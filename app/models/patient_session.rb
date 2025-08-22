@@ -44,8 +44,6 @@ class PatientSession < ApplicationRecord
   belongs_to :patient
   belongs_to :session
 
-  has_one :registration_status, class_name: "Patient::RegistrationStatus"
-
   has_one :location, through: :session
   has_one :subteam, through: :session
   has_one :team, through: :session
@@ -65,6 +63,12 @@ class PatientSession < ApplicationRecord
   has_many :pre_screenings,
            -> { where(patient_id: it.patient_id) },
            through: :session
+
+  has_one :registration_status,
+          -> { where(session_id: it.session_id) },
+          through: :patient,
+          source: :registration_statuses,
+          class_name: "Patient::RegistrationStatus"
 
   has_many :session_attendances,
            -> { where(patient_id: it.patient_id) },
@@ -188,7 +192,8 @@ class PatientSession < ApplicationRecord
         ->(status) do
           where(
             Patient::RegistrationStatus
-              .where("patient_session_id = patient_sessions.id")
+              .where("patient_id = patient_sessions.patient_id")
+              .where("session_id = patient_sessions.session_id")
               .where(status:)
               .arel
               .exists
