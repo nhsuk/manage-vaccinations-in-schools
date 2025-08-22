@@ -35,6 +35,8 @@ class Programme < ApplicationRecord
 
   has_many :teams, through: :team_programmes
 
+  scope :supports_delegation, -> { flu }
+
   enum :type,
        { flu: "flu", hpv: "hpv", menacwy: "menacwy", td_ipv: "td_ipv" },
        validate: true
@@ -50,6 +52,8 @@ class Programme < ApplicationRecord
   def doubles? = menacwy? || td_ipv?
 
   def seasonal? = flu?
+
+  def supports_delegation? = flu?
 
   DEFAULT_YEAR_GROUPS_BY_TYPE = {
     "flu" => (0..11).to_a,

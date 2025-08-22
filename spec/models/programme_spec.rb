@@ -17,6 +17,22 @@
 describe Programme do
   subject(:programme) { build(:programme) }
 
+  describe "scopes" do
+    describe "#supports_delegation" do
+      subject(:scope) { described_class.supports_delegation }
+
+      let(:flu_programme) { create(:programme, :flu) }
+      let(:hpv_programme) { create(:programme, :hpv) }
+      let(:menacwy_programme) { create(:programme, :menacwy) }
+      let(:td_ipv_programme) { create(:programme, :td_ipv) }
+
+      it { should include(flu_programme) }
+      it { should_not include(hpv_programme) }
+      it { should_not include(menacwy_programme) }
+      it { should_not include(td_ipv_programme) }
+    end
+  end
+
   describe "validations" do
     it { should validate_presence_of(:type) }
     it { should validate_inclusion_of(:type).in_array(%w[flu hpv]) }
@@ -56,6 +72,34 @@ describe Programme do
 
   describe "#seasonal?" do
     subject { programme.seasonal? }
+
+    context "with a flu programme" do
+      let(:programme) { build(:programme, :flu) }
+
+      it { should be(true) }
+    end
+
+    context "with an HPV programme" do
+      let(:programme) { build(:programme, :hpv) }
+
+      it { should be(false) }
+    end
+
+    context "with an MenACWY programme" do
+      let(:programme) { build(:programme, :menacwy) }
+
+      it { should be(false) }
+    end
+
+    context "with an Td/IPV programme" do
+      let(:programme) { build(:programme, :td_ipv) }
+
+      it { should be(false) }
+    end
+  end
+
+  describe "#supports_delegation?" do
+    subject { programme.supports_delegation? }
 
     context "with a flu programme" do
       let(:programme) { build(:programme, :flu) }

@@ -77,6 +77,9 @@ class Session < ApplicationRecord
           )
         end
 
+  scope :supports_delegation,
+        -> { has_programmes(Programme.supports_delegation) }
+
   scope :in_progress, -> { has_date(Date.current) }
   scope :unscheduled, -> { where.not(SessionDate.for_session.arel.exists) }
   scope :scheduled,
@@ -191,6 +194,8 @@ class Session < ApplicationRecord
     return false if dates.empty?
     Date.current > dates.min
   end
+
+  def supports_delegation? = programmes.any?(&:supports_delegation?)
 
   def year_groups
     @year_groups ||= location_programme_year_groups.pluck_year_groups

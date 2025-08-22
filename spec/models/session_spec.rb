@@ -84,6 +84,26 @@ describe Session do
       end
     end
 
+    describe "#supports_delegation" do
+      subject(:scope) { described_class.supports_delegation }
+
+      let!(:hpv_programme) { create(:programme, :hpv) }
+      let!(:flu_programme) { create(:programme, :flu) }
+      let(:session) { create(:session, programmes:) }
+
+      context "with a session for flu" do
+        let(:programmes) { [flu_programme] }
+
+        it { should include(session) }
+      end
+
+      context "with a session for HPV" do
+        let(:programmes) { [hpv_programme] }
+
+        it { should_not include(session) }
+      end
+    end
+
     describe "#in_progress" do
       subject(:scope) { described_class.in_progress }
 
@@ -149,18 +169,20 @@ describe Session do
     end
   end
 
-  describe "#programmes" do
-    subject(:programmes) { session.reload.programmes }
+  describe "associations" do
+    describe "#programmes" do
+      subject(:programmes) { session.reload.programmes }
 
-    let(:hpv_programme) { create(:programme, :hpv) }
-    let(:menacwy_programme) { create(:programme, :menacwy) }
+      let(:hpv_programme) { create(:programme, :hpv) }
+      let(:menacwy_programme) { create(:programme, :menacwy) }
 
-    let(:session) do
-      create(:session, programmes: [menacwy_programme, hpv_programme])
-    end
+      let(:session) do
+        create(:session, programmes: [menacwy_programme, hpv_programme])
+      end
 
-    it "is ordered by name" do
-      expect(programmes).to eq([hpv_programme, menacwy_programme])
+      it "is ordered by name" do
+        expect(programmes).to eq([hpv_programme, menacwy_programme])
+      end
     end
   end
 
@@ -195,6 +217,30 @@ describe Session do
 
     context "with a date" do
       before { create(:session_date, session:) }
+
+      it { should be(false) }
+    end
+  end
+
+  describe "#supports_delegation?" do
+    subject { session.supports_delegation? }
+
+    let(:session) { create(:session, programmes:) }
+
+    context "with only a flu programme" do
+      let(:programmes) { [create(:programme, :flu)] }
+
+      it { should be(true) }
+    end
+
+    context "with a flu and HPV programme" do
+      let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
+
+      it { should be(true) }
+    end
+
+    context "with only an HPV programme" do
+      let(:programmes) { [create(:programme, :hpv)] }
 
       it { should be(false) }
     end
