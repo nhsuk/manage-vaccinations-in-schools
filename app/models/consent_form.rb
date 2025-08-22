@@ -443,13 +443,8 @@ class ConsentForm < ApplicationRecord
         patient.school != school || patient.home_educated != home_educated
 
       if school_changed && !patient.deceased? && !patient.invalidated?
-        school_move =
-          if school
-            SchoolMove.find_or_initialize_by(patient:, school:)
-          else
-            SchoolMove.find_or_initialize_by(patient:, home_educated:, team:)
-          end
-
+        school_move = SchoolMove.find_or_initialize_by(patient:)
+        school_move.assign_from(school:, home_educated:, team:)
         school_move.update!(academic_year:, source: :parental_consent_form)
       end
 

@@ -16,10 +16,9 @@
 #
 # Indexes
 #
-#  index_school_moves_on_patient_id_and_home_educated_and_team_id  (patient_id,home_educated,team_id) UNIQUE
-#  index_school_moves_on_patient_id_and_school_id                  (patient_id,school_id) UNIQUE
-#  index_school_moves_on_school_id                                 (school_id)
-#  index_school_moves_on_team_id                                   (team_id)
+#  index_school_moves_on_patient_id  (patient_id) UNIQUE
+#  index_school_moves_on_school_id   (school_id)
+#  index_school_moves_on_team_id     (team_id)
 #
 # Foreign Keys
 #
@@ -49,13 +48,21 @@ class SchoolMove < ApplicationRecord
               unless: -> { school.nil? }
             }
 
+  def assign_from(school:, home_educated:, team:)
+    if school
+      assign_attributes(school:, home_educated: nil, team: nil)
+    else
+      assign_attributes(school: nil, home_educated:, team:)
+    end
+  end
+
   def confirm!(user: nil)
     ActiveRecord::Base.transaction do
       update_patient!
       update_archive_reasons!(user:)
       update_sessions!
       create_log_entry!(user:)
-      SchoolMove.where(patient:).destroy_all if persisted?
+      destroy! if persisted?
     end
   end
 
