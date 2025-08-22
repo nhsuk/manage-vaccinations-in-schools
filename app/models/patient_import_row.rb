@@ -19,13 +19,17 @@ class PatientImportRow
   validate :validate_date_of_birth,
            :validate_existing_patients,
            :validate_first_name,
+           :validate_preferred_first_name,
            :validate_gender_code,
            :validate_last_name,
+           :validate_preferred_last_name,
            :validate_nhs_number,
            :validate_parent_1_email,
+           :validate_parent_1_name,
            :validate_parent_1_phone,
            :validate_parent_1_relationship,
            :validate_parent_2_email,
+           :validate_parent_2_name,
            :validate_parent_2_phone,
            :validate_parent_2_relationship,
            :validate_year_group
@@ -428,6 +432,18 @@ class PatientImportRow
     end
   end
 
+  def validate_preferred_first_name
+    return if preferred_first_name.blank?
+    if preferred_first_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        preferred_first_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
+    elsif !preferred_first_name.to_s.match?(VALID_NAME_REGEX)
+      errors.add(preferred_first_name.header, "includes invalid character(s)")
+    end
+  end
+
   def validate_last_name
     if last_name.nil?
       errors.add(:base, "<code>CHILD_LAST_NAME</code> is missing")
@@ -443,6 +459,18 @@ class PatientImportRow
     end
   end
 
+  def validate_preferred_last_name
+    return if preferred_last_name.blank?
+    if preferred_last_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        preferred_last_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
+    elsif !preferred_last_name.to_s.match?(VALID_NAME_REGEX)
+      errors.add(preferred_last_name.header, "includes invalid character(s)")
+    end
+  end
+
   def validate_nhs_number
     return if nhs_number.blank?
 
@@ -451,6 +479,19 @@ class PatientImportRow
       message: "should be a valid NHS number with 10 characters",
       attributes: [nhs_number.header]
     ).validate_each(self, nhs_number.header, nhs_number_value)
+  end
+
+  def validate_parent_1_name
+    return if parent_1_name.blank?
+
+    if parent_1_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        parent_1_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
+    elsif !parent_1_name.to_s.match?(VALID_NAME_REGEX)
+      errors.add(parent_1_name.header, "includes invalid character(s)")
+    end
   end
 
   def validate_parent_1_email
@@ -477,6 +518,19 @@ class PatientImportRow
   def validate_parent_1_relationship
     if parent_1_relationship.present? && !parent_1_exists?
       errors.add(parent_1_relationship.header, "must be blank")
+    end
+  end
+
+  def validate_parent_2_name
+    return if parent_2_name.blank?
+
+    if parent_2_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        parent_2_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
+    elsif !parent_2_name.to_s.match?(VALID_NAME_REGEX)
+      errors.add(parent_2_name.header, "includes invalid character(s)")
     end
   end
 
