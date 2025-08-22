@@ -125,10 +125,7 @@ FactoryBot.define do
 
     after(:create) do |patient, evaluator|
       if evaluator.session
-        patient_session =
-          patient.patient_sessions.find_or_create_by!(
-            session: evaluator.session
-          )
+        PatientSession.find_or_create_by!(patient:, session: evaluator.session)
 
         if evaluator.in_attendance
           create(
@@ -138,9 +135,10 @@ FactoryBot.define do
             session: evaluator.session
           )
           create(
-            :patient_session_registration_status,
+            :patient_registration_status,
             :attending,
-            patient_session:
+            patient:,
+            session: evaluator.session
           )
         end
       end

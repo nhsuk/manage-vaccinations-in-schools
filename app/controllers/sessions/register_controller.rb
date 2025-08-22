@@ -11,7 +11,7 @@ class Sessions::RegisterController < ApplicationController
   layout "full"
 
   def show
-    @statuses = PatientSession::RegistrationStatus.statuses.keys
+    @statuses = Patient::RegistrationStatus.statuses.keys
 
     scope =
       @session.patient_sessions.includes_programmes.includes(

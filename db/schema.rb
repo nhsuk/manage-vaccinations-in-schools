@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_22_094829) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_22_153747) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -618,11 +618,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_22_094829) do
     t.index ["status"], name: "index_patient_consent_statuses_on_status"
   end
 
-  create_table "patient_session_registration_statuses", force: :cascade do |t|
-    t.bigint "patient_session_id", null: false
+  create_table "patient_registration_statuses", force: :cascade do |t|
     t.integer "status", default: 0, null: false
-    t.index ["patient_session_id"], name: "idx_on_patient_session_id_438fc21144", unique: true
-    t.index ["status"], name: "index_patient_session_registration_statuses_on_status"
+    t.bigint "patient_id", null: false
+    t.bigint "session_id", null: false
+    t.index ["patient_id", "session_id"], name: "idx_on_patient_id_session_id_2ff02d8889", unique: true
+    t.index ["patient_id"], name: "index_patient_registration_statuses_on_patient_id"
+    t.index ["session_id"], name: "index_patient_registration_statuses_on_session_id"
+    t.index ["status"], name: "index_patient_registration_statuses_on_status"
   end
 
   create_table "patient_sessions", force: :cascade do |t|
@@ -1061,7 +1064,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_22_094829) do
   add_foreign_key "patient_changesets", "patients"
   add_foreign_key "patient_consent_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_consent_statuses", "programmes"
-  add_foreign_key "patient_session_registration_statuses", "patient_sessions", on_delete: :cascade
+  add_foreign_key "patient_registration_statuses", "patients", on_delete: :cascade
+  add_foreign_key "patient_registration_statuses", "sessions", on_delete: :cascade
   add_foreign_key "patient_sessions", "patients"
   add_foreign_key "patient_sessions", "sessions"
   add_foreign_key "patient_specific_directions", "patients"
