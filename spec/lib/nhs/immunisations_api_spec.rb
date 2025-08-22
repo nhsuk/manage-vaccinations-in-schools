@@ -690,7 +690,7 @@ describe NHS::ImmunisationsAPI do
     end
 
     let(:status) { 200 }
-    let(:body) { file_fixture("fhir/search_response_2_results.json").read }
+    let(:body) { file_fixture("fhir/search_response_full_bundle.json").read }
     let(:headers) { { "content-type" => "application/fhir+json" } }
     let(:diagnostics) { nil }
 

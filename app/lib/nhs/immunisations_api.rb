@@ -209,7 +209,7 @@ module NHS::ImmunisationsAPI
     )
       vaccination_record.kept? && vaccination_record.recorded_in_service? &&
         vaccination_record.administered? &&
-        vaccination_record.programme.can_write_to_immunisations_api? &&
+        vaccination_record.programme.can_sync_to_immunisations_api? &&
         (ignore_nhs_number || vaccination_record.patient.nhs_number.present?) &&
         vaccination_record.notify_parents &&
         vaccination_record.patient.not_invalidated?
@@ -226,7 +226,7 @@ module NHS::ImmunisationsAPI
 
       if programmes.empty?
         raise "Cannot search for vaccination records in the immunisations API; no programmes provided."
-      elsif !programmes.all?(&:can_read_from_immunisations_api?)
+      elsif !programmes.all?(&:can_search_in_immunisations_api?)
         raise "Cannot search for vaccination records in the immunisations API; one or more programmes is not supported."
       end
 

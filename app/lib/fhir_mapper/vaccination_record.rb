@@ -7,6 +7,9 @@ module FHIRMapper
 
     delegate_missing_to :@vaccination_record
 
+    MAVIS_SYSTEM_NAME =
+      "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records"
+
     def initialize(vaccination_record)
       @vaccination_record = vaccination_record
     end
@@ -119,11 +122,7 @@ module FHIRMapper
     private
 
     def fhir_identifier
-      FHIR::Identifier.new(
-        system:
-          "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records",
-        value: uuid
-      )
+      FHIR::Identifier.new(system: MAVIS_SYSTEM_NAME, value: uuid)
     end
 
     def fhir_vaccination_procedure_extension
@@ -151,7 +150,6 @@ module FHIRMapper
       when "completed"
         "administered"
       when "not-done"
-        # "refused"
         # TODO: handle this more gracefully
         raise "Cannot import not-done vaccination records"
       else
