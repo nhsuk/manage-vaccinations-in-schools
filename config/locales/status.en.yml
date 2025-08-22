@@ -74,3 +74,10 @@ en:
         could_not_vaccinate: red
         none_yet: white
         vaccinated: green
+    psd:
+      label:
+        added: PSD added
+        not_added: PSD not added
+      colour:
+        added: green
+        not_added: grey
