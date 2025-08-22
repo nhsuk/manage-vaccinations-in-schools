@@ -9,6 +9,7 @@ class CIS2Info
   SUPERUSER_WORKGROUP = "mavissuperusers"
 
   PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE = "B0428"
+  PGD_SUPPLY_ACTIVITY_CODE = "B0429"
 
   attribute :organisation_name
   attribute :organisation_code
@@ -43,7 +44,7 @@ class CIS2Info
   end
 
   def is_nurse?
-    role_code == NURSE_ROLE
+    role_code == NURSE_ROLE && activity_codes.include?(PGD_SUPPLY_ACTIVITY_CODE)
   end
 
   def is_healthcare_assistant?

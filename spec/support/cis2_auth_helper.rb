@@ -93,7 +93,7 @@ module CIS2AuthHelper
     }
   end
 
-  def cis2_sign_in(user, ods_code:, role_code:, workgroups:)
+  def cis2_sign_in(user, ods_code:, role_code:, activity_codes:, workgroups:)
     mock_cis2_auth(
       uid: user.uid,
       given_name: user.given_name,
@@ -102,6 +102,7 @@ module CIS2AuthHelper
       sid: user.session_token,
       org_code: ods_code,
       role_code:,
+      activity_codes:,
       workgroups:
     )
 
@@ -118,15 +119,20 @@ module CIS2AuthHelper
 
     ods_code = organisation.ods_code
 
-    role_code ||= {
+    role_code = {
       nurse: CIS2Info::NURSE_ROLE,
       admin: CIS2Info::ADMIN_ROLE
+    }.fetch(role)
+
+    activity_codes = {
+      nurse: [CIS2Info::PGD_SUPPLY_ACTIVITY_CODE],
+      admin: []
     }.fetch(role)
 
     workgroups = user.teams.where(organisation:).pluck(:workgroup)
     workgroups << CIS2Info::SUPERUSER_WORKGROUP if superuser
 
-    cis2_sign_in(user, ods_code:, role_code:, workgroups:)
+    cis2_sign_in(user, ods_code:, role_code:, activity_codes:, workgroups:)
   end
 
   def mock_cis2_auth(
@@ -138,7 +144,7 @@ module CIS2AuthHelper
     org_code: nil,
     org_name: "Test SAIS Org",
     user_only_has_one_role: false,
-    activity_codes: [],
+    activity_codes: [CIS2Info::PGD_SUPPLY_ACTIVITY_CODE],
     workgroups: [],
     sid: nil,
     selected_roleid: "5555666677778888"
