@@ -5,6 +5,7 @@ en:
       register: Registration status
       triage: Triage status
       vaccination: Outcome
+      patient_specific_direction: PSD status
     consent:
       label:
         conflicts: Conflicting consent
@@ -74,3 +75,10 @@ en:
         could_not_vaccinate: red
         none_yet: white
         vaccinated: green
+    patient_specific_direction:
+      label:
+        added: PSD added
+        not_added: PSD not added
+      colour:
+        added: green
+        not_added: grey
