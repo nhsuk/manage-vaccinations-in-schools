@@ -208,29 +208,30 @@ module NHS::ImmunisationsAPI
       end
 
       Rails.logger.info(
-        "Searching for vaccination records in immunisations API for patient:" \
-          " #{patient.id}"
+        "Searching for vaccination records in immunisations API for patient: #{patient.id}"
       )
 
       params = {}
-      params[:patient] = patient.nhs_number
-      params[:vaccineCode] = programmes.map(&:snomed_target_disease_name).join(",")
-      params[:dateFrom] = date_from&.iso8601
-
-      query = []
-      query << "patient.identifier=https%3A%2F%2Ffhir.nhs.uk%2FId%2Fnhs-number%7C#{params[:patient]}"
-      query << "-immunization.target=#{params[:vaccineCode]}"
-      query << "-date.from=#{params[:dateFrom]}" if params[:dateFrom]
-      query_string = query.compact.join("&")
+      params["patient.identifier"] = "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}"
+      params["-immunization.target"] = programmes.map(&:snomed_target_disease_name).join(",")
+      params["-date.from"] = date_from.iso8601 if date_from
 
       response =
         NHS::API.connection.get(
-          "/immunisation-fhir-api/FHIR/R4/Immunization&#{query_string}",
+          "/immunisation-fhir-api/FHIR/R4/Immunization",
+          params,
           "Content-Type" => "application/fhir+json"
         )
 
       if response.status == 200
-        handle_search_response(response.body)
+        # To create fixtures for testing
+        File.write("tmp/search_response.json", response.body.to_json)
+        puts "Successfully saved"
+
+        # TODO: check that bundle.link matches params
+
+        body = FHIR.from_contents(response.body.to_json)
+        handle_search_response(body, patient:)
       else
         raise "Error searching for vaccination records for patient #{patient.id} in" \
                 " Immunisations API: unexpected response status" \
@@ -317,9 +318,10 @@ module NHS::ImmunisationsAPI
       end
     end
 
-    def handle_search_response(response_body)
-      File.write("tmp/search_response.json", response_body)
-      puts "Successfully saved"
+    def handle_search_response(response_body, patient)
+      # TODO: add team to `from_fhir_record` call
+      records = response_body.entry.map { |entry| FHIRMapper::VaccinationRecord.from_fhir_record(entry.resource, patient:) }
+      # records.each(&:save!)
     end
   end
 end

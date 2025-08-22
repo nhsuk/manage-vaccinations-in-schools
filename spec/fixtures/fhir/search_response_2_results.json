@@ -1,0 +1,277 @@
+{
+  "resourceType": "Bundle",
+  "type": "searchset",
+  "link": [
+    {
+      "relation": "self",
+      "url": "https://int.api.service.nhs.uk/immunisation-fhir-api/Immunization?immunization.target=FLU\u0026patient.identifier=https%3A%2F%2Ffhir.nhs.uk%2FId%2Fnhs-number%7C9449305552"
+    }
+  ],
+  "entry": [
+    {
+      "fullUrl": "https://api.service.nhs.uk/immunisation-fhir-api/Immunization/4142cff1-5fe5-437c-a3e6-700515f05dc5",
+      "resource": {
+        "resourceType": "Immunization",
+        "id": "4142cff1-5fe5-437c-a3e6-700515f05dc5",
+        "extension": [
+          {
+            "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+            "valueCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "822851000000102",
+                  "display": "Seasonal influenza vaccination (procedure)"
+                }
+              ]
+            }
+          }
+        ],
+        "identifier": [
+          {
+            "use": "official",
+            "system": "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records",
+            "value": "6166a080-301b-44b5-a33d-86d5eeb62601"
+          }
+        ],
+        "status": "completed",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "27114211000001105",
+              "display": "Fluenz Tetra vaccine nasal suspension 0.2ml unit dose (AstraZeneca UK Ltd) (product)"
+            }
+          ]
+        },
+        "patient": {
+          "reference": "urn:uuid:8361e64c-a48f-485d-b757-0ceb978a2e09",
+          "type": "Patient",
+          "identifier": {
+            "system": "https://fhir.nhs.uk/Id/nhs-number",
+            "value": "9449305552"
+          }
+        },
+        "occurrenceDateTime": "2025-07-15T14:47:43+01:00",
+        "recorded": "2025-07-15T14:47:47.245000+01:00",
+        "primarySource": true,
+        "location": {
+          "identifier": {
+            "system": "https://fhir.hl7.org.uk/Id/urn-school-number",
+            "value": "100001"
+          }
+        },
+        "manufacturer": {
+          "display": "AstraZeneca"
+        },
+        "lotNumber": "MN4027",
+        "expirationDate": "2025-08-16",
+        "site": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "279549004",
+              "display": "Nasal cavity structure"
+            }
+          ]
+        },
+        "route": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "46713006",
+              "display": "Nasal"
+            }
+          ]
+        },
+        "doseQuantity": {
+          "value": 0.2,
+          "unit": "ml",
+          "system": "http://snomed.info/sct",
+          "code": "258773002"
+        },
+        "performer": [
+          {
+            "actor": {
+              "type": "Organization",
+              "identifier": {
+                "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                "value": "R1L"
+              }
+            }
+          }
+        ],
+        "reasonCode": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "723620004"
+              }
+            ]
+          }
+        ],
+        "protocolApplied": [
+          {
+            "targetDisease": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "6142004",
+                    "display": "Influenza"
+                  }
+                ]
+              }
+            ],
+            "doseNumberPositiveInt": 1
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "https://api.service.nhs.uk/immunisation-fhir-api/Immunization/7ca9afa5-6256-439f-bf74-caf617786134",
+      "resource": {
+        "resourceType": "Immunization",
+        "id": "7ca9afa5-6256-439f-bf74-caf617786134",
+        "extension": [
+          {
+            "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+            "valueCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "884861000000100",
+                  "display": "Seasonal influenza vaccination (procedure)"
+                }
+              ]
+            }
+          }
+        ],
+        "identifier": [
+          {
+            "use": "official",
+            "system": "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records",
+            "value": "bbf6ef30-2a03-48ee-8f94-f455c802e9ca"
+          }
+        ],
+        "status": "completed",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "43208811000001106",
+              "display": "Fluenz (trivalent) vaccine nasal suspension 0.2ml unit dose (AstraZeneca UK Ltd) (product)"
+            }
+          ]
+        },
+        "patient": {
+          "reference": "urn:uuid:8361e64c-a48f-485d-b757-0ceb978a2e09",
+          "type": "Patient",
+          "identifier": {
+            "system": "https://fhir.nhs.uk/Id/nhs-number",
+            "value": "9449305552"
+          }
+        },
+        "occurrenceDateTime": "2025-08-22T13:44:24+01:00",
+        "recorded": "2025-08-22T13:44:29.594000+01:00",
+        "primarySource": true,
+        "location": {
+          "identifier": {
+            "system": "https://fhir.hl7.org.uk/Id/urn-school-number",
+            "value": "100001"
+          }
+        },
+        "manufacturer": {
+          "display": "AstraZeneca"
+        },
+        "lotNumber": "BU5086",
+        "expirationDate": "2025-09-30",
+        "site": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "279549004",
+              "display": "Nasal cavity structure"
+            }
+          ]
+        },
+        "route": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "46713006",
+              "display": "Nasal"
+            }
+          ]
+        },
+        "doseQuantity": {
+          "value": 0.2,
+          "unit": "ml",
+          "system": "http://snomed.info/sct",
+          "code": "258773002"
+        },
+        "performer": [
+          {
+            "actor": {
+              "type": "Organization",
+              "identifier": {
+                "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                "value": "R1L"
+              }
+            }
+          }
+        ],
+        "reasonCode": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "723620004"
+              }
+            ]
+          }
+        ],
+        "protocolApplied": [
+          {
+            "targetDisease": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "6142004",
+                    "display": "Influenza"
+                  }
+                ]
+              }
+            ],
+            "doseNumberPositiveInt": 1
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:8361e64c-a48f-485d-b757-0ceb978a2e09",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "9449305552",
+        "identifier": [
+          {
+            "system": "https://fhir.nhs.uk/Id/nhs-number",
+            "value": "9449305552"
+          }
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    }
+  ],
+  "total": 2
+}

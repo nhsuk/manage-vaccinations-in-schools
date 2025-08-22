@@ -50,7 +50,7 @@ module FHIRMapper
       immunisation
     end
 
-    def self.from_fhir_record(fhir_record, patient:, team:)
+    def self.from_fhir_record(fhir_record, patient:, team: nil)
       attrs = {}
 
       attrs[:patient] = patient
