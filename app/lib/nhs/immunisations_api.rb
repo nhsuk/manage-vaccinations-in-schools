@@ -195,7 +195,7 @@ module NHS::ImmunisationsAPI
 
     def search_immunisations(patient, programmes:, date_from: nil)
       unless Flipper.enabled?(:immunisations_fhir_api_integration) &&
-             Flipper.enabled?(:immunisations_fhir_api_integration_search)
+               Flipper.enabled?(:immunisations_fhir_api_integration_search)
         Rails.logger.info(
           "Not searching for vaccination records in the immunisations API as one of the" \
             " feature flags is disabled: Patient #{patient.id}"
@@ -212,9 +212,14 @@ module NHS::ImmunisationsAPI
       )
 
       params = {}
-      params["patient.identifier"] = "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}"
-      params["-immunization.target"] = programmes.map(&:snomed_target_disease_name).join(",")
-      params["-date.from"] = date_from.iso8601 if date_from
+      params[
+        "patient.identifier"
+      ] = "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}"
+      params["-immunization.target"] = programmes.map(
+        &:snomed_target_disease_name
+      ).join(",")
+      # Format: YYYY-MM-DD. Searches from the start of this day
+      params["-date.from"] = date_from.strftime("%F") if date_from
 
       response =
         NHS::API.connection.get(
@@ -225,13 +230,13 @@ module NHS::ImmunisationsAPI
 
       if response.status == 200
         # To create fixtures for testing
-        File.write("tmp/search_response.json", response.body.to_json)
-        puts "Successfully saved"
+        File.write("tmp/search_response.json", response.body)
+        Rails.logger.debug "Successfully saved"
 
         # TODO: check that bundle.link matches params
 
-        body = FHIR.from_contents(response.body.to_json)
-        handle_search_response(body, patient:)
+        FHIR.from_contents(response.body)
+        # handle_search_response(body, patient:) # TODO: should this call be here, or should it be called by the job?
       else
         raise "Error searching for vaccination records for patient #{patient.id} in" \
                 " Immunisations API: unexpected response status" \
@@ -320,7 +325,12 @@ module NHS::ImmunisationsAPI
 
     def handle_search_response(response_body, patient)
       # TODO: add team to `from_fhir_record` call
-      records = response_body.entry.map { |entry| FHIRMapper::VaccinationRecord.from_fhir_record(entry.resource, patient:) }
+      response_body.entry.map do |entry|
+          FHIRMapper::VaccinationRecord.from_fhir_record(
+            entry.resource,
+            patient:
+          )
+        end
       # records.each(&:save!)
     end
   end

@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 describe NHS::ImmunisationsAPI do
-  before { Flipper.enable(:immunisations_fhir_api_integration) }
+  before do
+    Flipper.enable(:immunisations_fhir_api_integration)
+    Flipper.enable(:immunisations_fhir_api_integration_search)
+  end
 
   let(:team) { create(:team, ods_code: "A9A5A") }
   let(:patient) do
@@ -66,18 +69,39 @@ describe NHS::ImmunisationsAPI do
     end
   end
 
+  shared_examples "an immunisations_fhir_api_integration_search feature flag check" do
+    context "the immunisations_fhir_api_integration_search feature flag is disabled" do
+      before { Flipper.disable(:immunisations_fhir_api_integration_search) }
+
+      it "does not make a request to the NHS API" do
+        perform_request
+
+        expect(request_stub).not_to have_been_made
+      end
+    end
+  end
+
   shared_examples "unexpected response status" do |unexpected_status, action|
     context "unexpected response status" do
       let(:status) { unexpected_status }
       let(:response) { "" }
 
       it "raises an error saying the response is unexpected" do
-        expect { perform_request }.to raise_error(
-          Regexp.new(
-            "Error #{action} vaccination record #{vaccination_record.id}" \
-              " (to|from) Immunisations API: unexpected response status"
+        if action == "searching"
+          expect { perform_request }.to raise_error(
+            Regexp.new(
+              "Error searching for vaccination records for patient #{patient.id}" \
+                " in Immunisations API: unexpected response status"
+            )
           )
-        )
+        else
+          expect { perform_request }.to raise_error(
+            Regexp.new(
+              "Error #{action} vaccination record #{vaccination_record.id}" \
+                " (to|from) Immunisations API: unexpected response status"
+            )
+          )
+        end
       end
     end
   end
@@ -88,12 +112,21 @@ describe NHS::ImmunisationsAPI do
       let(:diagnostics) { "Invalid patient ID" }
 
       it "raises an error with the diagnostic message" do
-        expect { perform_request }.to raise_error(
-          Regexp.new(
-            "Error #{action} vaccination record #{vaccination_record.id}" \
-              " (to|from) Immunisations API: Invalid patient ID"
+        if action == "searching"
+          expect { perform_request }.to raise_error(
+            Regexp.new(
+              "Error #{action} for vaccination records for patient #{patient.id}" \
+                " in Immunisations API: Invalid patient ID"
+            )
           )
-        )
+        else
+          expect { perform_request }.to raise_error(
+            Regexp.new(
+              "Error #{action} vaccination record #{vaccination_record.id}" \
+                " (to|from) Immunisations API: Invalid patient ID"
+            )
+          )
+        end
       end
     end
   end
@@ -642,5 +675,64 @@ describe NHS::ImmunisationsAPI do
         include_examples "deletes the immunisation record if previously recorded"
       end
     end
+  end
+
+  describe "search_immunisations" do
+    subject(:perform_request) do
+      described_class.search_immunisations(patient, programmes:, date_from:)
+    end
+
+    let(:programmes) { [create(:programme, :flu)] }
+    let(:date_from) { Time.new(2025, 8, 22, 12, 30, 37, "+01:00") }
+
+    let!(:request_stub) do
+      stub_request(
+        :get,
+        "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
+      ).with(
+        query: {
+          "patient.identifier" =>
+            "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}",
+          "-immunization.target" => "FLU",
+          "-date.from" => "2025-08-22"
+        }
+      ).to_return(status:, body:, headers:)
+    end
+
+    let(:status) { 200 }
+    let(:body) do
+      File.read(
+        Rails.root.join("spec/fixtures/fhir/search_response_1_result.json")
+      )
+    end
+    let(:headers) { {} }
+    let(:diagnostics) { nil }
+
+    it "sends the correct request" do
+      request_stub.with do |request|
+        expect(request.headers).to include(
+          {
+            "Accept" => "application/fhir+json",
+            "Content-Type" => "application/fhir+json"
+          }
+        )
+        expect(request.body).to be_blank
+        true
+      end
+
+      perform_request
+
+      expect(request_stub).to have_been_made
+    end
+
+    context "with an unexpected operationOutcome" do
+      pending("implementation") || fail
+    end
+
+    include_examples "generic error handling"
+    include_examples "unexpected response status", 250, "searching"
+
+    include_examples "an immunisations_fhir_api_integration feature flag check"
+    include_examples "an immunisations_fhir_api_integration_search feature flag check"
   end
 end
