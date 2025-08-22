@@ -2,11 +2,11 @@
 
 class TriagePolicy < ApplicationPolicy
   def create?
-    user.can_supply_using_pgd?
+    user.is_nurse?
   end
 
   def update?
-    user.can_supply_using_pgd?
+    user.is_nurse?
   end
 
   class Scope < ApplicationPolicy::Scope

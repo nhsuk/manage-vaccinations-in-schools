@@ -2,6 +2,6 @@
 
 class NoticesPolicy < ApplicationPolicy
   def index?
-    user.can_access_sensitive_records?
+    user.is_superuser?
   end
 end
