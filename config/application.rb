@@ -66,10 +66,6 @@ module ManageVaccinations
 
     config.time_zone = "London"
 
-    config.assets.paths << Rails.root.join(
-      "node_modules/govuk-frontend/dist/govuk/assets"
-    )
-
     config.exceptions_app = routes
 
     config.active_model.i18n_customize_full_message = true
