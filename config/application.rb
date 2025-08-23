@@ -66,6 +66,8 @@ module ManageVaccinations
 
     config.time_zone = "London"
 
+    config.assets.excluded_paths = [Rails.root.join("app/assets/stylesheets")]
+
     config.exceptions_app = routes
 
     config.active_model.i18n_customize_full_message = true
