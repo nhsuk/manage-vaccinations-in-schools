@@ -10,14 +10,12 @@
     "idb": "^8.0.3",
     "nhsuk-frontend": "^10.0.0",
     "sass": "^1.91.0",
-    "stimulus": "^3.2.2",
-    "workbox-build": "^7.3.0"
+    "stimulus": "^3.2.2"
   },
   "scripts": {
     "build:css": "sass ./app/assets/stylesheets:./app/assets/builds --no-source-map --pkg-importer=node --quiet-deps --style compressed",
     "build": "esbuild app/javascript/*.[jt]s app/javascript/controllers/*.[jt]s --bundle --sourcemap --outdir=app/assets/builds --public-path=assets --minify",
-    "build:serviceworker": "esbuild app/javascript/serviceworker/main.js --bundle --sourcemap --outfile=public/sw.js --minify",
-    "test:e2e": "PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1 playwright test",
+    "test:e2e": "playwright test",
     "test:load": "artillery run tests/load.yml",
     "test": "jest"
   },
