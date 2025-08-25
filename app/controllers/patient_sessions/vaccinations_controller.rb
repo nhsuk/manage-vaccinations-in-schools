@@ -9,7 +9,11 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
   after_action :verify_authorized
 
   def create
-    authorize VaccinationRecord
+    authorize VaccinationRecord.new(
+                patient: @patient,
+                session: @session,
+                programme: @programme
+              )
 
     draft_vaccination_record =
       DraftVaccinationRecord.new(request_session: session, current_user:)

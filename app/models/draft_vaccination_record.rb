@@ -187,7 +187,11 @@ class DraftVaccinationRecord
   def session
     return nil if session_id.nil?
 
-    SessionPolicy::Scope.new(@current_user, Session).resolve.find(session_id)
+    SessionPolicy::Scope
+      .new(@current_user, Session)
+      .resolve
+      .includes(:programmes)
+      .find(session_id)
   end
 
   def session=(value)

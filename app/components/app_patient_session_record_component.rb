@@ -2,7 +2,7 @@
 
 class AppPatientSessionRecordComponent < ViewComponent::Base
   erb_template <<-ERB
-    <% if helpers.policy(VaccinationRecord).new? %>
+    <% if helpers.policy(vaccination_record).new? %>
       <h3 class="nhsuk-heading-m"><%= heading %></h3>
       <%= render AppVaccinateFormComponent.new(vaccinate_form) %>
     <% end %>
@@ -31,6 +31,10 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
 
   delegate :patient, :session, to: :patient_session
   delegate :academic_year, to: :session
+
+  def vaccination_record
+    VaccinationRecord.new(patient:, session:, programme:)
+  end
 
   def default_vaccinate_form
     pre_screening_confirmed = patient.pre_screenings.today.exists?(programme:)
