@@ -25,6 +25,22 @@ class Sessions::RecordController < ApplicationController
       scope = scope.has_registration_status(%w[attending completed])
     end
 
+    @vaccine_methods = @session.vaccine_methods_for(user: current_user)
+
+    if @vaccine_methods != @session.vaccine_methods
+      scope =
+        if @vaccine_methods.empty?
+          scope.none
+        else
+          @vaccine_methods.reduce(scope) do |accumulator, vaccine_method|
+            accumulator.has_vaccine_method(
+              vaccine_method,
+              programme: @session.programmes
+            )
+          end
+        end
+    end
+
     patient_sessions =
       @form.apply(scope).consent_given_and_ready_to_vaccinate(
         programmes: @form.programmes,
