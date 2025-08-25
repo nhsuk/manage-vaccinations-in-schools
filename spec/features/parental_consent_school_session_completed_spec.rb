@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Parental consent" do
+  around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
+
   scenario "Move to a completed session" do
     stub_pds_search_to_return_no_patients
 
