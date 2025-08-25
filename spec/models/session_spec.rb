@@ -296,6 +296,32 @@ describe Session do
     it { should contain_exactly("injection", "nasal") }
   end
 
+  describe "#vaccine_methods_for" do
+    subject { session.vaccine_methods_for(user:) }
+
+    let(:programmes) { [create(:programme, :flu)] }
+
+    let(:session) { create(:session, programmes:) }
+
+    context "with a nurse" do
+      let(:user) { create(:nurse) }
+
+      it { should match_array(%w[nasal injection]) }
+    end
+
+    context "with a healthcare assistant" do
+      let(:user) { create(:healthcare_assistant) }
+
+      it { should eq(%w[nasal]) }
+    end
+
+    context "with an admin staff" do
+      let(:user) { create(:admin) }
+
+      it { should be_empty }
+    end
+  end
+
   describe "#today_or_future_dates" do
     subject(:today_or_future_dates) do
       travel_to(today) { session.today_or_future_dates }
