@@ -197,6 +197,8 @@ class Session < ApplicationRecord
 
   def supports_delegation? = programmes.any?(&:supports_delegation?)
 
+  def pgd_supply_enabled? = supports_delegation?
+
   def year_groups
     @year_groups ||= location_programme_year_groups.pluck_year_groups
   end

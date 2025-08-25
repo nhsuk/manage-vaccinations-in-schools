@@ -246,6 +246,30 @@ describe Session do
     end
   end
 
+  describe "#pgd_supply_enabled?" do
+    subject { session.pgd_supply_enabled? }
+
+    let(:session) { create(:session, programmes:) }
+
+    context "with only a flu programme" do
+      let(:programmes) { [create(:programme, :flu)] }
+
+      it { should be(true) }
+    end
+
+    context "with a flu and HPV programme" do
+      let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
+
+      it { should be(true) }
+    end
+
+    context "with only an HPV programme" do
+      let(:programmes) { [create(:programme, :hpv)] }
+
+      it { should be(false) }
+    end
+  end
+
   describe "#year_groups" do
     subject { session.year_groups }
 
