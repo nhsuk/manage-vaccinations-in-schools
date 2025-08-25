@@ -9,9 +9,13 @@
                                         ].compact) %>
 <% end %>
 
-<% if policy(VaccinationRecord).new? && (outstanding_programmes = @patient_session.outstanding_programmes).any? %>
+<% if (outstanding_programmes = @patient_session.outstanding_programmes).any? %>
+  <% programmes_can_record_vaccination = outstanding_programmes.filter do |programme|
+       policy(VaccinationRecord.new(patient: @patient, session: @session, programme:)).new?
+     end %>
+
   <%= govuk_notification_banner(title_text: "Important") do |notification_banner| %>
-    <% notification_banner.with_heading(text: "You still need to record an outcome for #{outstanding_programmes.map(&:name).to_sentence}.") %>
+    <% notification_banner.with_heading(text: "You still need to record an outcome for #{programmes_can_record_vaccination.map(&:name).to_sentence}.") %>
   <% end %>
 <% end %>
 
