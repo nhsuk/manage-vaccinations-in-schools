@@ -797,15 +797,14 @@ describe "Import child records" do
 
   def and_maia_has_multiple_pds_search_results
     maia = Patient.find_by(given_name: "Maia", family_name: "Smith")
-    expect(maia.pds_search_results.count).to eq(6)
+    expect(maia.pds_search_results.count).to eq(5)
     expect(maia.pds_search_results.pluck(:step)).to eq(
       %w[
         no_fuzzy_with_history
         no_fuzzy_with_wildcard_postcode
         no_fuzzy_with_wildcard_given_name
         no_fuzzy_with_wildcard_family_name
-        fuzzy_without_history
-        fuzzy_with_history
+        fuzzy
       ]
     )
   end
