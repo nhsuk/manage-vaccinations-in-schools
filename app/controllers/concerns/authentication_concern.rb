@@ -50,7 +50,8 @@ module AuthenticationConcern
 
     def selected_cis2_role_is_valid?
       cis2_info.is_admin? || cis2_info.is_nurse? ||
-        cis2_info.is_healthcare_assistant? || cis2_info.is_superuser?
+        cis2_info.is_healthcare_assistant? || cis2_info.is_superuser? ||
+        cis2_info.is_prescriber?
     end
 
     def storable_location?

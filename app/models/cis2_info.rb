@@ -8,6 +8,7 @@ class CIS2Info
 
   SUPERUSER_WORKGROUP = "mavissuperusers"
 
+  INDEPENDENT_PRESCRIBING_ACTIVITY_CODE = "B0420"
   PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE = "B0428"
 
   attribute :organisation_name
@@ -48,6 +49,10 @@ class CIS2Info
 
   def is_healthcare_assistant?
     activity_codes.include?(PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE)
+  end
+
+  def is_prescriber?
+    activity_codes.include?(INDEPENDENT_PRESCRIBING_ACTIVITY_CODE)
   end
 
   def is_superuser?
