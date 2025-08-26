@@ -21,9 +21,20 @@ describe "Flu vaccination" do
   end
 
   def given_a_session_exists
-    programmes = [create(:programme, :flu)]
+    @programme = create(:programme, :flu)
+    programmes = [@programme]
 
     @team = create(:team, programmes:)
+
+    @batch =
+      create(
+        :batch,
+        :not_expired,
+        team: @team,
+        vaccine: @programme.vaccines.nasal.first
+      )
+
+    @nurse = create(:nurse, team: @team)
     @user = create(:healthcare_assistant, team: @team)
 
     @session =
@@ -78,11 +89,28 @@ describe "Flu vaccination" do
 
   def when_i_click_on_the_injection_patient
     # This patient won't be in the "Record" tab.
+    expect(page).not_to have_content(@patient_injection_only.full_name)
+
     within(".app-secondary-navigation") { click_on "Children" }
     click_on @patient_injection_only.full_name
   end
 
   def then_i_am_able_to_vaccinate_them
+    check "I have checked that the above statements are true"
+    select @nurse.full_name
+    within all("section")[1] do
+      choose "Yes"
+    end
+    click_on "Continue"
+
+    choose @batch.name
+    click_on "Continue"
+
+    click_on "Change supplier"
+    choose @nurse.full_name
+    4.times { click_on "Continue" }
+
+    click_on "Confirm"
     click_on "Record vaccinations"
   end
 

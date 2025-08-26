@@ -11,8 +11,8 @@ class DraftVaccinationRecord
   attribute :delivery_method, :string
   attribute :delivery_site, :string
   attribute :dose_sequence, :integer
+  attribute :first_active_wizard_step, :string
   attribute :full_dose, :boolean
-  attribute :protocol, :string
   attribute :identity_check_confirmed_by_other_name, :string
   attribute :identity_check_confirmed_by_other_relationship, :string
   attribute :identity_check_confirmed_by_patient, :boolean
@@ -27,8 +27,9 @@ class DraftVaccinationRecord
   attribute :performed_by_user_id, :integer
   attribute :performed_ods_code, :string
   attribute :programme_id, :integer
+  attribute :protocol, :string
   attribute :session_id, :integer
-  attribute :first_active_wizard_step, :string
+  attribute :supplied_by_user_id, :integer
 
   def initialize(current_user:, **attributes)
     @current_user = current_user
@@ -47,6 +48,7 @@ class DraftVaccinationRecord
       :notes,
       :date_and_time,
       (:outcome if can_change_outcome?),
+      (:supplier if requires_supplied_by?),
       (:delivery if administered?),
       (:dose if administered? && can_be_half_dose?),
       (:batch if administered?),
@@ -198,6 +200,16 @@ class DraftVaccinationRecord
     self.session_id = value.id
   end
 
+  def supplied_by
+    return nil if supplied_by_user_id.nil?
+
+    User.find(supplied_by_user_id)
+  end
+
+  def supplied_by=(value)
+    self.supplied_by_user_id = value.id
+  end
+
   def vaccination_record
     return nil if editing_id.nil?
 
@@ -276,7 +288,6 @@ class DraftVaccinationRecord
       delivery_site
       dose_sequence
       full_dose
-      protocol
       identity_check
       location_id
       location_name
@@ -289,7 +300,9 @@ class DraftVaccinationRecord
       performed_by_user_id
       performed_ods_code
       programme_id
+      protocol
       session_id
+      supplied_by_user_id
       vaccine_id
     ]
   end
@@ -346,6 +359,10 @@ class DraftVaccinationRecord
 
   def can_change_outcome?
     outcome != "already_had" || editing? || session.nil? || session.today?
+  end
+
+  def requires_supplied_by?
+    performed_by_user && !performed_by_user&.show_in_suppliers
   end
 
   def delivery_site_matches_delivery_method

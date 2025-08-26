@@ -17,7 +17,8 @@ class VaccinationRecordPolicy < ApplicationPolicy
   end
 
   def edit?
-    user.is_nurse? && record.recorded_in_service? &&
+    (record.performed_by_user_id == user.id || user.is_nurse?) &&
+      record.recorded_in_service? &&
       record.performed_ods_code == user.selected_organisation.ods_code
   end
 
