@@ -36,8 +36,7 @@ class PDSSearchResult < ApplicationRecord
          no_fuzzy_with_wildcard_postcode: 3,
          no_fuzzy_with_wildcard_given_name: 4,
          no_fuzzy_with_wildcard_family_name: 5,
-         fuzzy_without_history: 6,
-         fuzzy_with_history: 7
+         fuzzy: 6
        },
        validate: true
 

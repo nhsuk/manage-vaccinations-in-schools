@@ -79,7 +79,7 @@ class ProcessPatientChangesetsJob < ApplicationJob
         too_many_matches: :no_fuzzy_without_history
       },
       no_fuzzy_without_history: {
-        no_matches: :fuzzy_without_history,
+        no_matches: :fuzzy,
         one_match: :save_nhs_number_if_unique,
         too_many_matches: :give_up,
         format_query: ->(query) { query.merge(history: false) }
@@ -98,28 +98,21 @@ class ProcessPatientChangesetsJob < ApplicationJob
         format_query: ->(query) { query[:given_name][3..] = "*" }
       },
       no_fuzzy_with_wildcard_family_name: {
-        no_matches: :fuzzy_without_history,
-        one_match: :fuzzy_without_history,
-        too_many_matches: :fuzzy_without_history,
-        skip_step: :fuzzy_without_history,
+        no_matches: :fuzzy,
+        one_match: :fuzzy,
+        too_many_matches: :fuzzy,
+        skip_step: :fuzzy,
         format_query: ->(query) { query[:family_name][3..] = "*" }
       },
-      fuzzy_without_history: {
-        no_matches: :fuzzy_with_history,
-        one_match: :save_nhs_number_if_unique,
-        too_many_matches: :save_nhs_number_if_unique,
-        format_query: ->(query) do
-          query[:fuzzy] = true
-          query[:history] = false
-        end
-      },
-      fuzzy_with_history: {
+      fuzzy: {
         no_matches: :give_up,
         one_match: :save_nhs_number_if_unique,
         too_many_matches: :save_nhs_number_if_unique,
         format_query: ->(query) do
           query[:fuzzy] = true
-          query[:history] = true
+          # For fuzzy searches, history is the default. We get an error if we
+          # try to set it to true explicitly
+          query[:history] = nil
         end
       }
     }

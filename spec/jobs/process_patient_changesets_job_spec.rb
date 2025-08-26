@@ -60,7 +60,7 @@ describe ProcessPatientChangesetsJob do
   end
 
   context "when a later fuzzy search finds a match" do
-    let(:step) { :fuzzy_without_history }
+    let(:step) { :fuzzy }
 
     before do
       patient_changeset["pending_changes"]["search_results"] = [
@@ -85,7 +85,7 @@ describe ProcessPatientChangesetsJob do
   end
 
   context "when fuzzy search returns conflicting NHS numbers" do
-    let(:step) { :fuzzy_without_history }
+    let(:step) { :fuzzy }
 
     before do
       patient_changeset["pending_changes"]["search_results"] = [
