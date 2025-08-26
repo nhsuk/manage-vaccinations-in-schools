@@ -3,7 +3,7 @@
 class AppSessionSummaryComponent < ViewComponent::Base
   erb_template <<-ERB
     <h3 class="nhsuk-heading-s nhsuk-u-margin-top-5">
-      <%= @session.location.name %>
+      <%= session.location.name %>
     </h3>
 
     <% if session.school? %>
