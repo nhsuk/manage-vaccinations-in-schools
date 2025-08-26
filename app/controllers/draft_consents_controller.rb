@@ -6,6 +6,9 @@ class DraftConsentsController < ApplicationController
   skip_after_action :verify_policy_scoped
 
   before_action :set_draft_consent
+
+  include DraftObjectValidatorConcern
+
   before_action :set_patient_session
   before_action :set_patient
   before_action :set_session
@@ -146,6 +149,10 @@ class DraftConsentsController < ApplicationController
 
   def triage_form_params
     params.expect(triage_form: %i[status_and_vaccine_method notes])
+  end
+
+  def draft_object
+    @draft_consent
   end
 
   def set_draft_consent
