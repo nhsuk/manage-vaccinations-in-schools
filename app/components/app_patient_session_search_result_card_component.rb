@@ -203,8 +203,9 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       key: :register,
       value:
         render(
-          AppRegisterStatusTagComponent.new(
-            patient_session.registration_status&.status || "unknown"
+          AppStatusTagComponent.new(
+            patient_session.registration_status&.status || "unknown",
+            context: :register
           )
         )
     }
