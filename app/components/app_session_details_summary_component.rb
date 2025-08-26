@@ -27,23 +27,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
   def cohort_row
     count = patient_sessions.count
 
-    actions =
-      if @session.school?
-        href = import_session_path(session)
-        [{ text: "Import class lists", href: }]
-      else
-        []
-      end
-
-    {
-      key: {
-        text: "Cohort"
-      },
-      value: {
-        text: I18n.t("children", count:)
-      },
-      actions:
-    }
+    { key: { text: "Cohort" }, value: { text: I18n.t("children", count:) } }
   end
 
   def consent_refused_row

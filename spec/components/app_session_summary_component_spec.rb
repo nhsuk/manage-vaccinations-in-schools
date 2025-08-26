@@ -20,6 +20,7 @@ describe AppSessionSummaryComponent do
   end
 
   it { should have_content("Streeling University") }
+  it { should have_link("Import class lists") }
 
   it { should have_content("School URN") }
   it { should have_content("123456") }
