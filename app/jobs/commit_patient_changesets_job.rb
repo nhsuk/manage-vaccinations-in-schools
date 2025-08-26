@@ -138,8 +138,8 @@ class CommitPatientChangesetsJob < ApplicationJob
       count_column_to_increment =
         import.count_column(
           changeset.patient,
-          changeset.parents,
-          changeset.parent_relationships
+          changeset.parents.uniq,
+          changeset.parent_relationships.uniq
         )
       counts[count_column_to_increment] += 1
     end
