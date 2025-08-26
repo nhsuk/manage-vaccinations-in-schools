@@ -74,6 +74,10 @@ describe CohortImport do
         expect(cohort_import).to be_invalid
         expect(cohort_import.rows).not_to be_empty
       end
+
+      it "is invalid" do
+        expect(cohort_import).not_to be_valid
+      end
     end
 
     describe "with unrecognised fields" do
@@ -398,6 +402,24 @@ describe CohortImport do
 
       it "adds the known school patients to the session" do
         expect { process! }.to change(session.patients, :count).from(0).to(2)
+      end
+    end
+
+    context "with invalid fields" do
+      before { process! }
+
+      let(:file) { "invalid_fields.csv" }
+
+      describe "error for row with first name having invalid characters" do
+        subject(:child_first_name) { cohort_import.errors[:row_21][0][0] }
+
+        it { should include "includes invalid character(s)" }
+      end
+
+      describe "error for row with last name having invalid characters" do
+        subject(:child_last_name) { cohort_import.errors[:row_22][0][0] }
+
+        it { should include "includes invalid character(s)" }
       end
     end
   end
