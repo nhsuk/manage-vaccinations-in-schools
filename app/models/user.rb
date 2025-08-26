@@ -72,6 +72,8 @@ class User < ApplicationRecord
   scope :recently_active,
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
 
+  scope :show_in_suppliers, -> { where(show_in_suppliers: true) }
+
   enum :fallback_role,
        {
          nurse: 0,

@@ -1,5 +1,5 @@
 <%= form_with(
-     model: vaccinate_form,
+     model: form,
      url:,
      method: :post,
      class: "nhsuk-card",
@@ -54,6 +54,20 @@
       <% end %>
 
       <%= f.govuk_text_area :pre_screening_notes, label: { text: "Pre-screening notes (optional)" }, rows: 3 %>
+
+      <% if form.requires_supplied_by_user_id? %>
+        <%= f.govuk_select :supplied_by_user_id,
+                           label: { text: "Which nurse identified and pre-screened the child and supplied the vaccine?" },
+                           data: { module: "autocomplete" } do %>
+          <%= tag.option "", value: "" %>
+          <% form.supplied_by_users.each do |user| %>
+            <%= tag.option user.full_name,
+                           value: user.id,
+                           selected: user.id == form.supplied_by_user_id,
+                           data: { hint: user.email } %>
+          <% end %>
+        <% end %>
+      <% end %>
     </section>
 
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">

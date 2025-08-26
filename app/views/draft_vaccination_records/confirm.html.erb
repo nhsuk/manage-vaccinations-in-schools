@@ -20,6 +20,7 @@
      delivery_site: wizard_path("delivery"),
      dose_volume: @draft_vaccination_record.wizard_steps.include?(:dose) ? wizard_path("dose") : nil,
      identity: wizard_path("identity"),
+     supplier: wizard_path("supplier"),
      location: @draft_vaccination_record.wizard_steps.include?(:location) ? wizard_path("location") : nil,
      notes: wizard_path("notes"),
      outcome: @draft_vaccination_record.wizard_steps.include?(:outcome) ? wizard_path("outcome") : nil,

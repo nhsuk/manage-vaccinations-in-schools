@@ -17,6 +17,7 @@ class DraftVaccinationRecordsController < ApplicationController
   before_action :validate_params, only: :update
   before_action :set_batches, if: -> { current_step == :batch }
   before_action :set_locations, if: -> { current_step == :location }
+  before_action :set_supplied_by_users, if: -> { current_step == :supplier }
   before_action :set_back_link_path
 
   after_action :verify_authorized
@@ -165,7 +166,8 @@ class DraftVaccinationRecordsController < ApplicationController
       ],
       location: %i[location_id],
       notes: %i[notes],
-      outcome: %i[outcome]
+      outcome: %i[outcome],
+      supplier: %i[supplied_by_user_id]
     }.fetch(current_step)
 
     params
@@ -229,6 +231,10 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def set_locations
     @locations = policy_scope(Location).community_clinic
+  end
+
+  def set_supplied_by_users
+    @supplied_by_users = current_team.users.show_in_suppliers
   end
 
   def set_back_link_path
