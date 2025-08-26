@@ -19,7 +19,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user.is_superuser?
+    user.is_superuser? && record.source != "nhs_immunisations_api"
   end
 
   class Scope < ApplicationPolicy::Scope

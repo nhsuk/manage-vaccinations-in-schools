@@ -3,11 +3,11 @@
 describe VaccinationRecordPolicy do
   subject(:policy) { described_class.new(user, vaccination_record) }
 
+  let(:programme) { create(:programme) }
+  let(:team) { create(:team, programmes: [programme]) }
+
   describe "update?" do
     subject(:update?) { policy.update? }
-
-    let(:programme) { create(:programme) }
-    let(:team) { create(:team, programmes: [programme]) }
 
     let(:vaccination_record) { create(:vaccination_record, programme:) }
 
@@ -45,29 +45,58 @@ describe VaccinationRecordPolicy do
   describe "destroy?" do
     subject(:destroy?) { policy.destroy? }
 
-    let(:vaccination_record) { create(:vaccination_record) }
+    context "when vaccination record is from the nhs immunisations api" do
+      let(:vaccination_record) do
+        create(:vaccination_record, programme:, source: "nhs_immunisations_api")
+      end
 
-    context "with an admin" do
-      let(:user) { build(:admin) }
-
-      it { should be(false) }
-
-      context "and superuser access" do
+      context "with an admin with superuser access" do
         let(:user) { build(:admin, :superuser) }
 
-        it { should be(true) }
+        it { should be(false) }
+      end
+
+      context "with a nurse with superuser access" do
+        let(:user) { build(:nurse, :superuser) }
+
+        it { should be(false) }
       end
     end
 
-    context "with a nurse" do
-      let(:user) { build(:nurse) }
+    context "when vaccination record is managed in mavis" do
+      let(:session) { create(:session, team:, programmes: [programme]) }
+      let(:vaccination_record) do
+        create(
+          :vaccination_record,
+          team:,
+          programme:,
+          source: "mavis",
+          session:
+        )
+      end
 
-      it { should be(false) }
+      context "with an admin" do
+        let(:user) { build(:admin) }
 
-      context "and superuser access" do
-        let(:user) { build(:nurse, :superuser) }
+        it { should be(false) }
 
-        it { should be(true) }
+        context "and superuser access" do
+          let(:user) { build(:admin, :superuser) }
+
+          it { should be(true) }
+        end
+      end
+
+      context "with a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be(false) }
+
+        context "and superuser access" do
+          let(:user) { build(:nurse, :superuser) }
+
+          it { should be(true) }
+        end
       end
     end
   end
