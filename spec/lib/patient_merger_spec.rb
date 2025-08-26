@@ -48,6 +48,9 @@ describe PatientMerger do
     let(:notify_log_entry) do
       create(:notify_log_entry, :email, patient: patient_to_destroy)
     end
+    let(:pds_search_result) do
+      create(:pds_search_result, patient: patient_to_destroy)
+    end
     let(:parent_relationship) do
       create(:parent_relationship, patient: patient_to_destroy)
     end
@@ -121,6 +124,12 @@ describe PatientMerger do
 
     it "moves notify log entries" do
       expect { call }.to change { notify_log_entry.reload.patient }.to(
+        patient_to_keep
+      )
+    end
+
+    it "moves PDS search results" do
+      expect { call }.to change { pds_search_result.reload.patient }.to(
         patient_to_keep
       )
     end
