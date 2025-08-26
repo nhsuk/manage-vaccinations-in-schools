@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_22_094829) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_26_135132) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -718,7 +718,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_22_094829) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["import_type", "import_id"], name: "index_pds_search_results_on_import"
-    t.index ["patient_id", "import_type", "import_id", "step"], name: "index_pds_search_results_on_patient_import_step", unique: true
     t.index ["patient_id"], name: "index_pds_search_results_on_patient_id"
   end
 
