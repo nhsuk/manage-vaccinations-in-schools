@@ -36,6 +36,10 @@ class PatientMerger
         patient_id: patient_to_keep.id
       )
 
+      patient_to_destroy.pds_search_results.update_all(
+        patient_id: patient_to_keep.id
+      )
+
       patient_to_destroy.school_moves.find_each do |school_move|
         if patient_to_keep.school_moves.exists?(
              home_educated: school_move.home_educated,
