@@ -9,7 +9,7 @@
     "govuk-frontend": "^5.11.2",
     "idb": "^8.0.3",
     "nhsuk-frontend": "^9.6.4",
-    "sass": "^1.90.0",
+    "sass": "^1.91.0",
     "stimulus": "^3.2.2",
     "workbox-build": "^7.3.0"
   },
