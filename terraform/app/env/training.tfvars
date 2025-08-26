@@ -21,9 +21,7 @@ http_hosts = {
   MAVIS__HOST                        = "training.manage-vaccinations-in-schools.nhs.uk"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "training.give-or-refuse-consent-for-vaccinations.nhs.uk"
 }
-appspec_bucket       = "nhse-mavis-appspec-bucket-training"
-minimum_web_replicas = 2
-maximum_web_replicas = 4
+appspec_bucket = "nhse-mavis-appspec-bucket-training"
 
 valkey_node_type          = "cache.t4g.micro"
 valkey_log_retention_days = 3
