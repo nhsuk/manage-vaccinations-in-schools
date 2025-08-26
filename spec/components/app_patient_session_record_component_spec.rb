@@ -7,10 +7,12 @@ describe AppPatientSessionRecordComponent do
     described_class.new(
       patient_session,
       programme: programmes.first,
+      current_user:,
       vaccinate_form: VaccinateForm.new
     )
   end
 
+  let(:current_user) { create(:user) }
   let(:programmes) { [create(:programme, :hpv)] }
   let(:session) { create(:session, :today, programmes:) }
   let(:patient) do
