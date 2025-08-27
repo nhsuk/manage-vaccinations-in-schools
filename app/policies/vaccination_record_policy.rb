@@ -2,25 +2,32 @@
 
 class VaccinationRecordPolicy < ApplicationPolicy
   def create?
-    user.is_nurse?
+    user.is_nurse? ||
+      (
+        patient.approved_vaccine_methods(programme:, academic_year:) &
+          session.vaccine_methods_for(user:)
+      ).present?
   end
 
-  def new?
-    create?
+  def new? = create?
+
+  def record_already_vaccinated?
+    user.is_nurse? && !session.today? &&
+      patient.vaccination_status(programme:, academic_year:).none_yet?
   end
 
   def edit?
-    user.is_nurse? && record.session_id.present? &&
+    (record.performed_by_user_id == user.id || user.is_nurse?) &&
+      record.recorded_in_service? &&
       record.performed_ods_code == user.selected_organisation.ods_code
   end
 
-  def update?
-    edit?
-  end
+  def update? = edit?
 
-  def destroy?
-    user.is_superuser?
-  end
+  def destroy? = user.is_superuser?
+
+  delegate :patient, :session, :programme, to: :record
+  delegate :academic_year, to: :session
 
   class Scope < ApplicationPolicy::Scope
     def resolve

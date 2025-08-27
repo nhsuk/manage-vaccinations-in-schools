@@ -204,7 +204,7 @@ class Session < ApplicationRecord
   end
 
   def vaccine_methods
-    programmes.flat_map(&:vaccine_methods).uniq.sort
+    @vaccine_methods ||= programmes.flat_map(&:vaccine_methods).uniq.sort
   end
 
   def programmes_for(year_group: nil, patient: nil, academic_year: nil)
@@ -214,6 +214,16 @@ class Session < ApplicationRecord
       location_programme_year_groups.any? do
         it.programme_id == programme.id && it.year_group == year_group
       end
+    end
+  end
+
+  def vaccine_methods_for(user:)
+    if user.is_nurse?
+      vaccine_methods
+    elsif user.is_healthcare_assistant? && pgd_supply_enabled?
+      %w[nasal]
+    else
+      []
     end
   end
 

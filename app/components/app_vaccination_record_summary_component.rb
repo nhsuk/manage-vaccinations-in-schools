@@ -201,6 +201,20 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
+      if @vaccination_record.supplied_by.present?
+        summary_list.with_row do |row|
+          row.with_key { "Supplier" }
+          row.with_value { supplier_value }
+          if (href = @change_links[:supplier])
+            row.with_action(
+              text: "Change",
+              visually_hidden_text: "supplier",
+              href:
+            )
+          end
+        end
+      end
+
       if @vaccination_record.performed_by.present?
         summary_list.with_row do |row|
           row.with_key { "Vaccinator" }
@@ -328,6 +342,13 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
     highlight_if(
       @vaccination_record.performed_at.to_fs(:time),
       @vaccination_record.performed_at_changed?
+    )
+  end
+
+  def supplier_value
+    highlight_if(
+      @vaccination_record.supplied_by&.full_name,
+      @vaccination_record.supplied_by_user_id_changed?
     )
   end
 
