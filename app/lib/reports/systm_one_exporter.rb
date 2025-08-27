@@ -95,6 +95,7 @@ class Reports::SystmOneExporter
           :patient,
           :performed_by_user,
           :session,
+          :supplied_by,
           :vaccine
         )
 
@@ -209,14 +210,19 @@ class Reports::SystmOneExporter
   end
 
   def notes(vaccination_record)
-    notes = vaccination_record.notes.to_s
-    if vaccination_record.performed_by
-      notes += (notes.empty? ? "" : "\n ")
-      notes +=
-        "Administered by: #{vaccination_record.performed_by.given_name}" \
-          " #{vaccination_record.performed_by.family_name}"
-    end
-    notes
+    [
+      vaccination_record.notes,
+      if (user = vaccination_record.performed_by)
+        "Administered by: #{user.full_name}"
+      end,
+      if (user = vaccination_record.supplied_by)
+        if vaccination_record.pgd?
+          "Authorised by: #{user.full_name}"
+        else
+          "Prescribed by: #{user.full_name}"
+        end
+      end
+    ].compact_blank.join("\n")
   end
 
   def method(vaccination_record)
