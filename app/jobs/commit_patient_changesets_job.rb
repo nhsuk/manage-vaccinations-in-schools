@@ -113,7 +113,8 @@ class CommitPatientChangesetsJob < ApplicationJob
           step: PDSSearchResult.steps[result["step"]],
           result: PDSSearchResult.results[result["result"]],
           nhs_number: result["nhs_number"],
-          import:
+          import:,
+          created_at: result["created_at"]
         )
       end
     end
