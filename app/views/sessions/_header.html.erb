@@ -24,6 +24,14 @@
         selected: request.path == session_consent_path(@session),
       )
     
+      if @session.psd_enabled?
+        nav.with_item(
+          href: session_patient_specific_directions_path(@session),
+          text: t("sessions.tabs.patient_specific_directions"),
+          selected: request.path == session_patient_specific_directions_path(@session),
+        )
+      end
+    
       nav.with_item(
         href: session_triage_path(@session),
         text: t("sessions.tabs.triage"),

@@ -56,6 +56,10 @@ FactoryBot.define do
       users { [create(:user, :admin, team: instance)] }
     end
 
+    trait :with_one_healthcare_assistant do
+      users { [create(:user, :healthcare_assistant, team: instance)] }
+    end
+
     trait :with_generic_clinic do
       after(:create) { |team| GenericClinicFactory.call(team:) }
     end
