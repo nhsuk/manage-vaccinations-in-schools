@@ -69,7 +69,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        service: [ web, good-job, sidekiq ]
+        service: ${{ inputs.server_types == 'all' && fromJSON('["web", "good-job", "sidekiq"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -165,7 +165,7 @@ jobs:
         id: deploy-web-service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ${{ runner.temp }}
+          task-definition: ${{ runner.temp }}/web-task-definition.json
           codedeploy-appspec: config/templates/appspec.yaml
           cluster: ${{ env.cluster_name }}
           service: mavis-${{ inputs.environment }}-web
@@ -197,13 +197,13 @@ jobs:
           name: ${{ inputs.environment }}-good-job-task-definition
       - name: Change family of task definition
         run: |
-          file_path="${{ runner.temp }}/web-task-definition.json"
+          file_path="${{ runner.temp }}/good-job-task-definition.json"
           family_name="mavis-good-job-task-definition-${{ inputs.environment }}"
           echo "$(jq --arg f "$family_name" '.family = $f' "$file_path")" > "$file_path"
       - name: Deploy good-job service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ${{ runner.temp }}/web-task-definition.json
+          task-definition: ${{ runner.temp }}/good-job-task-definition.json
           cluster: ${{ env.cluster_name }}
           service: mavis-${{ inputs.environment }}-good-job
           force-new-deployment: true

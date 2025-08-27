@@ -8,11 +8,18 @@ on:
         description: Deployment environment
         required: true
         type: string
-      image_tag:
-        required: false
-        type: string
       git_ref_to_deploy:
         required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Deployment environment
+        required: true
+        type: string
+      git_ref_to_deploy:
+        description: The git commit SHA to deploy.
+        required: false
         type: string
 
 permissions: {}
