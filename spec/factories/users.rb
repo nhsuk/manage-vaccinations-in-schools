@@ -34,10 +34,10 @@ FactoryBot.define do
   factory :user,
           aliases: %i[
             nurse
-            assessor
             created_by
-            recorded_by
             performed_by
+            recorded_by
+            supplied_by
             uploaded_by
           ] do
     transient do
@@ -61,6 +61,7 @@ FactoryBot.define do
 
     sequence(:email) { |n| "nurse-#{n}@example.com" }
     fallback_role { :nurse }
+    show_in_suppliers { true }
 
     given_name { "Test" }
     family_name { "User" }
@@ -83,12 +84,14 @@ FactoryBot.define do
       sequence(:email) { |n| "admin-#{n}@example.com" }
       role_code { CIS2Info::ADMIN_ROLE }
       fallback_role { :admin }
+      show_in_suppliers { false }
     end
 
     trait :superuser do
       sequence(:email) { |n| "superuser-#{n}@example.com" }
       role_workgroups { [CIS2Info::SUPERUSER_WORKGROUP] }
       fallback_role { :superuser }
+      show_in_suppliers { false }
     end
 
     trait :healthcare_assistant do
@@ -98,6 +101,7 @@ FactoryBot.define do
         [CIS2Info::PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE]
       end
       fallback_role { :healthcare_assistant }
+      show_in_suppliers { false }
     end
 
     trait :prescriber do

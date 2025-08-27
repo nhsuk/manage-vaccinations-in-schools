@@ -34,6 +34,7 @@
 #  performed_by_user_id                  :bigint
 #  programme_id                          :bigint           not null
 #  session_id                            :bigint
+#  supplied_by_user_id                   :bigint
 #  vaccine_id                            :bigint
 #
 # Indexes
@@ -46,6 +47,7 @@
 #  index_vaccination_records_on_performed_by_user_id      (performed_by_user_id)
 #  index_vaccination_records_on_programme_id              (programme_id)
 #  index_vaccination_records_on_session_id                (session_id)
+#  index_vaccination_records_on_supplied_by_user_id       (supplied_by_user_id)
 #  index_vaccination_records_on_uuid                      (uuid) UNIQUE
 #  index_vaccination_records_on_vaccine_id                (vaccine_id)
 #
@@ -56,6 +58,7 @@
 #  fk_rails_...  (performed_by_user_id => users.id)
 #  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (session_id => sessions.id)
+#  fk_rails_...  (supplied_by_user_id => users.id)
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 FactoryBot.define do

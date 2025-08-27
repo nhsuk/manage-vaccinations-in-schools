@@ -23,6 +23,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "FHIR"
   inflect.acronym "GIAS"
   inflect.acronym "GP"
+  inflect.acronym "HCA"
   inflect.acronym "JWKS"
   inflect.acronym "NHS"
   inflect.acronym "OAuth2"
