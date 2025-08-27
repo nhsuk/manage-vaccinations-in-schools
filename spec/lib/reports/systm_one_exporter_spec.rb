@@ -58,7 +58,7 @@ describe Reports::SystmOneExporter do
         "Reason" => "Routine",
         "Site" => "Left deltoid",
         "Method" => "Intramuscular",
-        "Notes" => "Administered by: Test User"
+        "Notes" => "Administered by: USER, Test"
       }
     )
   end
@@ -261,6 +261,47 @@ describe Reports::SystmOneExporter do
           "Postcode" => ""
         )
       end
+    end
+  end
+
+  describe "Notes field" do
+    subject { csv_row["Notes"] }
+
+    let(:nurse) { create(:nurse, given_name: "Nurse") }
+    let(:healthcare_assistant) do
+      create(:healthcare_assistant, given_name: "HCA")
+    end
+
+    context "nasal flu administered by healthcare assistant under PGD" do
+      let(:vaccination_record) do
+        create(
+          :vaccination_record,
+          programme:,
+          patient:,
+          session:,
+          protocol: "pgd",
+          performed_by: healthcare_assistant,
+          supplied_by: nurse
+        )
+      end
+
+      it { should eq("Administered by: USER, HCA\nAuthorised by: USER, Nurse") }
+    end
+
+    context "nasal flu administered by healthcare assistant under PSD" do
+      let(:vaccination_record) do
+        create(
+          :vaccination_record,
+          programme:,
+          patient:,
+          session:,
+          protocol: "psd",
+          performed_by: healthcare_assistant,
+          supplied_by: nurse
+        )
+      end
+
+      it { should eq("Administered by: USER, HCA\nPrescribed by: USER, Nurse") }
     end
   end
 
