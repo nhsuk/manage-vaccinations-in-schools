@@ -268,6 +268,13 @@ class PatientSession < ApplicationRecord
 
   delegate :academic_year, to: :session
 
+  def psd_added?(programme:)
+    patient
+      .patient_specific_directions
+      .where(programme:, academic_year:)
+      .exists?
+  end
+
   def safe_to_destroy?
     vaccination_records.empty? && gillick_assessments.empty? &&
       session_attendances.none?(&:attending?)

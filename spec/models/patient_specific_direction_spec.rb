@@ -7,7 +7,6 @@
 #  id                 :bigint           not null, primary key
 #  academic_year      :integer          not null
 #  delivery_site      :integer          not null
-#  full_dose          :boolean          not null
 #  vaccine_method     :integer          not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
@@ -70,7 +69,5 @@ describe PatientSpecificDirection, type: :model do
         :vaccine_method
       ).in_array(%w[injection nasal])
     end
-
-    it { should allow_values(true, false).for(:full_dose) }
   end
 end
