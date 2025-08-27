@@ -149,10 +149,10 @@ class VaccinationRecord < ApplicationRecord
 
   encrypts :notes
 
-  with_options if: :administered? do
-    validates :full_dose, inclusion: [true, false]
-    validates :protocol, presence: true
-  end
+  validates :full_dose, inclusion: [true, false], if: :administered?
+  validates :protocol,
+            presence: true,
+            if: -> { administered? && recorded_in_service? }
 
   validates :notes, length: { maximum: 1000 }
 

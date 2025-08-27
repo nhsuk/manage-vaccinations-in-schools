@@ -78,7 +78,11 @@ describe VaccinationRecord do
       it { should allow_values(true, false).for(:full_dose) }
       it { should_not allow_values(nil).for(:full_dose) }
 
-      it { should validate_presence_of(:protocol) }
+      context "when administered in mavis" do
+        before { vaccination_record.session = create(:session) }
+
+        it { should validate_presence_of(:protocol) }
+      end
     end
 
     context "when not administered" do
