@@ -16,9 +16,8 @@
 #
 # Indexes
 #
-#  index_pds_search_results_on_import               (import_type,import_id)
-#  index_pds_search_results_on_patient_id           (patient_id)
-#  index_pds_search_results_on_patient_import_step  (patient_id,import_type,import_id,step) UNIQUE
+#  index_pds_search_results_on_import      (import_type,import_id)
+#  index_pds_search_results_on_patient_id  (patient_id)
 #
 # Foreign Keys
 #
