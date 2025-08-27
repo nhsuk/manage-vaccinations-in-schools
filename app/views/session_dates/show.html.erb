@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(edit_session_path(@session), name: "edit session") %>
+  <%= render AppBacklinkComponent.new(session_edit_path(@session), name: "edit session") %>
 <% end %>
 
 <%= h1 "When will sessions be held?" %>
@@ -42,6 +42,6 @@
 
   <div class="app-button-group">
     <%= f.govuk_submit "Continue" %>
-    <%= govuk_link_to "Back", edit_session_path(@session) %>
+    <%= govuk_link_to "Back", session_edit_path(@session) %>
   </div>
 <% end %>
