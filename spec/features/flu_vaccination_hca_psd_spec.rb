@@ -40,28 +40,53 @@ describe "Patient Specific Directions" do
     then_i_should_not_see_link_to_bulk_add_psds
   end
 
+  scenario "viewing patients under record vaccinations that don't have PSD" do
+    given_a_flu_programme_with_a_running_session(
+      user_type: :with_one_healthcare_assistant
+    )
+    and_a_patient_without_a_psd_exists
+    and_i_am_signed_in(role: :healthcare_assistant)
+
+    when_i_visit_the_record_vaccinations_tab
+    then_i_should_not_see_the_patient
+  end
+
+  scenario "when viewing a patient session with no PSD, there is no ability to record a vaccination" do
+    given_a_flu_programme_with_a_running_session(
+      user_type: :with_one_healthcare_assistant
+    )
+    and_a_patient_without_a_psd_exists
+    and_i_am_signed_in(role: :healthcare_assistant)
+
+    when_i_visit_the_session_patient_programme_page
+    then_i_should_not_see_the_record_vaccination_section
+  end
+
   def given_delegation_feature_flag_is_enabled
     Flipper.enable(:delegation)
   end
 
   def given_a_flu_programme_with_a_running_session(user_type:)
-    programmes = [create(:programme, :flu)]
-    @team = create(:team, user_type, programmes:)
+    @programme = create(:programme, :flu)
+    @team = create(:team, user_type, programmes: [@programme])
 
-    @batch =
-      create(:batch, team: @team, vaccine: programmes.first.vaccines.first)
+    @batch = create(:batch, team: @team, vaccine: @programme.vaccines.first)
 
-    @session = create(:session, team: @team, programmes:)
+    @session = create(:session, team: @team, programmes: [@programme])
   end
 
   def and_a_patient_who_doesnt_need_triage_exists
-    @patient_triage_not_needed =
+    @patient =
       create(
         :patient_session,
-        :consent_given_triage_not_needed,
+        :consent_given_nasal_only_triage_not_needed,
+        :in_attendance,
         session: @session
       ).patient
   end
+
+  alias_method :and_a_patient_without_a_psd_exists,
+               :and_a_patient_who_doesnt_need_triage_exists
 
   def and_i_am_signed_in(role: :nurse)
     @user = @team.users.first
@@ -70,6 +95,14 @@ describe "Patient Specific Directions" do
 
   def when_i_go_to_the_session_psds_tab
     visit session_patient_specific_directions_path(@session)
+  end
+
+  def when_i_visit_the_record_vaccinations_tab
+    visit session_record_path(@session)
+  end
+
+  def when_i_visit_the_session_patient_programme_page
+    visit session_patient_programme_path(@session, @patient, @programme)
   end
 
   def then_the_patient_should_have_psd_status_not_added
@@ -102,5 +135,13 @@ describe "Patient Specific Directions" do
 
   def then_i_should_not_see_link_to_bulk_add_psds
     expect(page).not_to have_text("Add new PSDs")
+  end
+
+  def then_i_should_not_see_the_patient
+    expect(page).not_to have_text(@patient.given_name)
+  end
+
+  def then_i_should_not_see_the_record_vaccination_section
+    expect(page).not_to have_text("Record flu vaccination with injection")
   end
 end
