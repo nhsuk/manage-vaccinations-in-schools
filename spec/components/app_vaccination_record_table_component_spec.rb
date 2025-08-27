@@ -69,6 +69,7 @@ describe AppVaccinationRecordTableComponent do
       vaccination_records.first.patient.patient_sessions.destroy_all
       vaccination_records.first.update!(
         session: nil,
+        source: "historical_upload",
         location: nil,
         location_name: "Unknown",
         performed_ods_code: nil

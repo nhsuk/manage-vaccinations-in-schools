@@ -111,6 +111,8 @@ class DraftVaccinationRecordsController < ApplicationController
 
     @draft_vaccination_record.write_to!(@vaccination_record)
 
+    @vaccination_record.source = "mavis"
+
     should_notify_parents =
       @vaccination_record.confirmation_sent? &&
         (
