@@ -26,15 +26,16 @@ class PatientSession::RegistrationStatus < ApplicationRecord
            -> { kept.order(performed_at: :desc) },
            through: :patient
 
-  has_one :session_attendance,
-          -> { today },
-          through: :patient_session,
-          source: :session_attendances
+  has_many :session_attendances,
+           -> { includes(:session_date) },
+           through: :patient_session
 
   enum :status,
        { unknown: 0, attending: 1, not_attending: 2, completed: 3 },
        default: :unknown,
        validate: true
+
+  def session_attendance = session_attendances.find(&:today?)
 
   def assign_status
     self.status = generator.status
