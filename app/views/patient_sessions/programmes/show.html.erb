@@ -10,7 +10,7 @@
 
     <%= render AppPatientSessionTriageComponent.new(@patient_session, programme: @programme, triage_form: @triage_form) %>
 
-    <%= render AppPatientSessionRecordComponent.new(@patient_session, programme: @programme, vaccinate_form: @vaccinate_form) %>
+    <%= render AppPatientSessionRecordComponent.new(@patient_session, programme: @programme, current_user:, vaccinate_form: @vaccinate_form) %>
 
     <%= render AppPatientSessionOutcomeComponent.new(@patient_session, programme: @programme) %>
   </div>

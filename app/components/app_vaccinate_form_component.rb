@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 class AppVaccinateFormComponent < ViewComponent::Base
-  def initialize(vaccinate_form)
+  def initialize(form)
     super
 
-    @vaccinate_form = vaccinate_form
+    @form = form
   end
 
   private
 
-  attr_reader :vaccinate_form
+  attr_reader :form
 
-  delegate :patient, :session, :programme, to: :vaccinate_form
+  delegate :patient, :session, :programme, to: :form
   delegate :academic_year, to: :session
 
   def url

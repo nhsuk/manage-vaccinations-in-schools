@@ -277,11 +277,6 @@ class PatientSession < ApplicationRecord
     destroy! if safe_to_destroy?
   end
 
-  def can_record_as_already_vaccinated?(programme:)
-    !session.today? &&
-      patient.vaccination_status(programme:, academic_year:).none_yet?
-  end
-
   def programmes = session.programmes_for(patient:, academic_year:)
 
   def todays_attendance

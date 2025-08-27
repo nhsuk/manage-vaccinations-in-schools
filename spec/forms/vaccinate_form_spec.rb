@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 describe VaccinateForm do
-  subject(:form) { described_class.new(programme:) }
+  subject(:form) { described_class.new(programme:, current_user:) }
 
   let(:programme) { create(:programme) }
+  let(:current_user) { create(:user) }
 
   describe "validations" do
     it do
@@ -28,7 +29,8 @@ describe VaccinateForm do
       subject(:form) do
         described_class.new(
           identity_check_confirmed_by_patient: false,
-          programme:
+          programme:,
+          current_user:
         )
       end
 

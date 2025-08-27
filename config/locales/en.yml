@@ -162,6 +162,8 @@ en:
               blank: Confirm you’ve checked the pre-screening statements are true
             pre_screening_notes:
               too_long: Enter notes that are less than %{count} characters long
+            supplied_by_user_id:
+              inclusion: Choose which nurse identified and pre-screened the child and supplied the vaccine
             vaccine_method:
               inclusion: Choose if they are ready to vaccinate
         vaccination_report:
@@ -739,6 +741,7 @@ en:
     route: route
     school: school
     session: session
+    supplier: supplier
     timeline: timeline
     triage: triage
     type: type
