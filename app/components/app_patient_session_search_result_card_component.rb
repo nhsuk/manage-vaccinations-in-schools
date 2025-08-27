@@ -119,7 +119,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def vaccination_method
-    return if context == :patients
+    return unless %i[register record].include?(context)
 
     programmes_to_check = programmes.select(&:has_multiple_vaccine_methods?)
 
