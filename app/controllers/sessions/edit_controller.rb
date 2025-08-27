@@ -3,6 +3,21 @@
 class Sessions::EditController < ApplicationController
   before_action :set_session
 
+  before_action :authorize_session_edit,
+                except: %i[
+                  update_programmes
+                  update_send_consent_requests_at
+                  update_send_invitations_at
+                  update_weeks_before_consent_reminders
+                ]
+  before_action :authorize_session_update,
+                only: %i[
+                  update_programmes
+                  update_send_consent_requests_at
+                  update_send_invitations_at
+                  update_weeks_before_consent_reminders
+                ]
+
   def show
   end
 
@@ -69,6 +84,14 @@ class Sessions::EditController < ApplicationController
 
   def set_session
     @session = policy_scope(Session).find_by!(slug: params[:session_slug])
+  end
+
+  def authorize_session_edit
+    authorize @session, :edit?
+  end
+
+  def authorize_session_update
+    authorize @session, :update?
   end
 
   def programmes_params
