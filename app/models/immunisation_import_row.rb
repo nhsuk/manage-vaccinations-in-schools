@@ -106,7 +106,6 @@ class ImmunisationImportRow
       performed_by_user:,
       performed_ods_code: performed_ods_code&.to_s,
       programme:,
-      protocol: "pgd",
       session:
     }
 
@@ -117,7 +116,7 @@ class ImmunisationImportRow
       )
     end
 
-    attributes.merge!(notify_parents: true) if session
+    attributes.merge!(notify_parents: true, protocol: "pgd") if session
 
     attributes_to_stage_if_already_exists = {
       batch_id: batch&.id,
