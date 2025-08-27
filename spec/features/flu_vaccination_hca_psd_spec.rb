@@ -3,6 +3,18 @@
 describe "Patient Specific Directions" do
   before { given_delegation_feature_flag_is_enabled }
 
+  scenario "Healthcare worked records nasal vaccination with PSD" do
+    given_a_flu_programme_with_a_running_session(
+      user_type: :with_one_healthcare_assistant
+    )
+    and_a_patient_with_a_psd_exists
+    and_i_am_signed_in(role: :healthcare_assistant)
+
+    when_i_visit_the_session_patient_programme_page
+    and_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
+    and_the_vaccination_record_has_psd_as_the_protocol
+  end
+
   scenario "prescriber can bulk add PSDs to patients that don't require triage" do
     given_a_flu_programme_with_a_running_session(user_type: :with_one_nurse)
     and_a_patient_who_doesnt_need_triage_exists
@@ -68,21 +80,47 @@ describe "Patient Specific Directions" do
 
   def given_a_flu_programme_with_a_running_session(user_type:)
     @programme = create(:programme, :flu)
-    @team = create(:team, user_type, programmes: [@programme])
+    programmes = [@programme]
 
-    @batch = create(:batch, team: @team, vaccine: @programme.vaccines.first)
+    @team = create(:team, user_type, programmes:)
 
-    @session = create(:session, team: @team, programmes: [@programme])
+    @batch =
+      create(
+        :batch,
+        :not_expired,
+        team: @team,
+        vaccine: @programme.vaccines.nasal.first
+      )
+
+    @session =
+      create(
+        :session,
+        :today,
+        :requires_no_registration,
+        :psd_enabled,
+        team: @team,
+        programmes:
+      )
   end
 
   def and_a_patient_who_doesnt_need_triage_exists
     @patient =
       create(
-        :patient_session,
+        :patient,
         :consent_given_nasal_only_triage_not_needed,
         :in_attendance,
         session: @session
-      ).patient
+      )
+  end
+
+  def and_a_patient_with_a_psd_exists
+    and_a_patient_who_doesnt_need_triage_exists
+
+    create(
+      :patient_specific_direction,
+      patient: @patient,
+      programme: @programme
+    )
   end
 
   alias_method :and_a_patient_without_a_psd_exists,
@@ -143,5 +181,26 @@ describe "Patient Specific Directions" do
 
   def then_i_should_not_see_the_record_vaccination_section
     expect(page).not_to have_text("Record flu vaccination with injection")
+  end
+
+  def and_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
+    within all("section")[0] do
+      check "I have checked that the above statements are true"
+    end
+
+    within all("section")[1] do
+      choose "Yes"
+      click_button "Continue"
+    end
+
+    choose @batch.name
+    click_button "Continue"
+    click_on "Confirm"
+
+    expect(page).to have_text("Vaccination outcome recorded for flu")
+  end
+
+  def and_the_vaccination_record_has_psd_as_the_protocol
+    expect(@patient.vaccination_records.first.protocol).to eq("psd")
   end
 end

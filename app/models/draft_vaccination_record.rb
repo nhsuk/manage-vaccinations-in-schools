@@ -131,7 +131,11 @@ class DraftVaccinationRecord
   alias_method :administered, :administered?
 
   def protocol
-    :pgd
+    if session.psd_enabled? && @current_user.is_healthcare_assistant?
+      :psd
+    else
+      :pgd
+    end
   end
 
   def batch
