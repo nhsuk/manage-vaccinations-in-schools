@@ -54,6 +54,36 @@ class Patient::ConsentStatus < ApplicationRecord
 
   def vaccine_method_nasal? = vaccine_methods.include?("nasal")
 
+  def create_or_update_reportable_consent_event
+    event =
+      ReportingAPI::ConsentEvent.find_or_initialize_by(
+        source_id: self.id,
+        source_type: self.class.name
+      )
+
+    consent = self.consents.where(programme_id: self.programme_id, academic_year: self.academic_year).includes(:parent, :team).last
+    
+    event.event_timestamp = consent&.submitted_at || Time.current
+    event.event_type = self.status
+
+    event.copy_attributes_from_references(
+      patient: self.patient,
+      patient_school: self.patient&.school,
+      # Need to wait for PR 4345 to get merged into next before we can do this:
+      # patient_local_authority: self.patient&.local_authority_from_postcode,
+      parent: consent&.parent,
+      parent_relationship: self.patient&.parent_relationships.find_by(parent_id: consent&.parent_id),
+      consent: consent,
+      consent_status: self,
+      programme: self.programme,
+      team: consent&.team,
+      organisation: consent&.team&.organisation
+    )
+
+    event.save!
+    event
+  end
+
   private
 
   def generator

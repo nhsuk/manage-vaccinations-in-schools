@@ -69,7 +69,7 @@ class ConsentNotification < ApplicationRecord
     # If a problem occurs while the emails/texts are sent, they will be in the job
     # queue and restarted at a later date.
 
-    ConsentNotification.create!(
+    notification = ConsentNotification.create!(
       programmes:,
       patient:,
       session:,
@@ -77,6 +77,8 @@ class ConsentNotification < ApplicationRecord
       sent_at: Time.current,
       sent_by: current_user
     )
+    # write the denormalized events for Commissioner Reporting
+    notification.create_or_update_reportable_consent_events
 
     is_school = session.location.school?
 
@@ -116,5 +118,37 @@ class ConsentNotification < ApplicationRecord
         sent_by: current_user
       )
     end
+
   end
+
+  def create_or_update_reportable_consent_events
+    parents = patient.parents.select(&:contactable?)
+    programmes.each do |programme|
+      parents.each do |parent|
+        event =
+          ReportingAPI::ConsentEvent.find_or_initialize_by(
+            source_id: id,
+            source_type: self.class.name
+          )
+        event.event_timestamp = sent_at
+        event.event_type = type
+
+        event.copy_attributes_from_references(
+          consent_notification: self,
+          patient: patient,
+          patient_school: patient.school,
+          # patient_local_authority: patient&.local_authority_from_postcode,
+          parent:,
+          parent_relationship: patient.parent_relationships.find_by(parent_id: parent.id),
+          programme:,
+          team: session&.team,
+          organisation: session&.team&.organisation 
+        )
+
+        event.save!
+        event
+      end
+    end
+  end
+
 end

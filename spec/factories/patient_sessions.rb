@@ -39,7 +39,7 @@ FactoryBot.define do
     session { association :session, programmes: }
 
     patient do
-      association :patient, team:, school:, home_educated:, year_group:
+      association :patient, team:, school:, home_educated:, year_group:, random_nhs_number: true
     end
 
     trait :unknown_attendance do

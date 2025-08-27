@@ -83,7 +83,12 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
     .where(programme: programmes)
     .find_each { |vaccine| FactoryBot.create(:batch, team:, vaccine:) }
 
-  location = FactoryBot.create(:school, team:, year_groups:)
+  location = begin
+    FactoryBot.create(:school, team:, year_groups:)
+  rescue ActiveRecord::RecordInvalid
+    Location.where(subteam_id: team.id).where("year_groups @> ARRAY [?]", year_groups).order("RANDOM()").first
+  end
+
   date = completed ? 1.week.ago.to_date : Date.current
 
   session = FactoryBot.create(:session, date:, team:, programmes:, location:)
@@ -114,7 +119,7 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
       end
 
       # Add extra consent forms with a successful NHS number lookup
-      temporary_patient = FactoryBot.build(:patient)
+      temporary_patient = FactoryBot.build(:patient, random_nhs_number: true)
       FactoryBot.create(
         :consent_form,
         :recorded,
