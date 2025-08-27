@@ -29,6 +29,12 @@
 
 <ul class="app-action-list">
   <% if (session_attendance = @patient_session.todays_attendance) %>
+    <% if @patient_session.psd_added?(programme: @programme) %>
+      <li class="app-action-list__item">
+        <strong class="nhsuk-tag nhsuk-tag--aqua-green">PSD added</strong>
+      </li>
+    <% end %>
+
     <li class="app-action-list__item">
       <%= render AppRegisterStatusTagComponent.new(@patient_session.registration_status&.status || "unknown") %>
     </li>
