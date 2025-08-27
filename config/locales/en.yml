@@ -690,6 +690,7 @@ en:
       record: Record vaccinations
       register: Register
       triage: Triage
+      patient_specific_directions: PSDs
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results

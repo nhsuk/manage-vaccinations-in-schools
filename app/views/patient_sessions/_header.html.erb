@@ -36,7 +36,7 @@
     <% end %>
 
     <li class="app-action-list__item">
-      <%= render AppRegisterStatusTagComponent.new(@patient_session.registration_status&.status || "unknown") %>
+      <%= render AppStatusTagComponent.new(@patient_session.registration_status&.status || "unknown", context: :register) %>
     </li>
 
     <% if policy(session_attendance).edit? && @session.requires_registration? %>
