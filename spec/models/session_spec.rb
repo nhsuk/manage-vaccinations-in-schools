@@ -313,6 +313,14 @@ describe Session do
       let(:user) { create(:healthcare_assistant) }
 
       it { should eq(%w[nasal]) }
+
+      context "with national protocol enabled" do
+        let(:session) do
+          create(:session, :national_protocol_enabled, programmes:)
+        end
+
+        it { should match_array(%w[nasal injection]) }
+      end
     end
 
     context "with an admin staff" do
