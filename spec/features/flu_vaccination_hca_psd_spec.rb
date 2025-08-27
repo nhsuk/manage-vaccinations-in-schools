@@ -3,10 +3,9 @@
 describe "Patient Specific Directions" do
   before { given_delegation_feature_flag_is_enabled }
 
-  scenario "prescriber can bulk add PSDs to patients that don't require triage" do
-    given_a_flu_programme_with_a_running_session(user_type: :with_one_nurse)
-    and_a_patient_with_consent_given_nasal_only_triage_not_needed
-    and_a_patient_with_consent_given_injection_only_triage_not_needed
+  scenario "Prescriber can bulk add PSDs to patients that don't require triage" do
+    given_a_flu_session_exists(user_type: :with_one_nurse)
+    and_patients_exist
     and_i_am_signed_in(role: :prescriber)
 
     when_i_go_to_the_session_psds_tab
@@ -23,32 +22,49 @@ describe "Patient Specific Directions" do
     and_zero_children_should_be_eligible_for_psd
   end
 
-  scenario "admin cannot bulk add PSDs to patients" do
-    given_a_flu_programme_with_a_running_session(user_type: :with_one_admin)
-    and_a_patient_with_consent_given_nasal_only_triage_not_needed
+  scenario "Admin cannot bulk add PSDs to patients" do
+    given_a_flu_session_exists(user_type: :with_one_admin)
+    and_patients_exist
     and_i_am_signed_in(role: :medical_secretary)
 
     when_i_go_to_the_session_psds_tab
     then_i_should_not_see_link_to_bulk_add_psds
   end
 
-  scenario "healthcare assistant cannot bulk add PSDs to patients" do
-    given_a_flu_programme_with_a_running_session(
-      user_type: :with_one_healthcare_assistant
-    )
-    and_a_patient_with_consent_given_nasal_only_triage_not_needed
+  scenario "HCAs cannot bulk add PSDs to patients" do
+    given_a_flu_session_exists(user_type: :with_one_healthcare_assistant)
+    and_patients_exist
     and_i_am_signed_in(role: :healthcare_assistant)
 
     when_i_go_to_the_session_psds_tab
     then_i_should_not_see_link_to_bulk_add_psds
   end
 
+  scenario "Viewing patients under record tab that don't have PSD" do
+    given_a_flu_session_exists(user_type: :with_one_healthcare_assistant)
+    and_patients_exist
+    and_i_am_signed_in(role: :healthcare_assistant)
+
+    when_i_visit_the_record_vaccinations_tab
+    then_i_should_not_see_the_patient
+  end
+
+  scenario "Viewing a patient page with no PSD" do
+    given_a_flu_session_exists(user_type: :with_one_healthcare_assistant)
+    and_patients_exist
+    and_i_am_signed_in(role: :healthcare_assistant)
+
+    when_i_visit_the_session_patient_programme_page
+    then_i_should_not_see_the_record_vaccination_section
+  end
+
   def given_delegation_feature_flag_is_enabled
     Flipper.enable(:delegation)
   end
 
-  def given_a_flu_programme_with_a_running_session(user_type:)
-    @programmes = [create(:programme, :flu)]
+  def given_a_flu_session_exists(user_type:)
+    @programme = create(:programme, :flu)
+    @programmes = [@programme]
     @team = create(:team, user_type, programmes: @programmes)
 
     @batch =
@@ -57,22 +73,17 @@ describe "Patient Specific Directions" do
     @session = create(:session, team: @team, programmes: @programmes)
   end
 
-  def and_a_patient_with_consent_given_nasal_only_triage_not_needed
-    @nasal_patient =
+  def and_patients_exist
+    @patient_nasal_only =
       create(
         :patient,
         :consent_given_nasal_only_triage_not_needed,
-        programmes: @programmes,
         session: @session
       )
-  end
-
-  def and_a_patient_with_consent_given_injection_only_triage_not_needed
-    @injection_patient =
+    @patient_injection_only =
       create(
         :patient,
         :consent_given_injection_only_triage_not_needed,
-        programmes: @programmes,
         session: @session
       )
   end
@@ -85,16 +96,28 @@ describe "Patient Specific Directions" do
     visit session_patient_specific_directions_path(@session)
   end
 
+  def when_i_visit_the_record_vaccinations_tab
+    visit session_record_path(@session)
+  end
+
+  def when_i_visit_the_session_patient_programme_page
+    visit session_patient_programme_path(
+            @session,
+            @patient_nasal_only,
+            @programme
+          )
+  end
+
   def then_the_patients_should_have_psd_status_not_added
     expect(page).to have_text("PSD not added")
   end
 
   def then_the_nasal_patient_should_have_psd_status_added
-    expect_patient_to_have_psd_status(@nasal_patient, "PSD added")
+    expect_patient_to_have_psd_status(@patient_nasal_only, "PSD added")
   end
 
   def and_the_injection_patient_should_have_psd_status_not_added
-    expect_patient_to_have_psd_status(@injection_patient, "PSD not added")
+    expect_patient_to_have_psd_status(@patient_injection_only, "PSD not added")
   end
 
   def and_i_should_see_one_child_eligible_for_psd
@@ -132,5 +155,13 @@ describe "Patient Specific Directions" do
     patient_link = page.find("a", text: full_name)
     patient_card = patient_link.ancestor(".nhsuk-card")
     expect(patient_card).to have_css(".nhsuk-tag", text: status)
+  end
+
+  def then_i_should_not_see_the_patient
+    expect(page).not_to have_text(@patient_nasal_only.given_name)
+  end
+
+  def then_i_should_not_see_the_record_vaccination_section
+    expect(page).not_to have_text("Record flu vaccination with injection")
   end
 end
