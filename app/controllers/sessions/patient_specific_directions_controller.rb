@@ -21,12 +21,10 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
   end
 
   def create
-    ActiveRecord::Base.transaction do
-      PatientSpecificDirection.import!(
-        psds_to_create,
-        on_duplicate_key_ignore: true
-      )
-    end
+    PatientSpecificDirection.import!(
+      psds_to_create,
+      on_duplicate_key_ignore: true
+    )
 
     redirect_to session_patient_specific_directions_path(@session),
                 flash: {

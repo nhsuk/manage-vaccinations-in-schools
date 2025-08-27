@@ -27,10 +27,9 @@ class AppTriageFormComponent < ViewComponent::Base
   def builder = GOVUKDesignSystemFormBuilder::FormBuilder
 
   def show_psd_options?(option)
-    Flipper.enabled?(:delegation) &&
-      helpers.policy(PatientSpecificDirection).create? &&
-      patient_session.session.psd_enabled? &&
-      option == "safe_to_vaccinate_nasal"
+    patient_session.session.psd_enabled? &&
+      option == "safe_to_vaccinate_nasal" &&
+      helpers.policy(PatientSpecificDirection).create?
   end
 
   def fieldset_options
