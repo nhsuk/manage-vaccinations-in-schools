@@ -32,7 +32,7 @@
 #
 FactoryBot.define do
   factory :patient_specific_direction do
-    created_by
+    created_by { association(:user, :prescriber) }
     patient
     programme
     vaccine { programme.vaccines.sample || association(:vaccine) }
