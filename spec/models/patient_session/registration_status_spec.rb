@@ -43,7 +43,7 @@ describe PatientSession::RegistrationStatus do
     describe "#session_attendance" do
       subject do
         described_class
-          .includes(:session_attendance)
+          .includes(:session_attendances)
           .find(patient_session_registration_status.id)
           .session_attendance
       end
