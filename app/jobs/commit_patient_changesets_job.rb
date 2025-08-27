@@ -79,6 +79,7 @@ class CommitPatientChangesetsJob < ApplicationJob
         next true
       end
     end
+    patients.uniq!
   end
 
   def import_school_moves(changesets, import)
