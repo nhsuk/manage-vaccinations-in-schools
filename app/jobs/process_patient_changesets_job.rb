@@ -20,15 +20,12 @@ class ProcessPatientChangesetsJob < ApplicationJob
         step: step_name,
         result: result,
         nhs_number: pds_patient&.nhs_number
-      }
-
-      if multiple_nhs_numbers_found?(patient_changeset)
-        finish_processing(patient_changeset)
-      end
+      }.with_indifferent_access
 
       next_step = step[result]
 
-      if result == :error || next_step.nil? || next_step == :give_up
+      if result == :error || next_step.nil? || next_step == :give_up ||
+           multiple_nhs_numbers_found?(patient_changeset)
         finish_processing(patient_changeset)
       elsif next_step == :save_nhs_number_if_unique
         if nhs_number_is_unique_across_searches?(patient_changeset)
@@ -40,9 +37,11 @@ class ProcessPatientChangesetsJob < ApplicationJob
         end
         finish_processing(patient_changeset)
       elsif next_step.in?(steps.keys)
+        patient_changeset.save!
         raise "Recursive step detected: #{next_step}" if next_step == step_name
         enqueue_next_search(patient_changeset, next_step)
       else
+        patient_changeset.save!
         raise "Unknown step: #{next_step}"
       end
     end
