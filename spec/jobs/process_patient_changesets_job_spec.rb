@@ -23,6 +23,19 @@ describe ProcessPatientChangesetsJob do
       )
       expect(patient_changeset).to be_processed
     end
+
+    it "records the search result" do
+      freeze_time do
+        perform
+
+        expect(patient_changeset.search_results.last).to include(
+          "step" => "no_fuzzy_with_history",
+          "result" => "one_match",
+          "nhs_number" => "1234567890",
+          "created_at" => Time.current.iso8601(3)
+        )
+      end
+    end
   end
 
   context "when no match is found initially" do

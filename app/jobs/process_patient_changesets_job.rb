@@ -19,7 +19,8 @@ class ProcessPatientChangesetsJob < ApplicationJob
       patient_changeset.search_results << {
         step: step_name,
         result: result,
-        nhs_number: pds_patient&.nhs_number
+        nhs_number: pds_patient&.nhs_number,
+        created_at: Time.current
       }.with_indifferent_access
 
       next_step = step[result]
