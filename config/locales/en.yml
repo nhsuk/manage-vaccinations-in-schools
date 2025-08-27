@@ -260,6 +260,7 @@ en:
           not_well: Unwell
           refused: Refused vaccine
         protocols:
+          national: National protocol
           pgd: Patient Group Direction (PGD)
         sync_statuses:
           cannot_sync: Cannot sync

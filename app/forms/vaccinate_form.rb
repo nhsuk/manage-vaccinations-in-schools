@@ -73,6 +73,14 @@ class VaccinateForm
     super
   end
 
+  def protocol
+    if current_user.is_nurse? || vaccine_method == "nasal"
+      "pgd"
+    else
+      "national"
+    end
+  end
+
   def supplied_by_users
     current_user.selected_team.users.show_in_suppliers
   end
@@ -113,10 +121,11 @@ class VaccinateForm
     draft_vaccination_record.patient_id = patient.id
     draft_vaccination_record.performed_at = Time.current
     draft_vaccination_record.performed_by_user = current_user
-    draft_vaccination_record.supplied_by_user_id = supplied_by_user_id
     draft_vaccination_record.performed_ods_code = organisation.ods_code
     draft_vaccination_record.programme = programme
+    draft_vaccination_record.protocol = protocol
     draft_vaccination_record.session_id = session.id
+    draft_vaccination_record.supplied_by_user_id = supplied_by_user_id
 
     draft_vaccination_record.save # rubocop:disable Rails/SaveBang
   end
