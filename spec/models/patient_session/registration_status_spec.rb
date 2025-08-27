@@ -31,12 +31,46 @@ describe PatientSession::RegistrationStatus do
   end
   let(:patient_session) { create(:patient_session, patient:, session:) }
 
-  it { should belong_to(:patient_session) }
-
   it do
     expect(patient_session_registration_status).to define_enum_for(
       :status
     ).with_values(%i[unknown attending not_attending completed])
+  end
+
+  describe "associations" do
+    it { should belong_to(:patient_session) }
+
+    describe "#session_attendance" do
+      subject do
+        described_class
+          .includes(:session_attendance)
+          .find(patient_session_registration_status.id)
+          .session_attendance
+      end
+
+      let(:patient_session_registration_status) do
+        create(:patient_session_registration_status, patient_session:)
+      end
+      let(:today_session_attendance) do
+        create(
+          :session_attendance,
+          :present,
+          patient_session:,
+          session_date: session.session_dates.find_by(value: Date.current)
+        )
+      end
+
+      before do
+        create(
+          :session_attendance,
+          :absent,
+          patient_session:,
+          session_date: session.session_dates.find_by(value: Date.yesterday)
+        )
+      end
+
+      it { should eq(today_session_attendance) }
+    end
   end
 
   describe "#status" do
