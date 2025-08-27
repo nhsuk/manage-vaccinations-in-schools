@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_26_135132) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_27_091512) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -641,7 +641,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_135132) do
     t.bigint "vaccine_id", null: false
     t.integer "vaccine_method", null: false
     t.integer "delivery_site", null: false
-    t.boolean "full_dose", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "academic_year", null: false
