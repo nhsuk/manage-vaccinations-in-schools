@@ -10,12 +10,16 @@ en:
       label:
         conflicts: Conflicting consent
         given: Consent given
+        given_injection: Consent given for injected vaccine
+        given_nasal: Consent given for nasal spray
         no_response: No response
         not_required: No consent needed
         refused: Consent refused
       colour:
         conflicts: dark-orange
         given: aqua-green
+        given_injection: aqua-green
+        given_nasal: aqua-green
         no_response: grey
         not_required: grey
         refused: red

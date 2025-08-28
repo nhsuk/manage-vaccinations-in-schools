@@ -72,7 +72,7 @@ describe AppPatientSessionSearchResultCardComponent do
       let(:programme) { create(:programme, :flu) }
 
       it { should_not have_text("Vaccination method") }
-      it { should have_text("Nasal") }
+      it { should have_text("Consent given for nasal spray") }
     end
   end
 
