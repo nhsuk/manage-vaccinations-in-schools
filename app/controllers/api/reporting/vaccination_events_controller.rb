@@ -14,6 +14,15 @@ class API::Reporting::VaccinationEventsController < API::Reporting::BaseControll
     "Vaccinated elsewhere" => :total_vaccinated_elsewhere
   }.freeze
 
+  GROUPS = {
+    local_authority: :patient_local_authority_from_postcode_short_name,
+    school: :school_name,
+    year_group: :patient_year_group,
+    gender: :patient_gender_code,
+    programme: :programme_type,
+    team: :team_name
+  }.freeze
+
   def index
     @vaccinations =
       ReportingAPI::VaccinationEvent.where(@filters.to_where_clause)
@@ -47,5 +56,12 @@ class API::Reporting::VaccinationEventsController < API::Reporting::BaseControll
       local_authority: :patient_local_authority_from_postcode_short_name,
       school_local_authority: :patient_school_gias_local_authority_code
     }
+  end
+
+  def group_clause(params)
+    groups = params[:group].to_s.split(",").map { |param| GROUPS[param.to_sym] }
+    # we always group by year/month
+    groups += %i[event_timestamp_year event_timestamp_month]
+    groups.uniq
   end
 end

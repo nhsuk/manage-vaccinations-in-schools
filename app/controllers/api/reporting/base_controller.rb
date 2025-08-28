@@ -18,16 +18,6 @@ class API::Reporting::BaseController < ActionController::API
 
   before_action :set_default_filters, :set_filters
 
-  GROUPS = {
-    local_authority: :patient_local_authority_from_postcode_short_name,
-    school: :school_name,
-    year_group: :patient_year_group,
-    gender: :patient_gender_code,
-    programme: :programme_type,
-    team: :team_name,
-    month: :event_timestamp_month
-  }.freeze
-
   private
 
   def render_paginated_json(records:)
@@ -56,12 +46,6 @@ class API::Reporting::BaseController < ActionController::API
   # suitable for use in a .where(...) clause
   def filter_clause(_params, _filters)
     @filters.to_where_clause
-  end
-
-  def group_clause(params)
-    groups = params[:group].to_s.split(",").map { |param| GROUPS[param.to_sym] }
-    groups += %i[event_timestamp_year event_timestamp_month]
-    groups.uniq
   end
 
   # convert a relation to a csv file,
