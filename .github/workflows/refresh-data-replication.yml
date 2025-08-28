@@ -1,0 +1,190 @@
+name: Refresh Data Replication
+run-name: Refresh data replication resources & data for ${{ inputs.environment }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Deployment environment
+        required: true
+        type: choice
+        options:
+          - training
+          - production
+          - test
+          - qa
+          - sandbox-alpha
+          - sandbox-beta
+      db_snapshot_arn:
+        description: ARN of the DB snapshot to use (optional)
+        required: false
+        type: string
+      egress_cidr:
+        description: CIDR blocks to allow egress traffic.
+        type: string
+        required: true
+        default: "[]"
+      take_db_snapshot:
+        description: Take a new DB snapshot before creating the environment
+        type: boolean
+        default: false
+
+permissions: {}
+
+env:
+  aws_role: ${{ inputs.environment == 'production'
+    && 'arn:aws:iam::820242920762:role/GithubDeployDataReplicationInfrastructure'
+    || 'arn:aws:iam::393416225559:role/GithubDeployDataReplicationInfrastructure' }}
+  db_snapshot_role: ${{ inputs.environment == 'production'
+    && 'arn:aws:iam::820242920762:role/DatabaseSnapshotRole'
+    || 'arn:aws:iam::393416225559:role/DatabaseSnapshotRole' }}
+
+
+defaults:
+  run:
+    working-directory: terraform/data_replication
+
+concurrency:
+  group: deploy-data-replica-${{ inputs.environment }}
+
+jobs:
+  prepare-db-replica:
+    name: Prepare data replica
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Assume DB Snapshot role
+        if: inputs.take_db_snapshot
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.db_snapshot_role }}
+          aws-region: eu-west-2
+      - name: Take DB snapshot
+        if: inputs.take_db_snapshot
+        run: |
+          set -e
+          snapshot_identifier=snapshot-for-data-replication-$(date +"%Y-%m-%d-%H-%M-%S")
+          aws rds create-db-cluster-snapshot --db-cluster-identifier mavis-${{ inputs.environment }} --db-cluster-snapshot-identifier $snapshot_identifier
+          echo "Waiting for snapshot to be available. This can take a while."
+          aws rds wait db-cluster-snapshot-available --db-cluster-snapshot-identifier $snapshot_identifier
+          echo "New snapshot is now available"
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: get latest snapshot
+        id: get-latest-snapshot
+        run: |
+          set -e
+          if [ -z "${{ inputs.db_snapshot_arn }}" ]; then
+              echo "No snapshot ARN provided, fetching the latest snapshot"
+              SNAPSHOT_ARN=$(aws rds describe-db-cluster-snapshots \
+              --query "DBClusterSnapshots[?DBClusterIdentifier=='mavis-${{ inputs.environment }}'].[DBClusterSnapshotArn, SnapshotCreateTime]" \
+              --output text | sort -k2 -r | head -n 1 | cut -f1)
+          
+              if [ -z "$SNAPSHOT_ARN" ]; then
+                  echo "No snapshots found for mavis-${{ inputs.environment }}"
+                  exit 1
+              fi
+          else
+              echo "Using provided snapshot ARN: ${{ inputs.db_snapshot_arn }}"
+              SNAPSHOT_ARN="${{ inputs.db_snapshot_arn }}"
+          fi
+          echo "Using snapshot ARN: $SNAPSHOT_ARN"
+          echo "SNAPSHOT_ARN=$SNAPSHOT_ARN" >> $GITHUB_OUTPUT
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.11.4
+    outputs:
+      SNAPSHOT_ARN: ${{ steps.get-latest-snapshot.outputs.SNAPSHOT_ARN }}
+
+  plan:
+    name: Terraform plan
+    runs-on: ubuntu-latest
+    needs:
+      - prepare-db-replica
+    env:
+      SNAPSHOT_ARN: ${{ needs.prepare-db-replica.outputs.SNAPSHOT_ARN }}
+      DB_SECRET_ARN: ${{ needs.prepare-db-replica.outputs.DB_SECRET_ARN || 'arn:aws:secretsmanager:eu-west-2:000000000000:secret:placeholder' }}
+      REPLACE_DB_CLUSTER: ${{ inputs.deployment_type == 'Deployment with DB recreation' }}
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.11.4
+      - name: Get db secret arn
+        id: get-db-secret-arn
+        working-directory: terraform/app
+        run: |
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          DB_SECRET_ARN=$(terraform output --raw db_secret_arn)
+          echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_OUTPUT
+      - name: Terraform Plan
+        id: plan
+        run: |
+          set -eo pipefail
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+
+          CIDR_BLOCKS='${{ inputs.egress_cidr }}'
+          PLAN_ARGS=(
+            "plan"
+            "-var=db_secret_arn=${{ steps.get-db-secret-arn.outputs.DB_SECRET_ARN }}"
+            "-var=imported_snapshot=${{ env.SNAPSHOT_ARN }}"
+            "-var-file=env/${{ inputs.environment }}.tfvars"
+            "-var=allowed_egress_cidr_blocks=$CIDR_BLOCKS"
+            "-out=${{ runner.temp }}/tfplan"
+          )
+          
+          if [ "${{ env.REPLACE_DB_CLUSTER }}" = "true" ]; then
+            PLAN_ARGS+=("-replace" "aws_rds_cluster.cluster")
+          fi
+          terraform "${PLAN_ARGS[@]}" | tee ${{ runner.temp }}/tf_stdout
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan_infrastructure-${{ inputs.environment }}
+          path: ${{ runner.temp }}/tfplan
+
+  apply:
+    name: Terraform apply
+    runs-on: ubuntu-latest
+    needs: plan
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Download artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: tfplan_infrastructure-${{ inputs.environment }}
+          path: ${{ runner.temp }}
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.11.4
+      - name: Apply the changes
+        run: |
+          set -e
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform apply ${{ runner.temp }}/tfplan
