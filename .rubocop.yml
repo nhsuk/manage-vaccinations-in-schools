@@ -23,6 +23,7 @@ Layout/LineLength:
   Exclude:
     - db/schema.rb
     - spec/factories/reporting_api/*
+    - app/models/reporting_api/*
 
 Lint/PercentStringArray:
   Exclude:

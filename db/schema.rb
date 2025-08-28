@@ -886,7 +886,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_100519) do
     t.bigint "programme_id"
     t.string "programme_type"
     t.index ["event_timestamp"], name: "ix_rpt_vac_event_tstamp"
-    t.index ["event_timestamp_academic_year", "event_timestamp_month", "programme_id", "event_type"], name: "ix_rpt_vac_event_tstamp_year_month_prog_type"
+    t.index ["event_timestamp_academic_year", "event_timestamp_month", "programme_id", "event_type"], name: "ix_rve_tstamp_year_month_prog_type"
     t.index ["event_timestamp_academic_year", "event_timestamp_month"], name: "ix_rpt_vac_event_ac_year_month"
     t.index ["source_type", "source_id"], name: "index_reporting_api_vaccination_events_on_source"
     t.index ["source_type", "source_id"], name: "ix_rpt_vac_event_source_type_id"

@@ -74,7 +74,7 @@
 #  ix_rpt_vac_event_ac_year_month                    (event_timestamp_academic_year,event_timestamp_month)
 #  ix_rpt_vac_event_source_type_id                   (source_type,source_id)
 #  ix_rpt_vac_event_tstamp                           (event_timestamp)
-#  ix_rpt_vac_event_tstamp_year_month_prog_type      (event_timestamp_academic_year,event_timestamp_month,programme_id,event_type)
+#  ix_rve_tstamp_year_month_prog_type                (event_timestamp_academic_year,event_timestamp_month,programme_id,event_type)
 #
 FactoryBot.define do
   factory :reporting_api_vaccination_event,
