@@ -44,6 +44,9 @@ env:
   aws_role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployDataReplicationInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployDataReplicationInfrastructure' }}
+  db_snapshot_role: ${{ inputs.environment == 'production'
+    && 'arn:aws:iam::820242920762:role/DatabaseSnapshotRole'
+    || 'arn:aws:iam::393416225559:role/DatabaseSnapshotRole' }}
 
 defaults:
   run:
@@ -62,10 +65,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-      - name: Configure AWS Credentials
+      - name: Assume DB Snapshot role
+        if: inputs.take_db_snapshot
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ env.aws_role }}
+          role-to-assume: ${{ env.db_snapshot_role }}
           aws-region: eu-west-2
       - name: Take DB snapshot
         if: inputs.take_db_snapshot
@@ -76,6 +80,11 @@ jobs:
           echo "Waiting for snapshot to be available. This can take a while."
           aws rds wait db-cluster-snapshot-available --db-cluster-snapshot-identifier $snapshot_identifier
           echo "New snapshot is now available"
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
       - name: Get latest snapshot
         id: get-latest-snapshot
         run: |
