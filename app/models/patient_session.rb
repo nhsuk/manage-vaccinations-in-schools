@@ -266,6 +266,18 @@ class PatientSession < ApplicationRecord
           )
         end
 
+  scope :has_patient_specific_direction,
+        ->(programme:) do
+          joins(:session).where(
+            PatientSpecificDirection
+              .where("patient_id = patient_sessions.patient_id")
+              .where("academic_year = sessions.academic_year")
+              .where(programme:)
+              .arel
+              .exists
+          )
+        end
+
   scope :destroy_all_if_safe,
         -> do
           includes(

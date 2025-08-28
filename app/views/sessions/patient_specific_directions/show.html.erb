@@ -8,29 +8,37 @@
 
 <%= render "sessions/header" %>
 
-<%= govuk_inset_text do %>
-  <span class="nhsuk-u-visually-hidden">Information: </span>
-  <p class="nhsuk-body">
-    There are <%= @eligible_for_bulk_psd_count %> children with consent for the nasal flu vaccine
-    who do not require triage and do not yet have a PSD in place.
-  </p>
-  <% if current_user.is_nurse? %>
-    <div class="nhsuk-action-link">
-      <%= link_to new_session_patient_specific_directions_path(@session), class: "nhsuk-action-link__link" do %>
-        <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" width="36" height="36">
-          <path d="M0 0h24v24H0z" fill="none"></path>
-          <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>
-        </svg>
-        <span class="nhsuk-action-link__text">Add new PSDs</span>
-      <% end %>
-    </div>
-  <% end %>
-<% end %>
-
 <div class="nhsuk-grid-row">
-  <div class="app-grid-column-filters"></div>
+  <div class="app-grid-column-filters">
+    <%= render AppPatientSearchFormComponent.new(
+          @form,
+          url: session_patient_specific_directions_path(@session),
+          programmes: @session.programmes,
+          patient_specific_direction_statuses: %w[added not_added],
+          year_groups: @session.year_groups,
+        ) %>
+  </div>
 
   <div class="app-grid-column-results">
+    <%= govuk_inset_text do %>
+      <span class="nhsuk-u-visually-hidden">Information: </span>
+      <p class="nhsuk-body">
+        There are <%= @eligible_for_bulk_psd_count %> children with consent for the nasal flu vaccine
+        who do not require triage and do not yet have a PSD in place.
+      </p>
+      <% if current_user.is_nurse? %>
+        <div class="nhsuk-action-link">
+          <%= link_to new_session_patient_specific_directions_path(@session), class: "nhsuk-action-link__link" do %>
+            <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" width="36" height="36">
+              <path d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>
+            </svg>
+            <span class="nhsuk-action-link__text">Add new PSDs</span>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+
     <%= render AppSessionNeedsReviewWarningComponent.new(session: @session) %>
     <%= render AppSearchResultsComponent.new(@pagy, label: "children", heading: "Review PSDs") do %>
       <% @patient_sessions.each do |patient_session| %>
