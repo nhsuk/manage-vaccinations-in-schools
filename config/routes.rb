@@ -217,10 +217,8 @@ Rails.application.routes.draw do
     resource :triage, only: :show, controller: "sessions/triage"
     resource :patient_specific_directions,
              path: "patient-specific-directions",
-             only: %i[show create],
-             controller: "sessions/patient_specific_directions" do
-      get "bulk-add", action: :bulk_add
-    end
+             only: %i[show new create],
+             controller: "sessions/patient_specific_directions"
     resource :register, only: :show, controller: "sessions/register" do
       post ":patient_id/:status", as: :create, action: :create
     end
