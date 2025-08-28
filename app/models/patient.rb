@@ -217,14 +217,20 @@ class Patient < ApplicationRecord
         end
 
   scope :has_consent_status,
-        ->(status, programme:, academic_year:) do
-          where(
-            Patient::ConsentStatus
-              .where("patient_id = patients.id")
-              .where(status:, programme:, academic_year:)
-              .arel
-              .exists
-          )
+        ->(status, programme:, academic_year:, vaccine_method: nil) do
+          consent_status_scope =
+            Patient::ConsentStatus.where("patient_id = patients.id").where(
+              status:,
+              programme:,
+              academic_year:
+            )
+
+          if vaccine_method
+            consent_status_scope =
+              consent_status_scope.has_vaccine_method(vaccine_method)
+          end
+
+          where(consent_status_scope.arel.exists)
         end
 
   scope :has_triage_status,

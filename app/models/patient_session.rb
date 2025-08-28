@@ -166,15 +166,19 @@ class PatientSession < ApplicationRecord
         end
 
   scope :has_consent_status,
-        ->(status, programme:) do
-          joins(:session).where(
+        ->(status, programme:, vaccine_method: nil) do
+          consent_status_scope =
             Patient::ConsentStatus
               .where("patient_id = patient_sessions.patient_id")
               .where("academic_year = sessions.academic_year")
               .where(status:, programme:)
-              .arel
-              .exists
-          )
+
+          if vaccine_method
+            consent_status_scope =
+              consent_status_scope.has_vaccine_method(vaccine_method)
+          end
+
+          joins(:session).where(consent_status_scope.arel.exists)
         end
 
   scope :has_registration_status,
