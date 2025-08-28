@@ -133,6 +133,9 @@ class DraftVaccinationRecord
   def protocol
     if session.psd_enabled? && @current_user.is_healthcare_assistant?
       :psd
+    elsif session.national_protocol_enabled? &&
+          @current_user.is_healthcare_assistant?
+      :national
     else
       :pgd
     end

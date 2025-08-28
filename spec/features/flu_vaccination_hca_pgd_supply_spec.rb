@@ -4,7 +4,7 @@ describe "Flu vaccination" do
   around { |example| travel_to(Time.zone.local(2024, 10, 1)) { example.run } }
 
   scenario "Administered by HCA" do
-    given_a_session_exists
+    given_a_session_exists_using_national_protocol
     and_patients_exist
 
     when_i_visit_the_session_record_tab
@@ -20,7 +20,7 @@ describe "Flu vaccination" do
     then_i_am_not_able_to_vaccinate_them
   end
 
-  def given_a_session_exists
+  def given_a_session_exists_using_national_protocol
     @programme = create(:programme, :flu)
     programmes = [@programme]
 
@@ -42,6 +42,7 @@ describe "Flu vaccination" do
         :session,
         :today,
         :requires_no_registration,
+        :national_protocol_enabled,
         team: @team,
         programmes:
       )

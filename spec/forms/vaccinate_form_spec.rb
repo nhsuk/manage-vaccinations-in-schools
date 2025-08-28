@@ -9,10 +9,11 @@ describe VaccinateForm do
   let(:current_user) do
     build(:user, show_in_suppliers: user_designated_as_supplier)
   end
-  let(:session) { build(:session, psd_enabled:) }
+  let(:session) { build(:session, psd_enabled:, national_protocol_enabled:) }
   let(:patient_session) { build(:patient_session, session:) }
 
   let(:psd_enabled) { false }
+  let(:national_protocol_enabled) { false }
   let(:user_designated_as_supplier) { true }
 
   describe "validations" do
@@ -78,7 +79,7 @@ describe VaccinateForm do
       end
 
       context "when operating under national protocol" do
-        let(:psd_enabled) { false }
+        let(:national_protocol_enabled) { true }
         let(:psd_record_exists) { false }
         let(:user_designated_as_supplier) { false }
 

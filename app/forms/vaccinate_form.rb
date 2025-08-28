@@ -88,9 +88,8 @@ class VaccinateForm
   end
 
   def operating_under_national_protocol?
-    # Making the assumption session operating under national protocol
-    # when PSD is not enabled, and no PSD record exists for this patient
-    !session.psd_enabled? && !patient_session.psd_added?(programme:)
+    session.national_protocol_enabled? && !session.psd_enabled? &&
+      !patient_session.psd_added?(programme:)
   end
 
   def user_not_designated_as_supplier?

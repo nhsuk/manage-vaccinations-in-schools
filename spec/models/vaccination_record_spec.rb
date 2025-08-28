@@ -70,7 +70,11 @@ describe VaccinationRecord do
   end
 
   describe "validations" do
-    it { should validate_inclusion_of(:protocol).in_array(%w[pgd psd]) }
+    it do
+      expect(vaccination_record).to validate_inclusion_of(:protocol).in_array(
+        %w[pgd psd national]
+      )
+    end
 
     context "when administered" do
       before { vaccination_record.outcome = "administered" }
