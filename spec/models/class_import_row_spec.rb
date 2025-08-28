@@ -53,7 +53,7 @@ describe ClassImportRow do
     it { should be_valid }
 
     context "when date of birth is outside the programme year group" do
-      let(:data) { valid_data.merge("CHILD_DATE_OF_BIRTH" => "1990-01-01") }
+      let(:data) { valid_data.merge("CHILD_DATE_OF_BIRTH" => "2000-01-01") }
 
       it "is invalid" do
         expect(class_import_row).to be_invalid
