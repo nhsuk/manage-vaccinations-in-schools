@@ -191,4 +191,16 @@ describe ProcessPatientChangesetsJob do
       perform
     end
   end
+
+  context "rate limiting from PDS" do
+    before do
+      allow(PDS::Patient).to receive(:search).and_raise(
+        Faraday::TooManyRequestsError
+      )
+    end
+
+    it "re-raises the error" do
+      expect { perform }.to raise_error(Faraday::TooManyRequestsError)
+    end
+  end
 end

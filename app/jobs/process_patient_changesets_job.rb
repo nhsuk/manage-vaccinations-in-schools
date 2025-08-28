@@ -149,6 +149,8 @@ class ProcessPatientChangesetsJob < ApplicationJob
     [:no_matches, nil]
   rescue NHS::PDS::TooManyMatches
     [:too_many_matches, nil]
+  rescue Faraday::TooManyRequestsError
+    raise
   rescue Faraday::ClientError, Faraday::ServerError => e
     Rails.logger.error(
       "Error doing PDS search for patient changeset: #{e.message}"
