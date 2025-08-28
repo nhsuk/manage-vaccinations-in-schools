@@ -6,8 +6,6 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
   before_action :set_session
   before_action :set_patient_search_form
 
-  layout "full"
-
   def show
     scope =
       @session.patient_sessions.includes_programmes.includes(
@@ -18,6 +16,8 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
     @eligible_for_bulk_psd_count = patient_sessions_allowed_psd.count
     patient_sessions = @form.apply(scope)
     @pagy, @patient_sessions = pagy(patient_sessions)
+
+    render layout: "full"
   end
 
   def new
