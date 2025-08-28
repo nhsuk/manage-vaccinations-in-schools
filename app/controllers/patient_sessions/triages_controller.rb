@@ -74,11 +74,11 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
   def ensure_psd_exists
     psd_attributes = {
       academic_year: @academic_year,
+      delivery_site: "nose",
       patient: @patient,
       programme: @programme,
-      vaccine: @programme.vaccines.first,
-      vaccine_method: :nasal,
-      delivery_site: :nose
+      vaccine: @programme.vaccines.nasal.first,
+      vaccine_method: "nasal"
     }
 
     return if PatientSpecificDirection.exists?(**psd_attributes)

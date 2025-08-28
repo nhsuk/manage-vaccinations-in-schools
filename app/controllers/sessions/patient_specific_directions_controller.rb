@@ -50,12 +50,12 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
     patient_sessions_allowed_psd.map do |patient_session|
       PatientSpecificDirection.new(
         academic_year: @session.academic_year,
+        created_by_user_id: current_user.id,
+        delivery_site: "nose",
         patient_id: patient_session.patient_id,
         programme_id: programme.id,
-        vaccine_id: programme.vaccines.first.id,
-        created_by_user_id: current_user.id,
-        vaccine_method: :nasal,
-        delivery_site: :nose
+        vaccine_id: programme.vaccines.find(&:nasal?).id,
+        vaccine_method: "nasal"
       )
     end
   end
