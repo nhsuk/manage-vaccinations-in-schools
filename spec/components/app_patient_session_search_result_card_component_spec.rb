@@ -71,7 +71,7 @@ describe AppPatientSessionSearchResultCardComponent do
     context "and the programme is flu" do
       let(:programme) { create(:programme, :flu) }
 
-      it { should have_text("Vaccination method") }
+      it { should_not have_text("Vaccination method") }
       it { should have_text("Nasal") }
     end
   end
@@ -82,8 +82,7 @@ describe AppPatientSessionSearchResultCardComponent do
     context "and the programme is flu" do
       let(:programme) { create(:programme, :flu) }
 
-      it { should have_text("Vaccination method") }
-      it { should have_text("Nasal") }
+      it { should_not have_text("Vaccination method") }
     end
   end
 
