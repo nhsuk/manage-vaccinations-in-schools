@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 # == Schema Information
 #
@@ -76,15 +77,28 @@
 #  ix_rpt_vac_event_tstamp_year_month_prog_type      (event_timestamp_academic_year,event_timestamp_month,programme_id,event_type)
 #
 FactoryBot.define do
-  factory :reporting_api_vaccination_event, class: "ReportingAPI::VaccinationEvent" do
+  factory :reporting_api_vaccination_event,
+          class: "ReportingAPI::VaccinationEvent" do
     transient do
-      outcome { 'administered' }
+      outcome { "administered" }
       year_group { 9 }
-      for_patient { build(:patient, year_group: year_group, random_nhs_number: true) }
-      programme { Programme.find_by(type: 'flu') || build(:programme, type: 'flu') }
+      for_patient do
+        build(:patient, year_group: year_group, random_nhs_number: true)
+      end
+      programme do
+        Programme.find_by(type: "flu") || build(:programme, type: "flu")
+      end
     end
 
-    source { build(:vaccination_record, patient: for_patient, programme: programme, outcome: outcome, performed_by: User.first) }
+    source do
+      build(
+        :vaccination_record,
+        patient: for_patient,
+        programme: programme,
+        outcome: outcome,
+        performed_by: User.first
+      )
+    end
     patient { for_patient }
     vaccination_record_outcome { outcome }
     patient_year_group { year_group }

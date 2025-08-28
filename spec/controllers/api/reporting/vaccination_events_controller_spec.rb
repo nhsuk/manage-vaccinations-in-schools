@@ -3,7 +3,7 @@
 describe API::Reporting::VaccinationEventsController do
   describe "#group_clause" do
     let(:group_clause) { controller.send(:group_clause, params) }
-    let(:params) { {group: groups} }
+    let(:params) { { group: groups } }
     let(:resulting_groups) { group_clause }
 
     context "given a :group param which is comma-separated string of params to group by" do
