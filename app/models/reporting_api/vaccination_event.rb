@@ -31,6 +31,10 @@
 #  programme_type                                   :string
 #  school_address_postcode                          :string
 #  school_address_town                              :string
+#  school_gias_local_authority_code                 :string
+#  school_local_authority_gss_code                  :string
+#  school_local_authority_mhclg_code                :string
+#  school_local_authority_short_name                :string
 #  school_name                                      :string
 #  source_type                                      :string
 #  team_name                                        :string
@@ -82,11 +86,23 @@ class ReportingAPI::VaccinationEvent < ApplicationRecord
         comparison: "vaccination_record_outcome = 'administered'",
         as: "total_vaccinated_by_sais"
       )
-    ).select(
-      count_sql_where(
-        comparison: "vaccination_record_outcome = 'already_had'",
-        as: "total_vaccinated_elsewhere"
-      )
+    )
+  end
+
+  def self.with_count_of_patients_vaccinated
+    # We want a count of just the distinct patient_ids 
+    # for whom the outcome was 'administered'.
+    # If the outcome was not 'administered', this count should not include them
+    select( <<-SQL
+        COUNT(
+          DISTINCT(
+            CASE WHEN vaccination_record_outcome = 'administered'
+            THEN patient_id 
+            ELSE NULL 
+            END
+          )
+        ) AS total_patients_vaccinated
+      SQL
     )
   end
 end

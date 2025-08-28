@@ -30,6 +30,13 @@ class AddReportingAPIVaccinationEvents < ActiveRecord::Migration[8.0]
       t.string :school_name
       t.string :school_address_town
       t.string :school_address_postcode
+
+      t.string :school_local_authority_gss_code
+      t.string :school_local_authority_mhclg_code
+      t.string :school_local_authority_short_name
+      t.string :school_gias_local_authority_code
+
+
       t.bigint :gp_practice_id
       t.string :gp_practice_name
       t.string :gp_practice_address_town
