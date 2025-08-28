@@ -22,7 +22,9 @@
 #
 
 describe ReportingAPI::OneTimeToken do
-  subject(:token) { described_class.new(user_id: user.id, token: SecureRandom.hex(32)) }
+  subject(:token) do
+    described_class.new(user_id: user.id, token: SecureRandom.hex(32))
+  end
 
   let(:user) { create(:user) }
 
@@ -190,7 +192,6 @@ describe ReportingAPI::OneTimeToken do
       it "has the cis2_info as json" do
         expect(data["cis2_info"]).to eq(token.cis2_info.as_json)
       end
-      
     end
   end
 

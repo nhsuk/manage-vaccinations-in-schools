@@ -78,28 +78,60 @@
 #
 describe ReportingAPI::VaccinationEvent do
   describe ".with_count_of_patients_vaccinated" do
-    let(:patient_1) { create(:patient, random_nhs_number: true, year_group: 7) }
-    let(:patient_2) { create(:patient, random_nhs_number: true, year_group: 7) }
-    let(:patient_3) { create(:patient, random_nhs_number: true, year_group: 8) }
+    let(:patient_a) { create(:patient, random_nhs_number: true, year_group: 7) }
+    let(:patient_b) { create(:patient, random_nhs_number: true, year_group: 7) }
+    let(:patient_c) { create(:patient, random_nhs_number: true, year_group: 8) }
 
     before do
-      create_list(:reporting_api_vaccination_event, 2, for_patient: patient_1, year_group: 7, outcome: "administered" )
-      create_list(:reporting_api_vaccination_event, 1, for_patient: patient_2, year_group: 7, outcome: "already_had" )
-      create_list(:reporting_api_vaccination_event, 3, for_patient: patient_3, year_group: 8, outcome: "administered" )
+      create_list(
+        :reporting_api_vaccination_event,
+        2,
+        for_patient: patient_a,
+        year_group: 7,
+        outcome: "administered"
+      )
+      create_list(
+        :reporting_api_vaccination_event,
+        1,
+        for_patient: patient_b,
+        year_group: 7,
+        outcome: "already_had"
+      )
+      create_list(
+        :reporting_api_vaccination_event,
+        3,
+        for_patient: patient_c,
+        year_group: 8,
+        outcome: "administered"
+      )
     end
 
     context "on a grouped resultset" do
       subject(:resultset) { described_class.group(:patient_year_group) }
-      let(:results) { resultset.select(:patient_year_group).with_count_of_patients_vaccinated.to_a }
+
+      let(:results) do
+        resultset
+          .select(:patient_year_group)
+          .with_count_of_patients_vaccinated
+          .to_a
+      end
 
       it "adds total_patients_vaccinated to the resultset" do
-        expect(results).to all( have_attribute(:total_patients_vaccinated) )
+        expect(results).to all(have_attribute(:total_patients_vaccinated))
       end
 
       describe "the total_patients_vaccinated attribute" do
         it "equals the count of records in the current group with vaccination_record_outcome: 'administered'" do
-          expect(results.find{|event| event.patient_year_group == 7 }.total_patients_vaccinated).to eq( 1 )
-          expect(results.find{|event| event.patient_year_group == 8 }.total_patients_vaccinated).to eq( 1 )
+          expect(
+            results
+              .find { |event| event.patient_year_group == 7 }
+              .total_patients_vaccinated
+          ).to eq(1)
+          expect(
+            results
+              .find { |event| event.patient_year_group == 8 }
+              .total_patients_vaccinated
+          ).to eq(1)
         end
       end
     end
@@ -107,24 +139,57 @@ describe ReportingAPI::VaccinationEvent do
 
   describe ".with_counts_of_outcomes" do
     before do
-      create_list(:reporting_api_vaccination_event, 2,  year_group: 7, outcome: "administered" )
-      create_list(:reporting_api_vaccination_event, 1,  year_group: 7, outcome: "already_had" )
-      create_list(:reporting_api_vaccination_event, 3,  year_group: 8, outcome: "administered" )
-      create_list(:reporting_api_vaccination_event, 2,  year_group: 8, outcome: "already_had" )
+      create_list(
+        :reporting_api_vaccination_event,
+        2,
+        year_group: 7,
+        outcome: "administered"
+      )
+      create_list(
+        :reporting_api_vaccination_event,
+        1,
+        year_group: 7,
+        outcome: "already_had"
+      )
+      create_list(
+        :reporting_api_vaccination_event,
+        3,
+        year_group: 8,
+        outcome: "administered"
+      )
+      create_list(
+        :reporting_api_vaccination_event,
+        2,
+        year_group: 8,
+        outcome: "already_had"
+      )
     end
 
     context "on a grouped resultset" do
       subject(:resultset) { described_class.group(:patient_year_group) }
-      let(:results) { resultset.select(:patient_year_group).with_counts_of_outcomes.to_a }
+
+      let(:results) do
+        resultset.select(:patient_year_group).with_counts_of_outcomes.to_a
+      end
 
       it "adds total_vaccinated_by_sais to the resultset" do
-        expect(resultset.with_counts_of_outcomes).to all( have_attribute(:total_vaccinated_by_sais) )
+        expect(resultset.with_counts_of_outcomes).to all(
+          have_attribute(:total_vaccinated_by_sais)
+        )
       end
 
       describe "the total_vaccinated_by_sais attribute" do
         it "equals the count of records in the current group with vaccination_record_outcome: 'administered'" do
-          expect(results.find{|event| event.patient_year_group == 7 }.total_vaccinated_by_sais).to eq( 2 )
-          expect(results.find{|event| event.patient_year_group == 8 }.total_vaccinated_by_sais).to eq( 3 )
+          expect(
+            results
+              .find { |event| event.patient_year_group == 7 }
+              .total_vaccinated_by_sais
+          ).to eq(2)
+          expect(
+            results
+              .find { |event| event.patient_year_group == 8 }
+              .total_vaccinated_by_sais
+          ).to eq(3)
         end
       end
     end

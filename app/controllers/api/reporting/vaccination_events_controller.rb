@@ -11,7 +11,8 @@ class API::Reporting::VaccinationEventsController < API::Reporting::BaseControll
     "Gender" => :patient_gender_code,
     "Month" => :event_timestamp_month,
     "Year" => :event_timestamp_year,
-    "Vaccinated by SAIS" => :total_vaccinated_by_sais
+    "Vaccinations performed by SAIS" => :total_vaccinated_by_sais,
+    "Patients Vaccinated" => :total_patients_vaccinated
   }.freeze
 
   GROUPS = {
