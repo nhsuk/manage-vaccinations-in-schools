@@ -65,6 +65,7 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
       @session
         .patient_sessions
         .has_consent_status(:given, programme:)
+        .has_triage_status(:not_required, programme:)
         .without_patient_specific_direction(programme:)
   end
 end
