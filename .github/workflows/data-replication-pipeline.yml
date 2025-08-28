@@ -35,6 +35,10 @@ on:
         type: string
         required: true
         default: "[]"
+      take_db_snapshot:
+        description: Take a new DB snapshot before creating the environment
+        type: boolean
+        default: false
 
 env:
   aws_role: ${{ inputs.environment == 'production'
@@ -63,7 +67,16 @@ jobs:
         with:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
-      - name: get latest snapshot
+      - name: Take DB snapshot
+        if: inputs.take_db_snapshot
+        run: |
+          set -e
+          snapshot_identifier=snapshot-for-data-replication-$(date +"%Y-%m-%d-%H-%M-%S")
+          aws rds create-db-cluster-snapshot --db-cluster-identifier mavis-${{ inputs.environment }} --db-cluster-snapshot-identifier $snapshot_identifier
+          echo "Waiting for snapshot to be available. This can take a while."
+          aws rds wait db-cluster-snapshot-available --db-cluster-snapshot-identifier $snapshot_identifier
+          echo "New snapshot is now available"
+      - name: Get latest snapshot
         id: get-latest-snapshot
         run: |
           set -e
