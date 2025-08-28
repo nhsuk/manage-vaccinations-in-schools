@@ -58,7 +58,6 @@ variable "task_config" {
     }))
     cpu                  = number
     memory               = number
-    docker_image         = string
     execution_role_arn   = string
     task_role_arn        = string
     log_group_name       = string

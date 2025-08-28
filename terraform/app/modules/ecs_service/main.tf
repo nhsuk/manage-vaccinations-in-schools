@@ -70,7 +70,7 @@ resource "aws_ecs_service" "this" {
 }
 
 resource "aws_ecs_task_definition" "this" {
-  family                   = "mavis-${local.server_type_name}-task-definition-${var.environment}"
+  family                   = "mavis-${local.server_type_name}-task-definition-${var.environment}-template"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = var.task_config.cpu
@@ -80,7 +80,7 @@ resource "aws_ecs_task_definition" "this" {
   container_definitions = jsonencode([
     {
       name                   = var.container_name
-      image                  = var.task_config.docker_image
+      image                  = "CHANGE_ME"
       essential              = true
       readonlyRootFileSystem = true
       portMappings = [
