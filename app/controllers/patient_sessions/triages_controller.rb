@@ -72,12 +72,15 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
   end
 
   def ensure_psd_exists
+    # TODO: Handle programmes with multiple nasal vaccines.
+    vaccine = @programme.vaccines.nasal.first
+
     psd_attributes = {
       academic_year: @academic_year,
       delivery_site: "nose",
       patient: @patient,
       programme: @programme,
-      vaccine: @programme.vaccines.nasal.first,
+      vaccine:,
       vaccine_method: "nasal"
     }
 

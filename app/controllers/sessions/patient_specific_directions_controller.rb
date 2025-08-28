@@ -4,6 +4,8 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
   include PatientSearchFormConcern
 
   before_action :set_session
+  before_action :set_programme
+  before_action :set_vaccine
   before_action :set_patient_search_form
 
   def show
@@ -42,19 +44,25 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
     @session = policy_scope(Session).find_by!(slug: params[:session_slug])
   end
 
-  def programme
-    @session.programmes.includes(:vaccines).first
+  def set_programme
+    # TODO: Handle PSDs in sessions with multiple programmes.
+    @programme = @session.programmes.supports_delegation.first
+  end
+
+  def set_vaccine
+    # TODO: Handle programmes with multiple vaccines.
+    @vaccine = @programme.vaccines.nasal.first
   end
 
   def psds_to_create
     patient_sessions_allowed_psd.map do |patient_session|
       PatientSpecificDirection.new(
         academic_year: @session.academic_year,
-        created_by_user_id: current_user.id,
+        created_by: current_user,
         delivery_site: "nose",
         patient_id: patient_session.patient_id,
-        programme_id: programme.id,
-        vaccine_id: programme.vaccines.find(&:nasal?).id,
+        programme: @programme,
+        vaccine: @vaccine,
         vaccine_method: "nasal"
       )
     end
@@ -64,8 +72,8 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
     @patient_sessions_allowed_psd ||=
       @session
         .patient_sessions
-        .has_consent_status(:given, programme:)
-        .has_triage_status(:not_required, programme:)
-        .without_patient_specific_direction(programme:)
+        .has_consent_status("given", programme: @programme)
+        .has_triage_status("not_required", programme: @programme)
+        .without_patient_specific_direction(programme: @programme)
   end
 end
