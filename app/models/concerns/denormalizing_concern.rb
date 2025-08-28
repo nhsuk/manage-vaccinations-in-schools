@@ -26,11 +26,8 @@ module DenormalizingConcern
       copy_attributes_from_references(references)
 
       simple_valued_attrs = attrs.except(*references.keys)
-      super(
-        **entries_which_exist_in_attributes(simple_valued_attrs)
-      )
+      super(**entries_which_exist_in_attributes(simple_valued_attrs))
     end
-
 
     def copy_attributes_from_references(references = {})
       attr_set = self.class.attribute_names.to_set
@@ -48,9 +45,7 @@ module DenormalizingConcern
 
     # given a hash, return only the keys which exist in this class' attributes
     def entries_which_exist_in_attributes(attrs = {})
-      attrs.slice(
-          *self.class.attribute_names.map(&:to_sym)
-        ).symbolize_keys
+      attrs.slice(*self.class.attribute_names.map(&:to_sym)).symbolize_keys
     end
 
     # given a prefix and object like :school, (School object)

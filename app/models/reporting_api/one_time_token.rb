@@ -49,15 +49,14 @@ class ReportingAPI::OneTimeToken < ApplicationRecord
     created_at < self.class.expire_before
   end
 
-  
   def to_jwt
     JWT.encode(
       jwt_payload,
       Settings.reporting_api.client_app.secret,
       SIGNING_ALGORITHM
-      )
+    )
   end
-  
+
   def jwt_payload
     {
       "iat" => Time.current.utc.to_i,

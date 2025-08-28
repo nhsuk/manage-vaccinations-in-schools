@@ -90,10 +90,10 @@ class ReportingAPI::VaccinationEvent < ApplicationRecord
   end
 
   def self.with_count_of_patients_vaccinated
-    # We want a count of just the distinct patient_ids 
+    # We want a count of just the distinct patient_ids
     # for whom the outcome was 'administered'.
     # If the outcome was not 'administered', this count should not include them
-    select( <<-SQL
+    select(<<-SQL)
         COUNT(
           DISTINCT(
             CASE WHEN vaccination_record_outcome = 'administered'
@@ -103,6 +103,5 @@ class ReportingAPI::VaccinationEvent < ApplicationRecord
           )
         ) AS total_patients_vaccinated
       SQL
-    )
   end
 end

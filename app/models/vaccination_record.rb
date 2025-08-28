@@ -210,28 +210,28 @@ class VaccinationRecord < ApplicationRecord
   def create_or_update_reporting_api_vaccination_event
     re =
       ReportingAPI::VaccinationEvent.find_or_initialize_by(
-        source_id: self.id,
+        source_id: id,
         source_type: self.class.name
       )
-    re.event_timestamp = self.performed_at
-    re.event_type = self.outcome
+    re.event_timestamp = performed_at
+    re.event_type = outcome
 
     re.copy_attributes_from_references(
-      patient: self.patient.reload,
-      patient_local_authority_from_postcode: self.patient.local_authority_from_postcode,
-      school: self.location,
-      school_local_authority: self.location&.local_authority,
+      patient: patient.reload,
+      patient_local_authority_from_postcode:
+        patient.local_authority_from_postcode,
+      school: location,
+      school_local_authority: location&.local_authority,
       vaccination_record: self,
-      vaccine: self.vaccine,
-      team: self.team,
-      organisation: self.team&.organisation,
-      programme: self.programme
+      vaccine: vaccine,
+      team: team,
+      organisation: team&.organisation,
+      programme: programme
     )
 
     re.save!
     re
   end
-
 
   private
 
