@@ -97,4 +97,18 @@ describe ReportingAPI::EventConcern do
       end
     end
   end
+
+  describe '.count_sql_where' do
+    let(:comparison) { " thing == 'value' "}
+    let(:as) { "my_field_name" }
+    let(:result) { object_including_the_concern.class.count_sql_where(comparison:, as:) }
+    
+    it "returns an SQL SUM statement " do
+      expect(result).to match(/\s*SUM\s*(.*)\s+AS\s+.*/i)
+    end
+
+    it "counts the records where the comparison evaluates to true" do
+      expect(result).to match( /.*(\s*CASE\s+WHEN\s+#{comparison}\s+THEN\s+1\s+ELSE\s+0\s+END\s*).*/i )
+    end
+  end
 end

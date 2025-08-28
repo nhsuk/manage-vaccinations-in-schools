@@ -28,7 +28,7 @@ module ReportingAPI::EventConcern
     end
 
     def self.count_sql_where(comparison:, as:)
-      "sum(CASE WHEN #{comparison} THEN 1 ELSE 0 END) AS #{as}"
+      "SUM(CASE WHEN #{comparison} THEN 1 ELSE 0 END) AS #{as}"
     end
   end
 end
