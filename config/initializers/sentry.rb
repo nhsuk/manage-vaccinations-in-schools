@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+return if ENV["SENTRY_DISABLE"].present?
+
 require "active_support/parameter_filter"
 
 Sentry.init do |config|
