@@ -20,6 +20,10 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
     @pagy, @patient_sessions = pagy(patient_sessions)
   end
 
+  def new
+    @eligible_for_bulk_psd_count = patient_sessions_allowed_psd.count
+  end
+
   def create
     PatientSpecificDirection.import!(
       psds_to_create,
@@ -30,10 +34,6 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
                 flash: {
                   success: "PSDs added"
                 }
-  end
-
-  def bulk_add
-    @eligible_for_bulk_psd_count = patient_sessions_allowed_psd.count
   end
 
   private

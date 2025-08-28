@@ -14,7 +14,7 @@
     <div class="app-button-group">
       <%= govuk_button_to "Yes, add PSDs", session_patient_specific_directions_path(@session) %>
       <%= govuk_link_to "No, return to session",
-                        bulk_add_session_patient_specific_directions_path(@session),
+                        new_session_patient_specific_directions_path(@session),
                         method: :post,
                         prevent_double_click: true %>
     </div>
