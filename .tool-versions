@@ -3,6 +3,7 @@ hk          1.1.2
 nodejs      22.15.0
 pkl         0.28.1
 postgres    17.2
+python      3.12.3
 redis       8.2.1
 ruby        3.4.6
 terraform   1.13.3
