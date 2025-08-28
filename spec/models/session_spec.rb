@@ -296,6 +296,24 @@ describe Session do
     it { should contain_exactly("injection", "nasal") }
   end
 
+  describe "#has_multiple_vaccine_methods?" do
+    subject { session.has_multiple_vaccine_methods? }
+
+    let(:session) { create(:session, programmes: [programme]) }
+
+    context "with a flu session" do
+      let(:programme) { create(:programme, :flu) }
+
+      it { should be(true) }
+    end
+
+    context "with an HPV session" do
+      let(:programme) { create(:programme, :hpv) }
+
+      it { should be(false) }
+    end
+  end
+
   describe "#today_or_future_dates" do
     subject(:today_or_future_dates) do
       travel_to(today) { session.today_or_future_dates }

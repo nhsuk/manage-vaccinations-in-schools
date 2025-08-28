@@ -331,9 +331,12 @@ class AppActivityLogComponent < ViewComponent::Base
     triages.map do |triage|
       programmes = programmes_for(triage)
       title = "Triaged decision: #{triage.human_enum_name(:status)}"
-      title +=
-        " with #{triage.human_enum_name(:vaccine_method)}" if triage.vaccine_method.present? &&
-        programmes.first.has_multiple_vaccine_methods?
+
+      if triage.vaccine_method.present? &&
+           programmes.first.has_multiple_vaccine_methods?
+        title += " with #{triage.human_enum_name(:vaccine_method)}"
+      end
+
       {
         title:,
         body: triage.notes,
