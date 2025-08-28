@@ -14,6 +14,14 @@
 #  gp_practice_address_postcode                     :string
 #  gp_practice_address_town                         :string
 #  gp_practice_name                                 :string
+#  location_address_postcode                        :string
+#  location_address_town                            :string
+#  location_gias_local_authority_code               :string
+#  location_local_authority_gss_code                :string
+#  location_local_authority_mhclg_code              :string
+#  location_local_authority_short_name              :string
+#  location_name                                    :string
+#  location_type                                    :string
 #  organisation_name                                :string
 #  organisation_ods_code                            :string
 #  patient_address_postcode                         :string
@@ -29,13 +37,6 @@
 #  patient_nhs_number                               :string
 #  patient_year_group                               :integer
 #  programme_type                                   :string
-#  school_address_postcode                          :string
-#  school_address_town                              :string
-#  school_gias_local_authority_code                 :string
-#  school_local_authority_gss_code                  :string
-#  school_local_authority_mhclg_code                :string
-#  school_local_authority_short_name                :string
-#  school_name                                      :string
 #  source_type                                      :string
 #  team_name                                        :string
 #  vaccination_record_delivery_method               :string
@@ -55,10 +56,10 @@
 #  vaccine_snomed_product_code                      :string
 #  vaccine_snomed_product_term                      :string
 #  gp_practice_id                                   :bigint
+#  location_id                                      :bigint
 #  organisation_id                                  :bigint
 #  patient_id                                       :bigint
 #  programme_id                                     :bigint
-#  school_id                                        :bigint
 #  source_id                                        :bigint
 #  team_id                                          :bigint
 #  vaccination_record_batch_id                      :bigint
@@ -74,7 +75,8 @@
 #  ix_rpt_vac_event_ac_year_month                    (event_timestamp_academic_year,event_timestamp_month)
 #  ix_rpt_vac_event_source_type_id                   (source_type,source_id)
 #  ix_rpt_vac_event_tstamp                           (event_timestamp)
-#  ix_rpt_vac_event_tstamp_year_month_prog_type      (event_timestamp_academic_year,event_timestamp_month,programme_id,event_type)
+#  ix_rve_team_acyr_month                            (team_id,event_timestamp_academic_year,event_timestamp_month)
+#  ix_rve_tstamp_year_month_prog_type                (event_timestamp_academic_year,event_timestamp_month,programme_id,event_type)
 #
 class ReportingAPI::VaccinationEvent < ApplicationRecord
   include DenormalizingConcern
@@ -90,10 +92,10 @@ class ReportingAPI::VaccinationEvent < ApplicationRecord
   end
 
   def self.with_count_of_patients_vaccinated
-    # We want a count of just the distinct patient_ids 
+    # We want a count of just the distinct patient_ids
     # for whom the outcome was 'administered'.
     # If the outcome was not 'administered', this count should not include them
-    select( <<-SQL
+    select(<<-SQL)
         COUNT(
           DISTINCT(
             CASE WHEN vaccination_record_outcome = 'administered'
@@ -103,6 +105,5 @@ class ReportingAPI::VaccinationEvent < ApplicationRecord
           )
         ) AS total_patients_vaccinated
       SQL
-    )
   end
 end

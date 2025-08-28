@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 # == Schema Information
 #
@@ -13,6 +14,14 @@
 #  gp_practice_address_postcode                     :string
 #  gp_practice_address_town                         :string
 #  gp_practice_name                                 :string
+#  location_address_postcode                        :string
+#  location_address_town                            :string
+#  location_gias_local_authority_code               :string
+#  location_local_authority_gss_code                :string
+#  location_local_authority_mhclg_code              :string
+#  location_local_authority_short_name              :string
+#  location_name                                    :string
+#  location_type                                    :string
 #  organisation_name                                :string
 #  organisation_ods_code                            :string
 #  patient_address_postcode                         :string
@@ -28,13 +37,6 @@
 #  patient_nhs_number                               :string
 #  patient_year_group                               :integer
 #  programme_type                                   :string
-#  school_address_postcode                          :string
-#  school_address_town                              :string
-#  school_gias_local_authority_code                 :string
-#  school_local_authority_gss_code                  :string
-#  school_local_authority_mhclg_code                :string
-#  school_local_authority_short_name                :string
-#  school_name                                      :string
 #  source_type                                      :string
 #  team_name                                        :string
 #  vaccination_record_delivery_method               :string
@@ -54,10 +56,10 @@
 #  vaccine_snomed_product_code                      :string
 #  vaccine_snomed_product_term                      :string
 #  gp_practice_id                                   :bigint
+#  location_id                                      :bigint
 #  organisation_id                                  :bigint
 #  patient_id                                       :bigint
 #  programme_id                                     :bigint
-#  school_id                                        :bigint
 #  source_id                                        :bigint
 #  team_id                                          :bigint
 #  vaccination_record_batch_id                      :bigint
@@ -73,18 +75,40 @@
 #  ix_rpt_vac_event_ac_year_month                    (event_timestamp_academic_year,event_timestamp_month)
 #  ix_rpt_vac_event_source_type_id                   (source_type,source_id)
 #  ix_rpt_vac_event_tstamp                           (event_timestamp)
-#  ix_rpt_vac_event_tstamp_year_month_prog_type      (event_timestamp_academic_year,event_timestamp_month,programme_id,event_type)
+#  ix_rve_team_acyr_month                            (team_id,event_timestamp_academic_year,event_timestamp_month)
+#  ix_rve_tstamp_year_month_prog_type                (event_timestamp_academic_year,event_timestamp_month,programme_id,event_type)
 #
 FactoryBot.define do
-  factory :reporting_api_vaccination_event, class: "ReportingAPI::VaccinationEvent" do
+  factory :reporting_api_vaccination_event,
+          class: "ReportingAPI::VaccinationEvent" do
     transient do
-      outcome { 'administered' }
+      outcome { "administered" }
       year_group { 9 }
-      for_patient { build(:patient, year_group: year_group, random_nhs_number: true) }
-      programme { Programme.find_by(type: 'flu') || build(:programme, type: 'flu') }
+      for_patient do
+        build(:patient, year_group: year_group, random_nhs_number: true)
+      end
+      programme do
+        Programme.find_by(type: "flu") || build(:programme, type: "flu")
+      end
+      location do
+        Location.order("RANDOM()").first || build(:location)
+      end
+      session do
+        Session.order("RANDOM()").first || build(:session, location: location)
+      end
     end
 
-    source { build(:vaccination_record, patient: for_patient, programme: programme, outcome: outcome, performed_by: User.first) }
+    source do
+      build(
+        :vaccination_record,
+        patient: for_patient,
+        programme: programme,
+        outcome: outcome,
+        session: session,
+        location: location,
+        performed_by: User.first
+      )
+    end
     patient { for_patient }
     vaccination_record_outcome { outcome }
     patient_year_group { year_group }
