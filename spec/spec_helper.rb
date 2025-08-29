@@ -223,6 +223,7 @@ RSpec.configure do |config|
   config.include PDSHelper, type: :feature
   config.include EmailExpectations, type: :feature
   config.include FactoryBot::Syntax::Methods
+  config.include ImportsHelper, type: :feature
   config.include SMSExpectations, type: :feature
   config.include ViewComponent::TestHelpers, type: :component
   config.include AuthorisationHelper
