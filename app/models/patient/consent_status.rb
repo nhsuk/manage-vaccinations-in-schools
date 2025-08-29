@@ -37,7 +37,10 @@ class Patient::ConsentStatus < ApplicationRecord
 
   scope :has_vaccine_method,
         ->(vaccine_method) do
-          where("vaccine_methods[1] = ?", vaccine_methods.fetch(vaccine_method))
+          where(
+            "vaccine_methods[1] IN (?)",
+            Array(vaccine_method).map { vaccine_methods.fetch(it) }
+          )
         end
 
   enum :status,

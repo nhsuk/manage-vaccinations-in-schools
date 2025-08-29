@@ -140,14 +140,47 @@ class PatientSearchForm < SearchForm
 
   def filter_consent_statuses(scope)
     if (statuses = consent_statuses).present?
-      if @session
-        scope.has_consent_status(statuses, programme: programmes)
+      given_with_vaccine_method_statuses, other_statuses =
+        statuses.partition { it.starts_with?("given_") }
+
+      given_with_vaccine_method_scope =
+        if given_with_vaccine_method_statuses.any?
+          vaccine_methods =
+            given_with_vaccine_method_statuses.map { it.sub("given_", "") }
+
+          if @session
+            scope.has_consent_status(
+              "given",
+              programme: programmes,
+              vaccine_method: vaccine_methods
+            )
+          else
+            scope.has_consent_status(
+              "given",
+              programme: programmes,
+              academic_year:,
+              vaccine_method: vaccine_methods
+            )
+          end
+        end
+
+      other_status_scope =
+        if other_statuses.any?
+          if @session
+            scope.has_consent_status(other_statuses, programme: programmes)
+          else
+            scope.has_consent_status(
+              other_statuses,
+              programme: programmes,
+              academic_year:
+            )
+          end
+        end
+
+      if given_with_vaccine_method_scope && other_status_scope
+        given_with_vaccine_method_scope.or(other_status_scope)
       else
-        scope.has_consent_status(
-          statuses,
-          programme: programmes,
-          academic_year:
-        )
+        given_with_vaccine_method_scope || other_status_scope
       end
     else
       scope
