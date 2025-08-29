@@ -42,7 +42,7 @@ class AppProgrammeStatusTagsComponent < ViewComponent::Base
       if vaccine_methods.present?
         tag.span(
           Vaccine.human_enum_name(:method, vaccine_methods.first),
-          class: "nhsuk-u-secondary-text-color"
+          class: "nhsuk-u-secondary-text-colour"
         )
       end
 
@@ -50,7 +50,7 @@ class AppProgrammeStatusTagsComponent < ViewComponent::Base
       if latest_session_status && latest_session_status != "none_yet"
         tag.span(
           I18n.t(latest_session_status, scope: %i[status session label]),
-          class: "nhsuk-u-secondary-text-color"
+          class: "nhsuk-u-secondary-text-colour"
         )
       end
 

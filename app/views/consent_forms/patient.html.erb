@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(consent_form_path(@consent_form), name: "unmatched consent responses") %>
+  <%= govuk_back_link(href: consent_form_path(@consent_form)) %>
 <% end %>
 
 <% page_title = "Create a new child record from this consent response?" %>

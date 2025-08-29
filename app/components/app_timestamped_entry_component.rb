@@ -5,7 +5,7 @@ class AppTimestampedEntryComponent < ViewComponent::Base
     <p class="nhsuk-body">
       <%= @text %>
     </p>
-    <p class="nhsuk-u-margin-bottom-2 nhsuk-u-secondary-text-color nhsuk-u-font-size-16 nhsuk-u-margin-bottom-0">
+    <p class="nhsuk-u-margin-bottom-2 nhsuk-u-secondary-text-colour nhsuk-u-font-size-16 nhsuk-u-margin-bottom-0">
       <% if @recorded_by.present? %>
         <%= mail_to(@recorded_by.email, @recorded_by.full_name) %>,
       <% end %>

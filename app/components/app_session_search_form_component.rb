@@ -14,9 +14,9 @@ class AppSessionSearchFormComponent < ViewComponent::Base
                                  class: "app-search-input__input" %>
 
           <button class="nhsuk-button app-button--icon app-search-input__submit" data-module="nhsuk-button" type="submit">
-            <svg class="nhsuk-icon nhsuk-icon__search" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false" role="img">
+            <svg class="nhsuk-icon nhsuk-icon--search" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false" role="img" aria-label="Search">
               <title>Search</title>
-              <path d="M19.71 18.29l-4.11-4.1a7 7 0 1 0-1.41 1.41l4.1 4.11a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42zM5 10a5 5 0 1 1 5 5 5 5 0 0 1-5-5z" fill="currentColor"></path>
+              <path d="m20.7 19.3-4.1-4.1a7 7 0 1 0-1.4 1.4l4 4.1a1 1 0 0 0 1.5 0c.4-.4.4-1 0-1.4ZM6 11a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z"/>
             </svg>
           </button>
         </div>
@@ -69,7 +69,7 @@ class AppSessionSearchFormComponent < ViewComponent::Base
           <% end %>
         <% end %>
 
-        <div class="app-button-group">
+        <div class="nhsuk-button-group">
           <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
           <%= govuk_button_link_to "Clear filters", clear_filters_path, secondary: true, class: "app-button--small" %>
         </div>

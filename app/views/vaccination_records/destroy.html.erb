@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(@return_to, name: "patient") %>
+  <%= govuk_back_link(href: @return_to) %>
 <% end %>
 
 <% page_title = "Are you sure you want to archive this vaccination record?" %>
@@ -16,7 +16,7 @@
 
 <%= form_with url: vaccination_record_path, method: :delete do |f| %>
   <%= f.hidden_field :return_to, value: @return_to %>
-  <div class="app-button-group">
+  <div class="nhsuk-button-group">
     <%= f.govuk_submit "Yes, archive this vaccination record", warning: true %>
     <%= govuk_link_to "No, return to patient", @return_to %>
   </div>

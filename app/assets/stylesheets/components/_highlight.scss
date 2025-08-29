@@ -1,34 +1,29 @@
-@use "sass:color";
 @use "../vendor/nhsuk-frontend" as *;
 
 .app-highlight {
-  background-color: color.mix(
-    $color_nhsuk-white,
-    $color_nhsuk-warm-yellow,
-    80%
-  );
-  border-bottom: 3px solid $color_nhsuk-warm-yellow;
+  background-color: nhsuk-tint(nhsuk-colour("warm-yellow"), 80%);
+  border-bottom: 3px solid nhsuk-colour("warm-yellow");
 
   a & {
-    color: $nhsuk-link-color;
+    color: $nhsuk-link-colour;
   }
 
   a:visited & {
-    color: $nhsuk-link-visited-color;
+    color: $nhsuk-link-visited-colour;
   }
 
   a:hover & {
-    color: $nhsuk-link-hover-color;
+    color: $nhsuk-link-hover-colour;
   }
 
   a:active & {
-    color: $nhsuk-link-active-color;
+    color: $nhsuk-link-active-colour;
   }
 
   a:focus & {
     background-color: transparent;
     border-color: transparent;
-    color: $nhsuk-focus-text-color;
+    color: $nhsuk-focus-text-colour;
   }
 
   // Ensure highlight is announced by screen readers

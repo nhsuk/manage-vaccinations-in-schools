@@ -1,9 +1,9 @@
 import { Controller } from "@hotwired/stimulus";
-import { Button } from "govuk-frontend";
+import { Button } from "nhsuk-frontend";
 
 // Connects to data-module="nhsuk-button"
 export default class extends Controller {
   connect() {
-    new Button(this.element);
+    return new Button(this.element);
   }
 }

@@ -1,23 +1,17 @@
-<nav class="nhsuk-breadcrumb<%= " #{@classes}" if @classes %>"
-     aria-label="Breadcrumb"
+<nav class="nhsuk-breadcrumb aria-label="Breadcrumb"
      <%= @attributes.map { |name, value| "#{name}=\"#{value}\"" }.join(" ") %>>
-  <div class="nhsuk-width-container">
-    <ol class="nhsuk-breadcrumb__list">
-      <% @items.each do |item| %>
-        <li class="nhsuk-breadcrumb__item">
-          <%= item[:href].nil? ?
-                item[:text] :
-                link_to(item[:text], item[:href],
-                        class: "nhsuk-breadcrumb__link",
-                        attributes: item[:attributes]) %></li>
-      <% end %>
-    </ol>
-    <p class="nhsuk-breadcrumb__back">
-      <a class="nhsuk-breadcrumb__backlink"
-         href="<%= linkable_items.last[:href] %>">
-        <span class="nhsuk-u-visually-hidden">Back to &nbsp;</span>
-        <%= linkable_items.last[:text] %>
-      </a>
-    </p>
-  </div>
+  <ol class="nhsuk-breadcrumb__list">
+    <% @items.each do |item| %>
+      <li class="nhsuk-breadcrumb__list-item">
+        <%= item[:href].nil? ?
+              item[:text] :
+              link_to(item[:text], item[:href],
+                      class: "nhsuk-breadcrumb__link",
+                      attributes: item[:attributes]) %></li>
+    <% end %>
+  </ol>
+  <%= govuk_back_link(href: linkable_items.last[:href]) do %>
+    <span class="nhsuk-u-visually-hidden">Back to &nbsp;</span>
+    <%= linkable_items.last[:text] %>
+  <% end %>
 </nav>

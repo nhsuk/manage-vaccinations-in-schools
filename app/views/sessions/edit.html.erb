@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(session_path(@session), name: @session.location.name) %>
+  <%= govuk_back_link(href: session_path(@session)) %>
 <% end %>
 
 <%= h1 "Edit session" do %>
@@ -48,7 +48,7 @@
             row.with_value do
               safe_join([
                 "Send #{pluralize(@session.weeks_before_consent_reminders, "week")} before each session",
-                tag.span("Next: #{send_consent_reminders_at.to_fs(:long_day_of_week)}", class: "nhsuk-u-secondary-text-color"),
+                tag.span("Next: #{send_consent_reminders_at.to_fs(:long_day_of_week)}", class: "nhsuk-u-secondary-text-colour"),
               ], tag.br)
             end
             if @session.can_change_notification_dates?

@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(edit_session_path(@session), name: "edit session") %>
+  <%= govuk_back_link(href: edit_session_path(@session)) %>
 <% end %>
 
 <% legend = "When should parents get a request to give consent?" %>

@@ -29,7 +29,7 @@
       <p><%= latest_triage.performed_by.full_name %> decided that <%= patient.full_name %>'s vaccination should be delayed.</p>
     <% end %>
 
-    <div class="app-button-group nhsuk-u-margin-bottom-4">
+    <div class="nhsuk-button-group">
       <% if helpers.policy(Triage).new? %>
         <%= govuk_button_link_to "Update triage outcome",
                                  new_session_patient_programme_triages_path(session, patient, programme),

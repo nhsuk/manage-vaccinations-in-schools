@@ -1,12 +1,12 @@
 import { Controller } from "@hotwired/stimulus";
-import ErrorSummary from "nhsuk-frontend/packages/components/error-summary/error-summary";
+import { ErrorSummary } from "nhsuk-frontend";
 
 // Connects to data-module="nhsuk-error-summary"
 export default class extends Controller {
   connect() {
     this.shimFocusBehaviour();
 
-    ErrorSummary();
+    return new ErrorSummary(this.element);
   }
 
   // Because we're using the GOVUK Error Summary HTML, the server-rendered

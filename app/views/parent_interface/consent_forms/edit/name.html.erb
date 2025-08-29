@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(@header_path, name: "start consent page") %>
+  <%= govuk_back_link(href: @header_path) %>
 <% end %>
 
 <%= h1 "What is your child’s name?" %>

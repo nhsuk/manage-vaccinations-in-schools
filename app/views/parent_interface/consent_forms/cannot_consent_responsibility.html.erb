@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        parent_interface_consent_form_edit_path(@consent_form, :parent),
-        name: "edit your details page",
-      ) %>
+  <%= govuk_back_link(href: parent_interface_consent_form_edit_path(@consent_form, :parent)) %>
 <% end %>
 
 <%= h1 "You cannot give or refuse consent through this service" %>

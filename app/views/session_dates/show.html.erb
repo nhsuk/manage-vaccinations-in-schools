@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(edit_session_path(@session), name: "edit session") %>
+  <%= govuk_back_link(href: edit_session_path(@session)) %>
 <% end %>
 
 <%= h1 "When will sessions be held?" %>
@@ -15,7 +15,7 @@
             <h2 class="nhsuk-heading-m">
               <%= date_f.object.value.to_fs(:long) %>
             </h2>
-            <p class="nhsuk-u-secondary-text-color">
+            <p class="nhsuk-u-secondary-text-colour">
               Children have attended this session. It cannot be changed.
             </p>
           <% else %>
@@ -40,7 +40,7 @@
     <%= f.govuk_submit "Add another date", name: "add_another", secondary: true, class: "app-add-another__add" %>
   </div>
 
-  <div class="app-button-group">
+  <div class="nhsuk-button-group">
     <%= f.govuk_submit "Continue" %>
     <%= govuk_link_to "Back", edit_session_path(@session) %>
   </div>

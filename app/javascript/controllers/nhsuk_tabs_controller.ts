@@ -1,9 +1,9 @@
 import { Controller } from "@hotwired/stimulus";
-import NhsukTabs from "nhsuk-frontend/packages/components/tabs/tabs";
+import { Tabs } from "nhsuk-frontend";
 
 // Connects to data-module="nhsuk-tabs"
 export default class extends Controller {
   connect() {
-    NhsukTabs();
+    return new Tabs(this.element);
   }
 }

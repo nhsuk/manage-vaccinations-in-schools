@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(edit_patient_path(@patient), name: "patient") %>
+  <%= govuk_back_link(href: edit_patient_path(@patient)) %>
 <% end %>
 
 <% page_title = "Are you sure you want to remove the relationship between #{@parent_relationship.label_with_parent} and #{@patient.full_name(context: :parents)}?" %>
@@ -25,7 +25,7 @@
 <% end %>
 
 <%= form_with url: patient_parent_relationship_path, method: :delete do |f| %>
-  <div class="app-button-group">
+  <div class="nhsuk-button-group">
     <%= f.govuk_submit "Yes, remove this relationship", warning: true %>
     <%= govuk_link_to "No, return to child record", edit_patient_path(@patient) %>
   </div>

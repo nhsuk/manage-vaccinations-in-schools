@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(@back_link_path) %>
+  <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
 <% title = "Do you want to send #{@parent.full_name} an email and text message confirming their decision?" %>
