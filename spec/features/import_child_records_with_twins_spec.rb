@@ -100,12 +100,7 @@ describe "Child record imports twins" do
   def and_i_upload_a_file_with_a_twin
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
     click_on "Continue"
-
-    perform_enqueued_jobs(only: ProcessImportJob)
-    perform_enqueued_jobs(only: ProcessPatientChangesetsJob)
-    perform_enqueued_jobs(only: CommitPatientChangesetsJob)
-
-    visit cohort_import_path(CohortImport.last)
+    wait_for_import_to_complete(CohortImport)
   end
 
   def then_i_should_see_the_import_page_with_successful_import

@@ -152,12 +152,7 @@ describe "Import class lists - Moving patients" do
   def when_i_upload_a_valid_file
     attach_file("class_import[csv]", "spec/fixtures/class_import/valid.csv")
     click_on "Continue"
-
-    perform_enqueued_jobs(only: ProcessImportJob)
-    perform_enqueued_jobs(only: ProcessPatientChangesetsJob)
-    perform_enqueued_jobs(only: CommitPatientChangesetsJob)
-
-    visit class_import_path(ClassImport.last)
+    wait_for_import_to_complete(ClassImport)
   end
 
   alias_method :and_i_upload_a_valid_file, :when_i_upload_a_valid_file

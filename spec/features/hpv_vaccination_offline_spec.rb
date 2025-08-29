@@ -365,11 +365,7 @@ describe "HPV vaccination" do
     attach_file("immunisation_import[csv]", "tmp/modified.csv")
     click_on "Continue"
 
-    perform_enqueued_jobs(only: ProcessImportJob)
-    perform_enqueued_jobs(only: ProcessPatientChangesetsJob)
-    perform_enqueued_jobs(only: CommitPatientChangesetsJob)
-
-    click_link ImmunisationImport.last.created_at.to_fs(:long), match: :first
+    wait_for_import_to_complete(ImmunisationImport)
   end
 
   def when_i_navigate_to_the_session_page

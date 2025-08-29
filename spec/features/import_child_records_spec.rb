@@ -192,12 +192,7 @@ describe "Import child records" do
   def and_i_upload_a_valid_file
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
     click_on "Continue"
-
-    perform_enqueued_jobs(only: ProcessImportJob)
-    perform_enqueued_jobs(only: ProcessPatientChangesetsJob)
-    perform_enqueued_jobs(only: CommitPatientChangesetsJob)
-
-    click_link CohortImport.last.created_at.to_fs(:long), match: :first
+    wait_for_import_to_complete(CohortImport)
   end
 
   def and_i_should_see_the_patients
@@ -359,12 +354,7 @@ describe "Import child records" do
       "spec/fixtures/cohort_import/valid_with_changes.csv"
     )
     click_on "Continue"
-
-    perform_enqueued_jobs(only: ProcessImportJob)
-    perform_enqueued_jobs(only: ProcessPatientChangesetsJob)
-    perform_enqueued_jobs(only: CommitPatientChangesetsJob)
-
-    click_link CohortImport.last.created_at.to_fs(:long), match: :first
+    wait_for_import_to_complete(CohortImport)
   end
 
   def and_i_go_to_the_import_page

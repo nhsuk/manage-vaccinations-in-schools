@@ -163,12 +163,7 @@ describe "Import class lists" do
     attach_file("class_import[csv]", "spec/fixtures/class_import/valid.csv")
     click_on "Continue"
 
-    perform_enqueued_jobs(only: ProcessImportJob)
-    perform_enqueued_jobs(only: ProcessPatientChangesetsJob)
-    perform_enqueued_jobs(only: CommitPatientChangesetsJob)
-
-    click_link ClassImport.order(:created_at).last.created_at.to_fs(:long),
-               match: :first
+    wait_for_import_to_complete(ClassImport)
   end
 
   def then_i_should_see_the_patients

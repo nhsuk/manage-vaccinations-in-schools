@@ -65,9 +65,7 @@ describe "Triage" do
     )
     click_on "Continue"
 
-    perform_enqueued_jobs(only: ProcessImportJob)
-
-    click_link ImmunisationImport.last.created_at.to_fs(:long), match: :first
+    wait_for_import_to_complete(ImmunisationImport)
   end
 
   def then_i_see_the_completed_upload
@@ -90,11 +88,7 @@ describe "Triage" do
     attach_file("class_import[csv]", file_fixture("td_ipv/class_list.csv"))
     click_on "Continue"
 
-    perform_enqueued_jobs(only: ProcessImportJob)
-    perform_enqueued_jobs(only: ProcessPatientChangesetsJob)
-    perform_enqueued_jobs(only: CommitPatientChangesetsJob)
-
-    click_link ClassImport.last.created_at.to_fs(:long), match: :first
+    wait_for_import_to_complete(ClassImport)
   end
 
   def then_i_see_one_patient_needing_consent

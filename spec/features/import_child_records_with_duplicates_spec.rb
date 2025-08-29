@@ -216,12 +216,7 @@ describe "Child record imports duplicates" do
   def and_i_upload_a_file_with_duplicate_records
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
     click_on "Continue"
-
-    perform_enqueued_jobs(only: ProcessImportJob)
-    perform_enqueued_jobs(only: ProcessPatientChangesetsJob)
-    perform_enqueued_jobs(only: CommitPatientChangesetsJob)
-
-    click_link CohortImport.last.created_at.to_fs(:long), match: :first
+    wait_for_import_to_complete(CohortImport)
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
