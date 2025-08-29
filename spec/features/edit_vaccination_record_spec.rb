@@ -8,7 +8,7 @@ describe "Edit vaccination record" do
   scenario "User edits a new vaccination record" do
     given_i_am_signed_in
     and_an_administered_vaccination_record_exists
-    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    and_imms_api_sync_job_feature_is_enabled
 
     when_i_go_to_the_vaccination_record_for_the_patient
     then_i_should_see_the_vaccination_record
@@ -96,7 +96,7 @@ describe "Edit vaccination record" do
 
   scenario "Edit outcome to vaccinated" do
     given_i_am_signed_in
-    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    and_imms_api_sync_job_feature_is_enabled
     and_a_not_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
 
@@ -128,7 +128,7 @@ describe "Edit vaccination record" do
 
   scenario "Edit outcome to not vaccinated" do
     given_i_am_signed_in
-    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    and_imms_api_sync_job_feature_is_enabled
     and_an_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
 
@@ -272,9 +272,9 @@ describe "Edit vaccination record" do
     end
   end
 
-  def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
-    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
+  def and_imms_api_sync_job_feature_is_enabled
     Flipper.enable(:immunisations_fhir_api_integration)
+    Flipper.enable(:imms_api_sync_job)
 
     uuid = Random.uuid
     @stubbed_post_request = stub_immunisations_api_post(uuid:)
@@ -307,7 +307,8 @@ describe "Edit vaccination record" do
         programme: @programme
       )
 
-    if Flipper.enabled?(:immunisations_fhir_api_integration)
+    if Flipper.enabled?(:immunisations_fhir_api_integration) &&
+         Flipper.enabled?(:imms_api_sync_job)
       perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
     end
   end

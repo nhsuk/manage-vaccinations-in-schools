@@ -345,7 +345,7 @@ describe ImmunisationImport do
       )
     end
 
-    before { Flipper.enable :enqueue_sync_vaccination_records_to_nhs }
+    before { Flipper.enable :imms_api_sync_job }
 
     let(:session) { create(:session, programmes:) }
     let(:vaccination_record) do

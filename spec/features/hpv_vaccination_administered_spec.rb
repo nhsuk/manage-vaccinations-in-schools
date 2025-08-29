@@ -5,7 +5,7 @@ describe "HPV vaccination" do
 
   scenario "Administered with common delivery site" do
     given_i_am_signed_in
-    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    and_imms_api_sync_job_feature_is_enabled
 
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
     and_i_fill_in_pre_screening_questions
@@ -143,9 +143,9 @@ describe "HPV vaccination" do
     @registrations_are_not_required = true
   end
 
-  def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
-    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
+  def and_imms_api_sync_job_feature_is_enabled
     Flipper.enable(:immunisations_fhir_api_integration)
+    Flipper.enable(:imms_api_sync_job)
 
     immunisation_uuid = Random.uuid
     @stubbed_post_request = stub_immunisations_api_post(uuid: immunisation_uuid)

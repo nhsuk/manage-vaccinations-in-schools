@@ -6,14 +6,14 @@ delegation: Allow prescribers to create a PSDs for healthcare workers to adminis
 
 dev_tools: Developer tools useful for testing and debugging.
 
-enqueue_sync_vaccination_records_to_nhs: Send new vaccinations recorded by
-  nurses to NHS Immunisations FHIR API.
-
 immunisations_fhir_api_integration: Master switch to control communications
   with NHS Immunisations FHIR API.
 
 immunisations_fhir_api_integration_search: Master switch to control whether
   search requests can be made to the NHS Immunisations FHIR API.
+
+imms_api_sync_job: Flag to switch off any automated sending of vaccination records
+  (Create, Update, Delete), triggered by the creation/edit/delete of any vaccination records.
 
 import_choose_academic_year: Add an option to choose the academic year when
   importing patients during the preparation period.

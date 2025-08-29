@@ -33,7 +33,7 @@ module MavisCLI
         vaccination_record.update!(
           nhs_immunisations_api_sync_pending_at: Time.current
         )
-        SyncVaccinationRecordToNHSJob.perform_now(vaccination_record)
+        NHS::ImmunisationsAPI.sync_immunisation(vaccination_record)
         puts "Successfully synced vaccination record #{vaccination_record_id}"
       end
     end
