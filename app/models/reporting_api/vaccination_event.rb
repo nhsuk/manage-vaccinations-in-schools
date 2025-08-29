@@ -38,6 +38,9 @@
 #  patient_school_address_postcode                  :string
 #  patient_school_address_town                      :string
 #  patient_school_gias_local_authority_code         :string
+#  patient_school_local_authority_gss_code          :string
+#  patient_school_local_authority_mchlg_code        :string
+#  patient_school_local_authority_short_name        :string
 #  patient_school_name                              :string
 #  patient_school_type                              :string
 #  patient_year_group                               :integer

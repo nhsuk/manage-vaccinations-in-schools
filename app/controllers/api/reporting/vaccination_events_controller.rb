@@ -7,6 +7,8 @@ class API::Reporting::VaccinationEventsController < API::Reporting::BaseControll
     "Local Authority" => :patient_local_authority_from_postcode_short_name,
     "Location" => :location_name,
     "Location Local Authority" => :location_local_authority_short_name,
+    "Patient School" => :patient_school_name,
+    "Patient School Local Authority" => :patient_school_local_authority_short_name,
     "Year Group" => :patient_year_group,
     "Gender" => :patient_gender_code,
     "Month" => :event_timestamp_month,
@@ -19,6 +21,8 @@ class API::Reporting::VaccinationEventsController < API::Reporting::BaseControll
     local_authority: :patient_local_authority_from_postcode_short_name,
     location: :location_name,
     location_local_authority: :location_local_authority_short_name,
+    school: :patient_school_name,
+    school_local_authority: :patient_school_local_authority_short_name,
     year_group: :patient_year_group,
     gender: :patient_gender_code,
     programme: :programme_type,
@@ -61,8 +65,9 @@ class API::Reporting::VaccinationEventsController < API::Reporting::BaseControll
       programme: :programme_type,
       month: :event_timestamp_month,
       year: :event_timestamp_year,
-      local_authority: :patient_local_authority_from_postcode_short_name,
-      location_local_authority: :location_gias_local_authority_code,
+      school_local_authority: :patient_school_local_authority_mhclg_code,
+      local_authority: :patient_local_authority_from_postcode_mhclg_code,
+      location_local_authority: :location_local_authority_mhclg_code,
       location_type: :location_type
     }
   end
