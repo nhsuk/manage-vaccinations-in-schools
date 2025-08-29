@@ -257,6 +257,30 @@ class PatientSession < ApplicationRecord
           end
         end
 
+  scope :without_patient_specific_direction,
+        ->(programme:) do
+          joins(:session).where.not(
+            PatientSpecificDirection
+              .where("patient_id = patient_sessions.patient_id")
+              .where("academic_year = sessions.academic_year")
+              .where(programme:)
+              .arel
+              .exists
+          )
+        end
+
+  scope :has_patient_specific_direction,
+        ->(programme:) do
+          joins(:session).where(
+            PatientSpecificDirection
+              .where("patient_id = patient_sessions.patient_id")
+              .where("academic_year = sessions.academic_year")
+              .where(programme:)
+              .arel
+              .exists
+          )
+        end
+
   scope :destroy_all_if_safe,
         -> do
           includes(
@@ -268,6 +292,13 @@ class PatientSession < ApplicationRecord
 
   delegate :academic_year, to: :session
 
+  def psd_added?(programme:)
+    patient
+      .patient_specific_directions
+      .where(programme:, academic_year:)
+      .exists?
+  end
+
   def safe_to_destroy?
     vaccination_records.empty? && gillick_assessments.empty? &&
       session_attendances.none?(&:attending?)
@@ -275,11 +306,6 @@ class PatientSession < ApplicationRecord
 
   def destroy_if_safe!
     destroy! if safe_to_destroy?
-  end
-
-  def can_record_as_already_vaccinated?(programme:)
-    !session.today? &&
-      patient.vaccination_status(programme:, academic_year:).none_yet?
   end
 
   def programmes = session.programmes_for(patient:, academic_year:)

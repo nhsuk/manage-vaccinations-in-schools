@@ -19,6 +19,8 @@ class VaccinateForm
   attribute :pre_screening_confirmed, :boolean
   attribute :pre_screening_notes, :string
 
+  attribute :supplied_by_user_id, :integer
+
   attribute :vaccine_method, :string
   attribute :delivery_site, :string
   attribute :dose_sequence, :integer
@@ -37,10 +39,16 @@ class VaccinateForm
               maximum: 300
             }
 
-  validates :vaccine_method, inclusion: { in: :vaccine_method_options }
   validates :pre_screening_notes, length: { maximum: 1000 }
-
   validates :pre_screening_confirmed, presence: true, if: :administered?
+
+  validates :supplied_by_user_id,
+            inclusion: {
+              in: :supplied_by_user_id_values
+            },
+            if: :requires_supplied_by_user_id?
+
+  validates :vaccine_method, inclusion: { in: :vaccine_method_options }
   validates :delivery_site,
             inclusion: {
               in: :delivery_site_options
@@ -64,6 +72,12 @@ class VaccinateForm
 
     super
   end
+
+  def supplied_by_users
+    current_user.selected_team.users.show_in_suppliers
+  end
+
+  def requires_supplied_by_user_id? = !current_user.show_in_suppliers
 
   def save(draft_vaccination_record:)
     return nil if invalid?
@@ -99,6 +113,7 @@ class VaccinateForm
     draft_vaccination_record.patient_id = patient.id
     draft_vaccination_record.performed_at = Time.current
     draft_vaccination_record.performed_by_user = current_user
+    draft_vaccination_record.supplied_by_user_id = supplied_by_user_id
     draft_vaccination_record.performed_ods_code = organisation.ods_code
     draft_vaccination_record.programme = programme
     draft_vaccination_record.session_id = session.id
@@ -111,6 +126,8 @@ class VaccinateForm
   delegate :organisation, to: :session
 
   def administered? = vaccine_method != "none"
+
+  def supplied_by_user_id_values = supplied_by_users.pluck(:id)
 
   def vaccine_method_options
     programme.vaccine_methods + ["none"]

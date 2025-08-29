@@ -10,7 +10,11 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
   after_action :verify_authorized
 
   def create
-    authorize VaccinationRecord
+    authorize VaccinationRecord.new(
+                patient: @patient,
+                session: @session,
+                programme: @programme
+              )
 
     draft_vaccination_record =
       DraftVaccinationRecord.new(request_session: session, current_user:)
@@ -28,9 +32,10 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
     if @vaccinate_form.save(draft_vaccination_record:)
       steps = draft_vaccination_record.wizard_steps
 
-      steps.delete(:notes) # this is on the confirmation page
-      steps.delete(:identity) # this can only be changed from confirmation page
       steps.delete(:dose) # this can only be changed from confirmation page
+      steps.delete(:identity) # this can only be changed from confirmation page
+      steps.delete(:notes) # this is on the confirmation page
+      steps.delete(:supplier) # this can only be changed from confirmation page
 
       steps.delete(:date_and_time)
       steps.delete(:outcome) if draft_vaccination_record.administered?
@@ -65,6 +70,7 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
         identity_check_confirmed_by_patient
         pre_screening_confirmed
         pre_screening_notes
+        supplied_by_user_id
         vaccine_id
         vaccine_method
       ]

@@ -146,6 +146,9 @@ en:
             status_and_vaccine_method:
               blank: Choose a status
               inclusion: Choose a status
+            add_psd:
+              blank: Select yes or no
+              inclusion: Select yes or no
         vaccinate_form:
           attributes:
             delivery_site:
@@ -162,6 +165,8 @@ en:
               blank: Confirm you’ve checked the pre-screening statements are true
             pre_screening_notes:
               too_long: Enter notes that are less than %{count} characters long
+            supplied_by_user_id:
+              inclusion: Choose which nurse identified and pre-screened the child and supplied the vaccine
             vaccine_method:
               inclusion: Choose if they are ready to vaccinate
         vaccination_report:
@@ -685,6 +690,7 @@ en:
       record: Record vaccinations
       register: Register
       triage: Triage
+      patient_specific_directions: PSDs
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results
@@ -739,6 +745,7 @@ en:
     route: route
     school: school
     session: session
+    supplier: supplier
     timeline: timeline
     triage: triage
     type: type

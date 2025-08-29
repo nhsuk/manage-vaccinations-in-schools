@@ -9,9 +9,13 @@
                                         ].compact) %>
 <% end %>
 
-<% if policy(VaccinationRecord).new? && (outstanding_programmes = @patient_session.outstanding_programmes).any? %>
+<% if (outstanding_programmes = @patient_session.outstanding_programmes).any? %>
+  <% programmes_can_record_vaccination = outstanding_programmes.filter do |programme|
+       policy(VaccinationRecord.new(patient: @patient, session: @session, programme:)).new?
+     end %>
+
   <%= govuk_notification_banner(title_text: "Important") do |notification_banner| %>
-    <% notification_banner.with_heading(text: "You still need to record an outcome for #{outstanding_programmes.map(&:name).to_sentence}.") %>
+    <% notification_banner.with_heading(text: "You still need to record an outcome for #{programmes_can_record_vaccination.map(&:name).to_sentence}.") %>
   <% end %>
 <% end %>
 
@@ -25,8 +29,14 @@
 
 <ul class="app-action-list">
   <% if (session_attendance = @patient_session.todays_attendance) %>
+    <% if @patient_session.psd_added?(programme: @programme) %>
+      <li class="app-action-list__item">
+        <strong class="nhsuk-tag nhsuk-tag--aqua-green">PSD added</strong>
+      </li>
+    <% end %>
+
     <li class="app-action-list__item">
-      <%= render AppRegisterStatusTagComponent.new(@patient_session.registration_status&.status || "unknown") %>
+      <%= render AppStatusTagComponent.new(@patient_session.registration_status&.status || "unknown", context: :register) %>
     </li>
 
     <% if policy(session_attendance).edit? && @session.requires_registration? %>
@@ -39,7 +49,7 @@
     <% end %>
   <% end %>
 
-  <% if policy(VaccinationRecord).create? && @programme && @patient_session.can_record_as_already_vaccinated?(programme: @programme) %>
+  <% if @programme && policy(VaccinationRecord.new(patient: @patient, session: @session, programme: @programme)).record_already_vaccinated? %>
     <li class="app-action-list__item">
       <%= link_to "Record as already vaccinated",
                   session_patient_programme_record_already_vaccinated_path(@session, @patient, @programme) %>

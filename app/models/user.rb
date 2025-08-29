@@ -72,6 +72,8 @@ class User < ApplicationRecord
   scope :recently_active,
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
 
+  scope :show_in_suppliers, -> { where(show_in_suppliers: true) }
+
   enum :fallback_role,
        {
          nurse: 0,
@@ -126,6 +128,8 @@ class User < ApplicationRecord
     role =
       if is_healthcare_assistant?
         "Healthcare Assistant"
+      elsif is_prescriber?
+        "Prescriber"
       elsif is_nurse?
         "Nurse"
       else
@@ -149,6 +153,10 @@ class User < ApplicationRecord
     else
       fallback_role_healthcare_assistant?
     end
+  end
+
+  def is_prescriber?
+    cis2_enabled? ? cis2_info.is_prescriber? : fallback_role_prescriber?
   end
 
   def is_superuser?

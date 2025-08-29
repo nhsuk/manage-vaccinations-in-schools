@@ -12,6 +12,7 @@ class PatientSearchForm < SearchForm
   attribute :date_of_birth_year, :integer
   attribute :missing_nhs_number, :boolean
   attribute :vaccination_status, :string
+  attribute :patient_specific_direction_status, :string
   attribute :programme_types, array: true
   attribute :q, :string
   attribute :register_status, :string
@@ -59,6 +60,7 @@ class PatientSearchForm < SearchForm
     scope = filter_register_status(scope)
     scope = filter_triage_status(scope)
     scope = filter_vaccine_method(scope)
+    scope = filter_patient_specific_direction_status(scope)
 
     scope.order_by_name
   end
@@ -163,6 +165,19 @@ class PatientSearchForm < SearchForm
           academic_year:
         )
       end
+    else
+      scope
+    end
+  end
+
+  def filter_patient_specific_direction_status(scope)
+    return scope if (status = patient_specific_direction_status&.to_sym).blank?
+
+    case status
+    when :added
+      scope.has_patient_specific_direction(programme: programmes)
+    when :not_added
+      scope.without_patient_specific_direction(programme: programmes)
     else
       scope
     end

@@ -1,11 +1,11 @@
 <% content_for :before_main do %>
-  <%= govuk_back_link(href: edit_session_path(@session)) %>
+  <%= govuk_back_link(href: session_edit_path(@session)) %>
 <% end %>
 
 <% legend = "Which programmes is this session part of?" %>
 <% content_for :page_title, legend %>
 
-<%= form_with model: @form, url: edit_programmes_session_path(@session), method: :put do |f| %>
+<%= form_with model: @form, url: programmes_session_edit_path(@session), method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_collection_check_boxes :programme_ids, policy_scope(Programme), :id, :name,

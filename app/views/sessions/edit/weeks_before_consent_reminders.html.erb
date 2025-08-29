@@ -1,11 +1,11 @@
 <% content_for :before_main do %>
-  <%= govuk_back_link(href: edit_session_path(@session)) %>
+  <%= govuk_back_link(href: session_edit_path(@session)) %>
 <% end %>
 
 <% legend = "When should parents get a reminder to give consent?" %>
 <% content_for :page_title, legend %>
 
-<%= form_with model: @session, url: edit_weeks_before_consent_reminders_session_path(@session), method: :put do |f| %>
+<%= form_with model: @session, url: weeks_before_consent_reminders_session_edit_path(@session), method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_text_field :weeks_before_consent_reminders,

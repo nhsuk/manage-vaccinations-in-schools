@@ -34,6 +34,7 @@ describe PatientSearchForm do
   let(:register_status) { nil }
   let(:triage_status) { nil }
   let(:vaccine_method) { nil }
+  let(:patient_specific_direction_status) { nil }
   let(:year_groups) { %w[8 9 10 11] }
 
   let(:params) do
@@ -46,6 +47,7 @@ describe PatientSearchForm do
       date_of_birth_year:,
       missing_nhs_number:,
       vaccination_status:,
+      patient_specific_direction_status:,
       programme_types:,
       q:,
       register_status:,
@@ -455,6 +457,50 @@ describe PatientSearchForm do
           create(:patient_session, :consent_given_triage_needed, session:)
 
         expect(form.apply(scope)).to include(patient_session)
+      end
+    end
+
+    context "filtering on patient specific direction status" do
+      let(:consent_statuses) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:vaccination_status) { nil }
+      let(:programme_types) { nil }
+      let(:q) { nil }
+      let(:register_status) { nil }
+      let(:triage_status) { nil }
+      let(:year_groups) { nil }
+
+      let!(:patient_session_with_psd) do
+        create(:patient_session, session:).tap do |patient_session|
+          create(
+            :patient_specific_direction,
+            patient: patient_session.patient,
+            programme: programmes.first
+          )
+        end
+      end
+
+      let!(:patient_session_without_psd) { create(:patient_session, session:) }
+
+      context "when status is 'added'" do
+        let(:patient_specific_direction_status) { "added" }
+
+        it "finds the patient with the PSD" do
+          expect(form.apply(scope)).to contain_exactly(patient_session_with_psd)
+        end
+      end
+
+      context "when status is 'not_added'" do
+        let(:patient_specific_direction_status) { "not_added" }
+
+        it "finds the patient that has no PSD" do
+          expect(form.apply(scope)).to contain_exactly(
+            patient_session_without_psd
+          )
+        end
       end
     end
 
