@@ -212,6 +212,11 @@ locals {
     CORE      = concat(local.secret_values["CORE"], local.parameter_values["CORE"])
     REPORTING = concat(local.secret_values["REPORTING"], local.parameter_values["REPORTING"])
   }
+  container_ports = {
+    web       = 4000
+    good_job  = 4000
+    reporting = 5000
+  }
 }
 
 ########## RDS configuration ##########
@@ -301,6 +306,13 @@ variable "active_lb_target_group" {
   }
 }
 
+variable "reporting_endpoints" {
+  type        = list(string)
+  description = "List of endpoints for the loadbalancer to forward to the reporting service"
+  default     = ["/reporting", "/reporting/*"]
+  nullable    = false
+}
+
 ########## Valkey Configuration ##########
 
 variable "valkey_port" {
@@ -372,7 +384,8 @@ variable "valkey_log_retention_days" {
 }
 
 locals {
-  ecs_initial_lb_target_group     = var.active_lb_target_group == "green" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
-  ecs_sg_ids                      = [module.web_service.security_group_id, module.sidekiq_service.security_group_id]
-  valkey_cache_availability_zones = var.valkey_failover_enabled ? [aws_subnet.private_subnet_a.availability_zone, aws_subnet.private_subnet_b.availability_zone] : [aws_subnet.private_subnet_a.availability_zone]
+  ecs_initial_lb_target_group       = var.active_lb_target_group == "green" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
+  reporting_initial_lb_target_group = var.active_lb_target_group == "green" ? aws_lb_target_group.reporting_green.arn : aws_lb_target_group.reporting_blue.arn
+  ecs_sg_ids                        = [module.web_service.security_group_id, module.sidekiq_service.security_group_id]
+  valkey_cache_availability_zones   = var.valkey_failover_enabled ? [aws_subnet.private_subnet_a.availability_zone, aws_subnet.private_subnet_b.availability_zone] : [aws_subnet.private_subnet_a.availability_zone]
 }
