@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe API::Reporting::VaccinationEventsController do
+  it_behaves_like "a ReportingAPI controller"
+
+  include ReportingAPIHelper
+
   describe "#group_clause" do
     let(:group_clause) { controller.send(:group_clause, params) }
     let(:params) { { group: groups } }
@@ -48,6 +52,39 @@ describe API::Reporting::VaccinationEventsController do
 
       it "strips the empty elements from the output" do
         expect(resulting_groups).to eq(resulting_groups.compact)
+      end
+    end
+  end
+
+  describe "#index" do
+    context "with the reporting_api feature flag enabled" do
+      before do
+        Flipper.enable(:reporting_api)
+      end
+      context "given a valid JWT" do
+        before do
+          request.headers["Authorization"] = "Bearer #{valid_jwt}"
+        end
+        context "with no content type requested" do
+          it "responds with JSON" do
+            get :index
+            expect(response.content_type).to eq("application/json")
+          end
+        end
+
+        context "when requesting JSON" do
+          it "responds with JSON" do
+            get :index, format: :json
+            expect(response.content_type).to eq("application/json")
+          end
+        end
+
+        context "when requesting CSV" do
+          it "responds with CSV" do
+            get :index, format: :csv
+            expect(response.content_type).to eq("text/csv")
+          end
+        end
       end
     end
   end
