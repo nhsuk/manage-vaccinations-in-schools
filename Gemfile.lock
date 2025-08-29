@@ -659,7 +659,7 @@ GEM
       tilt (~> 2.0)
       yard (~> 0.9, >= 0.9.24)
       yard-solargraph (~> 0.1)
-    solargraph-rails (1.2.2)
+    solargraph-rails (1.2.3)
       activesupport
       solargraph (>= 0.48.0, < 0.57)
     splunk-sdk-ruby (1.0.5)
