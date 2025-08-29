@@ -44,7 +44,6 @@ class PatientSession < ApplicationRecord
   belongs_to :patient
   belongs_to :session
 
-  has_many :pre_screenings
   has_many :session_attendances, dependent: :destroy
   has_one :registration_status
 
@@ -63,6 +62,10 @@ class PatientSession < ApplicationRecord
           -> { where(session_id: it.session_id).order(created_at: :desc) },
           through: :patient,
           source: :notes
+
+  has_many :pre_screenings,
+           -> { where(patient_id: it.patient_id) },
+           through: :session
 
   has_many :session_notifications,
            -> { where(session_id: it.session_id) },

@@ -19,6 +19,10 @@ class PatientSessions::BaseController < ApplicationController
       )
   end
 
+  def set_session_date
+    @session_date = @session.session_dates.find_by!(value: Date.current)
+  end
+
   def set_academic_year
     @academic_year = @session.academic_year
   end

@@ -5,6 +5,7 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
   include VaccinationMailerConcern
 
   before_action :set_todays_batch
+  before_action :set_session_date
 
   after_action :verify_authorized
 
@@ -17,7 +18,8 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
     @vaccinate_form =
       VaccinateForm.new(
         current_user:,
-        patient_session: @patient_session,
+        patient: @patient,
+        session_date: @session_date,
         programme: @programme,
         todays_batch: @todays_batch,
         **vaccinate_form_params
