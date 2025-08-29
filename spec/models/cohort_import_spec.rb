@@ -385,6 +385,41 @@ describe CohortImport do
       end
     end
 
+    context "with an existing patient with a school move" do
+      let!(:existing_patient) do
+        create(
+          :patient,
+          given_name: "Jimmy",
+          family_name: "Smith",
+          date_of_birth: Date.new(2010, 1, 2),
+          nhs_number: nil,
+          team:,
+          school: create(:school)
+        )
+      end
+      let!(:school_move) do
+        create(:school_move, :to_school, patient: existing_patient)
+      end
+
+      before do
+        team.sessions.each do |session|
+          create(:patient_session, session:, patient: existing_patient)
+        end
+      end
+
+      it "doesn't create an additional patient" do
+        expect { process! }.to change(Patient, :count).by(2)
+      end
+
+      it "replaces the existing school move" do
+        expect { process! }.not_to(
+          change { existing_patient.reload.school_moves.count }
+        )
+
+        expect(school_move.reload.school).to eq(location)
+      end
+    end
+
     context "with an unscheduled session" do
       let(:session) do
         create(:session, :unscheduled, team:, programmes:, location:)
