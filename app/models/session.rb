@@ -279,11 +279,11 @@ class Session < ApplicationRecord
     end
   end
 
-  def send_consent_reminders_at
-    return nil if dates.empty? || days_before_consent_reminders.nil?
+  def next_reminder_dates
+    return [] if days_before_consent_reminders.nil?
 
-    reminder_dates = dates.map { _1 - days_before_consent_reminders.days }
-    reminder_dates.find(&:future?) || reminder_dates.last
+    reminder_dates = dates.map { it - days_before_consent_reminders.days }
+    reminder_dates.select(&:future?)
   end
 
   def open_consent_at = send_consent_requests_at
@@ -304,6 +304,15 @@ class Session < ApplicationRecord
 
   def open_for_consent?
     close_consent_at&.today? || close_consent_at&.future? || false
+  end
+
+  def next_reminder_date = next_reminder_dates.first
+
+  def patients_with_no_consent_response_count
+    patient_sessions.has_consent_status(
+      "no_response",
+      programme: programmes
+    ).count
   end
 
   private

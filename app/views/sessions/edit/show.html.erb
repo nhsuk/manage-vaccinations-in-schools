@@ -42,13 +42,17 @@
           end
         end
       
-        if (send_consent_reminders_at = @session.send_consent_reminders_at).present?
+        if @session.open_for_consent?
           summary_list.with_row do |row|
             row.with_key { "Consent reminders" }
             row.with_value do
               safe_join([
                 "Send #{pluralize(@session.weeks_before_consent_reminders, "week")} before each session",
-                tag.span("Next: #{send_consent_reminders_at.to_fs(:long_day_of_week)}", class: "nhsuk-u-secondary-text-colour"),
+                if (next_date = @session.next_reminder_date).nil?
+                  tag.span("No more reminders will be sent", class: "nhsuk-u-secondary-text-colour")
+                else
+                  tag.span("Next: #{next_date.to_fs(:long_day_of_week)}", class: "nhsuk-u-secondary-text-colour")
+                end,
               ], tag.br)
             end
             if @session.can_change_notification_dates?

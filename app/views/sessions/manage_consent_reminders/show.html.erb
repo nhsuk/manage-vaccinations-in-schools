@@ -1,0 +1,75 @@
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t("sessions.index.title"), href: sessions_path },
+                                          { text: @session.location.name, href: session_path(@session) },
+                                        ]) %>
+  <%= render AppBacklinkComponent.new(session_path(@session), name: @session.location.name) %>
+<% end %>
+
+<%= h1 t(".title") %>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <% t(".description").split("\n").each do |paragraph| %>
+      <p class="nhsuk-body"><%= paragraph %></p>
+    <% end %>
+    <p class="nhsuk-body">
+      <%= t(".your_schedule",
+            days: pluralize(@session.days_before_consent_reminders, "day"),
+            weeks: pluralize(@session.weeks_before_consent_reminders, "week")) %>
+    </p>
+
+    <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2"><%= t(".session_dates") %></h2>
+    <ul class="nhsuk-list nhsuk-list--bullet">
+      <% @session.dates.each do |date| %>
+        <li><%= date.to_fs(:long_day_of_week) %></li>
+      <% end %>
+    </ul>
+
+    <% if @session.next_reminder_dates.present? %>
+      <details class="nhsuk-details">
+        <summary class="nhsuk-details__summary">
+          <span class="nhsuk-details__summary-text">
+            <%= t(".reminder_dates.label") %>
+          </span>
+        </summary>
+        <div class="nhsuk-details__text">
+          <p class="nhsuk-body"><%= t(".reminder_dates.description") %></p>
+
+          <ul class="nhsuk-list app-list--spaced">
+            <% @session.next_reminder_dates.each do |date| %>
+              <li><%= date.to_fs(:long_day_of_week) %></li>
+            <% end %>
+          </ul>
+        </div>
+      </details>
+    <% end %>
+
+    <div class="nhsuk-inset-text">
+      <p class="nhsuk-body nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-2">
+        <%= t(".patients_to_get_consent.status",
+              count: @session.patients_with_no_consent_response_count,
+              total: @session.patients.count) %>
+      </p>
+
+      <p class="nhsuk-body nhsuk-u-margin-bottom-0">
+        <%= t(".next_reminder_date.text",
+              count: @session.next_reminder_date.present? ? 1 : 0,
+              date: @session.next_reminder_date.try(:to_fs, :long_day_of_week)) %>
+      </p>
+    </div>
+
+    <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Send parents a manual consent reminder</h2>
+    <p class="nhsuk-body">
+      <%= t(".pre_confirm") %>
+    </p>
+
+    <% if @session.today_or_future_dates.present? %>
+      <%= button_to t(".confirm"),
+                    session_manage_consent_reminders_path(@session),
+                    method: :post,
+                    class: "nhsuk-button" %>
+  <% end %>
+  </div>
+</div>

@@ -255,6 +255,11 @@ Rails.application.routes.draw do
              only: %i[edit update],
              controller: "sessions/invite_to_clinic"
 
+    resource :manage_consent_reminders,
+             path: "manage-consent-reminders",
+             only: %i[show create],
+             controller: "sessions/manage_consent_reminders"
+
     member do
       get "import"
 

@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
-describe SendSchoolConsentRemindersJob do
+describe SendAutomaticSchoolConsentRemindersJob do
   subject(:perform_now) { described_class.perform_now(session) }
 
-  let(:programmes) { [create(:programme)] }
+  let(:programmes) { [create(:programme, :flu)] }
 
   let(:parents) { create_list(:parent, 2) }
+
+  let(:manual_reminder_patient) { create(:patient, parents:, team:) }
 
   let(:patient_with_initial_reminder_sent) do
     create(
@@ -19,9 +21,13 @@ describe SendSchoolConsentRemindersJob do
   let(:patient_not_sent_reminder) do
     create(:patient, :consent_request_sent, parents:, programmes:)
   end
+  let(:patient_vaccinated_last_year) do
+    create(:patient, :consent_request_sent, parents:, programmes:)
+  end
   let(:patient_not_sent_reminder_joined_after_first_date) do
     create(:patient, :consent_request_sent, parents:, programmes:)
   end
+
   let(:patient_not_sent_request) { create(:patient, parents:, programmes:) }
   let(:patient_with_consent) do
     create(:patient, :consent_given_triage_not_needed, programmes:)
@@ -32,6 +38,7 @@ describe SendSchoolConsentRemindersJob do
 
   let!(:patients) do
     [
+      manual_reminder_patient,
       patient_with_initial_reminder_sent,
       patient_not_sent_reminder,
       patient_not_sent_reminder_joined_after_first_date,
@@ -61,12 +68,24 @@ describe SendSchoolConsentRemindersJob do
     )
   end
 
+  let(:user) { create(:user, team:) }
+
   before do
     ConsentNotification.request.update_all(sent_at: dates.first - 1.week)
     ConsentNotification.reminder.update_all(sent_at: dates.first)
 
     patient_not_sent_reminder_joined_after_first_date.consent_notifications.update_all(
       sent_at: dates.first + 1.day
+    )
+
+    create(
+      :consent_notification,
+      patient: manual_reminder_patient,
+      session:,
+      programmes:,
+      type: :initial_reminder,
+      sent_at: dates.first - 9.days,
+      sent_by: user
     )
   end
 
@@ -87,14 +106,15 @@ describe SendSchoolConsentRemindersJob do
     it "sends notifications to one patient" do
       expect(ConsentNotification).to receive(:create_and_send!).once.with(
         patient: patient_not_sent_reminder,
-        programmes:,
+        programmes: [programmes.first],
         session:,
-        type: :initial_reminder
+        type: :initial_reminder,
+        current_user: nil
       )
       perform_now
     end
 
-    it "records a notification" do
+    it "records notifications" do
       expect { perform_now }.to change(ConsentNotification, :count).by(1)
     end
 
@@ -104,6 +124,52 @@ describe SendSchoolConsentRemindersJob do
       it "doesn't send any notifications" do
         expect(ConsentNotification).not_to receive(:create_and_send!)
         perform_now
+      end
+    end
+
+    context "when a manual reminder was sent more than three days ago" do
+      before do
+        create(
+          :consent_notification,
+          patient: patient_not_sent_reminder,
+          session:,
+          programmes:,
+          type: :initial_reminder,
+          sent_at: 4.days.ago,
+          sent_by: user
+        )
+      end
+
+      it "sends automatic reminders" do
+        expect { perform_now }.to change(ConsentNotification, :count).by(1)
+
+        notification = ConsentNotification.last
+        expect(notification.patient).to eq(patient_not_sent_reminder)
+        expect(notification.programmes.length).to eq(1)
+        expect(notification.automated_reminder?).to be true
+
+        programme_types = notification.programmes.map(&:type)
+        expect(programme_types).to match_array(programmes.map(&:type))
+      end
+    end
+
+    context "when a manual reminder was sent less than three days ago" do
+      let(:user) { create(:user, team:) }
+
+      before do
+        create(
+          :consent_notification,
+          patient: patient_not_sent_reminder,
+          session:,
+          programmes:,
+          type: :initial_reminder,
+          sent_at: 2.days.ago,
+          sent_by: user
+        )
+      end
+
+      it "does not send an automatic reminder" do
+        expect { perform_now }.not_to change(ConsentNotification, :count)
       end
     end
   end
@@ -123,6 +189,31 @@ describe SendSchoolConsentRemindersJob do
     it "doesn't send any notifications" do
       expect(ConsentNotification).not_to receive(:create_and_send!)
       perform_now
+    end
+  end
+
+  context "five days before the first session, eight before the second" do
+    let(:today) { dates.first - 5.days }
+    let(:user) { create(:user, team:) }
+
+    context "when a manual reminder was sent less than three days before the reminder should have gone out" do
+      it "does not send an automatic reminder because the first session's reminder should be skipped" do
+        expect { perform_now }.not_to change(
+          ConsentNotification.where(patient_id: manual_reminder_patient.id),
+          :count
+        )
+      end
+    end
+  end
+
+  context "2 days before the first session, six before the second" do
+    let(:today) { dates.first - 2.days }
+    let(:user) { create(:user, team:) }
+
+    context "when a manual reminder was sent less than three days before the reminder should have gone out" do
+      it "sends the reminder for the second session" do
+        expect { perform_now }.to change(ConsentNotification, :count).by(1)
+      end
     end
   end
 
@@ -153,21 +244,24 @@ describe SendSchoolConsentRemindersJob do
         patient: patient_not_sent_reminder,
         programmes:,
         session:,
-        type: :initial_reminder
+        type: :initial_reminder,
+        current_user: nil
       )
 
       expect(ConsentNotification).to receive(:create_and_send!).once.with(
         patient: patient_not_sent_reminder_joined_after_first_date,
         programmes:,
         session:,
-        type: :initial_reminder
+        type: :initial_reminder,
+        current_user: nil
       )
 
       expect(ConsentNotification).to receive(:create_and_send!).once.with(
         patient: patient_with_initial_reminder_sent,
         programmes:,
         session:,
-        type: :subsequent_reminder
+        type: :subsequent_reminder,
+        current_user: nil
       )
 
       perform_now
