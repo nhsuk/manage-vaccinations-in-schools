@@ -35,6 +35,14 @@
 #  patient_local_authority_from_postcode_mhclg_code :string
 #  patient_local_authority_from_postcode_short_name :string
 #  patient_nhs_number                               :string
+#  patient_school_address_postcode                  :string
+#  patient_school_address_town                      :string
+#  patient_school_gias_local_authority_code         :string
+#  patient_school_local_authority_gss_code          :string
+#  patient_school_local_authority_mchlg_code        :string
+#  patient_school_local_authority_short_name        :string
+#  patient_school_name                              :string
+#  patient_school_type                              :string
 #  patient_year_group                               :integer
 #  programme_type                                   :string
 #  source_type                                      :string
@@ -59,6 +67,7 @@
 #  location_id                                      :bigint
 #  organisation_id                                  :bigint
 #  patient_id                                       :bigint
+#  patient_school_id                                :bigint
 #  programme_id                                     :bigint
 #  source_id                                        :bigint
 #  team_id                                          :bigint
@@ -79,10 +88,16 @@
 #  ix_rve_tstamp_year_month_prog_type                (event_timestamp_academic_year,event_timestamp_month,programme_id,event_type)
 #
 describe ReportingAPI::VaccinationEvent do
+  let!(:flu) { Programme.find_by_type('flu') || create(:programme, type: 'flu') }
+  
+  let(:location) { create(:school, name: "St Vaxes")}
+  let(:sample_session) { create(:session, location: location, programmes: [flu]) }
+  
   describe ".with_count_of_patients_vaccinated" do
     let(:patient_a) { create(:patient, random_nhs_number: true, year_group: 7) }
     let(:patient_b) { create(:patient, random_nhs_number: true, year_group: 7) }
     let(:patient_c) { create(:patient, random_nhs_number: true, year_group: 8) }
+
 
     before do
       create_list(
@@ -90,21 +105,24 @@ describe ReportingAPI::VaccinationEvent do
         2,
         for_patient: patient_a,
         year_group: 7,
-        outcome: "administered"
+        outcome: "administered",
+        session: sample_session,
       )
       create_list(
         :reporting_api_vaccination_event,
         1,
         for_patient: patient_b,
         year_group: 7,
-        outcome: "already_had"
+        outcome: "already_had",
+        session: sample_session,
       )
       create_list(
         :reporting_api_vaccination_event,
         3,
         for_patient: patient_c,
         year_group: 8,
-        outcome: "administered"
+        outcome: "administered",
+        session: sample_session
       )
     end
 
@@ -145,24 +163,28 @@ describe ReportingAPI::VaccinationEvent do
         :reporting_api_vaccination_event,
         2,
         year_group: 7,
+        session: sample_session,
         outcome: "administered"
       )
       create_list(
         :reporting_api_vaccination_event,
         1,
         year_group: 7,
+        session: sample_session,
         outcome: "already_had"
       )
       create_list(
         :reporting_api_vaccination_event,
         3,
         year_group: 8,
+        session: sample_session,
         outcome: "administered"
       )
       create_list(
         :reporting_api_vaccination_event,
         2,
         year_group: 8,
+        session: sample_session,
         outcome: "already_had"
       )
     end
@@ -174,23 +196,23 @@ describe ReportingAPI::VaccinationEvent do
         resultset.select(:patient_year_group).with_counts_of_outcomes.to_a
       end
 
-      it "adds total_vaccinated_by_sais to the resultset" do
+      it "adds total_vaccinations_performed to the resultset" do
         expect(resultset.with_counts_of_outcomes).to all(
-          have_attribute(:total_vaccinated_by_sais)
+          have_attribute(:total_vaccinations_performed)
         )
       end
 
-      describe "the total_vaccinated_by_sais attribute" do
+      describe "the total_vaccinations_performed attribute" do
         it "equals the count of records in the current group with vaccination_record_outcome: 'administered'" do
           expect(
             results
               .find { |event| event.patient_year_group == 7 }
-              .total_vaccinated_by_sais
+              .total_vaccinations_performed
           ).to eq(2)
           expect(
             results
               .find { |event| event.patient_year_group == 8 }
-              .total_vaccinated_by_sais
+              .total_vaccinations_performed
           ).to eq(3)
         end
       end

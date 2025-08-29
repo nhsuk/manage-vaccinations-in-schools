@@ -53,13 +53,6 @@ class API::Reporting::BaseController < ActionController::API
     render status: :forbidden and return unless Flipper.enabled?(:reporting_api)
   end
 
-  # Expects a hash of (param name) => (attribute name)
-  # Returns a hash of (attribute name) => (value of param with that name)
-  # suitable for use in a .where(...) clause
-  def filter_clause(_params, _filters)
-    @filters.to_where_clause
-  end
-
   # convert a relation to a csv file,
   # given a mapping of header names to attribute names
   # e.g. { 'Local Authority' => :patient_local_authority_from_postcode_short_name }
