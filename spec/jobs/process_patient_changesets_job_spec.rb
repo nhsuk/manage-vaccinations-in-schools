@@ -8,10 +8,6 @@ describe ProcessPatientChangesetsJob do
 
   let(:step) { nil }
 
-  before do
-    allow(patient_changeset.import).to receive(:slow?).and_return(false)
-  end
-
   context "when one match is found on initial search" do
     before { allow(PDS::Patient).to receive(:search).and_return(mock_patient) }
 
@@ -41,13 +37,13 @@ describe ProcessPatientChangesetsJob do
   context "when no match is found initially" do
     before do
       allow(PDS::Patient).to receive(:search).and_return(nil)
-      allow(described_class).to receive(:perform_now).and_call_original
+      allow(described_class).to receive(:perform_later).and_call_original
     end
 
     it "proceeds to next search steps" do
       perform
 
-      expect(described_class).to have_received(:perform_now).with(
+      expect(described_class).to have_received(:perform_later).with(
         patient_changeset,
         :no_fuzzy_with_wildcard_postcode
       )
@@ -59,13 +55,13 @@ describe ProcessPatientChangesetsJob do
       allow(PDS::Patient).to receive(:search).and_raise(
         NHS::PDS::TooManyMatches
       )
-      allow(described_class).to receive(:perform_now).and_call_original
+      allow(described_class).to receive(:perform_later).and_call_original
     end
 
     it "falls back to no history search" do
       perform
 
-      expect(described_class).to have_received(:perform_now).with(
+      expect(described_class).to have_received(:perform_later).with(
         patient_changeset,
         :no_fuzzy_without_history
       )
@@ -125,19 +121,18 @@ describe ProcessPatientChangesetsJob do
 
     before do
       patient_changeset.child_attributes["given_name"] = "Al"
-      allow(described_class).to receive(:perform_now).and_call_original
+      allow(described_class).to receive(:perform_later).and_call_original
       allow(PDS::Patient).to receive(:search).and_return(nil)
     end
 
     it "skips to the next appropriate step" do
       perform
 
-      expect(described_class).to have_received(:perform_now).with(
+      expect(described_class).to have_received(:perform_later).with(
         patient_changeset,
         :no_fuzzy_with_wildcard_family_name
       )
 
-      expect(patient_changeset).to be_processed
       given_name_result =
         patient_changeset.search_results.find do |result|
           result["step"] == "no_fuzzy_with_wildcard_given_name"
@@ -161,22 +156,6 @@ describe ProcessPatientChangesetsJob do
     end
   end
 
-  context "when import is slow" do
-    before do
-      allow(patient_changeset.import).to receive(:slow?).and_return(true)
-      allow(PDS::Patient).to receive(:search).and_return(nil)
-    end
-
-    it "enqueues the next search step" do
-      expect(described_class).to receive(:perform_later).with(
-        patient_changeset,
-        :no_fuzzy_with_wildcard_postcode
-      )
-
-      perform
-    end
-  end
-
   context "when all changesets are processed" do
     before do
       allow(PDS::Patient).to receive(:search).and_return(mock_patient)
@@ -184,7 +163,7 @@ describe ProcessPatientChangesetsJob do
     end
 
     it "triggers CommitPatientChangesetsJob" do
-      expect(CommitPatientChangesetsJob).to receive(:perform_now).with(
+      expect(CommitPatientChangesetsJob).to receive(:perform_later).with(
         patient_changeset.import
       )
 

@@ -204,6 +204,12 @@ describe "Class list imports duplicates" do
       "spec/fixtures/class_import/duplicates.csv"
     )
     click_on "Continue"
+
+    perform_enqueued_jobs(only: ProcessImportJob)
+    perform_enqueued_jobs(only: ProcessPatientChangesetsJob)
+    perform_enqueued_jobs(only: CommitPatientChangesetsJob)
+
+    click_link ClassImport.last.created_at.to_fs(:long), match: :first
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
