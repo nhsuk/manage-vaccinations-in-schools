@@ -131,7 +131,11 @@ class DraftVaccinationRecord
   alias_method :administered, :administered?
 
   def protocol
-    :pgd
+    return :pgd unless @current_user.is_healthcare_assistant?
+    return :psd if session&.psd_enabled? && vaccine_method == "nasal"
+    return :national if session&.national_protocol_enabled?
+
+    :pgd # Default protocol for HCAs when no special protocols apply
   end
 
   def batch

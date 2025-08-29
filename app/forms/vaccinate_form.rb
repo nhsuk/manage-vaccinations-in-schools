@@ -77,7 +77,24 @@ class VaccinateForm
     current_user.selected_team.users.show_in_suppliers
   end
 
-  def requires_supplied_by_user_id? = !current_user.show_in_suppliers
+  def requires_supplied_by_user_id?
+    return false unless patient_session
+
+    # Under national protocol, healthcare providers normally need to provide supplier
+    # details when recording a vaccination. However, supplier details are not required
+    # for Healthcare Assistants (HCAs) operating under Patient Specific Direction (PSD)
+    # protocol.
+    operating_under_national_protocol? && user_not_designated_as_supplier?
+  end
+
+  def operating_under_national_protocol?
+    session.national_protocol_enabled? && !session.psd_enabled? &&
+      !patient_session.psd_added?(programme:)
+  end
+
+  def user_not_designated_as_supplier?
+    !current_user.show_in_suppliers
+  end
 
   def save(draft_vaccination_record:)
     return nil if invalid?
