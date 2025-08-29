@@ -79,6 +79,19 @@ class AppPatientSearchFormComponent < ViewComponent::Base
             <% end %>
           <% end %>
         <% end %>
+        
+        <% if patient_specific_direction_statuses.any? %>
+          <%= f.govuk_radio_buttons_fieldset :patient_specific_direction_status, legend: { text: "PSD status", size: "s" } do %>
+            <%= f.govuk_radio_button :patient_specific_direction_status, "", checked: form.patient_specific_direction_status.blank?, label: { text: "Any" } %>
+
+            <% patient_specific_direction_statuses.each do |status| %>
+              <%= f.govuk_radio_button :patient_specific_direction_status,
+                                       status,
+                                       checked: form.patient_specific_direction_status == status,
+                                       label: { text: t(status, scope: %i[status patient_specific_direction label]) } %>
+            <% end %>
+          <% end %>
+        <% end %>
 
         <% if vaccine_methods.any? %>
           <%= f.govuk_radio_buttons_fieldset :vaccine_method, legend: { text: "Vaccination method", size: "s" } do %>
@@ -182,6 +195,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     register_statuses: [],
     triage_statuses: [],
     vaccination_statuses: [],
+    patient_specific_direction_statuses: [],
     vaccine_methods: [],
     year_groups: [],
     heading_level: 3,
@@ -197,6 +211,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     @register_statuses = register_statuses
     @triage_statuses = triage_statuses
     @vaccination_statuses = vaccination_statuses
+    @patient_specific_direction_statuses = patient_specific_direction_statuses
     @vaccine_methods = vaccine_methods
     @year_groups = year_groups
     @heading_level = heading_level
@@ -212,6 +227,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               :register_statuses,
               :triage_statuses,
               :vaccination_statuses,
+              :patient_specific_direction_statuses,
               :vaccine_methods,
               :year_groups,
               :heading_level,
