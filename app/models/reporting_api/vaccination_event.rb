@@ -86,7 +86,7 @@ class ReportingAPI::VaccinationEvent < ApplicationRecord
     select(
       count_sql_where(
         comparison: "vaccination_record_outcome = 'administered'",
-        as: "total_vaccinated_by_sais"
+        as: "total_vaccinations_performed"
       )
     )
   end
