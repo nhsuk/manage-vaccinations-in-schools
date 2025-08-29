@@ -22,6 +22,13 @@ class AddReportingAPIVaccinationEvents < ActiveRecord::Migration[8.0]
       t.integer :patient_birth_academic_year
       t.integer :patient_year_group
 
+      t.bigint :patient_school_id
+      t.string :patient_school_name
+      t.string :patient_school_address_town
+      t.string :patient_school_address_postcode
+      t.string :patient_school_gias_local_authority_code
+      t.string :patient_school_type
+
       t.string :patient_local_authority_from_postcode_gss_code
       t.string :patient_local_authority_from_postcode_mhclg_code
       t.string :patient_local_authority_from_postcode_short_name

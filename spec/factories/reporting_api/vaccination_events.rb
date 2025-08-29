@@ -35,6 +35,11 @@
 #  patient_local_authority_from_postcode_mhclg_code :string
 #  patient_local_authority_from_postcode_short_name :string
 #  patient_nhs_number                               :string
+#  patient_school_address_postcode                  :string
+#  patient_school_address_town                      :string
+#  patient_school_gias_local_authority_code         :string
+#  patient_school_name                              :string
+#  patient_school_type                              :string
 #  patient_year_group                               :integer
 #  programme_type                                   :string
 #  source_type                                      :string
@@ -59,6 +64,7 @@
 #  location_id                                      :bigint
 #  organisation_id                                  :bigint
 #  patient_id                                       :bigint
+#  patient_school_id                                :bigint
 #  programme_id                                     :bigint
 #  source_id                                        :bigint
 #  team_id                                          :bigint

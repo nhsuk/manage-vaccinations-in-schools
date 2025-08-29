@@ -220,6 +220,7 @@ class VaccinationRecord < ApplicationRecord
       patient: patient&.reload,
       patient_local_authority_from_postcode:
         patient&.local_authority_from_postcode,
+      patient_school: patient&.school,
       location: location,
       location_local_authority: location&.local_authority,
       vaccination_record: self,
