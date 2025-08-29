@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 module NHS::ImmunisationsAPI
-  PROGRAMME_TYPES = %w[flu hpv].freeze
+  class BundleLinkParamsMismatch < StandardError
+  end
+
+  class OperationOutcomeInBundle < StandardError
+  end
 
   class << self
     def sync_immunisation(vaccination_record)
@@ -187,10 +191,71 @@ module NHS::ImmunisationsAPI
     )
       vaccination_record.kept? && vaccination_record.recorded_in_service? &&
         vaccination_record.administered? &&
-        vaccination_record.programme.type.in?(PROGRAMME_TYPES) &&
+        vaccination_record.programme.can_write_to_immunisations_api? &&
         (ignore_nhs_number || vaccination_record.patient.nhs_number.present?) &&
         vaccination_record.notify_parents &&
         vaccination_record.patient.not_invalidated?
+    end
+
+    def search_immunisations(patient, programmes:, date_from: nil, date_to: nil)
+      unless Flipper.enabled?(:immunisations_fhir_api_integration) &&
+               Flipper.enabled?(:immunisations_fhir_api_integration_search)
+        Rails.logger.info(
+          "Not searching for vaccination records in the immunisations API as one of the" \
+            " feature flags is disabled: Patient #{patient.id}"
+        )
+        return
+      end
+
+      if programmes.empty?
+        raise "Cannot search for vaccination records in the immunisations API; no programmes provided."
+      elsif !programmes.all?(&:can_read_from_immunisations_api?)
+        raise "Cannot search for vaccination records in the immunisations API; one or more programmes is not supported."
+      end
+
+      Rails.logger.info(
+        "Searching for vaccination records in immunisations API for patient: #{patient.id}"
+      )
+
+      params = {
+        "patient.identifier" =>
+          "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}",
+        "-immunization.target" =>
+          programmes.map(&:snomed_target_disease_name).join(","),
+        "-date.from" => date_from&.strftime("%F"),
+        "-date.to" => date_to&.strftime("%F")
+      }.compact
+
+      response =
+        NHS::API.connection.get(
+          "/immunisation-fhir-api/FHIR/R4/Immunization",
+          params,
+          "Content-Type" => "application/fhir+json"
+        )
+
+      if response.status == 200
+        # # To create fixtures for testing
+        # File.write("tmp/search_response.json", response.body.to_json)
+        # Rails.logger.debug "Successfully saved"
+
+        bundle = FHIR.from_contents(response.body.to_json)
+
+        check_bundle_link_params(bundle, params)
+        check_operation_outcome_entry(bundle)
+
+        bundle
+      else
+        raise "Error searching for vaccination records for patient #{patient.id} in" \
+                " Immunisations API: unexpected response status" \
+                " #{response.status}"
+      end
+    rescue Faraday::ClientError => e
+      if (diagnostics = extract_error_diagnostics(e&.response)).present?
+        raise "Error searching for vaccination records for patient #{patient.id} in" \
+                " Immunisations API: #{diagnostics}"
+      else
+        raise
+      end
     end
 
     private
@@ -262,6 +327,38 @@ module NHS::ImmunisationsAPI
 
       if vaccination_record.patient.nhs_number.blank?
         raise "Patient nhs number is missing: #{vaccination_record.id}"
+      end
+    end
+
+    def check_bundle_link_params(bundle, request_params)
+      link = bundle.link&.find { it.relation == "self" }&.url
+
+      uri = URI(link)
+      bundle_params = URI.decode_www_form(uri.query).to_h
+
+      # TODO: There is currently a bug in the API where the `Bundle.link` value for `-immunization.target` is
+      #       incorrectly returned as `immunization.target` rather than `-immunization.target`. Matt Jarvis has
+      #       told me that this should be fixed in their next release (3) or possibly release 4, at which point we
+      #       can remove this logic.
+      tweaked_bundle_params =
+        bundle_params.transform_keys do |key|
+          key == "immunization.target" ? "-immunization.target" : key
+        end
+
+      unless tweaked_bundle_params == request_params ||
+               bundle_params == request_params
+        raise NHS::ImmunisationsAPI::BundleLinkParamsMismatch,
+              "Bundle link parameters do not match request parameters: #{tweaked_bundle_params} != #{request_params}"
+      end
+    end
+
+    def check_operation_outcome_entry(bundle)
+      operation_outcome_entry =
+        bundle.entry&.find { it.resource.resourceType == "OperationOutcome" }
+
+      if operation_outcome_entry.present?
+        raise NHS::ImmunisationsAPI::OperationOutcomeInBundle,
+              "OperationOutcome entry found in bundle: #{operation_outcome_entry.resource}"
       end
     end
   end
