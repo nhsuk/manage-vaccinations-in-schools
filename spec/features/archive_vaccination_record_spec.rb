@@ -161,7 +161,7 @@ describe "Archive vaccination record" do
       programme: @programme
     )
 
-    if Flipper.enabled?(:immunisations_fhir_api_integration)
+    if Flipper.enabled?(:imms_api_integration)
       perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
       expect(@stubbed_post_request).to have_been_requested
     end
@@ -175,7 +175,7 @@ describe "Archive vaccination record" do
 
   def and_imms_api_enqueue_write_feature_is_enabled
     Flipper.enable(:imms_api_enqueue_write)
-    Flipper.enable(:immunisations_fhir_api_integration)
+    Flipper.enable(:imms_api_integration)
 
     uuid = Random.uuid
     @stubbed_post_request = stub_immunisations_api_post(uuid:)

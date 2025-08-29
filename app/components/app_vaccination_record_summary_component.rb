@@ -246,7 +246,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
       end
 
       if @vaccination_record.respond_to?(:sync_status) &&
-           Flipper.enabled?(:immunisations_fhir_api_integration)
+           Flipper.enabled?(:imms_api_enqueue_write)
         summary_list.with_row do |row|
           row.with_key { "Synced with NHS England?" }
           row.with_value do
