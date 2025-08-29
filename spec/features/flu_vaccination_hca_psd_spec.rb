@@ -88,6 +88,38 @@ describe "Patient Specific Directions" do
     and_the_vaccination_record_uses_national_protocol
   end
 
+  context "Both PSD and National Protocol is enabled" do
+    scenario "the vaccine method is nasal" do
+      given_a_flu_programme_with_a_running_session(
+        user_type: :with_one_healthcare_assistant,
+        psd_enabled: true,
+        national_protocol_enabled: true
+      )
+
+      and_a_patient_with_a_psd_exists
+      and_i_am_signed_in(role: :healthcare_assistant)
+
+      when_i_visit_the_session_patient_programme_page
+      and_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
+      and_the_vaccination_record_has_psd_as_the_protocol
+    end
+
+    scenario "the vaccine method is injection" do
+      given_a_flu_programme_with_a_running_session(
+        user_type: :with_one_healthcare_assistant,
+        psd_enabled: true,
+        national_protocol_enabled: true
+      )
+
+      and_a_patient_with_a_psd_exists
+      and_i_am_signed_in(role: :healthcare_assistant)
+
+      when_i_visit_the_session_patient_programme_page
+      and_i_record_that_the_patient_has_been_vaccinated_with_injection
+      and_the_vaccination_record_uses_national_protocol
+    end
+  end
+
   def given_delegation_feature_flag_is_enabled
     Flipper.enable(:delegation)
   end
