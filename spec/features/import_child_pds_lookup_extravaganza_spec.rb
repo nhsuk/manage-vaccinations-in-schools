@@ -424,6 +424,15 @@ describe "Import child records" do
     click_button "Continue"
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/#{filename}")
     click_on "Continue"
+
+    perform_enqueued_jobs(only: ProcessImportJob)
+    perform_enqueued_jobs(only: ProcessPatientChangesetsJob)
+    perform_enqueued_jobs(only: CommitPatientChangesetsJob)
+
+    # TODO: Hack to make sure all the steps are processed.
+    10.times { perform_enqueued_jobs }
+
+    visit cohort_import_path(CohortImport.last)
   end
 
   def when_i_visit_a_session_page_for_the_hpv_programme
@@ -454,6 +463,13 @@ describe "Import child records" do
       "spec/fixtures/class_import/pds_extravaganza.csv"
     )
     click_on "Continue"
+
+    perform_enqueued_jobs(only: ProcessImportJob)
+    perform_enqueued_jobs(only: ProcessPatientChangesetsJob)
+    perform_enqueued_jobs(only: CommitPatientChangesetsJob)
+
+    click_link ClassImport.order(:created_at).last.created_at.to_fs(:long),
+               match: :first
   end
 
   def when_i_visit_the_import_page
@@ -590,7 +606,6 @@ describe "Import child records" do
   end
 
   def and_i_should_see_correct_patient_counts
-    perform_enqueued_jobs
     expect(Patient.count).to eq(11)
   end
 

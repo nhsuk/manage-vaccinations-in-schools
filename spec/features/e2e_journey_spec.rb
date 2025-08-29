@@ -115,6 +115,11 @@ describe "End-to-end journey" do
     click_on "Continue"
     attach_file "cohort_import[csv]", csv_file.path
     click_on "Continue"
+
+    perform_enqueued_jobs(only: ProcessImportJob)
+    perform_enqueued_jobs(only: ProcessPatientChangesetsJob)
+    perform_enqueued_jobs(only: CommitPatientChangesetsJob)
+
     visit cohort_import_path(CohortImport.last)
   end
 

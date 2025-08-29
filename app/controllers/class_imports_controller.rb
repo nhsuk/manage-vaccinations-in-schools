@@ -30,13 +30,8 @@ class ClassImportsController < ApplicationController
 
     @class_import.save!
 
-    if @class_import.slow?
-      ProcessImportJob.perform_later(@class_import)
-      redirect_to imports_path, flash: { success: "Import processing started" }
-    else
-      ProcessImportJob.perform_now(@class_import)
-      redirect_to class_import_path(@class_import)
-    end
+    ProcessImportJob.perform_later(@class_import)
+    redirect_to imports_path, flash: { success: "Import processing started" }
   end
 
   def show

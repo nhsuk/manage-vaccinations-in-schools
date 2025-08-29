@@ -158,8 +158,17 @@ describe "Import class lists" do
   end
 
   def and_i_upload_a_valid_file
+    travel 1.minute
+
     attach_file("class_import[csv]", "spec/fixtures/class_import/valid.csv")
     click_on "Continue"
+
+    perform_enqueued_jobs(only: ProcessImportJob)
+    perform_enqueued_jobs(only: ProcessPatientChangesetsJob)
+    perform_enqueued_jobs(only: CommitPatientChangesetsJob)
+
+    click_link ClassImport.order(:created_at).last.created_at.to_fs(:long),
+               match: :first
   end
 
   def then_i_should_see_the_patients
@@ -171,6 +180,7 @@ describe "Import class lists" do
     expect(page).to have_content("Date of birth 1 January 2010")
     expect(page).to have_content("Postcode SW1A 1AA")
   end
+
   alias_method :and_i_should_see_the_patients, :then_i_should_see_the_patients
 
   def when_i_click_on_upload_records

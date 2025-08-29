@@ -62,10 +62,6 @@ module CSVImportable
     csv_removed_at != nil
   end
 
-  def slow?
-    rows_count > 15
-  end
-
   def load_data!
     return if invalid?
 
@@ -132,13 +128,8 @@ module CSVImportable
           PatientChangeset.from_import_row(row:, import: self, row_number:)
         end
 
-      changesets.each do
-        if slow?
-          ProcessPatientChangesetsJob.perform_later(it)
-        else
-          ProcessPatientChangesetsJob.perform_now(it)
-        end
-      end
+      changesets.each { ProcessPatientChangesetsJob.perform_later(it) }
+
       return
     end
 

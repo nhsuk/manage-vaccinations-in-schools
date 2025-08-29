@@ -160,11 +160,7 @@ class ProcessPatientChangesetsJob < ApplicationJob
   end
 
   def enqueue_next_search(patient_changeset, next_step)
-    if patient_changeset.import.slow?
-      ProcessPatientChangesetsJob.perform_later(patient_changeset, next_step)
-    else
-      ProcessPatientChangesetsJob.perform_now(patient_changeset, next_step)
-    end
+    ProcessPatientChangesetsJob.perform_later(patient_changeset, next_step)
   end
 
   def finish_processing(patient_changeset)
@@ -173,11 +169,7 @@ class ProcessPatientChangesetsJob < ApplicationJob
 
     # TODO: Make this atomic
     if patient_changeset.import.changesets.pending.none?
-      if patient_changeset.import.slow?
-        CommitPatientChangesetsJob.perform_later(patient_changeset.import)
-      else
-        CommitPatientChangesetsJob.perform_now(patient_changeset.import)
-      end
+      CommitPatientChangesetsJob.perform_later(patient_changeset.import)
     end
   end
 end
