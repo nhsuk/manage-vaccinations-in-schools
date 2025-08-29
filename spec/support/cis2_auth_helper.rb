@@ -130,7 +130,7 @@ module CIS2AuthHelper
       healthcare_assistant: [
         CIS2Info::PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE
       ],
-      nurse: []
+      nurse: [CIS2Info::PGD_SUPPLY_ACTIVITY_CODE]
     }.fetch(role)
 
     workgroups = user.teams.where(organisation:).pluck(:workgroup)
@@ -148,7 +148,7 @@ module CIS2AuthHelper
     org_code: nil,
     org_name: "Test SAIS Org",
     user_only_has_one_role: false,
-    activity_codes: [],
+    activity_codes: [CIS2Info::PGD_SUPPLY_ACTIVITY_CODE],
     workgroups: [],
     sid: nil,
     selected_roleid: "5555666677778888"
