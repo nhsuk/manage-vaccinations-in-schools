@@ -21,6 +21,8 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class ReportingAPI::OneTimeToken < ApplicationRecord
+  SIGNING_ALGORITHM = "HS512"
+
   belongs_to :user
 
   validates :user_id, uniqueness: true, presence: true
@@ -45,5 +47,23 @@ class ReportingAPI::OneTimeToken < ApplicationRecord
 
   def expired?
     created_at < self.class.expire_before
+  end
+
+  def to_jwt
+    JWT.encode(
+      jwt_payload,
+      Settings.reporting_api.client_app.secret,
+      SIGNING_ALGORITHM
+    )
+  end
+
+  def jwt_payload
+    {
+      "iat" => Time.current.utc.to_i,
+      "data" => {
+        "user" => user.as_json,
+        "cis2_info" => cis2_info
+      }
+    }
   end
 end
