@@ -16,21 +16,33 @@ class API::Reporting::BaseController < ActionController::API
   before_action :ensure_reporting_api_feature_enabled
   before_action :authenticate_user_by_jwt!
 
-  before_action :set_default_filters, :set_filters
-
   private
 
   def render_paginated_json(records:)
     pagy, this_page_records = pagy(records, json_api: true)
 
+    set_json_headers
     render json: { data: this_page_records, links: pagy_jsonapi_links(pagy) }
+  end
+
+  def set_json_headers
+    response.headers["Content-Type"] = "application/json"
+    response.headers["Last-Modified"] = Time.now.httpdate
   end
 
   def render_csv(records:, header_mappings:, prefix: "data")
     filename = csv_filename(prefix:)
+    set_csv_headers
     send_data to_csv(records:, header_mappings:),
               filename:,
               disposition: :attachment
+  end
+
+  def set_csv_headers
+    response.headers["Content-Type"] = "text/csv"
+    response.headers["Content-Disposition"] = "attachment; filename=posts-#{Date.today}.csv"
+    response.headers["Cache-Control"] = "no-cache"
+    response.headers["Last-Modified"] = Time.now.httpdate
   end
 
   def csv_filename(prefix: "data")

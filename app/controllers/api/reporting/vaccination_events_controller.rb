@@ -26,6 +26,9 @@ class API::Reporting::VaccinationEventsController < API::Reporting::BaseControll
     organisation: :organisation_id
   }.freeze
 
+
+  before_action :set_default_filters, :set_filters
+
   def index
     @vaccinations =
       ReportingAPI::VaccinationEvent.where(@filters.to_where_clause)
@@ -38,8 +41,8 @@ class API::Reporting::VaccinationEventsController < API::Reporting::BaseControll
 
     if request.format.csv?
       render_csv records: @vaccinations,
-                 header_mappings: CSV_HEADERS,
-                 prefix: "vaccinations"
+                header_mappings: CSV_HEADERS,
+                prefix: "vaccinations"
     else
       render_paginated_json(records: @vaccinations)
     end
