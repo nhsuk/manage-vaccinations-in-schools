@@ -65,9 +65,9 @@ class API::Reporting::VaccinationEventsController < API::Reporting::BaseControll
   end
 
   def group_clause(params)
-    groups = params[:group].to_s.split(",").map { |param| GROUPS[param.to_sym] }
+    groups = params[:group].to_s.split(",").map { |param| GROUPS[param.strip.to_sym] }
     # we always group by year/month
     groups += %i[event_timestamp_year event_timestamp_month]
-    groups.uniq
+    groups.compact.uniq
   end
 end
