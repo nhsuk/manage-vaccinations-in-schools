@@ -94,6 +94,13 @@ variable "vpc_log_retention_days" {
   nullable    = false
 }
 
+variable "reporting_flask_secret_version" {
+  type        = number
+  default     = 1
+  description = "Version of the secret used by the reporting service to sign cookies, increment this value if the secret is changed."
+  nullable    = false
+}
+
 ########## Task definition configuration ##########
 
 
@@ -241,6 +248,18 @@ variable "sidekiq_replicas" {
   type        = number
   default     = 2
   description = "Amount of replicas for the sidekiq service"
+}
+
+variable "minimum_reporting_replicas" {
+  type        = number
+  default     = 2
+  description = "Minimum amount of allowed replicas for reporting service. Also the replica count when creating the service."
+}
+
+variable "maximum_reporting_replicas" {
+  type        = number
+  default     = 4
+  description = "Maximum amount of allowed replicas for reporting service"
 }
 
 variable "max_aurora_capacity_units" {
