@@ -3,10 +3,14 @@
 class AppSessionSummaryComponent < ViewComponent::Base
   erb_template <<-ERB
     <h3 class="nhsuk-heading-s nhsuk-u-margin-top-5">
-      <%= @session.location.name %>
+      <%= session.location.name %>
     </h3>
 
-     <%= govuk_summary_list(rows:, classes:) %>
+    <% if session.school? %>
+      <%= govuk_button_link_to "Import class lists", import_session_path(session), secondary: true %>
+    <% end %>
+
+    <%= govuk_summary_list(rows:, classes:) %>
   ERB
 
   def initialize(session)
