@@ -15,7 +15,7 @@ class RemovePatientSessionFromPreScreenings < ActiveRecord::Migration[8.0]
         SessionDate.find_by!(
           session_id:,
           value: pre_screening.created_at.to_date
-        )
+        ).id
       pre_screening.update_columns(patient_id:, session_date_id:)
     end
 
