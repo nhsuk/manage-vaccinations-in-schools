@@ -147,22 +147,18 @@ class Reports::ProgrammeVaccinationsExporter
     @gillick_assessments ||=
       GillickAssessment
         .select(
-          "DISTINCT ON (patient_session_id) gillick_assessments.*, " \
-            "patient_sessions.patient_id, patient_sessions.session_id"
+          "DISTINCT ON (patient_id, session_id) gillick_assessments.*, session_id"
         )
-        .joins(:patient_session)
         .joins(:session)
         .where(
-          patient_sessions: {
-            patient_id: vaccination_records.select(:patient_id),
-            session_id: vaccination_records.select(:session_id)
-          },
+          patient_id: vaccination_records.select(:patient_id),
           programme:,
           session: {
+            id: vaccination_records.select(:session_id),
             academic_year:
           }
         )
-        .order(:patient_session_id, created_at: :desc)
+        .order(:patient_id, :session_id, created_at: :desc)
         .includes(:performed_by)
         .group_by(&:patient_id)
         .transform_values do

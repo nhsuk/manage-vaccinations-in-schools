@@ -64,6 +64,8 @@ describe "Triage" do
       file_fixture("td_ipv/vaccination_records.csv")
     )
     click_on "Continue"
+
+    wait_for_import_to_complete(ImmunisationImport)
   end
 
   def then_i_see_the_completed_upload
@@ -85,6 +87,8 @@ describe "Triage" do
 
     attach_file("class_import[csv]", file_fixture("td_ipv/class_list.csv"))
     click_on "Continue"
+
+    wait_for_import_to_complete(ClassImport)
   end
 
   def then_i_see_one_patient_needing_consent

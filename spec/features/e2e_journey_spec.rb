@@ -115,7 +115,7 @@ describe "End-to-end journey" do
     click_on "Continue"
     attach_file "cohort_import[csv]", csv_file.path
     click_on "Continue"
-    visit cohort_import_path(CohortImport.last)
+    wait_for_import_to_complete(CohortImport)
   end
 
   def then_i_see_that_the_cohort_has_been_uploaded

@@ -32,4 +32,6 @@ class SessionAttendance < ApplicationRecord
   has_one :location, through: :session
 
   scope :today, -> { joins(:session_date).merge(SessionDate.today) }
+
+  delegate :today?, to: :session_date
 end

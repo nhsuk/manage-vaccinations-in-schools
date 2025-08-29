@@ -141,10 +141,10 @@ class VaccinationRecord < ApplicationRecord
 
   encrypts :notes
 
-  with_options if: :administered? do
-    validates :full_dose, inclusion: [true, false]
-    validates :protocol, presence: true
-  end
+  validates :full_dose, inclusion: [true, false], if: :administered?
+  validates :protocol,
+            presence: true,
+            if: -> { administered? && recorded_in_service? }
 
   validates :notes, length: { maximum: 1000 }
 
@@ -172,6 +172,10 @@ class VaccinationRecord < ApplicationRecord
              if: :changes_need_to_be_synced_to_nhs_immunisations_api?
 
   delegate :fhir_record, to: :fhir_mapper
+
+  class << self
+    delegate :from_fhir_record, to: FHIRMapper::VaccinationRecord
+  end
 
   def academic_year = performed_at.to_date.academic_year
 

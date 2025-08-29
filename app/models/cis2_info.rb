@@ -8,6 +8,8 @@ class CIS2Info
 
   SUPERUSER_WORKGROUP = "mavissuperusers"
 
+  PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE = "B0428"
+
   attribute :organisation_name
   attribute :organisation_code
   attribute :role_name
@@ -36,25 +38,23 @@ class CIS2Info
   def has_valid_workgroup? =
     organisation&.teams&.exists?(workgroup: workgroups) || false
 
-  def can_view?
-    [ADMIN_ROLE, NURSE_ROLE].include?(role_code)
+  def is_admin?
+    role_code == ADMIN_ROLE
   end
 
-  def can_supply_using_pgd?
+  def is_nurse?
     role_code == NURSE_ROLE
   end
 
-  def can_perform_local_admin_tasks?
-    in_superuser_workgroup?
+  def is_healthcare_assistant?
+    activity_codes.include?(PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE)
   end
 
-  def can_access_sensitive_records?
-    in_superuser_workgroup?
+  def is_superuser?
+    workgroups.include?(SUPERUSER_WORKGROUP)
   end
 
   private
 
   def request_session_key = "cis2_info"
-
-  def in_superuser_workgroup? = workgroups.include?(SUPERUSER_WORKGROUP)
 end

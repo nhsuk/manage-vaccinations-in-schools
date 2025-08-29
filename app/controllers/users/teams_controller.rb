@@ -35,6 +35,7 @@ class Users::TeamsController < ApplicationController
   private
 
   def return_to_path
-    session[:user_return_to] || dashboard_path
+    after_sign_in_path_for(current_user) || session[:user_return_to] ||
+      dashboard_path
   end
 end

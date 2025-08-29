@@ -256,6 +256,11 @@ unless Settings.cis2.enabled
   user = create_user(team:, email: "nurse.joy@example.com")
   create_user(team:, email: "admin.hope@example.com", fallback_role: "admin")
   create_user(team:, email: "superuser@example.com", fallback_role: "superuser")
+  create_user(
+    team:,
+    email: "hca@example.com",
+    fallback_role: "healthcare_assistant"
+  )
 
   attach_sample_of_schools_to(team)
 

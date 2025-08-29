@@ -56,7 +56,7 @@ class PatientImport < ApplicationRecord
     end
 
     count_column_to_increment =
-      count_column(patient, parents, parent_relationships)
+      count_column(patient, parents.uniq, parent_relationships.uniq)
 
     # Instead of saving individually, we'll collect the records
     @parents_batch ||= Set.new

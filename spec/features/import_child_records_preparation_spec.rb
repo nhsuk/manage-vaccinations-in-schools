@@ -196,7 +196,8 @@ describe "Import child records" do
   def and_pds_lookup_during_import_is_enabled
     Flipper.enable(:pds_lookup_during_import)
 
-    stub_pds_search_to_return_no_patients(
+    stub_pds_search_to_return_a_patient(
+      "9990000026",
       "family" => "Smith",
       "given" => "Jimmy",
       "birthdate" => "eq2010-01-02",
@@ -279,6 +280,7 @@ describe "Import child records" do
   def when_i_upload_a_valid_file
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
     click_on "Continue"
+    wait_for_import_to_complete(CohortImport)
   end
 
   def then_i_should_see_the_patients

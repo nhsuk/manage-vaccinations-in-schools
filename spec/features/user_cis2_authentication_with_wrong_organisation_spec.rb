@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "User CIS2 authentication" do
+describe "User CIS2 authentication", :cis2 do
   scenario "user has wrong organisation selected" do
     given_i_am_setup_in_cis2_but_not_mavis
     when_i_go_to_the_sessions_page

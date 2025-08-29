@@ -2,7 +2,7 @@
 
 class VaccinationRecordPolicy < ApplicationPolicy
   def create?
-    user.can_supply_using_pgd?
+    user.is_nurse?
   end
 
   def new?
@@ -10,7 +10,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
   end
 
   def edit?
-    user.can_supply_using_pgd? && record.session_id.present? &&
+    user.is_nurse? && record.session_id.present? &&
       record.performed_ods_code == user.selected_organisation.ods_code
   end
 
@@ -19,7 +19,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user.can_perform_local_admin_tasks?
+    user.is_superuser?
   end
 
   class Scope < ApplicationPolicy::Scope

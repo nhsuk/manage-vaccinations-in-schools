@@ -20,6 +20,8 @@ class CommitPatientChangesetsJob < ApplicationJob
           import_patients_and_parents(changesets, import)
 
           import_school_moves(changesets, import)
+
+          import_pds_search_results(changesets, import)
         end
 
       import.postprocess_rows!
@@ -77,6 +79,7 @@ class CommitPatientChangesetsJob < ApplicationJob
         next true
       end
     end
+    patients.uniq!
   end
 
   def import_school_moves(changesets, import)
@@ -96,6 +99,30 @@ class CommitPatientChangesetsJob < ApplicationJob
     )
   end
 
+  def import_pds_search_results(changesets, import)
+    pds_search_records = []
+
+    changesets.each do |changeset|
+      next if changeset.search_results.blank?
+
+      patient = changeset.patient
+      next unless patient.persisted?
+
+      changeset.search_results.each do |result|
+        pds_search_records << PDSSearchResult.new(
+          patient_id: patient.id,
+          step: PDSSearchResult.steps[result["step"]],
+          result: PDSSearchResult.results[result["result"]],
+          nhs_number: result["nhs_number"],
+          import:,
+          created_at: result["created_at"]
+        )
+      end
+    end
+
+    PDSSearchResult.import(pds_search_records, on_duplicate_key_ignore: true)
+  end
+
   def link_records_to_import(import_source, record_class, records)
     source_type = import_source.class.name
     record_type = record_class.name
@@ -113,8 +140,8 @@ class CommitPatientChangesetsJob < ApplicationJob
       count_column_to_increment =
         import.count_column(
           changeset.patient,
-          changeset.parents,
-          changeset.parent_relationships
+          changeset.parents.uniq,
+          changeset.parent_relationships.uniq
         )
       counts[count_column_to_increment] += 1
     end

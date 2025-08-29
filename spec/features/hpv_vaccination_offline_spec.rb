@@ -364,6 +364,8 @@ describe "HPV vaccination" do
 
     attach_file("immunisation_import[csv]", "tmp/modified.csv")
     click_on "Continue"
+
+    wait_for_import_to_complete(ImmunisationImport)
   end
 
   def when_i_navigate_to_the_session_page

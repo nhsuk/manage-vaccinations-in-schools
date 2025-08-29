@@ -46,6 +46,28 @@ resource "aws_iam_role_policy_attachment" "data_replication" {
   policy_arn = each.value
 }
 
+resource "aws_iam_role" "data_replication_snapshot" {
+  name        = "DatabaseSnapshotRole"
+  description = "Role to be assumed by the data replication workflow for taking on-demand DB snapshots"
+  assume_role_policy = templatefile("resources/iam_role_github_trust_policy_${var.environment}.json.tftpl", {
+    account_id = var.account_id
+  })
+}
+
+resource "aws_iam_policy" "db_snapshot_policy" {
+  name        = "DatabaseSnapshotPolicy"
+  description = "Policy to take DB snapshots"
+  policy      = file("resources/iam_policy_DatabaseSnapshotPolicy.json")
+  lifecycle {
+    ignore_changes = [description]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "db_snapshot" {
+  role       = aws_iam_role.data_replication_snapshot.name
+  policy_arn = aws_iam_policy.db_snapshot_policy.arn
+}
+
 ################# Deploy Monitoring ################
 
 resource "aws_iam_role" "monitoring_deploy" {

@@ -49,9 +49,8 @@ module AuthenticationConcern
     end
 
     def selected_cis2_role_is_valid?
-      cis2_info.can_view? || cis2_info.can_supply_using_pgd? ||
-        cis2_info.can_perform_local_admin_tasks? ||
-        cis2_info.can_access_sensitive_records?
+      cis2_info.is_admin? || cis2_info.is_nurse? ||
+        cis2_info.is_healthcare_assistant? || cis2_info.is_superuser?
     end
 
     def storable_location?
@@ -111,7 +110,12 @@ module AuthenticationConcern
       if Flipper.enabled?(:reporting_api)
         urls << reporting_app_redirect_uri_with_auth_code_for(current_user)
       end
-      urls += [stored_location_for(scope), dashboard_path]
+      urls += [
+        stored_location_for(scope),
+        session[:user_return_to],
+        dashboard_path
+      ]
+
       urls.compact.find do
         is_valid_redirect?(it) && (it != request.fullpath) &&
           (it != new_users_teams_path)

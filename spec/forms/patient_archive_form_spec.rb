@@ -24,4 +24,9 @@ describe PatientArchiveForm do
       it { should validate_length_of(:other_details).is_at_most(300) }
     end
   end
+
+  it "normalises NHS numbers" do
+    form.nhs_number = "123 456 7890"
+    expect(form.nhs_number).to eq("1234567890")
+  end
 end

@@ -44,7 +44,6 @@ class PatientSession < ApplicationRecord
   belongs_to :patient
   belongs_to :session
 
-  has_many :gillick_assessments
   has_many :pre_screenings
   has_many :session_attendances, dependent: :destroy
   has_one :registration_status
@@ -53,6 +52,10 @@ class PatientSession < ApplicationRecord
   has_one :subteam, through: :session
   has_one :team, through: :session
   has_one :organisation, through: :team
+
+  has_many :gillick_assessments,
+           -> { where(patient_id: it.patient_id) },
+           through: :session
 
   has_many :notes, -> { where(session_id: it.session_id) }, through: :patient
 

@@ -95,6 +95,7 @@ describe "Immunisation imports" do
       "spec/fixtures/immunisation_import/invalid_rows.csv"
     )
     click_on "Continue"
+    wait_for_import_to_complete(ImmunisationImport)
   end
 
   def then_i_should_see_the_errors_page
@@ -122,6 +123,7 @@ describe "Immunisation imports" do
       "spec/fixtures/immunisation_import/valid_hpv.csv"
     )
     click_on "Continue"
+    wait_for_import_to_complete(ImmunisationImport)
   end
 
   def then_i_should_see_the_success_heading

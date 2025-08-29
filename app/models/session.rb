@@ -52,7 +52,7 @@ class Session < ApplicationRecord
   has_one :organisation, through: :team
   has_one :subteam, through: :location
   has_many :programmes, through: :session_programmes
-  has_many :gillick_assessments, through: :patient_sessions
+  has_many :gillick_assessments, through: :session_dates
   has_many :patients, through: :patient_sessions
   has_many :vaccines, through: :programmes
 
@@ -76,6 +76,9 @@ class Session < ApplicationRecord
             programmes.count
           )
         end
+
+  scope :supports_delegation,
+        -> { has_programmes(Programme.supports_delegation) }
 
   scope :in_progress, -> { has_date(Date.current) }
   scope :unscheduled, -> { where.not(SessionDate.for_session.arel.exists) }
@@ -191,6 +194,10 @@ class Session < ApplicationRecord
     return false if dates.empty?
     Date.current > dates.min
   end
+
+  def supports_delegation? = programmes.any?(&:supports_delegation?)
+
+  def pgd_supply_enabled? = supports_delegation?
 
   def year_groups
     @year_groups ||= location_programme_year_groups.pluck_year_groups

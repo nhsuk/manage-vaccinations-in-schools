@@ -8,4 +8,8 @@ class Users::SessionsController < Devise::SessionsController
   before_action :store_redirect_uri!, only: :new
 
   layout "one_half"
+
+  def create
+    super { |user| user.update!(show_in_suppliers: user.is_nurse?) }
+  end
 end

@@ -11,7 +11,7 @@
     <ol class="nhsuk-list app-add-another__list">
       <%= f.fields_for :session_dates do |date_f| %>
         <li class="app-add-another__list-item">
-          <% if date_f.object.persisted? && date_f.object.session_attendances.any? %>
+          <% if date_f.object.persisted? && date_f.object.has_been_attended? %>
             <h2 class="nhsuk-heading-m">
               <%= date_f.object.value.to_fs(:long) %>
             </h2>

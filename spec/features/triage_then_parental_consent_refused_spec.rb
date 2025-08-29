@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Triage" do
+  around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
+
   scenario "Nurse triages a patient and then consent is refused" do
     stub_pds_search_to_return_no_patients
 

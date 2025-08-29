@@ -33,7 +33,7 @@ describe SessionDate do
   end
 
   describe "#today_or_future?" do
-    subject(:today_or_future?) { session_date.today_or_future? }
+    subject { session_date.today_or_future? }
 
     context "with a today's date" do
       it { should be(true) }
@@ -47,6 +47,33 @@ describe SessionDate do
 
     context "with a date in the future" do
       let(:value) { Date.tomorrow }
+
+      it { should be(true) }
+    end
+  end
+
+  describe "#has_been_attended?" do
+    subject { session_date.has_been_attended? }
+
+    let(:session) { create(:session) }
+    let(:session_date) { session.session_dates.first }
+
+    it { should be(false) }
+
+    context "with a Gillick assessment" do
+      before { create(:gillick_assessment, :competent, session:) }
+
+      it { should be(true) }
+    end
+
+    context "with a session attendance" do
+      before do
+        create(
+          :session_attendance,
+          :present,
+          patient_session: create(:patient_session, session:)
+        )
+      end
 
       it { should be(true) }
     end

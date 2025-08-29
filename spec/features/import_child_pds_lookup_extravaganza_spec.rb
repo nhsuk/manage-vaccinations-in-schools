@@ -32,6 +32,7 @@ describe "Import child records" do
     when_i_click_review_for("WILLIAMS, Catherine")
     then_i_see_both_records_have_an_nhs_number
     and_i_see_address_differences_for_review
+    and_i_do_not_see_the_option_to_keep_both
     when_i_use_duplicate_record_during_merge
     then_the_existing_patient_has_an_nhs_number_in_mavis
     and_catherine_parents_are_handled_correctly
@@ -67,6 +68,7 @@ describe "Import child records" do
     and_there_is_an_import_review_for_maia
     when_i_review_and_accept_duplicate_maia_record
     then_maia_has_the_uploaded_nhs_number
+    and_maia_has_multiple_pds_search_results
 
     then_school_moves_are_created_appropriately
 
@@ -245,7 +247,24 @@ describe "Import child records" do
         session: @session
       )
 
-    expect(Patient.count).to eq(6)
+    @existing_patient_deduplication_check =
+      create(
+        :patient,
+        given_name: "Caroline",
+        family_name: "Richard",
+        nhs_number: nil,
+        date_of_birth: Date.new(2010, 5, 15),
+        gender_code: :not_known,
+        address_line_1: nil,
+        address_line_2: nil,
+        address_town: nil,
+        address_postcode: "B1 1AA",
+        school: @school,
+        birth_academic_year: 2012,
+        session: @session
+      )
+
+    expect(Patient.count).to eq(7)
     expect(ParentRelationship.count).to eq(1)
     expect(Parent.count).to eq(2)
   end
@@ -317,11 +336,66 @@ describe "Import child records" do
       "address-postalcode" => "SW7 5LE"
     )
 
+    stub_all_searches_to_return_no_patient(
+      family_name: "Smith",
+      given_name: "Maia",
+      birthdate: "eq2010-08-16",
+      address_postcode: "W2 3PE"
+    )
+
+    stub_all_searches_to_return_no_patient(
+      family_name: "Richard",
+      given_name: "Caroline",
+      birthdate: "eq2010-05-15",
+      address_postcode: "B1 1AA"
+    )
+  end
+
+  def stub_all_searches_to_return_no_patient(
+    family_name:,
+    given_name:,
+    birthdate:,
+    address_postcode:
+  )
     stub_pds_search_to_return_no_patients(
-      "family" => "Smith",
-      "given" => "Maia",
-      "birthdate" => "eq2010-08-16",
-      "address-postalcode" => "W2 3PE"
+      "family" => family_name,
+      "given" => given_name,
+      "birthdate" => birthdate,
+      "address-postalcode" => address_postcode
+    )
+    stub_pds_search_to_return_no_patients(
+      "family" => "#{family_name[0..2]}*",
+      "given" => given_name,
+      "birthdate" => birthdate,
+      "address-postalcode" => address_postcode
+    )
+    stub_pds_search_to_return_no_patients(
+      "family" => family_name,
+      "given" => "#{given_name[0..2]}*",
+      "birthdate" => birthdate,
+      "address-postalcode" => address_postcode
+    )
+    stub_pds_search_to_return_no_patients(
+      "family" => family_name,
+      "given" => given_name,
+      "birthdate" => birthdate,
+      "address-postalcode" => "#{address_postcode[0..1]}*"
+    )
+    stub_pds_search_to_return_no_patients(
+      "family" => family_name,
+      "given" => given_name,
+      "birthdate" => birthdate,
+      "address-postalcode" => address_postcode,
+      "_fuzzy-match" => "true",
+      "_history" => "false"
+    )
+    stub_pds_search_to_return_no_patients(
+      "family" => family_name,
+      "given" => given_name,
+      "birthdate" => birthdate,
+      "address-postalcode" => address_postcode,
+      "_fuzzy-match" => "true",
+      "_history" => "true"
     )
   end
 
@@ -350,6 +424,7 @@ describe "Import child records" do
     click_button "Continue"
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/#{filename}")
     click_on "Continue"
+    wait_for_import_to_complete(CohortImport)
   end
 
   def when_i_visit_a_session_page_for_the_hpv_programme
@@ -380,6 +455,7 @@ describe "Import child records" do
       "spec/fixtures/class_import/pds_extravaganza.csv"
     )
     click_on "Continue"
+    wait_for_import_to_complete(ClassImport)
   end
 
   def when_i_visit_the_import_page
@@ -481,7 +557,7 @@ describe "Import child records" do
 
   def and_i_should_see_one_new_patient_created
     perform_enqueued_jobs
-    expect(Patient.count).to eq(6)
+    expect(Patient.count).to eq(7)
   end
 
   def and_i_see_the_patient_uploaded_with_nhs_number
@@ -507,7 +583,7 @@ describe "Import child records" do
   end
 
   def then_the_existing_patient_has_an_nhs_number_in_mavis
-    expect(Patient.count).to eq(10)
+    expect(Patient.count).to eq(11)
     patient = Patient.where(given_name: "Catherine").first
     expect(patient.nhs_number).to eq("9876543210")
     expect(patient.address_line_1).to eq("456 New Street")
@@ -516,8 +592,7 @@ describe "Import child records" do
   end
 
   def and_i_should_see_correct_patient_counts
-    perform_enqueued_jobs
-    expect(Patient.count).to eq(10)
+    expect(Patient.count).to eq(11)
   end
 
   def and_parents_are_created_for_albert
@@ -560,6 +635,10 @@ describe "Import child records" do
     expect(page).to have_content("456 New Street") # New address from CSV
     expect(page).to have_content("Birmingham") # Original town
     expect(page).to have_content("London") # New town from CSV
+  end
+
+  def and_i_do_not_see_the_option_to_keep_both
+    expect(page).not_to have_content("Keep both child records")
   end
 
   def and_catherine_parents_are_handled_correctly
@@ -647,7 +726,7 @@ describe "Import child records" do
 
   def and_import_counts_are_correct
     import = CohortImport.last
-    expect(import.patients.count).to eq(9)
+    expect(import.patients.count).to eq(10)
   end
 
   def when_i_click_on_patient_with_unknown_relationship
@@ -711,7 +790,7 @@ describe "Import child records" do
 
   def then_i_see_one_record_is_an_exact_match
     expect(page).to have_content(
-      "1 record was not imported because it already exists in Mavis"
+      "3 records were not imported because they already exist in Mavis"
     )
   end
 
@@ -731,6 +810,7 @@ describe "Import child records" do
 
   def when_i_review_and_accept_duplicate_maia_record
     click_link "Review"
+    expect(page).to have_content("Keep both child records")
     choose "Use uploaded child record"
     click_on "Resolve duplicate"
   end
@@ -738,5 +818,19 @@ describe "Import child records" do
   def then_maia_has_the_uploaded_nhs_number
     maia = Patient.find_by(given_name: "Maia", family_name: "Smith")
     expect(maia.nhs_number).to eq("9435789102")
+  end
+
+  def and_maia_has_multiple_pds_search_results
+    maia = Patient.find_by(given_name: "Maia", family_name: "Smith")
+    expect(maia.pds_search_results.count).to eq(5)
+    expect(maia.pds_search_results.pluck(:step)).to eq(
+      %w[
+        no_fuzzy_with_history
+        no_fuzzy_with_wildcard_postcode
+        no_fuzzy_with_wildcard_given_name
+        no_fuzzy_with_wildcard_family_name
+        fuzzy
+      ]
+    )
   end
 end

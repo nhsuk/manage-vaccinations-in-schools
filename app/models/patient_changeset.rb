@@ -39,10 +39,8 @@ class PatientChangeset < ApplicationRecord
               },
               parent_2: {
               },
-              pds: {
-              }
+              search_results: []
             }
-
   belongs_to :import, polymorphic: true
   belongs_to :patient, optional: true
   belongs_to :school, class_name: "Location", optional: true
@@ -70,7 +68,8 @@ class PatientChangeset < ApplicationRecord
         #       Maybe one day.
         school_move_source: row.school_move_source,
         parent_1: row.parent_1_import_attributes,
-        parent_2: row.parent_2_import_attributes
+        parent_2: row.parent_2_import_attributes,
+        search_results: []
       }
     )
   end
@@ -82,6 +81,8 @@ class PatientChangeset < ApplicationRecord
   def parent_1_attributes = pending_changes["parent_1"]
 
   def parent_2_attributes = pending_changes["parent_2"]
+
+  def search_results = pending_changes["search_results"]
 
   def academic_year = pending_changes["academic_year"]
 

@@ -89,7 +89,8 @@ describe "Import class lists" do
   def and_pds_lookup_during_import_is_enabled
     Flipper.enable(:pds_lookup_during_import)
 
-    stub_pds_search_to_return_no_patients(
+    stub_pds_search_to_return_a_patient(
+      "9990000026",
       "family" => "Smith",
       "given" => "Jimmy",
       "birthdate" => "eq2010-01-02",
@@ -157,8 +158,12 @@ describe "Import class lists" do
   end
 
   def and_i_upload_a_valid_file
+    travel 1.minute
+
     attach_file("class_import[csv]", "spec/fixtures/class_import/valid.csv")
     click_on "Continue"
+
+    wait_for_import_to_complete(ClassImport)
   end
 
   def then_i_should_see_the_patients
@@ -170,6 +175,7 @@ describe "Import class lists" do
     expect(page).to have_content("Date of birth 1 January 2010")
     expect(page).to have_content("Postcode SW1A 1AA")
   end
+
   alias_method :and_i_should_see_the_patients, :then_i_should_see_the_patients
 
   def when_i_click_on_upload_records

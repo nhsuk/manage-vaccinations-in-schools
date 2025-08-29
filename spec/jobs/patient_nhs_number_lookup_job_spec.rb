@@ -60,6 +60,13 @@ describe PatientNHSNumberLookupJob do
         expect(patient).to receive(:update_from_pds!)
         perform_now
       end
+
+      it "creates a PDSSearchResult" do
+        expect { perform_now }.to change(PDSSearchResult, :count).by(1)
+        expect(PDSSearchResult.last.step).to eq("no_fuzzy_with_history_daily")
+        expect(PDSSearchResult.last.result).to eq("one_match")
+        expect(PDSSearchResult.last.nhs_number).to eq("9449306168")
+      end
     end
 
     context "with a match and the patient already exists" do
@@ -70,17 +77,13 @@ describe PatientNHSNumberLookupJob do
       let(:patient_session) do
         create(:patient_session, patient:, programmes: [programme])
       end
+      let(:session) { patient_session.session }
       let(:gillick_assessment) do
-        create(:gillick_assessment, :competent, patient_session:)
+        create(:gillick_assessment, :competent, patient:, session:)
       end
       let(:triage) { create(:triage, patient:, programme:) }
       let(:vaccination_record) do
-        create(
-          :vaccination_record,
-          patient:,
-          session: patient_session.session,
-          programme:
-        )
+        create(:vaccination_record, patient:, session:, programme:)
       end
 
       context "when the existing patient is not already in the session" do

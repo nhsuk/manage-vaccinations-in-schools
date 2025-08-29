@@ -205,7 +205,16 @@ locals {
   }]
   parameter_store_arns = [for key, value in local.parameter_store_variables : aws_ssm_parameter.environment_config[key].arn]
 
-  task_envs = [
+  sandbox_envs = (
+    startswith(var.environment, "sandbox") ? [
+      {
+        name  = "SENTRY_DISABLE"
+        value = "true"
+      }
+    ] : []
+  )
+
+  task_envs = concat([
     {
       name  = "DB_HOST"
       value = aws_rds_cluster.core.endpoint
@@ -246,7 +255,8 @@ locals {
       name  = "SIDEKIQ_REDIS_URL"
       value = "rediss://${aws_elasticache_replication_group.valkey.primary_endpoint_address}:${var.valkey_port}"
     },
-  ]
+  ], local.sandbox_envs)
+
   task_secrets = concat([
     {
       name      = "DB_CREDENTIALS"

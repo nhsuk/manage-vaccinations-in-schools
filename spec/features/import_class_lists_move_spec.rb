@@ -83,7 +83,8 @@ describe "Import class lists - Moving patients" do
   def and_pds_lookup_during_import_is_enabled
     Flipper.enable(:pds_lookup_during_import)
 
-    stub_pds_search_to_return_no_patients(
+    stub_pds_search_to_return_a_patient(
+      "9990000026",
       "family" => "Smith",
       "given" => "Jimmy",
       "birthdate" => "eq2010-01-02",
@@ -151,7 +152,9 @@ describe "Import class lists - Moving patients" do
   def when_i_upload_a_valid_file
     attach_file("class_import[csv]", "spec/fixtures/class_import/valid.csv")
     click_on "Continue"
+    wait_for_import_to_complete(ClassImport)
   end
+
   alias_method :and_i_upload_a_valid_file, :when_i_upload_a_valid_file
 
   def when_i_go_to_the_upload_page

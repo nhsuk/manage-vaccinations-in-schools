@@ -93,4 +93,69 @@ describe LocalAuthority, type: :model do
       end
     end
   end
+
+  describe ".for_postcode" do
+    let(:matching_local_authority) do
+      create(
+        :local_authority,
+        mhclg_code: "ERY",
+        gss_code: "E06000011",
+        gias_code: 811,
+        official_name: "East Riding of Yorkshire Council",
+        short_name: "East Riding of Yorkshire",
+        gov_uk_slug: "east-riding-of-yorkshire",
+        nation: "England",
+        region: "Yorkshire and The Humber"
+      )
+    end
+
+    before do
+      create(
+        :local_authority,
+        official_name: "not a match",
+        gss_code: "E99999999"
+      )
+      create(
+        :local_authority_postcode,
+        value: "TS25 4AQ",
+        gss_code: "E99999999"
+      )
+      # matching postcode -> LA lookup
+      create(
+        :local_authority_postcode,
+        value: "YO16 5BL",
+        gss_code: matching_local_authority.gss_code
+      )
+    end
+
+    context "given a normalized postcode" do
+      let(:postcode) { "YO16 5BL" }
+
+      context "for which a LocalAuthority::Postcode exists" do
+        it "returns the matching LocalAuthority" do
+          expect(described_class.for_postcode(postcode)).to eq(
+            matching_local_authority
+          )
+        end
+      end
+
+      context "for which no LocalAuthority::Postcode exists" do
+        let(:postcode) { "DH1 3LH" }
+
+        it "returns nil" do
+          expect(described_class.for_postcode(postcode)).to be_nil
+        end
+      end
+    end
+
+    context "given a postcode which would match if it was normalized" do
+      let(:postcode) { "yo16 5Bl. " }
+
+      it "returns the matching LocalAuthority" do
+        expect(described_class.for_postcode(postcode)).to eq(
+          matching_local_authority
+        )
+      end
+    end
+  end
 end

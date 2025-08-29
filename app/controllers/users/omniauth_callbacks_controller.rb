@@ -24,6 +24,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     else
       @user = User.find_or_create_from_cis2_oidc(user_cis2_info, valid_teams)
 
+      # Track which users have authorisation to supply using the PGD protocol.
+      @user.update!(show_in_suppliers: cis2_info.is_nurse?)
+
       # give them a session token for the reporting app also
       @user.update!(reporting_api_session_token: SecureRandom.hex(32))
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_21_073434) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_26_135132) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -285,7 +285,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_073434) do
   create_table "gillick_assessments", force: :cascade do |t|
     t.text "notes", default: "", null: false
     t.bigint "performed_by_user_id", null: false
-    t.bigint "patient_session_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "knows_vaccination", null: false
@@ -294,9 +293,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_073434) do
     t.boolean "knows_delivery", null: false
     t.boolean "knows_side_effects", null: false
     t.bigint "programme_id", null: false
-    t.index ["patient_session_id"], name: "index_gillick_assessments_on_patient_session_id"
+    t.bigint "patient_id", null: false
+    t.bigint "session_date_id", null: false
+    t.index ["patient_id"], name: "index_gillick_assessments_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_gillick_assessments_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_gillick_assessments_on_programme_id"
+    t.index ["session_date_id"], name: "index_gillick_assessments_on_session_date_id"
   end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -474,6 +476,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_073434) do
     t.index ["mhclg_code"], name: "index_local_authorities_on_mhclg_code", unique: true
     t.index ["nation", "short_name"], name: "index_local_authorities_on_nation_and_short_name"
     t.index ["short_name"], name: "index_local_authorities_on_short_name"
+  end
+
+  create_table "local_authority_postcodes", id: false, force: :cascade do |t|
+    t.string "gss_code", null: false
+    t.string "value", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["gss_code"], name: "index_local_authority_postcodes_on_gss_code"
+    t.index ["value"], name: "index_local_authority_postcodes_on_value", unique: true
   end
 
   create_table "location_programme_year_groups", force: :cascade do |t|
@@ -697,6 +708,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_073434) do
     t.index ["school_id"], name: "index_patients_on_school_id"
   end
 
+  create_table "pds_search_results", force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.string "import_type"
+    t.bigint "import_id"
+    t.integer "step", null: false
+    t.integer "result", null: false
+    t.string "nhs_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["import_type", "import_id"], name: "index_pds_search_results_on_import"
+    t.index ["patient_id"], name: "index_pds_search_results_on_patient_id"
+  end
+
   create_table "pre_screenings", force: :cascade do |t|
     t.bigint "patient_session_id", null: false
     t.bigint "performed_by_user_id", null: false
@@ -889,6 +913,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_073434) do
     t.string "session_token"
     t.integer "fallback_role"
     t.string "reporting_api_session_token"
+    t.boolean "show_in_suppliers", default: false, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
     t.index ["reporting_api_session_token"], name: "index_users_on_reporting_api_session_token", unique: true
@@ -999,8 +1024,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_073434) do
   add_foreign_key "consents", "programmes"
   add_foreign_key "consents", "teams"
   add_foreign_key "consents", "users", column: "recorded_by_user_id"
-  add_foreign_key "gillick_assessments", "patient_sessions"
+  add_foreign_key "gillick_assessments", "patients"
   add_foreign_key "gillick_assessments", "programmes"
+  add_foreign_key "gillick_assessments", "session_dates"
   add_foreign_key "gillick_assessments", "users", column: "performed_by_user_id"
   add_foreign_key "health_questions", "health_questions", column: "follow_up_question_id"
   add_foreign_key "health_questions", "health_questions", column: "next_question_id"
@@ -1045,6 +1071,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_073434) do
   add_foreign_key "patient_vaccination_statuses", "programmes"
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
+  add_foreign_key "pds_search_results", "patients"
   add_foreign_key "pre_screenings", "patient_sessions"
   add_foreign_key "pre_screenings", "programmes"
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"

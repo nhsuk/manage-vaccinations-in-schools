@@ -3,11 +3,19 @@
 module PDSHelper
   def stub_pds_search_to_return_no_patients(**query)
     query["_history"] ||= "true"
+    query.delete("_history") if query["_history"] == "false"
 
     stub_request(
       :get,
       "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
-    ).with(query: hash_including(query)).to_return_json(body: { total: 0 })
+    ).with(query: hash_including(query)).to_return_json(
+      body: {
+        total: 0
+      },
+      headers: {
+        "Content-Type" => "application/fhir+json"
+      }
+    )
   end
 
   def stub_pds_search_to_return_a_patient(nhs_number = "9449306168", **query)
@@ -29,6 +37,21 @@ module PDSHelper
       "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
     ).with(query: hash_including(query)).to_return(
       body: response_data.to_json,
+      headers: {
+        "Content-Type" => "application/fhir+json"
+      }
+    )
+  end
+
+  def stub_pds_search_to_return_too_many_matches(**query)
+    query["_history"] ||= "true"
+
+    stub_request(
+      :get,
+      "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
+    ).with(query: hash_including(query)).to_return(
+      body: file_fixture("pds/too-many-matches.json"),
+      status: 200,
       headers: {
         "Content-Type" => "application/fhir+json"
       }

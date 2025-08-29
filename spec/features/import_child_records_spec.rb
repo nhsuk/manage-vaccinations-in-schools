@@ -140,7 +140,8 @@ describe "Import child records" do
   def and_pds_lookup_during_import_is_enabled
     Flipper.enable(:pds_lookup_during_import)
 
-    stub_pds_search_to_return_no_patients(
+    stub_pds_search_to_return_a_patient(
+      "9990000026",
       "family" => "Smith",
       "given" => "Jimmy",
       "birthdate" => "eq2010-01-02",
@@ -191,6 +192,7 @@ describe "Import child records" do
   def and_i_upload_a_valid_file
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
     click_on "Continue"
+    wait_for_import_to_complete(CohortImport)
   end
 
   def and_i_should_see_the_patients
@@ -322,11 +324,9 @@ describe "Import child records" do
   end
 
   def when_i_wait_for_the_background_job_to_complete
-    perform_enqueued_jobs
-    # TODO: Temporary hack to ensure process patient changesets jobs are done
-    perform_enqueued_jobs if enqueued_jobs.any?
-    # TODO: Temporary hack to ensure commit patient  changesets jobs are done
-    perform_enqueued_jobs if enqueued_jobs.any?
+    perform_enqueued_jobs(only: ProcessImportJob)
+    perform_enqueued_jobs(only: ProcessPatientChangesetsJob)
+    perform_enqueued_jobs(only: CommitPatientChangesetsJob)
   end
 
   def then_i_should_see_the_holding_page
@@ -354,6 +354,7 @@ describe "Import child records" do
       "spec/fixtures/cohort_import/valid_with_changes.csv"
     )
     click_on "Continue"
+    wait_for_import_to_complete(CohortImport)
   end
 
   def and_i_go_to_the_import_page

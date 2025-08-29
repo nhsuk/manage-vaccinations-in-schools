@@ -108,6 +108,10 @@ Rails.application.routes.draw do
         resources :teams, only: :destroy, param: :workgroup
         post "/onboard", to: "onboard#create"
       end
+      namespace :reporting do
+        post "authorize", to: "one_time_tokens#authorize"
+        get "totals", controller: :totals, action: :index
+      end
     end
   end
 

@@ -124,10 +124,34 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
 
   def child_columns
     [
-      { name: "CHILD_FIRST_NAME", notes: tag.strong("Required") },
-      { name: "CHILD_LAST_NAME", notes: tag.strong("Required") },
-      { name: "CHILD_PREFERRED_FIRST_NAME", notes: "Optional" },
-      { name: "CHILD_PREFERRED_LAST_NAME", notes: "Optional" },
+      {
+        name: "CHILD_FIRST_NAME",
+        notes:
+          "#{tag.strong("Required")}, must use alphabetical characters (you" \
+            " can include accents like Chloë, hyphens like Anne-Marie or" \
+            " apostrophes like D'Arcy but no other special characters)."
+      },
+      {
+        name: "CHILD_LAST_NAME",
+        notes:
+          "#{tag.strong("Required")}, must use alphabetical characters (you" \
+            " can include accents like Jiménez, hyphens like Burne-Jones or" \
+            " apostrophes like O'Hare but no other special characters)."
+      },
+      {
+        name: "CHILD_PREFERRED_FIRST_NAME",
+        notes:
+          "Optional, must use alphabetical characters (you can include" \
+            " accents like Chloë, hyphens like Anne-Marie or apostrophes like" \
+            " D'Arcy but no other special characters)."
+      },
+      {
+        name: "CHILD_PREFERRED_LAST_NAME",
+        notes:
+          "Optional, must use alphabetical characters (you can include" \
+            " accents like Jiménez, hyphens like Burne-Jones or apostrophes" \
+            " like O'Hare but no other special characters)."
+      },
       {
         name: "CHILD_DATE_OF_BIRTH",
         notes:
@@ -164,7 +188,13 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   def parent_columns
     %w[PARENT_1 PARENT_2].flat_map do |prefix|
       [
-        { name: "#{prefix}_NAME", notes: "Optional" },
+        {
+          name: "#{prefix}_NAME",
+          notes:
+            "Optional, must use alphabetical characters (you can include" \
+              " accents like Chloë, hyphens like Anne-Marie or apostrophes" \
+              " like D'Arcy but no other special characters)."
+        },
         {
           name: "#{prefix}_RELATIONSHIP",
           notes:

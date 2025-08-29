@@ -13,27 +13,32 @@
 #  notes                :text             default(""), not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  patient_session_id   :bigint           not null
+#  patient_id           :bigint           not null
 #  performed_by_user_id :bigint           not null
 #  programme_id         :bigint           not null
+#  session_date_id      :bigint           not null
 #
 # Indexes
 #
-#  index_gillick_assessments_on_patient_session_id    (patient_session_id)
+#  index_gillick_assessments_on_patient_id            (patient_id)
 #  index_gillick_assessments_on_performed_by_user_id  (performed_by_user_id)
 #  index_gillick_assessments_on_programme_id          (programme_id)
+#  index_gillick_assessments_on_session_date_id       (session_date_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (patient_session_id => patient_sessions.id)
+#  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
 #  fk_rails_...  (programme_id => programmes.id)
+#  fk_rails_...  (session_date_id => session_dates.id)
 #
 FactoryBot.define do
   factory :gillick_assessment do
-    patient_session
-    programme { patient_session.session.programmes.first }
+    transient { session }
 
+    patient
+    session_date { session.session_dates.first }
+    programme { session.programmes.first }
     performed_by
 
     trait :not_competent do

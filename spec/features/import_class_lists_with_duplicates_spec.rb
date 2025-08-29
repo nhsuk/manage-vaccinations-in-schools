@@ -77,12 +77,13 @@ describe "Class list imports duplicates" do
 
       when_i_review_the_third_duplicate_record
       then_i_should_see_the_third_duplicate_record
+      and_i_should_not_be_able_to_keep_both_records
 
-      when_i_choose_to_keep_both_records
+      when_i_choose_to_keep_the_existing_record
       and_i_confirm_my_selection
       then_i_should_see_a_success_message
       and_the_third_record_should_not_be_updated
-      and_a_fourth_record_should_exist
+      and_a_fourth_record_should_not_exist
     end
   end
 
@@ -94,21 +95,24 @@ describe "Class list imports duplicates" do
   def and_pds_lookup_during_import_is_enabled
     Flipper.enable(:pds_lookup_during_import)
 
-    stub_pds_search_to_return_no_patients(
+    stub_pds_search_to_return_a_patient(
+      "9990000018",
       "family" => "Smith",
       "given" => "Jimmy",
       "birthdate" => "eq2010-01-01",
       "address-postalcode" => "SW1A 1BB"
     )
 
-    stub_pds_search_to_return_no_patients(
+    stub_pds_search_to_return_a_patient(
+      "9990000034",
       "family" => "Salles",
       "given" => "Rebecca",
       "birthdate" => "eq2010-02-03",
       "address-postalcode" => "SW1A 3BB"
     )
 
-    stub_pds_search_to_return_no_patients(
+    stub_pds_search_to_return_a_patient(
+      "9990000026",
       "family" => "Jones",
       "given" => "Sara",
       "birthdate" => "eq2010-02-02",
@@ -200,6 +204,7 @@ describe "Class list imports duplicates" do
       "spec/fixtures/class_import/duplicates.csv"
     )
     click_on "Continue"
+    wait_for_import_to_complete(ClassImport)
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
@@ -237,6 +242,10 @@ describe "Class list imports duplicates" do
 
   def when_i_choose_to_keep_both_records
     choose "Keep both child records"
+  end
+
+  def and_i_should_not_be_able_to_keep_both_records
+    expect(page).not_to have_content("Keep both child records")
   end
 
   def then_i_should_see_a_success_message
@@ -284,5 +293,9 @@ describe "Class list imports duplicates" do
 
     fourth_patient = Patient.find_by(nhs_number: nil)
     expect(fourth_patient.given_name).to eq("Rebecca")
+  end
+
+  def and_a_fourth_record_should_not_exist
+    expect(Patient.count).to eq(3)
   end
 end
