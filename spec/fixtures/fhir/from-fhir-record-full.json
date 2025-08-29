@@ -261,25 +261,8 @@
   },
   "location": {
     "identifier": {
-      "value": "X99999",
-      "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-      "use": "official",
-      "type": {
-        "coding": [
-          {
-            "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
-            "version": "Test version",
-            "code": "123456",
-            "display": "Location display",
-            "userSelected": true
-          }
-        ],
-        "text": "test string Location"
-      },
-      "period": {
-        "start": "2000-01-01",
-        "end": "2025-01-01"
-      }
+      "system": "https://fhir.hl7.org.uk/Id/urn-school-number",
+      "value": "100006"
     }
   },
   "lotNumber": "4120Z001",

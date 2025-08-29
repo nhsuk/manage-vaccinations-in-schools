@@ -7,8 +7,9 @@ describe FHIRMapper::VaccinationRecord do
   let(:organisation) { create(:organisation) }
   let(:team) { create(:team, organisation:, programmes: [programme]) }
   let(:programme) { create(:programme, :hpv) }
+  let(:school) { create(:school) }
   let(:patient_session) do
-    create(:patient_session, programmes: [programme], team:)
+    create(:patient_session, programmes: [programme], team:, school:)
   end
   let(:patient) { patient_session.patient }
   let(:session) { patient_session.session }
@@ -297,28 +298,20 @@ describe FHIRMapper::VaccinationRecord do
       VaccinationRecord.from_fhir_record(fhir_immunization, patient:, team:)
     end
 
-    around { |example| travel_to(Date.new(2025, 5, 20)) { example.run } }
+    around { |example| travel_to(Date.new(2025, 11, 20)) { example.run } }
 
     let(:programme) { create(:programme, :flu) }
 
     shared_examples "a mapped vaccination record (common fields)" do
       its(:persisted?) { should be false }
 
-      # TODO: add source to vaccination_record
-
       its(:nhs_immunisations_api_id) do
         should eq "11112222-3333-4444-5555-666677779999"
       end
 
+      # TODO: add source to vaccination_record
       its(:source) { pending("implementation") || raise } # should eq "nhs_immunisations_api" }
       its(:nhs_immunisations_api_synced_at) { should eq Time.current }
-      its(:performed_at) { should eq Time.parse("2025-04-06T23:59:50.2+01:00") }
-      its(:delivery_method) { should eq "intramuscular" }
-      its(:delivery_site) { should eq "left_arm_upper_position" }
-      its(:full_dose) { should be true }
-      its(:outcome) { should eq "administered" }
-      its(:location_name) { should eq "X99999" }
-      its(:performed_ods_code) { should eq "B0C4P" }
 
       context "when the record is saved to the database" do
         before { record.save! }
@@ -336,6 +329,7 @@ describe FHIRMapper::VaccinationRecord do
           )
         )
       end
+      let(:school) { create(:school, urn: "100006") }
 
       include_examples "a mapped vaccination record (common fields)"
 
@@ -346,6 +340,15 @@ describe FHIRMapper::VaccinationRecord do
       its(:vaccine) do
         should have_attributes(snomed_product_code: "43207411000001105")
       end
+
+      its(:performed_at) { should eq Time.parse("2025-04-06T23:59:50.2+01:00") }
+      its(:delivery_method) { should eq "intramuscular" }
+      its(:delivery_site) { should eq "left_arm_upper_position" }
+      its(:full_dose) { should be true }
+      its(:outcome) { should eq "administered" }
+      its(:location) { should have_attributes(urn: "100006") }
+      its(:location_name) { should be_nil }
+      its(:performed_ods_code) { should eq "B0C4P" }
     end
 
     context "with a record that has an unknown vaccine" do
@@ -371,6 +374,13 @@ describe FHIRMapper::VaccinationRecord do
 
       its(:vaccine) { should be_nil }
       its(:batch) { should be_nil }
+      its(:performed_at) { should eq Time.parse("2025-04-06T23:59:50.2+01:00") }
+      its(:delivery_method) { should eq "intramuscular" }
+      its(:delivery_site) { should eq "left_arm_upper_position" }
+      its(:full_dose) { should be true }
+      its(:location_name) { should eq "X99999" }
+      its(:outcome) { should eq "administered" }
+      its(:performed_ods_code) { should eq "B0C4P" }
 
       its(:notes) do
         should include(
@@ -380,6 +390,30 @@ describe FHIRMapper::VaccinationRecord do
                  "Batch expiry: 2026-07-02"
                )
       end
+    end
+
+    context "with a record that has an unknown location" do
+      let(:fhir_immunization) do
+        FHIR.from_contents(
+          File.read(
+            Rails.root.join(
+              "spec/fixtures/fhir/from-fhir-record-unknown-location.json"
+            )
+          )
+        )
+      end
+
+      include_examples "a mapped vaccination record (common fields)"
+
+      its(:performed_at) { should eq Time.parse("2025-08-28T11:45:30+01:00") }
+      its(:delivery_method) { should eq "nasal_spray" }
+      its(:delivery_site) { should eq "nose" }
+      its(:full_dose) { should be true }
+      its(:outcome) { should eq "administered" }
+      its(:performed_ods_code) { should eq "A9A5A" }
+
+      its(:location) { should be_nil }
+      its(:location_name) { should eq "X99999" }
     end
   end
 end
