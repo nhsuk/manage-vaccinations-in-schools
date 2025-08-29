@@ -54,7 +54,8 @@ resource "aws_iam_role" "data_replication_snapshot" {
   name        = "DatabaseSnapshotRole"
   description = "Role to be assumed by the data replication workflow for taking on-demand DB snapshots"
   assume_role_policy = templatefile("resources/iam_role_github_trust_policy_${var.environment}.json.tftpl", {
-    account_id = var.account_id
+    account_id      = var.account_id
+    repository_list = ["repo:nhsuk/manage-vaccinations-in-schools:*"]
   })
 }
 
