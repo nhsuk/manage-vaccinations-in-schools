@@ -56,6 +56,11 @@ module "web_service" {
   environment           = var.environment
   server_type           = "web"
   deployment_controller = "CODE_DEPLOY"
+
+  depends_on = [
+    aws_rds_cluster_instance.core,
+    aws_elasticache_replication_group.valkey
+  ]
 }
 
 module "good_job_service" {
@@ -82,6 +87,10 @@ module "good_job_service" {
   cluster_name          = aws_ecs_cluster.cluster.name
   environment           = var.environment
   server_type           = "good-job"
+
+  depends_on = [
+    aws_rds_cluster_instance.core
+  ]
 }
 
 module "sidekiq_service" {
@@ -110,6 +119,7 @@ module "sidekiq_service" {
   server_type           = "sidekiq"
 
   depends_on = [
+    aws_rds_cluster_instance.core,
     aws_elasticache_replication_group.valkey
   ]
 }
