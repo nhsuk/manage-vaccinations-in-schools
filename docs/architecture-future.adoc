@@ -197,11 +197,6 @@ include::diagrams/component-view-future.puml[]
 ----
 endif::[]
 
-Browser Cache Storage::
-Data necessary for offline functionality is stored in the browser's cache
-storage. This is managed by the service worker, see the offline documentation
-for more information.
-
 Database::
 Relational storage used to store application data including programme data,
 consent responses and vaccination events. In the case of the vaccination events,
@@ -219,17 +214,9 @@ service using a standard login page, and as is standard with Ruby on Rails apps,
 resources are exposed with REST-like paths using an MVC approach to separate
 concerns on the server.
 
-There is a notable exception made to this pattern, though, to support offline
-working.
-
-=== Offline support
-
-include::offline-support.adoc[leveloffset=+2,lines=24..-1]
-
 == Components
 
 * Authentication
 * Programme management - creation, update, etc
 * Programme operations and vaccination recording
-* Offline support - Browser-based component
 * FHIR server synchronisation
