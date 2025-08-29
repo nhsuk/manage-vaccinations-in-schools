@@ -216,8 +216,7 @@ module NHS::ImmunisationsAPI
     end
 
     def search_immunisations(patient, programmes:, date_from: nil, date_to: nil)
-      unless Flipper.enabled?(:imms_api_integration) &&
-               Flipper.enabled?(:immunisations_fhir_api_integration_search)
+      unless Flipper.enabled?(:imms_api_integration)
         Rails.logger.info(
           "Not searching for vaccination records in the immunisations API as the" \
             "feature flag is disabled: Patient #{patient.id}"
