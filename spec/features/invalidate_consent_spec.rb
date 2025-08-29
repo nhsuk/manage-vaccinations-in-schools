@@ -81,7 +81,7 @@ describe "Invalidate consent" do
   end
 
   def and_the_api_feature_flag_is_enabled
-    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
+    Flipper.enable(:imms_api_enqueue_write)
     Flipper.enable(:immunisations_fhir_api_integration)
   end
 

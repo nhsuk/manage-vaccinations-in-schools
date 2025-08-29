@@ -7,7 +7,7 @@ describe "Flu vaccination" do
     given_i_am_signed_in_with_flu_programme
     and_there_is_a_flu_session_today_with_patients_ready_to_vaccinate
     and_there_are_nasal_and_injection_batches
-    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    and_imms_api_enqueue_write_feature_is_enabled
 
     when_i_go_to_the_nasal_only_patient
     then_i_see_the_vaccination_form_for_nasal_spray
@@ -148,8 +148,8 @@ describe "Flu vaccination" do
       create(:batch, :not_expired, team: @team, vaccine: @injection_vaccine)
   end
 
-  def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
-    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
+  def and_imms_api_enqueue_write_feature_is_enabled
+    Flipper.enable(:imms_api_enqueue_write)
     Flipper.enable(:immunisations_fhir_api_integration)
 
     @stubbed_post_request = stub_immunisations_api_post
