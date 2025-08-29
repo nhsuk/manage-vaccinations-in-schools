@@ -2,8 +2,8 @@
 
 describe NHS::ImmunisationsAPI do
   before do
-    Flipper.enable(:immunisations_fhir_api_integration)
     Flipper.enable(:immunisations_fhir_api_integration_search)
+    Flipper.enable(:imms_api_integration)
   end
 
   let(:team) { create(:team, ods_code: "A9A5A") }
@@ -58,9 +58,9 @@ describe NHS::ImmunisationsAPI do
   end
   let(:notify_parents) { true }
 
-  shared_examples "an immunisations_fhir_api_integration feature flag check" do
-    context "the immunisations_fhir_api_integration feature flag is disabled" do
-      before { Flipper.disable(:immunisations_fhir_api_integration) }
+  shared_examples "an immunisations_fhir_api_integration_search feature flag check" do
+    context "the immunisations_fhir_api_integration_search feature flag is disabled" do
+      before { Flipper.disable(:immunisations_fhir_api_integration_search) }
 
       it "does not make a request to the NHS API" do
         perform_request
@@ -70,9 +70,9 @@ describe NHS::ImmunisationsAPI do
     end
   end
 
-  shared_examples "an immunisations_fhir_api_integration_search feature flag check" do
-    context "the immunisations_fhir_api_integration_search feature flag is disabled" do
-      before { Flipper.disable(:immunisations_fhir_api_integration_search) }
+  shared_examples "an imms_api_integration feature flag check" do
+    context "the imms_api_integration feature flag is disabled" do
+      before { Flipper.disable(:imms_api_integration) }
 
       it "does not make a request to the NHS API" do
         perform_request
@@ -313,7 +313,7 @@ describe NHS::ImmunisationsAPI do
       include_examples "generic error handling"
     end
 
-    include_examples "an immunisations_fhir_api_integration feature flag check"
+    include_examples "an imms_api_integration feature flag check"
   end
 
   describe "update immunisations" do
@@ -358,7 +358,7 @@ describe NHS::ImmunisationsAPI do
       expect(request_stub).to have_been_made
     end
 
-    include_examples "an immunisations_fhir_api_integration feature flag check"
+    include_examples "an imms_api_integration feature flag check"
 
     it "sets the nhs_immunisations_api_synced_at" do
       freeze_time do
@@ -447,7 +447,7 @@ describe NHS::ImmunisationsAPI do
       expect(request_stub).to have_been_made
     end
 
-    include_examples "an immunisations_fhir_api_integration feature flag check"
+    include_examples "an imms_api_integration feature flag check"
 
     it "sets the nhs_immunisations_api_synced_at" do
       freeze_time do
@@ -770,7 +770,7 @@ describe NHS::ImmunisationsAPI do
     include_examples "generic error handling"
     include_examples "unexpected response status", 250, "searching"
 
-    include_examples "an immunisations_fhir_api_integration feature flag check"
     include_examples "an immunisations_fhir_api_integration_search feature flag check"
+    include_examples "an imms_api_integration feature flag check"
   end
 end

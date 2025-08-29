@@ -11,8 +11,8 @@ module MavisCLI
       def call(vaccination_record_id:, **)
         MavisCLI.load_rails
 
-        unless Flipper.enabled?(:immunisations_fhir_api_integration)
-          puts "Cannot sync vaccination record: the `immunisations_fhir_api_integration` feature flag is disabled"
+        unless Flipper.enabled?(:imms_api_integration)
+          puts "Cannot sync vaccination record: the `imms_api_integration` feature flag is disabled"
           return
         end
 

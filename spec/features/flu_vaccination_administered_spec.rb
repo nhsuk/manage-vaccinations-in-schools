@@ -149,8 +149,8 @@ describe "Flu vaccination" do
   end
 
   def and_imms_api_sync_job_feature_is_enabled
-    Flipper.enable(:immunisations_fhir_api_integration)
     Flipper.enable(:imms_api_sync_job)
+    Flipper.enable(:imms_api_integration)
 
     @stubbed_post_request = stub_immunisations_api_post
   end

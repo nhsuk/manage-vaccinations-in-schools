@@ -6,8 +6,7 @@ delegation: Allow prescribers to create a PSDs for healthcare workers to adminis
 
 dev_tools: Developer tools useful for testing and debugging.
 
-immunisations_fhir_api_integration: Master switch to control communications
-  with NHS Immunisations FHIR API.
+imms_api_integration: Umbrella flag to switch off ALL API integration (including CLI tools).
 
 immunisations_fhir_api_integration_search: Master switch to control whether
   search requests can be made to the NHS Immunisations FHIR API.

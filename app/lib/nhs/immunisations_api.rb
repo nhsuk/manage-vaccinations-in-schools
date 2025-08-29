@@ -24,7 +24,7 @@ module NHS::ImmunisationsAPI
     end
 
     def create_immunisation(vaccination_record)
-      unless Flipper.enabled?(:immunisations_fhir_api_integration)
+      unless Flipper.enabled?(:imms_api_integration)
         Rails.logger.info(
           "Not recording vaccination record to immunisations API as the" \
             " feature flag is disabled: #{vaccination_record.id}"
@@ -76,7 +76,7 @@ module NHS::ImmunisationsAPI
     end
 
     def update_immunisation(vaccination_record)
-      unless Flipper.enabled?(:immunisations_fhir_api_integration)
+      unless Flipper.enabled?(:imms_api_integration)
         Rails.logger.info(
           "Not updating vaccination record to immunisations API as the" \
             " feature flag is disabled: #{vaccination_record.id}"
@@ -147,7 +147,7 @@ module NHS::ImmunisationsAPI
     end
 
     def delete_immunisation(vaccination_record)
-      unless Flipper.enabled?(:immunisations_fhir_api_integration)
+      unless Flipper.enabled?(:imms_api_integration)
         Rails.logger.info(
           "Not deleting vaccination record from immunisations API as the" \
             " feature flag is disabled: #{vaccination_record.id}"
@@ -216,11 +216,11 @@ module NHS::ImmunisationsAPI
     end
 
     def search_immunisations(patient, programmes:, date_from: nil, date_to: nil)
-      unless Flipper.enabled?(:immunisations_fhir_api_integration) &&
+      unless Flipper.enabled?(:imms_api_integration) &&
                Flipper.enabled?(:immunisations_fhir_api_integration_search)
         Rails.logger.info(
-          "Not searching for vaccination records in the immunisations API as one of the" \
-            " feature flags is disabled: Patient #{patient.id}"
+          "Not searching for vaccination records in the immunisations API as the" \
+            "feature flag is disabled: Patient #{patient.id}"
         )
         return
       end

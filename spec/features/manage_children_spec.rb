@@ -217,8 +217,8 @@ describe "Manage children" do
   end
 
   def and_sync_vaccination_records_to_nhs_feature_is_enabled
-    Flipper.enable(:immunisations_fhir_api_integration)
     Flipper.enable(:imms_api_sync_job)
+    Flipper.enable(:imms_api_integration)
 
     immunisation_uuid = Random.uuid
     @stubbed_post_request = stub_immunisations_api_post(uuid: immunisation_uuid)

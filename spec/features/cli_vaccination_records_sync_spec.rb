@@ -3,9 +3,9 @@
 require_relative "../../app/lib/mavis_cli"
 
 describe "mavis vaccination-records sync" do
-  before { Flipper.enable :immunisations_fhir_api_integration }
+  before { Flipper.enable :imms_api_integration }
 
-  after { Flipper.disable :immunisations_fhir_api_integration }
+  after { Flipper.disable :imms_api_integration }
 
   context "when the vaccination record exists and has not been synced" do
     it "syncs the vaccination record to the NHS API" do
@@ -31,8 +31,8 @@ describe "mavis vaccination-records sync" do
     end
   end
 
-  context "when the immunisations_fhir_api_integration feature flag is disabled" do
-    before { Flipper.disable :immunisations_fhir_api_integration }
+  context "when the imms_api_integration feature flag is disabled" do
+    before { Flipper.disable :imms_api_integration }
 
     it "displays a message indicating the feature flag is disabled" do
       given_a_vaccination_record_exists
@@ -145,7 +145,7 @@ describe "mavis vaccination-records sync" do
 
   def then_the_feature_flag_disabled_message_is_displayed
     expect(@output).to include(
-      "Cannot sync vaccination record: the `immunisations_fhir_api_integration` feature flag is disabled"
+      "Cannot sync vaccination record: the `imms_api_integration` feature flag is disabled"
     )
   end
 end
