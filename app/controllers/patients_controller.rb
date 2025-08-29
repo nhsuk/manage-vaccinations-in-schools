@@ -25,6 +25,29 @@ class PatientsController < ApplicationController
   def edit
   end
 
+  def pds_search_history
+    latest_results = @patient.pds_search_results.includes(:import).latest_set
+
+    @timeline_items =
+      if latest_results.present?
+        latest_results
+          .map(&:timeline_item)
+          .sort_by { |item| item["created_at"] }
+      else
+        []
+      end
+
+    time = latest_results&.last&.import&.processed_at
+
+    if @patient.nhs_number.present?
+      @timeline_items << {
+        active: true,
+        heading_text: "NHS number is #{@patient.nhs_number}",
+        description: time&.to_date&.to_fs(:long)
+      }
+    end
+  end
+
   def invite_to_clinic
     PatientLocation.find_or_create_by!(
       patient: @patient,
