@@ -5,8 +5,8 @@ class API::Reporting::VaccinationEventsController < API::Reporting::BaseControll
     "Vaccine" => :programme_type,
     "Provider" => :team_name,
     "Local Authority" => :patient_local_authority_from_postcode_short_name,
-    "School" => :school_name,
-    "School Local Authority" => :school_local_authority_short_name,
+    "Location" => :location_name,
+    "Location Local Authority" => :location_local_authority_short_name,
     "Year Group" => :patient_year_group,
     "Gender" => :patient_gender_code,
     "Month" => :event_timestamp_month,
@@ -17,8 +17,8 @@ class API::Reporting::VaccinationEventsController < API::Reporting::BaseControll
 
   GROUPS = {
     local_authority: :patient_local_authority_from_postcode_short_name,
-    school: :school_name,
-    school_local_authority: :school_local_authority_short_name,
+    location: :location_name,
+    location_local_authority: :location_local_authority_short_name,
     year_group: :patient_year_group,
     gender: :patient_gender_code,
     programme: :programme_type,
@@ -59,7 +59,8 @@ class API::Reporting::VaccinationEventsController < API::Reporting::BaseControll
       month: :event_timestamp_month,
       year: :event_timestamp_year,
       local_authority: :patient_local_authority_from_postcode_short_name,
-      school_local_authority: :school_gias_local_authority_code
+      location_local_authority: :location_gias_local_authority_code,
+      location_type: :location_type
     }
   end
 

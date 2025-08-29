@@ -217,11 +217,11 @@ class VaccinationRecord < ApplicationRecord
     re.event_type = outcome
 
     re.copy_attributes_from_references(
-      patient: patient.reload,
+      patient: patient&.reload,
       patient_local_authority_from_postcode:
-        patient.local_authority_from_postcode,
-      school: location,
-      school_local_authority: location&.local_authority,
+        patient&.local_authority_from_postcode,
+      location: location,
+      location_local_authority: location&.local_authority,
       vaccination_record: self,
       vaccine: vaccine,
       team: team,

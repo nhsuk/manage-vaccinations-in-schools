@@ -26,16 +26,16 @@ class AddReportingAPIVaccinationEvents < ActiveRecord::Migration[8.0]
       t.string :patient_local_authority_from_postcode_mhclg_code
       t.string :patient_local_authority_from_postcode_short_name
 
-      t.bigint :school_id
-      t.string :school_name
-      t.string :school_address_town
-      t.string :school_address_postcode
+      t.bigint :location_id
+      t.string :location_name
+      t.string :location_address_town
+      t.string :location_address_postcode
 
-      t.string :school_local_authority_gss_code
-      t.string :school_local_authority_mhclg_code
-      t.string :school_local_authority_short_name
-      t.string :school_gias_local_authority_code
-
+      t.string :location_local_authority_gss_code
+      t.string :location_local_authority_mhclg_code
+      t.string :location_local_authority_short_name
+      t.string :location_gias_local_authority_code
+      t.string :location_type
 
       t.bigint :gp_practice_id
       t.string :gp_practice_name
@@ -79,6 +79,7 @@ class AddReportingAPIVaccinationEvents < ActiveRecord::Migration[8.0]
       t.index  [:event_timestamp_academic_year, :event_timestamp_month], name: 'ix_rpt_vac_event_ac_year_month'
       t.index  [:source_type, :source_id], name: 'ix_rpt_vac_event_source_type_id'
       t.index  [:event_timestamp_academic_year, :event_timestamp_month, :programme_id, :event_type], name: 'ix_rve_tstamp_year_month_prog_type'
+      t.index  [:team_id, :event_timestamp_academic_year, :event_timestamp_month], name: 'ix_rve_team_acyr_month'
     end
   end
 end
