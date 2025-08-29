@@ -94,6 +94,13 @@ variable "vpc_log_retention_days" {
   nullable    = false
 }
 
+variable "reporting_flask_secret_version" {
+  type        = number
+  default     = 1
+  description = "Version of the secret used by the reporting service to sign cookies, increment this value if the secret is changed."
+  nullable    = false
+}
+
 ########## Task definition configuration ##########
 
 
@@ -131,11 +138,26 @@ locals {
   ])
   secret_values = tomap(
     {
-      CORE = [{
-        name      = "DB_CREDENTIALS"
-        valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
-      }]
-      REPORTING = []
+      CORE = [
+        {
+          name      = "DB_CREDENTIALS"
+          valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
+        },
+        {
+          name      = "MAVIS__REPORTING_API__CLIENT_APP__SECRET"
+          valueFrom = aws_secretsmanager_secret.jwt_sign.arn
+        }
+      ]
+      REPORTING = [
+        {
+          name      = "CLIENT_SECRET"
+          valueFrom = aws_secretsmanager_secret.jwt_sign.arn
+        },
+        {
+          name      = "SECRET_KEY"
+          valueFrom = aws_secretsmanager_secret.reporting_flask.arn
+        }
+      ]
     }
   )
 
@@ -203,9 +225,26 @@ locals {
         name  = "SENTRY_ENVIRONMENT"
         value = var.environment
       },
+      {
+        name  = "MAVIS__REPORTING_API__CLIENT_APP__CLIENT_ID"
+        value = aws_secretsmanager_secret.jwt_sign.name
+      },
       ], local.sandbox_envs,
     )
-    REPORTING = []
+    REPORTING = [
+      {
+        name  = "VALKEY_ADDRESS"
+        value = aws_elasticache_serverless_cache.reporting_service.endpoint[0].address
+      },
+      {
+        name  = "VALKEY_PORT"
+        value = aws_elasticache_serverless_cache.reporting_service.endpoint[0].port
+      },
+      {
+        name  = "CLIENT_ID"
+        value = aws_secretsmanager_secret.jwt_sign.name
+      }
+    ]
   }
 
   task_secrets = {
@@ -288,6 +327,18 @@ variable "maximum_sidekiq_replicas" {
   type        = number
   default     = 4
   description = "Amount of replicas for the sidekiq service"
+}
+
+variable "minimum_reporting_replicas" {
+  type        = number
+  default     = 2
+  description = "Minimum amount of allowed replicas for reporting service. Also the replica count when creating the service."
+}
+
+variable "maximum_reporting_replicas" {
+  type        = number
+  default     = 4
+  description = "Maximum amount of allowed replicas for reporting service"
 }
 
 variable "max_aurora_capacity_units" {
