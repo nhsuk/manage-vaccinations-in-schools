@@ -656,6 +656,14 @@ class Patient < ApplicationRecord
   class UnknownGPPractice < StandardError
   end
 
+  def latest_pds_search_result
+    pds_search_results.latest_set&.first&.changeset&.pds_nhs_number
+  end
+
+  def pds_lookup_match?
+    nhs_number.present? && nhs_number == latest_pds_search_result
+  end
+
   private
 
   def patient_status(association, programme:, academic_year:)

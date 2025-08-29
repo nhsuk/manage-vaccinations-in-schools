@@ -19,7 +19,9 @@ class AppChildSummaryComponent < ViewComponent::Base
 
   def call
     govuk_summary_list(
-      actions: @change_links.present? || @remove_links.present?
+      actions:
+        @change_links.present? || @remove_links.present? ||
+          pds_search_history_link.present?
     ) do |summary_list|
       summary_list.with_row do |row|
         row.with_key { "NHS number" }
@@ -30,6 +32,8 @@ class AppChildSummaryComponent < ViewComponent::Base
             href:,
             visually_hidden_text: "NHS number"
           )
+        elsif (href = pds_search_history_link)
+          row.with_action(text: "PDS history", href:)
         end
       end
 
@@ -208,5 +212,11 @@ class AppChildSummaryComponent < ViewComponent::Base
 
   def highlight_if(value, condition)
     condition ? tag.span(value, class: "app-highlight") : value
+  end
+
+  def pds_search_history_link
+    return unless @child.is_a?(Patient) && @child.pds_lookup_match?
+
+    pds_search_history_patient_path(@child)
   end
 end
