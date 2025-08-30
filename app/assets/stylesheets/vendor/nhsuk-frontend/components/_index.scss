@@ -1,3 +1,4 @@
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/action-link";
 @forward "pkg:nhsuk-frontend/dist/nhsuk/components/back-link";
 @forward "pkg:nhsuk-frontend/dist/nhsuk/components/breadcrumb";
 @forward "pkg:nhsuk-frontend/dist/nhsuk/components/button";
@@ -26,7 +27,6 @@
 @forward "pkg:nhsuk-frontend/dist/nhsuk/components/warning-callout";
 
 // Ignored components
-// - action-link
 // - character-count
 // - contents-list
 // - do-dont-list
