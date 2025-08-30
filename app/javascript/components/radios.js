@@ -1,7 +1,6 @@
-import { Controller } from "@hotwired/stimulus";
 import { Radios } from "nhsuk-frontend";
 
-class UpgradedRadios extends Radios {
+export class UpgradedRadios extends Radios {
   constructor($root) {
     // Promote data-aria-controls attribute to a aria-controls attribute as per
     // https://github.com/alphagov/govuk-frontend/blob/88fea750b5eb9c9d9f661405e68bfb59e59754b2/packages/govuk-frontend/src/govuk/components/radios/radios.mjs#L33-L34
@@ -23,12 +22,5 @@ class UpgradedRadios extends Radios {
     });
 
     super($root);
-  }
-}
-
-// Connects to data-module="nhsuk-radios"
-export default class extends Controller {
-  connect() {
-    return new UpgradedRadios(this.element);
   }
 }

@@ -8,8 +8,9 @@
 <%= form_with model: @draft_import, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_select :location_id, label: { text: title, size: "l", tag: "h1" },
-                                   data: { module: "autocomplete" } do %>
+  <%= f.govuk_select :location_id,
+                     label: { text: title, size: "l", tag: "h1" },
+                     data: { module: "app-autocomplete" } do %>
     <%= tag.option "", value: "" %>
 
     <% @location_options.each do |location| %>

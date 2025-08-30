@@ -2,19 +2,17 @@
   "name": "app",
   "private": "true",
   "dependencies": {
-    "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo-rails": "^8.0.16",
     "accessible-autocomplete": "^3.0.1",
     "esbuild": "^0.25.9",
     "govuk-frontend": "^5.11.2",
     "idb": "^8.0.3",
     "nhsuk-frontend": "^10.0.0",
-    "sass": "^1.91.0",
-    "stimulus": "^3.2.2"
+    "sass": "^1.91.0"
   },
   "scripts": {
     "build:css": "sass ./app/assets/stylesheets:./app/assets/builds --no-source-map --pkg-importer=node --quiet-deps --style compressed",
-    "build": "esbuild app/javascript/*.[jt]s app/javascript/controllers/*.[jt]s --bundle --sourcemap --outdir=app/assets/builds --public-path=assets --minify",
+    "build": "esbuild ./app/javascript/*.js --bundle --outdir=app/assets/builds --public-path=assets --minify",
     "test:e2e": "playwright test",
     "test:load": "artillery run tests/load.yml",
     "test": "jest"

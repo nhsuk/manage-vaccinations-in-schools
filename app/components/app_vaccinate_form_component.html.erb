@@ -58,7 +58,7 @@
       <% if form.requires_supplied_by_user_id? %>
         <%= f.govuk_select :supplied_by_user_id,
                            label: { text: "Which nurse identified and pre-screened the child and supplied the vaccine?" },
-                           data: { module: "autocomplete" } do %>
+                           data: { module: "app-autocomplete" } do %>
           <%= tag.option "", value: "" %>
           <% form.supplied_by_users.each do |user| %>
             <%= tag.option user.full_name,
