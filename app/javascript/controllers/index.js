@@ -7,15 +7,6 @@ import { application } from "./application";
 import AutocompleteController from "./autocomplete_controller";
 application.register("autocomplete", AutocompleteController);
 
-import AutosubmitController from "./autosubmit_controller";
-application.register("autosubmit", AutosubmitController);
-
-import CheckAllController from "./check_all_controller";
-application.register("check-all", CheckAllController);
-
-import GovukCharacterCountController from "./govuk_character_count_controller";
-application.register("govuk-character-count", GovukCharacterCountController);
-
 import GovukCheckboxesController from "./govuk_checkboxes_controller";
 application.register("govuk-checkboxes", GovukCheckboxesController);
 
