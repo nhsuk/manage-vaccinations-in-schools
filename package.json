@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build:css": "sass ./app/assets/stylesheets:./app/assets/builds --no-source-map --pkg-importer=node --quiet-deps --style compressed",
-    "build": "esbuild ./app/javascript/*.js --bundle --outdir=app/assets/builds --public-path=assets --minify",
+    "build": "esbuild ./app/assets/javascripts/*.js --bundle --outdir=app/assets/builds --public-path=assets --minify",
     "test:e2e": "playwright test",
     "test:load": "artillery run tests/load.yml",
     "test": "jest"
