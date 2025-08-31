@@ -9,7 +9,7 @@
     <title><%= page_title(@service_name) %></title>
 
     <%= stylesheet_link_tag @assets_name, "data-turbo-track": Rails.env.development? ? "" : "reload" %>
-    <%= javascript_include_tag "application", "data-turbo-track": Rails.env.development? ? "" : "reload", type: "module" %>
+    <%= javascript_include_tag @assets_name, "data-turbo-track": Rails.env.development? ? "" : "reload", type: "module" %>
 
     <%= icon_link_tag "favicon.ico", rel: "icon", sizes: "48x48" %>
     <%= icon_link_tag "favicon.svg", rel: "icon", sizes: "any", type: "image/svg+xml" %>
