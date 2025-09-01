@@ -177,7 +177,7 @@ resource "aws_elasticache_serverless_cache" "rails_cache" {
 ################ REDIS CACHE FOR REPORTING SERVICE #####################
 
 resource "aws_security_group" "reporting_valkey" {
-  name        = "mavis-cache-${var.environment}"
+  name        = "mavis-cache-reporting-${var.environment}"
   description = "Security group for Valkey ElastiCache for the reporting service"
   vpc_id      = aws_vpc.application_vpc.id
 
