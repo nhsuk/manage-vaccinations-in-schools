@@ -39,12 +39,18 @@ module NHS::ImmunisationsAPI
           " #{vaccination_record.id}"
       )
 
-      response =
-        NHS::API.connection.post(
-          "/immunisation-fhir-api/FHIR/R4/Immunization",
-          vaccination_record.fhir_record.to_json,
-          "Content-Type" => "application/fhir+json"
-        )
+      response, duration =
+        execute_and_time do
+          NHS::API.connection.post(
+            "/immunisation-fhir-api/FHIR/R4/Immunization",
+            vaccination_record.fhir_record.to_json,
+            "Content-Type" => "application/fhir+json"
+          )
+        end
+
+      Rails.logger.info(
+        "Create response returned with status #{response.status} in #{duration}s"
+      )
 
       if response.status == 201
         vaccination_record.update!(
@@ -94,15 +100,21 @@ module NHS::ImmunisationsAPI
       )
 
       nhs_id = vaccination_record.nhs_immunisations_api_id
-      response =
-        NHS::API.connection.put(
-          "/immunisation-fhir-api/FHIR/R4/Immunization/#{nhs_id}",
-          vaccination_record.fhir_record.to_json,
-          {
-            "Content-Type" => "application/fhir+json",
-            "E-Tag" => vaccination_record.nhs_immunisations_api_etag
-          }
-        )
+      response, duration =
+        execute_and_time do
+          NHS::API.connection.put(
+            "/immunisation-fhir-api/FHIR/R4/Immunization/#{nhs_id}",
+            vaccination_record.fhir_record.to_json,
+            {
+              "Content-Type" => "application/fhir+json",
+              "E-Tag" => vaccination_record.nhs_immunisations_api_etag
+            }
+          )
+        end
+
+      Rails.logger.info(
+        "Update response returned with status #{response.status} in #{duration}s"
+      )
 
       if response.status == 200
         vaccination_record.update!(
@@ -153,15 +165,21 @@ module NHS::ImmunisationsAPI
       )
 
       nhs_id = vaccination_record.nhs_immunisations_api_id
-      response =
-        NHS::API.connection.delete(
-          "/immunisation-fhir-api/FHIR/R4/Immunization/#{nhs_id}",
-          nil,
-          {
-            "Accept" => "application/fhir+json",
-            "E-Tag" => vaccination_record.nhs_immunisations_api_etag
-          }
-        )
+      response, duration =
+        execute_and_time do
+          NHS::API.connection.delete(
+            "/immunisation-fhir-api/FHIR/R4/Immunization/#{nhs_id}",
+            nil,
+            {
+              "Accept" => "application/fhir+json",
+              "E-Tag" => vaccination_record.nhs_immunisations_api_etag
+            }
+          )
+        end
+
+      Rails.logger.info(
+        "Delete response returned with status #{response.status} in #{duration}s"
+      )
 
       if response.status == 204
         # It's not entirely clear if the e-tag should be changed here, but
@@ -226,12 +244,18 @@ module NHS::ImmunisationsAPI
         "-date.to" => date_to&.strftime("%F")
       }.compact
 
-      response =
-        NHS::API.connection.get(
-          "/immunisation-fhir-api/FHIR/R4/Immunization",
-          params,
-          "Content-Type" => "application/fhir+json"
-        )
+      response, duration =
+        execute_and_time do
+          NHS::API.connection.get(
+            "/immunisation-fhir-api/FHIR/R4/Immunization",
+            params,
+            "Content-Type" => "application/fhir+json"
+          )
+        end
+
+      Rails.logger.info(
+        "Search response returned with status #{response.status} in #{duration}s"
+      )
 
       if response.status == 200
         # # To create fixtures for testing
@@ -360,6 +384,13 @@ module NHS::ImmunisationsAPI
         raise NHS::ImmunisationsAPI::OperationOutcomeInBundle,
               "OperationOutcome entry found in bundle: #{operation_outcome_entry.resource}"
       end
+    end
+
+    def execute_and_time(&block)
+      start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      result = block.call
+      duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
+      [result, duration]
     end
   end
 end
