@@ -161,9 +161,12 @@ def setup_clinic(team)
   academic_year = AcademicYear.current
   clinic_session = team.generic_clinic_session(academic_year:)
 
-  clinic_session.session_dates.create!(value: Date.current)
-  clinic_session.session_dates.create!(value: Date.current - 1.day)
-  clinic_session.session_dates.create!(value: Date.current + 1.day)
+  [Date.current, Date.yesterday, Date.tomorrow].each do |value|
+    if value.in?(academic_year.to_academic_year_date_range)
+      clinic_session.session_dates.create!(value:)
+    end
+  end
+
   clinic_session.update!(send_invitations_at: Date.current - 3.weeks)
 
   # All patients belong to the community clinic. This is normally
