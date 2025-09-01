@@ -32,30 +32,28 @@ def create_team(ods_code:)
     )
 end
 
-def create_user(team:, email: nil, uid: nil, fallback_role: :nurse)
+def create_user(role, team:, email: nil, uid: nil)
   if uid
     User.find_by(uid:) ||
       FactoryBot.create(
-        :user,
+        role,
         uid:,
         family_name: "Flo",
         given_name: "Nurse",
         email: "nurse.flo@example.nhs.uk",
         provider: "cis2",
-        team:,
-        fallback_role:
+        team:
         # password: Do not set this as they should not log in via password
       )
   elsif email
     User.find_by(email:) ||
       FactoryBot.create(
-        :user,
+        role,
         family_name: email.split("@").first.split(".").last.capitalize,
         given_name: email.split("@").first.split(".").first.capitalize,
         email:,
         password: email,
-        team:,
-        fallback_role:
+        team:
       )
   else
     raise "No email or UID provided"
@@ -259,14 +257,10 @@ unless Settings.cis2.enabled
   # Don't create Nurse Joy's team on a CIS2 env, because password authentication
   # is not available and password= fails to run.
   team = create_team(ods_code: "R1L")
-  user = create_user(team:, email: "nurse.joy@example.com")
-  create_user(team:, email: "admin.hope@example.com", fallback_role: "admin")
-  create_user(team:, email: "superuser@example.com", fallback_role: "superuser")
-  create_user(
-    team:,
-    email: "hca@example.com",
-    fallback_role: "healthcare_assistant"
-  )
+  user = create_user(:nurse, team:, email: "nurse.joy@example.com")
+  create_user(:admin, team:, email: "admin.hope@example.com")
+  create_user(:superuser, team:, email: "superuser@example.com")
+  create_user(:healthcare_assistant, team:, email: "hca@example.com")
 
   attach_sample_of_schools_to(team)
 
@@ -285,7 +279,7 @@ end
 
 # CIS2 team - the ODS code and user UID need to match the values in the CIS2 env
 team = create_team(ods_code: "A9A5A")
-user = create_user(team:, uid: "555057896106")
+user = create_user(:nurse, team:, uid: "555057896106")
 
 attach_sample_of_schools_to(team)
 
