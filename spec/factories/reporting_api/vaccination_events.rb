@@ -63,6 +63,8 @@
 #  vaccine_nivs_name                                :text
 #  vaccine_snomed_product_code                      :string
 #  vaccine_snomed_product_term                      :string
+#  created_at                                       :datetime         not null
+#  updated_at                                       :datetime         not null
 #  gp_practice_id                                   :bigint
 #  location_id                                      :bigint
 #  organisation_id                                  :bigint
