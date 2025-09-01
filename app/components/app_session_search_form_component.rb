@@ -78,8 +78,6 @@ class AppSessionSearchFormComponent < ViewComponent::Base
   ERB
 
   def initialize(form, url:, programmes:, academic_years:)
-    super
-
     @form = form
     @url = url
     @programmes = programmes

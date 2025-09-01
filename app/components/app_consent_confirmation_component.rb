@@ -8,8 +8,6 @@ class AppConsentConfirmationComponent < ViewComponent::Base
   ERB
 
   def initialize(consent_form)
-    super
-
     @consent_form = consent_form
   end
 

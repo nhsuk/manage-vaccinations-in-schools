@@ -201,8 +201,6 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     heading_level: 3,
     show_aged_out_of_programmes: false
   )
-    super
-
     @form = form
     @url = url
 

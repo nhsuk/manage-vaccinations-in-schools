@@ -2,8 +2,6 @@
 
 class AppStatusTagComponent < ViewComponent::Base
   def initialize(status, context:)
-    super
-
     @status = status
     @context = context
   end

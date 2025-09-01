@@ -2,8 +2,6 @@
 
 class AppSessionCardComponent < ViewComponent::Base
   def initialize(session, patient_count:)
-    super
-
     @session = session
     @patient_count = patient_count
   end

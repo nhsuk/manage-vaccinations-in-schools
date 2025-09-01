@@ -2,8 +2,6 @@
 
 class AppImportsNavigationComponent < ViewComponent::Base
   def initialize(active:)
-    super
-
     @active = active
   end
 

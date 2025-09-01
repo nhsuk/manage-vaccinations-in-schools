@@ -2,8 +2,6 @@
 
 class AppVaccinationRecordTableComponent < ViewComponent::Base
   def initialize(vaccination_records, current_user:, count:)
-    super
-
     @vaccination_records = vaccination_records
     @current_user = current_user
     @count = count

@@ -2,8 +2,6 @@
 
 class AppPatientTableComponent < ViewComponent::Base
   def initialize(patients, current_user:, count:)
-    super
-
     @patients = patients
     @current_user = current_user
     @count = count

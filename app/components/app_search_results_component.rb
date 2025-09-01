@@ -20,8 +20,6 @@ class AppSearchResultsComponent < ViewComponent::Base
   ERB
 
   def initialize(pagy, label:, heading: "Search results")
-    super
-
     @pagy = pagy
     @label = label
     @heading = heading

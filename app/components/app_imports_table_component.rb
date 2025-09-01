@@ -2,8 +2,6 @@
 
 class AppImportsTableComponent < ViewComponent::Base
   def initialize(team:)
-    super
-
     @team = team
   end
 

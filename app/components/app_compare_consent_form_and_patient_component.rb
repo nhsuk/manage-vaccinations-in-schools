@@ -20,8 +20,6 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
   ERB
 
   def initialize(consent_form:, patient:)
-    super
-
     @consent_form = consent_form
     @patient = patient
   end

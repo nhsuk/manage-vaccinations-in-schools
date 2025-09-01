@@ -18,8 +18,6 @@ class AppDetailsComponent < ViewComponent::Base
   renders_one :summary
 
   def initialize(summary: nil, open: false, expander: false)
-    super
-
     with_summary { summary } if summary
     @open = open
     @expander = expander

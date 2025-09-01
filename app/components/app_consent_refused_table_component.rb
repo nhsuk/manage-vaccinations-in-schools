@@ -2,8 +2,6 @@
 
 class AppConsentRefusedTableComponent < ViewComponent::Base
   def initialize(consents, vaccine_may_contain_gelatine:)
-    super
-
     @grouped_by_reason_for_refusal =
       consents.response_refused.group(:reason_for_refusal).count
     @total_count = @grouped_by_reason_for_refusal.values.sum

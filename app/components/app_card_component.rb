@@ -38,8 +38,6 @@ class AppCardComponent < ViewComponent::Base
     filters: false,
     section: false
   )
-    super
-
     @link_to = link_to
     @colour = colour
     @heading_level = heading_level

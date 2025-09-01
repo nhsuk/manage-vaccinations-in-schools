@@ -14,8 +14,6 @@ class AppPatientSummaryComponent < ViewComponent::Base
   ERB
 
   def initialize(patient)
-    super
-
     @patient = patient
   end
 

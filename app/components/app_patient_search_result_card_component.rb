@@ -12,8 +12,6 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     show_school: false,
     show_year_group: false
   )
-    super
-
     @patient = patient
     @link_to = link_to
     @programme = programme

@@ -2,8 +2,6 @@
 
 class AppCountComponent < ViewComponent::Base
   def initialize(count)
-    super
-
     @count = count
   end
 

@@ -55,8 +55,6 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   ERB
 
   def initialize(patient_session, context:, programmes: [])
-    super
-
     unless context.in?(
              %i[
                patients

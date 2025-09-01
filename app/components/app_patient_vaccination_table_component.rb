@@ -2,8 +2,6 @@
 
 class AppPatientVaccinationTableComponent < ViewComponent::Base
   def initialize(patient, academic_year:, programme: nil, show_caption: false)
-    super
-
     @patient = patient
     @academic_year = academic_year
     @programme = programme

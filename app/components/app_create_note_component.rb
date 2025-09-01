@@ -13,8 +13,6 @@ class AppCreateNoteComponent < ViewComponent::Base
   ERB
 
   def initialize(note, open: false)
-    super
-
     @note = note
     @open = open
   end

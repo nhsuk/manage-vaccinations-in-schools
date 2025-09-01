@@ -46,8 +46,6 @@ class AppPatientSessionTableComponent < ViewComponent::Base
   ERB
 
   def initialize(patient_sessions)
-    super
-
     @patient_sessions = patient_sessions
   end
 

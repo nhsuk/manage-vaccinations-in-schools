@@ -9,8 +9,6 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
   ERB
 
   def initialize(patient_session, programme:, current_user:, vaccinate_form:)
-    super
-
     @patient_session = patient_session
     @programme = programme
     @current_user = current_user

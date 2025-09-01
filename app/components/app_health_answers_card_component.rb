@@ -2,8 +2,6 @@
 
 class AppHealthAnswersCardComponent < ViewComponent::Base
   def initialize(objects, heading: "Answers to health questions")
-    super
-
     @objects = objects.is_a?(Array) ? objects : [objects]
     @heading = heading
   end

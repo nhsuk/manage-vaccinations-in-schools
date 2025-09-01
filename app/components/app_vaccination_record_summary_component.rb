@@ -7,8 +7,6 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
     change_links: {},
     show_notes: true
   )
-    super
-
     @vaccination_record = vaccination_record
     @current_user = current_user
     @change_links = change_links

@@ -9,8 +9,6 @@ class AppChildSummaryComponent < ViewComponent::Base
     change_links: {},
     remove_links: {}
   )
-    super
-
     @child = child
     @current_team = current_team
     @show_parents = show_parents

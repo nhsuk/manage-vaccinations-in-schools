@@ -40,8 +40,6 @@ class AppLogEventComponent < ViewComponent::Base
     invalidated: false,
     card: false
   )
-    super
-
     @title = title
     @body = body
     @at = at.to_fs(:long)

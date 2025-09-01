@@ -2,8 +2,6 @@
 
 class AppImportFormatDetailsComponent < ViewComponent::Base
   def initialize(import:)
-    super
-
     @import = import
   end
 

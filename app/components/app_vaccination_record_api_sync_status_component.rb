@@ -18,7 +18,6 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
   }.freeze
 
   def initialize(vaccination_record)
-    super
     @vaccination_record = vaccination_record
   end
 

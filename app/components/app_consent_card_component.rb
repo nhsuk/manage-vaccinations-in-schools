@@ -2,8 +2,6 @@
 
 class AppConsentCardComponent < ViewComponent::Base
   def initialize(consent, session:)
-    super
-
     @consent = consent
     @session = session
   end

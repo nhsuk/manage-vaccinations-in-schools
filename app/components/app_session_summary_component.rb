@@ -14,8 +14,6 @@ class AppSessionSummaryComponent < ViewComponent::Base
   ERB
 
   def initialize(session)
-    super
-
     @session = session
   end
 

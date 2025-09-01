@@ -2,8 +2,6 @@
 
 class AppConsentPatientSummaryComponent < ViewComponent::Base
   def initialize(consent)
-    super
-
     @consent = consent
   end
 

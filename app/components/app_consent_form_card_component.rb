@@ -2,8 +2,6 @@
 
 class AppConsentFormCardComponent < ViewComponent::Base
   def initialize(consent_form)
-    super
-
     @consent_form = consent_form
   end
 

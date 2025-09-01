@@ -2,8 +2,6 @@
 
 class AppPatientSessionTriageComponent < ViewComponent::Base
   def initialize(patient_session, programme:, triage_form: nil)
-    super
-
     @patient_session = patient_session
     @programme = programme
     @triage_form = triage_form || default_triage_form

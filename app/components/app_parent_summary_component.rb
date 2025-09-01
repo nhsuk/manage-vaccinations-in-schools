@@ -2,8 +2,6 @@
 
 class AppParentSummaryComponent < ViewComponent::Base
   def initialize(parent_relationship:, change_links: {})
-    super
-
     @parent_relationship = parent_relationship
     @parent = parent_relationship.parent
     @patient = parent_relationship.patient

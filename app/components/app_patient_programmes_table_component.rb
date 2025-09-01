@@ -2,8 +2,6 @@
 
 class AppPatientProgrammesTableComponent < ViewComponent::Base
   def initialize(patient, programmes:)
-    super
-
     @patient = patient
     @programmes = programmes
   end

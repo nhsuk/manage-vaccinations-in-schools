@@ -4,8 +4,6 @@ class AppFlashMessageComponent < ViewComponent::Base
   attr_reader :body, :heading, :heading_link_text, :heading_link_href
 
   def initialize(flash:)
-    super
-
     flash = flash.to_h.with_indifferent_access
     @message_key = (recognised_message_keys & flash.keys.map(&:to_sym)).first
 

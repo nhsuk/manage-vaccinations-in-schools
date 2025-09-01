@@ -2,8 +2,6 @@
 
 class AppProgrammeSessionTableComponent < ViewComponent::Base
   def initialize(sessions, programme:)
-    super
-
     @sessions = sessions
     @programme = programme
   end

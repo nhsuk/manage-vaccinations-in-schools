@@ -2,8 +2,6 @@
 
 class AppBreadcrumbComponent < ViewComponent::Base
   def initialize(items:, attributes: {})
-    super
-
     @items = items
     @attributes = attributes
   end

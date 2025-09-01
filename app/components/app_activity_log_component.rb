@@ -15,8 +15,6 @@ class AppActivityLogComponent < ViewComponent::Base
   ERB
 
   def initialize(team:, patient: nil, patient_session: nil)
-    super
-
     if patient.nil? && patient_session.nil?
       raise "Pass either a patient or a patient session."
     elsif patient && patient_session

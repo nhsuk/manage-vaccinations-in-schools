@@ -2,8 +2,6 @@
 
 class AppSessionDetailsSummaryComponent < ViewComponent::Base
   def initialize(session)
-    super
-
     @session = session
   end
 

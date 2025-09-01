@@ -2,8 +2,6 @@
 
 class AppNoticesTableComponent < ViewComponent::Base
   def initialize(notices)
-    super
-
     @notices = notices
   end
 

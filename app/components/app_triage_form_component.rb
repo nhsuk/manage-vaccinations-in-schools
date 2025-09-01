@@ -8,8 +8,6 @@ class AppTriageFormComponent < ViewComponent::Base
     heading: true,
     continue: false
   )
-    super
-
     @triage_form = triage_form
     @url = url
     @method = method

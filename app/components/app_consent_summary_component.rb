@@ -2,8 +2,6 @@
 
 class AppConsentSummaryComponent < ViewComponent::Base
   def initialize(consent, change_links: {})
-    super
-
     @consent = consent
     @change_links = change_links
   end

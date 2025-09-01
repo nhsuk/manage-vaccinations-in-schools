@@ -2,8 +2,6 @@
 
 class AppPatientPDSDiscrepancyTableComponent < ViewComponent::Base
   def initialize(discrepancies:, current_user:)
-    super
-
     @discrepancies = discrepancies
     @current_user = current_user
   end
