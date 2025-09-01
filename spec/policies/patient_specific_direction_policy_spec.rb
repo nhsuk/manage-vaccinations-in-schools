@@ -1,25 +1,27 @@
 # frozen_string_literal: true
 
-RSpec.describe PatientSpecificDirectionPolicy do
+describe PatientSpecificDirectionPolicy do
   subject(:policy) { described_class.new(user, PatientSpecificDirection) }
 
-  context "cis2 is disabled", cis2: :disabled do
-    describe "#create?" do
-      context "when user is a nurse" do
-        let(:user) { build(:user, :nurse) }
+  describe "#create?" do
+    subject(:create?) { policy.create? }
 
-        it "permits creation" do
-          expect(policy.create?).to be(true)
-        end
-      end
+    context "when user is a nurse" do
+      let(:user) { build(:user, :nurse) }
 
-      context "when user is not a nurse" do
-        let(:user) { build(:user, :healthcare_assistant) }
+      it { should be(true) }
+    end
 
-        it "denies creation" do
-          expect(policy.create?).to be(false)
-        end
-      end
+    context "when user is a prescriber" do
+      let(:user) { build(:user, :prescriber) }
+
+      it { should be(true) }
+    end
+
+    context "when user is a healthcare assistant" do
+      let(:user) { build(:user, :healthcare_assistant) }
+
+      it { should be(false) }
     end
   end
 end
