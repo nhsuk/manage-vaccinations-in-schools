@@ -10,11 +10,11 @@ module MavisCLI
                type: :array,
                required: true,
                desc: "The programme types to search for"
-      argument :date_from, required: false, desc: "Start date (YYYY-MM-DD)"
-      argument :date_to, required: false, desc: "End date (YYYY-MM-DD)"
-      argument :output_file,
-               required: false,
-               desc: "File path to save JSON output"
+      option :date_from, required: false, desc: "Start date (YYYY-MM-DD)"
+      option :date_to, required: false, desc: "End date (YYYY-MM-DD)"
+      option :output_file,
+             required: false,
+             desc: "File path to save JSON output"
 
       def call(
         patient_id:,
