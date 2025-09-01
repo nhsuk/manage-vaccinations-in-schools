@@ -19,7 +19,7 @@
 describe SessionDate do
   subject(:session_date) { build(:session_date, session:, value:) }
 
-  let(:session) { create(:session, academic_year: 2024) }
+  let(:session) { create(:session, :unscheduled, academic_year: 2024) }
   let(:value) { Date.current }
 
   describe "validations" do

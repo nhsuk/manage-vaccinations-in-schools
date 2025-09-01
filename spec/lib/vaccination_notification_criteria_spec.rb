@@ -7,7 +7,13 @@ describe VaccinationNotificationCriteria do
     let(:programme) { build(:programme) }
     let(:patient) { create(:patient) }
     let(:vaccination_record) do
-      build(:vaccination_record, patient:, programme:, session:)
+      build(
+        :vaccination_record,
+        patient:,
+        programme:,
+        session:,
+        performed_at: Date.new(2025, 2, 1)
+      )
     end
     let(:session) { create(:session, programmes: [programme]) }
 
@@ -53,6 +59,7 @@ describe VaccinationNotificationCriteria do
             :self_consent,
             patient:,
             programme:,
+            submitted_at: Date.new(2025, 1, 1),
             notify_parents_on_vaccination: false
           )
         end
@@ -66,6 +73,7 @@ describe VaccinationNotificationCriteria do
             :consent,
             patient:,
             programme:,
+            submitted_at: Date.new(2025, 1, 1),
             notify_parents_on_vaccination: nil
           )
         end

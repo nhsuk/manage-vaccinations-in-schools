@@ -5,6 +5,8 @@ describe Reports::SystmOneExporter do
 
   before { vaccination_record }
 
+  around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
+
   let(:csv) do
     described_class.call(
       team:,
