@@ -70,7 +70,7 @@ describe DraftVaccinationRecord do
         )
       end
 
-      around { |example| freeze_time { example.run } }
+      around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
 
       before { draft_vaccination_record.wizard_step = :date_and_time }
 

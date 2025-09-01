@@ -22,6 +22,8 @@ describe PatientSession::RegistrationStatus do
     build(:patient_session_registration_status, patient_session:)
   end
 
+  around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
+
   let(:programmes) do
     [create(:programme, :menacwy), create(:programme, :td_ipv)]
   end

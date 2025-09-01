@@ -47,6 +47,8 @@ describe PreScreening do
       end
 
       context "with an instance for yesterday" do
+        around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
+
         let(:session_date) { create(:session_date, value: Date.yesterday) }
         let(:pre_screening) { create(:pre_screening, session_date:) }
 

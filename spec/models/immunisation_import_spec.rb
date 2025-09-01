@@ -78,6 +78,8 @@ describe ImmunisationImport do
   describe "#parse_rows!" do
     before { immunisation_import.parse_rows! }
 
+    around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
+
     context "with valid Flu rows" do
       let(:programmes) { [create(:programme, :flu_all_vaccines)] }
       let(:file) { "valid_flu.csv" }
@@ -127,6 +129,8 @@ describe ImmunisationImport do
 
   describe "#process!" do
     subject(:process!) { immunisation_import.process! }
+
+    around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
 
     context "with valid Flu rows" do
       let(:programmes) { [create(:programme, :flu_all_vaccines)] }

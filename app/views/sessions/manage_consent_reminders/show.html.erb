@@ -4,7 +4,6 @@
                                           { text: t("sessions.index.title"), href: sessions_path },
                                           { text: @session.location.name, href: session_path(@session) },
                                         ]) %>
-  <%= render AppBacklinkComponent.new(session_path(@session), name: @session.location.name) %>
 <% end %>
 
 <%= h1 t(".title") %>

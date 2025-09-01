@@ -299,9 +299,11 @@ describe ImmunisationImportRow do
       before { immunisation_import_row.valid? }
 
       context "when importing for an existing session" do
+        around { |example| travel_to(Date.new(2025, 9, 1)) { example.run } }
+
         let(:data) do
           {
-            "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
+            "DATE_OF_VACCINATION" => "20250902",
             "SESSION_ID" => session.id.to_s
           }
         end

@@ -22,7 +22,7 @@ describe "mavis gias check_import" do
       create(
         :session,
         location: @school_with_future_session,
-        dates: [Date.tomorrow],
+        date: Date.tomorrow,
         programmes: [@programme]
       )
 
@@ -32,7 +32,7 @@ describe "mavis gias check_import" do
       create(
         :session,
         location: @school2_with_future_session,
-        dates: [Date.tomorrow],
+        date: Date.tomorrow,
         programmes: [@programme]
       )
 
@@ -42,7 +42,7 @@ describe "mavis gias check_import" do
       create(
         :session,
         location: @school_without_future_session,
-        dates: [Date.yesterday],
+        date: Date.yesterday,
         programmes: [@programme]
       )
   end

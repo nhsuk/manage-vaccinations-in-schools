@@ -183,6 +183,7 @@ describe Patient::ConsentStatus do
           :refused,
           patient:,
           programme:,
+          academic_year: AcademicYear.current,
           created_at: 1.day.ago,
           submitted_at: 2.days.ago
         )
@@ -191,6 +192,7 @@ describe Patient::ConsentStatus do
           :given,
           patient:,
           programme:,
+          academic_year: AcademicYear.current,
           created_at: 2.days.ago,
           submitted_at: 1.day.ago
         )

@@ -16,16 +16,16 @@ describe AppPatientSessionTableComponent do
 
     let(:location) { create(:school, name: "Waterloo Road", programmes:) }
     let(:session) do
-      create(
-        :session,
-        location:,
-        programmes:,
-        academic_year: 2024,
-        date: Date.new(2025, 1, 1)
-      )
+      create(:session, location:, programmes:, date: Date.new(2025, 1, 1))
     end
 
-    let(:patient_sessions) { create_list(:patient_session, 1, session:) }
+    # Can't use year_group here because we need an absolute date, not one
+    # relative to the current academic year.
+    let(:patient) { create(:patient, date_of_birth: Date.new(2011, 9, 1)) }
+
+    let(:patient_sessions) do
+      create_list(:patient_session, 1, patient:, session:)
+    end
 
     it { should have_content("Location") }
     it { should have_content("Session dates") }
