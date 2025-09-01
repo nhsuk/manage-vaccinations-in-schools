@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_27_091512) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_29_172505) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -951,6 +951,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_091512) do
     t.boolean "notify_parents"
     t.bigint "location_id"
     t.bigint "supplied_by_user_id"
+    t.integer "source", null: false
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
     t.index ["location_id"], name: "index_vaccination_records_on_location_id"
@@ -962,6 +963,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_091512) do
     t.index ["supplied_by_user_id"], name: "index_vaccination_records_on_supplied_by_user_id"
     t.index ["uuid"], name: "index_vaccination_records_on_uuid", unique: true
     t.index ["vaccine_id"], name: "index_vaccination_records_on_vaccine_id"
+    t.check_constraint "session_id IS NULL AND source <> 0 OR session_id IS NOT NULL AND source = 0", name: "source_check"
   end
 
   create_table "vaccines", force: :cascade do |t|

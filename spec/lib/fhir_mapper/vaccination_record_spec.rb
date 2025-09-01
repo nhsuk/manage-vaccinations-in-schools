@@ -309,8 +309,7 @@ describe FHIRMapper::VaccinationRecord do
         should eq "11112222-3333-4444-5555-666677779999"
       end
 
-      # TODO: add source to vaccination_record
-      its(:source) { pending("implementation") || raise } # should eq "nhs_immunisations_api" }
+      its(:source) { should eq "nhs_immunisations_api" }
       its(:nhs_immunisations_api_synced_at) { should eq Time.current }
 
       context "when the record is saved to the database" do
