@@ -88,8 +88,11 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
 
   session = FactoryBot.create(:session, date:, team:, programmes:, location:)
 
-  session.session_dates.create!(value: date - 1.day)
-  session.session_dates.create!(value: date + 1.day)
+  [date - 1.day, date + 1.day].each do |value|
+    if value.in?(session.academic_year.to_academic_year_date_range)
+      session.session_dates.create!(value:)
+    end
+  end
 
   programmes.each do |programme|
     year_groups.each do |year_group|
