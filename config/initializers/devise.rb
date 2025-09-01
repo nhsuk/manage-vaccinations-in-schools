@@ -407,11 +407,12 @@ Devise.setup do |config|
       user&.update!(session_token: nil, reporting_api_session_token: nil)
     end
   else
-    Warden::Manager.after_authentication do |user, _auth, _opts|
+    Warden::Manager.after_authentication do |user, _warden, _opts|
       user&.reporting_api_session_token = SecureRandom.hex(32)
+      user&.show_in_suppliers = user&.is_nurse?
     end
 
-    Warden::Manager.before_logout do |user, _auth, _opts|
+    Warden::Manager.before_logout do |user, _warden, _opts|
       # we use this syntax to stop CodeQL complaining about bypassing validations
       # (which we have to do to support local development when password auth is enabled
       # and you're using the example user created in db/seeds)
