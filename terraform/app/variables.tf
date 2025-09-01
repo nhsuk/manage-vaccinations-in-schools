@@ -121,9 +121,9 @@ variable "enable_enhanced_db_monitoring" {
 locals {
   is_production = var.environment == "production"
   parameter_store_variables = tomap({ #TODO: Remove once all variables are sourced from application config
-    MAVIS__ACADEMIC_YEAR_TODAY_OVERRIDE             = ""
-    MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = ""
-    MAVIS__PDS__ENQUEUE_BULK_UPDATES                = ""
+    MAVIS__ACADEMIC_YEAR_TODAY_OVERRIDE             = "a"
+    MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = "a"
+    MAVIS__PDS__ENQUEUE_BULK_UPDATES                = "a"
     MAVIS__PDS__RATE_LIMIT_PER_SECOND               = 5
     GOOD_JOB_MAX_THREADS                            = 5
     SIDEKIQ_CONCURRENCY                             = 5

@@ -25,20 +25,26 @@ resource "aws_ssm_parameter" "cloud_variables" {
 }
 
 resource "aws_secretsmanager_secret" "jwt_sign" {
-  name                    = "rep-jwt-signing-secret-${var.environment}"
+  name                    = "rep-jwt-signing-secret-${var.environment}-${substr(uuid(), 0, 4)}"
   description             = "Secret for jwt signing"
   recovery_window_in_days = 7
   tags = {
     Name = "jwt-signing-${var.environment}"
   }
+  lifecycle {
+    ignore_changes = [name]
+  }
 }
 
 resource "aws_secretsmanager_secret" "reporting_flask" {
-  name                    = "reporting-cookie-secret-${var.environment}"
+  name                    = "reporting-cookie-secret-${var.environment}-${substr(uuid(), 0, 4)}"
   description             = "Secret for signing cookies in the reporting service"
   recovery_window_in_days = 7
   tags = {
     Name = "reporting-cookie-secret-${var.environment}"
+  }
+  lifecycle {
+    ignore_changes = [name]
   }
 }
 
