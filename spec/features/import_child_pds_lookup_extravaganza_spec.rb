@@ -19,9 +19,12 @@ describe "Import child records" do
     # Case 1: Patient with existing NHS number (Albert) - nothing should happen
     and_i_see_the_patient_uploaded_with_nhs_number
     and_parents_are_created_for_albert
+    when_i_click_on_alberts_pds_history
+    then_i_see_the_pds_lookup_history
 
     # Case 2: Existing patient without NHS number (Betty) - should not show duplicate review
-    and_i_do_not_see_an_import_review_for_the_first_patient_uploaded_without_nhs_number
+    when_i_go_back_to_the_import_page
+    then_i_do_not_see_an_import_review_for_the_first_patient_uploaded_without_nhs_number
     when_i_click_on_the_patient_without_review
     then_i_see_the_new_patient_has_an_nhs_number
     and_betty_has_correct_parent_relationships
@@ -272,12 +275,14 @@ describe "Import child records" do
   def and_pds_lookup_during_import_is_enabled
     Flipper.enable(:pds_lookup_during_import)
 
-    stub_pds_search_to_return_a_patient(
-      "9999075320",
-      "family" => "Tweedle",
-      "given" => "Albert",
-      "birthdate" => "eq2009-12-29",
-      "address-postalcode" => "SW11 1EH"
+    stub_pds_cascading_search(
+      family_name: "Tweedle",
+      given_name: "Albert",
+      birthdate: "eq2009-12-29",
+      address_postcode: "SW11 1EH",
+      steps: {
+        wildcard_family_name: "9999075320"
+      }
     )
 
     stub_pds_search_to_return_a_patient(
@@ -416,6 +421,11 @@ describe "Import child records" do
     end
   end
 
+  def when_i_click_on_alberts_pds_history
+    click_on "TWEEDLE, Albert"
+    click_link "PDS history"
+  end
+
   def and_i_upload_import_file(filename)
     click_button "Import records"
     choose "Child records"
@@ -445,6 +455,10 @@ describe "Import child records" do
 
   def then_i_should_see_the_import_page
     expect(page).to have_content("Import class list")
+  end
+
+  def then_i_see_the_pds_lookup_history
+    expect(page).to have_content("NHS number lookup history")
   end
 
   def when_i_upload_a_valid_file
@@ -526,7 +540,7 @@ describe "Import child records" do
       )
   end
 
-  def and_i_do_not_see_an_import_review_for_the_first_patient_uploaded_without_nhs_number
+  def then_i_do_not_see_an_import_review_for_the_first_patient_uploaded_without_nhs_number
     expect(page).not_to have_content("Actions Review SAMSON, Betty")
   end
 
