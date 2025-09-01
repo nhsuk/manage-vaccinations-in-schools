@@ -72,7 +72,11 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
     @patient_sessions_allowed_psd ||=
       @session
         .patient_sessions
-        .has_consent_status("given", programme: @programme)
+        .has_consent_status(
+          "given",
+          programme: @programme,
+          vaccine_method: "nasal"
+        )
         .has_triage_status("not_required", programme: @programme)
         .without_patient_specific_direction(programme: @programme)
   end
