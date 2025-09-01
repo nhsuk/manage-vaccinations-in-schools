@@ -1,6 +1,7 @@
 import "@hotwired/turbo-rails";
 import {
   createAll,
+  isSupported,
   Button,
   Checkboxes,
   ErrorSummary,
@@ -15,14 +16,71 @@ import { UpgradedRadios as Radios } from "./components/radios.js";
 // Configure Turbo
 Turbo.session.drive = false;
 
-// Initiate NHS.UK frontend components on page load
+/**
+ * Check if component has been initialised
+ *
+ * @param {string} moduleName - Name of component module
+ * @returns {boolean} Whether component is already initialised
+ */
+function isInitialised(moduleName) {
+  return document.querySelector(`[data-${moduleName}-init]`) !== null;
+}
+
+/**
+ * Initialise components
+ *
+ * We need to check if components have already been initialised because Turbo
+ * may have initialised them on a previous page (pre-)load.
+ */
+function initialiseComponents() {
+  if (!isSupported()) {
+    document.body.classList.add("nhsuk-frontend-supported");
+  }
+
+  if (!isInitialised("app-autocomplete")) {
+    createAll(Autocomplete);
+  }
+
+  if (!isInitialised("nhsuk-button")) {
+    createAll(Button, { preventDoubleClick: true });
+  }
+
+  if (!isInitialised("nhsuk-checkboxes")) {
+    createAll(Checkboxes);
+  }
+
+  if (!isInitialised("nhsuk-error-summary")) {
+    createAll(ErrorSummary);
+  }
+
+  if (!isInitialised("nhsuk-header")) {
+    createAll(Header);
+  }
+
+  if (!isInitialised("nhsuk-radios")) {
+    createAll(Radios);
+  }
+
+  if (!isInitialised("nhsuk-notification-banner")) {
+    createAll(NotificationBanner);
+  }
+
+  if (!isInitialised("nhsuk-skip-link")) {
+    createAll(SkipLink);
+  }
+}
+
+// Initiate components once page has loaded
 document.addEventListener("DOMContentLoaded", () => {
-  createAll(Autocomplete);
-  createAll(Button, { preventDoubleClick: true });
-  createAll(Checkboxes);
-  createAll(ErrorSummary);
-  createAll(Header);
-  createAll(Radios);
-  createAll(NotificationBanner);
-  createAll(SkipLink);
+  initialiseComponents();
+});
+
+// Reinitialize components when Turbo loads (and preloads) a page
+document.addEventListener("turbo:load", () => {
+  initialiseComponents();
+});
+
+// Reinitialize components when Turbo morphs a page
+document.addEventListener("turbo:morph", () => {
+  initialiseComponents();
 });
