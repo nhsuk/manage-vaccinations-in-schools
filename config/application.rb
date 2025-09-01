@@ -66,7 +66,10 @@ module ManageVaccinations
 
     config.time_zone = "London"
 
-    config.assets.excluded_paths = [Rails.root.join("app/assets/stylesheets")]
+    config.assets.excluded_paths = [
+      Rails.root.join("app/assets/javascripts"),
+      Rails.root.join("app/assets/stylesheets")
+    ]
 
     config.exceptions_app = routes
 

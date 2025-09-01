@@ -13,7 +13,6 @@ gem "jsbundling-rails"
 gem "pg"
 gem "propshaft"
 gem "puma"
-gem "stimulus-rails"
 gem "thruster", require: false
 gem "turbo-rails"
 
