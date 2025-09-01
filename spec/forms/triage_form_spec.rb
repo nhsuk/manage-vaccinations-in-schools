@@ -16,12 +16,7 @@ describe TriageForm do
     it { should_not validate_presence_of(:notes) }
     it { should_not validate_presence_of(:vaccine_methods) }
     it { should validate_length_of(:notes).is_at_most(1000) }
-
-    it do
-      expect(form).to validate_inclusion_of(:add_psd).in_array(
-        [true, false]
-      ).allow_nil
-    end
+    it { should allow_values(true, false).for(:add_psd) }
   end
 
   describe "when the patient is safe to vaccinate for HPV" do
