@@ -235,10 +235,7 @@ describe NHS::ImmunisationsAPI do
     end
 
     it "sends the correct JSON payload" do
-      expected_body =
-        File.read(
-          Rails.root.join("spec/fixtures/fhir/immunisation-create.json")
-        ).chomp
+      expected_body = file_fixture("fhir/immunisation-create.json").read.chomp
 
       request_stub.with do |request|
         expect(request.headers).to include(
@@ -342,10 +339,7 @@ describe NHS::ImmunisationsAPI do
     end
 
     it "sends the correct JSON payload" do
-      expected_body =
-        File.read(
-          Rails.root.join("spec/fixtures/fhir/immunisation-update.json")
-        ).chomp
+      expected_body = file_fixture("fhir/immunisation-update.json").read.chomp
 
       request_stub.with do |request|
         expect(request.headers).to include(
@@ -711,11 +705,7 @@ describe NHS::ImmunisationsAPI do
     end
 
     let(:status) { 200 }
-    let(:body) do
-      File.read(
-        Rails.root.join("spec/fixtures/fhir/search_response_2_results.json")
-      )
-    end
+    let(:body) { file_fixture("fhir/search_response_2_results.json").read }
     let(:headers) { { "content-type" => "application/fhir+json" } }
     let(:diagnostics) { nil }
 
@@ -767,11 +757,7 @@ describe NHS::ImmunisationsAPI do
 
     context "with an operation outcome in bundle" do
       let(:body) do
-        File.read(
-          Rails.root.join(
-            "spec/fixtures/fhir/search_response_operation_outcome_entry.json"
-          )
-        )
+        file_fixture("fhir/search_response_operation_outcome_entry.json").read
       end
 
       it "raises an error" do

@@ -324,9 +324,7 @@ describe FHIRMapper::VaccinationRecord do
     context "with a full fhir record" do
       let(:fhir_immunization) do
         FHIR.from_contents(
-          File.read(
-            Rails.root.join("spec/fixtures/fhir/from-fhir-record-full.json")
-          )
+          file_fixture("/fhir/from-fhir-record-full.json").read
         )
       end
       let(:school) { create(:school, urn: "100006") }
@@ -354,11 +352,7 @@ describe FHIRMapper::VaccinationRecord do
     context "with a record that has an unknown vaccine" do
       let(:fhir_immunization) do
         FHIR.from_contents(
-          File.read(
-            Rails.root.join(
-              "spec/fixtures/fhir/from-fhir-record-unknown-vaccine.json"
-            )
-          )
+          file_fixture("fhir/from-fhir-record-unknown-vaccine.json").read
         )
       end
 
@@ -395,11 +389,7 @@ describe FHIRMapper::VaccinationRecord do
     context "with a record that has an unknown location" do
       let(:fhir_immunization) do
         FHIR.from_contents(
-          File.read(
-            Rails.root.join(
-              "spec/fixtures/fhir/from-fhir-record-unknown-location.json"
-            )
-          )
+          file_fixture("fhir/from-fhir-record-unknown-location.json").read
         )
       end
 
