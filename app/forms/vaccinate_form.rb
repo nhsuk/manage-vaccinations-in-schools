@@ -85,18 +85,24 @@ class VaccinateForm
   end
 
   def healthcare_assistant_using_pgd?
-    current_user.is_healthcare_assistant? && !session.psd_enabled? &&
-      vaccine_method == "nasal"
+    healthcare_assistant? && !session.psd_enabled? && vaccine_method == "nasal"
   end
 
   def healthcare_assistant_using_psd?
-    current_user.is_healthcare_assistant? && session.psd_enabled? && psd_exists?
+    healthcare_assistant? && session.psd_enabled? && psd_exists? &&
+      vaccine_method == "nasal"
   end
 
   def requires_supplied_by_user_id?
     return false if healthcare_assistant_using_psd?
+    return true if special_nasal_case?
 
     user_not_designated_as_supplier?
+  end
+
+  def special_nasal_case?
+    healthcare_assistant_with_dual_protocols? && !psd_exists? &&
+      consented_for_nasal_only?
   end
 
   def psd_exists?
@@ -106,8 +112,15 @@ class VaccinateForm
     end
   end
 
-  def healthcare_assistant_using_psd_and_national_protocol?
-    current_user.is_healthcare_assistant? && session.psd_enabled? &&
+  def consented_for_nasal_only?
+    patient.consent_status(
+      programme:,
+      academic_year: session.academic_year
+    ).vaccine_methods == ["nasal"]
+  end
+
+  def healthcare_assistant_with_dual_protocols?
+    healthcare_assistant? && session.psd_enabled? &&
       session.national_protocol_enabled?
   end
 
@@ -117,6 +130,10 @@ class VaccinateForm
 
   def supplied_by_users
     current_user.selected_team.users.show_in_suppliers
+  end
+
+  def healthcare_assistant?
+    current_user.is_healthcare_assistant?
   end
 
   def save(draft_vaccination_record:)
