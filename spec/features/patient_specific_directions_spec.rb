@@ -7,7 +7,7 @@ describe "Patient Specific Directions" do
     given_a_flu_programme_with_a_running_session(user_type: :with_one_nurse)
     and_a_patient_with_consent_given_nasal_only_triage_not_needed
     and_a_patient_with_consent_given_injection_only_triage_not_needed
-    and_i_am_signed_in
+    and_i_am_signed_in(role: :prescriber)
 
     when_i_go_to_the_session_psds_tab
     then_the_patients_should_have_psd_status_not_added
@@ -77,9 +77,8 @@ describe "Patient Specific Directions" do
       )
   end
 
-  def and_i_am_signed_in(role: :nurse)
-    @user = @team.users.first
-    sign_in @user, role:
+  def and_i_am_signed_in(role:)
+    sign_in @team.users.first, role:
   end
 
   def when_i_go_to_the_session_psds_tab
