@@ -33,7 +33,7 @@ RSpec.describe API::Reporting::TotalsController do
             JWT.encode(
               valid_payload,
               Settings.reporting_api.client_app.secret,
-              "HS512"
+              ReportingAPI::OneTimeToken::JWT_SIGNING_ALGORITHM
             )
           end
 
@@ -58,7 +58,7 @@ RSpec.describe API::Reporting::TotalsController do
             JWT.encode(
               valid_payload,
               Settings.reporting_api.client_app.secret,
-              "HS512"
+              ReportingAPI::OneTimeToken::JWT_SIGNING_ALGORITHM
             )
           end
 
@@ -73,7 +73,7 @@ RSpec.describe API::Reporting::TotalsController do
             JWT.encode(
               invalid_payload,
               Settings.reporting_api.client_app.secret,
-              "HS512"
+              ReportingAPI::OneTimeToken::JWT_SIGNING_ALGORITHM
             )
           end
 

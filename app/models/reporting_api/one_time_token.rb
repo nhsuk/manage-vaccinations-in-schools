@@ -26,6 +26,8 @@ class ReportingAPI::OneTimeToken < ApplicationRecord
   validates :user_id, uniqueness: true, presence: true
   validates :token, uniqueness: true, presence: true
 
+  JWT_SIGNING_ALGORITHM = "HS512"
+
   def self.generate!(user_id:, cis2_info: {})
     create!(user_id: user_id, token: SecureRandom.hex(32), cis2_info: cis2_info)
   end
@@ -45,5 +47,23 @@ class ReportingAPI::OneTimeToken < ApplicationRecord
 
   def expired?
     created_at < self.class.expire_before
+  end
+
+  def jwt_payload
+    {
+      "iat" => Time.current.utc.to_i,
+      "data" => {
+        "user" => user.as_json,
+        "cis2_info" => cis2_info
+      }
+    }
+  end
+
+  def to_jwt
+    JWT.encode(
+      jwt_payload,
+      Settings.reporting_api.client_app.secret,
+      JWT_SIGNING_ALGORITHM
+    )
   end
 end
