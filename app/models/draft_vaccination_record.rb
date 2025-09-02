@@ -25,6 +25,7 @@ class DraftVaccinationRecord
   attribute :performed_by_family_name, :string
   attribute :performed_by_given_name, :string
   attribute :performed_by_user_id, :integer
+  attribute :protocol, :string
   attribute :performed_ods_code, :string
   attribute :programme_id, :integer
   attribute :protocol, :string
@@ -129,10 +130,6 @@ class DraftVaccinationRecord
 
   # So that a form error matches to a field in this model
   alias_method :administered, :administered?
-
-  def protocol
-    :pgd
-  end
 
   def batch
     return nil if batch_id.nil?
