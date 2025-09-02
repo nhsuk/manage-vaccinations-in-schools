@@ -69,7 +69,10 @@ class User < ApplicationRecord
             },
             if: :requires_email_and_password?
 
-  scope :recently_active,
+  scope :active_in_past_week,
+        -> { where(last_sign_in_at: 1.week.ago..Time.current) }
+
+  scope :active_in_past_day,
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
 
   scope :show_in_suppliers, -> { where(show_in_suppliers: true) }
