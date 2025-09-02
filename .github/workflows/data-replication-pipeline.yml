@@ -15,9 +15,11 @@ on:
           - qa
           - sandbox-alpha
           - sandbox-beta
-      image_tag:
-        description: Docker image tag to deploy
-        required: false
+      git_ref_to_deploy:
+        description:
+          | # Use blank unicode character (U+2800) to force line-break
+          Use code from: ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+          (Git ref to deploy, for example, a tag, branch name or commit SHA. Will use workflow ref if not provided.)
         type: string
 
 permissions: {}
@@ -28,7 +30,7 @@ env:
   db_snapshot_arn: ${{ inputs.db_snapshot_arn }}
   egress_cidr: ${{ inputs.egress_cidr }}
   take_db_snapshot: ${{ inputs.take_db_snapshot }}
-  git_ref: ${{ inputs.git_sha_to_deploy || github.sha }}
+  git_ref: ${{ inputs.git_ref_to_deploy || github.sha }}
   aws_role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployDataReplicationInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployDataReplicationInfrastructure' }}
@@ -57,7 +59,7 @@ jobs:
     needs: determine-git-sha
     uses: ./.github/workflows/build-and-push-image.yml
     with:
-      git-sha: ${{ needs.determine-git-sha.outputs.git-sha }}
+      git_sha: ${{ needs.determine-git-sha.outputs.git-sha }}
 
   prepare-deployment:
     name: Prepare deployment
@@ -80,8 +82,6 @@ jobs:
         with:
           python-version: 3.12.3
           cache: pip
-      - name: Install Python dependencies
-        run: python3 -m pip install -r script/requirements.txt
       - name: Get image digest
         id: get-image-digest
         run: |
