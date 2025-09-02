@@ -79,6 +79,7 @@ describe ProcessPatientChangesetsJob do
           nhs_number: "1234567890"
         }
       ]
+      patient_changeset.save!
       allow(PDS::Patient).to receive(:search).and_raise(
         NHS::PDS::TooManyMatches
       )
@@ -104,6 +105,7 @@ describe ProcessPatientChangesetsJob do
           nhs_number: "1234567890"
         }
       ]
+      patient_changeset.save!
       different_patient =
         instance_double(PDS::Patient, nhs_number: "1112223333")
       allow(PDS::Patient).to receive(:search).and_return(different_patient)
