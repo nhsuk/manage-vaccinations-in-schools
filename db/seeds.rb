@@ -258,7 +258,7 @@ unless Settings.cis2.enabled
   # is not available and password= fails to run.
   team = create_team(ods_code: "R1L")
   user = create_user(:nurse, team:, email: "nurse.joy@example.com")
-  create_user(:admin, team:, email: "admin.hope@example.com")
+  create_user(:medical_secretary, team:, email: "admin.hope@example.com")
   create_user(:superuser, team:, email: "superuser@example.com")
   create_user(:healthcare_assistant, team:, email: "hca@example.com")
 

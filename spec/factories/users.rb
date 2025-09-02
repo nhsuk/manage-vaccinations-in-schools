@@ -80,10 +80,10 @@ FactoryBot.define do
       end
     end
 
-    trait :admin do
-      sequence(:email) { |n| "admin-#{n}@example.com" }
-      role_code { CIS2Info::ADMIN_ROLE }
-      fallback_role { :admin }
+    trait :medical_secretary do
+      sequence(:email) { |n| "medical-secretary-#{n}@example.com" }
+      role_code { CIS2Info::MEDICAL_SECRETARY_ROLE }
+      fallback_role { :medical_secretary }
       show_in_suppliers { false }
     end
 
@@ -96,7 +96,7 @@ FactoryBot.define do
 
     trait :healthcare_assistant do
       sequence(:email) { |n| "healthcare-assistant-#{n}@example.com" }
-      role_code { nil }
+      role_code { CIS2Info::MEDICAL_SECRETARY_ROLE }
       activity_codes do
         [CIS2Info::PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE]
       end
@@ -117,8 +117,8 @@ FactoryBot.define do
     end
   end
 
-  factory :admin, parent: :user, traits: %i[admin]
   factory :healthcare_assistant, parent: :user, traits: %i[healthcare_assistant]
+  factory :medical_secretary, parent: :user, traits: %i[medical_secretary]
   factory :prescriber, parent: :user, traits: %i[prescriber]
   factory :superuser, parent: :user, traits: %i[superuser]
 end

@@ -53,7 +53,7 @@ FactoryBot.define do
     end
 
     trait :with_one_admin do
-      users { [create(:user, :admin, team: instance)] }
+      users { [create(:user, :medical_secretary, team: instance)] }
     end
 
     trait :with_one_healthcare_assistant do

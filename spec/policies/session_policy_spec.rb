@@ -4,8 +4,8 @@ describe SessionPolicy do
   subject(:policy) { described_class.new(user, session) }
 
   shared_examples "edit/update session" do
-    context "with an admin" do
-      let(:user) { create(:admin) }
+    context "with a medical secretary" do
+      let(:user) { create(:medical_secretary) }
 
       context "with a scheduled session" do
         let(:session) { create(:session, :scheduled) }
@@ -100,7 +100,7 @@ describe SessionPolicy do
         let(:session) { create(:session, team:, programmes:) }
 
         context "and an admin user" do
-          let(:user) { create(:admin, team:) }
+          let(:user) { create(:medical_secretary, team:) }
 
           it { should include(session) }
         end

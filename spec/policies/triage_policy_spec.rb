@@ -4,8 +4,8 @@ describe TriagePolicy do
   subject(:policy) { described_class.new(user, Triage) }
 
   shared_examples "only nurses or prescribers" do
-    context "with an admin" do
-      let(:user) { create(:admin) }
+    context "with a medical secretary" do
+      let(:user) { create(:medical_secretary) }
 
       it { should be(false) }
     end

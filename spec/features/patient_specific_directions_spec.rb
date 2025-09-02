@@ -26,7 +26,7 @@ describe "Patient Specific Directions" do
   scenario "admin cannot bulk add PSDs to patients" do
     given_a_flu_programme_with_a_running_session(user_type: :with_one_admin)
     and_a_patient_with_consent_given_nasal_only_triage_not_needed
-    and_i_am_signed_in(role: :admin)
+    and_i_am_signed_in(role: :medical_secretary)
 
     when_i_go_to_the_session_psds_tab
     then_i_should_not_see_link_to_bulk_add_psds
