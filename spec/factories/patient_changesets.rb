@@ -46,7 +46,7 @@ FactoryBot.define do
       {
         child: {
           "given_name" => "John",
-          "family_name" => "Doe",
+          "family_name" => "Dover",
           "date_of_birth" => "2010-01-01",
           "address_postcode" => "SW1A 1AA",
           "nhs_number" => nil
