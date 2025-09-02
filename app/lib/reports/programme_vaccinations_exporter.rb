@@ -65,9 +65,13 @@ class Reports::ProgrammeVaccinationsExporter
       TIME_OF_VACCINATION
       PROGRAMME_NAME
       VACCINE_GIVEN
+      PROTOCOL
       PERFORMING_PROFESSIONAL_EMAIL
       PERFORMING_PROFESSIONAL_FORENAME
       PERFORMING_PROFESSIONAL_SURNAME
+      SUPPLIER_EMAIL
+      SUPPLIER_FORENAME
+      SUPPLIER_SURNAME
       BATCH_NUMBER
       BATCH_EXPIRY_DATE
       ANATOMICAL_SITE
@@ -94,6 +98,7 @@ class Reports::ProgrammeVaccinationsExporter
           :location,
           :performed_by_user,
           :session,
+          :supplied_by,
           :vaccine,
           patient: %i[consent_statuses gp_practice school]
         )
@@ -228,9 +233,13 @@ class Reports::ProgrammeVaccinationsExporter
       vaccination_record.performed_at.strftime("%H:%M:%S"),
       programme.name,
       vaccine&.nivs_name || "",
+      vaccination_record.protocol || "",
       vaccination_record.performed_by_user&.email || "",
       vaccination_record.performed_by&.given_name || "",
       vaccination_record.performed_by&.family_name || "",
+      vaccination_record.supplied_by&.email || "",
+      vaccination_record.supplied_by&.given_name || "",
+      vaccination_record.supplied_by&.family_name || "",
       vaccination_record.batch&.name || "",
       vaccination_record.batch&.expiry&.iso8601 || "",
       anatomical_site(vaccination_record:),
