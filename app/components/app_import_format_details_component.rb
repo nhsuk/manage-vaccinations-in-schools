@@ -346,4 +346,13 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       { name: "PERFORMING_PROFESSIONAL_SURNAME", notes: "Optional" }
     ]
   end
+
+  def supplier
+    [
+      {
+        name: "SUPPLIER_EMAIL",
+        notes: "Required if uploading delegated vaccination records."
+      }
+    ]
+  end
 end
