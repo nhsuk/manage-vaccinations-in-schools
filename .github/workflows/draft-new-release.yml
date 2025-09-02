@@ -1,0 +1,33 @@
+name: draft-new-release.yml
+run-name: Draft release notes for ${{ inputs.release_tag }}
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        required: true
+        description: Release tag
+
+jobs:
+  create-release-notes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Generate release notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: script/draft_new_release.sh ${{ inputs.release_tag }}
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ inputs.release_tag }}" \
+            --title "Draft release ${{ inputs.release_tag }}" \
+            --notes-file release_notes.md \
+            --draft
+
