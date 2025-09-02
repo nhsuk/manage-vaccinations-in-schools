@@ -48,6 +48,8 @@ resource "aws_iam_role_policy_attachment" "data_replication" {
   policy_arn = each.value
 }
 
+################# DB Snapshot Policy ################
+
 resource "aws_iam_role" "data_replication_snapshot" {
   name        = "DatabaseSnapshotRole"
   description = "Role to be assumed by the data replication workflow for taking on-demand DB snapshots"
