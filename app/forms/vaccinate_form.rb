@@ -74,18 +74,50 @@ class VaccinateForm
   end
 
   def protocol
-    if current_user.is_nurse? || vaccine_method == "nasal"
+    if current_user.is_nurse? || healthcare_assistant_using_pgd? ||
+         special_nasal_case?
       "pgd"
+    elsif healthcare_assistant_using_psd?
+      "psd"
     else
       "national"
     end
   end
 
+  def healthcare_assistant_using_pgd?
+    current_user.is_healthcare_assistant? && !session.psd_enabled? &&
+      vaccine_method == "nasal"
+  end
+
+  def healthcare_assistant_using_psd?
+    current_user.is_healthcare_assistant? && session.psd_enabled? && psd_exists?
+  end
+
+  def requires_supplied_by_user_id?
+    return false if healthcare_assistant_using_psd?
+
+    user_not_designated_as_supplier?
+  end
+
+  def psd_exists?
+    patient.patient_specific_directions.any? do
+      it.programme_id == programme.id &&
+        it.academic_year == session.academic_year
+    end
+  end
+
+  def healthcare_assistant_using_psd_and_national_protocol?
+    current_user.is_healthcare_assistant? && session.psd_enabled? &&
+      session.national_protocol_enabled?
+  end
+
+  def user_not_designated_as_supplier?
+    !current_user.show_in_suppliers
+  end
+
   def supplied_by_users
     current_user.selected_team.users.show_in_suppliers
   end
-
-  def requires_supplied_by_user_id? = !current_user.show_in_suppliers
 
   def save(draft_vaccination_record:)
     return nil if invalid?

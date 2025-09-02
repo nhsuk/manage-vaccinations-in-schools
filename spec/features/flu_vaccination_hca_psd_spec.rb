@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-describe "Patient Specific Directions" do
+describe "Flu vaccination" do
   before { given_delegation_feature_flag_is_enabled }
 
-  scenario "Prescriber can bulk add PSDs to patients that don't require triage" do
+  scenario "Prescriber bulk add PSDs to patients that don't require triage" do
     given_a_flu_session_exists(user_type: :with_one_nurse)
     and_patients_exist
     and_i_am_signed_in(role: :prescriber)
@@ -58,6 +58,17 @@ describe "Patient Specific Directions" do
     then_i_should_not_see_the_record_vaccination_section
   end
 
+  scenario "Nasal flu administered by HCA under PSD" do
+    given_a_flu_session_exists(user_type: :with_one_healthcare_assistant)
+    and_patients_exist
+    and_the_nasal_only_patient_has_a_psd
+    and_i_am_signed_in(role: :healthcare_assistant)
+
+    when_i_visit_the_session_patient_programme_page
+    and_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
+    and_the_vaccination_record_has_psd_as_the_protocol
+  end
+
   def given_delegation_feature_flag_is_enabled
     Flipper.enable(:delegation)
   end
@@ -68,9 +79,22 @@ describe "Patient Specific Directions" do
     @team = create(:team, user_type, programmes: @programmes)
 
     @batch =
-      create(:batch, team: @team, vaccine: @programmes.first.vaccines.first)
+      create(
+        :batch,
+        :not_expired,
+        team: @team,
+        vaccine: @programme.vaccines.nasal.first
+      )
 
-    @session = create(:session, team: @team, programmes: @programmes)
+    @session =
+      create(
+        :session,
+        :today,
+        :requires_no_registration,
+        :psd_enabled,
+        team: @team,
+        programmes: @programmes
+      )
   end
 
   def and_patients_exist
@@ -86,6 +110,14 @@ describe "Patient Specific Directions" do
         :consent_given_injection_only_triage_not_needed,
         session: @session
       )
+  end
+
+  def and_the_nasal_only_patient_has_a_psd
+    create(
+      :patient_specific_direction,
+      patient: @patient_nasal_only,
+      programme: @programme
+    )
   end
 
   def and_i_am_signed_in(role:)
@@ -163,5 +195,26 @@ describe "Patient Specific Directions" do
 
   def then_i_should_not_see_the_record_vaccination_section
     expect(page).not_to have_text("Record flu vaccination with injection")
+  end
+
+  def and_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
+    within all("section")[0] do
+      check "I have checked that the above statements are true"
+    end
+
+    within all("section")[1] do
+      choose "Yes"
+      click_button "Continue"
+    end
+
+    choose @batch.name
+    click_button "Continue"
+    click_on "Confirm"
+
+    expect(page).to have_text("Vaccination outcome recorded for flu")
+  end
+
+  def and_the_vaccination_record_has_psd_as_the_protocol
+    expect(@patient_nasal_only.vaccination_records.first.protocol).to eq("psd")
   end
 end
