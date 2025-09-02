@@ -25,7 +25,8 @@ class Sessions::RecordController < ApplicationController
       scope = scope.has_registration_status(%w[attending completed])
     end
 
-    if @session.psd_enabled? && current_user.is_healthcare_assistant?
+    if !@session.national_protocol_enabled? && @session.psd_enabled? &&
+         current_user.is_healthcare_assistant?
       scope = scope.has_patient_specific_direction(programme: @programme)
     end
 
