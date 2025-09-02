@@ -31,7 +31,6 @@ class AddReportingAPIVaccinationEvents < ActiveRecord::Migration[8.0]
 
       t.string :patient_school_local_authority_mhclg_code
       t.string :patient_school_local_authority_short_name
-
       t.string :patient_local_authority_from_postcode_mhclg_code
       t.string :patient_local_authority_from_postcode_short_name
 

@@ -22,15 +22,15 @@ module ReportingAPI
       filters_to_apply
     end
 
-    # Returns a string with all non-nil params conatenated. Used in 
+    # Returns a string with all non-nil params conatenated. Used in
     # generating CSV filenames for filtered recordsets
     def to_s
       filters
-        .map do |param, _attr_name|
+        .map { |param, _attr_name|
           params[param] ? [param.to_s, params[param]].join("_") : nil
-        end
+        }
         .compact
-        .map{|e| e.gsub(/[^a-z0-9\_]+/i, '_') }
+        .map { |e| e.gsub(/[^a-z0-9_]+/i, "_") }
         .join("_")
     end
   end

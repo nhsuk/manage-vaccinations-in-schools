@@ -4,11 +4,12 @@ module MavisCLI
   module ReportingAPIVaccinationEvents
     class Regenerate < Dry::CLI::Command
       desc "Re-generate ReportingAPI Vaccination Events"
-      argument :min_datetime, 
-                desc: "Only regenerate for vaccination records created after this datetime (use ISO8601 format)",
-                optional: true,
-                aliases: ["--from", "-f"],
-                default: nil
+      argument :min_datetime,
+               desc:
+                 "Only regenerate for vaccination records created after this datetime (use ISO8601 format)",
+               optional: true,
+               aliases: %w[--from -f],
+               default: nil
 
       def call(min_datetime: Time.current - 2.years, **)
         MavisCLI.load_rails
@@ -23,7 +24,6 @@ module MavisCLI
       end
     end
   end
-
 
   register "reporting-api-vaccination-events" do |prefix|
     prefix.register "regenerate", ReportingAPIVaccinationEvents::Regenerate

@@ -8,7 +8,8 @@ class API::Reporting::VaccinationEventsController < API::Reporting::BaseControll
     "Location" => :location_name,
     "Location Local Authority" => :location_local_authority_short_name,
     "Patient School" => :patient_school_name,
-    "Patient School Local Authority" => :patient_school_local_authority_short_name,
+    "Patient School Local Authority" =>
+      :patient_school_local_authority_short_name,
     "Year Group" => :patient_year_group,
     "Gender" => :patient_gender_code,
     "Month" => :event_timestamp_month,
@@ -30,7 +31,6 @@ class API::Reporting::VaccinationEventsController < API::Reporting::BaseControll
     organisation: :organisation_id
   }.freeze
 
-
   before_action :set_default_filters, :set_filters
 
   def index
@@ -45,8 +45,8 @@ class API::Reporting::VaccinationEventsController < API::Reporting::BaseControll
 
     if request.format.csv?
       render_csv records: @vaccinations,
-                header_mappings: CSV_HEADERS,
-                prefix: "vaccinations"
+                 header_mappings: CSV_HEADERS,
+                 prefix: "vaccinations"
     else
       render_paginated_json(records: @vaccinations)
     end
@@ -73,7 +73,8 @@ class API::Reporting::VaccinationEventsController < API::Reporting::BaseControll
   end
 
   def group_clause(params)
-    groups = params[:group].to_s.split(",").map { |param| GROUPS[param.strip.to_sym] }
+    groups =
+      params[:group].to_s.split(",").map { |param| GROUPS[param.strip.to_sym] }
     # we always group by year/month
     groups += %i[event_timestamp_year event_timestamp_month]
     groups.compact.uniq

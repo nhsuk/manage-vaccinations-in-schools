@@ -27,7 +27,7 @@ class API::Reporting::BaseController < ActionController::API
 
   def set_json_headers
     response.headers["Content-Type"] = "application/json"
-    response.headers["Last-Modified"] = Time.now.httpdate
+    response.headers["Last-Modified"] = Time.zone.now.httpdate
   end
 
   def render_csv(records:, header_mappings:, prefix: "data")
@@ -40,9 +40,11 @@ class API::Reporting::BaseController < ActionController::API
 
   def set_csv_headers
     response.headers["Content-Type"] = "text/csv"
-    response.headers["Content-Disposition"] = "attachment; filename=posts-#{Date.today}.csv"
+    response.headers[
+      "Content-Disposition"
+    ] = "attachment; filename=posts-#{Time.zone.today}.csv"
     response.headers["Cache-Control"] = "no-cache"
-    response.headers["Last-Modified"] = Time.now.httpdate
+    response.headers["Last-Modified"] = Time.zone.now.httpdate
   end
 
   def csv_filename(prefix: "data")
