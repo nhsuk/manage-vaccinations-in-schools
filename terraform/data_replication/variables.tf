@@ -86,6 +86,7 @@ locals {
   subnet_list                        = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
   shared_egress_infrastructure_count = min(length(var.allowed_egress_cidr_blocks), 1)
 
+  valkey_port = 6379
   task_envs = [
     {
       name  = "DB_HOST"
@@ -114,6 +115,10 @@ locals {
     {
       name  = "MAVIS__PDS__ENQUEUE_BULK_UPDATES"
       value = "false"
+    },
+    {
+      name  = "SIDEKIQ_REDIS_URL"
+      value = "rediss://${aws_elasticache_replication_group.valkey.primary_endpoint_address}:${local.valkey_port}"
     }
   ]
   task_secrets = [
