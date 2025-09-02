@@ -16,10 +16,14 @@ class Reports::OfflineSessionExporter
         package.use_shared_strings = true
 
         add_vaccinations_sheet(package)
-        add_reference_sheet package,
+        add_reference_sheet(package,
                             name: "Performing Professionals",
                             values_name: "EMAIL",
-                            values: performing_professional_email_values
+                            values: performing_professional_email_values)
+        add_reference_sheet(package,
+                            name: "Suppliers",
+                            values_name: "EMAIL",
+                            values: supplier_email_values)
         add_batch_numbers_sheets(package)
       }
       .to_stream
@@ -112,6 +116,7 @@ class Reports::OfflineSessionExporter
           programme
           vaccine_given
           performing_professional_email
+          supplier_email
           batch_number
           batch_expiry_date
           anatomical_site
@@ -349,6 +354,10 @@ class Reports::OfflineSessionExporter
       vaccination_record.performed_by_user&.email,
       allowed_formula: performing_professionals_range
     )
+    row[:supplier_email] = Cell.new(
+      vaccination_record.supplied_by&.email,
+      allowed_formula: suppliers_range
+    )
     row[:batch_number] = Cell.new(
       batch&.name,
       allowed_formula: batch_numbers_range_for_programme(programme)
@@ -394,6 +403,7 @@ class Reports::OfflineSessionExporter
     row[:performing_professional_email] = Cell.new(
       allowed_formula: performing_professionals_range
     )
+    row[:supplier_email] = Cell.new(allowed_formula: suppliers_range)
     row[:batch_number] = Cell.new(
       allowed_formula: batch_numbers_range_for_programme(programme)
     )
@@ -433,13 +443,21 @@ class Reports::OfflineSessionExporter
   end
 
   def performing_professional_email_values
-    @performing_professional_email_values ||=
-      User.joins(:teams).where(teams: team).pluck(:email)
+    @performing_professional_email_values ||= team.users.pluck(:email)
   end
 
   def performing_professionals_range
     count = performing_professional_email_values.count
     "'Performing Professionals'!$A2:$A#{count + 1}"
+  end
+
+  def supplier_email_values
+    @supplier_email_values ||= team.users.show_in_suppliers.pluck(:email)
+  end
+
+  def suppliers_range
+    count = supplier_email_values.count
+    "'Suppliers'!$A2:$A#{count + 1}"
   end
 
   def batch_numbers_range_for_programme(programme)
