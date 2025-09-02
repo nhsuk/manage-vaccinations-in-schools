@@ -147,6 +147,7 @@ jobs:
             "-var-file=env/${{ inputs.environment }}.tfvars"
             "-var=allowed_egress_cidr_blocks=$CIDR_BLOCKS"
             "-out=${{ runner.temp }}/tfplan"
+            "-replace" "aws_rds_cluster.cluster"
           )
           
           if [ "${{ env.REPLACE_DB_CLUSTER }}" = "true" ]; then

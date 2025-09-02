@@ -16,7 +16,7 @@ on:
           - production
           - sandbox-alpha
           - sandbox-beta
-      server_types:
+      server-types:
         description: Server types to deploy
         required: true
         type: choice
@@ -26,7 +26,7 @@ on:
           - good-job
           - sidekiq
         default: all
-      git_sha_to_deploy:
+      git-ref-to-deploy:
         description: The git commit SHA to deploy.
         required: false
         type: string
@@ -35,16 +35,12 @@ on:
       environment:
         required: true
         type: string
-      server_types:
+      server-types:
         required: true
         type: string
-      git_sha_to_deploy:
+      git-ref-to-deploy:
         description: The git commit SHA to deploy.
         required: true
-        type: string
-      app_version:
-        description: The git ref to deploy (branch, tag, or commit SHA).
-        required: false
         type: string
 
 permissions: {}
@@ -56,9 +52,9 @@ env:
   aws-role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployECSService'
     || 'arn:aws:iam::393416225559:role/GithubDeployECSService' }}
-  aws_account_id: ${{ inputs.environment == 'production' && '820242920762' || '393416225559' }}
-  cluster_name: mavis-${{ inputs.environment }}
-  app_version: ${{ inputs.app_version == '' && 'unknown' || inputs.app_version }}
+  aws-account-id: ${{ inputs.environment == 'production' && '820242920762' || '393416225559' }}
+  cluster-name: mavis-${{ inputs.environment }}
+  app-version: ${{ inputs.git-ref-to-deploy == '' && 'unknown' || inputs.git-ref-to-deploy }}
 
 jobs:
   prepare-deployment:
@@ -69,12 +65,13 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        service: ${{ inputs.server_types == 'all' && fromJSON('["web", "good-job", "sidekiq"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
+        service: ${{ inputs.server-types == 'all' && fromJSON('["web", "good-job", "sidekiq"]') || fromJSON(format('["{0}"]', inputs.server-types)) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+        id: checkout-code
         with:
-          ref: ${{ inputs.git_sha_to_deploy || github.sha }}
+          ref: ${{ inputs.git-ref-to-deploy || github.sha }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
@@ -83,7 +80,7 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.12.3
+          python-version: 3.13.7
           cache: pip
       - name: Install Python dependencies
         run: python3 -m pip install -r script/requirements.txt
@@ -92,7 +89,7 @@ jobs:
         run: |
           digest=$(aws ecr describe-images \
             --repository-name mavis/webapp \
-            --image-ids imageTag=${{ inputs.git_sha_to_deploy || github.sha }} \
+            --image-ids imageTag=${{ steps.checkout-code.outputs.commit }} \
             --query 'imageDetails[0].imageDigest' \
             --output text)
           echo "digest=$digest" >> $GITHUB_OUTPUT
@@ -111,13 +108,13 @@ jobs:
         with:
           task-definition-family: "mavis-${{ matrix.service }}-task-definition-${{ inputs.environment }}-template"
           container-name: "application"
-          image: "${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}"
+          image: "${{ env.aws-account-id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}"
           environment-variables: ${{ steps.parse-environment-variables.outputs.parsed_env_vars }}
       - name: Rename task definition file
         run: mv ${{ steps.create-task-definition.outputs.task-definition }} ${{ runner.temp }}/${{ matrix.service }}-task-definition.json
       - name: Populate SSM parameters for ${{ matrix.service }} service
         run: |
-          python3 script/populate_ssm_parameters.py ${{ inputs.environment }} ${{ matrix.service }} --app-version ${{ env.app_version }}
+          python3 script/populate_ssm_parameters.py ${{ inputs.environment }} ${{ matrix.service }} --app-version ${{ env.app-version }}
       - name: Upload artifact for ${{ matrix.service }} task definition
         uses: actions/upload-artifact@v4
         with:
@@ -135,8 +132,8 @@ jobs:
   deploy-web:
     name: Deploy web service
     runs-on: ubuntu-latest
-    if: ${{ inputs.server_types == 'web' || inputs.server_types == 'all' }}
-    needs: [prepare-deployment, approve-deployments]
+    if: ${{ inputs.server-types == 'web' || inputs.server-types == 'all' }}
+    needs: [ prepare-deployment, approve-deployments ]
     permissions:
       id-token: write
     steps:
@@ -148,7 +145,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
       - name: Download web task definition artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: ${{ runner.temp }}
           name: ${{ inputs.environment }}-web-task-definition
@@ -167,7 +164,7 @@ jobs:
         with:
           task-definition: ${{ runner.temp }}/web-task-definition.json
           codedeploy-appspec: config/templates/appspec.yaml
-          cluster: ${{ env.cluster_name }}
+          cluster: ${{ env.cluster-name }}
           service: mavis-${{ inputs.environment }}-web
           codedeploy-application: mavis-${{ inputs.environment }}
           codedeploy-deployment-group: blue-green-group-${{ inputs.environment }}
@@ -180,13 +177,13 @@ jobs:
   deploy-good-job:
     name: Deploy good-job service
     runs-on: ubuntu-latest
-    if: ${{ inputs.server_types == 'good-job' || inputs.server_types == 'all' }}
-    needs: [prepare-deployment, approve-deployments]
+    if: ${{ inputs.server-types == 'good-job' || inputs.server-types == 'all' }}
+    needs: [ prepare-deployment, approve-deployments ]
     permissions:
       id-token: write
     steps:
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
@@ -204,7 +201,7 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ runner.temp }}/good-job-task-definition.json
-          cluster: ${{ env.cluster_name }}
+          cluster: ${{ env.cluster-name }}
           service: mavis-${{ inputs.environment }}-good-job
           force-new-deployment: true
           wait-for-service-stability: true
@@ -212,8 +209,8 @@ jobs:
   create-sidekiq-deployment:
     name: Create sidekiq deployment
     runs-on: ubuntu-latest
-    if: ${{ inputs.server_types == 'sidekiq' || inputs.server_types == 'all' }}
-    needs: [prepare-deployment, approve-deployments]
+    if: ${{ inputs.server-types == 'sidekiq' || inputs.server-types == 'all' }}
+    needs: [ prepare-deployment, approve-deployments ]
     permissions:
       id-token: write
     steps:
@@ -223,7 +220,7 @@ jobs:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
       - name: Download sidekiq task definition artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: ${{ runner.temp }}
           name: ${{ inputs.environment }}-sidekiq-task-definition
@@ -236,7 +233,7 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ runner.temp }}/sidekiq-task-definition.json
-          cluster: ${{ env.cluster_name }}
+          cluster: ${{ env.cluster-name }}
           service: mavis-${{ inputs.environment }}-sidekiq
           force-new-deployment: true
           wait-for-service-stability: true

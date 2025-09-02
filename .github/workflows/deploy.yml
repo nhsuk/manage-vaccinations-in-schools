@@ -1,5 +1,5 @@
 name: Deploy
-run-name: Deploy ${{ inputs.git_ref_to_deploy || github.ref_name }} to ${{ inputs.environment }}
+run-name: Deploy ${{ inputs.git-ref-to-deploy || github.ref_name }} to ${{ inputs.environment }}
 
 concurrency:
   group: deploy-${{ inputs.environment }}
@@ -10,12 +10,12 @@ on:
       environment:
         required: true
         type: string
-      server_types:
+      server-types:
         required: true
         type: string
   workflow_dispatch:
     inputs:
-      git_ref_to_deploy:
+      git-ref-to-deploy:
         description:
           | # Use blank unicode character (U+2800) to force line-break
           Use code from: ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -33,7 +33,7 @@ on:
           - production
           - sandbox-alpha
           - sandbox-beta
-      server_types:
+      server-types:
         description: Server types to deploy
         required: true
         type: choice
@@ -46,7 +46,7 @@ on:
         default: all
 
 env:
-  account_id: ${{ inputs.environment == 'production' && '820242920762' || '393416225559' }}
+  account-id: ${{ inputs.environment == 'production' && '820242920762' || '393416225559' }}
 
 jobs:
   validate-inputs:
@@ -56,8 +56,8 @@ jobs:
       - name: Validate inputs
         run: |
           if [[ "${{ inputs.environment }}" == "preview" || "${{ inputs.environment }}" == "production" ]]; then
-            if [[ -z "${{ inputs.git_ref_to_deploy }}" ]]; then
-              echo "Error: git_ref_to_deploy is required for preview and production environments."
+            if [[ -z "${{ inputs.git-ref-to-deploy }}" ]]; then
+              echo "Error: git-ref-to-deploy is required for preview and production environments."
               exit 1
             fi
           fi
@@ -71,7 +71,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          ref: ${{ inputs.git_ref_to_deploy || github.sha }}
+          ref: ${{ inputs.git-ref-to-deploy || github.sha }}
       - name: Get git sha
         id: get-git-sha
         run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
@@ -98,13 +98,13 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: arn:aws:iam::${{ env.account_id }}:role/GithubDeployMavisAndInfrastructure
+          role-to-assume: arn:aws:iam::${{ env.account-id }}:role/GithubDeployMavisAndInfrastructure
           aws-region: eu-west-2
       - name: Compare permissions
         id: compare-permissions
         run: |
           source ./scripts/validate-github-actions-policy.sh
-          validate_policies arn:aws:iam::${{ env.account_id }}:policy/DeployMavisResources ./account/resources/iam_policy_DeployMavisResources.json
+          validate_policies arn:aws:iam::${{ env.account-id }}:policy/DeployMavisResources ./account/resources/iam_policy_DeployMavisResources.json
           exit $?
   update-permissions:
     runs-on: ubuntu-latest
@@ -124,10 +124,10 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: arn:aws:iam::${{ env.account_id }}:role/GithubDeployMavisAndInfrastructure
+          role-to-assume: arn:aws:iam::${{ env.account-id }}:role/GithubDeployMavisAndInfrastructure
           aws-region: eu-west-2
       - name: Update IAM policy
-        run: ./scripts/update-github-actions-policy.sh arn:aws:iam::${{ env.account_id }}:policy/DeployMavisResources ./account/resources/iam_policy_DeployMavisResources.json
+        run: ./scripts/update-github-actions-policy.sh arn:aws:iam::${{ env.account-id }}:policy/DeployMavisResources ./account/resources/iam_policy_DeployMavisResources.json
   deploy-infrastructure:
     permissions:
       id-token: write
@@ -144,15 +144,14 @@ jobs:
     uses: ./.github/workflows/deploy-infrastructure.yml
     with:
       environment: ${{ inputs.environment }}
-      git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
+      git-ref-to-deploy: ${{ inputs.git-ref-to-deploy || github.ref_name }}
   deploy-application:
     permissions:
       id-token: write
     needs: [deploy-infrastructure, determine-git-sha]
-    if: ${{ !cancelled() && inputs.server_types != 'none' && needs.deploy-infrastructure.result == 'success' }}
+    if: ${{ !cancelled() && inputs.server-types != 'none' && needs.deploy-infrastructure.result == 'success' }}
     uses: ./.github/workflows/deploy-application.yml
     with:
       environment: ${{ inputs.environment }}
-      server_types: ${{ inputs.server_types }}
-      git_sha_to_deploy: ${{ needs.determine-git-sha.outputs.git-sha }}
-      app_version: ${{ inputs.git_ref_to_deploy }}
+      server-types: ${{ inputs.server-types }}
+      git-ref-to-deploy: ${{ inputs.git-ref-to-deploy || github.ref_name }}

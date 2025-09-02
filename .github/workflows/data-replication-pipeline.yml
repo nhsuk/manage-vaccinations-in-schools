@@ -23,7 +23,7 @@ on:
 permissions: {}
 
 env:
-  aws-role: ${{ inputs.environment == 'production'
+  aws_role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployDataReplicationInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployDataReplicationInfrastructure' }}
   aws_account_id: ${{ inputs.environment == 'production' && '820242920762' || '393416225559' }}
@@ -80,15 +80,13 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ env.aws-role }}
+          role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
       - name: Setup python
         uses: actions/setup-python@v4
         with:
           python-version: 3.12.3
           cache: pip
-      - name: Install Python dependencies
-        run: python3 -m pip install -r script/requirements.txt
       - name: Get image digest
         id: get-image-digest
         run: |
@@ -145,7 +143,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ env.aws-role }}
+          role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
       - name: Download data-replication task definition artifact
         uses: actions/download-artifact@v5

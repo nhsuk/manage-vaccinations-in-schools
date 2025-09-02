@@ -8,7 +8,7 @@ on:
         description: Deployment environment
         required: true
         type: string
-      git_ref_to_deploy:
+      git-ref-to-deploy:
         required: true
         type: string
   workflow_dispatch:
@@ -17,7 +17,7 @@ on:
         description: Deployment environment
         required: true
         type: string
-      git_ref_to_deploy:
+      git-ref-to-deploy:
         description: The git commit SHA to deploy.
         required: false
         type: string
@@ -28,12 +28,10 @@ concurrency:
   group: deploy-infrastructure-${{ inputs.environment }}
 
 env:
-  aws_role: ${{ inputs.environment == 'production'
+  aws-role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
-  aws_account_id: ${{ inputs.environment == 'production'
-    && '820242920762' || '393416225559' }}
-  git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
+  git-ref-to-deploy: ${{ inputs.git-ref-to-deploy || github.ref_name }}
 
 defaults:
   run:
@@ -49,11 +47,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          ref: ${{ env.git_ref_to_deploy }}
+          ref: ${{ env.git-ref-to-deploy }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ env.aws_role }}
+          role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
@@ -92,11 +90,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          ref: ${{ env.git_ref_to_deploy }}
+          ref: ${{ env.git-ref-to-deploy }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ env.aws_role }}
+          role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
       - name: Download artifact
         uses: actions/download-artifact@v5
