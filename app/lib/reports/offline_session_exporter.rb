@@ -79,45 +79,48 @@ class Reports::OfflineSessionExporter
   end
 
   def columns
-    @columns ||= %i[
-      person_forename
-      person_surname
-      organisation_code
-      school_name
-      clinic_name
-      care_setting
-      person_dob
-      year_group
-      person_gender_code
-      person_address_line_1
-      person_postcode
-      nhs_number
-      consent_status
-      consent_details
-      health_question_answers
-      triage_status
-      triaged_by
-      triage_date
-      triage_notes
-      gillick_status
-      gillick_assessment_date
-      gillick_assessed_by
-      gillick_assessment_notes
-      vaccinated
-      date_of_vaccination
-      time_of_vaccination
-      programme
-      vaccine_given
-      performing_professional_email
-      batch_number
-      batch_expiry_date
-      anatomical_site
-      dose_sequence
-      reason_not_vaccinated
-      notes
-      session_id
-      uuid
-    ]
+    @columns ||=
+      %i[
+        person_forename
+        person_surname
+        organisation_code
+        school_name
+        clinic_name
+        care_setting
+        person_dob
+        year_group
+        person_gender_code
+        person_address_line_1
+        person_postcode
+        nhs_number
+        consent_status
+        consent_details
+        health_question_answers
+        triage_status
+        triaged_by
+        triage_date
+        triage_notes
+        gillick_status
+        gillick_assessment_date
+        gillick_assessed_by
+        gillick_assessment_notes
+      ] + (session.psd_enabled? ? [:psd_status] : []) +
+        %i[
+          vaccinated
+          date_of_vaccination
+          time_of_vaccination
+          programme
+          vaccine_given
+          performing_professional_email
+          batch_number
+          batch_expiry_date
+          anatomical_site
+          dose_sequence
+          reason_not_vaccinated
+          notes
+          session_id
+          uuid
+        ]
   end
 
   def patient_sessions
@@ -177,6 +180,21 @@ class Reports::OfflineSessionExporter
         )
         .order(:patient_id, :programme_id, created_at: :desc)
         .includes(:performed_by)
+        .group_by(&:patient_id)
+        .transform_values do
+          it.group_by(&:programme_id).transform_values(&:first)
+        end
+  end
+
+  def patient_specific_directions
+    @patient_specific_directions ||=
+      PatientSpecificDirection
+        .select(
+          "DISTINCT ON (patient_id, programme_id) patient_specific_directions.*"
+        )
+        .where(academic_year:, patient_id: patient_sessions.select(:patient_id))
+        .order(:patient_id, :programme_id, created_at: :desc)
+        .includes(:created_by)
         .group_by(&:patient_id)
         .transform_values do
           it.group_by(&:programme_id).transform_values(&:first)
@@ -247,8 +265,10 @@ class Reports::OfflineSessionExporter
     patient = patient_session.patient
     session = patient_session.session
 
-    grouped_consents = consents.dig(patient.id, programme.id) || []
     gillick_assessment = gillick_assessments.dig(patient.id, programme.id)
+    grouped_consents = consents.dig(patient.id, programme.id) || []
+    patient_specific_direction =
+      patient_specific_directions.dig(patient.id, programme.id)
     triage = triages.dig(patient.id, programme.id)
     academic_year = session.academic_year
 
@@ -286,6 +306,10 @@ class Reports::OfflineSessionExporter
     row[:gillick_assessment_date] = gillick_assessment&.created_at
     row[:gillick_assessed_by] = gillick_assessment&.performed_by&.full_name
     row[:gillick_assessment_notes] = gillick_assessment&.notes
+
+    row[:psd_status] = psd_status(
+      patient_specific_direction:
+    ) if session.psd_enabled?
   end
 
   def add_existing_row_cells(row, vaccination_record:)

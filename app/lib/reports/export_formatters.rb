@@ -77,6 +77,10 @@ module Reports::ExportFormatters
     end
   end
 
+  def psd_status(patient_specific_direction:)
+    patient_specific_direction ? "PSD added" : ""
+  end
+
   def vaccinated(vaccination_record:)
     vaccination_record.administered? ? "Y" : "N"
   end

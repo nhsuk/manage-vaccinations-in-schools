@@ -103,6 +103,12 @@ describe Reports::OfflineSessionExporter do
             ]
           )
         end
+
+        context "with PSD enabled" do
+          before { session.update!(psd_enabled: true) }
+
+          it { should include("PSD_STATUS") }
+        end
       end
 
       describe "rows" do
@@ -167,6 +173,26 @@ describe Reports::OfflineSessionExporter do
             expect(rows.first["PERSON_DOB"].to_date).to eq(
               patient.date_of_birth
             )
+          end
+
+          context "with PSD enabled" do
+            before { session.update!(psd_enabled: true) }
+
+            it "adds a PSD status column" do
+              expect(rows.count).to eq(1)
+              expect(rows.first["PSD_STATUS"]).to be_blank
+            end
+
+            context "and the patient has a PSD" do
+              before do
+                create(:patient_specific_direction, programme:, patient:)
+              end
+
+              it "adds a PSD status column" do
+                expect(rows.count).to eq(1)
+                expect(rows.first["PSD_STATUS"]).to eq("PSD added")
+              end
+            end
           end
         end
 
