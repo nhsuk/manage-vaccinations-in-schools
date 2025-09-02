@@ -72,11 +72,11 @@ describe "Triage" do
     and_the_vaccine_method_is_recorded_as_nasal
   end
 
-  scenario "adding PSD instruction" do
+  scenario "prescriber can add add PSD instruction" do
     given_delegation_feature_flag_is_enabled
     and_a_flu_programme_with_a_running_session_with_psd_enabled
     and_a_patient_with_nasal_consent_who_needs_triage_exists
-    and_i_am_signed_in
+    and_i_am_signed_in_as_a_prescriber
 
     when_i_go_to_the_session_triage_tab
     then_i_see_the_patient_who_needs_triage
@@ -185,6 +185,11 @@ describe "Triage" do
   def and_i_am_signed_in
     @user = @team.users.first
     sign_in @user
+  end
+
+  def and_i_am_signed_in_as_a_prescriber
+    @user = @team.users.first
+    sign_in @user, role: :prescriber
   end
 
   def when_i_go_to_the_session_triage_tab

@@ -4,22 +4,22 @@ describe PatientSpecificDirectionPolicy do
   subject(:policy) { described_class.new(user, PatientSpecificDirection) }
 
   describe "#create?" do
-    subject(:create?) { policy.create? }
+    subject { policy.create? }
 
     context "when user is a nurse" do
-      let(:user) { build(:user, :nurse) }
+      let(:user) { build(:nurse) }
 
-      it { should be(true) }
+      it { should be(false) }
     end
 
     context "when user is a prescriber" do
-      let(:user) { build(:user, :prescriber) }
+      let(:user) { build(:prescriber) }
 
       it { should be(true) }
     end
 
     context "when user is a healthcare assistant" do
-      let(:user) { build(:user, :healthcare_assistant) }
+      let(:user) { build(:healthcare_assistant) }
 
       it { should be(false) }
     end

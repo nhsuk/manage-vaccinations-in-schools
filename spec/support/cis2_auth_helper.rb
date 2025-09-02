@@ -122,7 +122,8 @@ module CIS2AuthHelper
     role_code = {
       admin: CIS2Info::ADMIN_ROLE,
       healthcare_assistant: CIS2Info::ADMIN_ROLE,
-      nurse: CIS2Info::NURSE_ROLE
+      nurse: CIS2Info::NURSE_ROLE,
+      prescriber: nil
     }.fetch(role)
 
     activity_codes = {
@@ -130,7 +131,8 @@ module CIS2AuthHelper
       healthcare_assistant: [
         CIS2Info::PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE
       ],
-      nurse: []
+      nurse: [],
+      prescriber: [CIS2Info::INDEPENDENT_PRESCRIBING_ACTIVITY_CODE]
     }.fetch(role)
 
     workgroups = user.teams.where(organisation:).pluck(:workgroup)
