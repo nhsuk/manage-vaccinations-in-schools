@@ -309,6 +309,12 @@ describe Session do
       it { should match_array(%w[nasal injection]) }
     end
 
+    context "with a prescriber" do
+      let(:user) { create(:prescriber) }
+
+      it { should match_array(%w[nasal injection]) }
+    end
+
     context "with a healthcare assistant" do
       let(:user) { create(:healthcare_assistant) }
 

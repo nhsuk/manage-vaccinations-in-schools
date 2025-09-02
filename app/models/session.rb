@@ -219,7 +219,7 @@ class Session < ApplicationRecord
   end
 
   def vaccine_methods_for(user:)
-    if user.is_nurse?
+    if user.is_nurse? || user.is_prescriber?
       vaccine_methods
     elsif user.is_healthcare_assistant? && pgd_supply_enabled?
       %w[nasal]

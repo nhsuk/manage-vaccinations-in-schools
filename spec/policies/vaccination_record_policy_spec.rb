@@ -40,6 +40,21 @@ describe VaccinationRecordPolicy do
         it { should be(true) }
       end
     end
+
+    context "with a prescriber" do
+      let(:user) { create(:prescriber, teams: [team]) }
+
+      it { should be(false) }
+
+      context "when vaccination record is managed by the team" do
+        let(:session) { create(:session, team:, programmes: [programme]) }
+        let(:vaccination_record) do
+          create(:vaccination_record, team:, programme:, session:)
+        end
+
+        it { should be(true) }
+      end
+    end
   end
 
   describe "destroy?" do

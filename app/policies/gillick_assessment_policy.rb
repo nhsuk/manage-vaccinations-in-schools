@@ -2,18 +2,10 @@
 
 class GillickAssessmentPolicy < ApplicationPolicy
   def create?
-    user.is_nurse?
-  end
-
-  def new?
-    create?
-  end
-
-  def edit?
-    user.is_nurse?
+    user.is_nurse? || user.is_prescriber?
   end
 
   def update?
-    edit?
+    user.is_nurse? || user.is_prescriber?
   end
 end

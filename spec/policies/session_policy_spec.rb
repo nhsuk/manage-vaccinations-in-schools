@@ -42,13 +42,29 @@ describe SessionPolicy do
       context "with a scheduled session" do
         let(:session) { create(:session, :scheduled) }
 
-        it { should be(false) }
+        it { should be(true) }
       end
 
       context "with an unscheduled session" do
         let(:session) { create(:session, :unscheduled) }
 
-        it { should be(false) }
+        it { should be(true) }
+      end
+    end
+
+    context "with a prescriber" do
+      let(:user) { create(:prescriber) }
+
+      context "with a scheduled session" do
+        let(:session) { create(:session, :scheduled) }
+
+        it { should be(true) }
+      end
+
+      context "with an unscheduled session" do
+        let(:session) { create(:session, :unscheduled) }
+
+        it { should be(true) }
       end
     end
   end
