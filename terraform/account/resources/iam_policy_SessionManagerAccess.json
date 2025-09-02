@@ -8,7 +8,9 @@
         "ssmmessages:CreateControlChannel",
         "ssmmessages:CreateDataChannel",
         "ssmmessages:OpenControlChannel",
-        "ssmmessages:OpenDataChannel"
+        "ssmmessages:OpenDataChannel",
+        "cloudwatch:PutMetricData",
+        "cloudwatch:ListMetrics"
       ],
       "Resource": ["*"]
     }

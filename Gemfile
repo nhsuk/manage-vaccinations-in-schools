@@ -71,6 +71,9 @@ gem "uk_postcode"
 gem "wicked"
 gem "with_advisory_lock"
 
+# AWS SDK for CloudWatch metrics (needed for production rake tasks)
+gem "aws-sdk-cloudwatch", "~> 1"
+
 group :development, :test do
   gem "brakeman", require: false
   gem "debug", platforms: %i[mri mingw x64_mingw]

@@ -116,6 +116,9 @@ GEM
     aws-sdk-accessanalyzer (1.79.0)
       aws-sdk-core (~> 3, >= 3.234.0)
       aws-sigv4 (~> 1.5)
+    aws-sdk-cloudwatch (1.120.0)
+      aws-sdk-core (~> 3, >= 3.231.0)
+      aws-sigv4 (~> 1.5)
     aws-sdk-core (3.234.0)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
@@ -773,6 +776,7 @@ DEPENDENCIES
   asciidoctor-diagram
   audited!
   aws-sdk-accessanalyzer
+  aws-sdk-cloudwatch (~> 1)
   aws-sdk-ec2
   aws-sdk-ecr
   aws-sdk-iam
