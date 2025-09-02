@@ -22,7 +22,9 @@
 #
 
 describe ReportingAPI::OneTimeToken do
-  subject { described_class.new(user_id: user.id, token: SecureRandom.hex(32)) }
+  subject(:token) do
+    described_class.new(user_id: user.id, token: SecureRandom.hex(32))
+  end
 
   let(:user) { create(:user) }
 
@@ -166,6 +168,57 @@ describe ReportingAPI::OneTimeToken do
           end
         end
       end
+    end
+  end
+
+  describe "#jwt_payload" do
+    let(:result) { token.jwt_payload }
+
+    it "has iat set to the current time as an integer" do
+      expect(result["iat"]).to be_within(1000).of(Time.current.utc.to_i)
+    end
+
+    it "has a data hash" do
+      expect(result["data"]).to be_a(Hash)
+    end
+
+    describe "the data hash" do
+      let(:data) { result["data"] }
+
+      it "has the user as json" do
+        expect(data["user"]).to eq(token.user.as_json)
+      end
+
+      it "has the cis2_info as json" do
+        expect(data["cis2_info"]).to eq(token.cis2_info.as_json)
+      end
+    end
+  end
+
+  describe "#to_jwt" do
+    let(:result) { token.to_jwt }
+    let(:decoded_payload) do
+      JWT.decode(
+        result,
+        Settings.reporting_api.client_app.secret,
+        true,
+        { algorithm: ReportingAPI::OneTimeToken::JWT_SIGNING_ALGORITHM }
+      ).first
+    end
+
+    it "returns a JWT signed with the Mavis reporting app secret" do
+      expect {
+        JWT.decode(
+          result,
+          Settings.reporting_api.client_app.secret,
+          true,
+          { algorithm: ReportingAPI::OneTimeToken::JWT_SIGNING_ALGORITHM }
+        )
+      }.not_to raise_error
+    end
+
+    it "has the jwt_payload" do
+      expect(decoded_payload).to eq(token.jwt_payload)
     end
   end
 end

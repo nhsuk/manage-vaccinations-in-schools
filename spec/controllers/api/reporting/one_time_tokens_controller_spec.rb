@@ -95,7 +95,10 @@ RSpec.describe API::Reporting::OneTimeTokensController do
                     response_json["jwt"],
                     Settings.reporting_api.client_app.secret,
                     true,
-                    { algorithm: "HS512" }
+                    {
+                      algorithm:
+                        ReportingAPI::OneTimeToken::JWT_SIGNING_ALGORITHM
+                    }
                   )
                 }.not_to raise_error
               end
@@ -106,7 +109,10 @@ RSpec.describe API::Reporting::OneTimeTokensController do
                     response_json["jwt"],
                     Settings.reporting_api.client_app.secret,
                     true,
-                    { algorithm: "HS512" }
+                    {
+                      algorithm:
+                        ReportingAPI::OneTimeToken::JWT_SIGNING_ALGORITHM
+                    }
                   )
                 end
                 let(:jwt_data) { decoded_payload.first["data"] }
