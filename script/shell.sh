@@ -161,5 +161,5 @@ aws ecs execute-command --region "$region" \
     --cluster "$cluster_name" \
     --task "$task_id" \
     --container "$container_name" \
-    --command "/bin/bash" \
+    --command "/rails/bin/docker-entrypoint /bin/bash" \
     --interactive

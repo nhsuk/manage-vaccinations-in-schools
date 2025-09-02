@@ -2,17 +2,6 @@
 
 BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-# Extract ENV_VARS into set of variables and export them to the shell
-if [ -n "$ENV_VARS" ]; then
-  IFS=',' read -ra ADDR <<< "$ENV_VARS"
-  for i in "${ADDR[@]}"; do
-    if [[ "$i" == *"="* ]]; then
-      export "${i?}"
-      echo "Exported: $i"
-    fi
-  done
-fi
-
 if [ "$SERVER_TYPE" == "web" ]; then
   echo "Starting web server..."
   exec "$BIN_DIR"/thrust "$BIN_DIR"/rails server
