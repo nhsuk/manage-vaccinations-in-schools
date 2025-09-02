@@ -2,7 +2,7 @@
 
 class VaccinationRecordPolicy < ApplicationPolicy
   def create?
-    user.is_nurse? ||
+    user.is_nurse? || user.is_prescriber? ||
       (
         patient.approved_vaccine_methods(programme:, academic_year:) &
           session.vaccine_methods_for(user:)
@@ -12,13 +12,15 @@ class VaccinationRecordPolicy < ApplicationPolicy
   def new? = create?
 
   def record_already_vaccinated?
-    user.is_nurse? && !session.today? &&
+    (user.is_nurse? || user.is_prescriber?) && !session.today? &&
       patient.vaccination_status(programme:, academic_year:).none_yet?
   end
 
   def edit?
-    (record.performed_by_user_id == user.id || user.is_nurse?) &&
-      record.recorded_in_service? &&
+    (
+      record.performed_by_user_id == user.id || user.is_nurse? ||
+        user.is_prescriber?
+    ) && record.recorded_in_service? &&
       record.performed_ods_code == user.selected_organisation.ods_code
   end
 

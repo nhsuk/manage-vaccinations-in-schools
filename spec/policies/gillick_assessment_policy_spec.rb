@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe TriagePolicy do
-  subject(:policy) { described_class.new(user, Triage) }
+describe GillickAssessmentPolicy do
+  subject(:policy) { described_class.new(user, GillickAssessment) }
 
   shared_examples "only nurses or prescribers" do
     context "with an admin" do
@@ -51,20 +51,5 @@ describe TriagePolicy do
     subject { policy.update? }
 
     include_examples "only nurses or prescribers"
-  end
-
-  describe TriagePolicy::Scope do
-    describe "#resolve" do
-      subject { described_class.new(user, Triage).resolve }
-
-      let(:team) { create(:team) }
-      let(:user) { create(:user, team:) }
-
-      let(:team_batch) { create(:triage, team:) }
-      let(:non_team_batch) { create(:triage) }
-
-      it { should include(team_batch) }
-      it { should_not include(non_team_batch) }
-    end
   end
 end
