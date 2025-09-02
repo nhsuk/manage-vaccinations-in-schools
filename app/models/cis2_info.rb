@@ -48,7 +48,8 @@ class CIS2Info
   end
 
   def is_healthcare_assistant?
-    activity_codes.include?(PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE)
+    role_code == MEDICAL_SECRETARY_ROLE &&
+      activity_codes.include?(PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE)
   end
 
   def is_prescriber?

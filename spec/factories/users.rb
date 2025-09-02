@@ -96,7 +96,7 @@ FactoryBot.define do
 
     trait :healthcare_assistant do
       sequence(:email) { |n| "healthcare-assistant-#{n}@example.com" }
-      role_code { nil }
+      role_code { CIS2Info::MEDICAL_SECRETARY_ROLE }
       activity_codes do
         [CIS2Info::PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE]
       end
