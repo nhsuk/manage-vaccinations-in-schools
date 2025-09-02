@@ -183,7 +183,7 @@ describe "Edit vaccination record" do
     then_i_should_see_the_vaccination_record
   end
 
-  scenario "Cannot as an admin" do
+  scenario "Cannot as a medical secretary" do
     given_i_am_signed_in_as_an_admin
     and_an_administered_vaccination_record_exists
 
@@ -254,7 +254,7 @@ describe "Edit vaccination record" do
   end
 
   def given_i_am_signed_in_as_an_admin
-    sign_in @team.users.first, role: :admin
+    sign_in @team.users.first, role: :medical_secretary
   end
 
   def and_an_administered_vaccination_record_exists

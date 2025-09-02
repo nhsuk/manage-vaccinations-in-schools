@@ -61,7 +61,7 @@ describe "Td/IPV" do
     then_i_see_the_patient_doesnt_need_triage
   end
 
-  scenario "can't record as already vaccinated as an admin" do
+  scenario "can't record as already vaccinated as a medical secretary" do
     given_a_td_ipv_programme_with_a_session(clinic: false)
     and_a_patient_is_in_the_session
     and_the_patient_doesnt_need_triage
@@ -147,7 +147,7 @@ describe "Td/IPV" do
   end
 
   def when_i_go_the_session_as_an_admin
-    sign_in @nurse, role: :admin
+    sign_in @nurse, role: :medical_secretary
     visit dashboard_path
     click_on "Sessions", match: :first
     choose "Scheduled"

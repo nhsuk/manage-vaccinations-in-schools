@@ -3,7 +3,7 @@
 describe "MenACWY and Td/IPV vaccination" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
-  scenario "Cannot be recorded by an admin" do
+  scenario "Cannot be recorded by a medical secretary" do
     given_i_am_signed_in_as_an_admin
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
     then_i_cannot_record_that_the_patient_has_been_vaccinated
@@ -32,7 +32,7 @@ describe "MenACWY and Td/IPV vaccination" do
       session: @session
     )
 
-    sign_in team.users.first, role: :admin
+    sign_in team.users.first, role: :medical_secretary
 
     visit "/"
   end

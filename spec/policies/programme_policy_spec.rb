@@ -11,7 +11,7 @@ describe ProgrammePolicy do
       let(:team) { create(:team, programmes: [flu_programme, hpv_programme]) }
 
       context "with an admin user" do
-        let(:user) { create(:admin, team:) }
+        let(:user) { create(:medical_secretary, team:) }
 
         it { should contain_exactly(flu_programme, hpv_programme) }
       end

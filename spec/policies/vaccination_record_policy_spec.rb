@@ -11,8 +11,8 @@ describe VaccinationRecordPolicy do
 
     let(:vaccination_record) { create(:vaccination_record, programme:) }
 
-    context "with an admin" do
-      let(:user) { create(:admin, teams: [team]) }
+    context "with a medical secretary" do
+      let(:user) { create(:medical_secretary, teams: [team]) }
 
       it { should be(false) }
 
@@ -62,13 +62,13 @@ describe VaccinationRecordPolicy do
 
     let(:vaccination_record) { create(:vaccination_record) }
 
-    context "with an admin" do
-      let(:user) { build(:admin) }
+    context "with a medical secretary" do
+      let(:user) { build(:medical_secretary) }
 
       it { should be(false) }
 
       context "and superuser access" do
-        let(:user) { build(:admin, :superuser) }
+        let(:user) { build(:medical_secretary, :superuser) }
 
         it { should be(true) }
       end

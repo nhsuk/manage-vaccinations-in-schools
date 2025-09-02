@@ -4,7 +4,7 @@ class CIS2Info
   include RequestSessionPersistable
 
   NURSE_ROLE = "S8000:G8000:R8001"
-  ADMIN_ROLE = "S8000:G8001:R8006"
+  MEDICAL_SECRETARY_ROLE = "S8000:G8001:R8006"
 
   SUPERUSER_WORKGROUP = "mavissuperusers"
 
@@ -39,8 +39,8 @@ class CIS2Info
   def has_valid_workgroup? =
     organisation&.teams&.exists?(workgroup: workgroups) || false
 
-  def is_admin?
-    role_code == ADMIN_ROLE
+  def is_medical_secretary?
+    role_code == MEDICAL_SECRETARY_ROLE
   end
 
   def is_nurse?

@@ -77,7 +77,7 @@ class User < ApplicationRecord
   enum :fallback_role,
        {
          nurse: 0,
-         admin: 1,
+         medical_secretary: 1,
          superuser: 2,
          healthcare_assistant: 3,
          prescriber: 4
@@ -133,14 +133,18 @@ class User < ApplicationRecord
       elsif is_nurse?
         "Nurse"
       else
-        "Administrator"
+        "Medical secretary"
       end
 
     is_superuser? ? "#{role} (Superuser)" : role
   end
 
-  def is_admin?
-    cis2_enabled? ? cis2_info.is_admin? : fallback_role_admin?
+  def is_medical_secretary?
+    if cis2_enabled?
+      cis2_info.is_medical_secretary?
+    else
+      fallback_role_medical_secretary?
+    end
   end
 
   def is_nurse?

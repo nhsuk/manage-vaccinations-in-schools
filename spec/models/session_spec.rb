@@ -329,8 +329,8 @@ describe Session do
       end
     end
 
-    context "with an admin staff" do
-      let(:user) { create(:admin) }
+    context "with a medical secretary" do
+      let(:user) { create(:medical_secretary) }
 
       it { should be_empty }
     end
