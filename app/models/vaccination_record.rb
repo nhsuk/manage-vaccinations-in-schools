@@ -117,7 +117,7 @@ class VaccinationRecord < ApplicationRecord
 
   scope :recorded_in_service, -> { where.not(session_id: nil) }
 
-  enum :protocol, { pgd: 0, psd: 1 }, validate: { allow_nil: true }
+  enum :protocol, { pgd: 0, psd: 1, national: 2 }, validate: { allow_nil: true }
 
   enum :delivery_method,
        { intramuscular: 0, subcutaneous: 1, nasal_spray: 2 },
