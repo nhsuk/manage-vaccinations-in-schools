@@ -40,7 +40,9 @@ data "aws_iam_policy_document" "shell_access" {
       "ssmmessages:CreateControlChannel",
       "ssmmessages:CreateDataChannel",
       "ssmmessages:OpenControlChannel",
-      "ssmmessages:OpenDataChannel"
+      "ssmmessages:OpenDataChannel",
+      "cloudwatch:PutMetricData",
+      "cloudwatch:ListMetrics"
     ]
     resources = ["*"]
     effect    = "Allow"
