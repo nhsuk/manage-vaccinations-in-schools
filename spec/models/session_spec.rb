@@ -296,46 +296,6 @@ describe Session do
     it { should contain_exactly("injection", "nasal") }
   end
 
-  describe "#vaccine_methods_for" do
-    subject { session.vaccine_methods_for(user:) }
-
-    let(:programmes) { [create(:programme, :flu)] }
-
-    let(:session) { create(:session, programmes:) }
-
-    context "with a nurse" do
-      let(:user) { create(:nurse) }
-
-      it { should match_array(%w[nasal injection]) }
-    end
-
-    context "with a prescriber" do
-      let(:user) { create(:prescriber) }
-
-      it { should match_array(%w[nasal injection]) }
-    end
-
-    context "with a healthcare assistant" do
-      let(:user) { create(:healthcare_assistant) }
-
-      it { should eq(%w[nasal]) }
-
-      context "with national protocol enabled" do
-        let(:session) do
-          create(:session, :national_protocol_enabled, programmes:)
-        end
-
-        it { should match_array(%w[nasal injection]) }
-      end
-    end
-
-    context "with a medical secretary" do
-      let(:user) { create(:medical_secretary) }
-
-      it { should be_empty }
-    end
-  end
-
   describe "#today_or_future_dates" do
     subject(:today_or_future_dates) do
       travel_to(today) { session.today_or_future_dates }

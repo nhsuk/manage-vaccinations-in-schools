@@ -19,17 +19,44 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   def vaccine_methods
-    patient.approved_vaccine_methods(programme:, academic_year:)
+    @vaccine_methods ||=
+      begin
+        approved_vaccine_methods =
+          patient.approved_vaccine_methods(programme:, academic_year:)
+
+        if current_user.is_nurse? || current_user.is_prescriber?
+          return approved_vaccine_methods
+        end
+        return [] unless healthcare_assistant?
+
+        approved_vaccine_methods.select do |vaccine_method|
+          (
+            vaccine_method == "injection" && session.national_protocol_enabled?
+          ) || (vaccine_method == "nasal" && session.pgd_supply_enabled?) ||
+            (
+              session.psd_enabled? &&
+                patient.has_patient_specific_direction?(
+                  programme:,
+                  academic_year:,
+                  vaccine_method:
+                )
+            )
+        end
+      end
   end
 
   def show_supplied_by_user_id_outside_vaccine_method?
-    healthcare_assistant? && vaccine_methods.count == 1 &&
-      !has_patient_specific_direction?(vaccine_method: vaccine_methods.first)
+    @show_supplied_by_user_id_outside_vaccine_method ||=
+      healthcare_assistant? &&
+        vaccine_methods.none? do |vaccine_method|
+          has_patient_specific_direction?(vaccine_method:)
+        end
   end
 
   def show_supplied_by_user_id_inside_vaccine_method?(vaccine_method)
-    healthcare_assistant? && vaccine_methods.count > 1 &&
-      !has_patient_specific_direction?(vaccine_method:)
+    return false if show_supplied_by_user_id_outside_vaccine_method?
+
+    healthcare_assistant? && !has_patient_specific_direction?(vaccine_method:)
   end
 
   def has_patient_specific_direction?(vaccine_method:)

@@ -69,7 +69,7 @@ describe "Flu vaccination" do
     and_the_vaccination_record_has_psd_as_the_protocol
   end
 
-  scenario "PSD and national protocol enabled, no PSD, but patient consented nasal spray" do
+  scenario "Nasal flu cannot be administered without a PSD even if national protocol enabled" do
     given_a_flu_session_exists(
       user_type: :with_one_healthcare_assistant,
       national_protocol_enabled: true
@@ -78,8 +78,7 @@ describe "Flu vaccination" do
     and_i_am_signed_in(role: :healthcare_assistant)
 
     when_i_visit_the_session_patient_programme_page
-    then_i_am_able_to_vaccinate_them_via_pgd
-    and_the_vaccination_record_has_pdg_as_the_protocol
+    then_i_should_not_see_the_record_vaccination_section
   end
 
   def given_delegation_feature_flag_is_enabled
@@ -229,27 +228,7 @@ describe "Flu vaccination" do
     expect(page).to have_text("Vaccination outcome recorded for flu")
   end
 
-  def then_i_am_able_to_vaccinate_them_via_pgd
-    check "I have checked that the above statements are true"
-
-    select @nurse.full_name
-    within all("section")[1] do
-      choose "Yes"
-    end
-    click_on "Continue"
-
-    choose @batch.name
-    click_on "Continue"
-
-    click_on "Confirm"
-    click_on "Record vaccinations"
-  end
-
   def and_the_vaccination_record_has_psd_as_the_protocol
     expect(@patient_nasal_only.vaccination_records.first.protocol).to eq("psd")
-  end
-
-  def and_the_vaccination_record_has_pdg_as_the_protocol
-    expect(@patient_nasal_only.vaccination_records.first.protocol).to eq("pgd")
   end
 end

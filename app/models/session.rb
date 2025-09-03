@@ -198,7 +198,7 @@ class Session < ApplicationRecord
 
   def supports_delegation? = programmes.any?(&:supports_delegation?)
 
-  def pgd_supply_enabled? = supports_delegation?
+  def pgd_supply_enabled? = supports_delegation? && !psd_enabled?
 
   def year_groups
     @year_groups ||= location_programme_year_groups.pluck_year_groups
@@ -215,24 +215,6 @@ class Session < ApplicationRecord
       location_programme_year_groups.any? do
         it.programme_id == programme.id && it.year_group == year_group
       end
-    end
-  end
-
-  def vaccine_methods_for(user:)
-    if user.is_nurse? || user.is_prescriber?
-      vaccine_methods
-    elsif user.is_healthcare_assistant?
-      if pgd_supply_enabled? && national_protocol_enabled?
-        vaccine_methods
-      elsif national_protocol_enabled?
-        vaccine_methods.include?("injection") ? %w[injection] : []
-      elsif pgd_supply_enabled?
-        vaccine_methods.include?("nasal") ? %w[nasal] : []
-      else
-        []
-      end
-    else
-      []
     end
   end
 

@@ -11,10 +11,10 @@ describe "Flu vaccination" do
     then_i_only_see_nasal_spray_patients
 
     when_i_click_on_the_nasal_only_patient
-    then_i_am_able_to_vaccinate_them
+    then_i_am_able_to_vaccinate_them_nasal_only
 
     when_i_click_on_the_nasal_and_injection_patient
-    then_i_am_able_to_vaccinate_them
+    then_i_am_able_to_vaccinate_them_nasal_only
 
     when_i_click_on_the_injection_patient
     then_i_am_not_able_to_vaccinate_them
@@ -95,7 +95,9 @@ describe "Flu vaccination" do
     click_on @patient_injection_only.full_name
   end
 
-  def then_i_am_able_to_vaccinate_them
+  def then_i_am_able_to_vaccinate_them_nasal_only
+    expect(page).not_to have_content("injected flu instead")
+
     check "I have checked that the above statements are true"
     select @nurse.full_name
     within all("section")[1] do

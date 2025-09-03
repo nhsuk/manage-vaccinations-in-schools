@@ -45,7 +45,7 @@
             url: session_record_path(@session),
             programmes: @session.programmes,
             year_groups: @session.year_groups,
-            vaccine_methods: @vaccine_methods.length > 1 ? @vaccine_methods : [],
+            vaccine_methods: @session.vaccine_methods.then { it.length > 1 ? it : [] },
           ) %>
     </div>
 
