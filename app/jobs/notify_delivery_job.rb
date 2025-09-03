@@ -3,12 +3,6 @@
 require "notifications/client"
 
 class NotifyDeliveryJob < ApplicationJob
-  self.queue_adapter = :sidekiq unless Rails.env.test?
-
-  queue_as :notifications
-
-  retry_on Notifications::Client::ServerError, wait: :polynomially_longer
-
   def self.client
     @client ||=
       Notifications::Client.new(
@@ -20,13 +14,9 @@ class NotifyDeliveryJob < ApplicationJob
     @deliveries ||= []
   end
 
-  def self.send_via_notify?
-    Settings.govuk_notify&.enabled
-  end
+  def self.send_via_notify? = Settings.govuk_notify&.enabled
 
-  def self.send_via_test?
-    Rails.env.test?
-  end
+  def self.send_via_test? = Rails.env.test?
 
   class UnknownTemplate < StandardError
   end

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class EmailDeliveryJob < NotifyDeliveryJob
+  include NotifyThrottlingConcern
+
   def perform(
     template_name,
     consent: nil,

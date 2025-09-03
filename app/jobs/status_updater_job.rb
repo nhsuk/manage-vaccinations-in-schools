@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class StatusUpdaterJob < NotifyDeliveryJob
+class StatusUpdaterJob < ApplicationJob
   include GoodJob::ActiveJobExtensions::Concurrency
 
   queue_as :statuses
