@@ -324,6 +324,10 @@ The `private_key` will automatically be used to generate a JWK on the
 `/oidc/jwks` endpoint, which is used by CIS2 to validate the JWT we use to
 request the access token from CIS2.
 
+### Reporting
+
+See [docs/reporting.md](docs/releasing.md).
+
 #### Key Rotation
 
 Keys should be rotated regularly. When a new key is introduced it's JWK will
