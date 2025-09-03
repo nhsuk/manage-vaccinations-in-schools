@@ -1744,6 +1744,24 @@ describe ImmunisationImportRow do
       end
     end
 
+    describe "#supplied_by" do
+      subject { vaccination_record.supplied_by }
+
+      context "with a value" do
+        let(:data) { valid_data.merge("SUPPLIER_EMAIL" => "nurse@example.com") }
+
+        context "and a user that doesn't exist" do
+          it { expect(immunisation_import_row).to be_invalid }
+        end
+
+        context "and a user that does exist" do
+          let!(:user) { create(:nurse, email: "nurse@example.com") }
+
+          it { should eq(user) }
+        end
+      end
+    end
+
     describe "#performed_ods_code" do
       subject { vaccination_record.performed_ods_code }
 
@@ -1751,6 +1769,48 @@ describe ImmunisationImportRow do
         let(:data) { valid_data.merge("ORGANISATION_CODE" => "ABC") }
 
         it { should eq("ABC") }
+      end
+    end
+
+    describe "#protocol" do
+      subject { vaccination_record.protocol }
+
+      it { should eq("pgd") }
+
+      context "with a supplier" do
+        before { create(:nurse, email: "nurse@example.com") }
+
+        let(:data) { valid_data.merge("SUPPLIER_EMAIL" => "nurse@example.com") }
+
+        it { should eq("national") }
+
+        context "and nasal flu PSD" do
+          let(:programmes) { [create(:programme, :flu)] }
+          let(:data) do
+            valid_flu_data.merge("SUPPLIER_EMAIL" => "nurse@example.com")
+          end
+
+          let!(:patient) { create(:patient, nhs_number:) }
+
+          before do
+            create(
+              :patient_specific_direction,
+              patient:,
+              programme: programmes.first
+            )
+          end
+
+          it { should eq("psd") }
+        end
+
+        context "and nasal flu PGD" do
+          let(:programmes) { [create(:programme, :flu)] }
+          let(:data) do
+            valid_flu_data.merge("SUPPLIER_EMAIL" => "nurse@example.com")
+          end
+
+          it { should eq("pgd") }
+        end
       end
     end
 

@@ -75,9 +75,13 @@ describe Reports::ProgrammeVaccinationsExporter do
             TIME_OF_VACCINATION
             PROGRAMME_NAME
             VACCINE_GIVEN
+            PROTOCOL
             PERFORMING_PROFESSIONAL_EMAIL
             PERFORMING_PROFESSIONAL_FORENAME
             PERFORMING_PROFESSIONAL_SURNAME
+            SUPPLIER_EMAIL
+            SUPPLIER_FORENAME
+            SUPPLIER_SURNAME
             BATCH_NUMBER
             BATCH_EXPIRY_DATE
             ANATOMICAL_SITE
@@ -163,6 +167,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "PERSON_POSTCODE" => patient.address_postcode,
                 "PERSON_SURNAME" => patient.family_name,
                 "PROGRAMME_NAME" => programme.name,
+                "PROTOCOL" => "pgd",
                 "REASON_NOT_VACCINATED" => "",
                 "RECORD_CREATED" => "2024-01-01T12:05:20+00:00",
                 "RECORD_UPDATED" => "",
@@ -172,6 +177,9 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "SCHOOL_URN" => location.urn,
                 "SNOMED_PROCEDURE_CODE" =>
                   vaccination_record.snomed_procedure_code,
+                "SUPPLIER_EMAIL" => "",
+                "SUPPLIER_FORENAME" => "",
+                "SUPPLIER_SURNAME" => "",
                 "TIME_OF_VACCINATION" => "12:05:20",
                 "TRIAGED_BY" => "",
                 "TRIAGE_DATE" => "",
@@ -182,6 +190,23 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "YEAR_GROUP" => patient.year_group(academic_year:).to_s
               }
             )
+          end
+
+          context "with a supplier" do
+            let(:supplied_by) { create(:nurse) }
+
+            before do
+              vaccination_record.update!(supplied_by:, protocol: "national")
+            end
+
+            it "includes the information" do
+              expect(rows.first.to_hash).to include(
+                "PROTOCOL" => "national",
+                "SUPPLIER_EMAIL" => supplied_by.email,
+                "SUPPLIER_FORENAME" => supplied_by.given_name,
+                "SUPPLIER_SURNAME" => supplied_by.family_name
+              )
+            end
           end
         end
 
@@ -314,6 +339,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "PERSON_POSTCODE" => patient.address_postcode,
                 "PERSON_SURNAME" => patient.family_name,
                 "PROGRAMME_NAME" => programme.name,
+                "PROTOCOL" => "pgd",
                 "REASON_NOT_VACCINATED" => "",
                 "RECORD_CREATED" => Time.current.iso8601,
                 "RECORD_UPDATED" => "",
@@ -323,6 +349,9 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "SCHOOL_URN" => "888888",
                 "SNOMED_PROCEDURE_CODE" =>
                   vaccination_record.snomed_procedure_code,
+                "SUPPLIER_EMAIL" => "",
+                "SUPPLIER_FORENAME" => "",
+                "SUPPLIER_SURNAME" => "",
                 "TIME_OF_VACCINATION" => "12:05:20",
                 "TRIAGED_BY" => "",
                 "TRIAGE_DATE" => "",
