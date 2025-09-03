@@ -93,9 +93,10 @@ describe "Flu vaccination" do
   def and_the_nasal_and_injection_patient_has_a_psd
     create(
       :patient_specific_direction,
+      academic_year: @session.academic_year,
       patient: @patient_nasal_and_injection,
       programme: @programme,
-      academic_year: @session.academic_year
+      team: @team
     )
   end
 

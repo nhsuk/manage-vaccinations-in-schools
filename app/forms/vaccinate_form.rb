@@ -99,8 +99,9 @@ class VaccinateForm
 
   def has_patient_specific_direction?
     patient.has_patient_specific_direction?(
-      programme:,
       academic_year:,
+      programme:,
+      team: current_user.selected_team,
       vaccine_method:
     )
   end

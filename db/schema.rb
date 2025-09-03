@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_03_161554) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_03_164644) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -645,10 +645,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_03_161554) do
     t.datetime "updated_at", null: false
     t.integer "academic_year", null: false
     t.datetime "invalidated_at"
+    t.bigint "team_id", null: false
     t.index ["academic_year"], name: "index_patient_specific_directions_on_academic_year"
     t.index ["created_by_user_id"], name: "index_patient_specific_directions_on_created_by_user_id"
     t.index ["patient_id"], name: "index_patient_specific_directions_on_patient_id"
     t.index ["programme_id"], name: "index_patient_specific_directions_on_programme_id"
+    t.index ["team_id"], name: "index_patient_specific_directions_on_team_id"
     t.index ["vaccine_id"], name: "index_patient_specific_directions_on_vaccine_id"
   end
 
@@ -1068,6 +1070,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_03_161554) do
   add_foreign_key "patient_sessions", "sessions"
   add_foreign_key "patient_specific_directions", "patients"
   add_foreign_key "patient_specific_directions", "programmes"
+  add_foreign_key "patient_specific_directions", "teams"
   add_foreign_key "patient_specific_directions", "users", column: "created_by_user_id"
   add_foreign_key "patient_specific_directions", "vaccines"
   add_foreign_key "patient_triage_statuses", "patients", on_delete: :cascade

@@ -35,14 +35,15 @@ class VaccinationRecordPolicy < ApplicationPolicy
   private
 
   delegate :patient, :session, :programme, to: :record
-  delegate :academic_year, to: :session
+  delegate :academic_year, :team, to: :session
 
   def can_create_with_psd?(approved_vaccine_methods)
     session.psd_enabled? &&
       approved_vaccine_methods.any? do |vaccine_method|
         patient.has_patient_specific_direction?(
-          programme:,
           academic_year:,
+          programme:,
+          team:,
           vaccine_method:
         )
       end
