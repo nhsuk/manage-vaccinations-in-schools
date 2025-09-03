@@ -319,6 +319,15 @@ describe AppVaccinationRecordSummaryComponent do
       )
     end
 
+    describe "source row" do
+      it do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "SourceRecorded in Mavis"
+        )
+      end
+    end
+
     context "when the notes are not present" do
       let(:notes) { nil }
 

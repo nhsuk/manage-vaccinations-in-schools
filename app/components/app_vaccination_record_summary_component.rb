@@ -257,6 +257,13 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
+      if @vaccination_record.respond_to?(:source)
+        summary_list.with_row do |row|
+          row.with_key { "Source" }
+          row.with_value { source_value }
+        end
+      end
+
       if @vaccination_record.respond_to?(:sync_status) &&
            Flipper.enabled?(:immunisations_fhir_api_integration)
         summary_list.with_row do |row|
@@ -277,6 +284,13 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
            :identity_check_label,
            :vaccination_record_location,
            to: :helpers
+
+  def source_value
+    highlight_if(
+      @vaccination_record.human_enum_name(:source),
+      @vaccination_record.source_changed?
+    )
+  end
 
   def outcome_value
     highlight_if(

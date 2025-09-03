@@ -269,6 +269,11 @@ en:
           pending: Sync pending
           synced: Synced
           failed: Sync failed
+        sources:
+          service: Recorded in Mavis
+          historical_upload: Uploaded as a historical vaccination
+          nhs_immunisations_api: External source such as GP practice
+          consent_refusal: Parent reported already vaccinated
       vaccine:
         methods:
           injection: Injection
