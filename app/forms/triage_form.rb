@@ -135,7 +135,7 @@ class TriageForm
     if add_patient_specific_direction
       create_patient_specific_direction!
     elsif add_patient_specific_direction == false
-      destroy_patient_specific_directions!
+      invalidate_patient_specific_directions!
     end
   end
 
@@ -162,10 +162,10 @@ class TriageForm
     )
   end
 
-  def destroy_patient_specific_directions!
+  def invalidate_patient_specific_directions!
     patient
       .patient_specific_directions
       .where(academic_year:, programme:)
-      .destroy_all
+      .invalidate_all
   end
 end

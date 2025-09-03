@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_03_153120) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_03_161554) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -644,6 +644,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_03_153120) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "academic_year", null: false
+    t.datetime "invalidated_at"
     t.index ["academic_year"], name: "index_patient_specific_directions_on_academic_year"
     t.index ["created_by_user_id"], name: "index_patient_specific_directions_on_created_by_user_id"
     t.index ["patient_id"], name: "index_patient_specific_directions_on_patient_id"
