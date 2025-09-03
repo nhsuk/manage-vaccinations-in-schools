@@ -256,6 +256,40 @@ describe AppActivityLogComponent do
                      programme: "HPV"
   end
 
+  describe "patient specific directions" do
+    before do
+      create(
+        :patient_specific_direction,
+        created_at: Time.zone.local(2024, 6, 1, 12),
+        created_by: user,
+        patient:,
+        programme: programmes.second,
+        team:
+      )
+
+      create(
+        :patient_specific_direction,
+        created_at: Time.zone.local(2024, 6, 1, 10),
+        invalidated_at: Time.zone.local(2024, 6, 1, 11),
+        created_by: user,
+        patient:,
+        programme: programmes.second,
+        team:
+      )
+    end
+
+    include_examples "card",
+                     title: "PSD added",
+                     date: "1 June 2024 at 12:00pm",
+                     by: "JOY, Nurse",
+                     programme: "Flu"
+
+    include_examples "card",
+                     title: "PSD invalidated",
+                     date: "1 June 2024 at 11:00am",
+                     programme: "Flu"
+  end
+
   describe "vaccination not administered" do
     before do
       create(

@@ -94,6 +94,7 @@ class AppActivityLogComponent < ViewComponent::Base
       gillick_assessment_events,
       note_events,
       notify_events,
+      patient_specific_direction_events,
       pre_screening_events,
       session_events,
       triage_events,
@@ -275,6 +276,29 @@ class AppActivityLogComponent < ViewComponent::Base
         by: notify_log_entry.sent_by,
         programmes: programmes_for(notify_log_entry)
       }
+    end
+  end
+
+  def patient_specific_direction_events
+    patient_specific_directions.flat_map do |patient_specific_direction|
+      events = []
+
+      events << {
+        title: "PSD added",
+        at: patient_specific_direction.created_at,
+        by: patient_specific_direction.created_by,
+        programmes: programmes_for(patient_specific_direction)
+      }
+
+      if patient_specific_direction.invalidated?
+        events << {
+          title: "PSD invalidated",
+          at: patient_specific_direction.invalidated_at,
+          programmes: programmes_for(patient_specific_direction)
+        }
+      end
+
+      events
     end
   end
 
