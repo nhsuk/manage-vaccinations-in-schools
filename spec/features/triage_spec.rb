@@ -97,8 +97,13 @@ describe "Triage" do
     and_i_choose_that_they_are_safe_to_vaccinate_with_nasal
     and_i_choose_to_add_psd
     and_i_save_triage
-
     then_i_should_see_the_patient_tagged_psd_added
+
+    when_i_click_on_the_update_triage_link
+    and_i_choose_that_they_are_safe_to_vaccinate_with_nasal
+    and_i_choose_not_to_add_psd
+    and_i_save_triage
+    then_i_should_see_the_patient_tagged_psd_not_added
   end
 
   def given_a_programme_with_a_running_session
@@ -288,6 +293,10 @@ describe "Triage" do
     choose "Yes"
   end
 
+  def and_i_choose_not_to_add_psd
+    choose "No"
+  end
+
   def when_i_do_not_vaccinate
     choose "No, do not vaccinate"
     click_button "Save triage"
@@ -419,7 +428,15 @@ describe "Triage" do
     within(".app-action-list") { expect(page).to have_content("PSD added") }
   end
 
+  def then_i_should_see_the_patient_tagged_psd_not_added
+    within(".app-action-list") { expect(page).to have_content("PSD not added") }
+  end
+
   def then_i_should_see_the_patient_with_status_psd_added
     expect(page).to have_content("PSD added")
+  end
+
+  def when_i_click_on_the_update_triage_link
+    click_link "Update triage outcome"
   end
 end

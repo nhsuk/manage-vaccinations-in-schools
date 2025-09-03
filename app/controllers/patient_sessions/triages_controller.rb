@@ -46,7 +46,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
         )
         .each { send_triage_confirmation(@patient_session, @programme, it) }
 
-      ensure_psd_exists if @triage_form.add_psd?
+      @triage_form.add_psd? ? ensure_psd_exists : remove_existing_psd
 
       redirect_to redirect_path, flash: { success: "Triage outcome updated" }
     else
@@ -89,5 +89,15 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
     PatientSpecificDirection.create!(
       psd_attributes.merge(created_by: current_user)
     )
+  end
+
+  def remove_existing_psd
+    PatientSpecificDirection.find_by(
+      {
+        academic_year: @academic_year,
+        patient: @patient,
+        programme: @programme
+      }
+    )&.destroy!
   end
 end
