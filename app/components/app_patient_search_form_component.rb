@@ -112,7 +112,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               <%= f.govuk_check_box :year_groups,
                                     year_group,
                                     checked: form.year_groups&.include?(year_group),
-                                    label: { text: helpers.format_year_group(year_group) } %>
+                                    label: { text: format_year_group(year_group) } %>
             <% end %>
           <% end %>
         <% end %>
@@ -201,8 +201,6 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     heading_level: 3,
     show_aged_out_of_programmes: false
   )
-    super
-
     @form = form
     @url = url
 
@@ -232,6 +230,11 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               :year_groups,
               :heading_level,
               :show_aged_out_of_programmes
+
+  delegate :format_year_group,
+           :govuk_button_link_to,
+           :govuk_details,
+           to: :helpers
 
   def open_details?
     @form.date_of_birth_year.present? || @form.date_of_birth_month.present? ||

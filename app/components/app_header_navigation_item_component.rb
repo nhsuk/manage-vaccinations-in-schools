@@ -2,8 +2,6 @@
 
 class AppHeaderNavigationItemComponent < ViewComponent::Base
   def initialize(title, path, request_path:, count: nil)
-    super
-
     @title = title
     @path = path
     @request_path = request_path

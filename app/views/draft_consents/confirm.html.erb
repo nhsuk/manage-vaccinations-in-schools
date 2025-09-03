@@ -54,7 +54,7 @@
               row.with_value { @triage.notes }
               row.with_action(text: "Change", href: wizard_path(:triage), visually_hidden_text: "triage notes")
             else
-              row.with_value { @triage.notes.presence || govuk_link_to("Enter triage notes", wizard_path(:triage)) }
+              row.with_value { @triage.notes.presence || link_to("Enter triage notes", wizard_path(:triage)) }
             end
           end
         end %>

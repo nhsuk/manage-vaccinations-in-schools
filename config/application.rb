@@ -79,8 +79,8 @@ module ManageVaccinations
     config.good_job.execution_mode = :external
 
     config.view_component.default_preview_layout = "component_preview"
-    config.view_component.preview_controller = "ComponentPreviewsController"
-    config.view_component.preview_paths << Rails.root.join(
+    config.view_component.previews.controller = "ComponentPreviewsController"
+    config.view_component.previews.paths << Rails.root.join(
       "spec/components/previews"
     )
   end

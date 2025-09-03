@@ -36,18 +36,18 @@ describe AppConsentRefusedTableComponent do
     create(:consent, :refused, programme:, reason_for_refusal: :other)
   end
 
-  it { should have_content("Contains gelatine\n\n            16.7%") }
-  it { should have_content("Already vaccinated\n\n            16.7%") }
+  it { should have_content("Contains gelatine\n            16.7%") }
+  it { should have_content("Already vaccinated\n            16.7%") }
 
   it do
     expect(rendered).to have_content(
-      "Will be vaccinated elsewhere\n\n            16.7%"
+      "Will be vaccinated elsewhere\n            16.7%"
     )
   end
 
-  it { should have_content("Medical reasons\n\n            16.7%") }
-  it { should have_content("Personal choice\n\n            16.7%") }
-  it { should have_content("Other\n\n            16.7%") }
+  it { should have_content("Medical reasons\n            16.7%") }
+  it { should have_content("Personal choice\n            16.7%") }
+  it { should have_content("Other\n            16.7%") }
 
   context "when no vaccine contains gelatine" do
     let(:vaccine_may_contain_gelatine) { false }

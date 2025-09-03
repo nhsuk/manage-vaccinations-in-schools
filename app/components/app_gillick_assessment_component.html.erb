@@ -22,7 +22,7 @@
       <p><%= notes %></p>
     <% end %>
 
-    <% if helpers.policy(gillick_assessment).edit? %>
+    <% if policy(gillick_assessment).edit? %>
       <p>
         <%= govuk_button_link_to "Edit Gillick competence",
                                  edit_session_patient_programme_gillick_assessment_path(

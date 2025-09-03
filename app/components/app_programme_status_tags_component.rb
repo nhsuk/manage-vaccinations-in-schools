@@ -2,8 +2,6 @@
 
 class AppProgrammeStatusTagsComponent < ViewComponent::Base
   def initialize(status_by_programme, outcome:)
-    super
-
     @status_by_programme = status_by_programme
     @outcome = outcome
   end

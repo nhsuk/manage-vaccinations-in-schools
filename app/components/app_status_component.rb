@@ -11,8 +11,6 @@ class AppStatusComponent < ViewComponent::Base
   ERB
 
   def initialize(text:, colour: "blue", small: false)
-    super
-
     @text = text
     @colour = colour
     @small = small

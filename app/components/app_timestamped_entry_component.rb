@@ -14,7 +14,6 @@ class AppTimestampedEntryComponent < ViewComponent::Base
   ERB
 
   def initialize(text:, timestamp:, recorded_by: nil)
-    super
     @text = text
     @timestamp = timestamp || Time.zone.now
     @recorded_by = recorded_by

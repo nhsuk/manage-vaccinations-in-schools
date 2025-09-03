@@ -4,7 +4,6 @@ class AppSecondaryNavigationComponent < ViewComponent::Base
   renders_many :items, "Item"
 
   def initialize(classes: nil, attributes: {})
-    super
     classes = classes.join(" ") if classes.is_a? Array
     @classes =
       "app-secondary-navigation nhsuk-u-margin-bottom-4#{classes.present? ? " #{classes}" : ""}"
@@ -19,8 +18,6 @@ class AppSecondaryNavigationComponent < ViewComponent::Base
 
   class Item < ViewComponent::Base
     def initialize(href:, text: nil, selected: false, ticked: false)
-      super
-
       @href = href
       @text = html_escape(text)
       @selected = selected

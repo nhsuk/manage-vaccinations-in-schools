@@ -2,8 +2,6 @@
 
 class AppGillickAssessmentComponent < ViewComponent::Base
   def initialize(patient_session:, programme:)
-    super
-
     @patient_session = patient_session
     @programme = programme
   end
@@ -13,6 +11,7 @@ class AppGillickAssessmentComponent < ViewComponent::Base
   attr_reader :patient_session, :programme
 
   delegate :patient, :session, to: :patient_session
+  delegate :govuk_button_link_to, :policy, to: :helpers
 
   def gillick_assessment
     @gillick_assessment ||=
@@ -24,6 +23,6 @@ class AppGillickAssessmentComponent < ViewComponent::Base
 
   def can_assess?
     @can_assess ||=
-      patient_session.session.today? && helpers.policy(GillickAssessment).new?
+      patient_session.session.today? && policy(GillickAssessment).new?
   end
 end

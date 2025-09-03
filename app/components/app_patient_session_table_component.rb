@@ -46,12 +46,12 @@ class AppPatientSessionTableComponent < ViewComponent::Base
   ERB
 
   def initialize(patient_sessions)
-    super
-
     @patient_sessions = patient_sessions
   end
 
   private
 
   attr_reader :patient_sessions
+
+  delegate :govuk_table, to: :helpers
 end

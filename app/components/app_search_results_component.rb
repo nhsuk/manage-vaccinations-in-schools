@@ -20,8 +20,6 @@ class AppSearchResultsComponent < ViewComponent::Base
   ERB
 
   def initialize(pagy, label:, heading: "Search results")
-    super
-
     @pagy = pagy
     @label = label
     @heading = heading
@@ -30,6 +28,8 @@ class AppSearchResultsComponent < ViewComponent::Base
   private
 
   attr_reader :pagy, :label, :heading
+
+  delegate :govuk_pagination, to: :helpers
 
   def has_results? = pagy.count.positive?
 end

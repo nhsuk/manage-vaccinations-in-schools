@@ -2,13 +2,13 @@
 
 class AppBreadcrumbComponent < ViewComponent::Base
   def initialize(items:, attributes: {})
-    super
-
     @items = items
     @attributes = attributes
   end
 
-  def linkable_items
-    @items.select { |item| item[:href] }
-  end
+  private
+
+  delegate :govuk_back_link, to: :helpers
+
+  def linkable_items = @items.select { it[:href].present? }
 end

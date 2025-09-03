@@ -2,8 +2,6 @@
 
 class AppConsentStatusComponent < ViewComponent::Base
   def initialize(patient_session:, programme:)
-    super
-
     @patient_session = patient_session
     @programme = programme
   end

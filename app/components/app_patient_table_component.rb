@@ -2,8 +2,6 @@
 
 class AppPatientTableComponent < ViewComponent::Base
   def initialize(patients, current_user:, count:)
-    super
-
     @patients = patients
     @current_user = current_user
     @count = count
@@ -12,6 +10,8 @@ class AppPatientTableComponent < ViewComponent::Base
   private
 
   attr_reader :patients, :current_user, :count
+
+  delegate :govuk_table, to: :helpers
 
   def can_link_to?(record) = allowed_ids.include?(record.id)
 

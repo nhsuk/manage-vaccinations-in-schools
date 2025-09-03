@@ -2,14 +2,13 @@
 
 class AppImportFormatDetailsComponent < ViewComponent::Base
   def initialize(import:)
-    super
-
     @import = import
   end
 
   private
 
   delegate :team, to: :@import
+  delegate :govuk_details, :govuk_table, to: :helpers
 
   def summary_text
     case @import

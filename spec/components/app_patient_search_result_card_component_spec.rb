@@ -54,19 +54,19 @@ describe AppPatientSearchResultCardComponent do
     let(:programme) { create(:programme, :flu) }
     let(:academic_year) { Date.current.academic_year }
 
-    it { should have_text("Programme outcome\nFluNo outcome") }
+    it { should have_text("Programme outcomeFluNo outcome") }
     it { should_not have_text("Triage status") }
 
     context "when given a consent status" do
       let(:consent_status) { "given" }
 
-      it { should have_text("Consent status\nFluNo response") }
+      it { should have_text("Consent statusFluNo response") }
     end
 
     context "when given a triage status" do
       let(:triage_status) { "safe_to_vaccinate" }
 
-      it { should have_text("Triage status\nFluNo triage needed") }
+      it { should have_text("Triage statusFluNo triage needed") }
     end
 
     context "when triage status is 'Any' and a patient's triage status is required" do
@@ -74,7 +74,7 @@ describe AppPatientSearchResultCardComponent do
 
       before { create(:patient_triage_status, :required, patient:, programme:) }
 
-      it { should have_text("Triage status\nFluNeeds triage") }
+      it { should have_text("Triage statusFluNeeds triage") }
     end
 
     context "with a session status of unwell" do
@@ -88,7 +88,7 @@ describe AppPatientSearchResultCardComponent do
         )
       end
 
-      it { should have_text("Programme outcome\nFluNo outcomeUnwell") }
+      it { should have_text("Programme outcomeFluNo outcomeUnwell") }
     end
   end
 end

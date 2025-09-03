@@ -2,8 +2,6 @@
 
 class AppSessionCardComponent < ViewComponent::Base
   def initialize(session, patient_count:)
-    super
-
     @session = session
     @patient_count = patient_count
   end
@@ -19,6 +17,7 @@ class AppSessionCardComponent < ViewComponent::Base
 
   attr_reader :session, :patient_count
 
+  delegate :govuk_summary_list, to: :helpers
   delegate :programmes, to: :session
 
   def card_options = { link_to: session_path(session), compact: true }

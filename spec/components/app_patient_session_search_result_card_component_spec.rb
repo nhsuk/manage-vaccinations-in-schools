@@ -94,7 +94,7 @@ describe AppPatientSessionSearchResultCardComponent do
 
       it { should have_text("Outcome") }
 
-      it { should have_text("Action required\nRecord vaccination for HPV") }
+      it { should have_text("Action requiredRecord vaccination for HPV") }
       it { should have_button("Attending") }
       it { should have_button("Absent") }
 
@@ -111,7 +111,7 @@ describe AppPatientSessionSearchResultCardComponent do
 
       it { should have_text("Outcome") }
 
-      it { should have_text("Action required\nRecord vaccination for HPV") }
+      it { should have_text("Action requiredRecord vaccination for HPV") }
       it { should_not have_button("Attending") }
       it { should_not have_button("Absent") }
 
@@ -127,7 +127,7 @@ describe AppPatientSessionSearchResultCardComponent do
   context "when context is record" do
     let(:context) { :record }
 
-    it { should have_text("Action required\nRecord vaccination for HPV") }
+    it { should have_text("Action requiredRecord vaccination for HPV") }
 
     context "and the programme is flu" do
       let(:programme) { create(:programme, :flu) }

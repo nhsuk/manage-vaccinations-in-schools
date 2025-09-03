@@ -12,8 +12,6 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     show_school: false,
     show_year_group: false
   )
-    super
-
     @patient = patient
     @link_to = link_to
     @programme = programme
@@ -37,14 +35,12 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
       govuk_summary_list do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "Date of birth" }
-          row.with_value { helpers.patient_date_of_birth(@patient) }
+          row.with_value { patient_date_of_birth(@patient) }
         end
         if @show_year_group
           summary_list.with_row do |row|
             row.with_key { "Year group" }
-            row.with_value do
-              helpers.patient_year_group(@patient, academic_year:)
-            end
+            row.with_value { patient_year_group(@patient, academic_year:) }
           end
         end
         if @show_postcode && !@patient.restricted?
@@ -56,13 +52,13 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
         if @show_school
           summary_list.with_row do |row|
             row.with_key { "School" }
-            row.with_value { helpers.patient_school(@patient) }
+            row.with_value { patient_school(@patient) }
           end
         end
         if @show_parents && @patient.parent_relationships.any?
           summary_list.with_row do |row|
             row.with_key { "Parents or guardians" }
-            row.with_value { helpers.patient_parents(@patient) }
+            row.with_value { patient_parents(@patient) }
           end
         end
         if @programme && @academic_year
@@ -88,6 +84,13 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   private
 
   attr_reader :academic_year
+
+  delegate :govuk_summary_list,
+           :patient_date_of_birth,
+           :patient_parents,
+           :patient_school,
+           :patient_year_group,
+           to: :helpers
 
   def programme_outcome_tag
     render_status_tag(:vaccination, :programme)

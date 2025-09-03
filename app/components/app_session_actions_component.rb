@@ -7,8 +7,6 @@ class AppSessionActionsComponent < ViewComponent::Base
   ERB
 
   def initialize(session)
-    super
-
     @session = session
   end
 
@@ -18,6 +16,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
   attr_reader :session
 
+  delegate :govuk_summary_list, to: :helpers
   delegate :academic_year, :programmes, to: :session
 
   def patient_sessions

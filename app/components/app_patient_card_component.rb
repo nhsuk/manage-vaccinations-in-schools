@@ -29,8 +29,6 @@ class AppPatientCardComponent < ViewComponent::Base
     remove_links: {},
     heading_level: 3
   )
-    super
-
     @patient = patient
     @current_team = current_team
     @change_links = change_links

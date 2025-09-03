@@ -2,8 +2,6 @@
 
 class AppProgrammeNavigationComponent < ViewComponent::Base
   def initialize(programme, academic_year, active:)
-    super
-
     @programme = programme
     @academic_year = academic_year
     @active = active

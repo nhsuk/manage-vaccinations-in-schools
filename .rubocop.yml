@@ -23,6 +23,10 @@ Layout/LineLength:
   Exclude:
     - db/schema.rb
 
+Lint/MissingSuper:
+  Exclude:
+    - app/components/*.rb
+
 Lint/PercentStringArray:
   Exclude:
     - spec/models/dps_export_spec.rb

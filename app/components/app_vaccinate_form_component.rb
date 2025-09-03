@@ -2,8 +2,6 @@
 
 class AppVaccinateFormComponent < ViewComponent::Base
   def initialize(form)
-    super
-
     @form = form
   end
 

@@ -27,7 +27,7 @@
             row.with_action(text: "Change", href: session_dates_path(@session), visually_hidden_text: "session dates")
           else
             row.with_value do
-              govuk_link_to "Add session dates", session_dates_path(@session)
+              link_to "Add session dates", session_dates_path(@session)
             end
           end
         end

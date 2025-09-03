@@ -2,15 +2,13 @@
 
 class AppPatientSessionRecordComponent < ViewComponent::Base
   erb_template <<-ERB
-    <% if helpers.policy(vaccination_record).new? %>
+    <% if policy(vaccination_record).new? %>
       <h3 class="nhsuk-heading-m"><%= heading %></h3>
       <%= render AppVaccinateFormComponent.new(vaccinate_form) %>
     <% end %>
   ERB
 
   def initialize(patient_session, programme:, current_user:, vaccinate_form:)
-    super
-
     @patient_session = patient_session
     @programme = programme
     @current_user = current_user
@@ -30,6 +28,7 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
 
   attr_reader :patient_session, :current_user, :programme, :vaccinate_form
 
+  delegate :policy, to: :helpers
   delegate :patient, :session, to: :patient_session
   delegate :academic_year, to: :session
 

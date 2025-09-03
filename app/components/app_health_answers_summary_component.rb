@@ -24,8 +24,6 @@ class AppHealthAnswersSummaryComponent < ViewComponent::Base
   ERB
 
   def initialize(objects)
-    super
-
     @objects = objects.is_a?(Array) ? objects : [objects]
   end
 

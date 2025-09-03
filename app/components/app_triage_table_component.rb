@@ -2,20 +2,17 @@
 
 class AppTriageTableComponent < ViewComponent::Base
   def initialize(patient_session:, programme:)
-    super
-
     @patient_session = patient_session
     @programme = programme
   end
 
-  def render?
-    triages.any?
-  end
+  def render? = triages.any?
 
   private
 
   attr_reader :patient_session, :programme
 
+  delegate :govuk_table, :triage_status_tag, to: :helpers
   delegate :patient, :session, to: :patient_session
   delegate :academic_year, to: :session
 

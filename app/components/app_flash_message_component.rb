@@ -4,8 +4,6 @@ class AppFlashMessageComponent < ViewComponent::Base
   attr_reader :body, :heading, :heading_link_text, :heading_link_href
 
   def initialize(flash:)
-    super
-
     flash = flash.to_h.with_indifferent_access
     @message_key = (recognised_message_keys & flash.keys.map(&:to_sym)).first
 
@@ -21,6 +19,10 @@ class AppFlashMessageComponent < ViewComponent::Base
     else
       @heading = flash[@message_key]
     end
+  end
+
+  def render?
+    @heading.present? || @body.present?
   end
 
   def title
@@ -40,15 +42,11 @@ class AppFlashMessageComponent < ViewComponent::Base
     %i[warning success].include?(type) ? "alert" : "region"
   end
 
-  def render?
-    @heading.present? || @body.present?
-  end
-
-  def success?
-    type == :success
-  end
+  def success? = type == :success
 
   private
+
+  delegate :govuk_notification_banner, to: :helpers
 
   def primary_message_keys
     @primary_message_keys ||= %i[info success warning]

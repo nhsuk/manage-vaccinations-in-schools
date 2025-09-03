@@ -2,8 +2,6 @@
 
 class AppSessionDetailsSummaryComponent < ViewComponent::Base
   def initialize(session)
-    super
-
     @session = session
   end
 
@@ -15,6 +13,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
 
   attr_reader :session
 
+  delegate :govuk_summary_list, to: :helpers
   delegate :programmes, to: :session
 
   def patient_sessions
