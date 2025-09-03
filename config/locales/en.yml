@@ -262,6 +262,7 @@ en:
         protocols:
           national: National protocol
           pgd: Patient Group Direction (PGD)
+          psd: Patient Specific Direction
         sync_statuses:
           cannot_sync: Cannot sync
           not_synced: Not synced

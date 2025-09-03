@@ -152,7 +152,8 @@ class VaccinateForm
     draft_vaccination_record.programme = programme
     draft_vaccination_record.protocol = protocol
     draft_vaccination_record.session_id = session.id
-    draft_vaccination_record.supplied_by_user_id = supplied_by_user_id
+    draft_vaccination_record.supplied_by_user_id =
+      supplied_by_user_id || psd_created_by_user_id
 
     draft_vaccination_record.save # rubocop:disable Rails/SaveBang
   end
@@ -164,6 +165,21 @@ class VaccinateForm
   def administered? = vaccine_method != "none"
 
   def supplied_by_user_id_values = supplied_by_users.pluck(:id)
+
+  def psd_created_by_user_id
+    if healthcare_assistant_using_psd?
+      patient
+        .patient_specific_directions
+        .order(created_at: :desc)
+        .find_by(
+          academic_year:,
+          programme:,
+          team: current_user.selected_team,
+          vaccine_method:
+        )
+        &.created_by_user_id
+    end
+  end
 
   def vaccine_method_options
     programme.vaccine_methods + ["none"]
