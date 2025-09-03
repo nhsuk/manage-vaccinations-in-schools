@@ -76,11 +76,10 @@ class VaccinateForm
   def protocol
     if healthcare_assistant_using_psd?
       "psd"
-    elsif current_user.is_nurse? || healthcare_assistant_using_pgd? ||
-          special_nasal_case?
-      "pgd"
-    else
+    elsif healthcare_assistant_using_national?
       "national"
+    else
+      "pgd"
     end
   end
 
@@ -89,20 +88,13 @@ class VaccinateForm
       has_patient_specific_direction?
   end
 
-  def healthcare_assistant_using_pgd?
-    healthcare_assistant? && !session.psd_enabled? && vaccine_method == "nasal"
+  def healthcare_assistant_using_national?
+    healthcare_assistant? && session.national_protocol_enabled? &&
+      vaccine_method == "injection"
   end
 
   def requires_supplied_by_user_id?
-    return false if healthcare_assistant_using_psd?
-    return true if special_nasal_case?
-
-    user_not_designated_as_supplier?
-  end
-
-  def special_nasal_case?
-    healthcare_assistant_with_dual_protocols? &&
-      !has_patient_specific_direction? && consented_for_nasal_only?
+    user_not_designated_as_supplier? && !healthcare_assistant_using_psd?
   end
 
   def has_patient_specific_direction?
@@ -111,11 +103,6 @@ class VaccinateForm
       academic_year:,
       vaccine_method:
     )
-  end
-
-  def consented_for_nasal_only?
-    patient.consent_status(programme:, academic_year:).vaccine_methods ==
-      ["nasal"]
   end
 
   def healthcare_assistant_with_dual_protocols?
