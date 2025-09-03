@@ -134,7 +134,7 @@ class TriageForm
   def handle_patient_specific_direction
     if add_patient_specific_direction
       create_patient_specific_direction!
-    elsif add_patient_specific_direction == false
+    else
       invalidate_patient_specific_directions!
     end
   end
