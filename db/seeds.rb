@@ -261,6 +261,7 @@ unless Settings.cis2.enabled
   create_user(:medical_secretary, team:, email: "admin.hope@example.com")
   create_user(:superuser, team:, email: "superuser@example.com")
   create_user(:healthcare_assistant, team:, email: "hca@example.com")
+  create_user(:prescriber, team:, email: "prescriber@example.com")
 
   attach_sample_of_schools_to(team)
 

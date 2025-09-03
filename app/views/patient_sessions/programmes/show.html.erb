@@ -8,7 +8,7 @@
   <div class="app-grid-column-patient-session">
     <%= render AppPatientSessionConsentComponent.new(@patient_session, programme: @programme) %>
 
-    <%= render AppPatientSessionTriageComponent.new(@patient_session, programme: @programme, triage_form: @triage_form) %>
+    <%= render AppPatientSessionTriageComponent.new(@patient_session, programme: @programme, current_user:, triage_form: @triage_form) %>
 
     <%= render AppPatientSessionRecordComponent.new(@patient_session, programme: @programme, current_user:, vaccinate_form: @vaccinate_form) %>
 

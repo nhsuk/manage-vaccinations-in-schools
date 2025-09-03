@@ -146,7 +146,7 @@ en:
             status_and_vaccine_method:
               blank: Choose a status
               inclusion: Choose a status
-            add_psd:
+            add_patient_specific_direction:
               blank: Select yes or no
               inclusion: Select yes or no
         vaccinate_form:

@@ -3,12 +3,15 @@
 describe AppPatientSessionTriageComponent do
   subject { render_inline(component) }
 
-  let(:component) { described_class.new(patient_session, programme:) }
+  let(:component) do
+    described_class.new(patient_session, programme:, current_user:)
+  end
 
   let(:programme) { create(:programme) }
   let(:session) { create(:session, programmes: [programme]) }
   let(:patient_session) { create(:patient_session, session:) }
   let(:patient) { patient_session.patient }
+  let(:current_user) { create(:nurse) }
 
   before do
     patient_session.reload.strict_loading!(false)

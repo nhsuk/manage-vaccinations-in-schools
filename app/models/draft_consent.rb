@@ -32,6 +32,7 @@ class DraftConsent
   attribute :recorded_by_user_id, :integer
   attribute :response, :string
   attribute :route, :string
+  attribute :triage_add_patient_specific_direction, :boolean
   attribute :triage_notes, :string
   attribute :triage_status_and_vaccine_method, :string
   attribute :vaccine_methods, array: true, default: []
@@ -309,6 +310,8 @@ class DraftConsent
     consent.academic_year = academic_year if academic_year.present?
 
     if triage_allowed? && response_given?
+      triage_form.add_patient_specific_direction =
+        triage_add_patient_specific_direction
       triage_form.notes = triage_notes || ""
       triage_form.current_user = recorded_by
       triage_form.status_and_vaccine_method = triage_status_and_vaccine_method
