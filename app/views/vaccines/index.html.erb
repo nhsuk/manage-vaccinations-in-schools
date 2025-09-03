@@ -30,7 +30,7 @@
                   <%= batch.name %>
                 </span>
 
-                <% if batch.id == @todays_batch_id_by_programme_and_vaccine_methods[vaccine.programme][vaccine.method] %>
+                <% if batch.id == @todays_batch_id_by_programme_and_vaccine_methods&.dig(vaccine.programme, vaccine.method) %>
                   <br>
                   <span class="nhsuk-caption-m">
                     (Your default)
