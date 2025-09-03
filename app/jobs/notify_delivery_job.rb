@@ -3,7 +3,9 @@
 require "notifications/client"
 
 class NotifyDeliveryJob < ApplicationJob
-  queue_as :mailer
+  self.queue_adapter = :sidekiq unless Rails.env.test?
+
+  queue_as :notifications
 
   retry_on Notifications::Client::ServerError, wait: :polynomially_longer
 

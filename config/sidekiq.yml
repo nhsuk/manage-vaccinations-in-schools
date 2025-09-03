@@ -3,4 +3,5 @@
 :queues:
   - imports
   - consents
+  - notifications
   - pds
