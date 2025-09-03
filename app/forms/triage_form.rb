@@ -75,8 +75,8 @@ class TriageForm
 
   private
 
-  delegate :team, :patient, :session, to: :patient_session
-  delegate :academic_year, to: :session
+  delegate :patient, :session, to: :patient_session
+  delegate :academic_year, :team, to: :session
 
   def consented_vaccine_methods
     @consented_vaccine_methods ||=
@@ -150,6 +150,7 @@ class TriageForm
       delivery_site: "nose",
       patient:,
       programme:,
+      team:,
       vaccine:,
       vaccine_method:
     }
@@ -165,7 +166,7 @@ class TriageForm
   def invalidate_patient_specific_directions!
     patient
       .patient_specific_directions
-      .where(academic_year:, programme:)
+      .where(academic_year:, programme:, team:)
       .invalidate_all
   end
 end

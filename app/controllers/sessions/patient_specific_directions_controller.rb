@@ -62,6 +62,7 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
         delivery_site: "nose",
         patient_id: patient_session.patient_id,
         programme: @programme,
+        team: current_team,
         vaccine: @vaccine,
         vaccine_method: "nasal"
       )

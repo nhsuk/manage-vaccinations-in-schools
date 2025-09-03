@@ -380,8 +380,8 @@ class Patient < ApplicationRecord
     patient_status(vaccination_statuses, programme:, academic_year:)
   end
 
-  def has_patient_specific_direction?(...)
-    patient_specific_directions.not_invalidated.where(...).exists?
+  def has_patient_specific_direction?(team:, **kwargs)
+    patient_specific_directions.not_invalidated.where(team:, **kwargs).exists?
   end
 
   def consent_given_and_safe_to_vaccinate?(

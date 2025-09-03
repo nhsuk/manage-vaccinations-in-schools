@@ -130,7 +130,8 @@ describe "Flu vaccination" do
     create(
       :patient_specific_direction,
       patient: @patient_nasal_only,
-      programme: @programme
+      programme: @programme,
+      team: @team
     )
   end
 

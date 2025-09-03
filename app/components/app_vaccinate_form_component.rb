@@ -10,7 +10,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
   attr_reader :form
 
   delegate :current_user, :patient, :session, :programme, to: :form
-  delegate :academic_year, to: :session
+  delegate :academic_year, :team, to: :session
 
   def url
     session_patient_programme_vaccinations_path(session, patient, programme)
@@ -34,8 +34,9 @@ class AppVaccinateFormComponent < ViewComponent::Base
             (
               session.psd_enabled? &&
                 patient.has_patient_specific_direction?(
-                  programme:,
                   academic_year:,
+                  programme:,
+                  team:,
                   vaccine_method:
                 )
             )
@@ -59,8 +60,9 @@ class AppVaccinateFormComponent < ViewComponent::Base
 
   def has_patient_specific_direction?(vaccine_method:)
     patient.has_patient_specific_direction?(
-      programme:,
       academic_year:,
+      programme:,
+      team:,
       vaccine_method:
     )
   end

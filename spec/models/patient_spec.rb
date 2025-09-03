@@ -686,6 +686,27 @@ describe Patient do
     it { should eq("JD") }
   end
 
+  describe "#has_patient_specific_direction?" do
+    subject { patient.has_patient_specific_direction?(team:) }
+
+    let(:team) { create(:team) }
+    let(:patient) { create(:patient) }
+
+    it { should be(false) }
+
+    context "with a PSD from the same team" do
+      before { create(:patient_specific_direction, patient:, team:) }
+
+      it { should be(true) }
+    end
+
+    context "with a PSD from a different team" do
+      before { create(:patient_specific_direction, patient:) }
+
+      it { should be(false) }
+    end
+  end
+
   describe "#approved_vaccine_methods" do
     subject(:approved_vaccine_methods) do
       patient.approved_vaccine_methods(programme:, academic_year:)

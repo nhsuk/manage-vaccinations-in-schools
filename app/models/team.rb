@@ -45,9 +45,10 @@ class Team < ApplicationRecord
   has_many :consent_forms
   has_many :consents
   has_many :locations
-  has_many :team_programmes, -> { joins(:programme).order(:"programmes.type") }
+  has_many :patient_specific_directions
   has_many :sessions
   has_many :subteams
+  has_many :team_programmes, -> { joins(:programme).order(:"programmes.type") }
 
   has_many :community_clinics, through: :subteams
   has_many :locations, through: :subteams
