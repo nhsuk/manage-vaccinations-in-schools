@@ -127,6 +127,14 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
       )
       .invalidate_all
 
+    @patient
+      .patient_specific_directions
+      .where(
+        academic_year: @session.academic_year,
+        programme_id: @consent.programme_id
+      )
+      .invalidate_all
+
     StatusUpdater.call(patient: @patient)
   end
 

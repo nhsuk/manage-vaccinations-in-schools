@@ -452,6 +452,12 @@ class ConsentForm < ApplicationRecord
         .from_consent_form!(self, patient:, current_user:)
         .each do |consent|
           next unless consent.requires_triage?
+
+          patient
+            .patient_specific_directions
+            .where(academic_year:, programme: consent.programme)
+            .invalidate_all
+
           patient
             .triages
             .where(academic_year:, programme: consent.programme)

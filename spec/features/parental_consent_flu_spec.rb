@@ -19,12 +19,38 @@ describe "Parental consent" do
     then_i_see_the_confirmation_page
   end
 
+  scenario "Flu programme already has a PSD" do
+    stub_pds_search_to_return_no_patients
+
+    given_a_flu_programme_is_underway
+    and_the_child_has_a_psd
+
+    when_i_go_to_the_consent_form
+    then_i_see_the_consent_form
+
+    when_i_give_consent
+    when_i_answer_yes_to_all_health_questions
+    then_i_see_the_confirmation_page
+
+    when_i_submit_the_consent_form
+    then_the_psd_is_invalidated
+  end
+
   def given_a_flu_programme_is_underway
     @programme = create(:programme, :flu)
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     location = create(:school, name: "Pilot School")
     @session = create(:session, :scheduled, programmes: [@programme], location:)
     @child = create(:patient, session: @session)
+  end
+
+  def and_the_child_has_a_psd
+    @patient_specific_direction =
+      create(
+        :patient_specific_direction,
+        patient: @child,
+        programme: @programme
+      )
   end
 
   def when_i_go_to_the_consent_form
@@ -86,6 +112,20 @@ describe "Parental consent" do
     end
   end
 
+  def when_i_answer_yes_to_all_health_questions
+    11.times do
+      choose "Yes"
+
+      begin
+        fill_in "Give details", with: "Details"
+      rescue Capybara::ElementNotFound
+        # Some questions don't have a give details text box.
+      end
+
+      click_button "Continue"
+    end
+  end
+
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Check and confirm")
   end
@@ -108,5 +148,14 @@ describe "Parental consent" do
       choose "No"
       click_button "Continue"
     end
+  end
+
+  def when_i_submit_the_consent_form
+    click_on "Confirm"
+    perform_enqueued_jobs
+  end
+
+  def then_the_psd_is_invalidated
+    expect(@patient_specific_direction.reload).to be_invalidated
   end
 end
