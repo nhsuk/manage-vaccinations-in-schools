@@ -23,9 +23,10 @@ describe "Flu vaccination" do
   scenario "Administered by HCA under national protocol with PSD enabled" do
     given_a_session_exists(psd_enabled: true)
     and_patients_exist
+    and_the_nasal_and_injection_patient_has_a_psd
 
     when_i_visit_the_session_record_tab
-    then_i_see_all_the_patients
+    then_i_see_only_the_injection_patients
 
     when_i_click_on_the_nasal_and_injection_patient
     then_i_am_able_to_vaccinate_them_using_injection_instead_of_nasal
@@ -89,6 +90,15 @@ describe "Flu vaccination" do
       )
   end
 
+  def and_the_nasal_and_injection_patient_has_a_psd
+    create(
+      :patient_specific_direction,
+      patient: @patient_nasal_and_injection,
+      programme: @programme,
+      academic_year: @session.academic_year
+    )
+  end
+
   def when_i_visit_the_session_record_tab
     sign_in @user, role: :healthcare_assistant
     visit session_record_path(@session)
@@ -96,6 +106,12 @@ describe "Flu vaccination" do
 
   def then_i_see_all_the_patients
     expect(page).to have_content(@patient_nasal_only.full_name)
+    expect(page).to have_content(@patient_nasal_and_injection.full_name)
+    expect(page).to have_content(@patient_injection_only.full_name)
+  end
+
+  def then_i_see_only_the_injection_patients
+    expect(page).not_to have_content(@patient_nasal_only.full_name)
     expect(page).to have_content(@patient_nasal_and_injection.full_name)
     expect(page).to have_content(@patient_injection_only.full_name)
   end

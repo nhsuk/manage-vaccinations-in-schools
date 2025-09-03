@@ -109,6 +109,7 @@ FactoryBot.define do
       role_code { nil }
       activity_codes { [CIS2Info::INDEPENDENT_PRESCRIBING_ACTIVITY_CODE] }
       fallback_role { :prescriber }
+      show_in_suppliers { false }
     end
 
     trait :signed_in do

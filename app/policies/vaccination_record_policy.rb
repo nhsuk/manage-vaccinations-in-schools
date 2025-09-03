@@ -2,11 +2,15 @@
 
 class VaccinationRecordPolicy < ApplicationPolicy
   def create?
-    user.is_nurse? || user.is_prescriber? ||
-      (
-        patient.approved_vaccine_methods(programme:, academic_year:) &
-          session.vaccine_methods_for(user:)
-      ).present?
+    return true if user.is_nurse? || user.is_prescriber?
+    return false unless user.is_healthcare_assistant?
+
+    approved_vaccine_methods =
+      patient.approved_vaccine_methods(programme:, academic_year:)
+
+    can_create_with_psd?(approved_vaccine_methods) ||
+      can_create_with_national_protocol?(approved_vaccine_methods) ||
+      can_create_with_pgd_supply?(approved_vaccine_methods)
   end
 
   def new? = create?
@@ -28,8 +32,30 @@ class VaccinationRecordPolicy < ApplicationPolicy
 
   def destroy? = user.is_superuser?
 
+  private
+
   delegate :patient, :session, :programme, to: :record
   delegate :academic_year, to: :session
+
+  def can_create_with_psd?(approved_vaccine_methods)
+    session.psd_enabled? &&
+      approved_vaccine_methods.any? do |vaccine_method|
+        patient.has_patient_specific_direction?(
+          programme:,
+          academic_year:,
+          vaccine_method:
+        )
+      end
+  end
+
+  def can_create_with_national_protocol?(approved_vaccine_methods)
+    session.national_protocol_enabled? &&
+      approved_vaccine_methods.include?("injection")
+  end
+
+  def can_create_with_pgd_supply?(approved_vaccine_methods)
+    session.pgd_supply_enabled? && approved_vaccine_methods.include?("nasal")
+  end
 
   class Scope < ApplicationPolicy::Scope
     def resolve

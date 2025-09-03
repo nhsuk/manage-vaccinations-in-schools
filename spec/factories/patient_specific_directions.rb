@@ -39,6 +39,6 @@ FactoryBot.define do
 
     delivery_site { "nose" }
     vaccine_method { "nasal" }
-    academic_year { Time.current.to_date.academic_year }
+    academic_year { AcademicYear.current }
   end
 end

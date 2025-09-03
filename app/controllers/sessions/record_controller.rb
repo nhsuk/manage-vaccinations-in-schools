@@ -25,29 +25,10 @@ class Sessions::RecordController < ApplicationController
       scope = scope.has_registration_status(%w[attending completed])
     end
 
-    if !@session.national_protocol_enabled? && @session.psd_enabled? &&
-         current_user.is_healthcare_assistant?
-      scope = scope.has_patient_specific_direction(programme: @programme)
-    end
-
-    @vaccine_methods = @session.vaccine_methods_for(user: current_user)
-
-    if @vaccine_methods != @session.vaccine_methods
-      scope =
-        if @vaccine_methods.empty?
-          scope.none
-        else
-          @vaccine_methods.reduce(scope) do |accumulator, vaccine_method|
-            accumulator.has_vaccine_method(
-              vaccine_method,
-              programme: @session.programmes
-            )
-          end
-        end
-    end
-
     patient_sessions =
-      @form.apply(scope).consent_given_and_ready_to_vaccinate(
+      filter_on_vaccine_method_or_patient_specific_direction(
+        @form.apply(scope)
+      ).consent_given_and_ready_to_vaccinate(
         programmes: @form.programmes,
         vaccine_method: @form.vaccine_method.presence
       )
@@ -129,5 +110,37 @@ class Sessions::RecordController < ApplicationController
         .not_archived
         .not_expired
         .order_by_name_and_expiration
+  end
+
+  def filter_on_vaccine_method_or_patient_specific_direction(scope)
+    return scope if current_user.is_nurse? || current_user.is_prescriber?
+    return scope.none unless current_user.is_healthcare_assistant?
+
+    original_scope = scope
+
+    if @session.psd_enabled? && @session.national_protocol_enabled?
+      original_scope.has_patient_specific_direction(
+        programme: @session.programmes
+      ).or(
+        original_scope.has_vaccine_method(
+          "injection",
+          programme: @session.programmes
+        )
+      )
+    elsif @session.pgd_supply_enabled? && @session.national_protocol_enabled?
+      original_scope.has_vaccine_method(
+        %w[nasal injection],
+        programme: @session.programmes
+      )
+    elsif @session.pgd_supply_enabled?
+      original_scope.has_vaccine_method("nasal", programme: @session.programmes)
+    elsif @session.national_protocol_enabled?
+      original_scope.has_vaccine_method(
+        "injection",
+        programme: @session.programmes
+      )
+    else
+      original_scope.none
+    end
   end
 end
