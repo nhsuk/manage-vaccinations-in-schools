@@ -11,7 +11,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
 
   attr_reader :form
 
-  delegate :patient, :session, :programme, to: :form
+  delegate :current_user, :patient, :session, :programme, to: :form
   delegate :academic_year, to: :session
 
   def url
@@ -21,6 +21,26 @@ class AppVaccinateFormComponent < ViewComponent::Base
   def vaccine_methods
     patient.approved_vaccine_methods(programme:, academic_year:)
   end
+
+  def show_supplied_by_user_id_outside_vaccine_method?
+    healthcare_assistant? && vaccine_methods.count == 1 &&
+      !has_patient_specific_direction?(vaccine_method: vaccine_methods.first)
+  end
+
+  def show_supplied_by_user_id_inside_vaccine_method?(vaccine_method)
+    healthcare_assistant? && vaccine_methods.count > 1 &&
+      !has_patient_specific_direction?(vaccine_method:)
+  end
+
+  def has_patient_specific_direction?(vaccine_method:)
+    patient.has_patient_specific_direction?(
+      programme:,
+      academic_year:,
+      vaccine_method:
+    )
+  end
+
+  def healthcare_assistant? = current_user.is_healthcare_assistant?
 
   def dose_sequence
     programme.default_dose_sequence

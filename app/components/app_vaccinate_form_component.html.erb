@@ -55,7 +55,7 @@
 
       <%= f.govuk_text_area :pre_screening_notes, label: { text: "Pre-screening notes (optional)" }, rows: 3 %>
 
-      <% if form.requires_supplied_by_user_id? %>
+      <% if show_supplied_by_user_id_outside_vaccine_method? %>
         <%= f.govuk_select :supplied_by_user_id,
                            label: { text: "Which nurse identified and pre-screened the child and supplied the vaccine?" },
                            data: { module: "app-autocomplete" } do %>
@@ -105,7 +105,7 @@
                                                    } %>
             <% end %>
 
-            <% if form.healthcare_assistant_with_dual_protocols? %>
+            <% if show_supplied_by_user_id_inside_vaccine_method?(vaccine_method) %>
               <%= f.govuk_select :supplied_by_user_id,
                                  label: { text: "Which nurse identified and pre-screened the child and supplied the vaccine?" },
                                  data: { module: "app-autocomplete" } do %>

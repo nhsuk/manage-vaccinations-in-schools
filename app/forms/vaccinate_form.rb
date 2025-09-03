@@ -94,7 +94,7 @@ class VaccinateForm
   end
 
   def requires_supplied_by_user_id?
-    user_not_designated_as_supplier? && !healthcare_assistant_using_psd?
+    !current_user.show_in_suppliers && !healthcare_assistant_using_psd?
   end
 
   def has_patient_specific_direction?
@@ -103,15 +103,6 @@ class VaccinateForm
       academic_year:,
       vaccine_method:
     )
-  end
-
-  def healthcare_assistant_with_dual_protocols?
-    healthcare_assistant? && session.psd_enabled? &&
-      session.national_protocol_enabled?
-  end
-
-  def user_not_designated_as_supplier?
-    !current_user.show_in_suppliers
   end
 
   def supplied_by_users
