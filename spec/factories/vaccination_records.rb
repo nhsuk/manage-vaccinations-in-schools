@@ -31,7 +31,7 @@
 #  batch_id                              :bigint
 #  location_id                           :bigint
 #  nhs_immunisations_api_id              :string
-#  patient_id                            :bigint
+#  patient_id                            :bigint           not null
 #  performed_by_user_id                  :bigint
 #  programme_id                          :bigint           not null
 #  session_id                            :bigint
