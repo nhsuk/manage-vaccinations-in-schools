@@ -28,9 +28,13 @@
 </p>
 
 <ul class="app-action-list">
-  <% if @patient_session.psd_added?(programme: @programme) %>
+  <% if @session.psd_enabled? %>
     <li class="app-action-list__item">
-      <strong class="nhsuk-tag nhsuk-tag--aqua-green">PSD added</strong>
+      <% if @patient_session.psd_added?(programme: @programme) %>
+        <%= render AppStatusTagComponent.new(:added, context: :patient_specific_direction) %>
+      <% else %>
+        <%= render AppStatusTagComponent.new(:not_added, context: :patient_specific_direction) %>
+      <% end %>
     </li>
   <% end %>
 
