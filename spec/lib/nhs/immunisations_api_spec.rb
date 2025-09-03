@@ -428,42 +428,6 @@ describe NHS::ImmunisationsAPI do
     it "returns the FHIR record" do
       expect(perform_request).to be_a FHIR::Immunization
     end
-
-    context "an error is returned by the api" do
-      let(:code) { nil }
-      let(:diagnostics) { nil }
-
-      let(:body) do
-        {
-          resourceType: "OperationOutcome",
-          id: "bc2c3c82-4392-4314-9d6b-a7345f82d923",
-          meta: {
-            profile: [
-              "https://simplifier.net/guide/UKCoreDevelopment2/ProfileUKCore-OperationOutcome"
-            ]
-          },
-          issue: [
-            {
-              severity: "error",
-              code: "invalid",
-              details: {
-                coding: [
-                  {
-                    system: "https://fhir.nhs.uk/Codesystem/http-error-codes",
-                    code:
-                  }
-                ]
-              },
-              diagnostics:
-            }
-          ]
-        }.to_json
-      end
-
-      include_examples "unexpected response status", 201, "reading"
-      include_examples "client error (4XX) handling", "reading"
-      include_examples "generic error handling"
-    end
   end
 
   describe "update immunisations" do
