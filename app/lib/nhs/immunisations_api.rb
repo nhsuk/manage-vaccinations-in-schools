@@ -75,6 +75,53 @@ module NHS::ImmunisationsAPI
       end
     end
 
+    def read_immunisation_by_nhs_immunisations_api_id(nhs_immunisations_api_id)
+      unless Flipper.enabled?(:imms_api_integration)
+        Rails.logger.info(
+          "Not reading vaccination record by NHS Immunisations API ID from immunisations API as the" \
+            " feature flag is disabled: #{nhs_immunisations_api_id}"
+        )
+        return
+      end
+
+      if nhs_immunisations_api_id.blank?
+        raise "ID #{nhs_immunisations_api_id} is blank"
+      end
+
+      Rails.logger.info(
+        "Reading vaccination record from immunisations API by NHS Immunisations API ID:" \
+          " #{nhs_immunisations_api_id}"
+      )
+
+      response, duration =
+        execute_and_time do
+          NHS::API.connection.get(
+            "/immunisation-fhir-api/FHIR/R4/Immunization/#{nhs_immunisations_api_id}",
+            nil,
+            { "Accept" => "application/fhir+json" }
+          )
+        end
+
+      Rails.logger.info(
+        "Read response returned with status #{response.status} in #{duration}s"
+      )
+
+      if response.status == 200
+        FHIR.from_contents(response.body.to_json)
+      else
+        raise "Error reading vaccination record from" \
+                " Immunisations API by NHS Immunisations API ID #{nhs_immunisations_api_id}: unexpected response" \
+                " status #{response.status}"
+      end
+    rescue Faraday::ClientError => e
+      if (diagnostics = extract_error_diagnostics(e&.response)).present?
+        raise "Error reading vaccination record from" \
+                " Immunisations API by NHS Immunisations API ID #{nhs_immunisations_api_id}: #{diagnostics}"
+      else
+        raise
+      end
+    end
+
     def read_immunisation(vaccination_record)
       unless Flipper.enabled?(:imms_api_integration)
         Rails.logger.info(
