@@ -296,11 +296,8 @@ class PatientSession < ApplicationRecord
 
   delegate :academic_year, to: :session
 
-  def psd_added?(programme:)
-    patient
-      .patient_specific_directions
-      .where(programme:, academic_year:)
-      .exists?
+  def has_patient_specific_direction?(**query)
+    patient.has_patient_specific_direction?(academic_year:, **query)
   end
 
   def safe_to_destroy?

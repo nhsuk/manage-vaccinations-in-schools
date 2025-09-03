@@ -380,6 +380,10 @@ class Patient < ApplicationRecord
     patient_status(vaccination_statuses, programme:, academic_year:)
   end
 
+  def has_patient_specific_direction?(...)
+    patient_specific_directions.exists?(...)
+  end
+
   def consent_given_and_safe_to_vaccinate?(
     programme:,
     academic_year:,
