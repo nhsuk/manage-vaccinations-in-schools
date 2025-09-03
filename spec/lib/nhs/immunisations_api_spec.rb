@@ -301,6 +301,83 @@ describe NHS::ImmunisationsAPI do
     include_examples "an imms_api_integration feature flag check"
   end
 
+  describe "read immunisation" do
+    subject(:perform_request) do
+      described_class.read_immunisation(vaccination_record)
+    end
+
+    let(:status) { 200 }
+    let(:body) { file_fixture("fhir/fhir_record_full.json").read }
+    let(:headers) { { "content-type" => "application/fhir+json" } }
+
+    let!(:request_stub) do
+      stub_request(
+        :get,
+        "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization/ffff1111-eeee-2222-dddd-3333eeee4444"
+      ).to_return(status:, body:, headers:)
+    end
+
+    before do
+      vaccination_record.update(
+        nhs_immunisations_api_id: "ffff1111-eeee-2222-dddd-3333eeee4444"
+      )
+    end
+
+    include_examples "an imms_api_integration feature flag check"
+
+    it "sends the correct request" do
+      request_stub.with do |request|
+        expect(request.headers).to include(
+          { "Accept" => "application/fhir+json" }
+        )
+      end
+
+      perform_request
+
+      expect(request_stub).to have_been_made
+    end
+
+    it "returns the FHIR record" do
+      expect(perform_request).to be_a FHIR::Immunization
+    end
+
+    context "an error is returned by the api" do
+      let(:code) { nil }
+      let(:diagnostics) { nil }
+
+      let(:body) do
+        {
+          resourceType: "OperationOutcome",
+          id: "bc2c3c82-4392-4314-9d6b-a7345f82d923",
+          meta: {
+            profile: [
+              "https://simplifier.net/guide/UKCoreDevelopment2/ProfileUKCore-OperationOutcome"
+            ]
+          },
+          issue: [
+            {
+              severity: "error",
+              code: "invalid",
+              details: {
+                coding: [
+                  {
+                    system: "https://fhir.nhs.uk/Codesystem/http-error-codes",
+                    code:
+                  }
+                ]
+              },
+              diagnostics:
+            }
+          ]
+        }.to_json
+      end
+
+      include_examples "unexpected response status", 201, "reading"
+      include_examples "client error (4XX) handling", "reading"
+      include_examples "generic error handling"
+    end
+  end
+
   describe "update immunisations" do
     subject(:perform_request) do
       described_class.update_immunisation(vaccination_record)

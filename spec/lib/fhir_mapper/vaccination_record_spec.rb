@@ -326,9 +326,7 @@ describe FHIRMapper::VaccinationRecord do
 
     context "with a full fhir record" do
       let(:fhir_immunization) do
-        FHIR.from_contents(
-          file_fixture("/fhir/fhir_record_full.json").read
-        )
+        FHIR.from_contents(file_fixture("/fhir/fhir_record_full.json").read)
       end
       let(:school) { create(:school, urn: "100006") }
 
