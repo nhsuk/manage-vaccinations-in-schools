@@ -19,12 +19,6 @@ class AppTriageFormComponent < ViewComponent::Base
 
   def builder = GOVUKDesignSystemFormBuilder::FormBuilder
 
-  def show_psd_options?(option)
-    patient_session.session.psd_enabled? &&
-      option == "safe_to_vaccinate_nasal" &&
-      policy(PatientSpecificDirection).create?
-  end
-
   def fieldset_options
     text = "Is it safe to vaccinate #{patient.given_name}?"
     hint =

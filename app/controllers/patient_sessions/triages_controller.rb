@@ -18,6 +18,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
 
     @triage_form =
       TriageForm.new(
+        current_user:,
         patient_session: @patient_session,
         programme: @programme,
         triage: previous_triage
@@ -46,8 +47,6 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
         )
         .each { send_triage_confirmation(@patient_session, @programme, it) }
 
-      @triage_form.add_psd? ? ensure_psd_exists : remove_existing_psd
-
       redirect_to redirect_path, flash: { success: "Triage outcome updated" }
     else
       render "patient_sessions/programmes/show",
@@ -59,7 +58,13 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
   private
 
   def triage_form_params
-    params.expect(triage_form: %i[status_and_vaccine_method notes add_psd])
+    params.expect(
+      triage_form: %i[
+        status_and_vaccine_method
+        notes
+        add_patient_specific_direction
+      ]
+    )
   end
 
   def redirect_path
@@ -69,35 +74,5 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
       @programme,
       return_to: "triage"
     )
-  end
-
-  def ensure_psd_exists
-    # TODO: Handle programmes with multiple nasal vaccines.
-    vaccine = @programme.vaccines.nasal.first
-
-    psd_attributes = {
-      academic_year: @academic_year,
-      delivery_site: "nose",
-      patient: @patient,
-      programme: @programme,
-      vaccine:,
-      vaccine_method: "nasal"
-    }
-
-    return if PatientSpecificDirection.exists?(**psd_attributes)
-
-    PatientSpecificDirection.create!(
-      psd_attributes.merge(created_by: current_user)
-    )
-  end
-
-  def remove_existing_psd
-    PatientSpecificDirection.find_by(
-      {
-        academic_year: @academic_year,
-        patient: @patient,
-        programme: @programme
-      }
-    )&.destroy!
   end
 end

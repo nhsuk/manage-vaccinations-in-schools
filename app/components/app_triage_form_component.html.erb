@@ -4,11 +4,11 @@
     <%= f.govuk_radio_buttons_fieldset :status_and_vaccine_method, **fieldset_options do %>
       <% form.safe_to_vaccinate_options.each do |option| %>
         <%= f.govuk_radio_button :status_and_vaccine_method, option do %>
-        <% if show_psd_options?(option) %>
-          <%= f.govuk_radio_buttons_fieldset :psd_action,
+        <% if form.show_add_patient_specific_direction?(option) %>
+          <%= f.govuk_radio_buttons_fieldset :add_patient_specific_direction,
                                              legend: { text: "Do you want to add a PSD?", size: "s" } do %>
-            <%= f.govuk_radio_button :add_psd, "true", label: { text: "Yes" } %>
-            <%= f.govuk_radio_button :add_psd, "false", label: { text: "No" } %>
+            <%= f.govuk_radio_button :add_patient_specific_direction, "true", label: { text: "Yes" } %>
+            <%= f.govuk_radio_button :add_patient_specific_direction, "false", label: { text: "No" } %>
           <% end %>
         <% end %>
       <% end %>
