@@ -7,6 +7,7 @@
 #  id                 :bigint           not null, primary key
 #  academic_year      :integer          not null
 #  delivery_site      :integer          not null
+#  invalidated_at     :datetime
 #  vaccine_method     :integer          not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
@@ -31,6 +32,8 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class PatientSpecificDirection < ApplicationRecord
+  include Invalidatable
+
   audited associated_with: :patient
 
   belongs_to :created_by, class_name: "User", foreign_key: :created_by_user_id
