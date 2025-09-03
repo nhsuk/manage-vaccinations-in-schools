@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ReportingAPIHelper
-  def valid_payload
+  def valid_jwt_payload
     team = create(:team, :with_one_nurse)
     user = team.users.first
     {
@@ -17,6 +17,22 @@ module ReportingAPIHelper
   end
 
   def valid_jwt
-    JWT.encode(valid_payload, Settings.reporting_api.client_app.secret, "HS512")
+    JWT.encode(
+      valid_jwt_payload,
+      Settings.reporting_api.client_app.secret,
+      "HS512"
+    )
+  end
+
+  def invalid_jwt_payload
+    { user: { id: -1 } }
+  end
+
+  def jwt_with_invalid_payload
+    JWT.encode(
+      invalid_jwt_payload,
+      Settings.reporting_api.client_app.secret,
+      "HS512"
+    )
   end
 end
