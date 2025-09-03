@@ -72,7 +72,6 @@ describe("Autocomplete", () => {
 
     // Check that matching options are shown
     const visibleOptions = listbox.querySelectorAll("li");
-    console.log(visibleOptions[0].innerHTML.trim());
     expect(visibleOptions.length).toEqual(1);
 
     // Option display hint text
