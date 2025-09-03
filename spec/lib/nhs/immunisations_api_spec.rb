@@ -220,7 +220,7 @@ describe NHS::ImmunisationsAPI do
     end
 
     it "sends the correct JSON payload" do
-      expected_body = file_fixture("fhir/immunisation-create.json").read.chomp
+      expected_body = file_fixture("fhir/immunisation_create.json").read.chomp
 
       request_stub.with do |request|
         expect(request.headers).to include(
@@ -324,7 +324,7 @@ describe NHS::ImmunisationsAPI do
     end
 
     it "sends the correct JSON payload" do
-      expected_body = file_fixture("fhir/immunisation-update.json").read.chomp
+      expected_body = file_fixture("fhir/immunisation_update.json").read.chomp
 
       request_stub.with do |request|
         expect(request.headers).to include(
