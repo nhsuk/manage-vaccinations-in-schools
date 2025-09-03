@@ -148,6 +148,7 @@ class TriageForm
     attributes = {
       academic_year:,
       delivery_site: "nose",
+      invalidated_at: nil,
       patient:,
       programme:,
       team:,
