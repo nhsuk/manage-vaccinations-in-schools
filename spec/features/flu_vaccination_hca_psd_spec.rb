@@ -89,7 +89,7 @@ describe "Flu vaccination" do
     @programme = create(:programme, :flu)
     @programmes = [@programme]
     @team = create(:team, user_type, programmes: @programmes)
-    @nurse = create(:nurse, team: @team)
+    @user = create(:nurse, team: @team)
 
     @batch =
       create(
@@ -224,6 +224,10 @@ describe "Flu vaccination" do
 
     choose @batch.name
     click_button "Continue"
+
+    expect(page).to have_content("ProtocolPatient Specific Direction")
+    expect(page).to have_content("Supplier#{@user.full_name}")
+
     click_on "Confirm"
 
     expect(page).to have_text("Vaccination outcome recorded for flu")
