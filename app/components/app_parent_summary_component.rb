@@ -20,7 +20,7 @@ class AppParentSummaryComponent < ViewComponent::Base
             row.with_action(text: "Change", href:, visually_hidden_text: "name")
           end
         elsif (href = @change_links[:name])
-          row.with_value { govuk_link_to("Add name", href) }
+          row.with_value { link_to("Add name", href) }
         else
           row.with_value { "Not provided" }
         end
@@ -51,7 +51,7 @@ class AppParentSummaryComponent < ViewComponent::Base
               )
             end
           elsif (href = @change_links[:email])
-            row.with_value { govuk_link_to("Add email address", href) }
+            row.with_value { link_to("Add email address", href) }
           else
             row.with_value { "Not provided" }
           end
@@ -69,7 +69,7 @@ class AppParentSummaryComponent < ViewComponent::Base
               )
             end
           elsif (href = @change_links[:phone])
-            row.with_value { govuk_link_to("Add phone number", href) }
+            row.with_value { link_to("Add phone number", href) }
           else
             row.with_value { "Not provided" }
           end
@@ -105,6 +105,8 @@ class AppParentSummaryComponent < ViewComponent::Base
   end
 
   private
+
+  delegate :govuk_summary_list, to: :helpers
 
   def email_address
     delivery_status = @parent.email_delivery_status

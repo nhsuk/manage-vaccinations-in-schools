@@ -30,6 +30,7 @@ class AppConsentConfirmationComponent < ViewComponent::Base
            :response_given?,
            :parent_email,
            to: :@consent_form
+  delegate :govuk_panel, to: :helpers
 
   def full_name
     @consent_form.full_name(context: :parents)

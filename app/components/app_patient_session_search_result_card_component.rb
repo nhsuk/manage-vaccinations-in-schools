@@ -8,12 +8,12 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       <%= govuk_summary_list do |summary_list|
             summary_list.with_row do |row|
               row.with_key { "Date of birth" }
-              row.with_value { helpers.patient_date_of_birth(patient) }
+              row.with_value { patient_date_of_birth(patient) }
             end
 
             summary_list.with_row do |row|
               row.with_key { "Year group" }
-              row.with_value { helpers.patient_year_group(patient, academic_year:) }
+              row.with_value { patient_year_group(patient, academic_year:) }
             end
 
             if action_required
@@ -47,8 +47,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
       <% if context == :register && can_register_attendance? %>
         <div class="nhsuk-button-group">
-          <%= helpers.govuk_button_to "Attending", create_session_register_path(session, patient, "present"), secondary: true, class: "app-button--small" %>
-          <%= helpers.govuk_button_to "Absent", create_session_register_path(session, patient, "absent"), class: "app-button--secondary-warning app-button--small" %>
+          <%= govuk_button_to "Attending", create_session_register_path(session, patient, "present"), secondary: true, class: "app-button--small" %>
+          <%= govuk_button_to "Absent", create_session_register_path(session, patient, "absent"), class: "app-button--secondary-warning app-button--small" %>
         </div>
       <% end %>
     <% end %>
@@ -86,6 +86,12 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
   attr_reader :patient_session, :patient, :session, :context, :programmes
 
+  delegate :govuk_button_to,
+           :govuk_summary_list,
+           :patient_date_of_birth,
+           :patient_year_group,
+           :policy,
+           to: :helpers
   delegate :academic_year, to: :session
 
   def can_register_attendance?
@@ -95,7 +101,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         session_date: SessionDate.new(value: Date.current)
       )
 
-    helpers.policy(session_attendance).new?
+    policy(session_attendance).new?
   end
 
   def patient_path

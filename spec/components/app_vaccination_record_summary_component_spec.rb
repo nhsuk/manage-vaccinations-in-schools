@@ -52,7 +52,7 @@ describe AppVaccinationRecordSummaryComponent do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Outcome\nVaccinated"
+        text: "OutcomeVaccinated"
       )
     end
 
@@ -62,7 +62,7 @@ describe AppVaccinationRecordSummaryComponent do
       it do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Outcome\nUnwell"
+          text: "OutcomeUnwell"
         )
       end
     end
@@ -72,7 +72,7 @@ describe AppVaccinationRecordSummaryComponent do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Programme\nHPV"
+        text: "ProgrammeHPV"
       )
     end
   end
@@ -81,7 +81,7 @@ describe AppVaccinationRecordSummaryComponent do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Vaccine\nGardasil 9"
+        text: "VaccineGardasil 9"
       )
     end
 
@@ -99,7 +99,7 @@ describe AppVaccinationRecordSummaryComponent do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Method\nIntramuscular"
+        text: "MethodIntramuscular"
       )
     end
   end
@@ -108,7 +108,7 @@ describe AppVaccinationRecordSummaryComponent do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Site\nLeft arm (upper position)"
+        text: "SiteLeft arm (upper position)"
       )
     end
   end
@@ -117,7 +117,7 @@ describe AppVaccinationRecordSummaryComponent do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Dose volume\n0.5 ml"
+        text: "Dose volume0.5 ml"
       )
     end
 
@@ -143,7 +143,7 @@ describe AppVaccinationRecordSummaryComponent do
       it do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Dose number\nSecond"
+          text: "Dose numberSecond"
         )
       end
     end
@@ -154,14 +154,14 @@ describe AppVaccinationRecordSummaryComponent do
       it do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Dose number\nFirst"
+          text: "Dose numberFirst"
         )
       end
     end
   end
 
   describe "batch ID row" do
-    it { should have_css(".nhsuk-summary-list__row", text: "Batch ID\nABC") }
+    it { should have_css(".nhsuk-summary-list__row", text: "Batch IDABC") }
 
     context "without a vaccine" do
       let(:outcome) { :not_well }
@@ -177,7 +177,7 @@ describe AppVaccinationRecordSummaryComponent do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Batch expiry date\n1 January 2026"
+        text: "Batch expiry date1 January 2026"
       )
     end
 
@@ -200,7 +200,7 @@ describe AppVaccinationRecordSummaryComponent do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Date\n6 September 2024"
+        text: "Date6 September 2024"
       )
     end
   end
@@ -209,7 +209,7 @@ describe AppVaccinationRecordSummaryComponent do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Time\n12:00pm"
+        text: "Time12:00pm"
       )
     end
   end
@@ -226,7 +226,7 @@ describe AppVaccinationRecordSummaryComponent do
       it do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Vaccinator\nNURSE, Test"
+          text: "VaccinatorNURSE, Test"
         )
       end
     end
@@ -244,7 +244,7 @@ describe AppVaccinationRecordSummaryComponent do
       it do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Vaccinator\nNURSE, Test"
+          text: "VaccinatorNURSE, Test"
         )
       end
     end
@@ -266,7 +266,7 @@ describe AppVaccinationRecordSummaryComponent do
       it do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Child identified by\nThe child"
+          text: "Child identified byThe child"
         )
       end
     end
@@ -276,7 +276,7 @@ describe AppVaccinationRecordSummaryComponent do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Location\nHogwarts"
+        text: "LocationHogwarts"
       )
     end
 
@@ -296,7 +296,7 @@ describe AppVaccinationRecordSummaryComponent do
       it do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Location\nHogwarts"
+          text: "LocationHogwarts"
         )
       end
     end
@@ -306,7 +306,7 @@ describe AppVaccinationRecordSummaryComponent do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Protocol\nPatient Group Direction (PGD)"
+        text: "ProtocolPatient Group Direction (PGD)"
       )
     end
   end
@@ -315,7 +315,7 @@ describe AppVaccinationRecordSummaryComponent do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Notes\nSome notes."
+        text: "NotesSome notes."
       )
     end
 
@@ -325,7 +325,7 @@ describe AppVaccinationRecordSummaryComponent do
       it do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Notes\nNot provided"
+          text: "NotesNot provided"
         )
       end
     end

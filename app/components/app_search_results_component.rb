@@ -29,5 +29,7 @@ class AppSearchResultsComponent < ViewComponent::Base
 
   attr_reader :pagy, :label, :heading
 
+  delegate :govuk_pagination, to: :helpers
+
   def has_results? = pagy.count.positive?
 end

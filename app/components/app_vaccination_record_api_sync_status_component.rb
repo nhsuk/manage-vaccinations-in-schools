@@ -1,22 +1,6 @@
 # frozen_string_literal: true
 
 class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
-  attr_reader :vaccination_record
-
-  delegate :nhs_immunisations_api_synced_at,
-           :sync_status,
-           :recorded_in_service?,
-           :notify_parents,
-           to: :vaccination_record
-
-  SYNC_STATUS_COLOURS = {
-    synced: "green",
-    pending: "blue",
-    failed: "red",
-    cannot_sync: "orange",
-    not_synced: "grey"
-  }.freeze
-
   def initialize(vaccination_record)
     @vaccination_record = vaccination_record
   end
@@ -33,6 +17,23 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
   end
 
   private
+
+  attr_reader :vaccination_record
+
+  delegate :govuk_tag, to: :helpers
+  delegate :nhs_immunisations_api_synced_at,
+           :sync_status,
+           :recorded_in_service?,
+           :notify_parents,
+           to: :vaccination_record
+
+  SYNC_STATUS_COLOURS = {
+    synced: "green",
+    pending: "blue",
+    failed: "red",
+    cannot_sync: "orange",
+    not_synced: "grey"
+  }.freeze
 
   def vaccination_record_sync_status_tag
     text = VaccinationRecord.human_enum_name(:sync_statuses, sync_status)

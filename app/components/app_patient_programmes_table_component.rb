@@ -19,6 +19,8 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
 
   attr_reader :patient, :programmes
 
+  delegate :govuk_table, to: :helpers
+
   CAPTION = "Vaccination programmes"
   HEADERS = ["Programme name", "Status", "Notes"].freeze
 

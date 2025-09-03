@@ -15,6 +15,7 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
 
   attr_reader :patient_session, :programme, :triage_form
 
+  delegate :govuk_button_link_to, to: :helpers
   delegate :patient, :session, to: :patient_session
   delegate :academic_year, to: :session
 

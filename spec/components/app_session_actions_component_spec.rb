@@ -53,12 +53,12 @@ describe AppSessionActionsComponent do
     )
   end
 
-  it { should have_text("No NHS number\n1 child") }
-  it { should have_text("No consent response\n1 child") }
-  it { should have_text("Conflicting consent\n1 child") }
-  it { should have_text("Triage needed\n1 child") }
-  it { should have_text("Register attendance\n3 child") }
-  it { should have_text("Ready for vaccinator\n1 child for HPV") }
+  it { should have_text("No NHS number1 child") }
+  it { should have_text("No consent response1 child") }
+  it { should have_text("Conflicting consent1 child") }
+  it { should have_text("Triage needed1 child") }
+  it { should have_text("Register attendance3 child") }
+  it { should have_text("Ready for vaccinator1 child for HPV") }
 
   it { should have_link("1 child without an NHS number") }
   it { should have_link("1 child with no response") }

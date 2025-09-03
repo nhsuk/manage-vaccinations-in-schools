@@ -8,4 +8,6 @@ class AppNoticesTableComponent < ViewComponent::Base
   private
 
   attr_reader :notices
+
+  delegate :govuk_table, to: :helpers
 end

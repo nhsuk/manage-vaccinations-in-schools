@@ -27,6 +27,6 @@
 <%= form_with url: patient_parent_relationship_path, method: :delete do |f| %>
   <div class="nhsuk-button-group">
     <%= f.govuk_submit "Yes, remove this relationship", warning: true %>
-    <%= govuk_link_to "No, return to child record", edit_patient_path(@patient) %>
+    <%= link_to "No, return to child record", edit_patient_path(@patient) %>
   </div>
 <% end %>

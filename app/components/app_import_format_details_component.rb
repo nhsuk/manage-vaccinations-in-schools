@@ -8,6 +8,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   private
 
   delegate :team, to: :@import
+  delegate :govuk_details, :govuk_table, to: :helpers
 
   def summary_text
     case @import

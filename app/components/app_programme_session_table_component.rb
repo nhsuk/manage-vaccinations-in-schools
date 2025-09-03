@@ -10,6 +10,8 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
 
   attr_reader :sessions, :programme
 
+  delegate :govuk_table, to: :helpers
+
   def cohort_count(session:)
     format_number(patient_sessions(session:).count)
   end

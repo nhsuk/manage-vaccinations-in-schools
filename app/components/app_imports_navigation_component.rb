@@ -19,7 +19,7 @@ class AppImportsNavigationComponent < ViewComponent::Base
         selected: active == :issues
       )
 
-      if helpers.policy(:notices).index?
+      if policy(:notices).index?
         nav.with_item(
           href: imports_notices_path,
           text: notices_text,
@@ -33,19 +33,16 @@ class AppImportsNavigationComponent < ViewComponent::Base
 
   attr_reader :active
 
+  delegate :import_issues_count, :policy, :policy_scope, to: :helpers
+
   def issues_text
     safe_join(
-      [
-        "Import issues",
-        " ",
-        render(AppCountComponent.new(helpers.import_issues_count))
-      ]
+      ["Import issues", " ", render(AppCountComponent.new(import_issues_count))]
     )
   end
 
   def notices_text
-    count =
-      ImportantNotices.call(patient_scope: helpers.policy_scope(Patient)).length
+    count = ImportantNotices.call(patient_scope: policy_scope(Patient)).length
     safe_join(["Important notices", " ", render(AppCountComponent.new(count))])
   end
 end

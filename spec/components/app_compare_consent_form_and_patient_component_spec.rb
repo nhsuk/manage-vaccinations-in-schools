@@ -34,10 +34,10 @@ describe AppCompareConsentFormAndPatientComponent do
       )
     end
 
-    it { should have_text("Full name\nDOE, John").twice }
-    it { should have_text("Date of birth\n1 January 2000").twice }
-    it { should have_text("Address\n1 Main StreetAreaSome TownSW11 1AA").twice }
-    it { should have_text("School\nWaterloo Road").twice }
+    it { should have_text("Full nameDOE, John").twice }
+    it { should have_text("Date of birth1 January 2000").twice }
+    it { should have_text("Address1 Main StreetAreaSome TownSW11 1AA").twice }
+    it { should have_text("SchoolWaterloo Road").twice }
   end
 
   describe "when the consent form does not match the patient" do
@@ -55,16 +55,16 @@ describe AppCompareConsentFormAndPatientComponent do
       )
     end
 
-    it { should have_text("Full name\nDOE, John").once }
-    it { should have_text("Full name\nDOE, Jane").once }
+    it { should have_text("Full nameDOE, John").once }
+    it { should have_text("Full nameDOE, Jane").once }
 
-    it { should have_text("Date of birth\n1 January 2000").once }
-    it { should have_text("Date of birth\n2 January 2000").once }
+    it { should have_text("Date of birth1 January 2000").once }
+    it { should have_text("Date of birth2 January 2000").once }
 
-    it { should have_text("Address\n1 Main StreetAreaSome TownSW11 1AA").once }
-    it { should have_text("Address\n2 Main StreetAreaSome TownSW11 1AA").once }
+    it { should have_text("Address1 Main StreetAreaSome TownSW11 1AA").once }
+    it { should have_text("Address2 Main StreetAreaSome TownSW11 1AA").once }
 
-    it { should have_text("School\nWaterloo Road").once }
-    it { should have_text("School\nHogwarts").once }
+    it { should have_text("SchoolWaterloo Road").once }
+    it { should have_text("SchoolHogwarts").once }
   end
 end

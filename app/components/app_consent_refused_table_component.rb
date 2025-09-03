@@ -14,6 +14,8 @@ class AppConsentRefusedTableComponent < ViewComponent::Base
               :total_count,
               :vaccine_may_contain_gelatine
 
+  delegate :govuk_table, to: :helpers
+
   def percentage_for(reason_for_refusal)
     return 0 if total_count.zero?
 

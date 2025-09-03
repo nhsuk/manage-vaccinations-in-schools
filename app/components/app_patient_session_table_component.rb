@@ -52,4 +52,6 @@ class AppPatientSessionTableComponent < ViewComponent::Base
   private
 
   attr_reader :patient_sessions
+
+  delegate :govuk_table, to: :helpers
 end

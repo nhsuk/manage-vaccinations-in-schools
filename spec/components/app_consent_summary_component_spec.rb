@@ -42,7 +42,7 @@ describe AppConsentSummaryComponent do
 
     it do
       expect(rendered).to have_content(
-        "Confirmation of vaccination sent to parent?\nNo"
+        "Confirmation of vaccination sent to parent?No"
       )
     end
   end
@@ -54,7 +54,7 @@ describe AppConsentSummaryComponent do
 
     it do
       expect(rendered).to have_content(
-        "Confirmation of vaccination sent to parent?\nYes"
+        "Confirmation of vaccination sent to parent?Yes"
       )
     end
   end

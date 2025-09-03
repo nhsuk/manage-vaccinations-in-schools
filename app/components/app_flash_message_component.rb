@@ -21,6 +21,10 @@ class AppFlashMessageComponent < ViewComponent::Base
     end
   end
 
+  def render?
+    @heading.present? || @body.present?
+  end
+
   def title
     @title ||
       I18n.t(type, scope: :notification_banner, default: type.to_s.humanize)
@@ -38,15 +42,11 @@ class AppFlashMessageComponent < ViewComponent::Base
     %i[warning success].include?(type) ? "alert" : "region"
   end
 
-  def render?
-    @heading.present? || @body.present?
-  end
-
-  def success?
-    type == :success
-  end
+  def success? = type == :success
 
   private
+
+  delegate :govuk_notification_banner, to: :helpers
 
   def primary_message_keys
     @primary_message_keys ||= %i[info success warning]

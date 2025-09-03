@@ -12,6 +12,7 @@ class AppTriageTableComponent < ViewComponent::Base
 
   attr_reader :patient_session, :programme
 
+  delegate :govuk_table, :triage_status_tag, to: :helpers
   delegate :patient, :session, to: :patient_session
   delegate :academic_year, to: :session
 

@@ -20,7 +20,7 @@
 
             <div>
               <p>
-                <%= govuk_link_to session.location.name, session_path(session) %>
+                <%= link_to session.location.name, session_path(session) %>
 
                 <% if session.location.has_address? %>
                   <br />

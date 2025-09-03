@@ -10,6 +10,7 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
 
   attr_reader :patient_session, :programme
 
+  delegate :govuk_button_to, to: :helpers
   delegate :patient, :session, to: :patient_session
   delegate :academic_year, to: :session
 

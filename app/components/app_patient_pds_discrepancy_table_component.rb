@@ -10,6 +10,8 @@ class AppPatientPDSDiscrepancyTableComponent < ViewComponent::Base
 
   attr_reader :discrepancies, :current_user
 
+  delegate :format_nhs_number, :govuk_table, to: :helpers
+
   def can_link_to?(record)
     allowed_ids.include?(record.id)
   end

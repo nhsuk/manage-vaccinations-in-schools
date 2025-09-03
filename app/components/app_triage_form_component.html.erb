@@ -1,8 +1,8 @@
-<%= form_with model: triage_form, url:, method:, builder: do |f| %>
+<%= form_with model: form, url:, method:, builder: do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
     <%= f.govuk_radio_buttons_fieldset :status_and_vaccine_method, **fieldset_options do %>
-      <% triage_form.safe_to_vaccinate_options.each do |option| %>
+      <% form.safe_to_vaccinate_options.each do |option| %>
         <%= f.govuk_radio_button :status_and_vaccine_method, option do %>
         <% if show_psd_options?(option) %>
           <%= f.govuk_radio_buttons_fieldset :psd_action,
@@ -14,7 +14,7 @@
       <% end %>
       <% end %>
       <%= f.govuk_radio_divider %>
-      <% triage_form.other_options.each do |option| %>
+      <% form.other_options.each do |option| %>
         <%= f.govuk_radio_button :status_and_vaccine_method, option %>
       <% end %>
     <% end %>

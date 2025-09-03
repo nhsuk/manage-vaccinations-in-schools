@@ -39,6 +39,8 @@ class AppConsentFormCardComponent < ViewComponent::Base
 
   private
 
+  delegate :govuk_summary_list, to: :helpers
+
   def refusal_reason
     {
       title:

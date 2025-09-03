@@ -5,13 +5,13 @@ class AppImportsTableComponent < ViewComponent::Base
     @team = team
   end
 
-  def render?
-    imports.present?
-  end
+  def render? = imports.present?
 
   private
 
   attr_reader :team
+
+  delegate :govuk_table, to: :helpers
 
   def imports
     @imports ||=

@@ -21,6 +21,10 @@ class AppSessionSummaryComponent < ViewComponent::Base
 
   attr_reader :session
 
+  delegate :govuk_button_link_to,
+           :govuk_link_to,
+           :govuk_summary_list,
+           to: :helpers
   delegate :location, to: :session
 
   def classes

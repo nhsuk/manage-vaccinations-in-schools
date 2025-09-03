@@ -22,7 +22,7 @@
 
         <% row.with_cell(text: triage.notes) %>
 
-        <% row.with_cell(text: helpers.triage_status_tag(triage)) %>
+        <% row.with_cell(text: triage_status_tag(triage)) %>
       <% end %>
     <% end %>
   <% end %>

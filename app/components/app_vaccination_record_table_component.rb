@@ -11,6 +11,8 @@ class AppVaccinationRecordTableComponent < ViewComponent::Base
 
   attr_reader :vaccination_records, :current_user, :count
 
+  delegate :govuk_table, to: :helpers
+
   def can_link_to?(record) = allowed_ids.include?(record.id)
 
   def allowed_ids

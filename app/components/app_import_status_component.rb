@@ -8,6 +8,8 @@ class AppImportStatusComponent < ViewComponent::Base
 
   private
 
+  delegate :govuk_tag, to: :helpers
+
   def status_text
     {
       "pending_import" => "Processing",

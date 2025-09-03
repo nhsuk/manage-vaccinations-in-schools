@@ -21,6 +21,11 @@ class AppPatientSummaryComponent < ViewComponent::Base
 
   attr_reader :patient
 
+  delegate :format_address_multi_line,
+           :govuk_summary_list,
+           :patient_nhs_number,
+           to: :helpers
+
   def rows
     [nhs_number_row, date_of_birth_row, address_row]
   end
@@ -41,9 +46,9 @@ class AppPatientSummaryComponent < ViewComponent::Base
       value: {
         text:
           if patient.nhs_number.present?
-            helpers.patient_nhs_number(patient)
+            patient_nhs_number(patient)
           else
-            helpers.link_to(
+            link_to(
               "Add the child's NHS number",
               edit_nhs_number_patient_path(patient)
             )
@@ -69,7 +74,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
         text: "Address"
       },
       value: {
-        text: helpers.format_address_multi_line(patient)
+        text: format_address_multi_line(patient)
       }
     }
   end
