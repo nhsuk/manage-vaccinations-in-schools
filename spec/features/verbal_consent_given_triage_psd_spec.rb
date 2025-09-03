@@ -4,6 +4,7 @@ describe "Verbal consent" do
   scenario "Given flu nasal spray with PSD" do
     given_a_flu_programme_is_underway
     and_i_am_signed_in
+    and_the_patient_has_an_invalidated_psd
 
     when_i_record_that_verbal_nasal_consent_was_given(add_psd: true)
     then_i_see_the_check_and_confirm_page
@@ -28,15 +29,7 @@ describe "Verbal consent" do
   end
 
   def given_a_flu_programme_is_underway
-    create_programme(:flu)
-  end
-
-  def and_i_am_signed_in
-    sign_in @team.users.first, role: :prescriber
-  end
-
-  def create_programme(programme_type)
-    @programme = create(:programme, programme_type)
+    @programme = create(:programme, :flu)
     programmes = [@programme]
     @team = create(:team, :with_one_nurse, programmes:)
     @session = create(:session, :psd_enabled, team: @team, programmes:)
@@ -45,6 +38,19 @@ describe "Verbal consent" do
     @patient = create(:patient, session: @session, parents: [@parent])
 
     StatusUpdater.call
+  end
+
+  def and_i_am_signed_in
+    sign_in @team.users.first, role: :prescriber
+  end
+
+  def and_the_patient_has_an_invalidated_psd
+    create(
+      :patient_specific_direction,
+      patient: @patient,
+      programme: @programme,
+      invalidated_at: Time.current
+    )
   end
 
   def when_i_record_that_verbal_nasal_consent_was_given(add_psd:)

@@ -104,6 +104,16 @@ describe "Triage" do
     and_i_choose_not_to_add_psd
     and_i_save_triage
     then_i_should_see_the_patient_tagged_psd_not_added
+
+    when_i_click_on_the_update_triage_link
+    and_i_choose_that_they_are_safe_to_vaccinate_with_nasal
+    and_i_choose_to_add_psd
+    and_i_save_triage
+    then_i_should_see_the_patient_tagged_psd_added
+
+    when_i_click_on_the_update_triage_link
+    and_i_do_not_vaccinate
+    then_i_should_see_the_patient_tagged_psd_not_added
   end
 
   def given_a_programme_with_a_running_session
@@ -301,6 +311,8 @@ describe "Triage" do
     choose "No, do not vaccinate"
     click_button "Save triage"
   end
+
+  alias_method :and_i_do_not_vaccinate, :when_i_do_not_vaccinate
 
   def when_i_save_the_triage_without_choosing_an_option
     click_button "Save triage"
