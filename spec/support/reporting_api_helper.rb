@@ -1,0 +1,22 @@
+# frozen_string_literal: true
+
+module ReportingAPIHelper
+  def valid_payload
+    team = create(:team, :with_one_nurse)
+    user = team.users.first
+    {
+      data: {
+        user: user.as_json,
+        cis2_info: {
+          organisation_code: team.organisation.ods_code,
+          workgroups: [team.workgroup],
+          role_code: CIS2Info::NURSE_ROLE
+        }
+      }
+    }
+  end
+
+  def valid_jwt
+    JWT.encode(valid_payload, Settings.reporting_api.client_app.secret, "HS512")
+  end
+end
