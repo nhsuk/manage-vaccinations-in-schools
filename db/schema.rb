@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_29_172505) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_03_153120) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -938,7 +938,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_29_172505) do
     t.string "location_name"
     t.datetime "discarded_at"
     t.datetime "confirmation_sent_at"
-    t.bigint "patient_id"
+    t.bigint "patient_id", null: false
     t.bigint "session_id"
     t.string "performed_ods_code"
     t.bigint "vaccine_id"
