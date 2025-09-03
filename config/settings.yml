@@ -50,4 +50,5 @@ reporting_api:
   client_app:
     token_ttl_seconds: 600
     root_url:
+    client_id:
     secret:
