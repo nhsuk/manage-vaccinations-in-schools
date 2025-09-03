@@ -32,7 +32,18 @@ describe "Flu vaccination" do
     then_i_am_able_to_vaccinate_them_using_injection_instead_of_nasal
   end
 
-  def given_a_session_exists(psd_enabled: false)
+  scenario "HCA viewing record tab where national protocol is turned off and patient triaged for injection" do
+    given_a_session_exists(national_protocol_enabled: false)
+    and_a_nasal_and_injection_patient_exists_triaged_as_safe_vaccinate_with_injection
+
+    when_i_visit_the_session_record_tab
+    then_i_should_not_see_the_patient
+  end
+
+  def given_a_session_exists(
+    psd_enabled: false,
+    national_protocol_enabled: true
+  )
     @programme = create(:programme, :flu)
     programmes = [@programme]
 
@@ -65,7 +76,8 @@ describe "Flu vaccination" do
         :national_protocol_enabled,
         team: @team,
         programmes:,
-        psd_enabled:
+        psd_enabled:,
+        national_protocol_enabled:
       )
   end
 
@@ -86,6 +98,15 @@ describe "Flu vaccination" do
       create(
         :patient,
         :consent_given_injection_only_triage_not_needed,
+        session: @session
+      )
+  end
+
+  def and_a_nasal_and_injection_patient_exists_triaged_as_safe_vaccinate_with_injection
+    @patient_nasal_and_injection =
+      create(
+        :patient,
+        :consent_given_injection_and_nasal_triage_safe_to_vaccinate_injection,
         session: @session
       )
   end
@@ -114,6 +135,10 @@ describe "Flu vaccination" do
     expect(page).not_to have_content(@patient_nasal_only.full_name)
     expect(page).to have_content(@patient_nasal_and_injection.full_name)
     expect(page).to have_content(@patient_injection_only.full_name)
+  end
+
+  def then_i_should_not_see_the_patient
+    expect(page).not_to have_content(@patient_nasal_and_injection.full_name)
   end
 
   def when_i_click_on_the_nasal_only_patient
