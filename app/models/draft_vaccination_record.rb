@@ -28,7 +28,6 @@ class DraftVaccinationRecord
   attribute :protocol, :string
   attribute :performed_ods_code, :string
   attribute :programme_id, :integer
-  attribute :protocol, :string
   attribute :session_id, :integer
   attribute :supplied_by_user_id, :integer
 

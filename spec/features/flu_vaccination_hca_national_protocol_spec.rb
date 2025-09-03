@@ -20,7 +20,18 @@ describe "Flu vaccination" do
     then_i_am_able_to_vaccinate_them(nasal: false)
   end
 
-  def given_a_session_exists
+  scenario "Administered by HCA under national protocol with PSD enabled" do
+    given_a_session_exists(psd_enabled: true)
+    and_patients_exist
+
+    when_i_visit_the_session_record_tab
+    then_i_see_all_the_patients
+
+    when_i_click_on_the_nasal_and_injection_patient
+    then_i_am_able_to_vaccinate_them_using_injection_instead_of_nasal
+  end
+
+  def given_a_session_exists(psd_enabled: false)
     @programme = create(:programme, :flu)
     programmes = [@programme]
 
@@ -52,7 +63,8 @@ describe "Flu vaccination" do
         :requires_no_registration,
         :national_protocol_enabled,
         team: @team,
-        programmes:
+        programmes:,
+        psd_enabled:
       )
   end
 
@@ -121,6 +133,25 @@ describe "Flu vaccination" do
     protocol = nasal ? "Patient Group Direction (PGD)" : "National"
 
     expect(page).to have_content("Protocol#{protocol}")
+
+    click_on "Confirm"
+    click_on "Record vaccinations"
+  end
+
+  def then_i_am_able_to_vaccinate_them_using_injection_instead_of_nasal
+    check "I have checked that the above statements are true"
+
+    within all("section")[1] do
+      choose "No — but they can have the injected flu instead"
+      choose "Left arm (upper position)"
+      select @nurse.full_name
+    end
+    click_on "Continue"
+
+    choose @injection_batch.name
+    click_on "Continue"
+
+    expect(page).to have_content("ProtocolNational")
 
     click_on "Confirm"
     click_on "Record vaccinations"

@@ -32,7 +32,7 @@
 #
 FactoryBot.define do
   factory :patient_specific_direction do
-    created_by
+    created_by { association(:user, :prescriber) }
     patient
     programme
     vaccine { programme.vaccines.sample || association(:vaccine) }
@@ -40,9 +40,5 @@ FactoryBot.define do
     delivery_site { "nose" }
     vaccine_method { "nasal" }
     academic_year { Time.current.to_date.academic_year }
-
-    trait :half_dose do
-      full_dose { false }
-    end
   end
 end
