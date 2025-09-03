@@ -14,6 +14,5 @@
   <%= govuk_button_to "Yes, add PSDs",
                       session_patient_specific_directions_path(@session), class: "nhsuk-u-margin-right-4" %>
 
-  <%= link_to "No, return to session",
-              new_session_patient_specific_directions_path(@session) %>
+  <%= link_to "No, return to session", session_patient_specific_directions_path(@session) %>
 </div>
