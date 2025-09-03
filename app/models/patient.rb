@@ -381,7 +381,7 @@ class Patient < ApplicationRecord
   end
 
   def has_patient_specific_direction?(...)
-    patient_specific_directions.exists?(...)
+    patient_specific_directions.not_invalidated.where(...).exists?
   end
 
   def consent_given_and_safe_to_vaccinate?(
