@@ -64,11 +64,8 @@
       <%= t(".pre_confirm") %>
     </p>
 
-    <% if @session.today_or_future_dates.present? %>
-      <%= button_to t(".confirm"),
-                    session_manage_consent_reminders_path(@session),
-                    method: :post,
-                    class: "nhsuk-button" %>
+    <% if @session.open_for_consent? %>
+      <%= govuk_button_to t(".confirm"), session_manage_consent_reminders_path(@session) %>
   <% end %>
   </div>
 </div>
