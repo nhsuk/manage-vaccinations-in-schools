@@ -26,7 +26,9 @@ module SendClinicInvitationsConcern
 
     return false if already_sent_notification
 
-    eligible_programmes = patient_session.programmes & programmes
+    session = patient_session.session
+
+    eligible_programmes = session.programmes_for(patient:) & programmes
 
     return false if eligible_programmes.empty?
 

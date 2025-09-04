@@ -314,6 +314,4 @@ class PatientSession < ApplicationRecord
   def destroy_if_safe!
     destroy! if safe_to_destroy?
   end
-
-  def programmes = session.programmes_for(patient:)
 end

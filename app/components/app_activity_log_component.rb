@@ -317,11 +317,14 @@ class AppActivityLogComponent < ViewComponent::Base
 
   def session_events
     patient_sessions.map do |patient_session|
+      patient = patient_session.patient
+      session = patient_session.session
+
       [
         {
           title: "Added to the session at #{patient_session.location.name}",
           at: patient_session.created_at,
-          programmes: programmes_for(patient_session)
+          programmes: session.programmes_for(patient:)
         }
       ]
     end

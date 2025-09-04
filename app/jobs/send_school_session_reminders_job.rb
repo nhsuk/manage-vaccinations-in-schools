@@ -32,7 +32,8 @@ class SendSchoolSessionRemindersJob < ApplicationJob
 
     return false unless patient.send_notifications?
 
-    programmes = patient_session.programmes
+    session = patient_session.session
+    programmes = session.programmes_for(patient:)
     academic_year = patient_session.academic_year
 
     all_vaccinated =

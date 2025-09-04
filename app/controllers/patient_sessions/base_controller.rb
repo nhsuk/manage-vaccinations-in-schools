@@ -47,10 +47,12 @@ class PatientSessions::BaseController < ApplicationController
     return unless params.key?(:programme_type) || params.key?(:type)
 
     @programme =
-      @patient_session.programmes.find do |programme|
-        programme.type == params[:programme_type] ||
-          programme.type == params[:type]
-      end
+      @session
+        .programmes_for(patient: @patient)
+        .find do |programme|
+          programme.type == params[:programme_type] ||
+            programme.type == params[:type]
+        end
 
     raise ActiveRecord::RecordNotFound if @programme.nil?
   end

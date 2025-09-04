@@ -81,9 +81,9 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
     @programmes =
       if programmes.present?
-        patient_session.programmes.select { it.in?(programmes) }
+        session.programmes_for(patient:).select { it.in?(programmes) }
       else
-        patient_session.programmes
+        session.programmes_for(patient:)
       end
   end
 
@@ -125,12 +125,14 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     return unless %i[register record].include?(context)
 
     next_activities =
-      patient_session.programmes.filter_map do |programme|
-        status = patient.next_activity(programme:, academic_year:)
-        next if status.nil?
+      session
+        .programmes_for(patient:)
+        .filter_map do |programme|
+          status = patient.next_activity(programme:, academic_year:)
+          next if status.nil?
 
-        "#{I18n.t(status, scope: :activity)} for #{programme.name_in_sentence}"
-      end
+          "#{I18n.t(status, scope: :activity)} for #{programme.name_in_sentence}"
+        end
 
     return if next_activities.empty?
 

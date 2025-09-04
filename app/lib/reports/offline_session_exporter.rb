@@ -223,48 +223,51 @@ class Reports::OfflineSessionExporter
 
   def rows(patient_session:)
     patient = patient_session.patient
+    session = patient_session.session
     academic_year = patient_session.academic_year
 
-    patient_session.programmes.flat_map do |programme|
-      consent_status = patient.consent_status(programme:, academic_year:)
+    session
+      .programmes_for(patient:)
+      .flat_map do |programme|
+        consent_status = patient.consent_status(programme:, academic_year:)
 
-      bg_color =
-        if consent_status.refused?
-          "F7D4D1"
-        elsif consent_status.conflicts?
-          "FFDC8E"
-        end
+        bg_color =
+          if consent_status.refused?
+            "F7D4D1"
+          elsif consent_status.conflicts?
+            "FFDC8E"
+          end
 
-      row_style = {
-        strike: patient.invalidated?,
-        bg_color:,
-        border: {
-          style: :thin,
-          color: "000000"
+        row_style = {
+          strike: patient.invalidated?,
+          bg_color:,
+          border: {
+            style: :thin,
+            color: "000000"
+          }
         }
-      }
 
-      vaccination_records =
-        patient.vaccination_records.to_a.select do
-          it.programme_id == programme.id
-        end
+        vaccination_records =
+          patient.vaccination_records.to_a.select do
+            it.programme_id == programme.id
+          end
 
-      if vaccination_records.any?
-        vaccination_records.map do |vaccination_record|
-          Row.new(columns, style: row_style) do |row|
-            add_patient_cells(row, patient_session:, programme:)
-            add_existing_row_cells(row, vaccination_record:)
+        if vaccination_records.any?
+          vaccination_records.map do |vaccination_record|
+            Row.new(columns, style: row_style) do |row|
+              add_patient_cells(row, patient_session:, programme:)
+              add_existing_row_cells(row, vaccination_record:)
+            end
           end
+        else
+          [
+            Row.new(columns, style: row_style) do |row|
+              add_patient_cells(row, patient_session:, programme:)
+              add_new_row_cells(row, patient_session:, programme:)
+            end
+          ]
         end
-      else
-        [
-          Row.new(columns, style: row_style) do |row|
-            add_patient_cells(row, patient_session:, programme:)
-            add_new_row_cells(row, patient_session:, programme:)
-          end
-        ]
       end
-    end
   end
 
   def add_patient_cells(row, patient_session:, programme:)

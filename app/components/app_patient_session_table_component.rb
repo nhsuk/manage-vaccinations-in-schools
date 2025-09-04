@@ -14,18 +14,21 @@ class AppPatientSessionTableComponent < ViewComponent::Base
 
         <% table.with_body do |body| %>
           <% patient_sessions.each do |patient_session| %>
-            <% patient_session.programmes.each do |programme| %>
+            <% patient = patient_session.patient %>
+            <% session = patient_session.session %>
+
+            <% session.programmes_for(patient:).each do |programme| %>
               <% body.with_row do |row| %>
                 <% row.with_cell do %>
                   <span class="nhsuk-table-responsive__heading">Location</span>
                   <%= link_to patient_session.session.location.name,
-                              session_patient_programme_path(patient_session.session, patient_session.patient, programme) %>
+                              session_patient_programme_path(session, patient, programme) %>
                 <% end %>
 
                 <% row.with_cell do %>
                   <span class="nhsuk-table-responsive__heading">Session dates</span>
                   <ul class="nhsuk-list">
-                    <% patient_session.session.dates.each do |date| %>
+                    <% session.dates.each do |date| %>
                       <li><%= date.to_fs(:long) %></li>
                     <% end %>
                   </ul>

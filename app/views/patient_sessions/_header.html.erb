@@ -64,21 +64,21 @@
   <% end %>
 </ul>
 
-<%= render AppStickyNavigationComponent.new do %> 
+<%= render AppStickyNavigationComponent.new do %>
   <%= render AppSecondaryNavigationComponent.new do |nav|
-        @patient_session.programmes.each do |programme|
+        @session.programmes_for(patient: @patient).each do |programme|
           nav.with_item(
             href: session_patient_programme_path(@session, @patient, programme, return_to: params[:return_to]),
             text: programme.name,
             selected: @programme == programme,
             ticked: @patient.vaccination_status(programme:, academic_year: @academic_year).vaccinated?,
           )
-        end
       
-        nav.with_item(
-          href: session_patient_activity_path(@session, @patient, return_to: params[:return_to]),
-          text: "Session activity and notes",
-          selected: request.path.ends_with?("/activity"),
-        )
+          nav.with_item(
+            href: session_patient_activity_path(@session, @patient, return_to: params[:return_to]),
+            text: "Session activity and notes",
+            selected: request.path.ends_with?("/activity"),
+          )
+        end
       end %>
 <% end %>
