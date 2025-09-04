@@ -45,5 +45,9 @@ FactoryBot.define do
     delivery_site { "nose" }
     vaccine_method { "nasal" }
     academic_year { AcademicYear.current }
+
+    trait :invalidated do
+      invalidated_at { Time.current }
+    end
   end
 end

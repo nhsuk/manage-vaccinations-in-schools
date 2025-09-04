@@ -198,6 +198,7 @@ class Reports::OfflineSessionExporter
           "DISTINCT ON (patient_id, programme_id) patient_specific_directions.*"
         )
         .where(academic_year:, patient_id: patient_sessions.select(:patient_id))
+        .not_invalidated
         .order(:patient_id, :programme_id, created_at: :desc)
         .includes(:created_by)
         .group_by(&:patient_id)

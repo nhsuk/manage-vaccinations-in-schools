@@ -195,6 +195,22 @@ describe Reports::OfflineSessionExporter do
                 expect(rows.first["PSD_STATUS"]).to eq("PSD added")
               end
             end
+
+            context "and the patient has an invalidated PSD" do
+              before do
+                create(
+                  :patient_specific_direction,
+                  :invalidated,
+                  programme:,
+                  patient:
+                )
+              end
+
+              it "adds a blank PSD status column" do
+                expect(rows.count).to eq(1)
+                expect(rows.first["PSD_STATUS"]).to eq("")
+              end
+            end
           end
         end
 
