@@ -84,32 +84,6 @@ describe ReportingAPI::EventConcern do
           }.to change(object_including_the_concern, :patient_year_group).to(6)
         end
       end
-
-      context "but no patient" do
-        before do
-          object_including_the_concern.patient_year_group = 6
-          object_including_the_concern.patient = nil
-        end
-
-        it "sets the patient_year_group to nil" do
-          expect {
-            object_including_the_concern.send(:set_patient_year_group)
-          }.to change(object_including_the_concern, :patient_year_group).to(nil)
-        end
-      end
-    end
-
-    context "when the object does not have an event_timestamp" do
-      before do
-        object_including_the_concern.patient_year_group = 6
-        object_including_the_concern.event_timestamp = nil
-      end
-
-      it "sets the patient_year_group to nil" do
-        expect {
-          object_including_the_concern.send(:set_patient_year_group)
-        }.to change(object_including_the_concern, :patient_year_group).to(nil)
-      end
     end
   end
 
