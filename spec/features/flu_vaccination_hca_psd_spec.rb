@@ -67,6 +67,9 @@ describe "Flu vaccination" do
     when_i_visit_the_session_patient_programme_page
     then_i_am_able_to_vaccinate_them_with_nasal_via_psd
     and_the_vaccination_record_has_psd_as_the_protocol
+
+    when_i_visit_the_session_activity_page
+    then_i_see_no_psd_status_tag
   end
 
   scenario "Nasal flu cannot be administered without a PSD even if national protocol enabled" do
@@ -235,5 +238,14 @@ describe "Flu vaccination" do
 
   def and_the_vaccination_record_has_psd_as_the_protocol
     expect(@patient_nasal_only.vaccination_records.first.protocol).to eq("psd")
+  end
+
+  def when_i_visit_the_session_activity_page
+    click_on "Session activity"
+  end
+
+  def then_i_see_no_psd_status_tag
+    expect(page).not_to have_css(".nhsuk-tag", text: "PSD added")
+    expect(page).not_to have_css(".nhsuk-tag", text: "PSD not added")
   end
 end
