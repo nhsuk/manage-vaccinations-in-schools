@@ -22,8 +22,7 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
         academic_year:
       ) &&
       (
-        patient_session.registration_status&.attending? ||
-          patient_session.registration_status&.completed? ||
+        registration_status&.attending? || registration_status&.completed? ||
           !session.requires_registration?
       )
   end
@@ -35,6 +34,10 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
   delegate :policy, to: :helpers
   delegate :patient, :session, to: :patient_session
   delegate :academic_year, to: :session
+
+  def registration_status
+    @registration_status ||= patient.registration_status(session:)
+  end
 
   def vaccination_record
     VaccinationRecord.new(patient:, session:, programme:)

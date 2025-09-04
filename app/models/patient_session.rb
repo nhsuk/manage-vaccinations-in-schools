@@ -64,12 +64,6 @@ class PatientSession < ApplicationRecord
            -> { where(patient_id: it.patient_id) },
            through: :session
 
-  has_one :registration_status,
-          -> { where(session_id: it.session_id) },
-          through: :patient,
-          source: :registration_statuses,
-          class_name: "Patient::RegistrationStatus"
-
   has_many :attendance_records,
            -> { where(patient_id: it.patient_id) },
            through: :location
