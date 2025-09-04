@@ -6,6 +6,7 @@ describe "Flu vaccination" do
   scenario "Prescriber bulk add PSDs to patients that don't require triage" do
     given_a_flu_session_exists(user_type: :with_one_nurse)
     and_patients_exist
+    and_the_patient_has_an_invalidated_psd
     and_i_am_signed_in(role: :prescriber)
 
     when_i_go_to_the_session_psds_tab
@@ -127,6 +128,15 @@ describe "Flu vaccination" do
         :consent_given_injection_only_triage_not_needed,
         session: @session
       )
+  end
+
+  def and_the_patient_has_an_invalidated_psd
+    create(
+      :patient_specific_direction,
+      patient: @patient_nasal_only,
+      programme: @programme,
+      invalidated_at: Time.current
+    )
   end
 
   def and_the_nasal_only_patient_has_a_psd

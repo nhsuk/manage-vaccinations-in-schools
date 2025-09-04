@@ -70,7 +70,7 @@ class PatientSearchForm < SearchForm
   def academic_year =
     @session&.academic_year || @academic_year || AcademicYear.pending
 
-  def team = @current_user.selected_team
+  def team = @session&.team || @current_user.selected_team
 
   def filter_name(scope)
     q.present? ? scope.search_by_name(q) : scope
@@ -175,9 +175,9 @@ class PatientSearchForm < SearchForm
 
     case status
     when :added
-      scope.has_patient_specific_direction(programme: programmes)
+      scope.has_patient_specific_direction(programme: programmes, team:)
     when :not_added
-      scope.without_patient_specific_direction(programme: programmes)
+      scope.without_patient_specific_direction(programme: programmes, team:)
     else
       scope
     end

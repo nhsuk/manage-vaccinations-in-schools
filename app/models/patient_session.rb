@@ -262,24 +262,26 @@ class PatientSession < ApplicationRecord
         end
 
   scope :without_patient_specific_direction,
-        ->(programme:) do
+        ->(programme:, team:) do
           joins(:session).where.not(
             PatientSpecificDirection
               .where("patient_id = patient_sessions.patient_id")
               .where("academic_year = sessions.academic_year")
-              .where(programme:)
+              .where(programme:, team:)
+              .not_invalidated
               .arel
               .exists
           )
         end
 
   scope :has_patient_specific_direction,
-        ->(programme:) do
+        ->(programme:, team:) do
           joins(:session).where(
             PatientSpecificDirection
               .where("patient_id = patient_sessions.patient_id")
               .where("academic_year = sessions.academic_year")
-              .where(programme:)
+              .where(programme:, team:)
+              .not_invalidated
               .arel
               .exists
           )
