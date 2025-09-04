@@ -319,7 +319,7 @@ class PatientSession < ApplicationRecord
     destroy! if safe_to_destroy?
   end
 
-  def programmes = session.programmes_for(patient:, academic_year:)
+  def programmes = session.programmes_for(patient:)
 
   def next_activity(programme:)
     if patient.vaccination_status(programme:, academic_year:).vaccinated?

@@ -24,11 +24,9 @@ class StatusGenerator::Registration
 
   attr_reader :patient, :session, :attendance_record, :vaccination_records
 
-  delegate :academic_year, to: :session
-
   def status_should_be_completed?
     session
-      .programmes_for(patient:, academic_year:)
+      .programmes_for(patient:)
       .all? do |programme|
         vaccination_records.any? do
           it.programme_id == programme.id && it.session_id == session.id
