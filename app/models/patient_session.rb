@@ -321,15 +321,6 @@ class PatientSession < ApplicationRecord
 
   def programmes = session.programmes_for(patient:, academic_year:)
 
-  def todays_attendance
-    if (session_date = session.session_dates.today.first)
-      patient
-        .attendance_records
-        .includes(:patient, session_date: { session: :programmes })
-        .find_or_initialize_by(session_date:)
-    end
-  end
-
   def next_activity(programme:)
     if patient.vaccination_status(programme:, academic_year:).vaccinated?
       return nil

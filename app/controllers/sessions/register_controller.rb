@@ -5,8 +5,8 @@ class Sessions::RegisterController < ApplicationController
 
   before_action :set_session
   before_action :set_patient_search_form, only: :show
+  before_action :set_session_date, only: :create
   before_action :set_patient, only: :create
-  before_action :set_patient_session, only: :create
 
   layout "full"
 
@@ -27,13 +27,17 @@ class Sessions::RegisterController < ApplicationController
   def create
     attendance_record =
       ActiveRecord::Base.transaction do
-        record = authorize @patient_session.todays_attendance
+        record =
+          authorize @patient
+                      .attendance_records
+                      .includes(:session_date)
+                      .find_or_initialize_by(session_date: @session_date)
         record.update!(attending: params[:status] == "present")
-        StatusUpdater.call(patient: @patient_session.patient)
+        StatusUpdater.call(patient: @patient)
         record
       end
 
-    name = @patient_session.patient.full_name
+    name = @patient.full_name
 
     flash[:info] = if attendance_record.attending?
       t("attendance_flash.present", name:)
@@ -50,12 +54,11 @@ class Sessions::RegisterController < ApplicationController
     @session = policy_scope(Session).find_by!(slug: params[:session_slug])
   end
 
-  def set_patient
-    @patient = policy_scope(Patient).find(params[:patient_id])
+  def set_session_date
+    @session_date = @session.session_dates.find_by!(value: Date.current)
   end
 
-  def set_patient_session
-    @patient_session =
-      PatientSession.find_by!(patient: @patient, session: @session)
+  def set_patient
+    @patient = policy_scope(Patient).find(params[:patient_id])
   end
 end

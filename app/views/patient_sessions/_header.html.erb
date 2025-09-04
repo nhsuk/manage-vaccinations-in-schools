@@ -38,7 +38,9 @@
     </li>
   <% end %>
 
-  <% if @session.requires_registration? && (attendance_record = @patient_session.todays_attendance) %>
+  <% if @session.requires_registration? && (session_date = @session.session_dates.today.first) %>
+    <% attendance_record = @patient.attendance_records.includes(:session_date).find_or_initialize_by(session_date:) %>
+
     <li class="app-action-list__item">
       <%= render AppStatusTagComponent.new(@patient_session.registration_status&.status || "unknown", context: :register) %>
     </li>
