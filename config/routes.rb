@@ -14,6 +14,8 @@ Rails.application.routes.draw do
           }
   end
 
+  get "/logout", to: "users/logout#show"
+
   if Settings.cis2.enabled
     devise_for :users,
                module: :users,

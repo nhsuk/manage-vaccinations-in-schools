@@ -9,7 +9,21 @@ class API::Reporting::OneTimeTokensController < API::Reporting::BaseController
   def authorize
     @token = ReportingAPI::OneTimeToken.find_by!(token: params[:code])
     @token.delete # <- Tokens are one-time use
-    json_data = { jwt: @token.to_jwt }
+
+    user = @token.user
+    display_name = user.full_name
+    display_name +=
+      " (#{user.role_description})" if user.role_description.present?
+
+    json_data = {
+      jwt: @token.to_jwt,
+      user_nav: {
+        items: [
+          { text: display_name, icon: true },
+          { href: logout_path, text: "Log out" }
+        ]
+      }
+    }
     render json: json_data
   rescue ActiveRecord::RecordNotFound
     render json: { errors: "invalid_grant" }, status: :forbidden
