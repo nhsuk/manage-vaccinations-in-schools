@@ -12,15 +12,15 @@ describe DraftConsent do
 
   let(:programme) { create(:programme, :hpv) }
   let(:session) { create(:session, team:, programmes: [programme]) }
-
-  let(:patient_session) { create(:patient_session, session:) }
+  let(:patient) { create(:patient, session:) }
 
   let(:valid_given_attributes) do
     {
       notes: "Some notes.",
       response: "given",
       parent_email: "test@example.com",
-      patient_session_id: patient_session.id,
+      patient_id: patient.id,
+      session_id: session.id,
       programme_id: programme.id
     }
   end
@@ -41,7 +41,8 @@ describe DraftConsent do
       response: "refused",
       notes: "Some notes.",
       parent_email: "test@example.com",
-      patient_session_id: patient_session.id,
+      patient_id: patient.id,
+      session_id: session.id,
       programme_id: programme.id
     }
   end

@@ -6,7 +6,6 @@ class DraftConsentsController < ApplicationController
   skip_after_action :verify_policy_scoped
 
   before_action :set_draft_consent
-  before_action :set_patient_session
   before_action :set_patient
   before_action :set_session
   before_action :set_programme
@@ -73,7 +72,7 @@ class DraftConsentsController < ApplicationController
       StatusUpdater.call(patient: @patient)
     end
 
-    set_patient_session # reload with new statuses
+    set_patient # reload with new statuses
 
     if @draft_consent.send_confirmation?
       send_triage_confirmation(@patient, @session, @programme, @consent)
@@ -160,16 +159,12 @@ class DraftConsentsController < ApplicationController
     @draft_consent = DraftConsent.new(request_session: session, current_user:)
   end
 
-  def set_patient_session
-    @patient_session = @draft_consent.patient_session
-  end
-
   def set_patient
-    @patient = @patient_session.patient
+    @patient = @draft_consent.patient
   end
 
   def set_session
-    @session = @patient_session.session
+    @session = @draft_consent.session
   end
 
   def set_programme

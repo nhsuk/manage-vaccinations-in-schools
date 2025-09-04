@@ -36,11 +36,7 @@ class PatientSessions::BaseController < ApplicationController
 
   def set_patient_session
     @patient_session =
-      PatientSession.find_by!(patient_id: @patient.id, session_id: @session.id)
-
-    # Assigned to already loaded objects
-    @patient_session.patient = @patient
-    @patient_session.session = @session
+      PatientSession.find_by!(patient: @patient, session: @session)
   end
 
   def set_programme
