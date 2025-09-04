@@ -5,7 +5,6 @@ class PatientsController < ApplicationController
 
   before_action :set_patient_search_form, only: :index
   before_action :set_patient, except: :index
-  before_action :set_patient_sessions, only: :show
   before_action :set_in_generic_clinic, only: :show
   before_action :record_access_log_entry, only: %i[show log]
 
@@ -50,14 +49,6 @@ class PatientsController < ApplicationController
         patient_sessions: :location,
         vaccination_records: :programme
       ).find(params[:id])
-  end
-
-  def set_patient_sessions
-    @patient_sessions =
-      policy_scope(PatientSession)
-        .includes_programmes
-        .includes(session: :location)
-        .where(patient: @patient)
   end
 
   def set_in_generic_clinic
