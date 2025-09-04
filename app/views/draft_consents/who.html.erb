@@ -11,7 +11,7 @@
   <%= page_title %>
 <% end %>
 
-<% gillick_competent = @patient_session.gillick_assessments.order(created_at: :desc).find_by(programme: @programme)&.gillick_competent? %>
+<% gillick_competent = @patient.gillick_assessments.order(created_at: :desc).where_session(@session).find_by(programme: @programme)&.gillick_competent? %>
 
 <%= form_with model: @draft_consent, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
