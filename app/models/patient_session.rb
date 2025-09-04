@@ -320,22 +320,4 @@ class PatientSession < ApplicationRecord
   end
 
   def programmes = session.programmes_for(patient:)
-
-  def outstanding_programmes
-    if registration_status.nil? || registration_status.unknown? ||
-         registration_status.not_attending?
-      return []
-    end
-
-    any_programme_exists = vaccination_records.exists?(programme: programmes)
-
-    # If this patient hasn't been seen yet by a nurse for any of the programmes,
-    # we don't want to show the banner.
-    return [] unless any_programme_exists
-
-    programmes.select do |programme|
-      !vaccination_records.exists?(programme:) &&
-        patient.consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
-    end
-  end
 end

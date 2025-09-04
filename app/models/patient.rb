@@ -374,6 +374,11 @@ class Patient < ApplicationRecord
     patient_status(consent_statuses, programme:, academic_year:)
   end
 
+  def registration_status(session:)
+    registration_statuses.find { it.session_id == session.id } ||
+      registration_statuses.build(session:)
+  end
+
   def triage_status(programme:, academic_year:)
     patient_status(triage_statuses, programme:, academic_year:)
   end

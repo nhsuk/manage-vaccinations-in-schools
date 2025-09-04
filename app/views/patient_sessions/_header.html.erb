@@ -9,7 +9,7 @@
                                         ].compact) %>
 <% end %>
 
-<% if (outstanding_programmes = @patient_session.outstanding_programmes).any? %>
+<% if (outstanding_programmes = patient_outstanding_programmes(@patient, session: @session)).any? %>
   <% programmes_can_record_vaccination = outstanding_programmes.filter do |programme|
        policy(VaccinationRecord.new(patient: @patient, session: @session, programme:)).new?
      end %>
