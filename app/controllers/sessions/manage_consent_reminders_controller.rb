@@ -3,6 +3,9 @@
 class Sessions::ManageConsentRemindersController < ApplicationController
   before_action :set_session
 
+  def show
+  end
+
   def create
     SendManualSchoolConsentRemindersJob.perform_now(@session, current_user:)
 
