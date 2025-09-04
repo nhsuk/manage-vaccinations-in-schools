@@ -120,7 +120,8 @@ class Sessions::RecordController < ApplicationController
 
     if @session.psd_enabled? && @session.national_protocol_enabled?
       original_scope.has_patient_specific_direction(
-        programme: @session.programmes
+        programme: @session.programmes,
+        team: current_team
       ).or(
         original_scope.has_vaccine_method(
           "injection",

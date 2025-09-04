@@ -79,6 +79,9 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
           vaccine_method: "nasal"
         )
         .has_triage_status("not_required", programme: @programme)
-        .without_patient_specific_direction(programme: @programme)
+        .without_patient_specific_direction(
+          programme: @programme,
+          team: current_team
+        )
   end
 end

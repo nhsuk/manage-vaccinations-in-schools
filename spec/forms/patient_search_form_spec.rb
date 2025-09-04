@@ -352,7 +352,7 @@ describe PatientSearchForm do
   context "for patient sessions" do
     let(:scope) { PatientSession.all }
 
-    let(:session) { create(:session, programmes:) }
+    let(:session) { create(:session, programmes:, team:) }
 
     it "doesn't raise an error" do
       expect { form.apply(scope) }.not_to raise_error
@@ -478,7 +478,8 @@ describe PatientSearchForm do
           create(
             :patient_specific_direction,
             patient: patient_session.patient,
-            programme: programmes.first
+            programme: programmes.first,
+            team:
           )
         end
       end
