@@ -14,8 +14,7 @@ class AppTriageFormComponent < ViewComponent::Base
   attr_reader :form, :url, :method, :heading, :continue
 
   delegate :policy, to: :helpers
-  delegate :patient_session, :programme, to: :form
-  delegate :patient, :session, to: :patient_session
+  delegate :patient, :session, :programme, to: :form
 
   def builder = GOVUKDesignSystemFormBuilder::FormBuilder
 

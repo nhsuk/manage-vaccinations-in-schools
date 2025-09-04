@@ -19,7 +19,8 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
     @triage_form =
       TriageForm.new(
         current_user:,
-        patient_session: @patient_session,
+        patient: @patient,
+        session: @session,
         programme: @programme,
         triage: previous_triage
       )
@@ -31,7 +32,8 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
     @triage_form =
       TriageForm.new(
         current_user:,
-        patient_session: @patient_session,
+        patient: @patient,
+        session: @session,
         programme: @programme,
         **triage_form_params
       )

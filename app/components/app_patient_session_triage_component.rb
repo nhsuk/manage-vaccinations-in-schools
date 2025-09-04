@@ -52,6 +52,6 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
   end
 
   def default_triage_form
-    TriageForm.new(patient_session:, programme:, current_user:)
+    TriageForm.new(patient:, session:, programme:, current_user:)
   end
 end

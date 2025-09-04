@@ -197,7 +197,8 @@ class DraftConsentsController < ApplicationController
           current_user:,
           notes: @draft_consent.triage_notes,
           vaccine_methods: @draft_consent.vaccine_methods,
-          patient_session: @patient_session,
+          patient: @patient,
+          session: @session,
           programme: @programme,
           status_and_vaccine_method:
             @draft_consent.triage_status_and_vaccine_method
