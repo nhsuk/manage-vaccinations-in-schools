@@ -6,10 +6,25 @@ class SchoolMovePolicy < ApplicationPolicy
       team = user.selected_team
       return scope.none if team.nil?
 
+      patient_subquery =
+        Patient
+          .joins(patient_sessions: :session)
+          .select(:id)
+          .distinct
+          .where(sessions: { team_id: team.id })
+          .arel
+          .as("patients")
       scope
-        .where(school: team.schools)
+        .joins(
+          SchoolMove
+            .arel_table
+            .join(patient_subquery, Arel::Nodes::OuterJoin)
+            .on(SchoolMove.arel_table[:patient_id].eq(patient_subquery[:id]))
+            .join_sources
+        )
+        .where(patient_subquery[:id].not_eq(nil))
+        .or(scope.where(school: team.schools))
         .or(scope.where(team:))
-        .or(scope.where(patient: team.patients))
     end
   end
 end
