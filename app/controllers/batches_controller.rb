@@ -66,7 +66,7 @@ class BatchesController < ApplicationController
   def update_archive
     @batch.archive!
 
-    redirect_to vaccines_path, flash: { success: "Batch archived." }
+    redirect_to vaccines_path, flash: { success: "Batch archived" }
   end
 
   private
