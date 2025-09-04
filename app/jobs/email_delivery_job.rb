@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class EmailDeliveryJob < NotifyDeliveryJob
+  include NotifyThrottlingConcern
+
   def perform(
     template_name,
     consent: nil,
@@ -47,7 +49,17 @@ class EmailDeliveryJob < NotifyDeliveryJob
 
     delivery_id =
       if self.class.send_via_notify?
-        self.class.client.send_email(**args).id
+        begin
+          self.class.client.send_email(**args).id
+        rescue Notifications::Client::BadRequestError => e
+          if !Rails.env.production? &&
+               e.message.include?(TEAM_ONLY_API_KEY_MESSAGE)
+            # Prevent retries and job failures.
+            Sentry.capture_exception(e)
+          else
+            raise
+          end
+        end
       elsif self.class.send_via_test?
         self.class.deliveries << args
         SecureRandom.uuid

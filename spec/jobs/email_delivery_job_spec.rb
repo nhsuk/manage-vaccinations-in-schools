@@ -180,9 +180,9 @@ describe EmailDeliveryJob do
       described_class.perform_later(GOVUK_NOTIFY_EMAIL_TEMPLATES.keys.first)
     end
 
-    it "uses the mailer queue" do
+    it "uses the notifications queue" do
       expect { perform_later }.to have_enqueued_job(described_class).on_queue(
-        :mailer
+        :notifications
       )
     end
   end

@@ -3,9 +3,8 @@
 require "notifications/client"
 
 class NotifyDeliveryJob < ApplicationJob
-  queue_as :mailer
-
-  retry_on Notifications::Client::ServerError, wait: :polynomially_longer
+  TEAM_ONLY_API_KEY_MESSAGE =
+    "Can’t send to this recipient using a team-only API key"
 
   def self.client
     @client ||=
@@ -18,13 +17,9 @@ class NotifyDeliveryJob < ApplicationJob
     @deliveries ||= []
   end
 
-  def self.send_via_notify?
-    Settings.govuk_notify&.enabled
-  end
+  def self.send_via_notify? = Settings.govuk_notify&.enabled
 
-  def self.send_via_test?
-    Rails.env.test?
-  end
+  def self.send_via_test? = Rails.env.test?
 
   class UnknownTemplate < StandardError
   end
