@@ -215,39 +215,11 @@ FactoryBot.define do
       end
     end
 
-    trait :triaged_do_not_vaccinate do
-      patient do
-        association :patient,
-                    :consent_given_triage_needed,
-                    :triage_do_not_vaccinate,
-                    performed_by: user,
-                    programmes: session.programmes,
-                    team:,
-                    school:,
-                    home_educated:,
-                    year_group:
-      end
-    end
-
     trait :triaged_kept_in_triage do
       patient do
         association :patient,
                     :consent_given_triage_needed,
                     :triage_needs_follow_up,
-                    performed_by: user,
-                    programmes: session.programmes,
-                    team:,
-                    school:,
-                    home_educated:,
-                    year_group:
-      end
-    end
-
-    trait :delay_vaccination do
-      patient do
-        association :patient,
-                    :consent_given_triage_needed,
-                    :triage_delay_vaccination,
                     performed_by: user,
                     programmes: session.programmes,
                     team:,

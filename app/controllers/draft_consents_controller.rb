@@ -76,7 +76,7 @@ class DraftConsentsController < ApplicationController
     set_patient_session # reload with new statuses
 
     if @draft_consent.send_confirmation?
-      send_triage_confirmation(@patient_session, @programme, @consent)
+      send_triage_confirmation(@patient, @session, @programme, @consent)
     end
 
     heading_link_href =
