@@ -20,7 +20,7 @@ class API::Reporting::OneTimeTokensController < API::Reporting::BaseController
       user_nav: {
         items: [
           { text: display_name, icon: true },
-          { href: "/logout", text: "Log out" }
+          { href: logout_path, text: "Log out" }
         ]
       }
     }

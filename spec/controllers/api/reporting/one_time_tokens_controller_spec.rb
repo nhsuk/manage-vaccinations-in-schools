@@ -80,9 +80,9 @@ RSpec.describe API::Reporting::OneTimeTokensController do
           let(:token) { valid_token }
 
           before do
-            allow(ReportingAPI::OneTimeToken).to receive(:find_by!)
-              .with(token: token.token)
-              .and_return(token)
+            allow(ReportingAPI::OneTimeToken).to receive(:find_by!).with(
+              token: token.token
+            ).and_return(token)
             allow(token).to receive(:user).and_return(user)
           end
 
