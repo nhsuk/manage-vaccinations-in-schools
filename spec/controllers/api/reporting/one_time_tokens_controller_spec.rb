@@ -4,14 +4,33 @@ require "spec_helper"
 
 RSpec.describe API::Reporting::OneTimeTokensController do
   let(:user) { create(:user) }
-  let(:mock_cis2_info) { { "some_key" => "some value" } }
+  let(:organisation) { create(:organisation) }
+  let(:team) { create(:team, organisation:) }
+  let(:mock_cis2_info_hash) do
+    {
+      "organisation_code" => organisation.ods_code,
+      "workgroups" => [team.workgroup],
+      "role_code" => CIS2Info::NURSE_ROLE,
+      "activity_codes" => []
+    }
+  end
+  let(:mock_cis2_info) do
+    CIS2Info.new(request_session: { "cis2_info" => mock_cis2_info_hash })
+  end
   let(:valid_token) do
     ReportingAPI::OneTimeToken.find_or_generate_for!(
       user:,
-      cis2_info: mock_cis2_info
+      cis2_info: mock_cis2_info_hash
     )
   end
   let(:invalid_token) { SecureRandom.hex(32) }
+
+  before do
+    allow(user).to receive_messages(
+      cis2_info: mock_cis2_info,
+      cis2_enabled?: true
+    )
+  end
 
   describe "#authorize" do
     context "given a valid client_id when reporting_api is enabled" do
@@ -60,6 +79,13 @@ RSpec.describe API::Reporting::OneTimeTokensController do
         context "and a valid OneTimeToken in the code param" do
           let(:token) { valid_token }
 
+          before do
+            allow(ReportingAPI::OneTimeToken).to receive(:find_by!)
+              .with(token: token.token)
+              .and_return(token)
+            allow(token).to receive(:user).and_return(user)
+          end
+
           it "responds with 200" do
             do_the_request
             expect(response.status).to eq(200)
@@ -79,6 +105,39 @@ RSpec.describe API::Reporting::OneTimeTokensController do
 
           describe "the response json" do
             let(:response_json) { JSON.parse(response.body) }
+
+            it "includes a user_nav key" do
+              do_the_request
+              expect(response_json).to have_key("user_nav")
+            end
+
+            describe "the user_nav key" do
+              before { do_the_request }
+
+              it "is a hash with items array" do
+                expect(response_json["user_nav"]).to be_a(Hash)
+                expect(response_json["user_nav"]).to have_key("items")
+                expect(response_json["user_nav"]["items"]).to be_an(Array)
+              end
+
+              it "includes the user display name in the first item" do
+                expected_display_name = user.full_name
+                expected_display_name +=
+                  " (#{user.role_description})" if user.role_description.present?
+                expect(response_json["user_nav"]["items"][0]["text"]).to eq(
+                  expected_display_name
+                )
+              end
+
+              it "includes a logout link in the second item" do
+                expect(response_json["user_nav"]["items"][1]["href"]).to eq(
+                  "/logout"
+                )
+                expect(response_json["user_nav"]["items"][1]["text"]).to eq(
+                  "Log out"
+                )
+              end
+            end
 
             it "includes a JWT" do
               do_the_request
@@ -124,7 +183,7 @@ RSpec.describe API::Reporting::OneTimeTokensController do
 
                 it "includes the users cis2_info" do
                   do_the_request
-                  expect(jwt_data["cis2_info"]).to eq(mock_cis2_info)
+                  expect(jwt_data["cis2_info"]).to eq(mock_cis2_info_hash)
                 end
               end
             end
