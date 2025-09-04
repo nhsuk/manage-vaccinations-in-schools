@@ -8,8 +8,9 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(patient_session, programme:, current_user:, vaccinate_form:)
-    @patient_session = patient_session
+  def initialize(patient:, session:, programme:, current_user:, vaccinate_form:)
+    @patient = patient
+    @session = session
     @programme = programme
     @current_user = current_user
     @vaccinate_form = vaccinate_form || default_vaccinate_form
@@ -29,10 +30,9 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
 
   private
 
-  attr_reader :patient_session, :current_user, :programme, :vaccinate_form
+  attr_reader :patient, :session, :current_user, :programme, :vaccinate_form
 
   delegate :policy, to: :helpers
-  delegate :patient, :session, to: :patient_session
   delegate :academic_year, to: :session
 
   def registration_status

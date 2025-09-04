@@ -5,7 +5,8 @@ describe AppPatientSessionRecordComponent do
 
   let(:component) do
     described_class.new(
-      patient_session,
+      patient:,
+      session:,
       programme: programmes.first,
       current_user:,
       vaccinate_form: VaccinateForm.new
@@ -16,16 +17,11 @@ describe AppPatientSessionRecordComponent do
   let(:programmes) { [create(:programme, :hpv)] }
   let(:session) { create(:session, :today, programmes:) }
   let(:patient) do
-    create(:patient, :consent_given_triage_not_needed, programmes:)
+    create(:patient, :consent_given_triage_not_needed, :in_attendance, session:)
   end
-  let(:patient_session) do
-    create(:patient_session, :in_attendance, programmes:, patient:, session:)
-  end
-
-  before { patient_session.strict_loading!(false) }
 
   describe "#render?" do
-    subject(:render) { component.render? }
+    subject { component.render? }
 
     it { should be(true) }
 
@@ -36,8 +32,8 @@ describe AppPatientSessionRecordComponent do
     end
 
     context "patient is not attending the session" do
-      let(:patient_session) do
-        create(:patient_session, programmes:, patient:, session:)
+      let(:patient) do
+        create(:patient, :consent_given_triage_not_needed, session:)
       end
 
       it { should be(false) }
@@ -46,7 +42,9 @@ describe AppPatientSessionRecordComponent do
     context "patient is fully vaccinated" do
       let(:patient) { create(:patient, :vaccinated, programmes:) }
 
-      before { patient.registration_statuses.first.completed! }
+      before do
+        create(:patient_registration_status, :completed, patient:, session:)
+      end
 
       it { should be(false) }
 

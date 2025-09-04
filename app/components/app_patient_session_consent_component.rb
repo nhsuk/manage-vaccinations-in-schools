@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 class AppPatientSessionConsentComponent < ViewComponent::Base
-  def initialize(patient_session, programme:)
-    @patient_session = patient_session
+  def initialize(patient:, session:, programme:)
+    @patient = patient
+    @session = session
     @programme = programme
   end
 
   private
 
-  attr_reader :patient_session, :programme
+  attr_reader :patient, :session, :programme
 
   delegate :govuk_button_to, to: :helpers
-  delegate :patient, :session, to: :patient_session
   delegate :academic_year, to: :session
 
   def colour
