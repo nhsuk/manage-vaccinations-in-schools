@@ -63,7 +63,8 @@ class AppActivityLogComponent < ViewComponent::Base
         :vaccine
       )
 
-    @patient_specific_directions = @patient.patient_specific_directions
+    @patient_specific_directions =
+      @patient.patient_specific_directions.includes(:created_by)
 
     @archive_reasons = @patient.archive_reasons.where(team:)
   end
