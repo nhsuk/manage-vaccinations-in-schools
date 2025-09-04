@@ -63,8 +63,8 @@ if Settings.web_concurrency > 1 &&
   # See https://github.com/bensheldon/good_job#execute-jobs-async--in-process
   MAIN_PID = Process.pid
   before_fork { GoodJob.shutdown }
-  on_worker_boot { GoodJob.restart }
-  on_worker_shutdown { GoodJob.shutdown }
+  before_worker_boot { GoodJob.restart }
+  before_worker_shutdown { GoodJob.shutdown }
   at_exit { GoodJob.shutdown if Process.pid == MAIN_PID }
 
   # Use the `preload_app!` method when specifying a `workers` number.
@@ -75,4 +75,4 @@ if Settings.web_concurrency > 1 &&
 end
 
 # Re-open appenders after forking the process; needed for Semantic Logger
-on_worker_boot { SemanticLogger.reopen }
+before_worker_boot { SemanticLogger.reopen }
