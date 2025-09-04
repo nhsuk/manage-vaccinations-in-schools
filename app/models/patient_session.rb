@@ -306,10 +306,6 @@ class PatientSession < ApplicationRecord
 
   delegate :academic_year, to: :session
 
-  def has_patient_specific_direction?(**query)
-    patient.has_patient_specific_direction?(academic_year:, **query)
-  end
-
   def safe_to_destroy?
     vaccination_records.empty? && gillick_assessments.empty? &&
       attendance_records.none?(&:attending?)
