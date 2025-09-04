@@ -28,16 +28,15 @@
 #  fk_rails_...  (session_date_id => session_dates.id)
 #
 class PreScreening < ApplicationRecord
+  include BelongsToSessionDate
+
   audited associated_with: :patient
 
   belongs_to :patient
-  belongs_to :session_date
   belongs_to :programme
   belongs_to :performed_by,
              class_name: "User",
              foreign_key: :performed_by_user_id
-
-  scope :today, -> { joins(:session_date).merge(SessionDate.today) }
 
   encrypts :notes
 
