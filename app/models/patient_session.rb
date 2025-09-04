@@ -68,10 +68,6 @@ class PatientSession < ApplicationRecord
            -> { where(patient_id: it.patient_id) },
            through: :location
 
-  has_many :session_notifications,
-           -> { where(session_id: it.session_id) },
-           through: :patient
-
   has_many :vaccination_records,
            -> { where(session_id: it.session_id) },
            through: :patient
@@ -81,22 +77,6 @@ class PatientSession < ApplicationRecord
   scope :archived, ->(team:) { merge(Patient.archived(team:)) }
 
   scope :not_archived, ->(team:) { merge(Patient.not_archived(team:)) }
-
-  scope :notification_not_sent,
-        ->(session_date) do
-          where.not(
-            SessionNotification
-              .where(
-                "session_notifications.session_id = patient_sessions.session_id"
-              )
-              .where(
-                "session_notifications.patient_id = patient_sessions.patient_id"
-              )
-              .where(session_date:)
-              .arel
-              .exists
-          )
-        end
 
   scope :appear_in_programmes,
         ->(programmes) do

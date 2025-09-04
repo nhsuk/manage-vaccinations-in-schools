@@ -11,28 +11,35 @@ class SendClinicSubsequentInvitationsJob < ApplicationJob
     session_date = session.next_date(include_today: true)
     raise NoSessionDates if session_date.nil?
 
-    patient_sessions(session, session_date:).each do |patient_session|
-      send_notification(patient_session:, session_date:)
+    patients(session, session_date:).each do |patient|
+      send_notification(patient:, session:, session_date:)
     end
   end
 
-  def patient_sessions(session, session_date:)
+  def patients(session, session_date:)
     programmes = session.programmes
 
     # We only send subsequent invitations (reminders) to patients who
     # have already received an invitation.
 
     session
-      .patient_sessions
-      .joins(:patient)
-      .includes_programmes
+      .patients
       .includes(
+        :consent_statuses,
+        :consents,
+        :parents,
         :session_notifications,
-        patient: %i[consents parents vaccination_records]
+        :vaccination_records,
+        :vaccination_statuses
       )
-      .select { it.session_notifications.any? }
-      .select do |patient_session|
-        should_send_notification?(patient_session:, programmes:, session_date:)
+      .select { it.session_notifications.any? { it.session_id == session.id } }
+      .select do |patient|
+        should_send_notification?(
+          patient:,
+          session:,
+          programmes:,
+          session_date:
+        )
       end
   end
 end

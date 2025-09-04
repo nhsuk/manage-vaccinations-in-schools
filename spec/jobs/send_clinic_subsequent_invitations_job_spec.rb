@@ -8,13 +8,12 @@ describe SendClinicSubsequentInvitationsJob do
   let(:programmes) { [create(:programme, :hpv)] }
   let(:team) { create(:team, programmes:) }
   let(:parents) { create_list(:parent, 2) }
-  let(:patient) { create(:patient, parents:, year_group: 8) }
+  let(:patient) { create(:patient, parents:, year_group: 8, session:) }
   let(:location) { create(:generic_clinic, team:) }
 
   let(:session) do
     create(:session, programmes:, date: 1.week.ago.to_date, location:, team:)
   end
-  let!(:patient_session) { create(:patient_session, patient:, session:) }
 
   before { session.session_dates.create!(value: 1.week.from_now.to_date) }
 
@@ -35,7 +34,8 @@ describe SendClinicSubsequentInvitationsJob do
 
     it "sends a notification" do
       expect(SessionNotification).to receive(:create_and_send!).once.with(
-        patient_session:,
+        patient:,
+        session:,
         session_date: session.dates.second,
         type: :clinic_subsequent_invitation
       )

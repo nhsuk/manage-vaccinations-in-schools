@@ -45,14 +45,12 @@ class SessionNotification < ApplicationRecord
   end
 
   def self.create_and_send!(
-    patient_session:,
+    patient:,
+    session:,
     session_date:,
     type:,
     current_user: nil
   )
-    patient = patient_session.patient
-    session = patient_session.session
-
     academic_year = session.academic_year
 
     parents =

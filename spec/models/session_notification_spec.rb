@@ -29,7 +29,8 @@ describe SessionNotification do
     subject(:create_and_send!) do
       travel_to(today) do
         described_class.create_and_send!(
-          patient_session:,
+          patient:,
+          session:,
           session_date:,
           type:,
           current_user:
@@ -40,17 +41,14 @@ describe SessionNotification do
     let(:today) { Date.new(2024, 1, 1) }
 
     let(:parents) { create_list(:parent, 2) }
-    let(:patient) { create(:patient, parents:, year_group: 10) }
+    let(:patient) { create(:patient, parents:, year_group: 10, session:) }
     let(:programme) { create(:programme, :td_ipv) }
     let(:programmes) { [programme] }
     let(:team) { create(:team, programmes:) }
     let(:location) { create(:school, team:) }
     let(:session) { create(:session, location:, programmes:, team:) }
     let(:session_date) { session.dates.min }
-    let(:patient_session) { create(:patient_session, patient:, session:) }
     let(:current_user) { create(:user) }
-
-    before { patient_session.patient.strict_loading!(false) }
 
     context "with a school reminder" do
       let(:type) { :school_reminder }

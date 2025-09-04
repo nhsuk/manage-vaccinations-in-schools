@@ -14,20 +14,18 @@ class ClinicPatientSessionsFactory
   end
 
   def patient_sessions_to_create
-    patient_sessions_in_clinic =
-      patient_sessions_in_school.map do |patient_session|
+    patients_in_school.filter_map do |patient|
+      if SendClinicInitialInvitationsJob.new.should_send_notification?(
+           patient:,
+           session: generic_clinic_session,
+           programmes:,
+           session_date:
+         )
         PatientSession.includes(:session_notifications).find_or_initialize_by(
-          patient: patient_session.patient,
+          patient:,
           session: generic_clinic_session
         )
       end
-
-    patient_sessions_in_clinic.select do |patient_session|
-      SendClinicInitialInvitationsJob.new.should_send_notification?(
-        patient_session:,
-        programmes:,
-        session_date:
-      )
     end
   end
 
@@ -43,7 +41,7 @@ class ClinicPatientSessionsFactory
     @session_date ||= generic_clinic_session.next_date(include_today: true)
   end
 
-  def patient_sessions_in_school
-    school_session.patient_sessions.includes(:patient)
+  def patients_in_school
+    school_session.patients.includes(:consent_statuses, :vaccination_statuses)
   end
 end

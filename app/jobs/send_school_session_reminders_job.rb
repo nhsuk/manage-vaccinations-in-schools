@@ -6,35 +6,47 @@ class SendSchoolSessionRemindersJob < ApplicationJob
   def perform
     date = Date.tomorrow
 
-    patient_sessions =
-      PatientSession
-        .includes_programmes
-        .includes(patient: [:parents, { consents: %i[parent patient] }])
-        .eager_load(:session)
+    sessions =
+      Session
+        .includes(:programmes, :location_programme_year_groups)
+        .has_date(date)
         .joins(:location)
         .merge(Location.school)
-        .merge(Session.has_date(date))
-        .notification_not_sent(date)
 
-    patient_sessions.find_each do |patient_session|
-      next unless should_send_notification?(patient_session:)
+    sessions.find_each do |session|
+      patients =
+        session
+          .patients
+          .includes(:consent_statuses, :triage_statuses, :vaccination_statuses)
+          .where.not(
+            SessionNotification
+              .where(session:)
+              .where(
+                "session_notifications.patient_id = patient_sessions.patient_id"
+              )
+              .where(session_date: date)
+              .arel
+              .exists
+          )
 
-      SessionNotification.create_and_send!(
-        patient_session:,
-        session_date: date,
-        type: :school_reminder
-      )
+      patients.find_each do |patient|
+        next unless should_send_notification?(patient:, session:)
+
+        SessionNotification.create_and_send!(
+          patient:,
+          session:,
+          session_date: date,
+          type: :school_reminder
+        )
+      end
     end
   end
 
-  def should_send_notification?(patient_session:)
-    patient = patient_session.patient
-
+  def should_send_notification?(patient:, session:)
     return false unless patient.send_notifications?
 
-    session = patient_session.session
     programmes = session.programmes_for(patient:)
-    academic_year = patient_session.academic_year
+    academic_year = session.academic_year
 
     all_vaccinated =
       programmes.all? do |programme|

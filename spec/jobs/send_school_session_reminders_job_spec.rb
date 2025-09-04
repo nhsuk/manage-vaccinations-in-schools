@@ -10,12 +10,14 @@ describe SendSchoolSessionRemindersJob do
   end
 
   context "for an active session tomorrow" do
-    let!(:session) { create(:session, programmes:, date: Date.tomorrow) }
-    let(:patient_session) { create(:patient_session, patient:, session:) }
+    let(:session) { create(:session, programmes:, date: Date.tomorrow) }
+
+    before { create(:patient_session, patient:, session:) }
 
     it "sends a notification" do
       expect(SessionNotification).to receive(:create_and_send!).once.with(
-        patient_session:,
+        patient:,
+        session:,
         session_date: Date.tomorrow,
         type: :school_reminder
       )
@@ -29,7 +31,8 @@ describe SendSchoolSessionRemindersJob do
 
       it "sends a notification" do
         expect(SessionNotification).to receive(:create_and_send!).once.with(
-          patient_session:,
+          patient:,
+          session:,
           session_date: Date.tomorrow,
           type: :school_reminder
         )
@@ -60,6 +63,7 @@ describe SendSchoolSessionRemindersJob do
     context "when already vaccinated" do
       before do
         create(:vaccination_record, patient:, programme: programmes.first)
+        StatusUpdater.call(patient:)
       end
 
       it "doesn't send any notifications" do

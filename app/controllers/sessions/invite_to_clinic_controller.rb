@@ -3,7 +3,7 @@
 class Sessions::InviteToClinicController < ApplicationController
   before_action :set_session
   before_action :set_generic_clinic_session
-  before_action :set_patient_sessions_to_invite
+  before_action :set_patients_to_invite
   before_action :set_invitations_to_send
 
   skip_after_action :verify_policy_scoped
@@ -51,21 +51,18 @@ class Sessions::InviteToClinicController < ApplicationController
       end
   end
 
-  def set_patient_sessions_to_invite
-    @patient_sessions_to_invite =
+  def set_patients_to_invite
+    @patients_to_invite =
       if @session.school?
-        factory.patient_sessions_to_create
+        factory.patient_sessions_to_create.map(&:patient)
       else
         session_date = @generic_clinic_session.next_date(include_today: true)
-        SendClinicSubsequentInvitationsJob.new.patient_sessions(
-          @session,
-          session_date:
-        )
+        SendClinicSubsequentInvitationsJob.new.patients(@session, session_date:)
       end
   end
 
   def set_invitations_to_send
-    @invitations_to_send = @patient_sessions_to_invite.length
+    @invitations_to_send = @patients_to_invite.length
   end
 
   def factory
