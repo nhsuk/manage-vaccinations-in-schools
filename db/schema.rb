@@ -744,6 +744,78 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_03_164644) do
     t.index ["type"], name: "index_programmes_on_type", unique: true
   end
 
+  create_table "reporting_api_consent_events", force: :cascade do |t|
+    t.string "event_type"
+    t.datetime "event_timestamp"
+    t.integer "event_timestamp_year"
+    t.integer "event_timestamp_month"
+    t.integer "event_timestamp_day"
+    t.integer "event_timestamp_academic_year"
+    t.string "source_type"
+    t.bigint "source_id"
+    t.bigint "patient_id"
+    t.string "patient_address_town"
+    t.string "patient_address_postcode"
+    t.string "patient_gender_code"
+    t.boolean "patient_home_educated"
+    t.date "patient_date_of_death"
+    t.integer "patient_birth_academic_year"
+    t.integer "patient_year_group"
+    t.string "patient_local_authority_gss_code"
+    t.string "patient_local_authority_gias_code"
+    t.string "patient_local_authority_mhclg_code"
+    t.string "patient_local_authority_short_name"
+    t.bigint "patient_school_id"
+    t.string "patient_school_address_town"
+    t.string "patient_school_address_postcode"
+    t.integer "patient_school_gias_local_authority_code"
+    t.integer "patient_school_gias_establishment_number"
+    t.string "consent_status_status"
+    t.integer "consent_status_vaccine_methods", array: true
+    t.integer "consent_status_academic_year"
+    t.integer "consent_notification_id"
+    t.datetime "consent_notification_sent_at"
+    t.string "consent_notification_type"
+    t.string "consent_response"
+    t.string "consent_reason_for_refusal"
+    t.string "consent_route"
+    t.bigint "consent_parent_id"
+    t.bigint "consent_organisation_id"
+    t.datetime "consent_withdrawn_at"
+    t.datetime "consent_invalidated_at"
+    t.boolean "consent_notify_parents"
+    t.datetime "consent_submitted_at"
+    t.integer "consent_vaccine_methods", array: true
+    t.string "parent_contact_method_type"
+    t.boolean "parent_phone_receive_updates"
+    t.string "parent_relationship_type"
+    t.string "parent_relationship_other_name"
+    t.bigint "vaccine_id"
+    t.text "vaccine_brand"
+    t.string "vaccine_method"
+    t.text "vaccine_manufacturer"
+    t.decimal "vaccine_dose_volume_ml"
+    t.string "vaccine_snomed_product_code"
+    t.string "vaccine_snomed_product_term"
+    t.text "vaccine_nivs_name"
+    t.boolean "vaccine_discontinued"
+    t.bigint "vaccine_programme_id"
+    t.boolean "vaccine_full_dose"
+    t.bigint "programme_id"
+    t.string "programme_type"
+    t.bigint "team_id"
+    t.string "team_name"
+    t.bigint "organisation_id"
+    t.string "organisation_ods_code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_timestamp"], name: "ix_rpt_consent_event_tstamp"
+    t.index ["event_timestamp_academic_year", "event_timestamp_month", "programme_id", "event_type"], name: "ix_rpt_consent_event_tstamp_year_month_prog_type"
+    t.index ["event_timestamp_academic_year", "event_timestamp_month"], name: "ix_rpt_consent_event_ac_year_month"
+    t.index ["source_type", "source_id"], name: "index_reporting_api_consent_events_on_source"
+    t.index ["source_type", "source_id"], name: "ix_rpt_consent_source_type_id"
+  end
+
   create_table "reporting_api_one_time_tokens", primary_key: "token", id: :string, force: :cascade do |t|
     t.bigint "user_id", null: false
     t.jsonb "cis2_info", default: {}, null: false
@@ -752,6 +824,63 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_03_164644) do
     t.index ["created_at"], name: "index_reporting_api_one_time_tokens_on_created_at"
     t.index ["token"], name: "index_reporting_api_one_time_tokens_on_token", unique: true
     t.index ["user_id"], name: "index_reporting_api_one_time_tokens_on_user_id", unique: true
+  end
+
+  create_table "reporting_api_vaccination_events", force: :cascade do |t|
+    t.string "event_type", null: false
+    t.datetime "event_timestamp", null: false
+    t.integer "event_timestamp_year", null: false
+    t.integer "event_timestamp_month", null: false
+    t.integer "event_timestamp_day", null: false
+    t.integer "event_timestamp_academic_year", null: false
+    t.string "source_type", null: false
+    t.bigint "source_id", null: false
+    t.bigint "patient_id", null: false
+    t.string "patient_address_town"
+    t.string "patient_address_postcode"
+    t.string "patient_gender_code"
+    t.boolean "patient_home_educated"
+    t.date "patient_date_of_death"
+    t.integer "patient_birth_academic_year"
+    t.integer "patient_year_group"
+    t.bigint "patient_school_id"
+    t.string "patient_school_name"
+    t.string "patient_school_address_town"
+    t.string "patient_school_address_postcode"
+    t.integer "patient_school_gias_local_authority_code"
+    t.string "patient_school_type"
+    t.string "patient_school_local_authority_mhclg_code"
+    t.string "patient_school_local_authority_short_name"
+    t.string "patient_local_authority_from_postcode_mhclg_code"
+    t.string "patient_local_authority_from_postcode_short_name"
+    t.bigint "location_id"
+    t.string "location_name"
+    t.string "location_address_town"
+    t.string "location_address_postcode"
+    t.string "location_type"
+    t.string "location_local_authority_mhclg_code"
+    t.string "location_local_authority_short_name"
+    t.bigint "team_id"
+    t.string "team_name"
+    t.bigint "organisation_id"
+    t.string "organisation_ods_code"
+    t.string "organisation_name"
+    t.string "vaccination_record_outcome"
+    t.uuid "vaccination_record_uuid"
+    t.datetime "vaccination_record_performed_at"
+    t.bigint "vaccination_record_programme_id"
+    t.bigint "vaccination_record_session_id"
+    t.bigint "programme_id"
+    t.string "programme_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_timestamp"], name: "ix_rve_tstamp"
+    t.index ["event_timestamp_academic_year", "event_timestamp_month", "event_type"], name: "ix_rve_acyear_month_type"
+    t.index ["event_timestamp_academic_year", "event_timestamp_month"], name: "ix_rve_ac_year_month"
+    t.index ["programme_id", "event_timestamp_academic_year", "event_timestamp_month"], name: "ix_rve_prog_acyear_month"
+    t.index ["source_type", "source_id"], name: "index_reporting_api_vaccination_events_on_source"
+    t.index ["source_type", "source_id"], name: "ix_rve_source_type_id"
+    t.index ["team_id", "event_timestamp_academic_year", "event_timestamp_month"], name: "ix_rve_team_acyr_month"
   end
 
   create_table "school_move_log_entries", force: :cascade do |t|
