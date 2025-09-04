@@ -62,7 +62,7 @@ jobs:
         with:
           ref: ${{ inputs.git_sha_to_deploy || github.sha }}
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
@@ -107,7 +107,7 @@ jobs:
           name: DEPLOYMENT_ENVS-${{ inputs.environment }}
           path: ${{ runner.temp }}
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
@@ -140,7 +140,7 @@ jobs:
           name: DEPLOYMENT_ENVS-${{ inputs.environment }}
           path: ${{ runner.temp }}
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
@@ -184,7 +184,7 @@ jobs:
           name: DEPLOYMENT_ENVS-${{ inputs.environment }}
           path: ${{ runner.temp }}
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
