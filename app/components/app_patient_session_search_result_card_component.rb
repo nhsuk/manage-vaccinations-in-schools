@@ -126,7 +126,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
     next_activities =
       patient_session.programmes.filter_map do |programme|
-        status = patient_session.next_activity(programme:)
+        status = patient.next_activity(programme:, academic_year:)
         next if status.nil?
 
         "#{I18n.t(status, scope: :activity)} for #{programme.name_in_sentence}"

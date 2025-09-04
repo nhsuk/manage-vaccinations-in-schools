@@ -409,6 +409,22 @@ class Patient < ApplicationRecord
     true
   end
 
+  def next_activity(programme:, academic_year:)
+    return nil if vaccination_status(programme:, academic_year:).vaccinated?
+
+    if consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
+      return :record
+    end
+
+    return :triage if triage_status(programme:, academic_year:).required?
+
+    consent_status = consent_status(programme:, academic_year:)
+
+    return :consent if consent_status.no_response? || consent_status.conflicts?
+
+    :do_not_record
+  end
+
   def approved_vaccine_methods(programme:, academic_year:)
     triage_status = triage_status(programme:, academic_year:)
 

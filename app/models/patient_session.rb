@@ -321,26 +321,6 @@ class PatientSession < ApplicationRecord
 
   def programmes = session.programmes_for(patient:)
 
-  def next_activity(programme:)
-    if patient.vaccination_status(programme:, academic_year:).vaccinated?
-      return nil
-    end
-
-    if patient.consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
-      return :record
-    end
-
-    if patient.triage_status(programme:, academic_year:).required?
-      return :triage
-    end
-
-    consent_status = patient.consent_status(programme:, academic_year:)
-
-    return :consent if consent_status.no_response? || consent_status.conflicts?
-
-    :do_not_record
-  end
-
   def outstanding_programmes
     if registration_status.nil? || registration_status.unknown? ||
          registration_status.not_attending?
