@@ -11,7 +11,7 @@ class Sessions::ManageConsentRemindersController < ApplicationController
 
     redirect_to session_path(@session),
                 flash: {
-                  success: "Manual consent reminders sent."
+                  success: "Manual consent reminders sent"
                 }
   end
 
