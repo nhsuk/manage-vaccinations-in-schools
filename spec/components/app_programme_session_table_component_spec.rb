@@ -16,7 +16,7 @@ describe AppProgrammeSessionTableComponent do
   let(:patient) { create(:patient, session:) }
 
   before do
-    create_list(:patient_session, 4, :consent_no_response, session:)
+    create_list(:patient, 4, :consent_no_response, session:)
 
     create(:patient_consent_status, :given, programme:, patient:)
 

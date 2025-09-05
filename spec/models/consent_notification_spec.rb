@@ -40,13 +40,11 @@ describe ConsentNotification do
     let(:today) { Date.new(2024, 1, 1) }
 
     let(:parents) { create_list(:parent, 2) }
-    let(:patient) { create(:patient, parents:) }
+    let(:patient) { create(:patient, parents:, session:) }
     let(:programmes) { [create(:programme, :hpv)] }
     let(:team) { create(:team, programmes:) }
     let(:location) { create(:school, team:) }
-    let(:session) do
-      create(:session, location:, programmes:, patients: [patient], team:)
-    end
+    let(:session) { create(:session, location:, programmes:, team:) }
     let(:current_user) { nil }
 
     context "with a request and a school location" do

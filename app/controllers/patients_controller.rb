@@ -46,7 +46,7 @@ class PatientsController < ApplicationController
         :school,
         consents: %i[parent patient],
         parent_relationships: :parent,
-        patient_sessions: :location,
+        sessions: :location,
         vaccination_records: :programme
       ).find(params[:id])
   end
@@ -54,8 +54,7 @@ class PatientsController < ApplicationController
   def set_in_generic_clinic
     generic_clinic_session =
       current_team.generic_clinic_session(academic_year: AcademicYear.pending)
-    @in_generic_clinic =
-      @patient.patient_sessions.exists?(session: generic_clinic_session)
+    @in_generic_clinic = @patient.sessions.include?(generic_clinic_session)
   end
 
   def record_access_log_entry

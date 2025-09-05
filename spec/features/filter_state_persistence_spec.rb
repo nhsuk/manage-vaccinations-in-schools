@@ -63,18 +63,19 @@ describe "Filter states" do
     @programme = create(:programme, :hpv)
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @session = create(:session, team: @team, programmes: [@programme])
-    create(:patient_session, :consent_no_response, session: @session)
-    create(:patient_session, :consent_conflicting, session: @session)
-    create(:patient_session, :consent_refused, session: @session)
-    create(:patient_session, :consent_given_triage_needed, session: @session)
+
+    create(:patient, :consent_no_response, session: @session)
+    create(:patient, :consent_conflicting, session: @session)
+    create(:patient, :consent_refused, session: @session)
+    create(:patient, :consent_given_triage_needed, session: @session)
     create(
-      :patient_session,
+      :patient,
       :consent_given_triage_not_needed,
       :in_attendance,
       session: @session
     )
-    create(:patient_session, :unknown_attendance, session: @session)
-    create(:patient_session, :vaccinated, session: @session)
+    create(:patient, :unknown_attendance, session: @session)
+    create(:patient, :vaccinated, session: @session)
 
     sign_in @team.users.first
   end

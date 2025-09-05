@@ -41,7 +41,7 @@ describe Stats::Organisations do
         expect(result[:programme_stats].size).to eq(2)
 
         flu_stats =
-          result[:programme_stats].find { |p| p[:programme_name] == "flu" }
+          result[:programme_stats].find { it[:programme_name] == "flu" }
         expect(flu_stats[:cohort_total][:total]).to eq(3)
         expect(flu_stats[:cohort_total][:years]).to include(
           8 => 1,
@@ -65,7 +65,7 @@ describe Stats::Organisations do
         expect(result[:team_names]).to eq("Team Alpha")
 
         flu_stats =
-          result[:programme_stats].find { |p| p[:programme_name] == "flu" }
+          result[:programme_stats].find { it[:programme_name] == "flu" }
         expect(flu_stats[:cohort_total][:total]).to eq(2)
         expect(flu_stats[:cohort_total][:years]).to include(8 => 1, 9 => 1)
         expect(flu_stats[:cohort_total][:years]).not_to include(11)
@@ -98,7 +98,7 @@ describe Stats::Organisations do
         result = service.call
 
         flu_stats =
-          result[:programme_stats].find { |p| p[:programme_name] == "flu" }
+          result[:programme_stats].find { it[:programme_name] == "flu" }
         expect(flu_stats[:cohort_total][:total]).to eq(1)
       end
 
@@ -114,10 +114,10 @@ describe Stats::Organisations do
         result = service.call
 
         flu_stats =
-          result[:programme_stats].find { |p| p[:programme_name] == "flu" }
+          result[:programme_stats].find { it[:programme_name] == "flu" }
         consent_stats = flu_stats[:consent_stats]
 
-        expect(consent_stats[:total_consents]).to eq(2)
+        expect(consent_stats[:total_consents]).to eq(3)
         expect(consent_stats[:patients_with_response_given]).to eq(1)
         expect(consent_stats[:patients_with_response_refused]).to eq(1)
         expect(consent_stats[:patients_with_no_response][:total]).to eq(1)
@@ -135,7 +135,7 @@ describe Stats::Organisations do
         result = service.call
 
         flu_stats =
-          result[:programme_stats].find { |p| p[:programme_name] == "flu" }
+          result[:programme_stats].find { it[:programme_name] == "flu" }
         vaccination_stats = flu_stats[:vaccination_stats]
 
         expect(vaccination_stats[:coverage_count]).to eq(1)
@@ -155,7 +155,7 @@ describe Stats::Organisations do
         result = service.call
 
         flu_stats =
-          result[:programme_stats].find { |p| p[:programme_name] == "flu" }
+          result[:programme_stats].find { it[:programme_name] == "flu" }
         comms_stats = flu_stats[:comms_stats]
 
         expect(comms_stats[:schools_involved]).to eq(1)
@@ -233,59 +233,18 @@ describe Stats::Organisations do
           academic_year: previous_academic_year
         )
 
-      patient_8 = create(:patient, team: target_team, year_group: 8)
-      patient_9 = create(:patient, team: target_team, year_group: 9)
-      patient_11 = create(:patient, team: target_team2, year_group: 11)
-      old_patient = create(:patient, team: target_team, year_group: 8)
-
-      create(
-        :patient_session,
-        :consent_given_triage_not_needed,
-        :vaccinated,
-        session: session1,
-        patient: patient_8
-      )
-      create(
-        :patient_session,
-        :consent_refused,
-        session: session1,
-        patient: patient_9
-      )
-      create(
-        :patient_session,
-        :consent_no_response,
-        session: session2,
-        patient: patient_11
-      )
-
-      create(
-        :patient_session,
-        :consent_refused,
-        session: old_session,
-        patient: old_patient
-      )
-
-      create(
-        :patient_consent_status,
-        :given,
-        patient: patient_8,
-        programme: programme_flu,
-        academic_year: current_academic_year
-      )
-      create(
-        :patient_consent_status,
-        :refused,
-        patient: patient_9,
-        programme: programme_flu,
-        academic_year: current_academic_year
-      )
-      create(
-        :patient_consent_status,
-        :no_response,
-        patient: patient_11,
-        programme: programme_flu,
-        academic_year: current_academic_year
-      )
+      patient_8 =
+        create(
+          :patient,
+          :consent_given_triage_not_needed,
+          :vaccinated,
+          year_group: 8,
+          session: session1
+        )
+      patient_9 =
+        create(:patient, :consent_refused, year_group: 9, session: session1)
+      create(:patient, :consent_no_response, year_group: 11, session: session2)
+      create(:patient, :consent_refused, year_group: 8, session: old_session)
 
       create(
         :consent_notification,
@@ -304,23 +263,6 @@ describe Stats::Organisations do
         :initial_reminder,
         patient: patient_8,
         session: session1
-      )
-
-      create(
-        :consent,
-        :given,
-        patient: patient_8,
-        programme: programme_flu,
-        academic_year: current_academic_year,
-        team: target_team
-      )
-      create(
-        :consent,
-        :refused,
-        programme: programme_flu,
-        patient: patient_9,
-        academic_year: current_academic_year,
-        team: target_team
       )
     end
   end
