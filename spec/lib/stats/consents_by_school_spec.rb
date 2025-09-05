@@ -57,7 +57,6 @@ describe Stats::ConsentsBySchool do
         expect(result).to have_key(:by_date)
         expect(result).to have_key(:by_days)
         expect(result).to have_key(:sessions)
-        expect(result).to have_key(:by_days_sessions)
       end
 
       it "calculates by_date data correctly" do
@@ -65,8 +64,12 @@ describe Stats::ConsentsBySchool do
         response_date = 8.days.ago.to_date
 
         expect(result[:by_date]).to have_key(response_date)
-        expect(result[:by_date][response_date]).to have_key(school)
-        expect(result[:by_date][response_date][school]).to eq(1)
+        expect(result[:by_date][response_date]).to have_key(
+          [school, consent.programme]
+        )
+        expect(
+          result[:by_date][response_date][[school, consent.programme]]
+        ).to eq(1)
       end
 
       it "calculates by_days data correctly" do
@@ -74,8 +77,12 @@ describe Stats::ConsentsBySchool do
         days_difference = 2 # 10 days ago - 8 days ago
 
         expect(result[:by_days]).to have_key(days_difference)
-        expect(result[:by_days][days_difference]).to have_key(school)
-        expect(result[:by_days][days_difference][school]).to eq(1)
+        expect(result[:by_days][days_difference]).to have_key(
+          [school, consent.programme]
+        )
+        expect(
+          result[:by_days][days_difference][[school, consent.programme]]
+        ).to eq(1)
       end
 
       it "returns sessions with locations" do
@@ -217,9 +224,50 @@ describe Stats::ConsentsBySchool do
         latest_response_date = hpv_consent.responded_at.to_date
         days_difference = 2 # 10 days ago - 8 days ago (earliest consent)
 
-        expect(result[:by_date][earliest_response_date][school]).to eq(1)
-        expect(result[:by_days][days_difference][school]).to eq(1)
+        expect(
+          result[:by_date][earliest_response_date][
+            [school, flu_consent.programme]
+          ]
+        ).to eq(1)
+        expect(
+          result[:by_days][days_difference][[school, flu_consent.programme]]
+        ).to eq(1)
         expect(result[:by_date]).not_to have_key(latest_response_date)
+      end
+    end
+
+    context "when filtering for sessions_with_consents" do
+      let!(:session) do
+        create(
+          :session,
+          team: team,
+          location: school,
+          programmes: [programme_flu],
+          academic_year: academic_year,
+          send_consent_requests_at: 5.days.ago
+        )
+      end
+
+      it "includes sessions with a notify log entry in the academic year" do
+        create(
+          :notify_log_entry,
+          location: school,
+          programme: programme_flu,
+          created_at: academic_year.start_date + 1.day
+        )
+
+        expect(service.send(:sessions_with_consents)).to include(session)
+      end
+
+      it "excludes sessions with only notify log entries outside the academic year" do
+        create(
+          :notify_log_entry,
+          location: school,
+          programme: programme_flu,
+          created_at: academic_year.start_date - 1.day
+        )
+
+        expect(service.send(:sessions_with_consents)).not_to include(session)
       end
     end
   end
