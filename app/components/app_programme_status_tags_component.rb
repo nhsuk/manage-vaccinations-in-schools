@@ -10,8 +10,18 @@ class AppProgrammeStatusTagsComponent < ViewComponent::Base
     safe_join(
       status_by_programme.map do |programme, hash|
         status = hash[:status]
+
         vaccine_methods =
-          (hash[:vaccine_methods] if programme.has_multiple_vaccine_methods?)
+          if programme.has_multiple_vaccine_methods?
+            if outcome == :consent &&
+                 (vaccine_method = hash[:vaccine_methods]&.first)
+              status = :"#{status}_#{vaccine_method}"
+              nil
+            else
+              hash[:vaccine_methods]
+            end
+          end
+
         latest_session_status = hash[:latest_session_status] if status !=
           hash[:latest_session_status]
 
