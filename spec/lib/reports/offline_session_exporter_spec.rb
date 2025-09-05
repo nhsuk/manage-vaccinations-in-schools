@@ -306,7 +306,7 @@ describe Reports::OfflineSessionExporter do
             end
           end
 
-          context "with lots of health answers" do
+          context "with consent" do
             before do
               create(
                 :consent,
@@ -314,6 +314,20 @@ describe Reports::OfflineSessionExporter do
                 patient:,
                 programme:,
                 health_questions_list: ["First question?", "Second question?"]
+              )
+              create(
+                :patient_consent_status,
+                :given,
+                patient:,
+                programme:,
+                academic_year:,
+                vaccine_methods: %w[nasal injection]
+              )
+            end
+
+            it "includes the status" do
+              expect(rows.first["CONSENT_STATUS"]).to eq(
+                expected_consent_status
               )
             end
 
@@ -1028,6 +1042,9 @@ describe Reports::OfflineSessionExporter do
     let(:programme) { create(:programme, :flu) }
     let(:expected_programme) { "Flu" }
     let(:expected_dose_sequence) { 1 }
+    let(:expected_consent_status) do
+      "Consent given for nasal spray and injection"
+    end
 
     include_examples "generates a report"
   end
@@ -1036,6 +1053,7 @@ describe Reports::OfflineSessionExporter do
     let(:programme) { create(:programme, :hpv) }
     let(:expected_programme) { "HPV" }
     let(:expected_dose_sequence) { 1 }
+    let(:expected_consent_status) { "Consent given" }
 
     include_examples "generates a report"
   end
@@ -1044,6 +1062,7 @@ describe Reports::OfflineSessionExporter do
     let(:programme) { create(:programme, :menacwy) }
     let(:expected_programme) { "ACWYX4" }
     let(:expected_dose_sequence) { nil }
+    let(:expected_consent_status) { "Consent given" }
 
     include_examples "generates a report"
   end
@@ -1052,6 +1071,7 @@ describe Reports::OfflineSessionExporter do
     let(:programme) { create(:programme, :td_ipv) }
     let(:expected_programme) { "3-in-1" }
     let(:expected_dose_sequence) { nil }
+    let(:expected_consent_status) { "Consent given" }
 
     include_examples "generates a report"
   end
