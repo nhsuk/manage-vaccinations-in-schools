@@ -2,8 +2,6 @@
 
 class AppPatientVaccinationTableComponent < ViewComponent::Base
   def initialize(patient, academic_year:, programme: nil, show_caption: false)
-    super
-
     @patient = patient
     @academic_year = academic_year
     @programme = programme
@@ -11,6 +9,8 @@ class AppPatientVaccinationTableComponent < ViewComponent::Base
   end
 
   private
+
+  delegate :govuk_table, to: :helpers
 
   attr_reader :patient, :academic_year, :programme, :show_caption
 

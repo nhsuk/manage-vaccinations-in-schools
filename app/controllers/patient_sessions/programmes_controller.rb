@@ -8,11 +8,11 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
   end
 
   def record_already_vaccinated
-    unless @patient_session.can_record_as_already_vaccinated?(
-             programme: @programme
-           )
-      redirect_to session_patient_path and return
-    end
+    authorize VaccinationRecord.new(
+                patient: @patient,
+                session: @session,
+                programme: @programme
+              )
 
     draft_vaccination_record =
       DraftVaccinationRecord.new(request_session: session, current_user:)
@@ -20,7 +20,7 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
     draft_vaccination_record.clear_attributes
     draft_vaccination_record.update!(
       first_active_wizard_step: :confirm,
-      location: nil,
+      location_id: nil,
       location_name: "Unknown",
       outcome: :already_had,
       patient: @patient,

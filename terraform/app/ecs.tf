@@ -102,12 +102,20 @@ module "sidekiq_service" {
     subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
     vpc_id  = aws_vpc.application_vpc.id
   }
-  minimum_replica_count = var.sidekiq_replicas
-  maximum_replica_count = var.sidekiq_replicas
-  cluster_id            = aws_ecs_cluster.cluster.id
-  cluster_name          = aws_ecs_cluster.cluster.name
-  environment           = var.environment
-  server_type           = "sidekiq"
+  minimum_replica_count = var.minimum_sidekiq_replicas
+  maximum_replica_count = var.maximum_sidekiq_replicas
+  autoscaling_policies = tomap({
+    cpu = {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+      target_value           = 60
+      scale_in_cooldown      = 600
+      scale_out_cooldown     = 300
+    }
+  })
+  cluster_id   = aws_ecs_cluster.cluster.id
+  cluster_name = aws_ecs_cluster.cluster.name
+  environment  = var.environment
+  server_type  = "sidekiq"
 
   depends_on = [
     aws_elasticache_replication_group.valkey

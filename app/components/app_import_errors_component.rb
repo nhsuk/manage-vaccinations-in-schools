@@ -36,12 +36,8 @@ class AppImportErrorsComponent < ViewComponent::Base
   ERB
 
   def initialize(errors)
-    super
-
     @errors = errors
   end
 
-  def render?
-    @errors.present?
-  end
+  def render? = @errors.present?
 end

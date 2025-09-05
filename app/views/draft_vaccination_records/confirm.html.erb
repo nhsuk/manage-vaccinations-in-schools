@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(@back_link_path) %>
+  <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
 <% if @draft_vaccination_record.editing? %>
@@ -20,6 +20,7 @@
      delivery_site: wizard_path("delivery"),
      dose_volume: @draft_vaccination_record.wizard_steps.include?(:dose) ? wizard_path("dose") : nil,
      identity: wizard_path("identity"),
+     supplier: wizard_path("supplier"),
      location: @draft_vaccination_record.wizard_steps.include?(:location) ? wizard_path("location") : nil,
      notes: wizard_path("notes"),
      outcome: @draft_vaccination_record.wizard_steps.include?(:outcome) ? wizard_path("outcome") : nil,

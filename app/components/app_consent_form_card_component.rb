@@ -2,8 +2,6 @@
 
 class AppConsentFormCardComponent < ViewComponent::Base
   def initialize(consent_form)
-    super
-
     @consent_form = consent_form
   end
 
@@ -40,6 +38,8 @@ class AppConsentFormCardComponent < ViewComponent::Base
   end
 
   private
+
+  delegate :govuk_summary_list, to: :helpers
 
   def refusal_reason
     {

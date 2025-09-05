@@ -1,0 +1,47 @@
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t("sessions.index.title"), href: sessions_path },
+                                          { text: @session.location.name, href: session_path(@session) },
+                                        ]) %>
+<% end %>
+
+<%= render "sessions/header" %>
+
+<div class="nhsuk-grid-row">
+  <div class="app-grid-column-filters">
+    <%= render AppPatientSearchFormComponent.new(
+          @form,
+          url: session_patient_specific_directions_path(@session),
+          programmes: @session.programmes,
+          patient_specific_direction_statuses: %w[added not_added],
+          year_groups: @session.year_groups,
+        ) %>
+  </div>
+
+  <div class="app-grid-column-results">
+    <%= govuk_inset_text do %>
+      <span class="nhsuk-u-visually-hidden">Information: </span>
+      <p class="nhsuk-body">
+        There are <%= @eligible_for_bulk_psd_count %> children with consent for the nasal flu vaccine
+        who do not require triage and do not yet have a PSD in place.
+      </p>
+
+      <% if policy(PatientSpecificDirection).create? %>
+        <%= link_to new_session_patient_specific_directions_path(@session), class: "nhsuk-action-link" do %>
+          <svg class="nhsuk-icon nhsuk-icon--arrow-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false" aria-hidden="true">
+            <path d="M12 2a10 10 0 0 0-10 9h11.7l-4-4a1 1 0 0 1 1.5-1.4l5.6 5.7a1 1 0 0 1 0 1.4l-5.6 5.7a1 1 0 0 1-1.5 0 1 1 0 0 1 0-1.4l4-4H2A10 10 0 1 0 12 2z" />
+          </svg>
+          <span class="nhsuk-action-link__text">Add new PSDs</span>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= render AppSessionNeedsReviewWarningComponent.new(session: @session) %>
+    <%= render AppSearchResultsComponent.new(@pagy, label: "children", heading: "Review PSDs") do %>
+      <% @patient_sessions.each do |patient_session| %>
+        <%= render AppPatientSessionSearchResultCardComponent.new(patient_session, context: :patient_specific_direction) %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(@back_link_path) %>
+  <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
 <% page_title = "Check and confirm answers" %>
@@ -54,7 +54,7 @@
               row.with_value { @triage.notes }
               row.with_action(text: "Change", href: wizard_path(:triage), visually_hidden_text: "triage notes")
             else
-              row.with_value { @triage.notes.presence || govuk_link_to("Enter triage notes", wizard_path(:triage)) }
+              row.with_value { @triage.notes.presence || link_to("Enter triage notes", wizard_path(:triage)) }
             end
           end
         end %>

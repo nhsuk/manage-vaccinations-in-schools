@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 class AppPatientSessionTriageComponent < ViewComponent::Base
-  def initialize(patient_session, programme:, triage_form: nil)
-    super
-
+  def initialize(patient_session, programme:, current_user:, triage_form: nil)
     @patient_session = patient_session
     @programme = programme
+    @current_user = current_user
     @triage_form = triage_form || default_triage_form
   end
 
@@ -15,8 +14,9 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
 
   private
 
-  attr_reader :patient_session, :programme, :triage_form
+  attr_reader :patient_session, :programme, :current_user, :triage_form
 
+  delegate :govuk_button_link_to, to: :helpers
   delegate :patient, :session, to: :patient_session
   delegate :academic_year, to: :session
 
@@ -51,5 +51,7 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
       )
   end
 
-  def default_triage_form = TriageForm.new(patient_session:, programme:)
+  def default_triage_form
+    TriageForm.new(patient_session:, programme:, current_user:)
+  end
 end

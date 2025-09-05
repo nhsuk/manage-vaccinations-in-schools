@@ -2,11 +2,11 @@
 
 class SessionAttendancePolicy < ApplicationPolicy
   def create?
-    super && !already_vaccinated? && !was_seen_by_nurse?
+    !already_vaccinated? && !was_seen_by_nurse?
   end
 
   def update?
-    super && !already_vaccinated? && !was_seen_by_nurse?
+    !already_vaccinated? && !was_seen_by_nurse?
   end
 
   private

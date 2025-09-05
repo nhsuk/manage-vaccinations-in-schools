@@ -11,8 +11,8 @@ describe VaccinationRecordPolicy do
 
     let(:vaccination_record) { create(:vaccination_record, programme:) }
 
-    context "with an admin" do
-      let(:user) { create(:admin, teams: [team]) }
+    context "with a medical secretary" do
+      let(:user) { create(:medical_secretary, teams: [team]) }
 
       it { should be(false) }
 
@@ -40,6 +40,21 @@ describe VaccinationRecordPolicy do
         it { should be(true) }
       end
     end
+
+    context "with a prescriber" do
+      let(:user) { create(:prescriber, teams: [team]) }
+
+      it { should be(false) }
+
+      context "when vaccination record is managed by the team" do
+        let(:session) { create(:session, team:, programmes: [programme]) }
+        let(:vaccination_record) do
+          create(:vaccination_record, team:, programme:, session:)
+        end
+
+        it { should be(true) }
+      end
+    end
   end
 
   describe "destroy?" do
@@ -47,13 +62,13 @@ describe VaccinationRecordPolicy do
 
     let(:vaccination_record) { create(:vaccination_record) }
 
-    context "with an admin" do
-      let(:user) { build(:admin) }
+    context "with a medical secretary" do
+      let(:user) { build(:medical_secretary) }
 
       it { should be(false) }
 
       context "and superuser access" do
-        let(:user) { build(:admin, :superuser) }
+        let(:user) { build(:medical_secretary, :superuser) }
 
         it { should be(true) }
       end

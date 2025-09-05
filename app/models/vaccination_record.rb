@@ -24,16 +24,18 @@
 #  performed_by_given_name               :string
 #  performed_ods_code                    :string
 #  protocol                              :integer
+#  source                                :integer          not null
 #  uuid                                  :uuid             not null
 #  created_at                            :datetime         not null
 #  updated_at                            :datetime         not null
 #  batch_id                              :bigint
 #  location_id                           :bigint
 #  nhs_immunisations_api_id              :string
-#  patient_id                            :bigint
+#  patient_id                            :bigint           not null
 #  performed_by_user_id                  :bigint
 #  programme_id                          :bigint           not null
 #  session_id                            :bigint
+#  supplied_by_user_id                   :bigint
 #  vaccine_id                            :bigint
 #
 # Indexes
@@ -46,6 +48,7 @@
 #  index_vaccination_records_on_performed_by_user_id      (performed_by_user_id)
 #  index_vaccination_records_on_programme_id              (programme_id)
 #  index_vaccination_records_on_session_id                (session_id)
+#  index_vaccination_records_on_supplied_by_user_id       (supplied_by_user_id)
 #  index_vaccination_records_on_uuid                      (uuid) UNIQUE
 #  index_vaccination_records_on_vaccine_id                (vaccine_id)
 #
@@ -56,6 +59,7 @@
 #  fk_rails_...  (performed_by_user_id => users.id)
 #  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (session_id => sessions.id)
+#  fk_rails_...  (supplied_by_user_id => users.id)
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class VaccinationRecord < ApplicationRecord
@@ -87,8 +91,13 @@ class VaccinationRecord < ApplicationRecord
 
   belongs_to :batch, optional: true
   belongs_to :vaccine, optional: true
-  belongs_to :performed_by_user, class_name: "User", optional: true
   belongs_to :programme
+
+  belongs_to :performed_by_user, class_name: "User", optional: true
+  belongs_to :supplied_by,
+             class_name: "User",
+             foreign_key: :supplied_by_user_id,
+             optional: true
 
   has_and_belongs_to_many :immunisation_imports
 
@@ -108,7 +117,7 @@ class VaccinationRecord < ApplicationRecord
 
   scope :recorded_in_service, -> { where.not(session_id: nil) }
 
-  enum :protocol, { pgd: 0, psd: 1 }, validate: { allow_nil: true }
+  enum :protocol, { pgd: 0, psd: 1, national: 2 }, validate: { allow_nil: true }
 
   enum :delivery_method,
        { intramuscular: 0, subcutaneous: 1, nasal_spray: 2 },
@@ -137,6 +146,16 @@ class VaccinationRecord < ApplicationRecord
          already_had: 4,
          absent_from_session: 6
        },
+       validate: true
+
+  enum :source,
+       {
+         service: 0,
+         historical_upload: 1,
+         nhs_immunisations_api: 2,
+         consent_refusal: 3
+       },
+       prefix: true,
        validate: true
 
   encrypts :notes

@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(edit_nhs_number_patient_path(@patient), name: "edit NHS number") %>
+  <%= govuk_back_link(href: edit_nhs_number_patient_path(@patient)) %>
 <% end %>
 
 <% page_title = "Do you want to merge this record?" %>
@@ -18,8 +18,8 @@
 <%= form_with model: @form, url: edit_nhs_number_merge_patient_path(@patient), method: :put do |f| %>
   <%= f.hidden_field :nhs_number %>
 
-  <div class="app-button-group">
+  <div class="nhsuk-button-group">
     <%= f.govuk_submit "Merge records" %>
-    <%= govuk_link_to "Edit NHS number", edit_nhs_number_patient_path(@patient) %>
+    <%= link_to "Edit NHS number", edit_nhs_number_patient_path(@patient) %>
   </div>
 <% end %>

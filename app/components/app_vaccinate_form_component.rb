@@ -1,27 +1,73 @@
 # frozen_string_literal: true
 
 class AppVaccinateFormComponent < ViewComponent::Base
-  def initialize(vaccinate_form)
-    super
-
-    @vaccinate_form = vaccinate_form
+  def initialize(form)
+    @form = form
   end
 
   private
 
-  attr_reader :vaccinate_form
+  attr_reader :form
 
-  delegate :patient_session, :programme, to: :vaccinate_form
-  delegate :patient, :session, to: :patient_session
-  delegate :academic_year, to: :session
+  delegate :current_user, :patient, :session, :programme, to: :form
+  delegate :academic_year, :team, to: :session
 
   def url
     session_patient_programme_vaccinations_path(session, patient, programme)
   end
 
   def vaccine_methods
-    patient.approved_vaccine_methods(programme:, academic_year:)
+    @vaccine_methods ||=
+      begin
+        approved_vaccine_methods =
+          patient.approved_vaccine_methods(programme:, academic_year:)
+
+        if current_user.is_nurse? || current_user.is_prescriber?
+          return approved_vaccine_methods
+        end
+        return [] unless healthcare_assistant?
+
+        approved_vaccine_methods.select do |vaccine_method|
+          (
+            vaccine_method == "injection" && session.national_protocol_enabled?
+          ) || (vaccine_method == "nasal" && session.pgd_supply_enabled?) ||
+            (
+              session.psd_enabled? &&
+                patient.has_patient_specific_direction?(
+                  academic_year:,
+                  programme:,
+                  team:,
+                  vaccine_method:
+                )
+            )
+        end
+      end
   end
+
+  def show_supplied_by_user_id_outside_vaccine_method?
+    @show_supplied_by_user_id_outside_vaccine_method ||=
+      healthcare_assistant? &&
+        vaccine_methods.none? do |vaccine_method|
+          has_patient_specific_direction?(vaccine_method:)
+        end
+  end
+
+  def show_supplied_by_user_id_inside_vaccine_method?(vaccine_method)
+    return false if show_supplied_by_user_id_outside_vaccine_method?
+
+    healthcare_assistant? && !has_patient_specific_direction?(vaccine_method:)
+  end
+
+  def has_patient_specific_direction?(vaccine_method:)
+    patient.has_patient_specific_direction?(
+      academic_year:,
+      programme:,
+      team:,
+      vaccine_method:
+    )
+  end
+
+  def healthcare_assistant? = current_user.is_healthcare_assistant?
 
   def dose_sequence
     programme.default_dose_sequence

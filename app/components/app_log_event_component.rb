@@ -18,7 +18,7 @@ class AppLogEventComponent < ViewComponent::Base
       </p></blockquote>
     <% end %>
 
-    <p class="nhsuk-body-s nhsuk-u-margin-0 nhsuk-u-secondary-text-color">
+    <p class="nhsuk-body-s nhsuk-u-margin-0 nhsuk-u-secondary-text-colour">
       <% if programmes.any? %>
         <%= render AppProgrammeTagsComponent.new(programmes) %>
         &nbsp;
@@ -40,8 +40,6 @@ class AppLogEventComponent < ViewComponent::Base
     invalidated: false,
     card: false
   )
-    super
-
     @title = title
     @body = body
     @at = at.to_fs(:long)

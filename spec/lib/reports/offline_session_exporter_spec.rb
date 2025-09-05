@@ -92,6 +92,7 @@ describe Reports::OfflineSessionExporter do
               PROGRAMME
               VACCINE_GIVEN
               PERFORMING_PROFESSIONAL_EMAIL
+              SUPPLIER_EMAIL
               BATCH_NUMBER
               BATCH_EXPIRY_DATE
               ANATOMICAL_SITE
@@ -102,6 +103,12 @@ describe Reports::OfflineSessionExporter do
               UUID
             ]
           )
+        end
+
+        context "with PSD enabled" do
+          before { session.update!(psd_enabled: true) }
+
+          it { should include("PSD_STATUS") }
         end
       end
 
@@ -153,6 +160,7 @@ describe Reports::OfflineSessionExporter do
                 "REASON_NOT_VACCINATED" => "",
                 "SCHOOL_NAME" => location.name,
                 "SESSION_ID" => session.id,
+                "SUPPLIER_EMAIL" => "",
                 "TIME_OF_VACCINATION" => "",
                 "TRIAGED_BY" => nil,
                 "TRIAGE_DATE" => nil,
@@ -167,6 +175,42 @@ describe Reports::OfflineSessionExporter do
             expect(rows.first["PERSON_DOB"].to_date).to eq(
               patient.date_of_birth
             )
+          end
+
+          context "with PSD enabled" do
+            before { session.update!(psd_enabled: true) }
+
+            it "adds a PSD status column" do
+              expect(rows.count).to eq(1)
+              expect(rows.first["PSD_STATUS"]).to be_blank
+            end
+
+            context "and the patient has a PSD" do
+              before do
+                create(:patient_specific_direction, programme:, patient:)
+              end
+
+              it "adds a PSD status column" do
+                expect(rows.count).to eq(1)
+                expect(rows.first["PSD_STATUS"]).to eq("PSD added")
+              end
+            end
+
+            context "and the patient has an invalidated PSD" do
+              before do
+                create(
+                  :patient_specific_direction,
+                  :invalidated,
+                  programme:,
+                  patient:
+                )
+              end
+
+              it "adds a blank PSD status column" do
+                expect(rows.count).to eq(1)
+                expect(rows.first["PSD_STATUS"]).to eq("")
+              end
+            end
           end
         end
 
@@ -231,6 +275,7 @@ describe Reports::OfflineSessionExporter do
                 "REASON_NOT_VACCINATED" => "",
                 "SCHOOL_NAME" => location.name,
                 "SESSION_ID" => session.id,
+                "SUPPLIER_EMAIL" => nil,
                 "TIME_OF_VACCINATION" => "12:05:20",
                 "TRIAGED_BY" => nil,
                 "TRIAGE_DATE" => nil,
@@ -249,6 +294,16 @@ describe Reports::OfflineSessionExporter do
             expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
               performed_at.to_date
             )
+          end
+
+          context "with a supplier" do
+            let(:supplied_by) { create(:nurse) }
+
+            before { vaccination_record.update!(supplied_by:) }
+
+            it "includes the supplier" do
+              expect(rows.first["SUPPLIER_EMAIL"]).to eq(supplied_by.email)
+            end
           end
 
           context "with lots of health answers" do
@@ -321,6 +376,7 @@ describe Reports::OfflineSessionExporter do
                 "REASON_NOT_VACCINATED" => "",
                 "SCHOOL_NAME" => "Waterloo Road",
                 "SESSION_ID" => nil,
+                "SUPPLIER_EMAIL" => nil,
                 "TIME_OF_VACCINATION" => "12:05:20",
                 "TRIAGED_BY" => nil,
                 "TRIAGE_DATE" => nil,
@@ -399,6 +455,7 @@ describe Reports::OfflineSessionExporter do
                 "REASON_NOT_VACCINATED" => "",
                 "SCHOOL_NAME" => "",
                 "SESSION_ID" => clinic_session.id,
+                "SUPPLIER_EMAIL" => nil,
                 "TIME_OF_VACCINATION" => "12:05:20",
                 "TRIAGED_BY" => nil,
                 "TRIAGE_DATE" => nil,
@@ -468,6 +525,7 @@ describe Reports::OfflineSessionExporter do
                 "REASON_NOT_VACCINATED" => "",
                 "SCHOOL_NAME" => location.name,
                 "SESSION_ID" => session.id,
+                "SUPPLIER_EMAIL" => "",
                 "TIME_OF_VACCINATION" => "",
                 "TRIAGED_BY" => nil,
                 "TRIAGE_DATE" => nil,
@@ -533,6 +591,7 @@ describe Reports::OfflineSessionExporter do
                 "REASON_NOT_VACCINATED" => "unwell",
                 "SCHOOL_NAME" => location.name,
                 "SESSION_ID" => session.id,
+                "SUPPLIER_EMAIL" => nil,
                 "TIME_OF_VACCINATION" => "12:05:20",
                 "TRIAGED_BY" => nil,
                 "TRIAGE_DATE" => nil,
@@ -701,6 +760,7 @@ describe Reports::OfflineSessionExporter do
               PROGRAMME
               VACCINE_GIVEN
               PERFORMING_PROFESSIONAL_EMAIL
+              SUPPLIER_EMAIL
               BATCH_NUMBER
               BATCH_EXPIRY_DATE
               ANATOMICAL_SITE
@@ -753,6 +813,7 @@ describe Reports::OfflineSessionExporter do
                 "REASON_NOT_VACCINATED" => "",
                 "SCHOOL_NAME" => "",
                 "SESSION_ID" => session.id,
+                "SUPPLIER_EMAIL" => "",
                 "TIME_OF_VACCINATION" => "",
                 "TRIAGED_BY" => nil,
                 "TRIAGE_DATE" => nil,
@@ -837,6 +898,7 @@ describe Reports::OfflineSessionExporter do
                 "REASON_NOT_VACCINATED" => "",
                 "SCHOOL_NAME" => "Waterloo Road",
                 "SESSION_ID" => session.id,
+                "SUPPLIER_EMAIL" => nil,
                 "TIME_OF_VACCINATION" => "12:05:20",
                 "TRIAGED_BY" => nil,
                 "TRIAGE_DATE" => nil,

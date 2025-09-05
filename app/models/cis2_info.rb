@@ -4,10 +4,11 @@ class CIS2Info
   include RequestSessionPersistable
 
   NURSE_ROLE = "S8000:G8000:R8001"
-  ADMIN_ROLE = "S8000:G8001:R8006"
+  MEDICAL_SECRETARY_ROLE = "S8000:G8001:R8006"
 
   SUPERUSER_WORKGROUP = "mavissuperusers"
 
+  INDEPENDENT_PRESCRIBING_ACTIVITY_CODE = "B0420"
   PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE = "B0428"
 
   attribute :organisation_name
@@ -38,8 +39,8 @@ class CIS2Info
   def has_valid_workgroup? =
     organisation&.teams&.exists?(workgroup: workgroups) || false
 
-  def is_admin?
-    role_code == ADMIN_ROLE
+  def is_medical_secretary?
+    role_code == MEDICAL_SECRETARY_ROLE
   end
 
   def is_nurse?
@@ -47,7 +48,12 @@ class CIS2Info
   end
 
   def is_healthcare_assistant?
-    activity_codes.include?(PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE)
+    role_code == MEDICAL_SECRETARY_ROLE &&
+      activity_codes.include?(PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE)
+  end
+
+  def is_prescriber?
+    activity_codes.include?(INDEPENDENT_PRESCRIBING_ACTIVITY_CODE)
   end
 
   def is_superuser?

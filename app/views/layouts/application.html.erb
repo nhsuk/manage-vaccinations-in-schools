@@ -2,14 +2,14 @@
 <html lang="en" class="nhsuk-template">
   <head>
     <meta charset="utf-8">
-    <%= tag :meta, name: "viewport", content: "width=device-width, initial-scale=1" %>
+    <%= tag :meta, name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" %>
     <%= tag :meta, name: "theme-color", content: @theme_colour %>
     <%= tag :meta, name: "format-detection", content: "telephone=no" %>
 
     <title><%= page_title(@service_name) %></title>
 
     <%= stylesheet_link_tag @assets_name, "data-turbo-track": Rails.env.development? ? "" : "reload" %>
-    <%= javascript_include_tag "application", "data-turbo-track": Rails.env.development? ? "" : "reload", defer: true %>
+    <%= javascript_include_tag @assets_name, "data-turbo-track": Rails.env.development? ? "" : "reload", type: "module" %>
 
     <%= icon_link_tag "favicon.ico", rel: "icon", sizes: "48x48" %>
     <%= icon_link_tag "favicon.svg", rel: "icon", sizes: "any", type: "image/svg+xml" %>
@@ -30,17 +30,17 @@
     <script>
       document.body.className += ' js-enabled' +
          ('noModule' in HTMLScriptElement.prototype
-           ? ' govuk-frontend-supported'
+           ? ' nhsuk-frontend-supported'
            : '');
     </script>
 
-    <a class="nhsuk-skip-link" href="#main-content">Skip to main content</a>
+    <%= govuk_skip_link %>
 
     <%= render "layouts/header" %>
 
-    <%= yield :before_main %>
-
     <div class="nhsuk-width-container">
+      <%= yield :before_main %>
+
       <main class="nhsuk-main-wrapper" id="main-content" role="main">
         <%= render(AppFlashMessageComponent.new(flash: flash)) %>
 
@@ -50,33 +50,31 @@
 
     <%= yield :after_main %>
 
-    <footer role="contentinfo">
-      <div class="nhsuk-footer-container">
-        <div class="nhsuk-width-container">
+    <footer class="nhsuk-footer" role="contentinfo">
+      <div class="nhsuk-width-container">
+        <div class="nhsuk-footer__meta">
           <h2 class="nhsuk-u-visually-hidden">Support links</h2>
-          <div class="nhsuk-footer">
-            <ul class="nhsuk-footer__list">
-              <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
-                <%= link_to "Accessibility statement", :accessibility_statement, classes: "nhsuk-footer__list-item-link" %>
+          <ul class="nhsuk-footer__list">
+            <li class="nhsuk-footer__list-item">
+              <%= link_to "Accessibility statement", :accessibility_statement, classes: "nhsuk-footer__list-item-link" %>
+            </li>
+            <% if @privacy_policy_url %>
+              <li class="nhsuk-footer__list-item">
+                <%= link_to "Privacy policy", @privacy_policy_url, classes: "nhsuk-footer__list-item-link" %>
               </li>
-              <% if @privacy_policy_url %>
-                <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
-                  <%= link_to "Privacy policy", @privacy_policy_url, classes: "nhsuk-footer__list-item-link" %>
-                </li>
-              <% end %>
-              <% if @service_guide_url %>
-                <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
-                  <%= link_to "#{t("service.guide.title")} (opens in a new tab)", @service_guide_url, classes: "nhsuk-footer__list-item-link", target: "_blank" %>
-                </li>
-              <% end %>
-              <% if app_version %>
-                <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item nhsuk-u-secondary-text-color">
-                  <%= app_version %>
-                </li>
-              <% end %>
-            </ul>
-            <p class="nhsuk-footer__copyright">&copy; NHS England</p>
-          </div>
+            <% end %>
+            <% if @service_guide_url %>
+              <li class="nhsuk-footer__list-item">
+                <%= link_to "#{t("service.guide.title")} (opens in a new tab)", @service_guide_url, classes: "nhsuk-footer__list-item-link", target: "_blank" %>
+              </li>
+            <% end %>
+          </ul>
+          <% if app_version %>
+            <p class="nhsuk-body-s nhsuk-u-secondary-text-colour">
+              <code><%= app_version %></code>
+            </p>
+          <% end %>
+          <p class="nhsuk-body-s">&copy; NHS England</p>
         </div>
       </div>
     </footer>

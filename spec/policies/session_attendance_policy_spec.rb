@@ -59,6 +59,8 @@ describe SessionAttendancePolicy do
     context "with session attendance and both vaccination records from a different date" do
       let(:session_attendance) { build(:session_attendance, patient_session:) }
 
+      around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
+
       before do
         programmes.each do |programme|
           create(

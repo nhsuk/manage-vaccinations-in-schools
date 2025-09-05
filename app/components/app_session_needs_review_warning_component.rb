@@ -14,7 +14,6 @@ class AppSessionNeedsReviewWarningComponent < ViewComponent::Base
   end
 
   def initialize(session:)
-    super
     @session = session
   end
 

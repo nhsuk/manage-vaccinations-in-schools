@@ -1,24 +1,7 @@
 # frozen_string_literal: true
 
 class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
-  attr_reader :vaccination_record
-
-  delegate :nhs_immunisations_api_synced_at,
-           :sync_status,
-           :recorded_in_service?,
-           :notify_parents,
-           to: :vaccination_record
-
-  SYNC_STATUS_COLOURS = {
-    synced: "green",
-    pending: "blue",
-    failed: "red",
-    cannot_sync: "orange",
-    not_synced: "grey"
-  }.freeze
-
   def initialize(vaccination_record)
-    super
     @vaccination_record = vaccination_record
   end
 
@@ -35,6 +18,23 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
 
   private
 
+  attr_reader :vaccination_record
+
+  delegate :govuk_tag, to: :helpers
+  delegate :nhs_immunisations_api_synced_at,
+           :sync_status,
+           :recorded_in_service?,
+           :notify_parents,
+           to: :vaccination_record
+
+  SYNC_STATUS_COLOURS = {
+    synced: "green",
+    pending: "blue",
+    failed: "red",
+    cannot_sync: "orange",
+    not_synced: "grey"
+  }.freeze
+
   def vaccination_record_sync_status_tag
     text = VaccinationRecord.human_enum_name(:sync_statuses, sync_status)
     colour = SYNC_STATUS_COLOURS.fetch(sync_status)
@@ -45,7 +45,7 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
   def secondary_text(text)
     return unless text
 
-    tag.span(text, class: "nhsuk-u-secondary-text-color")
+    tag.span(text, class: "nhsuk-u-secondary-text-colour")
   end
 
   def additional_information_text
@@ -53,9 +53,7 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
       case sync_status
       when :not_synced
         is_not_a_synced_programme =
-          !vaccination_record.programme.type.in?(
-            NHS::ImmunisationsAPI::PROGRAMME_TYPES
-          )
+          !vaccination_record.programme.can_write_to_immunisations_api?
         if is_not_a_synced_programme
           "Records are currently not synced for this programme"
         elsif notify_parents == false

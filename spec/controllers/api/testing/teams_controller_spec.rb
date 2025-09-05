@@ -71,7 +71,7 @@ describe API::Testing::TeamsController do
 
       create(:school_move, :to_school, patient: Patient.first)
       create(:session_date, session: Session.first)
-      create(:pre_screening, patient_session: PatientSession.first)
+      create(:pre_screening, patient: Patient.first, session: Session.first)
     end
 
     it "deletes associated data" do

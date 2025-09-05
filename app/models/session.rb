@@ -51,6 +51,7 @@ class Session < ApplicationRecord
 
   has_one :organisation, through: :team
   has_one :subteam, through: :location
+  has_many :pre_screenings, through: :session_dates
   has_many :programmes, through: :session_programmes
   has_many :gillick_assessments, through: :session_dates
   has_many :patients, through: :patient_sessions
@@ -197,14 +198,14 @@ class Session < ApplicationRecord
 
   def supports_delegation? = programmes.any?(&:supports_delegation?)
 
-  def pgd_supply_enabled? = supports_delegation?
+  def pgd_supply_enabled? = supports_delegation? && !psd_enabled?
 
   def year_groups
     @year_groups ||= location_programme_year_groups.pluck_year_groups
   end
 
   def vaccine_methods
-    programmes.flat_map(&:vaccine_methods).uniq.sort
+    @vaccine_methods ||= programmes.flat_map(&:vaccine_methods).uniq.sort
   end
 
   def programmes_for(year_group: nil, patient: nil, academic_year: nil)
@@ -268,11 +269,11 @@ class Session < ApplicationRecord
     end
   end
 
-  def send_consent_reminders_at
-    return nil if dates.empty? || days_before_consent_reminders.nil?
+  def next_reminder_dates
+    return [] if days_before_consent_reminders.nil?
 
-    reminder_dates = dates.map { _1 - days_before_consent_reminders.days }
-    reminder_dates.find(&:future?) || reminder_dates.last
+    reminder_dates = dates.map { it - days_before_consent_reminders.days }
+    reminder_dates.select(&:future?)
   end
 
   def open_consent_at = send_consent_requests_at
@@ -293,6 +294,15 @@ class Session < ApplicationRecord
 
   def open_for_consent?
     close_consent_at&.today? || close_consent_at&.future? || false
+  end
+
+  def next_reminder_date = next_reminder_dates.first
+
+  def patients_with_no_consent_response_count
+    patient_sessions.has_consent_status(
+      "no_response",
+      programme: programmes
+    ).count
   end
 
   private

@@ -16,10 +16,9 @@
 #
 # Indexes
 #
-#  index_school_moves_on_patient_id_and_home_educated_and_team_id  (patient_id,home_educated,team_id) UNIQUE
-#  index_school_moves_on_patient_id_and_school_id                  (patient_id,school_id) UNIQUE
-#  index_school_moves_on_school_id                                 (school_id)
-#  index_school_moves_on_team_id                                   (team_id)
+#  index_school_moves_on_patient_id  (patient_id) UNIQUE
+#  index_school_moves_on_school_id   (school_id)
+#  index_school_moves_on_team_id     (team_id)
 #
 # Foreign Keys
 #
@@ -155,15 +154,10 @@ describe SchoolMove do
     end
 
     shared_examples "destroys the school move" do
-      it "destroys the school move and any others" do
-        other_school_move = create(:school_move, :to_school, patient:)
-
+      it "destroys the school move" do
         expect(school_move).to be_persisted
-        expect { confirm! }.to change(described_class, :count).by(-2)
+        expect { confirm! }.to change(described_class, :count).by(-1)
         expect { school_move.reload }.to raise_error(
-          ActiveRecord::RecordNotFound
-        )
-        expect { other_school_move.reload }.to raise_error(
           ActiveRecord::RecordNotFound
         )
       end

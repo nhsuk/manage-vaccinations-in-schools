@@ -14,6 +14,8 @@ Rails.application.routes.draw do
           }
   end
 
+  get "/logout", to: "users/logout#show"
+
   if Settings.cis2.enabled
     devise_for :users,
                module: :users,
@@ -211,10 +213,14 @@ Rails.application.routes.draw do
     get "download", on: :member
   end
 
-  resources :sessions, only: %i[edit index show], param: :slug do
+  resources :sessions, only: %i[index show], param: :slug do
     resource :patients, only: :show, controller: "sessions/patients"
     resource :consent, only: :show, controller: "sessions/consent"
     resource :triage, only: :show, controller: "sessions/triage"
+    resource :patient_specific_directions,
+             path: "patient-specific-directions",
+             only: %i[show new create],
+             controller: "sessions/patient_specific_directions"
     resource :register, only: :show, controller: "sessions/register" do
       post ":patient_id/:status", as: :create, action: :create
     end
@@ -225,41 +231,39 @@ Rails.application.routes.draw do
       post "batch/:programme_type/:vaccine_method", action: :update_batch
     end
 
+    resource :edit, only: :show, controller: "sessions/edit" do
+      get "programmes"
+      put "programmes", action: :update_programmes
+
+      get "send-consent-requests-at"
+      put "send-consent-requests-at", action: :update_send_consent_requests_at
+
+      get "send-invitations-at"
+      put "send-invitations-at", action: :update_send_invitations_at
+
+      get "weeks-before-consent-reminders"
+      put "weeks-before-consent-reminders",
+          action: :update_weeks_before_consent_reminders
+
+      get "register-attendance"
+      put "register-attendance", action: :update_register_attendance
+
+      get "delegation"
+      put "delegation", action: :update_delegation
+    end
+
     resource :invite_to_clinic,
              path: "invite-to-clinic",
              only: %i[edit update],
              controller: "sessions/invite_to_clinic"
 
+    resource :manage_consent_reminders,
+             path: "manage-consent-reminders",
+             only: %i[show create],
+             controller: "sessions/manage_consent_reminders"
+
     member do
       get "import"
-
-      get "edit/programmes",
-          controller: "sessions/edit",
-          action: "edit_programmes"
-      put "edit/programmes",
-          controller: "sessions/edit",
-          action: "update_programmes"
-
-      get "edit/send-consent-requests-at",
-          controller: "sessions/edit",
-          action: "edit_send_consent_requests_at"
-      put "edit/send-consent-requests-at",
-          controller: "sessions/edit",
-          action: "update_send_consent_requests_at"
-
-      get "edit/send-invitations-at",
-          controller: "sessions/edit",
-          action: "edit_send_invitations_at"
-      put "edit/send-invitations-at",
-          controller: "sessions/edit",
-          action: "update_send_invitations_at"
-
-      get "edit/weeks-before-consent-reminders",
-          controller: "sessions/edit",
-          action: "edit_weeks_before_consent_reminders"
-      put "edit/weeks-before-consent-reminders",
-          controller: "sessions/edit",
-          action: "update_weeks_before_consent_reminders"
 
       constraints -> { Flipper.enabled?(:dev_tools) } do
         put "make-in-progress", to: "sessions#make_in_progress"

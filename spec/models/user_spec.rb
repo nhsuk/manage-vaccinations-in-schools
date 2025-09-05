@@ -57,10 +57,10 @@ describe User do
   describe "#role_description" do
     subject { user.role_description }
 
-    context "when the user is an admin" do
-      let(:user) { build(:admin) }
+    context "when the user is a medical secretary" do
+      let(:user) { build(:medical_secretary) }
 
-      it { should eq("Administrator") }
+      it { should eq("Medical secretary") }
     end
 
     context "when the user is a nurse" do
@@ -70,24 +70,24 @@ describe User do
     end
 
     context "when the user is a superuser" do
-      let(:user) { build(:admin, :superuser) }
+      let(:user) { build(:medical_secretary, :superuser) }
 
-      it { should eq("Administrator (Superuser)") }
+      it { should eq("Medical secretary (Superuser)") }
     end
   end
 
-  describe "#is_admin?" do
-    subject { user.is_admin? }
+  describe "#is_medical_secretary?" do
+    subject { user.is_medical_secretary? }
 
     context "cis2 is enabled", cis2: :enabled do
-      context "when the user is an admin" do
-        let(:user) { build(:admin) }
+      context "when the user is a medical secretary" do
+        let(:user) { build(:medical_secretary) }
 
         it { should be(true) }
       end
 
       context "when the user is an admin and superuser" do
-        let(:user) { build(:admin, :superuser) }
+        let(:user) { build(:medical_secretary, :superuser) }
 
         it { should be(true) }
       end
@@ -100,14 +100,14 @@ describe User do
     end
 
     context "cis2 is disabled", cis2: :disabled do
-      context "when the user is an admin" do
-        let(:user) { build(:admin) }
+      context "when the user is a medical secretary" do
+        let(:user) { build(:medical_secretary) }
 
         it { should be(true) }
       end
 
       context "when the user is an admin and superuser" do
-        let(:user) { build(:admin, :superuser) }
+        let(:user) { build(:medical_secretary, :superuser) }
 
         it { should be(false) }
       end
@@ -130,8 +130,8 @@ describe User do
         it { should be(true) }
       end
 
-      context "when the user is admin staff" do
-        let(:user) { build(:admin) }
+      context "when the user is a medical secretary" do
+        let(:user) { build(:medical_secretary) }
 
         it { should be(false) }
       end
@@ -144,8 +144,8 @@ describe User do
         it { should be(true) }
       end
 
-      context "when the user is admin staff" do
-        let(:user) { build(:admin) }
+      context "when the user is a medical secretary" do
+        let(:user) { build(:medical_secretary) }
 
         it { should be(false) }
       end
@@ -162,8 +162,8 @@ describe User do
         it { should be(false) }
       end
 
-      context "when the user is admin staff" do
-        let(:user) { build(:admin) }
+      context "when the user is a medical secretary" do
+        let(:user) { build(:medical_secretary) }
 
         it { should be(false) }
       end
@@ -182,8 +182,8 @@ describe User do
         it { should be(false) }
       end
 
-      context "when the user is admin staff" do
-        let(:user) { build(:admin) }
+      context "when the user is a medical secretary" do
+        let(:user) { build(:medical_secretary) }
 
         it { should be(false) }
       end
@@ -196,23 +196,67 @@ describe User do
     end
   end
 
+  describe "#is_prescriber?" do
+    subject { user.is_prescriber? }
+
+    context "cis2 is enabled", cis2: :enabled do
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be(false) }
+      end
+
+      context "when the user is a medical secretary" do
+        let(:user) { build(:medical_secretary) }
+
+        it { should be(false) }
+      end
+
+      context "when the user is a prescriber" do
+        let(:user) { build(:prescriber) }
+
+        it { should be(true) }
+      end
+    end
+
+    context "cis2 is disabled", cis2: :disabled do
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be(false) }
+      end
+
+      context "when the user is a medical secretary" do
+        let(:user) { build(:medical_secretary) }
+
+        it { should be(false) }
+      end
+
+      context "when the user is a prescriber" do
+        let(:user) { build(:prescriber) }
+
+        it { should be(true) }
+      end
+    end
+  end
+
   describe "#is_superuser?" do
     subject { user.is_superuser? }
 
     context "cis2 is enabled", cis2: :enabled do
-      context "when the user is an admin" do
-        let(:user) { build(:admin) }
+      context "when the user is a medical secretary" do
+        let(:user) { build(:medical_secretary) }
 
         it { should be(false) }
 
         context "with superuser access" do
-          let(:user) { build(:admin, :superuser) }
+          let(:user) { build(:medical_secretary, :superuser) }
 
           it { should be(true) }
         end
 
         context "without workgroups" do
-          let(:user) { build(:admin, role_workgroups: []) }
+          let(:user) { build(:medical_secretary, role_workgroups: []) }
 
           it { should be(false) }
         end
@@ -238,13 +282,13 @@ describe User do
     end
 
     context "cis2 is disabled", cis2: :disabled do
-      context "when the user is an admin" do
-        let(:user) { build(:admin) }
+      context "when the user is a medical secretary" do
+        let(:user) { build(:medical_secretary) }
 
         it { should be(false) }
 
         context "with superuser access" do
-          let(:user) { build(:admin, :superuser) }
+          let(:user) { build(:medical_secretary, :superuser) }
 
           it { should be(true) }
         end

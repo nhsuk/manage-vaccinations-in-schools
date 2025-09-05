@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(backlink_path) %>
+  <%= govuk_back_link(href: backlink_path) %>
 <% end %>
 
 <%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
@@ -15,18 +15,18 @@
 
   <%= f.govuk_select :school_id,
                      label: { text: "Select a school" },
-                     data: { module: "autocomplete" } do %>
-        <%= tag.option "", value: "" %>
-        <% @consent_form.eligible_schools.each do |school| %>
-          <% is_duplicate = @consent_form.eligible_schools.count { |s| s.name == school.name } > 1 %>
-          <%= tag.option location_display_name(school, show_postcode: is_duplicate),
-                         value: school.id,
-                         selected: school.id == @consent_form.school_id,
-                         data: { hint: school.address_parts.join(", ") } %>
-        <% end %>
-        <%= tag.option("Home-schooled",
-                       value: ParentInterface::ConsentForms::EditController::HOME_EDUCATED_SCHOOL_ID,
-                       selected: @consent_form.education_setting_home?) %>
+                     data: { module: "app-autocomplete" } do %>
+    <%= tag.option "", value: "" %>
+    <% @consent_form.eligible_schools.each do |school| %>
+      <% is_duplicate = @consent_form.eligible_schools.count { |s| s.name == school.name } > 1 %>
+      <%= tag.option location_display_name(school, show_postcode: is_duplicate),
+                     value: school.id,
+                     selected: school.id == @consent_form.school_id,
+                     data: { hint: school.address_parts.join(", ") } %>
+    <% end %>
+    <%= tag.option("Home-schooled",
+                   value: ParentInterface::ConsentForms::EditController::HOME_EDUCATED_SCHOOL_ID,
+                   selected: @consent_form.education_setting_home?) %>
   <% end %>
 
   <%= f.govuk_submit "Continue" %>

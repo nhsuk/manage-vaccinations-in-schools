@@ -1,12 +1,20 @@
-<%= form_with model: triage_form, url:, method:, builder: do |f| %>
+<%= form_with model: form, url:, method:, builder: do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
     <%= f.govuk_radio_buttons_fieldset :status_and_vaccine_method, **fieldset_options do %>
-      <% triage_form.safe_to_vaccinate_options.each do |option| %>
-        <%= f.govuk_radio_button :status_and_vaccine_method, option %>
+      <% form.safe_to_vaccinate_options.each do |option| %>
+        <%= f.govuk_radio_button :status_and_vaccine_method, option do %>
+        <% if form.show_add_patient_specific_direction?(option) %>
+          <%= f.govuk_radio_buttons_fieldset :add_patient_specific_direction,
+                                             legend: { text: "Do you want to add a PSD?", size: "s" } do %>
+            <%= f.govuk_radio_button :add_patient_specific_direction, "true", label: { text: "Yes" } %>
+            <%= f.govuk_radio_button :add_patient_specific_direction, "false", label: { text: "No" } %>
+          <% end %>
+        <% end %>
+      <% end %>
       <% end %>
       <%= f.govuk_radio_divider %>
-      <% triage_form.other_options.each do |option| %>
+      <% form.other_options.each do |option| %>
         <%= f.govuk_radio_button :status_and_vaccine_method, option %>
       <% end %>
     <% end %>

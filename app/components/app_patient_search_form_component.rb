@@ -14,9 +14,9 @@ class AppPatientSearchFormComponent < ViewComponent::Base
                                  class: "app-search-input__input" %>
 
           <button class="nhsuk-button app-button--icon app-search-input__submit" data-module="nhsuk-button" type="submit">
-            <svg class="nhsuk-icon nhsuk-icon__search" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false" role="img">
+            <svg class="nhsuk-icon nhsuk-icon--search" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false" role="img" aria-label="Search">
               <title>Search</title>
-              <path d="M19.71 18.29l-4.11-4.1a7 7 0 1 0-1.41 1.41l4.1 4.11a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42zM5 10a5 5 0 1 1 5 5 5 5 0 0 1-5-5z" fill="currentColor"></path>
+              <path d="m20.7 19.3-4.1-4.1a7 7 0 1 0-1.4 1.4l4 4.1a1 1 0 0 0 1.5 0c.4-.4.4-1 0-1.4ZM6 11a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z"/>
             </svg>
           </button>
         </div>
@@ -79,6 +79,19 @@ class AppPatientSearchFormComponent < ViewComponent::Base
             <% end %>
           <% end %>
         <% end %>
+        
+        <% if patient_specific_direction_statuses.any? %>
+          <%= f.govuk_radio_buttons_fieldset :patient_specific_direction_status, legend: { text: "PSD status", size: "s" } do %>
+            <%= f.govuk_radio_button :patient_specific_direction_status, "", checked: form.patient_specific_direction_status.blank?, label: { text: "Any" } %>
+
+            <% patient_specific_direction_statuses.each do |status| %>
+              <%= f.govuk_radio_button :patient_specific_direction_status,
+                                       status,
+                                       checked: form.patient_specific_direction_status == status,
+                                       label: { text: t(status, scope: %i[status patient_specific_direction label]) } %>
+            <% end %>
+          <% end %>
+        <% end %>
 
         <% if vaccine_methods.any? %>
           <%= f.govuk_radio_buttons_fieldset :vaccine_method, legend: { text: "Vaccination method", size: "s" } do %>
@@ -99,7 +112,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               <%= f.govuk_check_box :year_groups,
                                     year_group,
                                     checked: form.year_groups&.include?(year_group),
-                                    label: { text: helpers.format_year_group(year_group) } %>
+                                    label: { text: format_year_group(year_group) } %>
             <% end %>
           <% end %>
         <% end %>
@@ -157,7 +170,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
           <% end %>
 
           <% if show_buttons_in_details? %>
-            <div class="app-button-group">
+            <div class="nhsuk-button-group">
               <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
               <%= govuk_button_link_to "Clear filters", clear_filters_path, secondary: true, class: "app-button--small" %>
             </div>
@@ -165,7 +178,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
         <% end %>
 
         <% unless show_buttons_in_details? %>
-          <div class="app-button-group">
+          <div class="nhsuk-button-group">
             <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
             <%= govuk_button_link_to "Clear filters", clear_filters_path, secondary: true, class: "app-button--small" %>
           </div>
@@ -182,13 +195,12 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     register_statuses: [],
     triage_statuses: [],
     vaccination_statuses: [],
+    patient_specific_direction_statuses: [],
     vaccine_methods: [],
     year_groups: [],
     heading_level: 3,
     show_aged_out_of_programmes: false
   )
-    super
-
     @form = form
     @url = url
 
@@ -197,6 +209,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     @register_statuses = register_statuses
     @triage_statuses = triage_statuses
     @vaccination_statuses = vaccination_statuses
+    @patient_specific_direction_statuses = patient_specific_direction_statuses
     @vaccine_methods = vaccine_methods
     @year_groups = year_groups
     @heading_level = heading_level
@@ -212,10 +225,16 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               :register_statuses,
               :triage_statuses,
               :vaccination_statuses,
+              :patient_specific_direction_statuses,
               :vaccine_methods,
               :year_groups,
               :heading_level,
               :show_aged_out_of_programmes
+
+  delegate :format_year_group,
+           :govuk_button_link_to,
+           :govuk_details,
+           to: :helpers
 
   def open_details?
     @form.date_of_birth_year.present? || @form.date_of_birth_month.present? ||

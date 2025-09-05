@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(edit_patient_path(@patient), name: "patient") %>
+  <%= govuk_back_link(href: edit_patient_path(@patient)) %>
 <% end %>
 
 <%= form_with model: @parent_relationship, url: patient_parent_relationship_path(@patient, @parent), method: :put do |f| %>

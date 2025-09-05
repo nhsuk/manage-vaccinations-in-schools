@@ -20,8 +20,6 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
   ERB
 
   def initialize(consent_form:, patient:)
-    super
-
     @consent_form = consent_form
     @patient = patient
   end
@@ -69,7 +67,7 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
         value: {
           text:
             highlight(
-              helpers.format_address_multi_line(consent_form),
+              format_address_multi_line(consent_form),
               unless: address_match?
             )
         }
@@ -79,11 +77,7 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
           text: "School"
         },
         value: {
-          text:
-            highlight(
-              helpers.patient_school(consent_form),
-              unless: school_match?
-            )
+          text: highlight(patient_school(consent_form), unless: school_match?)
         }
       },
       {
@@ -92,9 +86,7 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
         },
         value: {
           text:
-            helpers.format_parent_with_relationship(
-              consent_form.parent_relationship
-            )
+            format_parent_with_relationship(consent_form.parent_relationship)
         }
       }
     ].compact
@@ -126,26 +118,12 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
           text: "Address"
         },
         value: {
-          text: helpers.format_address_multi_line(patient)
+          text: format_address_multi_line(patient)
         }
       },
-      {
-        key: {
-          text: "School"
-        },
-        value: {
-          text: helpers.patient_school(patient)
-        }
-      },
+      { key: { text: "School" }, value: { text: patient_school(patient) } },
       if patient.parent_relationships.any?
-        {
-          key: {
-            text: "Parents"
-          },
-          value: {
-            text: helpers.patient_parents(patient)
-          }
-        }
+        { key: { text: "Parents" }, value: { text: patient_parents(patient) } }
       end
     ].compact
   end
@@ -153,6 +131,13 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
   private
 
   attr_reader :heading, :consent_form, :patient
+
+  delegate :format_address_multi_line,
+           :format_parent_with_relationship,
+           :govuk_summary_list,
+           :patient_parents,
+           :patient_school,
+           to: :helpers
 
   def include_preferred_full_name_row?
     consent_form.has_preferred_name? || patient.has_preferred_name?

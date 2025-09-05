@@ -19,8 +19,6 @@ class AppWarningCalloutComponent < ViewComponent::Base
   ERB
 
   def initialize(heading:, description: nil)
-    super
-
     @heading = heading
     @description = description
   end

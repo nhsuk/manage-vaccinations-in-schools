@@ -2,8 +2,6 @@
 
 class AppProgrammeTagsComponent < ViewComponent::Base
   def initialize(programmes)
-    super
-
     @programmes = programmes
   end
 

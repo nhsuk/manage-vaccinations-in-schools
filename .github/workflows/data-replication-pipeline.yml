@@ -67,7 +67,7 @@ jobs:
         uses: actions/checkout@v5
       - name: Assume DB Snapshot role
         if: inputs.take_db_snapshot
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.db_snapshot_role }}
           aws-region: eu-west-2
@@ -81,7 +81,7 @@ jobs:
           aws rds wait db-cluster-snapshot-available --db-cluster-snapshot-identifier $snapshot_identifier
           echo "New snapshot is now available"
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
@@ -121,7 +121,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
@@ -160,7 +160,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
@@ -214,7 +214,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2

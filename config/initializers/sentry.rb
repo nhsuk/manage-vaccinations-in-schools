@@ -54,7 +54,7 @@ Sentry.init do |config|
       if !Rails.env.production? &&
            hint[:exception].is_a?(Notifications::Client::BadRequestError) &&
            hint[:exception].message.include?(
-             "Can’t send to this recipient using a team-only API key"
+             NotifyDeliveryJob::TEAM_ONLY_API_KEY_MESSAGE
            )
         nil
       else

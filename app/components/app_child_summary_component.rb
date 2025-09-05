@@ -9,8 +9,6 @@ class AppChildSummaryComponent < ViewComponent::Base
     change_links: {},
     remove_links: {}
   )
-    super
-
     @child = child
     @current_team = current_team
     @show_parents = show_parents
@@ -97,7 +95,7 @@ class AppChildSummaryComponent < ViewComponent::Base
           summary_list.with_row do |row|
             row.with_key { parent_relationship.ordinal_label.upcase_first }
             row.with_value do
-              helpers.format_parent_with_relationship(parent_relationship)
+              format_parent_with_relationship(parent_relationship)
             end
 
             if (
@@ -129,6 +127,15 @@ class AppChildSummaryComponent < ViewComponent::Base
 
   private
 
+  delegate :format_address_multi_line,
+           :format_parent_with_relationship,
+           :govuk_summary_list,
+           :patient_date_of_birth,
+           :patient_nhs_number,
+           :patient_school,
+           :patient_year_group,
+           to: :helpers
+
   def academic_year = AcademicYear.pending
 
   def archive_reason
@@ -139,7 +146,7 @@ class AppChildSummaryComponent < ViewComponent::Base
   end
 
   def format_nhs_number
-    highlight_if(helpers.patient_nhs_number(@child), @child.nhs_number_changed?)
+    highlight_if(patient_nhs_number(@child), @child.nhs_number_changed?)
   end
 
   def format_archive_reason
@@ -167,10 +174,7 @@ class AppChildSummaryComponent < ViewComponent::Base
   end
 
   def format_date_of_birth
-    highlight_if(
-      helpers.patient_date_of_birth(@child),
-      @child.date_of_birth_changed?
-    )
+    highlight_if(patient_date_of_birth(@child), @child.date_of_birth_changed?)
   end
 
   def format_date_of_death
@@ -185,22 +189,19 @@ class AppChildSummaryComponent < ViewComponent::Base
   end
 
   def format_address
-    highlight_if(
-      helpers.format_address_multi_line(@child),
-      @child.address_changed?
-    )
+    highlight_if(format_address_multi_line(@child), @child.address_changed?)
   end
 
   def format_school
     highlight_if(
-      helpers.patient_school(@child),
+      patient_school(@child),
       @child.school_id_changed? || @child.home_educated_changed?
     )
   end
 
   def format_year_group
     highlight_if(
-      helpers.patient_year_group(@child, academic_year:),
+      patient_year_group(@child, academic_year:),
       @child.year_group_changed? || @child.registration_changed?
     )
   end

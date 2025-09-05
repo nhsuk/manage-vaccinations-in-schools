@@ -120,17 +120,19 @@ module CIS2AuthHelper
     ods_code = organisation.ods_code
 
     role_code = {
-      admin: CIS2Info::ADMIN_ROLE,
-      healthcare_assistant: CIS2Info::ADMIN_ROLE,
-      nurse: CIS2Info::NURSE_ROLE
+      healthcare_assistant: CIS2Info::MEDICAL_SECRETARY_ROLE,
+      medical_secretary: CIS2Info::MEDICAL_SECRETARY_ROLE,
+      nurse: CIS2Info::NURSE_ROLE,
+      prescriber: nil
     }.fetch(role)
 
     activity_codes = {
-      admin: [],
       healthcare_assistant: [
         CIS2Info::PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE
       ],
-      nurse: []
+      medical_secretary: [],
+      nurse: [],
+      prescriber: [CIS2Info::INDEPENDENT_PRESCRIBING_ACTIVITY_CODE]
     }.fetch(role)
 
     workgroups = user.teams.where(organisation:).pluck(:workgroup)

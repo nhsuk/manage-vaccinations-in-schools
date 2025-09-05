@@ -3,7 +3,7 @@
 describe "User CIS2 authentication", :cis2 do
   before { given_a_test_team_is_setup_in_mavis_and_cis2 }
 
-  scenario "as an admin" do
+  scenario "as a medical secretary" do
     given_an_admin_user_is_mocked
 
     when_i_go_to_the_start_page
@@ -62,7 +62,7 @@ describe "User CIS2 authentication", :cis2 do
       uid: @user.uid,
       given_name: "Admin",
       family_name: "Test",
-      role_code: CIS2Info::ADMIN_ROLE,
+      role_code: CIS2Info::MEDICAL_SECRETARY_ROLE,
       org_code: @team.organisation.ods_code,
       org_name: @team.name,
       workgroups: [@team.workgroup]

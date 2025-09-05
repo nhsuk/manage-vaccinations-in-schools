@@ -175,17 +175,13 @@ class PatientChangeset < ApplicationRecord
              patient.home_educated != home_educated ||
              patient.not_in_team?(team:, academic_year:) ||
              patient.archived?(team:)
-          school_move =
-            if school
-              SchoolMove.find_or_initialize_by(patient:, school:)
-            else
-              SchoolMove.find_or_initialize_by(patient:, home_educated:, team:)
-            end
-
-          school_move.tap do
-            it.academic_year = academic_year
-            it.source = school_move_source
-          end
+          school_move = SchoolMove.find_or_initialize_by(patient:)
+          school_move.assign_from(school:, home_educated:, team:)
+          school_move.assign_attributes(
+            academic_year:,
+            source: school_move_source
+          )
+          school_move
         end
       end
   end

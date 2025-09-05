@@ -70,6 +70,7 @@ class Patient < ApplicationRecord
   has_many :parent_relationships, -> { order(:created_at) }
   has_many :patient_sessions
   has_many :pds_search_results
+  has_many :pre_screenings
   has_many :school_move_log_entries
   has_many :school_moves
   has_many :session_notifications
@@ -77,11 +78,11 @@ class Patient < ApplicationRecord
   has_many :triages
   has_many :vaccination_records, -> { kept }
   has_many :vaccination_statuses
+  has_many :patient_specific_directions
 
   has_many :gillick_assessments
   has_many :parents, through: :parent_relationships
   has_many :patient_specific_directions
-  has_many :pre_screenings, through: :patient_sessions
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
   has_many :teams, -> { distinct }, through: :sessions
@@ -216,14 +217,20 @@ class Patient < ApplicationRecord
         end
 
   scope :has_consent_status,
-        ->(status, programme:, academic_year:) do
-          where(
-            Patient::ConsentStatus
-              .where("patient_id = patients.id")
-              .where(status:, programme:, academic_year:)
-              .arel
-              .exists
-          )
+        ->(status, programme:, academic_year:, vaccine_method: nil) do
+          consent_status_scope =
+            Patient::ConsentStatus.where("patient_id = patients.id").where(
+              status:,
+              programme:,
+              academic_year:
+            )
+
+          if vaccine_method
+            consent_status_scope =
+              consent_status_scope.has_vaccine_method(vaccine_method)
+          end
+
+          where(consent_status_scope.arel.exists)
         end
 
   scope :has_triage_status,
@@ -371,6 +378,10 @@ class Patient < ApplicationRecord
 
   def vaccination_status(programme:, academic_year:)
     patient_status(vaccination_statuses, programme:, academic_year:)
+  end
+
+  def has_patient_specific_direction?(team:, **kwargs)
+    patient_specific_directions.not_invalidated.where(team:, **kwargs).exists?
   end
 
   def consent_given_and_safe_to_vaccinate?(

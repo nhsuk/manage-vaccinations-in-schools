@@ -2,11 +2,11 @@
 
 class TriagePolicy < ApplicationPolicy
   def create?
-    user.is_nurse?
+    user.is_nurse? || user.is_prescriber?
   end
 
   def update?
-    user.is_nurse?
+    user.is_nurse? || user.is_prescriber?
   end
 
   class Scope < ApplicationPolicy::Scope

@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(programme_overview_path(@programme, @academic_year), name: @programme.name) %>
+  <%= govuk_back_link(href: programme_overview_path(@programme, @academic_year)) %>
 <% end %>
 
 <%= form_with model: @vaccination_report, url: wizard_path, method: :put do |f| %>

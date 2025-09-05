@@ -2,8 +2,6 @@
 
 class AppSessionDetailsSummaryComponent < ViewComponent::Base
   def initialize(session)
-    super
-
     @session = session
   end
 
@@ -15,6 +13,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
 
   attr_reader :session
 
+  delegate :govuk_summary_list, to: :helpers
   delegate :programmes, to: :session
 
   def patient_sessions
@@ -27,23 +26,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
   def cohort_row
     count = patient_sessions.count
 
-    actions =
-      if @session.school?
-        href = import_session_path(session)
-        [{ text: "Import class lists", href: }]
-      else
-        []
-      end
-
-    {
-      key: {
-        text: "Cohort"
-      },
-      value: {
-        text: I18n.t("children", count:)
-      },
-      actions:
-    }
+    { key: { text: "Cohort" }, value: { text: I18n.t("children", count:) } }
   end
 
   def consent_refused_row

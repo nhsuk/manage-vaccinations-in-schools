@@ -17,6 +17,7 @@ class DraftVaccinationRecordsController < ApplicationController
   before_action :validate_params, only: :update
   before_action :set_batches, if: -> { current_step == :batch }
   before_action :set_locations, if: -> { current_step == :location }
+  before_action :set_supplied_by_users, if: -> { current_step == :supplier }
   before_action :set_back_link_path
 
   after_action :verify_authorized
@@ -84,7 +85,7 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def handle_outcome
     if !@draft_vaccination_record.administered? &&
-         @draft_vaccination_record.location_name.present?
+         @draft_vaccination_record.location_id.present?
       # If not administered and location is set, we can skip to confirm.
       # Otherwise, we need to get the location information from the user.
       jump_to("confirm")
@@ -110,6 +111,8 @@ class DraftVaccinationRecordsController < ApplicationController
         @draft_vaccination_record.performed_at.to_date
 
     @draft_vaccination_record.write_to!(@vaccination_record)
+
+    @vaccination_record.source = "service"
 
     should_notify_parents =
       @vaccination_record.confirmation_sent? &&
@@ -163,9 +166,10 @@ class DraftVaccinationRecordsController < ApplicationController
         identity_check_confirmed_by_other_name
         identity_check_confirmed_by_other_relationship
       ],
-      location: %i[location_name],
+      location: %i[location_id],
       notes: %i[notes],
-      outcome: %i[outcome]
+      outcome: %i[outcome],
+      supplier: %i[supplied_by_user_id]
     }.fetch(current_step)
 
     params
@@ -193,7 +197,12 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def set_vaccination_record
     @vaccination_record =
-      @draft_vaccination_record.vaccination_record || VaccinationRecord.new
+      @draft_vaccination_record.vaccination_record ||
+        VaccinationRecord.new(
+          patient: @patient,
+          session: @session,
+          programme: @programme
+        )
   end
 
   def set_steps
@@ -224,6 +233,10 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def set_locations
     @locations = policy_scope(Location).community_clinic
+  end
+
+  def set_supplied_by_users
+    @supplied_by_users = current_team.users.show_in_suppliers
   end
 
   def set_back_link_path

@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(@back_link_path) %>
+  <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
 <% title = "Where was the #{@programme.name_in_sentence} vaccination offered?" %>
@@ -8,13 +8,13 @@
 <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_radio_buttons_fieldset :location_name,
+  <%= f.govuk_radio_buttons_fieldset :location_id,
                                      caption: { text: @patient.full_name, size: "l" },
                                      legend: { size: "l", tag: "h1",
                                                text: title } do %>
 
     <% @locations.each do |location| %>
-      <%= f.govuk_radio_button :location_name, format_location_name_and_address_single_line(location),
+      <%= f.govuk_radio_button :location_id, location.id,
                                label: { text: location.name },
                                hint: { text: format_address_single_line(location) } %>
     <% end %>

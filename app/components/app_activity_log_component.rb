@@ -3,7 +3,7 @@
 class AppActivityLogComponent < ViewComponent::Base
   erb_template <<-ERB
     <% events_by_day.each do |day, events| %>
-      <h3 class="nhsuk-heading-xs nhsuk-u-secondary-text-color
+      <h3 class="nhsuk-heading-xs nhsuk-u-secondary-text-colour
                  nhsuk-u-font-weight-normal">
         <%= day.to_fs(:long) %>
       </h3>
@@ -15,8 +15,6 @@ class AppActivityLogComponent < ViewComponent::Base
   ERB
 
   def initialize(team:, patient: nil, patient_session: nil)
-    super
-
     if patient.nil? && patient_session.nil?
       raise "Pass either a patient or a patient session."
     elsif patient && patient_session
@@ -65,7 +63,8 @@ class AppActivityLogComponent < ViewComponent::Base
         :vaccine
       )
 
-    @patient_specific_directions = @patient.patient_specific_directions
+    @patient_specific_directions =
+      @patient.patient_specific_directions.includes(:created_by)
 
     @archive_reasons = @patient.archive_reasons.where(team:)
   end
@@ -77,14 +76,14 @@ class AppActivityLogComponent < ViewComponent::Base
               :notify_log_entries,
               :patient,
               :patient_sessions,
+              :patient_specific_directions,
               :pre_screenings,
               :session_attendances,
               :triages,
-              :vaccination_records,
-              :patient_specific_directions
+              :vaccination_records
 
   def events_by_day
-    all_events.sort_by { -_1[:at].to_i }.group_by { _1[:at].to_date }
+    all_events.sort_by { -it[:at].to_i }.group_by { it[:at].to_date }
   end
 
   def all_events
@@ -92,14 +91,15 @@ class AppActivityLogComponent < ViewComponent::Base
       archive_events,
       attendance_events,
       consent_events,
+      expiration_events,
       gillick_assessment_events,
       note_events,
       notify_events,
+      patient_specific_direction_events,
       pre_screening_events,
       session_events,
       triage_events,
-      vaccination_events,
-      decision_expiration_events
+      vaccination_events
     ].flatten
   end
 
@@ -166,6 +166,74 @@ class AppActivityLogComponent < ViewComponent::Base
     end
   end
 
+  def expiration_events
+    all_programmes = Programme.all.to_a
+
+    AcademicYear.all.flat_map do |academic_year|
+      next [] if academic_year >= AcademicYear.current
+
+      not_vaccinated_programmes =
+        all_programmes.reject do |programme|
+          patient.vaccination_status(programme:, academic_year:).vaccinated?
+        end
+
+      vaccinated_but_seasonal_programmes =
+        all_programmes.select do |programme|
+          patient.vaccination_status(programme:, academic_year:).vaccinated? &&
+            programme.seasonal?
+        end
+
+      expired_items =
+        {
+          vaccinated_but_seasonal: vaccinated_but_seasonal_programmes,
+          not_vaccinated: not_vaccinated_programmes
+        }.transform_values do |programmes|
+          get_expired_items(academic_year:, programmes:)
+        end
+
+      expired_items.map do |category, expired_items_in_category|
+        expired_item_names = []
+        if expired_items_in_category[:consents].any?
+          expired_item_names += ["consent", "health information"]
+        end
+        if expired_items_in_category[:triages].any?
+          expired_item_names << "triage outcome"
+        end
+        if expired_items_in_category[:patient_specific_directions].any?
+          expired_item_names << "PSD status"
+        end
+
+        next [] if expired_item_names.empty?
+
+        title =
+          "#{
+            expired_item_names.to_sentence(
+              words_connector: ", ",
+              last_word_connector: " and "
+            ).upcase_first
+          } expired"
+
+        body =
+          case category
+          when :not_vaccinated
+            "#{@patient.full_name} was not vaccinated."
+          when :vaccinated_but_seasonal
+            "#{@patient.full_name} was vaccinated."
+          end
+
+        programmes = expired_items_in_category.values.flatten.uniq
+
+        {
+          title:,
+          body:,
+          at:
+            academic_year.to_academic_year_date_range.end.end_of_day - 1.second,
+          programmes:
+        }
+      end
+    end
+  end
+
   def gillick_assessment_events
     gillick_assessments.each_with_index.map do |gillick_assessment, index|
       action = index.zero? ? "Completed" : "Updated"
@@ -209,6 +277,29 @@ class AppActivityLogComponent < ViewComponent::Base
         by: notify_log_entry.sent_by,
         programmes: programmes_for(notify_log_entry)
       }
+    end
+  end
+
+  def patient_specific_direction_events
+    patient_specific_directions.flat_map do |patient_specific_direction|
+      events = []
+
+      events << {
+        title: "PSD added",
+        at: patient_specific_direction.created_at,
+        by: patient_specific_direction.created_by,
+        programmes: programmes_for(patient_specific_direction)
+      }
+
+      if patient_specific_direction.invalidated?
+        events << {
+          title: "PSD invalidated",
+          at: patient_specific_direction.invalidated_at,
+          programmes: programmes_for(patient_specific_direction)
+        }
+      end
+
+      events
     end
   end
 
@@ -318,74 +409,6 @@ class AppActivityLogComponent < ViewComponent::Base
     @programmes_by_id ||= Programme.all.index_by(&:id)
   end
 
-  def decision_expiration_events
-    all_programmes = Programme.all.to_a
-
-    AcademicYear.all.flat_map do |academic_year|
-      next [] if academic_year >= AcademicYear.current
-
-      not_vaccinated_programmes =
-        all_programmes.reject do |programme|
-          patient.vaccination_status(programme:, academic_year:).vaccinated?
-        end
-
-      vaccinated_but_seasonal_programmes =
-        all_programmes.select do |programme|
-          patient.vaccination_status(programme:, academic_year:).vaccinated? &&
-            programme.seasonal?
-        end
-
-      expired_items =
-        {
-          vaccinated_but_seasonal: vaccinated_but_seasonal_programmes,
-          not_vaccinated: not_vaccinated_programmes
-        }.transform_values do |programmes|
-          get_expired_items(academic_year:, programmes:)
-        end
-
-      expired_items.map do |category, expired_items_in_category|
-        expired_item_names = []
-        if expired_items_in_category[:consents].any?
-          expired_item_names += ["consent", "health information"]
-        end
-        if expired_items_in_category[:triages].any?
-          expired_item_names << "triage outcome"
-        end
-        if expired_items_in_category[:psds].any?
-          expired_item_names << "PSD status"
-        end
-
-        next [] if expired_item_names.empty?
-
-        title =
-          "#{
-            expired_item_names.to_sentence(
-              words_connector: ", ",
-              last_word_connector: " and "
-            ).upcase_first
-          } expired"
-
-        body =
-          case category
-          when :not_vaccinated
-            "#{@patient.full_name} was not vaccinated."
-          when :vaccinated_but_seasonal
-            "#{@patient.full_name} was vaccinated."
-          end
-
-        programmes = expired_items_in_category.values.flatten.uniq
-
-        {
-          title:,
-          body:,
-          at:
-            academic_year.to_academic_year_date_range.end.end_of_day - 1.second,
-          programmes:
-        }
-      end
-    end
-  end
-
   private
 
   def filter_expired(items, academic_year:, programmes:)
@@ -399,7 +422,7 @@ class AppActivityLogComponent < ViewComponent::Base
     {
       consents:,
       triages:,
-      psds: patient_specific_directions
+      patient_specific_directions:
     }.transform_values do |items|
       filter_expired(items, academic_year:, programmes:)
     end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_26_135132) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_03_164644) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -641,14 +641,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_135132) do
     t.bigint "vaccine_id", null: false
     t.integer "vaccine_method", null: false
     t.integer "delivery_site", null: false
-    t.boolean "full_dose", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "academic_year", null: false
+    t.datetime "invalidated_at"
+    t.bigint "team_id", null: false
     t.index ["academic_year"], name: "index_patient_specific_directions_on_academic_year"
     t.index ["created_by_user_id"], name: "index_patient_specific_directions_on_created_by_user_id"
     t.index ["patient_id"], name: "index_patient_specific_directions_on_patient_id"
     t.index ["programme_id"], name: "index_patient_specific_directions_on_programme_id"
+    t.index ["team_id"], name: "index_patient_specific_directions_on_team_id"
     t.index ["vaccine_id"], name: "index_patient_specific_directions_on_vaccine_id"
   end
 
@@ -722,15 +724,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_135132) do
   end
 
   create_table "pre_screenings", force: :cascade do |t|
-    t.bigint "patient_session_id", null: false
     t.bigint "performed_by_user_id", null: false
     t.text "notes", default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "programme_id", null: false
-    t.index ["patient_session_id"], name: "index_pre_screenings_on_patient_session_id"
+    t.bigint "patient_id", null: false
+    t.bigint "session_date_id", null: false
+    t.index ["patient_id"], name: "index_pre_screenings_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_pre_screenings_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_pre_screenings_on_programme_id"
+    t.index ["session_date_id"], name: "index_pre_screenings_on_session_date_id"
   end
 
   create_table "programmes", force: :cascade do |t|
@@ -748,6 +752,63 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_135132) do
     t.index ["created_at"], name: "index_reporting_api_one_time_tokens_on_created_at"
     t.index ["token"], name: "index_reporting_api_one_time_tokens_on_token", unique: true
     t.index ["user_id"], name: "index_reporting_api_one_time_tokens_on_user_id", unique: true
+  end
+
+  create_table "reporting_api_vaccination_events", force: :cascade do |t|
+    t.string "event_type", null: false
+    t.datetime "event_timestamp", null: false
+    t.integer "event_timestamp_year", null: false
+    t.integer "event_timestamp_month", null: false
+    t.integer "event_timestamp_day", null: false
+    t.integer "event_timestamp_academic_year", null: false
+    t.string "source_type", null: false
+    t.bigint "source_id", null: false
+    t.bigint "patient_id", null: false
+    t.string "patient_address_town"
+    t.string "patient_address_postcode"
+    t.string "patient_gender_code"
+    t.boolean "patient_home_educated"
+    t.date "patient_date_of_death"
+    t.integer "patient_birth_academic_year"
+    t.integer "patient_year_group"
+    t.bigint "patient_school_id"
+    t.string "patient_school_name"
+    t.string "patient_school_address_town"
+    t.string "patient_school_address_postcode"
+    t.integer "patient_school_gias_local_authority_code"
+    t.string "patient_school_type"
+    t.string "patient_school_local_authority_mhclg_code"
+    t.string "patient_school_local_authority_short_name"
+    t.string "patient_local_authority_from_postcode_mhclg_code"
+    t.string "patient_local_authority_from_postcode_short_name"
+    t.bigint "location_id"
+    t.string "location_name"
+    t.string "location_address_town"
+    t.string "location_address_postcode"
+    t.string "location_type"
+    t.string "location_local_authority_mhclg_code"
+    t.string "location_local_authority_short_name"
+    t.bigint "team_id"
+    t.string "team_name"
+    t.bigint "organisation_id"
+    t.string "organisation_ods_code"
+    t.string "organisation_name"
+    t.string "vaccination_record_outcome"
+    t.uuid "vaccination_record_uuid"
+    t.datetime "vaccination_record_performed_at"
+    t.bigint "vaccination_record_programme_id"
+    t.bigint "vaccination_record_session_id"
+    t.bigint "programme_id"
+    t.string "programme_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_timestamp"], name: "ix_rve_tstamp"
+    t.index ["event_timestamp_academic_year", "event_timestamp_month", "event_type"], name: "ix_rve_acyear_month_type"
+    t.index ["event_timestamp_academic_year", "event_timestamp_month"], name: "ix_rve_ac_year_month"
+    t.index ["programme_id", "event_timestamp_academic_year", "event_timestamp_month"], name: "ix_rve_prog_acyear_month"
+    t.index ["source_type", "source_id"], name: "index_reporting_api_vaccination_events_on_source"
+    t.index ["source_type", "source_id"], name: "ix_rve_source_type_id"
+    t.index ["team_id", "event_timestamp_academic_year", "event_timestamp_month"], name: "ix_rve_team_acyr_month"
   end
 
   create_table "school_move_log_entries", force: :cascade do |t|
@@ -770,8 +831,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_135132) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "academic_year", null: false
-    t.index ["patient_id", "home_educated", "team_id"], name: "index_school_moves_on_patient_id_and_home_educated_and_team_id", unique: true
-    t.index ["patient_id", "school_id"], name: "index_school_moves_on_patient_id_and_school_id", unique: true
+    t.index ["patient_id"], name: "index_school_moves_on_patient_id", unique: true
     t.index ["school_id"], name: "index_school_moves_on_school_id"
     t.index ["team_id"], name: "index_school_moves_on_team_id"
   end
@@ -938,7 +998,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_135132) do
     t.string "location_name"
     t.datetime "discarded_at"
     t.datetime "confirmation_sent_at"
-    t.bigint "patient_id"
+    t.bigint "patient_id", null: false
     t.bigint "session_id"
     t.string "performed_ods_code"
     t.bigint "vaccine_id"
@@ -950,6 +1010,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_135132) do
     t.datetime "nhs_immunisations_api_sync_pending_at"
     t.boolean "notify_parents"
     t.bigint "location_id"
+    t.bigint "supplied_by_user_id"
+    t.integer "source", null: false
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
     t.index ["location_id"], name: "index_vaccination_records_on_location_id"
@@ -958,8 +1020,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_135132) do
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_vaccination_records_on_programme_id"
     t.index ["session_id"], name: "index_vaccination_records_on_session_id"
+    t.index ["supplied_by_user_id"], name: "index_vaccination_records_on_supplied_by_user_id"
     t.index ["uuid"], name: "index_vaccination_records_on_uuid", unique: true
     t.index ["vaccine_id"], name: "index_vaccination_records_on_vaccine_id"
+    t.check_constraint "session_id IS NULL AND source <> 0 OR session_id IS NOT NULL AND source = 0", name: "source_check"
   end
 
   create_table "vaccines", force: :cascade do |t|
@@ -1063,6 +1127,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_135132) do
   add_foreign_key "patient_sessions", "sessions"
   add_foreign_key "patient_specific_directions", "patients"
   add_foreign_key "patient_specific_directions", "programmes"
+  add_foreign_key "patient_specific_directions", "teams"
   add_foreign_key "patient_specific_directions", "users", column: "created_by_user_id"
   add_foreign_key "patient_specific_directions", "vaccines"
   add_foreign_key "patient_triage_statuses", "patients", on_delete: :cascade
@@ -1072,8 +1137,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_135132) do
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "pds_search_results", "patients"
-  add_foreign_key "pre_screenings", "patient_sessions"
+  add_foreign_key "pre_screenings", "patients"
   add_foreign_key "pre_screenings", "programmes"
+  add_foreign_key "pre_screenings", "session_dates"
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
   add_foreign_key "reporting_api_one_time_tokens", "users"
   add_foreign_key "school_move_log_entries", "locations", column: "school_id"
@@ -1104,6 +1170,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_135132) do
   add_foreign_key "vaccination_records", "programmes"
   add_foreign_key "vaccination_records", "sessions"
   add_foreign_key "vaccination_records", "users", column: "performed_by_user_id"
+  add_foreign_key "vaccination_records", "users", column: "supplied_by_user_id"
   add_foreign_key "vaccination_records", "vaccines"
   add_foreign_key "vaccines", "programmes"
 end

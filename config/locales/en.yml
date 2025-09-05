@@ -146,6 +146,9 @@ en:
             status_and_vaccine_method:
               blank: Choose a status
               inclusion: Choose a status
+            add_patient_specific_direction:
+              blank: Select yes or no
+              inclusion: Select yes or no
         vaccinate_form:
           attributes:
             delivery_site:
@@ -162,6 +165,8 @@ en:
               blank: Confirm you’ve checked the pre-screening statements are true
             pre_screening_notes:
               too_long: Enter notes that are less than %{count} characters long
+            supplied_by_user_id:
+              inclusion: Choose which nurse identified and pre-screened the child and supplied the vaccine
             vaccine_method:
               inclusion: Choose if they are ready to vaccinate
         vaccination_report:
@@ -255,7 +260,9 @@ en:
           not_well: Unwell
           refused: Refused vaccine
         protocols:
+          national: National protocol
           pgd: Patient Group Direction (PGD)
+          psd: Patient Specific Direction
         sync_statuses:
           cannot_sync: Cannot sync
           not_synced: Not synced
@@ -615,7 +622,7 @@ en:
   imports:
     index:
       title: Import records
-      title_short: Import
+      title_short: Imports
     notices:
       index:
         no_results: There are currently no important notices.
@@ -681,10 +688,38 @@ en:
     tabs:
       consent: Consent
       overview: Overview
+      patient_specific_directions: PSDs
       patients: Children
       record: Record vaccinations
       register: Register
       triage: Triage
+    manage_consent_reminders:
+      show:
+        label: Send reminders
+        title: Manage consent reminders
+        description: >
+          Mavis automatically sends email and text reminders to parents who have not
+          responded to the initial consent request.
+  
+          Automatic reminders are sent a set time before each session.
+  
+          You can also send reminders manually. Mavis will then skip the next automatic
+          reminder if it's due to be sent within 3 days.
+        your_schedule: For this session, reminders are sent %{days} (%{weeks}) before each session.
+        reminder_dates:
+          label: Automatic consent reminder schedule
+          description: "Reminders will be sent automatically on these dates:"
+        patients_to_get_consent:
+          label: Parents who need to give consent
+          status: "%{count} parents out of %{total} have not responded yet"
+        next_reminder_date:
+          label: Next reminder
+          text:
+            zero: There are no more automatic consent reminders to be sent
+            one: The next automatic consent reminder will be sent on %{date}
+        session_dates: Session dates
+        pre_confirm: Mavis will skip the next automatic reminder if it's scheduled to be sent within 3 days.
+        confirm: Send manual consent reminders
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results
@@ -739,6 +774,7 @@ en:
     route: route
     school: school
     session: session
+    supplier: supplier
     timeline: timeline
     triage: triage
     type: type

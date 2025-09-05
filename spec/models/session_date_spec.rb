@@ -19,7 +19,7 @@
 describe SessionDate do
   subject(:session_date) { build(:session_date, session:, value:) }
 
-  let(:session) { create(:session, academic_year: 2024) }
+  let(:session) { create(:session, :unscheduled, academic_year: 2024) }
   let(:value) { Date.current }
 
   describe "validations" do
@@ -62,6 +62,12 @@ describe SessionDate do
 
     context "with a Gillick assessment" do
       before { create(:gillick_assessment, :competent, session:) }
+
+      it { should be(true) }
+    end
+
+    context "with a pre-screening" do
+      before { create(:pre_screening, session:) }
 
       it { should be(true) }
     end

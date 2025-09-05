@@ -27,7 +27,7 @@ describe AppProgrammeSessionTableComponent do
 
   it do
     expect(rendered).to have_content(
-      "Details\nCohort\nNo response\nTriage needed\nVaccinated"
+      "DetailsCohortNo responseTriage neededVaccinated"
     )
   end
 

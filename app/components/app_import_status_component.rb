@@ -2,12 +2,13 @@
 
 class AppImportStatusComponent < ViewComponent::Base
   def initialize(import:, break_tag: false)
-    super
     @import = import
     @break_tag = break_tag
   end
 
   private
+
+  delegate :govuk_tag, to: :helpers
 
   def status_text
     {

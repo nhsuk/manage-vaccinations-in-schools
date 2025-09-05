@@ -11,6 +11,8 @@ describe Reports::CareplusExporter do
     )
   end
 
+  around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
+
   let(:academic_year) { AcademicYear.current }
 
   shared_examples "generates a report" do

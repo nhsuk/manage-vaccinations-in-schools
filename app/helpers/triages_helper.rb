@@ -29,7 +29,7 @@ module TriagesHelper
       safe_join(
         [
           govuk_tag(text: tag.s(text), classes: "nhsuk-tag--#{colour}"),
-          tag.span("Invalid", class: "nhsuk-u-secondary-text-color")
+          tag.span("Invalid", class: "nhsuk-u-secondary-text-colour")
         ]
       )
     else

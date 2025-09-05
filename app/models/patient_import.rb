@@ -130,7 +130,10 @@ class PatientImport < ApplicationRecord
     end
     @school_moves_to_confirm.clear
 
-    SchoolMove.import(@school_moves_to_save.to_a, on_duplicate_key_ignore: :all)
+    SchoolMove.import!(
+      @school_moves_to_save.to_a,
+      on_duplicate_key_update: :all
+    )
     @school_moves_to_save.clear
   end
 end

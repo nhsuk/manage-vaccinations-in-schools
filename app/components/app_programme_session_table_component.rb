@@ -2,8 +2,6 @@
 
 class AppProgrammeSessionTableComponent < ViewComponent::Base
   def initialize(sessions, programme:)
-    super
-
     @sessions = sessions
     @programme = programme
   end
@@ -11,6 +9,8 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   private
 
   attr_reader :sessions, :programme
+
+  delegate :govuk_table, to: :helpers
 
   def cohort_count(session:)
     format_number(patient_sessions(session:).count)

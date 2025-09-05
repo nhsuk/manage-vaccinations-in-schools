@@ -2,7 +2,7 @@
 
 class AppSearchResultsComponent < ViewComponent::Base
   erb_template <<-ERB
-    <h3 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Search results</h3>
+    <h3 class="nhsuk-heading-m nhsuk-u-margin-bottom-2"><%= heading %></h3>
 
     <p class="nhsuk-caption-m nhsuk-u-margin-bottom-4">
       <% if has_results? %>
@@ -19,16 +19,17 @@ class AppSearchResultsComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(pagy, label:)
-    super
-
+  def initialize(pagy, label:, heading: "Search results")
     @pagy = pagy
     @label = label
+    @heading = heading
   end
 
   private
 
-  attr_reader :pagy, :label
+  attr_reader :pagy, :label, :heading
+
+  delegate :govuk_pagination, to: :helpers
 
   def has_results? = pagy.count.positive?
 end

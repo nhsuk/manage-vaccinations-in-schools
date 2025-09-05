@@ -273,7 +273,7 @@ describe ReportingAPI::TokenAuthenticationConcern do
           jwt,
           Settings.reporting_api.client_app.secret,
           true,
-          { algorithm: "HS512" }
+          { algorithm: ReportingAPI::OneTimeToken::JWT_SIGNING_ALGORITHM }
         ) #.and_return(decoded_jwt)
         an_object_which_includes_the_concern.send(:decode_jwt!, jwt)
       end
@@ -284,7 +284,7 @@ describe ReportingAPI::TokenAuthenticationConcern do
             jwt,
             Settings.reporting_api.client_app.secret,
             true,
-            { algorithm: "HS512" }
+            { algorithm: ReportingAPI::OneTimeToken::JWT_SIGNING_ALGORITHM }
           ).and_return(decoded_jwt)
         end
 

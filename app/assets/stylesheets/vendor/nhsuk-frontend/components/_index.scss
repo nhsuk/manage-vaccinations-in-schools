@@ -1,31 +1,32 @@
-@forward "pkg:nhsuk-frontend/packages/components/back-link";
-@forward "pkg:nhsuk-frontend/packages/components/breadcrumb";
-@forward "pkg:nhsuk-frontend/packages/components/button";
-@forward "pkg:nhsuk-frontend/packages/components/card";
-@forward "pkg:nhsuk-frontend/packages/components/checkboxes";
-@forward "pkg:nhsuk-frontend/packages/components/date-input";
-@forward "pkg:nhsuk-frontend/packages/components/details";
-@forward "pkg:nhsuk-frontend/packages/components/error-message";
-@forward "pkg:nhsuk-frontend/packages/components/error-summary";
-@forward "pkg:nhsuk-frontend/packages/components/fieldset";
-@forward "pkg:nhsuk-frontend/packages/components/footer";
-@forward "pkg:nhsuk-frontend/packages/components/header";
-@forward "pkg:nhsuk-frontend/packages/components/hint";
-@forward "pkg:nhsuk-frontend/packages/components/input";
-@forward "pkg:nhsuk-frontend/packages/components/inset-text";
-@forward "pkg:nhsuk-frontend/packages/components/label";
-@forward "pkg:nhsuk-frontend/packages/components/panel";
-@forward "pkg:nhsuk-frontend/packages/components/radios";
-@forward "pkg:nhsuk-frontend/packages/components/select";
-@forward "pkg:nhsuk-frontend/packages/components/skip-link";
-@forward "pkg:nhsuk-frontend/packages/components/summary-list";
-@forward "pkg:nhsuk-frontend/packages/components/tables";
-@forward "pkg:nhsuk-frontend/packages/components/tag";
-@forward "pkg:nhsuk-frontend/packages/components/textarea";
-@forward "pkg:nhsuk-frontend/packages/components/warning-callout";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/action-link";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/back-link";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/breadcrumb";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/button";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/card";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/checkboxes";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/date-input";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/details";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/error-message";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/error-summary";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/fieldset";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/footer";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/header";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/hint";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/input";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/inset-text";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/label";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/notification-banner";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/panel";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/radios";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/select";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/skip-link";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/summary-list";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/tables";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/tag";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/textarea";
+@forward "pkg:nhsuk-frontend/dist/nhsuk/components/warning-callout";
 
 // Ignored components
-// - action-link
 // - character-count
 // - contents-list
 // - do-dont-list

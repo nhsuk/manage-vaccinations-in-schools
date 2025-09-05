@@ -2,8 +2,6 @@
 
 class AppConsentPatientSummaryComponent < ViewComponent::Base
   def initialize(consent)
-    super
-
     @consent = consent
   end
 
@@ -22,20 +20,23 @@ class AppConsentPatientSummaryComponent < ViewComponent::Base
       unless restricted?
         summary_list.with_row do |row|
           row.with_key { "Home address" }
-          row.with_value do
-            helpers.format_address_multi_line(consent_form_or_patient)
-          end
+          row.with_value { format_address_multi_line(consent_form_or_patient) }
         end
       end
 
       summary_list.with_row do |row|
         row.with_key { "School" }
-        row.with_value { helpers.patient_school(consent_form_or_patient) }
+        row.with_value { patient_school(consent_form_or_patient) }
       end
     end
   end
 
   private
+
+  delegate :format_address_multi_line,
+           :govuk_summary_list,
+           :patient_school,
+           to: :helpers
 
   def consent_form_or_patient
     @consent.consent_form || @consent.patient

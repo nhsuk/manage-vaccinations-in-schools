@@ -19,9 +19,7 @@ http_hosts = {
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "preview.mavistesting.com"
 }
 
-appspec_bucket       = "nhse-mavis-appspec-bucket-preview"
-minimum_web_replicas = 2
-maximum_web_replicas = 4
+appspec_bucket = "nhse-mavis-appspec-bucket-preview"
 
 valkey_node_type          = "cache.t4g.micro"
 valkey_log_retention_days = 3

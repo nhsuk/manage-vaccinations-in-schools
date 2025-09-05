@@ -34,10 +34,10 @@ FactoryBot.define do
   factory :user,
           aliases: %i[
             nurse
-            assessor
             created_by
-            recorded_by
             performed_by
+            recorded_by
+            supplied_by
             uploaded_by
           ] do
     transient do
@@ -61,6 +61,7 @@ FactoryBot.define do
 
     sequence(:email) { |n| "nurse-#{n}@example.com" }
     fallback_role { :nurse }
+    show_in_suppliers { true }
 
     given_name { "Test" }
     family_name { "User" }
@@ -79,25 +80,36 @@ FactoryBot.define do
       end
     end
 
-    trait :admin do
-      sequence(:email) { |n| "admin-#{n}@example.com" }
-      role_code { CIS2Info::ADMIN_ROLE }
-      fallback_role { :admin }
+    trait :medical_secretary do
+      sequence(:email) { |n| "medical-secretary-#{n}@example.com" }
+      role_code { CIS2Info::MEDICAL_SECRETARY_ROLE }
+      fallback_role { :medical_secretary }
+      show_in_suppliers { false }
     end
 
     trait :superuser do
       sequence(:email) { |n| "superuser-#{n}@example.com" }
       role_workgroups { [CIS2Info::SUPERUSER_WORKGROUP] }
       fallback_role { :superuser }
+      show_in_suppliers { false }
     end
 
     trait :healthcare_assistant do
       sequence(:email) { |n| "healthcare-assistant-#{n}@example.com" }
-      role_code { CIS2Info::ADMIN_ROLE }
+      role_code { CIS2Info::MEDICAL_SECRETARY_ROLE }
       activity_codes do
         [CIS2Info::PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE]
       end
       fallback_role { :healthcare_assistant }
+      show_in_suppliers { false }
+    end
+
+    trait :prescriber do
+      sequence(:email) { |n| "prescriber-#{n}@example.com" }
+      role_code { nil }
+      activity_codes { [CIS2Info::INDEPENDENT_PRESCRIBING_ACTIVITY_CODE] }
+      fallback_role { :prescriber }
+      show_in_suppliers { false }
     end
 
     trait :signed_in do
@@ -106,7 +118,8 @@ FactoryBot.define do
     end
   end
 
-  factory :admin, parent: :user, traits: %i[admin]
   factory :healthcare_assistant, parent: :user, traits: %i[healthcare_assistant]
+  factory :medical_secretary, parent: :user, traits: %i[medical_secretary]
+  factory :prescriber, parent: :user, traits: %i[prescriber]
   factory :superuser, parent: :user, traits: %i[superuser]
 end

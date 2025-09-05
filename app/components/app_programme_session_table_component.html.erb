@@ -20,11 +20,11 @@
 
             <div>
               <p>
-                <%= govuk_link_to session.location.name, session_path(session) %>
+                <%= link_to session.location.name, session_path(session) %>
 
                 <% if session.location.has_address? %>
                   <br />
-                  <span class="nhsuk-u-secondary-text-color">
+                  <span class="nhsuk-u-secondary-text-colour">
                     <%= helpers.format_address_single_line(session.location) %>
                   </span>
                 <% end %>
@@ -68,7 +68,7 @@
 
               <br />
 
-              <span class="nhsuk-u-secondary-text-color">
+              <span class="nhsuk-u-secondary-text-colour">
                 <%= no_response_percentage(session:) %>
               </span>
             </div>
@@ -92,7 +92,7 @@
 
               <br />
 
-              <span class="nhsuk-u-secondary-text-color">
+              <span class="nhsuk-u-secondary-text-colour">
                 <%= vaccinated_percentage(session:) %>
               </span>
             </div>

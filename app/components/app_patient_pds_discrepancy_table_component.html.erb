@@ -39,12 +39,12 @@
 
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Uploaded NHS number</span>
-            <%= helpers.format_nhs_number(changeset.uploaded_nhs_number) %>
+            <%= format_nhs_number(changeset.uploaded_nhs_number) %>
           <% end %>
 
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">PDS NHS number</span>
-            <%= helpers.format_nhs_number(changeset.pds_nhs_number) %>
+            <%= format_nhs_number(changeset.pds_nhs_number) %>
           <% end %>
         <% end %>
       <% end %>

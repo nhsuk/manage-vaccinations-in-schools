@@ -7,8 +7,6 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
     change_links: {},
     show_notes: true
   )
-    super
-
     @vaccination_record = vaccination_record
     @current_user = current_user
     @change_links = change_links
@@ -162,7 +160,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
       if @identity_check
         summary_list.with_row do |row|
           row.with_key { "Child identified by" }
-          row.with_value { helpers.identity_check_label(@identity_check) }
+          row.with_value { identity_check_label(@identity_check) }
           if (href = @change_links[:identity])
             row.with_action(
               text: "Change",
@@ -198,6 +196,20 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         row.with_value { time_value }
         if (href = @change_links[:performed_at])
           row.with_action(text: "Change", visually_hidden_text: "time", href:)
+        end
+      end
+
+      if @vaccination_record.supplied_by.present?
+        summary_list.with_row do |row|
+          row.with_key { "Supplier" }
+          row.with_value { supplier_value }
+          if (href = @change_links[:supplier])
+            row.with_action(
+              text: "Change",
+              visually_hidden_text: "supplier",
+              href:
+            )
+          end
         end
       end
 
@@ -261,6 +273,11 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
   private
 
+  delegate :govuk_summary_list,
+           :identity_check_label,
+           :vaccination_record_location,
+           to: :helpers
+
   def outcome_value
     highlight_if(
       VaccinationRecord.human_enum_name(:outcome, @vaccination_record.outcome),
@@ -312,7 +329,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def location_value
-    helpers.vaccination_record_location(@vaccination_record)
+    vaccination_record_location(@vaccination_record)
   end
 
   def date_value
@@ -328,6 +345,13 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
     highlight_if(
       @vaccination_record.performed_at.to_fs(:time),
       @vaccination_record.performed_at_changed?
+    )
+  end
+
+  def supplier_value
+    highlight_if(
+      @vaccination_record.supplied_by&.full_name,
+      @vaccination_record.supplied_by_user_id_changed?
     )
   end
 

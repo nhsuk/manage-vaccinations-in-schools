@@ -2,8 +2,6 @@
 
 class AppProgrammeStatsComponent < ViewComponent::Base
   def initialize(programme, academic_year:, patient_ids:)
-    super
-
     @programme = programme
     @academic_year = academic_year
     @patient_ids = patient_ids

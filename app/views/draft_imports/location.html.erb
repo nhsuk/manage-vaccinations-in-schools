@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(previous_wizard_path) %>
+  <%= govuk_back_link(href: previous_wizard_path) %>
 <% end %>
 
 <% title = "Which school is this class list for?" %>
@@ -8,8 +8,9 @@
 <%= form_with model: @draft_import, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_select :location_id, label: { text: title, size: "l", tag: "h1" },
-                                   data: { module: "autocomplete" } do %>
+  <%= f.govuk_select :location_id,
+                     label: { text: title, size: "l", tag: "h1" },
+                     data: { module: "app-autocomplete" } do %>
     <%= tag.option "", value: "" %>
 
     <% @location_options.each do |location| %>

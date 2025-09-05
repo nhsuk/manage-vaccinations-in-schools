@@ -28,7 +28,7 @@ describe EnqueueSchoolConsentRemindersJob do
 
     it "doesn't queue any jobs" do
       expect { perform_now }.not_to have_enqueued_job(
-        SendSchoolConsentRemindersJob
+        SendAutomaticSchoolConsentRemindersJob
       )
     end
   end
@@ -38,7 +38,7 @@ describe EnqueueSchoolConsentRemindersJob do
 
     it "queues a job for the session" do
       expect { perform_now }.to have_enqueued_job(
-        SendSchoolConsentRemindersJob
+        SendAutomaticSchoolConsentRemindersJob
       ).with(session)
     end
 
@@ -47,7 +47,7 @@ describe EnqueueSchoolConsentRemindersJob do
 
       it "doesn't queue any jobs" do
         expect { perform_now }.not_to have_enqueued_job(
-          SendSchoolConsentRemindersJob
+          SendAutomaticSchoolConsentRemindersJob
         )
       end
     end
@@ -58,7 +58,7 @@ describe EnqueueSchoolConsentRemindersJob do
 
     it "queues a job for the session" do
       expect { perform_now }.to have_enqueued_job(
-        SendSchoolConsentRemindersJob
+        SendAutomaticSchoolConsentRemindersJob
       ).with(session)
     end
 
@@ -67,7 +67,7 @@ describe EnqueueSchoolConsentRemindersJob do
 
       it "doesn't queue any jobs" do
         expect { perform_now }.not_to have_enqueued_job(
-          SendSchoolConsentRemindersJob
+          SendAutomaticSchoolConsentRemindersJob
         )
       end
     end

@@ -32,30 +32,28 @@ def create_team(ods_code:)
     )
 end
 
-def create_user(team:, email: nil, uid: nil, fallback_role: :nurse)
+def create_user(role, team:, email: nil, uid: nil)
   if uid
     User.find_by(uid:) ||
       FactoryBot.create(
-        :user,
+        role,
         uid:,
         family_name: "Flo",
         given_name: "Nurse",
         email: "nurse.flo@example.nhs.uk",
         provider: "cis2",
-        team:,
-        fallback_role:
+        team:
         # password: Do not set this as they should not log in via password
       )
   elsif email
     User.find_by(email:) ||
       FactoryBot.create(
-        :user,
+        role,
         family_name: email.split("@").first.split(".").last.capitalize,
         given_name: email.split("@").first.split(".").first.capitalize,
         email:,
         password: email,
-        team:,
-        fallback_role:
+        team:
       )
   else
     raise "No email or UID provided"
@@ -88,8 +86,11 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
 
   session = FactoryBot.create(:session, date:, team:, programmes:, location:)
 
-  session.session_dates.create!(value: date - 1.day)
-  session.session_dates.create!(value: date + 1.day)
+  [date - 1.day, date + 1.day].each do |value|
+    if value.in?(session.academic_year.to_academic_year_date_range)
+      session.session_dates.create!(value:)
+    end
+  end
 
   programmes.each do |programme|
     year_groups.each do |year_group|
@@ -158,9 +159,12 @@ def setup_clinic(team)
   academic_year = AcademicYear.current
   clinic_session = team.generic_clinic_session(academic_year:)
 
-  clinic_session.session_dates.create!(value: Date.current)
-  clinic_session.session_dates.create!(value: Date.current - 1.day)
-  clinic_session.session_dates.create!(value: Date.current + 1.day)
+  [Date.current, Date.yesterday, Date.tomorrow].each do |value|
+    if value.in?(academic_year.to_academic_year_date_range)
+      clinic_session.session_dates.create!(value:)
+    end
+  end
+
   clinic_session.update!(send_invitations_at: Date.current - 3.weeks)
 
   # All patients belong to the community clinic. This is normally
@@ -253,14 +257,11 @@ unless Settings.cis2.enabled
   # Don't create Nurse Joy's team on a CIS2 env, because password authentication
   # is not available and password= fails to run.
   team = create_team(ods_code: "R1L")
-  user = create_user(team:, email: "nurse.joy@example.com")
-  create_user(team:, email: "admin.hope@example.com", fallback_role: "admin")
-  create_user(team:, email: "superuser@example.com", fallback_role: "superuser")
-  create_user(
-    team:,
-    email: "hca@example.com",
-    fallback_role: "healthcare_assistant"
-  )
+  user = create_user(:nurse, team:, email: "nurse.joy@example.com")
+  create_user(:medical_secretary, team:, email: "admin.hope@example.com")
+  create_user(:superuser, team:, email: "superuser@example.com")
+  create_user(:healthcare_assistant, team:, email: "hca@example.com")
+  create_user(:prescriber, team:, email: "prescriber@example.com")
 
   attach_sample_of_schools_to(team)
 
@@ -279,7 +280,7 @@ end
 
 # CIS2 team - the ODS code and user UID need to match the values in the CIS2 env
 team = create_team(ods_code: "A9A5A")
-user = create_user(team:, uid: "555057896106")
+user = create_user(:nurse, team:, uid: "555057896106")
 
 attach_sample_of_schools_to(team)
 

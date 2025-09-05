@@ -2,8 +2,6 @@
 
 class AppParentCardComponent < ViewComponent::Base
   def initialize(parent_relationship:, change_links: {})
-    super
-
     @parent_relationship = parent_relationship
     @change_links = change_links
   end

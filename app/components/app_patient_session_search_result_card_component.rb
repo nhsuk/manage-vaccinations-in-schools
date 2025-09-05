@@ -8,12 +8,12 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       <%= govuk_summary_list do |summary_list|
             summary_list.with_row do |row|
               row.with_key { "Date of birth" }
-              row.with_value { helpers.patient_date_of_birth(patient) }
+              row.with_value { patient_date_of_birth(patient) }
             end
 
             summary_list.with_row do |row|
               row.with_key { "Year group" }
-              row.with_value { helpers.patient_year_group(patient, academic_year:) }
+              row.with_value { patient_year_group(patient, academic_year:) }
             end
 
             if action_required
@@ -37,7 +37,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               end
             end
 
-            if (note = patient_session.latest_note)
+            if context != :patient_specific_direction && (note = patient_session.latest_note)
               summary_list.with_row do |row|
                 row.with_key { "Notes" }
                 row.with_value { render note_to_log_event(note) }
@@ -46,18 +46,25 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           end %>
 
       <% if context == :register && can_register_attendance? %>
-        <div class="app-button-group">
-          <%= helpers.govuk_button_to "Attending", create_session_register_path(session, patient, "present"), secondary: true, class: "app-button--small" %>
-          <%= helpers.govuk_button_to "Absent", create_session_register_path(session, patient, "absent"), class: "app-button--secondary-warning app-button--small" %>
+        <div class="nhsuk-button-group">
+          <%= govuk_button_to "Attending", create_session_register_path(session, patient, "present"), secondary: true, class: "app-button--small" %>
+          <%= govuk_button_to "Absent", create_session_register_path(session, patient, "absent"), class: "app-button--secondary-warning app-button--small" %>
         </div>
       <% end %>
     <% end %>
   ERB
 
   def initialize(patient_session, context:, programmes: [])
-    super
-
-    unless context.in?(%i[patients consent triage register record])
+    unless context.in?(
+             %i[
+               patients
+               consent
+               triage
+               register
+               record
+               patient_specific_direction
+             ]
+           )
       raise "Unknown context: #{context}"
     end
 
@@ -79,6 +86,12 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
   attr_reader :patient_session, :patient, :session, :context, :programmes
 
+  delegate :govuk_button_to,
+           :govuk_summary_list,
+           :patient_date_of_birth,
+           :patient_year_group,
+           :policy,
+           to: :helpers
   delegate :academic_year, to: :session
 
   def can_register_attendance?
@@ -88,7 +101,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         session_date: SessionDate.new(value: Date.current)
       )
 
-    helpers.policy(session_attendance).new?
+    policy(session_attendance).new?
   end
 
   def patient_path
@@ -157,6 +170,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       [consent_status_tag]
     when :triage
       [triage_status_tag]
+    when :patient_specific_direction
+      [patient_specific_direction_status_tag]
     else
       [vaccination_status_tag]
     end
@@ -203,8 +218,9 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       key: :register,
       value:
         render(
-          AppRegisterStatusTagComponent.new(
-            patient_session.registration_status&.status || "unknown"
+          AppStatusTagComponent.new(
+            patient_session.registration_status&.status || "unknown",
+            context: :register
           )
         )
     }
@@ -240,6 +256,19 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     { status: status }
   end
 
+  def patient_specific_direction_status_tag
+    {
+      key: :patient_specific_direction,
+      value:
+        render(
+          AppStatusTagComponent.new(
+            psd_exists?(programmes.first) ? :added : :not_added,
+            context: :patient_specific_direction
+          )
+        )
+    }
+  end
+
   def note_to_log_event(note)
     truncated_body = note.body.truncate_words(80, omission: "…")
 
@@ -259,5 +288,11 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     body = safe_join([truncated_body, continue_reading])
 
     AppLogEventComponent.new(body:, at: note.created_at, by: note.created_by)
+  end
+
+  def psd_exists?(programme)
+    patient.patient_specific_directions.any? do
+      it.programme_id == programme.id && it.academic_year == academic_year
+    end
   end
 end

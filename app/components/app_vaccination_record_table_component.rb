@@ -2,8 +2,6 @@
 
 class AppVaccinationRecordTableComponent < ViewComponent::Base
   def initialize(vaccination_records, current_user:, count:)
-    super
-
     @vaccination_records = vaccination_records
     @current_user = current_user
     @count = count
@@ -12,6 +10,8 @@ class AppVaccinationRecordTableComponent < ViewComponent::Base
   private
 
   attr_reader :vaccination_records, :current_user, :count
+
+  delegate :govuk_table, to: :helpers
 
   def can_link_to?(record) = allowed_ids.include?(record.id)
 

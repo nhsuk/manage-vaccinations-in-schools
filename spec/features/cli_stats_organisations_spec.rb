@@ -112,8 +112,9 @@ describe "mavis stats organisations" do
       create(
         :session,
         team: @team_a,
-        academic_year: (Date.current.year - 1),
-        programmes: [programme_flu]
+        academic_year: AcademicYear.current - 1,
+        programmes: [programme_flu],
+        date: (AcademicYear.current - 1).to_academic_year_date_range.end
       )
 
     patient_year_8 = create(:patient, team: @team_a, year_group: 8)

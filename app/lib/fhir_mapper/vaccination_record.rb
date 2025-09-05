@@ -53,7 +53,7 @@ module FHIRMapper
     def self.from_fhir_record(fhir_record, patient:, team:)
       attrs = {}
 
-      # attrs[:source] = "nhs_immunisations_api"
+      attrs[:source] = "nhs_immunisations_api"
 
       attrs[:patient] = patient
 

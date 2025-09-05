@@ -3,11 +3,11 @@
 
 .app-filters {
   &.nhsuk-card {
-    background-color: color.scale($color_nhsuk-grey-4, $alpha: -50%);
+    background-color: color.scale(nhsuk-colour("grey-4"), $alpha: -50%);
   }
 
   .nhsuk-card__heading--feature {
-    background-color: $color_nhsuk-grey-1;
+    background-color: nhsuk-colour("grey-1");
   }
 
   // Adjust design and spacing of details component
@@ -21,7 +21,7 @@
     }
 
     &[open] {
-      background-color: $color_nhsuk-grey-4;
+      background-color: nhsuk-colour("grey-4");
     }
   }
 

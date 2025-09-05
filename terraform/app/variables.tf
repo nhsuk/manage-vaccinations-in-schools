@@ -318,13 +318,13 @@ variable "container_insights" {
 
 variable "minimum_web_replicas" {
   type        = number
-  default     = 3
+  default     = 2
   description = "Minimum amount of allowed replicas for web service. Also the replica count when creating th service."
 }
 
 variable "maximum_web_replicas" {
   type        = number
-  default     = 3
+  default     = 4
   description = "Maximum amount of allowed replicas for web service"
 }
 
@@ -334,9 +334,15 @@ variable "good_job_replicas" {
   description = "Amount of replicas for the good-job service"
 }
 
-variable "sidekiq_replicas" {
+variable "minimum_sidekiq_replicas" {
   type        = number
   default     = 2
+  description = "Amount of replicas for the sidekiq service"
+}
+
+variable "maximum_sidekiq_replicas" {
+  type        = number
+  default     = 4
   description = "Amount of replicas for the sidekiq service"
 }
 

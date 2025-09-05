@@ -2,8 +2,6 @@
 
 class AppHeaderNavigationItemComponent < ViewComponent::Base
   def initialize(title, path, request_path:, count: nil)
-    super
-
     @title = title
     @path = path
     @request_path = request_path
@@ -18,7 +16,7 @@ class AppHeaderNavigationItemComponent < ViewComponent::Base
         aria: {
           current: current? ? "true" : nil
         }
-      ) { safe_join([@title, count_tag].compact, " ") }
+      ) { safe_join([@title, count_tag].compact) }
     end
   end
 
@@ -29,7 +27,7 @@ class AppHeaderNavigationItemComponent < ViewComponent::Base
   def classes
     [
       "nhsuk-header__navigation-item",
-      ("app-header__navigation-item--current" if current?),
+      ("nhsuk-header__navigation-item--current" if current?),
       ("app-header__navigation-item--with-count" if show_count?)
     ].compact.join(" ")
   end

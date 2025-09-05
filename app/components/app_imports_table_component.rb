@@ -2,18 +2,16 @@
 
 class AppImportsTableComponent < ViewComponent::Base
   def initialize(team:)
-    super
-
     @team = team
   end
 
-  def render?
-    imports.present?
-  end
+  def render? = imports.present?
 
   private
 
   attr_reader :team
+
+  delegate :govuk_table, to: :helpers
 
   def imports
     @imports ||=

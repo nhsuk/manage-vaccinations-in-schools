@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 describe "HPV vaccination" do
-  scenario "Download spreadsheet, record offline at a school session, upload vaccination outcomes back into Mavis" do
-    travel_to(Time.zone.local(2024, 2, 1, 12, 0, 0))
+  around do |example|
+    travel_to(Time.zone.local(2024, 2, 1, 12)) { example.run }
+  end
 
+  scenario "Download spreadsheet, record offline at a school session, upload vaccination outcomes back into Mavis" do
     stub_pds_get_nhs_number_to_return_a_patient
 
     given_an_hpv_programme_is_underway
@@ -22,8 +24,6 @@ describe "HPV vaccination" do
   end
 
   scenario "Download spreadsheet, record offline at a clinic, upload vaccination outcomes back into Mavis" do
-    travel_to(Time.zone.local(2024, 2, 1, 12, 0, 0))
-
     stub_pds_get_nhs_number_to_return_a_patient
 
     given_an_hpv_programme_is_underway(clinic: true)
@@ -355,6 +355,8 @@ describe "HPV vaccination" do
   end
 
   def and_i_upload_the_modified_csv_file
+    travel 1.minute
+
     visit "/"
 
     click_on "Import", match: :first

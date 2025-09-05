@@ -24,6 +24,7 @@ class ImmunisationImportRow
            :validate_reason_not_administered,
            :validate_school_name,
            :validate_school_urn,
+           :validate_supplied_by,
            :validate_session_id,
            :validate_time_of_vaccination,
            :validate_uuid,
@@ -94,6 +95,7 @@ class ImmunisationImportRow
     return unless valid?
 
     outcome = (administered ? "administered" : reason_not_administered_value)
+    source = (offline_recording? ? "service" : "historical_upload")
 
     attributes = {
       dose_sequence: dose_sequence_value,
@@ -106,8 +108,12 @@ class ImmunisationImportRow
       performed_by_user:,
       performed_ods_code: performed_ods_code&.to_s,
       programme:,
-      session:
+      protocol:,
+      session:,
+      supplied_by:
     }
+
+    attributes.merge!(notify_parents: true) if session
 
     if performed_by_user.nil?
       attributes.merge!(
@@ -116,15 +122,14 @@ class ImmunisationImportRow
       )
     end
 
-    attributes.merge!(notify_parents: true, protocol: "pgd") if session
-
     attributes_to_stage_if_already_exists = {
       batch_id: batch&.id,
       delivery_method: delivery_method_value,
       delivery_site: delivery_site_value,
       notes: notes&.to_s,
       vaccine_id: vaccine&.id,
-      discarded_at: nil
+      discarded_at: nil,
+      source:
     }
 
     vaccination_record =
@@ -213,6 +218,8 @@ class ImmunisationImportRow
 
   def session_id = @data[:session_id]
 
+  def supplied_by_email = @data[:supplier_email]
+
   def time_of_vaccination =
     @data[:time_of_vaccination].presence || @data[:event_time]
 
@@ -257,6 +264,13 @@ class ImmunisationImportRow
   def performed_by_user
     @performed_by_user ||=
       if (email = performed_by_email&.to_s)
+        User.find_by(email:)
+      end
+  end
+
+  def supplied_by
+    @supplied_by ||=
+      if (email = supplied_by_email&.to_s)
         User.find_by(email:)
       end
   end
@@ -309,6 +323,24 @@ class ImmunisationImportRow
       end
   end
 
+  def protocol
+    if supplied_by && supplied_by != performed_by_user
+      if patient.patient_specific_directions.exists?(
+           programme:,
+           academic_year:,
+           delivery_site: delivery_site_value
+         )
+        "psd"
+      elsif delivery_method_value == "nasal_spray"
+        "pgd"
+      else
+        "national"
+      end
+    else
+      "pgd"
+    end
+  end
+
   def vaccine_nivs_name
     parsed_vaccination_description_string&.dig(:vaccine_name) ||
       vaccine_name&.to_s
@@ -345,6 +377,8 @@ class ImmunisationImportRow
   delegate :default_dose_sequence, :maximum_dose_sequence, to: :programme
 
   def offline_recording? = session_id.present?
+
+  def academic_year = date_of_vaccination.to_date.academic_year
 
   def existing_patients
     if patient_first_name.blank? || patient_last_name.blank? ||
@@ -588,8 +622,7 @@ class ImmunisationImportRow
         end
       end
 
-      if programme&.flu? &&
-           date_of_vaccination.to_date.academic_year != AcademicYear.current
+      if programme&.flu? && academic_year != AcademicYear.current
         errors.add(
           date_of_vaccination.header,
           "must be in the current academic year"
@@ -796,7 +829,7 @@ class ImmunisationImportRow
           errors.add(performed_by_email.header, "Enter a valid email address.")
         end
       end
-    elsif performed_by_email.present? # previous academic years from here on
+    elsif performed_by_email.present?
       if performed_by_user.nil?
         errors.add(performed_by_email.header, "Enter a valid email address")
       end
@@ -908,6 +941,12 @@ class ImmunisationImportRow
             "contact our support team."
         )
       end
+    end
+  end
+
+  def validate_supplied_by
+    if supplied_by_email.present? && supplied_by.nil?
+      errors.add(supplied_by_email.header, "Enter a valid email address")
     end
   end
 

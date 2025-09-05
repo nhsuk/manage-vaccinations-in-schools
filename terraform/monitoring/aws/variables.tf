@@ -27,7 +27,8 @@ locals {
       AWS-Mavis-Admins = "96f2a2a4-3031-70a2-01be-db6c0030cb03"
     }
     EDITOR = {
-      AWS-Mavis-Developers = "f68222d4-c0b1-700b-b09f-81572d4dee95"
+      AWS-Mavis-Developers            = "f68222d4-c0b1-700b-b09f-81572d4dee95"
+      AWS-Mavis-DataReplicationAccess = "46b21234-40e1-7071-1325-1a564e8a1ad4"
     }
     VIEWER = {
       AWS-Mavis-ReadOnly = "16b29214-60a1-7008-ff52-0ccd29b7e2d4"

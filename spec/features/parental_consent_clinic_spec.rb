@@ -240,7 +240,7 @@ describe "Parental consent" do
     sign_in @team.users.first
     visit "/dashboard"
 
-    within ".nhsuk-navigation" do
+    within ".nhsuk-header__navigation" do
       click_on "School moves"
     end
   end

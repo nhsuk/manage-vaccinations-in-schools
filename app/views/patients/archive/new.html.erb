@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(patient_path(@patient), name: "patient") %>
+  <%= govuk_back_link(href: patient_path(@patient)) %>
 <% end %>
 
 <% legend = "Why do you want to archive this record?" %>
@@ -29,7 +29,7 @@
     <% end %>
   <% end %>
 
-  <div class="app-button-group">
+  <div class="nhsuk-button-group">
     <%= f.govuk_submit "Archive record", warning: true %>
     <%= link_to "Return to child record", patient_path(@patient) %>
   </div>

@@ -8,9 +8,9 @@ describe AppSessionDetailsSummaryComponent do
   let(:programme) { create(:programme, :hpv) }
   let(:session) { create(:session, programmes: [programme]) }
 
-  it { should have_text("Cohort\nNo children") }
-  it { should have_text("Consent refused\nNo children") }
-  it { should have_text("Vaccinated\nNo vaccinations given for HPV") }
+  it { should have_text("CohortNo children") }
+  it { should have_text("Consent refusedNo children") }
+  it { should have_text("VaccinatedNo vaccinations given for HPV") }
 
   context "with activity" do
     before do
@@ -19,10 +19,9 @@ describe AppSessionDetailsSummaryComponent do
       create(:patient_session, :vaccinated, session:)
     end
 
-    it { should have_text("Cohort\n3 children") }
-    it { should have_text("Consent refused\n1 child") }
-    it { should have_text("Vaccinated\n1 vaccination given for HPV") }
-    it { should have_link("Import class lists") }
+    it { should have_text("Cohort3 children") }
+    it { should have_text("Consent refused1 child") }
+    it { should have_text("Vaccinated1 vaccination given for HPV") }
     it { should have_link("Review consent refused") }
     it { should have_link("Review vaccinated") }
   end
@@ -33,7 +32,7 @@ describe AppSessionDetailsSummaryComponent do
       create(:patient_session, :consent_refused, session:, year_group: 7)
     end
 
-    it { should have_text("Cohort\nNo children") }
-    it { should have_text("Consent refused\nNo children") }
+    it { should have_text("CohortNo children") }
+    it { should have_text("Consent refusedNo children") }
   end
 end

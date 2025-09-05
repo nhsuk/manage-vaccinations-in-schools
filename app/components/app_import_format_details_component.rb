@@ -2,14 +2,13 @@
 
 class AppImportFormatDetailsComponent < ViewComponent::Base
   def initialize(import:)
-    super
-
     @import = import
   end
 
   private
 
   delegate :team, to: :@import
+  delegate :govuk_details, :govuk_table, to: :helpers
 
   def summary_text
     case @import
@@ -344,6 +343,15 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       },
       { name: "PERFORMING_PROFESSIONAL_FORENAME", notes: "Optional" },
       { name: "PERFORMING_PROFESSIONAL_SURNAME", notes: "Optional" }
+    ]
+  end
+
+  def supplier
+    [
+      {
+        name: "SUPPLIER_EMAIL",
+        notes: "Required if uploading delegated vaccination records."
+      }
     ]
   end
 end

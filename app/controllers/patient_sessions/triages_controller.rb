@@ -18,6 +18,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
 
     @triage_form =
       TriageForm.new(
+        current_user:,
         patient_session: @patient_session,
         programme: @programme,
         triage: previous_triage
@@ -57,7 +58,13 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
   private
 
   def triage_form_params
-    params.expect(triage_form: %i[status_and_vaccine_method notes])
+    params.expect(
+      triage_form: %i[
+        status_and_vaccine_method
+        notes
+        add_patient_specific_direction
+      ]
+    )
   end
 
   def redirect_path

@@ -106,6 +106,8 @@ class DraftConsentsController < ApplicationController
     @triage_form.assign_attributes(triage_form_params)
 
     @draft_consent.assign_attributes(
+      triage_add_patient_specific_direction:
+        @triage_form.add_patient_specific_direction,
       triage_form_valid: @triage_form.valid?,
       triage_notes: @triage_form.notes,
       triage_status_and_vaccine_method: @triage_form.status_and_vaccine_method,
@@ -145,7 +147,13 @@ class DraftConsentsController < ApplicationController
   end
 
   def triage_form_params
-    params.expect(triage_form: %i[status_and_vaccine_method notes])
+    params.expect(
+      triage_form: %i[
+        status_and_vaccine_method
+        notes
+        add_patient_specific_direction
+      ]
+    )
   end
 
   def set_draft_consent
@@ -184,6 +192,9 @@ class DraftConsentsController < ApplicationController
     @triage_form =
       if policy(Triage).new?
         TriageForm.new(
+          add_patient_specific_direction:
+            @draft_consent.triage_add_patient_specific_direction,
+          current_user:,
           notes: @draft_consent.triage_notes,
           vaccine_methods: @draft_consent.vaccine_methods,
           patient_session: @patient_session,

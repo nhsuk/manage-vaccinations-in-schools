@@ -2,8 +2,6 @@
 
 class AppPatientPDSDiscrepancyTableComponent < ViewComponent::Base
   def initialize(discrepancies:, current_user:)
-    super
-
     @discrepancies = discrepancies
     @current_user = current_user
   end
@@ -11,6 +9,8 @@ class AppPatientPDSDiscrepancyTableComponent < ViewComponent::Base
   private
 
   attr_reader :discrepancies, :current_user
+
+  delegate :format_nhs_number, :govuk_table, to: :helpers
 
   def can_link_to?(record)
     allowed_ids.include?(record.id)

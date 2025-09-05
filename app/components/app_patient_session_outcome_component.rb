@@ -16,8 +16,6 @@ class AppPatientSessionOutcomeComponent < ViewComponent::Base
   ERB
 
   def initialize(patient_session, programme:)
-    super
-
     @patient_session = patient_session
     @programme = programme
   end

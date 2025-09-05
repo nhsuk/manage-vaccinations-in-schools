@@ -11,8 +11,8 @@ class DraftVaccinationRecord
   attribute :delivery_method, :string
   attribute :delivery_site, :string
   attribute :dose_sequence, :integer
+  attribute :first_active_wizard_step, :string
   attribute :full_dose, :boolean
-  attribute :protocol, :string
   attribute :identity_check_confirmed_by_other_name, :string
   attribute :identity_check_confirmed_by_other_relationship, :string
   attribute :identity_check_confirmed_by_patient, :boolean
@@ -25,10 +25,11 @@ class DraftVaccinationRecord
   attribute :performed_by_family_name, :string
   attribute :performed_by_given_name, :string
   attribute :performed_by_user_id, :integer
+  attribute :protocol, :string
   attribute :performed_ods_code, :string
   attribute :programme_id, :integer
   attribute :session_id, :integer
-  attribute :first_active_wizard_step, :string
+  attribute :supplied_by_user_id, :integer
 
   def initialize(current_user:, **attributes)
     @current_user = current_user
@@ -47,6 +48,7 @@ class DraftVaccinationRecord
       :notes,
       :date_and_time,
       (:outcome if can_change_outcome?),
+      (:supplier if requires_supplied_by?),
       (:delivery if administered?),
       (:dose if administered? && can_be_half_dose?),
       (:batch if administered?),
@@ -90,7 +92,7 @@ class DraftVaccinationRecord
   end
 
   on_wizard_step :location, exact: true do
-    validates :location_name, presence: true
+    validates :location_id, presence: true
   end
 
   on_wizard_step :notes, exact: true do
@@ -127,10 +129,6 @@ class DraftVaccinationRecord
 
   # So that a form error matches to a field in this model
   alias_method :administered, :administered?
-
-  def protocol
-    :pgd
-  end
 
   def batch
     return nil if batch_id.nil?
@@ -187,11 +185,25 @@ class DraftVaccinationRecord
   def session
     return nil if session_id.nil?
 
-    SessionPolicy::Scope.new(@current_user, Session).resolve.find(session_id)
+    SessionPolicy::Scope
+      .new(@current_user, Session)
+      .resolve
+      .includes(:programmes)
+      .find(session_id)
   end
 
   def session=(value)
     self.session_id = value.id
+  end
+
+  def supplied_by
+    return nil if supplied_by_user_id.nil?
+
+    User.find(supplied_by_user_id)
+  end
+
+  def supplied_by=(value)
+    self.supplied_by_user_id = value.id
   end
 
   def vaccination_record
@@ -272,7 +284,6 @@ class DraftVaccinationRecord
       delivery_site
       dose_sequence
       full_dose
-      protocol
       identity_check
       location_id
       location_name
@@ -285,7 +296,9 @@ class DraftVaccinationRecord
       performed_by_user_id
       performed_ods_code
       programme_id
+      protocol
       session_id
+      supplied_by_user_id
       vaccine_id
     ]
   end
@@ -342,6 +355,10 @@ class DraftVaccinationRecord
 
   def can_change_outcome?
     outcome != "already_had" || editing? || session.nil? || session.today?
+  end
+
+  def requires_supplied_by?
+    performed_by_user && !performed_by_user&.show_in_suppliers
   end
 
   def delivery_site_matches_delivery_method
