@@ -45,6 +45,7 @@ describe PatientMerger do
     let(:gillick_assessment) do
       create(:gillick_assessment, :competent, patient: patient_to_destroy)
     end
+    let(:note) { create(:note, patient: patient_to_destroy) }
     let(:notify_log_entry) do
       create(:notify_log_entry, :email, patient: patient_to_destroy)
     end
@@ -120,6 +121,10 @@ describe PatientMerger do
       expect { call }.to change { gillick_assessment.reload.patient }.to(
         patient_to_keep
       )
+    end
+
+    it "moves notes" do
+      expect { call }.to change { note.reload.patient }.to(patient_to_keep)
     end
 
     it "moves notify log entries" do
