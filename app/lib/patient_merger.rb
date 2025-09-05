@@ -28,6 +28,9 @@ class PatientMerger
         patient_id: patient_to_keep.id
       )
       patient_to_destroy.consents.update_all(patient_id: patient_to_keep.id)
+
+      patient_to_destroy.notes.update_all(patient_id: patient_to_keep.id)
+
       patient_to_destroy.notify_log_entries.update_all(
         patient_id: patient_to_keep.id
       )
