@@ -48,8 +48,8 @@ class Reports::OfflineSessionExporter
     workbook.add_worksheet(name: "Vaccinations") do |sheet|
       sheet.add_row(columns.map { it.to_s.upcase })
 
-      patient_sessions.find_each do |patient_session|
-        rows(patient_session:).each { |row| row.add_to(sheet:, cached_styles:) }
+      patients.find_each do |patient|
+        rows(patient:).each { |row| row.add_to(sheet:, cached_styles:) }
       end
 
       sheet.sheet_view.pane do |pane|
@@ -128,26 +128,21 @@ class Reports::OfflineSessionExporter
         ]
   end
 
-  def patient_sessions
-    @patient_sessions ||=
+  def patients
+    @patients ||=
       session
-        .patient_sessions
+        .patients
         .includes(
-          patient: [
-            :consent_statuses,
-            :school,
-            { parent_relationships: :parent },
-            {
-              vaccination_records: %i[
-                batch
-                performed_by_user
-                vaccine
-                programme
-                session
-              ]
-            }
-          ],
-          session: [{ programmes: :vaccines }, :location]
+          :consent_statuses,
+          :school,
+          parent_relationships: :parent,
+          vaccination_records: %i[
+            batch
+            performed_by_user
+            vaccine
+            programme
+            session
+          ]
         )
         .order_by_name
   end
@@ -155,7 +150,7 @@ class Reports::OfflineSessionExporter
   def consents
     @consents ||=
       Consent
-        .where(academic_year:, patient_id: patient_sessions.select(:patient_id))
+        .where(academic_year:, patient_id: patients.select(:id))
         .not_invalidated
         .includes(:parent, patient: { parent_relationships: :parent })
         .group_by(&:patient_id)
@@ -177,12 +172,7 @@ class Reports::OfflineSessionExporter
       GillickAssessment
         .select("DISTINCT ON (patient_id, programme_id) gillick_assessments.*")
         .joins(:session)
-        .where(
-          session_dates: {
-            session:
-          },
-          patient_id: patient_sessions.select(:patient_id)
-        )
+        .where(session_dates: { session: }, patient_id: patients.select(:id))
         .order(:patient_id, :programme_id, created_at: :desc)
         .includes(:performed_by)
         .group_by(&:patient_id)
@@ -197,7 +187,7 @@ class Reports::OfflineSessionExporter
         .select(
           "DISTINCT ON (patient_id, programme_id) patient_specific_directions.*"
         )
-        .where(academic_year:, patient_id: patient_sessions.select(:patient_id))
+        .where(academic_year:, patient_id: patients.select(:id))
         .not_invalidated
         .order(:patient_id, :programme_id, created_at: :desc)
         .includes(:created_by)
@@ -211,7 +201,7 @@ class Reports::OfflineSessionExporter
     @triages ||=
       Triage
         .select("DISTINCT ON (patient_id, programme_id) triages.*")
-        .where(academic_year:, patient_id: patient_sessions.select(:patient_id))
+        .where(academic_year:, patient_id: patients.select(:id))
         .not_invalidated
         .order(:patient_id, :programme_id, created_at: :desc)
         .includes(:performed_by)
@@ -221,11 +211,7 @@ class Reports::OfflineSessionExporter
         end
   end
 
-  def rows(patient_session:)
-    patient = patient_session.patient
-    session = patient_session.session
-    academic_year = patient_session.academic_year
-
+  def rows(patient:)
     session
       .programmes_for(patient:)
       .flat_map do |programme|
@@ -255,31 +241,27 @@ class Reports::OfflineSessionExporter
         if vaccination_records.any?
           vaccination_records.map do |vaccination_record|
             Row.new(columns, style: row_style) do |row|
-              add_patient_cells(row, patient_session:, programme:)
+              add_patient_cells(row, patient:, programme:)
               add_existing_row_cells(row, vaccination_record:)
             end
           end
         else
           [
             Row.new(columns, style: row_style) do |row|
-              add_patient_cells(row, patient_session:, programme:)
-              add_new_row_cells(row, patient_session:, programme:)
+              add_patient_cells(row, patient:, programme:)
+              add_new_row_cells(row, patient:, programme:)
             end
           ]
         end
       end
   end
 
-  def add_patient_cells(row, patient_session:, programme:)
-    patient = patient_session.patient
-    session = patient_session.session
-
+  def add_patient_cells(row, patient:, programme:)
     gillick_assessment = gillick_assessments.dig(patient.id, programme.id)
     grouped_consents = consents.dig(patient.id, programme.id) || []
     patient_specific_direction =
       patient_specific_directions.dig(patient.id, programme.id)
     triage = triages.dig(patient.id, programme.id)
-    academic_year = session.academic_year
 
     row[:organisation_code] = organisation.ods_code
     row[:person_forename] = patient.given_name
@@ -388,10 +370,7 @@ class Reports::OfflineSessionExporter
     end
   end
 
-  def add_new_row_cells(row, patient_session:, programme:)
-    patient = patient_session.patient
-    location = patient_session.session.location
-
+  def add_new_row_cells(row, patient:, programme:)
     row[:vaccinated] = Cell.new(allowed_values: %w[Y N])
     row[:date_of_vaccination] = Cell.new(type: :date)
     row[:school_name] = school_name(location:, patient:)
