@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 class EnqueueUpdatePatientsFromPDSJob < ApplicationJob
-  include GoodJob::ActiveJobExtensions::Concurrency
+  include SingleConcurrencyConcern
 
   queue_as :pds
-
-  good_job_control_concurrency_with perform_limit: 1
 
   def perform
     scope = Patient.with_nhs_number.not_invalidated.not_deceased
