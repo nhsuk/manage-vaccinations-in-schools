@@ -65,6 +65,7 @@ class Patient < ApplicationRecord
   has_many :consent_notifications
   has_many :consent_statuses
   has_many :consents
+  has_many :gillick_assessments
   has_many :notes
   has_many :notify_log_entries
   has_many :parent_relationships, -> { order(:created_at) }
@@ -73,6 +74,7 @@ class Patient < ApplicationRecord
   has_many :pre_screenings
   has_many :school_move_log_entries
   has_many :school_moves
+  has_many :session_attendances
   has_many :session_notifications
   has_many :triage_statuses
   has_many :triages
@@ -80,10 +82,8 @@ class Patient < ApplicationRecord
   has_many :vaccination_statuses
   has_many :patient_specific_directions
 
-  has_many :gillick_assessments
   has_many :parents, through: :parent_relationships
   has_many :patient_specific_directions
-  has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
   has_many :teams, -> { distinct }, through: :sessions
 

@@ -168,7 +168,7 @@ describe PatientSession do
       it { should be true }
 
       it "is safe with only absent attendances" do
-        create(:session_attendance, :absent, patient_session:)
+        create(:session_attendance, :absent, patient:, session:)
         expect(safe_to_destroy?).to be true
       end
     end
@@ -185,12 +185,12 @@ describe PatientSession do
       end
 
       it "is unsafe with present attendances" do
-        create(:session_attendance, :present, patient_session:)
+        create(:session_attendance, :present, patient:, session:)
         expect(safe_to_destroy?).to be false
       end
 
       it "is unsafe with mixed conditions" do
-        create(:session_attendance, :absent, patient_session:)
+        create(:session_attendance, :absent, patient:, session:)
         create(:vaccination_record, programme:, patient:, session:)
         expect(safe_to_destroy?).to be false
       end

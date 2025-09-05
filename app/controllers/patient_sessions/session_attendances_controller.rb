@@ -43,10 +43,12 @@ class PatientSessions::SessionAttendancesController < PatientSessions::BaseContr
 
   def set_session_attendance
     @session_attendance =
-      authorize @patient_session
-                  .session_attendances
-                  .includes(:patient, :session_date)
-                  .find_or_initialize_by(session_date: @session_date)
+      authorize(
+        @patient
+          .session_attendances
+          .includes(:patient, session_date: { session: :programmes })
+          .find_or_initialize_by(session_date: @session_date)
+      )
   end
 
   def session_attendance_params

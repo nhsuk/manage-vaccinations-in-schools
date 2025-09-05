@@ -55,6 +55,7 @@ class Session < ApplicationRecord
   has_many :programmes, through: :session_programmes
   has_many :gillick_assessments, through: :session_dates
   has_many :patients, through: :patient_sessions
+  has_many :session_attendances, through: :session_dates
   has_many :vaccines, through: :programmes
 
   has_many :location_programme_year_groups,

@@ -22,19 +22,13 @@
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (session_date_id => session_dates.id)
 #
-FactoryBot.define do
-  factory :session_attendance do
-    transient { session { association(:session) } }
+describe SessionAttendance do
+  subject(:session_attendance) { build(:session_attendance) }
 
-    patient
-    session_date { session.session_dates.first }
+  describe "associations" do
+    it { should belong_to(:patient) }
+    it { should belong_to(:session_date) }
 
-    trait :present do
-      attending { true }
-    end
-
-    trait :absent do
-      attending { false }
-    end
+    it { should have_one(:session).through(:session_date) }
   end
 end
