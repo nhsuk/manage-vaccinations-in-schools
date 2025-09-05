@@ -4,4 +4,7 @@
   - imports
   - consents
   - notifications
+  - statuses
+  - patients
   - pds
+  - immunisations_api

@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 class SyncVaccinationRecordToNHSJob < ApplicationJob
-  def self.concurrent_jobs_per_second = 2
-  def self.concurrency_key = :immunisations_api
-
   include ImmunisationsAPIThrottlingConcern
 
   queue_as :immunisation_api

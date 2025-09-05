@@ -75,7 +75,7 @@ module ManageVaccinations
 
     config.active_model.i18n_customize_full_message = true
 
-    config.active_job.queue_adapter = :good_job
+    config.active_job.queue_adapter = :sidekiq
     config.good_job.execution_mode = :external
 
     config.view_component.default_preview_layout = "component_preview"
