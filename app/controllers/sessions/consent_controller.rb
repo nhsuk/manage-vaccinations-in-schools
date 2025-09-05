@@ -29,7 +29,7 @@ class Sessions::ConsentController < ApplicationController
       @session
         .patient_sessions
         .includes_programmes
-        .includes(:latest_note, patient: :consent_statuses)
+        .includes(patient: [:consent_statuses, { notes: :created_by }])
         .has_consent_status(
           statuses_except_not_required,
           programme: @form.programmes

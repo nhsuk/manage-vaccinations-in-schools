@@ -53,13 +53,6 @@ class PatientSession < ApplicationRecord
            -> { where(patient_id: it.patient_id) },
            through: :session
 
-  has_many :notes, -> { where(session_id: it.session_id) }, through: :patient
-
-  has_one :latest_note,
-          -> { where(session_id: it.session_id).order(created_at: :desc) },
-          through: :patient,
-          source: :notes
-
   has_many :pre_screenings,
            -> { where(patient_id: it.patient_id) },
            through: :session

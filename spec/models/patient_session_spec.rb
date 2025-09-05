@@ -30,14 +30,6 @@ describe PatientSession do
   describe "associations" do
     it { should have_many(:gillick_assessments) }
     it { should have_many(:pre_screenings) }
-
-    it do
-      expect(patient_session).to have_one(:latest_note)
-        .through(:patient)
-        .source(:notes)
-        .conditions(session_id: session.id)
-        .order(created_at: :desc)
-    end
   end
 
   describe "scopes" do

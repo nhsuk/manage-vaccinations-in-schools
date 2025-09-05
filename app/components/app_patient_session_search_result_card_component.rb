@@ -42,10 +42,10 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               end
             end
 
-            if context != :patient_specific_direction && (note = patient_session.latest_note)
+            if context != :patient_specific_direction && latest_note
               summary_list.with_row do |row|
                 row.with_key { "Notes" }
-                row.with_value { render note_to_log_event(note) }
+                row.with_value { render note_to_log_event(latest_note) }
               end
             end
           end %>
@@ -59,7 +59,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(patient_session, context:, programmes: [])
+  def initialize(patient:, session:, context:, programmes: [])
     unless context.in?(
              %i[
                patients
@@ -73,10 +73,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       raise "Unknown context: #{context}"
     end
 
-    @patient_session = patient_session
-    @patient = patient_session.patient
-    @session = patient_session.session
-
+    @patient = patient
+    @session = session
     @context = context
 
     @programmes =
@@ -89,7 +87,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
   private
 
-  attr_reader :patient_session, :patient, :session, :context, :programmes
+  attr_reader :patient, :session, :context, :programmes
 
   delegate :govuk_button_to,
            :govuk_summary_list,
@@ -281,6 +279,14 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           )
         )
     }
+  end
+
+  def latest_note
+    patient
+      .notes
+      .sort_by(&:created_at)
+      .reverse
+      .find { it.session_id == session.id }
   end
 
   def note_to_log_event(note)
