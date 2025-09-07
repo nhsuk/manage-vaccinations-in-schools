@@ -37,7 +37,7 @@ class PatientSession::RegistrationStatus < ApplicationRecord
        validate: true
 
   def session_attendance
-    session_attendances.find { it.session_date_id == session_date.id }
+    session_attendances.find { it.session_date_id == session_date&.id }
   end
 
   def assign_status

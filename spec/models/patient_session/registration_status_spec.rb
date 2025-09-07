@@ -41,18 +41,31 @@ describe PatientSession::RegistrationStatus do
 
   describe "associations" do
     it { should belong_to(:patient_session) }
+  end
 
-    describe "#session_attendance" do
-      subject do
-        described_class
-          .includes(:session_attendances)
-          .find(patient_session_registration_status.id)
-          .session_attendance
-      end
+  describe "#session_attendance" do
+    subject do
+      described_class
+        .includes(:session_attendances)
+        .find(patient_session_registration_status.id)
+        .session_attendance
+    end
 
-      let(:patient_session_registration_status) do
-        create(:patient_session_registration_status, patient_session:)
-      end
+    let(:patient_session_registration_status) do
+      create(:patient_session_registration_status, patient_session:)
+    end
+
+    context "with no attendances" do
+      it { should be_nil }
+    end
+
+    context "with no session date today" do
+      let(:session) { create(:session, date: Date.yesterday, programmes:) }
+
+      it { should be_nil }
+    end
+
+    context "with an attendance today and yesterday" do
       let(:today_session_attendance) do
         create(
           :session_attendance,
@@ -76,7 +89,7 @@ describe PatientSession::RegistrationStatus do
   end
 
   describe "#status" do
-    subject(:status) { patient_session_registration_status.assign_status }
+    subject { patient_session_registration_status.assign_status }
 
     context "with no session attendance" do
       it { should be(:unknown) }
