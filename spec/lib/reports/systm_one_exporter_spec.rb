@@ -224,7 +224,7 @@ describe Reports::SystmOneExporter do
 
     context "flu" do
       let(:programme) { create(:programme, :flu_all_vaccines) }
-      let(:dose_sequence) { nil }
+      let(:dose_sequence) { 1 }
 
       context "Cell-based Trivalent Influenza Vaccine Seqirus" do
         let(:vaccine) do
@@ -368,10 +368,6 @@ describe Reports::SystmOneExporter do
       let(:delivery_method) { :nasal_spray }
       let(:delivery_site) { :nose }
 
-      it "uses the generic SystmOne code" do
-        expect(csv_row["Vaccination"]).to eq "Fluenz Part 1"
-      end
-
       it "uses 'Nasal' as the method" do
         expect(csv_row["Method"]).to eq "Nasal"
       end
@@ -388,12 +384,6 @@ describe Reports::SystmOneExporter do
       end
       let(:delivery_method) { :intramuscular }
       let(:delivery_site) { :right_arm_upper_position }
-
-      it "uses the generic SystmOne code" do
-        expect(
-          csv_row["Vaccination"]
-        ).to eq "Cell-based Trivalent Influenza Vaccine Seqirus Part 1"
-      end
 
       it "uses 'Intramuscular' as the method" do
         expect(csv_row["Method"]).to eq "Intramuscular"

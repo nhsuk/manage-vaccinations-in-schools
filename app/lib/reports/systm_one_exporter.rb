@@ -10,7 +10,7 @@ class Reports::SystmOneExporter
 
   VACCINE_DOSE_MAPPINGS = {
     "Cell-based Trivalent Influenza Vaccine Seqirus" => {
-      nil => "YcjYj"
+      1 => "YcjYj"
     },
     "Gardasil 9" => {
       1 => "Y19a4",
@@ -18,13 +18,13 @@ class Reports::SystmOneExporter
       3 => "Y19a6"
     },
     "Fluenz" => {
-      nil => "YcjAC"
+      1 => "YcjAC"
     },
     "Vaxigrip" => {
-      nil => "YcjYf"
+      1 => "YcjYf"
     },
     "Viatris" => {
-      nil => "YcjYh"
+      1 => "YcjYh"
     }
   }.freeze
 
