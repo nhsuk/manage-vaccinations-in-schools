@@ -44,37 +44,39 @@ module ConsentsHelper
     vaccine_method =
       if consent.vaccine_methods.present? &&
            consent.programme.has_multiple_vaccine_methods?
-        tag.span(
-          Vaccine.human_enum_name(:method, consent.vaccine_methods.first),
-          class: "nhsuk-u-secondary-text-colour"
-        )
+        Vaccine.human_enum_name(:method, consent.vaccine_methods.first)
       end
 
     # We can’t use the colour param as NHS.UK frontend uses different colour
     # names (aqua-green) than those supported by GOV.UK Frontend (turquoise)
-    if consent.invalidated?
-      safe_join(
-        [
-          govuk_tag(text: tag.s(text), classes: "nhsuk-tag--#{colour}"),
-          vaccine_method,
-          tag.span("Invalid", class: "nhsuk-u-secondary-text-colour")
-        ].compact
-      )
-    elsif consent.withdrawn?
-      safe_join(
-        [
-          govuk_tag(text: tag.s(text), classes: "nhsuk-tag--#{colour}"),
-          vaccine_method,
-          tag.span("Withdrawn", class: "nhsuk-u-secondary-text-colour")
-        ].compact
-      )
+    if consent.invalidated? || consent.withdrawn?
+      primary_tag =
+        govuk_tag(text: tag.s(text), classes: "nhsuk-tag--#{colour}")
+
+      secondary_text =
+        tag.span(class: "nhsuk-u-secondary-text-colour") do
+          safe_join(
+            [
+              (tag.s(vaccine_method) if vaccine_method),
+              if consent.invalidated?
+                tag.span("Invalid")
+              else
+                tag.span("Withdrawn")
+              end
+            ].compact,
+            " "
+          )
+        end
+
+      safe_join([primary_tag, secondary_text])
     else
-      safe_join(
-        [
-          govuk_tag(text:, classes: "nhsuk-tag--#{colour}"),
-          vaccine_method
-        ].compact
-      )
+      primary_tag = govuk_tag(text:, classes: "nhsuk-tag--#{colour}")
+      secondary_text =
+        if vaccine_method
+          tag.span(vaccine_method, class: "nhsuk-u-secondary-text-colour")
+        end
+
+      safe_join([primary_tag, secondary_text].compact)
     end
   end
 end
