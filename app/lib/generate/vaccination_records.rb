@@ -26,12 +26,7 @@ class Generate::VaccinationRecords
       patient = patient_session.patient
       session = patient_session.session
 
-      unless AttendanceRecord.joins(:session_date).exists?(
-               patient:,
-               session_date: {
-                 session:
-               }
-             )
+      unless AttendanceRecord.exists?(patient:, location: session.location)
         attendance_records << FactoryBot.build(
           :attendance_record,
           :present,

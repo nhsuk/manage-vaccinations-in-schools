@@ -63,7 +63,6 @@ class StatusUpdater
       .includes(
         :patient,
         :attendance_records,
-        :session_date,
         :vaccination_records,
         session: :programmes
       )

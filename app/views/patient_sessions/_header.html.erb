@@ -38,13 +38,14 @@
     </li>
   <% end %>
 
-  <% if @session.requires_registration? && (session_date = @session.session_dates.today.first) %>
-    <% attendance_record = @patient.attendance_records.includes(:session_date).find_or_initialize_by(session_date:) %>
+  <% if @session.requires_registration? && (date = @session.dates.find(&:today?)) %>
+    <% attendance_record = @patient.attendance_records.find_or_initialize_by(location: @session.location, date:) %>
 
     <li class="app-action-list__item">
       <%= render AppStatusTagComponent.new(@patient_session.registration_status&.status || "unknown", context: :register) %>
     </li>
 
+    <% attendance_record.session = @session %>
     <% if policy(attendance_record).edit? %>
       <li class="app-action-list__item">
         <%= link_to(

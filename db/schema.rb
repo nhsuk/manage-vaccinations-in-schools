@@ -50,14 +50,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_09_095902) do
   end
 
   create_table "attendance_records", force: :cascade do |t|
-    t.bigint "session_date_id", null: false
     t.boolean "attending", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "patient_id", null: false
-    t.index ["patient_id", "session_date_id"], name: "index_attendance_records_on_patient_id_and_session_date_id", unique: true
+    t.date "date", null: false
+    t.bigint "location_id", null: false
+    t.index ["location_id"], name: "index_attendance_records_on_location_id"
+    t.index ["patient_id", "location_id", "date"], name: "idx_on_patient_id_location_id_date_e5912f40c4", unique: true
     t.index ["patient_id"], name: "index_attendance_records_on_patient_id"
-    t.index ["session_date_id"], name: "index_attendance_records_on_session_date_id"
   end
 
   create_table "audits", force: :cascade do |t|
@@ -1055,8 +1056,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_09_095902) do
   add_foreign_key "archive_reasons", "patients"
   add_foreign_key "archive_reasons", "teams"
   add_foreign_key "archive_reasons", "users", column: "created_by_user_id"
+  add_foreign_key "attendance_records", "locations"
   add_foreign_key "attendance_records", "patients"
-  add_foreign_key "attendance_records", "session_dates"
   add_foreign_key "batches", "teams"
   add_foreign_key "batches", "vaccines"
   add_foreign_key "batches_immunisation_imports", "batches"

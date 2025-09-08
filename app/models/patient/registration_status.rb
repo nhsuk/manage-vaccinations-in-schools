@@ -29,9 +29,7 @@ class Patient::RegistrationStatus < ApplicationRecord
            -> { kept.order(performed_at: :desc) },
            through: :patient
 
-  has_one :session_date, -> { today }, through: :session, source: :session_dates
-
-  has_many :attendance_records, through: :patient
+  has_many :attendance_records, -> { today }, through: :patient
 
   enum :status,
        { unknown: 0, attending: 1, not_attending: 2, completed: 3 },
@@ -39,7 +37,7 @@ class Patient::RegistrationStatus < ApplicationRecord
        validate: true
 
   def attendance_record
-    attendance_records.find { it.session_date_id == session_date&.id }
+    attendance_records.find { it.location_id == session.location_id }
   end
 
   def assign_status

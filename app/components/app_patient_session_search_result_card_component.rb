@@ -98,8 +98,11 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     attendance_record =
       AttendanceRecord.new(
         patient:,
-        session_date: SessionDate.new(session:, value: Date.current)
+        location: session.location,
+        date: Date.current
       )
+
+    attendance_record.session = session
 
     policy(attendance_record).new?
   end

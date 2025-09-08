@@ -53,6 +53,7 @@ class Location < ApplicationRecord
              primary_key: :gias_code,
              optional: true
 
+  has_many :attendance_records
   has_many :consent_forms
   has_many :location_programme_year_groups
   has_many :patients, foreign_key: :school_id

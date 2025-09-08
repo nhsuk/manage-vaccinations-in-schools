@@ -6,9 +6,7 @@ describe StatusGenerator::Registration do
       patient:,
       session:,
       attendance_record:
-        patient_session.attendance_records.find_by(
-          session_date: session.session_dates.last
-        ),
+        patient_session.attendance_records.find_by(date: session.dates.last),
       vaccination_records: patient.vaccination_records
     )
   end
@@ -37,7 +35,8 @@ describe StatusGenerator::Registration do
           :attendance_record,
           :present,
           patient:,
-          session_date: session.session_dates.first
+          session:,
+          date: session.dates.first
         )
       end
 
@@ -50,7 +49,8 @@ describe StatusGenerator::Registration do
           :attendance_record,
           :present,
           patient:,
-          session_date: session.session_dates.second
+          session:,
+          date: session.dates.second
         )
       end
 
@@ -63,7 +63,8 @@ describe StatusGenerator::Registration do
           :attendance_record,
           :absent,
           patient:,
-          session_date: session.session_dates.second
+          session:,
+          date: session.dates.second
         )
       end
 

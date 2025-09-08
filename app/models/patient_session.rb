@@ -72,7 +72,7 @@ class PatientSession < ApplicationRecord
 
   has_many :attendance_records,
            -> { where(patient_id: it.patient_id) },
-           through: :session
+           through: :location
 
   has_many :session_notifications,
            -> { where(session_id: it.session_id) },

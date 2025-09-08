@@ -26,16 +26,19 @@ class Sessions::RegisterController < ApplicationController
 
   def create
     attendance_record =
-      ActiveRecord::Base.transaction do
-        record =
-          authorize @patient
-                      .attendance_records
-                      .includes(:session_date)
-                      .find_or_initialize_by(session_date: @session_date)
-        record.update!(attending: params[:status] == "present")
-        StatusUpdater.call(patient: @patient)
-        record
-      end
+      @patient.attendance_records.find_or_initialize_by(
+        location: @session.location,
+        date: @session_date.value
+      )
+
+    attendance_record.session = @session
+
+    authorize attendance_record
+
+    ActiveRecord::Base.transaction do
+      attendance_record.update!(attending: params[:status] == "present")
+      StatusUpdater.call(patient: @patient)
+    end
 
     name = @patient.full_name
 

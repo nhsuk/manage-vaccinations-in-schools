@@ -42,18 +42,20 @@ class PatientSessions::AttendancesController < PatientSessions::BaseController
   private
 
   def set_attendance_record
-    @attendance_record =
-      authorize(
-        @patient
-          .attendance_records
-          .includes(:patient, session_date: { session: :programmes })
-          .find_or_initialize_by(session_date: @session_date)
+    attendance_record =
+      @patient.attendance_records.find_or_initialize_by(
+        location: @session.location,
+        date: @session_date.value
       )
+
+    attendance_record.session = @session
+
+    @attendance_record = authorize attendance_record
   end
 
   def attendance_record_params
     params
       .expect(attendance_record: :attending)
-      .tap { |p| p[:attending] = nil if p[:attending] == "not_registered" }
+      .tap { it[:attending] = nil if it[:attending] == "not_registered" }
   end
 end

@@ -71,21 +71,11 @@ describe Patient::RegistrationStatus do
 
     context "with an attendance today and yesterday" do
       let(:today_attendance_record) do
-        create(
-          :attendance_record,
-          :present,
-          patient:,
-          session_date: session.session_dates.find_by(value: Date.current)
-        )
+        create(:attendance_record, :present, :today, patient:, session:)
       end
 
       before do
-        create(
-          :attendance_record,
-          :absent,
-          patient:,
-          session_date: session.session_dates.find_by(value: Date.yesterday)
-        )
+        create(:attendance_record, :absent, :yesterday, patient:, session:)
       end
 
       it { should eq(today_attendance_record) }
@@ -105,7 +95,8 @@ describe Patient::RegistrationStatus do
           :attendance_record,
           :present,
           patient:,
-          session_date: session.session_dates.first
+          session:,
+          date: session.dates.first
         )
       end
 
@@ -118,7 +109,8 @@ describe Patient::RegistrationStatus do
           :attendance_record,
           :present,
           patient:,
-          session_date: session.session_dates.second
+          session:,
+          date: session.dates.second
         )
       end
 
@@ -131,7 +123,8 @@ describe Patient::RegistrationStatus do
           :attendance_record,
           :absent,
           patient:,
-          session_date: session.session_dates.second
+          session:,
+          date: session.dates.second
         )
       end
 
