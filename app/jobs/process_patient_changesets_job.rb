@@ -51,7 +51,7 @@ class ProcessPatientChangesetsJob < ApplicationJob
   private
 
   def unique_nhs_numbers(patient_changeset)
-    patient_changeset.search_results.pluck(:nhs_number).compact.uniq
+    patient_changeset.search_results.pluck("nhs_number").compact.uniq
   end
 
   def get_unique_nhs_number(patient_changeset)

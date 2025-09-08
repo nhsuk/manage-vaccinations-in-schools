@@ -336,26 +336,31 @@ describe "Import child records" do
       "address-postalcode" => "SW7 5LE"
     )
 
-    stub_all_searches_to_return_no_patient(
+    stub_pds_cascading_search(
       family_name: "Smith",
       given_name: "Maia",
       birthdate: "eq2010-08-16",
       address_postcode: "W2 3PE"
     )
 
-    stub_all_searches_to_return_no_patient(
+    stub_pds_cascading_search(
       family_name: "Richard",
       given_name: "Caroline",
       birthdate: "eq2010-05-15",
-      address_postcode: "B1 1AA"
+      address_postcode: "B1 1AA",
+      steps: {
+        wildcard_postcode: "1111111111",
+        fuzzy: "9435726097"
+      }
     )
   end
 
-  def stub_all_searches_to_return_no_patient(
+  def stub_pds_cascading_search(
     family_name:,
     given_name:,
     birthdate:,
-    address_postcode:
+    address_postcode:,
+    steps: {}
   )
     stub_pds_search_to_return_no_patients(
       "family" => family_name,
@@ -363,40 +368,40 @@ describe "Import child records" do
       "birthdate" => birthdate,
       "address-postalcode" => address_postcode
     )
-    stub_pds_search_to_return_no_patients(
-      "family" => "#{family_name[0..2]}*",
-      "given" => given_name,
-      "birthdate" => birthdate,
-      "address-postalcode" => address_postcode
-    )
-    stub_pds_search_to_return_no_patients(
-      "family" => family_name,
-      "given" => "#{given_name[0..2]}*",
-      "birthdate" => birthdate,
-      "address-postalcode" => address_postcode
-    )
-    stub_pds_search_to_return_no_patients(
-      "family" => family_name,
-      "given" => given_name,
-      "birthdate" => birthdate,
-      "address-postalcode" => "#{address_postcode[0..1]}*"
-    )
-    stub_pds_search_to_return_no_patients(
-      "family" => family_name,
-      "given" => given_name,
-      "birthdate" => birthdate,
-      "address-postalcode" => address_postcode,
-      "_fuzzy-match" => "true",
-      "_history" => "false"
-    )
-    stub_pds_search_to_return_no_patients(
-      "family" => family_name,
-      "given" => given_name,
-      "birthdate" => birthdate,
-      "address-postalcode" => address_postcode,
-      "_fuzzy-match" => "true",
-      "_history" => "true"
-    )
+
+    {
+      wildcard_postcode: {
+        "family" => family_name,
+        "given" => given_name,
+        "birthdate" => birthdate,
+        "address-postalcode" => "#{address_postcode[0..1]}*"
+      },
+      wildcard_given_name: {
+        "family" => family_name,
+        "given" => "#{given_name[0..2]}*",
+        "birthdate" => birthdate,
+        "address-postalcode" => address_postcode
+      },
+      wildcard_family_name: {
+        "family" => "#{family_name[0..2]}*",
+        "given" => given_name,
+        "birthdate" => birthdate,
+        "address-postalcode" => address_postcode
+      },
+      fuzzy: {
+        "family" => family_name,
+        "given" => given_name,
+        "birthdate" => birthdate,
+        "address-postalcode" => address_postcode,
+        "_fuzzy-match" => "true"
+      }
+    }.each do |step, query|
+      if steps[step]
+        stub_pds_search_to_return_a_patient(steps[step], **query)
+      else
+        stub_pds_search_to_return_no_patients(**query)
+      end
+    end
   end
 
   def when_i_visit_the_import_page

@@ -2,8 +2,7 @@
 
 module PDSHelper
   def stub_pds_search_to_return_no_patients(**query)
-    query["_history"] ||= "true"
-    query.delete("_history") if query["_history"] == "false"
+    query["_history"] ||= "true" unless query["_fuzzy-match"] == "true"
 
     stub_request(
       :get,
@@ -19,7 +18,7 @@ module PDSHelper
   end
 
   def stub_pds_search_to_return_a_patient(nhs_number = "9449306168", **query)
-    query["_history"] ||= "true"
+    query["_history"] ||= "true" unless query["_fuzzy-match"] == "true"
 
     response_data =
       JSON.parse(file_fixture("pds/search-patients-response.json").read)
