@@ -26,8 +26,7 @@ module "db_access_service" {
     subnets = local.subnet_list
     vpc_id  = aws_vpc.vpc.id
   }
-  server_type      = "none"
-  server_type_name = "data-replication"
+  server_type = "data-replication"
   task_config = {
     environment          = local.task_envs
     secrets              = local.task_secrets

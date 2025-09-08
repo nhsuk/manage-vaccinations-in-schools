@@ -124,6 +124,10 @@ locals {
     {
       name      = "RAILS_MASTER_KEY"
       valueFrom = var.rails_master_key_path
+    },
+    {
+      name      = "READ_ONLY_DB_PASSWORD"
+      valueFrom = aws_secretsmanager_secret.ro_db_password.arn
     }
   ]
 }
