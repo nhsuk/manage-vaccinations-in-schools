@@ -71,19 +71,44 @@ describe "Manage attendance" do
     then_i_do_not_see_the_register_tab
   end
 
+  scenario "Viewing a patient from yesterday with attendance turned off" do
+    given_my_team_is_running_an_hpv_vaccination_programme
+    and_there_is_a_vaccination_session_yesterday_that_requires_no_registration
+    and_the_session_has_patients
+
+    when_i_go_to_the_session
+    and_i_click_on_the_record_tab
+    then_i_cant_see_the_patients
+
+    when_i_go_to_the_session
+    and_i_click_on_the_children_tab
+    and_i_go_to_a_patient
+    then_i_cant_record_a_vaccination
+  end
+
   def given_my_team_is_running_an_hpv_vaccination_programme
     @programmes = [create(:programme, :hpv_all_vaccines)]
-    @team = create(:team, :with_one_nurse, programmes: @programmes)
+    @team =
+      create(
+        :team,
+        :with_one_nurse,
+        :with_generic_clinic,
+        programmes: @programmes
+      )
   end
 
   def and_there_is_a_vaccination_session_today
-    location = create(:school, team: @team)
     @session =
-      create(:session, :today, programmes: @programmes, team: @team, location:)
+      create(
+        :session,
+        :today,
+        programmes: @programmes,
+        team: @team,
+        location: create(:school, team: @team)
+      )
   end
 
   def and_there_is_a_vaccination_session_today_that_requires_no_registration
-    location = create(:school, team: @team)
     @session =
       create(
         :session,
@@ -91,7 +116,19 @@ describe "Manage attendance" do
         :requires_no_registration,
         programmes: @programmes,
         team: @team,
-        location:
+        location: create(:school, team: @team)
+      )
+  end
+
+  def and_there_is_a_vaccination_session_yesterday_that_requires_no_registration
+    @session =
+      create(
+        :session,
+        :yesterday,
+        :requires_no_registration,
+        programmes: @programmes,
+        team: @team,
+        location: create(:school, team: @team)
       )
   end
 
@@ -112,16 +149,26 @@ describe "Manage attendance" do
     click_link @session.location.name
   end
 
+  def and_i_click_on_the_children_tab
+    within(".app-secondary-navigation") { click_on "Children" }
+  end
+
   def and_i_click_on_the_register_tab
     click_link "Register"
   end
 
-  def when_i_click_on_the_record_vaccinations_tab
+  def and_i_click_on_the_record_tab
     click_link "Record vaccinations"
   end
 
   def then_i_do_not_see_the_register_tab
     expect(page).not_to have_content("Register")
+  end
+
+  def then_i_cant_see_the_patients
+    expect(page).to have_content(
+      "You can record vaccinations when a session is in progress."
+    )
   end
 
   def then_i_should_not_see_link_to_update_attendance
@@ -225,5 +272,9 @@ describe "Manage attendance" do
     click_on "Change register attendance"
     choose "No"
     click_on "Continue"
+  end
+
+  def then_i_cant_record_a_vaccination
+    expect(page).not_to have_content("Record vaccination")
   end
 end
