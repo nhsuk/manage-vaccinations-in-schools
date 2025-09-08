@@ -21,6 +21,10 @@
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Imported on</span>
             <%= link_to import.created_at.to_fs(:long), path(import) %>
+            <br />
+            <span class="nhsuk-u-secondary-text-color nhsuk-u-font-size-16">
+              <%= import.csv_filename %>
+            </span>
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Type</span>
