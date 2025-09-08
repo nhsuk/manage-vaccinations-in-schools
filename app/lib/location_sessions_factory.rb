@@ -56,7 +56,7 @@ class LocationSessionsFactory
   end
 
   def add_patients!(session:)
-    PatientSession.import!(
+    PatientLocation.import!(
       %i[patient_id session_id],
       patient_ids.map { [it, session.id] },
       on_duplicate_key_ignore: true

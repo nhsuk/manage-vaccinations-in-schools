@@ -15,7 +15,7 @@ class Sessions::RecordController < ApplicationController
 
   def show
     scope =
-      @session.patient_sessions.includes(
+      @session.patient_locations.includes(
         patient: [
           :consent_statuses,
           :triage_statuses,
@@ -28,7 +28,7 @@ class Sessions::RecordController < ApplicationController
       scope = scope.has_registration_status(%w[attending completed])
     end
 
-    patient_sessions =
+    patient_locations =
       filter_on_vaccine_method_or_patient_specific_direction(
         @form.apply(scope)
       ).consent_given_and_ready_to_vaccinate(
@@ -36,7 +36,7 @@ class Sessions::RecordController < ApplicationController
         vaccine_method: @form.vaccine_method.presence
       )
 
-    @pagy, @patient_sessions = pagy_array(patient_sessions)
+    @pagy, @patient_locations = pagy_array(patient_locations)
 
     render layout: "full"
   end

@@ -403,7 +403,7 @@ describe CohortImport do
 
       before do
         team.sessions.each do |session|
-          create(:patient_session, session:, patient: existing_patient)
+          create(:patient_location, session:, patient: existing_patient)
         end
       end
 

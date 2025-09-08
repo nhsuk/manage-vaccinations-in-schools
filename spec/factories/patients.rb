@@ -125,7 +125,7 @@ FactoryBot.define do
 
     after(:create) do |patient, evaluator|
       if evaluator.session
-        PatientSession.find_or_create_by!(patient:, session: evaluator.session)
+        PatientLocation.find_or_create_by!(patient:, session: evaluator.session)
       end
     end
 

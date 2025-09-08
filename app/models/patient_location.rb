@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: patient_sessions
+# Table name: patient_locations
 #
 #  id         :bigint           not null, primary key
 #  created_at :datetime         not null
@@ -12,8 +12,8 @@
 #
 # Indexes
 #
-#  index_patient_sessions_on_patient_id_and_session_id  (patient_id,session_id) UNIQUE
-#  index_patient_sessions_on_session_id                 (session_id)
+#  index_patient_locations_on_patient_id_and_session_id  (patient_id,session_id) UNIQUE
+#  index_patient_locations_on_session_id                 (session_id)
 #
 # Foreign Keys
 #
@@ -37,7 +37,7 @@
 # that case, the list of programmes they appear in won't be the same as the
 # complete list of programmes administered in the session.
 
-class PatientSession < ApplicationRecord
+class PatientLocation < ApplicationRecord
   audited associated_with: :patient
   has_associated_audits
 
@@ -143,7 +143,7 @@ class PatientSession < ApplicationRecord
         ->(status, programme:, vaccine_method: nil) do
           consent_status_scope =
             Patient::ConsentStatus
-              .where("patient_id = patient_sessions.patient_id")
+              .where("patient_id = patient_locations.patient_id")
               .where("academic_year = sessions.academic_year")
               .where(status:, programme:)
 
@@ -159,8 +159,8 @@ class PatientSession < ApplicationRecord
         ->(status) do
           where(
             Patient::RegistrationStatus
-              .where("patient_id = patient_sessions.patient_id")
-              .where("session_id = patient_sessions.session_id")
+              .where("patient_id = patient_locations.patient_id")
+              .where("session_id = patient_locations.session_id")
               .where(status:)
               .arel
               .exists
@@ -171,7 +171,7 @@ class PatientSession < ApplicationRecord
         ->(status, programme:) do
           joins(:session).where(
             Patient::TriageStatus
-              .where("patient_id = patient_sessions.patient_id")
+              .where("patient_id = patient_locations.patient_id")
               .where("academic_year = sessions.academic_year")
               .where(status:, programme:)
               .arel
@@ -183,7 +183,7 @@ class PatientSession < ApplicationRecord
         ->(status, programme:) do
           joins(:session).where(
             Patient::VaccinationStatus
-              .where("patient_id = patient_sessions.patient_id")
+              .where("patient_id = patient_locations.patient_id")
               .where("academic_year = sessions.academic_year")
               .where(status:, programme:)
               .arel
@@ -195,7 +195,7 @@ class PatientSession < ApplicationRecord
         ->(vaccine_method, programme:) do
           joins(:session).where(
             Patient::TriageStatus
-              .where("patient_id = patient_sessions.patient_id")
+              .where("patient_id = patient_locations.patient_id")
               .where("academic_year = sessions.academic_year")
               .where(vaccine_method:, programme:)
               .arel
@@ -203,14 +203,14 @@ class PatientSession < ApplicationRecord
           ).or(
             joins(:session).where(
               Patient::TriageStatus
-                .where("patient_id = patient_sessions.patient_id")
+                .where("patient_id = patient_locations.patient_id")
                 .where("academic_year = sessions.academic_year")
                 .where(status: "not_required", programme:)
                 .arel
                 .exists
             ).where(
               Patient::ConsentStatus
-                .where("patient_id = patient_sessions.patient_id")
+                .where("patient_id = patient_locations.patient_id")
                 .where("academic_year = sessions.academic_year")
                 .where(programme:)
                 .has_vaccine_method(vaccine_method)
@@ -222,9 +222,9 @@ class PatientSession < ApplicationRecord
 
   scope :consent_given_and_ready_to_vaccinate,
         ->(programmes:, vaccine_method:) do
-          select do |patient_session|
-            patient = patient_session.patient
-            session = patient_session.session
+          select do |patient_location|
+            patient = patient_location.patient
+            session = patient_location.session
 
             programmes.any? do |programme|
               patient.consent_given_and_safe_to_vaccinate?(
@@ -240,7 +240,7 @@ class PatientSession < ApplicationRecord
         ->(programme:, team:) do
           joins(:session).where.not(
             PatientSpecificDirection
-              .where("patient_id = patient_sessions.patient_id")
+              .where("patient_id = patient_locations.patient_id")
               .where("academic_year = sessions.academic_year")
               .where(programme:, team:)
               .not_invalidated
@@ -253,7 +253,7 @@ class PatientSession < ApplicationRecord
         ->(programme:, team:) do
           joins(:session).where(
             PatientSpecificDirection
-              .where("patient_id = patient_sessions.patient_id")
+              .where("patient_id = patient_locations.patient_id")
               .where("academic_year = sessions.academic_year")
               .where(programme:, team:)
               .not_invalidated

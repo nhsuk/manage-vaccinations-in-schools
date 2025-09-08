@@ -70,10 +70,11 @@ class VaccinationRecordPolicy < ApplicationPolicy
       relevant_patients =
         Patient
           .select("1")
-          .joins(patient_sessions: :session)
+          .joins(patient_locations: :session)
           .where("patients.id = vaccination_records.patient_id")
           .where(sessions: { team_id: team.id })
           .arel
+
       scope
         .kept
         .where(relevant_patients.exists)

@@ -26,7 +26,7 @@ describe AppSessionNeedsReviewWarningComponent do
         create(
           :patient,
           nhs_number: nil,
-          patient_sessions: [build(:patient_session, session:)],
+          patient_locations: [build(:patient_location, session:)],
           year_group: session.programmes.sample.default_year_groups.sample
         )
       end

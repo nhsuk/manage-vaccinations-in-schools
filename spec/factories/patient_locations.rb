@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: patient_sessions
+# Table name: patient_locations
 #
 #  id         :bigint           not null, primary key
 #  created_at :datetime         not null
@@ -12,8 +12,8 @@
 #
 # Indexes
 #
-#  index_patient_sessions_on_patient_id_and_session_id  (patient_id,session_id) UNIQUE
-#  index_patient_sessions_on_session_id                 (session_id)
+#  index_patient_locations_on_patient_id_and_session_id  (patient_id,session_id) UNIQUE
+#  index_patient_locations_on_session_id                 (session_id)
 #
 # Foreign Keys
 #
@@ -21,7 +21,7 @@
 #  fk_rails_...  (session_id => sessions.id)
 #
 FactoryBot.define do
-  factory :patient_session do
+  factory :patient_location do
     transient { programmes { [association(:programme)] } }
 
     patient

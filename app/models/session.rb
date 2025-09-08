@@ -39,7 +39,7 @@ class Session < ApplicationRecord
 
   has_many :consent_notifications
   has_many :notes
-  has_many :patient_sessions
+  has_many :patient_locations
   has_many :session_dates, -> { order(:value) }
   has_many :session_notifications
   has_many :session_programmes,
@@ -54,7 +54,7 @@ class Session < ApplicationRecord
   has_many :pre_screenings, through: :session_dates
   has_many :programmes, through: :session_programmes
   has_many :gillick_assessments, through: :session_dates
-  has_many :patients, through: :patient_sessions
+  has_many :patients, through: :patient_locations
   has_many :vaccines, through: :programmes
 
   has_many :location_programme_year_groups,
@@ -301,7 +301,7 @@ class Session < ApplicationRecord
   def next_reminder_date = next_reminder_dates.first
 
   def patients_with_no_consent_response_count
-    patient_sessions.has_consent_status(
+    patient_locations.has_consent_status(
       "no_response",
       programme: programmes
     ).count

@@ -19,7 +19,7 @@ module MavisCLI
           return
         end
 
-        unless PatientSession
+        unless PatientLocation
                  .joins(:patient, :session)
                  .where(
                    patient: {

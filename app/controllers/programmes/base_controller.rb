@@ -22,7 +22,7 @@ class Programmes::BaseController < ApplicationController
 
   def patient_ids
     @patient_ids ||=
-      PatientSession
+      PatientLocation
         .distinct
         .joins(:patient, :session)
         .where(session_id: session_ids)

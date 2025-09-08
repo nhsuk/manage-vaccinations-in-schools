@@ -33,7 +33,7 @@ class AppSessionNeedsReviewWarningComponent < ViewComponent::Base
   def warning_counts
     @warning_counts ||= {
       children_without_nhs_number:
-        patient_sessions.merge(Patient.without_nhs_number).count
+        patient_locations.merge(Patient.without_nhs_number).count
     }
   end
 
@@ -42,9 +42,9 @@ class AppSessionNeedsReviewWarningComponent < ViewComponent::Base
     link_to(t(warning, count: warning_counts[warning]), warning_href[warning])
   end
 
-  def patient_sessions
+  def patient_locations
     @session
-      .patient_sessions
+      .patient_locations
       .joins(:patient, :session)
       .appear_in_programmes(@session.programmes)
   end

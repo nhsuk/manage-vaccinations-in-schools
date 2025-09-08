@@ -17,7 +17,7 @@ class SessionsController < ApplicationController
     sessions = @form.apply(scope)
 
     @patient_count_by_session_id =
-      PatientSession
+      PatientLocation
         .where(session_id: sessions.map(&:id))
         .joins(:patient, :session)
         .appear_in_programmes(@programmes)

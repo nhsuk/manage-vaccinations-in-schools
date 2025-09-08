@@ -22,7 +22,7 @@ describe PatientArchiver do
   context "when in upcoming sessions" do
     let(:session) { create(:session, :tomorrow, team:) }
 
-    before { create(:patient_session, patient:, session:) }
+    before { create(:patient_location, patient:, session:) }
 
     it "removes the patient from the sessions" do
       expect(patient.sessions).to include(session)

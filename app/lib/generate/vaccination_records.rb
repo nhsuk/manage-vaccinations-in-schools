@@ -22,9 +22,9 @@ class Generate::VaccinationRecords
     attendance_records = []
     vaccination_records = []
 
-    random_patient_sessions.each do |patient_session|
-      patient = patient_session.patient
-      session = patient_session.session
+    random_patient_locations.each do |patient_location|
+      patient = patient_location.patient
+      session = patient_location.session
 
       unless AttendanceRecord.exists?(patient:, location: session.location)
         attendance_records << FactoryBot.build(
@@ -36,16 +36,16 @@ class Generate::VaccinationRecords
       end
 
       location_name =
-        patient_session.location.name if patient_session.session.clinic?
+        patient_location.location.name if patient_location.session.clinic?
 
       vaccination_records << FactoryBot.build(
         :vaccination_record,
         :administered,
-        patient: patient_session.patient,
+        patient: patient_location.patient,
         programme:,
         team:,
         performed_by:,
-        session: patient_session.session,
+        session: patient_location.session,
         vaccine:,
         batch:,
         location_name:
@@ -58,25 +58,25 @@ class Generate::VaccinationRecords
     StatusUpdater.call(patient: vaccination_records.map(&:patient))
   end
 
-  def random_patient_sessions
+  def random_patient_locations
     if administered&.positive?
-      patient_sessions
+      patient_locations
         .sample(administered)
         .tap do |selected|
           if selected.size < administered
             info =
-              "#{selected.size} (patient_sessions) < #{administered} (administered)"
+              "#{selected.size} (patient_locations) < #{administered} (administered)"
             raise "Not enough patients to generate vaccinations: #{info}"
           end
         end
     else
-      patient_sessions
+      patient_locations
     end
   end
 
-  def patient_sessions
+  def patient_locations
     (session.presence || team)
-      .patient_sessions
+      .patient_locations
       .joins(:patient)
       .includes(
         :session,

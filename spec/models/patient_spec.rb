@@ -173,16 +173,16 @@ describe Patient do
         end
 
         before do
-          create(:patient_session, patient:, session: flu_session)
-          create(:patient_session, patient:, session: hpv_session)
+          create(:patient_location, patient:, session: flu_session)
+          create(:patient_location, patient:, session: hpv_session)
 
           create(
-            :patient_session,
+            :patient_location,
             patient: another_patient,
             session: flu_session
           )
           create(
-            :patient_session,
+            :patient_location,
             patient: another_patient,
             session: hpv_session
           )
@@ -275,16 +275,16 @@ describe Patient do
         end
 
         before do
-          create(:patient_session, patient:, session: flu_session)
-          create(:patient_session, patient:, session: hpv_session)
+          create(:patient_location, patient:, session: flu_session)
+          create(:patient_location, patient:, session: hpv_session)
 
           create(
-            :patient_session,
+            :patient_location,
             patient: another_patient,
             session: flu_session
           )
           create(
-            :patient_session,
+            :patient_location,
             patient: another_patient,
             session: hpv_session
           )
@@ -896,7 +896,7 @@ describe Patient do
           )
         end
 
-        before { create(:patient_session, patient:, session:) }
+        before { create(:patient_location, patient:, session:) }
 
         it "removes the patient from the session" do
           expect(session.patients).to include(patient)
@@ -1134,11 +1134,11 @@ describe Patient do
         )
       end
 
-      before { create(:patient_session, patient: old_patient, session:) }
+      before { create(:patient_location, patient: old_patient, session:) }
 
       it "adds the new patient to any upcoming sessions" do
-        expect(new_patient.patient_sessions.size).to eq(1)
-        expect(new_patient.patient_sessions.first.session).to eq(session)
+        expect(new_patient.patient_locations.size).to eq(1)
+        expect(new_patient.patient_locations.first.session).to eq(session)
       end
     end
 

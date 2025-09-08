@@ -52,8 +52,8 @@ class Team < ApplicationRecord
 
   has_many :community_clinics, through: :subteams
   has_many :locations, through: :subteams
-  has_many :patient_sessions, through: :sessions
-  has_many :patients, -> { distinct }, through: :patient_sessions
+  has_many :patient_locations, through: :sessions
+  has_many :patients, -> { distinct }, through: :patient_locations
   has_many :programmes, through: :team_programmes
   has_many :schools, through: :subteams
   has_many :vaccination_records, through: :sessions

@@ -170,9 +170,9 @@ def setup_clinic(team)
   # All patients belong to the community clinic. This is normally
   # handled by school moves, but here we need to do it manually.
 
-  PatientSession.import(
+  PatientLocation.import(
     team.patients.map do
-      PatientSession.new(patient: it, session: clinic_session)
+      PatientLocation.new(patient: it, session: clinic_session)
     end,
     on_duplicate_key_ignore: :all
   )

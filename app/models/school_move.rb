@@ -98,13 +98,13 @@ class SchoolMove < ApplicationRecord
 
   def update_sessions!
     patient
-      .patient_sessions
+      .patient_locations
       .joins(:session)
       .where("academic_year >= ?", academic_year)
       .destroy_all_if_safe
 
     sessions_to_add.find_each do |session|
-      PatientSession.find_or_create_by!(patient:, session:)
+      PatientLocation.find_or_create_by!(patient:, session:)
     end
 
     StatusUpdater.call(patient:)

@@ -37,7 +37,7 @@ class TeamSessionsFactory
         .where(academic_year:)
         .where.not(location: team.locations)
         .where
-        .missing(:patient_sessions)
+        .missing(:patient_locations)
         .destroy_all
     end
   end

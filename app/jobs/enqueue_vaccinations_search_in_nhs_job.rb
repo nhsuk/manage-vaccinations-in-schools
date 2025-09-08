@@ -15,11 +15,7 @@ class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
           .references(:session_dates)
       end
 
-    patient_ids =
-      Patient
-        .includes(:sessions)
-        .where(patient_sessions: { session: sessions.pluck(:id) })
-        .ids
+    patient_ids = PatientLocation.where(session: sessions).pluck(:patient_id)
 
     return if patient_ids.empty?
 

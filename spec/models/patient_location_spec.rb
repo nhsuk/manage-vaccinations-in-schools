@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: patient_sessions
+# Table name: patient_locations
 #
 #  id         :bigint           not null, primary key
 #  created_at :datetime         not null
@@ -12,8 +12,8 @@
 #
 # Indexes
 #
-#  index_patient_sessions_on_patient_id_and_session_id  (patient_id,session_id) UNIQUE
-#  index_patient_sessions_on_session_id                 (session_id)
+#  index_patient_locations_on_patient_id_and_session_id  (patient_id,session_id) UNIQUE
+#  index_patient_locations_on_session_id                 (session_id)
 #
 # Foreign Keys
 #
@@ -21,8 +21,8 @@
 #  fk_rails_...  (session_id => sessions.id)
 #
 
-describe PatientSession do
-  subject(:patient_session) { create(:patient_session, session:) }
+describe PatientLocation do
+  subject(:patient_location) { create(:patient_location, session:) }
 
   let(:programme) { create(:programme) }
   let(:session) { create(:session, programmes: [programme]) }
@@ -43,20 +43,20 @@ describe PatientSession do
       let(:programmes) { create_list(:programme, 1, :td_ipv) }
       let(:session) { create(:session, programmes:) }
 
-      let(:patient_session) { create(:patient_session, patient:, session:) }
+      let(:patient_location) { create(:patient_location, patient:, session:) }
 
       it { should be_empty }
 
       context "in a session with the right year group" do
         let(:patient) { create(:patient, year_group: 9) }
 
-        it { should include(patient_session) }
+        it { should include(patient_location) }
       end
 
       context "in a session but the wrong year group" do
         let(:patient) { create(:patient, year_group: 8) }
 
-        it { should_not include(patient_session) }
+        it { should_not include(patient_location) }
       end
 
       context "in a session with the right year group for the programme but not the location" do
@@ -75,7 +75,7 @@ describe PatientSession do
           end
         end
 
-        it { should_not include(patient_session) }
+        it { should_not include(patient_location) }
       end
     end
 
@@ -91,7 +91,7 @@ describe PatientSession do
       let(:session) { create(:session, programmes:) }
       let(:academic_year) { Date.current.academic_year }
       let(:vaccine_method) { nil }
-      let(:patient_session) { patient.patient_sessions.first }
+      let(:patient_location) { patient.patient_locations.first }
 
       it { should be_empty }
 
@@ -100,7 +100,7 @@ describe PatientSession do
           create(:patient, :consent_given_triage_not_needed, session:)
         end
 
-        it { should include(patient_session) }
+        it { should include(patient_location) }
       end
 
       context "when filtering on nasal spray" do
@@ -118,7 +118,7 @@ describe PatientSession do
             ).update!(vaccine_methods: %w[nasal injection])
           end
 
-          it { should include(patient_session) }
+          it { should include(patient_location) }
 
           context "when the patient has been vaccinated for flu" do
             before do
@@ -131,7 +131,7 @@ describe PatientSession do
               StatusUpdater.call(session:, patient:)
             end
 
-            it { should_not include(patient_session) }
+            it { should_not include(patient_location) }
           end
         end
       end
@@ -139,10 +139,10 @@ describe PatientSession do
   end
 
   describe "#safe_to_destroy?" do
-    subject(:safe_to_destroy?) { patient_session.safe_to_destroy? }
+    subject(:safe_to_destroy?) { patient_location.safe_to_destroy? }
 
-    let(:patient_session) { create(:patient_session, session:) }
-    let(:patient) { patient_session.patient }
+    let(:patient_location) { create(:patient_location, session:) }
+    let(:patient) { patient_location.patient }
 
     context "when safe to destroy" do
       it { should be true }

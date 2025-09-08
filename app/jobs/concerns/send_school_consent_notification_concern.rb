@@ -9,11 +9,11 @@ module SendSchoolConsentNotificationConcern
     return unless session.school? && session.open_for_consent?
 
     session
-      .patient_sessions
+      .patient_locations
       .includes_programmes
       .includes(patient: %i[consent_notifications consents vaccination_records])
-      .find_each do |patient_session|
-        patient = patient_session.patient
+      .find_each do |patient_location|
+        patient = patient_location.patient
         next unless patient.send_notifications?
 
         ProgrammeGrouper

@@ -71,7 +71,7 @@ class Patient < ApplicationRecord
   has_many :notes
   has_many :notify_log_entries
   has_many :parent_relationships, -> { order(:created_at) }
-  has_many :patient_sessions
+  has_many :patient_locations
   has_many :pds_search_results
   has_many :pre_screenings
   has_many :registration_statuses
@@ -86,12 +86,12 @@ class Patient < ApplicationRecord
 
   has_many :parents, through: :parent_relationships
   has_many :patient_specific_directions
-  has_many :sessions, through: :patient_sessions
+  has_many :sessions, through: :patient_locations
   has_many :teams, -> { distinct }, through: :sessions
 
   has_many :pending_sessions,
            -> { where(academic_year: AcademicYear.pending) },
-           through: :patient_sessions,
+           through: :patient_locations,
            source: :session
 
   has_and_belongs_to_many :class_imports
@@ -142,7 +142,7 @@ class Patient < ApplicationRecord
   scope :appear_in_programmes,
         ->(programmes, academic_year:) do
           where(
-            PatientSession
+            PatientLocation
               .joins(:session)
               .where(sessions: { academic_year: })
               .where("patient_id = patients.id")
@@ -155,7 +155,7 @@ class Patient < ApplicationRecord
   scope :not_appear_in_programmes,
         ->(programmes, academic_year:) do
           where.not(
-            PatientSession
+            PatientLocation
               .joins(:session)
               .where(sessions: { academic_year: })
               .where("patient_id = patients.id")
@@ -503,7 +503,7 @@ class Patient < ApplicationRecord
   end
 
   def not_in_team?(team:, academic_year:)
-    patient_sessions
+    patient_locations
       .joins(:session)
       .where(session: { academic_year:, team: })
       .empty?
@@ -514,7 +514,7 @@ class Patient < ApplicationRecord
       new_patient.nhs_number = nil
 
       pending_sessions.each do |session|
-        new_patient.patient_sessions.build(session:)
+        new_patient.patient_locations.build(session:)
       end
 
       school_moves.each do |school_move|
@@ -534,7 +534,7 @@ class Patient < ApplicationRecord
 
     sessions = sessions.where(team_id: team.id) unless team.nil?
 
-    patient_sessions.where(session: sessions).destroy_all_if_safe
+    patient_locations.where(session: sessions).destroy_all_if_safe
   end
 
   def self.from_consent_form(consent_form)

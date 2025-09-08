@@ -350,7 +350,7 @@ describe PatientSearchForm do
   end
 
   context "for patient sessions" do
-    let(:scope) { PatientSession.all }
+    let(:scope) { PatientLocation.all }
 
     let(:session) { create(:session, programmes:, team:) }
 
@@ -376,20 +376,20 @@ describe PatientSearchForm do
       context "with a patient session eligible for the programme" do
         let(:patient) { create(:patient, year_group: 9) }
 
-        let(:patient_session) { create(:patient_session, patient:, session:) }
+        let(:patient_location) { create(:patient_location, patient:, session:) }
 
         it "is included" do
-          expect(form.apply(scope)).to include(patient_session)
+          expect(form.apply(scope)).to include(patient_location)
         end
       end
 
       context "with a patient session not eligible for the programme" do
         let(:patient) { create(:patient, year_group: 8) }
 
-        let(:patient_session) { create(:patient_session, patient:, session:) }
+        let(:patient_location) { create(:patient_location, patient:, session:) }
 
         it "is not included" do
-          expect(form.apply(scope)).not_to include(patient_session)
+          expect(form.apply(scope)).not_to include(patient_location)
         end
       end
     end
@@ -414,8 +414,8 @@ describe PatientSearchForm do
         patient_refused = create(:patient, :consent_refused, session:)
 
         expect(form.apply(scope)).to contain_exactly(
-          patient_given.patient_sessions.first,
-          patient_refused.patient_sessions.first
+          patient_given.patient_locations.first,
+          patient_refused.patient_locations.first
         )
       end
 
@@ -423,12 +423,12 @@ describe PatientSearchForm do
         let(:consent_statuses) { %w[given_nasal] }
 
         it "filters on consent status" do
-          patient_session_given_nasal =
+          patient_location_given_nasal =
             create(
               :patient,
               :consent_given_nasal_only_triage_not_needed,
               session:
-            ).patient_sessions.first
+            ).patient_locations.first
 
           create(
             :patient,
@@ -437,7 +437,7 @@ describe PatientSearchForm do
           )
 
           expect(form.apply(scope)).to contain_exactly(
-            patient_session_given_nasal
+            patient_location_given_nasal
           )
         end
       end
@@ -457,8 +457,8 @@ describe PatientSearchForm do
 
       it "filters on register status" do
         patient = create(:patient, :in_attendance, session:)
-        patient_session = patient.patient_sessions.first
-        expect(form.apply(scope)).to include(patient_session)
+        patient_location = patient.patient_locations.first
+        expect(form.apply(scope)).to include(patient_location)
       end
     end
 
@@ -477,9 +477,9 @@ describe PatientSearchForm do
 
       it "filters on triage status" do
         patient = create(:patient, :consent_given_triage_needed, session:)
-        patient_session = patient.patient_sessions.first
+        patient_location = patient.patient_locations.first
 
-        expect(form.apply(scope)).to include(patient_session)
+        expect(form.apply(scope)).to include(patient_location)
       end
     end
 
@@ -496,24 +496,28 @@ describe PatientSearchForm do
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
-      let!(:patient_session_with_psd) do
-        create(:patient_session, session:).tap do |patient_session|
+      let!(:patient_location_with_psd) do
+        create(:patient_location, session:).tap do |patient_location|
           create(
             :patient_specific_direction,
-            patient: patient_session.patient,
+            patient: patient_location.patient,
             programme: programmes.first,
             team:
           )
         end
       end
 
-      let!(:patient_session_without_psd) { create(:patient_session, session:) }
+      let!(:patient_location_without_psd) do
+        create(:patient_location, session:)
+      end
 
       context "when status is 'added'" do
         let(:patient_specific_direction_status) { "added" }
 
         it "finds the patient with the PSD" do
-          expect(form.apply(scope)).to contain_exactly(patient_session_with_psd)
+          expect(form.apply(scope)).to contain_exactly(
+            patient_location_with_psd
+          )
         end
       end
 
@@ -522,7 +526,7 @@ describe PatientSearchForm do
 
         it "finds the patient that has no PSD" do
           expect(form.apply(scope)).to contain_exactly(
-            patient_session_without_psd
+            patient_location_without_psd
           )
         end
       end
@@ -570,7 +574,7 @@ describe PatientSearchForm do
         )
 
         expect(form.apply(scope)).to contain_exactly(
-          nasal_patient.patient_sessions.first
+          nasal_patient.patient_locations.first
         )
       end
     end

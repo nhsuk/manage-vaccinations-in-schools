@@ -10,20 +10,20 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
 
   def show
     scope =
-      @session.patient_sessions.includes_programmes.includes(
+      @session.patient_locations.includes_programmes.includes(
         patient: {
           patient_specific_directions: :programme
         }
       )
-    @eligible_for_bulk_psd_count = patient_sessions_allowed_psd.count
-    patient_sessions = @form.apply(scope)
-    @pagy, @patient_sessions = pagy(patient_sessions)
+    @eligible_for_bulk_psd_count = patient_locations_allowed_psd.count
+    patient_locations = @form.apply(scope)
+    @pagy, @patient_locations = pagy(patient_locations)
 
     render layout: "full"
   end
 
   def new
-    @eligible_for_bulk_psd_count = patient_sessions_allowed_psd.count
+    @eligible_for_bulk_psd_count = patient_locations_allowed_psd.count
   end
 
   def create
@@ -56,12 +56,12 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
   end
 
   def psds_to_create
-    patient_sessions_allowed_psd.map do |patient_session|
+    patient_locations_allowed_psd.map do |patient_location|
       PatientSpecificDirection.new(
         academic_year: @session.academic_year,
         created_by: current_user,
         delivery_site: "nose",
-        patient_id: patient_session.patient_id,
+        patient_id: patient_location.patient_id,
         programme: @programme,
         team: current_team,
         vaccine: @vaccine,
@@ -70,10 +70,10 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
     end
   end
 
-  def patient_sessions_allowed_psd
-    @patient_sessions_allowed_psd ||=
+  def patient_locations_allowed_psd
+    @patient_locations_allowed_psd ||=
       @session
-        .patient_sessions
+        .patient_locations
         .has_consent_status(
           "given",
           programme: @programme,

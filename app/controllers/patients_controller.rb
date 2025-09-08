@@ -29,7 +29,7 @@ class PatientsController < ApplicationController
     session =
       current_team.generic_clinic_session(academic_year: AcademicYear.pending)
 
-    PatientSession.find_or_create_by!(patient: @patient, session:)
+    PatientLocation.find_or_create_by!(patient: @patient, session:)
 
     redirect_to patient_path(@patient),
                 flash: {

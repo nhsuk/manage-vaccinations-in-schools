@@ -13,11 +13,11 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   delegate :govuk_table, to: :helpers
 
   def cohort_count(session:)
-    format_number(patient_sessions(session:).count)
+    format_number(patient_locations(session:).count)
   end
 
   def no_response_scope(session:)
-    patient_sessions(session:).has_consent_status(:no_response, programme:)
+    patient_locations(session:).has_consent_status(:no_response, programme:)
   end
 
   def no_response_count(session:)
@@ -27,13 +27,13 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   def no_response_percentage(session:)
     format_percentage(
       no_response_scope(session:).count,
-      patient_sessions(session:).count
+      patient_locations(session:).count
     )
   end
 
   def triage_needed_count(session:)
     format_number(
-      patient_sessions(session:).has_triage_status(:required, programme:).count
+      patient_locations(session:).has_triage_status(:required, programme:).count
     )
   end
 
@@ -48,13 +48,13 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   def vaccinated_percentage(session:)
     format_percentage(
       vaccinated_scope(session:).count,
-      patient_sessions(session:).count
+      patient_locations(session:).count
     )
   end
 
-  def patient_sessions(session:)
+  def patient_locations(session:)
     session
-      .patient_sessions
+      .patient_locations
       .joins(:patient, :session)
       .appear_in_programmes([programme])
   end

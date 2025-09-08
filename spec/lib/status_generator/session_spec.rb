@@ -3,8 +3,8 @@
 describe StatusGenerator::Session do
   subject(:generator) do
     described_class.new(
-      session_id: patient_session.session_id,
-      academic_year: patient_session.academic_year,
+      session_id: patient_location.session_id,
+      academic_year: patient_location.academic_year,
       attendance_record: patient.attendance_records.last,
       programme:,
       patient:,
@@ -14,14 +14,14 @@ describe StatusGenerator::Session do
     )
   end
 
-  let(:patient_session) { create(:patient_session, programmes: [programme]) }
+  let(:patient_location) { create(:patient_location, programmes: [programme]) }
   let(:programme) { create(:programme) }
 
   describe "#status" do
     subject(:status) { generator.status }
 
-    let(:patient) { patient_session.patient }
-    let(:session) { patient_session.session }
+    let(:patient) { patient_location.patient }
+    let(:session) { patient_location.session }
 
     context "with no vaccination record" do
       it { should be(:none_yet) }
@@ -90,8 +90,8 @@ describe StatusGenerator::Session do
 
     around { |example| travel_to(Time.zone.now) { example.run } }
 
-    let(:patient) { patient_session.patient }
-    let(:session) { patient_session.session }
+    let(:patient) { patient_location.patient }
+    let(:session) { patient_location.session }
     let(:performed_at) { 1.day.ago.beginning_of_minute }
     let(:created_at) { 2.days.ago.midday }
 

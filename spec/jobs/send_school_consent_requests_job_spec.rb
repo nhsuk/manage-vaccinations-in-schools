@@ -28,7 +28,7 @@ describe SendSchoolConsentRequestsJob do
   end
 
   before do
-    patients.each { |patient| create(:patient_session, patient:, session:) }
+    patients.each { |patient| create(:patient_location, patient:, session:) }
   end
 
   around { |example| travel_to(today) { example.run } }

@@ -16,15 +16,15 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
   delegate :govuk_summary_list, to: :helpers
   delegate :programmes, to: :session
 
-  def patient_sessions
+  def patient_locations
     session
-      .patient_sessions
+      .patient_locations
       .joins(:patient, :session)
       .appear_in_programmes(programmes)
   end
 
   def cohort_row
-    count = patient_sessions.count
+    count = patient_locations.count
 
     { key: { text: "Cohort" }, value: { text: I18n.t("children", count:) } }
   end
@@ -33,7 +33,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
     status = "refused"
 
     count =
-      patient_sessions.has_consent_status(status, programme: programmes).count
+      patient_locations.has_consent_status(status, programme: programmes).count
 
     href = session_consent_path(session, consent_statuses: [status])
 

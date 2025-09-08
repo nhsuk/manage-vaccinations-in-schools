@@ -258,7 +258,8 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   end
 
   def eligible_year_groups_for(programme:)
-    location_ids = patient.patient_sessions.joins(:session).select(:location_id)
+    location_ids =
+      patient.patient_locations.joins(:session).select(:location_id)
 
     LocationProgrammeYearGroup
       .where(location_id: location_ids)

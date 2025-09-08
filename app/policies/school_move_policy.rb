@@ -8,7 +8,7 @@ class SchoolMovePolicy < ApplicationPolicy
 
       patient_subquery =
         Patient
-          .joins(patient_sessions: :session)
+          .joins(patient_locations: :session)
           .select(:id)
           .distinct
           .where(sessions: { team_id: team.id })

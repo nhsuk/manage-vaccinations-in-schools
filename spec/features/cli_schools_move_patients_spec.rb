@@ -52,11 +52,11 @@ describe "schools move-patients" do
   end
 
   context "when some patient sessions are not safe to destroy" do
-    let!(:patient_session) { create(:patient_session, patient:, session:) } # rubocop:disable RSpec/LetSetup
+    let!(:patient_location) { create(:patient_location, patient:, session:) } # rubocop:disable RSpec/LetSetup
 
     before do
       # rubocop:disable RSpec/AnyInstance
-      allow_any_instance_of(PatientSession).to receive(
+      allow_any_instance_of(PatientLocation).to receive(
         :safe_to_destroy?
       ).and_return(false)
       # rubocop:enable RSpec/AnyInstance
