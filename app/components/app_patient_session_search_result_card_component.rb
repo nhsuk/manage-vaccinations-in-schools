@@ -95,13 +95,13 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   delegate :academic_year, to: :session
 
   def can_register_attendance?
-    session_attendance =
-      SessionAttendance.new(
+    attendance_record =
+      AttendanceRecord.new(
         patient:,
         session_date: SessionDate.new(session:, value: Date.current)
       )
 
-    policy(session_attendance).new?
+    policy(attendance_record).new?
   end
 
   def patient_path

@@ -31,15 +31,15 @@ class Patient::RegistrationStatus < ApplicationRecord
 
   has_one :session_date, -> { today }, through: :session, source: :session_dates
 
-  has_many :session_attendances, through: :patient
+  has_many :attendance_records, through: :patient
 
   enum :status,
        { unknown: 0, attending: 1, not_attending: 2, completed: 3 },
        default: :unknown,
        validate: true
 
-  def session_attendance
-    session_attendances.find { it.session_date_id == session_date&.id }
+  def attendance_record
+    attendance_records.find { it.session_date_id == session_date&.id }
   end
 
   def assign_status
@@ -53,7 +53,7 @@ class Patient::RegistrationStatus < ApplicationRecord
       StatusGenerator::Registration.new(
         patient:,
         session:,
-        session_attendance:,
+        attendance_record:,
         vaccination_records:
       )
   end

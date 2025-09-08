@@ -38,16 +38,16 @@
     </li>
   <% end %>
 
-  <% if @session.requires_registration? && (session_attendance = @patient_session.todays_attendance) %>
+  <% if @session.requires_registration? && (attendance_record = @patient_session.todays_attendance) %>
     <li class="app-action-list__item">
       <%= render AppStatusTagComponent.new(@patient_session.registration_status&.status || "unknown", context: :register) %>
     </li>
 
-    <% if policy(session_attendance).edit? %>
+    <% if policy(attendance_record).edit? %>
       <li class="app-action-list__item">
         <%= link_to(
               "Update attendance",
-              edit_session_patient_session_attendance_path(@session, @patient)
+              edit_session_patient_attendance_path(@session, @patient)
             ) %>
       </li>
     <% end %>

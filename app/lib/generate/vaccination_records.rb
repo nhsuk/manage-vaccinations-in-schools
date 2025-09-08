@@ -19,21 +19,21 @@ class Generate::VaccinationRecords
   attr_reader :config, :team, :programme, :session, :administered
 
   def create_vaccinations
-    session_attendances = []
+    attendance_records = []
     vaccination_records = []
 
     random_patient_sessions.each do |patient_session|
       patient = patient_session.patient
       session = patient_session.session
 
-      unless SessionAttendance.joins(:session_date).exists?(
+      unless AttendanceRecord.joins(:session_date).exists?(
                patient:,
                session_date: {
                  session:
                }
              )
-        session_attendances << FactoryBot.build(
-          :session_attendance,
+        attendance_records << FactoryBot.build(
+          :attendance_record,
           :present,
           patient:,
           session:
@@ -57,7 +57,7 @@ class Generate::VaccinationRecords
       )
     end
 
-    SessionAttendance.import!(session_attendances)
+    AttendanceRecord.import!(attendance_records)
     VaccinationRecord.import!(vaccination_records)
 
     StatusUpdater.call(patient: vaccination_records.map(&:patient))

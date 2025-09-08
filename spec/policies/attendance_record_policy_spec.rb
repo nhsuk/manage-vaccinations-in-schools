@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe SessionAttendancePolicy do
-  subject(:policy) { described_class.new(user, session_attendance) }
+describe AttendanceRecordPolicy do
+  subject(:policy) { described_class.new(user, attendance_record) }
 
   let(:user) { create(:nurse) }
 
@@ -12,17 +12,13 @@ describe SessionAttendancePolicy do
 
   shared_examples "allow if not yet vaccinated or seen by nurse" do
     context "with a new session attendance" do
-      let(:session_attendance) do
-        build(:session_attendance, patient:, session:)
-      end
+      let(:attendance_record) { build(:attendance_record, patient:, session:) }
 
       it { should be(true) }
     end
 
     context "with session attendance and one vaccination record from a different session" do
-      let(:session_attendance) do
-        build(:session_attendance, patient:, session:)
-      end
+      let(:attendance_record) { build(:attendance_record, patient:, session:) }
 
       before do
         create(
@@ -39,9 +35,7 @@ describe SessionAttendancePolicy do
     end
 
     context "with session attendance and both vaccination records" do
-      let(:session_attendance) do
-        build(:session_attendance, patient:, session:)
-      end
+      let(:attendance_record) { build(:attendance_record, patient:, session:) }
 
       before do
         programmes.each do |programme|
@@ -61,9 +55,7 @@ describe SessionAttendancePolicy do
     end
 
     context "with session attendance and both vaccination records from a different date" do
-      let(:session_attendance) do
-        build(:session_attendance, patient:, session:)
-      end
+      let(:attendance_record) { build(:attendance_record, patient:, session:) }
 
       around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
 

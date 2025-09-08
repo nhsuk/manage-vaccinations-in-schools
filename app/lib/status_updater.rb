@@ -62,7 +62,7 @@ class StatusUpdater
       )
       .includes(
         :patient,
-        :session_attendances,
+        :attendance_records,
         :session_date,
         :vaccination_records,
         session: :programmes
@@ -118,7 +118,7 @@ class StatusUpdater
         :consents,
         :triages,
         :vaccination_records,
-        :session_attendance
+        :attendance_record
       )
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)

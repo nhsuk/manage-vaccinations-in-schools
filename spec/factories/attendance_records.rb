@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: session_attendances
+# Table name: attendance_records
 #
 #  id              :bigint           not null, primary key
 #  attending       :boolean          not null
@@ -13,9 +13,9 @@
 #
 # Indexes
 #
-#  index_session_attendances_on_patient_id                      (patient_id)
-#  index_session_attendances_on_patient_id_and_session_date_id  (patient_id,session_date_id) UNIQUE
-#  index_session_attendances_on_session_date_id                 (session_date_id)
+#  index_attendance_records_on_patient_id                      (patient_id)
+#  index_attendance_records_on_patient_id_and_session_date_id  (patient_id,session_date_id) UNIQUE
+#  index_attendance_records_on_session_date_id                 (session_date_id)
 #
 # Foreign Keys
 #
@@ -23,7 +23,7 @@
 #  fk_rails_...  (session_date_id => session_dates.id)
 #
 FactoryBot.define do
-  factory :session_attendance do
+  factory :attendance_record do
     transient { session { association(:session) } }
 
     patient

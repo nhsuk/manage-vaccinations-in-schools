@@ -49,6 +49,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_09_095902) do
     t.index ["team_id"], name: "index_archive_reasons_on_team_id"
   end
 
+  create_table "attendance_records", force: :cascade do |t|
+    t.bigint "session_date_id", null: false
+    t.boolean "attending", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "patient_id", null: false
+    t.index ["patient_id", "session_date_id"], name: "index_attendance_records_on_patient_id_and_session_date_id", unique: true
+    t.index ["patient_id"], name: "index_attendance_records_on_patient_id"
+    t.index ["session_date_id"], name: "index_attendance_records_on_session_date_id"
+  end
+
   create_table "audits", force: :cascade do |t|
     t.integer "auditable_id"
     t.string "auditable_type"
@@ -839,17 +850,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_09_095902) do
     t.index ["team_id"], name: "index_school_moves_on_team_id"
   end
 
-  create_table "session_attendances", force: :cascade do |t|
-    t.bigint "session_date_id", null: false
-    t.boolean "attending", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "patient_id", null: false
-    t.index ["patient_id", "session_date_id"], name: "index_session_attendances_on_patient_id_and_session_date_id", unique: true
-    t.index ["patient_id"], name: "index_session_attendances_on_patient_id"
-    t.index ["session_date_id"], name: "index_session_attendances_on_session_date_id"
-  end
-
   create_table "session_dates", force: :cascade do |t|
     t.bigint "session_id", null: false
     t.date "value", null: false
@@ -1055,6 +1055,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_09_095902) do
   add_foreign_key "archive_reasons", "patients"
   add_foreign_key "archive_reasons", "teams"
   add_foreign_key "archive_reasons", "users", column: "created_by_user_id"
+  add_foreign_key "attendance_records", "patients"
+  add_foreign_key "attendance_records", "session_dates"
   add_foreign_key "batches", "teams"
   add_foreign_key "batches", "vaccines"
   add_foreign_key "batches_immunisation_imports", "batches"
@@ -1153,8 +1155,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_09_095902) do
   add_foreign_key "school_moves", "locations", column: "school_id"
   add_foreign_key "school_moves", "patients"
   add_foreign_key "school_moves", "teams"
-  add_foreign_key "session_attendances", "patients"
-  add_foreign_key "session_attendances", "session_dates"
   add_foreign_key "session_dates", "sessions"
   add_foreign_key "session_notifications", "patients"
   add_foreign_key "session_notifications", "sessions"

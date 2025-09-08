@@ -73,7 +73,7 @@ describe SessionDate do
     end
 
     context "with a session attendance" do
-      before { create(:session_attendance, :present, session:) }
+      before { create(:attendance_record, :present, session:) }
 
       it { should be(true) }
     end

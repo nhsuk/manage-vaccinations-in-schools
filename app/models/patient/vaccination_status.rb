@@ -40,10 +40,10 @@ class Patient::VaccinationStatus < ApplicationRecord
 
   has_one :patient_session
 
-  has_one :session_attendance,
+  has_one :attendance_record,
           -> { today },
           through: :patient,
-          source: :session_attendances
+          source: :attendance_records
 
   enum :status,
        { none_yet: 0, vaccinated: 1, could_not_vaccinate: 2 },
@@ -92,7 +92,7 @@ class Patient::VaccinationStatus < ApplicationRecord
       StatusGenerator::Session.new(
         session_id:,
         academic_year:,
-        session_attendance:,
+        attendance_record:,
         programme:,
         patient:,
         consents:,

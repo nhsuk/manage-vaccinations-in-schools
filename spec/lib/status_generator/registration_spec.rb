@@ -5,8 +5,8 @@ describe StatusGenerator::Registration do
     described_class.new(
       patient:,
       session:,
-      session_attendance:
-        patient_session.session_attendances.find_by(
+      attendance_record:
+        patient_session.attendance_records.find_by(
           session_date: session.session_dates.last
         ),
       vaccination_records: patient.vaccination_records
@@ -34,7 +34,7 @@ describe StatusGenerator::Registration do
     context "with a session attendance for a different day to today" do
       before do
         create(
-          :session_attendance,
+          :attendance_record,
           :present,
           patient:,
           session_date: session.session_dates.first
@@ -47,7 +47,7 @@ describe StatusGenerator::Registration do
     context "with a present session attendance for today" do
       before do
         create(
-          :session_attendance,
+          :attendance_record,
           :present,
           patient:,
           session_date: session.session_dates.second
@@ -60,7 +60,7 @@ describe StatusGenerator::Registration do
     context "with an absent session attendance for today" do
       before do
         create(
-          :session_attendance,
+          :attendance_record,
           :absent,
           patient:,
           session_date: session.session_dates.second

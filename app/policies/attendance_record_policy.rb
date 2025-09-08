@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SessionAttendancePolicy < ApplicationPolicy
+class AttendanceRecordPolicy < ApplicationPolicy
   def create?
     !already_vaccinated? && !was_seen_by_nurse?
   end

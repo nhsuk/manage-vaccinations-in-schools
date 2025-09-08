@@ -25,7 +25,7 @@ class Sessions::RegisterController < ApplicationController
   end
 
   def create
-    session_attendance =
+    attendance_record =
       ActiveRecord::Base.transaction do
         record = authorize @patient_session.todays_attendance
         record.update!(attending: params[:status] == "present")
@@ -35,7 +35,7 @@ class Sessions::RegisterController < ApplicationController
 
     name = @patient_session.patient.full_name
 
-    flash[:info] = if session_attendance.attending?
+    flash[:info] = if attendance_record.attending?
       t("attendance_flash.present", name:)
     else
       t("attendance_flash.absent", name:)
