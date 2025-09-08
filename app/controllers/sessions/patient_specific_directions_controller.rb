@@ -34,7 +34,8 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
 
     redirect_to session_patient_specific_directions_path(@session),
                 flash: {
-                  success: "PSDs added"
+                  success:
+                    "#{"PSD".pluralize(@eligible_for_bulk_psd_count)} added"
                 }
   end
 
