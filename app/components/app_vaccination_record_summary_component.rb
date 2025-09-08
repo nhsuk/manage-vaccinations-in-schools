@@ -13,6 +13,8 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
     @show_notes = show_notes
 
     @batch = vaccination_record.batch
+    @batch_name = vaccination_record.batch_name if vaccination_record.respond_to?(:batch_name)
+    @batch_expiry = vaccination_record.batch_expiry if vaccination_record.respond_to?(:batch_expiry)
     @identity_check = vaccination_record.identity_check
     @patient = vaccination_record.patient
     @programme = vaccination_record.programme
@@ -68,10 +70,10 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         summary_list.with_row do |row|
           row.with_key { "Batch ID" }
 
-          if @batch
+          if @batch || @batch_name
             row.with_value(classes: ["app-u-monospace"]) { batch_id_value }
 
-            if (href = @change_links[:batch])
+            if @batch && (href = @change_links[:batch])
               row.with_action(
                 text: "Change",
                 href:,
@@ -85,7 +87,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
           end
         end
 
-        if @batch
+        if @batch || @batch_expiry
           summary_list.with_row do |row|
             row.with_key { "Batch expiry date" }
             row.with_value { batch_expiry_value }
@@ -318,13 +320,18 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def batch_id_value
-    highlight_if(@batch.name, @vaccination_record.batch_id_changed?)
+    highlight_if(
+      @batch&.name || @batch_name,
+      @vaccination_record.batch_id_changed? ||
+      (@vaccination_record.batch_name_changed? if @vaccination_record.respond_to?(:batch_name))
+    )
   end
 
   def batch_expiry_value
     highlight_if(
-      @batch.expiry&.to_fs(:long) || "Unknown",
-      @vaccination_record.batch_id_changed?
+      @batch&.expiry&.to_fs(:long) || @batch_expiry&.to_fs(:long) || "Unknown",
+      @vaccination_record.batch_id_changed? ||
+      (@vaccination_record.batch_expiry_changed? if @vaccination_record.respond_to?(:batch_expiry))
     )
   end
 

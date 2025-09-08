@@ -17,6 +17,8 @@ describe AppVaccinationRecordSummaryComponent do
   let(:batch) do
     create(:batch, name: "ABC", expiry: Date.new(2026, 1, 1), vaccine:)
   end
+  let(:batch_name) { nil }
+  let(:batch_expiry) { nil }
   let(:other_batch) do
     create(:batch, name: "DEF", expiry: Date.new(2027, 1, 1), vaccine:)
   end
@@ -31,6 +33,8 @@ describe AppVaccinationRecordSummaryComponent do
       performed_at:,
       outcome:,
       batch:,
+      batch_name:,
+      batch_expiry:,
       vaccine:,
       patient:,
       session:,
@@ -161,12 +165,34 @@ describe AppVaccinationRecordSummaryComponent do
   end
 
   describe "batch ID row" do
-    it { should have_css(".nhsuk-summary-list__row", text: "Batch IDABC") }
+    context "with a batch, and vaccine" do
+      it { should have_css(".nhsuk-summary-list__row", text: "Batch IDABC") }
+    end
 
-    context "without a vaccine" do
+    context "with a batch_name, and vaccine" do
+      let(:batch) { nil }
+      let(:batch_name) { "ABC" }
+      let(:batch_expiry) { Date.new(2026, 1, 1) }
+
+      it { should have_css(".nhsuk-summary-list__row", text: "Batch IDABC") }
+    end
+
+    context "with a batch_name, and no vaccine" do
+      let(:vaccine) { nil }
+      let(:batch) { nil }
+      let(:batch_name) { "ABC" }
+      let(:batch_expiry) { nil }
+      let(:other_batch) { nil }
+
+      it { should have_css(".nhsuk-summary-list__row", text: "Batch IDABC") }
+    end
+
+    context "without a vaccine, batch_name or batch_expiry" do
       let(:outcome) { :not_well }
       let(:vaccine) { nil }
       let(:batch) { nil }
+      let(:batch_name) { nil }
+      let(:batch_expiry) { nil }
       let(:other_batch) { nil }
 
       it { should_not have_css(".nhsuk-summary-list__row", text: "Batch ID") }
@@ -174,11 +200,54 @@ describe AppVaccinationRecordSummaryComponent do
   end
 
   describe "batch expiry date row" do
-    it do
-      expect(rendered).to have_css(
-        ".nhsuk-summary-list__row",
-        text: "Batch expiry date1 January 2026"
-      )
+    context "with a batch, and vaccine" do
+      it do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Batch expiry date1 January 2026"
+        )
+      end
+    end
+
+    context "with a batch_expiry, and vaccine" do
+      let(:batch) { nil }
+      let(:batch_name) { "ABC" }
+      let(:batch_expiry) { Date.new(2026, 1, 1) }
+
+      it do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Batch expiry date1 January 2026"
+        )
+      end
+    end
+
+    context "with a batch_expiry, and no vaccine" do
+      let(:vaccine) { nil }
+      let(:batch) { nil }
+      let(:batch_name) { "ABC" }
+      let(:batch_expiry) { Date.new(2026, 1, 1) }
+      let(:other_batch) { nil }
+
+      it do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Batch expiry date1 January 2026"
+        )
+      end
+    end
+
+    context "with a batch_expiry, but no batch_name" do
+      let(:batch) { nil }
+      let(:batch_name) { nil }
+      let(:batch_expiry) { Date.new(2026, 1, 1) }
+
+      it do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Batch expiry date1 January 2026"
+        )
+      end
     end
 
     context "without a vaccine" do
