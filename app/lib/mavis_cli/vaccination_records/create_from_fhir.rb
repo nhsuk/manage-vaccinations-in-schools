@@ -8,9 +8,6 @@ module MavisCLI
       argument :patient_id,
                required: true,
                desc: "ID of the patient to attach the vaccination record to"
-      argument :team_id,
-               required: false,
-               desc: "ID of the team (optional, used for batch association)"
 
       option :file,
              type: :string,
@@ -21,7 +18,7 @@ module MavisCLI
              required: false,
              desc: "Raw FHIR Immunization JSON string"
 
-      def call(patient_id:, team_id: nil, file: nil, json: nil, **)
+      def call(patient_id:, file: nil, json: nil, **)
         MavisCLI.load_rails
 
         unless Flipper.enabled?(:immunisations_fhir_api_integration)
@@ -50,12 +47,6 @@ module MavisCLI
           return
         end
 
-        team = team_id.present? ? Team.find_by(id: team_id) : nil
-        if team_id.present? && team.nil?
-          puts "Error: Team with ID #{team_id} not found"
-          return
-        end
-
         begin
           payload = file ? File.read(file) : json
           data = JSON.parse(payload)
@@ -78,8 +69,7 @@ module MavisCLI
           record =
             FHIRMapper::VaccinationRecord.from_fhir_record(
               fhir_record,
-              patient: patient,
-              team: team
+              patient: patient
             )
 
           record.save!

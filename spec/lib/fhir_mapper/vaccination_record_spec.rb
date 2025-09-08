@@ -5,11 +5,10 @@
 # worth it.
 describe FHIRMapper::VaccinationRecord do
   let(:organisation) { create(:organisation) }
-  let(:team) { create(:team, organisation:, programmes: [programme]) }
   let(:programme) { create(:programme, :hpv) }
   let(:school) { create(:school) }
   let(:patient_session) do
-    create(:patient_session, programmes: [programme], team:, school:)
+    create(:patient_session, programmes: [programme], school:)
   end
   let(:patient) { patient_session.patient }
   let(:session) { patient_session.session }
@@ -295,7 +294,7 @@ describe FHIRMapper::VaccinationRecord do
 
   describe "#from_fhir_record" do
     subject(:record) do
-      VaccinationRecord.from_fhir_record(fhir_immunization, patient:, team:)
+      VaccinationRecord.from_fhir_record(fhir_immunization, patient:)
     end
 
     around { |example| travel_to(Date.new(2025, 11, 20)) { example.run } }
@@ -311,6 +310,7 @@ describe FHIRMapper::VaccinationRecord do
 
       its(:source) { should eq "nhs_immunisations_api" }
       its(:nhs_immunisations_api_synced_at) { should eq Time.current }
+      its(:batch) { should be_nil }
 
       context "when the record is saved to the database" do
         before { record.save! }
@@ -332,7 +332,8 @@ describe FHIRMapper::VaccinationRecord do
 
       its(:performed_by_given_name) { should eq "Steph" }
       its(:performed_by_family_name) { should eq "Smith" }
-      its(:batch) { should have_attributes(name: "4120Z001") }
+      its(:batch_name) { should eq "4120Z001" }
+      its(:batch_expiry) { should eq Date.parse("2026-07-02") }
 
       its(:vaccine) do
         should have_attributes(snomed_product_code: "43207411000001105")
@@ -366,7 +367,6 @@ describe FHIRMapper::VaccinationRecord do
       end
 
       its(:vaccine) { should be_nil }
-      its(:batch) { should be_nil }
       its(:performed_at) { should eq Time.parse("2025-04-06T23:59:50.2+01:00") }
       its(:delivery_method) { should eq "intramuscular" }
       its(:delivery_site) { should eq "left_arm_upper_position" }
