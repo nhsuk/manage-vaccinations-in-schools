@@ -123,7 +123,6 @@ class ImmunisationImportRow
     end
 
     attributes_to_stage_if_already_exists = {
-      batch_id: batch&.id,
       delivery_method: delivery_method_value,
       delivery_site: delivery_site_value,
       notes: notes&.to_s,
@@ -131,6 +130,15 @@ class ImmunisationImportRow
       discarded_at: nil,
       source:
     }
+
+    if session
+      attributes_to_stage_if_already_exists.merge!(batch_id: batch&.id)
+    elsif administered && vaccine && batch_name.present?
+      attributes_to_stage_if_already_exists.merge!(
+        batch_name: batch_name&.to_s,
+        batch_expiry: batch_expiry&.to_date
+      )
+    end
 
     vaccination_record =
       if uuid.present?

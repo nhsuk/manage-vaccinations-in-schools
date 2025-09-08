@@ -952,26 +952,49 @@ describe ImmunisationImportRow do
       end
     end
 
-    describe "#batch" do
+    describe "#batch (with session)" do
       subject(:batch) { vaccination_record.batch }
 
-      let(:data) { valid_data }
-
-      it { should be_archived }
-
-      context "without a vaccine" do
-        before { data.delete("VACCINE_GIVEN") }
-
-        it { should be_nil }
+      let(:data) do
+        valid_data.merge(
+          {
+            "SESSION_ID" => session.id.to_s,
+            "DATE_OF_VACCINATION" => session.dates.first.strftime("%Y%m%d"),
+            "ORGANISATION_CODE" => team.organisation.ods_code,
+            "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email
+          }
+        )
       end
 
-      context "without a batch number or expiry date" do
-        before do
-          data.delete("BATCH_NUMBER")
-          data.delete("BATCH_EXPIRY_DATE")
+      let(:session) { create(:session, team:, programmes:) }
+      let(:session_dates) { create_list(:session_date, 2, session:) }
+
+      it { should be_archived }
+    end
+
+    describe "#batch_name and #batch_expiry (without session)" do
+      context "with both batch name and expiry" do
+        it "doesn't create a batch" do
+          expect { vaccination_record }.not_to change(Batch, :count)
         end
 
-        it { should be_nil }
+        it "sets the batch name and expiry on the vaccination record" do
+          expect(vaccination_record.batch_name).to eq("123")
+          expect(vaccination_record.batch_expiry).to eq(Date.new(2021, 1, 1))
+        end
+      end
+
+      context "without batch name" do
+        let(:data) { valid_data.except("BATCH_NUMBER") }
+
+        it "doesn't create a batch" do
+          expect { vaccination_record }.not_to change(Batch, :count)
+        end
+
+        it "doesn't set the batch name nor expiry on the vaccination record" do
+          expect(vaccination_record.batch_name).to be_nil
+          expect(vaccination_record.batch_expiry).to be_nil
+        end
       end
     end
 
