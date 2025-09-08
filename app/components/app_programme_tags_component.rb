@@ -5,16 +5,13 @@ class AppProgrammeTagsComponent < ViewComponent::Base
     @programmes = programmes
   end
 
-  def call
-    safe_join(
-      programmes.map do
-        tag.strong(it.name, class: "nhsuk-tag nhsuk-tag--white")
-      end,
-      " "
-    )
-  end
+  def call = safe_join(tags, " ")
 
   private
 
   attr_reader :programmes
+
+  def names = programmes.map(&:name).sort
+
+  def tags = names.map { tag.strong(it, class: "nhsuk-tag nhsuk-tag--white") }
 end
