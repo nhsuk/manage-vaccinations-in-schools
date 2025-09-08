@@ -12,6 +12,7 @@ describe "Parental consent given with an inexact automatic match" do
     when_a_parent_gives_consent_with_three_of_four_fields_matching_the_cohort
     and_the_nurse_checks_the_consent_responses
     then_they_see_that_the_child_has_consent
+    and_they_see_consent_contact_warning_notifications
   end
 
   def given_an_hpv_programme_is_underway
@@ -38,6 +39,8 @@ describe "Parental consent given with an inexact automatic match" do
         date_of_birth: Date.new(2011, 1, 1),
         address_postcode: "TE1 1ST"
       )
+    @parent = create(:parent, email: "eliza.smith@example.com")
+    create(:parent_relationship, :mother, parent: @parent, patient: @child)
   end
 
   def when_a_parent_gives_consent_with_three_of_four_fields_matching_the_cohort
@@ -90,7 +93,8 @@ describe "Parental consent given with an inexact automatic match" do
   end
 
   def and_the_nurse_checks_the_consent_responses
-    perform_enqueued_jobs
+    # first process the confirmation email, then process the contact warning email
+    2.times { perform_enqueued_jobs }
 
     sign_in @team.users.first
     visit "/dashboard"
@@ -111,5 +115,13 @@ describe "Parental consent given with an inexact automatic match" do
     click_on "Update results"
 
     expect(page).to have_content(@child.full_name)
+  end
+
+  def and_they_see_consent_contact_warning_notifications
+    click_on "SMITH, Joanna"
+    click_on "Session activity and notes"
+    expect(page).to have_content("Consent unknown contact details warning sent")
+    expect(page).to have_content(@parent.email)
+    expect(page).to have_content(@parent.phone)
   end
 end

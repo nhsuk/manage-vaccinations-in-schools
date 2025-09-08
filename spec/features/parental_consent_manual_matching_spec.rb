@@ -24,6 +24,7 @@ describe "Parental consent manual matching" do
 
     when_i_click_on_the_activity_log
     then_i_see_the_consent_was_matched_manually
+    and_i_do_not_see_any_consent_contact_warning_notifications
   end
 
   scenario "Consent isn't matched automatically, nurse matches it manually, patient is not eligible for programme" do
@@ -74,9 +75,12 @@ describe "Parental consent manual matching" do
         :consent_form,
         :recorded,
         session: @session,
-        parent_full_name: "John Smith"
+        parent_full_name: "John Smith",
+        parent_email: "john.smith@example.com"
       )
     @patient = create(:patient, session: @session)
+    @parent = create(:parent, email: "eliza.smith@example.com")
+    create(:parent_relationship, :mother, parent: @parent, patient: @patient)
   end
 
   def given_the_patient_has_aged_out_of_the_programme
@@ -153,6 +157,13 @@ describe "Parental consent manual matching" do
     expect(page).to have_content(
       "Consent response manually matched with child record"
     )
+  end
+
+  def and_i_do_not_see_any_consent_contact_warning_notifications
+    expect(page).not_to have_content(
+      "Consent unknown contact details warning sent"
+    )
+    expect(page).not_to have_content(@parent.email)
   end
 
   def when_i_choose_to_archive_the_response

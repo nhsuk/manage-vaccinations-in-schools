@@ -29,8 +29,13 @@ class EmailDeliveryJob < NotifyDeliveryJob
       )
 
     email_address =
-      personalisation.consent_form&.parent_email ||
+      if template_name == :consent_unknown_contact_details_warning
         personalisation.parent&.email
+      else
+        personalisation.consent_form&.parent_email ||
+          personalisation.parent&.email
+      end
+
     return if email_address.nil?
 
     args = {

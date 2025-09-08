@@ -2,6 +2,7 @@
 
 class ConsentFormMatchingJob < ApplicationJob
   include PDSAPIThrottlingConcern
+  include ConsentFormMailerConcern
 
   queue_as :consents
 
@@ -50,10 +51,13 @@ class ConsentFormMatchingJob < ApplicationJob
     return false unless pds_patient
 
     patient =
-      Patient.includes(:school).find_by(nhs_number: pds_patient.nhs_number)
+      Patient.includes(:school, :parents).find_by(
+        nhs_number: pds_patient.nhs_number
+      )
     return false unless patient
 
     patient.update_from_pds!(pds_patient)
+    send_parental_contact_warning_if_needed(patient, @consent_form)
     @consent_form.match_with_patient!(patient, current_user: nil)
   end
 
@@ -62,13 +66,16 @@ class ConsentFormMatchingJob < ApplicationJob
       @consent_form
         .original_session
         .patients
-        .includes(:school)
+        .includes(:school, :parents)
         .match_existing(nhs_number: nil, **query)
   end
 
   def matching_patients
     @matching_patients ||=
-      Patient.includes(:school).match_existing(nhs_number: nil, **query)
+      Patient.includes(:school, :parents).match_existing(
+        nhs_number: nil,
+        **query
+      )
   end
 
   def update_consent_form_nhs_number
@@ -86,6 +93,7 @@ class ConsentFormMatchingJob < ApplicationJob
       end
     end
 
+    send_parental_contact_warning_if_needed(patient, @consent_form)
     @consent_form.match_with_patient!(patient, current_user: nil)
   end
 end
