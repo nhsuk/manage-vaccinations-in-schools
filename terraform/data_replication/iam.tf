@@ -11,7 +11,8 @@ data "aws_iam_policy_document" "ecs_permissions" {
     sid     = "dbSecretSid"
     actions = ["secretsmanager:GetSecretValue"]
     resources = [
-      var.db_secret_arn
+      var.db_secret_arn,
+      aws_secretsmanager_secret.ro_db_password.arn
     ]
     effect = "Allow"
   }
