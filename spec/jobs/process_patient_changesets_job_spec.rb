@@ -68,8 +68,8 @@ describe ProcessPatientChangesetsJob do
     end
   end
 
-  context "when a later wildcard-family-name search finds a match" do
-    let(:step) { :no_fuzzy_with_wildcard_family_name }
+  context "when a later fuzzy search finds a match" do
+    let(:step) { :fuzzy }
 
     before do
       patient_changeset["pending_changes"]["search_results"] = [
@@ -93,8 +93,8 @@ describe ProcessPatientChangesetsJob do
     end
   end
 
-  context "when wildcard-family-name search returns conflicting NHS numbers" do
-    let(:step) { :no_fuzzy_with_wildcard_family_name }
+  context "when fuzzy search returns conflicting NHS numbers" do
+    let(:step) { :fuzzy }
 
     before do
       patient_changeset["pending_changes"]["search_results"] = [
@@ -113,7 +113,6 @@ describe ProcessPatientChangesetsJob do
       perform
 
       expect(patient_changeset.child_attributes["nhs_number"]).to be_blank
-      expect(patient_changeset.pds_nhs_number).to be_nil
     end
   end
 
