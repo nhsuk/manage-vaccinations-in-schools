@@ -181,7 +181,7 @@ describe "Flu vaccination" do
   end
 
   def and_i_should_see_one_child_eligible_for_psd
-    expect(page).to have_text("There are 1 children")
+    expect(page).to have_text("There is 1 child")
   end
 
   def and_should_see_again_one_child_eligible_for_psd
@@ -206,7 +206,7 @@ describe "Flu vaccination" do
 
   def and_i_should_only_see_one_child_eligible_for_bulk_adding_psd
     expect(page).to have_text(
-      "There are 1 children with consent for the nasal flu vaccine"
+      "There is 1 child with consent for the nasal flu vaccine"
     )
   end
 

@@ -23,8 +23,9 @@
     <%= govuk_inset_text do %>
       <span class="nhsuk-u-visually-hidden">Information: </span>
       <p class="nhsuk-body">
-        There are <%= @eligible_for_bulk_psd_count %> children with consent for the nasal flu vaccine
-        who do not require triage and do not yet have a PSD in place.
+        There <%= @eligible_for_bulk_psd_count == 1 ? "is" : "are" %>
+        <%= pluralize(@eligible_for_bulk_psd_count, "child") %> with consent for
+        the nasal flu vaccine who do not require triage and do not yet have a PSD in place.
       </p>
 
       <% if policy(PatientSpecificDirection).create? %>
