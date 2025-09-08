@@ -71,6 +71,10 @@ FactoryBot.define do
       date { Date.current }
     end
 
+    trait :yesterday do
+      date { Date.yesterday }
+    end
+
     trait :unscheduled do
       date { nil }
     end
