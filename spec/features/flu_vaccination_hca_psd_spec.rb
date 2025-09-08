@@ -185,7 +185,7 @@ describe "Flu vaccination" do
   end
 
   def and_should_see_again_one_child_eligible_for_psd
-    expect(page).to have_text("1 new PSDs?")
+    expect(page).to have_text("1 new PSD?")
   end
 
   def and_zero_children_should_be_eligible_for_psd
@@ -197,7 +197,7 @@ describe "Flu vaccination" do
   end
 
   def when_i_click_on_button_to_bulk_add_psds
-    click_button "Yes, add PSDs"
+    click_button "Yes, add PSD"
   end
 
   def then_i_should_not_see_link_to_bulk_add_psds

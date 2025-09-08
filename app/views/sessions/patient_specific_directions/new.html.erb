@@ -6,12 +6,14 @@
                                         ]) %>
 <% end %>
 
-<%= h1 "Are you sure you want to add #{@eligible_for_bulk_psd_count} new PSDs?" %>
+<% psd_label = "PSD".pluralize(@eligible_for_bulk_psd_count) %>
+
+<%= h1 "Are you sure you want to add #{@eligible_for_bulk_psd_count} new #{psd_label}?" %>
 
 <p class="nhsuk-body">This cannot be undone.</p>
 
 <div class="nhsuk-button-group">
-  <%= govuk_button_to "Yes, add PSDs",
+  <%= govuk_button_to "Yes, add #{psd_label}",
                       session_patient_specific_directions_path(@session), class: "nhsuk-u-margin-right-4" %>
 
   <%= link_to "No, return to session", session_patient_specific_directions_path(@session) %>
