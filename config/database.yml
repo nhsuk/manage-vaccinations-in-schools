@@ -12,6 +12,10 @@ test:
 staging:
   <<: *default
   database: manage_vaccinations_staging
+  sslmode: verify-full
+  sslrootcert: config/aws-eu-west-2-root-ca.crt
 production:
   <<: *default
   database: manage_vaccinations_production
+  sslmode: verify-full
+  sslrootcert: config/aws-eu-west-2-root-ca.crt # This certificate is valid until 2061
