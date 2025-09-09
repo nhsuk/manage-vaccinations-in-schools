@@ -1,9 +1,6 @@
 basic_auth: Require users to sign in with basic authentication before they
   can use the service.
 
-delegation: Allow prescribers to create a PSDs for healthcare workers to administer
-  nasal vaccines or supply injected vaccines to healthcare works using the PGD protocol.
-
 dev_tools: Developer tools useful for testing and debugging.
 
 enqueue_sync_vaccination_records_to_nhs: Send new vaccinations recorded by
@@ -25,6 +22,6 @@ pds_lookup_during_import: Perform PDS lookups as part of the patient import
 
 testing_api: Basic API useful for automated testing.
 
-reporting_api: Enables the Commissioner reporting component to authenticate to Mavis via OAUTH 2.0 
-  Authorization Code Flow (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), and retrieve 
+reporting_api: Enables the Commissioner reporting component to authenticate to Mavis via OAUTH 2.0
+  Authorization Code Flow (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), and retrieve
   statistics from /api/reporting/

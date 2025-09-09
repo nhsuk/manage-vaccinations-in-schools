@@ -85,7 +85,6 @@ describe "Triage" do
   end
 
   scenario "prescriber can add add PSD instruction" do
-    given_delegation_feature_flag_is_enabled
     and_a_flu_programme_with_a_running_session_with_psd_enabled
     and_a_patient_with_nasal_consent_who_needs_triage_exists
     and_i_am_signed_in_as_a_prescriber
@@ -203,10 +202,6 @@ describe "Triage" do
         :consent_given_triage_not_needed,
         session: @session
       ).patient
-  end
-
-  def given_delegation_feature_flag_is_enabled
-    Flipper.enable(:delegation)
   end
 
   def and_i_am_signed_in
