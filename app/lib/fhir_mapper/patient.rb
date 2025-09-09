@@ -22,7 +22,7 @@ module FHIRMapper
         name: [FHIR::HumanName.new(family: family_name, given: given_name)],
         birthDate: date_of_birth&.strftime("%Y-%m-%d"),
         gender: gender_fhir_value,
-        address: [FHIR::Address.new(postalCode: address_postcode)]
+        address: [FHIR::Address.new(postalCode: address_postcode || "ZZ99 3CZ")]
       )
     end
 
