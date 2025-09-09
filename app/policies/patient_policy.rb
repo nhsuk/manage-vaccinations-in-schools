@@ -8,45 +8,53 @@ class PatientPolicy < ApplicationPolicy
 
       return scope.none if team.nil?
 
-      patient_session_exists =
+      patients_table = Patient.arel_table
+      associated_patients_table = Arel::Table.new("associated_patients")
+
+      associated_patients = [
         PatientSession
-          .where("patient_sessions.patient_id = patients.id")
-          .where(session: team.sessions)
+          .select(:patient_id)
+          .joins(:session)
+          .where(sessions: { team_id: team.id })
+          .arel,
+        ArchiveReason.select(:patient_id).where(team_id: team.id).arel,
+        SchoolMove.select(:patient_id).where(team_id: team.id).arel,
+        SchoolMove.select(:patient_id).where(school: team.schools).arel,
+        VaccinationRecord
+          .select(:patient_id)
+          .joins(:session)
+          .where(sessions: { team_id: team.id })
+          .arel,
+        VaccinationRecord
+          .select(:patient_id)
+          .where(performed_ods_code: organisation.ods_code, session_id: nil)
           .arel
-          .exists
+      ]
 
-      school_move_exists =
-        SchoolMove
-          .where("school_moves.patient_id = patients.id")
-          .where(team:)
-          .or(
-            SchoolMove.where("school_moves.patient_id = patients.id").where(
-              school: team.schools
-            )
-          )
-          .arel
-          .exists
+      associated_patiens_union =
+        Arel::Nodes::Union.new(associated_patients[0], associated_patients[1])
+      associated_patients[2..].each do |select|
+        associated_patiens_union =
+          Arel::Nodes::Union.new(associated_patiens_union, select)
+      end
 
-      vaccination_records_for_patients =
-        VaccinationRecord.where("vaccination_records.patient_id = patients.id")
+      associated_patients_query =
+        Arel::SelectManager
+          .new
+          .project(Arel.star)
+          .from(associated_patiens_union.as("t"))
+          .group("t.patient_id")
 
-      vaccination_record_exists =
-        vaccination_records_for_patients
-          .where(session: team.sessions)
-          .or(
-            vaccination_records_for_patients.where(
-              performed_ods_code: organisation.ods_code,
-              session_id: nil
-            )
-          )
-          .arel
-          .exists
+      join_associated_patients =
+        patients_table
+          .join(associated_patients_table)
+          .on(associated_patients_table[:patient_id].eq(patients_table[:id]))
+          .join_sources
+          .first
 
-      scope
-        .archived(team:)
-        .or(scope.where(patient_session_exists))
-        .or(scope.where(school_move_exists))
-        .or(scope.where(vaccination_record_exists))
+      Patient.with(associated_patients: associated_patients_query).joins(
+        join_associated_patients
+      )
     end
   end
 end
