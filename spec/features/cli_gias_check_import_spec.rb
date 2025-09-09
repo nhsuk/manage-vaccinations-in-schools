@@ -68,12 +68,15 @@ describe "mavis gias check_import" do
                      Closed schools (total): 1
       Proposed to be closed schools (total): 1
 
-       Existing schools with future sessions: 2
+         Existing schools with future sessions: 2
                      That are closed in import: 1 (50.0%)
       That are proposed to be closed in import: 1 (50.0%)
 
       URNs of closed schools with future sessions:
         100000
+
+      URNs of schools that will be closing, with future sessions:
+        100002
     OUTPUT
   end
 end
