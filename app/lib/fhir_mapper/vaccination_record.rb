@@ -50,7 +50,7 @@ module FHIRMapper
       immunisation
     end
 
-    def self.from_fhir_record(fhir_record, patient:, team:)
+    def self.from_fhir_record(fhir_record, patient:)
       attrs = {}
 
       attrs[:source] = "nhs_immunisations_api"
@@ -98,12 +98,8 @@ module FHIRMapper
 
       attrs[:vaccine] = Vaccine.from_fhir_record(fhir_record)
 
-      if attrs[:vaccine] && team
-        attrs[:batch] = batch_from_fhir(
-          fhir_record,
-          vaccine: attrs[:vaccine],
-          team:
-        )
+      if attrs[:vaccine]
+        attrs[:batch] = batch_from_fhir(fhir_record, vaccine: attrs[:vaccine])
         attrs[:full_dose] = full_dose_from_fhir(
           fhir_record,
           vaccine: attrs[:vaccine]
@@ -322,11 +318,10 @@ module FHIRMapper
       )
     end
 
-    private_class_method def self.batch_from_fhir(fhir_record, vaccine:, team:)
+    private_class_method def self.batch_from_fhir(fhir_record, vaccine:)
       ::Batch.create_with(archived_at: Time.current).find_or_create_by!(
         expiry: fhir_record.expirationDate&.to_date,
         name: fhir_record.lotNumber.to_s,
-        team:,
         vaccine:
       )
     end

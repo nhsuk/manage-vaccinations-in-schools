@@ -295,7 +295,7 @@ describe FHIRMapper::VaccinationRecord do
 
   describe "#from_fhir_record" do
     subject(:record) do
-      VaccinationRecord.from_fhir_record(fhir_immunization, patient:, team:)
+      VaccinationRecord.from_fhir_record(fhir_immunization, patient:)
     end
 
     around { |example| travel_to(Date.new(2025, 11, 20)) { example.run } }
@@ -311,6 +311,10 @@ describe FHIRMapper::VaccinationRecord do
 
       its(:source) { should eq "nhs_immunisations_api" }
       its(:nhs_immunisations_api_synced_at) { should eq Time.current }
+
+      it "batch.team is nil" do
+        expect(record.batch&.team).to be_nil
+      end
 
       context "when the record is saved to the database" do
         before { record.save! }
