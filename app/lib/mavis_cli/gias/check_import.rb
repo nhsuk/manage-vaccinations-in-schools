@@ -42,6 +42,8 @@ module MavisCLI
           csv_entry = zip.glob("edubasealldata*.csv").first
           csv_content = csv_entry.get_input_stream.read
 
+          progress_bar = MavisCLI.progress_bar(csv_content.lines.count + 1)
+
           CSV.parse(
             csv_content,
             headers: true,
@@ -71,6 +73,8 @@ module MavisCLI
                   new_status.in?(["Open", "Open, but proposed to close"])
               new_schools << urn
             end
+          ensure
+            progress_bar.increment
           end
         end
 

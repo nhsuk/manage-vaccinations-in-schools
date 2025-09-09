@@ -79,7 +79,8 @@ describe "mavis gias check_import" do
 
   def then_i_should_see_the_correct_counts
     expect(@output).to eq <<~OUTPUT
-                        New schools (total): 1
+
+      Progress: |                  New schools (total): 1
                      Closed schools (total): 1
       Proposed to be closed schools (total): 1
 
