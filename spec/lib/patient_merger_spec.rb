@@ -197,7 +197,7 @@ describe PatientMerger do
     end
 
     it "enqueues sync jobs for vaccination records" do
-      Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
+      Flipper.enable(:imms_api_sync_job)
       expect { call }.to have_enqueued_job(SyncVaccinationRecordToNHSJob).with(
         vaccination_record
       )

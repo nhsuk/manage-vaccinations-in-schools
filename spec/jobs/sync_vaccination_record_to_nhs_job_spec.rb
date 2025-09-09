@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
 describe SyncVaccinationRecordToNHSJob, type: :job do
-  before { allow(NHS::ImmunisationsAPI).to receive(:sync_immunisation) }
+  before do
+    allow(NHS::ImmunisationsAPI).to receive(:sync_immunisation)
+    Flipper.enable(:imms_api_sync_job)
+  end
+
+  after { Flipper.disable(:imms_api_sync_job) }
 
   let(:vaccination_record) { create(:vaccination_record) }
 

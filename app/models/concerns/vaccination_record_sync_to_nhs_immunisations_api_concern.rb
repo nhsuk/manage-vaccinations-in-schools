@@ -34,7 +34,7 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
   end
 
   def sync_to_nhs_immunisations_api
-    return unless Flipper.enabled?(:enqueue_sync_vaccination_records_to_nhs)
+    return unless Flipper.enabled?(:imms_api_sync_job)
     return unless syncable_to_nhs_immunisations_api?
 
     # The immunisations api module checks if a sync is still pending using this

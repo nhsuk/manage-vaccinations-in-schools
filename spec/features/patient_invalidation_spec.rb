@@ -33,8 +33,8 @@ describe "Patient invalidation deletes vaccination record from API" do
   end
 
   def and_the_feature_flags_are_enabled
-    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
-    Flipper.enable(:immunisations_fhir_api_integration)
+    Flipper.enable(:imms_api_sync_job)
+    Flipper.enable(:imms_api_integration)
   end
 
   def and_the_vaccination_record_has_been_sent_to_the_api

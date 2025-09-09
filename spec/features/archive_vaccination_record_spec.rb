@@ -20,7 +20,7 @@ describe "Archive vaccination record" do
 
   scenario "User archives a record and checks activity log" do
     given_an_hpv_programme_is_underway
-    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    and_imms_api_sync_job_feature_is_enabled
     and_an_administered_vaccination_record_exists
 
     when_i_sign_in_as_a_superuser
@@ -161,7 +161,8 @@ describe "Archive vaccination record" do
       programme: @programme
     )
 
-    if Flipper.enabled?(:immunisations_fhir_api_integration)
+    if Flipper.enabled?(:imms_api_integration) &&
+         Flipper.enabled?(:imms_api_sync_job)
       perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
       expect(@stubbed_post_request).to have_been_requested
     end
@@ -173,9 +174,9 @@ describe "Archive vaccination record" do
     @vaccination_record.update(confirmation_sent_at: Time.current)
   end
 
-  def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
-    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
-    Flipper.enable(:immunisations_fhir_api_integration)
+  def and_imms_api_sync_job_feature_is_enabled
+    Flipper.enable(:imms_api_sync_job)
+    Flipper.enable(:imms_api_integration)
 
     uuid = Random.uuid
     @stubbed_post_request = stub_immunisations_api_post(uuid:)
