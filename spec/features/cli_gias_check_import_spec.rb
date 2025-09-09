@@ -17,7 +17,12 @@ describe "mavis gias check_import" do
 
   def and_there_are_schools_with_future_sessions
     @school_with_future_session =
-      create(:school, name: "The Aldgate School", urn: "100000")
+      create(
+        :school,
+        name: "The Aldgate School",
+        urn: "100000",
+        year_groups: (-1..6).to_a
+      )
     @session_with_future_dates =
       create(
         :session,
@@ -27,7 +32,12 @@ describe "mavis gias check_import" do
       )
 
     @school2_with_future_session =
-      create(:school, name: "St Paul's Cathedral School", urn: "100002")
+      create(
+        :school,
+        name: "St Paul's Cathedral School",
+        urn: "100002",
+        year_groups: (0..6).to_a
+      )
     @session_with_future_dates =
       create(
         :session,
@@ -37,7 +47,12 @@ describe "mavis gias check_import" do
       )
 
     @school_without_future_session =
-      create(:school, name: "City of London School for Girls", urn: "100001")
+      create(
+        :school,
+        name: "City of London School for Girls",
+        urn: "100001",
+        year_groups: (3..13).to_a
+      )
     @session_without_future_dates =
       create(
         :session,
@@ -71,11 +86,15 @@ describe "mavis gias check_import" do
          Existing schools with future sessions: 2
                      That are closed in import: 1 (50.0%)
       That are proposed to be closed in import: 1 (50.0%)
+                  That have year group changes: 1 (50.0%)
 
       URNs of closed schools with future sessions:
         100000
 
       URNs of schools that will be closing, with future sessions:
+        100002
+
+      URNs of schools with year group changes, with future sessions:
         100002
     OUTPUT
   end
