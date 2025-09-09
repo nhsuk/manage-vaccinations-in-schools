@@ -37,7 +37,9 @@ class API::Testing::TeamsController < API::Testing::BaseController
         # In local dev we can end up with NotifyLogEntries without a patient
         log_destroy(NotifyLogEntry.where(patient_id: nil))
         log_destroy(NotifyLogEntry.where(patient_id: patient_ids))
+        log_destroy(PatientChangeset.where(patient_id: patient_ids))
         log_destroy(PatientSession.where(patient_id: patient_ids))
+        log_destroy(PatientSpecificDirection.where(patient_id: patient_ids))
         log_destroy(PDSSearchResult.where(patient_id: patient_ids))
         log_destroy(PreScreening.where(patient_id: patient_ids))
         log_destroy(SchoolMove.where(patient_id: patient_ids))
