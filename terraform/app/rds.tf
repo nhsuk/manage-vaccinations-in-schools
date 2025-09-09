@@ -52,7 +52,9 @@ resource "aws_rds_cluster" "core" {
   allow_major_version_upgrade     = true
   preferred_backup_window         = "01:00-01:30"
   preferred_maintenance_window    = "sun:02:30-sun:03:00"
-  db_cluster_parameter_group_name = "default.aurora-postgresql16"
+  db_cluster_parameter_group_name = var.enable_enhanced_db_monitoring ? aws_rds_cluster_parameter_group.enhanced_monitoring[0].name : "default.aurora-postgresql16"
+  database_insights_mode          = var.enable_enhanced_db_monitoring ? "advanced" : "standard"
+  performance_insights_enabled    = var.enable_enhanced_db_monitoring
   monitoring_interval             = var.enable_enhanced_db_monitoring ? 30 : 0
   monitoring_role_arn             = var.enable_enhanced_db_monitoring ? aws_iam_role.enhanced_db_monitoring[0].arn : null
   enabled_cloudwatch_logs_exports = ["postgresql", "instance"]
@@ -88,6 +90,34 @@ resource "aws_rds_cluster_instance" "core" {
   promotion_tier       = each.value["promotion_tier"]
   monitoring_interval  = var.enable_enhanced_db_monitoring ? 30 : 0
   monitoring_role_arn  = var.enable_enhanced_db_monitoring ? aws_iam_role.enhanced_db_monitoring[0].arn : null
+}
+
+resource "aws_rds_cluster_parameter_group" "enhanced_monitoring" {
+  count       = var.enable_enhanced_db_monitoring ? 1 : 0
+  family      = "aurora-postgresql16"
+  name        = "enhanced-monitoring-group-${var.environment}"
+  description = "DB cluster parameter group for enhanced DB monitoring"
+
+  parameter {
+    name  = "aurora_compute_plan_id"
+    value = 1 # true
+  }
+  parameter {
+    name  = "aurora_stat_plans.minutes_until_recapture"
+    value = 5
+  }
+  parameter {
+    name  = "log_parameter_max_length"
+    value = 0
+  }
+  parameter {
+    name  = "log_min_duration_statement"
+    value = 1000
+  }
+  parameter {
+    name  = "log_line_prefix"
+    value = "%m:%r:%u@%d:[%p]:%l:%e:%s:%v:%x:%c:%q%a:"
+  }
 }
 
 resource "aws_iam_role" "enhanced_db_monitoring" {
