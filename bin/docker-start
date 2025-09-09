@@ -5,9 +5,6 @@ BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 if [ "$SERVER_TYPE" == "web" ]; then
   echo "Starting web server..."
   exec "$BIN_DIR"/thrust "$BIN_DIR"/rails server
-elif [ "$SERVER_TYPE" == "good-job" ]; then
-  echo "Starting good-job server..."
-  exec "$BIN_DIR"/good_job start
 elif [ "$SERVER_TYPE" == "sidekiq" ]; then
   echo "Starting sidekiq server..."
   exec "$BIN_DIR"/sidekiq
@@ -15,6 +12,6 @@ elif [ "$SERVER_TYPE" == "none" ]; then
   echo "No server started"
   exec tail -f /dev/null  # Keep container running
 else
-  echo "SERVER_TYPE variable: '$SERVER_TYPE' unknown. Allowed values ['web','good-job', 'none']"
+  echo "SERVER_TYPE variable: '$SERVER_TYPE' unknown. Allowed values: web, sidekiq, none"
   exit 1
 fi

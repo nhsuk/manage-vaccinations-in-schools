@@ -40,7 +40,6 @@ on:
         options:
           - all
           - web
-          - good-job
           - sidekiq
           - none
         default: all
