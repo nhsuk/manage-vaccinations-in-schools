@@ -110,6 +110,7 @@ require "rspec/rails"
 require "capybara/cuprite"
 require "capybara-screenshot/rspec"
 require "sidekiq/testing"
+require "rack_session_access/capybara"
 
 Faker::Config.locale = "en-GB"
 

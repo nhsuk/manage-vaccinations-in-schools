@@ -53,4 +53,6 @@ Rails.application.configure do
   # Enable strict loading to catch N+1 problems.
   config.active_record.strict_loading_by_default = true
   config.active_record.strict_loading_mode = :n_plus_one_only
+
+  config.middleware.use RackSessionAccess::Middleware
 end
