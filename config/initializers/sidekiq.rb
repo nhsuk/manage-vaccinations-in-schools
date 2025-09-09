@@ -22,8 +22,8 @@ end
 Sidekiq::Throttled::Registry.add(
   :notify,
   threshold: {
-    limit: Settings.govuk_notify.rate_limit_per_minute.to_i,
-    period: 1.minute
+    limit: Settings.govuk_notify.rate_limit_per_second.to_i,
+    period: 1.second
   }
 )
 

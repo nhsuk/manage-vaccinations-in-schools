@@ -28,7 +28,7 @@ govuk_notify:
   team_key: <%= Rails.application.credentials.govuk_notify&.team_key %>
   live_key: <%= Rails.application.credentials.govuk_notify&.live_key %>
   callback_bearer_token: <%= Rails.application.credentials.govuk_notify&.callback_bearer_token %>
-  rate_limit_per_minute: 2500
+  rate_limit_per_second: 45
 
 nhs_api:
   api_key: <%= Rails.application.credentials.nhs_api&.api_key %>
