@@ -68,8 +68,8 @@ describe ProcessPatientChangesetsJob do
     end
   end
 
-  context "when a later fuzzy search finds a match" do
-    let(:step) { :fuzzy }
+  context "when a later wildcard-family-name search finds a match" do
+    let(:step) { :no_fuzzy_with_wildcard_family_name }
 
     before do
       patient_changeset["pending_changes"]["search_results"] = [
@@ -79,6 +79,7 @@ describe ProcessPatientChangesetsJob do
           nhs_number: "1234567890"
         }
       ]
+      patient_changeset.save!
       allow(PDS::Patient).to receive(:search).and_raise(
         NHS::PDS::TooManyMatches
       )
@@ -93,8 +94,8 @@ describe ProcessPatientChangesetsJob do
     end
   end
 
-  context "when fuzzy search returns conflicting NHS numbers" do
-    let(:step) { :fuzzy }
+  context "when wildcard-family-name search returns conflicting NHS numbers" do
+    let(:step) { :no_fuzzy_with_wildcard_family_name }
 
     before do
       patient_changeset["pending_changes"]["search_results"] = [
@@ -104,6 +105,7 @@ describe ProcessPatientChangesetsJob do
           nhs_number: "1234567890"
         }
       ]
+      patient_changeset.save!
       different_patient =
         instance_double(PDS::Patient, nhs_number: "1112223333")
       allow(PDS::Patient).to receive(:search).and_return(different_patient)
@@ -113,6 +115,7 @@ describe ProcessPatientChangesetsJob do
       perform
 
       expect(patient_changeset.child_attributes["nhs_number"]).to be_blank
+      expect(patient_changeset.pds_nhs_number).to be_nil
     end
   end
 

@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/citizensadvice/capybara_accessible_selectors
-  revision: eb1277097bf94cab378182db201985161ca2b7f0
+  revision: 556f423037c337df588066eca89e13e7c4184a1f
   branch: main
   specs:
-    capybara_accessible_selectors (0.11.0)
+    capybara_accessible_selectors (0.13.0)
       capybara (~> 3.36)
 
 GIT
@@ -113,7 +113,7 @@ GEM
     ast (2.4.3)
     attr_required (1.0.2)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1154.0)
+    aws-partitions (1.1156.0)
     aws-sdk-accessanalyzer (1.78.0)
       aws-sdk-core (~> 3, >= 3.231.0)
       aws-sigv4 (~> 1.5)
@@ -125,7 +125,7 @@ GEM
       bigdecimal
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-ec2 (1.555.0)
+    aws-sdk-ec2 (1.556.0)
       aws-sdk-core (~> 3, >= 3.231.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-ecr (1.110.0)
@@ -134,13 +134,13 @@ GEM
     aws-sdk-iam (1.129.0)
       aws-sdk-core (~> 3, >= 3.231.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-kms (1.111.0)
+    aws-sdk-kms (1.112.0)
       aws-sdk-core (~> 3, >= 3.231.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-rds (1.291.0)
+    aws-sdk-rds (1.292.0)
       aws-sdk-core (~> 3, >= 3.231.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-s3 (1.198.0)
+    aws-sdk-s3 (1.199.0)
       aws-sdk-core (~> 3, >= 3.231.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
@@ -460,7 +460,7 @@ GEM
       activesupport (>= 3.0.0)
     raabro (1.4.0)
     racc (1.8.1)
-    rack (3.2.0)
+    rack (3.2.1)
     rack-oauth2 (2.2.1)
       activesupport
       attr_required
@@ -612,14 +612,14 @@ GEM
     securerandom (0.4.1)
     semantic_logger (4.17.0)
       concurrent-ruby (~> 1.0)
-    sentry-rails (5.26.0)
+    sentry-rails (5.27.0)
       railties (>= 5.0)
-      sentry-ruby (~> 5.26.0)
-    sentry-ruby (5.26.0)
+      sentry-ruby (~> 5.27.0)
+    sentry-ruby (5.27.0)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
-    sentry-sidekiq (5.26.0)
-      sentry-ruby (~> 5.26.0)
+    sentry-sidekiq (5.27.0)
+      sentry-ruby (~> 5.27.0)
       sidekiq (>= 3.0)
     shoulda-matchers (6.5.0)
       activesupport (>= 5.2.0)

@@ -51,7 +51,7 @@ class ProcessPatientChangesetsJob < ApplicationJob
   private
 
   def unique_nhs_numbers(patient_changeset)
-    patient_changeset.search_results.pluck(:nhs_number).compact.uniq
+    patient_changeset.search_results.pluck("nhs_number").compact.uniq
   end
 
   def get_unique_nhs_number(patient_changeset)
@@ -79,7 +79,7 @@ class ProcessPatientChangesetsJob < ApplicationJob
         too_many_matches: :no_fuzzy_without_history
       },
       no_fuzzy_without_history: {
-        no_matches: :fuzzy,
+        no_matches: :give_up,
         one_match: :save_nhs_number_if_unique,
         too_many_matches: :give_up,
         format_query: ->(query) { query.merge(history: false) }
@@ -98,22 +98,11 @@ class ProcessPatientChangesetsJob < ApplicationJob
         format_query: ->(query) { query[:given_name][3..] = "*" }
       },
       no_fuzzy_with_wildcard_family_name: {
-        no_matches: :fuzzy,
-        one_match: :fuzzy,
-        too_many_matches: :fuzzy,
-        skip_step: :fuzzy,
-        format_query: ->(query) { query[:family_name][3..] = "*" }
-      },
-      fuzzy: {
-        no_matches: :give_up,
+        no_matches: :save_nhs_number_if_unique,
         one_match: :save_nhs_number_if_unique,
         too_many_matches: :save_nhs_number_if_unique,
-        format_query: ->(query) do
-          query[:fuzzy] = true
-          # For fuzzy searches, history is the default. We get an error if we
-          # try to set it to true explicitly
-          query[:history] = nil
-        end
+        skip_step: :save_nhs_number_if_unique,
+        format_query: ->(query) { query[:family_name][3..] = "*" }
       }
     }
   end

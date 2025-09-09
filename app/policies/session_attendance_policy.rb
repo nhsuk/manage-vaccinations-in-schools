@@ -11,23 +11,22 @@ class SessionAttendancePolicy < ApplicationPolicy
 
   private
 
-  delegate :patient_session, :session_date, to: :record
-
-  def academic_year = patient_session.session.academic_year
+  delegate :patient, :session_date, to: :record
+  delegate :session, to: :session_date
+  delegate :academic_year, to: :session
 
   def already_vaccinated?
-    patient_session.programmes.all? do |programme|
-      patient_session
-        .patient
-        .vaccination_status(programme:, academic_year:)
-        .vaccinated?
-    end
+    session
+      .programmes_for(patient:, academic_year:)
+      .all? do |programme|
+        patient.vaccination_status(programme:, academic_year:).vaccinated?
+      end
   end
 
   def was_seen_by_nurse?
     VaccinationRecord.kept.exists?(
-      patient_id: patient_session.patient_id,
-      session_id: patient_session.session_id,
+      patient:,
+      session:,
       performed_at: session_date.value.all_day
     )
   end

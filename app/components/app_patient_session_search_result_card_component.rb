@@ -97,8 +97,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def can_register_attendance?
     session_attendance =
       SessionAttendance.new(
-        patient_session:,
-        session_date: SessionDate.new(value: Date.current)
+        patient:,
+        session_date: SessionDate.new(session:, value: Date.current)
       )
 
     policy(session_attendance).new?
@@ -262,7 +262,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       value:
         render(
           AppStatusTagComponent.new(
-            psd_exists?(programmes.first) ? :added : :not_added,
+            has_patient_specific_direction? ? :added : :not_added,
             context: :patient_specific_direction
           )
         )
@@ -290,9 +290,11 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     AppLogEventComponent.new(body:, at: note.created_at, by: note.created_by)
   end
 
-  def psd_exists?(programme)
+  def has_patient_specific_direction?
+    programme_ids = programmes.map(&:id)
     patient.patient_specific_directions.any? do
-      it.programme_id == programme.id && it.academic_year == academic_year
+      it.programme_id.in?(programme_ids) && it.academic_year == academic_year &&
+        !it.invalidated?
     end
   end
 end

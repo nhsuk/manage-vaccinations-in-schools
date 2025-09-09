@@ -14,26 +14,35 @@ module MavisCLI
 
         require "zip"
 
-        existing_schools_with_future_sessions =
-          Set.new(
-            Location
-              .school
-              .joins(sessions: :session_dates)
-              .where("session_dates.value >= ?", Time.zone.today)
-              .pluck(:urn)
-          )
+        schools_with_future_sessions = {
+          existing:
+            Set.new(
+              Location
+                .school
+                .joins(sessions: :session_dates)
+                .where("session_dates.value >= ?", Time.zone.today)
+                .pluck(:urn)
+            ),
+          closed: Set.new,
+          closing: Set.new,
+          year_group_changes: Set.new
+        }
+        schools_without_future_sessions = {
+          closed: Set.new,
+          closing: Set.new,
+          year_group_changes: Set.new
+        }
+
         existing_schools = Set.new(Location.school.pluck(:urn))
         team_schools = Set.new(Location.school.joins(:subteam).pluck(:urn))
 
-        closed_schools_with_future_sessions = Set.new
-        closing_schools_with_future_sessions = Set.new
-        closed_schools_without_future_sessions = Set.new
-        closing_schools_without_future_sessions = Set.new
         new_schools = Set.new
 
         Zip::File.open(input_file) do |zip|
           csv_entry = zip.glob("edubasealldata*.csv").first
           csv_content = csv_entry.get_input_stream.read
+
+          progress_bar = MavisCLI.progress_bar(csv_content.lines.count + 1)
 
           CSV.parse(
             csv_content,
@@ -46,55 +55,108 @@ module MavisCLI
             urn = row["URN"]
             new_status = row["EstablishmentStatus (name)"]
 
-            if urn.in?(existing_schools_with_future_sessions)
-              if new_status == "Closed"
-                closed_schools_with_future_sessions << urn
-              elsif new_status == "Open, but proposed to close"
-                closing_schools_with_future_sessions << urn
-              end
+            if urn.in?(schools_with_future_sessions[:existing])
+              check_for_school_closure(row, schools_with_future_sessions)
+              check_for_year_group_changes(
+                row,
+                schools_with_future_sessions,
+                existing_schools
+              )
             elsif urn.in?(team_schools)
-              if new_status == "Closed"
-                closed_schools_without_future_sessions << urn
-              elsif new_status == "Open, but proposed to close"
-                closing_schools_without_future_sessions << urn
-              end
+              check_for_school_closure(row, schools_without_future_sessions)
+              check_for_year_group_changes(
+                row,
+                schools_without_future_sessions,
+                existing_schools
+              )
             elsif !urn.in?(existing_schools) &&
                   new_status.in?(["Open", "Open, but proposed to close"])
               new_schools << urn
             end
+          ensure
+            progress_bar.increment
           end
         end
 
         closed_schools_count =
-          closed_schools_without_future_sessions.count +
-            closed_schools_with_future_sessions.count
+          schools_without_future_sessions[:closed].count +
+            schools_with_future_sessions[:closed].count
         closing_schools_count =
-          closing_schools_without_future_sessions.count +
-            closing_schools_with_future_sessions.count
+          schools_without_future_sessions[:closing].count +
+            schools_with_future_sessions[:closing].count
 
         closed_schools_with_future_sessions_pct =
-          closed_schools_with_future_sessions.count.to_f /
-            existing_schools_with_future_sessions.count
-
+          calculate_percentage(schools_with_future_sessions, :closed)
         closing_schools_with_future_sessions_pct =
-          closing_schools_with_future_sessions.count.to_f /
-            existing_schools_with_future_sessions.count
+          calculate_percentage(schools_with_future_sessions, :closing)
+        schools_with_changed_year_groups_pct =
+          calculate_percentage(
+            schools_with_future_sessions,
+            :year_group_changes
+          )
 
         puts <<~OUTPUT
                   New schools (total): #{new_schools.count}
                Closed schools (total): #{closed_schools_count}
 Proposed to be closed schools (total): #{closing_schools_count}
 
- Existing schools with future sessions: #{existing_schools_with_future_sessions.count}
-               That are closed in import: #{closed_schools_with_future_sessions.count} (#{closed_schools_with_future_sessions_pct * 100}%)
-That are proposed to be closed in import: #{closing_schools_with_future_sessions.count} (#{closing_schools_with_future_sessions_pct * 100}%)
+   Existing schools with future sessions: #{schools_with_future_sessions[:existing].count}
+               That are closed in import: #{schools_with_future_sessions[:closed].count} (#{closed_schools_with_future_sessions_pct * 100}%)
+That are proposed to be closed in import: #{schools_with_future_sessions[:closing].count} (#{closing_schools_with_future_sessions_pct * 100}%)
+            That have year group changes: #{schools_with_future_sessions[:year_group_changes].count} (#{schools_with_changed_year_groups_pct * 100}%)
         OUTPUT
 
-        puts <<~OUTPUT if closed_schools_with_future_sessions.any?
+        puts <<~OUTPUT if schools_with_future_sessions[:closed].any?
 
 URNs of closed schools with future sessions:
-  #{closed_schools_with_future_sessions.to_a.sort.join("\n  ")}
+  #{schools_with_future_sessions[:closed].to_a.sort.join("\n  ")}
           OUTPUT
+
+        puts <<~OUTPUT if schools_with_future_sessions[:closing].any?
+
+URNs of schools that will be closing, with future sessions:
+  #{schools_with_future_sessions[:closing].to_a.sort.join("\n  ")}
+          OUTPUT
+
+        puts <<~OUTPUT if schools_with_future_sessions[:year_group_changes].any?
+
+URNs of schools with year group changes, with future sessions:
+  #{schools_with_future_sessions[:year_group_changes].to_a.sort.join("\n  ")}
+          OUTPUT
+      end
+
+      private
+
+      def calculate_percentage(schools_set, metric)
+        if schools_set[:existing].count.positive?
+          schools_set[metric].count.to_f / schools_set[:existing].count
+        else
+          0.0
+        end
+      end
+
+      def check_for_school_closure(row, school_set)
+        urn = row["URN"]
+        new_status = row["EstablishmentStatus (name)"]
+
+        if new_status == "Closed"
+          school_set[:closed] << urn
+        elsif new_status == "Open, but proposed to close"
+          school_set[:closing] << urn
+        end
+      end
+
+      def check_for_year_group_changes(row, school_set, existing_schools)
+        urn = row["URN"]
+        return unless urn.in? existing_schools
+
+        low_year_group = row["StatutoryLowAge"].to_i - 4
+        high_year_group = row["StatutoryHighAge"].to_i - 5
+
+        if (low_year_group..high_year_group).to_a !=
+             Location.school.find_by(urn:).year_groups
+          school_set[:year_group_changes] << urn
+        end
       end
     end
   end

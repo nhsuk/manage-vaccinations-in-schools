@@ -79,7 +79,7 @@ describe StatusGenerator::Session do
     end
 
     context "when not attending the session" do
-      before { create(:session_attendance, :absent, patient_session:) }
+      before { create(:session_attendance, :absent, patient:, session:) }
 
       it { should be(:absent_from_session) }
     end
@@ -263,10 +263,10 @@ describe StatusGenerator::Session do
         create(
           :vaccination_record,
           :absent_from_session,
-          patient: patient,
-          session: session,
-          programme: programme,
-          performed_at: performed_at
+          patient:,
+          session:,
+          programme:,
+          performed_at:
         )
       end
 
@@ -275,9 +275,7 @@ describe StatusGenerator::Session do
 
     context "with absent from session attendance" do
       before do
-        attendance =
-          create(:session_attendance, :absent, patient_session: patient_session)
-        attendance.update_column(:created_at, created_at)
+        create(:session_attendance, :absent, patient:, session:, created_at:)
       end
 
       it { should eq(created_at) }
@@ -292,19 +290,19 @@ describe StatusGenerator::Session do
           create(
             :vaccination_record,
             :absent_from_session,
-            patient: patient,
-            session: session,
-            programme: programme,
+            patient:,
+            session:,
+            programme:,
             performed_at: earlier_date
           )
 
-          attendance =
-            create(
-              :session_attendance,
-              :absent,
-              patient_session: patient_session
-            )
-          attendance.update_column(:created_at, later_date)
+          create(
+            :session_attendance,
+            :absent,
+            patient:,
+            session:,
+            created_at: later_date
+          )
         end
 
         it { should eq(earlier_date) }
@@ -315,19 +313,19 @@ describe StatusGenerator::Session do
           create(
             :vaccination_record,
             :absent_from_session,
-            patient: patient,
-            session: session,
-            programme: programme,
+            patient:,
+            session:,
+            programme:,
             performed_at: later_date
           )
 
-          attendance =
-            create(
-              :session_attendance,
-              :absent,
-              patient_session: patient_session
-            )
-          attendance.update_column(:created_at, earlier_date)
+          create(
+            :session_attendance,
+            :absent,
+            patient:,
+            session:,
+            created_at: earlier_date
+          )
         end
 
         it { should eq(earlier_date) }
@@ -339,10 +337,10 @@ describe StatusGenerator::Session do
         create(
           :vaccination_record,
           :not_administered,
-          patient: patient,
-          session: session,
-          programme: programme,
-          performed_at: performed_at
+          patient:,
+          session:,
+          programme:,
+          performed_at:
         )
       end
 

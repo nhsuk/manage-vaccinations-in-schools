@@ -20,6 +20,18 @@ describe "Flu vaccination" do
     then_i_am_able_to_vaccinate_them(nasal: false)
   end
 
+  scenario "Administered by HCA under national protocol but had a previous PSD" do
+    given_a_session_exists
+    and_patients_exist
+    and_the_nasal_and_injection_patient_has_a_psd
+
+    when_i_visit_the_session_record_tab
+    then_i_see_all_the_patients
+
+    when_i_click_on_the_nasal_and_injection_patient
+    then_i_am_able_to_vaccinate_them(nasal: true)
+  end
+
   scenario "Administered by HCA under national protocol with PSD enabled" do
     given_a_session_exists(psd_enabled: true)
     and_patients_exist

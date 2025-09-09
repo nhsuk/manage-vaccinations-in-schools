@@ -113,6 +113,7 @@ Rails.application.routes.draw do
       namespace :reporting do
         post "authorize", to: "one_time_tokens#authorize"
         get "totals", controller: :totals, action: :index
+        resources :vaccination_events, path: "vaccination-events", only: :index
       end
     end
   end

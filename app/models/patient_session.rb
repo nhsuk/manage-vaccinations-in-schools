@@ -44,7 +44,6 @@ class PatientSession < ApplicationRecord
   belongs_to :patient
   belongs_to :session
 
-  has_many :session_attendances, dependent: :destroy
   has_one :registration_status
 
   has_one :location, through: :session
@@ -64,6 +63,10 @@ class PatientSession < ApplicationRecord
           source: :notes
 
   has_many :pre_screenings,
+           -> { where(patient_id: it.patient_id) },
+           through: :session
+
+  has_many :session_attendances,
            -> { where(patient_id: it.patient_id) },
            through: :session
 
@@ -315,9 +318,10 @@ class PatientSession < ApplicationRecord
 
   def todays_attendance
     if (session_date = session.session_dates.today.first)
-      session_attendances.includes(:session_date).find_or_initialize_by(
-        session_date:
-      )
+      patient
+        .session_attendances
+        .includes(:patient, session_date: { session: :programmes })
+        .find_or_initialize_by(session_date:)
     end
   end
 

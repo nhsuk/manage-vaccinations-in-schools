@@ -72,7 +72,7 @@ describe AppPatientSessionSearchResultCardComponent do
       let(:programme) { create(:programme, :flu) }
 
       it { should_not have_text("Vaccination method") }
-      it { should have_text("Nasal") }
+      it { should have_text("Consent given for nasal spray") }
     end
   end
 
@@ -83,6 +83,27 @@ describe AppPatientSessionSearchResultCardComponent do
       let(:programme) { create(:programme, :flu) }
 
       it { should_not have_text("Vaccination method") }
+    end
+  end
+
+  context "when context is patient specific direction" do
+    let(:context) { :patient_specific_direction }
+    let(:programme) { create(:programme, :flu) }
+
+    it { should have_text("PSD statusPSD not added") }
+
+    context "with a PSD" do
+      before { create(:patient_specific_direction, patient:, programme:) }
+
+      it { should have_text("PSD statusPSD added") }
+    end
+
+    context "with an invalidated PSD" do
+      before do
+        create(:patient_specific_direction, :invalidated, patient:, programme:)
+      end
+
+      it { should have_text("PSD statusPSD not added") }
     end
   end
 

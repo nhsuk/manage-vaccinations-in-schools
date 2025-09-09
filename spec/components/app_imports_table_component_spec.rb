@@ -80,6 +80,10 @@ describe AppImportsTableComponent do
       ".nhsuk-table__cell",
       text: "1 January 2020 at 12:00am"
     )
+    expect(rendered).to have_css(
+      ".nhsuk-table__cell",
+      text: CohortImport.first.csv_filename
+    )
     expect(rendered).to have_css(".nhsuk-table__cell", text: "Child record")
     expect(rendered).to have_css(
       ".nhsuk-table__cell",

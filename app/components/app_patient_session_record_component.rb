@@ -20,7 +20,7 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
       (
         patient_session.registration_status&.attending? ||
           patient_session.registration_status&.completed? ||
-          !session.requires_registration?
+          (!session.requires_registration? && session.today?)
       )
   end
 

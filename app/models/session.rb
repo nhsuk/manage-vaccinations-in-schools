@@ -55,6 +55,7 @@ class Session < ApplicationRecord
   has_many :programmes, through: :session_programmes
   has_many :gillick_assessments, through: :session_dates
   has_many :patients, through: :patient_sessions
+  has_many :session_attendances, through: :session_dates
   has_many :vaccines, through: :programmes
 
   has_many :location_programme_year_groups,
@@ -207,6 +208,8 @@ class Session < ApplicationRecord
   def vaccine_methods
     @vaccine_methods ||= programmes.flat_map(&:vaccine_methods).uniq.sort
   end
+
+  def has_multiple_vaccine_methods? = vaccine_methods.length > 1
 
   def programmes_for(year_group: nil, patient: nil, academic_year: nil)
     year_group ||= patient.year_group(academic_year:)

@@ -9,10 +9,22 @@ class Reports::SystmOneExporter
   }.with_indifferent_access.freeze
 
   VACCINE_DOSE_MAPPINGS = {
+    "Cell-based Trivalent Influenza Vaccine Seqirus" => {
+      1 => "YcjYj"
+    },
     "Gardasil 9" => {
-      "1" => "Y19a4",
-      "2" => "Y19a5",
-      "3" => "Y19a6"
+      1 => "Y19a4",
+      2 => "Y19a5",
+      3 => "Y19a6"
+    },
+    "Fluenz" => {
+      1 => "YcjAC"
+    },
+    "Vaxigrip" => {
+      1 => "YcjYf"
+    },
+    "Viatris" => {
+      1 => "YcjYh"
     }
   }.freeze
 
@@ -183,12 +195,14 @@ class Reports::SystmOneExporter
   def vaccination(vaccination_record)
     return if vaccination_record.not_administered?
 
-    VACCINE_DOSE_MAPPINGS.dig(
-      vaccination_record.vaccine.brand,
-      vaccination_record.dose_sequence.to_s
-    ) ||
-      "#{vaccination_record.vaccine.brand} " \
-        "Part #{vaccination_record.dose_sequence}"
+    vaccine_brand = vaccination_record.vaccine.brand
+    dose_sequence = vaccination_record.dose_sequence
+
+    mapping = VACCINE_DOSE_MAPPINGS.dig(vaccine_brand, dose_sequence)
+
+    return mapping if mapping.present?
+
+    dose_sequence ? "#{vaccine_brand} Part #{dose_sequence}" : vaccine_brand
   end
 
   def reason(vaccination_record)

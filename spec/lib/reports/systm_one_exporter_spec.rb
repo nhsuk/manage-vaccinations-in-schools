@@ -206,25 +206,67 @@ describe Reports::SystmOneExporter do
       )
     end
 
-    context "HPV Gardasil 9 dose 2" do
-      let(:vaccine) { Vaccine.find_by(brand: "Gardasil 9") }
-      let(:dose_sequence) { 2 }
+    context "HPV" do
+      context "Gardasil 9 dose 2" do
+        let(:vaccine) { Vaccine.find_by!(brand: "Gardasil 9") }
+        let(:dose_sequence) { 2 }
 
-      it { should eq "Y19a5" }
+        it { should eq("Y19a5") }
+      end
+
+      context "Gardasil 9 dose 3" do
+        let(:vaccine) { Vaccine.find_by!(brand: "Gardasil 9") }
+        let(:dose_sequence) { 3 }
+
+        it { should eq("Y19a6") }
+      end
     end
 
-    context "HPV Gardasil 9 dose 3" do
-      let(:vaccine) { Vaccine.find_by(brand: "Gardasil 9") }
-      let(:dose_sequence) { 3 }
+    context "flu" do
+      let(:programme) { create(:programme, :flu_all_vaccines) }
+      let(:dose_sequence) { 1 }
 
-      it { should eq "Y19a6" }
+      context "Cell-based Trivalent Influenza Vaccine Seqirus" do
+        let(:vaccine) do
+          Vaccine.find_by!(
+            brand: "Cell-based Trivalent Influenza Vaccine Seqirus"
+          )
+        end
+
+        it { should eq("YcjYj") }
+      end
+
+      context "Fluenz" do
+        let(:vaccine) { Vaccine.find_by!(brand: "Fluenz") }
+
+        it { should eq("YcjAC") }
+      end
+
+      context "Vaxigrip" do
+        let(:vaccine) { Vaccine.find_by!(brand: "Vaxigrip") }
+
+        it { should eq("YcjYf") }
+      end
+
+      context "Viatris" do
+        let(:vaccine) { Vaccine.find_by!(brand: "Viatris") }
+
+        it { should eq("YcjYh") }
+      end
     end
 
     context "unknown vaccine and no dose sequence" do
-      let(:vaccine) { create(:vaccine, :fluenz) }
+      let(:vaccine) { create(:vaccine, :menquadfi) }
+      let(:dose_sequence) { nil }
+
+      it { should eq("MenQuadfi") }
+    end
+
+    context "unknown vaccine and a dose sequence" do
+      let(:vaccine) { create(:vaccine, :menquadfi) }
       let(:dose_sequence) { 1 }
 
-      it { should eq "Fluenz Part 1" }
+      it { should eq("MenQuadfi Part 1") }
     end
   end
 
@@ -326,10 +368,6 @@ describe Reports::SystmOneExporter do
       let(:delivery_method) { :nasal_spray }
       let(:delivery_site) { :nose }
 
-      it "uses the generic SystmOne code" do
-        expect(csv_row["Vaccination"]).to eq "Fluenz Part 1"
-      end
-
       it "uses 'Nasal' as the method" do
         expect(csv_row["Method"]).to eq "Nasal"
       end
@@ -346,12 +384,6 @@ describe Reports::SystmOneExporter do
       end
       let(:delivery_method) { :intramuscular }
       let(:delivery_site) { :right_arm_upper_position }
-
-      it "uses the generic SystmOne code" do
-        expect(
-          csv_row["Vaccination"]
-        ).to eq "Cell-based Trivalent Influenza Vaccine Seqirus Part 1"
-      end
 
       it "uses 'Intramuscular' as the method" do
         expect(csv_row["Method"]).to eq "Intramuscular"

@@ -462,7 +462,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           expect(rows.first.to_hash).to include(
             "CONSENT_DETAILS" =>
               "Given by John Smith at 2024-01-01 12:05:20 +0000",
-            "CONSENT_STATUS" => "Consent given",
+            "CONSENT_STATUS" => expected_consent_status,
             "HEALTH_QUESTION_ANSWERS" =>
               consent
                 .health_answers
@@ -563,24 +563,28 @@ describe Reports::ProgrammeVaccinationsExporter do
 
   context "Flu programme" do
     let(:programme) { create(:programme, :flu) }
+    let(:expected_consent_status) { "Consent given for injection" }
 
     include_examples "generates a report"
   end
 
   context "HPV programme" do
     let(:programme) { create(:programme, :hpv) }
+    let(:expected_consent_status) { "Consent given" }
 
     include_examples "generates a report"
   end
 
   context "MenACWY programme" do
     let(:programme) { create(:programme, :menacwy) }
+    let(:expected_consent_status) { "Consent given" }
 
     include_examples "generates a report"
   end
 
   context "Td/IPV programme" do
     let(:programme) { create(:programme, :td_ipv) }
+    let(:expected_consent_status) { "Consent given" }
 
     include_examples "generates a report"
   end

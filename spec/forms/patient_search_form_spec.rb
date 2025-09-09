@@ -419,6 +419,29 @@ describe PatientSearchForm do
           patient_session_refused
         )
       end
+
+      context "with combined consent status and vaccine method" do
+        let(:consent_statuses) { %w[given_nasal] }
+
+        it "filters on consent status" do
+          patient_session_given_nasal =
+            create(
+              :patient,
+              :consent_given_nasal_only_triage_not_needed,
+              session:
+            ).patient_sessions.first
+
+          create(
+            :patient,
+            :consent_given_injection_only_triage_not_needed,
+            session:
+          )
+
+          expect(form.apply(scope)).to contain_exactly(
+            patient_session_given_nasal
+          )
+        end
+      end
     end
 
     context "filtering on register status" do

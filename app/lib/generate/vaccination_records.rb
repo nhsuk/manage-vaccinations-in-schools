@@ -23,17 +23,20 @@ class Generate::VaccinationRecords
     vaccination_records = []
 
     random_patient_sessions.each do |patient_session|
-      patient_session_id = patient_session.id
-      session_date_ids = patient_session.session.session_dates.pluck(:id)
+      patient = patient_session.patient
+      session = patient_session.session
 
-      unless SessionAttendance.exists?(
-               patient_session_id:,
-               session_date_id: session_date_ids
+      unless SessionAttendance.joins(:session_date).exists?(
+               patient:,
+               session_date: {
+                 session:
+               }
              )
         session_attendances << FactoryBot.build(
           :session_attendance,
           :present,
-          patient_session:
+          patient:,
+          session:
         )
       end
 
