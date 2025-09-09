@@ -2,8 +2,6 @@
 
 require "active_support/core_ext/integer/time"
 
-require_relative "../cron_jobs"
-
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -96,7 +94,4 @@ Rails.application.configure do
   # ]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
-
-  config.good_job.enable_cron = true
-  config.good_job.cron = CRON_JOBS
 end
