@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_05_153313) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_09_095902) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -77,7 +77,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_05_153313) do
     t.bigint "vaccine_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "team_id", null: false
+    t.bigint "team_id"
     t.datetime "archived_at"
     t.index ["team_id", "name", "expiry", "vaccine_id"], name: "index_batches_on_team_id_and_name_and_expiry_and_vaccine_id", unique: true
     t.index ["vaccine_id"], name: "index_batches_on_vaccine_id"

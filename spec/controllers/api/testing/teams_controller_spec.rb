@@ -86,7 +86,7 @@ describe API::Testing::TeamsController do
           .and(change(Parent, :count).by(-4))
           .and(change(Patient, :count).by(-3))
           .and(change(PatientSession, :count).by(-3))
-          .and(change(VaccinationRecord, :count).by(-11))
+          .and(change(VaccinationRecord, :count).by(-9))
           .and(change(SessionDate, :count).by(-1))
       )
     end
@@ -107,7 +107,7 @@ describe API::Testing::TeamsController do
             .and(change(Parent, :count).by(-4))
             .and(change(Patient, :count).by(-3))
             .and(change(PatientSession, :count).by(-3))
-            .and(change(VaccinationRecord, :count).by(-11))
+            .and(change(VaccinationRecord, :count).by(-9))
             .and(change(SessionDate, :count).by(-1))
         )
       end
