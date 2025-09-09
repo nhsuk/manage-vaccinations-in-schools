@@ -958,6 +958,7 @@ describe ImmunisationImportRow do
       let(:data) { valid_data }
 
       it { should be_archived }
+      its(:team) { should be_nil }
 
       context "without a vaccine" do
         before { data.delete("VACCINE_GIVEN") }
