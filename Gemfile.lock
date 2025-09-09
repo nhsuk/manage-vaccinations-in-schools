@@ -606,6 +606,8 @@ GEM
       base64
     rubyzip (3.0.2)
     rufo (0.18.1)
+    rufus-scheduler (3.9.2)
+      fugit (~> 1.1, >= 1.11.1)
     sanitize (7.0.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.16.8)
@@ -629,6 +631,9 @@ GEM
       logger (>= 1.6.2)
       rack (>= 3.1.0)
       redis-client (>= 0.23.2)
+    sidekiq-scheduler (6.0.1)
+      rufus-scheduler (~> 3.2)
+      sidekiq (>= 7.3, < 9)
     sidekiq-throttled (2.0.0)
       concurrent-ruby (>= 1.2.0)
       redis-prescription (~> 2.2)
@@ -828,6 +833,7 @@ DEPENDENCIES
   sentry-sidekiq
   shoulda-matchers
   sidekiq
+  sidekiq-scheduler
   sidekiq-throttled
   simplecov
   solargraph
