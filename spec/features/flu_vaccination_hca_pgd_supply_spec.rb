@@ -20,6 +20,18 @@ describe "Flu vaccination" do
     then_i_am_not_able_to_vaccinate_them
   end
 
+  scenario "Administered by HCA under PGD supply, patient has previous PSD" do
+    given_a_session_exists
+    and_patients_exist
+    and_the_nasal_only_patient_has_a_psd
+
+    when_i_visit_the_session_record_tab
+    then_i_only_see_nasal_spray_patients
+
+    when_i_click_on_the_nasal_only_patient
+    then_i_am_able_to_vaccinate_them_nasal_only
+  end
+
   scenario "Patient consents nasal, has health issues, and is triaged as safe to vaccinate" do
     given_a_session_exists
     and_a_nasal_patient_exists_with_health_issues_marked_safe_vaccinate_with_nasal
@@ -75,6 +87,15 @@ describe "Flu vaccination" do
         :consent_given_injection_only_triage_not_needed,
         session: @session
       )
+  end
+
+  def and_the_nasal_only_patient_has_a_psd
+    create(
+      :patient_specific_direction,
+      patient: @patient_nasal_only,
+      programme: @programme,
+      team: @team
+    )
   end
 
   def and_a_nasal_patient_exists_with_health_issues_marked_safe_vaccinate_with_nasal
