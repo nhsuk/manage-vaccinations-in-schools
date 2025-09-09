@@ -42,8 +42,6 @@ Rails.application.routes.draw do
 
   root to: redirect("/start")
 
-  mount GoodJob::Engine => "/good-job"
-
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
     ActiveSupport::SecurityUtils.secure_compare(
       Rails.application.credentials.support_username,
