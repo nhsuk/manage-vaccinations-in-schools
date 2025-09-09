@@ -59,12 +59,13 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   def has_patient_specific_direction?(vaccine_method:)
-    patient.has_patient_specific_direction?(
-      academic_year:,
-      programme:,
-      team:,
-      vaccine_method:
-    )
+    session.psd_enabled? &&
+      patient.has_patient_specific_direction?(
+        academic_year:,
+        programme:,
+        team:,
+        vaccine_method:
+      )
   end
 
   def healthcare_assistant? = current_user.is_healthcare_assistant?
