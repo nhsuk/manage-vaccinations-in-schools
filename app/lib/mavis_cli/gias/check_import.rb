@@ -82,16 +82,14 @@ module MavisCLI
             schools_with_future_sessions[:closing].count
 
         closed_schools_with_future_sessions_pct =
-          schools_with_future_sessions[:closed].count.to_f /
-            schools_with_future_sessions[:existing].count
-
+          calculate_percentage(schools_with_future_sessions, :closed)
         closing_schools_with_future_sessions_pct =
-          schools_with_future_sessions[:closing].count.to_f /
-            schools_with_future_sessions[:existing].count
-
+          calculate_percentage(schools_with_future_sessions, :closing)
         schools_with_changed_year_groups_pct =
-          schools_with_future_sessions[:year_group_changes].count.to_f /
-            schools_with_future_sessions[:existing].count
+          calculate_percentage(
+            schools_with_future_sessions,
+            :year_group_changes
+          )
 
         puts <<~OUTPUT
                   New schools (total): #{new_schools.count}
@@ -124,6 +122,14 @@ URNs of schools with year group changes, with future sessions:
       end
 
       private
+
+      def calculate_percentage(schools_set, metric)
+        if schools_set[:existing].count.positive?
+          schools_set[metric].count.to_f / schools_set[:existing].count
+        else
+          0.0
+        end
+      end
 
       def check_for_school_closure(row, school_set)
         urn = row["URN"]
