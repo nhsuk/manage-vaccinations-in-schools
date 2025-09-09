@@ -3,11 +3,7 @@
 module SendSchoolConsentNotificationConcern
   extend ActiveSupport::Concern
 
-  included do
-    self.queue_adapter = :sidekiq unless Rails.env.test?
-
-    queue_as :notifications
-  end
+  included { queue_as :notifications }
 
   def patient_programmes_eligible_for_notification(session:)
     return unless session.school? && session.open_for_consent?

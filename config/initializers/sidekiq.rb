@@ -18,6 +18,14 @@ Sidekiq::Throttled.configure do |config|
   config.cooldown_threshold = 1000
 end
 
+Sidekiq::Throttled::Registry.add(
+  :immunisations_api,
+  threshold: {
+    limit: 5,
+    period: 1.second
+  }
+)
+
 # https://docs.notifications.service.gov.uk/rest-api.html#rate-limits
 Sidekiq::Throttled::Registry.add(
   :notify,

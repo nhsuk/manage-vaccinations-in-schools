@@ -7,8 +7,6 @@ module PDSAPIThrottlingConcern
   include Sidekiq::Throttled::Job
 
   included do
-    self.queue_adapter = :sidekiq unless Rails.env.test?
-
     sidekiq_throttle_as :pds
 
     retry_on Faraday::ServerError, wait: :polynomially_longer
