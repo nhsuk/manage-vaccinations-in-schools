@@ -3,7 +3,8 @@
 describe StatusGenerator::Registration do
   subject(:generator) do
     described_class.new(
-      patient_session:,
+      patient:,
+      session:,
       session_attendance:
         patient_session.session_attendances.find_by(
           session_date: session.session_dates.last
