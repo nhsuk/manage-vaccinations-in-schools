@@ -250,6 +250,8 @@ describe "Child record imports duplicates" do
   def when_i_choose_to_keep_the_duplicate_record
     choose "Use uploaded child record"
   end
+  alias_method :and_i_choose_to_keep_the_duplicate_record,
+               :when_i_choose_to_keep_the_duplicate_record
 
   alias_method :and_i_choose_to_keep_the_duplicate_record,
                :when_i_choose_to_keep_the_duplicate_record
@@ -261,6 +263,8 @@ describe "Child record imports duplicates" do
   def when_i_choose_to_keep_the_previously_uploaded_record
     choose "Keep existing child"
   end
+  alias_method :and_i_choose_to_keep_the_previously_uploaded_record,
+               :when_i_choose_to_keep_the_previously_uploaded_record
 
   alias_method :and_i_choose_to_keep_the_previously_uploaded_record,
                :when_i_choose_to_keep_the_previously_uploaded_record

@@ -126,7 +126,14 @@ class PatientImport < ApplicationRecord
       end
     end
 
+    patients_with_nhs_number_changes =
+      patients.select(&:nhs_number_previously_changed?)
+
     Patient.import(patients, on_duplicate_key_update: :all)
+
+    SearchVaccinationRecordsInNHSJob.perform_bulk(
+      patients_with_nhs_number_changes.pluck(:id).zip
+    )
 
     ParentRelationship.import(
       relationships,
