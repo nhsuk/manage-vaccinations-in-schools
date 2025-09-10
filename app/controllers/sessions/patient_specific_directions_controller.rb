@@ -10,7 +10,7 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
 
   def show
     scope =
-      @session.patient_locations.includes_programmes.includes(
+      @session.patient_locations.includes(
         patient: {
           patient_specific_directions: :programme
         }

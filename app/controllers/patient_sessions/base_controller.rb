@@ -36,7 +36,11 @@ class PatientSessions::BaseController < ApplicationController
 
   def set_patient_location
     @patient_location =
-      PatientLocation.find_by!(patient: @patient, session: @session)
+      PatientLocation.find_by!(
+        patient: @patient,
+        location: @session.location,
+        academic_year: @session.academic_year
+      )
   end
 
   def set_programme

@@ -14,7 +14,7 @@ class Sessions::RegisterController < ApplicationController
     @statuses = Patient::RegistrationStatus.statuses.keys
 
     scope =
-      @session.patient_locations.includes_programmes.includes(
+      @session.patient_locations.includes(
         patient: [
           :consent_statuses,
           :registration_statuses,

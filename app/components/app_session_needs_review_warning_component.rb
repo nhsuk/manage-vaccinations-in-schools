@@ -45,7 +45,7 @@ class AppSessionNeedsReviewWarningComponent < ViewComponent::Base
   def patient_locations
     @session
       .patient_locations
-      .joins(:patient, :session)
+      .joins(:patient)
       .appear_in_programmes(@session.programmes)
   end
 end

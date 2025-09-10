@@ -158,6 +158,7 @@ describe Patient do
         let(:location) do
           create(:school, programmes: [flu_programme, hpv_programme])
         end
+        let(:academic_year) { AcademicYear.current }
 
         # Year 4 is eligible for flu only.
         let(:patient) { create(:patient, year_group: 4) }
@@ -165,26 +166,16 @@ describe Patient do
         # Year 9 is eligible for flu and HPV only.
         let(:another_patient) { create(:patient, year_group: 9) }
 
-        let(:flu_session) do
-          create(:session, location:, programmes: [flu_programme])
-        end
-        let(:hpv_session) do
-          create(:session, location:, programmes: [hpv_programme])
-        end
-
         before do
-          create(:patient_location, patient:, session: flu_session)
-          create(:patient_location, patient:, session: hpv_session)
+          create(:session, location:, programmes: [flu_programme])
+          create(:session, location:, programmes: [hpv_programme])
 
+          create(:patient_location, patient:, location:, academic_year:)
           create(
             :patient_location,
             patient: another_patient,
-            session: flu_session
-          )
-          create(
-            :patient_location,
-            patient: another_patient,
-            session: hpv_session
+            location:,
+            academic_year:
           )
         end
 
@@ -260,6 +251,7 @@ describe Patient do
         let(:location) do
           create(:school, programmes: [flu_programme, hpv_programme])
         end
+        let(:academic_year) { AcademicYear.current }
 
         # Year 4 is eligible for flu only.
         let!(:patient) { create(:patient, year_group: 4) }
@@ -267,26 +259,16 @@ describe Patient do
         # Year 9 is eligible for flu and HPV only.
         let(:another_patient) { create(:patient, year_group: 9) }
 
-        let(:flu_session) do
-          create(:session, location:, programmes: [flu_programme])
-        end
-        let(:hpv_session) do
-          create(:session, location:, programmes: [hpv_programme])
-        end
-
         before do
-          create(:patient_location, patient:, session: flu_session)
-          create(:patient_location, patient:, session: hpv_session)
+          create(:session, location:, programmes: [flu_programme])
+          create(:session, location:, programmes: [hpv_programme])
 
+          create(:patient_location, patient:, location:, academic_year:)
           create(
             :patient_location,
             patient: another_patient,
-            session: flu_session
-          )
-          create(
-            :patient_location,
-            patient: another_patient,
-            session: hpv_session
+            location:,
+            academic_year:
           )
         end
 
@@ -1126,19 +1108,20 @@ describe Patient do
     end
 
     context "when the old patient has upcoming sessions" do
-      let(:session) do
+      let(:location) { create(:school) }
+
+      before do
         create(
-          :session,
-          academic_year: AcademicYear.pending,
-          date: AcademicYear.pending.to_academic_year_date_range.begin
+          :patient_location,
+          patient: old_patient,
+          location:,
+          academic_year: AcademicYear.pending
         )
       end
 
-      before { create(:patient_location, patient: old_patient, session:) }
-
       it "adds the new patient to any upcoming sessions" do
         expect(new_patient.patient_locations.size).to eq(1)
-        expect(new_patient.patient_locations.first.session).to eq(session)
+        expect(new_patient.patient_locations.first.location).to eq(location)
       end
     end
 

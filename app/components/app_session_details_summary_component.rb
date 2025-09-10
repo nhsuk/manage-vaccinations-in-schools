@@ -17,10 +17,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
   delegate :programmes, to: :session
 
   def patient_locations
-    session
-      .patient_locations
-      .joins(:patient, :session)
-      .appear_in_programmes(programmes)
+    session.patient_locations.joins(:patient).appear_in_programmes(programmes)
   end
 
   def cohort_row

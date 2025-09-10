@@ -28,7 +28,6 @@ class Sessions::ConsentController < ApplicationController
     scope =
       @session
         .patient_locations
-        .includes_programmes
         .includes(patient: [:consent_statuses, { notes: :created_by }])
         .has_consent_status(
           statuses_except_not_required,

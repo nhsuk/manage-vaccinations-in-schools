@@ -21,9 +21,10 @@ class ClinicPatientLocationsFactory
            programmes:,
            session_date:
          )
-        PatientLocation.includes(:session_notifications).find_or_initialize_by(
+        PatientLocation.new(
           patient:,
-          session: generic_clinic_session
+          academic_year: generic_clinic_session.academic_year,
+          location: generic_clinic_session.location
         )
       end
     end

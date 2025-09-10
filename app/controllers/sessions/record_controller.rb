@@ -25,7 +25,11 @@ class Sessions::RecordController < ApplicationController
       )
 
     if @session.requires_registration?
-      scope = scope.has_registration_status(%w[attending completed])
+      scope =
+        scope.has_registration_status(
+          %w[attending completed],
+          session: @session
+        )
     end
 
     patient_locations =
@@ -33,6 +37,7 @@ class Sessions::RecordController < ApplicationController
         @form.apply(scope)
       ).consent_given_and_ready_to_vaccinate(
         programmes: @form.programmes,
+        academic_year: @session.academic_year,
         vaccine_method: @form.vaccine_method.presence
       )
 

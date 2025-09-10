@@ -9,17 +9,16 @@ class LocationSessionsFactory
   def call
     ActiveRecord::Base.transaction do
       if location.generic_clinic?
-        add_patients!(
-          session: find_or_create_session!(programmes: location.programmes)
-        )
+        find_or_create_session!(programmes: location.programmes)
       else
         ProgrammeGrouper
           .call(location.programmes)
           .values
           .reject { |programmes| already_exists?(programmes:) }
           .map { |programmes| create_session!(programmes:) }
-          .each { |session| add_patients!(session:) }
       end
+
+      add_patients!
     end
   end
 
@@ -55,10 +54,10 @@ class LocationSessionsFactory
       end
   end
 
-  def add_patients!(session:)
+  def add_patients!
     PatientLocation.import!(
-      %i[patient_id session_id],
-      patient_ids.map { [it, session.id] },
+      %i[patient_id location_id academic_year],
+      patient_ids.map { [it, location.id, academic_year] },
       on_duplicate_key_ignore: true
     )
   end

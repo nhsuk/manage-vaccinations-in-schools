@@ -163,6 +163,8 @@ describe "Manage children" do
         :with_one_nurse,
         programmes: [@programme]
       )
+
+    TeamSessionsFactory.call(@team, academic_year: AcademicYear.current)
   end
 
   def given_patients_exist

@@ -129,7 +129,7 @@ class PatientSearchForm < SearchForm
   def filter_programmes(scope)
     if programmes.present?
       if @session
-        scope.joins(:patient, :session).appear_in_programmes(programmes)
+        scope.joins(:patient).appear_in_programmes(programmes)
       else
         scope.appear_in_programmes(programmes, academic_year:)
       end
@@ -218,7 +218,7 @@ class PatientSearchForm < SearchForm
 
   def filter_register_status(scope)
     if (status = register_status&.to_sym).present?
-      scope.has_registration_status(status)
+      scope.has_registration_status(status, session: @session)
     else
       scope
     end

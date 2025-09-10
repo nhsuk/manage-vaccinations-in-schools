@@ -20,9 +20,10 @@
 #
 # Indexes
 #
-#  index_sessions_on_location_id                (location_id)
-#  index_sessions_on_team_id_and_academic_year  (team_id,academic_year)
-#  index_sessions_on_team_id_and_location_id    (team_id,location_id)
+#  index_sessions_on_location_id                                (location_id)
+#  index_sessions_on_location_id_and_academic_year_and_team_id  (location_id,academic_year,team_id)
+#  index_sessions_on_team_id_and_academic_year                  (team_id,academic_year)
+#  index_sessions_on_team_id_and_location_id                    (team_id,location_id)
 #
 # Foreign Keys
 #
@@ -39,7 +40,6 @@ class Session < ApplicationRecord
 
   has_many :consent_notifications
   has_many :notes
-  has_many :patient_locations
   has_many :session_dates, -> { order(:value) }
   has_many :session_notifications
   has_many :session_programmes,
@@ -48,6 +48,10 @@ class Session < ApplicationRecord
   has_many :vaccination_records, -> { kept }
 
   has_and_belongs_to_many :immunisation_imports
+
+  has_many :patient_locations,
+           -> { where(academic_year: it.academic_year) },
+           through: :location
 
   has_one :organisation, through: :team
   has_one :subteam, through: :location
@@ -62,6 +66,12 @@ class Session < ApplicationRecord
            through: :location
 
   accepts_nested_attributes_for :session_dates, allow_destroy: true
+
+  scope :joins_patient_locations, -> { joins(<<-SQL) }
+      INNER JOIN patient_locations
+      ON patient_locations.location_id = sessions.location_id
+      AND patient_locations.academic_year = sessions.academic_year
+    SQL
 
   scope :has_date,
         ->(value) { where(SessionDate.for_session.where(value:).arel.exists) }
@@ -174,17 +184,11 @@ class Session < ApplicationRecord
 
   delegate :clinic?, :generic_clinic?, :school?, to: :location
 
-  def to_param
-    slug
-  end
+  def to_param = slug
 
-  def today?
-    dates.any?(&:today?)
-  end
+  def today? = dates.any?(&:today?)
 
-  def unscheduled?
-    dates.empty?
-  end
+  def unscheduled? = dates.empty?
 
   def completed?
     return false if dates.empty?

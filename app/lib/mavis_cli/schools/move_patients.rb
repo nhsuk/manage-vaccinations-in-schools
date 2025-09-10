@@ -11,6 +11,8 @@ module MavisCLI
       def call(source_urn:, target_urn:)
         MavisCLI.load_rails
 
+        academic_year = AcademicYear.pending
+
         old_loc = Location.school.find_by_urn_and_site(source_urn)
         new_loc = Location.school.find_by_urn_and_site(target_urn)
 
@@ -20,14 +22,13 @@ module MavisCLI
         end
 
         unless PatientLocation
-                 .joins(:patient, :session)
+                 .joins(:patient)
                  .where(
                    patient: {
                      school: old_loc
                    },
-                   session: {
-                     location: old_loc
-                   }
+                   academic_year:,
+                   location: old_loc
                  )
                  .all?(&:safe_to_destroy?)
           raise "Some patient sessions at #{old_loc.urn} are not safe to destroy. Cannot complete transfer."
@@ -42,6 +43,10 @@ module MavisCLI
           location_id: new_loc.id
         )
         Patient.where(school_id: old_loc.id).update_all(school_id: new_loc.id)
+        PatientLocation.where(
+          academic_year:,
+          location_id: old_loc.id
+        ).update_all(location_id: new_loc.id)
         ConsentForm.where(location_id: old_loc.id).update_all(
           location_id: new_loc.id
         )

@@ -37,6 +37,8 @@ describe Generate::VaccinationRecords do
 
     context "no patients without vaccinations" do
       it "raises an error" do
+        session
+
         expect { described_class.call(team:, administered: 1) }.to raise_error(
           RuntimeError
         )

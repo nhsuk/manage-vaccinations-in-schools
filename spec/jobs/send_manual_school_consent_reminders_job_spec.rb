@@ -42,7 +42,7 @@ describe SendManualSchoolConsentRemindersJob do
 
   before do
     create(:parent_relationship, patient:, parent:)
-    create(:patient_location, patient:, session:, programmes:)
+    create(:patient_location, patient:, session:)
     patient.reload
   end
 

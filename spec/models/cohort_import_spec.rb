@@ -39,11 +39,12 @@ describe CohortImport do
 
   let(:file) { "valid.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
+  let(:academic_year) { AcademicYear.current }
 
   # Ensure location URN matches the URN in our fixture files
   let!(:location) { create(:school, urn: "123456", team:) }
 
-  before { TeamSessionsFactory.call(team, academic_year: AcademicYear.current) }
+  before { TeamSessionsFactory.call(team, academic_year:) }
 
   it_behaves_like "a CSVImportable model"
 
@@ -402,8 +403,13 @@ describe CohortImport do
       end
 
       before do
-        team.sessions.each do |session|
-          create(:patient_location, session:, patient: existing_patient)
+        team.locations.each do |location|
+          create(
+            :patient_location,
+            patient: existing_patient,
+            location:,
+            academic_year:
+          )
         end
       end
 

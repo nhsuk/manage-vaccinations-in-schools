@@ -11,9 +11,9 @@ class PatientPolicy < ApplicationPolicy
       existence_criteria = [
         PatientLocation
           .select("1")
-          .joins(:session)
+          .joins_sessions
           .where("patient_locations.patient_id = patients.id")
-          .where(sessions: { team_id: team.id })
+          .where("sessions.team_id = ?", team.id)
           .arel,
         ArchiveReason
           .select("1")

@@ -53,10 +53,7 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   end
 
   def patient_locations(session:)
-    session
-      .patient_locations
-      .joins(:patient, :session)
-      .appear_in_programmes([programme])
+    session.patient_locations.joins(:patient).appear_in_programmes([programme])
   end
 
   def format_number(count) = count.to_s

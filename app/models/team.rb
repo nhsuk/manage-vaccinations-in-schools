@@ -52,8 +52,6 @@ class Team < ApplicationRecord
 
   has_many :community_clinics, through: :subteams
   has_many :locations, through: :subteams
-  has_many :patient_locations, through: :sessions
-  has_many :patients, -> { distinct }, through: :patient_locations
   has_many :programmes, through: :team_programmes
   has_many :schools, through: :subteams
   has_many :vaccination_records, through: :sessions
@@ -76,13 +74,17 @@ class Team < ApplicationRecord
   validates :privacy_policy_url, presence: true
   validates :workgroup, presence: true, uniqueness: true
 
+  def patients
+    Patient.joins_sessions.where(sessions: { team_id: id })
+  end
+
   def year_groups
     @year_groups ||= location_programme_year_groups.pluck_year_groups
   end
 
-  def generic_clinic_session(academic_year:)
-    location = locations.generic_clinic.first
+  def generic_clinic = locations.generic_clinic.first
 
+  def generic_clinic_session(academic_year:)
     sessions
       .includes(
         :location,
@@ -91,7 +93,7 @@ class Team < ApplicationRecord
         :session_dates
       )
       .create_with(programmes:)
-      .find_or_create_by!(academic_year:, location:)
+      .find_or_create_by!(academic_year:, location: generic_clinic)
   end
 
   def weeks_before_consent_reminders

@@ -14,7 +14,6 @@ class Sessions::TriageController < ApplicationController
     scope =
       @session
         .patient_locations
-        .includes_programmes
         .includes(patient: [:triage_statuses, { notes: :created_by }])
         .has_triage_status(@statuses, programme: @form.programmes)
 

@@ -20,7 +20,11 @@ class Stats::Organisations
   attr_reader :organisation, :teams, :programmes, :academic_year, :patients
 
   def build_patients_scope
-    Patient.joins(:teams).where(teams: { id: teams.pluck(:id) }).distinct
+    Patient.distinct.joins_sessions.where(
+      sessions: {
+        team_id: teams.map(&:id)
+      }
+    )
   end
 
   def calculate_organisation_stats

@@ -2,10 +2,15 @@
 
 class StatusUpdater
   def initialize(patient: nil, session: nil)
-    scope = PatientLocation
+    scope = PatientLocation.joins_sessions
 
     scope = scope.where(patient:) if patient
-    scope = scope.where(session:) if session
+
+    if session.is_a?(Session)
+      scope = scope.where(sessions: { id: session.id })
+    elsif session
+      scope = scope.where(sessions: { id: session.pluck(:id) })
+    end
 
     @patient_locations = scope
   end
@@ -57,8 +62,8 @@ class StatusUpdater
 
     Patient::RegistrationStatus
       .where(
-        patient: patient_locations.select(:patient_id),
-        session: patient_locations.select(:session_id)
+        "(patient_id, session_id) IN (?)",
+        patient_locations.select("patient_id", "sessions.id")
       )
       .includes(
         :patient,
@@ -166,13 +171,13 @@ class StatusUpdater
 
   def patient_location_statuses_to_import
     patient_locations
-      .joins(:patient, :session)
+      .joins(:patient)
       .pluck(
-        :"patients.id",
-        :"sessions.id",
-        :"sessions.location_id",
-        :"sessions.academic_year",
-        :"patients.birth_academic_year"
+        "patients.id",
+        "sessions.id",
+        "sessions.location_id",
+        "sessions.academic_year",
+        "patients.birth_academic_year"
       )
       .filter_map do |patient_id, session_id, location_id, academic_year, birth_academic_year|
         year_group = birth_academic_year.to_year_group(academic_year:)

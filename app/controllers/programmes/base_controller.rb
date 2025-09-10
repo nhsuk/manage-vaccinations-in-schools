@@ -24,8 +24,9 @@ class Programmes::BaseController < ApplicationController
     @patient_ids ||=
       PatientLocation
         .distinct
-        .joins(:patient, :session)
-        .where(session_id: session_ids)
+        .joins(:patient)
+        .joins_sessions
+        .where("sessions.id IN (?)", session_ids)
         .appear_in_programmes([@programme])
         .not_archived(team: current_team)
         .pluck(:patient_id)

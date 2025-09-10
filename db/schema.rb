@@ -537,12 +537,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_074716) do
   end
 
   create_table "patient_locations", force: :cascade do |t|
-    t.bigint "session_id", null: false
     t.bigint "patient_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["patient_id", "session_id"], name: "index_patient_locations_on_patient_id_and_session_id", unique: true
-    t.index ["session_id"], name: "index_patient_locations_on_session_id"
+    t.integer "academic_year", null: false
+    t.bigint "location_id", null: false
+    t.index ["location_id", "academic_year"], name: "index_patient_locations_on_location_id_and_academic_year"
+    t.index ["location_id"], name: "index_patient_locations_on_location_id"
+    t.index ["patient_id", "location_id", "academic_year"], name: "idx_on_patient_id_location_id_academic_year_08a1dc4afe", unique: true
   end
 
   create_table "patient_registration_statuses", force: :cascade do |t|
@@ -796,6 +798,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_074716) do
     t.boolean "requires_registration", default: true, null: false
     t.boolean "psd_enabled", default: false, null: false
     t.boolean "national_protocol_enabled", default: false, null: false
+    t.index ["location_id", "academic_year", "team_id"], name: "index_sessions_on_location_id_and_academic_year_and_team_id"
     t.index ["location_id"], name: "index_sessions_on_location_id"
     t.index ["team_id", "academic_year"], name: "index_sessions_on_team_id_and_academic_year"
     t.index ["team_id", "location_id"], name: "index_sessions_on_team_id_and_location_id"
@@ -1037,8 +1040,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_074716) do
   add_foreign_key "patient_changesets", "patients"
   add_foreign_key "patient_consent_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_consent_statuses", "programmes"
+  add_foreign_key "patient_locations", "locations"
   add_foreign_key "patient_locations", "patients"
-  add_foreign_key "patient_locations", "sessions"
   add_foreign_key "patient_registration_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_registration_statuses", "sessions", on_delete: :cascade
   add_foreign_key "patient_specific_directions", "patients"

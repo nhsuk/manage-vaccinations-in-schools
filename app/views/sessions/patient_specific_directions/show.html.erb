@@ -41,7 +41,7 @@
       <% @patient_locations.each do |patient_location| %>
         <%= render AppPatientSessionSearchResultCardComponent.new(
               patient: patient_location.patient,
-              session: patient_location.session,
+              session: @session,
               context: :patient_specific_direction,
             ) %>
       <% end %>

@@ -28,7 +28,9 @@ class API::Testing::TeamsController < API::Testing::BaseController
         patient_ids = team.patients.pluck(:id)
         consent_form_ids = team.consent_forms.pluck(:id)
 
-        log_destroy(PatientLocation.where(session: sessions))
+        log_destroy(
+          PatientLocation.where(location_id: sessions.select(:location_id))
+        )
 
         log_destroy(AccessLogEntry.where(patient_id: patient_ids))
         log_destroy(ArchiveReason.where(patient_id: patient_ids))

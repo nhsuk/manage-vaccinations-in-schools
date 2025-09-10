@@ -12,7 +12,7 @@ class Sessions::PatientsController < ApplicationController
     @statuses = Patient::VaccinationStatus.statuses.keys
 
     scope =
-      @session.patient_locations.includes_programmes.includes(
+      @session.patient_locations.includes(
         patient: [:vaccination_statuses, { notes: :created_by }]
       )
 

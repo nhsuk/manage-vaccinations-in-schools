@@ -66,9 +66,10 @@ class AppActivityLogComponent < ViewComponent::Base
     @patient_locations =
       @patient
         .patient_locations
-        .includes_programmes
-        .includes(session: :location)
-        .then { |scope| session ? scope.where(session:) : scope }
+        .includes(:location)
+        .then do |scope|
+          session ? scope.where(location: session.location) : scope
+        end
 
     @patient_specific_directions =
       @patient
@@ -347,14 +348,10 @@ class AppActivityLogComponent < ViewComponent::Base
 
   def session_events
     patient_locations.map do |patient_location|
-      patient = patient_location.patient
-      session = patient_location.session
-
       [
         {
-          title: "Added to the session at #{session.location.name}",
-          at: patient_location.created_at,
-          programmes: session.programmes_for(patient:)
+          title: "Added to the session at #{patient_location.location.name}",
+          at: patient_location.created_at
         }
       ]
     end

@@ -74,10 +74,8 @@ describe PatientNHSNumberLookupJob do
 
       let!(:existing_patient) { create(:patient, nhs_number: "9449306168") }
 
-      let(:patient_location) do
-        create(:patient_location, patient:, programmes: [programme])
-      end
-      let(:session) { patient_location.session }
+      let(:session) { create(:session, programmes: [programme]) }
+      let(:patient_location) { create(:patient_location, patient:, session:) }
       let(:gillick_assessment) do
         create(:gillick_assessment, :competent, patient:, session:)
       end
@@ -116,7 +114,8 @@ describe PatientNHSNumberLookupJob do
           create(
             :patient_location,
             patient: existing_patient,
-            session: patient_location.session
+            location: patient_location.location,
+            academic_year: patient_location.academic_year
           )
         end
 

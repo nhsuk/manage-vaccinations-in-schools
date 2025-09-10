@@ -10,7 +10,6 @@ module SendSchoolConsentNotificationConcern
 
     session
       .patient_locations
-      .includes_programmes
       .includes(patient: %i[consent_notifications consents vaccination_records])
       .find_each do |patient_location|
         patient = patient_location.patient

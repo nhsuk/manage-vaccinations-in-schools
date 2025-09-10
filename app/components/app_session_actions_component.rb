@@ -20,10 +20,7 @@ class AppSessionActionsComponent < ViewComponent::Base
   delegate :academic_year, :programmes, to: :session
 
   def patient_locations
-    session
-      .patient_locations
-      .joins(:patient, :session)
-      .appear_in_programmes(programmes)
+    session.patient_locations.joins(:patient).appear_in_programmes(programmes)
   end
 
   def rows
@@ -80,7 +77,7 @@ class AppSessionActionsComponent < ViewComponent::Base
     return nil unless session.requires_registration? && session.today?
 
     status = "unknown"
-    count = patient_locations.has_registration_status(status).count
+    count = patient_locations.has_registration_status(status, session:).count
     href = session_register_path(session, register_status: status)
 
     generate_row(:children_to_register, count:, href:)
@@ -92,7 +89,7 @@ class AppSessionActionsComponent < ViewComponent::Base
     counts_by_programme =
       session.programmes.index_with do |programme|
         patient_locations
-          .has_registration_status(%w[attending completed])
+          .has_registration_status(%w[attending completed], session:)
           .includes(
             patient: %i[consent_statuses triage_statuses vaccination_statuses]
           )

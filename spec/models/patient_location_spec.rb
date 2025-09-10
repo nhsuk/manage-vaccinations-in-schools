@@ -4,21 +4,23 @@
 #
 # Table name: patient_locations
 #
-#  id         :bigint           not null, primary key
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  patient_id :bigint           not null
-#  session_id :bigint           not null
+#  id            :bigint           not null, primary key
+#  academic_year :integer          not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  location_id   :bigint           not null
+#  patient_id    :bigint           not null
 #
 # Indexes
 #
-#  index_patient_locations_on_patient_id_and_session_id  (patient_id,session_id) UNIQUE
-#  index_patient_locations_on_session_id                 (session_id)
+#  idx_on_patient_id_location_id_academic_year_08a1dc4afe    (patient_id,location_id,academic_year) UNIQUE
+#  index_patient_locations_on_location_id                    (location_id)
+#  index_patient_locations_on_location_id_and_academic_year  (location_id,academic_year)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (patient_id => patients.id)
-#  fk_rails_...  (session_id => sessions.id)
 #
 
 describe PatientLocation do
@@ -28,16 +30,16 @@ describe PatientLocation do
   let(:session) { create(:session, programmes: [programme]) }
 
   describe "associations" do
+    it { should have_many(:attendance_records) }
     it { should have_many(:gillick_assessments) }
     it { should have_many(:pre_screenings) }
+    it { should have_many(:vaccination_records) }
   end
 
   describe "scopes" do
     describe "#appear_in_programmes" do
       subject(:scope) do
-        described_class.joins(:patient, :session).appear_in_programmes(
-          programmes
-        )
+        described_class.joins(:patient).appear_in_programmes(programmes)
       end
 
       let(:programmes) { create_list(:programme, 1, :td_ipv) }
@@ -83,6 +85,7 @@ describe PatientLocation do
       subject(:scope) do
         described_class.consent_given_and_ready_to_vaccinate(
           programmes:,
+          academic_year:,
           vaccine_method:
         )
       end

@@ -67,17 +67,16 @@ class VaccinationRecordPolicy < ApplicationPolicy
       team = user.selected_team
       return scope.none if team.nil?
 
-      relevant_patients =
-        Patient
+      patient_in_team =
+        team
+          .patients
           .select("1")
-          .joins(patient_locations: :session)
           .where("patients.id = vaccination_records.patient_id")
-          .where(sessions: { team_id: team.id })
           .arel
-
+          .exists
       scope
         .kept
-        .where(relevant_patients.exists)
+        .where(patient_in_team)
         .or(scope.kept.where(session: team.sessions))
         .or(
           scope.kept.where(

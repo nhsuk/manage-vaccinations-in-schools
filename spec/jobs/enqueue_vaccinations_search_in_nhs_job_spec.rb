@@ -7,7 +7,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
   let(:flu) { create(:programme, :flu) }
   let(:location) { create(:school, team:, programmes: [flu]) }
   let(:school) { location }
-  let!(:patient) { create(:patient, team:, school:) }
+  let!(:patient) { create(:patient, team:, school:, session:) }
 
   describe "#perform", :within_academic_year do
     subject { SearchVaccinationRecordsInNHSJob }
@@ -23,8 +23,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
         dates:,
         send_invitations_at:,
         team:,
-        location:,
-        patients: [patient]
+        location:
       )
     end
 

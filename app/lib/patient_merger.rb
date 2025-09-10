@@ -102,7 +102,8 @@ class PatientMerger
 
       patient_to_destroy.patient_locations.each do |patient_location|
         if patient_to_keep.patient_locations.exists?(
-             session_id: patient_location.session_id
+             academic_year: patient_location.academic_year,
+             location_id: patient_location.location_id
            )
           next
         end

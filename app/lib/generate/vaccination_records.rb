@@ -8,9 +8,7 @@ class Generate::VaccinationRecords
     @administered = administered
   end
 
-  def call
-    create_vaccinations
-  end
+  def call = create_vaccinations
 
   def self.call(...) = new(...).call
 
@@ -22,34 +20,34 @@ class Generate::VaccinationRecords
     attendance_records = []
     vaccination_records = []
 
-    random_patient_locations.each do |patient_location|
-      patient = patient_location.patient
-      session = patient_location.session
+    sessions.each do |session|
+      location = session.location
 
-      unless AttendanceRecord.exists?(patient:, location: session.location)
-        attendance_records << FactoryBot.build(
-          :attendance_record,
-          :present,
+      random_patients_for(session:).each do |patient|
+        unless AttendanceRecord.exists?(patient:, location:)
+          attendance_records << FactoryBot.build(
+            :attendance_record,
+            :present,
+            patient:,
+            session:
+          )
+        end
+
+        location_name = location.name if session.clinic?
+
+        vaccination_records << FactoryBot.build(
+          :vaccination_record,
+          :administered,
           patient:,
-          session:
+          programme:,
+          team:,
+          performed_by:,
+          session:,
+          vaccine:,
+          batch:,
+          location_name:
         )
       end
-
-      location_name =
-        patient_location.location.name if patient_location.session.clinic?
-
-      vaccination_records << FactoryBot.build(
-        :vaccination_record,
-        :administered,
-        patient: patient_location.patient,
-        programme:,
-        team:,
-        performed_by:,
-        session: patient_location.session,
-        vaccine:,
-        batch:,
-        location_name:
-      )
     end
 
     AttendanceRecord.import!(attendance_records)
@@ -58,9 +56,9 @@ class Generate::VaccinationRecords
     StatusUpdater.call(patient: vaccination_records.map(&:patient))
   end
 
-  def random_patient_locations
+  def random_patients_for(session:)
     if administered&.positive?
-      patient_locations
+      patients_for(session:)
         .sample(administered)
         .tap do |selected|
           if selected.size < administered
@@ -70,27 +68,27 @@ class Generate::VaccinationRecords
           end
         end
     else
-      patient_locations
+      patients_for(session:)
     end
   end
 
-  def patient_locations
-    (session.presence || team)
-      .patient_locations
-      .joins(:patient)
-      .includes(
-        :session,
-        :location,
-        session: :session_dates,
-        patient: %i[consent_statuses vaccination_statuses triage_statuses]
-      )
-      .appear_in_programmes([programme])
-      .has_consent_status("given", programme:)
+  def sessions
+    (
+      @sessions ||=
+        session ? [session] : team.sessions.includes(:location, :session_dates)
+    )
+  end
+
+  def patients_for(session:)
+    academic_year = session.academic_year
+
+    session
+      .patients
+      .includes(:consent_statuses, :vaccination_statuses, :triage_statuses)
+      .appear_in_programmes([programme], academic_year:)
+      .has_consent_status("given", programme:, academic_year:)
       .select do
-        it.patient.consent_given_and_safe_to_vaccinate?(
-          programme:,
-          academic_year: it.session.academic_year
-        )
+        it.consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
       end
   end
 
