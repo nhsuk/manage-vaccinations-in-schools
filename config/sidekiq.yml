@@ -39,7 +39,7 @@
       class: EnqueueSchoolConsentRequestsJob
       description: Send school consent request emails to parents for each session
     school_consent_reminders:
-      cron: "15 16 * * *",
+      cron: "15 16 * * *"
       class: EnqueueSchoolConsentRemindersJob
       description: Send school consent reminder emails to parents for each session
     school_session_reminders:
