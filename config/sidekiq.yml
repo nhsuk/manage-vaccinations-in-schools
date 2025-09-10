@@ -8,6 +8,7 @@
   - patients
   - pds
   - immunisations_api
+  - default
 :scheduler:
   :schedule:
     clinic_session_invitations:

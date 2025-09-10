@@ -3,6 +3,8 @@
 class CommitPatientChangesetsJob < ApplicationJob
   include SingleConcurrencyConcern
 
+  queue_as :imports
+
   def perform(import)
     counts = import.class.const_get(:COUNT_COLUMNS).index_with(0)
 
