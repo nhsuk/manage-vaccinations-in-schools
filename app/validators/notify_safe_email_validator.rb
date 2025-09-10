@@ -23,7 +23,7 @@ class NotifySafeEmailValidator < ActiveModel::EachValidator
 
       parts = hostname.split(".")
 
-      if hostname.length > 253 || parts.length < 2
+      if hostname.length > 253 || parts.length < 2 || hostname.ends_with?(".")
         record.errors.add(attribute, options[:message] || :invalid, value:)
       elsif !parts.all? { |part| HOSTNAME_PART.match?(part) }
         record.errors.add(attribute, options[:message] || :invalid, value:)
