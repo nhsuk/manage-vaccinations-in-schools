@@ -71,6 +71,7 @@ describe Reports::OfflineSessionExporter do
               CARE_SETTING
               PERSON_DOB
               YEAR_GROUP
+              REGISTRATION
               PERSON_GENDER_CODE
               PERSON_ADDRESS_LINE_1
               PERSON_POSTCODE
@@ -169,7 +170,8 @@ describe Reports::OfflineSessionExporter do
                 "VACCINATED" => "",
                 "VACCINE_GIVEN" => "",
                 "UUID" => "",
-                "YEAR_GROUP" => patient.year_group(academic_year:)
+                "YEAR_GROUP" => patient.year_group(academic_year:),
+                "REGISTRATION" => patient.registration
               }
             )
             expect(rows.first["PERSON_DOB"].to_date).to eq(
@@ -284,7 +286,8 @@ describe Reports::OfflineSessionExporter do
                 "VACCINATED" => "Y",
                 "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
                 "UUID" => vaccination_record.uuid,
-                "YEAR_GROUP" => patient.year_group(academic_year:)
+                "YEAR_GROUP" => patient.year_group(academic_year:),
+                "REGISTRATION" => patient.registration
               }
             )
             expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
@@ -399,7 +402,8 @@ describe Reports::OfflineSessionExporter do
                 "VACCINATED" => "Y",
                 "VACCINE_GIVEN" => nil,
                 "UUID" => vaccination_record.uuid,
-                "YEAR_GROUP" => patient.year_group(academic_year:)
+                "YEAR_GROUP" => patient.year_group(academic_year:),
+                "REGISTRATION" => patient.registration
               }
             )
             expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
@@ -478,7 +482,8 @@ describe Reports::OfflineSessionExporter do
                 "VACCINATED" => "Y",
                 "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
                 "UUID" => vaccination_record.uuid,
-                "YEAR_GROUP" => patient.year_group(academic_year:)
+                "YEAR_GROUP" => patient.year_group(academic_year:),
+                "REGISTRATION" => patient.registration
               }
             )
             expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
@@ -548,7 +553,8 @@ describe Reports::OfflineSessionExporter do
                 "VACCINATED" => "",
                 "VACCINE_GIVEN" => "",
                 "UUID" => "",
-                "YEAR_GROUP" => patient.year_group(academic_year:)
+                "YEAR_GROUP" => patient.year_group(academic_year:),
+                "REGISTRATION" => patient.registration
               }
             )
             expect(rows.first["PERSON_DOB"].to_date).to eq(
@@ -614,7 +620,8 @@ describe Reports::OfflineSessionExporter do
                 "VACCINATED" => "N",
                 "VACCINE_GIVEN" => nil,
                 "UUID" => vaccination_record.uuid,
-                "YEAR_GROUP" => patient.year_group(academic_year:)
+                "YEAR_GROUP" => patient.year_group(academic_year:),
+                "REGISTRATION" => patient.registration
               }
             )
             expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
@@ -753,6 +760,7 @@ describe Reports::OfflineSessionExporter do
               CARE_SETTING
               PERSON_DOB
               YEAR_GROUP
+              REGISTRATION
               PERSON_GENDER_CODE
               PERSON_ADDRESS_LINE_1
               PERSON_POSTCODE
@@ -836,7 +844,8 @@ describe Reports::OfflineSessionExporter do
                 "VACCINATED" => "",
                 "VACCINE_GIVEN" => "",
                 "UUID" => "",
-                "YEAR_GROUP" => patient.year_group(academic_year:)
+                "YEAR_GROUP" => patient.year_group(academic_year:),
+                "REGISTRATION" => patient.registration
               }
             )
             expect(rows.first["PERSON_DOB"].to_date).to eq(
@@ -921,7 +930,8 @@ describe Reports::OfflineSessionExporter do
                 "VACCINATED" => "Y",
                 "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
                 "UUID" => vaccination_record.uuid,
-                "YEAR_GROUP" => patient.year_group(academic_year:)
+                "YEAR_GROUP" => patient.year_group(academic_year:),
+                "REGISTRATION" => patient.registration
               }
             )
             expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
