@@ -4,6 +4,10 @@ module FHIRMapper
   class Patient
     delegate_missing_to :@patient
 
+    # See:
+    # https://digital.nhs.uk/developer/api-catalogue/personal-demographics-service-fhir/get-and-update-contact-details-in-pds
+    ADDRESS_UNKNOWN_POSTCODE = "ZZ99 3WZ"
+
     def initialize(patient)
       @patient = patient
     end
@@ -22,7 +26,11 @@ module FHIRMapper
         name: [FHIR::HumanName.new(family: family_name, given: given_name)],
         birthDate: date_of_birth&.strftime("%Y-%m-%d"),
         gender: gender_fhir_value,
-        address: [FHIR::Address.new(postalCode: address_postcode || "ZZ99 3CZ")]
+        address: [
+          FHIR::Address.new(
+            postalCode: address_postcode || ADDRESS_UNKNOWN_POSTCODE
+          )
+        ]
       )
     end
 

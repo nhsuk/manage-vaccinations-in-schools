@@ -35,7 +35,7 @@ describe FHIRMapper::Patient do
       context "when the address postcode is not set" do
         let(:patient) { create(:patient, address_postcode: nil) }
 
-        its(:postalCode) { should eq "ZZ99 3CZ" }
+        its(:postalCode) { should eq "ZZ99 3WZ" }
       end
     end
 
