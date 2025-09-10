@@ -52,6 +52,15 @@ describe "Flu vaccination" do
     then_i_should_not_see_the_patient
   end
 
+  scenario "Vaccination refused by the patient" do
+    given_a_session_exists
+    and_patients_exist
+
+    when_i_visit_the_session_record_tab
+    and_i_click_on_the_nasal_and_injection_patient
+    then_i_am_able_to_record_the_refusal
+  end
+
   def given_a_session_exists(
     psd_enabled: false,
     national_protocol_enabled: true
@@ -162,6 +171,9 @@ describe "Flu vaccination" do
     click_on @patient_nasal_and_injection.full_name
   end
 
+  alias_method :and_i_click_on_the_nasal_and_injection_patient,
+               :when_i_click_on_the_nasal_and_injection_patient
+
   def when_i_click_on_the_injection_patient
     click_on @patient_injection_only.full_name
   end
@@ -209,5 +221,17 @@ describe "Flu vaccination" do
 
     click_on "Confirm"
     click_on "Record vaccinations"
+  end
+
+  def then_i_am_able_to_record_the_refusal
+    within all("section")[1] do
+      choose "No"
+    end
+    click_on "Continue"
+
+    choose "They refused it"
+    click_on "Continue"
+
+    click_on "Confirm"
   end
 end

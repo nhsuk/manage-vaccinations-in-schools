@@ -41,6 +41,15 @@ describe "Flu vaccination" do
     then_i_am_able_to_vaccinate_them_nasal_only
   end
 
+  scenario "Vaccination refused by the patient" do
+    given_a_session_exists
+    and_patients_exist
+
+    when_i_visit_the_session_record_tab
+    and_i_click_on_the_nasal_only_patient
+    then_i_am_able_to_record_the_refusal
+  end
+
   def given_a_session_exists
     @programme = create(:programme, :flu)
     programmes = [@programme]
@@ -121,6 +130,7 @@ describe "Flu vaccination" do
   def when_i_click_on_the_nasal_only_patient
     click_on @patient_nasal_only.full_name
   end
+
   alias_method :and_i_click_on_the_nasal_only_patient,
                :when_i_click_on_the_nasal_only_patient
 
@@ -160,5 +170,17 @@ describe "Flu vaccination" do
   def then_i_am_not_able_to_vaccinate_them
     expect(page).not_to have_content("Pre-screening checks")
     expect(page).not_to have_content("ready for their")
+  end
+
+  def then_i_am_able_to_record_the_refusal
+    within all("section")[1] do
+      choose "No"
+    end
+    click_on "Continue"
+
+    choose "They refused it"
+    click_on "Continue"
+
+    click_on "Confirm"
   end
 end
