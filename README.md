@@ -23,7 +23,8 @@ This project depends on:
 - [Ruby on Rails](https://rubyonrails.org/)
 - [NodeJS](https://nodejs.org/)
 - [Yarn](https://yarnpkg.com/)
-- [Postgres](https://www.postgresql.org/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Redis](https://redis.io/) or [Valkey](https://valkey.io/)
 
 The instructions below assume you are using `mise` to manage the necessary
 versions of the above.
