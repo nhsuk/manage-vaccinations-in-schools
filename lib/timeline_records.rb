@@ -2,38 +2,102 @@
 
 class TimelineRecords
   DEFAULT_DETAILS_CONFIG = {
-    cohort_imports: [],
-    class_imports: [],
-    sessions: %i[],
-    school_moves: %i[school_id source],
-    school_move_log_entries: %i[school_id user_id],
     consents: %i[response route],
+    sessions: %i[],
+    session_attendances: %i[],
     triages: %i[status performed_by_user_id],
-    vaccination_records: %i[outcome session_id]
+    vaccination_records: %i[outcome session_id],
+    cohort_imports: %i[],
+    class_imports: %i[],
+    parents: %i[],
+    gillick_assessments: %i[],
+    parent_relationships: %i[],
+    school_moves: %i[school_id source],
+    school_move_log_entries: %i[school_id user_id]
   }.freeze
 
   AVAILABLE_DETAILS_CONFIG = {
-    cohort_imports: %i[rows_count status uploaded_by_user_id],
-    class_imports: %i[rows_count year_groups uploaded_by_user_id location_id],
-    sessions: %i[],
-    school_moves: %i[source school_id home_educated],
-    school_move_log_entries: %i[user_id school_id home_educated],
-    consents: %i[
-      programme_id
-      response
-      route
-      parent_id
-      withdrawn_at
-      invalidated_at
-    ],
-    triages: %i[status performed_by_user_id programme_id invalidated_at],
+    consents: %i[response route updated_at withdrawn_at invalidated_at],
+    sessions: %i[slug academic_year],
+    session_attendances: %i[attending updated_at],
+    triages: %i[status updated_at invalidated_at performed_by_user_id],
     vaccination_records: %i[
       outcome
-      performed_by_user_id
-      programme_id
+      performed_at
+      updated_at
+      discarded_at
+      uuid
       session_id
-      vaccine_id
-    ]
+    ],
+    cohort_imports: %i[
+      csv_filename
+      processed_at
+      status
+      rows_count
+      new_record_count
+      exact_duplicate_record_count
+      changed_record_count
+    ],
+    class_imports: %i[
+      csv_filename
+      processed_at
+      status
+      rows_count
+      new_record_count
+      exact_duplicate_record_count
+      changed_record_count
+      year_groups
+    ],
+    parents: %i[],
+    gillick_assessments: %i[],
+    parent_relationships: %i[],
+    school_moves: %i[school_id source],
+    school_move_log_entries: %i[school_id user_id]
+  }.freeze
+
+  AVAILABLE_DETAILS_CONFIG_WITH_PII = {
+    consents: %i[response route updated_at withdrawn_at invalidated_at],
+    sessions: %i[slug academic_year],
+    session_attendances: %i[attending updated_at],
+    triages: %i[status updated_at invalidated_at performed_by_user_id],
+    vaccination_records: %i[
+      outcome
+      performed_at
+      updated_at
+      discarded_at
+      uuid
+      session_id
+    ],
+    cohort_imports: %i[
+      csv_filename
+      processed_at
+      status
+      rows_count
+      new_record_count
+      exact_duplicate_record_count
+      changed_record_count
+    ],
+    class_imports: %i[
+      csv_filename
+      processed_at
+      status
+      rows_count
+      new_record_count
+      exact_duplicate_record_count
+      changed_record_count
+      year_groups
+    ],
+    parents: %i[full_name email phone],
+    gillick_assessments: %i[
+      knows_vaccination
+      knows_disease
+      knows_consequences
+      knows_delivery
+      knows_side_effects
+    ],
+    parent_relationships: %i[type other_name],
+    school_moves: %i[school_id source],
+    school_move_log_entries: %i[school_id user_id]
   }.freeze
 
   DEFAULT_AUDITS_CONFIG = {
@@ -69,7 +133,51 @@ class TimelineRecords
     source
   ].freeze
 
-  def initialize(patient, detail_config: {}, audit_config: {})
+  ALLOWED_AUDITED_CHANGES_WITH_PII = %i[
+    full_name
+    email
+    phone
+    nhs_number
+    given_name
+    family_name
+    date_of_birth
+    address_line_1
+    address_line_2
+    address_town
+    address_postcode
+    home_educated
+    updated_from_pds_at
+    restricted_at
+    date_of_death
+    pending_changes
+    patient_id
+    session_id
+    location_id
+    programme_id
+    vaccine_id
+    organisation_id
+    team_id
+    school_id
+    gp_practice_id
+    uploaded_by_user_id
+    performed_by_user_id
+    user_id
+    parent_id
+    status
+    outcome
+    response
+    route
+    date_of_death_recorded_at
+    restricted_at
+    invalidated_at
+    withdrawn_at
+    rows_count
+    year_groups
+    home_educated
+    source
+  ].freeze
+
+  def initialize(patient, detail_config: {}, audit_config: {}, show_pii: false)
     @patient = patient
     @patient_id = @patient.id
     @patient_events = patient_events(@patient)
@@ -77,6 +185,7 @@ class TimelineRecords
     @detail_config = extract_detail_config(detail_config)
     @events = []
     @audit_config = audit_config
+    @show_pii = show_pii
   end
 
   def render_timeline(*event_names, truncate_columns: false)
@@ -239,12 +348,15 @@ class TimelineRecords
         end
       ).reject { it.audited_changes.keys == ["updated_from_pds_at"] }
 
+    allowed_changes =
+      @show_pii ? ALLOWED_AUDITED_CHANGES_WITH_PII : ALLOWED_AUDITED_CHANGES
+
     audit_events.map do |audit|
       filtered_changes =
         audit
           .audited_changes
           .each_with_object({}) do |(key, value), hash|
-            if ALLOWED_AUDITED_CHANGES.include?(key.to_sym)
+            if allowed_changes.include?(key.to_sym)
               hash[key] = value
             elsif audits[:include_filtered_audit_changes]
               hash[key] = "[FILTERED]"

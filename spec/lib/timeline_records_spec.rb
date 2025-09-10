@@ -2,11 +2,16 @@
 
 describe TimelineRecords do
   subject(:timeline) do
-    described_class.new(patient, detail_config: detail_config)
+    described_class.new(
+      patient,
+      detail_config: detail_config,
+      show_pii: show_pii
+    )
   end
 
   let(:programme) { create(:programme, :hpv) }
   let(:detail_config) { {} }
+  let(:show_pii) { false }
   let(:team) { create(:team, programmes: [programme]) }
   let(:session) { create(:session, team:, programmes: [programme]) }
   let(:class_import) { create(:class_import, session:) }
@@ -395,6 +400,26 @@ describe TimelineRecords do
           :updated_from_pds_at
         )
         expect(event[:details][:audited_changes][:team_id]).to eq([nil, 1])
+      end
+    end
+
+    context "with show_pii: true" do
+      let(:show_pii) { true }
+
+      it "includes PII-based audited changes" do
+        patient.audits.create!(
+          audited_changes: {
+            given_name: %w[Alessia Alice],
+            organisation_id: [nil, 1]
+          }
+        )
+        events = timeline.load_events(["audits"])
+        expect(events.first[:details][:audited_changes]).to have_key(
+          :given_name
+        )
+        expect(events.first[:details][:audited_changes]).to have_key(
+          :organisation_id
+        )
       end
     end
 

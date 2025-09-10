@@ -158,6 +158,15 @@
                                          "data-turbo-permanent": "true" %>
             <% end %>
             <% end %>
+
+            <div class="nhsuk-u-margin-bottom-4">
+            <%= f.govuk_check_box :show_pii, true,
+                                  label: { text: "Show PII" },
+                                  checked: @show_pii,
+                                  "data-autosubmit-target": "field",
+                                  "data-action": "autosubmit#submit",
+                                  "data-turbo-permanent": "true" %>
+            </div>
             
             <%= helpers.govuk_button_link_to "Reset filters",
                                              @reset_url,
