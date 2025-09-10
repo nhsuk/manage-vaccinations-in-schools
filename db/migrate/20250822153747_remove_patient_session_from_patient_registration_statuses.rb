@@ -10,13 +10,12 @@ class RemovePatientSessionFromPatientRegistrationStatuses < ActiveRecord::Migrat
       t.index %i[patient_id session_id], unique: true
     end
 
-    Patient::RegistrationStatus.find_each do |registration_status|
-      patient_session =
-        PatientSession.find(registration_status.patient_session_id)
-      patient_id = patient_session.patient_id
-      session_id = patient_session.session_id
-      registration_status.update_columns(patient_id:, session_id:)
-    end
+    execute <<-SQL
+      UPDATE patient_registration_statuses
+      SET patient_id = patient_sessions.patient_id, session_id = patient_sessions.session_id
+      FROM patient_sessions
+      WHERE patient_registration_statuses.patient_session_id = patient_sessions.id
+    SQL
 
     change_table :patient_registration_statuses, bulk: true do |t|
       t.change_null :patient_id, false
