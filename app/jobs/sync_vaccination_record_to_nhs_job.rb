@@ -3,7 +3,7 @@
 class SyncVaccinationRecordToNHSJob < ApplicationJob
   include ImmunisationsAPIThrottlingConcern
 
-  queue_as :immunisation_api
+  queue_as :immunisations_api
 
   def perform(vaccination_record)
     tx_id = SecureRandom.urlsafe_base64(16)

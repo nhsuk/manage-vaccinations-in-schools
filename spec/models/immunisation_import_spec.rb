@@ -358,7 +358,7 @@ describe ImmunisationImport do
       }.to have_enqueued_job(SyncVaccinationRecordToNHSJob)
         .with(vaccination_record)
         .once
-        .on_queue(:immunisation_api)
+        .on_queue(:immunisations_api)
     end
   end
 end
