@@ -6,7 +6,7 @@
   <%= "Patient.find(#{@patient.id})" %>
 </code>
 
-<% if params[:event_names].include?("audits") && @patient_timeline %>
+<% if params[:event_names].include?("audits") && @patient_timeline && !@show_pii %>
   <%= govuk_inset_text do %>
     <p class="nhsuk-body">
       Only audited changes that do not involve PII are included
@@ -16,13 +16,13 @@
 
 <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
   
-  <div class="nhsuk-grid-column-one-third app-grid-column--sticky">
+  <div class="nhsuk-grid-column-one-half app-grid-column--sticky">
       <%= render AppTimelineFilterComponent.new(
             url: inspect_timeline_patient_path,
             patient: @patient,
             teams: @patient.teams,
             event_options: TimelineRecords::DEFAULT_DETAILS_CONFIG,
-            timeline_fields: TimelineRecords::AVAILABLE_DETAILS_CONFIG,
+            timeline_fields: @show_pii ? TimelineRecords::AVAILABLE_DETAILS_CONFIG_WITH_PII : TimelineRecords::AVAILABLE_DETAILS_CONFIG,
             class_imports: @patient_events[:class_imports],
             cohort_imports: @patient_events[:cohort_imports],
             sessions: @patient_events[:sessions],
@@ -31,11 +31,13 @@
               event_names: Inspect::Timeline::PatientsController::DEFAULT_EVENT_NAMES,
               detail_config: TimelineRecords::DEFAULT_DETAILS_CONFIG,
               compare_option: nil,
+              show_pii: false,
             ),
+            show_pii: @show_pii,
           ) %>
   </div>
 
-  <div class="nhsuk-grid-column-two-thirds">
+  <div class="nhsuk-grid-column-one-half">
     <% if @no_events_message %>
       <%= render AppWarningCalloutComponent.new(
             heading: "No events found",
