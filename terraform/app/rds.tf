@@ -55,7 +55,7 @@ resource "aws_rds_cluster" "core" {
   db_cluster_parameter_group_name       = var.enable_enhanced_db_monitoring ? aws_rds_cluster_parameter_group.enhanced_monitoring[0].name : "default.aurora-postgresql16"
   database_insights_mode                = var.enable_enhanced_db_monitoring ? "advanced" : "standard"
   performance_insights_enabled          = var.enable_enhanced_db_monitoring
-  performance_insights_retention_period = var.enable_enhanced_db_monitoring ? 465 : 7
+  performance_insights_retention_period = var.enable_enhanced_db_monitoring ? 465 : 0
   monitoring_interval                   = var.enable_enhanced_db_monitoring ? 30 : 0
   monitoring_role_arn                   = var.enable_enhanced_db_monitoring ? aws_iam_role.enhanced_db_monitoring[0].arn : null
   enabled_cloudwatch_logs_exports       = ["postgresql", "instance"]
