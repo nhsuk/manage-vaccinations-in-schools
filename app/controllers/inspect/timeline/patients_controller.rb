@@ -7,6 +7,8 @@ class Inspect::Timeline::PatientsController < ApplicationController
 
   layout "full"
 
+  SHOW_PII = false
+
   DEFAULT_EVENT_NAMES = %w[
     consents
     school_moves
@@ -20,6 +22,8 @@ class Inspect::Timeline::PatientsController < ApplicationController
   ].freeze
 
   def show
+    @show_pii = params[:show_pii] || SHOW_PII
+
     params.reverse_merge!(event_names: DEFAULT_EVENT_NAMES)
     params[:audit_config] ||= {}
 
@@ -43,7 +47,8 @@ class Inspect::Timeline::PatientsController < ApplicationController
       TimelineRecords.new(
         @patient,
         detail_config: build_details_config,
-        audit_config: audit_config
+        audit_config: audit_config,
+        show_pii: @show_pii
       ).load_timeline_events(event_names)
 
     @no_events_message = true if @patient_timeline.empty?
@@ -95,8 +100,10 @@ class Inspect::Timeline::PatientsController < ApplicationController
         :invalid_patient
       end
     else
-      raise ArgumentError,
-            "Invalid patient comparison option: #{compare_option}"
+      raise ArgumentError, <<~MESSAGE
+      Invalid patient comparison option: #{compare_option}.
+      Supported options are: class_import, cohort_import, session, manual_entry
+    MESSAGE
     end
   end
 
