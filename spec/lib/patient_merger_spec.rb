@@ -68,6 +68,9 @@ describe PatientMerger do
     let(:duplicate_school_move) do
       create(:school_move, patient: patient_to_keep, school: school_move.school)
     end
+    let(:session_attendance) do
+      create(:session_attendance, :present, patient: patient_to_destroy)
+    end
     let(:session_notification) do
       create(
         :session_notification,
@@ -172,6 +175,12 @@ describe PatientMerger do
     it "deletes duplicate school moves" do
       expect { call }.not_to change(duplicate_school_move, :patient)
       expect { school_move.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it "moves session attendances" do
+      expect { call }.to change { session_attendance.reload.patient }.to(
+        patient_to_keep
+      )
     end
 
     it "moves session notifications" do
