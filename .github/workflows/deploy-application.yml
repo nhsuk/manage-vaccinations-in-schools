@@ -64,7 +64,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        service: ${{ inputs.server-types == 'all' && fromJSON('["web", "sidekiq"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
+        service: ${{ inputs.server-types == 'all' && fromJSON('["web", "sidekiq"]') || fromJSON(format('["{0}"]', inputs.server-types)) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -132,7 +132,7 @@ jobs:
     name: Deploy web service
     runs-on: ubuntu-latest
     if: ${{ inputs.server-types == 'web' || inputs.server-types == 'all' }}
-    needs: [ prepare-deployment, approve-deployments ]
+    needs: [prepare-deployment, approve-deployments]
     permissions:
       id-token: write
     steps:
@@ -177,7 +177,7 @@ jobs:
     name: Create sidekiq deployment
     runs-on: ubuntu-latest
     if: ${{ inputs.server-types == 'sidekiq' || inputs.server-types == 'all' }}
-    needs: [ prepare-deployment, approve-deployments ]
+    needs: [prepare-deployment, approve-deployments]
     permissions:
       id-token: write
     steps:
