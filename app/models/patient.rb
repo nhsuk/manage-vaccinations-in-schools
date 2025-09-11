@@ -581,9 +581,7 @@ class Patient < ApplicationRecord
 
   def sync_vaccinations_to_nhs_immunisations_api
     if should_sync_vaccinations_to_nhs_immunisations_api?
-      vaccination_records.syncable_to_nhs_immunisations_api.find_each(
-        &:sync_to_nhs_immunisations_api
-      )
+      vaccination_records.sync_all_to_nhs_immunisations_api
     end
   end
 end

@@ -6,11 +6,16 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
   included do
     scope :syncable_to_nhs_immunisations_api,
           -> { includes(:patient, :programme).recorded_in_service }
+
+    scope :sync_all_to_nhs_immunisations_api,
+          -> do
+            syncable_to_nhs_immunisations_api.find_each(
+              &:sync_to_nhs_immunisations_api
+            )
+          end
   end
 
-  def syncable_to_nhs_immunisations_api?
-    recorded_in_service?
-  end
+  def syncable_to_nhs_immunisations_api? = recorded_in_service?
 
   def sync_status
     should_be_synced =
@@ -40,6 +45,7 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
     # The immunisations api module checks if a sync is still pending using this
     # timestamp.
     update!(nhs_immunisations_api_sync_pending_at: Time.current)
+
     SyncVaccinationRecordToNHSJob.perform_later(self)
   end
 end
