@@ -31,6 +31,12 @@ describe FHIRMapper::Patient do
       subject { patient_fhir.address[0] }
 
       its(:postalCode) { should eq patient.address_postcode }
+
+      context "when the address postcode is not set" do
+        let(:patient) { create(:patient, address_postcode: nil) }
+
+        its(:postalCode) { should eq "ZZ99 3WZ" }
+      end
     end
 
     describe "gender" do
