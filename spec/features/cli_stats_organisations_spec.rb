@@ -62,7 +62,7 @@ describe "mavis stats organisations" do
 
   private
 
-  def command(args = [])
+  def command(*args)
     Dry::CLI.new(MavisCLI).call(arguments: ["stats", "organisations", *args])
   end
 
@@ -189,15 +189,13 @@ describe "mavis stats organisations" do
   end
 
   def when_i_run_the_command
-    @output = capture_output { command(["--ods_code", @organisation.ods_code]) }
+    @output = capture_output { command("--ods_code", @organisation.ods_code) }
   end
 
   def when_i_run_the_command_with_programme_filter(programme)
     @output =
       capture_output do
-        command(
-          ["--ods_code", @organisation.ods_code, "--programme", programme]
-        )
+        command("--ods_code", @organisation.ods_code, "--programme", programme)
       end
   end
 
@@ -206,12 +204,10 @@ describe "mavis stats organisations" do
     @output =
       capture_output do
         command(
-          [
-            "--ods_code",
-            @organisation.ods_code,
-            "--academic_year",
-            previous_year.to_s
-          ]
+          "--ods_code",
+          @organisation.ods_code,
+          "--academic_year",
+          previous_year.to_s
         )
       end
   end
@@ -219,28 +215,29 @@ describe "mavis stats organisations" do
   def when_i_run_the_command_with_team_filter(team_name)
     @output =
       capture_output do
-        command(
-          ["--ods_code", @organisation.ods_code, "--team_name", team_name]
-        )
+        command("--ods_code", @organisation.ods_code, "--team_name", team_name)
       end
   end
 
   def when_i_run_the_command_with_json
     @output =
       capture_output do
-        command(["--ods_code", @organisation.ods_code, "--format", "json"])
+        command("--ods_code", @organisation.ods_code, "--format", "json")
       end
   end
 
   def when_i_run_the_command_with_invalid_organisation
-    @output = capture_error { command(%w[--ods_code INVALID_ODS]) }
+    @output = capture_error { command("--ods_code", "INVALID_ODS") }
   end
 
   def when_i_run_the_command_with_invalid_team
     @output =
       capture_error do
         command(
-          ["--ods_code", @organisation.ods_code, "--team_name", "INVALID_TEAM"]
+          "--ods_code",
+          @organisation.ods_code,
+          "--team_name",
+          "INVALID_TEAM"
         )
       end
   end

@@ -38,7 +38,7 @@ describe "mavis stats consents-by-school", type: :integration do
 
   private
 
-  def command(args = [])
+  def command(*args)
     Dry::CLI.new(MavisCLI).call(
       arguments: ["stats", "consents-by-school", *args]
     )
@@ -159,13 +159,13 @@ describe "mavis stats consents-by-school", type: :integration do
   end
 
   def when_i_run_the_command
-    @output = capture_output { command(["--ods_code", @organisation.ods_code]) }
+    @output = capture_output { command("--ods_code", @organisation.ods_code) }
   end
 
   def when_i_run_the_command_with_flu_programme
     @output =
       capture_output do
-        command(["--ods_code", @organisation.ods_code, "--programme", "flu"])
+        command("--ods_code", @organisation.ods_code, "--programme", "flu")
       end
   end
 
@@ -174,12 +174,10 @@ describe "mavis stats consents-by-school", type: :integration do
     @output =
       capture_output do
         command(
-          [
-            "--ods_code",
-            @organisation.ods_code,
-            "--academic_year",
-            previous_year.to_s
-          ]
+          "--ods_code",
+          @organisation.ods_code,
+          "--academic_year",
+          previous_year.to_s
         )
       end
   end
@@ -188,30 +186,26 @@ describe "mavis stats consents-by-school", type: :integration do
     @output =
       capture_output do
         command(
-          [
-            "--ods_code",
-            @organisation.ods_code,
-            "--workgroup",
-            "ImmunisationNorth"
-          ]
+          "--ods_code",
+          @organisation.ods_code,
+          "--workgroup",
+          "ImmunisationNorth"
         )
       end
   end
 
   def when_i_run_the_command_with_invalid_organisation
-    @output = capture_error { command(%w[--ods_code INVALID123]) }
+    @output = capture_error { command("--ods_code", "INVALID123") }
   end
 
   def when_i_run_the_command_with_invalid_team
     @output =
       capture_error do
         command(
-          [
-            "--ods_code",
-            @organisation.ods_code,
-            "--workgroup",
-            "InvalidTeamName"
-          ]
+          "--ods_code",
+          @organisation.ods_code,
+          "--workgroup",
+          "InvalidTeamName"
         )
       end
   end
