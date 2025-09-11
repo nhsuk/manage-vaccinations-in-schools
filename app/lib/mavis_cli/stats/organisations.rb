@@ -74,7 +74,7 @@ module MavisCLI
           puts "Filtering by team: #{teams.map(&:name).join(", ")}"
         else
           teams = organisation.teams
-          puts "Filtering by all teams: #{teams.map(&:name).join(", ")}"
+          puts "Filtering by all teams: #{teams.map(&:name).sort.join(", ")}"
         end
 
         [organisation, teams]

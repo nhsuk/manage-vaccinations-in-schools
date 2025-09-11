@@ -90,7 +90,7 @@ module MavisCLI
             puts "Filtering by team: #{teams.map(&:workgroup).join(", ")}"
           else
             teams = organisation.teams
-            puts "Filtering by all teams: #{teams.map(&:workgroup).join(", ")}"
+            puts "Filtering by all teams: #{teams.map(&:workgroup).sort.join(", ")}"
           end
           teams
         elsif workgroup
@@ -103,7 +103,7 @@ module MavisCLI
           [team]
         else
           teams = Team.all
-          puts "Filtering by all teams: #{teams.map(&:workgroup).join(", ")}"
+          puts "Filtering by all teams: #{teams.map(&:workgroup).sort.join(", ")}"
           teams
         end
       end
