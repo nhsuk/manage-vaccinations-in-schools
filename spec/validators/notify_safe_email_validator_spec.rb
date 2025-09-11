@@ -62,6 +62,7 @@ describe NotifySafeEmailValidator do
     ";beginning-semicolon@domain.co.uk",
     "middle-semicolon@domain.co;uk",
     "trailing-semicolon@domain.com;",
+    "trailing-dot@domain.com.",
     '"email+leading-quotes@domain.com',
     'email+middle"-quotes@domain.com',
     '"quoted-local-part"@domain.com',
