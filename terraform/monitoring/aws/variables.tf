@@ -34,5 +34,7 @@ locals {
       AWS-Mavis-ReadOnly = "16b29214-60a1-7008-ff52-0ccd29b7e2d4"
     }
   }
-  bucket_name = "nhse-mavis-grafana-${var.environment}"
+  bucket_name             = "nhse-mavis-grafana-${var.environment}"
+  prefix_environment      = var.environment == "development" ? "qa" : var.environment
+  data_replication_prefix = "mavis-${local.prefix_environment}-data-replication"
 }

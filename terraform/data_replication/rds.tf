@@ -5,6 +5,18 @@ resource "aws_db_subnet_group" "dbsg" {
 
 resource "aws_security_group" "rds" {
   vpc_id = aws_vpc.vpc.id
+  tags = {
+    Name = "${local.name_prefix}-rds-sg"
+  }
+}
+
+resource "aws_security_group_rule" "ecs_to_grafana" {
+  type                     = "egress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  security_group_id        = module.db_access_service.security_group_id
+  source_security_group_id = aws_security_group.rds.id
 }
 
 resource "aws_security_group_rule" "rds_inbound" {
@@ -14,6 +26,16 @@ resource "aws_security_group_rule" "rds_inbound" {
   protocol                 = "tcp"
   security_group_id        = aws_security_group.rds.id
   source_security_group_id = module.db_access_service.security_group_id
+}
+
+resource "aws_security_group_rule" "rds_inbound_grafana" {
+  type              = "ingress"
+  from_port         = 5432
+  to_port           = 5432
+  protocol          = "tcp"
+  security_group_id = aws_security_group.rds.id
+  cidr_blocks       = [aws_vpc.vpc.cidr_block]
+  description       = "Allow Grafana workspace access to PostgreSQL"
 }
 
 resource "aws_rds_cluster" "cluster" {

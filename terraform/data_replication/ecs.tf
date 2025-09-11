@@ -39,5 +39,6 @@ module "db_access_service" {
     region               = var.region
     health_check_command = ["CMD-SHELL", "echo 'alive' || exit 1"]
   }
-  depends_on = [aws_rds_cluster_instance.instance]
+  default_egress_cidr_blocks = var.allowed_egress_cidr_blocks
+  depends_on                 = [aws_rds_cluster_instance.instance]
 }
