@@ -14,7 +14,7 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
     it "enqueues the job if the vaccination record is eligible to sync" do
       expect {
         vaccination_record.sync_to_nhs_immunisations_api
-      }.to have_enqueued_job(SyncVaccinationRecordToNHSJob)
+      }.to enqueue_sidekiq_job(SyncVaccinationRecordToNHSJob)
     end
 
     it "sets nhs_immunisations_api_sync_pending_at" do
@@ -36,7 +36,7 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
       it "does not enqueue the job" do
         expect {
           vaccination_record.sync_to_nhs_immunisations_api
-        }.not_to have_enqueued_job(SyncVaccinationRecordToNHSJob)
+        }.not_to enqueue_sidekiq_job(SyncVaccinationRecordToNHSJob)
       end
 
       it "does not set nhs_immunisations_api_sync_pending_at" do
@@ -57,7 +57,7 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
       it "does not enqueue the job" do
         expect {
           vaccination_record.sync_to_nhs_immunisations_api
-        }.not_to have_enqueued_job(SyncVaccinationRecordToNHSJob)
+        }.not_to enqueue_sidekiq_job(SyncVaccinationRecordToNHSJob)
       end
 
       it "does not set nhs_immunisations_api_sync_pending_at" do

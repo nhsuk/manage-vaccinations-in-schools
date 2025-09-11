@@ -109,6 +109,7 @@ require "rspec/rails"
 # Add additional requires below this line. Rails is not loaded until this point!
 require "capybara/cuprite"
 require "capybara-screenshot/rspec"
+require "sidekiq/testing"
 
 Faker::Config.locale = "en-GB"
 

@@ -44,7 +44,7 @@ describe "Patient invalidation deletes vaccination record from API" do
       stub_immunisations_api_post(uuid: @immunisation_uuid)
 
     @vaccination_record.sync_to_nhs_immunisations_api
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
 
     expect(@stubbed_post_request).to have_been_requested
 
@@ -72,7 +72,7 @@ describe "Patient invalidation deletes vaccination record from API" do
     @stubbed_delete_request =
       stub_immunisations_api_delete(uuid: @immunisation_uuid)
 
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
 
     expect(@stubbed_delete_request).to have_been_requested
   end

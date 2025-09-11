@@ -46,6 +46,6 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
     # timestamp.
     update!(nhs_immunisations_api_sync_pending_at: Time.current)
 
-    SyncVaccinationRecordToNHSJob.perform_later(self)
+    SyncVaccinationRecordToNHSJob.perform_async(id)
   end
 end

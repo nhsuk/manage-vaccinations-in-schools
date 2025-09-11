@@ -1,14 +1,20 @@
 # frozen_string_literal: true
 
-class SyncVaccinationRecordToNHSJob < ApplicationJob
-  include ImmunisationsAPIThrottlingConcern
+class SyncVaccinationRecordToNHSJob
+  include Sidekiq::Job
+  include Sidekiq::Throttled::Job
 
-  queue_as :immunisations_api
+  sidekiq_options queue: :immunisations_api
+  sidekiq_throttle_as :immunisations_api
 
-  def perform(vaccination_record)
+  def perform(vaccination_record_id)
+    vaccination_record = VaccinationRecord.find(vaccination_record_id)
+
     tx_id = SecureRandom.urlsafe_base64(16)
-    SemanticLogger.tagged(tx_id:, job_id: provider_job_id || job_id) do
-      Sentry.set_tags(tx_id:, job_id: provider_job_id || job_id)
+    job_id = Sidekiq::Context.current["jid"]
+
+    SemanticLogger.tagged(tx_id:, job_id:) do
+      Sentry.set_tags(tx_id:, job_id:)
 
       return unless Flipper.enabled?(:imms_api_sync_job)
 
