@@ -158,11 +158,9 @@ describe ImmunisationImportRow do
     context "without a vaccine and recording offline" do
       let(:data) do
         valid_data.merge(
-          {
-            "VACCINE_GIVEN" => "",
-            "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
-            "SESSION_ID" => session.id.to_s
-          }
+          "VACCINE_GIVEN" => "",
+          "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
+          "SESSION_ID" => session.id.to_s
         )
       end
 
@@ -958,6 +956,7 @@ describe ImmunisationImportRow do
       let(:data) { valid_data }
 
       it { should be_archived }
+
       its(:team) { should be_nil }
 
       context "without a vaccine" do
@@ -973,6 +972,22 @@ describe ImmunisationImportRow do
         end
 
         it { should be_nil }
+      end
+
+      context "when recording offline" do
+        let(:data) do
+          valid_data.merge(
+            "DATE_OF_VACCINATION" => session.dates.first.strftime("%Y%m%d"),
+            "SESSION_ID" => session.id.to_s,
+            "ORGANISATION_CODE" => team.organisation.ods_code,
+            "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,
+            "DOSE_SEQUENCE" => "1"
+          )
+        end
+
+        let(:session) { create(:session, team:, programmes:) }
+
+        its(:team) { should eq(session.team) }
       end
     end
 
@@ -1574,11 +1589,9 @@ describe ImmunisationImportRow do
       context "with an existing matching patient but mismatching capitalisation, without NHS number" do
         let(:data) do
           valid_data.except("NHS_NUMBER").merge(
-            {
-              "PERSON_FORENAME" => "RON",
-              "PERSON_SURNAME" => "WEASLEY",
-              "PERSON_POSTCODE" => "sw1a 1aa"
-            }
+            "PERSON_FORENAME" => "RON",
+            "PERSON_SURNAME" => "WEASLEY",
+            "PERSON_POSTCODE" => "sw1a 1aa"
           )
         end
 
