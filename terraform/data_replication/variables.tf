@@ -82,9 +82,8 @@ variable "rails_master_key_path" {
 }
 
 locals {
-  name_prefix                        = "mavis-${var.environment}-data-replication"
-  subnet_list                        = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
-  shared_egress_infrastructure_count = min(length(var.allowed_egress_cidr_blocks), 1)
+  name_prefix = "mavis-${var.environment}-data-replication"
+  subnet_list = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
 
   task_envs = [
     {

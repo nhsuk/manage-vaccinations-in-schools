@@ -11,12 +11,18 @@ resource "aws_subnet" "subnet_a" {
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = "10.0.1.0/24"
   availability_zone = "${var.region}a"
+  tags = {
+    Private = true
+  }
 }
 
 resource "aws_subnet" "subnet_b" {
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = "10.0.2.0/24"
   availability_zone = "${var.region}b"
+  tags = {
+    Private = true
+  }
 }
 
 resource "aws_route_table" "private" {
@@ -36,45 +42,43 @@ resource "aws_subnet" "public_subnet" {
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = "10.0.3.0/24"
   availability_zone = "${var.region}a"
+  tags = {
+    Private = false
+  }
 }
 
-resource "aws_internet_gateway" "internet_gateway" {
-  count  = local.shared_egress_infrastructure_count
+resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.vpc.id
   tags = {
     Name = "data-replication-igw-${var.environment}"
   }
 }
 
-resource "aws_eip" "nat_ip" {
-  count      = local.shared_egress_infrastructure_count
+resource "aws_eip" "this" {
   domain     = "vpc"
-  depends_on = [aws_internet_gateway.internet_gateway]
+  depends_on = [aws_internet_gateway.this]
 }
 
-resource "aws_nat_gateway" "nat_gateway" {
-  count             = local.shared_egress_infrastructure_count
+resource "aws_nat_gateway" "this" {
   subnet_id         = aws_subnet.public_subnet.id
-  allocation_id     = aws_eip.nat_ip[0].id
+  allocation_id     = aws_eip.this.id
   connectivity_type = "public"
-  depends_on        = [aws_internet_gateway.internet_gateway]
+  depends_on        = [aws_internet_gateway.this]
   tags = {
     Name = "data-replication-nat-gateway-${var.environment}"
   }
 }
 
 resource "aws_route" "private_to_public" {
-  count                  = length(var.allowed_egress_cidr_blocks)
   route_table_id         = aws_route_table.private.id
-  destination_cidr_block = var.allowed_egress_cidr_blocks[count.index]
-  nat_gateway_id         = aws_nat_gateway.nat_gateway[0].id
+  nat_gateway_id         = aws_nat_gateway.this.id
+  destination_cidr_block = "0.0.0.0/0"
 }
 
 resource "aws_route" "public_to_igw" {
-  count                  = length(var.allowed_egress_cidr_blocks)
   route_table_id         = aws_route_table.public.id
-  destination_cidr_block = var.allowed_egress_cidr_blocks[count.index]
-  gateway_id             = aws_internet_gateway.internet_gateway[0].id
+  gateway_id             = aws_internet_gateway.this.id
+  destination_cidr_block = "0.0.0.0/0"
 }
 
 resource "aws_route_table" "public" {

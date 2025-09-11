@@ -29,3 +29,5 @@ resource "grafana_data_source" "cloudwatch" {
   })
   uid = "cloudwatch"
 }
+
+# resouce "grafana_data_source" "postgres" {}

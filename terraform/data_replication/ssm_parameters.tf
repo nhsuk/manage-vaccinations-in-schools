@@ -14,8 +14,7 @@ resource "aws_secretsmanager_secret" "ro_db_password" {
     Name = "${local.name_prefix}-ro-db-password"
   }
   lifecycle {
-    ignore_changes       = [name]
-    replace_triggered_by = [aws_rds_cluster.cluster]
+    ignore_changes = [name]
   }
 }
 
