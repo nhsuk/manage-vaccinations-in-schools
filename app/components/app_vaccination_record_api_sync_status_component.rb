@@ -53,7 +53,7 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
       case sync_status
       when :not_synced
         is_not_a_synced_programme =
-          !vaccination_record.programme.can_write_to_immunisations_api?
+          !vaccination_record.programme.can_sync_to_immunisations_api?
         if is_not_a_synced_programme
           "Records are currently not synced for this programme"
         elsif notify_parents == false
