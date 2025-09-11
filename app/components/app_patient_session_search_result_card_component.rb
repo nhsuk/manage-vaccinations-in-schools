@@ -129,8 +129,12 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
     return if next_activities.empty?
 
-    tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
-      safe_join(next_activities.map { tag.li(it) })
+    if next_activities.size == 1
+      next_activities.first
+    else
+      tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
+        safe_join(next_activities.map { tag.li(it) })
+      end
     end
   end
 
