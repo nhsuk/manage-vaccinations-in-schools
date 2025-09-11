@@ -54,6 +54,18 @@ class PatientChangeset < ApplicationRecord
           )
         end
 
+  scope :with_pds_match, -> { where.not(pds_nhs_number: nil) }
+
+  scope :without_pds_match, -> { where(pds_nhs_number: nil) }
+
+  scope :with_pds_search_attempted,
+        -> do
+          where("pending_changes -> 'search_results' != '[]'::jsonb").where.not(
+            "jsonb_array_length(pending_changes -> 'search_results') = 1 AND 
+            (pending_changes -> 'search_results' -> 0 ->> 'result') = 'no_postcode'"
+          )
+        end
+
   def self.from_import_row(row:, import:, row_number:)
     create!(
       import:,

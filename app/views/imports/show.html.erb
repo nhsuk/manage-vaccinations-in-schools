@@ -75,13 +75,41 @@
 <% end %>
 
 <% if import.rows_are_invalid? %>
-  <%= render AppImportErrorsComponent.new(import.errors) do %>
+  <%= render AppImportErrorsComponent.new(errors: import.errors) do %>
     <p class="nhsuk-u-reading-width">
       The records cannot be uploaded due to errors in the CSV file.
     </p>
 
     <%= render AppImportFormatDetailsComponent.new(import:) %>
   <% end %>
+<% end %>
+
+<% if import.low_pds_match_rate? %>
+  <%= render AppImportErrorsComponent.new(title: "Too many records could not be matched") do %>
+    <p class="nhsuk-u-reading-width">
+      The records could not be imported as an unusually low number of records were matched to PDS (spine).
+      PDS successfully matched
+      <% if import.pds_match_rate.positive? %>only <% end %>
+      <%= import.changesets.with_pds_match.count %> records,
+      a <%= import.pds_match_rate %>% match rate.
+    </p>
+    <p class="nhsuk-u-reading-width">
+      Review your file and try uploading it again.
+    </p>
+
+    <%= render AppImportFormatDetailsComponent.new(import:) %>
+  <% end %>
+
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary" data-module="app-sticky" data-app-sticky-init>
+      <span class="nhsuk-details__summary-text">
+        <%= import.changesets.without_pds_match.count %> unmatched records
+      </span>
+    </summary>
+    <div class="nhsuk-details__text">
+      <%= render AppImportPDSUnmatchedSummaryComponent.new(changesets: import.changesets.without_pds_match) %>
+    </div>
+  </details>
 <% end %>
 
 <% if import.processed? %>

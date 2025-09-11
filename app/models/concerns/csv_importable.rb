@@ -20,7 +20,12 @@ module CSVImportable
     scope :processed, -> { where.not(processed_at: nil) }
 
     enum :status,
-         { pending_import: 0, rows_are_invalid: 1, processed: 2 },
+         {
+           pending_import: 0,
+           rows_are_invalid: 1,
+           processed: 2,
+           low_pds_match_rate: 3
+         },
          default: :pending_import,
          validate: true
 

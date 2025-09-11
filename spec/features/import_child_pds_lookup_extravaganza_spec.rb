@@ -9,9 +9,14 @@ describe "Import child records" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
     and_an_existing_patient_record_exists
-    and_pds_lookup_during_import_is_enabled
 
     when_i_visit_the_import_page
+    and_pds_lookups_dont_return_any_matches
+    and_i_upload_import_file("pds_extravaganza.csv")
+    then_i_should_see_the_import_failed
+
+    when_i_visit_the_import_page
+    and_pds_lookup_during_import_is_enabled
     and_i_upload_import_file("pds_extravaganza.csv")
     then_i_should_see_the_import_page
     and_i_should_see_correct_patient_counts
@@ -269,6 +274,30 @@ describe "Import child records" do
     expect(Parent.count).to eq(2)
   end
 
+  def and_pds_lookups_dont_return_any_matches
+    Flipper.enable(:pds_lookup_during_import)
+    Flipper.enable(:import_low_pds_match_rate)
+
+    csv_path =
+      Rails.root.join("spec/fixtures/cohort_import/pds_extravaganza.csv")
+
+    CSV.foreach(csv_path, headers: true, header_converters: :symbol) do |row|
+      family_name = row[:child_last_name]
+      given_name = row[:child_first_name]
+      birthdate = row[:child_date_of_birth]
+      postcode = row[:child_postcode]
+
+      next if [family_name, given_name, birthdate].any?(&:blank?)
+
+      stub_pds_cascading_search(
+        family_name: family_name,
+        given_name: given_name,
+        birthdate: "eq#{birthdate}",
+        address_postcode: postcode
+      )
+    end
+  end
+
   def and_pds_lookup_during_import_is_enabled
     Flipper.enable(:pds_lookup_during_import)
 
@@ -443,6 +472,11 @@ describe "Import child records" do
     click_on "Continue"
   end
 
+  def then_i_should_see_the_import_failed
+    expect(page).to have_content("Too many records could not be matched")
+    expect(page).to have_content("11 unmatched records")
+  end
+
   def then_i_should_see_the_import_page
     expect(page).to have_content("Import class list")
   end
@@ -463,7 +497,7 @@ describe "Import child records" do
 
   def when_i_go_back_to_the_import_page
     visit "/imports"
-    click_link "1 September 2025 at 12:00pm"
+    click_link "1 September 2025 at 12:00pm", match: :first
   end
 
   def when_i_click_review_for(name)

@@ -6,6 +6,11 @@ class CommitPatientChangesetsJob < ApplicationJob
   queue_as :imports
 
   def perform(import)
+    if Flipper.enabled?(:import_low_pds_match_rate)
+      import.validate_pds_match_rate!
+      return if import.low_pds_match_rate?
+    end
+
     counts = import.class.const_get(:COUNT_COLUMNS).index_with(0)
 
     ActiveRecord::Base.transaction do
