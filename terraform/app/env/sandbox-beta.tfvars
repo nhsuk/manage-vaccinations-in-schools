@@ -1,6 +1,7 @@
-environment           = "sandbox-beta"
-rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
-dns_certificate_arn   = null
+environment            = "sandbox-beta"
+rails_master_key_path  = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
+mise_sops_age_key_path = "/copilot/mavis/secrets/STAGING_MISE_SOPS_AGE_KEY"
+dns_certificate_arn    = null
 resource_name = {
   rds_security_group       = "mavis-sandbox-beta-rds-sg"
   loadbalancer             = "mavis-sandbox-beta-alb"
