@@ -12,8 +12,8 @@ http_hosts = {
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "sandbox-alpha.mavistesting.com"
 }
 
-minimum_web_replicas = 1
-maximum_web_replicas = 2
+minimum_web_replicas     = 1
+maximum_web_replicas     = 2
 minimum_sidekiq_replicas = 1
 maximum_sidekiq_replicas = 2
 
