@@ -23,7 +23,6 @@ on:
         options:
           - all
           - web
-          - good-job
           - sidekiq
         default: all
       git-ref-to-deploy:
@@ -65,7 +64,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        service: ${{ inputs.server-types == 'all' && fromJSON('["web", "good-job", "sidekiq"]') || fromJSON(format('["{0}"]', inputs.server-types)) }}
+        service: ${{ inputs.server-types == 'all' && fromJSON('["web", "sidekiq"]') || fromJSON(format('["{0}"]', inputs.server-types)) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -133,7 +132,7 @@ jobs:
     name: Deploy web service
     runs-on: ubuntu-latest
     if: ${{ inputs.server-types == 'web' || inputs.server-types == 'all' }}
-    needs: [ prepare-deployment, approve-deployments ]
+    needs: [prepare-deployment, approve-deployments]
     permissions:
       id-token: write
     steps:
@@ -174,43 +173,11 @@ jobs:
           aws deploy wait deployment-successful --deployment-id "${{ steps.deploy-web-service.outputs.codedeploy-deployment-id }}"
           echo "Deployment successful"
 
-  deploy-good-job:
-    name: Deploy good-job service
-    runs-on: ubuntu-latest
-    if: ${{ inputs.server-types == 'good-job' || inputs.server-types == 'all' }}
-    needs: [ prepare-deployment, approve-deployments ]
-    permissions:
-      id-token: write
-    steps:
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v5
-        with:
-          role-to-assume: ${{ env.aws-role }}
-          aws-region: eu-west-2
-      - name: Download good-job task definition artifact
-        uses: actions/download-artifact@v5
-        with:
-          path: ${{ runner.temp }}
-          name: ${{ inputs.environment }}-good-job-task-definition
-      - name: Change family of task definition
-        run: |
-          file_path="${{ runner.temp }}/good-job-task-definition.json"
-          family_name="mavis-good-job-task-definition-${{ inputs.environment }}"
-          echo "$(jq --arg f "$family_name" '.family = $f' "$file_path")" > "$file_path"
-      - name: Deploy good-job service
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        with:
-          task-definition: ${{ runner.temp }}/good-job-task-definition.json
-          cluster: ${{ env.cluster-name }}
-          service: mavis-${{ inputs.environment }}-good-job
-          force-new-deployment: true
-          wait-for-service-stability: true
-
   create-sidekiq-deployment:
     name: Create sidekiq deployment
     runs-on: ubuntu-latest
     if: ${{ inputs.server-types == 'sidekiq' || inputs.server-types == 'all' }}
-    needs: [ prepare-deployment, approve-deployments ]
+    needs: [prepare-deployment, approve-deployments]
     permissions:
       id-token: write
     steps:
