@@ -15,16 +15,16 @@ on:
           - qa
           - sandbox-alpha
           - sandbox-beta
-      db_snapshot_arn:
+      db-snapshot-arn:
         description: ARN of the DB snapshot to use (optional)
         required: false
         type: string
-      egress_cidr:
+      egress-cidr:
         description: CIDR blocks to allow egress traffic.
         type: string
         required: true
         default: "[]"
-      take_db_snapshot:
+      take-db-snapshot:
         description: Take a new DB snapshot before creating the environment
         type: boolean
         default: false
@@ -56,13 +56,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
       - name: Assume DB Snapshot role
-        if: inputs.take_db_snapshot
-        uses: aws-actions/configure-aws-credentials@v4
+        if: inputs.take-db-snapshot
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.db_snapshot_role }}
           aws-region: eu-west-2
       - name: Take DB snapshot
-        if: inputs.take_db_snapshot
+        if: inputs.take-db-snapshot
         run: |
           set -e
           snapshot_identifier=snapshot-for-data-replication-$(date +"%Y-%m-%d-%H-%M-%S")
@@ -71,15 +71,15 @@ jobs:
           aws rds wait db-cluster-snapshot-available --db-cluster-snapshot-identifier $snapshot_identifier
           echo "New snapshot is now available"
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
-      - name: get latest snapshot
+      - name: Get latest snapshot
         id: get-latest-snapshot
         run: |
           set -e
-          if [ -z "${{ inputs.db_snapshot_arn }}" ]; then
+          if [ -z "${{ inputs.db-snapshot-arn }}" ]; then
               echo "No snapshot ARN provided, fetching the latest snapshot"
               SNAPSHOT_ARN=$(aws rds describe-db-cluster-snapshots \
               --query "DBClusterSnapshots[?DBClusterIdentifier=='mavis-${{ inputs.environment }}'].[DBClusterSnapshotArn, SnapshotCreateTime]" \
@@ -90,8 +90,8 @@ jobs:
                   exit 1
               fi
           else
-              echo "Using provided snapshot ARN: ${{ inputs.db_snapshot_arn }}"
-              SNAPSHOT_ARN="${{ inputs.db_snapshot_arn }}"
+              echo "Using provided snapshot ARN: ${{ inputs.db-snapshot-arn }}"
+              SNAPSHOT_ARN="${{ inputs.db-snapshot-arn }}"
           fi
           echo "Using snapshot ARN: $SNAPSHOT_ARN"
           echo "SNAPSHOT_ARN=$SNAPSHOT_ARN" >> $GITHUB_OUTPUT
@@ -110,14 +110,13 @@ jobs:
     env:
       SNAPSHOT_ARN: ${{ needs.prepare-db-replica.outputs.SNAPSHOT_ARN }}
       DB_SECRET_ARN: ${{ needs.prepare-db-replica.outputs.DB_SECRET_ARN || 'arn:aws:secretsmanager:eu-west-2:000000000000:secret:placeholder' }}
-      REPLACE_DB_CLUSTER: ${{ inputs.deployment_type == 'Deployment with DB recreation' }}
     permissions:
       id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
@@ -138,7 +137,7 @@ jobs:
           set -eo pipefail
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
 
-          CIDR_BLOCKS='${{ inputs.egress_cidr }}'
+          CIDR_BLOCKS='${{ inputs.egress-cidr }}'
           PLAN_ARGS=(
             "plan"
             "-var=db_secret_arn=${{ steps.get-db-secret-arn.outputs.DB_SECRET_ARN }}"
@@ -167,7 +166,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
