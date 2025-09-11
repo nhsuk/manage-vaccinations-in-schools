@@ -1,0 +1,28 @@
+<%= govuk_table do |table| %>
+  <% table.with_head do |head| %>
+    <% head.with_row do |row| %>
+      <% row.with_cell(text: "Vaccine") %>
+      <% row.with_cell(text: "Administered") %>
+      <% row.with_cell(text: "Default batch") %>
+    <% end %>
+  <% end %>
+
+  <% table.with_body do |body| %>
+    <% tally_results.each do |(vaccine_brand_name, tally_data)| %>
+      <% body.with_row do |row| %>
+        <% row.with_cell do %>
+          <%= vaccine_brand_name %>
+        <% end %>
+        <% row.with_cell do %>
+          <%= tally_data[:count] %>
+        <% end %>
+        <% row.with_cell do %>
+          <%= tally_data[:default_batch] || "Not set" %>
+          <% if tally_data[:default_batch] %>
+            <%= link_to "Change", batch_session_record_path(session, tally_data[:programme], tally_data[:vaccine_method]) %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
