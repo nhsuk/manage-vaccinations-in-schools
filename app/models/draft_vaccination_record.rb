@@ -132,8 +132,7 @@ class DraftVaccinationRecord
 
   def batch
     return nil if batch_id.nil?
-
-    BatchPolicy::Scope.new(@current_user, Batch).resolve.find(batch_id)
+    Batch.find(batch_id)
   end
 
   def batch=(value)
@@ -151,7 +150,6 @@ class DraftVaccinationRecord
 
   def patient
     return nil if patient_id.nil?
-
     Patient.find(patient_id)
   end
 
@@ -161,7 +159,6 @@ class DraftVaccinationRecord
 
   def performed_by_user
     return nil if performed_by_user_id.nil?
-
     User.find(performed_by_user_id)
   end
 
