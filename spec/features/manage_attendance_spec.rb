@@ -201,7 +201,7 @@ describe "Manage attendance" do
   end
 
   def and_i_go_to_a_patient
-    click_link Patient.where.missing(:session_attendances).first.full_name
+    click_link Patient.where.missing(:attendance_records).first.full_name
   end
 
   def then_the_patient_is_not_registered_yet

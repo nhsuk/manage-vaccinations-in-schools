@@ -55,7 +55,7 @@ FactoryBot.define do
     trait :in_attendance do
       after(:create) do |patient_session|
         create(
-          :session_attendance,
+          :attendance_record,
           :present,
           patient: patient_session.patient,
           session: patient_session.session

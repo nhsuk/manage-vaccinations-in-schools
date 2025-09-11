@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class StatusGenerator::Registration
-  def initialize(patient:, session:, session_attendance:, vaccination_records:)
+  def initialize(patient:, session:, attendance_record:, vaccination_records:)
     @patient = patient
     @session = session
-    @session_attendance = session_attendance
+    @attendance_record = attendance_record
     @vaccination_records = vaccination_records
   end
 
@@ -22,7 +22,7 @@ class StatusGenerator::Registration
 
   private
 
-  attr_reader :patient, :session, :session_attendance, :vaccination_records
+  attr_reader :patient, :session, :attendance_record, :vaccination_records
 
   delegate :academic_year, to: :session
 
@@ -37,10 +37,10 @@ class StatusGenerator::Registration
   end
 
   def status_should_be_attending?
-    session_attendance&.attending
+    attendance_record&.attending
   end
 
   def status_should_be_not_attending?
-    session_attendance&.attending == false
+    attendance_record&.attending == false
   end
 end

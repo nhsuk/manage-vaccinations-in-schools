@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SessionAttendancePolicy < ApplicationPolicy
+class AttendanceRecordPolicy < ApplicationPolicy
   def create?
     !already_vaccinated? && !was_seen_by_nurse?
   end
@@ -11,8 +11,8 @@ class SessionAttendancePolicy < ApplicationPolicy
 
   private
 
-  delegate :patient, :session_date, to: :record
-  delegate :session, to: :session_date
+  delegate :patient, :location_id, :date, :session, to: :record
+
   delegate :academic_year, to: :session
 
   def already_vaccinated?
@@ -26,8 +26,8 @@ class SessionAttendancePolicy < ApplicationPolicy
   def was_seen_by_nurse?
     VaccinationRecord.kept.exists?(
       patient:,
-      session:,
-      performed_at: session_date.value.all_day
+      location_id:,
+      performed_at: date.all_day
     )
   end
 end

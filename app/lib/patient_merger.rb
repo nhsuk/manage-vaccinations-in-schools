@@ -24,6 +24,10 @@ class PatientMerger
 
       patient_to_destroy.archive_reasons.destroy_all
 
+      patient_to_destroy.attendance_records.update_all(
+        patient_id: patient_to_keep.id
+      )
+
       patient_to_destroy.consent_notifications.update_all(
         patient_id: patient_to_keep.id
       )
@@ -60,10 +64,6 @@ class PatientMerger
       end
 
       patient_to_destroy.school_move_log_entries.update_all(
-        patient_id: patient_to_keep.id
-      )
-
-      patient_to_destroy.session_attendances.update_all(
         patient_id: patient_to_keep.id
       )
 

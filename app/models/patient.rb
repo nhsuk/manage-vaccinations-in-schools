@@ -61,6 +61,7 @@ class Patient < ApplicationRecord
 
   has_many :access_log_entries
   has_many :archive_reasons
+  has_many :attendance_records
   has_many :changesets, class_name: "PatientChangeset"
   has_many :consent_notifications
   has_many :consent_statuses
@@ -75,7 +76,6 @@ class Patient < ApplicationRecord
   has_many :registration_statuses
   has_many :school_move_log_entries
   has_many :school_moves
-  has_many :session_attendances
   has_many :session_notifications
   has_many :triage_statuses
   has_many :triages

@@ -286,7 +286,7 @@ Rails.application.routes.draw do
               only: [],
               module: :patient_sessions do
       resource :activity, only: %i[show create]
-      resource :session_attendance, path: "attendance", only: %i[edit update]
+      resource :attendance, only: %i[edit update]
 
       resources :programmes, path: "", param: :type, only: :show do
         get "record-already-vaccinated"

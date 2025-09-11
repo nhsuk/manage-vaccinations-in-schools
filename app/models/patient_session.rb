@@ -70,9 +70,9 @@ class PatientSession < ApplicationRecord
           source: :registration_statuses,
           class_name: "Patient::RegistrationStatus"
 
-  has_many :session_attendances,
+  has_many :attendance_records,
            -> { where(patient_id: it.patient_id) },
-           through: :session
+           through: :location
 
   has_many :session_notifications,
            -> { where(session_id: it.session_id) },
@@ -299,7 +299,7 @@ class PatientSession < ApplicationRecord
         -> do
           includes(
             :gillick_assessments,
-            :session_attendances,
+            :attendance_records,
             :vaccination_records
           ).find_each(&:destroy_if_safe!)
         end
@@ -312,7 +312,7 @@ class PatientSession < ApplicationRecord
 
   def safe_to_destroy?
     vaccination_records.empty? && gillick_assessments.empty? &&
-      session_attendances.none?(&:attending?)
+      attendance_records.none?(&:attending?)
   end
 
   def destroy_if_safe!
@@ -320,15 +320,6 @@ class PatientSession < ApplicationRecord
   end
 
   def programmes = session.programmes_for(patient:, academic_year:)
-
-  def todays_attendance
-    if (session_date = session.session_dates.today.first)
-      patient
-        .session_attendances
-        .includes(:patient, session_date: { session: :programmes })
-        .find_or_initialize_by(session_date:)
-    end
-  end
 
   def next_activity(programme:)
     if patient.vaccination_status(programme:, academic_year:).vaccinated?
