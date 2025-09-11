@@ -4,11 +4,7 @@ class VaccinationReport
   include RequestSessionPersistable
   include WizardStepConcern
 
-  def self.file_formats(programme)
-    %w[careplus mavis].tap do
-      it << "systm_one" if programme.hpv? || programme.flu?
-    end
-  end
+  FILE_FORMATS = %w[careplus mavis systm_one].freeze
 
   attribute :date_from, :date
   attribute :date_to, :date
@@ -26,10 +22,7 @@ class VaccinationReport
   end
 
   on_wizard_step :file_format, exact: true do
-    validates :file_format,
-              inclusion: {
-                in: -> { VaccinationReport.file_formats(it.programme) }
-              }
+    validates :file_format, inclusion: FILE_FORMATS
   end
 
   def programme
