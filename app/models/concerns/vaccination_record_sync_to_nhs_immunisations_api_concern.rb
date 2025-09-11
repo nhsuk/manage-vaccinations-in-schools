@@ -9,9 +9,15 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
 
     scope :sync_all_to_nhs_immunisations_api,
           -> do
-            syncable_to_nhs_immunisations_api.find_each(
-              &:sync_to_nhs_immunisations_api
+            return unless Flipper.enabled?(:imms_api_sync_job)
+
+            ids = syncable_to_nhs_immunisations_api.pluck(:id)
+
+            VaccinationRecord.where(id: ids).update_all(
+              nhs_immunisations_api_sync_pending_at: Time.current
             )
+
+            SyncVaccinationRecordToNHSJob.perform_bulk(ids.zip)
           end
   end
 
@@ -39,13 +45,12 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
   end
 
   def sync_to_nhs_immunisations_api
-    return unless Flipper.enabled?(:imms_api_sync_job)
-    return unless syncable_to_nhs_immunisations_api?
+    unless Flipper.enabled?(:imms_api_sync_job) &&
+             syncable_to_nhs_immunisations_api?
+      return
+    end
 
-    # The immunisations api module checks if a sync is still pending using this
-    # timestamp.
     update!(nhs_immunisations_api_sync_pending_at: Time.current)
-
     SyncVaccinationRecordToNHSJob.perform_async(id)
   end
 end
