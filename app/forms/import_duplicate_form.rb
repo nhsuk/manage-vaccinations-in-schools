@@ -35,10 +35,23 @@ class ImportDuplicateForm
   end
 
   def apply_changes_options
-    can_keep_both? ? %w[apply discard keep_both] : %w[apply discard]
+    if can_apply?
+      can_keep_both? ? %w[apply discard keep_both] : %w[apply discard]
+    else
+      %w[discard]
+    end
+  end
+
+  def can_apply?
+    !(
+      object.is_a?(VaccinationRecord) &&
+        object.sourced_from_nhs_immunisations_api?
+    )
   end
 
   def apply_pending_changes!
+    return unless can_apply?
+
     object.patient.apply_pending_changes! if object.respond_to?(:patient)
 
     object.apply_pending_changes!
@@ -51,7 +64,7 @@ class ImportDuplicateForm
   end
 
   def keep_both_changes!
-    object.apply_pending_changes_to_new_record! if can_keep_both?
+    object.apply_pending_changes_to_new_record! if can_keep_both? && can_apply?
   end
 
   def reset_count!
