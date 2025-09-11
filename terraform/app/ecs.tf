@@ -73,21 +73,12 @@ resource "aws_service_discovery_service" "web" {
 module "web_service" {
   source = "./modules/ecs_service"
   task_config = {
-    environment = concat(
-      local.task_envs, [{
-        name  = "MAVIS__REPORTING_API__CLIENT_APP__CLIENT_ID"
-        value = aws_secretsmanager_secret.jwt_sign.name
-      }]
-    )
+    environment = local.task_envs
     secrets = concat(
       local.task_secrets,
       [{
         name      = "ENV_VARS"
         valueFrom = aws_ssm_parameter.cloud_variables["web"].arn
-        },
-        {
-          name      = "MAVIS__REPORTING_API__CLIENT_APP__SECRET"
-          valueFrom = aws_secretsmanager_secret.jwt_sign.arn
         }
     ])
     cpu                  = 1024
@@ -207,10 +198,6 @@ module "reporting_service" {
       {
         name  = "VALKEY_PORT"
         value = aws_elasticache_serverless_cache.reporting_service.endpoint[0].port
-      },
-      {
-        name  = "CLIENT_ID"
-        value = aws_secretsmanager_secret.jwt_sign.name
       }
     ]
     secrets = [
@@ -219,12 +206,8 @@ module "reporting_service" {
         valueFrom = aws_ssm_parameter.cloud_variables["reporting"].arn
       },
       {
-        name      = "CLIENT_SECRET"
-        valueFrom = aws_secretsmanager_secret.jwt_sign.arn
-      },
-      {
-        name      = "SECRET_KEY"
-        valueFrom = aws_secretsmanager_secret.reporting_flask.arn
+        name      = "MISE_SOPS_AGE_KEY"
+        valueFrom = var.mise_sops_age_key_path
       }
     ]
     cpu                  = 1024

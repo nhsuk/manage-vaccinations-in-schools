@@ -9,7 +9,8 @@ resource_name = {
   lb_security_group        = "mavis-training-PublicHTTPLoadBalancerSecurityGroup-L8GOGS04ARYI"
   cloudwatch_vpc_log_group = "mavis-training-FlowLogs"
 }
-rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
+rails_master_key_path  = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
+mise_sops_age_key_path = "/copilot/mavis/secrets/STAGING_MISE_SOPS_AGE_KEY"
 
 http_hosts = {
   MAVIS__HOST                        = "training.manage-vaccinations-in-schools.nhs.uk"

@@ -94,10 +94,10 @@ variable "vpc_log_retention_days" {
   nullable    = false
 }
 
-variable "reporting_flask_secret_version" {
-  type        = number
-  default     = 1
-  description = "Version of the secret used by the reporting service to sign cookies, increment this value if the secret is changed."
+variable "mise_sops_age_key_path" {
+  type        = string
+  default     = "/mavis/development/credentials/MISE_SOPS_AGE_KEY"
+  description = "The path of the System Manager Parameter Store secure string for the MISE SOPS age key."
   nullable    = false
 }
 

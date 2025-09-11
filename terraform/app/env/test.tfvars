@@ -6,7 +6,8 @@ resource_name = {
   lb_security_group        = "mavis-test-PublicHTTPLoadBalancerSecurityGroup-15LE48D6JYPML"
   cloudwatch_vpc_log_group = "mavis-test-FlowLogs"
 }
-rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
+rails_master_key_path  = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
+mise_sops_age_key_path = "/copilot/mavis/secrets/STAGING_MISE_SOPS_AGE_KEY"
 
 # Normally this is 31, but this gives us 2 weeks of additional testing.
 academic_year_number_of_preparation_days = 45
