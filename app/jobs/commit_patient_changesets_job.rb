@@ -94,7 +94,8 @@ class CommitPatientChangesetsJob < ApplicationJob
   end
 
   def import_school_moves(changesets, import)
-    school_moves = changesets.map(&:school_move).compact
+    school_moves = changesets.map(&:school_move).compact.uniq(&:patient)
+
     auto_confirmable_school_moves, importable_school_moves =
       school_moves.partition { has_auto_confirmable_school_move?(it, import) }
 

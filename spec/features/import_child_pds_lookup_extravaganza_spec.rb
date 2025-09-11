@@ -441,7 +441,7 @@ describe "Import child records" do
 
   def then_i_should_see_the_import_failed
     expect(page).to have_content("Too many records could not be matched")
-    expect(page).to have_content("11 unmatched records")
+    expect(page).to have_content("12 unmatched records")
   end
 
   def when_i_upload_a_valid_file
