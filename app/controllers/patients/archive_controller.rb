@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Patients::ArchiveController < Patients::BaseController
-  before_action :set_archive_reason
-
   def new
     @form = PatientArchiveForm.new
   end
@@ -10,8 +8,8 @@ class Patients::ArchiveController < Patients::BaseController
   def create
     @form =
       PatientArchiveForm.new(
-        archive_reason: @archive_reason,
         current_user:,
+        patient: @patient,
         **patient_archive_form_params
       )
 
@@ -26,12 +24,6 @@ class Patients::ArchiveController < Patients::BaseController
   end
 
   private
-
-  def set_archive_reason
-    @archive_reason = ArchiveReason.find_or_create_by(team:, patient: @patient)
-  end
-
-  def team = current_user.selected_team
 
   def patient_archive_form_params
     params.expect(patient_archive_form: %i[nhs_number type other_details])
