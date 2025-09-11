@@ -2,8 +2,13 @@
 
 class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   erb_template <<-ERB
-    <%= render AppCardComponent.new(heading_level: 4, compact: true) do |card| %>
-      <% card.with_heading { link_to(patient.full_name_with_known_as, patient_path) } %>
+    <% card_link = @context != :register ? patient_path : nil %>
+    <%= render AppCardComponent.new(link_to: card_link, heading_level: 4, compact: true) do |card| %>
+      <% if card_link.nil? %>
+        <% card.with_heading { link_to(patient.full_name_with_known_as, patient_path) } %>
+      <% else %>
+        <% card.with_heading { patient.full_name_with_known_as } %>
+      <% end %>
 
       <%= govuk_summary_list(actions: false) do |summary_list|
             summary_list.with_row do |row|
