@@ -43,7 +43,7 @@ describe "Patient invalidation deletes vaccination record from API" do
     @stubbed_post_request =
       stub_immunisations_api_post(uuid: @immunisation_uuid)
 
-    @vaccination_record.sync_to_nhs_immunisations_api
+    @vaccination_record.sync_to_nhs_immunisations_api!
     Sidekiq::Job.drain_all
 
     expect(@stubbed_post_request).to have_been_requested

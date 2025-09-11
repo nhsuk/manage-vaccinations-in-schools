@@ -19,6 +19,10 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
 
             SyncVaccinationRecordToNHSJob.perform_bulk(ids.zip)
           end
+
+    before_save :touch_nhs_immunisations_api_sync_pending_at,
+                if: :changes_need_to_be_synced_to_nhs_immunisations_api?
+    after_commit :queue_sync_to_nhs_immunisations_api
   end
 
   def syncable_to_nhs_immunisations_api? = recorded_in_service?
@@ -44,13 +48,41 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
     :pending
   end
 
-  def sync_to_nhs_immunisations_api
-    unless Flipper.enabled?(:imms_api_sync_job) &&
-             syncable_to_nhs_immunisations_api?
+  def changes_need_to_be_synced_to_nhs_immunisations_api?
+    changes.present? && !nhs_immunisations_api_etag_changed? &&
+      !nhs_immunisations_api_sync_pending_at_changed? &&
+      !nhs_immunisations_api_synced_at_changed? &&
+      !nhs_immunisations_api_id_changed?
+  end
+
+  def touch_nhs_immunisations_api_sync_pending_at
+    return unless Flipper.enabled?(:imms_api_sync_job)
+    return unless syncable_to_nhs_immunisations_api?
+
+    self.nhs_immunisations_api_sync_pending_at = Time.current
+  end
+
+  def queue_sync_to_nhs_immunisations_api
+    return unless Flipper.enabled?(:imms_api_sync_job)
+    return unless syncable_to_nhs_immunisations_api?
+    return if nhs_immunisations_api_sync_pending_at.nil?
+
+    if nhs_immunisations_api_synced_at &&
+         (
+           nhs_immunisations_api_sync_pending_at <
+             nhs_immunisations_api_synced_at
+         )
       return
     end
 
-    update!(nhs_immunisations_api_sync_pending_at: Time.current)
     SyncVaccinationRecordToNHSJob.perform_async(id)
+  end
+
+  def sync_to_nhs_immunisations_api!
+    touch_nhs_immunisations_api_sync_pending_at
+    save!
+
+    # The after_commit callback queues the job to actually perform the sync
+    # with the API.
   end
 end
