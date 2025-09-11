@@ -23,4 +23,3 @@ good_job_replicas        = 1
 valkey_node_type          = "cache.t4g.micro"
 valkey_log_retention_days = 3
 valkey_failover_enabled   = false
-sidekiq_replicas          = 1
