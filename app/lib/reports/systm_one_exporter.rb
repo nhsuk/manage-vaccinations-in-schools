@@ -17,6 +17,9 @@ class Reports::SystmOneExporter
       2 => "Y19a5",
       3 => "Y19a6"
     },
+    "MenQuadfi" => {
+      nil => "YbXKi"
+    },
     "Fluenz" => {
       1 => "YcjAC"
     },
