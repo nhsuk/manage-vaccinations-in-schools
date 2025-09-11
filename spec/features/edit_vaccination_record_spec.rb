@@ -345,6 +345,9 @@ describe "Edit vaccination record" do
 
   def then_i_see_the_edit_vaccination_record_page
     expect(page).to have_content("Edit vaccination record")
+    expect(page).not_to have_content(
+      "The vaccine given does not match that determined by the child’s consent or triage outcome"
+    )
   end
 
   def when_i_click_back
