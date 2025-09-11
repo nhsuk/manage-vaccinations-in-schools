@@ -48,6 +48,10 @@ describe "Flu vaccination" do
     then_i_see_the_vaccination_form_for_nasal_spray
     and_i_see_the_option_to_administer_injection
 
+    when_i_dont_confirm_identity_check_but_dont_enter_who
+    then_i_see_the_vaccination_form_for_nasal_spray
+    and_i_see_the_option_to_administer_injection
+
     when_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray(
       check_injection_first: true
     )
@@ -208,11 +212,18 @@ describe "Flu vaccination" do
     )
   end
 
+  def when_i_dont_confirm_identity_check_but_dont_enter_who
+    choose "No, it was confirmed by somebody else"
+    choose "No"
+    click_on "Continue"
+  end
+
   def when_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray(
     check_injection_first: false
   )
     within all("section")[0] do
       check "I have checked that the above statements are true"
+      choose "Yes" # confirmed identity
     end
 
     # Check that I can change my mind injection to nasal.

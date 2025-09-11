@@ -62,6 +62,8 @@ class VaccinateForm
 
   def delivery_site
     if vaccine_method.present?
+      return nil if vaccine_method == "none"
+
       available_delivery_sites =
         Vaccine::AVAILABLE_DELIVERY_SITES.fetch(vaccine_method)
 
