@@ -35,14 +35,14 @@ module MavisCLI
         programmes = find_programmes(teams, programme)
         academic_year_value = academic_year&.to_i || AcademicYear.current
 
-        service =
+        @service =
           ::Stats::ConsentsBySchool.new(
             teams: teams,
             programmes: programmes,
             academic_year: academic_year_value
           )
 
-        results = service.call
+        results = @service.call
 
         output_results(results)
       end
@@ -118,6 +118,7 @@ module MavisCLI
           csv << build_programme_row(columns)
           csv << build_cohort_row(sessions, columns)
           csv << build_consent_date_row(sessions, columns)
+          csv << build_first_session_date_row(sessions, columns)
 
           by_days_data.keys.sort.each do |day|
             csv << build_data_row(day, columns, by_days_data[day])
@@ -143,15 +144,25 @@ module MavisCLI
       def build_consent_date_row(sessions, columns)
         ["Date consent requests sent"] +
           columns.map do |location, programme|
-            sessions
-              .find do |session|
-                session.location == location &&
-                  session
-                    .session_programmes
-                    .map(&:programme)
-                    .include?(programme)
-              end
-              &.send_consent_requests_at
+            session = find_session_for_column(sessions, location, programme)
+            next nil unless session
+
+            @service
+              .send(:first_consent_notification_date, session, programme)
+              &.to_date
+              &.iso8601
+          end
+      end
+
+      def build_first_session_date_row(sessions, columns)
+        ["First session date"] +
+          columns.map do |location, programme|
+            session = find_session_for_column(sessions, location, programme)
+            next nil unless session
+
+            @service
+              .send(:first_session_date_after_consent, session, programme)
+              &.to_date
               &.iso8601
           end
       end
@@ -159,9 +170,15 @@ module MavisCLI
       def build_data_row(label, columns, data)
         [label] +
           columns.map do |location, programme|
-            # Look up data using IDs since that's how it's stored now
             data.fetch([location.id, programme.id], 0)
           end
+      end
+
+      def find_session_for_column(sessions, location, programme)
+        sessions.find do |session|
+          session.location == location &&
+            session.session_programmes.map(&:programme).include?(programme)
+        end
       end
 
       def cohort_count_for_column(sessions, location, programme)
