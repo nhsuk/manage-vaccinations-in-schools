@@ -1,0 +1,38 @@
+@use "sass:color";
+@use "../vendor/nhsuk-frontend" as *;
+
+.app-sticky-navigation {
+  background: nhsuk-colour("grey-5");
+  border-bottom: 1px solid $nhsuk-border-colour;
+
+  @include nhsuk-responsive-margin(5, "bottom");
+
+  .app-secondary-navigation {
+    margin: 0;
+  }
+
+  .app-secondary-navigation__list {
+    box-shadow: none;
+
+    @include nhsuk-media-query($until: tablet) {
+      margin-left: #{$nhsuk-gutter-half * -1};
+    }
+  }
+
+  &[data-app-sticky-init] {
+    left: 0;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    position: sticky;
+    right: 0;
+    top: 0;
+    width: 100vw;
+    z-index: 999;
+  }
+
+  &[data-stuck="true"] {
+    border-bottom-color: nhsuk-colour("grey-3");
+    box-shadow: 0 $nhsuk-border-width 0
+      color.scale(nhsuk-colour("grey-3"), $alpha: -50%);
+  }
+}

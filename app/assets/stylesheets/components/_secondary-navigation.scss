@@ -13,13 +13,6 @@
   }
 }
 
-.app-secondary-navigation--sticky {
-  background-color: nhsuk-colour("grey-5");
-  position: sticky;
-  top: 0;
-  z-index: 99;
-}
-
 .app-secondary-navigation__link {
   display: block;
   padding: nhsuk-spacing(2) $nhsuk-gutter-half;
