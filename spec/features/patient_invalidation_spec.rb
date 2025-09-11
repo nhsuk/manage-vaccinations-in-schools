@@ -33,8 +33,8 @@ describe "Patient invalidation deletes vaccination record from API" do
   end
 
   def and_the_feature_flags_are_enabled
-    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
-    Flipper.enable(:immunisations_fhir_api_integration)
+    Flipper.enable(:imms_api_sync_job)
+    Flipper.enable(:imms_api_integration)
   end
 
   def and_the_vaccination_record_has_been_sent_to_the_api
@@ -43,8 +43,8 @@ describe "Patient invalidation deletes vaccination record from API" do
     @stubbed_post_request =
       stub_immunisations_api_post(uuid: @immunisation_uuid)
 
-    @vaccination_record.sync_to_nhs_immunisations_api
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    @vaccination_record.sync_to_nhs_immunisations_api!
+    Sidekiq::Job.drain_all
 
     expect(@stubbed_post_request).to have_been_requested
 
@@ -72,7 +72,7 @@ describe "Patient invalidation deletes vaccination record from API" do
     @stubbed_delete_request =
       stub_immunisations_api_delete(uuid: @immunisation_uuid)
 
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
 
     expect(@stubbed_delete_request).to have_been_requested
   end

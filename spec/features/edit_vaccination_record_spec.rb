@@ -8,7 +8,7 @@ describe "Edit vaccination record" do
   scenario "User edits a new vaccination record" do
     given_i_am_signed_in
     and_an_administered_vaccination_record_exists
-    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    and_imms_api_sync_job_feature_is_enabled
 
     when_i_go_to_the_vaccination_record_for_the_patient
     then_i_should_see_the_vaccination_record
@@ -96,7 +96,7 @@ describe "Edit vaccination record" do
 
   scenario "Edit outcome to vaccinated" do
     given_i_am_signed_in
-    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    and_imms_api_sync_job_feature_is_enabled
     and_a_not_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
 
@@ -128,7 +128,7 @@ describe "Edit vaccination record" do
 
   scenario "Edit outcome to not vaccinated" do
     given_i_am_signed_in
-    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    and_imms_api_sync_job_feature_is_enabled
     and_an_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
 
@@ -267,14 +267,12 @@ describe "Edit vaccination record" do
         programme: @programme
       )
 
-    if Flipper.enabled?(:immunisations_fhir_api_integration)
-      perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
-    end
+    Sidekiq::Job.drain_all if Flipper.enabled?(:imms_api_integration)
   end
 
-  def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
-    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
-    Flipper.enable(:immunisations_fhir_api_integration)
+  def and_imms_api_sync_job_feature_is_enabled
+    Flipper.enable(:imms_api_sync_job)
+    Flipper.enable(:imms_api_integration)
 
     uuid = Random.uuid
     @stubbed_post_request = stub_immunisations_api_post(uuid:)
@@ -307,8 +305,9 @@ describe "Edit vaccination record" do
         programme: @programme
       )
 
-    if Flipper.enabled?(:immunisations_fhir_api_integration)
-      perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    if Flipper.enabled?(:imms_api_integration) &&
+         Flipper.enabled?(:imms_api_sync_job)
+      Sidekiq::Job.drain_all
     end
   end
 
@@ -511,12 +510,12 @@ describe "Edit vaccination record" do
   end
 
   def and_the_vaccination_record_is_synced_to_nhs
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
     expect(@stubbed_post_request).to have_been_requested
   end
 
   def and_the_vaccination_record_is_deleted_from_nhs
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
     expect(@stubbed_delete_request).to have_been_requested
   end
 end

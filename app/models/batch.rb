@@ -10,7 +10,7 @@
 #  name        :string           not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
-#  team_id     :bigint           not null
+#  team_id     :bigint
 #  vaccine_id  :bigint           not null
 #
 # Indexes
@@ -28,7 +28,7 @@ class Batch < ApplicationRecord
 
   audited associated_with: :vaccine
 
-  belongs_to :team
+  belongs_to :team, optional: true
   belongs_to :vaccine
 
   has_and_belongs_to_many :immunisation_imports

@@ -1,29 +1,16 @@
 # frozen_string_literal: true
 
 describe "Delegation" do
-  after { given_the_feature_flag_is_disabled }
-
-  scenario "feature flag off and in a flu session" do
-    given_the_feature_flag_is_disabled
-    and_a_flu_session_exists
+  scenario "in a HPV session" do
+    given_an_hpv_session_exists
 
     when_i_visit_the_session_as_a_nurse
     and_i_go_to_the_edit_page
     then_i_see_nothing_about_delegation
   end
 
-  scenario "feature flag on and in a HPV session" do
-    given_the_feature_flag_is_enabled
-    and_an_hpv_session_exists
-
-    when_i_visit_the_session_as_a_nurse
-    and_i_go_to_the_edit_page
-    then_i_see_nothing_about_delegation
-  end
-
-  scenario "feature flag on and in a flu session" do
-    given_the_feature_flag_is_enabled
-    and_a_flu_session_exists
+  scenario "in a flu session" do
+    given_a_flu_session_exists
 
     when_i_visit_the_session_as_a_nurse
     and_i_go_to_the_edit_page
@@ -33,15 +20,7 @@ describe "Delegation" do
     then_i_see_the_options_are_enabled
   end
 
-  def given_the_feature_flag_is_enabled
-    Flipper.enable(:delegation)
-  end
-
-  def given_the_feature_flag_is_disabled
-    Flipper.disable(:delegation)
-  end
-
-  def and_a_flu_session_exists
+  def given_a_flu_session_exists
     @programme = create(:programme, :flu)
     @team = create(:team, programmes: [@programme])
     @nurse = create(:nurse, teams: [@team])
@@ -49,7 +28,7 @@ describe "Delegation" do
     @session = create(:session, programmes: [@programme], team: @team)
   end
 
-  def and_an_hpv_session_exists
+  def given_an_hpv_session_exists
     @programme = create(:programme, :hpv)
     @team = create(:team, programmes: [@programme])
     @nurse = create(:nurse, teams: [@team])

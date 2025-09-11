@@ -359,7 +359,7 @@ class ImmunisationImportRow
         Batch.create_with(archived_at: Time.current).find_or_create_by!(
           expiry: batch_expiry&.to_date,
           name: batch_name.to_s,
-          team:,
+          team_id: session&.team_id,
           vaccine:
         )
       end

@@ -345,7 +345,7 @@ describe ImmunisationImport do
       )
     end
 
-    before { Flipper.enable :enqueue_sync_vaccination_records_to_nhs }
+    before { Flipper.enable :imms_api_sync_job }
 
     let(:session) { create(:session, programmes:) }
     let(:vaccination_record) do
@@ -355,10 +355,10 @@ describe ImmunisationImport do
     it "syncs the flu vaccination record to the NHS Immunisations API" do
       expect {
         immunisation_import.send(:postprocess_rows!)
-      }.to have_enqueued_job(SyncVaccinationRecordToNHSJob)
-        .with(vaccination_record)
+      }.to enqueue_sidekiq_job(SyncVaccinationRecordToNHSJob)
+        .with(vaccination_record.id)
         .once
-        .on_queue(:immunisation_api)
+        .on("immunisations_api")
     end
   end
 end

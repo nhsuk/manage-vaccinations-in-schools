@@ -331,6 +331,55 @@ describe AppVaccinationRecordSummaryComponent do
     end
   end
 
+  describe "synced with NHS England row" do
+    after do
+      Flipper.disable(:imms_api_integration)
+      Flipper.disable(:imms_api_sync_job)
+    end
+
+    context "when the imms_api_integration and imms_api_sync_job feature flags are enabled" do
+      before do
+        Flipper.enable(:imms_api_integration)
+        Flipper.enable(:imms_api_sync_job)
+      end
+
+      it do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Synced with NHS England?"
+        )
+      end
+    end
+
+    context "when the imms_api_integration feature flag is disabled" do
+      before do
+        Flipper.disable(:imms_api_integration)
+        Flipper.enable(:imms_api_sync_job)
+      end
+
+      it do
+        expect(rendered).not_to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Synced with NHS England?"
+        )
+      end
+    end
+
+    context "when the imms_api_sync_job feature flag is disabled" do
+      before do
+        Flipper.enable(:imms_api_integration)
+        Flipper.disable(:imms_api_sync_job)
+      end
+
+      it do
+        expect(rendered).not_to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Synced with NHS England?"
+        )
+      end
+    end
+  end
+
   describe "with pending changes" do
     let(:component) do
       described_class.new(

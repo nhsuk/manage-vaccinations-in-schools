@@ -22,3 +22,7 @@ pds:
 
 splunk:
   enabled: false
+
+reporting_api:
+  client_app:
+    root_url: http://localhost:4001

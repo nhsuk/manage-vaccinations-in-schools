@@ -34,28 +34,31 @@ resource "aws_db_subnet_group" "core" {
 }
 
 resource "aws_rds_cluster" "core" {
-  cluster_identifier              = local.rds_cluster
-  engine                          = "aurora-postgresql"
-  engine_mode                     = "provisioned"
-  engine_version                  = "16.8"
-  database_name                   = "manage_vaccinations"
-  master_username                 = "postgres"
-  backup_retention_period         = var.backup_retention_period
-  skip_final_snapshot             = !local.is_production
-  final_snapshot_identifier       = "${local.rds_cluster}-final-snapshot"
-  db_subnet_group_name            = aws_db_subnet_group.core.name
-  vpc_security_group_ids          = [aws_security_group.rds_security_group.id]
-  kms_key_id                      = aws_kms_key.rds_cluster.arn
-  storage_encrypted               = true
-  manage_master_user_password     = true
-  deletion_protection             = true
-  allow_major_version_upgrade     = true
-  preferred_backup_window         = "01:00-01:30"
-  preferred_maintenance_window    = "sun:02:30-sun:03:00"
-  db_cluster_parameter_group_name = "default.aurora-postgresql16"
-  monitoring_interval             = var.enable_enhanced_db_monitoring ? 30 : 0
-  monitoring_role_arn             = var.enable_enhanced_db_monitoring ? aws_iam_role.enhanced_db_monitoring[0].arn : null
-  enabled_cloudwatch_logs_exports = ["postgresql", "instance"]
+  cluster_identifier                    = local.rds_cluster
+  engine                                = "aurora-postgresql"
+  engine_mode                           = "provisioned"
+  engine_version                        = "16.8"
+  database_name                         = "manage_vaccinations"
+  master_username                       = "postgres"
+  backup_retention_period               = var.backup_retention_period
+  skip_final_snapshot                   = !local.is_production
+  final_snapshot_identifier             = "${local.rds_cluster}-final-snapshot"
+  db_subnet_group_name                  = aws_db_subnet_group.core.name
+  vpc_security_group_ids                = [aws_security_group.rds_security_group.id]
+  kms_key_id                            = aws_kms_key.rds_cluster.arn
+  storage_encrypted                     = true
+  manage_master_user_password           = true
+  deletion_protection                   = true
+  allow_major_version_upgrade           = true
+  preferred_backup_window               = "01:00-01:30"
+  preferred_maintenance_window          = "sun:02:30-sun:03:00"
+  db_cluster_parameter_group_name       = var.enable_enhanced_db_monitoring ? aws_rds_cluster_parameter_group.enhanced_monitoring[0].name : "default.aurora-postgresql16"
+  database_insights_mode                = var.enable_enhanced_db_monitoring ? "advanced" : "standard"
+  performance_insights_enabled          = var.enable_enhanced_db_monitoring
+  performance_insights_retention_period = var.enable_enhanced_db_monitoring ? 465 : 0
+  monitoring_interval                   = var.enable_enhanced_db_monitoring ? 30 : 0
+  monitoring_role_arn                   = var.enable_enhanced_db_monitoring ? aws_iam_role.enhanced_db_monitoring[0].arn : null
+  enabled_cloudwatch_logs_exports       = ["postgresql", "instance"]
 
   serverlessv2_scaling_configuration {
     max_capacity = var.max_aurora_capacity_units
@@ -88,6 +91,34 @@ resource "aws_rds_cluster_instance" "core" {
   promotion_tier       = each.value["promotion_tier"]
   monitoring_interval  = var.enable_enhanced_db_monitoring ? 30 : 0
   monitoring_role_arn  = var.enable_enhanced_db_monitoring ? aws_iam_role.enhanced_db_monitoring[0].arn : null
+}
+
+resource "aws_rds_cluster_parameter_group" "enhanced_monitoring" {
+  count       = var.enable_enhanced_db_monitoring ? 1 : 0
+  family      = "aurora-postgresql16"
+  name        = "enhanced-monitoring-group-${var.environment}"
+  description = "DB cluster parameter group for enhanced DB monitoring"
+
+  parameter {
+    name  = "aurora_compute_plan_id"
+    value = 1 # true
+  }
+  parameter {
+    name  = "aurora_stat_plans.minutes_until_recapture"
+    value = 5
+  }
+  parameter {
+    name  = "log_parameter_max_length"
+    value = 0
+  }
+  parameter {
+    name  = "log_min_duration_statement"
+    value = 1000
+  }
+  parameter {
+    name  = "log_line_prefix"
+    value = "%m:%r:%u@%d:[%p]:%l:%e:%s:%v:%x:%c:%q%a:"
+  }
 }
 
 resource "aws_iam_role" "enhanced_db_monitoring" {

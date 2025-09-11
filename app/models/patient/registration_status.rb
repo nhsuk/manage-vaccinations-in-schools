@@ -2,26 +2,28 @@
 
 # == Schema Information
 #
-# Table name: patient_session_registration_statuses
+# Table name: patient_registration_statuses
 #
-#  id                 :bigint           not null, primary key
-#  status             :integer          default("unknown"), not null
-#  patient_session_id :bigint           not null
+#  id         :bigint           not null, primary key
+#  status     :integer          default("unknown"), not null
+#  patient_id :bigint           not null
+#  session_id :bigint           not null
 #
 # Indexes
 #
-#  idx_on_patient_session_id_438fc21144                   (patient_session_id) UNIQUE
-#  index_patient_session_registration_statuses_on_status  (status)
+#  idx_on_patient_id_session_id_2ff02d8889            (patient_id,session_id) UNIQUE
+#  index_patient_registration_statuses_on_patient_id  (patient_id)
+#  index_patient_registration_statuses_on_session_id  (session_id)
+#  index_patient_registration_statuses_on_status      (status)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (patient_session_id => patient_sessions.id) ON DELETE => cascade
+#  fk_rails_...  (patient_id => patients.id) ON DELETE => cascade
+#  fk_rails_...  (session_id => sessions.id) ON DELETE => cascade
 #
-class PatientSession::RegistrationStatus < ApplicationRecord
-  belongs_to :patient_session
-
-  has_one :patient, through: :patient_session
-  has_one :session, through: :patient_session
+class Patient::RegistrationStatus < ApplicationRecord
+  belongs_to :patient
+  belongs_to :session
 
   has_many :vaccination_records,
            -> { kept.order(performed_at: :desc) },
@@ -49,7 +51,8 @@ class PatientSession::RegistrationStatus < ApplicationRecord
   def generator
     @generator ||=
       StatusGenerator::Registration.new(
-        patient_session:,
+        patient:,
+        session:,
         session_attendance:,
         vaccination_records:
       )

@@ -72,6 +72,7 @@ class Patient < ApplicationRecord
   has_many :patient_sessions
   has_many :pds_search_results
   has_many :pre_screenings
+  has_many :registration_statuses
   has_many :school_move_log_entries
   has_many :school_moves
   has_many :session_attendances
@@ -580,9 +581,7 @@ class Patient < ApplicationRecord
 
   def sync_vaccinations_to_nhs_immunisations_api
     if should_sync_vaccinations_to_nhs_immunisations_api?
-      vaccination_records.syncable_to_nhs_immunisations_api.find_each(
-        &:sync_to_nhs_immunisations_api
-      )
+      vaccination_records.sync_all_to_nhs_immunisations_api
     end
   end
 end

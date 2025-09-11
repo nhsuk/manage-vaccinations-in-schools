@@ -1,19 +1,15 @@
 basic_auth: Require users to sign in with basic authentication before they
   can use the service.
 
-delegation: Allow prescribers to create a PSDs for healthcare workers to administer
-  nasal vaccines or supply injected vaccines to healthcare works using the PGD protocol.
-
 dev_tools: Developer tools useful for testing and debugging.
 
-enqueue_sync_vaccination_records_to_nhs: Send new vaccinations recorded by
-  nurses to NHS Immunisations FHIR API.
+imms_api_integration: Umbrella flag to switch off ALL API integration (including CLI tools).
 
-immunisations_fhir_api_integration: Master switch to control communications
-  with NHS Immunisations FHIR API.
+imms_api_search_job: Flag to switch off any automated receipt of vaccination records (Read, Search),
+  via scheduled jobs.
 
-immunisations_fhir_api_integration_search: Master switch to control whether
-  search requests can be made to the NHS Immunisations FHIR API.
+imms_api_sync_job: Flag to switch off any automated sending of vaccination records
+  (Create, Update, Delete), triggered by the creation/edit/delete of any vaccination records.
 
 import_choose_academic_year: Add an option to choose the academic year when
   importing patients during the preparation period.
@@ -25,6 +21,6 @@ pds_lookup_during_import: Perform PDS lookups as part of the patient import
 
 testing_api: Basic API useful for automated testing.
 
-reporting_api: Enables the Commissioner reporting component to authenticate to Mavis via OAUTH 2.0 
-  Authorization Code Flow (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), and retrieve 
+reporting_api: Enables the Commissioner reporting component to authenticate to Mavis via OAUTH 2.0
+  Authorization Code Flow (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), and retrieve
   statistics from /api/reporting/

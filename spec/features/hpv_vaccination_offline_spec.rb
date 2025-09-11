@@ -44,7 +44,7 @@ describe "HPV vaccination" do
 
   scenario "User uploads duplicates in an offline recording for a session" do
     given_an_hpv_programme_is_underway_with_a_single_patient
-    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    and_imms_api_sync_job_feature_is_enabled
 
     when_i_choose_to_record_offline_from_a_school_session_page
     and_alter_an_existing_vaccination_record_to_create_a_duplicate
@@ -180,9 +180,9 @@ describe "HPV vaccination" do
     )
   end
 
-  def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
-    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
-    Flipper.enable(:immunisations_fhir_api_integration)
+  def and_imms_api_sync_job_feature_is_enabled
+    Flipper.enable(:imms_api_sync_job)
+    Flipper.enable(:imms_api_integration)
 
     immunisation_uuid = Random.uuid
     @stubbed_post_request = stub_immunisations_api_post(uuid: immunisation_uuid)
@@ -485,12 +485,12 @@ describe "HPV vaccination" do
 
   def and_the_vaccination_record_is_synced_to_nhs
     # expect(SyncVaccinationRecordToNHSJob).to have_been_enqueued.exactly(2).times
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
     expect(@stubbed_post_request).to have_been_requested
   end
 
   def and_the_vaccination_record_is_deleted_from_nhs
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
     expect(@stubbed_delete_request).to have_been_requested
   end
 end

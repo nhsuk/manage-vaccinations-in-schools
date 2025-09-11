@@ -68,6 +68,9 @@ describe PatientMerger do
     let(:duplicate_school_move) do
       create(:school_move, patient: patient_to_keep, school: school_move.school)
     end
+    let(:session_attendance) do
+      create(:session_attendance, :present, patient: patient_to_destroy)
+    end
     let(:session_notification) do
       create(
         :session_notification,
@@ -174,6 +177,12 @@ describe PatientMerger do
       expect { school_move.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
+    it "moves session attendances" do
+      expect { call }.to change { session_attendance.reload.patient }.to(
+        patient_to_keep
+      )
+    end
+
     it "moves session notifications" do
       expect { call }.to change { session_notification.reload.patient }.to(
         patient_to_keep
@@ -197,10 +206,10 @@ describe PatientMerger do
     end
 
     it "enqueues sync jobs for vaccination records" do
-      Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
-      expect { call }.to have_enqueued_job(SyncVaccinationRecordToNHSJob).with(
-        vaccination_record
-      )
+      Flipper.enable(:imms_api_sync_job)
+      expect { call }.to enqueue_sidekiq_job(
+        SyncVaccinationRecordToNHSJob
+      ).with(vaccination_record.id)
     end
 
     context "when parent is already associated with patient to keep" do

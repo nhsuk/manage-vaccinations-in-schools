@@ -11,8 +11,8 @@ module MavisCLI
       def call(vaccination_record_id:, **)
         MavisCLI.load_rails
 
-        unless Flipper.enabled?(:immunisations_fhir_api_integration)
-          puts "Cannot sync vaccination record: the `immunisations_fhir_api_integration` feature flag is disabled"
+        unless Flipper.enabled?(:imms_api_integration)
+          puts "Cannot sync vaccination record: the `imms_api_integration` feature flag is disabled"
           return
         end
 
@@ -33,7 +33,7 @@ module MavisCLI
         vaccination_record.update!(
           nhs_immunisations_api_sync_pending_at: Time.current
         )
-        SyncVaccinationRecordToNHSJob.perform_now(vaccination_record)
+        NHS::ImmunisationsAPI.sync_immunisation(vaccination_record)
         puts "Successfully synced vaccination record #{vaccination_record_id}"
       end
     end

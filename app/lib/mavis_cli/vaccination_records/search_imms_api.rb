@@ -26,10 +26,8 @@ module MavisCLI
       )
         MavisCLI.load_rails
 
-        unless Flipper.enabled?(:immunisations_fhir_api_integration) &&
-                 Flipper.enabled?(:immunisations_fhir_api_integration_search)
-          puts "Cannot search: one of the feature flags is disabled " \
-                 "(immunisations_fhir_api_integration, immunisations_fhir_api_integration_search)"
+        unless Flipper.enabled?(:imms_api_integration)
+          puts "Cannot search: Feature flag :imms_api_integration is not enabled"
           return
         end
 

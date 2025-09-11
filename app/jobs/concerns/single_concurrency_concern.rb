@@ -1,14 +1,10 @@
 # frozen_string_literal: true
 
-module NotifyThrottlingConcern
+module SingleConcurrencyConcern
   extend ActiveSupport::Concern
 
   include Sidekiq::Job
   include Sidekiq::Throttled::Job
 
-  included do
-    sidekiq_throttle_as :notify
-
-    queue_as :notifications
-  end
+  included { sidekiq_throttle concurrency: { limit: 1 } }
 end

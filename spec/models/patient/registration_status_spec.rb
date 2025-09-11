@@ -2,24 +2,28 @@
 
 # == Schema Information
 #
-# Table name: patient_session_registration_statuses
+# Table name: patient_registration_statuses
 #
-#  id                 :bigint           not null, primary key
-#  status             :integer          default("unknown"), not null
-#  patient_session_id :bigint           not null
+#  id         :bigint           not null, primary key
+#  status     :integer          default("unknown"), not null
+#  patient_id :bigint           not null
+#  session_id :bigint           not null
 #
 # Indexes
 #
-#  idx_on_patient_session_id_438fc21144                   (patient_session_id) UNIQUE
-#  index_patient_session_registration_statuses_on_status  (status)
+#  idx_on_patient_id_session_id_2ff02d8889            (patient_id,session_id) UNIQUE
+#  index_patient_registration_statuses_on_patient_id  (patient_id)
+#  index_patient_registration_statuses_on_session_id  (session_id)
+#  index_patient_registration_statuses_on_status      (status)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (patient_session_id => patient_sessions.id) ON DELETE => cascade
+#  fk_rails_...  (patient_id => patients.id) ON DELETE => cascade
+#  fk_rails_...  (session_id => sessions.id) ON DELETE => cascade
 #
-describe PatientSession::RegistrationStatus do
-  subject(:patient_session_registration_status) do
-    build(:patient_session_registration_status, patient_session:)
+describe Patient::RegistrationStatus do
+  subject(:patient_registration_status) do
+    build(:patient_registration_status, patient:, session:)
   end
 
   around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
@@ -31,28 +35,28 @@ describe PatientSession::RegistrationStatus do
   let(:session) do
     create(:session, dates: [Date.yesterday, Date.current], programmes:)
   end
-  let(:patient_session) { create(:patient_session, patient:, session:) }
 
   it do
-    expect(patient_session_registration_status).to define_enum_for(
-      :status
-    ).with_values(%i[unknown attending not_attending completed])
+    expect(patient_registration_status).to define_enum_for(:status).with_values(
+      %i[unknown attending not_attending completed]
+    )
   end
 
   describe "associations" do
-    it { should belong_to(:patient_session) }
+    it { should belong_to(:patient) }
+    it { should belong_to(:session) }
   end
 
   describe "#session_attendance" do
     subject do
       described_class
         .includes(:session_attendances)
-        .find(patient_session_registration_status.id)
+        .find(patient_registration_status.id)
         .session_attendance
     end
 
-    let(:patient_session_registration_status) do
-      create(:patient_session_registration_status, patient_session:)
+    let(:patient_registration_status) do
+      create(:patient_registration_status, patient:, session:)
     end
 
     context "with no attendances" do
@@ -89,7 +93,7 @@ describe PatientSession::RegistrationStatus do
   end
 
   describe "#status" do
-    subject { patient_session_registration_status.assign_status }
+    subject { patient_registration_status.assign_status }
 
     context "with no session attendance" do
       it { should be(:unknown) }

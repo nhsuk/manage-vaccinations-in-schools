@@ -10,7 +10,7 @@
 #  name        :string           not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
-#  team_id     :bigint           not null
+#  team_id     :bigint
 #  vaccine_id  :bigint           not null
 #
 # Indexes

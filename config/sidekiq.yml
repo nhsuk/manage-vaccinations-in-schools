@@ -4,4 +4,62 @@
   - imports
   - consents
   - notifications
+  - statuses
+  - patients
   - pds
+  - immunisations_api
+  - default
+:scheduler:
+  :schedule:
+    clinic_session_invitations:
+      cron: "0 9 * * *"
+      class: EnqueueClinicSessionInvitationsJob
+      description: Send school clinic invitation emails to parents
+    invalidate_self_consents:
+      cron: "0 2 * * *"
+      class: InvalidateSelfConsentsJob
+      description: Invalidate all self-consents and associated triage for the previous day
+    patients_aged_out_of_school:
+      cron: "0 5 * * *"
+      class: PatientsAgedOutOfSchoolJob
+      description: Moves patients who have aged out of their school to unknown school
+    patients_clear_registration:
+      cron: "15 5 * * *"
+      class: PatientsClearRegistrationJob
+      description: Clears the registration of patients for the previous academic year
+    patients_refused_consent_already_vaccinated:
+      cron: "30 5 * * *"
+      class: PatientsRefusedConsentAlreadyVaccinatedJob
+      description: Record already vaccinated for patients who refused consent in the previous academic year for that reason
+    remove_import_csv:
+      cron: "0 1 * * *"
+      class: RemoveImportCSVJob
+      description: Remove CSV data from old cohort and immunisation imports
+    school_consent_requests:
+      cron: "0 16 * * *"
+      class: EnqueueSchoolConsentRequestsJob
+      description: Send school consent request emails to parents for each session
+    school_consent_reminders:
+      cron: "15 16 * * *"
+      class: EnqueueSchoolConsentRemindersJob
+      description: Send school consent reminder emails to parents for each session
+    school_session_reminders:
+      cron: "0 9 * * *"
+      class: SendSchoolSessionRemindersJob
+      description: Send school session reminder emails to parents
+    status_updater:
+      cron: "0 3 * * *"
+      class: StatusUpdaterJob
+      description: Updates the status of all patients
+    trim_active_record_sessions:
+      cron: "0 2 * * *"
+      class: TrimActiveRecordSessionsJob
+      description: Remove ActiveRecord sessions older than 30 days
+    update_patients_from_pds:
+      cron: "0 0,6,12,18 * * *"
+      class: EnqueueUpdatePatientsFromPDSJob
+      description: Keep patient details up to date with PDS
+    vaccination_confirmations:
+      cron: "0 13,16,19 * * *"
+      class: SendVaccinationConfirmationsJob
+      description: Send vaccination confirmation emails to parents

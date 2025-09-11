@@ -222,12 +222,12 @@ GEM
     erubi (1.13.1)
     et-orbi (1.2.11)
       tzinfo
-    factory_bot (6.5.4)
+    factory_bot (6.5.5)
       activesupport (>= 6.1.0)
     factory_bot_instruments (1.2.0)
       activerecord (>= 4.0)
       factory_bot (>= 4)
-    factory_bot_rails (6.5.0)
+    factory_bot_rails (6.5.1)
       factory_bot (~> 6.5)
       railties (>= 6.1.0)
     faker (3.5.2)
@@ -454,7 +454,7 @@ GEM
       date
       stringio
     public_suffix (6.0.2)
-    puma (7.0.0)
+    puma (7.0.2)
       nio4r (~> 2.0)
     pundit (2.5.0)
       activesupport (>= 3.0.0)
@@ -559,6 +559,11 @@ GEM
       rspec-expectations (~> 3.13)
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
+    rspec-sidekiq (5.2.0)
+      rspec-core (~> 3.0)
+      rspec-expectations (~> 3.0)
+      rspec-mocks (~> 3.0)
+      sidekiq (>= 5, < 9)
     rspec-support (3.13.4)
     rubocop (1.79.2)
       json (~> 2.3)
@@ -604,8 +609,10 @@ GEM
       rubyzip (>= 1.3.0)
     rubyntlm (0.6.5)
       base64
-    rubyzip (3.0.2)
+    rubyzip (3.1.0)
     rufo (0.18.1)
+    rufus-scheduler (3.9.2)
+      fugit (~> 1.1, >= 1.11.1)
     sanitize (7.0.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.16.8)
@@ -629,6 +636,9 @@ GEM
       logger (>= 1.6.2)
       rack (>= 3.1.0)
       redis-client (>= 0.23.2)
+    sidekiq-scheduler (6.0.1)
+      rufus-scheduler (~> 3.2)
+      sidekiq (>= 7.3, < 9)
     sidekiq-throttled (2.0.0)
       concurrent-ruby (>= 1.2.0)
       redis-prescription (~> 2.2)
@@ -817,6 +827,7 @@ DEPENDENCIES
   rspec
   rspec-html-matchers
   rspec-rails
+  rspec-sidekiq
   rubocop-govuk
   ruby-prof
   ruby-progressbar
@@ -828,6 +839,7 @@ DEPENDENCIES
   sentry-sidekiq
   shoulda-matchers
   sidekiq
+  sidekiq-scheduler
   sidekiq-throttled
   simplecov
   solargraph

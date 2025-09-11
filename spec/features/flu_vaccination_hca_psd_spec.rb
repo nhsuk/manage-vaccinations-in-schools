@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe "Flu vaccination" do
-  before { given_delegation_feature_flag_is_enabled }
-
   scenario "Prescriber bulk add PSDs to patients that don't require triage" do
     given_a_flu_session_exists(user_type: :with_one_nurse)
     and_patients_exist
@@ -83,10 +81,6 @@ describe "Flu vaccination" do
 
     when_i_visit_the_session_patient_programme_page
     then_i_should_not_see_the_record_vaccination_section
-  end
-
-  def given_delegation_feature_flag_is_enabled
-    Flipper.enable(:delegation)
   end
 
   def given_a_flu_session_exists(user_type:, national_protocol_enabled: false)

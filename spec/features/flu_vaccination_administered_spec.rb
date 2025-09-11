@@ -7,7 +7,7 @@ describe "Flu vaccination" do
     given_i_am_signed_in_with_flu_programme
     and_there_is_a_flu_session_today_with_patients_ready_to_vaccinate
     and_there_are_nasal_and_injection_batches
-    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    and_imms_api_sync_job_feature_is_enabled
 
     when_i_go_to_the_nasal_only_patient
     then_i_see_the_vaccination_form_for_nasal_spray
@@ -45,6 +45,10 @@ describe "Flu vaccination" do
     and_there_are_nasal_and_injection_batches
 
     when_i_go_to_the_nasal_or_injection_patient
+    then_i_see_the_vaccination_form_for_nasal_spray
+    and_i_see_the_option_to_administer_injection
+
+    when_i_dont_confirm_identity_check_but_dont_enter_who
     then_i_see_the_vaccination_form_for_nasal_spray
     and_i_see_the_option_to_administer_injection
 
@@ -148,9 +152,9 @@ describe "Flu vaccination" do
       create(:batch, :not_expired, team: @team, vaccine: @injection_vaccine)
   end
 
-  def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
-    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
-    Flipper.enable(:immunisations_fhir_api_integration)
+  def and_imms_api_sync_job_feature_is_enabled
+    Flipper.enable(:imms_api_sync_job)
+    Flipper.enable(:imms_api_integration)
 
     @stubbed_post_request = stub_immunisations_api_post
   end
@@ -208,11 +212,18 @@ describe "Flu vaccination" do
     )
   end
 
+  def when_i_dont_confirm_identity_check_but_dont_enter_who
+    choose "No, it was confirmed by somebody else"
+    choose "No"
+    click_on "Continue"
+  end
+
   def when_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray(
     check_injection_first: false
   )
     within all("section")[0] do
       check "I have checked that the above statements are true"
+      choose "Yes" # confirmed identity
     end
 
     # Check that I can change my mind injection to nasal.
@@ -313,7 +324,7 @@ describe "Flu vaccination" do
   end
 
   def and_the_vaccination_record_is_synced_to_nhs
-    perform_enqueued_jobs
+    Sidekiq::Job.drain_all
     expect(@stubbed_post_request).to have_been_requested
   end
 

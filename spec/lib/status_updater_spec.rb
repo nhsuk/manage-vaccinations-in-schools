@@ -16,7 +16,7 @@ describe StatusUpdater do
     end
 
     it "doesn't create any registration statuses" do
-      expect { call }.not_to change(PatientSession::RegistrationStatus, :count)
+      expect { call }.not_to change(Patient::RegistrationStatus, :count)
     end
 
     it "doesn't create any triage statuses" do
@@ -102,7 +102,7 @@ describe StatusUpdater do
     end
 
     it "doesn't create any registration statuses" do
-      expect { call }.not_to change(PatientSession::RegistrationStatus, :count)
+      expect { call }.not_to change(Patient::RegistrationStatus, :count)
     end
 
     it "doesn't create any triage statuses" do

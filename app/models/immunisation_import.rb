@@ -110,8 +110,6 @@ class ImmunisationImport < ApplicationRecord
   def postprocess_rows!
     StatusUpdater.call(patient: patients)
 
-    vaccination_records.syncable_to_nhs_immunisations_api.find_each(
-      &:sync_to_nhs_immunisations_api
-    )
+    vaccination_records.sync_all_to_nhs_immunisations_api
   end
 end

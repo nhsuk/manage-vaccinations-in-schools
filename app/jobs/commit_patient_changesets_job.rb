@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 class CommitPatientChangesetsJob < ApplicationJob
-  include GoodJob::ActiveJobExtensions::Concurrency
+  include SingleConcurrencyConcern
 
-  # Only permit one job to run per import.
-  good_job_control_concurrency_with perform_limit: 1,
-                                    key: -> { arguments.first.id }
+  queue_as :imports
 
   def perform(import)
     counts = import.class.const_get(:COUNT_COLUMNS).index_with(0)

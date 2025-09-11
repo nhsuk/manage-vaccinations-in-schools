@@ -8,18 +8,18 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
   let(:programme) { create(:programme, type: "flu") }
   let(:session) { create(:session, programmes: [programme]) }
 
-  describe "#sync_to_nhs_immunisations_api" do
-    before { Flipper.enable(:enqueue_sync_vaccination_records_to_nhs) }
+  describe "#sync_to_nhs_immunisations_api!" do
+    before { Flipper.enable(:imms_api_sync_job) }
 
     it "enqueues the job if the vaccination record is eligible to sync" do
       expect {
-        vaccination_record.sync_to_nhs_immunisations_api
-      }.to have_enqueued_job(SyncVaccinationRecordToNHSJob)
+        vaccination_record.sync_to_nhs_immunisations_api!
+      }.to enqueue_sidekiq_job(SyncVaccinationRecordToNHSJob)
     end
 
     it "sets nhs_immunisations_api_sync_pending_at" do
       freeze_time do
-        expect { vaccination_record.sync_to_nhs_immunisations_api }.to change(
+        expect { vaccination_record.sync_to_nhs_immunisations_api! }.to change(
           vaccination_record,
           :nhs_immunisations_api_sync_pending_at
         ).from(nil).to(Time.current)
@@ -35,13 +35,13 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
 
       it "does not enqueue the job" do
         expect {
-          vaccination_record.sync_to_nhs_immunisations_api
-        }.not_to have_enqueued_job(SyncVaccinationRecordToNHSJob)
+          vaccination_record.sync_to_nhs_immunisations_api!
+        }.not_to enqueue_sidekiq_job(SyncVaccinationRecordToNHSJob)
       end
 
       it "does not set nhs_immunisations_api_sync_pending_at" do
         expect {
-          vaccination_record.sync_to_nhs_immunisations_api
+          vaccination_record.sync_to_nhs_immunisations_api!
         }.not_to change(
           vaccination_record,
           :nhs_immunisations_api_sync_pending_at
@@ -50,19 +50,19 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
     end
 
     context "when the feature flag is disabled" do
-      before { Flipper.disable(:enqueue_sync_vaccination_records_to_nhs) }
+      before { Flipper.disable(:imms_api_sync_job) }
 
       let(:vaccination_record) { create(:vaccination_record) }
 
       it "does not enqueue the job" do
         expect {
-          vaccination_record.sync_to_nhs_immunisations_api
-        }.not_to have_enqueued_job(SyncVaccinationRecordToNHSJob)
+          vaccination_record.sync_to_nhs_immunisations_api!
+        }.not_to enqueue_sidekiq_job(SyncVaccinationRecordToNHSJob)
       end
 
       it "does not set nhs_immunisations_api_sync_pending_at" do
         expect {
-          vaccination_record.sync_to_nhs_immunisations_api
+          vaccination_record.sync_to_nhs_immunisations_api!
         }.not_to change(
           vaccination_record,
           :nhs_immunisations_api_sync_pending_at

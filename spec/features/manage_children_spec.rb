@@ -217,8 +217,8 @@ describe "Manage children" do
   end
 
   def and_sync_vaccination_records_to_nhs_feature_is_enabled
-    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
-    Flipper.enable(:immunisations_fhir_api_integration)
+    Flipper.enable(:imms_api_sync_job)
+    Flipper.enable(:imms_api_integration)
 
     immunisation_uuid = Random.uuid
     @stubbed_post_request = stub_immunisations_api_post(uuid: immunisation_uuid)
@@ -228,7 +228,7 @@ describe "Manage children" do
   end
 
   def and_the_vaccination_has_been_synced_to_nhs
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
   end
 
   def and_todays_date_is_in_the_far_future
@@ -400,7 +400,7 @@ describe "Manage children" do
   end
 
   def when_i_wait_for_the_sync_to_complete
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
   end
 
   def then_i_cannot_see_notices
@@ -448,12 +448,12 @@ describe "Manage children" do
   end
 
   def and_the_vaccination_record_is_updated_with_the_nhs
-    perform_enqueued_jobs
+    Sidekiq::Job.drain_all
     expect(@stubbed_put_request).to have_been_requested
   end
 
   def and_the_vaccination_record_is_deleted_from_the_nhs
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
     expect(@stubbed_delete_request).to have_been_requested
   end
 end
