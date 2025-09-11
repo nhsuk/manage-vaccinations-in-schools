@@ -106,28 +106,57 @@ class PatientSession < ApplicationRecord
 
   scope :appear_in_programmes,
         ->(programmes) do
-          # Are any of the programmes administered in the session?
-          programme_in_session =
-            SessionProgramme
-              .where(programme: programmes)
-              .where("session_programmes.session_id = sessions.id")
-              .arel
-              .exists
+          sessions = Session.arel_table
+          patient_sessions = PatientSession.arel_table
+          relevant_sessions = Arel::Table.new("relevant_sessions")
+          session_programmes = SessionProgramme.arel_table
+          location_programme_year_groups = LocationProgrammeYearGroup.arel_table
 
-          # Is the patient eligible for any of those programmes by year group?
-          patient_in_administered_year_groups =
-            LocationProgrammeYearGroup
-              .where(programme: programmes)
-              .where("location_id = sessions.location_id")
+          relevant_sessions_query =
+            SessionProgramme
+              .select(
+                :session_id,
+                "academic_year " \
+                  "- #{Integer::AGE_CHILDREN_START_SCHOOL} " \
+                  "- year_group as birth_academic_year"
+              )
+              .distinct
+              .joins(
+                session_programmes
+                  .join(sessions)
+                  .on(session_programmes[:session_id].eq(sessions[:id]))
+                  .join_sources
+              )
+              .joins(
+                sessions
+                  .join(location_programme_year_groups)
+                  .on(
+                    location_programme_year_groups[:location_id].eq(
+                      sessions[:location_id]
+                    )
+                  )
+                  .join_sources
+              )
+              .where(session_programmes[:programme_id].in(programmes.map(&:id)))
               .where(
-                "year_group = sessions.academic_year " \
-                  "- patients.birth_academic_year " \
-                  "- #{Integer::AGE_CHILDREN_START_SCHOOL}"
+                location_programme_year_groups[:programme_id].in(
+                  programmes.map(&:id)
+                )
               )
               .arel
-              .exists
+              .as("relevant_sessions")
 
-          where(programme_in_session).where(patient_in_administered_year_groups)
+          joins(
+            sessions
+              .join(relevant_sessions_query)
+              .on(
+                patient_sessions[:session_id].eq(
+                  relevant_sessions[:session_id]
+                ),
+                "relevant_sessions.birth_academic_year = patients.birth_academic_year"
+              )
+              .join_sources
+          )
         end
 
   scope :search_by_name,
