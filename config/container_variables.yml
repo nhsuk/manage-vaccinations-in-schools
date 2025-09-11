@@ -41,8 +41,6 @@ tunable_vars:
       MAVIS__SPLUNK__ENABLED: "true"
       MAVIS__CIS2__ENABLED: "true"
       MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS: 31
-    good-job:
-      GOOD_JOB_MAX_THREADS: 5
     sidekiq:
       SIDEKIQ_CONCURRENCY: 5
       MAVIS__PDS__ENQUEUE_BULK_UPDATES: "true"
@@ -53,8 +51,6 @@ tunable_vars:
       MAVIS__SPLUNK__ENABLED: "true"
       MAVIS__CIS2__ENABLED: "false"
       MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS: 45
-    good-job:
-      GOOD_JOB_MAX_THREADS: 5
     sidekiq:
       SIDEKIQ_CONCURRENCY: 5
       MAVIS__PDS__ENQUEUE_BULK_UPDATES: "false"
@@ -64,8 +60,6 @@ tunable_vars:
     web:
       MAVIS__SPLUNK__ENABLED: "true"
       MAVIS__CIS2__ENABLED: "true"
-    good-job:
-      GOOD_JOB_MAX_THREADS: 5
     sidekiq:
       SIDEKIQ_CONCURRENCY: 5
       MAVIS__PDS__ENQUEUE_BULK_UPDATES: "false"
@@ -75,8 +69,6 @@ tunable_vars:
     web:
       MAVIS__SPLUNK__ENABLED: "false"
       MAVIS__CIS2__ENABLED: "false"
-    good-job:
-      GOOD_JOB_MAX_THREADS: 5
     sidekiq:
       SIDEKIQ_CONCURRENCY: 5
       MAVIS__PDS__ENQUEUE_BULK_UPDATES: "false"
@@ -86,8 +78,6 @@ tunable_vars:
     web:
       MAVIS__SPLUNK__ENABLED: "false"
       MAVIS__CIS2__ENABLED: "false"
-    good-job:
-      GOOD_JOB_MAX_THREADS: 5
     sidekiq:
       SIDEKIQ_CONCURRENCY: 5
       MAVIS__PDS__ENQUEUE_BULK_UPDATES: "false"
@@ -97,8 +87,6 @@ tunable_vars:
     web:
       MAVIS__SPLUNK__ENABLED: "false"
       MAVIS__CIS2__ENABLED: "false"
-    good-job:
-      GOOD_JOB_MAX_THREADS: 5
     sidekiq:
       SIDEKIQ_CONCURRENCY: 5
       MAVIS__PDS__ENQUEUE_BULK_UPDATES: "false"
@@ -108,8 +96,6 @@ tunable_vars:
     web:
       MAVIS__SPLUNK__ENABLED: "false"
       MAVIS__CIS2__ENABLED: "false"
-    good-job:
-      GOOD_JOB_MAX_THREADS: 5
     sidekiq:
       SIDEKIQ_CONCURRENCY: 5
       MAVIS__PDS__ENQUEUE_BULK_UPDATES: "false"
