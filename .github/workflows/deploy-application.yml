@@ -32,6 +32,10 @@ on:
           (Git ref to deploy, for example, a tag, branch name or commit SHA. Will use workflow ref if not provided.)
         required: false
         type: string
+      image-tag:
+        description: Docker image tag to deploy (if not provided, will build from git-ref-to-deploy)
+        required: false
+        type: string
   workflow_call:
     inputs:
       environment:
@@ -46,6 +50,10 @@ on:
           Use code from: ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
           (Git ref to deploy, for example, a tag, branch name or commit SHA. Will use workflow ref if not provided.)
         required: true
+        type: string
+      image-tag:
+        description: Docker image tag to deploy
+        required: false
         type: string
 
 permissions: {}
@@ -64,9 +72,34 @@ concurrency:
   group: deploy-application-${{ inputs.environment }}
 
 jobs:
+  determine-git-sha:
+    runs-on: ubuntu-latest
+    permissions: {}
+    outputs:
+      git-sha: ${{ steps.get-git-sha.outputs.git-sha }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.git-ref-to-deploy || github.sha }}
+      - name: Get git sha
+        id: get-git-sha
+        run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+  build-and-push-image:
+    if: ${{ !inputs.image-tag }}
+    permissions:
+      id-token: write
+    needs: determine-git-sha
+    uses: ./.github/workflows/build-and-push-image.yml
+    with:
+      git-sha: ${{ needs.determine-git-sha.outputs.git-sha }}
+
   prepare-deployment:
     name: Prepare deployment
     runs-on: ubuntu-latest
+    needs: [determine-git-sha, build-and-push-image]
+    if: ${{ always() && (needs.build-and-push-image.result == 'success' || needs.build-and-push-image.result == 'skipped') }}
     permissions:
       id-token: write
     strategy:
@@ -96,7 +129,7 @@ jobs:
         run: |
           digest=$(aws ecr describe-images \
             --repository-name mavis/webapp \
-            --image-ids imageTag=${{ steps.checkout-code.outputs.commit }} \
+            --image-ids imageTag=${{ inputs.image-tag || needs.determine-git-sha.outputs.git-sha }} \
             --query 'imageDetails[0].imageDigest' \
             --output text)
           echo "digest=$digest" >> $GITHUB_OUTPUT
@@ -181,8 +214,8 @@ jobs:
           aws deploy wait deployment-successful --deployment-id "${{ steps.deploy-web-service.outputs.codedeploy-deployment-id }}"
           echo "Deployment successful"
 
-  create-sidekiq-deployment:
-    name: Create sidekiq deployment
+  deploy-sidekiq:
+    name: Deploy sidekiq service
     runs-on: ubuntu-latest
     if: ${{ inputs.server_types == 'sidekiq' || inputs.server_types == 'all' }}
     needs: [prepare-deployment, approve-deployments]
