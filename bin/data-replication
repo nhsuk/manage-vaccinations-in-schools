@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+# Data replication script - creates read-only database role and keeps container running
+
+set -e
+
+echo "Starting data replication setup..."
+
+if [ -z "$READ_ONLY_DB_PASSWORD" ]; then
+  echo "Error: READ_ONLY_DB_PASSWORD environment variable is not set"
+  exit 1
+fi
+
+echo "Creating read-only database role..."
+
+bundle exec rails runner "
+begin
+  ActiveRecord::Base.connection.execute(\"
+    DO \$\$
+    BEGIN
+      IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'grafana_ro') THEN
+        CREATE ROLE grafana_ro WITH LOGIN PASSWORD '#{ENV['READ_ONLY_DB_PASSWORD']}';
+      ELSE
+        ALTER ROLE grafana_ro WITH PASSWORD '#{ENV['READ_ONLY_DB_PASSWORD']}';
+      END IF;
+    END
+    \$\$;
+  \")
+  
+  ActiveRecord::Base.connection.execute(\"
+    GRANT CONNECT ON DATABASE #{ActiveRecord::Base.connection.current_database} TO grafana_ro;
+    GRANT USAGE ON SCHEMA public TO grafana_ro;
+    GRANT SELECT ON ALL TABLES IN SCHEMA public TO grafana_ro;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO grafana_ro;
+  \")
+  
+  puts 'Read-only role created/updated successfully'
+rescue => e
+  puts \"Error creating read-only role: \#{e.message}\"
+  exit 1
+end
+"
+
+echo "Data replication setup completed. Keeping container running..."
+
+exec tail -f /dev/null
