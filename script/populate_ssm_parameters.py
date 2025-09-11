@@ -24,12 +24,12 @@ def load_yaml_config(file_path: str) -> Dict[str, Any]:
 def extract_cloud_variables(config: Dict[str, Any], environment: str, server_type: str) -> List[str]:
     """Extract cloud variables from YAML config for the given environment and server type."""
     cloud_vars = []
-    
+
     env_config = config[environment]
     if server_type in env_config:
         for key, value in env_config[server_type].items():
             cloud_vars.append(f"{key}={value}")
-    
+
     return cloud_vars
 
 
@@ -39,16 +39,16 @@ def update_ssm_parameter(parameter_name: str, values: List[str], app_version: st
         ssm = boto3.client('ssm')
         values.append(f"app_version={app_version}")
         string_list = ','.join(values)
-        
+
         print(f"Updating SSM parameter: {parameter_name}")
-        
+
         ssm.put_parameter(
             Name=parameter_name,
             Value=string_list,
             Type='StringList',
             Overwrite=True
         )
-        
+
     except Exception as e:
         print(f"Error: Failed to update SSM parameter '{parameter_name}': {e}")
         sys.exit(1)
@@ -67,7 +67,7 @@ Examples:
 
     parser.add_argument('environment', help='Environment name (e.g., qa, production, etc.)')
     parser.add_argument('server_type', help='Server type')
-    parser.add_argument('-c', '--config-file', default='config/container_variables.yml', 
+    parser.add_argument('-c', '--config-file', default='config/container_variables.yml',
                        help='Container variables file path (default: config/container_variables.yml)')
     parser.add_argument('--app-version', default='unknown', help='Application version (default: unknown)')
 

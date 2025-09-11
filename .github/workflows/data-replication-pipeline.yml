@@ -40,9 +40,22 @@ concurrency:
   group: deploy-data-replica-${{ inputs.environment }}
 
 jobs:
+  validate-inputs:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Validate inputs
+        run: |
+          if [[ "$environment" == "preview" || "$environment" == "production" ]]; then
+            if [[ -z "$git_ref_to_deploy" ]]; then
+              echo "Error: git_ref_to_deploy is required for preview and production environments."
+              exit 1
+            fi
+          fi
   determine-git-sha:
     runs-on: ubuntu-latest
-    permissions: { }
+    permissions: {}
+    needs: validate-inputs
     outputs:
       git-sha: ${{ steps.get-git-sha.outputs.git-sha }}
     steps:
