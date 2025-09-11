@@ -34,7 +34,7 @@ concurrency:
 jobs:
   validate-inputs:
     runs-on: ubuntu-latest
-    permissions: { }
+    permissions: {}
     steps:
       - name: Validate inputs
         run: |
@@ -46,7 +46,7 @@ jobs:
           fi
   determine-git-sha:
     runs-on: ubuntu-latest
-    permissions: { }
+    permissions: {}
     needs: validate-inputs
     outputs:
       git-sha: ${{ steps.get-git-sha.outputs.git-sha }}
@@ -136,7 +136,7 @@ jobs:
   deploy-data-replication:
     name: Deploy data-replication service
     runs-on: ubuntu-latest
-    needs: [ prepare-deployment, approve-deployments ]
+    needs: [prepare-deployment, approve-deployments]
     permissions:
       id-token: write
     steps:
