@@ -175,10 +175,18 @@ locals {
           valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.rails_master_key_path}"
         }],
       )
-      REPORTING = [for key, value in aws_ssm_parameter.reporting_environment_overwrites : {
-        name      = key
-        valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${value.name}"
-      }]
+      REPORTING = concat(
+        [for key, value in aws_ssm_parameter.reporting_environment_overwrites :
+          {
+            name      = key
+            valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${value.name}"
+          }
+        ],
+        [{
+          name = "MISE_SOPS_AGE_KEY"
+          valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.mise_sops_age_key_path}"
+        }],
+      )
     }
   )
 
