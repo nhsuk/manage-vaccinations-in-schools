@@ -16,11 +16,15 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
   end
 
   def render?
-    patient.consent_given_and_safe_to_vaccinate?(programme:, academic_year:) &&
+    session.today? &&
+      patient.consent_given_and_safe_to_vaccinate?(
+        programme:,
+        academic_year:
+      ) &&
       (
         patient_session.registration_status&.attending? ||
           patient_session.registration_status&.completed? ||
-          (!session.requires_registration? && session.today?)
+          !session.requires_registration?
       )
   end
 
