@@ -15,11 +15,11 @@ on:
           - qa
           - sandbox-alpha
           - sandbox-beta
-      image_tag:
-        description: Docker image tag to deploy (if not provided, will build from git_ref_to_deploy)
+      image-tag:
+        description: Docker image tag to deploy (if not provided, will build from git-ref-to-deploy)
         required: false
         type: string
-      git_ref_to_deploy:
+      git-ref-to-deploy:
         description: Git ref (branch/tag/SHA) to deploy
         required: false
         type: string
@@ -43,8 +43,8 @@ jobs:
       - name: Validate inputs
         run: |
           if [[ "${{ inputs.environment }}" == "preview" || "${{ inputs.environment }}" == "production" ]]; then
-            if [[ -z "${{ inputs.git_ref_to_deploy }}" && -z "${{ inputs.image_tag }}" ]]; then
-              echo "Error: Either git_ref_to_deploy or image_tag is required for preview and production environment."
+            if [[ -z "${{ inputs.git-ref-to-deploy }}" && -z "${{ inputs.image-tag }}" ]]; then
+            echo "Error: Either git-ref-to-deploy or image-tag is required for preview and production environment."
               exit 1
             fi
           fi
@@ -59,13 +59,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          ref: ${{ inputs.git_ref_to_deploy || github.sha }}
+          ref: ${{ inputs.git-ref-to-deploy || github.sha }}
       - name: Get git sha
         id: get-git-sha
         run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
   build-and-push-image:
-    if: ${{ !inputs.image_tag }}
+    if: ${{ !inputs.image-tag }}
     permissions:
       id-token: write
     needs: determine-git-sha
@@ -84,7 +84,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          ref: ${{ inputs.git_ref_to_deploy || github.sha }}
+          ref: ${{ inputs.git-ref-to-deploy || github.sha }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
@@ -102,7 +102,7 @@ jobs:
         run: |
           digest=$(aws ecr describe-images \
             --repository-name mavis/webapp \
-            --image-ids imageTag=${{ inputs.image_tag || needs.determine-git-sha.outputs.git-sha }} \
+            --image-ids imageTag=${{ inputs.image-tag || needs.determine-git-sha.outputs.git-sha }} \
             --query 'imageDetails[0].imageDigest' \
             --output text)
           echo "digest=$digest" >> $GITHUB_OUTPUT
