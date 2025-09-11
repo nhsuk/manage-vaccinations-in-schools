@@ -39,7 +39,6 @@ env:
     && 'arn:aws:iam::820242920762:role/DatabaseSnapshotRole'
     || 'arn:aws:iam::393416225559:role/DatabaseSnapshotRole' }}
 
-
 defaults:
   run:
     working-directory: terraform/data_replication
@@ -85,7 +84,7 @@ jobs:
               SNAPSHOT_ARN=$(aws rds describe-db-cluster-snapshots \
               --query "DBClusterSnapshots[?DBClusterIdentifier=='mavis-${{ inputs.environment }}'].[DBClusterSnapshotArn, SnapshotCreateTime]" \
               --output text | sort -k2 -r | head -n 1 | cut -f1)
-          
+
               if [ -z "$SNAPSHOT_ARN" ]; then
                   echo "No snapshots found for mavis-${{ inputs.environment }}"
                   exit 1
@@ -149,10 +148,7 @@ jobs:
             "-out=${{ runner.temp }}/tfplan"
             "-replace" "aws_rds_cluster.cluster"
           )
-          
-          if [ "${{ env.REPLACE_DB_CLUSTER }}" = "true" ]; then
-            PLAN_ARGS+=("-replace" "aws_rds_cluster.cluster")
-          fi
+
           terraform "${PLAN_ARGS[@]}" | tee ${{ runner.temp }}/tf_stdout
       - name: Upload artifact
         uses: actions/upload-artifact@v4
