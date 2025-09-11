@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe SearchVaccinationRecordsInNHSJob do
-  subject(:perform_job) { described_class.perform_now(patient) }
+  subject(:perform) { described_class.new.perform(patient.id) }
 
   let(:team) { create(:team) }
   let(:school) { create(:school, team:) }
@@ -77,9 +77,7 @@ describe SearchVaccinationRecordsInNHSJob do
 
     context "with 2 new incoming records" do
       it "creates new vaccination records for incoming Immunizations" do
-        expect { perform_job }.to change {
-          patient.vaccination_records.count
-        }.by(2)
+        expect { perform }.to change { patient.vaccination_records.count }.by(2)
       end
     end
 
@@ -91,9 +89,7 @@ describe SearchVaccinationRecordsInNHSJob do
       end
 
       it "updates existing records and creates new records not present" do
-        expect { perform_job }.to change {
-          patient.vaccination_records.count
-        }.by(1)
+        expect { perform }.to change { patient.vaccination_records.count }.by(1)
         expect(patient.vaccination_records.map(&:id)).to include(
           existing_records.map(&:id).first
         )
@@ -112,9 +108,9 @@ describe SearchVaccinationRecordsInNHSJob do
       let(:body) { file_fixture("fhir/search_response_1_result.json").read }
 
       it "deletes the record that is no longer present, and edits the existing record" do
-        expect { perform_job }.to change {
-          patient.vaccination_records.count
-        }.by(-1)
+        expect { perform }.to change { patient.vaccination_records.count }.by(
+          -1
+        )
         expect(patient.vaccination_records.count).to eq(1)
         expect(existing_records.map(&:id)).to include(
           patient.vaccination_records.map(&:id).first
@@ -131,9 +127,7 @@ describe SearchVaccinationRecordsInNHSJob do
       end
 
       it "does not create a new record" do
-        expect { perform_job }.not_to(
-          change { patient.vaccination_records.count }
-        )
+        expect { perform }.not_to(change { patient.vaccination_records.count })
       end
     end
 
@@ -141,9 +135,7 @@ describe SearchVaccinationRecordsInNHSJob do
       before { Flipper.disable(:imms_api_search_job) }
 
       it "does not change any records locally" do
-        expect { perform_job }.not_to(
-          change { patient.vaccination_records.count }
-        )
+        expect { perform }.not_to(change { patient.vaccination_records.count })
       end
     end
 
@@ -153,7 +145,7 @@ describe SearchVaccinationRecordsInNHSJob do
       end
 
       it "does not change the record which was recorded in service" do
-        expect { perform_job }.not_to(change(vaccination_record, :reload))
+        expect { perform }.not_to(change(vaccination_record, :reload))
 
         expect(patient.vaccination_records.count).to be 3
         expect(patient.vaccination_records.map(&:source)).to contain_exactly(
@@ -174,9 +166,9 @@ describe SearchVaccinationRecordsInNHSJob do
       end
 
       it "deletes all the API records and does not create any new ones" do
-        expect { perform_job }.to change {
-          patient.vaccination_records.count
-        }.by(-2)
+        expect { perform }.to change { patient.vaccination_records.count }.by(
+          -2
+        )
         expect(patient.vaccination_records.count).to eq(0)
       end
     end

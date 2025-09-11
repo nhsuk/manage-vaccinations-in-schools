@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
-class SearchVaccinationRecordsInNHSJob < ApplicationJob
-  include ImmunisationsAPIThrottlingConcern
+class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
+  def perform(patient_id)
+    patient = Patient.find(patient_id)
 
-  queue_as :immunisation_api
-
-  def perform(patient)
     tx_id = SecureRandom.urlsafe_base64(16)
-    SemanticLogger.tagged(tx_id:, job_id: provider_job_id || job_id) do
-      Sentry.set_tags(tx_id:, job_id: provider_job_id || job_id)
+
+    SemanticLogger.tagged(tx_id:, job_id:) do
+      Sentry.set_tags(tx_id:, job_id:)
 
       return unless Flipper.enabled?(:imms_api_search_job)
 
