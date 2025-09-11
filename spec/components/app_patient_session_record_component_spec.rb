@@ -43,10 +43,30 @@ describe AppPatientSessionRecordComponent do
       it { should be(false) }
     end
 
+    context "patient is fully vaccinated" do
+      let(:patient) { create(:patient, :vaccinated, programmes:) }
+
+      before { patient.registration_statuses.first.completed! }
+
+      it { should be(false) }
+
+      context "but the session was yesterday" do
+        let(:session) { create(:session, :yesterday, programmes:) }
+
+        it { should be(false) }
+      end
+    end
+
     context "session requires no registration" do
       let(:session) { create(:session, :requires_no_registration, programmes:) }
 
       it { should be(true) }
+
+      context "but the session was yesterday" do
+        let(:session) { create(:session, :yesterday, programmes:) }
+
+        it { should be(false) }
+      end
     end
   end
 end
