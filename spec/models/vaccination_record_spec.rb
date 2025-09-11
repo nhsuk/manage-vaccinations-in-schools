@@ -357,72 +357,64 @@ describe VaccinationRecord do
     let(:vaccination_record) { create(:vaccination_record) }
 
     context "when the update doesn't change any attributes" do
-      before { vaccination_record.update!(notes: vaccination_record.notes) }
-
-      it { should be_falsy }
+      it { should be(false) }
     end
 
     context "when regular fields have been changed" do
-      before { vaccination_record.update!(notes: "Updated notes") }
+      before { vaccination_record.notes = "Updated notes" }
 
-      it { should be_truthy }
+      it { should be(true) }
     end
 
     context "when only nhs_immunisations_api_etag has been changed" do
-      before do
-        vaccination_record.update!(nhs_immunisations_api_etag: "new-etag")
-      end
+      before { vaccination_record.nhs_immunisations_api_etag = "new-etag" }
 
-      it { should be_falsy }
+      it { should be(false) }
     end
 
     context "when only nhs_immunisations_api_sync_pending_at has been changed" do
       before do
-        vaccination_record.update!(
-          nhs_immunisations_api_sync_pending_at: Time.current
-        )
+        vaccination_record.nhs_immunisations_api_sync_pending_at = Time.current
       end
 
-      it { should be_falsy }
+      it { should be(false) }
     end
 
     context "when only nhs_immunisations_api_synced_at has been changed" do
       before do
-        vaccination_record.update!(
-          nhs_immunisations_api_synced_at: Time.current
-        )
+        vaccination_record.nhs_immunisations_api_synced_at = Time.current
       end
 
-      it { should be_falsy }
+      it { should be(false) }
     end
 
     context "when only nhs_immunisations_api_id has been changed" do
-      before { vaccination_record.update!(nhs_immunisations_api_id: "new-id") }
+      before { vaccination_record.nhs_immunisations_api_id = "new-id" }
 
-      it { should be_falsy }
+      it { should be(false) }
     end
 
     context "when both regular fields and nhs_immunisations_api fields have been changed" do
       before do
-        vaccination_record.update!(
+        vaccination_record.assign_attributes(
           notes: "Updated notes",
           nhs_immunisations_api_etag: "new-etag"
         )
       end
 
-      it { should be_falsy }
+      it { should be(false) }
     end
 
     context "when a regular field and multiple nhs_immunisations_api fields have been changed" do
       before do
-        vaccination_record.update!(
+        vaccination_record.assign_attributes(
           outcome: :refused,
           nhs_immunisations_api_etag: "new-etag",
           nhs_immunisations_api_sync_pending_at: Time.current
         )
       end
 
-      it { should be_falsy }
+      it { should be(false) }
     end
   end
 

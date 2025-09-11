@@ -109,6 +109,7 @@ require "rspec/rails"
 # Add additional requires below this line. Rails is not loaded until this point!
 require "capybara/cuprite"
 require "capybara-screenshot/rspec"
+require "sidekiq/testing"
 
 Faker::Config.locale = "en-GB"
 
@@ -228,4 +229,8 @@ RSpec.configure do |config|
   config.include ViewComponent::TestHelpers, type: :component
   config.include AuthorisationHelper
   config.include ImmunisationsAPIHelper, type: :feature
+end
+
+RSpec::Sidekiq.configure do |config|
+  config.warn_when_jobs_not_processed_by_sidekiq = false
 end

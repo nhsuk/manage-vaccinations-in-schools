@@ -78,6 +78,7 @@ group :development, :test do
   gem "factory_bot_instruments"
   gem "pry-rails"
   gem "rspec-rails"
+  gem "rspec-sidekiq"
 end
 
 group :development do

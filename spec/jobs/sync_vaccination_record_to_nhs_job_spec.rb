@@ -11,7 +11,7 @@ describe SyncVaccinationRecordToNHSJob, type: :job do
   let(:vaccination_record) { create(:vaccination_record) }
 
   it "syncs the vaccination" do
-    described_class.perform_now(vaccination_record)
+    described_class.new.perform(vaccination_record.id)
 
     expect(NHS::ImmunisationsAPI).to have_received(:sync_immunisation)
   end

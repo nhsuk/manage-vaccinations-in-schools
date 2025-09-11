@@ -163,7 +163,7 @@ describe "Archive vaccination record" do
 
     if Flipper.enabled?(:imms_api_integration) &&
          Flipper.enabled?(:imms_api_sync_job)
-      perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+      Sidekiq::Job.drain_all
       expect(@stubbed_post_request).to have_been_requested
     end
 
@@ -273,7 +273,7 @@ describe "Archive vaccination record" do
   end
 
   def and_the_vaccination_record_is_deleted_from_nhs
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
     expect(@stubbed_delete_request).to have_been_requested
   end
 end

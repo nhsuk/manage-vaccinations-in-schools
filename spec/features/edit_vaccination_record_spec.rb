@@ -267,9 +267,7 @@ describe "Edit vaccination record" do
         programme: @programme
       )
 
-    if Flipper.enabled?(:imms_api_integration)
-      perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
-    end
+    Sidekiq::Job.drain_all if Flipper.enabled?(:imms_api_integration)
   end
 
   def and_imms_api_sync_job_feature_is_enabled
@@ -307,9 +305,9 @@ describe "Edit vaccination record" do
         programme: @programme
       )
 
-    +if Flipper.enabled?(:imms_api_integration) &&
+    if Flipper.enabled?(:imms_api_integration) &&
          Flipper.enabled?(:imms_api_sync_job)
-      perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+      Sidekiq::Job.drain_all
     end
   end
 
@@ -512,12 +510,12 @@ describe "Edit vaccination record" do
   end
 
   def and_the_vaccination_record_is_synced_to_nhs
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
     expect(@stubbed_post_request).to have_been_requested
   end
 
   def and_the_vaccination_record_is_deleted_from_nhs
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
     expect(@stubbed_delete_request).to have_been_requested
   end
 end

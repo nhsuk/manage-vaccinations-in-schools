@@ -214,12 +214,12 @@ describe "Invalidate consent" do
     @stubbed_post_request =
       stub_immunisations_api_post(uuid: @vaccination_record.uuid)
 
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
     expect(@stubbed_post_request).not_to have_been_requested
   end
 
   def and_the_vaccination_record_is_synced_to_the_imms_api
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
     expect(@stubbed_post_request).to have_been_requested
   end
 end

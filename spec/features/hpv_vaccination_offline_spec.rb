@@ -485,12 +485,12 @@ describe "HPV vaccination" do
 
   def and_the_vaccination_record_is_synced_to_nhs
     # expect(SyncVaccinationRecordToNHSJob).to have_been_enqueued.exactly(2).times
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
     expect(@stubbed_post_request).to have_been_requested
   end
 
   def and_the_vaccination_record_is_deleted_from_nhs
-    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    Sidekiq::Job.drain_all
     expect(@stubbed_delete_request).to have_been_requested
   end
 end

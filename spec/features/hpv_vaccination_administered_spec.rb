@@ -306,7 +306,7 @@ describe "HPV vaccination" do
   end
 
   def and_the_vaccination_record_is_synced_to_nhs
-    perform_enqueued_jobs
+    Sidekiq::Job.drain_all
     expect(@stubbed_post_request).to have_been_requested
   end
 end

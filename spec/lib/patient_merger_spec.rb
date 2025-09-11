@@ -207,9 +207,9 @@ describe PatientMerger do
 
     it "enqueues sync jobs for vaccination records" do
       Flipper.enable(:imms_api_sync_job)
-      expect { call }.to have_enqueued_job(SyncVaccinationRecordToNHSJob).with(
-        vaccination_record
-      )
+      expect { call }.to enqueue_sidekiq_job(
+        SyncVaccinationRecordToNHSJob
+      ).with(vaccination_record.id)
     end
 
     context "when parent is already associated with patient to keep" do
