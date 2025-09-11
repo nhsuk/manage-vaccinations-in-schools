@@ -129,10 +129,9 @@ class PatientMerger
       StatusUpdater.call(patient: patient_to_keep)
     end
 
-    VaccinationRecord
-      .where(id: vaccination_record_ids)
-      .syncable_to_nhs_immunisations_api
-      .find_each(&:sync_to_nhs_immunisations_api)
+    VaccinationRecord.where(
+      id: vaccination_record_ids
+    ).sync_all_to_nhs_immunisations_api
   end
 
   def self.call(...) = new(...).call
