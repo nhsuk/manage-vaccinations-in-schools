@@ -229,3 +229,7 @@ RSpec.configure do |config|
   config.include AuthorisationHelper
   config.include ImmunisationsAPIHelper, type: :feature
 end
+
+RSpec::Sidekiq.configure do |config|
+  config.warn_when_jobs_not_processed_by_sidekiq = false
+end

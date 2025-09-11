@@ -559,6 +559,11 @@ GEM
       rspec-expectations (~> 3.13)
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
+    rspec-sidekiq (5.2.0)
+      rspec-core (~> 3.0)
+      rspec-expectations (~> 3.0)
+      rspec-mocks (~> 3.0)
+      sidekiq (>= 5, < 9)
     rspec-support (3.13.4)
     rubocop (1.79.2)
       json (~> 2.3)
@@ -822,6 +827,7 @@ DEPENDENCIES
   rspec
   rspec-html-matchers
   rspec-rails
+  rspec-sidekiq
   rubocop-govuk
   ruby-prof
   ruby-progressbar
