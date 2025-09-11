@@ -30,7 +30,9 @@ class VaccinationRecordPolicy < ApplicationPolicy
 
   def update? = edit?
 
-  def destroy? = user.is_superuser?
+  def destroy?
+    user.is_superuser? && !record.sourced_from_nhs_immunisations_api?
+  end
 
   private
 
