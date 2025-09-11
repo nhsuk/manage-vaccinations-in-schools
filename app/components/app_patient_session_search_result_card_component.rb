@@ -5,7 +5,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     <%= render AppCardComponent.new(heading_level: 4, compact: true) do |card| %>
       <% card.with_heading { link_to(patient.full_name_with_known_as, patient_path) } %>
 
-      <%= govuk_summary_list do |summary_list|
+      <%= govuk_summary_list(actions: false) do |summary_list|
             summary_list.with_row do |row|
               row.with_key { "Date of birth" }
               row.with_value { patient_date_of_birth(patient) }
