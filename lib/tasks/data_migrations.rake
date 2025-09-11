@@ -12,4 +12,20 @@ namespace :data_migrations do
       parent.update_column(:email, email)
     end
   end
+
+  desc "Removes school moves from any archived patients"
+  task remove_school_moves_from_archived_patients: :environment do
+    puts "#{ArchiveReason.count} archived patients"
+
+    ArchiveReason
+      .includes(:patient, :team)
+      .find_each do |archive_reason|
+        patient = archive_reason.patient
+        team = archive_reason.team
+
+        PatientArchiver.send(:new, patient:, team:, type: nil).send(
+          :destroy_school_moves!
+        )
+      end
+  end
 end
