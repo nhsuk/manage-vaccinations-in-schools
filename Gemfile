@@ -78,7 +78,6 @@ group :development, :test do
   gem "factory_bot_instruments"
   gem "pry-rails"
   gem "rspec-rails"
-  gem "rspec-sidekiq"
 end
 
 group :development do
@@ -118,6 +117,7 @@ group :test do
   gem "its"
   gem "rspec"
   gem "rspec-html-matchers"
+  gem "rspec-sidekiq"
   gem "rubyXL"
   gem "shoulda-matchers"
   gem "simplecov", require: false
