@@ -95,7 +95,12 @@ class ImmunisationImportRow
     return unless valid?
 
     outcome = (administered ? "administered" : reason_not_administered_value)
-    source = (offline_recording? ? "service" : "historical_upload")
+    source =
+      if imms_api_record?
+        "nhs_immunisations_api"
+      else
+        offline_recording? ? "service" : "historical_upload"
+      end
 
     attributes = {
       dose_sequence: dose_sequence_value,
@@ -135,8 +140,7 @@ class ImmunisationImportRow
     vaccination_record =
       if uuid.present?
         VaccinationRecord
-          .joins(:team)
-          .find_by!(teams: { id: team.id }, uuid: uuid.to_s)
+          .find_by!(uuid: uuid.to_s)
           .tap { it.stage_changes(attributes) }
       else
         VaccinationRecord.find_or_initialize_by(attributes)
@@ -379,6 +383,13 @@ class ImmunisationImportRow
   delegate :default_dose_sequence, :maximum_dose_sequence, to: :programme
 
   def offline_recording? = session_id.present?
+
+  def imms_api_record?
+    uuid.present? &&
+      VaccinationRecord.find_by!(
+        uuid: uuid.to_s
+      ).sourced_from_nhs_immunisations_api?
+  end
 
   def academic_year = date_of_vaccination.to_date.academic_year
 
@@ -970,15 +981,13 @@ class ImmunisationImportRow
   def validate_uuid
     return if uuid.blank?
 
-    scope =
-      VaccinationRecord.joins(:team).where(
-        teams: {
-          id: team.id
-        },
-        uuid: uuid.to_s
-      )
+    scope = VaccinationRecord.includes(:team).find_by(uuid: uuid.to_s)
 
-    errors.add(uuid.header, "Enter an existing record.") unless scope.exists?
+    return if scope&.sourced_from_nhs_immunisations_api?
+
+    return if !scope.nil? && scope.team == team
+
+    errors.add(uuid.header, "Enter an existing record.")
   end
 
   def validate_vaccine
