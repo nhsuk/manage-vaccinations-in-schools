@@ -17,6 +17,8 @@ class PatientArchiver
       end
 
       patient.clear_pending_sessions!(team:)
+
+      destroy_school_moves!
     end
   end
 
@@ -30,5 +32,15 @@ class PatientArchiver
 
   def archive_reason
     @archive_reason ||= ArchiveReason.find_or_create_by(team:, patient:)
+  end
+
+  def destroy_school_moves!
+    patient.school_moves.where(team:).destroy_all
+
+    patient
+      .school_moves
+      .joins(school: :subteam)
+      .where(subteams: { team: team })
+      .destroy_all
   end
 end
