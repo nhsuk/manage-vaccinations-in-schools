@@ -1,5 +1,5 @@
-name: Deploy Data Replication
-run-name: Deploy Data Replication service for ${{ inputs.environment }}
+name: Deploy data replication
+run-name: Deploy data replication to ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
@@ -16,7 +16,11 @@ on:
           - sandbox-alpha
           - sandbox-beta
       image_tag:
-        description: Docker image tag to deploy
+        description: Docker image tag to deploy (if not provided, will build from git_ref_to_deploy)
+        required: false
+        type: string
+      git_ref_to_deploy:
+        description: Git ref (branch/tag/SHA) to deploy
         required: false
         type: string
 
@@ -39,11 +43,12 @@ jobs:
       - name: Validate inputs
         run: |
           if [[ "${{ inputs.environment }}" == "preview" || "${{ inputs.environment }}" == "production" ]]; then
-            if [[ -z "${{ inputs.git_ref_to_deploy }}" ]]; then
-              echo "Error: git_ref_to_deploy is required for preview and production environments."
+            if [[ -z "${{ inputs.git_ref_to_deploy }}" && -z "${{ inputs.image_tag }}" ]]; then
+              echo "Error: Either git_ref_to_deploy or image_tag is required for preview and production environment."
               exit 1
             fi
           fi
+
   determine-git-sha:
     runs-on: ubuntu-latest
     permissions: {}
@@ -58,7 +63,9 @@ jobs:
       - name: Get git sha
         id: get-git-sha
         run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
   build-and-push-image:
+    if: ${{ !inputs.image_tag }}
     permissions:
       id-token: write
     needs: determine-git-sha
@@ -69,14 +76,15 @@ jobs:
   prepare-deployment:
     name: Prepare deployment
     runs-on: ubuntu-latest
-    needs: build-and-push-image
+    needs: [determine-git-sha, build-and-push-image]
+    if: ${{ always() && (needs.build-and-push-image.result == 'success' || needs.build-and-push-image.result == 'skipped') }}
     permissions:
       id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          ref: ${{ inputs.git_sha_to_deploy || github.sha }}
+          ref: ${{ inputs.git_ref_to_deploy || github.sha }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
@@ -87,12 +95,14 @@ jobs:
         with:
           python-version: 3.13.7
           cache: pip
+      - name: Install yq
+        run: pip install yq
       - name: Get image digest
         id: get-image-digest
         run: |
           digest=$(aws ecr describe-images \
             --repository-name mavis/webapp \
-            --image-ids imageTag=${{ inputs.git_sha_to_deploy || github.sha }} \
+            --image-ids imageTag=${{ inputs.image_tag || needs.determine-git-sha.outputs.git-sha }} \
             --query 'imageDetails[0].imageDigest' \
             --output text)
           echo "digest=$digest" >> $GITHUB_OUTPUT
