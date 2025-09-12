@@ -53,7 +53,7 @@ module NHS::ImmunisationsAPI
       )
 
       if response.status == 201
-        vaccination_record.update!(
+        vaccination_record.update_columns(
           nhs_immunisations_api_id:
             extract_nhs_id(response.headers.fetch("location")),
           nhs_immunisations_api_synced_at: Time.current,
@@ -169,7 +169,7 @@ module NHS::ImmunisationsAPI
       )
 
       if response.status == 200
-        vaccination_record.update!(
+        vaccination_record.update_columns(
           nhs_immunisations_api_synced_at: Time.current,
           # This simplistic approach is based on the assumption that the NHS
           # Immunisations API will always simply increment the ETag. Alternative
@@ -235,10 +235,10 @@ module NHS::ImmunisationsAPI
 
       if response.status == 204
         # It's not entirely clear if the e-tag should be changed here, but
-        # experiments show (by deletind and then re-creating a vaccination
+        # experiments show (by deleting and then re-creating a vaccination
         # record with an "update") that it appears that the e-tag is incremented
         # on the reviving update.
-        vaccination_record.update!(
+        vaccination_record.update_columns(
           nhs_immunisations_api_synced_at: Time.current
         )
       else
@@ -309,7 +309,7 @@ module NHS::ImmunisationsAPI
       )
 
       if response.status == 200
-        # # To create fixtures for testing
+        # To create fixtures for testing
         # File.write("tmp/search_response.json", response.body.to_json)
         # Rails.logger.debug "Successfully saved"
 
