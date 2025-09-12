@@ -10,7 +10,12 @@ class AppVaccinationsSummaryTableComponent < ViewComponent::Base
   delegate :govuk_table, to: :helpers
 
   def tally_results
-    administered = session.vaccination_records.includes(:vaccine).administered
+    administered =
+      session
+        .vaccination_records
+        .includes(:vaccine)
+        .administered
+        .where(performed_by_user: current_user)
 
     results = initialize_results_hash
     populate_results(results, administered) if administered.any?
@@ -40,12 +45,17 @@ class AppVaccinationsSummaryTableComponent < ViewComponent::Base
     results
   end
 
-  def populate_results(results, administered_vaccination_records)
-    administered_vaccination_records
-      .where(performed_by_user: current_user)
-      .find_each do |vaccination_record|
-        results[vaccination_record.vaccine.brand][:count] += 1
-      end
+  def populate_results(results, vaccination_records)
+    vaccination_records.find_each do |vaccination_record|
+      brand = vaccination_record.vaccine.brand
+
+      # Non-prod environments can have bad data where
+      # vaccines associated with the session are not
+      # associated with the vaccination records.
+      next unless results[brand]
+
+      results[brand][:count] += 1
+    end
 
     results
   end
