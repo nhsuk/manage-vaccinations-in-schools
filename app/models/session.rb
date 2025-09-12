@@ -68,10 +68,22 @@ class Session < ApplicationRecord
   accepts_nested_attributes_for :session_dates, allow_destroy: true
 
   scope :joins_patient_locations, -> { joins(<<-SQL) }
-      INNER JOIN patient_locations
-      ON patient_locations.location_id = sessions.location_id
-      AND patient_locations.academic_year = sessions.academic_year
-    SQL
+    INNER JOIN patient_locations
+    ON patient_locations.location_id = sessions.location_id
+    AND patient_locations.academic_year = sessions.academic_year
+  SQL
+
+  scope :joins_patients, -> { joins(<<-SQL) }
+    INNER JOIN patients
+    ON patients.id = patient_locations.patient_id
+  SQL
+
+  scope :joins_location_programme_year_groups, -> { joins(<<-SQL) }
+    INNER JOIN location_programme_year_groups
+    ON location_programme_year_groups.location_id = sessions.location_id
+    AND location_programme_year_groups.programme_id = session_programmes.programme_id
+    AND location_programme_year_groups.year_group = sessions.academic_year - patients.birth_academic_year - #{Integer::AGE_CHILDREN_START_SCHOOL}
+  SQL
 
   scope :has_date,
         ->(value) { where(SessionDate.for_session.where(value:).arel.exists) }
@@ -183,6 +195,21 @@ class Session < ApplicationRecord
   before_create :set_slug
 
   delegate :clinic?, :generic_clinic?, :school?, to: :location
+
+  def programme_birth_academic_years
+    @programme_birth_academic_years ||=
+      ProgrammeBirthAcademicYears.new(programme_year_groups, academic_year:)
+  end
+
+  def patients
+    birth_academic_years =
+      location_programme_year_groups.pluck_birth_academic_years(academic_year:)
+
+    Patient
+      .joins_sessions
+      .where(sessions: { id: })
+      .where(birth_academic_year: birth_academic_years)
+  end
 
   def to_param = slug
 

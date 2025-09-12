@@ -13,12 +13,16 @@ class Sessions::TriageController < ApplicationController
 
     scope =
       @session
-        .patient_locations
-        .includes(patient: [:triage_statuses, { notes: :created_by }])
-        .has_triage_status(@statuses, programme: @form.programmes)
+        .patients
+        .includes(:triage_statuses, notes: :created_by)
+        .has_triage_status(
+          @statuses,
+          programme: @form.programmes,
+          academic_year: @session.academic_year
+        )
 
-    patient_locations = @form.apply(scope)
-    @pagy, @patient_locations = pagy(patient_locations)
+    patients = @form.apply(scope)
+    @pagy, @patients = pagy(patients)
   end
 
   private

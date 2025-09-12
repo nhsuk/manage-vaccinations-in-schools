@@ -59,7 +59,7 @@ describe PatientSearchForm do
 
   let(:empty_params) { {} }
 
-  context "for patients" do
+  describe "#apply" do
     let(:scope) { Patient.all }
 
     let(:session_for_patients) { create(:session, team:, programmes:) }
@@ -217,6 +217,55 @@ describe PatientSearchForm do
       end
     end
 
+    context "filtering on consent status" do
+      let(:consent_statuses) { %w[given refused] }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:vaccination_status) { nil }
+      let(:programme_types) { programmes.map(&:type) }
+      let(:q) { nil }
+      let(:register_status) { nil }
+      let(:triage_status) { nil }
+      let(:year_groups) { nil }
+
+      let(:session) { session_for_patients }
+
+      it "filters on consent status" do
+        patient_given =
+          create(:patient, :consent_given_triage_not_needed, session:)
+
+        patient_refused = create(:patient, :consent_refused, session:)
+
+        expect(form.apply(scope)).to contain_exactly(
+          patient_given,
+          patient_refused
+        )
+      end
+
+      context "with combined consent status and vaccine method" do
+        let(:consent_statuses) { %w[given_nasal] }
+
+        it "filters on consent status" do
+          patient_given_nasal =
+            create(
+              :patient,
+              :consent_given_nasal_only_triage_not_needed,
+              session:
+            )
+
+          create(
+            :patient,
+            :consent_given_injection_only_triage_not_needed,
+            session:
+          )
+
+          expect(form.apply(scope)).to contain_exactly(patient_given_nasal)
+        end
+      end
+    end
+
     context "filtering on programmes" do
       let(:consent_status) { nil }
       let(:date_of_birth_day) { nil }
@@ -273,6 +322,137 @@ describe PatientSearchForm do
           )
 
         expect(form.apply(scope)).to include(patient)
+      end
+    end
+
+    context "filtering on register status" do
+      let(:consent_statuses) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:vaccination_status) { nil }
+      let(:q) { nil }
+      let(:register_status) { "attending" }
+      let(:triage_status) { nil }
+      let(:year_groups) { nil }
+
+      let(:session) { session_for_patients }
+
+      it "filters on register status" do
+        patient = create(:patient, :in_attendance, session:)
+        expect(form.apply(scope)).to include(patient)
+      end
+    end
+
+    context "filtering on triage status" do
+      let(:consent_statuses) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:vaccination_status) { nil }
+      let(:programme_types) { programmes.map(&:type) }
+      let(:q) { nil }
+      let(:register_status) { nil }
+      let(:triage_status) { "required" }
+      let(:year_groups) { nil }
+
+      let(:session) { session_for_patients }
+
+      it "filters on triage status" do
+        patient = create(:patient, :consent_given_triage_needed, session:)
+
+        expect(form.apply(scope)).to include(patient)
+      end
+    end
+
+    context "filtering on patient specific direction status" do
+      let(:consent_statuses) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:vaccination_status) { nil }
+      let(:programme_types) { nil }
+      let(:q) { nil }
+      let(:register_status) { nil }
+      let(:triage_status) { nil }
+      let(:year_groups) { nil }
+
+      let(:session) { session_for_patients }
+
+      let!(:patient_with_psd) { create(:patient, session:) }
+      let!(:patient_without_psd) { create(:patient, session:) }
+
+      before do
+        create(
+          :patient_specific_direction,
+          patient: patient_with_psd,
+          programme: programmes.first,
+          team:
+        )
+      end
+
+      context "when status is 'added'" do
+        let(:patient_specific_direction_status) { "added" }
+
+        it "finds the patient with the PSD" do
+          expect(form.apply(scope)).to contain_exactly(patient_with_psd)
+        end
+      end
+
+      context "when status is 'not_added'" do
+        let(:patient_specific_direction_status) { "not_added" }
+
+        it "finds the patient that has no PSD" do
+          expect(form.apply(scope)).to contain_exactly(patient_without_psd)
+        end
+      end
+    end
+
+    context "filtering on vaccine method" do
+      let(:consent_statuses) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:vaccination_status) { nil }
+      let(:programme_types) { programmes.map(&:type) }
+      let(:q) { nil }
+      let(:register_status) { nil }
+      let(:triage_status) { nil }
+      let(:vaccine_method) { "nasal" }
+      let(:year_groups) { nil }
+
+      let(:session) { session_for_patients }
+
+      it "filters on vaccine method" do
+        nasal_patient =
+          create(:patient, :consent_given_triage_not_needed, session:)
+
+        nasal_patient.consent_statuses.first.update!(
+          vaccine_methods: %w[nasal injection]
+        )
+
+        _nasal_only_different_programme_patient =
+          create(
+            :patient,
+            :consent_given_triage_not_needed,
+            programmes: [create(:programme, :hpv)]
+          )
+
+        _injection_only_patient =
+          create(:patient, :consent_given_triage_not_needed, session:)
+
+        injection_primary_patient =
+          create(:patient, :consent_given_triage_not_needed, session:)
+
+        injection_primary_patient.consent_statuses.first.update!(
+          vaccine_methods: %w[injection nasal]
+        )
+
+        expect(form.apply(scope)).to contain_exactly(nasal_patient)
       end
     end
 
@@ -345,237 +525,6 @@ describe PatientSearchForm do
         it "sorts by similarity" do
           expect(form.apply(scope)).to eq([patient_a, patient_b, patient_c])
         end
-      end
-    end
-  end
-
-  context "for patient sessions" do
-    let(:scope) { PatientLocation.all }
-
-    let(:session) { create(:session, programmes:, team:) }
-
-    it "doesn't raise an error" do
-      expect { form.apply(scope) }.not_to raise_error
-    end
-
-    context "filtering on programmes" do
-      let(:consent_status) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
-      let(:programme_types) { programmes.map(&:type) }
-      let(:q) { nil }
-      let(:register_status) { nil }
-      let(:triage_status) { nil }
-      let(:year_groups) { nil }
-
-      let(:programmes) { [create(:programme, :menacwy)] }
-
-      context "with a patient session eligible for the programme" do
-        let(:patient) { create(:patient, year_group: 9) }
-
-        let(:patient_location) { create(:patient_location, patient:, session:) }
-
-        it "is included" do
-          expect(form.apply(scope)).to include(patient_location)
-        end
-      end
-
-      context "with a patient session not eligible for the programme" do
-        let(:patient) { create(:patient, year_group: 8) }
-
-        let(:patient_location) { create(:patient_location, patient:, session:) }
-
-        it "is not included" do
-          expect(form.apply(scope)).not_to include(patient_location)
-        end
-      end
-    end
-
-    context "filtering on consent status" do
-      let(:consent_statuses) { %w[given refused] }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
-      let(:programme_types) { programmes.map(&:type) }
-      let(:q) { nil }
-      let(:register_status) { nil }
-      let(:triage_status) { nil }
-      let(:year_groups) { nil }
-
-      it "filters on consent status" do
-        patient_given =
-          create(:patient, :consent_given_triage_not_needed, session:)
-
-        patient_refused = create(:patient, :consent_refused, session:)
-
-        expect(form.apply(scope)).to contain_exactly(
-          patient_given.patient_locations.first,
-          patient_refused.patient_locations.first
-        )
-      end
-
-      context "with combined consent status and vaccine method" do
-        let(:consent_statuses) { %w[given_nasal] }
-
-        it "filters on consent status" do
-          patient_location_given_nasal =
-            create(
-              :patient,
-              :consent_given_nasal_only_triage_not_needed,
-              session:
-            ).patient_locations.first
-
-          create(
-            :patient,
-            :consent_given_injection_only_triage_not_needed,
-            session:
-          )
-
-          expect(form.apply(scope)).to contain_exactly(
-            patient_location_given_nasal
-          )
-        end
-      end
-    end
-
-    context "filtering on register status" do
-      let(:consent_statuses) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
-      let(:q) { nil }
-      let(:register_status) { "attending" }
-      let(:triage_status) { nil }
-      let(:year_groups) { nil }
-
-      it "filters on register status" do
-        patient = create(:patient, :in_attendance, session:)
-        patient_location = patient.patient_locations.first
-        expect(form.apply(scope)).to include(patient_location)
-      end
-    end
-
-    context "filtering on triage status" do
-      let(:consent_statuses) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
-      let(:programme_types) { programmes.map(&:type) }
-      let(:q) { nil }
-      let(:register_status) { nil }
-      let(:triage_status) { "required" }
-      let(:year_groups) { nil }
-
-      it "filters on triage status" do
-        patient = create(:patient, :consent_given_triage_needed, session:)
-        patient_location = patient.patient_locations.first
-
-        expect(form.apply(scope)).to include(patient_location)
-      end
-    end
-
-    context "filtering on patient specific direction status" do
-      let(:consent_statuses) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
-      let(:programme_types) { nil }
-      let(:q) { nil }
-      let(:register_status) { nil }
-      let(:triage_status) { nil }
-      let(:year_groups) { nil }
-
-      let!(:patient_location_with_psd) do
-        create(:patient_location, session:).tap do |patient_location|
-          create(
-            :patient_specific_direction,
-            patient: patient_location.patient,
-            programme: programmes.first,
-            team:
-          )
-        end
-      end
-
-      let!(:patient_location_without_psd) do
-        create(:patient_location, session:)
-      end
-
-      context "when status is 'added'" do
-        let(:patient_specific_direction_status) { "added" }
-
-        it "finds the patient with the PSD" do
-          expect(form.apply(scope)).to contain_exactly(
-            patient_location_with_psd
-          )
-        end
-      end
-
-      context "when status is 'not_added'" do
-        let(:patient_specific_direction_status) { "not_added" }
-
-        it "finds the patient that has no PSD" do
-          expect(form.apply(scope)).to contain_exactly(
-            patient_location_without_psd
-          )
-        end
-      end
-    end
-
-    context "filtering on vaccine method" do
-      let(:consent_statuses) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
-      let(:programme_types) { programmes.map(&:type) }
-      let(:q) { nil }
-      let(:register_status) { nil }
-      let(:triage_status) { nil }
-      let(:vaccine_method) { "nasal" }
-      let(:year_groups) { nil }
-
-      let(:programme) { create(:programme, :flu) }
-
-      it "filters on vaccine method" do
-        nasal_patient =
-          create(:patient, :consent_given_triage_not_needed, session:)
-
-        nasal_patient.consent_statuses.first.update!(
-          vaccine_methods: %w[nasal injection]
-        )
-
-        _nasal_only_different_programme_patient =
-          create(
-            :patient,
-            :consent_given_triage_not_needed,
-            programmes: [create(:programme, :hpv)]
-          )
-
-        _injection_only_patient =
-          create(:patient, :consent_given_triage_not_needed, session:)
-
-        injection_primary_patient =
-          create(:patient, :consent_given_triage_not_needed, session:)
-
-        injection_primary_patient.consent_statuses.first.update!(
-          vaccine_methods: %w[injection nasal]
-        )
-
-        expect(form.apply(scope)).to contain_exactly(
-          nasal_patient.patient_locations.first
-        )
       end
     end
   end

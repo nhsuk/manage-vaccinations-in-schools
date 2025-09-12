@@ -186,6 +186,6 @@ class Stats::Organisations
   end
 
   def get_eligible_patients(programme)
-    patients.appear_in_programmes([programme], academic_year: academic_year)
+    patients.appear_in_programmes([programme], academic_year:)
   end
 end

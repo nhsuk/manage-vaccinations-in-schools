@@ -1,23 +1,28 @@
 # frozen_string_literal: true
 
 class AppProgrammeSessionTableComponent < ViewComponent::Base
-  def initialize(sessions, programme:)
+  def initialize(sessions, programme:, academic_year:)
     @sessions = sessions
     @programme = programme
+    @academic_year = academic_year
   end
 
   private
 
-  attr_reader :sessions, :programme
+  attr_reader :sessions, :programme, :academic_year
 
   delegate :govuk_table, to: :helpers
 
   def cohort_count(session:)
-    format_number(patient_locations(session:).count)
+    format_number(patients(session:).count)
   end
 
   def no_response_scope(session:)
-    patient_locations(session:).has_consent_status(:no_response, programme:)
+    patients(session:).has_consent_status(
+      :no_response,
+      programme:,
+      academic_year:
+    )
   end
 
   def no_response_count(session:)
@@ -27,13 +32,17 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   def no_response_percentage(session:)
     format_percentage(
       no_response_scope(session:).count,
-      patient_locations(session:).count
+      patients(session:).count
     )
   end
 
   def triage_needed_count(session:)
     format_number(
-      patient_locations(session:).has_triage_status(:required, programme:).count
+      patients(session:).has_triage_status(
+        :required,
+        programme:,
+        academic_year:
+      ).count
     )
   end
 
@@ -48,12 +57,22 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   def vaccinated_percentage(session:)
     format_percentage(
       vaccinated_scope(session:).count,
-      patient_locations(session:).count
+      patients(session:).count
     )
   end
 
-  def patient_locations(session:)
-    session.patient_locations.joins(:patient).appear_in_programmes([programme])
+  def patients(session:)
+    @patients ||= {}
+    @patients[session] = session.patients.where(
+      birth_academic_year: birth_academic_years(session:)
+    )
+  end
+
+  def birth_academic_years(session:)
+    @birth_academic_years ||= {}
+    @birth_academic_years[session] = session.programme_birth_academic_years[
+      programme
+    ]
   end
 
   def format_number(count) = count.to_s

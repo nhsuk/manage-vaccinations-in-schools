@@ -39,7 +39,10 @@ describe PatientLocation do
   describe "scopes" do
     describe "#appear_in_programmes" do
       subject(:scope) do
-        described_class.joins(:patient).appear_in_programmes(programmes)
+        described_class
+          .joins_sessions
+          .joins(:patient)
+          .appear_in_programmes(programmes)
       end
 
       let(:programmes) { create_list(:programme, 1, :td_ipv) }
@@ -78,65 +81,6 @@ describe PatientLocation do
         end
 
         it { should_not include(patient_location) }
-      end
-    end
-
-    describe "#consent_given_and_ready_to_vaccinate" do
-      subject(:scope) do
-        described_class.consent_given_and_ready_to_vaccinate(
-          programmes:,
-          academic_year:,
-          vaccine_method:
-        )
-      end
-
-      let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
-      let(:session) { create(:session, programmes:) }
-      let(:academic_year) { Date.current.academic_year }
-      let(:vaccine_method) { nil }
-      let(:patient_location) { patient.patient_locations.first }
-
-      it { should be_empty }
-
-      context "with a patient eligible for vaccination" do
-        let(:patient) do
-          create(:patient, :consent_given_triage_not_needed, session:)
-        end
-
-        it { should include(patient_location) }
-      end
-
-      context "when filtering on nasal spray" do
-        let(:vaccine_method) { "nasal" }
-
-        context "with a patient eligible for vaccination" do
-          let(:patient) do
-            create(:patient, :consent_given_triage_not_needed, session:)
-          end
-
-          before do
-            patient.consent_status(
-              programme: programmes.first,
-              academic_year:
-            ).update!(vaccine_methods: %w[nasal injection])
-          end
-
-          it { should include(patient_location) }
-
-          context "when the patient has been vaccinated for flu" do
-            before do
-              create(
-                :vaccination_record,
-                programme: programmes.first,
-                session:,
-                patient:
-              )
-              StatusUpdater.call(session:, patient:)
-            end
-
-            it { should_not include(patient_location) }
-          end
-        end
       end
     end
   end

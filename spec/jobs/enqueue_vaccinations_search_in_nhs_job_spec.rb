@@ -43,13 +43,6 @@ describe EnqueueVaccinationsSearchInNHSJob do
 
       it { should have_received(:perform_bulk).once.with([[patient.id]]) }
 
-      context "community clinic session" do
-        let(:location) { create(:community_clinic, team:, programmes: [flu]) }
-        let(:school) { create(:school, team:, programmes: [flu]) }
-
-        it { should have_received(:perform_bulk).exactly(:once) }
-      end
-
       context "generic clinic session" do
         let(:location) { create(:generic_clinic, team:, programmes: [flu]) }
         let(:school) { create(:school, team:, programmes: [flu]) }

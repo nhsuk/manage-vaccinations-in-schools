@@ -104,10 +104,22 @@ class Patient < ApplicationRecord
         end
 
   scope :joins_sessions, -> { joins(:patient_locations).joins(<<-SQL) }
-      INNER JOIN sessions
-      ON sessions.location_id = patient_locations.location_id
-      AND sessions.academic_year = patient_locations.academic_year
-    SQL
+    INNER JOIN sessions
+    ON sessions.location_id = patient_locations.location_id
+    AND sessions.academic_year = patient_locations.academic_year
+  SQL
+
+  scope :joins_session_programmes, -> { joins(<<-SQL) }
+    INNER JOIN session_programmes
+    ON session_programmes.session_id = sessions.id
+  SQL
+
+  scope :joins_location_programme_year_groups, -> { joins(<<-SQL) }
+    INNER JOIN location_programme_year_groups
+    ON location_programme_year_groups.location_id = sessions.location_id
+    AND location_programme_year_groups.programme_id = session_programmes.programme_id
+    AND location_programme_year_groups.year_group = sessions.academic_year - patients.birth_academic_year - #{Integer::AGE_CHILDREN_START_SCHOOL}
+  SQL
 
   scope :archived,
         ->(team:) do
@@ -141,24 +153,34 @@ class Patient < ApplicationRecord
   scope :appear_in_programmes,
         ->(programmes, academic_year:) do
           where(
-            PatientLocation
-              .where(academic_year:)
-              .where("patient_id = patients.id")
-              .appear_in_programmes(programmes)
-              .arel
-              .exists
+            id:
+              joins_sessions
+                .joins_session_programmes
+                .joins_location_programme_year_groups
+                .where(sessions: { academic_year: })
+                .where(
+                  session_programmes: {
+                    programme_id: programmes.map(&:id)
+                  }
+                )
+                .select("patients.id")
           )
         end
 
   scope :not_appear_in_programmes,
         ->(programmes, academic_year:) do
           where.not(
-            PatientLocation
-              .where(academic_year:)
-              .where("patient_id = patients.id")
-              .appear_in_programmes(programmes)
-              .arel
-              .exists
+            id:
+              joins_sessions
+                .joins_session_programmes
+                .joins_location_programme_year_groups
+                .where(sessions: { academic_year: })
+                .where(
+                  session_programmes: {
+                    programme_id: programmes.map(&:id)
+                  }
+                )
+                .select("patients.id")
           )
         end
 
@@ -243,6 +265,80 @@ class Patient < ApplicationRecord
           )
         end
 
+  scope :has_vaccine_method,
+        ->(vaccine_method, programme:, academic_year:) do
+          where(
+            Patient::TriageStatus
+              .where("patient_id = patients.id")
+              .where(vaccine_method:, programme:, academic_year:)
+              .arel
+              .exists
+          ).or(
+            where(
+              Patient::TriageStatus
+                .where("patient_id = patients.id")
+                .where(status: "not_required", programme:, academic_year:)
+                .arel
+                .exists
+            ).where(
+              Patient::ConsentStatus
+                .where("patient_id = patients.id")
+                .where(programme:, academic_year:)
+                .has_vaccine_method(vaccine_method)
+                .arel
+                .exists
+            )
+          )
+        end
+
+  scope :has_registration_status,
+        ->(status, session:) do
+          where(
+            Patient::RegistrationStatus
+              .where("patient_id = patients.id")
+              .where(session:, status:)
+              .arel
+              .exists
+          )
+        end
+
+  scope :with_patient_specific_direction,
+        ->(programme:, academic_year:, team:) do
+          where(
+            PatientSpecificDirection
+              .where("patient_id = patients.id")
+              .where(programme:, academic_year:, team:)
+              .not_invalidated
+              .arel
+              .exists
+          )
+        end
+
+  scope :without_patient_specific_direction,
+        ->(programme:, academic_year:, team:) do
+          where.not(
+            PatientSpecificDirection
+              .where("patient_id = patients.id")
+              .where(programme:, academic_year:, team:)
+              .not_invalidated
+              .arel
+              .exists
+          )
+        end
+
+  scope :consent_given_and_ready_to_vaccinate,
+        ->(programmes:, academic_year:, vaccine_method:) do
+          select do |patient|
+            programmes.any? do |programme|
+              patient.consent_given_and_safe_to_vaccinate?(
+                programme:,
+                academic_year:,
+                vaccine_method:
+              )
+            end
+          end
+        end
+
   validates :given_name, :family_name, :date_of_birth, presence: true
 
   validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }
@@ -273,10 +369,6 @@ class Patient < ApplicationRecord
   before_destroy :destroy_childless_parents
 
   delegate :fhir_record, to: :fhir_mapper
-
-  def sessions
-    Session.joins_patient_locations.where(patient_locations: { patient_id: id })
-  end
 
   def self.match_existing(
     nhs_number:,
@@ -345,6 +437,16 @@ class Patient < ApplicationRecord
     end
 
     results
+  end
+
+  def sessions
+    Session
+      .joins_patient_locations
+      .joins_patients
+      .joins(:session_programmes)
+      .joins_location_programme_year_groups
+      .where(patients: { id: })
+      .distinct
   end
 
   def teams

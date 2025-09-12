@@ -22,9 +22,9 @@
   <div class="app-grid-column-results">
     <%= render AppSessionNeedsReviewWarningComponent.new(session: @session) %>
     <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
-      <% @patient_locations.each do |patient_location| %>
+      <% @patients.each do |patient| %>
         <%= render AppPatientSessionSearchResultCardComponent.new(
-              patient: patient_location.patient,
+              patient:,
               session: @session,
               context: :consent,
               programmes: @form.programmes,

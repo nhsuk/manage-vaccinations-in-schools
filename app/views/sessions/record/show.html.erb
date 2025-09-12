@@ -24,9 +24,9 @@
       <%= render AppSessionNeedsReviewWarningComponent.new(session: @session) %>
       <%= render AppVaccinationsSummaryTableComponent.new(current_user:, session: @session, request_session: session) %>
       <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
-        <% @patient_locations.each do |patient_location| %>
+        <% @patients.each do |patient| %>
           <%= render AppPatientSessionSearchResultCardComponent.new(
-                patient: patient_location.patient,
+                patient:,
                 session: @session,
                 context: :record,
                 programmes: @form.programmes,

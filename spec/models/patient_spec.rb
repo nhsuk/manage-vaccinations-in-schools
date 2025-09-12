@@ -360,6 +360,64 @@ describe Patient do
 
       it { should eq([patient_a, patient_b, patient_c]) }
     end
+
+    describe "#consent_given_and_ready_to_vaccinate" do
+      subject(:scope) do
+        described_class.consent_given_and_ready_to_vaccinate(
+          programmes:,
+          academic_year:,
+          vaccine_method:
+        )
+      end
+
+      let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
+      let(:session) { create(:session, programmes:) }
+      let(:academic_year) { Date.current.academic_year }
+      let(:vaccine_method) { nil }
+
+      it { should be_empty }
+
+      context "with a patient eligible for vaccination" do
+        let(:patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
+        end
+
+        it { should include(patient) }
+      end
+
+      context "when filtering on nasal spray" do
+        let(:vaccine_method) { "nasal" }
+
+        context "with a patient eligible for vaccination" do
+          let(:patient) do
+            create(:patient, :consent_given_triage_not_needed, session:)
+          end
+
+          before do
+            patient.consent_status(
+              programme: programmes.first,
+              academic_year:
+            ).update!(vaccine_methods: %w[nasal injection])
+          end
+
+          it { should include(patient) }
+
+          context "when the patient has been vaccinated for flu" do
+            before do
+              create(
+                :vaccination_record,
+                programme: programmes.first,
+                session:,
+                patient:
+              )
+              StatusUpdater.call(session:, patient:)
+            end
+
+            it { should_not include(patient) }
+          end
+        end
+      end
+    end
   end
 
   describe "validations" do
@@ -878,12 +936,14 @@ describe Patient do
           )
         end
 
-        before { create(:patient_location, patient:, session:) }
+        let!(:patient_location) do
+          create(:patient_location, patient:, session:)
+        end
 
         it "removes the patient from the session" do
-          expect(session.patients).to include(patient)
+          expect(patient.patient_locations).to include(patient_location)
           update_from_pds!
-          expect(session.patients).not_to include(patient)
+          expect(patient.patient_locations).not_to include(patient_location)
         end
 
         it "archives the patient" do

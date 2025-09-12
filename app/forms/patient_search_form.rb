@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class PatientSearchForm < SearchForm
-  attr_accessor :current_user
   attr_writer :academic_year
 
   attribute :aged_out_of_programmes, :boolean
@@ -43,7 +42,7 @@ class PatientSearchForm < SearchForm
       if programme_types.present?
         Programme.where(type: programme_types)
       else
-        @session&.programmes
+        session&.programmes
       end
   end
 
@@ -67,10 +66,12 @@ class PatientSearchForm < SearchForm
 
   private
 
-  def academic_year =
-    @session&.academic_year || @academic_year || AcademicYear.pending
+  attr_reader :current_user, :session
 
-  def team = @session&.team || @current_user.selected_team
+  def academic_year =
+    session&.academic_year || @academic_year || AcademicYear.pending
+
+  def team = session&.team || current_user.selected_team
 
   def filter_name(scope)
     q.present? ? scope.search_by_name(q) : scope
@@ -87,11 +88,11 @@ class PatientSearchForm < SearchForm
   def filter_aged_out_of_programmes(scope)
     if aged_out_of_programmes
       scope.not_appear_in_programmes(team.programmes, academic_year:)
-    elsif @session || archived
-      scope
-    else
+    elsif session || archived
       # Archived patients won't appear in programmes, so we need to
       # skip this check if we're trying to view archived patients.
+      scope
+    else
       scope.appear_in_programmes(team.programmes, academic_year:)
     end
   end
@@ -99,7 +100,7 @@ class PatientSearchForm < SearchForm
   def filter_archived(scope)
     if archived
       scope.archived(team:)
-    elsif @session
+    elsif session
       scope
     else
       scope.not_archived(team:)
@@ -127,9 +128,14 @@ class PatientSearchForm < SearchForm
   end
 
   def filter_programmes(scope)
-    if programmes.present?
-      if @session
-        scope.joins(:patient).appear_in_programmes(programmes)
+    if programme_types.present?
+      if session
+        birth_academic_years =
+          programmes.flat_map do |programme|
+            session.programme_birth_academic_years[programme]
+          end
+
+        scope.where(birth_academic_year: birth_academic_years)
       else
         scope.appear_in_programmes(programmes, academic_year:)
       end
@@ -148,33 +154,21 @@ class PatientSearchForm < SearchForm
           vaccine_methods =
             given_with_vaccine_method_statuses.map { it.sub("given_", "") }
 
-          if @session
-            scope.has_consent_status(
-              "given",
-              programme: programmes,
-              vaccine_method: vaccine_methods
-            )
-          else
-            scope.has_consent_status(
-              "given",
-              programme: programmes,
-              academic_year:,
-              vaccine_method: vaccine_methods
-            )
-          end
+          scope.has_consent_status(
+            "given",
+            programme: programmes,
+            academic_year:,
+            vaccine_method: vaccine_methods
+          )
         end
 
       other_status_scope =
         if other_statuses.any?
-          if @session
-            scope.has_consent_status(other_statuses, programme: programmes)
-          else
-            scope.has_consent_status(
-              other_statuses,
-              programme: programmes,
-              academic_year:
-            )
-          end
+          scope.has_consent_status(
+            other_statuses,
+            programme: programmes,
+            academic_year:
+          )
         end
 
       if given_with_vaccine_method_scope && other_status_scope
@@ -189,15 +183,11 @@ class PatientSearchForm < SearchForm
 
   def filter_vaccination_statuses(scope)
     if (status = vaccination_status&.to_sym).present?
-      if @session
-        scope.has_vaccination_status(status, programme: programmes)
-      else
-        scope.has_vaccination_status(
-          status,
-          programme: programmes,
-          academic_year:
-        )
-      end
+      scope.has_vaccination_status(
+        status,
+        programme: programmes,
+        academic_year:
+      )
     else
       scope
     end
@@ -208,9 +198,17 @@ class PatientSearchForm < SearchForm
 
     case status
     when :added
-      scope.has_patient_specific_direction(programme: programmes, team:)
+      scope.with_patient_specific_direction(
+        programme: programmes,
+        academic_year:,
+        team:
+      )
     when :not_added
-      scope.without_patient_specific_direction(programme: programmes, team:)
+      scope.without_patient_specific_direction(
+        programme: programmes,
+        academic_year:,
+        team:
+      )
     else
       scope
     end
@@ -218,7 +216,7 @@ class PatientSearchForm < SearchForm
 
   def filter_register_status(scope)
     if (status = register_status&.to_sym).present?
-      scope.has_registration_status(status, session: @session)
+      scope.has_registration_status(status, session:)
     else
       scope
     end
@@ -226,11 +224,7 @@ class PatientSearchForm < SearchForm
 
   def filter_triage_status(scope)
     if (status = triage_status&.to_sym).present?
-      if @session
-        scope.has_triage_status(status, programme: programmes)
-      else
-        scope.has_triage_status(status, programme: programmes, academic_year:)
-      end
+      scope.has_triage_status(status, programme: programmes, academic_year:)
     else
       scope
     end
@@ -238,7 +232,11 @@ class PatientSearchForm < SearchForm
 
   def filter_vaccine_method(scope)
     if vaccine_method.present?
-      scope.has_vaccine_method(vaccine_method, programme: programmes)
+      scope.has_vaccine_method(
+        vaccine_method,
+        programme: programmes,
+        academic_year:
+      )
     else
       scope
     end

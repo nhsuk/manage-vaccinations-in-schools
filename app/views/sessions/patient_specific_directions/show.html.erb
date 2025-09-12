@@ -38,9 +38,9 @@
 
     <%= render AppSessionNeedsReviewWarningComponent.new(session: @session) %>
     <%= render AppSearchResultsComponent.new(@pagy, label: "children", heading: "Review PSDs") do %>
-      <% @patient_locations.each do |patient_location| %>
+      <% @patients.each do |patient| %>
         <%= render AppPatientSessionSearchResultCardComponent.new(
-              patient: patient_location.patient,
+              patient:,
               session: @session,
               context: :patient_specific_direction,
             ) %>
