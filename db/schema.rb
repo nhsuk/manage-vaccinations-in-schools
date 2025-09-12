@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_09_095902) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_12_134432) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -564,12 +564,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_09_095902) do
     t.index ["parent_id"], name: "index_notify_log_entries_on_parent_id"
     t.index ["patient_id"], name: "index_notify_log_entries_on_patient_id"
     t.index ["sent_by_user_id"], name: "index_notify_log_entries_on_sent_by_user_id"
-  end
-
-  create_table "offline_passwords", force: :cascade do |t|
-    t.string "password", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "organisations", force: :cascade do |t|
