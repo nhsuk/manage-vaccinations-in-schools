@@ -25,7 +25,7 @@ ecs_log_retention_days    = 30
 backup_retention_period   = 7
 ssl_policy                = "ELBSecurityPolicy-TLS13-1-2-2021-06"
 access_logs_bucket        = "nhse-mavis-access-logs-production"
-max_aurora_capacity_units = 32
+max_aurora_capacity_units = 64
 container_insights        = "enhanced"
 
 enable_backup_to_vault        = true
