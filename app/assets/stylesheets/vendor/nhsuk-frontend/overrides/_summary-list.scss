@@ -12,3 +12,8 @@
 .nhsuk-summary-list__row:last-of-type {
   border: none;
 }
+
+// Reduce space between summary list and button group
+.nhsuk-summary-list:has(+ .nhsuk-button-group) {
+  @include nhsuk-responsive-margin(4, "bottom");
+}
