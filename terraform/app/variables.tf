@@ -94,6 +94,13 @@ variable "vpc_log_retention_days" {
   nullable    = false
 }
 
+variable "mise_sops_age_key_path" {
+  type        = string
+  default     = "/mavis/development/credentials/MISE_SOPS_AGE_KEY"
+  description = "The path of the System Manager Parameter Store secure string for the MISE SOPS age key."
+  nullable    = false
+}
+
 ########## Task definition configuration ##########
 
 
@@ -114,9 +121,9 @@ variable "enable_enhanced_db_monitoring" {
 locals {
   is_production = var.environment == "production"
   parameter_store_variables = tomap({ #TODO: Remove once all variables are sourced from application config
-    MAVIS__ACADEMIC_YEAR_TODAY_OVERRIDE             = ""
-    MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = ""
-    MAVIS__PDS__ENQUEUE_BULK_UPDATES                = ""
+    MAVIS__ACADEMIC_YEAR_TODAY_OVERRIDE             = "a"
+    MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = "a"
+    MAVIS__PDS__ENQUEUE_BULK_UPDATES                = "a"
     MAVIS__PDS__RATE_LIMIT_PER_SECOND               = 5
     GOOD_JOB_MAX_THREADS                            = 5
     SIDEKIQ_CONCURRENCY                             = 5
@@ -165,6 +172,11 @@ locals {
       valueFrom = var.rails_master_key_path
     }
   ]
+  container_ports = {
+    web       = 4000
+    good_job  = 4000
+    reporting = 5000
+  }
 }
 
 ########## RDS configuration ##########
@@ -244,6 +256,18 @@ variable "maximum_sidekiq_replicas" {
   description = "Amount of replicas for the sidekiq service"
 }
 
+variable "minimum_reporting_replicas" {
+  type        = number
+  default     = 2
+  description = "Minimum amount of allowed replicas for reporting service. Also the replica count when creating the service."
+}
+
+variable "maximum_reporting_replicas" {
+  type        = number
+  default     = 4
+  description = "Maximum amount of allowed replicas for reporting service"
+}
+
 variable "max_aurora_capacity_units" {
   type        = number
   default     = 8
@@ -258,6 +282,13 @@ variable "active_lb_target_group" {
     condition     = contains(["blue", "green"], var.active_lb_target_group)
     error_message = "Valid target groups: blue, green"
   }
+}
+
+variable "reporting_endpoints" {
+  type        = list(string)
+  description = "List of endpoints for the loadbalancer to forward to the reporting service"
+  default     = ["/reporting", "/reporting/*"]
+  nullable    = false
 }
 
 ########## Valkey Configuration ##########
@@ -331,7 +362,8 @@ variable "valkey_log_retention_days" {
 }
 
 locals {
-  ecs_initial_lb_target_group     = var.active_lb_target_group == "green" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
-  ecs_sg_ids                      = [module.web_service.security_group_id, module.good_job_service.security_group_id, module.sidekiq_service.security_group_id]
-  valkey_cache_availability_zones = var.valkey_failover_enabled ? [aws_subnet.private_subnet_a.availability_zone, aws_subnet.private_subnet_b.availability_zone] : [aws_subnet.private_subnet_a.availability_zone]
+  ecs_initial_lb_target_group       = var.active_lb_target_group == "green" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
+  reporting_initial_lb_target_group = var.active_lb_target_group == "green" ? aws_lb_target_group.reporting_green.arn : aws_lb_target_group.reporting_blue.arn
+  db_access_sg_ids                  = [module.web_service.security_group_id, module.good_job_service.security_group_id, module.sidekiq_service.security_group_id]
+  valkey_cache_availability_zones   = var.valkey_failover_enabled ? [aws_subnet.private_subnet_a.availability_zone, aws_subnet.private_subnet_b.availability_zone] : [aws_subnet.private_subnet_a.availability_zone]
 }

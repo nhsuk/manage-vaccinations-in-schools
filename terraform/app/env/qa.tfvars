@@ -6,7 +6,8 @@ resource_name = {
   lb_security_group        = "mavis-qa-PublicHTTPLoadBalancerSecurityGroup-ml4lZT5ey5ih"
   cloudwatch_vpc_log_group = "mavis-qa-FlowLogs"
 }
-rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
+rails_master_key_path  = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
+mise_sops_age_key_path = "/copilot/mavis/secrets/STAGING_MISE_SOPS_AGE_KEY"
 
 http_hosts = {
   MAVIS__HOST                        = "qa.mavistesting.com"

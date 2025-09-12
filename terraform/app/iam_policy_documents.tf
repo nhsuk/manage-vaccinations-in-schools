@@ -3,13 +3,16 @@
 data "aws_iam_policy_document" "codedeploy" {
   statement {
     actions   = ["ecs:DescribeServices", "ecs:UpdateServicePrimaryTaskSet"]
-    resources = [module.web_service.service.id]
+    resources = [module.web_service.service.id, module.reporting_service.service.id]
     effect    = "Allow"
   }
   statement {
-    actions   = ["ecs:CreateTaskSet", "ecs:DeleteTaskSet"]
-    resources = ["arn:aws:ecs:*:*:task-set/${aws_ecs_cluster.cluster.name}/${module.web_service.service.name}/*"]
-    effect    = "Allow"
+    actions = ["ecs:CreateTaskSet", "ecs:DeleteTaskSet"]
+    resources = [
+      "arn:aws:ecs:*:*:task-set/${aws_ecs_cluster.cluster.name}/${module.web_service.service.name}/*",
+      "arn:aws:ecs:*:*:task-set/${aws_ecs_cluster.cluster.name}/${module.reporting_service.service.name}/*"
+    ]
+    effect = "Allow"
   }
   statement {
     actions = [
@@ -52,7 +55,10 @@ data "aws_iam_policy_document" "ecs_secrets_access" {
     sid     = "ssmParameterStoreAccessSid"
     actions = ["ssm:GetParameters"]
     resources = concat(
-      ["arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.rails_master_key_path}"],
+      [
+        "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.rails_master_key_path}",
+        "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.mise_sops_age_key_path}"
+      ],
       local.parameter_store_arns, #TODO: Remove once all variables are sourced from application config
       [for key, value in aws_ssm_parameter.cloud_variables : value.arn]
     )

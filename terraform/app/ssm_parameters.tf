@@ -11,7 +11,7 @@ resource "aws_ssm_parameter" "environment_config" { #TODO: Remove once all varia
 
 resource "aws_ssm_parameter" "cloud_variables" {
   for_each = toset([
-    "web", "good-job", "sidekiq"
+    "web", "good-job", "sidekiq", "reporting"
   ])
   name  = "/${var.environment}/envs/${each.value}"
   type  = "StringList"
