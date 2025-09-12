@@ -95,6 +95,28 @@ describe "Child record imports duplicates" do
     end
   end
 
+  scenario "SearchVaccinationRecordsInNHSJob is enqueued during duplicate resolution" do
+    given_i_am_signed_in
+    and_the_required_feature_flags_are_enabled
+    and_an_hpv_programme_is_underway
+    and_matching_patient_records_exist_with_different_nhs_numbers
+
+    when_i_visit_the_import_page
+    and_i_start_adding_children_to_the_cohort
+    and_i_upload_a_file_with_duplicate_records
+    then_i_should_see_the_import_page_with_duplicate_records
+
+    when_i_review_the_first_duplicate_record
+    and_i_choose_to_keep_the_duplicate_record
+    and_i_confirm_my_selection
+    then_search_vaccination_records_in_nhs_job_should_be_enqueued
+
+    when_i_review_the_second_duplicate_record_jimmy
+    and_i_choose_to_keep_the_previously_uploaded_record
+    and_i_confirm_my_selection
+    then_search_vaccination_records_in_nhs_job_should_be_enqueued_for_second_patient
+  end
+
   def given_i_am_signed_in
     @programme = create(:programme, :hpv)
     @team =
@@ -228,6 +250,11 @@ describe "Child record imports duplicates" do
   def when_i_choose_to_keep_the_duplicate_record
     choose "Use uploaded child record"
   end
+  alias_method :and_i_choose_to_keep_the_duplicate_record,
+               :when_i_choose_to_keep_the_duplicate_record
+
+  alias_method :and_i_choose_to_keep_the_duplicate_record,
+               :when_i_choose_to_keep_the_duplicate_record
 
   def when_i_choose_to_keep_both_records
     choose "Keep both child records"
@@ -236,6 +263,11 @@ describe "Child record imports duplicates" do
   def when_i_choose_to_keep_the_previously_uploaded_record
     choose "Keep existing child"
   end
+  alias_method :and_i_choose_to_keep_the_previously_uploaded_record,
+               :when_i_choose_to_keep_the_previously_uploaded_record
+
+  alias_method :and_i_choose_to_keep_the_previously_uploaded_record,
+               :when_i_choose_to_keep_the_previously_uploaded_record
 
   def when_i_submit_the_form_without_choosing_anything
     click_on "Resolve duplicate"
@@ -270,6 +302,10 @@ describe "Child record imports duplicates" do
 
   def when_i_review_the_second_duplicate_record
     click_on "Review SMITH, James"
+  end
+
+  def when_i_review_the_second_duplicate_record_jimmy
+    click_on "Review SMITH, Jimmy"
   end
 
   def and_the_first_duplicate_record_should_be_persisted
@@ -335,5 +371,74 @@ describe "Child record imports duplicates" do
   def then_i_should_see_no_import_issues_with_the_count
     expect(page).to have_link("Import issues")
     expect(page).to have_selector(".app-count", text: "(0)")
+  end
+
+  def and_the_required_feature_flags_are_enabled
+    Flipper.enable(:imms_api_integration)
+    Flipper.enable(:imms_api_search_job)
+  end
+
+  def and_matching_patient_records_exist_with_different_nhs_numbers
+    @first_patient =
+      create(
+        :patient,
+        given_name: "Jennifer",
+        family_name: "Clarke",
+        nhs_number: nil, # 9990000018 in valid.csv, will raise a duplicate to review
+        date_of_birth: Date.new(2010, 1, 1),
+        gender_code: :female,
+        address_line_1: "10 Downing Street",
+        address_line_2: "",
+        address_town: "London",
+        address_postcode: "SW11 1AA",
+        school: nil,
+        session: @session
+      )
+
+    @second_patient =
+      create(
+        :patient,
+        given_name: "Jimmy",
+        family_name: "Smith",
+        nhs_number: nil, # 999 000 0026 in valid.csv, will raise a duplicate to review
+        date_of_birth: Date.new(2010, 1, 2),
+        gender_code: :male,
+        address_line_1: "10 Downing Street",
+        address_line_2: "",
+        address_town: "London",
+        address_postcode: "SW11 1AA",
+        school: @school,
+        session: @session
+      )
+
+    @third_patient =
+      create(
+        :patient,
+        given_name: "Mark",
+        family_name: "Doe",
+        nhs_number: "9999075320", # nil in valid.csv, will be implicitly accepted
+        date_of_birth: Date.new(2010, 1, 3),
+        gender_code: :male,
+        address_line_1: "10 Downing Street",
+        address_line_2: "",
+        address_town: "London",
+        address_postcode: "SW1A 1AA",
+        school: @school,
+        session: @session
+      )
+  end
+
+  def then_search_vaccination_records_in_nhs_job_should_be_enqueued
+    # When we keep the duplicate record and NHS number changes, SearchVaccinationRecordsInNHSJob should be enqueued
+    expect(SearchVaccinationRecordsInNHSJob).to have_enqueued_sidekiq_job.with(
+      @first_patient.id
+    )
+  end
+
+  def then_search_vaccination_records_in_nhs_job_should_be_enqueued_for_second_patient
+    # The second patient should have NHS number changes and SearchVaccinationRecordsInNHSJob should be enqueued
+    expect(
+      SearchVaccinationRecordsInNHSJob
+    ).not_to have_enqueued_sidekiq_job.with(@second_patient.id)
   end
 end

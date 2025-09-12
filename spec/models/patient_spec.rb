@@ -966,6 +966,34 @@ describe Patient do
     end
   end
 
+  describe "#should_search_vaccinations_from_nhs_immunisations_api?" do
+    subject(:should_search_vaccinations_from_nhs_immunisations_api?) do
+      patient.send(:should_search_vaccinations_from_nhs_immunisations_api?)
+    end
+
+    let(:patient) { create(:patient, nhs_number: "9449310475") }
+
+    context "when nhs_number changes" do
+      it "syncs vaccination records to NHS Immunisations API" do
+        patient.update!(nhs_number: "9449304130")
+
+        expect(
+          should_search_vaccinations_from_nhs_immunisations_api?
+        ).to be_truthy
+      end
+    end
+
+    context "when other attributes change" do
+      it "does not sync vaccination records to NHS Immunisations API" do
+        patient.update!(given_name: "NewName")
+
+        expect(
+          should_search_vaccinations_from_nhs_immunisations_api?
+        ).to be_falsy
+      end
+    end
+  end
+
   describe "#stage_changes" do
     let(:patient) { create(:patient, given_name: "John", family_name: "Doe") }
 

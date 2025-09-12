@@ -46,8 +46,16 @@ class CommitPatientChangesetsJob < ApplicationJob
         .uniq { [_1.parent, _1.patient] }
 
     deduplicate_patients!(patients, relationships)
+
+    patients_with_nhs_number_changes =
+      patients.select(&:nhs_number_previously_changed?)
+
     Patient.import(patients.to_a, on_duplicate_key_update: :all)
     link_records_to_import(import, Patient, patients)
+
+    SearchVaccinationRecordsInNHSJob.perform_bulk(
+      patients_with_nhs_number_changes.pluck(:id).zip
+    )
 
     changesets.each(&:assign_patient_id)
     PatientChangeset.import(changesets, on_duplicate_key_update: :all)
