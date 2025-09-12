@@ -10,12 +10,10 @@
 <% end %>
 
 <% if @initial_invitations %>
-  <p>This school session has been completed.</p>
-
   <% if @invitations_to_send == 1 %>
-    <p>There is <%= @invitations_to_send %> child currently without clinic appointments. You can send invitations to their parents to book an appointment.</p>
+    <p><%= @invitations_to_send %> child was not vaccinated. You can send invitations to their parents to book an appointment.</p>
   <% else %>
-    <p>There are <%= @invitations_to_send %> children currently without clinic appointments. You can send invitations to their parents to book an appointment.</p>
+    <p><%= @invitations_to_send %> children were not vaccinated. You can send invitations to their parents to book an appointment.</p>
   <% end %>
 <% else %>
   <% if @invitations_to_send == 0 %>
