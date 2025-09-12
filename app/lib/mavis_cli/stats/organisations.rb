@@ -63,7 +63,6 @@ module MavisCLI
           warn "Could not find organisation with ODS code '#{ods_code}'"
           return nil, nil
         end
-        puts "Filtering by organisation: #{organisation.ods_code}"
 
         if team_name
           teams = organisation.teams.where(name: team_name)
@@ -71,10 +70,12 @@ module MavisCLI
             warn "Could not find team '#{team_name}' for organisation '#{ods_code}'"
             return nil, nil
           end
+          puts "Filtering by organisation: #{organisation.ods_code}"
           puts "Filtering by team: #{teams.map(&:name).join(", ")}"
         else
+          puts "Filtering by organisation: #{organisation.ods_code}"
           teams = organisation.teams
-          puts "Filtering by all teams: #{teams.map(&:name).join(", ")}"
+          puts "Filtering by all teams: #{teams.map(&:name).sort.join(", ")}"
         end
 
         [organisation, teams]

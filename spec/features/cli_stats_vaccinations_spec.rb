@@ -63,7 +63,7 @@ describe "mavis stats vaccinations" do
 
   private
 
-  def command(args = [])
+  def command(*args)
     Dry::CLI.new(MavisCLI).call(arguments: ["stats", "vaccinations", *args])
   end
 
@@ -157,31 +157,31 @@ describe "mavis stats vaccinations" do
   end
 
   def when_i_run_the_command_with_csv
-    @output = capture_output { command(%w[--format csv]) }
+    @output = capture_output { command("--format", "csv") }
   end
 
   def when_i_run_the_command_with_json
-    @output = capture_output { command(%w[--format json]) }
+    @output = capture_output { command("--format", "json") }
   end
 
   def when_i_run_the_command_with_ods_code(ods_code)
-    @output = capture_output { command(["--ods_code", ods_code]) }
+    @output = capture_output { command("--ods_code", ods_code) }
   end
 
   def when_i_run_the_command_with_team_filter(workgroup)
-    @output = capture_output { command(["--workgroup", workgroup]) }
+    @output = capture_output { command("--workgroup", workgroup) }
   end
 
   def when_i_run_the_command_with_programme_filter(programme)
-    @output = capture_output { command(["--programme", programme]) }
+    @output = capture_output { command("--programme", programme) }
   end
 
   def when_i_run_the_command_with_invalid_organisation
-    @output = capture_error { command(%w[--ods_code INVALID_ODS]) }
+    @output = capture_error { command("--ods_code", "INVALID_ODS") }
   end
 
   def when_i_run_the_command_with_invalid_team
-    @output = capture_error { command(%w[--workgroup INVALID_TEAM]) }
+    @output = capture_error { command("--workgroup", "INVALID_TEAM") }
   end
 
   def then_i_see_table_format_with_all_programmes
