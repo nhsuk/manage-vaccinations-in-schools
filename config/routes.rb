@@ -271,11 +271,6 @@ Rails.application.routes.draw do
       constraints -> { Flipper.enabled?(:dev_tools) } do
         put "make-in-progress", to: "sessions#make_in_progress"
       end
-
-      constraints -> { Flipper.enabled?(:offline_working) } do
-        get "setup-offline", to: "offline_passwords#new"
-        post "setup-offline", to: "offline_passwords#create"
-      end
     end
 
     resource :dates, controller: "session_dates", only: %i[show update]
