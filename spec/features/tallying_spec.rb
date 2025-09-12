@@ -2,28 +2,29 @@
 
 describe "Tallying" do
   scenario "vaccinator can see how many they have administered during a session" do
-    given_a_session_exists_for_hpv_and_flu
+    given_a_session_for_hpv_and_flu_is_running_today
     and_i_have_administered_two_cervarix_vaccines_for_hpv_programme
     and_administered_one_gardasil_vaccine_for_hpv_programme
     and_administered_one_fluenz_vaccine_for_flu_programme
+    and_i_created_vaccination_records_yesterday
     and_vaccinations_are_recorded_by_other_team_members
     and_the_default_vaccine_batches_have_been_set_for_flu_and_hpv
 
     when_i_visit_the_session_record_tab
     and_i_click_on_the_expander_your_vaccinations_today
-    then_i_see_my_vaccinations_in_summary_with_default_batches
+    then_i_see_my_vaccination_tallies_for_today_with_default_batches
   end
 
   scenario "no vaccinations have been administered yet" do
-    given_a_session_exists_for_hpv_and_flu
+    given_a_session_for_hpv_and_flu_is_running_today
     and_the_default_vaccine_batches_have_been_set_for_flu_and_hpv
 
     when_i_visit_the_session_record_tab
     and_i_click_on_the_expander_your_vaccinations_today
-    then_i_see_my_vaccinations_in_summary_with_all_zero_values_with_default_batches
+    then_i_see_my_vaccination_tallies_with_all_zero_values_with_default_batches
   end
 
-  def given_a_session_exists_for_hpv_and_flu
+  def given_a_session_for_hpv_and_flu_is_running_today
     @flu_programme = create(:programme, :flu, vaccines: [])
     @hpv_programme = create(:programme, :hpv, vaccines: [])
 
@@ -124,6 +125,18 @@ describe "Tallying" do
     )
   end
 
+  def and_i_created_vaccination_records_yesterday
+    create(
+      :vaccination_record,
+      batch: @cervarix_batch,
+      vaccine: @cervarix_vaccine,
+      session: @session,
+      programme: @hpv_programme,
+      performed_by: @user,
+      performed_at: Time.zone.yesterday
+    )
+  end
+
   def and_vaccinations_are_recorded_by_other_team_members
     create(
       :vaccination_record,
@@ -134,14 +147,14 @@ describe "Tallying" do
     )
   end
 
-  def then_i_see_my_vaccinations_in_summary_with_default_batches
+  def then_i_see_my_vaccination_tallies_for_today_with_default_batches
     rows = page.all(".nhsuk-table__row")
     expect(rows[1]).to have_content("Cervarix 1 #{@cervarix_batch.name} Change")
     expect(rows[2]).to have_content("Gardasil 2 Not set")
     expect(rows[3]).to have_content("Fluenz 1 #{@fluenz_batch.name} Change")
   end
 
-  def then_i_see_my_vaccinations_in_summary_with_all_zero_values_with_default_batches
+  def then_i_see_my_vaccination_tallies_with_all_zero_values_with_default_batches
     rows = page.all(".nhsuk-table__row")
     expect(rows[1]).to have_content("Cervarix 0 #{@cervarix_batch.name} Change")
     expect(rows[2]).to have_content("Gardasil 0 Not set")

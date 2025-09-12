@@ -16,6 +16,7 @@ class AppVaccinationsSummaryTableComponent < ViewComponent::Base
         .includes(:vaccine)
         .administered
         .where(performed_by_user: current_user)
+        .where(performed_at: Date.current.all_day)
 
     results = initialize_results_hash
     populate_results(results, administered) if administered.any?
