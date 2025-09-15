@@ -12,7 +12,7 @@ class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
         Session
           .includes(:session_dates)
           .has_programmes([flu])
-          .where("sessions.send_invitations_at <= ?", 2.days.from_now)
+          .where("sessions.send_consent_requests_at <= ?", 2.days.from_now)
           .where("session_dates.value >= ?", Time.zone.today)
           .references(:session_dates)
       end
