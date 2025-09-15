@@ -49,11 +49,6 @@
         "codedeploy:ListDeploymentTargets",
         "codedeploy:RegisterApplicationRevision",
         "codedeploy:StopDeployment",
-        "ssm:DescribeParameters",
-        "ssm:GetParameter",
-        "ssm:GetParameters",
-        "ssm:GetParametersByPath",
-        "ssm:PutParameter",
         "iam:PassRole"
       ],
       "Resource": ["*"]

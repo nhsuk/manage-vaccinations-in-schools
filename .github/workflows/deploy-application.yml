@@ -109,13 +109,6 @@ jobs:
         with:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
-      - name: Setup python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.13.7
-          cache: pip
-      - name: Install Python dependencies
-        run: python3 -m pip install -r script/requirements.txt
       - name: Get image digest
         id: get-image-digest
         run: |
@@ -125,15 +118,6 @@ jobs:
             --query 'imageDetails[0].imageDigest' \
             --output text)
           echo "digest=$digest" >> $GITHUB_OUTPUT
-      - name: Parse environment variables
-        id: parse-environment-variables
-        run: |
-          parsed_env_vars=$(yq -r '.environments.${{ inputs.environment }} | to_entries | .[] | .key + "=" + .value' config/container_variables.yml)
-          {
-            echo 'parsed_env_vars<<EOF'
-            echo "$parsed_env_vars"
-            echo 'EOF'
-          } >> "$GITHUB_OUTPUT"
       - name: Populate web task definition
         id: create-task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
@@ -141,12 +125,10 @@ jobs:
           task-definition-family: "mavis-${{ matrix.service }}-task-definition-${{ inputs.environment }}-template"
           container-name: "application"
           image: "${{ env.aws-account-id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}"
-          environment-variables: ${{ steps.parse-environment-variables.outputs.parsed_env_vars }}
+          environment-variables: |
+            APP_VERSION=app-version
       - name: Rename task definition file
         run: mv ${{ steps.create-task-definition.outputs.task-definition }} ${{ runner.temp }}/${{ matrix.service }}-task-definition.json
-      - name: Populate SSM parameters for ${{ matrix.service }} service
-        run: |
-          python3 script/populate_ssm_parameters.py ${{ inputs.environment }} ${{ matrix.service }} --app-version ${{ env.app-version }}
       - name: Upload artifact for ${{ matrix.service }} task definition
         uses: actions/upload-artifact@v4
         with:
