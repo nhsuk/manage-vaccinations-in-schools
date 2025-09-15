@@ -102,7 +102,11 @@ class SessionNotification < ApplicationRecord
             )
           end
       else
-        session.programmes_for(patient:)
+        session
+          .programmes_for(patient:)
+          .reject do |programme|
+            patient.vaccination_status(programme:, academic_year:).vaccinated?
+          end
       end
 
     parents.each do |parent|
