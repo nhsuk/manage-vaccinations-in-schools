@@ -219,19 +219,19 @@ module FHIRMapper
 
     private_class_method def self.dose_volume_ml_from_fhir(fhir_record)
       dq = fhir_record.doseQuantity
-      if dq.system == "http://unitsofmeasure.org" && dq.code == "ml"
+      if %w[ml milliliter].include?(dq.unit.downcase)
         dq.value.to_f
       else
-        raise "Unknown dose quantity system: #{dq.system} and code: #{dq.code}"
+        raise "Unknown dose unit: #{dq.unit}"
       end
     end
 
     private_class_method def self.full_dose_from_fhir(fhir_record, vaccine:)
-      if vaccine.programme.type == :flu && vaccine.method == :nasal
-        fhir_record.doseQuantity.value >= vaccine.dose_volume_ml
+      if vaccine.programme.flu? && vaccine.nasal?
+        dose_volume_ml_from_fhir(fhir_record) >= vaccine.dose_volume_ml
+      else
+        true
       end
-
-      true
     end
 
     private_class_method def self.vaccine_batch_notes_from_fhir(fhir_record)
