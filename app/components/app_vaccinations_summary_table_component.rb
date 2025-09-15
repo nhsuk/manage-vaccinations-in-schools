@@ -14,7 +14,7 @@ class AppVaccinationsSummaryTableComponent < ViewComponent::Base
   delegate :govuk_table, to: :helpers
 
   def count_by_vaccine
-    vaccines = session.vaccines.includes(:programme).order(:brand)
+    vaccines = session.vaccines.active.includes(:programme).order(:brand)
 
     vaccination_records =
       session

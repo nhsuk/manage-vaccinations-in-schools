@@ -38,8 +38,9 @@ describe "Tallying" do
     @cervarix_vaccine = create(:vaccine, :cervarix, programme: @hpv_programme)
     @cervarix_batch = create(:batch, :not_expired, vaccine: @cervarix_vaccine)
 
-    @gardasil_vaccine = create(:vaccine, :gardasil, programme: @hpv_programme)
-    @gardasil_batch = create(:batch, :not_expired, vaccine: @gardasil_vaccine)
+    @gardasil9_vaccine =
+      create(:vaccine, :gardasil_9, programme: @hpv_programme)
+    @gardasil9_batch = create(:batch, :not_expired, vaccine: @gardasil9_vaccine)
 
     @fluenz_vaccine = create(:vaccine, :fluenz, programme: @flu_programme)
     @fluenz_batch = create(:batch, :not_expired, vaccine: @fluenz_vaccine)
@@ -95,8 +96,8 @@ describe "Tallying" do
 
     create(
       :vaccination_record,
-      batch: @gardasil_batch,
-      vaccine: @gardasil_vaccine,
+      batch: @gardasil9_batch,
+      vaccine: @gardasil9_vaccine,
       session: @session,
       programme: @hpv_programme,
       performed_by: @user
@@ -106,8 +107,8 @@ describe "Tallying" do
   def and_administered_one_gardasil_vaccine_for_hpv_programme
     create(
       :vaccination_record,
-      batch: @gardasil_batch,
-      vaccine: @gardasil_vaccine,
+      batch: @gardasil9_batch,
+      vaccine: @gardasil9_vaccine,
       session: @session,
       programme: @hpv_programme,
       performed_by: @user
@@ -149,16 +150,17 @@ describe "Tallying" do
 
   def then_i_see_my_vaccination_tallies_for_today_with_default_batches
     rows = page.all(".nhsuk-table__row")
+    expect(rows.count).to eq(4)
     expect(rows[1]).to have_content("Fluenz 1 #{@fluenz_batch.name} Change")
-    expect(rows[2]).to have_content("Cervarix 1 #{@cervarix_batch.name} Change")
-    expect(rows[3]).to have_content("Gardasil 2 Not set")
+    expect(rows[2]).to have_content("Gardasil 9 2 Not set")
+    expect(rows[3]).to have_content("Cervarix 1 #{@cervarix_batch.name} Change")
   end
 
   def then_i_see_my_vaccination_tallies_with_all_zero_values_with_default_batches
     rows = page.all(".nhsuk-table__row")
+    expect(rows.count).to eq(3)
     expect(rows[1]).to have_content("Fluenz 0 #{@fluenz_batch.name} Change")
-    expect(rows[2]).to have_content("Cervarix 0 #{@cervarix_batch.name} Change")
-    expect(rows[3]).to have_content("Gardasil 0 Not set")
+    expect(rows[2]).to have_content("Gardasil 9 0 Not set")
   end
 
   def and_i_click_on_the_expander_your_vaccinations_today
