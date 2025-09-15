@@ -25,7 +25,7 @@ module "web_service" {
     environment          = local.task_envs
     secrets              = local.task_secrets
     cpu                  = 1024
-    memory               = 2048
+    memory               = 3072
     docker_image         = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/${var.docker_image}@${var.image_digest}"
     execution_role_arn   = aws_iam_role.ecs_task_execution_role.arn
     task_role_arn        = aws_iam_role.ecs_task_role.arn
