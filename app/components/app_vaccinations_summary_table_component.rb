@@ -11,7 +11,9 @@ class AppVaccinationsSummaryTableComponent < ViewComponent::Base
 
   attr_reader :session, :request_session, :current_user
 
-  delegate :govuk_table, to: :helpers
+  delegate :govuk_table, :policy, to: :helpers
+
+  def render? = policy(VaccinationRecord.new).new?
 
   def count_by_vaccine
     vaccines = session.vaccines.active.includes(:programme).order(:brand)

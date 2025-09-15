@@ -16,6 +16,8 @@ describe AppVaccinationsSummaryTableComponent do
     described_class.new(current_user:, session:, request_session:)
   end
 
+  before { stub_authorization(allowed: true) }
+
   context "with an active vaccine" do
     let(:hpv_vaccine) { create(:vaccine, programme: hpv_programme) }
 
