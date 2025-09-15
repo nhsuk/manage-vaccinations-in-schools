@@ -64,6 +64,8 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
 
       # Remaining incoming_vaccination_records are new
       incoming_vaccination_records.each(&:save!)
+
+      StatusUpdater.call(patient:)
     end
   end
 
