@@ -15,10 +15,6 @@
       cron: "0 9 * * *"
       class: EnqueueClinicSessionInvitationsJob
       description: Send school clinic invitation emails to parents
-    enqueue_vaccinations_search_in_nhs_job:
-      cron: "19 13 * * *"
-      class: EnqueueVaccinationsSearchInNHSJob
-      description: Find upcoming sessions and enqueue jobs to find vaccinations for patients in them
     invalidate_self_consents:
       cron: "0 2 * * *"
       class: InvalidateSelfConsentsJob
