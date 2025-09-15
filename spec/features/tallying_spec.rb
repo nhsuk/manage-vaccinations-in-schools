@@ -24,6 +24,12 @@ describe "Tallying" do
     then_i_see_my_vaccination_tallies_with_all_zero_values_with_default_batches
   end
 
+  scenario "when an admin is viewing the record tab for a session" do
+    given_a_session_for_hpv_and_flu_is_running_today
+    when_i_visit_the_session_record_tab_as_an_admin
+    then_i_do_not_see_the_vaccination_tallies_table
+  end
+
   def given_a_session_for_hpv_and_flu_is_running_today
     @flu_programme = create(:programme, :flu, vaccines: [])
     @hpv_programme = create(:programme, :hpv, vaccines: [])
@@ -56,6 +62,11 @@ describe "Tallying" do
 
   def when_i_visit_the_session_record_tab
     sign_in @user, role: :nurse
+    visit session_record_path(@session)
+  end
+
+  def when_i_visit_the_session_record_tab_as_an_admin
+    sign_in @user, role: :medical_secretary
     visit session_record_path(@session)
   end
 
@@ -165,5 +176,9 @@ describe "Tallying" do
 
   def and_i_click_on_the_expander_your_vaccinations_today
     find("span", text: "Your vaccinations today").click
+  end
+
+  def then_i_do_not_see_the_vaccination_tallies_table
+    expect(page).to have_no_content("Your vaccinations today")
   end
 end

@@ -22,11 +22,7 @@
 
     <div class="app-grid-column-results">
       <%= render AppSessionNeedsReviewWarningComponent.new(session: @session) %>
-      <div class="nhsuk-u-margin-top-3">
-        <%= render AppDetailsComponent.new(summary: "Your vaccinations today", expander: true) do %>
-          <%= render AppVaccinationsSummaryTableComponent.new(current_user:, session: @session, request_session: session) %>
-        <% end %>
-      </div>
+      <%= render AppVaccinationsSummaryTableComponent.new(current_user:, session: @session, request_session: session) %>
       <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
         <% @patient_sessions.each do |patient_session| %>
           <%= render AppPatientSessionSearchResultCardComponent.new(

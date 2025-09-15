@@ -4,6 +4,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
   def create?
     return true if user.is_nurse? || user.is_prescriber?
     return false unless user.is_healthcare_assistant?
+    return true if patient.nil?
 
     approved_vaccine_methods =
       patient.approved_vaccine_methods(programme:, academic_year:)

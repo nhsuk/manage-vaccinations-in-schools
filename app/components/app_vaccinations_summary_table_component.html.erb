@@ -1,29 +1,33 @@
-<%= govuk_table do |table| %>
-  <% table.with_head do |head| %>
-    <% head.with_row do |row| %>
-      <% row.with_cell(text: "Vaccine") %>
-      <% row.with_cell(text: "Administered") %>
-      <% row.with_cell(text: "Default batch") %>
-    <% end %>
-  <% end %>
+<div class="nhsuk-u-margin-top-3">
+  <%= render AppDetailsComponent.new(summary: "Your vaccinations today", expander: true) do %>
+    <%= govuk_table do |table| %>
+      <% table.with_head do |head| %>
+        <% head.with_row do |row| %>
+          <% row.with_cell(text: "Vaccine") %>
+          <% row.with_cell(text: "Administered") %>
+          <% row.with_cell(text: "Default batch") %>
+        <% end %>
+      <% end %>
 
-  <% table.with_body do |body| %>
-    <% count_by_vaccine.each do |(vaccine, count)| %>
-      <% body.with_row do |row| %>
-        <% row.with_cell do %>
-          <%= vaccine.brand %>
-        <% end %>
-        <% row.with_cell do %>
-          <%= count %>
-        <% end %>
-        <% row.with_cell do %>
-          <% batch = default_batch(vaccine) %>
-          <%= batch&.name || "Not set" %>
-          <% if batch %>
-            <%= link_to "Change", batch_session_record_path(session, vaccine.programme, vaccine.method) %>
+      <% table.with_body do |body| %>
+        <% count_by_vaccine.each do |(vaccine, count)| %>
+          <% body.with_row do |row| %>
+            <% row.with_cell do %>
+              <%= vaccine.brand %>
+            <% end %>
+            <% row.with_cell do %>
+              <%= count %>
+            <% end %>
+            <% row.with_cell do %>
+              <% batch = default_batch(vaccine) %>
+              <%= batch&.name || "Not set" %>
+              <% if batch %>
+                <%= link_to "Change", batch_session_record_path(session, vaccine.programme, vaccine.method) %>
+              <% end %>
+            <% end %>
           <% end %>
         <% end %>
       <% end %>
     <% end %>
   <% end %>
-<% end %>
+</div>
