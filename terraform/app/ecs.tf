@@ -22,16 +22,11 @@ resource "aws_ecs_cluster" "cluster" {
 module "web_service" {
   source = "./modules/ecs_service"
   task_config = {
-    environment = local.task_envs
-    secrets = concat(
-      local.task_secrets,
-      [{
-        name      = "ENV_VARS"
-        valueFrom = aws_ssm_parameter.cloud_variables["web"].arn
-    }])
+    environment          = local.task_envs["CORE"]
+    secrets              = local.task_secrets["CORE"]
     cpu                  = 1024
     memory               = 2048
-    execution_role_arn   = aws_iam_role.ecs_task_execution_role.arn
+    execution_role_arn   = aws_iam_role.ecs_task_execution_role["CORE"].arn
     task_role_arn        = aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
@@ -65,16 +60,11 @@ module "web_service" {
 module "good_job_service" {
   source = "./modules/ecs_service"
   task_config = {
-    environment = local.task_envs
-    secrets = concat(
-      local.task_secrets,
-      [{
-        name      = "ENV_VARS"
-        valueFrom = aws_ssm_parameter.cloud_variables["good-job"].arn
-    }])
+    environment          = local.task_envs["CORE"]
+    secrets              = local.task_secrets["CORE"]
     cpu                  = 1024
     memory               = 2048
-    execution_role_arn   = aws_iam_role.ecs_task_execution_role.arn
+    execution_role_arn   = aws_iam_role.ecs_task_execution_role["CORE"].arn
     task_role_arn        = aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
@@ -95,16 +85,11 @@ module "good_job_service" {
 module "sidekiq_service" {
   source = "./modules/ecs_service"
   task_config = {
-    environment = local.task_envs
-    secrets = concat(
-      local.task_secrets,
-      [{
-        name      = "ENV_VARS"
-        valueFrom = aws_ssm_parameter.cloud_variables["sidekiq"].arn
-    }])
+    environment          = local.task_envs["CORE"]
+    secrets              = local.task_secrets["CORE"]
     cpu                  = 1024
     memory               = 2048
-    execution_role_arn   = aws_iam_role.ecs_task_execution_role.arn
+    execution_role_arn   = aws_iam_role.ecs_task_execution_role["CORE"].arn
     task_role_arn        = aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region

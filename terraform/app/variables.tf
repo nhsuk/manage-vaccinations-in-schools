@@ -113,15 +113,35 @@ variable "enable_enhanced_db_monitoring" {
 
 locals {
   is_production = var.environment == "production"
-  parameter_store_variables = tomap({ #TODO: Remove once all variables are sourced from application config
-    MAVIS__ACADEMIC_YEAR_TODAY_OVERRIDE             = ""
-    MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = ""
-    MAVIS__PDS__ENQUEUE_BULK_UPDATES                = ""
-    MAVIS__PDS__RATE_LIMIT_PER_SECOND               = 5
-    GOOD_JOB_MAX_THREADS                            = 5
-    SIDEKIQ_CONCURRENCY                             = 5
+  parameter_store_variables = tomap({
+    CORE = local.is_production ? {} : tomap({
+      MAVIS__ACADEMIC_YEAR_TODAY_OVERRIDE             = "CHANGE_ME"
+      MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = "CHANGE_ME"
+      MAVIS__PDS__ENQUEUE_BULK_UPDATES                = "CHANGE_ME"
+      MAVIS__PDS__RATE_LIMIT_PER_SECOND               = "CHANGE_ME"
+      SIDEKIQ_CONCURRENCY                             = "CHANGE_ME"
+    })
+    REPORTING = local.is_production ? {} : tomap({
+    })
   })
-  parameter_store_arns = [for key, value in aws_ssm_parameter.environment_config : value.arn] #TODO: Remove once all variables are sourced from application config
+  non_empty_parameter_groups = toset([
+    for key, value in local.parameter_store_variables : key if length(concat(local.secret_arns[key], local.parameter_store_paths[key])) > 0
+  ])
+  parameter_store_paths = tomap(
+    {
+      CORE = concat(
+        [for key, value in aws_ssm_parameter.core_environment_overwrites : value.name],
+        [var.rails_master_key_path]
+      )
+      REPORTING = [for key, value in aws_ssm_parameter.reporting_environment_overwrites : value.name]
+    }
+  )
+  secret_arns = tomap(
+    {
+      CORE      = [aws_rds_cluster.core.master_user_secret[0].secret_arn]
+      REPORTING = []
+    }
+  )
 
   sandbox_envs = (
     startswith(var.environment, "sandbox") ? [
@@ -132,39 +152,60 @@ locals {
     ] : []
   )
 
-  task_envs = concat([
-    {
-      name  = "DB_HOST"
-      value = aws_rds_cluster.core.endpoint
-    },
-    {
-      name  = "DB_NAME"
-      value = aws_rds_cluster.core.database_name
-    },
-    {
-      name  = "MAVIS__HOST"
-      value = var.http_hosts.MAVIS__HOST
-    },
-    {
-      name  = "MAVIS__GIVE_OR_REFUSE_CONSENT_HOST"
-      value = var.http_hosts.MAVIS__GIVE_OR_REFUSE_CONSENT_HOST
-    },
-    {
-      name  = "SIDEKIQ_REDIS_URL"
-      value = "rediss://${aws_elasticache_replication_group.valkey.primary_endpoint_address}:${var.valkey_port}"
-    },
-  ], local.sandbox_envs)
+  task_envs = tomap({
+    CORE = concat([
+      {
+        name  = "RAILS_ENV"
+        value = local.is_production ? "production" : "staging"
+      },
+      {
+        name  = "SENTRY_ENVIRONMENT"
+        value = var.environment
+      },
+      {
+        name  = "DB_HOST"
+        value = aws_rds_cluster.core.endpoint
+      },
+      {
+        name  = "DB_NAME"
+        value = aws_rds_cluster.core.database_name
+      },
+      {
+        name  = "MAVIS__HOST"
+        value = var.http_hosts.MAVIS__HOST
+      },
+      {
+        name  = "MAVIS__GIVE_OR_REFUSE_CONSENT_HOST"
+        value = var.http_hosts.MAVIS__GIVE_OR_REFUSE_CONSENT_HOST
+      },
+      {
+        name  = "SIDEKIQ_REDIS_URL"
+        value = "rediss://${aws_elasticache_replication_group.valkey.primary_endpoint_address}:${var.valkey_port}"
+      },
+      ],
+      local.sandbox_envs,
+    )
+    REPORTING = []
+  })
 
-  task_secrets = [
-    {
-      name      = "DB_CREDENTIALS"
-      valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
-    },
-    {
-      name      = "RAILS_MASTER_KEY"
-      valueFrom = var.rails_master_key_path
-    }
-  ]
+  task_secrets = tomap({
+    CORE = concat(
+      [
+        {
+          name      = "DB_CREDENTIALS"
+          valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
+        }
+      ],
+      [for key, value in local.parameter_store_variables["CORE"] : {
+        name      = key
+        valueFrom = aws_ssm_parameter.core_environment_overwrites[key].name
+      }]
+    )
+    REPORTING = [for key, value in local.parameter_store_variables["REPORTING"] : {
+      name      = key
+      valueFrom = aws_ssm_parameter.core_environment_overwrites[key].name
+    }]
+  })
 }
 
 ########## RDS configuration ##########

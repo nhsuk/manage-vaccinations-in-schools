@@ -6,17 +6,11 @@ if [ -z "${LD_PRELOAD+x}" ]; then
   export LD_PRELOAD
 fi
 
-
-# Extract ENV_VARS into set of variables and export them to the shell
-if [ -n "$ENV_VARS" ]; then
-  IFS=',' read -ra ADDR <<< "$ENV_VARS"
-  for i in "${ADDR[@]}"; do
-    if [[ "$i" == *"="* ]]; then
-      export "${i?}"
-      echo "Exported: $i"
-    fi
-  done
-fi
+for var in $(env | cut -d= -f1); do
+  if [ "${!var}" = "CHANGE_ME" ]; then
+    unset "$var"
+  fi
+done
 
 # When starting the container then create or migrate existing database
 if [ "$1" == "./bin/docker-start" ]; then
