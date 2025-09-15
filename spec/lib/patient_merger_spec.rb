@@ -61,6 +61,13 @@ describe PatientMerger do
     let(:patient_session) do
       create(:patient_session, session:, patient: patient_to_destroy)
     end
+    let(:patient_specific_direction) do
+      create(
+        :patient_specific_direction,
+        programme:,
+        patient: patient_to_destroy
+      )
+    end
     let(:pre_screening) { create(:pre_screening, patient: patient_to_destroy) }
     let(:school_move) do
       create(:school_move, :to_school, patient: patient_to_destroy)
@@ -158,6 +165,12 @@ describe PatientMerger do
       expect { call }.to change { patient_session.reload.patient }.to(
         patient_to_keep
       )
+    end
+
+    it "moves patient specific directions" do
+      expect { call }.to change {
+        patient_specific_direction.reload.patient
+      }.to(patient_to_keep)
     end
 
     it "moves pre-screenings" do
