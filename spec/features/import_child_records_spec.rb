@@ -338,7 +338,7 @@ describe "Import child records" do
   end
 
   def when_i_go_to_the_import_page
-    click_link CohortImport.last.created_at.to_fs(:long), match: :first
+    click_on_most_recent_import(CohortImport)
   end
 
   def and_i_import_child_records_from_children_tab
