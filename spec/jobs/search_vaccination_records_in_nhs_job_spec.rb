@@ -34,6 +34,13 @@ describe SearchVaccinationRecordsInNHSJob do
   end
 
   describe "#perform" do
+    shared_examples "calls StatusUpdater" do
+      it "calls StatusUpdater with the patient" do
+        expect(StatusUpdater).to receive(:call).with(patient:)
+        perform
+      end
+    end
+
     let(:expected_query) do
       {
         "patient.identifier" =>
@@ -79,6 +86,8 @@ describe SearchVaccinationRecordsInNHSJob do
       it "creates new vaccination records for incoming Immunizations" do
         expect { perform }.to change { patient.vaccination_records.count }.by(2)
       end
+
+      include_examples "calls StatusUpdater"
     end
 
     context "with 1 existing record and 1 new incoming record" do
@@ -97,6 +106,8 @@ describe SearchVaccinationRecordsInNHSJob do
           Time.parse("2025-08-22T14:16:03+01:00")
         )
       end
+
+      include_examples "calls StatusUpdater"
     end
 
     context "with 2 existing records and only 1 incoming (edited) record" do
@@ -119,6 +130,8 @@ describe SearchVaccinationRecordsInNHSJob do
           Time.parse("2025-08-23T14:16:03+01:00")
         )
       end
+
+      include_examples "calls StatusUpdater"
     end
 
     context "with a mavis record in the search results" do
@@ -129,6 +142,8 @@ describe SearchVaccinationRecordsInNHSJob do
       it "does not create a new record" do
         expect { perform }.not_to(change { patient.vaccination_records.count })
       end
+
+      include_examples "calls StatusUpdater"
     end
 
     context "with the feature flag disabled" do
@@ -154,6 +169,8 @@ describe SearchVaccinationRecordsInNHSJob do
           "nhs_immunisations_api"
         )
       end
+
+      include_examples "calls StatusUpdater"
     end
 
     context "with no NHS number" do
@@ -171,6 +188,8 @@ describe SearchVaccinationRecordsInNHSJob do
         )
         expect(patient.vaccination_records.count).to eq(0)
       end
+
+      include_examples "calls StatusUpdater"
     end
   end
 end
