@@ -8,18 +8,19 @@
   <% end %>
 
   <% table.with_body do |body| %>
-    <% tally_results.each do |(vaccine_brand_name, tally_data)| %>
+    <% count_by_vaccine.each do |(vaccine, count)| %>
       <% body.with_row do |row| %>
         <% row.with_cell do %>
-          <%= vaccine_brand_name %>
+          <%= vaccine.brand %>
         <% end %>
         <% row.with_cell do %>
-          <%= tally_data[:count] %>
+          <%= count %>
         <% end %>
         <% row.with_cell do %>
-          <%= tally_data[:default_batch] || "Not set" %>
-          <% if tally_data[:default_batch] %>
-            <%= link_to "Change", batch_session_record_path(session, tally_data[:programme], tally_data[:vaccine_method]) %>
+          <% batch = default_batch(vaccine) %>
+          <%= batch&.name || "Not set" %>
+          <% if batch %>
+            <%= link_to "Change", batch_session_record_path(session, vaccine.programme, vaccine.method) %>
           <% end %>
         <% end %>
       <% end %>
