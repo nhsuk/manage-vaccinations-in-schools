@@ -1,6 +1,6 @@
-resource "aws_ssm_parameter" "environment_config" { #TODO: Remove once all variables are sourced from application config
-  for_each = local.parameter_store_variables
-  name     = "/${var.environment}/env/${each.key}"
+resource "aws_ssm_parameter" "core_environment_overwrites" {
+  for_each = local.parameter_store_variables["CORE"]
+  name     = "/${var.environment}/env/core/${each.key}"
   type     = "String"
   value    = each.value
 
@@ -9,17 +9,13 @@ resource "aws_ssm_parameter" "environment_config" { #TODO: Remove once all varia
   }
 }
 
-resource "aws_ssm_parameter" "cloud_variables" {
-  for_each = toset([
-    "web", "good-job", "sidekiq"
-  ])
-  name  = "/${var.environment}/envs/${each.value}"
-  type  = "StringList"
-  value = "service=${each.value}"
+resource "aws_ssm_parameter" "reporting_environment_overwrites" {
+  for_each = local.parameter_store_variables["REPORTING"]
+  name     = "/${var.environment}/env/reporting/${each.key}"
+  type     = "String"
+  value    = each.value
 
   lifecycle {
-    ignore_changes = [
-      value
-    ]
+    ignore_changes = all
   }
 }

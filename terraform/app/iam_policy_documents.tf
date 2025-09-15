@@ -19,18 +19,16 @@ data "aws_iam_policy_document" "codedeploy" {
       "elasticloadbalancing:DescribeRules",
       "elasticloadbalancing:ModifyRule"
     ]
-    resources = ["*"] #TODO: Restrict permissions to only Mavis-specifc resources
+    resources = ["*"]
     effect    = "Allow"
   }
   statement {
-    actions   = ["s3:GetObject", "s3:GetObjectVersion"]
-    resources = ["arn:aws:s3:::*"]
-    effect    = "Allow"
-  }
-  statement {
-    actions   = ["iam:PassRole"]
-    resources = [aws_iam_role.ecs_task_role.arn, aws_iam_role.ecs_task_execution_role.arn]
-    effect    = "Allow"
+    actions = ["iam:PassRole"]
+    resources = concat(
+      [aws_iam_role.ecs_task_role.arn],
+      [for role in aws_iam_role.ecs_task_execution_role : role.arn]
+    )
+    effect = "Allow"
   }
 }
 
@@ -48,23 +46,24 @@ data "aws_iam_policy_document" "shell_access" {
 }
 
 data "aws_iam_policy_document" "ecs_secrets_access" {
-  statement {
-    sid     = "ssmParameterStoreAccessSid"
-    actions = ["ssm:GetParameters"]
-    resources = concat(
-      ["arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.rails_master_key_path}"],
-      local.parameter_store_arns, #TODO: Remove once all variables are sourced from application config
-      [for key, value in aws_ssm_parameter.cloud_variables : value.arn]
-    )
-    effect = "Allow"
+  for_each = local.applications_accessing_secrets_or_parameters
+  dynamic "statement" {
+    for_each = length(local.parameter_values[each.key]) == 0 ? [] : [1]
+    content {
+      sid       = "ssmParameterStoreAccessSid"
+      actions   = ["ssm:GetParameters"]
+      resources = [for kv_pair in local.parameter_values[each.key] : kv_pair["valueFrom"]]
+      effect    = "Allow"
+    }
   }
-  statement {
-    sid     = "dbSecretSid"
-    actions = ["secretsmanager:GetSecretValue"]
-    resources = [
-      aws_rds_cluster.core.master_user_secret[0].secret_arn
-    ]
-    effect = "Allow"
+  dynamic "statement" {
+    for_each = length(local.secret_values[each.key]) == 0 ? [] : [1]
+    content {
+      sid       = "dbSecretSid"
+      actions   = ["secretsmanager:GetSecretValue"]
+      resources = [for kv_pair in local.secret_values[each.key] : kv_pair["valueFrom"]]
+      effect    = "Allow"
+    }
   }
 }
 

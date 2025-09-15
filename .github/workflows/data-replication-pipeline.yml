@@ -92,13 +92,6 @@ jobs:
         with:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
-      - name: Setup python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.13.7
-          cache: pip
-      - name: Install yq
-        run: pip install yq
       - name: Get image digest
         id: get-image-digest
         run: |
@@ -113,10 +106,8 @@ jobs:
         env:
           MAVIS__PDS__RATE_LIMIT_PER_SECOND: ${{ inputs.environment == 'production' && 50 || 5 }}
         run: |
-          parsed_env_vars=$(yq -r ".environments.$environment | to_entries | .[] | .key + \"=\" + .value" config/container_variables.yml)
           {
             echo 'parsed_env_vars<<EOF'
-            echo "$parsed_env_vars"
             echo "MAVIS__SPLUNK__ENABLED=false"
             echo "MAVIS__CIS2__ENABLED=false"
             echo "MAVIS__PDS__ENQUEUE_BULK_UPDATES=false"

@@ -113,14 +113,50 @@ variable "enable_enhanced_db_monitoring" {
 
 locals {
   is_production = var.environment == "production"
-  parameter_store_variables = tomap({ #TODO: Remove once all variables are sourced from application config
-    MAVIS__ACADEMIC_YEAR_TODAY_OVERRIDE             = ""
-    MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = ""
-    MAVIS__PDS__ENQUEUE_BULK_UPDATES                = ""
-    MAVIS__PDS__RATE_LIMIT_PER_SECOND               = 5
-    SIDEKIQ_CONCURRENCY                             = 5
+  parameter_store_variables = tomap({
+    CORE = local.is_production ? {} : tomap({
+      MAVIS__ACADEMIC_YEAR_TODAY_OVERRIDE             = "CHANGE_ME"
+      MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = "CHANGE_ME"
+      MAVIS__PDS__ENQUEUE_BULK_UPDATES                = "CHANGE_ME"
+      MAVIS__PDS__RATE_LIMIT_PER_SECOND               = "CHANGE_ME"
+      SIDEKIQ_CONCURRENCY                             = "CHANGE_ME"
+    })
+    REPORTING = local.is_production ? {} : tomap({
+    })
   })
-  parameter_store_arns = [for key, value in aws_ssm_parameter.environment_config : value.arn] #TODO: Remove once all variables are sourced from application config
+  applications_accessing_secrets_or_parameters = toset([
+    for key, value in local.parameter_store_variables : key if length(local.task_secrets[key]) > 0
+  ])
+  secret_values = tomap(
+    {
+      CORE = [{
+        name      = "DB_CREDENTIALS"
+        valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
+      }]
+      REPORTING = []
+    }
+  )
+
+  parameter_values = tomap(
+    {
+      CORE = concat(
+        [for key, value in aws_ssm_parameter.core_environment_overwrites :
+          {
+            name      = key
+            valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${value.name}"
+          }
+        ],
+        [{
+          name      = "RAILS_MASTER_KEY"
+          valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.rails_master_key_path}"
+        }],
+      )
+      REPORTING = [for key, value in aws_ssm_parameter.reporting_environment_overwrites : {
+        name      = key
+        valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${value.name}"
+      }]
+    }
+  )
 
   sandbox_envs = (
     startswith(var.environment, "sandbox") ? [
@@ -131,43 +167,49 @@ locals {
     ] : []
   )
 
-  task_envs = concat([
-    {
-      name  = "DB_HOST"
-      value = aws_rds_cluster.core.endpoint
-    },
-    {
-      name  = "DB_NAME"
-      value = aws_rds_cluster.core.database_name
-    },
-    {
-      name  = "MAVIS__HOST"
-      value = var.http_hosts.MAVIS__HOST
-    },
-    {
-      name  = "MAVIS__GIVE_OR_REFUSE_CONSENT_HOST"
-      value = var.http_hosts.MAVIS__GIVE_OR_REFUSE_CONSENT_HOST
-    },
-    {
-      name  = "SIDEKIQ_REDIS_URL"
-      value = "rediss://${aws_elasticache_replication_group.valkey.primary_endpoint_address}:${var.valkey_port}"
-    },
-    {
-      name  = "REDIS_CACHE_URL"
-      value = "rediss://${aws_elasticache_serverless_cache.rails_cache.endpoint[0].address}:${aws_elasticache_serverless_cache.rails_cache.endpoint[0].port}"
-    },
-  ], local.sandbox_envs)
+  task_envs = {
+    CORE = concat([
+      {
+        name  = "DB_HOST"
+        value = aws_rds_cluster.core.endpoint
+      },
+      {
+        name  = "DB_NAME"
+        value = aws_rds_cluster.core.database_name
+      },
+      {
+        name  = "MAVIS__HOST"
+        value = var.http_hosts.MAVIS__HOST
+      },
+      {
+        name  = "MAVIS__GIVE_OR_REFUSE_CONSENT_HOST"
+        value = var.http_hosts.MAVIS__GIVE_OR_REFUSE_CONSENT_HOST
+      },
+      {
+        name  = "SIDEKIQ_REDIS_URL"
+        value = "rediss://${aws_elasticache_replication_group.valkey.primary_endpoint_address}:${var.valkey_port}"
+      },
+      {
+        name  = "REDIS_CACHE_URL"
+        value = "rediss://${aws_elasticache_serverless_cache.rails_cache.endpoint[0].address}:${aws_elasticache_serverless_cache.rails_cache.endpoint[0].port}"
+      },
+      {
+        name  = "RAILS_ENV"
+        value = var.environment == "production" ? "production" : "staging"
+      },
+      {
+        name  = "SENTRY_ENVIRONMENT"
+        value = var.environment
+      },
+      ], local.sandbox_envs,
+    )
+    REPORTING = []
+  }
 
-  task_secrets = [
-    {
-      name      = "DB_CREDENTIALS"
-      valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
-    },
-    {
-      name      = "RAILS_MASTER_KEY"
-      valueFrom = var.rails_master_key_path
-    }
-  ]
+  task_secrets = {
+    CORE      = concat(local.secret_values["CORE"], local.parameter_values["CORE"])
+    REPORTING = concat(local.secret_values["REPORTING"], local.parameter_values["REPORTING"])
+  }
 }
 
 ########## RDS configuration ##########
