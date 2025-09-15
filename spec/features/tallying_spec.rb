@@ -149,16 +149,16 @@ describe "Tallying" do
 
   def then_i_see_my_vaccination_tallies_for_today_with_default_batches
     rows = page.all(".nhsuk-table__row")
-    expect(rows[1]).to have_content("Cervarix 1 #{@cervarix_batch.name} Change")
-    expect(rows[2]).to have_content("Gardasil 2 Not set")
-    expect(rows[3]).to have_content("Fluenz 1 #{@fluenz_batch.name} Change")
+    expect(rows[1]).to have_content("Fluenz 1 #{@fluenz_batch.name} Change")
+    expect(rows[2]).to have_content("Cervarix 1 #{@cervarix_batch.name} Change")
+    expect(rows[3]).to have_content("Gardasil 2 Not set")
   end
 
   def then_i_see_my_vaccination_tallies_with_all_zero_values_with_default_batches
     rows = page.all(".nhsuk-table__row")
-    expect(rows[1]).to have_content("Cervarix 0 #{@cervarix_batch.name} Change")
-    expect(rows[2]).to have_content("Gardasil 0 Not set")
-    expect(rows[3]).to have_content("Fluenz 0 #{@fluenz_batch.name} Change")
+    expect(rows[1]).to have_content("Fluenz 0 #{@fluenz_batch.name} Change")
+    expect(rows[2]).to have_content("Cervarix 0 #{@cervarix_batch.name} Change")
+    expect(rows[3]).to have_content("Gardasil 0 Not set")
   end
 
   def and_i_click_on_the_expander_your_vaccinations_today

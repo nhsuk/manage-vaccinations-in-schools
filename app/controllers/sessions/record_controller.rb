@@ -9,7 +9,6 @@ class Sessions::RecordController < ApplicationController
   before_action :set_session
   before_action :set_patient_search_form
 
-  before_action :set_todays_batches, only: :show
   before_action :set_programme, except: :show
   before_action :set_vaccine_method, except: :show
   before_action :set_batches, except: :show
@@ -72,24 +71,6 @@ class Sessions::RecordController < ApplicationController
       policy_scope(Session).includes(programmes: :vaccines).find_by!(
         slug: params[:session_slug]
       )
-  end
-
-  def set_todays_batches
-    all_batches =
-      @session.programmes.index_with do |programme|
-        programme.vaccine_methods.filter_map do |vaccine_method|
-          id = todays_batch_id(programme:, vaccine_method:)
-          next if id.nil?
-
-          policy_scope(Batch)
-            .where(vaccine: @session.vaccines)
-            .not_archived
-            .not_expired
-            .find_by(id:)
-        end
-      end
-
-    @todays_batches = all_batches.compact_blank
   end
 
   def set_programme

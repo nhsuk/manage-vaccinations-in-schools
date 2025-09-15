@@ -7,55 +7,30 @@ class AppVaccinationsSummaryTableComponent < ViewComponent::Base
     @request_session = request_session
   end
 
-  delegate :govuk_table, to: :helpers
-
-  def tally_results
-    administered =
-      session
-        .vaccination_records
-        .includes(:vaccine)
-        .administered
-        .where(performed_by_user: current_user)
-        .where(performed_at: Date.current.all_day)
-
-    results = initialize_results_hash
-    populate_results(results, administered) if administered.any?
-
-    results
-  end
-
   private
 
   attr_reader :session, :request_session, :current_user
 
-  def initialize_results_hash
-    results = {}
+  delegate :govuk_table, to: :helpers
 
-    session
-      .vaccines
-      .includes(:programme)
-      .find_each do |vaccine|
-        results[vaccine.brand] = {
-          count: 0,
-          programme: vaccine.programme,
-          vaccine_method: vaccine.method,
-          default_batch: default_batch(vaccine)
-        }
-      end
+  def count_by_vaccine
+    vaccines = session.vaccines.includes(:programme).order(:brand)
 
-    results
-  end
+    vaccination_records =
+      session
+        .vaccination_records
+        .includes(vaccine: :programme)
+        .administered
+        .where(performed_by_user: current_user)
+        .where(performed_at: Date.current.all_day)
 
-  def populate_results(results, vaccination_records)
+    results = vaccines.index_with { 0 }
+
     vaccination_records.find_each do |vaccination_record|
-      brand = vaccination_record.vaccine.brand
+      vaccine = vaccination_record.vaccine
 
-      # Non-prod environments can have bad data where
-      # vaccines associated with the session are not
-      # associated with the vaccination records.
-      next unless results[brand]
-
-      results[brand][:count] += 1
+      results[vaccine] ||= 0
+      results[vaccine] += 1
     end
 
     results
@@ -69,10 +44,7 @@ class AppVaccinationsSummaryTableComponent < ViewComponent::Base
         vaccine.method,
         :id
       )
-    batch = Batch.find_by(id: batch_id)
 
-    return unless batch && batch.vaccine.brand == vaccine.brand
-
-    batch.name
+    Batch.where(vaccine:).find_by(id: batch_id)
   end
 end
