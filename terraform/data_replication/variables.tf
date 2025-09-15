@@ -50,30 +50,6 @@ variable "account_id" {
   nullable    = false
 }
 
-variable "docker_image" {
-  type        = string
-  default     = "mavis/webapp"
-  description = "The docker image name for the essential container in the task definition"
-  nullable    = false
-}
-
-variable "image_digest" {
-  type        = string
-  description = "The docker image digest for the essential container in the task definition."
-  nullable    = false
-}
-
-variable "rails_env" {
-  type        = string
-  default     = "staging"
-  description = "The rails environment configuration to use for the mavis application"
-  nullable    = false
-  validation {
-    condition     = contains(["staging", "production"], var.rails_env)
-    error_message = "Incorrect rails environment, allowed values are: {staging, production}"
-  }
-}
-
 variable "rails_master_key_path" {
   type        = string
   default     = "/mavis/staging/credentials/RAILS_MASTER_KEY"
@@ -94,26 +70,6 @@ locals {
     {
       name  = "DB_NAME"
       value = aws_rds_cluster.cluster.database_name
-    },
-    {
-      name  = "RAILS_ENV"
-      value = var.rails_env
-    },
-    {
-      name  = "SENTRY_ENVIRONMENT"
-      value = var.environment
-    },
-    {
-      name  = "MAVIS__CIS2__ENABLED"
-      value = "false"
-    },
-    {
-      name  = "MAVIS__SPLUNK__ENABLED"
-      value = "false"
-    },
-    {
-      name  = "MAVIS__PDS__ENQUEUE_BULK_UPDATES"
-      value = "false"
     }
   ]
   task_secrets = [

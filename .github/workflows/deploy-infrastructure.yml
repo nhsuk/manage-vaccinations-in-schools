@@ -8,11 +8,18 @@ on:
         description: Deployment environment
         required: true
         type: string
-      image_tag:
-        required: false
-        type: string
-      git_ref_to_deploy:
+      git-ref-to-deploy:
         required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Deployment environment
+        required: true
+        type: string
+      git-ref-to-deploy:
+        description: The git commit SHA to deploy.
+        required: false
         type: string
 
 permissions: {}
@@ -21,12 +28,10 @@ concurrency:
   group: deploy-infrastructure-${{ inputs.environment }}
 
 env:
-  aws_role: ${{ inputs.environment == 'production'
+  aws-role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
-  aws_account_id: ${{ inputs.environment == 'production'
-    && '820242920762' || '393416225559' }}
-  git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
+  git-ref-to-deploy: ${{ inputs.git-ref-to-deploy || github.ref_name }}
 
 defaults:
   run:
@@ -42,31 +47,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          ref: ${{ env.git_ref_to_deploy }}
+          ref: ${{ env.git-ref-to-deploy }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ env.aws_role }}
+          role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
-      - name: Set image tag
-        run: |
-          IMAGE_TAG="${{ inputs.image_tag || github.sha }}"
-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-      - name: Login to ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-      - name: Pull Docker image
-        run: |
-          set -e
-          DOCKER_IMAGE="${{ steps.login-ecr.outputs.registry }}/mavis/webapp:${IMAGE_TAG}"
-          docker pull "$DOCKER_IMAGE"
-          echo "DOCKER_IMAGE=$DOCKER_IMAGE" >> $GITHUB_ENV
-      - name: Extract image digest
-        run: |
-          set -e
-          DOCKER_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' "$DOCKER_IMAGE")
-          DIGEST="${DOCKER_DIGEST#*@}"
-          echo "DIGEST=$DIGEST" >> $GITHUB_ENV
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -78,7 +64,7 @@ jobs:
         run: |
           set -e
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          terraform plan -var="image_digest=$DIGEST" -var="app_version=${{ env.git_ref_to_deploy }}"  \
+          terraform plan \
           -var-file="env/${{ inputs.environment }}.tfvars" \
           -out ${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
           TF_EXIT_CODE=${PIPESTATUS[0]}
@@ -104,11 +90,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          ref: ${{ env.git_ref_to_deploy }}
+          ref: ${{ env.git-ref-to-deploy }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ env.aws_role }}
+          role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
       - name: Download artifact
         uses: actions/download-artifact@v5

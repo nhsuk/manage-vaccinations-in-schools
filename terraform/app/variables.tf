@@ -23,12 +23,6 @@ variable "access_logs_bucket" {
   description = "Name of the S3 bucket which stores access logs for various resources"
 }
 
-variable "appspec_bucket" {
-  type        = string
-  description = "Name of the S3 bucket which stores appspec files"
-  nullable    = false
-}
-
 variable "account_id" {
   type        = string
   default     = "393416225559"
@@ -102,76 +96,11 @@ variable "vpc_log_retention_days" {
 
 ########## Task definition configuration ##########
 
-variable "rails_env" {
-  type        = string
-  default     = "staging"
-  description = "The rails environment configuration to use for the mavis application"
-  nullable    = false
-  validation {
-    condition     = contains(["staging", "production"], var.rails_env)
-    error_message = "Incorrect rails environment, allowed values are: {staging, production}"
-  }
-}
 
 variable "rails_master_key_path" {
   type        = string
   default     = "/mavis/development/credentials/RAILS_MASTER_KEY"
   description = "The path of the System Manager Parameter Store secure string for the rails master key."
-  nullable    = false
-}
-
-variable "docker_image" {
-  type        = string
-  default     = "mavis/webapp"
-  description = "The docker image name for the essential container in the task definition"
-  nullable    = false
-}
-
-variable "image_digest" {
-  type        = string
-  description = "The docker image digest for the essential container in the task definition."
-  nullable    = false
-}
-
-variable "enable_cis2" {
-  type        = bool
-  default     = true
-  description = "Boolean toggle to determine whether the CIS2 feature should be enabled."
-  nullable    = false
-}
-
-variable "enable_pds_enqueue_bulk_updates" {
-  type        = bool
-  default     = true
-  description = "Whether PDS jobs that update patients in bulk should execute or not. This is disabled in non-production environments to avoid making unnecessary requests to PDS."
-  nullable    = false
-}
-
-variable "academic_year_today_override" {
-  type        = string
-  default     = "nil"
-  description = "A date that can be used to override today's date when calculating the current academic year."
-  nullable    = false
-}
-
-variable "academic_year_number_of_preparation_days" {
-  type        = number
-  default     = 31
-  description = "How many days before the start of the academic year to start the preparation period."
-  nullable    = false
-}
-
-variable "pds_rate_limit_per_second" {
-  type        = number
-  default     = 5
-  description = "The rate limit when communicating with PDS."
-  nullable    = false
-}
-
-variable "enable_splunk" {
-  type        = bool
-  default     = true
-  description = "Boolean toggle to determine whether the Splunk feature should be enabled."
   nullable    = false
 }
 
@@ -182,28 +111,37 @@ variable "enable_enhanced_db_monitoring" {
   nullable    = false
 }
 
-variable "app_version" {
-  type        = string
-  description = "The version identifier for the MAVIS application deployment"
-  default     = "Unknown"
-  nullable    = false
-}
-
 locals {
   is_production = var.environment == "production"
   parameter_store_variables = tomap({
-    MAVIS__ACADEMIC_YEAR_TODAY_OVERRIDE             = var.academic_year_today_override
-    MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = var.academic_year_number_of_preparation_days
-    MAVIS__PDS__ENQUEUE_BULK_UPDATES                = var.enable_pds_enqueue_bulk_updates ? "true" : "false"
-    MAVIS__PDS__RATE_LIMIT_PER_SECOND               = var.pds_rate_limit_per_second
-    GOOD_JOB_MAX_THREADS                            = 5
-    SIDEKIQ_CONCURRENCY                             = 5
+    CORE = local.is_production ? {} : tomap({
+      MAVIS__ACADEMIC_YEAR_TODAY_OVERRIDE             = "CHANGE_ME"
+      MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = "CHANGE_ME"
+      MAVIS__PDS__ENQUEUE_BULK_UPDATES                = "CHANGE_ME"
+      MAVIS__PDS__RATE_LIMIT_PER_SECOND               = "CHANGE_ME"
+      SIDEKIQ_CONCURRENCY                             = "CHANGE_ME"
+    })
+    REPORTING = local.is_production ? {} : tomap({
+    })
   })
-  parameter_store_config_list = [for key, value in local.parameter_store_variables : {
-    name      = key
-    valueFrom = aws_ssm_parameter.environment_config[key].arn
-  }]
-  parameter_store_arns = [for key, value in local.parameter_store_variables : aws_ssm_parameter.environment_config[key].arn]
+  non_empty_parameter_groups = toset([
+    for key, value in local.parameter_store_variables : key if length(concat(local.secret_arns[key], local.parameter_store_paths[key])) > 0
+  ])
+  parameter_store_paths = tomap(
+    {
+      CORE = concat(
+        [for key, value in aws_ssm_parameter.core_environment_overwrites : value.name],
+        [var.rails_master_key_path]
+      )
+      REPORTING = [for key, value in aws_ssm_parameter.reporting_environment_overwrites : value.name]
+    }
+  )
+  secret_arns = tomap(
+    {
+      CORE      = [aws_rds_cluster.core.master_user_secret[0].secret_arn]
+      REPORTING = []
+    }
+  )
 
   sandbox_envs = (
     startswith(var.environment, "sandbox") ? [
@@ -214,59 +152,60 @@ locals {
     ] : []
   )
 
-  task_envs = concat([
-    {
-      name  = "DB_HOST"
-      value = aws_rds_cluster.core.endpoint
-    },
-    {
-      name  = "DB_NAME"
-      value = aws_rds_cluster.core.database_name
-    },
-    {
-      name  = "RAILS_ENV"
-      value = var.rails_env
-    },
-    {
-      name  = "SENTRY_ENVIRONMENT"
-      value = var.environment
-    },
-    {
-      name  = "MAVIS__HOST"
-      value = var.http_hosts.MAVIS__HOST
-    },
-    {
-      name  = "MAVIS__GIVE_OR_REFUSE_CONSENT_HOST"
-      value = var.http_hosts.MAVIS__GIVE_OR_REFUSE_CONSENT_HOST
-    },
-    {
-      name  = "MAVIS__CIS2__ENABLED"
-      value = var.enable_cis2 ? "true" : "false"
-    },
-    {
-      name  = "MAVIS__SPLUNK__ENABLED"
-      value = var.enable_splunk ? "true" : "false"
-    },
-    {
-      name  = "APP_VERSION"
-      value = var.app_version
-    },
-    {
-      name  = "SIDEKIQ_REDIS_URL"
-      value = "rediss://${aws_elasticache_replication_group.valkey.primary_endpoint_address}:${var.valkey_port}"
-    },
-  ], local.sandbox_envs)
+  task_envs = tomap({
+    CORE = concat([
+      {
+        name  = "RAILS_ENV"
+        value = local.is_production ? "production" : "staging"
+      },
+      {
+        name  = "SENTRY_ENVIRONMENT"
+        value = var.environment
+      },
+      {
+        name  = "DB_HOST"
+        value = aws_rds_cluster.core.endpoint
+      },
+      {
+        name  = "DB_NAME"
+        value = aws_rds_cluster.core.database_name
+      },
+      {
+        name  = "MAVIS__HOST"
+        value = var.http_hosts.MAVIS__HOST
+      },
+      {
+        name  = "MAVIS__GIVE_OR_REFUSE_CONSENT_HOST"
+        value = var.http_hosts.MAVIS__GIVE_OR_REFUSE_CONSENT_HOST
+      },
+      {
+        name  = "SIDEKIQ_REDIS_URL"
+        value = "rediss://${aws_elasticache_replication_group.valkey.primary_endpoint_address}:${var.valkey_port}"
+      },
+      ],
+      local.sandbox_envs,
+    )
+    REPORTING = []
+  })
 
-  task_secrets = concat([
-    {
-      name      = "DB_CREDENTIALS"
-      valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
-    },
-    {
-      name      = "RAILS_MASTER_KEY"
-      valueFrom = var.rails_master_key_path
-    }
-  ], local.parameter_store_config_list)
+  task_secrets = tomap({
+    CORE = concat(
+      [
+        {
+          name      = "DB_CREDENTIALS"
+          valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
+        }
+      ],
+      [for key, value in local.parameter_store_variables["CORE"] : {
+        name      = key
+        valueFrom = aws_ssm_parameter.core_environment_overwrites[key].name
+      }]
+    )
+    REPORTING = [for key, value in local.parameter_store_variables["REPORTING"] : {
+      name      = key
+      valueFrom = aws_ssm_parameter.core_environment_overwrites[key].name
+    }]
+  })
 }
 
 ########## RDS configuration ##########
