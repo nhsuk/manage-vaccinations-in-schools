@@ -43,6 +43,10 @@ class PatientMerger
         patient_id: patient_to_keep.id
       )
 
+      patient_to_destroy.patient_specific_directions.update_all(
+        patient_id: patient_to_keep.id
+      )
+
       patient_to_destroy.pds_search_results.update_all(
         patient_id: patient_to_keep.id
       )
