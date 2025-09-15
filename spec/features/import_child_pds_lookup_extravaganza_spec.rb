@@ -427,11 +427,14 @@ describe "Import child records" do
   end
 
   def and_i_upload_import_file(filename)
+    travel 1.minute
+
     click_button "Import records"
     choose "Child records"
     click_button "Continue"
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/#{filename}")
     click_on "Continue"
+
     wait_for_import_to_complete(CohortImport)
   end
 
@@ -462,7 +465,8 @@ describe "Import child records" do
 
   def when_i_go_back_to_the_import_page
     visit "/imports"
-    click_link "1 September 2025 at 12:00pm", match: :first
+
+    click_on_most_recent_import(CohortImport)
   end
 
   def when_i_click_review_for(name)
