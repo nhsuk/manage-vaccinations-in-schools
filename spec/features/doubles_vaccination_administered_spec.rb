@@ -64,6 +64,8 @@ describe "MenACWY and Td/IPV vaccination" do
     sign_in @nurse
     visit session_record_path(@session)
     click_link @patient.full_name
+
+    expect(page).to have_content("Session activity and notes").once
   end
 
   def then_i_see_the_menacwy_vaccination_form
