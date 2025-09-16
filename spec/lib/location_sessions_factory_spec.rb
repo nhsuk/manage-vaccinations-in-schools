@@ -182,11 +182,17 @@ describe LocationSessionsFactory do
         let!(:location) { create(:generic_clinic, team:) }
 
         it "creates missing sessions for each programme group" do
-          expect { call }.to change(team.sessions, :count).by(1)
+          expect { call }.to change(team.sessions, :count).by(3)
 
           session =
-            team.sessions.includes(:location, :programmes).find_by(location:)
-          expect(session.programmes).to match_array(programmes)
+            team
+              .sessions
+              .order(:created_at)
+              .where(location:)
+              .includes(:programmes)
+          expect(session.first.programmes).to eq(flu_programmes)
+          expect(session.second.programmes).to eq(hpv_programmes)
+          expect(session.third.programmes).to eq(doubles_programmes)
         end
       end
 

@@ -8,15 +8,11 @@ class LocationSessionsFactory
 
   def call
     ActiveRecord::Base.transaction do
-      if location.generic_clinic?
-        find_or_create_session!(programmes: location.programmes)
-      else
-        ProgrammeGrouper
-          .call(location.programmes)
-          .values
-          .reject { |programmes| already_exists?(programmes:) }
-          .map { |programmes| create_session!(programmes:) }
-      end
+      ProgrammeGrouper
+        .call(location.programmes)
+        .values
+        .reject { |programmes| already_exists?(programmes:) }
+        .map { |programmes| create_session!(programmes:) }
 
       add_patients!
     end
@@ -38,20 +34,6 @@ class LocationSessionsFactory
 
   def create_session!(programmes:)
     team.sessions.create!(academic_year:, location:, programmes:)
-  end
-
-  def find_or_create_session!(programmes:)
-    team
-      .sessions
-      .create_with(programmes:)
-      .find_or_create_by!(academic_year:, location:)
-      .tap do |session|
-        programmes.each do |programme|
-          unless programme.in?(session.programmes)
-            session.programmes << programme
-          end
-        end
-      end
   end
 
   def add_patients!
