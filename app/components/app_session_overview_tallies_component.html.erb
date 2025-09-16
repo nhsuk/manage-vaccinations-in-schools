@@ -1,0 +1,26 @@
+<div class="nhsuk-grid-column-full">
+  <% programmes.each do |programme| %>
+    <section>
+      <h3 class="nhsuk-heading-m nhsuk-u-margin-bottom-4">
+        <%= programme.name %>
+      </h3>
+      <ul class="nhsuk-grid-row nhsuk-card-group">
+        <% tally_cards_for_programme(programme).each do |card_data| %>
+          <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
+            <%= render AppCardComponent.new(
+                  heading_level: 5,
+                  colour: card_data[:colour],
+                  data: true,
+                  compact: true,
+                  style_as_count: true,
+                  link_to: card_data[:link_to],
+                ) do |card| %>
+              <% card.with_heading { card_data[:heading] } %>
+              <% card.with_description { card_data[:count] } %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </section>
+  <% end %>
+</div>
