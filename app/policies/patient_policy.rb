@@ -8,53 +8,46 @@ class PatientPolicy < ApplicationPolicy
 
       return scope.none if team.nil?
 
-      patients_table = Patient.arel_table
-      associated_patients_table = Arel::Table.new("associated_patients")
-
-      associated_patients = [
+      existence_criteria = [
         PatientSession
-          .select(:patient_id)
+          .select("1")
           .joins(:session)
+          .where("patient_sessions.patient_id = patients.id")
           .where(sessions: { team_id: team.id })
           .arel,
-        ArchiveReason.select(:patient_id).where(team_id: team.id).arel,
-        SchoolMove.select(:patient_id).where(team_id: team.id).arel,
-        SchoolMove.select(:patient_id).where(school: team.schools).arel,
+        ArchiveReason
+          .select("1")
+          .where("archive_reasons.patient_id = patients.id")
+          .where(team_id: team.id)
+          .arel,
+        SchoolMove
+          .select("1")
+          .where("school_moves.patient_id = patients.id")
+          .where(team_id: team.id)
+          .arel,
+        SchoolMove
+          .select("1")
+          .where("school_moves.patient_id = patients.id")
+          .where(school: team.schools)
+          .arel,
         VaccinationRecord
-          .select(:patient_id)
+          .select("1")
           .joins(:session)
+          .where("vaccination_records.patient_id = patients.id")
           .where(sessions: { team_id: team.id })
           .arel,
         VaccinationRecord
-          .select(:patient_id)
+          .select("1")
+          .where("vaccination_records.patient_id = patients.id")
           .where(performed_ods_code: organisation.ods_code, session_id: nil)
           .arel
       ]
 
-      associated_patiens_union =
-        Arel::Nodes::Union.new(associated_patients[0], associated_patients[1])
-      associated_patients[2..].each do |select|
-        associated_patiens_union =
-          Arel::Nodes::Union.new(associated_patiens_union, select)
+      condition = existence_criteria[0].exists
+      existence_criteria[1..].each do |filter|
+        condition = condition.or(filter.exists)
       end
-
-      associated_patients_query =
-        Arel::SelectManager
-          .new
-          .project(Arel.star)
-          .from(associated_patiens_union.as("t"))
-          .group("t.patient_id")
-
-      join_associated_patients =
-        patients_table
-          .join(associated_patients_table)
-          .on(associated_patients_table[:patient_id].eq(patients_table[:id]))
-          .join_sources
-          .first
-
-      Patient.with(associated_patients: associated_patients_query).joins(
-        join_associated_patients
-      )
+      scope.where(condition)
     end
   end
 end
