@@ -67,28 +67,16 @@ class VaccinationRecordPolicy < ApplicationPolicy
       team = user.selected_team
       return scope.none if team.nil?
 
-      patient_subquery =
+      relevant_patients =
         Patient
+          .select("1")
           .joins(patient_sessions: :session)
-          .select(:id)
-          .distinct
+          .where("patients.id = vaccination_records.patient_id")
           .where(sessions: { team_id: team.id })
           .arel
-          .as("patients")
       scope
-        .joins(
-          VaccinationRecord
-            .arel_table
-            .join(patient_subquery, Arel::Nodes::OuterJoin)
-            .on(
-              VaccinationRecord.arel_table[:patient_id].eq(
-                patient_subquery[:id]
-              )
-            )
-            .join_sources
-        )
         .kept
-        .where(patient_subquery[:id].not_eq(nil))
+        .where(relevant_patients.exists)
         .or(scope.kept.where(session: team.sessions))
         .or(
           scope.kept.where(
