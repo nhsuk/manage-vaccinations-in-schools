@@ -9,12 +9,17 @@ class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
         Session.where(id: sessions.map(&:id))
       else
         flu = Programme.flu.sole
-        Session
-          .includes(:session_dates)
-          .has_programmes([flu])
-          .where("sessions.send_consent_requests_at <= ?", 2.days.from_now)
-          .where("session_dates.value >= ?", Time.zone.today)
-          .references(:session_dates)
+
+        scope =
+          Session
+            .includes(:session_dates)
+            .has_programmes([flu])
+            .where("session_dates.value >= ?", Time.zone.today)
+            .references(:session_dates)
+
+        scope.where("sessions.send_invitations_at <= ?", 2.days.from_now).or(
+          scope.where("sessions.send_consent_requests_at <= ?", 2.days.from_now)
+        )
       end
 
     scope.find_each do |session|
