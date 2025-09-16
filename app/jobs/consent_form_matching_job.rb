@@ -59,6 +59,8 @@ class ConsentFormMatchingJob < ApplicationJob
     patient.update_from_pds!(pds_patient)
     send_parental_contact_warning_if_needed(patient, @consent_form)
     @consent_form.match_with_patient!(patient, current_user: nil)
+    reset_counts
+    true
   end
 
   def session_patients
@@ -95,5 +97,10 @@ class ConsentFormMatchingJob < ApplicationJob
 
     send_parental_contact_warning_if_needed(patient, @consent_form)
     @consent_form.match_with_patient!(patient, current_user: nil)
+    reset_counts
+  end
+
+  def reset_counts
+    TeamCachedCounts.new(@consent_form.team).reset_unmatched_consent_responses!
   end
 end
