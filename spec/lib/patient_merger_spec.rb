@@ -274,6 +274,27 @@ describe PatientMerger do
       end
     end
 
+    context "when both patients have attendance records" do
+      let!(:to_keep_attendance_record) do
+        create(
+          :attendance_record,
+          :present,
+          patient: patient_to_keep,
+          location_id: attendance_record.location_id,
+          date: attendance_record.date,
+          session: nil
+        )
+      end
+
+      it "keeps the attendance record on the merged patient" do
+        expect { call }.to change(AttendanceRecord, :count).by(-1)
+        expect { attendance_record.reload }.to raise_error(
+          ActiveRecord::RecordNotFound
+        )
+        expect(to_keep_attendance_record.reload.patient).to eq(patient_to_keep)
+      end
+    end
+
     context "when both patients are archived" do
       before do
         create(
