@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-# This script creates a new draft release and creates a template for the release notes. 
+# This script creates draft release notes for a release.
 # It extracts pre-release and post-release tasks from pull request descriptions.
 # The required syntax is:
-# Pre-Release:
+# ## Pre-release tasks
 # - Task 1
 # - Task 2
-# Post-Release:
+# ## Post-release tasks
 # - Task 3
 
 set -e
@@ -28,8 +28,9 @@ post_release_tasks=""
 for pr in $pr_numbers; do
   echo "Processing PR #$pr"
   pr_body=$(gh pr view "$pr" --json body -q '.body')
-  pre=$(echo "$pr_body" | sed -n '/Pre-Release:/,/Post-Release:/p' | grep '^[*-]' || true)
-  post=$(echo "$pr_body" | sed -n '/Post-Release:/,$p' | grep '^[*-]' || true)
+
+  pre=$(echo "$pr_body" | sed -n '/## Pre-release tasks/,/## Post-release tasks/p' | grep '^[*-]' | grep -v '^- \.\.\.' || true)
+  post=$(echo "$pr_body" | sed -n '/## Post-release tasks/,$p' | grep '^[*-]' | grep -v '^- \.\.\.' || true)
 
   if [ -n "$pre" ]; then
     pre_release_tasks+="
@@ -50,13 +51,13 @@ release_body="**Full Changelog**: https://github.com/nhsuk/manage-vaccinations-i
 
 if [ -n "$pre_release_tasks" ]; then
   release_body+="
-## Pre-Release Tasks
+## Pre-release tasks
 ${pre_release_tasks}
 "
 fi
 if [ -n "$post_release_tasks" ]; then
   release_body+="
-## Post-Release Tasks
+## Post-release tasks
 ${post_release_tasks}
 "
 fi

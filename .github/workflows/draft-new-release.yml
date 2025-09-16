@@ -1,4 +1,4 @@
-name: draft-new-release.yml
+name: Draft new release
 run-name: Draft release notes for ${{ inputs.release_tag }}
 permissions:
   contents: write
