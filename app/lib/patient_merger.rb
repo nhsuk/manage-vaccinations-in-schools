@@ -24,9 +24,16 @@ class PatientMerger
 
       patient_to_destroy.archive_reasons.destroy_all
 
-      patient_to_destroy.attendance_records.update_all(
-        patient_id: patient_to_keep.id
-      )
+      patient_to_destroy.attendance_records.find_each do |attendance_record|
+        if patient_to_keep.attendance_records.exists?(
+             location_id: attendance_record.location_id,
+             date: attendance_record.date
+           )
+          attendance_record.destroy!
+        else
+          attendance_record.update_column(:patient_id, patient_to_keep.id)
+        end
+      end
 
       patient_to_destroy.consent_notifications.update_all(
         patient_id: patient_to_keep.id
@@ -63,7 +70,7 @@ class PatientMerger
            )
           school_move.destroy!
         else
-          school_move.update!(patient: patient_to_keep)
+          school_move.update_column(:patient_id, patient_to_keep.id)
         end
       end
 
@@ -89,7 +96,7 @@ class PatientMerger
            )
           relationship.destroy!
         else
-          relationship.update!(patient_id: patient_to_keep.id)
+          relationship.update_column(:patient_id, patient_to_keep.id)
         end
       end
 
@@ -99,7 +106,7 @@ class PatientMerger
            )
           next
         end
-        patient_session.update!(patient: patient_to_keep)
+        patient_session.update_column(:patient_id, patient_to_keep.id)
       end
 
       PatientSession.where(patient: patient_to_destroy).destroy_all
