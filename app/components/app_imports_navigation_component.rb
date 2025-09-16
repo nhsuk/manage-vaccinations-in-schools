@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class AppImportsNavigationComponent < ViewComponent::Base
-  def initialize(active:)
+  def initialize(active:, team:)
     @active = active
+    @team = team
   end
 
   def call
@@ -31,18 +32,22 @@ class AppImportsNavigationComponent < ViewComponent::Base
 
   private
 
-  attr_reader :active
+  attr_reader :active, :team
 
-  delegate :import_issues_count, :policy, :policy_scope, to: :helpers
+  delegate :policy, :policy_scope, to: :helpers
 
   def issues_text
-    safe_join(
-      ["Import issues", " ", render(AppCountComponent.new(import_issues_count))]
-    )
+    count = TeamCachedCounts.new(team).import_issues
+    text_with_count("Import issues", count)
   end
 
   def notices_text
     count = ImportantNotices.call(patient_scope: policy_scope(Patient)).length
-    safe_join(["Important notices", " ", render(AppCountComponent.new(count))])
+
+    text_with_count("Important notices", count)
+  end
+
+  def text_with_count(text, count)
+    safe_join([text, " ", render(AppCountComponent.new(count))])
   end
 end
