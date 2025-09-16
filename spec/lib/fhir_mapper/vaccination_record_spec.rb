@@ -8,11 +8,10 @@ describe FHIRMapper::VaccinationRecord do
   let(:team) { create(:team, organisation:, programmes: [programme]) }
   let(:programme) { create(:programme, :hpv) }
   let(:school) { create(:school) }
-  let(:patient_session) do
-    create(:patient_session, programmes: [programme], team:, school:)
+  let(:session) do
+    create(:session, location: school, programmes: [programme], team:)
   end
-  let(:patient) { patient_session.patient }
-  let(:session) { patient_session.session }
+  let(:patient) { create(:patient, session:) }
   let(:vaccination_outcome) { :administered }
   let(:vaccine) { vaccination_record.vaccine }
   let(:nhs_immunisations_api_id) { nil }

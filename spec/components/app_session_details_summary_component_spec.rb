@@ -14,9 +14,9 @@ describe AppSessionDetailsSummaryComponent do
 
   context "with activity" do
     before do
-      create(:patient_session, session:)
-      create(:patient_session, :consent_refused, session:)
-      create(:patient_session, :vaccinated, session:)
+      create(:patient, session:)
+      create(:patient, :consent_refused, session:)
+      create(:patient, :vaccinated, session:)
     end
 
     it { should have_text("Cohort3 children") }
@@ -28,8 +28,8 @@ describe AppSessionDetailsSummaryComponent do
 
   context "when the patients are not eligible for the programme" do
     before do
-      create(:patient_session, session:, year_group: 7)
-      create(:patient_session, :consent_refused, session:, year_group: 7)
+      create(:patient, session:, year_group: 7)
+      create(:patient, :consent_refused, session:, year_group: 7)
     end
 
     it { should have_text("CohortNo children") }

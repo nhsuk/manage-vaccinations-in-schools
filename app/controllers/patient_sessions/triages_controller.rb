@@ -19,7 +19,8 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
     @triage_form =
       TriageForm.new(
         current_user:,
-        patient_session: @patient_session,
+        patient: @patient,
+        session: @session,
         programme: @programme,
         triage: previous_triage
       )
@@ -31,7 +32,8 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
     @triage_form =
       TriageForm.new(
         current_user:,
-        patient_session: @patient_session,
+        patient: @patient,
+        session: @session,
         programme: @programme,
         **triage_form_params
       )
@@ -45,7 +47,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
           programme_id: @programme.id,
           academic_year: @academic_year
         )
-        .each { send_triage_confirmation(@patient_session, @programme, it) }
+        .each { send_triage_confirmation(@patient, @session, @programme, it) }
 
       redirect_to redirect_path, flash: { success: "Triage outcome updated" }
     else

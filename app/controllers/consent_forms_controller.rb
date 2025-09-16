@@ -38,13 +38,11 @@ class ConsentFormsController < ApplicationController
     session =
       @patient
         .pending_sessions
+        .includes(:location_programme_year_groups, :programmes)
         .has_programmes(@consent_form.programmes)
         .first || @consent_form.original_session
 
-    patient_session =
-      PatientSession.includes_programmes.find_by(patient: @patient, session:)
-
-    programme = patient_session&.programmes&.first
+    programme = session.programmes_for(patient: @patient).first
 
     heading_link_href =
       if programme.nil?

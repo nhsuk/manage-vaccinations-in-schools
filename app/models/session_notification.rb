@@ -45,24 +45,28 @@ class SessionNotification < ApplicationRecord
   end
 
   def self.create_and_send!(
-    patient_session:,
+    patient:,
+    session:,
     session_date:,
     type:,
     current_user: nil
   )
-    patient = patient_session.patient
-    session = patient_session.session
-
     academic_year = session.academic_year
 
     parents =
       if type == :school_reminder
-        patient_session.programmes.flat_map do |programme|
-          ConsentGrouper
-            .call(patient.consents, programme_id: programme.id, academic_year:)
-            .select(&:response_given?)
-            .filter_map(&:parent)
-        end
+        session
+          .programmes_for(patient:)
+          .flat_map do |programme|
+            ConsentGrouper
+              .call(
+                patient.consents,
+                programme_id: programme.id,
+                academic_year:
+              )
+              .select(&:response_given?)
+              .filter_map(&:parent)
+          end
       else
         patient.parents.select(&:contactable?)
       end
@@ -89,14 +93,16 @@ class SessionNotification < ApplicationRecord
 
     programmes =
       if type == :school_reminder
-        patient_session.programmes.select do |programme|
-          patient.consent_given_and_safe_to_vaccinate?(
-            programme:,
-            academic_year:
-          )
-        end
+        session
+          .programmes_for(patient:)
+          .select do |programme|
+            patient.consent_given_and_safe_to_vaccinate?(
+              programme:,
+              academic_year:
+            )
+          end
       else
-        patient_session.programmes
+        session.programmes_for(patient:)
       end
 
     parents.each do |parent|

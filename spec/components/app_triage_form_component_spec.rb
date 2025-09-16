@@ -7,10 +7,10 @@ describe AppTriageFormComponent do
   let(:url) { "/triage" }
 
   let(:programme) { create(:programme) }
-  let(:patient_session) { create(:patient_session, programmes: [programme]) }
-  let(:patient) { patient_session.patient }
+  let(:session) { create(:session, programmes: [programme]) }
+  let(:patient) { create(:patient, session:) }
 
-  let(:triage_form) { TriageForm.new(patient_session:, programme:) }
+  let(:triage_form) { TriageForm.new(patient:, session:, programme:) }
 
   it { should have_css("h2") }
   it { should have_text("Is it safe to vaccinate") }

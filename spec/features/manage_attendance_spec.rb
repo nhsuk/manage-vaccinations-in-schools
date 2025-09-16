@@ -134,7 +134,7 @@ describe "Manage attendance" do
 
   def and_the_session_has_patients
     create_list(
-      :patient_session,
+      :patient,
       3,
       :consent_given_triage_not_needed,
       programmes: @programmes,

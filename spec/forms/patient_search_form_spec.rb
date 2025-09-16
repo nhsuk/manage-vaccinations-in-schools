@@ -408,15 +408,14 @@ describe PatientSearchForm do
       let(:year_groups) { nil }
 
       it "filters on consent status" do
-        patient_session_given =
-          create(:patient_session, :consent_given_triage_not_needed, session:)
+        patient_given =
+          create(:patient, :consent_given_triage_not_needed, session:)
 
-        patient_session_refused =
-          create(:patient_session, :consent_refused, session:)
+        patient_refused = create(:patient, :consent_refused, session:)
 
         expect(form.apply(scope)).to contain_exactly(
-          patient_session_given,
-          patient_session_refused
+          patient_given.patient_sessions.first,
+          patient_refused.patient_sessions.first
         )
       end
 
@@ -457,7 +456,8 @@ describe PatientSearchForm do
       let(:year_groups) { nil }
 
       it "filters on register status" do
-        patient_session = create(:patient_session, :in_attendance, session:)
+        patient = create(:patient, :in_attendance, session:)
+        patient_session = patient.patient_sessions.first
         expect(form.apply(scope)).to include(patient_session)
       end
     end
@@ -476,8 +476,8 @@ describe PatientSearchForm do
       let(:year_groups) { nil }
 
       it "filters on triage status" do
-        patient_session =
-          create(:patient_session, :consent_given_triage_needed, session:)
+        patient = create(:patient, :consent_given_triage_needed, session:)
+        patient_session = patient.patient_sessions.first
 
         expect(form.apply(scope)).to include(patient_session)
       end
@@ -545,31 +545,33 @@ describe PatientSearchForm do
       let(:programme) { create(:programme, :flu) }
 
       it "filters on vaccine method" do
-        nasal_patient_session =
-          create(:patient_session, :consent_given_triage_not_needed, session:)
+        nasal_patient =
+          create(:patient, :consent_given_triage_not_needed, session:)
 
-        nasal_patient_session.patient.consent_statuses.first.update!(
+        nasal_patient.consent_statuses.first.update!(
           vaccine_methods: %w[nasal injection]
         )
 
         _nasal_only_different_programme_patient =
           create(
-            :patient_session,
+            :patient,
             :consent_given_triage_not_needed,
             programmes: [create(:programme, :hpv)]
           )
 
         _injection_only_patient =
-          create(:patient_session, :consent_given_triage_not_needed, session:)
+          create(:patient, :consent_given_triage_not_needed, session:)
 
         injection_primary_patient =
-          create(:patient_session, :consent_given_triage_not_needed, session:)
+          create(:patient, :consent_given_triage_not_needed, session:)
 
-        injection_primary_patient.patient.consent_statuses.first.update!(
+        injection_primary_patient.consent_statuses.first.update!(
           vaccine_methods: %w[injection nasal]
         )
 
-        expect(form.apply(scope)).to contain_exactly(nasal_patient_session)
+        expect(form.apply(scope)).to contain_exactly(
+          nasal_patient.patient_sessions.first
+        )
       end
     end
   end

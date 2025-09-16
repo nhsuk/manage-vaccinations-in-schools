@@ -13,12 +13,12 @@ module SendSchoolConsentNotificationConcern
       .includes_programmes
       .includes(patient: %i[consent_notifications consents vaccination_records])
       .find_each do |patient_session|
-        ProgrammeGrouper
-          .call(patient_session.programmes)
-          .each_value do |programmes|
-            patient = patient_session.patient
-            next unless patient.send_notifications?
+        patient = patient_session.patient
+        next unless patient.send_notifications?
 
+        ProgrammeGrouper
+          .call(session.programmes_for(patient:))
+          .each_value do |programmes|
             programmes_that_need_response =
               get_programmes_that_need_consent(patient:, session:, programmes:)
             next if programmes_that_need_response.empty?

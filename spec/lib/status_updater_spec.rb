@@ -5,7 +5,7 @@ describe StatusUpdater do
 
   around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
 
-  let!(:patient_session) { create(:patient_session, patient:, programmes:) }
+  before { create(:patient_session, patient:, programmes:) }
 
   context "with an HPV session and ineligible patient" do
     let(:programmes) { [create(:programme, :hpv)] }
@@ -47,10 +47,8 @@ describe StatusUpdater do
     end
 
     it "creates a registration status" do
-      expect { call }.to change {
-        patient_session.reload.registration_status
-      }.from(nil)
-      expect(patient_session.registration_status).to be_unknown
+      expect { call }.to change(patient.registration_statuses, :count).by(1)
+      expect(patient.registration_statuses.first).to be_unknown
     end
 
     it "creates a triage status" do
@@ -74,10 +72,8 @@ describe StatusUpdater do
     end
 
     it "creates a registration status" do
-      expect { call }.to change {
-        patient_session.reload.registration_status
-      }.from(nil)
-      expect(patient_session.registration_status).to be_unknown
+      expect { call }.to change(patient.registration_statuses, :count).by(1)
+      expect(patient.registration_statuses.first).to be_unknown
     end
 
     it "creates a triage status" do
@@ -127,10 +123,8 @@ describe StatusUpdater do
     end
 
     it "creates a registration status" do
-      expect { call }.to change {
-        patient_session.reload.registration_status
-      }.from(nil)
-      expect(patient_session.registration_status).to be_unknown
+      expect { call }.to change(patient.registration_statuses, :count).by(1)
+      expect(patient.registration_statuses.first).to be_unknown
     end
 
     it "creates a triage status for both programmes" do

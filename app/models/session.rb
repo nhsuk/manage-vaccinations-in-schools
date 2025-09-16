@@ -210,7 +210,7 @@ class Session < ApplicationRecord
 
   def has_multiple_vaccine_methods? = vaccine_methods.length > 1
 
-  def programmes_for(year_group: nil, patient: nil, academic_year: nil)
+  def programmes_for(year_group: nil, patient: nil)
     year_group ||= patient.year_group(academic_year:)
 
     programmes.select do |programme|

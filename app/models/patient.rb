@@ -374,6 +374,11 @@ class Patient < ApplicationRecord
     patient_status(consent_statuses, programme:, academic_year:)
   end
 
+  def registration_status(session:)
+    registration_statuses.find { it.session_id == session.id } ||
+      registration_statuses.build(session:)
+  end
+
   def triage_status(programme:, academic_year:)
     patient_status(triage_statuses, programme:, academic_year:)
   end
@@ -407,6 +412,22 @@ class Patient < ApplicationRecord
     end
 
     true
+  end
+
+  def next_activity(programme:, academic_year:)
+    return nil if vaccination_status(programme:, academic_year:).vaccinated?
+
+    if consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
+      return :record
+    end
+
+    return :triage if triage_status(programme:, academic_year:).required?
+
+    consent_status = consent_status(programme:, academic_year:)
+
+    return :consent if consent_status.no_response? || consent_status.conflicts?
+
+    :do_not_record
   end
 
   def approved_vaccine_methods(programme:, academic_year:)

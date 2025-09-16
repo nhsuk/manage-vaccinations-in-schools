@@ -17,7 +17,7 @@ class AttendanceRecordPolicy < ApplicationPolicy
 
   def already_vaccinated?
     session
-      .programmes_for(patient:, academic_year:)
+      .programmes_for(patient:)
       .all? do |programme|
         patient.vaccination_status(programme:, academic_year:).vaccinated?
       end

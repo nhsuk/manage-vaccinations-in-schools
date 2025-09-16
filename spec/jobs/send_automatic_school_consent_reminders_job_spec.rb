@@ -4,6 +4,7 @@ describe SendAutomaticSchoolConsentRemindersJob do
   subject(:perform_now) { described_class.perform_now(session) }
 
   let(:programmes) { [create(:programme, :flu)] }
+  let(:user) { create(:user, team:) }
 
   let(:parents) { create_list(:parent, 2) }
 
@@ -62,15 +63,13 @@ describe SendAutomaticSchoolConsentRemindersJob do
       send_consent_requests_at: dates.first - 3.weeks,
       days_before_consent_reminders: 7,
       location:,
-      patients:,
       programmes:,
       team:
     )
   end
 
-  let(:user) { create(:user, team:) }
-
   before do
+    patients.each { |patient| create(:patient_session, patient:, session:) }
     ConsentNotification.request.update_all(sent_at: dates.first - 1.week)
     ConsentNotification.reminder.update_all(sent_at: dates.first)
 

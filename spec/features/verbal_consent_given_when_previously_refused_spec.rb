@@ -29,13 +29,7 @@ feature "Verbal consent" do
   end
 
   def and_a_parent_has_refused_consent_for_their_child
-    @child =
-      create(
-        :patient_session,
-        :consent_refused,
-        programmes: [@programme],
-        session: @session
-      ).patient
+    @child = create(:patient, :consent_refused, session: @session)
   end
 
   def and_i_am_logged_in_as_a_nurse

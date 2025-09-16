@@ -53,30 +53,13 @@ class PatientSession < ApplicationRecord
            -> { where(patient_id: it.patient_id) },
            through: :session
 
-  has_many :notes, -> { where(session_id: it.session_id) }, through: :patient
-
-  has_one :latest_note,
-          -> { where(session_id: it.session_id).order(created_at: :desc) },
-          through: :patient,
-          source: :notes
-
   has_many :pre_screenings,
            -> { where(patient_id: it.patient_id) },
            through: :session
 
-  has_one :registration_status,
-          -> { where(session_id: it.session_id) },
-          through: :patient,
-          source: :registration_statuses,
-          class_name: "Patient::RegistrationStatus"
-
   has_many :attendance_records,
            -> { where(patient_id: it.patient_id) },
            through: :location
-
-  has_many :session_notifications,
-           -> { where(session_id: it.session_id) },
-           through: :patient
 
   has_many :vaccination_records,
            -> { where(session_id: it.session_id) },
@@ -87,22 +70,6 @@ class PatientSession < ApplicationRecord
   scope :archived, ->(team:) { merge(Patient.archived(team:)) }
 
   scope :not_archived, ->(team:) { merge(Patient.not_archived(team:)) }
-
-  scope :notification_not_sent,
-        ->(session_date) do
-          where.not(
-            SessionNotification
-              .where(
-                "session_notifications.session_id = patient_sessions.session_id"
-              )
-              .where(
-                "session_notifications.patient_id = patient_sessions.patient_id"
-              )
-              .where(session_date:)
-              .arel
-              .exists
-          )
-        end
 
   scope :appear_in_programmes,
         ->(programmes) do
@@ -306,10 +273,6 @@ class PatientSession < ApplicationRecord
 
   delegate :academic_year, to: :session
 
-  def has_patient_specific_direction?(**query)
-    patient.has_patient_specific_direction?(academic_year:, **query)
-  end
-
   def safe_to_destroy?
     vaccination_records.empty? && gillick_assessments.empty? &&
       attendance_records.none?(&:attending?)
@@ -317,45 +280,5 @@ class PatientSession < ApplicationRecord
 
   def destroy_if_safe!
     destroy! if safe_to_destroy?
-  end
-
-  def programmes = session.programmes_for(patient:, academic_year:)
-
-  def next_activity(programme:)
-    if patient.vaccination_status(programme:, academic_year:).vaccinated?
-      return nil
-    end
-
-    if patient.consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
-      return :record
-    end
-
-    if patient.triage_status(programme:, academic_year:).required?
-      return :triage
-    end
-
-    consent_status = patient.consent_status(programme:, academic_year:)
-
-    return :consent if consent_status.no_response? || consent_status.conflicts?
-
-    :do_not_record
-  end
-
-  def outstanding_programmes
-    if registration_status.nil? || registration_status.unknown? ||
-         registration_status.not_attending?
-      return []
-    end
-
-    any_programme_exists = vaccination_records.exists?(programme: programmes)
-
-    # If this patient hasn't been seen yet by a nurse for any of the programmes,
-    # we don't want to show the banner.
-    return [] unless any_programme_exists
-
-    programmes.select do |programme|
-      !vaccination_records.exists?(programme:) &&
-        patient.consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
-    end
   end
 end

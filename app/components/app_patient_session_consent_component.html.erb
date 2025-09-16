@@ -35,7 +35,7 @@
                           secondary: true %>
     </div>
 
-    <%= render AppGillickAssessmentComponent.new(patient_session:, programme:) %>
+    <%= render AppGillickAssessmentComponent.new(patient:, session:, programme:) %>
   <% end %>
 
   <% if consents.any? %>

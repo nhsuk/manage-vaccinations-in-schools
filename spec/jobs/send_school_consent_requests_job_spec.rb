@@ -27,10 +27,14 @@ describe SendSchoolConsentRequestsJob do
     ]
   end
 
+  before do
+    patients.each { |patient| create(:patient_session, patient:, session:) }
+  end
+
   around { |example| travel_to(today) { example.run } }
 
   context "when session is unscheduled" do
-    let(:session) { create(:session, :unscheduled, patients:, programmes:) }
+    let(:session) { create(:session, :unscheduled, programmes:) }
 
     it "doesn't send any notifications" do
       expect(ConsentNotification).not_to receive(:create_and_send!)
@@ -42,7 +46,6 @@ describe SendSchoolConsentRequestsJob do
     let(:session) do
       create(
         :session,
-        patients:,
         programmes:,
         date: 3.weeks.from_now.to_date,
         send_consent_requests_at: Date.current
@@ -129,7 +132,7 @@ describe SendSchoolConsentRequestsJob do
     context "when location is a generic clinic" do
       let(:team) { create(:team, programmes:) }
       let(:location) { create(:generic_clinic, team:) }
-      let(:session) { create(:session, patients:, programmes:, team:) }
+      let(:session) { create(:session, programmes:, team:) }
 
       it "doesn't send any notifications" do
         expect(ConsentNotification).not_to receive(:create_and_send!)

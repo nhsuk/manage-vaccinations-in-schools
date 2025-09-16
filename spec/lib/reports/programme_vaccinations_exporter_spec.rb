@@ -474,10 +474,7 @@ describe Reports::ProgrammeVaccinationsExporter do
 
       context "with a gillick assessment" do
         let(:session) { create(:session, programmes:, team:) }
-        let(:patient_session) do
-          create(:patient_session, :vaccinated, session:)
-        end
-        let(:patient) { patient_session.patient }
+        let(:patient) { create(:patient, :vaccinated, session:) }
 
         before do
           performed_by = create(:user, given_name: "Test", family_name: "Nurse")
@@ -546,7 +543,13 @@ describe Reports::ProgrammeVaccinationsExporter do
         end
 
         before do
-          create(:patient_session, :vaccinated, session:, user: performed_by)
+          create(
+            :patient,
+            :triage_ready_to_vaccinate,
+            :vaccinated,
+            session:,
+            performed_by:
+          )
         end
 
         it "includes the information" do

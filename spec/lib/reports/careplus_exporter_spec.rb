@@ -64,15 +64,15 @@ describe Reports::CareplusExporter do
     end
 
     it "does not include the patient if they have no vaccination details" do
-      create(:patient_session, session:)
+      create(:patient, session:)
 
       expect(data_rows.first).to be_nil
     end
 
     it "includes the patient and vaccination details" do
-      patient_session =
+      patient =
         create(
-          :patient_session,
+          :patient,
           :consent_given_triage_not_needed,
           programmes:,
           session:
@@ -82,8 +82,8 @@ describe Reports::CareplusExporter do
           :vaccination_record,
           programme:,
           delivery_method:,
-          patient: patient_session.patient,
-          session: patient_session.session,
+          patient:,
+          session:,
           performed_at: 2.weeks.ago
         )
 
@@ -117,15 +117,12 @@ describe Reports::CareplusExporter do
 
       it "includes clinic location details" do
         patient =
-          create(:patient, year_group: programme.default_year_groups.first)
-
-        create(
-          :patient_session,
-          :consent_given_triage_not_needed,
-          programmes:,
-          patient:,
-          session:
-        )
+          create(
+            :patient,
+            :consent_given_triage_not_needed,
+            programmes:,
+            session:
+          )
         create(
           :vaccination_record,
           programme:,
@@ -145,7 +142,7 @@ describe Reports::CareplusExporter do
     end
 
     it "excludes vaccination records outside the date range" do
-      patient = create(:patient_session, session:).patient
+      patient = create(:patient, session:)
 
       create(
         :vaccination_record,
@@ -161,7 +158,7 @@ describe Reports::CareplusExporter do
     end
 
     it "excludes not administered vaccination records" do
-      patient = create(:patient_session, session:).patient
+      patient = create(:patient, session:)
 
       create(
         :vaccination_record,
@@ -175,7 +172,7 @@ describe Reports::CareplusExporter do
     end
 
     it "includes vaccination records updated within the date range" do
-      patient = create(:patient_session, session:).patient
+      patient = create(:patient, session:)
 
       create(
         :vaccination_record,
@@ -191,7 +188,7 @@ describe Reports::CareplusExporter do
     end
 
     it "excludes vaccination records for a different programme outside the date range" do
-      patient = create(:patient_session, session:).patient
+      patient = create(:patient, session:)
 
       other_programme =
         create(
@@ -221,27 +218,26 @@ describe Reports::CareplusExporter do
 
     context "with a restricted patient" do
       it "doesn't include the address line 1" do
-        patient_session =
+        patient =
           create(
-            :patient_session,
+            :patient,
             :consent_given_triage_not_needed,
             programmes:,
-            session:
+            session:,
+            restricted_at: Time.current
           )
         create(
           :vaccination_record,
           programme:,
-          patient: patient_session.patient,
-          session: patient_session.session,
+          patient:,
+          session:,
           performed_at: 2.weeks.ago
         )
-
-        patient_session.patient.update!(restricted_at: Time.current)
 
         address_index = headers.index("Address Line 1")
         row = data_rows.first
 
-        expect(row[0]).to eq(patient_session.patient.nhs_number)
+        expect(row[0]).to eq(patient.nhs_number)
         expect(row).not_to be_nil
         expect(row[address_index]).to be_blank
       end

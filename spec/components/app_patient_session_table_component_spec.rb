@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 describe AppPatientSessionTableComponent do
-  subject(:rendered) { render_inline(component) }
+  subject { render_inline(component) }
 
-  let(:component) { described_class.new(patient_sessions) }
+  let(:component) { described_class.new(patient, current_team: team) }
+
+  let(:team) { create(:team) }
 
   context "without a session" do
-    let(:patient_sessions) { [] }
+    let(:patient) { create(:patient) }
 
     it { should have_content("No sessions") }
   end
@@ -16,16 +18,20 @@ describe AppPatientSessionTableComponent do
 
     let(:location) { create(:school, name: "Waterloo Road", programmes:) }
     let(:session) do
-      create(:session, location:, programmes:, date: Date.new(2025, 1, 1))
+      create(
+        :session,
+        team:,
+        location:,
+        programmes:,
+        date: Date.new(2025, 1, 1)
+      )
     end
 
     # Can't use year_group here because we need an absolute date, not one
     # relative to the current academic year.
     let(:patient) { create(:patient, date_of_birth: Date.new(2011, 9, 1)) }
 
-    let(:patient_sessions) do
-      create_list(:patient_session, 1, patient:, session:)
-    end
+    before { create_list(:patient_session, 1, patient:, session:) }
 
     it { should have_content("Location") }
     it { should have_content("Session dates") }

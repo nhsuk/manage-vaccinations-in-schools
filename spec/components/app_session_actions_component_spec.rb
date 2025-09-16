@@ -16,41 +16,35 @@ describe AppSessionActionsComponent do
 
   before do
     create(
-      :patient_session,
+      :patient,
       :consent_no_response,
       :unknown_attendance,
       session:,
       year_group:
     )
     create(
-      :patient_session,
+      :patient,
       :consent_conflicting,
       :unknown_attendance,
       session:,
       year_group:
     )
     create(
-      :patient_session,
+      :patient,
       :consent_given_triage_needed,
       :unknown_attendance,
       session:,
       year_group:
     )
     create(
-      :patient_session,
+      :patient,
       :consent_given_triage_not_needed,
       :in_attendance,
       session:,
       year_group:
     )
-    create(:patient_session, :vaccinated, :in_attendance, session:, year_group:)
-
-    create(
-      :patient_session,
-      patient: patient_without_nhs_number,
-      session:,
-      year_group:
-    )
+    create(:patient, :vaccinated, :in_attendance, session:, year_group:)
+    create(:patient, nhs_number: nil, session:, year_group:)
   end
 
   it { should have_text("No NHS number1 child") }

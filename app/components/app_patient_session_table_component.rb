@@ -2,7 +2,7 @@
 
 class AppPatientSessionTableComponent < ViewComponent::Base
   erb_template <<-ERB
-    <% if patient_sessions.any? %>
+    <% if sessions.any? %>
       <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
         <% table.with_head do |head| %>
           <% head.with_row do |row| %>
@@ -13,19 +13,19 @@ class AppPatientSessionTableComponent < ViewComponent::Base
         <% end %>
 
         <% table.with_body do |body| %>
-          <% patient_sessions.each do |patient_session| %>
-            <% patient_session.programmes.each do |programme| %>
+          <% sessions.each do |session| %>
+            <% session.programmes_for(patient:).each do |programme| %>
               <% body.with_row do |row| %>
                 <% row.with_cell do %>
                   <span class="nhsuk-table-responsive__heading">Location</span>
-                  <%= link_to patient_session.session.location.name,
-                              session_patient_programme_path(patient_session.session, patient_session.patient, programme) %>
+                  <%= link_to session.location.name,
+                              session_patient_programme_path(session, patient, programme) %>
                 <% end %>
 
                 <% row.with_cell do %>
                   <span class="nhsuk-table-responsive__heading">Session dates</span>
                   <ul class="nhsuk-list">
-                    <% patient_session.session.dates.each do |date| %>
+                    <% session.dates.each do |date| %>
                       <li><%= date.to_fs(:long) %></li>
                     <% end %>
                   </ul>
@@ -45,13 +45,27 @@ class AppPatientSessionTableComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(patient_sessions)
-    @patient_sessions = patient_sessions
+  def initialize(patient, current_team:)
+    @patient = patient
+    @current_team = current_team
   end
 
   private
 
-  attr_reader :patient_sessions
+  attr_reader :patient, :current_team
 
   delegate :govuk_table, to: :helpers
+
+  def sessions
+    @sessions ||=
+      patient
+        .sessions
+        .where(team: current_team)
+        .includes(
+          :location,
+          :location_programme_year_groups,
+          :programmes,
+          :session_dates
+        )
+  end
 end

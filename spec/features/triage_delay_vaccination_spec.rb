@@ -38,13 +38,7 @@ describe "Triage" do
         date: Time.zone.today
       )
     @patient =
-      create(
-        :patient_session,
-        :consent_given_triage_needed,
-        :in_attendance,
-        programmes:,
-        session:
-      ).patient
+      create(:patient, :consent_given_triage_needed, :in_attendance, session:)
   end
 
   def and_i_am_signed_in

@@ -13,8 +13,7 @@ class Sessions::PatientsController < ApplicationController
 
     scope =
       @session.patient_sessions.includes_programmes.includes(
-        :latest_note,
-        patient: :vaccination_statuses
+        patient: [:vaccination_statuses, { notes: :created_by }]
       )
 
     patient_sessions = @form.apply(scope)

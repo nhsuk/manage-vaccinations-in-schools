@@ -26,12 +26,13 @@ class DraftConsent
   attribute :parent_relationship_other_name, :string
   attribute :parent_relationship_type, :string
   attribute :parent_responsibility, :boolean
-  attribute :patient_session_id, :integer
+  attribute :patient_id, :integer
   attribute :programme_id, :integer
   attribute :reason_for_refusal, :string
   attribute :recorded_by_user_id, :integer
   attribute :response, :string
   attribute :route, :string
+  attribute :session_id, :integer
   attribute :triage_add_patient_specific_direction, :boolean
   attribute :triage_notes, :string
   attribute :triage_status_and_vaccine_method, :string
@@ -249,33 +250,14 @@ class DraftConsent
     self.parent_responsibility = value ? true : nil
   end
 
-  def patient_session
-    return nil if patient_session_id.nil?
+  def patient
+    return nil if patient_id.nil?
 
-    PatientSessionPolicy::Scope
-      .new(@current_user, PatientSession)
-      .resolve
-      .find(patient_session_id)
+    PatientPolicy::Scope.new(@current_user, Patient).resolve.find(patient_id)
   end
 
-  def patient_session=(value)
-    self.patient_session_id = value.id
-    self.academic_year = value.academic_year
-  end
-
-  delegate :location,
-           :team,
-           :patient,
-           :session,
-           to: :patient_session,
-           allow_nil: true
-
-  def patient_id
-    patient&.id
-  end
-
-  def team_id
-    team&.id
+  def patient=(value)
+    self.patient_id = value.id
   end
 
   def recorded_by
@@ -300,6 +282,21 @@ class DraftConsent
   def programme=(value)
     self.programme_id = value.id
   end
+
+  def session
+    return nil if session_id.nil?
+
+    SessionPolicy::Scope.new(@current_user, Session).resolve.find(session_id)
+  end
+
+  def session=(value)
+    self.session_id = value.id
+    self.academic_year = value.academic_year
+  end
+
+  delegate :location, :team, to: :session, allow_nil: true
+
+  def team_id = team&.id
 
   def write_to!(consent, triage_form:)
     self.response = "given" if flu_response?

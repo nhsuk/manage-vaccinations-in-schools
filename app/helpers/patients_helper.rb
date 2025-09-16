@@ -24,6 +24,30 @@ module PatientsHelper
     "#{patient.date_of_birth.to_fs(:long)} (aged #{patient.age})"
   end
 
+  def patient_outstanding_programmes(patient, session:)
+    registration_status = patient.registration_status(session:)
+    programmes = session.programmes_for(patient:)
+
+    if registration_status.nil? || registration_status.unknown? ||
+         registration_status.not_attending?
+      return []
+    end
+
+    any_programme_exists =
+      patient.vaccination_records.exists?(session:, programme: programmes)
+
+    # If this patient hasn't been seen yet by a nurse for any of the programmes,
+    # we don't want to show the banner.
+    return [] unless any_programme_exists
+
+    academic_year = session.academic_year
+
+    programmes.select do |programme|
+      !patient.vaccination_records.exists?(session:, programme:) &&
+        patient.consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
+    end
+  end
+
   def patient_school(patient)
     if (school = patient.school).present?
       school.name

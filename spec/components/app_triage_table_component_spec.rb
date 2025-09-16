@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 describe AppTriageTableComponent do
-  let(:component) { described_class.new(patient_session:, programme:) }
+  let(:component) { described_class.new(patient:, session:, programme:) }
 
   let(:programme) { create(:programme) }
-  let(:patient_session) { create(:patient_session, programmes: [programme]) }
-  let(:patient) { patient_session.patient }
+  let(:session) { create(:session, programmes: [programme]) }
+  let(:patient) { create(:patient, session:) }
 
   before { patient.strict_loading!(false) }
 
   describe "#render?" do
-    subject(:render?) { component.render? }
+    subject { component.render? }
 
     it { should be(false) }
 
