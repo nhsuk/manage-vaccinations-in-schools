@@ -22,7 +22,15 @@ resource "aws_ecs_cluster" "cluster" {
 module "web_service" {
   source = "./modules/ecs_service"
   task_config = {
-    environment          = local.task_envs
+    environment = concat(
+      local.task_envs,
+      [
+        {
+          name  = "REDIS_CACHE_URL"
+          value = aws_elasticache_serverless_cache.rails_cache.endpoint[0].address
+        }
+      ]
+    )
     secrets              = local.task_secrets
     cpu                  = 1024
     memory               = 3072
