@@ -7,6 +7,7 @@
         <% row.with_cell(text: "Vaccination date") %>
         <% row.with_cell(text: "Location") %>
         <% row.with_cell(text: "Programme") if show_programme %>
+        <% row.with_cell(text: "Source") %>
         <% row.with_cell(text: "Outcome") %>
       <% end %>
     <% end %>
@@ -37,6 +38,11 @@
               <span class="nhsuk-table-responsive__heading">Programme</span>
               <%= render AppProgrammeTagsComponent.new([vaccination_record.programme]) %>
             <% end %>
+          <% end %>
+
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Source</span>
+            <%= vaccination_record.human_enum_name(:source) %>
           <% end %>
 
           <% row.with_cell do %>

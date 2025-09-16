@@ -14,6 +14,10 @@ module ImportsHelper
 
     perform_enqueued_jobs(only: CommitPatientChangesetsJob)
 
+    click_on_most_recent_import(import_class)
+  end
+
+  def click_on_most_recent_import(import_class)
     click_on import_class.order(:created_at).last.created_at.to_fs(:long),
              match: :first
   end

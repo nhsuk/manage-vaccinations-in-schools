@@ -15,7 +15,7 @@
     <%= icon_link_tag "favicon.svg", rel: "icon", sizes: "any", type: "image/svg+xml" %>
     <%= icon_link_tag "icon-mask.svg", rel: "mask-icon", color: @theme_colour %>
     <%= icon_link_tag "#{@assets_name}/icon-180.png", rel: "apple-touch-icon" %>
-    <%= tag :link, rel: "manifest", href: manifest_path(name: @assets_name) %>
+    <%= manifest_link_tag @assets_name, rel: "manifest" %>
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>

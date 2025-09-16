@@ -31,6 +31,7 @@ class API::Testing::TeamsController < API::Testing::BaseController
 
         log_destroy(AccessLogEntry.where(patient_id: patient_ids))
         log_destroy(ArchiveReason.where(patient_id: patient_ids))
+        log_destroy(AttendanceRecord.where(patient_id: patient_ids))
         log_destroy(ConsentNotification.where(patient_id: patient_ids))
         log_destroy(GillickAssessment.where(patient_id: patient_ids))
         log_destroy(Note.where(patient_id: patient_ids))
@@ -45,7 +46,6 @@ class API::Testing::TeamsController < API::Testing::BaseController
         log_destroy(SchoolMove.where(patient_id: patient_ids))
         log_destroy(SchoolMove.where(team:))
         log_destroy(SchoolMoveLogEntry.where(patient_id: patient_ids))
-        log_destroy(SessionAttendance.where(patient_id: patient_ids))
         log_destroy(VaccinationRecord.where(patient_id: patient_ids))
 
         log_destroy(SessionDate.where(session: sessions))

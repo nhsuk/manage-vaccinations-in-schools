@@ -258,14 +258,43 @@ class DraftVaccinationRecord
   end
 
   def vaccine_method_matches_consent_and_triage?
-    return true if delivery_method.blank? || !administered?
+    if delivery_method.blank? || !administered? || academic_year.nil?
+      return true
+    end
 
-    academic_year = session&.academic_year || performed_at.academic_year
-    approved_methods =
-      patient.approved_vaccine_methods(programme:, academic_year:)
+    # We can't use `patient.approved_vaccine_methods` because once vaccinated
+    # a patient no longer has an approved list of vaccine methods (they don't
+    # need the vaccine).
+
+    consent_generator =
+      StatusGenerator::Consent.new(
+        programme:,
+        academic_year:,
+        patient:,
+        consents: patient.consents,
+        vaccination_records: []
+      )
+
+    triage_generator =
+      StatusGenerator::Triage.new(
+        programme:,
+        academic_year:,
+        patient:,
+        consents: patient.consents,
+        triages: patient.triages,
+        vaccination_records: []
+      )
+
+    approved_vaccine_methods =
+      if triage_generator.status == :not_required
+        consent_generator.vaccine_methods
+      else
+        [triage_generator.vaccine_method].compact
+      end
+
     vaccine_method = Vaccine.delivery_method_to_vaccine_method(delivery_method)
 
-    approved_methods.include?(vaccine_method)
+    approved_vaccine_methods.include?(vaccine_method)
   end
 
   private
@@ -318,13 +347,15 @@ class DraftVaccinationRecord
     end
   end
 
+  def academic_year = session&.academic_year
+
   def earliest_possible_value
-    session.academic_year.to_academic_year_date_range.first.beginning_of_day
+    academic_year.to_academic_year_date_range.first.beginning_of_day
   end
 
   def latest_possible_value
     [
-      session.academic_year.to_academic_year_date_range.last.end_of_day,
+      academic_year.to_academic_year_date_range.last.end_of_day,
       Time.current
     ].min
   end

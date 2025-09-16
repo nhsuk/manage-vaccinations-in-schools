@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class PatientImport < ApplicationRecord
+  PDS_MATCH_THRESHOLD = 0.7
+  CHANGESET_THRESHOLD = 10
+
   self.abstract_class = true
 
   has_many :patient_changesets
@@ -15,6 +18,21 @@ class PatientImport < ApplicationRecord
     else
       :exact_duplicate_record_count
     end
+  end
+
+  def validate_pds_match_rate!
+    return if valid_pds_match_rate? || changesets.count < CHANGESET_THRESHOLD
+
+    update!(status: :low_pds_match_rate)
+  end
+
+  def pds_match_rate
+    return 0 if changesets.with_pds_match.count.zero?
+
+    matched = changesets.with_pds_match.count.to_f
+    attempted = changesets.with_pds_search_attempted.count
+
+    (matched / attempted * 100).round(2)
   end
 
   private
@@ -70,6 +88,10 @@ class PatientImport < ApplicationRecord
     count_column_to_increment
   end
 
+  def valid_pds_match_rate?
+    pds_match_rate / 100 >= PDS_MATCH_THRESHOLD
+  end
+
   def bulk_import(rows: 100)
     return if rows != :all && @patients_batch.size < rows
 
@@ -104,7 +126,14 @@ class PatientImport < ApplicationRecord
       end
     end
 
+    patients_with_nhs_number_changes =
+      patients.select(&:nhs_number_previously_changed?)
+
     Patient.import(patients, on_duplicate_key_update: :all)
+
+    SearchVaccinationRecordsInNHSJob.perform_bulk(
+      patients_with_nhs_number_changes.pluck(:id).zip
+    )
 
     ParentRelationship.import(
       relationships,

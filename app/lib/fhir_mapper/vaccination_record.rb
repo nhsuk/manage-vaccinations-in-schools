@@ -7,6 +7,9 @@ module FHIRMapper
 
     delegate_missing_to :@vaccination_record
 
+    MAVIS_SYSTEM_NAME =
+      "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records"
+
     def initialize(vaccination_record)
       @vaccination_record = vaccination_record
     end
@@ -119,11 +122,7 @@ module FHIRMapper
     private
 
     def fhir_identifier
-      FHIR::Identifier.new(
-        system:
-          "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records",
-        value: uuid
-      )
+      FHIR::Identifier.new(system: MAVIS_SYSTEM_NAME, value: uuid)
     end
 
     def fhir_vaccination_procedure_extension
@@ -151,7 +150,6 @@ module FHIRMapper
       when "completed"
         "administered"
       when "not-done"
-        # "refused"
         # TODO: handle this more gracefully
         raise "Cannot import not-done vaccination records"
       else
@@ -221,19 +219,19 @@ module FHIRMapper
 
     private_class_method def self.dose_volume_ml_from_fhir(fhir_record)
       dq = fhir_record.doseQuantity
-      if dq.system == "http://unitsofmeasure.org" && dq.code == "ml"
+      if %w[ml milliliter].include?(dq.unit.downcase)
         dq.value.to_f
       else
-        raise "Unknown dose quantity system: #{dq.system} and code: #{dq.code}"
+        raise "Unknown dose unit: #{dq.unit}"
       end
     end
 
     private_class_method def self.full_dose_from_fhir(fhir_record, vaccine:)
-      if vaccine.programme.type == :flu && vaccine.method == :nasal
-        fhir_record.doseQuantity.value >= vaccine.dose_volume_ml
+      if vaccine.programme.flu? && vaccine.nasal?
+        dose_volume_ml_from_fhir(fhir_record) >= vaccine.dose_volume_ml
+      else
+        true
       end
-
-      true
     end
 
     private_class_method def self.vaccine_batch_notes_from_fhir(fhir_record)

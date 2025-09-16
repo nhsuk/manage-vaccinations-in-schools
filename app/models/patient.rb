@@ -61,6 +61,7 @@ class Patient < ApplicationRecord
 
   has_many :access_log_entries
   has_many :archive_reasons
+  has_many :attendance_records
   has_many :changesets, class_name: "PatientChangeset"
   has_many :consent_notifications
   has_many :consent_statuses
@@ -75,7 +76,6 @@ class Patient < ApplicationRecord
   has_many :registration_statuses
   has_many :school_move_log_entries
   has_many :school_moves
-  has_many :session_attendances
   has_many :session_notifications
   has_many :triage_statuses
   has_many :triages
@@ -271,6 +271,7 @@ class Patient < ApplicationRecord
              end
 
   after_update :sync_vaccinations_to_nhs_immunisations_api
+  after_commit :search_vaccinations_from_nhs_immunisations_api, on: :update
   before_destroy :destroy_childless_parents
 
   delegate :fhir_record, to: :fhir_mapper
@@ -582,6 +583,16 @@ class Patient < ApplicationRecord
   def sync_vaccinations_to_nhs_immunisations_api
     if should_sync_vaccinations_to_nhs_immunisations_api?
       vaccination_records.sync_all_to_nhs_immunisations_api
+    end
+  end
+
+  def should_search_vaccinations_from_nhs_immunisations_api?
+    nhs_number_previously_changed?
+  end
+
+  def search_vaccinations_from_nhs_immunisations_api
+    if should_search_vaccinations_from_nhs_immunisations_api?
+      SearchVaccinationRecordsInNHSJob.perform_async(id)
     end
   end
 end

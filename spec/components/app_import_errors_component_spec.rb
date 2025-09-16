@@ -3,7 +3,7 @@
 describe AppImportErrorsComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(errors) }
+  let(:component) { described_class.new(errors:) }
 
   let(:errors) do
     [
@@ -20,4 +20,6 @@ describe AppImportErrorsComponent do
 
   it { should have_text("blank") }
   it { should have_text("invalid") }
+
+  it { should have_text("Records could not be imported") }
 end

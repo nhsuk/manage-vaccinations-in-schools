@@ -5,39 +5,42 @@ class AppImportErrorsComponent < ViewComponent::Base
     <div class="nhsuk-card nhsuk-card--feature app-card--red">
       <div class="nhsuk-card__content nhsuk-card__content--feature">
         <h2 class="nhsuk-card__heading nhsuk-card__heading--feature nhsuk-heading-m">
-          Records could not be imported
+          <%= @title %>
         </h2>
 
         <%= content %>
 
-        <div data-testid="import-errors">
-          <% @errors.each do |error| %>
-            <h3 class="nhsuk-heading-s" data-testid="import-errors__heading">
-              <% if error.attribute == :csv %>
-                CSV
-              <% else %>
-                <%= error.attribute.to_s.humanize %>
-              <% end %>
-            </h3>
+        <% if @errors.present? %>
+          <div data-testid="import-errors">
+            <% @errors.each do |error| %>
+              <h3 class="nhsuk-heading-s" data-testid="import-errors__heading">
+                <% if error.attribute == :csv %>
+                  CSV
+                <% else %>
+                  <%= error.attribute.to_s.humanize %>
+                <% end %>
+              </h3>
 
-            <ul class="nhsuk-list nhsuk-list--bullet" data-testid="import-errors__list">
+              <ul class="nhsuk-list nhsuk-list--bullet" data-testid="import-errors__list">
               <% if error.type.is_a?(Array) %>
                 <% error.type.each do |type| %>
                   <li><%= sanitize type %></li>
                 <% end %>
               <% else %>
                 <li><%= sanitize error.type %></li>
-              <% end %>
-            </ul>
-          <% end %>
-        </div>
+                <% end %>
+              </ul>
+            <% end %>
+          </div>
+        <% end %>
       </div>
     </div>
   ERB
 
-  def initialize(errors)
+  def initialize(errors: nil, title: "Records could not be imported")
     @errors = errors
+    @title = title
   end
 
-  def render? = @errors.present?
+  def render? = @errors.present? || content.present?
 end

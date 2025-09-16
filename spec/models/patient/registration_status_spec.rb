@@ -47,12 +47,12 @@ describe Patient::RegistrationStatus do
     it { should belong_to(:session) }
   end
 
-  describe "#session_attendance" do
+  describe "#attendance_record" do
     subject do
       described_class
-        .includes(:session_attendances)
+        .includes(:attendance_records)
         .find(patient_registration_status.id)
-        .session_attendance
+        .attendance_record
     end
 
     let(:patient_registration_status) do
@@ -70,25 +70,15 @@ describe Patient::RegistrationStatus do
     end
 
     context "with an attendance today and yesterday" do
-      let(:today_session_attendance) do
-        create(
-          :session_attendance,
-          :present,
-          patient:,
-          session_date: session.session_dates.find_by(value: Date.current)
-        )
+      let(:today_attendance_record) do
+        create(:attendance_record, :present, :today, patient:, session:)
       end
 
       before do
-        create(
-          :session_attendance,
-          :absent,
-          patient:,
-          session_date: session.session_dates.find_by(value: Date.yesterday)
-        )
+        create(:attendance_record, :absent, :yesterday, patient:, session:)
       end
 
-      it { should eq(today_session_attendance) }
+      it { should eq(today_attendance_record) }
     end
   end
 
@@ -102,10 +92,11 @@ describe Patient::RegistrationStatus do
     context "with a session attendance for a different day to today" do
       before do
         create(
-          :session_attendance,
+          :attendance_record,
           :present,
           patient:,
-          session_date: session.session_dates.first
+          session:,
+          date: session.dates.first
         )
       end
 
@@ -115,10 +106,11 @@ describe Patient::RegistrationStatus do
     context "with a present session attendance for today" do
       before do
         create(
-          :session_attendance,
+          :attendance_record,
           :present,
           patient:,
-          session_date: session.session_dates.second
+          session:,
+          date: session.dates.second
         )
       end
 
@@ -128,10 +120,11 @@ describe Patient::RegistrationStatus do
     context "with an absent session attendance for today" do
       before do
         create(
-          :session_attendance,
+          :attendance_record,
           :absent,
           patient:,
-          session_date: session.session_dates.second
+          session:,
+          date: session.dates.second
         )
       end
 

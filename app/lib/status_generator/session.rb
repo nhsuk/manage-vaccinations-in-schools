@@ -4,7 +4,7 @@ class StatusGenerator::Session
   def initialize(
     session_id:,
     academic_year:,
-    session_attendance:,
+    attendance_record:,
     programme:,
     patient:,
     consents:,
@@ -13,7 +13,7 @@ class StatusGenerator::Session
   )
     @session_id = session_id
     @academic_year = academic_year
-    @session_attendance = session_attendance
+    @attendance_record = attendance_record
     @programme = programme
     @patient = patient
     @consents = consents
@@ -63,7 +63,7 @@ class StatusGenerator::Session
 
   attr_reader :session_id,
               :academic_year,
-              :session_attendance,
+              :attendance_record,
               :programme,
               :patient,
               :consents,
@@ -113,7 +113,7 @@ class StatusGenerator::Session
 
   def status_should_be_absent_from_session?
     vaccination_record&.absent_from_session? ||
-      session_attendance&.attending == false
+      attendance_record&.attending == false
   end
 
   def absence_date
@@ -121,7 +121,7 @@ class StatusGenerator::Session
       if vaccination_record&.absent_from_session?
         vaccination_record.performed_at
       end,
-      (session_attendance.created_at if session_attendance&.attending == false)
+      (attendance_record.created_at if attendance_record&.attending == false)
     ].compact.min
   end
 

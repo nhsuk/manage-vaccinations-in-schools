@@ -57,7 +57,14 @@ FactoryBot.define do
         },
         pds: {
         },
-        search_results: []
+        search_results: [
+          {
+            step: :no_fuzzy_with_history,
+            result: :no_matches,
+            nhs_number: nil,
+            created_at: Time.current
+          }
+        ]
       }
     end
 
@@ -68,6 +75,34 @@ FactoryBot.define do
     trait :with_nhs_number do
       after(:build) do |changeset|
         changeset.pending_changes["child"]["nhs_number"] = "1234567890"
+      end
+    end
+
+    trait :with_pds_match do
+      after(:build) do |changeset|
+        changeset.pending_changes["search_results"] = [
+          {
+            step: :no_fuzzy_with_history,
+            result: :one_match,
+            nhs_number: "1234567890",
+            created_at: Time.current
+          }
+        ]
+        changeset.pds_nhs_number = "1234567890"
+      end
+    end
+
+    trait :without_pds_search_attempted do
+      after(:build) do |changeset|
+        changeset.pending_changes["search_results"] = [
+          {
+            step: :no_fuzzy_with_history,
+            result: :no_postcode,
+            nhs_number: nil,
+            created_at: Time.current
+          }
+        ]
+        changeset.pds_nhs_number = nil
       end
     end
 

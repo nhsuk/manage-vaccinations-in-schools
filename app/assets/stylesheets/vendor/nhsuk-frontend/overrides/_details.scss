@@ -1,0 +1,16 @@
+@use "sass:color";
+@use "../core" as *;
+
+.nhsuk-expander {
+  .nhsuk-details__summary {
+    &[data-app-sticky-init] {
+      position: sticky;
+      top: 0;
+    }
+
+    &[data-stuck="true"] {
+      border-bottom-color: nhsuk-colour("grey-3");
+      box-shadow: 0 $nhsuk-border-width 0 color.scale(nhsuk-colour("grey-3"), $alpha: -50%);
+    }
+  }
+}

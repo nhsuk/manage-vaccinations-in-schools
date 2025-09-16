@@ -3,7 +3,7 @@
 class PatientArchiveForm
   include PatientMergeFormConcern
 
-  attr_accessor :current_user, :archive_reason
+  attr_accessor :current_user, :patient
 
   attribute :other_details, :string
   attribute :type, :string
@@ -28,15 +28,7 @@ class PatientArchiveForm
     if duplicate?
       super
     else
-      ActiveRecord::Base.transaction do
-        if other?
-          archive_reason.update!(type:, other_details:)
-        else
-          archive_reason.update!(type:, other_details: "")
-        end
-
-        patient.clear_pending_sessions!(team:)
-      end
+      PatientArchiver.call(patient:, team:, type:, other_details:)
     end
   end
 
@@ -44,5 +36,7 @@ class PatientArchiveForm
 
   def other? = type == "other"
 
-  delegate :team, :patient, to: :archive_reason
+  private
+
+  def team = current_user.selected_team
 end

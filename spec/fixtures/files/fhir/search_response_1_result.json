@@ -4,7 +4,7 @@
   "link": [
     {
       "relation": "self",
-      "url": "https://int.api.service.nhs.uk/immunisation-fhir-api/Immunization?-date.from=2025-08-01\u0026-date.to=2025-10-01\u0026immunization.target=FLU\u0026patient.identifier=https%3A%2F%2Ffhir.nhs.uk%2FId%2Fnhs-number%7C9449308357"
+      "url": "https://int.api.service.nhs.uk/immunisation-fhir-api/Immunization?immunization.target=FLU\u0026patient.identifier=https%3A%2F%2Ffhir.nhs.uk%2FId%2Fnhs-number%7C9449308357"
     }
   ],
   "entry": [
@@ -30,7 +30,7 @@
         "identifier": [
           {
             "use": "official",
-            "system": "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records",
+            "system": "https://supplierABC/identifiers/vacc",
             "value": "71f538d8-1171-4204-aee4-17ff0b0ba0b0"
           }
         ],
@@ -52,7 +52,7 @@
             "value": "9449308357"
           }
         },
-        "occurrenceDateTime": "2025-08-22T14:16:03+01:00",
+        "occurrenceDateTime": "2025-08-23T14:16:03+01:00",
         "recorded": "2025-08-22T14:16:05.246000+01:00",
         "primarySource": true,
         "location": {

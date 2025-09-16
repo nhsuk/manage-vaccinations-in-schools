@@ -6,6 +6,11 @@ class CommitPatientChangesetsJob < ApplicationJob
   queue_as :imports
 
   def perform(import)
+    if Flipper.enabled?(:import_low_pds_match_rate)
+      import.validate_pds_match_rate!
+      return if import.low_pds_match_rate?
+    end
+
     counts = import.class.const_get(:COUNT_COLUMNS).index_with(0)
 
     ActiveRecord::Base.transaction do
@@ -41,8 +46,16 @@ class CommitPatientChangesetsJob < ApplicationJob
         .uniq { [_1.parent, _1.patient] }
 
     deduplicate_patients!(patients, relationships)
+
+    patients_with_nhs_number_changes =
+      patients.select(&:nhs_number_previously_changed?)
+
     Patient.import(patients.to_a, on_duplicate_key_update: :all)
     link_records_to_import(import, Patient, patients)
+
+    SearchVaccinationRecordsInNHSJob.perform_bulk(
+      patients_with_nhs_number_changes.pluck(:id).zip
+    )
 
     changesets.each(&:assign_patient_id)
     PatientChangeset.import(changesets, on_duplicate_key_update: :all)

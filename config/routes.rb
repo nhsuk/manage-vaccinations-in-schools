@@ -60,7 +60,8 @@ Rails.application.routes.draw do
   get "/dashboard", to: "dashboard#index"
   get "/accessibility-statement", to: "content#accessibility_statement"
 
-  get "/manifest/:name.json", to: "manifest#show", as: :manifest
+  get "/manifest/:name-:digest.json", to: "manifest#show", as: :manifest
+  get "/manifest/:name.json", to: "manifest#show"
 
   get "/up", to: "rails/health#show", as: :rails_health_check
 
@@ -270,11 +271,6 @@ Rails.application.routes.draw do
       constraints -> { Flipper.enabled?(:dev_tools) } do
         put "make-in-progress", to: "sessions#make_in_progress"
       end
-
-      constraints -> { Flipper.enabled?(:offline_working) } do
-        get "setup-offline", to: "offline_passwords#new"
-        post "setup-offline", to: "offline_passwords#create"
-      end
     end
 
     resource :dates, controller: "session_dates", only: %i[show update]
@@ -285,7 +281,7 @@ Rails.application.routes.draw do
               only: [],
               module: :patient_sessions do
       resource :activity, only: %i[show create]
-      resource :session_attendance, path: "attendance", only: %i[edit update]
+      resource :attendance, only: %i[edit update]
 
       resources :programmes, path: "", param: :type, only: :show do
         get "record-already-vaccinated"

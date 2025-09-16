@@ -7,10 +7,23 @@ $_secondary-warning-button-hover-colour: color.change(
   $alpha: 0.1
 );
 
+.button_to {
+  display: contents;
+}
+
 .nhsuk-button {
-  .button_to &,
-  .nhsuk-table & {
+  .button_to & {
     margin-bottom: 0;
+  }
+
+  .nhsuk-button-group .button_to & {
+    $horizontal-gap: nhsuk-spacing(4);
+    $vertical-gap: nhsuk-spacing(3);
+    margin-bottom: $vertical-gap + $_button-shadow-size;
+
+    @include nhsuk-media-query($from: tablet) {
+      margin-right: $horizontal-gap;
+    }
   }
 }
 

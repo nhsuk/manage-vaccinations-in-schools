@@ -358,7 +358,7 @@ describe DraftVaccinationRecord do
     context "when vaccination is not administered" do
       let(:attributes) { valid_not_administered_attributes }
 
-      it { should be true }
+      it { should be(true) }
     end
 
     context "when delivery method is nasal_spray" do
@@ -367,41 +367,39 @@ describe DraftVaccinationRecord do
       end
 
       context "when consent is given for nasal" do
-        let(:patient) do
-          create(
-            :patient,
-            :consent_given_nasal_only_triage_not_needed,
-            session:
-          )
-        end
+        before { create(:consent, :given_nasal, patient:, programme:) }
 
-        it { should be true }
+        it { should be(true) }
       end
 
       context "when consent is given for injection" do
-        let(:patient) do
-          create(
-            :patient,
-            :consent_given_injection_only_triage_needed,
-            session:
-          )
-        end
+        before { create(:consent, :given_injection, patient:, programme:) }
 
-        it { should be false }
+        it { should be(false) }
       end
 
       context "when triage is safe for nasal" do
-        let(:patient) do
-          create(:patient, :triage_safe_to_vaccinate_nasal, session:)
+        before do
+          create(:consent, :given_nasal, patient:, programme:)
+          create(
+            :triage,
+            :ready_to_vaccinate,
+            patient:,
+            programme:,
+            vaccine_method: "nasal"
+          )
         end
 
-        it { should be true }
+        it { should be(true) }
       end
 
       context "when triage is safe for injection" do
-        let(:patient) { create(:patient, :triage_safe_to_vaccinate, session:) }
+        before do
+          create(:consent, :given_injection, patient:, programme:)
+          create(:triage, :ready_to_vaccinate, patient:, programme:)
+        end
 
-        it { should be false }
+        it { should be(false) }
       end
     end
 
@@ -411,37 +409,39 @@ describe DraftVaccinationRecord do
       end
 
       context "when consent is given for injection" do
-        let(:patient) do
-          create(
-            :patient,
-            :consent_given_injection_only_triage_not_needed,
-            session:
-          )
-        end
+        before { create(:consent, :given_injection, patient:, programme:) }
 
-        it { should be true }
+        it { should be(true) }
       end
 
       context "when consent is given for nasal" do
-        let(:patient) do
-          create(:patient, :consent_given_nasal_only_triage_needed, session:)
-        end
+        before { create(:consent, :given_nasal, patient:, programme:) }
 
-        it { should be false }
+        it { should be(false) }
       end
 
       context "when triage is safe for injection" do
-        let(:patient) { create(:patient, :triage_safe_to_vaccinate, session:) }
+        before do
+          create(:consent, :given_injection, patient:, programme:)
+          create(:triage, :ready_to_vaccinate, patient:, programme:)
+        end
 
-        it { should be true }
+        it { should be(true) }
       end
 
       context "when triage is safe for nasal" do
-        let(:patient) do
-          create(:patient, :triage_safe_to_vaccinate_nasal, session:)
+        before do
+          create(:consent, :given_nasal, patient:, programme:)
+          create(
+            :triage,
+            :ready_to_vaccinate,
+            patient:,
+            programme:,
+            vaccine_method: "nasal"
+          )
         end
 
-        it { should be false }
+        it { should be(false) }
       end
     end
   end

@@ -9,9 +9,14 @@ describe "Import child records" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
     and_an_existing_patient_record_exists
-    and_pds_lookup_during_import_is_enabled
 
     when_i_visit_the_import_page
+    and_pds_lookups_dont_return_any_matches
+    and_i_upload_import_file("pds_extravaganza.csv")
+    then_i_should_see_the_import_failed
+
+    when_i_visit_the_import_page
+    and_pds_lookup_during_import_is_enabled
     and_i_upload_import_file("pds_extravaganza.csv")
     then_i_should_see_the_import_page
     and_i_should_see_correct_patient_counts
@@ -269,6 +274,30 @@ describe "Import child records" do
     expect(Parent.count).to eq(2)
   end
 
+  def and_pds_lookups_dont_return_any_matches
+    Flipper.enable(:pds_lookup_during_import)
+    Flipper.enable(:import_low_pds_match_rate)
+
+    csv_path =
+      Rails.root.join("spec/fixtures/cohort_import/pds_extravaganza.csv")
+
+    CSV.foreach(csv_path, headers: true, header_converters: :symbol) do |row|
+      family_name = row[:child_last_name]
+      given_name = row[:child_first_name]
+      birthdate = row[:child_date_of_birth]
+      postcode = row[:child_postcode]
+
+      next if [family_name, given_name, birthdate].any?(&:blank?)
+
+      stub_pds_cascading_search(
+        family_name: family_name,
+        given_name: given_name,
+        birthdate: "eq#{birthdate}",
+        address_postcode: postcode
+      )
+    end
+  end
+
   def and_pds_lookup_during_import_is_enabled
     Flipper.enable(:pds_lookup_during_import)
 
@@ -397,31 +426,15 @@ describe "Import child records" do
     end
   end
 
-  def when_i_visit_the_import_page
-    visit "/"
-    click_link "Import", match: :first
-  end
-
-  def when_i_go_back_to_the_import_page
-    visit "/imports"
-    click_link "1 September 2025 at 12:00pm"
-  end
-
-  def when_i_click_review_for(name)
-    within(
-      :xpath,
-      "//div[h3[contains(text(), 'records with import issues')]]"
-    ) do
-      within(:xpath, ".//tr[contains(., '#{name}')]") { click_link "Review" }
-    end
-  end
-
   def and_i_upload_import_file(filename)
+    travel 1.minute
+
     click_button "Import records"
     choose "Child records"
     click_button "Continue"
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/#{filename}")
     click_on "Continue"
+
     wait_for_import_to_complete(CohortImport)
   end
 
@@ -431,20 +444,9 @@ describe "Import child records" do
     click_on "Waterloo Road"
   end
 
-  def and_i_start_adding_children_to_the_session
-    click_on "Import class lists"
-  end
-
-  def and_i_select_the_year_groups
-    check "Year 8"
-    check "Year 9"
-    check "Year 10"
-    check "Year 11"
-    click_on "Continue"
-  end
-
-  def then_i_should_see_the_import_page
-    expect(page).to have_content("Import class list")
+  def then_i_should_see_the_import_failed
+    expect(page).to have_content("Too many records could not be matched")
+    expect(page).to have_content("11 unmatched records")
   end
 
   def when_i_upload_a_valid_file
@@ -463,7 +465,8 @@ describe "Import child records" do
 
   def when_i_go_back_to_the_import_page
     visit "/imports"
-    click_link "1 September 2025 at 12:00pm"
+
+    click_on_most_recent_import(CohortImport)
   end
 
   def when_i_click_review_for(name)
@@ -484,10 +487,6 @@ describe "Import child records" do
     check "Year 9"
     check "Year 10"
     click_on "Continue"
-  end
-
-  def then_i_should_see_the_import_page
-    expect(page).to have_content("Import class list")
   end
 
   def and_an_existing_patient_records_exist_in_school
@@ -727,27 +726,6 @@ describe "Import child records" do
     expect(import.patients.count).to eq(10)
   end
 
-  def when_i_click_on_patient_with_unknown_relationship
-    click_link "GREEN, Oliver"
-  end
-
-  def then_i_see_patient_with_unknown_relationship_details
-    expect(page).to have_content("GREEN, Oliver")
-    expect(page).to have_content("15 August 2010")
-  end
-
-  def and_oliver_has_unknown_relationship_parent
-    oliver = Patient.find_by(given_name: "Oliver", family_name: "Green")
-    expect(oliver.parents.count).to eq(1)
-
-    parent = oliver.parents.first
-    expect(parent.full_name).to eq("Jane Doe")
-    expect(parent.email).to be_blank
-
-    relationship = oliver.parent_relationships.first
-    expect(relationship.type).to eq("unknown")
-    expect(relationship.label).to eq("Unknown")
-  end
   def when_i_click_on_patient_with_unknown_relationship
     click_link "GREEN, Oliver"
   end

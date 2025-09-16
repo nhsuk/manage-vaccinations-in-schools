@@ -25,6 +25,9 @@ class AppActivityLogComponent < ViewComponent::Base
     @patient_sessions =
       patient_session ? [patient_session] : patient.patient_sessions
 
+    @attendance_records =
+      (patient || patient_session).attendance_records.includes(:location)
+
     @consents =
       @patient.consents.includes(
         :consent_form,
@@ -52,9 +55,6 @@ class AppActivityLogComponent < ViewComponent::Base
     @pre_screenings =
       (patient || patient_session).pre_screenings.includes(:performed_by)
 
-    @session_attendances =
-      (patient || patient_session).session_attendances.includes(:location)
-
     @triages = @patient.triages.includes(:performed_by)
 
     @vaccination_records =
@@ -78,7 +78,7 @@ class AppActivityLogComponent < ViewComponent::Base
               :patient_sessions,
               :patient_specific_directions,
               :pre_screenings,
-              :session_attendances,
+              :attendance_records,
               :triages,
               :vaccination_records
 
@@ -382,19 +382,19 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def attendance_events
-    session_attendances.map do |session_attendance|
+    attendance_records.map do |attendance_record|
       title =
         (
-          if session_attendance.attending?
+          if attendance_record.attending?
             "Attended session"
           else
             "Absent from session"
           end
         )
 
-      title += " at #{session_attendance.location.name}"
+      title += " at #{attendance_record.location.name}"
 
-      { title:, at: session_attendance.created_at }
+      { title:, at: attendance_record.created_at }
     end
   end
 

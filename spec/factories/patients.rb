@@ -129,7 +129,7 @@ FactoryBot.define do
 
         if evaluator.in_attendance
           create(
-            :session_attendance,
+            :attendance_record,
             :present,
             patient:,
             session: evaluator.session
@@ -227,19 +227,6 @@ FactoryBot.define do
           association(
             :patient_triage_status,
             :safe_to_vaccinate,
-            patient: instance,
-            programme:
-          )
-        end
-      end
-    end
-
-    trait :triage_safe_to_vaccinate_nasal do
-      triage_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_triage_status,
-            :safe_to_vaccinate_nasal,
             patient: instance,
             programme:
           )

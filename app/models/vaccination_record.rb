@@ -155,7 +155,7 @@ class VaccinationRecord < ApplicationRecord
          nhs_immunisations_api: 2,
          consent_refusal: 3
        },
-       prefix: true,
+       prefix: "sourced_from",
        validate: true
 
   encrypts :notes

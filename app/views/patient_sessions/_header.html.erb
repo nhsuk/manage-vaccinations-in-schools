@@ -38,16 +38,19 @@
     </li>
   <% end %>
 
-  <% if @session.requires_registration? && (session_attendance = @patient_session.todays_attendance) %>
+  <% if @session.requires_registration? && (date = @session.dates.find(&:today?)) %>
+    <% attendance_record = @patient.attendance_records.find_or_initialize_by(location: @session.location, date:) %>
+
     <li class="app-action-list__item">
       <%= render AppStatusTagComponent.new(@patient_session.registration_status&.status || "unknown", context: :register) %>
     </li>
 
-    <% if policy(session_attendance).edit? %>
+    <% attendance_record.session = @session %>
+    <% if policy(attendance_record).edit? %>
       <li class="app-action-list__item">
         <%= link_to(
               "Update attendance",
-              edit_session_patient_session_attendance_path(@session, @patient)
+              edit_session_patient_attendance_path(@session, @patient)
             ) %>
       </li>
     <% end %>
@@ -61,19 +64,21 @@
   <% end %>
 </ul>
 
-<%= render AppSecondaryNavigationComponent.new(classes: "app-secondary-navigation--sticky") do |nav|
-      @patient_session.programmes.each do |programme|
+<%= render AppStickyNavigationComponent.new do %> 
+  <%= render AppSecondaryNavigationComponent.new do |nav|
+        @patient_session.programmes.each do |programme|
+          nav.with_item(
+            href: session_patient_programme_path(@session, @patient, programme, return_to: params[:return_to]),
+            text: programme.name,
+            selected: @programme == programme,
+            ticked: @patient.vaccination_status(programme:, academic_year: @academic_year).vaccinated?,
+          )
+        end
+      
         nav.with_item(
-          href: session_patient_programme_path(@session, @patient, programme, return_to: params[:return_to]),
-          text: programme.name,
-          selected: @programme == programme,
-          ticked: @patient.vaccination_status(programme:, academic_year: @academic_year).vaccinated?,
+          href: session_patient_activity_path(@session, @patient, return_to: params[:return_to]),
+          text: "Session activity and notes",
+          selected: request.path.ends_with?("/activity"),
         )
-      end
-    
-      nav.with_item(
-        href: session_patient_activity_path(@session, @patient, return_to: params[:return_to]),
-        text: "Session activity and notes",
-        selected: request.path.ends_with?("/activity"),
-      )
-    end %>
+      end %>
+<% end %>

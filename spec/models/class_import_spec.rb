@@ -538,4 +538,96 @@ describe ClassImport do
       end
     end
   end
+
+  describe "#pds_match_rate" do
+    subject(:pds_match_rate) { class_import.pds_match_rate }
+
+    context "when there are no changesets" do
+      it { should eq(0) }
+    end
+
+    context "with some changesets" do
+      before do
+        create_list(
+          :patient_changeset,
+          4,
+          :with_pds_match,
+          import: class_import
+        )
+        create_list(:patient_changeset, 6, import: class_import)
+      end
+
+      it "returns percentage" do
+        expect(pds_match_rate).to eq(40.0)
+      end
+    end
+
+    context "with only some attempted searches" do
+      before do
+        create_list(
+          :patient_changeset,
+          4,
+          :with_pds_match,
+          import: class_import
+        )
+        create_list(
+          :patient_changeset,
+          6,
+          :without_pds_search_attempted,
+          import: class_import
+        )
+      end
+
+      it "returns 100" do
+        expect(pds_match_rate).to eq(100)
+      end
+    end
+  end
+
+  describe "#validate_pds_match_rate!" do
+    subject(:validate_pds_match_rate!) { class_import.validate_pds_match_rate! }
+
+    context "when match rate is equal to threshold" do
+      before do
+        create_list(
+          :patient_changeset,
+          7,
+          :with_pds_match,
+          import: class_import
+        )
+        create_list(:patient_changeset, 3, import: class_import)
+      end
+
+      it "does not mark as low_pds_match_rate" do
+        validate_pds_match_rate!
+        expect(class_import.reload.status).not_to eq("low_pds_match_rate")
+      end
+    end
+
+    context "when match rate is below threshold and enough changesets" do
+      before do
+        create_list(
+          :patient_changeset,
+          6,
+          :with_pds_match,
+          import: class_import
+        )
+        create_list(:patient_changeset, 4, import: class_import)
+      end
+
+      it "marks the import as low_pds_match_rate" do
+        validate_pds_match_rate!
+        expect(class_import.reload.status).to eq("low_pds_match_rate")
+      end
+    end
+
+    context "when there are fewer than 10 changesets" do
+      before { create_list(:patient_changeset, 5, import: class_import) }
+
+      it "skips validation" do
+        validate_pds_match_rate!
+        expect(class_import.reload.status).not_to eq("low_pds_match_rate")
+      end
+    end
+  end
 end

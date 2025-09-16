@@ -8,7 +8,7 @@
 <% end %>
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-one-third app-grid-column--sticky">
+  <div class="nhsuk-grid-column-one-third" data-module="app-sticky">
     <%= render AppCardComponent.new(heading_level: 2, colour: "blue") do |card| %>
       <% card.with_heading { "Consent response" } %>
 

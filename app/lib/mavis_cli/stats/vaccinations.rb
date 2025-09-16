@@ -79,7 +79,6 @@ module MavisCLI
             warn "Could not find organisation with ODS code '#{ods_code}'"
             return
           end
-          puts "Filtering by organisation: #{organisation.ods_code}"
 
           if workgroup
             teams = organisation.teams.where(workgroup:)
@@ -87,10 +86,12 @@ module MavisCLI
               warn "Could not find team '#{workgroup}' for organisation '#{ods_code}'"
               return
             end
+            puts "Filtering by organisation: #{organisation.ods_code}"
             puts "Filtering by team: #{teams.map(&:workgroup).join(", ")}"
           else
+            puts "Filtering by organisation: #{organisation.ods_code}"
             teams = organisation.teams
-            puts "Filtering by all teams: #{teams.map(&:workgroup).join(", ")}"
+            puts "Filtering by all teams: #{teams.map(&:workgroup).sort.join(", ")}"
           end
           teams
         elsif workgroup
@@ -103,7 +104,7 @@ module MavisCLI
           [team]
         else
           teams = Team.all
-          puts "Filtering by all teams: #{teams.map(&:workgroup).join(", ")}"
+          puts "Filtering by all teams: #{teams.map(&:workgroup).sort.join(", ")}"
           teams
         end
       end

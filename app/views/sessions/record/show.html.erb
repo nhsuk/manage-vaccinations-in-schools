@@ -8,35 +8,6 @@
 
 <%= render "sessions/header" %>
 
-<% if @todays_batches.any? %>
-  <%= govuk_inset_text html_attributes: { class: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-4" } do %>
-    <span class="nhsuk-visually-hidden">Information:</span>
-
-    <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
-      Default batches
-    </h2>
-
-    <ul class="nhsuk-list nhsuk-list--bullet">
-      <% @todays_batches.each do |programme, batches| %>
-        <% batches.each do |batch| %>
-          <% programme_name = if programme.has_multiple_vaccine_methods?
-                 "#{programme.name_in_sentence} #{batch.vaccine.human_enum_name(:method).downcase}"
-               else
-                 programme.name_in_sentence
-               end %>
-
-          <li>
-            <%= batch.vaccine.brand %> (<%= programme_name %>): <span class="app-u-monospace"><%= batch.name %></span>
-            <a class="nhsuk-link nhsuk-u-margin-left-2" href="<%= batch_session_record_path(@session, programme, batch.vaccine.method) %>">
-              Change default batch<span class="nhsuk-u-visually-hidden"> for <%= batch.vaccine.brand %></span>
-            </a>
-          </li>
-        <% end %>
-      <% end %>
-    </ul>
-  <% end %>
-<% end %>
-
 <% if @session.today? %>
   <div class="nhsuk-grid-row">
     <div class="app-grid-column-filters">
@@ -51,6 +22,7 @@
 
     <div class="app-grid-column-results">
       <%= render AppSessionNeedsReviewWarningComponent.new(session: @session) %>
+      <%= render AppVaccinationsSummaryTableComponent.new(current_user:, session: @session, request_session: session) %>
       <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
         <% @patient_sessions.each do |patient_session| %>
           <%= render AppPatientSessionSearchResultCardComponent.new(

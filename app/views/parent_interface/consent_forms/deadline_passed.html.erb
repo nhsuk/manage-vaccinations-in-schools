@@ -5,5 +5,5 @@
 <h2 class="nhsuk-heading-m">You can still book a clinic appointment</h2>
 
 <p class="govuk-body">
-  Contact <%= link_to @subteam.email, "mailto:#{@subteam.email}" %> to book a clinic appointment.
+  Contact <%= mail_to @subteam.email %> to book a clinic appointment.
 </p>

@@ -14,7 +14,7 @@ imms_api_sync_job: Flag to switch off any automated sending of vaccination recor
 import_choose_academic_year: Add an option to choose the academic year when
   importing patients during the preparation period.
 
-offline_working: Prototype support for using Mavis offline.
+import_low_pds_match_rate: Prevent processing uploads with a low pds match rate.
 
 pds_lookup_during_import: Perform PDS lookups as part of the patient import
   processing.

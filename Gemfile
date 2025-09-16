@@ -122,4 +122,5 @@ group :test do
   gem "shoulda-matchers"
   gem "simplecov", require: false
   gem "webmock"
+  gem "rack_session_access"
 end

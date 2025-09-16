@@ -269,6 +269,11 @@ en:
           pending: Sync pending
           synced: Synced
           failed: Sync failed
+        sources:
+          service: Recorded in Mavis
+          historical_upload: Uploaded as a historical vaccination
+          nhs_immunisations_api: External source such as GP practice
+          consent_refusal: Parent reported already vaccinated
       vaccine:
         methods:
           injection: Injection
@@ -720,6 +725,15 @@ en:
         session_dates: Session dates
         pre_confirm: Mavis will skip the next automatic reminder if it's scheduled to be sent within 3 days.
         confirm: Send manual consent reminders
+    patient_specific_directions:
+      show:
+        eligibility_message:
+          one: >-
+            There is 1 child with consent for the nasal flu vaccine who
+            does not require triage and does not yet have a PSD in place.
+          other: >-
+            There are %{count} children with consent for the nasal flu vaccine 
+            who do not require triage and do not yet have a PSD in place.
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results

@@ -2,10 +2,15 @@
 
 class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   erb_template <<-ERB
-    <%= render AppCardComponent.new(heading_level: 4, compact: true) do |card| %>
-      <% card.with_heading { link_to(patient.full_name_with_known_as, patient_path) } %>
+    <% card_link = @context != :register ? patient_path : nil %>
+    <%= render AppCardComponent.new(link_to: card_link, heading_level: 4, compact: true) do |card| %>
+      <% if card_link.nil? %>
+        <% card.with_heading { link_to(patient.full_name_with_known_as, patient_path) } %>
+      <% else %>
+        <% card.with_heading { patient.full_name_with_known_as } %>
+      <% end %>
 
-      <%= govuk_summary_list do |summary_list|
+      <%= govuk_summary_list(actions: false) do |summary_list|
             summary_list.with_row do |row|
               row.with_key { "Date of birth" }
               row.with_value { patient_date_of_birth(patient) }
@@ -95,13 +100,16 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   delegate :academic_year, to: :session
 
   def can_register_attendance?
-    session_attendance =
-      SessionAttendance.new(
+    attendance_record =
+      AttendanceRecord.new(
         patient:,
-        session_date: SessionDate.new(session:, value: Date.current)
+        location: session.location,
+        date: Date.current
       )
 
-    policy(session_attendance).new?
+    attendance_record.session = session
+
+    policy(attendance_record).new?
   end
 
   def patient_path
@@ -126,8 +134,12 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
     return if next_activities.empty?
 
-    tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
-      safe_join(next_activities.map { tag.li(it) })
+    if next_activities.size == 1
+      next_activities.first
+    else
+      tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
+        safe_join(next_activities.map { tag.li(it) })
+      end
     end
   end
 

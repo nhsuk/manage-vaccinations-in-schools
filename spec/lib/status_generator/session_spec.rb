@@ -5,7 +5,7 @@ describe StatusGenerator::Session do
     described_class.new(
       session_id: patient_session.session_id,
       academic_year: patient_session.academic_year,
-      session_attendance: patient_session.session_attendances.last,
+      attendance_record: patient_session.attendance_records.last,
       programme:,
       patient:,
       consents: patient.consents,
@@ -79,7 +79,7 @@ describe StatusGenerator::Session do
     end
 
     context "when not attending the session" do
-      before { create(:session_attendance, :absent, patient:, session:) }
+      before { create(:attendance_record, :absent, patient:, session:) }
 
       it { should be(:absent_from_session) }
     end
@@ -275,7 +275,7 @@ describe StatusGenerator::Session do
 
     context "with absent from session attendance" do
       before do
-        create(:session_attendance, :absent, patient:, session:, created_at:)
+        create(:attendance_record, :absent, patient:, session:, created_at:)
       end
 
       it { should eq(created_at) }
@@ -297,7 +297,7 @@ describe StatusGenerator::Session do
           )
 
           create(
-            :session_attendance,
+            :attendance_record,
             :absent,
             patient:,
             session:,
@@ -320,7 +320,7 @@ describe StatusGenerator::Session do
           )
 
           create(
-            :session_attendance,
+            :attendance_record,
             :absent,
             patient:,
             session:,

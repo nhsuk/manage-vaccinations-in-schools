@@ -206,22 +206,6 @@ describe Reports::SystmOneExporter do
       )
     end
 
-    context "HPV" do
-      context "Gardasil 9 dose 2" do
-        let(:vaccine) { Vaccine.find_by!(brand: "Gardasil 9") }
-        let(:dose_sequence) { 2 }
-
-        it { should eq("Y19a5") }
-      end
-
-      context "Gardasil 9 dose 3" do
-        let(:vaccine) { Vaccine.find_by!(brand: "Gardasil 9") }
-        let(:dose_sequence) { 3 }
-
-        it { should eq("Y19a6") }
-      end
-    end
-
     context "flu" do
       let(:programme) { create(:programme, :flu_all_vaccines) }
       let(:dose_sequence) { 1 }
@@ -255,18 +239,57 @@ describe Reports::SystmOneExporter do
       end
     end
 
-    context "unknown vaccine and no dose sequence" do
-      let(:vaccine) { create(:vaccine, :menquadfi) }
+    context "HPV" do
+      context "Gardasil 9 dose 2" do
+        let(:vaccine) { Vaccine.find_by!(brand: "Gardasil 9") }
+        let(:dose_sequence) { 2 }
+
+        it { should eq("Y19a5") }
+      end
+
+      context "Gardasil 9 dose 3" do
+        let(:vaccine) { Vaccine.find_by!(brand: "Gardasil 9") }
+        let(:dose_sequence) { 3 }
+
+        it { should eq("Y19a6") }
+      end
+    end
+
+    context "MenACWY" do
+      let(:programme) { create(:programme, :menacwy_all_vaccines) }
       let(:dose_sequence) { nil }
 
-      it { should eq("MenQuadfi") }
+      context "MenQuadfi" do
+        let(:vaccine) { Vaccine.find_by!(brand: "MenQuadfi") }
+
+        it { should eq("YbXKi") }
+      end
+
+      context "Menveo" do
+        let(:vaccine) { Vaccine.find_by!(brand: "Menveo") }
+
+        it { should eq("Menveo") }
+      end
+
+      context "Nimenrix" do
+        let(:vaccine) { Vaccine.find_by!(brand: "Nimenrix") }
+
+        it { should eq("Nimenrix") }
+      end
+    end
+
+    context "unknown vaccine and no dose sequence" do
+      let(:vaccine) { create(:vaccine, :menveo) }
+      let(:dose_sequence) { nil }
+
+      it { should eq("Menveo") }
     end
 
     context "unknown vaccine and a dose sequence" do
-      let(:vaccine) { create(:vaccine, :menquadfi) }
+      let(:vaccine) { create(:vaccine, :menveo) }
       let(:dose_sequence) { 1 }
 
-      it { should eq("MenQuadfi Part 1") }
+      it { should eq("Menveo Part 1") }
     end
   end
 

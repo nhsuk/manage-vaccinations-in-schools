@@ -5,8 +5,8 @@
 <% title = "Is #{@patient.full_name} attending today’s session?" %>
 <% content_for :page_title, title %>
 
-<%= form_with model: @session_attendance,
-              url: session_patient_session_attendance_path(@session, @patient),
+<%= form_with model: @attendance_record,
+              url: session_patient_attendance_path(@session, @patient),
               method: :put do |f| %>
   <%= f.govuk_error_summary %>
   <%= f.govuk_radio_buttons_fieldset(:attending,
@@ -28,7 +28,7 @@
     <%= f.govuk_radio_button(
           :attending, "not_registered",
           label: { text: "They have not been registered yet" },
-          checked: @session_attendance.attending.nil?,
+          checked: @attendance_record.attending.nil?,
         ) %>
   <% end %>
 

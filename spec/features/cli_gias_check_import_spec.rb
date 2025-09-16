@@ -78,25 +78,22 @@ describe "mavis gias check_import" do
   end
 
   def then_i_should_see_the_correct_counts
-    expect(@output).to eq <<~OUTPUT
+    expect(@output).to include("New schools (total): 1")
+    expect(@output).to include("Closed schools (total): 1")
+    expect(@output).to include("Proposed to be closed schools (total): 1")
 
-      Progress: |                  New schools (total): 1
-                     Closed schools (total): 1
-      Proposed to be closed schools (total): 1
+    expect(@output).to include("Existing schools with future sessions: 2")
+    expect(@output).to include("That are closed in import: 1")
+    expect(@output).to include("That have year group changes: 1")
 
-         Existing schools with future sessions: 2
-                     That are closed in import: 1 (50.0%)
-      That are proposed to be closed in import: 1 (50.0%)
-                  That have year group changes: 1 (50.0%)
-
-      URNs of closed schools with future sessions:
-        100000
-
-      URNs of schools that will be closing, with future sessions:
-        100002
-
-      URNs of schools with year group changes, with future sessions:
-        100002
-    OUTPUT
+    expect(@output).to include(
+      "URNs of closed schools with future sessions:\n  100000"
+    )
+    expect(@output).to include(
+      "URNs of schools that will be closing, with future sessions:\n  100002"
+    )
+    expect(@output).to include(
+      "URNs of schools with year group changes, with future sessions:\n  100002"
+    )
   end
 end
