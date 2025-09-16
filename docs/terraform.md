@@ -106,6 +106,6 @@ tf apply -var-file=env/$env.tfvars -var="image_digest=<image_digest_from_ECR>"
 ```
 
 Step 3: Run Codedeploy from the AWS Console
-Step 4: If needed, trigger a deployment for the good-job service from the AWS ECS Console
+Step 4: If needed, trigger a deployment for the sidekiq service from the AWS ECS Console
 
 For a more high-level description of the process see [deployment-process.md](../terraform/documentation/deployment-process.md)
