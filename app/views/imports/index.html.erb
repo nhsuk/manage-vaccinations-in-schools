@@ -2,6 +2,6 @@
 
 <%= govuk_button_to "Import records", imports_path, secondary: true, class: "nhsuk-u-margin-bottom-4" %>
 
-<%= render AppImportsNavigationComponent.new(active: :index) %>
+<%= render AppImportsNavigationComponent.new(active: :index, team: current_team) %>
 
 <%= render AppImportsTableComponent.new(team: current_team) %>

@@ -55,6 +55,8 @@ module ParentInterface
 
       session.delete(:consent_form_id)
 
+      TeamCachedCounts.new(@team).reset_unmatched_consent_responses!
+
       send_consent_form_confirmation(@consent_form)
 
       ConsentFormMatchingJob.perform_later(@consent_form)
