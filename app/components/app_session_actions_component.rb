@@ -41,12 +41,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
   def no_consent_response_row
     status = "no_response"
-    count =
-      patients.has_consent_status(
-        status,
-        programme: programmes,
-        academic_year:
-      ).count
+    count = session.patients_with_no_consent_response_count
     href = session_consent_path(session, consent_statuses: [status])
     actions = [
       {

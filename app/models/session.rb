@@ -332,9 +332,10 @@ class Session < ApplicationRecord
   def next_reminder_date = next_reminder_dates.first
 
   def patients_with_no_consent_response_count
-    patient_locations.has_consent_status(
+    patients.has_consent_status(
       "no_response",
-      programme: programmes
+      programme: programmes,
+      academic_year:
     ).count
   end
 
