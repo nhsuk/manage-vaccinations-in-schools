@@ -941,7 +941,15 @@ class ImmunisationImportRow
 
   def validate_session_id
     if session_id.present?
-      if session_id.to_i.nil?
+      if uuid.present? &&
+           VaccinationRecord.find_by(
+             uuid: uuid.to_s
+           )&.sourced_from_nhs_immunisations_api?
+        errors.add(
+          session_id.header,
+          "A session ID cannot be provided for this record; this record was sourced from an external source."
+        )
+      elsif session_id.to_i.nil?
         errors.add(
           session_id.header,
           "The session ID is not recognised. Download the offline spreadsheet " \
