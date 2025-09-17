@@ -271,6 +271,36 @@ describe Session do
     end
   end
 
+  describe "#patients_with_no_consent_response_count" do
+    subject(:count) { session.patients_with_no_consent_response_count }
+
+    let(:programme) { create(:programme) }
+    let(:session) { create(:session, programmes: [programme]) }
+
+    context "when there are no patients" do
+      it { should eq(0) }
+    end
+
+    context "when there are patients with different consent statuses" do
+      it "returns count of patients with no response consent status" do
+        create(
+          :patient,
+          :consent_no_response,
+          session:,
+          programmes: [programme]
+        )
+        create(
+          :patient,
+          :consent_given_triage_not_needed,
+          session:,
+          programmes: [programme]
+        )
+
+        expect(count).to eq(1)
+      end
+    end
+  end
+
   describe "#year_groups" do
     subject { session.year_groups }
 
