@@ -142,6 +142,7 @@ class Patient < ApplicationRecord
         ->(programmes, academic_year:) do
           patient_locations =
             PatientLocation
+              .select("1")
               .where("patient_locations.patient_id = patients.id")
               .where(academic_year:)
               .appear_in_programmes(programmes)
@@ -153,6 +154,7 @@ class Patient < ApplicationRecord
         ->(programmes, academic_year:) do
           patient_locations =
             PatientLocation
+              .select("1")
               .where("patient_locations.patient_id = patients.id")
               .where(academic_year:)
               .appear_in_programmes(programmes)
