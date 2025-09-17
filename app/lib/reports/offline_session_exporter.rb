@@ -263,7 +263,6 @@ class Reports::OfflineSessionExporter
       patient_specific_directions.dig(patient.id, programme.id)
     triage = triages.dig(patient.id, programme.id)
 
-    row[:organisation_code] = organisation.ods_code
     row[:person_forename] = patient.given_name
     row[:person_surname] = patient.family_name
     row[:person_dob] = patient.date_of_birth
@@ -310,6 +309,8 @@ class Reports::OfflineSessionExporter
     session = vaccination_record.session
     vaccine = vaccination_record.vaccine
     location = session&.location
+
+    row[:organisation_code] = vaccination_record.performed_ods_code
 
     row[:vaccinated] = Cell.new(
       vaccinated(vaccination_record:),
@@ -371,6 +372,8 @@ class Reports::OfflineSessionExporter
   end
 
   def add_new_row_cells(row, patient:, programme:)
+    row[:organisation_code] = organisation.ods_code
+
     row[:vaccinated] = Cell.new(allowed_values: %w[Y N])
     row[:date_of_vaccination] = Cell.new(type: :date)
     row[:school_name] = school_name(location:, patient:)
