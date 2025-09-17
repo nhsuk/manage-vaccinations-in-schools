@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "HPV vaccination" do
+describe "offline vaccination" do
   around do |example|
     travel_to(Time.zone.local(2024, 2, 1, 12)) { example.run }
   end
