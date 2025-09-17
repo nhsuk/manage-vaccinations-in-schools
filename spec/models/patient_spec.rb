@@ -158,6 +158,7 @@ describe Patient do
         let(:location) do
           create(:school, programmes: [flu_programme, hpv_programme])
         end
+        let(:academic_year) { AcademicYear.current }
 
         # Year 4 is eligible for flu only.
         let(:patient) { create(:patient, year_group: 4) }
@@ -165,26 +166,16 @@ describe Patient do
         # Year 9 is eligible for flu and HPV only.
         let(:another_patient) { create(:patient, year_group: 9) }
 
-        let(:flu_session) do
-          create(:session, location:, programmes: [flu_programme])
-        end
-        let(:hpv_session) do
-          create(:session, location:, programmes: [hpv_programme])
-        end
-
         before do
-          create(:patient_session, patient:, session: flu_session)
-          create(:patient_session, patient:, session: hpv_session)
+          create(:session, location:, programmes: [flu_programme])
+          create(:session, location:, programmes: [hpv_programme])
 
+          create(:patient_location, patient:, location:, academic_year:)
           create(
-            :patient_session,
+            :patient_location,
             patient: another_patient,
-            session: flu_session
-          )
-          create(
-            :patient_session,
-            patient: another_patient,
-            session: hpv_session
+            location:,
+            academic_year:
           )
         end
 
@@ -260,6 +251,7 @@ describe Patient do
         let(:location) do
           create(:school, programmes: [flu_programme, hpv_programme])
         end
+        let(:academic_year) { AcademicYear.current }
 
         # Year 4 is eligible for flu only.
         let!(:patient) { create(:patient, year_group: 4) }
@@ -267,26 +259,16 @@ describe Patient do
         # Year 9 is eligible for flu and HPV only.
         let(:another_patient) { create(:patient, year_group: 9) }
 
-        let(:flu_session) do
-          create(:session, location:, programmes: [flu_programme])
-        end
-        let(:hpv_session) do
-          create(:session, location:, programmes: [hpv_programme])
-        end
-
         before do
-          create(:patient_session, patient:, session: flu_session)
-          create(:patient_session, patient:, session: hpv_session)
+          create(:session, location:, programmes: [flu_programme])
+          create(:session, location:, programmes: [hpv_programme])
 
+          create(:patient_location, patient:, location:, academic_year:)
           create(
-            :patient_session,
+            :patient_location,
             patient: another_patient,
-            session: flu_session
-          )
-          create(
-            :patient_session,
-            patient: another_patient,
-            session: hpv_session
+            location:,
+            academic_year:
           )
         end
 
@@ -377,6 +359,64 @@ describe Patient do
       end
 
       it { should eq([patient_a, patient_b, patient_c]) }
+    end
+
+    describe "#consent_given_and_ready_to_vaccinate" do
+      subject(:scope) do
+        described_class.consent_given_and_ready_to_vaccinate(
+          programmes:,
+          academic_year:,
+          vaccine_method:
+        )
+      end
+
+      let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
+      let(:session) { create(:session, programmes:) }
+      let(:academic_year) { Date.current.academic_year }
+      let(:vaccine_method) { nil }
+
+      it { should be_empty }
+
+      context "with a patient eligible for vaccination" do
+        let(:patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
+        end
+
+        it { should include(patient) }
+      end
+
+      context "when filtering on nasal spray" do
+        let(:vaccine_method) { "nasal" }
+
+        context "with a patient eligible for vaccination" do
+          let(:patient) do
+            create(:patient, :consent_given_triage_not_needed, session:)
+          end
+
+          before do
+            patient.consent_status(
+              programme: programmes.first,
+              academic_year:
+            ).update!(vaccine_methods: %w[nasal injection])
+          end
+
+          it { should include(patient) }
+
+          context "when the patient has been vaccinated for flu" do
+            before do
+              create(
+                :vaccination_record,
+                programme: programmes.first,
+                session:,
+                patient:
+              )
+              StatusUpdater.call(session:, patient:)
+            end
+
+            it { should_not include(patient) }
+          end
+        end
+      end
     end
   end
 
@@ -896,12 +936,14 @@ describe Patient do
           )
         end
 
-        before { create(:patient_session, patient:, session:) }
+        let!(:patient_location) do
+          create(:patient_location, patient:, session:)
+        end
 
         it "removes the patient from the session" do
-          expect(session.patients).to include(patient)
+          expect(patient.patient_locations).to include(patient_location)
           update_from_pds!
-          expect(session.patients).not_to include(patient)
+          expect(patient.patient_locations).not_to include(patient_location)
         end
 
         it "archives the patient" do
@@ -1126,19 +1168,20 @@ describe Patient do
     end
 
     context "when the old patient has upcoming sessions" do
-      let(:session) do
+      let(:location) { create(:school) }
+
+      before do
         create(
-          :session,
-          academic_year: AcademicYear.pending,
-          date: AcademicYear.pending.to_academic_year_date_range.begin
+          :patient_location,
+          patient: old_patient,
+          location:,
+          academic_year: AcademicYear.pending
         )
       end
 
-      before { create(:patient_session, patient: old_patient, session:) }
-
       it "adds the new patient to any upcoming sessions" do
-        expect(new_patient.patient_sessions.size).to eq(1)
-        expect(new_patient.patient_sessions.first.session).to eq(session)
+        expect(new_patient.patient_locations.size).to eq(1)
+        expect(new_patient.patient_locations.first.location).to eq(location)
       end
     end
 

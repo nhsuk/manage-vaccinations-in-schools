@@ -21,7 +21,7 @@ describe Stats::ConsentsBySchool do
 
     context "when there are consent responses" do
       before do
-        patient_session
+        patient_location
         consent
       end
 
@@ -37,7 +37,7 @@ describe Stats::ConsentsBySchool do
       end
 
       let!(:patient) { create(:patient, team:) }
-      let(:patient_session) { create(:patient_session, session:, patient:) }
+      let(:patient_location) { create(:patient_location, session:, patient:) }
 
       let(:consent) do
         create(
@@ -169,7 +169,7 @@ describe Stats::ConsentsBySchool do
     end
 
     context "when there are multiple consents for a patient" do
-      before { patient_session }
+      before { patient_location }
 
       let!(:session) do
         create(
@@ -183,8 +183,8 @@ describe Stats::ConsentsBySchool do
       end
 
       let!(:patient) { create(:patient, team: team) }
-      let(:patient_session) do
-        create(:patient_session, session: session, patient: patient)
+      let(:patient_location) do
+        create(:patient_location, session: session, patient: patient)
       end
 
       let!(:flu_consent) do

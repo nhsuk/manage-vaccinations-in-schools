@@ -111,9 +111,9 @@ describe "mavis stats consents-by-school", type: :integration do
         session: session_prev_year
       )
 
-    create(:patient_session, session: session1, patient: patient1)
-    create(:patient_session, session: session2, patient: patient2)
-    create(:patient_session, session: session3, patient: patient3)
+    create(:patient_location, session: session1, patient: patient1)
+    create(:patient_location, session: session2, patient: patient2)
+    create(:patient_location, session: session3, patient: patient3)
 
     create(
       :consent,

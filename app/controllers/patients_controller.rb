@@ -26,10 +26,11 @@ class PatientsController < ApplicationController
   end
 
   def invite_to_clinic
-    session =
-      current_team.generic_clinic_session(academic_year: AcademicYear.pending)
-
-    PatientSession.find_or_create_by!(patient: @patient, session:)
+    PatientLocation.find_or_create_by!(
+      patient: @patient,
+      location: current_team.generic_clinic,
+      academic_year: AcademicYear.pending
+    )
 
     redirect_to patient_path(@patient),
                 flash: {
@@ -46,15 +47,16 @@ class PatientsController < ApplicationController
         :school,
         consents: %i[parent patient],
         parent_relationships: :parent,
-        sessions: :location,
         vaccination_records: :programme
       ).find(params[:id])
   end
 
   def set_in_generic_clinic
-    generic_clinic_session =
-      current_team.generic_clinic_session(academic_year: AcademicYear.pending)
-    @in_generic_clinic = @patient.sessions.include?(generic_clinic_session)
+    @in_generic_clinic =
+      @patient.patient_locations.exists?(
+        location: current_team.generic_clinic,
+        academic_year: AcademicYear.pending
+      )
   end
 
   def record_access_log_entry

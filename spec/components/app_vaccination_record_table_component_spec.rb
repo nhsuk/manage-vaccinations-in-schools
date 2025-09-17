@@ -66,7 +66,7 @@ describe AppVaccinationRecordTableComponent do
 
   context "with a vaccination record not performed by the team" do
     before do
-      vaccination_records.first.patient.patient_sessions.destroy_all
+      vaccination_records.first.patient.patient_locations.destroy_all
       vaccination_records.first.update!(
         session: nil,
         source: "historical_upload",

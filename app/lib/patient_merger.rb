@@ -100,16 +100,17 @@ class PatientMerger
         end
       end
 
-      patient_to_destroy.patient_sessions.each do |patient_session|
-        if patient_to_keep.patient_sessions.exists?(
-             session_id: patient_session.session_id
+      patient_to_destroy.patient_locations.each do |patient_location|
+        if patient_to_keep.patient_locations.exists?(
+             academic_year: patient_location.academic_year,
+             location_id: patient_location.location_id
            )
           next
         end
-        patient_session.update_column(:patient_id, patient_to_keep.id)
+        patient_location.update_column(:patient_id, patient_to_keep.id)
       end
 
-      PatientSession.where(patient: patient_to_destroy).destroy_all
+      PatientLocation.where(patient: patient_to_destroy).destroy_all
 
       patient_to_destroy.changesets.update_all(patient_id: nil)
 

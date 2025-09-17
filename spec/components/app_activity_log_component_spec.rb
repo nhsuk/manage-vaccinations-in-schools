@@ -35,7 +35,7 @@ describe AppActivityLogComponent do
     create(:parent_relationship, :father, parent: dad, patient:)
 
     create(
-      :patient_session,
+      :patient_location,
       patient:,
       session:,
       created_at: Time.zone.parse("2025-05-29 12:00")

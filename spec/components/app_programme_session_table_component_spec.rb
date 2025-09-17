@@ -3,9 +3,10 @@
 describe AppProgrammeSessionTableComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(sessions, programme:) }
+  let(:component) { described_class.new(sessions, programme:, academic_year:) }
 
   let(:programme) { create(:programme) }
+  let(:academic_year) { AcademicYear.current }
   let(:location) do
     create(:school, name: "Waterloo Road", programmes: [programme])
   end

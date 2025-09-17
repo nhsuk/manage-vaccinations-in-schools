@@ -101,13 +101,8 @@ describe "Import child records" do
 
   def given_i_am_signed_in
     @programme = create(:programme, :hpv)
-    @team =
-      create(
-        :team,
-        :with_generic_clinic,
-        :with_one_nurse,
-        programmes: [@programme]
-      )
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
+
     sign_in @team.users.first
   end
 

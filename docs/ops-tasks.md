@@ -13,7 +13,7 @@ session = org.sessions.find_by(location:)
 session.patients.count # get the number of patients
 
 # check all the patients can be safely removed from the session
-session.patient_sessions.all?(&:safe_to_destroy?)
+session.patient_locations.all?(&:safe_to_destroy?)
 
 # update all the patients to unknown school
 session.patients.update_all(
@@ -23,7 +23,7 @@ session.patients.update_all(
 )
 
 # removes all patients from the session
-session.patient_sessions.destroy_all
+session.patient_locations.destroy_all
 ```
 
 ## Add a patient from community clinic to school session
@@ -143,9 +143,9 @@ This can be done manually, and doesn't need a `SchoolMove`:
 
 ```rb
 # Check if the patient session in question is safe to be destroyed.
-patient.patient_sessions.first.safe_to_destroy?
+patient.patient_locations.first.safe_to_destroy?
 
-patient.patient_sessions.first.destroy
+patient.patient_locations.first.destroy
 
 patient.sessions << clinic_session
 ```

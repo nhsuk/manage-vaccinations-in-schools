@@ -85,14 +85,14 @@ describe "Immunisation imports duplicates" do
         address_postcode: "LE8 2DA",
         school: @location
       )
-    @patient_session =
+    @patient_location =
       create(
-        :patient_session,
+        :patient_location,
         patient: @already_vaccinated_patient,
         session: @session
       )
-    @third_patient_session =
-      create(:patient_session, patient: @third_patient, session: @session)
+    @third_patient_location =
+      create(:patient_location, patient: @third_patient, session: @session)
     @vaccine = @programme.vaccines.find_by(nivs_name: "Gardasil9")
     @other_vaccine = @programme.vaccines.find_by(nivs_name: "Cervarix")
     @batch = create(:batch, vaccine: @vaccine, name: "SomethingElse")

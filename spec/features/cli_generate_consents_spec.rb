@@ -56,9 +56,17 @@ describe "mavis generate consents" do
 
     expect(
       @team
-        .patient_sessions
-        .has_consent_status(:given, programme: @programme)
-        .has_triage_status(:not_required, programme: @programme)
+        .patients
+        .has_consent_status(
+          :given,
+          programme: @programme,
+          academic_year: AcademicYear.current
+        )
+        .has_triage_status(
+          :not_required,
+          programme: @programme,
+          academic_year: AcademicYear.current
+        )
         .count
     ).to eq 1
   end

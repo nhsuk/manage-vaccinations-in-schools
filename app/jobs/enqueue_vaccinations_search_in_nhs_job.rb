@@ -4,8 +4,10 @@ class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
   queue_as :immunisations_api
 
   def perform(sessions = nil)
-    sessions ||=
-      begin
+    scope =
+      if sessions
+        Session.where(id: sessions.map(&:id))
+      else
         flu = Programme.flu.sole
         Session
           .includes(:session_dates)
@@ -15,14 +17,11 @@ class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
           .references(:session_dates)
       end
 
-    patient_ids =
-      Patient
-        .includes(:sessions)
-        .where(patient_sessions: { session: sessions.pluck(:id) })
-        .ids
+    scope.find_each do |session|
+      ids = session.patients.pluck(:id)
+      next if ids.empty?
 
-    return if patient_ids.empty?
-
-    SearchVaccinationRecordsInNHSJob.perform_bulk(patient_ids.zip)
+      SearchVaccinationRecordsInNHSJob.perform_bulk(ids.zip)
+    end
   end
 end

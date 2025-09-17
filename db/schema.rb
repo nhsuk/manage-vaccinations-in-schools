@@ -358,10 +358,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_074716) do
     t.index ["uploaded_by_user_id"], name: "index_immunisation_imports_on_uploaded_by_user_id"
   end
 
-  create_table "immunisation_imports_patient_sessions", id: false, force: :cascade do |t|
+  create_table "immunisation_imports_patient_locations", id: false, force: :cascade do |t|
     t.bigint "immunisation_import_id", null: false
-    t.bigint "patient_session_id", null: false
-    t.index ["immunisation_import_id", "patient_session_id"], name: "idx_on_immunisation_import_id_patient_session_id_b5003c646e", unique: true
+    t.bigint "patient_location_id", null: false
+    t.index ["immunisation_import_id", "patient_location_id"], name: "idx_on_immunisation_import_id_patient_location_id_97ddfb7192", unique: true
   end
 
   create_table "immunisation_imports_patients", id: false, force: :cascade do |t|
@@ -536,6 +536,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_074716) do
     t.index ["status"], name: "index_patient_consent_statuses_on_status"
   end
 
+  create_table "patient_locations", force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "academic_year", null: false
+    t.bigint "location_id", null: false
+    t.index ["location_id", "academic_year"], name: "index_patient_locations_on_location_id_and_academic_year"
+    t.index ["location_id"], name: "index_patient_locations_on_location_id"
+    t.index ["patient_id", "location_id", "academic_year"], name: "idx_on_patient_id_location_id_academic_year_08a1dc4afe", unique: true
+  end
+
   create_table "patient_registration_statuses", force: :cascade do |t|
     t.integer "status", default: 0, null: false
     t.bigint "patient_id", null: false
@@ -544,15 +555,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_074716) do
     t.index ["patient_id"], name: "index_patient_registration_statuses_on_patient_id"
     t.index ["session_id"], name: "index_patient_registration_statuses_on_session_id"
     t.index ["status"], name: "index_patient_registration_statuses_on_status"
-  end
-
-  create_table "patient_sessions", force: :cascade do |t|
-    t.bigint "session_id", null: false
-    t.bigint "patient_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["patient_id", "session_id"], name: "index_patient_sessions_on_patient_id_and_session_id", unique: true
-    t.index ["session_id"], name: "index_patient_sessions_on_session_id"
   end
 
   create_table "patient_specific_directions", force: :cascade do |t|
@@ -796,6 +798,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_074716) do
     t.boolean "requires_registration", default: true, null: false
     t.boolean "psd_enabled", default: false, null: false
     t.boolean "national_protocol_enabled", default: false, null: false
+    t.index ["location_id", "academic_year", "team_id"], name: "index_sessions_on_location_id_and_academic_year_and_team_id"
     t.index ["location_id"], name: "index_sessions_on_location_id"
     t.index ["team_id", "academic_year"], name: "index_sessions_on_team_id_and_academic_year"
     t.index ["team_id", "location_id"], name: "index_sessions_on_team_id_and_location_id"
@@ -1013,8 +1016,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_074716) do
   add_foreign_key "identity_checks", "vaccination_records", on_delete: :cascade
   add_foreign_key "immunisation_imports", "teams"
   add_foreign_key "immunisation_imports", "users", column: "uploaded_by_user_id"
-  add_foreign_key "immunisation_imports_patient_sessions", "immunisation_imports"
-  add_foreign_key "immunisation_imports_patient_sessions", "patient_sessions"
+  add_foreign_key "immunisation_imports_patient_locations", "immunisation_imports"
+  add_foreign_key "immunisation_imports_patient_locations", "patient_locations"
   add_foreign_key "immunisation_imports_patients", "immunisation_imports"
   add_foreign_key "immunisation_imports_patients", "patients"
   add_foreign_key "immunisation_imports_sessions", "immunisation_imports"
@@ -1037,10 +1040,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_074716) do
   add_foreign_key "patient_changesets", "patients"
   add_foreign_key "patient_consent_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_consent_statuses", "programmes"
+  add_foreign_key "patient_locations", "locations"
+  add_foreign_key "patient_locations", "patients"
   add_foreign_key "patient_registration_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_registration_statuses", "sessions", on_delete: :cascade
-  add_foreign_key "patient_sessions", "patients"
-  add_foreign_key "patient_sessions", "sessions"
   add_foreign_key "patient_specific_directions", "patients"
   add_foreign_key "patient_specific_directions", "programmes"
   add_foreign_key "patient_specific_directions", "teams"

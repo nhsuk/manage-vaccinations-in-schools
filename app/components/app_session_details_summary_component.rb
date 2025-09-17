@@ -14,17 +14,12 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
   attr_reader :session
 
   delegate :govuk_summary_list, to: :helpers
-  delegate :programmes, to: :session
+  delegate :programmes, :academic_year, to: :session
 
-  def patient_sessions
-    session
-      .patient_sessions
-      .joins(:patient, :session)
-      .appear_in_programmes(programmes)
-  end
+  def patients = session.patients
 
   def cohort_row
-    count = patient_sessions.count
+    count = patients.count
 
     { key: { text: "Cohort" }, value: { text: I18n.t("children", count:) } }
   end
@@ -33,7 +28,11 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
     status = "refused"
 
     count =
-      patient_sessions.has_consent_status(status, programme: programmes).count
+      patients.has_consent_status(
+        status,
+        programme: programmes,
+        academic_year:
+      ).count
 
     href = session_consent_path(session, consent_statuses: [status])
 

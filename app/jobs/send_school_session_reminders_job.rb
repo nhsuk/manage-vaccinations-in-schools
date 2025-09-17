@@ -22,7 +22,7 @@ class SendSchoolSessionRemindersJob < ApplicationJob
             SessionNotification
               .where(session:)
               .where(
-                "session_notifications.patient_id = patient_sessions.patient_id"
+                "session_notifications.patient_id = patient_locations.patient_id"
               )
               .where(session_date: date)
               .arel

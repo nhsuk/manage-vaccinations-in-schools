@@ -37,10 +37,11 @@ class ConsentFormsController < ApplicationController
 
     session =
       @patient
-        .pending_sessions
+        .sessions
         .includes(:location_programme_year_groups, :programmes)
         .has_programmes(@consent_form.programmes)
-        .first || @consent_form.original_session
+        .find_by(academic_year: AcademicYear.pending) ||
+        @consent_form.original_session
 
     programme = session.programmes_for(patient: @patient).first
 
@@ -136,7 +137,6 @@ class ConsentFormsController < ApplicationController
     @patient =
       policy_scope(Patient).includes(
         parent_relationships: :parent,
-        pending_sessions: :programmes,
         vaccination_records: :programme
       ).find(params[:patient_id])
   end

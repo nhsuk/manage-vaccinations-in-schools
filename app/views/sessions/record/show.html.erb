@@ -24,10 +24,10 @@
       <%= render AppSessionNeedsReviewWarningComponent.new(session: @session) %>
       <%= render AppVaccinationsSummaryTableComponent.new(current_user:, session: @session, request_session: session) %>
       <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
-        <% @patient_sessions.each do |patient_session| %>
+        <% @patients.each do |patient| %>
           <%= render AppPatientSessionSearchResultCardComponent.new(
-                patient: patient_session.patient,
-                session: patient_session.session,
+                patient:,
+                session: @session,
                 context: :record,
                 programmes: @form.programmes,
               ) %>

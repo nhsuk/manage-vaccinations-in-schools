@@ -34,7 +34,7 @@ class ImmunisationImport < ApplicationRecord
   include CSVImportable
 
   has_and_belongs_to_many :batches
-  has_and_belongs_to_many :patient_sessions
+  has_and_belongs_to_many :patient_locations
   has_and_belongs_to_many :sessions
   has_and_belongs_to_many :vaccination_records
 
@@ -57,7 +57,7 @@ class ImmunisationImport < ApplicationRecord
     @vaccination_records_batch ||= Set.new
     @batches_batch ||= Set.new
     @patients_batch ||= Set.new
-    @patient_sessions_batch ||= Set.new
+    @patient_locations_batch ||= Set.new
 
     @vaccination_records_batch.add(vaccination_record)
     if (batch = vaccination_record.batch)
@@ -65,8 +65,8 @@ class ImmunisationImport < ApplicationRecord
     end
     @patients_batch.add(vaccination_record.patient)
 
-    if (patient_session = row.to_patient_session)
-      @patient_sessions_batch.add(patient_session)
+    if (patient_location = row.to_patient_location)
+      @patient_locations_batch.add(patient_location)
     end
 
     count_column_to_increment
@@ -78,16 +78,16 @@ class ImmunisationImport < ApplicationRecord
     # We need to convert the batch to an array as `import` modifies the
     # objects to add IDs to any new records.
     vaccination_records = @vaccination_records_batch.to_a
-    patient_sessions = @patient_sessions_batch.to_a
+    patient_locations = @patient_locations_batch.to_a
 
     VaccinationRecord.import(vaccination_records, on_duplicate_key_update: :all)
-    PatientSession.import(patient_sessions, on_duplicate_key_ignore: :all)
+    PatientLocation.import(patient_locations, on_duplicate_key_ignore: :all)
 
     [
       [:vaccination_records, vaccination_records],
       [:batches, @batches_batch],
       [:patients, @patients_batch],
-      [:patient_sessions, patient_sessions.select { it.id.present? }]
+      [:patient_locations, patient_locations.select { it.id.present? }]
     ].each do |association, collection|
       link_records_by_type(association, collection)
       collection.clear

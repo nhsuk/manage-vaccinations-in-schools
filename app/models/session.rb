@@ -20,9 +20,10 @@
 #
 # Indexes
 #
-#  index_sessions_on_location_id                (location_id)
-#  index_sessions_on_team_id_and_academic_year  (team_id,academic_year)
-#  index_sessions_on_team_id_and_location_id    (team_id,location_id)
+#  index_sessions_on_location_id                                (location_id)
+#  index_sessions_on_location_id_and_academic_year_and_team_id  (location_id,academic_year,team_id)
+#  index_sessions_on_team_id_and_academic_year                  (team_id,academic_year)
+#  index_sessions_on_team_id_and_location_id                    (team_id,location_id)
 #
 # Foreign Keys
 #
@@ -39,7 +40,6 @@ class Session < ApplicationRecord
 
   has_many :consent_notifications
   has_many :notes
-  has_many :patient_sessions
   has_many :session_dates, -> { order(:value) }
   has_many :session_notifications
   has_many :session_programmes,
@@ -49,12 +49,16 @@ class Session < ApplicationRecord
 
   has_and_belongs_to_many :immunisation_imports
 
+  has_many :patient_locations,
+           -> { where(academic_year: it.academic_year) },
+           through: :location
+
   has_one :organisation, through: :team
   has_one :subteam, through: :location
   has_many :pre_screenings, through: :session_dates
   has_many :programmes, through: :session_programmes
   has_many :gillick_assessments, through: :session_dates
-  has_many :patients, through: :patient_sessions
+  has_many :patients, through: :patient_locations
   has_many :vaccines, through: :programmes
 
   has_many :location_programme_year_groups,
@@ -62,6 +66,24 @@ class Session < ApplicationRecord
            through: :location
 
   accepts_nested_attributes_for :session_dates, allow_destroy: true
+
+  scope :joins_patient_locations, -> { joins(<<-SQL) }
+    INNER JOIN patient_locations
+    ON patient_locations.location_id = sessions.location_id
+    AND patient_locations.academic_year = sessions.academic_year
+  SQL
+
+  scope :joins_patients, -> { joins(<<-SQL) }
+    INNER JOIN patients
+    ON patients.id = patient_locations.patient_id
+  SQL
+
+  scope :joins_location_programme_year_groups, -> { joins(<<-SQL) }
+    INNER JOIN location_programme_year_groups
+    ON location_programme_year_groups.location_id = sessions.location_id
+    AND location_programme_year_groups.programme_id = session_programmes.programme_id
+    AND location_programme_year_groups.year_group = sessions.academic_year - patients.birth_academic_year - #{Integer::AGE_CHILDREN_START_SCHOOL}
+  SQL
 
   scope :has_date,
         ->(value) { where(SessionDate.for_session.where(value:).arel.exists) }
@@ -174,17 +196,26 @@ class Session < ApplicationRecord
 
   delegate :clinic?, :generic_clinic?, :school?, to: :location
 
-  def to_param
-    slug
+  def programme_birth_academic_years
+    @programme_birth_academic_years ||=
+      ProgrammeBirthAcademicYears.new(programme_year_groups, academic_year:)
   end
 
-  def today?
-    dates.any?(&:today?)
+  def patients
+    birth_academic_years =
+      location_programme_year_groups.pluck_birth_academic_years(academic_year:)
+
+    Patient
+      .joins_sessions
+      .where(sessions: { id: })
+      .where(birth_academic_year: birth_academic_years)
   end
 
-  def unscheduled?
-    dates.empty?
-  end
+  def to_param = slug
+
+  def today? = dates.any?(&:today?)
+
+  def unscheduled? = dates.empty?
 
   def completed?
     return false if dates.empty?
@@ -301,7 +332,7 @@ class Session < ApplicationRecord
   def next_reminder_date = next_reminder_dates.first
 
   def patients_with_no_consent_response_count
-    patient_sessions.has_consent_status(
+    patient_locations.has_consent_status(
       "no_response",
       programme: programmes
     ).count

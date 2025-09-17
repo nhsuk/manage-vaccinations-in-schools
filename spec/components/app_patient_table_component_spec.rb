@@ -77,7 +77,7 @@ describe AppPatientTableComponent do
     let(:team) { current_user.selected_team }
     let(:session) { create(:session, team:) }
 
-    before { create(:patient_session, patient: patients.first, session:) }
+    before { create(:patient_location, patient: patients.first, session:) }
 
     it "renders links" do
       expect(rendered).to have_link("SMITH, John")

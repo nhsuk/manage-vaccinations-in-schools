@@ -41,7 +41,7 @@ describe "Programme" do
     # To make it realistic we'll also add patients to clinics.
     Patient.find_each do |patient|
       create(
-        :patient_session,
+        :patient_location,
         patient:,
         session:
           @team.generic_clinic_session(academic_year: AcademicYear.current)

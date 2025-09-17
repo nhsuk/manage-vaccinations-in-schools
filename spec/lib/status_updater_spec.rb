@@ -5,7 +5,9 @@ describe StatusUpdater do
 
   around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
 
-  before { create(:patient_session, patient:, programmes:) }
+  let(:session) { create(:session, programmes:) }
+
+  before { create(:patient_location, patient:, session:) }
 
   context "with an HPV session and ineligible patient" do
     let(:programmes) { [create(:programme, :hpv)] }

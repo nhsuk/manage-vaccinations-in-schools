@@ -2,12 +2,17 @@
 
 class StatusUpdater
   def initialize(patient: nil, session: nil)
-    scope = PatientSession
+    scope = PatientLocation.joins_sessions
 
     scope = scope.where(patient:) if patient
-    scope = scope.where(session:) if session
 
-    @patient_sessions = scope
+    if session.is_a?(Session)
+      scope = scope.where(sessions: { id: session.id })
+    elsif session
+      scope = scope.where(sessions: { id: session.pluck(:id) })
+    end
+
+    @patient_locations = scope
   end
 
   def call
@@ -23,7 +28,7 @@ class StatusUpdater
 
   private
 
-  attr_reader :patient_sessions
+  attr_reader :patient_locations
 
   def update_consent_statuses!
     Patient::ConsentStatus.import!(
@@ -33,7 +38,7 @@ class StatusUpdater
     )
 
     Patient::ConsentStatus
-      .where(patient: patient_sessions.select(:patient_id))
+      .where(patient: patient_locations.select(:patient_id))
       .includes(:consents, :patient, :programme, :vaccination_records)
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)
@@ -51,14 +56,14 @@ class StatusUpdater
   def update_registration_statuses!
     Patient::RegistrationStatus.import!(
       %i[patient_id session_id],
-      patient_session_statuses_to_import,
+      patient_location_statuses_to_import,
       on_duplicate_key_ignore: true
     )
 
     Patient::RegistrationStatus
       .where(
-        patient: patient_sessions.select(:patient_id),
-        session: patient_sessions.select(:session_id)
+        "(patient_id, session_id) IN (?)",
+        patient_locations.select("patient_id", "sessions.id")
       )
       .includes(
         :patient,
@@ -87,7 +92,7 @@ class StatusUpdater
     )
 
     Patient::TriageStatus
-      .where(patient: patient_sessions.select(:patient_id))
+      .where(patient: patient_locations.select(:patient_id))
       .includes(:patient, :programme, :consents, :triages, :vaccination_records)
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)
@@ -110,7 +115,7 @@ class StatusUpdater
     )
 
     Patient::VaccinationStatus
-      .where(patient: patient_sessions.select(:patient_id))
+      .where(patient: patient_locations.select(:patient_id))
       .includes(
         :patient,
         :programme,
@@ -138,7 +143,7 @@ class StatusUpdater
 
   def patient_statuses_to_import
     @patient_statuses_to_import ||=
-      patient_sessions
+      patient_locations
         .joins(:patient)
         .pluck(:patient_id, :"patients.birth_academic_year")
         .uniq
@@ -164,15 +169,15 @@ class StatusUpdater
     end
   end
 
-  def patient_session_statuses_to_import
-    patient_sessions
-      .joins(:patient, :session)
+  def patient_location_statuses_to_import
+    patient_locations
+      .joins(:patient)
       .pluck(
-        :"patients.id",
-        :"sessions.id",
-        :"sessions.location_id",
-        :"sessions.academic_year",
-        :"patients.birth_academic_year"
+        "patients.id",
+        "sessions.id",
+        "sessions.location_id",
+        "sessions.academic_year",
+        "patients.birth_academic_year"
       )
       .filter_map do |patient_id, session_id, location_id, academic_year, birth_academic_year|
         year_group = birth_academic_year.to_year_group(academic_year:)
@@ -202,7 +207,6 @@ class StatusUpdater
   def programme_ids_per_location_id_and_year_group
     @programme_ids_per_location_id_and_year_group ||=
       LocationProgrammeYearGroup
-        .distinct
         .pluck(:location_id, :programme_id, :year_group)
         .each_with_object({}) do |(location_id, programme_id, year_group), hash|
           hash[location_id] ||= {}

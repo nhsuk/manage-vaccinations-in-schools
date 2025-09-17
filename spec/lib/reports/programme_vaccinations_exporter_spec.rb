@@ -211,7 +211,7 @@ describe Reports::ProgrammeVaccinationsExporter do
         end
 
         context "with a vaccinated patient outside the date range" do
-          let(:patient) { create(:patient_session, session:).patient }
+          let(:patient) { create(:patient_location, session:).patient }
           let(:start_date) { Date.current }
 
           before do
@@ -230,7 +230,7 @@ describe Reports::ProgrammeVaccinationsExporter do
         end
 
         context "with a vaccination for a different programme" do
-          let(:patient) { create(:patient_session, session:).patient }
+          let(:patient) { create(:patient_location, session:).patient }
 
           let(:other_programme) do
             create(
@@ -252,7 +252,7 @@ describe Reports::ProgrammeVaccinationsExporter do
         end
 
         context "with a vaccinated patient that was updated in the date range" do
-          let(:patient) { create(:patient_session, session:).patient }
+          let(:patient) { create(:patient_location, session:).patient }
           let(:start_date) { 1.day.ago }
 
           before do

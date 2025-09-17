@@ -143,7 +143,7 @@ describe ImmunisationImport do
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(11)
           .and change(immunisation_import.batches, :count).by(4)
-          .and not_change(immunisation_import.patient_sessions, :count)
+          .and not_change(immunisation_import.patient_locations, :count)
 
         # Second import should not duplicate the vaccination records if they're
         # identical.
@@ -153,7 +153,7 @@ describe ImmunisationImport do
           .to not_change(immunisation_import, :processed_at)
           .and not_change(VaccinationRecord, :count)
           .and not_change(Patient, :count)
-          .and not_change(PatientSession, :count)
+          .and not_change(PatientLocation, :count)
           .and not_change(Batch, :count)
       end
 
@@ -197,7 +197,7 @@ describe ImmunisationImport do
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(10)
           .and change(immunisation_import.batches, :count).by(8)
-          .and not_change(immunisation_import.patient_sessions, :count)
+          .and not_change(immunisation_import.patient_locations, :count)
 
         # Second import should not duplicate the vaccination records if they're
         # identical.
@@ -207,7 +207,7 @@ describe ImmunisationImport do
           .to not_change(immunisation_import, :processed_at)
           .and not_change(VaccinationRecord, :count)
           .and not_change(Patient, :count)
-          .and not_change(PatientSession, :count)
+          .and not_change(PatientLocation, :count)
           .and not_change(Batch, :count)
       end
 
@@ -257,7 +257,7 @@ describe ImmunisationImport do
           .and change(immunisation_import.vaccination_records, :count).by(4)
           .and change(immunisation_import.patients, :count).by(4)
           .and change(immunisation_import.batches, :count).by(1)
-          .and not_change(immunisation_import.patient_sessions, :count)
+          .and not_change(immunisation_import.patient_locations, :count)
 
         # Second import should not duplicate the vaccination records if they're
         # identical.
@@ -267,7 +267,7 @@ describe ImmunisationImport do
           .to not_change(immunisation_import, :processed_at)
           .and not_change(VaccinationRecord, :count)
           .and not_change(Patient, :count)
-          .and not_change(PatientSession, :count)
+          .and not_change(PatientLocation, :count)
           .and not_change(Batch, :count)
       end
     end

@@ -4,7 +4,7 @@ class PatientSessions::BaseController < ApplicationController
   before_action :set_session
   before_action :set_academic_year
   before_action :set_patient
-  before_action :set_patient_session
+  before_action :set_patient_location
   before_action :set_programme
   before_action :set_breadcrumb_item
 
@@ -34,9 +34,13 @@ class PatientSessions::BaseController < ApplicationController
       )
   end
 
-  def set_patient_session
-    @patient_session =
-      PatientSession.find_by!(patient: @patient, session: @session)
+  def set_patient_location
+    @patient_location =
+      PatientLocation.find_by!(
+        patient: @patient,
+        location: @session.location,
+        academic_year: @session.academic_year
+      )
   end
 
   def set_programme

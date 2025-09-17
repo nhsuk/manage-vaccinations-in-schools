@@ -105,7 +105,7 @@ describe Patient::VaccinationStatus do
 
     before do
       patient.strict_loading!(false)
-      create(:patient_session, patient:, session:)
+      create(:patient_location, patient:, session:)
     end
 
     let(:session) { create(:session, programmes: [programme]) }

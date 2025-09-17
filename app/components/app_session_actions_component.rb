@@ -19,12 +19,7 @@ class AppSessionActionsComponent < ViewComponent::Base
   delegate :govuk_summary_list, to: :helpers
   delegate :academic_year, :programmes, to: :session
 
-  def patient_sessions
-    session
-      .patient_sessions
-      .joins(:patient, :session)
-      .appear_in_programmes(programmes)
-  end
+  def patients = session.patients
 
   def rows
     @rows ||= [
@@ -38,7 +33,7 @@ class AppSessionActionsComponent < ViewComponent::Base
   end
 
   def no_nhs_number_row
-    count = patient_sessions.merge(Patient.without_nhs_number).count
+    count = patients.without_nhs_number.count
     href = session_patients_path(session, missing_nhs_number: true)
 
     generate_row(:children_without_nhs_number, count:, href:)
@@ -47,7 +42,11 @@ class AppSessionActionsComponent < ViewComponent::Base
   def no_consent_response_row
     status = "no_response"
     count =
-      patient_sessions.has_consent_status(status, programme: programmes).count
+      patients.has_consent_status(
+        status,
+        programme: programmes,
+        academic_year:
+      ).count
     href = session_consent_path(session, consent_statuses: [status])
     actions = [
       {
@@ -61,7 +60,11 @@ class AppSessionActionsComponent < ViewComponent::Base
   def conflicting_consent_row
     status = "conflicts"
     count =
-      patient_sessions.has_consent_status(status, programme: programmes).count
+      patients.has_consent_status(
+        status,
+        programme: programmes,
+        academic_year:
+      ).count
     href = session_consent_path(session, consent_statuses: [status])
 
     generate_row(:children_with_conflicting_consent_response, count:, href:)
@@ -70,7 +73,11 @@ class AppSessionActionsComponent < ViewComponent::Base
   def triage_required_row
     status = "required"
     count =
-      patient_sessions.has_triage_status(status, programme: programmes).count
+      patients.has_triage_status(
+        status,
+        programme: programmes,
+        academic_year:
+      ).count
     href = session_triage_path(session, triage_status: status)
 
     generate_row(:children_requiring_triage, count:, href:)
@@ -80,7 +87,7 @@ class AppSessionActionsComponent < ViewComponent::Base
     return nil unless session.requires_registration? && session.today?
 
     status = "unknown"
-    count = patient_sessions.has_registration_status(status).count
+    count = patients.has_registration_status(status, session:).count
     href = session_register_path(session, register_status: status)
 
     generate_row(:children_to_register, count:, href:)
@@ -91,13 +98,11 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     counts_by_programme =
       session.programmes.index_with do |programme|
-        patient_sessions
-          .has_registration_status(%w[attending completed])
-          .includes(
-            patient: %i[consent_statuses triage_statuses vaccination_statuses]
-          )
-          .count do |patient_session|
-            patient_session.patient.consent_given_and_safe_to_vaccinate?(
+        patients
+          .has_registration_status(%w[attending completed], session:)
+          .includes(:consent_statuses, :triage_statuses, :vaccination_statuses)
+          .count do |patient|
+            patient.consent_given_and_safe_to_vaccinate?(
               programme:,
               academic_year:
             )
