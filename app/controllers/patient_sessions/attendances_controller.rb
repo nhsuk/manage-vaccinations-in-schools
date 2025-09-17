@@ -29,11 +29,8 @@ class PatientSessions::AttendancesController < PatientSessions::BaseController
         t("attendance_flash.absent", name:)
       end
 
-      redirect_to session_patient_programme_path(
-                    @session,
-                    @patient,
-                    @patient_session.programmes.first
-                  )
+      programme = @session.programmes_for(patient: @patient).first
+      redirect_to session_patient_programme_path(@session, @patient, programme)
     else
       render :edit, status: :unprocessable_content
     end

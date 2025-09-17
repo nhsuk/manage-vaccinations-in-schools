@@ -15,8 +15,9 @@ class AppPatientSessionOutcomeComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(patient_session, programme:)
-    @patient_session = patient_session
+  def initialize(patient:, session:, programme:)
+    @patient = patient
+    @session = session
     @programme = programme
   end
 
@@ -29,9 +30,8 @@ class AppPatientSessionOutcomeComponent < ViewComponent::Base
 
   private
 
-  attr_reader :patient_session, :programme
+  attr_reader :patient, :session, :programme
 
-  delegate :patient, :session, to: :patient_session
   delegate :academic_year, to: :session
 
   def colour

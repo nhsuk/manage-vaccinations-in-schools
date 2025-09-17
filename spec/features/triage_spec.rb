@@ -147,11 +147,7 @@ describe "Triage" do
 
   def and_a_patient_who_needs_triage_exists
     @patient_triage_needed =
-      create(
-        :patient_session,
-        :consent_given_triage_needed,
-        session: @session
-      ).patient
+      create(:patient, :consent_given_triage_needed, session: @session)
 
     create(
       :consent,
@@ -168,10 +164,10 @@ describe "Triage" do
   def and_a_patient_with_nasal_consent_who_needs_triage_exists
     @patient_triage_needed =
       create(
-        :patient_session,
+        :patient,
         :consent_given_nasal_only_triage_needed,
         session: @session
-      ).patient
+      )
 
     @patient_triage_needed.reload # Make sure both consents are accessible
   end
@@ -179,17 +175,17 @@ describe "Triage" do
   def and_patients_with_different_flu_consent_types_exist
     @patient_injection_only =
       create(
-        :patient_session,
+        :patient,
         :consent_given_injection_only_triage_needed,
         session: @session
-      ).patient
+      )
 
     @patient_nasal_only =
       create(
-        :patient_session,
+        :patient,
         :consent_given_nasal_only_triage_needed,
         session: @session
-      ).patient
+      )
 
     @patient_injection_only.reload
     @patient_nasal_only.reload
@@ -197,11 +193,7 @@ describe "Triage" do
 
   def and_a_patient_who_doesnt_need_triage_exists
     @patient_triage_not_needed =
-      create(
-        :patient_session,
-        :consent_given_triage_not_needed,
-        session: @session
-      ).patient
+      create(:patient, :consent_given_triage_not_needed, session: @session)
   end
 
   def and_i_am_signed_in

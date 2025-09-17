@@ -21,7 +21,6 @@ minimum_web_replicas     = 1
 maximum_web_replicas     = 2
 minimum_sidekiq_replicas = 1
 maximum_sidekiq_replicas = 2
-good_job_replicas        = 1
 
 # Valkey serverless configuration - minimal settings for sandbox
 valkey_node_type          = "cache.t4g.micro"

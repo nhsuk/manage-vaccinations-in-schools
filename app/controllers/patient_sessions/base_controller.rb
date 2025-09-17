@@ -36,21 +36,19 @@ class PatientSessions::BaseController < ApplicationController
 
   def set_patient_session
     @patient_session =
-      PatientSession.find_by!(patient_id: @patient.id, session_id: @session.id)
-
-    # Assigned to already loaded objects
-    @patient_session.patient = @patient
-    @patient_session.session = @session
+      PatientSession.find_by!(patient: @patient, session: @session)
   end
 
   def set_programme
     return unless params.key?(:programme_type) || params.key?(:type)
 
     @programme =
-      @patient_session.programmes.find do |programme|
-        programme.type == params[:programme_type] ||
-          programme.type == params[:type]
-      end
+      @session
+        .programmes_for(patient: @patient)
+        .find do |programme|
+          programme.type == params[:programme_type] ||
+            programme.type == params[:type]
+        end
 
     raise ActiveRecord::RecordNotFound if @programme.nil?
   end

@@ -33,13 +33,14 @@
 #
 # Indexes
 #
-#  index_patients_on_family_name_trigram  (family_name) USING gin
-#  index_patients_on_given_name_trigram   (given_name) USING gin
-#  index_patients_on_gp_practice_id       (gp_practice_id)
-#  index_patients_on_names_family_first   (family_name,given_name)
-#  index_patients_on_names_given_first    (given_name,family_name)
-#  index_patients_on_nhs_number           (nhs_number) UNIQUE
-#  index_patients_on_school_id            (school_id)
+#  index_patients_on_family_name_trigram        (family_name) USING gin
+#  index_patients_on_given_name_trigram         (given_name) USING gin
+#  index_patients_on_gp_practice_id             (gp_practice_id)
+#  index_patients_on_names_family_first         (family_name,given_name)
+#  index_patients_on_names_given_first          (given_name,family_name)
+#  index_patients_on_nhs_number                 (nhs_number) UNIQUE
+#  index_patients_on_pending_changes_not_empty  (id) WHERE (pending_changes <> '{}'::jsonb)
+#  index_patients_on_school_id                  (school_id)
 #
 # Foreign Keys
 #
@@ -704,6 +705,75 @@ describe Patient do
       before { create(:patient_specific_direction, patient:) }
 
       it { should be(false) }
+    end
+  end
+
+  describe "#next_activity" do
+    subject { patient.next_activity(programme:, academic_year:) }
+
+    let(:patient) { create(:patient) }
+    let(:programme) { create(:programme) }
+    let(:academic_year) { AcademicYear.current }
+
+    context "with no consent" do
+      it { should be(:consent) }
+    end
+
+    context "with consent refused" do
+      before { create(:patient_consent_status, :refused, patient:, programme:) }
+
+      it { should be(:do_not_record) }
+    end
+
+    context "with triaged as do not vaccinate" do
+      before do
+        create(:patient_consent_status, :given, patient:, programme:)
+        create(:patient_triage_status, :do_not_vaccinate, patient:, programme:)
+      end
+
+      it { should be(:do_not_record) }
+    end
+
+    context "with consent needing triage" do
+      before do
+        create(:patient_consent_status, :given, patient:, programme:)
+        create(:patient_triage_status, :required, patient:, programme:)
+      end
+
+      it { should be(:triage) }
+    end
+
+    context "with triaged as safe to vaccinate" do
+      before do
+        create(:patient_consent_status, :given, patient:, programme:)
+        create(:patient_triage_status, :safe_to_vaccinate, patient:, programme:)
+      end
+
+      it { should be(:record) }
+    end
+
+    context "with consent no triage needed" do
+      before { create(:patient_consent_status, :given, patient:, programme:) }
+
+      it { should be(:record) }
+    end
+
+    context "with an administered vaccination record" do
+      before do
+        create(:patient_consent_status, :given, patient:, programme:)
+        create(:patient_vaccination_status, :vaccinated, patient:, programme:)
+      end
+
+      it { should be_nil }
+    end
+
+    context "with an un-administered vaccination record" do
+      before do
+        create(:patient_consent_status, :given, patient:, programme:)
+        create(:patient_vaccination_status, patient:, programme:)
+      end
+
+      it { should be(:record) }
     end
   end
 

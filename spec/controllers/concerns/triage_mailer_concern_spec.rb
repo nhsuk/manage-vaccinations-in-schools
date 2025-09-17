@@ -11,8 +11,6 @@ describe TriageMailerConcern do
         @current_user = current_user
       end
     end
-
-    patient_session.strict_loading!(false)
   end
 
   let(:sample) { SampleClass.new(current_user:) }
@@ -20,19 +18,23 @@ describe TriageMailerConcern do
 
   let(:programme) { create(:programme) }
   let(:programmes) { [programme] }
-  let(:patient) { patient_session.patient }
 
   describe "#send_triage_confirmation" do
     subject(:send_triage_confirmation) do
-      sample.send_triage_confirmation(patient_session, programme, consent)
+      sample.send_triage_confirmation(patient, session, programme, consent)
     end
 
     let(:session) { create(:session, programmes:) }
     let(:consent) { patient.consents.first }
 
     context "when the parents agree, triage is required and it is safe to vaccinate" do
-      let(:patient_session) do
-        create(:patient_session, :triaged_ready_to_vaccinate, session:)
+      let(:patient) do
+        create(
+          :patient,
+          :consent_given_triage_needed,
+          :triage_ready_to_vaccinate,
+          session:
+        )
       end
 
       it "sends an email saying triage was needed and vaccination will happen" do
@@ -47,8 +49,13 @@ describe TriageMailerConcern do
     end
 
     context "when the parents agree, triage is required but it isn't safe to vaccinate" do
-      let(:patient_session) do
-        create(:patient_session, :triaged_do_not_vaccinate, session:)
+      let(:patient) do
+        create(
+          :patient,
+          :consent_given_triage_needed,
+          :triage_do_not_vaccinate,
+          session:
+        )
       end
 
       it "sends an email saying triage was needed but vaccination won't happen" do
@@ -63,8 +70,13 @@ describe TriageMailerConcern do
     end
 
     context "when the parents agree, triage is required and vaccination should be delayed" do
-      let(:patient_session) do
-        create(:patient_session, :delay_vaccination, session:)
+      let(:patient) do
+        create(
+          :patient,
+          :consent_given_triage_needed,
+          :triage_delay_vaccination,
+          session:
+        )
       end
 
       it "sends an email saying triage was needed but vaccination won't happen" do
@@ -78,7 +90,7 @@ describe TriageMailerConcern do
       end
 
       context "when the team is Coventry & Warwickshire Partnership NHS Trust (CWPT)" do
-        let(:session) { create(:session, programmes: [programme], team:) }
+        let(:session) { create(:session, programmes:, team:) }
         let(:team) { create(:team, ods_code: "RYG") }
 
         it "enqueues an email using the CWPT-specific template" do
@@ -90,8 +102,8 @@ describe TriageMailerConcern do
     end
 
     context "when the parents agree and triage is not required" do
-      let(:patient_session) do
-        create(:patient_session, :consent_given_triage_not_needed, session:)
+      let(:patient) do
+        create(:patient, :consent_given_triage_not_needed, session:)
       end
 
       it "sends an email saying vaccination will happen" do
@@ -108,9 +120,7 @@ describe TriageMailerConcern do
     end
 
     context "when the parents agree, triage is required and a decision hasn't been made" do
-      let(:patient_session) do
-        create(:patient_session, :consent_given_triage_needed, session:)
-      end
+      let(:patient) { create(:patient, :consent_given_triage_needed, session:) }
 
       it "sends an email saying triage is required" do
         expect { send_triage_confirmation }.to have_delivered_email(
@@ -124,9 +134,7 @@ describe TriageMailerConcern do
     end
 
     context "when the patient didn't response" do
-      let(:patient_session) do
-        create(:patient_session, :consent_not_provided, session:)
-      end
+      let(:patient) { create(:patient, :consent_not_provided, session:) }
 
       it "doesn't send an email" do
         expect { send_triage_confirmation }.not_to have_delivered_email
@@ -138,15 +146,9 @@ describe TriageMailerConcern do
     end
 
     context "when the patient self-consented" do
-      let(:patient_session) { create(:patient_session, session:) }
+      let(:patient) { create(:patient, session:) }
       let(:consent) do
-        create(
-          :consent,
-          :self_consent,
-          :given,
-          patient: patient_session.patient,
-          programme:
-        )
+        create(:consent, :self_consent, :given, patient:, programme:)
       end
 
       it "doesn't send an email" do
@@ -159,9 +161,7 @@ describe TriageMailerConcern do
     end
 
     context "when the parents have verbally refused consent" do
-      let(:patient_session) do
-        create(:patient_session, :consent_refused, session:)
-      end
+      let(:patient) { create(:patient, :consent_refused, session:) }
 
       it "sends an email confirming they've refused consent" do
         expect { send_triage_confirmation }.to have_delivered_email(
@@ -185,7 +185,6 @@ describe TriageMailerConcern do
           programmes:
         )
       end
-      let(:patient_session) { create(:patient_session, patient:, session:) }
 
       it "doesn't send an email" do
         expect { send_triage_confirmation }.not_to have_delivered_email
@@ -205,7 +204,6 @@ describe TriageMailerConcern do
           programmes:
         )
       end
-      let(:patient_session) { create(:patient_session, patient:, session:) }
 
       it "doesn't send an email" do
         expect { send_triage_confirmation }.not_to have_delivered_email
@@ -225,7 +223,6 @@ describe TriageMailerConcern do
           programmes:
         )
       end
-      let(:patient_session) { create(:patient_session, patient:, session:) }
 
       it "doesn't send an email" do
         expect { send_triage_confirmation }.not_to have_delivered_email

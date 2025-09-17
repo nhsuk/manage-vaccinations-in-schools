@@ -3,17 +3,13 @@
 describe AppPatientSessionConsentComponent do
   subject { render_inline(component) }
 
-  let(:component) { described_class.new(patient_session, programme:) }
+  let(:component) { described_class.new(patient:, session:, programme:) }
 
   let(:programme) { create(:programme) }
   let(:session) { create(:session, programmes: [programme]) }
-  let(:patient_session) { create(:patient_session, session:) }
-  let(:patient) { patient_session.patient }
+  let(:patient) { create(:patient, session:) }
 
-  before do
-    patient_session.reload.strict_loading!(false)
-    stub_authorization(allowed: true)
-  end
+  before { stub_authorization(allowed: true) }
 
   context "without consent" do
     it { should_not have_content(/Consent (given|refused)/) }
@@ -40,7 +36,10 @@ describe AppPatientSessionConsentComponent do
   end
 
   context "with refused consent" do
-    let!(:consent) { create(:consent, :refused, patient:, programme:) }
+    let(:parent) { create(:parent_relationship, :mother, patient:).parent }
+    let!(:consent) do
+      create(:consent, :refused, patient: patient.reload, parent:, programme:)
+    end
 
     before { create(:patient_consent_status, :refused, patient:, programme:) }
 

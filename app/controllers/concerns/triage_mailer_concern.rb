@@ -3,13 +3,10 @@
 module TriageMailerConcern
   extend ActiveSupport::Concern
 
-  def send_triage_confirmation(patient_session, programme, consent)
+  def send_triage_confirmation(patient, session, programme, consent)
     if consent.programme_id != programme.id
       raise "Consent is for a different programme."
     end
-
-    session = patient_session.session
-    patient = patient_session.patient
 
     return unless patient.send_notifications?
     return if consent.via_self_consent?
@@ -24,7 +21,7 @@ module TriageMailerConcern
       email_template =
         resolve_email_template(
           :triage_vaccination_at_clinic,
-          patient_session.organisation
+          session.organisation
         )
       EmailDeliveryJob.perform_later(email_template, **params)
     elsif consent.requires_triage?

@@ -5,7 +5,7 @@ describe StatusGenerator::Session do
     described_class.new(
       session_id: patient_session.session_id,
       academic_year: patient_session.academic_year,
-      attendance_record: patient_session.attendance_records.last,
+      attendance_record: patient.attendance_records.last,
       programme:,
       patient:,
       consents: patient.consents,

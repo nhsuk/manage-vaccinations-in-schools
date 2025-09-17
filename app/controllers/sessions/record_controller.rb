@@ -16,8 +16,12 @@ class Sessions::RecordController < ApplicationController
   def show
     scope =
       @session.patient_sessions.includes(
-        :latest_note,
-        patient: %i[consent_statuses triage_statuses vaccination_statuses]
+        patient: [
+          :consent_statuses,
+          :triage_statuses,
+          :vaccination_statuses,
+          { notes: :created_by }
+        ]
       )
 
     if @session.requires_registration?

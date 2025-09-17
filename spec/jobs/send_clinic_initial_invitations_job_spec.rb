@@ -7,7 +7,7 @@ describe SendClinicInitialInvitationsJob do
   let(:programmes) { [create(:programme, :hpv)] }
   let(:team) { create(:team, programmes:) }
   let(:parents) { create_list(:parent, 2) }
-  let(:patient) { create(:patient, parents:, year_group: 9) }
+  let(:patient) { create(:patient, parents:, year_group: 9, session:) }
   let(:location) { create(:generic_clinic, team:) }
   let(:session) do
     create(
@@ -18,13 +18,13 @@ describe SendClinicInitialInvitationsJob do
       team:
     )
   end
-  let!(:patient_session) { create(:patient_session, patient:, session:) }
 
   around { |example| travel_to(today) { example.run } }
 
   it "sends a notification" do
     expect(SessionNotification).to receive(:create_and_send!).once.with(
-      patient_session:,
+      patient:,
+      session:,
       session_date: session.dates.first,
       type: :clinic_initial_invitation
     )

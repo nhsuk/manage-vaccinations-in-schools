@@ -14,59 +14,89 @@ class AppActivityLogComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(team:, patient: nil, patient_session: nil)
-    if patient.nil? && patient_session.nil?
-      raise "Pass either a patient or a patient session."
-    elsif patient && patient_session
-      raise "Pass only a patient or a patient session."
-    end
+  def initialize(team:, patient:, session: nil)
+    @patient = patient
 
-    @patient = patient || patient_session.patient
-    @patient_sessions =
-      patient_session ? [patient_session] : patient.patient_sessions
+    @archive_reasons =
+      @patient.archive_reasons.where(team:).includes(:created_by)
 
     @attendance_records =
-      (patient || patient_session).attendance_records.includes(:location)
+      (patient || patient_session)
+        .attendance_records
+        .includes(:location)
+        .then do |scope|
+          session ? scope.where(location: session.location) : scope
+        end
 
     @consents =
-      @patient.consents.includes(
-        :consent_form,
-        :parent,
-        :recorded_by,
-        :programme,
-        patient: :parent_relationships
-      )
+      @patient
+        .consents
+        .includes(
+          :consent_form,
+          :parent,
+          :recorded_by,
+          :programme,
+          patient: :parent_relationships
+        )
+        .then do |scope|
+          session ? scope.where(programme: session.programmes) : scope
+        end
 
     @gillick_assessments =
-      (patient || patient_session)
+      @patient
         .gillick_assessments
         .includes(:performed_by)
         .order(:created_at)
+        .then { |scope| session ? scope.where_session(session) : scope }
 
     @notes =
-      (patient || patient_session).notes.includes(
-        :created_by,
-        :patient,
-        session: :programmes
-      )
+      @patient
+        .notes
+        .includes(:created_by, :patient, session: :programmes)
+        .then { |scope| session ? scope.where(session:) : scope }
 
-    @notify_log_entries = @patient.notify_log_entries.includes(:sent_by)
+    @notify_log_entries =
+      @patient
+        .notify_log_entries
+        .includes(:sent_by)
+        .then do |scope|
+          session ? scope.where(programme_ids: session.programmes.ids) : scope
+        end
+
+    @patient_sessions =
+      @patient
+        .patient_sessions
+        .includes_programmes
+        .includes(session: :location)
+        .then { |scope| session ? scope.where(session:) : scope }
+
+    @patient_specific_directions =
+      @patient
+        .patient_specific_directions
+        .includes(:created_by)
+        .then do |scope|
+          session ? scope.where(programme: session.programmes) : scope
+        end
 
     @pre_screenings =
-      (patient || patient_session).pre_screenings.includes(:performed_by)
+      @patient
+        .pre_screenings
+        .includes(:performed_by)
+        .then { |scope| session ? scope.where_session(session) : scope }
 
-    @triages = @patient.triages.includes(:performed_by)
+    @triages =
+      @patient
+        .triages
+        .includes(:performed_by)
+        .then do |scope|
+          session ? scope.where(programme: session.programmes) : scope
+        end
 
     @vaccination_records =
       @patient.vaccination_records.with_discarded.includes(
         :performed_by_user,
         :vaccine
       )
-
-    @patient_specific_directions =
-      @patient.patient_specific_directions.includes(:created_by)
-
-    @archive_reasons = @patient.archive_reasons.where(team:)
   end
 
   attr_reader :archive_reasons,
@@ -216,9 +246,9 @@ class AppActivityLogComponent < ViewComponent::Base
         body =
           case category
           when :not_vaccinated
-            "#{@patient.full_name} was not vaccinated."
+            "#{patient.full_name} was not vaccinated."
           when :vaccinated_but_seasonal
-            "#{@patient.full_name} was vaccinated."
+            "#{patient.full_name} was vaccinated."
           end
 
         programmes = expired_items_in_category.values.flatten.uniq
@@ -317,11 +347,14 @@ class AppActivityLogComponent < ViewComponent::Base
 
   def session_events
     patient_sessions.map do |patient_session|
+      patient = patient_session.patient
+      session = patient_session.session
+
       [
         {
-          title: "Added to the session at #{patient_session.location.name}",
+          title: "Added to the session at #{session.location.name}",
           at: patient_session.created_at,
-          programmes: programmes_for(patient_session)
+          programmes: session.programmes_for(patient:)
         }
       ]
     end

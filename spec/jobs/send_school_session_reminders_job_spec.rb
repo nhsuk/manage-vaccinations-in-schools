@@ -9,13 +9,15 @@ describe SendSchoolSessionRemindersJob do
     create(:patient, :consent_given_triage_not_needed, parents:, programmes:)
   end
 
+  before { create(:patient_session, patient:, session:) }
+
   context "for an active session tomorrow" do
-    let!(:session) { create(:session, programmes:, date: Date.tomorrow) }
-    let(:patient_session) { create(:patient_session, patient:, session:) }
+    let(:session) { create(:session, :tomorrow, programmes:) }
 
     it "sends a notification" do
       expect(SessionNotification).to receive(:create_and_send!).once.with(
-        patient_session:,
+        patient:,
+        session:,
         session_date: Date.tomorrow,
         type: :school_reminder
       )
@@ -29,7 +31,8 @@ describe SendSchoolSessionRemindersJob do
 
       it "sends a notification" do
         expect(SessionNotification).to receive(:create_and_send!).once.with(
-          patient_session:,
+          patient:,
+          session:,
           session_date: Date.tomorrow,
           type: :school_reminder
         )
@@ -60,6 +63,7 @@ describe SendSchoolSessionRemindersJob do
     context "when already vaccinated" do
       before do
         create(:vaccination_record, patient:, programme: programmes.first)
+        StatusUpdater.call(patient:)
       end
 
       it "doesn't send any notifications" do
@@ -100,16 +104,7 @@ describe SendSchoolSessionRemindersJob do
     let(:team) { create(:team, programmes:) }
     let(:location) { create(:generic_clinic, team:) }
 
-    before do
-      create(
-        :session,
-        programmes:,
-        date: Date.tomorrow,
-        patients: [patient],
-        team:,
-        location:
-      )
-    end
+    let(:session) { create(:session, :tomorrow, programmes:, team:, location:) }
 
     it "doesn't send any notifications" do
       expect(SessionNotification).not_to receive(:create_and_send!)
@@ -118,9 +113,7 @@ describe SendSchoolSessionRemindersJob do
   end
 
   context "for a session today" do
-    before do
-      create(:session, programmes:, date: Time.zone.today, patients: [patient])
-    end
+    let(:session) { create(:session, :today, programmes:) }
 
     it "doesn't send any notifications" do
       expect(SessionNotification).not_to receive(:create_and_send!)
@@ -129,9 +122,7 @@ describe SendSchoolSessionRemindersJob do
   end
 
   context "for a session yesterday" do
-    before do
-      create(:session, programmes:, date: Date.yesterday, patients: [patient])
-    end
+    let(:session) { create(:session, :yesterday, programmes:) }
 
     it "doesn't send any notifications" do
       expect(SessionNotification).not_to receive(:create_and_send!)

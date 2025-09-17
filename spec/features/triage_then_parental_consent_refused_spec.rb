@@ -28,13 +28,7 @@ describe "Triage" do
     @session =
       create(:session, :scheduled, team: @team, programmes: [@programme])
 
-    @patient =
-      create(
-        :patient_session,
-        :consent_given_triage_needed,
-        programmes: [@programme],
-        session: @session
-      ).patient
+    @patient = create(:patient, :consent_given_triage_needed, session: @session)
   end
 
   def when_i_go_to_the_patient_that_needs_triage

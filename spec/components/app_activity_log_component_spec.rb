@@ -3,20 +3,12 @@
 describe AppActivityLogComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(patient_session:, team:) }
+  let(:component) { described_class.new(patient:, session:, team:) }
 
   let(:today) { Date.new(2026, 1, 1) }
 
   let(:programmes) { [create(:programme, :hpv), create(:programme, :flu)] }
   let(:team) { create(:team, programmes:) }
-  let(:patient_session) do
-    create(
-      :patient_session,
-      patient:,
-      session:,
-      created_at: Time.zone.parse("2025-05-29 12:00")
-    )
-  end
   let(:user) { create(:user, team:, family_name: "Joy", given_name: "Nurse") }
   let(:location) { create(:school, name: "Hogwarts") }
   let(:session) { create(:session, programmes:, location:) }
@@ -41,10 +33,15 @@ describe AppActivityLogComponent do
 
     create(:parent_relationship, :mother, parent: mum, patient:)
     create(:parent_relationship, :father, parent: dad, patient:)
-    patient.reload
 
-    patient_session.strict_loading!(false)
-    patient_session.patient.strict_loading!(false)
+    create(
+      :patient_session,
+      patient:,
+      session:,
+      created_at: Time.zone.parse("2025-05-29 12:00")
+    )
+
+    patient.reload
   end
 
   shared_examples "card" do |title:, date:, notes: nil, by: nil, programme: nil|
@@ -447,8 +444,6 @@ describe AppActivityLogComponent do
 
   describe "gillick assessments" do
     let(:programmes) { [create(:programme, :td_ipv)] }
-    let(:patient_session) { create(:patient_session, patient:, programmes:) }
-    let(:session) { patient_session.session }
 
     before do
       create(
@@ -511,14 +506,12 @@ describe AppActivityLogComponent do
   end
 
   describe "pre-screenings" do
-    let(:patient_session) { create(:patient_session, patient:, programmes:) }
-
     before do
       create(
         :pre_screening,
         performed_by: user,
         patient:,
-        session: patient_session.session,
+        session:,
         notes: "Some notes",
         created_at: Time.zone.local(2025, 6, 1, 12)
       )
@@ -559,15 +552,6 @@ describe AppActivityLogComponent do
       Programme.find_by(type: "flu") || create(:programme, :flu)
     end
     let(:programmes) { [hpv_programme, flu_programme] }
-
-    before do
-      create(
-        :patient_session,
-        patient:,
-        session: session_last_year,
-        created_at: Time.zone.parse("2024-05-29 12:00")
-      )
-    end
 
     context "with expired consent, triage, and PSD" do
       before do

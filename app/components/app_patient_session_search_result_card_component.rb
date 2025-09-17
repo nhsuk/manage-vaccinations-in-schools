@@ -42,10 +42,10 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               end
             end
 
-            if context != :patient_specific_direction && (note = patient_session.latest_note)
+            if context != :patient_specific_direction && latest_note
               summary_list.with_row do |row|
                 row.with_key { "Notes" }
-                row.with_value { render note_to_log_event(note) }
+                row.with_value { render note_to_log_event(latest_note) }
               end
             end
           end %>
@@ -59,7 +59,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(patient_session, context:, programmes: [])
+  def initialize(patient:, session:, context:, programmes: [])
     unless context.in?(
              %i[
                patients
@@ -73,23 +73,21 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       raise "Unknown context: #{context}"
     end
 
-    @patient_session = patient_session
-    @patient = patient_session.patient
-    @session = patient_session.session
-
+    @patient = patient
+    @session = session
     @context = context
 
     @programmes =
       if programmes.present?
-        patient_session.programmes.select { it.in?(programmes) }
+        session.programmes_for(patient:).select { it.in?(programmes) }
       else
-        patient_session.programmes
+        session.programmes_for(patient:)
       end
   end
 
   private
 
-  attr_reader :patient_session, :patient, :session, :context, :programmes
+  attr_reader :patient, :session, :context, :programmes
 
   delegate :govuk_button_to,
            :govuk_summary_list,
@@ -125,12 +123,14 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     return unless %i[register record].include?(context)
 
     next_activities =
-      patient_session.programmes.filter_map do |programme|
-        status = patient_session.next_activity(programme:)
-        next if status.nil?
+      session
+        .programmes_for(patient:)
+        .filter_map do |programme|
+          status = patient.next_activity(programme:, academic_year:)
+          next if status.nil?
 
-        "#{I18n.t(status, scope: :activity)} for #{programme.name_in_sentence}"
-      end
+          "#{I18n.t(status, scope: :activity)} for #{programme.name_in_sentence}"
+        end
 
     return if next_activities.empty?
 
@@ -231,7 +231,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       value:
         render(
           AppStatusTagComponent.new(
-            patient_session.registration_status&.status || "unknown",
+            patient.registration_status(session:)&.status || "unknown",
             context: :register
           )
         )
@@ -279,6 +279,14 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           )
         )
     }
+  end
+
+  def latest_note
+    patient
+      .notes
+      .sort_by(&:created_at)
+      .reverse
+      .find { it.session_id == session.id }
   end
 
   def note_to_log_event(note)

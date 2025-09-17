@@ -6,7 +6,7 @@ describe StatusGenerator::Registration do
       patient:,
       session:,
       attendance_record:
-        patient_session.attendance_records.find_by(date: session.dates.last),
+        patient.attendance_records.find_by(date: session.dates.last),
       vaccination_records: patient.vaccination_records
     )
   end

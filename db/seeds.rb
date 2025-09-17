@@ -96,15 +96,15 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
     year_groups.each do |year_group|
       patients_without_consent =
         FactoryBot.create_list(
-          :patient_session,
+          :patient,
           2,
           programmes: [programme],
           session:,
-          user:,
+          performed_by: user,
           year_group:
         )
-      unmatched_patients = patients_without_consent.sample(2).map(&:patient)
-      unmatched_patients.each do |patient|
+
+      patients_without_consent.each do |patient|
         FactoryBot.create(
           :consent_form,
           :recorded,
@@ -126,14 +126,14 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
       )
 
       traits = %i[
-        consent_given_triage_not_needed
-        consent_given_triage_needed
-        triaged_ready_to_vaccinate
-        consent_refused
         consent_conflicting
-        vaccinated
-        delay_vaccination
+        consent_given_triage_needed
+        consent_given_triage_not_needed
+        consent_refused
+        triage_delay_vaccination
+        triage_ready_to_vaccinate
         unable_to_vaccinate
+        vaccinated
       ]
 
       if programme.vaccinated_dose_sequence != 1
@@ -142,12 +142,12 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
 
       traits.each do |trait|
         FactoryBot.create_list(
-          :patient_session,
+          :patient,
           1,
           trait,
           programmes: [programme],
           session:,
-          user:,
+          performed_by: user,
           year_group:
         )
       end

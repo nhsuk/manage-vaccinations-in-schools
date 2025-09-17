@@ -33,13 +33,14 @@
 #
 # Indexes
 #
-#  index_patients_on_family_name_trigram  (family_name) USING gin
-#  index_patients_on_given_name_trigram   (given_name) USING gin
-#  index_patients_on_gp_practice_id       (gp_practice_id)
-#  index_patients_on_names_family_first   (family_name,given_name)
-#  index_patients_on_names_given_first    (given_name,family_name)
-#  index_patients_on_nhs_number           (nhs_number) UNIQUE
-#  index_patients_on_school_id            (school_id)
+#  index_patients_on_family_name_trigram        (family_name) USING gin
+#  index_patients_on_given_name_trigram         (given_name) USING gin
+#  index_patients_on_gp_practice_id             (gp_practice_id)
+#  index_patients_on_names_family_first         (family_name,given_name)
+#  index_patients_on_names_given_first          (given_name,family_name)
+#  index_patients_on_nhs_number                 (nhs_number) UNIQUE
+#  index_patients_on_pending_changes_not_empty  (id) WHERE (pending_changes <> '{}'::jsonb)
+#  index_patients_on_school_id                  (school_id)
 #
 # Foreign Keys
 #
@@ -61,7 +62,6 @@ FactoryBot.define do
       session { nil }
       year_group { programmes.flat_map(&:default_year_groups).sort.uniq.first }
       location_name { nil }
-      in_attendance { false }
       random_nhs_number { false }
 
       team { session&.team || school&.team || create(:team, programmes:) }
@@ -126,26 +126,24 @@ FactoryBot.define do
     after(:create) do |patient, evaluator|
       if evaluator.session
         PatientSession.find_or_create_by!(patient:, session: evaluator.session)
-
-        if evaluator.in_attendance
-          create(
-            :attendance_record,
-            :present,
-            patient:,
-            session: evaluator.session
-          )
-          create(
-            :patient_registration_status,
-            :attending,
-            patient:,
-            session: evaluator.session
-          )
-        end
       end
     end
 
     trait :in_attendance do
-      in_attendance { true }
+      after(:create) do |patient, evaluator|
+        if (session = evaluator.session)
+          create(:attendance_record, :present, patient:, session:)
+          create(:patient_registration_status, :attending, patient:, session:)
+        end
+      end
+    end
+
+    trait :unknown_attendance do
+      after(:create) do |patient, evaluator|
+        if (session = evaluator.session)
+          create(:patient_registration_status, patient:, session:)
+        end
+      end
     end
 
     trait :home_educated do
@@ -820,6 +818,45 @@ FactoryBot.define do
           association(
             :patient_triage_status,
             :delay_vaccination,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
+    trait :unable_to_vaccinate do
+      consent_given_triage_needed
+      triage_ready_to_vaccinate
+
+      vaccination_records do
+        programmes.map do |programme|
+          if session
+            association(
+              :vaccination_record,
+              :not_administered,
+              patient: instance,
+              performed_by:,
+              programme:,
+              session:,
+              location_name:
+            )
+          else
+            association(
+              :vaccination_record,
+              :not_administered,
+              patient: instance,
+              performed_by:,
+              programme:
+            )
+          end
+        end
+      end
+      vaccination_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_vaccination_status,
+            :could_not_vaccinate,
             patient: instance,
             programme:
           )

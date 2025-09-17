@@ -148,7 +148,8 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
 
   def create_params
     {
-      patient_session: @patient_session,
+      patient: @patient,
+      session: @session,
       programme: @programme,
       recorded_by: current_user
     }

@@ -53,11 +53,11 @@ describe "Tallying" do
 
     @patient =
       create(
-        :patient_session,
+        :patient,
         :consent_given_triage_not_needed,
         :in_attendance,
         session: @session
-      ).patient
+      )
   end
 
   def when_i_visit_the_session_record_tab

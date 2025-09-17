@@ -4,7 +4,7 @@ class TriageForm
   include ActiveModel::Model
   include ActiveModel::Attributes
 
-  attr_accessor :patient_session, :programme, :current_user
+  attr_accessor :patient, :session, :programme, :current_user
 
   attribute :add_patient_specific_direction, :boolean
   attribute :notes, :string
@@ -75,7 +75,6 @@ class TriageForm
 
   private
 
-  delegate :patient, :session, to: :patient_session
   delegate :academic_year, :team, to: :session
 
   def consented_vaccine_methods

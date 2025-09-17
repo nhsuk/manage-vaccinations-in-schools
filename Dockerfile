@@ -85,6 +85,5 @@ VOLUME ["/rails/db/data", "/rails/tmp", "/rails/log", "/tmp", "/var/log", "/var/
 # Start web server by default, this can be overwritten by environment variable
 EXPOSE 4000
 ENV HTTP_PORT=4000
-ENV GOOD_JOB_PROBE_PORT=4000
 ENV SERVER_TYPE=web
 CMD ["./bin/docker-start"]

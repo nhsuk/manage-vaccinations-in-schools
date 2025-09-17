@@ -196,7 +196,6 @@ locals {
     MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = var.academic_year_number_of_preparation_days
     MAVIS__PDS__ENQUEUE_BULK_UPDATES                = var.enable_pds_enqueue_bulk_updates ? "true" : "false"
     MAVIS__PDS__RATE_LIMIT_PER_SECOND               = var.pds_rate_limit_per_second
-    GOOD_JOB_MAX_THREADS                            = 5
     SIDEKIQ_CONCURRENCY                             = 5
   })
   parameter_store_config_list = [for key, value in local.parameter_store_variables : {
@@ -328,12 +327,6 @@ variable "maximum_web_replicas" {
   description = "Maximum amount of allowed replicas for web service"
 }
 
-variable "good_job_replicas" {
-  type        = number
-  default     = 2
-  description = "Amount of replicas for the good-job service"
-}
-
 variable "minimum_sidekiq_replicas" {
   type        = number
   default     = 2
@@ -434,6 +427,6 @@ variable "valkey_log_retention_days" {
 
 locals {
   ecs_initial_lb_target_group     = var.active_lb_target_group == "green" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
-  ecs_sg_ids                      = [module.web_service.security_group_id, module.good_job_service.security_group_id, module.sidekiq_service.security_group_id]
+  ecs_sg_ids                      = [module.web_service.security_group_id, module.sidekiq_service.security_group_id]
   valkey_cache_availability_zones = var.valkey_failover_enabled ? [aws_subnet.private_subnet_a.availability_zone, aws_subnet.private_subnet_b.availability_zone] : [aws_subnet.private_subnet_a.availability_zone]
 }

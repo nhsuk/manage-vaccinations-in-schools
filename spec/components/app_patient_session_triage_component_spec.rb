@@ -4,19 +4,15 @@ describe AppPatientSessionTriageComponent do
   subject { render_inline(component) }
 
   let(:component) do
-    described_class.new(patient_session, programme:, current_user:)
+    described_class.new(patient:, session:, programme:, current_user:)
   end
 
   let(:programme) { create(:programme) }
   let(:session) { create(:session, programmes: [programme]) }
-  let(:patient_session) { create(:patient_session, session:) }
-  let(:patient) { patient_session.patient }
+  let(:patient) { create(:patient, session:) }
   let(:current_user) { create(:nurse) }
 
-  before do
-    patient_session.reload.strict_loading!(false)
-    stub_authorization(allowed: true)
-  end
+  before { stub_authorization(allowed: true) }
 
   context "without triage" do
     it { should_not have_link("Update triage outcome") }

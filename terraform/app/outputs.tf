@@ -26,10 +26,6 @@ output "codedeploy_deployment_group_name" {
 output "ecs_variables" {
   value = {
     cluster_name = aws_ecs_cluster.cluster.name
-    good_job = {
-      service_name    = module.good_job_service.service.name
-      task_definition = module.good_job_service.task_definition
-    }
     sidekiq = {
       service_name    = module.sidekiq_service.service.name
       task_definition = module.sidekiq_service.task_definition

@@ -107,6 +107,11 @@ describe "mavis stats organisations" do
         location: school2,
         programmes: [programme_hpv]
       )
+    session3 =
+      create(
+        :session,
+        programmes: [programme_flu, programme_hpv, programme_menacwy]
+      )
 
     session_last_year =
       create(
@@ -117,50 +122,47 @@ describe "mavis stats organisations" do
         date: (AcademicYear.current - 1).to_academic_year_date_range.end
       )
 
-    patient_year_8 = create(:patient, team: @team_a, year_group: 8)
-    patient_year_9 = create(:patient, team: @team_a, year_group: 9)
-    patient_year_10 = create(:patient, team: @team_b, year_group: 10)
-    patient_year_11 = create(:patient, team: @team_a, year_group: 11)
-
+    patient_year_8 =
+      create(
+        :patient,
+        :consent_given_triage_not_needed,
+        :vaccinated,
+        year_group: 8,
+        session: session1
+      )
+    patient_year_9 =
+      create(
+        :patient,
+        :consent_given_triage_not_needed,
+        year_group: 9,
+        session: session3
+      )
     create(
-      :patient_session,
+      :patient,
       :consent_given_triage_not_needed,
-      :vaccinated,
-      session: session1,
-      patient: patient_year_8
+      year_group: 10,
+      session: session2
     )
-    create(
-      :patient_session,
-      :consent_refused,
-      :vaccinated,
-      session: session1,
-      patient: patient_year_9
-    )
-    create(
-      :patient_session,
-      :consent_given_triage_not_needed,
-      session: session2,
-      patient: patient_year_10
-    )
-    create(
-      :patient_session,
-      :consent_no_response,
-      session: session1,
-      patient: patient_year_11
-    )
+    create(:patient, :consent_no_response, year_group: 11, session: session1)
 
+    create(:patient_session, patient: patient_year_9, session: session1)
     create(
-      :patient_session,
-      :consent_refused,
-      session: session_last_year,
-      patient: patient_year_8
-    )
-
-    create(
-      :patient_session,
-      :consent_given_triage_not_needed,
+      :consent,
+      :refused,
       patient: patient_year_9,
-      programmes: [programme_flu, programme_hpv, programme_menacwy]
+      programme: session1.programmes.first
+    )
+
+    create(
+      :patient_session,
+      patient: patient_year_8,
+      session: session_last_year
+    )
+    create(
+      :consent,
+      :refused,
+      patient: patient_year_8,
+      programme: session_last_year.programmes.first
     )
 
     create(

@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 describe TriageForm do
-  subject(:form) { described_class.new(patient_session:, programme:) }
+  subject(:form) { described_class.new(patient:, session:, programme:) }
 
   let(:programme) { create(:programme) }
-  let(:patient_session) { create(:patient_session, programmes: [programme]) }
+  let(:session) { create(:session, programmes: [programme]) }
+  let(:patient) { create(:patient, session:) }
 
   describe "validations" do
     it do
@@ -22,7 +23,8 @@ describe TriageForm do
   describe "when the patient is safe to vaccinate for HPV" do
     subject(:form) do
       described_class.new(
-        patient_session:,
+        patient:,
+        session:,
         programme:,
         current_user: create(:user),
         notes: "test",
@@ -31,18 +33,11 @@ describe TriageForm do
     end
 
     let(:programme) { create(:programme, :hpv) }
-    let(:patient_session) do
-      create(
-        :patient_session,
-        :consent_given_triage_needed,
-        programmes: [programme]
-      )
-    end
+    let(:patient) { create(:patient, :consent_given_triage_needed, session:) }
 
     it "sets the vaccine method to injection" do
-      form.save!
+      triage = form.save!
 
-      triage = patient_session.reload.patient.triages.last
       expect(triage.vaccine_method).to eq("injection")
     end
   end
@@ -50,7 +45,8 @@ describe TriageForm do
   describe "when the patient has a nasal only consent" do
     subject(:form) do
       described_class.new(
-        patient_session:,
+        patient:,
+        session:,
         programme:,
         current_user: create(:user),
         notes: "test",
@@ -59,18 +55,13 @@ describe TriageForm do
     end
 
     let(:programme) { create(:programme, :flu) }
-    let(:patient_session) do
-      create(
-        :patient_session,
-        :consent_given_nasal_only_triage_needed,
-        programmes: [programme]
-      )
+    let(:patient) do
+      create(:patient, :consent_given_nasal_only_triage_needed, session:)
     end
 
     it "sets the vaccine method to nasal" do
-      form.save!
+      triage = form.save!
 
-      triage = patient_session.reload.patient.triages.last
       expect(triage.vaccine_method).to eq("nasal")
       expect(triage.notes).to eq("test")
     end

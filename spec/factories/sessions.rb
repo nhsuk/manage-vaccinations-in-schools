@@ -71,6 +71,10 @@ FactoryBot.define do
       date { Date.current }
     end
 
+    trait :tomorrow do
+      date { Date.tomorrow }
+    end
+
     trait :yesterday do
       date { Date.yesterday }
     end

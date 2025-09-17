@@ -12,7 +12,4 @@
       nav.with_item(href: log_patient_path(@patient), text: "Activity log", selected: true)
     end %>
 
-<%= render AppActivityLogComponent.new(
-      patient: @patient,
-      team: current_user.selected_team,
-    ) %>
+<%= render AppActivityLogComponent.new(patient: @patient, team: current_team) %>

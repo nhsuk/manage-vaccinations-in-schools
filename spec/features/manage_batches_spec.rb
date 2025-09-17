@@ -37,7 +37,7 @@ describe "Manage batches" do
     session = create(:session, :today, programmes: @programmes, location:)
 
     create(
-      :patient_session,
+      :patient,
       :consent_given_triage_not_needed,
       programmes: @programmes,
       session:

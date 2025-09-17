@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class AppTriageTableComponent < ViewComponent::Base
-  def initialize(patient_session:, programme:)
-    @patient_session = patient_session
+  def initialize(patient:, session:, programme:)
+    @patient = patient
+    @session = session
     @programme = programme
   end
 
@@ -10,10 +11,9 @@ class AppTriageTableComponent < ViewComponent::Base
 
   private
 
-  attr_reader :patient_session, :programme
+  attr_reader :patient, :session, :programme
 
   delegate :govuk_table, :triage_status_tag, to: :helpers
-  delegate :patient, :session, to: :patient_session
   delegate :academic_year, to: :session
 
   def triages

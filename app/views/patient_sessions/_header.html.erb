@@ -9,7 +9,7 @@
                                         ].compact) %>
 <% end %>
 
-<% if (outstanding_programmes = @patient_session.outstanding_programmes).any? %>
+<% if (outstanding_programmes = patient_outstanding_programmes(@patient, session: @session)).any? %>
   <% programmes_can_record_vaccination = outstanding_programmes.filter do |programme|
        policy(VaccinationRecord.new(patient: @patient, session: @session, programme:)).new?
      end %>
@@ -30,7 +30,7 @@
 <ul class="app-action-list">
   <% if @programme && @session.psd_enabled? %>
     <li class="app-action-list__item">
-      <% if @patient_session.has_patient_specific_direction?(programme: @programme, team: current_team) %>
+      <% if @patient.has_patient_specific_direction?(academic_year: @academic_year, programme: @programme, team: current_team) %>
         <%= render AppStatusTagComponent.new(:added, context: :patient_specific_direction) %>
       <% else %>
         <%= render AppStatusTagComponent.new(:not_added, context: :patient_specific_direction) %>
@@ -42,16 +42,14 @@
     <% attendance_record = @patient.attendance_records.find_or_initialize_by(location: @session.location, date:) %>
 
     <li class="app-action-list__item">
-      <%= render AppStatusTagComponent.new(@patient_session.registration_status&.status || "unknown", context: :register) %>
+      <%= render AppStatusTagComponent.new(@patient.registration_status(session: @session)&.status || "unknown", context: :register) %>
     </li>
 
     <% attendance_record.session = @session %>
     <% if policy(attendance_record).edit? %>
       <li class="app-action-list__item">
-        <%= link_to(
-              "Update attendance",
-              edit_session_patient_attendance_path(@session, @patient)
-            ) %>
+        <%= link_to "Update attendance",
+                    edit_session_patient_attendance_path(@session, @patient) %>
       </li>
     <% end %>
   <% end %>
@@ -64,9 +62,9 @@
   <% end %>
 </ul>
 
-<%= render AppStickyNavigationComponent.new do %> 
+<%= render AppStickyNavigationComponent.new do %>
   <%= render AppSecondaryNavigationComponent.new do |nav|
-        @patient_session.programmes.each do |programme|
+        @session.programmes_for(patient: @patient).each do |programme|
           nav.with_item(
             href: session_patient_programme_path(@session, @patient, programme, return_to: params[:return_to]),
             text: programme.name,

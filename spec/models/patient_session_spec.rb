@@ -30,14 +30,6 @@ describe PatientSession do
   describe "associations" do
     it { should have_many(:gillick_assessments) }
     it { should have_many(:pre_screenings) }
-
-    it do
-      expect(patient_session).to have_one(:latest_note)
-        .through(:patient)
-        .source(:notes)
-        .conditions(session_id: session.id)
-        .order(created_at: :desc)
-    end
   end
 
   describe "scopes" do
@@ -51,20 +43,18 @@ describe PatientSession do
       let(:programmes) { create_list(:programme, 1, :td_ipv) }
       let(:session) { create(:session, programmes:) }
 
+      let(:patient_session) { create(:patient_session, patient:, session:) }
+
       it { should be_empty }
 
       context "in a session with the right year group" do
-        let(:patient_session) do
-          create(:patient_session, session:, year_group: 9)
-        end
+        let(:patient) { create(:patient, year_group: 9) }
 
         it { should include(patient_session) }
       end
 
       context "in a session but the wrong year group" do
-        let(:patient_session) do
-          create(:patient_session, session:, year_group: 8)
-        end
+        let(:patient) { create(:patient, year_group: 8) }
 
         it { should_not include(patient_session) }
       end
@@ -72,8 +62,7 @@ describe PatientSession do
       context "in a session with the right year group for the programme but not the location" do
         let(:location) { create(:school, :secondary) }
         let(:session) { create(:session, location:, programmes:) }
-
-        let(:patient_session) { create(:patient, session:, year_group: 9) }
+        let(:patient) { create(:patient, year_group: 9) }
 
         before do
           programmes.each do |programme|
@@ -99,18 +88,16 @@ describe PatientSession do
       end
 
       let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
+      let(:session) { create(:session, programmes:) }
       let(:academic_year) { Date.current.academic_year }
       let(:vaccine_method) { nil }
+      let(:patient_session) { patient.patient_sessions.first }
 
       it { should be_empty }
 
       context "with a patient eligible for vaccination" do
-        let(:patient_session) do
-          create(
-            :patient_session,
-            :consent_given_triage_not_needed,
-            programmes:
-          )
+        let(:patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
         end
 
         it { should include(patient_session) }
@@ -120,19 +107,15 @@ describe PatientSession do
         let(:vaccine_method) { "nasal" }
 
         context "with a patient eligible for vaccination" do
-          let(:patient_session) do
-            create(
-              :patient_session,
-              :consent_given_triage_not_needed,
-              programmes:
-            )
+          let(:patient) do
+            create(:patient, :consent_given_triage_not_needed, session:)
           end
 
           before do
-            patient_session
-              .patient
-              .consent_status(programme: programmes.first, academic_year:)
-              .update!(vaccine_methods: %w[nasal injection])
+            patient.consent_status(
+              programme: programmes.first,
+              academic_year:
+            ).update!(vaccine_methods: %w[nasal injection])
           end
 
           it { should include(patient_session) }
@@ -142,13 +125,10 @@ describe PatientSession do
               create(
                 :vaccination_record,
                 programme: programmes.first,
-                session: patient_session.session,
-                patient: patient_session.patient
+                session:,
+                patient:
               )
-              StatusUpdater.call(
-                session: patient_session.session,
-                patient: patient_session.patient
-              )
+              StatusUpdater.call(session:, patient:)
             end
 
             it { should_not include(patient_session) }
@@ -194,73 +174,6 @@ describe PatientSession do
         create(:vaccination_record, programme:, patient:, session:)
         expect(safe_to_destroy?).to be false
       end
-    end
-  end
-
-  describe "#next_activity" do
-    subject { patient_session.next_activity(programme:) }
-
-    let(:patient) { patient_session.patient }
-
-    context "with no consent" do
-      it { should be(:consent) }
-    end
-
-    context "with consent refused" do
-      before { create(:patient_consent_status, :refused, patient:, programme:) }
-
-      it { should be(:do_not_record) }
-    end
-
-    context "with triaged as do not vaccinate" do
-      before do
-        create(:patient_consent_status, :given, patient:, programme:)
-        create(:patient_triage_status, :do_not_vaccinate, patient:, programme:)
-      end
-
-      it { should be(:do_not_record) }
-    end
-
-    context "with consent needing triage" do
-      before do
-        create(:patient_consent_status, :given, patient:, programme:)
-        create(:patient_triage_status, :required, patient:, programme:)
-      end
-
-      it { should be(:triage) }
-    end
-
-    context "with triaged as safe to vaccinate" do
-      before do
-        create(:patient_consent_status, :given, patient:, programme:)
-        create(:patient_triage_status, :safe_to_vaccinate, patient:, programme:)
-      end
-
-      it { should be(:record) }
-    end
-
-    context "with consent no triage needed" do
-      before { create(:patient_consent_status, :given, patient:, programme:) }
-
-      it { should be(:record) }
-    end
-
-    context "with an administered vaccination record" do
-      before do
-        create(:patient_consent_status, :given, patient:, programme:)
-        create(:patient_vaccination_status, :vaccinated, patient:, programme:)
-      end
-
-      it { should be_nil }
-    end
-
-    context "with an un-administered vaccination record" do
-      before do
-        create(:patient_consent_status, :given, patient:, programme:)
-        create(:patient_vaccination_status, patient:, programme:)
-      end
-
-      it { should be(:record) }
     end
   end
 end

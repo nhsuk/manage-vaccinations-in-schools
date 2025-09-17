@@ -15,9 +15,13 @@ class Sessions::RegisterController < ApplicationController
 
     scope =
       @session.patient_sessions.includes_programmes.includes(
-        :latest_note,
-        :registration_status,
-        patient: %i[consent_statuses triage_statuses vaccination_statuses]
+        patient: [
+          :consent_statuses,
+          :registration_statuses,
+          :triage_statuses,
+          :vaccination_statuses,
+          { notes: :created_by }
+        ]
       )
 
     patient_sessions = @form.apply(scope)

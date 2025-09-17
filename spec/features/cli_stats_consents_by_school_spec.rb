@@ -104,17 +104,16 @@ describe "mavis stats consents-by-school", type: :integration do
     patient1 = create(:patient, team: @team_a)
     patient2 = create(:patient, team: @team_b)
     patient3 = create(:patient, team: @team_a)
-    patient_prev = create(:patient, team: @team_a)
+    patient_prev =
+      create(
+        :patient,
+        :consent_given_triage_not_needed,
+        session: session_prev_year
+      )
 
     create(:patient_session, session: session1, patient: patient1)
     create(:patient_session, session: session2, patient: patient2)
     create(:patient_session, session: session3, patient: patient3)
-    create(
-      :patient_session,
-      :consent_given_triage_not_needed,
-      session: session_prev_year,
-      patient: patient_prev
-    )
 
     create(
       :consent,

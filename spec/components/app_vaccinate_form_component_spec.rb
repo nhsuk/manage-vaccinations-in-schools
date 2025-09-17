@@ -16,12 +16,10 @@ describe AppVaccinateFormComponent do
     create(
       :patient,
       :consent_given_triage_not_needed,
-      programmes:,
+      :in_attendance,
+      session:,
       given_name: "Hari"
     )
-  end
-  let(:patient_session) do
-    create(:patient_session, :in_attendance, programmes:, patient:, session:)
   end
 
   let(:vaccinate_form) do
@@ -29,8 +27,6 @@ describe AppVaccinateFormComponent do
   end
 
   let(:component) { described_class.new(vaccinate_form) }
-
-  before { patient_session.strict_loading!(false) }
 
   it { should have_css(".nhsuk-card") }
 
