@@ -27,7 +27,7 @@ module "web_service" {
       [
         {
           name  = "REDIS_CACHE_URL"
-          value = aws_elasticache_serverless_cache.rails_cache.endpoint[0].address
+          value = "rediss://${aws_elasticache_serverless_cache.rails_cache.endpoint[0].address}:${aws_elasticache_serverless_cache.rails_cache.endpoint[0].port}"
         }
       ]
     )
