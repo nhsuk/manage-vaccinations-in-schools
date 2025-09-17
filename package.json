@@ -4,7 +4,7 @@
   "dependencies": {
     "@hotwired/turbo-rails": "^8.0.16",
     "accessible-autocomplete": "^3.0.1",
-    "esbuild": "^0.25.9",
+    "esbuild": "^0.25.10",
     "govuk-frontend": "^5.11.2",
     "idb": "^8.0.3",
     "nhsuk-frontend": "^10.0.0",
