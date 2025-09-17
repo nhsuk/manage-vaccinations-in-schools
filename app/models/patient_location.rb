@@ -80,17 +80,10 @@ class PatientLocation < ApplicationRecord
 
   scope :appear_in_programmes,
         ->(programmes) do
-          where(
-            id:
-              joins_session_programmes
-                .joins_location_programme_year_groups
-                .where(
-                  session_programmes: {
-                    programme_id: programmes.map(&:id)
-                  }
-                )
-                .select("patient_locations.id")
-          )
+          joins_sessions
+            .joins_session_programmes
+            .joins_location_programme_year_groups
+            .where(session_programmes: { programme_id: programmes.map(&:id) })
         end
 
   scope :destroy_all_if_safe,
