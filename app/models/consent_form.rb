@@ -318,6 +318,8 @@ class ConsentForm < ApplicationRecord
 
   def recorded? = recorded_at != nil
 
+  def matched? = consents.exists?
+
   def response_given? = consent_form_programmes.any?(&:response_given?)
 
   def response_refused? = consent_form_programmes.any?(&:response_refused?)

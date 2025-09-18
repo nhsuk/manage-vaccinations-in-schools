@@ -9,6 +9,8 @@ class ConsentFormMatchingJob < ApplicationJob
   def perform(consent_form)
     @consent_form = consent_form
 
+    return if already_matched?
+
     # Match if we find a patient with the PDS NHS number
     return if match_with_exact_nhs_number
 
@@ -46,6 +48,8 @@ class ConsentFormMatchingJob < ApplicationJob
   def pds_patient
     @pds_patient ||= PDS::Patient.search(**query)
   end
+
+  def already_matched? = @consent_form.matched?
 
   def match_with_exact_nhs_number
     return false unless pds_patient

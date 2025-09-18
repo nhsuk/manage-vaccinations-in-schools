@@ -16,7 +16,7 @@ describe ConsentFormMatchingJob do
     )
   end
 
-  before do
+  let!(:stub) do
     stub_request(
       :get,
       "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
@@ -33,6 +33,28 @@ describe ConsentFormMatchingJob do
 
     it "doesn't create a consent" do
       expect { perform }.not_to change(Consent, :count)
+    end
+
+    it "makes requests to PDS" do
+      perform
+      expect(stub).to have_been_requested.twice
+    end
+  end
+
+  context "with a consent form that's already been matched" do
+    let(:response_file) { "pds/search-patients-no-results-response.json" }
+
+    before do
+      create(:consent, programme: session.programmes.first, consent_form:)
+    end
+
+    it "doesn't create a consent" do
+      expect { perform }.not_to change(Consent, :count)
+    end
+
+    it "doesn't make a request to PDS" do
+      perform
+      expect(stub).not_to have_been_requested
     end
   end
 
