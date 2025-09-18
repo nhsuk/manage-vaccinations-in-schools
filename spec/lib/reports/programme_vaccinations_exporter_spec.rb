@@ -460,8 +460,7 @@ describe Reports::ProgrammeVaccinationsExporter do
 
         it "includes the information" do
           expect(rows.first.to_hash).to include(
-            "CONSENT_DETAILS" =>
-              "Given by John Smith at 2024-01-01 12:05:20 +0000",
+            "CONSENT_DETAILS" => "On 2024-01-01 at 12:05 GIVEN by John Smith",
             "CONSENT_STATUS" => expected_consent_status,
             "HEALTH_QUESTION_ANSWERS" =>
               consent
