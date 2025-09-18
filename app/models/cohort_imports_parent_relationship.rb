@@ -13,8 +13,8 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (cohort_import_id => cohort_imports.id)
-#  fk_rails_...  (parent_relationship_id => parent_relationships.id)
+#  fk_rails_...  (cohort_import_id => cohort_imports.id) ON DELETE => cascade
+#  fk_rails_...  (parent_relationship_id => parent_relationships.id) ON DELETE => cascade
 #
 class CohortImportsParentRelationship < ApplicationRecord
   belongs_to :cohort_import
