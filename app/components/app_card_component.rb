@@ -17,7 +17,7 @@ class AppCardComponent < ViewComponent::Base
         <% end %>
 
         <% if description.present? %>
-          <p class="nhsuk-card__description"><%= description %></p>
+          <p class="nhsuk-card__description <%= discription_classes %>"><%= description %></p>
         <% end %>
 
         <%= content %>
@@ -36,7 +36,8 @@ class AppCardComponent < ViewComponent::Base
     data: false,
     compact: false,
     filters: false,
-    section: false
+    section: false,
+    style_as_count: false
   )
     @link_to = link_to
     @colour = colour
@@ -46,6 +47,7 @@ class AppCardComponent < ViewComponent::Base
     @compact = compact
     @filters = filters
     @section = section
+    @style_as_count = style_as_count
 
     @feature = (colour.present? && !data && !compact) || filters
   end
@@ -93,5 +95,9 @@ class AppCardComponent < ViewComponent::Base
       "nhsuk-heading-#{heading_modifier}",
       ("nhsuk-card__heading--feature" if @feature)
     ].compact.join(" ")
+  end
+
+  def discription_classes
+    [("app-card__count" if @style_as_count)].compact.join(" ")
   end
 end

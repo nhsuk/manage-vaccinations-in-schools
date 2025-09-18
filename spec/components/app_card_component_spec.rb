@@ -50,4 +50,14 @@ describe AppCardComponent do
 
     it { should have_css("section.nhsuk-card") }
   end
+
+  context "when style as count number" do
+    subject do
+      render_inline(described_class.new(style_as_count: true)) do
+        it.with_description { "Description" }
+      end
+    end
+
+    it { should have_css(".app-card__count") }
+  end
 end
