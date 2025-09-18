@@ -20,6 +20,12 @@ class SchoolMoveForm
       @school_move.ignore!
     end
 
+    TeamCachedCounts.new(team).reset_school_moves!
+
     true
   end
+
+  private
+
+  def team = current_user.selected_team
 end
