@@ -3,7 +3,7 @@
 class ImportDuplicateForm
   include ActiveModel::Model
 
-  attr_accessor :current_team, :object, :apply_changes
+  attr_accessor :object, :apply_changes
 
   validates :apply_changes, inclusion: { in: :apply_changes_options }
 
@@ -20,8 +20,6 @@ class ImportDuplicateForm
         keep_both_changes!
       end
     end
-
-    reset_count!
 
     true
   rescue ActiveRecord::RecordInvalid
@@ -52,9 +50,5 @@ class ImportDuplicateForm
 
   def keep_both_changes!
     object.apply_pending_changes_to_new_record! if can_keep_both?
-  end
-
-  def reset_count!
-    TeamCachedCounts.new(current_team).reset_import_issues!
   end
 end

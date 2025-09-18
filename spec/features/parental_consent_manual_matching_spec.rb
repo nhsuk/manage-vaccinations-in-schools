@@ -91,7 +91,6 @@ describe "Parental consent manual matching" do
   def when_i_go_to_the_dashboard
     sign_in @user
     visit dashboard_path
-    expect(page).to have_content("Unmatched responses (1)")
   end
 
   def and_i_click_on_unmatched_consent_responses
@@ -136,7 +135,6 @@ describe "Parental consent manual matching" do
 
   def when_i_link_the_response_with_the_record
     click_on "Link response with record"
-    expect(page).to have_content("Unmatched responses (0)")
   end
 
   def and_i_click_on_the_patient

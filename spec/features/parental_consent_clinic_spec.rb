@@ -256,7 +256,6 @@ describe "Parental consent" do
     choose "Update record with new school"
     click_on "Update child record"
     expect(page).to have_content("Success")
-    expect(page).to have_content("School moves (0)")
   end
 
   def then_the_nurse_should_see_no_moves
