@@ -19,6 +19,7 @@ class SessionsController < ApplicationController
     @patient_count_by_session_id =
       PatientLocation
         .joins(:patient)
+        .joins_sessions
         .appear_in_programmes(@programmes)
         .where("sessions.id IN (?)", sessions.pluck(:id))
         .distinct

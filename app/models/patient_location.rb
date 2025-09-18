@@ -66,24 +66,34 @@ class PatientLocation < ApplicationRecord
     AND sessions.academic_year = patient_locations.academic_year
   SQL
 
-  scope :joins_session_programmes, -> { joins(<<-SQL) }
-    INNER JOIN session_programmes
-    ON session_programmes.session_id = sessions.id
-  SQL
-
-  scope :joins_location_programme_year_groups, -> { joins(<<-SQL) }
-    INNER JOIN location_programme_year_groups
-    ON location_programme_year_groups.location_id = patient_locations.location_id
-    AND location_programme_year_groups.programme_id = session_programmes.programme_id
-    AND location_programme_year_groups.year_group = patient_locations.academic_year - patients.birth_academic_year - #{Integer::AGE_CHILDREN_START_SCHOOL}
-  SQL
-
   scope :appear_in_programmes,
         ->(programmes) do
-          joins_sessions
-            .joins_session_programmes
-            .joins_location_programme_year_groups
-            .where(session_programmes: { programme_id: programmes.map(&:id) })
+          session_programme_exists =
+            SessionProgramme
+              .where(programme: programmes)
+              .joins(:session)
+              .where("sessions.location_id = patient_locations.location_id")
+              .where("sessions.academic_year = patient_locations.academic_year")
+              .arel
+              .exists
+
+          location_programme_year_group_exists =
+            LocationProgrammeYearGroup
+              .where(
+                "location_programme_year_groups.location_id = patient_locations.location_id"
+              )
+              .where(
+                "location_programme_year_groups.year_group = " \
+                  "patient_locations.academic_year - patients.birth_academic_year - ?",
+                Integer::AGE_CHILDREN_START_SCHOOL
+              )
+              .where(programme: programmes)
+              .arel
+              .exists
+
+          where(session_programme_exists).where(
+            location_programme_year_group_exists
+          )
         end
 
   scope :destroy_all_if_safe,
