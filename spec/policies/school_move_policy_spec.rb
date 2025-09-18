@@ -17,14 +17,14 @@ describe SchoolMovePolicy do
 
       context "patient belonging to two sessions" do
         let(:patient) { create(:patient) }
-        let(:patient_session) { create(:patient_session, patient:, session:) }
-        let(:other_patient_session) do
-          create(:patient_session, patient:, session: other_session)
-        end
-
         let(:school) { create(:school, team:) }
         let(:school_move) do
           create(:school_move, :to_school, patient:, school:)
+        end
+
+        before do
+          create(:patient_location, patient:, session:)
+          create(:patient_location, patient:, session: other_session)
         end
 
         it { should contain_exactly(school_move) }
