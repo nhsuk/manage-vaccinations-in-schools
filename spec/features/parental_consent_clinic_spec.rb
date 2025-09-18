@@ -27,7 +27,7 @@ describe "Parental consent" do
     then_i_can_check_my_answers
 
     when_i_submit_the_consent_form
-    then_i_see_a_confirmation_page
+    then_i_see_a_confirmation_page_in_school
 
     when_the_nurse_checks_the_school_moves
     then_the_nurse_should_see_one_move
@@ -57,7 +57,7 @@ describe "Parental consent" do
     then_i_can_check_my_answers
 
     when_i_submit_the_consent_form
-    then_i_see_a_confirmation_page
+    then_i_see_a_confirmation_page_in_clinic
 
     when_the_nurse_checks_the_school_moves
     then_the_nurse_should_see_one_move
@@ -87,7 +87,7 @@ describe "Parental consent" do
     then_i_can_check_my_answers
 
     when_i_submit_the_consent_form
-    then_i_see_a_confirmation_page
+    then_i_see_a_confirmation_page_in_clinic
 
     when_the_nurse_checks_the_school_moves
     then_the_nurse_should_see_no_moves
@@ -229,9 +229,15 @@ describe "Parental consent" do
     click_on "Confirm"
   end
 
-  def then_i_see_a_confirmation_page
-    # TODO: "will get their HPV vaccination at the clinic"
+  def then_i_see_a_confirmation_page_in_school
+    expect(page).to have_content("is due to get the HPV vaccination at school")
+
+    perform_enqueued_jobs # match consent form with patient
+  end
+
+  def then_i_see_a_confirmation_page_in_clinic
     expect(page).to have_content("is due to get the HPV vaccination")
+    expect(page).not_to have_content("at school")
 
     perform_enqueued_jobs # match consent form with patient
   end
