@@ -35,6 +35,8 @@ class ConsentFormsController < ApplicationController
   def update_match
     @consent_form.match_with_patient!(@patient, current_user:)
 
+    reset_count!
+
     session =
       @patient
         .sessions
@@ -108,6 +110,8 @@ class ConsentFormsController < ApplicationController
       school_move.confirm!
 
       @consent_form.match_with_patient!(patient, current_user:)
+
+      reset_count!
     end
 
     if patient.nhs_number.nil?
@@ -142,5 +146,9 @@ class ConsentFormsController < ApplicationController
 
   def archive_params
     params.expect(consent_form: :notes).merge(archived_at: Time.current)
+  end
+
+  def reset_count!
+    TeamCachedCounts.new(current_team).reset_unmatched_consent_responses!
   end
 end
