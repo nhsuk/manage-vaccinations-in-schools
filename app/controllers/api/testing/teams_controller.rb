@@ -52,11 +52,12 @@ class API::Testing::TeamsController < API::Testing::BaseController
         log_destroy(SchoolMoveLogEntry.where(patient_id: patient_ids))
         log_destroy(VaccinationRecord.where(patient_id: patient_ids))
 
+        log_destroy(Consent.where(team:))
         log_destroy(ConsentForm.where(id: consent_form_ids))
+
         log_destroy(SessionDate.where(session: sessions))
 
         log_destroy(ArchiveReason.where(team:))
-        log_destroy(Consent.where(team:))
         log_destroy(Triage.where(team:))
 
         Patient

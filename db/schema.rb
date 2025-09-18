@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_16_074716) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_18_122640) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -204,7 +204,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_074716) do
     t.string "address_town"
     t.string "address_postcode"
     t.jsonb "health_answers", default: [], null: false
-    t.bigint "consent_id"
     t.string "parent_contact_method_other_details"
     t.string "parent_contact_method_type"
     t.string "parent_email"
@@ -225,7 +224,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_074716) do
     t.text "notes", default: "", null: false
     t.integer "academic_year", null: false
     t.index ["academic_year"], name: "index_consent_forms_on_academic_year"
-    t.index ["consent_id"], name: "index_consent_forms_on_consent_id"
     t.index ["location_id"], name: "index_consent_forms_on_location_id"
     t.index ["nhs_number"], name: "index_consent_forms_on_nhs_number"
     t.index ["school_id"], name: "index_consent_forms_on_school_id"
@@ -270,7 +268,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_074716) do
     t.integer "vaccine_methods", default: [], null: false, array: true
     t.integer "academic_year", null: false
     t.boolean "notify_parent_on_refusal"
+    t.bigint "consent_form_id"
     t.index ["academic_year"], name: "index_consents_on_academic_year"
+    t.index ["consent_form_id"], name: "index_consents_on_consent_form_id"
     t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"
     t.index ["programme_id"], name: "index_consents_on_programme_id"
@@ -992,7 +992,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_074716) do
   add_foreign_key "cohort_imports_patients", "patients"
   add_foreign_key "consent_form_programmes", "consent_forms"
   add_foreign_key "consent_form_programmes", "programmes"
-  add_foreign_key "consent_forms", "consents"
   add_foreign_key "consent_forms", "locations"
   add_foreign_key "consent_forms", "locations", column: "school_id"
   add_foreign_key "consent_forms", "teams"
@@ -1001,6 +1000,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_074716) do
   add_foreign_key "consent_notifications", "patients"
   add_foreign_key "consent_notifications", "sessions"
   add_foreign_key "consent_notifications", "users", column: "sent_by_user_id"
+  add_foreign_key "consents", "consent_forms"
   add_foreign_key "consents", "parents"
   add_foreign_key "consents", "patients"
   add_foreign_key "consents", "programmes"
