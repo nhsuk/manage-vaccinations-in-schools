@@ -27,16 +27,16 @@ class Sessions::ConsentController < ApplicationController
 
     scope =
       @session
-        .patient_sessions
-        .includes_programmes
-        .includes(patient: [:consent_statuses, { notes: :created_by }])
+        .patients
+        .includes(:consent_statuses, { notes: :created_by })
         .has_consent_status(
           statuses_except_not_required,
-          programme: @form.programmes
+          programme: @form.programmes,
+          academic_year: @session.academic_year
         )
 
-    patient_sessions = @form.apply(scope)
-    @pagy, @patient_sessions = pagy(patient_sessions)
+    patients = @form.apply(scope)
+    @pagy, @patients = pagy(patients)
   end
 
   private

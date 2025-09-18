@@ -2,7 +2,7 @@
 
 <%= govuk_button_to "Import records", imports_path, secondary: true, class: "nhsuk-u-margin-bottom-4" %>
 
-<%= render AppImportsNavigationComponent.new(active: :notices) %>
+<%= render AppImportsNavigationComponent.new(active: :notices, team: current_team) %>
 
 <% if @notices.present? %>
   <%= render AppNoticesTableComponent.new(@notices) %>

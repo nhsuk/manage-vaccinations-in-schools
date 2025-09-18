@@ -12,9 +12,7 @@ class AppPatientPDSDiscrepancyTableComponent < ViewComponent::Base
 
   delegate :format_nhs_number, :govuk_table, to: :helpers
 
-  def can_link_to?(record)
-    allowed_ids.include?(record.id)
-  end
+  def can_link_to?(record) = allowed_ids.include?(record.id)
 
   def allowed_ids
     @allowed_ids ||= PatientPolicy::Scope.new(current_user, Patient).resolve.ids

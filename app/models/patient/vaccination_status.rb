@@ -38,7 +38,7 @@ class Patient::VaccinationStatus < ApplicationRecord
            -> { kept.order(performed_at: :desc) },
            through: :patient
 
-  has_one :patient_session
+  has_one :patient_location
 
   has_one :attendance_record,
           -> { today },

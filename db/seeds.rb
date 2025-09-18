@@ -167,13 +167,20 @@ def setup_clinic(team)
 
   clinic_session.update!(send_invitations_at: Date.current - 3.weeks)
 
-  # All patients belong to the community clinic. This is normally
-  # handled by school moves, but here we need to do it manually.
+  # All unknown school or home-schooled patients belong to the community clinic.
+  # This is normally handled by school moves, but here we need to do it manually.
 
-  PatientSession.import(
-    team.patients.map do
-      PatientSession.new(patient: it, session: clinic_session)
-    end,
+  PatientLocation.import(
+    team
+      .patients
+      .where(school: nil)
+      .map do
+        PatientLocation.new(
+          patient: it,
+          location: clinic_session.location,
+          academic_year: clinic_session.academic_year
+        )
+      end,
     on_duplicate_key_ignore: :all
   )
 end

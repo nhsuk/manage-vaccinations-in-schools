@@ -14,7 +14,7 @@ class Sessions::InviteToClinicController < ApplicationController
 
   def update
     if @session.school?
-      factory.create_patient_sessions!
+      factory.create_patient_locations!
 
       flash[
         :success
@@ -54,7 +54,7 @@ class Sessions::InviteToClinicController < ApplicationController
   def set_patients_to_invite
     @patients_to_invite =
       if @session.school?
-        factory.patient_sessions_to_create.map(&:patient)
+        factory.patient_locations_to_create.map(&:patient)
       else
         session_date = @generic_clinic_session.next_date(include_today: true)
         SendClinicSubsequentInvitationsJob.new.patients(@session, session_date:)
@@ -68,7 +68,7 @@ class Sessions::InviteToClinicController < ApplicationController
   def factory
     @factory ||=
       if @session.school?
-        ClinicPatientSessionsFactory.new(
+        ClinicPatientLocationsFactory.new(
           school_session: @session,
           generic_clinic_session: @generic_clinic_session
         )

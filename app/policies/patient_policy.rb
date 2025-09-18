@@ -9,11 +9,11 @@ class PatientPolicy < ApplicationPolicy
       return scope.none if team.nil?
 
       existence_criteria = [
-        PatientSession
+        PatientLocation
           .select("1")
-          .joins(:session)
-          .where("patient_sessions.patient_id = patients.id")
-          .where(sessions: { team_id: team.id })
+          .joins_sessions
+          .where("patient_locations.patient_id = patients.id")
+          .where("sessions.team_id = ?", team.id)
           .arel,
         ArchiveReason
           .select("1")

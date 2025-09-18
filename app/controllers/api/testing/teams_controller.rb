@@ -28,7 +28,9 @@ class API::Testing::TeamsController < API::Testing::BaseController
         patient_ids = team.patients.pluck(:id)
         consent_form_ids = team.consent_forms.pluck(:id)
 
-        log_destroy(PatientSession.where(session: sessions))
+        log_destroy(
+          PatientLocation.where(location_id: sessions.select(:location_id))
+        )
 
         log_destroy(AccessLogEntry.where(patient_id: patient_ids))
         log_destroy(ArchiveReason.where(patient_id: patient_ids))
@@ -41,7 +43,7 @@ class API::Testing::TeamsController < API::Testing::BaseController
         log_destroy(NotifyLogEntry.where(patient_id: patient_ids))
         log_destroy(NotifyLogEntry.where(consent_form_id: consent_form_ids))
         log_destroy(PatientChangeset.where(patient_id: patient_ids))
-        log_destroy(PatientSession.where(patient_id: patient_ids))
+        log_destroy(PatientLocation.where(patient_id: patient_ids))
         log_destroy(PatientSpecificDirection.where(patient_id: patient_ids))
         log_destroy(PDSSearchResult.where(patient_id: patient_ids))
         log_destroy(PreScreening.where(patient_id: patient_ids))

@@ -167,7 +167,7 @@ describe SchoolMove do
       let(:academic_year) { AcademicYear.pending }
 
       context "with a patient in no sessions" do
-        let(:patient) { create(:patient, team: nil) }
+        let(:patient) { create(:patient, team: nil, programmes:) }
 
         context "to a school with a scheduled session" do
           let(:school_move) do
@@ -228,7 +228,7 @@ describe SchoolMove do
       end
 
       context "with an archived patient" do
-        let(:patient) { create(:patient, team: nil) }
+        let(:patient) { create(:patient, team: nil, programmes:) }
 
         before { create(:archive_reason, :imported_in_error, patient:, team:) }
 

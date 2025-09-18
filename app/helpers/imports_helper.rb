@@ -12,15 +12,6 @@ module ImportsHelper
     %w[registration] => :registration
   }.freeze
 
-  def import_issues_count
-    vaccination_records_with_issues =
-      policy_scope(VaccinationRecord).with_pending_changes.pluck(:patient_id)
-
-    patients_with_issues = policy_scope(Patient).with_pending_changes.pluck(:id)
-
-    (vaccination_records_with_issues + patients_with_issues).uniq.length
-  end
-
   def issue_categories_for(pending_changes)
     FIELD_GROUPS.filter_map do |(keys, group)|
       group.to_s.humanize if (pending_changes & keys).any?

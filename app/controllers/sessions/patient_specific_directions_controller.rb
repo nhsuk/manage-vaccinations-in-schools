@@ -9,21 +9,18 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
   before_action :set_patient_search_form
 
   def show
-    scope =
-      @session.patient_sessions.includes_programmes.includes(
-        patient: {
-          patient_specific_directions: :programme
-        }
-      )
-    @eligible_for_bulk_psd_count = patient_sessions_allowed_psd.count
-    patient_sessions = @form.apply(scope)
-    @pagy, @patient_sessions = pagy(patient_sessions)
+    scope = @session.patients.includes(patient_specific_directions: :programme)
+
+    @eligible_for_bulk_psd_count = patients_allowed_psd.count
+
+    patients = @form.apply(scope)
+    @pagy, @patients = pagy(patients)
 
     render layout: "full"
   end
 
   def new
-    @eligible_for_bulk_psd_count = patient_sessions_allowed_psd.count
+    @eligible_for_bulk_psd_count = patients_allowed_psd.count
   end
 
   def create
@@ -56,12 +53,12 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
   end
 
   def psds_to_create
-    patient_sessions_allowed_psd.map do |patient_session|
+    patients_allowed_psd.map do |patient|
       PatientSpecificDirection.new(
         academic_year: @session.academic_year,
         created_by: current_user,
         delivery_site: "nose",
-        patient_id: patient_session.patient_id,
+        patient:,
         programme: @programme,
         team: current_team,
         vaccine: @vaccine,
@@ -70,18 +67,24 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
     end
   end
 
-  def patient_sessions_allowed_psd
-    @patient_sessions_allowed_psd ||=
+  def patients_allowed_psd
+    @patients_allowed_psd ||=
       @session
-        .patient_sessions
+        .patients
         .has_consent_status(
           "given",
           programme: @programme,
+          academic_year: @session.academic_year,
           vaccine_method: "nasal"
         )
-        .has_triage_status("not_required", programme: @programme)
+        .has_triage_status(
+          "not_required",
+          programme: @programme,
+          academic_year: @session.academic_year
+        )
         .without_patient_specific_direction(
           programme: @programme,
+          academic_year: @session.academic_year,
           team: current_team
         )
   end

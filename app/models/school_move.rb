@@ -98,33 +98,15 @@ class SchoolMove < ApplicationRecord
 
   def update_sessions!
     patient
-      .patient_sessions
-      .joins(:session)
+      .patient_locations
       .where("academic_year >= ?", academic_year)
       .destroy_all_if_safe
 
-    sessions_to_add.find_each do |session|
-      PatientSession.find_or_create_by!(patient:, session:)
-    end
+    location = school || team.generic_clinic
+
+    PatientLocation.find_or_create_by!(patient:, location:, academic_year:)
 
     StatusUpdater.call(patient:)
-  end
-
-  def sessions_to_add
-    @sessions_to_add ||=
-      begin
-        scope =
-          Session.includes(:location, :session_dates).where(
-            "academic_year >= ?",
-            academic_year
-          )
-
-        if school
-          scope.where(team: school.team, location: school)
-        else
-          scope.where(team:, locations: { type: "generic_clinic" })
-        end
-      end
   end
 
   def create_log_entry!(user:)

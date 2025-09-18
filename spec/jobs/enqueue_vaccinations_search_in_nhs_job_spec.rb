@@ -7,7 +7,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
   let(:flu) { create(:programme, :flu) }
   let(:location) { create(:school, team:, programmes: [flu]) }
   let(:school) { location }
-  let!(:patient) { create(:patient, team:, school:) }
+  let!(:patient) { create(:patient, team:, school:, session:) }
 
   describe "#perform", :within_academic_year do
     subject { SearchVaccinationRecordsInNHSJob }
@@ -23,8 +23,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
         dates:,
         send_invitations_at:,
         team:,
-        location:,
-        patients: [patient]
+        location:
       )
     end
 
@@ -43,13 +42,6 @@ describe EnqueueVaccinationsSearchInNHSJob do
       let(:send_invitations_at) { 14.days.ago }
 
       it { should have_received(:perform_bulk).once.with([[patient.id]]) }
-
-      context "community clinic session" do
-        let(:location) { create(:community_clinic, team:, programmes: [flu]) }
-        let(:school) { create(:school, team:, programmes: [flu]) }
-
-        it { should have_received(:perform_bulk).exactly(:once) }
-      end
 
       context "generic clinic session" do
         let(:location) { create(:generic_clinic, team:, programmes: [flu]) }

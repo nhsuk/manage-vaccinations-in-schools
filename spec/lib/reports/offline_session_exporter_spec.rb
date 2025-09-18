@@ -119,7 +119,7 @@ describe Reports::OfflineSessionExporter do
         let(:batch) do
           create(:batch, :not_expired, vaccine: programme.vaccines.active.first)
         end
-        let(:patient_session) { create(:patient_session, patient:, session:) }
+        let(:patient_location) { create(:patient_location, patient:, session:) }
         let(:patient) do
           create(:patient, year_group: programme.default_year_groups.first)
         end
@@ -225,7 +225,7 @@ describe Reports::OfflineSessionExporter do
         end
 
         context "with a vaccinated patient" do
-          before { create(:patient_session, patient:, session:) }
+          before { create(:patient_location, patient:, session:) }
 
           let!(:vaccination_record) do
             create(
@@ -340,7 +340,7 @@ describe Reports::OfflineSessionExporter do
         end
 
         context "with a vaccinated patient outside the session" do
-          before { create(:patient_session, patient:, session:) }
+          before { create(:patient_location, patient:, session:) }
 
           let!(:vaccination_record) do
             create(
@@ -430,8 +430,8 @@ describe Reports::OfflineSessionExporter do
           end
 
           before do
-            create(:patient_session, patient:, session:)
-            create(:patient_session, patient:, session: clinic_session)
+            create(:patient_location, patient:, session:)
+            create(:patient_location, patient:, session: clinic_session)
           end
 
           it "adds a row with the vaccination details" do
@@ -493,7 +493,7 @@ describe Reports::OfflineSessionExporter do
 
         context "with a vaccinated patient for a different programme" do
           before do
-            create(:patient_session, patient:, session:)
+            create(:patient_location, patient:, session:)
 
             other_programme = (Programme.types.keys - [programme.type]).sample
             create(
@@ -558,7 +558,7 @@ describe Reports::OfflineSessionExporter do
         end
 
         context "with a patient who couldn't be vaccinated" do
-          before { create(:patient_session, patient:, session:) }
+          before { create(:patient_location, patient:, session:) }
 
           let!(:vaccination_record) do
             create(
@@ -875,7 +875,7 @@ describe Reports::OfflineSessionExporter do
             )
           end
 
-          before { create(:patient_session, patient:, session:) }
+          before { create(:patient_location, patient:, session:) }
 
           it "adds a row to fill in" do
             expect(rows.count).to eq(1)

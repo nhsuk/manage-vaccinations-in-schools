@@ -114,7 +114,7 @@ class PatientChangeset < ApplicationRecord
         Patient.new(
           child_attributes.merge(
             "home_educated" => false,
-            "patient_sessions" => []
+            "patient_locations" => []
           )
         )
       end
@@ -209,7 +209,7 @@ class PatientChangeset < ApplicationRecord
     end
 
     matches =
-      Patient.includes(:patient_sessions).match_existing(
+      Patient.includes(:patient_locations).match_existing(
         nhs_number: child_attributes["nhs_number"],
         given_name: child_attributes["given_name"],
         family_name: child_attributes["family_name"],

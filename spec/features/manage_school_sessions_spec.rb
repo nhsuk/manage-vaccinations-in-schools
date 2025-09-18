@@ -105,6 +105,28 @@ describe "Manage school sessions" do
 
     clinic_session.set_notification_dates
     clinic_session.save!
+
+    patient_already_in_clinic_without_invitiation =
+      create(:patient, year_group: 8, session: @session)
+    create(
+      :patient_location,
+      patient: patient_already_in_clinic_without_invitiation,
+      session: clinic_session
+    )
+
+    patient_already_in_clinic_with_invitiation =
+      create(:patient, year_group: 8, session: @session)
+    create(
+      :patient_location,
+      patient: patient_already_in_clinic_with_invitiation,
+      session: clinic_session
+    )
+    create(
+      :session_notification,
+      :clinic_initial_invitation,
+      session: clinic_session,
+      patient: patient_already_in_clinic_with_invitiation
+    )
   end
 
   def and_i_am_signed_in
@@ -153,7 +175,7 @@ describe "Manage school sessions" do
   end
 
   def and_i_see_a_child_in_the_cohort
-    expect(page).to have_content("1 child")
+    expect(page).to have_content("3 children")
   end
 
   def when_i_click_on_schedule_sessions
@@ -291,7 +313,7 @@ describe "Manage school sessions" do
   def then_i_see_the_send_invitations_page
     expect(page).to have_content("Invite parents to book a clinic appointment")
     expect(page).to have_content(
-      "There is 1 child currently without clinic appointments."
+      "There are 2 children currently without clinic appointments."
     )
   end
 
@@ -299,7 +321,7 @@ describe "Manage school sessions" do
                :when_i_click_on_send_invitations
 
   def then_i_see_the_invitation_confirmation
-    expect(page).to have_content("1 child invited to the clinic")
+    expect(page).to have_content("2 children invited to the clinic")
   end
 
   def and_the_parent_receives_an_invitation

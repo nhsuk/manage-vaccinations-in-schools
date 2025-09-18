@@ -31,7 +31,7 @@ describe AppPatientSessionTableComponent do
     # relative to the current academic year.
     let(:patient) { create(:patient, date_of_birth: Date.new(2011, 9, 1)) }
 
-    before { create_list(:patient_session, 1, patient:, session:) }
+    before { create_list(:patient_location, 1, patient:, session:) }
 
     it { should have_content("Location") }
     it { should have_content("Session dates") }

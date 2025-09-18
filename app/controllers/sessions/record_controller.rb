@@ -15,28 +15,31 @@ class Sessions::RecordController < ApplicationController
 
   def show
     scope =
-      @session.patient_sessions.includes(
-        patient: [
-          :consent_statuses,
-          :triage_statuses,
-          :vaccination_statuses,
-          { notes: :created_by }
-        ]
+      @session.patients.includes(
+        :consent_statuses,
+        :triage_statuses,
+        :vaccination_statuses,
+        notes: :created_by
       )
 
     if @session.requires_registration?
-      scope = scope.has_registration_status(%w[attending completed])
+      scope =
+        scope.has_registration_status(
+          %w[attending completed],
+          session: @session
+        )
     end
 
-    patient_sessions =
+    patients =
       filter_on_vaccine_method_or_patient_specific_direction(
         @form.apply(scope)
       ).consent_given_and_ready_to_vaccinate(
         programmes: @form.programmes,
+        academic_year: @session.academic_year,
         vaccine_method: @form.vaccine_method.presence
       )
 
-    @pagy, @patient_sessions = pagy_array(patient_sessions)
+    @pagy, @patients = pagy_array(patients)
 
     render layout: "full"
   end
@@ -103,28 +106,32 @@ class Sessions::RecordController < ApplicationController
 
     original_scope = scope
 
+    programme = @session.programmes
+    academic_year = @session.academic_year
+    team = current_team
+
     if @session.psd_enabled? && @session.national_protocol_enabled?
-      original_scope.has_patient_specific_direction(
-        programme: @session.programmes,
-        team: current_team
+      original_scope.with_patient_specific_direction(
+        programme:,
+        academic_year:,
+        team:
       ).or(
         original_scope.has_vaccine_method(
           "injection",
-          programme: @session.programmes
+          programme:,
+          academic_year:
         )
       )
     elsif @session.pgd_supply_enabled? && @session.national_protocol_enabled?
       original_scope.has_vaccine_method(
         %w[nasal injection],
-        programme: @session.programmes
+        programme:,
+        academic_year:
       )
     elsif @session.pgd_supply_enabled?
-      original_scope.has_vaccine_method("nasal", programme: @session.programmes)
+      original_scope.has_vaccine_method("nasal", programme:, academic_year:)
     elsif @session.national_protocol_enabled?
-      original_scope.has_vaccine_method(
-        "injection",
-        programme: @session.programmes
-      )
+      original_scope.has_vaccine_method("injection", programme:, academic_year:)
     else
       original_scope.none
     end

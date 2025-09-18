@@ -40,7 +40,6 @@ class Imports::IssuesController < ApplicationController
     @patients =
       policy_scope(Patient).with_pending_changes.includes(
         :gp_practice,
-        :pending_sessions,
         :school,
         :school_moves
       )
