@@ -48,6 +48,34 @@ module VaccinationMailerConcern
     end
   end
 
+  def send_vaccination_discovered_if_required(vaccination_record)
+    # TODO: should we restrict this logic to these records?
+    return unless vaccination_record.sourced_from_nhs_immunisations_api?
+
+    consents =
+      vaccination_record
+        .patient
+        .consents
+        .where(
+          programme: vaccination_record.programme,
+          academic_year: vaccination_record.academic_year,
+          invalidated_at: nil
+        )
+        .select(&:response_given?)
+
+    parents = consents.map(&:parent).uniq
+
+    parents.each do |parent|
+      EmailDeliveryJob.perform_later(
+        :vaccination_discovered,
+        parent:,
+        vaccination_record:
+      )
+    end
+
+    consents.each(&:invalidate!) # TODO: is there a better way to prevent this notification from being sent twice?
+  end
+
   def parents_for_vaccination_mailer(vaccination_record)
     patient = vaccination_record.patient
     unless patient.send_notifications? && vaccination_record.notify_parents
