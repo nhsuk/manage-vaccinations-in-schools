@@ -36,9 +36,7 @@ class TeamSessionsFactory
         .unscheduled
         .where(academic_year:)
         .where.not(location: team.locations)
-        .where
-        .missing(:patient_sessions)
-        .destroy_all
+        .find_each { |session| session.destroy! if session.patients.empty? }
     end
   end
 end

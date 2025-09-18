@@ -4,7 +4,7 @@ describe "status:update" do
   context "with all patients" do
     subject(:invoke) { Rake::Task["status:update:all"].invoke }
 
-    before { create(:patient_session) }
+    before { create(:patient_location) }
 
     after { Rake.application["status:update:all"].reenable }
 
@@ -25,7 +25,7 @@ describe "status:update" do
 
     let(:patient) { create(:patient) }
 
-    before { create(:patient_session, patient:) }
+    before { create(:patient_location, patient:) }
 
     it "doesn't raise an error" do
       expect { invoke }.not_to raise_error
@@ -46,7 +46,7 @@ describe "status:update" do
 
     let(:session) { create(:session) }
 
-    before { create(:patient_session, session:) }
+    before { create(:patient_location, session:) }
 
     it "doesn't raise an error" do
       expect { invoke }.not_to raise_error

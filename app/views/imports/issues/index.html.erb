@@ -2,7 +2,7 @@
 
 <%= govuk_button_to "Import records", imports_path, secondary: true, class: "nhsuk-u-margin-bottom-4" %>
 
-<%= render AppImportsNavigationComponent.new(active: :issues) %>
+<%= render AppImportsNavigationComponent.new(active: :issues, team: current_team) %>
 
 <% if @import_issues.any? %>
   <div class="nhsuk-table__panel-with-heading-tab">

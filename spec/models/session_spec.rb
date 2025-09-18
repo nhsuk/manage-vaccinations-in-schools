@@ -20,9 +20,10 @@
 #
 # Indexes
 #
-#  index_sessions_on_location_id                (location_id)
-#  index_sessions_on_team_id_and_academic_year  (team_id,academic_year)
-#  index_sessions_on_team_id_and_location_id    (team_id,location_id)
+#  index_sessions_on_location_id                                (location_id)
+#  index_sessions_on_location_id_and_academic_year_and_team_id  (location_id,academic_year,team_id)
+#  index_sessions_on_team_id_and_academic_year                  (team_id,academic_year)
+#  index_sessions_on_team_id_and_location_id                    (team_id,location_id)
 #
 # Foreign Keys
 #
@@ -267,6 +268,36 @@ describe Session do
       let(:programmes) { [create(:programme, :hpv)] }
 
       it { should be(false) }
+    end
+  end
+
+  describe "#patients_with_no_consent_response_count" do
+    subject(:count) { session.patients_with_no_consent_response_count }
+
+    let(:programme) { create(:programme) }
+    let(:session) { create(:session, programmes: [programme]) }
+
+    context "when there are no patients" do
+      it { should eq(0) }
+    end
+
+    context "when there are patients with different consent statuses" do
+      it "returns count of patients with no response consent status" do
+        create(
+          :patient,
+          :consent_no_response,
+          session:,
+          programmes: [programme]
+        )
+        create(
+          :patient,
+          :consent_given_triage_not_needed,
+          session:,
+          programmes: [programme]
+        )
+
+        expect(count).to eq(1)
+      end
     end
   end
 

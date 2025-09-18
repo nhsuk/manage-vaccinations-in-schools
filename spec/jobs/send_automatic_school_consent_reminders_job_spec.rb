@@ -69,7 +69,7 @@ describe SendAutomaticSchoolConsentRemindersJob do
   end
 
   before do
-    patients.each { |patient| create(:patient_session, patient:, session:) }
+    patients.each { |patient| create(:patient_location, patient:, session:) }
     ConsentNotification.request.update_all(sent_at: dates.first - 1.week)
     ConsentNotification.reminder.update_all(sent_at: dates.first)
 

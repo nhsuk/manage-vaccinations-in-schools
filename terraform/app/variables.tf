@@ -254,6 +254,10 @@ locals {
       name  = "SIDEKIQ_REDIS_URL"
       value = "rediss://${aws_elasticache_replication_group.valkey.primary_endpoint_address}:${var.valkey_port}"
     },
+    {
+      name  = "REDIS_CACHE_URL"
+      value = "rediss://${aws_elasticache_serverless_cache.rails_cache.endpoint[0].address}:${aws_elasticache_serverless_cache.rails_cache.endpoint[0].port}"
+    },
   ], local.sandbox_envs)
 
   task_secrets = concat([

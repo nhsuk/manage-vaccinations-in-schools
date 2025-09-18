@@ -11,7 +11,7 @@ describe EnqueueClinicSessionInvitationsJob do
   let(:patient) { create(:patient, parents:, year_group: 8) }
   let(:location) { create(:generic_clinic, team:) }
 
-  before { create(:patient_session, patient:, session:) }
+  before { create(:patient_location, patient:, session:) }
 
   context "for a scheduled clinic session in 3 weeks" do
     let(:date) { 3.weeks.from_now.to_date }

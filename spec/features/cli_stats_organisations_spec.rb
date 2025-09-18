@@ -145,7 +145,7 @@ describe "mavis stats organisations" do
     )
     create(:patient, :consent_no_response, year_group: 11, session: session1)
 
-    create(:patient_session, patient: patient_year_9, session: session1)
+    create(:patient_location, patient: patient_year_9, session: session1)
     create(
       :consent,
       :refused,
@@ -154,7 +154,7 @@ describe "mavis stats organisations" do
     )
 
     create(
-      :patient_session,
+      :patient_location,
       patient: patient_year_8,
       session: session_last_year
     )

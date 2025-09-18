@@ -47,13 +47,13 @@ module Stats
 
       sessions.find_each do |session|
         session
-          .patient_sessions
+          .patient_locations
           .includes(patient: { consents: %i[consent_form parent] })
-          .find_each do |patient_session|
+          .find_each do |patient_location|
             grouped_consents =
               @programmes.map do |programme|
                 ConsentGrouper.call(
-                  patient_session.patient.consents,
+                  patient_location.patient.consents,
                   programme_id: programme.id,
                   academic_year: @academic_year
                 )&.min_by(&:created_at)

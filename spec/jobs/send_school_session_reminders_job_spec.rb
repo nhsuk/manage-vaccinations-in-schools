@@ -9,7 +9,7 @@ describe SendSchoolSessionRemindersJob do
     create(:patient, :consent_given_triage_not_needed, parents:, programmes:)
   end
 
-  before { create(:patient_session, patient:, session:) }
+  before { create(:patient_location, patient:, session:) }
 
   context "for an active session tomorrow" do
     let(:session) { create(:session, :tomorrow, programmes:) }

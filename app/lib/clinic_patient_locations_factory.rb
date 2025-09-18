@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
-class ClinicPatientSessionsFactory
+class ClinicPatientLocationsFactory
   def initialize(school_session:, generic_clinic_session:)
     @school_session = school_session
     @generic_clinic_session = generic_clinic_session
   end
 
-  def create_patient_sessions!
-    PatientSession.import!(
-      patient_sessions_to_create,
+  def create_patient_locations!
+    PatientLocation.import!(
+      patient_locations_to_create,
       on_duplicate_key_ignore: true
     )
   end
 
-  def patient_sessions_to_create
+  def patient_locations_to_create
     patients_in_school.filter_map do |patient|
       if SendClinicInitialInvitationsJob.new.should_send_notification?(
            patient:,
@@ -21,9 +21,10 @@ class ClinicPatientSessionsFactory
            programmes:,
            session_date:
          )
-        PatientSession.includes(:session_notifications).find_or_initialize_by(
+        PatientLocation.new(
           patient:,
-          session: generic_clinic_session
+          academic_year: generic_clinic_session.academic_year,
+          location: generic_clinic_session.location
         )
       end
     end

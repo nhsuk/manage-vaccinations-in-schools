@@ -262,7 +262,7 @@ def create_students_and_vaccinations_for(school:, team:, year_size_estimate:)
       session_participants = [dose_1_cohort, dose_2_cohort].flatten.compact
 
       session_participants.filter_map do |student|
-        patient_session = PatientSession.create!(patient: student, session:)
+        patient_session = PatientLocation.create!(patient: student, session:)
 
         next if rand < 0.1 # assume 90% uptake
 

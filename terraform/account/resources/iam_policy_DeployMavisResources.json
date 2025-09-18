@@ -155,7 +155,12 @@
         "elasticache:ModifyCacheCluster",
         "elasticache:ModifyCacheParameterGroup",
         "elasticache:ModifyCacheSubnetGroup",
-        "elasticache:IncreaseReplicaCount"
+        "elasticache:IncreaseReplicaCount",
+        "elasticache:CreateServerlessCache",
+        "elasticache:DescribeServerlessCaches",
+        "elasticache:DescribeServerlessCacheSnapshots",
+        "elasticache:DeleteServerlessCache",
+        "elasticache:ModifyServerlessCache"
       ],
       "Resource": ["*"]
     }

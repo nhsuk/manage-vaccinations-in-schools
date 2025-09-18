@@ -14,18 +14,16 @@ class Sessions::RegisterController < ApplicationController
     @statuses = Patient::RegistrationStatus.statuses.keys
 
     scope =
-      @session.patient_sessions.includes_programmes.includes(
-        patient: [
-          :consent_statuses,
-          :registration_statuses,
-          :triage_statuses,
-          :vaccination_statuses,
-          { notes: :created_by }
-        ]
+      @session.patients.includes(
+        :consent_statuses,
+        :registration_statuses,
+        :triage_statuses,
+        :vaccination_statuses,
+        notes: :created_by
       )
 
-    patient_sessions = @form.apply(scope)
-    @pagy, @patient_sessions = pagy(patient_sessions)
+    patients = @form.apply(scope)
+    @pagy, @patients = pagy(patients)
   end
 
   def create

@@ -156,8 +156,10 @@ class ImmunisationImportRow
     vaccination_record
   end
 
-  def to_patient_session
-    PatientSession.new(patient:, session:) if patient && session
+  def to_patient_location
+    if patient && session
+      PatientLocation.new(patient:, location: session.location, academic_year:)
+    end
   end
 
   def batch_expiry = @data[:batch_expiry_date]

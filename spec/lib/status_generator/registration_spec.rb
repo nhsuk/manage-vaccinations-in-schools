@@ -20,7 +20,7 @@ describe StatusGenerator::Registration do
   let(:session) do
     create(:session, dates: [Date.yesterday, Date.current], programmes:)
   end
-  let(:patient_session) { create(:patient_session, patient:, session:) }
+  let(:patient_location) { create(:patient_location, patient:, session:) }
 
   describe "#status" do
     subject { generator.status }

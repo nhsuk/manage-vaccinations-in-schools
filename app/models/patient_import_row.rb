@@ -51,7 +51,7 @@ class PatientImportRow
       prepare_patient_changes(existing_patient, import_attributes)
     else
       Patient.new(
-        import_attributes.merge(home_educated: false, patient_sessions: [])
+        import_attributes.merge(home_educated: false, patient_locations: [])
       )
     end
   end
@@ -346,7 +346,7 @@ class PatientImportRow
       return
     end
 
-    Patient.includes(:patient_sessions).match_existing(
+    Patient.includes(:patient_locations).match_existing(
       nhs_number: nhs_number_value,
       given_name: first_name.to_s,
       family_name: last_name.to_s,

@@ -38,12 +38,12 @@ describe PatientPolicy do
 
       before do
         create(
-          :patient_session,
+          :patient_location,
           patient: patient_in_session,
           session: create(:session, team:, programmes:)
         )
         create(
-          :patient_session,
+          :patient_location,
           patient: patient_not_in_session,
           session: create(:session, team: another_team, programmes:)
         )

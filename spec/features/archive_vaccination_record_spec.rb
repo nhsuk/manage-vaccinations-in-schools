@@ -136,8 +136,8 @@ describe "Archive vaccination record" do
         team: @team
       )
 
-    @patient_session =
-      create(:patient_session, patient: @patient, session: @session)
+    @patient_location =
+      create(:patient_location, patient: @patient, session: @session)
   end
 
   def and_an_administered_vaccination_record_exists

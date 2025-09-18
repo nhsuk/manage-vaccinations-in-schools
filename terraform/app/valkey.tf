@@ -1,3 +1,5 @@
+################ SIDEKIQ CACHE FOR JOB PROCESSING #####################
+
 resource "aws_security_group" "valkey" {
   name        = "mavis-cache-${var.environment}"
   description = "Security group for Valkey ElastiCache (self-designed cluster)"
@@ -109,4 +111,66 @@ resource "aws_cloudwatch_log_group" "valkey_engine_log" {
   tags = {
     Name = "mavis-cache-engine-log-${var.environment}"
   }
+}
+
+
+################ REDIS CACHE FOR CACHING DB QUERIES #####################
+
+resource "aws_security_group" "rails_valkey" {
+  name        = "mavis-cache-rails-${var.environment}"
+  description = "Security group for Valkey ElastiCache for the rails service"
+  vpc_id      = aws_vpc.application_vpc.id
+
+  tags = {
+    Name = "mavis-cache-rails-${var.environment}"
+  }
+
+  lifecycle {
+    ignore_changes = [description]
+  }
+}
+
+resource "aws_security_group_rule" "rails_valkey_ingress" {
+  type                     = "ingress"
+  from_port                = aws_elasticache_serverless_cache.rails_cache.endpoint[0].port
+  to_port                  = aws_elasticache_serverless_cache.rails_cache.endpoint[0].port
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.rails_valkey.id
+  source_security_group_id = module.web_service.security_group_id
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_elasticache_parameter_group" "rails" {
+  family = "valkey8"
+  name   = "mavis-cache-rails-params-${var.environment}"
+
+  parameter {
+    name  = "maxmemory-policy"
+    value = "allkeys-lfu"
+  }
+
+  tags = {
+    Name = "mavis-cache-rails-params-${var.environment}"
+  }
+}
+
+resource "aws_elasticache_serverless_cache" "rails_cache" {
+  engine      = "valkey"
+  name        = "mavis-cache-rails-${var.environment}"
+  description = "Rails cache for web servers"
+  cache_usage_limits {
+    data_storage {
+      maximum = 1
+      unit    = "GB"
+    }
+    ecpu_per_second {
+      maximum = 1000
+    }
+  }
+  major_engine_version = "8"
+  security_group_ids   = [aws_security_group.rails_valkey.id]
+  subnet_ids           = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
 }

@@ -12,12 +12,10 @@ class Sessions::PatientsController < ApplicationController
     @statuses = Patient::VaccinationStatus.statuses.keys
 
     scope =
-      @session.patient_sessions.includes_programmes.includes(
-        patient: [:vaccination_statuses, { notes: :created_by }]
-      )
+      @session.patients.includes(:vaccination_statuses, notes: :created_by)
 
-    patient_sessions = @form.apply(scope)
-    @pagy, @patient_sessions = pagy(patient_sessions)
+    patients = @form.apply(scope)
+    @pagy, @patients = pagy(patients)
   end
 
   private

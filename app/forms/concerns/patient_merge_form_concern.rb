@@ -20,7 +20,7 @@ module PatientMergeFormConcern
         ) ||
           Patient
             .where
-            .missing(:patient_sessions)
+            .missing(:patient_locations)
             .includes(vaccination_records: :programme)
             .find_by(nhs_number:)
       end

@@ -17,11 +17,12 @@ class SessionsController < ApplicationController
     sessions = @form.apply(scope)
 
     @patient_count_by_session_id =
-      PatientSession
-        .where(session_id: sessions.map(&:id))
-        .joins(:patient, :session)
+      PatientLocation
+        .joins(:patient)
         .appear_in_programmes(@programmes)
-        .group(:session_id)
+        .where("sessions.id IN (?)", sessions.pluck(:id))
+        .distinct
+        .group("sessions.id")
         .count
 
     @pagy, @sessions = pagy_array(sessions)
