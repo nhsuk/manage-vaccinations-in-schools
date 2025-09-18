@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe AppPatientSessionTriageComponent do
-  subject { render_inline(component) }
+  subject(:rendered) { render_inline(component) }
 
   let(:component) do
     described_class.new(patient:, session:, programme:, current_user:)
@@ -24,7 +24,13 @@ describe AppPatientSessionTriageComponent do
       create(:patient_triage_status, :safe_to_vaccinate, patient:, programme:)
     end
 
-    it { should have_css(".app-card--aqua-green", text: "Safe to vaccinate") }
+    it do
+      expect(rendered).to have_css(
+        ".app-card__heading--aqua-green",
+        text: "Safe to vaccinate"
+      )
+    end
+
     it { should have_content("safe to vaccinate") }
     it { should have_link("Update triage outcome") }
   end
@@ -35,7 +41,7 @@ describe AppPatientSessionTriageComponent do
       create(:patient_triage_status, :do_not_vaccinate, patient:, programme:)
     end
 
-    it { should have_css(".app-card--red", text: "Do not vaccinate") }
+    it { should have_css(".app-card__heading--red", text: "Do not vaccinate") }
     it { should have_content("should not be vaccinated") }
     it { should have_link("Update triage outcome") }
   end

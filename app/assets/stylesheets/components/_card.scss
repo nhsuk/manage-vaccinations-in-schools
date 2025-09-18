@@ -3,78 +3,68 @@
 
 .app-card {
   &--aqua-green {
-    .nhsuk-card__heading--feature {
-      background-color: nhsuk-colour("aqua-green");
+    background-color: nhsuk-tint(nhsuk-colour("aqua-green"), 80%);
+    border-color: nhsuk-tint(nhsuk-colour("aqua-green"), 50%);
+    color: nhsuk-shade(nhsuk-colour("aqua-green"), 50%);
+
+    &.nhsuk-card--clickable:active {
+      border-color: nhsuk-shade(nhsuk-colour("aqua-green"), 50%);
     }
   }
 
-  &--dark-orange {
-    .nhsuk-card__heading--feature {
-      background-color: app.$dark-orange-colour;
+  &--blue {
+    background-color: nhsuk-tint(nhsuk-colour("blue"), 80%);
+    border-color: nhsuk-tint(nhsuk-colour("blue"), 30%);
+    color: nhsuk-shade(nhsuk-colour("blue"), 30%);
+
+    &.nhsuk-card--clickable:active {
+      border-color: nhsuk-shade(nhsuk-colour("blue"), 30%);
     }
   }
 
   &--green {
-    .nhsuk-card__heading--feature {
-      background-color: nhsuk-colour("green");
+    background-color: nhsuk-tint(nhsuk-colour("green"), 80%);
+    border-color: nhsuk-tint(nhsuk-colour("green"), 40%);
+    color: nhsuk-shade(nhsuk-colour("green"), 40%);
+
+    &.nhsuk-card--clickable:active {
+      border-color: nhsuk-shade(nhsuk-colour("green"), 40%);
     }
   }
 
   &--grey {
-    .nhsuk-card__heading--feature {
-      background-color: nhsuk-colour("grey-1");
-    }
-  }
+    background-color: nhsuk-tint(nhsuk-colour("grey-1"), 80%);
+    border-color: nhsuk-tint(nhsuk-colour("grey-1"), 30%);
+    color: nhsuk-shade(nhsuk-colour("grey-1"), 30%);
 
-  &--purple {
-    .nhsuk-card__heading--feature {
-      background-color: nhsuk-colour("purple");
+    &.nhsuk-card--clickable:active {
+      border-color: nhsuk-shade(nhsuk-colour("grey-1"), 30%);
     }
   }
 
   &--red {
-    .nhsuk-card__heading--feature {
-      background-color: nhsuk-colour("red");
+    background-color: nhsuk-tint(nhsuk-colour("red"), 80%);
+    border-color: nhsuk-tint(nhsuk-colour("red"), 50%);
+    color: nhsuk-shade(nhsuk-colour("red"), 50%);
+
+    &.nhsuk-card--clickable:active {
+      border-color: nhsuk-shade(nhsuk-colour("red"), 50%);
     }
   }
 
-  &--reversed {
-    background-color: nhsuk-colour("blue");
-    border-color: nhsuk-shade(nhsuk-colour("blue"), 25%);
-    color: nhsuk-colour("white");
-
-    &:active {
-      border-color: nhsuk-shade(nhsuk-colour("blue"), 50%);
-    }
-
-    .nhsuk-card__link {
-      @include nhsuk-link-style-white;
+  &--aqua-green,
+  &--blue,
+  &--green,
+  &--grey,
+  &--red {
+    .nhsuk-card__link,
+    .nhsuk-card__link:hover {
+      color: inherit;
     }
   }
 
   &--offset {
     background-color: rgba(nhsuk-colour("grey-5"), 0.5);
-  }
-
-  &--data {
-    display: flex;
-
-    .nhsuk-card__content {
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-    }
-
-    .nhsuk-card__heading {
-      @include nhsuk-typography-weight-normal;
-    }
-
-    .nhsuk-card__description {
-      margin-top: auto;
-
-      @include nhsuk-font-size(48);
-      @include nhsuk-typography-weight-bold;
-    }
   }
 }
 
@@ -88,5 +78,57 @@
   .nhsuk-card__content {
     @include nhsuk-responsive-padding(4);
     @include nhsuk-responsive-padding(3, "bottom");
+  }
+}
+
+// Align counts across cards
+.nhsuk-card:has(> .nhsuk-card__content > .app-card__data) {
+  display: flex;
+
+  .nhsuk-card__heading {
+    line-height: 1.2;
+  }
+
+  .nhsuk-card__content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}
+
+.app-card__data {
+  @include nhsuk-font-size(48);
+  @include nhsuk-typography-weight-bold;
+}
+
+.app-card__heading {
+  &--aqua-green {
+    background-color: nhsuk-colour("aqua-green");
+  }
+
+  &--dark-orange {
+    background-color: app.$dark-orange-colour;
+  }
+
+  &--green {
+    background-color: nhsuk-colour("green");
+  }
+
+  &--grey {
+    background-color: nhsuk-colour("grey-1");
+  }
+
+  &--purple {
+    background-color: nhsuk-colour("purple");
+  }
+
+  &--red {
+    background-color: nhsuk-colour("red");
+  }
+
+  &--warm-yellow {
+    background-color: nhsuk-colour("warm-yellow");
+    color: $nhsuk-text-colour;
   }
 }

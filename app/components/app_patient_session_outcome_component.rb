@@ -4,8 +4,8 @@ class AppPatientSessionOutcomeComponent < ViewComponent::Base
   erb_template <<-ERB
     <h3 class="nhsuk-heading-m">Programme outcome</h3>
     
-    <%= render AppCardComponent.new(heading_level: 4, colour:) do |card| %>
-      <% card.with_heading { heading } %>
+    <%= render AppCardComponent.new(feature: true) do |card| %>
+      <% card.with_heading(level: 4, colour:) { heading } %>
       <%= render AppPatientVaccinationTableComponent.new(
             patient,
             programme:,

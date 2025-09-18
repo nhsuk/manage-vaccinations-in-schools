@@ -1,7 +1,7 @@
 <h3 class="nhsuk-heading-m">Consent</h3>
 
-<%= render AppCardComponent.new(heading_level: 4, colour:) do |card| %>
-  <% card.with_heading { heading } %>
+<%= render AppCardComponent.new(feature: true) do |card| %>
+  <% card.with_heading(level: 4, colour:) { heading } %>
 
   <% unless vaccination_status.vaccinated? %>
     <% if consent_status.no_response? %>

@@ -25,12 +25,8 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   end
 
   def call
-    render AppCardComponent.new(
-             link_to: @link_to,
-             heading_level: 4,
-             compact: true
-           ) do |card|
-      card.with_heading { @patient.full_name_with_known_as }
+    render AppCardComponent.new(link_to: @link_to, compact: true) do |card|
+      card.with_heading(level: 4) { @patient.full_name_with_known_as }
 
       govuk_summary_list do |summary_list|
         summary_list.with_row do |row|

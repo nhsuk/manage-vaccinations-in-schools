@@ -3,8 +3,8 @@
 class AppSessionSearchFormComponent < ViewComponent::Base
   erb_template <<-ERB
     <%= form_with url:, method: :get, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
-      <%= render AppCardComponent.new(heading_level: 2, filters: true) do |card| %>
-        <% card.with_heading { "Find session" } %>
+      <%= render AppCardComponent.new(filters: true) do |card| %>
+        <% card.with_heading(level: 2) { "Find session" } %>
 
         <div class="app-search-input" role="search">
           <%= f.govuk_text_field :q,

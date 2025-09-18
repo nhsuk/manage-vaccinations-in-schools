@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe AppPatientSessionConsentComponent do
-  subject { render_inline(component) }
+  subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(patient:, session:, programme:) }
 
@@ -43,7 +43,7 @@ describe AppPatientSessionConsentComponent do
 
     before { create(:patient_consent_status, :refused, patient:, programme:) }
 
-    it { should have_css(".app-card--red", text: "Consent refused") }
+    it { should have_css(".app-card__heading--red", text: "Consent refused") }
     it { should have_content(consent.parent.full_name) }
     it { should have_content(consent.parent_relationship.label) }
     it { should have_content("Consent refused") }
@@ -55,7 +55,13 @@ describe AppPatientSessionConsentComponent do
 
     before { create(:patient_consent_status, :given, patient:, programme:) }
 
-    it { should have_css(".app-card--aqua-green", text: "Consent given") }
+    it do
+      expect(rendered).to have_css(
+        ".app-card__heading--aqua-green",
+        text: "Consent given"
+      )
+    end
+
     it { should_not have_css("a", text: "Contact #{consent.parent.full_name}") }
   end
 end
