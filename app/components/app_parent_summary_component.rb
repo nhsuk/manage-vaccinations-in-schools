@@ -108,20 +108,19 @@ class AppParentSummaryComponent < ViewComponent::Base
 
   delegate :govuk_summary_list, to: :helpers
 
+  EMAIL_FAILURE_TEXTS = {
+    "permanent_failure" => "Email address does not exist",
+    "temporary_failure" => "Inbox not accepting messages right now"
+  }.freeze
+
   def email_address
     delivery_status = @parent.email_delivery_status
 
     elements = [
       tag.p(@parent.email, class: "nhsuk-body nhsuk-u-margin-0"),
-      if delivery_status == "permanent_failure"
+      if (failure_text = EMAIL_FAILURE_TEXTS[delivery_status])
         render AppStatusComponent.new(
-                 text: "Email address does not exist",
-                 colour: "red",
-                 small: true
-               )
-      elsif delivery_status == "temporary_failure"
-        render AppStatusComponent.new(
-                 text: "Inbox not accepting messages right now",
+                 text: failure_text,
                  colour: "red",
                  small: true
                )
@@ -131,20 +130,21 @@ class AppParentSummaryComponent < ViewComponent::Base
     safe_join(elements)
   end
 
+  PHONE_FAILURE_TEXTS = {
+    "not_uk_mobile_number_failure" =>
+      "Phone number is a landline not accepting text messages",
+    "permanent_failure" => "Phone number does not exist",
+    "temporary_failure" => "Inbox not accepting messages right now"
+  }.freeze
+
   def phone_number
     delivery_status = @parent.sms_delivery_status
 
     elements = [
       tag.p(@parent.phone, class: "nhsuk-body nhsuk-u-margin-0"),
-      if delivery_status == "permanent_failure"
+      if (failure_text = PHONE_FAILURE_TEXTS[delivery_status])
         render AppStatusComponent.new(
-                 text: "Phone number does not exist",
-                 colour: "red",
-                 small: true
-               )
-      elsif delivery_status == "temporary_failure"
-        render AppStatusComponent.new(
-                 text: "Inbox not accepting messages right now",
+                 text: failure_text,
                  colour: "red",
                  small: true
                )
