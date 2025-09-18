@@ -50,6 +50,7 @@ describe "HPV vaccination" do
     and_i_no_longer_see_the_patient_in_the_record_tab
     and_i_no_longer_see_the_patient_in_the_consent_tab
     and_the_vaccination_record_is_synced_to_nhs
+    and_the_parent_doesnt_receive_a_vaccination_discovered_email
 
     when_i_go_back
     and_i_save_changes
@@ -308,5 +309,9 @@ describe "HPV vaccination" do
   def and_the_vaccination_record_is_synced_to_nhs
     Sidekiq::Job.drain_all
     expect(@stubbed_post_request).to have_been_requested
+  end
+
+  def and_the_parent_doesnt_receive_a_vaccination_discovered_email
+    expect(email_deliveries).to be_empty
   end
 end

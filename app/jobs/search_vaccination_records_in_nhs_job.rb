@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
+  include VaccinationMailerConcern
+
   def perform(patient_id)
     patient = Patient.find(patient_id)
 
@@ -63,7 +65,10 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
       end
 
       # Remaining incoming_vaccination_records are new
-      incoming_vaccination_records.each(&:save!)
+      incoming_vaccination_records.each do |vaccination_record|
+        vaccination_record.save!
+        send_vaccination_discovered_if_required(vaccination_record)
+      end
 
       StatusUpdater.call(patient:)
     end
