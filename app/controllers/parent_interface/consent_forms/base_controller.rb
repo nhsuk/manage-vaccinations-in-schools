@@ -31,7 +31,7 @@ module ParentInterface
       if params[:session_slug]
         @session = Session.find_by!(slug: params[:session_slug])
       elsif @consent_form.present?
-        @session = @consent_form.original_session
+        @session = @consent_form.session
       end
     end
 

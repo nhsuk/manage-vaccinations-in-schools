@@ -14,8 +14,7 @@ module ConsentFormMailerConcern
               consent_form:,
               programmes:
             )
-          elsif consent_form.actual_session.clinic? ||
-                consent_form.actual_session.completed?
+          elsif consent_form.session.clinic? || consent_form.session.completed?
             EmailDeliveryJob.perform_later(
               :consent_confirmation_clinic,
               consent_form:,
