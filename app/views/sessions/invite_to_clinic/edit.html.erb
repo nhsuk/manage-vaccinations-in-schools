@@ -10,15 +10,18 @@
 <% end %>
 
 <% if @initial_invitations %>
-  <% if @invitations_to_send == 1 %>
-    <p><%= @invitations_to_send %> child was not vaccinated. You can send invitations to their parents to book an appointment.</p>
+  <% if @invitations_to_send == 0 %>
+    <p>You do not need to send any clinic invitations. The parents of any children who were not vaccinated have already received clinic invitations.</p>
+  <% elsif @invitations_to_send == 1 %>
+    <p><%= @invitations_to_send %> child was not vaccinated at this school and have not already been invited to a clinic.</p>
+    <p>You can send invitations to their parents to book an appointment to have their children vaccinated at a clinic.</p>
   <% else %>
-    <p><%= @invitations_to_send %> children were not vaccinated. You can send invitations to their parents to book an appointment.</p>
+    <p><%= @invitations_to_send %> children were not vaccinated at this school and have not already been invited to a clinic.</p>
+    <p>You can send invitations to their parents to book an appointment to have their children vaccinated at a clinic.</p>
   <% end %>
 <% else %>
   <% if @invitations_to_send == 0 %>
     <p>You cannot send a booking reminder now. This is because there are currently no children whose parents have not already been sent a reminder about the next clinic session.</p>
-
     <p>You will be able to send new booking reminders after the next clinic date has passed, if there are still children who did not get vaccinated.</p>
   <% elsif @invitations_to_send == 1 %>
     <p>This will send booking reminders to the parents of <%= @invitations_to_send %> child who has not yet been sent a reminder.</p>
