@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "HPV vaccination" do
+describe "offline vaccination" do
   around do |example|
     travel_to(Time.zone.local(2024, 2, 1, 12)) { example.run }
   end
@@ -64,6 +64,42 @@ describe "HPV vaccination" do
     and_i_choose_to_keep_the_duplicate_record
     then_i_should_see_a_success_message
     and_the_vaccination_record_is_deleted_from_nhs
+  end
+
+  scenario "User tries to edit vaccination record sourced from NHS immunisations API in offline workflow" do
+    given_a_flu_programme_is_underway_with_a_single_patient
+    and_the_patients_record_is_sourced_from_nhs_api
+
+    when_i_choose_to_record_offline_from_a_school_session_page
+    and_alter_an_existing_vaccination_record_to_create_a_duplicate
+    and_i_upload_the_modified_csv_file
+    then_i_see_a_duplicate_record_needs_review
+
+    when_i_review_the_duplicate_record
+    then_i_should_see_the_nhs_api_restriction_message
+    and_i_should_only_see_discard_option
+    and_i_should_not_see_radio_buttons
+
+    when_i_discard_the_incoming_changes
+    then_i_should_see_a_success_message
+    and_the_nhs_api_record_should_remain_unchanged
+
+    when_i_go_to_the_import_page
+    then_i_should_see_no_import_issues_with_the_count
+  end
+
+  scenario "User can upload un-edited vaccination records sourced from NHS immunisations API in offline workflow" do
+    given_a_flu_programme_is_underway_with_a_single_patient
+    and_the_patients_record_is_sourced_from_nhs_api
+
+    when_i_choose_to_record_offline_from_a_school_session_page
+    and_i_save_the_csv_file
+    and_i_upload_the_modified_csv_file
+    then_i_see_that_no_records_need_review
+    and_the_nhs_api_record_should_remain_unchanged
+
+    when_i_go_to_the_import_page
+    then_i_should_see_no_import_issues_with_the_count
   end
 
   def given_an_hpv_programme_is_underway(clinic: false)
@@ -180,6 +216,38 @@ describe "HPV vaccination" do
     )
   end
 
+  def given_a_flu_programme_is_underway_with_a_single_patient
+    programmes = [create(:programme, :flu)]
+
+    @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
+    school = create(:school, team: @team)
+    previous_date = 1.month.ago
+
+    vaccine = programmes.first.vaccines.active.first
+    @batch = create(:batch, :not_expired, team: @team, vaccine:)
+
+    @session =
+      create(:session, :today, team: @team, programmes:, location: school)
+
+    @session.session_dates.create!(value: previous_date)
+
+    @previously_vaccinated_patient =
+      create(:patient, session: @session, school:, year_group: 8)
+  end
+
+  def and_the_patients_record_is_sourced_from_nhs_api
+    fhir_record =
+      FHIR.from_contents(file_fixture("fhir/fhir_record_full.json").read)
+    @nhs_api_vaccination_record =
+      FHIRMapper::VaccinationRecord.from_fhir_record(
+        fhir_record,
+        patient: @previously_vaccinated_patient
+      )
+    @nhs_api_vaccination_record.performed_at = 1.month.ago
+    @nhs_api_vaccination_record.notes = "Imported from NHS API"
+    @nhs_api_vaccination_record.save!
+  end
+
   def and_imms_api_sync_job_feature_is_enabled
     Flipper.enable(:imms_api_sync_job)
     Flipper.enable(:imms_api_integration)
@@ -189,6 +257,65 @@ describe "HPV vaccination" do
     @stubbed_put_request = stub_immunisations_api_put(uuid: immunisation_uuid)
     @stubbed_delete_request =
       stub_immunisations_api_delete(uuid: immunisation_uuid)
+  end
+
+  def and_i_upload_a_file_with_duplicate_nhs_api_records
+    visit "/"
+    click_on "Import", match: :first
+    click_on "Import records"
+    choose "Vaccination records"
+    click_on "Continue"
+
+    attach_file(
+      "immunisation_import[csv]",
+      "spec/fixtures/immunisation_import/valid_hpv_offline_spreadsheet.csv"
+    )
+    click_on "Continue"
+    wait_for_import_to_complete(ImmunisationImport)
+  end
+
+  def when_i_review_the_nhs_api_duplicate_record
+    click_link "Review"
+  end
+
+  def then_i_should_see_the_nhs_api_restriction_message
+    expect(page).to have_content("You cannot keep the incoming changes")
+    expect(page).to have_content(
+      "The existing record was imported automatically from an external source, such as a GP practice, meaning that " \
+        "Mavis is not the primary source for this vaccination record."
+    )
+  end
+
+  def and_i_should_only_see_discard_option
+    expect(page).to have_button("Discard incoming changes")
+  end
+
+  def and_i_should_not_see_radio_buttons
+    expect(page).not_to have_content("Apply the uploaded changes")
+    expect(page).not_to have_content("Keep the existing record")
+    expect(page).not_to have_selector("input[type='radio']")
+  end
+
+  def when_i_discard_the_incoming_changes
+    click_button "Discard incoming changes"
+  end
+
+  def and_the_nhs_api_record_should_remain_unchanged
+    @nhs_api_vaccination_record.reload
+    expect(@nhs_api_vaccination_record.notes).to eq("Imported from NHS API")
+    expect(@nhs_api_vaccination_record.source).to eq("nhs_immunisations_api")
+    expect(@nhs_api_vaccination_record.outcome).to eq("administered")
+    expect(@nhs_api_vaccination_record.delivery_site).to eq(
+      "left_arm_upper_position"
+    )
+  end
+
+  def when_i_go_to_the_import_page
+    click_link "Import", match: :first
+  end
+
+  def then_i_should_see_no_import_issues_with_the_count
+    expect(page).to have_content("Import issues (0)")
   end
 
   def when_i_choose_to_record_offline_from_a_school_session_page
@@ -231,6 +358,24 @@ describe "HPV vaccination" do
     # Change details for the vaccination record
     row_for_vaccinated_patient["DOSE_SEQUENCE"] = "2"
     row_for_vaccinated_patient["ANATOMICAL_SITE"] = "Right Upper Arm"
+
+    File.write("tmp/modified.csv", csv_table.to_csv)
+  end
+
+  def and_i_save_the_csv_file
+    expect(page.status_code).to eq(200)
+
+    @workbook = RubyXL::Parser.parse_buffer(page.body)
+    @sheet = @workbook["Vaccinations"]
+    @headers = @sheet[0].cells.map(&:value)
+
+    array = @workbook[0].to_a[1..].map(&:cells).map { it.map(&:value) }
+    csv_table =
+      CSV::Table.new(
+        array.map do |row|
+          CSV::Row.new(@headers, row.map { |cell| excel_cell_to_csv(cell) })
+        end
+      )
 
     File.write("tmp/modified.csv", csv_table.to_csv)
   end
@@ -477,6 +622,10 @@ describe "HPV vaccination" do
     expect(page).to have_content(
       "1 record has import issues to resolve before it can be imported into Mavis"
     )
+  end
+
+  def then_i_see_that_no_records_need_review
+    expect(page).not_to have_content("has import issues")
   end
 
   def then_i_should_see_a_success_message
