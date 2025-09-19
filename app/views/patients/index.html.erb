@@ -10,8 +10,8 @@
 <% if @patients.any? %>
   <%= render AppPatientTableComponent.new(@patients, current_user:, count: @pagy.count) %>
 <% else %>
-  <%= render AppCardComponent.new(heading_level: 2, colour: "blue") do |card| %>
-    <% card.with_heading { "No children" } %>
+  <%= render AppCardComponent.new(feature: true) do |card| %>
+    <% card.with_heading(level: 2) { "No children" } %>
     <% card.with_description { "No children matching search criteria found." } %>
   <% end %>
 <% end %>

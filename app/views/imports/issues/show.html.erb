@@ -13,8 +13,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-half">
-    <%= render AppCardComponent.new(heading_level: 2, colour: "blue") do |c| %>
-      <% c.with_heading { "Uploaded record" } %>
+    <%= render AppCardComponent.new(feature: true) do |c| %>
+      <% c.with_heading(level: 2) { "Uploaded record" } %>
       <% if @type == "child" %>
         <%= render AppChildSummaryComponent.new(@patient.with_pending_changes) %>
       <% else %>
@@ -26,8 +26,8 @@
   </div>
 
   <div class="nhsuk-grid-column-one-half">
-    <%= render AppCardComponent.new(heading_level: 2, colour: "blue") do |c| %>
-      <% c.with_heading { "#{@existing_or_deleted.capitalize} record" } %>
+    <%= render AppCardComponent.new(feature: true) do |c| %>
+      <% c.with_heading(level: 2) { "#{@existing_or_deleted.capitalize} record" } %>
       <% if @type == "child" %>
         <%= render AppChildSummaryComponent.new(@patient) %>
       <% else %>
