@@ -173,6 +173,41 @@ describe SessionNotification do
               )
       end
 
+      context "when the session administers two programmes but the patient only needs one" do
+        let(:programmes) do
+          [create(:programme, :flu), create(:programme, :hpv)]
+        end
+
+        before do
+          create(:vaccination_record, patient:, programme: programmes.first)
+          StatusUpdater.call(patient:)
+        end
+
+        it "only sends emails for the remaining programme" do
+          expect { create_and_send! }.to have_delivered_email(
+            :session_clinic_initial_invitation
+          ).with(
+            parent: parents.first,
+            patient:,
+            programmes: [programmes.second],
+            session:,
+            sent_by: current_user
+          )
+        end
+
+        it "enqueues a text per parent" do
+          expect { create_and_send! }.to have_delivered_sms(
+            :session_clinic_initial_invitation
+          ).with(
+            parent: parents.first,
+            patient:,
+            programmes: [programmes.second],
+            session:,
+            sent_by: current_user
+          )
+        end
+      end
+
       context "when the team is Coventry & Warwickshire Partnership NHS Trust (CWPT)" do
         let(:team) { create(:team, ods_code: "RYG", programmes:) }
 
