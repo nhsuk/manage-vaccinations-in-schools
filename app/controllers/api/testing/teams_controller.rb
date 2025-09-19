@@ -60,10 +60,9 @@ class API::Testing::TeamsController < API::Testing::BaseController
         log_destroy(ArchiveReason.where(team:))
         log_destroy(Triage.where(team:))
 
-        Patient
-          .where(id: patient_ids)
-          .includes(:parents)
-          .in_batches { log_destroy(it) }
+        log_destroy(ParentRelationship.where(patient_id: patient_ids))
+        log_destroy(Patient.where(id: patient_ids))
+        log_destroy(Parent.where.missing(:parent_relationships))
 
         batches = Batch.where(team:)
         log_destroy(VaccinationRecord.where(batch: batches))
@@ -102,7 +101,7 @@ class API::Testing::TeamsController < API::Testing::BaseController
   def log_destroy(query)
     where_clause = query.where_clause
     @log_time ||= Time.zone.now
-    query.destroy_all
+    query.delete_all
     response.stream.write(
       "#{query.model.name}.where(#{where_clause.to_h}): #{Time.zone.now - @log_time}s\n"
     )

@@ -13,8 +13,8 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (cohort_import_id => cohort_imports.id)
-#  fk_rails_...  (patient_id => patients.id)
+#  fk_rails_...  (cohort_import_id => cohort_imports.id) ON DELETE => cascade
+#  fk_rails_...  (patient_id => patients.id) ON DELETE => cascade
 #
 class CohortImportsPatient < ApplicationRecord
   belongs_to :cohort_import

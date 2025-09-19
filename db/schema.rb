@@ -971,27 +971,27 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_122640) do
   add_foreign_key "attendance_records", "patients"
   add_foreign_key "batches", "teams"
   add_foreign_key "batches", "vaccines"
-  add_foreign_key "batches_immunisation_imports", "batches"
-  add_foreign_key "batches_immunisation_imports", "immunisation_imports"
+  add_foreign_key "batches_immunisation_imports", "batches", on_delete: :cascade
+  add_foreign_key "batches_immunisation_imports", "immunisation_imports", on_delete: :cascade
   add_foreign_key "class_imports", "locations"
   add_foreign_key "class_imports", "teams"
   add_foreign_key "class_imports", "users", column: "uploaded_by_user_id"
-  add_foreign_key "class_imports_parent_relationships", "class_imports"
-  add_foreign_key "class_imports_parent_relationships", "parent_relationships"
-  add_foreign_key "class_imports_parents", "class_imports"
-  add_foreign_key "class_imports_parents", "parents"
-  add_foreign_key "class_imports_patients", "class_imports"
-  add_foreign_key "class_imports_patients", "patients"
+  add_foreign_key "class_imports_parent_relationships", "class_imports", on_delete: :cascade
+  add_foreign_key "class_imports_parent_relationships", "parent_relationships", on_delete: :cascade
+  add_foreign_key "class_imports_parents", "class_imports", on_delete: :cascade
+  add_foreign_key "class_imports_parents", "parents", on_delete: :cascade
+  add_foreign_key "class_imports_patients", "class_imports", on_delete: :cascade
+  add_foreign_key "class_imports_patients", "patients", on_delete: :cascade
   add_foreign_key "cohort_imports", "teams"
   add_foreign_key "cohort_imports", "users", column: "uploaded_by_user_id"
-  add_foreign_key "cohort_imports_parent_relationships", "cohort_imports"
-  add_foreign_key "cohort_imports_parent_relationships", "parent_relationships"
-  add_foreign_key "cohort_imports_parents", "cohort_imports"
-  add_foreign_key "cohort_imports_parents", "parents"
-  add_foreign_key "cohort_imports_patients", "cohort_imports"
-  add_foreign_key "cohort_imports_patients", "patients"
-  add_foreign_key "consent_form_programmes", "consent_forms"
-  add_foreign_key "consent_form_programmes", "programmes"
+  add_foreign_key "cohort_imports_parent_relationships", "cohort_imports", on_delete: :cascade
+  add_foreign_key "cohort_imports_parent_relationships", "parent_relationships", on_delete: :cascade
+  add_foreign_key "cohort_imports_parents", "cohort_imports", on_delete: :cascade
+  add_foreign_key "cohort_imports_parents", "parents", on_delete: :cascade
+  add_foreign_key "cohort_imports_patients", "cohort_imports", on_delete: :cascade
+  add_foreign_key "cohort_imports_patients", "patients", on_delete: :cascade
+  add_foreign_key "consent_form_programmes", "consent_forms", on_delete: :cascade
+  add_foreign_key "consent_form_programmes", "programmes", on_delete: :cascade
   add_foreign_key "consent_forms", "locations"
   add_foreign_key "consent_forms", "locations", column: "school_id"
   add_foreign_key "consent_forms", "teams"
@@ -1016,14 +1016,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_122640) do
   add_foreign_key "identity_checks", "vaccination_records", on_delete: :cascade
   add_foreign_key "immunisation_imports", "teams"
   add_foreign_key "immunisation_imports", "users", column: "uploaded_by_user_id"
-  add_foreign_key "immunisation_imports_patient_locations", "immunisation_imports"
-  add_foreign_key "immunisation_imports_patient_locations", "patient_locations"
-  add_foreign_key "immunisation_imports_patients", "immunisation_imports"
-  add_foreign_key "immunisation_imports_patients", "patients"
-  add_foreign_key "immunisation_imports_sessions", "immunisation_imports"
-  add_foreign_key "immunisation_imports_sessions", "sessions"
-  add_foreign_key "immunisation_imports_vaccination_records", "immunisation_imports"
-  add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records"
+  add_foreign_key "immunisation_imports_patient_locations", "immunisation_imports", on_delete: :cascade
+  add_foreign_key "immunisation_imports_patient_locations", "patient_locations", on_delete: :cascade
+  add_foreign_key "immunisation_imports_patients", "immunisation_imports", on_delete: :cascade
+  add_foreign_key "immunisation_imports_patients", "patients", on_delete: :cascade
+  add_foreign_key "immunisation_imports_sessions", "immunisation_imports", on_delete: :cascade
+  add_foreign_key "immunisation_imports_sessions", "sessions", on_delete: :cascade
+  add_foreign_key "immunisation_imports_vaccination_records", "immunisation_imports", on_delete: :cascade
+  add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records", on_delete: :cascade
   add_foreign_key "location_programme_year_groups", "locations", on_delete: :cascade
   add_foreign_key "location_programme_year_groups", "programmes", on_delete: :cascade
   add_foreign_key "locations", "subteams"

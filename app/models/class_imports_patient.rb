@@ -13,8 +13,8 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (class_import_id => class_imports.id)
-#  fk_rails_...  (patient_id => patients.id)
+#  fk_rails_...  (class_import_id => class_imports.id) ON DELETE => cascade
+#  fk_rails_...  (patient_id => patients.id) ON DELETE => cascade
 #
 class ClassImportsPatient < ApplicationRecord
   belongs_to :class_import
