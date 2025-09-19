@@ -50,9 +50,13 @@ module Reports::ExportFormatters
 
   def consent_details(consents:)
     values =
-      consents.map do |consent|
-        "#{consent.response.humanize} by #{consent.name} at #{consent.created_at}"
-      end
+      consents
+        .sort_by(&:created_at)
+        .reverse
+        .map do |consent|
+          "On #{consent.created_at.to_date} at #{consent.created_at.strftime("%H:%M")} " \
+            "#{consent.response.humanize.upcase} by #{consent.name}"
+        end
 
     values.join(", ")
   end
