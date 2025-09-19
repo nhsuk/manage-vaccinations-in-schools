@@ -11,6 +11,7 @@ module ParentInterface
     prepend_before_action :set_session
     prepend_before_action :set_consent_form
     before_action :authenticate_consent_form_user!
+    before_action :check_if_past_deadline!
     before_action :set_privacy_policy_url
 
     private
@@ -30,7 +31,7 @@ module ParentInterface
       if params[:session_slug]
         @session = Session.find_by!(slug: params[:session_slug])
       elsif @consent_form.present?
-        @session = @consent_form.original_session
+        @session = @consent_form.session
       end
     end
 
@@ -59,12 +60,6 @@ module ParentInterface
         elsif @session.present?
           @session.subteam
         end
-    end
-
-    def authenticate_consent_form_user!
-      unless session[:consent_form_id] == @consent_form.id
-        redirect_to @header_path
-      end
     end
 
     def set_header_path
@@ -98,6 +93,21 @@ module ParentInterface
 
     def set_privacy_policy_url
       @privacy_policy_url = @team.privacy_policy_url
+    end
+
+    def authenticate_consent_form_user!
+      unless session[:consent_form_id] == @consent_form.id
+        redirect_to @header_path
+      end
+    end
+
+    def check_if_past_deadline!
+      return if @session.open_for_consent?
+
+      redirect_to deadline_passed_parent_interface_consent_forms_path(
+                    @session.slug,
+                    @programmes.map(&:type).join("-")
+                  )
     end
   end
 end
