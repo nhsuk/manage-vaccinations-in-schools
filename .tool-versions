@@ -5,5 +5,5 @@ pkl         0.28.1
 postgres    17.2
 redis       8.2.1
 ruby        3.4.3
-terraform   1.11.4
+terraform   1.13.3
 tflint      0.55.1

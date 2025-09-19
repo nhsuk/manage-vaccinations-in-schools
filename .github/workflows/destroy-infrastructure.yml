@@ -42,7 +42,7 @@ jobs:
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.11.4
+          terraform_version: 1.13.3
       - name: Ensure DB cluster can be deleted
         run: |
           set -e
