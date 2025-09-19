@@ -29,9 +29,9 @@ jobs:
     steps:
       - name: Send Slack notification
         if: needs.test.result == 'failure' || needs.deploy.result == 'failure'
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
-          webhook: ${{ secrets.SLACK_MAVIS_TECH_WEBHOOK_URL }}
+          webhook: ${{ secrets.SLACK_MAVIS_ALERTS_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload: |
             text: ":rotating_light: Continuous Deployment failed :rotating_light:"
