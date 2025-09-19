@@ -93,6 +93,7 @@ class Reports::OfflineSessionExporter
         care_setting
         person_dob
         year_group
+        registration
         person_gender_code
         person_address_line_1
         person_postcode
@@ -268,6 +269,7 @@ class Reports::OfflineSessionExporter
     row[:person_surname] = patient.family_name
     row[:person_dob] = patient.date_of_birth
     row[:year_group] = patient.year_group(academic_year:)
+    row[:registration] = patient.registration
     row[:person_gender_code] = Cell.new(
       patient.gender_code.humanize,
       allowed_values: Patient.gender_codes.keys
