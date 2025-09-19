@@ -35,7 +35,6 @@
 #  use_preferred_name                  :boolean
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
-#  consent_id                          :bigint
 #  location_id                         :bigint           not null
 #  school_id                           :bigint
 #  team_id                             :bigint           not null
@@ -43,7 +42,6 @@
 # Indexes
 #
 #  index_consent_forms_on_academic_year  (academic_year)
-#  index_consent_forms_on_consent_id     (consent_id)
 #  index_consent_forms_on_location_id    (location_id)
 #  index_consent_forms_on_nhs_number     (nhs_number)
 #  index_consent_forms_on_school_id      (school_id)
@@ -51,7 +49,6 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (consent_id => consents.id)
 #  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (school_id => locations.id)
 #  fk_rails_...  (team_id => teams.id)
@@ -68,7 +65,7 @@ class ConsentForm < ApplicationRecord
 
   before_save :reset_unused_attributes
 
-  scope :unmatched, -> { where(consent_id: nil) }
+  scope :unmatched, -> { where.missing(:consents) }
   scope :recorded, -> { where.not(recorded_at: nil) }
 
   attr_accessor :health_question_number,
@@ -77,13 +74,14 @@ class ConsentForm < ApplicationRecord
                 :chosen_programme,
                 :injection_alternative
 
-  audited associated_with: :consent
+  audited associated_with: :team
   has_associated_audits
 
-  belongs_to :consent, optional: true
   belongs_to :location
   belongs_to :school, class_name: "Location", optional: true
   belongs_to :team
+
+  has_many :consents
 
   has_many :notify_log_entries
   has_many :consent_form_programmes,
@@ -319,6 +317,8 @@ class ConsentForm < ApplicationRecord
   end
 
   def recorded? = recorded_at != nil
+
+  def matched? = consents.exists?
 
   def response_given? = consent_form_programmes.any?(&:response_given?)
 

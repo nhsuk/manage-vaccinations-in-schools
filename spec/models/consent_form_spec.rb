@@ -35,7 +35,6 @@
 #  use_preferred_name                  :boolean
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
-#  consent_id                          :bigint
 #  location_id                         :bigint           not null
 #  school_id                           :bigint
 #  team_id                             :bigint           not null
@@ -43,7 +42,6 @@
 # Indexes
 #
 #  index_consent_forms_on_academic_year  (academic_year)
-#  index_consent_forms_on_consent_id     (consent_id)
 #  index_consent_forms_on_location_id    (location_id)
 #  index_consent_forms_on_nhs_number     (nhs_number)
 #  index_consent_forms_on_school_id      (school_id)
@@ -51,7 +49,6 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (consent_id => consents.id)
 #  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (school_id => locations.id)
 #  fk_rails_...  (team_id => teams.id)
@@ -59,6 +56,10 @@
 
 describe ConsentForm do
   subject(:consent_form) { build(:consent_form) }
+
+  describe "associations" do
+    it { should have_many(:consents) }
+  end
 
   describe "validations" do
     subject(:consent_form) do
@@ -550,30 +551,26 @@ describe ConsentForm do
   describe "scope unmatched" do
     let(:programme) { create(:programme) }
     let(:session) { create(:session, programmes: [programme]) }
-    let(:consent) { create(:consent, programme:) }
-    let(:unmatched_consent_form) do
-      create(:consent_form, consent: nil, session:)
-    end
-    let(:matched_consent_form) { create(:consent_form, consent:, session:) }
+    let(:unmatched_consent_form) { create(:consent_form, session:) }
+    let(:matched_consent_form) { create(:consent_form, session:) }
+
+    before { create(:consent, programme:, consent_form: matched_consent_form) }
 
     it "returns unmatched consent forms" do
-      expect(described_class.unmatched).to include unmatched_consent_form
-      expect(described_class.unmatched).not_to include matched_consent_form
+      expect(described_class.unmatched).to include(unmatched_consent_form)
+      expect(described_class.unmatched).not_to include(matched_consent_form)
     end
   end
 
   describe "scope recorded" do
     let(:programme) { create(:programme) }
     let(:session) { create(:session, programmes: [programme]) }
-    let(:consent) { create(:consent, programme:) }
-    let(:recorded_consent_form) do
-      create(:consent_form, :recorded, consent:, session:)
-    end
-    let(:draft_consent_form) { create(:consent_form, consent:, session:) }
+    let(:recorded_consent_form) { create(:consent_form, :recorded, session:) }
+    let(:draft_consent_form) { create(:consent_form, session:) }
 
     it "returns unmatched consent forms" do
-      expect(described_class.recorded).to include recorded_consent_form
-      expect(described_class.recorded).not_to include draft_consent_form
+      expect(described_class.recorded).to include(recorded_consent_form)
+      expect(described_class.recorded).not_to include(draft_consent_form)
     end
   end
 

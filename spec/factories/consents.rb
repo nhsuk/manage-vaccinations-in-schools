@@ -19,6 +19,7 @@
 #  withdrawn_at                  :datetime
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
+#  consent_form_id               :bigint
 #  parent_id                     :bigint
 #  patient_id                    :bigint           not null
 #  programme_id                  :bigint           not null
@@ -28,6 +29,7 @@
 # Indexes
 #
 #  index_consents_on_academic_year        (academic_year)
+#  index_consents_on_consent_form_id      (consent_form_id)
 #  index_consents_on_parent_id            (parent_id)
 #  index_consents_on_patient_id           (patient_id)
 #  index_consents_on_programme_id         (programme_id)
@@ -36,6 +38,7 @@
 #
 # Foreign Keys
 #
+#  fk_rails_...  (consent_form_id => consent_forms.id)
 #  fk_rails_...  (parent_id => parents.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (programme_id => programmes.id)

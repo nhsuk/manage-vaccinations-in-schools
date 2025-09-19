@@ -90,7 +90,7 @@ class Generate::Consents
       traits = [response]
     end
 
-    consents =
+    consent_forms =
       available_patient_sessions.map do |patient, session|
         school = session.location.school? ? session.location : patient.school
 
@@ -98,23 +98,19 @@ class Generate::Consents
         @updated_sessions << session
 
         FactoryBot.build(
-          :consent,
-          *traits,
-          patient:,
-          programme:,
+          :consent_form,
           team:,
-          consent_form:
-            FactoryBot.build(
-              :consent_form,
-              team:,
-              programmes: [programme],
-              session:,
-              school:,
-              response:
-            )
+          programmes: [programme],
+          session:,
+          school:,
+          response:,
+          consents: [
+            FactoryBot.build(:consent, *traits, patient:, programme:, team:)
+          ]
         )
       end
-    Consent.import!(consents, recursive: true)
+
+    ConsentForm.import!(consent_forms, recursive: true)
   end
 
   def validate_programme_and_session(programme, session)
