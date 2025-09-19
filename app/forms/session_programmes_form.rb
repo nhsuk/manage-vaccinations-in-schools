@@ -14,7 +14,22 @@ class SessionProgrammesForm
   def save
     return false if invalid?
 
-    session.programme_ids = programme_ids
+    new_programme_ids = programme_ids - session.programme_ids
+
+    ActiveRecord::Base.transaction do
+      new_programme_ids.each do |programme_id|
+        programme = Programme.find(programme_id)
+
+        session.programmes << programme
+
+        location = session.location
+
+        unless location.location_programme_year_groups.exists?(programme:)
+          session.location.create_default_programme_year_groups!([programme])
+        end
+      end
+    end
+
     StatusUpdaterJob.perform_later(session:)
 
     true
