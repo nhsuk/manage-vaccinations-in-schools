@@ -81,5 +81,10 @@ FactoryBot.define do
       type { "td_ipv" }
       vaccines { [association(:vaccine, :revaxis, programme: instance)] }
     end
+
+    trait :td_ipv_all_vaccines do
+      td_ipv
+      vaccines { [association(:vaccine, :revaxis, programme: instance)] }
+    end
   end
 end
