@@ -701,10 +701,10 @@ describe "Import child records" do
 
   def and_all_parent_relationships_are_established
     expect(Parent.count).to eq(7)
-    expect(ParentRelationship.count).to eq(7)
+    expect(ParentRelationship.count).to eq(8)
 
     father_relationships = ParentRelationship.where(type: "father")
-    expect(father_relationships.count).to eq(3) # John Tweedle, Mike HomeDad, Robert Samson
+    expect(father_relationships.count).to eq(4) # John Tweedle, Mike HomeDad, Robert Samson
 
     mother_relationships = ParentRelationship.where(type: "mother")
     expect(mother_relationships.count).to eq(2) # Mary Tweedle, Linda Samson

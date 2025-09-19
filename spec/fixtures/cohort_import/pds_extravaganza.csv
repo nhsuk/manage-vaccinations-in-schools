@@ -7,6 +7,6 @@ CHILD_SCHOOL_URN,PARENT_1_NAME,PARENT_1_RELATIONSHIP,PARENT_1_EMAIL,PARENT_1_PHO
 123456,Jane Doe,,,01234567896,,,,,Oliver,Green,,2010-08-15,8,789 Silent Street,,London,SW1W 8JL,9435753868
 123456,,,,,,,,,Lara,Williams,,2010-05-15,8,,,,B1 1AA,
 123456,,,,,,,,,Lucy,McCarthy,,2010-08-16,8,789 Silent Street,,London,SW7 5LE,9435815065
-123456,,,,,,,,,Maia,Smith,,2010-08-16,8,790 Silent Street,,London,W2 3PE,9435789102
+123456,Mike HomeDad,Father,mike@home.com,01234567895,,,,,Maia,Smith,,2010-08-16,8,790 Silent Street,,London,W2 3PE,9435789102
 123456,,,,,,,,,Caroline,Richard,,2010-05-15,8,,,,B1 1AA,
 123456,,,,,,,,,Caroline,Richard,,2010-05-15,8,,,,B1 1AA,
