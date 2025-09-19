@@ -312,9 +312,7 @@ describe "Manage school sessions" do
 
   def then_i_see_the_send_invitations_page
     expect(page).to have_content("Invite parents to book a clinic appointment")
-    expect(page).to have_content(
-      "There are 2 children currently without clinic appointments."
-    )
+    expect(page).to have_content("2 children were not vaccinated.")
   end
 
   alias_method :and_i_click_on_send_invitations,
