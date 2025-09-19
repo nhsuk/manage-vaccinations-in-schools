@@ -6,7 +6,7 @@ module MavisCLI
       desc "Import GIAS schools data"
 
       option :input_file,
-             aliases: ["-f"],
+             aliases: ["-i"],
              default: "db/data/dfe-schools.zip",
              desc: "GIAS database file to use"
 
