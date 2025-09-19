@@ -11,13 +11,17 @@
 <% t(".description").split("\n").each do |paragraph| %>
   <p class="nhsuk-body"><%= paragraph %></p>
 <% end %>
+
 <p class="nhsuk-body">
   <%= t(".your_schedule",
         days: pluralize(@session.days_before_consent_reminders, "day"),
         weeks: pluralize(@session.weeks_before_consent_reminders, "week")) %>
 </p>
 
-<h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2"><%= t(".session_dates") %></h2>
+<h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">
+  <%= t(".session_dates") %>
+</h2>
+
 <ul class="nhsuk-list nhsuk-list--bullet">
   <% @session.dates.each do |date| %>
     <li><%= date.to_fs(:long_day_of_week) %></li>
@@ -25,22 +29,15 @@
 </ul>
 
 <% if @session.next_reminder_dates.present? %>
-  <details class="nhsuk-details">
-    <summary class="nhsuk-details__summary">
-      <span class="nhsuk-details__summary-text">
-        <%= t(".reminder_dates.label") %>
-      </span>
-    </summary>
-    <div class="nhsuk-details__text">
-      <p class="nhsuk-body"><%= t(".reminder_dates.description") %></p>
+  <%= render AppDetailsComponent.new(summary: t(".reminder_dates.label")) do %>
+    <p class="nhsuk-body"><%= t(".reminder_dates.description") %></p>
 
-      <ul class="nhsuk-list app-list--spaced">
-        <% @session.next_reminder_dates.each do |date| %>
-          <li><%= date.to_fs(:long_day_of_week) %></li>
-        <% end %>
-      </ul>
-    </div>
-  </details>
+    <ul class="nhsuk-list app-list--spaced">
+      <% @session.next_reminder_dates.each do |date| %>
+        <li><%= date.to_fs(:long_day_of_week) %></li>
+      <% end %>
+    </ul>
+  <% end %>
 <% end %>
 
 <div class="nhsuk-inset-text">
@@ -57,11 +54,15 @@
   </p>
 </div>
 
-<h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Send parents a manual consent reminder</h2>
+<h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">
+  Send parents a manual consent reminder
+</h2>
+
 <p class="nhsuk-body">
   <%= t(".pre_confirm") %>
 </p>
 
 <% if @session.open_for_consent? %>
-  <%= govuk_button_to t(".confirm"), session_manage_consent_reminders_path(@session) %>
+  <%= govuk_button_to t(".confirm"),
+                      session_manage_consent_reminders_path(@session) %>
 <% end %>
