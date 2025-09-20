@@ -404,6 +404,8 @@ class PatientImportRow
       errors.add(date_of_birth.header, "is required but missing")
     elsif date_of_birth.to_date.nil?
       errors.add(date_of_birth.header, "should be formatted as YYYY-MM-DD")
+    elsif date_of_birth.to_date < Date.new(2000, 1, 1)
+      errors.add(date_of_birth.header, "is too old to still be in school")
     end
   end
 

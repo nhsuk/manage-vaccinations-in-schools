@@ -66,7 +66,7 @@ describe CohortImportRow do
     it { should be_valid }
 
     context "when date of birth is outside the programme year group" do
-      let(:data) { valid_data.merge("CHILD_DATE_OF_BIRTH" => "1990-01-01") }
+      let(:data) { valid_data.merge("CHILD_DATE_OF_BIRTH" => "2000-01-01") }
 
       it "is invalid" do
         expect(cohort_import_row).to be_invalid
@@ -85,6 +85,22 @@ describe CohortImportRow do
         expect(
           cohort_import_row.errors["CHILD_DATE_OF_BIRTH"]
         ).to contain_exactly("should be formatted as YYYY-MM-DD")
+      end
+    end
+
+    context "when date of birth is in the previous century" do
+      let(:data) do
+        valid_data.merge(
+          { "CHILD_DATE_OF_BIRTH" => "1911-01-01", "CHILD_YEAR_GROUP" => "9" }
+        )
+      end
+
+      it "is invalid" do
+        expect(cohort_import_row).to be_invalid
+        expect(cohort_import_row.errors.size).to eq(1)
+        expect(
+          cohort_import_row.errors["CHILD_DATE_OF_BIRTH"]
+        ).to contain_exactly("is too old to still be in school")
       end
     end
 
