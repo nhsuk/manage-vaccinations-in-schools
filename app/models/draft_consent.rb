@@ -447,7 +447,7 @@ class DraftConsent
     return if health_answers.map(&:valid?).all?
 
     health_answers.each_with_index do |health_answer, index|
-      next unless health_answer.requires_notes?
+      next unless health_answer.ask_notes?
 
       health_answer.errors.messages.each do |field, messages|
         messages.each do |message|
