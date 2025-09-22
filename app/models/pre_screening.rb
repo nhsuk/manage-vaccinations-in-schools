@@ -29,6 +29,7 @@
 #
 class PreScreening < ApplicationRecord
   include BelongsToSessionDate
+  include Notable
 
   audited associated_with: :patient
 
@@ -37,8 +38,4 @@ class PreScreening < ApplicationRecord
   belongs_to :performed_by,
              class_name: "User",
              foreign_key: :performed_by_user_id
-
-  encrypts :notes
-
-  validates :notes, length: { maximum: 1000 }
 end

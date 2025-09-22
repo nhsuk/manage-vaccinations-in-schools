@@ -59,6 +59,4 @@ class Triage < ApplicationRecord
        validate: {
          if: :ready_to_vaccinate?
        }
-
-  encrypts :notes
 end
