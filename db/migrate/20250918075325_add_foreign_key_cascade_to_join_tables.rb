@@ -31,7 +31,10 @@ class AddForeignKeyCascadeToJoinTables < ActiveRecord::Migration[8.0]
   def change
     FOREIGN_KEYS.each do |foreign_key|
       remove_foreign_key foreign_key.first, foreign_key.last
-      add_foreign_key foreign_key.first, foreign_key.last, on_delete: :cascade
+      add_foreign_key foreign_key.first,
+                      foreign_key.last,
+                      on_delete: :cascade,
+                      validate: false
     end
   end
 end
