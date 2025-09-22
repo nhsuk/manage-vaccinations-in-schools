@@ -141,6 +141,7 @@ class ConsentForm < ApplicationRecord
            :address_town,
            :family_name,
            :given_name,
+           :notes,
            :parent_contact_method_other_details,
            :parent_email,
            :parent_full_name,
