@@ -13,80 +13,74 @@ class API::Testing::TeamsController < API::Testing::BaseController
 
     @start_time = Time.zone.now
 
-    Team.with_advisory_lock("reset-team-#{team.id}") do
-      ActiveRecord::Base.transaction do
-        log_destroy(CohortImport.where(team:))
-        log_destroy(ImmunisationImport.where(team:))
-        log_destroy(ClassImport.where(team:))
+    log_destroy(CohortImport.where(team:))
+    log_destroy(ImmunisationImport.where(team:))
+    log_destroy(ClassImport.where(team:))
 
-        sessions = Session.where(team:)
+    sessions = Session.where(team:)
 
-        log_destroy(ConsentNotification.where(session: sessions))
-        log_destroy(SessionNotification.where(session: sessions))
-        log_destroy(VaccinationRecord.where(session: sessions))
+    log_destroy(ConsentNotification.where(session: sessions))
+    log_destroy(SessionNotification.where(session: sessions))
+    log_destroy(VaccinationRecord.where(session: sessions))
 
-        patient_ids = team.patients.pluck(:id)
-        consent_form_ids = team.consent_forms.pluck(:id)
+    patient_ids = team.patients.pluck(:id)
+    consent_form_ids = team.consent_forms.pluck(:id)
 
-        log_destroy(
-          PatientLocation.where(location_id: sessions.select(:location_id))
-        )
+    log_destroy(
+      PatientLocation.where(location_id: sessions.select(:location_id))
+    )
 
-        log_destroy(AccessLogEntry.where(patient_id: patient_ids))
-        log_destroy(ArchiveReason.where(patient_id: patient_ids))
-        log_destroy(AttendanceRecord.where(patient_id: patient_ids))
-        log_destroy(ConsentNotification.where(patient_id: patient_ids))
-        log_destroy(GillickAssessment.where(patient_id: patient_ids))
-        log_destroy(Note.where(patient_id: patient_ids))
-        # In local dev we can end up with NotifyLogEntries without a patient
-        log_destroy(NotifyLogEntry.where(patient_id: nil))
-        log_destroy(NotifyLogEntry.where(patient_id: patient_ids))
-        log_destroy(NotifyLogEntry.where(consent_form_id: consent_form_ids))
-        log_destroy(PatientChangeset.where(patient_id: patient_ids))
-        log_destroy(PatientLocation.where(patient_id: patient_ids))
-        log_destroy(PatientSpecificDirection.where(patient_id: patient_ids))
-        log_destroy(PDSSearchResult.where(patient_id: patient_ids))
-        log_destroy(PreScreening.where(patient_id: patient_ids))
-        log_destroy(SchoolMove.where(patient_id: patient_ids))
-        log_destroy(SchoolMove.where(team:))
-        log_destroy(SchoolMoveLogEntry.where(patient_id: patient_ids))
-        log_destroy(VaccinationRecord.where(patient_id: patient_ids))
+    log_destroy(AccessLogEntry.where(patient_id: patient_ids))
+    log_destroy(ArchiveReason.where(patient_id: patient_ids))
+    log_destroy(AttendanceRecord.where(patient_id: patient_ids))
+    log_destroy(ConsentNotification.where(patient_id: patient_ids))
+    log_destroy(GillickAssessment.where(patient_id: patient_ids))
+    log_destroy(Note.where(patient_id: patient_ids))
+    # In local dev we can end up with NotifyLogEntries without a patient
+    log_destroy(NotifyLogEntry.where(patient_id: nil))
+    log_destroy(NotifyLogEntry.where(patient_id: patient_ids))
+    log_destroy(NotifyLogEntry.where(consent_form_id: consent_form_ids))
+    log_destroy(PatientChangeset.where(patient_id: patient_ids))
+    log_destroy(PatientLocation.where(patient_id: patient_ids))
+    log_destroy(PatientSpecificDirection.where(patient_id: patient_ids))
+    log_destroy(PDSSearchResult.where(patient_id: patient_ids))
+    log_destroy(PreScreening.where(patient_id: patient_ids))
+    log_destroy(SchoolMove.where(patient_id: patient_ids))
+    log_destroy(SchoolMove.where(team:))
+    log_destroy(SchoolMoveLogEntry.where(patient_id: patient_ids))
+    log_destroy(VaccinationRecord.where(patient_id: patient_ids))
 
-        log_destroy(Consent.where(team:))
-        log_destroy(ConsentForm.where(id: consent_form_ids))
+    log_destroy(Consent.where(team:))
+    log_destroy(ConsentForm.where(id: consent_form_ids))
 
-        log_destroy(SessionDate.where(session: sessions))
+    log_destroy(SessionDate.where(session: sessions))
 
-        log_destroy(ArchiveReason.where(team:))
-        log_destroy(Triage.where(team:))
+    log_destroy(ArchiveReason.where(team:))
+    log_destroy(Triage.where(team:))
 
-        log_destroy(ParentRelationship.where(patient_id: patient_ids))
-        log_destroy(Patient.where(id: patient_ids))
-        log_destroy(Parent.where.missing(:parent_relationships))
+    log_destroy(ParentRelationship.where(patient_id: patient_ids))
+    log_destroy(Patient.where(id: patient_ids))
+    log_destroy(Parent.where.missing(:parent_relationships))
 
-        batches = Batch.where(team:)
-        log_destroy(VaccinationRecord.where(batch: batches))
-        log_destroy(batches)
+    batches = Batch.where(team:)
+    log_destroy(VaccinationRecord.where(batch: batches))
+    log_destroy(batches)
 
-        log_destroy(
-          VaccinationRecord.where(
-            performed_ods_code: team.organisation.ods_code
-          )
-        )
+    log_destroy(
+      VaccinationRecord.where(performed_ods_code: team.organisation.ods_code)
+    )
 
-        unless keep_itself
-          log_destroy(SessionProgramme.where(session: sessions))
-          log_destroy(sessions)
+    unless keep_itself
+      log_destroy(SessionProgramme.where(session: sessions))
+      log_destroy(sessions)
 
-          subteams = Subteam.where(team:)
-          log_destroy(Location.generic_clinic.where(subteam: subteams))
-          Location.where(subteam: subteams).update_all(subteam_id: nil)
-          log_destroy(subteams)
+      subteams = Subteam.where(team:)
+      log_destroy(Location.generic_clinic.where(subteam: subteams))
+      Location.where(subteam: subteams).update_all(subteam_id: nil)
+      log_destroy(subteams)
 
-          log_destroy(TeamProgramme.where(team:))
-          log_destroy(Team.where(id: team.id))
-        end
-      end
+      log_destroy(TeamProgramme.where(team:))
+      log_destroy(Team.where(id: team.id))
     end
 
     response.stream.write "Done"
