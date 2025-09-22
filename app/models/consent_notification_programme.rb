@@ -15,8 +15,8 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (consent_notification_id => consent_notifications.id)
-#  fk_rails_...  (programme_id => programmes.id)
+#  fk_rails_...  (consent_notification_id => consent_notifications.id) ON DELETE => cascade
+#  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
 #
 class ConsentNotificationProgramme < ApplicationRecord
   belongs_to :consent_notification

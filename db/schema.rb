@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_18_122640) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_22_074139) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -995,8 +995,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_122640) do
   add_foreign_key "consent_forms", "locations"
   add_foreign_key "consent_forms", "locations", column: "school_id"
   add_foreign_key "consent_forms", "teams"
-  add_foreign_key "consent_notification_programmes", "consent_notifications"
-  add_foreign_key "consent_notification_programmes", "programmes"
+  add_foreign_key "consent_notification_programmes", "consent_notifications", on_delete: :cascade
+  add_foreign_key "consent_notification_programmes", "programmes", on_delete: :cascade
   add_foreign_key "consent_notifications", "patients"
   add_foreign_key "consent_notifications", "sessions"
   add_foreign_key "consent_notifications", "users", column: "sent_by_user_id"
@@ -1071,12 +1071,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_122640) do
   add_foreign_key "session_notifications", "patients"
   add_foreign_key "session_notifications", "sessions"
   add_foreign_key "session_notifications", "users", column: "sent_by_user_id"
-  add_foreign_key "session_programmes", "programmes"
-  add_foreign_key "session_programmes", "sessions"
+  add_foreign_key "session_programmes", "programmes", on_delete: :cascade
+  add_foreign_key "session_programmes", "sessions", on_delete: :cascade
   add_foreign_key "sessions", "teams"
   add_foreign_key "subteams", "teams"
-  add_foreign_key "team_programmes", "programmes"
-  add_foreign_key "team_programmes", "teams"
+  add_foreign_key "team_programmes", "programmes", on_delete: :cascade
+  add_foreign_key "team_programmes", "teams", on_delete: :cascade
   add_foreign_key "teams", "organisations"
   add_foreign_key "triages", "patients"
   add_foreign_key "triages", "programmes"
