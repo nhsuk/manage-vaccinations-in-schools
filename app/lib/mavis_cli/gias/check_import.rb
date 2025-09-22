@@ -9,6 +9,7 @@ module MavisCLI
              aliases: ["-i"],
              default: "db/data/dfe-schools.zip",
              desc: "GIAS database file to use"
+
       def call(input_file:, **)
         MavisCLI.load_rails
 
