@@ -5,23 +5,19 @@ class SwapConsentAndConsentFormAssociations < ActiveRecord::Migration[8.0]
     add_reference :consents, :consent_form, foreign_key: true
 
     reversible do |direction|
-      direction.up do
-        ConsentForm
-          .where.not(consent_id: nil)
-          .find_each do |consent_form|
-            consent = Consent.find(consent_form.consent_id)
-            consent.update_column(:consent_form_id, consent_form.id)
-          end
-      end
+      direction.up { execute <<~SQL }
+        UPDATE consents
+        SET consent_form_id = consent_forms.id
+        FROM consent_forms
+        WHERE consents.id = consent_forms.consent_id 
+      SQL
 
-      direction.down do
-        Consent
-          .where.not(consent_form_id: nil)
-          .find_each do |consent|
-            consent_form = ConsentForm.find(consent.consent_form_id)
-            consent_form.update_column(:consent_id, consent.id)
-          end
-      end
+      direction.down { execute <<~SQL }
+        UPDATE consent_forms
+        SET consent_id = consents.id
+        FROM consents
+        WHERE consent_forms.id = consents.consent_form_id 
+      SQL
     end
 
     remove_reference :consent_forms, :consent, foreign_key: true
