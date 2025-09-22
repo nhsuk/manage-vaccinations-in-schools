@@ -57,6 +57,20 @@ class Programme < ApplicationRecord
 
   def name_in_sentence = flu? ? name.downcase : name
 
+  def group
+    if flu?
+      :flu
+    elsif hpv?
+      :hpv
+    elsif doubles?
+      :doubles
+    elsif mmr?
+      :mmr
+    else
+      raise UnsupportedProgramme, self
+    end
+  end
+
   def doubles? = menacwy? || td_ipv?
 
   def seasonal? = flu?
