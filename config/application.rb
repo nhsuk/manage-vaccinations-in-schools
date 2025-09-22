@@ -82,7 +82,5 @@ module ManageVaccinations
     config.view_component.previews.paths << Rails.root.join(
       "spec/components/previews"
     )
-
-    config.active_record.encryption.support_unencrypted_data = true
   end
 end
