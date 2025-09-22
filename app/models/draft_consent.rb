@@ -56,7 +56,7 @@ class DraftConsent
       (:triage if triage_allowed? && response_given?),
       (:reason if response_refused?),
       (:notify_parent_on_refusal if ask_notify_parent_on_refusal?),
-      (:notes if notes_required?),
+      (:notes if requires_notes?),
       :confirm
     ].compact
   end
@@ -430,7 +430,7 @@ class DraftConsent
       !via_self_consent?
   end
 
-  def notes_required?
+  def requires_notes?
     response_refused? &&
       reason_for_refusal.in?(Consent::REASON_FOR_REFUSAL_REQUIRES_NOTES)
   end
@@ -462,7 +462,7 @@ class DraftConsent
   def reset_unused_attributes
     update_vaccine_methods
 
-    self.notes = "" unless notes_required?
+    self.notes = "" unless requires_notes?
     self.notify_parent_on_refusal = nil unless ask_notify_parent_on_refusal?
     self.reason_for_refusal = nil unless response_refused?
 
