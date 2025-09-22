@@ -3,6 +3,8 @@
 class HealthAnswer
   include ActiveModel::Model
 
+  include Notable
+
   attr_accessor :id,
                 :question,
                 :response,
@@ -14,9 +16,6 @@ class HealthAnswer
                 :give_details_hint
 
   validates :response, inclusion: { in: %w[yes no] }
-
-  validates :notes, presence: true, if: :requires_notes?
-  validates :notes, length: { maximum: 1000 }
 
   def attributes
     %i[
