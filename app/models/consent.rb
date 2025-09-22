@@ -99,7 +99,7 @@ class Consent < ApplicationRecord
 
   validates :notes,
             presence: {
-              if: :notes_required?
+              if: :requires_notes?
             },
             length: {
               maximum: 1000
@@ -207,7 +207,7 @@ class Consent < ApplicationRecord
     already_vaccinated
   ].freeze
 
-  def notes_required?
+  def requires_notes?
     withdrawn? || invalidated? ||
       (
         response_refused? &&
