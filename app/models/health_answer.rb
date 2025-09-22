@@ -15,7 +15,7 @@ class HealthAnswer
 
   validates :response, inclusion: { in: %w[yes no] }
 
-  validates :notes, presence: true, if: -> { requires_notes? && response_yes? }
+  validates :notes, presence: true, if: :requires_notes?
   validates :notes, length: { maximum: 1000 }
 
   def attributes
@@ -46,7 +46,9 @@ class HealthAnswer
     [nil, true].include?(would_require_triage)
   end
 
-  def requires_notes? = follow_up_question.nil?
+  def ask_notes? = follow_up_question.nil?
+
+  def requires_notes? = ask_notes? && response_yes?
 
   def response_yes? = response == "yes"
 
