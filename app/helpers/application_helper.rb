@@ -59,4 +59,8 @@ or set it with content_for(:page_title)."
   end
 
   def cached_counts = TeamCachedCounts.new(current_team)
+
+  def tallying_enabled?
+    params[:tallies] == "true"
+  end
 end
