@@ -53,6 +53,7 @@ class Consent < ApplicationRecord
   include HasVaccineMethods
   include Invalidatable
   include Notable
+  include Refusable
 
   audited associated_with: :patient
 
@@ -82,20 +83,6 @@ class Consent < ApplicationRecord
        { website: 0, phone: 1, paper: 2, in_person: 3, self_consent: 4 },
        prefix: "via",
        validate: true
-
-  enum :reason_for_refusal,
-       {
-         contains_gelatine: 0,
-         already_vaccinated: 1,
-         will_be_vaccinated_elsewhere: 2,
-         medical_reasons: 3,
-         personal_choice: 4,
-         other: 5
-       },
-       prefix: true,
-       validate: {
-         if: -> { response_refused? || withdrawn? }
-       }
 
   validates :parent, presence: true, unless: :via_self_consent?
   validates :recorded_by,
@@ -131,6 +118,10 @@ class Consent < ApplicationRecord
   def responded_at
     invalidated_at || withdrawn_at || submitted_at
   end
+
+  def requires_reason_for_refusal? = super || withdrawn?
+
+  def requires_notes? = super || invalidated?
 
   def requires_triage?
     response_given? && health_answers_require_triage?
@@ -190,21 +181,6 @@ class Consent < ApplicationRecord
 
       consents
     end
-  end
-
-  REASON_FOR_REFUSAL_REQUIRES_NOTES = %w[
-    other
-    will_be_vaccinated_elsewhere
-    medical_reasons
-    already_vaccinated
-  ].freeze
-
-  def requires_notes?
-    withdrawn? || invalidated? ||
-      (
-        response_refused? &&
-          reason_for_refusal.in?(REASON_FOR_REFUSAL_REQUIRES_NOTES)
-      )
   end
 
   def update_vaccination_records_no_notify!
