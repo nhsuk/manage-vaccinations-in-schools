@@ -30,8 +30,6 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class Session < ApplicationRecord
-  include HasProgrammeYearGroups
-
   audited associated_with: :location
   has_associated_audits
 
@@ -61,7 +59,9 @@ class Session < ApplicationRecord
   has_many :vaccines, through: :programmes
 
   has_many :location_programme_year_groups,
-           -> { where(programme: it.programmes) },
+           -> do
+             where(academic_year: it.academic_year, programme: it.programmes)
+           end,
            through: :location
 
   accepts_nested_attributes_for :session_dates, allow_destroy: true
@@ -80,6 +80,7 @@ class Session < ApplicationRecord
   scope :joins_location_programme_year_groups, -> { joins(<<-SQL) }
     INNER JOIN location_programme_year_groups
     ON location_programme_year_groups.location_id = sessions.location_id
+    AND location_programme_year_groups.academic_year = sessions.academic_year
     AND location_programme_year_groups.programme_id = session_programmes.programme_id
     AND location_programme_year_groups.year_group = sessions.academic_year - patients.birth_academic_year - #{Integer::AGE_CHILDREN_START_SCHOOL}
   SQL
@@ -195,6 +196,11 @@ class Session < ApplicationRecord
 
   delegate :clinic?, :generic_clinic?, :school?, to: :location
 
+  def programme_year_groups
+    @programme_year_groups ||=
+      ProgrammeYearGroups.new(location_programme_year_groups)
+  end
+
   def programme_birth_academic_years
     @programme_birth_academic_years ||=
       ProgrammeBirthAcademicYears.new(programme_year_groups, academic_year:)
@@ -202,7 +208,7 @@ class Session < ApplicationRecord
 
   def patients
     birth_academic_years =
-      location_programme_year_groups.pluck_birth_academic_years(academic_year:)
+      location_programme_year_groups.pluck_birth_academic_years
 
     Patient
       .joins_sessions

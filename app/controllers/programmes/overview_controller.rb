@@ -24,7 +24,10 @@ class Programmes::OverviewController < Programmes::BaseController
   end
 
   def set_patient_count_by_year_group
-    year_groups = current_team.programme_year_groups[@programme]
+    year_groups =
+      current_team.programme_year_groups(academic_year: @academic_year)[
+        @programme
+      ]
 
     patient_count_by_birth_academic_year =
       Patient.where(id: patient_ids).group(:birth_academic_year).count

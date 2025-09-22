@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
 class GenericClinicFactory
-  def initialize(team:)
+  def initialize(team:, academic_year:)
     @team = team
+    @academic_year = academic_year
   end
 
   def call
     ActiveRecord::Base.transaction do
       location.update!(year_groups:)
-      location.create_default_programme_year_groups!(programmes)
+      location.create_default_programme_year_groups!(programmes, academic_year:)
       location
     end
   end
@@ -19,7 +20,7 @@ class GenericClinicFactory
 
   private
 
-  attr_reader :team
+  attr_reader :team, :academic_year
 
   delegate :programmes, to: :team
 

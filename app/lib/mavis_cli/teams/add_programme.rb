@@ -31,13 +31,18 @@ module MavisCLI
           return
         end
 
+        academic_year = AcademicYear.pending
+
         ActiveRecord::Base.transaction do
           TeamProgramme.create!(team:, programme:)
 
-          GenericClinicFactory.call(team: team.reload)
+          GenericClinicFactory.call(team: team.reload, academic_year:)
 
           team.locations.find_each do |location|
-            location.create_default_programme_year_groups!([programme])
+            location.create_default_programme_year_groups!(
+              [programme],
+              academic_year:
+            )
           end
         end
       end
