@@ -794,6 +794,37 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "vaccination in a session, but UUID matches a record sourced from NHS immunisations API" do
+      let(:data) do
+        {
+          "VACCINATED" => "Y",
+          "PROGRAMME" => "Flu",
+          "SESSION_ID" => 1,
+          "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
+          "UUID" => "12345678-1234-1234-1234-123456789abc"
+        }
+      end
+
+      before do
+        create(
+          :vaccination_record,
+          programme: create(:programme, :flu),
+          uuid: "12345678-1234-1234-1234-123456789abc",
+          source: :nhs_immunisations_api
+        )
+      end
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors["SESSION_ID"]).to eq(
+          [
+            "A session ID cannot be provided for this record; " \
+              "this record was sourced from an external source."
+          ]
+        )
+      end
+    end
+
     context "with valid fields for Flu" do
       let(:programmes) { [create(:programme, :flu)] }
 
