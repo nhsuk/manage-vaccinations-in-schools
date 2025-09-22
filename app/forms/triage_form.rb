@@ -4,6 +4,8 @@ class TriageForm
   include ActiveModel::Model
   include ActiveModel::Attributes
 
+  include Notable
+
   attr_accessor :patient, :session, :programme, :current_user
 
   attribute :add_patient_specific_direction, :boolean
@@ -20,7 +22,6 @@ class TriageForm
             inclusion: {
               in: :status_and_vaccine_method_options
             }
-  validates :notes, length: { maximum: 1000 }
 
   def triage=(triage)
     self.status_and_vaccine_method =

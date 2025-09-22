@@ -66,6 +66,7 @@
 class VaccinationRecord < ApplicationRecord
   include Discard::Model
   include HasDoseVolume
+  include Notable
   include PendingChangesConcern
   include VaccinationRecordPerformedByConcern
   include VaccinationRecordSyncToNHSImmunisationsAPIConcern
@@ -159,14 +160,10 @@ class VaccinationRecord < ApplicationRecord
        prefix: "sourced_from",
        validate: true
 
-  encrypts :notes
-
   validates :full_dose, inclusion: [true, false], if: :administered?
   validates :protocol,
             presence: true,
             if: -> { administered? && recorded_in_service? }
-
-  validates :notes, length: { maximum: 1000 }
 
   validates :location_name,
             absence: {
