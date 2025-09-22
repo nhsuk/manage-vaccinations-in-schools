@@ -15,8 +15,8 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (programme_id => programmes.id)
-#  fk_rails_...  (team_id => teams.id)
+#  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
+#  fk_rails_...  (team_id => teams.id) ON DELETE => cascade
 #
 class TeamProgramme < ApplicationRecord
   belongs_to :programme
