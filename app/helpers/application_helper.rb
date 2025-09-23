@@ -61,6 +61,6 @@ or set it with content_for(:page_title)."
   def cached_counts = TeamCachedCounts.new(current_team)
 
   def tallying_enabled?
-    params[:tallies] == "true"
+    Flipper.enabled?(:tallying) && params[:tallying] == "true"
   end
 end
