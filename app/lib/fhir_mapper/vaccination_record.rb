@@ -320,6 +320,7 @@ module FHIRMapper
       ::Batch.create_with(archived_at: Time.current).find_or_create_by!(
         expiry: fhir_record.expirationDate&.to_date,
         name: fhir_record.lotNumber.to_s,
+        team: nil,
         vaccine:
       )
     end
