@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "pagy/extras/array"
-
 class Sessions::RecordController < ApplicationController
   include PatientSearchFormConcern
   include TodaysBatchConcern
