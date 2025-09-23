@@ -153,7 +153,7 @@ module "reporting_service" {
     secrets              = local.task_secrets["REPORTING"]
     cpu                  = 1024
     memory               = 2048
-    execution_role_arn   = aws_iam_role.ecs_task_execution_role.arn
+    execution_role_arn   = aws_iam_role.ecs_task_execution_role["REPORTING"].arn
     task_role_arn        = aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region

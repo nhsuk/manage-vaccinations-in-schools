@@ -142,22 +142,9 @@ locals {
         {
           name      = "DB_CREDENTIALS"
           valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
-        },
-        {
-          name      = "MAVIS__REPORTING_API__CLIENT_APP__SECRET"
-          valueFrom = aws_secretsmanager_secret.jwt_sign.arn
         }
       ]
-      REPORTING = [
-        {
-          name      = "CLIENT_SECRET"
-          valueFrom = aws_secretsmanager_secret.jwt_sign.arn
-        },
-        {
-          name      = "SECRET_KEY"
-          valueFrom = aws_secretsmanager_secret.reporting_flask.arn
-        }
-      ]
+      REPORTING = []
     }
   )
 
@@ -183,7 +170,7 @@ locals {
           }
         ],
         [{
-          name = "MISE_SOPS_AGE_KEY"
+          name      = "MISE_SOPS_AGE_KEY"
           valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.mise_sops_age_key_path}"
         }],
       )
@@ -233,10 +220,6 @@ locals {
         name  = "SENTRY_ENVIRONMENT"
         value = var.environment
       },
-      {
-        name  = "MAVIS__REPORTING_API__CLIENT_APP__CLIENT_ID"
-        value = aws_secretsmanager_secret.jwt_sign.name
-      },
       ], local.sandbox_envs,
     )
     REPORTING = [
@@ -248,10 +231,6 @@ locals {
         name  = "VALKEY_PORT"
         value = aws_elasticache_serverless_cache.reporting_service.endpoint[0].port
       },
-      {
-        name  = "CLIENT_ID"
-        value = aws_secretsmanager_secret.jwt_sign.name
-      }
     ]
   }
 
@@ -445,6 +424,6 @@ variable "valkey_log_retention_days" {
 locals {
   ecs_initial_lb_target_group       = var.active_lb_target_group == "green" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
   reporting_initial_lb_target_group = var.active_lb_target_group == "green" ? aws_lb_target_group.reporting_green.arn : aws_lb_target_group.reporting_blue.arn
-  ecs_sg_ids                        = [module.web_service.security_group_id, module.sidekiq_service.security_group_id]
+  db_access_sg_ids                  = [module.web_service.security_group_id, module.sidekiq_service.security_group_id]
   valkey_cache_availability_zones   = var.valkey_failover_enabled ? [aws_subnet.private_subnet_a.availability_zone, aws_subnet.private_subnet_b.availability_zone] : [aws_subnet.private_subnet_a.availability_zone]
 }
