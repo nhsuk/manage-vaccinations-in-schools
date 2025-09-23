@@ -3,7 +3,7 @@
 namespace :data_migrations do
   desc "Mark vaccination records as synced to NHS Imms API"
   task mark_vaccination_records_as_synced: :environment do
-    csv_data = File.data("db/data/imms-api-missing-record-ids.csv")
+    csv_data = File.read("db/data/imms-api-missing-record-ids.csv")
 
     rows = CSV.parse(csv_data, headers: true)
     rows.each do |row|
