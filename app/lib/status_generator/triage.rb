@@ -63,12 +63,12 @@ class StatusGenerator::Triage
 
   def vaccinated?
     @vaccinated ||=
-      VaccinatedCriteria.call(
+      VaccinatedCriteria.new(
         programme:,
         academic_year:,
         patient:,
         vaccination_records:
-      )
+      ).vaccinated?
   end
 
   def status_should_be_safe_to_vaccinate?
