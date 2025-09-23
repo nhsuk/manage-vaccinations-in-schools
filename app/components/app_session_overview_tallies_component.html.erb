@@ -21,4 +21,21 @@
       </ul>
     </section>
   <% end %>
+  <section>
+    <h3 class="nhsuk-heading-m nhsuk-u-margin-bottom-4">Consent</h3>
+    <% if session.dates.present? %>
+      <p class="nhsuk-body">Consent period <%= session_consent_period(session).downcase_first %></p>
+    <% end %>
+
+    <ul class="nhsuk-grid-row nhsuk-card-group">
+      <% consent_cards.each do |card_data| %>
+        <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+          <%= render AppCardComponent.new(compact: true, link_to: card_data[:link_to]) do |card|
+                card.with_heading(size: "xs") { card_data[:heading] }
+                card.with_data { card_data[:count].to_s }
+              end %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
 </div>

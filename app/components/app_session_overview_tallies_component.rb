@@ -9,7 +9,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
 
   attr_reader :session, :patient_ids, :academic_year
 
-  delegate :govuk_table, to: :helpers
+  delegate :govuk_table, :session_consent_period, to: :helpers
   delegate :programmes, to: :session
 
   def tally_cards_for_programme(programme)
@@ -54,6 +54,60 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
           )
       }
     ]
+  end
+
+  def consent_cards
+    cards =
+      programmes.flat_map do |programme|
+        if programme.has_multiple_vaccine_methods?
+          [
+            {
+              heading: "Consent given for flu (nasal spray)",
+              count:
+                consent_given_count(programme, vaccine_method: "nasal").to_s,
+              link_to:
+                session_consent_path(
+                  session,
+                  consent_statuses: ["given_nasal"],
+                  programme_types: [programme.type]
+                )
+            },
+            {
+              heading: "Consent given for flu (injection)",
+              count:
+                consent_given_count(
+                  programme,
+                  vaccine_method: "injection"
+                ).to_s,
+              link_to:
+                session_consent_path(
+                  session,
+                  consent_statuses: ["given_injection"],
+                  programme_types: [programme.type]
+                )
+            }
+          ]
+        else
+          [
+            {
+              heading: "Consent given for #{programme.name_in_sentence}",
+              count: consent_given_count(programme).to_s,
+              link_to:
+                session_consent_path(
+                  session,
+                  consent_statuses: ["given"],
+                  programme_types: [programme.type]
+                )
+            }
+          ]
+        end
+      end
+
+    cards << {
+      heading: "Consent refused",
+      count: consent_refused_count(programmes).to_s,
+      link_to: session_consent_path(session, consent_statuses: ["refused"])
+    }
   end
 
   private
@@ -151,5 +205,21 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
       birth_academic_years = session.programme_birth_academic_years[programme]
       session.patients.where(birth_academic_year: birth_academic_years)
     end
+  end
+
+  def consent_refused_count(programme)
+    session
+      .patients
+      .has_consent_status("refused", programme:, academic_year:)
+      .count
+  end
+
+  def consent_given_count(programme, vaccine_method: nil)
+    patients_for_programme(programme).has_consent_status(
+      "given",
+      programme:,
+      academic_year:,
+      vaccine_method:
+    ).count
   end
 end
