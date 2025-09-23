@@ -96,9 +96,9 @@ describe "mavis stats consents-by-school", type: :integration do
         team: @team_a,
         location: school1,
         programmes: [programme_flu],
-        academic_year: AcademicYear.current - 1,
-        date: Date.new(AcademicYear.current - 1, 12, 15),
-        send_consent_requests_at: Date.new(AcademicYear.current - 1, 12, 1)
+        academic_year: AcademicYear.previous,
+        date: Date.new(AcademicYear.previous, 12, 15),
+        send_consent_requests_at: Date.new(AcademicYear.previous, 12, 1)
       )
 
     patient1 = create(:patient, team: @team_a)
@@ -147,7 +147,7 @@ describe "mavis stats consents-by-school", type: :integration do
       :given,
       patient: patient_prev,
       programme: programme_flu,
-      submitted_at: Date.new(AcademicYear.current - 1, 12, 5),
+      submitted_at: Date.new(AcademicYear.previous, 12, 5),
       created_at: Date.new(AcademicYear.current, 12, 5)
     )
   end
@@ -169,7 +169,7 @@ describe "mavis stats consents-by-school", type: :integration do
   end
 
   def when_i_run_the_command_with_previous_academic_year
-    previous_year = AcademicYear.current - 1
+    previous_year = AcademicYear.previous
     @output =
       capture_output do
         command(
@@ -249,9 +249,9 @@ describe "mavis stats consents-by-school", type: :integration do
     )
 
     prev_year_consent_date =
-      Date.new(AcademicYear.current - 1, 12, 5).strftime("%Y-%m-%d")
+      Date.new(AcademicYear.previous, 12, 5).strftime("%Y-%m-%d")
     prev_year_request_date =
-      Date.new(AcademicYear.current - 1, 12, 1).strftime("%Y-%m-%d")
+      Date.new(AcademicYear.previous, 12, 1).strftime("%Y-%m-%d")
 
     expect(@output).to include(prev_year_consent_date)
     expect(@output).to include(prev_year_request_date)
