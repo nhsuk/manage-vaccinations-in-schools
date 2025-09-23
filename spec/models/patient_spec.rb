@@ -956,6 +956,23 @@ describe Patient do
           expect(archive_reason).to be_deceased
           expect(archive_reason.team_id).to eq(session.team_id)
         end
+
+        context "when already archived" do
+          let!(:archive_reason) do
+            create(
+              :archive_reason,
+              :moved_out_of_area,
+              patient:,
+              team: session.team
+            )
+          end
+
+          it "updates the existing archive reason" do
+            expect(archive_reason).to be_moved_out_of_area
+            expect { update_from_pds! }.not_to change(ArchiveReason, :count)
+            expect(archive_reason.reload).to be_deceased
+          end
+        end
       end
     end
 
