@@ -21,8 +21,6 @@ describe AppSessionOverviewTalliesComponent do
           text: tally_name
         ).ancestor(".nhsuk-card")
 
-      puts(programme_section.native.to_html)
-
       expect(tally).to have_css(".nhsuk-card__description", text: count)
     end
   end
