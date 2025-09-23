@@ -32,6 +32,8 @@ class ConsentFormMatchingJob < ApplicationJob
     # - 2 or more patients in the original session, matching with no NHS number
     # - 1 or more patients in any session, matching with no NHS number
     # Then do nothing; the nurse needs to match manually or create a new patient
+  rescue NHS::PDS::TooManyMatches => e
+    Sentry.capture_exception(e)
   end
 
   private
