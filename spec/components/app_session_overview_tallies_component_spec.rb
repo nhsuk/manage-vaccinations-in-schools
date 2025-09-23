@@ -11,10 +11,13 @@ describe AppSessionOverviewTalliesComponent do
 
   shared_examples "displays correct count" do |programme_name, tally_name, count|
     it "displays correct #{tally_name.downcase} count" do
+      StatusUpdater.call
+
       rendered
 
       programme_section =
         page.find(".nhsuk-heading-m", text: programme_name).ancestor("section")
+
       tally =
         programme_section.find(
           ".nhsuk-card__heading",
@@ -27,6 +30,8 @@ describe AppSessionOverviewTalliesComponent do
 
   shared_examples "displays correct consent count" do |consent_tally_name, count|
     it "displays correct #{consent_tally_name.downcase} count" do
+      StatusUpdater.call
+
       rendered
 
       tally =
@@ -38,7 +43,7 @@ describe AppSessionOverviewTalliesComponent do
     end
   end
 
-  context "with no patient sessions" do
+  context "with no patients" do
     include_examples "displays correct count", "Flu", "Eligible cohort", 0
     include_examples "displays correct count", "Flu", "Vaccinated", 0
     include_examples "displays correct count", "Flu", "Could not vaccinate", 0
@@ -51,15 +56,20 @@ describe AppSessionOverviewTalliesComponent do
   end
 
   context "when a patient exists in year 9" do
-    let(:patient) { create(:patient, session:, year_group: 9) }
+    let!(:patient) { create(:patient, session:, year_group: 9) }
+
+    include_examples "displays correct count", "Flu", "Eligible cohort", 1
+    include_examples "displays correct count", "Flu", "Vaccinated", 0
+    include_examples "displays correct count", "Flu", "Could not vaccinate", 0
+    include_examples "displays correct count", "Flu", "No outcome", 1
 
     context "they have been vaccinated during the session" do
       before do
         create(
-          :patient_vaccination_status,
-          :vaccinated,
+          :vaccination_record,
           patient:,
-          programme: flu_programme
+          programme: flu_programme,
+          session:
         )
       end
 
@@ -70,14 +80,7 @@ describe AppSessionOverviewTalliesComponent do
     end
 
     context "they could not be vaccinated" do
-      before do
-        create(
-          :patient_vaccination_status,
-          :could_not_vaccinate,
-          patient:,
-          programme: flu_programme
-        )
-      end
+      before { create(:consent, :refused, patient:, programme: flu_programme) }
 
       include_examples "displays correct count", "Flu", "Eligible cohort", 1
       include_examples "displays correct count", "Flu", "Vaccinated", 0
@@ -85,30 +88,13 @@ describe AppSessionOverviewTalliesComponent do
       include_examples "displays correct count", "Flu", "No outcome", 0
     end
 
-    context "there is no outcome yet for the patient" do
+    context "they were vaccinated in previous years" do
       before do
         create(
-          :patient_vaccination_status,
-          :none_yet,
-          patient:,
-          programme: flu_programme
-        )
-      end
-
-      include_examples "displays correct count", "Flu", "Eligible cohort", 1
-      include_examples "displays correct count", "Flu", "Vaccinated", 0
-      include_examples "displays correct count", "Flu", "Could not vaccinate", 0
-      include_examples "displays correct count", "Flu", "No outcome", 1
-    end
-
-    context "patient was vaccinated in previous years" do
-      before do
-        create(
-          :patient_vaccination_status,
-          :vaccinated,
+          :vaccination_record,
           patient:,
           programme: hpv_programme,
-          academic_year: AcademicYear.previous
+          performed_at: 1.year.ago
         )
       end
 
@@ -118,24 +104,23 @@ describe AppSessionOverviewTalliesComponent do
       include_examples "displays correct count", "HPV", "No outcome", 0
     end
 
-    context "patient had seasonal vaccination in previous years" do
+    context "they had seasonal vaccination in previous years" do
       before do
         create(
-          :patient_vaccination_status,
-          :vaccinated,
+          :vaccination_record,
           patient:,
           programme: flu_programme,
-          academic_year: AcademicYear.previous
+          performed_at: 1.year.ago
         )
       end
 
       include_examples "displays correct count", "Flu", "Eligible cohort", 1
       include_examples "displays correct count", "Flu", "Vaccinated", 0
       include_examples "displays correct count", "Flu", "Could not vaccinate", 0
-      include_examples "displays correct count", "Flu", "No outcome", 0
+      include_examples "displays correct count", "Flu", "No outcome", 1
     end
 
-    context "patient was vaccinated for HPV but elsewhere" do
+    context "they were vaccinated for HPV but elsewhere" do
       before do
         create(
           :vaccination_record,
@@ -151,21 +136,21 @@ describe AppSessionOverviewTalliesComponent do
       include_examples "displays correct count", "HPV", "No outcome", 0
     end
 
-    context "patient refused HPV vaccine elsewhere" do
+    context "they refused HPV vaccine elsewhere" do
       before do
         create(
           :vaccination_record,
+          :refused,
           patient:,
           location: create(:school, name: "Hogwarts"),
-          programme: hpv_programme,
-          outcome: "refused"
+          programme: hpv_programme
         )
       end
 
       include_examples "displays correct count", "HPV", "Eligible cohort", 1
       include_examples "displays correct count", "HPV", "Vaccinated", 0
       include_examples "displays correct count", "HPV", "Could not vaccinate", 0
-      include_examples "displays correct count", "HPV", "No outcome", 0
+      include_examples "displays correct count", "HPV", "No outcome", 1
     end
 
     context "with multiple patients and one was vaccinated for HPV elsewhere" do
@@ -191,29 +176,23 @@ describe AppSessionOverviewTalliesComponent do
       include_examples "displays correct count", "HPV", "Eligible cohort", 1
       include_examples "displays correct count", "HPV", "Vaccinated", 0
       include_examples "displays correct count", "HPV", "Could not vaccinate", 0
-      include_examples "displays correct count", "HPV", "No outcome", 0
+      include_examples "displays correct count", "HPV", "No outcome", 1
     end
   end
 
   context "three patients eligible, one vaccinated, one could not be vaccinated, and one had no outcome" do
-    let(:patients) { create_list(:patient, 3, session:, year_group: 9) }
+    let!(:patients) { create_list(:patient, 3, session:, year_group: 9) }
 
     before do
       create(
-        :patient_vaccination_status,
-        :none_yet,
+        :vaccination_record,
         programme: hpv_programme,
-        patient: patients.first
+        patient: patients.second,
+        session:
       )
       create(
-        :patient_vaccination_status,
-        :vaccinated,
-        programme: hpv_programme,
-        patient: patients.second
-      )
-      create(
-        :patient_vaccination_status,
-        :could_not_vaccinate,
+        :consent,
+        :refused,
         programme: hpv_programme,
         patient: patients.third
       )

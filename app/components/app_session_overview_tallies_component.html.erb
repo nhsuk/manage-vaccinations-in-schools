@@ -5,7 +5,7 @@
         <%= programme.name %>
       </h3>
       <ul class="nhsuk-grid-row nhsuk-card-group">
-        <% tally_cards_for_programme(programme).each do |card_data| %>
+        <% cards_for_programme(programme).each do |card_data| %>
           <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
             <%= render AppCardComponent.new(compact: true, colour: card_data[:colour]) do |card| %>
               <% card.with_heading(size: "xs") { card_data[:heading] } %>
