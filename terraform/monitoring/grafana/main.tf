@@ -30,4 +30,30 @@ resource "grafana_data_source" "cloudwatch" {
   uid = "cloudwatch"
 }
 
-# resouce "grafana_data_source" "postgres" {}
+resource "grafana_data_source" "postgresql" {
+  name = "postgresql"
+  type = "grafana-postgresql-datasource"
+  json_data_encoded = jsonencode({
+    sslmode                = "require"
+    connMaxLifetime        = 14400
+    database               = "manage_vaccinations"
+    maxIdleConns           = 5
+    maxIdleConnsAuto       = true
+    maxOpenConns           = 5
+    tlsConfigurationMethod = "file-path"
+    timescaledb            = false
+    postgresVersion        = 1500
+  })
+  secure_json_data_encoded = jsonencode({
+    password = "CHANGE_ME"
+  })
+  url      = "CHANGE_ME"
+  uid      = "postgres"
+  username = "grafana_ro"
+  lifecycle {
+    ignore_changes = [
+      secure_json_data_encoded,
+      url,
+    ]
+  }
+}
