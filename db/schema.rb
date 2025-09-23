@@ -186,6 +186,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
     t.bigint "consent_form_id", null: false
     t.integer "response"
     t.integer "vaccine_methods", default: [], null: false, array: true
+    t.integer "reason_for_refusal"
+    t.text "notes", default: "", null: false
     t.index ["consent_form_id"], name: "index_consent_form_programmes_on_consent_form_id"
     t.index ["programme_id", "consent_form_id"], name: "idx_on_programme_id_consent_form_id_2113cb7f37", unique: true
   end
@@ -198,8 +200,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
     t.text "family_name"
     t.boolean "use_preferred_name"
     t.date "date_of_birth"
-    t.integer "reason"
-    t.text "reason_notes"
     t.string "address_line_1"
     t.string "address_line_2"
     t.string "address_town"

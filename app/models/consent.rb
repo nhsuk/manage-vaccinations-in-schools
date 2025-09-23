@@ -147,27 +147,14 @@ class Consent < ApplicationRecord
           .consent_form_programmes
           .includes(:programme)
           .map do |consent_form_programme|
-            notes =
-              if consent_form_programme.response_given?
-                ""
-              else
-                consent_form.reason_notes.presence || ""
-              end
-            reason_for_refusal =
-              if consent_form_programme.response_given?
-                nil
-              else
-                consent_form.reason
-              end
-
             patient.consents.create!(
               consent_form:,
               health_answers: consent_form.health_answers,
-              notes:,
+              notes: consent_form_programme.notes,
               team: consent_form.team,
               parent:,
               programme: consent_form_programme.programme,
-              reason_for_refusal:,
+              reason_for_refusal: consent_form_programme.reason_for_refusal,
               recorded_by: current_user,
               response: consent_form_programme.response,
               route: "website",

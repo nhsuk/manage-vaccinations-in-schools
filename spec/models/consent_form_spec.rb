@@ -28,8 +28,6 @@
 #  parent_relationship_type            :string
 #  preferred_family_name               :string
 #  preferred_given_name                :string
-#  reason                              :integer
-#  reason_notes                        :text
 #  recorded_at                         :datetime
 #  school_confirmed                    :boolean
 #  use_preferred_name                  :boolean
@@ -98,7 +96,7 @@ describe ConsentForm do
         :consent_form,
         health_answers:,
         parent_phone_receive_updates:,
-        reason:,
+        reason_for_refusal:,
         response:,
         session:,
         programmes:,
@@ -109,7 +107,7 @@ describe ConsentForm do
 
     let(:health_answers) { [] }
     let(:parent_phone_receive_updates) { false }
-    let(:reason) { nil }
+    let(:reason_for_refusal) { nil }
     let(:response) { nil }
     let(:session) { create(:session, programmes:) }
     let(:programmes) { [create(:programme, :hpv)] }
@@ -241,29 +239,29 @@ describe ConsentForm do
       end
     end
 
-    context "when wizard_step is :reason" do
+    context "when wizard_step is :reason_for_refusal" do
       let(:response) { "refused" }
-      let(:wizard_step) { :reason }
+      let(:wizard_step) { :reason_for_refusal }
 
       context "runs validations from previous steps" do
         it { should validate_presence_of(:given_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
       end
 
-      it { should validate_presence_of(:reason).on(:update) }
+      it { should validate_presence_of(:reason_for_refusal).on(:update) }
     end
 
-    context "when wizard_step is :reason_notes" do
+    context "when wizard_step is :reason_for_refusal_notes" do
       let(:response) { "refused" }
-      let(:reason) { "medical_reasons" }
-      let(:wizard_step) { :reason_notes }
+      let(:reason_for_refusal) { "medical_reasons" }
+      let(:wizard_step) { :reason_for_refusal_notes }
 
       context "runs validations from previous steps" do
         it { should validate_presence_of(:given_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
       end
 
-      it { should validate_presence_of(:reason_notes).on(:update) }
+      it { should validate_presence_of(:reason_for_refusal_notes).on(:update) }
     end
 
     context "when wizard_step is :address" do
@@ -368,9 +366,9 @@ describe ConsentForm do
   end
 
   describe "#wizard_steps" do
-    it "does not ask for reason for refusal when patient gives consent" do
+    it "does not ask for reason_for_refusal for refusal when patient gives consent" do
       consent_form = create(:consent_form, response: "given")
-      expect(consent_form.wizard_steps).not_to include(:reason)
+      expect(consent_form.wizard_steps).not_to include(:reason_for_refusal)
     end
 
     it "asks for details when patient refuses for a few different reasons" do
@@ -381,20 +379,32 @@ describe ConsentForm do
         will_be_vaccinated_elsewhere
         other
         already_vaccinated
-      ].each do |reason|
+      ].each do |reason_for_refusal|
         consent_form =
-          create(:consent_form, response: "refused", reason:, session:)
-        expect(consent_form.wizard_steps).to include(:reason_notes)
+          create(
+            :consent_form,
+            response: "refused",
+            reason_for_refusal:,
+            session:
+          )
+        expect(consent_form.wizard_steps).to include(:reason_for_refusal_notes)
       end
     end
 
     it "skips asking for details when patient refuses due to gelatine content or pesonal reason" do
       session = create(:session)
 
-      %w[contains_gelatine personal_choice].each do |reason|
+      %w[contains_gelatine personal_choice].each do |reason_for_refusal|
         consent_form =
-          build(:consent_form, response: "refused", reason:, session:)
-        expect(consent_form.wizard_steps).not_to include(:reason_notes)
+          build(
+            :consent_form,
+            response: "refused",
+            reason_for_refusal:,
+            session:
+          )
+        expect(consent_form.wizard_steps).not_to include(
+          :reason_for_refusal_notes
+        )
       end
     end
   end
@@ -728,7 +738,10 @@ describe ConsentForm do
         response: nil
       )
 
-    consent_form.update!(response: "refused", reason: "personal_choice")
+    consent_form.update!(
+      response: "refused",
+      reason_for_refusal: "personal_choice"
+    )
 
     expect(consent_form.health_answers).to be_empty
   end
@@ -772,7 +785,7 @@ describe ConsentForm do
       vaccine_methods: %w[injection]
     )
     consent_form.update!(
-      reason: "personal_choice",
+      reason_for_refusal: "personal_choice",
       address_line_1: "123 Fake St",
       address_town: "London",
       address_postcode: "SW1A 1AA"
@@ -793,7 +806,10 @@ describe ConsentForm do
         response: nil
       )
 
-    consent_form.update!(response: "refused", reason: "personal_choice")
+    consent_form.update!(
+      response: "refused",
+      reason_for_refusal: "personal_choice"
+    )
     consent_form.reload
 
     expect(consent_form.health_answers).to be_empty
@@ -996,13 +1012,13 @@ describe ConsentForm do
       create(
         :consent_form,
         response: "refused",
-        reason: "contains_gelatine",
-        reason_notes: "I'm vegan",
+        reason_for_refusal: "contains_gelatine",
+        reason_for_refusal_notes: "I'm vegan",
         session:
       )
     consent_form.update!(response: "given")
-    expect(consent_form.reason).to be_nil
-    expect(consent_form.reason_notes).to be_nil
+    expect(consent_form.reason_for_refusal).to be_nil
+    expect(consent_form.reason_for_refusal_notes).to be_nil
 
     consent_form = create(:consent_form, session:)
     consent_form.update!(response: "refused")

@@ -34,8 +34,8 @@ en:
     parent_details: parent-details
     programmes: programmes
     questions: questions
-    reason: reason
-    reason_notes: reason-notes
+    reason_for_refusal: reason-for-refusal
+    reason_for_refusal_notes: reason-for-refusal-notes
     register_attendance: register-attendance
     response_doubles: response-doubles
     response_flu: response-flu

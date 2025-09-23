@@ -1,0 +1,14 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: backlink_path) %>
+<% end %>
+
+<%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= h1 t(@consent_form.reason_for_refusal, scope: %i[consent_forms notes title]) %>
+
+  <%= f.govuk_text_area :reason_for_refusal_notes,
+                        label: { text: "Give details" + (@consent_form.reason_for_refusal_requires_notes? ? "" : " (optional)") } %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

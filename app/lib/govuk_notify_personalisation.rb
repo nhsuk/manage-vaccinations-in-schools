@@ -232,10 +232,10 @@ class GovukNotifyPersonalisation
   end
 
   def reason_for_refusal
-    reason = consent_form&.reason || consent&.reason_for_refusal
+    reason = consent_form&.reason_for_refusal || consent&.reason_for_refusal
     return if reason.nil?
 
-    I18n.t("mailers.consent_form_mailer.reasons_for_refusal.#{reason}")
+    I18n.t(reason, scope: "mailers.consent_form_mailer.reasons_for_refusal")
   end
 
   def short_patient_name
