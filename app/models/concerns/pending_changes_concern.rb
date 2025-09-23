@@ -55,8 +55,8 @@ module PendingChangesConcern
   private
 
   def normalised(value)
-    if value.respond_to?(:downcase)
-      value.downcase
+    if value.is_a?(String)
+      value.downcase.presence
     elsif value.is_a?(Time)
       value.round
     else
