@@ -115,6 +115,8 @@ locals {
   is_production = var.environment == "production"
   parameter_store_variables = tomap({
     CORE = local.is_production ? {} : tomap({
+      MAVIS__CIS2__ENABLED                            = "CHANGE_ME"
+      MAVIS__SPLUNK__ENABLED                          = "CHANGE_ME"
       MAVIS__ACADEMIC_YEAR_TODAY_OVERRIDE             = "CHANGE_ME"
       MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = "CHANGE_ME"
       MAVIS__PDS__ENQUEUE_BULK_UPDATES                = "CHANGE_ME"
