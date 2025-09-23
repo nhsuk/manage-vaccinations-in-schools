@@ -30,13 +30,13 @@ resource "aws_security_group" "this" {
 }
 
 resource "aws_security_group_rule" "ingress" {
-  count                    = length(var.ingress_ports)
-  type                     = "ingress"
-  from_port                = var.ingress_ports[count.index]
-  to_port                  = var.ingress_ports[count.index]
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.this.id
-  source_security_group_id = var.source_security_group
+  count             = length(var.ingress_ports)
+  type              = "ingress"
+  from_port         = var.ingress_ports[count.index]
+  to_port           = var.ingress_ports[count.index]
+  protocol          = "tcp"
+  security_group_id = aws_security_group.this.id
+  cidr_blocks       = ["0.0.0.0/0"]
   lifecycle {
     create_before_destroy = true
   }
