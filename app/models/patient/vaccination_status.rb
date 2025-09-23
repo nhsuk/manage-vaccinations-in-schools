@@ -72,6 +72,7 @@ class Patient::VaccinationStatus < ApplicationRecord
 
   def assign_status
     self.status = generator.status
+    self.latest_location_id = generator.location_id
     self.latest_session_status = session_generator&.status || :none_yet
     self.status_changed_at =
       session_generator&.status_changed_at ||
