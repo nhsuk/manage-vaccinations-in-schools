@@ -108,7 +108,7 @@ describe AppSessionOverviewTalliesComponent do
           :vaccinated,
           patient:,
           programme: hpv_programme,
-          academic_year: AcademicYear.current - 1
+          academic_year: AcademicYear.previous
         )
       end
 
@@ -125,7 +125,7 @@ describe AppSessionOverviewTalliesComponent do
           :vaccinated,
           patient:,
           programme: flu_programme,
-          academic_year: AcademicYear.current - 1
+          academic_year: AcademicYear.previous
         )
       end
 
