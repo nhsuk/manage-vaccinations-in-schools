@@ -53,6 +53,9 @@ describe "Flu vaccination" do
     and_patients_exist
     and_i_am_signed_in(role: :healthcare_assistant)
 
+    when_i_visit_the_record_vaccinations_tab
+    then_i_should_not_see_the_patient
+
     when_i_visit_the_session_patient_programme_page
     then_i_should_not_see_the_record_vaccination_section
   end
@@ -63,7 +66,8 @@ describe "Flu vaccination" do
     and_the_nasal_only_patient_has_a_psd
     and_i_am_signed_in(role: :healthcare_assistant)
 
-    when_i_visit_the_session_patient_programme_page
+    when_i_visit_the_record_vaccinations_tab
+    and_i_click_on_the_nasal_only_patient
     then_i_am_able_to_vaccinate_them_with_nasal_via_psd
     and_the_vaccination_record_has_psd_as_the_protocol
 
@@ -152,6 +156,10 @@ describe "Flu vaccination" do
 
   def when_i_visit_the_record_vaccinations_tab
     visit session_record_path(@session)
+  end
+
+  def and_i_click_on_the_nasal_only_patient
+    click_on @patient_nasal_only.full_name
   end
 
   def when_i_visit_the_session_patient_programme_page

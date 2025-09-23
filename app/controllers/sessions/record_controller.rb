@@ -128,10 +128,14 @@ class Sessions::RecordController < ApplicationController
         programme:,
         academic_year:
       )
+    elsif @session.psd_enabled?
+      original_scope.with_patient_specific_direction(
+        programme:,
+        academic_year:,
+        team:
+      )
     elsif @session.pgd_supply_enabled?
       original_scope.has_vaccine_method("nasal", programme:, academic_year:)
-    elsif @session.national_protocol_enabled?
-      original_scope.has_vaccine_method("injection", programme:, academic_year:)
     else
       original_scope.none
     end
