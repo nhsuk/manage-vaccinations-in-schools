@@ -103,8 +103,13 @@ class Patient::VaccinationStatus < ApplicationRecord
 
   def latest_vaccination_record
     @latest_vaccination_record ||=
-      vaccination_records.find do
-        it.academic_year == academic_year && it.programme_id == programme_id
+      vaccination_records.reverse.find do
+        it.programme_id == programme.id &&
+          if programme.seasonal?
+            it.academic_year == academic_year
+          else
+            it.academic_year <= academic_year
+          end
       end
   end
 
