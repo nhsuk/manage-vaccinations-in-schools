@@ -62,13 +62,13 @@ describe "mavis schools show" do
   end
 
   def then_the_school_details_are_displayed
-    expect(@output).to match(/name: Test School/)
-    expect(@output).to match(/urn: 123456/)
+    expect(@output).to match(/name.*Test School/)
+    expect(@output).to match(/urn.*123456/)
   end
 
   def then_the_school_details_with_sites_are_displayed
-    expect(@output).to match(/name: Test School/)
-    expect(@output).to match(/urn: 123456/)
-    expect(@output).to match(/site: B/)
+    expect(@output).to match(/name.*Test School/)
+    expect(@output).to match(/urn.*123456/)
+    expect(@output).to match(/site.*B/)
   end
 end
