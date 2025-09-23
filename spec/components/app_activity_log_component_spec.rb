@@ -10,7 +10,7 @@ describe AppActivityLogComponent do
   let(:programmes) { [create(:programme, :hpv), create(:programme, :flu)] }
   let(:team) { create(:team, programmes:) }
   let(:user) { create(:user, team:, family_name: "Joy", given_name: "Nurse") }
-  let(:location) { create(:school, name: "Hogwarts") }
+  let(:location) { create(:school, name: "Hogwarts", programmes:) }
   let(:session) { create(:session, programmes:, location:) }
   let(:session_last_year) do
     create(:session, programmes:, location:, date: 1.year.ago.to_date)
@@ -21,7 +21,7 @@ describe AppActivityLogComponent do
       school: location,
       given_name: "Sarah",
       family_name: "Doe",
-      year_group: 8
+      year_group: 9
     )
   end
 
@@ -620,19 +620,20 @@ describe AppActivityLogComponent do
           patient:,
           created_by: user,
           academic_year: 2024,
-          created_at: Time.zone.parse("#2024-05-30 15:00")
+          created_at: Time.zone.local(2025, 5, 30, 15)
         )
+
+        create(:patient_location, patient:, session: session_last_year)
 
         create(
           :vaccination_record,
           patient:,
           programme: hpv_programme,
-          session: session_last_year
+          session: session_last_year,
+          performed_at: Time.zone.local(2025, 5, 30, 16)
         )
-        patient.vaccination_status(
-          programme: hpv_programme,
-          academic_year: 2024
-        ).assign_status
+
+        StatusUpdater.call(patient:)
       end
 
       it "does not render expired PSD card for vaccinated patient" do
