@@ -6,10 +6,10 @@
       </h3>
 
       <p class="nhsuk-caption-m nhsuk-u-reading-width nhsuk-u-margin-bottom-4">
-        <%= t(".eligibility_message", count: eligible_for_vaccination_count(programme)) %>
+        <%= t(".eligibility_message", count: eligible_cohort_count(programme)) %>
       </p>
 
-      <% tally_cards = tally_cards_for_programme(programme) %>
+      <% tally_cards = cards_for_programme(programme) %>
       <% column_class = tally_cards.length == 4 ? "one-quarter" : "one-fifth" %>
 
       <ul class="nhsuk-grid-row nhsuk-card-group">
@@ -26,6 +26,7 @@
       </ul>
     </section>
   <% end %>
+
   <section>
     <%= render AppCardComponent.new do |card| %>
       <% if session.today? %>
@@ -40,9 +41,9 @@
       <% if session.started? %>
         <%= render AppSessionDatesTableComponent.new(session) %>
       <% else %>
-        <% if session_dates.present? %>
+        <% if dates.present? %>
           <%= tag.ul(class: "nhsuk-list") do %>
-            <% session_dates.each do |date| %>
+            <% dates.each do |date| %>
               <%= tag.li(date.to_fs(:long_day_of_week)) %>
             <% end %>
           <% end %>

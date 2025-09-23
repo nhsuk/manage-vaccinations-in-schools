@@ -166,7 +166,7 @@ describe AppSessionOverviewTalliesComponent do
           :vaccinated,
           patient:,
           programme: hpv_programme,
-          academic_year: AcademicYear.previous
+          academic_year: AcademicYear.current - 1
         )
       end
 
@@ -187,7 +187,7 @@ describe AppSessionOverviewTalliesComponent do
           :vaccinated,
           patient:,
           programme: flu_programme,
-          academic_year: AcademicYear.previous
+          academic_year: AcademicYear.current - 1
         )
       end
 
@@ -216,6 +216,8 @@ describe AppSessionOverviewTalliesComponent do
           location: create(:school, name: "Hogwarts"),
           programme: hpv_programme
         )
+
+        StatusUpdater.call(patient:)
       end
 
       include_examples "displays correct children due vaccination", "HPV", 0
@@ -267,6 +269,8 @@ describe AppSessionOverviewTalliesComponent do
           location: other_school,
           programme: hpv_programme
         )
+
+        StatusUpdater.call(patient:)
       end
 
       include_examples "displays correct children due vaccination", "HPV", 1

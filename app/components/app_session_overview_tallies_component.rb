@@ -3,14 +3,14 @@
 class AppSessionOverviewTalliesComponent < ViewComponent::Base
   def initialize(session)
     @session = session
-    @patient_ids = session.patients.pluck(:id)
-    @academic_year = session.academic_year
-    @session_dates = session.dates
   end
 
-  attr_reader :session, :patient_ids, :academic_year, :session_dates
+  private
 
-  delegate :programmes, to: :session
+  attr_reader :session
+
+  delegate :academic_year, :dates, :location, :programmes, to: :session
+
   delegate :govuk_table,
            :govuk_button_link_to,
            :govuk_inset_text,
@@ -30,20 +30,20 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
   end
 
   def no_sessions_message
-    location_context = @session.generic_clinic? ? "clinic" : "school"
+    location_context = session.clinic? ? "clinic" : "school"
     "There are currently no sessions scheduled at this #{location_context}."
   end
 
   def edit_button_text
-    session_dates.empty? ? "Schedule sessions" : "Edit session"
+    dates.empty? ? "Schedule sessions" : "Edit session"
   end
 
-  def tally_cards_for_programme(programme)
+  def cards_for_programme(programme)
     [
       {
         heading: "No response",
         colour: "grey",
-        count: consent_count(:no_response, programme).to_s,
+        count: consent_count(programme, "no_response").to_s,
         link_to:
           session_consent_path(
             session,
@@ -58,7 +58,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
               heading: "Consent given for nasal spray",
               colour: "aqua-green",
               count:
-                consent_count(:given, programme, vaccine_method: :nasal).to_s,
+                consent_count(programme, "given", vaccine_method: "nasal").to_s,
               link_to:
                 session_consent_path(
                   session,
@@ -71,9 +71,9 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
               colour: "aqua-green",
               count:
                 consent_count(
-                  :given,
                   programme,
-                  vaccine_method: :injection
+                  "given",
+                  vaccine_method: "injection"
                 ).to_s,
               link_to:
                 session_consent_path(
@@ -88,7 +88,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
             {
               heading: "Consent given",
               colour: "aqua-green",
-              count: consent_count(:given, programme).to_s,
+              count: consent_count(programme, "given").to_s,
               link_to:
                 session_consent_path(
                   session,
@@ -124,6 +124,51 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
     ].flatten
   end
 
+  def eligible_patients(programme)
+    session
+      .patients
+      .appear_in_programmes([programme], session:)
+      .eligible_for_programmes([programme], location:, academic_year:)
+  end
+
+  def eligible_cohort_count(programme)
+    eligible_patients(programme).count
+  end
+
+  def vaccinated_count(programme)
+    eligible_patients(programme).has_vaccination_status(
+      "vaccinated",
+      programme:,
+      academic_year:
+    ).count
+  end
+
+  def could_not_vaccinate_count(programme)
+    eligible_patients(programme).has_vaccination_status(
+      "could_not_vaccinate",
+      programme:,
+      academic_year:
+    ).count
+  end
+
+  def consent_count(programme, status, vaccine_method: nil)
+    eligible_patients(programme).has_consent_status(
+      status,
+      programme:,
+      academic_year:,
+      vaccine_method:
+    ).count
+  end
+
+  def no_outcome_count(programme)
+    eligible_patients(programme).has_vaccination_status(
+      "none_yet",
+      programme:,
+      academic_year:,
+      vaccine_method:
+    ).count
+  end
+
   def still_to_vaccinate_count
     session
       .patients
@@ -133,102 +178,5 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
         vaccine_method: nil
       )
       .count
-  end
-
-  private
-
-  def eligible_for_vaccination_count(programme)
-    @eligible_for_vaccination_count ||= {}
-    @eligible_for_vaccination_count[
-      programme.id
-    ] ||= patients_in_programme_cohort_count(programme) -
-      previously_vaccinated_count(programme) -
-      vaccinated_at_different_locations_count(programme)
-  end
-
-  def vaccinated_count(programme)
-    [
-      0,
-      administered_vaccination_count(programme) -
-        previously_vaccinated_count(programme)
-    ].max
-  end
-
-  def could_not_vaccinate_count(programme)
-    patients_for_programme(programme).has_vaccination_status(
-      :could_not_vaccinate,
-      programme:,
-      academic_year:
-    ).count
-  end
-
-  def consent_count(status, programme, vaccine_method: nil)
-    patients_for_programme(programme).has_consent_status(
-      status,
-      programme:,
-      academic_year:,
-      vaccine_method:
-    ).count
-  end
-
-  def patients_in_programme_cohort_count(programme)
-    @patients_in_programme_cohort ||= {}
-    @patients_in_programme_cohort[programme.id] ||= patients_for_programme(
-      programme
-    ).appear_in_programmes([programme], session:).count
-  end
-
-  def previously_vaccinated_count(programme)
-    return 0 if programme.seasonal?
-
-    @previously_vaccinated_count ||= {}
-    @previously_vaccinated_count[programme.id] ||= patients_for_programme(
-      programme
-    ).has_vaccination_status(
-      :vaccinated,
-      programme:,
-      academic_year: academic_year - 1
-    ).count
-  end
-
-  def administered_vaccination_count(programme)
-    patients_for_programme(programme).has_vaccination_status(
-      :vaccinated,
-      programme:,
-      academic_year:
-    ).count
-  end
-
-  def vaccinated_at_different_locations_count(programme)
-    vaccination_records =
-      VaccinationRecord
-        .where(
-          patient_id: patient_ids,
-          programme_id: programme.id,
-          outcome: %w[administered already_had]
-        )
-        .where.not(location: session.location)
-
-    # The VaccinatedCriteria class is responsible for determining whether a
-    # patient is considered vaccinated or not. There's some nuance around
-    # Td/IPV and MenACWY where a patient may have a vaccination record, but
-    # if it's the wrong dose or if the patient was younger than 10 years old
-    # it doesn't count.
-    session.patients.count do |patient|
-      VaccinatedCriteria.new(
-        programme:,
-        academic_year:,
-        patient:,
-        vaccination_records:
-      ).vaccinated?
-    end
-  end
-
-  def patients_for_programme(programme)
-    @patients_for_programmes ||= {}
-    @patients_for_programmes[programme.id] ||= begin
-      birth_academic_years = session.programme_birth_academic_years[programme]
-      session.patients.where(birth_academic_year: birth_academic_years)
-    end
   end
 end
