@@ -33,9 +33,6 @@ resource "aws_grafana_workspace_service_account" "grafana_provider" {
   workspace_id = aws_grafana_workspace.this.id
 }
 
-locals {
-}
-
 resource "aws_security_group" "grafana_workspace" {
   name_prefix = "grafana-workspace-${var.environment}"
   description = "Security group for Grafana workspace"

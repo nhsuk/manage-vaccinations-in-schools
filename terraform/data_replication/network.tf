@@ -121,12 +121,15 @@ module "vpc_endpoints" {
   }
 }
 
-resource "aws_vpc_endpoint" "s3_gateway" {
-  vpc_id            = aws_vpc.vpc.id
-  service_name      = "com.amazonaws.${var.region}.s3"
-  vpc_endpoint_type = "Gateway"
-  route_table_ids   = [aws_route_table.private.id]
-  tags = {
-    Name = "${local.name_prefix}-s3-gw-endpoint"
-  }
+data "aws_prefix_list" "s3" {
+  name = "com.amazonaws.${var.region}.s3"
+}
+
+resource "aws_security_group_rule" "egress_to_s3" {
+  type              = "egress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  prefix_list_ids   = [data.aws_prefix_list.s3.id]
+  security_group_id = module.db_access_service.security_group_id
 }
