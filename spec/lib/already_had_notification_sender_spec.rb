@@ -79,8 +79,6 @@ describe AlreadyHadNotificationSender do
           )
         end
 
-        before { allow(VaccinatedCriteria).to receive(:call).and_return(false) }
-
         it "sends email notifications to all parents with valid consents" do
           call
 

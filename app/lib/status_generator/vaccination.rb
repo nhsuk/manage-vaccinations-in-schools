@@ -39,12 +39,12 @@ class StatusGenerator::Vaccination
   def programme_id = programme.id
 
   def status_should_be_vaccinated?
-    VaccinatedCriteria.call(
+    VaccinatedCriteria.new(
       programme:,
       academic_year:,
       patient:,
       vaccination_records:
-    )
+    ).vaccinated?
   end
 
   def status_should_be_could_not_vaccinate?
