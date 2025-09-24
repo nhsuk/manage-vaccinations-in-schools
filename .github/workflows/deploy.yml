@@ -45,6 +45,9 @@ on:
         default: all
 
 env:
+  git_ref_to_deploy: ${{ inputs.git_ref_to_deploy }}
+  environment: ${{ inputs.environment }}
+  server_types: ${{ inputs.server_types }}
   account_id: ${{ inputs.environment == 'production' && '820242920762' || '393416225559' }}
 
 jobs:
@@ -54,8 +57,8 @@ jobs:
     steps:
       - name: Validate inputs
         run: |
-          if [[ "${{ inputs.environment }}" == "preview" || "${{ inputs.environment }}" == "production" ]]; then
-            if [[ -z "${{ inputs.git_ref_to_deploy }}" ]]; then
+          if [[ "$environment" == "preview" || "$environment" == "production" ]]; then
+            if [[ -z "$git_ref_to_deploy" ]]; then
               echo "Error: git_ref_to_deploy is required for preview and production environments."
               exit 1
             fi
@@ -103,7 +106,7 @@ jobs:
         id: compare-permissions
         run: |
           source ./scripts/validate-github-actions-policy.sh
-          validate_policies arn:aws:iam::${{ env.account_id }}:policy/DeployMavisResources ./account/resources/iam_policy_DeployMavisResources.json
+          validate_policies "arn:aws:iam::$account_id:policy/DeployMavisResources" ./account/resources/iam_policy_DeployMavisResources.json
           exit $?
   update-permissions:
     runs-on: ubuntu-latest
@@ -126,7 +129,7 @@ jobs:
           role-to-assume: arn:aws:iam::${{ env.account_id }}:role/GithubDeployMavisAndInfrastructure
           aws-region: eu-west-2
       - name: Update IAM policy
-        run: ./scripts/update-github-actions-policy.sh arn:aws:iam::${{ env.account_id }}:policy/DeployMavisResources ./account/resources/iam_policy_DeployMavisResources.json
+        run: ./scripts/update-github-actions-policy.sh "arn:aws:iam::$account_id:policy/DeployMavisResources" ./account/resources/iam_policy_DeployMavisResources.json
   deploy-infrastructure:
     permissions:
       id-token: write

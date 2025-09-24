@@ -40,13 +40,16 @@ on:
 
 permissions: {}
 
-concurrency:
-  group: deploy-application-${{ inputs.environment }}
-
 env:
+  git_sha_to_deploy: ${{ inputs.git_sha_to_deploy }}
+  environment: ${{ inputs.environment }}
+  server_types: ${{ inputs.server_types }}
   aws-role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
+
+concurrency:
+  group: deploy-application-${{ inputs.environment }}
 
 jobs:
   prepare-deployment:
@@ -74,7 +77,7 @@ jobs:
         working-directory: terraform/app
         run: |
           set -e
-          terraform init -backend-config=env/${{ inputs.environment }}-backend.hcl -reconfigure
+          terraform init -backend-config="env/$environment-backend.hcl" -reconfigure
           terraform output -json | jq -r '
           "s3_bucket=" + .s3_bucket.value,
           "s3_key=" + .s3_key.value,

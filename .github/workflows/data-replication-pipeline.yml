@@ -41,6 +41,11 @@ on:
         default: false
 
 env:
+  environment: ${{ inputs.environment }}
+  deployment_type: ${{ inputs.deployment_type }}
+  db_snapshot_arn: ${{ inputs.db_snapshot_arn }}
+  egress_cidr: ${{ inputs.egress_cidr }}
+  take_db_snapshot: ${{ inputs.take_db_snapshot }}
   aws_role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployDataReplicationInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployDataReplicationInfrastructure' }}
@@ -76,7 +81,7 @@ jobs:
         run: |
           set -e
           snapshot_identifier=snapshot-for-data-replication-$(date +"%Y-%m-%d-%H-%M-%S")
-          aws rds create-db-cluster-snapshot --db-cluster-identifier mavis-${{ inputs.environment }} --db-cluster-snapshot-identifier $snapshot_identifier
+          aws rds create-db-cluster-snapshot --db-cluster-identifier mavis-$environment --db-cluster-snapshot-identifier $snapshot_identifier
           echo "Waiting for snapshot to be available. This can take a while."
           aws rds wait db-cluster-snapshot-available --db-cluster-snapshot-identifier $snapshot_identifier
           echo "New snapshot is now available"
@@ -89,19 +94,19 @@ jobs:
         id: get-latest-snapshot
         run: |
           set -e
-          if [ -z "${{ inputs.db_snapshot_arn }}" ]; then
+          if [ -z "$db_snapshot_arn" ]; then
               echo "No snapshot ARN provided, fetching the latest snapshot"
               SNAPSHOT_ARN=$(aws rds describe-db-cluster-snapshots \
-              --query "DBClusterSnapshots[?DBClusterIdentifier=='mavis-${{ inputs.environment }}'].[DBClusterSnapshotArn, SnapshotCreateTime]" \
+              --query "DBClusterSnapshots[?DBClusterIdentifier=='mavis-$environment'].[DBClusterSnapshotArn, SnapshotCreateTime]" \
               --output text | sort -k2 -r | head -n 1 | cut -f1)
           
               if [ -z "$SNAPSHOT_ARN" ]; then
-                  echo "No snapshots found for mavis-${{ inputs.environment }}"
+                  echo "No snapshots found for mavis-$environment"
                   exit 1
               fi
           else
-              echo "Using provided snapshot ARN: ${{ inputs.db_snapshot_arn }}"
-              SNAPSHOT_ARN="${{ inputs.db_snapshot_arn }}"
+              echo "Using provided snapshot ARN: $db_snapshot_arn"
+              SNAPSHOT_ARN="$db_snapshot_arn"
           fi
           echo "Using snapshot ARN: $SNAPSHOT_ARN"
           echo "SNAPSHOT_ARN=$SNAPSHOT_ARN" >> $GITHUB_OUTPUT
@@ -130,9 +135,11 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
       - name: Get docker image digest
         id: get-docker-image-digest
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag || github.sha }}
         run: |
           set -e
-          DOCKER_IMAGE="${{ steps.login-ecr.outputs.registry }}/mavis/webapp:${{ inputs.image_tag || github.sha }}"
+          DOCKER_IMAGE="${{ steps.login-ecr.outputs.registry }}/mavis/webapp:$IMAGE_TAG"
           docker pull "$DOCKER_IMAGE"
           DOCKER_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' "$DOCKER_IMAGE")
           DIGEST="${DOCKER_DIGEST#*@}"
@@ -172,27 +179,26 @@ jobs:
         id: get-db-secret-arn
         working-directory: terraform/app
         run: |
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
           DB_SECRET_ARN=$(terraform output --raw db_secret_arn)
           echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_OUTPUT
       - name: Terraform Plan
         id: plan
         run: |
           set -eo pipefail
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
 
-          CIDR_BLOCKS='${{ inputs.egress_cidr }}'
           PLAN_ARGS=(
             "plan"
-            "-var=image_digest=${{ env.DOCKER_DIGEST }}"
+            "-var=image_digest=$DOCKER_DIGEST"
             "-var=db_secret_arn=${{ steps.get-db-secret-arn.outputs.DB_SECRET_ARN }}"
-            "-var=imported_snapshot=${{ env.SNAPSHOT_ARN }}"
-            "-var-file=env/${{ inputs.environment }}.tfvars"
-            "-var=allowed_egress_cidr_blocks=$CIDR_BLOCKS"
+            "-var=imported_snapshot=$SNAPSHOT_ARN"
+            "-var-file=env/$environment.tfvars"
+            "-var=allowed_egress_cidr_blocks=$egress_cidr"
             "-out=${{ runner.temp }}/tfplan"
           )
           
-          if [ "${{ env.REPLACE_DB_CLUSTER }}" = "true" ]; then
+          if [ "$REPLACE_DB_CLUSTER" = "true" ]; then
             PLAN_ARGS+=("-replace" "aws_rds_cluster.cluster")
           fi
           terraform "${PLAN_ARGS[@]}" | tee ${{ runner.temp }}/tf_stdout
@@ -249,12 +255,12 @@ jobs:
       - name: Apply the changes
         run: |
           set -e
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
           terraform apply ${{ runner.temp }}/tfplan
       - name: Deploy db-access-service
         run: |
           task_definition_arn=$(terraform output -raw task_definition_arn)
           aws ecs update-service \
-            --cluster mavis-${{ inputs.environment }}-data-replication \
-            --service mavis-${{ inputs.environment }}-data-replication \
+            --cluster "mavis-$environment-data-replication" \
+            --service "mavis-$environment-data-replication" \
             --task-definition $task_definition_arn
