@@ -11,7 +11,8 @@ SELECT DISTINCT
   -- Team info
   t.id AS team_id,
   t.name AS team_name,
-  t.organisation_id,
+  -- Patient's current organisation (where enrolled)
+  COALESCE(patient_school_org.id, patient_location_org.id) AS organisation_id,
   -- Patient location info (minimal for filtering)
   COALESCE(school_la.mhclg_code, '') AS patient_school_local_authority_code,
   COALESCE(la.mhclg_code, '') AS patient_local_authority_code,
@@ -51,9 +52,21 @@ INNER JOIN teams t ON t.id = s.team_id
 INNER JOIN session_programmes sp ON sp.session_id = s.id
 INNER JOIN programmes prog ON prog.id = sp.programme_id
 
--- Left join patient school for local authority info
+-- Left join patient school for local authority info and organisation
 LEFT JOIN locations school ON school.id = p.school_id
+LEFT JOIN subteams school_subteam ON school_subteam.id = school.subteam_id
+LEFT JOIN teams school_team ON school_team.id = school_subteam.team_id
+LEFT JOIN organisations patient_school_org ON patient_school_org.id = school_team.organisation_id
 LEFT JOIN local_authorities school_la ON school_la.gias_code = school.gias_local_authority_code
+
+-- Left join current patient location for organisation (fallback if no school)
+LEFT JOIN patient_locations current_pl ON current_pl.patient_id = p.id
+  AND current_pl.academic_year = s.academic_year
+LEFT JOIN locations current_location ON current_location.id = current_pl.location_id
+LEFT JOIN subteams current_location_subteam ON current_location_subteam.id = current_location.subteam_id
+LEFT JOIN teams current_location_team ON current_location_team.id = current_location_subteam.team_id
+LEFT JOIN organisations patient_location_org ON patient_location_org.id = current_location_team.organisation_id
+
 -- Left join patient postcode for local authority info via postcode lookup
 LEFT JOIN local_authority_postcodes lap ON lap.value = p.address_postcode
 LEFT JOIN local_authorities la ON la.gss_code = lap.gss_code
