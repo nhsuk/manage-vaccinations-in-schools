@@ -2,39 +2,37 @@
 
 class AppImportErrorsComponent < ViewComponent::Base
   erb_template <<-ERB
-    <div class="nhsuk-card nhsuk-card--feature app-card--red">
-      <div class="nhsuk-card__content nhsuk-card__content--feature">
-        <h2 class="nhsuk-card__heading nhsuk-card__heading--feature nhsuk-heading-m">
-          <%= @title %>
-        </h2>
+    <%= render AppCardComponent.new(feature: true) do |card| %>
+      <% card.with_heading(level: 2, colour: "red") do %>
+        <%= @title %>
+      <% end %>
 
-        <%= content %>
+      <%= content %>
 
-        <% if @errors.present? %>
-          <div data-testid="import-errors">
-            <% @errors.each do |error| %>
-              <h3 class="nhsuk-heading-s" data-testid="import-errors__heading">
-                <% if error.attribute == :csv %>
-                  CSV
-                <% else %>
-                  <%= error.attribute.to_s.humanize %>
-                <% end %>
-              </h3>
+      <% if @errors.present? %>
+        <div data-testid="import-errors">
+          <% @errors.each do |error| %>
+            <h3 class="nhsuk-heading-s" data-testid="import-errors__heading">
+              <% if error.attribute == :csv %>
+                CSV
+              <% else %>
+                <%= error.attribute.to_s.humanize %>
+              <% end %>
+            </h3>
 
-              <ul class="nhsuk-list nhsuk-list--bullet" data-testid="import-errors__list">
+            <ul class="nhsuk-list nhsuk-list--bullet" data-testid="import-errors__list">
               <% if error.type.is_a?(Array) %>
                 <% error.type.each do |type| %>
                   <li><%= sanitize type %></li>
                 <% end %>
               <% else %>
                 <li><%= sanitize error.type %></li>
-                <% end %>
-              </ul>
-            <% end %>
-          </div>
-        <% end %>
-      </div>
-    </div>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
   ERB
 
   def initialize(errors: nil, title: "Records could not be imported")
