@@ -9,6 +9,8 @@ class ConsentFormMatchingJob < ApplicationJob
   def perform(consent_form)
     @consent_form = consent_form
 
+    return if already_matched?
+
     # Match if we find a patient with the PDS NHS number
     return if match_with_exact_nhs_number
 
@@ -30,6 +32,8 @@ class ConsentFormMatchingJob < ApplicationJob
     # - 2 or more patients in the original session, matching with no NHS number
     # - 1 or more patients in any session, matching with no NHS number
     # Then do nothing; the nurse needs to match manually or create a new patient
+  rescue NHS::PDS::TooManyMatches => e
+    Sentry.capture_exception(e)
   end
 
   private
@@ -46,6 +50,8 @@ class ConsentFormMatchingJob < ApplicationJob
   def pds_patient
     @pds_patient ||= PDS::Patient.search(**query)
   end
+
+  def already_matched? = @consent_form.matched?
 
   def match_with_exact_nhs_number
     return false unless pds_patient

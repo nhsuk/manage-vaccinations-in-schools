@@ -4,20 +4,18 @@ class AppCardComponent < ViewComponent::Base
   erb_template <<-ERB
     <<%= top_level_tag %> class="<%= card_classes %>">
       <div class="<%= content_classes %>">
-        <% if heading.present? %>
-          <h<%= @heading_level %> class="<%= heading_classes %>">
-            <% if @link_to.present? %>
-              <%= link_to @link_to, class: "nhsuk-card__link" do %>
-                <%= heading %>
-              <% end %>
-            <% else %>
-              <%= heading %>
-            <% end %>
-          </h<%= @heading_level %>>
-        <% end %>
+        <%= heading %>
 
         <% if description.present? %>
           <p class="nhsuk-card__description"><%= description %></p>
+        <% end %>
+
+        <% if data.present? %>
+          <p class="nhsuk-card__description app-card__data"><%= data %></p>
+        <% end %>
+
+        <% if meta.present? %>
+          <p class="nhsuk-body-s"><%= meta %></p>
         <% end %>
 
         <%= content %>
@@ -25,29 +23,37 @@ class AppCardComponent < ViewComponent::Base
     </<%= top_level_tag %>>
   ERB
 
-  renders_one :heading
+  renders_one :heading,
+              ->(level: 3, size: nil, colour: nil) do
+                AppCardHeadingComponent.new(
+                  level: level,
+                  size: size,
+                  colour: colour,
+                  feature: @feature,
+                  link_to: @link_to
+                )
+              end
+
   renders_one :description
+  renders_one :data
+  renders_one :meta
 
   def initialize(
     colour: nil,
     link_to: nil,
-    heading_level: 3,
+    feature: false,
     secondary: false,
-    data: false,
     compact: false,
     filters: false,
     section: false
   )
     @link_to = link_to
     @colour = colour
-    @heading_level = heading_level
+    @feature = filters || feature
     @secondary = secondary
-    @data = data
     @compact = compact
     @filters = filters
     @section = section
-
-    @feature = (colour.present? && !data && !compact) || filters
   end
 
   private
@@ -57,13 +63,12 @@ class AppCardComponent < ViewComponent::Base
   def card_classes
     [
       "nhsuk-card",
-      "app-card",
-      ("nhsuk-card--feature" if @feature),
-      ("app-card--#{@colour}" if @colour.present?),
       ("nhsuk-card--clickable" if @link_to.present?),
+      ("nhsuk-card--feature" if @feature),
       ("nhsuk-card--secondary" if @secondary),
-      ("app-card--data" if @data),
+      "app-card",
       ("app-card--compact" if @compact),
+      ("app-card--#{@colour}" if @colour.present?),
       ("app-filters" if @filters)
     ].compact.join(" ")
   end
@@ -71,27 +76,8 @@ class AppCardComponent < ViewComponent::Base
   def content_classes
     [
       "nhsuk-card__content",
-      ("app-card__content" unless @data),
       ("nhsuk-card__content--feature" if @feature),
       ("nhsuk-card__content--secondary" if @secondary)
-    ].compact.join(" ")
-  end
-
-  def heading_modifier
-    if @data
-      "xs"
-    elsif @secondary || @compact
-      "s"
-    else
-      "m"
-    end
-  end
-
-  def heading_classes
-    [
-      "nhsuk-card__heading",
-      "nhsuk-heading-#{heading_modifier}",
-      ("nhsuk-card__heading--feature" if @feature)
     ].compact.join(" ")
   end
 end

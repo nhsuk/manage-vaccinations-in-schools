@@ -1,15 +1,18 @@
 # frozen_string_literal: true
 
 namespace :data_migrations do
-  desc "Fix vaccination record locations where both location_id and location_name is set"
-  task fix_vaccination_record_locations: :environment do
-    vaccination_records =
-      VaccinationRecord
-        .where.not(location_id: nil)
-        .where.not(location_name: nil)
+  desc "Mark vaccination records as synced to NHS Imms API"
+  task mark_vaccination_records_as_synced: :environment do
+    csv_data = File.read("db/data/imms-api-missing-record-ids.csv")
 
-    puts "#{vaccination_records.count} vaccination records need fixing"
-
-    vaccination_records.update_all(location_id: nil)
+    rows = CSV.parse(csv_data, headers: true)
+    rows.each do |row|
+      vr = VaccinationRecord.find(row["mavis_id"])
+      vr.update_columns(
+        nhs_immunisations_api_synced_at: row["time"],
+        nhs_immunisations_api_id: row["imms_api_id"],
+        nhs_immunisations_api_etag: "1"
+      )
+    end
   end
 end

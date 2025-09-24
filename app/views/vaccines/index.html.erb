@@ -1,8 +1,8 @@
 <%= h1 t(".title"), size: "xl" %>
 
 <% @vaccines.each do |vaccine| %>
-  <%= render AppCardComponent.new(heading_level: 2, section: true) do |card| %>
-    <% card.with_heading { link_to(vaccine_heading(vaccine), vaccine_path(vaccine)) } %>
+  <%= render AppCardComponent.new(section: true) do |card| %>
+    <% card.with_heading(level: 2) { link_to(vaccine_heading(vaccine), vaccine_path(vaccine)) } %>
 
     <p><%= vaccine.manufacturer %></p>
 

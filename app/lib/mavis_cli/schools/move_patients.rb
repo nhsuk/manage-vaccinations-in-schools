@@ -39,6 +39,9 @@ module MavisCLI
         end
         new_loc.update!(subteam: old_loc.subteam)
 
+        LocationProgrammeYearGroup.where(location_id: old_loc.id).update_all(
+          location_id: new_loc.id
+        )
         Session.where(location_id: old_loc.id).update_all(
           location_id: new_loc.id
         )

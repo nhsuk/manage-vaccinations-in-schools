@@ -277,6 +277,17 @@ describe NHS::ImmunisationsAPI do
       expect(vaccination_record.nhs_immunisations_api_etag).to eq "1"
     end
 
+    it "does not change the updated_at timestamp" do
+      original_updated_at = vaccination_record.updated_at
+
+      # Small delay to ensure time difference if updated_at were to change
+      travel 1.second
+
+      perform_request
+
+      expect(vaccination_record.reload.updated_at).to eq original_updated_at
+    end
+
     context "an error is returned by the api" do
       let(:code) { nil }
       let(:diagnostics) { nil }
@@ -484,6 +495,17 @@ describe NHS::ImmunisationsAPI do
       end
     end
 
+    it "does not change the updated_at timestamp" do
+      original_updated_at = vaccination_record.updated_at
+
+      # Small delay to ensure time difference if updated_at were to change
+      travel 1.second
+
+      perform_request
+
+      expect(vaccination_record.reload.updated_at).to eq original_updated_at
+    end
+
     it "increments the etag" do
       perform_request
 
@@ -571,6 +593,17 @@ describe NHS::ImmunisationsAPI do
           vaccination_record.nhs_immunisations_api_synced_at
         ).to eq Time.current
       end
+    end
+
+    it "does not change the updated_at timestamp" do
+      original_updated_at = vaccination_record.updated_at
+
+      # Small delay to ensure time difference if updated_at were to change
+      travel 1.second
+
+      perform_request
+
+      expect(vaccination_record.reload.updated_at).to eq original_updated_at
     end
 
     context "an error is returned by the api" do

@@ -43,7 +43,7 @@ jobs:
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.11.4
+          terraform_version: 1.13.3
       - name: Terraform Plan
         id: plan
         env:
@@ -87,7 +87,7 @@ jobs:
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.11.4
+          terraform_version: 1.13.3
       - name: Apply the changes
         env:
           PERSONAL_ACCESS_TOKEN: ${{ secrets.BACKUP_MODULES_ACCESS_TOKEN }}

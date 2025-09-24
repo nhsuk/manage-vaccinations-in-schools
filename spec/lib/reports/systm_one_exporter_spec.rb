@@ -268,28 +268,49 @@ describe Reports::SystmOneExporter do
       context "Menveo" do
         let(:vaccine) { Vaccine.find_by!(brand: "Menveo") }
 
-        it { should eq("Menveo") }
+        it { should eq("Y0da5") }
       end
 
       context "Nimenrix" do
         let(:vaccine) { Vaccine.find_by!(brand: "Nimenrix") }
 
-        it { should eq("Nimenrix") }
+        it { should eq("YOfcf") }
+      end
+    end
+
+    context "Td/IPV" do
+      let(:programme) { create(:programme, :td_ipv_all_vaccines) }
+      let(:dose_sequence) { nil }
+
+      context "Revaxis with unknon dose sequence" do
+        let(:vaccine) { Vaccine.find_by!(brand: "Revaxis") }
+
+        it { should eq("x05ub") }
+      end
+
+      # Mavis doesn't set dose sequence for Td/IPV currently but this could theoretically change in future
+      context "Revaxis with dose sequence 1" do
+        let(:vaccine) { Vaccine.find_by!(brand: "Revaxis") }
+        let(:dose_sequence) { 1 }
+
+        it { should eq("Y3417") }
       end
     end
 
     context "unknown vaccine and no dose sequence" do
-      let(:vaccine) { create(:vaccine, :menveo) }
+      let(:programme) { create(:programme, :hpv_all_vaccines) }
+      let(:vaccine) { Vaccine.find_by!(brand: "Gardasil") }
       let(:dose_sequence) { nil }
 
-      it { should eq("Menveo") }
+      it { should eq("Gardasil") }
     end
 
     context "unknown vaccine and a dose sequence" do
-      let(:vaccine) { create(:vaccine, :menveo) }
+      let(:programme) { create(:programme, :hpv_all_vaccines) }
+      let(:vaccine) { Vaccine.find_by!(brand: "Gardasil") }
       let(:dose_sequence) { 1 }
 
-      it { should eq("Menveo Part 1") }
+      it { should eq("Gardasil Part 1") }
     end
   end
 

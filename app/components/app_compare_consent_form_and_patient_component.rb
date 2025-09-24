@@ -4,15 +4,15 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
   erb_template <<-ERB
     <div class="nhsuk-grid-row nhsuk-card-group">
       <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-        <%= render AppCardComponent.new(heading_level: 2, colour: "blue") do |card| %>
-          <% card.with_heading { "Consent response" } %>
+        <%= render AppCardComponent.new(feature: true) do |card| %>
+          <% card.with_heading(level: 2) { "Consent response" } %>
           <%= govuk_summary_list(rows: consent_form_rows) %>
         <% end %>
       </div>
 
       <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-        <%= render AppCardComponent.new(heading_level: 2, colour: "blue") do |card| %>
-          <% card.with_heading { "Child record" } %>
+        <%= render AppCardComponent.new(feature: true) do |card| %>
+          <% card.with_heading(level: 2) { "Child record" } %>
           <%= govuk_summary_list(rows: patient_rows) %>
         <% end %>
       </div>

@@ -8,54 +8,57 @@
 <%= render "header" %>
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-three-quarters">
-    <%= render AppCardComponent.new do |card| %>
-      <% card.with_heading { @session.clinic? ? "Community clinic" : "School session" } %>
+  <% if tallying_enabled? %>
+    <%= render AppSessionOverviewTalliesComponent.new(@session) %>
+    <% else %>
+    <div class="nhsuk-grid-column-three-quarters">
+      <%= render AppCardComponent.new do |card| %>
+        <% card.with_heading { @session.clinic? ? "Community clinic" : "School session" } %>
 
-      <p class="nhsuk-body"><%= session_status_tag(@session) %></p>
+        <p class="nhsuk-body"><%= session_status_tag(@session) %></p>
 
-      <% if (dates = @session.dates).present? %>
-        <h4 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Session dates</h4>
-        <%= tag.ul(class: "nhsuk-list") do %>
-          <% dates.each do |date| %>
-            <%= tag.li(date.to_fs(:long_day_of_week)) %>
+        <% if (dates = @session.dates).present? %>
+          <h4 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Session dates</h4>
+          <%= tag.ul(class: "nhsuk-list") do %>
+            <% dates.each do |date| %>
+              <%= tag.li(date.to_fs(:long_day_of_week)) %>
+            <% end %>
           <% end %>
+
+          <p class="nhsuk-body">Consent period <%= session_consent_period(@session).downcase_first %></p>
         <% end %>
 
-        <p class="nhsuk-body">Consent period <%= session_consent_period(@session).downcase_first %></p>
-      <% end %>
+        <h4 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Session details</h4>
 
-      <h4 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Session details</h4>
+        <%= render AppSessionDetailsSummaryComponent.new(@session) %>
 
-      <%= render AppSessionDetailsSummaryComponent.new(@session) %>
-
-      <% if @session.unscheduled? %>
-        <% if policy(@session).edit? %>
-          <%= govuk_button_link_to "Schedule sessions", session_edit_path(@session), secondary: true %>
-        <% end %>
-      <% else %>
-        <%= render AppSessionActionsComponent.new(@session) %>
-
-        <div class="nhsuk-button-group">
+        <% if @session.unscheduled? %>
           <% if policy(@session).edit? %>
-            <%= govuk_button_link_to "Edit session", session_edit_path(@session), secondary: true %>
+            <%= govuk_button_link_to "Schedule sessions", session_edit_path(@session), secondary: true %>
           <% end %>
+        <% else %>
+          <%= render AppSessionActionsComponent.new(@session) %>
 
-          <%= link_to "Record offline", session_path(@session, format: :xlsx) %>
+          <div class="nhsuk-button-group">
+            <% if policy(@session).edit? %>
+              <%= govuk_button_link_to "Edit session", session_edit_path(@session), secondary: true %>
+            <% end %>
 
-          <% if @session.clinic? && @session.can_send_clinic_invitations? %>
-            <%= link_to "Send booking reminders", edit_session_invite_to_clinic_path(@session) %>
-          <% elsif @session.school? && @session.can_send_clinic_invitations? %>
-            <%= link_to "Send clinic invitations", edit_session_invite_to_clinic_path(@session) %>
-          <% end %>
-        </div>
+            <%= link_to "Record offline", session_path(@session, format: :xlsx) %>
+
+            <% if @session.clinic? && @session.can_send_clinic_invitations? %>
+              <%= link_to "Send booking reminders", edit_session_invite_to_clinic_path(@session) %>
+            <% elsif @session.school? && @session.can_send_clinic_invitations? %>
+              <%= link_to "Send clinic invitations", edit_session_invite_to_clinic_path(@session) %>
+            <% end %>
+          </div>
+        <% end %>
       <% end %>
-    <% end %>
-  </div>
-
-  <div class="nhsuk-grid-column-one-quarter">
-    <%= render AppSessionSummaryComponent.new(@session) %>
-  </div>
+    </div>
+    <div class="nhsuk-grid-column-one-quarter">
+      <%= render AppSessionSummaryComponent.new(@session) %>
+    </div>
+  <% end %>
 </div>
 
 <% content_for :after_main do %>

@@ -15,8 +15,8 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (programme_id => programmes.id)
-#  fk_rails_...  (session_id => sessions.id)
+#  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
+#  fk_rails_...  (session_id => sessions.id) ON DELETE => cascade
 #
 class SessionProgramme < ApplicationRecord
   audited associated_with: :session

@@ -108,7 +108,7 @@ jobs:
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.11.4
+          terraform_version: 1.13.3
     outputs:
       SNAPSHOT_ARN: ${{ steps.get-latest-snapshot.outputs.SNAPSHOT_ARN }}
 
@@ -167,7 +167,7 @@ jobs:
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.11.4
+          terraform_version: 1.13.3
       - name: Get db secret arn
         id: get-db-secret-arn
         working-directory: terraform/app
@@ -201,6 +201,25 @@ jobs:
         with:
           name: tfplan_infrastructure-${{ inputs.environment }}
           path: ${{ runner.temp }}/tfplan
+      - name: Notify pending approval
+        if: inputs.environment == 'production'
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
+        with:
+          webhook: ${{ secrets.SLACK_MAVIS_TECH_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: ":hourglass: Approval required :hourglass:"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "${{ github.workflow }} requires approval"
+              - type: "section"
+                fields:
+                  - type: "mrkdwn"
+                    text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow run>"
+                  - type: "mrkdwn"
+                    text: "*Triggered by:*\n${{ github.actor }}"
 
   apply:
     name: Terraform apply
@@ -226,7 +245,7 @@ jobs:
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.11.4
+          terraform_version: 1.13.3
       - name: Apply the changes
         run: |
           set -e

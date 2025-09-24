@@ -13,8 +13,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-half">
-    <%= render AppCardComponent.new(heading_level: 2, colour: "blue") do |c| %>
-      <% c.with_heading { "Uploaded record" } %>
+    <%= render AppCardComponent.new(feature: true) do |c| %>
+      <% c.with_heading(level: 2) { "Uploaded record" } %>
       <% if @type == "child" %>
         <%= render AppChildSummaryComponent.new(@patient.with_pending_changes) %>
       <% else %>
@@ -26,8 +26,8 @@
   </div>
 
   <div class="nhsuk-grid-column-one-half">
-    <%= render AppCardComponent.new(heading_level: 2, colour: "blue") do |c| %>
-      <% c.with_heading { "#{@existing_or_deleted.capitalize} record" } %>
+    <%= render AppCardComponent.new(feature: true) do |c| %>
+      <% c.with_heading(level: 2) { "#{@existing_or_deleted.capitalize} record" } %>
       <% if @type == "child" %>
         <%= render AppChildSummaryComponent.new(@patient) %>
       <% else %>
@@ -43,17 +43,27 @@
       model: @form,
       url: imports_issue_path(@record, type: params[:type]),
       method: :patch,
-      class: "nhsuk-u-width-one-half",
+      class: "nhsuk-u-full-width",
     ) do |f| %>
-  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <% if !@form.can_apply? %>
 
-  <%= f.govuk_collection_radio_buttons :apply_changes,
-                                       @form.apply_changes_options,
-                                       :itself,
-                                       ->(option) { I18n.t(option, scope: "import_duplicate_form.options.label.#{@existing_or_deleted}", type: @type) },
-                                       ->(option) { I18n.t(option, scope: "import_duplicate_form.options.hint.#{@existing_or_deleted}") },
-                                       bold_labels: false,
-                                       small: true %>
+    <h1 class="nhsuk-heading-m">You cannot keep the incoming changes</h1>
 
-  <%= f.govuk_submit "Resolve duplicate" %>
+    <p>The existing record was imported automatically from an external source, such as a GP practice, meaning that Mavis is not the primary source for this vaccination record.</p>
+
+    <%= f.hidden_field :apply_changes, value: "discard" %>
+    <%= f.govuk_submit "Discard incoming changes" %>
+  <% else %>
+    <% content_for(:before_content) { f.govuk_error_summary } %>
+
+    <%= f.govuk_collection_radio_buttons :apply_changes,
+                                         @form.apply_changes_options,
+                                         :itself,
+                                         ->(option) { I18n.t(option, scope: "import_duplicate_form.options.label.#{@existing_or_deleted}", type: @type) },
+                                         ->(option) { I18n.t(option, scope: "import_duplicate_form.options.hint.#{@existing_or_deleted}") },
+                                         bold_labels: false,
+                                         small: true %>
+
+    <%= f.govuk_submit "Resolve duplicate" %>
+  <% end %>
 <% end %>

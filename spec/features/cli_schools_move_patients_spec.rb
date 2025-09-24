@@ -13,6 +13,13 @@ describe "schools move-patients" do
   let(:source_school) { create(:school, team: team, subteam:) }
   let(:target_school) { create(:school, team: team) }
   let(:programmes) { [create(:programme, :hpv)] }
+  let(:location_programme_year_group) do
+    create(
+      :location_programme_year_group,
+      location: source_school,
+      programme: programmes.first
+    )
+  end
   let!(:patient) { create(:patient, school: source_school) }
   let!(:session) { create(:session, location: source_school, programmes:) }
   let!(:school_move) do
@@ -42,7 +49,9 @@ describe "schools move-patients" do
                         source_school
                       ).to(target_school).and change {
                               school_move.reload.school
-                            }.from(source_school).to(target_school)
+                            }.from(source_school).to(target_school).and change {
+                                    location_programme_year_group.reload.location
+                                  }.from(source_school).to(target_school)
 
     expect(patient.school).to eq(target_school)
     expect(consent_form.school).to eq(target_school)

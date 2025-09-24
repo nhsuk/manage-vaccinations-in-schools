@@ -95,13 +95,16 @@ class ImmunisationImportRow
     return unless valid?
 
     outcome = (administered ? "administered" : reason_not_administered_value)
-    source = (offline_recording? ? "service" : "historical_upload")
+    source =
+      if imms_api_record?
+        "nhs_immunisations_api"
+      else
+        offline_recording? ? "service" : "historical_upload"
+      end
 
     attributes = {
       dose_sequence: dose_sequence_value,
       full_dose: true,
-      location:,
-      location_name:,
       outcome:,
       patient_id: patient.id,
       performed_at:,
@@ -112,10 +115,12 @@ class ImmunisationImportRow
       session:,
       supplied_by:
     }
+    attributes.merge!(location:, location_name:) unless imms_api_record?
 
     attributes.merge!(notify_parents: true) if session
 
-    if performed_by_user.nil?
+    if performed_by_user.nil? &&
+         (performed_by_family_name.present? || performed_by_given_name.present?)
       attributes.merge!(
         performed_by_family_name: performed_by_family_name&.to_s,
         performed_by_given_name: performed_by_given_name&.to_s
@@ -135,8 +140,7 @@ class ImmunisationImportRow
     vaccination_record =
       if uuid.present?
         VaccinationRecord
-          .joins(:team)
-          .find_by!(teams: { id: team.id }, uuid: uuid.to_s)
+          .find_by!(uuid: uuid.to_s)
           .tap { it.stage_changes(attributes) }
       else
         VaccinationRecord.find_or_initialize_by(attributes)
@@ -250,13 +254,13 @@ class ImmunisationImportRow
   end
 
   def performed_at
-    data = date_of_vaccination.to_date
+    date = date_of_vaccination.to_date
     time = time_of_vaccination&.to_time
 
     Time.zone.local(
-      data.year,
-      data.month,
-      data.day,
+      date.year,
+      date.month,
+      date.day,
       time&.hour || 0,
       time&.min || 0,
       time&.sec || 0
@@ -326,7 +330,9 @@ class ImmunisationImportRow
   end
 
   def protocol
-    if supplied_by && supplied_by != performed_by_user
+    if imms_api_record?
+      nil
+    elsif supplied_by && supplied_by != performed_by_user
       if patient.patient_specific_directions.exists?(
            programme:,
            academic_year:,
@@ -379,6 +385,13 @@ class ImmunisationImportRow
   delegate :default_dose_sequence, :maximum_dose_sequence, to: :programme
 
   def offline_recording? = session_id.present?
+
+  def imms_api_record?
+    uuid.present? &&
+      VaccinationRecord.sourced_from_nhs_immunisations_api.exists?(
+        uuid: uuid.to_s
+      )
+  end
 
   def academic_year = date_of_vaccination.to_date.academic_year
 
@@ -928,7 +941,15 @@ class ImmunisationImportRow
 
   def validate_session_id
     if session_id.present?
-      if session_id.to_i.nil?
+      if uuid.present? &&
+           VaccinationRecord.sourced_from_nhs_immunisations_api.exists?(
+             uuid: uuid.to_s
+           )
+        errors.add(
+          session_id.header,
+          "A session ID cannot be provided for this record; this record was sourced from an external source."
+        )
+      elsif session_id.to_i.nil?
         errors.add(
           session_id.header,
           "The session ID is not recognised. Download the offline spreadsheet " \
@@ -970,15 +991,16 @@ class ImmunisationImportRow
   def validate_uuid
     return if uuid.blank?
 
+    scope = VaccinationRecord.left_outer_joins(:session).where(uuid: uuid.to_s)
+
     scope =
-      VaccinationRecord.joins(:team).where(
-        teams: {
-          id: team.id
-        },
-        uuid: uuid.to_s
+      scope.where(sessions: { team: }).or(
+        scope.sourced_from_nhs_immunisations_api
       )
 
-    errors.add(uuid.header, "Enter an existing record.") unless scope.exists?
+    return if scope.exists?
+
+    errors.add(uuid.header, "Enter an existing record.")
   end
 
   def validate_vaccine

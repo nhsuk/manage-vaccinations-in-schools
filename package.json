@@ -5,10 +5,10 @@
     "@hotwired/turbo-rails": "^8.0.16",
     "accessible-autocomplete": "^3.0.1",
     "esbuild": "^0.25.10",
-    "govuk-frontend": "^5.11.2",
+    "govuk-frontend": "^5.12.0",
     "idb": "^8.0.3",
     "nhsuk-frontend": "^10.0.0",
-    "sass": "^1.92.1"
+    "sass": "^1.93.0"
   },
   "scripts": {
     "build:css": "sass ./app/assets/stylesheets:./app/assets/builds --no-source-map --pkg-importer=node --quiet-deps --style compressed",

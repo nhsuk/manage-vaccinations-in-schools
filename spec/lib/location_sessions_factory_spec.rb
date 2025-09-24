@@ -57,8 +57,7 @@ describe LocationSessionsFactory do
         it "adds the patients to the new sessions" do
           expect { call }.to change(team.sessions, :count).by(1)
 
-          session =
-            team.sessions.includes(:patients).find_by(location:, academic_year:)
+          session = team.sessions.find_by(location:, academic_year:)
           expect(session.patients).to include(patient_at_location)
           expect(session.patients).not_to include(patient_at_different_location)
         end
@@ -117,8 +116,7 @@ describe LocationSessionsFactory do
         it "adds the patients to the new sessions" do
           expect { call }.to change(team.sessions, :count).by(1)
 
-          session =
-            team.sessions.includes(:patients).find_by(location:, academic_year:)
+          session = team.sessions.find_by(location:, academic_year:)
           expect(session.patients).to include(patient_at_location)
           expect(session.patients).not_to include(patient_at_school_location)
         end

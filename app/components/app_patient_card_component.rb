@@ -2,8 +2,8 @@
 
 class AppPatientCardComponent < ViewComponent::Base
   erb_template <<-ERB
-    <%= render AppCardComponent.new(heading_level:, section: true) do |card| %>
-      <% card.with_heading { "Child’s details" } %>
+    <%= render AppCardComponent.new(section: true) do |card| %>
+      <% card.with_heading(level: heading_level) { "Child’s details" } %>
       
       <% important_notices.each do |notice| %>
         <%= render AppStatusComponent.new(text: notice[:message]) %>

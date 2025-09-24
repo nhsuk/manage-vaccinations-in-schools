@@ -15,15 +15,15 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-half">
-    <%= render AppCardComponent.new(heading_level: 2, colour: "blue") do |card| %>
-      <% card.with_heading { "#{@school_move.human_enum_name(:source)} record" } %>
+    <%= render AppCardComponent.new(feature: true) do |card| %>
+      <% card.with_heading(level: 2) { "#{@school_move.human_enum_name(:source)} record" } %>
       <%= render AppChildSummaryComponent.new(@patient_with_changes) %>
     <% end %>
   </div>
 
   <div class="nhsuk-grid-column-one-half">
-    <%= render AppCardComponent.new(heading_level: 2, colour: "blue") do |card| %>
-      <% card.with_heading { "Child record" } %>
+    <%= render AppCardComponent.new(feature: true) do |card| %>
+      <% card.with_heading(level: 2) { "Child record" } %>
       <%= render AppChildSummaryComponent.new(@patient) %>
     <% end %>
   </div>

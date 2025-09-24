@@ -63,11 +63,7 @@ class PatientMerger
       )
 
       patient_to_destroy.school_moves.find_each do |school_move|
-        if patient_to_keep.school_moves.exists?(
-             home_educated: school_move.home_educated,
-             team_id: school_move.team_id,
-             school_id: school_move.school_id
-           )
+        if patient_to_keep.school_moves.exists?
           school_move.destroy!
         else
           school_move.update_column(:patient_id, patient_to_keep.id)

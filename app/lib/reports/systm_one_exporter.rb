@@ -20,6 +20,9 @@ class Reports::SystmOneExporter
     "MenQuadfi" => {
       nil => "YbXKi"
     },
+    "Menveo" => {
+      nil => "Y0da5"
+    },
     "Fluenz" => {
       1 => "YcjAC"
     },
@@ -28,6 +31,17 @@ class Reports::SystmOneExporter
     },
     "Viatris" => {
       1 => "YcjYh"
+    },
+    "Revaxis" => {
+      1 => "Y3417",
+      2 => "Y3418",
+      3 => "Y3400",
+      4 => "Y06d3",
+      5 => "Y06d4",
+      nil => "x05ub"
+    },
+    "Nimenrix" => {
+      nil => "YOfcf"
     }
   }.freeze
 

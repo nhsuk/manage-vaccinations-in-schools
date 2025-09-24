@@ -4,8 +4,8 @@
 
 <%= h1 vaccine_heading(@vaccine), size: "l" %>
 
-<%= render AppCardComponent.new(heading_level: 2) do |card| %>
-  <% card.with_heading { "Vaccine details" } %>
+<%= render AppCardComponent.new do |card| %>
+  <% card.with_heading(level: 2) { "Vaccine details" } %>
 
   <dl class="nhsuk-summary-list">
     <div class="nhsuk-summary-list__row">

@@ -313,7 +313,7 @@ describe "Manage school sessions" do
   def then_i_see_the_send_invitations_page
     expect(page).to have_content("Invite parents to book a clinic appointment")
     expect(page).to have_content(
-      "There are 2 children currently without clinic appointments."
+      "2 children were not vaccinated at this school and have not already been invited to a clinic."
     )
   end
 

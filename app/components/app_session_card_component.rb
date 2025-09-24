@@ -8,7 +8,7 @@ class AppSessionCardComponent < ViewComponent::Base
 
   def call
     render AppCardComponent.new(**card_options) do |card|
-      card.with_heading { session.location.name }
+      card.with_heading(level: 4) { session.location.name }
       govuk_summary_list(rows:)
     end
   end

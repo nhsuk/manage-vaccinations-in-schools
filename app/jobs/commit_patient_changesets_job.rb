@@ -60,6 +60,7 @@ class CommitPatientChangesetsJob < ApplicationJob
     changesets.each(&:assign_patient_id)
     PatientChangeset.import(changesets, on_duplicate_key_update: :all)
 
+    deduplicate_parents!(parents, relationships)
     Parent.import(parents.to_a, on_duplicate_key_update: :all)
     link_records_to_import(import, Parent, parents)
 
@@ -93,8 +94,28 @@ class CommitPatientChangesetsJob < ApplicationJob
     patients.uniq!
   end
 
+  def deduplicate_parents!(parents, relationships)
+    @parents_by_email ||= {}
+    parents.reject! do |parent|
+      next false if parent.email.blank?
+
+      existing_parent = @parents_by_email[parent.email]
+      if parent.persisted? || existing_parent.nil?
+        @parents_by_email[parent.email] = parent
+        next false
+      else
+        relationships
+          .select { _1.parent == parent }
+          .each { _1.parent = existing_parent }
+        next true
+      end
+    end
+    parents.uniq!
+  end
+
   def import_school_moves(changesets, import)
-    school_moves = changesets.map(&:school_move).compact
+    school_moves = changesets.map(&:school_move).compact.uniq(&:patient)
+
     auto_confirmable_school_moves, importable_school_moves =
       school_moves.partition { has_auto_confirmable_school_move?(it, import) }
 

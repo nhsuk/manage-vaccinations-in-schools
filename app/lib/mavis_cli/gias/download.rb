@@ -14,7 +14,12 @@ module MavisCLI
     class Download < Dry::CLI::Command
       desc "Download GIAS schools data"
 
-      def call
+      option :output_file,
+             aliases: ["-o"],
+             default: "db/data/dfe-schools.zip",
+             desc: "file path to write GIAS database to"
+
+      def call(output_file:, **)
         require "mechanize"
 
         puts "Starting schools data download process..."
@@ -51,9 +56,9 @@ module MavisCLI
           download_button = download_form.button_with(value: "Results.zip")
           puts "'Results.zip' link found, downloading the file..."
           download_file = agent.click(download_button)
-          puts "Overwriting db/data/dfe-schools.zip"
-          download_file.save!("db/data/dfe-schools.zip")
-          puts "File downloaded successfully to db/data/dfe-schools.zip"
+          puts "Writing #{output_file}"
+          download_file.save!(output_file)
+          puts "File downloaded successfully to #{output_file}"
         else
           puts "Download button never appeared, aborting"
         end
