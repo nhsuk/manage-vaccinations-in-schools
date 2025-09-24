@@ -3,13 +3,16 @@
 data "aws_iam_policy_document" "codedeploy" {
   statement {
     actions   = ["ecs:DescribeServices", "ecs:UpdateServicePrimaryTaskSet"]
-    resources = [module.web_service.service.id]
+    resources = [module.web_service.service.id, module.reporting_service.service.id]
     effect    = "Allow"
   }
   statement {
-    actions   = ["ecs:CreateTaskSet", "ecs:DeleteTaskSet"]
-    resources = ["arn:aws:ecs:*:*:task-set/${aws_ecs_cluster.cluster.name}/${module.web_service.service.name}/*"]
-    effect    = "Allow"
+    actions = ["ecs:CreateTaskSet", "ecs:DeleteTaskSet"]
+    resources = [
+      "arn:aws:ecs:*:*:task-set/${aws_ecs_cluster.cluster.name}/${module.web_service.service.name}/*",
+      "arn:aws:ecs:*:*:task-set/${aws_ecs_cluster.cluster.name}/${module.reporting_service.service.name}/*"
+    ]
+    effect = "Allow"
   }
   statement {
     actions = [

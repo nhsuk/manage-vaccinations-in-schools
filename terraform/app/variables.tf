@@ -94,6 +94,13 @@ variable "vpc_log_retention_days" {
   nullable    = false
 }
 
+variable "mise_sops_age_key_path" {
+  type        = string
+  default     = "/mavis/development/credentials/MISE_SOPS_AGE_KEY"
+  description = "The path of the System Manager Parameter Store secure string for the MISE SOPS age key."
+  nullable    = false
+}
+
 ########## Task definition configuration ##########
 
 
@@ -131,10 +138,12 @@ locals {
   ])
   secret_values = tomap(
     {
-      CORE = [{
-        name      = "DB_CREDENTIALS"
-        valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
-      }]
+      CORE = [
+        {
+          name      = "DB_CREDENTIALS"
+          valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
+        }
+      ]
       REPORTING = []
     }
   )
@@ -153,10 +162,18 @@ locals {
           valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.rails_master_key_path}"
         }],
       )
-      REPORTING = [for key, value in aws_ssm_parameter.reporting_environment_overwrites : {
-        name      = key
-        valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${value.name}"
-      }]
+      REPORTING = concat(
+        [for key, value in aws_ssm_parameter.reporting_environment_overwrites :
+          {
+            name      = key
+            valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${value.name}"
+          }
+        ],
+        [{
+          name      = "MISE_SOPS_AGE_KEY"
+          valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.mise_sops_age_key_path}"
+        }],
+      )
     }
   )
 
@@ -205,12 +222,26 @@ locals {
       },
       ], local.sandbox_envs,
     )
-    REPORTING = []
+    REPORTING = [
+      {
+        name  = "VALKEY_ADDRESS"
+        value = aws_elasticache_serverless_cache.reporting_service.endpoint[0].address
+      },
+      {
+        name  = "VALKEY_PORT"
+        value = aws_elasticache_serverless_cache.reporting_service.endpoint[0].port
+      },
+    ]
   }
 
   task_secrets = {
     CORE      = concat(local.secret_values["CORE"], local.parameter_values["CORE"])
     REPORTING = concat(local.secret_values["REPORTING"], local.parameter_values["REPORTING"])
+  }
+  container_ports = {
+    web       = 4000
+    good_job  = 4000
+    reporting = 5000
   }
 }
 
@@ -285,6 +316,18 @@ variable "maximum_sidekiq_replicas" {
   description = "Amount of replicas for the sidekiq service"
 }
 
+variable "minimum_reporting_replicas" {
+  type        = number
+  default     = 2
+  description = "Minimum amount of allowed replicas for reporting service. Also the replica count when creating the service."
+}
+
+variable "maximum_reporting_replicas" {
+  type        = number
+  default     = 4
+  description = "Maximum amount of allowed replicas for reporting service"
+}
+
 variable "max_aurora_capacity_units" {
   type        = number
   default     = 8
@@ -299,6 +342,13 @@ variable "active_lb_target_group" {
     condition     = contains(["blue", "green"], var.active_lb_target_group)
     error_message = "Valid target groups: blue, green"
   }
+}
+
+variable "reporting_endpoints" {
+  type        = list(string)
+  description = "List of endpoints for the loadbalancer to forward to the reporting service"
+  default     = ["/reporting", "/reporting/*"]
+  nullable    = false
 }
 
 ########## Valkey Configuration ##########
@@ -372,7 +422,8 @@ variable "valkey_log_retention_days" {
 }
 
 locals {
-  ecs_initial_lb_target_group     = var.active_lb_target_group == "green" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
-  ecs_sg_ids                      = [module.web_service.security_group_id, module.sidekiq_service.security_group_id]
-  valkey_cache_availability_zones = var.valkey_failover_enabled ? [aws_subnet.private_subnet_a.availability_zone, aws_subnet.private_subnet_b.availability_zone] : [aws_subnet.private_subnet_a.availability_zone]
+  ecs_initial_lb_target_group       = var.active_lb_target_group == "green" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
+  reporting_initial_lb_target_group = var.active_lb_target_group == "green" ? aws_lb_target_group.reporting_green.arn : aws_lb_target_group.reporting_blue.arn
+  db_access_sg_ids                  = [module.web_service.security_group_id, module.sidekiq_service.security_group_id]
+  valkey_cache_availability_zones   = var.valkey_failover_enabled ? [aws_subnet.private_subnet_a.availability_zone, aws_subnet.private_subnet_b.availability_zone] : [aws_subnet.private_subnet_a.availability_zone]
 }
