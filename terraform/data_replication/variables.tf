@@ -37,12 +37,6 @@ variable "max_aurora_capacity_units" {
   description = "Maximum amount of allowed ACU capacity for Aurora Serverless v2"
 }
 
-variable "db_secret_arn" {
-  type        = string
-  description = "The ARN of the secret that stores the credentials for the database from which the snapshot originates."
-  nullable    = false
-}
-
 variable "account_id" {
   type        = string
   default     = "393416225559"
@@ -88,11 +82,11 @@ locals {
   task_envs = [
     {
       name  = "DB_HOST"
-      value = aws_rds_cluster.cluster.endpoint
+      value = aws_rds_cluster.this.endpoint
     },
     {
       name  = "DB_NAME"
-      value = aws_rds_cluster.cluster.database_name
+      value = aws_rds_cluster.this.database_name
     },
     {
       name  = "RAILS_ENV"
@@ -118,7 +112,7 @@ locals {
   task_secrets = [
     {
       name      = "DB_CREDENTIALS"
-      valueFrom = var.db_secret_arn
+      valueFrom = aws_rds_cluster.this.master_user_secret[0].secret_arn
     },
     {
       name      = "RAILS_MASTER_KEY"
