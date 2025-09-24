@@ -126,7 +126,7 @@ locals {
     },
     {
       name      = "READ_ONLY_DB_PASSWORD"
-      valueFrom = aws_secretsmanager_secret.ro_db_password.arn
+      valueFrom = aws_secretsmanager_secret.read_only_db_password.arn
     }
   ]
 }

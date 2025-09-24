@@ -12,7 +12,7 @@ data "aws_iam_policy_document" "ecs_permissions" {
     actions = ["secretsmanager:GetSecretValue"]
     resources = [
       var.db_secret_arn,
-      aws_secretsmanager_secret.ro_db_password.arn
+      aws_secretsmanager_secret.read_only_db_password.arn
     ]
     effect = "Allow"
   }
