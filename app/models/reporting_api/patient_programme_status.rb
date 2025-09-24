@@ -69,14 +69,7 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
   end
 
   def self.not_vaccinated_count
-    # For cross-programme queries, calculate as cohort - vaccinated to avoid
-    # double counting
-    # When filtered by programme, the original logic works correctly
-    if current_scope.where_values_hash.key?("programme_type")
-      where(has_any_vaccination: false).distinct.count(:patient_id)
-    else
-      cohort_count - vaccinated_count
-    end
+    cohort_count - vaccinated_count
   end
 
   def self.vaccinated_by_sais_count
