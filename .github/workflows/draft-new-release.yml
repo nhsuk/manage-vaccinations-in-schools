@@ -10,6 +10,9 @@ on:
         required: true
         description: Release tag
 
+env:
+  release_tag: ${{ inputs.release_tag }}
+
 jobs:
   create-release-notes:
     runs-on: ubuntu-latest
@@ -21,13 +24,13 @@ jobs:
       - name: Generate release notes
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: script/draft_new_release.sh ${{ inputs.release_tag }}
+        run: script/draft_new_release.sh "$release_tag"
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "${{ inputs.release_tag }}" \
-            --title "Draft release ${{ inputs.release_tag }}" \
+          gh release create "$release_tag" \
+            --title "Draft release $release_tag" \
             --notes-file release_notes.md \
             --draft
 

@@ -17,6 +17,7 @@ on:
           - sandbox-beta
 
 env:
+  environment: ${{ inputs.environment }}
   aws_role: arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure
 
 permissions: {}
@@ -46,10 +47,10 @@ jobs:
       - name: Ensure DB cluster can be deleted
         run: |
           set -e
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
           if terraform state list | grep -q 'aws_rds_cluster.core'; then
             echo "DB cluster exists: removing delete protection"
-            aws rds modify-db-cluster --db-cluster-identifier mavis-${{ inputs.environment }} --no-deletion-protection
+            aws rds modify-db-cluster --db-cluster-identifier "mavis-$environment" --no-deletion-protection
             echo "DB cluster delete protection removed: proceeding to delete stage"
           else
             echo "DB cluster not in state: proceeding to delete stage"
@@ -58,7 +59,7 @@ jobs:
       - name: Delete cluster
         run: |
           set -e
-          terraform destroy -var-file="env/${{ inputs.environment }}.tfvars" \
+          terraform destroy -var-file="env/$environment.tfvars" \
           -var="image_digest=notneededfordestroy" -auto-approve
 
   destroy-backend:
@@ -77,5 +78,5 @@ jobs:
       - name: Delete terraform backend elements
         run: |
           set -e
-          TF_STATE_FILE=nhse-mavis-terraform-state/terraform-${{ inputs.environment }}.tfstate
+          TF_STATE_FILE="nhse-mavis-terraform-state/terraform-$environment.tfstate"
           aws s3 rm s3://$TF_STATE_FILE

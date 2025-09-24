@@ -58,8 +58,8 @@ jobs:
         id: plan
         run: |
           set -e
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          terraform plan -var-file="env/${{ inputs.environment }}.tfvars" \
+          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
+          terraform plan -var-file="env/$environment.tfvars" \
           -out ${{ runner.temp }}/tfplan-aws | tee ${{ runner.temp }}/tf_stdout_aws
           TF_EXIT_CODE=${PIPESTATUS[0]}
           cat ${{ runner.temp }}/tf_stdout_aws
@@ -114,7 +114,7 @@ jobs:
       - name: Apply AWS changes
         run: |
           set -e
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
           terraform apply ${{ runner.temp }}/tfplan-aws
 
   apply-grafana:
@@ -147,5 +147,5 @@ jobs:
           sudo apt-get install -y jq uuid-runtime
       - name: Deploy Grafana using tf_grafana.sh
         run: |
-          ./tf_grafana.sh ${{ inputs.environment }} plan --plan-file ${{ runner.temp }}/out
-          ./tf_grafana.sh ${{ inputs.environment }} apply --plan-file ${{ runner.temp }}/out
+          ./tf_grafana.sh "$environment" plan --plan-file ${{ runner.temp }}/out
+          ./tf_grafana.sh "$environment" apply --plan-file ${{ runner.temp }}/out
