@@ -21,7 +21,8 @@ describe API::Reporting::TotalsController do
       expect(parsed_response).to have_key("vaccinated")
       expect(parsed_response).to have_key("not_vaccinated")
       expect(parsed_response).to have_key("vaccinated_by_sais")
-      expect(parsed_response).to have_key("vaccinated_elsewhere")
+      expect(parsed_response).to have_key("vaccinated_elsewhere_declared")
+      expect(parsed_response).to have_key("vaccinated_elsewhere_recorded")
       expect(parsed_response).to have_key("vaccinated_previously")
       expect(parsed_response).to have_key("vaccinations_given")
       expect(parsed_response).to have_key("monthly_vaccinations_given")
@@ -59,7 +60,8 @@ describe API::Reporting::TotalsController do
       expect(vaccinated + not_vaccinated).to eq(cohort)
 
       expect(parsed_response["vaccinated_by_sais"]).to eq(2) # patient1 and patient2
-      expect(parsed_response["vaccinated_elsewhere"]).to eq(0) # no external vaccinations
+      expect(parsed_response["vaccinated_elsewhere_declared"]).to eq(0) # no declared external vaccinations
+      expect(parsed_response["vaccinated_elsewhere_recorded"]).to eq(0) # no recorded external vaccinations
       expect(parsed_response["vaccinated_previously"]).to eq(0) # no previous year vaccinations
       expect(parsed_response["vaccinations_given"]).to eq(2) # 2 administered records
       expect(parsed_response["monthly_vaccinations_given"]).to be_an(Array)

@@ -32,9 +32,13 @@ SELECT DISTINCT
     ELSE false
   END AS vaccinated_by_sais_current_year,
   CASE
-    WHEN vr_elsewhere_current.patient_id IS NOT NULL THEN true
+    WHEN vr_elsewhere_declared.patient_id IS NOT NULL THEN true
     ELSE false
-  END AS vaccinated_elsewhere_current_year,
+  END AS vaccinated_elsewhere_declared_current_year,
+  CASE
+    WHEN vr_elsewhere_recorded.patient_id IS NOT NULL THEN true
+    ELSE false
+  END AS vaccinated_elsewhere_recorded_current_year,
   CASE
     WHEN vr_previous.patient_id IS NOT NULL THEN true
     ELSE false
@@ -91,16 +95,27 @@ LEFT JOIN (
   AND vr_sais_current.programme_id = prog.id
   AND vr_sais_current.academic_year = s.academic_year
 
--- Left join to check if patient was vaccinated elsewhere in current academic year
+-- Left join to check if patient declared they were already vaccinated elsewhere
 LEFT JOIN (
-  SELECT DISTINCT vr.patient_id, vr.programme_id, vr_s.academic_year
+  SELECT DISTINCT vr.patient_id, vr.programme_id, COALESCE(vr_s.academic_year, EXTRACT(YEAR FROM vr.performed_at)) AS academic_year
   FROM vaccination_records vr
-  INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
+  LEFT JOIN sessions vr_s ON vr_s.id = vr.session_id
   WHERE vr.discarded_at IS NULL
-    AND vr.outcome = 4 -- already_had
-) vr_elsewhere_current ON vr_elsewhere_current.patient_id = p.id
-  AND vr_elsewhere_current.programme_id = prog.id
-  AND vr_elsewhere_current.academic_year = s.academic_year
+    AND vr.outcome = 4 -- already_had (declared elsewhere)
+) vr_elsewhere_declared ON vr_elsewhere_declared.patient_id = p.id
+  AND vr_elsewhere_declared.programme_id = prog.id
+  AND vr_elsewhere_declared.academic_year = s.academic_year
+
+-- Left join to check if patient has externally recorded vaccination (from uploads/NHS API)
+LEFT JOIN (
+  SELECT DISTINCT vr.patient_id, vr.programme_id, EXTRACT(YEAR FROM vr.performed_at) AS academic_year
+  FROM vaccination_records vr
+  WHERE vr.discarded_at IS NULL
+    AND vr.outcome = 0 -- administered (actual vaccination record)
+    AND vr.source IN (1, 2) -- historical_upload or nhs_immunisations_api
+) vr_elsewhere_recorded ON vr_elsewhere_recorded.patient_id = p.id
+  AND vr_elsewhere_recorded.programme_id = prog.id
+  AND vr_elsewhere_recorded.academic_year = s.academic_year
 
 -- Left join to check if patient was vaccinated in previous years
 LEFT JOIN (
