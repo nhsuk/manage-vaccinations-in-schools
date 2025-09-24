@@ -327,7 +327,7 @@ request the access token from CIS2.
 
 ### Reporting
 
-See [docs/reporting.md](docs/releasing.md).
+See [docs/reporting.md](docs/reporting.md).
 
 #### Key Rotation
 

@@ -1,6 +1,6 @@
 # Releasing
 
-Our default branch for making changes is `main`: new features and non-urgent
+Our default branch for making changes is `next`: new features and non-urgent
 bug fixes should be merged into here.
 
 The `release` branch is a reference to what is in production at any point in
@@ -9,11 +9,14 @@ necessary.
 
 Releasing basically follows these steps:
 
-1. Create a release candidate by tagging `main` (e.g. `v1.0.0-rc1`)
-2. Create a release in GitHub and add information about the changes. Update the
-   assurance statement.
-3. Create a release by fast-forwarding or resetting `release` to the release
-   candidate, and creating a tag (e.g. `v1.0.0`)
+1. Merge `next` into `main`
+2. Create a draft release by running the `Draft new release` workflow. This will
+   create a tag (e.g. `v1.0.0`) on `main` and create a draft release in GitHub with initial release notes.
+3. Update the release notes, add information about the changes.
+4. Update the assurance statement.
+5. Fast-forward or reset `release` to the release tag
+6. Run the `Deploy` workflow to deploy to production.
+7. Publish the release in GitHub.
 
 ```mermaid
 gitGraph
@@ -29,24 +32,18 @@ Details below.
 
 ## Pre-release and testing
 
-Changes merged into `main` are deployed to the `qa` and `test` environments for
+Changes merged into `next` are deployed to the `qa` and `test` environments for
 testing. When there is a large batch of PRs to merge at once, after a
 merge-freeze for example, only merge a few at a time to try to make it easier to
 trace any issues that arise during testing.
 
 ## Release candidate
 
-Once all the necessary changes are merged and have been tested, create a
-release candidate by creating a tag on the `main` branch. e.g. `v1.0.0-rc1`.
-
-Create a [release in GitHub](https://github.com/nhsuk/manage-vaccinations-in-schools/releases/)
-using this tag, or if one has been created for this version already update the
-tag in it. The assurance statement will also need to be updated with the tag URL
-(if the tag changes, e.g. to `-rc2`, this will need to be updated).
+Once all the necessary changes are merged and have been tested, merge `next` into `main` and create a new draft release.
 
 At this point the changes in the release will go through the NHS assurance
 processes, and possibly through external testing and assurance. If required it
-can be deployed to the `preview` or `training` environements.
+can be deployed to the `preview` or `training` environments.
 
 ## Deploy to production
 
@@ -68,9 +65,7 @@ git merge --ff-only v1.0.0-rc1
 git push --tags origin release
 ```
 
-Once the `release` branch is updated on GitHub, create the release in GitHub UI
-with the release tag, e.g. v1.0.0, moving the release notes from the release
-candidate. Now it's time to deploy. Start with a deploy to `training` or
+Once the `release` branch is updated on GitHub, it's time to deploy. Start with a deploy to `training` or
 `preview` to ensure the tagged version is correct. Once that's done you can
 deploy to production.
 

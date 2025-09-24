@@ -16,7 +16,7 @@ We follow the patterns and conventions in [GitHub Flow](https://docs.github.com/
 Below is a visual representation of the branching strategy. For concreteness lets consider
 the next version being developed for release v2.0.0:
 
-Outside a release cycle, features get merged into main:
+Generally, features for the upcoming release are merged into `next`:
 
 ```mermaid
 gitGraph
@@ -24,15 +24,7 @@ commit id: "v2.0.0-feature-1"
 commit id: "v2.0.0-feature-2"
 ```
 
-Once a release is ready for testing we tag it as a release candidate, e.g. v2.0.0-rc1, to be tested in the test and qa environments:
-
-```mermaid
-gitGraph
-commit id: "v2.0.0-feature-1"
-commit id: "v2.0.0-feature-2" tag: "v2.0.0-rc1"
-```
-
-Any new work for the next version, v2.1.0 in this case, goes onto a work in progress (wip) branch:
+Any work for a later version, v2.1.0 in this case, can go onto a dedicated branch, `v2.1.0-wip` for instance:
 
 ```mermaid
 gitGraph
@@ -44,25 +36,8 @@ commit id: "v2.1.0-feature-1"
 commit id: "v2.1.0-feature-2"
 ```
 
-Any patches to the release candidate are applied to both main and the wip branch,
-and the commit on main gets tagged as the next release candidate:
-
-```mermaid
-gitGraph
-commit id: "v2.0.0-feature-1"
-commit id: "v2.0.0-feature-2" tag: "v2.0.0-rc1"
-branch v2.1.0-wip
-checkout v2.1.0-wip
-commit id: "v2.1.0-feature-1"
-commit id: "v2.1.0-feature-2"
-checkout main
-commit id: "v2.0.0-patch-1" tag: "v2.0.0-rc2"
-checkout "v2.1.0-wip"
-cherry-pick id: "v2.0.0-patch-1"
-```
-
-Once the release candidate has been confirmed good and release approvals have been given,
-it is tagged as the new version (`v2.0.0`), and deployed to production:
+Once the release has been confirmed good and release approvals have been given,
+`next` is merged into `main`, tagged as the new version (`v2.0.0`), and deployed to production:
 
 ```mermaid
 gitGraph
@@ -78,8 +53,8 @@ checkout "v2.1.0-wip"
 cherry-pick id: "v2.0.0-patch-1"
 ```
 
-At this point the wip branch can be merged into main and feature development for v2.1.0
-can continue on main branch:
+At this point the wip branch can be merged into `next` and feature development for v2.1.0
+can continue on `next` branch:
 
 ```mermaid
 gitGraph
@@ -96,27 +71,4 @@ cherry-pick id: "v2.0.0-patch-1"
 checkout main
 merge v2.1.0-wip
 commit id: "v2.1.0-feature-3"
-```
-
-Once the first release candidate for v.2.1.0 is ready, the process repeats:
-
-```mermaid
-gitGraph
-commit id: "v2.0.0-feature-1"
-commit id: "v2.0.0-feature-2" tag: "v2.0.0-rc1"
-branch v2.1.0-wip
-checkout v2.1.0-wip
-commit id: "v2.1.0-feature-1"
-commit id: "v2.1.0-feature-2"
-checkout main
-commit id: "v2.0.0-patch-1" tag:"v2.0.0-rc2, v2.0.0"
-checkout v2.1.0-wip
-cherry-pick id: "v2.0.0-patch-1"
-checkout main
-merge v2.1.0-wip
-commit id: "v2.1.0-feature-3"
-commit id: "v2.1.0-feature-4" tag: "v2.1.0-rc1"
-branch v2.2.0-wip
-checkout v2.2.0-wip
-commit id: "v2.2.0-feature-1"
 ```
