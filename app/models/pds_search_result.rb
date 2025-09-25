@@ -88,7 +88,7 @@ class PDSSearchResult < ApplicationRecord
       description:
         I18n.t(
           "activerecord.attributes.#{self.class.model_name.i18n_key}.results.#{result}",
-          nhs_number: pds_nhs_number || nhs_number
+          nhs_number: nhs_number
         )
     }
   end
