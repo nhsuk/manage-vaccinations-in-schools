@@ -49,7 +49,7 @@ resource "grafana_data_source" "postgresql" {
   })
   url      = "CHANGE_ME"
   uid      = "postgres"
-  username = "grafana_ro"
+  username = "grafana_read_only"
   lifecycle {
     ignore_changes = [
       secure_json_data_encoded,
