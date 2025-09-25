@@ -105,7 +105,7 @@ class ConsentFormsController < ApplicationController
           )
         end
 
-      school_move.confirm!
+      school_move.confirm!(user: current_user)
 
       @consent_form.match_with_patient!(patient, current_user:)
     end
