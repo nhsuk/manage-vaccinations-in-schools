@@ -20,7 +20,8 @@ describe AppImportPDSUnmatchedSummaryComponent, type: :component do
           "address_postcode" => "AB1 2CD"
         }
       },
-      import:
+      import:,
+      row_number: 2
     )
   end
 
@@ -52,7 +53,8 @@ describe AppImportPDSUnmatchedSummaryComponent, type: :component do
             "address_postcode" => "ZZ9 9ZZ"
           }
         },
-        import:
+        import:,
+        row_number: 1
       )
     end
 
@@ -62,6 +64,13 @@ describe AppImportPDSUnmatchedSummaryComponent, type: :component do
       expect(rendered).to have_content("Jones")
       expect(rendered).to have_content("20 August 2011")
       expect(rendered).to have_content("ZZ9 9ZZ")
+    end
+
+    it "renders records in row number order" do
+      rows = rendered.css("tbody tr").map(&:text)
+
+      expect(rows.first).to include("Bob")
+      expect(rows.last).to include("Alice")
     end
   end
 

@@ -2,7 +2,7 @@
 
 class AppImportPDSUnmatchedSummaryComponent < ViewComponent::Base
   def initialize(changesets:)
-    @changesets = changesets
+    @changesets = changesets.sort_by(&:row_number)
   end
 
   def call
