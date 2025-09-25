@@ -27,6 +27,10 @@ class StatusGenerator::Vaccination
     end
   end
 
+  def location_id
+    vaccinated_criteria.location_id if status_should_be_vaccinated?
+  end
+
   private
 
   attr_reader :programme,
@@ -38,13 +42,18 @@ class StatusGenerator::Vaccination
 
   def programme_id = programme.id
 
+  def vaccinated_criteria
+    @vaccinated_criteria ||=
+      VaccinatedCriteria.new(
+        programme:,
+        academic_year:,
+        patient:,
+        vaccination_records:
+      )
+  end
+
   def status_should_be_vaccinated?
-    VaccinatedCriteria.call(
-      programme:,
-      academic_year:,
-      patient:,
-      vaccination_records:
-    )
+    vaccinated_criteria.vaccinated?
   end
 
   def status_should_be_could_not_vaccinate?
