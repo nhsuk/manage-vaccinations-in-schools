@@ -120,6 +120,6 @@ jobs:
       - name: Load Docker image
         run: docker load -i image.tar
       - name: Tag Docker image
-        run: docker tag mavis:latest "${{ steps.login-ecr.outputs.registry }}/mavis/webapp":"$git-ref"
+        run: docker tag mavis:latest "${{ steps.login-ecr.outputs.registry }}/mavis/webapp":"$git_ref"
       - name: Push Docker image
         run: docker push "${{ steps.login-ecr.outputs.registry }}/mavis/webapp":"$git_ref"
