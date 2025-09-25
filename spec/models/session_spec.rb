@@ -31,6 +31,23 @@
 #
 
 describe Session do
+  describe "associations" do
+    describe "#programmes" do
+      subject(:programmes) { session.reload.programmes }
+
+      let(:hpv_programme) { create(:programme, :hpv) }
+      let(:menacwy_programme) { create(:programme, :menacwy) }
+
+      let(:session) do
+        create(:session, programmes: [menacwy_programme, hpv_programme])
+      end
+
+      it "is ordered by name" do
+        expect(programmes).to eq([hpv_programme, menacwy_programme])
+      end
+    end
+  end
+
   describe "scopes" do
     let(:programmes) { [create(:programme)] }
 
@@ -170,23 +187,6 @@ describe Session do
     end
   end
 
-  describe "associations" do
-    describe "#programmes" do
-      subject(:programmes) { session.reload.programmes }
-
-      let(:hpv_programme) { create(:programme, :hpv) }
-      let(:menacwy_programme) { create(:programme, :menacwy) }
-
-      let(:session) do
-        create(:session, programmes: [menacwy_programme, hpv_programme])
-      end
-
-      it "is ordered by name" do
-        expect(programmes).to eq([hpv_programme, menacwy_programme])
-      end
-    end
-  end
-
   describe "#today?" do
     subject(:today?) { session.today? }
 
@@ -210,7 +210,7 @@ describe Session do
   end
 
   describe "#unscheduled?" do
-    subject(:unscheduled?) { session.reload.unscheduled? }
+    subject { session.reload.unscheduled? }
 
     let(:session) { create(:session, date: nil) }
 
@@ -220,6 +220,20 @@ describe Session do
       before { create(:session_date, session:) }
 
       it { should be(false) }
+    end
+  end
+
+  describe "#scheduled?" do
+    subject { session.reload.scheduled? }
+
+    let(:session) { create(:session, date: nil) }
+
+    it { should be(false) }
+
+    context "with a date" do
+      before { create(:session_date, session:) }
+
+      it { should be(true) }
     end
   end
 
