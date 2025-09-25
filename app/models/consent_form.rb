@@ -375,9 +375,16 @@ class ConsentForm < ApplicationRecord
             team:
           )
 
-        sessions_to_search.find { !it.completed? } ||
-          sessions_to_search.first ||
+        if (scheduled_session = sessions_to_search.find(&:scheduled?))
+          return scheduled_session
+        end
+
+        if education_setting_home? || education_setting_none?
           team.generic_clinic_session(academic_year:)
+        else
+          sessions_to_search.first ||
+            team.generic_clinic_session(academic_year:)
+        end
       end
   end
 

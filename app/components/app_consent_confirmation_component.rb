@@ -37,7 +37,7 @@ class AppConsentConfirmationComponent < ViewComponent::Base
   end
 
   def panel_text
-    location = (@consent_form.session.school? ? " at school" : "")
+    location = (@consent_form.education_setting_school? ? " at school" : "")
 
     if response_given?
       if @consent_form.health_answers_require_triage?
