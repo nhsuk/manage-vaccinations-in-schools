@@ -41,6 +41,42 @@ describe SearchVaccinationRecordsInNHSJob do
       end
     end
 
+    shared_examples "sends discovery comms if required once" do
+      it "calls send_vaccination_discovered_if_required once" do
+        job_instance = described_class.new
+        allow(described_class).to receive(:new).and_return(job_instance)
+        expect(job_instance).to receive(
+          :send_vaccination_discovered_if_required
+        ).once
+
+        perform
+      end
+    end
+
+    shared_examples "sends discovery comms if required twice" do
+      it "calls send_vaccination_discovered_if_required twice" do
+        job_instance = described_class.new
+        allow(described_class).to receive(:new).and_return(job_instance)
+        expect(job_instance).to receive(
+          :send_vaccination_discovered_if_required
+        ).twice
+
+        perform
+      end
+    end
+
+    shared_examples "doesn't send discovery comms" do
+      it "does not call send_vaccination_discovered_if_required" do
+        job_instance = described_class.new
+        allow(described_class).to receive(:new).and_return(job_instance)
+        expect(job_instance).not_to receive(
+          :send_vaccination_discovered_if_required
+        )
+
+        perform
+      end
+    end
+
     let(:expected_query) do
       {
         "patient.identifier" =>
@@ -87,6 +123,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect { perform }.to change { patient.vaccination_records.count }.by(2)
       end
 
+      include_examples "sends discovery comms if required twice"
       include_examples "calls StatusUpdater"
     end
 
@@ -107,6 +144,7 @@ describe SearchVaccinationRecordsInNHSJob do
         )
       end
 
+      include_examples "sends discovery comms if required once"
       include_examples "calls StatusUpdater"
     end
 
@@ -131,6 +169,7 @@ describe SearchVaccinationRecordsInNHSJob do
         )
       end
 
+      include_examples "doesn't send discovery comms"
       include_examples "calls StatusUpdater"
     end
 
@@ -143,6 +182,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect { perform }.not_to(change { patient.vaccination_records.count })
       end
 
+      include_examples "doesn't send discovery comms"
       include_examples "calls StatusUpdater"
     end
 
@@ -152,6 +192,8 @@ describe SearchVaccinationRecordsInNHSJob do
       it "does not change any records locally" do
         expect { perform }.not_to(change { patient.vaccination_records.count })
       end
+
+      include_examples "doesn't send discovery comms"
     end
 
     context "with a non-api record already on the patient" do
@@ -170,6 +212,7 @@ describe SearchVaccinationRecordsInNHSJob do
         )
       end
 
+      include_examples "sends discovery comms if required twice"
       include_examples "calls StatusUpdater"
     end
 
@@ -189,6 +232,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect(patient.vaccination_records.count).to eq(0)
       end
 
+      include_examples "doesn't send discovery comms"
       include_examples "calls StatusUpdater"
     end
   end

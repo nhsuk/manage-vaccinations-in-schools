@@ -312,7 +312,7 @@ class GovukNotifyPersonalisation
     if vaccination_record.performed_at.today?
       "today"
     else
-      vaccination_record.performed_at.to_date.to_fs(:long)
+      "on #{vaccination_record.performed_at.to_date.to_fs(:long)}"
     end
   end
 

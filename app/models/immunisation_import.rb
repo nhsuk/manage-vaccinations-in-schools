@@ -32,6 +32,7 @@
 #
 class ImmunisationImport < ApplicationRecord
   include CSVImportable
+  include VaccinationMailerConcern
 
   has_and_belongs_to_many :batches
   has_and_belongs_to_many :patient_locations
@@ -81,6 +82,11 @@ class ImmunisationImport < ApplicationRecord
     patient_locations = @patient_locations_batch.to_a
 
     VaccinationRecord.import(vaccination_records, on_duplicate_key_update: :all)
+
+    vaccination_records.each do |vaccination_record|
+      send_vaccination_discovered_if_required(vaccination_record)
+    end
+
     PatientLocation.import(patient_locations, on_duplicate_key_ignore: :all)
 
     [

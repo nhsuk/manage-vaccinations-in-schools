@@ -16,6 +16,7 @@ describe "Flu vaccination" do
     then_i_see_the_check_and_confirm_page_for_nasal_spray
     and_i_get_confirmation_after_recording
     and_the_vaccination_record_is_synced_to_nhs
+    and_the_parent_doesnt_receive_a_vaccination_discovered_email
 
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_to_the_parent_confirming_the_vaccination
@@ -33,6 +34,7 @@ describe "Flu vaccination" do
     when_i_record_that_the_patient_has_been_vaccinated_with_injection
     then_i_see_the_check_and_confirm_page_for_injection
     and_i_get_confirmation_after_recording
+    and_the_parent_doesnt_receive_a_vaccination_discovered_email
 
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_to_the_parent_confirming_the_vaccination
@@ -344,5 +346,9 @@ describe "Flu vaccination" do
       @patient.consents.last.parent.phone,
       :vaccination_administered
     )
+  end
+
+  def and_the_parent_doesnt_receive_a_vaccination_discovered_email
+    expect(email_deliveries).to be_empty
   end
 end
