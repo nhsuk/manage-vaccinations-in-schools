@@ -90,9 +90,6 @@ describe "Verbal consent" do
     find_all(".nhsuk-fieldset")[3].choose "No"
     click_button "Continue"
 
-    choose "Yes, it’s safe to vaccinate"
-    click_button "Continue"
-
     # Confirm
     expect(page).to have_content("Check and confirm answers")
     expect(page).to have_content(["Method", "By phone"].join)

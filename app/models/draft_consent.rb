@@ -53,7 +53,7 @@ class DraftConsent
       :agree,
       (:notify_parents_on_vaccination if response_given? && via_self_consent?),
       (:questions if response_given?),
-      (:triage if triage_allowed? && response_given?),
+      (:triage if triage_allowed? && requires_triage?),
       (:reason if response_refused?),
       (:notify_parent_on_refusal if ask_notify_parent_on_refusal?),
       (:notes if notes_required?),
@@ -306,7 +306,7 @@ class DraftConsent
     consent.submitted_at ||= Time.current
     consent.academic_year = academic_year if academic_year.present?
 
-    if triage_allowed? && response_given?
+    if triage_allowed? && requires_triage?
       triage_form.add_patient_specific_direction =
         triage_add_patient_specific_direction
       triage_form.notes = triage_notes || ""
@@ -441,6 +441,10 @@ class DraftConsent
 
   def triage_status_and_vaccine_method_options
     Triage.new(patient:, programme:).status_and_vaccine_method_options
+  end
+
+  def requires_triage?
+    response_given? && health_answers_require_triage?
   end
 
   def health_answers_are_valid

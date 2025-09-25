@@ -84,7 +84,12 @@ describe "Verbal consent" do
     choose "No"
     click_button "Continue"
 
-    9.times { |index| find_all(".nhsuk-fieldset")[index].choose "No" }
+    fieldsets = find_all(".nhsuk-fieldset")
+
+    8.times { |index| fieldsets[index].choose "No" }
+
+    fieldsets.last.choose "Yes"
+    fieldsets.last.fill_in "Give details", with: "Some details"
 
     click_button "Continue"
 
