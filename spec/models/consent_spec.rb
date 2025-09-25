@@ -120,7 +120,9 @@ describe Consent do
         ).first
       end
 
-      let(:consent_form) { create(:consent_form, :recorded, reason_notes: nil) }
+      let(:consent_form) do
+        create(:consent_form, :recorded, reason_for_refusal_notes: "")
+      end
       let(:patient) { create(:patient) }
       let(:current_user) { create(:user) }
 
@@ -134,7 +136,7 @@ describe Consent do
             programme: consent_form.programmes.first,
             patient:,
             consent_form:,
-            reason_for_refusal: consent_form.reason,
+            reason_for_refusal: consent_form.reason_for_refusal,
             notes: "",
             response: "given",
             route: "website"
@@ -207,15 +209,7 @@ describe Consent do
       let(:current_user) { create(:user) }
       let(:team) { create(:team, programmes:) }
       let(:session) { create(:session, team:, programmes:) }
-      let(:consent_form) do
-        create(
-          :consent_form,
-          :recorded,
-          session:,
-          reason: :personal_choice,
-          reason_notes: "Personal reasons."
-        )
-      end
+      let(:consent_form) { create(:consent_form, :recorded, session:) }
 
       before do
         consent_form.consent_form_programmes.first.update!(
@@ -224,7 +218,9 @@ describe Consent do
         )
         consent_form.consent_form_programmes.second.update!(
           response: "refused",
-          vaccine_methods: []
+          vaccine_methods: [],
+          reason_for_refusal: "personal_choice",
+          notes: "Personal reasons."
         )
       end
 

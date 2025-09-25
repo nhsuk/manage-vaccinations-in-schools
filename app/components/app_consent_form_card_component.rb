@@ -43,12 +43,8 @@ class AppConsentFormCardComponent < ViewComponent::Base
 
   def refusal_reason
     {
-      title:
-        Consent.human_enum_name(
-          :reason_for_refusal,
-          @consent_form.reason
-        ).presence,
-      notes: @consent_form.reason_notes
+      title: @consent_form.human_enum_name(:reason_for_refusal),
+      notes: @consent_form.reason_for_refusal_notes
     }
   end
 

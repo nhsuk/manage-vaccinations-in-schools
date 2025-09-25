@@ -4,11 +4,13 @@
 #
 # Table name: consent_form_programmes
 #
-#  id              :bigint           not null, primary key
-#  response        :integer
-#  vaccine_methods :integer          default([]), not null, is an Array
-#  consent_form_id :bigint           not null
-#  programme_id    :bigint           not null
+#  id                 :bigint           not null, primary key
+#  notes              :text             default(""), not null
+#  reason_for_refusal :integer
+#  response           :integer
+#  vaccine_methods    :integer          default([]), not null, is an Array
+#  consent_form_id    :bigint           not null
+#  programme_id       :bigint           not null
 #
 # Indexes
 #
