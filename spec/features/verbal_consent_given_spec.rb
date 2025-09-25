@@ -11,7 +11,6 @@ describe "Verbal consent" do
     when_i_confirm_the_consent_response
     then_an_email_is_sent_to_the_parent_confirming_their_consent
     and_a_text_is_sent_to_the_parent_confirming_their_consent
-    and_the_patients_status_is_safe_to_vaccinate
     and_i_can_see_the_consent_response_details
   end
 
@@ -39,7 +38,6 @@ describe "Verbal consent" do
     when_i_confirm_the_consent_response
     then_an_email_is_sent_to_the_parent_confirming_their_consent
     and_a_text_is_sent_to_the_parent_confirming_their_consent
-    and_the_patients_status_is_safe_to_vaccinate_with_nasal_spray
   end
 
   scenario "Given flu nasal spray and injection" do
@@ -89,16 +87,14 @@ describe "Verbal consent" do
   def when_i_record_that_verbal_injection_consent_was_given
     record_that_verbal_consent_was_given(
       consent_option: "Yes, for the injected vaccine only",
-      number_of_health_questions: 4,
-      triage_option: "Yes, it’s safe to vaccinate with injected vaccine"
+      number_of_health_questions: 4
     )
   end
 
   def when_i_record_that_verbal_nasal_consent_was_given
     record_that_verbal_consent_was_given(
       consent_option: "Yes, for the nasal spray",
-      number_of_health_questions: 9,
-      triage_option: "Yes, it’s safe to vaccinate with nasal spray"
+      number_of_health_questions: 9
     )
   end
 
@@ -106,7 +102,6 @@ describe "Verbal consent" do
     record_that_verbal_consent_was_given(
       consent_option: "Yes, for the nasal spray",
       number_of_health_questions: 10,
-      triage_option: "Yes, it’s safe to vaccinate with nasal spray",
       injective_alternative: true
     )
   end
@@ -114,7 +109,6 @@ describe "Verbal consent" do
   def record_that_verbal_consent_was_given(
     consent_option:,
     number_of_health_questions:,
-    triage_option: "Yes, it’s safe to vaccinate",
     injective_alternative: false
   )
     visit session_consent_path(@session)
@@ -153,9 +147,6 @@ describe "Verbal consent" do
     end
 
     click_button "Continue"
-
-    choose triage_option
-    click_button "Continue"
   end
 
   def then_i_see_the_check_and_confirm_page
@@ -185,17 +176,8 @@ describe "Verbal consent" do
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
   end
 
-  def and_the_patients_status_is_safe_to_vaccinate
-    click_link @patient.full_name, match: :first
-    expect(page).to have_content("Safe to vaccinate")
-  end
-
-  def and_the_patients_status_is_safe_to_vaccinate_with_nasal_spray
-    click_link @patient.full_name, match: :first
-    expect(page).to have_content("Safe to vaccinate with nasal spray")
-  end
-
   def and_i_can_see_the_consent_response_details
+    click_link @patient.full_name, match: :first
     click_link @parent.full_name
 
     expect(page).to have_content("Consent response from #{@parent.full_name}")
