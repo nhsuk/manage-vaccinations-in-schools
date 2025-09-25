@@ -62,10 +62,15 @@ describe PendingChangesConcern do
   end
 
   describe "#normalised" do
-    it "downcases strings and returns presence" do
+    it "downcases strings" do
       expect(model.send(:normalised, "HELLO WORLD")).to eq("hello world")
       expect(model.send(:normalised, "Mixed Case")).to eq("mixed case")
       expect(model.send(:normalised, "lowercase")).to eq("lowercase")
+    end
+
+    it "normalises whitespace in strings" do
+      expect(model.send(:normalised, "  Hello   World  ")).to eq("hello world")
+      expect(model.send(:normalised, "Hello\tWorld")).to eq("hello world")
     end
 
     it "returns nil for empty strings" do
