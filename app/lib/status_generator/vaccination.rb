@@ -14,7 +14,8 @@ class StatusGenerator::Vaccination
     @patient = patient
     @consents = consents
     @triages = triages
-    @vaccination_records = vaccination_records
+    @vaccination_records =
+      vaccination_records.select { it.academic_year <= @academic_year }
   end
 
   def status

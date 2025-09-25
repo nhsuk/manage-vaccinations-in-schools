@@ -117,9 +117,9 @@ describe "mavis stats organisations" do
       create(
         :session,
         team: @team_a,
-        academic_year: AcademicYear.current - 1,
+        academic_year: AcademicYear.previous,
         programmes: [programme_flu],
-        date: (AcademicYear.current - 1).to_academic_year_date_range.end
+        date: AcademicYear.previous.to_academic_year_date_range.end
       )
 
     patient_year_8 =
@@ -202,7 +202,7 @@ describe "mavis stats organisations" do
   end
 
   def when_i_run_the_command_with_academic_year_filter
-    previous_year = AcademicYear.current - 1
+    previous_year = AcademicYear.previous
     @output =
       capture_output do
         command(
@@ -277,7 +277,7 @@ describe "mavis stats organisations" do
   end
 
   def then_i_see_only_filtered_academic_year_statistics
-    previous_year = AcademicYear.current - 1
+    previous_year = AcademicYear.previous
     date_range = previous_year.to_academic_year_date_range
     start_date = date_range.first.strftime("%-d %B %Y")
     end_date = date_range.last.strftime("%-d %B %Y")

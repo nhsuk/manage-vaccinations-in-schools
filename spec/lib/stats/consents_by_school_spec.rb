@@ -152,7 +152,7 @@ describe Stats::ConsentsBySchool do
       let!(:previous_year_session) do
         create(
           :session,
-          date: Date.new(AcademicYear.current - 1, 12, 15),
+          date: Date.new(AcademicYear.previous, 12, 15),
           team:,
           location: school,
           programmes: [programme_flu],
