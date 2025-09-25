@@ -428,12 +428,12 @@ class Patient < ApplicationRecord
   end
 
   def teams
-    Team.left_outer_joins(:sessions).joins(<<-SQL)
-        INNER JOIN patient_locations
-        ON patient_locations.patient_id = #{id}
-        AND patient_locations.location_id = sessions.location_id
-        AND patient_locations.academic_year = sessions.academic_year 
-      SQL
+    Team.distinct.joins(:sessions).joins(<<-SQL)
+      INNER JOIN patient_locations
+      ON patient_locations.patient_id = #{id}
+      AND patient_locations.location_id = sessions.location_id
+      AND patient_locations.academic_year = sessions.academic_year 
+    SQL
   end
 
   def archived?(team:)

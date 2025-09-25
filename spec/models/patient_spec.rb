@@ -51,6 +51,22 @@
 describe Patient do
   describe "associations" do
     it { should have_many(:archive_reasons) }
+
+    describe "#vaccination_records" do
+      subject(:vaccination_records) { patient.vaccination_records }
+
+      let(:patient) { create(:patient) }
+      let(:programme) { create(:programme) }
+      let(:kept_vaccination_record) do
+        create(:vaccination_record, patient:, programme:)
+      end
+      let(:discarded_vaccination_record) do
+        create(:vaccination_record, :discarded, patient:, programme:)
+      end
+
+      it { should include(kept_vaccination_record) }
+      it { should_not include(discarded_vaccination_record) }
+    end
   end
 
   describe "scopes" do
@@ -464,20 +480,39 @@ describe Patient do
     it { should normalize(:address_postcode).from(" SW111AA ").to("SW11 1AA") }
   end
 
-  describe "#vaccination_records" do
-    subject(:vaccination_records) { patient.vaccination_records }
+  describe "#teams" do
+    subject(:teams) { patient.teams }
 
     let(:patient) { create(:patient) }
-    let(:programme) { create(:programme) }
-    let(:kept_vaccination_record) do
-      create(:vaccination_record, patient:, programme:)
-    end
-    let(:discarded_vaccination_record) do
-      create(:vaccination_record, :discarded, patient:, programme:)
-    end
 
-    it { should include(kept_vaccination_record) }
-    it { should_not include(discarded_vaccination_record) }
+    it { should be_empty }
+
+    context "when a team exists" do
+      let!(:team) { create(:team) }
+
+      it { should be_empty }
+
+      context "and the patient belongs to the team" do
+        let(:session) { create(:session, team:) }
+        let(:patient) { create(:patient, session:) }
+
+        it { should include(team) }
+      end
+
+      context "and the patient belongs to multiple sessions under the same team" do
+        let(:menacwy_session) do
+          create(:session, team:, programmes: [create(:programme, :menacwy)])
+        end
+        let(:td_ipv_session) do
+          create(:session, team:, programmes: [create(:programme, :td_ipv)])
+        end
+        let(:patient) { create(:patient, session: menacwy_session) }
+
+        before { create(:patient_location, patient:, session: td_ipv_session) }
+
+        it { should contain_exactly(team) }
+      end
+    end
   end
 
   describe "#match_existing" do
