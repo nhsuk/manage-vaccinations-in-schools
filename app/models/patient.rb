@@ -687,7 +687,13 @@ class Patient < ApplicationRecord
         ArchiveReason.new(team:, patient: self, type: :deceased)
       end
 
-    ArchiveReason.import!(archive_reasons, on_duplicate_key_update: :all)
+    ArchiveReason.import!(
+      archive_reasons,
+      on_duplicate_key_update: {
+        conflict_target: %i[team_id patient_id],
+        columns: %i[type]
+      }
+    )
   end
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::Patient.new(self)
