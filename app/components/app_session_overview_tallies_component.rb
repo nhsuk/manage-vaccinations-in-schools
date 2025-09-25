@@ -15,10 +15,21 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
   def tally_cards_for_programme(programme)
     [
       {
-        heading: "Eligible cohort",
+        heading: "Eligible children",
         colour: "blue",
         count: eligible_for_vaccination_count(programme).to_s,
         link_to: nil
+      },
+      {
+        heading: "No outcome",
+        colour: "grey",
+        count: no_outcome_count(programme).to_s,
+        link_to:
+          session_patients_path(
+            session,
+            vaccination_status: "none_yet",
+            programme_types: [programme.type]
+          )
       },
       {
         heading: "Vaccinated",
@@ -39,17 +50,6 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
           session_patients_path(
             session,
             vaccination_status: "could_not_vaccinate",
-            programme_types: [programme.type]
-          )
-      },
-      {
-        heading: "No outcome",
-        colour: "grey",
-        count: no_outcome_count(programme).to_s,
-        link_to:
-          session_patients_path(
-            session,
-            vaccination_status: "none_yet",
             programme_types: [programme.type]
           )
       }
