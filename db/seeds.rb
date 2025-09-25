@@ -288,9 +288,9 @@ support_team =
     workgroup: CIS2Info::SUPPORT_WORKGROUP
   )
 create_user(
+  :support,
   team: support_team,
-  email: "support@example.com",
-  fallback_role: "support"
+  email: "support@example.com"
 )
 
 attach_sample_of_schools_to(team)
