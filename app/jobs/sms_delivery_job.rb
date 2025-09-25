@@ -54,6 +54,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
                e.message.include?(TEAM_ONLY_API_KEY_MESSAGE)
             # Prevent retries and job failures.
             Sentry.capture_exception(e)
+            [nil, "technical_failure"]
           elsif e.message == INVALID_UK_MOBILE_NUMBER_ERROR
             [nil, "not_uk_mobile_number_failure"]
           else
