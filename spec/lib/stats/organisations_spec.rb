@@ -199,6 +199,11 @@ describe Stats::Organisations do
           team: target_team,
           programmes: [programme_flu, programme_hpv]
         )
+      school1.create_default_programme_year_groups!(
+        [programme_flu, programme_hpv],
+        academic_year: previous_academic_year
+      )
+
       school2 =
         create(
           :school,

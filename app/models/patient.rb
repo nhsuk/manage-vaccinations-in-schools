@@ -454,7 +454,8 @@ class Patient < ApplicationRecord
     academic_year = AcademicYear.pending
     year_group = self.year_group(academic_year:)
     programme_year_groups =
-      school&.programme_year_groups || team.programme_year_groups
+      school&.programme_year_groups(academic_year:) ||
+        team.programme_year_groups(academic_year:)
 
     team.programmes.any? do |programme|
       programme_year_groups[programme].include?(year_group)

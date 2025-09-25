@@ -24,9 +24,11 @@ class SessionProgrammesForm
 
         location = session.location
 
-        unless location.location_programme_year_groups.exists?(programme:)
-          session.location.create_default_programme_year_groups!([programme])
-        end
+        next if location.location_programme_year_groups.exists?(programme:)
+        session.location.create_default_programme_year_groups!(
+          [programme],
+          academic_year: session.academic_year
+        )
       end
     end
 

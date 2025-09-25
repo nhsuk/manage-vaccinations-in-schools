@@ -6,7 +6,10 @@ class Programmes::PatientsController < Programmes::BaseController
   before_action :set_patient_search_form
 
   def index
-    @year_groups = current_team.programme_year_groups[@programme]
+    @year_groups =
+      current_team.programme_year_groups(academic_year: @academic_year)[
+        @programme
+      ]
 
     scope =
       Patient.where(id: patient_ids).includes(

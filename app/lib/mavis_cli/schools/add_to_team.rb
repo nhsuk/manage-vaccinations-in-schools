@@ -56,7 +56,10 @@ module MavisCLI
             end
 
             location.update!(subteam:)
-            location.create_default_programme_year_groups!(programmes)
+            location.create_default_programme_year_groups!(
+              programmes,
+              academic_year:
+            )
 
             LocationSessionsFactory.call(location, academic_year:)
           end

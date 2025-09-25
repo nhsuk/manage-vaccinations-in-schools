@@ -136,13 +136,16 @@ class Onboarding
       models.each(&:save!)
 
       # Reload to ensure the programmes are loaded.
-      GenericClinicFactory.call(team: team.reload)
+      team.reload
+
+      GenericClinicFactory.call(team:, academic_year:)
 
       @users.each { |user| user.teams << team }
 
       TeamSessionsFactory.call(team, academic_year:)
 
       if create_sessions_for_previous_academic_year
+        GenericClinicFactory.call(team:, academic_year: academic_year - 1)
         TeamSessionsFactory.call(team, academic_year: academic_year - 1)
       end
     end
@@ -218,7 +221,8 @@ class Onboarding
     def save!
       location.update!(subteam:)
       location.create_default_programme_year_groups!(
-        programmes.map(&:programme)
+        programmes.map(&:programme),
+        academic_year: AcademicYear.pending
       )
     end
   end

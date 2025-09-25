@@ -35,6 +35,8 @@ module MavisCLI
             urn_or_ids.flat_map { Location.where_urn_and_site(it) }
           end
 
+        academic_year = AcademicYear.current
+
         locations.each do |location|
           location
             .attributes
@@ -62,7 +64,7 @@ module MavisCLI
           end
 
           puts Rainbow("programmes:").bright
-          pyg = location.programme_year_groups
+          pyg = location.programme_year_groups(academic_year:)
           location.programmes.each do |programme|
             puts "  #{Rainbow(programme.type).bright}:"
             puts "    #{Rainbow("year groups").bright}: #{pyg[programme].join(", ")}"

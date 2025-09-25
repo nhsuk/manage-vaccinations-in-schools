@@ -16,7 +16,9 @@ describe AppPatientSessionTableComponent do
   context "with a session" do
     let(:programmes) { [create(:programme, :hpv)] }
 
-    let(:location) { create(:school, name: "Waterloo Road", programmes:) }
+    let(:location) do
+      create(:school, name: "Waterloo Road", programmes:, academic_year: 2024)
+    end
     let(:session) do
       create(
         :session,

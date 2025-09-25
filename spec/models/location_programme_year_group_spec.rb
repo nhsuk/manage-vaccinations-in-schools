@@ -4,16 +4,16 @@
 #
 # Table name: location_programme_year_groups
 #
-#  id           :bigint           not null, primary key
-#  year_group   :integer          not null
-#  location_id  :bigint           not null
-#  programme_id :bigint           not null
+#  id            :bigint           not null, primary key
+#  academic_year :integer          not null
+#  year_group    :integer          not null
+#  location_id   :bigint           not null
+#  programme_id  :bigint           not null
 #
 # Indexes
 #
-#  idx_on_location_id_programme_id_year_group_4bee220488  (location_id,programme_id,year_group) UNIQUE
-#  index_location_programme_year_groups_on_location_id    (location_id)
-#  index_location_programme_year_groups_on_programme_id   (programme_id)
+#  idx_on_location_id_academic_year_programme_id_year__6ad5e2b67d  (location_id,academic_year,programme_id,year_group) UNIQUE
+#  index_location_programme_year_groups_on_programme_id            (programme_id)
 #
 # Foreign Keys
 #

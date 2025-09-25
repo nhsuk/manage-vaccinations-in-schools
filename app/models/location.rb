@@ -153,17 +153,19 @@ class Location < ApplicationRecord
     ).merge("is_attached_to_team" => !subteam_id.nil?)
   end
 
-  def create_default_programme_year_groups!(programmes)
+  def create_default_programme_year_groups!(programmes, academic_year:)
     ActiveRecord::Base.transaction do
       rows =
         programmes.flat_map do |programme|
           programme.default_year_groups.filter_map do |year_group|
-            [id, programme.id, year_group] if year_group.in?(year_groups)
+            if year_group.in?(year_groups)
+              [id, academic_year, programme.id, year_group]
+            end
           end
         end
 
       LocationProgrammeYearGroup.import!(
-        %i[location_id programme_id year_group],
+        %i[location_id academic_year programme_id year_group],
         rows,
         on_duplicate_key_ignore: true
       )
