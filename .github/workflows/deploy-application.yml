@@ -141,7 +141,7 @@ jobs:
     needs: prepare-deployment
     environment: ${{ inputs.environment }}
     steps:
-      - run: echo "Proceeding with deployment to ${{ inputs.environment }} environment"
+      - run: echo "Proceeding with deployment to $environment environment"
 
   deploy-web:
     name: Deploy web service

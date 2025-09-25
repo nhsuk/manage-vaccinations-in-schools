@@ -15,16 +15,16 @@ on:
           - qa
           - sandbox-alpha
           - sandbox-beta
-      db-snapshot-arn:
+      db_snapshot_arn:
         description: ARN of the DB snapshot to use (optional)
         required: false
         type: string
-      egress-cidr:
+      egress_cidr:
         description: CIDR blocks to allow egress traffic.
         type: string
         required: true
         default: "[]"
-      take-db-snapshot:
+      take_db_snapshot:
         description: Take a new DB snapshot before creating the environment
         type: boolean
         default: false
@@ -32,6 +32,7 @@ on:
 permissions: {}
 
 env:
+  db_snapshot_arn: ${{ inputs.db-snapshot-arn }}
   aws_role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployDataReplicationInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployDataReplicationInfrastructure' }}
@@ -56,17 +57,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
       - name: Assume DB Snapshot role
-        if: inputs.take-db-snapshot
+        if: inputs.take_db_snapshot
         uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.db_snapshot_role }}
           aws-region: eu-west-2
       - name: Take DB snapshot
-        if: inputs.take-db-snapshot
+        if: inputs.take_db_snapshot
         run: |
           set -e
           snapshot_identifier=snapshot-for-data-replication-$(date +"%Y-%m-%d-%H-%M-%S")
-          aws rds create-db-cluster-snapshot --db-cluster-identifier mavis-${{ inputs.environment }} --db-cluster-snapshot-identifier $snapshot_identifier
+          aws rds create-db-cluster-snapshot --db-cluster-identifier mavis-$environment --db-cluster-snapshot-identifier $snapshot_identifier
           echo "Waiting for snapshot to be available. This can take a while."
           aws rds wait db-cluster-snapshot-available --db-cluster-snapshot-identifier $snapshot_identifier
           echo "New snapshot is now available"
@@ -79,19 +80,19 @@ jobs:
         id: get-latest-snapshot
         run: |
           set -e
-          if [ -z "${{ inputs.db-snapshot-arn }}" ]; then
+          if [ -z "$db_snapshot_arn" ]; then
               echo "No snapshot ARN provided, fetching the latest snapshot"
               SNAPSHOT_ARN=$(aws rds describe-db-cluster-snapshots \
-              --query "DBClusterSnapshots[?DBClusterIdentifier=='mavis-${{ inputs.environment }}'].[DBClusterSnapshotArn, SnapshotCreateTime]" \
+              --query "DBClusterSnapshots[?DBClusterIdentifier=='mavis-$environment'].[DBClusterSnapshotArn, SnapshotCreateTime]" \
               --output text | sort -k2 -r | head -n 1 | cut -f1)
 
               if [ -z "$SNAPSHOT_ARN" ]; then
-                  echo "No snapshots found for mavis-${{ inputs.environment }}"
+                  echo "No snapshots found for mavis-$environment"
                   exit 1
               fi
           else
-              echo "Using provided snapshot ARN: ${{ inputs.db-snapshot-arn }}"
-              SNAPSHOT_ARN="${{ inputs.db-snapshot-arn }}"
+              echo "Using provided snapshot ARN: $db_snapshot_arn"
+              SNAPSHOT_ARN="$db_snapshot_arn"
           fi
           echo "Using snapshot ARN: $SNAPSHOT_ARN"
           echo "SNAPSHOT_ARN=$SNAPSHOT_ARN" >> $GITHUB_OUTPUT
@@ -128,22 +129,21 @@ jobs:
         id: get-db-secret-arn
         working-directory: terraform/app
         run: |
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
           DB_SECRET_ARN=$(terraform output --raw db_secret_arn)
           echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_OUTPUT
       - name: Terraform Plan
         id: plan
         run: |
           set -eo pipefail
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
 
-          CIDR_BLOCKS='${{ inputs.egress-cidr }}'
           PLAN_ARGS=(
             "plan"
             "-var=db_secret_arn=${{ steps.get-db-secret-arn.outputs.DB_SECRET_ARN }}"
-            "-var=imported_snapshot=${{ env.SNAPSHOT_ARN }}"
-            "-var-file=env/${{ inputs.environment }}.tfvars"
-            "-var=allowed_egress_cidr_blocks=$CIDR_BLOCKS"
+            "-var=imported_snapshot=$SNAPSHOT_ARN"
+            "-var-file=env/$environment.tfvars"
+            "-var=allowed_egress_cidr_blocks=$egress_cidr"
             "-out=${{ runner.temp }}/tfplan"
             "-replace" "aws_rds_cluster.cluster"
           )
@@ -182,5 +182,5 @@ jobs:
       - name: Apply the changes
         run: |
           set -e
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
           terraform apply ${{ runner.temp }}/tfplan
