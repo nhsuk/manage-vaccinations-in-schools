@@ -1296,4 +1296,86 @@ describe Patient do
       end
     end
   end
+
+  describe "#latest_pds_search_result" do
+    subject(:latest_pds_search_result) { patient.latest_pds_search_result }
+
+    let(:patient) { create(:patient) }
+
+    context "with no PDS search results" do
+      it { should be_nil }
+    end
+
+    context "with PDS search results but no changeset" do
+      let(:import) { create(:class_import) }
+
+      before { create(:pds_search_result, patient:, import:) }
+
+      it { should be_nil }
+    end
+
+    context "with PDS search results and changeset" do
+      let(:import) { create(:class_import) }
+
+      before do
+        create(
+          :patient_changeset,
+          patient:,
+          import:,
+          pds_nhs_number: "9449304130"
+        )
+        create(:pds_search_result, patient:, import:)
+      end
+
+      it { should eq("9449304130") }
+    end
+  end
+
+  describe "#pds_lookup_match?" do
+    subject(:pds_lookup_match?) { patient.pds_lookup_match? }
+
+    let(:patient) { create(:patient, nhs_number: "9449304130") }
+
+    context "when patient has no NHS number" do
+      let(:patient) { create(:patient, nhs_number: nil) }
+
+      it { should be(false) }
+    end
+
+    context "with no PDS search results" do
+      it { should be(false) }
+    end
+
+    context "with matching PDS search result" do
+      let(:import) { create(:class_import) }
+
+      before do
+        create(
+          :patient_changeset,
+          patient:,
+          import:,
+          pds_nhs_number: "9449304130"
+        )
+        create(:pds_search_result, patient:, import:)
+      end
+
+      it { should be(true) }
+    end
+
+    context "with non-matching PDS search result" do
+      let(:import) { create(:class_import) }
+
+      before do
+        create(
+          :patient_changeset,
+          patient:,
+          import:,
+          pds_nhs_number: "9449310475"
+        )
+        create(:pds_search_result, patient:, import:)
+      end
+
+      it { should be(false) }
+    end
+  end
 end
