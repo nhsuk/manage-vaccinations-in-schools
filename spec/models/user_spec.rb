@@ -106,7 +106,7 @@ describe User do
         it { should be(true) }
       end
 
-      context "when the user is an admin and superuser" do
+      context "when the user is a medical secretary and superuser" do
         let(:user) { build(:medical_secretary, :superuser) }
 
         it { should be(false) }
@@ -318,14 +318,14 @@ describe User do
         it { should be false }
       end
 
-      context "when the user is an admin" do
-        let(:user) { build(:admin) }
+      context "when the user is a medical secretary" do
+        let(:user) { build(:medical_secretary) }
 
         it { should be false }
       end
 
-      context "when the user is an admin and superuser" do
-        let(:user) { build(:admin, :superuser) }
+      context "when the user is a medical secretary and superuser" do
+        let(:user) { build(:medical_secretary, :superuser) }
 
         it { should be false }
       end
@@ -338,14 +338,14 @@ describe User do
         it { should be true }
       end
 
-      context "when the user is an admin" do
-        let(:user) { build(:admin) }
+      context "when the user is a medical secretary" do
+        let(:user) { build(:medical_secretary) }
 
         it { should be false }
       end
 
-      context "when the user is an admin and superuser" do
-        let(:user) { build(:admin, :superuser) }
+      context "when the user is a medical secretary and superuser" do
+        let(:user) { build(:medical_secretary, :superuser) }
 
         it { should be false }
       end
