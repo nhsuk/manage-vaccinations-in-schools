@@ -51,6 +51,7 @@ class Consent < ApplicationRecord
   include HasHealthAnswers
   include HasVaccineMethods
   include Invalidatable
+  include Notable
 
   audited associated_with: :patient
 
@@ -94,16 +95,6 @@ class Consent < ApplicationRecord
        validate: {
          if: -> { response_refused? || withdrawn? }
        }
-
-  encrypts :notes
-
-  validates :notes,
-            presence: {
-              if: :notes_required?
-            },
-            length: {
-              maximum: 1000
-            }
 
   validates :parent, presence: true, unless: :via_self_consent?
   validates :recorded_by,
@@ -207,7 +198,7 @@ class Consent < ApplicationRecord
     already_vaccinated
   ].freeze
 
-  def notes_required?
+  def requires_notes?
     withdrawn? || invalidated? ||
       (
         response_refused? &&

@@ -15,7 +15,7 @@
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <% @draft_consent.health_answers.each_with_index do |health_answer, index| %>
-    <% if health_answer.requires_notes? %>
+    <% if health_answer.ask_notes? %>
       <%= f.fields_for "question_#{index}", health_answer do |ff| %>
         <%= ff.govuk_radio_buttons_fieldset :question,
                                             legend: { size: "s", text: health_answer.question },

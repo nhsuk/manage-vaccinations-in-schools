@@ -34,6 +34,7 @@
 #
 class GillickAssessment < ApplicationRecord
   include BelongsToSessionDate
+  include Notable
 
   audited associated_with: :patient
 
@@ -44,8 +45,6 @@ class GillickAssessment < ApplicationRecord
              class_name: "User",
              foreign_key: :performed_by_user_id
 
-  encrypts :notes
-
   validates :knows_consequences,
             :knows_delivery,
             :knows_disease,
@@ -54,8 +53,6 @@ class GillickAssessment < ApplicationRecord
             inclusion: {
               in: [true, false]
             }
-
-  validates :notes, length: { maximum: 1000 }
 
   def gillick_competent?
     knows_consequences && knows_delivery && knows_disease &&
