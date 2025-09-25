@@ -32,7 +32,7 @@ on:
 permissions: {}
 
 env:
-  db_snapshot_arn: ${{ inputs.db-snapshot-arn }}
+  db_snapshot_arn: ${{ inputs.db_snapshot_arn }}
   aws_role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployDataReplicationInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployDataReplicationInfrastructure' }}

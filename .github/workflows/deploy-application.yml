@@ -73,7 +73,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          ref: ${{ inputs.git-ref-to-deploy || github.sha }}
+          ref: ${{ inputs.git_ref_to_deploy || github.sha }}
       - name: Get git sha
         id: get-git-sha
         run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
@@ -105,7 +105,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ env.aws-role }}
+          role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
       - name: Get image digest
         id: get-image-digest
@@ -118,7 +118,7 @@ jobs:
             --query 'imageDetails[0].imageDigest' \
             --output text)
           echo "digest=$digest" >> $GITHUB_OUTPUT
-      - name: Populate web task definition
+      - name: Populate task definition
         id: create-task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
@@ -154,7 +154,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ env.aws-role }}
+          role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
       - name: Checkout code
         uses: actions/checkout@v5
@@ -172,12 +172,15 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ runner.temp }}/web-task-definition.json
+      - name: Create appspec.yml
+        run: |
+          cp config/templates/appspec.yaml.tpl appspec.yaml
+          sed -i "s#TASK_DEFINITION_ARN#${{ steps.register-task-definition.outputs.task-definition-arn }}#g" appspec.yaml
       - name: Deploy web service with CodeDeploy
         id: deploy-web-service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ runner.temp }}/web-task-definition.json
-          codedeploy-appspec: config/templates/appspec.yaml
           cluster: ${{ env.cluster_name }}
           service: mavis-${{ inputs.environment }}-web
           codedeploy-application: mavis-${{ inputs.environment }}
@@ -199,7 +202,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ env.aws-role }}
+          role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
       - name: Download sidekiq task definition artifact
         uses: actions/download-artifact@v5

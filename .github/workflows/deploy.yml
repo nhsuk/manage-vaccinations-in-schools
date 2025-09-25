@@ -1,5 +1,5 @@
 name: Deploy
-run-name: Deploy ${{ inputs.git-ref-to-deploy || github.ref_name }} to ${{ inputs.environment }}
+run-name: Deploy ${{ inputs.git_ref_to_deploy || github.ref_name }} to ${{ inputs.environment }}
 
 concurrency:
   group: deploy-${{ inputs.environment }}
@@ -155,5 +155,5 @@ jobs:
     uses: ./.github/workflows/deploy-application.yml
     with:
       environment: ${{ inputs.environment }}
-      server_types: ${{ inputs.server-types }}
-      git_ref_to_deploy: ${{ inputs.git-ref-to-deploy || github.ref_name }}
+      server_types: ${{ inputs.server_types }}
+      git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
