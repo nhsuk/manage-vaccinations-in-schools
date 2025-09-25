@@ -13,15 +13,6 @@ describe PatientUpdateFromPDSJob do
     end
   end
 
-  context "invalidated patient" do
-    let!(:patient) { create(:patient, :invalidated) }
-
-    it "doesn't update the patient" do
-      expect(patient).not_to receive(:update_from_pds!)
-      perform_now
-    end
-  end
-
   context "with an NHS number" do
     before { create(:gp_practice, ods_code: "Y12345") }
 
@@ -59,6 +50,17 @@ describe PatientUpdateFromPDSJob do
         expect { perform_now }.not_to have_enqueued_job(
           PatientNHSNumberLookupJob
         )
+      end
+
+      context "when the patient is invalidated" do
+        let!(:patient) do
+          create(:patient, :invalidated, nhs_number: "9000000009")
+        end
+
+        it "updates the patient details from PDS" do
+          expect(patient).to receive(:update_from_pds!)
+          perform_now
+        end
       end
 
       context "when the NHS number for the patient has changed" do
