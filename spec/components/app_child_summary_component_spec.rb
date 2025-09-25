@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe AppChildSummaryComponent do
-  subject { render_inline(component) }
+  subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(patient) }
 
@@ -123,5 +123,35 @@ describe AppChildSummaryComponent do
 
     it { should have_text("Archive reason") }
     it { should have_text("Other: Some details.") }
+  end
+
+  context "with a PDS lookup match" do
+    let(:patient) { create(:patient) }
+
+    before { allow(patient).to receive(:pds_lookup_match?).and_return(true) }
+
+    it "shows a PDS history action link" do
+      expect(rendered).to have_link(
+        "PDS history",
+        href:
+          Rails.application.routes.url_helpers.pds_search_history_patient_path(
+            patient
+          )
+      )
+    end
+  end
+
+  context "without a PDS lookup match" do
+    let(:patient) { create(:patient) }
+
+    before { allow(patient).to receive(:pds_lookup_match?).and_return(false) }
+
+    it { should_not have_link("PDS history") }
+
+    context "when the record is not a Patient" do
+      let(:consent_form) { create(:consent_form) }
+
+      it { should_not have_link("PDS history") }
+    end
   end
 end
