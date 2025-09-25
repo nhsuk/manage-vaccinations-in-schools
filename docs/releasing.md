@@ -1,59 +1,59 @@
 # Releasing
 
-Our default branch for making changes is `main`: new features and non-urgent
-bug fixes should be merged into here.
+The `next` branch is used to collect and test changes before a release. Only
+changes scheduled for the next release should be in `next`, and commits may be
+reverted or added to reflect scope changes.
+
+Once a release has gone through the assurance stops and ready to release, `next`
+is merged into `main` using a PR, and then `main` is deployed out to production.
 
 The `release` branch is a reference to what is in production at any point in
-time. It usually tracks `main` but can also point to hotfix branches as
-necessary.
+time and updated at the time the release is performed. It usually tracks `main`
+but can also point to hotfix branches as necessary.
 
-Releasing basically follows these steps:
+Releasing follows these steps, performed once approval for release has been
+given:
 
-1. Create a release candidate by tagging `main` (e.g. `v1.0.0-rc1`)
-2. Create a release in GitHub and add information about the changes. Update the
-   assurance statement.
-3. Create a release by fast-forwarding or resetting `release` to the release
-   candidate, and creating a tag (e.g. `v1.0.0`)
+1. Create a PR to merge `next` into `main`; approve and merge.
+2. Create a draft release by running the `Draft new release` workflow. This
+   creates a draft release in GitHub with initial release notes.
+3. Update the release notes with information about the changes. This is
+   generated from the Jira tickets by a team member.
+4. Publish the release in GitHub. This will create the tag.
+5. Check the notes for pre and post-release tasks and ensure these are performed
+   before and after releasing to the environments below.
+6. Deploy the release to the `preview` and `training` envs, if not already done.
+   This can be used as a test that the tag deploys as expected.
+7. If there are migrations that need testing (e.g. a data migration or a
+   long-running migration), deploy this release to `data-replication` and test
+   the performance of the migration(s) there.
+8. Perform pre-release tasks.
+9. Run the `Deploy` workflow to deploy to production.
+10. Smoke test: login to the production service to ensure it looks normal.
+11. Perform post-release tasks.
+12. Fast-forward or reset `release` to the release tag.
+13. Update the service management channel on NHSE Slack.
+14. Update the topic in the Mavis tech channel to reflect the new version.
 
-```mermaid
-gitGraph
-    branch release
-    commit tag: "v0.9.9"
-    checkout main
-    commit tag: "v1.0.0-rc1"
-    checkout release
-    merge main tag: "v1.0.0"
-```
+Additional notes below.
 
-Details below.
+## Running the Deploy workflow
 
-## Pre-release and testing
+Use the `deploy.yml` workflow to run the deployments. For the production
+deployment, it's important to start the workflow from the `main` branch and
+specify the tag to deploy as input. This is because only workflows from the
+`main` branch can authenticate with the production AWS account.
 
-Changes merged into `main` are deployed to the `qa` and `test` environments for
-testing. When there is a large batch of PRs to merge at once, after a
-merge-freeze for example, only merge a few at a time to try to make it easier to
-trace any issues that arise during testing.
+Changes to the backup infrastructure must be deployed separately. In the rare
+case that the backup infrastructure needs to be updated, run the
+`deploy-backup-infrastructure.yml` workflow.
 
-## Release candidate
+## Upading the release branch
 
-Once all the necessary changes are merged and have been tested, create a
-release candidate by creating a tag on the `main` branch. e.g. `v1.0.0-rc1`.
-
-Create a [release in GitHub](https://github.com/nhsuk/manage-vaccinations-in-schools/releases/)
-using this tag, or if one has been created for this version already update the
-tag in it. The assurance statement will also need to be updated with the tag URL
-(if the tag changes, e.g. to `-rc2`, this will need to be updated).
-
-At this point the changes in the release will go through the NHS assurance
-processes, and possibly through external testing and assurance. If required it
-can be deployed to the `preview` or `training` environements.
-
-## Deploy to production
-
-When we are ready to release, update the `release` branch and deploy it to
-production. If there have been no hot-fixes since the last release then this is
-a simple fast-forward merge that has to be done on your localhost (see below for
-how to manage non-fast-forwardable situations):
+We update the `release` branch after we've deployed `main` to production. If
+there have been no hot-fixes since the last release then this is a simple
+fast-forward merge that has to be done on your localhost (see below for how to
+manage non-fast-forwardable situations):
 
 ```shell
 git checkout release
@@ -68,17 +68,7 @@ git merge --ff-only v1.0.0-rc1
 git push --tags origin release
 ```
 
-Once the `release` branch is updated on GitHub, create the release in GitHub UI
-with the release tag, e.g. v1.0.0, moving the release notes from the release
-candidate. Now it's time to deploy. Start with a deploy to `training` or
-`preview` to ensure the tagged version is correct. Once that's done you can
-deploy to production.
-
-Use the `deploy.yml` workflow to run the deployments. For the production deployment, it's important to start the workflow from the `main` branch and specify the tag to deploy as input. This is because only workflows from the `main` branch can authenticate with the production AWS account.
-
-Changes to the backup infrastructure must be deployed separately. In the rare case that the backup infrastructure needs to be updated, run the `deploy-backup-infrastructure.yml` workflow.
-
-## When `release` and `main` have diverged
+### When `release` and `main` have diverged
 
 There are cases when `release` won't be fast-forwardable to the release
 candidate on `main`. This will happen when a fix has been applied to the
@@ -136,6 +126,8 @@ previously described.
 
 ## Rollback
 
-A release can be rolled back by deploying the previous release tag using the regular GitHub workflow. This can be done on a per-service level or for all services.
-If the issue is spotted early and the CodeDeploy deployment is still in progress, the new deployment can still be aborted.
-To do this, go to the CodeDeploy console, select the deployment group, and click "Stop deployment".
+A release can be rolled back by deploying the previous release tag using the
+regular GitHub workflow. This can be done on a per-service level or for all
+services. If the issue is spotted early and the CodeDeploy deployment is still
+in progress, the new deployment can still be aborted. To do this, go to the
+CodeDeploy console, select the deployment group, and click "Stop deployment".
