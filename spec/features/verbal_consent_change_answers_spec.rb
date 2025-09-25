@@ -76,9 +76,6 @@ describe "Verbal consent" do
     find_all(".nhsuk-fieldset")[2].choose "No"
     find_all(".nhsuk-fieldset")[3].choose "No"
     click_button "Continue"
-
-    choose "Yes, it’s safe to vaccinate"
-    click_button "Continue"
   end
 
   def then_i_see_the_confirmation_page

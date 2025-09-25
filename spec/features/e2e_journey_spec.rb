@@ -23,7 +23,7 @@ describe "End-to-end journey" do
 
     # Verbal consent
     given_the_day_of_the_session_comes
-    when_i_register_verbal_consent_and_triage
+    when_i_register_verbal_consent
     then_i_should_see_that_the_patient_is_ready_for_vaccination
 
     # Attendance
@@ -182,7 +182,7 @@ describe "End-to-end journey" do
     sign_in @team.users.first
   end
 
-  def when_i_register_verbal_consent_and_triage
+  def when_i_register_verbal_consent
     click_link "Sessions", match: :first
     click_link "Pilot School"
     click_link "Register"
@@ -208,16 +208,13 @@ describe "End-to-end journey" do
     find_all(".nhsuk-fieldset")[3].choose "No"
     click_button "Continue"
 
-    choose "Yes, it’s safe to vaccinate"
-    click_button "Continue"
-
     click_button "Confirm"
 
     click_link "TABLES, Bobby", match: :first
   end
 
   def then_i_should_see_that_the_patient_is_ready_for_vaccination
-    expect(page).to have_content "Safe to vaccinate"
+    expect(page).to have_content("ready for the vaccinator")
   end
 
   def when_i_click_on_the_register_attendance_section

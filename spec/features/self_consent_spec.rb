@@ -236,16 +236,13 @@ describe "Self-consent" do
     # answer the health questions
     all("label", text: "No").each(&:click)
     click_on "Continue"
-
-    choose "Yes, it’s safe to vaccinate"
-    click_on "Continue"
   end
 
   def and_the_child_can_give_their_own_consent_that_the_nurse_records
     click_on "Change method"
 
     choose "Child (Gillick competent)"
-    5.times { click_on "Continue" }
+    4.times { click_on "Continue" }
 
     expect(page).to have_content("Confirmation of vaccination sent to parent")
 
@@ -264,7 +261,7 @@ describe "Self-consent" do
     choose "By phone"
     click_on "Continue"
 
-    3.times { click_on "Continue" }
+    2.times { click_on "Continue" }
   end
 
   def then_the_parent_can_give_consent
@@ -286,7 +283,7 @@ describe "Self-consent" do
   end
 
   def and_the_child_should_be_safe_to_vaccinate
-    expect(page).to have_content("Safe to vaccinate")
+    expect(page).to have_content("ready for the vaccinator")
   end
 
   def and_enqueued_jobs_run_with_no_errors

@@ -37,6 +37,8 @@ feature "Verbal consent" do
   end
 
   def when_i_record_the_consent_given_for_that_child_from_the_same_parent
+    travel 1.minute
+
     @refusing_parent = @child.consents.first.parent
 
     visit "/dashboard"
@@ -74,9 +76,6 @@ feature "Verbal consent" do
     find_all(".nhsuk-fieldset")[3].choose "No"
     click_button "Continue"
 
-    choose "Yes, it’s safe to vaccinate"
-    click_button "Continue"
-
     click_button "Confirm"
 
     expect(page).to have_alert(
@@ -100,6 +99,6 @@ feature "Verbal consent" do
     expect(page).to have_content(@child.full_name)
 
     click_on @child.full_name
-    expect(page).to have_content("Safe to vaccinate")
+    expect(page).to have_content("ready for the vaccinator")
   end
 end
