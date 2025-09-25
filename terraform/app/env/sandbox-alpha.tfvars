@@ -12,11 +12,6 @@ http_hosts = {
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "sandbox-alpha.mavistesting.com"
 }
 
-enable_splunk                   = false
-enable_cis2                     = false
-enable_pds_enqueue_bulk_updates = false
-
-appspec_bucket           = "nhse-mavis-appspec-bucket-sandbox-alpha"
 minimum_web_replicas     = 1
 maximum_web_replicas     = 2
 minimum_sidekiq_replicas = 1
@@ -25,4 +20,3 @@ maximum_sidekiq_replicas = 2
 valkey_node_type          = "cache.t4g.micro"
 valkey_log_retention_days = 3
 valkey_failover_enabled   = false
-sidekiq_replicas          = 1

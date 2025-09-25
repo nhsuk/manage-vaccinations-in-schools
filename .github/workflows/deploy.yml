@@ -83,7 +83,7 @@ jobs:
     needs: determine-git-sha
     uses: ./.github/workflows/build-and-push-image.yml
     with:
-      git-sha: ${{ needs.determine-git-sha.outputs.git-sha }}
+      git_sha: ${{ needs.determine-git-sha.outputs.git-sha }}
   validate-permissions:
     needs: validate-inputs
     runs-on: ubuntu-latest
@@ -111,7 +111,7 @@ jobs:
   update-permissions:
     runs-on: ubuntu-latest
     needs: validate-permissions
-    if: always() && (inputs.environment == 'production' || inputs.environment == 'preview') && needs.validate-permissions.result == 'failure'
+    if: ${{ !cancelled() && (inputs.environment == 'production' || inputs.environment == 'preview') && needs.validate-permissions.result == 'failure' }}
     environment: ${{ inputs.environment }}
     defaults:
       run:
@@ -140,21 +140,20 @@ jobs:
         validate-permissions,
         update-permissions,
       ]
-    if: always() &&
+    if: ${{ !cancelled() &&
       ((inputs.environment != 'production' && inputs.environment != 'preview') ||
-      needs.validate-permissions.result == 'success' || needs.update-permissions.result == 'success')
+      needs.validate-permissions.result == 'success' || needs.update-permissions.result == 'success') }}
     uses: ./.github/workflows/deploy-infrastructure.yml
     with:
       environment: ${{ inputs.environment }}
-      image_tag: ${{ needs.determine-git-sha.outputs.git-sha }}
       git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
   deploy-application:
     permissions:
       id-token: write
     needs: [deploy-infrastructure, determine-git-sha]
-    if: always() && inputs.server_types != 'none' && needs.deploy-infrastructure.result == 'success'
+    if: ${{ !cancelled() && inputs.server_types != 'none' && needs.deploy-infrastructure.result == 'success' }}
     uses: ./.github/workflows/deploy-application.yml
     with:
       environment: ${{ inputs.environment }}
       server_types: ${{ inputs.server_types }}
-      git_sha_to_deploy: ${{ needs.determine-git-sha.outputs.git-sha }}
+      git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}

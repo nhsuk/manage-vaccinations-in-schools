@@ -3,21 +3,21 @@ name: Build and push image
 on:
   workflow_dispatch:
     inputs:
-      git-sha:
+      git_sha:
         description: The FULL git commit sha to build the image from (optional).
         type: string
   workflow_call:
     inputs:
-      git-sha:
+      git_sha:
         description: The git commit sha to build the image from.
         type: string
 
 env:
   PUSH_IMAGE_TO_PRODUCTION: ${{ github.ref_name == 'main' }}
-  git_ref: ${{ inputs.git-sha || github.sha }}
+  git_ref: ${{ inputs.git_sha || github.sha }}
 
 concurrency:
-  group: build-and-push-image-${{ inputs.git-sha || github.sha }}
+  group: build-and-push-image-${{ inputs.git_sha || github.sha }}
 
 permissions: {}
 
