@@ -308,11 +308,7 @@ support_team =
     ods_code: CIS2Info::SUPPORT_ORGANISATION,
     workgroup: CIS2Info::SUPPORT_WORKGROUP
   )
-create_user(
-  team: support_team,
-  email: "support@example.com",
-  fallback_role: "support"
-)
+create_user(:support, team: support_team, email: "support@example.com")
 
 attach_sample_of_schools_to(team)
 

@@ -1,6 +1,6 @@
 <%= render AppCardComponent.new(filters: true) do |card| %>
     <% card.with_heading { "Customise timeline" } %>
-    <%= form_with url: @url,
+    <%= form_with url: url,
                   method: :get,
                   data: { module: "autosubmit",
                           turbo: "true",
@@ -8,10 +8,10 @@
                   builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
 
     <div class="nhsuk-u-margin-bottom-4">
-      <% if @pii_access_allowed %>
+      <% if pii_access_allowed %>
         <%= f.govuk_check_box :show_pii, true,
                               label: { text: "Show PII" },
-                              checked: @show_pii,
+                              checked: show_pii,
                               "data-autosubmit-target": "field",
                               "data-action": "autosubmit#submit",
                               "data-turbo-permanent": "true" %>
@@ -82,13 +82,13 @@
             <% end %>
 
             <%= f.govuk_check_box :event_names, "org_cohort_imports",
-                                  label: { text: "Cohort Imports for Team #{@teams.join(",")} excluding patient" },
+                                  label: { text: "Cohort Imports for Team #{teams.join(",")} excluding patient" },
                                   checked: "org_cohort_imports".in?(params[:event_names]),
                                   "data-autosubmit-target": "field",
                                   "data-action": "autosubmit#submit",
                                   "data-turbo-permanent": "true" %>
 
-            <% (@additional_class_imports).each do |location_id, import_ids| %>
+            <% (additional_class_imports).each do |location_id, import_ids| %>
                 <%= f.govuk_check_box :event_names, "add_class_imports_#{location_id}",
                                       label: { text: "Class Imports for Location-#{location_id} excluding Patient" },
                                       checked: "add_class_imports_#{location_id}".in?(params[:event_names]),
@@ -178,7 +178,7 @@
             <% end %>
 
             <%= helpers.govuk_button_link_to "Reset filters",
-                                             @reset_url,
+                                             reset_url,
                                              class: "govuk-button govuk-button--secondary nhsuk-u-display-block app-button--small",
                                              secondary: true,
                                              "data-autosubmit-target": "reset",
