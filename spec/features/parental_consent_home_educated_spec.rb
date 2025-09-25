@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe "Parental consent school" do
-  scenario "Child attends a different school" do
+describe "Parental consent" do
+  scenario "Child is home-schooled" do
     given_an_hpv_programme_is_underway
     when_i_go_to_the_consent_form
     when_i_fill_in_my_childs_name_and_birthday
@@ -12,7 +12,7 @@ describe "Parental consent school" do
     when_i_click_continue
     then_i_see_an_error
 
-    when_i_choose_a_school
+    when_i_choose_home_schooled
     then_i_see_the_parent_step
 
     and_i_give_consent
@@ -22,7 +22,13 @@ describe "Parental consent school" do
 
   def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    @team =
+      create(
+        :team,
+        :with_one_nurse,
+        :with_generic_clinic,
+        programmes: [@programme]
+      )
     location = create(:school, team: @team, name: "Pilot School")
     @session =
       create(
@@ -72,7 +78,7 @@ describe "Parental consent school" do
     expect(page).to have_heading "There is a problem"
   end
 
-  def when_i_choose_a_school
+  def when_i_choose_home_schooled
     select "Home-schooled"
     click_on "Continue"
   end

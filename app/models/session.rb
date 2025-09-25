@@ -227,6 +227,8 @@ class Session < ApplicationRecord
     Date.current > dates.max
   end
 
+  def scheduled? = !unscheduled? && !completed?
+
   def started?
     return false if dates.empty?
     Date.current > dates.min

@@ -548,6 +548,131 @@ describe ConsentForm do
     end
   end
 
+  describe "#session" do
+    subject { consent_form.session }
+
+    let(:programmes) { [create(:programme, :hpv)] }
+    let(:team) { create(:team, programmes:) }
+
+    let!(:school) { create(:school, team:) }
+    let!(:generic_clinic) { create(:generic_clinic, team:) }
+
+    let!(:generic_clinic_session) do
+      create(:session, location: generic_clinic, team:, programmes:)
+    end
+
+    context "with a consent form from a school" do
+      let(:consent_form) do
+        create(
+          :consent_form,
+          team:,
+          programmes:,
+          location: school,
+          academic_year: AcademicYear.current
+        )
+      end
+
+      context "with no school session" do
+        it { should eq(generic_clinic_session) }
+      end
+
+      context "with an unscheduled school session" do
+        let!(:school_session) do
+          create(:session, :unscheduled, location: school, team:, programmes:)
+        end
+
+        it { should eq(school_session) }
+      end
+
+      context "with an unscheduled and scheduled school session" do
+        before do
+          create(:session, :unscheduled, location: school, team:, programmes:)
+        end
+
+        let!(:scheduled_school_session) do
+          create(:session, :scheduled, location: school, team:, programmes:)
+        end
+
+        it { should eq(scheduled_school_session) }
+      end
+    end
+
+    context "with a consent form from a school to the clinic" do
+      let(:consent_form) do
+        create(
+          :consent_form,
+          :education_setting_home,
+          team:,
+          programmes:,
+          location: school,
+          academic_year: AcademicYear.current
+        )
+      end
+
+      context "with no school session" do
+        it { should eq(generic_clinic_session) }
+      end
+
+      context "with an unscheduled school session" do
+        before do
+          create(:session, :unscheduled, location: school, team:, programmes:)
+        end
+
+        it { should eq(generic_clinic_session) }
+      end
+
+      context "with an unscheduled and scheduled school session" do
+        before do
+          create(:session, :unscheduled, location: school, team:, programmes:)
+        end
+
+        let!(:scheduled_school_session) do
+          create(:session, :scheduled, location: school, team:, programmes:)
+        end
+
+        # This intentionally returns the school session because the clinic session
+        # might not be scheduled with dates yet (which is usually the case early
+        # on at the beginning of the year), and without a session the user sees
+        # a page saying the deadline has passed.
+        it { should eq(scheduled_school_session) }
+      end
+    end
+
+    context "with a consent form from a clinic" do
+      let(:consent_form) do
+        create(
+          :consent_form,
+          :education_setting_home,
+          team:,
+          programmes:,
+          location: generic_clinic,
+          academic_year: AcademicYear.current
+        )
+      end
+
+      context "with no school session" do
+        it { should eq(generic_clinic_session) }
+      end
+
+      context "with an unscheduled school session" do
+        before do
+          create(:session, :unscheduled, location: school, team:, programmes:)
+        end
+
+        it { should eq(generic_clinic_session) }
+      end
+
+      context "with an unscheduled and scheduled school session" do
+        before do
+          create(:session, :unscheduled, location: school, team:, programmes:)
+          create(:session, :scheduled, location: school, team:, programmes:)
+        end
+
+        it { should eq(generic_clinic_session) }
+      end
+    end
+  end
+
   describe "scope unmatched" do
     let(:programme) { create(:programme) }
     let(:session) { create(:session, programmes: [programme]) }
