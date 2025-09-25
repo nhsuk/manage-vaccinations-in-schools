@@ -10,12 +10,19 @@ class VaccinatedCriteria
 
   def call
     vaccination_records_for_programme =
-      vaccination_records.select { it.programme_id == programme.id }
+      vaccination_records.select do
+        it.programme_id == programme.id &&
+          if programme.seasonal?
+            it.academic_year == academic_year
+          else
+            it.academic_year <= academic_year
+          end
+      end
 
     if programme.seasonal?
-      vaccination_records_for_programme
-        .select { it.academic_year == academic_year }
-        .any? { it.administered? || it.already_had? }
+      vaccination_records_for_programme.any? do
+        it.administered? || it.already_had?
+      end
     else
       return true if vaccination_records_for_programme.any?(&:already_had?)
 
