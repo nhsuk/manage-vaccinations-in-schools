@@ -17,6 +17,13 @@ variable "server_type_name" {
   nullable    = true
 }
 
+variable "default_egress_cidr_blocks" {
+  type        = list(string)
+  description = "The default CIDR blocks for egress rules from the service. Defaults to allow all outbound traffic."
+  default     = ["0.0.0.0/0"]
+  nullable    = false
+}
+
 variable "minimum_replica_count" {
   type        = number
   description = "Minimum amount of allowed replicas for the service. Also the replica count when creating th service."
