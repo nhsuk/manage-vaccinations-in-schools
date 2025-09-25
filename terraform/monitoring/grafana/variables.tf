@@ -15,3 +15,9 @@ variable "region" {
   default     = "eu-west-2"
   description = "AWS region for the Grafana workspace."
 }
+
+variable "environment" {
+  type        = string
+  description = "Determines which alerting configuration to use (development or production)."
+  nullable    = false
+}

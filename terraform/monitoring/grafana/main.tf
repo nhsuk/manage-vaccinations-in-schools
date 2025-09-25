@@ -3,7 +3,7 @@ terraform {
   required_providers {
     grafana = {
       source  = "grafana/grafana"
-      version = "~> 3.25.4"
+      version = "~> 4.8.0"
     }
   }
 
@@ -56,4 +56,24 @@ resource "grafana_data_source" "postgresql" {
       url,
     ]
   }
+}
+
+resource "grafana_folder" "ecs" {
+  title = "ECS"
+  uid   = "ecs-folder"
+}
+
+resource "grafana_folder" "database" {
+  title = "Database"
+  uid   = "database-folder"
+}
+
+module "development_alerts" {
+  source = "./modules/development_alerts"
+  count  = var.environment == "development" ? 1 : 0
+}
+
+module "production_alerts" {
+  source = "./modules/production_alerts"
+  count  = var.environment == "production" ? 1 : 0
 }
