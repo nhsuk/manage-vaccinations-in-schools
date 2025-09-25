@@ -14,10 +14,10 @@ class ConsentFormMatchingJob < ApplicationJob
     # Match if we find a patient with the PDS NHS number
     return if match_with_exact_nhs_number
 
-    # Look for patients in the original session with no NHS number
-    if session_patients.count == 1
+    # Look for patients in the original location with no NHS number
+    if location_patients.count == 1
       # If we found exactly one, match the consent form to this patient
-      match_patient(session_patients.first)
+      match_patient(location_patients.first)
     end
 
     # Look for patients in any session with matching details
@@ -67,11 +67,16 @@ class ConsentFormMatchingJob < ApplicationJob
     @consent_form.match_with_patient!(patient, current_user: nil)
   end
 
-  def session_patients
-    @session_patients ||=
-      @consent_form
-        .original_session
-        .patients
+  def location_patients
+    @location_patients ||=
+      Patient
+        .joins(:patient_locations)
+        .where(
+          patient_locations: {
+            location: @consent_form.location,
+            academic_year: @consent_form.academic_year
+          }
+        )
         .includes(:school, :parents)
         .match_existing(nhs_number: nil, **query)
   end
