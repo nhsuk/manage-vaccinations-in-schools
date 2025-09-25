@@ -56,7 +56,7 @@ module PendingChangesConcern
 
   def normalised(value)
     if value.is_a?(String)
-      value.downcase.presence
+      value.downcase.normalise_whitespace&.presence
     elsif value.is_a?(Time)
       value.round
     else
