@@ -1,0 +1,7 @@
+en:
+  app_session_overview_tallies_component:
+    eligibility_message:
+      one: >-
+        1 child is due a vaccination this year and has not been vaccinated at another location
+      other: >-
+        %{count} children are due a vaccination this year and have not been vaccinated at another location

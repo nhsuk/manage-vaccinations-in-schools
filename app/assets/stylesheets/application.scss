@@ -2,6 +2,7 @@
 @forward "vendor/nhsuk-frontend" with (
   $nhsuk-page-width: 1100px,
   $nhsuk-grid-widths: (
+    one-fifth: 20%,
     one-quarter: 25%,
     one-third: 33.3333%,
     one-half: 50%,

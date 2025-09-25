@@ -15,10 +15,74 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
   def tally_cards_for_programme(programme)
     [
       {
-        heading: "Eligible cohort",
-        colour: "blue",
-        count: eligible_for_vaccination_count(programme).to_s,
-        link_to: nil
+        heading: "No response",
+        colour: "grey",
+        count: consent_count(:no_response, programme).to_s,
+        link_to:
+          session_consent_path(
+            session,
+            consent_statuses: ["no_response"],
+            programme_types: [programme.type]
+          )
+      },
+      (
+        if programme.has_multiple_vaccine_methods?
+          [
+            {
+              heading: "Consent given for nasal spray",
+              colour: "aqua-green",
+              count:
+                consent_count(:given, programme, vaccine_method: :nasal).to_s,
+              link_to:
+                session_consent_path(
+                  session,
+                  consent_statuses: ["given_nasal"],
+                  programme_types: [programme.type]
+                )
+            },
+            {
+              heading: "Consent given for injection",
+              colour: "aqua-green",
+              count:
+                consent_count(
+                  :given,
+                  programme,
+                  vaccine_method: :injection
+                ).to_s,
+              link_to:
+                session_consent_path(
+                  session,
+                  consent_statuses: ["given_injection"],
+                  programme_types: [programme.type]
+                )
+            }
+          ]
+        else
+          [
+            {
+              heading: "Consent given",
+              colour: "aqua-green",
+              count: consent_count(:given, programme).to_s,
+              link_to:
+                session_consent_path(
+                  session,
+                  consent_statuses: ["given"],
+                  programme_types: [programme.type]
+                )
+            }
+          ]
+        end
+      ),
+      {
+        heading: "Contraindicated or did not consent",
+        colour: "red",
+        count: could_not_vaccinate_count(programme).to_s,
+        link_to:
+          session_patients_path(
+            session,
+            vaccination_status: "could_not_vaccinate",
+            programme_types: [programme.type]
+          )
       },
       {
         heading: "Vaccinated",
@@ -30,33 +94,9 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
             vaccination_status: "vaccinated",
             programme_types: [programme.type]
           )
-      },
-      {
-        heading: "Could not vaccinate",
-        colour: "red",
-        count: could_not_vaccinate_count(programme).to_s,
-        link_to:
-          session_patients_path(
-            session,
-            vaccination_status: "could_not_vaccinate",
-            programme_types: [programme.type]
-          )
-      },
-      {
-        heading: "No outcome",
-        colour: "grey",
-        count: no_outcome_count(programme).to_s,
-        link_to:
-          session_patients_path(
-            session,
-            vaccination_status: "none_yet",
-            programme_types: [programme.type]
-          )
       }
-    ]
+    ].flatten
   end
-
-  private
 
   def eligible_for_vaccination_count(programme)
     @eligible_for_vaccination_count ||= {}
@@ -66,6 +106,8 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
       previously_vaccinated_count(programme) -
       vaccinated_at_different_locations_count(programme)
   end
+
+  private
 
   def vaccinated_count(programme)
     [
@@ -83,11 +125,12 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
     ).count
   end
 
-  def no_outcome_count(programme)
-    patients_for_programme(programme).has_vaccination_status(
-      :none_yet,
+  def consent_count(status, programme, vaccine_method: nil)
+    patients_for_programme(programme).has_consent_status(
+      status,
       programme:,
-      academic_year:
+      academic_year:,
+      vaccine_method:
     ).count
   end
 
