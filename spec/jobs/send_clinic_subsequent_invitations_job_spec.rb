@@ -9,7 +9,7 @@ describe SendClinicSubsequentInvitationsJob do
   let(:team) { create(:team, programmes:) }
   let(:parents) { create_list(:parent, 2) }
   let(:patient) { create(:patient, parents:, year_group: 8, session:) }
-  let(:location) { create(:generic_clinic, team:) }
+  let(:location) { create(:generic_clinic, team:, academic_year: 2024) }
 
   let(:session) do
     create(:session, programmes:, date: 1.week.ago.to_date, location:, team:)

@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module TriagesHelper
-  def triage_status_tag(triage)
+  def triage_status_text(triage)
+    return if triage.nil?
+
     status_method =
       if triage.programme.has_multiple_vaccine_methods? &&
            triage.vaccine_method.present?
@@ -10,7 +12,11 @@ module TriagesHelper
         triage.status
       end
 
-    text = Triage.human_enum_name(:status, status_method)
+    Triage.human_enum_name(:status, status_method)
+  end
+
+  def triage_status_tag(triage)
+    text = triage_status_text(triage)
 
     colour =
       if triage.invalidated?

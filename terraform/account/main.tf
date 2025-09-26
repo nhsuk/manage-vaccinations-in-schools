@@ -44,6 +44,38 @@ resource "aws_iam_policy" "data_replication_access" {
   }
 }
 
+resource "aws_iam_policy" "deny_pii_access" {
+  name        = "DenyPIIAccess"
+  description = "Deny access to personal identifiable information"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Deny"
+        Action = [
+          "ecs:ExecuteCommand",
+          "sts:AssumeRole"
+        ]
+        Resource = [
+          "*"
+        ]
+      },
+      {
+        "Sid" : "DenySelfRoleModification",
+        Effect = "Deny"
+        Action = [
+          "iam:PutRolePolicy",
+          "iam:DeleteRolePolicy",
+          "iam:DetachRolePolicy",
+          "iam:UpdateAssumeRolePolicy"
+        ]
+        Resource = [
+          "*" # TODO Target only role created by aws-prod-sso-config automation
+        ]
+      }
+    ]
+  })
+}
 
 ### Service linked role for Database Migration Service (DMS) ###
 

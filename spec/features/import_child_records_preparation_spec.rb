@@ -241,10 +241,15 @@ describe "Import child records" do
     ]
 
     @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
-    create(:school, urn: "123456", team: @team)
+    @school = create(:school, urn: "123456", team: @team)
     @user = @team.users.first
 
     [AcademicYear.current, AcademicYear.pending].each do |academic_year|
+      @school.create_default_programme_year_groups!(programmes, academic_year:)
+      @team.generic_clinic.create_default_programme_year_groups!(
+        programmes,
+        academic_year:
+      )
       TeamSessionsFactory.call(@team, academic_year:)
     end
   end

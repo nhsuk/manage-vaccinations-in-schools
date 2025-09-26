@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "pagy/extras/jsonapi"
-
 class API::Reporting::BaseController < ActionController::API
   # we need to still include the AuthenticationConcern even though
   # we're not using the authenticate_user! callback, because we call it
@@ -23,7 +21,7 @@ class API::Reporting::BaseController < ActionController::API
   private
 
   def render_paginated_json(records:)
-    pagy, this_page_records = pagy(records, json_api: true)
+    pagy, this_page_records = pagy(records, jsonapi: true)
 
     set_json_headers
     render json: { data: this_page_records, links: pagy_jsonapi_links(pagy) }

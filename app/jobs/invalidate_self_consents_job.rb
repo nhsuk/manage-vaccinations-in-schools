@@ -4,29 +4,36 @@ class InvalidateSelfConsentsJob < ApplicationJob
   queue_as :consents
 
   def perform
-    team_ids = Team.pluck(:id)
-    programme_ids = Programme.pluck(:id)
+    academic_year = AcademicYear.current
 
-    team_ids
-      .product(programme_ids)
-      .each do |team_id, programme_id|
+    Programme.find_each do |programme|
+      patients =
+        Patient.has_vaccination_status(
+          %i[none_yet could_not_vaccinate],
+          programme:,
+          academic_year:
+        )
+
+      Team.find_each do |team|
         consents =
           Consent
             .via_self_consent
-            .where(team_id:, programme_id:)
+            .where(academic_year:, team:, programme:)
+            .where(patient: patients)
             .where("created_at < ?", Date.current.beginning_of_day)
             .not_withdrawn
 
         triages =
           Triage
-            .where(team_id:, programme_id:)
-            .where("created_at < ?", Date.current.beginning_of_day)
+            .where(academic_year:, team:, programme:)
             .where(patient_id: consents.pluck(:patient_id))
+            .where("created_at < ?", Date.current.beginning_of_day)
 
         ActiveRecord::Base.transaction do
           consents.invalidate_all
           triages.invalidate_all
         end
       end
+    end
   end
 end

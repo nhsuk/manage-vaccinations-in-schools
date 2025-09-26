@@ -61,7 +61,9 @@ FactoryBot.define do
     end
 
     trait :with_generic_clinic do
-      after(:create) { |team| GenericClinicFactory.call(team:) }
+      after(:create) do |team|
+        GenericClinicFactory.call(team:, academic_year: AcademicYear.pending)
+      end
     end
   end
 end

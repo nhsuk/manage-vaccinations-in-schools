@@ -47,7 +47,7 @@ describe SessionProgrammesForm do
         location.location_programme_year_groups.count
       }.by(new_programme.default_year_groups.count)
 
-      expect(location.programme_year_groups[new_programme]).to eq(
+      expect(session.programme_year_groups[new_programme]).to eq(
         new_programme.default_year_groups
       )
     end

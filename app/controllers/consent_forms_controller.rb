@@ -40,8 +40,7 @@ class ConsentFormsController < ApplicationController
         .sessions
         .includes(:location_programme_year_groups, :programmes)
         .has_programmes(@consent_form.programmes)
-        .find_by(academic_year: AcademicYear.pending) ||
-        @consent_form.original_session
+        .find_by(academic_year: AcademicYear.pending) || @consent_form.session
 
     programme = session.programmes_for(patient: @patient).first
 
@@ -106,7 +105,7 @@ class ConsentFormsController < ApplicationController
           )
         end
 
-      school_move.confirm!
+      school_move.confirm!(user: current_user)
 
       @consent_form.match_with_patient!(patient, current_user:)
     end

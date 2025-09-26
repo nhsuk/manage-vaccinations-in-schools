@@ -428,12 +428,12 @@ class Patient < ApplicationRecord
   end
 
   def teams
-    Team.left_outer_joins(:sessions).joins(<<-SQL)
-        INNER JOIN patient_locations
-        ON patient_locations.patient_id = #{id}
-        AND patient_locations.location_id = sessions.location_id
-        AND patient_locations.academic_year = sessions.academic_year 
-      SQL
+    Team.distinct.joins(:sessions).joins(<<-SQL)
+      INNER JOIN patient_locations
+      ON patient_locations.patient_id = #{id}
+      AND patient_locations.location_id = sessions.location_id
+      AND patient_locations.academic_year = sessions.academic_year 
+    SQL
   end
 
   def archived?(team:)
@@ -454,7 +454,8 @@ class Patient < ApplicationRecord
     academic_year = AcademicYear.pending
     year_group = self.year_group(academic_year:)
     programme_year_groups =
-      school&.programme_year_groups || team.programme_year_groups
+      school&.programme_year_groups(academic_year:) ||
+        team.programme_year_groups(academic_year:)
 
     team.programmes.any? do |programme|
       programme_year_groups[programme].include?(year_group)
@@ -687,7 +688,13 @@ class Patient < ApplicationRecord
         ArchiveReason.new(team:, patient: self, type: :deceased)
       end
 
-    ArchiveReason.import!(archive_reasons, on_duplicate_key_update: :all)
+    ArchiveReason.import!(
+      archive_reasons,
+      on_duplicate_key_update: {
+        conflict_target: %i[team_id patient_id],
+        columns: %i[type]
+      }
+    )
   end
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::Patient.new(self)

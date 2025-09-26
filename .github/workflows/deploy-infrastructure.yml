@@ -17,16 +17,18 @@ on:
 
 permissions: {}
 
-concurrency:
-  group: deploy-infrastructure-${{ inputs.environment }}
-
 env:
+  environment: ${{ inputs.environment }}
+  image_tag: ${{ inputs.image_tag || github.sha }}
+  git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
   aws_role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
   aws_account_id: ${{ inputs.environment == 'production'
     && '820242920762' || '393416225559' }}
-  git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
+
+concurrency:
+  group: deploy-infrastructure-${{ inputs.environment }}
 
 defaults:
   run:
@@ -48,17 +50,13 @@ jobs:
         with:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
-      - name: Set image tag
-        run: |
-          IMAGE_TAG="${{ inputs.image_tag || github.sha }}"
-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
       - name: Login to ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
       - name: Pull Docker image
         run: |
           set -e
-          DOCKER_IMAGE="${{ steps.login-ecr.outputs.registry }}/mavis/webapp:${IMAGE_TAG}"
+          DOCKER_IMAGE="${{ steps.login-ecr.outputs.registry }}/mavis/webapp:$image_tag"
           docker pull "$DOCKER_IMAGE"
           echo "DOCKER_IMAGE=$DOCKER_IMAGE" >> $GITHUB_ENV
       - name: Extract image digest
@@ -72,14 +70,14 @@ jobs:
         with:
           terraform_version: 1.13.3
       - name: Check if any deployments are running
-        run: ../scripts/check-for-running-deployments.sh ${{ inputs.environment }}
+        run: ../scripts/check-for-running-deployments.sh $environment
       - name: Terraform Plan
         id: plan
         run: |
           set -e
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          terraform plan -var="image_digest=$DIGEST" -var="app_version=${{ env.git_ref_to_deploy }}"  \
-          -var-file="env/${{ inputs.environment }}.tfvars" \
+          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
+          terraform plan -var="image_digest=$DIGEST" -var="app_version=$git_ref_to_deploy"  \
+          -var-file="env/$environment.tfvars" \
           -out ${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
           TF_EXIT_CODE=${PIPESTATUS[0]}
           cat ${{ runner.temp }}/tf_stdout
@@ -122,5 +120,5 @@ jobs:
       - name: Apply the changes
         run: |
           set -e
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
           terraform apply ${{ runner.temp }}/tfplan

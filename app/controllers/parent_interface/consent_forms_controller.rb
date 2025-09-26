@@ -7,9 +7,9 @@ module ParentInterface
     skip_before_action :set_consent_form, only: %i[start create deadline_passed]
     skip_before_action :authenticate_consent_form_user!,
                        only: %i[start create deadline_passed]
+    skip_before_action :check_if_past_deadline!, only: :deadline_passed
 
-    before_action :clear_session_edit_variables, only: %i[confirm]
-    before_action :check_if_past_deadline, except: %i[deadline_passed]
+    before_action :clear_session_edit_variables, only: :confirm
 
     def start
     end
@@ -64,13 +64,6 @@ module ParentInterface
 
     def clear_session_edit_variables
       session.delete(:follow_up_changes_start_page)
-    end
-
-    def check_if_past_deadline
-      return if @session.open_for_consent?
-      redirect_to action: :deadline_passed,
-                  programme_types: @programmes.map(&:type).join("-"),
-                  session_slug: @session.slug
     end
   end
 end

@@ -415,8 +415,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_092416) do
     t.bigint "location_id", null: false
     t.bigint "programme_id", null: false
     t.integer "year_group", null: false
-    t.index ["location_id", "programme_id", "year_group"], name: "idx_on_location_id_programme_id_year_group_4bee220488", unique: true
-    t.index ["location_id"], name: "index_location_programme_year_groups_on_location_id"
+    t.integer "academic_year", null: false
+    t.index ["location_id", "academic_year", "programme_id", "year_group"], name: "idx_on_location_id_academic_year_programme_id_year__6ad5e2b67d", unique: true
     t.index ["programme_id"], name: "index_location_programme_year_groups_on_programme_id"
   end
 

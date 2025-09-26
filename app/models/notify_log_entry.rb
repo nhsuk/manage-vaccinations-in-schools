@@ -49,7 +49,8 @@ class NotifyLogEntry < ApplicationRecord
          delivered: 1,
          permanent_failure: 2,
          temporary_failure: 3,
-         technical_failure: 4
+         technical_failure: 4,
+         not_uk_mobile_number_failure: 5
        }
 
   validates :recipient, presence: true

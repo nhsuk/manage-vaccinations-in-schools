@@ -4,16 +4,16 @@
 #
 # Table name: location_programme_year_groups
 #
-#  id           :bigint           not null, primary key
-#  year_group   :integer          not null
-#  location_id  :bigint           not null
-#  programme_id :bigint           not null
+#  id            :bigint           not null, primary key
+#  academic_year :integer          not null
+#  year_group    :integer          not null
+#  location_id   :bigint           not null
+#  programme_id  :bigint           not null
 #
 # Indexes
 #
-#  idx_on_location_id_programme_id_year_group_4bee220488  (location_id,programme_id,year_group) UNIQUE
-#  index_location_programme_year_groups_on_location_id    (location_id)
-#  index_location_programme_year_groups_on_programme_id   (programme_id)
+#  idx_on_location_id_academic_year_programme_id_year__6ad5e2b67d  (location_id,academic_year,programme_id,year_group) UNIQUE
+#  index_location_programme_year_groups_on_programme_id            (programme_id)
 #
 # Foreign Keys
 #
@@ -30,11 +30,14 @@ class LocationProgrammeYearGroup < ApplicationRecord
         -> { distinct.order(:year_group).pluck(:year_group) }
 
   scope :pluck_birth_academic_years,
-        ->(academic_year:) do
-          pluck_year_groups.map { it.to_birth_academic_year(academic_year:) }
+        -> do
+          distinct
+            .order(:academic_year, :year_group)
+            .pluck(:academic_year, :year_group)
+            .map { _2.to_birth_academic_year(academic_year: _1) }
         end
 
-  def birth_academic_year(academic_year: nil)
+  def birth_academic_year
     year_group.to_birth_academic_year(academic_year:)
   end
 end

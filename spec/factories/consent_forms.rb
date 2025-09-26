@@ -122,6 +122,12 @@ FactoryBot.define do
       health_answers { [] }
     end
 
+    trait :education_setting_home do
+      education_setting { "home" }
+      school { nil }
+      school_confirmed { false }
+    end
+
     after(:create) do |consent_form, evaluator|
       vaccine_methods = evaluator.response == "given" ? %w[injection] : []
 

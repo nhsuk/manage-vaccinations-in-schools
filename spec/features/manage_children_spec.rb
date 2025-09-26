@@ -19,6 +19,17 @@ describe "Manage children" do
     then_i_see_the_activity_log
   end
 
+  scenario "Viewing children paginated" do
+    given_many_patients_exist
+
+    when_i_click_on_children
+    then_i_see_the_children
+    and_i_see_the_pages
+
+    when_i_visit_an_overflow_page
+    then_i_see_the_last_page
+  end
+
   scenario "Viewing children who have aged out" do
     given_patients_exist
     and_todays_date_is_in_the_far_future
@@ -194,6 +205,12 @@ describe "Manage children" do
       )
   end
 
+  def given_many_patients_exist
+    @session = create(:session, team: @team, programmes: [@programme])
+
+    create_list(:patient, 100, session: @session)
+  end
+
   def given_an_invalidated_patient_exists
     session = create(:session, team: @team, programmes: [@programme])
 
@@ -268,6 +285,20 @@ describe "Manage children" do
 
   def then_i_see_no_children
     expect(page).to have_content("No children")
+  end
+
+  def and_i_see_the_pages
+    expect(page).to have_content("Next page")
+    expect(page).to have_content("Showing 1 to 50 of 100 children")
+  end
+
+  def when_i_visit_an_overflow_page
+    visit patients_path(page: "100")
+  end
+
+  def then_i_see_the_last_page
+    expect(page).to have_content("Previous page")
+    expect(page).to have_content("Showing 51 to 100 of 100 children")
   end
 
   def when_i_click_on_view_aged_out_children

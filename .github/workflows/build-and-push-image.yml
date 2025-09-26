@@ -12,11 +12,12 @@ on:
         description: The git commit sha to build the image from.
         type: string
 
-concurrency:
-  group: build-and-push-image-${{ inputs.git-sha || github.sha }}
-
 env:
   PUSH_IMAGE_TO_PRODUCTION: ${{ github.ref_name == 'main' }}
+  git_ref: ${{ inputs.git-sha || github.sha }}
+
+concurrency:
+  group: build-and-push-image-${{ inputs.git-sha || github.sha }}
 
 permissions: {}
 
@@ -37,7 +38,7 @@ jobs:
       - name: Check if dev image exists
         id: check-dev-image
         run: |
-          if aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=${{ inputs.git-sha || github.sha }} > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=$git_ref > /dev/null 2>&1; then
             echo "Dev image with given tag already exists"
           else
             echo "Dev image does not exist. Build needed"
@@ -53,7 +54,7 @@ jobs:
         if: env.PUSH_IMAGE_TO_PRODUCTION == 'true'
         id: check-prod-image
         run: |
-          if aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=${{ inputs.git-sha || github.sha }} > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=$git_ref > /dev/null 2>&1; then
             echo "Production image with given tag already exists"
           else
             echo "Production image does not exist. Build needed"
@@ -68,7 +69,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          ref: ${{ inputs.git-sha || github.sha }}
+          ref: ${{ env.git_ref }}
       - name: Write build SHA
         run: git rev-parse HEAD > public/sha
       - name: Build Docker image
@@ -90,7 +91,7 @@ jobs:
       - name: Set aws roles
         id: determine-aws-roles
         run: |
-          if [ ${{ env.PUSH_IMAGE_TO_PRODUCTION }} = 'true' ]; then
+          if [ $PUSH_IMAGE_TO_PRODUCTION = 'true' ]; then
             echo 'aws-roles=["arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure", "arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure"]' >> $GITHUB_OUTPUT
           else
             echo 'aws-roles=["arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure"]' >> $GITHUB_OUTPUT
@@ -119,6 +120,6 @@ jobs:
       - name: Load Docker image
         run: docker load -i image.tar
       - name: Tag Docker image
-        run: docker tag mavis:latest "${{ steps.login-ecr.outputs.registry }}/mavis/webapp":"${{ inputs.git-sha || github.sha }}"
+        run: docker tag mavis:latest "${{ steps.login-ecr.outputs.registry }}/mavis/webapp":"$git_ref"
       - name: Push Docker image
-        run: docker push "${{ steps.login-ecr.outputs.registry }}/mavis/webapp":"${{ inputs.git-sha || github.sha }}"
+        run: docker push "${{ steps.login-ecr.outputs.registry }}/mavis/webapp":"$git_ref"

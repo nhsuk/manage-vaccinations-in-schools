@@ -2,6 +2,7 @@
 
 class Reports::OfflineSessionExporter
   include Reports::ExportFormatters
+  include TriagesHelper
 
   def initialize(session)
     @session = session
@@ -290,7 +291,7 @@ class Reports::OfflineSessionExporter
         }
       }
     )
-    row[:triage_status] = triage&.status&.humanize
+    row[:triage_status] = triage_status_text(triage)
     row[:triaged_by] = triage&.performed_by&.full_name
     row[:triage_date] = triage&.created_at
     row[:triage_notes] = triage&.notes

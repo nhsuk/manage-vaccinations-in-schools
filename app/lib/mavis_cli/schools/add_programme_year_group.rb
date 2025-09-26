@@ -31,11 +31,14 @@ module MavisCLI
           return
         end
 
+        academic_year = AcademicYear.pending
+
         ActiveRecord::Base.transaction do
           year_groups.each do |year_group|
             LocationProgrammeYearGroup.create!(
               location:,
               programme:,
+              academic_year:,
               year_group:
             )
           end

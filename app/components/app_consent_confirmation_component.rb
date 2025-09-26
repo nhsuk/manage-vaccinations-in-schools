@@ -37,6 +37,8 @@ class AppConsentConfirmationComponent < ViewComponent::Base
   end
 
   def panel_text
+    location = (@consent_form.education_setting_school? ? " at school" : "")
+
     if response_given?
       if @consent_form.health_answers_require_triage?
         <<-END_OF_TEXT
@@ -45,12 +47,12 @@ class AppConsentConfirmationComponent < ViewComponent::Base
           your answers and get in touch again soon.
         END_OF_TEXT
       else
-        "#{full_name} is due to get the #{given_vaccinations} at school" +
+        "#{full_name} is due to get the #{given_vaccinations}#{location}" +
           (session_dates.present? ? " on #{session_dates}" : "")
       end
     else
       "You’ve told us that you do not want #{full_name} to get the" \
-        " #{refused_vaccinations} at school"
+        " #{refused_vaccinations}#{location}"
     end
   end
 
@@ -86,7 +88,7 @@ class AppConsentConfirmationComponent < ViewComponent::Base
 
   def session_dates
     @consent_form
-      .actual_session
+      .session
       .today_or_future_dates
       .map { it.to_fs(:short_day_of_week) }
       .to_sentence(two_words_connector: " or ", last_word_connector: " or ")

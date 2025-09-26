@@ -14,13 +14,14 @@ on:
 
 permissions: {}
 
-concurrency:
-  group: backup-infrastructure-${{ inputs.environment }}
-
 env:
+  environment: ${{ inputs.environment }}
   aws_role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
+
+concurrency:
+  group: backup-infrastructure-${{ inputs.environment }}
 
 defaults:
   run:
@@ -51,8 +52,8 @@ jobs:
         run: |
           set -e
           git config --global url."https://foo:${PERSONAL_ACCESS_TOKEN}@github.com/NHSDigital".insteadOf "https://github.com/NHSDigital"
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          terraform plan -var-file="env/${{ inputs.environment }}.tfvars" \
+          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
+          terraform plan -var-file="env/$environment.tfvars" \
           -out ${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
       - name: Validate the changes
         run: |
@@ -94,5 +95,5 @@ jobs:
         run: |
           set -e
           git config --global url."https://foo:${PERSONAL_ACCESS_TOKEN}@github.com/NHSDigital".insteadOf "https://github.com/NHSDigital"
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
           terraform apply ${{ runner.temp }}/tfplan

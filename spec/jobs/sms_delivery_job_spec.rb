@@ -97,6 +97,66 @@ describe SMSDeliveryJob do
       end
     end
 
+    context "when the parent phone number is invalid" do
+      before do
+        allow(notifications_client).to receive(:send_sms).and_raise(
+          Notifications::Client::BadRequestError.new(
+            OpenStruct.new(
+              code: 400,
+              body: "InvalidPhoneError: Not a UK mobile number"
+            )
+          )
+        )
+      end
+
+      it "creates a log entry for the failure" do
+        expect { perform_now }.to change(NotifyLogEntry, :count).by(1)
+
+        notify_log_entry = NotifyLogEntry.last
+        expect(notify_log_entry).to be_sms
+        expect(notify_log_entry).to be_not_uk_mobile_number_failure
+        expect(notify_log_entry.delivery_id).to be_nil
+        expect(notify_log_entry.recipient).to eq("01234 567890")
+        expect(notify_log_entry.template_id).to eq(
+          GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
+        )
+        expect(notify_log_entry.parent).to eq(parent)
+        expect(notify_log_entry.patient).to eq(patient)
+        expect(notify_log_entry.programme_ids).to eq(programmes.map(&:id))
+        expect(notify_log_entry.sent_by).to eq(sent_by)
+      end
+    end
+
+    context "when the parent phone number is not part of the allow list" do
+      before do
+        allow(notifications_client).to receive(:send_sms).and_raise(
+          Notifications::Client::BadRequestError.new(
+            OpenStruct.new(
+              code: 400,
+              body: "Can’t send to this recipient using a team-only API key"
+            )
+          )
+        )
+      end
+
+      it "creates a log entry for the failure" do
+        expect { perform_now }.to change(NotifyLogEntry, :count).by(1)
+
+        notify_log_entry = NotifyLogEntry.last
+        expect(notify_log_entry).to be_sms
+        expect(notify_log_entry).to be_technical_failure
+        expect(notify_log_entry.delivery_id).to be_nil
+        expect(notify_log_entry.recipient).to eq("01234 567890")
+        expect(notify_log_entry.template_id).to eq(
+          GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
+        )
+        expect(notify_log_entry.parent).to eq(parent)
+        expect(notify_log_entry.patient).to eq(patient)
+        expect(notify_log_entry.programme_ids).to eq(programmes.map(&:id))
+        expect(notify_log_entry.sent_by).to eq(sent_by)
+      end
+    end
+
     context "with a consent form" do
       let(:consent_form) do
         create(:consent_form, session:, parent_phone: "01234567890")
@@ -135,6 +195,35 @@ describe SMSDeliveryJob do
         it "doesn't send a text" do
           expect(notifications_client).not_to receive(:send_sms)
           perform_now
+        end
+      end
+
+      context "when the parent phone number is invalid" do
+        before do
+          allow(notifications_client).to receive(:send_sms).and_raise(
+            Notifications::Client::BadRequestError.new(
+              OpenStruct.new(
+                code: 400,
+                body: "InvalidPhoneError: Not a UK mobile number"
+              )
+            )
+          )
+        end
+
+        it "creates a log entry for the failure" do
+          expect { perform_now }.to change(NotifyLogEntry, :count).by(1)
+
+          notify_log_entry = NotifyLogEntry.last
+          expect(notify_log_entry).to be_sms
+          expect(notify_log_entry).to be_not_uk_mobile_number_failure
+          expect(notify_log_entry.delivery_id).to be_nil
+          expect(notify_log_entry.recipient).to eq("01234 567890")
+          expect(notify_log_entry.template_id).to eq(
+            GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
+          )
+          expect(notify_log_entry.consent_form).to eq(consent_form)
+          expect(notify_log_entry.programme_ids).to eq(programmes.map(&:id))
+          expect(notify_log_entry.sent_by).to eq(sent_by)
         end
       end
     end

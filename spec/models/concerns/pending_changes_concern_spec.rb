@@ -60,4 +60,38 @@ describe PendingChangesConcern do
       expect(model.given_name).to eq("John")
     end
   end
+
+  describe "#normalised" do
+    it "downcases strings" do
+      expect(model.send(:normalised, "HELLO WORLD")).to eq("hello world")
+      expect(model.send(:normalised, "Mixed Case")).to eq("mixed case")
+      expect(model.send(:normalised, "lowercase")).to eq("lowercase")
+    end
+
+    it "normalises whitespace in strings" do
+      expect(model.send(:normalised, "  Hello   World  ")).to eq("hello world")
+      expect(model.send(:normalised, "Hello\tWorld")).to eq("hello world")
+    end
+
+    it "returns nil for empty strings" do
+      expect(model.send(:normalised, "")).to be_nil
+      expect(model.send(:normalised, "   ")).to be_nil
+    end
+
+    it "rounds Time objects" do
+      time = Time.zone.parse("2023-01-01 12:34:56.789")
+      expected = Time.zone.parse("2023-01-01 12:34:57")
+      expect(model.send(:normalised, time)).to eq(expected)
+    end
+
+    it "returns other types unchanged" do
+      expect(model.send(:normalised, 123)).to eq(123)
+      expect(model.send(:normalised, 45.67)).to eq(45.67)
+      expect(model.send(:normalised, true)).to be(true)
+      expect(model.send(:normalised, false)).to be(false)
+      expect(model.send(:normalised, nil)).to be_nil
+      expect(model.send(:normalised, [1, 2, 3])).to eq([1, 2, 3])
+      expect(model.send(:normalised, { a: 1 })).to eq({ a: 1 })
+    end
+  end
 end

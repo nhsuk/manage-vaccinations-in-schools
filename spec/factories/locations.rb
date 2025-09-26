@@ -44,6 +44,7 @@ FactoryBot.define do
     transient do
       team { nil }
       programmes { subteam&.team&.programmes || [] }
+      academic_year { AcademicYear.pending }
     end
 
     address_line_1 { Faker::Address.street_address }
@@ -57,7 +58,10 @@ FactoryBot.define do
     traits_for_enum :status
 
     after(:create) do |location, evaluator|
-      location.create_default_programme_year_groups!(evaluator.programmes)
+      location.create_default_programme_year_groups!(
+        evaluator.programmes,
+        academic_year: evaluator.academic_year
+      )
     end
 
     factory :community_clinic do

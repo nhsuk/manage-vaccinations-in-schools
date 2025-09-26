@@ -353,28 +353,39 @@ class ConsentForm < ApplicationRecord
     reason.in?(Consent::REASON_FOR_REFUSAL_REQUIRES_NOTES)
   end
 
-  def original_session
-    # The session that the consent form was filled out for.
-    @original_session ||=
-      Session
-        .joins(:programmes)
-        .where(programmes:)
-        .preload(:programmes)
-        .find_by(academic_year:, location:, team:)
-  end
+  def session
+    # This tries to find the most approriate session for this consent form.
+    # It's used when generating links to patients in a session, or when
+    # deciding which dates to show in an email. Under the hood, patients
+    # belong to locations, not sessions.
+    #
+    # Although unlikely to happen in production, there can be a scenario
+    # where multiple sessions at the same location offer the same programmes.
+    # In this case, we have to make a guess about which is the most relevant
+    # session.
 
-  def actual_session
-    # The session that the patient is expected to be seen in.
-    @actual_session ||=
-      (location_is_clinic? && original_session) ||
-        (
-          school &&
-            school
-              .sessions
-              .has_programmes(programmes)
-              .includes(:session_dates)
-              .find_by(academic_year:)
-        ) || team.generic_clinic_session(academic_year:)
+    @session ||=
+      begin
+        session_location = school || location
+
+        sessions_to_search =
+          Session.has_programmes(programmes).where(
+            academic_year:,
+            location: session_location,
+            team:
+          )
+
+        if (scheduled_session = sessions_to_search.find(&:scheduled?))
+          return scheduled_session
+        end
+
+        if education_setting_home? || education_setting_none?
+          team.generic_clinic_session(academic_year:)
+        else
+          sessions_to_search.first ||
+            team.generic_clinic_session(academic_year:)
+        end
+      end
   end
 
   def find_or_create_parent_with_relationship_to!(patient:)

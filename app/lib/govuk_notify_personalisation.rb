@@ -26,9 +26,7 @@ class GovukNotifyPersonalisation
     @programmes =
       programmes.presence || consent_form&.programmes.presence ||
         [consent&.programme || vaccination_record&.programme].compact
-    @session =
-      session || consent_form&.actual_session ||
-        consent_form&.original_session || vaccination_record&.session
+    @session = session || consent_form&.session || vaccination_record&.session
     @team =
       session&.team || consent_form&.team || consent&.team ||
         vaccination_record&.team
