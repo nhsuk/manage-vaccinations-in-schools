@@ -1,4 +1,4 @@
-SELECT DISTINCT
+SELECT DISTINCT ON (p.id, prog.id, t.id, s.academic_year)
   -- Unique identifier for concurrent refresh support
   CONCAT(p.id, '-', prog.id, '-', t.id, '-', s.academic_year) AS id,
   -- Patient identifiers (minimal)
@@ -153,3 +153,5 @@ LEFT JOIN (
 
 WHERE p.invalidated_at IS NULL
   AND p.restricted_at IS NULL
+
+ORDER BY p.id, prog.id, t.id, s.academic_year, patient_school_org.id NULLS LAST
