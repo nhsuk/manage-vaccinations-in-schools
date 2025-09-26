@@ -31,6 +31,17 @@ class AppPatientSearchFormComponent < ViewComponent::Base
             <% end %>
           <% end %>
         <% end %>
+        
+        <%= f.govuk_check_boxes_fieldset :show_only, multiple: false, legend: { text: "Show only", size: "s" } do %>
+          <%= f.govuk_check_box :still_to_vaccinate,
+                      1, 0,
+                      checked: form.still_to_vaccinate,
+                      multiple: false,
+                      link_errors: true,
+                      label: { text: "Still to vaccinate" },
+                      hint: { text: "With consent, not refused vaccine, not vaccinated yet" }%>
+
+        <% end %>
 
         <% if consent_statuses.any? %>
           <%= f.govuk_check_boxes_fieldset :consent_statuses, legend: { text: "Consent status", size: "s" } do %>
