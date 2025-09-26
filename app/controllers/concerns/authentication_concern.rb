@@ -32,6 +32,12 @@ module AuthenticationConcern
           redirect_to users_organisation_not_found_path
         elsif !selected_cis2_workgroup_is_valid?
           redirect_to users_workgroup_not_found_path
+        elsif user_is_support?
+          unless path_is_support? || request.path == "/users/teams/new"
+            redirect_to inspect_dashboard_path
+          end
+        elsif path_is_support?
+          redirect_to users_unauthorized_path
         end
       end
     end
@@ -51,7 +57,19 @@ module AuthenticationConcern
     def selected_cis2_role_is_valid?
       cis2_info.is_medical_secretary? || cis2_info.is_nurse? ||
         cis2_info.is_healthcare_assistant? || cis2_info.is_superuser? ||
-        cis2_info.is_prescriber?
+        cis2_info.is_prescriber? || cis2_info.is_support?
+    end
+
+    def user_is_support?
+      cis2_info.is_support?
+    end
+
+    def user_is_support_with_pii_access?
+      cis2_info.is_support_with_pii_access?
+    end
+
+    def path_is_support?
+      request.path.start_with?("/inspect")
     end
 
     def storable_location?
@@ -100,8 +118,8 @@ module AuthenticationConcern
 
         unless authenticated
           request_http_basic_authentication "Application", <<~MESSAGE
-        Access is currently restricted to authorised users only.
-      MESSAGE
+          Access is currently restricted to authorised users only.
+          MESSAGE
         end
       end
     end

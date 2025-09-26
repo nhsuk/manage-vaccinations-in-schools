@@ -174,6 +174,8 @@ module CIS2AuthHelper
     nhsid_nrbac_role["activity_codes"] = activity_codes
     nhsid_nrbac_role["workgroups"] = workgroups
 
+    nhsid_nrbac_role["activity_codes"] = activity_codes
+
     mock_auth["uid"] = uid
     raw_info["uid"] = uid
     raw_info["sub"] = uid
