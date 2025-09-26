@@ -226,6 +226,32 @@ describe Reports::OfflineSessionExporter do
           end
         end
 
+        context "with a triage assessment" do
+          let!(:patient) do
+            create(:patient, :triage_ready_to_vaccinate, session:)
+          end
+
+          it "adds a row with the triage details" do
+            expect(rows.count).to eq(1)
+            expected_status =
+              (
+                if programme.flu?
+                  "Safe to vaccinate with injection"
+                else
+                  "Safe to vaccinate"
+                end
+              )
+            expect(rows.first["TRIAGE_STATUS"]).to eq(expected_status)
+            expect(rows.first["TRIAGED_BY"]).to be_present
+
+            triage = patient.triages.find_by(programme:, academic_year:)
+            expect(Time.zone.parse(rows.first["TRIAGE_DATE"]).to_i).to eq(
+              triage.created_at.to_i
+            )
+            expect(rows.first["TRIAGE_NOTES"]).to eq(triage.notes)
+          end
+        end
+
         context "with a vaccinated patient" do
           before { create(:patient_location, patient:, session:) }
 
@@ -1057,6 +1083,29 @@ describe Reports::OfflineSessionExporter do
     end
 
     include_examples "generates a report"
+
+    context "with a triage assessment for injection only" do
+      subject(:rows) { worksheet_to_hashes(workbook.worksheets[0]) }
+
+      let(:session) { create(:session, programmes: [programme]) }
+      let(:patient) do
+        create(
+          :patient,
+          :consent_given_nasal_triage_safe_to_vaccinate_nasal,
+          session:
+        )
+      end
+      let(:workbook) { RubyXL::Parser.parse_buffer(call) }
+
+      it "adds a row with the triage details" do
+        patient
+
+        expect(rows.count).to eq(1)
+        expect(rows.first["TRIAGE_STATUS"]).to eq(
+          "Safe to vaccinate with nasal spray"
+        )
+      end
+    end
   end
 
   context "HPV programme" do

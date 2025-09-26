@@ -59,6 +59,10 @@ FactoryBot.define do
       vaccine_method { "injection" }
     end
 
+    trait :nasal_only do
+      vaccine_method { "nasal" }
+    end
+
     trait :do_not_vaccinate do
       status { "do_not_vaccinate" }
       vaccine_method { nil }
