@@ -55,7 +55,8 @@ describe "Flu vaccination" do
         vaccine: @programme.vaccines.nasal.first
       )
 
-    @nurse = create(:nurse, team: @team)
+    @nurse =
+      create(:nurse, team: @team, given_name: "Supplying", family_name: "Nurse")
     @user = create(:healthcare_assistant, team: @team)
 
     @session =
@@ -140,7 +141,7 @@ describe "Flu vaccination" do
     expect(page).not_to have_content("injected flu instead")
 
     check "I have checked that the above statements are true"
-    select @nurse.full_name
+    select "NURSE, Supplying"
     within all("section")[1] do
       choose "Yes"
     end
