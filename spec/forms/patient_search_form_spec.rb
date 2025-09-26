@@ -18,7 +18,8 @@ describe PatientSearchForm do
   let(:request_path) { "/patients" }
   let(:session) { nil }
 
-  let(:programmes) { [create(:programme, :flu)] }
+  let(:programme) { create(:programme, :flu) }
+  let(:programmes) { [programme] }
   let(:team) { create(:team, programmes:) }
 
   let(:aged_out_of_programmes) { nil }
@@ -34,6 +35,7 @@ describe PatientSearchForm do
   let(:register_status) { nil }
   let(:triage_status) { nil }
   let(:vaccine_method) { nil }
+  let(:still_to_vaccinate) { nil }
   let(:patient_specific_direction_status) { nil }
   let(:year_groups) { %w[8 9 10 11] }
 
@@ -47,6 +49,7 @@ describe PatientSearchForm do
       date_of_birth_year:,
       missing_nhs_number:,
       vaccination_status:,
+      still_to_vaccinate:,
       patient_specific_direction_status:,
       programme_types:,
       q:,
@@ -525,6 +528,58 @@ describe PatientSearchForm do
         it "sorts by similarity" do
           expect(form.apply(scope)).to eq([patient_a, patient_b, patient_c])
         end
+      end
+    end
+
+    context "when still_to_vaccinate is true" do
+      let(:consent_statuses) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:vaccination_status) { nil }
+      let(:programme_types) { nil }
+      let(:q) { nil }
+      let(:register_status) { nil }
+      let(:triage_status) { nil }
+      let(:year_groups) { nil }
+      let(:still_to_vaccinate) { "1" }
+
+      let(:session) { session_for_patients }
+
+      let(:patient_a) do
+        create(
+          :patient,
+          given_name: "Harry",
+          family_name: "Potter",
+          session: session_for_patients
+        )
+      end
+
+      let(:patient_b) do
+        create(
+          :patient,
+          given_name: "Hari",
+          family_name: "Potter",
+          session: session_for_patients
+        )
+      end
+
+      before do
+        create(
+          :patient_consent_status,
+          :given_injection_only,
+          programme:,
+          patient: patient_a
+        )
+      end
+
+      it "returns patient A" do
+        expect(form.apply(scope)).to eq([patient_a])
+      end
+
+      it "does not return patient B" do
+        expect(form.apply(scope)).not_to include(patient_b)
       end
     end
   end

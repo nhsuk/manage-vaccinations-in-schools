@@ -18,6 +18,7 @@ class PatientSearchForm < SearchForm
   attribute :triage_status, :string
   attribute :vaccine_method, :string
   attribute :year_groups, array: true
+  attribute :still_to_vaccinate, :boolean
 
   def initialize(current_user:, session: nil, **attributes)
     @current_user = current_user
@@ -60,6 +61,7 @@ class PatientSearchForm < SearchForm
     scope = filter_triage_status(scope)
     scope = filter_vaccine_method(scope)
     scope = filter_patient_specific_direction_status(scope)
+    scope = filter_still_to_vaccinate(scope)
 
     scope.order_by_name
   end
@@ -240,5 +242,14 @@ class PatientSearchForm < SearchForm
     else
       scope
     end
+  end
+
+  def filter_still_to_vaccinate(scope)
+    return scope if still_to_vaccinate.blank?
+
+    # We can use this scope because when a patient is vaccinated, their
+    # consent status is updated from "given" to "not_required" which means
+    # those patients will not appear in the search results.
+    scope.has_consent_status("given", programme: programmes, academic_year:)
   end
 end

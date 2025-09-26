@@ -9,8 +9,23 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
 
   attr_reader :session, :patient_ids, :academic_year
 
-  delegate :govuk_table, :session_consent_period, to: :helpers
   delegate :programmes, to: :session
+  delegate :govuk_table,
+           :govuk_button_link_to,
+           :govuk_inset_text,
+           :session_consent_period,
+           :policy,
+           to: :helpers
+
+  def heading
+    if session.completed?
+      "All session dates completed"
+    elsif session.today?
+      "Session in progress"
+    else
+      "Scheduled session dates"
+    end
+  end
 
   def tally_cards_for_programme(programme)
     [
@@ -108,6 +123,13 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
       count: consent_refused_count(programmes).to_s,
       link_to: session_consent_path(session, consent_statuses: ["refused"])
     }
+  end
+
+  def still_to_vaccinate_count
+    session
+      .patients
+      .has_consent_status("given", programme: programmes, academic_year:)
+      .count
   end
 
   private
