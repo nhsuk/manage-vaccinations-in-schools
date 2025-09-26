@@ -555,6 +555,18 @@ FactoryBot.define do
         end
       end
 
+      triages do
+        programmes.map do |programme|
+          association(
+            :triage,
+            :ready_to_vaccinate,
+            :nasal_only,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+
       consent_statuses do
         programmes.map do |programme|
           association(
