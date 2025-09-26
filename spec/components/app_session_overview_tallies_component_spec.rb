@@ -9,6 +9,8 @@ describe AppSessionOverviewTalliesComponent do
 
   let(:component) { described_class.new(session) }
 
+  before { stub_authorization(allowed: true) }
+
   shared_examples "displays correct count" do |programme_name, tally_name, count|
     it "displays correct #{tally_name.downcase} count" do
       rendered

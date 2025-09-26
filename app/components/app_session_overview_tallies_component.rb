@@ -5,12 +5,37 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
     @session = session
     @patient_ids = session.patients.pluck(:id)
     @academic_year = session.academic_year
+    @session_dates = session.dates
   end
 
-  attr_reader :session, :patient_ids, :academic_year
+  attr_reader :session, :patient_ids, :academic_year, :session_dates
 
-  delegate :govuk_table, to: :helpers
   delegate :programmes, to: :session
+  delegate :govuk_table,
+           :govuk_button_link_to,
+           :govuk_inset_text,
+           :session_consent_period,
+           :policy,
+           to: :helpers
+
+  def heading
+    if session.completed?
+      "All session dates completed"
+    elsif session.today?
+      "Session in progress"
+    else
+      "Scheduled session dates"
+    end
+  end
+
+  def no_sessions_message
+    location_context = @session.generic_clinic? ? "clinic" : "school"
+    "There are currently no sessions scheduled at this #{location_context}."
+  end
+
+  def edit_button_text
+    session_dates.empty? ? "Schedule sessions" : "Edit session"
+  end
 
   def tally_cards_for_programme(programme)
     [
@@ -98,6 +123,19 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
     ].flatten
   end
 
+  def still_to_vaccinate_count
+    session
+      .patients
+      .consent_given_and_ready_to_vaccinate(
+        programmes:,
+        academic_year:,
+        vaccine_method: nil
+      )
+      .count
+  end
+
+  private
+
   def eligible_for_vaccination_count(programme)
     @eligible_for_vaccination_count ||= {}
     @eligible_for_vaccination_count[
@@ -106,8 +144,6 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
       previously_vaccinated_count(programme) -
       vaccinated_at_different_locations_count(programme)
   end
-
-  private
 
   def vaccinated_count(programme)
     [

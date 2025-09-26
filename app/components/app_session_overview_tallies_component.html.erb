@@ -26,4 +26,34 @@
       </ul>
     </section>
   <% end %>
+  <section>
+    <%= render AppCardComponent.new do |card| %>
+      <% if session.today? %>
+        <%= govuk_inset_text classes: "nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-4" do %>
+          <%= link_to "#{still_to_vaccinate_count} children with consent have not been vaccinated yet",
+                      session_patients_path(session, still_to_vaccinate: 1) %>
+        <% end %>
+      <% end %>
+
+      <% card.with_heading(level: 3) { heading } %>
+
+      <% if session.started? %>
+        <%= render AppSessionDatesTableComponent.new(session) %>
+      <% else %>
+        <% if session_dates.present? %>
+          <%= tag.ul(class: "nhsuk-list") do %>
+            <% session_dates.each do |date| %>
+              <%= tag.li(date.to_fs(:long_day_of_week)) %>
+            <% end %>
+          <% end %>
+        <% else %>
+          <p class="nhsuk-hint"><%= no_sessions_message %></p>
+        <% end %>
+      <% end %>
+
+      <% if policy(session).edit? %>
+        <%= govuk_button_link_to edit_button_text, edit_session_path(session), secondary: true %>
+      <% end %>
+    <% end %>
+  </section>
 </div>
