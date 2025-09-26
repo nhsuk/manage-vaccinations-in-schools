@@ -39,12 +39,12 @@ describe AppSessionOverviewTalliesComponent do
   end
 
   context "with no patient sessions" do
-    include_examples "displays correct count", "Flu", "Eligible cohort", 0
+    include_examples "displays correct count", "Flu", "Eligible children", 0
     include_examples "displays correct count", "Flu", "Vaccinated", 0
     include_examples "displays correct count", "Flu", "Could not vaccinate", 0
     include_examples "displays correct count", "Flu", "No outcome", 0
 
-    include_examples "displays correct count", "HPV", "Eligible cohort", 0
+    include_examples "displays correct count", "HPV", "Eligible children", 0
     include_examples "displays correct count", "HPV", "Vaccinated", 0
     include_examples "displays correct count", "HPV", "Could not vaccinate", 0
     include_examples "displays correct count", "HPV", "No outcome", 0
@@ -63,7 +63,7 @@ describe AppSessionOverviewTalliesComponent do
         )
       end
 
-      include_examples "displays correct count", "Flu", "Eligible cohort", 1
+      include_examples "displays correct count", "Flu", "Eligible children", 1
       include_examples "displays correct count", "Flu", "Vaccinated", 1
       include_examples "displays correct count", "Flu", "Could not vaccinate", 0
       include_examples "displays correct count", "Flu", "No outcome", 0
@@ -79,7 +79,7 @@ describe AppSessionOverviewTalliesComponent do
         )
       end
 
-      include_examples "displays correct count", "Flu", "Eligible cohort", 1
+      include_examples "displays correct count", "Flu", "Eligible children", 1
       include_examples "displays correct count", "Flu", "Vaccinated", 0
       include_examples "displays correct count", "Flu", "Could not vaccinate", 1
       include_examples "displays correct count", "Flu", "No outcome", 0
@@ -95,7 +95,7 @@ describe AppSessionOverviewTalliesComponent do
         )
       end
 
-      include_examples "displays correct count", "Flu", "Eligible cohort", 1
+      include_examples "displays correct count", "Flu", "Eligible children", 1
       include_examples "displays correct count", "Flu", "Vaccinated", 0
       include_examples "displays correct count", "Flu", "Could not vaccinate", 0
       include_examples "displays correct count", "Flu", "No outcome", 1
@@ -112,7 +112,7 @@ describe AppSessionOverviewTalliesComponent do
         )
       end
 
-      include_examples "displays correct count", "HPV", "Eligible cohort", 0
+      include_examples "displays correct count", "HPV", "Eligible children", 0
       include_examples "displays correct count", "HPV", "Vaccinated", 0
       include_examples "displays correct count", "HPV", "Could not vaccinate", 0
       include_examples "displays correct count", "HPV", "No outcome", 0
@@ -129,7 +129,7 @@ describe AppSessionOverviewTalliesComponent do
         )
       end
 
-      include_examples "displays correct count", "Flu", "Eligible cohort", 1
+      include_examples "displays correct count", "Flu", "Eligible children", 1
       include_examples "displays correct count", "Flu", "Vaccinated", 0
       include_examples "displays correct count", "Flu", "Could not vaccinate", 0
       include_examples "displays correct count", "Flu", "No outcome", 0
@@ -145,7 +145,7 @@ describe AppSessionOverviewTalliesComponent do
         )
       end
 
-      include_examples "displays correct count", "HPV", "Eligible cohort", 0
+      include_examples "displays correct count", "HPV", "Eligible children", 0
       include_examples "displays correct count", "HPV", "Vaccinated", 0
       include_examples "displays correct count", "HPV", "Could not vaccinate", 0
       include_examples "displays correct count", "HPV", "No outcome", 0
@@ -162,7 +162,7 @@ describe AppSessionOverviewTalliesComponent do
         )
       end
 
-      include_examples "displays correct count", "HPV", "Eligible cohort", 1
+      include_examples "displays correct count", "HPV", "Eligible children", 1
       include_examples "displays correct count", "HPV", "Vaccinated", 0
       include_examples "displays correct count", "HPV", "Could not vaccinate", 0
       include_examples "displays correct count", "HPV", "No outcome", 0
@@ -188,11 +188,91 @@ describe AppSessionOverviewTalliesComponent do
         )
       end
 
-      include_examples "displays correct count", "HPV", "Eligible cohort", 1
+      include_examples "displays correct count", "HPV", "Eligible children", 1
       include_examples "displays correct count", "HPV", "Vaccinated", 0
       include_examples "displays correct count", "HPV", "Could not vaccinate", 0
       include_examples "displays correct count", "HPV", "No outcome", 0
     end
+
+    context "multiple patients with with various consent statuses" do
+      before do
+        create(
+          :patient_consent_status,
+          :refused,
+          patient: create(:patient, session:, year_group: 9),
+          programme: hpv_programme
+        )
+
+        create(
+          :patient_consent_status,
+          :given_injection_only,
+          patient: create(:patient, session:, year_group: 9),
+          programme: hpv_programme
+        )
+
+        create(
+          :patient_consent_status,
+          :given_nasal_or_injection,
+          patient: create(:patient, session:, year_group: 9),
+          programme: flu_programme
+        )
+
+        create(
+          :patient_consent_status,
+          :given_injection_only,
+          patient: create(:patient, session:, year_group: 9),
+          programme: flu_programme
+        )
+      end
+
+      include_examples "displays correct count",
+                       "Consent",
+                       "Consent given for HPV",
+                       1
+      include_examples "displays correct count",
+                       "Consent",
+                       "Consent given for flu (nasal spray)",
+                       1
+      include_examples "displays correct count",
+                       "Consent",
+                       "Consent given for flu (injection)",
+                       1
+      include_examples "displays correct count", "Consent", "Consent refused", 1
+    end
+  end
+
+  context "when patient has consented to more than one programme" do
+    let(:patient) { create(:patient, session:, year_group: 9) }
+
+    before do
+      create(
+        :patient_consent_status,
+        :refused,
+        patient:,
+        programme: hpv_programme
+      )
+
+      create(
+        :patient_consent_status,
+        :refused,
+        patient:,
+        programme: flu_programme
+      )
+    end
+
+    include_examples "displays correct count",
+                     "Consent",
+                     "Consent given for HPV",
+                     0
+    include_examples "displays correct count",
+                     "Consent",
+                     "Consent given for flu (nasal spray)",
+                     0
+    include_examples "displays correct count",
+                     "Consent",
+                     "Consent given for flu (injection)",
+                     0
+    include_examples "displays correct count", "Consent", "Consent refused", 1
   end
 
   context "three patients eligible, one vaccinated, one could not be vaccinated, and one had no outcome" do
@@ -219,7 +299,7 @@ describe AppSessionOverviewTalliesComponent do
       )
     end
 
-    include_examples "displays correct count", "HPV", "Eligible cohort", 3
+    include_examples "displays correct count", "HPV", "Eligible children", 3
     include_examples "displays correct count", "HPV", "Vaccinated", 1
     include_examples "displays correct count", "HPV", "Could not vaccinate", 1
     include_examples "displays correct count", "HPV", "No outcome", 1
