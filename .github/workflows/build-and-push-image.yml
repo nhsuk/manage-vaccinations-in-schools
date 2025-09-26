@@ -1,4 +1,5 @@
 name: Build and push image
+run-name: Build and push image for ${{ inputs.git-sha || github.sha }}
 
 on:
   workflow_dispatch:
