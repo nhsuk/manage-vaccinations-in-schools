@@ -226,6 +226,20 @@ describe Reports::OfflineSessionExporter do
           end
         end
 
+        context "with a triage assessment" do
+          let!(:patient) { create(:patient, :triage_ready_to_vaccinate, session:) }
+
+          it "adds a row with the triage details" do
+            expect(rows.count).to eq(1)
+            expect(rows.first["TRIAGE_STATUS"]).to eq("Ready to vaccinate")
+            expect(rows.first["TRIAGED_BY"]).to be_present
+
+            triage = patient.triages.find_by(programme:, academic_year:)
+            expect(Time.parse(rows.first["TRIAGE_DATE"]).to_i).to eq(triage.created_at.to_i)
+            expect(rows.first["TRIAGE_NOTES"]).to eq(triage.notes)
+          end
+        end
+
         context "with a vaccinated patient" do
           before { create(:patient_location, patient:, session:) }
 
