@@ -33,15 +33,23 @@ module MavisCLI
 
         academic_year = AcademicYear.pending
 
-        ActiveRecord::Base.transaction do
-          year_groups.each do |year_group|
-            LocationProgrammeYearGroup.create!(
+        location_programme_year_groups =
+          year_groups.map do |year_group|
+            LocationProgrammeYearGroup.new(
               location:,
               programme:,
               academic_year:,
               year_group:
             )
           end
+
+        begin
+          LocationProgrammeYearGroup.import!(
+            location_programme_year_groups,
+            on_duplicate_key_ignore: true
+          )
+        rescue ActiveRecord::RecordInvalid => e
+          warn e.message
         end
       end
     end
