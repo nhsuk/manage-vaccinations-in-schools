@@ -92,9 +92,7 @@ class DraftConsentsController < ApplicationController
 
     @draft_consent.health_answers.each_with_index do |health_answer, index|
       attributes = questions_attrs["question_#{index}"]
-      if health_answer.requires_notes?
-        health_answer.assign_attributes(attributes)
-      end
+      health_answer.assign_attributes(attributes) if health_answer.ask_notes?
     end
 
     @draft_consent.assign_attributes(wizard_step: current_step)
