@@ -7,10 +7,19 @@ class ManifestController < ApplicationController
   before_action :set_assets_name
 
   def show
-    respond_to do |format|
-      format.json do
-        render "manifest/show", content_type: "application/manifest+json"
+    render_block = -> do
+      respond_to do |format|
+        format.json do
+          render "manifest/show", content_type: "application/manifest+json"
+        end
       end
+    end
+
+    if params[:digest] == helpers.manifest_digest
+      http_cache_forever(public: true, &render_block)
+    else
+      expires_in 1.hour, public: true
+      render_block
     end
   end
 
