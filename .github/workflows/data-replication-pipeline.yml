@@ -130,6 +130,32 @@ jobs:
           name: ${{ inputs.environment }}-data-replication-task-definition
           path: ${{ runner.temp }}/data-replication-task-definition.json
 
+  notify-approval-required:
+    name: Notify on approval required
+    runs-on: ubuntu-latest
+    needs: prepare-deployment
+    if: ${{ inputs.environment == 'production' }}
+    steps:
+      - name: Notify pending approval
+        if: inputs.environment == 'production'
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
+        with:
+          webhook: ${{ secrets.SLACK_MAVIS_TECH_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: ":hourglass: Approval required :hourglass:"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "${{ github.workflow }} requires approval"
+              - type: "section"
+                fields:
+                  - type: "mrkdwn"
+                    text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow run>"
+                  - type: "mrkdwn"
+                    text: "*Triggered by:*\n${{ github.actor }}"
+
   approve-deployments:
     name: Wait for approval if required
     runs-on: ubuntu-latest
