@@ -1,0 +1,25 @@
+{
+  "Version" : "2012-10-17",
+  "Statement" : [
+  {
+    "Effect" : "Deny",
+    "Action" : [
+      "ecs:ExecuteCommand",
+      "sts:AssumeRole"
+    ],
+    "Resource" : [
+      "*"
+    ]
+  },
+  {
+    "Sid" : "DenySelfPolicyModification",
+    "Action" : [
+      "iam:CreatePolicyVersion",
+      "iam:DeletePolicyVersion"
+    ],
+    "Effect" : "Deny",
+    "Resource" : [
+      "arn:aws:iam::${account_id}:policy/DenyPIIAccess"
+    ]}
+  ]
+}
