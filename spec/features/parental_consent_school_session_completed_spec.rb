@@ -3,14 +3,23 @@
 describe "Parental consent" do
   around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
 
-  scenario "Move to a completed session" do
-    stub_pds_search_to_return_no_patients
+  before { stub_pds_search_to_return_no_patients }
 
+  scenario "Move to an unscheduled session" do
     given_an_hpv_programme_is_underway
 
     when_i_go_to_the_consent_form
     and_i_fill_in_my_childs_name_and_birthday
-    and_i_try_to_give_consent
+    and_i_try_to_give_consent_for_the_unscheduled_school
+    then_i_see_that_consent_is_open
+  end
+
+  scenario "Move to a completed session" do
+    given_an_hpv_programme_is_underway
+
+    when_i_go_to_the_consent_form
+    and_i_fill_in_my_childs_name_and_birthday
+    and_i_try_to_give_consent_for_the_completed_school
     then_i_see_that_consent_is_closed
   end
 
@@ -20,10 +29,12 @@ describe "Parental consent" do
 
     @subteam = create(:subteam, team: @team)
 
-    @scheduled_school =
+    @unscheduled_school =
       create(:school, :secondary, name: "School 1", subteam: @subteam)
-    @completed_school =
+    @scheduled_school =
       create(:school, :secondary, name: "School 2", subteam: @subteam)
+    @completed_school =
+      create(:school, :secondary, name: "School 3", subteam: @subteam)
 
     @scheduled_session =
       create(
@@ -32,6 +43,15 @@ describe "Parental consent" do
         team: @team,
         programmes: [@programme],
         location: @scheduled_school
+      )
+
+    @unscheduled_session =
+      create(
+        :session,
+        :unscheduled,
+        team: @team,
+        programmes: [@programme],
+        location: @unscheduled_school
       )
 
     @completed_session =
@@ -69,12 +89,25 @@ describe "Parental consent" do
     click_on "Continue"
   end
 
-  def and_i_try_to_give_consent
+  def and_i_try_to_give_consent_for_the_unscheduled_school
+    choose "No, they go to a different school"
+    click_on "Continue"
+
+    select @unscheduled_school.name
+    click_on "Continue"
+  end
+
+  def and_i_try_to_give_consent_for_the_completed_school
     choose "No, they go to a different school"
     click_on "Continue"
 
     select @completed_school.name
     click_on "Continue"
+  end
+
+  def then_i_see_that_consent_is_open
+    expect(page).to have_content("About you")
+    expect(page).to have_button("Continue")
   end
 
   def then_i_see_that_consent_is_closed

@@ -354,7 +354,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def session
-    # This tries to find the most approriate session for this consent form.
+    # This tries to find the most appropriate session for this consent form.
     # It's used when generating links to patients in a session, or when
     # deciding which dates to show in an email. Under the hood, patients
     # belong to locations, not sessions.
@@ -365,7 +365,10 @@ class ConsentForm < ApplicationRecord
     # session.
 
     @session ||=
-      begin
+      if location_is_clinic? || education_setting_home? ||
+           education_setting_none?
+        team.generic_clinic_session(academic_year:)
+      else
         session_location = school || location
 
         sessions_to_search =
@@ -375,16 +378,9 @@ class ConsentForm < ApplicationRecord
             team:
           )
 
-        if (scheduled_session = sessions_to_search.find(&:scheduled?))
-          return scheduled_session
-        end
-
-        if education_setting_home? || education_setting_none?
+        sessions_to_search.find(&:scheduled?) ||
+          sessions_to_search.find(&:unscheduled?) || sessions_to_search.first ||
           team.generic_clinic_session(academic_year:)
-        else
-          sessions_to_search.first ||
-            team.generic_clinic_session(academic_year:)
-        end
       end
   end
 
