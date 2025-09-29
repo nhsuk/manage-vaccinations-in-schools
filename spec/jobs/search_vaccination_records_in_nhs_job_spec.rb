@@ -41,6 +41,30 @@ describe SearchVaccinationRecordsInNHSJob do
       end
     end
 
+    shared_examples "sends discovery comms if required once" do
+      it "calls send_vaccination_discovered_if_required once" do
+        expect(AlreadyHadNotificationSender).to receive(:call).once
+
+        perform
+      end
+    end
+
+    shared_examples "sends discovery comms if required twice" do
+      it "calls send_vaccination_discovered_if_required twice" do
+        expect(AlreadyHadNotificationSender).to receive(:call).twice
+
+        perform
+      end
+    end
+
+    shared_examples "doesn't send discovery comms" do
+      it "does not call send_vaccination_discovered_if_required" do
+        expect(AlreadyHadNotificationSender).not_to receive(:call)
+
+        perform
+      end
+    end
+
     let(:expected_query) do
       {
         "patient.identifier" =>
