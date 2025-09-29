@@ -624,17 +624,10 @@ describe ConsentForm do
       context "with an unscheduled and scheduled school session" do
         before do
           create(:session, :unscheduled, location: school, team:, programmes:)
-        end
-
-        let!(:scheduled_school_session) do
           create(:session, :scheduled, location: school, team:, programmes:)
         end
 
-        # This intentionally returns the school session because the clinic session
-        # might not be scheduled with dates yet (which is usually the case early
-        # on at the beginning of the year), and without a session the user sees
-        # a page saying the deadline has passed.
-        it { should eq(scheduled_school_session) }
+        it { should eq(generic_clinic_session) }
       end
     end
 

@@ -102,6 +102,7 @@ module ParentInterface
     end
 
     def check_if_past_deadline!
+      return if @session.unscheduled?
       return if @session.open_for_consent?
 
       redirect_to deadline_passed_parent_interface_consent_forms_path(
