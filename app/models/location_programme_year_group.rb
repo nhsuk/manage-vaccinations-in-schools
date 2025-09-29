@@ -37,7 +37,13 @@ class LocationProgrammeYearGroup < ApplicationRecord
             .map { _2.to_birth_academic_year(academic_year: _1) }
         end
 
+  validates :year_group, inclusion: { in: :valid_year_groups }
+
   def birth_academic_year
     year_group.to_birth_academic_year(academic_year:)
   end
+
+  private
+
+  def valid_year_groups = location&.year_groups || []
 end
