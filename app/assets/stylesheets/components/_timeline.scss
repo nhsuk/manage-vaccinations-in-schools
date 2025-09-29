@@ -1,0 +1,126 @@
+@use "../vendor/nhsuk-frontend" as *;
+
+$_badge-size-mobile: 16px;
+$_badge-small-size-mobile: 12px;
+$_timeline-border-width: 2px;
+
+@function _dot-size($size) {
+  @if $size == "default" {
+    @return $_badge-size-mobile;
+  } @else if $size == "small" {
+    @return $_badge-small-size-mobile;
+  }
+}
+
+@function _dot-ml($size) {
+  @return - calc(($size / 2) + ($_timeline-border-width / 2));
+}
+
+@function _dot-mt-tablet($margin) {
+  @return $margin - 1px;
+}
+
+@mixin _badge($size) {
+  $mt: 4px;
+  $mt-small: 6px;
+
+  height: _dot-size($size);
+  margin-left: _dot-ml(_dot-size($size));
+  margin-right: if(
+    $size == "default",
+    nhsuk-spacing(4),
+    nhsuk-spacing(4) + 2px
+  );
+  margin-top: if($size == "default", $mt, $mt-small);
+  width: _dot-size($size);
+
+  @include nhsuk-media-query($from: tablet) {
+    $tablet: _dot-size($size) + 4px;
+
+    height: $tablet;
+    margin-left: _dot-ml($tablet);
+    margin-top: if(
+      $size == "default",
+      _dot-mt-tablet($mt),
+      _dot-mt-tablet($mt-small)
+    );
+    width: $tablet;
+  }
+}
+
+.app-timeline {
+  list-style: none;
+  padding: 0;
+
+  @include nhsuk-responsive-margin(5, "bottom");
+  @include nhsuk-responsive-padding(2, "top");
+
+  &__item {
+    display: flex;
+    margin-bottom: 0;
+    margin-left: 12px;
+    margin-top: -6px;
+    position: relative;
+
+    @include nhsuk-responsive-padding(5, "bottom");
+
+    &:last-child {
+      padding: 0;
+
+      &::before {
+        border: none;
+      }
+    }
+
+    &::before {
+      border-left: $_timeline-border-width solid $color_nhsuk-grey-3;
+      bottom: 0;
+      content: "";
+      display: block;
+      left: -$_timeline-border-width;
+      position: absolute;
+      top: nhsuk-spacing(2);
+      width: $_timeline-border-width;
+    }
+
+    &--past::before {
+      border-color: $color_nhsuk-blue;
+    }
+  }
+
+  &__badge {
+    flex-shrink: 0;
+    z-index: 1;
+
+    @include _badge("default");
+
+    &--small {
+      @include _badge("small");
+    }
+  }
+
+  &__header {
+    font-weight: normal;
+    margin-bottom: 0;
+
+    @include nhsuk-font-size(19);
+
+    &.nhsuk-u-font-weight-bold .app-u-monospace {
+      font-weight: inherit;
+    }
+  }
+
+  &__content {
+    :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__description {
+    color: $nhsuk-secondary-text-color;
+    padding-top: 0;
+
+    @include nhsuk-responsive-margin(2, "bottom");
+    @include nhsuk-font-size(16);
+  }
+}

@@ -214,6 +214,19 @@ en:
         types:
           father: dad
           mother: mum
+      pds_search_result:
+        steps:
+          no_fuzzy_with_history: "Non-fuzzy search (with history)"
+          no_fuzzy_with_history_daily: "Non-fuzzy search (with history)"
+          no_fuzzy_without_history: "Non-fuzzy search (without history)"
+          no_fuzzy_with_wildcard_postcode: "Non-fuzzy search (with history and wildcard postcode)"
+          no_fuzzy_with_wildcard_given_name: "Non-fuzzy search (with history and wildcard first name)"
+          no_fuzzy_with_wildcard_family_name: "Non-fuzzy search (with history and wildcard surname)"
+          fuzzy: "Fuzzy search"
+        results:
+          no_matches: "No matches found"
+          one_match: "Found %{nhs_number}"
+          too_many_matches: "Too many matches found"
       programme:
         types:
           flu: Flu
