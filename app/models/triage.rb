@@ -34,6 +34,7 @@
 #
 class Triage < ApplicationRecord
   include Invalidatable
+  include Notable
 
   audited associated_with: :patient
 
