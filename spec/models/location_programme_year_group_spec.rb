@@ -21,10 +21,22 @@
 #  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
 #
 describe LocationProgrammeYearGroup do
-  subject { build(:location_programme_year_group) }
+  subject(:location_programme_year_group) do
+    build(:location_programme_year_group, location:)
+  end
+
+  let(:location) { create(:school) }
 
   describe "associations" do
     it { should belong_to(:location) }
     it { should belong_to(:programme) }
+  end
+
+  describe "validations" do
+    it "validates year group is suitable for the location" do
+      expect(location_programme_year_group).to validate_inclusion_of(
+        :year_group
+      ).in_array(location.year_groups)
+    end
   end
 end

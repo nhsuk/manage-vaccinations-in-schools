@@ -30,7 +30,7 @@ describe ProgrammeYearGroups do
       let(:team) { create(:team, programmes: [programme]) }
 
       before do
-        location = create(:school, team:)
+        location = create(:school, team:, year_groups: (0..13).to_a)
         create(
           :location_programme_year_group,
           location:,
