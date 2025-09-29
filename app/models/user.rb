@@ -164,7 +164,24 @@ class User < ApplicationRecord
   end
 
   def is_superuser?
-    cis2_enabled? ? cis2_info.is_superuser? : fallback_role_superuser?
+    can_access_sensitive_flagged_records? ||
+      can_perform_local_system_administration?
+  end
+
+  def can_access_sensitive_flagged_records?
+    if cis2_enabled?
+      cis2_info.can_access_sensitive_flagged_records?
+    else
+      fallback_role_superuser?
+    end
+  end
+
+  def can_perform_local_system_administration?
+    if cis2_enabled?
+      cis2_info.can_perform_local_system_administration?
+    else
+      fallback_role_superuser?
+    end
   end
 
   private

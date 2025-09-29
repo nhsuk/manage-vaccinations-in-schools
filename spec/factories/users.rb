@@ -44,7 +44,6 @@ FactoryBot.define do
       team { Team.includes(:organisation).first || create(:team) }
 
       role_code { CIS2Info::NURSE_ROLE }
-      role_workgroups { [] }
       activity_codes { [] }
 
       cis2_info_hash do
@@ -54,7 +53,7 @@ FactoryBot.define do
           "role_code" => role_code,
           "activity_codes" => activity_codes,
           "team_workgroup" => team.workgroup,
-          "workgroups" => role_workgroups + [team.workgroup]
+          "workgroups" => [team.workgroup]
         }
       end
     end
@@ -89,7 +88,12 @@ FactoryBot.define do
 
     trait :superuser do
       sequence(:email) { |n| "superuser-#{n}@example.com" }
-      role_workgroups { [CIS2Info::SUPERUSER_WORKGROUP] }
+      activity_codes do
+        [
+          CIS2Info::ACCESS_SENSITIVE_FLAGGED_RECORDS_ACTIVITY_CODE,
+          CIS2Info::LOCAL_SYSTEM_ADMINISTRATION_ACTIVITY_CODE
+        ]
+      end
       fallback_role { :superuser }
       show_in_suppliers { false }
     end

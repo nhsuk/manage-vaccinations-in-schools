@@ -6,9 +6,9 @@ class CIS2Info
   NURSE_ROLE = "S8000:G8000:R8001"
   MEDICAL_SECRETARY_ROLE = "S8000:G8001:R8006"
 
-  SUPERUSER_WORKGROUP = "mavissuperusers"
-
+  ACCESS_SENSITIVE_FLAGGED_RECORDS_ACTIVITY_CODE = "B1611"
   INDEPENDENT_PRESCRIBING_ACTIVITY_CODE = "B0420"
+  LOCAL_SYSTEM_ADMINISTRATION_ACTIVITY_CODE = "B0062"
   PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE = "B0428"
 
   attribute :organisation_name
@@ -57,7 +57,16 @@ class CIS2Info
   end
 
   def is_superuser?
-    workgroups.include?(SUPERUSER_WORKGROUP)
+    can_access_sensitive_flagged_records? ||
+      can_perform_local_system_administration?
+  end
+
+  def can_access_sensitive_flagged_records?
+    activity_codes.include?(ACCESS_SENSITIVE_FLAGGED_RECORDS_ACTIVITY_CODE)
+  end
+
+  def can_perform_local_system_administration?
+    activity_codes.include?(LOCAL_SYSTEM_ADMINISTRATION_ACTIVITY_CODE)
   end
 
   private
