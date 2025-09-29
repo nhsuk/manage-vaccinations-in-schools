@@ -4,7 +4,7 @@ module VaccinationMailerConcern
   extend ActiveSupport::Concern
 
   def send_vaccination_confirmation(vaccination_record)
-    parents = parents_for_vaccination_mailer(vaccination_record)
+    parents = NotificationParentSelector.call(vaccination_record:)
     return if parents.empty?
 
     template_name =
@@ -33,7 +33,7 @@ module VaccinationMailerConcern
   end
 
   def send_vaccination_deletion(vaccination_record)
-    parents = parents_for_vaccination_mailer(vaccination_record)
+    parents = NotificationParentSelector.call(vaccination_record:)
     return if parents.empty?
 
     sent_by = try(:current_user)
@@ -106,27 +106,5 @@ module VaccinationMailerConcern
         patient_already_vaccinated_notification_sent_at: Time.current
       )
     end
-  end
-
-  def parents_for_vaccination_mailer(vaccination_record)
-    patient = vaccination_record.patient
-    unless patient.send_notifications? && vaccination_record.notify_parents
-      return []
-    end
-
-    programme_id = vaccination_record.programme_id
-    academic_year = vaccination_record.academic_year
-
-    consents =
-      ConsentGrouper.call(patient.consents, programme_id:, academic_year:)
-
-    parents =
-      if consents.any?(&:via_self_consent?)
-        patient.parents
-      else
-        consents.select(&:response_given?).filter_map(&:parent)
-      end
-
-    parents.select(&:contactable?)
   end
 end
