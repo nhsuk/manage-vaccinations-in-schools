@@ -25,6 +25,6 @@ FactoryBot.define do
     location
     academic_year { AcademicYear.pending }
     programme
-    year_group { (0..13).to_a.sample }
+    year_group { programme.default_year_groups.sample }
   end
 end
