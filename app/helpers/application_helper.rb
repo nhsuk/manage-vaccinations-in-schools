@@ -49,9 +49,12 @@ or set it with content_for(:page_title)."
     tag.link(href: asset_path(name), **options)
   end
 
+  def manifest_digest
+    Digest::SHA256.hexdigest(app_version.to_s)[0, 8]
+  end
+
   def manifest_link_tag(name, **options)
-    digest = Digest::SHA256.hexdigest(app_version.to_s)[0, 8]
-    tag.link(href: manifest_path(name, digest), **options)
+    tag.link(href: manifest_path(name, manifest_digest), **options)
   end
 
   def opengraph_image_tag(service_url, name)
