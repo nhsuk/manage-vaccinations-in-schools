@@ -126,7 +126,7 @@ jobs:
           container-name: "application"
           image: "${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}"
           environment-variables: |
-            APP_VERSION=app-version
+            APP_VERSION=${{ env.app_version }}
       - name: Rename task definition file
         run: mv ${{ steps.create-task-definition.outputs.task-definition }} ${{ runner.temp }}/${{ matrix.service }}-task-definition.json
       - name: Upload artifact for ${{ matrix.service }} task definition
