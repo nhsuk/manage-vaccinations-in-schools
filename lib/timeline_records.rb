@@ -2,103 +2,84 @@
 
 class TimelineRecords
   DEFAULT_DETAILS_CONFIG = {
-    consents: %i[response route],
-    sessions: %i[],
-    session_attendances: %i[],
-    triages: %i[status performed_by_user_id],
-    vaccination_records: %i[outcome session_id],
-    cohort_imports: %i[],
+    changesets: %i[import_id import_type],
     class_imports: %i[],
-    parents: %i[],
+    cohort_imports: %i[],
+    consents: %i[response route],
     gillick_assessments: %i[],
     parent_relationships: %i[],
+    parents: %i[],
+    pds_search_results: %i[],
+    school_move_log_entries: %i[school_id user_id],
     school_moves: %i[school_id source],
-    school_move_log_entries: %i[school_id user_id]
+    sessions: %i[location_id],
+    teams: %i[name],
+    triages: %i[performed_by_user_id status],
+    vaccination_records: %i[outcome session_id]
   }.freeze
 
   AVAILABLE_DETAILS_CONFIG = {
-    consents: %i[response route updated_at withdrawn_at invalidated_at],
-    sessions: %i[slug academic_year],
-    session_attendances: %i[attending updated_at],
-    triages: %i[status updated_at invalidated_at performed_by_user_id],
-    vaccination_records: %i[
-      outcome
-      performed_at
-      updated_at
-      discarded_at
-      uuid
-      session_id
-    ],
-    cohort_imports: %i[
-      csv_filename
-      processed_at
-      status
-      rows_count
-      new_record_count
-      exact_duplicate_record_count
-      changed_record_count
-    ],
+    changesets: %i[import_id import_type],
     class_imports: %i[
-      csv_filename
-      processed_at
-      status
-      rows_count
-      new_record_count
-      exact_duplicate_record_count
       changed_record_count
+      csv_filename
+      exact_duplicate_record_count
+      new_record_count
+      processed_at
+      rows_count
+      status
       year_groups
     ],
-    parents: %i[],
+    cohort_imports: %i[
+      changed_record_count
+      csv_filename
+      exact_duplicate_record_count
+      new_record_count
+      processed_at
+      rows_count
+      status
+    ],
+    consents: %i[invalidated_at response route updated_at withdrawn_at],
     gillick_assessments: %i[],
     parent_relationships: %i[],
+    parents: %i[],
+    pds_search_results: %i[step],
+    school_move_log_entries: %i[school_id user_id],
     school_moves: %i[school_id source],
-    school_move_log_entries: %i[school_id user_id]
-  }.freeze
-
-  AVAILABLE_DETAILS_CONFIG_WITH_PII = {
-    consents: %i[response route updated_at withdrawn_at invalidated_at],
-    sessions: %i[slug academic_year],
-    session_attendances: %i[attending updated_at],
-    triages: %i[status updated_at invalidated_at performed_by_user_id],
+    sessions: %i[academic_year location_id slug],
+    teams: %i[name],
+    triages: %i[invalidated_at performed_by_user_id status updated_at],
     vaccination_records: %i[
+      discarded_at
+      nhs_immunisations_api_synced_at
       outcome
       performed_at
-      updated_at
-      discarded_at
-      uuid
+      protocol
       session_id
-    ],
-    cohort_imports: %i[
-      csv_filename
-      processed_at
-      status
-      rows_count
-      new_record_count
-      exact_duplicate_record_count
-      changed_record_count
-    ],
-    class_imports: %i[
-      csv_filename
-      processed_at
-      status
-      rows_count
-      new_record_count
-      exact_duplicate_record_count
-      changed_record_count
-      year_groups
-    ],
-    parents: %i[full_name email phone],
+      source
+      updated_at
+      uuid
+    ]
+  }.freeze
+
+  AVAILABLE_DETAILS_CONFIG_PII = {
+    changesets: %i[pds_nhs_number uploaded_nhs_number],
     gillick_assessments: %i[
-      knows_vaccination
-      knows_disease
       knows_consequences
       knows_delivery
+      knows_disease
       knows_side_effects
+      knows_vaccination
     ],
-    parent_relationships: %i[type other_name],
-    school_moves: %i[school_id source],
-    school_move_log_entries: %i[school_id user_id]
+    parent_relationships: %i[other_name type],
+    parents: %i[email full_name phone],
+    pds_search_results: %i[nhs_number]
   }.freeze
+
+  AVAILABLE_DETAILS_CONFIG_WITH_PII =
+    AVAILABLE_DETAILS_CONFIG.merge(
+      AVAILABLE_DETAILS_CONFIG_PII
+    ) { |_, base_fields, pii_fields| (base_fields + pii_fields).uniq }
 
   DEFAULT_AUDITS_CONFIG = {
     include_associated_audits: true,
@@ -106,76 +87,58 @@ class TimelineRecords
   }.freeze
 
   ALLOWED_AUDITED_CHANGES = %i[
-    patient_id
-    session_id
-    location_id
-    programme_id
-    vaccine_id
-    organisation_id
-    team_id
-    school_id
-    gp_practice_id
-    uploaded_by_user_id
-    performed_by_user_id
-    user_id
-    parent_id
-    status
-    outcome
-    response
-    route
     date_of_death_recorded_at
-    restricted_at
-    invalidated_at
-    withdrawn_at
-    rows_count
-    year_groups
+    gp_practice_id
     home_educated
+    invalidated_at
+    location_id
+    organisation_id
+    outcome
+    parent_id
+    patient_id
+    performed_by_user_id
+    programme_id
+    registration_academic_year
+    response
+    restricted_at
+    rows_count
+    route
+    school_id
+    session_id
     source
+    status
+    team_id
+    uploaded_by_user_id
+    user_id
+    vaccine_id
+    withdrawn_at
+    year_groups
   ].freeze
 
-  ALLOWED_AUDITED_CHANGES_WITH_PII = %i[
-    full_name
-    email
-    phone
-    nhs_number
-    given_name
-    family_name
-    date_of_birth
+  ALLOWED_AUDITED_CHANGES_PII = %i[
     address_line_1
     address_line_2
-    address_town
     address_postcode
-    home_educated
-    updated_from_pds_at
-    restricted_at
+    address_town
+    birth_academic_year
+    date_of_birth
     date_of_death
+    email
+    family_name
+    full_name
+    gender_code
+    given_name
+    nhs_number
     pending_changes
-    patient_id
-    session_id
-    location_id
-    programme_id
-    vaccine_id
-    organisation_id
-    team_id
-    school_id
-    gp_practice_id
-    uploaded_by_user_id
-    performed_by_user_id
-    user_id
-    parent_id
-    status
-    outcome
-    response
-    route
-    date_of_death_recorded_at
-    restricted_at
-    invalidated_at
-    withdrawn_at
-    rows_count
-    year_groups
-    home_educated
-    source
+    phone
+    preferred_family_name
+    preferred_given_name
+    registration
+    updated_from_pds_at
   ].freeze
+
+  ALLOWED_AUDITED_CHANGES_WITH_PII =
+    (ALLOWED_AUDITED_CHANGES + ALLOWED_AUDITED_CHANGES_PII).uniq.freeze
 
   def initialize(patient, detail_config: {}, audit_config: {}, show_pii: false)
     @patient = patient
