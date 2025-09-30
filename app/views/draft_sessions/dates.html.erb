@@ -1,0 +1,50 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: @back_link_path) %>
+<% end %>
+
+<%= h1 "When will sessions be held?" %>
+
+<%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <div class="app-add-another">
+    <ol class="nhsuk-list app-add-another__list">
+      <% @draft_session.session_dates.each_with_index do |session_date, index| %>
+        <%= f.fields_for "session_date_#{index}", session_date do |ff| %>
+          <li class="app-add-another__list-item">
+            <% if session_date.has_been_attended? %>
+              <h2 class="nhsuk-heading-m">
+                <%= session_date.value.to_fs(:long) %>
+              </h2>
+              <p class="nhsuk-u-secondary-text-colour">
+                Children have attended this session. It cannot be changed.
+              </p>
+            <% else %>
+              <%= ff.govuk_date_field :value,
+                                      legend: { size: "m", text: "Session date" },
+                                      hint: { text: "For example, 27 3 2024" } %>
+
+              <% if @draft_session.session_dates.length > 1 %>
+                <%= f.govuk_submit "Delete",
+                                   name: "draft_session[session_date_#{index}][_destroy]",
+                                   value: "true",
+                                   class: "nhsuk-button app-add-another__delete app-button--secondary-warning app-button--small" %>
+              <% end %>
+            <% end %>
+          </li>
+        <% end %>
+      <% end %>
+    </ol>
+
+    <%= f.govuk_submit "Add another date",
+                       name: "draft_session[_add_another]",
+                       value: "true",
+                       secondary: true,
+                       class: "app-add-another__add" %>
+  </div>
+
+  <div class="nhsuk-button-group">
+    <%= f.govuk_submit "Continue" %>
+    <%= link_to "Back", @back_link_path %>
+  </div>
+<% end %>

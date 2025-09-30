@@ -20,14 +20,14 @@
         summary_list.with_row do |row|
           row.with_key { "Session dates" }
       
-          if (dates = @session.dates).present?
+          if (dates = @draft_session.dates).present?
             row.with_value do
               safe_join(dates.map { it.to_fs(:long_day_of_week) }, tag.br)
             end
-            row.with_action(text: "Change", href: session_dates_path(@session), visually_hidden_text: "session dates")
+            row.with_action(text: "Change", href: draft_session_path("dates"), visually_hidden_text: "session dates")
           else
             row.with_value do
-              link_to "Add session dates", session_dates_path(@session)
+              link_to "Add session dates", draft_session_path("dates")
             end
           end
         end

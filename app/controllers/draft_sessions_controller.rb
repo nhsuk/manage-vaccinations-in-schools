@@ -20,13 +20,15 @@ class DraftSessionsController < ApplicationController
   def update
     authorize @session, :update?
 
-    if current_step == :confirm
+    jump_to("confirm") if @draft_session.editing? && current_step != :confirm
+
+    if current_step == :dates
+      handle_dates
+    elsif current_step == :confirm
       handle_confirm
     else
       @draft_session.assign_attributes(update_params)
     end
-
-    jump_to("confirm") if @draft_session.editing? && current_step != :confirm
 
     render_wizard @draft_session
   end
@@ -68,6 +70,33 @@ class DraftSessionsController < ApplicationController
       end
   end
 
+  def handle_dates
+    session_dates_attrs = update_params.except(:wizard_step)
+
+    @draft_session
+      .session_dates
+      .to_enum
+      .with_index
+      .reverse_each do |session_date, index|
+      attributes = session_dates_attrs["session_date_#{index}"]
+      if attributes["_destroy"].present?
+        @draft_session.session_dates.delete_at(index)
+        jump_to("dates")
+      else
+        session_date.assign_attributes(attributes)
+      end
+    end
+
+    if session_dates_attrs["_add_another"].present?
+      @draft_session.session_dates << DraftSessionDate.new
+      jump_to("dates")
+    end
+
+    @draft_session.set_notification_dates
+
+    @draft_session.wizard_step = current_step
+  end
+
   def handle_confirm
     return unless @draft_session.save
 
@@ -87,6 +116,7 @@ class DraftSessionsController < ApplicationController
     permitted_attributes = {
       consent_reminders: %i[weeks_before_consent_reminders],
       consent_requests: %i[send_consent_requests_at],
+      dates: dates_params,
       delegation: %i[psd_enabled national_protocol_enabled],
       invitations: %i[send_invitations_at],
       programmes: %i[programme_ids],
@@ -97,6 +127,16 @@ class DraftSessionsController < ApplicationController
       .fetch(:draft_session, {})
       .permit(permitted_attributes)
       .merge(wizard_step: current_step)
+  end
+
+  def dates_params
+    n = @draft_session.session_dates&.size || 0
+    [
+      :_add_another,
+      Array
+        .new(n) { |index| ["session_date_#{index}", %i[id value _destroy]] }
+        .to_h
+    ]
   end
 
   def send_consent_requests_at_validator

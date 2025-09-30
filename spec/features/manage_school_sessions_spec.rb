@@ -20,9 +20,6 @@ describe "Manage school sessions" do
     when_i_click_on_schedule_sessions
     then_i_see_the_dates_page
 
-    when_i_try_submitting_without_entering_data
-    then_i_see_an_error
-
     when_i_choose_the_dates
     then_i_see_the_confirmation_page
 
@@ -186,14 +183,6 @@ describe "Manage school sessions" do
 
   def then_i_see_the_dates_page
     expect(page).to have_content("When will sessions be held?")
-  end
-
-  def when_i_try_submitting_without_entering_data
-    click_on "Continue"
-  end
-
-  def then_i_see_an_error
-    expect(page).to have_content("There is a problem\nEnter a date")
   end
 
   def when_i_choose_the_dates

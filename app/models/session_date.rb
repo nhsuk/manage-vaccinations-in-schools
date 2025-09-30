@@ -21,25 +21,15 @@ class SessionDate < ApplicationRecord
 
   belongs_to :session
 
-  has_one :location, through: :session
-
   has_many :gillick_assessments, dependent: :restrict_with_error
   has_many :pre_screenings, dependent: :restrict_with_error
 
+  has_one :location, through: :session
   has_many :attendance_records, -> { where(date: it.value) }, through: :location
 
   scope :for_session, -> { where("session_id = sessions.id") }
 
   scope :today, -> { where(value: Date.current) }
-
-  validates :value,
-            uniqueness: {
-              scope: :session
-            },
-            comparison: {
-              greater_than_or_equal_to: :earliest_possible_value,
-              less_than_or_equal_to: :latest_possible_value
-            }
 
   delegate :today?, :past?, :future?, to: :value
 
@@ -49,15 +39,5 @@ class SessionDate < ApplicationRecord
 
   def has_been_attended?
     gillick_assessments.any? || pre_screenings.any? || attendance_records.any?
-  end
-
-  private
-
-  def earliest_possible_value
-    Date.new((session || Date.current).academic_year, 9, 1)
-  end
-
-  def latest_possible_value
-    Date.new((session || Date.current).academic_year + 1, 8, 31)
   end
 end

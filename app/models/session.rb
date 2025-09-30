@@ -41,7 +41,7 @@ class Session < ApplicationRecord
 
   has_many :consent_notifications
   has_many :notes
-  has_many :session_dates, -> { order(:value) }
+  has_many :session_dates, -> { order(:value) }, autosave: true
   has_many :session_notifications
   has_many :session_programmes,
            -> { joins(:programme).order(:"programmes.type") },
@@ -67,8 +67,6 @@ class Session < ApplicationRecord
              where(academic_year: it.academic_year, programme: it.programmes)
            end,
            through: :location
-
-  accepts_nested_attributes_for :session_dates, allow_destroy: true
 
   scope :joins_patient_locations, -> { joins(<<-SQL) }
     INNER JOIN patient_locations

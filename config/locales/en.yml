@@ -88,6 +88,16 @@ en:
               blank: Enter weeks before a session takes place
               greater_than_or_equal_to: Enter %{count} or more weeks before a session
               less_than_or_equal_to: Enter %{count} or fewer weeks before a session
+        draft_session_date:
+          attributes:
+            value:
+              blank: Enter a date
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
+              taken: Enter a different date to the other session dates
+              greater_than_or_equal_to: Enter a date on or after the start of the school year (%{count})
+              less_than_or_equal_to: Enter a date on or before the end of the current school year (%{count})
         draft_vaccination_record:
           attributes:
             batch_id:
@@ -499,16 +509,6 @@ en:
             vaccines:
               blank: Choose the vaccines this programme administers
               match_type: Vaccines must be suitable for the programme type
-        session_date:
-          attributes:
-            value:
-              blank: Enter a date
-              missing_day: Enter a day
-              missing_month: Enter a month
-              missing_year: Enter a year
-              taken: Enter a different date to the other session dates
-              greater_than_or_equal_to: Enter a date on or after the start of the school year (%{count})
-              less_than_or_equal_to: Enter a date on or before the end of the current school year (%{count})
         user:
           attributes:
             email:

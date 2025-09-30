@@ -252,8 +252,6 @@ Rails.application.routes.draw do
       end
     end
 
-    resource :dates, controller: "session_dates", only: %i[show update]
-
     resources :patient_sessions,
               path: "patients",
               as: :patient,
