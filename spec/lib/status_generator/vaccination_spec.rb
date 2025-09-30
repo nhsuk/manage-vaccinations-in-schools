@@ -56,6 +56,21 @@ describe StatusGenerator::Vaccination do
       it { should be(:could_not_vaccinate) }
     end
 
+    context "with a conflicting consents" do
+      before do
+        create(:consent, :given, patient:, programme:)
+        create(
+          :consent,
+          :refused,
+          patient:,
+          programme:,
+          parent: create(:parent)
+        )
+      end
+
+      it { should be(:could_not_vaccinate) }
+    end
+
     context "with a triage as unsafe to vaccination" do
       before { create(:triage, :do_not_vaccinate, patient:, programme:) }
 
