@@ -54,6 +54,7 @@ or set it with content_for(:page_title)."
   end
 
   def manifest_link_tag(name, **options)
+    options[:crossorigin] ||= "use-credentials" unless Rails.env.production?
     tag.link(href: manifest_path(name, manifest_digest), **options)
   end
 
