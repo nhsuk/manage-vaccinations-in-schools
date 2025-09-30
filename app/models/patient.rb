@@ -73,6 +73,7 @@ class Patient < ApplicationRecord
   has_many :notify_log_entries
   has_many :parent_relationships, -> { order(:created_at) }
   has_many :patient_locations
+  has_many :patient_programme_vaccinations_searches
   has_many :patient_specific_directions
   has_many :patient_teams
   has_many :pds_search_results
