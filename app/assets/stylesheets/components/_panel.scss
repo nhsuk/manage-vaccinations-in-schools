@@ -1,0 +1,18 @@
+@use "../vendor/nhsuk-frontend" as *;
+
+// https://github.com/nhsuk/nhsuk-frontend/pull/1196
+.app-panel--interruption {
+  background-color: $nhsuk-brand-colour;
+
+  // Links within the Panel should use white text
+  .nhsuk-link,
+  a:not(.nhsuk-button) {
+    @include nhsuk-link-style-white;
+  }
+
+  .nhsuk-panel__body {
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
+}
