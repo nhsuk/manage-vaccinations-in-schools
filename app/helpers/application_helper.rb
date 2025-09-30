@@ -62,8 +62,6 @@ or set it with content_for(:page_title)."
     tag.meta(property: "og:image", content: "#{service_url}#{asset_path(name)}")
   end
 
-  def cached_counts = TeamCachedCounts.new(current_team)
-
   def tallying_enabled?
     Flipper.enabled?(:tallying) && params[:tallying] == "true"
   end
