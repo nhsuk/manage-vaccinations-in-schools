@@ -30,6 +30,8 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class Session < ApplicationRecord
+  include DaysBeforeToWeeksBefore
+
   audited associated_with: :location
   has_associated_audits
 
@@ -321,15 +323,6 @@ class Session < ApplicationRecord
   def close_consent_at
     return nil if dates.empty?
     dates.max - 1.day
-  end
-
-  def weeks_before_consent_reminders
-    return nil if days_before_consent_reminders.nil?
-    (days_before_consent_reminders / 7).to_i
-  end
-
-  def weeks_before_consent_reminders=(value)
-    self.days_before_consent_reminders = (value.blank? ? nil : value.to_i * 7)
   end
 
   def open_for_consent?
