@@ -12,7 +12,6 @@ http_hosts = {
   MAVIS__HOST                        = "qa.mavistesting.com"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "qa.mavistesting.com"
 }
-appspec_bucket            = "nhse-mavis-appspec-bucket-qa"
 max_aurora_capacity_units = 64
 container_insights        = "enhanced"
 

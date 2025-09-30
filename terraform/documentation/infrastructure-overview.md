@@ -9,8 +9,8 @@ public subnet.
 
 The core of this configuration are two ECS Fargate services. One service is running the webapp and the other one runs the background jobs.
 Both are running inside private subnets. The webapp service is accessible through a load balancer.
-The services contain ECS taskw, which run a docker image of the app. In the future, it is planed for the services to use
-autoscaling to dynamically adapt the number of running tasks to accommodate load.
+The services contain ECS tasks, which run a docker image of the app. All services use autoscaling with a minimum of
+2 tasks in production to ensure high availability.
 
 ## Database
 

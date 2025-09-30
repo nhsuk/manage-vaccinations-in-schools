@@ -27,12 +27,10 @@ permissions: {}
 env:
   environment: ${{ inputs.environment }}
   image_tag: ${{ inputs.image_tag || github.sha }}
-  git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
+  git_ref: ${{ inputs.git_ref_to_deploy || github.ref_name }}
   aws_role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
-  aws_account_id: ${{ inputs.environment == 'production'
-    && '820242920762' || '393416225559' }}
 
 concurrency:
   group: deploy-infrastructure-${{ inputs.environment }}
@@ -42,16 +40,65 @@ defaults:
     working-directory: terraform/app
 
 jobs:
-  plan:
-    name: Terraform plan
+  validate-permissions:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform
     permissions:
       id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          ref: ${{ env.git_ref_to_deploy }}
+          ref: ${{ github.ref_name }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::${{ env.account_id }}:role/GithubDeployMavisAndInfrastructure
+          aws-region: eu-west-2
+      - name: Compare permissions
+        id: compare-permissions
+        run: |
+          source ./scripts/validate-github-actions-policy.sh
+          validate_policies "arn:aws:iam::$account_id:policy/DeployMavisResources" ./account/resources/iam_policy_DeployMavisResources.json
+          exit $?
+  update-permissions:
+    runs-on: ubuntu-latest
+    needs: validate-permissions
+    if: ${{ (inputs.environment == 'production' || inputs.environment == 'preview') && needs.validate-permissions.result == 'failure' }}
+    environment: ${{ inputs.environment }}
+    defaults:
+      run:
+        working-directory: ./terraform
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::${{ env.account_id }}:role/GithubDeployMavisAndInfrastructure
+          aws-region: eu-west-2
+      - name: Update IAM policy
+        run: ./scripts/update-github-actions-policy.sh "arn:aws:iam::$account_id:policy/DeployMavisResources" ./account/resources/iam_policy_DeployMavisResources.json
+  plan:
+    name: Terraform plan
+    runs-on: ubuntu-latest
+    needs: [validate-permissions, update-permissions]
+    if: ${{ !cancelled() &&
+      ((inputs.environment != 'production' && inputs.environment != 'preview') ||
+      needs.validate-permissions.result == 'success' || needs.update-permissions.result == 'success') }}
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.git_ref }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
@@ -88,13 +135,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: plan
     environment: ${{ inputs.environment }}
+    if: ${{ !cancelled() }}
     permissions:
       id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          ref: ${{ env.git_ref_to_deploy }}
+          ref: ${{ env.git_ref }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
