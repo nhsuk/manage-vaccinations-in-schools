@@ -30,6 +30,7 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class Session < ApplicationRecord
+  include Consentable
   include DaysBeforeToWeeksBefore
 
   audited associated_with: :location
@@ -310,26 +311,6 @@ class Session < ApplicationRecord
       self.send_invitations_at = nil
     end
   end
-
-  def next_reminder_dates
-    return [] if days_before_consent_reminders.nil?
-
-    reminder_dates = dates.map { it - days_before_consent_reminders.days }
-    reminder_dates.select(&:future?)
-  end
-
-  def open_consent_at = send_consent_requests_at
-
-  def close_consent_at
-    return nil if dates.empty?
-    dates.max - 1.day
-  end
-
-  def open_for_consent?
-    close_consent_at&.today? || close_consent_at&.future? || false
-  end
-
-  def next_reminder_date = next_reminder_dates.first
 
   def patients_with_no_consent_response_count
     patients.has_consent_status(
