@@ -14,8 +14,10 @@
   {
     "Sid" : "DenySelfPolicyModification",
     "Action" : [
+      "iam:DeletePolicy",
       "iam:CreatePolicyVersion",
-      "iam:DeletePolicyVersion"
+      "iam:DeletePolicyVersion",
+      "iam:SetDefaultPolicyVersion"
     ],
     "Effect" : "Deny",
     "Resource" : [
