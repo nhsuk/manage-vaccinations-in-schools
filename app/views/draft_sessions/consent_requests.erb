@@ -1,11 +1,11 @@
 <% content_for :before_main do %>
-  <%= govuk_back_link(href: session_edit_path(@session)) %>
+  <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
 <% legend = "When should parents get a request to give consent?" %>
 <% content_for :page_title, legend %>
 
-<%= form_with model: @session, url: send_consent_requests_at_session_edit_path(@session), method: :put do |f| %>
+<%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_date_field :send_consent_requests_at,

@@ -29,19 +29,16 @@ describe "Manage school sessions" do
     when_i_click_on_change_programmes
     then_i_see_the_change_programmes_page
     and_i_change_the_programmes
-    and_i_confirm
 
     when_i_click_on_change_consent_requests
     then_i_see_the_change_consent_requests_page
     and_i_change_consent_requests_date
-    and_i_confirm
 
     when_i_click_on_change_consent_reminders
     then_i_see_the_change_consent_reminders_page
     and_i_change_consent_reminders_weeks
-    and_i_confirm
 
-    when_i_confirm
+    when_i_save_changes
     then_i_should_see_the_session_details
 
     when_i_go_to_todays_sessions_as_a_nurse
@@ -103,7 +100,11 @@ describe "Manage school sessions" do
 
     clinic_session.session_dates.create!(value: 1.month.from_now.to_date)
 
-    clinic_session.set_notification_dates
+    clinic_session.days_before_consent_reminders = nil
+    clinic_session.send_consent_requests_at = nil
+    clinic_session.send_invitations_at =
+      clinic_session.dates.min - @team.days_before_invitations.days
+
     clinic_session.save!
 
     patient_already_in_clinic_without_invitiation =
@@ -241,6 +242,7 @@ describe "Manage school sessions" do
 
   def and_i_change_the_programmes
     check "HPV"
+    click_on "Continue"
   end
 
   def when_i_click_on_change_consent_requests
@@ -257,6 +259,7 @@ describe "Manage school sessions" do
     fill_in "Day", with: "1"
     fill_in "Month", with: "3"
     fill_in "Year", with: "2024"
+    click_on "Continue"
   end
 
   def when_i_click_on_change_consent_reminders
@@ -271,13 +274,12 @@ describe "Manage school sessions" do
 
   def and_i_change_consent_reminders_weeks
     fill_in "When should parents get a reminder to give consent?", with: "1"
-  end
-
-  def when_i_confirm
     click_on "Continue"
   end
 
-  alias_method :and_i_confirm, :when_i_confirm
+  def when_i_save_changes
+    click_on "Save changes"
+  end
 
   def then_i_should_see_the_session_details
     expect(page).to have_content(@location.name.to_s)

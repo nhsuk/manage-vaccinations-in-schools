@@ -45,7 +45,8 @@ class Session < ApplicationRecord
   has_many :session_notifications
   has_many :session_programmes,
            -> { joins(:programme).order(:"programmes.type") },
-           dependent: :destroy
+           dependent: :destroy,
+           autosave: true
   has_many :vaccination_records, -> { kept }
 
   has_and_belongs_to_many :immunisation_imports
@@ -163,38 +164,6 @@ class Session < ApplicationRecord
 
   scope :registration_not_required, -> { where(requires_registration: false) }
 
-  validates :send_consent_requests_at,
-            presence: true,
-            comparison: {
-              greater_than_or_equal_to: :earliest_send_notifications_at,
-              less_than_or_equal_to: :latest_send_consent_requests_at
-            },
-            unless: -> do
-              earliest_send_notifications_at.nil? ||
-                latest_send_consent_requests_at.nil? || location.generic_clinic?
-            end
-
-  validates :send_invitations_at,
-            presence: true,
-            comparison: {
-              greater_than_or_equal_to: :earliest_send_notifications_at,
-              less_than: :earliest_date
-            },
-            if: -> { earliest_date.present? && location.generic_clinic? }
-
-  validates :weeks_before_consent_reminders,
-            presence: true,
-            comparison: {
-              greater_than_or_equal_to: 1,
-              less_than_or_equal_to: :maximum_weeks_before_consent_reminders
-            },
-            unless: -> do
-              maximum_weeks_before_consent_reminders.nil? ||
-                location.generic_clinic?
-            end
-
-  validates :programme_ids, presence: true
-
   before_create :set_slug
 
   delegate :clinic?, :generic_clinic?, :school?, to: :location
@@ -277,10 +246,6 @@ class Session < ApplicationRecord
     (include_today ? today_or_future_dates : future_dates).first
   end
 
-  def can_change_notification_dates?
-    consent_notifications.empty? && session_notifications.empty?
-  end
-
   def can_send_clinic_invitations?
     if clinic?
       next_date(include_today: true) && !completed?
@@ -289,26 +254,6 @@ class Session < ApplicationRecord
         team.generic_clinic_session(academic_year:).next_date(
           include_today: true
         )
-    end
-  end
-
-  def set_notification_dates
-    if earliest_date
-      if location.generic_clinic?
-        self.days_before_consent_reminders = nil
-        self.send_consent_requests_at = nil
-        self.send_invitations_at =
-          earliest_date - team.days_before_invitations.days
-      else
-        self.days_before_consent_reminders = team.days_before_consent_reminders
-        self.send_consent_requests_at =
-          earliest_date - team.days_before_consent_requests.days
-        self.send_invitations_at = nil
-      end
-    else
-      self.days_before_consent_reminders = nil
-      self.send_consent_requests_at = nil
-      self.send_invitations_at = nil
     end
   end
 
@@ -324,24 +269,5 @@ class Session < ApplicationRecord
 
   def set_slug
     self.slug = SecureRandom.alphanumeric(10) if slug.nil?
-  end
-
-  def earliest_date
-    dates.min
-  end
-
-  def earliest_send_notifications_at
-    return nil if earliest_date.nil?
-    earliest_date - 3.months
-  end
-
-  def latest_send_consent_requests_at
-    return nil if earliest_date.nil? || days_before_consent_reminders.nil?
-    earliest_date - days_before_consent_reminders.days - 1
-  end
-
-  def maximum_weeks_before_consent_reminders
-    return nil if earliest_date.nil? || send_consent_requests_at.nil?
-    (earliest_date - send_consent_requests_at).to_i / 7
   end
 end

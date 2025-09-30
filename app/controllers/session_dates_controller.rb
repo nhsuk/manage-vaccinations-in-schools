@@ -2,6 +2,7 @@
 
 class SessionDatesController < ApplicationController
   before_action :set_session
+  before_action :set_back_link_path
 
   def show
     @session.session_dates.build if @session.session_dates.empty?
@@ -9,19 +10,19 @@ class SessionDatesController < ApplicationController
 
   def update
     @session.assign_attributes(remove_invalid_dates(session_params))
-    @session.set_notification_dates
 
     render :show, status: :unprocessable_content and return if @session.invalid?
 
     @session.save!
+    update_notification_dates!
 
     # If deleting dates, they don't disappear from `session.dates` until
     # the model has been saved due to how `accepts_nested_attributes_for`
     # works.
     if any_destroyed?
-      @session.session_dates.reload
-      @session.set_notification_dates
       @session.save!
+
+      update_notification_dates!
     end
 
     StatusUpdaterJob.perform_later(session: @session)
@@ -31,11 +32,7 @@ class SessionDatesController < ApplicationController
       render :show
     else
       redirect_to(
-        if any_destroyed?
-          session_dates_path(@session)
-        else
-          session_edit_path(@session)
-        end
+        (any_destroyed? ? session_dates_path(@session) : @back_link_path)
       )
     end
   end
@@ -44,6 +41,16 @@ class SessionDatesController < ApplicationController
 
   def set_session
     @session = policy_scope(Session).find_by!(slug: params[:session_slug])
+  end
+
+  def set_back_link_path
+    @back_link_path = draft_session_path("confirm")
+  end
+
+  def update_notification_dates!
+    draft_session = DraftSession.new(request_session: session, current_user:)
+    draft_session.set_notification_dates
+    draft_session.save!
   end
 
   def session_params
@@ -56,7 +63,7 @@ class SessionDatesController < ApplicationController
 
   def any_destroyed?
     session_params[:session_dates_attributes].values.any? do
-      _1[:_destroy].present?
+      it[:_destroy].present?
     end
   end
 

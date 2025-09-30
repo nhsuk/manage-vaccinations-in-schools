@@ -272,6 +272,7 @@ describe "Manage attendance" do
     click_on "Change register attendance"
     choose "No"
     click_on "Continue"
+    click_on "Save changes"
   end
 
   def then_i_cant_record_a_vaccination

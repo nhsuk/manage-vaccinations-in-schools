@@ -91,6 +91,7 @@ describe "Scheduled consent requests" do
     fill_in "Year", with: session_date.year
 
     click_button "Continue"
+    click_button "Save changes"
   end
 
   def and_6_days_pass

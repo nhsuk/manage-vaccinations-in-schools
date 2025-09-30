@@ -51,6 +51,14 @@ class SessionsController < ApplicationController
     end
   end
 
+  def edit
+    DraftSession.new(request_session: session, current_user:).read_from!(
+      @session
+    )
+
+    redirect_to draft_session_path("confirm")
+  end
+
   def import
     draft_import = DraftImport.new(request_session: session, current_user:)
 

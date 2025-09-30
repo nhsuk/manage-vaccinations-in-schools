@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= govuk_back_link(href: session_path(@session)) %>
+  <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
 <%= h1 "Edit session" do %>
@@ -13,8 +13,8 @@
   <%= govuk_summary_list do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "Programmes" }
-          row.with_value { render AppProgrammeTagsComponent.new(@session.programmes) }
-          row.with_action(text: "Change", href: programmes_session_edit_path(@session), visually_hidden_text: "programmes")
+          row.with_value { render AppProgrammeTagsComponent.new(@draft_session.programmes) }
+          row.with_action(text: "Change", href: draft_session_path("programmes"), visually_hidden_text: "programmes")
         end
       
         summary_list.with_row do |row|
@@ -32,65 +32,69 @@
           end
         end
       
-        if (send_consent_requests_at = @session.send_consent_requests_at).present?
+        if (send_consent_requests_at = @draft_session.send_consent_requests_at).present?
           summary_list.with_row do |row|
             row.with_key { "Consent requests" }
             row.with_value { "Send on #{send_consent_requests_at.to_fs(:long_day_of_week)}" }
-            if @session.can_change_notification_dates?
-              row.with_action(text: "Change", href: send_consent_requests_at_session_edit_path(@session), visually_hidden_text: "consent requests")
+            if @draft_session.wizard_steps.include?(:consent_requests)
+              row.with_action(text: "Change", href: draft_session_path("consent-requests"), visually_hidden_text: "consent requests")
             end
           end
         end
       
-        if @session.open_for_consent?
+        if @draft_session.open_for_consent?
           summary_list.with_row do |row|
             row.with_key { "Consent reminders" }
             row.with_value do
               safe_join([
-                "Send #{pluralize(@session.weeks_before_consent_reminders, "week")} before each session",
-                if (next_date = @session.next_reminder_date).nil?
+                "Send #{pluralize(@draft_session.weeks_before_consent_reminders, "week")} before each session",
+                if (next_date = @draft_session.next_reminder_date).nil?
                   tag.span("No more reminders will be sent", class: "nhsuk-u-secondary-text-colour")
                 else
                   tag.span("Next: #{next_date.to_fs(:long_day_of_week)}", class: "nhsuk-u-secondary-text-colour")
                 end,
               ], tag.br)
             end
-            if @session.can_change_notification_dates?
-              row.with_action(text: "Change", href: weeks_before_consent_reminders_session_edit_path(@session), visually_hidden_text: "consent reminders")
+            if @draft_session.wizard_steps.include?(:consent_reminders)
+              row.with_action(text: "Change", href: draft_session_path("consent-reminders"), visually_hidden_text: "consent reminders")
             end
           end
         end
       
-        if (send_invitations_at = @session.send_invitations_at).present?
+        if (send_invitations_at = @draft_session.send_invitations_at).present?
           summary_list.with_row do |row|
             row.with_key { "Invitations" }
             row.with_value { "Send on #{send_invitations_at.to_fs(:long_day_of_week)}" }
-            if @session.can_change_notification_dates?
-              row.with_action(text: "Change", href: send_invitations_at_session_edit_path(@session), visually_hidden_text: "invitations")
+            if @draft_session.wizard_steps.include?(:invitations)
+              row.with_action(text: "Change", href: draft_session_path("invitations"), visually_hidden_text: "invitations")
             end
           end
         end
       
         summary_list.with_row do |row|
           row.with_key { "Register attendance" }
-          row.with_value { @session.requires_registration? ? "Yes" : "No" }
-          row.with_action(text: "Change", href: register_attendance_session_edit_path(@session), visually_hidden_text: "register attendance")
+          row.with_value { @draft_session.requires_registration ? "Yes" : "No" }
+          row.with_action(text: "Change", href: draft_session_path("register-attendance"), visually_hidden_text: "register attendance")
         end
       
-        if @session.supports_delegation?
+        if @draft_session.wizard_steps.include?(:delegation)
           summary_list.with_row do |row|
             row.with_key { "Use patient specific direction (PSD)" }
-            row.with_value { @session.psd_enabled? ? "Yes" : "No" }
-            row.with_action(text: "Change", href: delegation_session_edit_path(@session), visually_hidden_text: "use patient specific direction (PSD)")
+            row.with_value { @draft_session.psd_enabled ? "Yes" : "No" }
+            row.with_action(text: "Change", href: draft_session_path("delegation"), visually_hidden_text: "use patient specific direction (PSD)")
           end
       
           summary_list.with_row do |row|
             row.with_key { "Use national protocol" }
-            row.with_value { @session.national_protocol_enabled? ? "Yes" : "No" }
-            row.with_action(text: "Change", href: delegation_session_edit_path(@session), visually_hidden_text: "use national protocol")
+            row.with_value { @draft_session.national_protocol_enabled ? "Yes" : "No" }
+            row.with_action(text: "Change", href: draft_session_path("delegation"), visually_hidden_text: "use national protocol")
           end
         end
       end %>
 <% end %>
 
-<%= govuk_button_link_to "Continue", session_path(@session) %>
+<%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= f.govuk_submit "Save changes" %>
+<% end %>

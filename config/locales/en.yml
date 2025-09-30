@@ -65,6 +65,29 @@ en:
               inclusion: Choose which type of records you are importing
             year_groups:
               blank: Choose which year groups you want to import class list records for
+        draft_session:
+          attributes:
+            programme_ids:
+              blank: Choose which programmes this session is part of
+              inclusion: You cannot remove a programme from the session once it has been added
+            send_consent_requests_at:
+              blank: Enter a date
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
+              greater_than_or_equal_to: Enter a date at most 3 months before the first session date (%{count})
+              less_than_or_equal_to: Enter a date before the first session date and first reminder (%{count})
+            send_invitations_at:
+              blank: Enter a date
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
+              greater_than_or_equal_to: Enter a date at most 3 months before the first session date (%{count})
+              less_than: Enter a date before the first session date (%{count})
+            weeks_before_consent_reminders:
+              blank: Enter weeks before a session takes place
+              greater_than_or_equal_to: Enter %{count} or more weeks before a session
+              less_than_or_equal_to: Enter %{count} or fewer weeks before a session
         draft_vaccination_record:
           attributes:
             batch_id:
@@ -133,11 +156,6 @@ en:
           attributes:
             team_id:
               inclusion: Choose a team
-        session_programmes_form:
-          attributes:
-            programme_ids:
-              blank: Choose which programmes this session is part of
-              inclusion: You cannot remove a programme from the session once it has been added
         triage_form:
           attributes:
             notes:
@@ -481,26 +499,6 @@ en:
             vaccines:
               blank: Choose the vaccines this programme administers
               match_type: Vaccines must be suitable for the programme type
-        session:
-          attributes:
-            send_consent_requests_at:
-              blank: Enter a date
-              missing_day: Enter a day
-              missing_month: Enter a month
-              missing_year: Enter a year
-              greater_than_or_equal_to: Enter a date at most 3 months before the first session date (%{count})
-              less_than_or_equal_to: Enter a date before the first session date and first reminder (%{count})
-            send_invitations_at:
-              blank: Enter a date
-              missing_day: Enter a day
-              missing_month: Enter a month
-              missing_year: Enter a year
-              greater_than_or_equal_to: Enter a date at most 3 months before the first session date (%{count})
-              less_than: Enter a date before the first session date (%{count})
-            weeks_before_consent_reminders:
-              blank: Enter weeks before a session takes place
-              greater_than_or_equal_to: Enter %{count} or more weeks before a session
-              less_than_or_equal_to: Enter %{count} or fewer weeks before a session
         session_date:
           attributes:
             value:
@@ -762,48 +760,3 @@ en:
     zero: No vaccinations given
     one: 1 vaccination given
     other: "%{count} vaccinations given"
-  wicked:
-    academic_year: academic-year
-    address: address
-    agree: agree
-    batch: batch
-    cohort: cohort
-    confirm: confirm
-    confirm_school: confirm-school
-    contact_method: contact-method
-    date_and_time: date-and-time
-    date_of_birth: date-of-birth
-    dates: dates
-    delivery: delivery
-    dose: dose
-    education_setting: education-setting
-    file_format: file-format
-    gp: gp
-    health_question: health-question
-    identity: identity
-    injection_alternative: injection-alternative
-    location: location
-    name: name
-    notes: notes
-    notify_parent_on_refusal: notify-parent-on-refusal
-    notify_parents_on_vaccination: notify-parents-on-vaccination
-    outcome: outcome
-    parent: parent
-    parent_details: parent-details
-    questions: questions
-    reason: reason
-    reason_notes: reason-notes
-    response_doubles: response-doubles
-    response_flu: response-flu
-    response_hpv: response-hpv
-    route: route
-    school: school
-    session: session
-    supplier: supplier
-    timeline: timeline
-    triage: triage
-    type: type
-    vaccine: vaccine
-    when: when
-    who: who
-    year_groups: year-groups
