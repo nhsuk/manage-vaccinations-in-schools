@@ -390,6 +390,38 @@ describe SearchVaccinationRecordsInNHSJob do
       end
     end
 
+    shared_examples "records the search" do
+      describe "the PatientProgrammeVaccinationsSearch record" do
+        it "is created or updated with the search time" do
+          freeze_time
+
+          perform
+
+          ppis =
+            PatientProgrammeVaccinationsSearch.find_by(
+              patient:,
+              programme_type: programme.type
+            )
+          expect(ppis.last_searched_at).to eq Time.current
+        end
+      end
+    end
+
+    shared_examples "does not record the search" do
+      describe "the PatientProgrammeVaccinationsSearch record" do
+        it "is not created or updated" do
+          perform
+
+          expect(
+            PatientProgrammeVaccinationsSearch.find_by(
+              patient:,
+              programme_type: programme.type
+            )
+          ).to be_nil
+        end
+      end
+    end
+
     let(:patient_id) { patient.id }
     let(:expected_query) do
       {
@@ -447,6 +479,8 @@ describe SearchVaccinationRecordsInNHSJob do
 
       include_examples "sends discovery comms if required n times", 2
       include_examples "calls StatusUpdater"
+
+      include_examples "records the search"
     end
 
     context "with 1 existing record and 1 new incoming record" do
@@ -652,6 +686,7 @@ describe SearchVaccinationRecordsInNHSJob do
 
       include_examples "sends discovery comms if required n times", 2
       include_examples "calls StatusUpdater"
+      include_examples "records the search"
     end
 
     context "with no NHS number" do
@@ -672,6 +707,26 @@ describe SearchVaccinationRecordsInNHSJob do
 
       include_examples "sends discovery comms if required n times", 0
       include_examples "calls StatusUpdater"
+
+      include_examples "does not record the search"
+    end
+
+    context "with an existing PatientProgrammeVaccinationsSearch record" do
+      before do
+        create(:patient_programme_vaccinations_search, patient:, programme:)
+      end
+
+      include_examples "records the search"
+
+      describe "the PatientProgrammeVaccinationsSearch record" do
+        it "is not newly created" do
+          expect { perform }.not_to(
+            change do
+              PatientProgrammeVaccinationsSearch.for_programme(programme).count
+            end
+          )
+        end
+      end
     end
 
     context "with duplicates" do
