@@ -28,11 +28,15 @@ class DraftSession
   end
 
   def wizard_steps
-    steps = %i[dates programmes]
+    steps = %i[dates]
+
+    steps << :dates_check if school?
+
+    steps << :programmes
 
     if include_notification_steps?
-      steps += %i[consent_requests consent_reminders] if location.school?
-      steps << :invitations if location.clinic?
+      steps += %i[consent_requests consent_reminders] if school?
+      steps << :invitations if clinic?
     end
 
     steps << :register_attendance
@@ -106,11 +110,45 @@ class DraftSession
     super(values&.compact_blank&.map(&:to_i) || [])
   end
 
+  def location_programme_year_groups
+    @location_programme_year_groups ||=
+      session.location_programme_year_groups.includes(:programme).to_a +
+        new_programmes.flat_map do |programme|
+          programme.default_year_groups.map do |year_group|
+            LocationProgrammeYearGroup.new(location:, programme:, year_group:)
+          end
+        end
+  end
+
+  def programme_year_groups
+    @programme_year_groups ||=
+      ProgrammeYearGroups.new(location_programme_year_groups)
+  end
+
+  def year_groups = location_programme_year_groups.map(&:year_group).sort.uniq
+
+  def programmes_for(year_group: nil, patient: nil)
+    year_group ||= patient.year_group(academic_year:)
+
+    programmes.select do |programme|
+      location_programme_year_groups.any? do
+        it.programme_id == programme.id && it.year_group == year_group
+      end
+    end
+  end
+
+  def patient_is_catch_up?(patient, programmes:)
+    year_group = patient.year_group(academic_year:)
+    programmes.any? do |programme|
+      programme_year_groups.is_catch_up?(year_group, programme:)
+    end
+  end
+
   def dates = session_dates.map(&:value).compact
 
   def set_notification_dates
     if earliest_date
-      if location.clinic?
+      if clinic?
         self.days_before_consent_reminders = nil
         self.send_consent_requests_at = nil
         self.send_invitations_at =
@@ -126,6 +164,11 @@ class DraftSession
       self.send_consent_requests_at = nil
       self.send_invitations_at = nil
     end
+  end
+
+  def next_send_consent_requests_at
+    return nil if send_consent_requests_at.nil?
+    [send_consent_requests_at, Date.current].max
   end
 
   def read_from!(session)
@@ -164,22 +207,21 @@ class DraftSession
   end
 
   def create_location_programme_year_groups!
-    new_programmes =
-      new_programme_ids
-        .map { Programme.find(it) }
-        .reject do |programme|
-          location.location_programme_year_groups.exists?(programme:)
-        end
+    programmes_to_create =
+      new_programmes.reject do |programme|
+        location.location_programme_year_groups.exists?(programme:)
+      end
 
     location.create_default_programme_year_groups!(
-      new_programmes,
+      programmes_to_create,
       academic_year:
     )
   end
 
   private
 
-  delegate :academic_year, :team, to: :session
+  delegate :academic_year, :patient_locations, :team, to: :session
+  delegate :clinic?, :school?, to: :location
 
   def request_session_key = "session"
 
@@ -198,6 +240,10 @@ class DraftSession
 
   def new_programme_ids
     @new_programme_ids ||= programme_ids - session.programme_ids
+  end
+
+  def new_programmes
+    @new_programmes ||= Programme.where(id: new_programme_ids)
   end
 
   def valid_session_dates
