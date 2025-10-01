@@ -56,6 +56,7 @@ module MavisCLI
             end
 
             location.update!(subteam:)
+            location.import_year_groups_from_gias!(academic_year:)
             location.create_default_programme_year_groups!(
               programmes,
               academic_year:

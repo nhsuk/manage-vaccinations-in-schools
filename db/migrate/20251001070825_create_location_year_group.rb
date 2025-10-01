@@ -10,5 +10,17 @@ class CreateLocationYearGroup < ActiveRecord::Migration[8.0]
       t.index %i[location_id academic_year value], unique: true
       t.timestamps
     end
+
+    reversible do |direction|
+      direction.up do
+        academic_year = AcademicYear.current
+
+        Location
+          .where.not(subteam_id: nil)
+          .find_each do |location|
+            location.import_year_groups_from_gias!(academic_year:)
+          end
+      end
+    end
   end
 end
