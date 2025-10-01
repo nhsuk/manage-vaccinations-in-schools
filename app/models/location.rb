@@ -162,23 +162,33 @@ class Location < ApplicationRecord
     ).merge("is_attached_to_team" => !subteam_id.nil?)
   end
 
+  def import_year_groups!(values, academic_year:, source:)
+    Location::YearGroup.import!(
+      %i[location_id academic_year value source],
+      values.map { |value| [id, academic_year, value, source] },
+      on_duplicate_key_ignore: true
+    )
+  end
+
+  def import_year_groups_from_gias!(academic_year:)
+    import_year_groups!(gias_year_groups, academic_year:, source: "gias")
+  end
+
   def create_default_programme_year_groups!(programmes, academic_year:)
-    ActiveRecord::Base.transaction do
-      rows =
-        programmes.flat_map do |programme|
-          programme.default_year_groups.filter_map do |year_group|
-            if year_group.in?(gias_year_groups)
-              [id, academic_year, programme.id, year_group]
-            end
+    rows =
+      programmes.flat_map do |programme|
+        programme.default_year_groups.filter_map do |year_group|
+          if year_group.in?(gias_year_groups)
+            [id, academic_year, programme.id, year_group]
           end
         end
+      end
 
-      LocationProgrammeYearGroup.import!(
-        %i[location_id academic_year programme_id year_group],
-        rows,
-        on_duplicate_key_ignore: true
-      )
-    end
+    LocationProgrammeYearGroup.import!(
+      %i[location_id academic_year programme_id year_group],
+      rows,
+      on_duplicate_key_ignore: true
+    )
   end
 
   private
