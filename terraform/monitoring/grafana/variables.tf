@@ -21,3 +21,9 @@ variable "environment" {
   description = "Determines which alerting configuration to use (development or production)."
   nullable    = false
 }
+
+variable "slack_webhook_url" {
+  type        = string
+  description = "Slack webhook URL for sending alerts."
+  nullable    = false
+}

@@ -14,7 +14,6 @@ terraform {
   }
 }
 
-
 provider "grafana" {
   url  = var.workspace_url
   auth = var.service_account_token
@@ -38,6 +37,20 @@ resource "grafana_folder" "ecs" {
 resource "grafana_folder" "database" {
   title = "Database"
   uid   = "database-folder"
+}
+
+resource "grafana_contact_point" "slack" {
+  disable_provenance = true # TODO add only to avoid recreation
+  name               = "Slack"
+
+  slack {
+    url = var.slack_webhook_url
+  }
+}
+
+resource "grafana_notification_policy" "slack" {
+  contact_point = grafana_contact_point.slack.name
+  group_by      = ["grafana_folder", "alertname"]
 }
 
 module "development_alerts" {
