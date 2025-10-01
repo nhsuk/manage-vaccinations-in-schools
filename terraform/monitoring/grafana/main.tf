@@ -39,6 +39,11 @@ resource "grafana_folder" "database" {
   uid   = "database-folder"
 }
 
+resource "grafana_folder" "load_balancer" {
+  title = "Load Balancer"
+  uid   = "load-balancer-folder"
+}
+
 resource "grafana_contact_point" "slack" {
   disable_provenance = true # TODO add only to avoid recreation
   name               = "Slack"
