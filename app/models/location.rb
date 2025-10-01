@@ -86,8 +86,15 @@ class Location < ApplicationRecord
         end
 
   scope :has_year_groups,
-        ->(year_groups) do
-          where("ARRAY[?]::integer[] <@ gias_year_groups", year_groups)
+        ->(values, academic_year:) do
+          where(
+            "(?) >= ?",
+            Location::YearGroup
+              .select("COUNT(location_year_groups.id)")
+              .where("locations.id = location_year_groups.location_id")
+              .where(value: values, academic_year:),
+            values.count
+          )
         end
 
   scope :search_by_name,
@@ -179,10 +186,12 @@ class Location < ApplicationRecord
   end
 
   def create_default_programme_year_groups!(programmes, academic_year:)
+    valid_year_groups = location_year_groups.where(academic_year:).pluck_values
+
     rows =
       programmes.flat_map do |programme|
         programme.default_year_groups.filter_map do |year_group|
-          if year_group.in?(gias_year_groups)
+          if year_group.in?(valid_year_groups)
             [id, academic_year, programme.id, year_group]
           end
         end

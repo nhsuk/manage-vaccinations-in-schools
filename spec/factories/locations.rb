@@ -57,16 +57,6 @@ FactoryBot.define do
 
     traits_for_enum :status
 
-    after(:create) do |location, evaluator|
-      academic_year = evaluator.academic_year
-
-      location.import_year_groups_from_gias!(academic_year:)
-      location.create_default_programme_year_groups!(
-        evaluator.programmes,
-        academic_year:
-      )
-    end
-
     factory :community_clinic do
       type { :community_clinic }
       name { "#{Faker::University.name} Clinic" }
@@ -78,7 +68,20 @@ FactoryBot.define do
       type { :generic_clinic }
       name { "Community clinic" }
 
-      gias_year_groups { Location::YearGroup::VALUE_RANGE.to_a }
+      after(:create) do |location, evaluator|
+        year_groups = Location::YearGroup::VALUE_RANGE.to_a
+        academic_year = evaluator.academic_year
+
+        location.import_year_groups!(
+          year_groups,
+          academic_year:,
+          source: "generic_clinic_factory"
+        )
+        location.create_default_programme_year_groups!(
+          evaluator.programmes,
+          academic_year:
+        )
+      end
     end
 
     factory :gp_practice do
@@ -105,6 +108,15 @@ FactoryBot.define do
       trait :secondary do
         name { Faker::Educator.secondary_school }
         gias_year_groups { (7..11).to_a }
+      end
+
+      after(:create) do |location, evaluator|
+        academic_year = evaluator.academic_year
+        location.import_year_groups_from_gias!(academic_year:)
+        location.create_default_programme_year_groups!(
+          evaluator.programmes,
+          academic_year:
+        )
       end
     end
   end

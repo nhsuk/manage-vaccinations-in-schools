@@ -8,7 +8,6 @@ class GenericClinicFactory
 
   def call
     ActiveRecord::Base.transaction do
-      location.update!(gias_year_groups: year_groups)
       location.import_year_groups!(
         year_groups,
         academic_year:,

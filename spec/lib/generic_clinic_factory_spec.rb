@@ -41,7 +41,6 @@ describe GenericClinicFactory do
         expect(
           location.location_year_groups.where(academic_year:).pluck_values
         ).to eq(expected_year_groups)
-        expect(location.gias_year_groups).to eq(expected_year_groups)
       end
     end
 

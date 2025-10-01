@@ -45,5 +45,7 @@ class LocationProgrammeYearGroup < ApplicationRecord
 
   private
 
-  def valid_year_groups = location&.gias_year_groups || []
+  def valid_year_groups
+    location&.location_year_groups&.where(academic_year:)&.pluck_values || []
+  end
 end
