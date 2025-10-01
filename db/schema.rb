@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_01_062016) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_01_065147) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -434,7 +434,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_062016) do
     t.string "urn"
     t.integer "type", null: false
     t.string "ods_code"
-    t.integer "year_groups", default: [], null: false, array: true
     t.bigint "subteam_id"
     t.integer "gias_local_authority_code"
     t.integer "gias_establishment_number"
