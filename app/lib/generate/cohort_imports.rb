@@ -127,13 +127,13 @@ class Generate::CohortImports
             team.locations.where(urn: urns).includes(:team, :sessions)
           end
 
-        locations.select { (it.year_groups & all_year_groups).any? }
+        locations.select { (it.gias_year_groups & all_year_groups).any? }
       end
   end
 
   def build_patient
     school = schools_with_year_groups.sample
-    year_group ||= (school.year_groups & all_year_groups).sample
+    year_group ||= (school.gias_year_groups & all_year_groups).sample
     nhs_number = nil
     loop do
       nhs_number = Faker::NationalHealthService.british_number.gsub(" ", "")

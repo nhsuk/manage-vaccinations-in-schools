@@ -21,7 +21,7 @@ describe "mavis gias check_import" do
         :school,
         name: "The Aldgate School",
         urn: "100000",
-        year_groups: (-1..6).to_a
+        gias_year_groups: (-1..6).to_a
       )
     @session_with_future_dates =
       create(
@@ -36,7 +36,7 @@ describe "mavis gias check_import" do
         :school,
         name: "St Paul's Cathedral School",
         urn: "100002",
-        year_groups: (0..6).to_a
+        gias_year_groups: (0..6).to_a
       )
     @session_with_future_dates =
       create(
@@ -51,7 +51,7 @@ describe "mavis gias check_import" do
         :school,
         name: "City of London School for Girls",
         urn: "100001",
-        year_groups: (3..13).to_a
+        gias_year_groups: (3..13).to_a
       )
     @session_without_future_dates =
       create(

@@ -12,7 +12,7 @@ namespace :smoke do
       address_postcode: "TE1 1ST",
       gias_establishment_number: 999_999,
       gias_local_authority_code: 999_999,
-      year_groups: [8, 9, 10, 11]
+      gias_year_groups: [8, 9, 10, 11]
     )
 
     Location.find_or_create_by!(

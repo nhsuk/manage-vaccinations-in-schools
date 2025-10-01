@@ -8,7 +8,7 @@ class GenericClinicFactory
 
   def call
     ActiveRecord::Base.transaction do
-      location.update!(year_groups:)
+      location.update!(gias_year_groups: year_groups)
       location.create_default_programme_year_groups!(programmes, academic_year:)
       location
     end

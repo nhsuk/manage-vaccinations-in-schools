@@ -35,7 +35,7 @@ describe Onboarding do
 
       expect(team.locations.generic_clinic.count).to eq(1)
       generic_clinic = team.locations.generic_clinic.first
-      expect(generic_clinic.year_groups).to eq([8, 9, 10, 11])
+      expect(generic_clinic.gias_year_groups).to eq([8, 9, 10, 11])
       expect(generic_clinic.location_programme_year_groups.count).to eq(4)
 
       subteam1 = team.subteams.includes(:schools).find_by!(name: "Subteam 1")

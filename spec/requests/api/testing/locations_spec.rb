@@ -80,9 +80,11 @@ describe "/api/testing/locations" do
       end
 
       context "with multiple year groups" do
-        before { create(:school, year_groups: [8, 9]) }
+        before { create(:school, gias_year_groups: [8, 9]) }
 
-        let!(:secondary_school) { create(:school, year_groups: [8, 9, 10]) }
+        let!(:secondary_school) do
+          create(:school, gias_year_groups: [8, 9, 10])
+        end
 
         it "includes locations with all those year groups" do
           get "/api/testing/locations", params: { year_groups: [8, 9, 10] }

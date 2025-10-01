@@ -13,7 +13,7 @@ class PatientsAgedOutOfSchoolJob < ApplicationJob
         year_group = patient.year_group(academic_year:)
         school = patient.school
 
-        next if school.year_groups.include?(year_group)
+        next if school.gias_year_groups.include?(year_group)
 
         team = school.team
 
