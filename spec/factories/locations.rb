@@ -58,9 +58,12 @@ FactoryBot.define do
     traits_for_enum :status
 
     after(:create) do |location, evaluator|
+      academic_year = evaluator.academic_year
+
+      location.import_year_groups_from_gias!(academic_year:)
       location.create_default_programme_year_groups!(
         evaluator.programmes,
-        academic_year: evaluator.academic_year
+        academic_year:
       )
     end
 
@@ -75,7 +78,7 @@ FactoryBot.define do
       type { :generic_clinic }
       name { "Community clinic" }
 
-      gias_year_groups { (0..11).to_a }
+      gias_year_groups { Location::YearGroup::VALUE_RANGE.to_a }
     end
 
     factory :gp_practice do

@@ -41,4 +41,6 @@ class Location::YearGroup < ApplicationRecord
             uniqueness: {
               scope: %i[location_id academic_year]
             }
+
+  scope :pluck_values, -> { distinct.order(:value).pluck(:value) }
 end

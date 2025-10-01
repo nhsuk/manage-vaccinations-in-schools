@@ -147,6 +147,10 @@ class Location < ApplicationRecord
     site.nil? ? urn : urn + site
   end
 
+  def year_groups
+    @year_groups ||= location_year_groups.pluck_values
+  end
+
   def clinic? = generic_clinic? || community_clinic?
 
   def dfe_number
@@ -156,9 +160,9 @@ class Location < ApplicationRecord
   def as_json
     super.except(
       "created_at",
-      "updated_at",
       "subteam_id",
-      "systm_one_code"
+      "systm_one_code",
+      "updated_at"
     ).merge("is_attached_to_team" => !subteam_id.nil?)
   end
 

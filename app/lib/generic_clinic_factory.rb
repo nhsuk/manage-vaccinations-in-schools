@@ -9,6 +9,11 @@ class GenericClinicFactory
   def call
     ActiveRecord::Base.transaction do
       location.update!(gias_year_groups: year_groups)
+      location.import_year_groups!(
+        year_groups,
+        academic_year:,
+        source: "generic_clinic_factory"
+      )
       location.create_default_programme_year_groups!(programmes, academic_year:)
       location
     end
@@ -44,7 +49,5 @@ class GenericClinicFactory
       )
   end
 
-  def year_groups
-    programmes.flat_map(&:default_year_groups).uniq.sort
-  end
+  def year_groups = Location::YearGroup::VALUE_RANGE.to_a
 end

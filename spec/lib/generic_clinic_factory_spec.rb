@@ -15,7 +15,11 @@ describe GenericClinicFactory do
 
         location = Location.generic_clinic.first
         expect(location.team).to eq(team)
-        expect(location.gias_year_groups).to contain_exactly(
+
+        expected_year_groups = [
+          -3,
+          -2,
+          -1,
           0,
           1,
           2,
@@ -27,8 +31,17 @@ describe GenericClinicFactory do
           8,
           9,
           10,
-          11
-        )
+          11,
+          12,
+          13,
+          14,
+          15
+        ]
+
+        expect(
+          location.location_year_groups.where(academic_year:).pluck_values
+        ).to eq(expected_year_groups)
+        expect(location.gias_year_groups).to eq(expected_year_groups)
       end
     end
 
