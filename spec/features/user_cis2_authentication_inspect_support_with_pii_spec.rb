@@ -2,6 +2,7 @@
 
 describe "Inspect tools with PII access", :cis2 do
   scenario "Support user with PII access can view timeline with functional PII checkbox" do
+    given_ops_tools_feature_flag_is_on
     given_a_test_ops_organisation_with_pii_is_setup_in_mavis_and_cis2
     given_an_hpv_programme_is_underway
 
@@ -12,6 +13,7 @@ describe "Inspect tools with PII access", :cis2 do
   end
 
   scenario "Support user with PII access can view graph with functional PII checkbox" do
+    given_ops_tools_feature_flag_is_on
     given_a_test_ops_organisation_with_pii_is_setup_in_mavis_and_cis2
     given_an_hpv_programme_is_underway
 
@@ -22,6 +24,7 @@ describe "Inspect tools with PII access", :cis2 do
   end
 
   scenario "Support user with PII can't view confidential pages" do
+    given_ops_tools_feature_flag_is_on
     given_a_test_ops_organisation_with_pii_is_setup_in_mavis_and_cis2
     given_an_hpv_programme_is_underway
 
@@ -29,6 +32,27 @@ describe "Inspect tools with PII access", :cis2 do
 
     and_i_go_to_a_confidential_page
     then_i_see_the_inspect_dashboard
+  end
+
+  scenario "`ops_tools` feature flag is off" do
+    given_ops_tools_feature_flag_is_on
+    given_a_test_ops_organisation_with_pii_is_setup_in_mavis_and_cis2
+    given_an_hpv_programme_is_underway
+
+    when_i_login_as_a_support_user_with_pii_access
+
+    given_ops_tools_feature_flag_is_off
+    and_i_go_to_the_timeline_url_for_the_patient
+
+    then_a_page_not_found_error_is_displayed
+  end
+
+  def given_ops_tools_feature_flag_is_on
+    Flipper.enable(:ops_tools)
+  end
+
+  def given_ops_tools_feature_flag_is_off
+    Flipper.disable(:ops_tools)
   end
 
   def given_a_test_ops_organisation_with_pii_is_setup_in_mavis_and_cis2
@@ -115,5 +139,9 @@ describe "Inspect tools with PII access", :cis2 do
 
   def then_i_see_the_inspect_dashboard
     expect(page).to have_content("Operational support tools")
+  end
+
+  def then_a_page_not_found_error_is_displayed
+    expect(page).to have_content("Page not found")
   end
 end

@@ -16,6 +16,8 @@ import_choose_academic_year: Add an option to choose the academic year when
 
 import_low_pds_match_rate: Prevent processing uploads with a low pds match rate.
 
+ops_tools: Enable the operational support tools; timeline and graph.
+
 pds_lookup_during_import: Perform PDS lookups as part of the patient import
   processing.
 
