@@ -28,3 +28,6 @@ sed -i 's/receiver/contact_point/g' "$alert_file"
 
 # Remove attributes with null values
 sed -i '/= null/d' "$alert_file"
+
+# Insert "disable_provenance = true" right after "resource" lines
+sed -i '/^resource/ a\  disable_provenance = true' "$alert_file"
