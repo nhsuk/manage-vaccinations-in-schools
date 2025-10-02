@@ -84,8 +84,6 @@ if [[ -z "$GRAFANA_ENDPOINT" ]] || [[ -z "$SERVICE_ACCOUNT_ID" ]]; then
   exit 1
 fi
 
-./generate_alert_config.sh "$ENVIRONMENT"
-
 terraform -chdir="./grafana" init -backend-config="env/${ENVIRONMENT}-backend.hcl" -upgrade -reconfigure
 
 case "$ACTION" in

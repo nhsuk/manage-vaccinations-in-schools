@@ -45,8 +45,7 @@ resource "grafana_folder" "load_balancer" {
 }
 
 resource "grafana_contact_point" "slack" {
-  disable_provenance = true # TODO add only to avoid recreation
-  name               = "Slack"
+  name = "Slack"
 
   slack {
     url = var.slack_webhook_url
@@ -66,4 +65,10 @@ module "development_alerts" {
 module "production_alerts" {
   source = "./modules/production_alerts"
   count  = var.environment == "production" ? 1 : 0
+}
+
+
+import {
+  id = "load-balancer-folder:loadbalancer"
+  to = module.development_alerts[0].grafana_rule_group.rule_group_0002
 }

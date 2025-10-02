@@ -48,7 +48,7 @@ resource "grafana_rule_group" "rule_group_0000" {
     is_paused      = false
 
     notification_settings {
-      receiver            = "grafana-default-sns"
+      receiver            = "Slack"
       group_by            = null
       mute_time_intervals = null
     }
