@@ -90,6 +90,14 @@ class PatientChangeset < ApplicationRecord
 
   def child_attributes = pending_changes["child"]
 
+  def family_name = child_attributes["family_name"]
+
+  def given_name = child_attributes["given_name"]
+
+  def date_of_birth = child_attributes["date_of_birth"]
+
+  def address_postcode = child_attributes["address_postcode"]
+
   def parent_1_attributes = pending_changes["parent_1"]
 
   def parent_2_attributes = pending_changes["parent_2"]
