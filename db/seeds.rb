@@ -19,8 +19,8 @@ def create_gp_practices
   FactoryBot.create_list(:gp_practice, 30)
 end
 
-def create_team(ods_code:)
-  workgroup = ods_code.downcase
+def create_team(ods_code:, workgroup: nil)
+  workgroup ||= ods_code.downcase
 
   Team.find_by(workgroup:) ||
     FactoryBot.create(
@@ -302,6 +302,13 @@ end
 # CIS2 team - the ODS code and user UID need to match the values in the CIS2 env
 team = create_team(ods_code: "A9A5A")
 user = create_user(:nurse, team:, uid: "555057896106")
+
+support_team =
+  create_team(
+    ods_code: CIS2Info::SUPPORT_ORGANISATION,
+    workgroup: CIS2Info::SUPPORT_WORKGROUP
+  )
+create_user(:support, team: support_team, email: "support@example.com")
 
 attach_sample_of_schools_to(team)
 

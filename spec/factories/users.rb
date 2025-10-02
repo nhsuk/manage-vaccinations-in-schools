@@ -44,6 +44,7 @@ FactoryBot.define do
       team { Team.includes(:organisation).first || create(:team) }
 
       role_code { CIS2Info::NURSE_ROLE }
+      role_workgroups { [] }
       activity_codes { [] }
 
       cis2_info_hash do
@@ -53,7 +54,7 @@ FactoryBot.define do
           "role_code" => role_code,
           "activity_codes" => activity_codes,
           "team_workgroup" => team.workgroup,
-          "workgroups" => [team.workgroup]
+          "workgroups" => role_workgroups + [team.workgroup]
         }
       end
     end
@@ -116,6 +117,21 @@ FactoryBot.define do
       show_in_suppliers { false }
     end
 
+    trait :support do
+      team { create(:team, ods_code: "X26") }
+      role_code { CIS2Info::SUPPORT_ROLE }
+      sequence(:email) { |n| "support-#{n}@example.com" }
+      role_workgroups { [CIS2Info::SUPPORT_WORKGROUP] }
+      fallback_role { :support }
+      activity_codes do
+        [
+          CIS2Info::VIEW_SHARED_NON_PATIENT_IDENTIFIABLE_INFORMATION_ACTIVITY_CODE,
+          CIS2Info::ACCESS_SENSITIVE_FLAGGED_RECORDS_ACTIVITY_CODE,
+          CIS2Info::VIEW_DETAILED_HEALTH_RECORDS_ACTIVITY_CODE
+        ]
+      end
+    end
+
     trait :signed_in do
       current_sign_in_at { Time.current }
       current_sign_in_ip { "127.0.0.1" }
@@ -126,4 +142,5 @@ FactoryBot.define do
   factory :medical_secretary, parent: :user, traits: %i[medical_secretary]
   factory :prescriber, parent: :user, traits: %i[prescriber]
   factory :superuser, parent: :user, traits: %i[superuser]
+  factory :support, parent: :user, traits: %i[support]
 end
