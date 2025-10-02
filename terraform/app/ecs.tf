@@ -37,8 +37,12 @@ module "web_service" {
     vpc_id  = aws_vpc.application_vpc.id
   }
   loadbalancer = {
-    target_group_arn = local.ecs_initial_lb_target_group
-    container_port   = 4000
+    target_group_blue            = aws_lb_target_group.blue.arn
+    target_group_green           = aws_lb_target_group.green.arn
+    container_port               = 4000
+    production_listener_rule_arn = aws_lb_listener_rule.forward_to_app.arn
+    test_listner_rule_arn        = aws_lb_listener_rule.forward_to_test.arn
+    deploy_role_arn              = aws_iam_role.ecs_deploy.arn
   }
   autoscaling_policies = tomap({
     cpu = {
@@ -54,7 +58,12 @@ module "web_service" {
   maximum_replica_count = var.maximum_web_replicas
   environment           = var.environment
   server_type           = "web"
-  deployment_controller = "CODE_DEPLOY"
+
+  depends_on = [
+    aws_iam_role.ecs_deploy,
+    aws_rds_cluster_instance.core,
+    aws_elasticache_replication_group.valkey
+  ]
 }
 
 module "sidekiq_service" {
@@ -90,6 +99,7 @@ module "sidekiq_service" {
   server_type  = "sidekiq"
 
   depends_on = [
+    aws_rds_cluster_instance.core,
     aws_elasticache_replication_group.valkey
   ]
 }

@@ -27,42 +27,52 @@ resource "aws_security_group_rule" "egress_all" {
 }
 
 resource "aws_ecs_service" "this" {
-  name                              = "mavis-${var.environment}-${local.server_type_name}"
-  cluster                           = var.cluster_id
-  task_definition                   = aws_ecs_task_definition.this.arn
-  desired_count                     = var.minimum_replica_count
-  launch_type                       = "FARGATE"
-  enable_execute_command            = true
-  health_check_grace_period_seconds = 60
+  name                               = "mavis-${var.environment}-${local.server_type_name}"
+  cluster                            = var.cluster_id
+  task_definition                    = aws_ecs_task_definition.this.arn
+  desired_count                      = var.minimum_replica_count
+  launch_type                        = "FARGATE"
+  enable_execute_command             = true
+  health_check_grace_period_seconds  = 60
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
+  wait_for_steady_state              = true
+  sigint_rollback                    = true
+
 
   network_configuration {
     subnets         = var.network_params.subnets
     security_groups = [aws_security_group.this.id]
   }
-  deployment_controller {
-    type = var.deployment_controller
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
   }
-  dynamic "deployment_circuit_breaker" {
-    for_each = var.deployment_controller == "ECS" ? [1] : []
+  dynamic "deployment_configuration" {
+    for_each = var.loadbalancer != null ? [1] : []
     content {
-      enable   = true
-      rollback = true
+      strategy             = "BLUE_GREEN"
+      bake_time_in_minutes = 1
     }
   }
   dynamic "load_balancer" {
     for_each = var.loadbalancer != null ? [1] : []
     content {
-      target_group_arn = var.loadbalancer.target_group_arn
+      target_group_arn = var.loadbalancer.target_group_blue
       container_name   = var.container_name
       container_port   = var.loadbalancer.container_port
+      advanced_configuration {
+        alternate_target_group_arn = var.loadbalancer.target_group_green
+        production_listener_rule   = var.loadbalancer.production_listener_rule_arn
+        role_arn                   = var.loadbalancer.deploy_role_arn
+        test_listener_rule         = var.loadbalancer.test_listner_rule_arn
+      }
     }
   }
-  deployment_minimum_healthy_percent = 100
-  deployment_maximum_percent         = 200
+
   lifecycle {
     ignore_changes = [
       task_definition,
-      load_balancer,
       desired_count
     ]
     create_before_destroy = true
