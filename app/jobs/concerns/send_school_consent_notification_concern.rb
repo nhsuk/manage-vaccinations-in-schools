@@ -13,7 +13,7 @@ module SendSchoolConsentNotificationConcern
       .includes(patient: %i[consent_notifications consents vaccination_records])
       .find_each do |patient_location|
         patient = patient_location.patient
-        next unless patient.send_notifications?
+        next unless patient.send_notifications?(team: session.team)
 
         ProgrammeGrouper
           .call(session.programmes_for(patient:))

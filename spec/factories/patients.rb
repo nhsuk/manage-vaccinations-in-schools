@@ -170,6 +170,17 @@ FactoryBot.define do
       restricted_at { Time.current }
     end
 
+    trait :archived do
+      after(:create) do |patient, evaluator|
+        create(
+          :archive_reason,
+          :moved_out_of_area,
+          team: evaluator.team,
+          patient:
+        )
+      end
+    end
+
     trait :consent_request_sent do
       after(:create) do |patient, evaluator|
         create(

@@ -130,6 +130,8 @@ describe VaccinationMailerConcern do
     context "if the patient is deceased" do
       let(:patient) { create(:patient, :deceased) }
 
+      before { create(:consent, :given, patient:, programme:) }
+
       it "doesn't send an email" do
         expect { send_vaccination_confirmation }.not_to have_delivered_email
       end
@@ -141,6 +143,8 @@ describe VaccinationMailerConcern do
 
     context "if the patient is invalid" do
       let(:patient) { create(:patient, :invalidated) }
+
+      before { create(:consent, :given, patient:, programme:) }
 
       it "doesn't send an email" do
         expect { send_vaccination_confirmation }.not_to have_delivered_email
@@ -154,12 +158,28 @@ describe VaccinationMailerConcern do
     context "if the patient is restricted" do
       let(:patient) { create(:patient, :restricted) }
 
+      before { create(:consent, :given, patient:, programme:) }
+
       it "doesn't send an email" do
         expect { send_vaccination_confirmation }.not_to have_delivered_email
       end
 
       it "doesn't send a text message" do
         expect { send_vaccination_confirmation }.not_to have_delivered_sms
+      end
+    end
+
+    context "if the patient is archived" do
+      let(:patient) { create(:patient) }
+
+      before { create(:consent, :given, patient:, programme:) }
+
+      it "sends an email" do
+        expect { send_vaccination_confirmation }.to have_delivered_email
+      end
+
+      it "sends a text message" do
+        expect { send_vaccination_confirmation }.to have_delivered_sms
       end
     end
   end

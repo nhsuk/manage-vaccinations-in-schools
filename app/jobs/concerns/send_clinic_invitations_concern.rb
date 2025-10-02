@@ -20,7 +20,7 @@ module SendClinicInvitationsConcern
   end
 
   def should_send_notification?(patient:, session:, programmes:, session_date:)
-    return false unless patient.send_notifications?
+    return false unless patient.send_notifications?(team: session.team)
 
     already_sent_notification =
       patient.session_notifications.exists?(session:, session_date:)
