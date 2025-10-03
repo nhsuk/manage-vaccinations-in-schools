@@ -49,4 +49,47 @@ class PDSSearchResult < ApplicationRecord
          no_postcode: 5
        },
        validate: true
+
+  def self.grouped_sets
+    records = all.to_a
+    grouped_records =
+      records.group_by do |record|
+        if record.import_id.present?
+          [:import, record.import_type, record.import_id]
+        else
+          [:date, record.created_at.to_date]
+        end
+      end
+    grouped_records.values
+  end
+
+  def self.latest_set
+    grouped_sets.max_by { |set| set.map(&:created_at).max }
+  end
+
+  def pds_nhs_number
+    changeset&.pds_nhs_number
+  end
+
+  def changeset
+    return unless import_id
+
+    PatientChangeset.find_by(
+      import_type: import_type,
+      import_id: import_id,
+      patient_id: patient_id
+    )
+  end
+
+  def timeline_item
+    {
+      is_past_item: true,
+      heading_text: human_enum_name(:step),
+      description:
+        I18n.t(
+          "activerecord.attributes.#{self.class.model_name.i18n_key}.results.#{result}",
+          nhs_number: nhs_number
+        )
+    }
+  end
 end

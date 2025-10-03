@@ -53,10 +53,10 @@ class DraftConsent
       :agree,
       (:notify_parents_on_vaccination if response_given? && via_self_consent?),
       (:questions if response_given?),
-      (:triage if triage_allowed? && response_given?),
+      (:triage if triage_allowed? && requires_triage?),
       (:reason if response_refused?),
       (:notify_parent_on_refusal if ask_notify_parent_on_refusal?),
-      (:notes if notes_required?),
+      (:notes if requires_notes?),
       :confirm
     ].compact
   end
@@ -306,7 +306,7 @@ class DraftConsent
     consent.submitted_at ||= Time.current
     consent.academic_year = academic_year if academic_year.present?
 
-    if triage_allowed? && response_given?
+    if triage_allowed? && requires_triage?
       triage_form.add_patient_specific_direction =
         triage_add_patient_specific_direction
       triage_form.notes = triage_notes || ""
@@ -430,7 +430,7 @@ class DraftConsent
       !via_self_consent?
   end
 
-  def notes_required?
+  def requires_notes?
     response_refused? &&
       reason_for_refusal.in?(Consent::REASON_FOR_REFUSAL_REQUIRES_NOTES)
   end
@@ -443,11 +443,15 @@ class DraftConsent
     Triage.new(patient:, programme:).status_and_vaccine_method_options
   end
 
+  def requires_triage?
+    response_given? && health_answers_require_triage?
+  end
+
   def health_answers_are_valid
     return if health_answers.map(&:valid?).all?
 
     health_answers.each_with_index do |health_answer, index|
-      next unless health_answer.requires_notes?
+      next unless health_answer.ask_notes?
 
       health_answer.errors.messages.each do |field, messages|
         messages.each do |message|
@@ -462,7 +466,7 @@ class DraftConsent
   def reset_unused_attributes
     update_vaccine_methods
 
-    self.notes = "" unless notes_required?
+    self.notes = "" unless requires_notes?
     self.notify_parent_on_refusal = nil unless ask_notify_parent_on_refusal?
     self.reason_for_refusal = nil unless response_refused?
 

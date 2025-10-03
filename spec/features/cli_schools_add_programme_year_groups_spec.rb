@@ -19,9 +19,19 @@ describe "mavis schools add-programme-year-group" do
     end
   end
 
-  context "when the school and programme exists" do
+  context "when the school doesn't teach the year group" do
     it "runs successfully" do
       given_the_school_exists
+      and_the_programme_exists
+
+      when_i_run_the_command_expecting_an_error
+      then_a_validate_error_is_displayed
+    end
+  end
+
+  context "when the school and programme exists" do
+    it "runs successfully" do
+      given_the_school_exists_with_year_groups
       and_the_programme_exists
 
       when_i_run_the_command
@@ -41,12 +51,16 @@ describe "mavis schools add-programme-year-group" do
     @school = create(:school, urn: "123456")
   end
 
+  def given_the_school_exists_with_year_groups
+    @school = create(:school, urn: "123456", year_groups: [12, 13, 14])
+  end
+
   def and_the_programme_exists
     @programme = create(:programme, :flu)
   end
 
   def when_i_run_the_command
-    @output = capture_error { command }
+    @output = capture_output { command }
   end
 
   def when_i_run_the_command_expecting_an_error
@@ -59,6 +73,10 @@ describe "mavis schools add-programme-year-group" do
 
   def then_a_programme_not_found_error_message_is_displayed
     expect(@output).to include("Could not find programme.")
+  end
+
+  def then_a_validate_error_is_displayed
+    expect(@output).to include("Year group is not taught at the location")
   end
 
   def then_the_year_groups_are_added_to_the_school

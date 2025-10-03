@@ -6,7 +6,7 @@ class EnqueueUpdatePatientsFromPDSJob < ApplicationJob
   queue_as :pds
 
   def perform
-    scope = Patient.with_nhs_number.not_invalidated.not_deceased
+    scope = Patient.with_nhs_number.not_deceased
 
     patients =
       scope

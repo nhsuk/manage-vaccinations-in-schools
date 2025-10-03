@@ -17,13 +17,13 @@ describe EnqueueUpdatePatientsFromPDSJob do
   it "only queues jobs for the approriate patients" do
     expect { perform_now }.to have_enqueued_job(
       PatientUpdateFromPDSJob
-    ).exactly(3).times
+    ).exactly(4).times
   end
 
-  it "doesn't queue a job for the invalidated patient" do
-    expect { perform_now }.not_to have_enqueued_job(
-      PatientUpdateFromPDSJob
-    ).with(invalidated_patient)
+  it "queues a job for the invalidated patient" do
+    expect { perform_now }.to have_enqueued_job(PatientUpdateFromPDSJob).with(
+      invalidated_patient
+    )
   end
 
   it "doesn't queue a job for the deceased patient" do

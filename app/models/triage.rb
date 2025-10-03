@@ -34,6 +34,7 @@
 #
 class Triage < ApplicationRecord
   include Invalidatable
+  include Notable
 
   audited associated_with: :patient
 
@@ -59,6 +60,4 @@ class Triage < ApplicationRecord
        validate: {
          if: :ready_to_vaccinate?
        }
-
-  encrypts :notes
 end

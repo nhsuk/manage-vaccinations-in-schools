@@ -61,6 +61,7 @@ class ConsentForm < ApplicationRecord
   include FullNameConcern
   include GelatineVaccinesConcern
   include HasHealthAnswers
+  include Notable
   include WizardStepConcern
 
   before_save :reset_unused_attributes
@@ -187,8 +188,6 @@ class ConsentForm < ApplicationRecord
             if: :parent_relationship_other?
 
   validates :reason_notes, length: { maximum: 1000 }
-
-  validates :notes, presence: { if: :archived? }, length: { maximum: 1000 }
 
   normalizes :nhs_number, with: -> { _1.blank? ? nil : _1.gsub(/\s/, "") }
 
@@ -594,6 +593,8 @@ class ConsentForm < ApplicationRecord
   def choose_school?
     location_is_clinic? ? education_setting_school? : !school_confirmed
   end
+
+  def requires_notes? = archived?
 
   def reset_unused_attributes
     update_programme_responses

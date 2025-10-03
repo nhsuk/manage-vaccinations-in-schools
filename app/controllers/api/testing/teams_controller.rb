@@ -19,16 +19,17 @@ class API::Testing::TeamsController < API::Testing::BaseController
 
     log_destroy(SchoolMove.where(team:))
     log_destroy(Consent.where(team:))
-    log_destroy(ConsentForm.where(team:))
     log_destroy(ArchiveReason.where(team:))
     log_destroy(Triage.where(team:))
+
+    log_destroy(
+      NotifyLogEntry.joins(:consent_form).where(consent_form: { team: })
+    )
+    log_destroy(ConsentForm.where(team:))
 
     log_destroy(ConsentNotification.joins(:session).where(session: { team: }))
     log_destroy(SessionNotification.joins(:session).where(session: { team: }))
     log_destroy(VaccinationRecord.joins(:session).where(session: { team: }))
-    log_destroy(
-      NotifyLogEntry.joins(:consent_form).where(consent_form: { team: })
-    )
 
     patient_ids = team.patients.pluck(:id)
 

@@ -14,8 +14,7 @@ class DraftConsentsController < ApplicationController
 
   include WizardControllerConcern
 
-  before_action :set_triage_form,
-                if: -> { current_step.in?(%i[triage confirm]) }
+  before_action :set_triage_form, if: :includes_triage_step?
   before_action :set_parent_options, if: -> { current_step == :who }
   before_action :set_back_link_path
 
@@ -93,9 +92,7 @@ class DraftConsentsController < ApplicationController
 
     @draft_consent.health_answers.each_with_index do |health_answer, index|
       attributes = questions_attrs["question_#{index}"]
-      if health_answer.requires_notes?
-        health_answer.assign_attributes(attributes)
-      end
+      health_answer.assign_attributes(attributes) if health_answer.ask_notes?
     end
 
     @draft_consent.assign_attributes(wizard_step: current_step)
@@ -183,9 +180,13 @@ class DraftConsentsController < ApplicationController
     self.steps = @draft_consent.wizard_steps
   end
 
+  def includes_triage_step?
+    current_step.in?(%i[triage confirm]) && steps.include?("triage")
+  end
+
   def set_triage_form
     @triage_form =
-      if policy(Triage).new?
+      if includes_triage_step?
         TriageForm.new(
           add_patient_specific_direction:
             @draft_consent.triage_add_patient_specific_direction,

@@ -203,6 +203,20 @@ def create_imports(user, team)
       uploaded_by: user
     )
   end
+
+  low_pds_import =
+    FactoryBot.create(
+      :cohort_import,
+      :low_pds_match_rate,
+      team:,
+      uploaded_by: user
+    )
+  FactoryBot.create_list(
+    :patient_changeset,
+    15,
+    import: low_pds_import,
+    pds_nhs_number: nil
+  )
 end
 
 def create_school_moves(team)

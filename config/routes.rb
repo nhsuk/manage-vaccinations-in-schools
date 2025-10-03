@@ -175,8 +175,9 @@ Rails.application.routes.draw do
     end
 
     member do
-      get "log"
       post "invite-to-clinic"
+      get "log"
+      get "pds-search-history"
 
       get "edit/nhs-number",
           controller: "patients/edit",

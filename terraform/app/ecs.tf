@@ -22,12 +22,11 @@ resource "aws_ecs_cluster" "cluster" {
 module "web_service" {
   source = "./modules/ecs_service"
   task_config = {
-    environment          = local.task_envs
-    secrets              = local.task_secrets
+    environment          = local.task_envs["CORE"]
+    secrets              = local.task_secrets["CORE"]
     cpu                  = 1024
     memory               = 3072
-    docker_image         = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/${var.docker_image}@${var.image_digest}"
-    execution_role_arn   = aws_iam_role.ecs_task_execution_role.arn
+    execution_role_arn   = aws_iam_role.ecs_task_execution_role["CORE"].arn
     task_role_arn        = aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
@@ -61,12 +60,11 @@ module "web_service" {
 module "sidekiq_service" {
   source = "./modules/ecs_service"
   task_config = {
-    environment          = local.task_envs
-    secrets              = local.task_secrets
+    environment          = local.task_envs["CORE"]
+    secrets              = local.task_secrets["CORE"]
     cpu                  = 1024
     memory               = 2048
-    docker_image         = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/${var.docker_image}@${var.image_digest}"
-    execution_role_arn   = aws_iam_role.ecs_task_execution_role.arn
+    execution_role_arn   = aws_iam_role.ecs_task_execution_role["CORE"].arn
     task_role_arn        = aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
