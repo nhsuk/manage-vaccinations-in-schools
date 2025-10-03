@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Inspect timeline PII access logging", :cis2 do
+  before { Flipper.enable(:ops_tools) }
+
   scenario "Support user with PII access visiting timeline" do
     prepare_support_organisation_with_pii_access
     prepare_hpv_programme_with_one_patient

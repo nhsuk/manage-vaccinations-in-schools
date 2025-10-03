@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "HPV vaccination identity check" do
+  before { Flipper.enable(:ops_tools) }
+
   scenario "Default identification, changed and edited" do
     given_i_am_signed_in
 
