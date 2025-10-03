@@ -1,0 +1,73 @@
+<div style="<%= @primary_type == :patient ? "margin-bottom: 10px;" : "margin-bottom: 24px;" %>">
+  <%= h1 page_title: "Inspect #{@primary_type.to_s.classify} #{@primary_id}" do %>
+    <%= "Inspect #{@primary_type.to_s.classify} #{@primary_id}" %>
+  <% end %>
+  <code>
+    <%= "#{@primary_type.to_s.classify}.find(#{@primary_id})" %>
+  </code>
+</div>
+
+<% if @primary_type == :patient %>
+  <%= link_to "View timeline", inspect_timeline_patient_path(@primary_id), class: "nhsuk-button nhsuk-button--secondary" %>
+<% end %>
+
+<pre class="mermaid" style="overflow-x: auto; width: 100vw; margin-left: calc(50% - 50vw); display: grid; place-items: center;">
+  <%= @mermaid.html_safe %>
+</pre>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        flowchart: {
+          securityLevel: 'loose',
+          useMaxWidth: false
+        }
+    });
+</script>
+
+<%= render AppDetailsComponent.new(summary: "Graph options", expander: true, open: false) do %>
+  <%= form_with url: inspect_path(object_type: @primary_type.to_s.pluralize, object_id: @primary_id), method: :get, local: true do |form| %>
+    <div class="nhsuk-form-group" style="padding: 5px; margin-bottom: 20px;">
+      <% if @user_is_allowed_to_access_pii %>
+        <%= form.govuk_check_box :show_pii, true,
+                                 label: { text: "Show PII" },
+                                 checked: @show_pii,
+                                 "onchange": "this.form.submit();" %>
+      <% else %>
+        <%= form.govuk_check_box :show_pii, true,
+                                 label: { text: "Show PII (not allowed for this user)" },
+                                 checked: false,
+                                 "disabled": "true" %>
+      <% end %>
+    </div>
+
+    <% @traversals_config.keys.sort_by { |r| r.name.to_s.humanize }.each do |type| %>
+      <%= render AppDetailsComponent.new(summary: "#{type.to_s.humanize}", expander: true, open: false) do %>
+        <div class="nhsuk-form-group" style="padding: 5px;">
+          <%= form.label "additional_ids[#{type}]", safe_join(["Select relationships to include for ", tag.span(type, class: "nhsuk-u-font-weight-bold")]), class: "nhsuk-label" %>
+          <%= form.govuk_check_boxes_fieldset "relationships[#{type}]", legend: { hidden: true } do %>
+            <% type.to_s.classify.constantize.reflect_on_all_associations.sort_by { |r|
+                 [
+                   params.dig(:relationships, type)&.include?(r.name.to_s) ? 0 : 1,
+                   r.name.to_s.humanize,
+                 ]
+               }.each do |r| %>
+              <%= form.govuk_check_box "relationships[#{type}]", r.name, label: { text: r.name.to_s.humanize }, checked: params.dig(:relationships, type)&.include?(r.name.to_s) %>
+            <% end %>
+          <% end %>
+
+          <br>
+
+          <%= form.label "additional_ids[#{type}]", safe_join(["Additional ", tag.span(type, class: "nhsuk-u-font-weight-bold"), " IDs (comma separated)"]), class: "nhsuk-label" %>
+          <%= form.search_field "additional_ids[#{type}]", value: params.dig(:additional_ids, type), class: "nhsuk-input" %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <%= form.govuk_submit "Update graph", name: nil %>
+  <% end %>
+<% end %>
+
+<%= render AppDetailsComponent.new(summary: "Raw mermaid", expander: true, open: false) do %>
+  <pre class="nhsuk-u-font-family-monospace nhsuk-u-margin-0" style="font-size: small;"><%= @mermaid %></pre>
+<% end %>

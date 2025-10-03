@@ -80,7 +80,8 @@ class User < ApplicationRecord
          medical_secretary: 1,
          superuser: 2,
          healthcare_assistant: 3,
-         prescriber: 4
+         prescriber: 4,
+         support: 5
        },
        prefix: true,
        validate: {
@@ -132,8 +133,10 @@ class User < ApplicationRecord
         "Prescriber"
       elsif is_nurse?
         "Nurse"
-      else
+      elsif is_medical_secretary?
         "Medical secretary"
+      else
+        "Support"
       end
 
     is_superuser? ? "#{role} (Superuser)" : role
@@ -157,6 +160,10 @@ class User < ApplicationRecord
     else
       fallback_role_healthcare_assistant?
     end
+  end
+
+  def is_support?
+    cis2_enabled? ? cis2_info.is_support? : fallback_role_support?
   end
 
   def is_prescriber?

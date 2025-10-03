@@ -345,4 +345,12 @@ Rails.application.routes.draw do
   end
 
   get "/oidc/jwks", to: "jwks#jwks"
+
+  namespace :inspect do
+    get "dashboard", to: "dashboard#index"
+    get "graph/:object_type/:object_id", to: "graphs#show"
+    namespace :timeline do
+      resources :patients, only: [:show]
+    end
+  end
 end
