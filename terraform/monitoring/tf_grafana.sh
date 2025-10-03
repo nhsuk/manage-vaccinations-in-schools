@@ -3,7 +3,7 @@
 set -euo pipefail
 
 usage() {
-  echo "Usage: $0 <environment> [plan|apply|destroy] [--plan-file PLAN_FILE]"
+  echo "Usage: $0 <environment> [plan|apply|destroy] --slack-webhook-url SLACK_WEBHOOK_URL [--plan-file PLAN_FILE]"
   echo "  environment               Environment to deploy to (development|production)"
   echo "  plan                      Run terraform plan for Grafana configuration"
   echo "  apply                     Run terraform apply for Grafana configuration"
@@ -29,6 +29,7 @@ fi
 
 ACTION=""
 PLAN_FILE=""
+SLACK_WEBHOOK_URL=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -43,6 +44,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --plan-file)
       PLAN_FILE="$2"
+      shift 2
+      ;;
+    --slack-webhook-url)
+      SLACK_WEBHOOK_URL="$2"
       shift 2
       ;;
     -h|--help)
@@ -86,23 +91,25 @@ fi
 
 terraform -chdir="./grafana" init -backend-config="env/${ENVIRONMENT}-backend.hcl" -upgrade -reconfigure
 
+terraform_arguments=(-var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN" -var="environment=$ENVIRONMENT" -var="slack_webhook_url=$SLACK_WEBHOOK_URL")
+
 case "$ACTION" in
   plan)
     if [[ -n "$PLAN_FILE" ]]; then
-      terraform -chdir="./grafana" plan -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN" -out="$PLAN_FILE"
+      terraform -chdir="./grafana" plan "${terraform_arguments[@]}" -out="$PLAN_FILE"
     else
-      terraform -chdir="./grafana" plan -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN"
+      terraform -chdir="./grafana" plan "${terraform_arguments[@]}"
     fi
     ;;
   apply)
     if [[ -n "$PLAN_FILE" ]]; then
       terraform -chdir="./grafana" apply "$PLAN_FILE"
     else
-      terraform -chdir="./grafana" apply -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN"
+      terraform -chdir="./grafana" apply "${terraform_arguments[@]}"
     fi
     ;;
   destroy)
-    terraform -chdir="./grafana" destroy -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN"
+    terraform -chdir="./grafana" destroy "${terraform_arguments[@]}"
     ;;
   *)
     usage

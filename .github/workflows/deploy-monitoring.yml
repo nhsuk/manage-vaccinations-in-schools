@@ -147,5 +147,5 @@ jobs:
           sudo apt-get install -y jq uuid-runtime
       - name: Deploy Grafana using tf_grafana.sh
         run: |
-          ./tf_grafana.sh "$environment" plan --plan-file ${{ runner.temp }}/out
+          ./tf_grafana.sh "$environment" plan --plan-file ${{ runner.temp }}/out --slack-webhook-url ${{ inputs.environment == 'production' && secrets.GRAFANA_ALERTS_SLACK_WEBHOOK || secrets.GRAFANA_TEST_ALERTS_SLACK_WEBHOOK }}
           ./tf_grafana.sh "$environment" apply --plan-file ${{ runner.temp }}/out

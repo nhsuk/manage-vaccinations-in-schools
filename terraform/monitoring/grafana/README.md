@@ -27,7 +27,8 @@ Alerts should be configured in Grafana. The configuration should then be exporte
 2. Export the alert rules as Terraform (HCL).
 3. Save the exported code in modules/$environment_alerts/alerts.tf.tpl.
 
-### Importing Alerts
+### Restoring Alerts from Code
 
-There is no need to import alerts into the state. However, it is possible to do so. The script [generate_alert_config.sh](../generate_alert_config.sh) can be used to generate valid terraform syntax.
-Before it can be applied, the existing resources must still be imported into the state.
+To restore the alert configuration, first run [generate_alert_config.sh](../generate_alert_config.sh) to generate valid terraform syntax from the saved export.
+Add the alerts modules to the terraform configuration in [main.tf](main.tf) and run `terraform apply`.
+Before the terraform config can be applied, any existing resources must either be deleted or imported into the state to avoid name collisions.

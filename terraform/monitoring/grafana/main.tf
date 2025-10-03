@@ -66,9 +66,3 @@ module "production_alerts" {
   source = "./modules/production_alerts"
   count  = var.environment == "production" ? 1 : 0
 }
-
-
-import {
-  id = "load-balancer-folder:loadbalancer"
-  to = module.development_alerts[0].grafana_rule_group.rule_group_0002
-}
