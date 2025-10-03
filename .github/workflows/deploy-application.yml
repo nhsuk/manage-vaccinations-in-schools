@@ -135,10 +135,18 @@ jobs:
           name: ${{ inputs.environment }}-${{ matrix.service }}-task-definition
           path: ${{ runner.temp }}/${{ matrix.service }}-task-definition.json
 
+  approve-deployments:
+    name: Wait for approval if required
+    runs-on: ubuntu-latest
+    needs: prepare-deployment
+    environment: ${{ inputs.environment }}
+    steps:
+      - run: echo "Proceeding with deployment to $environment"
+
   deploy-service:
     name: Deploy service
     runs-on: ubuntu-latest
-    needs: [prepare-deployment]
+    needs: [prepare-deployment, approve-deployments]
     permissions:
       id-token: write
     strategy:
