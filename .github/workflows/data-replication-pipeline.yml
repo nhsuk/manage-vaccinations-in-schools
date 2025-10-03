@@ -30,7 +30,7 @@ env:
   db_snapshot_arn: ${{ inputs.db_snapshot_arn }}
   egress_cidr: ${{ inputs.egress_cidr }}
   take_db_snapshot: ${{ inputs.take_db_snapshot }}
-  git_ref: ${{ inputs.git_ref_to_deploy || github.sha }}
+  git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.sha }}
   aws_role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployDataReplicationInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployDataReplicationInfrastructure' }}
@@ -63,7 +63,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          ref: ${{ env.git_ref }}
+          ref: ${{ env.git_ref_to_deploy }}
       - name: Get git sha
         id: get-git-sha
         run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
@@ -86,7 +86,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          ref: ${{ env.git_ref }}
+          ref: ${{ env.git_ref_to_deploy }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
@@ -97,7 +97,7 @@ jobs:
         run: |
           digest=$(aws ecr describe-images \
             --repository-name mavis/webapp \
-            --image-ids imageTag=$git_ref \
+            --image-ids imageTag=$git_ref_to_deploy \
             --query 'imageDetails[0].imageDigest' \
             --output text)
           echo "digest=$digest" >> $GITHUB_OUTPUT
