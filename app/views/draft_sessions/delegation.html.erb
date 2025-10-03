@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
-  <%= govuk_back_link(href: session_edit_path(@session)) %>
+  <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
-<%= form_with model: @session, url: delegation_session_edit_path(@session), method: :put do |f| %>
+<%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <span class="nhsuk-caption-l"><%= @session.location.name %></span>

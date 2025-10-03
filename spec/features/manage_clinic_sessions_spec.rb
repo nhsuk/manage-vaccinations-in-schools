@@ -19,18 +19,14 @@ describe "Manage clinic sessions" do
     when_i_click_on_schedule_sessions
     then_i_see_the_dates_page
 
-    when_i_try_submitting_without_entering_data
-    then_i_see_an_error
-
     when_i_choose_the_dates
     then_i_see_the_confirmation_page
 
     when_i_click_on_change_invitations
     then_i_see_the_change_invitations_page
     and_i_change_invitations_date
-    and_i_confirm
 
-    when_i_confirm
+    when_i_save_changes
     then_i_should_see_the_session_details
 
     when_i_go_to_todays_sessions_as_a_nurse
@@ -138,14 +134,6 @@ describe "Manage clinic sessions" do
     expect(page).to have_content("When will sessions be held?")
   end
 
-  def when_i_try_submitting_without_entering_data
-    click_on "Continue"
-  end
-
-  def then_i_see_an_error
-    expect(page).to have_content("There is a problem\nEnter a date")
-  end
-
   def when_i_choose_the_dates
     fill_in "Day", with: "10"
     fill_in "Month", with: "03"
@@ -195,13 +183,12 @@ describe "Manage clinic sessions" do
     fill_in "Day", with: "1"
     fill_in "Month", with: "3"
     fill_in "Year", with: "2024"
-  end
-
-  def when_i_confirm
     click_on "Continue"
   end
 
-  alias_method :and_i_confirm, :when_i_confirm
+  def when_i_save_changes
+    click_on "Save changes"
+  end
 
   def then_i_should_see_the_session_details
     expect(page).to have_content("10 March 2024")

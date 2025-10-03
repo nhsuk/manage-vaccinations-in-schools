@@ -139,6 +139,7 @@ Rails.application.routes.draw do
 
   resource :draft_import, only: %i[show update], path: "draft-import/:id"
   resource :draft_consent, only: %i[show update], path: "draft-consent/:id"
+  resource :draft_session, only: %i[show update], path: "draft-session/:id"
   resource :draft_vaccination_record,
            only: %i[show update],
            path: "draft-vaccination-record/:id"
@@ -215,7 +216,7 @@ Rails.application.routes.draw do
     get "download", on: :member
   end
 
-  resources :sessions, only: %i[index show], param: :slug do
+  resources :sessions, only: %i[index show edit], param: :slug do
     resource :patients, only: :show, controller: "sessions/patients"
     resource :consent, only: :show, controller: "sessions/consent"
     resource :triage, only: :show, controller: "sessions/triage"
@@ -231,27 +232,6 @@ Rails.application.routes.draw do
           action: :edit_batch,
           as: :batch
       post "batch/:programme_type/:vaccine_method", action: :update_batch
-    end
-
-    resource :edit, only: :show, controller: "sessions/edit" do
-      get "programmes"
-      put "programmes", action: :update_programmes
-
-      get "send-consent-requests-at"
-      put "send-consent-requests-at", action: :update_send_consent_requests_at
-
-      get "send-invitations-at"
-      put "send-invitations-at", action: :update_send_invitations_at
-
-      get "weeks-before-consent-reminders"
-      put "weeks-before-consent-reminders",
-          action: :update_weeks_before_consent_reminders
-
-      get "register-attendance"
-      put "register-attendance", action: :update_register_attendance
-
-      get "delegation"
-      put "delegation", action: :update_delegation
     end
 
     resource :invite_to_clinic,
@@ -271,8 +251,6 @@ Rails.application.routes.draw do
         put "make-in-progress", to: "sessions#make_in_progress"
       end
     end
-
-    resource :dates, controller: "session_dates", only: %i[show update]
 
     resources :patient_sessions,
               path: "patients",

@@ -151,7 +151,7 @@ describe "End-to-end journey" do
     )
     expect(page).to have_content("Next: Friday, 23 February 2024")
 
-    click_on "Continue"
+    click_on "Save changes"
   end
 
   def then_i_see_the_session_page

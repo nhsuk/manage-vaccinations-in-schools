@@ -1,11 +1,11 @@
 <% content_for :before_main do %>
-  <%= govuk_back_link(href: session_edit_path(@session)) %>
+  <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
 <% legend = "Do you want to register children’s attendance before recording vaccinations?" %>
 <% content_for :page_title, legend %>
 
-<%= form_with model: @session, url: register_attendance_session_edit_path(@session), method: :put do |f| %>
+<%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_radio_buttons_fieldset :requires_registration,

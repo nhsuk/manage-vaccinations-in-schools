@@ -6,14 +6,10 @@ class DraftImportsController < ApplicationController
 
   include WizardControllerConcern
 
-  before_action :set_location_options,
-                only: %i[show update],
-                if: -> { current_step == :location }
-  before_action :set_year_group_options,
-                only: %i[show update],
-                if: -> { current_step == :year_groups }
+  before_action :set_location_options, if: -> { current_step == :location }
+  before_action :set_year_group_options, if: -> { current_step == :year_groups }
 
-  skip_after_action :verify_policy_scoped, only: %i[show update]
+  skip_after_action :verify_policy_scoped
 
   def show
     render_wizard
