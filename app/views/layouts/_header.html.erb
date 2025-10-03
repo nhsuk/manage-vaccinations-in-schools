@@ -38,34 +38,14 @@
     <nav class="nhsuk-header__navigation" aria-label="Menu">
       <div class="nhsuk-header__navigation-container nhsuk-width-container">
         <ul class="nhsuk-header__navigation-list">
-          <%= render AppHeaderNavigationItemComponent.new(t("programmes.index.title"), programmes_path, request_path: request.path) %>
-          <%= render AppHeaderNavigationItemComponent.new(t("sessions.index.title"), sessions_path, request_path: request.path) %>
-          <%= render AppHeaderNavigationItemComponent.new(t("patients.index.title"), patients_path, request_path: request.path) %>
-
-          <%= render AppHeaderNavigationItemComponent.new(
-            t("consent_forms.index.title_short"),
-            consent_forms_path,
-            request_path: request.path,
-            count: cached_counts.unmatched_consent_responses
-          ) %>
-
-          <%= render AppHeaderNavigationItemComponent.new(
-            t("school_moves.index.title"),
-            school_moves_path,
-            request_path: request.path,
-            count: cached_counts.school_moves
-          ) %>
-
-          <%= render AppHeaderNavigationItemComponent.new(t("vaccines.index.title"), vaccines_path, request_path: request.path) %>
-
-          <%= render AppHeaderNavigationItemComponent.new(
-            t("imports.index.title_short"),
-            imports_path,
-            request_path: request.path,
-            count: cached_counts.import_issues
-          ) %>
-
-          <%= render AppHeaderNavigationItemComponent.new(t("teams.show.title"), team_path, request_path: request.path) %>
+          <% @app_navigation_items.each do |item| %>
+            <%= render AppHeaderNavigationItemComponent.new(
+              item[:title],
+              item[:path],
+              request_path: request.path,
+              count: item[:count],
+            ) %>
+          <% end %>
 
           <li class="nhsuk-header__menu" hidden>
             <button class="nhsuk-header__menu-toggle nhsuk-header__navigation-link" id="toggle-menu" aria-expanded="false">
