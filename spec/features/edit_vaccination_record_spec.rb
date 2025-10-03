@@ -209,6 +209,34 @@ describe "Edit vaccination record" do
     then_i_should_see_the_vaccination_record
   end
 
+  scenario "User edits a service-created vaccination record and no discovered email is sent" do
+    given_i_am_signed_in
+    and_a_not_administered_vaccination_record_exists
+    and_the_patient_has_consent_but_no_prior_discovered_notification
+
+    when_i_go_to_the_vaccination_record_for_the_patient
+    and_i_click_on_edit_vaccination_record
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_change_outcome
+    then_i_should_see_the_change_outcome_form
+    and_i_choose_vaccinated
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_add_batch
+    and_i_choose_a_batch
+    then_i_see_the_edit_vaccination_record_page
+    and_i_should_see_the_updated_batch
+
+    when_i_click_on_add_delivery_method
+    and_i_choose_a_delivery_method_and_site
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_save_changes
+    then_i_should_see_the_vaccination_record
+    and_the_parent_doesnt_receive_a_vaccination_discovered_email
+  end
+
   def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv)
 
@@ -346,7 +374,7 @@ describe "Edit vaccination record" do
   def then_i_see_the_edit_vaccination_record_page
     expect(page).to have_content("Edit vaccination record")
     expect(page).not_to have_content(
-      "The vaccine given does not match that determined by the child’s consent or triage outcome"
+      "The vaccine given does not match that determined by the child's consent or triage outcome"
     )
   end
 
@@ -520,5 +548,13 @@ describe "Edit vaccination record" do
   def and_the_vaccination_record_is_deleted_from_nhs
     Sidekiq::Job.drain_all
     expect(@stubbed_delete_request).to have_been_requested
+  end
+
+  def and_the_patient_has_consent_but_no_prior_discovered_notification
+    create(:consent, :given, patient: @patient, programme: @programme)
+  end
+
+  def and_the_parent_doesnt_receive_a_vaccination_discovered_email
+    expect(email_deliveries).to be_empty
   end
 end
