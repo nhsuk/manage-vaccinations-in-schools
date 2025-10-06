@@ -61,7 +61,7 @@ env:
     || 'arn:aws:iam::393416225559:role/GithubDeployECSService' }}
   aws_account_id: ${{ inputs.environment == 'production' && '820242920762' || '393416225559' }}
   cluster_name: mavis-${{ inputs.environment }}
-  app_version: ${{ github.event_name == 'workflow_call' && inputs.app_version || (inputs.git_ref_to_deploy == '' && 'unknown' || inputs.git_ref_to_deploy) }}
+  app_version: ${{ inputs.app_version || inputs.git_ref_to_deploy || 'unknown' }}
 
 concurrency:
   group: deploy-application-${{ inputs.environment }}
