@@ -79,7 +79,7 @@ jobs:
   prepare-deployment:
     name: Prepare deployment
     runs-on: ubuntu-latest
-    needs: build-and-push-image
+    needs: [build-and-push-image, determine-git-sha]
     permissions:
       id-token: write
     steps:
@@ -97,7 +97,7 @@ jobs:
         run: |
           digest=$(aws ecr describe-images \
             --repository-name mavis/webapp \
-            --image-ids imageTag=$git_ref_to_deploy \
+            --image-ids imageTag=${{ needs.determine-git-sha.outputs.git-sha }} \
             --query 'imageDetails[0].imageDigest' \
             --output text)
           echo "digest=$digest" >> $GITHUB_OUTPUT
