@@ -42,6 +42,7 @@ Rails/LexicallyScopedActionFilter:
 Rails/Output:
   Exclude:
     - app/lib/mavis_cli/**/*.rb
+    - app/lib/timeline_records.rb
 
 Rails/UnknownEnv:
   Environments:
