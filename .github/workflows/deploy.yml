@@ -146,7 +146,7 @@ jobs:
     uses: ./.github/workflows/deploy-infrastructure.yml
     with:
       environment: ${{ inputs.environment }}
-      git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
+      git_ref_to_deploy: ${{ needs.determine-git-sha.outputs.git-sha }}
   deploy-application:
     permissions:
       id-token: write
@@ -156,4 +156,5 @@ jobs:
     with:
       environment: ${{ inputs.environment }}
       server_types: ${{ inputs.server_types }}
-      git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
+      git_ref_to_deploy: ${{ needs.determine-git-sha.outputs.git-sha }}
+      app_version: ${{ inputs.git_ref_to_deploy == '' && github.ref_name || inputs.git_ref_to_deploy }}
