@@ -79,11 +79,13 @@ class DraftSessionsController < ApplicationController
       .with_index
       .reverse_each do |session_date, index|
       attributes = session_dates_attrs["session_date_#{index}"]
-      if attributes["_destroy"].present?
-        @draft_session.session_dates.delete_at(index)
-        jump_to("dates")
-      else
-        session_date.assign_attributes(attributes)
+      if attributes.present?
+        if attributes["_destroy"].present?
+          @draft_session.session_dates.delete_at(index)
+          jump_to("dates")
+        else
+          session_date.assign_attributes(attributes)
+        end
       end
     end
 
