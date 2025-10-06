@@ -517,7 +517,7 @@ describe TimelineRecords do
       it "returns cohort imports that the patient is not in, for teams that the patient is in" do
         result = timeline.additional_events(patient)
         expect(result[:cohort_imports]).to eq(
-          cohort_imports_without_patient.map(&:id)
+          cohort_imports_without_patient.pluck(:id)
         )
       end
     end
@@ -547,14 +547,14 @@ describe TimelineRecords do
 
       it "returns an array of class import IDs" do
         result = timeline.patient_events(patient)
-        expect(result[:class_imports]).to eq(class_imports.map(&:id))
+        expect(result[:class_imports]).to eq(class_imports.pluck(:id))
       end
     end
 
     context "with cohort imports" do
       it "returns an array of cohort import IDs" do
         result = timeline.patient_events(patient)
-        expect(result[:cohort_imports]).to eq(cohort_imports.map(&:id))
+        expect(result[:cohort_imports]).to eq(cohort_imports.pluck(:id))
       end
     end
   end
