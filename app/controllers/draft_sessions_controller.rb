@@ -84,7 +84,7 @@ class DraftSessionsController < ApplicationController
           @draft_session.session_dates.delete_at(index)
           jump_to("dates")
         else
-          session_date.assign_attributes(attributes)
+          session_date.assign_attributes(remove_invalid_date(attributes))
         end
       end
     end
@@ -157,5 +157,24 @@ class DraftSessionsController < ApplicationController
         object: @draft_session,
         params: update_params
       )
+  end
+
+  def remove_invalid_date(hash)
+    return hash if hash.blank?
+
+    if hash.key?("value(1i)") && hash.key?("value(2i)") &&
+         hash.key?("value(3i)")
+      begin
+        Date.new(
+          hash["value(1i)"].to_i,
+          hash["value(2i)"].to_i,
+          hash["value(3i)"].to_i
+        )
+      rescue StandardError
+        hash.delete("value")
+      end
+    end
+
+    hash
   end
 end
