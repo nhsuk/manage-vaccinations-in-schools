@@ -54,6 +54,8 @@ describe Patient::VaccinationStatus do
     context "with a vaccination administered" do
       before { create(:vaccination_record, patient:, programme:) }
 
+      let(:programme) { create(:programme, :hpv) }
+
       it { should be(:vaccinated) }
     end
 
@@ -67,6 +69,8 @@ describe Patient::VaccinationStatus do
           programme:
         )
       end
+
+      let(:programme) { create(:programme, :hpv) }
 
       it { should be(:vaccinated) }
     end
@@ -102,6 +106,8 @@ describe Patient::VaccinationStatus do
     subject do
       patient_vaccination_status.tap(&:assign_status).latest_location_id
     end
+
+    let(:programme) { create(:programme, :hpv) }
 
     context "with no vaccination record" do
       it { should be_nil }

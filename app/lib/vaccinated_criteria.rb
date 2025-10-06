@@ -31,6 +31,8 @@ class VaccinatedCriteria
   def vaccination_record
     if programme.seasonal?
       relevant_vaccination_records.find { it.administered? || it.already_had? }
+    elsif programme.mmr?
+      nil # TODO: Implement vaccination criteria
     else
       if (
            already_had_record =

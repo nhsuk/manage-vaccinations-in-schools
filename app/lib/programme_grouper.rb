@@ -27,6 +27,8 @@ class ProgrammeGrouper
       :hpv
     elsif programme.doubles?
       :doubles
+    elsif programme.mmr?
+      :mmr
     else
       raise UnsupportedProgramme, programme
     end
