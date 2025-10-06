@@ -32,7 +32,9 @@ on:
 permissions: {}
 
 env:
+  environment: ${{ inputs.environment }}
   db_snapshot_arn: ${{ inputs.db_snapshot_arn }}
+  egress_cidr: ${{ inputs.egress_cidr }}
   aws_role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployDataReplicationInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployDataReplicationInfrastructure' }}
@@ -99,7 +101,7 @@ jobs:
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.11.4
+          terraform_version: 1.13.3
     outputs:
       SNAPSHOT_ARN: ${{ steps.get-latest-snapshot.outputs.SNAPSHOT_ARN }}
 
@@ -124,7 +126,7 @@ jobs:
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.11.4
+          terraform_version: 1.13.3
       - name: Get db secret arn
         id: get-db-secret-arn
         working-directory: terraform/app
@@ -204,7 +206,7 @@ jobs:
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.11.4
+          terraform_version: 1.13.3
       - name: Apply the changes
         run: |
           set -e
