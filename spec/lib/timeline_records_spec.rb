@@ -325,8 +325,10 @@ describe TimelineRecords do
     end
 
     it "handles a nil session id" do
-      events = timeline.send(:load_events, ["add_class_imports_nil"])
-      expect(events).to be_empty
+      output =
+        capture_error { timeline.send(:load_events, ["add_class_imports_nil"]) }
+      expect(output).to eq("No handler for event type: add_class_imports_nil\n")
+      expect(timeline.instance_variable_get(:@events)).to be_empty
     end
   end
 

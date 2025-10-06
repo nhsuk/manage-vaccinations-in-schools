@@ -269,7 +269,7 @@ class TimelineRecords
     when :audits
       @events += audits_events
     else
-      puts "No handler for event type: #{event_type}"
+      warn "No handler for event type: #{event_type}"
     end
   end
 
