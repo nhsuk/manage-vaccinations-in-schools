@@ -139,15 +139,26 @@ class Patient < ApplicationRecord
         end
 
   scope :appear_in_programmes,
-        ->(programmes, academic_year:) do
-          patient_locations =
-            PatientLocation
-              .select("1")
-              .where("patient_locations.patient_id = patients.id")
-              .where(academic_year:)
-              .appear_in_programmes(programmes)
+        ->(programmes, academic_year: nil, session: nil) do
+          if session
+            birth_academic_years =
+              programmes.flat_map do |programme|
+                session.programme_birth_academic_years[programme]
+              end
 
-          where(patient_locations.arel.exists)
+            where(birth_academic_year: birth_academic_years)
+          elsif academic_year
+            patient_locations =
+              PatientLocation
+                .select("1")
+                .where("patient_locations.patient_id = patients.id")
+                .where(academic_year:)
+                .appear_in_programmes(programmes)
+
+            where(patient_locations.arel.exists)
+          else
+            raise "Pass either academic year or session."
+          end
         end
 
   scope :not_appear_in_programmes,
