@@ -70,6 +70,10 @@ locals {
     {
       name  = "DB_NAME"
       value = aws_rds_cluster.cluster.database_name
+    },
+    {
+      name  = "RAILS_ENV"
+      value = var.environment == "production" ? "production" : "staging"
     }
   ]
   task_secrets = [
