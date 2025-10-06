@@ -196,10 +196,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         render(
           AppProgrammeStatusTagsComponent.new(
             programmes.index_with do |programme|
-              patient.consent_status(programme:, academic_year:).slice(
-                :status,
-                :vaccine_methods
-              )
+              consent_status_value(programme:, academic_year:)
             end,
             outcome: :consent
           )
@@ -245,10 +242,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         render(
           AppProgrammeStatusTagsComponent.new(
             programmes.index_with do |programme|
-              triage_status_value(
-                patient.triage_status(programme:, academic_year:),
-                programme
-              )
+              triage_status_value(programme:, academic_year:)
             end,
             outcome: :triage
           )
@@ -256,7 +250,28 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     }
   end
 
-  def triage_status_value(triage_status, programme)
+  def consent_status_value(programme:, academic_year:)
+    consent_status = patient.consent_status(programme:, academic_year:)
+
+    if programme.has_multiple_vaccine_methods?
+      triage_status = patient.triage_status(programme:, academic_year:)
+
+      if triage_status.vaccine_method.present?
+        return(
+          {
+            status: consent_status.status,
+            vaccine_methods: [triage_status.vaccine_method]
+          }
+        )
+      end
+    end
+
+    consent_status.slice(:status, :vaccine_methods)
+  end
+
+  def triage_status_value(programme:, academic_year:)
+    triage_status = patient.triage_status(programme:, academic_year:)
+
     status =
       if triage_status.vaccine_method.present? &&
            programme.has_multiple_vaccine_methods?
