@@ -15,11 +15,20 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
   delegate :academic_year, to: :session
 
   def colour
-    I18n.t(status, scope: %i[status consent colour])
+    I18n.t(consent_status.status, scope: %i[status consent colour])
   end
 
   def heading
-    "#{programme.name}: #{I18n.t(status, scope: %i[status consent label])}"
+    status_with_method = consent_status.status
+
+    if programme.has_multiple_vaccine_methods?
+      vaccine_method =
+        triage_status.vaccine_method.presence ||
+          consent_status.vaccine_methods.first
+      status_with_method += "_#{vaccine_method}" if vaccine_method
+    end
+
+    "#{programme.name}: #{I18n.t(status_with_method, scope: %i[status consent label])}"
   end
 
   def latest_consent_request
@@ -47,6 +56,10 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
     @consent_status ||= patient.consent_status(programme:, academic_year:)
   end
 
+  def triage_status
+    @triage_status ||= patient.triage_status(programme:, academic_year:)
+  end
+
   def vaccination_status
     @vaccination_status ||=
       patient.vaccination_status(programme:, academic_year:)
@@ -69,6 +82,4 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
   def show_health_answers?
     grouped_consents.any?(&:response_given?)
   end
-
-  delegate :status, to: :consent_status
 end
