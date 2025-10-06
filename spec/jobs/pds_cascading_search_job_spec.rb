@@ -127,7 +127,7 @@ describe PDSCascadingSearchJob do
       it "skips wildcard name steps and completes search" do
         described_class.perform_now(patient_changeset)
 
-        wait_for_jobs_to_finish(described_class.to_s)
+        perform_enqueued_jobs_while_exists(only: described_class)
         perform_enqueued_jobs(only: ProcessPatientChangesetJob)
 
         patient_changeset.reload
