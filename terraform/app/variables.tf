@@ -361,7 +361,15 @@ variable "valkey_log_retention_days" {
   }
 }
 
+
+variable "active_target_group" {
+  default     = "blue"
+  type        = string
+  description = "The active target group for blue/green deployments. Valid values are 'blue or 'green'."
+  nullable    = false
+}
 locals {
+  non_active_target_group         = var.active_target_group == "blue" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
   ecs_sg_ids                      = [module.web_service.security_group_id, module.sidekiq_service.security_group_id]
   valkey_cache_availability_zones = var.valkey_failover_enabled ? [aws_subnet.private_subnet_a.availability_zone, aws_subnet.private_subnet_b.availability_zone] : [aws_subnet.private_subnet_a.availability_zone]
 }

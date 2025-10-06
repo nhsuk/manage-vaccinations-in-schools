@@ -175,7 +175,7 @@ resource "aws_lb_listener_rule" "forward_to_test" {
   # Action to forward traffic to the target group
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.green.arn
+    target_group_arn = local.non_active_target_group
   }
 
   # Condition based on HTTP header

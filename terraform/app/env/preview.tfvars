@@ -16,3 +16,5 @@ http_hosts = {
 valkey_node_type          = "cache.t4g.micro"
 valkey_log_retention_days = 3
 valkey_failover_enabled   = false
+
+active_target_group = "blue"
