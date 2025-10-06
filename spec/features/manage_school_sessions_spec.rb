@@ -51,6 +51,7 @@ describe "Manage school sessions" do
     then_they_can_give_consent
 
     when_the_deadline_has_passed
+    and_patients_have_been_seen
     then_they_can_no_longer_give_consent
     and_i_am_signed_in
 
@@ -59,6 +60,9 @@ describe "Manage school sessions" do
     then_i_see_the_school
 
     when_i_click_on_the_school
+    and_i_click_on_edit_dates
+    then_i_see_the_dates_page_but_cannot_change
+
     and_i_click_on_send_invitations
     then_i_see_the_send_invitations_page
 
@@ -181,6 +185,20 @@ describe "Manage school sessions" do
     click_on "Add session dates"
   end
 
+  def and_i_click_on_edit_dates
+    click_on "Edit session"
+    click_on "Change session dates"
+  end
+
+  def then_i_see_the_dates_page_but_cannot_change
+    expect(page).to have_content(
+      "Children have attended this session. It cannot be changed."
+    )
+
+    click_on "Continue"
+    click_on "Save changes"
+  end
+
   def then_i_see_the_dates_page
     expect(page).to have_content("When will sessions be held?")
   end
@@ -286,6 +304,15 @@ describe "Manage school sessions" do
 
   def when_the_deadline_has_passed
     travel_to(Time.zone.local(2024, 3, 12))
+  end
+
+  def and_patients_have_been_seen
+    create(
+      :attendance_record,
+      :present,
+      patient: @patient,
+      session: @session.reload
+    )
   end
 
   def then_they_can_no_longer_give_consent
