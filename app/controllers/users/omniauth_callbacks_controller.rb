@@ -15,31 +15,33 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def cis2
     set_cis2_session_info
 
-    if !selected_cis2_role_is_valid?
-      redirect_to users_role_not_found_path
-    elsif !selected_cis2_org_is_registered?
-      redirect_to users_organisation_not_found_path
-    elsif !selected_cis2_workgroup_is_valid?
-      redirect_to users_workgroup_not_found_path
-    else
-      @user = User.find_or_create_from_cis2_oidc(user_cis2_info, valid_teams)
-
-      # Track which users have authorisation to supply using the PGD protocol.
-      @user.update!(show_in_suppliers: cis2_info.is_nurse?)
-
-      # give them a session token for the reporting app also
-      @user.update!(reporting_api_session_token: SecureRandom.hex(32))
-
-      # Force is set to true because the `session_token` might have changed
-      # even if the same user is logging in.
-      sign_in @user, event: :authentication, force: true
-      # We have to split sign_in and redirect methods up, so we can supply the
-      # allow_other_host param to the redirect. This is so that we can
-      # redirect to the reporting app which will be running on another host/port
-      # Note that safety checks on the host are now done in the
-      # after_sign_in_path_for method, so this doesn't allow arbitrary URLs
-      redirect_after_choosing_org
+    unless user_is_support?
+      if !selected_cis2_role_is_valid?
+        redirect_to users_role_not_found_path and return
+      elsif !selected_cis2_org_is_registered?
+        redirect_to users_organisation_not_found_path and return
+      elsif !selected_cis2_workgroup_is_valid?
+        redirect_to users_workgroup_not_found_path and return
+      end
     end
+
+    @user = User.find_or_create_from_cis2_oidc(user_cis2_info, valid_teams)
+
+    # Track which users have authorisation to supply using the PGD protocol.
+    @user.update!(show_in_suppliers: cis2_info.is_nurse?)
+
+    # give them a session token for the reporting app also
+    @user.update!(reporting_api_session_token: SecureRandom.hex(32))
+
+    # Force is set to true because the `session_token` might have changed
+    # even if the same user is logging in.
+    sign_in @user, event: :authentication, force: true
+    # We have to split sign_in and redirect methods up, so we can supply the
+    # allow_other_host param to the redirect. This is so that we can
+    # redirect to the reporting app which will be running on another host/port
+    # Note that safety checks on the host are now done in the
+    # after_sign_in_path_for method, so this doesn't allow arbitrary URLs
+    redirect_after_choosing_org
   rescue StandardError => e
     unless Rails.env.production?
       user_info = request.env["omniauth.auth"].to_h

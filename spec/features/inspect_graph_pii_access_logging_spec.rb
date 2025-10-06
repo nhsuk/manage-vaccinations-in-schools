@@ -38,19 +38,11 @@ describe "Inspect graph PII access logging", :cis2 do
 
   # Setup methods
   def prepare_support_organisation_with_pii_access
-    @organisation_support = create(:organisation, ods_code: "X26")
-    @team_support =
-      create(
-        :team,
-        organisation: @organisation_support,
-        workgroup: CIS2Info::SUPPORT_WORKGROUP
-      )
-
     mock_cis2_auth(
       uid: "123",
       given_name: "Support",
       family_name: "Test",
-      org_code: @organisation_support.ods_code,
+      org_code: "X26",
       workgroups: [CIS2Info::SUPPORT_WORKGROUP],
       role_code: CIS2Info::SUPPORT_ROLE,
       activity_codes: [

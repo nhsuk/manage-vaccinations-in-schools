@@ -56,20 +56,13 @@ describe "Inspect tools with PII access", :cis2 do
   end
 
   def given_a_test_ops_organisation_with_pii_is_setup_in_mavis_and_cis2
-    @organisation_support = create(:organisation, ods_code: "X26")
-    @team_support =
-      create(
-        :team,
-        organisation: @organisation_support,
-        workgroup: CIS2Info::SUPPORT_WORKGROUP
-      )
-    @user = create(:user, :support, team: @team_support)
+    @user = create(:user, :support)
 
     mock_cis2_auth(
       uid: "123",
       given_name: "Support",
       family_name: "Test",
-      org_code: @organisation_support.ods_code,
+      org_code: "X26",
       workgroups: [CIS2Info::SUPPORT_WORKGROUP],
       role_code: CIS2Info::SUPPORT_ROLE,
       activity_codes: [

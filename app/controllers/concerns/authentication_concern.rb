@@ -16,8 +16,8 @@ module AuthenticationConcern
     end
 
     def authenticate_user!
-      if !user_signed_in?
-        if request.path != start_path && request.path != new_users_teams_path
+      unless user_signed_in?
+        unless [start_path, new_users_teams_path].include?(request.path)
           store_location_for(:user, request.fullpath)
         end
 
@@ -25,19 +25,26 @@ module AuthenticationConcern
           flash[:info] = "You must be logged in to access this page."
           redirect_to start_path
         end
-      elsif cis2_enabled?
-        if !selected_cis2_role_is_valid?
-          redirect_to users_role_not_found_path
-        elsif !selected_cis2_org_is_registered?
-          redirect_to users_organisation_not_found_path
-        elsif !selected_cis2_workgroup_is_valid?
-          redirect_to users_workgroup_not_found_path
-        elsif path_is_support? && !user_is_support?
-          raise ActionController::RoutingError, "Not found"
-        elsif !path_is_support? && user_is_support? &&
-              request.path != new_users_teams_path
+        return
+      end
+
+      return unless cis2_enabled?
+
+      if user_is_support?
+        if !path_is_support? && request.path != new_users_teams_path
           redirect_to inspect_dashboard_path
         end
+        return
+      end
+
+      if !selected_cis2_role_is_valid?
+        redirect_to users_role_not_found_path
+      elsif !selected_cis2_org_is_registered?
+        redirect_to users_organisation_not_found_path
+      elsif !selected_cis2_workgroup_is_valid?
+        redirect_to users_workgroup_not_found_path
+      elsif path_is_support?
+        raise ActionController::RoutingError, "Not found"
       end
     end
 

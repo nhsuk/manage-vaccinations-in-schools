@@ -46,10 +46,11 @@ FactoryBot.define do
       role_code { CIS2Info::NURSE_ROLE }
       role_workgroups { [] }
       activity_codes { [] }
+      organisation_code { team.organisation.ods_code }
 
       cis2_info_hash do
         {
-          "organisation_code" => team.organisation.ods_code,
+          "organisation_code" => organisation_code,
           "organisation_name" => team.name,
           "role_code" => role_code,
           "activity_codes" => activity_codes,
@@ -118,10 +119,10 @@ FactoryBot.define do
     end
 
     trait :support do
-      team { create(:team, ods_code: "X26") }
       role_code { CIS2Info::SUPPORT_ROLE }
       sequence(:email) { |n| "support-#{n}@example.com" }
       role_workgroups { [CIS2Info::SUPPORT_WORKGROUP] }
+      organisation_code { "X26" }
       fallback_role { :support }
       activity_codes do
         [

@@ -58,16 +58,13 @@ describe "Inspect tools", :cis2 do
   end
 
   def given_a_test_support_organisation_is_setup_in_mavis_and_cis2
-    @ods_code = "X26"
-    @team_support =
-      create(:team, ods_code: @ods_code, workgroup: CIS2Info::SUPPORT_WORKGROUP)
-    @user = create(:user, :support, team: @team_support)
+    @user = create(:user, :support)
 
     mock_cis2_auth(
       uid: "123",
       given_name: "Support",
       family_name: "Test",
-      org_code: @ods_code,
+      org_code: "X26",
       workgroups: [CIS2Info::SUPPORT_WORKGROUP],
       role_code: CIS2Info::SUPPORT_ROLE,
       activity_codes: [
