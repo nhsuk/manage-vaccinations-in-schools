@@ -513,4 +513,13 @@ describe GovukNotifyPersonalisation do
       end
     end
   end
+
+  context "with session nil" do
+    let(:session) { nil }
+    let(:consent) { create(:consent, patient:) }
+
+    it "doesn't throw an error" do
+      expect { to_h }.not_to raise_error
+    end
+  end
 end
