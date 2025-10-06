@@ -130,12 +130,7 @@ class PatientSearchForm < SearchForm
   def filter_programmes(scope)
     if programme_types.present?
       if session
-        birth_academic_years =
-          programmes.flat_map do |programme|
-            session.programme_birth_academic_years[programme]
-          end
-
-        scope.where(birth_academic_year: birth_academic_years)
+        scope.appear_in_programmes(programmes, session:)
       else
         scope.appear_in_programmes(programmes, academic_year:)
       end

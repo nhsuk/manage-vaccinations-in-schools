@@ -95,7 +95,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
     @patients_in_programme_cohort ||= {}
     @patients_in_programme_cohort[programme.id] ||= patients_for_programme(
       programme
-    ).appear_in_programmes(programme, academic_year:).count
+    ).appear_in_programmes([programme], session:).count
   end
 
   def previously_vaccinated_count(programme)
