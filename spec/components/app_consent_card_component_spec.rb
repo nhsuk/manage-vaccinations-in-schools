@@ -36,7 +36,7 @@ describe AppConsentCardComponent do
   it { should have_content("Date") }
   it { should have_content("1 January 2024 at 12:00am") }
 
-  it { should have_content("Decision") }
+  it { should have_content("Response") }
   it { should have_content("Consent given") }
 
   it { should_not have_content("Consent also given for injected vaccine?") }
@@ -53,7 +53,7 @@ describe AppConsentCardComponent do
         create(:consent, programme:, vaccine_methods: %w[nasal injection])
       end
 
-      it { should have_content("Decision") }
+      it { should have_content("Response") }
       it { should have_content("Consent givenNasal spray") }
 
       it { should have_content("Consent also given for injected vaccine?") }

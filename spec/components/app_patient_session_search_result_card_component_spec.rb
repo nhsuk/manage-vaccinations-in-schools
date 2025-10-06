@@ -74,6 +74,19 @@ describe AppPatientSessionSearchResultCardComponent do
 
       it { should_not have_text("Vaccination method") }
       it { should have_text("Consent given for nasal spray") }
+
+      context "and the vaccine method is overridden by triage" do
+        let(:patient) do
+          create(
+            :patient,
+            :consent_given_injection_and_nasal_triage_safe_to_vaccinate_injection,
+            session:
+          )
+        end
+
+        it { should_not have_text("Vaccination method") }
+        it { should have_text("Consent given for injected vaccine") }
+      end
     end
   end
 

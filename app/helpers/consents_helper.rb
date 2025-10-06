@@ -22,7 +22,7 @@ module ConsentsHelper
     end
   end
 
-  def consent_status_tag(consent)
+  def consent_response_tag(consent)
     text =
       if consent.withdrawn?
         Consent.human_enum_name(:response, :given)
