@@ -8,6 +8,7 @@ class DraftSession
   include ActiveRecord::AttributeMethods::Serialization
   include Consentable
   include DaysBeforeToWeeksBefore
+  include Delegatable
 
   attribute :days_before_consent_reminders, :integer
   attribute :location_id, :integer
@@ -36,7 +37,7 @@ class DraftSession
 
     steps << :register_attendance
 
-    steps << :delegation if session.supports_delegation?
+    steps << :delegation if supports_delegation?
 
     steps + %i[confirm]
   end

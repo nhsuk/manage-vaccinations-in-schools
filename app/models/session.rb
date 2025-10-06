@@ -32,6 +32,7 @@
 class Session < ApplicationRecord
   include Consentable
   include DaysBeforeToWeeksBefore
+  include Delegatable
 
   audited associated_with: :location
   has_associated_audits
@@ -203,10 +204,6 @@ class Session < ApplicationRecord
     return false if dates.empty?
     Date.current > dates.min
   end
-
-  def supports_delegation? = programmes.any?(&:supports_delegation?)
-
-  def pgd_supply_enabled? = supports_delegation? && !psd_enabled?
 
   def year_groups
     @year_groups ||= location_programme_year_groups.pluck_year_groups
