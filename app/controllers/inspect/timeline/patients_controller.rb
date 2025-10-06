@@ -96,14 +96,17 @@ class Inspect::Timeline::PatientsController < ApplicationController
 
     case compare_option
     when "class_import"
-      class_import = params[:compare_option_class_import]
-      class_import.patients.where.not(id: @patient.id).sample
+      class_import = ClassImport.find(params[:compare_option_class_import])
+      id = class_import.patients.where.not(id: @patient.id).pluck(:id).sample
+      Patient.find(id)
     when "cohort_import"
-      cohort_import = params[:compare_option_cohort_import]
-      cohort_import.patients.where.not(id: @patient.id).sample
+      cohort_import = CohortImport.find(params[:compare_option_cohort_import])
+      id = cohort_import.patients.where.not(id: @patient.id).pluck(:id).sample
+      Patient.find(id)
     when "session"
       session = Session.find(params[:compare_option_session])
-      session.patients.where.not(id: @patient.id).sample
+      id = session.patients.where.not(id: @patient.id).pluck(:id).sample
+      Patient.find(id)
     when "manual_entry"
       begin
         Patient.find(params[:manual_patient_id])

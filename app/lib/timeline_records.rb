@@ -157,8 +157,8 @@ class TimelineRecords
   end
 
   def additional_events(patient)
-    patient_imports = patient_events(patient)[:class_imports]
-    patient_sessions = patient_events(patient)[:sessions]
+    patient_imports = @patient_events[:class_imports]
+    patient_sessions = @patient_events[:sessions]
     patient_locations =
       Location.joins(:sessions).where(sessions: { id: patient_sessions })
     class_imports = ClassImport.where(location_id: patient_locations)
@@ -168,22 +168,22 @@ class TimelineRecords
     {
       class_imports:
         class_imports
-          .group_by(&:location_id)
-          .transform_values { |imports| imports.map(&:id) },
+          .pluck(:location_id, :id)
+          .group_by(&:first)
+          .transform_values { |ids| ids.map(&:last) },
       cohort_imports:
-        patient
-          .teams
-          .flat_map(&:cohort_imports)
-          .map(&:id)
-          .reject { |id| patient_events(patient)[:cohort_imports].include?(id) }
+        CohortImport
+          .where(team_id: patient.teams.select(:id))
+          .where.not(id: @patient_events[:cohort_imports])
+          .pluck(:id)
     }
   end
 
   def patient_events(patient)
     {
-      class_imports: patient.class_imports.map(&:id),
-      cohort_imports: patient.cohort_imports.map(&:id),
-      sessions: patient.sessions.map(&:id)
+      class_imports: patient.class_imports.pluck(:id),
+      cohort_imports: patient.cohort_imports.pluck(:id),
+      sessions: patient.sessions.pluck(:id)
     }
   end
 
