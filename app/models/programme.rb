@@ -61,7 +61,7 @@ class Programme < ApplicationRecord
 
   def seasonal? = flu?
 
-  def catch_up_only? = false
+  def catch_up_only? = mmr?
 
   def supports_delegation? = flu?
 

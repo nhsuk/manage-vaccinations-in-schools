@@ -20,6 +20,14 @@ describe LocationSessionsFactory do
         expect(session.programmes).to eq(programmes)
       end
 
+      context "with MMR" do
+        let(:programmes) { [create(:programme, :mmr)] }
+
+        it "doesn't create a session on its own" do
+          expect { call }.not_to change(team.sessions, :count)
+        end
+      end
+
       context "with patients from a previous academic year" do
         let(:previous_session_at_location) do
           create(
