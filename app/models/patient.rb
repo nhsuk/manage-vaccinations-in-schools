@@ -109,6 +109,18 @@ class Patient < ApplicationRecord
     AND sessions.academic_year = patient_locations.academic_year
   SQL
 
+  scope :joins_location_programme_year_groups, -> { joins(<<-SQL) }
+    INNER JOIN location_programme_year_groups
+    ON location_programme_year_groups.location_id = patient_locations.location_id
+    AND location_programme_year_groups.academic_year = patient_locations.academic_year
+    AND location_programme_year_groups.year_group = patient_locations.academic_year - patients.birth_academic_year - #{Integer::AGE_CHILDREN_START_SCHOOL}
+  SQL
+
+  scope :joins_session_programmes, -> { joins_sessions.joins(<<-SQL) }
+    INNER JOIN session_programmes
+    ON session_programmes.session_id = sessions.id
+  SQL
+
   scope :archived,
         ->(team:) do
           joins_archive_reasons(team:).where("archive_reasons.id IS NOT NULL")
@@ -140,26 +152,23 @@ class Patient < ApplicationRecord
 
   scope :appear_in_programmes,
         ->(programmes, academic_year:) do
-          patient_locations =
-            PatientLocation
-              .select("1")
-              .where("patient_locations.patient_id = patients.id")
-              .where(academic_year:)
-              .appear_in_programmes(programmes)
-
-          where(patient_locations.arel.exists)
+          joins_session_programmes
+            .joins_location_programme_year_groups
+            .where(patient_locations: { academic_year: })
+            .where(
+              "location_programme_year_groups.programme_id = session_programmes.programme_id"
+            )
+            .where(
+              "session_programmes.programme_id IN (?)",
+              programmes.map(&:id)
+            )
         end
 
   scope :not_appear_in_programmes,
         ->(programmes, academic_year:) do
-          patient_locations =
-            PatientLocation
-              .select("1")
-              .where("patient_locations.patient_id = patients.id")
-              .where(academic_year:)
-              .appear_in_programmes(programmes)
-
-          where.not(patient_locations.arel.exists)
+          where.not(
+            id: appear_in_programmes(programmes, academic_year:).select(:id)
+          )
         end
 
   scope :search_by_name,

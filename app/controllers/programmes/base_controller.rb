@@ -27,6 +27,5 @@ class Programmes::BaseController < ApplicationController
         .appear_in_programmes([@programme], academic_year: @academic_year)
         .not_archived(team: current_team)
         .pluck(:id)
-        .uniq
   end
 end
