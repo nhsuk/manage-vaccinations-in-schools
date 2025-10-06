@@ -92,7 +92,7 @@ describe "Verbal consent" do
     click_button "Continue"
 
     # Confirm
-    expect(page).to have_content(["Decision", "Consent refused"].join)
+    expect(page).to have_content(["Response", "Consent refused"].join)
     expect(page).to have_content(["Name", @parent.full_name].join)
     click_button "Confirm"
 
@@ -111,7 +111,7 @@ describe "Verbal consent" do
     click_link @parent.full_name
 
     expect(page).to have_content(["Date", Date.current.to_fs(:long)].join)
-    expect(page).to have_content(["Decision", "Consent refused"].join)
+    expect(page).to have_content(["Response", "Consent refused"].join)
     expect(page).to have_content(["Method", "By phone"].join)
     expect(page).to have_content(["Reason for refusal", "Medical reasons"].join)
     expect(page).to have_content(

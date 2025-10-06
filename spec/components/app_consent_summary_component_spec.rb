@@ -9,7 +9,7 @@ describe AppConsentSummaryComponent do
 
   it { should have_content("Programme") }
   it { should have_content("Method") }
-  it { should have_content("Decision") }
+  it { should have_content("Response") }
 
   context "when recorded" do
     let(:consent) { create(:consent) }
@@ -73,7 +73,7 @@ describe AppConsentSummaryComponent do
         create(:consent, programme:, vaccine_methods: %w[nasal injection])
       end
 
-      it { should have_content("Decision") }
+      it { should have_content("Response") }
       it { should have_content("Consent givenNasal spray") }
 
       it { should have_content("Consent also given for injected vaccine?") }
