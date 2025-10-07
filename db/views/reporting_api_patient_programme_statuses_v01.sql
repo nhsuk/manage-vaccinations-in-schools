@@ -34,7 +34,7 @@ SELECT DISTINCT ON (p.id, prog.id, t.id, s.academic_year)
     ELSE false
   END AS vaccinated_by_sais_current_year,
   CASE
-    WHEN vr_elsewhere_declared.patient_id IS NOT NULL THEN true
+    WHEN vr_elsewhere_declared.patient_id IS NOT NULL AND vr_elsewhere_recorded.patient_id IS NULL THEN true
     ELSE false
   END AS vaccinated_elsewhere_declared_current_year,
   CASE
