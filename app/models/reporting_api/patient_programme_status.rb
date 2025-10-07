@@ -27,6 +27,7 @@
 #
 # Indexes
 #
+#  ix_rapi_pps_id              (id) UNIQUE
 #  ix_rapi_pps_org_year_prog   (organisation_id,academic_year,programme_type)
 #  ix_rapi_pps_prog_team_year  (programme_id,team_id,academic_year)
 #  ix_rapi_pps_school_la_prog  (patient_school_local_authority_code,programme_type)
@@ -56,7 +57,7 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
 
   def readonly? = true
 
-  def self.refresh!(concurrently: false)
+  def self.refresh!(concurrently: true)
     Scenic.database.refresh_materialized_view(table_name, concurrently:, cascade: false)
   end
 

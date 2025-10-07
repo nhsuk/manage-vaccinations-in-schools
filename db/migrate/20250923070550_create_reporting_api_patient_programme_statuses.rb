@@ -4,8 +4,8 @@ class CreateReportingAPIPatientProgrammeStatuses < ActiveRecord::Migration[8.0]
   def change
     create_view :reporting_api_patient_programme_statuses, materialized: true
 
-    # add_index :reporting_api_patient_programme_statuses, :id,
-    #           unique: true, name: "ix_rapi_pps_id"
+    add_index :reporting_api_patient_programme_statuses, :id,
+              unique: true, name: "ix_rapi_pps_id"
 
     add_index :reporting_api_patient_programme_statuses,
               [:programme_id, :team_id, :academic_year],
