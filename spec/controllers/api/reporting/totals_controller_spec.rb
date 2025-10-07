@@ -121,4 +121,273 @@ describe API::Reporting::TotalsController do
       expect(csv.length).to eq(2)
     end
   end
+
+  describe "Dashboard acceptance criteria" do
+    let(:team) { Team.last }
+    let(:hpv_programme) { create(:programme, :hpv, teams: [team]) }
+    let(:hpv_session) { create(:session, team:, programmes: [hpv_programme]) }
+    let(:flu_programme) { create(:programme, :flu, teams: [team]) }
+    let(:flu_session) { create(:session, team:, programmes: [flu_programme]) }
+
+    let(:cohort) { parsed_response["cohort"] }
+    let(:vaccinated) { parsed_response["vaccinated"] }
+    let(:not_vaccinated) { parsed_response["not_vaccinated"] }
+    let(:vaccinated_by_sais) { parsed_response["vaccinated_by_sais"] }
+    let(:vaccinated_elsewhere_declared) do
+      parsed_response["vaccinated_elsewhere_declared"]
+    end
+    let(:vaccinated_elsewhere_recorded) do
+      parsed_response["vaccinated_elsewhere_recorded"]
+    end
+    let(:vaccinations_given) { parsed_response["vaccinations_given"] }
+    let(:monthly_vaccinations_given) do
+      parsed_response["monthly_vaccinations_given"]
+    end
+
+    def refresh_and_get_totals(programme_type: "hpv")
+      ReportingAPI::PatientProgrammeStatus.refresh!(concurrently: false)
+      get :index, params: { programme: programme_type }
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "AC1: child vaccinated by SAIS" do
+      patient = create(:patient, session: hpv_session)
+      create(
+        :vaccination_record,
+        patient:,
+        programme: hpv_programme,
+        session: hpv_session,
+        outcome: "administered",
+        performed_at: Time.current
+      )
+
+      refresh_and_get_totals
+
+      expect(cohort).to eq(1)
+      expect(vaccinated).to eq(1)
+      expect(not_vaccinated).to eq(0)
+      expect(vaccinated_by_sais).to eq(1)
+      expect(vaccinations_given).to eq(1)
+
+      monthly =
+        monthly_vaccinations_given.find do
+          it["year"] == Time.current.year &&
+            it["month"] == Date::MONTHNAMES[Time.current.month]
+        end
+      expect(monthly).to be_present
+      expect(monthly["count"]).to eq(1)
+    end
+
+    it "AC2: historic record uploaded" do
+      patient = create(:patient, session: hpv_session)
+      create(
+        :vaccination_record,
+        patient:,
+        programme: hpv_programme,
+        session: nil,
+        source: "historical_upload",
+        outcome: "administered",
+        performed_at: 3.months.ago
+      )
+
+      refresh_and_get_totals
+
+      expect(cohort).to eq(1)
+      expect(vaccinated).to eq(0)
+      expect(not_vaccinated).to eq(1)
+      expect(vaccinated_elsewhere_recorded).to eq(1)
+      expect(vaccinations_given).to eq(1)
+      expect(monthly_vaccinations_given).to be_empty
+    end
+
+    it "AC3: child already had vaccination" do
+      patient = create(:patient, session: hpv_session)
+      create(
+        :vaccination_record,
+        :already_had,
+        patient:,
+        programme: hpv_programme,
+        session: hpv_session,
+        performed_at: Time.current
+      )
+
+      refresh_and_get_totals
+
+      expect(cohort).to eq(1)
+      expect(vaccinated).to eq(1)
+      expect(not_vaccinated).to eq(0)
+      expect(vaccinated_elsewhere_declared).to eq(1)
+      expect(monthly_vaccinations_given).to be_empty
+    end
+
+    it "AC4: vaccination imported from FHIR API" do
+      patient = create(:patient, session: flu_session)
+
+      create(
+        :vaccination_record,
+        patient:,
+        programme: flu_programme,
+        session: nil,
+        source: "nhs_immunisations_api",
+        outcome: "administered",
+        performed_at: 3.months.ago
+      )
+
+      refresh_and_get_totals(programme_type: "flu")
+
+      expect(cohort).to eq(1)
+      expect(vaccinated).to eq(0)
+      expect(not_vaccinated).to eq(1)
+      expect(vaccinated_elsewhere_recorded).to eq(1)
+      expect(vaccinations_given).to eq(1)
+      expect(monthly_vaccinations_given).to be_empty
+    end
+
+    it "AC5: already had and FHIR API import" do
+      patient = create(:patient, session: flu_session)
+
+      create(
+        :vaccination_record,
+        :already_had,
+        patient:,
+        programme: flu_programme,
+        session: flu_session,
+        performed_at: Time.current
+      )
+      create(
+        :vaccination_record,
+        patient:,
+        programme: flu_programme,
+        session: nil,
+        source: "nhs_immunisations_api",
+        outcome: "administered",
+        performed_at: 3.months.ago
+      )
+
+      refresh_and_get_totals(programme_type: "flu")
+
+      expect(cohort).to eq(1)
+      expect(vaccinated).to eq(1)
+      expect(not_vaccinated).to eq(0)
+      expect(vaccinated_elsewhere_declared).to eq(0)
+      expect(vaccinated_elsewhere_recorded).to eq(1)
+      expect(monthly_vaccinations_given).to be_empty
+    end
+
+    it "AC6: ineligible vaccination imported from FHIR API" do
+      patient = create(:patient, session: flu_session)
+
+      create(
+        :vaccination_record,
+        patient:,
+        programme: flu_programme,
+        session: nil,
+        source: "nhs_immunisations_api",
+        outcome: "administered",
+        performed_at: 1.year.ago
+      )
+
+      refresh_and_get_totals(programme_type: "flu")
+
+      expect(cohort).to eq(1)
+      expect(vaccinated).to eq(0)
+      expect(not_vaccinated).to eq(1)
+      expect(vaccinated_elsewhere_recorded).to eq(0)
+      expect(vaccinations_given).to eq(1)
+      expect(monthly_vaccinations_given).to be_empty
+    end
+
+    it "AC7: child refuses vaccination" do
+      patient = create(:patient, session: hpv_session)
+      create(
+        :vaccination_record,
+        patient:,
+        programme: hpv_programme,
+        session: hpv_session,
+        outcome: "refused",
+        performed_at: Time.current
+      )
+
+      refresh_and_get_totals
+
+      expect(cohort).to eq(1)
+      expect(vaccinated).to eq(0)
+      expect(not_vaccinated).to eq(1)
+      expect(vaccinated_by_sais).to eq(0)
+      expect(vaccinations_given).to eq(0)
+      expect(monthly_vaccinations_given).to be_empty
+    end
+
+    it "AC8: parent refuses consent" do
+      patient = create(:patient, session: flu_session)
+      create(
+        :vaccination_record,
+        patient:,
+        programme: flu_programme,
+        session: nil,
+        source: "consent_refusal",
+        outcome: "refused",
+        performed_at: Time.current
+      )
+
+      refresh_and_get_totals(programme_type: "flu")
+
+      expect(cohort).to eq(1)
+      expect(vaccinated).to eq(0)
+      expect(not_vaccinated).to eq(1)
+      expect(vaccinated_by_sais).to eq(0)
+      expect(vaccinations_given).to eq(0)
+      expect(monthly_vaccinations_given).to be_empty
+    end
+
+    it "AC9: child moves in with eligible vaccination record" do
+      other_team = create(:team, programmes: [flu_programme])
+      other_session =
+        create(:session, team: other_team, programmes: [flu_programme])
+
+      patient = create(:patient, session: flu_session)
+      create(
+        :vaccination_record,
+        patient:,
+        programme: flu_programme,
+        session: other_session,
+        outcome: "administered",
+        performed_at: 2.months.ago
+      )
+
+      refresh_and_get_totals(programme_type: "flu")
+
+      expect(cohort).to eq(1)
+      expect(vaccinated).to eq(1)
+      expect(not_vaccinated).to eq(0)
+      expect(vaccinated_by_sais).to eq(1)
+      expect(vaccinations_given).to eq(1)
+      expect(monthly_vaccinations_given).to be_empty
+    end
+
+    it "AC10: child moves out with eligible vaccination record" do
+      other_team = create(:team, programmes: [flu_programme])
+      other_session =
+        create(:session, team: other_team, programmes: [flu_programme])
+
+      patient = create(:patient, session: other_session)
+      create(
+        :vaccination_record,
+        patient:,
+        programme: flu_programme,
+        session: flu_session,
+        outcome: "administered",
+        performed_at: 2.months.ago
+      )
+
+      refresh_and_get_totals(programme_type: "flu")
+
+      expect(cohort).to eq(0)
+      expect(vaccinated).to eq(0)
+      expect(not_vaccinated).to eq(0)
+      expect(vaccinated_by_sais).to eq(0)
+      expect(vaccinations_given).to eq(0)
+      expect(monthly_vaccinations_given).to be_empty
+    end
+  end
 end
