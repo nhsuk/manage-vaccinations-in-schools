@@ -32,15 +32,16 @@ class AppPatientSearchFormComponent < ViewComponent::Base
           <% end %>
         <% end %>
         
-        <%= f.govuk_check_boxes_fieldset :show_only, multiple: false, legend: { text: "Show only", size: "s" } do %>
-          <%= f.govuk_check_box :still_to_vaccinate,
-                      1, 0,
-                      checked: form.still_to_vaccinate,
-                      multiple: false,
-                      link_errors: true,
-                      label: { text: "Still to vaccinate" },
-                      hint: { text: "With consent, not refused vaccine, not vaccinated yet" }%>
-
+        <% if tallying_enabled? %>
+          <%= f.govuk_check_boxes_fieldset :show_only, multiple: false, legend: { text: "Show only", size: "s" } do %>
+            <%= f.govuk_check_box :still_to_vaccinate,
+                        1, 0,
+                        checked: form.still_to_vaccinate,
+                        multiple: false,
+                        link_errors: true,
+                        label: { text: "Still to vaccinate" },
+                        hint: { text: "With consent, not refused vaccine, not vaccinated yet" }%>
+          <% end %>
         <% end %>
 
         <% if consent_statuses.any? %>
@@ -245,6 +246,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
   delegate :format_year_group,
            :govuk_button_link_to,
            :govuk_details,
+           :tallying_enabled?,
            to: :helpers
 
   def open_details?
