@@ -1106,7 +1106,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
       COALESCE(school_la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
       COALESCE(la.mhclg_code, ''::character varying) AS patient_local_authority_code,
           CASE
-              WHEN (p.birth_academic_year IS NOT NULL) THEN (s.academic_year - p.birth_academic_year)
+              WHEN (p.birth_academic_year IS NOT NULL) THEN ((s.academic_year - p.birth_academic_year) - 5)
               ELSE NULL::integer
           END AS patient_year_group,
           CASE

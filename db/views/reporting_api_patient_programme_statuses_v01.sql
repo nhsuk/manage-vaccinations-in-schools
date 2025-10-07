@@ -19,7 +19,7 @@ SELECT DISTINCT ON (p.id, prog.id, t.id, s.academic_year)
   -- Calculate patient year group for the academic year
   CASE
     WHEN p.birth_academic_year IS NOT NULL
-    THEN s.academic_year - p.birth_academic_year
+    THEN s.academic_year - p.birth_academic_year - 5 -- See AGE_CHILDREN_START_SCHOOL
     ELSE NULL
   END AS patient_year_group,
   -- Vaccination status booleans
