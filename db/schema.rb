@@ -1132,7 +1132,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
       COALESCE(vr_counts.sais_vaccinations_count, (0)::bigint) AS sais_vaccinations_count,
       vr_recent.most_recent_vaccination_month,
       vr_recent.most_recent_vaccination_year
-     FROM ((((((((((((((((((((((((patients p
+     FROM (((((((((((((((((((((((patients p
        JOIN patient_locations pl ON ((pl.patient_id = p.id)))
        JOIN sessions s ON (((s.location_id = pl.location_id) AND (s.academic_year = pl.academic_year))))
        JOIN teams t ON ((t.id = s.team_id)))
@@ -1143,8 +1143,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
        LEFT JOIN teams school_team ON ((school_team.id = school_subteam.team_id)))
        LEFT JOIN organisations patient_school_org ON ((patient_school_org.id = school_team.organisation_id)))
        LEFT JOIN local_authorities school_la ON ((school_la.gias_code = school.gias_local_authority_code)))
-       LEFT JOIN patient_locations current_pl ON (((current_pl.patient_id = p.id) AND (current_pl.academic_year = s.academic_year))))
-       LEFT JOIN locations current_location ON ((current_location.id = current_pl.location_id)))
+       LEFT JOIN locations current_location ON ((current_location.id = pl.location_id)))
        LEFT JOIN subteams current_location_subteam ON ((current_location_subteam.id = current_location.subteam_id)))
        LEFT JOIN teams current_location_team ON ((current_location_team.id = current_location_subteam.team_id)))
        LEFT JOIN organisations patient_location_org ON ((patient_location_org.id = current_location_team.organisation_id)))

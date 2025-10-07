@@ -64,9 +64,7 @@ LEFT JOIN organisations patient_school_org ON patient_school_org.id = school_tea
 LEFT JOIN local_authorities school_la ON school_la.gias_code = school.gias_local_authority_code
 
 -- Left join current patient location for organisation (fallback if no school)
-LEFT JOIN patient_locations current_pl ON current_pl.patient_id = p.id
-  AND current_pl.academic_year = s.academic_year
-LEFT JOIN locations current_location ON current_location.id = current_pl.location_id
+LEFT JOIN locations current_location ON current_location.id = pl.location_id
 LEFT JOIN subteams current_location_subteam ON current_location_subteam.id = current_location.subteam_id
 LEFT JOIN teams current_location_team ON current_location_team.id = current_location_subteam.team_id
 LEFT JOIN organisations patient_location_org ON patient_location_org.id = current_location_team.organisation_id
