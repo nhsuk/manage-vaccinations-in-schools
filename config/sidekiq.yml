@@ -35,6 +35,10 @@
       cron: "30 5 * * *"
       class: PatientsRefusedConsentAlreadyVaccinatedJob
       description: Record already vaccinated for patients who refused consent in the previous academic year for that reason
+    refresh_reporting_data:
+      cron: "0 * * * *"
+      class: ReportingAPI::RefreshJob
+      description: Refresh the reporting API materialized view data
     remove_import_csv:
       cron: "0 1 * * *"
       class: RemoveImportCSVJob
