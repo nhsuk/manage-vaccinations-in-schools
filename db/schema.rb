@@ -1194,7 +1194,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
     WHERE ((p.invalidated_at IS NULL) AND (p.restricted_at IS NULL));
   SQL
   add_index "reporting_api_patient_programme_statuses", ["academic_year", "programme_type"], name: "ix_rapi_pps_year_prog_type"
-  add_index "reporting_api_patient_programme_statuses", ["id"], name: "ix_rapi_pps_id", unique: true
   add_index "reporting_api_patient_programme_statuses", ["organisation_id", "academic_year", "programme_type"], name: "ix_rapi_pps_org_year_prog"
   add_index "reporting_api_patient_programme_statuses", ["patient_school_local_authority_code", "programme_type"], name: "ix_rapi_pps_school_la_prog"
   add_index "reporting_api_patient_programme_statuses", ["programme_id", "team_id", "academic_year"], name: "ix_rapi_pps_prog_team_year"
