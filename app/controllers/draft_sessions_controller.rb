@@ -121,7 +121,9 @@ class DraftSessionsController < ApplicationController
       dates: dates_params,
       delegation: %i[psd_enabled national_protocol_enabled],
       invitations: %i[send_invitations_at],
-      programmes: %i[programme_ids],
+      programmes: {
+        programme_ids: []
+      },
       register_attendance: %i[requires_registration]
     }.fetch(current_step)
 
@@ -162,16 +164,13 @@ class DraftSessionsController < ApplicationController
   def remove_invalid_date(hash)
     return hash if hash.blank?
 
-    if hash.key?("value(1i)") && hash.key?("value(2i)") &&
-         hash.key?("value(3i)")
+    keys = %w[value(1i) value(2i) value(3i)]
+
+    if keys.all? { hash.key?(it) }
       begin
-        Date.new(
-          hash["value(1i)"].to_i,
-          hash["value(2i)"].to_i,
-          hash["value(3i)"].to_i
-        )
+        Date.new(*keys.map { hash[it].to_i })
       rescue StandardError
-        hash.delete("value")
+        keys.each { hash.delete(it) }
       end
     end
 
