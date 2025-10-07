@@ -98,4 +98,27 @@ describe API::Reporting::TotalsController do
       expect(parsed_response["cohort"]).to eq(3)
     end
   end
+
+  describe "#index.csv" do
+    it "returns grouped CSV data by year group" do
+      team = Team.last
+      programme = create(:programme, :hpv, teams: [team])
+      session = create(:session, team:, programmes: [programme])
+
+      create(:patient, session:, year_group: 8)
+      create(:patient, session:, year_group: 9)
+
+      ReportingAPI::PatientProgrammeStatus.refresh!
+
+      request.headers["Accept"] = "text/csv"
+      get :index, params: { group: "year_group" }, format: :csv
+
+      expect(response).to have_http_status(:ok)
+      expect(response.content_type).to eq("text/csv")
+
+      csv = CSV.parse(response.body, headers: true)
+      expect(csv.headers).to include("Year Group", "Cohort", "Vaccinated")
+      expect(csv.length).to eq(2)
+    end
+  end
 end
