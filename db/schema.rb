@@ -1102,7 +1102,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
       s.academic_year,
       t.id AS team_id,
       t.name AS team_name,
-      t.organisation_id,
+      COALESCE(patient_school_org.id, patient_location_org.id) AS organisation_id,
       COALESCE(school_la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
       COALESCE(la.mhclg_code, ''::character varying) AS patient_local_authority_code,
           CASE
@@ -1128,14 +1128,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
       COALESCE(vr_counts.sais_vaccinations_count, (0)::bigint) AS sais_vaccinations_count,
       vr_recent.most_recent_vaccination_month,
       vr_recent.most_recent_vaccination_year
-     FROM (((((((((((((((patients p
+     FROM (((((((((((((((((((((((patients p
        JOIN patient_locations pl ON ((pl.patient_id = p.id)))
        JOIN sessions s ON (((s.location_id = pl.location_id) AND (s.academic_year = pl.academic_year))))
        JOIN teams t ON ((t.id = s.team_id)))
        JOIN session_programmes sp ON ((sp.session_id = s.id)))
        JOIN programmes prog ON ((prog.id = sp.programme_id)))
        LEFT JOIN locations school ON ((school.id = p.school_id)))
+       LEFT JOIN subteams school_subteam ON ((school_subteam.id = school.subteam_id)))
+       LEFT JOIN teams school_team ON ((school_team.id = school_subteam.team_id)))
+       LEFT JOIN organisations patient_school_org ON ((patient_school_org.id = school_team.organisation_id)))
        LEFT JOIN local_authorities school_la ON ((school_la.gias_code = school.gias_local_authority_code)))
+       LEFT JOIN patient_locations current_pl ON (((current_pl.patient_id = p.id) AND (current_pl.academic_year = s.academic_year))))
+       LEFT JOIN locations current_location ON ((current_location.id = current_pl.location_id)))
+       LEFT JOIN subteams current_location_subteam ON ((current_location_subteam.id = current_location.subteam_id)))
+       LEFT JOIN teams current_location_team ON ((current_location_team.id = current_location_subteam.team_id)))
+       LEFT JOIN organisations patient_location_org ON ((patient_location_org.id = current_location_team.organisation_id)))
        LEFT JOIN local_authority_postcodes lap ON (((lap.value)::text = (p.address_postcode)::text)))
        LEFT JOIN local_authorities la ON (((la.gss_code)::text = (lap.gss_code)::text)))
        LEFT JOIN ( SELECT DISTINCT vr.patient_id,
@@ -1183,4 +1191,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
   add_index "reporting_api_patient_programme_statuses", ["patient_school_local_authority_code", "programme_type"], name: "ix_rapi_pps_school_la_prog"
   add_index "reporting_api_patient_programme_statuses", ["programme_id", "team_id", "academic_year"], name: "ix_rapi_pps_prog_team_year"
   add_index "reporting_api_patient_programme_statuses", ["team_id", "academic_year"], name: "ix_rapi_pps_team_year"
+
 end
