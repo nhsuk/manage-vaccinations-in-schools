@@ -16,6 +16,8 @@ SELECT DISTINCT ON (p.id, prog.id, t.id, s.academic_year)
   -- Patient location info (minimal for filtering)
   COALESCE(school_la.mhclg_code, '') AS patient_school_local_authority_code,
   COALESCE(la.mhclg_code, '') AS patient_local_authority_code,
+  school.id AS patient_school_id,
+  school.name AS patient_school_name,
   -- Calculate patient year group for the academic year
   CASE
     WHEN p.birth_academic_year IS NOT NULL

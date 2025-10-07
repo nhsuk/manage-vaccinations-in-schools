@@ -12,6 +12,7 @@
 #  patient_gender_code                        :integer
 #  patient_local_authority_code               :string
 #  patient_school_local_authority_code        :string
+#  patient_school_name                        :text
 #  patient_year_group                         :integer
 #  programme_type                             :string
 #  sais_vaccinations_count                    :bigint
@@ -22,6 +23,7 @@
 #  vaccinated_in_previous_years               :boolean
 #  organisation_id                            :bigint
 #  patient_id                                 :bigint
+#  patient_school_id                          :bigint
 #  programme_id                               :bigint
 #  team_id                                    :bigint
 #
