@@ -32,7 +32,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
           <% end %>
         <% end %>
         
-        <% if tallying_enabled? %>
+        <% if tallying_enabled? && show_still_to_vaccinate %>
           <%= f.govuk_check_boxes_fieldset :show_only, multiple: false, legend: { text: "Show only", size: "s" } do %>
             <%= f.govuk_check_box :still_to_vaccinate,
                         1, 0,
@@ -211,7 +211,8 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     vaccine_methods: [],
     year_groups: [],
     heading_level: 3,
-    show_aged_out_of_programmes: false
+    show_aged_out_of_programmes: false,
+    show_still_to_vaccinate: false
   )
     @form = form
     @url = url
@@ -226,6 +227,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     @year_groups = year_groups
     @heading_level = heading_level
     @show_aged_out_of_programmes = show_aged_out_of_programmes
+    @show_still_to_vaccinate = show_still_to_vaccinate
   end
 
   private
@@ -241,7 +243,8 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               :vaccine_methods,
               :year_groups,
               :heading_level,
-              :show_aged_out_of_programmes
+              :show_aged_out_of_programmes,
+              :show_still_to_vaccinate
 
   delegate :format_year_group,
            :govuk_button_link_to,

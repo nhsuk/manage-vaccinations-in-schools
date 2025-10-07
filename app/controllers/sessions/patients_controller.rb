@@ -15,7 +15,9 @@ class Sessions::PatientsController < ApplicationController
       @session.patients.includes(:vaccination_statuses, notes: :created_by)
 
     patients = @form.apply(scope)
-    @pagy, @patients = pagy(patients)
+
+    @pagy, @patients =
+      patients.is_a?(Array) ? pagy_array(patients) : pagy(patients)
   end
 
   private
