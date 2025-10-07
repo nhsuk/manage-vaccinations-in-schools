@@ -1094,7 +1094,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
   add_foreign_key "vaccines", "programmes"
 
   create_view "reporting_api_patient_programme_statuses", materialized: true, sql_definition: <<-SQL
-      SELECT DISTINCT concat(p.id, '-', prog.id, '-', t.id, '-', s.academic_year) AS id,
+      SELECT DISTINCT ON (p.id, prog.id, t.id, s.academic_year) concat(p.id, '-', prog.id, '-', t.id, '-', s.academic_year) AS id,
       p.id AS patient_id,
       p.gender_code AS patient_gender_code,
       prog.id AS programme_id,
@@ -1191,7 +1191,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
              FROM vaccination_records vr
             WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 0))
             GROUP BY vr.patient_id, vr.programme_id) vr_recent ON (((vr_recent.patient_id = p.id) AND (vr_recent.programme_id = prog.id))))
-    WHERE ((p.invalidated_at IS NULL) AND (p.restricted_at IS NULL));
+    WHERE ((p.invalidated_at IS NULL) AND (p.restricted_at IS NULL))
+    ORDER BY p.id, prog.id, t.id, s.academic_year, patient_school_org.id;
   SQL
   add_index "reporting_api_patient_programme_statuses", ["academic_year", "programme_type"], name: "ix_rapi_pps_year_prog_type"
   add_index "reporting_api_patient_programme_statuses", ["organisation_id", "academic_year", "programme_type"], name: "ix_rapi_pps_org_year_prog"
