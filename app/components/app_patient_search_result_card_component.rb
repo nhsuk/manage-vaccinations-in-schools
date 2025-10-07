@@ -6,21 +6,21 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     link_to:,
     programme: nil,
     academic_year: nil,
-    triage_status: nil,
     show_parents: false,
     show_postcode: false,
     show_school: false,
+    show_triage_status: false,
     show_year_group: false
   )
     @patient = patient
     @link_to = link_to
     @programme = programme
     @academic_year = academic_year || AcademicYear.pending
-    @triage_status = triage_status
 
     @show_parents = show_parents
     @show_postcode = show_postcode
     @show_school = show_school
+    @show_triage_status = show_triage_status
     @show_year_group = show_year_group
   end
 
@@ -87,6 +87,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
               :show_parents,
               :show_postcode,
               :show_school,
+              :show_triage_status,
               :show_year_group
 
   delegate :govuk_summary_list,
@@ -130,7 +131,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   end
 
   def display_triage_status?
-    triage_status.present? ||
+    show_triage_status ||
       patient.triage_status(programme:, academic_year:).required?
   end
 end
