@@ -1188,11 +1188,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
             GROUP BY vr.patient_id, vr.programme_id) vr_counts ON (((vr_counts.patient_id = p.id) AND (vr_counts.programme_id = prog.id))))
        LEFT JOIN ( SELECT vr.patient_id,
               vr.programme_id,
+              vr_s.team_id,
               EXTRACT(month FROM max(vr.performed_at)) AS most_recent_vaccination_month,
               EXTRACT(year FROM max(vr.performed_at)) AS most_recent_vaccination_year
-             FROM vaccination_records vr
+             FROM (vaccination_records vr
+               JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
             WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 0))
-            GROUP BY vr.patient_id, vr.programme_id) vr_recent ON (((vr_recent.patient_id = p.id) AND (vr_recent.programme_id = prog.id))))
+            GROUP BY vr.patient_id, vr.programme_id, vr_s.team_id) vr_recent ON (((vr_recent.patient_id = p.id) AND (vr_recent.programme_id = prog.id) AND (vr_recent.team_id = t.id))))
     WHERE ((p.invalidated_at IS NULL) AND (p.restricted_at IS NULL))
     ORDER BY p.id, prog.id, t.id, s.academic_year, patient_school_org.id;
   SQL
