@@ -109,7 +109,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     render_status_tag(:triage, :triage)
   end
 
-  def render_status_tag(status_type, outcome)
+  def render_status_tag(status_type, context)
     status_model =
       patient.public_send("#{status_type}_status", programme:, academic_year:)
 
@@ -126,7 +126,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
 
     render AppProgrammeStatusTagsComponent.new(
              { programme => { status:, latest_session_status: } },
-             outcome:
+             context:
            )
   end
 

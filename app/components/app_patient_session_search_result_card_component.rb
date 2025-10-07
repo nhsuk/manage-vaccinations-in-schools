@@ -198,7 +198,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
             programmes.index_with do |programme|
               consent_status_value(programme:, academic_year:)
             end,
-            outcome: :consent
+            context: :consent
           )
         )
     }
@@ -216,7 +216,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
                 :latest_session_status
               )
             end,
-            outcome: :programme
+            context: :programme
           )
         )
     }
@@ -244,7 +244,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
             programmes.index_with do |programme|
               triage_status_value(programme:, academic_year:)
             end,
-            outcome: :triage
+            context: :triage
           )
         )
     }
