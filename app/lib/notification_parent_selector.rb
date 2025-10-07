@@ -18,23 +18,37 @@ class NotificationParentSelector
       end
   end
 
-  def call
+  def select_parents
+    consents = select_consents
+
+    consents
+      .map do |consent|
+        NotificationParentSelector.select_parents_from_consent(
+          consent:,
+          patient: @vaccination_record.patient
+        )
+      end
+      .flatten
+      .uniq
+  end
+
+  def self.select_parents_from_consent(consent:, patient:)
+    parents = (consent.via_self_consent? ? patient.parents : [consent.parent])
+
+    parents.select(&:contactable?)
+  end
+
+  def select_consents
     programme_id = @vaccination_record.programme_id
     academic_year = @vaccination_record.academic_year
 
     consents = ConsentGrouper.call(@consents, programme_id:, academic_year:)
 
-    parents =
-      if consents.any?(&:via_self_consent?)
-        @vaccination_record.patient.parents
-      else
-        consents.select(&:response_provided?).filter_map(&:parent)
-      end
-
-    parents.select(&:contactable?)
+    consents.select(&:response_provided?)
   end
 
-  def self.call(...) = new(...).call
+  def self.select_parents(...) = new(...).select_parents
+  def self.select_consents(...) = new(...).select_consents
 
   private_class_method :new
 

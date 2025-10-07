@@ -309,10 +309,7 @@ class GovukNotifyPersonalisation
     ].join("\n\n")
   end
 
-  delegate :privacy_notice_url,
-           :privacy_policy_url,
-           to: :team,
-           prefix: true
+  delegate :privacy_notice_url, :privacy_policy_url, to: :team, prefix: true
 
   def today_or_date_of_vaccination
     return if vaccination_record.nil?

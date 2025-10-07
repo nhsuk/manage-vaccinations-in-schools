@@ -31,32 +31,37 @@ class AlreadyHadNotificationSender
       )
     consents = consents.select(&:response_given?).reject(&:withdrawn?)
 
-    parents = NotificationParentSelector.call(vaccination_record:, consents:)
+    consents =
+      NotificationParentSelector.select_consents(
+        vaccination_record: @vaccination_record,
+        consents:
+      )
 
-    parents.each do |parent|
-      consents = parent.consents.where(patient: @vaccination_record.patient)
+    consents.each do |consent|
+      parents =
+        NotificationParentSelector.select_parents_from_consent(
+          consent:,
+          patient: @vaccination_record.patient
+        )
 
-      consent =
-        ConsentGrouper.call(consents, programme_id:, academic_year:).last
+      parents.each do |parent|
+        if parent.phone_receive_updates
+          SMSDeliveryJob.perform_later(
+            :vaccination_discovered,
+            parent:,
+            vaccination_record: @vaccination_record,
+            consent:
+          )
+        end
 
-      if parent.phone_receive_updates
-        SMSDeliveryJob.perform_later(
+        EmailDeliveryJob.perform_later(
           :vaccination_discovered,
           parent:,
-          vaccination_record:,
+          vaccination_record: @vaccination_record,
           consent:
         )
       end
 
-      EmailDeliveryJob.perform_later(
-        :vaccination_discovered,
-        parent:,
-        vaccination_record:,
-        consent:
-      )
-    end
-
-    consents.each do |consent|
       consent.update!(
         patient_already_vaccinated_notification_sent_at: Time.current
       )
