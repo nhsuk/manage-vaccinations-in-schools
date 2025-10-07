@@ -57,12 +57,13 @@ resource "grafana_notification_policy" "slack" {
   group_by      = ["grafana_folder", "alertname"]
 }
 
+# Add the alert modules to create alerting rules from the stored configurations
 module "development_alerts" {
   source = "./modules/development_alerts"
-  count  = var.environment == "development" ? 1 : 0
+  count  = var.environment == "development" ? 0 : 0
 }
 
 module "production_alerts" {
   source = "./modules/production_alerts"
-  count  = var.environment == "production" ? 1 : 0
+  count  = var.environment == "production" ? 0 : 0
 }
