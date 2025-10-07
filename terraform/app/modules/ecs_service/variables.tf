@@ -89,6 +89,21 @@ variable "network_params" {
   nullable    = false
 }
 
+variable "service_connect_config" {
+  type = object({
+    namespace = string
+    services = list(object({
+      port_name      = string
+      discovery_name = string
+      port           = number
+      dns_name       = string
+    }))
+  })
+  description = "Service Connect configuration for the ECS service. If this is not set, the service will not use Service Connect."
+  default     = null
+  nullable    = true
+}
+
 variable "loadbalancer" {
   type = object({
     target_group_blue            = string
