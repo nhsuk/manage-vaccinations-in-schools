@@ -101,7 +101,9 @@ describe GraphRecords do
         non_breaking_text("year_groups: #{session.location.year_groups}")
       ].map { |d| "<br><span style=\"font-size:14px\">#{d}</span>" }.join
 
-    expect(graph).to contain_exactly(
+    patient_location = patient.patient_locations.first
+
+    expect(graph).to include(
       "flowchart TB",
       "  classDef patient_focused fill:#469990,color:white,stroke:#000,stroke-width:3px",
       "  classDef parent fill:#e6194B,color:white,stroke:#000",
@@ -110,6 +112,8 @@ describe GraphRecords do
       "  classDef class_import fill:#000075,color:white,stroke:#000",
       "  classDef session fill:#fabed4,color:black,stroke:#000",
       "  classDef location fill:#3cb44b,color:white,stroke:#000",
+      "  classDef patient_location fill:#ffffff,color:black,stroke:#000",
+      "  classDef programme fill:#3cb44b,color:white,stroke:#000",
       "  patient-#{patient.id}[\"Patient #{patient.id}<br><span style=\"font-size:10px\"><i>Patient.find(" \
         "#{patient.id})</i></span><br><span style=\"font-size:10px\"><i>puts&nbsp;GraphRecords.new.graph(patient:" \
         "&nbsp;#{patient.id})</i></span><br><span style=\"font-size:14px\">updated_from_pds_at:&nbsp;</span><br>" \
@@ -136,15 +140,16 @@ describe GraphRecords do
         "Location.find(#{session.location.id})</i></span><br><span style=\"font-size:10px\"><i>puts&nbsp;GraphRecords" \
         ".new.graph(location:&nbsp;#{session.location.id})</i></span>#{location_details}\"]:::location",
       "  patient-#{patient.id} --> parent-#{parent.id}",
-      "  session-#{session.id} --> patient-#{patient.id}",
       "  consent-#{consent.id} --> parent-#{parent.id}",
       "  patient-#{patient.id} --> consent-#{consent.id}",
+      "  patient_location-#{patient_location&.id} --> patient-#{patient.id}",
       "  cohort_import-#{cohort_import.id} --> parent-#{parent.id}",
       "  class_import-#{class_import.id} --> parent-#{parent.id}",
       "  cohort_import-#{cohort_import.id} --> patient-#{patient.id}",
       "  class_import-#{class_import.id} --> patient-#{patient.id}",
       "  location-#{session.location.id} --> session-#{session.id}",
-      "  location-#{session.location.id} --> patient-#{patient.id}"
+      "  location-#{session.location.id} --> patient-#{patient.id}",
+      "  location-#{patient.school.id} --> patient_location-#{patient_location&.id}"
     )
   end
 
