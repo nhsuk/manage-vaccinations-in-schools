@@ -48,17 +48,23 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
   scope :for_organisation, ->(organisation_id) { where(organisation_id:) }
   scope :for_gender, ->(patient_gender_code) { where(patient_gender_code:) }
   scope :for_year_group, ->(patient_year_group) { where(patient_year_group:) }
-  scope :for_school_local_authority, ->(patient_school_local_authority_code) {
-      where(patient_school_local_authority_code:)
-    }
-  scope :for_local_authority, ->(patient_local_authority_code) {
-      where(patient_local_authority_code:)
-    }
+  scope :for_school_local_authority,
+        ->(patient_school_local_authority_code) do
+          where(patient_school_local_authority_code:)
+        end
+  scope :for_local_authority,
+        ->(patient_local_authority_code) do
+          where(patient_local_authority_code:)
+        end
 
   def readonly? = true
 
   def self.refresh!(concurrently: true)
-    Scenic.database.refresh_materialized_view(table_name, concurrently:, cascade: false)
+    Scenic.database.refresh_materialized_view(
+      table_name,
+      concurrently:,
+      cascade: false
+    )
   end
 
   def self.cohort_count
@@ -78,11 +84,15 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
   end
 
   def self.vaccinated_elsewhere_declared_count
-    where(vaccinated_elsewhere_declared_current_year: true).distinct.count(:patient_id)
+    where(vaccinated_elsewhere_declared_current_year: true).distinct.count(
+      :patient_id
+    )
   end
 
   def self.vaccinated_elsewhere_recorded_count
-    where(vaccinated_elsewhere_recorded_current_year: true).distinct.count(:patient_id)
+    where(vaccinated_elsewhere_recorded_current_year: true).distinct.count(
+      :patient_id
+    )
   end
 
   def self.vaccinated_previously_count
@@ -94,15 +104,15 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
   end
 
   def self.monthly_vaccinations_given
-    where(vaccinated_by_sais_current_year: true)
-      .where.not(most_recent_vaccination_month: nil)
-      .group(:most_recent_vaccination_year, :most_recent_vaccination_month)
-      .sum(:sais_vaccinations_count)
-      .map { |(year, month), count|
-      {
-        year: year.to_i, month: Date::MONTHNAMES[month.to_i], count:,
-      }
-    }
-      .sort_by { [it[:year], Date::MONTHNAMES.index(it[:month])] }
+    months =
+      where(vaccinated_by_sais_current_year: true)
+        .where.not(most_recent_vaccination_month: nil)
+        .group(:most_recent_vaccination_year, :most_recent_vaccination_month)
+        .sum(:sais_vaccinations_count)
+        .map do |(year, month), count|
+          { year: year.to_i, month: Date::MONTHNAMES[month.to_i], count: }
+        end
+    months.sort_by! { [it[:year], Date::MONTHNAMES.index(it[:month])] }
+    months
   end
 end

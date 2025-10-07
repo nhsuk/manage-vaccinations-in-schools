@@ -35,11 +35,23 @@ describe API::Reporting::TotalsController do
 
       # Patient 1: Vaccinated
       patient1 = create(:patient, session:)
-      create(:vaccination_record, patient: patient1, programme:, session:, outcome: "administered")
+      create(
+        :vaccination_record,
+        patient: patient1,
+        programme:,
+        session:,
+        outcome: "administered"
+      )
 
       # Patient 2: Vaccinated
       patient2 = create(:patient, session:)
-      create(:vaccination_record, patient: patient2, programme:, session:, outcome: "administered")
+      create(
+        :vaccination_record,
+        patient: patient2,
+        programme:,
+        session:,
+        outcome: "administered"
+      )
 
       # Patient 3: Not vaccinated (should be counted as not_vaccinated)
       create(:patient, session:)

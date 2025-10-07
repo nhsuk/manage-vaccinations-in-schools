@@ -10,7 +10,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
     gender: :patient_gender_code,
     year_group: :patient_year_group,
     school_local_authority: :patient_school_local_authority_code,
-    local_authority: :patient_local_authority_code,
+    local_authority: :patient_local_authority_code
   }.freeze
 
   before_action :set_default_filters, :set_filters
@@ -33,19 +33,23 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   #     Each element contains: {year: integer, month: integer, count: integer}
   def index
     organisation_id = current_user.organisations
-    scope = ReportingAPI::PatientProgrammeStatus.where(organisation_id:)
-      .where(@filters.to_where_clause)
+    scope =
+      ReportingAPI::PatientProgrammeStatus.where(organisation_id:).where(
+        @filters.to_where_clause
+      )
 
     render json: {
              cohort: scope.cohort_count,
              vaccinated: scope.vaccinated_count,
              not_vaccinated: scope.not_vaccinated_count,
              vaccinated_by_sais: scope.vaccinated_by_sais_count,
-             vaccinated_elsewhere_declared: scope.vaccinated_elsewhere_declared_count,
-             vaccinated_elsewhere_recorded: scope.vaccinated_elsewhere_recorded_count,
+             vaccinated_elsewhere_declared:
+               scope.vaccinated_elsewhere_declared_count,
+             vaccinated_elsewhere_recorded:
+               scope.vaccinated_elsewhere_recorded_count,
              vaccinated_previously: scope.vaccinated_previously_count,
              vaccinations_given: scope.vaccinations_given_count,
-             monthly_vaccinations_given: scope.monthly_vaccinations_given,
+             monthly_vaccinations_given: scope.monthly_vaccinations_given
            }
   end
 
