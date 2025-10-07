@@ -78,5 +78,24 @@ describe API::Reporting::TotalsController do
       expect(parsed_response["vaccinations_given"]).to eq(2) # 2 administered records
       expect(parsed_response["monthly_vaccinations_given"]).to be_an(Array)
     end
+
+    it "filters by multiple year groups" do
+      team = Team.last
+      programme = create(:programme, teams: [team])
+      session = create(:session, team:, programmes: [programme])
+
+      create(:patient, session:, year_group: 8)
+      create(:patient, session:, year_group: 8)
+      create(:patient, session:, year_group: 9)
+      create(:patient, session:, year_group: 10)
+      create(:patient, session:, year_group: 10)
+
+      ReportingAPI::PatientProgrammeStatus.refresh!
+
+      get :index, params: { year_group: [8, 9] }
+
+      expect(response).to have_http_status(:ok)
+      expect(parsed_response["cohort"]).to eq(3)
+    end
   end
 end
