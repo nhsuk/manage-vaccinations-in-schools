@@ -163,11 +163,14 @@ describe AlreadyHadNotificationSender do
         end
 
         context "with withdrawn consents" do
-          before do
-            first_consent.update!(
-              withdrawn_at: 1.day.ago,
-              notes: "Some notes",
-              reason_for_refusal: "personal_choice"
+          let!(:first_consent) do
+            create(
+              :consent,
+              :withdrawn,
+              patient:,
+              programme:,
+              parent: first_parent,
+              academic_year:
             )
           end
 
