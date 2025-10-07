@@ -26,6 +26,7 @@ describe "Manage school sessions" do
     when_i_click_on_change_programmes
     then_i_see_the_change_programmes_page
     and_i_change_the_programmes
+    then_i_see_the_new_programme
 
     when_i_click_on_change_consent_requests
     then_i_see_the_change_consent_requests_page
@@ -74,12 +75,13 @@ describe "Manage school sessions" do
 
   def given_my_team_is_running_an_hpv_vaccination_programme
     @programme = create(:programme, :hpv)
+    @other_programme = create(:programme, :flu)
     @team =
       create(
         :team,
         :with_one_nurse,
         :with_generic_clinic,
-        programmes: [@programme]
+        programmes: [@programme, @other_programme]
       )
     @location = create(:school, :secondary, team: @team)
     @session =
@@ -248,8 +250,12 @@ describe "Manage school sessions" do
   end
 
   def and_i_change_the_programmes
-    check "HPV"
+    check "Flu"
     click_on "Continue"
+  end
+
+  def then_i_see_the_new_programme
+    expect(page).to have_content("ProgrammesFlu HPV")
   end
 
   def when_i_click_on_change_consent_requests

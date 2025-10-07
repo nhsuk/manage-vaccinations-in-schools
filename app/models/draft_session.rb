@@ -12,7 +12,7 @@ class DraftSession
 
   attribute :days_before_consent_reminders, :integer
   attribute :location_id, :integer
-  attribute :national_protocol_enabled
+  attribute :national_protocol_enabled, :boolean
   attribute :programme_ids, array: true, default: []
   attribute :psd_enabled, :boolean
   attribute :requires_registration, :boolean
