@@ -5,3 +5,8 @@ en:
         1 child is due a vaccination this year and has not been vaccinated at another location
       other: >-
         %{count} children are due a vaccination this year and have not been vaccinated at another location
+    still_to_vaccinate_message:
+      one: >-
+        1 child with consent has not been vaccinated yet
+      other: >-
+        %{count} children with consent have not been vaccinated yet
