@@ -41,6 +41,7 @@ class GraphRecords
     location
     session
     session_date
+    patient_location
     class_import
     cohort_import
     session_attendance
@@ -69,11 +70,13 @@ class GraphRecords
         vaccination_records
         triages
         school
-        sessions
+        patient_locations
       ],
       parent: %i[patients consents cohort_imports class_imports],
       consent: %i[consent_form patient parent],
-      session: %i[location],
+      patient_location: %i[patient location],
+      location: %i[sessions],
+      session: %i[location programmes],
       vaccination_record: %i[session]
     },
     parent: {
@@ -150,6 +153,9 @@ class GraphRecords
     },
     class_import: {
       class_import: %i[team uploaded_by]
+    },
+    patient_location: {
+      patient_location: %i[patient location]
     }
   }.freeze
 
@@ -217,7 +223,8 @@ class GraphRecords
     batch: %i[name expiry archived_at],
     user: %i[fallback_role uid],
     consent_form: %i[response recorded_at archived_at],
-    parent_relationship: %i[type]
+    parent_relationship: %i[type],
+    patient_location: %i[academic_year]
   }.freeze
 
   EXTRA_DETAIL_WHITELIST_WITH_PII = {
