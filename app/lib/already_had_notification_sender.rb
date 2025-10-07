@@ -34,18 +34,25 @@ class AlreadyHadNotificationSender
     parents = NotificationParentSelector.call(vaccination_record:, consents:)
 
     parents.each do |parent|
+      consents = parent.consents.where(patient: @vaccination_record.patient)
+
+      consent =
+        ConsentGrouper.call(consents, programme_id:, academic_year:).last
+
       if parent.phone_receive_updates
         SMSDeliveryJob.perform_later(
           :vaccination_discovered,
           parent:,
-          vaccination_record:
+          vaccination_record:,
+          consent:
         )
       end
 
       EmailDeliveryJob.perform_later(
         :vaccination_discovered,
         parent:,
-        vaccination_record:
+        vaccination_record:,
+        consent:
       )
     end
 
