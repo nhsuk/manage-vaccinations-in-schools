@@ -1118,9 +1118,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
               ELSE false
           END AS vaccinated_by_sais_current_year,
           CASE
-              WHEN (vr_elsewhere_current.patient_id IS NOT NULL) THEN true
+              WHEN (vr_elsewhere_declared.patient_id IS NOT NULL) THEN true
               ELSE false
-          END AS vaccinated_elsewhere_current_year,
+          END AS vaccinated_elsewhere_declared_current_year,
+          CASE
+              WHEN (vr_elsewhere_recorded.patient_id IS NOT NULL) THEN true
+              ELSE false
+          END AS vaccinated_elsewhere_recorded_current_year,
           CASE
               WHEN (vr_previous.patient_id IS NOT NULL) THEN true
               ELSE false
@@ -1128,7 +1132,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
       COALESCE(vr_counts.sais_vaccinations_count, (0)::bigint) AS sais_vaccinations_count,
       vr_recent.most_recent_vaccination_month,
       vr_recent.most_recent_vaccination_year
-     FROM (((((((((((((((((((((((patients p
+     FROM ((((((((((((((((((((((((patients p
        JOIN patient_locations pl ON ((pl.patient_id = p.id)))
        JOIN sessions s ON (((s.location_id = pl.location_id) AND (s.academic_year = pl.academic_year))))
        JOIN teams t ON ((t.id = s.team_id)))
@@ -1160,10 +1164,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
             WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 0))) vr_sais_current ON (((vr_sais_current.patient_id = p.id) AND (vr_sais_current.programme_id = prog.id) AND (vr_sais_current.academic_year = s.academic_year))))
        LEFT JOIN ( SELECT DISTINCT vr.patient_id,
               vr.programme_id,
-              vr_s.academic_year
+              COALESCE((vr_s.academic_year)::numeric, EXTRACT(year FROM vr.performed_at)) AS academic_year
              FROM (vaccination_records vr
-               JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
-            WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 4))) vr_elsewhere_current ON (((vr_elsewhere_current.patient_id = p.id) AND (vr_elsewhere_current.programme_id = prog.id) AND (vr_elsewhere_current.academic_year = s.academic_year))))
+               LEFT JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
+            WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 4))) vr_elsewhere_declared ON (((vr_elsewhere_declared.patient_id = p.id) AND (vr_elsewhere_declared.programme_id = prog.id) AND (vr_elsewhere_declared.academic_year = (s.academic_year)::numeric))))
+       LEFT JOIN ( SELECT DISTINCT vr.patient_id,
+              vr.programme_id,
+              EXTRACT(year FROM vr.performed_at) AS academic_year
+             FROM vaccination_records vr
+            WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 0) AND (vr.source = ANY (ARRAY[1, 2])))) vr_elsewhere_recorded ON (((vr_elsewhere_recorded.patient_id = p.id) AND (vr_elsewhere_recorded.programme_id = prog.id) AND (vr_elsewhere_recorded.academic_year = (s.academic_year)::numeric))))
        LEFT JOIN ( SELECT DISTINCT vr.patient_id,
               vr.programme_id,
               vr_s.academic_year

@@ -4,25 +4,26 @@
 #
 # Table name: reporting_api_patient_programme_statuses
 #
-#  id                                  :text             primary key
-#  academic_year                       :integer
-#  has_any_vaccination                 :boolean
-#  most_recent_vaccination_month       :decimal(, )
-#  most_recent_vaccination_year        :decimal(, )
-#  patient_gender_code                 :integer
-#  patient_local_authority_code        :string
-#  patient_school_local_authority_code :string
-#  patient_year_group                  :integer
-#  programme_type                      :string
-#  sais_vaccinations_count             :bigint
-#  team_name                           :text
-#  vaccinated_by_sais_current_year     :boolean
-#  vaccinated_elsewhere_current_year   :boolean
-#  vaccinated_in_previous_years        :boolean
-#  organisation_id                     :bigint
-#  patient_id                          :bigint
-#  programme_id                        :bigint
-#  team_id                             :bigint
+#  id                                         :text             primary key
+#  academic_year                              :integer
+#  has_any_vaccination                        :boolean
+#  most_recent_vaccination_month              :decimal(, )
+#  most_recent_vaccination_year               :decimal(, )
+#  patient_gender_code                        :integer
+#  patient_local_authority_code               :string
+#  patient_school_local_authority_code        :string
+#  patient_year_group                         :integer
+#  programme_type                             :string
+#  sais_vaccinations_count                    :bigint
+#  team_name                                  :text
+#  vaccinated_by_sais_current_year            :boolean
+#  vaccinated_elsewhere_declared_current_year :boolean
+#  vaccinated_elsewhere_recorded_current_year :boolean
+#  vaccinated_in_previous_years               :boolean
+#  organisation_id                            :bigint
+#  patient_id                                 :bigint
+#  programme_id                               :bigint
+#  team_id                                    :bigint
 #
 # Indexes
 #
@@ -76,8 +77,12 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
     where(vaccinated_by_sais_current_year: true).distinct.count(:patient_id)
   end
 
-  def self.vaccinated_elsewhere_count
-    where(vaccinated_elsewhere_current_year: true).distinct.count(:patient_id)
+  def self.vaccinated_elsewhere_declared_count
+    where(vaccinated_elsewhere_declared_current_year: true).distinct.count(:patient_id)
+  end
+
+  def self.vaccinated_elsewhere_recorded_count
+    where(vaccinated_elsewhere_recorded_current_year: true).distinct.count(:patient_id)
   end
 
   def self.vaccinated_previously_count
