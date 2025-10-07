@@ -36,11 +36,11 @@ class AppPatientSessionOutcomeComponent < ViewComponent::Base
   delegate :academic_year, to: :session
 
   def colour
-    I18n.t(status, scope: %i[status programme colour])
+    I18n.t(status, scope: %i[status vaccination colour])
   end
 
   def heading
-    "#{programme.name}: #{I18n.t(status, scope: %i[status programme label])}"
+    "#{programme.name}: #{I18n.t(status, scope: %i[status vaccination label])}"
   end
 
   def vaccination_status

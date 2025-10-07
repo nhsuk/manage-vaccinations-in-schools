@@ -70,7 +70,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
           end
           summary_list.with_row do |row|
             row.with_key { "Programme outcome" }
-            row.with_value { programme_outcome_tag }
+            row.with_value { vaccination_status_tag }
           end
         end
       end
@@ -97,24 +97,18 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
            :patient_year_group,
            to: :helpers
 
-  def programme_outcome_tag
-    render_status_tag(:vaccination, :programme)
-  end
+  def vaccination_status_tag = status_tag(:vaccination)
 
-  def consent_status_tag
-    render_status_tag(:consent, :consent)
-  end
+  def consent_status_tag = status_tag(:consent)
 
-  def triage_status_tag
-    render_status_tag(:triage, :triage)
-  end
+  def triage_status_tag = status_tag(:triage)
 
-  def render_status_tag(status_type, context)
+  def status_tag(type)
     status_model =
-      patient.public_send("#{status_type}_status", programme:, academic_year:)
+      patient.public_send("#{type}_status", programme:, academic_year:)
 
     status =
-      if status_type == :triage && status_model.vaccine_method.present? &&
+      if type == :triage && status_model.vaccine_method.present? &&
            programme.has_multiple_vaccine_methods?
         "#{status_model.status}_#{status_model.vaccine_method}"
       else
@@ -122,11 +116,11 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
       end
 
     latest_session_status =
-      (status_model.latest_session_status if status_type == :vaccination)
+      (status_model.latest_session_status if type == :vaccination)
 
     render AppProgrammeStatusTagsComponent.new(
              { programme => { status:, latest_session_status: } },
-             context:
+             context: type
            )
   end
 

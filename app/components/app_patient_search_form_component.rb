@@ -87,7 +87,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               <%= f.govuk_radio_button :vaccination_status,
                                        status,
                                        checked: form.vaccination_status == status,
-                                       label: { text: t(status, scope: %i[status programme label]) } %>
+                                       label: { text: t(status, scope: %i[status vaccination label]) } %>
             <% end %>
           <% end %>
         <% end %>

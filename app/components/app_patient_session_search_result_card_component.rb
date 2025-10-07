@@ -216,7 +216,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
                 :latest_session_status
               )
             end,
-            context: :programme
+            context: :vaccination
           )
         )
     }

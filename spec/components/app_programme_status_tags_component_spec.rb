@@ -32,9 +32,9 @@ describe AppProgrammeStatusTagsComponent do
     it { should have_content("FluConsent given for nasal spray") }
   end
 
-  context "for programme context" do
+  context "for vaccination context" do
     let(:component) do
-      described_class.new(status_by_programme, context: :programme)
+      described_class.new(status_by_programme, context: :vaccination)
     end
 
     let(:status_by_programme) do
