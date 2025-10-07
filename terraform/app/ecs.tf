@@ -58,6 +58,17 @@ module "web_service" {
   maximum_replica_count = var.maximum_web_replicas
   environment           = var.environment
   server_type           = "web"
+  service_connect_config = {
+    namespace = "TBD"
+    services = [
+      {
+        port_name      = "web-port"
+        discovery_name = "web"
+        port           = 4000
+        dns_name       = "web"
+      }
+    ]
+  }
 
   depends_on = [
     aws_iam_role.ecs_deploy,
@@ -97,6 +108,17 @@ module "sidekiq_service" {
   cluster_name = aws_ecs_cluster.cluster.name
   environment  = var.environment
   server_type  = "sidekiq"
+  service_connect_config = {
+    namespace = "TBD"
+    services = [
+      {
+        port_name      = "sidekiq-port"
+        discovery_name = "sidekiq"
+        port           = 4000
+        dns_name       = "sidekiq"
+      }
+    ]
+  }
 
   depends_on = [
     aws_rds_cluster_instance.core,

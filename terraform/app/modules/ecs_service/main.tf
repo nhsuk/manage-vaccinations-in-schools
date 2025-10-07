@@ -95,8 +95,10 @@ resource "aws_ecs_task_definition" "this" {
       readonlyRootFileSystem = true
       portMappings = [
         {
+          name          = var.service_connect_config != null && length(var.service_connect_config.services) > 0 ? var.service_connect_config.services[0].port_name : null
           containerPort = 4000
           hostPort      = 4000
+          protocol      = "tcp"
         }
       ]
       environment = concat(var.task_config.environment, [{ name = "SERVER_TYPE", value = var.server_type }])
