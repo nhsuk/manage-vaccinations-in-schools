@@ -6,7 +6,6 @@ class Inspect::Timeline::PatientsController < ApplicationController
   skip_after_action :verify_policy_scoped
   before_action :ensure_ops_tools_feature_enabled
   before_action :set_patient
-  after_action :record_access_log_entry
 
   layout "full"
 
@@ -27,13 +26,12 @@ class Inspect::Timeline::PatientsController < ApplicationController
   def show
     set_pii_settings
 
-    params.reverse_merge!(event_names: DEFAULT_EVENT_NAMES)
     params[:audit_config] ||= {}
 
-    event_names = params[:event_names]
     compare_option = params[:compare_option] || nil
 
-    if params[:detail_config].blank?
+    # Set default values if none present
+    if params[:detail_config].blank? && params[:event_names].blank?
       default_details = TimelineRecords::DEFAULT_DETAILS_CONFIG
       new_params = params.to_unsafe_h.merge("detail_config" => default_details)
       redirect_to inspect_timeline_patient_path(new_params) and return
@@ -46,6 +44,13 @@ class Inspect::Timeline::PatientsController < ApplicationController
         params[:audit_config][:include_filtered_audit_changes]
     }
 
+    @compare_patient = sample_patient(params[:compare_option]) if compare_option
+
+    record_access_log_entry
+
+    params.reverse_merge!(event_names: DEFAULT_EVENT_NAMES)
+    event_names = params[:event_names]
+
     @patient_timeline =
       TimelineRecords.new(
         @patient,
@@ -55,8 +60,6 @@ class Inspect::Timeline::PatientsController < ApplicationController
       ).load_timeline_events(event_names)
 
     @no_events_message = true if @patient_timeline.empty?
-
-    @compare_patient = sample_patient(params[:compare_option]) if compare_option
 
     if @compare_patient == :invalid_patient
       @invalid_patient_id = true
@@ -144,7 +147,7 @@ class Inspect::Timeline::PatientsController < ApplicationController
   end
 
   def audit_pii_accessed?
-    true if @show_pii && params[:event_names].include?("audits")
+    true if @show_pii && params[:event_names]&.include?("audits")
   end
 
   def record_access_log_entry
