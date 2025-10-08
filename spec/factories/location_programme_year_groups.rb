@@ -4,20 +4,24 @@
 #
 # Table name: location_programme_year_groups
 #
-#  id            :bigint           not null, primary key
-#  academic_year :integer          not null
-#  year_group    :integer          not null
-#  location_id   :bigint           not null
-#  programme_id  :bigint           not null
+#  id                     :bigint           not null, primary key
+#  academic_year          :integer          not null
+#  year_group             :integer          not null
+#  location_id            :bigint           not null
+#  location_year_group_id :bigint           not null
+#  programme_id           :bigint           not null
 #
 # Indexes
 #
 #  idx_on_location_id_academic_year_programme_id_year__6ad5e2b67d  (location_id,academic_year,programme_id,year_group) UNIQUE
+#  idx_on_location_year_group_id_programme_id_405f51181e           (location_year_group_id,programme_id) UNIQUE
+#  index_location_programme_year_groups_on_location_year_group_id  (location_year_group_id)
 #  index_location_programme_year_groups_on_programme_id            (programme_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (location_id => locations.id) ON DELETE => cascade
+#  fk_rails_...  (location_year_group_id => location_year_groups.id) ON DELETE => cascade
 #  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
 #
 FactoryBot.define do
@@ -25,7 +29,15 @@ FactoryBot.define do
           class: "Location::ProgrammeYearGroup" do
     location
     academic_year { AcademicYear.pending }
-    programme
     year_group { programme.default_year_groups.sample }
+
+    location_year_group do
+      location.location_year_groups.find_or_initialize_by(
+        academic_year:,
+        value: year_group
+      )
+    end
+
+    programme
   end
 end

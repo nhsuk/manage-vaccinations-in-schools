@@ -189,19 +189,26 @@ class Location < ApplicationRecord
   end
 
   def import_default_programme_year_groups!(programmes, academic_year:)
-    valid_year_groups = location_year_groups.where(academic_year:).pluck_values
+    year_group_ids =
+      location_year_groups.where(academic_year:).pluck(:value, :id).to_h
 
     rows =
       programmes.flat_map do |programme|
         programme.default_year_groups.filter_map do |year_group|
-          if year_group.in?(valid_year_groups)
-            [id, academic_year, programme.id, year_group]
+          if (year_group_id = year_group_ids[year_group])
+            [id, academic_year, programme.id, year_group, year_group_id]
           end
         end
       end
 
     Location::ProgrammeYearGroup.import!(
-      %i[location_id academic_year programme_id year_group],
+      %i[
+        location_id
+        academic_year
+        programme_id
+        year_group
+        location_year_group_id
+      ],
       rows,
       on_duplicate_key_ignore: true
     )
