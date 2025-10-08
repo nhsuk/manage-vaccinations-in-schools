@@ -20,6 +20,9 @@ describe "Manage school sessions" do
     when_i_click_on_schedule_sessions
     then_i_see_the_dates_page
 
+    when_i_add_an_invalid_date
+    then_i_see_a_validation_error
+
     when_i_choose_the_dates
     then_i_see_the_confirmation_page
 
@@ -203,6 +206,17 @@ describe "Manage school sessions" do
 
   def then_i_see_the_dates_page
     expect(page).to have_content("When will sessions be held?")
+  end
+
+  def when_i_add_an_invalid_date
+    fill_in "Day", with: "99"
+    fill_in "Month", with: "99"
+    fill_in "Year", with: "99"
+    click_on "Continue"
+  end
+
+  def then_i_see_a_validation_error
+    expect(page).to have_content("Enter a date")
   end
 
   def when_i_choose_the_dates
