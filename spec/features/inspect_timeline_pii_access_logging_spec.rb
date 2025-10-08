@@ -99,7 +99,11 @@ describe "Inspect timeline PII access logging", :cis2 do
   end
 
   def and_i_visit_a_patient_timeline_with_pii_enabled
-    visit inspect_timeline_patient_path(id: @patient.id, show_pii: "true")
+    visit inspect_timeline_patient_path(
+            id: @patient.id,
+            show_pii: "true",
+            event_names: ["audits"]
+          )
     expect(page).to have_content("Customise timeline")
   end
 
@@ -108,15 +112,14 @@ describe "Inspect timeline PII access logging", :cis2 do
             id: @patient.id,
             show_pii: "true",
             compare_option: "manual_entry",
-            manual_patient_id: @compare_patient.id.to_s
+            manual_patient_id: @compare_patient.id.to_s,
+            event_names: ["audits"]
           )
     expect(page).to have_content("Customise timeline")
   end
 
   def then_an_access_log_entry_is_created_for_the_patient
-    # Two calls are made on first page load, so in this case (since we are visiting with show_pii: true),
-    # two logs are created
-    expect(@patient.access_log_entries.count).to eq(2)
+    expect(@patient.access_log_entries.count).to eq(1)
   end
 
   def and_the_access_log_entry_has_correct_attributes
@@ -125,7 +128,7 @@ describe "Inspect timeline PII access logging", :cis2 do
 
   def then_access_log_entries_are_created_for_both_patients
     # Check main patient log
-    expect(@patient.access_log_entries.count).to eq(2)
+    expect(@patient.access_log_entries.count).to eq(1)
     verify_log_entry(@patient.access_log_entries.last)
 
     # Check comparison patient log
