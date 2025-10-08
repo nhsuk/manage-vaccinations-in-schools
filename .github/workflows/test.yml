@@ -21,7 +21,7 @@ jobs:
           if [ ${{ github.event_name }} == "pull_request" ]; then
             git fetch origin
             RELEVANT_DIRS=$(git diff origin/${{ github.event.pull_request.base.ref }}...HEAD --name-only)
-            if [ -z "$(echo "$RELEVANT_DIRS" | egrep -v "^(.github|adr|aws|docs|storage|terraform|tests|tests-examples)/")" ]; then
+            if [ -z "$(echo "$RELEVANT_DIRS" | egrep -v "^(.github|adr|aws|docs|storage|terraform)/")" ]; then
               echo "No relevant changes detected, skipping rails tests"
               echo "RUN_RAILS_TESTS=false" >> $GITHUB_ENV
               exit 0

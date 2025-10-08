@@ -30,8 +30,7 @@
     "collectCoverage": true,
     "testPathIgnorePatterns": [
       "app/assets/builds/",
-      "node_modules/",
-      "tests"
+      "node_modules/"
     ],
     "transformIgnorePatterns": [],
     "testEnvironment": "jsdom",
