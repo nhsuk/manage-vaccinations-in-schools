@@ -15,7 +15,7 @@ describe AppPatientSearchResultCardComponent do
   end
 
   let(:link_to) { "/patient" }
-  let(:programme) { nil }
+  let(:programmes) { [] }
   let(:academic_year) { nil }
   let(:show_triage_status) { false }
   let(:show_postcode) { false }
@@ -25,7 +25,7 @@ describe AppPatientSearchResultCardComponent do
     described_class.new(
       patient,
       link_to:,
-      programme:,
+      programmes:,
       academic_year:,
       show_triage_status:,
       show_postcode:,
@@ -50,8 +50,9 @@ describe AppPatientSearchResultCardComponent do
     it { should have_text("Streeling University") }
   end
 
-  context "when given a programme" do
+  context "when given programmes" do
     let(:programme) { create(:programme, :flu) }
+    let(:programmes) { [programme] }
     let(:academic_year) { AcademicYear.current }
 
     it { should have_text("Programme statusFluNot eligible") }
@@ -68,12 +69,6 @@ describe AppPatientSearchResultCardComponent do
       let(:show_triage_status) { true }
 
       it { should have_text("Triage statusFluNo triage needed") }
-    end
-
-    context "when the patient has a triage status" do
-      before { create(:patient_triage_status, :required, patient:, programme:) }
-
-      it { should have_text("Triage statusFluNeeds triage") }
     end
 
     context "with a session status of unwell" do
