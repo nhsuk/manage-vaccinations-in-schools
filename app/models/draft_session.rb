@@ -213,7 +213,7 @@ class DraftSession
         location.location_programme_year_groups.exists?(programme:)
       end
 
-    location.create_default_programme_year_groups!(
+    location.import_default_programme_year_groups!(
       programmes_to_create,
       academic_year:
     )

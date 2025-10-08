@@ -188,7 +188,7 @@ class Location < ApplicationRecord
     import_year_groups!(gias_year_groups, academic_year:, source: "gias")
   end
 
-  def create_default_programme_year_groups!(programmes, academic_year:)
+  def import_default_programme_year_groups!(programmes, academic_year:)
     valid_year_groups = location_year_groups.where(academic_year:).pluck_values
 
     rows =

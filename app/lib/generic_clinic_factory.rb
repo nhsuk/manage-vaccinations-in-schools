@@ -13,7 +13,7 @@ class GenericClinicFactory
         academic_year:,
         source: "generic_clinic_factory"
       )
-      location.create_default_programme_year_groups!(programmes, academic_year:)
+      location.import_default_programme_year_groups!(programmes, academic_year:)
       location
     end
   end

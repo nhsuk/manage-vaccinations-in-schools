@@ -246,13 +246,13 @@ describe "Import child records" do
 
     [AcademicYear.current, AcademicYear.pending].each do |academic_year|
       @school.import_year_groups_from_gias!(academic_year:)
-      @school.create_default_programme_year_groups!(programmes, academic_year:)
+      @school.import_default_programme_year_groups!(programmes, academic_year:)
       @team.generic_clinic.import_year_groups!(
         Location::YearGroup::CLINIC_VALUE_RANGE,
         academic_year:,
         source: "generic_clinic_factory"
       )
-      @team.generic_clinic.create_default_programme_year_groups!(
+      @team.generic_clinic.import_default_programme_year_groups!(
         programmes,
         academic_year:
       )
