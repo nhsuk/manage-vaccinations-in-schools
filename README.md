@@ -195,18 +195,6 @@ To run the JS unit tests:
 yarn test
 ```
 
-To run the Playwright end-to-end tests use:
-
-```shell
-yarn test:e2e
-```
-
-To [generate tests interactively by clicking in a live browser](https://playwright.dev/docs/codegen):
-
-```shell
-yarn playwright codegen http://localhost:4000
-```
-
 #### Load testing
 
 Install [artillery](https://www.artillery.io):
