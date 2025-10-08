@@ -514,9 +514,9 @@ describe GovukNotifyPersonalisation do
     end
   end
 
-  context "with session nil" do
+  context "with the session is nil" do
     let(:session) { nil }
-    let(:consent) { create(:consent, patient:) }
+    let(:consent) { create(:consent, patient:, programme: programmes.first) }
 
     it "doesn't throw an error" do
       expect { to_h }.not_to raise_error
