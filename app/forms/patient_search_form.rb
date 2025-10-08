@@ -44,7 +44,7 @@ class PatientSearchForm < SearchForm
       if programme_types.present?
         Programme.where(type: programme_types)
       else
-        session&.programmes
+        session&.programmes || []
       end
   end
 
