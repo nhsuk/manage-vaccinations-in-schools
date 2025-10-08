@@ -33,6 +33,7 @@ module PatientSearchFormConcern
       :register_status,
       :triage_status,
       :vaccine_method,
+      :still_to_vaccinate,
       consent_statuses: [],
       programme_types: [],
       year_groups: []

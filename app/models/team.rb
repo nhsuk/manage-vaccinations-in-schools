@@ -32,6 +32,7 @@
 #  fk_rails_...  (organisation_id => organisations.id)
 #
 class Team < ApplicationRecord
+  include DaysBeforeToWeeksBefore
   include HasProgrammeYearGroups
 
   audited associated_with: :organisation
@@ -94,29 +95,5 @@ class Team < ApplicationRecord
       )
       .create_with(programmes:)
       .find_or_create_by!(academic_year:, location: generic_clinic)
-  end
-
-  def weeks_before_consent_reminders
-    (days_before_consent_reminders / 7).to_i
-  end
-
-  def weeks_before_consent_reminders=(value)
-    self.days_before_consent_reminders = value * 7
-  end
-
-  def weeks_before_consent_requests
-    (days_before_consent_requests / 7).to_i
-  end
-
-  def weeks_before_consent_requests=(value)
-    self.days_before_consent_requests = value * 7
-  end
-
-  def weeks_before_invitations
-    (days_before_invitations / 7).to_i
-  end
-
-  def weeks_before_invitations=(value)
-    self.days_before_invitations = value * 7
   end
 end

@@ -133,7 +133,9 @@ module CSVImportable
           PatientChangeset.from_import_row(row:, import: self, row_number:)
         end
 
-      changesets.each { ProcessPatientChangesetsJob.perform_later(it) }
+      changesets.each do |patient_changeset|
+        PDSCascadingSearchJob.perform_later(patient_changeset)
+      end
 
       return
     end

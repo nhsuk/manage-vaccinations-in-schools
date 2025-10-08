@@ -18,7 +18,7 @@ class AppConsentCardComponent < ViewComponent::Base
   attr_reader :consent, :session
 
   delegate :patient, :programme, to: :consent
-  delegate :consent_status_tag, :govuk_summary_list, to: :helpers
+  delegate :consent_response_tag, :govuk_summary_list, to: :helpers
 
   def link_to
     session_patient_programme_consent_path(session, patient, programme, consent)
@@ -52,10 +52,10 @@ class AppConsentCardComponent < ViewComponent::Base
       },
       {
         key: {
-          text: "Decision"
+          text: "Response"
         },
         value: {
-          text: consent_status_tag(consent)
+          text: consent_response_tag(consent)
         }
       },
       if consent.vaccine_method_nasal?

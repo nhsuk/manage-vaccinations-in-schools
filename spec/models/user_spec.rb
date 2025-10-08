@@ -106,7 +106,7 @@ describe User do
         it { should be(true) }
       end
 
-      context "when the user is an admin and superuser" do
+      context "when the user is a medical secretary and superuser" do
         let(:user) { build(:medical_secretary, :superuser) }
 
         it { should be(false) }
@@ -292,6 +292,74 @@ describe User do
 
           it { should be(true) }
         end
+      end
+    end
+  end
+
+  describe "#is_support?" do
+    subject(:is_support?) { user.is_support? }
+
+    context "cis2 is enabled", cis2: :enabled do
+      context "when the user is support" do
+        let(:user) { build(:support) }
+
+        it { should be true }
+      end
+
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be false }
+      end
+
+      context "when the user is a nurse and superuser" do
+        let(:user) { build(:nurse, :superuser) }
+
+        it { should be false }
+      end
+
+      context "when the user is a medical secretary" do
+        let(:user) { build(:medical_secretary) }
+
+        it { should be false }
+      end
+
+      context "when the user is a medical secretary and superuser" do
+        let(:user) { build(:medical_secretary, :superuser) }
+
+        it { should be false }
+      end
+    end
+
+    context "cis2 is disabled", cis2: :disabled do
+      context "when the user is support" do
+        let(:user) { build(:support) }
+
+        it { should be true }
+      end
+
+      context "when the user is a medical secretary" do
+        let(:user) { build(:medical_secretary) }
+
+        it { should be false }
+      end
+
+      context "when the user is a medical secretary and superuser" do
+        let(:user) { build(:medical_secretary, :superuser) }
+
+        it { should be false }
+      end
+
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be false }
+      end
+
+      context "when the user is a nurse and superuser" do
+        let(:user) { build(:nurse, :superuser) }
+
+        it { should be false }
       end
     end
   end

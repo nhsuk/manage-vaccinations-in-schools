@@ -3,6 +3,7 @@
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
   include AuthenticationConcern
+  include AppNavigationConcern
 
   before_action :store_user_location!
   before_action :authenticate_user!
@@ -19,6 +20,7 @@ class ApplicationController < ActionController::Base
   before_action :set_privacy_policy_url
   before_action :set_sentry_user
   before_action :authenticate_basic
+  before_action :set_app_navigation
 
   after_action :verify_policy_scoped, if: -> { Rails.env.local? }
 

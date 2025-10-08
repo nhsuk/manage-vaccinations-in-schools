@@ -63,7 +63,7 @@ describe "Verbal consent" do
     # No notes are asked for
 
     # Confirm
-    expect(page).to have_content(["Decision", "Consent refused"].join)
+    expect(page).to have_content(["Response", "Consent refused"].join)
     expect(page).to have_content(["Name", @parent.full_name].join)
 
     if notify_parent
@@ -92,7 +92,7 @@ describe "Verbal consent" do
     click_link parent.full_name
 
     expect(page).to have_content(["Date", Time.zone.today.to_fs(:long)].join)
-    expect(page).to have_content(["Decision", "Consent refused"].join)
+    expect(page).to have_content(["Response", "Consent refused"].join)
     expect(page).to have_content(["Method", "By phone"].join)
     expect(page).to have_content(["Reason for refusal", "Personal choice"].join)
     expect(page).not_to have_content("Notes")

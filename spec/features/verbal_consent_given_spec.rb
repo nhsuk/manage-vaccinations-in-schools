@@ -182,7 +182,7 @@ describe "Verbal consent" do
 
     expect(page).to have_content("Consent response from #{@parent.full_name}")
     expect(page).to have_content(["Date", Date.current.to_fs(:long)].join)
-    expect(page).to have_content(["Decision", "Consent given"].join)
+    expect(page).to have_content(["Response", "Consent given"].join)
     expect(page).to have_content(["Method", "By phone"].join)
 
     expect(page).to have_content(["Full name", @patient.full_name].join)

@@ -61,8 +61,6 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.13.3
-      - name: Check if any deployments are running
-        run: ../scripts/check-for-running-deployments.sh $environment
       - name: Terraform Plan
         id: plan
         run: |

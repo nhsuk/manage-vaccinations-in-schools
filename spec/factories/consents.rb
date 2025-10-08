@@ -4,27 +4,28 @@
 #
 # Table name: consents
 #
-#  id                            :bigint           not null, primary key
-#  academic_year                 :integer          not null
-#  health_answers                :jsonb            not null
-#  invalidated_at                :datetime
-#  notes                         :text             default(""), not null
-#  notify_parent_on_refusal      :boolean
-#  notify_parents_on_vaccination :boolean
-#  reason_for_refusal            :integer
-#  response                      :integer          not null
-#  route                         :integer          not null
-#  submitted_at                  :datetime         not null
-#  vaccine_methods               :integer          default([]), not null, is an Array
-#  withdrawn_at                  :datetime
-#  created_at                    :datetime         not null
-#  updated_at                    :datetime         not null
-#  consent_form_id               :bigint
-#  parent_id                     :bigint
-#  patient_id                    :bigint           not null
-#  programme_id                  :bigint           not null
-#  recorded_by_user_id           :bigint
-#  team_id                       :bigint           not null
+#  id                                              :bigint           not null, primary key
+#  academic_year                                   :integer          not null
+#  health_answers                                  :jsonb            not null
+#  invalidated_at                                  :datetime
+#  notes                                           :text             default(""), not null
+#  notify_parent_on_refusal                        :boolean
+#  notify_parents_on_vaccination                   :boolean
+#  patient_already_vaccinated_notification_sent_at :datetime
+#  reason_for_refusal                              :integer
+#  response                                        :integer          not null
+#  route                                           :integer          not null
+#  submitted_at                                    :datetime         not null
+#  vaccine_methods                                 :integer          default([]), not null, is an Array
+#  withdrawn_at                                    :datetime
+#  created_at                                      :datetime         not null
+#  updated_at                                      :datetime         not null
+#  consent_form_id                                 :bigint
+#  parent_id                                       :bigint
+#  patient_id                                      :bigint           not null
+#  programme_id                                    :bigint           not null
+#  recorded_by_user_id                             :bigint
+#  team_id                                         :bigint           not null
 #
 # Indexes
 #

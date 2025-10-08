@@ -89,21 +89,33 @@ variable "network_params" {
   nullable    = false
 }
 
-variable "loadbalancer" {
+variable "service_connect_config" {
   type = object({
-    target_group_arn = string
-    container_port   = number
+    namespace = string
+    services = list(object({
+      port_name      = string
+      discovery_name = string
+      port           = number
+      dns_name       = string
+    }))
   })
-  description = "Load balancer configuration for the ECS service if the service should be user-facing"
+  description = "Service Connect configuration for the ECS service. If this is not set, the service will not use Service Connect."
   default     = null
   nullable    = true
 }
 
-variable "deployment_controller" {
-  type        = string
-  description = "Deployment controller type for the ECS service"
-  default     = "ECS"
-  nullable    = false
+variable "loadbalancer" {
+  type = object({
+    target_group_blue            = string
+    target_group_green           = string
+    container_port               = number
+    production_listener_rule_arn = string
+    test_listner_rule_arn        = string
+    deploy_role_arn              = string
+  })
+  description = "Load balancer configuration for the ECS service if the service should be user-facing"
+  default     = null
+  nullable    = true
 }
 
 variable "container_name" {

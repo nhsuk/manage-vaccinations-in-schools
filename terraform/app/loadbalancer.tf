@@ -150,7 +150,7 @@ resource "aws_lb_listener_rule" "forward_to_app" {
   priority     = 50000
   action {
     type             = "forward"
-    target_group_arn = local.ecs_initial_lb_target_group
+    target_group_arn = aws_lb_target_group.blue.arn
   }
   condition {
     path_pattern {
@@ -163,6 +163,28 @@ resource "aws_lb_listener_rule" "forward_to_app" {
     }
   }
 
+  lifecycle {
+    ignore_changes = [action]
+  }
+}
+
+resource "aws_lb_listener_rule" "forward_to_test" {
+  listener_arn = aws_lb_listener.app_listener_https.arn
+  priority     = 20
+
+  # Action to forward traffic to the target group
+  action {
+    type             = "forward"
+    target_group_arn = local.non_active_target_group
+  }
+
+  # Condition based on HTTP header
+  condition {
+    http_header {
+      http_header_name = "X-Environment"
+      values           = ["test"]
+    }
+  }
   lifecycle {
     ignore_changes = [action]
   }

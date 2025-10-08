@@ -34,8 +34,8 @@ class AppConsentSummaryComponent < ViewComponent::Base
       end
 
       summary_list.with_row do |row|
-        row.with_key { "Decision" }
-        row.with_value { consent_status_tag(consent) }
+        row.with_key { "Response" }
+        row.with_value { consent_response_tag(consent) }
         if (href = change_links[:response])
           row.with_action(
             text: "Change",
@@ -96,5 +96,5 @@ class AppConsentSummaryComponent < ViewComponent::Base
   attr_reader :consent, :change_links
 
   delegate :programme, to: :consent
-  delegate :consent_status_tag, :govuk_summary_list, to: :helpers
+  delegate :consent_response_tag, :govuk_summary_list, to: :helpers
 end

@@ -5,7 +5,7 @@ describe AppPatientSessionConsentComponent do
 
   let(:component) { described_class.new(patient:, session:, programme:) }
 
-  let(:programme) { create(:programme) }
+  let(:programme) { create(:programme, :hpv) }
   let(:session) { create(:session, programmes: [programme]) }
   let(:patient) { create(:patient, session:) }
 
@@ -51,9 +51,11 @@ describe AppPatientSessionConsentComponent do
   end
 
   context "with given consent" do
-    let!(:consent) { create(:consent, :given, patient:, programme:) }
+    let(:patient) do
+      create(:patient, :consent_given_triage_not_needed, session:)
+    end
 
-    before { create(:patient_consent_status, :given, patient:, programme:) }
+    let(:consent) { patient.consents.first }
 
     it do
       expect(rendered).to have_css(
@@ -63,5 +65,27 @@ describe AppPatientSessionConsentComponent do
     end
 
     it { should_not have_css("a", text: "Contact #{consent.parent.full_name}") }
+
+    context "and the programme is flu" do
+      let(:programme) { create(:programme, :flu) }
+
+      let(:patient) do
+        create(:patient, :consent_given_nasal_only_triage_not_needed, session:)
+      end
+
+      it { should have_text("Consent given for nasal spray") }
+
+      context "and the vaccine method is overridden by triage" do
+        let(:patient) do
+          create(
+            :patient,
+            :consent_given_injection_and_nasal_triage_safe_to_vaccinate_injection,
+            session:
+          )
+        end
+
+        it { should have_text("Consent given for injected vaccine") }
+      end
+    end
   end
 end

@@ -10,11 +10,6 @@ resource "aws_iam_policy" "shell_access_policy" {
   policy = data.aws_iam_policy_document.shell_access.json
 }
 
-resource "aws_iam_policy" "codedeploy_restricted" {
-  name   = "codedeploy-restricted-${var.environment}"
-  policy = data.aws_iam_policy_document.codedeploy.json
-}
-
 resource "aws_iam_policy" "vpc_flowlogs" {
   name   = "vpc-flowlogs-${var.environment}"
   policy = data.aws_iam_policy_document.vpc_flowlogs.json
@@ -34,9 +29,9 @@ resource "aws_iam_role" "ecs_task_role" {
   assume_role_policy = templatefile("templates/iam_assume_role.json.tpl", { service_name = "ecs-tasks.amazonaws.com" })
 }
 
-resource "aws_iam_role" "code_deploy" {
-  name               = "codeDeployRole-${var.environment}"
-  assume_role_policy = templatefile("templates/iam_assume_role.json.tpl", { service_name = "codedeploy.amazonaws.com" })
+resource "aws_iam_role" "ecs_deploy" {
+  name               = "ecs-deploy-${var.environment}"
+  assume_role_policy = templatefile("templates/iam_assume_role.json.tpl", { service_name = "ecs.amazonaws.com" })
 }
 
 resource "aws_iam_role" "vpc_flowlogs" {
@@ -65,9 +60,9 @@ resource "aws_iam_role_policy_attachment" "ecs_task_fargate" {
   policy_arn = aws_iam_policy.shell_access_policy.arn
 }
 
-resource "aws_iam_role_policy_attachment" "code_deploy_blue_green" {
-  role       = aws_iam_role.code_deploy.name
-  policy_arn = aws_iam_policy.codedeploy_restricted.arn
+resource "aws_iam_role_policy_attachment" "ecs_deploy" {
+  role       = aws_iam_role.ecs_deploy.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonECSInfrastructureRolePolicyForLoadBalancers"
 }
 
 

@@ -325,7 +325,8 @@ describe "Import child records" do
 
   def when_i_wait_for_the_background_job_to_complete
     perform_enqueued_jobs(only: ProcessImportJob)
-    perform_enqueued_jobs(only: ProcessPatientChangesetsJob)
+    perform_enqueued_jobs(only: PDSCascadingSearchJob)
+    perform_enqueued_jobs(only: ProcessPatientChangesetJob)
     perform_enqueued_jobs(only: CommitPatientChangesetsJob)
   end
 

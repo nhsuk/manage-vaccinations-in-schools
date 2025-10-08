@@ -20,8 +20,8 @@ describe "Manage school sessions" do
     when_i_click_on_schedule_sessions
     then_i_see_the_dates_page
 
-    when_i_try_submitting_without_entering_data
-    then_i_see_an_error
+    when_i_add_an_invalid_date
+    then_i_see_a_validation_error
 
     when_i_choose_the_dates
     then_i_see_the_confirmation_page
@@ -29,19 +29,17 @@ describe "Manage school sessions" do
     when_i_click_on_change_programmes
     then_i_see_the_change_programmes_page
     and_i_change_the_programmes
-    and_i_confirm
+    then_i_see_the_new_programme
 
     when_i_click_on_change_consent_requests
     then_i_see_the_change_consent_requests_page
     and_i_change_consent_requests_date
-    and_i_confirm
 
     when_i_click_on_change_consent_reminders
     then_i_see_the_change_consent_reminders_page
     and_i_change_consent_reminders_weeks
-    and_i_confirm
 
-    when_i_confirm
+    when_i_save_changes
     then_i_should_see_the_session_details
 
     when_i_go_to_todays_sessions_as_a_nurse
@@ -57,6 +55,7 @@ describe "Manage school sessions" do
     then_they_can_give_consent
 
     when_the_deadline_has_passed
+    and_patients_have_been_seen
     then_they_can_no_longer_give_consent
     and_i_am_signed_in
 
@@ -65,6 +64,9 @@ describe "Manage school sessions" do
     then_i_see_the_school
 
     when_i_click_on_the_school
+    and_i_click_on_edit_dates
+    then_i_see_the_dates_page_but_cannot_change
+
     and_i_click_on_send_invitations
     then_i_see_the_send_invitations_page
 
@@ -76,12 +78,13 @@ describe "Manage school sessions" do
 
   def given_my_team_is_running_an_hpv_vaccination_programme
     @programme = create(:programme, :hpv)
+    @other_programme = create(:programme, :flu)
     @team =
       create(
         :team,
         :with_one_nurse,
         :with_generic_clinic,
-        programmes: [@programme]
+        programmes: [@programme, @other_programme]
       )
     @location = create(:school, :secondary, team: @team)
     @session =
@@ -103,7 +106,11 @@ describe "Manage school sessions" do
 
     clinic_session.session_dates.create!(value: 1.month.from_now.to_date)
 
-    clinic_session.set_notification_dates
+    clinic_session.days_before_consent_reminders = nil
+    clinic_session.send_consent_requests_at = nil
+    clinic_session.send_invitations_at =
+      clinic_session.dates.min - @team.days_before_invitations.days
+
     clinic_session.save!
 
     patient_already_in_clinic_without_invitiation =
@@ -183,16 +190,33 @@ describe "Manage school sessions" do
     click_on "Add session dates"
   end
 
+  def and_i_click_on_edit_dates
+    click_on "Edit session"
+    click_on "Change session dates"
+  end
+
+  def then_i_see_the_dates_page_but_cannot_change
+    expect(page).to have_content(
+      "Children have attended this session. It cannot be changed."
+    )
+
+    click_on "Continue"
+    click_on "Save changes"
+  end
+
   def then_i_see_the_dates_page
     expect(page).to have_content("When will sessions be held?")
   end
 
-  def when_i_try_submitting_without_entering_data
+  def when_i_add_an_invalid_date
+    fill_in "Day", with: "99"
+    fill_in "Month", with: "99"
+    fill_in "Year", with: "99"
     click_on "Continue"
   end
 
-  def then_i_see_an_error
-    expect(page).to have_content("There is a problem\nEnter a date")
+  def then_i_see_a_validation_error
+    expect(page).to have_content("Enter a date")
   end
 
   def when_i_choose_the_dates
@@ -240,7 +264,12 @@ describe "Manage school sessions" do
   end
 
   def and_i_change_the_programmes
-    check "HPV"
+    check "Flu"
+    click_on "Continue"
+  end
+
+  def then_i_see_the_new_programme
+    expect(page).to have_content("ProgrammesFlu HPV")
   end
 
   def when_i_click_on_change_consent_requests
@@ -257,6 +286,7 @@ describe "Manage school sessions" do
     fill_in "Day", with: "1"
     fill_in "Month", with: "3"
     fill_in "Year", with: "2024"
+    click_on "Continue"
   end
 
   def when_i_click_on_change_consent_reminders
@@ -271,13 +301,12 @@ describe "Manage school sessions" do
 
   def and_i_change_consent_reminders_weeks
     fill_in "When should parents get a reminder to give consent?", with: "1"
-  end
-
-  def when_i_confirm
     click_on "Continue"
   end
 
-  alias_method :and_i_confirm, :when_i_confirm
+  def when_i_save_changes
+    click_on "Save changes"
+  end
 
   def then_i_should_see_the_session_details
     expect(page).to have_content(@location.name.to_s)
@@ -295,6 +324,15 @@ describe "Manage school sessions" do
 
   def when_the_deadline_has_passed
     travel_to(Time.zone.local(2024, 3, 12))
+  end
+
+  def and_patients_have_been_seen
+    create(
+      :attendance_record,
+      :present,
+      patient: @patient,
+      session: @session.reload
+    )
   end
 
   def then_they_can_no_longer_give_consent
