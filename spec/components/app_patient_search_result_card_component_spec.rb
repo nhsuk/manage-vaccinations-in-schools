@@ -6,10 +6,11 @@ describe AppPatientSearchResultCardComponent do
   let(:patient) do
     create(
       :patient,
-      given_name: "Hari",
-      family_name: "Seldon",
-      date_of_birth: Date.new(2000, 1, 1),
       address_postcode: "SW11 1AA",
+      date_of_birth: Date.new(2000, 1, 1),
+      family_name: "Seldon",
+      given_name: "Hari",
+      nhs_number: "9000000009",
       school: build(:school, name: "Streeling University")
     )
   end
@@ -17,9 +18,10 @@ describe AppPatientSearchResultCardComponent do
   let(:link_to) { "/patient" }
   let(:programmes) { [] }
   let(:academic_year) { nil }
-  let(:show_triage_status) { false }
+  let(:show_nhs_number) { false }
   let(:show_postcode) { false }
   let(:show_school) { false }
+  let(:show_triage_status) { false }
 
   let(:component) do
     described_class.new(
@@ -27,16 +29,24 @@ describe AppPatientSearchResultCardComponent do
       link_to:,
       programmes:,
       academic_year:,
-      show_triage_status:,
+      show_nhs_number:,
       show_postcode:,
-      show_school:
+      show_school:,
+      show_triage_status:
     )
   end
 
   it { should have_link("SELDON, Hari", href: "/patient") }
   it { should have_text("1 January 2000") }
+  it { should_not have_text("900 000 0009") }
   it { should_not have_text("SW11 1AA") }
   it { should_not have_text("Streeling University") }
+
+  context "when showing the NHS number" do
+    let(:show_nhs_number) { true }
+
+    it { should have_text("900 000 0009") }
+  end
 
   context "when showing the postcode" do
     let(:show_postcode) { true }
