@@ -34,7 +34,7 @@
         <%= render AppPatientSearchResultCardComponent.new(
               patient,
               link_to: patient_path(patient),
-              programme: @programme,
+              programmes: [@programme],
               academic_year: @academic_year,
               show_triage_status: @form.triage_status.present?,
               show_year_group: patient.show_year_group?(team: current_team),

@@ -4,7 +4,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   def initialize(
     patient,
     link_to:,
-    programme: nil,
+    programmes: [],
     academic_year: nil,
     show_parents: false,
     show_postcode: false,
@@ -14,7 +14,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   )
     @patient = patient
     @link_to = link_to
-    @programme = programme
+    @programmes = programmes
     @academic_year = academic_year || AcademicYear.pending
 
     @show_parents = show_parents
@@ -57,20 +57,24 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
             row.with_value { patient_parents(patient) }
           end
         end
-        if programme && academic_year
-          summary_list.with_row do |row|
-            row.with_key { "Consent status" }
-            row.with_value { consent_status_tag }
+        if academic_year
+          if consent_status_tag
+            summary_list.with_row do |row|
+              row.with_key { "Consent status" }
+              row.with_value { consent_status_tag }
+            end
           end
-          if display_triage_status?
+          if show_triage_status && triage_status_tag
             summary_list.with_row do |row|
               row.with_key { "Triage status" }
               row.with_value { triage_status_tag }
             end
           end
-          summary_list.with_row do |row|
-            row.with_key { "Programme status" }
-            row.with_value { vaccination_status_tag }
+          if vaccination_status_tag
+            summary_list.with_row do |row|
+              row.with_key { "Programme status" }
+              row.with_value { vaccination_status_tag }
+            end
           end
         end
       end
@@ -81,7 +85,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
 
   attr_reader :patient,
               :link_to,
-              :programme,
+              :programmes,
               :academic_year,
               :triage_status,
               :show_parents,
@@ -104,18 +108,27 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   def triage_status_tag = status_tag(:triage)
 
   def status_tag(type)
-    render AppAttachedTagsComponent.new(
-             { programme.name => status_resolver.send(type) }
-           )
+    @status_tag ||= {}
+    @status_tag[type] ||= begin
+      status_by_programme =
+        programmes.each_with_object({}) do |programme, hash|
+          if (status_hash = status_resolver_for(programme).send(type))
+            hash[programme.name] = status_hash
+          end
+        end
+
+      if status_by_programme.present?
+        render AppAttachedTagsComponent.new(status_by_programme)
+      end
+    end
   end
 
-  def status_resolver
-    @status_resolver ||=
-      PatientStatusResolver.new(patient, programme:, academic_year:)
-  end
-
-  def display_triage_status?
-    show_triage_status ||
-      patient.triage_status(programme:, academic_year:).required?
+  def status_resolver_for(programme)
+    @status_resolver_for ||= {}
+    @status_resolver_for[programme.id] ||= PatientStatusResolver.new(
+      patient,
+      programme:,
+      academic_year:
+    )
   end
 end
