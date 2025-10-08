@@ -80,6 +80,14 @@ class Team < ApplicationRecord
     Patient.joins_sessions.where(sessions: { team_id: id })
   end
 
+  def year_groups(academic_year: nil)
+    academic_year ||= AcademicYear.pending
+    location_programme_year_groups
+      .joins(:location_year_group)
+      .where(location_year_group: { academic_year: })
+      .pluck_year_groups
+  end
+
   def generic_clinic = locations.generic_clinic.first
 
   def generic_clinic_session(academic_year:)

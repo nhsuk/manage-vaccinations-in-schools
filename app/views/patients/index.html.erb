@@ -1,25 +1,32 @@
 <%= h1 t(".title"), size: "xl" %>
 
-<%= render AppPatientSearchFormComponent.new(
-      @form,
-      url: patients_path,
-      heading_level: 2,
-      show_aged_out_of_programmes: true,
-    ) %>
+<div class="nhsuk-grid-row">
+  <div class="app-grid-column-filters">
+    <%= render AppPatientSearchFormComponent.new(
+          @form,
+          url: patients_path,
+          heading_level: 2,
+          programmes: policy_scope(Programme),
+          consent_statuses: %w[no_response given refused conflicts],
+          triage_statuses: %w[required delay_vaccination do_not_vaccinate safe_to_vaccinate],
+          vaccination_statuses: Patient::VaccinationStatus.statuses.keys,
+          year_groups: current_team.year_groups,
+          show_aged_out_of_programmes: true,
+        ) %>
+  </div>
 
-<% if @patients.any? %>
-  <%= render AppPatientTableComponent.new(@patients, current_user:, count: @pagy.count) %>
-<% else %>
-  <%= render AppCardComponent.new(feature: true) do |card| %>
-    <% card.with_heading(level: 2) { "No children" } %>
-    <% card.with_description { "No children matching search criteria found." } %>
-  <% end %>
-<% end %>
-
-<%= render AppPaginationComponent.new(pagy: @pagy) %>
-
-<% if @pagy.count.positive? %>
-  <p class="nhsuk-body">
-    Showing <b><%= @pagy.from %></b> to <b><%= @pagy.to %></b> of <b><%= @pagy.count %></b> children
-  </p>
-<% end %>
+  <div class="app-grid-column-results">
+    <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
+      <% @patients.each do |patient| %>
+        <%= render AppPatientSearchResultCardComponent.new(
+              patient,
+              link_to: patient_path(patient),
+              programmes: @form.programmes,
+              show_nhs_number: true,
+              show_school: true,
+              show_triage_status: @form.triage_status.present?,
+            ) %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

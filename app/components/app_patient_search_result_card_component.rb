@@ -141,4 +141,13 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
       academic_year:
     )
   end
+
+  def patient_appears_in_programme?(programme)
+    year_group = patient.year_group(academic_year:)
+
+    patient.location_programme_year_groups.any? do
+      it.academic_year == academic_year && it.year_group == year_group &&
+        it.programme_id == programme.id
+    end
+  end
 end

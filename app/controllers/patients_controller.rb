@@ -11,8 +11,16 @@ class PatientsController < ApplicationController
   layout "full"
 
   def index
-    patients = @form.apply(policy_scope(Patient).includes(:school))
+    scope =
+      policy_scope(Patient).includes(
+        :consent_statuses,
+        :location_programme_year_groups,
+        :school,
+        :triage_statuses,
+        :vaccination_statuses
+      )
 
+    patients = @form.apply(scope)
     @pagy, @patients = pagy(patients)
   end
 

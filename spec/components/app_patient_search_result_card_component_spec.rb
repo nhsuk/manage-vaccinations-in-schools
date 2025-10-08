@@ -7,7 +7,7 @@ describe AppPatientSearchResultCardComponent do
     create(
       :patient,
       address_postcode: "SW11 1AA",
-      date_of_birth: Date.new(2000, 1, 1),
+      date_of_birth: Date.new(2020, 1, 1),
       family_name: "Seldon",
       given_name: "Hari",
       nhs_number: "9000000009",
@@ -37,7 +37,7 @@ describe AppPatientSearchResultCardComponent do
   end
 
   it { should have_link("SELDON, Hari", href: "/patient") }
-  it { should have_text("1 January 2000") }
+  it { should have_text("1 January 2020") }
   it { should_not have_text("900 000 0009") }
   it { should_not have_text("SW11 1AA") }
   it { should_not have_text("Streeling University") }
