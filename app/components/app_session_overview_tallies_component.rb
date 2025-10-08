@@ -14,6 +14,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
   delegate :govuk_table,
            :govuk_button_link_to,
            :govuk_inset_text,
+           :govuk_summary_list,
            :session_consent_period,
            :policy,
            to: :helpers

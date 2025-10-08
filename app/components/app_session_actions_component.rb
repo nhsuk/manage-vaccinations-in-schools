@@ -2,19 +2,22 @@
 
 class AppSessionActionsComponent < ViewComponent::Base
   erb_template <<-ERB
-    <h4 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Action required</h4>
+    <% if show_heading %>
+      <h4 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Action required</h4>
+    <% end %>
     <%= govuk_summary_list(rows:) %>
   ERB
 
-  def initialize(session)
+  def initialize(session, show_heading: true)
     @session = session
+    @show_heading = show_heading
   end
 
   def render? = rows.any?
 
   private
 
-  attr_reader :session
+  attr_reader :session, :show_heading
 
   delegate :govuk_summary_list, to: :helpers
   delegate :academic_year, :programmes, to: :session
