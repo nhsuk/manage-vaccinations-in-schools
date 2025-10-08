@@ -597,6 +597,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_062016) do
     t.integer "academic_year", null: false
     t.integer "latest_session_status", default: 0, null: false
     t.datetime "status_changed_at", null: false
+    t.bigint "latest_location_id"
+    t.index ["latest_location_id"], name: "index_patient_vaccination_statuses_on_latest_location_id"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_fc0b47b743", unique: true
     t.index ["status"], name: "index_patient_vaccination_statuses_on_status"
   end
@@ -1054,6 +1056,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_062016) do
   add_foreign_key "patient_specific_directions", "vaccines"
   add_foreign_key "patient_triage_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_triage_statuses", "programmes"
+  add_foreign_key "patient_vaccination_statuses", "locations", column: "latest_location_id"
   add_foreign_key "patient_vaccination_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_vaccination_statuses", "programmes"
   add_foreign_key "patients", "locations", column: "gp_practice_id"

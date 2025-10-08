@@ -131,7 +131,12 @@ class StatusUpdater
           batch.select(&:changed?),
           on_duplicate_key_update: {
             conflict_target: [:id],
-            columns: %i[status latest_session_status status_changed_at]
+            columns: %i[
+              status
+              status_changed_at
+              latest_location_id
+              latest_session_status
+            ]
           }
         )
       end
