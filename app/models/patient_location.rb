@@ -78,7 +78,7 @@ class PatientLocation < ApplicationRecord
               .exists
 
           location_programme_year_group_exists =
-            LocationProgrammeYearGroup
+            Location::ProgrammeYearGroup
               .where(
                 "location_programme_year_groups.location_id = patient_locations.location_id"
               )

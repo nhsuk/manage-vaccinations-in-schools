@@ -21,7 +21,8 @@
 #  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
 #
 FactoryBot.define do
-  factory :location_programme_year_group do
+  factory :location_programme_year_group,
+          class: "Location::ProgrammeYearGroup" do
     location
     academic_year { AcademicYear.pending }
     programme

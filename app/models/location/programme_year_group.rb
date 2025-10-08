@@ -20,23 +20,32 @@
 #  fk_rails_...  (location_id => locations.id) ON DELETE => cascade
 #  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
 #
-describe LocationProgrammeYearGroup do
-  subject(:location_programme_year_group) do
-    build(:location_programme_year_group, location:)
+class Location::ProgrammeYearGroup < ApplicationRecord
+  audited associated_with: :location
+
+  belongs_to :location
+  belongs_to :programme
+
+  scope :pluck_year_groups,
+        -> { distinct.order(:year_group).pluck(:year_group) }
+
+  scope :pluck_birth_academic_years,
+        -> do
+          distinct
+            .order(:academic_year, :year_group)
+            .pluck(:academic_year, :year_group)
+            .map { _2.to_birth_academic_year(academic_year: _1) }
+        end
+
+  validates :year_group, inclusion: { in: :valid_year_groups }
+
+  def birth_academic_year
+    year_group.to_birth_academic_year(academic_year:)
   end
 
-  let(:location) { create(:school) }
+  private
 
-  describe "associations" do
-    it { should belong_to(:location) }
-    it { should belong_to(:programme) }
-  end
-
-  describe "validations" do
-    it "validates year group is suitable for the location" do
-      expect(location_programme_year_group).to validate_inclusion_of(
-        :year_group
-      ).in_array(location.gias_year_groups)
-    end
+  def valid_year_groups
+    location&.location_year_groups&.where(academic_year:)&.pluck_values || []
   end
 end

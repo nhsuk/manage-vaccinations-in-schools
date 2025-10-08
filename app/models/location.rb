@@ -56,10 +56,13 @@ class Location < ApplicationRecord
   has_many :location_year_groups,
            class_name: "Location::YearGroup",
            dependent: :destroy
-  has_many :location_programme_year_groups
+  has_many :location_programme_year_groups,
+           class_name: "Location::ProgrammeYearGroup",
+           dependent: :destroy
 
   has_many :attendance_records
   has_many :consent_forms
+
   has_many :patient_locations
   has_many :patients, foreign_key: :school_id
   has_many :sessions
@@ -197,7 +200,7 @@ class Location < ApplicationRecord
         end
       end
 
-    LocationProgrammeYearGroup.import!(
+    Location::ProgrammeYearGroup.import!(
       %i[location_id academic_year programme_id year_group],
       rows,
       on_duplicate_key_ignore: true

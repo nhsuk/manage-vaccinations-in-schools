@@ -200,7 +200,7 @@ class StatusUpdater
 
   def programme_ids_per_year_group
     @programme_ids_per_year_group ||=
-      LocationProgrammeYearGroup
+      Location::ProgrammeYearGroup
         .distinct
         .pluck(:programme_id, :year_group)
         .each_with_object({}) do |(programme_id, year_group), hash|
@@ -211,7 +211,7 @@ class StatusUpdater
 
   def programme_ids_per_location_id_and_year_group
     @programme_ids_per_location_id_and_year_group ||=
-      LocationProgrammeYearGroup
+      Location::ProgrammeYearGroup
         .pluck(:location_id, :programme_id, :year_group)
         .each_with_object({}) do |(location_id, programme_id, year_group), hash|
           hash[location_id] ||= {}

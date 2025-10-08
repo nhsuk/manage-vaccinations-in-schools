@@ -35,7 +35,7 @@ module MavisCLI
 
         location_programme_year_groups =
           year_groups.map do |year_group|
-            LocationProgrammeYearGroup.new(
+            Location::ProgrammeYearGroup.new(
               location:,
               programme:,
               academic_year:,
@@ -44,7 +44,7 @@ module MavisCLI
           end
 
         begin
-          LocationProgrammeYearGroup.import!(
+          Location::ProgrammeYearGroup.import!(
             location_programme_year_groups,
             on_duplicate_key_ignore: true
           )

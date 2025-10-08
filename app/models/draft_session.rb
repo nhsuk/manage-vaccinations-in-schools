@@ -115,8 +115,11 @@ class DraftSession
     @location_programme_year_groups ||=
       session.location_programme_year_groups.includes(:programme).to_a +
         new_programmes.flat_map do |programme|
-          programme.default_year_groups.map do |year_group|
-            LocationProgrammeYearGroup.new(location:, programme:, year_group:)
+          programme.default_year_groups.map do |value|
+            Location::ProgrammeYearGroup.new(
+              programme:,
+              year_group: Location::YearGroup.new(location:, value:)
+            )
           end
         end
   end
