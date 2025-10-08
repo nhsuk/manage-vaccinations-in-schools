@@ -87,13 +87,15 @@ describe AlreadyHadNotificationSender do
           expect(EmailDeliveryJob).to have_been_enqueued.with(
             :vaccination_discovered,
             parent: first_parent,
-            vaccination_record:
+            vaccination_record:,
+            consent: first_consent
           )
 
           expect(EmailDeliveryJob).to have_been_enqueued.with(
             :vaccination_discovered,
             parent: second_parent,
-            vaccination_record:
+            vaccination_record:,
+            consent: second_consent
           )
         end
 
@@ -103,13 +105,15 @@ describe AlreadyHadNotificationSender do
           expect(SMSDeliveryJob).to have_been_enqueued.with(
             :vaccination_discovered,
             parent: first_parent,
-            vaccination_record:
+            vaccination_record:,
+            consent: first_consent
           )
 
           expect(SMSDeliveryJob).not_to have_been_enqueued.with(
             :vaccination_discovered,
             parent: second_parent,
-            vaccination_record:
+            vaccination_record:,
+            consent: second_consent
           )
         end
 
@@ -145,23 +149,28 @@ describe AlreadyHadNotificationSender do
             expect(EmailDeliveryJob).not_to have_been_enqueued.with(
               :vaccination_discovered,
               parent: first_parent,
-              vaccination_record:
+              vaccination_record:,
+              consent: first_consent
             )
 
             expect(EmailDeliveryJob).to have_been_enqueued.with(
               :vaccination_discovered,
               parent: second_parent,
-              vaccination_record:
+              vaccination_record:,
+              consent: second_consent
             )
           end
         end
 
         context "with withdrawn consents" do
-          before do
-            first_consent.update!(
-              withdrawn_at: 1.day.ago,
-              notes: "Some notes",
-              reason_for_refusal: "personal_choice"
+          let!(:first_consent) do
+            create(
+              :consent,
+              :withdrawn,
+              patient:,
+              programme:,
+              parent: first_parent,
+              academic_year:
             )
           end
 
@@ -171,13 +180,15 @@ describe AlreadyHadNotificationSender do
             expect(EmailDeliveryJob).not_to have_been_enqueued.with(
               :vaccination_discovered,
               parent: first_parent,
-              vaccination_record:
+              vaccination_record:,
+              consent: first_consent
             )
 
             expect(EmailDeliveryJob).to have_been_enqueued.with(
               :vaccination_discovered,
               parent: second_parent,
-              vaccination_record:
+              vaccination_record:,
+              consent: second_consent
             )
           end
         end
@@ -196,13 +207,15 @@ describe AlreadyHadNotificationSender do
             expect(EmailDeliveryJob).not_to have_been_enqueued.with(
               :vaccination_discovered,
               parent: first_parent,
-              vaccination_record:
+              vaccination_record:,
+              consent: first_consent
             )
 
             expect(EmailDeliveryJob).to have_been_enqueued.with(
               :vaccination_discovered,
               parent: second_parent,
-              vaccination_record:
+              vaccination_record:,
+              consent: second_consent
             )
           end
         end
@@ -221,13 +234,15 @@ describe AlreadyHadNotificationSender do
             expect(EmailDeliveryJob).to have_been_enqueued.with(
               :vaccination_discovered,
               parent: first_parent,
-              vaccination_record:
+              vaccination_record:,
+              consent: first_consent
             )
 
             expect(EmailDeliveryJob).to have_been_enqueued.with(
               :vaccination_discovered,
               parent: second_parent,
-              vaccination_record:
+              vaccination_record:,
+              consent: second_consent
             )
           end
         end

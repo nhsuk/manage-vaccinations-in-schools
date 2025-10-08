@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 describe NotificationParentSelector do
-  describe "#call" do
-    subject(:call) { described_class.call(vaccination_record:, consents:) }
+  subject(:notification_parent_selector) do
+    described_class.new(vaccination_record:, consents:)
+  end
+
+  describe "#parents" do
+    subject(:parents) { notification_parent_selector.parents }
 
     let(:programme) { create(:programme) }
     let(:academic_year) { AcademicYear.current }
@@ -59,7 +63,7 @@ describe NotificationParentSelector do
 
       context "when consents have responses" do
         it "returns contactable parents from consents with responses" do
-          expect(call).to contain_exactly(first_parent, second_parent)
+          expect(parents).to contain_exactly(first_parent, second_parent)
         end
       end
 
@@ -89,7 +93,7 @@ describe NotificationParentSelector do
         end
 
         it "returns parents only from consents with provided responses" do
-          expect(call).to contain_exactly(second_parent)
+          expect(parents).to contain_exactly(second_parent)
         end
       end
 
@@ -100,7 +104,7 @@ describe NotificationParentSelector do
         end
 
         it "returns only contactable parents" do
-          expect(call).to contain_exactly(second_parent)
+          expect(parents).to contain_exactly(second_parent)
         end
       end
 
@@ -128,7 +132,7 @@ describe NotificationParentSelector do
         end
 
         it "returns all patient parents instead of consent parents" do
-          expect(call).to contain_exactly(first_parent, second_parent)
+          expect(parents).to contain_exactly(first_parent, second_parent)
         end
 
         context "when some patient parents are not contactable" do
@@ -141,7 +145,7 @@ describe NotificationParentSelector do
           end
 
           it "returns only contactable patient parents" do
-            expect(call).to contain_exactly(second_parent)
+            expect(parents).to contain_exactly(second_parent)
           end
         end
       end
@@ -164,7 +168,7 @@ describe NotificationParentSelector do
       end
 
       it "returns empty array" do
-        expect(call).to eq([])
+        expect(parents).to be_empty
       end
     end
 
@@ -176,7 +180,7 @@ describe NotificationParentSelector do
       end
 
       it "returns empty array" do
-        expect(call).to eq([])
+        expect(parents).to be_empty
       end
     end
 
@@ -186,7 +190,7 @@ describe NotificationParentSelector do
       before { allow(ConsentGrouper).to receive(:call).and_return([]) }
 
       it "handles empty consents gracefully" do
-        expect(call).to eq([])
+        expect(parents).to be_empty
       end
 
       context "when grouped consents are empty" do
@@ -211,7 +215,7 @@ describe NotificationParentSelector do
         end
 
         it "returns empty array when no grouped consents" do
-          expect(call).to eq([])
+          expect(parents).to be_empty
         end
       end
     end
@@ -226,7 +230,7 @@ describe NotificationParentSelector do
       end
 
       it "returns empty array without processing consents" do
-        expect(described_class.call(vaccination_record:)).to eq([])
+        expect(parents).to be_empty
       end
     end
   end

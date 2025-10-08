@@ -5,40 +5,40 @@ class NotificationParentSelector
     @vaccination_record = vaccination_record
 
     @consents =
-      if consents.present?
-        consents
-      else
-        patient = @vaccination_record.patient
-
-        if patient.send_notifications? && @vaccination_record.notify_parents
+      consents ||
+        if patient.send_notifications? && vaccination_record.notify_parents
           patient.consents
         else
           []
         end
-      end
   end
 
-  def call
-    programme_id = @vaccination_record.programme_id
-    academic_year = @vaccination_record.academic_year
-
-    consents = ConsentGrouper.call(@consents, programme_id:, academic_year:)
-
-    parents =
-      if consents.any?(&:via_self_consent?)
-        @vaccination_record.patient.parents
-      else
-        consents.select(&:response_provided?).filter_map(&:parent)
-      end
-
-    parents.select(&:contactable?)
+  def parents_with_consent
+    if (self_consent = latest_consents.find(&:via_self_consent?))
+      patient
+        .parents
+        .select(&:contactable?)
+        .map { |parent| [parent, self_consent] }
+    else
+      latest_consents
+        .select(&:response_given?)
+        .filter_map do |consent|
+          parent = consent.parent
+          [parent, consent] if parent&.contactable?
+        end
+    end
   end
 
-  def self.call(...) = new(...).call
-
-  private_class_method :new
+  def parents = parents_with_consent.map(&:first)
 
   private
 
   attr_reader :vaccination_record, :consents
+
+  delegate :patient, :programme_id, :academic_year, to: :vaccination_record
+
+  def latest_consents
+    @latest_consents ||=
+      ConsentGrouper.call(consents, programme_id:, academic_year:)
+  end
 end

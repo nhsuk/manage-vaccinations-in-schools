@@ -4,7 +4,7 @@ module VaccinationMailerConcern
   extend ActiveSupport::Concern
 
   def send_vaccination_confirmation(vaccination_record)
-    parents = NotificationParentSelector.call(vaccination_record:)
+    parents = NotificationParentSelector.new(vaccination_record:).parents
     return if parents.empty?
 
     template_name =
@@ -33,7 +33,7 @@ module VaccinationMailerConcern
   end
 
   def send_vaccination_deletion(vaccination_record)
-    parents = NotificationParentSelector.call(vaccination_record:)
+    parents = NotificationParentSelector.new(vaccination_record:).parents
     return if parents.empty?
 
     sent_by = try(:current_user)

@@ -107,6 +107,8 @@ class GovukNotifyPersonalisation
   end
 
   def consent_deadline
+    return nil if session.nil?
+
     next_date = session.future_dates.first
 
     close_consent_at =
@@ -117,6 +119,7 @@ class GovukNotifyPersonalisation
 
   def consent_link
     return nil if session.nil? || programmes.empty?
+
     host +
       start_parent_interface_consent_forms_path(
         session,
@@ -173,41 +176,41 @@ class GovukNotifyPersonalisation
     if vaccination_record
       vaccination_record_location(vaccination_record)
     else
-      session.location.name
+      session&.location&.name
     end
   end
 
   def next_or_today_session_date
-    session.next_date(include_today: true)&.to_fs(:short_day_of_week)
+    session&.next_date(include_today: true)&.to_fs(:short_day_of_week)
   end
 
   def next_or_today_session_dates
     session
-      .today_or_future_dates
-      .map { it.to_fs(:short_day_of_week) }
-      .to_sentence
+      &.today_or_future_dates
+      &.map { it.to_fs(:short_day_of_week) }
+      &.to_sentence
   end
 
   def next_or_today_session_dates_or
     session
-      .today_or_future_dates
-      .map { it.to_fs(:short_day_of_week) }
-      .to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
+      &.today_or_future_dates
+      &.map { it.to_fs(:short_day_of_week) }
+      &.to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
   end
 
   def next_session_date
-    session.next_date(include_today: false)&.to_fs(:short_day_of_week)
+    session&.next_date(include_today: false)&.to_fs(:short_day_of_week)
   end
 
   def next_session_dates
-    session.future_dates.map { it.to_fs(:short_day_of_week) }.to_sentence
+    session&.future_dates&.map { it.to_fs(:short_day_of_week) }&.to_sentence
   end
 
   def next_session_dates_or
     session
-      .future_dates
-      .map { it.to_fs(:short_day_of_week) }
-      .to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
+      &.future_dates
+      &.map { it.to_fs(:short_day_of_week) }
+      &.to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
   end
 
   def outcome_administered
@@ -263,6 +266,8 @@ class GovukNotifyPersonalisation
   end
 
   def subsequent_session_dates_offered_message
+    return nil if session.nil?
+
     dates = session.future_dates.drop(1)
     return "" if dates.empty?
 
