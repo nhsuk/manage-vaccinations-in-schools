@@ -945,13 +945,6 @@
   resolved "https://registry.yarnpkg.com/@pkgr/core/-/core-0.2.9.tgz#d229a7b7f9dac167a156992ef23c7f023653f53b"
   integrity sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==
 
-"@playwright/test@^1.56.0":
-  version "1.56.0"
-  resolved "https://registry.yarnpkg.com/@playwright/test/-/test-1.56.0.tgz#891fe101bddf3eee3dd609e7a145f705dc0f3054"
-  integrity sha512-Tzh95Twig7hUwwNe381/K3PggZBZblKUe2wv25oIpzWLr6Z0m4KgV1ZVIjnR6GM9ANEqjZD7XsZEa6JL/7YEgg==
-  dependencies:
-    playwright "1.56.0"
-
 "@prettier/plugin-ruby@^4.0.4":
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/@prettier/plugin-ruby/-/plugin-ruby-4.0.4.tgz#73d85fc2a1731a3f62b57ac3116cf1c234027cb6"

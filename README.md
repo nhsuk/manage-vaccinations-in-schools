@@ -195,23 +195,6 @@ To run the JS unit tests:
 yarn test
 ```
 
-#### Load testing
-
-Install [artillery](https://www.artillery.io):
-
-```shell
-yarn global add artillery
-```
-
-We don't package it alongside the other devDependencies because it's quite heavy
-and used infrequently.
-
-To run the load tests:
-
-```shell
-USERNAME=username PASSWORD=password SESSION=slug artillery run tests/load.yml --target=http://test.mavistesting.com
-```
-
 ### Example programmes
 
 You can generate an example programme by seeding the database with `rails db:seed:replant`.

@@ -13,11 +13,9 @@
   "scripts": {
     "build:css": "sass ./app/assets/stylesheets:./app/assets/builds --no-source-map --pkg-importer=node --quiet-deps --style compressed",
     "build": "esbuild ./app/assets/javascripts/*.js --bundle --outdir=app/assets/builds --public-path=assets --minify",
-    "test:load": "artillery run tests/load.yml",
     "test": "jest"
   },
   "devDependencies": {
-    "@playwright/test": "^1.56.0",
     "@prettier/plugin-ruby": "^4.0.4",
     "@types/jest": "^30.0.0",
     "esbuild-jest": "^0.5.0",
