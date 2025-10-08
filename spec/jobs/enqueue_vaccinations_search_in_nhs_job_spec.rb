@@ -51,7 +51,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
           let(:location) do
             create(
               :community_clinic,
-              year_groups: (0..11).to_a,
+              gias_year_groups: (0..11).to_a,
               team:,
               programmes: [flu]
             )
@@ -190,7 +190,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
         let(:location) do
           create(
             :community_clinic,
-            year_groups: (0..11).to_a,
+            gias_year_groups: (0..11).to_a,
             team:,
             programmes: [flu]
           )
@@ -214,7 +214,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
         let(:community_clinic) do
           create(
             :community_clinic,
-            year_groups: (0..11).to_a,
+            gias_year_groups: (0..11).to_a,
             team:,
             programmes: [flu]
           )

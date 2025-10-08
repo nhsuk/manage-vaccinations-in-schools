@@ -14,7 +14,7 @@ class API::Testing::LocationsController < API::Testing::BaseController
 
     if (year_groups = params[:year_groups]).present?
       @locations =
-        @locations.where("ARRAY[?]::integer[] <@ year_groups", year_groups)
+        @locations.where("ARRAY[?]::integer[] <@ gias_year_groups", year_groups)
     end
 
     if (is_attached_to_team = params[:is_attached_to_team]).present?

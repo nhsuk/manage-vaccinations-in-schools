@@ -15,7 +15,7 @@ describe GenericClinicFactory do
 
         location = Location.generic_clinic.first
         expect(location.team).to eq(team)
-        expect(location.year_groups).to contain_exactly(
+        expect(location.gias_year_groups).to contain_exactly(
           0,
           1,
           2,

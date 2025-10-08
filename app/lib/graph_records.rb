@@ -184,7 +184,7 @@ class GraphRecords
     organisation: %i[ods_code],
     team: %i[name workgroup],
     subteam: %i[name],
-    location: %i[name address_postcode type year_groups],
+    location: %i[name address_postcode type gias_year_groups],
     cohort_import: %i[
       csv_filename
       processed_at

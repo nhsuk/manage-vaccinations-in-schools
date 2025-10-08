@@ -24,7 +24,7 @@ module MavisCLI
       option :address_town, desc: "Town of the address"
       option :address_postcode, desc: "Postcode of the address"
 
-      option :year_groups,
+      option :gias_year_groups,
              type: :array,
              desc: "Year groups taught at the school"
 
@@ -41,7 +41,7 @@ module MavisCLI
         address_line_2: nil,
         address_town: nil,
         address_postcode: nil,
-        year_groups: []
+        gias_year_groups: []
       )
         MavisCLI.load_rails
 
@@ -53,14 +53,14 @@ module MavisCLI
             address_town:,
             gias_establishment_number:,
             gias_local_authority_code:,
+            gias_year_groups:,
             name:,
             site:,
             status:,
             systm_one_code:,
             type: "school",
             url:,
-            urn:,
-            year_groups:
+            urn:
           )
 
         puts "Location #{location.id} has been created."

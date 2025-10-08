@@ -155,7 +155,7 @@ URNs of schools with year group changes, with future sessions:
         high_year_group = row["StatutoryHighAge"].to_i - 5
 
         if (low_year_group..high_year_group).to_a !=
-             Location.school.find_by(urn:).year_groups
+             Location.school.find_by(urn:).gias_year_groups
           school_set[:year_group_changes] << urn
         end
       end

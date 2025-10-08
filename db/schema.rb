@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_01_062016) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -441,6 +441,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
     t.integer "status", default: 0, null: false
     t.string "site"
     t.string "systm_one_code"
+    t.integer "gias_year_groups", default: [], null: false, array: true
     t.index ["ods_code"], name: "index_locations_on_ods_code", unique: true
     t.index ["subteam_id"], name: "index_locations_on_subteam_id"
     t.index ["systm_one_code"], name: "index_locations_on_systm_one_code", unique: true
