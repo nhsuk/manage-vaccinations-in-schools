@@ -84,7 +84,21 @@ class DraftSessionsController < ApplicationController
           @draft_session.session_dates.delete_at(index)
           jump_to("dates")
         else
-          session_date.assign_attributes(remove_invalid_date(attributes))
+          # We need to do this here to get around the multi-parameter
+          # assignment error being raised if we don't validate before
+          # assignment.
+          year = attributes["value(1i)"]
+          month = attributes["value(2i)"]
+          day = attributes["value(3i)"]
+
+          next if day.blank? && month.blank? && year.blank?
+
+          begin
+            value = Date.new(year.to_i, month.to_i, day.to_i)
+            session_date.assign_attributes(value:)
+          rescue StandardError
+            session_date.errors.add(:value, :blank)
+          end
         end
       end
     end
@@ -159,21 +173,5 @@ class DraftSessionsController < ApplicationController
         object: @draft_session,
         params: update_params
       )
-  end
-
-  def remove_invalid_date(hash)
-    return hash if hash.blank?
-
-    keys = %w[value(1i) value(2i) value(3i)]
-
-    if keys.all? { hash.key?(it) }
-      begin
-        Date.new(*keys.map { hash[it].to_i })
-      rescue StandardError
-        keys.each { hash.delete(it) }
-      end
-    end
-
-    hash
   end
 end
