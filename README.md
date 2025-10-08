@@ -195,6 +195,8 @@ To run the JS unit tests:
 yarn test
 ```
 
+E2E, performance, security and accessibility tests can be found in the [Mavis testing respository](https://github.com/NHSDigital/manage-vaccinations-in-schools-testing).
+
 ### Example programmes
 
 You can generate an example programme by seeding the database with `rails db:seed:replant`.
