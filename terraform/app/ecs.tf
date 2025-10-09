@@ -251,4 +251,5 @@ module "ops_service" {
   minimum_replica_count = var.enable_ops_service ? 1 : 0
   server_type           = "none"
   server_type_name      = "ops"
+  readonly_file_system  = false
 }

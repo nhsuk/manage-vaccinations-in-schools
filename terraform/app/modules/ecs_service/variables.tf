@@ -139,6 +139,13 @@ variable "host_port" {
   nullable    = true
 }
 
+variable "readonly_file_system" {
+  type        = bool
+  description = "Whether the container's root filesystem should be mounted as read-only."
+  default     = true
+  nullable    = false
+}
+
 locals {
   autoscaling_enabled = var.maximum_replica_count > var.minimum_replica_count
   server_type_name    = var.server_type_name != null ? var.server_type_name : var.server_type
