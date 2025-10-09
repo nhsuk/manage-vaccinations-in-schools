@@ -50,6 +50,10 @@ resource "grafana_contact_point" "slack" {
   slack {
     url = var.slack_webhook_url
   }
+
+  lifecycle {
+    ignore_changes = [slack]
+  }
 }
 
 resource "grafana_notification_policy" "slack" {
@@ -60,7 +64,7 @@ resource "grafana_notification_policy" "slack" {
 # Add the alert modules to create alerting rules from the stored configurations
 module "development_alerts" {
   source = "./modules/development_alerts"
-  count  = var.environment == "development" ? 0 : 0
+  count  = var.environment == "development" ? 1 : 0
 }
 
 module "production_alerts" {

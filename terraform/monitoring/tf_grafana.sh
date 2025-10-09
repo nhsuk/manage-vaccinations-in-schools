@@ -3,7 +3,7 @@
 set -euo pipefail
 
 usage() {
-  echo "Usage: $0 <environment> [plan|apply|destroy] --slack-webhook-url SLACK_WEBHOOK_URL [--plan-file PLAN_FILE]"
+  echo "Usage: $0 <environment> [plan|apply|destroy] [--plan-file PLAN_FILE]"
   echo "  environment               Environment to deploy to (development|production)"
   echo "  plan                      Run terraform plan for Grafana configuration"
   echo "  apply                     Run terraform apply for Grafana configuration"
@@ -29,7 +29,6 @@ fi
 
 ACTION=""
 PLAN_FILE=""
-SLACK_WEBHOOK_URL=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -44,10 +43,6 @@ while [[ $# -gt 0 ]]; do
       ;;
     --plan-file)
       PLAN_FILE="$2"
-      shift 2
-      ;;
-    --slack-webhook-url)
-      SLACK_WEBHOOK_URL="$2"
       shift 2
       ;;
     -h|--help)
@@ -91,7 +86,7 @@ fi
 
 terraform -chdir="./grafana" init -backend-config="env/${ENVIRONMENT}-backend.hcl" -upgrade -reconfigure
 
-terraform_arguments=(-var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN" -var="environment=$ENVIRONMENT" -var="slack_webhook_url=$SLACK_WEBHOOK_URL")
+terraform_arguments=(-var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN" -var="environment=$ENVIRONMENT")
 
 case "$ACTION" in
   plan)
