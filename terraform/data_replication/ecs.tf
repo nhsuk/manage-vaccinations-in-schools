@@ -14,6 +14,9 @@ resource "aws_cloudwatch_log_group" "ecs_log_group" {
   skip_destroy      = false
 }
 
+data "aws_iam_role" "ecs_task_role" {
+  name = "EcsTaskRole"
+}
 
 module "db_access_service" {
   source                = "../app/modules/ecs_service"
@@ -34,7 +37,7 @@ module "db_access_service" {
     cpu                  = 1024
     memory               = 2048
     execution_role_arn   = aws_iam_role.ecs_task_execution_role.arn
-    task_role_arn        = aws_iam_role.ecs_task_role.arn
+    task_role_arn        = data.aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
     health_check_command = ["CMD-SHELL", "echo 'alive' || exit 1"]

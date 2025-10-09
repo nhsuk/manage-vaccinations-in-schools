@@ -58,6 +58,10 @@ resource "aws_service_discovery_private_dns_namespace" "internal" {
 }
 
 
+data "aws_iam_role" "ecs_task_role" {
+  name = "EcsTaskRole"
+}
+
 module "web_service" {
   source = "./modules/ecs_service"
   task_config = {
@@ -66,7 +70,7 @@ module "web_service" {
     cpu                  = 1024
     memory               = 3072
     execution_role_arn   = aws_iam_role.ecs_task_execution_role["CORE"].arn
-    task_role_arn        = aws_iam_role.ecs_task_role.arn
+    task_role_arn        = data.aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
     health_check_command = ["CMD-SHELL", "./bin/internal_healthcheck http://localhost:${local.container_ports.web}/health/database"]
@@ -124,7 +128,7 @@ module "sidekiq_service" {
     cpu                  = 1024
     memory               = 2048
     execution_role_arn   = aws_iam_role.ecs_task_execution_role["CORE"].arn
-    task_role_arn        = aws_iam_role.ecs_task_role.arn
+    task_role_arn        = data.aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
     health_check_command = ["CMD-SHELL", "./bin/internal_healthcheck && grep -q '[s]idekiq' /proc/*/cmdline 2>/dev/null || exit 1"]
@@ -162,7 +166,7 @@ module "reporting_service" {
     cpu                  = 1024
     memory               = 2048
     execution_role_arn   = aws_iam_role.ecs_task_execution_role["REPORTING"].arn
-    task_role_arn        = aws_iam_role.ecs_task_role.arn
+    task_role_arn        = data.aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
     health_check_command = ["CMD-SHELL", "wget --no-cache --spider -S http://localhost:${local.container_ports.reporting}/reports/healthcheck || exit 1"]
@@ -241,7 +245,7 @@ module "ops_service" {
     cpu                  = 1024
     memory               = 2048
     execution_role_arn   = aws_iam_role.ecs_task_execution_role["CORE"].arn
-    task_role_arn        = aws_iam_role.ecs_task_role.arn
+    task_role_arn        = data.aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
     health_check_command = ["CMD-SHELL", "echo 'alive' || exit 1"]
