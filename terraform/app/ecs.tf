@@ -218,33 +218,11 @@ module "ops_service" {
     vpc_id  = aws_vpc.application_vpc.id
   }
   task_config = {
-    environment = [
-      {
-        name  = "DB_HOST"
-        value = aws_rds_cluster.core.endpoint
-      },
-      {
-        name  = "DB_NAME"
-        value = aws_rds_cluster.core.database_name
-      },
-      {
-        name  = "RAILS_ENV"
-        value = var.environment == "production" ? "production" : "staging"
-      }
-    ]
-    secrets = [
-      {
-        name      = "DB_CREDENTIALS"
-        valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
-      },
-      {
-        name      = "RAILS_MASTER_KEY"
-        valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.rails_master_key_path}"
-      }
-    ]
+    environment          = local.task_envs["OPS_SERVICE"]
+    secrets              = local.task_secrets["OPS_SERVICE"]
     cpu                  = 1024
     memory               = 2048
-    execution_role_arn   = aws_iam_role.ecs_task_execution_role["CORE"].arn
+    execution_role_arn   = aws_iam_role.ecs_task_execution_role["OPS_SERVICE"].arn
     task_role_arn        = data.aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region

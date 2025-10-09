@@ -119,6 +119,7 @@ variable "enable_enhanced_db_monitoring" {
 }
 
 locals {
+  server_types  = toset(["CORE", "REPORTING", "OPS_SERVICE"])
   is_production = var.environment == "production"
   parameter_store_variables = tomap({
     CORE = local.is_production ? {} : tomap({
@@ -134,7 +135,7 @@ locals {
     })
   })
   applications_accessing_secrets_or_parameters = toset([
-    for key, value in local.parameter_store_variables : key if length(local.task_secrets[key]) > 0
+    for server_type in local.server_types : server_type if length(local.task_secrets[server_type]) > 0
   ])
   secret_values = tomap(
     {
@@ -143,6 +144,10 @@ locals {
         valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
       }]
       REPORTING = []
+      OPS_SERVICE = [{
+        name      = "DB_CREDENTIALS"
+        valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
+      }]
     }
   )
 
@@ -172,6 +177,12 @@ locals {
           valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.mise_sops_age_key_path}"
         }],
       )
+      OPS_SERVICE = [
+        {
+          name      = "RAILS_MASTER_KEY"
+          valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.rails_master_key_path}"
+        }
+      ]
     }
   )
 
@@ -230,11 +241,26 @@ locals {
         value = aws_elasticache_serverless_cache.reporting_service.endpoint[0].port
       },
     ]
+    OPS_SERVICE = [
+      {
+        name  = "DB_HOST"
+        value = aws_rds_cluster.core.endpoint
+      },
+      {
+        name  = "DB_NAME"
+        value = aws_rds_cluster.core.database_name
+      },
+      {
+        name  = "RAILS_ENV"
+        value = var.environment == "production" ? "production" : "staging"
+      }
+    ]
   }
 
   task_secrets = {
-    CORE      = concat(local.secret_values["CORE"], local.parameter_values["CORE"])
-    REPORTING = concat(local.secret_values["REPORTING"], local.parameter_values["REPORTING"])
+    CORE        = concat(local.secret_values["CORE"], local.parameter_values["CORE"])
+    REPORTING   = concat(local.secret_values["REPORTING"], local.parameter_values["REPORTING"])
+    OPS_SERVICE = concat(local.secret_values["OPS_SERVICE"], local.parameter_values["OPS_SERVICE"])
   }
   container_ports = {
     web       = 4000

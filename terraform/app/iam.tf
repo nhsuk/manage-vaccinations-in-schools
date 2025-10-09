@@ -18,7 +18,7 @@ resource "aws_iam_policy" "vpc_flowlogs" {
 ################################# IAM Roles #################################
 
 resource "aws_iam_role" "ecs_task_execution_role" {
-  for_each           = local.parameter_store_variables
+  for_each           = local.server_types
   name               = "ecsTaskExecutionRole-${var.environment}-${each.key}"
   assume_role_policy = templatefile("templates/iam_assume_role.json.tpl", { service_name = "ecs-tasks.amazonaws.com" })
 }
@@ -44,7 +44,7 @@ resource "aws_iam_role_policy_attachment" "ecs_secret_access" {
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_ecr_and_log_permissions" {
-  for_each   = local.parameter_store_variables
+  for_each   = local.server_types
   role       = aws_iam_role.ecs_task_execution_role[each.key].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
