@@ -32,7 +32,7 @@ jobs:
       build-needed: ${{ steps.check-dev-image.outputs.build-needed || steps.check-prod-image.outputs.build-needed }}
     steps:
       - name: Configure AWS Dev Credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure
           aws-region: eu-west-2
@@ -47,7 +47,7 @@ jobs:
           fi
       - name: Configure AWS Production credentials
         if: env.PUSH_IMAGE_TO_PRODUCTION == 'true'
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure
           aws-region: eu-west-2
@@ -111,7 +111,7 @@ jobs:
         with:
           name: image
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ matrix.aws-role }}
           aws-region: eu-west-2

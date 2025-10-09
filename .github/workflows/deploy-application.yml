@@ -106,7 +106,7 @@ jobs:
         with:
           ref: ${{ needs.determine-git-sha.outputs.git-sha }}
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
@@ -158,7 +158,7 @@ jobs:
         service: ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
     steps:
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
