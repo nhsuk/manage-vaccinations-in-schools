@@ -98,7 +98,7 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: arn:aws:iam::${{ env.account_id }}:role/GithubDeployMavisAndInfrastructure
           aws-region: eu-west-2
@@ -124,7 +124,7 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: arn:aws:iam::${{ env.account_id }}:role/GithubDeployMavisAndInfrastructure
           aws-region: eu-west-2
