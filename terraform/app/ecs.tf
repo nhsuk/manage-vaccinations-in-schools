@@ -203,3 +203,52 @@ module "reporting_service" {
     aws_iam_role.ecs_deploy
   ]
 }
+
+module "ops_service" {
+  source       = "./modules/ecs_service"
+  cluster_id   = aws_ecs_cluster.cluster.id
+  cluster_name = aws_ecs_cluster.cluster.name
+  environment  = var.environment
+  network_params = {
+    subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
+    vpc_id  = aws_vpc.application_vpc.id
+  }
+  task_config = {
+    environment = [
+      {
+        name  = "DB_HOST"
+        value = aws_rds_cluster.core.endpoint
+      },
+      {
+        name  = "DB_NAME"
+        value = aws_rds_cluster.core.database_name
+      },
+      {
+        name  = "RAILS_ENV"
+        value = var.environment == "production" ? "production" : "staging"
+      }
+    ]
+    secrets = [
+      {
+        name      = "DB_CREDENTIALS"
+        valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
+      },
+      {
+        name      = "RAILS_MASTER_KEY"
+        valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.rails_master_key_path}"
+      }
+    ]
+    cpu                  = 1024
+    memory               = 2048
+    execution_role_arn   = aws_iam_role.ecs_task_execution_role["CORE"].arn
+    task_role_arn        = aws_iam_role.ecs_task_role.arn
+    log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
+    region               = var.region
+    health_check_command = ["CMD-SHELL", "echo 'alive' || exit 1"]
+
+  }
+  maximum_replica_count = var.enable_ops_service ? 1 : 0
+  minimum_replica_count = var.enable_ops_service ? 1 : 0
+  server_type           = "none"
+  server_type_name      = "ops"
+}

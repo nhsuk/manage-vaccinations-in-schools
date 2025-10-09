@@ -24,6 +24,7 @@ on:
           - all
           - web
           - sidekiq
+          - ops
         default: all
       git_ref_to_deploy:
         description:
@@ -98,7 +99,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        service: ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
+        service: ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq", "ops"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -155,7 +156,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        service: ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
+        service: ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq", "ops"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5

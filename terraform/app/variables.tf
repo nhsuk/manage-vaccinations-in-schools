@@ -326,6 +326,14 @@ variable "maximum_reporting_replicas" {
   description = "Maximum amount of allowed replicas for reporting service"
 }
 
+variable "enable_ops_service" {
+  type        = bool
+  default     = false
+  description = "Number of replicas for the ops service"
+  nullable    = false
+}
+
+
 variable "max_aurora_capacity_units" {
   type        = number
   default     = 8
@@ -418,6 +426,6 @@ variable "active_target_group" {
 }
 locals {
   non_active_target_group         = var.active_target_group == "blue" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
-  db_access_sg_ids                = [module.web_service.security_group_id, module.sidekiq_service.security_group_id]
+  db_access_sg_ids                = [module.web_service.security_group_id, module.sidekiq_service.security_group_id, module.ops_service.security_group_id]
   valkey_cache_availability_zones = var.valkey_failover_enabled ? [aws_subnet.private_subnet_a.availability_zone, aws_subnet.private_subnet_b.availability_zone] : [aws_subnet.private_subnet_a.availability_zone]
 }
