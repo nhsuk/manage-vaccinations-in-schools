@@ -135,6 +135,7 @@ FactoryBot.define do
 
     trait :mmr do
       type { "mmr" }
+      injection
     end
 
     trait :td_ipv do

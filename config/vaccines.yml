@@ -132,6 +132,34 @@ nimenrix:
     Nimenrix vaccine powder and solvent for solution for injection
     0.5ml pre-filled syringes (GlaxoSmithKline UK Ltd) (product)
 
+# MMR
+
+priorix:
+  type: mmr
+  brand: Priorix
+  method: injection
+  manufacturer: GlaxoSmithKline UK Ltd
+  contains_gelatine: false
+  nivs_name: Priorix
+  dose_volume_ml: 0.5
+  snomed_product_code: 34925111000001104
+  snomed_product_term:
+    Priorix vaccine powder and solvent for solution for injection
+    0.5ml pre-filled syringes (GlaxoSmithKline UK Ltd) (product)
+
+vaxpro:
+  type: mmr
+  brand: MMR VaxPro
+  method: injection
+  manufacturer: Merck Sharp & Dohme (UK) Ltd
+  contains_gelatine: true
+  nivs_name: VaxPro
+  dose_volume_ml: 0.5
+  snomed_product_code: 13968211000001108
+  snomed_product_term:
+    M-M-RVAXPRO vaccine powder and solvent for suspension for injection
+    0.5ml pre-filled syringes (Merck Sharp & Dohme (UK) Ltd) (product)
+
 # Td/IPV
 
 revaxis:

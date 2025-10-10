@@ -89,5 +89,11 @@ describe Vaccine do
         it { should eq("884881000000109") }
       end
     end
+
+    context "with an MMR vaccine" do
+      let(:vaccine) { build(:vaccine, :mmr) }
+
+      it { should eq("38598009") }
+    end
   end
 end
