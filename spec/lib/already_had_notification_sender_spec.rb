@@ -83,14 +83,14 @@ describe AlreadyHadNotificationSender do
           call
 
           expect(EmailDeliveryJob).to have_been_enqueued.with(
-            :vaccination_discovered,
+            :vaccination_already_had,
             parent: first_parent,
             vaccination_record:,
             consent: first_consent
           )
 
           expect(EmailDeliveryJob).to have_been_enqueued.with(
-            :vaccination_discovered,
+            :vaccination_already_had,
             parent: second_parent,
             vaccination_record:,
             consent: second_consent
@@ -101,14 +101,14 @@ describe AlreadyHadNotificationSender do
           call
 
           expect(SMSDeliveryJob).to have_been_enqueued.with(
-            :vaccination_discovered,
+            :vaccination_already_had,
             parent: first_parent,
             vaccination_record:,
             consent: first_consent
           )
 
           expect(SMSDeliveryJob).not_to have_been_enqueued.with(
-            :vaccination_discovered,
+            :vaccination_already_had,
             parent: second_parent,
             vaccination_record:,
             consent: second_consent
@@ -145,14 +145,14 @@ describe AlreadyHadNotificationSender do
             call
 
             expect(EmailDeliveryJob).not_to have_been_enqueued.with(
-              :vaccination_discovered,
+              :vaccination_already_had,
               parent: first_parent,
               vaccination_record:,
               consent: first_consent
             )
 
             expect(EmailDeliveryJob).to have_been_enqueued.with(
-              :vaccination_discovered,
+              :vaccination_already_had,
               parent: second_parent,
               vaccination_record:,
               consent: second_consent
@@ -176,14 +176,14 @@ describe AlreadyHadNotificationSender do
             call
 
             expect(EmailDeliveryJob).not_to have_been_enqueued.with(
-              :vaccination_discovered,
+              :vaccination_already_had,
               parent: first_parent,
               vaccination_record:,
               consent: first_consent
             )
 
             expect(EmailDeliveryJob).to have_been_enqueued.with(
-              :vaccination_discovered,
+              :vaccination_already_had,
               parent: second_parent,
               vaccination_record:,
               consent: second_consent
@@ -203,14 +203,14 @@ describe AlreadyHadNotificationSender do
             call
 
             expect(EmailDeliveryJob).not_to have_been_enqueued.with(
-              :vaccination_discovered,
+              :vaccination_already_had,
               parent: first_parent,
               vaccination_record:,
               consent: first_consent
             )
 
             expect(EmailDeliveryJob).to have_been_enqueued.with(
-              :vaccination_discovered,
+              :vaccination_already_had,
               parent: second_parent,
               vaccination_record:,
               consent: second_consent
@@ -230,14 +230,14 @@ describe AlreadyHadNotificationSender do
             call
 
             expect(EmailDeliveryJob).to have_been_enqueued.with(
-              :vaccination_discovered,
+              :vaccination_already_had,
               parent: first_parent,
               vaccination_record:,
               consent: first_consent
             )
 
             expect(EmailDeliveryJob).to have_been_enqueued.with(
-              :vaccination_discovered,
+              :vaccination_already_had,
               parent: second_parent,
               vaccination_record:,
               consent: second_consent
