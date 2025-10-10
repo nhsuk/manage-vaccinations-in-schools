@@ -55,6 +55,8 @@ class Programme < ApplicationRecord
 
   def seasonal? = flu?
 
+  def catch_up_only? = false
+
   def supports_delegation? = flu?
 
   DEFAULT_YEAR_GROUPS_BY_TYPE = {

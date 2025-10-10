@@ -1,0 +1,20 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: @back_link_path) %>
+<% end %>
+
+<% programmes = @draft_session.programmes.map(&:name).to_sentence %>
+
+<% content_for :page_title, t(".title", programmes:) %>
+
+<%= govuk_panel(title_text: t(".title", programmes:), classes: %w[app-panel--interruption]) do %>
+  <p>Scheduling this session will send <%= pluralize(@catch_up_patients_receiving_consent_requests_count, "consent request") %> to parents of children not in <%= format_year_group(@draft_session.year_groups.first) %> on <%= @draft_session.next_send_consent_requests_at.to_fs(:long) %>.</p>
+  <p>Make sure you have uploaded all historical vaccination records for children in this school before you continue.</p>
+  <p>If you do not do this, you risk sending invitations to parents of already vaccinated children.</p>
+
+  <%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
+    <div class="nhsuk-button-group">
+      <%= f.govuk_submit "Keep session dates", inverse: true %>
+      <%= link_to "Remove session dates", draft_session_path("dates") %>
+    </div>
+  <% end %>
+<% end %>
