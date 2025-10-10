@@ -19,6 +19,7 @@ class PatientSearchForm < SearchForm
   attribute :vaccine_method, :string
   attribute :year_groups, array: true
   attribute :still_to_vaccinate, :boolean
+  attribute :eligible_children, :boolean
 
   def initialize(current_user:, session: nil, **attributes)
     @current_user = current_user
@@ -61,6 +62,7 @@ class PatientSearchForm < SearchForm
     scope = filter_triage_status(scope)
     scope = filter_vaccine_method(scope)
     scope = filter_patient_specific_direction_status(scope)
+    scope = filter_for_eligible_children_only(scope)
 
     scope = scope.order_by_name
 
@@ -247,6 +249,16 @@ class PatientSearchForm < SearchForm
       programmes:,
       academic_year:,
       vaccine_method:
+    )
+  end
+
+  def filter_for_eligible_children_only(scope)
+    return scope if eligible_children.blank?
+
+    scope.eligible_for_programmes(
+      programmes,
+      location: session.location,
+      academic_year:
     )
   end
 end
