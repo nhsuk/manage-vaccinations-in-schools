@@ -1,0 +1,108 @@
+{
+  "id": "11112222-3333-4444-5555-666677779999",
+  "extension": [
+    {
+      "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "955651000000100",
+            "display": "Influenza vaccination given by other healthcare provider (situation)"
+          }
+        ]
+      }
+    }
+  ],
+  "identifier": [
+    {
+      "use": "official",
+      "system": "https://nivs.ardengemcsu.nhs.uk/FluSAIS",
+      "value": "https://nivs.ardengemcsu.nhs.uk/FluSAIS16732797"
+    }
+  ],
+  "status": "completed",
+  "vaccineCode": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "43208811000001106",
+        "display": "Fluenz (trivalent) vaccine nasal suspension 0.2ml unit dose (AstraZeneca UK Ltd)"
+      }
+    ]
+  },
+  "patient": {
+    "reference": "urn:uuid:cc835e1c-a68f-418d-b38e-f00c95f34c36",
+    "type": "Patient",
+    "identifier": {
+      "system": "https://fhir.nhs.uk/Id/nhs-number",
+      "value": "9993425389"
+    }
+  },
+  "occurrenceDateTime": "2025-09-30T00:00:00+00:00",
+  "recorded": "2025-10-07",
+  "primarySource": true,
+  "location": {
+    "identifier": {
+      "system": "https://fhir.hl7.org.uk/Id/urn-school-number",
+      "value": "100006"
+    }
+  },
+  "manufacturer": {
+    "display": "AstraZeneca"
+  },
+  "lotNumber": "YF3276",
+  "expirationDate": "2025-12-16",
+  "site": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "279549004",
+        "display": "Nasal cavity structure (body structure)"
+      }
+    ]
+  },
+  "route": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "46713006",
+        "display": "Nasal route (qualifier value)"
+      }
+    ]
+  },
+  "doseQuantity": {
+    "value": 0.2,
+    "unit": "Milliliter (qualifier value)",
+    "system": "http://snomed.info/sct",
+    "code": "258773002"
+  },
+  "performer": [
+    {
+      "actor": {
+        "type": "Organization",
+        "identifier": {
+          "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+          "value": "B0C4P"
+        }
+      }
+    }
+  ],
+  "protocolApplied": [
+    {
+      "targetDisease": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "6142004",
+              "display": "Influenza caused by seasonal influenza virus (disorder)"
+            }
+          ]
+        }
+      ],
+      "doseNumberPositiveInt": 1
+    }
+  ],
+  "resourceType": "Immunization"
+}

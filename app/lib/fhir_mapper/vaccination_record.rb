@@ -10,6 +10,8 @@ module FHIRMapper
     MAVIS_SYSTEM_NAME =
       "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records"
 
+    MILLILITER_SUB_STRINGS = %w[ml millilitre milliliter].freeze
+
     def initialize(vaccination_record)
       @vaccination_record = vaccination_record
     end
@@ -219,7 +221,7 @@ module FHIRMapper
 
     private_class_method def self.dose_volume_ml_from_fhir(fhir_record)
       dq = fhir_record.doseQuantity
-      if %w[ml milliliter].include?(dq.unit.downcase)
+      if MILLILITER_SUB_STRINGS.any? { it.in?(dq.unit.downcase) }
         dq.value.to_f
       else
         raise "Unknown dose unit: #{dq.unit}"
