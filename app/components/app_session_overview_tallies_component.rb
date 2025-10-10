@@ -53,36 +53,22 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
       },
       (
         if programme.has_multiple_vaccine_methods?
-          [
+          programme.vaccine_methods.map do |vaccine_method|
+            method_string =
+              Vaccine.human_enum_name(:method, vaccine_method).downcase
+
             {
-              heading: "Consent given for nasal spray",
+              heading: "Consent given for #{method_string}",
               colour: "aqua-green",
-              count:
-                consent_count(programme, "given", vaccine_method: "nasal").to_s,
+              count: consent_count(programme, "given", vaccine_method:).to_s,
               link_to:
                 session_consent_path(
                   session,
-                  consent_statuses: ["given_nasal"],
-                  programme_types: [programme.type]
-                )
-            },
-            {
-              heading: "Consent given for injection",
-              colour: "aqua-green",
-              count:
-                consent_count(
-                  programme,
-                  "given",
-                  vaccine_method: "injection"
-                ).to_s,
-              link_to:
-                session_consent_path(
-                  session,
-                  consent_statuses: ["given_injection"],
+                  consent_statuses: ["given_#{vaccine_method}"],
                   programme_types: [programme.type]
                 )
             }
-          ]
+          end
         else
           [
             {

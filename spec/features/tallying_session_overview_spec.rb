@@ -20,7 +20,7 @@ describe "Tallying on session overview page" do
   end
 
   def given_a_session_for_flu_is_running_today
-    @flu_programme = create(:programme, :flu, vaccines: [])
+    @flu_programme = create(:programme, :flu_all_vaccines)
     programmes = [@flu_programme]
     team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
 
@@ -33,6 +33,7 @@ describe "Tallying on session overview page" do
   def and_i_visit_the_session_record_tab
     visit session_path(@session, tallying: true)
   end
+
   alias_method :when_i_visit_the_session_record_tab,
                :and_i_visit_the_session_record_tab
 
