@@ -7,7 +7,7 @@ describe FHIRMapper::VaccinationRecord do
   let(:organisation) { create(:organisation) }
   let(:team) { create(:team, organisation:, programmes: [programme]) }
   let(:programme) { create(:programme, :hpv) }
-  let(:school) { create(:school) }
+  let(:school) { create(:school, urn: "100006") }
   let(:session) do
     create(:session, location: school, programmes: [programme], team:)
   end
@@ -328,7 +328,6 @@ describe FHIRMapper::VaccinationRecord do
       let(:fhir_immunization) do
         FHIR.from_contents(file_fixture("/fhir/fhir_record_full.json").read)
       end
-      let(:school) { create(:school, urn: "100006") }
 
       include_examples "a mapped vaccination record (common fields)"
 
@@ -356,7 +355,6 @@ describe FHIRMapper::VaccinationRecord do
           file_fixture("/fhir/fhir_record_half_dose.json").read
         )
       end
-      let(:school) { create(:school, urn: "100006") }
 
       include_examples "a mapped vaccination record (common fields)"
 
@@ -384,7 +382,6 @@ describe FHIRMapper::VaccinationRecord do
           file_fixture("/fhir/fhir_record_extended_milliliter.json").read
         )
       end
-      let(:school) { create(:school, urn: "100006") }
 
       include_examples "a mapped vaccination record (common fields)"
 
