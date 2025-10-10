@@ -6,6 +6,7 @@
 #
 #  id                  :bigint           not null, primary key
 #  brand               :text             not null
+#  contains_gelatine   :boolean          not null
 #  discontinued        :boolean          default(FALSE), not null
 #  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
@@ -59,8 +60,6 @@ class Vaccine < ApplicationRecord
            to: :fhir_mapper
 
   def active? = !discontinued
-
-  def contains_gelatine? = programme.flu? && nasal?
 
   AVAILABLE_DELIVERY_SITES = {
     "injection" => %w[

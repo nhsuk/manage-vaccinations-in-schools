@@ -6,6 +6,7 @@
 #
 #  id                  :bigint           not null, primary key
 #  brand               :text             not null
+#  contains_gelatine   :boolean          not null
 #  discontinued        :boolean          default(FALSE), not null
 #  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
@@ -43,11 +44,16 @@ FactoryBot.define do
     snomed_product_code { Faker::Number.decimal_part(digits: 17) }
     snomed_product_term { Faker::Lorem.sentence }
     add_attribute(:method) { %i[nasal injection].sample }
+    contains_gelatine { false }
 
     traits_for_enum :method
 
     trait :discontinued do
       discontinued { true }
+    end
+
+    trait :contains_gelatine do
+      contains_gelatine { true }
     end
 
     trait :flu do
@@ -156,6 +162,7 @@ FactoryBot.define do
       trait key do
         send(data["type"])
         brand { data["brand"] }
+        contains_gelatine { data["contains_gelatine"] }
         discontinued { data.fetch("discontinued", false) }
         dose_volume_ml { data["dose_volume_ml"] }
         manufacturer { data["manufacturer"] }

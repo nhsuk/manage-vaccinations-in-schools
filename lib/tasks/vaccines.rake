@@ -18,6 +18,7 @@ namespace :vaccines do
         )
 
       vaccine.brand = data["brand"]
+      vaccine.contains_gelatine = data["contains_gelatine"]
       vaccine.discontinued = data.fetch("discontinued", false)
       vaccine.dose_volume_ml = data["dose_volume_ml"]
       vaccine.manufacturer = data["manufacturer"]
