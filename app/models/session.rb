@@ -33,6 +33,7 @@ class Session < ApplicationRecord
   include Consentable
   include DaysBeforeToWeeksBefore
   include Delegatable
+  include HasLocationProgrammeYearGroups
 
   audited associated_with: :location
   has_associated_audits
@@ -167,16 +168,6 @@ class Session < ApplicationRecord
 
   delegate :clinic?, :generic_clinic?, :school?, to: :location
 
-  def programme_year_groups
-    @programme_year_groups ||=
-      ProgrammeYearGroups.new(location_programme_year_groups)
-  end
-
-  def programme_birth_academic_years
-    @programme_birth_academic_years ||=
-      ProgrammeBirthAcademicYears.new(programme_year_groups, academic_year:)
-  end
-
   def patients
     birth_academic_years =
       location_programme_year_groups.pluck_birth_academic_years
@@ -203,10 +194,6 @@ class Session < ApplicationRecord
   def started?
     return false if dates.empty?
     Date.current > dates.min
-  end
-
-  def year_groups
-    @year_groups ||= location_programme_year_groups.pluck_year_groups
   end
 
   def vaccine_methods

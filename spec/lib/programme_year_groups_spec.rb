@@ -52,9 +52,11 @@ describe ProgrammeYearGroups do
   end
 
   describe "#[]" do
+    let(:academic_year) { AcademicYear.pending }
+
     context "with a scope" do
       let(:programme_year_groups) do
-        described_class.new(team.location_programme_year_groups)
+        described_class.new(team.location_programme_year_groups, academic_year:)
       end
 
       include_examples "all examples"
@@ -66,7 +68,8 @@ describe ProgrammeYearGroups do
           Team
             .includes(:location_programme_year_groups)
             .find(team.id)
-            .location_programme_year_groups
+            .location_programme_year_groups,
+          academic_year:
         )
       end
 
@@ -75,7 +78,10 @@ describe ProgrammeYearGroups do
 
     context "with an array" do
       let(:programme_year_groups) do
-        described_class.new(team.location_programme_year_groups.to_a)
+        described_class.new(
+          team.location_programme_year_groups.to_a,
+          academic_year:
+        )
       end
 
       include_examples "all examples"

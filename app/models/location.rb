@@ -38,7 +38,7 @@
 #
 class Location < ApplicationRecord
   include AddressConcern
-  include HasProgrammeYearGroups
+  include HasLocationProgrammeYearGroups
   include ODSCodeConcern
 
   self.inheritance_column = nil

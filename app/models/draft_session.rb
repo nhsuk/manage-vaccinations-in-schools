@@ -9,6 +9,7 @@ class DraftSession
   include Consentable
   include DaysBeforeToWeeksBefore
   include Delegatable
+  include HasLocationProgrammeYearGroups
 
   attribute :days_before_consent_reminders, :integer
   attribute :location_id, :integer
@@ -120,12 +121,9 @@ class DraftSession
         end
   end
 
-  def programme_year_groups
-    @programme_year_groups ||=
-      ProgrammeYearGroups.new(location_programme_year_groups)
+  def year_groups
+    location_programme_year_groups.map(&:year_group).sort.uniq
   end
-
-  def year_groups = location_programme_year_groups.map(&:year_group).sort.uniq
 
   def programmes_for(year_group: nil, patient: nil)
     year_group ||= patient.year_group(academic_year:)
