@@ -127,6 +127,10 @@ FactoryBot.define do
       end
     end
 
+    trait :mmr do
+      type { "mmr" }
+    end
+
     trait :td_ipv do
       type { "td_ipv" }
 
