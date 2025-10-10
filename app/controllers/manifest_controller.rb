@@ -2,6 +2,7 @@
 
 class ManifestController < ApplicationController
   skip_before_action :authenticate_user!
+  skip_before_action :store_user_location!
   skip_after_action :verify_policy_scoped
 
   before_action :set_assets_name
