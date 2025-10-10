@@ -232,5 +232,28 @@ describe TriageMailerConcern do
         expect { send_triage_confirmation }.not_to have_delivered_sms
       end
     end
+
+    context "if the patient is archived" do
+      let(:patient) do
+        create(
+          :patient,
+          :consent_given_triage_not_needed,
+          :archived,
+          programmes:
+        )
+      end
+
+      it "sends an email" do
+        expect { send_triage_confirmation }.to have_delivered_email(
+          :consent_confirmation_given
+        ).with(consent:, session:, sent_by: current_user)
+      end
+
+      it "sends a text message" do
+        expect { send_triage_confirmation }.to have_delivered_sms(
+          :consent_confirmation_given
+        ).with(consent:, session:, sent_by: current_user)
+      end
+    end
   end
 end

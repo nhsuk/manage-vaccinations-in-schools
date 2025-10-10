@@ -551,8 +551,9 @@ class Patient < ApplicationRecord
     restricted_at != nil
   end
 
-  def send_notifications?
-    !deceased? && !restricted? && !invalidated?
+  def send_notifications?(team:, send_to_archived: false)
+    !deceased? && !restricted? && !invalidated? &&
+      (send_to_archived || not_archived?(team:))
   end
 
   def update_from_pds!(pds_patient)

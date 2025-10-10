@@ -43,7 +43,7 @@ class SendSchoolSessionRemindersJob < ApplicationJob
   end
 
   def should_send_notification?(patient:, session:)
-    return false unless patient.send_notifications?
+    return false unless patient.send_notifications?(team: session.team)
 
     programmes = session.programmes_for(patient:)
     academic_year = session.academic_year
