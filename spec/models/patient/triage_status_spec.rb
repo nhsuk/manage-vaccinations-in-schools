@@ -242,6 +242,8 @@ describe Patient::TriageStatus do
         create(:vaccination_record, patient:, programme:)
       end
 
+      let(:programme) { create(:programme, :hpv) }
+
       it { should be_nil }
     end
 
