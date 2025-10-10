@@ -61,6 +61,25 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
 
   def readonly? = true
 
+  def self.with_aggregate_metrics
+    select(
+      "COUNT(DISTINCT patient_id)" \
+        "AS cohort",
+      "COUNT(DISTINCT CASE WHEN has_any_vaccination = true THEN patient_id END)" \
+        "AS vaccinated",
+      "COUNT(DISTINCT CASE WHEN has_any_vaccination = false THEN patient_id END)" \
+        "AS not_vaccinated",
+      "COUNT(DISTINCT CASE WHEN vaccinated_by_sais_current_year = true THEN patient_id END)" \
+        "AS vaccinated_by_sais",
+      "COUNT(DISTINCT CASE WHEN vaccinated_elsewhere_declared_current_year = true THEN patient_id END)" \
+        "AS vaccinated_elsewhere_declared",
+      "COUNT(DISTINCT CASE WHEN vaccinated_elsewhere_recorded_current_year = true THEN patient_id END)" \
+        "AS vaccinated_elsewhere_recorded",
+      "COUNT(DISTINCT CASE WHEN vaccinated_in_previous_years = true THEN patient_id END)" \
+        "AS vaccinated_previously"
+    )
+  end
+
   def self.refresh!(concurrently: true)
     Scenic.database.refresh_materialized_view(
       table_name,
