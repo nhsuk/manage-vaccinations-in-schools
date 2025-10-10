@@ -131,14 +131,17 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
 
     patient_table = ReportingAPI::PatientProgrammeStatus.arel_table
     lpyg_table = Location::ProgrammeYearGroup.arel_table
+    lyg_table = Location::YearGroup.arel_table
 
     subquery =
       lpyg_table
         .project(Arel.star)
-        .where(lpyg_table[:location_id].eq(patient_table[:session_location_id]))
+        .join(lyg_table)
+        .on(lpyg_table[:location_year_group_id].eq(lyg_table[:id]))
+        .where(lyg_table[:location_id].eq(patient_table[:session_location_id]))
+        .where(lyg_table[:value].eq(patient_table[:patient_year_group]))
+        .where(lyg_table[:academic_year].eq(patient_table[:academic_year]))
         .where(lpyg_table[:programme_id].eq(programme.id))
-        .where(lpyg_table[:year_group].eq(patient_table[:patient_year_group]))
-        .where(lpyg_table[:academic_year].eq(patient_table[:academic_year]))
 
     @scope = @scope.where(Arel::Nodes::Exists.new(subquery))
   end

@@ -23,6 +23,9 @@ class Sessions::PatientsController < ApplicationController
   private
 
   def set_session
-    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
+    @session =
+      policy_scope(Session).includes(:location_programme_year_groups).find_by!(
+        slug: params[:session_slug]
+      )
   end
 end

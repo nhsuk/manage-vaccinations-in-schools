@@ -263,7 +263,8 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
     location_ids = patient.patient_locations.select(:location_id)
 
     Location::ProgrammeYearGroup
-      .where(location_id: location_ids)
+      .joins(:location_year_group)
+      .where(location_year_group: { location_id: location_ids })
       .where(programme:)
       .pluck_year_groups
   end

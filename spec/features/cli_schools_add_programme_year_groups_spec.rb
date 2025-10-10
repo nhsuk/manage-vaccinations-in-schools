@@ -66,7 +66,7 @@ describe "mavis schools add-programme-year-group" do
       @school
         .location_programme_year_groups
         .where(programme: @programme)
-        .pluck(:year_group)
+        .pluck_year_groups
 
     expect(year_groups).to contain_exactly(12, 13, 14)
   end

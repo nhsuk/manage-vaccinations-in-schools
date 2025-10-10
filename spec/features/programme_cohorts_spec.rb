@@ -27,7 +27,7 @@ describe "Programme" do
   end
 
   def given_an_hpv_programme_is_underway
-    @academic_year = Date.current.academic_year
+    @academic_year = AcademicYear.current
     @programme = create(:programme, :hpv)
     @team =
       create(
@@ -59,11 +59,12 @@ describe "Programme" do
   end
 
   def given_a_school_has_separate_sessions_for_different_year_groups
-    @academic_year = academic_year = Date.current.academic_year
-    @location = location = create(:school)
-
     td_ipv_programme = create(:programme, :td_ipv)
     hpv_programme = create(:programme, :hpv)
+
+    @academic_year = AcademicYear.current
+    @location =
+      location = create(:school, programmes: [td_ipv_programme, hpv_programme])
 
     team =
       create(
@@ -74,22 +75,6 @@ describe "Programme" do
 
     create(:session, team:, location:, programmes: [td_ipv_programme])
     create(:session, team:, location:, programmes: [hpv_programme])
-
-    create(
-      :location_programme_year_group,
-      location:,
-      programme: td_ipv_programme,
-      year_group: 9,
-      academic_year:
-    )
-
-    create(
-      :location_programme_year_group,
-      location:,
-      programme: hpv_programme,
-      year_group: 8,
-      academic_year:
-    )
 
     sign_in team.users.first
   end
