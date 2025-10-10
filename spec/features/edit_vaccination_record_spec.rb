@@ -234,7 +234,7 @@ describe "Edit vaccination record" do
 
     when_i_click_on_save_changes
     then_i_should_see_the_vaccination_record
-    and_the_parent_doesnt_receive_a_vaccination_discovered_email
+    and_the_parent_doesnt_receive_a_vaccination_already_had_email
   end
 
   def given_an_hpv_programme_is_underway
@@ -554,7 +554,7 @@ describe "Edit vaccination record" do
     create(:consent, :given, patient: @patient, programme: @programme)
   end
 
-  def and_the_parent_doesnt_receive_a_vaccination_discovered_email
+  def and_the_parent_doesnt_receive_a_vaccination_already_had_email
     expect(email_deliveries).to be_empty
   end
 end

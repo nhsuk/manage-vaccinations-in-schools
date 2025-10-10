@@ -30,7 +30,7 @@ class AlreadyHadNotificationSender
     parents_with_consent.each do |parent, consent|
       if parent.phone_receive_updates
         SMSDeliveryJob.perform_later(
-          :vaccination_discovered,
+          :vaccination_already_had,
           parent:,
           vaccination_record: @vaccination_record,
           consent:
@@ -38,7 +38,7 @@ class AlreadyHadNotificationSender
       end
 
       EmailDeliveryJob.perform_later(
-        :vaccination_discovered,
+        :vaccination_already_had,
         parent:,
         vaccination_record: @vaccination_record,
         consent:
