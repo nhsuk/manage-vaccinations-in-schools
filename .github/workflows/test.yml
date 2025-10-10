@@ -21,7 +21,7 @@ jobs:
           if [ ${{ github.event_name }} == "pull_request" ]; then
             git fetch origin
             RELEVANT_DIRS=$(git diff origin/${{ github.event.pull_request.base.ref }}...HEAD --name-only)
-            if [ -z "$(echo "$RELEVANT_DIRS" | egrep -v "^(.github|adr|aws|docs|storage|terraform|tests|tests-examples)/")" ]; then
+            if [ -z "$(echo "$RELEVANT_DIRS" | egrep -v "^(.github|adr|aws|docs|storage|terraform)/")" ]; then
               echo "No relevant changes detected, skipping rails tests"
               echo "RUN_RAILS_TESTS=false" >> $GITHUB_ENV
               exit 0
@@ -87,63 +87,6 @@ jobs:
           cache: yarn
       - run: yarn install --immutable --immutable-cache --check-cache
       - run: yarn test
-
-  playwright:
-    timeout-minutes: 60
-    name: Playwright
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:17.2
-        env:
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-    env:
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/manage_vaccinations_test
-      RAILS_ENV: test
-      MAVIS__CIS2__ENABLED: false
-    steps:
-      - uses: actions/checkout@v5
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-          ruby-version: .tool-versions
-      - uses: actions/setup-node@v5
-        with:
-          cache: yarn
-          node-version-file: .tool-versions
-      - run: bundle
-      - run: yarn install --frozen-lockfile
-      - run: bin/rails db:prepare
-      - name: Get installed Playwright version
-        id: playwright-version
-        run: echo "PLAYWRIGHT_VERSION=$(yarn list --pattern '@playwright/test' --depth 0 -s | cut -d @ -f 3)" >> $GITHUB_ENV
-      - name: Cache playwright binaries
-        uses: actions/cache@v4
-        id: playwright-cache
-        with:
-          path: |
-            ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
-      - name: Install Playwright Browsers
-        run: yarn playwright install --with-deps
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-      - name: Precompile assets
-        run: bin/rails assets:precompile
-      - name: Run Playwright tests
-        run: yarn test:e2e
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-report
-          path: playwright?report
-          retention-days: 10
 
   terraform:
     name: Terraform Validate
