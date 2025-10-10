@@ -5,7 +5,7 @@ class PDSCascadingSearchJob < ApplicationJob
 
   queue_as :pds
 
-  def perform(searchable, step_name: nil)
+  def perform(searchable, step_name: nil, search_results: [])
     step_name ||= :no_fuzzy_with_history
 
     SemanticLogger.tagged(
@@ -28,20 +28,28 @@ class PDSCascadingSearchJob < ApplicationJob
         created_at: Time.current
       }.with_indifferent_access
 
-      searchable.search_results << search_result
+      if searchable.is_a?(PatientChangeset)
+        searchable.search_results << search_result
+      end
+
+      search_results << search_result
 
       searchable.save!
 
       next_step = steps[step_name][result]
 
       if result == :error || next_step.nil? || next_step == :give_up ||
-           multiple_nhs_numbers_found?(searchable) ||
+           multiple_nhs_numbers_found?(search_results) ||
            next_step == :save_nhs_number_if_unique
         searchable.save!
-        ProcessPatientChangesetJob.perform_later(searchable)
+        if searchable.is_a?(PatientChangeset)
+          ProcessPatientChangesetJob.perform_later(searchable)
+        else
+          PatientUpdateFromPDSJob.perform_later(searchable, search_results)
+        end
       elsif next_step.in?(steps.keys)
         raise "Recursive step detected: #{next_step}" if next_step == step_name
-        enqueue_next_search(searchable, next_step)
+        enqueue_next_search(searchable, next_step, search_results)
       else
         raise "Unknown step: #{next_step}"
       end
@@ -147,17 +155,17 @@ class PDSCascadingSearchJob < ApplicationJob
     }
   end
 
-  def enqueue_next_search(searchable, next_step)
+  def enqueue_next_search(searchable, step_name, search_results)
     searchable.save!
 
-    PDSCascadingSearchJob.perform_later(searchable, step_name: next_step)
+    PDSCascadingSearchJob.perform_later(searchable, step_name:, search_results:)
   end
 
-  def unique_nhs_numbers(searchable)
-    searchable.search_results.pluck("nhs_number").compact.uniq
+  def unique_nhs_numbers(search_results)
+    search_results.pluck("nhs_number").compact.uniq
   end
 
-  def multiple_nhs_numbers_found?(searchable)
-    unique_nhs_numbers(searchable).count > 1
+  def multiple_nhs_numbers_found?(search_results)
+    unique_nhs_numbers(search_results).count > 1
   end
 end

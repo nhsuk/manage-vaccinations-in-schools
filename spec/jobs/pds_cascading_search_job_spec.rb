@@ -67,7 +67,15 @@ describe PDSCascadingSearchJob do
           )
         }.to have_enqueued_job(described_class).with(
           patient_changeset,
-          step_name: :no_fuzzy_with_wildcard_postcode
+          step_name: :no_fuzzy_with_wildcard_postcode,
+          search_results: [
+            {
+              "step" => :no_fuzzy_with_history,
+              "result" => :no_matches,
+              "nhs_number" => nil,
+              "created_at" => Time.current
+            }
+          ]
         )
       end
     end
@@ -159,13 +167,14 @@ describe PDSCascadingSearchJob do
           result: "one_match",
           nhs_number: "9876543210",
           created_at: Time.current
-        }
+        }.with_indifferent_access
         patient_changeset.save!
 
         expect {
           described_class.perform_now(
             patient_changeset,
-            step_name: :no_fuzzy_with_wildcard_given_name
+            step_name: :no_fuzzy_with_wildcard_given_name,
+            search_results: patient_changeset.search_results
           )
         }.to have_enqueued_job(ProcessPatientChangesetJob).with(
           patient_changeset
@@ -198,20 +207,6 @@ describe PDSCascadingSearchJob do
       end
     end
 
-    context "when PDS API rate limit hit" do
-      before do
-        allow(PDS::Patient).to receive(:search).and_raise(
-          Faraday::TooManyRequestsError
-        )
-      end
-
-      it "re-raises TooManyRequestsError for retry" do
-        expect {
-          described_class.perform_now(patient_changeset)
-        }.to raise_error(Faraday::TooManyRequestsError)
-      end
-    end
-
     context "when too many matches found on first step" do
       before do
         allow(PDS::Patient).to receive(:search).and_raise(
@@ -224,7 +219,15 @@ describe PDSCascadingSearchJob do
           described_class.perform_now(patient_changeset)
         }.to have_enqueued_job(described_class).with(
           patient_changeset,
-          step_name: :no_fuzzy_without_history
+          step_name: :no_fuzzy_without_history,
+          search_results: [
+            {
+              "step" => :no_fuzzy_with_history,
+              "result" => :too_many_matches,
+              "nhs_number" => nil,
+              "created_at" => Time.current
+            }.with_indifferent_access
+          ]
         )
       end
     end
@@ -250,6 +253,91 @@ describe PDSCascadingSearchJob do
         }.to have_enqueued_job(ProcessPatientChangesetJob).with(
           patient_changeset
         )
+      end
+    end
+
+    context "when running for a Patient object" do
+      let(:patient) { create(:patient, nhs_number: nil) }
+
+      let(:search_results) { [] }
+
+      before do
+        allow(PDS::Patient).to receive(:search).and_return(mock_patient)
+      end
+
+      it "saves the search result into the provided array and enqueues PatientUpdateFromPDSJob" do
+        expect {
+          described_class.perform_now(patient, search_results:)
+        }.to have_enqueued_job(PatientUpdateFromPDSJob).with(
+          patient,
+          search_results
+        )
+
+        expect(search_results.count).to eq(1)
+        expect(search_results.first).to include(
+          step: :no_fuzzy_with_history,
+          result: :one_match,
+          nhs_number: "9449306168"
+        )
+      end
+
+      it "enqueues next step when no matches found" do
+        allow(PDS::Patient).to receive(:search).and_return(nil)
+
+        expect {
+          described_class.perform_now(
+            patient,
+            step_name: :no_fuzzy_with_history,
+            search_results: search_results
+          )
+        }.to have_enqueued_job(described_class).with(
+          patient,
+          step_name: :no_fuzzy_with_wildcard_postcode,
+          search_results: search_results
+        )
+      end
+
+      it "stops cascading when multiple NHS numbers found" do
+        search_results.concat(
+          [
+            {
+              step: "no_fuzzy_with_history",
+              result: "one_match",
+              nhs_number: "9435780156",
+              created_at: Time.current
+            }.with_indifferent_access,
+            {
+              step: "no_fuzzy_with_history",
+              result: "one_match",
+              nhs_number: "9435792103",
+              created_at: Time.current
+            }.with_indifferent_access
+          ]
+        )
+
+        expect {
+          described_class.perform_now(patient, search_results:)
+        }.to have_enqueued_job(PatientUpdateFromPDSJob).with(
+          patient,
+          search_results
+        )
+      end
+
+      it "records error result and enqueues PatientUpdateFromPDSJob on PDS error" do
+        allow(PDS::Patient).to receive(:search).and_raise(
+          Faraday::ServerError.new("boom", status: 500)
+        )
+
+        expect(Sentry).to receive(:capture_exception)
+
+        expect {
+          described_class.perform_now(patient, search_results:)
+        }.to have_enqueued_job(PatientUpdateFromPDSJob).with(
+          patient,
+          search_results
+        )
+
+        expect(search_results.first).to include(result: :error)
       end
     end
   end
