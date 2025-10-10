@@ -80,7 +80,7 @@ describe ImmunisationImport do
 
     around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
 
-    context "with valid Flu rows" do
+    context "with valid flu rows" do
       let(:programmes) { [create(:programme, :flu_all_vaccines)] }
       let(:file) { "valid_flu.csv" }
 
@@ -93,6 +93,16 @@ describe ImmunisationImport do
     context "with valid HPV rows" do
       let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
       let(:file) { "valid_hpv.csv" }
+
+      it "populates the rows" do
+        expect(immunisation_import).to be_valid
+        expect(immunisation_import.rows).not_to be_empty
+      end
+    end
+
+    context "with valid MMR rows" do
+      let(:programmes) { [create(:programme, :mmr)] }
+      let(:file) { "valid_mmr.csv" }
 
       it "populates the rows" do
         expect(immunisation_import).to be_valid
@@ -132,7 +142,7 @@ describe ImmunisationImport do
 
     around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
 
-    context "with valid Flu rows" do
+    context "with valid flu rows" do
       let(:programmes) { [create(:programme, :flu_all_vaccines)] }
       let(:file) { "valid_flu.csv" }
 
@@ -197,6 +207,60 @@ describe ImmunisationImport do
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(10)
           .and change(immunisation_import.batches, :count).by(8)
+          .and not_change(immunisation_import.patient_locations, :count)
+
+        # Second import should not duplicate the vaccination records if they're
+        # identical.
+
+        # stree-ignore
+        expect { immunisation_import.process! }
+          .to not_change(immunisation_import, :processed_at)
+          .and not_change(VaccinationRecord, :count)
+          .and not_change(Patient, :count)
+          .and not_change(PatientLocation, :count)
+          .and not_change(Batch, :count)
+      end
+
+      it "stores statistics on the import" do
+        # stree-ignore
+        expect { process! }
+          .to change(immunisation_import, :exact_duplicate_record_count).to(0)
+          .and change(immunisation_import, :new_record_count).to(11)
+      end
+
+      it "ignores and counts duplicate records" do
+        create(:immunisation_import, csv:, team:, uploaded_by:).process!
+        csv.rewind
+
+        process!
+        expect(immunisation_import.exact_duplicate_record_count).to eq(11)
+      end
+
+      it "enqueues jobs to look up missing NHS numbers" do
+        expect { process! }.to have_enqueued_job(
+          PatientNHSNumberLookupJob
+        ).once.on_queue(:imports)
+      end
+
+      it "enqueues jobs to update from PDS" do
+        expect { process! }.to have_enqueued_job(PatientUpdateFromPDSJob)
+          .exactly(9)
+          .times
+          .on_queue(:imports)
+      end
+    end
+
+    context "with valid MMR rows" do
+      let(:programmes) { [create(:programme, :mmr)] }
+      let(:file) { "valid_mmr.csv" }
+
+      it "creates locations, patients, and vaccination records" do
+        # stree-ignore
+        expect { process! }
+          .to change(immunisation_import, :processed_at).from(nil)
+          .and change(immunisation_import.vaccination_records, :count).by(11)
+          .and change(immunisation_import.patients, :count).by(10)
+          .and change(immunisation_import.batches, :count).by(7)
           .and not_change(immunisation_import.patient_locations, :count)
 
         # Second import should not duplicate the vaccination records if they're
@@ -335,7 +399,7 @@ describe ImmunisationImport do
       end
     end
 
-    context "when vaccination discovered notifications should/n't be sent" do
+    context "when vaccination discovered notifications shouldn't be sent" do
       let(:programmes) { [create(:programme, :flu_all_vaccines)] }
       let(:file) { "valid_flu.csv" }
 
