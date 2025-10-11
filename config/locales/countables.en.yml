@@ -32,6 +32,10 @@ en:
     zero: No children without an NHS number
     one: 1 child without an NHS number
     other: "%{count} children without an NHS number"
+  unmatched_responses:
+    zero: No unmatched responses
+    one: 1 unmatched response
+    other: "%{count} unmatched responses"
   vaccinations_given:
     zero: No vaccinations given
     one: 1 vaccination given

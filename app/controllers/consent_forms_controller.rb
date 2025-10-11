@@ -10,6 +10,11 @@ class ConsentFormsController < ApplicationController
   def index
     consent_forms = policy_scope(ConsentForm).unmatched.order(:recorded_at)
 
+    if (session_slug = params[:session_slug]).present?
+      @session = policy_scope(Session).find_by(slug: session_slug)
+      consent_forms = consent_forms.for_session(@session)
+    end
+
     @pagy, @consent_forms = pagy(consent_forms)
 
     render layout: "full"

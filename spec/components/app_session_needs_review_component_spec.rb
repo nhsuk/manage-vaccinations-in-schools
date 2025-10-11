@@ -17,6 +17,12 @@ describe AppSessionNeedsReviewComponent do
 
       it { should be(true) }
     end
+
+    context "when session has an unmatched consent response" do
+      before { create(:consent_form, :recorded, session:) }
+
+      it { should be(true) }
+    end
   end
 
   describe "rendered content" do
@@ -33,6 +39,18 @@ describe AppSessionNeedsReviewComponent do
       before { create_list(:patient, 3, nhs_number: nil, session:) }
 
       it { should have_text("3 children without an NHS number") }
+    end
+
+    context "when session has an unmatched consent response" do
+      before { create(:consent_form, :recorded, session:) }
+
+      it { should have_text("1 unmatched response") }
+    end
+
+    context "when session has multiple unmatched consent responses" do
+      before { create_list(:consent_form, 3, :recorded, session:) }
+
+      it { should have_text("3 unmatched responses") }
     end
   end
 end
