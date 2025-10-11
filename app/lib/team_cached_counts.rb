@@ -38,8 +38,6 @@ class TeamCachedCounts
       .new(current_user, ConsentForm)
       .resolve
       .unmatched
-      .recorded
-      .not_archived
       .count
   end
 
