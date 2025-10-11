@@ -20,7 +20,8 @@
   </div>
 
   <div class="app-grid-column-results">
-    <%= render AppSessionNeedsReviewWarningComponent.new(session: @session) %>
+    <%= render AppSessionNeedsReviewComponent.new(@session) %>
+
     <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
       <% @patients.each do |patient| %>
         <%= render AppPatientSessionSearchResultCardComponent.new(
