@@ -124,30 +124,34 @@ class Reports::CareplusExporter
   def rows(patient:, vaccination_records:)
     vaccination_records
       .group_by(&:session)
-      .map do |session, records|
-        [
-          patient.nhs_number,
-          patient.family_name,
-          patient.given_name,
-          patient.date_of_birth.strftime("%d/%m/%Y"),
-          patient.restricted? ? "" : patient.address_line_1,
-          consents[patient.id]&.name || "",
-          99, # Ethnicity, 99 is "Not known"
-          records.first.performed_at.strftime("%d/%m/%Y"),
-          records.first.performed_at.strftime("%H:%M"),
-          session.location.school? ? "SC" : "CL", # Venue Type
-          session.location.dfe_number || team.careplus_venue_code, # Venue Code
-          "IN", # Staff Type
-          "LW5PM", # Staff Code
-          "Y", # Attended; Did not attends do not get recorded on GP systems
-          "", # Reason Not Attended; Always blank
-          "", # Suspension End Date; Doesn't need to be used
-          *vaccine_fields(records, 0),
-          *vaccine_fields(records, 1),
-          *vaccine_fields(records, 2),
-          *vaccine_fields(records, 3),
-          *vaccine_fields(records, 4)
-        ]
+      .flat_map do |session, records_in_same_session|
+        records_in_same_session
+          .group_by { it.performed_at.to_date }
+          .map do |date, records|
+            [
+              patient.nhs_number,
+              patient.family_name,
+              patient.given_name,
+              patient.date_of_birth.strftime("%d/%m/%Y"),
+              patient.restricted? ? "" : patient.address_line_1,
+              consents[patient.id]&.name || "",
+              99, # Ethnicity, 99 is "Not known"
+              date.strftime("%d/%m/%Y"),
+              records.first.performed_at.strftime("%H:%M"),
+              session.location.school? ? "SC" : "CL", # Venue Type
+              session.location.dfe_number || team.careplus_venue_code, # Venue Code
+              "IN", # Staff Type
+              "LW5PM", # Staff Code
+              "Y", # Attended; Did not attends do not get recorded on GP systems
+              "", # Reason Not Attended; Always blank
+              "", # Suspension End Date; Doesn't need to be used
+              *vaccine_fields(records, 0),
+              *vaccine_fields(records, 1),
+              *vaccine_fields(records, 2),
+              *vaccine_fields(records, 3),
+              *vaccine_fields(records, 4)
+            ]
+          end
       end
   end
 
@@ -222,6 +226,8 @@ class Reports::CareplusExporter
       "HPV"
     elsif programme.menacwy?
       "ACWYX14"
+    elsif programme.mmr?
+      "MMR"
     elsif programme.td_ipv?
       "3IN1"
     else
