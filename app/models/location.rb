@@ -42,7 +42,6 @@ class Location < ApplicationRecord
   include ODSCodeConcern
 
   self.inheritance_column = nil
-  self.ignored_columns = %i[year_groups]
 
   audited associated_with: :subteam
   has_associated_audits
