@@ -11,18 +11,6 @@ class Inspect::Timeline::PatientsController < ApplicationController
 
   SHOW_PII_BY_DEFAULT = false
 
-  DEFAULT_EVENT_NAMES = %w[
-    consents
-    school_moves
-    school_move_log_entries
-    audits
-    sessions
-    triages
-    vaccination_records
-    class_imports
-    cohort_imports
-  ].freeze
-
   def show
     set_pii_settings
 
@@ -31,9 +19,16 @@ class Inspect::Timeline::PatientsController < ApplicationController
     compare_option = params[:compare_option] || nil
 
     # Set default values if none present
-    if params[:detail_config].blank? && params[:event_names].blank?
+    if params[:detail_config].nil? && params[:event_names].nil? &&
+         params[:show_pii].nil?
       default_details = TimelineRecords::DEFAULT_DETAILS_CONFIG
-      new_params = params.to_unsafe_h.merge("detail_config" => default_details)
+      default_events_selected =
+        TimelineRecords::DEFAULT_DETAILS_CONFIG.keys.append(:audits)
+      new_params =
+        params.to_unsafe_h.merge(
+          "detail_config" => default_details,
+          "event_names" => default_events_selected
+        )
       redirect_to inspect_timeline_patient_path(new_params) and return
     end
 
@@ -45,11 +40,9 @@ class Inspect::Timeline::PatientsController < ApplicationController
     }
 
     @compare_patient = sample_patient(params[:compare_option]) if compare_option
+    @event_names = params[:event_names] || []
 
     record_access_log_entry
-
-    params.reverse_merge!(event_names: DEFAULT_EVENT_NAMES)
-    event_names = params[:event_names]
 
     @patient_timeline =
       TimelineRecords.new(
@@ -57,7 +50,7 @@ class Inspect::Timeline::PatientsController < ApplicationController
         detail_config: build_details_config,
         audit_config: audit_config,
         show_pii: @show_pii
-      ).load_timeline_events(event_names)
+      ).load_timeline_events(@event_names)
 
     @no_events_message = true if @patient_timeline.empty?
 
@@ -70,7 +63,7 @@ class Inspect::Timeline::PatientsController < ApplicationController
           detail_config: build_details_config,
           audit_config: audit_config,
           show_pii: @show_pii
-        ).load_timeline_events(event_names)
+        ).load_timeline_events(@event_names)
 
       @no_events_compare_message = true if @compare_patient_timeline.empty?
     end
@@ -147,7 +140,7 @@ class Inspect::Timeline::PatientsController < ApplicationController
   end
 
   def audit_pii_accessed?
-    true if @show_pii && params[:event_names]&.include?("audits")
+    true if @show_pii && @event_names.include?("audits")
   end
 
   def record_access_log_entry
@@ -155,7 +148,7 @@ class Inspect::Timeline::PatientsController < ApplicationController
 
     details_accessed =
       build_details_config.reverse_merge(
-        params[:event_names].map { |key| [key.to_sym, []] }.to_h
+        @event_names.map { |key| [key.to_sym, []] }.to_h
       )
     details_accessed[:audits] = :accessed if details_accessed.key?(:audits)
 
