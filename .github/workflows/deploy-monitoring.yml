@@ -27,6 +27,7 @@ env:
     || 'arn:aws:iam::393416225559:role/GithubDeployMonitoring' }}
   aws_account_id: ${{ inputs.environment == 'production'
     && '820242920762' || '393416225559' }}
+  environment: ${{ inputs.environment }}
   git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
 
 jobs:
