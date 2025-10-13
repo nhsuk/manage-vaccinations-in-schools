@@ -14,6 +14,16 @@ data "aws_iam_policy_document" "shell_access" {
   }
 }
 
+data "aws_iam_policy_document" "ecs_monitoring" {
+  statement {
+    actions = [
+      "logs:CreateLogGroup",
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+}
+
 data "aws_iam_policy_document" "ecs_secrets_access" {
   for_each = local.applications_accessing_secrets_or_parameters
   dynamic "statement" {

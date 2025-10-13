@@ -10,6 +10,25 @@ usage() {
     echo "  --help                    Display this help message"
 }
 
+list_running_tasks() {
+    local service_name="$1"
+    if [ -n "$service_name" ]; then
+        aws ecs list-tasks --region "$region" --cluster "$cluster_name" --service-name "$service_name" --desired-status RUNNING | jq -r '.taskArns[]'
+    else
+        aws ecs list-tasks --region "$region" --cluster "$cluster_name" --desired-status RUNNING | jq -r '.taskArns[]'
+    fi
+}
+
+describe_tasks() {
+    local task_arns="$1"
+    aws ecs describe-tasks --region "$region" --cluster "$cluster_name" --tasks $task_arns
+}
+
+select_running_container() {
+    local task_data="$1"
+    echo "$task_data" | jq -r '.containers | map(select(.lastStatus == "RUNNING" and .runtimeId != null))[0].name'
+}
+
 if [ "$1" = "--help" ]; then
     usage
     exit 0
@@ -105,22 +124,18 @@ if [ -n "$task_id" ]; then
         echo "Task $task_id is not running (status: $task_status)"
         exit 1
     fi
-    container_name=$(echo "$task_description" | jq -r '.tasks[0].containers | map(select(.lastStatus == "RUNNING"))[0].name')
+    container_name=$(select_running_container "$(echo "$task_description" | jq '.tasks[0]')")
     if [ -z "$container_name" ] || [ "$container_name" = "null" ]; then
-        echo "No running containers found in task $task_id"
+        echo "No running containers with valid runtimeId found in task $task_id"
         exit 1
     fi
 elif [ -n "$task_ip" ]; then
-    if [ -n "$service_name" ]; then
-        task_arns=$(aws ecs list-tasks --region "$region" --cluster "$cluster_name" --service-name "$service_name" --desired-status RUNNING | jq -r '.taskArns[]')
-    else
-        task_arns=$(aws ecs list-tasks --region "$region" --cluster "$cluster_name" --desired-status RUNNING | jq -r '.taskArns[]')
-    fi
+    task_arns=$(list_running_tasks "$service_name")
     if [ -z "$task_arns" ]; then
         echo "No running tasks found in cluster $cluster_name" $([ -n "$service_name" ] && echo "for service $service_name")
         exit 1
     fi
-    tasks_description=$(aws ecs describe-tasks --region "$region" --cluster "$cluster_name" --tasks $task_arns)
+    tasks_description=$(describe_tasks "$task_arns")
     if [ -z "$tasks_description" ]; then
         echo "Failed to describe tasks in cluster $cluster_name"
         exit 1
@@ -131,33 +146,29 @@ elif [ -n "$task_ip" ]; then
         exit 1
     fi
     task_description=$(echo "$tasks_description" | jq '.tasks[] | select(.taskArn | endswith("'"$task_id"'"))')
-    container_name=$(echo "$task_description" | jq -r '.containers | map(select(.lastStatus == "RUNNING"))[0].name')
+    container_name=$(select_running_container "$task_description")
     if [ -z "$container_name" ] || [ "$container_name" = "null" ]; then
-        echo "No running containers found in task $task_id"
+        echo "No running containers with valid runtimeId found in task $task_id"
         exit 1
     fi
 else
-    if [ -n "$service_name" ]; then
-        task_arns=$(aws ecs list-tasks --region "$region" --cluster "$cluster_name" --service-name "$service_name" --desired-status RUNNING | jq -r '.taskArns[]')
-    else
-        task_arns=$(aws ecs list-tasks --region "$region" --cluster "$cluster_name" --desired-status RUNNING | jq -r '.taskArns[]')
-    fi
+    task_arns=$(list_running_tasks "$service_name")
     if [ -z "$task_arns" ]; then
         echo "No running tasks found in cluster $cluster_name" $([ -n "$service_name" ] && echo "for service $service_name")
         exit 1
     fi
-    tasks_description=$(aws ecs describe-tasks --region "$region" --cluster "$cluster_name" --tasks $task_arns)
+    tasks_description=$(describe_tasks "$task_arns")
     if [ -z "$tasks_description" ]; then
         echo "Failed to describe tasks in cluster $cluster_name"
         exit 1
     fi
-    selected_task=$(echo "$tasks_description" | jq '.tasks | map(select(.containers | map(.lastStatus == "RUNNING") | any)) | .[0]')
+    selected_task=$(echo "$tasks_description" | jq '.tasks | map(select(.containers | map(.lastStatus == "RUNNING" and .runtimeId != null) | any)) | .[0]')
     if [ -z "$selected_task" ] || [ "$selected_task" = "null" ]; then
-        echo "No running tasks with running containers found in cluster $cluster_name" $([ -n "$service_name" ] && echo "for service $service_name")
+        echo "No running tasks with running containers with valid runtimeId found in cluster $cluster_name" $([ -n "$service_name" ] && echo "for service $service_name")
         exit 1
     fi
     task_id=$(echo "$selected_task" | jq -r '.taskArn | split("/") | .[-1]')
-    container_name=$(echo "$selected_task" | jq -r '.containers | map(select(.lastStatus == "RUNNING"))[0].name')
+    container_name=$(select_running_container "$selected_task")
 fi
 
 echo "Opening an interactive shell in container $container_name of task $task_id"

@@ -5,6 +5,11 @@ resource "aws_iam_policy" "ecs_secret_access_policy" {
   policy   = data.aws_iam_policy_document.ecs_secrets_access[each.key].json
 }
 
+resource "aws_iam_policy" "ecs_monitoring_policy" {
+  name   = "ECSFargateMonitoringPolicy-${var.environment}"
+  policy = data.aws_iam_policy_document.ecs_monitoring.json
+}
+
 resource "aws_iam_policy" "shell_access_policy" {
   name   = "ECSFargateAllowExecuteCommand-${var.environment}"
   policy = data.aws_iam_policy_document.shell_access.json
@@ -53,6 +58,18 @@ resource "aws_iam_role_policy_attachment" "ecs_ecr_and_log_permissions" {
   for_each   = local.parameter_store_variables
   role       = aws_iam_role.ecs_task_execution_role[each.key].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_service_connect" {
+  for_each   = local.parameter_store_variables
+  role       = aws_iam_role.ecs_task_execution_role[each.key].name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_monitoring" {
+  for_each   = local.parameter_store_variables
+  role       = aws_iam_role.ecs_task_execution_role[each.key].name
+  policy_arn = aws_iam_policy.ecs_monitoring_policy.arn
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_fargate" {

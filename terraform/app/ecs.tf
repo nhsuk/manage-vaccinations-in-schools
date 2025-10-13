@@ -1,10 +1,34 @@
 resource "aws_security_group_rule" "web_service_alb_ingress" {
   type                     = "ingress"
-  from_port                = 4000
-  to_port                  = 4000
+  from_port                = local.container_ports.web
+  to_port                  = local.container_ports.web
   protocol                 = "tcp"
   security_group_id        = module.web_service.security_group_id
   source_security_group_id = aws_security_group.lb_service_sg.id
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_security_group_rule" "reporting_service_alb_ingress" {
+  type                     = "ingress"
+  from_port                = local.container_ports.reporting
+  to_port                  = local.container_ports.reporting
+  protocol                 = "tcp"
+  security_group_id        = module.reporting_service.security_group_id
+  source_security_group_id = aws_security_group.lb_service_sg.id
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_security_group_rule" "reporting_to_web_service" {
+  type                     = "ingress"
+  from_port                = local.container_ports.web
+  to_port                  = local.container_ports.web
+  protocol                 = "tcp"
+  security_group_id        = module.web_service.security_group_id
+  source_security_group_id = module.reporting_service.security_group_id
   lifecycle {
     create_before_destroy = true
   }
@@ -17,7 +41,22 @@ resource "aws_ecs_cluster" "cluster" {
     name  = "containerInsights"
     value = var.container_insights
   }
+
+  service_connect_defaults {
+    namespace = aws_service_discovery_private_dns_namespace.internal.arn
+  }
 }
+
+resource "aws_service_discovery_private_dns_namespace" "internal" {
+  name        = "mavis.${var.environment}.aws-int"
+  description = "Private namespace for ECS service discovery"
+  vpc         = aws_vpc.application_vpc.id
+
+  tags = {
+    Name = "ecs-service-discovery-${var.environment}"
+  }
+}
+
 
 module "web_service" {
   source = "./modules/ecs_service"
@@ -30,7 +69,7 @@ module "web_service" {
     task_role_arn        = aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
-    health_check_command = ["CMD-SHELL", "./bin/internal_healthcheck http://localhost:4000/health/database"]
+    health_check_command = ["CMD-SHELL", "./bin/internal_healthcheck http://localhost:${local.container_ports.web}/health/database"]
   }
   network_params = {
     subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
@@ -39,7 +78,7 @@ module "web_service" {
   loadbalancer = {
     target_group_blue            = aws_lb_target_group.blue.arn
     target_group_green           = aws_lb_target_group.green.arn
-    container_port               = 4000
+    container_port               = local.container_ports.web
     production_listener_rule_arn = aws_lb_listener_rule.forward_to_app.arn
     test_listner_rule_arn        = aws_lb_listener_rule.forward_to_test.arn
     deploy_role_arn              = aws_iam_role.ecs_deploy.arn
@@ -59,12 +98,12 @@ module "web_service" {
   environment           = var.environment
   server_type           = "web"
   service_connect_config = {
-    namespace = "TBD"
+    namespace = aws_service_discovery_private_dns_namespace.internal.arn
     services = [
       {
         port_name      = "web-port"
         discovery_name = "web"
-        port           = 4000
+        port           = local.container_ports.web
         dns_name       = "web"
       }
     ]
@@ -108,20 +147,59 @@ module "sidekiq_service" {
   cluster_name = aws_ecs_cluster.cluster.name
   environment  = var.environment
   server_type  = "sidekiq"
-  service_connect_config = {
-    namespace = "TBD"
-    services = [
-      {
-        port_name      = "sidekiq-port"
-        discovery_name = "sidekiq"
-        port           = 4000
-        dns_name       = "sidekiq"
-      }
-    ]
-  }
 
   depends_on = [
     aws_rds_cluster_instance.core,
     aws_elasticache_replication_group.valkey
+  ]
+}
+
+module "reporting_service" {
+  source = "./modules/ecs_service"
+  task_config = {
+    environment          = local.task_envs["REPORTING"]
+    secrets              = local.task_secrets["REPORTING"]
+    cpu                  = 1024
+    memory               = 2048
+    execution_role_arn   = aws_iam_role.ecs_task_execution_role["REPORTING"].arn
+    task_role_arn        = aws_iam_role.ecs_task_role.arn
+    log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
+    region               = var.region
+    health_check_command = ["CMD-SHELL", "wget --no-cache --spider -S http://localhost:${local.container_ports.reporting}/reports/healthcheck || exit 1"]
+  }
+  network_params = {
+    subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
+    vpc_id  = aws_vpc.application_vpc.id
+  }
+  loadbalancer = {
+    target_group_blue            = aws_lb_target_group.reporting_blue.arn
+    target_group_green           = aws_lb_target_group.reporting_green.arn
+    container_port               = local.container_ports.reporting
+    production_listener_rule_arn = aws_lb_listener_rule.forward_to_reporting.arn
+    test_listner_rule_arn        = aws_lb_listener_rule.forward_to_reporting_test.arn
+    deploy_role_arn              = aws_iam_role.ecs_deploy.arn
+  }
+  autoscaling_policies = tomap({
+    cpu = {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+      target_value           = 60
+      scale_in_cooldown      = 600
+      scale_out_cooldown     = 300
+    }
+  })
+  container_port        = local.container_ports.reporting
+  minimum_replica_count = var.minimum_reporting_replicas
+  maximum_replica_count = var.maximum_reporting_replicas
+  cluster_id            = aws_ecs_cluster.cluster.id
+  cluster_name          = aws_ecs_cluster.cluster.name
+  environment           = var.environment
+  server_type           = "reporting"
+  service_connect_config = {
+    namespace = aws_service_discovery_private_dns_namespace.internal.arn
+    services  = []
+  }
+
+  depends_on = [
+    aws_iam_role.ecs_deploy
   ]
 }
