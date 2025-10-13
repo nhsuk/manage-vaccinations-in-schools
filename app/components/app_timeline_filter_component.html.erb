@@ -30,13 +30,13 @@
                     <%= f.govuk_check_box :event_names,
                                           value,
                                           label: { text: value.to_s.humanize },
-                                          checked: value.to_s.in?(params[:event_names] || event_options.keys.map(&:to_s)),
+                                          checked: value.to_s.in?(@event_names || event_options.keys.map(&:to_s)),
                                           "data-autosubmit-target": "field",
                                           "data-action": "autosubmit#submit",
                                           "data-turbo-permanent": "true" %>
                     
                     <% available_fields = timeline_fields[value.to_sym] || [] %>
-                    <% if available_fields.any? && value.to_s.in?(params[:event_names]) %>
+                    <% if available_fields.any? && value.to_s.in?(@event_names) %>
                         <div class="nhsuk-checkboxes__conditional nhsuk-u-margin-bottom-2">
                             <% available_fields.each do |field| %>
                                 <%= f.govuk_check_box "detail_config[#{value}]",
@@ -56,11 +56,11 @@
             <%= f.govuk_check_boxes_fieldset :audit_config, legend: { hidden: true } do %>
                 <%= f.govuk_check_box :event_names, "audits",
                                       label: { text: "Audits" },
-                                      checked: "audits".in?(params[:event_names]),
+                                      checked: "audits".in?(@event_names),
                                       "data-autosubmit-target": "field",
                                       "data-action": "autosubmit#submit",
                                       "data-turbo-permanent": "true" %>
-                <% if "audits".in?(params[:event_names]) %>
+                <% if "audits".in?(@event_names) %>
                     <div class="nhsuk-checkboxes__conditional nhsuk-u-margin-bottom-2">
                         <%= f.govuk_check_box "audit_config[include_associated_audits]", true, false,
                                               multiple: false,
@@ -83,7 +83,7 @@
 
             <%= f.govuk_check_box :event_names, "org_cohort_imports",
                                   label: { text: "Cohort Imports for Team #{teams.join(",")} excluding patient" },
-                                  checked: "org_cohort_imports".in?(params[:event_names]),
+                                  checked: "org_cohort_imports".in?(@event_names),
                                   "data-autosubmit-target": "field",
                                   "data-action": "autosubmit#submit",
                                   "data-turbo-permanent": "true" %>
@@ -91,7 +91,7 @@
             <% (additional_class_imports).each do |location_id, import_ids| %>
                 <%= f.govuk_check_box :event_names, "add_class_imports_#{location_id}",
                                       label: { text: "Class Imports for Location-#{location_id} excluding Patient" },
-                                      checked: "add_class_imports_#{location_id}".in?(params[:event_names]),
+                                      checked: "add_class_imports_#{location_id}".in?(@event_names),
                                       "data-autosubmit-target": "field",
                                       "data-action": "autosubmit#submit",
                                       "data-turbo-permanent": "true" %>
