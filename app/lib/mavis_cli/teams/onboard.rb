@@ -5,14 +5,35 @@ module MavisCLI
     class Onboard < Dry::CLI::Command
       desc "Onboard a new team"
 
-      argument :path,
-               required: true,
-               desc: "The path to the onboarding configuration file"
+      argument :path, desc: "The path to the onboarding configuration file"
 
-      def call(path:)
+      option :training,
+             type: :boolean,
+             desc:
+               "Whether to set up the team for training. Not available in production."
+
+      option :ods_code, desc: "The ODS code for the training team"
+      option :workgroup, desc: "The workgroup for the training team"
+
+      def call(path: nil, training: false, ods_code: nil, workgroup: nil, **)
         MavisCLI.load_rails
 
-        config = YAML.safe_load(File.read(path))
+        if training && Rails.env.production?
+          warn "Cannot create a training team in production."
+          return
+        end
+
+        if !training && path.blank?
+          warn "Specify the path to a configuration file."
+          return
+        end
+
+        config =
+          if training
+            TrainingOnboardingConfiguration.call(ods_code:, workgroup:)
+          else
+            YAML.safe_load(File.read(path))
+          end
 
         onboarding = Onboarding.new(config)
 
