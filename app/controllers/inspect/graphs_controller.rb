@@ -152,11 +152,11 @@ module Inspect
     end
 
     def build_request_details
-      build_traversals_config.each_with_object(
-        {}
-      ) do |(_, relationships), details|
-        relationships.each { |rel| add_fields_to_details(details, rel) }
+      details = {}
+      @graph_record.node_types_in_graph.each do |type_sym|
+        add_fields_to_details(details, type_sym)
       end
+      details
     end
 
     def add_fields_to_details(details, type_sym)
