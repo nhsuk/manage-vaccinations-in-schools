@@ -21,7 +21,9 @@ module HasSideEffects
                  runny_blocked_nose: 12,
                  swelling: 13,
                  tiredness: 14,
-                 unwell: 15
+                 unwell: 15,
+                 swollen_glands: 16,
+                 raised_blotchy_rash: 17
                }
 
     validates :side_effects, subset: side_effects.keys

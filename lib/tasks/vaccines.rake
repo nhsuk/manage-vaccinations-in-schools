@@ -91,6 +91,8 @@ def side_effects_for(programme, method)
       swelling
       unwell
     ]
+  elsif programme.mmr?
+    %w[swollen_glands raised_blotchy_rash]
   elsif programme.td_ipv?
     %w[
       drowsy
