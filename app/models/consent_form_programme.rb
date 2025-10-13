@@ -9,6 +9,7 @@
 #  reason_for_refusal :integer
 #  response           :integer
 #  vaccine_methods    :integer          default([]), not null, is an Array
+#  without_gelatine   :boolean
 #  consent_form_id    :bigint           not null
 #  programme_id       :bigint           not null
 #
@@ -33,13 +34,16 @@ class ConsentFormProgramme < ApplicationRecord
 
   enum :response, { given: 0, refused: 1 }, prefix: true
 
-  delegate :flu?, :hpv?, :menacwy?, :td_ipv?, to: :programme
+  delegate :flu?, :hpv?, :menacwy?, :mmr?, :td_ipv?, to: :programme
 
   def vaccines
-    Vaccine
-      .active
-      .where(programme_id:, method: vaccine_methods)
-      .order(vaccine_method_order_sql, :id)
+    scope = Vaccine.active.where(programme_id:)
+
+    scope = scope.where(method: vaccine_methods).order(vaccine_method_order_sql)
+
+    scope = scope.where(contains_gelatine: false) if without_gelatine
+
+    scope
   end
 
   def human_enum_name(attribute)

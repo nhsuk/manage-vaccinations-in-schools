@@ -128,7 +128,6 @@ RSpec.feature "Parental consent change answers" do
     # BUG: The page should be the consent confirm page, but because we
     # encountered a validation error, the skip_to_confirm flag gets lost and we
     # end up on the next page in the wizard.
-
     click_button "Continue"
 
     # BUG: You shouldn't need to select again if injection is accepted as an
@@ -136,6 +135,7 @@ RSpec.feature "Parental consent change answers" do
     choose "Yes"
     click_button "Continue"
 
+    # BUG: You shouldn't need to answer the health questions again.
     9.times { click_button "Continue" }
 
     # BUG: You shouldn't need to choose this again. It happens because the
