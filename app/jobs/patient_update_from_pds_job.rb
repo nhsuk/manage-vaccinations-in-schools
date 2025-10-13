@@ -45,20 +45,14 @@ class PatientUpdateFromPDSJob < ApplicationJob
   rescue NHS::PDS::PatientNotFound
     patient.update!(nhs_number: nil)
     if Flipper.enabled?(:pds_cascading_search)
-      PDSCascadingSearchJob.perform_later(
-        searchable_id: patient.id,
-        searchable_type: patient.class.name
-      )
+      PDSCascadingSearchJob.perform_later(patient)
     else
       PatientNHSNumberLookupJob.perform_later(patient)
     end
   rescue NHS::PDS::InvalidatedResource, NHS::PDS::InvalidNHSNumber
     patient.invalidate!
     if Flipper.enabled?(:pds_cascading_search)
-      PDSCascadingSearchJob.perform_later(
-        searchable_id: patient.id,
-        searchable_type: patient.class.name
-      )
+      PDSCascadingSearchJob.perform_later(patient)
     else
       PatientNHSNumberLookupJob.perform_later(patient)
     end

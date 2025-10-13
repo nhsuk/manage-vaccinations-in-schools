@@ -113,6 +113,23 @@ describe PatientUpdateFromPDSJob do
           PatientNHSNumberLookupJob
         ).with(patient)
       end
+
+      context "when PDS cascading search is enabled" do
+        before { Flipper.enable(:pds_cascading_search) }
+        after { Flipper.disable(:pds_cascading_search) }
+
+        it "queues a job to look up NHS number using PDS cascading search" do
+          expect { perform_now }.to have_enqueued_job(
+            PDSCascadingSearchJob
+          ).with(patient)
+        end
+
+        it "does not queue PatientNHSNumberLookupJob" do
+          expect { perform_now }.not_to have_enqueued_job(
+            PatientNHSNumberLookupJob
+          )
+        end
+      end
     end
 
     context "when the NHS number is invalid" do
@@ -145,6 +162,23 @@ describe PatientUpdateFromPDSJob do
           PatientNHSNumberLookupJob
         ).with(patient)
       end
+
+      context "when PDS cascading search is enabled" do
+        before { Flipper.enable(:pds_cascading_search) }
+        after { Flipper.disable(:pds_cascading_search) }
+
+        it "queues a job to look up NHS number using PDS cascading search" do
+          expect { perform_now }.to have_enqueued_job(
+            PDSCascadingSearchJob
+          ).with(patient)
+        end
+
+        it "does not queue PatientNHSNumberLookupJob" do
+          expect { perform_now }.not_to have_enqueued_job(
+            PatientNHSNumberLookupJob
+          )
+        end
+      end
     end
 
     context "when the NHS number is not found" do
@@ -176,6 +210,23 @@ describe PatientUpdateFromPDSJob do
         expect { perform_now }.to have_enqueued_job(
           PatientNHSNumberLookupJob
         ).with(patient)
+      end
+
+      context "when PDS cascading search is enabled" do
+        before { Flipper.enable(:pds_cascading_search) }
+        after { Flipper.disable(:pds_cascading_search) }
+
+        it "queues a job to look up NHS number using PDS cascading search" do
+          expect { perform_now }.to have_enqueued_job(
+            PDSCascadingSearchJob
+          ).with(patient)
+        end
+
+        it "does not queue PatientNHSNumberLookupJob" do
+          expect { perform_now }.not_to have_enqueued_job(
+            PatientNHSNumberLookupJob
+          )
+        end
       end
     end
   end
