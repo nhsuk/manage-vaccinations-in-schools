@@ -107,6 +107,10 @@ FactoryBot.define do
       vaccine_methods { %w[nasal injection] }
     end
 
+    trait :without_gelatine do
+      without_gelatine { true }
+    end
+
     trait :self_consent do
       route { "self_consent" }
       parent { nil }

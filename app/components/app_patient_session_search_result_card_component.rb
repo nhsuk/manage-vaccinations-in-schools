@@ -266,7 +266,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       end
     end
 
-    consent_status.slice(:status, :vaccine_methods)
+    consent_status.slice(:status, :vaccine_methods, :without_gelatine)
   end
 
   def triage_status_value(programme:, academic_year:)

@@ -22,6 +22,10 @@ class AppProgrammeStatusTagsComponent < ViewComponent::Base
             end
           end
 
+        if context == :consent && hash[:without_gelatine]
+          status = :"#{status}_without_gelatine"
+        end
+
         latest_session_status = hash[:latest_session_status] if status !=
           hash[:latest_session_status]
 

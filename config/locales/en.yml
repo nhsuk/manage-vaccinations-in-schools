@@ -217,6 +217,7 @@ en:
           given: Consent given
           given_injection: Consent given
           given_nasal: Consent given
+          given_without_injection: Consent given
           not_provided: Not provided
           refused: Consent refused
         routes:
