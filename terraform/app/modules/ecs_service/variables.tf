@@ -125,6 +125,20 @@ variable "container_name" {
   nullable    = false
 }
 
+variable "container_port" {
+  type        = number
+  description = "The port on the container that the service will bind to. If not specified, it defaults to 4000."
+  default     = 4000
+  nullable    = false
+}
+
+variable "host_port" {
+  type        = number
+  description = "The port on the host that the container will bind to. If not specified, it defaults to the same value as container_port."
+  default     = null
+  nullable    = true
+}
+
 locals {
   autoscaling_enabled = var.maximum_replica_count > var.minimum_replica_count
   server_type_name    = var.server_type_name != null ? var.server_type_name : var.server_type

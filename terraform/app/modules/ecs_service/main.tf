@@ -69,7 +69,24 @@ resource "aws_ecs_service" "this" {
       }
     }
   }
-
+  dynamic "service_connect_configuration" {
+    for_each = var.service_connect_config != null ? [1] : []
+    content {
+      enabled   = true
+      namespace = var.service_connect_config.namespace
+      dynamic "service" {
+        for_each = var.service_connect_config.services
+        content {
+          port_name      = service.value.port_name
+          discovery_name = service.value.discovery_name
+          client_alias {
+            port     = service.value.port
+            dns_name = service.value.dns_name
+          }
+        }
+      }
+    }
+  }
   lifecycle {
     ignore_changes = [
       task_definition,
@@ -96,8 +113,8 @@ resource "aws_ecs_task_definition" "this" {
       portMappings = [
         {
           name          = var.service_connect_config != null && length(var.service_connect_config.services) > 0 ? var.service_connect_config.services[0].port_name : null
-          containerPort = 4000
-          hostPort      = 4000
+          containerPort = var.container_port
+          hostPort      = var.host_port == null ? var.container_port : var.host_port
           protocol      = "tcp"
         }
       ]
