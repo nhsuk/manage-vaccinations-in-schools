@@ -6,6 +6,7 @@
 #
 #  id                  :bigint           not null, primary key
 #  brand               :text             not null
+#  contains_gelatine   :boolean          not null
 #  discontinued        :boolean          default(FALSE), not null
 #  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
@@ -34,28 +35,6 @@
 describe Vaccine do
   describe "validations" do
     it { should validate_inclusion_of(:method).in_array(%w[injection nasal]) }
-  end
-
-  describe "#contains_gelatine?" do
-    subject { vaccine.contains_gelatine? }
-
-    context "with a nasal Flu vaccine" do
-      let(:vaccine) { build(:vaccine, :fluenz) }
-
-      it { should be(true) }
-    end
-
-    context "with an injected Flu vaccine" do
-      let(:vaccine) { build(:vaccine, :vaxigrip) }
-
-      it { should be(false) }
-    end
-
-    context "with an HPV vaccine" do
-      let(:vaccine) { build(:vaccine, :gardasil_9) }
-
-      it { should be(false) }
-    end
   end
 
   describe "#available_delivery_methods" do
@@ -109,6 +88,12 @@ describe Vaccine do
 
         it { should eq("884881000000109") }
       end
+    end
+
+    context "with an MMR vaccine" do
+      let(:vaccine) { build(:vaccine, :mmr) }
+
+      it { should eq("38598009") }
     end
   end
 end
