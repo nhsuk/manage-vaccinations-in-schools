@@ -36,9 +36,10 @@ class ConsentFormProgramme < ApplicationRecord
   delegate :flu?, :hpv?, :menacwy?, :td_ipv?, to: :programme
 
   def vaccines
-    vaccine_methods.flat_map do |method|
-      Vaccine.active.where(programme_id:, method:)
-    end
+    Vaccine
+      .active
+      .where(programme_id:, method: vaccine_methods)
+      .order(vaccine_method_order_sql, :id)
   end
 
   def human_enum_name(attribute)
@@ -48,4 +49,14 @@ class ConsentFormProgramme < ApplicationRecord
   private
 
   def requires_reason_for_refusal? = false
+
+  def vaccine_method_order_sql
+    node = Arel::Nodes::Case.new(Vaccine.arel_table[:method])
+
+    vaccine_methods.each_with_index do |method, i|
+      node = node.when(Vaccine.methods.fetch(method)).then(i)
+    end
+
+    node
+  end
 end
