@@ -27,9 +27,308 @@ describe SearchVaccinationRecordsInNHSJob do
     end
 
     it "returns only Immunization resources from the bundle" do
-      records = described_class.new.extract_vaccination_records(bundle)
+      records = described_class.new.send(:extract_vaccination_records, bundle)
       expect(records).to all(have_attributes(resourceType: "Immunization"))
       expect(records.size).to eq 2
+    end
+  end
+
+  describe "#deduplicate_vaccination_records" do
+    subject(:deduplicate) do
+      described_class.new.send(
+        :deduplicate_vaccination_records,
+        vaccination_records
+      )
+    end
+
+    shared_examples "handles duplicates" do
+      context "both primary source" do
+        let(:nhs_immunisations_api_primary_source) { true }
+
+        it "returns both records" do
+          expect(deduplicate).to contain_exactly(
+            first_vaccination_record,
+            second_vaccination_record
+          )
+        end
+      end
+
+      context "one primary source" do
+        let(:nhs_immunisations_api_primary_source) { false }
+
+        it "returns only the primary source record" do
+          expect(deduplicate).to contain_exactly(first_vaccination_record)
+        end
+      end
+
+      context "neither primary source" do
+        let(:nhs_immunisations_api_primary_source) { false }
+        let(:first_primary_source) { false }
+
+        it "returns both records" do
+          expect(deduplicate).to contain_exactly(
+            first_vaccination_record,
+            second_vaccination_record
+          )
+        end
+      end
+    end
+
+    let(:vaccination_records) do
+      [
+        first_vaccination_record,
+        second_vaccination_record,
+        third_vaccination_record
+      ].compact
+    end
+
+    let(:first_vaccination_record) do
+      create(
+        :vaccination_record,
+        programme:,
+        patient:,
+        nhs_immunisations_api_id: SecureRandom.uuid,
+        nhs_immunisations_api_primary_source: first_primary_source,
+        source: "nhs_immunisations_api",
+        performed_at:
+      )
+    end
+    let(:first_primary_source) { true }
+
+    let(:performed_at) { Time.zone.local(2025, 10, 10) }
+
+    let(:second_vaccination_record) { nil }
+
+    let(:third_vaccination_record) { nil }
+
+    context "with a single vaccination record" do
+      it "returns the record" do
+        expect(deduplicate).to eq [first_vaccination_record]
+      end
+    end
+
+    context "with two vaccination records with the same programme and performed_at" do
+      let(:second_vaccination_record) do
+        create(
+          :vaccination_record,
+          programme:,
+          patient:,
+          nhs_immunisations_api_id: SecureRandom.uuid,
+          nhs_immunisations_api_primary_source:,
+          source: "nhs_immunisations_api",
+          performed_at:
+        )
+      end
+
+      include_examples "handles duplicates"
+    end
+
+    context "with the same programme and performed_at on the same day" do
+      let(:second_vaccination_record) do
+        create(
+          :vaccination_record,
+          programme:,
+          patient:,
+          nhs_immunisations_api_id: SecureRandom.uuid,
+          nhs_immunisations_api_primary_source:,
+          source: "nhs_immunisations_api",
+          performed_at: Time.zone.local(2025, 10, 10, 12, 33, 44)
+        )
+      end
+
+      include_examples "handles duplicates"
+    end
+
+    context "with the same programme and different performed_at" do
+      let(:second_vaccination_record) do
+        create(
+          :vaccination_record,
+          programme:,
+          patient:,
+          nhs_immunisations_api_id: SecureRandom.uuid,
+          nhs_immunisations_api_primary_source: false,
+          source: "nhs_immunisations_api",
+          performed_at: Time.zone.local(2025, 10, 9)
+        )
+      end
+
+      it "returns both records" do
+        expect(deduplicate).to contain_exactly(
+          second_vaccination_record,
+          first_vaccination_record
+        )
+      end
+    end
+
+    context "with different programmes, same performed_at" do
+      let(:second_vaccination_record) do
+        create(
+          :vaccination_record,
+          programme: create(:programme, :hpv),
+          patient:,
+          nhs_immunisations_api_id: SecureRandom.uuid,
+          nhs_immunisations_api_primary_source: false,
+          source: "nhs_immunisations_api",
+          performed_at:
+        )
+      end
+
+      it "returns both records" do
+        expect(deduplicate).to contain_exactly(
+          first_vaccination_record,
+          second_vaccination_record
+        )
+      end
+    end
+
+    context "with three duplicate records" do
+      let(:second_vaccination_record) do
+        create(
+          :vaccination_record,
+          programme:,
+          patient:,
+          nhs_immunisations_api_id: SecureRandom.uuid,
+          nhs_immunisations_api_primary_source: second_primary_source,
+          source: "nhs_immunisations_api",
+          performed_at:
+        )
+      end
+
+      let(:third_vaccination_record) do
+        create(
+          :vaccination_record,
+          programme:,
+          patient:,
+          nhs_immunisations_api_id: SecureRandom.uuid,
+          nhs_immunisations_api_primary_source: third_primary_source,
+          source: "nhs_immunisations_api",
+          performed_at:
+        )
+      end
+
+      context "with one primary source" do
+        let(:second_primary_source) { false }
+        let(:third_primary_source) { false }
+
+        it "returns the first record only" do
+          expect(deduplicate).to contain_exactly(first_vaccination_record)
+        end
+      end
+
+      context "with two primary sources" do
+        let(:second_primary_source) { true }
+        let(:third_primary_source) { false }
+
+        it "returns the first and second records" do
+          expect(deduplicate).to contain_exactly(
+            first_vaccination_record,
+            second_vaccination_record
+          )
+        end
+      end
+
+      context "with three primary sources" do
+        let(:second_primary_source) { true }
+        let(:third_primary_source) { true }
+
+        it "returns all three records" do
+          expect(deduplicate).to contain_exactly(
+            first_vaccination_record,
+            second_vaccination_record,
+            third_vaccination_record
+          )
+        end
+      end
+    end
+
+    context "with a pair of duplicates and an unrelated record" do
+      shared_examples "contains the unrelated record" do
+        context "when the unrelated record is not primary" do
+          let(:third_primary_source) { false }
+
+          it "returns the unrelated record" do
+            expect(deduplicate).to include(third_vaccination_record)
+          end
+        end
+
+        context "when the unrelated record is primary" do
+          let(:third_primary_source) { true }
+
+          it "returns the unrelated record" do
+            expect(deduplicate).to include(third_vaccination_record)
+          end
+        end
+      end
+
+      let(:second_vaccination_record) do
+        create(
+          :vaccination_record,
+          programme:,
+          patient:,
+          nhs_immunisations_api_id: SecureRandom.uuid,
+          nhs_immunisations_api_primary_source: second_primary_source,
+          source: "nhs_immunisations_api",
+          performed_at:
+        )
+      end
+
+      let(:third_vaccination_record) do
+        create(
+          :vaccination_record,
+          programme: create(:programme, :hpv),
+          patient:,
+          nhs_immunisations_api_id: SecureRandom.uuid,
+          nhs_immunisations_api_primary_source: third_primary_source,
+          source: "nhs_immunisations_api",
+          performed_at: Time.zone.local(2025, 10, 9)
+        )
+      end
+      let(:third_primary_source) { true }
+
+      context "both primary source" do
+        let(:second_primary_source) { true }
+
+        it "returns both records" do
+          expect(deduplicate).to include(
+            first_vaccination_record,
+            second_vaccination_record
+          )
+        end
+
+        include_examples "contains the unrelated record"
+      end
+
+      context "one primary source" do
+        let(:second_primary_source) { false }
+
+        it "returns only the primary source record" do
+          expect(deduplicate).to include(first_vaccination_record)
+        end
+
+        include_examples "contains the unrelated record"
+      end
+
+      context "neither primary source" do
+        let(:second_primary_source) { false }
+        let(:first_primary_source) { false }
+
+        it "returns both records" do
+          expect(deduplicate).to include(
+            first_vaccination_record,
+            second_vaccination_record
+          )
+        end
+
+        include_examples "contains the unrelated record"
+      end
+    end
+
+    context "with no vaccination_records" do
+      let(:vaccination_records) { [] }
+
+      it "returns an empty array" do
+        expect(deduplicate).to eq([])
+      end
     end
   end
 
@@ -83,7 +382,7 @@ describe SearchVaccinationRecordsInNHSJob do
     end
     let!(:existing_records) do
       fhir_records =
-        described_class.new.extract_vaccination_records(existing_bundle)
+        described_class.new.send(:extract_vaccination_records, existing_bundle)
       mapped_records =
         fhir_records.map do |fhir_record|
           mapped =
@@ -222,6 +521,21 @@ describe SearchVaccinationRecordsInNHSJob do
 
       include_examples "doesn't send discovery comms"
       include_examples "calls StatusUpdater"
+    end
+
+    context "with duplicates" do
+      context "with a mavis record in the search results" do
+        let(:body) { file_fixture("fhir/search_response_duplicate.json").read }
+
+        it "only adds 1 vaccination record" do
+          expect { perform }.to change { patient.vaccination_records.count }.by(
+            1
+          )
+        end
+
+        include_examples "sends discovery comms if required once"
+        include_examples "calls StatusUpdater"
+      end
     end
   end
 end

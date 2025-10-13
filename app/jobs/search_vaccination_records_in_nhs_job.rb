@@ -33,6 +33,9 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
             )
           end
         incoming_vaccination_records = incoming_vaccination_records.compact
+
+        incoming_vaccination_records =
+          deduplicate_vaccination_records(incoming_vaccination_records)
       end
 
       existing_vaccination_records =
@@ -72,10 +75,38 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     end
   end
 
+  private
+
   def extract_vaccination_records(fhir_bundle)
     fhir_bundle
       .entry
       .map { it.resource if it.resource.resourceType == "Immunization" }
       .compact
+  end
+
+  def deduplicate_vaccination_records(vaccination_records)
+    grouped_vaccination_records =
+      vaccination_records.group_by do
+        [it.performed_at.to_date, it.programme_id]
+      end
+
+    deduplicated_vaccination_records = []
+
+    grouped_vaccination_records.each_value do |records|
+      if records.size == 1
+        deduplicated_vaccination_records << records.first
+      else
+        deduplicated_vaccination_records +=
+          if records.none?(&:nhs_immunisations_api_primary_source)
+            # If no records are primary sources, we keep all of them
+            records
+          else
+            # Otherwise prefer primary sources
+            records.select(&:nhs_immunisations_api_primary_source)
+          end
+      end
+    end
+
+    deduplicated_vaccination_records
   end
 end
