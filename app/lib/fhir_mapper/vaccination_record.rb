@@ -240,16 +240,18 @@ module FHIRMapper
           it.system == "http://snomed.info/sct"
         end
 
-      vaccine_snomed_code = fhir_vaccine.code
-      vaccine_description = fhir_vaccine.display.presence
+      vaccine_snomed_code = fhir_vaccine&.code
+      vaccine_description = fhir_vaccine&.display.presence
 
       batch_number = fhir_record.lotNumber
       batch_expiry = fhir_record.expirationDate
 
-      "SNOMED product code: #{vaccine_snomed_code}\n" \
-        "#{"SNOMED description: #{vaccine_description}\n" if vaccine_description}" \
-        "Batch number: #{batch_number}\n" \
-        "Batch expiry: #{batch_expiry}"
+      [
+        ("SNOMED product code: #{vaccine_snomed_code}" if vaccine_snomed_code),
+        ("SNOMED description: #{vaccine_description}" if vaccine_description),
+        ("Batch number: #{batch_number}" if batch_number),
+        ("Batch expiry: #{batch_expiry}" if batch_expiry)
+      ].compact.join("\n").presence
     end
 
     def fhir_user_performer(reference_id:)

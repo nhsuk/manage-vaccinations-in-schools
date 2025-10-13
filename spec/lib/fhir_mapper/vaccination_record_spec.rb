@@ -415,6 +415,34 @@ describe FHIRMapper::VaccinationRecord do
       end
     end
 
+    context "with a record that has an null vaccine" do
+      let(:fhir_immunization) do
+        FHIR.from_contents(file_fixture("fhir/fhir_record_gp.json").read)
+      end
+
+      include_examples "a mapped vaccination record (common fields)"
+
+      it do
+        expect(Sentry).to receive(:capture_exception).with(
+          an_instance_of(FHIRMapper::VaccinationRecord::UnknownVaccine)
+        )
+
+        record
+      end
+
+      its(:vaccine) { should be_nil }
+      its(:batch) { should be_nil }
+      its(:performed_at) { should eq Time.parse("2023-12-07T00:00:00+00:00") }
+      its(:delivery_method) { should be_nil }
+      its(:delivery_site) { should be_nil }
+      its(:full_dose) { should be true }
+      its(:location_name) { should eq "B12345" }
+      its(:outcome) { should eq "administered" }
+      its(:performed_ods_code) { should eq "B12345" }
+
+      its(:notes) { should be_nil }
+    end
+
     context "with a record that has an unknown location" do
       let(:fhir_immunization) do
         FHIR.from_contents(

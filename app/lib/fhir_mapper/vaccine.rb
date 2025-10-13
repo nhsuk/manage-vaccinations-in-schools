@@ -31,7 +31,7 @@ module FHIRMapper
           .vaccineCode
           .coding
           .find { it.system == "http://snomed.info/sct" }
-          .code
+          &.code
       ::Vaccine.find_by(snomed_product_code:)
     end
 
