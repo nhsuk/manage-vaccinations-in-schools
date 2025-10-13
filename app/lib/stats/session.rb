@@ -58,6 +58,7 @@ class Stats::Session
   def eligible_patients
     session
       .patients
+      .not_deceased
       .appear_in_programmes([programme], session:)
       .eligible_for_programmes(
         [programme],

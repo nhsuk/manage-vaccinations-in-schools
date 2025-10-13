@@ -81,5 +81,22 @@ describe Stats::Session do
         )
       end
     end
+
+    context "when patient is deceased" do
+      let(:patient) { create(:patient, :deceased, session:, year_group: 9) }
+
+      before do
+        create(
+          :patient_consent_status,
+          :given_injection_only,
+          patient:,
+          programme:
+        )
+      end
+
+      it "doesn't include them in eligible children" do
+        expect(stats).to include(eligible_children: 0)
+      end
+    end
   end
 end
