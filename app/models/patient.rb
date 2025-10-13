@@ -328,6 +328,39 @@ class Patient < ApplicationRecord
           end
         end
 
+  scope :eligible_for_programmes,
+        ->(programmes, location:, academic_year:) do
+          # We exclude patients who were vaccinated in a previous
+          # academic year, or vaccinated at a different location.
+
+          not_eligible_criteria =
+            programmes.map do |programme|
+              vaccinated_statuses =
+                Patient::VaccinationStatus
+                  .select("1")
+                  .where("patient_id = patients.id")
+                  .where(programme:)
+                  .vaccinated
+
+              scope =
+                vaccinated_statuses
+                  .where(academic_year:)
+                  .where.not(latest_location: location)
+
+              unless programme.seasonal?
+                scope =
+                  scope.or(
+                    vaccinated_statuses.where(academic_year: academic_year - 1)
+                  )
+              end
+
+              scope
+            end
+
+          # TODO: Handle multiple programmes.
+          where.not(not_eligible_criteria.first.arel.exists)
+        end
+
   validates :given_name, :family_name, :date_of_birth, presence: true
 
   validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }
@@ -443,7 +476,7 @@ class Patient < ApplicationRecord
       INNER JOIN patient_locations
       ON patient_locations.patient_id = #{id}
       AND patient_locations.location_id = sessions.location_id
-      AND patient_locations.academic_year = sessions.academic_year 
+      AND patient_locations.academic_year = sessions.academic_year
     SQL
   end
 
