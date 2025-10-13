@@ -64,6 +64,7 @@ module FHIRMapper
 
       attrs[:nhs_immunisations_api_id] = fhir_record.id
       attrs[:nhs_immunisations_api_synced_at] = Time.current
+      attrs[:nhs_immunisations_api_primary_source] = fhir_record.primarySource
 
       attrs[:programme] = programme_from_fhir(fhir_record)
 

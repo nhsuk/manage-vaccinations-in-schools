@@ -347,6 +347,7 @@ describe FHIRMapper::VaccinationRecord do
       its(:location) { should have_attributes(urn: "100006") }
       its(:location_name) { should be_nil }
       its(:performed_ods_code) { should eq "B0C4P" }
+      its(:nhs_immunisations_api_primary_source) { should be true }
     end
 
     context "with a record with not full dose" do
@@ -374,6 +375,7 @@ describe FHIRMapper::VaccinationRecord do
       its(:location) { should have_attributes(urn: "100006") }
       its(:location_name) { should be_nil }
       its(:performed_ods_code) { should eq "B0C4P" }
+      its(:nhs_immunisations_api_primary_source) { should be true }
     end
 
     context "with a record with an unexpected dose unit" do
@@ -428,6 +430,7 @@ describe FHIRMapper::VaccinationRecord do
       its(:location) { should have_attributes(urn: "100006") }
       its(:location_name) { should be_nil }
       its(:performed_ods_code) { should eq "B0C4P" }
+      its(:nhs_immunisations_api_primary_source) { should be true }
     end
 
     context "with a record that has an unknown vaccine" do
@@ -448,6 +451,7 @@ describe FHIRMapper::VaccinationRecord do
       its(:location_name) { should eq "X99999" }
       its(:outcome) { should eq "administered" }
       its(:performed_ods_code) { should eq "B0C4P" }
+      its(:nhs_immunisations_api_primary_source) { should be true }
 
       its(:notes) do
         should include(
@@ -459,7 +463,7 @@ describe FHIRMapper::VaccinationRecord do
       end
     end
 
-    context "with a record that has an null vaccine (minimum record from real GP)" do
+    context "with a record from a GP which is very sparse" do
       let(:fhir_immunization) do
         FHIR.from_contents(file_fixture("fhir/fhir_record_gp.json").read)
       end
@@ -475,6 +479,7 @@ describe FHIRMapper::VaccinationRecord do
       its(:location_name) { should eq "B12345" }
       its(:outcome) { should eq "administered" }
       its(:performed_ods_code) { should eq "B12345" }
+      its(:nhs_immunisations_api_primary_source) { should be false }
 
       its(:notes) { should be_nil }
     end
@@ -494,6 +499,7 @@ describe FHIRMapper::VaccinationRecord do
       its(:full_dose) { should be true }
       its(:outcome) { should eq "administered" }
       its(:performed_ods_code) { should eq "A9A5A" }
+      its(:nhs_immunisations_api_primary_source) { should be true }
 
       its(:location) { should be_nil }
       its(:location_name) { should eq "X99999" }
