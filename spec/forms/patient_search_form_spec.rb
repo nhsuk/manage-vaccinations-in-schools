@@ -84,7 +84,9 @@ describe PatientSearchForm do
       let(:year_groups) { nil }
 
       let(:programmes) { [create(:programme, :flu)] }
-      let(:location) { create(:school, programmes:, year_groups: [11, 12]) }
+      let(:location) do
+        create(:school, programmes:, gias_year_groups: [11, 12])
+      end
       let(:session_for_patients) { create(:session, location:, programmes:) }
 
       let!(:aged_out_patient) do

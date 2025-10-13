@@ -40,7 +40,13 @@ class Programme < ApplicationRecord
   scope :can_search_in_immunisations_api, -> { flu }
 
   enum :type,
-       { flu: "flu", hpv: "hpv", menacwy: "menacwy", td_ipv: "td_ipv" },
+       {
+         flu: "flu",
+         hpv: "hpv",
+         menacwy: "menacwy",
+         td_ipv: "td_ipv",
+         mmr: "mmr"
+       },
        validate: true
 
   delegate :fhir_target_disease_coding, to: :fhir_mapper
@@ -55,12 +61,15 @@ class Programme < ApplicationRecord
 
   def seasonal? = flu?
 
+  def catch_up_only? = mmr?
+
   def supports_delegation? = flu?
 
   DEFAULT_YEAR_GROUPS_BY_TYPE = {
     "flu" => (0..11).to_a,
     "hpv" => (8..11).to_a,
     "menacwy" => (9..11).to_a,
+    "mmr" => (0..11).to_a,
     "td_ipv" => (9..11).to_a
   }.freeze
 
@@ -92,6 +101,7 @@ class Programme < ApplicationRecord
     "flu" => 1,
     "hpv" => 1,
     "menacwy" => 1,
+    "mmr" => 2,
     "td_ipv" => 5
   }.freeze
 
@@ -107,6 +117,7 @@ class Programme < ApplicationRecord
     "flu" => 2,
     "hpv" => 3,
     "menacwy" => 3,
+    "mmr" => 2,
     "td_ipv" => 5
   }.freeze
 
@@ -118,6 +129,7 @@ class Programme < ApplicationRecord
     "flu" => %w[Flu],
     "hpv" => %w[HPV],
     "menacwy" => %w[ACWYX4 MenACWY],
+    "mmr" => %w[MMR],
     "td_ipv" => %w[3-in-1 Td/IPV]
   }.freeze
 

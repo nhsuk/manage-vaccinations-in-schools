@@ -260,6 +260,7 @@ en:
           flu: Flu
           hpv: HPV
           menacwy: MenACWY
+          mmr: MMR
           td_ipv: Td/IPV
       school_move:
         sources:
@@ -614,6 +615,9 @@ en:
         other: Why are they refusing to give consent?
         personal_choice: Why are they refusing to give consent?
         will_be_vaccinated_elsewhere: Where will their child get their vaccination?
+  draft_sessions:
+    dates_check:
+      title: Have you imported historical vaccination records for %{programmes}?
   import_duplicate_form:
     options:
       label:

@@ -159,6 +159,8 @@ describe Patient::TriageStatus do
           create(:triage, triage_trait, patient:, programme:) if triage_trait
         end
 
+        let(:programme) { create(:programme, :hpv) }
+
         it { should be(:not_required) }
       end
 
@@ -239,6 +241,8 @@ describe Patient::TriageStatus do
         create(:triage, :ready_to_vaccinate, patient:, programme:)
         create(:vaccination_record, patient:, programme:)
       end
+
+      let(:programme) { create(:programme, :hpv) }
 
       it { should be_nil }
     end

@@ -5,7 +5,7 @@
     "@hotwired/turbo-rails": "^8.0.18",
     "accessible-autocomplete": "^3.0.1",
     "esbuild": "^0.25.10",
-    "govuk-frontend": "^5.12.0",
+    "govuk-frontend": "^5.13.0",
     "idb": "^8.0.3",
     "nhsuk-frontend": "^10.0.0",
     "sass": "^1.93.2"
@@ -13,13 +13,9 @@
   "scripts": {
     "build:css": "sass ./app/assets/stylesheets:./app/assets/builds --no-source-map --pkg-importer=node --quiet-deps --style compressed",
     "build": "esbuild ./app/assets/javascripts/*.js --bundle --outdir=app/assets/builds --public-path=assets --minify",
-    "test:e2e": "playwright test",
-    "test:load": "artillery run tests/load.yml",
     "test": "jest"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.10.2",
-    "@playwright/test": "^1.56.0",
     "@prettier/plugin-ruby": "^4.0.4",
     "@types/jest": "^30.0.0",
     "esbuild-jest": "^0.5.0",
@@ -28,15 +24,13 @@
     "jest-environment-jsdom": "^30.2.0",
     "jest-fetch-mock": "^3.0.3",
     "officecrypto-tool": "^0.0.19",
-    "playwright-core": "^1.56.0",
     "prettier": "^3.6.2"
   },
   "jest": {
     "collectCoverage": true,
     "testPathIgnorePatterns": [
       "app/assets/builds/",
-      "node_modules/",
-      "tests"
+      "node_modules/"
     ],
     "transformIgnorePatterns": [],
     "testEnvironment": "jsdom",

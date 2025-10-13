@@ -11,6 +11,13 @@ class ProgrammeYearGroups
     @year_groups[programme.id] ||= year_groups_for_programme(programme)
   end
 
+  def is_catch_up?(year_group, programme:)
+    return nil if programme.seasonal?
+    return true if programme.catch_up_only?
+    return nil if self[programme].empty?
+    self[programme].first != year_group
+  end
+
   private
 
   attr_reader :location_programme_year_groups

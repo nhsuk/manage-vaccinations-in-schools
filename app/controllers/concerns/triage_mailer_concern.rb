@@ -8,7 +8,12 @@ module TriageMailerConcern
       raise "Consent is for a different programme."
     end
 
-    return unless patient.send_notifications?
+    unless patient.send_notifications?(
+             team: session.team,
+             send_to_archived: true
+           )
+      return
+    end
     return if consent.via_self_consent?
 
     params = { consent:, session:, sent_by: current_user }

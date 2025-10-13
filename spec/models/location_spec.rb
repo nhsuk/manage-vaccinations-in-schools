@@ -11,6 +11,7 @@
 #  address_town              :text
 #  gias_establishment_number :integer
 #  gias_local_authority_code :integer
+#  gias_year_groups          :integer          default([]), not null, is an Array
 #  name                      :text             not null
 #  ods_code                  :string
 #  site                      :string
@@ -19,7 +20,6 @@
 #  type                      :integer          not null
 #  url                       :text
 #  urn                       :string
-#  year_groups               :integer          default([]), not null, is an Array
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  subteam_id                :bigint
@@ -220,6 +220,7 @@ describe Location do
           "address_town" => location.address_town,
           "gias_establishment_number" => nil,
           "gias_local_authority_code" => nil,
+          "gias_year_groups" => [],
           "id" => location.id,
           "is_attached_to_team" => false,
           "name" => location.name,
@@ -228,8 +229,7 @@ describe Location do
           "status" => "unknown",
           "type" => "community_clinic",
           "url" => location.url,
-          "urn" => nil,
-          "year_groups" => []
+          "urn" => nil
         }
       )
     end
@@ -250,7 +250,7 @@ describe Location do
     let(:academic_year) { AcademicYear.pending }
 
     context "when the location has no year groups" do
-      let(:location) { create(:school, year_groups: []) }
+      let(:location) { create(:school, gias_year_groups: []) }
 
       it "doesn't create any programme year groups" do
         expect { create_default_programme_year_groups! }.not_to change(
@@ -261,7 +261,7 @@ describe Location do
     end
 
     context "when the location has fewer year groups than the default" do
-      let(:location) { create(:school, year_groups: (0..3).to_a) }
+      let(:location) { create(:school, gias_year_groups: (0..3).to_a) }
 
       it "creates only suitable year groups" do
         expect { create_default_programme_year_groups! }.to change(
@@ -276,7 +276,7 @@ describe Location do
     end
 
     context "when the location has more year groups than the default" do
-      let(:location) { create(:school, year_groups: (-1..14).to_a) }
+      let(:location) { create(:school, gias_year_groups: (-1..14).to_a) }
 
       it "creates only suitable year groups" do
         expect { create_default_programme_year_groups! }.to change(

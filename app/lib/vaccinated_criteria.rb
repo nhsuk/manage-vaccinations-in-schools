@@ -8,33 +8,48 @@ class VaccinatedCriteria
     @vaccination_records = vaccination_records
   end
 
-  def call
-    vaccination_records_for_programme =
+  def vaccinated? = !vaccination_record.nil?
+
+  delegate :location_id, to: :vaccination_record, allow_nil: true
+
+  private
+
+  attr_reader :programme, :academic_year, :patient, :vaccination_records
+
+  def relevant_vaccination_records
+    @relevant_vaccination_records ||=
       vaccination_records.select do
-        it.programme_id == programme.id &&
+        it.patient_id == patient.id && it.programme_id == programme.id &&
           if programme.seasonal?
             it.academic_year == academic_year
           else
             it.academic_year <= academic_year
           end
       end
+  end
 
+  def vaccination_record
     if programme.seasonal?
-      vaccination_records_for_programme.any? do
-        it.administered? || it.already_had?
-      end
+      relevant_vaccination_records.find { it.administered? || it.already_had? }
+    elsif programme.mmr?
+      nil # TODO: Implement vaccination criteria
     else
-      return true if vaccination_records_for_programme.any?(&:already_had?)
+      if (
+           already_had_record =
+             relevant_vaccination_records.find(&:already_had?)
+         )
+        return already_had_record
+      end
 
       administered_records =
-        vaccination_records_for_programme.select(&:administered?)
+        relevant_vaccination_records.select(&:administered?)
 
       if programme.hpv?
-        administered_records.any?
+        administered_records.first
       elsif programme.menacwy?
-        administered_records.any? { patient.age(now: it.performed_at) >= 10 }
+        administered_records.find { patient.age(now: it.performed_at) >= 10 }
       elsif programme.td_ipv?
-        administered_records.any? do
+        administered_records.find do
           (
             it.dose_sequence == programme.vaccinated_dose_sequence ||
               (it.dose_sequence.nil? && it.recorded_in_service?)
@@ -45,12 +60,4 @@ class VaccinatedCriteria
       end
     end
   end
-
-  def self.call(...) = new(...).call
-
-  private_class_method :new
-
-  private
-
-  attr_reader :programme, :academic_year, :patient, :vaccination_records
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_01_062016) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -441,6 +441,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
     t.integer "status", default: 0, null: false
     t.string "site"
     t.string "systm_one_code"
+    t.integer "gias_year_groups", default: [], null: false, array: true
     t.index ["ods_code"], name: "index_locations_on_ods_code", unique: true
     t.index ["subteam_id"], name: "index_locations_on_subteam_id"
     t.index ["systm_one_code"], name: "index_locations_on_systm_one_code", unique: true
@@ -596,6 +597,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
     t.integer "academic_year", null: false
     t.integer "latest_session_status", default: 0, null: false
     t.datetime "status_changed_at", null: false
+    t.bigint "latest_location_id"
+    t.index ["latest_location_id"], name: "index_patient_vaccination_statuses_on_latest_location_id"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_fc0b47b743", unique: true
     t.index ["status"], name: "index_patient_vaccination_statuses_on_status"
   end
@@ -1053,6 +1056,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
   add_foreign_key "patient_specific_directions", "vaccines"
   add_foreign_key "patient_triage_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_triage_statuses", "programmes"
+  add_foreign_key "patient_vaccination_statuses", "locations", column: "latest_location_id"
   add_foreign_key "patient_vaccination_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_vaccination_statuses", "programmes"
   add_foreign_key "patients", "locations", column: "gp_practice_id"
@@ -1092,4 +1096,117 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_30_072038) do
   add_foreign_key "vaccination_records", "users", column: "supplied_by_user_id"
   add_foreign_key "vaccination_records", "vaccines"
   add_foreign_key "vaccines", "programmes"
+
+  create_view "reporting_api_patient_programme_statuses", materialized: true, sql_definition: <<-SQL
+      SELECT DISTINCT ON (p.id, prog.id, t.id, s.academic_year) concat(p.id, '-', prog.id, '-', t.id, '-', s.academic_year) AS id,
+      p.id AS patient_id,
+      p.gender_code AS patient_gender_code,
+      prog.id AS programme_id,
+      prog.type AS programme_type,
+      s.academic_year,
+      t.id AS team_id,
+      t.name AS team_name,
+      COALESCE(patient_school_org.id, patient_location_org.id) AS organisation_id,
+      COALESCE(school_la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
+      COALESCE(la.mhclg_code, ''::character varying) AS patient_local_authority_code,
+      school.id AS patient_school_id,
+      school.name AS patient_school_name,
+          CASE
+              WHEN (p.birth_academic_year IS NOT NULL) THEN ((s.academic_year - p.birth_academic_year) - 5)
+              ELSE NULL::integer
+          END AS patient_year_group,
+          CASE
+              WHEN (vr_any.patient_id IS NOT NULL) THEN true
+              ELSE false
+          END AS has_any_vaccination,
+          CASE
+              WHEN (vr_sais_current.patient_id IS NOT NULL) THEN true
+              ELSE false
+          END AS vaccinated_by_sais_current_year,
+          CASE
+              WHEN ((vr_elsewhere_declared.patient_id IS NOT NULL) AND (vr_elsewhere_recorded.patient_id IS NULL)) THEN true
+              ELSE false
+          END AS vaccinated_elsewhere_declared_current_year,
+          CASE
+              WHEN (vr_elsewhere_recorded.patient_id IS NOT NULL) THEN true
+              ELSE false
+          END AS vaccinated_elsewhere_recorded_current_year,
+          CASE
+              WHEN (vr_previous.patient_id IS NOT NULL) THEN true
+              ELSE false
+          END AS vaccinated_in_previous_years,
+      COALESCE(vr_counts.sais_vaccinations_count, (0)::bigint) AS sais_vaccinations_count,
+      vr_recent.most_recent_vaccination_month,
+      vr_recent.most_recent_vaccination_year
+     FROM (((((((((((((((((((((((patients p
+       JOIN patient_locations pl ON ((pl.patient_id = p.id)))
+       JOIN sessions s ON (((s.location_id = pl.location_id) AND (s.academic_year = pl.academic_year))))
+       JOIN teams t ON ((t.id = s.team_id)))
+       JOIN session_programmes sp ON ((sp.session_id = s.id)))
+       JOIN programmes prog ON ((prog.id = sp.programme_id)))
+       LEFT JOIN locations school ON ((school.id = p.school_id)))
+       LEFT JOIN subteams school_subteam ON ((school_subteam.id = school.subteam_id)))
+       LEFT JOIN teams school_team ON ((school_team.id = school_subteam.team_id)))
+       LEFT JOIN organisations patient_school_org ON ((patient_school_org.id = school_team.organisation_id)))
+       LEFT JOIN local_authorities school_la ON ((school_la.gias_code = school.gias_local_authority_code)))
+       LEFT JOIN locations current_location ON ((current_location.id = pl.location_id)))
+       LEFT JOIN subteams current_location_subteam ON ((current_location_subteam.id = current_location.subteam_id)))
+       LEFT JOIN teams current_location_team ON ((current_location_team.id = current_location_subteam.team_id)))
+       LEFT JOIN organisations patient_location_org ON ((patient_location_org.id = current_location_team.organisation_id)))
+       LEFT JOIN local_authority_postcodes lap ON (((lap.value)::text = (p.address_postcode)::text)))
+       LEFT JOIN local_authorities la ON (((la.gss_code)::text = (lap.gss_code)::text)))
+       LEFT JOIN ( SELECT DISTINCT vr.patient_id,
+              vr.programme_id,
+              vr_s.academic_year
+             FROM (vaccination_records vr
+               JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
+            WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = ANY (ARRAY[0, 4])))) vr_any ON (((vr_any.patient_id = p.id) AND (vr_any.programme_id = prog.id) AND (vr_any.academic_year = s.academic_year))))
+       LEFT JOIN ( SELECT DISTINCT vr.patient_id,
+              vr.programme_id,
+              vr_s.academic_year
+             FROM (vaccination_records vr
+               JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
+            WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 0))) vr_sais_current ON (((vr_sais_current.patient_id = p.id) AND (vr_sais_current.programme_id = prog.id) AND (vr_sais_current.academic_year = s.academic_year))))
+       LEFT JOIN ( SELECT DISTINCT vr.patient_id,
+              vr.programme_id,
+              COALESCE((vr_s.academic_year)::numeric, EXTRACT(year FROM vr.performed_at)) AS academic_year
+             FROM (vaccination_records vr
+               LEFT JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
+            WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 4))) vr_elsewhere_declared ON (((vr_elsewhere_declared.patient_id = p.id) AND (vr_elsewhere_declared.programme_id = prog.id) AND (vr_elsewhere_declared.academic_year = (s.academic_year)::numeric))))
+       LEFT JOIN ( SELECT DISTINCT vr.patient_id,
+              vr.programme_id,
+              EXTRACT(year FROM vr.performed_at) AS academic_year
+             FROM vaccination_records vr
+            WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 0) AND (vr.source = ANY (ARRAY[1, 2])))) vr_elsewhere_recorded ON (((vr_elsewhere_recorded.patient_id = p.id) AND (vr_elsewhere_recorded.programme_id = prog.id) AND (vr_elsewhere_recorded.academic_year = (s.academic_year)::numeric))))
+       LEFT JOIN ( SELECT DISTINCT vr.patient_id,
+              vr.programme_id,
+              vr_s.academic_year
+             FROM (vaccination_records vr
+               JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
+            WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = ANY (ARRAY[0, 4])))) vr_previous ON (((vr_previous.patient_id = p.id) AND (vr_previous.programme_id = prog.id) AND (vr_previous.academic_year < s.academic_year))))
+       LEFT JOIN ( SELECT vr.patient_id,
+              vr.programme_id,
+              count(*) AS sais_vaccinations_count
+             FROM vaccination_records vr
+            WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 0))
+            GROUP BY vr.patient_id, vr.programme_id) vr_counts ON (((vr_counts.patient_id = p.id) AND (vr_counts.programme_id = prog.id))))
+       LEFT JOIN ( SELECT vr.patient_id,
+              vr.programme_id,
+              vr_s.team_id,
+              EXTRACT(month FROM max(vr.performed_at)) AS most_recent_vaccination_month,
+              EXTRACT(year FROM max(vr.performed_at)) AS most_recent_vaccination_year
+             FROM (vaccination_records vr
+               JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
+            WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 0))
+            GROUP BY vr.patient_id, vr.programme_id, vr_s.team_id) vr_recent ON (((vr_recent.patient_id = p.id) AND (vr_recent.programme_id = prog.id) AND (vr_recent.team_id = t.id))))
+    WHERE ((p.invalidated_at IS NULL) AND (p.restricted_at IS NULL))
+    ORDER BY p.id, prog.id, t.id, s.academic_year, patient_school_org.id;
+  SQL
+  add_index "reporting_api_patient_programme_statuses", ["academic_year", "programme_type"], name: "ix_rapi_pps_year_prog_type"
+  add_index "reporting_api_patient_programme_statuses", ["id"], name: "ix_rapi_pps_id", unique: true
+  add_index "reporting_api_patient_programme_statuses", ["organisation_id", "academic_year", "programme_type"], name: "ix_rapi_pps_org_year_prog"
+  add_index "reporting_api_patient_programme_statuses", ["patient_school_local_authority_code", "programme_type"], name: "ix_rapi_pps_school_la_prog"
+  add_index "reporting_api_patient_programme_statuses", ["programme_id", "team_id", "academic_year"], name: "ix_rapi_pps_prog_team_year"
+  add_index "reporting_api_patient_programme_statuses", ["team_id", "academic_year"], name: "ix_rapi_pps_team_year"
+
 end

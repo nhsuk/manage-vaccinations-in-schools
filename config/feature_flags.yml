@@ -18,6 +18,8 @@ import_low_pds_match_rate: Prevent processing uploads with a low pds match rate.
 
 ops_tools: Enable the operational support tools; timeline and graph.
 
+pds_cascading_search: Enable cascading PDS searches for patients without an NHS number.
+
 pds_lookup_during_import: Perform PDS lookups as part of the patient import
   processing.
 

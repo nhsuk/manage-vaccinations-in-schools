@@ -11,6 +11,7 @@
 #  address_town              :text
 #  gias_establishment_number :integer
 #  gias_local_authority_code :integer
+#  gias_year_groups          :integer          default([]), not null, is an Array
 #  name                      :text             not null
 #  ods_code                  :string
 #  site                      :string
@@ -19,7 +20,6 @@
 #  type                      :integer          not null
 #  url                       :text
 #  urn                       :string
-#  year_groups               :integer          default([]), not null, is an Array
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  subteam_id                :bigint
@@ -42,6 +42,7 @@ class Location < ApplicationRecord
   include ODSCodeConcern
 
   self.inheritance_column = nil
+  self.ignored_columns = %i[year_groups]
 
   audited associated_with: :subteam
   has_associated_audits
@@ -158,7 +159,7 @@ class Location < ApplicationRecord
       rows =
         programmes.flat_map do |programme|
           programme.default_year_groups.filter_map do |year_group|
-            if year_group.in?(year_groups)
+            if year_group.in?(gias_year_groups)
               [id, academic_year, programme.id, year_group]
             end
           end

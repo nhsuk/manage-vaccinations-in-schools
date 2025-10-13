@@ -21,7 +21,8 @@ describe SendManualSchoolConsentRemindersJob do
   let(:today) { dates.first - 1.week }
   let(:team) { create(:team, programmes:) }
   let(:location) { create(:school, team:) }
-  let(:patient) { create(:patient, team:) }
+  let(:parents) { create_list(:parent, 2) }
+  let(:patient) { create(:patient, team:, parents:) }
   let(:user) { create(:user, team:) }
 
   let(:dates) { [Date.new(2024, 1, 12), Date.new(2024, 1, 15)] }
@@ -90,11 +91,39 @@ describe SendManualSchoolConsentRemindersJob do
     end
   end
 
-  context "when the patient has opted out of notifications" do
-    before { patient.update(restricted_at: Time.current) }
+  context "if the patient is deceased" do
+    let(:patient) { create(:patient, :deceased, parents:) }
 
-    it "does not create a notification" do
-      expect { perform_now }.not_to change(ConsentNotification, :count)
+    it "doesn't send any notifications" do
+      expect(SessionNotification).not_to receive(:create_and_send!)
+      perform_now
+    end
+  end
+
+  context "if the patient is invalid" do
+    let(:patient) { create(:patient, :invalidated, parents:) }
+
+    it "doesn't send any notifications" do
+      expect(SessionNotification).not_to receive(:create_and_send!)
+      perform_now
+    end
+  end
+
+  context "if the patient is restricted" do
+    let(:patient) { create(:patient, :restricted, parents:) }
+
+    it "doesn't send any notifications" do
+      expect(SessionNotification).not_to receive(:create_and_send!)
+      perform_now
+    end
+  end
+
+  context "if the patient is archived" do
+    let(:patient) { create(:patient, :archived, parents:, team:) }
+
+    it "doesn't send any notifications" do
+      expect(SessionNotification).not_to receive(:create_and_send!)
+      perform_now
     end
   end
 end

@@ -195,34 +195,7 @@ To run the JS unit tests:
 yarn test
 ```
 
-To run the Playwright end-to-end tests use:
-
-```shell
-yarn test:e2e
-```
-
-To [generate tests interactively by clicking in a live browser](https://playwright.dev/docs/codegen):
-
-```shell
-yarn playwright codegen http://localhost:4000
-```
-
-#### Load testing
-
-Install [artillery](https://www.artillery.io):
-
-```shell
-yarn global add artillery
-```
-
-We don't package it alongside the other devDependencies because it's quite heavy
-and used infrequently.
-
-To run the load tests:
-
-```shell
-USERNAME=username PASSWORD=password SESSION=slug artillery run tests/load.yml --target=http://test.mavistesting.com
-```
+E2E, performance, security and accessibility tests can be found in the [Mavis testing respository](https://github.com/NHSDigital/manage-vaccinations-in-schools-testing).
 
 ### Example programmes
 

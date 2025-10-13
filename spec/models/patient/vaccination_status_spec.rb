@@ -9,16 +9,19 @@
 #  latest_session_status :integer          default("none_yet"), not null
 #  status                :integer          default("none_yet"), not null
 #  status_changed_at     :datetime         not null
+#  latest_location_id    :bigint
 #  patient_id            :bigint           not null
 #  programme_id          :bigint           not null
 #
 # Indexes
 #
-#  idx_on_patient_id_programme_id_academic_year_fc0b47b743  (patient_id,programme_id,academic_year) UNIQUE
-#  index_patient_vaccination_statuses_on_status             (status)
+#  idx_on_patient_id_programme_id_academic_year_fc0b47b743   (patient_id,programme_id,academic_year) UNIQUE
+#  index_patient_vaccination_statuses_on_latest_location_id  (latest_location_id)
+#  index_patient_vaccination_statuses_on_status              (status)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (latest_location_id => locations.id)
 #  fk_rails_...  (patient_id => patients.id) ON DELETE => cascade
 #  fk_rails_...  (programme_id => programmes.id)
 #
@@ -51,6 +54,8 @@ describe Patient::VaccinationStatus do
     context "with a vaccination administered" do
       before { create(:vaccination_record, patient:, programme:) }
 
+      let(:programme) { create(:programme, :hpv) }
+
       it { should be(:vaccinated) }
     end
 
@@ -64,6 +69,8 @@ describe Patient::VaccinationStatus do
           programme:
         )
       end
+
+      let(:programme) { create(:programme, :hpv) }
 
       it { should be(:vaccinated) }
     end
@@ -92,6 +99,69 @@ describe Patient::VaccinationStatus do
       before { create(:vaccination_record, :discarded, patient:, programme:) }
 
       it { should be(:none_yet) }
+    end
+  end
+
+  describe "#latest_location_id" do
+    subject do
+      patient_vaccination_status.tap(&:assign_status).latest_location_id
+    end
+
+    let(:programme) { create(:programme, :hpv) }
+
+    context "with no vaccination record" do
+      it { should be_nil }
+    end
+
+    context "with a vaccination administered" do
+      let(:location) { create(:school) }
+
+      before { create(:vaccination_record, patient:, programme:, location:) }
+
+      it { should eq(location.id) }
+    end
+
+    context "with a vaccination already had" do
+      let(:location) { create(:school) }
+
+      before do
+        create(
+          :vaccination_record,
+          :not_administered,
+          :already_had,
+          patient:,
+          programme:,
+          location:
+        )
+      end
+
+      it { should eq(location.id) }
+    end
+
+    context "with a vaccination not administered" do
+      before do
+        create(:vaccination_record, :not_administered, patient:, programme:)
+      end
+
+      it { should be_nil }
+    end
+
+    context "with a consent refused" do
+      before { create(:consent, :refused, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with a triage as unsafe to vaccination" do
+      before { create(:triage, :do_not_vaccinate, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with a discarded vaccination administered" do
+      before { create(:vaccination_record, :discarded, patient:, programme:) }
+
+      it { should be_nil }
     end
   end
 

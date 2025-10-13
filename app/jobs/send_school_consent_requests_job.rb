@@ -4,11 +4,7 @@ class SendSchoolConsentRequestsJob < ApplicationJob
   include SendSchoolConsentNotificationConcern
 
   def perform(session)
-    patient_programmes_eligible_for_notification(
-      session:
-    ) do |patient, programmes|
-      next unless should_send_notification?(patient:, programmes:)
-
+    patients_and_programmes(session) do |patient, programmes|
       ConsentNotification.create_and_send!(
         patient:,
         session:,
@@ -16,6 +12,16 @@ class SendSchoolConsentRequestsJob < ApplicationJob
         type: :request,
         current_user: nil
       )
+    end
+  end
+
+  def patients_and_programmes(session)
+    patient_programmes_eligible_for_notification(
+      session:
+    ) do |patient, programmes|
+      if should_send_notification?(patient:, programmes:)
+        yield patient, programmes
+      end
     end
   end
 

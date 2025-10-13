@@ -14,6 +14,7 @@ class LocationSessionsFactory
         ProgrammeGrouper
           .call(location.programmes)
           .values
+          .reject { |programmes| catch_up_only?(programmes:) }
           .reject { |programmes| already_exists?(programmes:) }
           .map { |programmes| create_session!(programmes:) }
       end
@@ -31,6 +32,10 @@ class LocationSessionsFactory
   attr_reader :location, :academic_year
 
   delegate :team, to: :location
+
+  def catch_up_only?(programmes:)
+    programmes.all?(&:catch_up_only?)
+  end
 
   def already_exists?(programmes:)
     team.sessions.has_programmes(programmes).exists?(academic_year:, location:)

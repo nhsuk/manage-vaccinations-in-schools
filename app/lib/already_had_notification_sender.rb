@@ -6,25 +6,15 @@ class AlreadyHadNotificationSender
   end
 
   def call
-    return if @vaccination_record.sourced_from_service?
-    if VaccinatedCriteria.call(
-         programme: @vaccination_record.programme,
-         academic_year: AcademicYear.current,
-         patient: @vaccination_record.patient,
-         vaccination_records:
-           @vaccination_record.patient.vaccination_records.where.not(
-             id: @vaccination_record.id
-           )
-       )
-      return
-    end
+    return if vaccination_record.sourced_from_service?
+    return if vaccinated_criteria.vaccinated?
 
-    consents = @vaccination_record.patient.consents.includes(:parent)
+    consents = patient.consents.includes(:parent)
 
     consents =
       consents.where(
         "patient_already_vaccinated_notification_sent_at < ?",
-        @vaccination_record.created_at
+        vaccination_record.created_at
       ).or(
         consents.where(
           "patient_already_vaccinated_notification_sent_at IS NULL"
@@ -40,7 +30,7 @@ class AlreadyHadNotificationSender
     parents_with_consent.each do |parent, consent|
       if parent.phone_receive_updates
         SMSDeliveryJob.perform_later(
-          :vaccination_discovered,
+          :vaccination_already_had,
           parent:,
           vaccination_record: @vaccination_record,
           consent:
@@ -48,7 +38,7 @@ class AlreadyHadNotificationSender
       end
 
       EmailDeliveryJob.perform_later(
-        :vaccination_discovered,
+        :vaccination_already_had,
         parent:,
         vaccination_record: @vaccination_record,
         consent:
@@ -67,4 +57,21 @@ class AlreadyHadNotificationSender
   private
 
   attr_reader :vaccination_record
+
+  delegate :patient, :programme, to: :vaccination_record
+
+  def academic_year = AcademicYear.current
+
+  def other_vaccination_records
+    patient.vaccination_records.where.not(id: vaccination_record.id)
+  end
+
+  def vaccinated_criteria
+    VaccinatedCriteria.new(
+      programme:,
+      academic_year:,
+      patient:,
+      vaccination_records: other_vaccination_records
+    )
+  end
 end

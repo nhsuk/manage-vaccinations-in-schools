@@ -36,6 +36,7 @@ module MavisCLI
               urn: row["URN"],
               gias_local_authority_code: row["LA (code)"],
               gias_establishment_number:,
+              gias_year_groups: process_year_groups(row),
               name: row["EstablishmentName"],
               address_line_1: row["Street"],
               address_line_2: [
@@ -45,8 +46,7 @@ module MavisCLI
               address_town: row["Town"],
               address_postcode: row["Postcode"],
               status: Integer(row["EstablishmentStatus (code)"]),
-              url: process_url(row["SchoolWebsite"].presence),
-              year_groups: process_year_groups(row)
+              url: process_url(row["SchoolWebsite"].presence)
             )
 
             if schools.size >= batch_size
@@ -74,14 +74,15 @@ module MavisCLI
               address_town
               gias_establishment_number
               gias_local_authority_code
+              gias_year_groups
               name
               status
               url
-              year_groups
             ]
           }
         )
       end
+
       # Some URLs from the GIAS CSV are missing the protocol.
       def process_url(url)
         return nil if url.blank?

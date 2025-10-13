@@ -14,6 +14,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
   delegate :govuk_table,
            :govuk_button_link_to,
            :govuk_inset_text,
+           :govuk_summary_list,
            :session_consent_period,
            :policy,
            to: :helpers
@@ -207,7 +208,6 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
           outcome: %w[administered already_had]
         )
         .where.not(location: session.location)
-        .group_by(&:patient_id)
 
     # The VaccinatedCriteria class is responsible for determining whether a
     # patient is considered vaccinated or not. There's some nuance around
@@ -215,12 +215,12 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
     # if it's the wrong dose or if the patient was younger than 10 years old
     # it doesn't count.
     session.patients.count do |patient|
-      VaccinatedCriteria.call(
+      VaccinatedCriteria.new(
         programme:,
         academic_year:,
         patient:,
-        vaccination_records: vaccination_records.fetch(patient.id, [])
-      )
+        vaccination_records:
+      ).vaccinated?
     end
   end
 

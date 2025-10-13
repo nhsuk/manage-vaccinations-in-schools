@@ -29,7 +29,6 @@ data
 db/*.sqlite3
 db/schema.rb
 log
-playwright-report
 public/*.js
 public/assets
 storage

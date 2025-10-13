@@ -11,6 +11,7 @@
 #  address_town              :text
 #  gias_establishment_number :integer
 #  gias_local_authority_code :integer
+#  gias_year_groups          :integer          default([]), not null, is an Array
 #  name                      :text             not null
 #  ods_code                  :string
 #  site                      :string
@@ -19,7 +20,6 @@
 #  type                      :integer          not null
 #  url                       :text
 #  urn                       :string
-#  year_groups               :integer          default([]), not null, is an Array
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  subteam_id                :bigint
@@ -75,7 +75,7 @@ FactoryBot.define do
       type { :generic_clinic }
       name { "Community clinic" }
 
-      year_groups { (0..11).to_a }
+      gias_year_groups { (0..11).to_a }
     end
 
     factory :gp_practice do
@@ -93,15 +93,15 @@ FactoryBot.define do
       sequence(:gias_local_authority_code, 1)
       sequence(:urn, 100_000, &:to_s)
 
-      year_groups { (0..11).to_a }
+      gias_year_groups { (0..11).to_a }
 
       trait :primary do
-        year_groups { (0..6).to_a }
+        gias_year_groups { (0..6).to_a }
       end
 
       trait :secondary do
         name { Faker::Educator.secondary_school }
-        year_groups { (7..11).to_a }
+        gias_year_groups { (7..11).to_a }
       end
     end
   end

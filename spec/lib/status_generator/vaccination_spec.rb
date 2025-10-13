@@ -83,4 +83,63 @@ describe StatusGenerator::Vaccination do
       it { should be(:none_yet) }
     end
   end
+
+  describe "#location_id" do
+    subject { generator.location_id }
+
+    context "with no vaccination record" do
+      it { should be_nil }
+    end
+
+    context "with a vaccination administered" do
+      let(:location) { create(:school) }
+
+      before { create(:vaccination_record, patient:, programme:, location:) }
+
+      it { should eq(location.id) }
+    end
+
+    context "with a vaccination already had" do
+      let(:location) { create(:school) }
+
+      before do
+        create(
+          :vaccination_record,
+          :not_administered,
+          :already_had,
+          patient:,
+          programme:,
+          location:
+        )
+      end
+
+      it { should eq(location.id) }
+    end
+
+    context "with a vaccination not administered" do
+      before do
+        create(:vaccination_record, :not_administered, patient:, programme:)
+      end
+
+      it { should be_nil }
+    end
+
+    context "with a consent refused" do
+      before { create(:consent, :refused, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with a triage as unsafe to vaccination" do
+      before { create(:triage, :do_not_vaccinate, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with a discarded vaccination administered" do
+      before { create(:vaccination_record, :discarded, patient:, programme:) }
+
+      it { should be_nil }
+    end
+  end
 end

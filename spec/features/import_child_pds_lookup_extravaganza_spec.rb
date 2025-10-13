@@ -115,7 +115,7 @@ describe "Import child records" do
         :school,
         urn: "123456",
         name: "Waterloo Road",
-        year_groups: [7, 8, 9, 10],
+        gias_year_groups: [7, 8, 9, 10],
         team: @team
       )
     @clinic = create(:generic_clinic, team: @team)

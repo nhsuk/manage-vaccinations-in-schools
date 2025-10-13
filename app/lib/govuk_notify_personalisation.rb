@@ -96,15 +96,9 @@ class GovukNotifyPersonalisation
     vaccination_record&.batch&.name
   end
 
-  def catch_up
-    return nil if patient.nil? || administered_year_groups.empty?
-    patient_year_group == administered_year_groups.first ? "no" : "yes"
-  end
+  def catch_up = is_catch_up? ? "yes" : "no"
 
-  def not_catch_up
-    return nil if patient.nil? || administered_year_groups.empty?
-    patient_year_group == administered_year_groups.first ? "yes" : "no"
-  end
+  def not_catch_up = is_catch_up? ? "no" : "yes"
 
   def consent_deadline
     return nil if session.nil?
@@ -403,8 +397,13 @@ class GovukNotifyPersonalisation
 
   private
 
-  def administered_year_groups
-    session&.year_groups || programmes.flat_map(&:default_year_groups).sort.uniq
+  def is_catch_up?
+    return false if patient.nil? || programmes.empty?
+
+    @is_catch_up ||=
+      programmes.any? do |programme|
+        programme_year_groups.is_catch_up?(patient_year_group, programme:)
+      end
   end
 
   def patient_year_group
@@ -434,6 +433,15 @@ class GovukNotifyPersonalisation
         else
           programme.name_in_sentence
         end
+      end
+  end
+
+  def programme_year_groups
+    @programme_year_groups ||=
+      if session
+        session.programme_year_groups
+      else
+        team.programme_year_groups(academic_year:)
       end
   end
 end

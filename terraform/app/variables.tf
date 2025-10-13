@@ -94,6 +94,13 @@ variable "vpc_log_retention_days" {
   nullable    = false
 }
 
+variable "mise_sops_age_key_path" {
+  type        = string
+  default     = "/mavis/development/credentials/MISE_SOPS_AGE_KEY"
+  description = "The path of the System Manager Parameter Store secure string for the MISE SOPS age key."
+  nullable    = false
+}
+
 ########## Task definition configuration ##########
 
 
@@ -153,10 +160,18 @@ locals {
           valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.rails_master_key_path}"
         }],
       )
-      REPORTING = [for key, value in aws_ssm_parameter.reporting_environment_overwrites : {
-        name      = key
-        valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${value.name}"
-      }]
+      REPORTING = concat(
+        [for key, value in aws_ssm_parameter.reporting_environment_overwrites :
+          {
+            name      = key
+            valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${value.name}"
+          }
+        ],
+        [{
+          name      = "MISE_SOPS_AGE_KEY"
+          valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.mise_sops_age_key_path}"
+        }],
+      )
     }
   )
 
@@ -205,12 +220,26 @@ locals {
       },
       ], local.sandbox_envs,
     )
-    REPORTING = []
+    REPORTING = [
+      {
+        name  = "VALKEY_ADDRESS"
+        value = aws_elasticache_serverless_cache.reporting_service.endpoint[0].address
+      },
+      {
+        name  = "VALKEY_PORT"
+        value = aws_elasticache_serverless_cache.reporting_service.endpoint[0].port
+      },
+    ]
   }
 
   task_secrets = {
     CORE      = concat(local.secret_values["CORE"], local.parameter_values["CORE"])
     REPORTING = concat(local.secret_values["REPORTING"], local.parameter_values["REPORTING"])
+  }
+  container_ports = {
+    web       = 4000
+    sidekiq   = 4000
+    reporting = 5000
   }
 }
 
@@ -285,10 +314,29 @@ variable "maximum_sidekiq_replicas" {
   description = "Amount of replicas for the sidekiq service"
 }
 
+variable "minimum_reporting_replicas" {
+  type        = number
+  default     = 0
+  description = "Minimum amount of allowed replicas for reporting service. Also the replica count when creating the service."
+}
+
+variable "maximum_reporting_replicas" {
+  type        = number
+  default     = 0
+  description = "Maximum amount of allowed replicas for reporting service"
+}
+
 variable "max_aurora_capacity_units" {
   type        = number
   default     = 8
   description = "Maximum amount of allowed ACU capacity for Aurora Serverless v2"
+}
+
+variable "reporting_endpoints" {
+  type        = list(string)
+  description = "List of endpoints for the loadbalancer to forward to the reporting service"
+  default     = ["/reports", "/reports/*"]
+  nullable    = false
 }
 
 ########## Valkey Configuration ##########
@@ -370,6 +418,6 @@ variable "active_target_group" {
 }
 locals {
   non_active_target_group         = var.active_target_group == "blue" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
-  ecs_sg_ids                      = [module.web_service.security_group_id, module.sidekiq_service.security_group_id]
+  db_access_sg_ids                = [module.web_service.security_group_id, module.sidekiq_service.security_group_id]
   valkey_cache_availability_zones = var.valkey_failover_enabled ? [aws_subnet.private_subnet_a.availability_zone, aws_subnet.private_subnet_b.availability_zone] : [aws_subnet.private_subnet_a.availability_zone]
 }

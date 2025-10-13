@@ -34,4 +34,22 @@ describe UpdatePatientsFromPDS do
       .exactly(2)
       .times
   end
+
+  context "when PDS cascading search is enabled" do
+    before { Flipper.enable(:pds_cascading_search) }
+    after { Flipper.disable(:pds_cascading_search) }
+
+    it "queues PDSCascadingSearchJob for patients without an NHS number" do
+      expect { call }.to have_enqueued_job(PDSCascadingSearchJob)
+        .on_queue(:pds)
+        .exactly(2)
+        .times
+    end
+
+    it "does not queue PatientNHSNumberLookupJob for patients without an NHS number" do
+      expect { call }.not_to have_enqueued_job(
+        PatientNHSNumberLookupJob
+      ).on_queue(:pds)
+    end
+  end
 end

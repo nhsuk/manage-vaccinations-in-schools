@@ -46,14 +46,37 @@
               <%= tag.li(date.to_fs(:long_day_of_week)) %>
             <% end %>
           <% end %>
+          <p class="nhsuk-body">Consent period <%= session_consent_period(@session).downcase_first %></p>
         <% else %>
           <p class="nhsuk-hint"><%= no_sessions_message %></p>
         <% end %>
       <% end %>
 
-      <% if policy(session).edit? %>
-        <%= govuk_button_link_to edit_button_text, edit_session_path(session), secondary: true %>
-      <% end %>
+      <div class="nhsuk-button-group">
+        <% if policy(session).edit? %>
+          <%= govuk_button_link_to edit_button_text, edit_session_path(session), secondary: true %>
+
+          <%= link_to "Record offline", session_path(@session, format: :xlsx) %>
+
+          <% if @session.clinic? && @session.can_send_clinic_invitations? %>
+            <%= link_to "Send booking reminders", edit_session_invite_to_clinic_path(@session) %>
+          <% elsif @session.school? && @session.can_send_clinic_invitations? %>
+            <%= link_to "Send clinic invitations", edit_session_invite_to_clinic_path(@session) %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+  <section>
+    <%= render AppCardComponent.new do |card| %>
+      <% card.with_heading(level: 3) { "Action required" } %>
+      <%= render AppSessionActionsComponent.new(session, show_heading: false) %>
+    <% end %>
+  </section>
+  <section>
+    <%= render AppCardComponent.new do |card| %>
+      <% card.with_heading(level: 3) { session.clinic? ? "About this clinic" : "About this school" } %>
+      <%= render AppSessionLocationSummaryComponent.new(session) %>
     <% end %>
   </section>
 </div>

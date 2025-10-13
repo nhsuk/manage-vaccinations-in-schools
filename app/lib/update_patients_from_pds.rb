@@ -11,7 +11,11 @@ class UpdatePatientsFromPDS
 
     patients.find_each do |patient|
       if patient.nhs_number.nil?
-        PatientNHSNumberLookupJob.set(queue:).perform_later(patient)
+        if Flipper.enabled?(:pds_cascading_search)
+          PDSCascadingSearchJob.set(queue:).perform_later(patient)
+        else
+          PatientNHSNumberLookupJob.set(queue:).perform_later(patient)
+        end
       else
         PatientUpdateFromPDSJob.set(queue:).perform_later(patient)
       end

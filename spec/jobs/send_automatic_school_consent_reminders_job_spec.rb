@@ -36,7 +36,7 @@ describe SendAutomaticSchoolConsentRemindersJob do
   let(:deceased_patient) { create(:patient, :deceased) }
   let(:invalid_patient) { create(:patient, :invalidated) }
   let(:restricted_patient) { create(:patient, :restricted) }
-
+  let(:archived_patient) { create(:patient, :archived, team:) }
   let!(:patients) do
     [
       manual_reminder_patient,
@@ -47,7 +47,8 @@ describe SendAutomaticSchoolConsentRemindersJob do
       patient_with_consent,
       deceased_patient,
       invalid_patient,
-      restricted_patient
+      restricted_patient,
+      archived_patient
     ]
   end
 

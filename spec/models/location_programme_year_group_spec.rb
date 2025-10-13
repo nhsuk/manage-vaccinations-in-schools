@@ -36,7 +36,7 @@ describe LocationProgrammeYearGroup do
     it "validates year group is suitable for the location" do
       expect(location_programme_year_group).to validate_inclusion_of(
         :year_group
-      ).in_array(location.year_groups)
+      ).in_array(location.gias_year_groups)
     end
   end
 end

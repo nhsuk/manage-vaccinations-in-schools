@@ -129,6 +129,11 @@ resource "aws_ecr_lifecycle_policy" "mavis" {
   })
 }
 
+resource "aws_ecr_repository" "mavis_reporting" {
+  name                 = "mavis/reporting"
+  image_tag_mutability = "MUTABLE"
+}
+
 
 #### Access Analyzer
 

@@ -52,7 +52,7 @@ describe "mavis schools add-programme-year-group" do
   end
 
   def given_the_school_exists_with_year_groups
-    @school = create(:school, urn: "123456", year_groups: [12, 13, 14])
+    @school = create(:school, urn: "123456", gias_year_groups: [12, 13, 14])
   end
 
   def and_the_programme_exists

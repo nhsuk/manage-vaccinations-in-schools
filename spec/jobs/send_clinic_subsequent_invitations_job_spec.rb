@@ -102,5 +102,14 @@ describe SendClinicSubsequentInvitationsJob do
         perform_now
       end
     end
+
+    context "if the patient is archived" do
+      let(:patient) { create(:patient, :archived, parents:, team:) }
+
+      it "doesn't send any notifications" do
+        expect(SessionNotification).not_to receive(:create_and_send!)
+        perform_now
+      end
+    end
   end
 end

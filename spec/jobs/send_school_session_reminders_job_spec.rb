@@ -3,6 +3,7 @@
 describe SendSchoolSessionRemindersJob do
   subject(:perform_now) { described_class.perform_now }
 
+  let(:team) { create(:team, programmes:) }
   let(:programmes) { [create(:programme)] }
   let(:parents) { create_list(:parent, 2) }
   let(:patient) do
@@ -12,7 +13,7 @@ describe SendSchoolSessionRemindersJob do
   before { create(:patient_location, patient:, session:) }
 
   context "for an active session tomorrow" do
-    let(:session) { create(:session, :tomorrow, programmes:) }
+    let(:session) { create(:session, :tomorrow, programmes:, team:) }
 
     it "sends a notification" do
       expect(SessionNotification).to receive(:create_and_send!).once.with(
@@ -98,10 +99,18 @@ describe SendSchoolSessionRemindersJob do
         perform_now
       end
     end
+
+    context "if the patient is archived" do
+      let(:patient) { create(:patient, :archived, parents:, team:) }
+
+      it "doesn't send any notifications" do
+        expect(SessionNotification).not_to receive(:create_and_send!)
+        perform_now
+      end
+    end
   end
 
   context "for a generic clinic session tomorrow" do
-    let(:team) { create(:team, programmes:) }
     let(:location) { create(:generic_clinic, team:) }
 
     let(:session) { create(:session, :tomorrow, programmes:, team:, location:) }
@@ -113,7 +122,7 @@ describe SendSchoolSessionRemindersJob do
   end
 
   context "for a session today" do
-    let(:session) { create(:session, :today, programmes:) }
+    let(:session) { create(:session, :today, programmes:, team:) }
 
     it "doesn't send any notifications" do
       expect(SessionNotification).not_to receive(:create_and_send!)
@@ -122,7 +131,7 @@ describe SendSchoolSessionRemindersJob do
   end
 
   context "for a session yesterday" do
-    let(:session) { create(:session, :yesterday, programmes:) }
+    let(:session) { create(:session, :yesterday, programmes:, team:) }
 
     it "doesn't send any notifications" do
       expect(SessionNotification).not_to receive(:create_and_send!)

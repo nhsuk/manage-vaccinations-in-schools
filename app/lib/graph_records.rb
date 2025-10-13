@@ -184,7 +184,7 @@ class GraphRecords
     organisation: %i[ods_code],
     team: %i[name workgroup],
     subteam: %i[name],
-    location: %i[name address_postcode type year_groups],
+    location: %i[name address_postcode type gias_year_groups],
     cohort_import: %i[
       csv_filename
       processed_at
@@ -440,6 +440,10 @@ class GraphRecords
     end
 
     result.to_a
+  end
+
+  def node_types_in_graph
+    @nodes.map { |node| node.class.name.underscore.to_sym }.uniq
   end
 
   def non_breaking_text(text)

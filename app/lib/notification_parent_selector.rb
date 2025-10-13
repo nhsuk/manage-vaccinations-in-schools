@@ -5,12 +5,20 @@ class NotificationParentSelector
     @vaccination_record = vaccination_record
 
     @consents =
-      consents ||
-        if patient.send_notifications? && vaccination_record.notify_parents
+      if consents.present?
+        consents
+      else
+        patient = @vaccination_record.patient
+
+        if patient.send_notifications?(
+             team: @vaccination_record.team,
+             send_to_archived: true
+           ) && @vaccination_record.notify_parents
           patient.consents
         else
           []
         end
+      end
   end
 
   def parents_with_consent

@@ -98,7 +98,9 @@ describe GraphRecords do
           "address_postcode: #{session.location.address_postcode}"
         ),
         non_breaking_text("type: #{session.location.type}"),
-        non_breaking_text("year_groups: #{session.location.year_groups}")
+        non_breaking_text(
+          "gias_year_groups: #{session.location.gias_year_groups}"
+        )
       ].map { |d| "<br><span style=\"font-size:14px\">#{d}</span>" }.join
 
     patient_location = patient.patient_locations.first

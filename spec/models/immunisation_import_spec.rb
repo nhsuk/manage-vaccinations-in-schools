@@ -366,7 +366,7 @@ describe ImmunisationImport do
 
       it "sends vaccination discovered notifications for imported records" do
         expect { process! }.to have_enqueued_job(EmailDeliveryJob).with(
-          :vaccination_discovered,
+          :vaccination_already_had,
           hash_including(parent: parent)
         ).at_least(:once)
       end
@@ -390,10 +390,10 @@ describe ImmunisationImport do
 
         it "sends both email and SMS notifications" do
           expect { process! }.to have_enqueued_job(EmailDeliveryJob).with(
-            :vaccination_discovered,
+            :vaccination_already_had,
             hash_including(parent: parent)
           ).at_least(:once).and have_enqueued_job(SMSDeliveryJob).with(
-                  :vaccination_discovered,
+                  :vaccination_already_had,
                   hash_including(parent: parent)
                 ).at_least(:once)
         end
@@ -406,7 +406,7 @@ describe ImmunisationImport do
 
         it "does not send vaccination discovered notifications" do
           expect { process! }.not_to have_enqueued_job(EmailDeliveryJob).with(
-            :vaccination_discovered,
+            :vaccination_already_had,
             hash_including(parent: parent)
           )
         end
@@ -417,7 +417,7 @@ describe ImmunisationImport do
 
         it "does not send vaccination discovered notifications" do
           expect { process! }.not_to have_enqueued_job(EmailDeliveryJob).with(
-            :vaccination_discovered,
+            :vaccination_already_had,
             hash_including(parent: parent)
           )
         end

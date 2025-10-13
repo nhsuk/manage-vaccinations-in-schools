@@ -160,7 +160,13 @@
         "elasticache:DescribeServerlessCaches",
         "elasticache:DescribeServerlessCacheSnapshots",
         "elasticache:DeleteServerlessCache",
-        "elasticache:ModifyServerlessCache"
+        "elasticache:ModifyServerlessCache",
+        "servicediscovery:CreatePrivateDnsNamespace",
+        "servicediscovery:DeleteNamespace",
+        "servicediscovery:GetNamespace",
+        "servicediscovery:UpdatePrivateDnsNamespace",
+        "servicediscovery:UpdateService",
+        "servicediscovery:UpdateServiceAttributes"
       ],
       "Resource": ["*"]
     }
