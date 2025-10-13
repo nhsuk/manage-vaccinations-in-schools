@@ -295,11 +295,13 @@ class GovukNotifyPersonalisation
 
     [
       "## Talk to your child about what they want",
-      "We suggest you talk to your child about the vaccine before you respond to us.",
-      "Young people have the right to refuse vaccinations. " \
-        "Those who show [‘Gillick competence’](https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
-        "have the right to consent to vaccinations themselves. " \
-        "Our team may assess Gillick competence during vaccination sessions."
+      "We suggest you talk to your child about the vaccination before you respond to us. " \
+        "Young people have the right to refuse vaccinations.",
+      "They also have [the right to consent to their own vaccinations]" \
+        "(https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
+        "if they show they fully understand what’s involved. Our team might give young " \
+        "people this opportunity if they assess them as suitably competent. Our team may " \
+        "assess Gillick competence during vaccination sessions."
     ].join("\n\n")
   end
 

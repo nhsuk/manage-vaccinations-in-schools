@@ -54,13 +54,15 @@ describe GovukNotifyPersonalisation do
     expect(to_h).to match(
       {
         talk_to_your_child_message:
-          "## Talk to your child about what they want\n\n" \
-            "We suggest you talk to your child about the vaccine before you " \
-            "respond to us.\n\nYoung people have the right to refuse " \
-            "vaccinations. Those who show " \
-            "[‘Gillick competence’](https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
-            "have the right to consent to vaccinations themselves. Our team " \
-            "may assess Gillick competence during vaccination sessions.",
+          "## Talk to your child about what they want\n\nWe suggest you talk to " \
+            "your child about the vaccination before you respond to us. Young " \
+            "people have the right to refuse vaccinations.\n\nThey also have " \
+            "[the right to consent to their own vaccinations]" \
+            "(https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
+            "if they show they fully understand what’s involved. Our team might " \
+            "give young people this opportunity if they assess them as suitably " \
+            "competent. Our team may assess Gillick competence during vaccination " \
+            "sessions.",
         catch_up: "no",
         consent_deadline: "Wednesday 31 December",
         consent_link:
