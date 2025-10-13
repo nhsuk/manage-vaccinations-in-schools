@@ -7,7 +7,7 @@ describe FHIRMapper::VaccinationRecord do
   let(:organisation) { create(:organisation) }
   let(:team) { create(:team, organisation:, programmes: [programme]) }
   let(:programme) { create(:programme, :hpv) }
-  let(:school) { create(:school) }
+  let(:school) { create(:school, urn: "100006") }
   let(:session) do
     create(:session, location: school, programmes: [programme], team:)
   end
@@ -328,7 +328,6 @@ describe FHIRMapper::VaccinationRecord do
       let(:fhir_immunization) do
         FHIR.from_contents(file_fixture("/fhir/fhir_record_full.json").read)
       end
-      let(:school) { create(:school, urn: "100006") }
 
       include_examples "a mapped vaccination record (common fields)"
 
@@ -356,7 +355,6 @@ describe FHIRMapper::VaccinationRecord do
           file_fixture("/fhir/fhir_record_half_dose.json").read
         )
       end
-      let(:school) { create(:school, urn: "100006") }
 
       include_examples "a mapped vaccination record (common fields)"
 
@@ -372,6 +370,33 @@ describe FHIRMapper::VaccinationRecord do
       its(:delivery_method) { should eq "nasal_spray" }
       its(:delivery_site) { should eq "nose" }
       its(:full_dose) { should be false }
+      its(:outcome) { should eq "administered" }
+      its(:location) { should have_attributes(urn: "100006") }
+      its(:location_name) { should be_nil }
+      its(:performed_ods_code) { should eq "B0C4P" }
+    end
+
+    context "with a record with extended milliliter description" do
+      let(:fhir_immunization) do
+        FHIR.from_contents(
+          file_fixture("/fhir/fhir_record_extended_milliliter.json").read
+        )
+      end
+
+      include_examples "a mapped vaccination record (common fields)"
+
+      its(:performed_by_given_name) { should be_nil }
+      its(:performed_by_family_name) { should be_nil }
+      its(:batch) { should have_attributes(name: "YF3276") }
+
+      its(:vaccine) do
+        should have_attributes(snomed_product_code: "43208811000001106")
+      end
+
+      its(:performed_at) { should eq Time.parse("2025-09-30T00:00:00+00:00") }
+      its(:delivery_method) { should eq "nasal_spray" }
+      its(:delivery_site) { should eq "nose" }
+      its(:full_dose) { should be true }
       its(:outcome) { should eq "administered" }
       its(:location) { should have_attributes(urn: "100006") }
       its(:location_name) { should be_nil }
