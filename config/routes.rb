@@ -109,10 +109,10 @@ Rails.application.routes.draw do
         resources :locations, only: :index
         resources :teams, only: :destroy, param: :workgroup
         post "/onboard", to: "onboard#create"
+        get "refresh-reporting", to: "reporting_refresh#create"
       end
       namespace :reporting do
         post "authorize", to: "one_time_tokens#authorize"
-        get "reset", to: "reset#create"
         get "totals", controller: :totals, action: :index
         resources :vaccination_events, path: "vaccination-events", only: :index
       end
