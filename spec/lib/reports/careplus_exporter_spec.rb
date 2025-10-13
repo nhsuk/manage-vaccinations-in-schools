@@ -112,6 +112,59 @@ describe Reports::CareplusExporter do
       expect(row[venue_code_index]).to eq("123456")
     end
 
+    context "with multiple vaccination records for the same session on different dates" do
+      let(:session) do
+        create(
+          :session,
+          team:,
+          programmes:,
+          location:,
+          dates: [4.weeks.ago, Date.current]
+        )
+      end
+
+      let(:patient) do
+        create(
+          :patient,
+          :consent_given_triage_not_needed,
+          programmes:,
+          session:
+        )
+      end
+
+      before do
+        create(
+          :vaccination_record,
+          programme:,
+          delivery_method:,
+          patient:,
+          session:,
+          performed_at: session.dates.first
+        )
+        create(
+          :vaccination_record,
+          programme:,
+          delivery_method:,
+          patient:,
+          session:,
+          performed_at: session.dates.last
+        )
+      end
+
+      it "includes the vaccination details on separate rows" do
+        expect(data_rows.count).to eq(2)
+
+        date_attended_index = headers.index("Date Attended")
+
+        expect(data_rows.first[date_attended_index]).to eq(
+          session.dates.first.strftime("%d/%m/%Y")
+        )
+        expect(data_rows.second[date_attended_index]).to eq(
+          session.dates.last.strftime("%d/%m/%Y")
+        )
+      end
+    end
+
     context "in a community clinic" do
       let(:location) { create(:generic_clinic, team:) }
 
@@ -272,6 +325,14 @@ describe Reports::CareplusExporter do
     let(:programme) { create(:programme, :menacwy) }
     let(:delivery_method) { :intramuscular }
     let(:expected_vaccine_code) { "ACWYX14" }
+
+    include_examples "generates a report"
+  end
+
+  context "MMR programme" do
+    let(:programme) { create(:programme, :mmr) }
+    let(:delivery_method) { :intramuscular }
+    let(:expected_vaccine_code) { "MMR" }
 
     include_examples "generates a report"
   end
