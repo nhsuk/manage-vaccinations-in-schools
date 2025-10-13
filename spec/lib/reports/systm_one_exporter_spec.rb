@@ -278,6 +278,23 @@ describe Reports::SystmOneExporter do
       end
     end
 
+    context "MMR" do
+      let(:programme) { create(:programme, :mmr) }
+      let(:dose_sequence) { nil }
+
+      context "Priorix" do
+        let(:vaccine) { Vaccine.find_by!(brand: "Priorix") }
+
+        it { should eq("Priorix") }
+      end
+
+      context "MMR VaxPro" do
+        let(:vaccine) { Vaccine.find_by!(brand: "MMR VaxPro") }
+
+        it { should eq("MMR VaxPro") }
+      end
+    end
+
     context "Td/IPV" do
       let(:programme) { create(:programme, :td_ipv_all_vaccines) }
       let(:dose_sequence) { nil }
