@@ -6,9 +6,12 @@ class DraftSessionsController < ApplicationController
 
   include WizardControllerConcern
 
-  before_action :set_catch_up_patients_receiving_consent_requests_count,
-                only: :show,
-                if: -> { current_step == :dates_check }
+  with_options only: :show, if: -> { current_step == :dates_check } do
+    before_action :set_catch_up_year_groups
+    before_action :set_catch_up_patients_vaccinated_percentage
+    before_action :set_catch_up_patients_receiving_consent_requests_count
+  end
+
   before_action :validate_params, only: :update
   before_action :set_back_link_path
 
@@ -48,6 +51,48 @@ class DraftSessionsController < ApplicationController
 
   def set_steps
     self.steps = @draft_session.wizard_steps
+  end
+
+  def set_catch_up_year_groups
+    @catch_up_year_groups = @draft_session.year_groups.drop(1)
+  end
+
+  def set_catch_up_patients_vaccinated_percentage
+    academic_year = @draft_session.academic_year
+    birth_academic_years =
+      @catch_up_year_groups.map { it.to_birth_academic_year(academic_year:) }
+
+    catch_up_patients =
+      @draft_session
+        .patient_locations
+        .where(patient: { birth_academic_year: birth_academic_years })
+        .includes(patient: :vaccination_statuses)
+        .map(&:patient)
+
+    total_count = catch_up_patients.count
+    vaccinated_count =
+      catch_up_patients.count do |patient|
+        year_group = patient.year_group(academic_year:)
+        @draft_session
+          .programmes_for(patient:)
+          .all? do |programme|
+            if @draft_session.programme_year_groups.is_catch_up?(
+                 year_group,
+                 programme:
+               )
+              patient.vaccination_status(programme:, academic_year:).vaccinated?
+            else
+              true
+            end
+          end
+      end
+
+    @catch_up_patients_vaccinated_percentage =
+      if total_count.zero? || vaccinated_count.zero?
+        0
+      else
+        (vaccinated_count / total_count.to_f * 100).to_i
+      end
   end
 
   def set_catch_up_patients_receiving_consent_requests_count

@@ -7,9 +7,29 @@
 <% content_for :page_title, t(".title", programmes:) %>
 
 <%= govuk_panel(title_text: t(".title", programmes:), classes: %w[app-panel--interruption]) do %>
-  <p>Scheduling this session will send <%= pluralize(@catch_up_patients_receiving_consent_requests_count, "consent request") %> to parents of children not in <%= format_year_group(@draft_session.year_groups.first) %> on <%= @draft_session.next_send_consent_requests_at.to_fs(:long) %>.</p>
-  <p>Make sure you have uploaded all historical vaccination records for children in this school before you continue.</p>
-  <p>If you do not do this, you risk sending invitations to parents of already vaccinated children.</p>
+  <p>
+    <% @catch_up_patients_vaccinated_percentage == 0 ? "Only " : "" %>
+    <%= @catch_up_patients_vaccinated_percentage %>% of children in
+    <%= @catch_up_year_groups.map { format_year_group(it) }.to_sentence %> in
+    this session have vaccination records. This is unusually low coverage for
+    catch-up year groups.
+  </p>
+
+  <p>
+    Check and confirm that vaccination records have been imported for all
+    children in this school before you continue.
+  </p>
+
+  <% if @draft_session.open_for_consent? && @catch_up_patients_receiving_consent_requests_count > 0 %>
+    <p>
+      Scheduling this session now will send consent requests to
+      <%= pluralize(@catch_up_patients_receiving_consent_requests_count, "parent") %>
+      of children in
+      <%= @catch_up_year_groups.map { format_year_group(it) }.to_sentence %> on
+      <%= @draft_session.send_consent_requests_at.to_fs(:long) %>. Many of them
+      may be parents of already vaccinated children.
+    </p>
+  <% end %>
 
   <%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
     <div class="nhsuk-button-group">

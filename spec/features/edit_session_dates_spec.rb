@@ -37,7 +37,8 @@ describe "Edit session dates" do
   end
 
   def and_the_session_has_unvaccinated_catch_up_patients
-    create_list(:patient, 10, session: @session, year_group: 9)
+    create(:patient, :vaccinated, session: @session, year_group: 9)
+    create_list(:patient, 9, session: @session, year_group: 9)
   end
 
   def when_i_visit_the_session_overview_page
@@ -70,7 +71,12 @@ describe "Edit session dates" do
       "Have you imported historical vaccination records for HPV?"
     )
     expect(page).to have_content(
-      "Scheduling this session will send 10 consent requests to parents of children not in Year 8 on 10 April 2024."
+      "10% of children in Year 9, Year 10, and Year 11 in this session have vaccination records."
+    )
+    expect(page).to have_content(
+      "Scheduling this session now will send consent requests to 9 parents " \
+        "of children in Year 9, Year 10, and Year 11 on 10 April 2024. Many " \
+        "of them may be parents of already vaccinated children."
     )
   end
 
