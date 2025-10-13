@@ -442,6 +442,10 @@ class GraphRecords
     result.to_a
   end
 
+  def node_types_in_graph
+    @nodes.map { |node| node.class.name.underscore.to_sym }.uniq
+  end
+
   def non_breaking_text(text)
     # Insert non-breaking spaces and hyphens to prevent Mermaid from breaking the line
     text.gsub(" ", "&nbsp;").gsub("-", "#8209;")
