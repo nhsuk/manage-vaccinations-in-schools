@@ -92,7 +92,7 @@ class GraphRecords
       patient: %i[parents]
     },
     consent_form: {
-      consent_form: [:consent]
+      consent_form: [:consents]
     },
     vaccination_record: {
       vaccination_record: %i[
