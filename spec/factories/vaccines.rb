@@ -136,6 +136,16 @@ FactoryBot.define do
     trait :mmr do
       type { "mmr" }
       injection
+
+      after(:create) do |vaccine|
+        bleeding_disorder =
+          create(:health_question, :bleeding_disorder, vaccine:)
+        mmr_vaccination = create(:health_question, :mmr_vaccination, vaccine:)
+        extra_support = create(:health_question, :extra_support, vaccine:)
+
+        bleeding_disorder.update!(next_question: mmr_vaccination)
+        mmr_vaccination.update!(next_question: extra_support)
+      end
     end
 
     trait :td_ipv do

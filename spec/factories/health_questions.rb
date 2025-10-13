@@ -135,5 +135,12 @@ FactoryBot.define do
       title { "Does you child take regular aspirin?" }
       hint { "Also known as Salicylate therapy" }
     end
+
+    trait :mmr_vaccination do
+      title do
+        "Has your child had a severe allergic reaction (anaphylaxis) to a " \
+          "previous dose of MMR or any other measles, mumps or rubella vaccine?"
+      end
+    end
   end
 end

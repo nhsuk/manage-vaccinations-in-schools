@@ -11,7 +11,7 @@ describe "Verbal consent" do
     when_i_confirm_the_consent_response
     then_an_email_is_sent_to_the_parent_confirming_their_consent
     and_a_text_is_sent_to_the_parent_confirming_their_consent
-    and_i_can_see_the_consent_response_details
+    and_i_can_see_the_consent_response_details(number_of_health_questions: 4)
   end
 
   scenario "Given flu injection" do
@@ -53,12 +53,42 @@ describe "Verbal consent" do
     and_a_text_is_sent_to_the_parent_confirming_their_consent
   end
 
+  scenario "Given MMR" do
+    given_an_mmr_programme_is_underway
+    and_i_am_signed_in
+
+    when_i_record_that_verbal_consent_was_given_with_gelatine
+    then_i_see_the_check_and_confirm_page
+
+    when_i_confirm_the_consent_response
+    then_an_email_is_sent_to_the_parent_confirming_their_consent
+    and_a_text_is_sent_to_the_parent_confirming_their_consent
+    and_i_can_see_the_consent_response_details(number_of_health_questions: 3)
+  end
+
+  scenario "Given MMR without gelatine" do
+    given_an_mmr_programme_is_underway
+    and_i_am_signed_in
+
+    when_i_record_that_verbal_consent_was_given_without_gelatine
+    then_i_see_the_check_and_confirm_page
+
+    when_i_confirm_the_consent_response
+    then_an_email_is_sent_to_the_parent_confirming_their_consent
+    and_a_text_is_sent_to_the_parent_confirming_their_consent
+    and_i_can_see_the_consent_response_details(number_of_health_questions: 3)
+  end
+
   def given_an_hpv_programme_is_underway
     create_programme(:hpv)
   end
 
   def given_a_flu_programme_is_underway
     create_programme(:flu)
+  end
+
+  def given_an_mmr_programme_is_underway
+    create_programme(:mmr)
   end
 
   def and_i_am_signed_in
@@ -106,10 +136,27 @@ describe "Verbal consent" do
     )
   end
 
+  def when_i_record_that_verbal_consent_was_given_with_gelatine
+    record_that_verbal_consent_was_given(
+      consent_option: "Yes, they agree",
+      number_of_health_questions: 3,
+      without_gelatine: false
+    )
+  end
+
+  def when_i_record_that_verbal_consent_was_given_without_gelatine
+    record_that_verbal_consent_was_given(
+      consent_option: "Yes, they agree",
+      number_of_health_questions: 3,
+      without_gelatine: true
+    )
+  end
+
   def record_that_verbal_consent_was_given(
     consent_option:,
     number_of_health_questions:,
-    injective_alternative: false
+    injective_alternative: nil,
+    without_gelatine: nil
   )
     visit session_consent_path(@session)
     click_link @patient.full_name
@@ -139,6 +186,13 @@ describe "Verbal consent" do
     choose consent_option
     if consent_option.include?("nasal")
       choose injective_alternative ? "Yes" : "No"
+    end
+    unless without_gelatine.nil?
+      if without_gelatine
+        choose "Yes, they want their child to have a vaccine that does not contain gelatine"
+      else
+        choose "Their child can have either type of vaccine"
+      end
     end
     click_button "Continue"
 
@@ -176,7 +230,7 @@ describe "Verbal consent" do
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
   end
 
-  def and_i_can_see_the_consent_response_details
+  def and_i_can_see_the_consent_response_details(number_of_health_questions:)
     click_link @patient.full_name, match: :first
     click_link @parent.full_name
 
@@ -201,7 +255,7 @@ describe "Verbal consent" do
     expect(page).to have_content("Answers to health questions")
     expect(page).to have_content(
       "#{@patient.parent_relationships.first.label} responded: No",
-      count: 4
+      count: number_of_health_questions
     )
   end
 

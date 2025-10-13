@@ -67,6 +67,16 @@ class AppConsentCardComponent < ViewComponent::Base
             text: consent.vaccine_method_injection? ? "Yes" : "No"
           }
         }
+      end,
+      unless consent.without_gelatine.nil?
+        {
+          key: {
+            text: "Consent given for gelatine-free vaccine only?"
+          },
+          value: {
+            text: consent.without_gelatine? ? "Yes" : "No"
+          }
+        }
       end
     ].compact
   end

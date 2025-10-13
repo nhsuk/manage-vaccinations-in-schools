@@ -72,7 +72,8 @@ class ConsentForm < ApplicationRecord
                 :parental_responsibility,
                 :response,
                 :chosen_programme,
-                :injection_alternative
+                :injection_alternative,
+                :without_gelatine
 
   audited associated_with: :team
   has_associated_audits
@@ -251,6 +252,10 @@ class ConsentForm < ApplicationRecord
     validates :injection_alternative, inclusion: %w[true false]
   end
 
+  on_wizard_step :without_gelatine, exact: true do
+    validates :without_gelatine, inclusion: %w[true false]
+  end
+
   on_wizard_step :reason_for_refusal do
     validates :reason_for_refusal, presence: true
   end
@@ -293,6 +298,7 @@ class ConsentForm < ApplicationRecord
           end
         ),
         (:injection_alternative if can_offer_injection_as_alternative?),
+        (:without_gelatine if can_offer_without_gelatine?),
         (:address if response_given?),
         (:health_question if response_given?),
         (:reason_for_refusal if refused_and_given),
@@ -339,6 +345,12 @@ class ConsentForm < ApplicationRecord
     consent_form_programmes.select(&:response_given?).any?(
       &:vaccine_method_nasal?
     )
+  end
+
+  def can_offer_without_gelatine?
+    programmes.any? do
+      it.vaccine_may_contain_gelatine? && !it.has_multiple_vaccine_methods?
+    end
   end
 
   def reason_for_refusal_requires_notes?
@@ -534,6 +546,12 @@ class ConsentForm < ApplicationRecord
       if consent_form_programme.vaccine_method_nasal?
         consent_form_programme.vaccine_methods = vaccine_methods
       end
+    end
+  end
+
+  def update_without_gelatine
+    consent_form_programmes.each do |consent_form_programme|
+      consent_form_programme.without_gelatine = without_gelatine
     end
   end
 

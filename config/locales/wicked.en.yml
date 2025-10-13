@@ -40,6 +40,7 @@ en:
     response_doubles: response-doubles
     response_flu: response-flu
     response_hpv: response-hpv
+    response_mmr: response-mmr
     route: route
     school: school
     session: session
@@ -50,4 +51,5 @@ en:
     vaccine: vaccine
     when: when
     who: who
+    without_gelatine: without-gelatine
     year_groups: year-groups

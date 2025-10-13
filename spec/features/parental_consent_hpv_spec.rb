@@ -3,7 +3,7 @@
 describe "Parental consent" do
   around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
 
-  scenario "Consent form exactly matches the cohort" do
+  scenario "HPV" do
     stub_pds_search_to_return_no_patients
 
     given_an_hpv_programme_is_underway
