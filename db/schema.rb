@@ -942,6 +942,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_14_121341) do
     t.bigint "location_id"
     t.bigint "supplied_by_user_id"
     t.integer "source", null: false
+    t.boolean "nhs_immunisations_api_primary_source"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
     t.index ["id"], name: "index_vaccination_records_on_pending_changes_not_empty", where: "(pending_changes <> '{}'::jsonb)"
@@ -954,6 +955,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_14_121341) do
     t.index ["supplied_by_user_id"], name: "index_vaccination_records_on_supplied_by_user_id"
     t.index ["uuid"], name: "index_vaccination_records_on_uuid", unique: true
     t.index ["vaccine_id"], name: "index_vaccination_records_on_vaccine_id"
+    t.check_constraint "nhs_immunisations_api_primary_source IS NULL OR source = 2", name: "nhs_immunisations_api_primary_source_requires_nhs_immunisations"
     t.check_constraint "session_id IS NULL AND source <> 0 OR session_id IS NOT NULL AND source = 0", name: "source_check"
   end
 
