@@ -73,6 +73,7 @@ class GovukNotifyPersonalisation
       vaccination:,
       vaccination_and_method:,
       vaccine:,
+      vaccine_and_dose:,
       vaccine_and_method:,
       vaccine_brand:,
       vaccine_is_injection:,
@@ -331,6 +332,14 @@ class GovukNotifyPersonalisation
 
   def vaccine
     "#{programme_names.to_sentence} vaccine".pluralize(programme_names.length)
+  end
+
+  def vaccine_and_dose
+    if (dose_sequence = vaccination_record&.dose_sequence)
+      "#{programme_names.to_sentence} #{I18n.t(dose_sequence, scope: :ordinal_number)} dose"
+    else
+      programme_names.to_sentence
+    end
   end
 
   def vaccine_and_method

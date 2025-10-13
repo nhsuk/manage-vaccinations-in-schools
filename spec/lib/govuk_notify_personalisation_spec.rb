@@ -89,6 +89,7 @@ describe GovukNotifyPersonalisation do
         vaccination: "HPV vaccination",
         vaccination_and_method: "HPV vaccination",
         vaccine: "HPV vaccine",
+        vaccine_and_dose: "HPV",
         vaccine_and_method: "HPV vaccine",
         vaccine_is_injection: "no",
         vaccine_is_nasal: "no",
@@ -334,6 +335,7 @@ describe GovukNotifyPersonalisation do
         :vaccination_record,
         :administered,
         programme: programmes.first,
+        dose_sequence: 1,
         performed_at: Date.new(2024, 1, 1),
         vaccine:
       )
@@ -346,6 +348,7 @@ describe GovukNotifyPersonalisation do
           today_or_date_of_vaccination: "on 1 January 2024",
           outcome_administered: "yes",
           outcome_not_administered: "no",
+          vaccine_and_dose: "HPV first dose",
           vaccine_brand: "Vaccine"
         )
       )
