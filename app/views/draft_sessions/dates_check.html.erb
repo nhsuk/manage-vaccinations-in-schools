@@ -8,7 +8,7 @@
 
 <%= govuk_panel(title_text: t(".title", programmes:), classes: %w[app-panel--interruption]) do %>
   <p>
-    <%= @catch_up_patients_vaccinated_percentage == 0 ? "Only " : "" %>
+    <%= @catch_up_patients_vaccinated_percentage == 0 ? "" : "Only " %>
     <%= @catch_up_patients_vaccinated_percentage %>% of children in
     <%= @catch_up_year_groups.map { format_year_group(it) }.to_sentence %> in
     this session have vaccination records. This is unusually low coverage for
