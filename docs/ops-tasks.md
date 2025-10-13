@@ -46,17 +46,18 @@ The following console commands will manually add an existing patient to the loca
 
 ```rb
 # Find the location
-loc = Location.find_by_urn_and_site("...")
+school = Location.find_by_urn_and_site("...")
 
 # The location should only have one session with no patients:
-loc.sessions.first.patients.count
+school.sessions.first.patients.count
 => 0
 
 # Use the logic in SchoolMove to associate each patient with the location session
-loc.patients.each { SchoolMove.new(patient: _1, school: loc).confirm! }
+academic_year = AcademicYear.current
+school.patients.each { SchoolMove.new(patient: _1, school:, academic_year:).confirm! }
 
 # Confirm that the patients have been added
-loc.sessions.first.patients.count
+school.sessions.first.patients.count
 => 294
 ```
 
