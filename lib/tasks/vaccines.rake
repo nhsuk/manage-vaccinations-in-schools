@@ -387,10 +387,13 @@ def create_mmr_health_questions(vaccine)
 
   immune_system.update!(next_question: household_immune_system)
 
-  vaccine.health_questions.create!(
-    title:
-      "Does the child have any other medical conditions we should know about?"
-  )
+  medical_conditions =
+    vaccine.health_questions.create!(
+      title:
+        "Does the child have any other medical conditions we should know about?"
+    )
+
+  household_immune_system.update!(next_question: medical_conditions)
 end
 
 def create_td_ipv_health_questions(vaccine)
