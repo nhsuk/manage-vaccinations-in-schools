@@ -210,18 +210,7 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def set_batches
-    method =
-      if @draft_vaccination_record.delivery_method == "nasal_spray"
-        "nasal"
-      else
-        "injection"
-      end
-
-    vaccines =
-      VaccineCriteria.new(
-        vaccine_methods: [method],
-        without_gelatine: nil
-      ).apply(@programme.vaccines)
+    vaccines = vaccine_criteria.apply(@programme.vaccines)
 
     scope = policy_scope(Batch).includes(:vaccine)
 
@@ -258,5 +247,17 @@ class DraftVaccinationRecordsController < ApplicationController
   def first_step_of_flow?
     current_step.to_s == @draft_vaccination_record.first_active_wizard_step ||
       current_step == @draft_vaccination_record.wizard_steps.first
+  end
+
+  def vaccine_criteria
+    vaccine_method =
+      Vaccine.delivery_method_to_vaccine_method(
+        @draft_vaccination_record.delivery_method
+      )
+
+    VaccineCriteria.new(
+      vaccine_methods: [vaccine_method].compact,
+      without_gelatine: nil
+    )
   end
 end

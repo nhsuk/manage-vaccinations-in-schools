@@ -30,7 +30,9 @@ class VaccineCriteria
   attr_reader :vaccine_methods, :without_gelatine
 
   def apply(scope)
-    scope = scope.where(method: vaccine_methods).order(method_order_node)
+    if vaccine_methods.present?
+      scope = scope.where(method: vaccine_methods).order(method_order_node)
+    end
 
     scope = scope.where(contains_gelatine: false) if without_gelatine
 
