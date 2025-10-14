@@ -26,6 +26,7 @@ on:
 
 env:
   PUSH_IMAGE_TO_PRODUCTION: ${{ github.ref_name == 'main' }}
+  image_type: ${{ inputs.image_to_build }}
   repository_name: mavis/${{ inputs.image_to_build }}
   git_ref: ${{ inputs.git_sha || github.sha }}
 
@@ -78,6 +79,8 @@ jobs:
     needs: check-image-presence
     if: needs.check-image-presence.outputs.build-needed == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -92,7 +95,7 @@ jobs:
         if: inputs.image_to_build == 'ops'
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ matrix.aws-role }}
+          role-to-assume: 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure'
           aws-region: eu-west-2
       - name: Login to ECR
         if: inputs.image_to_build == 'ops'
@@ -106,7 +109,7 @@ jobs:
       - name: Upload Docker image
         uses: actions/upload-artifact@v4
         with:
-          name: image
+          name: ${{ env.image_type }}-image
           path: image.tar
   define-matrix:
     name: Determine AWS roles to push the image
@@ -135,7 +138,7 @@ jobs:
       - name: Download Docker image
         uses: actions/download-artifact@v5
         with:
-          name: image
+          name: ${{ env.image_type }}-image
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:

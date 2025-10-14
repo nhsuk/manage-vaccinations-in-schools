@@ -82,7 +82,7 @@ jobs:
         id: get-git-sha
         run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
-  build-and-push-image:
+  build-and-push-webapp-image:
     permissions:
       id-token: write
     needs: determine-git-sha
@@ -90,17 +90,27 @@ jobs:
     with:
       image_to_build: webapp
       git_sha: ${{ needs.determine-git-sha.outputs.git-sha }}
+  build-and-push-ops-image:
+    permissions:
+      id-token: write
+    needs: build-and-push-webapp-image
+    uses: ./.github/workflows/build-and-push-image.yml
+    with:
+      image_to_build: ops
+      git_sha: ${{ needs.determine-git-sha.outputs.git-sha }}
 
   prepare-deployment:
     name: Prepare deployment
     runs-on: ubuntu-latest
-    needs: [ determine-git-sha, build-and-push-image ]
+    needs: [ determine-git-sha, build-and-push-ops-image ]
     permissions:
       id-token: write
     strategy:
       fail-fast: true
       matrix:
-        service: ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
+        service: ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq", "ops"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
+    env:
+      repository_name: ${{ matrix.service == 'ops' && 'mavis/ops' || 'mavis/webapp' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -118,7 +128,7 @@ jobs:
           image_tag: ${{ needs.determine-git-sha.outputs.git-sha }}
         run: |
           digest=$(aws ecr describe-images \
-            --repository-name mavis/webapp \
+            --repository-name $repository_name \
             --image-ids imageTag=$image_tag \
             --query 'imageDetails[0].imageDigest' \
             --output text)
@@ -129,7 +139,7 @@ jobs:
         with:
           task-definition-family: "mavis-${{ matrix.service }}-task-definition-${{ inputs.environment }}-template"
           container-name: "application"
-          image: "${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}"
+          image: "${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.repository_name }}@${{ steps.get-image-digest.outputs.digest }}"
           environment-variables: |
             APP_VERSION=${{ env.app_version }}
       - name: Rename task definition file
@@ -147,7 +157,6 @@ jobs:
     environment: ${{ inputs.environment }}
     steps:
       - run: echo "Proceeding with deployment to $environment"
-
   deploy-service:
     name: Deploy service
     runs-on: ubuntu-latest
@@ -157,7 +166,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        service: ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
+        service: ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq", "ops"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
