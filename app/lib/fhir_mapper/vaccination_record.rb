@@ -221,16 +221,18 @@ module FHIRMapper
 
     private_class_method def self.dose_volume_ml_from_fhir(fhir_record)
       dq = fhir_record.doseQuantity
-      if MILLILITER_SUB_STRINGS.any? { it.in?(dq.unit.downcase) }
+
+      if MILLILITER_SUB_STRINGS.any? { dq.unit.downcase.starts_with?(it) }
         dq.value.to_f
-      else
-        raise "Unknown dose unit: #{dq.unit}"
       end
     end
 
     private_class_method def self.full_dose_from_fhir(fhir_record, vaccine:)
       if vaccine.programme.flu? && vaccine.nasal?
-        dose_volume_ml_from_fhir(fhir_record) >= vaccine.dose_volume_ml
+        dose_volume_ml = dose_volume_ml_from_fhir(fhir_record)
+
+        # If we can't parse the volume unit then assume a full dose
+        dose_volume_ml.nil? || dose_volume_ml >= vaccine.dose_volume_ml
       else
         true
       end

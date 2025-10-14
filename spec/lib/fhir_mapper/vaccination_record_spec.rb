@@ -376,6 +376,33 @@ describe FHIRMapper::VaccinationRecord do
       its(:performed_ods_code) { should eq "B0C4P" }
     end
 
+    context "with a record with an unexpected dose unit" do
+      let(:fhir_immunization) do
+        FHIR.from_contents(
+          file_fixture("/fhir/fhir_record_unexpected_dose_unit.json").read
+        )
+      end
+
+      include_examples "a mapped vaccination record (common fields)"
+
+      its(:performed_by_given_name) { should eq "Steph" }
+      its(:performed_by_family_name) { should eq "Smith" }
+      its(:batch) { should have_attributes(name: "4120Z001") }
+
+      its(:vaccine) do
+        should have_attributes(snomed_product_code: "43208811000001106")
+      end
+
+      its(:performed_at) { should eq Time.parse("2025-04-06T23:59:50.2+01:00") }
+      its(:delivery_method) { should eq "nasal_spray" }
+      its(:delivery_site) { should eq "nose" }
+      its(:full_dose) { should be true }
+      its(:outcome) { should eq "administered" }
+      its(:location) { should have_attributes(urn: "100006") }
+      its(:location_name) { should be_nil }
+      its(:performed_ods_code) { should eq "B0C4P" }
+    end
+
     context "with a record with extended milliliter description" do
       let(:fhir_immunization) do
         FHIR.from_contents(
