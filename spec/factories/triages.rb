@@ -59,6 +59,15 @@ FactoryBot.define do
       nasal
     end
 
+    trait :safe_to_vaccinate_without_gelatine do
+      safe_to_vaccinate
+      without_gelatine
+    end
+
+    trait :without_gelatine do
+      without_gelatine { true }
+    end
+
     trait :invalidated do
       invalidated_at { Time.current }
     end

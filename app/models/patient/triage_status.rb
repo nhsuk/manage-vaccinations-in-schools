@@ -59,6 +59,7 @@ class Patient::TriageStatus < ApplicationRecord
   def assign_status
     self.status = generator.status
     self.vaccine_method = generator.vaccine_method
+    self.without_gelatine = generator.without_gelatine
   end
 
   delegate :consent_requires_triage?,
