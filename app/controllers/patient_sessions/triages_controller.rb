@@ -61,11 +61,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
 
   def triage_form_params
     params.expect(
-      triage_form: %i[
-        status_and_vaccine_method
-        notes
-        add_patient_specific_direction
-      ]
+      triage_form: %i[status_option notes add_patient_specific_direction]
     )
   end
 

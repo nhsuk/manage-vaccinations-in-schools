@@ -10,7 +10,7 @@ class TriageForm
 
   attribute :add_patient_specific_direction, :boolean
   attribute :notes, :string
-  attribute :status_and_vaccine_method, :string
+  attribute :status_option, :string
   attribute :vaccine_methods, array: true, default: []
 
   validates :add_patient_specific_direction,
@@ -18,13 +18,10 @@ class TriageForm
               in: [true, false]
             },
             if: :requires_add_patient_specific_direction?
-  validates :status_and_vaccine_method,
-            inclusion: {
-              in: :status_and_vaccine_method_options
-            }
+  validates :status_option, inclusion: { in: :status_options }
 
   def triage=(triage)
-    self.status_and_vaccine_method =
+    self.status_option =
       if triage.safe_to_vaccinate?
         if consented_vaccine_methods.length > 1
           "safe_to_vaccinate_#{triage.vaccine_method}"
@@ -59,7 +56,7 @@ class TriageForm
     %w[keep_in_triage delay_vaccination do_not_vaccinate]
   end
 
-  def status_and_vaccine_method_options
+  def status_options
     safe_to_vaccinate_options + other_options
   end
 
@@ -96,17 +93,17 @@ class TriageForm
   end
 
   def status
-    case status_and_vaccine_method
+    case status_option
     when "safe_to_vaccinate", "safe_to_vaccinate_injection",
          "safe_to_vaccinate_nasal"
       "safe_to_vaccinate"
     else
-      status_and_vaccine_method
+      status_option
     end
   end
 
   def vaccine_method
-    case status_and_vaccine_method
+    case status_option
     when "safe_to_vaccinate"
       consented_vaccine_methods.first
     when "safe_to_vaccinate_injection"
@@ -117,7 +114,7 @@ class TriageForm
   end
 
   def requires_add_patient_specific_direction?
-    show_add_patient_specific_direction?(status_and_vaccine_method)
+    show_add_patient_specific_direction?(status_option)
   end
 
   def can_create_patient_specific_directions?

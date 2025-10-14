@@ -9,7 +9,7 @@ en:
           true: Yes, they got the full dose
           false: No, they got half a dose
       triage_form:
-        status_and_vaccine_method_options:
+        status_option_options:
           delay_vaccination: No, delay vaccination (and invite to clinic)
           do_not_vaccinate: No, do not vaccinate
           keep_in_triage: No, keep in triage

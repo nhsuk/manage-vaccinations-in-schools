@@ -35,7 +35,7 @@ class DraftConsent
   attribute :session_id, :integer
   attribute :triage_add_patient_specific_direction, :boolean
   attribute :triage_notes, :string
-  attribute :triage_status_and_vaccine_method, :string
+  attribute :triage_status_option, :string
   attribute :vaccine_methods, array: true, default: []
   attribute :without_gelatine, :boolean
 
@@ -317,7 +317,7 @@ class DraftConsent
         triage_add_patient_specific_direction
       triage_form.notes = triage_notes || ""
       triage_form.current_user = recorded_by
-      triage_form.status_and_vaccine_method = triage_status_and_vaccine_method
+      triage_form.status_option = triage_status_option
     end
   end
 
@@ -448,8 +448,8 @@ class DraftConsent
     TriagePolicy.new(@current_user, Triage).new?
   end
 
-  def triage_status_and_vaccine_method_options
-    Triage.new(patient:, programme:).status_and_vaccine_method_options
+  def triage_status_options
+    Triage.new(patient:, programme:).status_options
   end
 
   def requires_triage?

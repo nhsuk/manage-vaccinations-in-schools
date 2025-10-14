@@ -173,7 +173,7 @@ en:
             notes:
               blank: Enter triage notes
               too_long: Enter triage notes that are less than 1000 characters long
-            status_and_vaccine_method:
+            status_option:
               blank: Choose a status
               inclusion: Choose a status
             add_patient_specific_direction:
