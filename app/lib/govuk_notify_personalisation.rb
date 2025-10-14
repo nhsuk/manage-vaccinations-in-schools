@@ -375,10 +375,10 @@ class GovukNotifyPersonalisation
             # We pick the first method as it's the one most likely to be used
             # to vaccinate the patient. For example, in the case of Flu, the
             # parents will approve nasal (and then optionally injection).
-            patient.approved_vaccine_methods(
-              programme:,
-              academic_year:
-            ).first == method
+            patient
+              .vaccine_criteria(programme:, academic_year:)
+              .vaccine_methods
+              .first == method
           end
         else
           Vaccine.where(programme: programmes, method:).exists?
@@ -399,7 +399,10 @@ class GovukNotifyPersonalisation
             # to vaccinate the patient. For example, in the case of Flu, the
             # parents will approve nasal (and then optionally injection).
             method =
-              patient.approved_vaccine_methods(programme:, academic_year:).first
+              patient
+                .vaccine_criteria(programme:, academic_year:)
+                .vaccine_methods
+                .first
             Vaccine.where(programme:, method:).flat_map(&:side_effects)
           end
         else
@@ -444,7 +447,10 @@ class GovukNotifyPersonalisation
                 vaccination_record.delivery_method
               )
             elsif patient
-              patient.approved_vaccine_methods(programme:, academic_year:).first
+              patient
+                .vaccine_criteria(programme:, academic_year:)
+                .vaccine_methods
+                .first
             end
 
           method_prefix =

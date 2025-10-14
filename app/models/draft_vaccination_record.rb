@@ -262,8 +262,8 @@ class DraftVaccinationRecord
       return true
     end
 
-    # We can't use `patient.approved_vaccine_methods` because once vaccinated
-    # a patient no longer has an approved list of vaccine methods (they don't
+    # We can't use `patient.vaccine_criteria` because once vaccinated a
+    # patient no longer has an approved list of vaccine methods (they don't
     # need the vaccine).
 
     consent_generator =

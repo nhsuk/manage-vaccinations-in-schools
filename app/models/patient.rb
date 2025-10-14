@@ -542,7 +542,7 @@ class Patient < ApplicationRecord
     end
 
     if vaccine_method &&
-         approved_vaccine_methods(programme:, academic_year:).first !=
+         vaccine_criteria(programme:, academic_year:).vaccine_methods.first !=
            vaccine_method
       return false
     end
@@ -566,13 +566,15 @@ class Patient < ApplicationRecord
     :do_not_record
   end
 
-  def approved_vaccine_methods(programme:, academic_year:)
+  def vaccine_criteria(programme:, academic_year:)
     triage_status = triage_status(programme:, academic_year:)
 
     if triage_status.not_required?
-      consent_status(programme:, academic_year:).vaccine_methods
+      VaccineCriteria.from_consent_status(
+        consent_status(programme:, academic_year:)
+      )
     else
-      [triage_status.vaccine_method].compact
+      VaccineCriteria.from_triage_status(triage_status)
     end
   end
 

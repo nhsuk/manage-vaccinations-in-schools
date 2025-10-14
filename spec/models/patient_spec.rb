@@ -852,54 +852,58 @@ describe Patient do
     end
   end
 
-  describe "#approved_vaccine_methods" do
-    subject(:approved_vaccine_methods) do
-      patient.approved_vaccine_methods(programme:, academic_year:)
+  describe "#vaccine_criteria" do
+    subject(:vaccine_criteria) do
+      patient.vaccine_criteria(programme:, academic_year:)
     end
 
     let(:patient) { create(:patient) }
     let(:programme) { create(:programme) }
-    let(:academic_year) { Date.current.academic_year }
+    let(:academic_year) { AcademicYear.current }
 
-    it { should be_empty }
-
-    context "when consent given and triage not required" do
-      before do
-        create(
-          :patient_consent_status,
-          :given,
-          patient:,
-          programme:,
-          vaccine_methods: %w[nasal injection]
-        )
-      end
-
-      it { should eq(%w[nasal injection]) }
-    end
-
-    context "when consent given and triage required" do
-      before do
-        create(
-          :patient_consent_status,
-          :given,
-          patient:,
-          programme:,
-          vaccine_methods: %w[nasal injection]
-        )
-        create(:patient_triage_status, :required, patient:, programme:)
-      end
+    describe "#vaccine_methods" do
+      subject { vaccine_criteria.vaccine_methods }
 
       it { should be_empty }
 
-      context "and when triaged" do
+      context "when consent given and triage not required" do
         before do
-          patient.triage_status(programme:, academic_year:).update!(
-            status: "safe_to_vaccinate",
-            vaccine_method: "nasal"
+          create(
+            :patient_consent_status,
+            :given,
+            patient:,
+            programme:,
+            vaccine_methods: %w[nasal injection]
           )
         end
 
-        it { should eq(%w[nasal]) }
+        it { should eq(%w[nasal injection]) }
+      end
+
+      context "when consent given and triage required" do
+        before do
+          create(
+            :patient_consent_status,
+            :given,
+            patient:,
+            programme:,
+            vaccine_methods: %w[nasal injection]
+          )
+          create(:patient_triage_status, :required, patient:, programme:)
+        end
+
+        it { should be_empty }
+
+        context "and when triaged" do
+          before do
+            patient.triage_status(programme:, academic_year:).update!(
+              status: "safe_to_vaccinate",
+              vaccine_method: "nasal"
+            )
+          end
+
+          it { should eq(%w[nasal]) }
+        end
       end
     end
   end
