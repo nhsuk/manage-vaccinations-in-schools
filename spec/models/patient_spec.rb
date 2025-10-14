@@ -1306,15 +1306,7 @@ describe Patient do
       it { should be_nil }
     end
 
-    context "with PDS search results but no changeset" do
-      let(:import) { create(:class_import) }
-
-      before { create(:pds_search_result, patient:, import:) }
-
-      it { should be_nil }
-    end
-
-    context "with PDS search results and changeset" do
+    context "with unique NHS number in PDS search results" do
       let(:import) { create(:class_import) }
 
       before do
@@ -1324,10 +1316,31 @@ describe Patient do
           import:,
           pds_nhs_number: "9449304130"
         )
-        create(:pds_search_result, patient:, import:)
+        create(:pds_search_result, patient:, import:, nhs_number: "9449304130")
+        create(
+          :pds_search_result,
+          patient:,
+          import:,
+          nhs_number: nil,
+          step: :no_fuzzy_with_wildcard_family_name
+        )
       end
 
       it { should eq("9449304130") }
+    end
+
+    context "with conflicting NHS numbers in PDS search results" do
+      before do
+        create(:pds_search_result, patient:, nhs_number: "9449304130")
+        create(
+          :pds_search_result,
+          patient:,
+          nhs_number: "9449310475",
+          step: :no_fuzzy_with_wildcard_family_name
+        )
+      end
+
+      it { should be_nil }
     end
   end
 
@@ -1356,7 +1369,7 @@ describe Patient do
           import:,
           pds_nhs_number: "9449304130"
         )
-        create(:pds_search_result, patient:, import:)
+        create(:pds_search_result, patient:, import:, nhs_number: "9449304130")
       end
 
       it { should be(true) }

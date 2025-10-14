@@ -702,7 +702,9 @@ class Patient < ApplicationRecord
   end
 
   def latest_pds_search_result
-    pds_search_results.latest_set&.first&.changeset&.pds_nhs_number
+    nhs_numbers =
+      pds_search_results.latest_set&.pluck(:nhs_number)&.compact&.uniq
+    nhs_numbers&.one? ? nhs_numbers.first : nil
   end
 
   def pds_lookup_match?
