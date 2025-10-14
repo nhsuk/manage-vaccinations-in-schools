@@ -1,0 +1,94 @@
+{
+  "resourceType": "Immunization",
+  "id": "11112222-3333-4444-5555-666677779999",
+  "contained": [
+    {
+      "resourceType": "Patient",
+      "id": "Patient1",
+      "identifier": [
+        {
+          "system": "https://fhir.nhs.uk/Id/nhs-number",
+          "value": "9998340446"
+        }
+      ],
+      "name": [
+        {
+          "family": "Abernathy",
+          "given": ["Sommer"]
+        }
+      ],
+      "gender": "unknown",
+      "birthDate": "2012-06-10",
+      "address": [
+        {
+          "postalCode": "TW9 1NR"
+        }
+      ]
+    }
+  ],
+  "extension": [
+    {
+      "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "884861000000100",
+            "display": "Seasonal influenza vaccination (procedure)"
+          }
+        ]
+      }
+    }
+  ],
+  "identifier": [
+    {
+      "system": "https://www.ieds.england.nhs.uk/",
+      "value": "7fa9ba01-aa9e-4ef9-a27c-30c9f413e421"
+    }
+  ],
+  "status": "completed",
+  "patient": {
+    "reference": "#Patient1"
+  },
+  "occurrenceDateTime": "2025-10-06T07:57:32+01:00",
+  "recorded": "2025-10-06T07:58:02.836000+01:00",
+  "primarySource": true,
+  "location": {
+    "identifier": {
+      "system": "https://fhir.hl7.org.uk/Id/urn-school-number",
+      "value": "100006"
+    }
+  },
+  "manufacturer": {
+    "display": "AstraZeneca"
+  },
+  "lotNumber": "aa1111",
+  "expirationDate": "2030-01-01",
+  "performer": [
+    {
+      "actor": {
+        "type": "Organization",
+        "identifier": {
+          "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+          "value": "PERF"
+        }
+      }
+    }
+  ],
+  "protocolApplied": [
+    {
+      "targetDisease": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "6142004",
+              "display": "Influenza"
+            }
+          ]
+        }
+      ],
+      "doseNumberPositiveInt": 1
+    }
+  ]
+}
