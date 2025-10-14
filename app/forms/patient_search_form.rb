@@ -243,7 +243,7 @@ class PatientSearchForm < SearchForm
   def filter_still_to_vaccinate(scope)
     return scope if still_to_vaccinate.blank?
 
-    scope.consent_given_and_ready_to_vaccinate(
+    scope.consent_given_and_safe_to_vaccinate(
       programmes:,
       academic_year:,
       vaccine_method:

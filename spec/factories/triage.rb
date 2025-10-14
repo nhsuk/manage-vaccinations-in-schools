@@ -44,7 +44,7 @@ FactoryBot.define do
 
     # TODO: Remove this default and require users of this factory to be
     #  explicit about the status they want.
-    status { "ready_to_vaccinate" }
+    status { "safe_to_vaccinate" }
     vaccine_method { "injection" }
 
     academic_year do
@@ -54,8 +54,8 @@ FactoryBot.define do
     traits_for_enum :status
     traits_for_enum :vaccine_method
 
-    trait :ready_to_vaccinate do
-      status { "ready_to_vaccinate" }
+    trait :safe_to_vaccinate do
+      status { "safe_to_vaccinate" }
       vaccine_method { "injection" }
     end
 
@@ -68,8 +68,8 @@ FactoryBot.define do
       vaccine_method { nil }
     end
 
-    trait :needs_follow_up do
-      status { "needs_follow_up" }
+    trait :keep_in_triage do
+      status { "keep_in_triage" }
       vaccine_method { nil }
     end
 

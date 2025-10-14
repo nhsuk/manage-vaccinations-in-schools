@@ -75,8 +75,7 @@ describe "Inspect graph PII access logging", :cis2 do
     @patient =
       create(
         :patient,
-        :consent_given_triage_needed,
-        :triage_ready_to_vaccinate,
+        :consent_given_triage_safe_to_vaccinate,
         given_name: "John",
         family_name: "Smith",
         year_group: 8,
@@ -103,8 +102,7 @@ describe "Inspect graph PII access logging", :cis2 do
     @patient =
       create(
         :patient,
-        :consent_given_triage_needed,
-        :triage_ready_to_vaccinate,
+        :consent_given_triage_safe_to_vaccinate,
         given_name: "John",
         family_name: "Smith",
         year_group: 8,
@@ -116,8 +114,7 @@ describe "Inspect graph PII access logging", :cis2 do
     @additional_patient =
       create(
         :patient,
-        :consent_given_triage_needed,
-        :triage_ready_to_vaccinate,
+        :consent_given_triage_safe_to_vaccinate,
         given_name: "Jane",
         family_name: "Doe",
         year_group: 8,

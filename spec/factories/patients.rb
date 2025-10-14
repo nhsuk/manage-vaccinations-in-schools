@@ -236,19 +236,6 @@ FactoryBot.define do
       end
     end
 
-    trait :triage_safe_to_vaccinate do
-      triage_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_triage_status,
-            :safe_to_vaccinate,
-            patient: instance,
-            programme:
-          )
-        end
-      end
-    end
-
     trait :triage_required do
       triage_statuses do
         programmes.map do |programme|
@@ -501,6 +488,20 @@ FactoryBot.define do
         end
       end
 
+      triages do
+        programmes.map do |programme|
+          association(
+            :triage,
+            :safe_to_vaccinate,
+            patient: instance,
+            performed_by:,
+            programme:,
+            team:,
+            notes: "Okay to vaccinate"
+          )
+        end
+      end
+
       triage_statuses do
         programmes.map do |programme|
           association(
@@ -570,7 +571,7 @@ FactoryBot.define do
         programmes.map do |programme|
           association(
             :triage,
-            :ready_to_vaccinate,
+            :safe_to_vaccinate,
             :nasal_only,
             patient: instance,
             programme:
@@ -765,25 +766,6 @@ FactoryBot.define do
       end
     end
 
-    trait :triage_ready_to_vaccinate do
-      consent_given_triage_needed
-      triage_safe_to_vaccinate
-
-      triages do
-        programmes.map do |programme|
-          association(
-            :triage,
-            :ready_to_vaccinate,
-            patient: instance,
-            performed_by:,
-            programme:,
-            team:,
-            notes: "Okay to vaccinate"
-          )
-        end
-      end
-    end
-
     trait :triage_do_not_vaccinate do
       triages do
         programmes.map do |programme|
@@ -810,25 +792,9 @@ FactoryBot.define do
       end
     end
 
-    trait :triage_needs_follow_up do
-      triage_required
+    trait :consent_given_triage_delay_vaccination do
+      consent_given_triage_needed
 
-      triages do
-        programmes.map do |programme|
-          association(
-            :triage,
-            :needs_follow_up,
-            patient: instance,
-            performed_by:,
-            programme:,
-            team:,
-            notes: "Needs follow up"
-          )
-        end
-      end
-    end
-
-    trait :triage_delay_vaccination do
       triages do
         programmes.map do |programme|
           association(
@@ -855,8 +821,7 @@ FactoryBot.define do
     end
 
     trait :unable_to_vaccinate do
-      consent_given_triage_needed
-      triage_ready_to_vaccinate
+      consent_given_triage_not_needed
 
       vaccination_records do
         programmes.map do |programme|

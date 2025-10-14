@@ -36,7 +36,7 @@ describe TimelineRecords do
       :triage,
       patient:,
       programme:,
-      status: :ready_to_vaccinate,
+      status: :safe_to_vaccinate,
       performed_by: user
     )
   end

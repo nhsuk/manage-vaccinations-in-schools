@@ -3,7 +3,7 @@
 <%= render AppCardComponent.new(feature: true) do |card| %>
   <% card.with_heading(level: 4, colour:) { heading } %>
 
-  <% if latest_triage.nil? || latest_triage.needs_follow_up? %>
+  <% if latest_triage.nil? || latest_triage.keep_in_triage? %>
     <% if helpers.policy(Triage).new? %>
       <p>You need to decide if <%= patient.full_name %> is safe to vaccinate.</p>
 
@@ -19,7 +19,7 @@
       <p>A nurse needs to decide if <%= patient.full_name %> is safe to vaccinate.</p>
     <% end %>
   <% elsif latest_triage %>
-    <% if latest_triage.ready_to_vaccinate? %>
+    <% if latest_triage.safe_to_vaccinate? %>
       <% if latest_triage.vaccine_method.present? && programme.has_multiple_vaccine_methods? %>
         <p><%= latest_triage.performed_by.full_name %> decided that <%= patient.full_name %> is safe to vaccinate using the <%= vaccination_method %> vaccine only.</p>
       <% else %>

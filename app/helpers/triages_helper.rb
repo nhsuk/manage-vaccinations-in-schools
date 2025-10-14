@@ -21,7 +21,7 @@ module TriagesHelper
     colour =
       if triage.invalidated?
         "grey"
-      elsif triage.ready_to_vaccinate?
+      elsif triage.safe_to_vaccinate?
         "aqua-green"
       elsif triage.do_not_vaccinate?
         "red"

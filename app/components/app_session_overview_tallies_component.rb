@@ -158,7 +158,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
   def still_to_vaccinate_count
     session
       .patients
-      .consent_given_and_ready_to_vaccinate(
+      .consent_given_and_safe_to_vaccinate(
         programmes:,
         academic_year:,
         vaccine_method: nil

@@ -6,7 +6,7 @@ describe "HPV vaccination" do
   scenario "Administered at a clinic" do
     given_i_am_signed_in
 
-    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    when_i_go_to_a_patient_that_is_safe_to_vaccinate
     and_i_record_that_the_patient_has_been_vaccinated
     and_i_select_the_batch
     and_i_select_a_location
@@ -54,7 +54,7 @@ describe "HPV vaccination" do
     sign_in team.users.first
   end
 
-  def when_i_go_to_a_patient_that_is_ready_to_vaccinate
+  def when_i_go_to_a_patient_that_is_safe_to_vaccinate
     visit session_record_path(@session)
     click_link @patient.full_name
   end

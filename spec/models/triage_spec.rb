@@ -38,7 +38,7 @@ describe Triage do
 
   describe "validations" do
     context "when safe to vaccinate" do
-      subject(:triage) { build(:triage, :ready_to_vaccinate) }
+      subject(:triage) { build(:triage, :safe_to_vaccinate) }
 
       it do
         expect(triage).to validate_inclusion_of(:vaccine_method).in_array(

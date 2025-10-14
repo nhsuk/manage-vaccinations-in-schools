@@ -26,7 +26,7 @@ describe AppTriageTableComponent do
 
     context "triaged as safe to vaccinate" do
       let!(:triage) do
-        create(:triage, :ready_to_vaccinate, patient:, programme:)
+        create(:triage, :safe_to_vaccinate, patient:, programme:)
       end
 
       it { should have_css("caption", text: "Triage notes") }

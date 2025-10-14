@@ -48,9 +48,9 @@ class Triage < ApplicationRecord
 
   enum :status,
        {
-         ready_to_vaccinate: 0,
+         safe_to_vaccinate: 0,
          do_not_vaccinate: 1,
-         needs_follow_up: 2,
+         keep_in_triage: 2,
          delay_vaccination: 3
        },
        validate: true
@@ -58,6 +58,6 @@ class Triage < ApplicationRecord
   enum :vaccine_method,
        { injection: 0, nasal: 1 },
        validate: {
-         if: :ready_to_vaccinate?
+         if: :safe_to_vaccinate?
        }
 end

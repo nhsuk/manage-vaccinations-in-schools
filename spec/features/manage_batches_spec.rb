@@ -5,7 +5,7 @@ describe "Manage batches" do
 
   scenario "Adding and editing batches" do
     given_my_team_is_running_an_hpv_vaccination_programme
-    and_there_is_a_vaccination_session_today_with_one_patient_ready_to_vaccinate
+    and_there_is_a_vaccination_session_today_with_one_patient_safe_to_vaccinate
 
     when_i_manage_vaccines
     then_i_see_only_active_hpv_vaccines_with_no_batches_set_up
@@ -32,7 +32,7 @@ describe "Manage batches" do
     @team = create(:team, :with_one_nurse, programmes: @programmes)
   end
 
-  def and_there_is_a_vaccination_session_today_with_one_patient_ready_to_vaccinate
+  def and_there_is_a_vaccination_session_today_with_one_patient_safe_to_vaccinate
     location = create(:school)
     session = create(:session, :today, programmes: @programmes, location:)
 

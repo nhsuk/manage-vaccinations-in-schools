@@ -130,8 +130,8 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
         consent_given_triage_needed
         consent_given_triage_not_needed
         consent_refused
-        triage_delay_vaccination
-        triage_ready_to_vaccinate
+        consent_given_triage_delay_vaccination
+        consent_given_triage_safe_to_vaccinate
         unable_to_vaccinate
         vaccinated
       ]
