@@ -571,8 +571,7 @@ FactoryBot.define do
         programmes.map do |programme|
           association(
             :triage,
-            :safe_to_vaccinate,
-            :nasal_only,
+            :safe_to_vaccinate_nasal,
             patient: instance,
             programme:
           )

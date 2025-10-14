@@ -21,6 +21,7 @@ describe InvalidateSelfConsentsJob do
       let(:triage) do
         create(
           :triage,
+          :safe_to_vaccinate,
           academic_year:,
           created_at: 1.day.ago,
           team:,
@@ -46,7 +47,14 @@ describe InvalidateSelfConsentsJob do
 
     context "with triage" do
       let(:triage) do
-        create(:triage, academic_year:, team:, programme:, patient:)
+        create(
+          :triage,
+          :safe_to_vaccinate,
+          academic_year:,
+          team:,
+          programme:,
+          patient:
+        )
       end
 
       it "does not invalidate the triage" do
@@ -72,6 +80,7 @@ describe InvalidateSelfConsentsJob do
       let(:triage) do
         create(
           :triage,
+          :safe_to_vaccinate,
           academic_year:,
           created_at: 1.day.ago,
           team:,
@@ -108,6 +117,7 @@ describe InvalidateSelfConsentsJob do
         let(:triage) do
           create(
             :triage,
+            :safe_to_vaccinate,
             academic_year:,
             created_at: 1.day.ago,
             team:,
@@ -134,7 +144,14 @@ describe InvalidateSelfConsentsJob do
 
     context "with triage" do
       let(:triage) do
-        create(:triage, academic_year:, team:, programme:, patient:)
+        create(
+          :triage,
+          :safe_to_vaccinate,
+          academic_year:,
+          team:,
+          programme:,
+          patient:
+        )
       end
 
       it "does not invalidate the triage" do

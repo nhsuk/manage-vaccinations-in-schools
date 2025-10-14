@@ -79,7 +79,7 @@ describe PatientNHSNumberLookupJob do
       let(:gillick_assessment) do
         create(:gillick_assessment, :competent, patient:, session:)
       end
-      let(:triage) { create(:triage, patient:, programme:) }
+      let(:triage) { create(:triage, :safe_to_vaccinate, patient:, programme:) }
       let(:vaccination_record) do
         create(:vaccination_record, patient:, session:, programme:)
       end
