@@ -37,13 +37,9 @@ class ConsentFormProgramme < ApplicationRecord
   delegate :flu?, :hpv?, :menacwy?, :mmr?, :td_ipv?, to: :programme
 
   def vaccines
-    scope = Vaccine.active.where(programme_id:)
-
-    scope = scope.where(method: vaccine_methods).order(vaccine_method_order_sql)
-
-    scope = scope.where(contains_gelatine: false) if without_gelatine
-
-    scope
+    VaccineCriteria.from_consentable(self).apply(
+      Vaccine.active.where(programme_id:)
+    )
   end
 
   def human_enum_name(attribute)
@@ -53,14 +49,4 @@ class ConsentFormProgramme < ApplicationRecord
   private
 
   def requires_reason_for_refusal? = false
-
-  def vaccine_method_order_sql
-    node = Arel::Nodes::Case.new(Vaccine.arel_table[:method])
-
-    vaccine_methods.each_with_index do |method, i|
-      node = node.when(Vaccine.methods.fetch(method)).then(i)
-    end
-
-    node
-  end
 end

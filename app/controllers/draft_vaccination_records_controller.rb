@@ -210,13 +210,6 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def set_batches
-    scope =
-      policy_scope(Batch).includes(:vaccine).where(
-        vaccine: {
-          programme: @programme
-        }
-      )
-
     method =
       if @draft_vaccination_record.delivery_method == "nasal_spray"
         "nasal"
@@ -224,10 +217,18 @@ class DraftVaccinationRecordsController < ApplicationController
         "injection"
       end
 
+    vaccines =
+      VaccineCriteria.new(
+        vaccine_methods: [method],
+        without_gelatine: nil
+      ).apply(@programme.vaccines)
+
+    scope = policy_scope(Batch).includes(:vaccine)
+
     @batches =
       scope
         .where(id: @draft_vaccination_record.batch_id)
-        .or(scope.not_archived.not_expired.where(vaccine: { method: }))
+        .or(scope.not_archived.not_expired.where(vaccine: vaccines))
         .order_by_name_and_expiration
   end
 
