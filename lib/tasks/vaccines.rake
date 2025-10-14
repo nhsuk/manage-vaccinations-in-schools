@@ -375,15 +375,13 @@ def create_mmr_health_questions(vaccine)
   severe_reaction_neomycin.update!(next_question: immune_system)
 
   household_immune_system =
-    if vaccine.nasal?
-      vaccine.health_questions.create!(
-        title:
-          "Is the child in regular close contact with anyone currently " \
-            "having treatment that severely affects their immune system?",
-        give_details_hint:
-          "Let us know if they can avoid contact with this person for 2 weeks"
-      )
-    end
+    vaccine.health_questions.create!(
+      title:
+        "Is the child in regular close contact with anyone currently " \
+          "having treatment that severely affects their immune system?",
+      give_details_hint:
+        "Let us know if they can avoid contact with this person for 2 weeks"
+    )
 
   immune_system.update!(next_question: household_immune_system)
 
