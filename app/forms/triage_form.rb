@@ -9,9 +9,9 @@ class TriageForm
   attr_accessor :patient, :session, :programme, :current_user
 
   attribute :add_patient_specific_direction, :boolean
+  attribute :consent_vaccine_methods, array: true, default: []
   attribute :notes, :string
   attribute :status_option, :string
-  attribute :vaccine_methods, array: true, default: []
 
   validates :add_patient_specific_direction,
             inclusion: {
@@ -75,8 +75,11 @@ class TriageForm
 
   def consented_vaccine_methods
     @consented_vaccine_methods ||=
-      vaccine_methods.presence ||
-        patient.consent_status(programme:, academic_year:).vaccine_methods
+      consent_vaccine_methods.presence || consent_status.vaccine_methods
+  end
+
+  def consent_status
+    @consent_status ||= patient.consent_status(programme:, academic_year:)
   end
 
   def triage_attributes

@@ -186,9 +186,9 @@ class DraftConsentsController < ApplicationController
         TriageForm.new(
           add_patient_specific_direction:
             @draft_consent.triage_add_patient_specific_direction,
+          consent_vaccine_methods: @draft_consent.vaccine_methods,
           current_user:,
           notes: @draft_consent.triage_notes,
-          vaccine_methods: @draft_consent.vaccine_methods,
           patient: @patient,
           session: @session,
           programme: @programme,
