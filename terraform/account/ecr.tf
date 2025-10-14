@@ -17,26 +17,25 @@ resource "aws_ecr_repository" "mavis" {
 
 resource "aws_ecr_lifecycle_policy" "mavis" {
   repository = aws_ecr_repository.mavis.name
-  policy = jsonencode({
-    rules = [
-      {
-        rulePriority = 1,
-        description  = "Expire images older than 3 months",
-        selection = {
-          tagStatus   = "any",
-          countType   = "sinceImagePushed",
-          countUnit   = "days",
-          countNumber = 90,
-        },
-        action = {
-          type = "expire"
-        }
-      }
-    ]
-  })
+  policy     = file("resources/ecr_lifecycle_policy.json")
 }
 
 resource "aws_ecr_repository" "mavis_reporting" {
   name                 = "mavis/reporting"
   image_tag_mutability = "MUTABLE"
+}
+
+resource "aws_ecr_lifecycle_policy" "mavis_reporting" {
+  repository = aws_ecr_repository.mavis_reporting.name
+  policy     = file("resources/ecr_lifecycle_policy.json")
+}
+
+resource "aws_ecr_repository" "mavis_ops" {
+  name                 = "mavis/ops"
+  image_tag_mutability = "MUTABLE"
+}
+
+resource "aws_ecr_lifecycle_policy" "mavis_ops" {
+  repository = aws_ecr_repository.mavis_ops.name
+  policy     = file("resources/ecr_lifecycle_policy.json")
 }

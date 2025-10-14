@@ -4,17 +4,29 @@ run-name: Build and push image for ${{ inputs.git-sha || github.sha }}
 on:
   workflow_dispatch:
     inputs:
+      image_to_build:
+        description: The type of image to build. Options are 'webapp' or 'ops'.
+        required: true
+        type: choice
+        options:
+          - webapp
+          - ops
       git_sha:
         description: The FULL git commit sha to build the image from (optional).
         type: string
   workflow_call:
     inputs:
+      image_to_build:
+        description: The type of image to build. Options are 'webapp' or 'ops'.
+        required: true
+        type: string
       git_sha:
         description: The git commit sha to build the image from.
         type: string
 
 env:
   PUSH_IMAGE_TO_PRODUCTION: ${{ github.ref_name == 'main' }}
+  repository_name: mavis/${{ inputs.image_to_build }}
   git_ref: ${{ inputs.git_sha || github.sha }}
 
 concurrency:
@@ -39,7 +51,7 @@ jobs:
       - name: Check if dev image exists
         id: check-dev-image
         run: |
-          if aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=$git_ref > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name $repository_name --image-ids imageTag=$git_ref > /dev/null 2>&1; then
             echo "Dev image with given tag already exists"
           else
             echo "Dev image does not exist. Build needed"
@@ -55,7 +67,7 @@ jobs:
         if: env.PUSH_IMAGE_TO_PRODUCTION == 'true'
         id: check-prod-image
         run: |
-          if aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=$git_ref > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name $repository_name --image-ids imageTag=$git_ref > /dev/null 2>&1; then
             echo "Production image with given tag already exists"
           else
             echo "Production image does not exist. Build needed"
@@ -73,8 +85,22 @@ jobs:
           ref: ${{ env.git_ref }}
       - name: Write build SHA
         run: git rev-parse HEAD > public/sha
-      - name: Build Docker image
+      - name: Build webapp docker image
+        if: inputs.image_to_build == 'webapp'
         run: docker build -t "mavis:latest" .
+      - name: Configure AWS Credentials
+        if: inputs.image_to_build == 'ops'
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ matrix.aws-role }}
+          aws-region: eu-west-2
+      - name: Login to ECR
+        if: inputs.image_to_build == 'ops'
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build ops docker image
+        if: inputs.image_to_build == 'ops'
+        run: docker build -f ops.Dockerfile --build-arg BASE_IMAGE_TAG=$git_ref -t "mavis:latest" .
       - name: Save Docker image
         run: docker save -o image.tar mavis:latest
       - name: Upload Docker image
@@ -121,6 +147,6 @@ jobs:
       - name: Load Docker image
         run: docker load -i image.tar
       - name: Tag Docker image
-        run: docker tag mavis:latest "${{ steps.login-ecr.outputs.registry }}/mavis/webapp":"$git_ref"
+        run: docker tag mavis:latest "${{ steps.login-ecr.outputs.registry }}/$repository_name":"$git_ref"
       - name: Push Docker image
-        run: docker push "${{ steps.login-ecr.outputs.registry }}/mavis/webapp":"$git_ref"
+        run: docker push "${{ steps.login-ecr.outputs.registry }}/$repository_name":"$git_ref"

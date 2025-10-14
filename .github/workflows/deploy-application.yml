@@ -88,6 +88,7 @@ jobs:
     needs: determine-git-sha
     uses: ./.github/workflows/build-and-push-image.yml
     with:
+      image_to_build: webapp
       git_sha: ${{ needs.determine-git-sha.outputs.git-sha }}
 
   prepare-deployment:
@@ -99,7 +100,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        service: ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq", "ops"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
+        service: ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -156,7 +157,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        service: ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq", "ops"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
+        service: ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
