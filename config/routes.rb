@@ -229,10 +229,11 @@ Rails.application.routes.draw do
       post ":patient_id/:status", as: :create, action: :create
     end
     resource :record, only: :show, controller: "sessions/record" do
-      get "batch/:programme_type/:vaccine_method",
+      get "batch/:programme_type/:vaccine_method/:contains_gelatine",
           action: :edit_batch,
           as: :batch
-      post "batch/:programme_type/:vaccine_method", action: :update_batch
+      post "batch/:programme_type/:vaccine_method/:contains_gelatine",
+           action: :update_batch
     end
 
     resource :invite_to_clinic,

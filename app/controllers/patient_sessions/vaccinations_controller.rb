@@ -63,6 +63,7 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
   def vaccinate_form_params
     params.expect(
       vaccinate_form: %i[
+        contains_gelatine
         delivery_site
         dose_sequence
         identity_check_confirmed_by_other_name
@@ -81,7 +82,15 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
     vaccine_method = vaccinate_form_params[:vaccine_method]
     return if vaccine_method.nil?
 
-    id = todays_batch_id(programme: @programme, vaccine_method:)
+    contains_gelatine = vaccinate_form_params[:contains_gelatine]
+    return if contains_gelatine.nil?
+
+    id =
+      todays_batch_id(
+        programme: @programme,
+        vaccine_method:,
+        contains_gelatine:
+      )
     return if id.nil?
 
     @todays_batch =

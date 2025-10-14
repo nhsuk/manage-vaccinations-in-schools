@@ -44,6 +44,7 @@ class AppVaccinationsSummaryTableComponent < ViewComponent::Base
         :todays_batch,
         vaccine.programme.type,
         vaccine.method,
+        vaccine.contains_gelatine.to_s,
         :id
       )
 

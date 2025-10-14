@@ -15,10 +15,12 @@ class VaccinesController < ApplicationController
         .order_by_name_and_expiration
         .group_by(&:vaccine_id)
 
-    @todays_batch_id_by_programme_and_vaccine_methods =
+    @todays_batch_ids =
       policy_scope(Programme).index_with do |programme|
         programme.vaccine_methods.index_with do |vaccine_method|
-          todays_batch_id(programme:, vaccine_method:)
+          [true, false].index_with do |contains_gelatine|
+            todays_batch_id(programme:, vaccine_method:, contains_gelatine:)
+          end
         end
       end
   end

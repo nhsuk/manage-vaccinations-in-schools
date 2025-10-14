@@ -47,6 +47,10 @@ class AppVaccinateFormComponent < ViewComponent::Base
       end
   end
 
+  def contains_gelatine
+    vaccine_criteria.without_gelatine ? false : true
+  end
+
   def show_supplied_by_user_id_outside_vaccine_method?
     @show_supplied_by_user_id_outside_vaccine_method ||=
       healthcare_assistant? &&

@@ -4,10 +4,11 @@ class VaccinateForm
   include ActiveModel::Model
   include ActiveModel::Attributes
 
-  attr_accessor :patient,
-                :session_date,
-                :programme,
+  attr_accessor :contains_gelatine,
                 :current_user,
+                :patient,
+                :programme,
+                :session_date,
                 :todays_batch
 
   delegate :session, to: :session_date

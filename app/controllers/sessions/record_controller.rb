@@ -7,9 +7,12 @@ class Sessions::RecordController < ApplicationController
   before_action :set_session
   before_action :set_patient_search_form
 
-  before_action :set_programme, except: :show
-  before_action :set_vaccine_method, except: :show
-  before_action :set_batches, except: :show
+  with_options only: %i[edit_batch update_batch] do
+    before_action :set_programme
+    before_action :set_vaccine_method
+    before_action :set_contains_gelatine
+    before_action :set_batches
+  end
 
   def show
     scope =
@@ -43,7 +46,13 @@ class Sessions::RecordController < ApplicationController
   end
 
   def edit_batch
-    id = todays_batch_id(programme: @programme, vaccine_method: @vaccine_method)
+    id =
+      todays_batch_id(
+        programme: @programme,
+        vaccine_method: @vaccine_method,
+        contains_gelatine: @contains_gelatine
+      )
+
     @todays_batch = authorize @batches.find(id), :edit?
 
     render :batch
@@ -86,9 +95,17 @@ class Sessions::RecordController < ApplicationController
     @vaccine_method = params[:vaccine_method]
   end
 
+  def set_contains_gelatine
+    @contains_gelatine = params[:contains_gelatine]
+  end
+
   def set_batches
     vaccines =
-      @session.vaccines.where(programme: @programme, method: @vaccine_method)
+      @session.vaccines.where(
+        programme: @programme,
+        method: @vaccine_method,
+        contains_gelatine: @contains_gelatine
+      )
 
     @batches =
       policy_scope(Batch)
