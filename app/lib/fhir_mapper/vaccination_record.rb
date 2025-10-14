@@ -148,10 +148,9 @@ module FHIRMapper
       when "completed"
         "administered"
       when "not-done"
-        # TODO: handle this more gracefully
         raise "Cannot import not-done vaccination records"
       else
-        raise "Unexpected vaccination status: #{fhir_record.status}. Expected only 'completed' or 'not-done'"
+        raise "Unexpected vaccination status: \"#{fhir_record.status}\". Expected only 'completed' or 'not-done'"
       end
     end
 

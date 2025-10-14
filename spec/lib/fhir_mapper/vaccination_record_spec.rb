@@ -499,7 +499,7 @@ describe FHIRMapper::VaccinationRecord do
       its(:location_name) { should eq "X99999" }
     end
 
-    context "with a record that the minimum which can be created via the API" do
+    context "with a record that is the minimum which can be created via the API" do
       let(:fhir_immunization) do
         FHIR.from_contents(
           file_fixture("fhir/fhir_record_minimum_api_create.json").read
@@ -517,6 +517,28 @@ describe FHIRMapper::VaccinationRecord do
 
       its(:location) { should have_attributes(urn: "100006") }
       its(:location_name) { should be_nil }
+    end
+
+    context "with a record that is the minimum which can be created based on the spec (for CSV bulk upload)" do
+      let(:fhir_immunization) do
+        FHIR.from_contents(
+          file_fixture("fhir/fhir_record_minimum_bulk_spec.json").read
+        )
+      end
+
+      include_examples "a mapped vaccination record (common fields)"
+
+      its(:vaccine) { should be_nil }
+      its(:batch) { should be_nil }
+      its(:performed_at) { should eq Time.parse("2023-12-07T00:00:00+00:00") }
+      its(:delivery_method) { should be_nil }
+      its(:delivery_site) { should be_nil }
+      its(:full_dose) { should be true }
+      its(:location_name) { should eq "B12345" }
+      its(:outcome) { should eq "administered" }
+      its(:performed_ods_code) { should eq "B12345" }
+
+      its(:notes) { should be_nil }
     end
   end
 end
