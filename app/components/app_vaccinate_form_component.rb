@@ -115,9 +115,16 @@ class AppVaccinateFormComponent < ViewComponent::Base
     "#{programme.name_in_sentence} #{vaccination}"
   end
 
-  def ask_not_taking_medication? = programme.doubles? || programme.flu?
+  def ask_not_taking_medication? =
+    programme.doubles? || programme.flu? || programme.mmr?
 
-  def ask_not_pregnant? = programme.td_ipv?
+  def ask_not_pregnant? = programme.td_ipv? || programme.mmr?
 
   def ask_asthma_flare_up? = vaccine_methods.include?("nasal")
+
+  def ask_blood_transfusion? = programme.mmr?
+
+  def ask_tb_skin_test? = programme.mmr?
+
+  def ask_yellow_fever_or_chickenpox? = programme.mmr?
 end

@@ -46,6 +46,15 @@
         <li>has no allergies which would prevent vaccination</li>
         <li>has not already had this vaccination</li>
         <li>knows what the vaccination is for, and is happy to have it</li>
+        <% if ask_blood_transfusion? %>
+          <li>has not had a blood transfusion in the last 3 months</li>
+        <% end %>
+        <% if ask_tb_skin_test? %>
+          <li>has not recently had a TB skin test, and is not due to have one in the next month</li>
+        <% end %>
+        <% if ask_yellow_fever_or_chickenpox? %>
+          <li>has not recently had the yellow fever vaccine or chickenpox vaccine, and is not due to have either of them in the next month</li>
+        <% end %>
       </ul>
 
       <%= f.govuk_check_boxes_fieldset :pre_screening_confirmed, multiple: false, legend: nil do %>
