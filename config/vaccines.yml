@@ -138,7 +138,7 @@ priorix:
   type: mmr
   brand: Priorix
   method: injection
-  manufacturer: GlaxoSmithKline UK Ltd
+  manufacturer: GlaxoSmithKline
   contains_gelatine: false
   nivs_name: Priorix
   dose_volume_ml: 0.5
@@ -151,7 +151,7 @@ vaxpro:
   type: mmr
   brand: MMR VaxPro
   method: injection
-  manufacturer: Merck Sharp & Dohme (UK) Ltd
+  manufacturer: Merck Sharp & Dohme
   contains_gelatine: true
   nivs_name: VaxPro
   dose_volume_ml: 0.5
