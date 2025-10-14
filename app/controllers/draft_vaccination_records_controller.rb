@@ -255,9 +255,15 @@ class DraftVaccinationRecordsController < ApplicationController
         @draft_vaccination_record.delivery_method
       )
 
+    without_gelatine =
+      @patient.vaccine_criteria(
+        programme: @programme,
+        academic_year: @session.academic_year
+      ).without_gelatine
+
     VaccineCriteria.new(
       vaccine_methods: [vaccine_method].compact,
-      without_gelatine: nil
+      without_gelatine:
     )
   end
 end
