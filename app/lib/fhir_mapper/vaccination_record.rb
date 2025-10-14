@@ -112,10 +112,6 @@ module FHIRMapper
       else
         attrs[:notes] = vaccine_batch_notes_from_fhir(fhir_record)
         attrs[:full_dose] = true
-
-        Sentry.capture_exception(
-          UnknownVaccine.new(fhir_record.vaccineCode.coding.first.code)
-        )
       end
 
       ::VaccinationRecord.new(attrs)
@@ -240,7 +236,7 @@ module FHIRMapper
 
     private_class_method def self.vaccine_batch_notes_from_fhir(fhir_record)
       fhir_vaccine =
-        fhir_record.vaccineCode.coding.find do
+        fhir_record.vaccineCode&.coding&.find do
           it.system == "http://snomed.info/sct"
         end
 

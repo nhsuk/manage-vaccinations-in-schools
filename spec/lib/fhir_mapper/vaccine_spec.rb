@@ -86,5 +86,15 @@ describe FHIRMapper::Vaccine do
 
       it { should be_nil }
     end
+
+    context "with no code at all" do
+      let(:fhir_record) do
+        FHIR.from_contents(
+          file_fixture("/fhir/fhir_record_minimum_api_create.json").read
+        )
+      end
+
+      it { should be_nil }
+    end
   end
 end

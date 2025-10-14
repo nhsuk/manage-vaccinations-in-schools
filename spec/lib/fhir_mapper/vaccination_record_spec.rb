@@ -439,14 +439,6 @@ describe FHIRMapper::VaccinationRecord do
 
       include_examples "a mapped vaccination record (common fields)"
 
-      it do
-        expect(Sentry).to receive(:capture_exception).with(
-          an_instance_of(FHIRMapper::VaccinationRecord::UnknownVaccine)
-        )
-
-        record
-      end
-
       its(:vaccine) { should be_nil }
       its(:batch) { should be_nil }
       its(:performed_at) { should eq Time.parse("2025-04-06T23:59:50.2+01:00") }
@@ -473,14 +465,6 @@ describe FHIRMapper::VaccinationRecord do
       end
 
       include_examples "a mapped vaccination record (common fields)"
-
-      it do
-        expect(Sentry).to receive(:capture_exception).with(
-          an_instance_of(FHIRMapper::VaccinationRecord::UnknownVaccine)
-        )
-
-        record
-      end
 
       its(:vaccine) { should be_nil }
       its(:batch) { should be_nil }
