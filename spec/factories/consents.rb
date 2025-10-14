@@ -107,6 +107,11 @@ FactoryBot.define do
       vaccine_methods { %w[nasal injection] }
     end
 
+    trait :given_without_gelatine do
+      given
+      without_gelatine
+    end
+
     trait :without_gelatine do
       without_gelatine { true }
     end

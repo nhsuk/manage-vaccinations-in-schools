@@ -10,6 +10,7 @@ class TriageForm
 
   attribute :add_patient_specific_direction, :boolean
   attribute :consent_vaccine_methods, array: true, default: []
+  attribute :consent_without_gelatine, :boolean
   attribute :notes, :string
   attribute :status_option, :string
 
@@ -47,8 +48,12 @@ class TriageForm
   def safe_to_vaccinate_options
     if programme.has_multiple_vaccine_methods?
       consented_vaccine_methods.map { |method| "safe_to_vaccinate_#{method}" }
+    elsif consented_without_gelatine
+      %w[safe_to_vaccinate_without_gelatine]
+    elsif programme.vaccine_may_contain_gelatine?
+      %w[safe_to_vaccinate safe_to_vaccinate_without_gelatine]
     else
-      ["safe_to_vaccinate"]
+      %w[safe_to_vaccinate]
     end
   end
 
@@ -78,27 +83,37 @@ class TriageForm
       consent_vaccine_methods.presence || consent_status.vaccine_methods
   end
 
+  def consented_without_gelatine
+    @consented_without_gelatine ||=
+      if !consent_without_gelatine.nil?
+        consent_without_gelatine
+      else
+        consent_status.without_gelatine
+      end
+  end
+
   def consent_status
     @consent_status ||= patient.consent_status(programme:, academic_year:)
   end
 
   def triage_attributes
     {
+      academic_year:,
       notes:,
-      team:,
       patient:,
       performed_by: current_user,
       programme:,
       status:,
+      team:,
       vaccine_method:,
-      academic_year:
+      without_gelatine:
     }
   end
 
   def status
     case status_option
     when "safe_to_vaccinate", "safe_to_vaccinate_injection",
-         "safe_to_vaccinate_nasal"
+         "safe_to_vaccinate_nasal", "safe_to_vaccinate_without_gelatine"
       "safe_to_vaccinate"
     else
       status_option
@@ -107,12 +122,21 @@ class TriageForm
 
   def vaccine_method
     case status_option
-    when "safe_to_vaccinate"
+    when "safe_to_vaccinate", "safe_to_vaccinate_without_gelatine"
       consented_vaccine_methods.first
     when "safe_to_vaccinate_injection"
       "injection"
     when "safe_to_vaccinate_nasal"
       "nasal"
+    end
+  end
+
+  def without_gelatine
+    if status_option == "safe_to_vaccinate_without_gelatine"
+      true
+    elsif programme.vaccine_may_contain_gelatine? &&
+          !programme.has_multiple_vaccine_methods?
+      false
     end
   end
 

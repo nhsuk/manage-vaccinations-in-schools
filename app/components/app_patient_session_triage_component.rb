@@ -31,7 +31,16 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
   end
 
   def heading
-    "#{programme.name}: #{I18n.t(status, scope: %i[status triage label])}"
+    status_with_suffix = triage_status.status
+
+    if programme.has_multiple_vaccine_methods?
+      vaccine_method = triage_status.vaccine_method
+      status_with_suffix += "_#{vaccine_method}" if vaccine_method
+    elsif triage_status.without_gelatine
+      status_with_suffix += "_without_gelatine"
+    end
+
+    "#{programme.name}: #{I18n.t(status_with_suffix, scope: %i[status triage label])}"
   end
 
   def triage_status

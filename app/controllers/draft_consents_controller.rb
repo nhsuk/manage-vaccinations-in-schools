@@ -187,6 +187,7 @@ class DraftConsentsController < ApplicationController
           add_patient_specific_direction:
             @draft_consent.triage_add_patient_specific_direction,
           consent_vaccine_methods: @draft_consent.vaccine_methods,
+          consent_without_gelatine: @draft_consent.without_gelatine,
           current_user:,
           notes: @draft_consent.triage_notes,
           patient: @patient,

@@ -49,5 +49,10 @@ FactoryBot.define do
       status { "given" }
       vaccine_methods { %w[nasal injection] }
     end
+
+    trait :given_without_gelatine do
+      given
+      without_gelatine { true }
+    end
   end
 end
