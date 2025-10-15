@@ -75,6 +75,7 @@ class StatusGenerator::Triage
         academic_year:,
         patient:,
         vaccination_records:,
+        patient_locations: [],
         triages: [],
         consents: []
       ).status == :vaccinated

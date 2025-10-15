@@ -117,12 +117,13 @@ class StatusUpdater
     Patient::VaccinationStatus
       .where(patient: patient_locations.select(:patient_id))
       .includes(
-        :patient,
-        :programme,
+        :attendance_record,
         :consents,
+        :patient,
+        :patient_locations,
+        :programme,
         :triages,
-        :vaccination_records,
-        :attendance_record
+        :vaccination_records
       )
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)

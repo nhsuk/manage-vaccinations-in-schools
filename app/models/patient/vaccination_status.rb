@@ -31,6 +31,10 @@ class Patient::VaccinationStatus < ApplicationRecord
 
   belongs_to :latest_location, class_name: "Location", optional: true
 
+  has_many :patient_locations,
+           -> { includes(location: :location_programme_year_groups) },
+           through: :patient
+
   has_many :consents,
            -> { not_invalidated.response_provided.includes(:parent, :patient) },
            through: :patient
@@ -87,6 +91,7 @@ class Patient::VaccinationStatus < ApplicationRecord
         programme:,
         academic_year:,
         patient:,
+        patient_locations:,
         consents:,
         triages:,
         vaccination_records:

@@ -6,6 +6,10 @@ describe StatusGenerator::Vaccination do
       programme:,
       academic_year: AcademicYear.current,
       patient:,
+      patient_locations:
+        patient.patient_locations.includes(
+          location: :location_programme_year_groups
+        ),
       consents: patient.consents,
       triages: patient.triages,
       vaccination_records: patient.vaccination_records

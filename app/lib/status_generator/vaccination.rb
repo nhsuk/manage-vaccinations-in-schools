@@ -5,6 +5,7 @@ class StatusGenerator::Vaccination
     programme:,
     academic_year:,
     patient:,
+    patient_locations:,
     consents:,
     triages:,
     vaccination_records:
@@ -12,6 +13,7 @@ class StatusGenerator::Vaccination
     @programme = programme
     @academic_year = academic_year
     @patient = patient
+    @patient_locations = patient_locations
     @consents = consents
     @triages = triages
     @vaccination_records = vaccination_records
@@ -36,6 +38,7 @@ class StatusGenerator::Vaccination
   attr_reader :programme,
               :academic_year,
               :patient,
+              :patient_locations,
               :consents,
               :triages,
               :vaccination_records

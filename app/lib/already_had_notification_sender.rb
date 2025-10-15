@@ -79,9 +79,10 @@ class AlreadyHadNotificationSender
       programme:,
       academic_year:,
       patient:,
+      vaccination_records: other_vaccination_records,
+      patient_locations: [],
       consents: [],
-      triages: [],
-      vaccination_records: other_vaccination_records
+      triages: []
     ).status == :vaccinated
   end
 end
