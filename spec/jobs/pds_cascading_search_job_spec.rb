@@ -75,7 +75,8 @@ describe PDSCascadingSearchJob do
               "nhs_number" => nil,
               "created_at" => Time.current
             }
-          ]
+          ],
+          queue: :pds
         )
       end
     end
@@ -227,7 +228,8 @@ describe PDSCascadingSearchJob do
               "nhs_number" => nil,
               "created_at" => Time.current
             }.with_indifferent_access
-          ]
+          ],
+          queue: :pds
         )
       end
     end
@@ -293,7 +295,8 @@ describe PDSCascadingSearchJob do
         }.to have_enqueued_job(described_class).with(
           patient,
           step_name: :no_fuzzy_with_wildcard_postcode,
-          search_results: search_results
+          search_results: search_results,
+          queue: :pds
         )
       end
 
