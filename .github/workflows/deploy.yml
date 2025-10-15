@@ -41,6 +41,7 @@ on:
           - all
           - web
           - sidekiq
+          - ops
           - none
         default: all
 

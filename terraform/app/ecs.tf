@@ -57,7 +57,6 @@ resource "aws_service_discovery_private_dns_namespace" "internal" {
   }
 }
 
-
 data "aws_iam_role" "ecs_task_role" {
   name = "EcsTaskRole"
 }
