@@ -186,6 +186,15 @@ class VaccinationRecord < ApplicationRecord
               less_than_or_equal_to: -> { Time.current }
             }
 
+  validates :nhs_immunisations_api_primary_source,
+            inclusion: {
+              in: [true, false],
+              if: :nhs_immunisations_api_id
+            },
+            absence: {
+              unless: :nhs_immunisations_api_id
+            }
+
   delegate :fhir_record, to: :fhir_mapper
 
   class << self

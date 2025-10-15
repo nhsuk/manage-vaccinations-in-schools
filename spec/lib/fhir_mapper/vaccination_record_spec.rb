@@ -15,6 +15,7 @@ describe FHIRMapper::VaccinationRecord do
   let(:vaccination_outcome) { :administered }
   let(:vaccine) { vaccination_record.vaccine }
   let(:nhs_immunisations_api_id) { nil }
+  let(:nhs_immunisations_api_primary_source) { nil }
   let(:vaccination_record) do
     create(
       :vaccination_record,
@@ -24,7 +25,8 @@ describe FHIRMapper::VaccinationRecord do
       session:,
       vaccine: programme.vaccines.first,
       outcome: vaccination_outcome,
-      nhs_immunisations_api_id:
+      nhs_immunisations_api_id:,
+      nhs_immunisations_api_primary_source:
     )
   end
   let(:user) { vaccination_record.performed_by_user }
@@ -41,6 +43,7 @@ describe FHIRMapper::VaccinationRecord do
 
       context "when the vaccination record has a UUID" do
         let(:nhs_immunisations_api_id) { "1212-1212-1212-121212121212" }
+        let(:nhs_immunisations_api_primary_source) { true }
 
         it { should eq "1212-1212-1212-121212121212" }
       end
