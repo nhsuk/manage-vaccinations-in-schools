@@ -6,9 +6,9 @@
 #
 #  id                    :bigint           not null, primary key
 #  academic_year         :integer          not null
+#  latest_date           :date
 #  latest_session_status :integer
 #  status                :integer          default("none_yet"), not null
-#  status_changed_at     :datetime         not null
 #  latest_location_id    :bigint
 #  patient_id            :bigint           not null
 #  programme_id          :bigint           not null
@@ -63,7 +63,7 @@ describe Patient::VaccinationStatus do
       )
       allow(session_generator).to receive_messages(
         status: :attending,
-        status_changed_at: Time.zone.local(2020, 1, 1)
+        date: Date.new(2020, 1, 1)
       )
     end
 
@@ -73,9 +73,7 @@ describe Patient::VaccinationStatus do
       expect(patient_vaccination_status.status).to eq("vaccinated")
       expect(patient_vaccination_status.latest_location_id).to eq(999)
       expect(patient_vaccination_status.latest_session_status).to eq(:attending)
-      expect(patient_vaccination_status.status_changed_at).to eq(
-        Time.zone.local(2020, 1, 1)
-      )
+      expect(patient_vaccination_status.latest_date).to eq(Date.new(2020, 1, 1))
     end
   end
 end

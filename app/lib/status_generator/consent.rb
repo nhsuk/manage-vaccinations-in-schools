@@ -29,8 +29,8 @@ class StatusGenerator::Consent
     end
   end
 
-  def status_changed_at
-    consents_for_status.map(&:submitted_at).max
+  def date
+    consents_for_status.map(&:submitted_at).max.to_date
   end
 
   def vaccine_methods

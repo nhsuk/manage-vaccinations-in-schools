@@ -6,9 +6,9 @@
 #
 #  id                    :bigint           not null, primary key
 #  academic_year         :integer          not null
+#  latest_date           :date
 #  latest_session_status :integer
 #  status                :integer          default("none_yet"), not null
-#  status_changed_at     :datetime         not null
 #  latest_location_id    :bigint
 #  patient_id            :bigint           not null
 #  programme_id          :bigint           not null
@@ -32,7 +32,7 @@ FactoryBot.define do
     academic_year { AcademicYear.current }
 
     latest_session_status { "none_yet" }
-    status_changed_at { academic_year.to_academic_year_date_range.begin }
+    latest_date { academic_year.to_academic_year_date_range.begin }
 
     traits_for_enum :status
   end

@@ -6,9 +6,9 @@
 #
 #  id                    :bigint           not null, primary key
 #  academic_year         :integer          not null
+#  latest_date           :date
 #  latest_session_status :integer
 #  status                :integer          default("none_yet"), not null
-#  status_changed_at     :datetime         not null
 #  latest_location_id    :bigint
 #  patient_id            :bigint           not null
 #  programme_id          :bigint           not null
@@ -26,6 +26,8 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class Patient::VaccinationStatus < ApplicationRecord
+  self.ignored_columns = %i[status_changed_at]
+
   belongs_to :patient
   belongs_to :programme
 
@@ -76,9 +78,9 @@ class Patient::VaccinationStatus < ApplicationRecord
 
   def assign_status
     self.status = generator.status
+    self.latest_date = session_generator.date
     self.latest_location_id = generator.location_id
     self.latest_session_status = session_generator.status
-    self.status_changed_at = session_generator.status_changed_at
   end
 
   private

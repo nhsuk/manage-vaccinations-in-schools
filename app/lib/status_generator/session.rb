@@ -41,7 +41,7 @@ class StatusGenerator::Session
     end
   end
 
-  def status_changed_at
+  def date
     if status_should_be_vaccinated?
       vaccination_date
     elsif status_should_be_already_had?
@@ -77,7 +77,7 @@ class StatusGenerator::Session
   end
 
   def vaccination_date
-    vaccination_record.performed_at
+    vaccination_record.performed_at.to_date
   end
 
   def status_should_be_already_had?
@@ -85,7 +85,7 @@ class StatusGenerator::Session
   end
 
   def already_had_date
-    vaccination_record.performed_at
+    vaccination_record.performed_at.to_date
   end
 
   def status_should_be_had_contraindications?
@@ -95,9 +95,9 @@ class StatusGenerator::Session
   def contraindications_date
     [
       if vaccination_record&.contraindications?
-        vaccination_record.performed_at
+        vaccination_record.performed_at.to_date
       end,
-      (triage.created_at if triage&.do_not_vaccinate?)
+      (triage.created_at.to_date if triage&.do_not_vaccinate?)
     ].compact.min
   end
 
@@ -107,9 +107,9 @@ class StatusGenerator::Session
 
   def refusal_date
     if vaccination_record&.refused?
-      vaccination_record.performed_at
+      vaccination_record.performed_at.to_date
     else
-      consent_generator.status_changed_at
+      consent_generator.date
     end
   end
 
@@ -121,9 +121,13 @@ class StatusGenerator::Session
   def absence_date
     [
       if vaccination_record&.absent_from_session?
-        vaccination_record.performed_at
+        vaccination_record.performed_at.to_date
       end,
-      (attendance_record.created_at if attendance_record&.attending == false)
+      (
+        if attendance_record&.attending == false
+          attendance_record.created_at.to_date
+        end
+      )
     ].compact.min
   end
 
@@ -132,7 +136,7 @@ class StatusGenerator::Session
   end
 
   def unwell_date
-    vaccination_record.performed_at
+    vaccination_record.performed_at.to_date
   end
 
   def status_should_be_conflicting_consent?
@@ -140,7 +144,7 @@ class StatusGenerator::Session
   end
 
   def conflicting_consent_date
-    consent_generator.status_changed_at
+    consent_generator.date
   end
 
   def consent_generator

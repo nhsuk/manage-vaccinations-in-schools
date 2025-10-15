@@ -83,13 +83,13 @@ describe StatusGenerator::Session do
     end
   end
 
-  describe "#status_changed_at" do
-    subject(:status_changed_at) { generator.status_changed_at }
+  describe "#date" do
+    subject(:date) { generator.date }
 
     around { |example| travel_to(Time.zone.now) { example.run } }
 
-    let(:performed_at) { 1.day.ago.beginning_of_minute }
-    let(:created_at) { 2.days.ago.midday }
+    let(:performed_at) { 1.day.ago.to_date }
+    let(:created_at) { 2.days.ago.to_date }
 
     context "with a vaccination administered" do
       before do
@@ -102,7 +102,7 @@ describe StatusGenerator::Session do
         )
       end
 
-      it { should eq(performed_at) }
+      it { should eq(performed_at.to_date) }
     end
 
     context "with a vaccination already had" do
@@ -110,14 +110,14 @@ describe StatusGenerator::Session do
         create(
           :vaccination_record,
           :already_had,
-          patient: patient,
-          session: session,
-          programme: programme,
+          patient:,
+          session:,
+          programme:,
           performed_at: performed_at
         )
       end
 
-      it { should eq(performed_at) }
+      it { should eq(performed_at.to_date) }
     end
 
     context "with contraindications from vaccination record" do
@@ -125,54 +125,46 @@ describe StatusGenerator::Session do
         create(
           :vaccination_record,
           :contraindications,
-          patient: patient,
-          session: session,
-          programme: programme,
+          patient:,
+          session:,
+          programme:,
           performed_at: performed_at
         )
       end
 
-      it { should eq(performed_at) }
+      it { should eq(performed_at.to_date) }
     end
 
     context "with contraindications from triage" do
       before do
-        triage =
-          create(
-            :triage,
-            :do_not_vaccinate,
-            patient: patient,
-            programme: programme
-          )
-        triage.update_column(:created_at, created_at)
+        create(
+          :triage,
+          :do_not_vaccinate,
+          patient: patient,
+          programme: programme,
+          created_at:
+        )
       end
 
-      it { should eq(created_at) }
+      it { should eq(created_at.to_date) }
     end
 
     context "with contraindications from both vaccination record and triage" do
-      let(:earlier_date) { 3.days.ago }
-      let(:later_date) { 1.day.ago }
+      let(:earlier_date) { 3.days.ago.to_date }
+      let(:later_date) { 1.day.ago.to_date }
 
       context "when vaccination record date is earlier" do
         before do
           create(
             :vaccination_record,
             :contraindications,
-            patient: patient,
-            session: session,
-            programme: programme,
+            patient:,
+            session:,
+            programme:,
             performed_at: earlier_date
           )
 
-          triage =
-            create(
-              :triage,
-              :do_not_vaccinate,
-              patient: patient,
-              programme: programme
-            )
-          triage.update_column(:created_at, later_date)
+          create(:triage, :do_not_vaccinate, patient:, programme:, created_at:)
         end
 
         it { should eq(earlier_date) }
@@ -183,20 +175,19 @@ describe StatusGenerator::Session do
           create(
             :vaccination_record,
             :contraindications,
-            patient: patient,
-            session: session,
-            programme: programme,
+            patient:,
+            session:,
+            programme:,
             performed_at: later_date
           )
 
-          triage =
-            create(
-              :triage,
-              :do_not_vaccinate,
-              patient: patient,
-              programme: programme
-            )
-          triage.update_column(:created_at, earlier_date)
+          create(
+            :triage,
+            :do_not_vaccinate,
+            patient:,
+            programme:,
+            created_at: earlier_date
+          )
         end
 
         it { should eq(earlier_date) }
@@ -208,14 +199,14 @@ describe StatusGenerator::Session do
         create(
           :vaccination_record,
           :refused,
-          patient: patient,
-          session: session,
-          programme: programme,
-          performed_at: performed_at
+          patient:,
+          session:,
+          programme:,
+          performed_at:
         )
       end
 
-      it { should eq(performed_at) }
+      it { should eq(performed_at.to_date) }
     end
 
     context "with refused from consent" do
@@ -251,7 +242,7 @@ describe StatusGenerator::Session do
         )
       end
 
-      it { should eq(vaccination_record_date) }
+      it { should eq(vaccination_record_date.to_date) }
     end
 
     context "with absent from vaccination record" do
@@ -266,7 +257,7 @@ describe StatusGenerator::Session do
         )
       end
 
-      it { should eq(performed_at) }
+      it { should eq(performed_at.to_date) }
     end
 
     context "with absent from session attendance" do
@@ -278,8 +269,8 @@ describe StatusGenerator::Session do
     end
 
     context "with absent from both vaccination record and session attendance" do
-      let(:earlier_date) { 3.days.ago }
-      let(:later_date) { 1.day.ago }
+      let(:earlier_date) { 3.days.ago.to_date }
+      let(:later_date) { 1.day.ago.to_date }
 
       context "when vaccination record date is earlier" do
         before do
@@ -340,7 +331,7 @@ describe StatusGenerator::Session do
         )
       end
 
-      it { should eq(performed_at) }
+      it { should eq(performed_at.to_date) }
     end
 
     context "with no status" do

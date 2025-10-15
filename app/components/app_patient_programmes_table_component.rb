@@ -148,7 +148,7 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   def notes_for_status(vaccination_status:)
     latest_session_status =
       vaccination_status.latest_session_status.to_s.humanize
-    date = vaccination_status.status_changed_at.to_date.to_fs(:long)
+    date = vaccination_status.latest_date.to_fs(:long)
     "#{latest_session_status} on #{date}"
   end
 
@@ -158,7 +158,9 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
         @patient
           .triages
           .includes(:performed_by)
-          .find_by(created_at: vaccination_status.status_changed_at)
+          .order(:created_at)
+          .where(created_at: vaccination_status.latest_date.all_day)
+          .last
 
       if latest_triage
         "#{latest_triage.performed_by.full_name} decided that #{patient.full_name} could not be vaccinated"

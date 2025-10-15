@@ -109,8 +109,8 @@ class StatusUpdater
 
   def update_vaccination_statuses!
     Patient::VaccinationStatus.import!(
-      %i[patient_id programme_id academic_year status_changed_at],
-      vaccination_statuses_to_import,
+      %i[patient_id programme_id academic_year],
+      patient_statuses_to_import,
       on_duplicate_key_ignore: true
     )
 
@@ -133,10 +133,10 @@ class StatusUpdater
           on_duplicate_key_update: {
             conflict_target: [:id],
             columns: %i[
-              status
-              status_changed_at
+              latest_date
               latest_location_id
               latest_session_status
+              status
             ]
           }
         )
@@ -162,17 +162,6 @@ class StatusUpdater
               .map { |programme_id| [patient_id, programme_id, academic_year] }
           end
         end
-  end
-
-  def vaccination_statuses_to_import
-    status_changed_ats =
-      AcademicYear.all.index_with do |academic_year|
-        academic_year.to_academic_year_date_range.begin
-      end
-
-    patient_statuses_to_import.map do |row|
-      [row[0], row[1], row[2], status_changed_ats.fetch(row[2])]
-    end
   end
 
   def patient_location_statuses_to_import
