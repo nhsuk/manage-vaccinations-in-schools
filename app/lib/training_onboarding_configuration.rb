@@ -58,7 +58,8 @@ class TrainingOnboardingConfiguration
         email: email_and_password,
         password: email_and_password,
         given_name: role.humanize,
-        family_name: identifier
+        family_name: identifier,
+        fallback_role: role
       }
     end
   end
