@@ -14,6 +14,12 @@ resource "aws_iam_policy" "shell_access_policy" {
   policy      = file("resources/iam_policy_ECSShellAccess.json")
 }
 
+resource "aws_iam_policy" "ecs_shell_access_policy" {
+  name        = "EcsShellAccess"
+  description = "Allows shell access to ECS tasks"
+  policy      = file("resources/iam_policy_EcsShellAccess.json")
+}
+
 resource "aws_iam_policy" "deny_pii_access" {
   name        = "DenyPIIAccess"
   description = "Deny access to personal identifiable information"
