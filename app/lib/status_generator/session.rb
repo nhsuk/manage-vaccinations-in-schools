@@ -56,6 +56,8 @@ class StatusGenerator::Session
       unwell_date
     elsif status_should_be_conflicting_consent?
       conflicting_consent_date
+    else
+      academic_year.to_academic_year_date_range.begin
     end
   end
 

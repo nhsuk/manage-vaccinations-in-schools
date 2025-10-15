@@ -344,7 +344,7 @@ describe StatusGenerator::Session do
     end
 
     context "with no status" do
-      it { should be_nil }
+      it { should eq(session.academic_year.to_academic_year_date_range.begin) }
     end
   end
 end
