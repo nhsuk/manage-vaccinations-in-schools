@@ -6,7 +6,7 @@
 #
 #  id                    :bigint           not null, primary key
 #  academic_year         :integer          not null
-#  latest_session_status :integer          default("none_yet"), not null
+#  latest_session_status :integer
 #  status                :integer          default("none_yet"), not null
 #  status_changed_at     :datetime         not null
 #  latest_location_id    :bigint

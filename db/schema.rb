@@ -614,7 +614,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_163100) do
     t.bigint "programme_id", null: false
     t.integer "status", default: 0, null: false
     t.integer "academic_year", null: false
-    t.integer "latest_session_status", default: 0, null: false
+    t.integer "latest_session_status"
     t.datetime "status_changed_at", null: false
     t.bigint "latest_location_id"
     t.index ["latest_location_id"], name: "index_patient_vaccination_statuses_on_latest_location_id"

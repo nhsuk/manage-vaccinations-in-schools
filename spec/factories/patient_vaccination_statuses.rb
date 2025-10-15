@@ -6,7 +6,7 @@
 #
 #  id                    :bigint           not null, primary key
 #  academic_year         :integer          not null
-#  latest_session_status :integer          default("none_yet"), not null
+#  latest_session_status :integer
 #  status                :integer          default("none_yet"), not null
 #  status_changed_at     :datetime         not null
 #  latest_location_id    :bigint
@@ -29,7 +29,9 @@ FactoryBot.define do
   factory :patient_vaccination_status, class: "Patient::VaccinationStatus" do
     patient
     programme
-    academic_year { Date.current.academic_year }
+    academic_year { AcademicYear.current }
+
+    latest_session_status { "none_yet" }
     status_changed_at { academic_year.to_academic_year_date_range.begin }
 
     traits_for_enum :status
