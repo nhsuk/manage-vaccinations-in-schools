@@ -50,13 +50,18 @@ class StatusGenerator::Consent
               :vaccination_records
 
   def vaccinated?
+    # We only care about whether the patient is vaccinated so although we're
+    # using the same status generator logic as elsewhere we don't need to pass
+    # in the consents and triage as an optimisation.
     @vaccinated ||=
-      VaccinatedCriteria.new(
+      StatusGenerator::Vaccination.new(
         programme:,
         academic_year:,
         patient:,
-        vaccination_records:
-      ).vaccinated?
+        vaccination_records:,
+        triages: [],
+        consents: []
+      ).status == :vaccinated
   end
 
   def status_should_be_given?
