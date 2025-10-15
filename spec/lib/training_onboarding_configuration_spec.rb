@@ -6,7 +6,8 @@ describe TrainingOnboardingConfiguration do
   let(:ods_code) { "ABC" }
   let(:workgroup) { "abc" }
 
-  let!(:unattached_school) { create(:school, :open) }
+  let!(:unattached_primary_school) { create(:school, :open, :primary) }
+  let!(:unattached_secondary_school) { create(:school, :open, :secondary) }
 
   before { create(:school, :open, team: create(:team)) }
 
@@ -78,7 +79,10 @@ describe TrainingOnboardingConfiguration do
           }
         ],
         schools: {
-          generic: [unattached_school.urn]
+          generic: [
+            unattached_primary_school.urn,
+            unattached_secondary_school.urn
+          ]
         },
         clinics: {
           generic: [
