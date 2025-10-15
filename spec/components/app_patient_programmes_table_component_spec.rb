@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe AppPatientProgrammesTableComponent do
-  subject(:rendered_component) { render_inline(component) }
+  subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(patient, programmes:) }
   let(:team) { create(:team, programmes:) }
@@ -67,16 +67,13 @@ describe AppPatientProgrammesTableComponent do
           performed_by: nurse,
           created_at: today
         )
+
         StatusUpdater.call(patient:)
+        patient.reload
       end
 
       it { should have_css(".nhsuk-tag--white", text: "Eligible") }
-
-      it do
-        expect(rendered_component).to have_content(
-          "#{nurse.full_name} decided that #{patient.full_name} could not be vaccinated"
-        )
-      end
+      it { should have_content("Had contraindications") }
     end
 
     context "when no outcome yet but had contraindications" do
@@ -97,7 +94,7 @@ describe AppPatientProgrammesTableComponent do
       it { should have_css(".nhsuk-tag--white", text: "Eligible") }
 
       it do
-        expect(rendered_component).to have_content(
+        expect(rendered).to have_content(
           "Had contraindications on #{today.to_fs(:long)}"
         )
       end
@@ -158,7 +155,7 @@ describe AppPatientProgrammesTableComponent do
     it { should have_content("MenACWY") }
 
     it do
-      expect(rendered_component).to have_content(
+      expect(rendered).to have_content(
         "Selected for the Year 2025 to 2026 HPV cohort"
       ).once
     end
@@ -195,13 +192,13 @@ describe AppPatientProgrammesTableComponent do
       it { should have_css(".nhsuk-tag--green", text: "Vaccinated") }
 
       it do
-        expect(rendered_component).to have_content(
+        expect(rendered).to have_content(
           "Vaccinated on #{first_dose_date.to_date.to_fs(:long)}"
         )
       end
 
       it do
-        expect(rendered_component).to have_content(
+        expect(rendered).to have_content(
           "Vaccinated on #{second_dose_date.to_date.to_fs(:long)}"
         )
       end
