@@ -83,6 +83,7 @@ describe AppPatientSearchResultCardComponent do
           :eligible,
           patient:,
           programme:,
+          latest_date: Date.new(2025, 1, 1),
           latest_session_status: "unwell"
         )
       end

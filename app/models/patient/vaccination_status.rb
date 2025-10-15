@@ -60,25 +60,17 @@ class Patient::VaccinationStatus < ApplicationRecord
        validate: true
 
   enum :latest_session_status,
-       {
-         none_yet: 0,
-         vaccinated: 1,
-         already_had: 2,
-         had_contraindications: 3,
-         refused: 4,
-         absent_from_session: 5,
-         unwell: 6,
-         conflicting_consent: 7
-       },
-       default: :none_yet,
+       { refused: 0, absent: 1, unwell: 2, contraindicated: 3 },
        prefix: true,
-       validate: true
+       validate: {
+         allow_nil: true
+       }
 
   def assign_status
     self.status = generator.status
-    self.latest_date = session_generator.date
-    self.latest_location_id = generator.location_id
-    self.latest_session_status = session_generator.status
+    self.latest_date = generator.latest_date
+    self.latest_location_id = generator.latest_location_id
+    self.latest_session_status = generator.latest_session_status
   end
 
   private
@@ -92,35 +84,8 @@ class Patient::VaccinationStatus < ApplicationRecord
         patient_locations:,
         consents:,
         triages:,
-        vaccination_records:
-      )
-  end
-
-  def session_generator
-    @session_generator ||=
-      StatusGenerator::Session.new(
-        session_id:,
-        academic_year:,
         attendance_record:,
-        programme:,
-        patient:,
-        consents:,
-        triages:,
         vaccination_records:
       )
   end
-
-  def latest_vaccination_record
-    @latest_vaccination_record ||=
-      vaccination_records.reverse.find do
-        it.programme_id == programme.id &&
-          if programme.seasonal?
-            it.academic_year == academic_year
-          else
-            it.academic_year <= academic_year
-          end
-      end
-  end
-
-  delegate :session_id, to: :latest_vaccination_record, allow_nil: true
 end

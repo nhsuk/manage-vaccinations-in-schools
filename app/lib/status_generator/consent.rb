@@ -61,7 +61,8 @@ class StatusGenerator::Consent
         vaccination_records:,
         patient_locations: [],
         triages: [],
-        consents: []
+        consents: [],
+        attendance_record: nil
       ).status == :vaccinated
   end
 

@@ -45,25 +45,6 @@ en:
         completed: green
         not_attending: red
         unknown: grey
-    session:
-      label:
-        absent_from_session: Absent from session
-        already_had: Already had vaccine
-        conflicting_consent: Conflicting consent
-        had_contraindications: Had contraindications
-        none_yet: No outcome
-        refused: Refused vaccine
-        unwell: Unwell
-        vaccinated: Vaccinated
-      colour:
-        absent_from_session: dark-orange
-        already_had: green
-        conflicting_consent: orange
-        had_contraindications: red
-        none_yet: white
-        refused: red
-        unwell: dark-orange
-        vaccinated: green
     triage:
       label:
         delay_vaccination: Delay vaccination

@@ -48,22 +48,16 @@ describe Patient::VaccinationStatus do
     let(:vaccination_generator) do
       instance_double(StatusGenerator::Vaccination)
     end
-    let(:session_generator) { instance_double(StatusGenerator::Session) }
 
     before do
       allow(StatusGenerator::Vaccination).to receive(:new).and_return(
         vaccination_generator
       )
-      allow(StatusGenerator::Session).to receive(:new).and_return(
-        session_generator
-      )
       allow(vaccination_generator).to receive_messages(
-        status: :vaccinated,
-        location_id: 999
-      )
-      allow(session_generator).to receive_messages(
-        status: :attending,
-        date: Date.new(2020, 1, 1)
+        status: "vaccinated",
+        latest_date: Date.new(2020, 1, 1),
+        latest_location_id: 999,
+        latest_session_status: "unwell"
       )
     end
 
@@ -72,7 +66,7 @@ describe Patient::VaccinationStatus do
 
       expect(patient_vaccination_status.status).to eq("vaccinated")
       expect(patient_vaccination_status.latest_location_id).to eq(999)
-      expect(patient_vaccination_status.latest_session_status).to eq(:attending)
+      expect(patient_vaccination_status.latest_session_status).to eq("unwell")
       expect(patient_vaccination_status.latest_date).to eq(Date.new(2020, 1, 1))
     end
   end

@@ -82,7 +82,8 @@ class AlreadyHadNotificationSender
       vaccination_records: other_vaccination_records,
       patient_locations: [],
       consents: [],
-      triages: []
+      triages: [],
+      attendance_record: nil
     ).status == :vaccinated
   end
 end

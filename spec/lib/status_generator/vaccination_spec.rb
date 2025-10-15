@@ -12,12 +12,14 @@ describe StatusGenerator::Vaccination do
         ),
       consents: patient.consents,
       triages: patient.triages,
+      attendance_record: patient.attendance_records.first,
       vaccination_records: patient.vaccination_records
     )
   end
 
   let(:patient) { create(:patient) }
   let(:programme) { create(:programme) }
+  let(:session) { create(:session, programmes: [programme]) }
 
   describe "#status" do
     subject { generator.status }
@@ -427,8 +429,165 @@ describe StatusGenerator::Vaccination do
     end
   end
 
-  describe "#location_id" do
-    subject { generator.location_id }
+  describe "#latest_date" do
+    subject(:date) { generator.latest_date }
+
+    let(:performed_at) { 1.day.ago.to_date }
+    let(:created_at) { 2.days.ago.to_date }
+
+    let(:programme) { create(:programme, :hpv) }
+
+    context "with a vaccination administered" do
+      before do
+        create(
+          :vaccination_record,
+          patient:,
+          session:,
+          programme:,
+          performed_at:
+        )
+      end
+
+      it { should eq(performed_at.to_date) }
+    end
+
+    context "with a vaccination already had" do
+      before do
+        create(
+          :vaccination_record,
+          :already_had,
+          patient:,
+          session:,
+          programme:,
+          performed_at: performed_at
+        )
+      end
+
+      it { should eq(performed_at.to_date) }
+    end
+
+    context "with contraindications from vaccination record" do
+      before do
+        create(
+          :vaccination_record,
+          :contraindications,
+          patient:,
+          session:,
+          programme:,
+          performed_at: performed_at
+        )
+      end
+
+      it { should eq(performed_at.to_date) }
+    end
+
+    context "with refused from vaccination record" do
+      before do
+        create(
+          :vaccination_record,
+          :refused,
+          patient:,
+          session:,
+          programme:,
+          performed_at:
+        )
+      end
+
+      it { should eq(performed_at.to_date) }
+    end
+
+    context "with absent from vaccination record" do
+      before do
+        create(
+          :vaccination_record,
+          :absent_from_session,
+          patient:,
+          session:,
+          programme:,
+          performed_at:
+        )
+      end
+
+      it { should eq(performed_at.to_date) }
+    end
+
+    context "with absent from session attendance" do
+      before do
+        create(:attendance_record, :absent, patient:, session:, created_at:)
+      end
+
+      it { should eq(created_at) }
+    end
+
+    context "with absent from both vaccination record and session attendance" do
+      let(:earlier_date) { 3.days.ago.to_date }
+      let(:later_date) { 1.day.ago.to_date }
+
+      context "when vaccination record date is earlier" do
+        before do
+          create(
+            :vaccination_record,
+            :absent_from_session,
+            patient:,
+            session:,
+            programme:,
+            performed_at: earlier_date
+          )
+
+          create(
+            :attendance_record,
+            :absent,
+            patient:,
+            session:,
+            created_at: later_date
+          )
+        end
+
+        it { should eq(later_date) }
+      end
+
+      context "when session attendance date is earlier" do
+        before do
+          create(
+            :vaccination_record,
+            :absent_from_session,
+            patient:,
+            session:,
+            programme:,
+            performed_at: later_date
+          )
+
+          create(
+            :attendance_record,
+            :absent,
+            patient:,
+            session:,
+            created_at: earlier_date
+          )
+        end
+
+        it { should eq(later_date) }
+      end
+    end
+
+    context "with unwell" do
+      before do
+        create(
+          :vaccination_record,
+          :not_administered,
+          patient:,
+          session:,
+          programme:,
+          performed_at:
+        )
+      end
+
+      it { should eq(performed_at.to_date) }
+    end
+  end
+
+  describe "#latest_location_id" do
+    subject { generator.latest_location_id }
 
     context "with a flu programme" do
       let(:programme) { create(:programme, :flu) }
@@ -755,6 +914,37 @@ describe StatusGenerator::Vaccination do
 
         it { should be(location.id) }
       end
+    end
+  end
+
+  describe "#latest_session_status" do
+    subject(:status) { generator.latest_session_status }
+
+    let(:programme) { create(:programme, :hpv) }
+    let(:patient) { create(:patient, session:) }
+
+    context "with no vaccination record" do
+      it { should be_nil }
+    end
+
+    context "with a vaccination not administered" do
+      before do
+        create(
+          :vaccination_record,
+          :not_administered,
+          patient:,
+          session:,
+          programme:
+        )
+      end
+
+      it { should be(:unwell) }
+    end
+
+    context "when not attending the session" do
+      before { create(:attendance_record, :absent, patient:, session:) }
+
+      it { should be(:absent) }
     end
   end
 end

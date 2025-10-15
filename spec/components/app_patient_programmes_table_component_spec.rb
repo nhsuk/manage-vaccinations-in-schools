@@ -19,9 +19,8 @@ describe AppPatientProgrammesTableComponent do
     let(:programmes) { create_list(:programme, 1, :flu) }
 
     it { should have_content("Vaccination programmes") }
-    it { should have_content("Flu (Winter 2025)") }
+    it { should have_content("Flu (winter 2025)") }
     it { should_not have_content("Vaccinated") }
-    it { should have_content("Selected for the Year 2025 to 2026 Flu cohort") }
 
     context "when vaccinated" do
       let(:patient) { create(:patient, :vaccinated, session:) }
@@ -52,28 +51,21 @@ describe AppPatientProgrammesTableComponent do
       before { StatusUpdater.call(patient:) }
 
       it { should have_css(".nhsuk-tag--white", text: "Eligible") }
-      it { should have_content("Refused on #{today.to_fs(:long)}") }
+      it { should have_content("Did not consent") }
     end
 
     context "when triage outcome was 'Do not vaccinate'" do
-      let(:patient) { create(:patient, :consent_given_triage_needed, session:) }
-
-      before do
+      let(:patient) do
         create(
-          :triage,
-          :do_not_vaccinate,
-          patient:,
-          programme: programmes.first,
-          performed_by: nurse,
-          created_at: today
+          :patient,
+          :consent_given_triage_needed,
+          :triage_do_not_vaccinate,
+          session:
         )
-
-        StatusUpdater.call(patient:)
-        patient.reload
       end
 
       it { should have_css(".nhsuk-tag--white", text: "Eligible") }
-      it { should have_content("Had contraindications") }
+      it { should have_content("Contraindicated") }
     end
 
     context "when no outcome yet but had contraindications" do
@@ -92,12 +84,7 @@ describe AppPatientProgrammesTableComponent do
       end
 
       it { should have_css(".nhsuk-tag--white", text: "Eligible") }
-
-      it do
-        expect(rendered).to have_content(
-          "Had contraindications on #{today.to_fs(:long)}"
-        )
-      end
+      it { should have_content("Contraindicated on #{today.to_fs(:long)}") }
     end
 
     context "when no outcome yet but was unwell" do
@@ -135,7 +122,7 @@ describe AppPatientProgrammesTableComponent do
       end
 
       it { should have_css(".nhsuk-tag--white", text: "Eligible") }
-      it { should have_content("Refused on #{today.to_fs(:long)}") }
+      it { should have_content("Child refused on #{today.to_fs(:long)}") }
     end
   end
 
@@ -153,59 +140,6 @@ describe AppPatientProgrammesTableComponent do
     it { should have_content("HPV") }
     it { should have_content("Td/IPV") }
     it { should have_content("MenACWY") }
-
-    it do
-      expect(rendered).to have_content(
-        "Selected for the Year 2025 to 2026 HPV cohort"
-      ).once
-    end
-
-    it { should have_content("Eligibility starts 1 September 2026").twice }
-
-    context "when vaccinated with multiple doses" do
-      let(:patient) { create(:patient, session:) }
-      let(:first_dose_date) { Time.zone.local(2024, 9, 1) }
-      let(:second_dose_date) { Time.zone.local(2025, 3, 1) }
-
-      before do
-        create(
-          :vaccination_record,
-          patient:,
-          programme: programmes.first,
-          performed_at: first_dose_date,
-          dose_sequence: 1,
-          session: session
-        )
-
-        create(
-          :vaccination_record,
-          patient:,
-          programme: programmes.first,
-          performed_at: second_dose_date,
-          dose_sequence: 2,
-          session: session
-        )
-
-        StatusUpdater.call(patient:)
-      end
-
-      it { should have_css(".nhsuk-tag--green", text: "Vaccinated") }
-
-      it do
-        expect(rendered).to have_content(
-          "Vaccinated on #{first_dose_date.to_date.to_fs(:long)}"
-        )
-      end
-
-      it do
-        expect(rendered).to have_content(
-          "Vaccinated on #{second_dose_date.to_date.to_fs(:long)}"
-        )
-      end
-
-      it { should have_content("HPV") } # First dose doesn't show dose sequence
-      it { should have_content("HPV (2nd dose)") }
-    end
 
     context "when vaccinated last year" do
       let(:patient) { create(:patient, session:) }

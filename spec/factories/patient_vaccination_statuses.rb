@@ -31,9 +31,11 @@ FactoryBot.define do
     programme
     academic_year { AcademicYear.current }
 
-    latest_session_status { "none_yet" }
-    latest_date { academic_year.to_academic_year_date_range.begin }
-
     traits_for_enum :status
+
+    trait :vaccinated do
+      status { "vaccinated" }
+      latest_date { Date.current }
+    end
   end
 end

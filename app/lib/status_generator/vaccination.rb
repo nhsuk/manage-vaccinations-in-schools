@@ -8,6 +8,7 @@ class StatusGenerator::Vaccination
     patient_locations:,
     consents:,
     triages:,
+    attendance_record:,
     vaccination_records:
   )
     @programme = programme
@@ -16,6 +17,7 @@ class StatusGenerator::Vaccination
     @patient_locations = patient_locations
     @consents = consents
     @triages = triages
+    @attendance_record = attendance_record
     @vaccination_records = vaccination_records
   end
 
@@ -31,8 +33,35 @@ class StatusGenerator::Vaccination
     end
   end
 
-  def location_id
+  def latest_date
+    if status_should_be_vaccinated?
+      vaccination_record.performed_at.to_date
+    elsif latest_session_status_should_be_absent?
+      [
+        relevant_vaccination_records.map(&:performed_at).max&.to_date,
+        attendance_record&.created_at&.to_date
+      ].compact.max
+    else
+      relevant_vaccination_records.map(&:performed_at).max&.to_date
+    end
+  end
+
+  def latest_location_id
     vaccination_record&.location_id if status_should_be_vaccinated?
+  end
+
+  def latest_session_status
+    if status_should_be_due? || status_should_be_eligible?
+      if latest_session_status_should_be_contraindicated?
+        :contraindicated
+      elsif latest_session_status_should_be_refused?
+        :refused
+      elsif latest_session_status_should_be_absent?
+        :absent
+      elsif latest_session_status_should_be_unwell?
+        :unwell
+      end
+    end
   end
 
   private
@@ -43,6 +72,7 @@ class StatusGenerator::Vaccination
               :patient_locations,
               :consents,
               :triages,
+              :attendance_record,
               :vaccination_records
 
   def programme_id = programme.id
@@ -142,4 +172,21 @@ class StatusGenerator::Vaccination
   end
 
   def status_should_be_eligible? = is_eligible?
+
+  def latest_session_status_should_be_contraindicated?
+    relevant_vaccination_records.last&.contraindications?
+  end
+
+  def latest_session_status_should_be_refused?
+    relevant_vaccination_records.last&.refused?
+  end
+
+  def latest_session_status_should_be_absent?
+    relevant_vaccination_records.last&.absent_from_session? ||
+      attendance_record&.attending == false
+  end
+
+  def latest_session_status_should_be_unwell?
+    relevant_vaccination_records.last&.not_well?
+  end
 end

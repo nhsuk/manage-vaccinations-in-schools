@@ -25,10 +25,23 @@ describe PatientStatusResolver do
   end
 
   describe "#vaccination" do
-    subject { status_attached_tag_resolver.vaccination }
+    subject(:hash) { status_attached_tag_resolver.vaccination }
 
     let(:programme) { create(:programme, :hpv) }
 
     it { should eq({ text: "Not eligible", colour: "grey" }) }
+
+    context "with details" do
+      let(:patient) do
+        create(:patient, :consent_given_triage_not_needed, session:)
+      end
+      let(:session) { create(:session, programmes: [programme]) }
+
+      it do
+        expect(hash).to eq(
+          { text: "Due", colour: "white", details_text: "Consent given" }
+        )
+      end
+    end
   end
 end

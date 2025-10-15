@@ -5,10 +5,11 @@
 # `AppAttachedTagsComponent` used to render the various statuses of any
 # particular patient, programme and academic year combination.
 class PatientStatusResolver
-  def initialize(patient, programme:, academic_year:)
+  def initialize(patient, programme:, academic_year:, context_location: nil)
     @patient = patient
     @programme = programme
     @academic_year = academic_year
+    @context_location = context_location
   end
 
   def consent
@@ -57,22 +58,55 @@ class PatientStatusResolver
   end
 
   def vaccination
-    status = vaccination_status.status
-    latest_session_status = vaccination_status.latest_session_status
+    if vaccination_status.vaccinated?
+      details_text =
+        if context_location.nil? ||
+             vaccination_status.latest_location_id == context_location.id
+          "Vaccinated on #{vaccination_status.latest_date.to_fs(:long)}"
+        else
+          "Vaccinated elsewhere"
+        end
 
-    details_text =
-      if latest_session_status != "none_yet"
-        I18n.t(latest_session_status, scope: %i[status session label])
-      end
+      tag_hash("vaccinated", context: :vaccination).merge(details_text:)
+    elsif vaccination_status.not_eligible?
+      tag_hash("not_eligible", context: :vaccination)
+    else
+      details_text =
+        if triage_status.do_not_vaccinate?
+          "Contraindicated"
+        elsif triage_status.delay_vaccination?
+          "Delay vaccination"
+        elsif consent_status.refused?
+          "Did not consent"
+        elsif consent_status.conflicts?
+          "Conflicting consent"
+        elsif !vaccination_status.latest_session_status.nil?
+          status_string =
+            if vaccination_status.latest_session_status_refused?
+              "Child refused"
+            elsif vaccination_status.latest_session_status_absent?
+              "Absent"
+            elsif vaccination_status.latest_session_status_unwell?
+              "Unwell"
+            elsif vaccination_status.latest_session_status_contraindicated?
+              "Contraindicated"
+            end
+          "#{status_string} on #{vaccination_status.latest_date.to_fs(:long)}"
+        elsif triage_status.safe_to_vaccinate?
+          triage.fetch(:text)
+        else
+          consent.fetch(:text)
+        end
 
-    tag_hash(status, context: :vaccination).then do |hash|
-      details_text ? hash.merge(details_text:) : hash
+      tag_hash(vaccination_status.status, context: :vaccination).merge(
+        details_text:
+      )
     end
   end
 
   private
 
-  attr_reader :patient, :programme, :academic_year
+  attr_reader :patient, :programme, :academic_year, :context_location
 
   def tag_hash(status, context:)
     text = I18n.t(status, scope: [:status, context, :label])

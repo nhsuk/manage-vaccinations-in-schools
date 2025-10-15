@@ -16,18 +16,6 @@ describe "Vaccination programmes table" do
     and_the_table_shows_other_eligible_vaccinations
   end
 
-  scenario "patient has non-seasonal vaccine with more than one dose" do
-    given_patients_exist_in_year_eleven
-    and_the_patient_is_vaccinated_for_hpv
-    and_the_patient_has_a_second_dose_of_hpv
-
-    when_i_click_on_children
-    and_i_click_on_a_child
-
-    then_the_table_has_a_row_showing_hpv_vaccinated
-    and_the_table_has_a_row_showing_second_hpv_vaccinated
-  end
-
   scenario "patient has a seasonal vaccine" do
     given_patients_exist_in_year_eleven
     and_the_patient_had_two_flu_doses_last_year
@@ -84,9 +72,10 @@ describe "Vaccination programmes table" do
         year_group: 10,
         given_name: "John",
         family_name: "Smith",
-        programmes: @programmes,
         school:
       )
+
+    StatusUpdater.call(patient: @patient)
   end
 
   def when_i_click_on_children
@@ -109,51 +98,26 @@ describe "Vaccination programmes table" do
     end
   end
 
-  def and_the_table_has_a_row_showing_second_hpv_vaccinated
-    expect(page).to have_selector(
-      "table.nhsuk-table tbody tr",
-      text: "HPV (2nd dose)"
-    ) do |row|
-      expect(row).to have_selector("td.nhsuk-table__cell", text: "Vaccinated")
-    end
-  end
-
   def and_the_table_shows_other_eligible_vaccinations
     expect(page).to have_selector(
       "table.nhsuk-table tbody tr",
-      text: "Flu (Winter 2025)"
+      text: "Flu (winter 2025)"
     ) do |row|
-      expect(row).to have_selector(
-        "td.nhsuk-table__cell",
-        text: "Eligibility starts 1 September 2025"
-      )
+      expect(row).to have_selector("td.nhsuk-table__cell", text: "Eligible")
     end
 
     expect(page).to have_selector(
       "table.nhsuk-table tbody tr",
       text: "MenACWY"
     ) do |row|
-      expect(row).to have_selector(
-        "td.nhsuk-table__cell",
-        text: "Selected for the Year 2023 to 2024 MenACWY cohort"
-      )
+      expect(row).to have_selector("td.nhsuk-table__cell", text: "Eligible")
     end
   end
 
   def then_the_table_has_two_rows_showing_flu_vaccinated
     expect(page).to have_selector(
       "table.nhsuk-table tbody tr",
-      text: "Flu (Winter 2024)"
-    ) do |row|
-      expect(row).to have_selector(
-        "td.nhsuk-table__cell",
-        text: "Vaccinated on 1 September 2024"
-      )
-    end
-
-    expect(page).to have_selector(
-      "table.nhsuk-table tbody tr",
-      text: "Flu (Winter 2024, 2nd dose)"
+      text: "Flu (winter 2024)"
     ) do |row|
       expect(row).to have_selector(
         "td.nhsuk-table__cell",
@@ -170,7 +134,7 @@ describe "Vaccination programmes table" do
       expect(row).to have_selector("td.nhsuk-table__cell", text: "Eligible")
       expect(row).to have_selector(
         "td.nhsuk-table__cell",
-        text: "Had contraindications on 31 August 2025"
+        text: "Contraindicated"
       )
     end
   end
@@ -183,6 +147,7 @@ describe "Vaccination programmes table" do
       session: @session,
       performed_at: 6.months.ago
     )
+    StatusUpdater.call(patient: @patient)
   end
 
   def and_the_patient_has_a_second_dose_of_hpv
@@ -193,6 +158,7 @@ describe "Vaccination programmes table" do
       programme: @hpv_programme,
       session: @session
     )
+    StatusUpdater.call(patient: @patient)
   end
 
   def and_the_patient_had_two_flu_doses_last_year
