@@ -167,13 +167,10 @@ describe "Vaccination programmes table" do
       "table.nhsuk-table tbody tr",
       text: "HPV"
     ) do |row|
+      expect(row).to have_selector("td.nhsuk-table__cell", text: "Eligible")
       expect(row).to have_selector(
         "td.nhsuk-table__cell",
-        text: "Could not vaccinate"
-      )
-      expect(row).to have_selector(
-        "td.nhsuk-table__cell",
-        text: "USER, Test decided that SMITH, John could not be vaccinated"
+        text: "Had contraindications on 31 August 2025"
       )
     end
   end

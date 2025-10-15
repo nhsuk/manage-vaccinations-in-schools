@@ -8,7 +8,7 @@
 #  academic_year         :integer          not null
 #  latest_date           :date
 #  latest_session_status :integer
-#  status                :integer          default("none_yet"), not null
+#  status                :integer          default("not_eligible"), not null
 #  latest_location_id    :bigint
 #  patient_id            :bigint           not null
 #  programme_id          :bigint           not null
@@ -49,16 +49,14 @@ class Patient::VaccinationStatus < ApplicationRecord
            -> { kept.order(performed_at: :desc) },
            through: :patient
 
-  has_one :patient_location
-
   has_one :attendance_record,
           -> { today },
           through: :patient,
           source: :attendance_records
 
   enum :status,
-       { none_yet: 0, vaccinated: 1, could_not_vaccinate: 2 },
-       default: :none_yet,
+       { not_eligible: 0, eligible: 1, due: 2, vaccinated: 3 },
+       default: :not_eligible,
        validate: true
 
   enum :latest_session_status,

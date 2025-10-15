@@ -51,7 +51,7 @@ describe AppPatientProgrammesTableComponent do
 
       before { StatusUpdater.call(patient:) }
 
-      it { should have_css(".nhsuk-tag--red", text: "Could not vaccinate") }
+      it { should have_css(".nhsuk-tag--white", text: "Eligible") }
       it { should have_content("Refused on #{today.to_fs(:long)}") }
     end
 
@@ -70,7 +70,7 @@ describe AppPatientProgrammesTableComponent do
         StatusUpdater.call(patient:)
       end
 
-      it { should have_css(".nhsuk-tag--red", text: "Could not vaccinate") }
+      it { should have_css(".nhsuk-tag--white", text: "Eligible") }
 
       it do
         expect(rendered_component).to have_content(
@@ -94,7 +94,7 @@ describe AppPatientProgrammesTableComponent do
         StatusUpdater.call(patient:)
       end
 
-      it { should have_css(".nhsuk-tag--white", text: "No outcome") }
+      it { should have_css(".nhsuk-tag--white", text: "Eligible") }
 
       it do
         expect(rendered_component).to have_content(
@@ -118,7 +118,7 @@ describe AppPatientProgrammesTableComponent do
         StatusUpdater.call(patient:)
       end
 
-      it { should have_css(".nhsuk-tag--white", text: "No outcome") }
+      it { should have_css(".nhsuk-tag--white", text: "Eligible") }
       it { should have_content("Unwell on #{today.to_fs(:long)}") }
     end
 
@@ -137,7 +137,7 @@ describe AppPatientProgrammesTableComponent do
         StatusUpdater.call(patient:)
       end
 
-      it { should have_css(".nhsuk-tag--white", text: "No outcome") }
+      it { should have_css(".nhsuk-tag--white", text: "Eligible") }
       it { should have_content("Refused on #{today.to_fs(:long)}") }
     end
   end

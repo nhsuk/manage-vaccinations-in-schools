@@ -49,13 +49,13 @@ describe AppProgrammeStatusTagsComponent do
           status: :vaccinated
         },
         td_ipv_programme => {
-          status: :none_yet,
+          status: :eligible,
           latest_session_status: :unwell
         }
       }
     end
 
     it { should have_content("MenACWYVaccinated") }
-    it { should have_content("Td/IPVNo outcomeUnwell") }
+    it { should have_content("Td/IPVEligibleUnwell") }
   end
 end

@@ -18,7 +18,7 @@ describe "HPV vaccination" do
     then_i_see_that_the_status_is_delayed
     and_i_can_record_a_second_vaccination
 
-    when_i_go_to_the_outcome_tab
+    when_i_go_to_the_children_tab
     then_i_see_the_patient_has_no_outcome_yet
 
     when_vaccination_confirmations_are_sent
@@ -86,7 +86,7 @@ describe "HPV vaccination" do
   end
 
   def then_i_see_that_the_status_is_delayed
-    expect(page).to have_content("No outcome")
+    expect(page).to have_content("HPV: Due")
     expect(page).not_to have_content("You still need to record an outcome")
   end
 
@@ -94,13 +94,13 @@ describe "HPV vaccination" do
     expect(page).to have_content("ready for their HPV vaccination?")
   end
 
-  def when_i_go_to_the_outcome_tab
+  def when_i_go_to_the_children_tab
     click_on @session.location.name
     within(".app-secondary-navigation") { click_on "Children" }
   end
 
   def then_i_see_the_patient_has_no_outcome_yet
-    expect(page).to have_content("Vaccination status\nHPVNo outcomeUnwell")
+    expect(page).to have_content("Vaccination status\nHPVDueUnwell")
   end
 
   def when_vaccination_confirmations_are_sent

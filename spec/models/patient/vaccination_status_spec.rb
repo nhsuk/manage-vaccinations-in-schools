@@ -8,7 +8,7 @@
 #  academic_year         :integer          not null
 #  latest_date           :date
 #  latest_session_status :integer
-#  status                :integer          default("none_yet"), not null
+#  status                :integer          default("not_eligible"), not null
 #  latest_location_id    :bigint
 #  patient_id            :bigint           not null
 #  programme_id          :bigint           not null
@@ -38,7 +38,7 @@ describe Patient::VaccinationStatus do
 
   it do
     expect(patient_vaccination_status).to define_enum_for(:status).with_values(
-      %i[none_yet vaccinated could_not_vaccinate]
+      %i[not_eligible eligible due vaccinated]
     )
   end
 

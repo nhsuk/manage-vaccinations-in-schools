@@ -16,27 +16,50 @@ describe StatusGenerator::Vaccination do
     )
   end
 
-  let(:patient) { create(:patient, date_of_birth: 15.years.ago.to_date) }
+  let(:patient) { create(:patient) }
   let(:programme) { create(:programme) }
 
   describe "#status" do
     subject { generator.status }
 
     context "with no vaccination record" do
-      it { should be(:none_yet) }
+      it { should be(:not_eligible) }
     end
 
     context "with a flu programme" do
       let(:programme) { create(:programme, :flu) }
 
-      it { should be(:none_yet) }
+      context "when eligible" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) { create(:patient, session:) }
+
+        it { should be(:eligible) }
+      end
+
+      context "when eligible and has consent" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
+        end
+
+        it { should be(:due) }
+      end
+
+      context "when eligible and safe to vaccinate" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) do
+          create(:patient, :consent_given_triage_safe_to_vaccinate, session:)
+        end
+
+        it { should be(:due) }
+      end
 
       context "with an unadministered vaccination record" do
         before do
           create(:vaccination_record, :not_administered, patient:, programme:)
         end
 
-        it { should be(:none_yet) }
+        it { should be(:not_eligible) }
       end
 
       context "with an administered vaccination record" do
@@ -72,7 +95,7 @@ describe StatusGenerator::Vaccination do
           )
         end
 
-        it { should be(:none_yet) }
+        it { should be(:not_eligible) }
       end
 
       context "with an already had vaccination record from last year" do
@@ -87,21 +110,44 @@ describe StatusGenerator::Vaccination do
           )
         end
 
-        it { should be(:none_yet) }
+        it { should be(:not_eligible) }
       end
     end
 
     context "with an HPV programme" do
       let(:programme) { create(:programme, :hpv) }
 
-      it { should be(:none_yet) }
+      context "when eligible" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) { create(:patient, session:) }
+
+        it { should be(:eligible) }
+      end
+
+      context "when eligible and has consent" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
+        end
+
+        it { should be(:due) }
+      end
+
+      context "when eligible and safe to vaccinate" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) do
+          create(:patient, :consent_given_triage_safe_to_vaccinate, session:)
+        end
+
+        it { should be(:due) }
+      end
 
       context "with an unadministered vaccination record" do
         before do
           create(:vaccination_record, :not_administered, patient:, programme:)
         end
 
-        it { should be(:none_yet) }
+        it { should be(:not_eligible) }
       end
 
       context "with an administered vaccination record" do
@@ -130,15 +176,42 @@ describe StatusGenerator::Vaccination do
     context "with a MenACWY programme" do
       let(:programme) { create(:programme, :menacwy) }
 
+      context "when eligible" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) { create(:patient, session:) }
+
+        it { should be(:eligible) }
+      end
+
+      context "when eligible and has consent" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
+        end
+
+        it { should be(:due) }
+      end
+
+      context "when eligible and safe to vaccinate" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) do
+          create(:patient, :consent_given_triage_safe_to_vaccinate, session:)
+        end
+
+        it { should be(:due) }
+      end
+
       context "with an unadministered vaccination record" do
         before do
           create(:vaccination_record, :not_administered, patient:, programme:)
         end
 
-        it { should be(:none_yet) }
+        it { should be(:not_eligible) }
       end
 
       context "with an administered vaccination record" do
+        let(:patient) { create(:patient, programmes: [programme]) }
+
         before do
           create(:vaccination_record, :administered, patient:, programme:)
         end
@@ -147,6 +220,8 @@ describe StatusGenerator::Vaccination do
       end
 
       context "with a second dose administered vaccination record" do
+        let(:patient) { create(:patient, programmes: [programme]) }
+
         before do
           create(
             :vaccination_record,
@@ -161,6 +236,8 @@ describe StatusGenerator::Vaccination do
       end
 
       context "with an administered vaccination record when the patient was younger than 10 years old" do
+        let(:patient) { create(:patient, programmes: [programme]) }
+
         before do
           create(
             :vaccination_record,
@@ -171,10 +248,12 @@ describe StatusGenerator::Vaccination do
           )
         end
 
-        it { should be(:none_yet) }
+        it { should be(:not_eligible) }
       end
 
       context "with an already had vaccination record" do
+        let(:patient) { create(:patient, programmes: [programme]) }
+
         before do
           create(
             :vaccination_record,
@@ -192,15 +271,42 @@ describe StatusGenerator::Vaccination do
     context "with an Td/IPV programme" do
       let(:programme) { create(:programme, :td_ipv) }
 
+      context "when eligible" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) { create(:patient, session:) }
+
+        it { should be(:eligible) }
+      end
+
+      context "when eligible and has consent" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
+        end
+
+        it { should be(:due) }
+      end
+
+      context "when eligible and safe to vaccinate" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) do
+          create(:patient, :consent_given_triage_safe_to_vaccinate, session:)
+        end
+
+        it { should be(:due) }
+      end
+
       context "with an unadministered vaccination record" do
         before do
           create(:vaccination_record, :not_administered, patient:, programme:)
         end
 
-        it { should be(:none_yet) }
+        it { should be(:not_eligible) }
       end
 
       context "with a first dose administered vaccination record" do
+        let(:patient) { create(:patient, programmes: [programme]) }
+
         before do
           create(
             :vaccination_record,
@@ -211,10 +317,12 @@ describe StatusGenerator::Vaccination do
           )
         end
 
-        it { should be(:none_yet) }
+        it { should be(:not_eligible) }
       end
 
       context "with a first dose administered vaccination record when the patient was younger than 10 years old" do
+        let(:patient) { create(:patient, programmes: [programme]) }
+
         before do
           create(
             :vaccination_record,
@@ -226,10 +334,12 @@ describe StatusGenerator::Vaccination do
           )
         end
 
-        it { should be(:none_yet) }
+        it { should be(:not_eligible) }
       end
 
       context "with a fifth dose administered vaccination record" do
+        let(:patient) { create(:patient, programmes: [programme]) }
+
         before do
           create(
             :vaccination_record,
@@ -244,6 +354,8 @@ describe StatusGenerator::Vaccination do
       end
 
       context "with a fifth dose administered vaccination record when the patient was younger than 10 years old" do
+        let(:patient) { create(:patient, programmes: [programme]) }
+
         before do
           create(
             :vaccination_record,
@@ -255,10 +367,12 @@ describe StatusGenerator::Vaccination do
           )
         end
 
-        it { should be(:none_yet) }
+        it { should be(:not_eligible) }
       end
 
       context "with an unknown dose administered vaccination record" do
+        let(:patient) { create(:patient, programmes: [programme]) }
+
         before do
           create(
             :vaccination_record,
@@ -269,10 +383,12 @@ describe StatusGenerator::Vaccination do
           )
         end
 
-        it { should be(:none_yet) }
+        it { should be(:not_eligible) }
       end
 
       context "with an unknown dose administered vaccination record recorded in a session" do
+        let(:patient) { create(:patient, programmes: [programme]) }
+
         before do
           create(
             :vaccination_record,
@@ -288,6 +404,8 @@ describe StatusGenerator::Vaccination do
       end
 
       context "with an already had vaccination record" do
+        let(:patient) { create(:patient, programmes: [programme]) }
+
         before do
           create(
             :vaccination_record,
@@ -302,37 +420,10 @@ describe StatusGenerator::Vaccination do
       end
     end
 
-    context "with a consent refused" do
-      before { create(:consent, :refused, patient:, programme:) }
-
-      it { should be(:could_not_vaccinate) }
-    end
-
-    context "with a conflicting consents" do
-      before do
-        create(:consent, :given, patient:, programme:)
-        create(
-          :consent,
-          :refused,
-          patient:,
-          programme:,
-          parent: create(:parent)
-        )
-      end
-
-      it { should be(:could_not_vaccinate) }
-    end
-
-    context "with a triage as unsafe to vaccination" do
-      before { create(:triage, :do_not_vaccinate, patient:, programme:) }
-
-      it { should be(:could_not_vaccinate) }
-    end
-
     context "with a discarded vaccination administered" do
       before { create(:vaccination_record, :discarded, patient:, programme:) }
 
-      it { should be(:none_yet) }
+      it { should be(:not_eligible) }
     end
   end
 
@@ -464,6 +555,7 @@ describe StatusGenerator::Vaccination do
 
     context "with a MenACWY programme" do
       let(:programme) { create(:programme, :menacwy) }
+      let(:patient) { create(:patient, programmes: [programme]) }
 
       it { should be_nil }
 
@@ -542,6 +634,7 @@ describe StatusGenerator::Vaccination do
 
     context "with an Td/IPV programme" do
       let(:programme) { create(:programme, :td_ipv) }
+      let(:patient) { create(:patient, date_of_birth: 15.years.ago.to_date) }
 
       it { should be_nil }
 
@@ -584,6 +677,7 @@ describe StatusGenerator::Vaccination do
 
       context "with a fifth dose administered vaccination record" do
         let(:location) { create(:school) }
+        let(:patient) { create(:patient, date_of_birth: 15.years.ago.to_date) }
 
         before do
           create(

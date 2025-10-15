@@ -107,7 +107,7 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   end
 
   def status_for_programme(vaccination_status:, programme:, academic_year:)
-    if vaccination_status.none_yet? &&
+    if vaccination_status.not_eligible? &&
          eligibility_start_in_future?(programme:, academic_year:)
       return "-"
     end
@@ -136,12 +136,10 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   end
 
   def notes_for_programme(vaccination_status:, programme:, academic_year:)
-    if vaccination_status.vaccinated?
-      notes_for_status(vaccination_status:)
-    elsif vaccination_status.could_not_vaccinate?
-      could_not_vaccinate_notes(vaccination_status:)
+    if vaccination_status.not_eligible?
+      eligibility_notes(programme:, academic_year:)
     else
-      no_outcome_yet_notes(vaccination_status:, programme:, academic_year:)
+      notes_for_status(vaccination_status:)
     end
   end
 
@@ -150,34 +148,6 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
       vaccination_status.latest_session_status.to_s.humanize
     date = vaccination_status.latest_date.to_fs(:long)
     "#{latest_session_status} on #{date}"
-  end
-
-  def could_not_vaccinate_notes(vaccination_status:)
-    if vaccination_status.latest_session_status_had_contraindications?
-      latest_triage =
-        @patient
-          .triages
-          .includes(:performed_by)
-          .order(:created_at)
-          .where(created_at: vaccination_status.latest_date.all_day)
-          .last
-
-      if latest_triage
-        "#{latest_triage.performed_by.full_name} decided that #{patient.full_name} could not be vaccinated"
-      else
-        "#{patient.full_name} could not be vaccinated"
-      end
-    else
-      notes_for_status(vaccination_status:)
-    end
-  end
-
-  def no_outcome_yet_notes(vaccination_status:, programme:, academic_year:)
-    if vaccination_status.latest_session_status_none_yet?
-      eligibility_notes(programme:, academic_year:)
-    else
-      notes_for_status(vaccination_status:)
-    end
   end
 
   def eligibility_notes(programme:, academic_year:)

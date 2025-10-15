@@ -22,10 +22,12 @@ class StatusGenerator::Vaccination
   def status
     if status_should_be_vaccinated?
       :vaccinated
-    elsif status_should_be_could_not_vaccinate?
-      :could_not_vaccinate
+    elsif status_should_be_due?
+      :due
+    elsif status_should_be_eligible?
+      :eligible
     else
-      :none_yet
+      :not_eligible
     end
   end
 
@@ -44,6 +46,8 @@ class StatusGenerator::Vaccination
               :vaccination_records
 
   def programme_id = programme.id
+
+  def year_group = patient.year_group(academic_year:)
 
   def relevant_vaccination_records
     @relevant_vaccination_records ||=
@@ -90,17 +94,52 @@ class StatusGenerator::Vaccination
     end
   end
 
+  def is_eligible?
+    @is_eligible ||=
+      patient_locations
+        .select { it.academic_year == academic_year }
+        .any? do |patient_location|
+          location = patient_location.location
+          year_group.in?(
+            location.programme_year_groups(academic_year:)[programme]
+          )
+        end
+  end
+
+  def consent_generator
+    @consent_generator ||=
+      StatusGenerator::Consent.new(
+        programme:,
+        academic_year:,
+        patient:,
+        consents:,
+        vaccination_records:
+      )
+  end
+
+  def triage_generator
+    @triage_generator ||=
+      StatusGenerator::Triage.new(
+        programme:,
+        academic_year:,
+        patient:,
+        consents:,
+        triages:,
+        vaccination_records:
+      )
+  end
+
   def status_should_be_vaccinated?
     vaccination_record != nil
   end
 
-  def status_should_be_could_not_vaccinate?
-    if ConsentGrouper.call(consents, programme_id:, academic_year:).any?(
-         &:response_refused?
-       )
-      return true
-    end
+  def status_should_be_due?
+    return false unless is_eligible?
 
-    TriageFinder.call(triages, programme_id:, academic_year:)&.do_not_vaccinate?
+    return false unless consent_generator.status == :given
+
+    triage_generator.status.in?(%i[safe_to_vaccinate not_required])
   end
+
+  def status_should_be_eligible? = is_eligible?
 end
