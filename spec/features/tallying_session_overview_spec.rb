@@ -73,8 +73,8 @@ describe "Tallying on session overview page" do
 
   def and_one_could_not_be_vaccinated
     create(
-      :patient_vaccination_status,
-      :could_not_vaccinate,
+      :patient_consent_status,
+      :refused,
       patient: @patients.fourth,
       programme: @flu_programme
     )
@@ -102,7 +102,7 @@ describe "Tallying on session overview page" do
       expect(page).to have_content(1)
     end
 
-    within(".nhsuk-card", text: "Contraindicated or did not consent") do
+    within(".nhsuk-card", text: "Did not consent") do
       expect(page).to have_content(1)
     end
 
@@ -130,7 +130,7 @@ describe "Tallying on session overview page" do
 
     and_i_visit_the_session_record_tab
 
-    click_link "Contraindicated or did not consent"
+    click_link "Did not consent"
     expect(page).to have_content("Showing 1 to 1 of 1 children")
     expect(page).to have_content(@patients.fourth.given_name)
 
