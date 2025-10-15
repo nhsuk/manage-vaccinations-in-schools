@@ -5,7 +5,7 @@ en:
       patient_specific_direction: PSD status
       register: Registration status
       triage: Triage status
-      vaccination: Outcome
+      vaccination: Vaccination status
     consent:
       label:
         conflicts: Conflicting consent
