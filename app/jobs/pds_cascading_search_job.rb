@@ -161,7 +161,8 @@ class PDSCascadingSearchJob < ApplicationJob
     PDSCascadingSearchJob.set(queue:).perform_later(
       searchable,
       step_name:,
-      search_results:
+      search_results:,
+      queue:
     )
   end
 
