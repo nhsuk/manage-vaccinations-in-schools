@@ -81,6 +81,11 @@ class Location < ApplicationRecord
           )
         end
 
+  scope :has_year_groups,
+        ->(year_groups) do
+          where("ARRAY[?]::integer[] <@ gias_year_groups", year_groups)
+        end
+
   scope :search_by_name,
         ->(query) do
           # Trigram matching requires at least 3 characters
