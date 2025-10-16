@@ -476,6 +476,48 @@ describe Patient do
         it { should include(patient) }
       end
     end
+
+    describe "#in_academic_year" do
+      subject(:scope) { described_class.in_academic_year(AcademicYear.pending) }
+
+      before do
+        old_session =
+          create(
+            :session,
+            programmes: [programme],
+            academic_year: AcademicYear.previous,
+            team: session_a.team
+          )
+        _old_patient = create(:patient, session: old_session)
+        _patient_without_team = create(:patient)
+      end
+
+      let(:programme) { Programme.flu }
+      let(:session_a) { create(:session, programmes: [programme]) }
+      let(:session_b) { create(:session, programmes: [programme]) }
+      let!(:patient_a) { create(:patient, session: session_a) }
+      let!(:patient_b) { create(:patient, session: session_b) }
+
+      it "returns patients for all teams in the current academic year" do
+        expect(scope).to contain_exactly(patient_a, patient_b)
+      end
+
+      context "with a deceased patient" do
+        let!(:deceased_patient) do
+          create(:patient, :deceased, session: session_a)
+        end
+
+        it { should_not include(deceased_patient) }
+      end
+
+      context "with a archived patient" do
+        let!(:archived_patient) do
+          create(:patient, :archived, session: session_a)
+        end
+
+        it { should_not include(archived_patient) }
+      end
+    end
   end
 
   describe "validations" do

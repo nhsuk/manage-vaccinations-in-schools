@@ -573,6 +573,28 @@ class Patient < ApplicationRecord
           scope
         end
 
+  # Patients that are in the given academic year, across all the teams and who
+  # could potentially be given a vaccination, irrespenctive of eligibility for
+  # any particular vaccine.
+  scope :in_academic_year,
+        ->(academic_year) do
+          matching_patient_locations =
+            PatientLocation
+              .select("1")
+              .where("patient_locations.patient_id = patients.id")
+              .where(academic_year:)
+              .arel
+          matching_archive_reasons =
+            ArchiveReason
+              .select("1")
+              .where("archive_reasons.patient_id = patients.id")
+              .arel
+
+          where(matching_patient_locations.exists)
+            .where.not(matching_archive_reasons.exists)
+            .not_deceased
+        end
+
   validates :given_name, :family_name, :date_of_birth, presence: true
 
   validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }
