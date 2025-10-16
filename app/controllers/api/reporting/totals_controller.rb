@@ -77,6 +77,8 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
       ReportingAPI::PatientProgrammeStatus.where(
         organisation_id: current_user.organisation_ids
       ).where(@filters.to_where_clause)
+
+    apply_default_year_group_filter
   end
 
   def csv_headers(groups)
@@ -118,5 +120,26 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
              vaccinations_given: @scope.vaccinations_given_count,
              monthly_vaccinations_given: @scope.monthly_vaccinations_given
            }
+  end
+
+  def apply_default_year_group_filter
+    return if params[:year_group].present?
+    return if params[:programme].blank?
+
+    programme = Programme.find_by(type: params[:programme])
+    return unless programme
+
+    patient_table = ReportingAPI::PatientProgrammeStatus.arel_table
+    lpyg_table = LocationProgrammeYearGroup.arel_table
+
+    subquery =
+      lpyg_table
+        .project(Arel.star)
+        .where(lpyg_table[:location_id].eq(patient_table[:session_location_id]))
+        .where(lpyg_table[:programme_id].eq(programme.id))
+        .where(lpyg_table[:year_group].eq(patient_table[:patient_year_group]))
+        .where(lpyg_table[:academic_year].eq(patient_table[:academic_year]))
+
+    @scope = @scope.where(Arel::Nodes::Exists.new(subquery))
   end
 end
