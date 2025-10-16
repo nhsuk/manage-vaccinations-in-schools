@@ -512,6 +512,33 @@ describe FHIRMapper::VaccinationRecord do
       its(:notes) { should be_nil }
     end
 
+    context "with a record with a short batch number" do
+      let(:fhir_immunization) do
+        FHIR.from_contents(
+          file_fixture("/fhir/fhir_record_short_batch.json").read
+        )
+      end
+
+      include_examples "a mapped vaccination record (common fields)"
+
+      its(:performed_by_given_name) { should be_nil }
+      its(:performed_by_family_name) { should be_nil }
+      its(:batch) { should have_attributes(name: "0") }
+
+      its(:vaccine) do
+        should have_attributes(snomed_product_code: "43207411000001105")
+      end
+
+      its(:performed_at) { should eq Time.parse("2025-09-20T00:00:00+00:00") }
+      its(:delivery_method) { should eq "intramuscular" }
+      its(:delivery_site) { should be_nil }
+      its(:full_dose) { should be true }
+      its(:outcome) { should eq "administered" }
+      its(:location) { should be_nil }
+      its(:location_name) { should eq "D83013" }
+      its(:performed_ods_code) { should eq "D83013" }
+    end
+
     context "with a record that has an unknown location" do
       let(:fhir_immunization) do
         FHIR.from_contents(
