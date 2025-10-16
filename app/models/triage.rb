@@ -4,18 +4,19 @@
 #
 # Table name: triages
 #
-#  id                   :bigint           not null, primary key
-#  academic_year        :integer          not null
-#  invalidated_at       :datetime
-#  notes                :text             default(""), not null
-#  status               :integer          not null
-#  vaccine_method       :integer
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  patient_id           :bigint           not null
-#  performed_by_user_id :bigint           not null
-#  programme_id         :bigint           not null
-#  team_id              :bigint           not null
+#  id                      :bigint           not null, primary key
+#  academic_year           :integer          not null
+#  delay_vaccination_until :date
+#  invalidated_at          :datetime
+#  notes                   :text             default(""), not null
+#  status                  :integer          not null
+#  vaccine_method          :integer
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#  patient_id              :bigint           not null
+#  performed_by_user_id    :bigint           not null
+#  programme_id            :bigint           not null
+#  team_id                 :bigint           not null
 #
 # Indexes
 #
@@ -57,4 +58,12 @@ class Triage < ApplicationRecord
        validate: {
          if: :safe_to_vaccinate?
        }
+
+  scope :delay_vaccination_until_in_past,
+        -> { where(delay_vaccination_until: ...Date.current) }
+
+  scope :should_be_invalidated,
+        -> { delay_vaccination_until_in_past.not_invalidated }
+
+  validates :delay_vaccination_until, absence: true, unless: :delay_vaccination?
 end
