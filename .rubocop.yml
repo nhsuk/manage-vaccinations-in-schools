@@ -19,7 +19,7 @@ Layout/EmptyLineAfterMagicComment:
   Enabled: true
 
 Layout/LineLength:
-  AllowedPatterns: [idx_on]
+  AllowedPatterns: [idx_on,index_]
   Exclude:
     - db/schema.rb
 
