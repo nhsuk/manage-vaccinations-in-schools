@@ -85,11 +85,10 @@ describe SearchVaccinationRecordsInNHSJob do
     let(:first_vaccination_record) do
       create(
         :vaccination_record,
+        :sourced_from_nhs_immunisations_api,
         programme:,
         patient:,
-        nhs_immunisations_api_id: SecureRandom.uuid,
         nhs_immunisations_api_primary_source: first_primary_source,
-        source: "nhs_immunisations_api",
         performed_at:
       )
     end
@@ -111,11 +110,10 @@ describe SearchVaccinationRecordsInNHSJob do
       let(:second_vaccination_record) do
         create(
           :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
           programme:,
           patient:,
-          nhs_immunisations_api_id: SecureRandom.uuid,
           nhs_immunisations_api_primary_source:,
-          source: "nhs_immunisations_api",
           performed_at:
         )
       end
@@ -127,11 +125,10 @@ describe SearchVaccinationRecordsInNHSJob do
       let(:second_vaccination_record) do
         create(
           :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
           programme:,
           patient:,
-          nhs_immunisations_api_id: SecureRandom.uuid,
           nhs_immunisations_api_primary_source:,
-          source: "nhs_immunisations_api",
           performed_at: Time.zone.local(2025, 10, 10, 12, 33, 44)
         )
       end
@@ -143,11 +140,10 @@ describe SearchVaccinationRecordsInNHSJob do
       let(:second_vaccination_record) do
         create(
           :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
           programme:,
           patient:,
-          nhs_immunisations_api_id: SecureRandom.uuid,
           nhs_immunisations_api_primary_source: false,
-          source: "nhs_immunisations_api",
           performed_at: Time.zone.local(2025, 10, 9)
         )
       end
@@ -164,11 +160,10 @@ describe SearchVaccinationRecordsInNHSJob do
       let(:second_vaccination_record) do
         create(
           :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
           programme: create(:programme, :hpv),
           patient:,
-          nhs_immunisations_api_id: SecureRandom.uuid,
           nhs_immunisations_api_primary_source: false,
-          source: "nhs_immunisations_api",
           performed_at:
         )
       end
@@ -185,11 +180,10 @@ describe SearchVaccinationRecordsInNHSJob do
       let(:second_vaccination_record) do
         create(
           :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
           programme:,
           patient:,
-          nhs_immunisations_api_id: SecureRandom.uuid,
           nhs_immunisations_api_primary_source: second_primary_source,
-          source: "nhs_immunisations_api",
           performed_at:
         )
       end
@@ -197,11 +191,10 @@ describe SearchVaccinationRecordsInNHSJob do
       let(:third_vaccination_record) do
         create(
           :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
           programme:,
           patient:,
-          nhs_immunisations_api_id: SecureRandom.uuid,
           nhs_immunisations_api_primary_source: third_primary_source,
-          source: "nhs_immunisations_api",
           performed_at:
         )
       end
@@ -263,11 +256,10 @@ describe SearchVaccinationRecordsInNHSJob do
       let(:second_vaccination_record) do
         create(
           :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
           programme:,
           patient:,
-          nhs_immunisations_api_id: SecureRandom.uuid,
           nhs_immunisations_api_primary_source: second_primary_source,
-          source: "nhs_immunisations_api",
           performed_at:
         )
       end
@@ -275,11 +267,10 @@ describe SearchVaccinationRecordsInNHSJob do
       let(:third_vaccination_record) do
         create(
           :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
           programme: create(:programme, :hpv),
           patient:,
-          nhs_immunisations_api_id: SecureRandom.uuid,
           nhs_immunisations_api_primary_source: third_primary_source,
-          source: "nhs_immunisations_api",
           performed_at: Time.zone.local(2025, 10, 9)
         )
       end
