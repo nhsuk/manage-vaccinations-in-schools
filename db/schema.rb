@@ -878,6 +878,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
     t.datetime "invalidated_at"
     t.integer "vaccine_method"
     t.integer "academic_year", null: false
+    t.date "delay_vaccination_until"
     t.index ["academic_year"], name: "index_triages_on_academic_year"
     t.index ["patient_id"], name: "index_triages_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_triages_on_performed_by_user_id"
@@ -1224,4 +1225,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
   add_index "reporting_api_patient_programme_statuses", ["patient_school_local_authority_code", "programme_type"], name: "ix_rapi_pps_school_la_prog"
   add_index "reporting_api_patient_programme_statuses", ["programme_id", "team_id", "academic_year"], name: "ix_rapi_pps_prog_team_year"
   add_index "reporting_api_patient_programme_statuses", ["team_id", "academic_year"], name: "ix_rapi_pps_team_year"
+
 end

@@ -4,18 +4,19 @@
 #
 # Table name: triages
 #
-#  id                   :bigint           not null, primary key
-#  academic_year        :integer          not null
-#  invalidated_at       :datetime
-#  notes                :text             default(""), not null
-#  status               :integer          not null
-#  vaccine_method       :integer
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  patient_id           :bigint           not null
-#  performed_by_user_id :bigint           not null
-#  programme_id         :bigint           not null
-#  team_id              :bigint           not null
+#  id                      :bigint           not null, primary key
+#  academic_year           :integer          not null
+#  delay_vaccination_until :date
+#  invalidated_at          :datetime
+#  notes                   :text             default(""), not null
+#  status                  :integer          not null
+#  vaccine_method          :integer
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#  patient_id              :bigint           not null
+#  performed_by_user_id    :bigint           not null
+#  programme_id            :bigint           not null
+#  team_id                 :bigint           not null
 #
 # Indexes
 #
@@ -45,6 +46,26 @@ describe Triage do
           %w[injection nasal]
         )
       end
+
+      it { should validate_absence_of(:delay_vaccination_until) }
+    end
+
+    context "when do not vaccinate" do
+      subject(:triage) { build(:triage, :do_not_vaccinate) }
+
+      it { should validate_absence_of(:delay_vaccination_until) }
+    end
+
+    context "when keep in triage" do
+      subject(:triage) { build(:triage, :keep_in_triage) }
+
+      it { should validate_absence_of(:delay_vaccination_until) }
+    end
+
+    context "when delay vaccination" do
+      subject(:triage) { build(:triage, :delay_vaccination) }
+
+      it { should_not validate_absence_of(:delay_vaccination_until) }
     end
   end
 end
