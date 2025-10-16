@@ -240,6 +240,23 @@ describe GovukNotifyPersonalisation do
         end
       end
     end
+
+    context "for the MMR programme" do
+      let(:programmes) { [create(:programme, :mmr)] }
+
+      it { expect(to_h).to include(consented_vaccine_methods_message: "") }
+
+      context "when consented to vaccine without gelatine" do
+        before { consent.update!(without_gelatine: true) }
+
+        it do
+          expect(to_h).to include(
+            consented_vaccine_methods_message:
+              "You’ve agreed that John can have the vaccine without gelatine."
+          )
+        end
+      end
+    end
   end
 
   context "with a consent form" do
@@ -319,6 +336,25 @@ describe GovukNotifyPersonalisation do
           expect(to_h).to include(
             consented_vaccine_methods_message:
               "You’ve agreed that Tom can have the nasal spray flu vaccine."
+          )
+        end
+      end
+    end
+
+    context "for the MMR programme" do
+      let(:programmes) { [create(:programme, :mmr)] }
+
+      it { expect(to_h).to include(consented_vaccine_methods_message: "") }
+
+      context "when consented to vaccine without gelatine" do
+        before do
+          consent_form.consent_form_programmes.update!(without_gelatine: true)
+        end
+
+        it do
+          expect(to_h).to include(
+            consented_vaccine_methods_message:
+              "You’ve agreed that Tom can have the vaccine without gelatine."
           )
         end
       end

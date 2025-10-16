@@ -123,24 +123,33 @@ class GovukNotifyPersonalisation
   end
 
   def consented_vaccine_methods_message
-    return nil if consent.nil? && consent_form.nil?
-
-    if (consent && !consent.programme.flu?) ||
-         (consent_form && consent_form.programmes.none?(&:flu?))
-      return ""
-    end
+    return if consent.nil? && consent_form.nil?
 
     consent_form_programmes =
-      consent ? [consent] : consent_form.consent_form_programmes
+      if consent
+        [consent]
+      else
+        consent_form.consent_form_programmes.includes(programme: :vaccines)
+      end
+
+    programmes = consent_form_programmes.map(&:programme)
 
     consented_vaccine_methods =
-      if consent_form_programmes.any?(&:vaccine_method_injection_and_nasal?)
-        "nasal spray flu vaccine, or the injected flu vaccine if the nasal spray is not suitable"
-      elsif consent_form_programmes.any?(&:vaccine_method_nasal?)
-        "nasal spray flu vaccine"
-      else
-        "injected flu vaccine"
+      if programmes.any?(&:has_multiple_vaccine_methods?)
+        if consent_form_programmes.any?(&:vaccine_method_injection_and_nasal?)
+          "nasal spray flu vaccine, or the injected flu vaccine if the nasal spray is not suitable"
+        elsif consent_form_programmes.any?(&:vaccine_method_nasal?)
+          "nasal spray flu vaccine"
+        else
+          "injected flu vaccine"
+        end
+      elsif programmes.any?(&:vaccine_may_contain_gelatine?)
+        if consent_form_programmes.any?(&:without_gelatine)
+          "vaccine without gelatine"
+        end
       end
+
+    return "" if consented_vaccine_methods.nil?
 
     "You’ve agreed that #{short_patient_name} can have the #{consented_vaccine_methods}."
   end
