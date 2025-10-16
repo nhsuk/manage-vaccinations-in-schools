@@ -255,7 +255,7 @@ class PatientSearchForm < SearchForm
   def filter_for_eligible_children_only(scope)
     return scope if eligible_children.blank?
 
-    scope.eligible_for_programmes(
+    scope.not_deceased.eligible_for_programmes(
       programmes,
       location: session.location,
       academic_year:
