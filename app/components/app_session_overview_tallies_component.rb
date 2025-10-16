@@ -106,7 +106,8 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
           session_patients_path(
             session,
             programme_types: [programme.type],
-            vaccination_status: "vaccinated"
+            vaccination_status: "vaccinated",
+            eligible_children: 1
           )
       }
     ].flatten
