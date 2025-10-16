@@ -117,7 +117,7 @@ describe AppActivityLogComponent do
 
       create(
         :triage,
-        :needs_follow_up,
+        :keep_in_triage,
         programme: programmes.first,
         patient:,
         created_at: Time.zone.parse("2025-05-30 14:00"),
@@ -126,7 +126,7 @@ describe AppActivityLogComponent do
       )
       create(
         :triage,
-        :ready_to_vaccinate,
+        :safe_to_vaccinate,
         programme: programmes.first,
         patient:,
         created_at: Time.zone.parse("2025-05-30 14:30"),
@@ -134,7 +134,7 @@ describe AppActivityLogComponent do
       )
       create(
         :triage,
-        :ready_to_vaccinate,
+        :safe_to_vaccinate,
         programme: programmes.second,
         patient:,
         created_at: Time.zone.parse("2025-05-30 14:35"),
@@ -567,7 +567,7 @@ describe AppActivityLogComponent do
 
         create(
           :triage,
-          :ready_to_vaccinate,
+          :safe_to_vaccinate,
           programme: hpv_programme,
           patient:,
           academic_year: 2024,
@@ -655,7 +655,7 @@ describe AppActivityLogComponent do
 
         create(
           :triage,
-          :ready_to_vaccinate,
+          :safe_to_vaccinate,
           programme: flu_programme,
           patient:,
           academic_year: 2024,

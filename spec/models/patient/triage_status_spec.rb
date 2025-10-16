@@ -122,7 +122,7 @@ describe Patient::TriageStatus do
     end
 
     context "with a safe to vaccinate triage" do
-      before { create(:triage, :ready_to_vaccinate, patient:, programme:) }
+      before { create(:triage, :safe_to_vaccinate, patient:, programme:) }
 
       it { should be(:safe_to_vaccinate) }
     end
@@ -134,7 +134,7 @@ describe Patient::TriageStatus do
     end
 
     context "with a needs follow up triage" do
-      before { create(:triage, :needs_follow_up, patient:, programme:) }
+      before { create(:triage, :keep_in_triage, patient:, programme:) }
 
       it { should be(:required) }
     end
@@ -147,7 +147,7 @@ describe Patient::TriageStatus do
 
     context "with an invalidated safe to vaccinate triage" do
       before do
-        create(:triage, :ready_to_vaccinate, :invalidated, patient:, programme:)
+        create(:triage, :safe_to_vaccinate, :invalidated, patient:, programme:)
       end
 
       it { should be(:not_required) }
@@ -171,7 +171,7 @@ describe Patient::TriageStatus do
 
       context "with a safe to vaccinate triage" do
         it_behaves_like "a vaccinated patient with any triage status" do
-          let(:triage_trait) { :ready_to_vaccinate }
+          let(:triage_trait) { :safe_to_vaccinate }
         end
       end
 
@@ -183,7 +183,7 @@ describe Patient::TriageStatus do
 
       context "with a needs follow up triage" do
         it_behaves_like "a vaccinated patient with any triage status" do
-          let(:triage_trait) { :needs_follow_up }
+          let(:triage_trait) { :keep_in_triage }
         end
       end
 
@@ -231,14 +231,14 @@ describe Patient::TriageStatus do
     end
 
     context "with a safe to vaccinate triage" do
-      before { create(:triage, :ready_to_vaccinate, patient:, programme:) }
+      before { create(:triage, :safe_to_vaccinate, patient:, programme:) }
 
       it { should eq("injection") }
     end
 
     context "with a safe to vaccinate triage and vaccinated" do
       before do
-        create(:triage, :ready_to_vaccinate, patient:, programme:)
+        create(:triage, :safe_to_vaccinate, patient:, programme:)
         create(:vaccination_record, patient:, programme:)
       end
 
@@ -254,7 +254,7 @@ describe Patient::TriageStatus do
     end
 
     context "with a needs follow up triage" do
-      before { create(:triage, :needs_follow_up, patient:, programme:) }
+      before { create(:triage, :keep_in_triage, patient:, programme:) }
 
       it { should be_nil }
     end
@@ -267,7 +267,7 @@ describe Patient::TriageStatus do
 
     context "with an invalidated safe to vaccinate triage" do
       before do
-        create(:triage, :ready_to_vaccinate, :invalidated, patient:, programme:)
+        create(:triage, :safe_to_vaccinate, :invalidated, patient:, programme:)
       end
 
       it { should be_nil }
@@ -289,7 +289,7 @@ describe Patient::TriageStatus do
         before do
           create(
             :triage,
-            :ready_to_vaccinate,
+            :safe_to_vaccinate,
             patient: patient,
             programme: programme,
             created_at: Date.new(current_academic_year, 10, 15).in_time_zone
@@ -303,7 +303,7 @@ describe Patient::TriageStatus do
         before do
           create(
             :triage,
-            :ready_to_vaccinate,
+            :safe_to_vaccinate,
             patient: patient,
             programme: programme,
             created_at: Date.new(previous_academic_year, 10, 15).in_time_zone
@@ -317,7 +317,7 @@ describe Patient::TriageStatus do
         before do
           create(
             :triage,
-            :ready_to_vaccinate,
+            :safe_to_vaccinate,
             patient: patient,
             programme: programme,
             created_at: Date.new(current_academic_year, 10, 15).in_time_zone
@@ -345,7 +345,7 @@ describe Patient::TriageStatus do
           )
           create(
             :triage,
-            :ready_to_vaccinate,
+            :safe_to_vaccinate,
             patient: patient,
             programme: programme,
             created_at: Date.new(previous_academic_year, 10, 15).in_time_zone

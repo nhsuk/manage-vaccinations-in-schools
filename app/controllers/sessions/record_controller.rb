@@ -31,7 +31,7 @@ class Sessions::RecordController < ApplicationController
     patients =
       filter_on_vaccine_method_or_patient_specific_direction(
         @form.apply(scope)
-      ).consent_given_and_ready_to_vaccinate(
+      ).consent_given_and_safe_to_vaccinate(
         programmes: @form.programmes,
         academic_year: @session.academic_year,
         vaccine_method: @form.vaccine_method.presence

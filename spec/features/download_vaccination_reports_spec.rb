@@ -68,7 +68,7 @@ describe "Download vaccination reports" do
     @patient =
       create(
         :patient,
-        :triage_ready_to_vaccinate,
+        :consent_given_triage_safe_to_vaccinate,
         given_name: "John",
         family_name: "Smith",
         programmes: [@programme],
@@ -88,7 +88,7 @@ describe "Download vaccination reports" do
     @patient =
       create(
         :patient,
-        :triage_ready_to_vaccinate,
+        :consent_given_triage_safe_to_vaccinate,
         given_name: "John",
         family_name: "Smith",
         programmes: [@programme],

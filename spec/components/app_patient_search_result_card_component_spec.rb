@@ -17,7 +17,7 @@ describe AppPatientSearchResultCardComponent do
   let(:link_to) { "/patient" }
   let(:programme) { nil }
   let(:academic_year) { nil }
-  let(:triage_status) { "" }
+  let(:show_triage_status) { false }
   let(:show_postcode) { false }
   let(:show_school) { false }
 
@@ -27,7 +27,7 @@ describe AppPatientSearchResultCardComponent do
       link_to:,
       programme:,
       academic_year:,
-      triage_status:,
+      show_triage_status:,
       show_postcode:,
       show_school:
     )
@@ -55,7 +55,6 @@ describe AppPatientSearchResultCardComponent do
     let(:academic_year) { Date.current.academic_year }
 
     it { should have_text("Programme outcomeFluNo outcome") }
-    it { should_not have_text("Triage status") }
 
     context "when given a consent status" do
       let(:consent_status) { "given" }
@@ -63,15 +62,15 @@ describe AppPatientSearchResultCardComponent do
       it { should have_text("Consent statusFluNo response") }
     end
 
-    context "when given a triage status" do
-      let(:triage_status) { "safe_to_vaccinate" }
+    it { should_not have_text("Triage status") }
+
+    context "when showing the triage status" do
+      let(:show_triage_status) { true }
 
       it { should have_text("Triage statusFluNo triage needed") }
     end
 
-    context "when triage status is 'Any' and a patient's triage status is required" do
-      let(:triage_status) { "" }
-
+    context "when the patient has a triage status" do
       before { create(:patient_triage_status, :required, patient:, programme:) }
 
       it { should have_text("Triage statusFluNeeds triage") }

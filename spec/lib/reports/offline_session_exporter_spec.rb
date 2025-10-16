@@ -228,7 +228,7 @@ describe Reports::OfflineSessionExporter do
 
         context "with a triage assessment" do
           let!(:patient) do
-            create(:patient, :triage_ready_to_vaccinate, session:)
+            create(:patient, :consent_given_triage_safe_to_vaccinate, session:)
           end
 
           it "adds a row with the triage details" do

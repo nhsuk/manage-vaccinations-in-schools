@@ -94,8 +94,7 @@ describe "Inspect tools with PII access", :cis2 do
     @patient =
       create(
         :patient,
-        :consent_given_triage_needed,
-        :triage_ready_to_vaccinate,
+        :consent_given_triage_safe_to_vaccinate,
         given_name: "John",
         family_name: "Smith",
         year_group: 8,

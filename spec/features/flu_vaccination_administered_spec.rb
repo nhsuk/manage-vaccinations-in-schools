@@ -5,7 +5,7 @@ describe "Flu vaccination" do
 
   scenario "Administered with nasal spray" do
     given_i_am_signed_in_with_flu_programme
-    and_there_is_a_flu_session_today_with_patients_ready_to_vaccinate
+    and_there_is_a_flu_session_today_with_patients_safe_to_vaccinate
     and_there_are_nasal_and_injection_batches
     and_imms_api_sync_job_feature_is_enabled
 
@@ -25,7 +25,7 @@ describe "Flu vaccination" do
 
   scenario "Administered with injection" do
     given_i_am_signed_in_with_flu_programme
-    and_there_is_a_flu_session_today_with_patients_ready_to_vaccinate
+    and_there_is_a_flu_session_today_with_patients_safe_to_vaccinate
     and_there_are_nasal_and_injection_batches
 
     when_i_go_to_the_injection_only_patient
@@ -43,7 +43,7 @@ describe "Flu vaccination" do
 
   scenario "Administered with nasal where injection is an option" do
     given_i_am_signed_in_with_flu_programme
-    and_there_is_a_flu_session_today_with_patients_ready_to_vaccinate
+    and_there_is_a_flu_session_today_with_patients_safe_to_vaccinate
     and_there_are_nasal_and_injection_batches
 
     when_i_go_to_the_nasal_or_injection_patient
@@ -67,7 +67,7 @@ describe "Flu vaccination" do
 
   scenario "Administered with injection instead of nasal" do
     given_i_am_signed_in_with_flu_programme
-    and_there_is_a_flu_session_today_with_patients_ready_to_vaccinate
+    and_there_is_a_flu_session_today_with_patients_safe_to_vaccinate
     and_there_are_nasal_and_injection_batches
 
     when_i_go_to_the_nasal_or_injection_patient
@@ -85,7 +85,7 @@ describe "Flu vaccination" do
 
   scenario "Switching between nasal and injection" do
     given_i_am_signed_in_with_flu_programme
-    and_there_is_a_flu_session_today_with_patients_ready_to_vaccinate
+    and_there_is_a_flu_session_today_with_patients_safe_to_vaccinate
     and_there_are_nasal_and_injection_batches
 
     when_i_go_to_the_nasal_only_patient
@@ -114,7 +114,7 @@ describe "Flu vaccination" do
     sign_in @team.users.first
   end
 
-  def and_there_is_a_flu_session_today_with_patients_ready_to_vaccinate
+  def and_there_is_a_flu_session_today_with_patients_safe_to_vaccinate
     @nasal_only_patient =
       create(
         :patient,

@@ -6,7 +6,7 @@ describe "Pre-screening" do
   scenario "must be confirmed before vaccinating HPV" do
     given_a_session_exists(:hpv)
 
-    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    when_i_go_to_a_patient_that_is_safe_to_vaccinate
     then_i_see_the_pre_screening_questions
     and_i_dont_see_the_medication_question
     and_i_dont_see_the_pregnancy_question
@@ -17,7 +17,7 @@ describe "Pre-screening" do
   scenario "must be confirmed before vaccinating MenACWY" do
     given_a_session_exists(:menacwy)
 
-    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    when_i_go_to_a_patient_that_is_safe_to_vaccinate
     then_i_see_the_pre_screening_questions
     and_i_see_the_medication_question
     and_i_dont_see_the_pregnancy_question
@@ -29,7 +29,7 @@ describe "Pre-screening" do
   scenario "must be confirmed before vaccinating Td/IPV" do
     given_a_session_exists(:td_ipv)
 
-    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    when_i_go_to_a_patient_that_is_safe_to_vaccinate
     then_i_see_the_pre_screening_questions
     and_i_see_the_medication_question
     and_i_see_the_pregnancy_question
@@ -41,7 +41,7 @@ describe "Pre-screening" do
   scenario "must be confirmed before vaccinating flu injection" do
     given_a_session_exists(:flu)
 
-    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    when_i_go_to_a_patient_that_is_safe_to_vaccinate
     then_i_see_the_pre_screening_questions
     and_i_see_the_medication_question
     and_i_dont_see_the_asthma_flare_up_question
@@ -53,7 +53,7 @@ describe "Pre-screening" do
   scenario "must be confirmed before vaccinating flu nasal" do
     given_a_session_exists(:flu, vaccine_method: "nasal")
 
-    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    when_i_go_to_a_patient_that_is_safe_to_vaccinate
     then_i_see_the_pre_screening_questions
     and_i_see_the_medication_question
     and_i_see_the_asthma_flare_up_question
@@ -94,7 +94,7 @@ describe "Pre-screening" do
       end
   end
 
-  def when_i_go_to_a_patient_that_is_ready_to_vaccinate
+  def when_i_go_to_a_patient_that_is_safe_to_vaccinate
     sign_in @nurse
     visit session_record_path(@session)
     click_link @patient.full_name

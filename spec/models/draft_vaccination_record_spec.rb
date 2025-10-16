@@ -383,7 +383,7 @@ describe DraftVaccinationRecord do
           create(:consent, :given_nasal, patient:, programme:)
           create(
             :triage,
-            :ready_to_vaccinate,
+            :safe_to_vaccinate,
             patient:,
             programme:,
             vaccine_method: "nasal"
@@ -396,7 +396,7 @@ describe DraftVaccinationRecord do
       context "when triage is safe for injection" do
         before do
           create(:consent, :given_injection, patient:, programme:)
-          create(:triage, :ready_to_vaccinate, patient:, programme:)
+          create(:triage, :safe_to_vaccinate, patient:, programme:)
         end
 
         it { should be(false) }
@@ -423,7 +423,7 @@ describe DraftVaccinationRecord do
       context "when triage is safe for injection" do
         before do
           create(:consent, :given_injection, patient:, programme:)
-          create(:triage, :ready_to_vaccinate, patient:, programme:)
+          create(:triage, :safe_to_vaccinate, patient:, programme:)
         end
 
         it { should be(true) }
@@ -434,7 +434,7 @@ describe DraftVaccinationRecord do
           create(:consent, :given_nasal, patient:, programme:)
           create(
             :triage,
-            :ready_to_vaccinate,
+            :safe_to_vaccinate,
             patient:,
             programme:,
             vaccine_method: "nasal"

@@ -34,9 +34,9 @@ describe TimelineRecords do
   let(:triage) do
     create(
       :triage,
+      :safe_to_vaccinate,
       patient:,
       programme:,
-      status: :ready_to_vaccinate,
       performed_by: user
     )
   end

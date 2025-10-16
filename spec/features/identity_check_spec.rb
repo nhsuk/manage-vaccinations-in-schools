@@ -6,7 +6,7 @@ describe "HPV vaccination identity check" do
   scenario "Default identification, changed and edited" do
     given_i_am_signed_in
 
-    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    when_i_go_to_a_patient_that_is_safe_to_vaccinate
     and_i_record_a_vaccination_was_given
     then_i_see_the_check_and_confirm_page
     and_child_identified_by_shows_the_child
@@ -43,7 +43,7 @@ describe "HPV vaccination identity check" do
   scenario "Non-vaccination identified by child" do
     given_i_am_signed_in
 
-    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    when_i_go_to_a_patient_that_is_safe_to_vaccinate
     and_i_record_that_the_patient_was_unwell
     and_i_confirm_the_details
 
@@ -77,7 +77,7 @@ describe "HPV vaccination identity check" do
     sign_in @team.users.first
   end
 
-  def when_i_go_to_a_patient_that_is_ready_to_vaccinate
+  def when_i_go_to_a_patient_that_is_safe_to_vaccinate
     visit session_record_path(@session)
     click_link @patient.full_name
   end

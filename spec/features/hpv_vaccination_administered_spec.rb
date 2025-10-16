@@ -7,7 +7,7 @@ describe "HPV vaccination" do
     given_i_am_signed_in
     and_imms_api_sync_job_feature_is_enabled
 
-    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    when_i_go_to_a_patient_that_is_safe_to_vaccinate
     and_i_fill_in_pre_screening_questions
     and_i_record_that_the_patient_has_been_vaccinated(
       "Left arm (upper position)"
@@ -69,7 +69,7 @@ describe "HPV vaccination" do
   scenario "Administered with other delivery site" do
     given_i_am_signed_in
 
-    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    when_i_go_to_a_patient_that_is_safe_to_vaccinate
     and_i_fill_in_pre_screening_questions
     and_i_record_that_the_patient_has_been_vaccinated("Other")
     when_i_click_back
@@ -88,7 +88,7 @@ describe "HPV vaccination" do
     given_registrations_are_not_required
     and_i_am_signed_in
 
-    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    when_i_go_to_a_patient_that_is_safe_to_vaccinate
     and_i_fill_in_pre_screening_questions
     and_i_record_that_the_patient_has_been_vaccinated("Other")
     and_i_select_the_delivery
@@ -153,7 +153,7 @@ describe "HPV vaccination" do
     @stubbed_put_request = stub_immunisations_api_put(uuid: immunisation_uuid)
   end
 
-  def when_i_go_to_a_patient_that_is_ready_to_vaccinate
+  def when_i_go_to_a_patient_that_is_safe_to_vaccinate
     visit session_record_path(@session)
     expect(page).not_to have_content("Default batches")
     click_link @patient.full_name

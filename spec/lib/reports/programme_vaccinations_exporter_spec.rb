@@ -544,7 +544,7 @@ describe Reports::ProgrammeVaccinationsExporter do
         before do
           create(
             :patient,
-            :triage_ready_to_vaccinate,
+            :consent_given_triage_safe_to_vaccinate,
             :vaccinated,
             session:,
             performed_by:
@@ -556,7 +556,7 @@ describe Reports::ProgrammeVaccinationsExporter do
             "TRIAGED_BY" => "NURSE, Test",
             "TRIAGE_DATE" => Date.current.strftime("%Y-%m-%d"),
             "TRIAGE_NOTES" => "Okay to vaccinate",
-            "TRIAGE_STATUS" => "Ready to vaccinate"
+            "TRIAGE_STATUS" => "Safe to vaccinate"
           )
         end
       end

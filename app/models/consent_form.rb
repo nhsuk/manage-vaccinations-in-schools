@@ -66,8 +66,9 @@ class ConsentForm < ApplicationRecord
 
   before_save :reset_unused_attributes
 
-  scope :unmatched, -> { where.missing(:consents) }
   scope :recorded, -> { where.not(recorded_at: nil) }
+
+  scope :unmatched, -> { recorded.not_archived.where.missing(:consents) }
 
   attr_accessor :health_question_number,
                 :parental_responsibility,

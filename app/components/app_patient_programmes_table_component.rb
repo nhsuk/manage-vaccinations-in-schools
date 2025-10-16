@@ -112,8 +112,10 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
       return "-"
     end
 
-    label = I18n.t(vaccination_status.status, scope: "status.programme.label")
-    colour = I18n.t(vaccination_status.status, scope: "status.programme.colour")
+    status = vaccination_status.status
+
+    label = I18n.t(status, scope: %i[status vaccination label])
+    colour = I18n.t(status, scope: %i[status vaccination colour])
     tag.strong(label, class: "nhsuk-tag nhsuk-tag--#{colour}")
   end
 

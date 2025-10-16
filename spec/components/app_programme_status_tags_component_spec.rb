@@ -7,9 +7,9 @@ describe AppProgrammeStatusTagsComponent do
   let(:td_ipv_programme) { create(:programme, :td_ipv) }
   let(:flu_programme) { create(:programme, :flu) }
 
-  context "for consent outcome" do
+  context "for consent context" do
     let(:component) do
-      described_class.new(status_by_programme, outcome: :consent)
+      described_class.new(status_by_programme, context: :consent)
     end
 
     let(:status_by_programme) do
@@ -32,9 +32,9 @@ describe AppProgrammeStatusTagsComponent do
     it { should have_content("FluConsent given for nasal spray") }
   end
 
-  context "for programme outcome" do
+  context "for vaccination context" do
     let(:component) do
-      described_class.new(status_by_programme, outcome: :programme)
+      described_class.new(status_by_programme, context: :vaccination)
     end
 
     let(:status_by_programme) do

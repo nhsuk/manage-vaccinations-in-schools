@@ -25,14 +25,12 @@ class TriageForm
 
   def triage=(triage)
     self.status_and_vaccine_method =
-      if triage.ready_to_vaccinate?
+      if triage.safe_to_vaccinate?
         if consented_vaccine_methods.length > 1
           "safe_to_vaccinate_#{triage.vaccine_method}"
         else
           "safe_to_vaccinate"
         end
-      elsif triage.needs_follow_up?
-        "keep_in_triage"
       else
         triage.status
       end
@@ -101,9 +99,7 @@ class TriageForm
     case status_and_vaccine_method
     when "safe_to_vaccinate", "safe_to_vaccinate_injection",
          "safe_to_vaccinate_nasal"
-      "ready_to_vaccinate"
-    when "keep_in_triage"
-      "needs_follow_up"
+      "safe_to_vaccinate"
     else
       status_and_vaccine_method
     end

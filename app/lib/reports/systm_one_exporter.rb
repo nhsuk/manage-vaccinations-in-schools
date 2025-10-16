@@ -195,9 +195,6 @@ class Reports::SystmOneExporter
     elsif location
       location.ods_code
     else
-      # TODO: Needs support for generic clinics. The `location_id` is
-      #  `nil` but `location_name` is a human-readable string, so we
-      #  have no choice but to use the location of the session.
       vaccination_record.session.location.ods_code
     end
   end

@@ -6,58 +6,58 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     link_to:,
     programme: nil,
     academic_year: nil,
-    triage_status: nil,
     show_parents: false,
     show_postcode: false,
     show_school: false,
+    show_triage_status: false,
     show_year_group: false
   )
     @patient = patient
     @link_to = link_to
     @programme = programme
     @academic_year = academic_year || AcademicYear.pending
-    @triage_status = triage_status
 
     @show_parents = show_parents
     @show_postcode = show_postcode
     @show_school = show_school
+    @show_triage_status = show_triage_status
     @show_year_group = show_year_group
   end
 
   def call
-    render AppCardComponent.new(link_to: @link_to, compact: true) do |card|
-      card.with_heading(level: 4) { @patient.full_name_with_known_as }
+    render AppCardComponent.new(link_to:, compact: true) do |card|
+      card.with_heading(level: 4) { patient.full_name_with_known_as }
 
       govuk_summary_list do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "Date of birth" }
-          row.with_value { patient_date_of_birth(@patient) }
+          row.with_value { patient_date_of_birth(patient) }
         end
-        if @show_year_group
+        if show_year_group
           summary_list.with_row do |row|
             row.with_key { "Year group" }
-            row.with_value { patient_year_group(@patient, academic_year:) }
+            row.with_value { patient_year_group(patient, academic_year:) }
           end
         end
-        if @show_postcode && !@patient.restricted?
+        if show_postcode && !patient.restricted?
           summary_list.with_row do |row|
             row.with_key { "Postcode" }
-            row.with_value { @patient.address_postcode }
+            row.with_value { patient.address_postcode }
           end
         end
-        if @show_school
+        if show_school
           summary_list.with_row do |row|
             row.with_key { "School" }
-            row.with_value { patient_school(@patient) }
+            row.with_value { patient_school(patient) }
           end
         end
-        if @show_parents && @patient.parent_relationships.any?
+        if show_parents && patient.parent_relationships.any?
           summary_list.with_row do |row|
             row.with_key { "Parents or guardians" }
-            row.with_value { patient_parents(@patient) }
+            row.with_value { patient_parents(patient) }
           end
         end
-        if @programme && @academic_year
+        if programme && academic_year
           summary_list.with_row do |row|
             row.with_key { "Consent status" }
             row.with_value { consent_status_tag }
@@ -70,7 +70,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
           end
           summary_list.with_row do |row|
             row.with_key { "Programme outcome" }
-            row.with_value { programme_outcome_tag }
+            row.with_value { vaccination_status_tag }
           end
         end
       end
@@ -79,7 +79,16 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
 
   private
 
-  attr_reader :academic_year
+  attr_reader :patient,
+              :link_to,
+              :programme,
+              :academic_year,
+              :triage_status,
+              :show_parents,
+              :show_postcode,
+              :show_school,
+              :show_triage_status,
+              :show_year_group
 
   delegate :govuk_summary_list,
            :patient_date_of_birth,
@@ -88,49 +97,35 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
            :patient_year_group,
            to: :helpers
 
-  def programme_outcome_tag
-    render_status_tag(:vaccination, :programme)
-  end
+  def vaccination_status_tag = status_tag(:vaccination)
 
-  def consent_status_tag
-    render_status_tag(:consent, :consent)
-  end
+  def consent_status_tag = status_tag(:consent)
 
-  def triage_status_tag
-    render_status_tag(:triage, :triage)
-  end
+  def triage_status_tag = status_tag(:triage)
 
-  def render_status_tag(status_type, outcome)
+  def status_tag(type)
     status_model =
-      @patient.public_send(
-        "#{status_type}_status",
-        programme: @programme,
-        academic_year: @academic_year
-      )
+      patient.public_send("#{type}_status", programme:, academic_year:)
 
     status =
-      if status_type == :triage && status_model.vaccine_method.present? &&
-           @programme.has_multiple_vaccine_methods?
+      if type == :triage && status_model.vaccine_method.present? &&
+           programme.has_multiple_vaccine_methods?
         "#{status_model.status}_#{status_model.vaccine_method}"
       else
         status_model.status
       end
 
     latest_session_status =
-      (status_model.latest_session_status if status_type == :vaccination)
+      (status_model.latest_session_status if type == :vaccination)
 
     render AppProgrammeStatusTagsComponent.new(
-             { @programme => { status:, latest_session_status: } },
-             outcome:
+             { programme => { status:, latest_session_status: } },
+             context: type
            )
   end
 
   def display_triage_status?
-    return true if @triage_status.present?
-
-    @patient.triage_status(
-      programme: @programme,
-      academic_year: @academic_year
-    ).required?
+    show_triage_status ||
+      patient.triage_status(programme:, academic_year:).required?
   end
 end

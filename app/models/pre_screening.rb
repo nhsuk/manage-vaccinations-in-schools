@@ -30,12 +30,10 @@
 class PreScreening < ApplicationRecord
   include BelongsToSessionDate
   include Notable
+  include PerformableByUser
 
   audited associated_with: :patient
 
   belongs_to :patient
   belongs_to :programme
-  belongs_to :performed_by,
-             class_name: "User",
-             foreign_key: :performed_by_user_id
 end

@@ -35,6 +35,7 @@
 class Triage < ApplicationRecord
   include Invalidatable
   include Notable
+  include PerformableByUser
 
   audited associated_with: :patient
 
@@ -42,15 +43,11 @@ class Triage < ApplicationRecord
   belongs_to :programme
   belongs_to :team
 
-  belongs_to :performed_by,
-             class_name: "User",
-             foreign_key: :performed_by_user_id
-
   enum :status,
        {
-         ready_to_vaccinate: 0,
+         safe_to_vaccinate: 0,
          do_not_vaccinate: 1,
-         needs_follow_up: 2,
+         keep_in_triage: 2,
          delay_vaccination: 3
        },
        validate: true
@@ -58,6 +55,6 @@ class Triage < ApplicationRecord
   enum :vaccine_method,
        { injection: 0, nasal: 1 },
        validate: {
-         if: :ready_to_vaccinate?
+         if: :safe_to_vaccinate?
        }
 end

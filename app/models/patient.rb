@@ -315,7 +315,7 @@ class Patient < ApplicationRecord
           )
         end
 
-  scope :consent_given_and_ready_to_vaccinate,
+  scope :consent_given_and_safe_to_vaccinate,
         ->(programmes:, academic_year:, vaccine_method:) do
           select do |patient|
             programmes.any? do |programme|
