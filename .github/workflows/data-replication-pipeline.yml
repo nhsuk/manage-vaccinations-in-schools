@@ -74,7 +74,6 @@ jobs:
     needs: determine-git-sha
     uses: ./.github/workflows/build-and-push-image.yml
     with:
-      image_to_build: webapp
       git_sha: ${{ needs.determine-git-sha.outputs.git-sha }}
 
   prepare-deployment:

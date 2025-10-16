@@ -82,27 +82,18 @@ jobs:
         id: get-git-sha
         run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
-  build-and-push-webapp-image:
+  build-and-push-images:
     permissions:
       id-token: write
     needs: determine-git-sha
     uses: ./.github/workflows/build-and-push-image.yml
     with:
-      image_to_build: webapp
-      git_sha: ${{ needs.determine-git-sha.outputs.git-sha }}
-  build-and-push-ops-image:
-    permissions:
-      id-token: write
-    needs: build-and-push-webapp-image
-    uses: ./.github/workflows/build-and-push-image.yml
-    with:
-      image_to_build: ops
       git_sha: ${{ needs.determine-git-sha.outputs.git-sha }}
 
   prepare-deployment:
     name: Prepare deployment
     runs-on: ubuntu-latest
-    needs: [ determine-git-sha, build-and-push-ops-image ]
+    needs: [ determine-git-sha, build-and-push-images ]
     permissions:
       id-token: write
     strategy:
