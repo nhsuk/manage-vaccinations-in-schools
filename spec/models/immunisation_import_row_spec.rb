@@ -810,7 +810,9 @@ describe ImmunisationImportRow do
           :vaccination_record,
           programme: create(:programme, :flu),
           uuid: "12345678-1234-1234-1234-123456789abc",
-          source: :nhs_immunisations_api
+          source: :nhs_immunisations_api,
+          nhs_immunisations_api_identifier_system: "ABC",
+          nhs_immunisations_api_identifier_value: "123"
         )
       end
 

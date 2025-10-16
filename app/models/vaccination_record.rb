@@ -188,6 +188,22 @@ class VaccinationRecord < ApplicationRecord
               less_than_or_equal_to: -> { Time.current }
             }
 
+  validates :nhs_immunisations_api_identifier_system,
+            presence: {
+              if: :sourced_from_nhs_immunisations_api?
+            },
+            absence: {
+              unless: :sourced_from_nhs_immunisations_api?
+            }
+
+  validates :nhs_immunisations_api_identifier_value,
+            presence: {
+              if: :sourced_from_nhs_immunisations_api?
+            },
+            absence: {
+              unless: :sourced_from_nhs_immunisations_api?
+            }
+
   validates :nhs_immunisations_api_primary_source,
             inclusion: {
               in: [true, false],

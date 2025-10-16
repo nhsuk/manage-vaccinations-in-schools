@@ -237,6 +237,8 @@ describe API::Reporting::TotalsController do
         programme: flu_programme,
         session: nil,
         source: "nhs_immunisations_api",
+        nhs_immunisations_api_identifier_system: "ABC",
+        nhs_immunisations_api_identifier_value: "123",
         outcome: "administered",
         performed_at: 3.months.ago
       )
@@ -268,6 +270,8 @@ describe API::Reporting::TotalsController do
         programme: flu_programme,
         session: nil,
         source: "nhs_immunisations_api",
+        nhs_immunisations_api_identifier_system: "ABC",
+        nhs_immunisations_api_identifier_value: "123",
         outcome: "administered",
         performed_at: 3.months.ago
       )
@@ -291,6 +295,8 @@ describe API::Reporting::TotalsController do
         programme: flu_programme,
         session: nil,
         source: "nhs_immunisations_api",
+        nhs_immunisations_api_identifier_system: "ABC",
+        nhs_immunisations_api_identifier_value: "123",
         outcome: "administered",
         performed_at: 1.year.ago
       )
