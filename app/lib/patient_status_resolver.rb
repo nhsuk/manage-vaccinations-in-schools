@@ -98,9 +98,16 @@ class PatientStatusResolver
           consent.fetch(:text)
         end
 
-      tag_hash(vaccination_status.status, context: :vaccination).merge(
-        details_text:
-      )
+      status = vaccination_status.status
+      text = I18n.t(status, scope: %i[status vaccination label])
+
+      if (count = vaccination_status.dose_sequence)
+        text += " for #{I18n.t(count, scope: :ordinal_number)} dose"
+      end
+
+      colour = I18n.t(status, scope: %i[status vaccination colour])
+
+      { text:, colour:, details_text: }
     end
   end
 
