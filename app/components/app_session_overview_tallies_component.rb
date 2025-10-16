@@ -39,11 +39,13 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
   end
 
   def cards_for_programme(programme)
+    stats = stats_for_programme(programme)
+
     [
       {
         heading: "No response",
         colour: "grey",
-        count: consent_count(programme, "no_response").to_s,
+        count: stats[:no_response].to_s,
         link_to:
           session_consent_path(
             session,
@@ -60,7 +62,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
             {
               heading: "Consent given for #{method_string}",
               colour: "aqua-green",
-              count: consent_count(programme, "given", vaccine_method:).to_s,
+              count: stats[:"consent_given_#{vaccine_method}"].to_s,
               link_to:
                 session_consent_path(
                   session,
@@ -74,7 +76,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
             {
               heading: "Consent given",
               colour: "aqua-green",
-              count: consent_count(programme, "given").to_s,
+              count: stats[:consent_given].to_s,
               link_to:
                 session_consent_path(
                   session,
@@ -88,7 +90,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
       {
         heading: "Did not consent",
         colour: "red",
-        count: consent_count(programme, "refused").to_s,
+        count: stats[:consent_refused].to_s,
         link_to:
           session_consent_path(
             session,
@@ -99,7 +101,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
       {
         heading: "Vaccinated",
         colour: "green",
-        count: vaccinated_count(programme).to_s,
+        count: stats[:vaccinated].to_s,
         link_to:
           session_patients_path(
             session,
@@ -110,32 +112,8 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
     ].flatten
   end
 
-  def eligible_patients(programme)
-    session
-      .patients
-      .appear_in_programmes([programme], session:)
-      .eligible_for_programmes([programme], location:, academic_year:)
-  end
-
-  def eligible_cohort_count(programme)
-    eligible_patients(programme).count
-  end
-
-  def vaccinated_count(programme)
-    eligible_patients(programme).has_vaccination_status(
-      "vaccinated",
-      programme:,
-      academic_year:
-    ).count
-  end
-
-  def consent_count(programme, status, vaccine_method: nil)
-    eligible_patients(programme).has_consent_status(
-      status,
-      programme:,
-      academic_year:,
-      vaccine_method:
-    ).count
+  def eligible_children_count(programme)
+    stats_for_programme(programme)[:eligible_children]
   end
 
   def still_to_vaccinate_count
@@ -147,5 +125,13 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
         vaccine_method: nil
       )
       .count
+  end
+
+  def stats_for_programme(programme)
+    @stats_by_programme ||= {}
+    @stats_by_programme[programme.id] ||= Stats::Session.call(
+      session:,
+      programme:
+    )
   end
 end
