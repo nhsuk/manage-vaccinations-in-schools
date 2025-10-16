@@ -90,6 +90,8 @@ describe SearchVaccinationRecordsInNHSJob do
         nhs_immunisations_api_id: SecureRandom.uuid,
         nhs_immunisations_api_primary_source: first_primary_source,
         source: "nhs_immunisations_api",
+        nhs_immunisations_api_identifier_system: "abc",
+        nhs_immunisations_api_identifier_value: "123",
         performed_at:
       )
     end
@@ -116,6 +118,8 @@ describe SearchVaccinationRecordsInNHSJob do
           nhs_immunisations_api_id: SecureRandom.uuid,
           nhs_immunisations_api_primary_source:,
           source: "nhs_immunisations_api",
+          nhs_immunisations_api_identifier_system: "abc",
+          nhs_immunisations_api_identifier_value: "123",
           performed_at:
         )
       end
@@ -132,6 +136,8 @@ describe SearchVaccinationRecordsInNHSJob do
           nhs_immunisations_api_id: SecureRandom.uuid,
           nhs_immunisations_api_primary_source:,
           source: "nhs_immunisations_api",
+          nhs_immunisations_api_identifier_system: "abc",
+          nhs_immunisations_api_identifier_value: "123",
           performed_at: Time.zone.local(2025, 10, 10, 12, 33, 44)
         )
       end
@@ -148,6 +154,8 @@ describe SearchVaccinationRecordsInNHSJob do
           nhs_immunisations_api_id: SecureRandom.uuid,
           nhs_immunisations_api_primary_source: false,
           source: "nhs_immunisations_api",
+          nhs_immunisations_api_identifier_system: "abc",
+          nhs_immunisations_api_identifier_value: "123",
           performed_at: Time.zone.local(2025, 10, 9)
         )
       end
@@ -169,6 +177,8 @@ describe SearchVaccinationRecordsInNHSJob do
           nhs_immunisations_api_id: SecureRandom.uuid,
           nhs_immunisations_api_primary_source: false,
           source: "nhs_immunisations_api",
+          nhs_immunisations_api_identifier_system: "abc",
+          nhs_immunisations_api_identifier_value: "123",
           performed_at:
         )
       end
@@ -190,6 +200,8 @@ describe SearchVaccinationRecordsInNHSJob do
           nhs_immunisations_api_id: SecureRandom.uuid,
           nhs_immunisations_api_primary_source: second_primary_source,
           source: "nhs_immunisations_api",
+          nhs_immunisations_api_identifier_system: "abc",
+          nhs_immunisations_api_identifier_value: "123",
           performed_at:
         )
       end
@@ -202,6 +214,8 @@ describe SearchVaccinationRecordsInNHSJob do
           nhs_immunisations_api_id: SecureRandom.uuid,
           nhs_immunisations_api_primary_source: third_primary_source,
           source: "nhs_immunisations_api",
+          nhs_immunisations_api_identifier_system: "abc",
+          nhs_immunisations_api_identifier_value: "123",
           performed_at:
         )
       end
@@ -268,6 +282,8 @@ describe SearchVaccinationRecordsInNHSJob do
           nhs_immunisations_api_id: SecureRandom.uuid,
           nhs_immunisations_api_primary_source: second_primary_source,
           source: "nhs_immunisations_api",
+          nhs_immunisations_api_identifier_system: "abc",
+          nhs_immunisations_api_identifier_value: "123",
           performed_at:
         )
       end
@@ -280,6 +296,8 @@ describe SearchVaccinationRecordsInNHSJob do
           nhs_immunisations_api_id: SecureRandom.uuid,
           nhs_immunisations_api_primary_source: third_primary_source,
           source: "nhs_immunisations_api",
+          nhs_immunisations_api_identifier_system: "abc",
+          nhs_immunisations_api_identifier_value: "123",
           performed_at: Time.zone.local(2025, 10, 9)
         )
       end
