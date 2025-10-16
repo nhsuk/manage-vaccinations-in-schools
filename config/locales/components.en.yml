@@ -2,9 +2,9 @@ en:
   app_session_overview_tallies_component:
     eligibility_message:
       one: >-
-        1 child is due a vaccination this year and has not been vaccinated at another location
+        1 child is eligible for vaccination this academic year and has not been vaccinated elsewhere
       other: >-
-        %{count} children are due a vaccination this year and have not been vaccinated at another location
+        %{count} children are eligible for vaccination this academic year and have not been vaccinated elsewhere
     still_to_vaccinate_message:
       one: >-
         1 child with consent has not been vaccinated yet
