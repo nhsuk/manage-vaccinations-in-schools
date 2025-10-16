@@ -48,5 +48,5 @@ class GenericClinicFactory
       )
   end
 
-  def year_groups = Location::YearGroup::VALUE_RANGE.to_a
+  def year_groups = Location::YearGroup::CLINIC_VALUE_RANGE.to_a
 end

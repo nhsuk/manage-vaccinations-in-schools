@@ -28,16 +28,10 @@ class Location::YearGroup < ApplicationRecord
 
   enum :source, { gias: 0, generic_clinic_factory: 1, cli: 2 }, validate: true
 
-  MINIMUM_VALUE = -3
-  MAXIMUM_VALUE = 15
-  VALUE_RANGE = (MINIMUM_VALUE..MAXIMUM_VALUE)
+  CLINIC_VALUE_RANGE = (-3..15)
 
   validates :value,
             presence: true,
-            comparison: {
-              greater_than_or_equal_to: MINIMUM_VALUE,
-              less_than_or_equal_to: MAXIMUM_VALUE
-            },
             uniqueness: {
               scope: %i[location_id academic_year]
             }

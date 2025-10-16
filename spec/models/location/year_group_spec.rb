@@ -34,12 +34,6 @@ describe Location::YearGroup do
     it { should validate_presence_of(:value) }
 
     it do
-      expect(location_year_group).to validate_comparison_of(
-        :value
-      ).is_greater_than_or_equal_to(-3).is_less_than_or_equal_to(15)
-    end
-
-    it do
       expect(location_year_group).to validate_uniqueness_of(:value).scoped_to(
         :location_id,
         :academic_year
