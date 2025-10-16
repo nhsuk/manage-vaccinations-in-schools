@@ -35,16 +35,13 @@
 class Triage < ApplicationRecord
   include Invalidatable
   include Notable
+  include PerformableByUser
 
   audited associated_with: :patient
 
   belongs_to :patient
   belongs_to :programme
   belongs_to :team
-
-  belongs_to :performed_by,
-             class_name: "User",
-             foreign_key: :performed_by_user_id
 
   enum :status,
        {
