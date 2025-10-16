@@ -69,6 +69,7 @@ class Patient::VaccinationStatus < ApplicationRecord
 
   def assign_status
     self.status = generator.status
+    self.dose_sequence = generator.dose_sequence
     self.latest_date = generator.latest_date
     self.latest_location_id = generator.latest_location_id
     self.latest_session_status = generator.latest_session_status

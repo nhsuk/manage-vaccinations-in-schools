@@ -133,6 +133,7 @@ class StatusUpdater
           on_duplicate_key_update: {
             conflict_target: [:id],
             columns: %i[
+              dose_sequence
               latest_date
               latest_location_id
               latest_session_status

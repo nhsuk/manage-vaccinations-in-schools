@@ -429,6 +429,30 @@ describe StatusGenerator::Vaccination do
     end
   end
 
+  describe "#dose_sequence" do
+    subject(:dose_sequence) { generator.dose_sequence }
+
+    it { should be_nil }
+
+    context "for MMR programme" do
+      let(:programme) { create(:programme, :mmr) }
+      let(:session) { create(:session, programmes: [programme]) }
+      let(:patient) do
+        create(:patient, :consent_given_triage_not_needed, session:)
+      end
+
+      it { should eq(1) }
+
+      context "with an existing vaccination record" do
+        before do
+          create(:vaccination_record, patient:, programme:, dose_sequence: 1)
+        end
+
+        it { should eq(2) }
+      end
+    end
+  end
+
   describe "#latest_date" do
     subject(:date) { generator.latest_date }
 

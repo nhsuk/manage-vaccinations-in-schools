@@ -33,6 +33,18 @@ class StatusGenerator::Vaccination
     end
   end
 
+  def dose_sequence
+    # TODO: Implement this for multi-dose HPV and Td/IPV in a more generic way.
+    return unless programme.mmr?
+
+    return unless status_should_be_due? || status_should_be_eligible?
+
+    latest_dose_sequence =
+      relevant_vaccination_records.filter_map(&:dose_sequence).max || 0
+
+    latest_dose_sequence + 1
+  end
+
   def latest_date
     if status_should_be_vaccinated?
       vaccination_record.performed_at.to_date

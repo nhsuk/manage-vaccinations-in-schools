@@ -55,20 +55,22 @@ describe Patient::VaccinationStatus do
         vaccination_generator
       )
       allow(vaccination_generator).to receive_messages(
-        status: "vaccinated",
+        dose_sequence: 1,
         latest_date: Date.new(2020, 1, 1),
         latest_location_id: 999,
-        latest_session_status: "unwell"
+        latest_session_status: "unwell",
+        status: "vaccinated"
       )
     end
 
     it "calls the status generators" do
       assign_status
 
-      expect(patient_vaccination_status.status).to eq("vaccinated")
+      expect(patient_vaccination_status.dose_sequence).to eq(1)
+      expect(patient_vaccination_status.latest_date).to eq(Date.new(2020, 1, 1))
       expect(patient_vaccination_status.latest_location_id).to eq(999)
       expect(patient_vaccination_status.latest_session_status).to eq("unwell")
-      expect(patient_vaccination_status.latest_date).to eq(Date.new(2020, 1, 1))
+      expect(patient_vaccination_status.status).to eq("vaccinated")
     end
   end
 end
