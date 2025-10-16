@@ -25,6 +25,7 @@
 #  patient_id                                 :bigint
 #  patient_school_id                          :bigint
 #  programme_id                               :bigint
+#  session_location_id                        :bigint
 #  team_id                                    :bigint
 #
 # Indexes

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_10_125658) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_14_121341) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1123,6 +1123,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_10_125658) do
       COALESCE(la.mhclg_code, ''::character varying) AS patient_local_authority_code,
       school.id AS patient_school_id,
       school.name AS patient_school_name,
+      pl.location_id AS session_location_id,
           CASE
               WHEN (p.birth_academic_year IS NOT NULL) THEN ((s.academic_year - p.birth_academic_year) - 5)
               ELSE NULL::integer
@@ -1220,5 +1221,4 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_10_125658) do
   add_index "reporting_api_patient_programme_statuses", ["patient_school_local_authority_code", "programme_type"], name: "ix_rapi_pps_school_la_prog"
   add_index "reporting_api_patient_programme_statuses", ["programme_id", "team_id", "academic_year"], name: "ix_rapi_pps_prog_team_year"
   add_index "reporting_api_patient_programme_statuses", ["team_id", "academic_year"], name: "ix_rapi_pps_team_year"
-
 end
