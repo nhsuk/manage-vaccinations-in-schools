@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_14_121341) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -942,6 +942,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_14_121341) do
     t.bigint "location_id"
     t.bigint "supplied_by_user_id"
     t.integer "source", null: false
+    t.string "nhs_immunisations_api_identifier_system"
+    t.string "nhs_immunisations_api_identifier_value"
     t.boolean "nhs_immunisations_api_primary_source"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"

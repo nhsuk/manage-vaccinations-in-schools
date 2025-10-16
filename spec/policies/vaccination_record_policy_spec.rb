@@ -62,7 +62,13 @@ describe VaccinationRecordPolicy do
 
     context "when vaccination record is from the nhs immunisations api" do
       let(:vaccination_record) do
-        create(:vaccination_record, programme:, source: "nhs_immunisations_api")
+        create(
+          :vaccination_record,
+          programme:,
+          source: "nhs_immunisations_api",
+          nhs_immunisations_api_identifier_system: "ABC",
+          nhs_immunisations_api_identifier_value: "123"
+        )
       end
 
       context "with a medical secretary with superuser access" do
