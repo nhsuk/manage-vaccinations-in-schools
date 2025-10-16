@@ -49,7 +49,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
         link_to:
           session_consent_path(
             session,
-            consent_statuses: ["no_response"],
+            consent_statuses: %w[no_response],
             programme_types: [programme.type]
           )
       },
@@ -80,7 +80,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
               link_to:
                 session_consent_path(
                   session,
-                  consent_statuses: ["given"],
+                  consent_statuses: %w[given],
                   programme_types: [programme.type]
                 )
             }
@@ -94,7 +94,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
         link_to:
           session_consent_path(
             session,
-            consent_statuses: ["refused"],
+            consent_statuses: %w[refused],
             programme_types: [programme.type]
           )
       },
@@ -105,8 +105,8 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
         link_to:
           session_patients_path(
             session,
-            vaccination_status: "vaccinated",
-            programme_types: [programme.type]
+            programme_types: [programme.type],
+            vaccination_status: "vaccinated"
           )
       }
     ].flatten

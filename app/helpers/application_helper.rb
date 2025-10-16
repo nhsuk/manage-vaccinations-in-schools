@@ -62,7 +62,5 @@ or set it with content_for(:page_title)."
     tag.meta(property: "og:image", content: "#{service_url}#{asset_path(name)}")
   end
 
-  def tallying_enabled?
-    Flipper.enabled?(:tallying) && params[:tallying] == "true"
-  end
+  def tallying_enabled? = Flipper.enabled?(:tallying)
 end
