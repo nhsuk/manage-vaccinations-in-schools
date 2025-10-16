@@ -116,6 +116,14 @@ FactoryBot.define do
 
     notify_parents { true }
 
+    trait :sourced_from_nhs_immunisations_api do
+      source { "nhs_immunisations_api" }
+      nhs_immunisations_api_id { SecureRandom.uuid }
+      nhs_immunisations_api_identifier_system { SecureRandom.uuid }
+      nhs_immunisations_api_identifier_value { SecureRandom.uuid }
+      nhs_immunisations_api_primary_source { true }
+    end
+
     trait :not_administered do
       delivery_site { nil }
       delivery_method { nil }
