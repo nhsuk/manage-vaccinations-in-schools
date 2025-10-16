@@ -6,6 +6,7 @@
 #
 #  id                    :bigint           not null, primary key
 #  academic_year         :integer          not null
+#  dose_sequence         :integer
 #  latest_date           :date
 #  latest_session_status :integer
 #  status                :integer          default("not_eligible"), not null
