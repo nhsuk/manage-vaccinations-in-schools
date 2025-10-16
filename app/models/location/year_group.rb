@@ -1,0 +1,46 @@
+# frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: location_year_groups
+#
+#  id            :bigint           not null, primary key
+#  academic_year :integer          not null
+#  source        :integer          not null
+#  value         :integer          not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  location_id   :bigint           not null
+#
+# Indexes
+#
+#  idx_on_location_id_academic_year_value_d553b03752  (location_id,academic_year,value) UNIQUE
+#  index_location_year_groups_on_location_id          (location_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (location_id => locations.id) ON DELETE => cascade
+#
+class Location::YearGroup < ApplicationRecord
+  audited associated_with: :location
+
+  belongs_to :location
+
+  enum :source, { gias: 0, generic_clinic_factory: 1, cli: 2 }, validate: true
+
+  MINIMUM_VALUE = -3
+  MAXIMUM_VALUE = 15
+  VALUE_RANGE = (MINIMUM_VALUE..MAXIMUM_VALUE)
+
+  validates :value,
+            presence: true,
+            comparison: {
+              greater_than_or_equal_to: MINIMUM_VALUE,
+              less_than_or_equal_to: MAXIMUM_VALUE
+            },
+            uniqueness: {
+              scope: %i[location_id academic_year]
+            }
+
+  scope :pluck_values, -> { distinct.order(:value).pluck(:value) }
+end

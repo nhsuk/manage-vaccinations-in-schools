@@ -143,7 +143,7 @@ class Patient < ApplicationRecord
           if session
             birth_academic_years =
               programmes.flat_map do |programme|
-                session.programme_birth_academic_years[programme]
+                session.programme_year_groups.birth_academic_years(programme)
               end
 
             where(birth_academic_year: birth_academic_years)

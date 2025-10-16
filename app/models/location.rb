@@ -38,7 +38,7 @@
 #
 class Location < ApplicationRecord
   include AddressConcern
-  include HasProgrammeYearGroups
+  include HasLocationProgrammeYearGroups
   include ODSCodeConcern
 
   self.inheritance_column = nil
@@ -53,9 +53,13 @@ class Location < ApplicationRecord
              primary_key: :gias_code,
              optional: true
 
+  has_many :location_year_groups,
+           class_name: "Location::YearGroup",
+           dependent: :destroy
+  has_many :location_programme_year_groups
+
   has_many :attendance_records
   has_many :consent_forms
-  has_many :location_programme_year_groups
   has_many :patient_locations
   has_many :patients, foreign_key: :school_id
   has_many :sessions
@@ -82,8 +86,15 @@ class Location < ApplicationRecord
         end
 
   scope :has_year_groups,
-        ->(year_groups) do
-          where("ARRAY[?]::integer[] <@ gias_year_groups", year_groups)
+        ->(values, academic_year:) do
+          where(
+            "(?) >= ?",
+            Location::YearGroup
+              .select("COUNT(location_year_groups.id)")
+              .where("locations.id = location_year_groups.location_id")
+              .where(value: values, academic_year:),
+            values.count
+          )
         end
 
   scope :search_by_name,
@@ -143,6 +154,10 @@ class Location < ApplicationRecord
     site.nil? ? urn : urn + site
   end
 
+  def year_groups
+    @year_groups ||= location_year_groups.pluck_values
+  end
+
   def clinic? = generic_clinic? || community_clinic?
 
   def dfe_number
@@ -152,29 +167,41 @@ class Location < ApplicationRecord
   def as_json
     super.except(
       "created_at",
-      "updated_at",
       "subteam_id",
-      "systm_one_code"
+      "systm_one_code",
+      "updated_at"
     ).merge("is_attached_to_team" => !subteam_id.nil?)
   end
 
+  def import_year_groups!(values, academic_year:, source:)
+    Location::YearGroup.import!(
+      %i[location_id academic_year value source],
+      values.map { |value| [id, academic_year, value, source] },
+      on_duplicate_key_ignore: true
+    )
+  end
+
+  def import_year_groups_from_gias!(academic_year:)
+    import_year_groups!(gias_year_groups, academic_year:, source: "gias")
+  end
+
   def create_default_programme_year_groups!(programmes, academic_year:)
-    ActiveRecord::Base.transaction do
-      rows =
-        programmes.flat_map do |programme|
-          programme.default_year_groups.filter_map do |year_group|
-            if year_group.in?(gias_year_groups)
-              [id, academic_year, programme.id, year_group]
-            end
+    valid_year_groups = location_year_groups.where(academic_year:).pluck_values
+
+    rows =
+      programmes.flat_map do |programme|
+        programme.default_year_groups.filter_map do |year_group|
+          if year_group.in?(valid_year_groups)
+            [id, academic_year, programme.id, year_group]
           end
         end
+      end
 
-      LocationProgrammeYearGroup.import!(
-        %i[location_id academic_year programme_id year_group],
-        rows,
-        on_duplicate_key_ignore: true
-      )
-    end
+    LocationProgrammeYearGroup.import!(
+      %i[location_id academic_year programme_id year_group],
+      rows,
+      on_duplicate_key_ignore: true
+    )
   end
 
   private

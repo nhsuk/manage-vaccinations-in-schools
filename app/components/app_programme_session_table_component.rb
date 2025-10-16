@@ -70,9 +70,9 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
 
   def birth_academic_years(session:)
     @birth_academic_years ||= {}
-    @birth_academic_years[session] = session.programme_birth_academic_years[
-      programme
-    ]
+    @birth_academic_years[
+      session
+    ] = session.programme_year_groups.birth_academic_years(programme)
   end
 
   def format_number(count) = count.to_s

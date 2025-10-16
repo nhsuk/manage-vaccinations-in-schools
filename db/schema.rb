@@ -422,6 +422,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_10_125658) do
     t.index ["programme_id"], name: "index_location_programme_year_groups_on_programme_id"
   end
 
+  create_table "location_year_groups", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.integer "academic_year", null: false
+    t.integer "value", null: false
+    t.integer "source", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id", "academic_year", "value"], name: "idx_on_location_id_academic_year_value_d553b03752", unique: true
+    t.index ["location_id"], name: "index_location_year_groups_on_location_id"
+  end
+
   create_table "locations", force: :cascade do |t|
     t.text "name", null: false
     t.text "address_line_1"
@@ -1031,6 +1042,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_10_125658) do
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records", on_delete: :cascade
   add_foreign_key "location_programme_year_groups", "locations", on_delete: :cascade
   add_foreign_key "location_programme_year_groups", "programmes", on_delete: :cascade
+  add_foreign_key "location_year_groups", "locations", on_delete: :cascade
   add_foreign_key "locations", "subteams"
   add_foreign_key "notes", "patients"
   add_foreign_key "notes", "sessions"

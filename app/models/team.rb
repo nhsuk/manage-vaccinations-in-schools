@@ -33,7 +33,7 @@
 #
 class Team < ApplicationRecord
   include DaysBeforeToWeeksBefore
-  include HasProgrammeYearGroups
+  include HasLocationProgrammeYearGroups
 
   audited associated_with: :organisation
   has_associated_audits
@@ -58,9 +58,8 @@ class Team < ApplicationRecord
   has_many :vaccination_records, through: :sessions
   has_many :vaccines, through: :programmes
 
-  has_many :location_programme_year_groups,
-           -> { where(programme: it.programmes) },
-           through: :locations
+  has_many :location_year_groups, through: :locations
+  has_many :location_programme_year_groups, through: :locations
 
   has_and_belongs_to_many :users
 
@@ -77,10 +76,6 @@ class Team < ApplicationRecord
 
   def patients
     Patient.joins_sessions.where(sessions: { team_id: id })
-  end
-
-  def year_groups
-    @year_groups ||= location_programme_year_groups.pluck_year_groups
   end
 
   def generic_clinic = locations.generic_clinic.first
