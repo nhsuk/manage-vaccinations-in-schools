@@ -86,13 +86,13 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
         end
       ),
       {
-        heading: "Contraindicated or did not consent",
+        heading: "Did not consent",
         colour: "red",
-        count: could_not_vaccinate_count(programme).to_s,
+        count: consent_count(programme, "refused").to_s,
         link_to:
-          session_patients_path(
+          session_consent_path(
             session,
-            vaccination_status: "could_not_vaccinate",
+            consent_statuses: ["refused"],
             programme_types: [programme.type]
           )
       },
@@ -129,26 +129,9 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
     ).count
   end
 
-  def could_not_vaccinate_count(programme)
-    eligible_patients(programme).has_vaccination_status(
-      "could_not_vaccinate",
-      programme:,
-      academic_year:
-    ).count
-  end
-
   def consent_count(programme, status, vaccine_method: nil)
     eligible_patients(programme).has_consent_status(
       status,
-      programme:,
-      academic_year:,
-      vaccine_method:
-    ).count
-  end
-
-  def no_outcome_count(programme)
-    eligible_patients(programme).has_vaccination_status(
-      "none_yet",
       programme:,
       academic_year:,
       vaccine_method:
