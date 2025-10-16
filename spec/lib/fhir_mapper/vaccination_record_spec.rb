@@ -334,6 +334,14 @@ describe FHIRMapper::VaccinationRecord do
 
       include_examples "a mapped vaccination record (common fields)"
 
+      its(:nhs_immunisations_api_identifier_system) do
+        should eq "https://supplierABC/identifiers/vacc"
+      end
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "aaaabbbb-0000-1111-3333-ffff77773333"
+      end
+
       its(:performed_by_given_name) { should eq "Steph" }
       its(:performed_by_family_name) { should eq "Smith" }
       its(:batch) { should have_attributes(name: "4120Z001") }
@@ -361,6 +369,14 @@ describe FHIRMapper::VaccinationRecord do
       end
 
       include_examples "a mapped vaccination record (common fields)"
+
+      its(:nhs_immunisations_api_identifier_system) do
+        should eq "https://supplierABC/identifiers/vacc"
+      end
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "aaaabbbb-0000-1111-3333-ffff77773333"
+      end
 
       its(:performed_by_given_name) { should eq "Steph" }
       its(:performed_by_family_name) { should eq "Smith" }
@@ -390,6 +406,14 @@ describe FHIRMapper::VaccinationRecord do
 
       include_examples "a mapped vaccination record (common fields)"
 
+      its(:nhs_immunisations_api_identifier_system) do
+        should eq "https://supplierABC/identifiers/vacc"
+      end
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "aaaabbbb-0000-1111-3333-ffff77773333"
+      end
+
       its(:performed_by_given_name) { should eq "Steph" }
       its(:performed_by_family_name) { should eq "Smith" }
       its(:batch) { should have_attributes(name: "4120Z001") }
@@ -416,6 +440,14 @@ describe FHIRMapper::VaccinationRecord do
       end
 
       include_examples "a mapped vaccination record (common fields)"
+
+      its(:nhs_immunisations_api_identifier_system) do
+        should eq "https://nivs.ardengemcsu.nhs.uk/FluSAIS"
+      end
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "https://nivs.ardengemcsu.nhs.uk/FluSAIS167327923"
+      end
 
       its(:performed_by_given_name) { should be_nil }
       its(:performed_by_family_name) { should be_nil }
@@ -445,6 +477,14 @@ describe FHIRMapper::VaccinationRecord do
 
       include_examples "a mapped vaccination record (common fields)"
 
+      its(:nhs_immunisations_api_identifier_system) do
+        should eq "https://supplierABC/identifiers/vacc"
+      end
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "aaaabbbb-0000-1111-3333-ffff77773333"
+      end
+
       its(:vaccine) { should be_nil }
       its(:batch) { should be_nil }
       its(:performed_at) { should eq Time.parse("2025-04-06T23:59:50.2+01:00") }
@@ -473,6 +513,12 @@ describe FHIRMapper::VaccinationRecord do
 
       include_examples "a mapped vaccination record (common fields)"
 
+      its(:nhs_immunisations_api_identifier_system) { should eq "YGJ" }
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "046D1E37-C498-40E9-95FB-5E156F740804"
+      end
+
       its(:vaccine) { should be_nil }
       its(:batch) { should be_nil }
       its(:performed_at) { should eq Time.parse("2023-12-07T00:00:00+00:00") }
@@ -496,6 +542,14 @@ describe FHIRMapper::VaccinationRecord do
 
       include_examples "a mapped vaccination record (common fields)"
 
+      its(:nhs_immunisations_api_identifier_system) do
+        should eq "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records"
+      end
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "68aef549-601f-427c-b914-7e459238c4dd"
+      end
+
       its(:performed_at) { should eq Time.parse("2025-08-28T11:45:30+01:00") }
       its(:delivery_method) { should eq "nasal_spray" }
       its(:delivery_site) { should eq "nose" }
@@ -517,6 +571,14 @@ describe FHIRMapper::VaccinationRecord do
 
       include_examples "a mapped vaccination record (common fields)"
 
+      its(:nhs_immunisations_api_identifier_system) do
+        should eq "https://www.ieds.england.nhs.uk/"
+      end
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "7fa9ba01-aa9e-4ef9-a27c-30c9f413e421"
+      end
+
       its(:performed_at) { should eq Time.parse("2025-10-06T07:57:32+01:00") }
       its(:delivery_method) { should be_nil }
       its(:delivery_site) { should be_nil }
@@ -536,6 +598,12 @@ describe FHIRMapper::VaccinationRecord do
       end
 
       include_examples "a mapped vaccination record (common fields)"
+
+      its(:nhs_immunisations_api_identifier_system) { should eq "YGJ" }
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "046D1E37-C498-40E9-95FB-5E156F740804"
+      end
 
       its(:vaccine) { should be_nil }
       its(:batch) { should be_nil }
