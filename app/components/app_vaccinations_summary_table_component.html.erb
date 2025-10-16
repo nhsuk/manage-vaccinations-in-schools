@@ -19,10 +19,12 @@
               <%= count %>
             <% end %>
             <% row.with_cell do %>
-              <% batch = default_batch(vaccine) %>
-              <%= batch&.name || "Not set" %>
-              <% if batch %>
-                <%= link_to "Change", batch_session_record_path(session, vaccine.programme, vaccine.method) %>
+              <% if vaccine.programme.can_save_to_todays_batch? %>
+                <% batch = default_batch(vaccine) %>
+                <%= batch&.name || "Not set" %>
+                <% if batch %>
+                  <%= link_to "Change", batch_session_record_path(session, vaccine.programme, vaccine.method) %>
+                <% end %>
               <% end %>
             <% end %>
           <% end %>
