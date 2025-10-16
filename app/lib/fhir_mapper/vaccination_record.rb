@@ -217,6 +217,8 @@ module FHIRMapper
     private_class_method def self.dose_volume_ml_from_fhir(fhir_record)
       dq = fhir_record.doseQuantity
 
+      return if dq.blank?
+
       if MILLILITER_SUB_STRINGS.any? { dq.unit.downcase.starts_with?(it) }
         dq.value.to_f
       end
@@ -318,9 +320,11 @@ module FHIRMapper
     end
 
     private_class_method def self.batch_from_fhir(fhir_record, vaccine:)
+      return if fhir_record.lotNumber&.to_s&.presence.nil?
+
       ::Batch.create_with(archived_at: Time.current).find_or_create_by!(
         expiry: fhir_record.expirationDate&.to_date,
-        name: fhir_record.lotNumber.to_s,
+        name: fhir_record.lotNumber&.to_s&.presence,
         team: nil,
         vaccine:
       )

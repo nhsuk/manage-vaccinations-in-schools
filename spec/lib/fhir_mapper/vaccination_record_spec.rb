@@ -479,6 +479,31 @@ describe FHIRMapper::VaccinationRecord do
       its(:notes) { should be_nil }
     end
 
+    context "with a record that is nasal flu, and is missing dose quantity (from real GP)" do
+      let(:fhir_immunization) do
+        FHIR.from_contents(
+          file_fixture("fhir/fhir_record_nasal_missing_dose.json").read
+        )
+      end
+
+      include_examples "a mapped vaccination record (common fields)"
+
+      its(:vaccine) do
+        should have_attributes(snomed_product_code: "43208811000001106")
+      end
+
+      its(:batch) { should be_nil }
+      its(:performed_at) { should eq Time.parse("2025-10-06T00:00:00+00:00") }
+      its(:delivery_method) { should be_nil }
+      its(:delivery_site) { should be_nil }
+      its(:full_dose) { should be true }
+      its(:location_name) { should eq "B12345" }
+      its(:outcome) { should eq "administered" }
+      its(:performed_ods_code) { should eq "B12345" }
+
+      its(:notes) { should be_nil }
+    end
+
     context "with a record that has an unknown location" do
       let(:fhir_immunization) do
         FHIR.from_contents(
