@@ -942,6 +942,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_14_121341) do
     t.bigint "location_id"
     t.bigint "supplied_by_user_id"
     t.integer "source", null: false
+    t.boolean "nhs_immunisations_api_primary_source"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
     t.index ["id"], name: "index_vaccination_records_on_pending_changes_not_empty", where: "(pending_changes <> '{}'::jsonb)"

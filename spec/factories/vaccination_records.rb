@@ -13,6 +13,7 @@
 #  full_dose                             :boolean
 #  location_name                         :string
 #  nhs_immunisations_api_etag            :string
+#  nhs_immunisations_api_primary_source  :boolean
 #  nhs_immunisations_api_sync_pending_at :datetime
 #  nhs_immunisations_api_synced_at       :datetime
 #  notes                                 :text

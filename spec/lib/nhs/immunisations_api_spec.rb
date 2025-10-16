@@ -30,6 +30,7 @@ describe NHS::ImmunisationsAPI do
   let(:nhs_immunisations_api_synced_at) { nil }
   let(:nhs_immunisations_api_etag) { nil }
   let(:nhs_immunisations_api_id) { nil }
+  let(:nhs_immunisations_api_primary_source) { nil }
   let(:nhs_immunisations_api_sync_pending_at) { nil }
   let(:vaccination_record) do
     create(
@@ -48,6 +49,7 @@ describe NHS::ImmunisationsAPI do
       created_at: Time.zone.parse("2021-02-07T13:28:17.271+00:00"),
       nhs_immunisations_api_synced_at:,
       nhs_immunisations_api_id:,
+      nhs_immunisations_api_primary_source:,
       nhs_immunisations_api_etag:,
       nhs_immunisations_api_sync_pending_at:,
       notify_parents:
@@ -152,6 +154,7 @@ describe NHS::ImmunisationsAPI do
 
       context "the vaccination record has been synced before" do
         let(:nhs_immunisations_api_id) { Random.uuid }
+        let(:nhs_immunisations_api_primary_source) { true }
         let(:nhs_immunisations_api_synced_at) { 2.seconds.ago }
         let(:nhs_immunisations_api_sync_pending_at) { 1.second.ago }
         let(:nhs_immunisations_api_etag) { "1" }
@@ -458,6 +461,7 @@ describe NHS::ImmunisationsAPI do
     before do
       vaccination_record.update(
         nhs_immunisations_api_id: "ffff1111-eeee-2222-dddd-3333eeee4444",
+        nhs_immunisations_api_primary_source: true,
         nhs_immunisations_api_synced_at: Date.yesterday,
         nhs_immunisations_api_etag: 1
       )
@@ -566,6 +570,7 @@ describe NHS::ImmunisationsAPI do
     before do
       vaccination_record.update(
         nhs_immunisations_api_id: "ffff1111-eeee-2222-dddd-3333eeee4444",
+        nhs_immunisations_api_primary_source: true,
         nhs_immunisations_api_synced_at: Date.yesterday,
         nhs_immunisations_api_etag: 1
       )
@@ -680,6 +685,7 @@ describe NHS::ImmunisationsAPI do
             patient:,
             nhs_immunisations_api_synced_at:,
             nhs_immunisations_api_id:,
+            nhs_immunisations_api_primary_source:,
             nhs_immunisations_api_etag:,
             nhs_immunisations_api_sync_pending_at:
           )
@@ -749,6 +755,7 @@ describe NHS::ImmunisationsAPI do
     context "the vaccination record has been synced before" do
       let(:nhs_immunisations_api_synced_at) { 2.seconds.ago }
       let(:nhs_immunisations_api_id) { Random.uuid }
+      let(:nhs_immunisations_api_primary_source) { true }
       let(:nhs_immunisations_api_sync_pending_at) { 1.second.ago }
 
       it { should eq :update }
@@ -768,6 +775,7 @@ describe NHS::ImmunisationsAPI do
     context "the vaccination record is already in-sync" do
       let(:nhs_immunisations_api_synced_at) { 1.second.ago }
       let(:nhs_immunisations_api_id) { Random.uuid }
+      let(:nhs_immunisations_api_primary_source) { true }
       let(:nhs_immunisations_api_sync_pending_at) { 2.seconds.ago }
 
       it { should be_nil }
@@ -785,7 +793,8 @@ describe NHS::ImmunisationsAPI do
           discarded_at: 3.seconds.ago,
           nhs_immunisations_api_synced_at: 2.seconds.ago,
           nhs_immunisations_api_sync_pending_at: 1.second.ago,
-          nhs_immunisations_api_id: Random.uuid
+          nhs_immunisations_api_id: Random.uuid,
+          nhs_immunisations_api_primary_source: true
         )
       end
 
@@ -809,6 +818,7 @@ describe NHS::ImmunisationsAPI do
             patient:,
             nhs_immunisations_api_synced_at:,
             nhs_immunisations_api_id:,
+            nhs_immunisations_api_primary_source:,
             nhs_immunisations_api_etag:,
             nhs_immunisations_api_sync_pending_at:
           )

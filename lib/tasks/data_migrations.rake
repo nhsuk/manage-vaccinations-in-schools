@@ -15,4 +15,24 @@ namespace :data_migrations do
       )
     end
   end
+
+  desc "Set nhs_immunisations_api_primary_source to true where nhs_immunisations_api_id is present"
+  task set_api_primary_source: :environment do
+    full_scope = VaccinationRecord.where.not(nhs_immunisations_api_id: nil)
+    puts "Found #{full_scope.count} records with `nhs_immunisations_api_id` present."
+
+    scope = full_scope.sourced_from_service
+    puts "Found #{scope.count} vaccination_records with nhs_immunisations_api_id present and recorded in service."
+
+    if full_scope.count != scope.count
+      raise "Mismatch between `full_scope` and `scope`. This means there are some records which have an ID, " \
+              "but weren't recorded in service"
+    end
+
+    to_update = scope.where(nhs_immunisations_api_primary_source: nil)
+    puts "Setting nhs_immunisations_api_primary_source to true for #{to_update.count} records..."
+
+    updated = to_update.update_all(nhs_immunisations_api_primary_source: true)
+    puts "Updated #{updated} records."
+  end
 end

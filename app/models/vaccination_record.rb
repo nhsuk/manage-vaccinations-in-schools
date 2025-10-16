@@ -13,6 +13,7 @@
 #  full_dose                             :boolean
 #  location_name                         :string
 #  nhs_immunisations_api_etag            :string
+#  nhs_immunisations_api_primary_source  :boolean
 #  nhs_immunisations_api_sync_pending_at :datetime
 #  nhs_immunisations_api_synced_at       :datetime
 #  notes                                 :text
@@ -183,6 +184,15 @@ class VaccinationRecord < ApplicationRecord
   validates :performed_at,
             comparison: {
               less_than_or_equal_to: -> { Time.current }
+            }
+
+  validates :nhs_immunisations_api_primary_source,
+            inclusion: {
+              in: [true, false],
+              if: :nhs_immunisations_api_id
+            },
+            absence: {
+              unless: :nhs_immunisations_api_id
             }
 
   delegate :fhir_record, to: :fhir_mapper
