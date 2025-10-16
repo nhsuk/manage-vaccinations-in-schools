@@ -23,8 +23,11 @@ describe "mavis teams list" do
   end
 
   def and_there_are_teams_in_the_organisations
-    @team1 = create(:team, organisation: @organisation1)
-    @team2 = create(:team, organisation: @organisation2)
+    @programme = create(:programme)
+    @team1 =
+      create(:team, organisation: @organisation1, programmes: [@programme])
+    @team2 =
+      create(:team, organisation: @organisation2, programmes: [@programme])
   end
 
   def when_i_run_the_list_teams_command
@@ -48,6 +51,7 @@ describe "mavis teams list" do
     expect(@output).to include(@team2.name)
     expect(@output).to include(@organisation2.ods_code)
     expect(@output).to include(@team2.workgroup)
+    expect(@output).to include(@programme.name).twice
   end
 
   def then_i_should_see_the_teams_for_just_that_ods_code
@@ -57,5 +61,6 @@ describe "mavis teams list" do
     expect(@output).not_to include(@team2.name)
     expect(@output).not_to include(@organisation2.ods_code)
     expect(@output).not_to include(@team2.workgroup)
+    expect(@output).to include(@programme.name).once
   end
 end
