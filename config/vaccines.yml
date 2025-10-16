@@ -1,10 +1,11 @@
 # Flu
 
 cell_based_trivalent:
-  brand: Cell-based Trivalent Influenza Vaccine Seqirus
   type: flu
+  brand: Cell-based Trivalent Influenza Vaccine Seqirus
   method: injection
   manufacturer: Sequirus
+  contains_gelatine: false
   nivs_name: Sequirus Cell-based Trivalent
   dose_volume_ml: 0.5
   snomed_product_code: 43207411000001105
@@ -13,10 +14,11 @@ cell_based_trivalent:
     (Seqirus UK Ltd)
 
 fluenz:
-  brand: Fluenz
   type: flu
+  brand: Fluenz
   method: nasal
   manufacturer: AstraZeneca
+  contains_gelatine: true
   nivs_name: AstraZeneca Fluenz
   dose_volume_ml: 0.2
   snomed_product_code: 43208811000001106
@@ -24,10 +26,11 @@ fluenz:
     dose (AstraZeneca UK Ltd) (product)
 
 vaxigrip:
-  brand: Vaxigrip
   type: flu
+  brand: Vaxigrip
   method: injection
   manufacturer: Sanofi
+  contains_gelatine: false
   nivs_name: Sanofi Vaxigrip
   dose_volume_ml: 0.5
   snomed_product_code: 45175511000001104
@@ -35,10 +38,11 @@ vaxigrip:
     inactivated) suspension for injection 0.5ml pre-filled syringes (Sanofi)
 
 viatris:
-  brand: Viatris
   type: flu
+  brand: Viatris
   method: injection
   manufacturer: Viatris
+  contains_gelatine: false
   nivs_name: Viatris
   dose_volume_ml: 0.5
   snomed_product_code: 45354911000001100
@@ -48,11 +52,12 @@ viatris:
 # HPV
 
 cervarix:
-  brand: Cervarix
   type: hpv
+  brand: Cervarix
   discontinued: true
   method: injection
   manufacturer: GlaxoSmithKline
+  contains_gelatine: false
   nivs_name: Cervarix
   dose_volume_ml: 0.5
   snomed_product_code: 12238911000001100
@@ -61,11 +66,12 @@ cervarix:
     syringes (GlaxoSmithKline) (product)
 
 gardasil:
-  brand: Gardasil
   type: hpv
+  brand: Gardasil
   discontinued: true
   method: injection
   manufacturer: Merck Sharp & Dohme
+  contains_gelatine: false
   nivs_name: Gardasil
   dose_volume_ml: 0.5
   snomed_product_code: 10880211000001104
@@ -74,10 +80,11 @@ gardasil:
     syringes (Merck Sharp & Dohme (UK) Ltd) (product)
 
 gardasil_9:
-  brand: Gardasil 9
   type: hpv
+  brand: Gardasil 9
   method: injection
   manufacturer: Merck Sharp & Dohme
+  contains_gelatine: false
   nivs_name: Gardasil9
   dose_volume_ml: 0.5
   snomed_product_code: 33493111000001108
@@ -87,22 +94,24 @@ gardasil_9:
 
 # MenACWY
 
-
 menquadfi:
-  brand: MenQuadfi
   type: menacwy
+  brand: MenQuadfi
   method: injection
   manufacturer: Sanofi
+  contains_gelatine: false
   nivs_name: MenQuadfi
   dose_volume_ml: 0.5
   snomed_product_code: 39779611000001104
-  snomed_product_term: MenQuadfi vaccine solution for injection 0.5ml vials (Sanofi) (product)
+  snomed_product_term:
+    MenQuadfi vaccine solution for injection 0.5ml vials (Sanofi) (product)
 
 menveo:
-  brand: Menveo
   type: menacwy
+  brand: Menveo
   method: injection
   manufacturer: GlaxoSmithKline
+  contains_gelatine: false
   nivs_name: Menveo
   dose_volume_ml: 0.5
   snomed_product_code: 17188711000001105
@@ -111,10 +120,11 @@ menveo:
     0.5ml vials (Novartis Vaccines and Diagnostics Ltd) (product)
 
 nimenrix:
-  brand: Nimenrix
   type: menacwy
+  brand: Nimenrix
   method: injection
   manufacturer: Pfizer
+  contains_gelatine: false
   nivs_name: Nimenrix
   dose_volume_ml: 0.5
   snomed_product_code: 20517811000001104
@@ -122,13 +132,42 @@ nimenrix:
     Nimenrix vaccine powder and solvent for solution for injection
     0.5ml pre-filled syringes (GlaxoSmithKline UK Ltd) (product)
 
+# MMR
+
+priorix:
+  type: mmr
+  brand: Priorix
+  method: injection
+  manufacturer: GlaxoSmithKline
+  contains_gelatine: false
+  nivs_name: Priorix
+  dose_volume_ml: 0.5
+  snomed_product_code: 34925111000001104
+  snomed_product_term:
+    Priorix vaccine powder and solvent for solution for injection
+    0.5ml pre-filled syringes (GlaxoSmithKline UK Ltd) (product)
+
+vaxpro:
+  type: mmr
+  brand: MMR VaxPro
+  method: injection
+  manufacturer: Merck Sharp & Dohme
+  contains_gelatine: true
+  nivs_name: VaxPro
+  dose_volume_ml: 0.5
+  snomed_product_code: 13968211000001108
+  snomed_product_term:
+    M-M-RVAXPRO vaccine powder and solvent for suspension for injection
+    0.5ml pre-filled syringes (Merck Sharp & Dohme (UK) Ltd) (product)
+
 # Td/IPV
 
 revaxis:
-  brand: Revaxis
   type: td_ipv
+  brand: Revaxis
   method: injection
   manufacturer: Sanofi
+  contains_gelatine: false
   nivs_name: Revaxis
   dose_volume_ml: 0.5
   snomed_product_code: 7374511000001107

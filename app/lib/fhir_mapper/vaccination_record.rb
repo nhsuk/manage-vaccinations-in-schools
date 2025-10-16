@@ -10,6 +10,8 @@ module FHIRMapper
     MAVIS_SYSTEM_NAME =
       "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records"
 
+    MILLILITER_SUB_STRINGS = %w[ml millilitre milliliter].freeze
+
     def initialize(vaccination_record)
       @vaccination_record = vaccination_record
     end
@@ -110,10 +112,6 @@ module FHIRMapper
       else
         attrs[:notes] = vaccine_batch_notes_from_fhir(fhir_record)
         attrs[:full_dose] = true
-
-        Sentry.capture_exception(
-          UnknownVaccine.new(fhir_record.vaccineCode.coding.first.code)
-        )
       end
 
       ::VaccinationRecord.new(attrs)
@@ -150,10 +148,9 @@ module FHIRMapper
       when "completed"
         "administered"
       when "not-done"
-        # TODO: handle this more gracefully
         raise "Cannot import not-done vaccination records"
       else
-        raise "Unexpected vaccination status: #{fhir_record.status}. Expected only 'completed' or 'not-done'"
+        raise "Unexpected vaccination status: \"#{fhir_record.status}\". Expected only 'completed' or 'not-done'"
       end
     end
 
@@ -219,16 +216,18 @@ module FHIRMapper
 
     private_class_method def self.dose_volume_ml_from_fhir(fhir_record)
       dq = fhir_record.doseQuantity
-      if %w[ml milliliter].include?(dq.unit.downcase)
+
+      if MILLILITER_SUB_STRINGS.any? { dq.unit.downcase.starts_with?(it) }
         dq.value.to_f
-      else
-        raise "Unknown dose unit: #{dq.unit}"
       end
     end
 
     private_class_method def self.full_dose_from_fhir(fhir_record, vaccine:)
       if vaccine.programme.flu? && vaccine.nasal?
-        dose_volume_ml_from_fhir(fhir_record) >= vaccine.dose_volume_ml
+        dose_volume_ml = dose_volume_ml_from_fhir(fhir_record)
+
+        # If we can't parse the volume unit then assume a full dose
+        dose_volume_ml.nil? || dose_volume_ml >= vaccine.dose_volume_ml
       else
         true
       end
@@ -236,20 +235,22 @@ module FHIRMapper
 
     private_class_method def self.vaccine_batch_notes_from_fhir(fhir_record)
       fhir_vaccine =
-        fhir_record.vaccineCode.coding.find do
+        fhir_record.vaccineCode&.coding&.find do
           it.system == "http://snomed.info/sct"
         end
 
-      vaccine_snomed_code = fhir_vaccine.code
-      vaccine_description = fhir_vaccine.display.presence
+      vaccine_snomed_code = fhir_vaccine&.code
+      vaccine_description = fhir_vaccine&.display.presence
 
       batch_number = fhir_record.lotNumber
       batch_expiry = fhir_record.expirationDate
 
-      "SNOMED product code: #{vaccine_snomed_code}\n" \
-        "#{"SNOMED description: #{vaccine_description}\n" if vaccine_description}" \
-        "Batch number: #{batch_number}\n" \
-        "Batch expiry: #{batch_expiry}"
+      [
+        ("SNOMED product code: #{vaccine_snomed_code}" if vaccine_snomed_code),
+        ("SNOMED description: #{vaccine_description}" if vaccine_description),
+        ("Batch number: #{batch_number}" if batch_number),
+        ("Batch expiry: #{batch_expiry}" if batch_expiry)
+      ].compact.join("\n").presence
     end
 
     def fhir_user_performer(reference_id:)

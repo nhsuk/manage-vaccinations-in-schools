@@ -134,7 +134,10 @@ module CSVImportable
         end
 
       changesets.each do |patient_changeset|
-        PDSCascadingSearchJob.perform_later(patient_changeset)
+        PDSCascadingSearchJob.set(queue: :imports).perform_later(
+          patient_changeset,
+          queue: :imports
+        )
       end
 
       return

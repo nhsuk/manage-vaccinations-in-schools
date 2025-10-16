@@ -4,6 +4,8 @@ module AcademicYear
   class << self
     def current = (override_current_date || Date.current).academic_year
 
+    def previous = current - 1
+
     def pending = preparation? ? current + 1 : current
 
     # 2024 is the year Mavis went into private beta. Earlier years are

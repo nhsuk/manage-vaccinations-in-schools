@@ -1,0 +1,55 @@
+{
+  "id": "11112222-3333-4444-5555-666677779999",
+  "identifier": [
+    {
+      "use": "official",
+      "system": "YGJ",
+      "value": "046D1E37-C498-40E9-95FB-5E156F740803"
+    }
+  ],
+  "status": "completed",
+  "patient": {
+    "type": "Patient",
+    "identifier": {
+      "system": "https://fhir.nhs.uk/Id/nhs-number",
+      "value": "9998886678"
+    }
+  },
+  "occurrenceDateTime": "2023-12-07T00:00:00+00:00",
+  "recorded": "2025-09-08",
+  "primarySource": false,
+  "location": {
+    "identifier": {
+      "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+      "value": "B12345"
+    }
+  },
+  "performer": [
+    {
+      "actor": {
+        "type": "Organization",
+        "identifier": {
+          "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+          "value": "B12345"
+        }
+      }
+    }
+  ],
+  "protocolApplied": [
+    {
+      "targetDisease": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "6142004",
+              "display": "Influenza caused by seasonal influenza virus (disorder)"
+            }
+          ]
+        }
+      ],
+      "doseNumberString": "Dose sequence not recorded"
+    }
+  ],
+  "resourceType": "Immunization"
+}

@@ -6,6 +6,7 @@
 #
 #  id                  :bigint           not null, primary key
 #  brand               :text             not null
+#  contains_gelatine   :boolean          not null
 #  discontinued        :boolean          default(FALSE), not null
 #  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
@@ -60,8 +61,6 @@ class Vaccine < ApplicationRecord
 
   def active? = !discontinued
 
-  def contains_gelatine? = programme.flu? && nasal?
-
   AVAILABLE_DELIVERY_SITES = {
     "injection" => %w[
       left_arm_upper_position
@@ -109,6 +108,9 @@ class Vaccine < ApplicationRecord
     "menacwy" => {
       "injection" => "871874000"
     },
+    "mmr" => {
+      "injection" => "38598009"
+    },
     "td_ipv" => {
       "injection" => "866186002"
     }
@@ -127,6 +129,10 @@ class Vaccine < ApplicationRecord
     "menacwy" =>
       "Administration of vaccine product containing only Neisseria " \
         "meningitidis serogroup A, C, W135 and Y antigens (procedure)",
+    "mmr" =>
+      "Administration of vaccine product containing only Measles " \
+        "morbillivirus and Mumps orthorubulavirus and Rubella virus " \
+        "antigens (procedure)",
     "td_ipv" =>
       "Administration of vaccine product containing only Clostridium " \
         "tetani and Corynebacterium diphtheriae and Human poliovirus " \

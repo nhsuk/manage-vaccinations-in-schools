@@ -1126,6 +1126,15 @@ describe Reports::OfflineSessionExporter do
     include_examples "generates a report"
   end
 
+  context "MMR programme" do
+    let(:programme) { create(:programme, :mmr) }
+    let(:expected_programme) { "MMR" }
+    let(:expected_dose_sequence) { nil }
+    let(:expected_consent_status) { "Consent given" }
+
+    include_examples "generates a report"
+  end
+
   context "Td/IPV programme" do
     let(:programme) { create(:programme, :td_ipv) }
     let(:expected_programme) { "3-in-1" }

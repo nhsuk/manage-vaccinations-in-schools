@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/citizensadvice/capybara_accessible_selectors
-  revision: 2d814b0736dc9bc8d364ed5031d61b7d7e1261f4
+  revision: 2c13c0ee6614c65434d504ed8d9cb80f5c20ece7
   branch: main
   specs:
     capybara_accessible_selectors (0.14.0)
@@ -106,7 +106,7 @@ GEM
       activesupport (>= 6.0.0)
     array_enum (1.6.0)
       activemodel
-    asciidoctor (2.0.23)
+    asciidoctor (2.0.24)
     asciidoctor-diagram (3.0.1)
       asciidoctor (>= 1.5.7, < 3.x)
       rexml
@@ -125,7 +125,7 @@ GEM
       bigdecimal
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-ec2 (1.560.0)
+    aws-sdk-ec2 (1.561.0)
       aws-sdk-core (~> 3, >= 3.231.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-ecr (1.110.0)

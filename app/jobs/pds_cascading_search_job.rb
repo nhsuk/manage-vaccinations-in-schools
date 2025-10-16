@@ -5,7 +5,7 @@ class PDSCascadingSearchJob < ApplicationJob
 
   queue_as :pds
 
-  def perform(searchable, step_name: nil, search_results: [])
+  def perform(searchable, step_name: nil, search_results: [], queue: :pds)
     step_name ||= :no_fuzzy_with_history
 
     SemanticLogger.tagged(
@@ -49,7 +49,7 @@ class PDSCascadingSearchJob < ApplicationJob
         end
       elsif next_step.in?(steps.keys)
         raise "Recursive step detected: #{next_step}" if next_step == step_name
-        enqueue_next_search(searchable, next_step, search_results)
+        enqueue_next_search(searchable, next_step, search_results, queue)
       else
         raise "Unknown step: #{next_step}"
       end
@@ -155,10 +155,15 @@ class PDSCascadingSearchJob < ApplicationJob
     }
   end
 
-  def enqueue_next_search(searchable, step_name, search_results)
+  def enqueue_next_search(searchable, step_name, search_results, queue)
     searchable.save!
 
-    PDSCascadingSearchJob.perform_later(searchable, step_name:, search_results:)
+    PDSCascadingSearchJob.set(queue:).perform_later(
+      searchable,
+      step_name:,
+      search_results:,
+      queue:
+    )
   end
 
   def unique_nhs_numbers(search_results)

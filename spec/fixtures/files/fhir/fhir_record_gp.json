@@ -1,0 +1,79 @@
+{
+  "id": "11112222-3333-4444-5555-666677779999",
+  "extension": [
+    {
+      "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "955651000000100",
+            "display": "Influenza vaccination given by other healthcare provider (situation)"
+          }
+        ]
+      }
+    }
+  ],
+  "identifier": [
+    {
+      "use": "official",
+      "system": "YGJ",
+      "value": "046D1E37-C498-40E9-95FB-5E156F740803"
+    }
+  ],
+  "status": "completed",
+  "vaccineCode": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+        "code": "NAVU",
+        "display": "Not available"
+      }
+    ]
+  },
+  "patient": {
+    "reference": "urn:uuid:5ccaa91a-ebd7-4d07-8dfa-55485b0f3bef",
+    "type": "Patient",
+    "identifier": {
+      "system": "https://fhir.nhs.uk/Id/nhs-number",
+      "value": "9998886678"
+    }
+  },
+  "occurrenceDateTime": "2023-12-07T00:00:00+00:00",
+  "recorded": "2025-09-08",
+  "primarySource": false,
+  "location": {
+    "identifier": {
+      "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+      "value": "B12345"
+    }
+  },
+  "performer": [
+    {
+      "actor": {
+        "type": "Organization",
+        "identifier": {
+          "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+          "value": "B12345"
+        }
+      }
+    }
+  ],
+  "protocolApplied": [
+    {
+      "targetDisease": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "6142004",
+              "display": "Influenza caused by seasonal influenza virus (disorder)"
+            }
+          ]
+        }
+      ],
+      "doseNumberString": "Dose sequence not recorded"
+    }
+  ],
+  "resourceType": "Immunization"
+}

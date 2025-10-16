@@ -6,7 +6,8 @@ describe TrainingOnboardingConfiguration do
   let(:ods_code) { "ABC" }
   let(:workgroup) { "abc" }
 
-  let!(:unattached_school) { create(:school, :open) }
+  let!(:unattached_primary_school) { create(:school, :open, :primary) }
+  let!(:unattached_secondary_school) { create(:school, :open, :secondary) }
 
   before { create(:school, :open, team: create(:team)) }
 
@@ -38,41 +39,50 @@ describe TrainingOnboardingConfiguration do
             email: "nurse.abc@example.com",
             family_name: "ABC (abc)",
             given_name: "Nurse",
-            password: "nurse.abc@example.com"
+            password: "nurse.abc@example.com",
+            fallback_role: "nurse"
           },
           {
             email: "medical-secretary.abc@example.com",
             family_name: "ABC (abc)",
             given_name: "Medical secretary",
-            password: "medical-secretary.abc@example.com"
+            password: "medical-secretary.abc@example.com",
+            fallback_role: "medical_secretary"
           },
           {
             email: "superuser.abc@example.com",
             family_name: "ABC (abc)",
             given_name: "Superuser",
-            password: "superuser.abc@example.com"
+            password: "superuser.abc@example.com",
+            fallback_role: "superuser"
           },
           {
             email: "healthcare-assistant.abc@example.com",
             family_name: "ABC (abc)",
             given_name: "Healthcare assistant",
-            password: "healthcare-assistant.abc@example.com"
+            password: "healthcare-assistant.abc@example.com",
+            fallback_role: "healthcare_assistant"
           },
           {
             email: "prescriber.abc@example.com",
             family_name: "ABC (abc)",
             given_name: "Prescriber",
-            password: "prescriber.abc@example.com"
+            password: "prescriber.abc@example.com",
+            fallback_role: "prescriber"
           },
           {
             email: "support.abc@example.com",
             family_name: "ABC (abc)",
             given_name: "Support",
-            password: "support.abc@example.com"
+            password: "support.abc@example.com",
+            fallback_role: "support"
           }
         ],
         schools: {
-          generic: [unattached_school.urn]
+          generic: [
+            unattached_primary_school.urn,
+            unattached_secondary_school.urn
+          ]
         },
         clinics: {
           generic: [

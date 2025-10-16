@@ -42,7 +42,6 @@ class Location < ApplicationRecord
   include ODSCodeConcern
 
   self.inheritance_column = nil
-  self.ignored_columns = %i[year_groups]
 
   audited associated_with: :subteam
   has_associated_audits
@@ -80,6 +79,11 @@ class Location < ApplicationRecord
             "CONCAT(locations.urn, locations.site) = ?",
             urn_and_site&.to_s&.strip
           )
+        end
+
+  scope :has_year_groups,
+        ->(year_groups) do
+          where("ARRAY[?]::integer[] <@ gias_year_groups", year_groups)
         end
 
   scope :search_by_name,

@@ -216,6 +216,8 @@ describe AppSessionOverviewTalliesComponent do
           location: create(:school, name: "Hogwarts"),
           programme: hpv_programme
         )
+
+        StatusUpdater.call(patient:)
       end
 
       include_examples "displays correct children due vaccination", "HPV", 0
@@ -267,6 +269,8 @@ describe AppSessionOverviewTalliesComponent do
           location: other_school,
           programme: hpv_programme
         )
+
+        StatusUpdater.call(patient:)
       end
 
       include_examples "displays correct children due vaccination", "HPV", 1

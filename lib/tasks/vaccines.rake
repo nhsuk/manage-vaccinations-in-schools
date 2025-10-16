@@ -18,6 +18,7 @@ namespace :vaccines do
         )
 
       vaccine.brand = data["brand"]
+      vaccine.contains_gelatine = data["contains_gelatine"]
       vaccine.discontinued = data.fetch("discontinued", false)
       vaccine.dose_volume_ml = data["dose_volume_ml"]
       vaccine.manufacturer = data["manufacturer"]
@@ -39,6 +40,8 @@ namespace :vaccines do
           create_hpv_health_questions(vaccine)
         elsif programme.menacwy?
           create_menacwy_health_questions(vaccine)
+        elsif programme.mmr?
+          create_mmr_health_questions(vaccine)
         elsif programme.td_ipv?
           create_td_ipv_health_questions(vaccine)
         else
@@ -88,6 +91,8 @@ def side_effects_for(programme, method)
       swelling
       unwell
     ]
+  elsif programme.mmr?
+    %w[swollen_glands raised_blotchy_rash]
   elsif programme.td_ipv?
     %w[
       drowsy
@@ -307,6 +312,86 @@ def create_menacwy_health_questions(vaccine)
   severe_allergies.update!(next_question: severe_reaction)
   severe_reaction.update!(next_question: extra_support)
   extra_support.update!(next_question: menacwy_previously)
+end
+
+def create_mmr_health_questions(vaccine)
+  bleeding =
+    vaccine.health_questions.create!(
+      title: "Does your child have a bleeding disorder"
+    )
+
+  blood_thinning =
+    vaccine.health_questions.create!(
+      title: "Does your child take blood-thinning medicine (anticoagulants)?",
+      hint:
+        "For example, warfarin, or other medicine used to prevent blood clots."
+    )
+
+  bleeding.update!(next_question: blood_thinning)
+
+  severe_reaction_mmr =
+    vaccine.health_questions.create!(
+      title:
+        "Has your child had a severe allergic reaction (anaphylaxis) to " \
+          "a previous dose of MMR or any other measles, mumps or rubella vaccine?"
+    )
+
+  blood_thinning.update!(next_question: severe_reaction_mmr)
+
+  severe_reaction_gelatine =
+    if vaccine.contains_gelatine?
+      vaccine
+        .health_questions
+        .create!(
+          title:
+            "Has your child ever had a severe allergic reaction (anaphylaxis) to gelatine?",
+          hint: "Gelatine is an ingredient in some foods and vaccines."
+        )
+        .tap { |next_question| severe_reaction_mmr.update!(next_question:) }
+    end
+
+  severe_reaction_neomycin =
+    vaccine.health_questions.create!(
+      title:
+        "Has your child ever had a severe allergic reaction (anaphylaxis) to neomycin?",
+      hint: "Neomycin is an antibiotic sometimes found in creams or ointments."
+    )
+
+  if vaccine.contains_gelatine?
+    severe_reaction_gelatine.update!(next_question: severe_reaction_neomycin)
+  else
+    severe_reaction_mmr.update!(next_question: severe_reaction_neomycin)
+  end
+
+  immune_system =
+    vaccine.health_questions.create!(
+      title:
+        "Does your child have a disease or treatment that severely affects their immune system?",
+      hint:
+        "The MMR vaccine is a live vaccine. It is not suitable for people " \
+          "who have serious problems with their immune systems."
+    )
+
+  severe_reaction_neomycin.update!(next_question: immune_system)
+
+  household_immune_system =
+    vaccine.health_questions.create!(
+      title:
+        "Is the child in regular close contact with anyone currently " \
+          "having treatment that severely affects their immune system?",
+      give_details_hint:
+        "Let us know if they can avoid contact with this person for 2 weeks"
+    )
+
+  immune_system.update!(next_question: household_immune_system)
+
+  medical_conditions =
+    vaccine.health_questions.create!(
+      title:
+        "Does the child have any other medical conditions we should know about?"
+    )
+
+  household_immune_system.update!(next_question: medical_conditions)
 end
 
 def create_td_ipv_health_questions(vaccine)

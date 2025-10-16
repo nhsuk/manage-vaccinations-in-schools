@@ -24,13 +24,14 @@
             sessions: @patient_events[:sessions],
             additional_class_imports: @additional_events[:class_imports],
             reset_url: inspect_timeline_patient_path(
-              event_names: Inspect::Timeline::PatientsController::DEFAULT_EVENT_NAMES,
+              event_names: TimelineRecords::DEFAULT_DETAILS_CONFIG.keys,
               detail_config: TimelineRecords::DEFAULT_DETAILS_CONFIG,
               compare_option: nil,
               show_pii: false,
             ),
             show_pii: @show_pii,
             pii_access_allowed: @user_is_allowed_to_access_pii,
+            event_names: @event_names,
           ) %>
   </div>
 
@@ -39,7 +40,7 @@
       <%= render AppWarningCalloutComponent.new(
             heading: "No events found",
             description: "Patient-#{@patient.id} doesn't have the following events recorded: " +
-                         "#{params[:event_names].map(&:humanize).join(", ")}".html_safe,
+                         "#{@event_names.map(&:humanize).join(", ")}".html_safe,
           ) %>
     <% else %>
         <% if @compare_patient_timeline || @invalid_patient_id || @no_events_compare_message %>
@@ -60,7 +61,7 @@
               <%= render AppWarningCalloutComponent.new(
                     heading: "No events found for comparison patient",
                     description: "Patient-#{@compare_patient.id} doesn't have the following events recorded: " +
-                                 "#{params[:event_names].map(&:humanize).join(", ")}".html_safe,
+                                 "#{@event_names.map(&:humanize).join(", ")}".html_safe,
                   ) %>
             </div>
           <% elsif @compare_patient_timeline %>

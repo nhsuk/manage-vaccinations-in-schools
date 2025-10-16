@@ -58,22 +58,21 @@ class TrainingOnboardingConfiguration
         email: email_and_password,
         password: email_and_password,
         given_name: role.humanize,
-        family_name: identifier
+        family_name: identifier,
+        fallback_role: role
       }
     end
   end
 
   def schools
-    {
-      generic:
-        Location
-          .school
-          .open
-          .where(subteam_id: nil)
-          .order("RANDOM()")
-          .limit(20)
-          .pluck(:urn)
-    }
+    scope =
+      Location.school.open.where(subteam_id: nil).order("RANDOM()").limit(10)
+
+    # Make sure we get a good mix of primary and secondary schools.
+    primary_schools = scope.has_year_groups([1, 2, 3, 4, 5, 6]).pluck(:urn)
+    secondary_schools = scope.has_year_groups([7, 8, 9, 10, 11]).pluck(:urn)
+
+    { generic: primary_schools + secondary_schools }
   end
 
   def clinics

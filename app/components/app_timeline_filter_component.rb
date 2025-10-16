@@ -13,7 +13,8 @@ class AppTimelineFilterComponent < ViewComponent::Base
     sessions:,
     reset_url:,
     show_pii:,
-    pii_access_allowed:
+    pii_access_allowed:,
+    event_names:
   )
     @url = url
     @patient = patient
@@ -27,6 +28,7 @@ class AppTimelineFilterComponent < ViewComponent::Base
     @reset_url = reset_url
     @show_pii = show_pii
     @pii_access_allowed = pii_access_allowed
+    @event_names = event_names
   end
 
   attr_reader :url,
@@ -40,5 +42,6 @@ class AppTimelineFilterComponent < ViewComponent::Base
               :cohort_imports,
               :sessions,
               :show_pii,
-              :pii_access_allowed
+              :pii_access_allowed,
+              :event_names
 end
