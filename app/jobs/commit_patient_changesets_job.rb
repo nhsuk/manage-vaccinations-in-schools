@@ -185,7 +185,11 @@ class CommitPatientChangesetsJob
       school_move.patient.not_in_team?(
         team: import.team,
         academic_year: import.academic_year
-      ) || school_move.patient.archived?(team: import.team)
+      ) || school_move.patient.archived?(team: import.team) ||
+      (
+        school_move.school == school_move.patient.school &&
+          school_move.home_educated == school_move.patient.home_educated
+      )
   end
 
   def reset_counts(import)
