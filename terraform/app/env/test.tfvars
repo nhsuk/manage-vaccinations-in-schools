@@ -9,9 +9,6 @@ resource_name = {
 rails_master_key_path  = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
 mise_sops_age_key_path = "/copilot/mavis/secrets/STAGING_MISE_SOPS_AGE_KEY"
 
-# Normally this is 31, but this gives us 2 weeks of additional testing.
-academic_year_number_of_preparation_days = 45
-
 http_hosts = {
   MAVIS__HOST                        = "test.mavistesting.com"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "test.mavistesting.com"

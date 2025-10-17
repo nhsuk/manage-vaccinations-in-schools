@@ -9,9 +9,6 @@ resource_name = {
 rails_master_key_path  = "/copilot/mavis/production/secrets/RAILS_MASTER_KEY"
 mise_sops_age_key_path = "/copilot/mavis/production/secrets/MISE_SOPS_AGE_KEY"
 
-academic_year_number_of_preparation_days = 31
-pds_rate_limit_per_second                = 50
-
 http_hosts = {
   MAVIS__HOST                        = "www.manage-vaccinations-in-schools.nhs.uk"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "www.give-or-refuse-consent-for-vaccinations.nhs.uk"
