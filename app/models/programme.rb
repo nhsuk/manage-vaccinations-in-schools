@@ -113,21 +113,7 @@ class Programme < ApplicationRecord
     vaccines.flat_map(&:available_delivery_sites).uniq
   end
 
-  DOSE_SEQUENCES = {
-    "flu" => 1,
-    "hpv" => 1,
-    "menacwy" => 1,
-    "mmr" => 2,
-    "td_ipv" => 5
-  }.freeze
-
-  def vaccinated_dose_sequence
-    DOSE_SEQUENCES.fetch(type)
-  end
-
-  def default_dose_sequence
-    hpv? || flu? ? vaccinated_dose_sequence : nil
-  end
+  def default_dose_sequence = hpv? || flu? ? 1 : nil
 
   MAXIMUM_DOSE_SEQUENCES = {
     "flu" => 2,

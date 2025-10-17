@@ -19,14 +19,15 @@ class StatusGenerator::Vaccination
     @triages = triages
     @attendance_record = attendance_record
 
-    @vaccination_records = vaccination_records.select do
-      it.patient_id == patient.id && it.programme_id == programme_id &&
-        if programme.seasonal?
-          it.academic_year == academic_year
-        else
-          it.academic_year <= academic_year
-        end
-    end
+    @vaccination_records =
+      vaccination_records.select do
+        it.patient_id == patient.id && it.programme_id == programme_id &&
+          if programme.seasonal?
+            it.academic_year == academic_year
+          else
+            it.academic_year <= academic_year
+          end
+      end
   end
 
   def status
@@ -136,8 +137,8 @@ class StatusGenerator::Vaccination
         vaccination_records.select { it.administered? || it.already_had? }
       else
         if (
-          already_had_records = vaccination_records.select(&:already_had?)
-        ).present?
+             already_had_records = vaccination_records.select(&:already_had?)
+           ).present?
           return already_had_records
         end
 
@@ -168,9 +169,9 @@ class StatusGenerator::Vaccination
           return already_had_record
         end
 
-        if programme.vaccinated_dose_sequence > 1
+        if programme.td_ipv?
           valid_vaccination_records.find do
-            it.dose_sequence == programme.vaccinated_dose_sequence ||
+            it.dose_sequence == 5 ||
               (it.dose_sequence.nil? && it.recorded_in_service?)
           end
         else
@@ -184,11 +185,11 @@ class StatusGenerator::Vaccination
       patient_locations
         .select { it.academic_year == academic_year }
         .any? do |patient_location|
-        location = patient_location.location
-        year_group.in?(
-          location.programme_year_groups(academic_year:)[programme]
-        )
-      end
+          location = patient_location.location
+          year_group.in?(
+            location.programme_year_groups(academic_year:)[programme]
+          )
+        end
   end
 
   def consent_generator

@@ -112,7 +112,11 @@ module Reports::ExportFormatters
   end
 
   def dose_sequence(vaccination_record:)
-    vaccination_record.administered? ? vaccination_record.dose_sequence : ""
+    if vaccination_record.administered?
+      vaccination_record.dose_sequence || ""
+    else
+      ""
+    end
   end
 
   def reason_not_vaccinated(vaccination_record:)
