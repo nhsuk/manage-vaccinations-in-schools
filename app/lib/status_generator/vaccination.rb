@@ -148,13 +148,13 @@ class StatusGenerator::Vaccination
           administered_records
         elsif programme.menacwy?
           administered_records.select do
-            patient.age(now: it.performed_at) >= 10
+            patient.age_years(now: it.performed_at) >= 10
           end
         elsif programme.mmr?
           administered_records # TODO: Implement vaccination criteria
         elsif programme.td_ipv?
           administered_records.select do
-            patient.age(now: it.performed_at) >= 10
+            patient.age_years(now: it.performed_at) >= 10
           end
         else
           raise UnsupportedProgramme, programme
