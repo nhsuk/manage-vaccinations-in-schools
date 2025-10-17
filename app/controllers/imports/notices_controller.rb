@@ -6,6 +6,6 @@ class Imports::NoticesController < ApplicationController
   def index
     authorize :notices
 
-    @notices = ImportantNotices.call(patient_scope: policy_scope(Patient))
+    @notices = policy_scope(ImportantNotice).order(date_time: :desc)
   end
 end

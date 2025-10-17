@@ -6,7 +6,7 @@ class AppPatientCardComponent < ViewComponent::Base
       <% card.with_heading(level: heading_level) { "Child’s details" } %>
       
       <% important_notices.each do |notice| %>
-        <%= render AppStatusComponent.new(text: notice[:message]) %>
+        <%= render AppStatusComponent.new(text: notice.message) %>
       <% end %>
 
       <%= render AppChildSummaryComponent.new(
@@ -46,5 +46,7 @@ class AppPatientCardComponent < ViewComponent::Base
 
   def show_school_and_year_group = patient.show_year_group?(team: current_team)
 
-  def important_notices = ImportantNotices.call(patient:)
+  def important_notices
+    ImportantNotice.latest_for_patient(patient:)
+  end
 end
