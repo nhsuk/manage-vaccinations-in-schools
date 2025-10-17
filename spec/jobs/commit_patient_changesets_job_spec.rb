@@ -407,6 +407,37 @@ describe CommitPatientChangesetsJob do
                                   )
         end
       end
+
+      context "with a patient currently in the imported school but with an outstanding move to another school" do
+        let(:other_school) { create(:school, team:) }
+
+        let(:existing_patient) do
+          create(
+            :patient,
+            given_name: "Jimmy",
+            family_name: "Smith",
+            date_of_birth: Date.new(2010, 1, 2),
+            nhs_number: nil,
+            team:,
+            session:
+          )
+        end
+
+        before do
+          create(
+            :school_move,
+            :to_school,
+            patient: existing_patient,
+            school: other_school
+          )
+        end
+
+        it "removes the outstanding school move when import confirms current school" do
+          expect { perform_job }.to change {
+            existing_patient.reload.school_moves.count
+          }.from(1).to(0)
+        end
+      end
     end
 
     context "when import_low_pds_match_rate flag is enabled" do
