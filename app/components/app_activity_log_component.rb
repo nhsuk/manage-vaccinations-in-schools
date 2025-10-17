@@ -114,7 +114,7 @@ class AppActivityLogComponent < ViewComponent::Base
               :vaccination_records
 
   def events_by_day
-    all_events.sort_by { -it[:at].to_i }.group_by { it[:at].to_date }
+    all_events.sort_by { it[:at] }.reverse.group_by { it[:at].to_date }
   end
 
   def all_events

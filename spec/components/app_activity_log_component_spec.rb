@@ -38,18 +38,20 @@ describe AppActivityLogComponent do
       :patient_location,
       patient:,
       session:,
-      created_at: Time.zone.parse("2025-05-29 12:00")
+      created_at: Time.zone.local(2025, 5, 29, 12)
     )
 
     patient.reload
   end
 
-  shared_examples "card" do |title:, date:, notes: nil, by: nil, programme: nil|
+  shared_examples "card" do |title:, date:, notes: nil, by: nil, index: nil, programme: nil|
     it "renders card '#{title}'" do
       expect(rendered).to have_css(".nhsuk-card__heading", text: title)
 
       card =
-        if programme
+        if index
+          page.all(".nhsuk-card")[index]
+        elsif programme
           page
             .all(".nhsuk-card")
             .find do |card_element|
@@ -94,7 +96,7 @@ describe AppActivityLogComponent do
         programme: programmes.first,
         patient:,
         parent: mum,
-        submitted_at: Time.zone.parse("2025-05-30 12:00"),
+        submitted_at: Time.zone.local(2025, 5, 30, 12),
         recorded_by: user
       )
       create(
@@ -103,7 +105,7 @@ describe AppActivityLogComponent do
         programme: programmes.first,
         patient:,
         parent: dad,
-        submitted_at: Time.zone.parse("2025-05-30 13:00")
+        submitted_at: Time.zone.local(2025, 5, 30, 13)
       )
       create(
         :consent,
@@ -111,7 +113,7 @@ describe AppActivityLogComponent do
         programme: programmes.second,
         patient:,
         parent: dad,
-        submitted_at: Time.zone.parse("2025-05-30 13:00"),
+        submitted_at: Time.zone.local(2025, 5, 30, 13),
         vaccine_methods: ["nasal"]
       )
 
@@ -120,7 +122,7 @@ describe AppActivityLogComponent do
         :keep_in_triage,
         programme: programmes.first,
         patient:,
-        created_at: Time.zone.parse("2025-05-30 14:00"),
+        created_at: Time.zone.local(2025, 5, 30, 14),
         notes: "Some notes",
         performed_by: user
       )
@@ -129,7 +131,7 @@ describe AppActivityLogComponent do
         :safe_to_vaccinate,
         programme: programmes.first,
         patient:,
-        created_at: Time.zone.parse("2025-05-30 14:30"),
+        created_at: Time.zone.local(2025, 5, 30, 14, 30),
         performed_by: user
       )
       create(
@@ -137,7 +139,7 @@ describe AppActivityLogComponent do
         :safe_to_vaccinate,
         programme: programmes.second,
         patient:,
-        created_at: Time.zone.parse("2025-05-30 14:35"),
+        created_at: Time.zone.local(2025, 5, 30, 14, 35),
         notes: "Some notes",
         performed_by: user,
         vaccine_method: "nasal"
@@ -148,7 +150,7 @@ describe AppActivityLogComponent do
         programme: programmes.first,
         patient:,
         session:,
-        performed_at: Time.zone.parse("2025-05-31 12:00"),
+        performed_at: Time.zone.local(2025, 5, 31, 12, 0, 0, 0),
         performed_by: user,
         notes: "Some notes"
       )
@@ -158,9 +160,9 @@ describe AppActivityLogComponent do
         programme: programmes.first,
         patient:,
         session:,
-        performed_at: Time.zone.parse("2025-05-31 13:00"),
+        performed_at: Time.zone.local(2025, 5, 31, 12, 0, 0, 1),
         performed_by: nil,
-        notes: "Some notes",
+        notes: "Some notes millisecond later",
         vaccine: create(:vaccine, :cervarix, programme: programmes.first)
       )
 
@@ -199,14 +201,16 @@ describe AppActivityLogComponent do
     include_examples "card",
                      title: "Vaccinated with Gardasil 9",
                      date: "31 May 2025 at 12:00pm",
+                     index: 2,
                      notes: "Some notes",
                      by: "JOY, Nurse",
                      programme: "HPV"
 
     include_examples "card",
                      title: "Vaccinated with Cervarix",
-                     date: "31 May 2025 at 1:00pm",
-                     notes: "Some notes",
+                     date: "31 May 2025 at 12:00pm",
+                     index: 1,
+                     notes: "Some notes millisecond later",
                      programme: "HPV"
 
     include_examples "card",
@@ -344,7 +348,7 @@ describe AppActivityLogComponent do
         :self_consent,
         programme: programmes.first,
         patient:,
-        submitted_at: Time.zone.parse("2025-05-30 12:00")
+        submitted_at: Time.zone.local(2025, 5, 30, 12)
       )
     end
 
@@ -533,7 +537,7 @@ describe AppActivityLogComponent do
           patient:,
           programme: programmes.first,
           vaccine: nil,
-          performed_at: Time.zone.parse("2025-05-31 13:00")
+          performed_at: Time.zone.local(2025, 5, 31, 13)
         )
       end
 
@@ -562,7 +566,7 @@ describe AppActivityLogComponent do
           patient:,
           parent: mum,
           academic_year: 2024,
-          submitted_at: Time.zone.parse("#2024-05-30 12:00")
+          submitted_at: Time.zone.local(2024, 5, 30, 12)
         )
 
         create(
@@ -571,7 +575,7 @@ describe AppActivityLogComponent do
           programme: hpv_programme,
           patient:,
           academic_year: 2024,
-          created_at: Time.zone.parse("#2024-05-30 14:30"),
+          created_at: Time.zone.local(2024, 5, 30, 14, 30),
           performed_by: user
         )
 
@@ -581,7 +585,7 @@ describe AppActivityLogComponent do
           patient:,
           created_by: user,
           academic_year: 2024,
-          created_at: Time.zone.parse("#2024-05-30 15:00")
+          created_at: Time.zone.local(2024, 5, 30, 15)
         )
       end
 
@@ -601,7 +605,7 @@ describe AppActivityLogComponent do
           patient:,
           created_by: user,
           academic_year: 2024,
-          created_at: Time.zone.parse("#2024-05-30 15:00")
+          created_at: Time.zone.local(2024, 5, 30, 15)
         )
       end
 
@@ -650,7 +654,7 @@ describe AppActivityLogComponent do
           patient:,
           parent: mum,
           academic_year: 2024,
-          submitted_at: Time.zone.parse("#2024-05-30 12:00")
+          submitted_at: Time.zone.local(2024, 5, 30, 12)
         )
 
         create(
@@ -659,7 +663,7 @@ describe AppActivityLogComponent do
           programme: flu_programme,
           patient:,
           academic_year: 2024,
-          created_at: Time.zone.parse("#2024-05-30 14:30"),
+          created_at: Time.zone.local(2024, 5, 30, 14, 30),
           performed_by: user
         )
 
@@ -669,7 +673,7 @@ describe AppActivityLogComponent do
           patient:,
           created_by: user,
           academic_year: 2024,
-          created_at: Time.zone.parse("#2024-05-30 15:00")
+          created_at: Time.zone.local(2024, 5, 30, 15)
         )
 
         create(
