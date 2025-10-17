@@ -22,7 +22,9 @@ class AppSessionSearchFormComponent < ViewComponent::Base
         </div>
 
         <% if programmes.present? %>
-          <%= f.govuk_check_boxes_fieldset :programmes, legend: { text: "Programme", size: "s" } do %>
+          <%= f.govuk_check_boxes_fieldset :programmes,
+                                           legend: { text: "Programme", size: "s" },
+                                           small: true do %>
             <% programmes.each do |programme| %>
               <%= f.govuk_check_box :programmes,
                                     programme.type,
@@ -33,7 +35,9 @@ class AppSessionSearchFormComponent < ViewComponent::Base
         <% end %>
 
         <% if academic_years && AcademicYear.pending != AcademicYear.current %>
-          <%= f.govuk_radio_buttons_fieldset :academic_year, legend: { text: "Academic year", size: "s" } do %>
+          <%= f.govuk_radio_buttons_fieldset :academic_year,
+                                             legend: { text: "Academic year", size: "s" },
+                                             small: true do %>
             <% [AcademicYear.pending, AcademicYear.current].each do |academic_year| %>
               <%= f.govuk_radio_button :academic_year,
                                        academic_year,
@@ -43,7 +47,9 @@ class AppSessionSearchFormComponent < ViewComponent::Base
           <% end %>
         <% end %>
 
-        <%= f.govuk_radio_buttons_fieldset :status, legend: { text: "Status", size: "s" } do %>
+        <%= f.govuk_radio_buttons_fieldset :status,
+                                           legend: { text: "Status", size: "s" },
+                                           small: true do %>
           <%= f.govuk_radio_button :status, "",
                                    checked: form.status.blank?,
                                    label: { text: "Any" } %>
@@ -56,7 +62,9 @@ class AppSessionSearchFormComponent < ViewComponent::Base
           <% end %>
         <% end %>
         
-        <%= f.govuk_radio_buttons_fieldset :type, legend: { text: "Type", size: "s" } do %>
+        <%= f.govuk_radio_buttons_fieldset :type,
+                                           legend: { text: "Type", size: "s" },
+                                           small: true do %>
           <%= f.govuk_radio_button :type, "",
                                    checked: form.type.blank?,
                                    label: { text: "Any" } %>
