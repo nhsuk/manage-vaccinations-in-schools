@@ -1,0 +1,21 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: imports_notices_path) %>
+<% end %>
+
+<% page_title = "Are you sure you want to dismiss this notice?" %>
+
+<%= h1 page_title do %>
+  <span class="nhsuk-caption-l">
+    <%= @notice.patient.full_name %>
+  </span>
+  <%= page_title %>
+<% end %>
+
+<p class="nhsuk-body">This cannot be undone.</p>
+
+<%= form_with url: imports_notice_path(@notice), method: :delete do |f| %>
+  <div class="nhsuk-button-group">
+    <%= f.govuk_submit "Yes, dismiss this notice", warning: true %>
+    <%= link_to "No, return to notices", imports_notices_path %>
+  </div>
+<% end %>
