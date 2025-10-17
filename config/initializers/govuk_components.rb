@@ -1,6 +1,3 @@
 # frozen_string_literal: true
 
-Govuk::Components.configure do |config|
-  config.brand = "nhsuk"
-  config.brand_overrides = { "GovukComponent::PaginationComponent" => "govuk" }
-end
+Govuk::Components.configure { |config| config.brand = "nhsuk" }

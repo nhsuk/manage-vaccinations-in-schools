@@ -58,7 +58,7 @@
     <% end %>
   </div>
 
-  <%= govuk_pagination(pagy: @pagy) %>
+  <%= render AppPaginationComponent.new(pagy: @pagy) %>
 <% else %>
   <p class="nhsuk-body">There are currently no unmatched consent responses.</p>
 <% end %>
