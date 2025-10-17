@@ -464,6 +464,19 @@ describe SearchVaccinationRecordsInNHSJob do
       include_examples "calls StatusUpdater"
     end
 
+    context "with a mavis record, and a duplicate thereof in the search results" do
+      let(:body) do
+        file_fixture("fhir/search_response_2_results_mavis_duplicate.json").read
+      end
+
+      it "does not create a new record" do
+        expect { perform }.not_to(change { patient.vaccination_records.count })
+      end
+
+      include_examples "doesn't send discovery comms"
+      include_examples "calls StatusUpdater"
+    end
+
     context "with the feature flag disabled" do
       before { Flipper.disable(:imms_api_search_job) }
 

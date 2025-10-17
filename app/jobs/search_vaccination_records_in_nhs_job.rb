@@ -21,21 +21,17 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
 
         incoming_vaccination_records =
           extract_vaccination_records(fhir_bundle).map do |fhir_record|
-            if FHIRMapper::VaccinationRecord::MAVIS_SYSTEM_NAME.in?(
-                 fhir_record.identifier.map(&:system)
-               )
-              next
-            end
-
             FHIRMapper::VaccinationRecord.from_fhir_record(
               fhir_record,
               patient:
             )
           end
-        incoming_vaccination_records = incoming_vaccination_records.compact
 
         incoming_vaccination_records =
           deduplicate_vaccination_records(incoming_vaccination_records)
+
+        incoming_vaccination_records =
+          reject_mavis_records(incoming_vaccination_records)
       end
 
       existing_vaccination_records =
@@ -76,6 +72,13 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
   end
 
   private
+
+  def reject_mavis_records(vaccination_records)
+    vaccination_records.reject do
+      it.nhs_immunisations_api_identifier_system ==
+        FHIRMapper::VaccinationRecord::MAVIS_SYSTEM_NAME
+    end
+  end
 
   def extract_vaccination_records(fhir_bundle)
     fhir_bundle
