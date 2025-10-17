@@ -232,6 +232,8 @@ class VaccinationRecord < ApplicationRecord
               unless: :nhs_immunisations_api_id
             }
 
+  after_save :generate_important_notice_if_needed
+
   delegate :fhir_record, to: :fhir_mapper
 
   class << self
@@ -304,5 +306,15 @@ class VaccinationRecord < ApplicationRecord
     next_dose_delay_triage.save!
 
     StatusUpdater.call(patient:)
+  end
+
+  def should_generate_important_notice?
+    notify_parents_previously_changed?
+  end
+
+  def generate_important_notice_if_needed
+    if should_generate_important_notice?
+      ImportantNoticeGeneratorJob.perform_later(patient_id)
+    end
   end
 end
