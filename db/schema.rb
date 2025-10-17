@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_17_133425) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -385,6 +385,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
     t.bigint "immunisation_import_id", null: false
     t.bigint "vaccination_record_id", null: false
     t.index ["immunisation_import_id", "vaccination_record_id"], name: "idx_on_immunisation_import_id_vaccination_record_id_588e859772", unique: true
+  end
+
+  create_table "important_notices", force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.bigint "team_id", null: false
+    t.bigint "vaccination_record_id"
+    t.bigint "dismissed_by_user_id"
+    t.integer "notice_type", null: false
+    t.text "message"
+    t.datetime "date_time"
+    t.boolean "can_dismiss", default: false
+    t.datetime "dismissed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["dismissed_by_user_id"], name: "index_important_notices_on_dismissed_by_user_id"
+    t.index ["patient_id", "notice_type", "date_time", "team_id"], name: "index_notices_on_patient_and_type_and_datetime_and_team", unique: true
+    t.index ["patient_id"], name: "index_important_notices_on_patient_id"
+    t.index ["team_id"], name: "index_important_notices_on_team_id"
+    t.index ["vaccination_record_id"], name: "index_important_notices_on_vaccination_record_id"
   end
 
   create_table "local_authorities", id: false, force: :cascade do |t|
@@ -1003,7 +1022,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   add_foreign_key "immunisation_imports_sessions", "sessions", on_delete: :cascade
   add_foreign_key "immunisation_imports_vaccination_records", "immunisation_imports", on_delete: :cascade
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records", on_delete: :cascade
-  add_foreign_key "location_programme_year_groups", "location_year_groups", on_delete: :cascade
+  add_foreign_key "important_notices", "patients"
+  add_foreign_key "important_notices", "teams"
+  add_foreign_key "important_notices", "users", column: "dismissed_by_user_id"
+  add_foreign_key "important_notices", "vaccination_records"
   add_foreign_key "location_programme_year_groups", "locations", on_delete: :cascade
   add_foreign_key "location_programme_year_groups", "programmes", on_delete: :cascade
   add_foreign_key "location_year_groups", "locations", on_delete: :cascade
