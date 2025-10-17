@@ -11,6 +11,7 @@
         <% row.with_cell(text: "Date") %>
         <% row.with_cell(text: "Child") %>
         <% row.with_cell(text: "Notice") %>
+        <%= row.with_cell(text: "Actions") %>
       <% end %>
     <% end %>
 
@@ -29,6 +30,12 @@
             <span class="nhsuk-table-responsive__heading">Notice</span>
             <%= notice.message %>
           <% end %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Actions</span>
+              <% if notice.can_dismiss? %>
+                <%= link_to "Dismiss", dismiss_imports_notice_path(notice) %>
+              <% end %>
+            <% end %>
         <% end %>
       <% end %>
     <% end %>
