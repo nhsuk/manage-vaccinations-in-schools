@@ -96,6 +96,7 @@ describe "Manage children" do
     then_i_see_the_edit_child_record_page
     and_i_see_the_nhs_number
     and_the_patient_is_no_longer_invalidated
+    and_the_important_notice_is_dismissed
   end
 
   scenario "Inviting to community clinic" do
@@ -152,6 +153,10 @@ describe "Manage children" do
     when_a_deceased_patient_exists
     and_i_click_on_notices
     then_i_see_the_notice_of_date_of_death
+
+    when_i_click_on_dismiss
+    and_i_choose_to_dismiss
+    then_i_see_no_notices
   end
 
   scenario "Viewing invalidated patient notices as a superuser" do
@@ -172,6 +177,15 @@ describe "Manage children" do
     when_a_restricted_patient_exists
     and_i_click_on_notices
     then_i_see_the_notice_of_sensitive
+
+    when_i_click_on_dismiss
+    and_i_choose_not_to_dismiss
+    then_i_see_the_notice_of_sensitive
+
+    when_i_click_on_dismiss
+    and_i_choose_to_dismiss
+    then_i_see_no_notices
+    and_i_see_a_success_banner
   end
 
   def given_my_team_exists
@@ -400,6 +414,11 @@ describe "Manage children" do
     expect(@patient.reload).not_to be_invalidated
   end
 
+  def and_the_important_notice_is_dismissed
+    notice = @patient.important_notices.find_by(type: :invalidated)
+    expect(notice.dismissed_at).to be_present
+  end
+
   def and_i_see_the_blank_nhs_number
     expect(page).to have_content("NHS numberNot provided")
   end
@@ -484,8 +503,24 @@ describe "Manage children" do
 
   alias_method :and_i_click_on_notices, :when_i_click_on_notices
 
+  def when_i_click_on_dismiss
+    click_on "Dismiss"
+  end
+
+  def and_i_choose_to_dismiss
+    click_on "Yes, dismiss this notice"
+  end
+
+  def and_i_choose_not_to_dismiss
+    click_on "No, return to notices"
+  end
+
   def then_i_see_no_notices
     expect(page).to have_content("There are currently no important notices.")
+  end
+
+  def and_i_see_a_success_banner
+    expect(page).to have_content("Notice dismissed")
   end
 
   def then_i_see_the_notice_of_date_of_death

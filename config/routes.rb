@@ -156,7 +156,9 @@ Rails.application.routes.draw do
       patch ":type", action: :update, on: :member
     end
 
-    resources :notices, only: :index
+    resources :notices, only: %i[index destroy] do
+      member { get :dismiss }
+    end
   end
 
   resources :notifications, only: :create
