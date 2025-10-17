@@ -15,9 +15,7 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
     @triage_form = triage_form || default_triage_form
   end
 
-  def render?
-    triage_status && !triage_status.not_required?
-  end
+  def render? = consent_status.given? || !triage_status.not_required?
 
   private
 
@@ -48,7 +46,11 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
       patient
         .triage_statuses
         .includes(:consents, :programme, :vaccination_records)
-        .find_by(programme:, academic_year:)
+        .find_or_initialize_by(programme:, academic_year:)
+  end
+
+  def consent_status
+    patient.consent_status(programme:, academic_year:)
   end
 
   def vaccination_method
