@@ -48,10 +48,7 @@ class StatusGenerator::Vaccination
 
     return unless status_should_be_due? || status_should_be_eligible?
 
-    latest_dose_sequence =
-      valid_vaccination_records.filter_map(&:dose_sequence).max || 0
-
-    latest_dose_sequence + 1
+    valid_vaccination_records.count + 1
   end
 
   def latest_date
@@ -144,22 +141,48 @@ class StatusGenerator::Vaccination
 
         administered_records = vaccination_records.select(&:administered?)
 
-        if programme.hpv?
-          administered_records
-        elsif programme.menacwy?
-          administered_records.select do
-            patient.age_years(now: it.performed_at) >= 10
-          end
+        if programme.doubles?
+          filter_doubles_vaccination_records(administered_records)
+        elsif programme.hpv?
+          filter_hpv_vaccination_records(administered_records)
         elsif programme.mmr?
-          administered_records # TODO: Implement vaccination criteria
-        elsif programme.td_ipv?
-          administered_records.select do
-            patient.age_years(now: it.performed_at) >= 10
-          end
+          filter_mmr_vaccination_records(administered_records)
         else
           raise UnsupportedProgramme, programme
         end
       end
+  end
+
+  def filter_mmr_vaccination_records(vaccination_records)
+    # Any child who hasn't had two doses of MMR with the first dose above 1
+    # year of age and the second above 15 months and the doses at least 4
+    # weeks apart is eligible for catch up vaccinations by SAIS until they
+    # have had two valid doses.
+
+    sorted_vaccination_records = vaccination_records.sort_by(&:performed_at)
+
+    first_dose =
+      sorted_vaccination_records.find do
+        patient.age_months(now: it.performed_at) >= 12
+      end
+
+    return [] if first_dose.nil?
+
+    second_dose =
+      sorted_vaccination_records.find do
+        it.performed_at > first_dose.performed_at + 28.days &&
+          patient.age_months(now: it.performed_at) >= 15
+      end
+
+    [first_dose, second_dose].compact
+  end
+
+  def filter_hpv_vaccination_records(vaccination_records)
+    vaccination_records
+  end
+
+  def filter_doubles_vaccination_records(vaccination_records)
+    vaccination_records.select { patient.age_years(now: it.performed_at) >= 10 }
   end
 
   def vaccinated_vaccination_record
@@ -169,7 +192,9 @@ class StatusGenerator::Vaccination
           return already_had_record
         end
 
-        if programme.td_ipv?
+        if programme.mmr?
+          valid_vaccination_records.last if valid_vaccination_records.count >= 2
+        elsif programme.td_ipv?
           valid_vaccination_records.find do
             it.dose_sequence == 5 ||
               (it.dose_sequence.nil? && it.recorded_in_service?)
