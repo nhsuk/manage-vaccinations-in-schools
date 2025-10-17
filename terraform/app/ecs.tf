@@ -57,6 +57,9 @@ resource "aws_service_discovery_private_dns_namespace" "internal" {
   }
 }
 
+data "aws_iam_role" "ecs_task_role" {
+  name = "EcsTaskRole"
+}
 
 module "web_service" {
   source = "./modules/ecs_service"
@@ -66,7 +69,7 @@ module "web_service" {
     cpu                  = 1024
     memory               = 3072
     execution_role_arn   = aws_iam_role.ecs_task_execution_role["CORE"].arn
-    task_role_arn        = aws_iam_role.ecs_task_role.arn
+    task_role_arn        = data.aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
     health_check_command = ["CMD-SHELL", "./bin/internal_healthcheck http://localhost:${local.container_ports.web}/health/database"]
@@ -124,7 +127,7 @@ module "sidekiq_service" {
     cpu                  = 1024
     memory               = 2048
     execution_role_arn   = aws_iam_role.ecs_task_execution_role["CORE"].arn
-    task_role_arn        = aws_iam_role.ecs_task_role.arn
+    task_role_arn        = data.aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
     health_check_command = ["CMD-SHELL", "./bin/internal_healthcheck && grep -q '[s]idekiq' /proc/*/cmdline 2>/dev/null || exit 1"]
@@ -162,7 +165,7 @@ module "reporting_service" {
     cpu                  = 1024
     memory               = 2048
     execution_role_arn   = aws_iam_role.ecs_task_execution_role["REPORTING"].arn
-    task_role_arn        = aws_iam_role.ecs_task_role.arn
+    task_role_arn        = data.aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
     health_check_command = ["CMD-SHELL", "wget --no-cache --spider -S http://localhost:${local.container_ports.reporting}/reports/healthcheck || exit 1"]
@@ -202,4 +205,32 @@ module "reporting_service" {
   depends_on = [
     aws_iam_role.ecs_deploy
   ]
+}
+
+module "ops_service" {
+  source       = "./modules/ecs_service"
+  cluster_id   = aws_ecs_cluster.cluster.id
+  cluster_name = aws_ecs_cluster.cluster.name
+  environment  = var.environment
+  network_params = {
+    subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
+    vpc_id  = aws_vpc.application_vpc.id
+  }
+  task_config = {
+    environment          = local.task_envs["OPS_SERVICE"]
+    secrets              = local.task_secrets["OPS_SERVICE"]
+    cpu                  = 1024
+    memory               = 2048
+    execution_role_arn   = aws_iam_role.ecs_task_execution_role["OPS_SERVICE"].arn
+    task_role_arn        = data.aws_iam_role.ecs_task_role.arn
+    log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
+    region               = var.region
+    health_check_command = ["CMD-SHELL", "echo 'alive' || exit 1"]
+
+  }
+  maximum_replica_count = var.enable_ops_service ? 1 : 0
+  minimum_replica_count = var.enable_ops_service ? 1 : 0
+  server_type           = "none"
+  server_type_name      = "ops"
+  readonly_file_system  = false
 }

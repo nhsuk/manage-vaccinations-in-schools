@@ -109,7 +109,7 @@ resource "aws_ecs_task_definition" "this" {
       name                   = var.container_name
       image                  = "CHANGE_ME"
       essential              = true
-      readonlyRootFileSystem = true
+      readonlyRootFileSystem = var.readonly_file_system
       portMappings = [
         {
           name          = var.service_connect_config != null && length(var.service_connect_config.services) > 0 ? var.service_connect_config.services[0].port_name : null

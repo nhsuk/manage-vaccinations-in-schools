@@ -1,5 +1,5 @@
-name: Build and push image
-run-name: Build and push image for ${{ inputs.git-sha || github.sha }}
+name: Build and push images
+run-name: Build and push images for ${{ inputs.git-sha || github.sha }}
 
 on:
   workflow_dispatch:
@@ -26,10 +26,15 @@ jobs:
   check-image-presence:
     name: Check if images already exist
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        image_type: ["webapp", "ops"]
     permissions:
       id-token: write
     outputs:
-      build-needed: ${{ steps.check-dev-image.outputs.build-needed || steps.check-prod-image.outputs.build-needed }}
+      webapp-build-needed: ${{ steps.check-dev-image.outputs.webapp-build-needed || steps.check-prod-image.outputs.webapp-build-needed }}
+      ops-build-needed: ${{ steps.check-dev-image.outputs.ops-build-needed || steps.check-prod-image.outputs.ops-build-needed }}
     steps:
       - name: Configure AWS Dev Credentials
         uses: aws-actions/configure-aws-credentials@v5
@@ -39,11 +44,11 @@ jobs:
       - name: Check if dev image exists
         id: check-dev-image
         run: |
-          if aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=$git_ref > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name mavis/${{ matrix.image_type }} --image-ids imageTag=$git_ref > /dev/null 2>&1; then
             echo "Dev image with given tag already exists"
           else
             echo "Dev image does not exist. Build needed"
-            echo "build-needed=true" >> $GITHUB_OUTPUT
+            echo "${{ matrix.image_type }}-build-needed=true" >> $GITHUB_OUTPUT
           fi
       - name: Configure AWS Production credentials
         if: env.PUSH_IMAGE_TO_PRODUCTION == 'true'
@@ -55,33 +60,12 @@ jobs:
         if: env.PUSH_IMAGE_TO_PRODUCTION == 'true'
         id: check-prod-image
         run: |
-          if aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=$git_ref > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name mavis/${{ matrix.image_type }} --image-ids imageTag=$git_ref > /dev/null 2>&1; then
             echo "Production image with given tag already exists"
           else
             echo "Production image does not exist. Build needed"
-            echo "build-needed=true" >> $GITHUB_OUTPUT
+            echo "${{ matrix.image_type }}-build-needed=true" >> $GITHUB_OUTPUT
           fi
-
-  build:
-    needs: check-image-presence
-    if: needs.check-image-presence.outputs.build-needed == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-        with:
-          ref: ${{ env.git_ref }}
-      - name: Write build SHA
-        run: git rev-parse HEAD > public/sha
-      - name: Build Docker image
-        run: docker build -t "mavis:latest" .
-      - name: Save Docker image
-        run: docker save -o image.tar mavis:latest
-      - name: Upload Docker image
-        uses: actions/upload-artifact@v4
-        with:
-          name: image
-          path: image.tar
   define-matrix:
     name: Determine AWS roles to push the image
     runs-on: ubuntu-latest
@@ -97,6 +81,37 @@ jobs:
           else
             echo 'aws-roles=["arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure"]' >> $GITHUB_OUTPUT
           fi
+  build:
+    needs: check-image-presence
+    if: needs.check-image-presence.outputs.webapp-build-needed == 'true' || needs.check-image-presence.outputs.ops-build-needed  == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.git_ref }}
+      - name: Write build SHA
+        run: git rev-parse HEAD > public/sha
+      - name: Build webapp docker image
+        run: docker build -t "mavis-webapp:latest" .
+      - name: Save web image
+        run: docker save -o image.tar mavis-webapp:latest
+      - name: Upload web image
+        uses: actions/upload-artifact@v4
+        with:
+          name: webapp-image
+          path: image.tar
+      - name: Build ops docker image
+        run: docker build -f ops.Dockerfile -t "mavis-ops:latest" .
+      - name: Save ops image
+        run: docker save -o image.tar mavis-ops:latest
+      - name: Upload ops image
+        uses: actions/upload-artifact@v4
+        with:
+          name: ops-image
+          path: image.tar
   push:
     runs-on: ubuntu-latest
     needs: [build, define-matrix]
@@ -105,11 +120,12 @@ jobs:
     strategy:
       matrix:
         aws-role: ${{ fromJSON(needs.define-matrix.outputs.aws-roles) }}
+        image_type: ["webapp", "ops"]
     steps:
       - name: Download Docker image
         uses: actions/download-artifact@v5
         with:
-          name: image
+          name: ${{ matrix.image_type }}-image
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
@@ -121,6 +137,6 @@ jobs:
       - name: Load Docker image
         run: docker load -i image.tar
       - name: Tag Docker image
-        run: docker tag mavis:latest "${{ steps.login-ecr.outputs.registry }}/mavis/webapp":"$git_ref"
+        run: docker tag mavis-${{ matrix.image_type }}:latest "${{ steps.login-ecr.outputs.registry }}/mavis/${{ matrix.image_type }}":"$git_ref"
       - name: Push Docker image
-        run: docker push "${{ steps.login-ecr.outputs.registry }}/mavis/webapp":"$git_ref"
+        run: docker push "${{ steps.login-ecr.outputs.registry }}/mavis/${{ matrix.image_type }}":"$git_ref"

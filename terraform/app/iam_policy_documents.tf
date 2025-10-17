@@ -1,19 +1,6 @@
 # These data objects do not attach to any AWS sources, instead they simply generate a local resource which can be used
 # to generate the JSON policy document for aws IAM in a terraform-friendly manner with less boiler-plate
 
-data "aws_iam_policy_document" "shell_access" {
-  statement {
-    actions = [
-      "ssmmessages:CreateControlChannel",
-      "ssmmessages:CreateDataChannel",
-      "ssmmessages:OpenControlChannel",
-      "ssmmessages:OpenDataChannel"
-    ]
-    resources = ["*"]
-    effect    = "Allow"
-  }
-}
-
 data "aws_iam_policy_document" "ecs_monitoring" {
   statement {
     actions = [
