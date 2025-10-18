@@ -1,0 +1,32 @@
+<dialog
+  role="dialog"
+  data-module="app-timeout-warning"
+  class="app-timeout-warning"
+  id="app-timeout-warning"
+  aria-labelledby="app-timeout-warning-title"
+  aria-describedby="app-timeout-warning-description"
+  data-turbo-permanent
+>
+  <h2 class="nhsuk-heading-m" id="app-timeout-warning-title">
+    You will be signed out soon
+  </h2>
+
+  <p class="nhsuk-body" aria-hidden="true">
+    For your security, you will be signed out in
+    <span id="app-timeout-warning-timer">2 minutes</span>.
+  </p>
+
+  <p
+    class="nhsuk-body nhsuk-u-visually-hidden"
+    id="app-timeout-warning-description"
+    aria-live="polite"
+    role="status"
+  >
+    For your security, you will be signed out in
+    <span id="app-timeout-warning-timer-accessible">2 minutes</span>.
+  </p>
+
+  <button type="submit" class="nhsuk-button nhsuk-u-margin-bottom-0" autofocus>
+    Stay signed in
+  </button>
+</dialog>
