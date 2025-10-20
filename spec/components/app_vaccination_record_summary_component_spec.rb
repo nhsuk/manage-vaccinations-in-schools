@@ -134,6 +134,17 @@ describe AppVaccinationRecordSummaryComponent do
         )
       end
     end
+
+    context "with full_dose nil" do
+      before { vaccination_record.update_columns(full_dose: nil) }
+
+      it do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Dose volumeUnknown"
+        )
+      end
+    end
   end
 
   describe "dose number row" do
