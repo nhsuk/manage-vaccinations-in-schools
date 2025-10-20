@@ -23,3 +23,5 @@ minimum_reporting_replicas = 2
 maximum_reporting_replicas = 4
 
 active_target_group = "green"
+
+enable_ops_service = true
