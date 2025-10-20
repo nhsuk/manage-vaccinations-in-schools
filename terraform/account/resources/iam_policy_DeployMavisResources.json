@@ -136,6 +136,7 @@
         "secretsmanager:PutSecretValue",
         "secretsmanager:UpdateSecret",
         "secretsmanager:GetSecretValue",
+        "secretsmanager:GetRandomPassword",
         "secretsmanager:RotateSecret",
         "secretsmanager:DeleteSecret",
         "secretsmanager:CancelRotateSecret",

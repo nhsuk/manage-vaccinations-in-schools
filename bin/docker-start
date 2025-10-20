@@ -8,6 +8,9 @@ if [ "$SERVER_TYPE" == "web" ]; then
 elif [ "$SERVER_TYPE" == "sidekiq" ]; then
   echo "Starting sidekiq server..."
   exec "$BIN_DIR"/sidekiq
+elif [ "$SERVER_TYPE" == "data-replication" ]; then
+  echo "Starting data replication server..."
+  exec "$BIN_DIR"/data-replication
 elif [ "$SERVER_TYPE" == "none" ]; then
   echo "No server started"
   exec tail -f /dev/null  # Keep container running
