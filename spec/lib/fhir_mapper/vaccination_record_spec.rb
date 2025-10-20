@@ -397,7 +397,7 @@ describe FHIRMapper::VaccinationRecord do
       its(:nhs_immunisations_api_primary_source) { should be true }
     end
 
-    context "with a record with an unexpected dose unit" do
+    context "with a record with an unexpected dose unit, and is nasal flu" do
       let(:fhir_immunization) do
         FHIR.from_contents(
           file_fixture("/fhir/fhir_record_unexpected_dose_unit.json").read
@@ -425,7 +425,7 @@ describe FHIRMapper::VaccinationRecord do
       its(:performed_at) { should eq Time.parse("2025-04-06T23:59:50.2+01:00") }
       its(:delivery_method) { should eq "nasal_spray" }
       its(:delivery_site) { should eq "nose" }
-      its(:full_dose) { should be true }
+      its(:full_dose) { should be_nil }
       its(:outcome) { should eq "administered" }
       its(:location) { should have_attributes(urn: "100006") }
       its(:location_name) { should be_nil }
@@ -544,6 +544,31 @@ describe FHIRMapper::VaccinationRecord do
 
       its(:vaccine) do
         should have_attributes(snomed_product_code: "43208811000001106")
+      end
+
+      its(:batch) { should be_nil }
+      its(:performed_at) { should eq Time.parse("2025-10-06T00:00:00+00:00") }
+      its(:delivery_method) { should be_nil }
+      its(:delivery_site) { should be_nil }
+      its(:full_dose) { should be_nil }
+      its(:location_name) { should eq "B12345" }
+      its(:outcome) { should eq "administered" }
+      its(:performed_ods_code) { should eq "B12345" }
+
+      its(:notes) { should be_nil }
+    end
+
+    context "with a record that is im flu, and is missing dose quantity" do
+      let(:fhir_immunization) do
+        FHIR.from_contents(
+          file_fixture("fhir/fhir_record_im_missing_dose.json").read
+        )
+      end
+
+      include_examples "a mapped vaccination record (common fields)"
+
+      its(:vaccine) do
+        should have_attributes(snomed_product_code: "43207411000001105")
       end
 
       its(:batch) { should be_nil }
