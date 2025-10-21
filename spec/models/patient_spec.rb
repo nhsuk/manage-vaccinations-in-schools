@@ -377,9 +377,9 @@ describe Patient do
       it { should eq([patient_a, patient_b, patient_c]) }
     end
 
-    describe "#consent_given_and_ready_to_vaccinate" do
+    describe "#consent_given_and_safe_to_vaccinate" do
       subject(:scope) do
-        described_class.consent_given_and_ready_to_vaccinate(
+        described_class.consent_given_and_safe_to_vaccinate(
           programmes:,
           academic_year:,
           vaccine_method:

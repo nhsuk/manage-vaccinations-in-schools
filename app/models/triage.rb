@@ -4,18 +4,19 @@
 #
 # Table name: triages
 #
-#  id                   :bigint           not null, primary key
-#  academic_year        :integer          not null
-#  invalidated_at       :datetime
-#  notes                :text             default(""), not null
-#  status               :integer          not null
-#  vaccine_method       :integer
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  patient_id           :bigint           not null
-#  performed_by_user_id :bigint           not null
-#  programme_id         :bigint           not null
-#  team_id              :bigint           not null
+#  id                      :bigint           not null, primary key
+#  academic_year           :integer          not null
+#  delay_vaccination_until :date
+#  invalidated_at          :datetime
+#  notes                   :text             default(""), not null
+#  status                  :integer          not null
+#  vaccine_method          :integer
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#  patient_id              :bigint           not null
+#  performed_by_user_id    :bigint           not null
+#  programme_id            :bigint           not null
+#  team_id                 :bigint           not null
 #
 # Indexes
 #
@@ -35,6 +36,7 @@
 class Triage < ApplicationRecord
   include Invalidatable
   include Notable
+  include PerformableByUser
 
   audited associated_with: :patient
 
@@ -42,15 +44,11 @@ class Triage < ApplicationRecord
   belongs_to :programme
   belongs_to :team
 
-  belongs_to :performed_by,
-             class_name: "User",
-             foreign_key: :performed_by_user_id
-
   enum :status,
        {
-         ready_to_vaccinate: 0,
+         safe_to_vaccinate: 0,
          do_not_vaccinate: 1,
-         needs_follow_up: 2,
+         keep_in_triage: 2,
          delay_vaccination: 3
        },
        validate: true
@@ -58,6 +56,14 @@ class Triage < ApplicationRecord
   enum :vaccine_method,
        { injection: 0, nasal: 1 },
        validate: {
-         if: :ready_to_vaccinate?
+         if: :safe_to_vaccinate?
        }
+
+  scope :delay_vaccination_until_in_past,
+        -> { where(delay_vaccination_until: ...Date.current) }
+
+  scope :should_be_invalidated,
+        -> { delay_vaccination_until_in_past.not_invalidated }
+
+  validates :delay_vaccination_until, absence: true, unless: :delay_vaccination?
 end

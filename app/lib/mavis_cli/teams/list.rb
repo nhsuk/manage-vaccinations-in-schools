@@ -19,16 +19,22 @@ module MavisCLI
                     "Could not find organisation with ODS code: #{ods_code}"
             end
 
-            organisation.teams
+            organisation.teams.includes(:programmes)
           else
-            Team.all
-          end.map do |team|
-            team.attributes.merge(ods_code: team.organisation.ods_code)
+            Team.includes(:programmes)
+          end
+
+        rows =
+          teams.find_each.map do |team|
+            team.slice(:id, :name, :workgroup).merge(
+              ods_code: team.organisation.ods_code,
+              programmes: team.programmes.map(&:name).join(", ")
+            )
           end
 
         puts TableTennis.new(
-               teams,
-               columns: %i[id name ods_code workgroup],
+               rows,
+               columns: %i[id name ods_code workgroup programmes],
                zebra: true
              )
       end

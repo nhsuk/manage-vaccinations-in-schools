@@ -2,9 +2,6 @@
 
 module FHIRMapper
   class VaccinationRecord
-    class UnknownVaccine < StandardError
-    end
-
     delegate_missing_to :@vaccination_record
 
     MAVIS_SYSTEM_NAME =
@@ -64,6 +61,15 @@ module FHIRMapper
 
       attrs[:nhs_immunisations_api_id] = fhir_record.id
       attrs[:nhs_immunisations_api_synced_at] = Time.current
+      attrs[:nhs_immunisations_api_identifier_system] = fhir_record
+        .identifier
+        .sole
+        .system
+      attrs[:nhs_immunisations_api_identifier_value] = fhir_record
+        .identifier
+        .sole
+        .value
+      attrs[:nhs_immunisations_api_primary_source] = fhir_record.primarySource
 
       attrs[:programme] = programme_from_fhir(fhir_record)
 
@@ -85,8 +91,6 @@ module FHIRMapper
         attrs[:location_name] = fhir_record.location.identifier.value
       end
 
-      # TODO: There is also a `display` field which could be used to identify the origin of the record,
-      #       but this is not marked as required on the schema, so is likely to be unreliable
       attrs[:performed_ods_code] = org_performer_ods_code_from_fhir(fhir_record)
 
       user_performer_name = user_performer_name_from_fhir(fhir_record)
@@ -96,10 +100,7 @@ module FHIRMapper
       attrs[:delivery_method] = delivery_method_from_fhir(fhir_record)
       attrs[:delivery_site] = site_from_fhir(fhir_record)
 
-      attrs[:dose_sequence] = fhir_record
-        .protocolApplied
-        .first
-        .doseNumberPositiveInt
+      attrs[:dose_sequence] = dose_sequence_from_fhir(fhir_record)
 
       attrs[:vaccine] = Vaccine.from_fhir_record(fhir_record)
 
@@ -217,6 +218,8 @@ module FHIRMapper
     private_class_method def self.dose_volume_ml_from_fhir(fhir_record)
       dq = fhir_record.doseQuantity
 
+      return if dq.blank?
+
       if MILLILITER_SUB_STRINGS.any? { dq.unit.downcase.starts_with?(it) }
         dq.value.to_f
       end
@@ -265,8 +268,9 @@ module FHIRMapper
           .performer
           .reject { it.actor&.type == "Organization" }
           .map { it.actor.reference&.sub("#", "") }
+          .compact
       user_actor =
-        fhir_record.contained.find do |c|
+        fhir_record.contained&.find do |c|
           c.id.in?(performer_references) && c.resourceType == "Practitioner"
         end
       user_actor&.name&.find { it&.use == "official" } ||
@@ -300,8 +304,15 @@ module FHIRMapper
       )
     end
 
+    private_class_method def self.dose_sequence_from_fhir(fhir_record)
+      # TODO: currently we only look at `doseNumberPositiveInt` but often `doseNumberString` is populated instead
+      #       This doesn't matter much for flu, but this may need to be revisited when we start consuming programmes
+      #       where dose number matters more (eg MMR)
+      fhir_record.protocolApplied.sole.doseNumberPositiveInt
+    end
+
     private_class_method def self.programme_from_fhir(fhir_record)
-      target_diseases = fhir_record.protocolApplied.first.targetDisease
+      target_diseases = fhir_record.protocolApplied.sole.targetDisease
       target_diseases_codes =
         target_diseases.map do |disease|
           disease
@@ -309,8 +320,9 @@ module FHIRMapper
             .find { |coding| coding.system == "http://snomed.info/sct" }
             .code
         end
-      # This may need to change when we start consuming programmes which have multiple target diseases, eg MMR
-      target_disease_code = target_diseases_codes.first
+
+      # TODO: This may need to change when we start consuming programmes which have multiple target diseases, eg MMR
+      target_disease_code = target_diseases_codes.sole
 
       ::Programme.find_by(
         type: ::Programme::SNOMED_TARGET_DISEASE_CODES.key(target_disease_code)
@@ -318,9 +330,11 @@ module FHIRMapper
     end
 
     private_class_method def self.batch_from_fhir(fhir_record, vaccine:)
+      return if fhir_record.lotNumber&.to_s&.presence.nil?
+
       ::Batch.create_with(archived_at: Time.current).find_or_create_by!(
         expiry: fhir_record.expirationDate&.to_date,
-        name: fhir_record.lotNumber.to_s,
+        name: fhir_record.lotNumber&.to_s,
         team: nil,
         vaccine:
       )

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_10_125658) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -420,6 +420,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_10_125658) do
     t.integer "academic_year", null: false
     t.index ["location_id", "academic_year", "programme_id", "year_group"], name: "idx_on_location_id_academic_year_programme_id_year__6ad5e2b67d", unique: true
     t.index ["programme_id"], name: "index_location_programme_year_groups_on_programme_id"
+  end
+
+  create_table "location_year_groups", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.integer "academic_year", null: false
+    t.integer "value", null: false
+    t.integer "source", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id", "academic_year", "value"], name: "idx_on_location_id_academic_year_value_d553b03752", unique: true
+    t.index ["location_id"], name: "index_location_year_groups_on_location_id"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -867,6 +878,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_10_125658) do
     t.datetime "invalidated_at"
     t.integer "vaccine_method"
     t.integer "academic_year", null: false
+    t.date "delay_vaccination_until"
     t.index ["academic_year"], name: "index_triages_on_academic_year"
     t.index ["patient_id"], name: "index_triages_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_triages_on_performed_by_user_id"
@@ -931,6 +943,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_10_125658) do
     t.bigint "location_id"
     t.bigint "supplied_by_user_id"
     t.integer "source", null: false
+    t.string "nhs_immunisations_api_identifier_system"
+    t.string "nhs_immunisations_api_identifier_value"
+    t.boolean "nhs_immunisations_api_primary_source"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
     t.index ["id"], name: "index_vaccination_records_on_pending_changes_not_empty", where: "(pending_changes <> '{}'::jsonb)"
@@ -1031,6 +1046,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_10_125658) do
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records", on_delete: :cascade
   add_foreign_key "location_programme_year_groups", "locations", on_delete: :cascade
   add_foreign_key "location_programme_year_groups", "programmes", on_delete: :cascade
+  add_foreign_key "location_year_groups", "locations", on_delete: :cascade
   add_foreign_key "locations", "subteams"
   add_foreign_key "notes", "patients"
   add_foreign_key "notes", "sessions"
@@ -1111,6 +1127,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_10_125658) do
       COALESCE(la.mhclg_code, ''::character varying) AS patient_local_authority_code,
       school.id AS patient_school_id,
       school.name AS patient_school_name,
+      pl.location_id AS session_location_id,
           CASE
               WHEN (p.birth_academic_year IS NOT NULL) THEN ((s.academic_year - p.birth_academic_year) - 5)
               ELSE NULL::integer

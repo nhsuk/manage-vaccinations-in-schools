@@ -25,7 +25,7 @@ module Stats
 
     def sessions
       @sessions ||=
-        Session
+        ::Session
           .joins(:session_programmes)
           .where(
             team: @teams,

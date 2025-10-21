@@ -60,8 +60,8 @@ describe TriagePolicy do
       let(:team) { create(:team) }
       let(:user) { create(:user, team:) }
 
-      let(:team_batch) { create(:triage, team:) }
-      let(:non_team_batch) { create(:triage) }
+      let(:team_batch) { create(:triage, :safe_to_vaccinate, team:) }
+      let(:non_team_batch) { create(:triage, :safe_to_vaccinate) }
 
       it { should include(team_batch) }
       it { should_not include(non_team_batch) }

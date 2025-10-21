@@ -128,6 +128,14 @@ describe API::Reporting::TotalsController do
     let(:hpv_session) { create(:session, team:, programmes: [hpv_programme]) }
     let(:flu_programme) { create(:programme, :flu, teams: [team]) }
     let(:flu_session) { create(:session, team:, programmes: [flu_programme]) }
+    let(:menacwy_programme) { create(:programme, :menacwy, teams: [team]) }
+    let(:menacwy_session) do
+      create(:session, team:, programmes: [menacwy_programme])
+    end
+    let(:td_ipv_programme) { create(:programme, :td_ipv, teams: [team]) }
+    let(:td_ipv_session) do
+      create(:session, team:, programmes: [td_ipv_programme])
+    end
 
     let(:cohort) { parsed_response["cohort"] }
     let(:vaccinated) { parsed_response["vaccinated"] }
@@ -150,7 +158,7 @@ describe API::Reporting::TotalsController do
       expect(response).to have_http_status(:ok)
     end
 
-    it "AC1: child vaccinated by SAIS" do
+    it "child vaccinated by SAIS" do
       patient = create(:patient, session: hpv_session)
       create(
         :vaccination_record,
@@ -178,7 +186,7 @@ describe API::Reporting::TotalsController do
       expect(monthly["count"]).to eq(1)
     end
 
-    it "AC2: historic record uploaded" do
+    it "historic record uploaded" do
       patient = create(:patient, session: hpv_session)
       create(
         :vaccination_record,
@@ -200,7 +208,7 @@ describe API::Reporting::TotalsController do
       expect(monthly_vaccinations_given).to be_empty
     end
 
-    it "AC3: child already had vaccination" do
+    it "child already had vaccination" do
       patient = create(:patient, session: hpv_session)
       create(
         :vaccination_record,
@@ -220,7 +228,7 @@ describe API::Reporting::TotalsController do
       expect(monthly_vaccinations_given).to be_empty
     end
 
-    it "AC4: vaccination imported from FHIR API" do
+    it "vaccination imported from FHIR API" do
       patient = create(:patient, session: flu_session)
 
       create(
@@ -229,6 +237,8 @@ describe API::Reporting::TotalsController do
         programme: flu_programme,
         session: nil,
         source: "nhs_immunisations_api",
+        nhs_immunisations_api_identifier_system: "ABC",
+        nhs_immunisations_api_identifier_value: "123",
         outcome: "administered",
         performed_at: 3.months.ago
       )
@@ -243,7 +253,7 @@ describe API::Reporting::TotalsController do
       expect(monthly_vaccinations_given).to be_empty
     end
 
-    it "AC5: already had and FHIR API import" do
+    it "already had and FHIR API import" do
       patient = create(:patient, session: flu_session)
 
       create(
@@ -260,6 +270,8 @@ describe API::Reporting::TotalsController do
         programme: flu_programme,
         session: nil,
         source: "nhs_immunisations_api",
+        nhs_immunisations_api_identifier_system: "ABC",
+        nhs_immunisations_api_identifier_value: "123",
         outcome: "administered",
         performed_at: 3.months.ago
       )
@@ -274,7 +286,7 @@ describe API::Reporting::TotalsController do
       expect(monthly_vaccinations_given).to be_empty
     end
 
-    it "AC6: ineligible vaccination imported from FHIR API" do
+    it "ineligible vaccination imported from FHIR API" do
       patient = create(:patient, session: flu_session)
 
       create(
@@ -283,6 +295,8 @@ describe API::Reporting::TotalsController do
         programme: flu_programme,
         session: nil,
         source: "nhs_immunisations_api",
+        nhs_immunisations_api_identifier_system: "ABC",
+        nhs_immunisations_api_identifier_value: "123",
         outcome: "administered",
         performed_at: 1.year.ago
       )
@@ -297,7 +311,7 @@ describe API::Reporting::TotalsController do
       expect(monthly_vaccinations_given).to be_empty
     end
 
-    it "AC7: child refuses vaccination" do
+    it "child refuses vaccination" do
       patient = create(:patient, session: hpv_session)
       create(
         :vaccination_record,
@@ -318,7 +332,7 @@ describe API::Reporting::TotalsController do
       expect(monthly_vaccinations_given).to be_empty
     end
 
-    it "AC8: parent refuses consent" do
+    it "parent refuses consent" do
       patient = create(:patient, session: flu_session)
       create(
         :vaccination_record,
@@ -340,7 +354,7 @@ describe API::Reporting::TotalsController do
       expect(monthly_vaccinations_given).to be_empty
     end
 
-    it "AC9: child moves in with eligible vaccination record" do
+    it "child moves in with eligible vaccination record" do
       other_team = create(:team, programmes: [flu_programme])
       other_session =
         create(:session, team: other_team, programmes: [flu_programme])
@@ -365,7 +379,7 @@ describe API::Reporting::TotalsController do
       expect(monthly_vaccinations_given).to be_empty
     end
 
-    it "AC10: child moves out with eligible vaccination record" do
+    it "child moves out with eligible vaccination record" do
       other_team = create(:team, programmes: [flu_programme])
       other_session =
         create(:session, team: other_team, programmes: [flu_programme])
@@ -388,6 +402,141 @@ describe API::Reporting::TotalsController do
       expect(vaccinated_by_sais).to eq(0)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
+    end
+
+    it "counts HPV cohort correctly across years 8 to 11" do
+      create(:patient, session: hpv_session, year_group: 8)
+      create(:patient, session: hpv_session, year_group: 8)
+      create(:patient, session: hpv_session, year_group: 9)
+      create(:patient, session: hpv_session, year_group: 10)
+      create(:patient, session: hpv_session, year_group: 11)
+
+      create(:patient, session: hpv_session, year_group: 7)
+      create(:patient, session: hpv_session, year_group: 12)
+
+      refresh_and_get_totals
+
+      expect(cohort).to eq(5)
+    end
+
+    it "counts flu cohort correctly across reception to year 11" do
+      create(:patient, session: flu_session, year_group: 0)
+      create(:patient, session: flu_session, year_group: 1)
+      create(:patient, session: flu_session, year_group: 5)
+      create(:patient, session: flu_session, year_group: 11)
+
+      create(:patient, session: flu_session, year_group: 12)
+      create(:patient, session: flu_session, year_group: 13)
+
+      refresh_and_get_totals(programme_type: "flu")
+
+      expect(cohort).to eq(4)
+    end
+
+    it "counts MenACWY cohort correctly across years 9 to 11" do
+      create(:patient, session: menacwy_session, year_group: 9)
+      create(:patient, session: menacwy_session, year_group: 10)
+      create(:patient, session: menacwy_session, year_group: 11)
+
+      create(:patient, session: menacwy_session, year_group: 8)
+      create(:patient, session: menacwy_session, year_group: 12)
+
+      refresh_and_get_totals(programme_type: "menacwy")
+
+      expect(cohort).to eq(3)
+    end
+
+    it "counts Td/IPV cohort correctly across years 9 to 11" do
+      create(:patient, session: td_ipv_session, year_group: 9)
+      create(:patient, session: td_ipv_session, year_group: 10)
+      create(:patient, session: td_ipv_session, year_group: 11)
+
+      create(:patient, session: td_ipv_session, year_group: 8)
+      create(:patient, session: td_ipv_session, year_group: 12)
+
+      refresh_and_get_totals(programme_type: "td_ipv")
+
+      expect(cohort).to eq(3)
+    end
+
+    it "counts year 12 students when session location has year 12 enabled" do
+      send_location =
+        create(
+          :school,
+          gias_year_groups: (0..12).to_a,
+          team:,
+          programmes: [flu_programme],
+          academic_year: AcademicYear.current
+        )
+      send_session =
+        create(
+          :session,
+          location: send_location,
+          team:,
+          programmes: [flu_programme]
+        )
+
+      create(
+        :location_programme_year_group,
+        location: send_location,
+        programme: flu_programme,
+        year_group: 12,
+        academic_year: AcademicYear.current
+      )
+
+      create(:patient, session: send_session, year_group: 11)
+      create(:patient, session: send_session, year_group: 12)
+
+      create(:patient, session: flu_session, year_group: 12)
+
+      refresh_and_get_totals(programme_type: "flu")
+
+      expect(cohort).to eq(2)
+    end
+
+    it "does not count year 12 students without SEND school enablement" do
+      create(:patient, session: hpv_session, year_group: 12)
+      create(:patient, session: flu_session, year_group: 12)
+      create(:patient, session: menacwy_session, year_group: 12)
+      create(:patient, session: td_ipv_session, year_group: 12)
+
+      refresh_and_get_totals(programme_type: "hpv")
+      expect(cohort).to eq(0)
+
+      refresh_and_get_totals(programme_type: "flu")
+      expect(cohort).to eq(0)
+
+      refresh_and_get_totals(programme_type: "menacwy")
+      expect(cohort).to eq(0)
+
+      refresh_and_get_totals(programme_type: "td_ipv")
+      expect(cohort).to eq(0)
+    end
+
+    it "does not count year 7 students for HPV, MenACWY and Td/IPV" do
+      create(:patient, session: hpv_session, year_group: 7)
+      create(:patient, session: menacwy_session, year_group: 7)
+      create(:patient, session: td_ipv_session, year_group: 7)
+
+      refresh_and_get_totals(programme_type: "hpv")
+      expect(cohort).to eq(0)
+
+      refresh_and_get_totals(programme_type: "menacwy")
+      expect(cohort).to eq(0)
+
+      refresh_and_get_totals(programme_type: "td_ipv")
+      expect(cohort).to eq(0)
+    end
+
+    it "does not count year 8 students for MenACWY and Td/IPV" do
+      create(:patient, session: menacwy_session, year_group: 8)
+      create(:patient, session: td_ipv_session, year_group: 8)
+
+      refresh_and_get_totals(programme_type: "menacwy")
+      expect(cohort).to eq(0)
+
+      refresh_and_get_totals(programme_type: "td_ipv")
+      expect(cohort).to eq(0)
     end
   end
 end

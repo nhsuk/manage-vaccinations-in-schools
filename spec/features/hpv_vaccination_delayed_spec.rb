@@ -6,7 +6,7 @@ describe "HPV vaccination" do
   scenario "Delayed (unwell)" do
     given_i_am_signed_in
 
-    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    when_i_go_to_a_patient_that_is_safe_to_vaccinate
     and_i_record_that_the_patient_was_unwell
     then_i_see_the_confirmation_page
 
@@ -46,7 +46,7 @@ describe "HPV vaccination" do
     sign_in @team.users.first
   end
 
-  def when_i_go_to_a_patient_that_is_ready_to_vaccinate
+  def when_i_go_to_a_patient_that_is_safe_to_vaccinate
     visit session_record_path(@session)
     click_link @patient.full_name
   end

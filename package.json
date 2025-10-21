@@ -4,10 +4,10 @@
   "dependencies": {
     "@hotwired/turbo-rails": "^8.0.18",
     "accessible-autocomplete": "^3.0.1",
-    "esbuild": "^0.25.10",
+    "esbuild": "^0.25.11",
     "govuk-frontend": "^5.13.0",
     "idb": "^8.0.3",
-    "nhsuk-frontend": "^10.0.0",
+    "nhsuk-frontend": "^10.1.0",
     "sass": "^1.93.2"
   },
   "scripts": {

@@ -13,7 +13,16 @@ class PatientsAgedOutOfSchoolJob < ApplicationJob
         year_group = patient.year_group(academic_year:)
         school = patient.school
 
-        next if school.gias_year_groups.include?(year_group)
+        # Year groups not yet set up for the next academic year.
+        next if school.location_year_groups.where(academic_year:).empty?
+
+        # Year group is valid for the school.
+        if school.location_year_groups.exists?(
+             academic_year:,
+             value: year_group
+           )
+          next
+        end
 
         team = school.team
 

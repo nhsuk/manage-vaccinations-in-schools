@@ -73,7 +73,7 @@ class StatusGenerator::Triage
 
   def status_should_be_safe_to_vaccinate?
     return false if vaccinated?
-    latest_triage&.ready_to_vaccinate?
+    latest_triage&.safe_to_vaccinate?
   end
 
   def status_should_be_do_not_vaccinate?
@@ -88,7 +88,7 @@ class StatusGenerator::Triage
 
   def status_should_be_required?
     return false if vaccinated?
-    return true if latest_triage&.needs_follow_up?
+    return true if latest_triage&.keep_in_triage?
 
     return false if latest_consents.empty?
 

@@ -2,10 +2,10 @@ en:
   status:
     label:
       consent: Consent status
+      patient_specific_direction: PSD status
       register: Registration status
       triage: Triage status
       vaccination: Outcome
-      patient_specific_direction: PSD status
     consent:
       label:
         conflicts: Conflicting consent
@@ -23,23 +23,13 @@ en:
         no_response: grey
         not_required: grey
         refused: red
-    triage:
+    patient_specific_direction:
       label:
-        delay_vaccination: Delay vaccination
-        do_not_vaccinate: Do not vaccinate
-        not_required: No triage needed
-        required: Needs triage
-        safe_to_vaccinate: Safe to vaccinate
-        safe_to_vaccinate_injection: Safe to vaccinate with injection
-        safe_to_vaccinate_nasal: Safe to vaccinate with nasal spray
+        added: PSD added
+        not_added: PSD not added
       colour:
-        delay_vaccination: dark-orange
-        do_not_vaccinate: red
-        not_required: grey
-        required: blue
-        safe_to_vaccinate: aqua-green
-        safe_to_vaccinate_injection: aqua-green
-        safe_to_vaccinate_nasal: aqua-green
+        added: green
+        not_added: grey
     register:
       label:
         attending: Attending session
@@ -70,7 +60,24 @@ en:
         refused: red
         unwell: dark-orange
         vaccinated: green
-    programme:
+    triage:
+      label:
+        delay_vaccination: Delay vaccination
+        do_not_vaccinate: Do not vaccinate
+        not_required: No triage needed
+        required: Needs triage
+        safe_to_vaccinate: Safe to vaccinate
+        safe_to_vaccinate_injection: Safe to vaccinate with injection
+        safe_to_vaccinate_nasal: Safe to vaccinate with nasal spray
+      colour:
+        delay_vaccination: dark-orange
+        do_not_vaccinate: red
+        not_required: grey
+        required: blue
+        safe_to_vaccinate: aqua-green
+        safe_to_vaccinate_injection: aqua-green
+        safe_to_vaccinate_nasal: aqua-green
+    vaccination:
       label:
         could_not_vaccinate: Could not vaccinate
         none_yet: No outcome
@@ -79,10 +86,3 @@ en:
         could_not_vaccinate: red
         none_yet: white
         vaccinated: green
-    patient_specific_direction:
-      label:
-        added: PSD added
-        not_added: PSD not added
-      colour:
-        added: green
-        not_added: grey

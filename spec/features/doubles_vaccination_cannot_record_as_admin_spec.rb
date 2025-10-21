@@ -5,7 +5,7 @@ describe "MenACWY and Td/IPV vaccination" do
 
   scenario "Cannot be recorded by a medical secretary" do
     given_i_am_signed_in_as_an_admin
-    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    when_i_go_to_a_patient_that_is_safe_to_vaccinate
     then_i_cannot_record_that_the_patient_has_been_vaccinated
   end
 
@@ -33,7 +33,7 @@ describe "MenACWY and Td/IPV vaccination" do
     visit "/"
   end
 
-  def when_i_go_to_a_patient_that_is_ready_to_vaccinate
+  def when_i_go_to_a_patient_that_is_safe_to_vaccinate
     visit session_register_path(@session)
     choose "Not registered yet"
     click_on "Update results"

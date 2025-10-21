@@ -73,7 +73,8 @@ describe "mavis vaccination-records sync" do
         patient:,
         programme:,
         nhs_immunisations_api_synced_at: Time.current,
-        nhs_immunisations_api_id: Random.uuid
+        nhs_immunisations_api_id: Random.uuid,
+        nhs_immunisations_api_primary_source: true
       )
   end
 

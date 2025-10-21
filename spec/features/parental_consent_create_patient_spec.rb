@@ -29,7 +29,7 @@ describe "Parental consent create patient" do
     and_the_unmatched_consent_responses_page_is_empty
 
     when_they_check_triage
-    then_the_patient_should_be_ready_to_vaccinate
+    then_the_patient_should_be_safe_to_vaccinate
   end
 
   scenario "Consent form doesn't match an NHS number" do
@@ -56,7 +56,7 @@ describe "Parental consent create patient" do
     and_the_unmatched_consent_responses_page_is_empty
 
     when_they_check_triage
-    then_the_patient_should_be_ready_to_vaccinate
+    then_the_patient_should_be_safe_to_vaccinate
   end
 
   def given_the_app_is_setup
@@ -206,7 +206,7 @@ describe "Parental consent create patient" do
     within(".app-secondary-navigation") { click_on "Children" }
   end
 
-  def then_the_patient_should_be_ready_to_vaccinate
+  def then_the_patient_should_be_safe_to_vaccinate
     expect(page).to have_content(@child.full_name)
     click_on @child.full_name
     expect(page).to have_content(

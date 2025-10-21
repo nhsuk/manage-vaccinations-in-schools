@@ -29,12 +29,7 @@ describe TriageMailerConcern do
 
     context "when the parents agree, triage is required and it is safe to vaccinate" do
       let(:patient) do
-        create(
-          :patient,
-          :consent_given_triage_needed,
-          :triage_ready_to_vaccinate,
-          session:
-        )
+        create(:patient, :consent_given_triage_safe_to_vaccinate, session:)
       end
 
       it "sends an email saying triage was needed and vaccination will happen" do
@@ -71,12 +66,7 @@ describe TriageMailerConcern do
 
     context "when the parents agree, triage is required and vaccination should be delayed" do
       let(:patient) do
-        create(
-          :patient,
-          :consent_given_triage_needed,
-          :triage_delay_vaccination,
-          session:
-        )
+        create(:patient, :consent_given_triage_delay_vaccination, session:)
       end
 
       it "sends an email saying triage was needed but vaccination won't happen" do

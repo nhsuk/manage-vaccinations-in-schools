@@ -15,6 +15,7 @@ describe FHIRMapper::VaccinationRecord do
   let(:vaccination_outcome) { :administered }
   let(:vaccine) { vaccination_record.vaccine }
   let(:nhs_immunisations_api_id) { nil }
+  let(:nhs_immunisations_api_primary_source) { nil }
   let(:vaccination_record) do
     create(
       :vaccination_record,
@@ -24,7 +25,8 @@ describe FHIRMapper::VaccinationRecord do
       session:,
       vaccine: programme.vaccines.first,
       outcome: vaccination_outcome,
-      nhs_immunisations_api_id:
+      nhs_immunisations_api_id:,
+      nhs_immunisations_api_primary_source:
     )
   end
   let(:user) { vaccination_record.performed_by_user }
@@ -41,6 +43,7 @@ describe FHIRMapper::VaccinationRecord do
 
       context "when the vaccination record has a UUID" do
         let(:nhs_immunisations_api_id) { "1212-1212-1212-121212121212" }
+        let(:nhs_immunisations_api_primary_source) { true }
 
         it { should eq "1212-1212-1212-121212121212" }
       end
@@ -331,6 +334,14 @@ describe FHIRMapper::VaccinationRecord do
 
       include_examples "a mapped vaccination record (common fields)"
 
+      its(:nhs_immunisations_api_identifier_system) do
+        should eq "https://supplierABC/identifiers/vacc"
+      end
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "aaaabbbb-0000-1111-3333-ffff77773333"
+      end
+
       its(:performed_by_given_name) { should eq "Steph" }
       its(:performed_by_family_name) { should eq "Smith" }
       its(:batch) { should have_attributes(name: "4120Z001") }
@@ -347,6 +358,7 @@ describe FHIRMapper::VaccinationRecord do
       its(:location) { should have_attributes(urn: "100006") }
       its(:location_name) { should be_nil }
       its(:performed_ods_code) { should eq "B0C4P" }
+      its(:nhs_immunisations_api_primary_source) { should be true }
     end
 
     context "with a record with not full dose" do
@@ -357,6 +369,14 @@ describe FHIRMapper::VaccinationRecord do
       end
 
       include_examples "a mapped vaccination record (common fields)"
+
+      its(:nhs_immunisations_api_identifier_system) do
+        should eq "https://supplierABC/identifiers/vacc"
+      end
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "aaaabbbb-0000-1111-3333-ffff77773333"
+      end
 
       its(:performed_by_given_name) { should eq "Steph" }
       its(:performed_by_family_name) { should eq "Smith" }
@@ -374,6 +394,7 @@ describe FHIRMapper::VaccinationRecord do
       its(:location) { should have_attributes(urn: "100006") }
       its(:location_name) { should be_nil }
       its(:performed_ods_code) { should eq "B0C4P" }
+      its(:nhs_immunisations_api_primary_source) { should be true }
     end
 
     context "with a record with an unexpected dose unit" do
@@ -384,6 +405,14 @@ describe FHIRMapper::VaccinationRecord do
       end
 
       include_examples "a mapped vaccination record (common fields)"
+
+      its(:nhs_immunisations_api_identifier_system) do
+        should eq "https://supplierABC/identifiers/vacc"
+      end
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "aaaabbbb-0000-1111-3333-ffff77773333"
+      end
 
       its(:performed_by_given_name) { should eq "Steph" }
       its(:performed_by_family_name) { should eq "Smith" }
@@ -412,6 +441,14 @@ describe FHIRMapper::VaccinationRecord do
 
       include_examples "a mapped vaccination record (common fields)"
 
+      its(:nhs_immunisations_api_identifier_system) do
+        should eq "https://nivs.ardengemcsu.nhs.uk/FluSAIS"
+      end
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "https://nivs.ardengemcsu.nhs.uk/FluSAIS167327923"
+      end
+
       its(:performed_by_given_name) { should be_nil }
       its(:performed_by_family_name) { should be_nil }
       its(:batch) { should have_attributes(name: "YF3276") }
@@ -428,6 +465,7 @@ describe FHIRMapper::VaccinationRecord do
       its(:location) { should have_attributes(urn: "100006") }
       its(:location_name) { should be_nil }
       its(:performed_ods_code) { should eq "B0C4P" }
+      its(:nhs_immunisations_api_primary_source) { should be true }
     end
 
     context "with a record that has an unknown vaccine" do
@@ -439,6 +477,14 @@ describe FHIRMapper::VaccinationRecord do
 
       include_examples "a mapped vaccination record (common fields)"
 
+      its(:nhs_immunisations_api_identifier_system) do
+        should eq "https://supplierABC/identifiers/vacc"
+      end
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "aaaabbbb-0000-1111-3333-ffff77773333"
+      end
+
       its(:vaccine) { should be_nil }
       its(:batch) { should be_nil }
       its(:performed_at) { should eq Time.parse("2025-04-06T23:59:50.2+01:00") }
@@ -448,6 +494,7 @@ describe FHIRMapper::VaccinationRecord do
       its(:location_name) { should eq "X99999" }
       its(:outcome) { should eq "administered" }
       its(:performed_ods_code) { should eq "B0C4P" }
+      its(:nhs_immunisations_api_primary_source) { should be true }
 
       its(:notes) do
         should include(
@@ -459,12 +506,18 @@ describe FHIRMapper::VaccinationRecord do
       end
     end
 
-    context "with a record that has an null vaccine (minimum record from real GP)" do
+    context "with a record from a GP which is very sparse" do
       let(:fhir_immunization) do
         FHIR.from_contents(file_fixture("fhir/fhir_record_gp.json").read)
       end
 
       include_examples "a mapped vaccination record (common fields)"
+
+      its(:nhs_immunisations_api_identifier_system) { should eq "YGJ" }
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "046D1E37-C498-40E9-95FB-5E156F740804"
+      end
 
       its(:vaccine) { should be_nil }
       its(:batch) { should be_nil }
@@ -475,8 +528,61 @@ describe FHIRMapper::VaccinationRecord do
       its(:location_name) { should eq "B12345" }
       its(:outcome) { should eq "administered" }
       its(:performed_ods_code) { should eq "B12345" }
+      its(:nhs_immunisations_api_primary_source) { should be false }
 
       its(:notes) { should be_nil }
+    end
+
+    context "with a record that is nasal flu, and is missing dose quantity (from real GP)" do
+      let(:fhir_immunization) do
+        FHIR.from_contents(
+          file_fixture("fhir/fhir_record_nasal_missing_dose.json").read
+        )
+      end
+
+      include_examples "a mapped vaccination record (common fields)"
+
+      its(:vaccine) do
+        should have_attributes(snomed_product_code: "43208811000001106")
+      end
+
+      its(:batch) { should be_nil }
+      its(:performed_at) { should eq Time.parse("2025-10-06T00:00:00+00:00") }
+      its(:delivery_method) { should be_nil }
+      its(:delivery_site) { should be_nil }
+      its(:full_dose) { should be true }
+      its(:location_name) { should eq "B12345" }
+      its(:outcome) { should eq "administered" }
+      its(:performed_ods_code) { should eq "B12345" }
+
+      its(:notes) { should be_nil }
+    end
+
+    context "with a record with a short batch number" do
+      let(:fhir_immunization) do
+        FHIR.from_contents(
+          file_fixture("/fhir/fhir_record_short_batch.json").read
+        )
+      end
+
+      include_examples "a mapped vaccination record (common fields)"
+
+      its(:performed_by_given_name) { should be_nil }
+      its(:performed_by_family_name) { should be_nil }
+      its(:batch) { should have_attributes(name: "0") }
+
+      its(:vaccine) do
+        should have_attributes(snomed_product_code: "43207411000001105")
+      end
+
+      its(:performed_at) { should eq Time.parse("2025-09-20T00:00:00+00:00") }
+      its(:delivery_method) { should eq "intramuscular" }
+      its(:delivery_site) { should be_nil }
+      its(:full_dose) { should be true }
+      its(:outcome) { should eq "administered" }
+      its(:location) { should be_nil }
+      its(:location_name) { should eq "D83013" }
+      its(:performed_ods_code) { should eq "D83013" }
     end
 
     context "with a record that has an unknown location" do
@@ -488,12 +594,21 @@ describe FHIRMapper::VaccinationRecord do
 
       include_examples "a mapped vaccination record (common fields)"
 
+      its(:nhs_immunisations_api_identifier_system) do
+        should eq "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records"
+      end
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "68aef549-601f-427c-b914-7e459238c4dd"
+      end
+
       its(:performed_at) { should eq Time.parse("2025-08-28T11:45:30+01:00") }
       its(:delivery_method) { should eq "nasal_spray" }
       its(:delivery_site) { should eq "nose" }
       its(:full_dose) { should be true }
       its(:outcome) { should eq "administered" }
       its(:performed_ods_code) { should eq "A9A5A" }
+      its(:nhs_immunisations_api_primary_source) { should be true }
 
       its(:location) { should be_nil }
       its(:location_name) { should eq "X99999" }
@@ -507,6 +622,14 @@ describe FHIRMapper::VaccinationRecord do
       end
 
       include_examples "a mapped vaccination record (common fields)"
+
+      its(:nhs_immunisations_api_identifier_system) do
+        should eq "https://www.ieds.england.nhs.uk/"
+      end
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "7fa9ba01-aa9e-4ef9-a27c-30c9f413e421"
+      end
 
       its(:performed_at) { should eq Time.parse("2025-10-06T07:57:32+01:00") }
       its(:delivery_method) { should be_nil }
@@ -527,6 +650,12 @@ describe FHIRMapper::VaccinationRecord do
       end
 
       include_examples "a mapped vaccination record (common fields)"
+
+      its(:nhs_immunisations_api_identifier_system) { should eq "YGJ" }
+
+      its(:nhs_immunisations_api_identifier_value) do
+        should eq "046D1E37-C498-40E9-95FB-5E156F740804"
+      end
 
       its(:vaccine) { should be_nil }
       its(:batch) { should be_nil }

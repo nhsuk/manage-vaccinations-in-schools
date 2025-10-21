@@ -7,7 +7,7 @@ describe "MenACWY and Td/IPV vaccination" do
     given_a_doubles_session_exists
     and_a_patient_is_ready_to_be_vaccinated
 
-    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    when_i_go_to_a_patient_that_is_safe_to_vaccinate
     then_i_see_the_menacwy_vaccination_form
     and_i_fill_out_pre_screening_questions
     and_i_record_the_vaccination(@menacwy_batch)
@@ -60,7 +60,7 @@ describe "MenACWY and Td/IPV vaccination" do
       )
   end
 
-  def when_i_go_to_a_patient_that_is_ready_to_vaccinate
+  def when_i_go_to_a_patient_that_is_safe_to_vaccinate
     sign_in @nurse
     visit session_record_path(@session)
     click_link @patient.full_name

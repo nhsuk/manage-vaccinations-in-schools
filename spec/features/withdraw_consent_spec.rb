@@ -75,7 +75,12 @@ describe "Withdraw consent" do
   end
 
   def and_triaged_as_safe_to_vaccinate
-    create(:triage, patient: @patient, programme: @programme)
+    create(
+      :triage,
+      :safe_to_vaccinate,
+      patient: @patient,
+      programme: @programme
+    )
     create(
       :patient_triage_status,
       :safe_to_vaccinate,

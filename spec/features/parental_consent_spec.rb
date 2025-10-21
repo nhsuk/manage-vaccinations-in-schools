@@ -28,7 +28,7 @@ describe "Parental consent" do
     and_they_see_the_full_consent_form
 
     when_they_check_triage
-    then_the_patient_should_be_ready_to_vaccinate
+    then_the_patient_should_be_safe_to_vaccinate
   end
 
   def given_an_hpv_programme_is_underway
@@ -200,7 +200,7 @@ describe "Parental consent" do
     click_on "Update results"
   end
 
-  def then_the_patient_should_be_ready_to_vaccinate
+  def then_the_patient_should_be_safe_to_vaccinate
     expect(page).to have_content(@child.full_name)
     click_on @child.full_name
     expect(page).to have_content(

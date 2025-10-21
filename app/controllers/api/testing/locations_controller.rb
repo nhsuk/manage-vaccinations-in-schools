@@ -13,7 +13,11 @@ class API::Testing::LocationsController < API::Testing::BaseController
     end
 
     if (year_groups = params[:year_groups]).present?
-      @locations = @locations.has_year_groups(year_groups)
+      @locations =
+        @locations.has_year_groups(
+          year_groups,
+          academic_year: AcademicYear.current
+        )
     end
 
     if (is_attached_to_team = params[:is_attached_to_team]).present?

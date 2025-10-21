@@ -5,18 +5,18 @@ class Generate::Triages
     team:,
     programme: nil,
     session: nil,
-    ready_to_vaccinate: 1,
+    safe_to_vaccinate: 1,
     do_not_vaccinate: 1
   )
     @team = team
     @programme = programme || team.programmes.sample
     @session = session
-    @ready_to_vaccinate = ready_to_vaccinate
+    @safe_to_vaccinate = safe_to_vaccinate
     @do_not_vaccinate = do_not_vaccinate
   end
 
   def call
-    create_triage_with_status(:ready_to_vaccinate, @ready_to_vaccinate)
+    create_triage_with_status(:safe_to_vaccinate, @safe_to_vaccinate)
     create_triage_with_status(:do_not_vaccinate, @do_not_vaccinate)
   end
 

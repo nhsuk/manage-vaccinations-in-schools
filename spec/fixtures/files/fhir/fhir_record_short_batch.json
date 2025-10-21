@@ -1,0 +1,95 @@
+{
+  "id": "11112222-3333-4444-5555-666677779999",
+  "extension": [
+    {
+      "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "985151000000100",
+            "display": "Administration of first inactivated seasonal influenza vaccination"
+          }
+        ]
+      }
+    }
+  ],
+  "identifier": [
+    {
+      "use": "official",
+      "system": "YGA",
+      "value": "TPP_V_444506677"
+    }
+  ],
+  "status": "completed",
+  "vaccineCode": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "43207411000001105",
+        "display": "Cell-based trivalent influenza vaccine (surface antigen, inactivated) suspension for injection 0.5ml pre-filled syringes (Seqirus UK Ltd)"
+      }
+    ]
+  },
+  "patient": {
+    "reference": "urn:uuid:6dd8d85c-7a38-4ea0-a9da-16fec39f4c81",
+    "type": "Patient",
+    "identifier": {
+      "system": "https://fhir.nhs.uk/Id/nhs-number",
+      "value": "9998886678"
+    }
+  },
+  "occurrenceDateTime": "2025-09-20T00:00:00+00:00",
+  "recorded": "2025-09-22",
+  "primarySource": true,
+  "location": {
+    "identifier": {
+      "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+      "value": "D83013"
+    }
+  },
+  "lotNumber": "0",
+  "route": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "78421000",
+        "display": "Intramuscular"
+      }
+    ]
+  },
+  "doseQuantity": {
+    "value": 0.5,
+    "unit": "ml",
+    "system": "http://snomed.info/sct",
+    "code": "258773002"
+  },
+  "performer": [
+    {
+      "actor": {
+        "type": "Organization",
+        "identifier": {
+          "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+          "value": "D83013"
+        }
+      }
+    }
+  ],
+  "protocolApplied": [
+    {
+      "targetDisease": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "6142004",
+              "display": "Influenza caused by seasonal influenza virus (disorder)"
+            }
+          ]
+        }
+      ],
+      "doseNumberPositiveInt": 1
+    }
+  ],
+  "resourceType": "Immunization"
+}

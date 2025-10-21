@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class AppProgrammeStatusTagsComponent < ViewComponent::Base
-  def initialize(status_by_programme, outcome:)
+  def initialize(status_by_programme, context:)
     @status_by_programme = status_by_programme
-    @outcome = outcome
+    @context = context
   end
 
   def call
@@ -13,7 +13,7 @@ class AppProgrammeStatusTagsComponent < ViewComponent::Base
 
         vaccine_methods =
           if programme.has_multiple_vaccine_methods?
-            if outcome == :consent &&
+            if context == :consent &&
                  (vaccine_method = hash[:vaccine_methods]&.first)
               status = :"#{status}_#{vaccine_method}"
               nil
@@ -32,7 +32,7 @@ class AppProgrammeStatusTagsComponent < ViewComponent::Base
 
   private
 
-  attr_reader :status_by_programme, :outcome
+  attr_reader :status_by_programme, :context
 
   def status_tag(programme, status, vaccine_methods, latest_session_status)
     programme_tag =
@@ -41,8 +41,8 @@ class AppProgrammeStatusTagsComponent < ViewComponent::Base
         class: "nhsuk-tag app-tag--attached nhsuk-tag--white"
       )
 
-    label = I18n.t(status, scope: [:status, outcome, :label])
-    colour = I18n.t(status, scope: [:status, outcome, :colour])
+    label = I18n.t(status, scope: [:status, context, :label])
+    colour = I18n.t(status, scope: [:status, context, :colour])
 
     status_tag = tag.strong(label, class: "nhsuk-tag nhsuk-tag--#{colour}")
 

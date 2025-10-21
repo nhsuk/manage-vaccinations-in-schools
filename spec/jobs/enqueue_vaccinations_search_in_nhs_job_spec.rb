@@ -47,21 +47,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
 
         it { should have_received(:perform_bulk).once.with([[patient.id]]) }
 
-        context "community clinic session" do
-          let(:location) do
-            create(
-              :community_clinic,
-              gias_year_groups: (0..11).to_a,
-              team:,
-              programmes: [flu]
-            )
-          end
-          let(:school) { create(:school, team:, programmes: [flu]) }
-
-          it { should have_received(:perform_bulk).exactly(:once) }
-        end
-
-        context "generic clinic session" do
+        context "clinic session" do
           let(:location) { create(:generic_clinic, team:, programmes: [flu]) }
           let(:school) { create(:school, team:, programmes: [flu]) }
 
@@ -186,20 +172,6 @@ describe EnqueueVaccinationsSearchInNHSJob do
         include_examples "notification date logic", :send_invitations_at
       end
 
-      context "community clinic sessions" do
-        let(:location) do
-          create(
-            :community_clinic,
-            gias_year_groups: (0..11).to_a,
-            team:,
-            programmes: [flu]
-          )
-        end
-        let(:school) { create(:school, team:, programmes: [flu]) }
-
-        include_examples "notification date logic", :send_consent_requests_at
-      end
-
       context "school sessions" do
         let(:location) { create(:school, team:, programmes: [flu]) }
         let(:school) { location }
@@ -210,14 +182,6 @@ describe EnqueueVaccinationsSearchInNHSJob do
       context "mixed session types" do
         let(:generic_clinic) do
           create(:generic_clinic, team:, programmes: [flu])
-        end
-        let(:community_clinic) do
-          create(
-            :community_clinic,
-            gias_year_groups: (0..11).to_a,
-            team:,
-            programmes: [flu]
-          )
         end
         let(:school_location) { create(:school, team:, programmes: [flu]) }
 
@@ -232,20 +196,6 @@ describe EnqueueVaccinationsSearchInNHSJob do
             days_before_consent_reminders: nil,
             team:,
             location: generic_clinic
-          )
-        end
-
-        let(:community_clinic_session) do
-          create(
-            :session,
-            programmes: [flu],
-            academic_year: AcademicYear.pending,
-            dates:,
-            send_invitations_at: nil,
-            send_consent_requests_at: 1.day.from_now,
-            days_before_consent_reminders: 7,
-            team:,
-            location: community_clinic
           )
         end
 
@@ -267,9 +217,6 @@ describe EnqueueVaccinationsSearchInNHSJob do
           create(:patient, team:, school:, session: generic_clinic_session)
         end
         let!(:second_patient) do
-          create(:patient, team:, school:, session: community_clinic_session)
-        end
-        let!(:third_patient) do
           create(:patient, team:, school:, session: school_session)
         end
 
@@ -283,10 +230,6 @@ describe EnqueueVaccinationsSearchInNHSJob do
           expect(SearchVaccinationRecordsInNHSJob).to have_received(
             :perform_bulk
           ).with([second_patient.id].zip)
-
-          expect(SearchVaccinationRecordsInNHSJob).to have_received(
-            :perform_bulk
-          ).with([third_patient.id].zip)
         end
       end
     end

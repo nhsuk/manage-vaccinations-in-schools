@@ -94,7 +94,7 @@ if [ "$env" == "production" ]; then
 fi
 #Check if env string ends with `data-replication`
 if [ -z "$service_name" ] && [[ "$env" != *data-replication ]]; then
-    service_name="mavis-$env-web"
+    service_name="mavis-$env-ops"
 fi
 
 cluster_name="mavis-$env"
@@ -171,7 +171,7 @@ else
     container_name=$(select_running_container "$selected_task")
 fi
 
-echo "Opening an interactive shell in container $container_name of task $task_id"
+echo "Opening an interactive shell in task $task_id" of service "$service_name"
 aws ecs execute-command --region "$region" \
     --cluster "$cluster_name" \
     --task "$task_id" \

@@ -20,7 +20,7 @@ describe AppPatientSessionTriageComponent do
 
   context "when triaged as safe to vaccinate" do
     before do
-      create(:triage, :ready_to_vaccinate, patient:, programme:)
+      create(:triage, :safe_to_vaccinate, patient:, programme:)
       create(:patient_triage_status, :safe_to_vaccinate, patient:, programme:)
     end
 

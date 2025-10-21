@@ -1,4 +1,6 @@
 <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
+  <% table.with_caption(text: "Vaccinations given", size: "s") %>
+
   <% table.with_head do |head| %>
     <% head.with_row do |row| %>
       <% row.with_cell(text: "Session date") %>

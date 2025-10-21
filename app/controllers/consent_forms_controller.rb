@@ -8,7 +8,9 @@ class ConsentFormsController < ApplicationController
   before_action :set_patient, only: %i[edit_match update_match]
 
   def index
-    @pagy, @consent_forms = pagy(consent_form_scope.order(:recorded_at))
+    consent_forms = policy_scope(ConsentForm).unmatched.order(:recorded_at)
+
+    @pagy, @consent_forms = pagy(consent_forms)
 
     render layout: "full"
   end
@@ -124,12 +126,8 @@ class ConsentFormsController < ApplicationController
 
   private
 
-  def consent_form_scope
-    policy_scope(ConsentForm).unmatched.recorded.not_archived
-  end
-
   def set_consent_form
-    @consent_form = consent_form_scope.find(params[:id])
+    @consent_form = policy_scope(ConsentForm).unmatched.find(params[:id])
   end
 
   def set_patient

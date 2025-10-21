@@ -10,7 +10,13 @@ describe ImportDuplicateForm do
 
     context "with vaccination records sourced from NHS immunisations API" do
       let(:object) do
-        create(:vaccination_record, programme:, source: :nhs_immunisations_api)
+        create(
+          :vaccination_record,
+          programme:,
+          source: :nhs_immunisations_api,
+          nhs_immunisations_api_identifier_system: "ABC",
+          nhs_immunisations_api_identifier_value: "123"
+        )
       end
 
       it { should be false }
@@ -85,7 +91,13 @@ describe ImportDuplicateForm do
 
     context "when object is a vaccination record sourced from NHS immunisations API" do
       let(:object) do
-        create(:vaccination_record, programme:, source: :nhs_immunisations_api)
+        create(
+          :vaccination_record,
+          programme:,
+          source: :nhs_immunisations_api,
+          nhs_immunisations_api_identifier_system: "ABC",
+          nhs_immunisations_api_identifier_value: "123"
+        )
       end
 
       it "returns the standard options" do

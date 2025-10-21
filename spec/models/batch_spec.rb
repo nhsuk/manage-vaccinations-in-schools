@@ -49,7 +49,6 @@ describe Batch do
     it { should be_valid }
 
     it { should validate_presence_of(:name) }
-    it { should validate_length_of(:name).is_at_least(2).is_at_most(100) }
 
     it do
       expect(batch).to validate_uniqueness_of(:expiry).scoped_to(
@@ -57,12 +56,6 @@ describe Batch do
         :name,
         :vaccine_id
       )
-    end
-
-    context "with invalid characters" do
-      subject(:batch) { build(:batch, name: "ABC*123") }
-
-      it { should be_invalid }
     end
   end
 

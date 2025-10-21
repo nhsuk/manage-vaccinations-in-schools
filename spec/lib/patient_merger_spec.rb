@@ -82,7 +82,14 @@ describe PatientMerger do
         patient: patient_to_destroy
       )
     end
-    let(:triage) { create(:triage, patient: patient_to_destroy, programme:) }
+    let(:triage) do
+      create(
+        :triage,
+        :safe_to_vaccinate,
+        patient: patient_to_destroy,
+        programme:
+      )
+    end
     let(:vaccination_record) do
       create(
         :vaccination_record,

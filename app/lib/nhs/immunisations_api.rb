@@ -57,6 +57,7 @@ module NHS::ImmunisationsAPI
           nhs_immunisations_api_id:
             extract_nhs_id(response.headers.fetch("location")),
           nhs_immunisations_api_synced_at: Time.current,
+          nhs_immunisations_api_primary_source: true,
           # We would normally retrieve this from the API response, but the NHS
           # Immunisations API does not return this to us, yet.
           nhs_immunisations_api_etag: 1

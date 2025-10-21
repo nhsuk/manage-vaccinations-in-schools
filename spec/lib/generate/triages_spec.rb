@@ -23,10 +23,10 @@ describe Generate::Triages do
         team:,
         programme:,
         session:,
-        ready_to_vaccinate: 1,
+        safe_to_vaccinate: 1,
         do_not_vaccinate: 0
       )
-      expect(Triage.ready_to_vaccinate.count).to eq 1
+      expect(Triage.safe_to_vaccinate.count).to eq 1
     end
   end
 
@@ -39,7 +39,7 @@ describe Generate::Triages do
         team:,
         programme:,
         session:,
-        ready_to_vaccinate: 0,
+        safe_to_vaccinate: 0,
         do_not_vaccinate: 1
       )
       expect(Triage.do_not_vaccinate.count).to eq 1

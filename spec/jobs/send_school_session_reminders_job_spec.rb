@@ -27,7 +27,12 @@ describe SendSchoolSessionRemindersJob do
 
     context "when triaged for vaccination" do
       let(:patient) do
-        create(:patient, :triage_ready_to_vaccinate, parents:, programmes:)
+        create(
+          :patient,
+          :consent_given_triage_safe_to_vaccinate,
+          parents:,
+          programmes:
+        )
       end
 
       it "sends a notification" do

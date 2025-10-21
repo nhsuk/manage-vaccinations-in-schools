@@ -39,15 +39,17 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
   end
 
   def cards_for_programme(programme)
+    stats = stats_for_programme(programme)
+
     [
       {
         heading: "No response",
         colour: "grey",
-        count: consent_count(programme, "no_response").to_s,
+        count: stats[:no_response].to_s,
         link_to:
           session_consent_path(
             session,
-            consent_statuses: ["no_response"],
+            consent_statuses: %w[no_response],
             programme_types: [programme.type]
           )
       },
@@ -60,7 +62,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
             {
               heading: "Consent given for #{method_string}",
               colour: "aqua-green",
-              count: consent_count(programme, "given", vaccine_method:).to_s,
+              count: stats[:"consent_given_#{vaccine_method}"].to_s,
               link_to:
                 session_consent_path(
                   session,
@@ -74,11 +76,11 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
             {
               heading: "Consent given",
               colour: "aqua-green",
-              count: consent_count(programme, "given").to_s,
+              count: stats[:consent_given].to_s,
               link_to:
                 session_consent_path(
                   session,
-                  consent_statuses: ["given"],
+                  consent_statuses: %w[given],
                   programme_types: [programme.type]
                 )
             }
@@ -86,83 +88,51 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
         end
       ),
       {
-        heading: "Contraindicated or did not consent",
+        heading: "Did not consent",
         colour: "red",
-        count: could_not_vaccinate_count(programme).to_s,
+        count: stats[:consent_refused].to_s,
         link_to:
-          session_patients_path(
+          session_consent_path(
             session,
-            vaccination_status: "could_not_vaccinate",
+            consent_statuses: %w[refused],
             programme_types: [programme.type]
           )
       },
       {
         heading: "Vaccinated",
         colour: "green",
-        count: vaccinated_count(programme).to_s,
+        count: stats[:vaccinated].to_s,
         link_to:
           session_patients_path(
             session,
+            programme_types: [programme.type],
             vaccination_status: "vaccinated",
-            programme_types: [programme.type]
+            eligible_children: 1
           )
       }
     ].flatten
   end
 
-  def eligible_patients(programme)
-    session
-      .patients
-      .appear_in_programmes([programme], session:)
-      .eligible_for_programmes([programme], location:, academic_year:)
-  end
-
-  def eligible_cohort_count(programme)
-    eligible_patients(programme).count
-  end
-
-  def vaccinated_count(programme)
-    eligible_patients(programme).has_vaccination_status(
-      "vaccinated",
-      programme:,
-      academic_year:
-    ).count
-  end
-
-  def could_not_vaccinate_count(programme)
-    eligible_patients(programme).has_vaccination_status(
-      "could_not_vaccinate",
-      programme:,
-      academic_year:
-    ).count
-  end
-
-  def consent_count(programme, status, vaccine_method: nil)
-    eligible_patients(programme).has_consent_status(
-      status,
-      programme:,
-      academic_year:,
-      vaccine_method:
-    ).count
-  end
-
-  def no_outcome_count(programme)
-    eligible_patients(programme).has_vaccination_status(
-      "none_yet",
-      programme:,
-      academic_year:,
-      vaccine_method:
-    ).count
+  def eligible_children_count(programme)
+    stats_for_programme(programme)[:eligible_children]
   end
 
   def still_to_vaccinate_count
     session
       .patients
-      .consent_given_and_ready_to_vaccinate(
+      .consent_given_and_safe_to_vaccinate(
         programmes:,
         academic_year:,
         vaccine_method: nil
       )
       .count
+  end
+
+  def stats_for_programme(programme)
+    @stats_by_programme ||= {}
+    @stats_by_programme[programme.id] ||= Stats::Session.call(
+      session:,
+      programme:
+    )
   end
 end

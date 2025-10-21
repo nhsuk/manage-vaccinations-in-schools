@@ -35,47 +35,26 @@
 FactoryBot.define do
   factory :triage do
     patient
-    performed_by
     programme
 
+    performed_by
     team { performed_by.teams.first }
 
     notes { "" }
 
-    # TODO: Remove this default and require users of this factory to be
-    #  explicit about the status they want.
-    status { "ready_to_vaccinate" }
-    vaccine_method { "injection" }
-
-    academic_year do
-      created_at&.to_date&.academic_year || Time.current.to_date.academic_year
-    end
+    academic_year { created_at&.to_date&.academic_year || AcademicYear.current }
 
     traits_for_enum :status
     traits_for_enum :vaccine_method
 
-    trait :ready_to_vaccinate do
-      status { "ready_to_vaccinate" }
-      vaccine_method { "injection" }
+    trait :safe_to_vaccinate do
+      status { "safe_to_vaccinate" }
+      injection
     end
 
-    trait :nasal_only do
-      vaccine_method { "nasal" }
-    end
-
-    trait :do_not_vaccinate do
-      status { "do_not_vaccinate" }
-      vaccine_method { nil }
-    end
-
-    trait :needs_follow_up do
-      status { "needs_follow_up" }
-      vaccine_method { nil }
-    end
-
-    trait :delay_vaccination do
-      status { "delay_vaccination" }
-      vaccine_method { nil }
+    trait :safe_to_vaccinate_nasal do
+      status { "safe_to_vaccinate" }
+      nasal
     end
 
     trait :invalidated do
