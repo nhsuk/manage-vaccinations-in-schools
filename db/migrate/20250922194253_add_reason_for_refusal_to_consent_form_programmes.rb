@@ -10,7 +10,8 @@ class AddReasonForRefusalToConsentFormProgrammes < ActiveRecord::Migration[8.0]
     reversible do |direction|
       direction.up { execute <<~SQL }
         UPDATE consent_form_programmes
-        SET reason_for_refusal = consent_forms.reason, notes = consent_forms.reason_notes
+        SET reason_for_refusal = consent_forms.reason,
+            notes = COALESCE(consent_forms.reason_notes, '')
         FROM consent_forms
         WHERE consent_forms.id = consent_form_programmes.consent_form_id
         AND consent_form_programmes.response = 1
