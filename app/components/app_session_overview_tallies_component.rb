@@ -90,11 +90,11 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
       {
         heading: "Did not consent",
         colour: "red",
-        count: stats[:consent_refused].to_s,
+        count: stats[:did_not_consent].to_s,
         link_to:
           session_consent_path(
             session,
-            consent_statuses: %w[refused],
+            consent_statuses: %w[refused conflicts],
             programme_types: [programme.type]
           )
       },
