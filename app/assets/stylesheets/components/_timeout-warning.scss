@@ -5,15 +5,15 @@ html:has(.app-timeout-warning[open]) {
 }
 
 .app-timeout-warning {
+  border: $nhsuk-border-width solid $nhsuk-border-colour;
+
   @include nhsuk-responsive-padding(6);
 
-  border: 4px solid nhsuk-colour("grey-1");
-
   &:focus {
-    outline: 4px solid $nhsuk-focus-colour;
+    outline: $nhsuk-focus-width solid $nhsuk-focus-colour;
   }
 
   &::backdrop {
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(nhsuk-colour("black"), 0.4);
   }
 }
