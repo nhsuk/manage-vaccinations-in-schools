@@ -1,10 +1,12 @@
-<%= h1 @session.location.name, class: "nhsuk-u-margin-bottom-2" %>
-
 <% unless tallying_enabled? %>
+  <%= h1 @session.location.name, class: "nhsuk-u-margin-bottom-2" %>
+
   <p class="nhsuk-caption-l nhsuk-u-margin-bottom-4">
     <%= @session.programmes.map(&:name).to_sentence %>
     (<%= format_academic_year(@session.academic_year) %>)
   </p>
+<% else %>
+  <%= h1 @session.location.name %>
 <% end %>
 
 <%= render AppSecondaryNavigationComponent.new do |nav|
