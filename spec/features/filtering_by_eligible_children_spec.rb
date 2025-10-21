@@ -56,7 +56,7 @@ describe "Filtering" do
   end
 
   def when_i_filter_eligible_children
-    check "Eligible children"
+    check "Eligible this academic year and not vaccinated elsewhere"
     click_on "Update results"
   end
 

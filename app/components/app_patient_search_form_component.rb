@@ -54,8 +54,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
                           checked: form.eligible_children,
                           multiple: false,
                           link_errors: true,
-                          label: { text: "Eligible children" },
-                          hint: { text: "Eligible this academic year and not vaccinated elsewhere" } %>
+                          label: { text: "Eligible this academic year and not vaccinated elsewhere" }%>
             <% end %>
           <% end %>
         <% end %>
