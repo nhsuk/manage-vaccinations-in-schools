@@ -80,6 +80,24 @@ module ParentInterface
 
     def update_params
       permitted_attributes = {
+        address: %i[
+          address_line_1
+          address_line_2
+          address_town
+          address_postcode
+        ],
+        confirm_school: %i[school_confirmed],
+        contact_method: %i[
+          parent_contact_method_type
+          parent_contact_method_other_details
+        ],
+        date_of_birth: %i[
+          date_of_birth(3i)
+          date_of_birth(2i)
+          date_of_birth(1i)
+        ],
+        education_setting: %i[education_setting],
+        injection_alternative: %i[injection_alternative],
         name: %i[
           given_name
           family_name
@@ -87,14 +105,6 @@ module ParentInterface
           preferred_given_name
           preferred_family_name
         ],
-        date_of_birth: %i[
-          date_of_birth(3i)
-          date_of_birth(2i)
-          date_of_birth(1i)
-        ],
-        confirm_school: %i[school_confirmed],
-        education_setting: %i[education_setting],
-        school: %i[school_id],
         parent: %i[
           parent_email
           parent_full_name
@@ -104,17 +114,12 @@ module ParentInterface
           parent_relationship_type
           parental_responsibility
         ],
-        contact_method: %i[
-          parent_contact_method_type
-          parent_contact_method_other_details
-        ],
-        reason: %i[reason],
-        reason_notes: %i[reason_notes],
+        reason_for_refusal: %i[reason_for_refusal],
+        reason_for_refusal_notes: %i[reason_for_refusal_notes],
         response_doubles: %i[response chosen_programme],
         response_flu: %i[response],
         response_hpv: %i[response],
-        injection_alternative: %i[injection_alternative],
-        address: %i[address_line_1 address_line_2 address_town address_postcode]
+        school: %i[school_id]
       }.fetch(current_step)
 
       params.fetch(:consent_form, {}).permit(permitted_attributes)

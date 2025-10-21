@@ -424,11 +424,6 @@ en:
               too_long: Enter a name that is less than 300 characters long
             reason:
               blank: Choose a reason
-            reason_notes:
-              blank: Enter details for refusing
-              too_long: >-
-                Enter details for refusing that are less than 1000 characters
-                long
             response:
               inclusion: Choose if you agree
             school_confirmed:
@@ -584,7 +579,7 @@ en:
         menacwy: Consent for the MenACWY vaccination
         td_ipv: Consent for the Td/IPV vaccination
       i_agree: Consent given
-    reason_notes:
+    notes:
       title:
         already_vaccinated: Where did your child get their vaccination?
         contains_gelatine: Tell us why you don’t agree

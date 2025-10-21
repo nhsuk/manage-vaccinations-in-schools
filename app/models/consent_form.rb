@@ -28,8 +28,6 @@
 #  parent_relationship_type            :string
 #  preferred_family_name               :string
 #  preferred_given_name                :string
-#  reason                              :integer
-#  reason_notes                        :text
 #  recorded_at                         :datetime
 #  school_confirmed                    :boolean
 #  use_preferred_name                  :boolean
@@ -111,17 +109,6 @@ class ConsentForm < ApplicationRecord
   has_many :eligible_schools, through: :team, source: :schools
   has_many :vaccines, through: :programmes
 
-  enum :reason,
-       {
-         contains_gelatine: 0,
-         already_vaccinated: 1,
-         will_be_vaccinated_elsewhere: 2,
-         medical_reasons: 3,
-         personal_choice: 4,
-         other: 5
-       },
-       prefix: "refused_because"
-
   enum :parent_contact_method_type,
        Parent.contact_method_types,
        prefix: :parent_contact_method,
@@ -149,8 +136,7 @@ class ConsentForm < ApplicationRecord
            :parent_phone,
            :parent_relationship_other_name,
            :preferred_family_name,
-           :preferred_given_name,
-           :reason_notes
+           :preferred_given_name
 
   normalizes :given_name, with: -> { _1.strip }
   normalizes :family_name, with: -> { _1.strip }
@@ -187,8 +173,6 @@ class ConsentForm < ApplicationRecord
   validates :parent_relationship_other_name,
             presence: true,
             if: :parent_relationship_other?
-
-  validates :reason_notes, length: { maximum: 1000 }
 
   normalizes :nhs_number, with: -> { _1.blank? ? nil : _1.gsub(/\s/, "") }
 
@@ -267,12 +251,12 @@ class ConsentForm < ApplicationRecord
     validates :injection_alternative, inclusion: %w[true false]
   end
 
-  on_wizard_step :reason do
-    validates :reason, presence: true
+  on_wizard_step :reason_for_refusal do
+    validates :reason_for_refusal, presence: true
   end
 
-  on_wizard_step :reason_notes do
-    validates :reason_notes, presence: true
+  on_wizard_step :reason_for_refusal_notes do
+    validates :reason_for_refusal_notes, presence: true
   end
 
   on_wizard_step :address do
@@ -302,17 +286,21 @@ class ConsentForm < ApplicationRecord
       (:contact_method if parent_phone.present?)
     ].compact + response_steps +
       [
-        (:reason if refused_and_not_given),
+        (:reason_for_refusal if refused_and_not_given),
         (
-          if refused_and_not_given && reason_notes_must_be_provided?
-            :reason_notes
+          if refused_and_not_given && reason_for_refusal_requires_notes?
+            :reason_for_refusal_notes
           end
         ),
         (:injection_alternative if can_offer_injection_as_alternative?),
         (:address if response_given?),
         (:health_question if response_given?),
-        (:reason if refused_and_given),
-        (:reason_notes if refused_and_given && reason_notes_must_be_provided?)
+        (:reason_for_refusal if refused_and_given),
+        (
+          if refused_and_given && reason_for_refusal_requires_notes?
+            :reason_for_refusal_notes
+          end
+        )
       ].compact
   end
 
@@ -323,6 +311,10 @@ class ConsentForm < ApplicationRecord
   def response_given? = consent_form_programmes.any?(&:response_given?)
 
   def response_refused? = consent_form_programmes.any?(&:response_refused?)
+
+  def human_enum_name(attribute)
+    Consent.human_enum_name(attribute, send(attribute))
+  end
 
   def each_health_answer
     return if health_answers.empty?
@@ -349,8 +341,8 @@ class ConsentForm < ApplicationRecord
     )
   end
 
-  def reason_notes_must_be_provided?
-    reason.in?(Consent::REASON_FOR_REFUSAL_REQUIRES_NOTES)
+  def reason_for_refusal_requires_notes?
+    consent_form_programmes.any?(&:reason_for_refusal_requires_notes?)
   end
 
   def session
@@ -481,6 +473,26 @@ class ConsentForm < ApplicationRecord
 
   def home_educated_changed?
     education_setting_changed?
+  end
+
+  def reason_for_refusal
+    consent_form_programmes.find(&:response_refused?)&.reason_for_refusal
+  end
+
+  def reason_for_refusal=(value)
+    consent_form_programmes
+      .select(&:response_refused?)
+      .each { it.reason_for_refusal = value }
+  end
+
+  def reason_for_refusal_notes
+    consent_form_programmes.find(&:response_refused?)&.notes
+  end
+
+  def reason_for_refusal_notes=(value)
+    consent_form_programmes
+      .select(&:response_refused?)
+      .each { it.notes = value }
   end
 
   def update_programme_responses
@@ -621,8 +633,8 @@ class ConsentForm < ApplicationRecord
     self.parent_relationship_other_name = nil unless parent_relationship_other?
 
     if response_given? && !response_refused?
-      self.reason = nil
-      self.reason_notes = nil
+      self.reason_for_refusal = nil
+      self.reason_for_refusal_notes = nil
     end
 
     if school_confirmed

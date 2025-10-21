@@ -174,7 +174,7 @@ describe "Parental consent" do
   end
 
   def then_i_see_an_error
-    expect(page).to have_heading "There is a problem"
+    expect(page).to have_heading("There is a problem")
   end
 
   def when_i_choose_a_school
@@ -183,7 +183,7 @@ describe "Parental consent" do
   end
 
   def then_i_see_the_parent_step
-    expect(page).to have_heading "About you"
+    expect(page).to have_heading("About you")
   end
 
   def when_i_give_consent

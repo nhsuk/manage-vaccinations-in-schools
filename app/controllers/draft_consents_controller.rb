@@ -131,7 +131,7 @@ class DraftConsentsController < ApplicationController
         parent_responsibility
       ],
       questions: questions_params,
-      reason: %i[reason_for_refusal],
+      reason_for_refusal: %i[reason_for_refusal],
       route: %i[route],
       who: %i[new_or_existing_contact]
     }.fetch(current_step)

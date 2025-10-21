@@ -14,8 +14,8 @@ describe AppConsentFormCardComponent do
       parent_email: "jane@example.com",
       response: :refused,
       recorded_at: Time.zone.local(2024, 3, 1, 14, 23, 0),
-      reason: :already_vaccinated,
-      reason_notes: "Vaccinated at the GP"
+      reason_for_refusal: "already_vaccinated",
+      reason_for_refusal_notes: "Vaccinated at the GP"
     )
   end
 

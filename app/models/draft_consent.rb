@@ -54,7 +54,7 @@ class DraftConsent
       (:notify_parents_on_vaccination if response_given? && via_self_consent?),
       (:questions if response_given?),
       (:triage if triage_allowed? && requires_triage?),
-      (:reason if response_refused?),
+      (:reason_for_refusal if response_refused?),
       (:notify_parent_on_refusal if ask_notify_parent_on_refusal?),
       (:notes if requires_notes?),
       :confirm
@@ -130,7 +130,7 @@ class DraftConsent
     validates :notify_parents_on_vaccination, inclusion: { in: [true, false] }
   end
 
-  on_wizard_step :reason, exact: true do
+  on_wizard_step :reason_for_refusal, exact: true do
     validates :reason_for_refusal,
               inclusion: {
                 in: Consent.reason_for_refusals.keys
