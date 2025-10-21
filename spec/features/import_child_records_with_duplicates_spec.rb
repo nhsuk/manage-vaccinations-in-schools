@@ -95,6 +95,21 @@ describe "Child record imports duplicates" do
     end
   end
 
+  scenario "Patient is archived after upload but before duplicate review" do
+    given_i_am_signed_in
+    and_an_hpv_programme_is_underway
+    and_an_existing_patient_record_exists
+
+    when_i_visit_the_import_page
+    and_i_start_adding_children_to_the_cohort
+    and_i_upload_a_file_with_duplicate_records
+    then_i_should_see_the_import_page_with_duplicate_records
+
+    given_i_archive_the_patient_record
+    when_i_go_to_the_import_page
+    then_i_should_see_no_import_issues_with_the_count
+  end
+
   scenario "SearchVaccinationRecordsInNHSJob is enqueued during duplicate resolution" do
     given_i_am_signed_in
     and_the_required_feature_flags_are_enabled
@@ -245,6 +260,24 @@ describe "Child record imports duplicates" do
     expect(page).to have_content("Imports (3)")
     expect(page).to have_content(
       "3 records have import issues to resolve before they can be imported into Mavis"
+    )
+  end
+
+  def given_i_archive_the_patient_record
+    PatientArchiver.call(
+      patient: @first_patient,
+      team: @team,
+      type: :imported_in_error
+    )
+    PatientArchiver.call(
+      patient: @second_patient,
+      team: @team,
+      type: :imported_in_error
+    )
+    PatientArchiver.call(
+      patient: @third_patient,
+      team: @team,
+      type: :imported_in_error
     )
   end
 

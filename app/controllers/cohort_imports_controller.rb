@@ -37,7 +37,8 @@ class CohortImportsController < ApplicationController
 
     @pagy, @patients = pagy(@cohort_import.patients.includes(:school))
 
-    @duplicates = @cohort_import.patients.with_pending_changes.distinct
+    @duplicates =
+      @patients.with_pending_changes_for_team(team: current_team).distinct
 
     @issues_text =
       @duplicates.each_with_object({}) do |patient, hash|
