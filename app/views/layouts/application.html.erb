@@ -50,6 +50,10 @@
 
     <%= yield :after_main %>
 
+    <% if current_user.present? %>
+      <%= render "layouts/timeout_warning" %>
+    <% end %>
+
     <footer class="nhsuk-footer" role="contentinfo">
       <div class="nhsuk-width-container">
         <div class="nhsuk-footer__meta">
