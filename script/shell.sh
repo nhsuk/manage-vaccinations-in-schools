@@ -94,7 +94,11 @@ if [ "$env" == "production" ]; then
 fi
 #Check if env string ends with `data-replication`
 if [ -z "$service_name" ] && [[ "$env" != *data-replication ]]; then
-    service_name="mavis-$env-ops"
+    if [ "$env" == "qa" ] || [ "$env" == "production" ]; then
+        service_name="mavis-$env-ops"
+    else
+        service_name="mavis-$env-web"
+    fi
 fi
 
 cluster_name="mavis-$env"
