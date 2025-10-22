@@ -101,13 +101,12 @@ describe "Pre-screening" do
   end
 
   def then_i_see_the_pre_screening_questions
+    expect(page).to have_content("is not acutely unwell")
     expect(page).to have_content(
       "knows what the vaccination is for, and agrees to have it"
     )
-    expect(page).to have_content("has not already had this vaccination")
-    expect(page).to have_content("is not acutely unwell")
     expect(page).to have_content(
-      "has no allergies which would prevent vaccination"
+      "has no other contraindications which prevent vaccination"
     )
   end
 
