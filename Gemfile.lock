@@ -101,12 +101,12 @@ GEM
       public_suffix (>= 2.0.2, < 7.0)
     aes_key_wrap (1.1.0)
     amazing_print (2.0.0)
-    annotaterb (4.19.0)
+    annotaterb (4.20.0)
       activerecord (>= 6.0.0)
       activesupport (>= 6.0.0)
     array_enum (1.6.0)
       activemodel
-    asciidoctor (2.0.24)
+    asciidoctor (2.0.25)
     asciidoctor-diagram (3.0.1)
       asciidoctor (>= 1.5.7, < 3.x)
       rexml
@@ -447,7 +447,7 @@ GEM
       date
       stringio
     public_suffix (6.0.2)
-    puma (7.0.4)
+    puma (7.1.0)
       nio4r (~> 2.0)
     pundit (2.5.2)
       activesupport (>= 3.0.0)
@@ -700,8 +700,8 @@ GEM
       unicode-display_width (~> 3.1)
     temple (0.10.0)
     thor (1.4.0)
-    thruster (0.1.15-arm64-darwin)
-    thruster (0.1.15-x86_64-linux)
+    thruster (0.1.16-arm64-darwin)
+    thruster (0.1.16-x86_64-linux)
     tilt (2.6.1)
     timeout (0.4.3)
     tsort (0.2.0)

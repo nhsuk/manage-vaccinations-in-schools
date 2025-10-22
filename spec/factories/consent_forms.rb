@@ -28,8 +28,6 @@
 #  parent_relationship_type            :string
 #  preferred_family_name               :string
 #  preferred_given_name                :string
-#  reason                              :integer
-#  reason_notes                        :text
 #  recorded_at                         :datetime
 #  school_confirmed                    :boolean
 #  use_preferred_name                  :boolean
@@ -61,6 +59,8 @@ FactoryBot.define do
     transient do
       session { association :session }
       response { "given" }
+      reason_for_refusal { nil }
+      reason_for_refusal_notes { "" }
     end
 
     given_name { Faker::Name.first_name }
@@ -118,7 +118,7 @@ FactoryBot.define do
 
     trait :refused do
       response { "refused" }
-      reason { :personal_choice }
+      reason_for_refusal { "personal_choice" }
       health_answers { [] }
     end
 
@@ -133,7 +133,9 @@ FactoryBot.define do
 
       consent_form.consent_form_programmes.update_all(
         response: evaluator.response,
-        vaccine_methods:
+        vaccine_methods:,
+        reason_for_refusal: evaluator.reason_for_refusal,
+        notes: evaluator.reason_for_refusal_notes
       )
     end
 

@@ -1,15 +1,12 @@
 # frozen_string_literal: true
 
 class ProgrammeGrouper
-  def initialize(programmes)
-    @programmes = programmes
+  def initialize(objects)
+    @objects = objects
   end
 
   def call
-    programmes
-      .group_by { programme_group(it) }
-      .transform_values { it.sort_by(&:type) }
-      .to_h
+    objects.group_by { group(it) }.transform_values { sorted(it) }.to_h
   end
 
   def self.call(...) = new(...).call
@@ -18,19 +15,13 @@ class ProgrammeGrouper
 
   private
 
-  attr_reader :programmes
+  attr_reader :objects
 
-  def programme_group(programme)
-    if programme.flu?
-      :flu
-    elsif programme.hpv?
-      :hpv
-    elsif programme.doubles?
-      :doubles
-    elsif programme.mmr?
-      :mmr
-    else
-      raise UnsupportedProgramme, programme
-    end
-  end
+  def programme(object) = object.try(:programme) || object
+
+  def group(object) = programme(object).group
+
+  def type(object) = programme(object).type
+
+  def sorted(objects) = objects.sort_by { type(it) }
 end
