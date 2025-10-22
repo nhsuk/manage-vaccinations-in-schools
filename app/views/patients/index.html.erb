@@ -16,7 +16,7 @@
   <% end %>
 <% end %>
 
-<%= govuk_pagination(pagy: @pagy) %>
+<%= render AppPaginationComponent.new(pagy: @pagy) %>
 
 <% if @pagy.count.positive? %>
   <p class="nhsuk-body">
