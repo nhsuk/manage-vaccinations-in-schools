@@ -240,6 +240,10 @@ locals {
         name  = "VALKEY_PORT"
         value = aws_elasticache_serverless_cache.reporting_service.endpoint[0].port
       },
+      {
+        name  = "ROOT_URL"
+        value = "https://${var.http_hosts.MAVIS__HOST}/reports/"
+      }
     ]
     OPS_SERVICE = [
       {
