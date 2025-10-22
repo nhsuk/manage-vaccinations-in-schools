@@ -11,7 +11,7 @@ class Stats::Session
     stats = {
       eligible_children: eligible_patients.count,
       no_response: consent_count("no_response"),
-      consent_refused: consent_count("refused"),
+      did_not_consent: consent_count(%w[refused conflicts]),
       vaccinated: vaccinated_count
     }
 

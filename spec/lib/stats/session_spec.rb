@@ -13,7 +13,7 @@ describe Stats::Session do
           eligible_children: 0,
           no_response: 0,
           consent_given: 0,
-          consent_refused: 0,
+          did_not_consent: 0,
           vaccinated: 0
         )
       end
@@ -36,14 +36,18 @@ describe Stats::Session do
         create(:patient, session:, year_group: 9).tap do |patient|
           create(:patient_consent_status, :refused, patient:, programme:)
         end
+
+        create(:patient, session:, year_group: 9).tap do |patient|
+          create(:patient_consent_status, :conflicts, patient:, programme:)
+        end
       end
 
       it "returns correct counts for each category" do
         expect(stats).to eq(
-          eligible_children: 4,
+          eligible_children: 5,
           no_response: 1,
           consent_given: 1,
-          consent_refused: 1,
+          did_not_consent: 2,
           vaccinated: 1
         )
       end
