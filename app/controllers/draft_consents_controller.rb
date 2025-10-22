@@ -10,6 +10,7 @@ class DraftConsentsController < ApplicationController
   before_action :set_parent
   before_action :set_consent
 
+  include PatientLoggingConcern
   include WizardControllerConcern
 
   before_action :set_triage_form, if: :includes_triage_step?
@@ -253,5 +254,9 @@ class DraftConsentsController < ApplicationController
   def questions_params
     n = @draft_consent.health_answers&.size || 0
     Array.new(n) { |index| ["question_#{index}", %i[notes response]] }.to_h
+  end
+
+  def patient_id_for_logging
+    @patient.id
   end
 end

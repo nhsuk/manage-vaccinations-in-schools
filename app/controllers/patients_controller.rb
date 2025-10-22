@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 class PatientsController < ApplicationController
+  include PatientLoggingConcern
   include PatientSearchFormConcern
+
+  skip_around_action :add_patient_id_log_tag, only: :index
 
   before_action :set_patient_search_form, only: :index
   before_action :set_search_params_present, only: :index
@@ -113,5 +116,9 @@ class PatientsController < ApplicationController
       controller: "patients",
       action: action_name
     )
+  end
+
+  def patient_id_for_logging
+    params[:id]
   end
 end
