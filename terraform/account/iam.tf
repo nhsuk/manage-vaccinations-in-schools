@@ -5,13 +5,13 @@ resource "aws_iam_role" "ecs_task_role" {
 
 resource "aws_iam_role_policy_attachment" "ecs_task_fargate" {
   role       = aws_iam_role.ecs_task_role.name
-  policy_arn = aws_iam_policy.shell_access_policy.arn
+  policy_arn = aws_iam_policy.session_manager_access.arn
 }
 
-resource "aws_iam_policy" "shell_access_policy" {
-  name        = "ShellAccessPolicy"
-  description = "Allow shell access to ECS tasks"
-  policy      = file("resources/iam_policy_ECSShellAccess.json")
+resource "aws_iam_policy" "session_manager_access" {
+  name        = "SessionManagerAccess"
+  description = "Allows ECS tasks to be accessed via AWS Systems Manager Session Manager"
+  policy      = file("resources/iam_policy_SessionManagerAccess.json")
 }
 
 resource "aws_iam_policy" "ecs_shell_access_policy" {
