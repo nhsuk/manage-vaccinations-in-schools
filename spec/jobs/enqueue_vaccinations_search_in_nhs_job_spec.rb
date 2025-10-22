@@ -16,8 +16,6 @@ describe EnqueueVaccinationsSearchInNHSJob do
 
         # Ensure expectation patients and sessions are created before the job runs
         searchable_patients
-
-        described_class.perform_now
       end
 
       def setup_feature_flag
@@ -67,8 +65,6 @@ describe EnqueueVaccinationsSearchInNHSJob do
       end
 
       shared_examples "behaviour before, during or after consent/invitation period" do
-        subject { SearchVaccinationRecordsInNHSJob }
-
         context "before the consent or invitation period for the session",
                 within_academic_year: {
                   from_start: 30.days
@@ -76,7 +72,13 @@ describe EnqueueVaccinationsSearchInNHSJob do
           let(:dates) { [30.days.from_now] }
           let(:send_consent_requests_or_invitations_at) { 7.days.from_now }
 
-          it { should_not have_received(:perform_bulk) }
+          it "does not perform any searches" do
+            described_class.perform_now
+
+            expect(SearchVaccinationRecordsInNHSJob).not_to have_received(
+              :perform_bulk
+            )
+          end
         end
 
         context "within the consent or invitation period for the session",
@@ -87,6 +89,8 @@ describe EnqueueVaccinationsSearchInNHSJob do
           let(:send_consent_requests_or_invitations_at) { 14.days.ago }
 
           it "performs searches on the session patients" do
+            described_class.perform_now
+
             expect(SearchVaccinationRecordsInNHSJob).to have_received(
               :perform_bulk
             ).once.with(searchable_patients.map(&:id).zip)
@@ -100,7 +104,13 @@ describe EnqueueVaccinationsSearchInNHSJob do
           let(:dates) { [7.days.ago] }
           let(:send_consent_requests_or_invitations_at) { 30.days.ago }
 
-          it { should_not have_received(:perform_bulk) }
+          it "does not perform any searches" do
+            described_class.perform_now
+
+            expect(SearchVaccinationRecordsInNHSJob).not_to have_received(
+              :perform_bulk
+            )
+          end
         end
 
         context "in between multiple session dates",
@@ -111,6 +121,8 @@ describe EnqueueVaccinationsSearchInNHSJob do
           let(:send_consent_requests_or_invitations_at) { 14.days.ago }
 
           it "performs searches on the session patients" do
+            described_class.perform_now
+
             expect(SearchVaccinationRecordsInNHSJob).to have_received(
               :perform_bulk
             ).once.with(searchable_patients.map(&:id).zip)
@@ -125,6 +137,8 @@ describe EnqueueVaccinationsSearchInNHSJob do
           let(:send_consent_requests_or_invitations_at) { 2.days.from_now }
 
           it "performs searches on the session patients" do
+            described_class.perform_now
+
             expect(SearchVaccinationRecordsInNHSJob).to have_received(
               :perform_bulk
             ).once.with(searchable_patients.map(&:id).zip)
@@ -187,8 +201,6 @@ describe EnqueueVaccinationsSearchInNHSJob do
 
         # Ensure expectation patients are created before the job runs
         searchable_patients
-
-        described_class.perform_now
       end
 
       def setup_stubs
@@ -227,6 +239,8 @@ describe EnqueueVaccinationsSearchInNHSJob do
         let(:patient_programme_vaccinations_searches) { [] }
 
         it "does not perform a search on the patient" do
+          described_class.perform_now
+
           expect(SearchVaccinationRecordsInNHSJob).not_to have_received(
             :perform_bulk
           )
@@ -237,6 +251,8 @@ describe EnqueueVaccinationsSearchInNHSJob do
         let(:patient_programme_vaccinations_searches) { [] }
 
         it "performs a search on the patients" do
+          described_class.perform_now
+
           expect(SearchVaccinationRecordsInNHSJob).to have_received(
             :perform_bulk
           ).once.with(searchable_patients.map(&:id).zip)
@@ -247,6 +263,8 @@ describe EnqueueVaccinationsSearchInNHSJob do
         let(:last_searched_at) { 28.days.ago }
 
         it "performs a search on the patient" do
+          described_class.perform_now
+
           expect(SearchVaccinationRecordsInNHSJob).to have_received(
             :perform_bulk
           ).once.with(searchable_patients.map(&:id).zip)
@@ -257,6 +275,8 @@ describe EnqueueVaccinationsSearchInNHSJob do
         let(:last_searched_at) { 27.days.ago }
 
         it "does not perform a search on the patient" do
+          described_class.perform_now
+
           expect(SearchVaccinationRecordsInNHSJob).not_to have_received(
             :perform_bulk
           )
@@ -279,6 +299,8 @@ describe EnqueueVaccinationsSearchInNHSJob do
           end
 
           it "searches for 1/28th of the elligible patients" do
+            described_class.perform_now
+
             expect(SearchVaccinationRecordsInNHSJob).to have_received(
               :perform_bulk
             ).once.with(searchable_patients.first(2).map(&:id).zip)
@@ -297,6 +319,8 @@ describe EnqueueVaccinationsSearchInNHSJob do
           end
 
           it "searches for the daily limit of patients" do
+            described_class.perform_now
+
             expect(SearchVaccinationRecordsInNHSJob).to have_received(
               :perform_bulk
             ).once.with(searchable_patients.first(daily_limit).map(&:id).zip)
@@ -313,8 +337,6 @@ describe EnqueueVaccinationsSearchInNHSJob do
         allow(SearchVaccinationRecordsInNHSJob).to receive(:perform_bulk)
 
         patient
-
-        described_class.perform_now
       end
 
       let(:school) { create(:school, team:, programmes:, gias_year_groups:) }
@@ -346,6 +368,8 @@ describe EnqueueVaccinationsSearchInNHSJob do
       end
 
       it "only performs one search for the patient" do
+        described_class.perform_now
+
         expect(SearchVaccinationRecordsInNHSJob).to have_received(
           :perform_bulk
         ).once.with([[patient.id]])
