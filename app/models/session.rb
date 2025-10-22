@@ -183,6 +183,15 @@ class Session < ApplicationRecord
 
   scope :registration_not_required, -> { where(requires_registration: false) }
 
+  scope :scheduled_for_search_in_nhs_immunisations_api,
+        -> do
+          scope = Session.scheduled
+
+          scope.where("sessions.send_invitations_at <= ?", 2.days.from_now).or(
+            scope.where("sessions.send_consent_requests_at <= ?", 2.days.from_now)
+          )
+        end
+
   before_create :set_slug
 
   delegate :clinic?, :generic_clinic?, :school?, to: :location
@@ -319,6 +328,10 @@ class Session < ApplicationRecord
         rows
       )
     end
+  end
+
+  def scheduled_for_search_in_nhs_immunisations_api?
+    Session.where(id:).scheduled_for_search_in_nhs_immunisations_api.exists?
   end
 
   private

@@ -125,4 +125,10 @@ class PatientLocation < ApplicationRecord
   def destroy_if_safe!
     destroy! if safe_to_destroy?
   end
+
+  def search_vaccinations_from_nhs_immunisations_api
+    if location.scheduled_for_search_in_nhs_immunisations_api?
+      SearchVaccinationRecordsInNHSJob.perform_async(patient.id)
+    end
+  end
 end
