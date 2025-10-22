@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ConsentFormsController < ApplicationController
+  include PatientLoggingConcern
   include PatientSearchFormConcern
 
   before_action :set_patient_search_form, only: :search
@@ -149,5 +150,9 @@ class ConsentFormsController < ApplicationController
 
   def archive_params
     params.expect(consent_form: :notes).merge(archived_at: Time.current)
+  end
+
+  def patient_id_for_logging
+    params[:patient_id]
   end
 end
