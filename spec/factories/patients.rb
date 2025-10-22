@@ -1035,5 +1035,9 @@ FactoryBot.define do
         end
       end
     end
+
+    trait :with_pending_changes do
+      pending_changes { { foo: "bar" } }
+    end
   end
 end
