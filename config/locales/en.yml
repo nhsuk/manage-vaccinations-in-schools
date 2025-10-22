@@ -19,6 +19,8 @@ en:
               too_long: Enter a batch that is less than %{count} characters long
         draft_consent:
           attributes:
+            injection_alternative:
+              inclusion: Select yes or no
             new_or_existing_contact:
               blank: Choose who you are trying to get consent from
             notify_parent_on_refusal:
@@ -53,7 +55,7 @@ en:
               inclusion: Choose if they consent
             route:
               inclusion: Choose how the response was given
-            injection_alternative:
+            without_gelatine:
               inclusion: Select yes or no
         draft_import:
           attributes:
@@ -215,6 +217,7 @@ en:
           given: Consent given
           given_injection: Consent given
           given_nasal: Consent given
+          given_without_injection: Consent given
           not_provided: Not provided
           refused: Consent refused
         routes:
@@ -389,6 +392,8 @@ en:
             given_name:
               blank: Enter a first name
               too_long: Enter a first name that is less than 300 characters long
+            injection_alternative:
+              inclusion: Select yes or no
             notes:
               blank: Enter notes
               too_long: Enter notes that are less than %{count} characters long
@@ -433,6 +438,8 @@ en:
               inclusion: Choose a school from the list
             use_preferred_name:
               inclusion: Tell us whether they use a different name
+            without_gelatine:
+              inclusion: Select yes or no
         gillick_assessment:
           attributes:
             knows_vaccination:
@@ -540,6 +547,7 @@ en:
         flu: Consent for the flu vaccination
         hpv: Consent for the HPV vaccination
         menacwy: Consent for the MenACWY vaccination
+        mmr: Consent for the MMR vaccination
         td_ipv: Consent for the Td/IPV vaccination
       i_agree: Consent given
     notes:
@@ -566,6 +574,7 @@ en:
         flu: Do they agree to them having the flu vaccination?
         hpv: Do they agree to them having the HPV vaccination?
         menacwy: Do they agree to them having the MenACWY vaccination?
+        mmr: Do they agree to them having the MMR vaccination?
         td_ipv: Do they agree to them having the Td/IPV vaccination?
     notes:
       title:

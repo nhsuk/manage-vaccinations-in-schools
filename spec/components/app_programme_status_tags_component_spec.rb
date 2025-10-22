@@ -4,6 +4,7 @@ describe AppProgrammeStatusTagsComponent do
   subject { render_inline(component) }
 
   let(:menacwy_programme) { create(:programme, :menacwy) }
+  let(:mmr_programme) { create(:programme, :mmr) }
   let(:td_ipv_programme) { create(:programme, :td_ipv) }
   let(:flu_programme) { create(:programme, :flu) }
 
@@ -14,22 +15,27 @@ describe AppProgrammeStatusTagsComponent do
 
     let(:status_by_programme) do
       {
-        menacwy_programme => {
-          status: :given
-        },
-        td_ipv_programme => {
-          status: :refused
-        },
         flu_programme => {
           status: :given,
           vaccine_methods: %w[nasal injection]
+        },
+        menacwy_programme => {
+          status: :given
+        },
+        mmr_programme => {
+          status: :given,
+          without_gelatine: true
+        },
+        td_ipv_programme => {
+          status: :refused
         }
       }
     end
 
-    it { should have_content("MenACWYConsent given") }
-    it { should have_content("Td/IPVConsent refused") }
     it { should have_content("FluConsent given for nasal spray") }
+    it { should have_content("MenACWYConsent given") }
+    it { should have_content("MMRConsent given for gelatine-free vaccine") }
+    it { should have_content("Td/IPVConsent refused") }
   end
 
   context "for vaccination context" do

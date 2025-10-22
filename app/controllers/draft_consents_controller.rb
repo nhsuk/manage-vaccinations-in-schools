@@ -117,7 +117,7 @@ class DraftConsentsController < ApplicationController
 
   def update_params
     permitted_attributes = {
-      agree: %i[response injection_alternative],
+      agree: %i[response injection_alternative without_gelatine],
       notes: %i[notes],
       notify_parent_on_refusal: %i[notify_parent_on_refusal],
       notify_parents_on_vaccination: %i[notify_parents_on_vaccination],

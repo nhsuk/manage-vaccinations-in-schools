@@ -188,6 +188,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
     t.integer "vaccine_methods", default: [], null: false, array: true
     t.integer "reason_for_refusal"
     t.text "notes", default: "", null: false
+    t.boolean "without_gelatine"
     t.index ["consent_form_id"], name: "index_consent_form_programmes_on_consent_form_id"
     t.index ["programme_id", "consent_form_id"], name: "idx_on_programme_id_consent_form_id_2113cb7f37", unique: true
   end
@@ -271,6 +272,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
     t.boolean "notify_parent_on_refusal"
     t.bigint "consent_form_id"
     t.datetime "patient_already_vaccinated_notification_sent_at"
+    t.boolean "without_gelatine"
     t.index ["academic_year"], name: "index_consents_on_academic_year"
     t.index ["consent_form_id"], name: "index_consents_on_consent_form_id"
     t.index ["parent_id"], name: "index_consents_on_parent_id"
@@ -548,6 +550,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
     t.integer "status", default: 0, null: false
     t.integer "vaccine_methods", default: [], null: false, array: true
     t.integer "academic_year", null: false
+    t.boolean "without_gelatine"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_1d3170e398", unique: true
     t.index ["status"], name: "index_patient_consent_statuses_on_status"
   end

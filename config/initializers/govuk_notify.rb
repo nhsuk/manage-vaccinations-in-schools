@@ -10,15 +10,19 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
     "3523d4b8-530b-42dd-8b9b-7fed8d1dfff1",
   consent_school_initial_reminder_flu: "7f85a5b4-5240-4ae9-94f7-43913852943c",
   consent_school_initial_reminder_hpv: "0d78bff0-9dde-4192-8cf8-10e83486b54f",
+  consent_school_initial_reminder_mmr: "5462c441-81c0-4ac0-821f-713b4178f8ba",
   consent_school_request_doubles: "9b1a015d-6caa-47c5-a223-f72377586602",
   consent_school_request_flu: "017853bc-2b35-4aff-99b1-193e514613a0",
   consent_school_request_hpv: "7b9bb010-0742-460a-ae25-1922355b6776",
+  consent_school_request_mmr: "7e86e688-ceca-4dcc-a1cf-19cb559d38a8",
   consent_school_subsequent_reminder_doubles:
     "ea03aada-0912-4373-91e1-80082071a7aa",
   consent_school_subsequent_reminder_flu:
     "c942ce27-590e-4387-9aa8-5b9b4f2796d1",
   consent_school_subsequent_reminder_hpv:
     "5f70d21d-00b6-41e6-bdc9-e64455972b43",
+  consent_school_subsequent_reminder_mmr:
+    "5462c441-81c0-4ac0-821f-713b4178f8ba",
   consent_unknown_contact_details_warning:
     "6d746839-a20e-4d50-8a1d-6f3900ff69b2",
   session_clinic_initial_invitation: "88d21cfc-39f6-44a2-98c3-9588e7214ae4",
@@ -34,6 +38,7 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   vaccination_administered_flu: "7238ee27-5840-40e5-b9b9-3130ba4cd4fa",
   vaccination_administered_hpv: "8a65d7b5-045c-4f26-8f76-6e593c14cb6d",
   vaccination_administered_menacwy: "38727494-9a81-42b3-9c1f-5c31e55333e7",
+  vaccination_administered_mmr: "0b1095db-fb38-4105-9f01-a364fa8bbb1c",
   vaccination_administered_td_ipv: "3abe7ca8-a889-484b-ab9f-07523302eb6a",
   vaccination_already_had: "e37fe0a2-7584-4c25-983a-8f5a11c818a1",
   vaccination_deleted: "1caf1459-abc9-4944-b8c0-deba906ea005",

@@ -1,56 +1,42 @@
 # frozen_string_literal: true
 
 describe "Parental consent" do
-  scenario "Flu" do
-    given_a_flu_programme_is_underway
+  before { given_an_mmr_programme_is_underway }
+
+  scenario "MMR - any vaccine" do
     when_i_go_to_the_consent_form
     then_i_see_the_consent_form
 
-    when_i_give_consent
+    when_i_give_consent(without_gelatine: false)
     then_i_see_the_first_health_question
 
     when_i_answer_no_to_all_health_questions
-    then_i_see_the_confirmation_page
+    then_i_see_the_check_and_confirm_page
 
-    when_i_change_my_answer_to_the_first_health_question
-    then_i_see_the_follow_up_question
-
-    when_i_answer_the_follow_up_questions
+    when_i_submit_the_consent_form
     then_i_see_the_confirmation_page
   end
 
-  scenario "Flu - already has a PSD" do
-    stub_pds_search_to_return_no_patients
-
-    given_a_flu_programme_is_underway
-    and_the_child_has_a_psd
-
+  scenario "MMR - without gelatine" do
     when_i_go_to_the_consent_form
     then_i_see_the_consent_form
 
-    when_i_give_consent
-    when_i_answer_yes_to_all_health_questions
-    then_i_see_the_confirmation_page
+    when_i_give_consent(without_gelatine: true)
+    then_i_see_the_first_health_question
+
+    when_i_answer_no_to_all_health_questions
+    then_i_see_the_check_and_confirm_page
 
     when_i_submit_the_consent_form
-    then_the_psd_is_invalidated
+    then_i_see_the_confirmation_page
   end
 
-  def given_a_flu_programme_is_underway
-    @programme = create(:programme, :flu)
+  def given_an_mmr_programme_is_underway
+    @programme = create(:programme, :mmr)
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     location = create(:school, name: "Pilot School", programmes: [@programme])
     @session = create(:session, :scheduled, programmes: [@programme], location:)
     @child = create(:patient, session: @session)
-  end
-
-  def and_the_child_has_a_psd
-    @patient_specific_direction =
-      create(
-        :patient_specific_direction,
-        patient: @child,
-        programme: @programme
-      )
   end
 
   def when_i_go_to_the_consent_form
@@ -61,7 +47,7 @@ describe "Parental consent" do
     expect(page).to have_content("Give or refuse consent for vaccinations")
   end
 
-  def when_i_give_consent
+  def when_i_give_consent(without_gelatine:)
     click_button "Start now"
 
     # What is your child's name?
@@ -87,11 +73,15 @@ describe "Parental consent" do
     click_button "Continue"
 
     # Do you agree?
-    choose "Yes, I agree to them having the nasal spray vaccine"
+    choose "Yes, I agree"
     click_button "Continue"
 
-    # Injection alternative
-    choose "Yes"
+    # Without gelatine
+    if without_gelatine
+      choose "I want my child to have the vaccine that does not contain gelatine"
+    else
+      choose "My child can have either type of vaccine"
+    end
     click_button "Continue"
 
     # Home address
@@ -102,60 +92,27 @@ describe "Parental consent" do
   end
 
   def then_i_see_the_first_health_question
-    expect(page).to have_content("Has your child been diagnosed with asthma?")
-  end
-
-  def when_i_answer_no_to_all_health_questions
-    9.times do
-      choose "No"
-      click_button "Continue"
-    end
-  end
-
-  def when_i_answer_yes_to_all_health_questions
-    11.times do
-      choose "Yes"
-
-      begin
-        fill_in "Give details", with: "Details"
-      rescue Capybara::ElementNotFound
-        # Some questions don't have a give details text box.
-      end
-
-      click_button "Continue"
-    end
-  end
-
-  def then_i_see_the_confirmation_page
-    expect(page).to have_content("Check and confirm")
-  end
-
-  def when_i_change_my_answer_to_the_first_health_question
-    click_link "Change your answer to health question 1"
-
-    choose "Yes"
-    click_button "Continue"
-  end
-
-  def then_i_see_the_follow_up_question
     expect(page).to have_content(
-      "Have they taken oral steroids in the last 2 weeks?"
+      "Does your child have a bleeding disorder or another medical condition they receive treatment for?"
     )
   end
 
-  def when_i_answer_the_follow_up_questions
-    2.times do
+  def when_i_answer_no_to_all_health_questions
+    3.times do
       choose "No"
       click_button "Continue"
     end
+  end
+
+  def then_i_see_the_check_and_confirm_page
+    expect(page).to have_content("Check and confirm")
   end
 
   def when_i_submit_the_consent_form
     click_on "Confirm"
-    perform_enqueued_jobs
   end
 
-  def then_the_psd_is_invalidated
-    expect(@patient_specific_direction.reload).to be_invalidated
+  def then_i_see_the_confirmation_page
+    expect(page).to have_content("is due to get the MMR vaccination at school")
   end
 end

@@ -54,13 +54,15 @@ describe GovukNotifyPersonalisation do
     expect(to_h).to match(
       {
         talk_to_your_child_message:
-          "## Talk to your child about what they want\n\n" \
-            "We suggest you talk to your child about the vaccine before you " \
-            "respond to us.\n\nYoung people have the right to refuse " \
-            "vaccinations. Those who show " \
-            "[‘Gillick competence’](https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
-            "have the right to consent to vaccinations themselves. Our team " \
-            "may assess Gillick competence during vaccination sessions.",
+          "## Talk to your child about what they want\n\nWe suggest you talk to " \
+            "your child about the vaccination before you respond to us. Young " \
+            "people have the right to refuse vaccinations.\n\nThey also have " \
+            "[the right to consent to their own vaccinations]" \
+            "(https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
+            "if they show they fully understand what’s involved. Our team might " \
+            "give young people this opportunity if they assess them as suitably " \
+            "competent. Our team may assess Gillick competence during vaccination " \
+            "sessions.",
         catch_up: "no",
         consent_deadline: "Wednesday 31 December",
         consent_link:
@@ -87,6 +89,7 @@ describe GovukNotifyPersonalisation do
         vaccination: "HPV vaccination",
         vaccination_and_method: "HPV vaccination",
         vaccine: "HPV vaccine",
+        vaccine_and_dose: "HPV",
         vaccine_and_method: "HPV vaccine",
         vaccine_is_injection: "no",
         vaccine_is_nasal: "no",
@@ -237,6 +240,23 @@ describe GovukNotifyPersonalisation do
         end
       end
     end
+
+    context "for the MMR programme" do
+      let(:programmes) { [create(:programme, :mmr)] }
+
+      it { expect(to_h).to include(consented_vaccine_methods_message: "") }
+
+      context "when consented to vaccine without gelatine" do
+        before { consent.update!(without_gelatine: true) }
+
+        it do
+          expect(to_h).to include(
+            consented_vaccine_methods_message:
+              "You’ve agreed that John can have the vaccine without gelatine."
+          )
+        end
+      end
+    end
   end
 
   context "with a consent form" do
@@ -320,6 +340,25 @@ describe GovukNotifyPersonalisation do
         end
       end
     end
+
+    context "for the MMR programme" do
+      let(:programmes) { [create(:programme, :mmr)] }
+
+      it { expect(to_h).to include(consented_vaccine_methods_message: "") }
+
+      context "when consented to vaccine without gelatine" do
+        before do
+          consent_form.consent_form_programmes.update!(without_gelatine: true)
+        end
+
+        it do
+          expect(to_h).to include(
+            consented_vaccine_methods_message:
+              "You’ve agreed that Tom can have the vaccine without gelatine."
+          )
+        end
+      end
+    end
   end
 
   context "with an administered vaccination record" do
@@ -332,6 +371,7 @@ describe GovukNotifyPersonalisation do
         :vaccination_record,
         :administered,
         programme: programmes.first,
+        dose_sequence: 1,
         performed_at: Date.new(2024, 1, 1),
         vaccine:
       )
@@ -344,6 +384,7 @@ describe GovukNotifyPersonalisation do
           today_or_date_of_vaccination: "on 1 January 2024",
           outcome_administered: "yes",
           outcome_not_administered: "no",
+          vaccine_and_dose: "HPV first dose",
           vaccine_brand: "Vaccine"
         )
       )

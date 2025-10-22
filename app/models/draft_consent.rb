@@ -37,6 +37,7 @@ class DraftConsent
   attribute :triage_notes, :string
   attribute :triage_status_and_vaccine_method, :string
   attribute :vaccine_methods, array: true, default: []
+  attribute :without_gelatine, :boolean
 
   def initialize(current_user:, **attributes)
     @current_user = current_user
@@ -124,6 +125,11 @@ class DraftConsent
                 in: [true, false]
               },
               if: -> { response == "given_nasal" }
+    validates :without_gelatine,
+              inclusion: {
+                in: [true, false]
+              },
+              if: -> { programme.mmr? && response == "given" }
   end
 
   on_wizard_step :notify_parents_on_vaccination, exact: true do
@@ -384,6 +390,8 @@ class DraftConsent
 
     vaccines = programme.vaccines.where(method: vaccine_methods)
 
+    vaccines = vaccines.where(contains_gelatine: false) if without_gelatine
+
     self.health_answers =
       HealthAnswersDeduplicator
         .call(vaccines:)
@@ -420,6 +428,7 @@ class DraftConsent
       route
       team_id
       vaccine_methods
+      without_gelatine
     ]
   end
 

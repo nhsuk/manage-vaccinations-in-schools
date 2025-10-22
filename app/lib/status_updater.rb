@@ -47,7 +47,7 @@ class StatusUpdater
           batch,
           on_duplicate_key_update: {
             conflict_target: [:id],
-            columns: %i[status vaccine_methods]
+            columns: %i[status vaccine_methods without_gelatine]
           }
         )
       end

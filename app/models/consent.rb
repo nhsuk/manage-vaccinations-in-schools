@@ -18,6 +18,7 @@
 #  submitted_at                                    :datetime         not null
 #  vaccine_methods                                 :integer          default([]), not null, is an Array
 #  withdrawn_at                                    :datetime
+#  without_gelatine                                :boolean
 #  created_at                                      :datetime         not null
 #  updated_at                                      :datetime         not null
 #  consent_form_id                                 :bigint
@@ -148,10 +149,10 @@ class Consent < ApplicationRecord
           .includes(:programme)
           .map do |consent_form_programme|
             patient.consents.create!(
+              academic_year: consent_form.academic_year,
               consent_form:,
               health_answers: consent_form.health_answers,
               notes: consent_form_programme.notes,
-              team: consent_form.team,
               parent:,
               programme: consent_form_programme.programme,
               reason_for_refusal: consent_form_programme.reason_for_refusal,
@@ -159,8 +160,9 @@ class Consent < ApplicationRecord
               response: consent_form_programme.response,
               route: "website",
               submitted_at: consent_form.recorded_at,
+              team: consent_form.team,
               vaccine_methods: consent_form_programme.vaccine_methods,
-              academic_year: consent_form.academic_year
+              without_gelatine: consent_form_programme.without_gelatine
             )
           end
 

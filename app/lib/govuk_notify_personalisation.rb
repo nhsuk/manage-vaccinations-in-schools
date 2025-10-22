@@ -73,6 +73,7 @@ class GovukNotifyPersonalisation
       vaccination:,
       vaccination_and_method:,
       vaccine:,
+      vaccine_and_dose:,
       vaccine_and_method:,
       vaccine_brand:,
       vaccine_is_injection:,
@@ -122,24 +123,33 @@ class GovukNotifyPersonalisation
   end
 
   def consented_vaccine_methods_message
-    return nil if consent.nil? && consent_form.nil?
-
-    if (consent && !consent.programme.flu?) ||
-         (consent_form && consent_form.programmes.none?(&:flu?))
-      return ""
-    end
+    return if consent.nil? && consent_form.nil?
 
     consent_form_programmes =
-      consent ? [consent] : consent_form.consent_form_programmes
+      if consent
+        [consent]
+      else
+        consent_form.consent_form_programmes.includes(programme: :vaccines)
+      end
+
+    programmes = consent_form_programmes.map(&:programme)
 
     consented_vaccine_methods =
-      if consent_form_programmes.any?(&:vaccine_method_injection_and_nasal?)
-        "nasal spray flu vaccine, or the injected flu vaccine if the nasal spray is not suitable"
-      elsif consent_form_programmes.any?(&:vaccine_method_nasal?)
-        "nasal spray flu vaccine"
-      else
-        "injected flu vaccine"
+      if programmes.any?(&:has_multiple_vaccine_methods?)
+        if consent_form_programmes.any?(&:vaccine_method_injection_and_nasal?)
+          "nasal spray flu vaccine, or the injected flu vaccine if the nasal spray is not suitable"
+        elsif consent_form_programmes.any?(&:vaccine_method_nasal?)
+          "nasal spray flu vaccine"
+        else
+          "injected flu vaccine"
+        end
+      elsif programmes.any?(&:vaccine_may_contain_gelatine?)
+        if consent_form_programmes.any?(&:without_gelatine)
+          "vaccine without gelatine"
+        end
       end
+
+    return "" if consented_vaccine_methods.nil?
 
     "You’ve agreed that #{short_patient_name} can have the #{consented_vaccine_methods}."
   end
@@ -295,11 +305,13 @@ class GovukNotifyPersonalisation
 
     [
       "## Talk to your child about what they want",
-      "We suggest you talk to your child about the vaccine before you respond to us.",
-      "Young people have the right to refuse vaccinations. " \
-        "Those who show [‘Gillick competence’](https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
-        "have the right to consent to vaccinations themselves. " \
-        "Our team may assess Gillick competence during vaccination sessions."
+      "We suggest you talk to your child about the vaccination before you respond to us. " \
+        "Young people have the right to refuse vaccinations.",
+      "They also have [the right to consent to their own vaccinations]" \
+        "(https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
+        "if they show they fully understand what’s involved. Our team might give young " \
+        "people this opportunity if they assess them as suitably competent. Our team may " \
+        "assess Gillick competence during vaccination sessions."
     ].join("\n\n")
   end
 
@@ -329,6 +341,14 @@ class GovukNotifyPersonalisation
 
   def vaccine
     "#{programme_names.to_sentence} vaccine".pluralize(programme_names.length)
+  end
+
+  def vaccine_and_dose
+    if (dose_sequence = vaccination_record&.dose_sequence)
+      "#{programme_names.to_sentence} #{I18n.t(dose_sequence, scope: :ordinal_number)} dose"
+    else
+      programme_names.to_sentence
+    end
   end
 
   def vaccine_and_method
