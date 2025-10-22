@@ -530,39 +530,6 @@ en:
           attributes:
             performed_at:
               less_than_or_equal_to: Enter a time in the past
-  children:
-    zero: No children
-    one: 1 child
-    other: "%{count} children"
-  children_without_nhs_number:
-    title: No NHS number
-    zero: No children without an NHS number
-    one: 1 child without an NHS number
-    other: "%{count} children without an NHS number"
-  children_with_no_consent_response:
-    title: No consent response
-    zero: No children with no response
-    one: 1 child with no response
-    other: "%{count} children with no response"
-  children_with_conflicting_consent_response:
-    title: Conflicting consent
-    zero: No children with conflicting responses
-    one: 1 child with conflicting response
-    other: "%{count} children with conflicting responses"
-  children_requiring_triage:
-    title: Triage needed
-    zero: No children requiring triage
-    one: 1 child requiring triage
-    other: "%{count} children requiring triage"
-  children_to_register:
-    title: Register attendance
-    zero: No children to register
-    one: 1 child to register
-    other: "%{count} children to register"
-  children_for_programme:
-    zero: "No children for %{programme}"
-    one: "1 child for %{programme}"
-    other: "%{count} children for %{programme}"
   consent_forms:
     index:
       title: Unmatched consent responses
@@ -753,7 +720,3 @@ en:
     absent: "%{name} is absent from today’s session."
     not_registered: "%{name} is not registered yet."
     present: "%{name} is attending today’s session."
-  vaccinations_given:
-    zero: No vaccinations given
-    one: 1 vaccination given
-    other: "%{count} vaccinations given"

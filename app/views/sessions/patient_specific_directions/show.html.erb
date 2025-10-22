@@ -36,7 +36,8 @@
       <% end %>
     <% end %>
 
-    <%= render AppSessionNeedsReviewWarningComponent.new(session: @session) %>
+    <%= render AppSessionNeedsReviewComponent.new(@session) %>
+
     <%= render AppSearchResultsComponent.new(@pagy, label: "children", heading: "Review PSDs") do %>
       <% @patients.each do |patient| %>
         <%= render AppPatientSessionSearchResultCardComponent.new(

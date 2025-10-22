@@ -68,6 +68,29 @@ class ConsentForm < ApplicationRecord
 
   scope :unmatched, -> { recorded.not_archived.where.missing(:consents) }
 
+  scope :has_any_programmes_of,
+        ->(programmes) do
+          where(
+            ConsentFormProgramme
+              .select("1")
+              .where(
+                "consent_form_programmes.consent_form_id = consent_forms.id"
+              )
+              .where(programme: programmes)
+              .arel
+              .exists
+          )
+        end
+
+  scope :for_session,
+        ->(session) do
+          where(
+            academic_year: session.academic_year,
+            location: session.location,
+            team: session.team
+          ).has_any_programmes_of(session.programmes)
+        end
+
   attr_accessor :health_question_number,
                 :parental_responsibility,
                 :response,
