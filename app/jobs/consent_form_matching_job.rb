@@ -40,8 +40,8 @@ class ConsentFormMatchingJob < ApplicationJob
 
   def query
     {
-      given_name: @consent_form.given_name,
-      family_name: @consent_form.family_name,
+      given_name: ApostropheNormaliser.call(@consent_form.given_name),
+      family_name: ApostropheNormaliser.call(@consent_form.family_name),
       date_of_birth: @consent_form.date_of_birth,
       address_postcode: @consent_form.address_postcode
     }
