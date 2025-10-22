@@ -15,9 +15,7 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
     @triage_form = triage_form || default_triage_form
   end
 
-  def render?
-    triage_status && !triage_status.not_required?
-  end
+  def render? = consent_status.given? || !triage_status.not_required?
 
   private
 
@@ -31,7 +29,16 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
   end
 
   def heading
-    "#{programme.name}: #{I18n.t(status, scope: %i[status triage label])}"
+    status_with_suffix = triage_status.status
+
+    if programme.has_multiple_vaccine_methods?
+      vaccine_method = triage_status.vaccine_method
+      status_with_suffix += "_#{vaccine_method}" if vaccine_method
+    elsif triage_status.without_gelatine
+      status_with_suffix += "_without_gelatine"
+    end
+
+    "#{programme.name}: #{I18n.t(status_with_suffix, scope: %i[status triage label])}"
   end
 
   def triage_status
@@ -39,7 +46,11 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
       patient
         .triage_statuses
         .includes(:consents, :programme, :vaccination_records)
-        .find_by(programme:, academic_year:)
+        .find_or_initialize_by(programme:, academic_year:)
+  end
+
+  def consent_status
+    patient.consent_status(programme:, academic_year:)
   end
 
   def vaccination_method

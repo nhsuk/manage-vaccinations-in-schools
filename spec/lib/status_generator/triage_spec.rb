@@ -312,4 +312,47 @@ describe StatusGenerator::Triage do
       it { should be_nil }
     end
   end
+
+  describe "#without_gelatine" do
+    subject { generator.without_gelatine }
+
+    let(:programme) { create(:programme, :mmr) }
+
+    context "with no triage" do
+      it { should be_nil }
+    end
+
+    context "with a do not vaccinate triage" do
+      before { create(:triage, :do_not_vaccinate, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with a safe to vaccinate triage with gelatine" do
+      before do
+        create(
+          :triage,
+          :safe_to_vaccinate,
+          patient:,
+          programme:,
+          without_gelatine: false
+        )
+      end
+
+      it { should be(false) }
+    end
+
+    context "with a safe to vaccinate triage without gelatine" do
+      before do
+        create(
+          :triage,
+          :safe_to_vaccinate_without_gelatine,
+          patient:,
+          programme:
+        )
+      end
+
+      it { should be(true) }
+    end
+  end
 end

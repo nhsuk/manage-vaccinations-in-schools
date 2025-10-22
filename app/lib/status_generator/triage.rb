@@ -35,6 +35,10 @@ class StatusGenerator::Triage
     latest_triage&.vaccine_method if status_should_be_safe_to_vaccinate?
   end
 
+  def without_gelatine
+    latest_triage&.without_gelatine if status_should_be_safe_to_vaccinate?
+  end
+
   def consent_requires_triage?
     latest_consents.any?(&:requires_triage?)
   end

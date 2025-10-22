@@ -106,7 +106,7 @@ class DraftConsentsController < ApplicationController
         @triage_form.add_patient_specific_direction,
       triage_form_valid: @triage_form.valid?,
       triage_notes: @triage_form.notes,
-      triage_status_and_vaccine_method: @triage_form.status_and_vaccine_method,
+      triage_status_option: @triage_form.status_option,
       wizard_step: :triage
     )
   end
@@ -144,11 +144,7 @@ class DraftConsentsController < ApplicationController
 
   def triage_form_params
     params.expect(
-      triage_form: %i[
-        status_and_vaccine_method
-        notes
-        add_patient_specific_direction
-      ]
+      triage_form: %i[status_option notes add_patient_specific_direction]
     )
   end
 
@@ -190,14 +186,14 @@ class DraftConsentsController < ApplicationController
         TriageForm.new(
           add_patient_specific_direction:
             @draft_consent.triage_add_patient_specific_direction,
+          consent_vaccine_methods: @draft_consent.vaccine_methods,
+          consent_without_gelatine: @draft_consent.without_gelatine,
           current_user:,
           notes: @draft_consent.triage_notes,
-          vaccine_methods: @draft_consent.vaccine_methods,
           patient: @patient,
           session: @session,
           programme: @programme,
-          status_and_vaccine_method:
-            @draft_consent.triage_status_and_vaccine_method
+          status_option: @draft_consent.triage_status_option
         )
       end
   end

@@ -602,6 +602,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
     t.integer "status", default: 0, null: false
     t.integer "vaccine_method"
     t.integer "academic_year", null: false
+    t.boolean "without_gelatine"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_6cf32349df", unique: true
     t.index ["status"], name: "index_patient_triage_statuses_on_status"
   end
@@ -885,6 +886,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
     t.integer "vaccine_method"
     t.integer "academic_year", null: false
     t.date "delay_vaccination_until"
+    t.boolean "without_gelatine"
     t.index ["academic_year"], name: "index_triages_on_academic_year"
     t.index ["patient_id"], name: "index_triages_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_triages_on_performed_by_user_id"

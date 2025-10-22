@@ -9,13 +9,13 @@ describe TriageForm do
 
   describe "validations" do
     it do
-      expect(form).to validate_inclusion_of(
-        :status_and_vaccine_method
-      ).in_array(form.status_and_vaccine_method_options)
+      expect(form).to validate_inclusion_of(:status_option).in_array(
+        form.status_options
+      )
     end
 
     it { should_not validate_presence_of(:notes) }
-    it { should_not validate_presence_of(:vaccine_methods) }
+    it { should_not validate_presence_of(:consent_vaccine_methods) }
     it { should validate_length_of(:notes).is_at_most(1000) }
     it { should allow_values(true, false).for(:add_patient_specific_direction) }
   end
@@ -28,7 +28,7 @@ describe TriageForm do
         programme:,
         current_user: create(:user),
         notes: "test",
-        status_and_vaccine_method: "safe_to_vaccinate"
+        status_option: "safe_to_vaccinate"
       )
     end
 
@@ -50,7 +50,7 @@ describe TriageForm do
         programme:,
         current_user: create(:user),
         notes: "test",
-        status_and_vaccine_method: "safe_to_vaccinate_nasal"
+        status_option: "safe_to_vaccinate_nasal"
       )
     end
 

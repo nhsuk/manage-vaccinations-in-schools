@@ -9,13 +9,14 @@ en:
           true: Yes, they got the full dose
           false: No, they got half a dose
       triage_form:
-        status_and_vaccine_method_options:
+        status_option_options:
           delay_vaccination: No, delay vaccination (and invite to clinic)
           do_not_vaccinate: No, do not vaccinate
           keep_in_triage: No, keep in triage
           safe_to_vaccinate: Yes, it’s safe to vaccinate
           safe_to_vaccinate_injection: Yes, it’s safe to vaccinate with injected vaccine
           safe_to_vaccinate_nasal: Yes, it’s safe to vaccinate with nasal spray
+          safe_to_vaccinate_without_gelatine: Yes, it’s safe to vaccinate with the gelatine-free vaccine
       vaccination_report:
         file_format_options:
           careplus: CarePlus

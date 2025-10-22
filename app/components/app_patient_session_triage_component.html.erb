@@ -3,7 +3,17 @@
 <%= render AppCardComponent.new(feature: true) do |card| %>
   <% card.with_heading(level: 4, colour:) { heading } %>
 
-  <% if latest_triage.nil? || latest_triage.keep_in_triage? %>
+  <% if triage_status.not_required? %>
+    <p>No triage is needed for <%= patient.full_name %>.</p>
+
+    <div class="nhsuk-button-group">
+      <% if helpers.policy(Triage).new? %>
+        <%= govuk_button_link_to "Update triage outcome",
+                                 new_session_patient_programme_triages_path(session, patient, programme),
+                                 secondary: true %>
+      <% end %>
+    </div>
+  <% elsif latest_triage.nil? || latest_triage.keep_in_triage? %>
     <% if helpers.policy(Triage).new? %>
       <p>You need to decide if <%= patient.full_name %> is safe to vaccinate.</p>
 

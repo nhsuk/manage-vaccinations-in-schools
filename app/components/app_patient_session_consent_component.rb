@@ -26,9 +26,9 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
         triage_status.vaccine_method.presence ||
           consent_status.vaccine_methods.first
       status_with_suffix += "_#{vaccine_method}" if vaccine_method
+    elsif consent_status.without_gelatine
+      status_with_suffix += "_without_gelatine"
     end
-
-    status_with_suffix += "_without_gelatine" if consent_status.without_gelatine
 
     "#{programme.name}: #{I18n.t(status_with_suffix, scope: %i[status consent label])}"
   end

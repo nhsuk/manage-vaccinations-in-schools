@@ -4,12 +4,13 @@
 #
 # Table name: patient_triage_statuses
 #
-#  id             :bigint           not null, primary key
-#  academic_year  :integer          not null
-#  status         :integer          default("not_required"), not null
-#  vaccine_method :integer
-#  patient_id     :bigint           not null
-#  programme_id   :bigint           not null
+#  id               :bigint           not null, primary key
+#  academic_year    :integer          not null
+#  status           :integer          default("not_required"), not null
+#  vaccine_method   :integer
+#  without_gelatine :boolean
+#  patient_id       :bigint           not null
+#  programme_id     :bigint           not null
 #
 # Indexes
 #

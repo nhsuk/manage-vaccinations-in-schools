@@ -280,7 +280,10 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         triage_status.status
       end
 
-    { status: status }
+    without_gelatine =
+      triage_status.without_gelatine && !programme.has_multiple_vaccine_methods?
+
+    { status: status, without_gelatine: }
   end
 
   def patient_specific_direction_status_tag

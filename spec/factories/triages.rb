@@ -34,37 +34,42 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (team_id => teams.id)
 #
-class Triage < ApplicationRecord
-  include Invalidatable
-  include Notable
-  include PerformableByUser
+FactoryBot.define do
+  factory :triage do
+    patient
+    programme
 
-  audited associated_with: :patient
+    performed_by
+    team { performed_by.teams.first }
 
-  belongs_to :patient
-  belongs_to :programme
-  belongs_to :team
+    notes { "" }
 
-  enum :status,
-       {
-         safe_to_vaccinate: 0,
-         do_not_vaccinate: 1,
-         keep_in_triage: 2,
-         delay_vaccination: 3
-       },
-       validate: true
+    academic_year { created_at&.to_date&.academic_year || AcademicYear.current }
 
-  enum :vaccine_method,
-       { injection: 0, nasal: 1 },
-       validate: {
-         if: :safe_to_vaccinate?
-       }
+    traits_for_enum :status
+    traits_for_enum :vaccine_method
 
-  scope :delay_vaccination_until_in_past,
-        -> { where(delay_vaccination_until: ...Date.current) }
+    trait :safe_to_vaccinate do
+      status { "safe_to_vaccinate" }
+      injection
+    end
 
-  scope :should_be_invalidated,
-        -> { delay_vaccination_until_in_past.not_invalidated }
+    trait :safe_to_vaccinate_nasal do
+      status { "safe_to_vaccinate" }
+      nasal
+    end
 
-  validates :delay_vaccination_until, absence: true, unless: :delay_vaccination?
+    trait :safe_to_vaccinate_without_gelatine do
+      safe_to_vaccinate
+      without_gelatine
+    end
+
+    trait :without_gelatine do
+      without_gelatine { true }
+    end
+
+    trait :invalidated do
+      invalidated_at { Time.current }
+    end
+  end
 end
