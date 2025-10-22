@@ -453,10 +453,6 @@ en:
               blank: Choose a file
               empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
-        location_programme_year_group:
-          attributes:
-            year_group:
-              inclusion: is not taught at the location
         note:
           attributes:
             body:

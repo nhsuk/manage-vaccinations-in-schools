@@ -241,9 +241,9 @@ describe Location do
     end
   end
 
-  describe "#create_default_programme_year_groups!" do
-    subject(:create_default_programme_year_groups!) do
-      location.create_default_programme_year_groups!(programmes, academic_year:)
+  describe "#import_default_programme_year_groups!" do
+    subject(:import_default_programme_year_groups!) do
+      location.import_default_programme_year_groups!(programmes, academic_year:)
     end
 
     let(:programmes) { [create(:programme, :flu)] } # years 0 to 11
@@ -253,7 +253,7 @@ describe Location do
       let(:location) { create(:school, gias_year_groups: []) }
 
       it "doesn't create any programme year groups" do
-        expect { create_default_programme_year_groups! }.not_to change(
+        expect { import_default_programme_year_groups! }.not_to change(
           location.location_programme_year_groups,
           :count
         )
@@ -264,7 +264,7 @@ describe Location do
       let(:location) { create(:school, gias_year_groups: (0..3).to_a) }
 
       it "creates only suitable year groups" do
-        expect { create_default_programme_year_groups! }.to change(
+        expect { import_default_programme_year_groups! }.to change(
           location.location_programme_year_groups,
           :count
         ).by(4)
@@ -279,7 +279,7 @@ describe Location do
       let(:location) { create(:school, gias_year_groups: (-1..14).to_a) }
 
       it "creates only suitable year groups" do
-        expect { create_default_programme_year_groups! }.to change(
+        expect { import_default_programme_year_groups! }.to change(
           location.location_programme_year_groups,
           :count
         ).by(12)
