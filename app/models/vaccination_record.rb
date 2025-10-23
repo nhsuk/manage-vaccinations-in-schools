@@ -43,18 +43,20 @@
 #
 # Indexes
 #
-#  index_vaccination_records_on_batch_id                   (batch_id)
-#  index_vaccination_records_on_discarded_at               (discarded_at)
-#  index_vaccination_records_on_location_id                (location_id)
-#  index_vaccination_records_on_nhs_immunisations_api_id   (nhs_immunisations_api_id) UNIQUE
-#  index_vaccination_records_on_patient_id                 (patient_id)
-#  index_vaccination_records_on_pending_changes_not_empty  (id) WHERE (pending_changes <> '{}'::jsonb)
-#  index_vaccination_records_on_performed_by_user_id       (performed_by_user_id)
-#  index_vaccination_records_on_programme_id               (programme_id)
-#  index_vaccination_records_on_session_id                 (session_id)
-#  index_vaccination_records_on_supplied_by_user_id        (supplied_by_user_id)
-#  index_vaccination_records_on_uuid                       (uuid) UNIQUE
-#  index_vaccination_records_on_vaccine_id                 (vaccine_id)
+#  index_vaccination_records_on_batch_id                           (batch_id)
+#  index_vaccination_records_on_discarded_at                       (discarded_at)
+#  index_vaccination_records_on_location_id                        (location_id)
+#  index_vaccination_records_on_nhs_immunisations_api_id           (nhs_immunisations_api_id) UNIQUE
+#  index_vaccination_records_on_patient_id                         (patient_id)
+#  index_vaccination_records_on_patient_id_and_session_id          (patient_id,session_id)
+#  index_vaccination_records_on_pending_changes_not_empty          (id) WHERE (pending_changes <> '{}'::jsonb)
+#  index_vaccination_records_on_performed_by_user_id               (performed_by_user_id)
+#  index_vaccination_records_on_performed_ods_code_and_patient_id  (performed_ods_code,patient_id) WHERE (session_id IS NULL)
+#  index_vaccination_records_on_programme_id                       (programme_id)
+#  index_vaccination_records_on_session_id                         (session_id)
+#  index_vaccination_records_on_supplied_by_user_id                (supplied_by_user_id)
+#  index_vaccination_records_on_uuid                               (uuid) UNIQUE
+#  index_vaccination_records_on_vaccine_id                         (vaccine_id)
 #
 # Foreign Keys
 #

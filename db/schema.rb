@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_16_163100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -45,6 +45,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_by_user_id"], name: "index_archive_reasons_on_created_by_user_id"
+    t.index ["patient_id", "team_id"], name: "index_archive_reasons_on_patient_id_and_team_id", unique: true
     t.index ["patient_id"], name: "index_archive_reasons_on_patient_id"
     t.index ["team_id", "patient_id"], name: "index_archive_reasons_on_team_id_and_patient_id", unique: true
     t.index ["team_id"], name: "index_archive_reasons_on_team_id"
@@ -561,6 +562,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
     t.datetime "updated_at", null: false
     t.integer "academic_year", null: false
     t.bigint "location_id", null: false
+    t.index ["location_id", "academic_year", "patient_id"], name: "idx_on_location_id_academic_year_patient_id_3237b32fa0", unique: true
     t.index ["location_id", "academic_year"], name: "index_patient_locations_on_location_id_and_academic_year"
     t.index ["location_id"], name: "index_patient_locations_on_location_id"
     t.index ["patient_id", "location_id", "academic_year"], name: "idx_on_patient_id_location_id_academic_year_08a1dc4afe", unique: true
@@ -777,6 +779,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "academic_year", null: false
+    t.index ["patient_id", "school_id"], name: "index_school_moves_on_patient_id_and_school_id"
     t.index ["patient_id"], name: "index_school_moves_on_patient_id", unique: true
     t.index ["school_id"], name: "index_school_moves_on_school_id"
     t.index ["team_id"], name: "index_school_moves_on_team_id"
@@ -820,6 +823,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
     t.boolean "requires_registration", default: true, null: false
     t.boolean "psd_enabled", default: false, null: false
     t.boolean "national_protocol_enabled", default: false, null: false
+    t.index ["academic_year", "location_id", "team_id"], name: "index_sessions_on_academic_year_and_location_id_and_team_id"
     t.index ["location_id", "academic_year", "team_id"], name: "index_sessions_on_location_id_and_academic_year_and_team_id"
     t.index ["location_id"], name: "index_sessions_on_location_id"
     t.index ["team_id", "academic_year"], name: "index_sessions_on_team_id_and_academic_year"
@@ -951,16 +955,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_112700) do
     t.bigint "location_id"
     t.bigint "supplied_by_user_id"
     t.integer "source", null: false
+    t.boolean "nhs_immunisations_api_primary_source"
     t.string "nhs_immunisations_api_identifier_system"
     t.string "nhs_immunisations_api_identifier_value"
-    t.boolean "nhs_immunisations_api_primary_source"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
     t.index ["id"], name: "index_vaccination_records_on_pending_changes_not_empty", where: "(pending_changes <> '{}'::jsonb)"
     t.index ["location_id"], name: "index_vaccination_records_on_location_id"
     t.index ["nhs_immunisations_api_id"], name: "index_vaccination_records_on_nhs_immunisations_api_id", unique: true
+    t.index ["patient_id", "session_id"], name: "index_vaccination_records_on_patient_id_and_session_id"
     t.index ["patient_id"], name: "index_vaccination_records_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
+    t.index ["performed_ods_code", "patient_id"], name: "index_vaccination_records_on_performed_ods_code_and_patient_id", where: "(session_id IS NULL)"
     t.index ["programme_id"], name: "index_vaccination_records_on_programme_id"
     t.index ["session_id"], name: "index_vaccination_records_on_session_id"
     t.index ["supplied_by_user_id"], name: "index_vaccination_records_on_supplied_by_user_id"
