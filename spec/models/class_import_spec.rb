@@ -38,8 +38,6 @@
 describe ClassImport do
   subject(:class_import) { create(:class_import, csv:, session:, team:) }
 
-  before { Sidekiq::Worker.clear_all }
-
   let(:programmes) { [create(:programme, :hpv)] }
   let(:team) { create(:team, :with_generic_clinic, programmes:) }
   let(:location) { create(:school, team:) }
@@ -150,18 +148,26 @@ describe ClassImport do
     subject(:process!) { class_import.process! }
 
     let(:file) { "valid.csv" }
+    let(:configured_job) { instance_double(ActiveJob::ConfiguredJob) }
+
+    before do
+      allow(PDSCascadingSearchJob).to receive(:set).with(
+        queue: :imports
+      ).and_return(configured_job)
+      allow(configured_job).to receive(:perform_later)
+      allow(CommitPatientChangesetsJob).to receive(:perform_later)
+    end
 
     context "when import_search_pds flag is enabled" do
       before { Flipper.enable(:import_search_pds) }
       after { Flipper.disable(:import_search_pds) }
 
       it "enqueues PDSCascadingSearchJob for each changeset" do
-        expect { process! }.to have_enqueued_job(PDSCascadingSearchJob)
-          .exactly(4)
-          .times
-          .on_queue(:imports)
+        process!
 
-        expect(CommitPatientChangesetsJob).not_to have_been_enqueued
+        expect(configured_job).to have_received(:perform_later).exactly(4).times
+
+        expect(CommitPatientChangesetsJob).not_to have_received(:perform_later)
       end
     end
 
@@ -169,11 +175,13 @@ describe ClassImport do
       before { Flipper.disable(:import_search_pds) }
 
       it "marks all changesets as processed and enqueues CommitPatientChangesetsJob" do
-        expect { process! }.to have_enqueued_job(
-          CommitPatientChangesetsJob
-        ).with(class_import).on_queue(:imports)
+        process!
 
-        expect(PDSCascadingSearchJob).not_to have_been_enqueued
+        expect(CommitPatientChangesetsJob).to have_received(
+          :perform_later
+        ).with(class_import)
+
+        expect(configured_job).not_to have_received(:perform_later)
       end
     end
   end

@@ -44,10 +44,7 @@ describe CohortImport do
   # Ensure location URN matches the URN in our fixture files
   let!(:location) { create(:school, urn: "123456", team:) }
 
-  before do
-    Sidekiq::Worker.clear_all
-    TeamSessionsFactory.call(team, academic_year:)
-  end
+  before { TeamSessionsFactory.call(team, academic_year:) }
 
   it_behaves_like "a CSVImportable model"
 
@@ -167,19 +164,28 @@ describe CohortImport do
   describe "#process!" do
     subject(:process!) { cohort_import.process! }
 
+    let(:configured_job) { instance_double(ActiveJob::ConfiguredJob) }
     let(:file) { "valid.csv" }
+
+    before do
+      allow(PDSCascadingSearchJob).to receive(:set).with(
+        queue: :imports
+      ).and_return(configured_job)
+      allow(configured_job).to receive(:perform_later)
+      allow(CommitPatientChangesetsJob).to receive(:perform_later)
+    end
 
     context "when import_search_pds flag is enabled" do
       before { Flipper.enable(:import_search_pds) }
+
       after { Flipper.disable(:import_search_pds) }
 
       it "enqueues PDSCascadingSearchJob for each changeset" do
-        expect { process! }.to have_enqueued_job(PDSCascadingSearchJob)
-          .exactly(3)
-          .times
-          .on_queue(:imports)
+        process!
 
-        expect(CommitPatientChangesetsJob).not_to have_been_enqueued
+        expect(configured_job).to have_received(:perform_later).exactly(3).times
+
+        expect(CommitPatientChangesetsJob).not_to have_received(:perform_later)
       end
     end
 
@@ -187,11 +193,13 @@ describe CohortImport do
       before { Flipper.disable(:import_search_pds) }
 
       it "marks all changesets as processed and enqueues CommitPatientChangesetsJob" do
-        expect { process! }.to have_enqueued_job(
-          CommitPatientChangesetsJob
-        ).with(cohort_import).on_queue(:imports)
+        process!
 
-        expect(PDSCascadingSearchJob).not_to have_been_enqueued
+        expect(CommitPatientChangesetsJob).to have_received(
+          :perform_later
+        ).with(cohort_import)
+
+        expect(configured_job).not_to have_received(:perform_later)
       end
     end
   end
