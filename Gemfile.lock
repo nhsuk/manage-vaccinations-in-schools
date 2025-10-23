@@ -773,12 +773,12 @@ DEPENDENCIES
   asciidoctor
   asciidoctor-diagram
   audited!
-  aws-sdk-accessanalyzer (~> 1)
-  aws-sdk-ec2 (~> 1)
-  aws-sdk-ecr (~> 1)
-  aws-sdk-iam (~> 1)
-  aws-sdk-rds (~> 1)
-  aws-sdk-s3 (~> 1)
+  aws-sdk-accessanalyzer
+  aws-sdk-ec2
+  aws-sdk-ecr
+  aws-sdk-iam
+  aws-sdk-rds
+  aws-sdk-s3
   bootsnap
   brakeman
   capybara
