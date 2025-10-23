@@ -66,14 +66,14 @@ gem "sidekiq-scheduler"
 gem "sidekiq-throttled"
 gem "splunk-sdk-ruby"
 gem "table_tennis"
-gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
+gem "tzinfo-data", platforms: %i[jruby windows]
 gem "uk_postcode"
 gem "wicked"
 gem "with_advisory_lock"
 
 group :development, :test do
   gem "brakeman", require: false
-  gem "debug", platforms: %i[mri mingw x64_mingw]
+  gem "debug", platforms: %i[mri windows]
   gem "factory_bot_instruments"
   gem "pry-rails"
   gem "rspec-rails"
