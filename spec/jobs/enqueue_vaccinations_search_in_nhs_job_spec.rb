@@ -8,6 +8,33 @@ describe EnqueueVaccinationsSearchInNHSJob do
     let(:programmes) { [flu] }
     let(:team) { create(:team) }
     let(:gias_year_groups) { (0..11).to_a }
+    let(:location) { school }
+    let(:school) { create(:school, team:, programmes:) }
+    let(:clinic) { create(:generic_clinic, team:, programmes:) }
+    let(:days_before_consent_reminders) { 7 }
+    let(:session) do
+      if location.generic_clinic?
+        send_consent_requests_at = nil
+        send_invitations_at = send_consent_requests_or_invitations_at
+      else
+        send_consent_requests_at = send_consent_requests_or_invitations_at
+        send_invitations_at = nil
+      end
+
+      create(
+        :session,
+        programmes:,
+        academic_year: AcademicYear.pending,
+        dates:,
+        send_consent_requests_at:,
+        send_invitations_at:,
+        days_before_consent_reminders:,
+        team:,
+        location:
+      )
+    end
+    let(:dates) { [14.days.from_now] }
+    let(:send_consent_requests_or_invitations_at) { 7.days.ago }
 
     describe "session searches" do
       before do
@@ -22,32 +49,6 @@ describe EnqueueVaccinationsSearchInNHSJob do
         Flipper.enable(:imms_api_enqueue_session_searches)
       end
 
-      let(:school) { create(:school, team:, programmes:, gias_year_groups:) }
-      let(:clinic) { create(:generic_clinic, team:, programmes:) }
-      let(:location) { school }
-
-      let(:days_before_consent_reminders) { 7 }
-      let(:session) do
-        if location.generic_clinic?
-          send_consent_requests_at = nil
-          send_invitations_at = send_consent_requests_or_invitations_at
-        else
-          send_consent_requests_at = send_consent_requests_or_invitations_at
-          send_invitations_at = nil
-        end
-
-        create(
-          :session,
-          programmes:,
-          academic_year: AcademicYear.pending,
-          dates:,
-          send_consent_requests_at:,
-          send_invitations_at:,
-          days_before_consent_reminders:,
-          team:,
-          location:
-        )
-      end
       let(:searchable_patients) { [create(:patient, team:, school:, session:)] }
 
       context "with feature flag disabled" do
@@ -192,6 +193,55 @@ describe EnqueueVaccinationsSearchInNHSJob do
 
         include_examples "behaviour before, during or after consent/invitation period"
       end
+
+      context "with sessions from previous academic years" do
+        before do
+          # The session searches only trigger for patients in sessions from the
+          # current academic year, so these should not show up.
+          old_session =
+            create(
+              :session,
+              programmes: [flu],
+              academic_year: AcademicYear.previous,
+              dates: [Date.new(AcademicYear.previous, 10, 1)],
+              send_consent_requests_at: 1.day.ago,
+              team:
+            )
+          create(:patient, team:, session: old_session, year_group: 8)
+        end
+
+        let(:location) { school }
+
+        include_examples "behaviour before, during or after consent/invitation period"
+      end
+
+      context "with sessions for non-searchable programmes" do
+        before do
+          # The session searches only trigger for patients in flu sessions, so
+          # these should not show up.
+          hpv = Programme.hpv
+          hpv_location = create(:school, team:, programmes: [hpv])
+          hpv_location.import_default_programme_year_groups!(
+            [hpv],
+            academic_year: AcademicYear.pending
+          )
+          hpv_session =
+            create(
+              :session,
+              programmes: [hpv],
+              academic_year: AcademicYear.pending,
+              dates: [20.days.from_now],
+              send_consent_requests_at: 1.day.ago,
+              team:,
+              location: hpv_location
+            )
+          create(:patient, team:, school:, session: hpv_session)
+        end
+
+        let(:location) { school }
+
+        include_examples "behaviour before, during or after consent/invitation period"
+      end
     end
 
     describe "doing the rolling searches" do
@@ -296,6 +346,31 @@ describe EnqueueVaccinationsSearchInNHSJob do
           # underlying structure changes in the future so we won't end up with a
           # false-positive test.
 
+          # TODO: Make this work (test is failing) and see if it's any faster.
+          #       Or just trash it, initial testing doessn't show it's faster.
+          # patients =
+          #   build_stubbed_list(
+          #     :patient,
+          #     50,
+          #     team:,
+          #     school:,
+          #     session:,
+          #     patient_programme_vaccinations_searches:,
+          #     patient_locations: [
+          #       build(
+          #         :patient_location,
+          #         location_id: location.id,
+          #         academic_year: AcademicYear.pending
+          #       )
+          #     ]
+          #   )
+          # allow(Patient).to receive(:all).and_return(
+          #   Patient.none.tap do |relation|
+          #     allow(relation).to receive(:to_a).and_return(patients)
+          #   end
+          # )
+          # patients
+
           Patient.import(build_list(:patient, 50, team:, school:, session:))
           PatientLocation.import(
             Patient.all.map do
@@ -323,7 +398,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
               (Patient.all - patients_with_older_searches).map do |patient|
                 {
                   patient_id: patient.id,
-                  programme_type: :flu,
+                  programme_type: flu.type,
                   last_searched_at: 10.days.ago
                 }
               end
@@ -333,7 +408,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
               patients_with_older_searches.map do |patient|
                 {
                   patient_id: patient.id,
-                  programme_type: :flu,
+                  programme_type: flu.type,
                   last_searched_at: 30.days.ago
                 }
               end
@@ -372,7 +447,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
               patients.map do |patient|
                 {
                   patient_id: patient.id,
-                  programme_type: :flu,
+                  programme_type: flu.type,
                   last_searched_at: 30.days.ago
                 }
               end

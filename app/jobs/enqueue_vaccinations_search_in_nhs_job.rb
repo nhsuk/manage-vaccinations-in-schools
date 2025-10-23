@@ -32,17 +32,17 @@ class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
   def rolling_search_period_in_days = 28
 
   def patient_ids_session_searches(programme_types:)
-    scope =
-      Session
-        .has_any_programme_types_of(programme_types)
-        .scheduled
-        .then do
-          it.where("sessions.send_invitations_at <= ?", 2.days.from_now).or(
-            it.where("sessions.send_consent_requests_at <= ?", 2.days.from_now)
-          )
-        end
-
-    scope.find_each.flat_map { |session| session.patients.pluck(:id) }
+    # stree-ignore
+    Session
+      .has_any_programme_types_of(programme_types)
+      .scheduled
+      .then {
+        it.where("sessions.send_invitations_at <= ?", 2.days.from_now).or(
+          it.where("sessions.send_consent_requests_at <= ?", 2.days.from_now)
+        )
+      }
+      .find_each
+      .flat_map { |session| session.patients.ids }
   end
 
   # This implements a rolling search strategy for patients' vaccination records
