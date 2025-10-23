@@ -236,6 +236,18 @@ describe SessionNotification do
         end
       end
 
+      context "when the team is Leicestershire Partnership Trust (LPT)" do
+        let(:team) { create(:team, ods_code: "RT5", programmes:) }
+
+        it "doesn't enqueue an email" do
+          expect { create_and_send! }.not_to have_delivered_email
+        end
+
+        it "doesn't enqueue an SMS" do
+          expect { create_and_send! }.not_to have_delivered_sms
+        end
+      end
+
       context "when parent doesn't want to receive updates by text" do
         let(:parent) { parents.first }
 
@@ -319,6 +331,18 @@ describe SessionNotification do
             session:,
             sent_by: current_user
           )
+        end
+      end
+
+      context "when the team is Leicestershire Partnership Trust (LPT)" do
+        let(:team) { create(:team, ods_code: "RT5", programmes:) }
+
+        it "doesn't enqueue an email" do
+          expect { create_and_send! }.not_to have_delivered_email
+        end
+
+        it "doesn't enqueue an SMS" do
+          expect { create_and_send! }.not_to have_delivered_sms
         end
       end
     end
