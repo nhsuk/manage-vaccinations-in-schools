@@ -225,9 +225,11 @@ class PatientChangeset < ApplicationRecord
         address_postcode: child_attributes["address_postcode"]
       )
 
+    existing_nhs_number = matches.first.nhs_number if matches.count == 1
+    upload_nhs_number = child_attributes["nhs_number"]
+
     self.matched_on_nhs_number =
-      if matches.count == 1 &&
-           matches.first.nhs_number == child_attributes["nhs_number"]
+      if existing_nhs_number && existing_nhs_number == upload_nhs_number
         true
       else
         false
