@@ -1,13 +1,12 @@
 GIT
-  remote: https://github.com/citizensadvice/capybara_accessible_selectors
+  remote: https://github.com/citizensadvice/capybara_accessible_selectors.git
   revision: 3b65e97d49a46a210be4397e3e162d6b177f4125
-  branch: main
   specs:
     capybara_accessible_selectors (0.14.0)
       capybara (~> 3.36)
 
 GIT
-  remote: https://github.com/tvararu/audited
+  remote: https://github.com/tvararu/audited.git
   revision: e089773f10f8ef5e5e92a2052a2fea55f83091d2
   branch: encryption
   specs:

@@ -24,7 +24,7 @@ gem "activerecord-import"
 gem "activerecord-session_store"
 gem "amazing_print"
 gem "array_enum"
-gem "audited", git: "https://github.com/tvararu/audited", branch: "encryption"
+gem "audited", github: "tvararu/audited", branch: "encryption"
 gem "caxlsx"
 gem "charlock_holmes"
 gem "config"
@@ -108,9 +108,7 @@ end
 group :test do
   gem "capybara"
 
-  gem "capybara_accessible_selectors",
-      git: "https://github.com/citizensadvice/capybara_accessible_selectors",
-      branch: "main"
+  gem "capybara_accessible_selectors", github: "citizensadvice/capybara_accessible_selectors"
   gem "capybara-screenshot"
   gem "climate_control"
   gem "cuprite"
