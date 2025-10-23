@@ -30,6 +30,8 @@ class DraftConsentsController < ApplicationController
     authorize Consent
 
     case current_step
+    when :agree
+      handle_agree
     when :confirm
       handle_confirm
     when :questions
@@ -50,6 +52,11 @@ class DraftConsentsController < ApplicationController
   end
 
   private
+
+  def handle_agree
+    @draft_consent.assign_attributes(update_params)
+    @draft_consent.update_vaccine_methods
+  end
 
   def handle_confirm
     return unless @draft_consent.save

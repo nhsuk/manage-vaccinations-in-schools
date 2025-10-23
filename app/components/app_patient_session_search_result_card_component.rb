@@ -156,7 +156,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
              programme:,
              academic_year:
            )
-          patient.approved_vaccine_methods(programme:, academic_year:)
+          patient.vaccine_criteria(programme:, academic_year:).vaccine_methods
         else
           []
         end

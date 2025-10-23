@@ -6,12 +6,11 @@ class VaccinationRecordPolicy < ApplicationPolicy
     return false unless user.is_healthcare_assistant?
     return true if patient.nil?
 
-    approved_vaccine_methods =
-      patient.approved_vaccine_methods(programme:, academic_year:)
+    vaccine_criteria = patient.vaccine_criteria(programme:, academic_year:)
 
-    can_create_with_psd?(approved_vaccine_methods) ||
-      can_create_with_national_protocol?(approved_vaccine_methods) ||
-      can_create_with_pgd_supply?(approved_vaccine_methods)
+    can_create_with_psd?(vaccine_criteria) ||
+      can_create_with_national_protocol?(vaccine_criteria) ||
+      can_create_with_pgd_supply?(vaccine_criteria)
   end
 
   def new? = create?
@@ -41,9 +40,9 @@ class VaccinationRecordPolicy < ApplicationPolicy
   delegate :patient, :session, :programme, to: :record
   delegate :academic_year, :team, to: :session
 
-  def can_create_with_psd?(approved_vaccine_methods)
+  def can_create_with_psd?(vaccine_criteria)
     session.psd_enabled? &&
-      approved_vaccine_methods.any? do |vaccine_method|
+      vaccine_criteria.vaccine_methods.any? do |vaccine_method|
         patient.has_patient_specific_direction?(
           academic_year:,
           programme:,
@@ -53,13 +52,14 @@ class VaccinationRecordPolicy < ApplicationPolicy
       end
   end
 
-  def can_create_with_national_protocol?(approved_vaccine_methods)
+  def can_create_with_national_protocol?(vaccine_criteria)
     session.national_protocol_enabled? &&
-      approved_vaccine_methods.include?("injection")
+      vaccine_criteria.vaccine_methods.include?("injection")
   end
 
-  def can_create_with_pgd_supply?(approved_vaccine_methods)
-    session.pgd_supply_enabled? && approved_vaccine_methods.include?("nasal")
+  def can_create_with_pgd_supply?(vaccine_criteria)
+    session.pgd_supply_enabled? &&
+      vaccine_criteria.vaccine_methods.include?("nasal")
   end
 
   class Scope < ApplicationPolicy::Scope

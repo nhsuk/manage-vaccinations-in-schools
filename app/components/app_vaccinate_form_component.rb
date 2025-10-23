@@ -16,11 +16,14 @@ class AppVaccinateFormComponent < ViewComponent::Base
     session_patient_programme_vaccinations_path(session, patient, programme)
   end
 
+  def vaccine_criteria
+    @vaccine_criteria ||= patient.vaccine_criteria(programme:, academic_year:)
+  end
+
   def vaccine_methods
     @vaccine_methods ||=
       begin
-        approved_vaccine_methods =
-          patient.approved_vaccine_methods(programme:, academic_year:)
+        approved_vaccine_methods = vaccine_criteria.vaccine_methods
 
         if current_user.is_nurse? || current_user.is_prescriber?
           return approved_vaccine_methods
@@ -70,9 +73,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
 
   def healthcare_assistant? = current_user.is_healthcare_assistant?
 
-  def dose_sequence
-    programme.default_dose_sequence
-  end
+  def dose_sequence = programme.default_dose_sequence
 
   COMMON_DELIVERY_SITES = {
     "injection" => %w[left_arm_upper_position right_arm_upper_position],

@@ -388,9 +388,8 @@ class DraftConsent
         }
       end
 
-    vaccines = programme.vaccines.where(method: vaccine_methods)
-
-    vaccines = vaccines.where(contains_gelatine: false) if without_gelatine
+    vaccines =
+      VaccineCriteria.from_consentable(self).apply(programme.vaccines.active)
 
     self.health_answers =
       HealthAnswersDeduplicator

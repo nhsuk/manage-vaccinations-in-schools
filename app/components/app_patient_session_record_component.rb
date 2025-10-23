@@ -57,10 +57,11 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
   end
 
   def heading
+    vaccine_criteria = patient.vaccine_criteria(programme:, academic_year:)
+
     vaccination =
       if programme.has_multiple_vaccine_methods?
-        vaccine_method =
-          patient.approved_vaccine_methods(programme:, academic_year:).first
+        vaccine_method = vaccine_criteria.vaccine_methods.first
         method_string =
           Vaccine.human_enum_name(:method, vaccine_method).downcase
         "vaccination with #{method_string}"
