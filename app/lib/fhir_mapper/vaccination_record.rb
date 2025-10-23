@@ -229,8 +229,9 @@ module FHIRMapper
       if vaccine.programme.flu? && vaccine.nasal?
         dose_volume_ml = dose_volume_ml_from_fhir(fhir_record)
 
-        # If we can't parse the volume unit then assume a full dose
-        dose_volume_ml.nil? || dose_volume_ml >= vaccine.dose_volume_ml
+        return nil if dose_volume_ml.nil?
+
+        dose_volume_ml >= vaccine.dose_volume_ml
       else
         true
       end

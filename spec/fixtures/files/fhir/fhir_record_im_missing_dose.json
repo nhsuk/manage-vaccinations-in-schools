@@ -1,0 +1,79 @@
+{
+  "id": "11112222-3333-4444-5555-666677779999",
+  "extension": [
+    {
+      "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "884861000000100",
+            "display": "Seasonal influenza vaccination (procedure)"
+          }
+        ]
+      }
+    }
+  ],
+  "identifier": [
+    {
+      "use": "official",
+      "system": "YGA",
+      "value": "TPP_V_748593287"
+    }
+  ],
+  "status": "completed",
+  "vaccineCode": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "43207411000001105",
+        "display": "Cell-based trivalent influenza vaccine (surface antigen, inactivated) suspension for injection 0.5ml pre-filled syringes (Seqirus UK Ltd)"
+      }
+    ]
+  },
+  "patient": {
+    "reference": "urn:uuid:46a31091-de8a-45fd-a73a-36b486fb3010",
+    "type": "Patient",
+    "identifier": {
+      "system": "https://fhir.nhs.uk/Id/nhs-number",
+      "value": "9998886678"
+    }
+  },
+  "occurrenceDateTime": "2025-10-06T00:00:00+00:00",
+  "recorded": "2025-10-09",
+  "primarySource": false,
+  "location": {
+    "identifier": {
+      "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+      "value": "B12345"
+    }
+  },
+  "performer": [
+    {
+      "actor": {
+        "type": "Organization",
+        "identifier": {
+          "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+          "value": "B12345"
+        }
+      }
+    }
+  ],
+  "protocolApplied": [
+    {
+      "targetDisease": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "6142004",
+              "display": "Influenza caused by seasonal influenza virus (disorder)"
+            }
+          ]
+        }
+      ],
+      "doseNumberPositiveInt": 1
+    }
+  ],
+  "resourceType": "Immunization"
+}

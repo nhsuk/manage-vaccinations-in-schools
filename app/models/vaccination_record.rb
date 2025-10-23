@@ -165,7 +165,10 @@ class VaccinationRecord < ApplicationRecord
        prefix: "sourced_from",
        validate: true
 
-  validates :full_dose, inclusion: [true, false], if: :administered?
+  validates :full_dose,
+            inclusion: [true, false],
+            if: -> { administered? && !sourced_from_nhs_immunisations_api? }
+
   validates :protocol,
             presence: true,
             if: -> { administered? && recorded_in_service? }

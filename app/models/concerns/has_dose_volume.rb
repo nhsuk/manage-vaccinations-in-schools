@@ -8,7 +8,7 @@ module HasDoseVolume
   def half_dose? = full_dose == false
 
   def dose_volume_ml
-    return nil if vaccine.nil?
+    return nil if vaccine.nil? || full_dose.nil?
 
     if full_dose?
       vaccine.dose_volume_ml
