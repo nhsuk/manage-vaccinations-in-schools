@@ -200,7 +200,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
         setup_stubs
 
         # Ensure expectation patients are created before the job runs
-        searchable_patients
+        patients
       end
 
       def setup_stubs
@@ -212,31 +212,14 @@ describe EnqueueVaccinationsSearchInNHSJob do
       end
 
       let(:school) { create(:school, team:, programmes:, gias_year_groups:) }
-      let(:patient_programme_vaccinations_searches) do
-        [
-          PatientProgrammeVaccinationsSearch.new(
-            programme: flu,
-            last_searched_at:
-          )
-        ]
-      end
-      let(:searchable_patients) do
-        [
-          create(
-            :patient,
-            team:,
-            school:,
-            patient_programme_vaccinations_searches:
-          )
-        ]
-      end
+      let(:location) { school }
+      let(:session) { create(:session, programmes:, team:, location:) }
+      let(:patients) { [create(:patient, team:, school:, session:)] }
 
       context "with the feature flag disabled" do
         def setup_feature_flag
           Flipper.disable(:imms_api_enqueue_rolling_searches)
         end
-
-        let(:patient_programme_vaccinations_searches) { [] }
 
         it "does not perform a search on the patient" do
           described_class.perform_now
@@ -248,31 +231,51 @@ describe EnqueueVaccinationsSearchInNHSJob do
       end
 
       context "with a patient that has no previous searches" do
-        let(:patient_programme_vaccinations_searches) { [] }
-
         it "performs a search on the patients" do
           described_class.perform_now
 
           expect(SearchVaccinationRecordsInNHSJob).to have_received(
             :perform_bulk
-          ).once.with(searchable_patients.map(&:id).zip)
+          ).once.with(patients.map(&:id).zip)
         end
       end
 
       context "with a patient that has searches 28 days ago or older" do
-        let(:last_searched_at) { 28.days.ago }
+        let(:patients) do
+          [
+            create(
+              :patient,
+              :with_vaccinations_search,
+              team:,
+              school:,
+              session:,
+              last_searched_at: 28.days.ago
+            )
+          ]
+        end
 
         it "performs a search on the patient" do
           described_class.perform_now
 
           expect(SearchVaccinationRecordsInNHSJob).to have_received(
             :perform_bulk
-          ).once.with(searchable_patients.map(&:id).zip)
+          ).once.with(patients.map(&:id).zip)
         end
       end
 
       context "with a patient that has searches less-than 28 days" do
-        let(:last_searched_at) { 27.days.ago }
+        let(:patients) do
+          [
+            create(
+              :patient,
+              :with_vaccinations_search,
+              team:,
+              school:,
+              session:,
+              last_searched_at: 27.days.ago
+            )
+          ]
+        end
 
         it "does not perform a search on the patient" do
           described_class.perform_now
@@ -283,47 +286,116 @@ describe EnqueueVaccinationsSearchInNHSJob do
         end
       end
 
-      context "with many patients that have searches 28 days ago or older" do
-        let(:searchable_patients) do
-          Patient.import(build_list(:patient, 50, team:, school:))
+      context "with many patients" do
+        let(:last_searched_at) { 28.days.ago }
+        let(:patients) do
+          # Importing patients this way is significantly faster than creating
+          # them with create / create_list. Not using a factory could end up
+          # with broken tests, but since the expectations further down expect to
+          # find at least 2 patients, I think it'll reliably stop working if the
+          # underlying structure changes in the future so we won't end up with a
+          # false-positive test.
+
+          Patient.import(build_list(:patient, 50, team:, school:, session:))
+          PatientLocation.import(
+            Patient.all.map do
+              {
+                patient_id: it.id,
+                location_id: location.id,
+                academic_year: AcademicYear.pending
+              }
+            end
+          )
           Patient.all
         end
 
-        context "and the batch size is less than the daily limit" do
-          def setup_stubs
-            allow(SearchVaccinationRecordsInNHSJob).to receive(:perform_bulk)
+        it "searches for 1/28th of the elligible patients" do
+          described_class.perform_now
 
-            allow_any_instance_of(EnqueueVaccinationsSearchInNHSJob).to receive(
-              :daily_enqueue_size_limit
-            ).and_return(1)
+          expect(SearchVaccinationRecordsInNHSJob).to have_received(
+            :perform_bulk
+          ).once.with(match([anything, anything]))
+        end
+
+        context "when most of the patients have had a search done recently" do
+          before do
+            PatientProgrammeVaccinationsSearch.import(
+              (Patient.all - patients_with_older_searches).map do |patient|
+                {
+                  patient_id: patient.id,
+                  programme_type: :flu,
+                  last_searched_at: 10.days.ago
+                }
+              end
+            )
+
+            PatientProgrammeVaccinationsSearch.import(
+              patients_with_older_searches.map do |patient|
+                {
+                  patient_id: patient.id,
+                  programme_type: :flu,
+                  last_searched_at: 30.days.ago
+                }
+              end
+            )
           end
 
+          let(:patients_with_older_searches) { patients.sample(5) }
+
           it "searches for 1/28th of the elligible patients" do
+            # We're protecting against a regression here where we search for
+            # 1/28th of the _remaining_ searchable patients, rather than 1/28th
+            # of all the patients elligible for searching. If we do the former,
+            # then we'll search for less and less patients over time.
             described_class.perform_now
 
             expect(SearchVaccinationRecordsInNHSJob).to have_received(
               :perform_bulk
-            ).once.with(searchable_patients.first(2).map(&:id).zip)
+            ).once do |args|
+              expect(args.length).to eq(2)
+              expect(patients_with_older_searches.map(&:id).zip).to include(
+                *args
+              )
+            end
+
+            # .once.with(patients_with_older_searches.first(2).map(&:id).zip)
           end
         end
 
-        context "and the batch size is greater than the daily limit" do
-          let(:daily_limit) { 10 }
-
-          def setup_stubs
-            allow(SearchVaccinationRecordsInNHSJob).to receive(:perform_bulk)
-
-            allow_any_instance_of(EnqueueVaccinationsSearchInNHSJob).to receive(
-              :daily_enqueue_size_limit
-            ).and_return(daily_limit)
+        context "with patients with no searches or older searches" do
+          before do
+            patients =
+              Patient.where.not(
+                id: [patient_with_no_searches.id, patient_with_old_searches.id]
+              )
+            PatientProgrammeVaccinationsSearch.import(
+              patients.map do |patient|
+                {
+                  patient_id: patient.id,
+                  programme_type: :flu,
+                  last_searched_at: 30.days.ago
+                }
+              end
+            )
+            create(
+              :patient_programme_vaccinations_search,
+              patient: patient_with_old_searches,
+              programme: flu,
+              last_searched_at: 40.days.ago
+            )
           end
 
-          it "searches for the daily limit of patients" do
+          let(:patient_with_no_searches) { Patient.all.first }
+          let(:patient_with_old_searches) { Patient.all.second }
+
+          it "prioritises patients with no searches, then older searches" do
             described_class.perform_now
 
             expect(SearchVaccinationRecordsInNHSJob).to have_received(
               :perform_bulk
-            ).once.with(searchable_patients.first(daily_limit).map(&:id).zip)
+            ).once.with(
+              [[patient_with_no_searches.id], [patient_with_old_searches.id]]
+            )
           end
         end
       end

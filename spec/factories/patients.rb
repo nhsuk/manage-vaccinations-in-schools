@@ -850,5 +850,20 @@ FactoryBot.define do
         )
       end
     end
+
+    trait :with_vaccinations_search do
+      transient { last_searched_at { 28.days.ago } }
+
+      after(:create) do |patient, evaluator|
+        evaluator.programmes.each do |programme|
+          create(
+            :patient_programme_vaccinations_search,
+            programme:,
+            patient:,
+            last_searched_at: evaluator.last_searched_at
+          )
+        end
+      end
+    end
   end
 end

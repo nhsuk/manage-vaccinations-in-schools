@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+# Enqueue jobs to search vaccination records in the NHS system for patients
+# associated with upcoming sessions and for patients due for a rolling search.
+#
+# The approach is to perform daily searches for patients that have upcoming
+# sessions, starting from 2 days before invitations or consent requests are sent
+# out and ending once the last date of the sessions has passed. For all other
+# patients we want to ensure a search is performed every 28 days at most.
 class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
   queue_as :immunisations_api_search
 
@@ -22,7 +29,6 @@ class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
   private
 
   def default_programme_types = ["flu"].freeze
-  def daily_enqueue_size_limit = 1000
   def rolling_search_period_in_days = 28
 
   def patient_ids_session_searches(programme_types:)
@@ -39,20 +45,32 @@ class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
     scope.find_each.flat_map { |session| session.patients.pluck(:id) }
   end
 
+  # This implements a rolling search strategy for patients' vaccination records
+  # in the NHS system. The goal is to ensure all patients have their vaccination
+  # data refreshed within the defined period, while spreading the load evenly
+  # over time.
+  #
+  # The batch size is calculated by dividing the total number of patients we can
+  # search for (that have NHS numbers) by the rolling search period (in days).
+  # This ensures that over the given search period all enrolled patients will
+  # have a search performed.
   def patient_ids_for_rolling_searches
-    patient_ids ||=
-      Patient
-        .where.not(
-          id:
-            PatientProgrammeVaccinationsSearch.where(
-              "last_searched_at > ?",
-              rolling_search_period_in_days.days.ago
-            ).select(:patient_id)
-        )
-        .ids
+    patients_base = Patient.with_nhs_number
+    batch_size = (patients_base.count.to_f / rolling_search_period_in_days).ceil
 
-    batch_size = (patient_ids.count.to_f / rolling_search_period_in_days).ceil
-    batch_size = [batch_size, daily_enqueue_size_limit].max
-    patient_ids.first(batch_size)
+    patients_with_recent_searches =
+      PatientProgrammeVaccinationsSearch.where(
+        "last_searched_at > ?",
+        rolling_search_period_in_days.days.ago
+      )
+
+    Patient
+      .where.not(id: patients_with_recent_searches.select(:patient_id))
+      .eager_load(:patient_programme_vaccinations_searches)
+      .order(
+        "patient_programme_vaccinations_searches.last_searched_at NULLS FIRST"
+      )
+      .limit(batch_size)
+      .pluck(:id)
   end
 end
