@@ -44,7 +44,10 @@ describe CohortImport do
   # Ensure location URN matches the URN in our fixture files
   let!(:location) { create(:school, urn: "123456", team:) }
 
-  before { TeamSessionsFactory.call(team, academic_year:) }
+  before do
+    Sidekiq::Worker.clear_all
+    TeamSessionsFactory.call(team, academic_year:)
+  end
 
   it_behaves_like "a CSVImportable model"
 
@@ -164,303 +167,31 @@ describe CohortImport do
   describe "#process!" do
     subject(:process!) { cohort_import.process! }
 
-    around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
-
     let(:file) { "valid.csv" }
 
-    it "creates patients and parents" do
-      # stree-ignore
-      expect { process! }
-        .to change(cohort_import, :processed_at).from(nil)
-        .and change(cohort_import.patients, :count).by(3)
-        .and change(cohort_import.parents, :count).by(3)
+    context "when import_search_pds flag is enabled" do
+      before { Flipper.enable(:import_search_pds) }
+      after { Flipper.disable(:import_search_pds) }
 
-      expect(Patient.first).to have_attributes(
-        nhs_number: "9990000018",
-        date_of_birth: Date.new(2010, 1, 1),
-        given_name: "Jennifer",
-        family_name: "Clarke",
-        school: location,
-        address_line_1: "10 Downing Street",
-        address_town: "London",
-        address_postcode: "SW1A 1AA"
-      )
+      it "enqueues PDSCascadingSearchJob for each changeset" do
+        expect { process! }.to have_enqueued_job(PDSCascadingSearchJob)
+          .exactly(3)
+          .times
+          .on_queue(:imports)
 
-      expect(Patient.first.parents).to be_empty
-
-      expect(Patient.second).to have_attributes(
-        nhs_number: "9990000026",
-        date_of_birth: Date.new(2010, 1, 2),
-        given_name: "Jimmy",
-        family_name: "Smith",
-        school: location,
-        address_line_1: "10 Downing Street",
-        address_town: "London",
-        address_postcode: "SW1A 1AA"
-      )
-
-      expect(Patient.second.parents.count).to eq(1)
-
-      expect(Patient.second.parents.first).to have_attributes(
-        full_name: "John Smith",
-        phone: "07412 345678",
-        email: "john@example.com"
-      )
-
-      expect(Patient.second.parent_relationships.first).to be_father
-
-      expect(Patient.third).to have_attributes(
-        nhs_number: nil,
-        date_of_birth: Date.new(2010, 1, 3),
-        given_name: "Mark",
-        family_name: "Doe",
-        school: nil,
-        address_line_1: "11 Downing Street",
-        address_town: "London",
-        address_postcode: "SW1A 1AA"
-      )
-
-      expect(Patient.third.parents.count).to eq(2)
-
-      expect(Patient.third.parents.first).to have_attributes(
-        full_name: "Jane Doe",
-        phone: "07412 345679",
-        email: "jane@example.com"
-      )
-
-      expect(Patient.third.parents.first).to have_attributes(
-        full_name: "Jane Doe",
-        phone: "07412 345679",
-        email: "jane@example.com"
-      )
-
-      expect(Patient.third.parent_relationships.first).to be_mother
-      expect(Patient.third.parent_relationships.second).to be_father
-
-      # Second import should not duplicate the patients if they're identical.
-
-      # stree-ignore
-      expect { cohort_import.process! }
-        .to not_change(cohort_import, :processed_at)
-        .and not_change(Patient, :count)
-        .and not_change(Parent, :count)
-    end
-
-    it "stores statistics on the import" do
-      # stree-ignore
-      expect { process! }
-        .to change(cohort_import, :exact_duplicate_record_count).to(0)
-        .and change(cohort_import, :new_record_count).to(3)
-        .and change(cohort_import, :changed_record_count).to(0)
-    end
-
-    it "ignores and counts duplicate records" do
-      create(:cohort_import, csv:, team:).process!
-      csv.rewind
-
-      process!
-      expect(cohort_import.exact_duplicate_record_count).to eq(3)
-    end
-
-    it "enqueues jobs to look up missing NHS numbers" do
-      expect { process! }.to have_enqueued_job(
-        PatientNHSNumberLookupJob
-      ).once.on_queue(:imports)
-    end
-
-    it "enqueues jobs to update from PDS" do
-      expect { process! }.to have_enqueued_job(
-        PatientUpdateFromPDSJob
-      ).twice.on_queue(:imports)
-    end
-
-    it "enqueues a job to move aged out patients" do
-      expect { process! }.to have_enqueued_job(PatientsAgedOutOfSchoolJob).once
-    end
-
-    context "when same NHS number appears multiple times in the file" do
-      let(:file) { "duplicate_nhs_numbers.csv" }
-
-      it "has a validation error" do
-        expect { process! }.not_to change(Patient, :count)
-        expect(cohort_import.errors[:row_2]).to eq(
-          [["The same NHS number appears multiple times in this file."]]
-        )
-        expect(cohort_import.errors[:row_3]).to eq(
-          [["The same NHS number appears multiple times in this file."]]
-        )
+        expect(CommitPatientChangesetsJob).not_to have_been_enqueued
       end
     end
 
-    context "with an existing patient matching the name" do
-      before do
-        create(
-          :patient,
-          given_name: "Jimmy",
-          family_name: "Smith",
-          date_of_birth: Date.new(2010, 1, 2),
-          nhs_number: nil,
-          team:
-        )
-      end
+    context "when import_search_pds flag is disabled" do
+      before { Flipper.disable(:import_search_pds) }
 
-      it "doesn't create an additional patient" do
-        expect { process! }.to change(Patient, :count).by(2)
-      end
-    end
+      it "marks all changesets as processed and enqueues CommitPatientChangesetsJob" do
+        expect { process! }.to have_enqueued_job(
+          CommitPatientChangesetsJob
+        ).with(cohort_import).on_queue(:imports)
 
-    context "with an existing patient matching the name but a different case" do
-      let!(:existing_patient) do
-        create(
-          :patient,
-          given_name: "JIMMY",
-          family_name: "smith",
-          date_of_birth: Date.new(2010, 1, 2),
-          nhs_number: nil,
-          team:
-        )
-      end
-
-      it "doesn't create an additional patient" do
-        expect { process! }.to change(Patient, :count).by(2)
-      end
-
-      it "doesn't stage the changes to the names" do
-        process!
-        expect(existing_patient.reload.pending_changes).not_to have_key(
-          "given_name"
-        )
-        expect(existing_patient.reload.pending_changes).not_to have_key(
-          "family_name"
-        )
-      end
-
-      it "automatically accepts the incoming case differences" do
-        process!
-        expect(existing_patient.reload.given_name).to eq("Jimmy")
-        expect(existing_patient.reload.family_name).to eq("Smith")
-      end
-    end
-
-    context "with an existing parent matching the name but a different case" do
-      let!(:existing_parent) do
-        create(:parent, full_name: "JOHN smith", email: "john@example.com")
-      end
-
-      it "doesn't create an additional parent" do
-        expect { process! }.to change(Parent, :count).by(2)
-      end
-
-      it "changes the parent's name to the incoming version" do
-        process!
-        expect(existing_parent.reload.full_name).to eq("John Smith")
-      end
-    end
-
-    context "with an existing patient that was previously removed from cohort" do
-      let!(:existing_patient) do
-        create(
-          :patient,
-          given_name: "Jimmy",
-          family_name: "smith",
-          date_of_birth: Date.new(2010, 1, 2),
-          nhs_number: nil,
-          team: nil
-        )
-      end
-
-      it "doesn't create an additional patient" do
-        expect { process! }.to change(Patient, :count).by(2)
-      end
-
-      it "automatically re-adds the patient to the cohort" do
-        expect { process! }.to change { existing_patient.reload.teams }.from(
-          []
-        ).to([team])
-      end
-
-      it "doesn't propose a school move" do
-        expect { process! }.not_to(
-          change { existing_patient.reload.school_moves.count }
-        )
-      end
-    end
-
-    context "with an existing patient with a school move" do
-      let!(:existing_patient) do
-        create(
-          :patient,
-          given_name: "Jimmy",
-          family_name: "Smith",
-          date_of_birth: Date.new(2010, 1, 2),
-          nhs_number: nil,
-          team:,
-          school: create(:school)
-        )
-      end
-      let!(:school_move) do
-        create(:school_move, :to_school, patient: existing_patient)
-      end
-
-      before do
-        team.locations.each do |location|
-          create(
-            :patient_location,
-            patient: existing_patient,
-            location:,
-            academic_year:
-          )
-        end
-      end
-
-      it "doesn't create an additional patient" do
-        expect { process! }.to change(Patient, :count).by(2)
-      end
-
-      it "replaces the existing school move" do
-        expect { process! }.not_to(
-          change { existing_patient.reload.school_moves.count }
-        )
-
-        expect(school_move.reload.school).to eq(location)
-      end
-    end
-
-    context "with an unscheduled session" do
-      let(:session) do
-        create(:session, :unscheduled, team:, programmes:, location:)
-      end
-
-      it "adds the known school patients to the session" do
-        expect { process! }.to change(session.patients, :count).from(0).to(2)
-      end
-    end
-
-    context "with a scheduled session" do
-      let(:session) do
-        create(:session, :scheduled, team:, programmes:, location:)
-      end
-
-      it "adds the known school patients to the session" do
-        expect { process! }.to change(session.patients, :count).from(0).to(2)
-      end
-    end
-
-    context "with invalid fields" do
-      before { process! }
-
-      let(:file) { "invalid_fields.csv" }
-
-      describe "error for row with first name having invalid characters" do
-        subject(:child_first_name) { cohort_import.errors[:row_21][0][0] }
-
-        it { should include "includes invalid character(s)" }
-      end
-
-      describe "error for row with last name having invalid characters" do
-        subject(:child_last_name) { cohort_import.errors[:row_22][0][0] }
-
-        it { should include "includes invalid character(s)" }
+        expect(PDSCascadingSearchJob).not_to have_been_enqueued
       end
     end
   end

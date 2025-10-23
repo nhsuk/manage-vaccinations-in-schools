@@ -16,6 +16,7 @@ describe "Class list imports duplicates" do
 
     when_i_review_the_first_duplicate_record
     then_i_should_see_the_first_duplicate_record
+    and_i_should_not_be_able_to_keep_both_records
 
     when_i_submit_the_form_without_choosing_anything
     then_i_should_see_a_validation_error
@@ -77,13 +78,12 @@ describe "Class list imports duplicates" do
 
       when_i_review_the_third_duplicate_record
       then_i_should_see_the_third_duplicate_record
-      and_i_should_not_be_able_to_keep_both_records
 
-      when_i_choose_to_keep_the_existing_record
+      when_i_choose_to_keep_both_records
       and_i_confirm_my_selection
       then_i_should_see_a_success_message
       and_the_third_record_should_not_be_updated
-      and_a_fourth_record_should_not_exist
+      and_a_fourth_record_should_exist_with_nhs_number
     end
   end
 
@@ -93,7 +93,7 @@ describe "Class list imports duplicates" do
   end
 
   def and_pds_lookup_during_import_is_enabled
-    Flipper.enable(:pds_lookup_during_import)
+    Flipper.enable(:import_search_pds)
 
     stub_pds_search_to_return_a_patient(
       "9990000018",
@@ -167,12 +167,14 @@ describe "Class list imports duplicates" do
         session: @session
       )
 
-    @third_patient =
+    @third_patient = # triggers 3/4 match
       create(
         :patient,
         given_name: "Jenny",
-        family_name: "Block",
-        nhs_number: "9990000034",
+        family_name: "Salles",
+        nhs_number: nil,
+        address_postcode: "SW1A 3BB",
+        date_of_birth: Date.new(2010, 2, 3),
         school: @location,
         session: @session
       )
@@ -274,25 +276,32 @@ describe "Class list imports duplicates" do
   end
 
   def when_i_review_the_third_duplicate_record
-    click_on "Review BLOCK, Jenny"
+    click_on "Review SALLES, Jenny"
   end
 
   def then_i_should_see_the_third_duplicate_record
-    expect(page).to have_content("Full nameBLOCK, Jenny")
+    expect(page).to have_content("Full nameSALLES, Jenny")
   end
 
   def and_the_third_record_should_not_be_updated
     @third_patient.reload
     expect(@third_patient.given_name).to eq("Jenny")
-    expect(@third_patient.nhs_number).to eq("9990000034")
     expect(@third_patient.pending_changes).to eq({})
   end
 
   def and_a_fourth_record_should_exist
     expect(Patient.count).to eq(4)
 
-    fourth_patient = Patient.find_by(nhs_number: nil)
+    fourth_patient = Patient.find_by(nhs_number: nil, given_name: "Rebecca")
+    expect(fourth_patient.family_name).to eq("Salles")
+  end
+
+  def and_a_fourth_record_should_exist_with_nhs_number
+    expect(Patient.count).to eq(4)
+
+    fourth_patient = Patient.find_by(nhs_number: "9990000034")
     expect(fourth_patient.given_name).to eq("Rebecca")
+    expect(fourth_patient.family_name).to eq("Salles")
   end
 
   def and_a_fourth_record_should_not_exist
