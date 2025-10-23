@@ -74,15 +74,12 @@ gem "with_advisory_lock"
 group :development, :test do
   gem "brakeman", require: false
   gem "debug", platforms: %i[mri mingw x64_mingw]
-
   gem "factory_bot_instruments"
   gem "pry-rails"
   gem "rspec-rails"
 end
 
 group :development do
-  gem "web-console"
-
   gem "annotaterb", require: false
   gem "asciidoctor"
   gem "asciidoctor-diagram"
@@ -103,16 +100,18 @@ group :development do
   gem "syntax_tree", require: false
   gem "syntax_tree-haml", require: false
   gem "syntax_tree-rbs", require: false
+  gem "web-console"
 end
 
 group :test do
   gem "capybara"
-
-  gem "capybara_accessible_selectors", github: "citizensadvice/capybara_accessible_selectors"
+  gem "capybara_accessible_selectors",
+      github: "citizensadvice/capybara_accessible_selectors"
   gem "capybara-screenshot"
   gem "climate_control"
   gem "cuprite"
   gem "its"
+  gem "rack_session_access"
   gem "rspec"
   gem "rspec-html-matchers"
   gem "rspec-sidekiq"
@@ -120,5 +119,4 @@ group :test do
   gem "shoulda-matchers"
   gem "simplecov", require: false
   gem "webmock"
-  gem "rack_session_access"
 end
