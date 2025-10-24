@@ -79,4 +79,10 @@ describe DraftSession do
       )
     end
   end
+
+  describe "#year_groups" do
+    subject(:year_groups) { draft_session.year_groups }
+
+    it { should all(be_a(Integer)) }
+  end
 end
