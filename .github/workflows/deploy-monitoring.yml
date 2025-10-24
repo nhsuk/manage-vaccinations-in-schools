@@ -104,7 +104,7 @@ jobs:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
       - name: Download AWS plan artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: tfplan_monitoring_aws-${{ inputs.environment }}
           path: ${{ runner.temp }}
