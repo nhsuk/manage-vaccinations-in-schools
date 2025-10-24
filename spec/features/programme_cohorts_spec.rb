@@ -17,6 +17,15 @@ describe "Programme" do
     then_i_see_the_patients_in_year_9
   end
 
+  scenario "patient is not counted for a session if their year group is not eligible" do
+    given_a_school_has_separate_sessions_for_different_year_groups
+    and_a_patient_is_only_eligible_for_only_one_of_those_sessions
+
+    when_i_visit_the_sessions_page
+    then_the_ineligible_session_should_show_no_children
+    and_the_eligible_session_should_show_one_child
+  end
+
   def given_an_hpv_programme_is_underway
     @academic_year = Date.current.academic_year
     @programme = create(:programme, :hpv)
@@ -49,10 +58,71 @@ describe "Programme" do
     end
   end
 
+  def given_a_school_has_separate_sessions_for_different_year_groups
+    @academic_year = academic_year = Date.current.academic_year
+    @location = location = create(:school)
+
+    td_ipv_programme = create(:programme, :td_ipv)
+    hpv_programme = create(:programme, :hpv)
+
+    team =
+      create(
+        :team,
+        :with_one_nurse,
+        programmes: [td_ipv_programme, hpv_programme]
+      )
+
+    create(:session, team:, location:, programmes: [td_ipv_programme])
+    create(:session, team:, location:, programmes: [hpv_programme])
+
+    create(
+      :location_programme_year_group,
+      location:,
+      programme: td_ipv_programme,
+      year_group: 9,
+      academic_year:
+    )
+
+    create(
+      :location_programme_year_group,
+      location:,
+      programme: hpv_programme,
+      year_group: 8,
+      academic_year:
+    )
+
+    sign_in team.users.first
+  end
+
+  def and_a_patient_is_only_eligible_for_only_one_of_those_sessions
+    create(
+      :patient_location,
+      patient: create(:patient, year_group: 8),
+      location: @location,
+      academic_year: @academic_year
+    )
+  end
+
+  def then_the_ineligible_session_should_show_no_children
+    card = page.find("dd", text: "Td/IPV").ancestor(".nhsuk-card")
+
+    expect(card).to have_content("No children")
+  end
+
+  def and_the_eligible_session_should_show_one_child
+    card = page.find("dd", text: "HPV").ancestor(".nhsuk-card")
+
+    expect(card).to have_content("1 child")
+  end
+
   def when_i_visit_the_overview_page
     visit "/dashboard"
     click_on "Programmes", match: :first
     click_on "HPV"
+  end
+
+  def when_i_visit_the_sessions_page
+    visit sessions_path
   end
 
   def then_i_should_see_the_cohorts_in_the_correct_order

@@ -109,6 +109,14 @@ class Patient < ApplicationRecord
     AND sessions.academic_year = patient_locations.academic_year
   SQL
 
+  scope :in_eligible_year_group_for_session_programme, -> { joins(<<-SQL) }
+    INNER JOIN session_programmes ON session_programmes.session_id = sessions.id
+    INNER JOIN location_programme_year_groups ON location_programme_year_groups.location_id = patient_locations.location_id
+    AND location_programme_year_groups.academic_year = patient_locations.academic_year
+    AND location_programme_year_groups.programme_id = session_programmes.programme_id
+    AND patients.birth_academic_year = location_programme_year_groups.academic_year - location_programme_year_groups.year_group - #{Integer::AGE_CHILDREN_START_SCHOOL}
+  SQL
+
   scope :archived,
         ->(team:) do
           joins_archive_reasons(team:).where("archive_reasons.id IS NOT NULL")
