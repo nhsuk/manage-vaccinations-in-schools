@@ -76,4 +76,10 @@ describe AppSessionActionsComponent do
     it { should_not have_text("Register attendance") }
     it { should_not have_text("Ready for vaccinator") }
   end
+
+  context "when there are no action required" do
+    before { PatientLocation.destroy_all }
+
+    it { should have_text("No action required") }
+  end
 end

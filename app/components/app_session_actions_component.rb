@@ -5,15 +5,17 @@ class AppSessionActionsComponent < ViewComponent::Base
     <% if show_heading %>
       <h4 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Action required</h4>
     <% end %>
-    <%= govuk_summary_list(rows:) %>
+    <% if rows.any? %>
+      <%= govuk_summary_list(rows:) %>
+    <% else %>
+      <p class="nhsuk-body">No action required</p>
+    <% end %>
   ERB
 
   def initialize(session, show_heading: true)
     @session = session
     @show_heading = show_heading
   end
-
-  def render? = rows.any?
 
   private
 
