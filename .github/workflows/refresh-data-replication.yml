@@ -152,7 +152,7 @@ jobs:
 
           terraform "${PLAN_ARGS[@]}" | tee ${{ runner.temp }}/tf_stdout
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: tfplan_infrastructure-${{ inputs.environment }}
           path: ${{ runner.temp }}/tfplan

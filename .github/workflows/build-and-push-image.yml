@@ -99,7 +99,7 @@ jobs:
       - name: Save web image
         run: docker save -o image.tar mavis-webapp:latest
       - name: Upload web image
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: webapp-image
           path: image.tar
@@ -108,7 +108,7 @@ jobs:
       - name: Save ops image
         run: docker save -o image.tar mavis-ops:latest
       - name: Upload ops image
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ops-image
           path: image.tar

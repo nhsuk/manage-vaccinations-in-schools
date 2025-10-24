@@ -136,7 +136,7 @@ jobs:
       - name: Rename task definition file
         run: mv ${{ steps.create-task-definition.outputs.task-definition }} ${{ runner.temp }}/${{ matrix.service }}-task-definition.json
       - name: Upload artifact for ${{ matrix.service }} task definition
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ inputs.environment }}-${{ matrix.service }}-task-definition
           path: ${{ runner.temp }}/${{ matrix.service }}-task-definition.json
