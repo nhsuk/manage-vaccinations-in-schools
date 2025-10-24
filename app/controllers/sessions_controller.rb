@@ -14,15 +14,7 @@ class SessionsController < ApplicationController
 
     sessions = @form.apply(scope)
 
-    @patient_count_by_session_id =
-      PatientLocation
-        .joins(:patient)
-        .joins_sessions
-        .appear_in_programmes(@programmes)
-        .where("sessions.id IN (?)", sessions.pluck(:id))
-        .distinct
-        .group("sessions.id")
-        .count
+    @patient_count_by_session_id = patient_counts_for_sessions(sessions)
 
     @pagy, @sessions = pagy_array(sessions)
 
@@ -95,5 +87,14 @@ class SessionsController < ApplicationController
       authorize policy_scope(Session).includes(programmes: :vaccines).find_by!(
                   slug: params[:slug]
                 )
+  end
+
+  def patient_counts_for_sessions(sessions)
+    Patient
+      .joins_sessions
+      .in_eligible_year_group_for_session_programme
+      .where("sessions.id IN (?)", sessions.pluck(:id))
+      .group("sessions.id")
+      .count("DISTINCT patients.id")
   end
 end
