@@ -73,4 +73,4 @@ Rails.configuration.action_view.render_tracker = :ruby
 #
 # Applications that want to keep generating the `autocomplete` attribute for those tags can set it to `false`.
 #++
-# Rails.configuration.action_view.remove_hidden_field_autocomplete = true
+Rails.configuration.action_view.remove_hidden_field_autocomplete = true
