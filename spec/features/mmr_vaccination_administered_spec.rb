@@ -116,6 +116,14 @@ describe "MMR vaccination" do
   end
 
   def when_i_go_to_the_without_gelatine_only_patient
+    visit session_consent_path(@session)
+    check "Consent given for gelatine-free injection"
+    click_on "Search"
+
+    expect(page).to have_content(@without_gelatine_only_patient.full_name)
+    expect(page).not_to have_content(@without_gelatine_patient.full_name)
+    expect(page).not_to have_content(@with_gelatine_patient.full_name)
+
     @patient = @without_gelatine_only_patient
 
     visit session_record_path(@session)
@@ -123,6 +131,14 @@ describe "MMR vaccination" do
   end
 
   def when_i_go_to_the_without_gelatine_patient
+    visit session_consent_path(@session)
+    check "Consent given"
+    click_on "Search"
+
+    expect(page).not_to have_content(@without_gelatine_only_patient.full_name)
+    expect(page).to have_content(@without_gelatine_patient.full_name)
+    expect(page).to have_content(@with_gelatine_patient.full_name)
+
     @patient = @without_gelatine_patient
 
     visit session_record_path(@session)
@@ -130,6 +146,14 @@ describe "MMR vaccination" do
   end
 
   def when_i_go_to_the_with_gelatine_patient
+    visit session_consent_path(@session)
+    check "Consent given"
+    click_on "Search"
+
+    expect(page).not_to have_content(@without_gelatine_only_patient.full_name)
+    expect(page).to have_content(@without_gelatine_patient.full_name)
+    expect(page).to have_content(@with_gelatine_patient.full_name)
+
     @patient = @with_gelatine_patient
 
     visit session_record_path(@session)

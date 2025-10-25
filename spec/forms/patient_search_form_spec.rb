@@ -249,7 +249,7 @@ describe PatientSearchForm do
         )
       end
 
-      context "with combined consent status and vaccine method" do
+      context "with nasal" do
         let(:consent_statuses) { %w[given_nasal] }
 
         it "filters on consent status" do
@@ -267,6 +267,54 @@ describe PatientSearchForm do
           )
 
           expect(form.apply(scope)).to contain_exactly(patient_given_nasal)
+        end
+      end
+
+      context "with injection without gelatine" do
+        let(:consent_statuses) { %w[given_injection_without_gelatine] }
+
+        it "filters on consent status" do
+          patient_given_without_gelatine =
+            create(
+              :patient,
+              :consent_given_without_gelatine_triage_not_needed,
+              session:
+            )
+
+          create(:patient, :consent_given_triage_not_needed, session:)
+
+          expect(form.apply(scope)).to contain_exactly(
+            patient_given_without_gelatine
+          )
+        end
+      end
+
+      context "with nasal and injection without gelatine" do
+        let(:consent_statuses) do
+          %w[given_nasal given_injection_without_gelatine]
+        end
+
+        it "filters on consent status" do
+          patient_given_nasal =
+            create(
+              :patient,
+              :consent_given_nasal_only_triage_not_needed,
+              session:
+            )
+
+          patient_given_without_gelatine =
+            create(
+              :patient,
+              :consent_given_without_gelatine_triage_not_needed,
+              session:
+            )
+
+          create(:patient, :consent_given_triage_not_needed, session:)
+
+          expect(form.apply(scope)).to contain_exactly(
+            patient_given_nasal,
+            patient_given_without_gelatine
+          )
         end
       end
     end

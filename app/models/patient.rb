@@ -240,16 +240,26 @@ class Patient < ApplicationRecord
         end
 
   scope :has_consent_status,
-        ->(status, programme:, academic_year:, vaccine_method: nil) do
+        ->(
+          status,
+          programme:,
+          academic_year:,
+          vaccine_method: nil,
+          without_gelatine: nil
+        ) do
           consent_status_scope =
             Patient::ConsentStatus
               .select("1")
               .where("patient_id = patients.id")
               .where(status:, programme:, academic_year:)
 
-          if vaccine_method
+          unless vaccine_method.nil?
             consent_status_scope =
               consent_status_scope.has_vaccine_method(vaccine_method)
+          end
+
+          unless without_gelatine.nil?
+            consent_status_scope = consent_status_scope.where(without_gelatine:)
           end
 
           where(consent_status_scope.arel.exists)

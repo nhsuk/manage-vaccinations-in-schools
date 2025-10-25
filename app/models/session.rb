@@ -34,6 +34,7 @@ class Session < ApplicationRecord
   include Consentable
   include DaysBeforeToWeeksBefore
   include Delegatable
+  include GelatineVaccinesConcern
   include HasLocationProgrammeYearGroups
 
   audited associated_with: :location
