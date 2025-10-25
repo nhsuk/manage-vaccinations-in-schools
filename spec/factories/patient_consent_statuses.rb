@@ -31,27 +31,30 @@ FactoryBot.define do
     traits_for_enum :status
 
     trait :given do
-      status { "given" }
-      vaccine_methods { %w[injection] }
+      # TODO: Avoid using generic `given` trait.
+      given_injection_only
     end
 
     trait :given_injection_only do
       status { "given" }
       vaccine_methods { %w[injection] }
+      without_gelatine { false }
     end
 
     trait :given_nasal_only do
       status { "given" }
       vaccine_methods { %w[nasal] }
+      without_gelatine { false }
     end
 
     trait :given_nasal_or_injection do
       status { "given" }
       vaccine_methods { %w[nasal injection] }
+      without_gelatine { false }
     end
 
     trait :given_without_gelatine do
-      given
+      given_injection_only
       without_gelatine { true }
     end
   end

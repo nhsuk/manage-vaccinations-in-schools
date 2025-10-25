@@ -146,23 +146,45 @@ class PatientSearchForm < SearchForm
 
   def filter_consent_statuses(scope)
     if (statuses = consent_statuses).present?
-      given_with_vaccine_method_statuses, other_statuses =
-        statuses.partition { it.starts_with?("given_") }
+      given_statuses, other_statuses =
+        statuses.partition { it.starts_with?("given") }
 
-      given_with_vaccine_method_scope =
-        if given_with_vaccine_method_statuses.any?
-          vaccine_methods =
-            given_with_vaccine_method_statuses.map { it.sub("given_", "") }
+      given_with_additional_statuses, given_without_additional_statuses =
+        given_statuses.partition { it.include?("_") }
 
+      given_with_additional_scope =
+        if given_with_additional_statuses.any?
+          additionals =
+            given_with_additional_statuses.map { it.sub("given_", "") }
+
+          if additionals.include?("without_gelatine")
+            scope.has_consent_status(
+              "given",
+              programme: programmes,
+              academic_year:,
+              without_gelatine: true
+            )
+          else
+            scope.has_consent_status(
+              "given",
+              programme: programmes,
+              academic_year:,
+              vaccine_method: additionals
+            )
+          end
+        end
+
+      given_without_additional_scope =
+        if given_without_additional_statuses.any?
           scope.has_consent_status(
             "given",
             programme: programmes,
             academic_year:,
-            vaccine_method: vaccine_methods
+            without_gelatine: false
           )
         end
 
-      other_status_scope =
+      other_scope =
         if other_statuses.any?
           scope.has_consent_status(
             other_statuses,
@@ -171,10 +193,20 @@ class PatientSearchForm < SearchForm
           )
         end
 
-      if given_with_vaccine_method_scope && other_status_scope
-        given_with_vaccine_method_scope.or(other_status_scope)
+      if given_with_additional_scope && given_without_additional_scope &&
+           other_scope
+        given_with_additional_scope.or(given_without_additional_scope).or(
+          other_scope
+        )
+      elsif given_with_additional_scope && given_without_additional_scope
+        given_with_additional_scope.or(given_without_additional_scope)
+      elsif given_with_additional_scope && other_scope
+        given_with_additional_scope.or(other_scope)
+      elsif given_without_additional_scope && other_scope
+        given_without_additional_scope.or(other_scope)
       else
-        given_with_vaccine_method_scope || other_status_scope
+        given_with_additional_scope || given_without_additional_scope ||
+          other_scope
       end
     else
       scope

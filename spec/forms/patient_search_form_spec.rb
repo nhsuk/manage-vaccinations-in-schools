@@ -269,6 +269,25 @@ describe PatientSearchForm do
           expect(form.apply(scope)).to contain_exactly(patient_given_nasal)
         end
       end
+
+      context "with combined consent status and without gelatine" do
+        let(:consent_statuses) { %w[given_without_gelatine] }
+
+        it "filters on consent status" do
+          patient_given_without_gelatine =
+            create(
+              :patient,
+              :consent_given_without_gelatine_triage_not_needed,
+              session:
+            )
+
+          create(:patient, :consent_given_triage_not_needed, session:)
+
+          expect(form.apply(scope)).to contain_exactly(
+            patient_given_without_gelatine
+          )
+        end
+      end
     end
 
     context "filtering on programmes" do

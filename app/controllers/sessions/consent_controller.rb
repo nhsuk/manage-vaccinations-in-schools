@@ -21,6 +21,14 @@ class Sessions::ConsentController < ApplicationController
             status
           end
         end
+      elsif @session.vaccine_may_contain_gelatine?
+        statuses_except_not_required.flat_map do |status|
+          if status == "given"
+            %w[given given_without_gelatine]
+          else
+            status
+          end
+        end
       else
         statuses_except_not_required
       end
