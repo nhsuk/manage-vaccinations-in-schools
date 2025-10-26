@@ -56,8 +56,6 @@ describe EnqueueVaccinationsSearchInNHSJob do
           Flipper.disable(:imms_api_enqueue_session_searches)
         end
 
-        let(:searchable_patients) { [] }
-
         it "does not perform searches on the session patients" do
           expect(SearchVaccinationRecordsInNHSJob).not_to have_received(
             :perform_bulk
@@ -246,130 +244,91 @@ describe EnqueueVaccinationsSearchInNHSJob do
 
     describe "doing the rolling searches" do
       before do
-        setup_feature_flag
-        setup_stubs
-
-        # Ensure expectation patients are created before the job runs
-        patients
-      end
-
-      def setup_stubs
-        allow(SearchVaccinationRecordsInNHSJob).to receive(:perform_bulk)
-      end
-
-      def setup_feature_flag
         Flipper.enable(:imms_api_enqueue_rolling_searches)
+        allow(SearchVaccinationRecordsInNHSJob).to receive(:perform_bulk)
       end
 
       let(:school) { create(:school, team:, programmes:, gias_year_groups:) }
       let(:location) { school }
       let(:session) { create(:session, programmes:, team:, location:) }
-      let(:patients) { [create(:patient, team:, school:, session:)] }
 
-      context "with the feature flag disabled" do
-        def setup_feature_flag
-          Flipper.disable(:imms_api_enqueue_rolling_searches)
+      context "on a single patient" do
+        before do
+          # Ensure expectation patients are created before the job runs
+          patient_programme_vaccinations_search if last_searched_at
         end
 
-        it "does not perform a search on the patient" do
-          described_class.perform_now
-
-          expect(SearchVaccinationRecordsInNHSJob).not_to have_received(
-            :perform_bulk
+        let(:patient_programme_vaccinations_search) do
+          create(
+            :patient_programme_vaccinations_search,
+            programme: flu,
+            last_searched_at:,
+            patient:
           )
         end
-      end
+        let(:last_searched_at) { 30.days.ago } # default for specs don't that care
+        let!(:patient) { create(:patient, team:, school:, session:) }
 
-      context "with a patient that has no previous searches" do
-        it "performs a search on the patients" do
-          described_class.perform_now
+        context "with the feature flag disabled" do
+          before { Flipper.disable(:imms_api_enqueue_rolling_searches) }
 
-          expect(SearchVaccinationRecordsInNHSJob).to have_received(
-            :perform_bulk
-          ).once.with(patients.map(&:id).zip)
-        end
-      end
+          it "does not perform a search on the patient" do
+            described_class.perform_now
 
-      context "with a patient that has searches 28 days ago or older" do
-        let(:patients) do
-          [
-            create(
-              :patient,
-              :with_vaccinations_search,
-              team:,
-              school:,
-              session:,
-              last_searched_at: 28.days.ago
+            expect(SearchVaccinationRecordsInNHSJob).not_to have_received(
+              :perform_bulk
             )
-          ]
+          end
         end
 
-        it "performs a search on the patient" do
-          described_class.perform_now
+        context "that has no previous searches" do
+          let(:last_searched_at) { nil }
 
-          expect(SearchVaccinationRecordsInNHSJob).to have_received(
-            :perform_bulk
-          ).once.with(patients.map(&:id).zip)
+          it "performs a search on the patients" do
+            described_class.perform_now
+
+            expect(SearchVaccinationRecordsInNHSJob).to have_received(
+              :perform_bulk
+            ).once.with([[patient.id]])
+          end
         end
-      end
 
-      context "with a patient that has searches less-than 28 days" do
-        let(:patients) do
-          [
-            create(
-              :patient,
-              :with_vaccinations_search,
-              team:,
-              school:,
-              session:,
-              last_searched_at: 27.days.ago
+        context "that has searches 28 days ago or older" do
+          let(:last_searched_at) { 28.days.ago }
+
+          it "performs a search on the patient" do
+            described_class.perform_now
+
+            expect(SearchVaccinationRecordsInNHSJob).to have_received(
+              :perform_bulk
+            ).once.with([[patient.id]])
+          end
+        end
+
+        context "that has searches less than 28 days" do
+          let(:last_searched_at) { 27.days.ago }
+
+          it "does not perform a search on the patient" do
+            described_class.perform_now
+
+            expect(SearchVaccinationRecordsInNHSJob).not_to have_received(
+              :perform_bulk
             )
-          ]
-        end
-
-        it "does not perform a search on the patient" do
-          described_class.perform_now
-
-          expect(SearchVaccinationRecordsInNHSJob).not_to have_received(
-            :perform_bulk
-          )
+          end
         end
       end
 
       context "with many patients" do
-        let(:last_searched_at) { 28.days.ago }
-        let(:patients) do
+        # Ignore patient from previous tests
+        let(:patient) {}
+        # let(:last_searched_at) { 28.days.ago }
+        let!(:patients) do
           # Importing patients this way is significantly faster than creating
           # them with create / create_list. Not using a factory could end up
           # with broken tests, but since the expectations further down expect to
           # find at least 2 patients, I think it'll reliably stop working if the
           # underlying structure changes in the future so we won't end up with a
           # false-positive test.
-
-          # TODO: Make this work (test is failing) and see if it's any faster.
-          #       Or just trash it, initial testing doessn't show it's faster.
-          # patients =
-          #   build_stubbed_list(
-          #     :patient,
-          #     50,
-          #     team:,
-          #     school:,
-          #     session:,
-          #     patient_programme_vaccinations_searches:,
-          #     patient_locations: [
-          #       build(
-          #         :patient_location,
-          #         location_id: location.id,
-          #         academic_year: AcademicYear.pending
-          #       )
-          #     ]
-          #   )
-          # allow(Patient).to receive(:all).and_return(
-          #   Patient.none.tap do |relation|
-          #     allow(relation).to receive(:to_a).and_return(patients)
-          #   end
-          # )
-          # patients
 
           Patient.import(build_list(:patient, 50, team:, school:, session:))
           PatientLocation.import(
@@ -460,8 +419,8 @@ describe EnqueueVaccinationsSearchInNHSJob do
             )
           end
 
-          let(:patient_with_no_searches) { Patient.all.first }
-          let(:patient_with_old_searches) { Patient.all.second }
+          let(:patient_with_no_searches) { patients.first }
+          let(:patient_with_old_searches) { patients.second }
 
           it "prioritises patients with no searches, then older searches" do
             described_class.perform_now
