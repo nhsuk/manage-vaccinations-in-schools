@@ -24,7 +24,7 @@ gem "activerecord-import"
 gem "activerecord-session_store"
 gem "amazing_print"
 gem "array_enum"
-gem "audited", git: "https://github.com/tvararu/audited", branch: "encryption"
+gem "audited", github: "tvararu/audited", branch: "encryption"
 gem "caxlsx"
 gem "charlock_holmes"
 gem "config"
@@ -74,24 +74,21 @@ gem "with_advisory_lock"
 group :development, :test do
   gem "brakeman", require: false
   gem "debug", platforms: %i[mri mingw x64_mingw]
-
   gem "factory_bot_instruments"
   gem "pry-rails"
   gem "rspec-rails"
 end
 
 group :development do
-  gem "web-console"
-
   gem "annotaterb", require: false
   gem "asciidoctor"
   gem "asciidoctor-diagram"
-  gem "aws-sdk-accessanalyzer", "~> 1"
-  gem "aws-sdk-ec2", "~> 1"
-  gem "aws-sdk-ecr", "~> 1"
-  gem "aws-sdk-iam", "~> 1"
-  gem "aws-sdk-rds", "~> 1"
-  gem "aws-sdk-s3", "~> 1"
+  gem "aws-sdk-accessanalyzer"
+  gem "aws-sdk-ec2"
+  gem "aws-sdk-ecr"
+  gem "aws-sdk-iam"
+  gem "aws-sdk-rds"
+  gem "aws-sdk-s3"
   gem "hotwire-livereload"
   gem "prettier_print", require: false
   gem "rladr"
@@ -103,18 +100,18 @@ group :development do
   gem "syntax_tree", require: false
   gem "syntax_tree-haml", require: false
   gem "syntax_tree-rbs", require: false
+  gem "web-console"
 end
 
 group :test do
   gem "capybara"
-
   gem "capybara_accessible_selectors",
-      git: "https://github.com/citizensadvice/capybara_accessible_selectors",
-      branch: "main"
+      github: "citizensadvice/capybara_accessible_selectors"
   gem "capybara-screenshot"
   gem "climate_control"
   gem "cuprite"
   gem "its"
+  gem "rack_session_access"
   gem "rspec"
   gem "rspec-html-matchers"
   gem "rspec-sidekiq"
@@ -122,5 +119,4 @@ group :test do
   gem "shoulda-matchers"
   gem "simplecov", require: false
   gem "webmock"
-  gem "rack_session_access"
 end
