@@ -23,6 +23,7 @@ class ApplicationController < ActionController::Base
   before_action :set_app_navigation
 
   after_action :verify_policy_scoped, if: -> { Rails.env.local? }
+  after_action :set_navigation_counts_cookie
 
   class UnprocessableEntity < StandardError
   end
@@ -98,5 +99,20 @@ class ApplicationController < ActionController::Base
 
   def set_sentry_user
     Sentry.set_user(id: current_user&.id)
+  end
+
+  # This cookie is used by the Reporting app to display counts in their header
+  def set_navigation_counts_cookie
+    return unless current_user && current_team
+
+    unmatched_consent_responses = cached_counts.unmatched_consent_responses || 0
+    school_moves = cached_counts.school_moves || 0
+    imports = cached_counts.import_issues || 0
+
+    cookies[:mavis_navigation_counts] = {
+      unmatched_consent_responses:,
+      school_moves:,
+      imports:
+    }.to_json
   end
 end
