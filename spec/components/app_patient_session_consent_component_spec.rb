@@ -84,7 +84,7 @@ describe AppPatientSessionConsentComponent do
           )
         end
 
-        it { should have_text("Consent given for injected vaccine") }
+        it { should have_text("Consent given for gelatine-free injection") }
       end
     end
   end

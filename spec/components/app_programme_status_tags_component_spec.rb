@@ -17,7 +17,7 @@ describe AppProgrammeStatusTagsComponent do
       {
         flu_programme => {
           status: :given,
-          vaccine_methods: %w[nasal injection]
+          vaccine_method: "nasal"
         },
         menacwy_programme => {
           status: :given
@@ -34,7 +34,7 @@ describe AppProgrammeStatusTagsComponent do
 
     it { should have_content("FluConsent given for nasal spray") }
     it { should have_content("MenACWYConsent given") }
-    it { should have_content("MMRConsent given for gelatine-free vaccine") }
+    it { should have_content("MMRConsent given for gelatine-free injection") }
     it { should have_content("Td/IPVConsent refused") }
   end
 

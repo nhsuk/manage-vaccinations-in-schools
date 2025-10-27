@@ -260,30 +260,26 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         return(
           {
             status: consent_status.status,
-            vaccine_methods: [triage_status.vaccine_method]
+            vaccine_method: triage_status.vaccine_method,
+            without_gelatine: triage_status.without_gelatine
           }
         )
       end
     end
 
-    consent_status.slice(:status, :vaccine_methods, :without_gelatine)
+    {
+      status: consent_status.status,
+      vaccine_method: consent_status.vaccine_methods.first,
+      without_gelatine: consent_status.without_gelatine
+    }
   end
 
   def triage_status_value(programme:, academic_year:)
-    triage_status = patient.triage_status(programme:, academic_year:)
-
-    status =
-      if triage_status.vaccine_method.present? &&
-           programme.has_multiple_vaccine_methods?
-        triage_status.status + "_#{triage_status.vaccine_method}"
-      else
-        triage_status.status
-      end
-
-    without_gelatine =
-      triage_status.without_gelatine && !programme.has_multiple_vaccine_methods?
-
-    { status: status, without_gelatine: }
+    patient.triage_status(programme:, academic_year:).slice(
+      :status,
+      :vaccine_method,
+      :without_gelatine
+    )
   end
 
   def patient_specific_direction_status_tag
