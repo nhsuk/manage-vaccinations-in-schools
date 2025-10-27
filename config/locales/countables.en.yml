@@ -33,6 +33,7 @@ en:
     one: 1 child without an NHS number
     other: "%{count} children without an NHS number"
   unmatched_responses:
+    title: Unmatched response
     zero: No unmatched responses
     one: 1 unmatched response
     other: "%{count} unmatched responses"
