@@ -359,6 +359,8 @@ describe FHIRMapper::VaccinationRecord do
       its(:location_name) { should be_nil }
       its(:performed_ods_code) { should eq "B0C4P" }
       its(:nhs_immunisations_api_primary_source) { should be true }
+
+      its(:notes) { should be_nil }
     end
 
     context "with a record with not full dose" do
@@ -395,6 +397,8 @@ describe FHIRMapper::VaccinationRecord do
       its(:location_name) { should be_nil }
       its(:performed_ods_code) { should eq "B0C4P" }
       its(:nhs_immunisations_api_primary_source) { should be true }
+
+      its(:notes) { should be_nil }
     end
 
     context "with a record with an unexpected dose unit, and is nasal flu" do
@@ -430,6 +434,8 @@ describe FHIRMapper::VaccinationRecord do
       its(:location) { should have_attributes(urn: "100006") }
       its(:location_name) { should be_nil }
       its(:performed_ods_code) { should eq "B0C4P" }
+
+      its(:notes) { should be_nil }
     end
 
     context "with a record with extended milliliter description" do
@@ -466,6 +472,8 @@ describe FHIRMapper::VaccinationRecord do
       its(:location_name) { should be_nil }
       its(:performed_ods_code) { should eq "B0C4P" }
       its(:nhs_immunisations_api_primary_source) { should be true }
+
+      its(:notes) { should be_nil }
     end
 
     context "with a record that has an unknown vaccine" do
@@ -608,6 +616,8 @@ describe FHIRMapper::VaccinationRecord do
       its(:location) { should be_nil }
       its(:location_name) { should eq "D83013" }
       its(:performed_ods_code) { should eq "D83013" }
+
+      its(:notes) { should be_nil }
     end
 
     context "with a record that has an unknown location" do
@@ -637,6 +647,8 @@ describe FHIRMapper::VaccinationRecord do
 
       its(:location) { should be_nil }
       its(:location_name) { should eq "X99999" }
+
+      its(:notes) { should be_nil }
     end
 
     context "with a record that is the minimum which can be created via the API" do
@@ -665,6 +677,10 @@ describe FHIRMapper::VaccinationRecord do
 
       its(:location) { should have_attributes(urn: "100006") }
       its(:location_name) { should be_nil }
+
+      its(:notes) do
+        should include("Batch number: aa1111", "Batch expiry: 2030-01-01")
+      end
     end
 
     context "with a record that is the minimum which can be created based on the spec (for CSV bulk upload)" do
