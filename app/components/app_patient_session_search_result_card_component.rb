@@ -150,26 +150,21 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
     return if programmes_to_check.empty?
 
-    vaccine_methods =
-      programmes_to_check.flat_map do |programme|
+    vaccine_criterias =
+      programmes_to_check.filter_map do |programme|
         if patient.consent_given_and_safe_to_vaccinate?(
              programme:,
              academic_year:
            )
-          patient.vaccine_criteria(programme:, academic_year:).vaccine_methods
-        else
-          []
+          patient.vaccine_criteria(programme:, academic_year:)
         end
       end
 
-    return if vaccine_methods.empty?
-
-    tag.span(
-      class: "app-vaccine-method",
-      data: {
-        method: vaccine_methods.first
-      }
-    ) { Vaccine.human_enum_name(:method, vaccine_methods.first) }
+    if (vaccine_criteria = vaccine_criterias.first)
+      render AppVaccineCriteriaComponent.new(vaccine_criteria) do
+        Vaccine.human_enum_name(:method, vaccine_criteria.vaccine_methods.first)
+      end
+    end
   end
 
   def status_tags
