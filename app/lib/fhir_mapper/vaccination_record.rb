@@ -221,7 +221,7 @@ module FHIRMapper
       return if dq.blank?
 
       if MILLILITER_SUB_STRINGS.any? { dq.unit.downcase.starts_with?(it) }
-        dq.value.to_f
+        dq.value.to_d
       end
     end
 
@@ -231,7 +231,12 @@ module FHIRMapper
 
         return nil if dose_volume_ml.nil?
 
-        dose_volume_ml >= vaccine.dose_volume_ml
+        case dose_volume_ml.to_d
+        when vaccine.dose_volume_ml
+          true
+        when vaccine.dose_volume_ml * 0.5.to_d
+          false
+        end
       else
         true
       end
