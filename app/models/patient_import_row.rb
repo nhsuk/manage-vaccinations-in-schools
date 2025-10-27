@@ -44,94 +44,6 @@ class PatientImportRow
     @year_groups = year_groups
   end
 
-  def to_patient
-    return unless valid?
-
-    if (existing_patient = existing_patients.first)
-      prepare_patient_changes(existing_patient, import_attributes)
-    else
-      Patient.new(
-        import_attributes.merge(home_educated: false, patient_locations: [])
-      )
-    end
-  end
-
-  def to_school_move(patient)
-    return if patient.deceased?
-
-    if patient.new_record? || patient.school != school ||
-         patient.home_educated != home_educated ||
-         patient.not_in_team?(team:, academic_year:) || patient.archived?(team:)
-      school_move = SchoolMove.find_or_initialize_by(patient:)
-      school_move.assign_from(school:, home_educated:, team:)
-      school_move.assign_attributes(academic_year:, source: school_move_source)
-      school_move
-    end
-  end
-
-  def to_parents
-    return unless valid?
-
-    parents = [
-      if parent_1_exists?
-        {
-          email: parent_1_email_value,
-          full_name: parent_1_name_value,
-          phone: parent_1_phone_value
-        }
-      end,
-      if parent_2_exists?
-        {
-          email: parent_2_email_value,
-          full_name: parent_2_name_value,
-          phone: parent_2_phone_value
-        }
-      end
-    ].compact
-
-    parents.map do |attributes|
-      email = attributes[:email]
-      phone = attributes[:phone]
-      full_name = attributes[:full_name]
-
-      parent =
-        Parent.match_existing(
-          patient: existing_patients.first,
-          email:,
-          phone:,
-          full_name:
-        ) || Parent.new
-
-      parent.email = attributes[:email] if attributes[:email]
-      parent.full_name = attributes[:full_name] if attributes[:full_name]
-      parent.phone = attributes[:phone] if attributes[:phone]
-      parent.phone_receive_updates = false if parent.phone.blank?
-
-      parent
-    end
-  end
-
-  def to_parent_relationships(parents, patient)
-    return unless valid?
-
-    parent_relationships = [
-      if parent_1_exists?
-        parent_relationship_attributes(parent_1_relationship&.to_s)
-      end,
-      if parent_2_exists?
-        parent_relationship_attributes(parent_2_relationship&.to_s)
-      end
-    ].compact
-
-    parents
-      .zip(parent_relationships)
-      .map do |parent, attributes|
-        ParentRelationship
-          .find_or_initialize_by(parent:, patient:)
-          .tap { it.assign_attributes(attributes) }
-      end
-  end
-
   def nhs_number = @data[:child_nhs_number]
 
   def first_name = @data[:child_first_name]
@@ -226,98 +138,6 @@ class PatientImportRow
 
   private
 
-  def prepare_patient_changes(patient, import_attributes)
-    unless stage_registration?
-      patient.registration = import_attributes.delete(:registration)
-      patient.registration_academic_year =
-        import_attributes.delete(:registration_academic_year)
-    end
-
-    auto_accept_attributes_if_applicable(patient, import_attributes)
-    handle_address_updates(patient, import_attributes)
-    stage_and_handle_pending_changes(patient, import_attributes)
-
-    patient
-  end
-
-  def handle_address_updates(patient, import_attributes)
-    if address_postcode.present? &&
-         address_postcode.to_postcode != patient.address_postcode
-      import_attributes.merge!(
-        address_line_1: address_line_1&.to_s,
-        address_line_2: address_line_2&.to_s,
-        address_town: address_town&.to_s
-      )
-    elsif auto_overwrite_address?(patient)
-      patient.address_line_1 = import_attributes.delete(:address_line_1)
-      patient.address_line_2 = import_attributes.delete(:address_line_2)
-      patient.address_town = import_attributes.delete(:address_town)
-    end
-  end
-
-  def stage_and_handle_pending_changes(patient, import_attributes)
-    auto_accepted_changes = patient.changed_attributes.keys
-
-    patient.stage_changes(import_attributes)
-
-    # If there are pending changes that require review, we need to revert
-    # any auto-accepted changes and move them to pending_changes instead.
-    # This ensures all changes are reviewed together rather than having
-    # some changes applied immediately while others await review. This
-    # is particularly critical when handling potential duplicates like twins,
-    # where auto-accepting some changes could lead to data from one twin being
-    # incorrectly applied to another twin's record.
-    if patient.pending_changes.any?
-      patient.pending_changes.merge!(patient.slice(*auto_accepted_changes))
-      patient.restore_attributes(auto_accepted_changes)
-    end
-  end
-
-  def auto_accept_attributes_if_applicable(patient, import_attributes)
-    auto_accept_attribute(
-      patient,
-      import_attributes,
-      :gender_code,
-      :in?,
-      %w[male female not_specified]
-    )
-
-    auto_accept_attribute(
-      patient,
-      import_attributes,
-      :preferred_given_name,
-      :present?
-    )
-
-    auto_accept_attribute(
-      patient,
-      import_attributes,
-      :preferred_family_name,
-      :present?
-    )
-  end
-
-  def auto_accept_attribute(
-    patient,
-    import_attributes,
-    attr_name,
-    predicate,
-    *predicate_args
-  )
-    present_in_import =
-      import_attributes[attr_name].public_send(predicate, *predicate_args)
-    present_in_patient =
-      patient[attr_name].public_send(predicate, *predicate_args)
-    if present_in_import && !present_in_patient
-      patient[attr_name] = import_attributes[attr_name]
-    end
-  end
-
-  def auto_overwrite_address?(existing_patient)
-    existing_patient.address_postcode == address_postcode&.to_postcode &&
-      [address_line_1, address_line_2, address_town].any?(&:present?)
-  end
-
   def parent_1_exists?
     [parent_1_name, parent_1_email, parent_1_phone].any?(&:present?)
   end
@@ -357,9 +177,7 @@ class PatientImportRow
 
   def birth_academic_year_value
     if year_group.present?
-      # rubocop:disable Lint/RedundantSafeNavigation
-      year_group.to_i&.to_birth_academic_year(academic_year:)
-      # rubocop:enable Lint/RedundantSafeNavigation
+      year_group&.to_i&.to_birth_academic_year(academic_year:)
     else
       date_of_birth&.to_date&.academic_year
     end
