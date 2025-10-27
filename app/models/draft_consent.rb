@@ -193,20 +193,24 @@ class DraftConsent
     self.editing_id = value.id
   end
 
-  def update_vaccine_methods
+  def update_vaccine_methods_and_without_gelatine
     if flu_response?
       if response == "given_nasal"
         self.vaccine_methods = ["nasal"]
+        self.without_gelatine = false
         vaccine_methods << "injection" if injection_alternative
       elsif response == "given_injection"
         self.vaccine_methods = ["injection"]
+        self.without_gelatine = true
         self.injection_alternative = nil
       end
     elsif response_given?
       self.vaccine_methods = ["injection"]
+      self.without_gelatine ||= false
       self.injection_alternative = nil
     else
       self.vaccine_methods = []
+      self.without_gelatine = nil
       self.injection_alternative = nil
     end
   end
@@ -472,7 +476,7 @@ class DraftConsent
   def request_session_key = "consent"
 
   def reset_unused_attributes
-    update_vaccine_methods
+    update_vaccine_methods_and_without_gelatine
 
     self.notes = "" unless requires_notes?
     self.notify_parent_on_refusal = nil unless ask_notify_parent_on_refusal?

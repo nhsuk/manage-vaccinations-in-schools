@@ -145,6 +145,8 @@ class AppConsentSummaryComponent < ViewComponent::Base
 
   def without_gelatine_row
     return if consent.without_gelatine.nil?
+    return if consent.vaccine_method_nasal?
+    return unless programme.vaccine_may_contain_gelatine?
 
     {
       key: {

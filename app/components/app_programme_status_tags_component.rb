@@ -22,7 +22,8 @@ class AppProgrammeStatusTagsComponent < ViewComponent::Base
             end
           end
 
-        if context == :consent && hash[:without_gelatine]
+        if context == :consent && !programme.has_multiple_vaccine_methods? &&
+             hash[:without_gelatine]
           status = :"#{status}_without_gelatine"
         end
 
