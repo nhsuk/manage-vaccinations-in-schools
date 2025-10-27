@@ -105,7 +105,7 @@ GEM
       activesupport (>= 6.0.0)
     array_enum (1.6.0)
       activemodel
-    asciidoctor (2.0.25)
+    asciidoctor (2.0.26)
     asciidoctor-diagram (3.0.1)
       asciidoctor (>= 1.5.7, < 3.x)
       rexml
