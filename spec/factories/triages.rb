@@ -52,11 +52,13 @@ FactoryBot.define do
     trait :safe_to_vaccinate do
       status { "safe_to_vaccinate" }
       injection
+      without_gelatine { false }
     end
 
     trait :safe_to_vaccinate_nasal do
       status { "safe_to_vaccinate" }
       nasal
+      without_gelatine { false }
     end
 
     trait :safe_to_vaccinate_without_gelatine do
