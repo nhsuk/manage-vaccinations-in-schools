@@ -12,7 +12,12 @@ class Sessions::PatientsController < ApplicationController
     @statuses = Patient::VaccinationStatus.statuses.keys
 
     scope =
-      @session.patients.includes(:vaccination_statuses, notes: :created_by)
+      @session.patients.includes(
+        :consent_statuses,
+        :triage_statuses,
+        :vaccination_statuses,
+        notes: :created_by
+      )
 
     patients = @form.apply(scope)
 
