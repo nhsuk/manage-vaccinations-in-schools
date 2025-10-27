@@ -243,6 +243,10 @@ locals {
       {
         name  = "ROOT_URL"
         value = "https://${var.http_hosts.MAVIS__HOST}/reports/"
+      },
+      {
+        name  = "MISE_ENV"
+        value = var.environment == "production" ? "production" : "staging"
       }
     ]
     OPS_SERVICE = [
