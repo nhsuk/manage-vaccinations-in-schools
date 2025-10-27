@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
-  queue_as :immunisations_api
+  queue_as :immunisations_api_search
 
   def perform(sessions = nil)
     scope =
