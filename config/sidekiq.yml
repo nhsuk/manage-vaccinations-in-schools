@@ -30,7 +30,7 @@
       description: Invalidate all delay vaccination triages that have expired
     patients_aged_out_of_school:
       cron: "0 5 * * *"
-      class: PatientsAgedOutOfSchoolJob
+      class: EnqueuePatientsAgedOutOfSchoolsJob
       description: Moves patients who have aged out of their school to unknown school
     patients_clear_registration:
       cron: "15 5 * * *"

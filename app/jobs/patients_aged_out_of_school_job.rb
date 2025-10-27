@@ -1,30 +1,36 @@
 # frozen_string_literal: true
 
-class PatientsAgedOutOfSchoolJob < ApplicationJob
-  queue_as :patients
+class PatientsAgedOutOfSchoolJob
+  include Sidekiq::Job
 
-  def perform
+  sidekiq_options queue: :patients
+
+  def perform(school_id)
+    return if school_id.nil?
+
     academic_year = AcademicYear.pending
 
+    school =
+      Location.school.includes(:location_year_groups, :team).find(school_id)
+
+    # Year groups not yet set up for the next academic year.
+    if school.location_year_groups.none? { it.academic_year == academic_year }
+      return
+    end
+
+    team = school.team
+
     Patient
-      .where.not(school_id: nil)
-      .includes(school: :team)
+      .where(school_id:)
       .find_each do |patient|
         year_group = patient.year_group(academic_year:)
-        school = patient.school
 
-        # Year groups not yet set up for the next academic year.
-        next if school.location_year_groups.where(academic_year:).empty?
+        school_has_year_group =
+          school.location_year_groups.any? do
+            it.academic_year == academic_year && it.value == year_group
+          end
 
-        # Year group is valid for the school.
-        if school.location_year_groups.exists?(
-             academic_year:,
-             value: year_group
-           )
-          next
-        end
-
-        team = school.team
+        next if school_has_year_group
 
         SchoolMove.new(
           patient:,

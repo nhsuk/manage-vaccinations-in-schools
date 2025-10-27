@@ -724,6 +724,8 @@ describe "Import child records" do
     perform_enqueued_jobs
     perform_enqueued_jobs
 
+    Sidekiq::Job.drain_all # PatientsAgedOutOfSchoolJob is Sidekiq-only
+
     charlie = Patient.find_by(given_name: "Charlie")
     charlie_move = SchoolMoveLogEntry.find_by(patient: charlie)
     expect(charlie_move).to be_present

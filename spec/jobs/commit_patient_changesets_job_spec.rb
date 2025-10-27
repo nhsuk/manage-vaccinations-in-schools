@@ -133,9 +133,9 @@ describe CommitPatientChangesetsJob do
       end
 
       it "enqueues a job to move aged out patients" do
-        expect { perform_job }.to have_enqueued_job(
+        expect { perform_job }.to enqueue_sidekiq_job(
           PatientsAgedOutOfSchoolJob
-        ).once
+        ).with(location.id).once
       end
 
       it "imports PDS search results when present" do
