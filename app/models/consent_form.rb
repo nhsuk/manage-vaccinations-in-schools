@@ -314,6 +314,7 @@ class ConsentForm < ApplicationRecord
       (:contact_method if parent_phone.present?)
     ].compact + response_steps +
       [
+        (:without_gelatine if can_offer_without_gelatine?),
         (:reason_for_refusal if refused_and_not_given),
         (
           if refused_and_not_given && reason_for_refusal_requires_notes?
@@ -321,7 +322,6 @@ class ConsentForm < ApplicationRecord
           end
         ),
         (:injection_alternative if can_offer_injection_as_alternative?),
-        (:without_gelatine if can_offer_without_gelatine?),
         (:address if response_given?),
         (:health_question if response_given?),
         (:reason_for_refusal if refused_and_given),
@@ -371,9 +371,10 @@ class ConsentForm < ApplicationRecord
   end
 
   def can_offer_without_gelatine?
-    programmes.any? do
-      it.vaccine_may_contain_gelatine? && !it.has_multiple_vaccine_methods?
-    end
+    response_given? &&
+      programmes.any? do
+        it.vaccine_may_contain_gelatine? && !it.has_multiple_vaccine_methods?
+      end
   end
 
   def reason_for_refusal_requires_notes?
