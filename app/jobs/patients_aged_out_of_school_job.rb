@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
-class PatientsAgedOutOfSchoolJob < ApplicationJob
-  queue_as :patients
+class PatientsAgedOutOfSchoolJob
+  include Sidekiq::Job
 
-  def perform
+  sidekiq_options queue: :patients
+
+  def perform(school_id)
+    return if school_id.nil?
+
     academic_year = AcademicYear.pending
 
     Patient
-      .where.not(school_id: nil)
+      .where(school_id:)
       .includes(school: :team)
       .find_each do |patient|
         year_group = patient.year_group(academic_year:)

@@ -79,7 +79,7 @@ class ClassImport < PatientImport
 
     SchoolMove.import!(school_moves, on_duplicate_key_ignore: true)
 
-    PatientsAgedOutOfSchoolJob.perform_later
+    PatientsAgedOutOfSchoolJob.perform_async(location_id)
   end
 
   private
