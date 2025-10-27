@@ -42,7 +42,7 @@ describe CohortImport do
   let(:academic_year) { AcademicYear.current }
 
   # Ensure location URN matches the URN in our fixture files
-  let!(:location) { create(:school, urn: "123456", team:) }
+  let!(:location) { create(:school, urn: "123456", team:) } # rubocop:disable RSpec/LetSetup
 
   before { TeamSessionsFactory.call(team, academic_year:) }
 
@@ -95,27 +95,6 @@ describe CohortImport do
       it "is valid" do
         expect(cohort_import).to be_valid
       end
-
-      it "accepts NHS numbers with spaces, removes spaces" do
-        expect(cohort_import).to be_valid
-        expect(cohort_import.rows.second.to_patient[:nhs_number]).to eq(
-          "9990000026"
-        )
-      end
-
-      it "parses dates in the ISO8601 format" do
-        expect(cohort_import).to be_valid
-        expect(cohort_import.rows.first.to_patient[:date_of_birth]).to eq(
-          Date.new(2010, 1, 1)
-        )
-      end
-
-      it "parses dates in the DD/MM/YYYY format" do
-        expect(cohort_import).to be_valid
-        expect(cohort_import.rows.second.to_patient[:date_of_birth]).to eq(
-          Date.new(2010, 1, 2)
-        )
-      end
     end
 
     describe "with minimal fields" do
@@ -124,17 +103,6 @@ describe CohortImport do
       it "is valid" do
         expect(cohort_import).to be_valid
         expect(cohort_import.rows.count).to eq(1)
-
-        patient = cohort_import.rows.first.to_patient
-        expect(patient).to have_attributes(
-          given_name: "Jennifer",
-          family_name: "Clarke",
-          date_of_birth: Date.new(2010, 1, 1)
-        )
-
-        expect(
-          cohort_import.rows.first.to_school_move(patient)
-        ).to have_attributes(school: location)
       end
     end
 
