@@ -18,6 +18,21 @@ describe AppPatientSessionTriageComponent do
     it { should_not have_link("Update triage outcome") }
   end
 
+  context "when consent is given and triage is not needed" do
+    let(:programme) { create(:programme, :hpv) }
+    let(:patient) do
+      create(:patient, :consent_given_triage_not_needed, session:)
+    end
+
+    it { should_not have_link("Update triage outcome") }
+
+    context "for MMR programme" do
+      let(:programme) { create(:programme, :mmr) }
+
+      it { should have_link("Update triage outcome") }
+    end
+  end
+
   context "when triaged as safe to vaccinate" do
     before do
       create(:triage, :safe_to_vaccinate, patient:, programme:)
