@@ -1,36 +1,74 @@
 # frozen_string_literal: true
 
 class AppConsentSummaryComponent < ViewComponent::Base
-  def initialize(consent, change_links: {})
+  def initialize(
+    consent,
+    change_links: {},
+    show_email_address: false,
+    show_notes: false,
+    show_notify_parent: false,
+    show_phone_number: false,
+    show_programme: false,
+    show_route: false
+  )
     @consent = consent
     @change_links = change_links
+    @show_email_address = show_email_address
+    @show_notes = show_notes
+    @show_notify_parent = show_notify_parent
+    @show_phone_number = show_phone_number
+    @show_programme = show_programme
+    @show_route = show_route
   end
 
   def call = govuk_summary_list(rows:, actions: @change_links.present?)
 
   private
 
-  attr_reader :consent, :change_links
+  attr_reader :consent,
+              :change_links,
+              :show_phone_number,
+              :show_email_address,
+              :show_programme,
+              :show_notify_parent,
+              :show_notes,
+              :show_route
 
   delegate :programme, to: :consent
   delegate :consent_response_tag, :govuk_summary_list, to: :helpers
 
   def rows
     [
+      phone_number_row,
+      email_address_row,
       programme_row,
       date_row,
-      method_row,
+      route_row,
       response_row,
       injection_alternative_row,
       without_gelatine_row,
-      notify_parents_on_vaccination_row,
       reason_for_refusal_row,
+      notify_parents_on_vaccination_row,
       notify_parent_on_refusal_row,
       notes_row
     ].compact
   end
 
+  def phone_number_row
+    if show_phone_number && (phone = consent.parent&.phone).present?
+      { key: { text: "Phone number" }, value: { text: phone } }
+    end
+  end
+
+  def email_address_row
+    if show_email_address && (email = consent.parent&.email).present?
+      { key: { text: "Email address" }, value: { text: email } }
+    end
+  end
+
   def programme_row
+    return unless show_programme
+
     {
       key: {
         text: "Programme"
@@ -58,7 +96,9 @@ class AppConsentSummaryComponent < ViewComponent::Base
     }
   end
 
-  def method_row
+  def route_row
+    return unless show_route
+
     {
       key: {
         text: "Method"
@@ -116,7 +156,21 @@ class AppConsentSummaryComponent < ViewComponent::Base
     }
   end
 
+  def reason_for_refusal_row
+    return if consent.reason_for_refusal.nil?
+
+    {
+      key: {
+        text: "Reason for refusal"
+      },
+      value: {
+        text: consent.human_enum_name(:reason_for_refusal)
+      }
+    }
+  end
+
   def notify_parents_on_vaccination_row
+    return unless show_notify_parent
     return if consent.notify_parents_on_vaccination.nil?
 
     {
@@ -137,20 +191,8 @@ class AppConsentSummaryComponent < ViewComponent::Base
     }
   end
 
-  def reason_for_refusal_row
-    return if consent.reason_for_refusal.nil?
-
-    {
-      key: {
-        text: "Reason for refusal"
-      },
-      value: {
-        text: consent.human_enum_name(:reason_for_refusal)
-      }
-    }
-  end
-
   def notify_parent_on_refusal_row
+    return unless show_notify_parent
     return if consent.notify_parent_on_refusal.nil?
 
     {
@@ -164,6 +206,7 @@ class AppConsentSummaryComponent < ViewComponent::Base
   end
 
   def notes_row
+    return unless show_notes
     return if consent.notes.blank?
 
     { key: { text: "Notes" }, value: { text: consent.notes } }

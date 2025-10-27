@@ -20,7 +20,13 @@
 
 <%= render AppCardComponent.new do |card| %>
   <% card.with_heading { "Response" } %>
-  <%= render AppConsentSummaryComponent.new(@consent) %>
+  <%= render AppConsentSummaryComponent.new(
+        @consent,
+        show_notes: true,
+        show_notify_parent: true,
+        show_programme: true,
+        show_route: true,
+      ) %>
 <% end %>
 
 <%= render AppCardComponent.new do |card| %>
