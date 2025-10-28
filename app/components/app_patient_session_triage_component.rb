@@ -15,9 +15,7 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
     @triage_form = triage_form || default_triage_form
   end
 
-  def render?
-    (programme.mmr? && consent_status.given?) || !triage_status.not_required?
-  end
+  def render? = consent_status.given? || !triage_status.not_required?
 
   private
 
