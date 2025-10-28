@@ -132,7 +132,7 @@ describe "Flu vaccination" do
     @injection_patient =
       create(
         :patient,
-        :consent_given_injection_only_triage_not_needed,
+        :consent_given_without_gelatine_triage_not_needed,
         :in_attendance,
         session: @session
       )
@@ -188,7 +188,7 @@ describe "Flu vaccination" do
 
     visit session_record_path(@session)
 
-    choose "Injection"
+    choose "Gelatine-free injection"
     click_on "Update results"
 
     click_link @patient.full_name

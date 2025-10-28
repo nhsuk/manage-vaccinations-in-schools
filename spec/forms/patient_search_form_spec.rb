@@ -34,7 +34,7 @@ describe PatientSearchForm do
   let(:q) { "query" }
   let(:register_status) { nil }
   let(:triage_status) { nil }
-  let(:vaccine_method) { nil }
+  let(:vaccine_criteria) { nil }
   let(:still_to_vaccinate) { nil }
   let(:patient_specific_direction_status) { nil }
   let(:year_groups) { %w[8 9 10 11] }
@@ -55,7 +55,7 @@ describe PatientSearchForm do
       q:,
       register_status:,
       triage_status:,
-      vaccine_method:,
+      vaccine_criteria:,
       year_groups:
     }
   end
@@ -464,7 +464,7 @@ describe PatientSearchForm do
       end
     end
 
-    context "filtering on vaccine method" do
+    context "filtering on vaccine criteria" do
       let(:consent_statuses) { nil }
       let(:date_of_birth_day) { nil }
       let(:date_of_birth_month) { nil }
@@ -475,7 +475,7 @@ describe PatientSearchForm do
       let(:q) { nil }
       let(:register_status) { nil }
       let(:triage_status) { nil }
-      let(:vaccine_method) { "nasal" }
+      let(:vaccine_criteria) { "nasal" }
       let(:year_groups) { nil }
 
       let(:session) { session_for_patients }

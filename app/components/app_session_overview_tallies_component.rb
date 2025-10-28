@@ -134,7 +134,8 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
       .consent_given_and_safe_to_vaccinate(
         programmes:,
         academic_year:,
-        vaccine_method: nil
+        vaccine_method: nil,
+        without_gelatine: nil
       )
       .count
   end
