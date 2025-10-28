@@ -7,8 +7,12 @@
 
   <%= h1 t(@consent_form.reason_for_refusal, scope: %i[consent_forms notes title]) %>
 
-  <%= f.govuk_text_area :reason_for_refusal_notes,
-                        label: { text: "Give details" + (@consent_form.reason_for_refusal_requires_notes? ? "" : " (optional)") } %>
+  <% label = "Give details" + (@consent_form.reason_for_refusal_requires_notes? ? "" : " (optional)") %>
+  <% hint = if @consent_form.refused_programmes.any?(&:mmr?)
+         "Children need 2 doses of the MMR vaccine to be fully protected. If your child has had more than 1 dose, give details about both doses."
+       end %>
+
+  <%= f.govuk_text_area :reason_for_refusal_notes, label: { text: label }, hint: { text: hint } %>
 
   <%= f.govuk_submit "Continue" %>
 <% end %>

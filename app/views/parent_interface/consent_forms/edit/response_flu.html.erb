@@ -11,7 +11,6 @@
   <%= f.govuk_radio_buttons_fieldset :response,
                                      legend: { size: "l", text: legend, tag: "h1" },
                                      hint: { text: "The nasal flu spray contains gelatine which comes from pigs." } do %>
-
     <%= f.govuk_radio_button :response, "given_nasal",
                              label: { text: "Yes, I agree to them having the nasal spray vaccine" },
                              hint: { text: "This is the recommended option and gives the best protection against flu" },
@@ -21,8 +20,7 @@
                              label: { text: "Yes, I agree to the alternative flu injection" },
                              hint: { text: "This is suitable for children who do not use gelatine products, or if they cannot have the nasal spray vaccine for medical reasons" } %>
 
-    <%= f.govuk_radio_button :response, "refused",
-                             label: { text: "No" } %>
+    <%= f.govuk_radio_button :response, "refused" %>
   <% end %>
 
   <%= f.govuk_submit "Continue" %>

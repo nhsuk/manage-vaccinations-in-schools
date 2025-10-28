@@ -8,9 +8,11 @@
 <%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_radio_buttons_fieldset :response, legend: { size: "l", text: legend, tag: "h1" } do %>
+  <%= f.govuk_radio_buttons_fieldset :response,
+                                     legend: { size: "l", text: legend, tag: "h1" },
+                                     hint: { text: "This is a catch-up vaccination for those who have not yet had 2 doses of the MMR vaccine. Children usually have these when they are 1 and 3 years old." } do %>
     <%= f.govuk_radio_button :response, "given", label: { text: "Yes, I agree" }, link_errors: true %>
-    <%= f.govuk_radio_button :response, "refused", label: { text: "No" } %>
+    <%= f.govuk_radio_button :response, "refused" %>
   <% end %>
 
   <%= f.govuk_submit "Continue" %>
