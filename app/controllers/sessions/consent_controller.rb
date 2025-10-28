@@ -13,17 +13,10 @@ class Sessions::ConsentController < ApplicationController
       Patient::ConsentStatus.statuses.keys - %w[not_required]
 
     @statuses =
-      if @session.has_multiple_vaccine_methods?
-        statuses_except_not_required.flat_map do |status|
-          if status == "given"
-            @session.vaccine_methods.map { "given_#{it}" }
-          else
-            status
-          end
-        end
-      else
-        statuses_except_not_required
-      end
+      insert_status_for_programmes(
+        statuses_except_not_required,
+        @session.programmes
+      )
 
     scope =
       @session
@@ -46,5 +39,30 @@ class Sessions::ConsentController < ApplicationController
       policy_scope(Session).includes(programmes: :vaccines).find_by!(
         slug: params[:session_slug]
       )
+  end
+
+  def insert_status_for_programmes(statuses, programmes)
+    insert_index = statuses.index("given") + 1
+
+    # TODO: Make this more generic, rather than specific to programme
+    #  combinations.
+
+    result = statuses.dup
+
+    if programmes.any?(&:flu?)
+      result.insert(
+        insert_index,
+        "given_nasal",
+        "given_injection_without_gelatine"
+      )
+    end
+
+    if programmes.any?(&:mmr?) && programmes.none?(&:flu?)
+      result.insert(insert_index, "given_injection_without_gelatine")
+    end
+
+    result.delete("given") if programmes.all?(&:flu?)
+
+    result
   end
 end

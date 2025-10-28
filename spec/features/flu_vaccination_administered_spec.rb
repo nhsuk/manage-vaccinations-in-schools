@@ -132,7 +132,7 @@ describe "Flu vaccination" do
     @injection_patient =
       create(
         :patient,
-        :consent_given_injection_only_triage_not_needed,
+        :consent_given_without_gelatine_triage_not_needed,
         :in_attendance,
         session: @session
       )
@@ -188,7 +188,7 @@ describe "Flu vaccination" do
 
     visit session_record_path(@session)
 
-    choose "Injection"
+    choose "Gelatine-free injection"
     click_on "Update results"
 
     click_link @patient.full_name
@@ -202,7 +202,9 @@ describe "Flu vaccination" do
   end
 
   def then_i_see_the_vaccination_form_for_injection
-    expect(page).to have_content("Record flu vaccination with injection")
+    expect(page).to have_content(
+      "Record flu vaccination with gelatine-free injection"
+    )
     expect(page).to have_content(
       "Is #{@patient.given_name} ready for their flu injection?"
     )

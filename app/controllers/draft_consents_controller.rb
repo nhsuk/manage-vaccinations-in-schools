@@ -55,7 +55,7 @@ class DraftConsentsController < ApplicationController
 
   def handle_agree
     @draft_consent.assign_attributes(update_params)
-    @draft_consent.update_vaccine_methods
+    @draft_consent.update_vaccine_methods_and_without_gelatine
   end
 
   def handle_confirm

@@ -13,11 +13,16 @@
 
 <%= render AppCardComponent.new do |card| %>
   <% card.with_heading { "Consent" } %>
-  <%= render AppConsentSummaryComponent.new(@draft_consent, change_links: {
-                                                              response: wizard_path("agree"),
-                                                              route: wizard_path(@draft_consent.via_self_consent? ? "who" : "route"),
-                                                              notify_parents_on_vaccination: wizard_path("notify-parents-on-vaccination"),
-                                                            }) %>
+  <%= render AppConsentSummaryComponent.new(@draft_consent,
+                                            change_links: {
+                                              response: wizard_path("agree"),
+                                              route: wizard_path(@draft_consent.via_self_consent? ? "who" : "route"),
+                                              notify_parents_on_vaccination: wizard_path("notify-parents-on-vaccination"),
+                                            },
+                                            show_route: true,
+                                            show_notes: true,
+                                            show_notify_parent: true,
+                                            show_programme: true) %>
 <% end %>
 
 <%= render AppCardComponent.new do |card| %>

@@ -224,7 +224,9 @@ describe "Flu vaccination" do
   end
 
   def then_i_should_not_see_the_record_vaccination_section
-    expect(page).not_to have_text("Record flu vaccination with injection")
+    expect(page).not_to have_text(
+      "Record flu vaccination with gelatine-free injection"
+    )
   end
 
   def then_i_am_able_to_vaccinate_them_with_nasal_via_psd

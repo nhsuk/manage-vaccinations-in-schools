@@ -726,6 +726,10 @@ en:
   vaccines:
     index:
       title: Vaccines
+  vaccine_criteria:
+    injection: Injection
+    injection_without_gelatine: Gelatine-free injection
+    nasal: Nasal spray
   attendance_flash:
     absent: "%{name} is absent from today’s session."
     not_registered: "%{name} is not registered yet."

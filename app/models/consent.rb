@@ -90,7 +90,10 @@ class Consent < ApplicationRecord
             presence: true,
             unless: -> { via_self_consent? || via_website? }
 
-  validates :vaccine_methods, presence: true, if: :response_given?
+  with_options if: :response_given? do
+    validates :vaccine_methods, presence: true
+    validates :without_gelatine, inclusion: [true, false]
+  end
 
   def self.verbal_routes = routes.except("website", "self_consent")
 

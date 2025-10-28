@@ -28,10 +28,10 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               end
             end
             
-            if vaccination_method
+            if vaccine_type
               summary_list.with_row do |row|
-                row.with_key { "Vaccination method" }
-                row.with_value { vaccination_method }
+                row.with_key { "Vaccine type" }
+                row.with_value { vaccine_type }
               end
             end
 
@@ -143,33 +143,40 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     end
   end
 
-  def vaccination_method
+  def vaccine_type
     return unless %i[register record].include?(context)
 
-    programmes_to_check = programmes.select(&:has_multiple_vaccine_methods?)
+    programmes_to_check =
+      programmes.select do
+        it.has_multiple_vaccine_methods? || it.vaccine_may_contain_gelatine?
+      end
 
     return if programmes_to_check.empty?
 
-    vaccine_methods =
-      programmes_to_check.flat_map do |programme|
+    labels =
+      programmes_to_check.filter_map do |programme|
         if patient.consent_given_and_safe_to_vaccinate?(
              programme:,
              academic_year:
            )
-          patient.vaccine_criteria(programme:, academic_year:).vaccine_methods
-        else
-          []
+          vaccine_criteria =
+            patient.vaccine_criteria(programme:, academic_year:)
+
+          render AppVaccineCriteriaLabelComponent.new(
+                   vaccine_criteria,
+                   programme:,
+                   context: :vaccine_type
+                 )
         end
       end
 
-    return if vaccine_methods.empty?
+    return if labels.empty?
 
-    tag.span(
-      class: "app-vaccine-method",
-      data: {
-        method: vaccine_methods.first
-      }
-    ) { Vaccine.human_enum_name(:method, vaccine_methods.first) }
+    if labels.count == 1
+      labels.first
+    else
+      tag.ul(class: "nhsuk-list") { safe_join(labels.map { tag.li(it) }) }
+    end
   end
 
   def status_tags
@@ -260,30 +267,26 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         return(
           {
             status: consent_status.status,
-            vaccine_methods: [triage_status.vaccine_method]
+            vaccine_method: triage_status.vaccine_method,
+            without_gelatine: triage_status.without_gelatine
           }
         )
       end
     end
 
-    consent_status.slice(:status, :vaccine_methods, :without_gelatine)
+    {
+      status: consent_status.status,
+      vaccine_method: consent_status.vaccine_methods.first,
+      without_gelatine: consent_status.without_gelatine
+    }
   end
 
   def triage_status_value(programme:, academic_year:)
-    triage_status = patient.triage_status(programme:, academic_year:)
-
-    status =
-      if triage_status.vaccine_method.present? &&
-           programme.has_multiple_vaccine_methods?
-        triage_status.status + "_#{triage_status.vaccine_method}"
-      else
-        triage_status.status
-      end
-
-    without_gelatine =
-      triage_status.without_gelatine && !programme.has_multiple_vaccine_methods?
-
-    { status: status, without_gelatine: }
+    patient.triage_status(programme:, academic_year:).slice(
+      :status,
+      :vaccine_method,
+      :without_gelatine
+    )
   end
 
   def patient_specific_direction_status_tag

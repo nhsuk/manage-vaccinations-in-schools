@@ -130,17 +130,17 @@ class AppPatientSearchFormComponent < ViewComponent::Base
           <% end %>
         <% end %>
 
-        <% if vaccine_methods.any? %>
-          <%= f.govuk_radio_buttons_fieldset :vaccine_method,
-                                             legend: { text: "Vaccination method", size: "s" },
+        <% if vaccine_criterias.any? %>
+          <%= f.govuk_radio_buttons_fieldset :vaccine_criteria,
+                                             legend: { text: "Vaccine type", size: "s" },
                                              small: true do %>
-            <%= f.govuk_radio_button :vaccine_method, "", checked: form.vaccine_method.blank?, label: { text: "Any" } %>
+            <%= f.govuk_radio_button :vaccine_criteria, "", checked: form.vaccine_criteria.blank?, label: { text: "Any" } %>
 
-            <% vaccine_methods.each do |vaccine_method| %>
-              <%= f.govuk_radio_button :vaccine_method,
-                                       vaccine_method,
-                                       checked: form.vaccine_method == vaccine_method,
-                                       label: { text: Vaccine.human_enum_name(:vaccine_method, vaccine_method) } %>
+            <% vaccine_criterias.each do |vaccine_criteria| %>
+              <%= f.govuk_radio_button :vaccine_criteria,
+                                       vaccine_criteria,
+                                       checked: form.vaccine_criteria == vaccine_criteria,
+                                       label: { text: t(vaccine_criteria, scope: "vaccine_criteria") } %>
             <% end %>
           <% end %>
         <% end %>
@@ -240,7 +240,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     triage_statuses: [],
     vaccination_statuses: [],
     patient_specific_direction_statuses: [],
-    vaccine_methods: [],
+    vaccine_criterias: [],
     year_groups: [],
     heading_level: 3,
     show_aged_out_of_programmes: false,
@@ -256,7 +256,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     @triage_statuses = triage_statuses
     @vaccination_statuses = vaccination_statuses
     @patient_specific_direction_statuses = patient_specific_direction_statuses
-    @vaccine_methods = vaccine_methods
+    @vaccine_criterias = vaccine_criterias
     @year_groups = year_groups
     @heading_level = heading_level
     @show_aged_out_of_programmes = show_aged_out_of_programmes
@@ -274,7 +274,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               :triage_statuses,
               :vaccination_statuses,
               :patient_specific_direction_statuses,
-              :vaccine_methods,
+              :vaccine_criterias,
               :year_groups,
               :heading_level,
               :show_aged_out_of_programmes,

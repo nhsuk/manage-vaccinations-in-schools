@@ -26,18 +26,30 @@ FactoryBot.define do
   factory :patient_triage_status, class: "Patient::TriageStatus" do
     patient
     programme
-    academic_year { Date.current.academic_year }
+    academic_year { AcademicYear.current }
 
     traits_for_enum :status
+    traits_for_enum :vaccine_method
 
     trait :safe_to_vaccinate do
       status { "safe_to_vaccinate" }
-      vaccine_method { "injection" }
+      injection
+      without_gelatine { false }
     end
 
     trait :safe_to_vaccinate_nasal do
       status { "safe_to_vaccinate" }
-      vaccine_method { "nasal" }
+      nasal
+      without_gelatine { false }
+    end
+
+    trait :safe_to_vaccinate_without_gelatine do
+      safe_to_vaccinate
+      without_gelatine
+    end
+
+    trait :without_gelatine do
+      without_gelatine { true }
     end
   end
 end

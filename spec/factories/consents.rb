@@ -73,6 +73,7 @@ FactoryBot.define do
 
     response { "given" }
     vaccine_methods { %w[injection] }
+    without_gelatine { false }
     route { "website" }
 
     health_answers do

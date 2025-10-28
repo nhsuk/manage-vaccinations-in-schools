@@ -67,4 +67,9 @@ class Triage < ApplicationRecord
         -> { delay_vaccination_until_in_past.not_invalidated }
 
   validates :delay_vaccination_until, absence: true, unless: :delay_vaccination?
+
+  with_options if: :safe_to_vaccinate? do
+    validates :vaccine_method, presence: true
+    validates :without_gelatine, inclusion: [true, false]
+  end
 end

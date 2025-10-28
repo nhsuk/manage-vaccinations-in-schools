@@ -410,7 +410,8 @@ describe Patient do
         described_class.consent_given_and_safe_to_vaccinate(
           programmes:,
           academic_year:,
-          vaccine_method:
+          vaccine_method:,
+          without_gelatine:
         )
       end
 
@@ -418,6 +419,7 @@ describe Patient do
       let(:session) { create(:session, programmes:) }
       let(:academic_year) { Date.current.academic_year }
       let(:vaccine_method) { nil }
+      let(:without_gelatine) { nil }
 
       it { should be_empty }
 

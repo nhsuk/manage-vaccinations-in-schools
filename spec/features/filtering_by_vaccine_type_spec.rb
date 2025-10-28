@@ -3,12 +3,12 @@
 describe "Filtering" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
-  scenario "By vaccination method" do
+  scenario "By vaccine type" do
     given_a_session_exists_with_programmes(%i[flu hpv])
     and_patients_are_in_the_flu_hpv_session
 
     when_i_visit_the_record_vaccinations_tab
-    then_the_any_vaccination_method_filter_is_selected
+    then_the_any_vaccine_criteria_filter_is_selected
     and_i_see_all_the_patients_in_flu_hpv_session
 
     when_i_filter_on_nasal
@@ -24,10 +24,10 @@ describe "Filtering" do
 
     when_i_visit_the_record_vaccinations_tab
     then_i_see_all_the_patients_in_doubles_session
-    and_i_dont_see_vaccination_method_filter_radios
+    and_i_dont_see_vaccine_criteria_filter_radios
   end
 
-  scenario "By programme and vaccination method" do
+  scenario "By programme and vaccine type" do
     given_a_session_exists_with_programmes(%i[flu hpv])
     and_patients_are_in_the_flu_hpv_session
 
@@ -66,7 +66,7 @@ describe "Filtering" do
     @patient_consented_for_flu_injection =
       create(
         :patient,
-        :consent_given_triage_not_needed,
+        :consent_given_without_gelatine_triage_not_needed,
         :in_attendance,
         programmes: [@session.programmes.first],
         year_group: 4,
@@ -100,7 +100,12 @@ describe "Filtering" do
         :in_attendance,
         year_group: 8,
         session: @session
-      )
+      ).tap do
+        it
+          .consent_statuses
+          .find_by(programme: @session.programmes.first)
+          .update!(without_gelatine: true)
+      end
   end
 
   def and_patients_are_in_the_doubles_session
@@ -145,9 +150,9 @@ describe "Filtering" do
     )
   end
 
-  def and_i_dont_see_vaccination_method_filter_radios
+  def and_i_dont_see_vaccine_criteria_filter_radios
     expect(page).not_to have_field("Nasal", type: "radio")
-    expect(page).not_to have_field("Injection", type: "radio")
+    expect(page).not_to have_field("Gelatine-free injection", type: "radio")
   end
 
   def when_i_filter_on_nasal
@@ -156,7 +161,7 @@ describe "Filtering" do
   end
 
   def when_i_filter_on_injection
-    choose "Injection"
+    choose "Gelatine-free injection"
     click_on "Update results"
   end
 
@@ -186,7 +191,7 @@ describe "Filtering" do
     )
   end
 
-  def then_the_any_vaccination_method_filter_is_selected
+  def then_the_any_vaccine_criteria_filter_is_selected
     expect(page).to have_checked_field("Any")
   end
 
@@ -207,7 +212,7 @@ describe "Filtering" do
   def when_i_filter_on_flu_and_injection
     check "Flu"
     uncheck "HPV"
-    choose "Injection"
+    choose "Gelatine-free injection"
     click_on "Update results"
   end
 

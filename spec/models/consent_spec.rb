@@ -68,6 +68,7 @@ describe Consent do
       subject { build(:consent, :refused) }
 
       it { should_not validate_presence_of(:vaccine_methods) }
+      it { should_not validate_presence_of(:without_gelatine) }
     end
   end
 

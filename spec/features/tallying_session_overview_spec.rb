@@ -65,7 +65,7 @@ describe "Tallying on session overview page" do
   def and_one_has_given_consent_for_injection
     create(
       :patient_consent_status,
-      :given_injection_only,
+      :given_without_gelatine,
       patient: @patients.third,
       programme: @flu_programme
     )
