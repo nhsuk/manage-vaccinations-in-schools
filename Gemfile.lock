@@ -186,7 +186,7 @@ GEM
       deep_merge (~> 1.2, >= 1.2.1)
       ostruct
     connection_pool (2.5.4)
-    crack (1.0.0)
+    crack (1.0.1)
       bigdecimal
       rexml
     crass (1.0.6)
@@ -285,7 +285,7 @@ GEM
       temple (>= 0.8.2)
       thor
       tilt
-    hashdiff (1.1.2)
+    hashdiff (1.2.1)
     hashie (5.0.0)
     hotwire-livereload (2.1.1)
       actioncable (>= 7.0.0)
@@ -732,7 +732,7 @@ GEM
       activesupport
       faraday (~> 2.0)
       faraday-follow_redirects
-    webmock (3.25.1)
+    webmock (3.26.0)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
