@@ -5,9 +5,6 @@
 # Table name: location_programme_year_groups
 #
 #  id                     :bigint           not null, primary key
-#  academic_year          :integer          not null
-#  year_group             :integer          not null
-#  location_id            :bigint           not null
 #  location_year_group_id :bigint           not null
 #  programme_id           :bigint           not null
 #
@@ -27,9 +24,11 @@
 FactoryBot.define do
   factory :location_programme_year_group,
           class: "Location::ProgrammeYearGroup" do
-    location
-    academic_year { AcademicYear.pending }
-    year_group { programme.default_year_groups.sample }
+    transient do
+      location { association :location }
+      academic_year { AcademicYear.pending }
+      year_group { programme.default_year_groups.sample }
+    end
 
     location_year_group do
       location.location_year_groups.find_or_initialize_by(

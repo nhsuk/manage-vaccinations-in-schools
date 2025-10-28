@@ -417,10 +417,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_163100) do
   end
 
   create_table "location_programme_year_groups", force: :cascade do |t|
-    t.bigint "location_id", null: false
+    t.bigint "location_id"
     t.bigint "programme_id", null: false
-    t.integer "year_group", null: false
-    t.integer "academic_year", null: false
+    t.integer "year_group"
+    t.integer "academic_year"
     t.bigint "location_year_group_id", null: false
     t.index ["location_id", "academic_year", "programme_id", "year_group"], name: "idx_on_location_id_academic_year_programme_id_year__6ad5e2b67d", unique: true
     t.index ["location_year_group_id", "programme_id"], name: "idx_on_location_year_group_id_programme_id_405f51181e", unique: true

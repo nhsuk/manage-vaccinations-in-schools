@@ -111,10 +111,11 @@ class Patient < ApplicationRecord
 
   scope :in_eligible_year_group_for_session_programme, -> { joins(<<-SQL) }
     INNER JOIN session_programmes ON session_programmes.session_id = sessions.id
-    INNER JOIN location_programme_year_groups ON location_programme_year_groups.location_id = patient_locations.location_id
-    AND location_programme_year_groups.academic_year = patient_locations.academic_year
+    INNER JOIN location_year_groups ON location_year_groups.location_id = patient_locations.location_id
+    AND location_year_groups.academic_year = patient_locations.academic_year
+    INNER JOIN location_programme_year_groups ON location_programme_year_groups.location_year_group_id = location_year_groups.id
     AND location_programme_year_groups.programme_id = session_programmes.programme_id
-    AND patients.birth_academic_year = location_programme_year_groups.academic_year - location_programme_year_groups.year_group - #{Integer::AGE_CHILDREN_START_SCHOOL}
+    AND patients.birth_academic_year = location_year_groups.academic_year - location_year_groups.value - #{Integer::AGE_CHILDREN_START_SCHOOL}
   SQL
 
   scope :archived,
@@ -227,6 +228,7 @@ class Patient < ApplicationRecord
         ->(status, programme:, academic_year:) do
           where(
             Patient::VaccinationStatus
+              .select("1")
               .where("patient_id = patients.id")
               .where(status:, programme:, academic_year:)
               .arel
@@ -237,11 +239,10 @@ class Patient < ApplicationRecord
   scope :has_consent_status,
         ->(status, programme:, academic_year:, vaccine_method: nil) do
           consent_status_scope =
-            Patient::ConsentStatus.where("patient_id = patients.id").where(
-              status:,
-              programme:,
-              academic_year:
-            )
+            Patient::ConsentStatus
+              .select("1")
+              .where("patient_id = patients.id")
+              .where(status:, programme:, academic_year:)
 
           if vaccine_method
             consent_status_scope =
@@ -255,6 +256,7 @@ class Patient < ApplicationRecord
         ->(status, programme:, academic_year:) do
           where(
             Patient::TriageStatus
+              .select("1")
               .where("patient_id = patients.id")
               .where(status:, programme:, academic_year:)
               .arel
@@ -266,6 +268,7 @@ class Patient < ApplicationRecord
         ->(vaccine_method, programme:, academic_year:) do
           where(
             Patient::TriageStatus
+              .select("1")
               .where("patient_id = patients.id")
               .where(vaccine_method:, programme:, academic_year:)
               .arel
@@ -273,12 +276,14 @@ class Patient < ApplicationRecord
           ).or(
             where(
               Patient::TriageStatus
+                .select("1")
                 .where("patient_id = patients.id")
                 .where(status: "not_required", programme:, academic_year:)
                 .arel
                 .exists
             ).where(
               Patient::ConsentStatus
+                .select("1")
                 .where("patient_id = patients.id")
                 .where(programme:, academic_year:)
                 .has_vaccine_method(vaccine_method)
@@ -292,6 +297,7 @@ class Patient < ApplicationRecord
         ->(status, session:) do
           where(
             Patient::RegistrationStatus
+              .select("1")
               .where("patient_id = patients.id")
               .where(session:, status:)
               .arel
@@ -303,6 +309,7 @@ class Patient < ApplicationRecord
         ->(programme:, academic_year:, team:) do
           where(
             PatientSpecificDirection
+              .select("1")
               .where("patient_id = patients.id")
               .where(programme:, academic_year:, team:)
               .not_invalidated
@@ -315,6 +322,7 @@ class Patient < ApplicationRecord
         ->(programme:, academic_year:, team:) do
           where.not(
             PatientSpecificDirection
+              .select("1")
               .where("patient_id = patients.id")
               .where(programme:, academic_year:, team:)
               .not_invalidated

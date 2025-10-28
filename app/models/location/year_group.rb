@@ -26,6 +26,13 @@ class Location::YearGroup < ApplicationRecord
 
   belongs_to :location
 
+  has_many :location_programme_year_groups,
+           class_name: "Location::ProgrammeYearGroup",
+           foreign_key: :location_year_group_id,
+           dependent: :destroy
+
+  has_many :programmes, through: :location_programme_year_groups
+
   enum :source, { gias: 0, generic_clinic_factory: 1, cli: 2 }, validate: true
 
   CLINIC_VALUE_RANGE = (-3..15)
@@ -37,4 +44,6 @@ class Location::YearGroup < ApplicationRecord
             }
 
   scope :pluck_values, -> { distinct.order(:value).pluck(:value) }
+
+  def birth_academic_year = value.to_birth_academic_year(academic_year:)
 end

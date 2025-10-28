@@ -5,9 +5,6 @@
 # Table name: location_programme_year_groups
 #
 #  id                     :bigint           not null, primary key
-#  academic_year          :integer          not null
-#  year_group             :integer          not null
-#  location_id            :bigint           not null
 #  location_year_group_id :bigint           not null
 #  programme_id           :bigint           not null
 #
@@ -25,22 +22,10 @@
 #  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
 #
 describe Location::ProgrammeYearGroup do
-  subject(:location_programme_year_group) do
-    build(:location_programme_year_group, location:)
-  end
-
-  let(:location) { create(:school) }
+  subject { build(:location_programme_year_group) }
 
   describe "associations" do
-    it { should belong_to(:location) }
+    it { should belong_to(:location_year_group) }
     it { should belong_to(:programme) }
-  end
-
-  describe "validations" do
-    it "validates year group is suitable for the location" do
-      expect(location_programme_year_group).to validate_inclusion_of(
-        :year_group
-      ).in_array(location.gias_year_groups)
-    end
   end
 end

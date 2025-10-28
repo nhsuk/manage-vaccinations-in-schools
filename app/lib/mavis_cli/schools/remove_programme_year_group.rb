@@ -31,14 +31,10 @@ module MavisCLI
           return
         end
 
-        ActiveRecord::Base.transaction do
-          year_groups.each do |year_group|
-            location
-              .location_programme_year_groups
-              .find_by(programme:, year_group:)
-              &.destroy!
-          end
-        end
+        location
+          .location_programme_year_groups
+          .where(location_year_group: { value: year_groups }, programme:)
+          .destroy_all
       end
     end
   end
