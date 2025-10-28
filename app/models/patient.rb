@@ -279,29 +279,29 @@ class Patient < ApplicationRecord
 
   scope :has_vaccine_method,
         ->(vaccine_method, programme:, academic_year:) do
-          where(
+          triage_status_matching =
             Patient::TriageStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where(vaccine_method:, programme:, academic_year:)
-              .arel
-              .exists
-          ).or(
-            where(
-              Patient::TriageStatus
-                .select("1")
-                .where("patient_id = patients.id")
-                .where(status: "not_required", programme:, academic_year:)
-                .arel
-                .exists
-            ).where(
-              Patient::ConsentStatus
-                .select("1")
-                .where("patient_id = patients.id")
-                .where(programme:, academic_year:)
-                .has_vaccine_method(vaccine_method)
-                .arel
-                .exists
+              .where(programme:, academic_year:)
+              .where(vaccine_method:)
+
+          triage_status_not_required =
+            Patient::TriageStatus
+              .select("1")
+              .where("patient_id = patients.id")
+              .where(status: "not_required", programme:, academic_year:)
+
+          consent_status_matching =
+            Patient::ConsentStatus
+              .select("1")
+              .where("patient_id = patients.id")
+              .where(programme:, academic_year:)
+              .has_vaccine_method(vaccine_method)
+
+          where(triage_status_matching.arel.exists).or(
+            where(triage_status_not_required.arel.exists).where(
+              consent_status_matching.arel.exists
             )
           )
         end
