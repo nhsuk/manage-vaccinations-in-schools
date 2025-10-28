@@ -28,10 +28,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
           end
 
         incoming_vaccination_records =
-          deduplicate_vaccination_records(incoming_vaccination_records)
-
-        incoming_vaccination_records =
-          reject_mavis_records(incoming_vaccination_records)
+          deduplicate_vaccination_records(patient, incoming_vaccination_records)
       end
 
       existing_vaccination_records =
@@ -73,13 +70,6 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
 
   private
 
-  def reject_mavis_records(vaccination_records)
-    vaccination_records.reject do
-      it.nhs_immunisations_api_identifier_system ==
-        FHIRMapper::VaccinationRecord::MAVIS_SYSTEM_NAME
-    end
-  end
-
   def extract_vaccination_records(fhir_bundle)
     fhir_bundle
       .entry
@@ -87,7 +77,11 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
       .compact
   end
 
-  def deduplicate_vaccination_records(vaccination_records)
+  def deduplicate_vaccination_records(patient, incoming_vaccination_records)
+    vaccination_records =
+      incoming_vaccination_records +
+        patient.vaccination_records.sourced_from_service.includes(:team)
+
     grouped_vaccination_records =
       vaccination_records.group_by do
         [it.performed_at.to_date, it.programme_id]
@@ -96,20 +90,21 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     deduplicated_vaccination_records = []
 
     grouped_vaccination_records.each_value do |records|
-      if records.size == 1
-        deduplicated_vaccination_records << records.first
-      else
-        deduplicated_vaccination_records +=
-          if records.none?(&:nhs_immunisations_api_primary_source)
-            # If no records are primary sources, we keep all of them
-            records
-          else
-            # Otherwise prefer primary sources
-            records.select(&:nhs_immunisations_api_primary_source)
-          end
-      end
+      deduplicated_vaccination_records +=
+        if records.any?(&:sourced_from_service?)
+          # If there exists a Mavis record, discard all incoming records
+          []
+        elsif records.none?(&:nhs_immunisations_api_primary_source)
+          # If no records are primary sources, keep all of them
+          records
+        else
+          # Otherwise prefer primary sources
+          records.select(&:nhs_immunisations_api_primary_source)
+        end
     end
 
-    deduplicated_vaccination_records
+    deduplicated_vaccination_records.select(
+      &:sourced_from_nhs_immunisations_api?
+    )
   end
 end
