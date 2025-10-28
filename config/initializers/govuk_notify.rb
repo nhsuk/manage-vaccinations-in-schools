@@ -30,12 +30,9 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   session_clinic_initial_invitation_ryg: "fc99ac81-9eeb-4df8-9aa0-04f0eb48e37f",
   session_clinic_subsequent_invitation_ryg:
     "eee59c1b-3af4-4ccd-8653-940887066390",
-  session_clinic_initial_invitation_rt5: nil,
-  session_clinic_subsequent_invitation_rt5: nil,
   session_school_reminder: "8b8a9566-bb03-4b3c-8abc-5bd5a4b8797d",
   triage_vaccination_at_clinic: "3c7461bd-e3cf-4ff9-9053-b4e87490aa45",
   triage_vaccination_at_clinic_ryg: "9faef718-bd76-4c30-93ea-fbe8584388a6",
-  triage_vaccination_at_clinic_rt5: nil,
   triage_vaccination_will_happen: "279c517c-4c52-4a69-96cb-31355bfa4e21",
   triage_vaccination_wont_happen: "d1faf47e-ccc3-4481-975b-1ec34211a21f",
   vaccination_administered_flu: "7238ee27-5840-40e5-b9b9-3130ba4cd4fa",
@@ -61,8 +58,6 @@ GOVUK_NOTIFY_SMS_TEMPLATES = {
   session_clinic_initial_invitation_ryg: "8ef5712f-bb7f-4911-8f3b-19df6f8a7179",
   session_clinic_subsequent_invitation_ryg:
     "018f146d-e7b7-4b63-ae26-bb07ca6fe2f9",
-  session_clinic_initial_invitation_rt5: nil,
-  session_clinic_subsequent_invitation_rt5: nil,
   session_school_reminder: "cc4a7f89-d260-461c-80f0-7e6e9af75e7a",
   vaccination_administered: "395a3ea1-df07-4dd6-8af1-64cc597ef383",
   vaccination_already_had: "fab1e355-bde1-47d5-835c-103bfd232b93",
