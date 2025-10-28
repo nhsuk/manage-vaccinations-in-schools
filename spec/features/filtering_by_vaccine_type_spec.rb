@@ -3,7 +3,7 @@
 describe "Filtering" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
-  scenario "By vaccine criteria" do
+  scenario "By vaccine type" do
     given_a_session_exists_with_programmes(%i[flu hpv])
     and_patients_are_in_the_flu_hpv_session
 
@@ -27,7 +27,7 @@ describe "Filtering" do
     and_i_dont_see_vaccine_criteria_filter_radios
   end
 
-  scenario "By programme and vaccination method" do
+  scenario "By programme and vaccine type" do
     given_a_session_exists_with_programmes(%i[flu hpv])
     and_patients_are_in_the_flu_hpv_session
 

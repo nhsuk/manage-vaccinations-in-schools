@@ -582,6 +582,8 @@ class Patient < ApplicationRecord
       return false
     end
 
+    return true if vaccine_method.nil? && without_gelatine.nil?
+
     vaccine_criteria = self.vaccine_criteria(programme:, academic_year:)
 
     if vaccine_method &&

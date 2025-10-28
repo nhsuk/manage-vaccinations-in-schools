@@ -202,7 +202,9 @@ describe "Flu vaccination" do
   end
 
   def then_i_see_the_vaccination_form_for_injection
-    expect(page).to have_content("Record flu vaccination with injection")
+    expect(page).to have_content(
+      "Record flu vaccination with gelatine-free injection"
+    )
     expect(page).to have_content(
       "Is #{@patient.given_name} ready for their flu injection?"
     )

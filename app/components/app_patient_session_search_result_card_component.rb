@@ -28,10 +28,10 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               end
             end
             
-            if vaccination_method
+            if vaccine_type
               summary_list.with_row do |row|
-                row.with_key { "Vaccination method" }
-                row.with_value { vaccination_method }
+                row.with_key { "Vaccine type" }
+                row.with_value { vaccine_type }
               end
             end
 
@@ -143,27 +143,39 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     end
   end
 
-  def vaccination_method
+  def vaccine_type
     return unless %i[register record].include?(context)
 
-    programmes_to_check = programmes.select(&:has_multiple_vaccine_methods?)
+    programmes_to_check =
+      programmes.select do
+        it.has_multiple_vaccine_methods? || it.vaccine_may_contain_gelatine?
+      end
 
     return if programmes_to_check.empty?
 
-    vaccine_criterias =
+    labels =
       programmes_to_check.filter_map do |programme|
         if patient.consent_given_and_safe_to_vaccinate?(
              programme:,
              academic_year:
            )
-          patient.vaccine_criteria(programme:, academic_year:)
+          vaccine_criteria =
+            patient.vaccine_criteria(programme:, academic_year:)
+
+          render AppVaccineCriteriaLabelComponent.new(
+                   vaccine_criteria,
+                   programme:,
+                   context: :vaccine_type
+                 )
         end
       end
 
-    if (vaccine_criteria = vaccine_criterias.first)
-      render AppVaccineCriteriaComponent.new(vaccine_criteria) do
-        Vaccine.human_enum_name(:method, vaccine_criteria.vaccine_methods.first)
-      end
+    return if labels.empty?
+
+    if labels.count == 1
+      labels.first
+    else
+      tag.ul(class: "nhsuk-list") { safe_join(labels.map { tag.li(it) }) }
     end
   end
 
