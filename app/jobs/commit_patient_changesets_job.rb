@@ -1,11 +1,25 @@
 # frozen_string_literal: true
 
-class CommitPatientChangesetsJob < ApplicationJob
-  include SingleConcurrencyConcern
+class CommitPatientChangesetsJob
+  include Sidekiq::Job
+  include Sidekiq::Throttled::Job
+
+  sidekiq_throttle concurrency: {
+                     limit: 1,
+                     key_suffix: ->(_) do
+                       if Flipper.enabled?(:import_concurrency_per_server)
+                         Socket.gethostname
+                       else
+                         ""
+                       end
+                     end
+                   }
 
   queue_as :imports
 
-  def perform(import)
+  def perform(import_global_id)
+    import = GlobalID::Locator.locate(import_global_id)
+
     if Flipper.enabled?(:import_low_pds_match_rate)
       import.validate_pds_match_rate!
       return if import.low_pds_match_rate?

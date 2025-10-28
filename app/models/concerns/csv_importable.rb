@@ -142,7 +142,8 @@ module CSVImportable
         end
       else
         changesets.each(&:processed!)
-        CommitPatientChangesetsJob.perform_later(self)
+
+        CommitPatientChangesetsJob.perform_async(to_global_id.to_s)
       end
 
       return
