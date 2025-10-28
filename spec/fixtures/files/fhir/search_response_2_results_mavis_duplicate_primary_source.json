@@ -4,7 +4,7 @@
   "link": [
     {
       "relation": "self",
-      "url": "https://int.api.service.nhs.uk/immunisation-fhir-api/Immunization?immunization.target=FLU,HPV,MENACWY,3IN1,MMR\u0026patient.identifier=https%3A%2F%2Ffhir.nhs.uk%2FId%2Fnhs-number%7C9449308357"
+      "url": "https://int.api.service.nhs.uk/immunisation-fhir-api/Immunization?immunization.target=3IN1,FLU,HPV,MENACWY,MMR\u0026patient.identifier=https%3A%2F%2Ffhir.nhs.uk%2FId%2Fnhs-number%7C9449308357"
     }
   ],
   "entry": [
@@ -178,7 +178,7 @@
         },
         "occurrenceDateTime": "2025-08-22T14:16:03+01:00",
         "recorded": "2025-08-22T00:00:00.000000+01:00",
-        "primarySource": false,
+        "primarySource": true,
         "location": {
           "identifier": {
             "system": "https://fhir.hl7.org.uk/Id/urn-school-number",
