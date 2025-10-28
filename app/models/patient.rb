@@ -128,6 +128,9 @@ class Patient < ApplicationRecord
           joins_archive_reasons(team:).where("archive_reasons.id IS NULL")
         end
 
+  scope :with_pending_changes_for_team,
+        ->(team:) { with_pending_changes.not_archived(team:) }
+
   scope :with_nhs_number, -> { where.not(nhs_number: nil) }
   scope :without_nhs_number, -> { where(nhs_number: nil) }
 

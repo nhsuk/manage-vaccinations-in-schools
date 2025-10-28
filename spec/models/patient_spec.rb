@@ -116,6 +116,34 @@ describe Patient do
       end
     end
 
+    describe "#with_pending_changes" do
+      subject(:scope) { described_class.with_pending_changes_for_team(team:) }
+
+      let(:team) { create(:team) }
+      let(:patient) { create(:patient) }
+
+      context "without pending changes" do
+        it { should_not include(patient) }
+      end
+
+      context "with pending changes" do
+        before do
+          patient.update!(pending_changes: { "some_field" => "new_value" })
+        end
+
+        it { should include(patient) }
+      end
+
+      context "with pending changes but archived from the team" do
+        before do
+          patient.update!(pending_changes: { "some_field" => "new_value" })
+          create(:archive_reason, :moved_out_of_area, team:, patient:)
+        end
+
+        it { should_not include(patient) }
+      end
+    end
+
     describe "#appear_in_programmes" do
       subject(:scope) do
         described_class.appear_in_programmes(programmes, academic_year:)
