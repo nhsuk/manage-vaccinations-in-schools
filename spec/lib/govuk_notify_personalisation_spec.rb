@@ -213,7 +213,7 @@ describe GovukNotifyPersonalisation do
       it do
         expect(to_h).to include(
           consented_vaccine_methods_message:
-            "You’ve agreed that John can have the injected flu vaccine."
+            "You’ve agreed for John to have the injected flu vaccine."
         )
       end
 
@@ -223,7 +223,7 @@ describe GovukNotifyPersonalisation do
         it do
           expect(to_h).to include(
             consented_vaccine_methods_message:
-              "You’ve agreed that John can have the nasal spray flu vaccine, " \
+              "You’ve agreed for John to have the nasal spray flu vaccine, " \
                 "or the injected flu vaccine if the nasal spray is not suitable."
           )
         end
@@ -235,7 +235,7 @@ describe GovukNotifyPersonalisation do
         it do
           expect(to_h).to include(
             consented_vaccine_methods_message:
-              "You’ve agreed that John can have the nasal spray flu vaccine."
+              "You’ve agreed for John to have the nasal spray flu vaccine."
           )
         end
       end
@@ -252,7 +252,7 @@ describe GovukNotifyPersonalisation do
         it do
           expect(to_h).to include(
             consented_vaccine_methods_message:
-              "You’ve agreed that John can have the vaccine without gelatine."
+              "You’ve agreed for John to have the vaccine without gelatine."
           )
         end
       end
@@ -305,7 +305,7 @@ describe GovukNotifyPersonalisation do
       it do
         expect(to_h).to include(
           consented_vaccine_methods_message:
-            "You’ve agreed that Tom can have the injected flu vaccine."
+            "You’ve agreed for Tom to have the injected flu vaccine."
         )
       end
 
@@ -319,7 +319,7 @@ describe GovukNotifyPersonalisation do
         it do
           expect(to_h).to include(
             consented_vaccine_methods_message:
-              "You’ve agreed that Tom can have the nasal spray flu vaccine, " \
+              "You’ve agreed for Tom to have the nasal spray flu vaccine, " \
                 "or the injected flu vaccine if the nasal spray is not suitable."
           )
         end
@@ -335,7 +335,7 @@ describe GovukNotifyPersonalisation do
         it do
           expect(to_h).to include(
             consented_vaccine_methods_message:
-              "You’ve agreed that Tom can have the nasal spray flu vaccine."
+              "You’ve agreed for Tom to have the nasal spray flu vaccine."
           )
         end
       end
@@ -354,7 +354,7 @@ describe GovukNotifyPersonalisation do
         it do
           expect(to_h).to include(
             consented_vaccine_methods_message:
-              "You’ve agreed that Tom can have the vaccine without gelatine."
+              "You’ve agreed for Tom to have the vaccine without gelatine."
           )
         end
       end

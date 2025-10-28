@@ -151,7 +151,7 @@ class GovukNotifyPersonalisation
 
     return "" if consented_vaccine_methods.nil?
 
-    "You’ve agreed that #{short_patient_name} can have the #{consented_vaccine_methods}."
+    "You’ve agreed for #{short_patient_name} to have the #{consented_vaccine_methods}."
   end
 
   def day_month_year_of_vaccination
