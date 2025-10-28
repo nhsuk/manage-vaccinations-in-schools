@@ -14,7 +14,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
         .where(academic_year: @session.academic_year)
         .not_invalidated
         .order(created_at: :desc)
-        .find_by(programme: @programme)
+        .find_or_initialize_by(programme: @programme)
 
     @triage_form =
       TriageForm.new(
@@ -51,9 +51,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
 
       redirect_to redirect_path, flash: { success: "Triage outcome updated" }
     else
-      render "patient_sessions/programmes/show",
-             layout: "full",
-             status: :unprocessable_content
+      render :new, status: :unprocessable_entity
     end
   end
 
