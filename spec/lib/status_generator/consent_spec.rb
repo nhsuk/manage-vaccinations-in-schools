@@ -408,4 +408,71 @@ describe StatusGenerator::Consent do
       end
     end
   end
+
+  describe "#without_gelatine" do
+    subject { generator.without_gelatine }
+
+    let(:programme) { create(:programme, :mmr) }
+
+    context "with no consent" do
+      it { should be_nil }
+    end
+
+    context "with an invalidated consent" do
+      before { create(:consent, :invalidated, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with a not provided consent" do
+      before { create(:consent, :not_provided, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with both an invalidated and not provided consent" do
+      before do
+        create(:consent, :invalidated, patient:, programme:)
+        create(:consent, :not_provided, patient:, programme:)
+      end
+
+      it { should be_nil }
+    end
+
+    context "with a refused consent" do
+      before { create(:consent, :refused, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with a given consent" do
+      before { create(:consent, :given, patient:, programme:) }
+
+      it { should be(false) }
+    end
+
+    context "with a without gelatine given consent" do
+      before do
+        create(:consent, :given, :without_gelatine, patient:, programme:)
+      end
+
+      it { should be(true) }
+    end
+
+    context "with a with and without gelatine given consent" do
+      before do
+        create(:consent, :given, patient:, programme:)
+        create(
+          :consent,
+          :given,
+          :without_gelatine,
+          patient:,
+          programme:,
+          parent: create(:parent)
+        )
+      end
+
+      it { should be(true) }
+    end
+  end
 end

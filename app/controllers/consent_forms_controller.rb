@@ -10,6 +10,11 @@ class ConsentFormsController < ApplicationController
   def index
     consent_forms = policy_scope(ConsentForm).unmatched.order(:recorded_at)
 
+    if (session_slug = params[:session_slug]).present?
+      @session = policy_scope(Session).find_by(slug: session_slug)
+      consent_forms = consent_forms.for_session(@session)
+    end
+
     @pagy, @consent_forms = pagy(consent_forms)
 
     render layout: "full"
@@ -127,7 +132,11 @@ class ConsentFormsController < ApplicationController
   private
 
   def set_consent_form
-    @consent_form = policy_scope(ConsentForm).unmatched.find(params[:id])
+    @consent_form =
+      policy_scope(ConsentForm)
+        .includes(:programmes, :vaccines)
+        .unmatched
+        .find(params[:id])
   end
 
   def set_patient

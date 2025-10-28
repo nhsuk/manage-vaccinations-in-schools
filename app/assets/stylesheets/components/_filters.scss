@@ -33,6 +33,9 @@
   .nhsuk-details__text {
     border-left: 0;
 
+    // Remove once https://github.com/nhsuk/nhsuk-frontend/pull/1633 released
+    box-sizing: border-box;
+
     @include nhsuk-responsive-padding(5, "left");
     @include nhsuk-responsive-padding(5, "right");
   }
@@ -44,38 +47,5 @@
 
   & .nhsuk-date-input__item:last-child {
     margin-right: 0;
-  }
-
-  // Adjust sizing of checkbox and radio items
-  .nhsuk-fieldset__legend--s {
-    margin-bottom: nhsuk-spacing(2);
-  }
-
-  & .nhsuk-checkboxes__item,
-  & .nhsuk-radios__item {
-    margin-bottom: 0;
-  }
-
-  & .nhsuk-checkboxes__label,
-  & .nhsuk-radios__label {
-    padding-left: 0;
-
-    &::before {
-      border-width: 3px;
-      padding: 0;
-      transform: scale(0.6667);
-      transform-origin: center left;
-    }
-
-    &::after {
-      box-sizing: border-box;
-      left: 3px;
-      transform: rotate(-45deg) scale(0.6667);
-    }
-  }
-
-  & .nhsuk-hint {
-    margin: 0;
-    padding: 0;
   }
 }

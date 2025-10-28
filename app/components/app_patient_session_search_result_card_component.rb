@@ -156,7 +156,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
              programme:,
              academic_year:
            )
-          patient.approved_vaccine_methods(programme:, academic_year:)
+          patient.vaccine_criteria(programme:, academic_year:).vaccine_methods
         else
           []
         end
@@ -266,7 +266,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       end
     end
 
-    consent_status.slice(:status, :vaccine_methods)
+    consent_status.slice(:status, :vaccine_methods, :without_gelatine)
   end
 
   def triage_status_value(programme:, academic_year:)
@@ -280,7 +280,10 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         triage_status.status
       end
 
-    { status: status }
+    without_gelatine =
+      triage_status.without_gelatine && !programme.has_multiple_vaccine_methods?
+
+    { status: status, without_gelatine: }
   end
 
   def patient_specific_direction_status_tag

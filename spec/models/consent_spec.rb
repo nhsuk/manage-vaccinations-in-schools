@@ -18,6 +18,7 @@
 #  submitted_at                                    :datetime         not null
 #  vaccine_methods                                 :integer          default([]), not null, is an Array
 #  withdrawn_at                                    :datetime
+#  without_gelatine                                :boolean
 #  created_at                                      :datetime         not null
 #  updated_at                                      :datetime         not null
 #  consent_form_id                                 :bigint

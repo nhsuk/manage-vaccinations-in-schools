@@ -130,7 +130,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
     return unless programme
 
     patient_table = ReportingAPI::PatientProgrammeStatus.arel_table
-    lpyg_table = LocationProgrammeYearGroup.arel_table
+    lpyg_table = Location::ProgrammeYearGroup.arel_table
 
     subquery =
       lpyg_table

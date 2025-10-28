@@ -1,13 +1,12 @@
 GIT
-  remote: https://github.com/citizensadvice/capybara_accessible_selectors
-  revision: 2c13c0ee6614c65434d504ed8d9cb80f5c20ece7
-  branch: main
+  remote: https://github.com/citizensadvice/capybara_accessible_selectors.git
+  revision: 3b65e97d49a46a210be4397e3e162d6b177f4125
   specs:
     capybara_accessible_selectors (0.14.0)
       capybara (~> 3.36)
 
 GIT
-  remote: https://github.com/tvararu/audited
+  remote: https://github.com/tvararu/audited.git
   revision: e089773f10f8ef5e5e92a2052a2fea55f83091d2
   branch: encryption
   specs:
@@ -106,18 +105,18 @@ GEM
       activesupport (>= 6.0.0)
     array_enum (1.6.0)
       activemodel
-    asciidoctor (2.0.25)
+    asciidoctor (2.0.26)
     asciidoctor-diagram (3.0.1)
       asciidoctor (>= 1.5.7, < 3.x)
       rexml
     ast (2.4.3)
     attr_required (1.0.2)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1174.0)
-    aws-sdk-accessanalyzer (1.78.0)
-      aws-sdk-core (~> 3, >= 3.231.0)
+    aws-partitions (1.1177.0)
+    aws-sdk-accessanalyzer (1.80.0)
+      aws-sdk-core (~> 3, >= 3.234.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-core (3.233.0)
+    aws-sdk-core (3.235.0)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
@@ -131,17 +130,17 @@ GEM
     aws-sdk-ecr (1.110.0)
       aws-sdk-core (~> 3, >= 3.231.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-iam (1.129.0)
-      aws-sdk-core (~> 3, >= 3.231.0)
+    aws-sdk-iam (1.132.0)
+      aws-sdk-core (~> 3, >= 3.234.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-kms (1.113.0)
-      aws-sdk-core (~> 3, >= 3.231.0)
+    aws-sdk-kms (1.115.0)
+      aws-sdk-core (~> 3, >= 3.234.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-rds (1.296.0)
-      aws-sdk-core (~> 3, >= 3.231.0)
+    aws-sdk-rds (1.297.0)
+      aws-sdk-core (~> 3, >= 3.234.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-s3 (1.200.0)
-      aws-sdk-core (~> 3, >= 3.231.0)
+    aws-sdk-s3 (1.201.0)
+      aws-sdk-core (~> 3, >= 3.234.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
     aws-sigv4 (1.12.1)
@@ -534,11 +533,11 @@ GEM
       nokogiri
     rexml (3.4.4)
     rladr (1.2.0)
-    rspec (3.13.1)
+    rspec (3.13.2)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
       rspec-mocks (~> 3.13.0)
-    rspec-core (3.13.5)
+    rspec-core (3.13.6)
       rspec-support (~> 3.13.0)
     rspec-expectations (3.13.5)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -546,7 +545,7 @@ GEM
     rspec-html-matchers (0.10.0)
       nokogiri (~> 1)
       rspec (>= 3.0.0.a)
-    rspec-mocks (3.13.5)
+    rspec-mocks (3.13.6)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-rails (8.0.2)
@@ -562,7 +561,7 @@ GEM
       rspec-expectations (~> 3.0)
       rspec-mocks (~> 3.0)
       sidekiq (>= 5, < 9)
-    rspec-support (3.13.4)
+    rspec-support (3.13.6)
     rubocop (1.79.2)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
@@ -607,7 +606,7 @@ GEM
       rubyzip (>= 1.3.0)
     rubyntlm (0.6.5)
       base64
-    rubyzip (3.2.0)
+    rubyzip (3.2.1)
     rufo (0.18.1)
     rufus-scheduler (3.9.2)
       fugit (~> 1.1, >= 1.11.1)
@@ -623,11 +622,11 @@ GEM
     sentry-rails (5.28.0)
       railties (>= 5.0)
       sentry-ruby (~> 5.28.0)
-    sentry-ruby (5.28.0)
+    sentry-ruby (5.28.1)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
-    sentry-sidekiq (5.28.0)
-      sentry-ruby (~> 5.28.0)
+    sentry-sidekiq (5.28.1)
+      sentry-ruby (~> 5.28.1)
       sidekiq (>= 3.0)
     shoulda-matchers (6.5.0)
       activesupport (>= 5.2.0)
@@ -773,12 +772,12 @@ DEPENDENCIES
   asciidoctor
   asciidoctor-diagram
   audited!
-  aws-sdk-accessanalyzer (~> 1)
-  aws-sdk-ec2 (~> 1)
-  aws-sdk-ecr (~> 1)
-  aws-sdk-iam (~> 1)
-  aws-sdk-rds (~> 1)
-  aws-sdk-s3 (~> 1)
+  aws-sdk-accessanalyzer
+  aws-sdk-ec2
+  aws-sdk-ecr
+  aws-sdk-iam
+  aws-sdk-rds
+  aws-sdk-s3
   bootsnap
   brakeman
   capybara

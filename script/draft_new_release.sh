@@ -19,7 +19,7 @@ fi
 release_tag=$1
 latest_release=$(gh release list --json name,isLatest --jq '.[] | select(.isLatest)|.name')
 
-pr_numbers=$(git log --pretty=format:"%s" "$latest_release"..origin/next | grep -oE 'Merge pull request #([0-9]+)' | grep -oE '[0-9]+')
+pr_numbers=$(git log --pretty=format:"%s" "$latest_release"..origin/main | grep -oE 'Merge pull request #([0-9]+)' | grep -oE '[0-9]+')
 
 pre_release_tasks=""
 post_release_tasks=""

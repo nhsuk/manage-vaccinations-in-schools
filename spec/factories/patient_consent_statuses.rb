@@ -4,12 +4,13 @@
 #
 # Table name: patient_consent_statuses
 #
-#  id              :bigint           not null, primary key
-#  academic_year   :integer          not null
-#  status          :integer          default("no_response"), not null
-#  vaccine_methods :integer          default([]), not null, is an Array
-#  patient_id      :bigint           not null
-#  programme_id    :bigint           not null
+#  id               :bigint           not null, primary key
+#  academic_year    :integer          not null
+#  status           :integer          default("no_response"), not null
+#  vaccine_methods  :integer          default([]), not null, is an Array
+#  without_gelatine :boolean
+#  patient_id       :bigint           not null
+#  programme_id     :bigint           not null
 #
 # Indexes
 #
@@ -47,6 +48,11 @@ FactoryBot.define do
     trait :given_nasal_or_injection do
       status { "given" }
       vaccine_methods { %w[nasal injection] }
+    end
+
+    trait :given_without_gelatine do
+      given
+      without_gelatine { true }
     end
   end
 end

@@ -19,6 +19,8 @@ en:
               too_long: Enter a batch that is less than %{count} characters long
         draft_consent:
           attributes:
+            injection_alternative:
+              inclusion: Select yes or no
             new_or_existing_contact:
               blank: Choose who you are trying to get consent from
             notify_parent_on_refusal:
@@ -53,7 +55,7 @@ en:
               inclusion: Choose if they consent
             route:
               inclusion: Choose how the response was given
-            injection_alternative:
+            without_gelatine:
               inclusion: Select yes or no
         draft_import:
           attributes:
@@ -171,7 +173,7 @@ en:
             notes:
               blank: Enter triage notes
               too_long: Enter triage notes that are less than 1000 characters long
-            status_and_vaccine_method:
+            status_option:
               blank: Choose a status
               inclusion: Choose a status
             add_patient_specific_direction:
@@ -215,6 +217,7 @@ en:
           given: Consent given
           given_injection: Consent given
           given_nasal: Consent given
+          given_without_injection: Consent given
           not_provided: Not provided
           refused: Consent refused
         routes:
@@ -275,6 +278,7 @@ en:
           safe_to_vaccinate: Safe to vaccinate
           safe_to_vaccinate_injection: Safe to vaccinate with injection
           safe_to_vaccinate_nasal: Safe to vaccinate with nasal spray
+          safe_to_vaccinate_without_gelatine: Safe to vaccinate with gelatine-free vaccine
         vaccine_methods:
           injection: injection
           nasal: nasal spray
@@ -389,6 +393,8 @@ en:
             given_name:
               blank: Enter a first name
               too_long: Enter a first name that is less than 300 characters long
+            injection_alternative:
+              inclusion: Select yes or no
             notes:
               blank: Enter notes
               too_long: Enter notes that are less than %{count} characters long
@@ -433,6 +439,8 @@ en:
               inclusion: Choose a school from the list
             use_preferred_name:
               inclusion: Tell us whether they use a different name
+            without_gelatine:
+              inclusion: Select yes or no
         gillick_assessment:
           attributes:
             knows_vaccination:
@@ -453,10 +461,6 @@ en:
               blank: Choose a file
               empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
-        location_programme_year_group:
-          attributes:
-            year_group:
-              inclusion: is not taught at the location
         note:
           attributes:
             body:
@@ -534,39 +538,6 @@ en:
           attributes:
             performed_at:
               less_than_or_equal_to: Enter a time in the past
-  children:
-    zero: No children
-    one: 1 child
-    other: "%{count} children"
-  children_without_nhs_number:
-    title: No NHS number
-    zero: No children without an NHS number
-    one: 1 child without an NHS number
-    other: "%{count} children without an NHS number"
-  children_with_no_consent_response:
-    title: No consent response
-    zero: No children with no response
-    one: 1 child with no response
-    other: "%{count} children with no response"
-  children_with_conflicting_consent_response:
-    title: Conflicting consent
-    zero: No children with conflicting responses
-    one: 1 child with conflicting response
-    other: "%{count} children with conflicting responses"
-  children_requiring_triage:
-    title: Triage needed
-    zero: No children requiring triage
-    one: 1 child requiring triage
-    other: "%{count} children requiring triage"
-  children_to_register:
-    title: Register attendance
-    zero: No children to register
-    one: 1 child to register
-    other: "%{count} children to register"
-  children_for_programme:
-    zero: "No children for %{programme}"
-    one: "1 child for %{programme}"
-    other: "%{count} children for %{programme}"
   consent_forms:
     index:
       title: Unmatched consent responses
@@ -577,6 +548,7 @@ en:
         flu: Consent for the flu vaccination
         hpv: Consent for the HPV vaccination
         menacwy: Consent for the MenACWY vaccination
+        mmr: Consent for the MMR vaccination
         td_ipv: Consent for the Td/IPV vaccination
       i_agree: Consent given
     notes:
@@ -603,6 +575,7 @@ en:
         flu: Do they agree to them having the flu vaccination?
         hpv: Do they agree to them having the HPV vaccination?
         menacwy: Do they agree to them having the MenACWY vaccination?
+        mmr: Do they agree to them having the MMR vaccination?
         td_ipv: Do they agree to them having the Td/IPV vaccination?
     notes:
       title:
@@ -757,7 +730,3 @@ en:
     absent: "%{name} is absent from today’s session."
     not_registered: "%{name} is not registered yet."
     present: "%{name} is attending today’s session."
-  vaccinations_given:
-    zero: No vaccinations given
-    one: 1 vaccination given
-    other: "%{count} vaccinations given"

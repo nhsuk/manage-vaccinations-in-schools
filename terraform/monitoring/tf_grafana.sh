@@ -86,23 +86,25 @@ fi
 
 terraform -chdir="./grafana" init -backend-config="env/${ENVIRONMENT}-backend.hcl" -upgrade -reconfigure
 
+terraform_arguments=(-var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN" -var="environment=$ENVIRONMENT")
+
 case "$ACTION" in
   plan)
     if [[ -n "$PLAN_FILE" ]]; then
-      terraform -chdir="./grafana" plan -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN" -out="$PLAN_FILE"
+      terraform -chdir="./grafana" plan "${terraform_arguments[@]}" -out="$PLAN_FILE"
     else
-      terraform -chdir="./grafana" plan -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN"
+      terraform -chdir="./grafana" plan "${terraform_arguments[@]}"
     fi
     ;;
   apply)
     if [[ -n "$PLAN_FILE" ]]; then
       terraform -chdir="./grafana" apply "$PLAN_FILE"
     else
-      terraform -chdir="./grafana" apply -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN"
+      terraform -chdir="./grafana" apply "${terraform_arguments[@]}"
     fi
     ;;
   destroy)
-    terraform -chdir="./grafana" destroy -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN"
+    terraform -chdir="./grafana" destroy "${terraform_arguments[@]}"
     ;;
   *)
     usage

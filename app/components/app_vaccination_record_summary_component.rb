@@ -329,6 +329,8 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def dose_volume_value
+    return "Unknown" if @vaccination_record.dose_volume_ml.blank?
+
     "#{@vaccination_record.dose_volume_ml} ml"
   end
 

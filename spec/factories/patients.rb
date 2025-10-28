@@ -462,6 +462,61 @@ FactoryBot.define do
       end
     end
 
+    trait :consent_given_without_gelatine_triage_needed do
+      triage_required
+
+      consents do
+        programmes.map do |programme|
+          association(
+            :consent,
+            :given_without_gelatine,
+            :from_mum,
+            :health_question_notes,
+            patient: instance,
+            programme:,
+            team:
+          )
+        end
+      end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given_without_gelatine,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
+    trait :consent_given_without_gelatine_triage_not_needed do
+      triage_not_required
+
+      consents do
+        programmes.map do |programme|
+          association(
+            :consent,
+            :given_without_gelatine,
+            :from_mum,
+            patient: instance,
+            programme:,
+            team:
+          )
+        end
+      end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given_without_gelatine,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
     trait :consent_given_triage_safe_to_vaccinate do
       consents do
         programmes.map do |programme|

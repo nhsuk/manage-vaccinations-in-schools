@@ -22,7 +22,9 @@ class AppPatientSearchFormComponent < ViewComponent::Base
         </div>
         
         <% if programmes.size > 1 %>
-          <%= f.govuk_check_boxes_fieldset :programme_types, legend: { text: "Programme", size: "s" } do %>
+          <%= f.govuk_check_boxes_fieldset :programme_types,
+                                           legend: { text: "Programme", size: "s" },
+                                           small: true do %>
             <% programmes.each do |programme| %>
               <%= f.govuk_check_box :programme_types,
                                     programme.type,
@@ -33,7 +35,10 @@ class AppPatientSearchFormComponent < ViewComponent::Base
         <% end %>
         
         <% if tallying_enabled? %>
-            <%= f.govuk_check_boxes_fieldset :show_only, multiple: true, legend: { text: "Show only", size: "s" } do %>
+            <%= f.govuk_check_boxes_fieldset :show_only,
+                                             multiple: true,
+                                             legend: { text: "Show only", size: "s" },
+                                             small: true do %>
             <% if show_still_to_vaccinate %>
               <%= f.govuk_check_box :still_to_vaccinate,
                           1, 0,
@@ -41,7 +46,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
                           multiple: false,
                           link_errors: true,
                           label: { text: "Still to vaccinate" },
-                          hint: { text: "With consent, not refused vaccine, not vaccinated yet" }%>
+                          hint: { text: "With consent, not refused vaccine, not vaccinated yet" } %>
             <% end %>
             <% if show_eligible_children %>
                <%= f.govuk_check_box :eligible_children,
@@ -49,14 +54,15 @@ class AppPatientSearchFormComponent < ViewComponent::Base
                           checked: form.eligible_children,
                           multiple: false,
                           link_errors: true,
-                          label: { text: "Eligible children" },
-                          hint: { text: "Eligible this academic year and not vaccinated elsewhere" }%>
+                          label: { text: "Eligible this academic year and not vaccinated elsewhere" }%>
             <% end %>
           <% end %>
         <% end %>
 
         <% if consent_statuses.any? %>
-          <%= f.govuk_check_boxes_fieldset :consent_statuses, legend: { text: "Consent status", size: "s" } do %>
+          <%= f.govuk_check_boxes_fieldset :consent_statuses,
+                                           legend: { text: "Consent status", size: "s" },
+                                           small: true do %>
             <% consent_statuses.each do |status| %>
               <%= f.govuk_check_box :consent_statuses,
                                     status,
@@ -67,7 +73,9 @@ class AppPatientSearchFormComponent < ViewComponent::Base
         <% end %>
 
         <% if triage_statuses.any? %>
-          <%= f.govuk_radio_buttons_fieldset :triage_status, legend: { text: "Triage status", size: "s" } do %>
+          <%= f.govuk_radio_buttons_fieldset :triage_status,
+                                             legend: { text: "Triage status", size: "s" },
+                                             small: true do %>
             <%= f.govuk_radio_button :triage_status, "", checked: form.triage_status.blank?, label: { text: "Any" } %>
             <% triage_statuses.each do |status| %>
               <%= f.govuk_radio_button :triage_status,
@@ -79,7 +87,9 @@ class AppPatientSearchFormComponent < ViewComponent::Base
         <% end %>
 
         <% if register_statuses.any? %>
-          <%= f.govuk_radio_buttons_fieldset :register_status, legend: { text: "Registration status", size: "s" } do %>
+          <%= f.govuk_radio_buttons_fieldset :register_status,
+                                             legend: { text: "Registration status", size: "s" },
+                                             small: true do %>
             <%= f.govuk_radio_button :register_status, "", checked: form.register_status.blank?, label: { text: "Any" } %>
             <% register_statuses.each do |status| %>
               <%= f.govuk_radio_button :register_status,
@@ -91,7 +101,9 @@ class AppPatientSearchFormComponent < ViewComponent::Base
         <% end %>
 
         <% if vaccination_statuses.any? %>
-          <%= f.govuk_radio_buttons_fieldset :vaccination_status, legend: { text: "Outcome", size: "s" } do %>
+          <%= f.govuk_radio_buttons_fieldset :vaccination_status,
+                                             legend: { text: "Outcome", size: "s" },
+                                             small: true do %>
             <%= f.govuk_radio_button :vaccination_status, "", checked: form.vaccination_status.blank?, label: { text: "Any" } %>
 
             <% vaccination_statuses.each do |status| %>
@@ -104,7 +116,9 @@ class AppPatientSearchFormComponent < ViewComponent::Base
         <% end %>
         
         <% if patient_specific_direction_statuses.any? %>
-          <%= f.govuk_radio_buttons_fieldset :patient_specific_direction_status, legend: { text: "PSD status", size: "s" } do %>
+          <%= f.govuk_radio_buttons_fieldset :patient_specific_direction_status,
+                                             legend: { text: "PSD status", size: "s" },
+                                             small: true do %>
             <%= f.govuk_radio_button :patient_specific_direction_status, "", checked: form.patient_specific_direction_status.blank?, label: { text: "Any" } %>
 
             <% patient_specific_direction_statuses.each do |status| %>
@@ -117,7 +131,9 @@ class AppPatientSearchFormComponent < ViewComponent::Base
         <% end %>
 
         <% if vaccine_methods.any? %>
-          <%= f.govuk_radio_buttons_fieldset :vaccine_method, legend: { text: "Vaccination method", size: "s" } do %>
+          <%= f.govuk_radio_buttons_fieldset :vaccine_method,
+                                             legend: { text: "Vaccination method", size: "s" },
+                                             small: true do %>
             <%= f.govuk_radio_button :vaccine_method, "", checked: form.vaccine_method.blank?, label: { text: "Any" } %>
 
             <% vaccine_methods.each do |vaccine_method| %>
@@ -130,7 +146,9 @@ class AppPatientSearchFormComponent < ViewComponent::Base
         <% end %>
 
         <% if year_groups.any? %>
-          <%= f.govuk_check_boxes_fieldset :year_groups, legend: { text: "Year group", size: "s" } do %>
+          <%= f.govuk_check_boxes_fieldset :year_groups,
+                                           legend: { text: "Year group", size: "s" },
+                                           small: true do %>
             <% year_groups.each do |year_group| %>
               <%= f.govuk_check_box :year_groups,
                                     year_group,
@@ -167,7 +185,10 @@ class AppPatientSearchFormComponent < ViewComponent::Base
             </fieldset>
           </div>
 
-          <%= f.govuk_check_boxes_fieldset :show_only, multiple: false, legend: { text: "Show only", size: "s" } do %>
+          <%= f.govuk_check_boxes_fieldset :show_only,
+                                           multiple: false,
+                                           legend: { text: "Show only", size: "s" },
+                                           small: true do %>
             <%= f.govuk_check_box :archived,
                                   1, 0,
                                   checked: form.archived,

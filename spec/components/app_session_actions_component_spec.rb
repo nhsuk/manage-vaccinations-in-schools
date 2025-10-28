@@ -45,9 +45,11 @@ describe AppSessionActionsComponent do
     )
     create(:patient, :vaccinated, :in_attendance, session:, year_group:)
     create(:patient, nhs_number: nil, session:, year_group:)
+    create(:consent_form, :recorded, session:)
   end
 
   it { should have_text("No NHS number1 child") }
+  it { should have_text("Unmatched response1 unmatched response") }
   it { should have_text("No consent response1 child") }
   it { should have_text("Conflicting consent1 child") }
   it { should have_text("Triage needed1 child") }
@@ -55,6 +57,7 @@ describe AppSessionActionsComponent do
   it { should have_text("Ready for vaccinator1 child for HPV") }
 
   it { should have_link("1 child without an NHS number") }
+  it { should have_link("1 unmatched response") }
   it { should have_link("1 child with no response") }
   it { should have_link("1 child with conflicting response") }
   it { should have_link("1 child requiring triage") }
@@ -75,5 +78,14 @@ describe AppSessionActionsComponent do
     it { should_not have_text("Triage needed") }
     it { should_not have_text("Register attendance") }
     it { should_not have_text("Ready for vaccinator") }
+  end
+
+  context "when there are no action required" do
+    before do
+      PatientLocation.destroy_all
+      ConsentForm.destroy_all
+    end
+
+    it { should have_text("No action required") }
   end
 end

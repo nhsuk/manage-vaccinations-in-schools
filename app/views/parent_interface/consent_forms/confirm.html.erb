@@ -30,6 +30,16 @@
                               href: change_link["response-#{group}"],
                               visually_hidden_text: "decision")
             end
+          
+            if (without_gelatine = consent_form_programme.without_gelatine) != nil
+              summary_list.with_row do |row|
+                row.with_key { "Consent given for gelatine-free vaccine only?" }
+                row.with_value { without_gelatine ? "Yes" : "No" }
+                row.with_action(text: "Change",
+                                href: change_link["without-gelatine"],
+                                visually_hidden_text: "decision")
+              end
+            end
           end %>
     <% end %>
   <% end %>

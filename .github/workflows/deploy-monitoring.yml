@@ -27,6 +27,7 @@ env:
     || 'arn:aws:iam::393416225559:role/GithubDeployMonitoring' }}
   aws_account_id: ${{ inputs.environment == 'production'
     && '820242920762' || '393416225559' }}
+  environment: ${{ inputs.environment }}
   git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
 
 jobs:
@@ -147,5 +148,6 @@ jobs:
           sudo apt-get install -y jq uuid-runtime
       - name: Deploy Grafana using tf_grafana.sh
         run: |
+          export TF_VAR_slack_webhook_url=${{ inputs.environment == 'production' && secrets.GRAFANA_ALERTS_SLACK_WEBHOOK || secrets.GRAFANA_TEST_ALERTS_SLACK_WEBHOOK }}
           ./tf_grafana.sh "$environment" plan --plan-file ${{ runner.temp }}/out
           ./tf_grafana.sh "$environment" apply --plan-file ${{ runner.temp }}/out

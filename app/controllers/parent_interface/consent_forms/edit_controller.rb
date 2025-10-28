@@ -20,6 +20,8 @@ module ParentInterface
         set_response_hpv
       when :injection_alternative
         set_injection_alternative
+      when :without_gelatine
+        set_without_gelatine
       end
 
       render_wizard
@@ -59,6 +61,9 @@ module ParentInterface
         end
       elsif is_injection_alternative_step?
         @consent_form.update_injection_alternative
+        @consent_form.seed_health_questions
+      elsif is_without_gelatine_step?
+        @consent_form.update_without_gelatine
         @consent_form.seed_health_questions
       elsif is_response_step?
         @consent_form.update_programme_responses
@@ -119,7 +124,9 @@ module ParentInterface
         response_doubles: %i[response chosen_programme],
         response_flu: %i[response],
         response_hpv: %i[response],
-        school: %i[school_id]
+        response_mmr: %i[response],
+        school: %i[school_id],
+        without_gelatine: %i[without_gelatine]
       }.fetch(current_step)
 
       params.fetch(:consent_form, {}).permit(permitted_attributes)
@@ -181,6 +188,12 @@ module ParentInterface
       end
     end
 
+    def set_without_gelatine
+      if @consent_form.consent_form_programmes.any?(&:without_gelatine?)
+        @consent_form.without_gelatine = "true"
+      end
+    end
+
     def validate_params
       case current_step
       when :date_of_birth
@@ -201,6 +214,8 @@ module ParentInterface
     def is_response_step? = step.start_with?("response-")
 
     def is_injection_alternative_step? = step == "injection-alternative"
+
+    def is_without_gelatine_step? = step == "without-gelatine"
 
     def is_health_question_step? = step == "health-question"
 

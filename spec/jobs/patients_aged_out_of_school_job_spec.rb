@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe PatientsAgedOutOfSchoolJob do
-  subject(:perform) { described_class.new.perform }
+  subject(:perform) { described_class.new.perform(school.id) }
 
   around { |example| travel_to(today) { example.run } }
 

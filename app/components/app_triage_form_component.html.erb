@@ -1,9 +1,9 @@
 <%= form_with model: form, url:, method:, builder: do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-    <%= f.govuk_radio_buttons_fieldset :status_and_vaccine_method, **fieldset_options do %>
-      <% form.safe_to_vaccinate_options.each do |option| %>
-        <%= f.govuk_radio_button :status_and_vaccine_method, option do %>
+  <%= f.govuk_radio_buttons_fieldset :status_option, **fieldset_options do %>
+    <% form.safe_to_vaccinate_options.each do |option| %>
+      <%= f.govuk_radio_button :status_option, option do %>
         <% if form.show_add_patient_specific_direction?(option) %>
           <%= f.govuk_radio_buttons_fieldset :add_patient_specific_direction,
                                              legend: { text: "Do you want to add a PSD?", size: "s" } do %>
@@ -12,12 +12,14 @@
           <% end %>
         <% end %>
       <% end %>
-      <% end %>
-      <%= f.govuk_radio_divider %>
-      <% form.other_options.each do |option| %>
-        <%= f.govuk_radio_button :status_and_vaccine_method, option %>
-      <% end %>
     <% end %>
+
+    <%= f.govuk_radio_divider %>
+
+    <% form.other_options.each do |option| %>
+      <%= f.govuk_radio_button :status_option, option %>
+    <% end %>
+  <% end %>
 
   <%= f.govuk_text_area :notes, label: { text: "Triage notes (optional)" }, rows: 5 %>
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "Parental consent" do
-  scenario "Flu programme" do
+  scenario "Flu" do
     given_a_flu_programme_is_underway
     when_i_go_to_the_consent_form
     then_i_see_the_consent_form
@@ -19,7 +19,7 @@ describe "Parental consent" do
     then_i_see_the_confirmation_page
   end
 
-  scenario "Flu programme already has a PSD" do
+  scenario "Flu - already has a PSD" do
     stub_pds_search_to_return_no_patients
 
     given_a_flu_programme_is_underway

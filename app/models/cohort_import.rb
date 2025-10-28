@@ -43,7 +43,8 @@ class CohortImport < PatientImport
   has_many :pds_search_results
 
   def postprocess_rows!
-    PatientsAgedOutOfSchoolJob.perform_later
+    ids = changesets.pluck(:school_id).uniq.compact
+    PatientsAgedOutOfSchoolJob.perform_bulk(ids.zip)
   end
 
   private

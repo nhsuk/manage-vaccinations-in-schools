@@ -127,17 +127,22 @@ module CSVImportable
     parse_rows! if rows.nil?
     return if invalid?
 
-    if is_a?(PatientImport) && Flipper.enabled?(:pds_lookup_during_import)
+    if is_a?(PatientImport)
       changesets =
         rows.each_with_index.map do |row, row_number|
           PatientChangeset.from_import_row(row:, import: self, row_number:)
         end
 
-      changesets.each do |patient_changeset|
-        PDSCascadingSearchJob.set(queue: :imports).perform_later(
-          patient_changeset,
-          queue: :imports
-        )
+      if Flipper.enabled?(:import_search_pds)
+        changesets.each do |patient_changeset|
+          PDSCascadingSearchJob.set(queue: :imports).perform_later(
+            patient_changeset,
+            queue: :imports
+          )
+        end
+      else
+        changesets.each(&:processed!)
+        CommitPatientChangesetsJob.perform_later(self)
       end
 
       return

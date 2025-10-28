@@ -4,12 +4,13 @@
 #
 # Table name: patient_triage_statuses
 #
-#  id             :bigint           not null, primary key
-#  academic_year  :integer          not null
-#  status         :integer          default("not_required"), not null
-#  vaccine_method :integer
-#  patient_id     :bigint           not null
-#  programme_id   :bigint           not null
+#  id               :bigint           not null, primary key
+#  academic_year    :integer          not null
+#  status           :integer          default("not_required"), not null
+#  vaccine_method   :integer
+#  without_gelatine :boolean
+#  patient_id       :bigint           not null
+#  programme_id     :bigint           not null
 #
 # Indexes
 #
@@ -58,6 +59,7 @@ class Patient::TriageStatus < ApplicationRecord
   def assign_status
     self.status = generator.status
     self.vaccine_method = generator.vaccine_method
+    self.without_gelatine = generator.without_gelatine
   end
 
   delegate :consent_requires_triage?,

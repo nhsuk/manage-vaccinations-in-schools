@@ -210,24 +210,14 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def set_batches
-    scope =
-      policy_scope(Batch).includes(:vaccine).where(
-        vaccine: {
-          programme: @programme
-        }
-      )
+    vaccines = vaccine_criteria.apply(@programme.vaccines)
 
-    method =
-      if @draft_vaccination_record.delivery_method == "nasal_spray"
-        "nasal"
-      else
-        "injection"
-      end
+    scope = policy_scope(Batch).includes(:vaccine)
 
     @batches =
       scope
         .where(id: @draft_vaccination_record.batch_id)
-        .or(scope.not_archived.not_expired.where(vaccine: { method: }))
+        .or(scope.not_archived.not_expired.where(vaccine: vaccines))
         .order_by_name_and_expiration
   end
 
@@ -257,5 +247,23 @@ class DraftVaccinationRecordsController < ApplicationController
   def first_step_of_flow?
     current_step.to_s == @draft_vaccination_record.first_active_wizard_step ||
       current_step == @draft_vaccination_record.wizard_steps.first
+  end
+
+  def vaccine_criteria
+    vaccine_method =
+      Vaccine.delivery_method_to_vaccine_method(
+        @draft_vaccination_record.delivery_method
+      )
+
+    without_gelatine =
+      @patient.vaccine_criteria(
+        programme: @programme,
+        academic_year: @session.academic_year
+      ).without_gelatine
+
+    VaccineCriteria.new(
+      vaccine_methods: [vaccine_method].compact,
+      without_gelatine:
+    )
   end
 end

@@ -52,6 +52,13 @@ class AppConsentSummaryComponent < ViewComponent::Base
         end
       end
 
+      unless consent.without_gelatine.nil?
+        summary_list.with_row do |row|
+          row.with_key { "Consent given for gelatine-free vaccine only?" }
+          row.with_value { consent.without_gelatine ? "Yes" : "No" }
+        end
+      end
+
       unless consent.notify_parents_on_vaccination.nil?
         summary_list.with_row do |row|
           row.with_key { "Confirmation of vaccination sent to parent?" }

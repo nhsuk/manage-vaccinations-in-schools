@@ -20,6 +20,7 @@ class AppTriageFormComponent < ViewComponent::Base
 
   def fieldset_options
     text = "Is it safe to vaccinate #{patient.given_name}?"
+
     hint =
       if programme.has_multiple_vaccine_methods?
         if form.consented_to_injection_only?

@@ -202,7 +202,7 @@ describe Stats::Organisations do
       school1.import_year_groups_from_gias!(
         academic_year: previous_academic_year
       )
-      school1.create_default_programme_year_groups!(
+      school1.import_default_programme_year_groups!(
         [programme_flu, programme_hpv],
         academic_year: previous_academic_year
       )

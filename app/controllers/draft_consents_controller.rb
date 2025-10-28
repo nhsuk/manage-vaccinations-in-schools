@@ -30,6 +30,8 @@ class DraftConsentsController < ApplicationController
     authorize Consent
 
     case current_step
+    when :agree
+      handle_agree
     when :confirm
       handle_confirm
     when :questions
@@ -50,6 +52,11 @@ class DraftConsentsController < ApplicationController
   end
 
   private
+
+  def handle_agree
+    @draft_consent.assign_attributes(update_params)
+    @draft_consent.update_vaccine_methods
+  end
 
   def handle_confirm
     return unless @draft_consent.save
@@ -106,7 +113,7 @@ class DraftConsentsController < ApplicationController
         @triage_form.add_patient_specific_direction,
       triage_form_valid: @triage_form.valid?,
       triage_notes: @triage_form.notes,
-      triage_status_and_vaccine_method: @triage_form.status_and_vaccine_method,
+      triage_status_option: @triage_form.status_option,
       wizard_step: :triage
     )
   end
@@ -117,7 +124,7 @@ class DraftConsentsController < ApplicationController
 
   def update_params
     permitted_attributes = {
-      agree: %i[response injection_alternative],
+      agree: %i[response injection_alternative without_gelatine],
       notes: %i[notes],
       notify_parent_on_refusal: %i[notify_parent_on_refusal],
       notify_parents_on_vaccination: %i[notify_parents_on_vaccination],
@@ -144,11 +151,7 @@ class DraftConsentsController < ApplicationController
 
   def triage_form_params
     params.expect(
-      triage_form: %i[
-        status_and_vaccine_method
-        notes
-        add_patient_specific_direction
-      ]
+      triage_form: %i[status_option notes add_patient_specific_direction]
     )
   end
 
@@ -190,14 +193,14 @@ class DraftConsentsController < ApplicationController
         TriageForm.new(
           add_patient_specific_direction:
             @draft_consent.triage_add_patient_specific_direction,
+          consent_vaccine_methods: @draft_consent.vaccine_methods,
+          consent_without_gelatine: @draft_consent.without_gelatine,
           current_user:,
           notes: @draft_consent.triage_notes,
-          vaccine_methods: @draft_consent.vaccine_methods,
           patient: @patient,
           session: @session,
           programme: @programme,
-          status_and_vaccine_method:
-            @draft_consent.triage_status_and_vaccine_method
+          status_option: @draft_consent.triage_status_option
         )
       end
   end

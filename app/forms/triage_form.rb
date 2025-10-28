@@ -9,22 +9,20 @@ class TriageForm
   attr_accessor :patient, :session, :programme, :current_user
 
   attribute :add_patient_specific_direction, :boolean
+  attribute :consent_vaccine_methods, array: true, default: []
+  attribute :consent_without_gelatine, :boolean
   attribute :notes, :string
-  attribute :status_and_vaccine_method, :string
-  attribute :vaccine_methods, array: true, default: []
+  attribute :status_option, :string
 
   validates :add_patient_specific_direction,
             inclusion: {
               in: [true, false]
             },
             if: :requires_add_patient_specific_direction?
-  validates :status_and_vaccine_method,
-            inclusion: {
-              in: :status_and_vaccine_method_options
-            }
+  validates :status_option, inclusion: { in: :status_options }
 
   def triage=(triage)
-    self.status_and_vaccine_method =
+    self.status_option =
       if triage.safe_to_vaccinate?
         if consented_vaccine_methods.length > 1
           "safe_to_vaccinate_#{triage.vaccine_method}"
@@ -50,8 +48,12 @@ class TriageForm
   def safe_to_vaccinate_options
     if programme.has_multiple_vaccine_methods?
       consented_vaccine_methods.map { |method| "safe_to_vaccinate_#{method}" }
+    elsif consented_without_gelatine
+      %w[safe_to_vaccinate_without_gelatine]
+    elsif programme.vaccine_may_contain_gelatine?
+      %w[safe_to_vaccinate safe_to_vaccinate_without_gelatine]
     else
-      ["safe_to_vaccinate"]
+      %w[safe_to_vaccinate]
     end
   end
 
@@ -59,7 +61,7 @@ class TriageForm
     %w[keep_in_triage delay_vaccination do_not_vaccinate]
   end
 
-  def status_and_vaccine_method_options
+  def status_options
     safe_to_vaccinate_options + other_options
   end
 
@@ -78,36 +80,49 @@ class TriageForm
 
   def consented_vaccine_methods
     @consented_vaccine_methods ||=
-      vaccine_methods.presence ||
-        patient.consent_status(programme:, academic_year:).vaccine_methods
+      consent_vaccine_methods.presence || consent_status.vaccine_methods
+  end
+
+  def consented_without_gelatine
+    @consented_without_gelatine ||=
+      if !consent_without_gelatine.nil?
+        consent_without_gelatine
+      else
+        consent_status.without_gelatine
+      end
+  end
+
+  def consent_status
+    @consent_status ||= patient.consent_status(programme:, academic_year:)
   end
 
   def triage_attributes
     {
+      academic_year:,
       notes:,
-      team:,
       patient:,
       performed_by: current_user,
       programme:,
       status:,
+      team:,
       vaccine_method:,
-      academic_year:
+      without_gelatine:
     }
   end
 
   def status
-    case status_and_vaccine_method
+    case status_option
     when "safe_to_vaccinate", "safe_to_vaccinate_injection",
-         "safe_to_vaccinate_nasal"
+         "safe_to_vaccinate_nasal", "safe_to_vaccinate_without_gelatine"
       "safe_to_vaccinate"
     else
-      status_and_vaccine_method
+      status_option
     end
   end
 
   def vaccine_method
-    case status_and_vaccine_method
-    when "safe_to_vaccinate"
+    case status_option
+    when "safe_to_vaccinate", "safe_to_vaccinate_without_gelatine"
       consented_vaccine_methods.first
     when "safe_to_vaccinate_injection"
       "injection"
@@ -116,8 +131,17 @@ class TriageForm
     end
   end
 
+  def without_gelatine
+    if status_option == "safe_to_vaccinate_without_gelatine"
+      true
+    elsif programme.vaccine_may_contain_gelatine? &&
+          !programme.has_multiple_vaccine_methods?
+      false
+    end
+  end
+
   def requires_add_patient_specific_direction?
-    show_add_patient_specific_direction?(status_and_vaccine_method)
+    show_add_patient_specific_direction?(status_option)
   end
 
   def can_create_patient_specific_directions?

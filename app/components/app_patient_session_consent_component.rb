@@ -19,16 +19,18 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
   end
 
   def heading
-    status_with_method = consent_status.status
+    status_with_suffix = consent_status.status
 
     if programme.has_multiple_vaccine_methods?
       vaccine_method =
         triage_status.vaccine_method.presence ||
           consent_status.vaccine_methods.first
-      status_with_method += "_#{vaccine_method}" if vaccine_method
+      status_with_suffix += "_#{vaccine_method}" if vaccine_method
+    elsif consent_status.without_gelatine
+      status_with_suffix += "_without_gelatine"
     end
 
-    "#{programme.name}: #{I18n.t(status_with_method, scope: %i[status consent label])}"
+    "#{programme.name}: #{I18n.t(status_with_suffix, scope: %i[status consent label])}"
   end
 
   def latest_consent_request

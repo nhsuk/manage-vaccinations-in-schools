@@ -77,7 +77,7 @@ FactoryBot.define do
           academic_year:,
           source: "generic_clinic_factory"
         )
-        location.create_default_programme_year_groups!(
+        location.import_default_programme_year_groups!(
           evaluator.programmes,
           academic_year:
         )
@@ -113,7 +113,7 @@ FactoryBot.define do
       after(:create) do |location, evaluator|
         academic_year = evaluator.academic_year
         location.import_year_groups_from_gias!(academic_year:)
-        location.create_default_programme_year_groups!(
+        location.import_default_programme_year_groups!(
           evaluator.programmes,
           academic_year:
         )

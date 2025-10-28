@@ -10,14 +10,14 @@ local linters = new Mapping<String, Group> {
 
             ["prettier"] = new Step {
                 batch = true
-                glob = List("*.rb", "*.rake", "*.md", "*.js", "*.html", "*.erb", "*.css", "*.ejs", "*.mjs", "*.scss", "*.yaml", "*.json")
+                glob = List("Gemfile", "*.rb", "*.rake", "*.md", "*.js", "*.html", "*.erb", "*.css", "*.ejs", "*.mjs", "*.scss", "*.yaml", "*.json")
                 check = "bin/prettier --check --ignore-unknown {{ files }}"
                 check_list_files = "bin/prettier --list-different --ignore-unknown {{ files }}"
                 fix = "bin/prettier --write --ignore-unknown {{ files }}"
             }
 
             ["rubocop"] = new Step {
-                glob = List("*.rb", "*.rake")
+                glob = List("Gemfile", "*.rb", "*.rake")
                 check = "bin/rubocop {{ files }}"
                 fix = "bin/rubocop --autocorrect-all {{ files }}"
             }

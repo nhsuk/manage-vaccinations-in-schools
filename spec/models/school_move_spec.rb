@@ -16,9 +16,10 @@
 #
 # Indexes
 #
-#  index_school_moves_on_patient_id  (patient_id) UNIQUE
-#  index_school_moves_on_school_id   (school_id)
-#  index_school_moves_on_team_id     (team_id)
+#  index_school_moves_on_patient_id                (patient_id) UNIQUE
+#  index_school_moves_on_patient_id_and_school_id  (patient_id,school_id)
+#  index_school_moves_on_school_id                 (school_id)
+#  index_school_moves_on_team_id                   (team_id)
 #
 # Foreign Keys
 #

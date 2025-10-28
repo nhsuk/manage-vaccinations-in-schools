@@ -359,6 +359,8 @@ describe FHIRMapper::VaccinationRecord do
       its(:location_name) { should be_nil }
       its(:performed_ods_code) { should eq "B0C4P" }
       its(:nhs_immunisations_api_primary_source) { should be true }
+
+      its(:notes) { should be_nil }
     end
 
     context "with a record with not full dose" do
@@ -395,9 +397,51 @@ describe FHIRMapper::VaccinationRecord do
       its(:location_name) { should be_nil }
       its(:performed_ods_code) { should eq "B0C4P" }
       its(:nhs_immunisations_api_primary_source) { should be true }
+
+      its(:notes) { should be_nil }
     end
 
-    context "with a record with an unexpected dose unit" do
+    describe "the parsed full_dose value" do
+      subject { record.full_dose }
+
+      before do
+        allow(fhir_immunization).to receive("doseQuantity").and_return(
+          FHIR::R4::Quantity.new(
+            value: dose_quantity,
+            unit: "ml",
+            system: "http://snomed.info/sct",
+            code: "258773002"
+          )
+        )
+      end
+
+      let(:dose_quantity) { nil }
+      let(:fhir_immunization) do
+        FHIR.from_contents(
+          file_fixture("/fhir/fhir_record_half_dose.json").read
+        )
+      end
+
+      context "when dose quantity is 0.5" do
+        let(:dose_quantity) { 0.5 }
+
+        it { should be_nil }
+      end
+
+      context "when dose quantity is 0.075" do
+        let(:dose_quantity) { 0.075 }
+
+        it { should be_nil }
+      end
+
+      context "when dose quantity is 0.1" do
+        let(:dose_quantity) { 0.1 }
+
+        it { should be false }
+      end
+    end
+
+    context "with a record with an unexpected dose unit, and is nasal flu" do
       let(:fhir_immunization) do
         FHIR.from_contents(
           file_fixture("/fhir/fhir_record_unexpected_dose_unit.json").read
@@ -425,11 +469,13 @@ describe FHIRMapper::VaccinationRecord do
       its(:performed_at) { should eq Time.parse("2025-04-06T23:59:50.2+01:00") }
       its(:delivery_method) { should eq "nasal_spray" }
       its(:delivery_site) { should eq "nose" }
-      its(:full_dose) { should be true }
+      its(:full_dose) { should be_nil }
       its(:outcome) { should eq "administered" }
       its(:location) { should have_attributes(urn: "100006") }
       its(:location_name) { should be_nil }
       its(:performed_ods_code) { should eq "B0C4P" }
+
+      its(:notes) { should be_nil }
     end
 
     context "with a record with extended milliliter description" do
@@ -466,6 +512,8 @@ describe FHIRMapper::VaccinationRecord do
       its(:location_name) { should be_nil }
       its(:performed_ods_code) { should eq "B0C4P" }
       its(:nhs_immunisations_api_primary_source) { should be true }
+
+      its(:notes) { should be_nil }
     end
 
     context "with a record that has an unknown vaccine" do
@@ -550,6 +598,31 @@ describe FHIRMapper::VaccinationRecord do
       its(:performed_at) { should eq Time.parse("2025-10-06T00:00:00+00:00") }
       its(:delivery_method) { should be_nil }
       its(:delivery_site) { should be_nil }
+      its(:full_dose) { should be_nil }
+      its(:location_name) { should eq "B12345" }
+      its(:outcome) { should eq "administered" }
+      its(:performed_ods_code) { should eq "B12345" }
+
+      its(:notes) { should be_nil }
+    end
+
+    context "with a record that is im flu, and is missing dose quantity" do
+      let(:fhir_immunization) do
+        FHIR.from_contents(
+          file_fixture("fhir/fhir_record_im_missing_dose.json").read
+        )
+      end
+
+      include_examples "a mapped vaccination record (common fields)"
+
+      its(:vaccine) do
+        should have_attributes(snomed_product_code: "43207411000001105")
+      end
+
+      its(:batch) { should be_nil }
+      its(:performed_at) { should eq Time.parse("2025-10-06T00:00:00+00:00") }
+      its(:delivery_method) { should be_nil }
+      its(:delivery_site) { should be_nil }
       its(:full_dose) { should be true }
       its(:location_name) { should eq "B12345" }
       its(:outcome) { should eq "administered" }
@@ -583,6 +656,8 @@ describe FHIRMapper::VaccinationRecord do
       its(:location) { should be_nil }
       its(:location_name) { should eq "D83013" }
       its(:performed_ods_code) { should eq "D83013" }
+
+      its(:notes) { should be_nil }
     end
 
     context "with a record that has an unknown location" do
@@ -612,6 +687,8 @@ describe FHIRMapper::VaccinationRecord do
 
       its(:location) { should be_nil }
       its(:location_name) { should eq "X99999" }
+
+      its(:notes) { should be_nil }
     end
 
     context "with a record that is the minimum which can be created via the API" do
@@ -640,6 +717,10 @@ describe FHIRMapper::VaccinationRecord do
 
       its(:location) { should have_attributes(urn: "100006") }
       its(:location_name) { should be_nil }
+
+      its(:notes) do
+        should include("Batch number: aa1111", "Batch expiry: 2030-01-01")
+      end
     end
 
     context "with a record that is the minimum which can be created based on the spec (for CSV bulk upload)" do

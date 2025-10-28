@@ -56,10 +56,13 @@ class Location < ApplicationRecord
   has_many :location_year_groups,
            class_name: "Location::YearGroup",
            dependent: :destroy
-  has_many :location_programme_year_groups
+  has_many :location_programme_year_groups,
+           class_name: "Location::ProgrammeYearGroup",
+           dependent: :destroy
 
   has_many :attendance_records
   has_many :consent_forms
+
   has_many :patient_locations
   has_many :patients, foreign_key: :school_id
   has_many :sessions
@@ -185,20 +188,27 @@ class Location < ApplicationRecord
     import_year_groups!(gias_year_groups, academic_year:, source: "gias")
   end
 
-  def create_default_programme_year_groups!(programmes, academic_year:)
-    valid_year_groups = location_year_groups.where(academic_year:).pluck_values
+  def import_default_programme_year_groups!(programmes, academic_year:)
+    year_group_ids =
+      location_year_groups.where(academic_year:).pluck(:value, :id).to_h
 
     rows =
       programmes.flat_map do |programme|
         programme.default_year_groups.filter_map do |year_group|
-          if year_group.in?(valid_year_groups)
-            [id, academic_year, programme.id, year_group]
+          if (year_group_id = year_group_ids[year_group])
+            [id, academic_year, programme.id, year_group, year_group_id]
           end
         end
       end
 
-    LocationProgrammeYearGroup.import!(
-      %i[location_id academic_year programme_id year_group],
+    Location::ProgrammeYearGroup.import!(
+      %i[
+        location_id
+        academic_year
+        programme_id
+        year_group
+        location_year_group_id
+      ],
       rows,
       on_duplicate_key_ignore: true
     )

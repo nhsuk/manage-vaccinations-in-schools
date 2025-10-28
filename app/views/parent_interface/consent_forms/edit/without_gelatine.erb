@@ -1,0 +1,19 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: backlink_path) %>
+<% end %>
+
+<% legend = "Do you want your child to have a vaccine without gelatine?" %>
+<% content_for :page_title, legend %>
+
+<%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_radio_buttons_fieldset :without_gelatine,
+                                     legend: { size: "l", text: legend, tag: "h1" },
+                                     hint: { text: "One type of MMR vaccine contains gelatine from pigs. An alternative MMR vaccine is available that does not contain gelatine." } do %>
+    <%= f.govuk_radio_button :without_gelatine, :true, label: { text: "I want my child to have the vaccine that does not contain gelatine" }, link_errors: true %>
+    <%= f.govuk_radio_button :without_gelatine, :false, label: { text: "My child can have either type of vaccine" } %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

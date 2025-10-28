@@ -109,6 +109,14 @@ class Patient < ApplicationRecord
     AND sessions.academic_year = patient_locations.academic_year
   SQL
 
+  scope :in_eligible_year_group_for_session_programme, -> { joins(<<-SQL) }
+    INNER JOIN session_programmes ON session_programmes.session_id = sessions.id
+    INNER JOIN location_programme_year_groups ON location_programme_year_groups.location_id = patient_locations.location_id
+    AND location_programme_year_groups.academic_year = patient_locations.academic_year
+    AND location_programme_year_groups.programme_id = session_programmes.programme_id
+    AND patients.birth_academic_year = location_programme_year_groups.academic_year - location_programme_year_groups.year_group - #{Integer::AGE_CHILDREN_START_SCHOOL}
+  SQL
+
   scope :archived,
         ->(team:) do
           joins_archive_reasons(team:).where("archive_reasons.id IS NOT NULL")
@@ -542,7 +550,7 @@ class Patient < ApplicationRecord
     end
 
     if vaccine_method &&
-         approved_vaccine_methods(programme:, academic_year:).first !=
+         vaccine_criteria(programme:, academic_year:).vaccine_methods.first !=
            vaccine_method
       return false
     end
@@ -566,13 +574,15 @@ class Patient < ApplicationRecord
     :do_not_record
   end
 
-  def approved_vaccine_methods(programme:, academic_year:)
+  def vaccine_criteria(programme:, academic_year:)
     triage_status = triage_status(programme:, academic_year:)
 
     if triage_status.not_required?
-      consent_status(programme:, academic_year:).vaccine_methods
+      VaccineCriteria.from_consent_status(
+        consent_status(programme:, academic_year:)
+      )
     else
-      [triage_status.vaccine_method].compact
+      VaccineCriteria.from_triage_status(triage_status)
     end
   end
 
@@ -702,7 +712,9 @@ class Patient < ApplicationRecord
   end
 
   def latest_pds_search_result
-    pds_search_results.latest_set&.first&.changeset&.pds_nhs_number
+    nhs_numbers =
+      pds_search_results.latest_set&.pluck(:nhs_number)&.compact&.uniq
+    nhs_numbers&.one? ? nhs_numbers.first : nil
   end
 
   def pds_lookup_match?

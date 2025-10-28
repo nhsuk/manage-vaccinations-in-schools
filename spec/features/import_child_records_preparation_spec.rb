@@ -97,6 +97,7 @@ describe "Import child records" do
     scenario "User uploads a file during preparation period" do
       given_today_is_the_start_of_the_2023_24_preparation_period
       and_the_app_is_setup
+      and_pds_lookup_during_import_is_enabled
 
       then_i_should_be_in_the_preparation_period
 
@@ -128,6 +129,7 @@ describe "Import child records" do
       given_today_is_the_start_of_the_2023_24_preparation_period
       and_i_can_choose_the_academic_year_on_import
       and_the_app_is_setup
+      and_pds_lookup_during_import_is_enabled
       then_i_should_be_in_the_preparation_period
 
       when_i_visit_the_import_page
@@ -158,6 +160,7 @@ describe "Import child records" do
       given_today_is_the_start_of_the_2024_25_preparation_period
       and_i_can_choose_the_academic_year_on_import
       and_the_app_is_setup
+      and_pds_lookup_during_import_is_enabled
       then_i_should_be_in_the_preparation_period
 
       when_i_visit_the_import_page
@@ -194,7 +197,7 @@ describe "Import child records" do
   end
 
   def and_pds_lookup_during_import_is_enabled
-    Flipper.enable(:pds_lookup_during_import)
+    Flipper.enable(:import_search_pds)
 
     stub_pds_search_to_return_a_patient(
       "9990000026",
@@ -246,13 +249,13 @@ describe "Import child records" do
 
     [AcademicYear.current, AcademicYear.pending].each do |academic_year|
       @school.import_year_groups_from_gias!(academic_year:)
-      @school.create_default_programme_year_groups!(programmes, academic_year:)
+      @school.import_default_programme_year_groups!(programmes, academic_year:)
       @team.generic_clinic.import_year_groups!(
         Location::YearGroup::CLINIC_VALUE_RANGE,
         academic_year:,
         source: "generic_clinic_factory"
       )
-      @team.generic_clinic.create_default_programme_year_groups!(
+      @team.generic_clinic.import_default_programme_year_groups!(
         programmes,
         academic_year:
       )

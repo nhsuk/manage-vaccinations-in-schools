@@ -79,6 +79,8 @@ class Programme < ApplicationRecord
 
   def supports_delegation? = flu?
 
+  def can_save_to_todays_batch? = !mmr?
+
   DEFAULT_YEAR_GROUPS_BY_TYPE = {
     "flu" => (0..11).to_a,
     "hpv" => (8..11).to_a,

@@ -273,7 +273,7 @@ describe "Import child records" do
   end
 
   def and_pds_lookups_dont_return_any_matches
-    Flipper.enable(:pds_lookup_during_import)
+    Flipper.enable(:import_search_pds)
     Flipper.enable(:import_low_pds_match_rate)
 
     csv_path =
@@ -297,7 +297,7 @@ describe "Import child records" do
   end
 
   def and_pds_lookup_during_import_is_enabled
-    Flipper.enable(:pds_lookup_during_import)
+    Flipper.enable(:import_search_pds)
 
     stub_pds_cascading_search(
       family_name: "Tweedle",
@@ -723,6 +723,8 @@ describe "Import child records" do
   def then_school_moves_are_created_appropriately
     perform_enqueued_jobs
     perform_enqueued_jobs
+
+    Sidekiq::Job.drain_all # PatientsAgedOutOfSchoolJob is Sidekiq-only
 
     charlie = Patient.find_by(given_name: "Charlie")
     charlie_move = SchoolMoveLogEntry.find_by(patient: charlie)

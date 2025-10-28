@@ -20,6 +20,7 @@
 #
 # Indexes
 #
+#  index_sessions_on_academic_year_and_location_id_and_team_id  (academic_year,location_id,team_id)
 #  index_sessions_on_location_id                                (location_id)
 #  index_sessions_on_location_id_and_academic_year_and_team_id  (location_id,academic_year,team_id)
 #  index_sessions_on_team_id_and_academic_year                  (team_id,academic_year)

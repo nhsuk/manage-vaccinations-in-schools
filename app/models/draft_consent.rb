@@ -35,8 +35,9 @@ class DraftConsent
   attribute :session_id, :integer
   attribute :triage_add_patient_specific_direction, :boolean
   attribute :triage_notes, :string
-  attribute :triage_status_and_vaccine_method, :string
+  attribute :triage_status_option, :string
   attribute :vaccine_methods, array: true, default: []
+  attribute :without_gelatine, :boolean
 
   def initialize(current_user:, **attributes)
     @current_user = current_user
@@ -124,6 +125,11 @@ class DraftConsent
                 in: [true, false]
               },
               if: -> { response == "given_nasal" }
+    validates :without_gelatine,
+              inclusion: {
+                in: [true, false]
+              },
+              if: -> { programme.mmr? && response == "given" }
   end
 
   on_wizard_step :notify_parents_on_vaccination, exact: true do
@@ -311,7 +317,7 @@ class DraftConsent
         triage_add_patient_specific_direction
       triage_form.notes = triage_notes || ""
       triage_form.current_user = recorded_by
-      triage_form.status_and_vaccine_method = triage_status_and_vaccine_method
+      triage_form.status_option = triage_status_option
     end
   end
 
@@ -382,7 +388,8 @@ class DraftConsent
         }
       end
 
-    vaccines = programme.vaccines.where(method: vaccine_methods)
+    vaccines =
+      VaccineCriteria.from_consentable(self).apply(programme.vaccines.active)
 
     self.health_answers =
       HealthAnswersDeduplicator
@@ -420,6 +427,7 @@ class DraftConsent
       route
       team_id
       vaccine_methods
+      without_gelatine
     ]
   end
 
@@ -439,8 +447,8 @@ class DraftConsent
     TriagePolicy.new(@current_user, Triage).new?
   end
 
-  def triage_status_and_vaccine_method_options
-    Triage.new(patient:, programme:).status_and_vaccine_method_options
+  def triage_status_options
+    Triage.new(patient:, programme:).status_options
   end
 
   def requires_triage?

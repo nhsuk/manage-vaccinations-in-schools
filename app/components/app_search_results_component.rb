@@ -15,7 +15,7 @@ class AppSearchResultsComponent < ViewComponent::Base
     <%= content %>
 
     <% if has_results? %>
-      <%= govuk_pagination(pagy:) %>
+      <%= render AppPaginationComponent.new(pagy: @pagy) %>
     <% end %>
   ERB
 
@@ -28,8 +28,6 @@ class AppSearchResultsComponent < ViewComponent::Base
   private
 
   attr_reader :pagy, :label, :heading
-
-  delegate :govuk_pagination, to: :helpers
 
   def has_results? = pagy.count.positive?
 end

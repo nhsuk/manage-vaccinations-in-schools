@@ -5,15 +5,17 @@ class AppSessionActionsComponent < ViewComponent::Base
     <% if show_heading %>
       <h4 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Action required</h4>
     <% end %>
-    <%= govuk_summary_list(rows:) %>
+    <% if rows.any? %>
+      <%= govuk_summary_list(rows:) %>
+    <% else %>
+      <p class="nhsuk-body">No action required</p>
+    <% end %>
   ERB
 
   def initialize(session, show_heading: true)
     @session = session
     @show_heading = show_heading
   end
-
-  def render? = rows.any?
 
   private
 
@@ -27,6 +29,7 @@ class AppSessionActionsComponent < ViewComponent::Base
   def rows
     @rows ||= [
       no_nhs_number_row,
+      unmatched_consent_row,
       no_consent_response_row,
       conflicting_consent_row,
       triage_required_row,
@@ -40,6 +43,13 @@ class AppSessionActionsComponent < ViewComponent::Base
     href = session_patients_path(session, missing_nhs_number: true)
 
     generate_row(:children_without_nhs_number, count:, href:)
+  end
+
+  def unmatched_consent_row
+    count = ConsentForm.for_session(session).unmatched.count
+    href = consent_forms_path(session_slug: @session.slug)
+
+    generate_row(:unmatched_responses, count:, href:)
   end
 
   def no_consent_response_row

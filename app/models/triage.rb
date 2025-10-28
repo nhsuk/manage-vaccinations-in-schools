@@ -11,6 +11,7 @@
 #  notes                   :text             default(""), not null
 #  status                  :integer          not null
 #  vaccine_method          :integer
+#  without_gelatine        :boolean
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  patient_id              :bigint           not null

@@ -183,5 +183,5 @@
     <%= render AppVaccinationRecordTableComponent.new(@vaccination_records, current_user:, count: @pagy.count) %>
   <% end %>
 
-  <%= govuk_pagination(pagy: @pagy) %>
+  <%= render AppPaginationComponent.new(pagy: @pagy) %>
 <% end %>

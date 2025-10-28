@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe API::Testing::TeamsController do
+  include ActiveJob::TestHelper
+
   before { Flipper.enable(:testing_api) }
   after { Flipper.disable(:testing_api) }
 
@@ -51,6 +53,7 @@ describe API::Testing::TeamsController do
       TeamSessionsFactory.call(team, academic_year: AcademicYear.current)
 
       cohort_import.process!
+      perform_enqueued_jobs # CommitPatientChangesetsJob
       immunisation_import.process!
 
       Patient.find_each do |patient|

@@ -18,6 +18,7 @@
 #  submitted_at                                    :datetime         not null
 #  vaccine_methods                                 :integer          default([]), not null, is an Array
 #  withdrawn_at                                    :datetime
+#  without_gelatine                                :boolean
 #  created_at                                      :datetime         not null
 #  updated_at                                      :datetime         not null
 #  consent_form_id                                 :bigint
@@ -104,6 +105,15 @@ FactoryBot.define do
     trait :given_nasal_or_injection do
       given
       vaccine_methods { %w[nasal injection] }
+    end
+
+    trait :given_without_gelatine do
+      given
+      without_gelatine
+    end
+
+    trait :without_gelatine do
+      without_gelatine { true }
     end
 
     trait :self_consent do

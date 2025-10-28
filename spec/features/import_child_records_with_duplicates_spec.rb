@@ -132,7 +132,7 @@ describe "Child record imports duplicates" do
   def and_pds_lookup_during_import_is_enabled
     return unless ENV["PDS_LOOKUP_DURING_IMPORT"] == "1"
 
-    Flipper.enable(:pds_lookup_during_import)
+    Flipper.enable(:import_search_pds)
 
     stub_pds_search_to_return_a_patient(
       "9990000026",

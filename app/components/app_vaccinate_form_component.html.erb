@@ -37,15 +37,14 @@
         <% if ask_not_pregnant? %>
           <li>is not pregnant</li>
         <% end %>
+        <li>knows what the vaccination is for, and agrees to have it</li>
         <% if ask_not_taking_medication? %>
           <li>is not taking any medication which prevents vaccination</li>
         <% end %>
         <% if ask_asthma_flare_up? %>
           <li>if they have asthma, has not had a flare-up of symptoms in the past 72 hours, including wheezing or needing to use a reliever inhaler more than usual</li>
         <% end %>
-        <li>has no allergies which would prevent vaccination</li>
-        <li>has not already had this vaccination</li>
-        <li>knows what the vaccination is for, and is happy to have it</li>
+        <li>has no other contraindications which prevent vaccination</li>
       </ul>
 
       <%= f.govuk_check_boxes_fieldset :pre_screening_confirmed, multiple: false, legend: nil do %>
