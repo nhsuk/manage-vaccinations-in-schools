@@ -39,13 +39,13 @@ FactoryBot.define do
     trait :email do
       type { "email" }
       recipient { Faker::Internet.email }
-      template_id { GOVUK_NOTIFY_EMAIL_TEMPLATES.values.compact.sample }
+      template_id { GOVUK_NOTIFY_EMAIL_TEMPLATES.values.sample }
     end
 
     trait :sms do
       type { "sms" }
       recipient { Faker::PhoneNumber.phone_number }
-      template_id { GOVUK_NOTIFY_SMS_TEMPLATES.values.compact.sample }
+      template_id { GOVUK_NOTIFY_SMS_TEMPLATES.values.sample }
     end
 
     delivery_id { SecureRandom.uuid }

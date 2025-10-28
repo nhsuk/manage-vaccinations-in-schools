@@ -120,15 +120,11 @@ class SessionNotification < ApplicationRecord
 
       template_name = compute_template_name(type, session.organisation)
 
-      if GOVUK_NOTIFY_EMAIL_TEMPLATES.fetch(template_name).present?
-        EmailDeliveryJob.perform_later(template_name, **params)
-      end
+      EmailDeliveryJob.perform_later(template_name, **params)
 
       next if type == :school_reminder && !parent.phone_receive_updates
 
-      if GOVUK_NOTIFY_SMS_TEMPLATES.fetch(template_name).present?
-        SMSDeliveryJob.perform_later(template_name, **params)
-      end
+      SMSDeliveryJob.perform_later(template_name, **params)
     end
   end
 
