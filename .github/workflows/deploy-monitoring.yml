@@ -77,7 +77,7 @@ jobs:
             echo "Infrastructure changes detected"
           fi
       - name: Upload AWS plan artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: tfplan_monitoring_aws-${{ inputs.environment }}
           path: ${{ runner.temp }}/tfplan-aws
