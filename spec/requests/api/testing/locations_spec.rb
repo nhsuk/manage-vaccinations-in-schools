@@ -67,16 +67,13 @@ describe "/api/testing/locations" do
 
     context "when filtering by year groups" do
       it "includes only relevant locations" do
-        get "/api/testing/locations", params: { year_groups: [1] }
+        get "/api/testing/locations", params: { gias_year_groups: [1] }
 
         expect(response).to have_http_status(:ok)
 
         locations = JSON.parse(response.body)
 
-        expect(locations).to contain_exactly(
-          primary_school.as_json,
-          generic_clinic.as_json
-        )
+        expect(locations).to contain_exactly(primary_school.as_json)
       end
 
       context "with multiple year groups" do
@@ -87,16 +84,13 @@ describe "/api/testing/locations" do
         end
 
         it "includes locations with all those year groups" do
-          get "/api/testing/locations", params: { year_groups: [8, 9, 10] }
+          get "/api/testing/locations", params: { gias_year_groups: [8, 9, 10] }
 
           expect(response).to have_http_status(:ok)
 
           locations = JSON.parse(response.body)
 
-          expect(locations).to contain_exactly(
-            secondary_school.as_json,
-            generic_clinic.as_json
-          )
+          expect(locations).to contain_exactly(secondary_school.as_json)
         end
       end
     end

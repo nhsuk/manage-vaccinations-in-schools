@@ -89,17 +89,8 @@ class Location < ApplicationRecord
           )
         end
 
-  scope :has_year_groups,
-        ->(values, academic_year:) do
-          where(
-            "(?) >= ?",
-            Location::YearGroup
-              .select("COUNT(location_year_groups.id)")
-              .where("locations.id = location_year_groups.location_id")
-              .where(value: values, academic_year:),
-            values.count
-          )
-        end
+  scope :has_gias_year_groups,
+        ->(values) { where("ARRAY[?]::integer[] <@ gias_year_groups", values) }
 
   scope :search_by_name,
         ->(query) do
