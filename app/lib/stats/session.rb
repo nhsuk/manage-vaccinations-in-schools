@@ -19,10 +19,9 @@ class Stats::Session
 
     if programme.has_multiple_vaccine_methods?
       programme.vaccine_methods.each do |vaccine_method|
-        stats[:"consent_given_#{vaccine_method}"] = consent_count_with_method(
-          patient_ids,
+        stats[:"consent_given_#{vaccine_method}"] = consent_counts_by_method[
           vaccine_method
-        )
+        ] || 0
       end
     end
 
@@ -59,16 +58,19 @@ class Stats::Session
         .count
   end
 
-  def consent_count_with_method(patient_ids, vaccine_method)
-    Patient::ConsentStatus
-      .where(
-        patient_id: patient_ids,
-        programme:,
-        academic_year:,
-        status: "given"
-      )
-      .has_vaccine_method(vaccine_method)
-      .count
+  def consent_counts_by_method
+    @consent_counts_by_method ||=
+      Patient::ConsentStatus
+        .where(
+          patient_id: patient_ids,
+          programme:,
+          academic_year:,
+          status: "given"
+        )
+        .joins("CROSS JOIN LATERAL unnest(vaccine_methods) as method_value")
+        .group(:method_value)
+        .count("DISTINCT patient_consent_statuses.id")
+        .transform_keys { Patient::ConsentStatus.vaccine_methods.key(it) }
   end
 
   def patient_ids

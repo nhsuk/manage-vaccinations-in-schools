@@ -75,13 +75,22 @@ describe Stats::Session do
             programme:
           )
         end
+
+        create(:patient, session:, year_group: 9).tap do |patient|
+          create(
+            :patient_consent_status,
+            :given_injection_only,
+            patient:,
+            programme:
+          )
+        end
       end
 
       it "returns counts broken down by vaccine method" do
         expect(stats).to include(
-          eligible_children: 2,
+          eligible_children: 3,
           consent_given_nasal: 1,
-          consent_given_injection: 1
+          consent_given_injection: 2
         )
       end
     end
