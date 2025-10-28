@@ -376,6 +376,8 @@ class DraftConsent
 
   def vaccine_method_nasal? = vaccine_methods.include?("nasal")
 
+  def vaccine_method_nasal_only? = vaccine_methods == %w[nasal]
+
   def seed_health_questions
     return unless response_given?
 

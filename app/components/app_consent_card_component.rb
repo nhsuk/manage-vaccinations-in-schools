@@ -22,7 +22,7 @@ class AppConsentCardComponent < ViewComponent::Base
   attr_reader :consent, :session
 
   delegate :patient, :programme, to: :consent
-  delegate :consent_response_tag, :govuk_summary_list, to: :helpers
+  delegate :govuk_summary_list, to: :helpers
 
   def link_to
     session_patient_programme_consent_path(session, patient, programme, consent)

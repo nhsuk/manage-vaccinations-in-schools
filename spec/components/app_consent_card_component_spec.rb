@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe AppConsentCardComponent do
-  subject { render_inline(component) }
+  subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(consent, session:) }
 
@@ -39,25 +39,28 @@ describe AppConsentCardComponent do
   it { should have_content("Response") }
   it { should have_content("Consent given") }
 
-  it { should_not have_content("Consent also given for injected vaccine?") }
-
   context "with the flu programme" do
     let(:programme) { create(:programme, :flu) }
     let(:consent) { create(:consent, programme:, vaccine_methods: %w[nasal]) }
 
-    it { should have_content("Consent also given for injected vaccine?") }
-    it { should have_content("No") }
+    it { should have_content("Chosen vaccineNasal spray only") }
+
+    context "and consenting to only injection" do
+      let(:consent) { create(:consent, :given_without_gelatine, programme:) }
+
+      it do
+        expect(rendered).to have_content(
+          "Chosen vaccineGelatine-free injected vaccine only"
+        )
+      end
+    end
 
     context "and consenting to multiple vaccine methods" do
       let(:consent) do
         create(:consent, programme:, vaccine_methods: %w[nasal injection])
       end
 
-      it { should have_content("Response") }
-      it { should have_content("Consent givenNasal spray") }
-
-      it { should have_content("Consent also given for injected vaccine?") }
-      it { should have_content("Yes") }
+      it { should have_content("Chosen vaccineNo preference") }
     end
   end
 end

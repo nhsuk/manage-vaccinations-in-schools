@@ -41,12 +41,6 @@ module ConsentsHelper
         "blue"
       end
 
-    vaccine_method =
-      if consent.vaccine_methods.present? &&
-           consent.programme.has_multiple_vaccine_methods?
-        Vaccine.human_enum_name(:method, consent.vaccine_methods.first)
-      end
-
     # We can’t use the colour param as NHS.UK frontend uses different colour
     # names (aqua-green) than those supported by GOV.UK Frontend (turquoise)
     if consent.invalidated? || consent.withdrawn?
@@ -57,7 +51,6 @@ module ConsentsHelper
         tag.span(class: "nhsuk-u-secondary-text-colour") do
           safe_join(
             [
-              (tag.s(vaccine_method) if vaccine_method),
               if consent.invalidated?
                 tag.span("Invalid")
               else
@@ -70,13 +63,7 @@ module ConsentsHelper
 
       safe_join([primary_tag, secondary_text])
     else
-      primary_tag = govuk_tag(text:, classes: "nhsuk-tag--#{colour}")
-      secondary_text =
-        if vaccine_method
-          tag.span(vaccine_method, class: "nhsuk-u-secondary-text-colour")
-        end
-
-      safe_join([primary_tag, secondary_text].compact)
+      govuk_tag(text:, classes: "nhsuk-tag--#{colour}")
     end
   end
 end

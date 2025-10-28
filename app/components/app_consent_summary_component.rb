@@ -45,8 +45,7 @@ class AppConsentSummaryComponent < ViewComponent::Base
       date_row,
       route_row,
       response_row,
-      injection_alternative_row,
-      without_gelatine_row,
+      chosen_vaccine_row,
       reason_for_refusal_row,
       notify_parents_on_vaccination_row,
       notify_parent_on_refusal_row,
@@ -130,32 +129,22 @@ class AppConsentSummaryComponent < ViewComponent::Base
     }
   end
 
-  def injection_alternative_row
-    return unless consent.vaccine_method_nasal?
+  def chosen_vaccine_row
+    unless programme.has_multiple_vaccine_methods? ||
+             programme.vaccine_may_contain_gelatine?
+      return
+    end
 
-    {
-      key: {
-        text: "Consent also given for injected vaccine?"
-      },
-      value: {
-        text: consent.vaccine_method_injection? ? "Yes" : "No"
-      }
-    }
-  end
+    value =
+      if consent.vaccine_method_nasal_only?
+        "Nasal spray only"
+      elsif consent.without_gelatine
+        "Gelatine-free injected vaccine only"
+      else
+        "No preference"
+      end
 
-  def without_gelatine_row
-    return if consent.without_gelatine.nil?
-    return if consent.vaccine_method_nasal?
-    return unless programme.vaccine_may_contain_gelatine?
-
-    {
-      key: {
-        text: "Consent given for gelatine-free vaccine only?"
-      },
-      value: {
-        text: consent.without_gelatine ? "Yes" : "No"
-      }
-    }
+    { key: { text: "Chosen vaccine" }, value: { text: value } }
   end
 
   def reason_for_refusal_row
