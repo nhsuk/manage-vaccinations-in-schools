@@ -166,7 +166,7 @@ class Reports::CareplusExporter
     [
       record.vaccine.snomed_product_code, # Vaccine X
       vaccine_code(record), # Code X field
-      "#{record.dose_sequence}P", # Dose X field
+      record.dose_sequence.present? ? "#{record.dose_sequence}P" : "", # Dose X field
       "", # Reason Not Given X
       coded_site(record.delivery_site), # Site X; Coded value
       record.vaccine.manufacturer, # Manufacturer X
