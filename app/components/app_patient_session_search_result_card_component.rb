@@ -132,15 +132,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           "#{I18n.t(status, scope: :activity)} for #{programme.name_in_sentence}"
         end
 
-    return if next_activities.empty?
-
-    if next_activities.size == 1
-      next_activities.first
-    else
-      tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
-        safe_join(next_activities.map { tag.li(it) })
-      end
-    end
+    render_bullet_list_or_single(next_activities)
   end
 
   def vaccine_type
@@ -170,13 +162,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         end
       end
 
-    return if labels.empty?
-
-    if labels.count == 1
-      labels.first
-    else
-      tag.ul(class: "nhsuk-list") { safe_join(labels.map { tag.li(it) }) }
-    end
+    render_bullet_list_or_single(labels)
   end
 
   def status_tags
@@ -288,6 +274,18 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     patient.patient_specific_directions.any? do
       it.programme_id.in?(programme_ids) && it.academic_year == academic_year &&
         !it.invalidated?
+    end
+  end
+
+  def render_bullet_list_or_single(items)
+    return if items.empty?
+
+    if items.size == 1
+      items.first
+    else
+      tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
+        safe_join(items.map { tag.li(it) })
+      end
     end
   end
 end
