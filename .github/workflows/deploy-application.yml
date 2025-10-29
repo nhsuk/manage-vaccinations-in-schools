@@ -175,6 +175,7 @@ jobs:
           family_name="mavis-${{ matrix.service }}-task-definition-$environment"
           echo "$(jq --arg f "$family_name" '.family = $f' "$file_path")" > "$file_path"
       - name: Deploy ${{ matrix.service }} service
+        id: ecs-deploy
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ runner.temp }}/${{ matrix.service }}-task-definition.json
@@ -182,3 +183,13 @@ jobs:
           service: mavis-${{ inputs.environment }}-${{ matrix.service }}
           force-new-deployment: true
           wait-for-service-stability: true
+      - name: Check if deployment was successful
+        run: |
+          current_task_definition_arn=$(aws ecs describe-services --cluster mavis-$environment --services mavis-$environment-${{ matrix.service }} --query services[0].deployments[0].taskDefinition | jq -r ".")
+          new_task_definition_arn=${{ steps.ecs-deploy.outputs.task-definition-arn }}
+          echo "Current task definition arn: $current_task_definition_arn"
+          echo "Expected task definition arn after deployment: $new_task_definition_arn"
+          if [ "$current_task_definition_arn" != "$new_task_definition_arn" ]; then
+            echo "Task definition arns don't match, likely due to a rollback to the previous version. Deployment failed."
+            exit 1
+          fi
