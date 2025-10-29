@@ -59,8 +59,8 @@ describe ImportantNotices do
       let(:vaccination_record) do
         create(
           :vaccination_record,
-          patient: patient,
-          programme: programme,
+          patient:,
+          programme:,
           notify_parents: false,
           performed_at:
         )

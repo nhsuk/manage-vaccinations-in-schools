@@ -80,8 +80,8 @@ class AppSessionDatesTableComponent < ViewComponent::Base
     @vaccination_records_by_date ||= {}
     @vaccination_records_by_date[programme.id] ||= VaccinationRecord
       .where(
-        programme: programme,
-        session: session,
+        programme:,
+        session:,
         patient_id: patients_for_programme(programme),
         outcome: :administered
       )

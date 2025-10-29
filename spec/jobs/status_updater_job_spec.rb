@@ -8,10 +8,7 @@ describe StatusUpdaterJob do
     let(:session) { build(:session) }
 
     it "calls the service class" do
-      expect(StatusUpdater).to receive(:call).with(
-        patient: patient,
-        session: session
-      )
+      expect(StatusUpdater).to receive(:call).with(patient:, session:)
       perform_now
     end
   end

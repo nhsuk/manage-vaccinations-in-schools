@@ -6,12 +6,12 @@ describe PDSCascadingSearchJob do
 
   let(:today) { Time.zone.local(2025, 9, 1, 12, 0, 0) }
   let(:programme) { create(:programme, :hpv) }
-  let(:school) { create(:school, urn: "123456", team: team) }
+  let(:school) { create(:school, urn: "123456", team:) }
   let(:team) { create(:team, programmes: [programme]) }
   let(:session) do
-    create(:session, team: team, location: school, programmes: [programme])
+    create(:session, team:, location: school, programmes: [programme])
   end
-  let(:import) { create(:cohort_import, team: team) }
+  let(:import) { create(:cohort_import, team:) }
   let(:mock_patient) { instance_double(PDS::Patient, nhs_number: "9449306168") }
 
   let(:patient_changeset) do

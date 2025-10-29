@@ -216,9 +216,9 @@ describe SessionNotification do
             :session_clinic_initial_invitation_ryg
           ).with(
             parent: parents.first,
-            patient: patient,
+            patient:,
             programmes:,
-            session: session,
+            session:,
             sent_by: current_user
           )
         end
@@ -228,9 +228,9 @@ describe SessionNotification do
             :session_clinic_initial_invitation_ryg
           ).with(
             parent: parents.first,
-            patient: patient,
+            patient:,
             programmes:,
-            session: session,
+            session:,
             sent_by: current_user
           )
         end

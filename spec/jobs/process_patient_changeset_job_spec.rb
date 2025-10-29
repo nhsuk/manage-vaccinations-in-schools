@@ -5,7 +5,7 @@ describe ProcessPatientChangesetJob do
 
   let(:programme) { create(:programme, :hpv) }
   let(:team) { create(:team, programmes: [programme]) }
-  let(:import) { create(:cohort_import, team: team) }
+  let(:import) { create(:cohort_import, team:) }
 
   let(:patient_changeset) do
     create(

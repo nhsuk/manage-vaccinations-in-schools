@@ -43,7 +43,7 @@ describe AppVaccinationsSummaryTableComponent do
         :vaccination_record,
         vaccine: hpv_vaccine,
         batch: hpv_batch,
-        session: session,
+        session:,
         programme: hpv_programme,
         performed_by_user: current_user
       )
@@ -52,7 +52,7 @@ describe AppVaccinationsSummaryTableComponent do
         :vaccination_record,
         vaccine: flu_vaccine,
         batch: flu_batch,
-        session: session,
+        session:,
         programme: flu_programme,
         performed_by_user: current_user
       )

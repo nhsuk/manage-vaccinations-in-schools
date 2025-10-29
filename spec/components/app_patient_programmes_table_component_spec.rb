@@ -78,7 +78,7 @@ describe AppPatientProgrammesTableComponent do
           programme: programmes.first,
           outcome: :contraindications,
           performed_at: today,
-          session: session
+          session:
         )
         StatusUpdater.call(patient:)
       end
@@ -97,7 +97,7 @@ describe AppPatientProgrammesTableComponent do
           programme: programmes.first,
           outcome: :not_well,
           performed_at: today,
-          session: session
+          session:
         )
         StatusUpdater.call(patient:)
       end
@@ -116,7 +116,7 @@ describe AppPatientProgrammesTableComponent do
           programme: programmes.first,
           outcome: :refused,
           performed_at: today,
-          session: session
+          session:
         )
         StatusUpdater.call(patient:)
       end
