@@ -181,15 +181,35 @@ class CommitPatientChangesetsJob
   end
 
   def has_auto_confirmable_school_move?(school_move, import)
-    (school_move.patient.school.nil? && !school_move.patient.home_educated) ||
-      school_move.patient.not_in_team?(
-        team: import.team,
-        academic_year: import.academic_year
-      ) || school_move.patient.archived?(team: import.team) ||
-      (
-        school_move.school == school_move.patient.school &&
-          school_move.home_educated == school_move.patient.home_educated
-      )
+    patient = school_move.patient
+    team = import.team
+    academic_year = import.academic_year
+
+    patient_has_no_education_location_yet?(patient:) ||
+      team_would_not_be_able_to_confirm_school_move?(
+        patient:,
+        team:,
+        academic_year:
+      ) || school_move_does_not_move_patient?(school_move:, patient:)
+  end
+
+  private
+
+  def patient_has_no_education_location_yet?(patient:)
+    patient.school.nil? && !patient.home_educated
+  end
+
+  def team_would_not_be_able_to_confirm_school_move?(
+    patient:,
+    team:,
+    academic_year:
+  )
+    patient.not_in_team?(team:, academic_year:) || patient.archived?(team:)
+  end
+
+  def school_move_does_not_move_patient?(school_move:, patient:)
+    school_move.school == patient.school &&
+      school_move.home_educated == patient.home_educated
   end
 
   def reset_counts(import)
