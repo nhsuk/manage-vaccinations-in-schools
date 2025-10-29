@@ -83,6 +83,7 @@ class Patient < ApplicationRecord
   has_many :vaccination_records, -> { kept }
   has_many :vaccination_statuses
   has_many :patient_specific_directions
+  has_many :patient_programme_vaccinations_searches
 
   has_many :locations, through: :patient_locations
   has_many :parents, through: :parent_relationships
@@ -399,6 +400,28 @@ class Patient < ApplicationRecord
 
           # TODO: Handle multiple programmes.
           where.not(not_eligible_criteria.first.arel.exists)
+        end
+
+  # Patients that are in the given academic year, across all the teams and who
+  # could potentially be given a vaccination, irrespenctive of eligibility for
+  # any particular vaccine.
+  scope :enrolled_in_academic_year,
+        ->(academic_year = AcademicYear.pending) do
+          matching_patient_locations =
+            PatientLocation
+              .select("1")
+              .where("patient_locations.patient_id = patients.id")
+              .where(academic_year:)
+              .arel
+          matching_archive_reasons =
+            ArchiveReason
+              .select("1")
+              .where("archive_reasons.patient_id = patients.id")
+              .arel
+
+          where(matching_patient_locations.exists)
+            .where.not(matching_archive_reasons.exists)
+            .not_deceased
         end
 
   validates :given_name, :family_name, :date_of_birth, presence: true

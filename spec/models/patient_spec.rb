@@ -464,6 +464,55 @@ describe Patient do
         end
       end
     end
+
+    describe "#enrolled_in_academic_year" do
+      subject(:scope) { described_class.enrolled_in_academic_year }
+
+      before { _patient_without_team = create(:patient) }
+
+      let(:session_a) { create(:session, programmes: [programme]) }
+      let(:session_b) { create(:session, programmes: [programme]) }
+      let(:programme) { create(:programme, :flu) }
+      let(:old_session) do
+        create(
+          :session,
+          programmes: [programme],
+          academic_year: AcademicYear.previous,
+          team: session_a.team
+        )
+      end
+      let!(:patient_a) { create(:patient, session: session_a) }
+      let!(:patient_b) { create(:patient, session: session_b) }
+      let!(:old_patient) { create(:patient, session: old_session) }
+
+      it "returns patients for all teams in the current academic year" do
+        expect(scope).to contain_exactly(patient_a, patient_b)
+      end
+
+      context "with academic year specified" do
+        subject(:scope) do
+          described_class.enrolled_in_academic_year(AcademicYear.previous)
+        end
+
+        it { should contain_exactly(old_patient) }
+      end
+
+      context "with a deceased patient" do
+        let!(:deceased_patient) do
+          create(:patient, :deceased, session: session_a)
+        end
+
+        it { should_not include(deceased_patient) }
+      end
+
+      context "with a archived patient" do
+        let!(:archived_patient) do
+          create(:patient, :archived, session: session_a)
+        end
+
+        it { should_not include(archived_patient) }
+      end
+    end
   end
 
   describe "validations" do

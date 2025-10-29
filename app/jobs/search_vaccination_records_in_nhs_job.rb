@@ -19,6 +19,12 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
         fhir_bundle =
           NHS::ImmunisationsAPI.search_immunisations(patient, programmes:)
 
+        programmes.each do |programme|
+          PatientProgrammeVaccinationsSearch
+            .find_or_initialize_by(patient:, programme:)
+            .tap { it.update!(last_searched_at: Time.current) }
+        end
+
         incoming_vaccination_records =
           extract_vaccination_records(fhir_bundle).map do |fhir_record|
             FHIRMapper::VaccinationRecord.from_fhir_record(

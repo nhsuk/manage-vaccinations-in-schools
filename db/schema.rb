@@ -568,6 +568,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
     t.index ["patient_id", "location_id", "academic_year"], name: "idx_on_patient_id_location_id_academic_year_08a1dc4afe", unique: true
   end
 
+  create_table "patient_programme_vaccinations_searches", force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.bigint "programme_id", null: false
+    t.datetime "last_searched_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["last_searched_at"], name: "idx_on_last_searched_at_96aaa59442"
+    t.index ["patient_id"], name: "index_patient_programme_vaccinations_searches_on_patient_id"
+    t.index ["programme_id"], name: "index_patient_programme_vaccinations_searches_on_programme_id"
+  end
+
   create_table "patient_registration_statuses", force: :cascade do |t|
     t.integer "status", default: 0, null: false
     t.bigint "patient_id", null: false
@@ -892,8 +903,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
     t.bigint "vaccine_id"
     t.boolean "full_dose"
     t.datetime "nhs_immunisations_api_synced_at"
-    t.string "nhs_immunisations_api_etag"
     t.string "nhs_immunisations_api_id"
+    t.string "nhs_immunisations_api_etag"
     t.integer "protocol"
     t.datetime "nhs_immunisations_api_sync_pending_at"
     t.boolean "notify_parents"
@@ -1023,6 +1034,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   add_foreign_key "patient_consent_statuses", "programmes"
   add_foreign_key "patient_locations", "locations"
   add_foreign_key "patient_locations", "patients"
+  add_foreign_key "patient_programme_vaccinations_searches", "patients"
+  add_foreign_key "patient_programme_vaccinations_searches", "programmes"
   add_foreign_key "patient_registration_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_registration_statuses", "sessions", on_delete: :cascade
   add_foreign_key "patient_specific_directions", "patients"

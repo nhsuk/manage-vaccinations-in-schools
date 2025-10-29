@@ -3,12 +3,22 @@ basic_auth: Require users to sign in with basic authentication before they
 
 dev_tools: Developer tools useful for testing and debugging.
 
+imms_api_enqueue_session_searches: |
+  Enables enqueueing of vaccination searches for upcoming sessions in the
+  EnqueueVaccinationsSearchInNHSJob.
+
+imms_api_enqueue_rolling_searches: |
+  Enables enqueueing of vaccination searches for patients not in sessions,
+  spread over a period of 28 days, in the EnqueueVaccinationsSearchInNHSJob.
+
 imms_api_integration: Umbrella flag to switch off ALL API integration (including CLI tools).
 
-imms_api_search_job: Flag to switch off any automated receipt of vaccination records (Read, Search),
+imms_api_search_job:
+  Flag to switch off any automated receipt of vaccination records (Read, Search),
   via scheduled jobs.
 
-imms_api_sync_job: Flag to switch off any automated sending of vaccination records
+imms_api_sync_job:
+  Flag to switch off any automated sending of vaccination records
   (Create, Update, Delete), triggered by the creation/edit/delete of any vaccination records.
 
 import_choose_academic_year: Add an option to choose the academic year when
@@ -26,6 +36,7 @@ tallying: Enables the session tally-based overview page
 
 testing_api: Basic API useful for automated testing.
 
-reporting_api: Enables the Commissioner reporting component to authenticate to Mavis via OAUTH 2.0
+reporting_api:
+  Enables the Commissioner reporting component to authenticate to Mavis via OAUTH 2.0
   Authorization Code Flow (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), and retrieve
   statistics from /api/reporting/
