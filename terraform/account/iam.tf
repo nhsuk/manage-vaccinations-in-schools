@@ -61,3 +61,29 @@ resource "aws_iam_role_policy_attachment" "dms_cloudwatch_logs_policy" {
   role       = aws_iam_role.dms_cloudwatch_logs_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonDMSCloudWatchLogsRole"
 }
+
+resource "aws_iam_policy" "data_replication_access" {
+  name        = "DataReplicationAccess"
+  description = "Allows shell access to Data Replication ECS tasks"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ecs:ListTasks",
+          "ecs:DescribeTasks",
+          "ecs:ExecuteCommand"
+        ]
+        Resource = [
+          "arn:aws:ecs:eu-west-2:${var.account_id}:cluster/mavis-*-data-replication*",
+          "arn:aws:ecs:eu-west-2:${var.account_id}:task/mavis-*-data-replication*/*",
+          "arn:aws:ecs:eu-west-2:${var.account_id}:container-instance/mavis-*-data-replication*/*"
+        ]
+      }
+    ]
+  })
+  lifecycle {
+    ignore_changes = [description]
+  }
+}
