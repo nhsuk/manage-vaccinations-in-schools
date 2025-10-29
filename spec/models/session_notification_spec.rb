@@ -236,6 +236,34 @@ describe SessionNotification do
         end
       end
 
+      context "when the team is Leicestershire Partnership Trust (LPT)" do
+        let(:team) { create(:team, ods_code: "RT5", programmes:) }
+
+        it "enqueues an email using the LPT-specific template" do
+          expect { create_and_send! }.to have_delivered_email(
+            :session_clinic_initial_invitation_rt5
+          ).with(
+            parent: parents.first,
+            patient: patient,
+            programmes:,
+            session: session,
+            sent_by: current_user
+          )
+        end
+
+        it "enqueues an SMS using the LPT-specific template" do
+          expect { create_and_send! }.to have_delivered_sms(
+            :session_clinic_initial_invitation_rt5
+          ).with(
+            parent: parents.first,
+            patient: patient,
+            programmes:,
+            session: session,
+            sent_by: current_user
+          )
+        end
+      end
+
       context "when parent doesn't want to receive updates by text" do
         let(:parent) { parents.first }
 

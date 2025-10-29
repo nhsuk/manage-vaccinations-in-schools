@@ -89,6 +89,17 @@ describe TriageMailerConcern do
           ).with(consent:, session:, sent_by: current_user)
         end
       end
+
+      context "when the team is Leicestershire Partnership Trust (LPT)" do
+        let(:session) { create(:session, programmes:, team:) }
+        let(:team) { create(:team, ods_code: "RT5") }
+
+        it "enqueues an email using the LPT-specific template" do
+          expect { send_triage_confirmation }.to have_delivered_email(
+            :triage_vaccination_at_clinic_rt5
+          ).with(consent:, session:, sent_by: current_user)
+        end
+      end
     end
 
     context "when the parents agree and triage is not required" do
