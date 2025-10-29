@@ -484,12 +484,7 @@ describe TimelineRecords do
 
     before do
       class_import_additional.location_id = session.id
-      create(
-        :patient_location,
-        patient:,
-        location: session.location,
-        session: session
-      )
+      create(:patient_location, patient:, location: session.location, session:)
       patient.class_imports = [class_import]
       patient.cohort_imports = cohort_imports_with_patient
       team.cohort_imports =
@@ -524,18 +519,13 @@ describe TimelineRecords do
   end
 
   describe "#patient_events" do
-    let(:class_imports) { create_list(:class_import, 3, session: session) }
+    let(:class_imports) { create_list(:class_import, 3, session:) }
     let(:cohort_imports) { create_list(:cohort_import, 3, team: session.team) }
 
     before do
       patient.class_imports = class_imports
       patient.cohort_imports = cohort_imports
-      create(
-        :patient_location,
-        patient:,
-        location: session.location,
-        session: session
-      )
+      create(:patient_location, patient:, location: session.location, session:)
     end
 
     context "with class imports" do
@@ -570,12 +560,7 @@ describe TimelineRecords do
         third_vaccination_record,
         fourth_vaccination_record
       ].each { |vr| patient.vaccination_records << vr }
-      create(
-        :patient_location,
-        patient:,
-        location: session.location,
-        session: session
-      )
+      create(:patient_location, patient:, location: session.location, session:)
       timeline.send(:load_events, %w[consents triages])
       timeline.send(:load_grouped_events, %w[consents triages])
     end

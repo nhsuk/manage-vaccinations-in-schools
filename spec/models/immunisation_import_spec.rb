@@ -420,7 +420,7 @@ describe ImmunisationImport do
         create(
           :consent,
           consent_status,
-          patient: patient,
+          patient:,
           parent: parent,
           programme: programmes.first,
           academic_year: AcademicYear.current

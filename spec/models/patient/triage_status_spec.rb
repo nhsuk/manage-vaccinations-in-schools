@@ -291,8 +291,8 @@ describe Patient::TriageStatus do
           create(
             :triage,
             :safe_to_vaccinate,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             created_at: Date.new(current_academic_year, 10, 15).in_time_zone
           )
         end
@@ -305,8 +305,8 @@ describe Patient::TriageStatus do
           create(
             :triage,
             :safe_to_vaccinate,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             created_at: Date.new(previous_academic_year, 10, 15).in_time_zone
           )
         end
@@ -319,15 +319,15 @@ describe Patient::TriageStatus do
           create(
             :triage,
             :safe_to_vaccinate,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             created_at: Date.new(current_academic_year, 10, 15).in_time_zone
           )
           create(
             :triage,
             :do_not_vaccinate,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             created_at: Date.new(previous_academic_year, 10, 15).in_time_zone
           )
         end
@@ -340,15 +340,15 @@ describe Patient::TriageStatus do
           create(
             :triage,
             :do_not_vaccinate,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             created_at: Date.new(current_academic_year, 10, 15).in_time_zone
           )
           create(
             :triage,
             :safe_to_vaccinate,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             created_at: Date.new(previous_academic_year, 10, 15).in_time_zone
           )
         end

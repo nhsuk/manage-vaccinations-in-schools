@@ -186,8 +186,8 @@ describe StatusGenerator::Consent do
           create(
             :consent,
             :given,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             parent: parent,
             submitted_at: Date.new(current_academic_year, 10, 15).in_time_zone
           )
@@ -201,8 +201,8 @@ describe StatusGenerator::Consent do
           create(
             :consent,
             :given,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             parent: parent,
             submitted_at: Date.new(previous_academic_year, 10, 15).in_time_zone
           )
@@ -216,16 +216,16 @@ describe StatusGenerator::Consent do
           create(
             :consent,
             :given,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             parent: parent,
             submitted_at: Date.new(current_academic_year, 10, 15).in_time_zone
           )
           create(
             :consent,
             :refused,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             parent: create(:parent),
             submitted_at: Date.new(previous_academic_year, 10, 15).in_time_zone
           )
@@ -239,16 +239,16 @@ describe StatusGenerator::Consent do
           create(
             :consent,
             :refused,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             parent: parent,
             submitted_at: Date.new(current_academic_year, 10, 15).in_time_zone
           )
           create(
             :consent,
             :given,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             parent: create(:parent),
             submitted_at: Date.new(previous_academic_year, 10, 15).in_time_zone
           )

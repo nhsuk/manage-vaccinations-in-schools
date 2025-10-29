@@ -289,8 +289,8 @@ describe Consent do
     let!(:consent_current_year_start) do
       create(
         :consent,
-        patient: patient,
-        programme: programme,
+        patient:,
+        programme:,
         parent: parent,
         submitted_at: Date.new(current_academic_year, 9, 1).in_time_zone,
         academic_year: current_academic_year
@@ -301,7 +301,7 @@ describe Consent do
       create(
         :consent,
         patient: create(:patient),
-        programme: programme,
+        programme:,
         parent: parent,
         submitted_at: Date.new(current_academic_year + 1, 1, 15).in_time_zone,
         academic_year: current_academic_year
@@ -312,7 +312,7 @@ describe Consent do
       create(
         :consent,
         patient: create(:patient),
-        programme: programme,
+        programme:,
         parent: parent,
         submitted_at: Date.new(current_academic_year + 1, 8, 31).in_time_zone,
         academic_year: current_academic_year
@@ -323,7 +323,7 @@ describe Consent do
       create(
         :consent,
         patient: create(:patient),
-        programme: programme,
+        programme:,
         parent: parent,
         submitted_at: Date.new(previous_academic_year, 10, 15).in_time_zone,
         academic_year: previous_academic_year
@@ -334,7 +334,7 @@ describe Consent do
       create(
         :consent,
         patient: create(:patient),
-        programme: programme,
+        programme:,
         parent: parent,
         submitted_at: Date.new(next_academic_year, 10, 15).in_time_zone,
         academic_year: next_academic_year
