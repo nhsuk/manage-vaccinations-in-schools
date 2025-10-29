@@ -385,7 +385,7 @@ def create_mmr_health_questions(vaccine)
   household_immune_system =
     vaccine.health_questions.create!(
       title:
-        "Is the child in regular close contact with anyone currently " \
+        "Is your child in regular close contact with anyone currently " \
           "having treatment that severely affects their immune system?",
       give_details_hint:
         "Let us know if they can avoid contact with this person for 2 weeks"
@@ -405,7 +405,7 @@ def create_mmr_health_questions(vaccine)
   medical_conditions =
     vaccine.health_questions.create!(
       title:
-        "Does the child have any other medical conditions we should know about?"
+        "Does your child have any other medical conditions we should know about?"
     )
 
   contraindications.update!(next_question: medical_conditions)
