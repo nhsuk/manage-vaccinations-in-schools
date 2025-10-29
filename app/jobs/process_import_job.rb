@@ -6,10 +6,14 @@ class ProcessImportJob < ApplicationJob
   queue_as :imports
 
   def perform(import)
-    import.parse_rows!
+    SemanticLogger.tagged(import_id: import.id) do
+      Sentry.set_tags(import_id: import.id)
 
-    return if import.rows_are_invalid?
+      import.parse_rows!
 
-    import.process!
+      return if import.rows_are_invalid?
+
+      import.process!
+    end
   end
 end
