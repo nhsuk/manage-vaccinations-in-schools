@@ -102,7 +102,7 @@ class PatientStatusResolver
       text = I18n.t(status, scope: %i[status vaccination label])
 
       if (count = vaccination_status.dose_sequence)
-        text += " for #{I18n.t(count, scope: :ordinal_number)} dose"
+        text += " for #{count.ordinalize} dose"
       end
 
       colour = I18n.t(status, scope: %i[status vaccination colour])
