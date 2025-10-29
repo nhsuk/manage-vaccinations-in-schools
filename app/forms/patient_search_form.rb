@@ -95,6 +95,10 @@ class PatientSearchForm < SearchForm
     filter_still_to_vaccinate(scope)
   end
 
+  def any_filters_applied?
+    attributes.any? { |_, v| v.present? }
+  end
+
   private
 
   attr_reader :current_user, :session
