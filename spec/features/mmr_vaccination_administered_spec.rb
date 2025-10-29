@@ -20,6 +20,9 @@ describe "MMR vaccination" do
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_to_the_parent_confirming_the_vaccination
     and_a_text_is_sent_to_the_parent_confirming_the_vaccination
+
+    when_i_visit_the_patient_mmr_tab
+    then_i_should_see_a_triage_for_the_next_vaccination_dose
   end
 
   scenario "administered without gelatine" do
@@ -227,5 +230,14 @@ describe "MMR vaccination" do
       @patient.consents.last.parent.phone,
       :vaccination_administered
     )
+  end
+
+  def when_i_visit_the_patient_mmr_tab
+    visit session_patient_programme_path(@session, @patient, @programme)
+  end
+
+  def then_i_should_see_a_triage_for_the_next_vaccination_dose
+    expect(page).to have_content("MMR: Delay vaccination")
+    expect(page).to have_content("Next dose 29 October 2024")
   end
 end
