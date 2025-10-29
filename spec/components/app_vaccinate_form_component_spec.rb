@@ -32,7 +32,7 @@ describe AppVaccinateFormComponent do
 
   context "with a flu programme and consent to nasal spray" do
     let(:programme) { create(:programme, :flu) }
-    let(:academic_year) { Date.current.academic_year }
+    let(:academic_year) { AcademicYear.current }
 
     before do
       patient.consent_status(programme:, academic_year:).update!(
@@ -73,7 +73,7 @@ describe AppVaccinateFormComponent do
 
   context "with a flu programme, consent to nasal spray, but triaged for injection" do
     let(:programme) { create(:programme, :flu) }
-    let(:academic_year) { Date.current.academic_year }
+    let(:academic_year) { AcademicYear.current }
 
     before do
       patient.consent_status(programme:, academic_year:).update!(

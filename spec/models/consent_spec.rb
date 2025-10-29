@@ -278,7 +278,7 @@ describe Consent do
   end
 
   describe "#for_academic_year" do
-    let(:current_academic_year) { Date.current.academic_year }
+    let(:current_academic_year) { AcademicYear.current }
     let(:previous_academic_year) { current_academic_year - 1 }
     let(:next_academic_year) { current_academic_year + 1 }
 

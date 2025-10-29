@@ -26,7 +26,7 @@ class Generate::Triages
 
   attr_reader :team, :programme
 
-  def academic_year = Date.current.academic_year
+  def academic_year = AcademicYear.current
 
   def patients
     (@session.presence || team)

@@ -166,7 +166,7 @@ describe AppPatientSessionSearchResultCardComponent do
 
     context "and the programme is flu" do
       let(:programme) { create(:programme, :flu) }
-      let(:academic_year) { Date.current.academic_year }
+      let(:academic_year) { AcademicYear.current }
 
       it { should have_text("Vaccine type") }
       it { should have_text("Nasal") }
