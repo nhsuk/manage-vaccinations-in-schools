@@ -32,15 +32,36 @@ describe PatientStatusResolver do
     it { should eq({ text: "Not eligible", colour: "grey" }) }
 
     context "with details" do
+      let(:session) { create(:session, programmes: [programme]) }
       let(:patient) do
         create(:patient, :consent_given_triage_not_needed, session:)
       end
-      let(:session) { create(:session, programmes: [programme]) }
 
       it do
         expect(hash).to eq(
           { text: "Due", colour: "white", details_text: "Consent given" }
         )
+      end
+    end
+
+    context "for MMR programme" do
+      let(:programme) { create(:programme, :mmr) }
+
+      context "and eligible for 1st dose" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) { create(:patient, session:) }
+
+        before { StatusUpdater.call(patient:) }
+
+        it do
+          expect(hash).to eq(
+            {
+              text: "Eligible for 1st dose",
+              colour: "white",
+              details_text: "No response"
+            }
+          )
+        end
       end
     end
   end
