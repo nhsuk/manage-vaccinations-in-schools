@@ -34,7 +34,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
           <% end %>
         <% end %>
         
-        <% if tallying_enabled? %>
+        <% if tallying_enabled? && (show_still_to_vaccinate || show_eligible_children) %>
             <%= f.govuk_check_boxes_fieldset :show_only,
                                              multiple: true,
                                              legend: { text: "Show only", size: "s" },
@@ -102,7 +102,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
 
         <% if vaccination_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :vaccination_status,
-                                             legend: { text: "Outcome", size: "s" },
+                                             legend: { text: "Vaccination status", size: "s" },
                                              small: true do %>
             <%= f.govuk_radio_button :vaccination_status, "", checked: form.vaccination_status.blank?, label: { text: "Any" } %>
 

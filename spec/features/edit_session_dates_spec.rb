@@ -38,7 +38,13 @@ describe "Edit session dates" do
 
   def and_the_session_has_unvaccinated_catch_up_patients
     create(:patient, :vaccinated, session: @session, year_group: 9)
-    create_list(:patient, 9, session: @session, year_group: 9)
+    create_list(
+      :patient,
+      9,
+      :eligible_for_vaccination,
+      session: @session,
+      year_group: 9
+    )
   end
 
   def when_i_visit_the_session_overview_page

@@ -23,7 +23,6 @@ describe "Parental consent" do
 
     when_the_nurse_checks_the_consent_responses
     then_they_see_that_the_child_has_consent_refused
-    and_the_programme_outcome_is_could_not_vaccinate
   end
 
   def given_an_hpv_programme_is_underway
@@ -142,18 +141,6 @@ describe "Parental consent" do
     expect(page).to have_content("Consent refused")
     check "Consent refused"
     click_on "Update results"
-    expect(page).to have_content(@child.full_name)
-  end
-
-  def and_the_programme_outcome_is_could_not_vaccinate
-    click_on "Programmes", match: :first
-    click_on "HPV", match: :first
-
-    within(".app-secondary-navigation") { click_on "Children" }
-
-    choose "Could not vaccinate"
-    click_on "Update results"
-
     expect(page).to have_content(@child.full_name)
   end
 end

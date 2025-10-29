@@ -9,10 +9,10 @@ describe AppVaccinationRecordAPISyncStatusComponent do
   let(:session) { create(:session, programmes: [programme]) }
 
   let(:component) { described_class.new(vaccination_record) }
-  let(:rendered_component) { render_inline(component) }
+  let(:rendered) { render_inline(component) }
 
   describe "#call" do
-    subject(:formatted_status) { rendered_component.to_html }
+    subject(:formatted_status) { rendered.to_html }
 
     context "when sync_status is :not_synced" do
       context "when vaccination has notify_parents nil (and is a historic record)" do

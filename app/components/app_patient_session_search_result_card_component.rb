@@ -199,33 +199,14 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def consent_status_tag
     {
       key: :consent,
-      value:
-        render(
-          AppProgrammeStatusTagsComponent.new(
-            programmes.index_with do |programme|
-              consent_status_value(programme:, academic_year:)
-            end,
-            context: :consent
-          )
-        )
+      value: render(AppAttachedTagsComponent.new(attached_tags(:consent)))
     }
   end
 
   def vaccination_status_tag
     {
       key: :vaccination,
-      value:
-        render(
-          AppProgrammeStatusTagsComponent.new(
-            programmes.index_with do |programme|
-              patient.vaccination_status(programme:, academic_year:).slice(
-                :status,
-                :latest_session_status
-              )
-            end,
-            context: :vaccination
-          )
-        )
+      value: render(AppAttachedTagsComponent.new(attached_tags(:vaccination)))
     }
   end
 
@@ -245,48 +226,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def triage_status_tag
     {
       key: :triage,
-      value:
-        render(
-          AppProgrammeStatusTagsComponent.new(
-            programmes.index_with do |programme|
-              triage_status_value(programme:, academic_year:)
-            end,
-            context: :triage
-          )
-        )
+      value: render(AppAttachedTagsComponent.new(attached_tags(:triage)))
     }
-  end
-
-  def consent_status_value(programme:, academic_year:)
-    consent_status = patient.consent_status(programme:, academic_year:)
-
-    if programme.has_multiple_vaccine_methods?
-      triage_status = patient.triage_status(programme:, academic_year:)
-
-      if triage_status.vaccine_method.present?
-        return(
-          {
-            status: consent_status.status,
-            vaccine_method: triage_status.vaccine_method,
-            without_gelatine: triage_status.without_gelatine
-          }
-        )
-      end
-    end
-
-    {
-      status: consent_status.status,
-      vaccine_method: consent_status.vaccine_methods.first,
-      without_gelatine: consent_status.without_gelatine
-    }
-  end
-
-  def triage_status_value(programme:, academic_year:)
-    patient.triage_status(programme:, academic_year:).slice(
-      :status,
-      :vaccine_method,
-      :without_gelatine
-    )
   end
 
   def patient_specific_direction_status_tag
@@ -300,6 +241,17 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           )
         )
     }
+  end
+
+  def attached_tags(context)
+    programmes.each_with_object({}) do |programme, hash|
+      hash[programme.name] = PatientStatusResolver.new(
+        patient,
+        programme:,
+        academic_year:,
+        context_location: session.location
+      ).send(context)
+    end
   end
 
   def latest_note
