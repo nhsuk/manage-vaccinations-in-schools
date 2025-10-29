@@ -317,7 +317,7 @@ end
 def create_mmr_health_questions(vaccine)
   bleeding =
     vaccine.health_questions.create!(
-      title: "Does your child have a bleeding disorder"
+      title: "Does your child have a bleeding disorder?"
     )
 
   blood_thinning =
