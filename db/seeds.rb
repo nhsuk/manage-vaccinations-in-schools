@@ -136,9 +136,7 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
         vaccinated
       ]
 
-      if programme.vaccinated_dose_sequence != 1
-        traits << :partially_vaccinated_triage_needed
-      end
+      traits << :partially_vaccinated_triage_needed if programme.td_ipv?
 
       traits.each do |trait|
         FactoryBot.create_list(

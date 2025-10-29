@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_16_163100) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -618,6 +618,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_163100) do
     t.datetime "status_changed_at"
     t.bigint "latest_location_id"
     t.date "latest_date"
+    t.integer "dose_sequence"
     t.index ["latest_location_id"], name: "index_patient_vaccination_statuses_on_latest_location_id"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_fc0b47b743", unique: true
     t.index ["status"], name: "index_patient_vaccination_statuses_on_status"

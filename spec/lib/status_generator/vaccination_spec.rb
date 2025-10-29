@@ -270,6 +270,63 @@ describe StatusGenerator::Vaccination do
       end
     end
 
+    context "with an MMR programme" do
+      let(:programme) { create(:programme, :mmr) }
+
+      context "when eligible" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) { create(:patient, session:) }
+
+        it { should be(:eligible) }
+      end
+
+      context "when eligible and has consent" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
+        end
+
+        it { should be(:due) }
+      end
+
+      context "with a valid first dose" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
+        end
+
+        before do
+          create(
+            :vaccination_record,
+            patient:,
+            programme:,
+            performed_at: patient.date_of_birth + 1.year
+          )
+        end
+
+        it { should be(:eligible) }
+
+        context "and then triaged as safe to vaccinate" do
+          before { create(:triage, :safe_to_vaccinate, patient:, programme:) }
+
+          it { should be(:due) }
+
+          context "and a valid second dose" do
+            before do
+              create(
+                :vaccination_record,
+                patient:,
+                programme:,
+                performed_at: patient.date_of_birth + 1.year + 3.months
+              )
+            end
+
+            it { should be(:vaccinated) }
+          end
+        end
+      end
+    end
+
     context "with an Td/IPV programme" do
       let(:programme) { create(:programme, :td_ipv) }
 
@@ -426,6 +483,30 @@ describe StatusGenerator::Vaccination do
       before { create(:vaccination_record, :discarded, patient:, programme:) }
 
       it { should be(:not_eligible) }
+    end
+  end
+
+  describe "#dose_sequence" do
+    subject(:dose_sequence) { generator.dose_sequence }
+
+    it { should be_nil }
+
+    context "for MMR programme" do
+      let(:programme) { create(:programme, :mmr) }
+      let(:session) { create(:session, programmes: [programme]) }
+      let(:patient) do
+        create(:patient, :consent_given_triage_not_needed, session:)
+      end
+
+      it { should eq(1) }
+
+      context "with an existing vaccination record" do
+        before do
+          create(:vaccination_record, patient:, programme:, dose_sequence: 1)
+        end
+
+        it { should eq(2) }
+      end
     end
   end
 
