@@ -25,6 +25,8 @@ module TriagesHelper
         "aqua-green"
       elsif triage.do_not_vaccinate?
         "red"
+      elsif triage.delay_vaccination?
+        "dark-orange"
       else
         "blue"
       end

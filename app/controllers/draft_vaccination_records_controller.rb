@@ -22,6 +22,8 @@ class DraftVaccinationRecordsController < ApplicationController
 
   after_action :verify_authorized
 
+  MINIMUM_MMR_DOSE_INTERVAL_DAYS = 28
+
   def show
     authorize @vaccination_record,
               @vaccination_record.new_record? ? :new? : :edit?
@@ -127,6 +129,10 @@ class DraftVaccinationRecordsController < ApplicationController
         )
     end
     @vaccination_record.save!
+
+    if @vaccination_record.administered? && @programme.mmr?
+      create_triage_record_for_next_mmr_vaccination
+    end
 
     StatusUpdater.call(patient: @patient)
 
@@ -264,6 +270,29 @@ class DraftVaccinationRecordsController < ApplicationController
     VaccineCriteria.new(
       vaccine_methods: [vaccine_method].compact,
       without_gelatine:
+    )
+  end
+
+  def create_triage_record_for_next_mmr_vaccination
+    dose_sequences =
+      @patient
+        .vaccination_statuses
+        .where(programme: @programme)
+        .pluck(:dose_sequence)
+
+    return if dose_sequences.include?(@programme.maximum_dose_sequence)
+
+    delay_date = MINIMUM_MMR_DOSE_INTERVAL_DAYS.days.from_now.to_date
+
+    Triage.create!(
+      patient: @patient,
+      team: @session.team,
+      programme: @programme,
+      performed_by: current_user,
+      status: "delay_vaccination",
+      academic_year: @session.academic_year,
+      notes: "Next dose #{delay_date.strftime("%d %B %Y")}",
+      delay_vaccination_until: delay_date
     )
   end
 end
