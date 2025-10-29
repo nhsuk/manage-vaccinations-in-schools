@@ -276,7 +276,7 @@ describe Patient::TriageStatus do
   end
 
   describe "academic year filtering" do
-    let(:current_academic_year) { Date.current.academic_year }
+    let(:current_academic_year) { AcademicYear.current }
     let(:previous_academic_year) { current_academic_year - 1 }
     let(:patient) { create(:patient) }
     let(:programme) { create(:programme) }

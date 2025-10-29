@@ -417,7 +417,7 @@ describe Patient do
 
       let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
       let(:session) { create(:session, programmes:) }
-      let(:academic_year) { Date.current.academic_year }
+      let(:academic_year) { AcademicYear.current }
       let(:vaccine_method) { nil }
       let(:without_gelatine) { nil }
 
