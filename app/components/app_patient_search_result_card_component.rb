@@ -69,7 +69,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
             end
           end
           summary_list.with_row do |row|
-            row.with_key { "Vaccination status" }
+            row.with_key { "Programme status" }
             row.with_value { vaccination_status_tag }
           end
         end

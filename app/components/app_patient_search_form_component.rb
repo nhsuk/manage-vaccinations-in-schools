@@ -102,7 +102,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
 
         <% if vaccination_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :vaccination_status,
-                                             legend: { text: "Vaccination status", size: "s" },
+                                             legend: { text: "Programme status", size: "s" },
                                              small: true do %>
             <%= f.govuk_radio_button :vaccination_status, "", checked: form.vaccination_status.blank?, label: { text: "Any" } %>
 

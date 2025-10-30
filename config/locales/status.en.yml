@@ -5,7 +5,7 @@ en:
       patient_specific_direction: PSD status
       register: Registration status
       triage: Triage status
-      vaccination: Vaccination status
+      vaccination: Programme status
     consent:
       label:
         conflicts: Conflicting consent
@@ -66,12 +66,12 @@ en:
         safe_to_vaccinate_without_gelatine: aqua-green
     vaccination:
       label:
-        due: Due
+        due: Due vaccination
         eligible: Eligible
         not_eligible: Not eligible
         vaccinated: Vaccinated
       colour:
-        due: white
+        due: aqua-green
         eligible: white
         not_eligible: grey
         vaccinated: green
