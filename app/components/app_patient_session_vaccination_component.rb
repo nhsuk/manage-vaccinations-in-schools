@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppPatientSessionVaccinationComponent < ViewComponent::Base
+class AppPatientSessionVaccinationComponent < AppPatientSessionSectionComponent
   erb_template <<-ERB
     <h3 class="nhsuk-heading-m">Programme status</h3>
     
@@ -15,12 +15,6 @@ class AppPatientSessionVaccinationComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(patient:, session:, programme:)
-    @patient = patient
-    @session = session
-    @programme = programme
-  end
-
   def render?
     patient
       .vaccination_records
@@ -31,22 +25,7 @@ class AppPatientSessionVaccinationComponent < ViewComponent::Base
 
   private
 
-  attr_reader :patient, :session, :programme
-
-  delegate :academic_year, to: :session
-
-  def colour
-    I18n.t(status, scope: %i[status vaccination colour])
+  def resolved_status
+    @resolved_status ||= patient_status_resolver.vaccination
   end
-
-  def heading
-    "#{programme.name}: #{I18n.t(status, scope: %i[status vaccination label])}"
-  end
-
-  def vaccination_status
-    @vaccination_status ||=
-      patient.vaccination_status(programme:, academic_year:)
-  end
-
-  delegate :status, to: :vaccination_status
 end
