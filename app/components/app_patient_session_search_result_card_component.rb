@@ -234,7 +234,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       hash[programme.name] = PatientStatusResolver.new(
         patient,
         programme:,
-        academic_year:
+        academic_year:,
+        context_location: session.location
       ).send(context)
     end
   end
