@@ -5,7 +5,6 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   FILTERS = {
     academic_year: :academic_year,
     programme: :programme_type,
-    team_id: :team_id,
     organisation_id: :organisation_id,
     gender: :patient_gender_code,
     year_group: :patient_year_group,
@@ -42,7 +41,8 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   # GET /api/reporting/totals
   # Params:
   # - all keys in the FILTERS constant can be passed to filter the results returned
-  #   e.g. academic_year=2024&team_id=1&programme=flu
+  # - workgroup: team workgroup to filter by (looked up within user's organisations)
+  #   e.g. academic_year=2024&workgroup=teamworkgroup&programme=flu
   #
   # Returns JSON object with:
   #   - cohort: integer - total distinct patients
@@ -78,6 +78,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
         organisation_id: current_user.organisation_ids
       ).where(@filters.to_where_clause)
 
+    apply_workgroup_filter if params[:workgroup].present?
     apply_default_year_group_filter
   end
 
@@ -120,6 +121,15 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
              vaccinations_given: @scope.vaccinations_given_count,
              monthly_vaccinations_given: @scope.monthly_vaccinations_given
            }
+  end
+
+  def apply_workgroup_filter
+    team =
+      Team.find_by(
+        workgroup: params[:workgroup],
+        organisation_id: current_user.organisation_ids
+      )
+    @scope = @scope.where(team_id: team.id) if team
   end
 
   def apply_default_year_group_filter
