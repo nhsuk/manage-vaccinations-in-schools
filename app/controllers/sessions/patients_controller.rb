@@ -11,13 +11,7 @@ class Sessions::PatientsController < ApplicationController
   def show
     @statuses = Patient::VaccinationStatus.statuses.keys - %w[not_eligible]
 
-    scope =
-      @session.patients.includes(
-        :consent_statuses,
-        :triage_statuses,
-        :vaccination_statuses,
-        notes: :created_by
-      )
+    scope = @session.patients.includes_statuses.includes(notes: :created_by)
 
     patients = @form.apply(scope)
 
