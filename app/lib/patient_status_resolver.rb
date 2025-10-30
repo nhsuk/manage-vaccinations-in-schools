@@ -59,7 +59,11 @@ class PatientStatusResolver
   def vaccination
     if vaccination_status.vaccinated?
       details_text =
-        "Vaccinated on #{vaccination_status.latest_date.to_fs(:long)}"
+        if vaccination_status.latest_session_status_already_had?
+          "Already had the vaccine"
+        else
+          "Vaccinated on #{vaccination_status.latest_date.to_fs(:long)}"
+        end
 
       tag_hash("vaccinated", context: :vaccination).merge(details_text:)
     elsif vaccination_status.not_eligible?
