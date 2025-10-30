@@ -122,7 +122,6 @@ describe ClassImport do
         queue: :imports
       ).and_return(configured_job)
       allow(configured_job).to receive(:perform_later)
-      allow(CommitPatientChangesetsJob).to receive(:perform_later)
     end
 
     context "when import_search_pds flag is enabled" do
@@ -134,7 +133,7 @@ describe ClassImport do
 
         expect(configured_job).to have_received(:perform_later).exactly(4).times
 
-        expect(CommitPatientChangesetsJob).not_to have_received(:perform_later)
+        expect(CommitPatientChangesetsJob).not_to have_enqueued_sidekiq_job
       end
     end
 
@@ -144,9 +143,9 @@ describe ClassImport do
       it "marks all changesets as processed and enqueues CommitPatientChangesetsJob" do
         process!
 
-        expect(CommitPatientChangesetsJob).to have_received(
-          :perform_later
-        ).with(class_import)
+        expect(CommitPatientChangesetsJob).to have_enqueued_sidekiq_job(
+          class_import.to_global_id.to_s
+        )
 
         expect(configured_job).not_to have_received(:perform_later)
       end

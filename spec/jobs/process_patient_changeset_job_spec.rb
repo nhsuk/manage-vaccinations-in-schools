@@ -39,7 +39,7 @@ describe ProcessPatientChangesetJob do
       it "does not enqueue CommitPatientChangesetsJob" do
         expect {
           described_class.perform_now(patient_changeset)
-        }.not_to have_enqueued_job(CommitPatientChangesetsJob)
+        }.not_to enqueue_sidekiq_job(CommitPatientChangesetsJob)
       end
     end
 
@@ -166,7 +166,9 @@ describe ProcessPatientChangesetJob do
       it "enqueues CommitPatientChangesetsJob" do
         expect {
           described_class.perform_now(patient_changeset)
-        }.to have_enqueued_job(CommitPatientChangesetsJob).with(import)
+        }.to enqueue_sidekiq_job(CommitPatientChangesetsJob).with(
+          import.to_global_id.to_s
+        )
       end
     end
 

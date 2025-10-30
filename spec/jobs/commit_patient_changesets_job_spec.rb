@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 describe CommitPatientChangesetsJob do
-  subject(:perform_job) { described_class.perform_now(import) }
+  subject(:perform_job) do
+    described_class.new.perform(import.to_global_id.to_s)
+  end
 
   let(:programmes) { [create(:programme, :hpv)] }
   let(:team) { create(:team, :with_generic_clinic, programmes:) }
@@ -126,7 +128,10 @@ describe CommitPatientChangesetsJob do
 
       it "stores statistics on the import" do
         # stree-ignore
-        expect { perform_job }
+        expect {
+          perform_job
+          import.reload
+        }
           .to change(import, :exact_duplicate_record_count).to(0)
           .and change(import, :new_record_count).to(4)
           .and change(import, :changed_record_count).to(0)
@@ -423,6 +428,9 @@ describe CommitPatientChangesetsJob do
         it "marks the import as low_pds_match_rate and stops processing" do
           expect(import).to receive(:validate_pds_match_rate!).and_call_original
           expect(import).not_to receive(:postprocess_rows!)
+          allow(ClassImport).to receive(:find).with(import.id.to_s).and_return(
+            import
+          )
 
           perform_job
           expect(import.reload.status).to eq("low_pds_match_rate")
