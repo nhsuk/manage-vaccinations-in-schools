@@ -51,7 +51,7 @@ describe AppPatientProgrammesTableComponent do
       before { StatusUpdater.call(patient:) }
 
       it { should have_css(".nhsuk-tag--white", text: "Eligible") }
-      it { should have_content("Did not consent") }
+      it { should have_content("Consent refused") }
     end
 
     context "when triage outcome was 'Do not vaccinate'" do

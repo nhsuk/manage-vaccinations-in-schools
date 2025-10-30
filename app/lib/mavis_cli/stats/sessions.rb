@@ -40,7 +40,7 @@ module MavisCLI
           headers[:consent_given] = "Consent given"
         end
 
-        headers[:consent_refused] = "Did not consent"
+        headers[:consent_refused] = "Consent refused"
         headers[:vaccinated] = "Vaccinated"
 
         headers

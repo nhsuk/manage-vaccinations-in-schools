@@ -50,13 +50,13 @@ describe AppSessionOverviewTalliesComponent do
                      "Flu",
                      "Consent given for injection",
                      0
-    include_examples "displays correct count", "Flu", "Did not consent", 0
+    include_examples "displays correct count", "Flu", "Consent refused", 0
     include_examples "displays correct count", "Flu", "Vaccinated", 0
 
     include_examples "displays correct children due vaccination", "HPV", 0
     include_examples "displays correct count", "HPV", "No response", 0
     include_examples "displays correct count", "HPV", "Consent given", 0
-    include_examples "displays correct count", "HPV", "Did not consent", 0
+    include_examples "displays correct count", "HPV", "Consent refused", 0
     include_examples "displays correct count", "HPV", "Vaccinated", 0
   end
 
@@ -83,7 +83,7 @@ describe AppSessionOverviewTalliesComponent do
                        "Flu",
                        "Consent given for injection",
                        0
-      include_examples "displays correct count", "Flu", "Did not consent", 0
+      include_examples "displays correct count", "Flu", "Consent refused", 0
       include_examples "displays correct count", "Flu", "Vaccinated", 1
     end
 
@@ -116,7 +116,7 @@ describe AppSessionOverviewTalliesComponent do
                        "Flu",
                        "Consent given for injection",
                        1
-      include_examples "displays correct count", "Flu", "Did not consent", 0
+      include_examples "displays correct count", "Flu", "Consent refused", 0
       include_examples "displays correct count", "Flu", "Vaccinated", 0
     end
 
@@ -140,7 +140,7 @@ describe AppSessionOverviewTalliesComponent do
                        "Flu",
                        "Consent given for injection",
                        0
-      include_examples "displays correct count", "Flu", "Did not consent", 1
+      include_examples "displays correct count", "Flu", "Consent refused", 1
       include_examples "displays correct count", "Flu", "Vaccinated", 0
     end
 
@@ -158,7 +158,7 @@ describe AppSessionOverviewTalliesComponent do
       include_examples "displays correct children due vaccination", "HPV", 0
       include_examples "displays correct count", "HPV", "No response", 0
       include_examples "displays correct count", "HPV", "Consent given", 0
-      include_examples "displays correct count", "HPV", "Did not consent", 0
+      include_examples "displays correct count", "HPV", "Consent refused", 0
       include_examples "displays correct count", "HPV", "Vaccinated", 0
     end
 
@@ -183,7 +183,7 @@ describe AppSessionOverviewTalliesComponent do
                        "Flu",
                        "Consent given for injection",
                        0
-      include_examples "displays correct count", "Flu", "Did not consent", 0
+      include_examples "displays correct count", "Flu", "Consent refused", 0
       include_examples "displays correct count", "Flu", "Vaccinated", 0
     end
 
@@ -202,7 +202,7 @@ describe AppSessionOverviewTalliesComponent do
       include_examples "displays correct children due vaccination", "HPV", 0
       include_examples "displays correct count", "HPV", "No response", 0
       include_examples "displays correct count", "HPV", "Consent given", 0
-      include_examples "displays correct count", "HPV", "Did not consent", 0
+      include_examples "displays correct count", "HPV", "Consent refused", 0
       include_examples "displays correct count", "HPV", "Vaccinated", 0
     end
 
@@ -220,7 +220,7 @@ describe AppSessionOverviewTalliesComponent do
       include_examples "displays correct children due vaccination", "HPV", 1
       include_examples "displays correct count", "HPV", "No response", 0
       include_examples "displays correct count", "HPV", "Consent given", 0
-      include_examples "displays correct count", "HPV", "Did not consent", 0
+      include_examples "displays correct count", "HPV", "Consent refused", 0
       include_examples "displays correct count", "HPV", "Vaccinated", 0
     end
 
@@ -249,7 +249,7 @@ describe AppSessionOverviewTalliesComponent do
       include_examples "displays correct children due vaccination", "HPV", 1
       include_examples "displays correct count", "HPV", "No response", 0
       include_examples "displays correct count", "HPV", "Consent given", 0
-      include_examples "displays correct count", "HPV", "Did not consent", 0
+      include_examples "displays correct count", "HPV", "Consent refused", 0
       include_examples "displays correct count", "HPV", "Vaccinated", 0
     end
   end
@@ -281,7 +281,7 @@ describe AppSessionOverviewTalliesComponent do
     include_examples "displays correct children due vaccination", "HPV", 3
     include_examples "displays correct count", "HPV", "No response", 0
     include_examples "displays correct count", "HPV", "Consent given", 1
-    include_examples "displays correct count", "HPV", "Did not consent", 1
+    include_examples "displays correct count", "HPV", "Consent refused", 1
     include_examples "displays correct count", "HPV", "Vaccinated", 1
   end
 end
