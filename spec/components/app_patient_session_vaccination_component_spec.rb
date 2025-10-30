@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppPatientSessionOutcomeComponent do
+describe AppPatientSessionVaccinationComponent do
   let(:component) { described_class.new(patient:, session:, programme:) }
 
   let(:programme) { create(:programme, :hpv) }

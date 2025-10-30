@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class AppPatientSessionOutcomeComponent < ViewComponent::Base
+class AppPatientSessionVaccinationComponent < ViewComponent::Base
   erb_template <<-ERB
-    <h3 class="nhsuk-heading-m">Programme outcome</h3>
+    <h3 class="nhsuk-heading-m">Programme status</h3>
     
     <%= render AppCardComponent.new(feature: true) do |card| %>
       <% card.with_heading(level: 4, colour:) { heading } %>
