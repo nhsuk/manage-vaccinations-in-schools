@@ -46,6 +46,7 @@ class GovukNotifyPersonalisation
       full_and_preferred_patient_name:,
       has_multiple_dates:,
       location_name:,
+      mmr_second_dose_message:,
       next_or_today_session_date:,
       next_or_today_session_dates:,
       next_or_today_session_dates_or:,
@@ -182,6 +183,22 @@ class GovukNotifyPersonalisation
     else
       session&.location&.name
     end
+  end
+
+  def mmr_second_dose_message
+    programme = programmes.find(&:mmr?)
+    return if programme.nil?
+
+    vaccination_status = patient.vaccination_status(programme:, academic_year:)
+
+    return "" if vaccination_status.vaccinated?
+
+    [
+      "## Your child still needs a second dose of the MMR vaccine",
+      "To be fully protected against measles, mumps and rubella, your " \
+        "child needs a second dose of the vaccine. Our team will be in " \
+        "touch about this soon."
+    ].join("\n\n")
   end
 
   def next_or_today_session_date
