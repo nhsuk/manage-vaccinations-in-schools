@@ -3,9 +3,11 @@
 describe SearchVaccinationRecordsInNHSJob do
   subject(:perform) { described_class.new.perform(patient.id) }
 
-  let(:team) { create(:team) }
+  let(:organisation) { create(:organisation) }
+  let(:team) { create(:team, organisation:) }
+  let(:session) { create(:session, team:, programmes: [programme]) }
   let(:school) { create(:school, team:) }
-  let(:patient) { create(:patient, team:, school:, nhs_number:) }
+  let(:patient) { create(:patient, team:, session:, school:, nhs_number:) }
   let(:nhs_number) { "9449308357" }
   let!(:programme) { create(:programme, :flu) }
 
@@ -394,6 +396,42 @@ describe SearchVaccinationRecordsInNHSJob do
         :get,
         "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
       ).with(query: expected_query).to_return(status:, body:, headers:)
+    end
+
+    context "with per-organisation feature flagging" do
+      before { Flipper.disable(:imms_api_search_job) }
+
+      context "correct organisation" do
+        before { Flipper.enable(:imms_api_search_job, organisation) }
+
+        it "searches as expected" do
+          perform
+
+          expect(
+            a_request(
+              :get,
+              "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
+            ).with(query: expected_query)
+          ).to have_been_made.once
+        end
+      end
+
+      context "incorrect organisation" do
+        let(:other_organisation) { create(:organisation) }
+
+        before { Flipper.enable(:imms_api_search_job, other_organisation) }
+
+        it "does not search" do
+          perform
+
+          expect(
+            a_request(
+              :get,
+              "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
+            ).with(query: expected_query)
+          ).not_to have_been_made
+        end
+      end
     end
 
     context "with 2 new incoming records" do

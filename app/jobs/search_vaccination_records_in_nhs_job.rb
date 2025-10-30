@@ -9,7 +9,11 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     SemanticLogger.tagged(tx_id:, job_id:) do
       Sentry.set_tags(tx_id:, job_id:)
 
-      return unless Flipper.enabled?(:imms_api_search_job)
+      feature_flag_enabled =
+        patient.teams.any? do
+          Flipper.enabled?(:imms_api_search_job, it.organisation)
+        end
+      return unless feature_flag_enabled
 
       programmes = Programme.can_search_in_immunisations_api
 
