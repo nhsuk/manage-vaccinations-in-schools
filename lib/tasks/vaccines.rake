@@ -413,7 +413,8 @@ def create_mmr_health_questions(vaccine)
   extra_support =
     vaccine.health_questions.create!(
       title: "Does your child need extra support during vaccination sessions?",
-      hint: "For example, they’re autistic, or extremely anxious"
+      hint: "For example, they’re autistic, or extremely anxious",
+      would_require_triage: false
     )
 
   medical_conditions.update!(next_question: extra_support)
