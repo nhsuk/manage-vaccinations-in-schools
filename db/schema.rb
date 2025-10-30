@@ -859,6 +859,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_123648) do
     t.string "privacy_policy_url", null: false
     t.enum "programme_types", null: false, array: true, enum_type: "programme_type"
     t.uuid "reply_to_id"
+    t.integer "type", null: false
     t.datetime "updated_at", null: false
     t.string "workgroup", null: false
     t.index ["name"], name: "index_teams_on_name", unique: true

@@ -16,6 +16,7 @@
 #  privacy_notice_url            :string           not null
 #  privacy_policy_url            :string           not null
 #  programme_types               :enum             not null, is an Array
+#  type                          :integer          not null
 #  workgroup                     :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
@@ -48,6 +49,12 @@ describe Team do
     it { should validate_presence_of(:phone) }
     it { should validate_presence_of(:privacy_policy_url) }
     it { should validate_presence_of(:workgroup) }
+
+    it do
+      expect(team).to validate_inclusion_of(:type).in_array(
+        %w[poc_only upload_only poc_with_legacy_upload]
+      )
+    end
 
     it { should validate_uniqueness_of(:name) }
     it { should validate_uniqueness_of(:workgroup) }
