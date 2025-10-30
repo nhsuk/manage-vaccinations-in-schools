@@ -58,7 +58,7 @@ class TriageForm
   end
 
   def other_options
-    %w[keep_in_triage delay_vaccination do_not_vaccinate]
+    %w[keep_in_triage invite_to_clinic delay_vaccination do_not_vaccinate]
   end
 
   def status_options

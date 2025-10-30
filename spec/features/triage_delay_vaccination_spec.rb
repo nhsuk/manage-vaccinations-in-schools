@@ -3,24 +3,24 @@
 describe "Triage" do
   around { |example| travel_to(Date.new(2025, 7, 1)) { example.run } }
 
-  scenario "delay vaccination" do
+  scenario "invite to clinic" do
     given_a_programme_with_a_running_session
     and_i_am_signed_in
     when_i_go_to_the_triage_page
 
     when_i_click_on_a_patient
-    and_i_enter_a_note_and_delay_vaccination
+    and_i_enter_a_note_and_invite_to_clinic
     then_i_see_an_alert_saying_the_record_was_saved
     and_a_vaccination_at_clinic_email_is_sent_to_the_parent
 
-    when_i_filter_by_delay_vaccination
+    when_i_filter_by_invited_to_clinic
     then_i_see_the_patient
 
     when_i_access_the_vaccinate_later_page
     then_i_see_the_patient
 
     when_i_view_the_child_record
-    then_they_should_have_the_status_banner_delay_vaccination
+    then_they_should_have_the_status_banner_invited_to_clinic
     and_i_am_not_able_to_record_a_vaccination
     and_i_am_able_to_update_the_triage
   end
@@ -56,6 +56,12 @@ describe "Triage" do
     click_link @patient.full_name
   end
 
+  def and_i_enter_a_note_and_invite_to_clinic
+    fill_in "Triage notes (optional)", with: "Invite to clinic"
+    choose "No, invite to clinic"
+    click_button "Save triage"
+  end
+
   def and_i_enter_a_note_and_delay_vaccination
     fill_in "Triage notes (optional)", with: "Delaying vaccination for 2 weeks"
     choose "No, delay vaccination (and invite to clinic)"
@@ -69,6 +75,12 @@ describe "Triage" do
   def and_a_vaccination_at_clinic_email_is_sent_to_the_parent
     expect_email_to @patient.consents.first.parent.email,
                     :triage_vaccination_at_clinic
+  end
+
+  def when_i_filter_by_invited_to_clinic
+    click_on "Triage"
+    choose "Invited to clinic"
+    click_on "Update results"
   end
 
   def when_i_filter_by_delay_vaccination
@@ -94,6 +106,10 @@ describe "Triage" do
 
   def then_they_should_have_the_status_banner_delay_vaccination
     expect(page).to have_content("Delay vaccination")
+  end
+
+  def then_they_should_have_the_status_banner_invited_to_clinic
+    expect(page).to have_content("Invite to clinic")
   end
 
   def and_i_am_not_able_to_record_a_vaccination

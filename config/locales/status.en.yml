@@ -47,6 +47,7 @@ en:
         unknown: grey
     triage:
       label:
+        invite_to_clinic: Invited to clinic
         delay_vaccination: Delay vaccination
         do_not_vaccinate: Do not vaccinate
         not_required: No triage needed
@@ -57,6 +58,7 @@ en:
         safe_to_vaccinate_without_gelatine: Safe to vaccinate with gelatine-free vaccine
       colour:
         delay_vaccination: dark-orange
+        invite_to_clinic: yellow
         do_not_vaccinate: red
         not_required: grey
         required: blue

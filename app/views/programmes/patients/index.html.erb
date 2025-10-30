@@ -22,7 +22,7 @@
           @form,
           url: programme_patients_path(@programme),
           consent_statuses: %w[no_response given refused conflicts],
-          triage_statuses: %w[required delay_vaccination do_not_vaccinate safe_to_vaccinate],
+          triage_statuses: %w[required invite_to_clinic delay_vaccination do_not_vaccinate safe_to_vaccinate],
           vaccination_statuses: Patient::VaccinationStatus.statuses.keys,
           year_groups: @year_groups,
         ) %>
