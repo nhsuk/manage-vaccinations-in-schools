@@ -77,7 +77,7 @@ class PatientStatusResolver
         elsif triage_status.delay_vaccination?
           "Delay vaccination"
         elsif consent_status.refused?
-          "Did not consent"
+          "Consent refused"
         elsif consent_status.conflicts?
           "Conflicting consent"
         elsif !vaccination_status.latest_session_status.nil?

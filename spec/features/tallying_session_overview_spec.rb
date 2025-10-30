@@ -102,7 +102,7 @@ describe "Tallying on session overview page" do
       expect(page).to have_content(1)
     end
 
-    within(".nhsuk-card", text: "Did not consent") do
+    within(".nhsuk-card", text: "Consent refused") do
       expect(page).to have_content(1)
     end
 
@@ -130,7 +130,7 @@ describe "Tallying on session overview page" do
 
     and_i_visit_the_session_record_tab
 
-    click_link "Did not consent"
+    click_link "Consent refused"
     expect(page).to have_content("Showing 1 to 1 of 1 children")
     expect(page).to have_content(@patients.fourth.given_name)
 
