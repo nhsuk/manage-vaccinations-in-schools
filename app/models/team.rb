@@ -15,6 +15,7 @@
 #  phone_instructions            :string
 #  privacy_notice_url            :string           not null
 #  privacy_policy_url            :string           not null
+#  team_type                     :integer          default("poc_only"), not null
 #  workgroup                     :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
@@ -67,6 +68,11 @@ class Team < ApplicationRecord
 
   normalizes :email, with: EmailAddressNormaliser.new
   normalizes :phone, with: PhoneNumberNormaliser.new
+
+  enum :team_type,
+       { poc_only: 0, upload_only: 1, poc_with_legacy_upload: 2 },
+       validate: true,
+       prefix: true
 
   validates :careplus_venue_code, presence: true
   validates :email, notify_safe_email: true

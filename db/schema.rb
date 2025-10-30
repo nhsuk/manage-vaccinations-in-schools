@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_29_071245) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_30_213843) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -804,6 +804,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_29_071245) do
     t.string "phone_instructions"
     t.bigint "organisation_id", null: false
     t.string "workgroup", null: false
+    t.integer "team_type", default: 0, null: false
     t.index ["name"], name: "index_teams_on_name", unique: true
     t.index ["organisation_id"], name: "index_teams_on_organisation_id"
     t.index ["workgroup"], name: "index_teams_on_workgroup", unique: true
