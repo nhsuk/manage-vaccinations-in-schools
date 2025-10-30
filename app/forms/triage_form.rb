@@ -39,6 +39,14 @@ class TriageForm
       end
   end
 
+  def notes
+    if programme.mmr? && delay_vaccination_until.present?
+      "Next dose #{delay_vaccination_until.strftime("%d %B %Y")}"
+    else
+      super
+    end
+  end
+
   def save
     save! if valid?
   end
@@ -211,12 +219,29 @@ class TriageForm
       )
     end
 
-    cutoff_date = Date.new(AcademicYear.current + 1, 8, 31)
+    cutoff_date = AcademicYear.current.to_academic_year_date_range.end
     if delay_vaccination_until > cutoff_date
       errors.add(
         :delay_vaccination_until,
         "The vaccination date cannot go beyond #{cutoff_date.strftime("%d %B %Y")}"
       )
     end
+
+    if programme.mmr?
+      next_mmr_dose_date = calculate_next_mmr_dose_date
+
+      if delay_vaccination_until < next_mmr_dose_date
+        errors.add(
+          :delay_vaccination_until,
+          "The vaccination cannot take place before #{next_mmr_dose_date.to_fs(:long)}"
+        )
+      end
+    end
+  end
+
+  def calculate_next_mmr_dose_date
+    vaccination_statuses = patient.vaccination_statuses.where(programme:)
+    vaccinated_on = vaccination_statuses.last&.latest_date
+    (vaccinated_on || Time.zone.today) + 28.days
   end
 end
