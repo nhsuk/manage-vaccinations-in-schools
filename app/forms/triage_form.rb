@@ -3,6 +3,7 @@
 class TriageForm
   include ActiveModel::Model
   include ActiveModel::Attributes
+  include ActiveRecord::AttributeAssignment
 
   include Notable
 
@@ -13,6 +14,7 @@ class TriageForm
   attribute :consent_without_gelatine, :boolean
   attribute :notes, :string
   attribute :status_option, :string
+  attribute :delay_vaccination_until, :date
 
   validates :add_patient_specific_direction,
             inclusion: {
@@ -20,6 +22,9 @@ class TriageForm
             },
             if: :requires_add_patient_specific_direction?
   validates :status_option, inclusion: { in: :status_options }
+
+  validates :delay_vaccination_until, presence: true, if: :delay_vaccination?
+  validate :validate_delay_vaccination_until_date
 
   def triage=(triage)
     self.status_option =
@@ -78,6 +83,10 @@ class TriageForm
 
   delegate :academic_year, :team, to: :session
 
+  def delay_vaccination?
+    status_option == "delay_vaccination"
+  end
+
   def consented_vaccine_methods
     @consented_vaccine_methods ||=
       consent_vaccine_methods.presence || consent_status.vaccine_methods
@@ -106,7 +115,8 @@ class TriageForm
       status:,
       team:,
       vaccine_method:,
-      without_gelatine:
+      without_gelatine:,
+      delay_vaccination_until:
     }
   end
 
@@ -189,5 +199,24 @@ class TriageForm
       .patient_specific_directions
       .where(academic_year:, programme:, team:)
       .invalidate_all
+  end
+
+  def validate_delay_vaccination_until_date
+    return if delay_vaccination_until.nil?
+
+    if delay_vaccination_until < Time.zone.today
+      errors.add(
+        :delay_vaccination_until,
+        "The vaccination cannot be in the past"
+      )
+    end
+
+    cutoff_date = Date.new(AcademicYear.current + 1, 8, 31)
+    if delay_vaccination_until > cutoff_date
+      errors.add(
+        :delay_vaccination_until,
+        "The vaccination date cannot go beyond #{cutoff_date.strftime("%d %B %Y")}"
+      )
+    end
   end
 end

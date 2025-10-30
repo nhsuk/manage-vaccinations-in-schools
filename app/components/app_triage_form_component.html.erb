@@ -17,7 +17,16 @@
     <%= f.govuk_radio_divider %>
 
     <% form.other_options.each do |option| %>
+      <% if option == "delay_vaccination" %>
+        <%= f.govuk_radio_button :status_option, option, link_errors: true do %>
+            <%= f.govuk_date_field :delay_vaccination_until,
+                                   legend: { text: "What is the earliest date #{form.patient.given_name} can be vaccinated?", size: "s" },
+                                   hint: { text: "For example, #{hint_date.strftime("%d %m %Y")}" },
+                                   link_errors: true %>
+        <% end %>
+      <% else %>
       <%= f.govuk_radio_button :status_option, option %>
+      <% end %>
     <% end %>
   <% end %>
 

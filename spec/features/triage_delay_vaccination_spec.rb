@@ -25,6 +25,28 @@ describe "Triage" do
     and_i_am_able_to_update_the_triage
   end
 
+  scenario "delay vaccination" do
+    given_a_programme_with_a_running_session
+    and_i_am_signed_in
+    when_i_go_to_the_triage_page
+
+    when_i_click_on_a_patient
+    and_i_choose_to_delay_vaccination
+    and_i_enter_a_date_beyond_the_current_academic_year
+    and_i_save_triage
+    then_i_see_an_error_that_date_cannot_be_beyond_academic_year
+
+    when_i_enter_valid_date
+    and_i_save_triage
+    then_i_see_an_alert_saying_the_record_was_saved
+
+    when_i_filter_by_delay_vaccination
+    then_i_see_the_patient
+
+    when_i_view_the_child_record
+    then_they_should_have_the_status_banner_delay_vaccination
+  end
+
   def given_a_programme_with_a_running_session
     programmes = [create(:programme, :hpv)]
     @team = create(:team, :with_one_nurse, programmes:)
@@ -59,13 +81,29 @@ describe "Triage" do
   def and_i_enter_a_note_and_invite_to_clinic
     fill_in "Triage notes (optional)", with: "Invite to clinic"
     choose "No, invite to clinic"
+    and_i_save_triage
+  end
+
+  def and_i_choose_to_delay_vaccination
+    choose "No, delay vaccination"
+  end
+
+  def and_i_enter_a_date_beyond_the_current_academic_year
+    fill_in_date(Date.new(2025, 9, 1))
+  end
+
+  def when_i_enter_valid_date
+    fill_in_date(1.week.from_now)
+  end
+
+  def and_i_save_triage
     click_button "Save triage"
   end
 
-  def and_i_enter_a_note_and_delay_vaccination
-    fill_in "Triage notes (optional)", with: "Delaying vaccination for 2 weeks"
-    choose "No, delay vaccination (and invite to clinic)"
-    click_button "Save triage"
+  def then_i_see_an_error_that_date_cannot_be_beyond_academic_year
+    expect(page).to have_content(
+      "The vaccination date cannot go beyond 31 August 2025"
+    )
   end
 
   def then_i_see_an_alert_saying_the_record_was_saved
@@ -118,5 +156,11 @@ describe "Triage" do
 
   def and_i_am_able_to_update_the_triage
     expect(page).to have_content("Update triage outcome")
+  end
+
+  def fill_in_date(date)
+    fill_in "Day", with: date.day
+    fill_in "Month", with: date.month
+    fill_in "Year", with: date.year
   end
 end
