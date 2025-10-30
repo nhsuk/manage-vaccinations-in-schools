@@ -31,7 +31,7 @@ describe PatientStatusResolver do
 
     it { should eq({ text: "Not eligible", colour: "grey" }) }
 
-    context "with details" do
+    context "and due" do
       let(:session) { create(:session, programmes: [programme]) }
       let(:patient) do
         create(:patient, :consent_given_triage_not_needed, session:)
@@ -39,7 +39,11 @@ describe PatientStatusResolver do
 
       it do
         expect(hash).to eq(
-          { text: "Due", colour: "white", details_text: "Consent given" }
+          {
+            text: "Due vaccination",
+            colour: "white",
+            details_text: "Consent given"
+          }
         )
       end
     end
