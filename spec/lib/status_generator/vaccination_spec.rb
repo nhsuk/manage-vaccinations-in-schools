@@ -999,13 +999,27 @@ describe StatusGenerator::Vaccination do
   end
 
   describe "#latest_session_status" do
-    subject(:status) { generator.latest_session_status }
+    subject { generator.latest_session_status }
 
     let(:programme) { create(:programme, :hpv) }
     let(:patient) { create(:patient, session:) }
 
     context "with no vaccination record" do
       it { should be_nil }
+    end
+
+    context "with a vaccination already had" do
+      before do
+        create(
+          :vaccination_record,
+          :already_had,
+          patient:,
+          session:,
+          programme:
+        )
+      end
+
+      it { should be(:already_had) }
     end
 
     context "with a vaccination not administered" do

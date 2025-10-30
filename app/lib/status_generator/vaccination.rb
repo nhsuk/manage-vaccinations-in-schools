@@ -69,7 +69,9 @@ class StatusGenerator::Vaccination
   end
 
   def latest_session_status
-    if status_should_be_due? || status_should_be_eligible?
+    if status_should_be_vaccinated?
+      :already_had if latest_session_status_should_be_already_had?
+    elsif status_should_be_due? || status_should_be_eligible?
       if latest_session_status_should_be_contraindicated?
         :contraindicated
       elsif latest_session_status_should_be_refused?
@@ -122,6 +124,10 @@ class StatusGenerator::Vaccination
 
   def latest_session_status_should_be_unwell?
     vaccination_records.last&.not_well?
+  end
+
+  def latest_session_status_should_be_already_had?
+    vaccinated_vaccination_record&.already_had?
   end
 
   def programme_id = programme.id

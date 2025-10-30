@@ -61,7 +61,7 @@ class Patient::VaccinationStatus < ApplicationRecord
        validate: true
 
   enum :latest_session_status,
-       { refused: 0, absent: 1, unwell: 2, contraindicated: 3 },
+       { refused: 0, absent: 1, unwell: 2, contraindicated: 3, already_had: 4 },
        prefix: true,
        validate: {
          allow_nil: true

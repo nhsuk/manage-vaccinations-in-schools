@@ -28,11 +28,61 @@ describe PatientStatusResolver do
     subject(:hash) { status_attached_tag_resolver.vaccination }
 
     let(:programme) { create(:programme, :hpv) }
+    let(:session) { create(:session, programmes: [programme]) }
 
     it { should eq({ text: "Not eligible", colour: "grey" }) }
 
+    context "with an administered vaccination record" do
+      let(:patient) do
+        create(:patient, :consent_given_triage_not_needed, session:)
+      end
+
+      before do
+        create(
+          :vaccination_record,
+          :administered,
+          patient:,
+          programme:,
+          performed_at: Time.zone.local(2025, 10, 30)
+        )
+        StatusUpdater.call(patient:)
+        patient.reload
+      end
+
+      it do
+        expect(hash).to eq(
+          {
+            text: "Vaccinated",
+            colour: "green",
+            details_text: "Vaccinated on 30 October 2025"
+          }
+        )
+      end
+    end
+
+    context "with an already had vaccination record" do
+      let(:patient) do
+        create(:patient, :consent_given_triage_not_needed, session:)
+      end
+
+      before do
+        create(:vaccination_record, :already_had, patient:, programme:)
+        StatusUpdater.call(patient:)
+        patient.reload
+      end
+
+      it do
+        expect(hash).to eq(
+          {
+            text: "Vaccinated",
+            colour: "green",
+            details_text: "Already had the vaccine"
+          }
+        )
+      end
+    end
+
     context "and due" do
-      let(:session) { create(:session, programmes: [programme]) }
       let(:patient) do
         create(:patient, :consent_given_triage_not_needed, session:)
       end
@@ -50,7 +100,6 @@ describe PatientStatusResolver do
 
     context "for MMR programme" do
       let(:programme) { create(:programme, :mmr) }
-      let(:session) { create(:session, programmes: [programme]) }
 
       context "and eligible for 1st dose" do
         let(:patient) { create(:patient, session:) }
