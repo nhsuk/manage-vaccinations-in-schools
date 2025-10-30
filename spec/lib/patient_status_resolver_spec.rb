@@ -46,12 +46,15 @@ describe PatientStatusResolver do
 
     context "for MMR programme" do
       let(:programme) { create(:programme, :mmr) }
+      let(:session) { create(:session, programmes: [programme]) }
 
       context "and eligible for 1st dose" do
-        let(:session) { create(:session, programmes: [programme]) }
         let(:patient) { create(:patient, session:) }
 
-        before { StatusUpdater.call(patient:) }
+        before do
+          StatusUpdater.call(patient:)
+          patient.reload
+        end
 
         it do
           expect(hash).to eq(
@@ -59,6 +62,27 @@ describe PatientStatusResolver do
               text: "Eligible for 1st dose",
               colour: "white",
               details_text: "No response"
+            }
+          )
+        end
+      end
+
+      context "and due 1st dose" do
+        let(:patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
+        end
+
+        before do
+          StatusUpdater.call(patient:)
+          patient.reload
+        end
+
+        it do
+          expect(hash).to eq(
+            {
+              text: "Due 1st dose",
+              colour: "white",
+              details_text: "Consent given"
             }
           )
         end
