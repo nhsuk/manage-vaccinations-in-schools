@@ -9,7 +9,7 @@ class Sessions::PatientsController < ApplicationController
   layout "full"
 
   def show
-    @statuses = Patient::VaccinationStatus.statuses.keys
+    @statuses = Patient::VaccinationStatus.statuses.keys - %w[not_eligible]
 
     scope =
       @session.patients.includes(
