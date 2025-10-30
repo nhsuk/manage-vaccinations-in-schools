@@ -13,6 +13,7 @@ describe "Archive children" do
     and_an_archived_patient_exists
 
     when_i_visit_the_children_page
+    and_i_filter_for_flu
     then_i_see_only_the_unarchived_patient
 
     when_i_filter_to_see_only_archived_patients
@@ -51,6 +52,7 @@ describe "Archive children" do
     and_i_see_a_success_message
 
     when_i_visit_the_children_page
+    and_i_filter_for_flu
     then_i_see_only_the_duplicate_patient
   end
 
@@ -112,10 +114,12 @@ describe "Archive children" do
   end
 
   def given_an_team_exists
-    programmes = [create(:programme, :flu)]
+    hpv = create(:programme, :hpv)
+    flu = create(:programme, :flu)
+    programmes = [hpv, flu]
     @team = create(:team, :with_generic_clinic, programmes:)
 
-    @session = create(:session, team: @team, programmes:)
+    @session = create(:session, team: @team, programmes: [flu])
   end
 
   def and_i_am_signed_in
@@ -145,12 +149,18 @@ describe "Archive children" do
     visit patients_path
   end
 
+  def and_i_filter_for_flu
+    check "Flu"
+    click_button "Update results"
+  end
+
   def then_i_see_only_the_unarchived_patient
     expect(page).to have_content("1 child")
     expect(page).to have_content(@unarchived_patient.full_name)
   end
 
   def when_i_filter_to_see_only_archived_patients
+    uncheck "Flu"
     find(".nhsuk-details__summary").click
     check "Archived records"
     click_on "Search"

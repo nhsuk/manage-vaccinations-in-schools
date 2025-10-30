@@ -199,6 +199,8 @@ describe "Archive vaccination record" do
 
   def and_i_go_to_a_patient_that_is_vaccinated_via_all_children
     visit patients_path
+    check "Year 8"
+    click_button "Update results"
     click_on @patient.full_name
   end
 
