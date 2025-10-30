@@ -405,7 +405,8 @@ def create_mmr_health_questions(vaccine)
   medical_conditions =
     vaccine.health_questions.create!(
       title:
-        "Does your child have any other medical conditions we should know about?"
+        "Does your child have any other medical conditions we should know about?",
+      would_require_triage: false
     )
 
   contraindications.update!(next_question: medical_conditions)
