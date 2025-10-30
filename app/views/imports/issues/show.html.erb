@@ -61,8 +61,7 @@
                                          :itself,
                                          ->(option) { I18n.t(option, scope: "import_duplicate_form.options.label.#{@existing_or_deleted}", type: @type) },
                                          ->(option) { I18n.t(option, scope: "import_duplicate_form.options.hint.#{@existing_or_deleted}") },
-                                         bold_labels: false,
-                                         small: true %>
+                                         bold_labels: false %>
 
     <%= f.govuk_submit "Resolve duplicate" %>
   <% end %>
