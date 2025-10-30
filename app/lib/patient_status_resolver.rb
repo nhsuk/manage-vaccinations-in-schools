@@ -102,7 +102,12 @@ class PatientStatusResolver
       text = I18n.t(status, scope: %i[status vaccination label])
 
       if (count = vaccination_status.dose_sequence)
-        text += " for #{count.ordinalize} dose"
+        text +=
+          if vaccination_status.eligible?
+            " for #{count.ordinalize} dose"
+          elsif vaccination_status.due?
+            " #{count.ordinalize} dose"
+          end
       end
 
       colour = I18n.t(status, scope: %i[status vaccination colour])
