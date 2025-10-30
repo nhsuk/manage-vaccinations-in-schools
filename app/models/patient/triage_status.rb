@@ -44,7 +44,8 @@ class Patient::TriageStatus < ApplicationRecord
          required: 1,
          safe_to_vaccinate: 2,
          do_not_vaccinate: 3,
-         delay_vaccination: 4
+         delay_vaccination: 4,
+         invite_to_clinic: 5
        },
        default: :not_required,
        validate: true

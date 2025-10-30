@@ -889,6 +889,34 @@ FactoryBot.define do
       end
     end
 
+    trait :consent_given_triage_invite_to_clinic do
+      consent_given_triage_needed
+
+      triages do
+        programmes.map do |programme|
+          association(
+            :triage,
+            :invite_to_clinic,
+            patient: instance,
+            performed_by:,
+            programme:,
+            team:,
+            notes: "Invite to clinic"
+          )
+        end
+      end
+      triage_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_triage_status,
+            :invite_to_clinic,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
     trait :consent_given_triage_delay_vaccination do
       consent_given_triage_needed
 
