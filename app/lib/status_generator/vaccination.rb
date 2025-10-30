@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 class StatusGenerator::Vaccination
+  ##
+  # Creates a new instance of the status generator used to determine the
+  # vaccination status of a patient.
+  #
+  # The `consents`, `triages` and `vaccination_records` arguments are expected
+  # to already be sorted in reverse chronological order, meaning the most
+  # recent item is at the beginning of the array.
   def initialize(
     programme:,
     academic_year:,
@@ -110,20 +117,20 @@ class StatusGenerator::Vaccination
   def status_should_be_eligible? = is_eligible?
 
   def latest_session_status_should_be_contraindicated?
-    vaccination_records.last&.contraindications?
+    vaccination_records.first&.contraindications?
   end
 
   def latest_session_status_should_be_refused?
-    vaccination_records.last&.refused?
+    vaccination_records.first&.refused?
   end
 
   def latest_session_status_should_be_absent?
-    vaccination_records.last&.absent_from_session? ||
+    vaccination_records.first&.absent_from_session? ||
       attendance_record&.attending == false
   end
 
   def latest_session_status_should_be_unwell?
-    vaccination_records.last&.not_well?
+    vaccination_records.first&.not_well?
   end
 
   def latest_session_status_should_be_already_had?
@@ -180,7 +187,7 @@ class StatusGenerator::Vaccination
           patient.age_months(now: it.performed_at) >= 15
       end
 
-    [first_dose, second_dose].compact
+    [second_dose, first_dose].compact
   end
 
   def filter_hpv_vaccination_records(vaccination_records)
@@ -199,7 +206,9 @@ class StatusGenerator::Vaccination
         end
 
         if programme.mmr?
-          valid_vaccination_records.last if valid_vaccination_records.count >= 2
+          if valid_vaccination_records.count >= 2
+            valid_vaccination_records.first
+          end
         elsif programme.td_ipv?
           valid_vaccination_records.find do
             it.dose_sequence == 5 ||

@@ -13,7 +13,8 @@ describe StatusGenerator::Vaccination do
       consents: patient.consents,
       triages: patient.triages,
       attendance_record: patient.attendance_records.first,
-      vaccination_records: patient.vaccination_records
+      vaccination_records:
+        patient.vaccination_records.order(performed_at: :desc)
     )
   end
 
@@ -999,7 +1000,7 @@ describe StatusGenerator::Vaccination do
   end
 
   describe "#latest_session_status" do
-    subject { generator.latest_session_status }
+    subject(:latest_session_status) { generator.latest_session_status }
 
     let(:programme) { create(:programme, :hpv) }
     let(:patient) { create(:patient, session:) }
@@ -1040,6 +1041,33 @@ describe StatusGenerator::Vaccination do
       before { create(:attendance_record, :absent, patient:, session:) }
 
       it { should be(:absent) }
+    end
+
+    context "with two vaccination records" do
+      before do
+        create(
+          :vaccination_record,
+          :not_administered,
+          outcome: "refused",
+          patient:,
+          session:,
+          programme:,
+          performed_at: 1.week.ago
+        )
+        create(
+          :vaccination_record,
+          :not_administered,
+          outcome: "not_well",
+          patient:,
+          session:,
+          programme:,
+          performed_at: 2.weeks.ago
+        )
+      end
+
+      it "picks the most recent record" do
+        expect(latest_session_status).to eq(:refused)
+      end
     end
   end
 end
