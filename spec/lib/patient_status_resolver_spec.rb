@@ -41,7 +41,7 @@ describe PatientStatusResolver do
         expect(hash).to eq(
           {
             text: "Due vaccination",
-            colour: "white",
+            colour: "aqua-green",
             details_text: "Consent given"
           }
         )
@@ -85,7 +85,7 @@ describe PatientStatusResolver do
           expect(hash).to eq(
             {
               text: "Due 1st dose",
-              colour: "white",
+              colour: "aqua-green",
               details_text: "Consent given"
             }
           )
