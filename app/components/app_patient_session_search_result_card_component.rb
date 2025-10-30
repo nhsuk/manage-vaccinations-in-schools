@@ -235,7 +235,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         patient,
         programme:,
         academic_year:,
-        context_location: session.location
+        context_location_id: session.location_id
       ).send(context)
     end
   end
