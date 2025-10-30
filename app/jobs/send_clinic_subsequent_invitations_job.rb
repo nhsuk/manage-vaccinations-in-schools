@@ -24,13 +24,12 @@ class SendClinicSubsequentInvitationsJob < ApplicationJob
 
     session
       .patients
+      .includes_statuses
       .includes(
-        :consent_statuses,
         :consents,
         :parents,
         :session_notifications,
-        :vaccination_records,
-        :vaccination_statuses
+        :vaccination_records
       )
       .select { it.session_notifications.any? { it.session_id == session.id } }
       .select do |patient|
