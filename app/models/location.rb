@@ -38,8 +38,13 @@
 #
 class Location < ApplicationRecord
   include AddressConcern
+  include ContributesToPatientTeams
   include HasLocationProgrammeYearGroups
   include ODSCodeConcern
+
+  class ActiveRecord_Relation < ActiveRecord::Relation
+    include ContributesToPatientTeams::Relation
+  end
 
   self.inheritance_column = nil
 
