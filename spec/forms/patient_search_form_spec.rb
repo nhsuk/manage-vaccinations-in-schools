@@ -418,6 +418,52 @@ describe PatientSearchForm do
 
         expect(form.apply(scope)).to include(patient)
       end
+
+      context "with nasal" do
+        let(:triage_status) { "safe_to_vaccinate_nasal" }
+
+        it "filters on triage status" do
+          patient_safe_to_vaccinate_nasal =
+            create(
+              :patient,
+              :consent_given_nasal_triage_safe_to_vaccinate_nasal,
+              session:
+            )
+
+          create(
+            :patient,
+            :consent_given_injection_and_nasal_triage_safe_to_vaccinate_injection,
+            session:
+          )
+
+          expect(form.apply(scope)).to contain_exactly(
+            patient_safe_to_vaccinate_nasal
+          )
+        end
+      end
+
+      context "with injection without gelatine" do
+        let(:triage_status) { "safe_to_vaccinate_injection_without_gelatine" }
+
+        it "filters on consent status" do
+          patient_safe_to_vaccinate_injection_without_gelatine =
+            create(
+              :patient,
+              :consent_given_injection_and_nasal_triage_safe_to_vaccinate_injection,
+              session:
+            )
+
+          create(
+            :patient,
+            :consent_given_nasal_triage_safe_to_vaccinate_nasal,
+            session:
+          )
+
+          expect(form.apply(scope)).to contain_exactly(
+            patient_safe_to_vaccinate_injection_without_gelatine
+          )
+        end
+      end
     end
 
     context "filtering on patient specific direction status" do

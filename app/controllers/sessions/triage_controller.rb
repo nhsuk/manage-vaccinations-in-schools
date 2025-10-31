@@ -4,19 +4,21 @@ class Sessions::TriageController < ApplicationController
   include PatientSearchFormConcern
 
   before_action :set_session
+  before_action :set_statuses
   before_action :set_patient_search_form
 
   layout "full"
 
   def show
-    @statuses = Patient::TriageStatus.statuses.keys - %w[not_required]
+    statuses_except_not_required =
+      Patient::TriageStatus.statuses.keys - %w[not_required]
 
     scope =
       @session
         .patients
         .includes(:triage_statuses, notes: :created_by)
         .has_triage_status(
-          @statuses,
+          statuses_except_not_required,
           programme: @form.programmes,
           academic_year: @session.academic_year
         )
@@ -28,6 +30,29 @@ class Sessions::TriageController < ApplicationController
   private
 
   def set_session
-    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
+    @session =
+      policy_scope(Session).includes(programmes: :vaccines).find_by!(
+        slug: params[:session_slug]
+      )
+  end
+
+  def set_statuses
+    programmes = @session.programmes
+
+    @statuses = %w[required]
+
+    unless programmes.all?(&:has_multiple_vaccine_methods?)
+      @statuses << "safe_to_vaccinate_injection"
+    end
+
+    if programmes.any?(&:has_multiple_vaccine_methods?)
+      @statuses << "safe_to_vaccinate_nasal"
+    end
+
+    if programmes.any?(&:vaccine_may_contain_gelatine?)
+      @statuses << "safe_to_vaccinate_injection_without_gelatine"
+    end
+
+    @statuses += %w[do_not_vaccinate delay_vaccination invite_to_clinic]
   end
 end
