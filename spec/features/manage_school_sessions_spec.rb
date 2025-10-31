@@ -13,6 +13,9 @@ describe "Manage school sessions" do
     when_i_go_to_unscheduled_sessions
     then_i_see_the_school
 
+    when_i_seach_for_the_school
+    then_i_see_the_school
+
     when_i_click_on_the_school
     then_i_see_the_school_session
     and_i_see_a_child_in_the_cohort
@@ -151,6 +154,11 @@ describe "Manage school sessions" do
 
   def when_i_go_to_unscheduled_sessions
     choose "Unscheduled"
+    click_on "Update results"
+  end
+
+  def when_i_seach_for_the_school
+    fill_in "Search", with: @location.name
     click_on "Update results"
   end
 
