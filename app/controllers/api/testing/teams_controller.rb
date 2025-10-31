@@ -68,6 +68,8 @@ class API::Testing::TeamsController < API::Testing::BaseController
       VaccinationRecord.where(performed_ods_code: team.organisation.ods_code)
     )
 
+    TeamCachedCounts.new(team).reset_all!
+
     unless keep_itself
       log_destroy(Session.where(team:))
 

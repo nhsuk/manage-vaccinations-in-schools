@@ -43,6 +43,8 @@ class CommitPatientChangesetsJob
 
       import.postprocess_rows!
 
+      reset_counts(import)
+
       import.update_columns(
         processed_at: Time.zone.now,
         status: :processed,
@@ -179,5 +181,11 @@ class CommitPatientChangesetsJob
         team: import.team,
         academic_year: import.academic_year
       ) || school_move.patient.archived?(team: import.team)
+  end
+
+  def reset_counts(import)
+    cached_counts = TeamCachedCounts.new(import.team)
+    cached_counts.reset_import_issues!
+    cached_counts.reset_school_moves!
   end
 end
