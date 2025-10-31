@@ -44,7 +44,7 @@ describe PDSCascadingSearchJob do
         expect {
           described_class.perform_now(patient_changeset)
         }.to have_enqueued_job(ProcessPatientChangesetJob).with(
-          patient_changeset
+          patient_changeset.id
         )
 
         patient_changeset.reload
@@ -106,7 +106,7 @@ describe PDSCascadingSearchJob do
         expect {
           described_class.perform_now(patient_changeset)
         }.to have_enqueued_job(ProcessPatientChangesetJob).with(
-          patient_changeset
+          patient_changeset.id
         )
 
         patient_changeset.reload
@@ -184,7 +184,7 @@ describe PDSCascadingSearchJob do
             search_results: patient_changeset.search_results
           )
         }.to have_enqueued_job(ProcessPatientChangesetJob).with(
-          patient_changeset
+          patient_changeset.id
         )
       end
     end
@@ -202,7 +202,7 @@ describe PDSCascadingSearchJob do
         expect {
           described_class.perform_now(patient_changeset)
         }.to have_enqueued_job(ProcessPatientChangesetJob).with(
-          patient_changeset
+          patient_changeset.id
         )
 
         patient_changeset.reload
@@ -259,7 +259,7 @@ describe PDSCascadingSearchJob do
             step_name: :no_fuzzy_without_history
           )
         }.to have_enqueued_job(ProcessPatientChangesetJob).with(
-          patient_changeset
+          patient_changeset.id
         )
       end
     end
