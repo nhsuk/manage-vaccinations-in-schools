@@ -49,11 +49,14 @@ class PatientsController < ApplicationController
   end
 
   def invite_to_clinic
-    PatientLocation.find_or_create_by!(
-      patient: @patient,
-      location: current_team.generic_clinic,
-      academic_year: AcademicYear.pending
-    )
+    patient_location =
+      PatientLocation.find_or_create_by!(
+        patient: @patient,
+        location: current_team.generic_clinic,
+        academic_year: AcademicYear.pending
+      )
+
+    patient_location.search_vaccinations_from_nhs_immunisations_api
 
     redirect_to patient_path(@patient),
                 flash: {

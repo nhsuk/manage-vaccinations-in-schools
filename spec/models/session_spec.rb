@@ -186,6 +186,231 @@ describe Session do
         )
       end
     end
+
+    describe "#scheduled_for_search_in_nhs_immunisations_api" do
+      subject(:scope) do
+        described_class.scheduled_for_search_in_nhs_immunisations_api
+      end
+
+      let(:team) { create(:team) }
+      let(:flu) { create(:programme, :flu) }
+
+      let(:location) { create(:school, team:, programmes: [flu]) }
+
+      context "with a normal school session" do
+        let(:send_consent_requests_at) {}
+        let(:days_before_consent_reminders) { 7 }
+
+        let!(:session) do
+          create(
+            :session,
+            programmes: [flu],
+            academic_year: AcademicYear.pending,
+            dates:,
+            send_consent_requests_at: send_consent_requests_at,
+            days_before_consent_reminders: days_before_consent_reminders,
+            team:,
+            location:
+          )
+        end
+
+        context "with a specific unscheduled session" do
+          let(:dates) { [] }
+          let(:days_before_consent_reminders) { nil }
+
+          it "does not include unscheduled sessions" do
+            expect(scope).not_to include(session)
+          end
+        end
+
+        context "session with dates in the future" do
+          let(:dates) { [7.days.from_now] }
+          let(:send_consent_requests_at) { 14.days.ago }
+
+          it "is included" do
+            expect(scope).to include(session)
+          end
+
+          context "clinic session" do
+            let(:location) { create(:generic_clinic, team:, programmes: [flu]) }
+
+            it "is included" do
+              expect(scope).to include(session)
+            end
+          end
+        end
+
+        context "session with dates in the past",
+                within_academic_year: {
+                  from_start: 7.days
+                } do
+          let(:dates) { [7.days.ago] }
+          let(:send_consent_requests_at) { 30.days.ago }
+
+          it "is excluded" do
+            expect(scope).not_to include(session)
+          end
+        end
+
+        context "session with dates in the past and the future",
+                within_academic_year: {
+                  from_start: 7.days
+                } do
+          let(:send_consent_requests_at) { 28.days.ago }
+          let(:dates) { [7.days.ago, 7.days.from_now] }
+
+          it "is included" do
+            expect(scope).to include(session)
+          end
+        end
+
+        context "session with send_invitations_at in the future" do
+          let(:location) { create(:generic_clinic, team:, programmes: [flu]) }
+          let(:dates) { [17.days.from_now] }
+
+          let!(:session) do
+            create(
+              :session,
+              programmes: [flu],
+              academic_year: AcademicYear.pending,
+              dates:,
+              send_invitations_at: 2.days.from_now,
+              send_consent_requests_at: nil,
+              days_before_consent_reminders: nil,
+              team:,
+              location:
+            )
+          end
+
+          it "is included (within 2 days threshold)" do
+            expect(scope).to include(session)
+          end
+        end
+
+        context "session with send_consent_requests_at too far in the future" do
+          let(:dates) { [17.days.from_now] }
+          let(:send_consent_requests_at) { 3.days.from_now }
+
+          it "is excluded" do
+            expect(scope).not_to include(session)
+          end
+        end
+      end
+
+      shared_examples "notification date logic for scope" do |notification_date_field|
+        let(:dates) { [30.days.from_now] }
+
+        context "with notification date within threshold" do
+          let!(:session) do
+            session_attributes = {
+              programmes: [flu],
+              academic_year: AcademicYear.pending,
+              dates: dates,
+              team: team,
+              location: location
+            }
+
+            if notification_date_field == :send_invitations_at
+              session_attributes[:send_invitations_at] = 1.day.from_now
+              session_attributes[:send_consent_requests_at] = nil
+            else
+              session_attributes[:send_invitations_at] = nil
+              session_attributes[:send_consent_requests_at] = 1.day.from_now
+              session_attributes[:days_before_consent_reminders] = 7
+            end
+
+            create(:session, session_attributes)
+          end
+
+          it "includes the session" do
+            expect(scope).to include(session)
+          end
+        end
+
+        context "with notification date too far in future" do
+          let!(:session) do
+            session_attributes = {
+              programmes: [flu],
+              academic_year: AcademicYear.pending,
+              dates: dates,
+              team: team,
+              location: location
+            }
+
+            if notification_date_field == :send_invitations_at
+              session_attributes[:send_invitations_at] = 3.days.from_now
+              session_attributes[:send_consent_requests_at] = nil
+            else
+              session_attributes[:send_invitations_at] = nil
+              session_attributes[:send_consent_requests_at] = 3.days.from_now
+              session_attributes[:days_before_consent_reminders] = 7
+            end
+
+            create(:session, session_attributes)
+          end
+
+          it "excludes the session" do
+            expect(scope).not_to include(session)
+          end
+        end
+      end
+
+      context "testing notification date logic for different location types" do
+        context "generic clinic sessions" do
+          let(:location) { create(:generic_clinic, team:, programmes: [flu]) }
+
+          include_examples "notification date logic for scope",
+                           :send_invitations_at
+        end
+
+        context "school sessions" do
+          let(:location) { create(:school, team:, programmes: [flu]) }
+
+          include_examples "notification date logic for scope",
+                           :send_consent_requests_at
+        end
+
+        context "mixed session types" do
+          let(:generic_clinic) do
+            create(:generic_clinic, team:, programmes: [flu])
+          end
+          let(:school_location) { create(:school, team:, programmes: [flu]) }
+
+          let!(:generic_clinic_session) do
+            create(
+              :session,
+              programmes: [flu],
+              academic_year: AcademicYear.pending,
+              dates: [30.days.from_now],
+              send_invitations_at: 1.day.from_now,
+              send_consent_requests_at: nil,
+              days_before_consent_reminders: nil,
+              team: team,
+              location: generic_clinic
+            )
+          end
+
+          let!(:school_session) do
+            create(
+              :session,
+              programmes: [flu],
+              academic_year: AcademicYear.pending,
+              dates: [30.days.from_now],
+              send_invitations_at: nil,
+              send_consent_requests_at: 1.day.from_now,
+              days_before_consent_reminders: 7,
+              team: team,
+              location: school_location
+            )
+          end
+
+          it "includes all sessions when their respective notification dates are within threshold" do
+            expect(scope).to include(generic_clinic_session)
+            expect(scope).to include(school_session)
+          end
+        end
+      end
+    end
   end
 
   describe "#today?" do
@@ -443,6 +668,42 @@ describe Session do
 
     context "when the consent period closed yesterday" do
       let(:session) { create(:session, date: Date.current) }
+
+      it { should be(false) }
+    end
+  end
+
+  describe "#scheduled_for_search_in_nhs_immunisations_api?" do
+    subject(:scheduled?) do
+      session.scheduled_for_search_in_nhs_immunisations_api?
+    end
+
+    let(:team) { create(:team) }
+    let(:flu) { create(:programme, :flu) }
+    let(:location) { create(:school, team:, programmes: [flu]) }
+
+    let(:session) do
+      create(
+        :session,
+        programmes: [flu],
+        academic_year: AcademicYear.pending,
+        dates:,
+        send_consent_requests_at:,
+        team:,
+        location:
+      )
+    end
+
+    context "when the session meets the scope criteria" do
+      let(:dates) { [7.days.from_now] }
+      let(:send_consent_requests_at) { 14.days.ago }
+
+      it { should be(true) }
+    end
+
+    context "when the session does not meet the scope criteria" do
+      let(:dates) { [17.days.from_now] }
+      let(:send_consent_requests_at) { 3.days.from_now } # too far in the future
 
       it { should be(false) }
     end

@@ -168,6 +168,13 @@ class Location < ApplicationRecord
     ).merge("is_attached_to_team" => !subteam_id.nil?)
   end
 
+  def scheduled_for_search_in_nhs_immunisations_api?
+    Session
+      .where(location_id: id)
+      .scheduled_for_search_in_nhs_immunisations_api
+      .exists?
+  end
+
   def import_year_groups!(values, academic_year:, source:)
     Location::YearGroup.import!(
       %i[location_id academic_year value source],

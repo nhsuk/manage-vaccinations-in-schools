@@ -11,6 +11,11 @@ class ClinicPatientLocationsFactory
       patient_locations_to_create,
       on_duplicate_key_ignore: true
     )
+
+    if generic_clinic_session.scheduled_for_search_in_nhs_immunisations_api?
+      patient_ids = patient_locations_to_create.map { it.patient.id }
+      SearchVaccinationRecordsInNHSJob.perform_async(patient_ids.zip)
+    end
   end
 
   def patient_locations_to_create

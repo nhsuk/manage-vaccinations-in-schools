@@ -105,7 +105,10 @@ class SchoolMove < ApplicationRecord
 
     location = school || team.generic_clinic
 
-    PatientLocation.find_or_create_by!(patient:, location:, academic_year:)
+    patient_location =
+      PatientLocation.find_or_create_by!(patient:, location:, academic_year:)
+
+    patient_location.search_vaccinations_from_nhs_immunisations_api
 
     StatusUpdater.call(patient:)
   end

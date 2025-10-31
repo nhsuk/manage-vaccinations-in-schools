@@ -172,6 +172,23 @@ class Session < ApplicationRecord
 
   scope :registration_not_required, -> { where(requires_registration: false) }
 
+  scope :scheduled_for_search_in_nhs_immunisations_api,
+        -> do
+          scope =
+            Session
+              .includes(:session_dates)
+              .has_programmes(Programme.can_search_in_immunisations_api)
+              .where("session_dates.value >= ?", Time.zone.today)
+              .references(:session_dates)
+
+          scope.where("sessions.send_invitations_at <= ?", 2.days.from_now).or(
+            scope.where(
+              "sessions.send_consent_requests_at <= ?",
+              2.days.from_now
+            )
+          )
+        end
+
   before_create :set_slug
 
   delegate :clinic?, :generic_clinic?, :school?, to: :location
@@ -254,6 +271,10 @@ class Session < ApplicationRecord
       programme: programmes,
       academic_year:
     ).count
+  end
+
+  def scheduled_for_search_in_nhs_immunisations_api?
+    Session.where(id:).scheduled_for_search_in_nhs_immunisations_api.exists?
   end
 
   private
