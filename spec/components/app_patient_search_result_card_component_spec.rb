@@ -18,6 +18,7 @@ describe AppPatientSearchResultCardComponent do
   let(:link_to) { "/patient" }
   let(:programmes) { [] }
   let(:academic_year) { nil }
+  let(:show_consent_status) { false }
   let(:show_nhs_number) { false }
   let(:show_postcode) { false }
   let(:show_school) { false }
@@ -29,6 +30,7 @@ describe AppPatientSearchResultCardComponent do
       link_to:,
       programmes:,
       academic_year:,
+      show_consent_status:,
       show_nhs_number:,
       show_postcode:,
       show_school:,
@@ -66,14 +68,14 @@ describe AppPatientSearchResultCardComponent do
     let(:academic_year) { AcademicYear.current }
 
     it { should have_text("Programme statusFluNot eligible") }
+    it { should_not have_text("Triage status") }
+    it { should_not have_text("Consent status") }
 
-    context "when given a consent status" do
-      let(:consent_status) { "given" }
+    context "when showing the consent status" do
+      let(:show_consent_status) { true }
 
       it { should have_text("Consent statusFluNo response") }
     end
-
-    it { should_not have_text("Triage status") }
 
     context "when showing the triage status" do
       let(:show_triage_status) { true }

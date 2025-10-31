@@ -22,6 +22,7 @@
               patient,
               link_to: patient_path(patient),
               programmes: @form.programmes,
+              show_consent_status: @form.consent_statuses.present?,
               show_nhs_number: true,
               show_school: true,
               show_triage_status: @form.triage_status.present?,
