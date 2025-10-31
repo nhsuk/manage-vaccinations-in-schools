@@ -17,13 +17,9 @@ class CommitPatientChangesetsJob
 
   queue_as :imports
 
-  def perform(import_global_id)
-    import = GlobalID::Locator.locate(import_global_id)
-
-    if Flipper.enabled?(:import_low_pds_match_rate)
-      import.validate_pds_match_rate!
-      return if import.low_pds_match_rate?
-    end
+  def perform(patient_changeset_ids)
+    changesets = PatientChangeset.where(id: patient_changeset_ids)
+    import = changesets.first.import
 
     counts = import.class.const_get(:COUNT_COLUMNS).index_with(0)
 
