@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_29_071245) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -417,12 +417,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "location_programme_year_groups", force: :cascade do |t|
-    t.bigint "location_id"
     t.bigint "programme_id", null: false
-    t.integer "year_group"
-    t.integer "academic_year"
     t.bigint "location_year_group_id", null: false
-    t.index ["location_id", "academic_year", "programme_id", "year_group"], name: "idx_on_location_id_academic_year_programme_id_year__6ad5e2b67d", unique: true
     t.index ["location_year_group_id", "programme_id"], name: "idx_on_location_year_group_id_programme_id_405f51181e", unique: true
     t.index ["location_year_group_id"], name: "index_location_programme_year_groups_on_location_year_group_id"
     t.index ["programme_id"], name: "index_location_programme_year_groups_on_programme_id"
@@ -487,7 +483,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
     t.uuid "delivery_id"
     t.integer "delivery_status", default: 0, null: false
     t.bigint "parent_id"
-    t.string "recipient_deterministic"
     t.string "recipient", null: false
     t.integer "programme_ids", default: [], null: false, array: true
     t.index ["consent_form_id"], name: "index_notify_log_entries_on_consent_form_id"
@@ -615,7 +610,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
     t.integer "status", default: 0, null: false
     t.integer "academic_year", null: false
     t.integer "latest_session_status"
-    t.datetime "status_changed_at"
     t.bigint "latest_location_id"
     t.date "latest_date"
     t.integer "dose_sequence"
@@ -1004,7 +998,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   add_foreign_key "immunisation_imports_vaccination_records", "immunisation_imports", on_delete: :cascade
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records", on_delete: :cascade
   add_foreign_key "location_programme_year_groups", "location_year_groups", on_delete: :cascade
-  add_foreign_key "location_programme_year_groups", "locations", on_delete: :cascade
   add_foreign_key "location_programme_year_groups", "programmes", on_delete: :cascade
   add_foreign_key "location_year_groups", "locations", on_delete: :cascade
   add_foreign_key "locations", "subteams"
