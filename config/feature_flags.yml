@@ -5,8 +5,8 @@ dev_tools: Developer tools useful for testing and debugging.
 
 imms_api_integration: Umbrella flag to switch off ALL API integration (including CLI tools).
 
-imms_api_search_job: Flag to switch off any automated receipt of vaccination records (Read, Search),
-  via scheduled jobs.
+imms_api_search_job: Flag to switch off any automated receipt of vaccination records (Search),
+  as part of the search job. This feature flag can be enabled on a per-organisation basis.
 
 imms_api_sync_job: Flag to switch off any automated sending of vaccination records
   (Create, Update, Delete), triggered by the creation/edit/delete of any vaccination records.
