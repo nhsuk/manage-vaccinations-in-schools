@@ -111,4 +111,8 @@ class Team < ApplicationRecord
   def is_upload_only?
     team_type_upload_only?
   end
+
+  def is_poc?
+    team_type_poc_only? || team_type_poc_with_legacy_upload?
+  end
 end
