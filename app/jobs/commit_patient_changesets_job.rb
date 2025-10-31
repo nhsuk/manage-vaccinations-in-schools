@@ -121,11 +121,13 @@ class CommitPatientChangesetsJob
       # the duplicates won't be persisted, so we can skip those
       school_move.confirm! if school_move.patient.persisted?
     end
-
-    SchoolMove.import!(
-      importable_school_moves.to_a,
-      on_duplicate_key_update: :all
-    )
+    school_move_import_records = importable_school_moves.to_a
+    imported_ids =
+      SchoolMove.import!(
+        school_move_import_records,
+        on_duplicate_key_update: :all
+      ).ids
+    SyncPatientTeamJob.perform_later(SchoolMove, imported_ids)
   end
 
   def import_pds_search_results(changesets, import)

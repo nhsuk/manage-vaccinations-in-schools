@@ -37,6 +37,52 @@ describe PatientLocation do
     it { should have_many(:vaccination_records) }
   end
 
+  describe "callbacks" do
+    it "creates a patient team" do
+      expect { patient_location }.to change(PatientTeam, :count).by(1)
+
+      patient_team = PatientTeam.last
+      expect(patient_team.patient_id).to eq(patient_location.patient_id)
+      expect(patient_team.team_id).to eq(session.team_id)
+      expect(patient_team.sources).to eq(%w[patient_location])
+    end
+
+    it "deletes a patient team" do
+      patient_location
+
+      expect { patient_location.destroy! }.to change(PatientTeam, :count).by(-1)
+    end
+
+    it "creates patient teams in bulk" do
+      patient_location.update!(academic_year: 2000) # no sessions exist for this academic year
+
+      expect(PatientTeam.count).to eq(0)
+
+      expect {
+        described_class.where(
+          id: patient_location.id
+        ).update_all_and_sync_patient_teams(
+          academic_year: session.academic_year
+        )
+      }.to change(PatientTeam, :count).by(1)
+
+      patient_team = PatientTeam.last
+      expect(patient_team.patient_id).to eq(patient_location.patient_id)
+      expect(patient_team.team_id).to eq(session.team_id)
+      expect(patient_team.sources).to eq(%w[patient_location])
+    end
+
+    it "deletes patient teams in bulk" do
+      patient_location
+
+      expect {
+        described_class.where(
+          id: patient_location.id
+        ).delete_all_and_sync_patient_teams
+      }.to change(PatientTeam, :count).by(-1)
+    end
+  end
+
   describe "scopes" do
     describe "#appear_in_programmes" do
       subject(:scope) do

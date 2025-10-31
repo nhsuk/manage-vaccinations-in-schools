@@ -59,23 +59,23 @@ module MavisCLI
           )
         end
 
-        Session.where(location_id: old_loc.id).update_all(
-          location_id: new_loc.id
-        )
+        Session.where(
+          location_id: old_loc.id
+        ).update_all_and_sync_patient_teams(location_id: new_loc.id)
         Patient.where(school_id: old_loc.id).update_all(school_id: new_loc.id)
         PatientLocation.where(
           academic_year:,
           location_id: old_loc.id
-        ).update_all(location_id: new_loc.id)
+        ).update_all_and_sync_patient_teams(location_id: new_loc.id)
         ConsentForm.where(location_id: old_loc.id).update_all(
           location_id: new_loc.id
         )
         ConsentForm.where(school_id: old_loc.id).update_all(
           school_id: new_loc.id
         )
-        SchoolMove.where(school_id: old_loc.id).update_all(
-          school_id: new_loc.id
-        )
+        SchoolMove.where(
+          school_id: old_loc.id
+        ).update_all_and_sync_patient_teams(school_id: new_loc.id)
         Patient
           .where(school_id: new_loc.id)
           .find_each do |patient|

@@ -80,13 +80,23 @@ class ImmunisationImport < ApplicationRecord
     vaccination_records = @vaccination_records_batch.to_a
     patient_locations = @patient_locations_batch.to_a
 
-    VaccinationRecord.import(vaccination_records, on_duplicate_key_update: :all)
+    imported_ids =
+      VaccinationRecord.import(
+        vaccination_records,
+        on_duplicate_key_update: :all
+      ).ids
+    SyncPatientTeamJob.perform_later(VaccinationRecord, imported_ids)
 
     vaccination_records.each do |vaccination_record|
       AlreadyHadNotificationSender.call(vaccination_record:)
     end
 
-    PatientLocation.import(patient_locations, on_duplicate_key_ignore: :all)
+    imported_ids =
+      PatientLocation.import(
+        patient_locations,
+        on_duplicate_key_ignore: :all
+      ).ids
+    SyncPatientTeamJob.perform_later(PatientLocation, imported_ids)
 
     [
       [:vaccination_records, vaccination_records],
