@@ -50,7 +50,9 @@ class Team < ApplicationRecord
   has_many :sessions
   has_many :subteams
   has_many :team_programmes, -> { joins(:programme).order(:"programmes.type") }
+  has_many :patient_teams
 
+  has_many :patients, through: :patient_teams
   has_many :community_clinics, through: :subteams
   has_many :locations, through: :subteams
   has_many :programmes, through: :team_programmes
