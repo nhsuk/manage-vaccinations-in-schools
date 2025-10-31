@@ -35,14 +35,49 @@ class PatientChangeset < ApplicationRecord
   attribute :pending_changes,
             :jsonb,
             default: {
-              child: {
+              upload: {
+                child: {
+                },
+                parent_1: {
+                },
+                parent_2: {
+                },
+                academic_year: nil,
+                home_educated: nil,
+                school_move_source: nil
               },
-              parent_1: {
-              },
-              parent_2: {
-              },
-              search_results: []
+              search_results: [],
+              review: {
+                patient: {
+                },
+                school_move: {
+                }
+              }
             }
+
+  attribute :data,
+            :jsonb,
+            default: {
+              upload: {
+                child: {
+                },
+                parent_1: {
+                },
+                parent_2: {
+                },
+                academic_year: nil,
+                home_educated: nil,
+                school_move_source: nil
+              },
+              search_results: [],
+              review: {
+                patient: {
+                },
+                school_move: {
+                }
+              }
+            }
+
   belongs_to :import, polymorphic: true
   belongs_to :patient, optional: true
   belongs_to :school, class_name: "Location", optional: true
@@ -62,9 +97,9 @@ class PatientChangeset < ApplicationRecord
 
   scope :with_pds_search_attempted,
         -> do
-          where("pending_changes -> 'search_results' != '[]'::jsonb").where.not(
-            "jsonb_array_length(pending_changes -> 'search_results') = 1 AND 
-            (pending_changes -> 'search_results' -> 0 ->> 'result') = 'no_postcode'"
+          where("data -> 'search_results' != '[]'::jsonb").where.not(
+            "jsonb_array_length(data -> 'search_results') = 1 AND 
+            (data -> 'search_results' -> 0 ->> 'result') = 'no_postcode'"
           )
         end
 
@@ -74,23 +109,37 @@ class PatientChangeset < ApplicationRecord
       row_number:,
       school: row.school,
       uploaded_nhs_number: row.import_attributes[:nhs_number],
-      pending_changes: {
-        child: row.import_attributes,
-        academic_year: row.academic_year,
-        home_educated: row.home_educated,
-        # TODO: This should gotten from the import, but it does not provide.
-        #       Maybe one day.
-        school_move_source: row.school_move_source,
-        parent_1: row.parent_1_import_attributes,
-        parent_2: row.parent_2_import_attributes,
-        search_results: []
+      data: {
+        upload: {
+          child: row.import_attributes,
+          academic_year: row.academic_year,
+          home_educated: row.home_educated,
+          # TODO: This should gotten from the import, but it does not provide.
+          #       Maybe one day.
+          school_move_source: row.school_move_source,
+          parent_1: row.parent_1_import_attributes,
+          parent_2: row.parent_2_import_attributes
+        },
+        search_results: [],
+        review: {
+          patient: {
+          },
+          school_move: {
+          }
+        }
       }
     )
   end
 
   delegate :team, to: :import
 
-  def child_attributes = pending_changes["child"]
+  def data
+    super || pending_changes
+  end
+
+  def review_data = data["review"]
+
+  def child_attributes = data["upload"]["child"]
 
   def family_name = child_attributes["family_name"]
 
@@ -100,26 +149,28 @@ class PatientChangeset < ApplicationRecord
 
   def address_postcode = child_attributes["address_postcode"]
 
-  def parent_1_attributes = pending_changes["parent_1"]
+  def parent_1_attributes = data["upload"]["parent_1"]
 
-  def parent_2_attributes = pending_changes["parent_2"]
+  def parent_2_attributes = data["upload"]["parent_2"]
 
-  def search_results = pending_changes["search_results"]
+  def search_results = data["search_results"]
 
-  def academic_year = pending_changes["academic_year"]
+  def academic_year = data["upload"]["academic_year"]
 
-  def home_educated = pending_changes["home_educated"]
+  def home_educated = data["upload"]["home_educated"]
 
-  def school_move_source = pending_changes["school_move_source"]
+  def school_move_source = data["upload"]["school_move_source"]
+
+  def nhs_number = child_attributes["nhs_number"]
 
   def invalidate!
-    pending_changes["child"]["invalidated_at"] = Time.current
+    data["upload"]["child"]["invalidated_at"] = Time.current
   end
 
   def patient
     @patient ||=
       if (existing_patient = existing_patients.first)
-        prepare_patient_changes(existing_patient, pending_changes)
+        prepare_patient_changes(existing_patient)
       else
         Patient.new(
           child_attributes.merge(
@@ -240,7 +291,7 @@ class PatientChangeset < ApplicationRecord
     matches
   end
 
-  def prepare_patient_changes(existing_patient, _pending_changes)
+  def prepare_patient_changes(existing_patient)
     auto_accept_child_attributes(existing_patient)
     handle_address_updates(existing_patient)
     stage_and_handle_pending_changes(existing_patient)

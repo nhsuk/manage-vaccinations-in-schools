@@ -145,7 +145,7 @@ describe CommitPatientChangesetsJob do
 
       it "imports PDS search results when present" do
         changeset = import.changesets.first
-        changeset.pending_changes["search_results"] = [
+        changeset.data["search_results"] = [
           {
             "step" => "no_fuzzy_with_history",
             "result" => "one_match",
