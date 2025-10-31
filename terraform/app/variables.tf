@@ -137,6 +137,10 @@ locals {
   applications_accessing_secrets_or_parameters = toset([
     for server_type in local.server_types : server_type if length(local.task_secrets[server_type]) > 0
   ])
+
+  redis_cache_url   = "rediss://${aws_elasticache_serverless_cache.rails_cache.endpoint[0].address}:${aws_elasticache_serverless_cache.rails_cache.endpoint[0].port}"
+  redis_sidekiq_url = "rediss://${aws_elasticache_replication_group.valkey.primary_endpoint_address}:${var.valkey_port}"
+
   secret_values = tomap(
     {
       CORE = [{
@@ -215,11 +219,11 @@ locals {
       },
       {
         name  = "SIDEKIQ_REDIS_URL"
-        value = "rediss://${aws_elasticache_replication_group.valkey.primary_endpoint_address}:${var.valkey_port}"
+        value = local.redis_sidekiq_url
       },
       {
         name  = "REDIS_CACHE_URL"
-        value = "rediss://${aws_elasticache_serverless_cache.rails_cache.endpoint[0].address}:${aws_elasticache_serverless_cache.rails_cache.endpoint[0].port}"
+        value = local.redis_cache_url
       },
       {
         name  = "RAILS_ENV"
@@ -261,7 +265,15 @@ locals {
       {
         name  = "RAILS_ENV"
         value = var.environment == "production" ? "production" : "staging"
-      }
+      },
+      {
+        name  = "SIDEKIQ_REDIS_URL"
+        value = local.redis_sidekiq_url
+      },
+      {
+        name  = "REDIS_CACHE_URL"
+        value = local.redis_cache_url
+      },
     ]
   }
 
