@@ -527,6 +527,8 @@ GEM
       psych (>= 4.0.0)
       tsort
     redcarpet (3.6.1)
+    redis (5.4.1)
+      redis-client (>= 0.22.0)
     redis-client (0.26.1)
       connection_pool
     redis-prescription (2.6.0)
@@ -835,6 +837,7 @@ DEPENDENCIES
   rails (= 8.1.1)
   rails_semantic_logger
   rainbow
+  redis
   rladr
   rspec
   rspec-html-matchers
