@@ -168,7 +168,8 @@ class PatientChangeset < ApplicationRecord
     data["upload"]["child"]["invalidated_at"] = Time.current
   end
 
-  def patient
+  def patient(reload: false)
+    @patient = nil if reload
     @patient ||=
       if (existing_patient = existing_patients.first)
         prepare_patient_changes(existing_patient)
@@ -241,7 +242,8 @@ class PatientChangeset < ApplicationRecord
     end
   end
 
-  def school_move
+  def school_move(reload: false)
+    @school_move = nil if reload
     @school_move ||=
       begin
         return if patient.deceased?
@@ -298,6 +300,29 @@ class PatientChangeset < ApplicationRecord
     stage_and_handle_pending_changes(existing_patient)
 
     existing_patient
+  end
+
+  def calculate_review_data!
+    if patient(reload: true).nil?
+      update!(record_type: :new_patient)
+      return
+    end
+
+    data["review"]["patient"]["id"] = patient.id
+
+    if patient.pending_changes.any?
+      update!(record_type: :import_issue)
+      data["review"]["patient"]["pending_changes"] = patient.pending_changes
+    else
+      update!(record_type: :auto_match)
+    end
+
+    if school_move(reload: true).present? && !auto_accept_school_move?
+      data["review"]["school_move"]["school_id"] = school_move.school_id
+      data["review"]["school_move"]["home_educated"] = school_move.home_educated
+    end
+
+    save!
   end
 
   def auto_accept_child_attributes(existing_patient)

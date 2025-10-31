@@ -24,6 +24,45 @@ class PatientImport < ApplicationRecord
     return if valid_pds_match_rate? || changesets.count < CHANGESET_THRESHOLD
 
     update!(status: :low_pds_match_rate)
+    changesets.update_all(status: :import_invalid)
+  end
+
+  def validate_rows_are_unique!
+    row_errors = {}
+
+    nhs_duplicates =
+      changesets
+        .group_by(&:nhs_number)
+        .select { |nhs, cs| nhs.present? && cs.size > 1 }
+
+    nhs_duplicates.each_value do |changesets|
+      changesets.each do |cs|
+        row_errors["Row #{cs.row_number}"] ||= []
+        row_errors[
+          "Row #{cs.row_number}"
+        ] << "The same NHS number appears multiple times in this file."
+      end
+    end
+
+    patient_duplicates =
+      changesets
+        .group_by(&:patient_id)
+        .select { |pid, cs| pid.present? && cs.size > 1 }
+
+    patient_duplicates.each_value do |changesets|
+      changesets.each do |cs|
+        row_errors["Row #{cs.row_number}"] ||= []
+        row_errors[
+          "Row #{cs.row_number}"
+        ] << "The same Mavis patient record appears multiple times in this file."
+      end
+    end
+
+    if row_errors.any?
+      update!(status: :rows_are_invalid)
+      update!(serialized_errors: row_errors)
+      changesets.update_all(status: :import_invalid)
+    end
   end
 
   def pds_match_rate
