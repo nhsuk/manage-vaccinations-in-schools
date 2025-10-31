@@ -31,14 +31,14 @@ describe ProcessPatientChangesetJob do
       before { patient_changeset.processed! }
 
       it "does nothing" do
-        expect { described_class.perform_now(patient_changeset) }.not_to(
+        expect { described_class.perform_now(patient_changeset.id) }.not_to(
           change { patient_changeset.reload.updated_at }
         )
       end
 
       it "does not enqueue CommitPatientChangesetsJob" do
         expect {
-          described_class.perform_now(patient_changeset)
+          described_class.perform_now(patient_changeset.id)
         }.not_to enqueue_sidekiq_job(CommitPatientChangesetsJob)
       end
     end
@@ -62,23 +62,23 @@ describe ProcessPatientChangesetJob do
       end
 
       it "saves the NHS number to child_attributes" do
-        described_class.perform_now(patient_changeset)
+        described_class.perform_now(patient_changeset.id)
 
-        expect(patient_changeset.child_attributes["nhs_number"]).to eq(
+        expect(patient_changeset.reload.child_attributes["nhs_number"]).to eq(
           "9449306168"
         )
       end
 
       it "saves the NHS number to pds_nhs_number" do
-        described_class.perform_now(patient_changeset)
+        described_class.perform_now(patient_changeset.id)
 
-        expect(patient_changeset.pds_nhs_number).to eq("9449306168")
+        expect(patient_changeset.reload.pds_nhs_number).to eq("9449306168")
       end
 
       it "marks changeset as processed" do
-        described_class.perform_now(patient_changeset)
+        described_class.perform_now(patient_changeset.id)
 
-        expect(patient_changeset).to be_processed
+        expect(patient_changeset.reload).to be_processed
       end
     end
 
@@ -101,16 +101,18 @@ describe ProcessPatientChangesetJob do
       end
 
       it "does not save any NHS number" do
-        described_class.perform_now(patient_changeset)
+        described_class.perform_now(patient_changeset.id)
 
-        expect(patient_changeset.child_attributes["nhs_number"]).to be_nil
-        expect(patient_changeset.pds_nhs_number).to be_nil
+        expect(
+          patient_changeset.reload.child_attributes["nhs_number"]
+        ).to be_nil
+        expect(patient_changeset.reload.pds_nhs_number).to be_nil
       end
 
       it "marks changeset as processed" do
-        described_class.perform_now(patient_changeset)
+        described_class.perform_now(patient_changeset.id)
 
-        expect(patient_changeset).to be_processed
+        expect(patient_changeset.reload).to be_processed
       end
     end
 
@@ -133,16 +135,18 @@ describe ProcessPatientChangesetJob do
       end
 
       it "does not save any NHS number" do
-        described_class.perform_now(patient_changeset)
+        described_class.perform_now(patient_changeset.id)
 
-        expect(patient_changeset.child_attributes["nhs_number"]).to be_nil
-        expect(patient_changeset.pds_nhs_number).to be_nil
+        expect(
+          patient_changeset.reload.child_attributes["nhs_number"]
+        ).to be_nil
+        expect(patient_changeset.reload.pds_nhs_number).to be_nil
       end
 
       it "marks changeset as processed" do
-        described_class.perform_now(patient_changeset)
+        described_class.perform_now(patient_changeset.id)
 
-        expect(patient_changeset).to be_processed
+        expect(patient_changeset.reload).to be_processed
       end
     end
 
@@ -165,7 +169,7 @@ describe ProcessPatientChangesetJob do
 
       it "enqueues CommitPatientChangesetsJob" do
         expect {
-          described_class.perform_now(patient_changeset)
+          described_class.perform_now(patient_changeset.id)
         }.to enqueue_sidekiq_job(CommitPatientChangesetsJob).with(
           import.to_global_id.to_s
         )
@@ -191,7 +195,7 @@ describe ProcessPatientChangesetJob do
 
       it "does not enqueue CommitPatientChangesetsJob" do
         expect {
-          described_class.perform_now(patient_changeset)
+          described_class.perform_now(patient_changeset.id)
         }.not_to have_enqueued_job(CommitPatientChangesetsJob)
       end
     end
@@ -215,7 +219,7 @@ describe ProcessPatientChangesetJob do
 
       it "does not enqueue CommitPatientChangesetsJob" do
         expect {
-          described_class.perform_now(patient_changeset)
+          described_class.perform_now(patient_changeset.id)
         }.not_to have_enqueued_job(CommitPatientChangesetsJob)
       end
     end

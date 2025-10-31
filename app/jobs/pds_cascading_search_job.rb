@@ -43,7 +43,7 @@ class PDSCascadingSearchJob < ApplicationJob
            next_step == :save_nhs_number_if_unique
         searchable.save!
         if searchable.is_a?(PatientChangeset)
-          ProcessPatientChangesetJob.perform_later(searchable)
+          ProcessPatientChangesetJob.perform_later(searchable.id)
         else
           PatientUpdateFromPDSJob.perform_later(searchable, search_results)
         end
