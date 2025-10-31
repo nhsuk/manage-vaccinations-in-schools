@@ -52,5 +52,5 @@ class Location::ProgrammeYearGroup < ApplicationRecord
 
   def year_group = location_year_group.value
 
-  delegate :birth_academic_year, to: :location_year_group
+  delegate :academic_year, :birth_academic_year, to: :location_year_group
 end

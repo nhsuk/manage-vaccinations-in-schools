@@ -85,6 +85,7 @@ class Patient < ApplicationRecord
   has_many :patient_specific_directions
 
   has_many :locations, through: :patient_locations
+  has_many :location_programme_year_groups, through: :locations
   has_many :parents, through: :parent_relationships
 
   has_and_belongs_to_many :class_imports
