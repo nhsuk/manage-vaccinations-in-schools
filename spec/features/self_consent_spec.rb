@@ -121,7 +121,7 @@ describe "Self-consent" do
 
     within(
       "fieldset",
-      text: "The child knows how the injection will be given"
+      text: "The child knows how the vaccination will be given"
     ) { choose "No" }
 
     within(
@@ -187,7 +187,7 @@ describe "Self-consent" do
 
     within(
       "fieldset",
-      text: "The child knows how the injection will be given"
+      text: "The child knows how the vaccination will be given"
     ) { choose "Yes" }
 
     within(
