@@ -69,12 +69,17 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class VaccinationRecord < ApplicationRecord
+  include ContributesToPatientTeams
   include Discard::Model
   include HasDoseVolume
   include Notable
   include PendingChangesConcern
   include VaccinationRecordPerformedByConcern
   include VaccinationRecordSyncToNHSImmunisationsAPIConcern
+
+  class ActiveRecord_Relation < ActiveRecord::Relation
+    include ContributesToPatientTeams::Relation
+  end
 
   audited associated_with: :patient
 
