@@ -237,6 +237,22 @@ describe "Edit vaccination record" do
     and_the_parent_doesnt_receive_a_vaccination_already_had_email
   end
 
+  scenario "Patient has an existing delayed triage and user edit's vaccination record date" do
+    given_i_am_signed_in
+    and_an_administered_vaccination_record_exists
+    and_a_delayed_triage_exists
+
+    when_i_go_to_the_vaccination_record_for_the_patient
+    and_i_click_on_edit_vaccination_record
+
+    when_i_click_on_change_date
+    then_i_should_see_the_date_time_form
+
+    when_i_fill_in_a_valid_date_and_time
+    and_i_click_on_save_changes
+    then_the_delayed_triage_is_updated_accordingly
+  end
+
   def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv)
 
@@ -297,6 +313,23 @@ describe "Edit vaccination record" do
       )
 
     Sidekiq::Job.drain_all if Flipper.enabled?(:imms_api_integration)
+  end
+
+  def and_a_delayed_triage_exists
+    delay_date = @vaccination_record.performed_at + 28.days
+    @delayed_triage =
+      create(
+        :triage,
+        patient: @patient,
+        team: @session.team,
+        programme: @programme,
+        performed_by: @team.users.first,
+        status: "delay_vaccination",
+        academic_year: @session.academic_year,
+        notes: "Next dose #{delay_date.strftime("%d %B %Y")}",
+        delay_vaccination_until: delay_date
+      )
+    @vaccination_record.update!(next_dose_delay_triage: @delayed_triage)
   end
 
   def and_imms_api_sync_job_feature_is_enabled
@@ -517,6 +550,7 @@ describe "Edit vaccination record" do
     travel 1.minute
     click_on "Save changes"
   end
+  alias_method :and_i_click_on_save_changes, :when_i_click_on_save_changes
 
   def then_the_parent_doesnt_receive_an_email
     expect(email_deliveries).to be_empty
@@ -560,5 +594,17 @@ describe "Edit vaccination record" do
 
   def and_the_parent_doesnt_receive_a_vaccination_already_had_email
     expect(email_deliveries).to be_empty
+  end
+
+  def then_the_delayed_triage_is_updated_accordingly
+    expected_delay_date = @valid_date + 28.days
+
+    expect(@delayed_triage.reload.delay_vaccination_until).to eq(
+      expected_delay_date
+    )
+
+    expect(@delayed_triage.notes).to eq(
+      "Next dose #{expected_delay_date.strftime("%d %B %Y")}"
+    )
   end
 end

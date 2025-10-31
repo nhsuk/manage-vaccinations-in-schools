@@ -127,6 +127,9 @@ class VaccinationRecord < ApplicationRecord
   has_one :subteam, through: :session
   has_one :team, through: :session
 
+  after_update :recalculate_next_dose_delay_triage_date,
+               if: :saved_change_to_performed_at?
+
   scope :for_academic_year,
         ->(academic_year) do
           where(performed_at: academic_year.to_academic_year_date_range)
@@ -276,5 +279,23 @@ class VaccinationRecord < ApplicationRecord
 
   def fhir_mapper
     @fhir_mapper ||= FHIRMapper::VaccinationRecord.new(self)
+  end
+
+  def recalculate_next_dose_delay_triage_date
+    return if next_dose_delay_triage.blank?
+    return unless administered?
+
+    previous_performed_at, current_performed_at = saved_change_to_performed_at
+
+    days_difference =
+      (current_performed_at.to_date - previous_performed_at.to_date).to_i
+
+    new_delay_date =
+      next_dose_delay_triage.delay_vaccination_until + days_difference.days
+
+    next_dose_delay_triage.update!(
+      delay_vaccination_until: new_delay_date,
+      notes: "Next dose #{new_delay_date.to_fs(:long)}"
+    )
   end
 end
