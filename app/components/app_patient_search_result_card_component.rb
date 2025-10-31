@@ -32,7 +32,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     render AppCardComponent.new(link_to:, compact: true) do |card|
       card.with_heading(level: 4) { patient.full_name_with_known_as }
 
-      govuk_summary_list do |summary_list|
+      govuk_summary_list(actions: false) do |summary_list|
         if show_nhs_number
           summary_list.with_row do |row|
             row.with_key { "NHS number" }
