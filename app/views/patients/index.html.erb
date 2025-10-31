@@ -16,18 +16,22 @@
   </div>
 
   <div class="app-grid-column-results">
-    <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
-      <% @patients.each do |patient| %>
-        <%= render AppPatientSearchResultCardComponent.new(
-              patient,
-              link_to: patient_path(patient),
-              programmes: @form.programmes,
-              show_consent_status: @form.consent_statuses.present?,
-              show_nhs_number: true,
-              show_school: true,
-              show_triage_status: @form.triage_status.present?,
-            ) %>
+    <% if @search_params_present %>
+      <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
+        <% @patients.each do |patient| %>
+          <%= render AppPatientSearchResultCardComponent.new(
+                patient,
+                link_to: patient_path(patient),
+                programmes: @form.programmes,
+                show_consent_status: @form.consent_statuses.present?,
+                show_nhs_number: true,
+                show_school: true,
+                show_triage_status: @form.triage_status.present?,
+              ) %>
+        <% end %>
       <% end %>
+    <% else %>
+       <%= render AppSearchResultsComponent.new(@pagy, label: "children", no_results_text: "Search for a child or use filters to see children matching your selection.") %>
     <% end %>
   </div>
 </div>

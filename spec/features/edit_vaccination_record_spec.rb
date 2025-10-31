@@ -273,7 +273,8 @@ describe "Edit vaccination record" do
         given_name: "John",
         family_name: "Smith",
         team: @team,
-        session: @session
+        session: @session,
+        year_group: 8
       )
   end
 
@@ -356,6 +357,9 @@ describe "Edit vaccination record" do
     visit "/dashboard"
 
     click_on "Children", match: :first
+    check "Year 8"
+    click_button "Update results"
+
     click_on @patient.full_name
     click_on Date.current.to_fs(:long)
   end

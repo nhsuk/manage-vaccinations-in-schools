@@ -6,6 +6,7 @@ describe "Patient search" do
   scenario "Users can search for patients" do
     given_that_i_am_signed_in
     when_i_visit_the_patients_page
+    and_i_filter_for_year_8
     then_i_see_all_patients
 
     when_i_search_by_name
@@ -14,7 +15,7 @@ describe "Patient search" do
 
     when_i_open_advanced_filters
     and_i_clear_the_search
-    then_i_see_all_patients
+    then_i_see_no_patients
 
     when_i_search_for_a
     then_i_see_patients_starting_with_a
@@ -24,13 +25,13 @@ describe "Patient search" do
 
     when_i_open_advanced_filters
     and_i_clear_the_search
-    then_i_see_all_patients
+    then_i_see_no_patients
 
     when_i_search_for_patients_without_nhs_numbers
     then_i_see_patients_without_nhs_numbers
 
     when_i_clear_the_search
-    then_i_see_all_patients
+    then_i_see_no_patients
 
     when_i_search_for_patients_by_date_of_birth
     then_i_see_patients_by_date_of_birth
@@ -74,7 +75,13 @@ describe "Patient search" do
       %w[Cassidy Wilson],
       %w[Bob Taylor]
     ].each do |(given_name, family_name)|
-      create(:patient, given_name:, family_name:, session: @session)
+      create(
+        :patient,
+        given_name:,
+        family_name:,
+        session: @session,
+        year_group: 8
+      )
     end
 
     create(
@@ -82,7 +89,8 @@ describe "Patient search" do
       given_name: "Salvor",
       family_name: "Hardin",
       session: @session,
-      nhs_number: nil
+      nhs_number: nil,
+      year_group: 8
     )
 
     create(
@@ -90,7 +98,8 @@ describe "Patient search" do
       given_name: "Hari",
       family_name: "Seldon",
       session: @session,
-      date_of_birth: Date.new(2013, 1, 1)
+      date_of_birth: Date.new(2013, 1, 1),
+      year_group: 8
     )
 
     sign_in team.users.first
@@ -98,6 +107,11 @@ describe "Patient search" do
 
   def when_i_visit_the_patients_page
     visit patients_path
+  end
+
+  def and_i_filter_for_year_8
+    check "Year 8"
+    click_button "Update results"
   end
 
   def then_i_see_all_patients
@@ -230,5 +244,11 @@ describe "Patient search" do
 
   def then_i_see_no_results
     expect(page).to have_content("No children matching search criteria found")
+  end
+
+  def then_i_see_no_patients
+    expect(page).to have_content(
+      "Search for a child or use filters to see children matching your selection."
+    )
   end
 end

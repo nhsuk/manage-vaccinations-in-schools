@@ -7,20 +7,27 @@ class PatientsController < ApplicationController
   before_action :set_patient, except: :index
   before_action :set_in_generic_clinic, only: :show
   before_action :record_access_log_entry, only: %i[show log]
+  before_action :set_search_params_present, only: :index
+  skip_after_action :verify_policy_scoped, only: :index
 
   layout "full"
 
   def index
-    scope =
-      policy_scope(Patient).includes(
-        :consent_statuses,
-        :location_programme_year_groups,
-        :school,
-        :triage_statuses,
-        :vaccination_statuses
-      )
+    if @search_params_present
+      scope =
+        policy_scope(Patient).includes(
+          :consent_statuses,
+          :location_programme_year_groups,
+          :school,
+          :triage_statuses,
+          :vaccination_statuses
+        )
 
-    patients = @form.apply(scope)
+      patients = @form.apply(scope)
+    else
+      patients = Patient.none
+    end
+
     @pagy, @patients = pagy(patients)
   end
 
@@ -96,5 +103,9 @@ class PatientsController < ApplicationController
       controller: "patients",
       action: action_name
     )
+  end
+
+  def set_search_params_present
+    @search_params_present = @form.any_filters_applied?
   end
 end

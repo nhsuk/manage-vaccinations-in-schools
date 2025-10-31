@@ -10,6 +10,9 @@ describe "Manage children" do
     and_the_patient_is_vaccinated
 
     when_i_click_on_children
+    then_i_see_no_children_by_default
+
+    when_i_filter_for_children
     then_i_see_the_children
 
     when_i_click_on_a_child
@@ -23,6 +26,7 @@ describe "Manage children" do
     given_many_patients_exist
 
     when_i_click_on_children
+    and_i_filter_for_children
     then_i_see_the_children
     and_i_see_the_pages
 
@@ -35,6 +39,7 @@ describe "Manage children" do
     and_todays_date_is_in_the_far_future
 
     when_i_click_on_children
+    and_i_filter_for_children
     then_i_see_no_children
 
     when_i_click_on_view_aged_out_children
@@ -47,6 +52,7 @@ describe "Manage children" do
     and_the_patient_is_vaccinated
 
     when_i_click_on_children
+    and_i_filter_for_children
     and_i_click_on_a_child
     then_i_see_the_child
 
@@ -76,6 +82,7 @@ describe "Manage children" do
     given_an_invalidated_patient_exists
 
     when_i_click_on_children
+    and_i_filter_for_children
     and_i_click_on_a_child
     then_i_see_the_child
 
@@ -95,6 +102,7 @@ describe "Manage children" do
     given_patients_exist
 
     when_i_click_on_children
+    and_i_filter_for_children
     and_i_click_on_a_child
     then_i_see_the_child
     and_i_dont_see_a_community_clinic_session
@@ -112,6 +120,7 @@ describe "Manage children" do
     and_the_vaccination_has_been_synced_to_nhs
 
     when_i_click_on_children
+    and_i_filter_for_children
     and_i_click_on_a_child
     then_i_see_the_child
 
@@ -166,13 +175,14 @@ describe "Manage children" do
   end
 
   def given_my_team_exists
-    @programme = create(:programme, :hpv)
+    @hpv = create(:programme, :hpv)
+    @flu = create(:programme, :flu)
     @team =
       create(
         :team,
         :with_generic_clinic,
         :with_one_nurse,
-        programmes: [@programme]
+        programmes: [@hpv, @flu]
       )
 
     TeamSessionsFactory.call(@team, academic_year: AcademicYear.current)
@@ -182,7 +192,7 @@ describe "Manage children" do
     school = create(:school, team: @team)
 
     @session =
-      create(:session, location: school, team: @team, programmes: [@programme])
+      create(:session, location: school, team: @team, programmes: [@hpv])
 
     @patient =
       create(
@@ -194,7 +204,7 @@ describe "Manage children" do
       )
     create_list(:patient, 9, session: @session)
 
-    another_session = create(:session, team: @team, programmes: [@programme])
+    another_session = create(:session, team: @team, programmes: [@hpv])
 
     @existing_patient =
       create(
@@ -206,13 +216,13 @@ describe "Manage children" do
   end
 
   def given_many_patients_exist
-    @session = create(:session, team: @team, programmes: [@programme])
+    @session = create(:session, team: @team, programmes: [@hpv])
 
     create_list(:patient, 100, session: @session)
   end
 
   def given_an_invalidated_patient_exists
-    session = create(:session, team: @team, programmes: [@programme])
+    session = create(:session, team: @team, programmes: [@hpv])
 
     @patient =
       create(
@@ -230,7 +240,7 @@ describe "Manage children" do
     create(
       :vaccination_record,
       patient: @patient,
-      programme: @programme,
+      programme: @hpv,
       session: @session
     )
   end
@@ -255,19 +265,19 @@ describe "Manage children" do
   end
 
   def when_a_deceased_patient_exists
-    session = create(:session, team: @team, programmes: [@programme])
+    session = create(:session, team: @team, programmes: [@hpv])
 
     @deceased_patient = create(:patient, :deceased, session:)
   end
 
   def when_an_invalidated_patient_exists
-    session = create(:session, team: @team, programmes: [@programme])
+    session = create(:session, team: @team, programmes: [@hpv])
 
     @invalidated_patient = create(:patient, :invalidated, session:)
   end
 
   def when_a_restricted_patient_exists
-    session = create(:session, team: @team, programmes: [@programme])
+    session = create(:session, team: @team, programmes: [@hpv])
 
     @restricted_patient = create(:patient, :restricted, session:)
   end
@@ -278,6 +288,19 @@ describe "Manage children" do
     visit "/dashboard"
     click_on "Children", match: :first
   end
+
+  def then_i_see_no_children_by_default
+    expect(page).to have_content(
+      "Search for a child or use filters to see children matching your selection."
+    )
+  end
+
+  def when_i_filter_for_children
+    check "HPV"
+    click_on "Update results"
+  end
+
+  alias_method :and_i_filter_for_children, :when_i_filter_for_children
 
   def then_i_see_the_children
     expect(page).to have_content(/\d+ children/)
@@ -293,7 +316,7 @@ describe "Manage children" do
   end
 
   def when_i_visit_an_overflow_page
-    visit patients_path(page: "100")
+    click_on "2"
   end
 
   def then_i_see_the_last_page
@@ -303,8 +326,9 @@ describe "Manage children" do
 
   def when_i_click_on_view_aged_out_children
     find(".nhsuk-details__summary").click
+    uncheck "HPV"
     check "Children aged out of programmes"
-    click_on "Search"
+    click_on "Update results"
   end
 
   def when_i_click_on_a_child
