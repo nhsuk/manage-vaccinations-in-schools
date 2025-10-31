@@ -7,7 +7,7 @@
       "check_name": "SendFile",
       "message": "Parameter value used in file name",
       "file": "app/controllers/programmes_controller.rb",
-      "line": 62,
+      "line": 13,
       "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
       "code": "send_file(\"public/consent_forms/#{authorize(policy_scope(Programme).find_by!(:type => params[:type])).type}.pdf\", :filename => (\"#{authorize(policy_scope(Programme).find_by!(:type => params[:type])).name} Consent Form.pdf\"), :disposition => \"attachment\")",
       "render_path": null,
@@ -24,5 +24,5 @@
       "note": "Programme names/types come from a limited set of enums."
     }
   ],
-  "brakeman_version": "7.0.0"
+  "brakeman_version": "7.1.0"
 }

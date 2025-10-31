@@ -7,10 +7,12 @@ class ClinicPatientLocationsFactory
   end
 
   def create_patient_locations!
-    PatientLocation.import!(
-      patient_locations_to_create,
-      on_duplicate_key_ignore: true
-    )
+    imported_ids =
+      PatientLocation.import!(
+        patient_locations_to_create,
+        on_duplicate_key_ignore: true
+      ).ids
+    SyncPatientTeamJob.perform_later(PatientLocation, imported_ids)
   end
 
   def patient_locations_to_create

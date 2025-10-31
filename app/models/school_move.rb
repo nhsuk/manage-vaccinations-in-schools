@@ -28,9 +28,14 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class SchoolMove < ApplicationRecord
-  audited associated_with: :patient
-
+  include ContributesToPatientTeams
   include Schoolable
+
+  class ActiveRecord_Relation < ActiveRecord::Relation
+    include ContributesToPatientTeams::Relation
+  end
+
+  audited associated_with: :patient
 
   belongs_to :patient
 
@@ -94,7 +99,9 @@ class SchoolMove < ApplicationRecord
         )
       end
 
-    ArchiveReason.import!(archive_reasons, on_duplicate_key_ignore: true)
+    imported_ids =
+      ArchiveReason.import!(archive_reasons, on_duplicate_key_ignore: true).ids
+    SyncPatientTeamJob.perform_later(ArchiveReason, imported_ids)
   end
 
   def update_sessions!

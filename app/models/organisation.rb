@@ -14,7 +14,12 @@
 #  index_organisations_on_ods_code  (ods_code) UNIQUE
 #
 class Organisation < ApplicationRecord
+  include ContributesToPatientTeams
   include ODSCodeConcern
+
+  class ActiveRecord_Relation < ActiveRecord::Relation
+    include ContributesToPatientTeams::Relation
+  end
 
   audited
   has_associated_audits

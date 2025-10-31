@@ -51,7 +51,8 @@ class Generate::VaccinationRecords
     end
 
     AttendanceRecord.import!(attendance_records)
-    VaccinationRecord.import!(vaccination_records)
+    imported_ids = VaccinationRecord.import!(vaccination_records).ids
+    SyncPatientTeamJob.perform_later(VaccinationRecord, imported_ids)
 
     StatusUpdater.call(patient: vaccination_records.map(&:patient))
   end
