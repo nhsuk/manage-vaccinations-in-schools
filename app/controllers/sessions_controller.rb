@@ -90,11 +90,11 @@ class SessionsController < ApplicationController
   end
 
   def patient_counts_for_sessions(sessions)
-    Patient
-      .joins_sessions
-      .in_eligible_year_group_for_session_programme
-      .where("sessions.id = ANY(ARRAY[?]::bigint[])", sessions.map(&:id))
-      .group("sessions.id")
+    sessions
+      .joins_patient_locations
+      .joins_patients
+      .joins_location_programme_year_groups
+      .group("earliest_session_dates.value", :id)
       .count("DISTINCT patients.id")
   end
 end
