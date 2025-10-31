@@ -5,11 +5,12 @@
 # Table name: patient_changesets
 #
 #  id                    :bigint           not null, primary key
+#  data                  :jsonb            not null
 #  import_type           :string           not null
 #  matched_on_nhs_number :boolean
 #  pds_nhs_number        :string
-#  pending_changes       :jsonb            not null
-#  row_number            :integer          not null
+#  record_type           :integer          default(1), not null
+#  row_number            :integer
 #  status                :integer          default("pending"), not null
 #  uploaded_nhs_number   :string
 #  created_at            :datetime         not null
@@ -30,22 +31,48 @@
 #  fk_rails_...  (school_id => locations.id)
 #
 class PatientChangeset < ApplicationRecord
-  attribute :pending_changes,
+  attribute :data,
             :jsonb,
             default: {
-              child: {
+              upload: {
+                child: {
+                },
+                parent_1: {
+                },
+                parent_2: {
+                },
+                academic_year: nil,
+                home_educated: nil,
+                school_move_source: nil
               },
-              parent_1: {
-              },
-              parent_2: {
-              },
-              search_results: []
+              search_results: [],
+              review: {
+                patient: {
+                },
+                school_move: {
+                }
+              }
             }
+
   belongs_to :import, polymorphic: true
   belongs_to :patient, optional: true
   belongs_to :school, class_name: "Location", optional: true
 
-  enum :status, { pending: 0, processed: 1 }, validate: true
+  enum :status,
+       {
+         pending: 0,
+         processed: 1,
+         calculating_review: 2,
+         ready_for_review: 3,
+         import_invalid: 4,
+         needs_re_review: 5,
+         cancelled: 6
+       },
+       validate: true
+
+  enum :record_type,
+       { import_issue: 0, auto_match: 1, new_patient: 2, not_in_file: 3 },
+       validate: true
 
   scope :nhs_number_discrepancies,
         -> do
@@ -60,11 +87,24 @@ class PatientChangeset < ApplicationRecord
 
   scope :with_pds_search_attempted,
         -> do
-          where("pending_changes -> 'search_results' != '[]'::jsonb").where.not(
-            "jsonb_array_length(pending_changes -> 'search_results') = 1 AND 
-            (pending_changes -> 'search_results' -> 0 ->> 'result') = 'no_postcode'"
+          where("data -> 'search_results' != '[]'::jsonb").where.not(
+            "jsonb_array_length(data -> 'search_results') = 1 AND 
+            (data -> 'search_results' -> 0 ->> 'result') = 'no_postcode'"
           )
         end
+
+  scope :new_patients, -> { where(record_type: :new_patient) }
+  scope :auto_matched, -> { where(record_type: :auto_match) }
+  scope :import_issues, -> { where(record_type: :import_issue) }
+
+  scope :with_school_moves,
+        -> do
+          where("data -> 'review' -> 'school_move' IS NOT NULL").where.not(
+            status: :processed
+          )
+        end
+
+  scope :from_file, -> { where.not(row_number: nil) }
 
   def self.from_import_row(row:, import:, row_number:)
     create!(
@@ -72,23 +112,35 @@ class PatientChangeset < ApplicationRecord
       row_number:,
       school: row.school,
       uploaded_nhs_number: row.import_attributes[:nhs_number],
-      pending_changes: {
-        child: row.import_attributes,
-        academic_year: row.academic_year,
-        home_educated: row.home_educated,
-        # TODO: This should gotten from the import, but it does not provide.
-        #       Maybe one day.
-        school_move_source: row.school_move_source,
-        parent_1: row.parent_1_import_attributes,
-        parent_2: row.parent_2_import_attributes,
-        search_results: []
+      data: {
+        upload: {
+          child: row.import_attributes,
+          academic_year: row.academic_year,
+          home_educated: row.home_educated,
+          # TODO: This should gotten from the import, but it does not provide.
+          #       Maybe one day.
+          school_move_source: row.school_move_source,
+          parent_1: row.parent_1_import_attributes,
+          parent_2: row.parent_2_import_attributes
+        },
+        search_results: [],
+        review: {
+          patient: {
+            pending_changes: {
+            }
+          },
+          school_move: {
+          }
+        }
       }
     )
   end
 
   delegate :team, to: :import
 
-  def child_attributes = pending_changes["child"]
+  def review_data = data["review"]
+
+  def child_attributes = data["upload"]["child"]
 
   def family_name = child_attributes["family_name"]
 
@@ -98,26 +150,29 @@ class PatientChangeset < ApplicationRecord
 
   def address_postcode = child_attributes["address_postcode"]
 
-  def parent_1_attributes = pending_changes["parent_1"]
+  def parent_1_attributes = data["upload"]["parent_1"]
 
-  def parent_2_attributes = pending_changes["parent_2"]
+  def parent_2_attributes = data["upload"]["parent_2"]
 
-  def search_results = pending_changes["search_results"]
+  def search_results = data["search_results"]
 
-  def academic_year = pending_changes["academic_year"]
+  def academic_year = data["upload"]["academic_year"]
 
-  def home_educated = pending_changes["home_educated"]
+  def home_educated = data["upload"]["home_educated"]
 
-  def school_move_source = pending_changes["school_move_source"]
+  def school_move_source = data["upload"]["school_move_source"]
+
+  def nhs_number = child_attributes["nhs_number"]
 
   def invalidate!
-    pending_changes["child"]["invalidated_at"] = Time.current
+    data["upload"]["child"]["invalidated_at"] = Time.current
   end
 
-  def patient
+  def patient(reload: false)
+    @patient = nil if reload
     @patient ||=
       if (existing_patient = existing_patients.first)
-        prepare_patient_changes(existing_patient, pending_changes)
+        prepare_patient_changes(existing_patient)
       else
         Patient.new(
           child_attributes.merge(
@@ -187,7 +242,8 @@ class PatientChangeset < ApplicationRecord
     end
   end
 
-  def school_move
+  def school_move(reload: false)
+    @school_move = nil if reload
     @school_move ||=
       begin
         return if patient.deceased?
@@ -238,12 +294,35 @@ class PatientChangeset < ApplicationRecord
     matches
   end
 
-  def prepare_patient_changes(existing_patient, _pending_changes)
+  def prepare_patient_changes(existing_patient)
     auto_accept_child_attributes(existing_patient)
     handle_address_updates(existing_patient)
     stage_and_handle_pending_changes(existing_patient)
 
     existing_patient
+  end
+
+  def calculate_review_data!
+    if patient(reload: true).nil?
+      update!(record_type: :new_patient)
+      return
+    end
+
+    data["review"]["patient"]["id"] = patient.id
+
+    if patient.pending_changes.any?
+      update!(record_type: :import_issue)
+      data["review"]["patient"]["pending_changes"] = patient.pending_changes
+    else
+      update!(record_type: :auto_match)
+    end
+
+    if school_move(reload: true).present? && !auto_accept_school_move?
+      data["review"]["school_move"]["school_id"] = school_move.school_id
+      data["review"]["school_move"]["home_educated"] = school_move.home_educated
+    end
+
+    save!
   end
 
   def auto_accept_child_attributes(existing_patient)

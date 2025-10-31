@@ -12,12 +12,14 @@ describe AppImportPDSUnmatchedSummaryComponent, type: :component do
   let(:changeset) do
     create(
       :patient_changeset,
-      pending_changes: {
-        child: {
-          "given_name" => "Alice",
-          "family_name" => "Smith",
-          "date_of_birth" => Date.new(2010, 5, 15),
-          "address_postcode" => "AB1 2CD"
+      data: {
+        upload: {
+          child: {
+            "given_name" => "Alice",
+            "family_name" => "Smith",
+            "date_of_birth" => Date.new(2010, 5, 15),
+            "address_postcode" => "AB1 2CD"
+          }
         }
       },
       import:,
@@ -45,12 +47,14 @@ describe AppImportPDSUnmatchedSummaryComponent, type: :component do
     let(:other_changeset) do
       create(
         :patient_changeset,
-        pending_changes: {
-          child: {
-            "given_name" => "Bob",
-            "family_name" => "Jones",
-            "date_of_birth" => Date.new(2011, 8, 20),
-            "address_postcode" => "ZZ9 9ZZ"
+        data: {
+          upload: {
+            child: {
+              "given_name" => "Bob",
+              "family_name" => "Jones",
+              "date_of_birth" => Date.new(2011, 8, 20),
+              "address_postcode" => "ZZ9 9ZZ"
+            }
           }
         },
         import:,
@@ -76,7 +80,7 @@ describe AppImportPDSUnmatchedSummaryComponent, type: :component do
 
   context "when values are blank" do
     let(:changeset) do
-      create(:patient_changeset, pending_changes: { child: {} }, import:)
+      create(:patient_changeset, data: { upload: { child: {} } }, import:)
     end
 
     it "renders empty cells" do

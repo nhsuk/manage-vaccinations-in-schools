@@ -141,9 +141,11 @@ module CSVImportable
           )
         end
       else
-        changesets.each(&:processed!)
+        changesets.each(&:calculating_review!)
 
-        CommitPatientChangesetsJob.perform_async(to_global_id.to_s)
+        changesets.each do |patient_changeset|
+          ReviewPatientChangesetJob.perform_later(patient_changeset.id)
+        end
       end
 
       return
