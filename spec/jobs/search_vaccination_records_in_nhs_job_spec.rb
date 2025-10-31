@@ -5,6 +5,7 @@ describe SearchVaccinationRecordsInNHSJob do
 
   let(:team) { create(:team) }
   let(:school) { create(:school, team:) }
+  let(:session) { create(:session, location: school, programmes: [programme]) }
   let(:patient) { create(:patient, team:, school:, nhs_number:) }
   let(:nhs_number) { "9449308357" }
   let!(:programme) { create(:programme, :flu) }
@@ -37,6 +38,7 @@ describe SearchVaccinationRecordsInNHSJob do
     subject(:deduplicate) do
       described_class.new.send(
         :deduplicate_vaccination_records,
+        patient,
         vaccination_records
       )
     end
@@ -72,6 +74,24 @@ describe SearchVaccinationRecordsInNHSJob do
           )
         end
       end
+
+      context "record duplicates a Mavis record" do
+        let(:nhs_immunisations_api_primary_source) { true }
+
+        before do
+          create(
+            :vaccination_record,
+            session:,
+            programme:,
+            patient:,
+            performed_at:
+          )
+        end
+
+        it "returns no records" do
+          expect(deduplicate).to be_empty
+        end
+      end
     end
 
     let(:vaccination_records) do
@@ -83,7 +103,7 @@ describe SearchVaccinationRecordsInNHSJob do
     end
 
     let(:first_vaccination_record) do
-      create(
+      build(
         :vaccination_record,
         :sourced_from_nhs_immunisations_api,
         programme:,
@@ -108,7 +128,7 @@ describe SearchVaccinationRecordsInNHSJob do
 
     context "with two vaccination records with the same programme and performed_at" do
       let(:second_vaccination_record) do
-        create(
+        build(
           :vaccination_record,
           :sourced_from_nhs_immunisations_api,
           programme:,
@@ -123,7 +143,7 @@ describe SearchVaccinationRecordsInNHSJob do
 
     context "with the same programme and performed_at on the same day" do
       let(:second_vaccination_record) do
-        create(
+        build(
           :vaccination_record,
           :sourced_from_nhs_immunisations_api,
           programme:,
@@ -138,7 +158,7 @@ describe SearchVaccinationRecordsInNHSJob do
 
     context "with the same programme and different performed_at" do
       let(:second_vaccination_record) do
-        create(
+        build(
           :vaccination_record,
           :sourced_from_nhs_immunisations_api,
           programme:,
@@ -158,7 +178,7 @@ describe SearchVaccinationRecordsInNHSJob do
 
     context "with different programmes, same performed_at" do
       let(:second_vaccination_record) do
-        create(
+        build(
           :vaccination_record,
           :sourced_from_nhs_immunisations_api,
           programme: create(:programme, :hpv),
@@ -178,7 +198,7 @@ describe SearchVaccinationRecordsInNHSJob do
 
     context "with three duplicate records" do
       let(:second_vaccination_record) do
-        create(
+        build(
           :vaccination_record,
           :sourced_from_nhs_immunisations_api,
           programme:,
@@ -189,7 +209,7 @@ describe SearchVaccinationRecordsInNHSJob do
       end
 
       let(:third_vaccination_record) do
-        create(
+        build(
           :vaccination_record,
           :sourced_from_nhs_immunisations_api,
           programme:,
@@ -254,7 +274,7 @@ describe SearchVaccinationRecordsInNHSJob do
       end
 
       let(:second_vaccination_record) do
-        create(
+        build(
           :vaccination_record,
           :sourced_from_nhs_immunisations_api,
           programme:,
@@ -265,7 +285,7 @@ describe SearchVaccinationRecordsInNHSJob do
       end
 
       let(:third_vaccination_record) do
-        create(
+        build(
           :vaccination_record,
           :sourced_from_nhs_immunisations_api,
           programme: create(:programme, :hpv),
@@ -451,30 +471,65 @@ describe SearchVaccinationRecordsInNHSJob do
       include_examples "calls StatusUpdater"
     end
 
-    context "with a mavis record in the search results" do
-      let(:body) do
-        file_fixture("fhir/search_response_1_result_mavis.json").read
+    context "with a mavis record in the database" do
+      before do
+        create(
+          :vaccination_record,
+          patient:,
+          programme:,
+          performed_at: Time.zone.parse("2025-08-22T14:16:03+01:00"),
+          session:
+        )
       end
 
-      it "does not create a new record" do
-        expect { perform }.not_to(change { patient.vaccination_records.count })
+      context "with a mavis record in the search results" do
+        let(:body) do
+          file_fixture("fhir/search_response_1_result_mavis.json").read
+        end
+
+        it "does not create a new record" do
+          expect { perform }.not_to(
+            change { patient.vaccination_records.count }
+          )
+        end
+
+        include_examples "doesn't send discovery comms"
+        include_examples "calls StatusUpdater"
       end
 
-      include_examples "doesn't send discovery comms"
-      include_examples "calls StatusUpdater"
-    end
+      context "with a mavis record and a duplicate in the search results" do
+        let(:body) do
+          file_fixture(
+            "fhir/search_response_2_results_mavis_duplicate.json"
+          ).read
+        end
 
-    context "with a mavis record, and a duplicate thereof in the search results" do
-      let(:body) do
-        file_fixture("fhir/search_response_2_results_mavis_duplicate.json").read
+        it "does not create a new record" do
+          expect { perform }.not_to(
+            change { patient.vaccination_records.count }
+          )
+        end
+
+        include_examples "doesn't send discovery comms"
+        include_examples "calls StatusUpdater"
       end
 
-      it "does not create a new record" do
-        expect { perform }.not_to(change { patient.vaccination_records.count })
-      end
+      context "with a mavis record and a primary source duplicate in the search results" do
+        let(:body) do
+          file_fixture(
+            "fhir/search_response_2_results_mavis_duplicate_primary_source.json"
+          ).read
+        end
 
-      include_examples "doesn't send discovery comms"
-      include_examples "calls StatusUpdater"
+        it "does not create a new record, ignoring the other primary source record" do
+          expect { perform }.not_to(
+            change { patient.vaccination_records.count }
+          )
+        end
+
+        include_examples "doesn't send discovery comms"
+        include_examples "calls StatusUpdater"
+      end
     end
 
     context "with the feature flag disabled" do
