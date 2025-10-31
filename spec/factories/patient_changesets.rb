@@ -5,11 +5,12 @@
 # Table name: patient_changesets
 #
 #  id                    :bigint           not null, primary key
+#  data                  :jsonb            not null
 #  import_type           :string           not null
 #  matched_on_nhs_number :boolean
 #  pds_nhs_number        :string
-#  pending_changes       :jsonb            not null
-#  row_number            :integer          not null
+#  record_type           :integer          default(1), not null
+#  row_number            :integer
 #  status                :integer          default("pending"), not null
 #  uploaded_nhs_number   :string
 #  created_at            :datetime         not null
