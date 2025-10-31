@@ -68,7 +68,8 @@ class Imports::IssuesController < ApplicationController
   def set_form
     apply_changes = params.dig(:import_duplicate_form, :apply_changes)
 
-    @form = ImportDuplicateForm.new(object: @record, apply_changes:)
+    @form =
+      ImportDuplicateForm.new(current_team:, object: @record, apply_changes:)
   end
 
   def set_type
