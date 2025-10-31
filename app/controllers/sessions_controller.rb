@@ -14,7 +14,7 @@ class SessionsController < ApplicationController
 
     sessions = @form.apply(scope)
 
-    @pagy, @sessions = pagy(sessions)
+    @pagy, @sessions = pagy_array(sessions)
 
     @patient_count_by_session_id = patient_counts_for_sessions(@sessions)
 
