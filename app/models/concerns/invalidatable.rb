@@ -18,4 +18,9 @@ module Invalidatable
   def not_invalidated?
     invalidated_at.nil?
   end
+
+  def should_be_invalidated?
+    delay_vaccination? && delay_vaccination_until.present? &&
+      delay_vaccination_until < Date.current
+  end
 end

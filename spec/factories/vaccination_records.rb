@@ -33,6 +33,7 @@
 #  updated_at                              :datetime         not null
 #  batch_id                                :bigint
 #  location_id                             :bigint
+#  next_dose_delay_triage_id               :bigint
 #  nhs_immunisations_api_id                :string
 #  patient_id                              :bigint           not null
 #  performed_by_user_id                    :bigint
@@ -46,6 +47,7 @@
 #  index_vaccination_records_on_batch_id                           (batch_id)
 #  index_vaccination_records_on_discarded_at                       (discarded_at)
 #  index_vaccination_records_on_location_id                        (location_id)
+#  index_vaccination_records_on_next_dose_delay_triage_id          (next_dose_delay_triage_id)
 #  index_vaccination_records_on_nhs_immunisations_api_id           (nhs_immunisations_api_id) UNIQUE
 #  index_vaccination_records_on_patient_id                         (patient_id)
 #  index_vaccination_records_on_patient_id_and_session_id          (patient_id,session_id)
@@ -61,6 +63,7 @@
 # Foreign Keys
 #
 #  fk_rails_...  (batch_id => batches.id)
+#  fk_rails_...  (next_dose_delay_triage_id => triages.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
 #  fk_rails_...  (programme_id => programmes.id)

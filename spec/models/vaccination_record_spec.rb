@@ -33,6 +33,7 @@
 #  updated_at                              :datetime         not null
 #  batch_id                                :bigint
 #  location_id                             :bigint
+#  next_dose_delay_triage_id               :bigint
 #  nhs_immunisations_api_id                :string
 #  patient_id                              :bigint           not null
 #  performed_by_user_id                    :bigint
@@ -46,6 +47,7 @@
 #  index_vaccination_records_on_batch_id                           (batch_id)
 #  index_vaccination_records_on_discarded_at                       (discarded_at)
 #  index_vaccination_records_on_location_id                        (location_id)
+#  index_vaccination_records_on_next_dose_delay_triage_id          (next_dose_delay_triage_id)
 #  index_vaccination_records_on_nhs_immunisations_api_id           (nhs_immunisations_api_id) UNIQUE
 #  index_vaccination_records_on_patient_id                         (patient_id)
 #  index_vaccination_records_on_patient_id_and_session_id          (patient_id,session_id)
@@ -61,6 +63,7 @@
 # Foreign Keys
 #
 #  fk_rails_...  (batch_id => batches.id)
+#  fk_rails_...  (next_dose_delay_triage_id => triages.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
 #  fk_rails_...  (programme_id => programmes.id)
@@ -456,6 +459,32 @@ describe VaccinationRecord do
 
         it { expect(vaccination_record.academic_year).to eq(academic_year) }
       end
+    end
+  end
+
+  context "when MMR vaccination date is backdated" do
+    subject(:vaccination_record) do
+      create(
+        :vaccination_record,
+        :administered,
+        programme:,
+        next_dose_delay_triage:
+      )
+    end
+
+    let(:programme) { create(:programme, :mmr) }
+    let(:next_dose_delay_triage) do
+      create(
+        :triage,
+        status: "delay_vaccination",
+        delay_vaccination_until: Date.current + 28.days
+      )
+    end
+
+    it "marks next_dose_delay_triage invalid if it's gone past 28 days" do
+      vaccination_record.performed_at = Date.current - 29.days
+      vaccination_record.save!
+      expect(next_dose_delay_triage.reload).to be_invalidated
     end
   end
 end
