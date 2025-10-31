@@ -7,12 +7,14 @@ describe "Access log" do
 
   scenario "View patient" do
     when_i_go_to_the_children
+    and_i_filter_for_year_8
     and_i_go_to_a_patient
     then_i_am_recorded_in_the_access_log(controller: "patients")
   end
 
   scenario "View patient's activity log" do
     when_i_go_to_the_children
+    and_i_filter_for_year_8
     and_i_go_to_a_patient
     and_i_click_on_activity_log
     then_i_am_recorded_in_the_access_log_twice(controller: "patients")
@@ -52,6 +54,11 @@ describe "Access log" do
   def when_i_go_to_the_children
     visit dashboard_path
     click_on "Children", match: :first
+  end
+
+  def and_i_filter_for_year_8
+    check "Year 8"
+    click_button "Update results"
   end
 
   def when_i_go_to_the_session
