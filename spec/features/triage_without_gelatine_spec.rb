@@ -84,20 +84,20 @@ describe "Triage" do
   def then_i_see_the_triage_options
     expect(page).to have_content("Yes, it’s safe to vaccinate").twice
     expect(page).to have_content(
-      "Yes, it’s safe to vaccinate with the gelatine-free vaccine"
+      "Yes, it’s safe to vaccinate with the gelatine-free injection"
     )
   end
 
   def then_i_see_the_triage_options_without_gelatine_only
     expect(page).to have_content("Yes, it’s safe to vaccinate").once
     expect(page).to have_content(
-      "Yes, it’s safe to vaccinate with the gelatine-free vaccine"
+      "Yes, it’s safe to vaccinate with the gelatine-free injection"
     )
   end
 
   def when_i_record_the_triage_outcome(without_gelatine:)
     if without_gelatine
-      choose "Yes, it’s safe to vaccinate with the gelatine-free vaccine"
+      choose "Yes, it’s safe to vaccinate with the gelatine-free injection"
     else
       choose "Yes, it’s safe to vaccinate"
     end
@@ -110,7 +110,7 @@ describe "Triage" do
 
   def then_i_see_the_triage_status_without_gelatine
     expect(page).to have_content(
-      "MMR: Safe to vaccinate with gelatine-free vaccine"
+      "MMR: Safe to vaccinate with gelatine-free injection"
     )
   end
 end

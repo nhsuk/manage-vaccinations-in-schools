@@ -53,7 +53,7 @@ en:
         safe_to_vaccinate: Safe to vaccinate
         safe_to_vaccinate_injection: Safe to vaccinate with injection
         safe_to_vaccinate_nasal: Safe to vaccinate with nasal spray
-        safe_to_vaccinate_without_gelatine: Safe to vaccinate with gelatine-free vaccine
+        safe_to_vaccinate_without_gelatine: Safe to vaccinate with gelatine-free injection
       colour:
         delay_vaccination: dark-orange
         invite_to_clinic: yellow

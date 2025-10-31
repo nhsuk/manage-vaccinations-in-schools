@@ -21,7 +21,7 @@ describe AppVaccineCriteriaLabelComponent do
 
     it { should have_content("Record MMR vaccination") }
 
-    context "with gelatine-free vaccine" do
+    context "with gelatine-free injection" do
       let(:without_gelatine) { true }
 
       it do
@@ -40,7 +40,7 @@ describe AppVaccineCriteriaLabelComponent do
 
     it { should have_content("Either for MMR") }
 
-    context "with gelatine-free vaccine" do
+    context "with gelatine-free injection" do
       let(:without_gelatine) { true }
 
       it { should have_content("Gelatine-free injection for MMR") }
