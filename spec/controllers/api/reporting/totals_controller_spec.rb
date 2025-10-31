@@ -97,6 +97,27 @@ describe API::Reporting::TotalsController do
       expect(response).to have_http_status(:ok)
       expect(parsed_response["cohort"]).to eq(3)
     end
+
+    it "filters by workgroup" do
+      team = Team.last
+      other_team = create(:team, organisation: team.organisation)
+
+      programme = create(:programme, teams: [team, other_team])
+      session = create(:session, team:, programmes: [programme])
+      other_session =
+        create(:session, team: other_team, programmes: [programme])
+
+      create(:patient, session:)
+      create(:patient, session:)
+      create(:patient, session: other_session)
+
+      ReportingAPI::PatientProgrammeStatus.refresh!
+
+      get :index, params: { workgroup: team.workgroup }
+
+      expect(response).to have_http_status(:ok)
+      expect(parsed_response["cohort"]).to eq(2)
+    end
   end
 
   describe "#index.csv" do
