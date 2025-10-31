@@ -27,8 +27,6 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class Patient::VaccinationStatus < ApplicationRecord
-  self.ignored_columns = %i[status_changed_at]
-
   belongs_to :patient
   belongs_to :programme
 
