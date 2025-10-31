@@ -60,7 +60,6 @@ class Location < ApplicationRecord
   has_many :attendance_records
   has_many :consent_forms
   has_many :patient_locations
-  has_many :patients, foreign_key: :school_id
   has_many :sessions
 
   has_one :team, through: :subteam
