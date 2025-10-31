@@ -68,6 +68,12 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
           end
         end
         if academic_year
+          if vaccination_status_tag
+            summary_list.with_row do |row|
+              row.with_key { "Programme status" }
+              row.with_value { vaccination_status_tag }
+            end
+          end
           if show_consent_status && consent_status_tag
             summary_list.with_row do |row|
               row.with_key { "Consent status" }
@@ -78,12 +84,6 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
             summary_list.with_row do |row|
               row.with_key { "Triage status" }
               row.with_value { triage_status_tag }
-            end
-          end
-          if vaccination_status_tag
-            summary_list.with_row do |row|
-              row.with_key { "Programme status" }
-              row.with_value { vaccination_status_tag }
             end
           end
         end
