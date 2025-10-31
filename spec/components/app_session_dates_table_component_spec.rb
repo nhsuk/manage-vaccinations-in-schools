@@ -170,7 +170,7 @@ describe AppSessionDatesTableComponent do
 
     create(
       :vaccination_record,
-      session: session,
+      session:,
       programme:,
       performed_at:,
       patient:,

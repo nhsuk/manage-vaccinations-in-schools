@@ -116,6 +116,34 @@ describe Patient do
       end
     end
 
+    describe "#with_pending_changes" do
+      subject(:scope) { described_class.with_pending_changes_for_team(team:) }
+
+      let(:team) { create(:team) }
+      let(:patient) { create(:patient) }
+
+      context "without pending changes" do
+        it { should_not include(patient) }
+      end
+
+      context "with pending changes" do
+        before do
+          patient.update!(pending_changes: { "some_field" => "new_value" })
+        end
+
+        it { should include(patient) }
+      end
+
+      context "with pending changes but archived from the team" do
+        before do
+          patient.update!(pending_changes: { "some_field" => "new_value" })
+          create(:archive_reason, :moved_out_of_area, team:, patient:)
+        end
+
+        it { should_not include(patient) }
+      end
+    end
+
     describe "#appear_in_programmes" do
       subject(:scope) do
         described_class.appear_in_programmes(programmes, academic_year:)
@@ -382,14 +410,16 @@ describe Patient do
         described_class.consent_given_and_safe_to_vaccinate(
           programmes:,
           academic_year:,
-          vaccine_method:
+          vaccine_method:,
+          without_gelatine:
         )
       end
 
       let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
       let(:session) { create(:session, programmes:) }
-      let(:academic_year) { Date.current.academic_year }
+      let(:academic_year) { AcademicYear.current }
       let(:vaccine_method) { nil }
+      let(:without_gelatine) { nil }
 
       it { should be_empty }
 

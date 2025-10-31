@@ -6,6 +6,14 @@
   <% end %>
 <% end %>
 
+<% if Flipper.enabled?(:statuses_changed_banner) %>
+  <%= render AppWarningCalloutComponent.new(heading: "Programme statuses have changed") do %>
+    <p>We’ve updated the words Mavis uses to show each child’s programme status.</p>
+    <p><%= link_to "Read about the new statuses in the user guide",
+                   "https://guide.manage-vaccinations-in-schools.nhs.uk/changes-to-programme-statuses/" %></p>
+  <% end %>
+<% end %>
+
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: programmes_path) do |card| %>

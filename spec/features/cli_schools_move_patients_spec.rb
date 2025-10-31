@@ -10,8 +10,8 @@ describe "schools move-patients" do
   let(:team) { create(:team) }
   let(:subteam) { create(:subteam, team:) }
   let(:other_subteam) { create(:subteam, team:) }
-  let(:source_school) { create(:school, team: team, subteam:) }
-  let(:target_school) { create(:school, team: team) }
+  let(:source_school) { create(:school, team:, subteam:) }
+  let(:target_school) { create(:school, team:) }
   let(:programmes) { [create(:programme, :hpv)] }
   let(:location_programme_year_group) do
     create(
@@ -22,9 +22,7 @@ describe "schools move-patients" do
   end
   let!(:patient) { create(:patient, school: source_school) }
   let!(:session) { create(:session, location: source_school, programmes:) }
-  let!(:school_move) do
-    create(:school_move, patient: patient, school: source_school)
-  end
+  let!(:school_move) { create(:school_move, patient:, school: source_school) }
   let!(:consent_form) do
     create(
       :consent_form,

@@ -15,6 +15,8 @@ module HasVaccineMethods
 
   def vaccine_method_nasal? = vaccine_methods.include?("nasal")
 
+  def vaccine_method_nasal_only? = vaccine_methods == %w[nasal]
+
   def vaccine_method_injection_and_nasal?
     vaccine_method_injection? && vaccine_method_nasal?
   end

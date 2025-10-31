@@ -80,14 +80,15 @@ class PatientLocation < ApplicationRecord
 
           location_programme_year_group_exists =
             Location::ProgrammeYearGroup
+              .joins(:location_year_group)
               .where(
-                "location_programme_year_groups.location_id = patient_locations.location_id"
+                "location_year_groups.location_id = patient_locations.location_id"
               )
               .where(
-                "location_programme_year_groups.academic_year = patient_locations.academic_year"
+                "location_year_groups.academic_year = patient_locations.academic_year"
               )
               .where(
-                "location_programme_year_groups.year_group = " \
+                "location_year_groups.value = " \
                   "patient_locations.academic_year - patients.birth_academic_year - ?",
                 Integer::AGE_CHILDREN_START_SCHOOL
               )

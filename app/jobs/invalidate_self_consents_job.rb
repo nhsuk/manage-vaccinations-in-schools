@@ -9,7 +9,7 @@ class InvalidateSelfConsentsJob < ApplicationJob
     Programme.find_each do |programme|
       patients =
         Patient.has_vaccination_status(
-          %i[none_yet could_not_vaccinate],
+          %i[not_eligible eligible due],
           programme:,
           academic_year:
         )

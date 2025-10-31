@@ -106,7 +106,7 @@ FactoryBot.define do
     outcome { "administered" }
     performed_at { Time.current }
 
-    dose_sequence { programme.vaccinated_dose_sequence }
+    dose_sequence { programme.default_dose_sequence }
     full_dose { true }
     protocol { "pgd" }
 

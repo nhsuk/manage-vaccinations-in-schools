@@ -28,10 +28,10 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               end
             end
             
-            if vaccination_method
+            if vaccine_type
               summary_list.with_row do |row|
-                row.with_key { "Vaccination method" }
-                row.with_value { vaccination_method }
+                row.with_key { "Vaccine type" }
+                row.with_value { vaccine_type }
               end
             end
 
@@ -132,44 +132,37 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           "#{I18n.t(status, scope: :activity)} for #{programme.name_in_sentence}"
         end
 
-    return if next_activities.empty?
-
-    if next_activities.size == 1
-      next_activities.first
-    else
-      tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
-        safe_join(next_activities.map { tag.li(it) })
-      end
-    end
+    render_bullet_list_or_single(next_activities)
   end
 
-  def vaccination_method
+  def vaccine_type
     return unless %i[register record].include?(context)
 
-    programmes_to_check = programmes.select(&:has_multiple_vaccine_methods?)
+    programmes_to_check =
+      programmes.select do
+        it.has_multiple_vaccine_methods? || it.vaccine_may_contain_gelatine?
+      end
 
     return if programmes_to_check.empty?
 
-    vaccine_methods =
-      programmes_to_check.flat_map do |programme|
+    labels =
+      programmes_to_check.filter_map do |programme|
         if patient.consent_given_and_safe_to_vaccinate?(
              programme:,
              academic_year:
            )
-          patient.vaccine_criteria(programme:, academic_year:).vaccine_methods
-        else
-          []
+          vaccine_criteria =
+            patient.vaccine_criteria(programme:, academic_year:)
+
+          render AppVaccineCriteriaLabelComponent.new(
+                   vaccine_criteria,
+                   programme:,
+                   context: :vaccine_type
+                 )
         end
       end
 
-    return if vaccine_methods.empty?
-
-    tag.span(
-      class: "app-vaccine-method",
-      data: {
-        method: vaccine_methods.first
-      }
-    ) { Vaccine.human_enum_name(:method, vaccine_methods.first) }
+    render_bullet_list_or_single(labels)
   end
 
   def status_tags
@@ -192,33 +185,14 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def consent_status_tag
     {
       key: :consent,
-      value:
-        render(
-          AppProgrammeStatusTagsComponent.new(
-            programmes.index_with do |programme|
-              consent_status_value(programme:, academic_year:)
-            end,
-            context: :consent
-          )
-        )
+      value: render(AppAttachedTagsComponent.new(attached_tags(:consent)))
     }
   end
 
   def vaccination_status_tag
     {
       key: :vaccination,
-      value:
-        render(
-          AppProgrammeStatusTagsComponent.new(
-            programmes.index_with do |programme|
-              patient.vaccination_status(programme:, academic_year:).slice(
-                :status,
-                :latest_session_status
-              )
-            end,
-            context: :vaccination
-          )
-        )
+      value: render(AppAttachedTagsComponent.new(attached_tags(:vaccination)))
     }
   end
 
@@ -238,52 +212,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def triage_status_tag
     {
       key: :triage,
-      value:
-        render(
-          AppProgrammeStatusTagsComponent.new(
-            programmes.index_with do |programme|
-              triage_status_value(programme:, academic_year:)
-            end,
-            context: :triage
-          )
-        )
+      value: render(AppAttachedTagsComponent.new(attached_tags(:triage)))
     }
-  end
-
-  def consent_status_value(programme:, academic_year:)
-    consent_status = patient.consent_status(programme:, academic_year:)
-
-    if programme.has_multiple_vaccine_methods?
-      triage_status = patient.triage_status(programme:, academic_year:)
-
-      if triage_status.vaccine_method.present?
-        return(
-          {
-            status: consent_status.status,
-            vaccine_methods: [triage_status.vaccine_method]
-          }
-        )
-      end
-    end
-
-    consent_status.slice(:status, :vaccine_methods, :without_gelatine)
-  end
-
-  def triage_status_value(programme:, academic_year:)
-    triage_status = patient.triage_status(programme:, academic_year:)
-
-    status =
-      if triage_status.vaccine_method.present? &&
-           programme.has_multiple_vaccine_methods?
-        triage_status.status + "_#{triage_status.vaccine_method}"
-      else
-        triage_status.status
-      end
-
-    without_gelatine =
-      triage_status.without_gelatine && !programme.has_multiple_vaccine_methods?
-
-    { status: status, without_gelatine: }
   end
 
   def patient_specific_direction_status_tag
@@ -297,6 +227,16 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           )
         )
     }
+  end
+
+  def attached_tags(context)
+    programmes.each_with_object({}) do |programme, hash|
+      hash[programme.name] = PatientStatusResolver.new(
+        patient,
+        programme:,
+        academic_year:
+      ).send(context)
+    end
   end
 
   def latest_note
@@ -333,6 +273,18 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     patient.patient_specific_directions.any? do
       it.programme_id.in?(programme_ids) && it.academic_year == academic_year &&
         !it.invalidated?
+    end
+  end
+
+  def render_bullet_list_or_single(items)
+    return if items.empty?
+
+    if items.size == 1
+      items.first
+    else
+      tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
+        safe_join(items.map { tag.li(it) })
+      end
     end
   end
 end

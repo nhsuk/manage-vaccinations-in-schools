@@ -269,9 +269,9 @@ describe Location do
           :count
         ).by(4)
 
-        expect(
-          location.location_programme_year_groups.pluck(:year_group).sort
-        ).to eq((0..3).to_a)
+        expect(location.location_programme_year_groups.pluck_year_groups).to eq(
+          (0..3).to_a
+        )
       end
     end
 
@@ -284,9 +284,9 @@ describe Location do
           :count
         ).by(12)
 
-        expect(
-          location.location_programme_year_groups.pluck(:year_group).sort
-        ).to eq((0..11).to_a)
+        expect(location.location_programme_year_groups.pluck_year_groups).to eq(
+          (0..11).to_a
+        )
       end
     end
   end

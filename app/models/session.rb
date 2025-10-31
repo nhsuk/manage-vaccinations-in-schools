@@ -34,6 +34,7 @@ class Session < ApplicationRecord
   include Consentable
   include DaysBeforeToWeeksBefore
   include Delegatable
+  include GelatineVaccinesConcern
   include HasLocationProgrammeYearGroups
 
   audited associated_with: :location
@@ -65,11 +66,15 @@ class Session < ApplicationRecord
   has_many :gillick_assessments, through: :session_dates
   has_many :vaccines, through: :programmes
 
+  has_many :location_year_groups,
+           -> { where(academic_year: it.academic_year) },
+           through: :location
+
   has_many :location_programme_year_groups,
            -> do
-             where(academic_year: it.academic_year, programme: it.programmes)
+             includes(:location_year_group).where(programme: it.programmes)
            end,
-           through: :location
+           through: :location_year_groups
 
   scope :joins_patient_locations, -> { joins(<<-SQL) }
     INNER JOIN patient_locations
@@ -83,11 +88,13 @@ class Session < ApplicationRecord
   SQL
 
   scope :joins_location_programme_year_groups, -> { joins(<<-SQL) }
+    INNER JOIN location_year_groups
+    ON location_year_groups.location_id = sessions.location_id
+    AND location_year_groups.academic_year = sessions.academic_year
+    AND location_year_groups.value = sessions.academic_year - patients.birth_academic_year - #{Integer::AGE_CHILDREN_START_SCHOOL}
     INNER JOIN location_programme_year_groups
-    ON location_programme_year_groups.location_id = sessions.location_id
-    AND location_programme_year_groups.academic_year = sessions.academic_year
+    ON location_programme_year_groups.location_year_group_id = location_year_groups.id
     AND location_programme_year_groups.programme_id = session_programmes.programme_id
-    AND location_programme_year_groups.year_group = sessions.academic_year - patients.birth_academic_year - #{Integer::AGE_CHILDREN_START_SCHOOL}
   SQL
 
   scope :has_date,
@@ -208,7 +215,8 @@ class Session < ApplicationRecord
 
     programmes.select do |programme|
       location_programme_year_groups.any? do
-        it.programme_id == programme.id && it.year_group == year_group
+        it.programme_id == programme.id &&
+          it.location_year_group.value == year_group
       end
     end
   end

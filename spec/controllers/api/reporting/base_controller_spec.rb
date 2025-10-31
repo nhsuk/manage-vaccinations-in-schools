@@ -95,26 +95,18 @@ describe API::Reporting::BaseController do
 
   describe "#to_csv" do
     context "given some records" do
-      let!(:flu) { Programme.flu.first || create(:programme, type: "flu") }
-      let(:location) { create(:school, name: "St Vaxes") }
-      let(:sample_session) do
-        create(:session, location: location, programmes: [flu])
-      end
-      let(:patient_a) do
-        create(:patient, random_nhs_number: true, year_group: 7)
-      end
-      let(:records) { ReportingAPI::VaccinationEvent.where("id > 0") }
+      let!(:programme) { create(:programme, type: "hpv") }
+      let(:patient) { create(:patient, random_nhs_number: true) }
+      let(:records) { VaccinationRecord.where("id > 0") }
       let(:result) { controller.send(:to_csv, records:, header_mappings:) }
 
       before do
         create_list(
-          :reporting_api_vaccination_event,
+          :vaccination_record,
           2,
-          for_patient: patient_a,
-          year_group: 7,
-          outcome: "administered",
-          session: sample_session,
-          location: location
+          patient:,
+          programme:,
+          outcome: "administered"
         )
       end
 
@@ -122,8 +114,8 @@ describe API::Reporting::BaseController do
         let(:header_mappings) do
           {
             "Patient ID" => :patient_id,
-            "Outcome" => :vaccination_record_outcome,
-            "Year Group" => :patient_year_group
+            "Outcome" => :outcome,
+            "UUID" => :uuid
           }
         end
 
@@ -143,10 +135,10 @@ describe API::Reporting::BaseController do
           describe "the row for each record" do
             it "has each attribute named in the header mappings in the right order" do
               expect(returned_csv_rows[1]).to eq(
-                "#{records[0].patient_id},administered,7"
+                "#{records[0].patient_id},administered,#{records[0].uuid}"
               )
               expect(returned_csv_rows[2]).to eq(
-                "#{records[1].patient_id},administered,7"
+                "#{records[1].patient_id},administered,#{records[1].uuid}"
               )
             end
 
@@ -154,7 +146,7 @@ describe API::Reporting::BaseController do
               let(:header_mappings) do
                 {
                   "Patient ID" => :patient_id,
-                  "Outcome" => :vaccination_record_outcome,
+                  "Outcome" => :outcome,
                   "Non-existent attribute" => :non_existent_attribute
                 }
               end

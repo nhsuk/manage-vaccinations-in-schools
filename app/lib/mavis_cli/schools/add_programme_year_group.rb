@@ -43,11 +43,8 @@ module MavisCLI
               )
 
             Location::ProgrammeYearGroup.find_or_create_by!(
-              location:,
-              programme:,
-              academic_year:,
-              year_group:,
-              location_year_group:
+              location_year_group:,
+              programme:
             )
           end
         end

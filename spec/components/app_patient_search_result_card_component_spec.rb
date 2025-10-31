@@ -52,9 +52,9 @@ describe AppPatientSearchResultCardComponent do
 
   context "when given a programme" do
     let(:programme) { create(:programme, :flu) }
-    let(:academic_year) { Date.current.academic_year }
+    let(:academic_year) { AcademicYear.current }
 
-    it { should have_text("Programme outcomeFluNo outcome") }
+    it { should have_text("Programme statusFluNot eligible") }
 
     context "when given a consent status" do
       let(:consent_status) { "given" }
@@ -80,14 +80,15 @@ describe AppPatientSearchResultCardComponent do
       before do
         create(
           :patient_vaccination_status,
-          :none_yet,
+          :eligible,
           patient:,
           programme:,
+          latest_date: Date.new(2025, 1, 1),
           latest_session_status: "unwell"
         )
       end
 
-      it { should have_text("Programme outcomeFluNo outcomeUnwell") }
+      it { should have_text("Programme statusFluEligibleUnwell") }
     end
   end
 end

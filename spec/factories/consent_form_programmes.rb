@@ -31,11 +31,11 @@ FactoryBot.define do
     trait :given do
       response { "given" }
       vaccine_methods { %w[injection] }
+      without_gelatine { false }
     end
 
     trait :refused do
       response { "refused" }
-      vaccine_methods { [] }
     end
   end
 end

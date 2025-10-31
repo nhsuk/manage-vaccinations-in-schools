@@ -4,7 +4,7 @@ describe ConsentNotificationPolicy do
   let(:programmes) { [create(:programme, :hpv)] }
   let(:team) { create(:team, programmes: programmes) }
   let(:user) do
-    user = create(:user, team: team)
+    user = create(:user, team:)
     allow(user).to receive(:selected_team).and_return(team)
     user
   end

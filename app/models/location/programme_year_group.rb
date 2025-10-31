@@ -5,9 +5,6 @@
 # Table name: location_programme_year_groups
 #
 #  id                     :bigint           not null, primary key
-#  academic_year          :integer          not null
-#  year_group             :integer          not null
-#  location_id            :bigint           not null
 #  location_year_group_id :bigint           not null
 #  programme_id           :bigint           not null
 #
@@ -25,33 +22,39 @@
 #  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
 #
 class Location::ProgrammeYearGroup < ApplicationRecord
-  audited associated_with: :location
+  audited associated_with: :location_year_group
+
+  self.ignored_columns = %w[location_id academic_year year_group]
 
   belongs_to :location_year_group, class_name: "Location::YearGroup"
-
-  belongs_to :location
   belongs_to :programme
 
+  has_one :location, through: :location_year_group
+
   scope :pluck_year_groups,
-        -> { distinct.order(:year_group).pluck(:year_group) }
+        -> do
+          joins(:location_year_group)
+            .distinct
+            .order(:"location_year_group.value")
+            .pluck(:"location_year_group.value")
+        end
 
   scope :pluck_birth_academic_years,
         -> do
-          distinct
-            .order(:academic_year, :year_group)
-            .pluck(:academic_year, :year_group)
+          joins(:location_year_group)
+            .distinct
+            .order(
+              :"location_year_group.academic_year",
+              :"location_year_group.value"
+            )
+            .pluck(
+              :"location_year_group.academic_year",
+              :"location_year_group.value"
+            )
             .map { _2.to_birth_academic_year(academic_year: _1) }
         end
 
-  validates :year_group, inclusion: { in: :valid_year_groups }
+  def year_group = location_year_group.value
 
-  def birth_academic_year
-    year_group.to_birth_academic_year(academic_year:)
-  end
-
-  private
-
-  def valid_year_groups
-    location&.location_year_groups&.where(academic_year:)&.pluck_values || []
-  end
+  delegate :birth_academic_year, to: :location_year_group
 end

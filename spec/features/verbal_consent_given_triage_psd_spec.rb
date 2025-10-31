@@ -107,8 +107,8 @@ describe "Verbal consent" do
   end
 
   def and_i_see_the_flu_nasal_consent_given
-    expect(page).to have_content("Consent givenNasal spray")
-    expect(page).to have_content("Consent also given for injected vaccine?No")
+    expect(page).to have_content("ResponseConsent given")
+    expect(page).to have_content("Chosen vaccineNasal spray only")
   end
 
   def when_i_confirm_the_consent_response

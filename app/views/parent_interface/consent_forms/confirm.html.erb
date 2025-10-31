@@ -3,7 +3,7 @@
 <% end %>
 
 <% change_link = Proc.new do |step, params = {}|
-     options = (step == "reason" || step.start_with?("response-")) ? {} : { skip_to_confirm: true }
+     options = (step == "reason-for-refusal" || step.start_with?("response-")) ? {} : { skip_to_confirm: true }
      parent_interface_consent_form_edit_path(
        @consent_form,
        step,
@@ -31,10 +31,10 @@
                               visually_hidden_text: "decision")
             end
           
-            if (without_gelatine = consent_form_programme.without_gelatine) != nil
+            if @consent_form.can_offer_without_gelatine? && (without_gelatine = consent_form_programme.without_gelatine) != nil
               summary_list.with_row do |row|
                 row.with_key { "Consent given for gelatine-free vaccine only?" }
-                row.with_value { without_gelatine ? "Yes" : "No" }
+                row.with_value { consent_form_programme.without_gelatine ? "Yes" : "No" }
                 row.with_action(text: "Change",
                                 href: change_link["without-gelatine"],
                                 visually_hidden_text: "decision")
@@ -70,7 +70,7 @@
               row.with_key { "Reason" }
               row.with_value { reason_for_refusal_text.html_safe }
               row.with_action(text: "Change",
-                              href: change_link["reason"],
+                              href: change_link["reason-for-refusal"],
                               visually_hidden_text: "reason for refusal")
             end
           end %>

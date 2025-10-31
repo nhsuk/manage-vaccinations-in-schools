@@ -19,7 +19,7 @@ class TeamCachedCounts
       PatientPolicy::Scope
         .new(current_user, Patient)
         .resolve
-        .with_pending_changes
+        .with_pending_changes_for_team(team:)
         .pluck(:id)
 
     (vaccination_records_with_issues + patients_with_issues).uniq.length

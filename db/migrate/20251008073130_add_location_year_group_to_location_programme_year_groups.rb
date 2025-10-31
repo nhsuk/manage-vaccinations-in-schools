@@ -59,7 +59,7 @@ class AddLocationYearGroupToLocationProgrammeYearGroups < ActiveRecord::Migratio
 
       Location.find(location_id).import_year_groups!(
         year_groups,
-        academic_year: academic_year,
+        academic_year:,
         source: "gias"
       )
     end

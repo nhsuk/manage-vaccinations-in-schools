@@ -6,7 +6,7 @@ describe Stats::ConsentsBySchool do
       described_class.new(
         teams: [team],
         programmes: [programme_flu, programme_hpv],
-        academic_year: academic_year
+        academic_year:
       )
     end
 
@@ -15,7 +15,7 @@ describe Stats::ConsentsBySchool do
     let(:programme_hpv) { create(:programme, type: "hpv") }
     let(:team) { create(:team, organisation: organisation, name: "Test Team") }
     let(:academic_year) { AcademicYear.current }
-    let(:school) { create(:school, name: "Test School", team: team) }
+    let(:school) { create(:school, name: "Test School", team:) }
 
     before { team.programmes << [programme_flu, programme_hpv] }
 
@@ -28,7 +28,7 @@ describe Stats::ConsentsBySchool do
       let!(:session) do
         create(
           :session,
-          team: team,
+          team:,
           location: school,
           programmes: [programme_flu],
           academic_year:,
@@ -174,18 +174,16 @@ describe Stats::ConsentsBySchool do
       let!(:session) do
         create(
           :session,
-          team: team,
+          team:,
           location: school,
           programmes: [programme_flu, programme_hpv],
-          academic_year: academic_year,
+          academic_year:,
           send_consent_requests_at: 10.days.ago
         )
       end
 
-      let!(:patient) { create(:patient, team: team) }
-      let(:patient_location) do
-        create(:patient_location, session: session, patient: patient)
-      end
+      let!(:patient) { create(:patient, team:) }
+      let(:patient_location) { create(:patient_location, session:, patient:) }
 
       let!(:flu_consent) do
         create(

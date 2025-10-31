@@ -132,10 +132,10 @@ class TriageForm
   end
 
   def without_gelatine
-    if status_option == "safe_to_vaccinate_without_gelatine"
+    case status_option
+    when "safe_to_vaccinate_injection", "safe_to_vaccinate_without_gelatine"
       true
-    elsif programme.vaccine_may_contain_gelatine? &&
-          !programme.has_multiple_vaccine_methods?
+    when "safe_to_vaccinate", "safe_to_vaccinate_nasal"
       false
     end
   end

@@ -61,6 +61,7 @@ FactoryBot.define do
       response { "given" }
       reason_for_refusal { nil }
       reason_for_refusal_notes { "" }
+      without_gelatine { false }
     end
 
     given_name { Faker::Name.first_name }
@@ -130,12 +131,14 @@ FactoryBot.define do
 
     after(:create) do |consent_form, evaluator|
       vaccine_methods = evaluator.response == "given" ? %w[injection] : []
+      without_gelatine = evaluator.without_gelatine
 
       consent_form.consent_form_programmes.update_all(
+        notes: evaluator.reason_for_refusal_notes,
+        reason_for_refusal: evaluator.reason_for_refusal,
         response: evaluator.response,
         vaccine_methods:,
-        reason_for_refusal: evaluator.reason_for_refusal,
-        notes: evaluator.reason_for_refusal_notes
+        without_gelatine:
       )
     end
 

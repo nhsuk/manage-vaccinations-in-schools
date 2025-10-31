@@ -372,6 +372,7 @@ describe GovukNotifyPersonalisation do
         :administered,
         programme: programmes.first,
         dose_sequence: 1,
+        patient:,
         performed_at: Date.new(2024, 1, 1),
         vaccine:
       )
@@ -388,6 +389,43 @@ describe GovukNotifyPersonalisation do
           vaccine_brand: "Vaccine"
         )
       )
+    end
+
+    context "for the MMR programme" do
+      let(:programmes) { [create(:programme, :mmr)] }
+
+      let(:patient) do
+        create(:patient, date_of_birth: Date.new(2018, 2, 1), session:)
+      end
+
+      it do
+        expect(to_h).to include(
+          mmr_second_dose_message:
+            "## Your child still needs a second dose of the MMR vaccine\n\n" \
+              "To be fully protected against measles, mumps and rubella, " \
+              "your child needs a second dose of the vaccine. Our team will " \
+              "be in touch about this soon."
+        )
+      end
+
+      context "when fully vaccinated" do
+        before do
+          create(
+            :vaccination_record,
+            :administered,
+            programme: programmes.first,
+            patient:,
+            performed_at: Date.new(2020, 1, 1),
+            vaccine:
+          )
+
+          vaccination_record # ensure second dose exists
+
+          StatusUpdater.call(patient:)
+        end
+
+        it { should include(mmr_second_dose_message: "") }
+      end
     end
   end
 

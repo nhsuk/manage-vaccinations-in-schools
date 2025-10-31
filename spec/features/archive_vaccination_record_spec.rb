@@ -153,12 +153,7 @@ describe "Archive vaccination record" do
         batch:
       )
 
-    create(
-      :patient_vaccination_status,
-      :vaccinated,
-      patient: @patient,
-      programme: @programme
-    )
+    StatusUpdater.call(patient: @patient)
 
     if Flipper.enabled?(:imms_api_integration) &&
          Flipper.enabled?(:imms_api_sync_job)

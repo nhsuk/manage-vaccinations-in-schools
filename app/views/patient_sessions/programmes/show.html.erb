@@ -12,6 +12,6 @@
 
     <%= render AppPatientSessionRecordComponent.new(patient: @patient, session: @session, programme: @programme, current_user:, vaccinate_form: @vaccinate_form) %>
 
-    <%= render AppPatientSessionOutcomeComponent.new(patient: @patient, session: @session, programme: @programme) %>
+    <%= render AppPatientSessionVaccinationComponent.new(patient: @patient, session: @session, programme: @programme) %>
   </div>
 </div>

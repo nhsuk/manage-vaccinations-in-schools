@@ -56,18 +56,19 @@ class Location < ApplicationRecord
   has_many :location_year_groups,
            class_name: "Location::YearGroup",
            dependent: :destroy
-  has_many :location_programme_year_groups,
-           class_name: "Location::ProgrammeYearGroup",
-           dependent: :destroy
 
   has_many :attendance_records
   has_many :consent_forms
-
   has_many :patient_locations
   has_many :patients, foreign_key: :school_id
   has_many :sessions
 
   has_one :team, through: :subteam
+
+  has_many :location_programme_year_groups,
+           -> { includes(:location_year_group) },
+           through: :location_year_groups
+
   has_many :programmes,
            -> { distinct.order(:type) },
            through: :location_programme_year_groups
@@ -88,17 +89,8 @@ class Location < ApplicationRecord
           )
         end
 
-  scope :has_year_groups,
-        ->(values, academic_year:) do
-          where(
-            "(?) >= ?",
-            Location::YearGroup
-              .select("COUNT(location_year_groups.id)")
-              .where("locations.id = location_year_groups.location_id")
-              .where(value: values, academic_year:),
-            values.count
-          )
-        end
+  scope :has_gias_year_groups,
+        ->(values) { where("ARRAY[?]::integer[] <@ gias_year_groups", values) }
 
   scope :search_by_name,
         ->(query) do
@@ -196,19 +188,13 @@ class Location < ApplicationRecord
       programmes.flat_map do |programme|
         programme.default_year_groups.filter_map do |year_group|
           if (year_group_id = year_group_ids[year_group])
-            [id, academic_year, programme.id, year_group, year_group_id]
+            [year_group_id, programme.id]
           end
         end
       end
 
     Location::ProgrammeYearGroup.import!(
-      %i[
-        location_id
-        academic_year
-        programme_id
-        year_group
-        location_year_group_id
-      ],
+      %i[location_year_group_id programme_id],
       rows,
       on_duplicate_key_ignore: true
     )

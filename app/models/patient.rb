@@ -111,10 +111,11 @@ class Patient < ApplicationRecord
 
   scope :in_eligible_year_group_for_session_programme, -> { joins(<<-SQL) }
     INNER JOIN session_programmes ON session_programmes.session_id = sessions.id
-    INNER JOIN location_programme_year_groups ON location_programme_year_groups.location_id = patient_locations.location_id
-    AND location_programme_year_groups.academic_year = patient_locations.academic_year
+    INNER JOIN location_year_groups ON location_year_groups.location_id = patient_locations.location_id
+    AND location_year_groups.academic_year = patient_locations.academic_year
+    INNER JOIN location_programme_year_groups ON location_programme_year_groups.location_year_group_id = location_year_groups.id
     AND location_programme_year_groups.programme_id = session_programmes.programme_id
-    AND patients.birth_academic_year = location_programme_year_groups.academic_year - location_programme_year_groups.year_group - #{Integer::AGE_CHILDREN_START_SCHOOL}
+    AND patients.birth_academic_year = location_year_groups.academic_year - location_year_groups.value - #{Integer::AGE_CHILDREN_START_SCHOOL}
   SQL
 
   scope :archived,
@@ -126,6 +127,9 @@ class Patient < ApplicationRecord
         ->(team:) do
           joins_archive_reasons(team:).where("archive_reasons.id IS NULL")
         end
+
+  scope :with_pending_changes_for_team,
+        ->(team:) { with_pending_changes.not_archived(team:) }
 
   scope :with_nhs_number, -> { where.not(nhs_number: nil) }
   scope :without_nhs_number, -> { where(nhs_number: nil) }
@@ -227,6 +231,7 @@ class Patient < ApplicationRecord
         ->(status, programme:, academic_year:) do
           where(
             Patient::VaccinationStatus
+              .select("1")
               .where("patient_id = patients.id")
               .where(status:, programme:, academic_year:)
               .arel
@@ -235,17 +240,26 @@ class Patient < ApplicationRecord
         end
 
   scope :has_consent_status,
-        ->(status, programme:, academic_year:, vaccine_method: nil) do
+        ->(
+          status,
+          programme:,
+          academic_year:,
+          vaccine_method: nil,
+          without_gelatine: nil
+        ) do
           consent_status_scope =
-            Patient::ConsentStatus.where("patient_id = patients.id").where(
-              status:,
-              programme:,
-              academic_year:
-            )
+            Patient::ConsentStatus
+              .select("1")
+              .where("patient_id = patients.id")
+              .where(status:, programme:, academic_year:)
 
-          if vaccine_method
+          unless vaccine_method.nil?
             consent_status_scope =
               consent_status_scope.has_vaccine_method(vaccine_method)
+          end
+
+          unless without_gelatine.nil?
+            consent_status_scope = consent_status_scope.where(without_gelatine:)
           end
 
           where(consent_status_scope.arel.exists)
@@ -255,6 +269,7 @@ class Patient < ApplicationRecord
         ->(status, programme:, academic_year:) do
           where(
             Patient::TriageStatus
+              .select("1")
               .where("patient_id = patients.id")
               .where(status:, programme:, academic_year:)
               .arel
@@ -262,28 +277,41 @@ class Patient < ApplicationRecord
           )
         end
 
-  scope :has_vaccine_method,
-        ->(vaccine_method, programme:, academic_year:) do
-          where(
+  scope :has_vaccine_criteria,
+        ->(
+          programme:,
+          academic_year:,
+          vaccine_method: nil,
+          without_gelatine: nil
+        ) do
+          triage_status_matching =
             Patient::TriageStatus
+              .select("1")
               .where("patient_id = patients.id")
-              .where(vaccine_method:, programme:, academic_year:)
-              .arel
-              .exists
-          ).or(
-            where(
-              Patient::TriageStatus
-                .where("patient_id = patients.id")
-                .where(status: "not_required", programme:, academic_year:)
-                .arel
-                .exists
-            ).where(
-              Patient::ConsentStatus
-                .where("patient_id = patients.id")
-                .where(programme:, academic_year:)
-                .has_vaccine_method(vaccine_method)
-                .arel
-                .exists
+              .where(programme:, academic_year:)
+              .then { vaccine_method ? it.where(vaccine_method:) : it }
+              .then { without_gelatine ? it.where(without_gelatine:) : it }
+
+          triage_status_not_required =
+            Patient::TriageStatus
+              .select("1")
+              .where("patient_id = patients.id")
+              .where(programme:, academic_year:)
+              .where(status: "not_required")
+
+          consent_status_matching =
+            Patient::ConsentStatus
+              .select("1")
+              .where("patient_id = patients.id")
+              .where(programme:, academic_year:)
+              .then { without_gelatine ? it.where(without_gelatine:) : it }
+              .then do
+                vaccine_method ? it.has_vaccine_method(vaccine_method) : it
+              end
+
+          where(triage_status_matching.arel.exists).or(
+            where(triage_status_not_required.arel.exists).where(
+              consent_status_matching.arel.exists
             )
           )
         end
@@ -292,6 +320,7 @@ class Patient < ApplicationRecord
         ->(status, session:) do
           where(
             Patient::RegistrationStatus
+              .select("1")
               .where("patient_id = patients.id")
               .where(session:, status:)
               .arel
@@ -303,6 +332,7 @@ class Patient < ApplicationRecord
         ->(programme:, academic_year:, team:) do
           where(
             PatientSpecificDirection
+              .select("1")
               .where("patient_id = patients.id")
               .where(programme:, academic_year:, team:)
               .not_invalidated
@@ -315,6 +345,7 @@ class Patient < ApplicationRecord
         ->(programme:, academic_year:, team:) do
           where.not(
             PatientSpecificDirection
+              .select("1")
               .where("patient_id = patients.id")
               .where(programme:, academic_year:, team:)
               .not_invalidated
@@ -324,13 +355,14 @@ class Patient < ApplicationRecord
         end
 
   scope :consent_given_and_safe_to_vaccinate,
-        ->(programmes:, academic_year:, vaccine_method:) do
+        ->(programmes:, academic_year:, vaccine_method:, without_gelatine:) do
           select do |patient|
             programmes.any? do |programme|
               patient.consent_given_and_safe_to_vaccinate?(
                 programme:,
                 academic_year:,
-                vaccine_method:
+                vaccine_method:,
+                without_gelatine:
               )
             end
           end
@@ -538,7 +570,8 @@ class Patient < ApplicationRecord
   def consent_given_and_safe_to_vaccinate?(
     programme:,
     academic_year:,
-    vaccine_method: nil
+    vaccine_method: nil,
+    without_gelatine: nil
   )
     return false if vaccination_status(programme:, academic_year:).vaccinated?
 
@@ -549,9 +582,17 @@ class Patient < ApplicationRecord
       return false
     end
 
+    return true if vaccine_method.nil? && without_gelatine.nil?
+
+    vaccine_criteria = self.vaccine_criteria(programme:, academic_year:)
+
     if vaccine_method &&
-         vaccine_criteria(programme:, academic_year:).vaccine_methods.first !=
-           vaccine_method
+         vaccine_criteria.vaccine_methods.first != vaccine_method
+      return false
+    end
+
+    if !without_gelatine.nil? &&
+         vaccine_criteria.without_gelatine != without_gelatine
       return false
     end
 

@@ -246,34 +246,6 @@ describe Programme do
     end
   end
 
-  describe "#vaccinated_dose_sequence" do
-    subject { programme.vaccinated_dose_sequence }
-
-    context "with a flu programme" do
-      let(:programme) { build(:programme, :flu) }
-
-      it { should eq(1) }
-    end
-
-    context "with an HPV programme" do
-      let(:programme) { build(:programme, :hpv) }
-
-      it { should eq(1) }
-    end
-
-    context "with a MenACWY programme" do
-      let(:programme) { build(:programme, :menacwy) }
-
-      it { should eq(1) }
-    end
-
-    context "with an Td/IPV programme" do
-      let(:programme) { build(:programme, :td_ipv) }
-
-      it { should eq(5) }
-    end
-  end
-
   describe "#default_dose_sequence" do
     subject(:default_dose_sequence) { programme.default_dose_sequence }
 

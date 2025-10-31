@@ -256,6 +256,7 @@ describe "End-to-end journey" do
   def then_i_see_that_the_child_is_vaccinated
     click_on "Pilot School"
     within(".app-secondary-navigation") { click_on "Children" }
+    expect(page).not_to have_content("Not eligible")
     choose "Vaccinated", match: :first
     click_on "Update results"
 

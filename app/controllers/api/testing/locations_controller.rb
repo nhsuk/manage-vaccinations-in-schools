@@ -12,12 +12,8 @@ class API::Testing::LocationsController < API::Testing::BaseController
       @locations = @locations.where(status: status)
     end
 
-    if (year_groups = params[:year_groups]).present?
-      @locations =
-        @locations.has_year_groups(
-          year_groups,
-          academic_year: AcademicYear.current
-        )
+    if (gias_year_groups = params[:gias_year_groups]).present?
+      @locations = @locations.has_gias_year_groups(gias_year_groups)
     end
 
     if (is_attached_to_team = params[:is_attached_to_team]).present?

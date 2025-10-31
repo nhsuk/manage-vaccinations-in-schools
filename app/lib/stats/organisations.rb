@@ -51,7 +51,7 @@ class Stats::Organisations
     eligible_patients = get_eligible_patients(programme)
     by_year =
       eligible_patients
-        .group_by { |p| p.year_group(academic_year: academic_year) }
+        .group_by { it.year_group(academic_year:) }
         .transform_values(&:count)
 
     { total: eligible_patients.count, years: by_year }
@@ -73,36 +73,28 @@ class Stats::Organisations
       Consent
         .joins(:team)
         .where(team: teams)
-        .where(programme: programme, academic_year: academic_year)
+        .where(programme:, academic_year:)
         .distinct
         .count
 
     patients_with_no_response =
       eligible_patients.has_consent_status(
         :no_response,
-        programme: programme,
-        academic_year: academic_year
+        programme:,
+        academic_year:
       )
 
     patients_with_response_given =
-      eligible_patients.has_consent_status(
-        :given,
-        programme: programme,
-        academic_year: academic_year
-      )
+      eligible_patients.has_consent_status(:given, programme:, academic_year:)
 
     patients_with_response_refused =
-      eligible_patients.has_consent_status(
-        :refused,
-        programme: programme,
-        academic_year: academic_year
-      )
+      eligible_patients.has_consent_status(:refused, programme:, academic_year:)
 
     patients_with_response_conflicting =
       eligible_patients.has_consent_status(
         :conflicts,
-        programme: programme,
-        academic_year: academic_year
+        programme:,
+        academic_year:
       )
 
     no_response_but_contacted =
@@ -129,7 +121,7 @@ class Stats::Organisations
         .joins(session: :team)
         .where(sessions: { team: teams })
         .where(patient_id: eligible_patients.map(&:id))
-        .where(sessions: { academic_year: academic_year })
+        .where(sessions: { academic_year: })
         .has_programme(programme)
 
     initial_requests = comms.request
@@ -155,8 +147,8 @@ class Stats::Organisations
     vaccinated_patients =
       eligible_patients.has_vaccination_status(
         :vaccinated,
-        programme: programme,
-        academic_year: academic_year
+        programme:,
+        academic_year:
       )
 
     coverage_count = vaccinated_patients.count

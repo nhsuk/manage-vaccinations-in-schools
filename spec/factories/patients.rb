@@ -210,6 +210,32 @@ FactoryBot.define do
       end
     end
 
+    trait :eligible_for_vaccination do
+      vaccination_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_vaccination_status,
+            :eligible,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
+    trait :due_for_vaccination do
+      vaccination_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_vaccination_status,
+            :due,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
     trait :consent_no_response do
       consent_statuses do
         programmes.map do |programme|
@@ -251,6 +277,7 @@ FactoryBot.define do
 
     trait :consent_given_triage_not_needed do
       triage_not_required
+      due_for_vaccination
 
       consents do
         programmes.map do |programme|
@@ -278,6 +305,7 @@ FactoryBot.define do
 
     trait :consent_given_nasal_only_triage_not_needed do
       triage_not_required
+      due_for_vaccination
 
       consents do
         programmes.map do |programme|
@@ -305,6 +333,7 @@ FactoryBot.define do
 
     trait :consent_given_injection_only_triage_not_needed do
       triage_not_required
+      due_for_vaccination
 
       consents do
         programmes.map do |programme|
@@ -333,6 +362,7 @@ FactoryBot.define do
 
     trait :consent_given_nasal_or_injection_triage_not_needed do
       triage_not_required
+      due_for_vaccination
 
       consents do
         programmes.map do |programme|
@@ -360,6 +390,7 @@ FactoryBot.define do
 
     trait :consent_given_triage_needed do
       triage_required
+      eligible_for_vaccination
 
       consents do
         programmes.map do |programme|
@@ -387,6 +418,8 @@ FactoryBot.define do
     end
 
     trait :consent_given_injection_only_triage_needed do
+      eligible_for_vaccination
+
       consents do
         programmes.map do |programme|
           association(
@@ -425,6 +458,8 @@ FactoryBot.define do
     end
 
     trait :consent_given_nasal_only_triage_needed do
+      eligible_for_vaccination
+
       consents do
         programmes.map do |programme|
           association(
@@ -518,6 +553,8 @@ FactoryBot.define do
     end
 
     trait :consent_given_triage_safe_to_vaccinate do
+      due_for_vaccination
+
       consents do
         programmes.map do |programme|
           association(
@@ -570,6 +607,8 @@ FactoryBot.define do
     end
 
     trait :consent_given_injection_and_nasal_triage_safe_to_vaccinate_nasal do
+      due_for_vaccination
+
       consents do
         programmes.map do |programme|
           association(
@@ -608,6 +647,8 @@ FactoryBot.define do
     end
 
     trait :consent_given_nasal_triage_safe_to_vaccinate_nasal do
+      due_for_vaccination
+
       consents do
         programmes.map do |programme|
           association(
@@ -657,6 +698,8 @@ FactoryBot.define do
     end
 
     trait :consent_given_injection_and_nasal_triage_safe_to_vaccinate_injection do
+      due_for_vaccination
+
       consents do
         programmes.map do |programme|
           association(
@@ -686,7 +729,7 @@ FactoryBot.define do
         programmes.map do |programme|
           association(
             :patient_triage_status,
-            :safe_to_vaccinate,
+            :safe_to_vaccinate_without_gelatine,
             patient: instance,
             programme:
           )
@@ -898,16 +941,6 @@ FactoryBot.define do
               programme:
             )
           end
-        end
-      end
-      vaccination_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_vaccination_status,
-            :could_not_vaccinate,
-            patient: instance,
-            programme:
-          )
         end
       end
     end

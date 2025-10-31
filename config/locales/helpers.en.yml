@@ -1,9 +1,16 @@
 en:
   helpers:
+    hint:
+      consent_form:
+        response_options:
+          refused: If you do not agree to the vaccination, you’ll get a chance to tell us why
     legend:
       import_duplicate_form:
         apply_changes: Which record do you want to keep?
     label:
+      consent_form:
+        response_options:
+          refused: "No"
       draft_vaccination_record:
         full_dose_options:
           true: Yes, they got the full dose

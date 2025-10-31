@@ -84,12 +84,14 @@ describe Reports::CareplusExporter do
           delivery_method:,
           patient:,
           session:,
-          performed_at: 2.weeks.ago
+          performed_at: 2.weeks.ago,
+          dose_sequence: 1
         )
 
       attended_index = headers.index("Attended")
       vaccine_index = headers.index("Vaccine 1")
       vaccine_code_index = headers.index("Vaccine Code 1")
+      dose_index = headers.index("Dose 1")
       batch_index = headers.index("Batch No 1")
       site_index = headers.index("Site 1")
       staff_type_index = headers.index("Staff Type")
@@ -104,6 +106,7 @@ describe Reports::CareplusExporter do
         vaccination_record.vaccine.snomed_product_code
       )
       expect(row[vaccine_code_index]).to eq(expected_vaccine_code)
+      expect(row[dose_index]).to eq("1P")
       expect(row[batch_index]).to eq(vaccination_record.batch.name)
       expect(row[site_index]).to eq("ULA")
       expect(row[staff_type_index]).to eq("IN")
@@ -293,6 +296,21 @@ describe Reports::CareplusExporter do
         expect(row[0]).to eq(patient.nhs_number)
         expect(row).not_to be_nil
         expect(row[address_index]).to be_blank
+      end
+    end
+
+    context "with a vaccination record that has no dose sequence" do
+      it "includes the vaccination details" do
+        patient = create(:patient, session:)
+        create(
+          :vaccination_record,
+          programme:,
+          patient:,
+          session:,
+          dose_sequence: nil
+        )
+
+        expect(data_rows.first[headers.index("Dose 1")]).to be_blank
       end
     end
   end

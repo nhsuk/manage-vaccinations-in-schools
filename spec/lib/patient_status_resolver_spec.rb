@@ -1,0 +1,145 @@
+# frozen_string_literal: true
+
+describe PatientStatusResolver do
+  subject(:status_attached_tag_resolver) do
+    described_class.new(patient, programme:, academic_year:)
+  end
+
+  let(:patient) { create(:patient) }
+  let(:academic_year) { AcademicYear.current }
+
+  describe "#consent" do
+    subject { status_attached_tag_resolver.consent }
+
+    let(:programme) { create(:programme, :hpv) }
+
+    it { should eq({ text: "No response", colour: "grey" }) }
+  end
+
+  describe "#triage" do
+    subject { status_attached_tag_resolver.triage }
+
+    let(:programme) { create(:programme, :hpv) }
+
+    it { should eq({ text: "No triage needed", colour: "grey" }) }
+  end
+
+  describe "#vaccination" do
+    subject(:hash) { status_attached_tag_resolver.vaccination }
+
+    let(:programme) { create(:programme, :hpv) }
+    let(:session) { create(:session, programmes: [programme]) }
+
+    it { should eq({ text: "Not eligible", colour: "grey" }) }
+
+    context "with an administered vaccination record" do
+      let(:patient) do
+        create(:patient, :consent_given_triage_not_needed, session:)
+      end
+
+      before do
+        create(
+          :vaccination_record,
+          :administered,
+          patient:,
+          programme:,
+          performed_at: Time.zone.local(2025, 10, 30)
+        )
+        StatusUpdater.call(patient:)
+        patient.reload
+      end
+
+      it do
+        expect(hash).to eq(
+          {
+            text: "Vaccinated",
+            colour: "green",
+            details_text: "Vaccinated on 30 October 2025"
+          }
+        )
+      end
+    end
+
+    context "with an already had vaccination record" do
+      let(:patient) do
+        create(:patient, :consent_given_triage_not_needed, session:)
+      end
+
+      before do
+        create(:vaccination_record, :already_had, patient:, programme:)
+        StatusUpdater.call(patient:)
+        patient.reload
+      end
+
+      it do
+        expect(hash).to eq(
+          {
+            text: "Vaccinated",
+            colour: "green",
+            details_text: "Already had the vaccine"
+          }
+        )
+      end
+    end
+
+    context "and due" do
+      let(:patient) do
+        create(:patient, :consent_given_triage_not_needed, session:)
+      end
+
+      it do
+        expect(hash).to eq(
+          {
+            text: "Due vaccination",
+            colour: "aqua-green",
+            details_text: "Consent given"
+          }
+        )
+      end
+    end
+
+    context "for MMR programme" do
+      let(:programme) { create(:programme, :mmr) }
+
+      context "and eligible for 1st dose" do
+        let(:patient) { create(:patient, session:) }
+
+        before do
+          StatusUpdater.call(patient:)
+          patient.reload
+        end
+
+        it do
+          expect(hash).to eq(
+            {
+              text: "Eligible for 1st dose",
+              colour: "white",
+              details_text: "No response"
+            }
+          )
+        end
+      end
+
+      context "and due 1st dose" do
+        let(:patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
+        end
+
+        before do
+          StatusUpdater.call(patient:)
+          patient.reload
+        end
+
+        it do
+          expect(hash).to eq(
+            {
+              text: "Due 1st dose",
+              colour: "aqua-green",
+              details_text: "Consent given"
+            }
+          )
+        end
+      end
+    end
+  end
+end

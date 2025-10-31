@@ -59,6 +59,16 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
             method_string =
               Vaccine.human_enum_name(:method, vaccine_method).downcase
 
+            # Flu injection is always without gelatine.
+            consent_status =
+              (
+                if vaccine_method == "injection"
+                  "given_injection_without_gelatine"
+                else
+                  "given_nasal"
+                end
+              )
+
             {
               heading: "Consent given for #{method_string}",
               colour: "aqua-green",
@@ -66,7 +76,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
               link_to:
                 session_consent_path(
                   session,
-                  consent_statuses: ["given_#{vaccine_method}"],
+                  consent_statuses: [consent_status],
                   programme_types: [programme.type]
                 )
             }
@@ -88,7 +98,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
         end
       ),
       {
-        heading: "Did not consent",
+        heading: "Consent refused",
         colour: "red",
         count: stats[:did_not_consent].to_s,
         link_to:
@@ -120,10 +130,12 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
   def still_to_vaccinate_count
     session
       .patients
+      .includes(:consent_statuses, :triage_statuses, :vaccination_statuses)
       .consent_given_and_safe_to_vaccinate(
         programmes:,
         academic_year:,
-        vaccine_method: nil
+        vaccine_method: nil,
+        without_gelatine: nil
       )
       .count
   end

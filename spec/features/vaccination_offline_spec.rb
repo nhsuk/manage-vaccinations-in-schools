@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "offline vaccination" do
+describe "Offline vaccination" do
   around do |example|
     travel_to(Time.zone.local(2024, 2, 1, 12)) { example.run }
   end
@@ -554,12 +554,12 @@ describe "offline vaccination" do
 
     visit patient_url
     within(".nhsuk-breadcrumb__list") { click_on "Children" }
-    choose "No outcome"
+    choose "Due vaccination"
     click_on "Update results"
 
     click_on @unvaccinated_patient.full_name
     expect(page).to have_content(@unvaccinated_patient.full_name)
-    expect(page).to have_content("No outcome")
+    expect(page).to have_content("Due vaccination")
     expect(page).to have_content("Absent from session")
 
     visit patient_url

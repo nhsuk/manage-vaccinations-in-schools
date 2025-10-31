@@ -9,7 +9,11 @@ class AppConsentCardComponent < ViewComponent::Base
   def call
     render AppCardComponent.new(**card_options) do |card|
       card.with_heading(level: 6) { heading }
-      govuk_summary_list(rows:)
+      render AppConsentSummaryComponent.new(
+               consent,
+               show_email_address: true,
+               show_phone_number: true
+             )
     end
   end
 
@@ -18,7 +22,7 @@ class AppConsentCardComponent < ViewComponent::Base
   attr_reader :consent, :session
 
   delegate :patient, :programme, to: :consent
-  delegate :consent_response_tag, :govuk_summary_list, to: :helpers
+  delegate :govuk_summary_list, to: :helpers
 
   def link_to
     session_patient_programme_consent_path(session, patient, programme, consent)
@@ -32,52 +36,5 @@ class AppConsentCardComponent < ViewComponent::Base
     else
       "#{consent.name} (#{consent.who_responded})"
     end
-  end
-
-  def rows
-    [
-      if (phone = consent.parent&.phone).present?
-        { key: { text: "Phone number" }, value: { text: phone } }
-      end,
-      if (email = consent.parent&.email).present?
-        { key: { text: "Email address" }, value: { text: email } }
-      end,
-      {
-        key: {
-          text: "Date"
-        },
-        value: {
-          text: consent.responded_at.to_fs(:long)
-        }
-      },
-      {
-        key: {
-          text: "Response"
-        },
-        value: {
-          text: consent_response_tag(consent)
-        }
-      },
-      if consent.vaccine_method_nasal?
-        {
-          key: {
-            text: "Consent also given for injected vaccine?"
-          },
-          value: {
-            text: consent.vaccine_method_injection? ? "Yes" : "No"
-          }
-        }
-      end,
-      unless consent.without_gelatine.nil?
-        {
-          key: {
-            text: "Consent given for gelatine-free vaccine only?"
-          },
-          value: {
-            text: consent.without_gelatine? ? "Yes" : "No"
-          }
-        }
-      end
-    ].compact
   end
 end

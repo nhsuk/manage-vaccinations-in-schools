@@ -1,38 +1,35 @@
 # frozen_string_literal: true
 
 namespace :data_migrations do
-  desc "Mark vaccination records as synced to NHS Imms API"
-  task mark_vaccination_records_as_synced: :environment do
-    csv_data = File.read("db/data/imms-api-missing-record-ids.csv")
+  desc "Set without_gelatine value on all consents to ensure they are valid"
+  task set_consent_without_gelatine: :environment do
+    flu_programme = Programme.flu.sole
 
-    rows = CSV.parse(csv_data, headers: true)
-    rows.each do |row|
-      vr = VaccinationRecord.find(row["mavis_id"])
-      vr.update_columns(
-        nhs_immunisations_api_synced_at: row["time"],
-        nhs_immunisations_api_id: row["imms_api_id"],
-        nhs_immunisations_api_etag: "1"
-      )
-    end
+    Consent
+      .response_given
+      .where(without_gelatine: nil)
+      .find_each do |consent|
+        is_flu = consent.programme_id == flu_programme.id
+        consented_to_nasal = consent.vaccine_methods.include?("nasal")
+
+        without_gelatine = is_flu && !consented_to_nasal
+        consent.update_columns(without_gelatine:)
+      end
   end
 
-  desc "Set nhs_immunisations_api_primary_source to true where nhs_immunisations_api_id is present"
-  task set_api_primary_source: :environment do
-    full_scope = VaccinationRecord.where.not(nhs_immunisations_api_id: nil)
-    puts "Found #{full_scope.count} records with `nhs_immunisations_api_id` present."
+  desc "Set without_gelatine value on all triages to ensure they are valid"
+  task set_triage_without_gelatine: :environment do
+    flu_programme = Programme.flu.sole
 
-    scope = full_scope.sourced_from_service
-    puts "Found #{scope.count} vaccination_records with nhs_immunisations_api_id present and recorded in service."
+    Triage
+      .safe_to_vaccinate
+      .where(without_gelatine: nil)
+      .find_each do |triage|
+        is_flu = triage.programme_id == flu_programme.id
+        triaged_as_injection = triage.vaccine_method == "injection"
 
-    if full_scope.count != scope.count
-      raise "Mismatch between `full_scope` and `scope`. This means there are some records which have an ID, " \
-              "but weren't recorded in service"
-    end
-
-    to_update = scope.where(nhs_immunisations_api_primary_source: nil)
-    puts "Setting nhs_immunisations_api_primary_source to true for #{to_update.count} records..."
-
-    updated = to_update.update_all(nhs_immunisations_api_primary_source: true)
-    puts "Updated #{updated} records."
+        without_gelatine = is_flu && triaged_as_injection
+        triage.update_columns(without_gelatine:)
+      end
   end
 end

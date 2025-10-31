@@ -9,17 +9,17 @@ class PatientSearchForm < SearchForm
   attribute :date_of_birth_day, :integer
   attribute :date_of_birth_month, :integer
   attribute :date_of_birth_year, :integer
+  attribute :eligible_children, :boolean
   attribute :missing_nhs_number, :boolean
-  attribute :vaccination_status, :string
   attribute :patient_specific_direction_status, :string
   attribute :programme_types, array: true
   attribute :q, :string
   attribute :register_status, :string
-  attribute :triage_status, :string
-  attribute :vaccine_method, :string
-  attribute :year_groups, array: true
   attribute :still_to_vaccinate, :boolean
-  attribute :eligible_children, :boolean
+  attribute :triage_status, :string
+  attribute :vaccination_status, :string
+  attribute :vaccine_criteria, :string
+  attribute :year_groups, array: true
 
   def initialize(current_user:, session: nil, **attributes)
     @current_user = current_user
@@ -48,6 +48,32 @@ class PatientSearchForm < SearchForm
       end
   end
 
+  def vaccine_method
+    return nil if vaccine_criteria.blank?
+
+    case vaccine_criteria
+    when "injection", "injection_without_gelatine"
+      "injection"
+    when "nasal"
+      "nasal"
+    else
+      raise "Unknown vaccine criteria value: #{value}"
+    end
+  end
+
+  def without_gelatine
+    return nil if vaccine_criteria.blank?
+
+    case vaccine_criteria
+    when "injection", "nasal"
+      false
+    when "injection_without_gelatine"
+      true
+    else
+      raise "Unknown vaccine criteria value: #{value}"
+    end
+  end
+
   def apply(scope)
     scope = filter_name(scope)
     scope = filter_year_groups(scope)
@@ -60,7 +86,7 @@ class PatientSearchForm < SearchForm
     scope = filter_vaccination_statuses(scope)
     scope = filter_register_status(scope)
     scope = filter_triage_status(scope)
-    scope = filter_vaccine_method(scope)
+    scope = filter_vaccine_criteria(scope)
     scope = filter_patient_specific_direction_status(scope)
     scope = filter_for_eligible_children_only(scope)
 
@@ -146,23 +172,23 @@ class PatientSearchForm < SearchForm
 
   def filter_consent_statuses(scope)
     if (statuses = consent_statuses).present?
-      given_with_vaccine_method_statuses, other_statuses =
-        statuses.partition { it.starts_with?("given_") }
+      given_statuses, other_statuses =
+        statuses.partition { it.starts_with?("given") }
 
-      given_with_vaccine_method_scope =
-        if given_with_vaccine_method_statuses.any?
-          vaccine_methods =
-            given_with_vaccine_method_statuses.map { it.sub("given_", "") }
+      given_scope =
+        if given_statuses.any?
+          or_scope = consent_status_scope_for(given_statuses.first, scope)
 
-          scope.has_consent_status(
-            "given",
-            programme: programmes,
-            academic_year:,
-            vaccine_method: vaccine_methods
-          )
+          given_statuses
+            .drop(1)
+            .each do |value|
+              or_scope = or_scope.or(consent_status_scope_for(value, scope))
+            end
+
+          or_scope
         end
 
-      other_status_scope =
+      other_scope =
         if other_statuses.any?
           scope.has_consent_status(
             other_statuses,
@@ -171,13 +197,44 @@ class PatientSearchForm < SearchForm
           )
         end
 
-      if given_with_vaccine_method_scope && other_status_scope
-        given_with_vaccine_method_scope.or(other_status_scope)
+      if given_scope && other_scope
+        given_scope.or(other_scope)
       else
-        given_with_vaccine_method_scope || other_status_scope
+        given_scope || other_scope
       end
     else
       scope
+    end
+  end
+
+  def consent_status_scope_for(value, scope)
+    case value
+    when "given"
+      scope.has_consent_status(
+        "given",
+        programme: programmes,
+        academic_year:,
+        vaccine_method: "injection",
+        without_gelatine: false
+      )
+    when "given_nasal"
+      scope.has_consent_status(
+        "given",
+        programme: programmes,
+        academic_year:,
+        vaccine_method: "nasal",
+        without_gelatine: false
+      )
+    when "given_injection_without_gelatine"
+      scope.has_consent_status(
+        "given",
+        programme: programmes,
+        academic_year:,
+        vaccine_method: "injection",
+        without_gelatine: true
+      )
+    else
+      raise "Unknown consent filter value: #{value}"
     end
   end
 
@@ -230,16 +287,15 @@ class PatientSearchForm < SearchForm
     end
   end
 
-  def filter_vaccine_method(scope)
-    if vaccine_method.present?
-      scope.has_vaccine_method(
-        vaccine_method,
-        programme: programmes,
-        academic_year:
-      )
-    else
-      scope
-    end
+  def filter_vaccine_criteria(scope)
+    return scope if vaccine_criteria.blank?
+
+    scope.has_vaccine_criteria(
+      vaccine_method:,
+      without_gelatine:,
+      programme: programmes,
+      academic_year:
+    )
   end
 
   def filter_still_to_vaccinate(scope)
@@ -248,7 +304,8 @@ class PatientSearchForm < SearchForm
     scope.consent_given_and_safe_to_vaccinate(
       programmes:,
       academic_year:,
-      vaccine_method:
+      vaccine_method:,
+      without_gelatine:
     )
   end
 

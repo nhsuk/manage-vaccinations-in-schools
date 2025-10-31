@@ -39,9 +39,26 @@ module MavisCLI
         end
         new_loc.update!(subteam: old_loc.subteam)
 
-        Location::ProgrammeYearGroup.where(location_id: old_loc.id).update_all(
-          location_id: new_loc.id
+        new_loc.import_year_groups!(
+          old_loc.year_groups,
+          academic_year:,
+          source: "cli"
         )
+
+        old_loc
+          .location_programme_year_groups
+          .find_each do |location_programme_year_group|
+          location_year_group =
+            new_loc.location_year_groups.find_by!(
+              academic_year:,
+              value: location_programme_year_group.location_year_group.value
+            )
+          location_programme_year_group.update_column(
+            :location_year_group_id,
+            location_year_group.id
+          )
+        end
+
         Session.where(location_id: old_loc.id).update_all(
           location_id: new_loc.id
         )

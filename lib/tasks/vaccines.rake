@@ -317,7 +317,7 @@ end
 def create_mmr_health_questions(vaccine)
   bleeding =
     vaccine.health_questions.create!(
-      title: "Does your child have a bleeding disorder"
+      title: "Does your child have a bleeding disorder?"
     )
 
   blood_thinning =
@@ -329,14 +329,22 @@ def create_mmr_health_questions(vaccine)
 
   bleeding.update!(next_question: blood_thinning)
 
+  blood_or_plasma_transfusion =
+    vaccine.health_questions.create!(
+      title:
+        "Has your child received a blood or plasma transfusion, or immunoglobulin in the last 3 months?"
+    )
+
+  blood_thinning.update!(next_question: blood_or_plasma_transfusion)
+
   severe_reaction_mmr =
     vaccine.health_questions.create!(
       title:
         "Has your child had a severe allergic reaction (anaphylaxis) to " \
-          "a previous dose of MMR or any other measles, mumps or rubella vaccine?"
+          "a previous dose of MMR or any other vaccine?"
     )
 
-  blood_thinning.update!(next_question: severe_reaction_mmr)
+  blood_or_plasma_transfusion.update!(next_question: severe_reaction_mmr)
 
   severe_reaction_gelatine =
     if vaccine.contains_gelatine?
@@ -377,7 +385,7 @@ def create_mmr_health_questions(vaccine)
   household_immune_system =
     vaccine.health_questions.create!(
       title:
-        "Is the child in regular close contact with anyone currently " \
+        "Is your child in regular close contact with anyone currently " \
           "having treatment that severely affects their immune system?",
       give_details_hint:
         "Let us know if they can avoid contact with this person for 2 weeks"
@@ -385,13 +393,32 @@ def create_mmr_health_questions(vaccine)
 
   immune_system.update!(next_question: household_immune_system)
 
+  contraindications =
+    vaccine.health_questions.create!(
+      title:
+        "Has your child recently had, or are they soon due to have a " \
+          "TB skin test, chickenpox vaccine or yellow fever vaccine?"
+    )
+
+  household_immune_system.update!(next_question: contraindications)
+
   medical_conditions =
     vaccine.health_questions.create!(
       title:
-        "Does the child have any other medical conditions we should know about?"
+        "Does your child have any other medical conditions we should know about?",
+      would_require_triage: false
     )
 
-  household_immune_system.update!(next_question: medical_conditions)
+  contraindications.update!(next_question: medical_conditions)
+
+  extra_support =
+    vaccine.health_questions.create!(
+      title: "Does your child need extra support during vaccination sessions?",
+      hint: "For example, they’re autistic, or extremely anxious",
+      would_require_triage: false
+    )
+
+  medical_conditions.update!(next_question: extra_support)
 end
 
 def create_td_ipv_health_questions(vaccine)

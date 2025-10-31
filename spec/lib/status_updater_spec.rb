@@ -60,7 +60,7 @@ describe StatusUpdater do
 
     it "creates a patient vaccination status" do
       expect { call }.to change(patient.vaccination_statuses, :count).by(1)
-      expect(patient.vaccination_statuses.first).to be_none_yet
+      expect(patient.vaccination_statuses.first).to be_eligible
     end
   end
 
@@ -85,7 +85,7 @@ describe StatusUpdater do
 
     it "creates a patient vaccination status" do
       expect { call }.to change(patient.vaccination_statuses, :count).by(1)
-      expect(patient.vaccination_statuses.first).to be_none_yet
+      expect(patient.vaccination_statuses.first).to be_eligible
     end
   end
 
@@ -137,8 +137,8 @@ describe StatusUpdater do
 
     it "creates a patient vaccination status for both programmes" do
       expect { call }.to change(patient.vaccination_statuses, :count).by(2)
-      expect(patient.vaccination_statuses.first).to be_none_yet
-      expect(patient.vaccination_statuses.second).to be_none_yet
+      expect(patient.vaccination_statuses.first).to be_eligible
+      expect(patient.vaccination_statuses.second).to be_eligible
     end
   end
 end

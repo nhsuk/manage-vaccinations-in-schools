@@ -159,7 +159,7 @@ describe StatusGenerator::Triage do
     end
 
     describe "academic year filtering" do
-      let(:current_academic_year) { Date.current.academic_year }
+      let(:current_academic_year) { AcademicYear.current }
       let(:previous_academic_year) { current_academic_year - 1 }
       let(:patient) { create(:patient) }
       let(:programme) { create(:programme) }
@@ -169,8 +169,8 @@ describe StatusGenerator::Triage do
           create(
             :triage,
             :safe_to_vaccinate,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             created_at: Date.new(current_academic_year, 10, 15).in_time_zone
           )
         end
@@ -183,8 +183,8 @@ describe StatusGenerator::Triage do
           create(
             :triage,
             :safe_to_vaccinate,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             created_at: Date.new(previous_academic_year, 10, 15).in_time_zone
           )
         end
@@ -197,15 +197,15 @@ describe StatusGenerator::Triage do
           create(
             :triage,
             :safe_to_vaccinate,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             created_at: Date.new(current_academic_year, 10, 15).in_time_zone
           )
           create(
             :triage,
             :do_not_vaccinate,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             created_at: Date.new(previous_academic_year, 10, 15).in_time_zone
           )
         end
@@ -218,15 +218,15 @@ describe StatusGenerator::Triage do
           create(
             :triage,
             :do_not_vaccinate,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             created_at: Date.new(current_academic_year, 10, 15).in_time_zone
           )
           create(
             :triage,
             :safe_to_vaccinate,
-            patient: patient,
-            programme: programme,
+            patient:,
+            programme:,
             created_at: Date.new(previous_academic_year, 10, 15).in_time_zone
           )
         end

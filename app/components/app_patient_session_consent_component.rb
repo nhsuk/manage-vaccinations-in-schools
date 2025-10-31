@@ -1,36 +1,12 @@
 # frozen_string_literal: true
 
-class AppPatientSessionConsentComponent < ViewComponent::Base
-  def initialize(patient:, session:, programme:)
-    @patient = patient
-    @session = session
-    @programme = programme
-  end
-
+class AppPatientSessionConsentComponent < AppPatientSessionSectionComponent
   private
 
-  attr_reader :patient, :session, :programme
-
   delegate :govuk_button_to, to: :helpers
-  delegate :academic_year, to: :session
 
-  def colour
-    I18n.t(consent_status.status, scope: %i[status consent colour])
-  end
-
-  def heading
-    status_with_suffix = consent_status.status
-
-    if programme.has_multiple_vaccine_methods?
-      vaccine_method =
-        triage_status.vaccine_method.presence ||
-          consent_status.vaccine_methods.first
-      status_with_suffix += "_#{vaccine_method}" if vaccine_method
-    elsif consent_status.without_gelatine
-      status_with_suffix += "_without_gelatine"
-    end
-
-    "#{programme.name}: #{I18n.t(status_with_suffix, scope: %i[status consent label])}"
+  def resolved_status
+    @resolved_status ||= patient_status_resolver.consent
   end
 
   def latest_consent_request
@@ -56,10 +32,6 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
 
   def consent_status
     @consent_status ||= patient.consent_status(programme:, academic_year:)
-  end
-
-  def triage_status
-    @triage_status ||= patient.triage_status(programme:, academic_year:)
   end
 
   def vaccination_status

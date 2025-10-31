@@ -14,9 +14,11 @@ class PatientSessions::BaseController < ApplicationController
 
   def set_session
     @session =
-      policy_scope(Session).includes(:location, :programmes).find_by!(
-        slug: params.fetch(:session_slug, params[:slug])
-      )
+      policy_scope(Session).includes(
+        :location,
+        :location_programme_year_groups,
+        :programmes
+      ).find_by!(slug: params.fetch(:session_slug, params[:slug]))
   end
 
   def set_session_date

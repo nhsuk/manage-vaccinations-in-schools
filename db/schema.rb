@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_16_163100) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -417,10 +417,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_163100) do
   end
 
   create_table "location_programme_year_groups", force: :cascade do |t|
-    t.bigint "location_id", null: false
+    t.bigint "location_id"
     t.bigint "programme_id", null: false
-    t.integer "year_group", null: false
-    t.integer "academic_year", null: false
+    t.integer "year_group"
+    t.integer "academic_year"
     t.bigint "location_year_group_id", null: false
     t.index ["location_id", "academic_year", "programme_id", "year_group"], name: "idx_on_location_id_academic_year_programme_id_year__6ad5e2b67d", unique: true
     t.index ["location_year_group_id", "programme_id"], name: "idx_on_location_year_group_id_programme_id_405f51181e", unique: true
@@ -614,9 +614,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_163100) do
     t.bigint "programme_id", null: false
     t.integer "status", default: 0, null: false
     t.integer "academic_year", null: false
-    t.integer "latest_session_status", default: 0, null: false
-    t.datetime "status_changed_at", null: false
+    t.integer "latest_session_status"
+    t.datetime "status_changed_at"
     t.bigint "latest_location_id"
+    t.date "latest_date"
+    t.integer "dose_sequence"
     t.index ["latest_location_id"], name: "index_patient_vaccination_statuses_on_latest_location_id"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_fc0b47b743", unique: true
     t.index ["status"], name: "index_patient_vaccination_statuses_on_status"
@@ -700,63 +702,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_163100) do
     t.index ["created_at"], name: "index_reporting_api_one_time_tokens_on_created_at"
     t.index ["token"], name: "index_reporting_api_one_time_tokens_on_token", unique: true
     t.index ["user_id"], name: "index_reporting_api_one_time_tokens_on_user_id", unique: true
-  end
-
-  create_table "reporting_api_vaccination_events", force: :cascade do |t|
-    t.string "event_type", null: false
-    t.datetime "event_timestamp", null: false
-    t.integer "event_timestamp_year", null: false
-    t.integer "event_timestamp_month", null: false
-    t.integer "event_timestamp_day", null: false
-    t.integer "event_timestamp_academic_year", null: false
-    t.string "source_type", null: false
-    t.bigint "source_id", null: false
-    t.bigint "patient_id", null: false
-    t.string "patient_address_town"
-    t.string "patient_address_postcode"
-    t.string "patient_gender_code"
-    t.boolean "patient_home_educated"
-    t.date "patient_date_of_death"
-    t.integer "patient_birth_academic_year"
-    t.integer "patient_year_group"
-    t.bigint "patient_school_id"
-    t.string "patient_school_name"
-    t.string "patient_school_address_town"
-    t.string "patient_school_address_postcode"
-    t.integer "patient_school_gias_local_authority_code"
-    t.string "patient_school_type"
-    t.string "patient_school_local_authority_mhclg_code"
-    t.string "patient_school_local_authority_short_name"
-    t.string "patient_local_authority_from_postcode_mhclg_code"
-    t.string "patient_local_authority_from_postcode_short_name"
-    t.bigint "location_id"
-    t.string "location_name"
-    t.string "location_address_town"
-    t.string "location_address_postcode"
-    t.string "location_type"
-    t.string "location_local_authority_mhclg_code"
-    t.string "location_local_authority_short_name"
-    t.bigint "team_id"
-    t.string "team_name"
-    t.bigint "organisation_id"
-    t.string "organisation_ods_code"
-    t.string "organisation_name"
-    t.string "vaccination_record_outcome"
-    t.uuid "vaccination_record_uuid"
-    t.datetime "vaccination_record_performed_at"
-    t.bigint "vaccination_record_programme_id"
-    t.bigint "vaccination_record_session_id"
-    t.bigint "programme_id"
-    t.string "programme_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["event_timestamp"], name: "ix_rve_tstamp"
-    t.index ["event_timestamp_academic_year", "event_timestamp_month", "event_type"], name: "ix_rve_acyear_month_type"
-    t.index ["event_timestamp_academic_year", "event_timestamp_month"], name: "ix_rve_ac_year_month"
-    t.index ["programme_id", "event_timestamp_academic_year", "event_timestamp_month"], name: "ix_rve_prog_acyear_month"
-    t.index ["source_type", "source_id"], name: "index_reporting_api_vaccination_events_on_source"
-    t.index ["source_type", "source_id"], name: "ix_rve_source_type_id"
-    t.index ["team_id", "event_timestamp_academic_year", "event_timestamp_month"], name: "ix_rve_team_acyr_month"
   end
 
   create_table "school_move_log_entries", force: :cascade do |t|

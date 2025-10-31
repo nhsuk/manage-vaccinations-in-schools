@@ -33,7 +33,7 @@ describe AppPatientSessionSearchResultCardComponent do
   it { should have_link("SELDON, Hari", href:) }
   it { should have_text("Year 8") }
   it { should have_text("Consent status") }
-  it { should_not have_text("Vaccination method") }
+  it { should_not have_text("Vaccine type") }
 
   context "when patient session has notes" do
     let(:note) { create(:note, patient:, session:) }
@@ -72,7 +72,7 @@ describe AppPatientSessionSearchResultCardComponent do
     context "and the programme is flu" do
       let(:programme) { create(:programme, :flu) }
 
-      it { should_not have_text("Vaccination method") }
+      it { should_not have_text("Vaccine type") }
       it { should have_text("Consent given for nasal spray") }
 
       context "and the vaccine method is overridden by triage" do
@@ -84,8 +84,8 @@ describe AppPatientSessionSearchResultCardComponent do
           )
         end
 
-        it { should_not have_text("Vaccination method") }
-        it { should have_text("Consent given for injected vaccine") }
+        it { should_not have_text("Vaccine type") }
+        it { should have_text("Consent given for gelatine-free injection") }
       end
     end
   end
@@ -96,7 +96,7 @@ describe AppPatientSessionSearchResultCardComponent do
     context "and the programme is flu" do
       let(:programme) { create(:programme, :flu) }
 
-      it { should_not have_text("Vaccination method") }
+      it { should_not have_text("Vaccine type") }
     end
   end
 
@@ -127,7 +127,7 @@ describe AppPatientSessionSearchResultCardComponent do
     context "when allowed to record attendance" do
       before { stub_authorization(allowed: true) }
 
-      it { should have_text("Outcome") }
+      it { should have_text("Programme status") }
 
       it { should have_text("Action requiredRecord vaccination for HPV") }
       it { should have_button("Attending") }
@@ -136,7 +136,7 @@ describe AppPatientSessionSearchResultCardComponent do
       context "and the programme is flu" do
         let(:programme) { create(:programme, :flu) }
 
-        it { should have_text("Vaccination method") }
+        it { should have_text("Vaccine type") }
         it { should have_text("Nasal") }
       end
     end
@@ -144,7 +144,7 @@ describe AppPatientSessionSearchResultCardComponent do
     context "when not allowed to record attendance" do
       before { stub_authorization(allowed: false) }
 
-      it { should have_text("Outcome") }
+      it { should have_text("Programme status") }
 
       it { should have_text("Action requiredRecord vaccination for HPV") }
       it { should_not have_button("Attending") }
@@ -153,7 +153,7 @@ describe AppPatientSessionSearchResultCardComponent do
       context "and the programme is flu" do
         let(:programme) { create(:programme, :flu) }
 
-        it { should have_text("Vaccination method") }
+        it { should have_text("Vaccine type") }
         it { should have_text("Nasal") }
       end
     end
@@ -166,9 +166,9 @@ describe AppPatientSessionSearchResultCardComponent do
 
     context "and the programme is flu" do
       let(:programme) { create(:programme, :flu) }
-      let(:academic_year) { Date.current.academic_year }
+      let(:academic_year) { AcademicYear.current }
 
-      it { should have_text("Vaccination method") }
+      it { should have_text("Vaccine type") }
       it { should have_text("Nasal") }
 
       context "and once vaccinated" do
@@ -177,7 +177,7 @@ describe AppPatientSessionSearchResultCardComponent do
           patient.vaccination_status(programme:, academic_year:).assign_status
         end
 
-        it { should_not have_text("Vaccination method") }
+        it { should_not have_text("Vaccine type") }
       end
     end
   end
@@ -185,12 +185,12 @@ describe AppPatientSessionSearchResultCardComponent do
   context "when context is patients" do
     let(:context) { :patients }
 
-    it { should have_text("Outcome") }
+    it { should have_text("Programme status") }
 
     context "and the programme is flu" do
       let(:programme) { create(:programme, :flu) }
 
-      it { should_not have_text("Vaccination method") }
+      it { should_not have_text("Vaccine type") }
     end
   end
 end

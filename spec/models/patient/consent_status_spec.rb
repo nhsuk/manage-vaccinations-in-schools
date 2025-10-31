@@ -238,7 +238,7 @@ describe Patient::ConsentStatus do
     end
 
     describe "academic year filtering" do
-      let(:current_academic_year) { Date.current.academic_year }
+      let(:current_academic_year) { AcademicYear.current }
       let(:previous_academic_year) { current_academic_year - 1 }
       let(:patient) { create(:patient) }
       let(:programme) { create(:programme) }
@@ -254,8 +254,8 @@ describe Patient::ConsentStatus do
             create(
               :consent,
               :given,
-              patient: patient,
-              programme: programme,
+              patient:,
+              programme:,
               parent: parent,
               submitted_at: Date.new(current_academic_year, 10, 15).in_time_zone
             )
@@ -269,8 +269,8 @@ describe Patient::ConsentStatus do
             create(
               :consent,
               :given,
-              patient: patient,
-              programme: programme,
+              patient:,
+              programme:,
               parent: parent,
               submitted_at:
                 Date.new(previous_academic_year, 10, 15).in_time_zone
@@ -285,16 +285,16 @@ describe Patient::ConsentStatus do
             create(
               :consent,
               :given,
-              patient: patient,
-              programme: programme,
+              patient:,
+              programme:,
               parent: parent,
               submitted_at: Date.new(current_academic_year, 10, 15).in_time_zone
             )
             create(
               :consent,
               :refused,
-              patient: patient,
-              programme: programme,
+              patient:,
+              programme:,
               parent: create(:parent),
               submitted_at:
                 Date.new(previous_academic_year, 10, 15).in_time_zone
@@ -309,16 +309,16 @@ describe Patient::ConsentStatus do
             create(
               :consent,
               :refused,
-              patient: patient,
-              programme: programme,
+              patient:,
+              programme:,
               parent: parent,
               submitted_at: Date.new(current_academic_year, 10, 15).in_time_zone
             )
             create(
               :consent,
               :given,
-              patient: patient,
-              programme: programme,
+              patient:,
+              programme:,
               parent: create(:parent),
               submitted_at:
                 Date.new(previous_academic_year, 10, 15).in_time_zone

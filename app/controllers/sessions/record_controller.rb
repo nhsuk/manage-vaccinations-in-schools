@@ -12,6 +12,8 @@ class Sessions::RecordController < ApplicationController
   before_action :set_batches, except: :show
 
   def show
+    @vaccine_criterias = vaccine_criterias_for_programmes(@session.programmes)
+
     scope =
       @session.patients.includes(
         :consent_statuses,
@@ -34,7 +36,8 @@ class Sessions::RecordController < ApplicationController
       ).consent_given_and_safe_to_vaccinate(
         programmes: @form.programmes,
         academic_year: @session.academic_year,
-        vaccine_method: @form.vaccine_method.presence
+        vaccine_method: @form.vaccine_method,
+        without_gelatine: @form.without_gelatine
       )
 
     @pagy, @patients = pagy_array(patients)
@@ -98,6 +101,21 @@ class Sessions::RecordController < ApplicationController
         .order_by_name_and_expiration
   end
 
+  def vaccine_criterias_for_programmes(programmes)
+    # TODO: Make this more generic, rather than specific to programme
+    #  combinations.
+
+    if programmes.any?(&:flu?) && programmes.count > 1
+      %w[injection injection_without_gelatine nasal]
+    elsif programmes.any?(&:flu?)
+      %w[injection_without_gelatine nasal]
+    elsif programmes.any?(&:mmr?)
+      %w[injection injection_without_gelatine]
+    else
+      []
+    end
+  end
+
   def filter_on_vaccine_method_or_patient_specific_direction(scope)
     return scope if current_user.is_nurse? || current_user.is_prescriber?
     return scope.none unless current_user.is_healthcare_assistant?
@@ -114,15 +132,15 @@ class Sessions::RecordController < ApplicationController
         academic_year:,
         team:
       ).or(
-        original_scope.has_vaccine_method(
-          "injection",
+        original_scope.has_vaccine_criteria(
+          vaccine_method: "injection",
           programme:,
           academic_year:
         )
       )
     elsif @session.pgd_supply_enabled? && @session.national_protocol_enabled?
-      original_scope.has_vaccine_method(
-        %w[nasal injection],
+      original_scope.has_vaccine_criteria(
+        vaccine_method: %w[nasal injection],
         programme:,
         academic_year:
       )
@@ -133,7 +151,11 @@ class Sessions::RecordController < ApplicationController
         team:
       )
     elsif @session.pgd_supply_enabled?
-      original_scope.has_vaccine_method("nasal", programme:, academic_year:)
+      original_scope.has_vaccine_criteria(
+        vaccine_method: "nasal",
+        programme:,
+        academic_year:
+      )
     else
       original_scope.none
     end

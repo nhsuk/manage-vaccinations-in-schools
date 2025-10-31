@@ -40,7 +40,7 @@ class PatientArchiver
     patient
       .school_moves
       .joins(school: :subteam)
-      .where(subteams: { team: team })
+      .where(subteams: { team: })
       .destroy_all
   end
 end

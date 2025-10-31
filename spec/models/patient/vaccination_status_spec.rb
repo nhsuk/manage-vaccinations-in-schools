@@ -6,9 +6,10 @@
 #
 #  id                    :bigint           not null, primary key
 #  academic_year         :integer          not null
-#  latest_session_status :integer          default("none_yet"), not null
-#  status                :integer          default("none_yet"), not null
-#  status_changed_at     :datetime         not null
+#  dose_sequence         :integer
+#  latest_date           :date
+#  latest_session_status :integer
+#  status                :integer          default("not_eligible"), not null
 #  latest_location_id    :bigint
 #  patient_id            :bigint           not null
 #  programme_id          :bigint           not null
@@ -38,205 +39,38 @@ describe Patient::VaccinationStatus do
 
   it do
     expect(patient_vaccination_status).to define_enum_for(:status).with_values(
-      %i[none_yet vaccinated could_not_vaccinate]
+      %i[not_eligible eligible due vaccinated]
     )
   end
 
-  describe "#status" do
-    subject { patient_vaccination_status.tap(&:assign_status).status.to_sym }
+  describe "#assign_status" do
+    subject(:assign_status) { patient_vaccination_status.assign_status }
 
-    before { patient.strict_loading!(false) }
-
-    context "with no vaccination record" do
-      it { should be(:none_yet) }
-    end
-
-    context "with a vaccination administered" do
-      before { create(:vaccination_record, patient:, programme:) }
-
-      let(:programme) { create(:programme, :hpv) }
-
-      it { should be(:vaccinated) }
-    end
-
-    context "with a vaccination already had" do
-      before do
-        create(
-          :vaccination_record,
-          :not_administered,
-          :already_had,
-          patient:,
-          programme:
-        )
-      end
-
-      let(:programme) { create(:programme, :hpv) }
-
-      it { should be(:vaccinated) }
-    end
-
-    context "with a vaccination not administered" do
-      before do
-        create(:vaccination_record, :not_administered, patient:, programme:)
-      end
-
-      it { should be(:none_yet) }
-    end
-
-    context "with a consent refused" do
-      before { create(:consent, :refused, patient:, programme:) }
-
-      it { should be(:could_not_vaccinate) }
-    end
-
-    context "with a triage as unsafe to vaccination" do
-      before { create(:triage, :do_not_vaccinate, patient:, programme:) }
-
-      it { should be(:could_not_vaccinate) }
-    end
-
-    context "with a discarded vaccination administered" do
-      before { create(:vaccination_record, :discarded, patient:, programme:) }
-
-      it { should be(:none_yet) }
-    end
-  end
-
-  describe "#latest_location_id" do
-    subject do
-      patient_vaccination_status.tap(&:assign_status).latest_location_id
-    end
-
-    let(:programme) { create(:programme, :hpv) }
-
-    context "with no vaccination record" do
-      it { should be_nil }
-    end
-
-    context "with a vaccination administered" do
-      let(:location) { create(:school) }
-
-      before { create(:vaccination_record, patient:, programme:, location:) }
-
-      it { should eq(location.id) }
-    end
-
-    context "with a vaccination already had" do
-      let(:location) { create(:school) }
-
-      before do
-        create(
-          :vaccination_record,
-          :not_administered,
-          :already_had,
-          patient:,
-          programme:,
-          location:
-        )
-      end
-
-      it { should eq(location.id) }
-    end
-
-    context "with a vaccination not administered" do
-      before do
-        create(:vaccination_record, :not_administered, patient:, programme:)
-      end
-
-      it { should be_nil }
-    end
-
-    context "with a consent refused" do
-      before { create(:consent, :refused, patient:, programme:) }
-
-      it { should be_nil }
-    end
-
-    context "with a triage as unsafe to vaccination" do
-      before { create(:triage, :do_not_vaccinate, patient:, programme:) }
-
-      it { should be_nil }
-    end
-
-    context "with a discarded vaccination administered" do
-      before { create(:vaccination_record, :discarded, patient:, programme:) }
-
-      it { should be_nil }
-    end
-  end
-
-  describe "#latest_session_status" do
-    subject do
-      patient_vaccination_status
-        .tap(&:assign_status)
-        .latest_session_status
-        .to_sym
+    let(:vaccination_generator) do
+      instance_double(StatusGenerator::Vaccination)
     end
 
     before do
-      patient.strict_loading!(false)
-      create(:patient_location, patient:, session:)
+      allow(StatusGenerator::Vaccination).to receive(:new).and_return(
+        vaccination_generator
+      )
+      allow(vaccination_generator).to receive_messages(
+        dose_sequence: 1,
+        latest_date: Date.new(2020, 1, 1),
+        latest_location_id: 999,
+        latest_session_status: "unwell",
+        status: "vaccinated"
+      )
     end
 
-    let(:session) { create(:session, programmes: [programme]) }
+    it "calls the status generators" do
+      assign_status
 
-    context "with no vaccination record" do
-      it { should be(:none_yet) }
-    end
-
-    context "with a vaccination administered" do
-      before { create(:vaccination_record, patient:, session:, programme:) }
-
-      it { should be(:vaccinated) }
-    end
-
-    context "with a vaccination already had" do
-      before do
-        create(
-          :vaccination_record,
-          :not_administered,
-          :already_had,
-          patient:,
-          session:,
-          programme:
-        )
-      end
-
-      it { should be(:already_had) }
-    end
-
-    context "with a vaccination not administered" do
-      before do
-        create(
-          :vaccination_record,
-          :not_administered,
-          patient:,
-          session:,
-          programme:
-        )
-      end
-
-      it { should be(:unwell) }
-    end
-
-    context "with a consent refused" do
-      before { create(:consent, :refused, patient:, programme:) }
-
-      it { should be(:refused) }
-    end
-
-    context "with a triage as unsafe to vaccination" do
-      before { create(:triage, :do_not_vaccinate, patient:, programme:) }
-
-      it { should be(:had_contraindications) }
-    end
-
-    context "with a discarded vaccination administered" do
-      before do
-        create(:vaccination_record, :discarded, patient:, session:, programme:)
-      end
-
-      it { should be(:none_yet) }
+      expect(patient_vaccination_status.dose_sequence).to eq(1)
+      expect(patient_vaccination_status.latest_date).to eq(Date.new(2020, 1, 1))
+      expect(patient_vaccination_status.latest_location_id).to eq(999)
+      expect(patient_vaccination_status.latest_session_status).to eq("unwell")
+      expect(patient_vaccination_status.status).to eq("vaccinated")
     end
   end
 end

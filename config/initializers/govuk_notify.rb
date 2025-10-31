@@ -2,10 +2,10 @@
 
 GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   consent_clinic_request: "14e88a09-4281-4257-9574-6afeaeb42715",
-  consent_confirmation_clinic: "f2921e23-4b73-4e44-abbb-38b0e235db8e",
+  consent_confirmation_clinic: "1d050527-9a6c-4513-86d4-6955b98ac7d9",
   consent_confirmation_given: "c6c8dbfc-b429-4468-bd0b-176e771b5a8e",
   consent_confirmation_refused: "5a676dac-3385-49e4-98c2-fc6b45b5a851",
-  consent_confirmation_triage: "604ee667-c996-471e-b986-79ab98d0767c",
+  consent_confirmation_triage: "35d621db-957b-4afb-9143-3e32398d2b87",
   consent_school_initial_reminder_doubles:
     "3523d4b8-530b-42dd-8b9b-7fed8d1dfff1",
   consent_school_initial_reminder_flu: "7f85a5b4-5240-4ae9-94f7-43913852943c",
@@ -27,11 +27,13 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
     "6d746839-a20e-4d50-8a1d-6f3900ff69b2",
   session_clinic_initial_invitation: "88d21cfc-39f6-44a2-98c3-9588e7214ae4",
   session_clinic_subsequent_invitation: "a86a3b3f-a848-41d8-9a6f-d38174981388",
+  session_clinic_initial_invitation_rt5: "e1b6a2f6-728a-4de3-88ec-40194b354eac",
   session_clinic_initial_invitation_ryg: "fc99ac81-9eeb-4df8-9aa0-04f0eb48e37f",
   session_clinic_subsequent_invitation_ryg:
     "eee59c1b-3af4-4ccd-8653-940887066390",
   session_school_reminder: "8b8a9566-bb03-4b3c-8abc-5bd5a4b8797d",
   triage_vaccination_at_clinic: "3c7461bd-e3cf-4ff9-9053-b4e87490aa45",
+  triage_vaccination_at_clinic_rt5: "5cacefcd-44f2-43ff-8fc0-008890406504",
   triage_vaccination_at_clinic_ryg: "9faef718-bd76-4c30-93ea-fbe8584388a6",
   triage_vaccination_will_happen: "279c517c-4c52-4a69-96cb-31355bfa4e21",
   triage_vaccination_wont_happen: "d1faf47e-ccc3-4481-975b-1ec34211a21f",
@@ -55,6 +57,7 @@ GOVUK_NOTIFY_SMS_TEMPLATES = {
     "1fd4620d-1c96-4af1-b047-ed13a90b0f44",
   session_clinic_initial_invitation: "790c9c72-729a-40d6-b44d-d480e38f0990",
   session_clinic_subsequent_invitation: "ce7a6a1b-465e-4be4-b9e0-47ddb64f3adb",
+  session_clinic_initial_invitation_rt5: "7be79abb-7295-4e6f-8cfb-9597bfad2f56",
   session_clinic_initial_invitation_ryg: "8ef5712f-bb7f-4911-8f3b-19df6f8a7179",
   session_clinic_subsequent_invitation_ryg:
     "018f146d-e7b7-4b63-ae26-bb07ca6fe2f9",
@@ -84,5 +87,7 @@ GOVUK_NOTIFY_UNUSED_TEMPLATES = {
     :consent_school_initial_reminder_hpv,
   "e9aa7f0f-986f-49be-a1ee-6d1d1c13e9ec" => :consent_school_request_doubles,
   "fa3c8dd5-4688-4b93-960a-1d422c4e5597" => :triage_vaccination_will_happen,
-  "6e4c514d-fcc9-4bc8-b7eb-e222a1445681" => :session_school_reminder
+  "6e4c514d-fcc9-4bc8-b7eb-e222a1445681" => :session_school_reminder,
+  "604ee667-c996-471e-b986-79ab98d0767c" => :consent_confirmation_triage,
+  "f2921e23-4b73-4e44-abbb-38b0e235db8e" => :consent_confirmation_clinic
 }.freeze

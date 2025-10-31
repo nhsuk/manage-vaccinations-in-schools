@@ -34,7 +34,7 @@ module SendSchoolConsentNotificationConcern
 
     programmes.select do |programme|
       patient.consent_status(programme:, academic_year:).no_response? &&
-        patient.vaccination_status(programme:, academic_year:).none_yet?
+        patient.vaccination_status(programme:, academic_year:).eligible?
     end
   end
 

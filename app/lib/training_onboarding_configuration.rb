@@ -68,13 +68,10 @@ class TrainingOnboardingConfiguration
     scope =
       Location.school.open.where(subteam_id: nil).order("RANDOM()").limit(10)
 
-    academic_year = AcademicYear.current
-
     # Make sure we get a good mix of primary and secondary schools.
-    primary_schools =
-      scope.has_year_groups([1, 2, 3, 4, 5, 6], academic_year:).pluck(:urn)
+    primary_schools = scope.has_gias_year_groups([1, 2, 3, 4, 5, 6]).pluck(:urn)
     secondary_schools =
-      scope.has_year_groups([7, 8, 9, 10, 11], academic_year:).pluck(:urn)
+      scope.has_gias_year_groups([7, 8, 9, 10, 11]).pluck(:urn)
 
     { generic: primary_schools + secondary_schools }
   end

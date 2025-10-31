@@ -553,12 +553,12 @@ en:
       i_agree: Consent given
     notes:
       title:
-        already_vaccinated: Where did your child get their vaccination?
+        already_vaccinated: When and where did your child get their vaccination?
         contains_gelatine: Tell us why you don’t agree
         medical_reasons: What medical reasons prevent your child from being vaccinated?
         other: Tell us why you don’t agree
         personal_choice: Tell us why you don’t agree
-        will_be_vaccinated_elsewhere: Where will your child get their vaccination?
+        will_be_vaccinated_elsewhere: When and where will your child get their vaccination?
     start:
       title: Give or refuse consent for vaccinations
   dashboard:
@@ -726,6 +726,10 @@ en:
   vaccines:
     index:
       title: Vaccines
+  vaccine_criteria:
+    injection: Injection
+    injection_without_gelatine: Gelatine-free injection
+    nasal: Nasal spray
   attendance_flash:
     absent: "%{name} is absent from today’s session."
     not_registered: "%{name} is not registered yet."

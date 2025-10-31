@@ -533,15 +533,23 @@ class ConsentForm < ApplicationRecord
 
   def update_programme_responses
     case response
-    when "given", "given_injection"
+    when "given"
       consent_form_programmes.each do
         it.response = "given"
         it.vaccine_methods = %w[injection]
+        it.without_gelatine = false
+      end
+    when "given_injection"
+      consent_form_programmes.each do
+        it.response = "given"
+        it.vaccine_methods = %w[injection]
+        it.without_gelatine = true # currently flu injection is to avoid gelatine
       end
     when "given_nasal"
       consent_form_programmes.each do
         it.response = "given"
         it.vaccine_methods = %w[nasal]
+        it.without_gelatine = false
       end
     when "given_one"
       consent_form_programmes.each do |consent_form_programme|
@@ -552,6 +560,7 @@ class ConsentForm < ApplicationRecord
             "refused"
           end
         consent_form_programme.vaccine_methods = %w[injection]
+        consent_form_programme.without_gelatine = false
       end
     when "refused"
       consent_form_programmes.each { it.response = "refused" }

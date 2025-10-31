@@ -229,7 +229,7 @@ describe ConsentFormMailerConcern do
         it "sends warning email" do
           expect { send_warning }.to have_delivered_email(
             :consent_unknown_contact_details_warning
-          ).with(parent: parent, patient: patient, consent_form:)
+          ).with(parent:, patient:, consent_form:)
         end
 
         it "does not send warning SMS" do
@@ -265,11 +265,7 @@ describe ConsentFormMailerConcern do
                         consent_form:
                       ).and have_delivered_sms(
                               :consent_unknown_contact_details_warning
-                            ).with(
-                              parent: parent2,
-                              patient: patient,
-                              consent_form:
-                            )
+                            ).with(parent: parent2, patient:, consent_form:)
         end
       end
     end

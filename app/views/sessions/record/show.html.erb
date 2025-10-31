@@ -16,7 +16,7 @@
             url: session_record_path(@session),
             programmes: @session.programmes,
             year_groups: @session.year_groups,
-            vaccine_methods: @session.vaccine_methods.then { it.length > 1 ? it : [] },
+            vaccine_criterias: @vaccine_criterias,
           ) %>
     </div>
 

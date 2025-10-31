@@ -21,7 +21,7 @@ module PatientsHelper
   end
 
   def patient_date_of_birth(patient)
-    "#{patient.date_of_birth.to_fs(:long)} (aged #{patient.age})"
+    "#{patient.date_of_birth.to_fs(:long)} (aged #{patient.age_years})"
   end
 
   def patient_outstanding_programmes(patient, session:)

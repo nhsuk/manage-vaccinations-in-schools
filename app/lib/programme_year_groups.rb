@@ -35,15 +35,15 @@ class ProgrammeYearGroups
          location_programme_year_groups.loaded?
       location_programme_year_groups
         .select { it.programme_id == programme.id }
-        .select { it.academic_year == academic_year }
-        .map(&:year_group)
+        .select { it.location_year_group.academic_year == academic_year }
+        .map { it.location_year_group.value }
         .sort
         .uniq
     else
-      location_programme_year_groups.where(
-        academic_year:,
-        programme:
-      ).pluck_year_groups
+      location_programme_year_groups
+        .joins(:location_year_group)
+        .where(location_year_group: { academic_year: }, programme:)
+        .pluck_year_groups
     end
   end
 end

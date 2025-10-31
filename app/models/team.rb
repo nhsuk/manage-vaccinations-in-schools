@@ -59,7 +59,9 @@ class Team < ApplicationRecord
   has_many :vaccines, through: :programmes
 
   has_many :location_year_groups, through: :locations
-  has_many :location_programme_year_groups, through: :locations
+  has_many :location_programme_year_groups,
+           -> { includes(:location_year_group) },
+           through: :location_year_groups
 
   has_and_belongs_to_many :users
 

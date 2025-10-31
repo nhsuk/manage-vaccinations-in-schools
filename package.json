@@ -2,7 +2,7 @@
   "name": "app",
   "private": "true",
   "dependencies": {
-    "@hotwired/turbo-rails": "^8.0.18",
+    "@hotwired/turbo-rails": "^8.0.20",
     "accessible-autocomplete": "^3.0.1",
     "esbuild": "^0.25.11",
     "govuk-frontend": "^5.13.0",

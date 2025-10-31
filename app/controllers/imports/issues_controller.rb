@@ -38,11 +38,9 @@ class Imports::IssuesController < ApplicationController
       )
 
     @patients =
-      policy_scope(Patient).with_pending_changes.includes(
-        :gp_practice,
-        :school,
-        :school_moves
-      )
+      policy_scope(Patient).with_pending_changes_for_team(
+        team: current_team
+      ).includes(:gp_practice, :school, :school_moves)
 
     @import_issues =
       (@vaccination_records + @patients).uniq do |record|

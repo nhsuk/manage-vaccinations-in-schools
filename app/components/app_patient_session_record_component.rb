@@ -58,19 +58,10 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
 
   def heading
     vaccine_criteria = patient.vaccine_criteria(programme:, academic_year:)
-
-    vaccination =
-      if programme.has_multiple_vaccine_methods?
-        vaccine_method = vaccine_criteria.vaccine_methods.first
-        method_string =
-          Vaccine.human_enum_name(:method, vaccine_method).downcase
-        "vaccination with #{method_string}"
-      else
-        "vaccination"
-      end
-
-    tag.span(class: "app-vaccine-method", data: { method: vaccine_method }) do
-      "Record #{programme.name_in_sentence} #{vaccination}"
-    end
+    render AppVaccineCriteriaLabelComponent.new(
+             vaccine_criteria,
+             programme:,
+             context: :heading
+           )
   end
 end
