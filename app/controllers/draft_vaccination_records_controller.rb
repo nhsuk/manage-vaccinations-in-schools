@@ -12,6 +12,7 @@ class DraftVaccinationRecordsController < ApplicationController
   before_action :set_programme
   before_action :set_vaccination_record
 
+  include PatientLoggingConcern
   include WizardControllerConcern
 
   before_action :validate_params, only: :update
@@ -294,5 +295,9 @@ class DraftVaccinationRecordsController < ApplicationController
       notes: "Next dose #{delay_date.strftime("%d %B %Y")}",
       delay_vaccination_until: delay_date
     )
+  end
+
+  def patient_id_for_logging
+    @patient.id
   end
 end
