@@ -17,7 +17,8 @@ en:
           false: No, they got half a dose
       triage_form:
         status_option_options:
-          delay_vaccination: No, delay vaccination (and invite to clinic)
+          invite_to_clinic: No, invite to clinic
+          delay_vaccination: No, delay vaccination
           do_not_vaccinate: No, do not vaccinate
           keep_in_triage: No, keep in triage
           safe_to_vaccinate: Yes, it’s safe to vaccinate

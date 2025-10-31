@@ -206,7 +206,7 @@ class StatusGenerator::Vaccination
         end
 
         if programme.mmr?
-          if valid_vaccination_records.count >= 2
+          if valid_vaccination_records.count >= programme.maximum_dose_sequence
             valid_vaccination_records.first
           end
         elsif programme.td_ipv?

@@ -50,7 +50,8 @@ class Triage < ApplicationRecord
          safe_to_vaccinate: 0,
          do_not_vaccinate: 1,
          keep_in_triage: 2,
-         delay_vaccination: 3
+         delay_vaccination: 3,
+         invite_to_clinic: 4
        },
        validate: true
 

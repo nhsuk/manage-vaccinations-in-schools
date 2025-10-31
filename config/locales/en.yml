@@ -179,6 +179,8 @@ en:
             add_patient_specific_direction:
               blank: Select yes or no
               inclusion: Select yes or no
+            delay_vaccination_until:
+              blank: Enter a date
         vaccinate_form:
           attributes:
             delivery_site:
@@ -273,6 +275,7 @@ en:
       triage:
         statuses:
           delay_vaccination: Delay vaccination to a later date
+          invite_to_clinic: Invite to clinic
           do_not_vaccinate: Do not vaccinate
           keep_in_triage: Keep in triage
           safe_to_vaccinate: Safe to vaccinate

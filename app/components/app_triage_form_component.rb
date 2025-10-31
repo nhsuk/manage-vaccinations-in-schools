@@ -18,6 +18,10 @@ class AppTriageFormComponent < ViewComponent::Base
 
   def builder = GOVUKDesignSystemFormBuilder::FormBuilder
 
+  def hint_date
+    Time.zone.today + 28.days
+  end
+
   def fieldset_options
     text = "Is it safe to vaccinate #{patient.given_name}?"
 

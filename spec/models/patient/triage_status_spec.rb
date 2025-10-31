@@ -43,6 +43,7 @@ describe Patient::TriageStatus do
         safe_to_vaccinate
         do_not_vaccinate
         delay_vaccination
+        invite_to_clinic
       ]
     )
   end
