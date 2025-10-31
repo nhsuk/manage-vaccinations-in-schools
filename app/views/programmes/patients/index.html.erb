@@ -36,6 +36,7 @@
               link_to: patient_path(patient),
               programmes: [@programme],
               academic_year: @academic_year,
+              show_consent_status: @form.consent_statuses.present?,
               show_triage_status: @form.triage_status.present?,
               show_year_group: patient.show_year_group?(team: current_team),
             ) %>

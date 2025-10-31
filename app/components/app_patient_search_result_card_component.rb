@@ -6,6 +6,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     link_to:,
     programmes: [],
     academic_year: nil,
+    show_consent_status: false,
     show_nhs_number: false,
     show_parents: false,
     show_postcode: false,
@@ -18,6 +19,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     @programmes = programmes
     @academic_year = academic_year || AcademicYear.pending
 
+    @show_consent_status = show_consent_status
     @show_nhs_number = show_nhs_number
     @show_parents = show_parents
     @show_postcode = show_postcode
@@ -66,7 +68,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
           end
         end
         if academic_year
-          if consent_status_tag
+          if show_consent_status && consent_status_tag
             summary_list.with_row do |row|
               row.with_key { "Consent status" }
               row.with_value { consent_status_tag }
@@ -96,6 +98,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
               :programmes,
               :academic_year,
               :triage_status,
+              :show_consent_status,
               :show_nhs_number,
               :show_parents,
               :show_postcode,
