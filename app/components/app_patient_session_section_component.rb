@@ -18,6 +18,11 @@ class AppPatientSessionSectionComponent < ViewComponent::Base
   def heading = "#{programme.name}: #{resolved_status.fetch(:text)}"
 
   def patient_status_resolver
-    PatientStatusResolver.new(patient, programme:, academic_year:)
+    PatientStatusResolver.new(
+      patient,
+      programme:,
+      academic_year:,
+      context_location_id: session.location_id
+    )
   end
 end

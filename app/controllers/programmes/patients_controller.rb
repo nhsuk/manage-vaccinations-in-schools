@@ -12,12 +12,10 @@ class Programmes::PatientsController < Programmes::BaseController
       ]
 
     scope =
-      Patient.where(id: patient_ids).includes(
-        :consent_statuses,
-        :triage_statuses,
-        :vaccination_statuses,
-        school: :location_programme_year_groups
-      )
+      Patient
+        .where(id: patient_ids)
+        .includes_statuses
+        .includes(school: :location_programme_year_groups)
 
     @form.academic_year = @academic_year
     @form.programme_types = [@programme.type]

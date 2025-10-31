@@ -14,13 +14,7 @@ class Sessions::RecordController < ApplicationController
   def show
     @vaccine_criterias = vaccine_criterias_for_programmes(@session.programmes)
 
-    scope =
-      @session.patients.includes(
-        :consent_statuses,
-        :triage_statuses,
-        :vaccination_statuses,
-        notes: :created_by
-      )
+    scope = @session.patients.includes_statuses.includes(notes: :created_by)
 
     if @session.requires_registration?
       scope =
