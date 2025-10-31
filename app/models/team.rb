@@ -107,4 +107,8 @@ class Team < ApplicationRecord
       .create_with(programmes:)
       .find_or_create_by!(academic_year:, location: generic_clinic)
   end
+
+  def is_upload_only?
+    team_type_upload_only?
+  end
 end

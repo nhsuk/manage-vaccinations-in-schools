@@ -57,6 +57,7 @@
   &--green,
   &--grey,
   &--red {
+
     .nhsuk-card__link,
     .nhsuk-card__link:hover {
       color: inherit;
@@ -65,6 +66,11 @@
 
   &--offset {
     background-color: rgba(nhsuk-colour("grey-5"), 0.5);
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    pointer-events: none;
   }
 }
 

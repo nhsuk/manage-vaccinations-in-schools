@@ -1,0 +1,37 @@
+<ul class="nhsuk-grid-row nhsuk-card-group">
+  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: programmes_path) do |card| %>
+      <% card.with_heading(level: 2) { t("programmes.index.title") } %>
+      <p class="nhsuk-body">Use this area to:</p>
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <li>import child records</li>
+        <li>organise vaccination sessions</li>
+        <li>report vaccinations</li>
+      </ul>
+    <% end %>
+  </li>
+
+  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: sessions_path) do |card| %>
+      <% card.with_heading(level: 2) { t("sessions.index.title") } %>
+      <p class="nhsuk-body">Use this area to:</p>
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <li>review consent responses</li>
+        <li>triage health records</li>
+        <li>record vaccinations</li>
+        <li>review session outcomes</li>
+      </ul>
+    <% end %>
+  </li>
+
+  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: patients_path) do |card| %>
+      <% card.with_heading(level: 2) { t("patients.index.title") } %>
+      <p class="nhsuk-body">Use this area to:</p>
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <li>find child records</li>
+        <li>view child vaccinations</li>
+      </ul>
+    <% end %>
+  </li>
+</ul>
