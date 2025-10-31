@@ -175,72 +175,46 @@ class PatientSearchForm < SearchForm
   end
 
   def filter_consent_statuses(scope)
-    if (statuses = consent_statuses).present?
-      given_statuses, other_statuses =
-        statuses.partition { it.starts_with?("given") }
+    return scope if consent_statuses.blank?
 
-      given_scope =
-        if given_statuses.any?
-          or_scope = consent_status_scope_for(given_statuses.first, scope)
+    or_scope = consent_status_scope_for(consent_statuses.first, scope)
 
-          given_statuses
-            .drop(1)
-            .each do |value|
-              or_scope = or_scope.or(consent_status_scope_for(value, scope))
-            end
-
-          or_scope
-        end
-
-      other_scope =
-        if other_statuses.any?
-          scope.has_consent_status(
-            other_statuses,
-            programme: programmes,
-            academic_year:
-          )
-        end
-
-      if given_scope && other_scope
-        given_scope.or(other_scope)
-      else
-        given_scope || other_scope
+    consent_statuses
+      .drop(1)
+      .each do |value|
+        or_scope = or_scope.or(consent_status_scope_for(value, scope))
       end
-    else
-      scope
-    end
+
+    or_scope
   end
 
   def consent_status_scope_for(value, scope)
-    case value
-    when "given"
+    if (predicate = CONSENT_GIVEN_PREDICATES[value])
       scope.has_consent_status(
         "given",
         programme: programmes,
         academic_year:,
-        vaccine_method: "injection",
-        without_gelatine: false
-      )
-    when "given_nasal"
-      scope.has_consent_status(
-        "given",
-        programme: programmes,
-        academic_year:,
-        vaccine_method: "nasal",
-        without_gelatine: false
-      )
-    when "given_injection_without_gelatine"
-      scope.has_consent_status(
-        "given",
-        programme: programmes,
-        academic_year:,
-        vaccine_method: "injection",
-        without_gelatine: true
+        **predicate
       )
     else
-      raise "Unknown consent filter value: #{value}"
+      scope.has_consent_status(value, programme: programmes, academic_year:)
     end
   end
+
+  CONSENT_GIVEN_PREDICATES = {
+    "given_injection" => {
+      vaccine_method: "injection",
+      without_gelatine: false
+    },
+    "given_nasal" => {
+      vaccine_method: "nasal",
+      without_gelatine: false
+    },
+    "given_injection_without_gelatine" => {
+      vaccine_method: "injection",
+      without_gelatine: true
+    }
+  }.freeze
 
   def filter_vaccination_statuses(scope)
     if (status = vaccination_status&.to_sym).present?

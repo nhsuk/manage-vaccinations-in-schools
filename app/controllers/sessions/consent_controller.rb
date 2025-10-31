@@ -41,7 +41,9 @@ class Sessions::ConsentController < ApplicationController
 
     @statuses = %w[no_response]
 
-    @statuses << "given" unless programmes.all?(&:has_multiple_vaccine_methods?)
+    unless programmes.all?(&:has_multiple_vaccine_methods?)
+      @statuses << "given_injection"
+    end
 
     if programmes.any?(&:has_multiple_vaccine_methods?)
       @statuses << "given_nasal"
