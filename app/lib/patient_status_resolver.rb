@@ -38,16 +38,17 @@ class PatientStatusResolver
   def triage
     status =
       if triage_status.safe_to_vaccinate?
-        if programme.has_multiple_vaccine_methods?
-          [
-            "safe_to_vaccinate",
-            triage_status.vaccine_method
-          ].compact_blank.join("_")
-        elsif triage_status.without_gelatine
-          "safe_to_vaccinate_without_gelatine"
-        else
-          "safe_to_vaccinate"
-        end
+        vaccine_method = triage_status.vaccine_method
+
+        without_gelatine = triage_status.without_gelatine
+
+        parts = [
+          "safe_to_vaccinate",
+          vaccine_method,
+          without_gelatine ? "without_gelatine" : nil
+        ]
+
+        parts.compact_blank.join("_")
       else
         triage_status.status
       end

@@ -62,7 +62,7 @@ describe "Triage" do
     when_i_record_that_they_are_safe_to_vaccinate_with_injection
     then_i_see_the_update_triage_link
     and_i_see_the_safe_triage_decision_with_method("injected")
-    and_i_see_the_triage_status_tag(method: "injection")
+    and_i_see_the_triage_status_tag(method: "gelatine-free injection")
     and_vaccination_will_happen_emails_are_sent_to_both_parents
     and_the_vaccine_method_is_recorded_as_injection
 
