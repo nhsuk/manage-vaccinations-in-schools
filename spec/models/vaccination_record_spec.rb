@@ -461,4 +461,30 @@ describe VaccinationRecord do
       end
     end
   end
+
+  context "when MMR vaccination date is backdated" do
+    subject(:vaccination_record) do
+      create(
+        :vaccination_record,
+        :administered,
+        programme:,
+        next_dose_delay_triage:
+      )
+    end
+
+    let(:programme) { create(:programme, :mmr) }
+    let(:next_dose_delay_triage) do
+      create(
+        :triage,
+        status: "delay_vaccination",
+        delay_vaccination_until: Date.current + 28.days
+      )
+    end
+
+    it "marks next_dose_delay_triage invalid if it's gone past 28 days" do
+      vaccination_record.performed_at = Date.current - 29.days
+      vaccination_record.save!
+      expect(next_dose_delay_triage.reload).to be_invalidated
+    end
+  end
 end
