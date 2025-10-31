@@ -6,37 +6,49 @@ describe AppPatientSearchResultCardComponent do
   let(:patient) do
     create(
       :patient,
-      given_name: "Hari",
-      family_name: "Seldon",
-      date_of_birth: Date.new(2000, 1, 1),
       address_postcode: "SW11 1AA",
+      date_of_birth: Date.new(2020, 1, 1),
+      family_name: "Seldon",
+      given_name: "Hari",
+      nhs_number: "9000000009",
       school: build(:school, name: "Streeling University")
     )
   end
 
   let(:link_to) { "/patient" }
-  let(:programme) { nil }
+  let(:programmes) { [] }
   let(:academic_year) { nil }
-  let(:show_triage_status) { false }
+  let(:show_consent_status) { false }
+  let(:show_nhs_number) { false }
   let(:show_postcode) { false }
   let(:show_school) { false }
+  let(:show_triage_status) { false }
 
   let(:component) do
     described_class.new(
       patient,
       link_to:,
-      programme:,
+      programmes:,
       academic_year:,
-      show_triage_status:,
+      show_consent_status:,
+      show_nhs_number:,
       show_postcode:,
-      show_school:
+      show_school:,
+      show_triage_status:
     )
   end
 
   it { should have_link("SELDON, Hari", href: "/patient") }
-  it { should have_text("1 January 2000") }
+  it { should have_text("1 January 2020") }
+  it { should_not have_text("900 000 0009") }
   it { should_not have_text("SW11 1AA") }
   it { should_not have_text("Streeling University") }
+
+  context "when showing the NHS number" do
+    let(:show_nhs_number) { true }
+
+    it { should have_text("900 000 0009") }
+  end
 
   context "when showing the postcode" do
     let(:show_postcode) { true }
@@ -50,30 +62,25 @@ describe AppPatientSearchResultCardComponent do
     it { should have_text("Streeling University") }
   end
 
-  context "when given a programme" do
+  context "when given programmes" do
     let(:programme) { create(:programme, :flu) }
+    let(:programmes) { [programme] }
     let(:academic_year) { AcademicYear.current }
 
     it { should have_text("Programme statusFluNot eligible") }
+    it { should_not have_text("Triage status") }
+    it { should_not have_text("Consent status") }
 
-    context "when given a consent status" do
-      let(:consent_status) { "given" }
+    context "when showing the consent status" do
+      let(:show_consent_status) { true }
 
       it { should have_text("Consent statusFluNo response") }
     end
-
-    it { should_not have_text("Triage status") }
 
     context "when showing the triage status" do
       let(:show_triage_status) { true }
 
       it { should have_text("Triage statusFluNo triage needed") }
-    end
-
-    context "when the patient has a triage status" do
-      before { create(:patient_triage_status, :required, patient:, programme:) }
-
-      it { should have_text("Triage statusFluNeeds triage") }
     end
 
     context "with a session status of unwell" do
