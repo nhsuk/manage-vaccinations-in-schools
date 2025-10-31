@@ -60,11 +60,13 @@ class LocationSessionsFactory
   end
 
   def add_patients!
-    PatientLocation.import!(
-      %i[patient_id location_id academic_year],
-      patient_ids.map { [it, location.id, academic_year] },
-      on_duplicate_key_ignore: true
-    )
+    imported_ids =
+      PatientLocation.import!(
+        %i[patient_id location_id academic_year],
+        patient_ids.map { [it, location.id, academic_year] },
+        on_duplicate_key_ignore: true
+      ).ids
+    SyncPatientTeamJob.perform_later(PatientLocation, imported_ids)
   end
 
   def patient_ids

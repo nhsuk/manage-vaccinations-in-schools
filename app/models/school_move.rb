@@ -99,7 +99,9 @@ class SchoolMove < ApplicationRecord
         )
       end
 
-    ArchiveReason.import!(archive_reasons, on_duplicate_key_ignore: true)
+    imported_ids =
+      ArchiveReason.import!(archive_reasons, on_duplicate_key_ignore: true).ids
+    SyncPatientTeamJob.perform_later(ArchiveReason, imported_ids)
   end
 
   def update_sessions!

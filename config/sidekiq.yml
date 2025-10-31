@@ -1,10 +1,11 @@
 ---
 :concurrency: 5
 :queues:
+  - cache
   - imports
   - consents
   - notifications
-  - statuses
+  - statuses #TODO: Remove once queue is empty
   - patients
   - triages
   - pds
