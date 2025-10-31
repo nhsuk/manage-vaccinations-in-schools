@@ -1,5 +1,20 @@
 # frozen_string_literal: true
 
+# We need this to support Rails 8.1.
+module RailsSemanticLogger
+  module ActiveRecord
+    class LogSubscriber < ActiveSupport::LogSubscriber
+      def self.runtime=(value)
+        ::ActiveRecord::RuntimeRegistry.stats.sql_runtime = value
+      end
+
+      def self.runtime
+        ::ActiveRecord::RuntimeRegistry.stats.sql_runtime ||= 0
+      end
+    end
+  end
+end
+
 # We need to patch the SplunkHttp appender to add the request channel header.
 # Without this, Splunk returns a 400.
 module SplunkHttpPatch
