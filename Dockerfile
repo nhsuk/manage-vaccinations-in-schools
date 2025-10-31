@@ -59,6 +59,7 @@ RUN bundle exec bootsnap precompile app/ lib/
 RUN SECRET_KEY_BASE_DUMMY=1 \
     MAVIS__CIS2__ENABLED=false \
     MAVIS__SPLUNK__ENABLED=false \
+    REDIS_CACHE_URL=1 \
     ./bin/rails assets:precompile
 
 # Remove node modules to reduce image size
