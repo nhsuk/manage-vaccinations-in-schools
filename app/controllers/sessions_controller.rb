@@ -14,9 +14,9 @@ class SessionsController < ApplicationController
 
     sessions = @form.apply(scope)
 
-    @patient_count_by_session_id = patient_counts_for_sessions(sessions)
+    @pagy, @sessions = pagy(sessions)
 
-    @pagy, @sessions = pagy_array(sessions)
+    @patient_count_by_session_id = patient_counts_for_sessions(@sessions)
 
     render layout: "full"
   end
@@ -93,7 +93,7 @@ class SessionsController < ApplicationController
     Patient
       .joins_sessions
       .in_eligible_year_group_for_session_programme
-      .where("sessions.id IN (?)", sessions.pluck(:id))
+      .where("sessions.id = ANY(ARRAY[?]::bigint[])", sessions.map(&:id))
       .group("sessions.id")
       .count("DISTINCT patients.id")
   end
