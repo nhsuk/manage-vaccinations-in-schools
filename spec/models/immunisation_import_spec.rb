@@ -511,7 +511,7 @@ describe ImmunisationImport do
       }.to enqueue_sidekiq_job(SyncVaccinationRecordToNHSJob)
         .with(vaccination_record.id)
         .once
-        .on("immunisations_api")
+        .on("immunisations_api_sync")
     end
   end
 end

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
+  sidekiq_options queue: :immunisations_api_search
+
   def perform(patient_id)
     patient = Patient.find(patient_id)
 

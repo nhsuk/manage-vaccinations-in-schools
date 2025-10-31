@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class SyncVaccinationRecordToNHSJob < ImmunisationsAPIJob
+  sidekiq_options queue: :immunisations_api_sync
+
   def perform(vaccination_record_id)
     vaccination_record = VaccinationRecord.find(vaccination_record_id)
 

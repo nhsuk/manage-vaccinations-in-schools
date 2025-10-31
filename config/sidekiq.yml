@@ -8,7 +8,8 @@
   - patients
   - triages
   - pds
-  - immunisations_api
+  - immunisations_api_sync
+  - immunisations_api_search
   - default
 :scheduler:
   :schedule:
