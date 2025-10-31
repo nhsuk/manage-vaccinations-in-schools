@@ -14,21 +14,20 @@ class PatientStatusResolver
   def consent
     status =
       if consent_status.given?
-        value = "given"
+        vaccine_method =
+          triage_status.vaccine_method.presence ||
+            consent_status.vaccine_methods.first
 
-        if programme.has_multiple_vaccine_methods?
-          if triage_status.vaccine_method.present?
-            value += "_#{triage_status.vaccine_method}"
-          elsif (vaccine_method = consent_status.vaccine_methods.first)
-            value += "_#{vaccine_method}"
-          end
-        end
+        without_gelatine =
+          triage_status.without_gelatine || consent_status.without_gelatine
 
-        if triage_status.without_gelatine || consent_status.without_gelatine
-          value += "_without_gelatine"
-        end
+        parts = [
+          "given",
+          vaccine_method,
+          without_gelatine ? "without_gelatine" : nil
+        ]
 
-        value
+        parts.compact_blank.join("_")
       else
         consent_status.status
       end

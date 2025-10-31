@@ -10,10 +10,9 @@ en:
       label:
         conflicts: Conflicting consent
         given: Consent given
-        given_injection: Consent given for injection
+        given_injection: Consent given
         given_injection_without_gelatine: Consent given for gelatine-free injection
         given_nasal: Consent given for nasal spray
-        given_without_gelatine: Consent given for gelatine-free injection
         no_response: No response
         not_required: No consent needed
         refused: Consent refused
@@ -23,7 +22,6 @@ en:
         given_injection: aqua-green
         given_injection_without_gelatine: aqua-green
         given_nasal: aqua-green
-        given_without_gelatine: aqua-green
         no_response: grey
         not_required: grey
         refused: red
