@@ -70,4 +70,100 @@ describe Team do
       expect(team.community_clinics).to match_array(clinic_locations)
     end
   end
+
+  describe "#has_upload_access_only?" do
+    context "given the bulk upload feature flag is disabled" do
+      context "when type is upload_only" do
+        let(:team) { build(:team, type: :upload_only) }
+
+        it "returns false" do
+          expect(team.has_upload_access_only?).to be false
+        end
+      end
+
+      context "when type is poc_only" do
+        let(:team) { build(:team, type: :poc_only) }
+
+        it "returns false" do
+          expect(team.has_upload_access_only?).to be false
+        end
+      end
+    end
+
+    context "given the bulk upload feature flag is enabled" do
+      before { Flipper.enable(:bulk_upload) }
+
+      context "when type is upload_only" do
+        let(:team) { build(:team, type: :upload_only) }
+
+        it "returns true" do
+          expect(team.has_upload_access_only?).to be true
+        end
+      end
+
+      context "when type is poc_only" do
+        let(:team) { build(:team, type: :poc_only) }
+
+        it "returns false" do
+          expect(team.has_upload_access_only?).to be false
+        end
+      end
+
+      context "when type is poc_with_legacy_upload" do
+        let(:team) { build(:team, type: :poc_with_legacy_upload) }
+
+        it "returns false" do
+          expect(team.has_upload_access_only?).to be false
+        end
+      end
+    end
+  end
+
+  describe "#has_poc_access?" do
+    context "given the bulk upload feature flag is disabled" do
+      context "when type is poc_only" do
+        let(:team) { build(:team, type: :poc_only) }
+
+        it "returns true" do
+          expect(team.has_poc_access?).to be true
+        end
+      end
+
+      context "when type is upload_only" do
+        let(:team) { build(:team, type: :upload_only) }
+
+        it "returns true" do
+          expect(team.has_poc_access?).to be true
+        end
+      end
+    end
+
+    context "given the bulk upload feature flag is enabled" do
+      before { Flipper.enable(:bulk_upload) }
+
+      context "when type is poc_only" do
+        let(:team) { build(:team, type: :poc_only) }
+
+        it "returns true" do
+          expect(team.has_poc_access?).to be true
+        end
+      end
+
+      context "when type is poc_with_legacy_upload" do
+        let(:team) { build(:team, type: :poc_with_legacy_upload) }
+
+        it "returns true" do
+          expect(team.has_poc_access?).to be true
+        end
+      end
+
+      context "when type is upload_only" do
+        let(:team) { build(:team, type: :upload_only) }
+
+        it "returns false" do
+          expect(team.has_poc_access?).to be false
+        end
+      end
+    end
+  end
 end
