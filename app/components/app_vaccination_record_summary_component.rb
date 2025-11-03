@@ -413,13 +413,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   def dose_number
     dose_sequence = @vaccination_record.dose_sequence
 
-    if dose_sequence.nil?
-      "Unknown"
-    elsif dose_sequence <= 10
-      I18n.t(dose_sequence, scope: :ordinal_number).upcase_first
-    else
-      dose_sequence.ordinalize
-    end
+    dose_sequence.nil? ? "Unknown" : dose_sequence.ordinalize
   end
 
   def highlight_if(value, condition)

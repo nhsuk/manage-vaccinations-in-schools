@@ -154,7 +154,7 @@ describe AppVaccinationRecordSummaryComponent do
       it do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Dose numberSecond"
+          text: "Dose number2nd"
         )
       end
     end
@@ -165,7 +165,7 @@ describe AppVaccinationRecordSummaryComponent do
       it do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Dose numberFirst"
+          text: "Dose number1st"
         )
       end
     end

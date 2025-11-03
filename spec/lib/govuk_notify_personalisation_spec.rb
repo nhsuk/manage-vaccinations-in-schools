@@ -385,7 +385,7 @@ describe GovukNotifyPersonalisation do
           today_or_date_of_vaccination: "on 1 January 2024",
           outcome_administered: "yes",
           outcome_not_administered: "no",
-          vaccine_and_dose: "HPV first dose",
+          vaccine_and_dose: "HPV 1st dose",
           vaccine_brand: "Vaccine"
         )
       )
