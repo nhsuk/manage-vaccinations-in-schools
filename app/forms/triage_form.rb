@@ -93,6 +93,12 @@ class TriageForm
       can_create_patient_specific_directions?
   end
 
+  def next_mmr_dose_date
+    vaccination_statuses = patient.vaccination_statuses.where(programme:)
+    vaccinated_on = vaccination_statuses.last&.latest_date
+    (vaccinated_on || Time.zone.today) + 28.days
+  end
+
   private
 
   delegate :academic_year, :team, to: :session
@@ -233,22 +239,12 @@ class TriageForm
       )
     end
 
-    if programme.mmr?
-      next_mmr_dose_date = calculate_next_mmr_dose_date
-
-      if delay_vaccination_until < next_mmr_dose_date
-        errors.add(
-          :delay_vaccination_until,
-          "The vaccination cannot take place before #{next_mmr_dose_date.to_fs(:long)}"
-        )
-      end
+    if programme.mmr? && (delay_vaccination_until < next_mmr_dose_date)
+      errors.add(
+        :delay_vaccination_until,
+        "The vaccination cannot take place before #{next_mmr_dose_date.to_fs(:long)}"
+      )
     end
-  end
-
-  def calculate_next_mmr_dose_date
-    vaccination_statuses = patient.vaccination_statuses.where(programme:)
-    vaccinated_on = vaccination_statuses.last&.latest_date
-    (vaccinated_on || Time.zone.today) + 28.days
   end
 
   def associate_triage_with_vaccination_record(next_dose_delay_triage)

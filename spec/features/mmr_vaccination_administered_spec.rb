@@ -25,10 +25,7 @@ describe "MMR vaccination" do
     then_i_should_see_a_triage_for_the_next_vaccination_dose
 
     when_i_click_on_update_triage_outcome
-    and_i_change_the_delay_vaccination_until_date_to_tomorrow
-    and_i_save_triage
-    then_i_see_an_error_that_vaccination_cannot_take_place_before_minimum_mmr_date
-
+    and_i_should_see_a_hint_text_when_the_next_dose_is_due
     when_i_enter_valid_date
     and_i_save_triage
     then_i_should_see_a_triage_with_the_new_date_for_vaccination
@@ -279,10 +276,6 @@ describe "MMR vaccination" do
     click_on "Update triage outcome"
   end
 
-  def and_i_change_the_delay_vaccination_until_date_to_tomorrow
-    fill_in_date(Time.zone.local(2024, 10, 2))
-  end
-
   def when_i_enter_valid_date
     fill_in_date(5.weeks.from_now)
   end
@@ -291,10 +284,8 @@ describe "MMR vaccination" do
     fill_in_date(2.days.ago)
   end
 
-  def then_i_see_an_error_that_vaccination_cannot_take_place_before_minimum_mmr_date
-    expect(page).to have_content(
-      "The vaccination cannot take place before 29 October 2024"
-    )
+  def and_i_should_see_a_hint_text_when_the_next_dose_is_due
+    expect(page).to have_content("2nd dose is not due until 29 October 2024")
   end
 
   def fill_in_date(date)
