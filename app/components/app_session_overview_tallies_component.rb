@@ -45,7 +45,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
       {
         heading: "No response",
         colour: "grey",
-        count: stats[:no_response].to_s,
+        count: stats[:consent_no_response].to_s,
         link_to:
           session_consent_path(
             session,
@@ -100,7 +100,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
       {
         heading: "Consent refused",
         colour: "red",
-        count: stats[:did_not_consent].to_s,
+        count: stats[:consent_refused].to_s,
         link_to:
           session_consent_path(
             session,
@@ -143,7 +143,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
   def stats_for_programme(programme)
     @stats_by_programme ||= {}
     @stats_by_programme[programme.id] ||= Stats::Session.call(
-      session:,
+      session,
       programme:
     )
   end

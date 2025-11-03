@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 describe Stats::Session do
-  describe ".call" do
-    subject(:stats) { described_class.call(session:, programme:) }
+  describe "#call" do
+    subject(:stats) { described_class.call(session, programme:) }
 
     let(:programme) { create(:programme, :hpv) }
     let(:session) { create(:session, programmes: [programme]) }
@@ -11,9 +11,9 @@ describe Stats::Session do
       it "returns zero counts for all stats" do
         expect(stats).to eq(
           eligible_children: 0,
-          no_response: 0,
+          consent_no_response: 0,
           consent_given: 0,
-          did_not_consent: 0,
+          consent_refused: 0,
           vaccinated: 0
         )
       end
@@ -45,9 +45,9 @@ describe Stats::Session do
       it "returns correct counts for each category" do
         expect(stats).to eq(
           eligible_children: 5,
-          no_response: 1,
+          consent_no_response: 1,
           consent_given: 1,
-          did_not_consent: 2,
+          consent_refused: 2,
           vaccinated: 1
         )
       end
