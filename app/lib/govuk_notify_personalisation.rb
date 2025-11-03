@@ -329,8 +329,7 @@ class GovukNotifyPersonalisation
       "They also have [the right to consent to their own vaccinations]" \
         "(https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
         "if they show they fully understand what’s involved. Our team might give young " \
-        "people this opportunity if they assess them as suitably competent. Our team may " \
-        "assess Gillick competence during vaccination sessions."
+        "people this opportunity if they assess them as suitably competent."
     ].join("\n\n")
   end
 

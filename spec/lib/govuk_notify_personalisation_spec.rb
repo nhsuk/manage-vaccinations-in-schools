@@ -61,8 +61,7 @@ describe GovukNotifyPersonalisation do
             "(https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
             "if they show they fully understand what’s involved. Our team might " \
             "give young people this opportunity if they assess them as suitably " \
-            "competent. Our team may assess Gillick competence during vaccination " \
-            "sessions.",
+            "competent.",
         catch_up: "no",
         consent_deadline: "Wednesday 31 December",
         consent_link:
