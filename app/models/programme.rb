@@ -148,7 +148,7 @@ class Programme < ApplicationRecord
     "td_ipv" => %w[76902006 397430003 398102009]
   }.freeze
 
-  def snomed_target_disease_code
+  def snomed_target_disease_codes
     SNOMED_TARGET_DISEASE_CODES.fetch(type)
   end
 
@@ -164,7 +164,7 @@ class Programme < ApplicationRecord
     ]
   }.freeze
 
-  def snomed_target_disease_term
+  def snomed_target_disease_terms
     SNOMED_TARGET_DISEASE_TERMS.fetch(type)
   end
 
