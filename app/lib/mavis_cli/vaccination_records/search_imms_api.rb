@@ -8,7 +8,7 @@ module MavisCLI
       argument :patient_id, required: true, desc: "ID of the patient"
       argument :programme_types,
                type: :array,
-               required: true,
+               required: false,
                desc: "The programme types to search for"
       option :date_from, required: false, desc: "Start date (YYYY-MM-DD)"
       option :date_to, required: false, desc: "End date (YYYY-MM-DD)"
