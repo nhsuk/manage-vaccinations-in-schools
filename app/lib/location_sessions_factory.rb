@@ -65,6 +65,10 @@ class LocationSessionsFactory
       patient_ids.map { [it, location.id, academic_year] },
       on_duplicate_key_ignore: true
     )
+
+    if location.scheduled_for_search_in_nhs_immunisations_api?
+      SearchVaccinationRecordsInNHSJob.perform_bulk(patient_ids.zip)
+    end
   end
 
   def patient_ids

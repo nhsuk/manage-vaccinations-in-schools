@@ -290,4 +290,40 @@ describe Location do
       end
     end
   end
+
+  describe "#scheduled_for_search_in_nhs_immunisations_api?" do
+    subject(:scheduled?) do
+      location.scheduled_for_search_in_nhs_immunisations_api?
+    end
+
+    let(:team) { create(:team) }
+    let(:flu) { create(:programme, :flu) }
+    let(:location) { create(:school, team:, programmes: [flu]) }
+
+    before do
+      create(
+        :session,
+        programmes: [flu],
+        academic_year: AcademicYear.pending,
+        dates:,
+        send_consent_requests_at:,
+        team:,
+        location:
+      )
+    end
+
+    context "when any associated session is scheduled for search" do
+      let(:dates) { [7.days.from_now] }
+      let(:send_consent_requests_at) { 14.days.ago }
+
+      it { should be(true) }
+    end
+
+    context "when no associated sessions are scheduled for search" do
+      let(:dates) { [17.days.from_now] }
+      let(:send_consent_requests_at) { 3.days.from_now } # too far in the future
+
+      it { should be(false) }
+    end
+  end
 end
