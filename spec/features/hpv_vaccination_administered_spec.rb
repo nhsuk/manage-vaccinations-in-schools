@@ -270,7 +270,7 @@ describe "HPV vaccination" do
     click_on Date.current.to_fs(:long)
 
     expect(page).to have_content("Vaccination details")
-    expect(page).to have_content("Dose numberFirst")
+    expect(page).to have_content("Dose number1st")
   end
 
   def when_i_go_to_the_register_tab

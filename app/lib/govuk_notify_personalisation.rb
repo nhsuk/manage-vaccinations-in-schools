@@ -364,7 +364,7 @@ class GovukNotifyPersonalisation
 
   def vaccine_and_dose
     if (dose_sequence = vaccination_record&.dose_sequence)
-      "#{programme_names.to_sentence} #{I18n.t(dose_sequence, scope: :ordinal_number)} dose"
+      "#{programme_names.to_sentence} #{dose_sequence.ordinalize} dose"
     else
       programme_names.to_sentence
     end
