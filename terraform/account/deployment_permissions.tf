@@ -4,7 +4,7 @@ resource "aws_iam_role" "mavis_deploy" {
   description = "Role allowing terraform deployment from github workflows"
   assume_role_policy = templatefile("resources/iam_role_github_trust_policy_${var.environment}.json.tftpl", {
     account_id      = var.account_id
-    repository_list = ["repo:nhsuk/manage-vaccinations-in-schools:*"]
+    repository_list = ["repo:nhsuk/manage-vaccinations-in-schools"]
   })
 }
 
@@ -29,7 +29,7 @@ resource "aws_iam_role" "data_replication_deploy" {
   description = "Role to be assumed by github workflows dealing with the creation and destruction of the data-replication infrastructure."
   assume_role_policy = templatefile("resources/iam_role_github_trust_policy_${var.environment}.json.tftpl", {
     account_id      = var.account_id
-    repository_list = ["repo:nhsuk/manage-vaccinations-in-schools:*"]
+    repository_list = ["repo:nhsuk/manage-vaccinations-in-schools"]
   })
 }
 
@@ -55,7 +55,7 @@ resource "aws_iam_role" "data_replication_snapshot" {
   description = "Role to be assumed by the data replication workflow for taking on-demand DB snapshots"
   assume_role_policy = templatefile("resources/iam_role_github_trust_policy_${var.environment}.json.tftpl", {
     account_id      = var.account_id
-    repository_list = ["repo:nhsuk/manage-vaccinations-in-schools:*"]
+    repository_list = ["repo:nhsuk/manage-vaccinations-in-schools"]
   })
 }
 
@@ -80,7 +80,7 @@ resource "aws_iam_role" "monitoring_deploy" {
   description = "Role allowing terraform deployment of monitoring resources from github workflows"
   assume_role_policy = templatefile("resources/iam_role_github_trust_policy_${var.environment}.json.tftpl", {
     account_id      = var.account_id
-    repository_list = ["repo:nhsuk/manage-vaccinations-in-schools:*"]
+    repository_list = ["repo:nhsuk/manage-vaccinations-in-schools"]
   })
 }
 
@@ -119,8 +119,8 @@ resource "aws_iam_role" "deploy_ecs_service" {
   assume_role_policy = templatefile("resources/iam_role_github_trust_policy_${var.environment}.json.tftpl", {
     account_id = var.account_id,
     repository_list = [
-      "repo:nhsuk/manage-vaccinations-in-schools:*",
-      "repo:NHSDigital/manage-vaccinations-in-schools-reporting:*"
+      "repo:nhsuk/manage-vaccinations-in-schools",
+      "repo:NHSDigital/manage-vaccinations-in-schools-reporting"
     ]
   })
 }
