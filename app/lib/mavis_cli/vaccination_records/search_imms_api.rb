@@ -8,7 +8,7 @@ module MavisCLI
       argument :patient_id, required: true, desc: "ID of the patient"
       argument :programme_types,
                type: :array,
-               required: true,
+               required: false,
                desc: "The programme types to search for"
       option :date_from, required: false, desc: "Start date (YYYY-MM-DD)"
       option :date_to, required: false, desc: "End date (YYYY-MM-DD)"
@@ -38,7 +38,13 @@ module MavisCLI
         end
 
         programmes =
-          programme_types.map { |type| Programme.find_by(type: type.downcase) }
+          if programme_types.empty?
+            Programme.can_search_in_immunisations_api
+          else
+            programme_types.map do |type|
+              Programme.find_by(type: type.downcase)
+            end
+          end
         if programmes.any?(&:nil?)
           puts "Error: One or more programmes not found in database; " \
                  "available types are: #{Programme.types.keys.join(", ")}"
