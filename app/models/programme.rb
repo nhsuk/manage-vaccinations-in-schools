@@ -142,11 +142,11 @@ class Programme < ApplicationRecord
   end
 
   SNOMED_TARGET_DISEASE_CODES = {
-    "hpv" => %w[240532009],
-    "flu" => %w[6142004],
-    "menacwy" => %w[23511006],
-    "mmr" => %w[14189004 36989005 36653000],
-    "td_ipv" => %w[76902006 397430003 398102009]
+    "hpv" => %w[240532009].to_set,
+    "flu" => %w[6142004].to_set,
+    "menacwy" => %w[23511006].to_set,
+    "mmr" => %w[14189004 36989005 36653000].to_set,
+    "td_ipv" => %w[76902006 397430003 398102009].to_set
   }.freeze
 
   def snomed_target_disease_codes
