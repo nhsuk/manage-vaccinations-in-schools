@@ -305,7 +305,7 @@ module FHIRMapper
 
     def fhir_protocol_applied
       FHIR::Immunization::ProtocolApplied.new(
-        targetDisease: [programme.fhir_target_disease_coding],
+        targetDisease: programme.fhir_target_disease_coding,
         doseNumberPositiveInt: dose_sequence
       )
     end
