@@ -60,7 +60,7 @@ describe Programme do
       subject(:scope) { described_class.can_search_in_immunisations_api }
 
       let(:expectations) do
-        { flu: true, hpv: false, menacwy: false, td_ipv: false }
+        { flu: true, hpv: true, menacwy: true, td_ipv: true, mmr: true }
       end
 
       let!(:programmes) do
