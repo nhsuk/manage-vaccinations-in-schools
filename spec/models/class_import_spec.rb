@@ -243,4 +243,74 @@ describe ClassImport do
       end
     end
   end
+
+  describe "#validate_changeset_uniqueness!" do
+    subject(:validate_changeset_uniqueness!) do
+      class_import.validate_changeset_uniqueness!
+    end
+
+    context "when all rows are unique" do
+      before { create_list(:patient_changeset, 3, import: class_import) }
+
+      it "does not mark the import as changesets_are_invalid" do
+        validate_changeset_uniqueness!
+        expect(class_import.reload.status).not_to eq("changesets_are_invalid")
+        expect(class_import.serialized_errors).to be_nil.or eq({})
+      end
+    end
+
+    context "when duplicate NHS numbers exist" do
+      before do
+        create(
+          :patient_changeset,
+          data: {
+            upload: {
+              child: {
+                nhs_number: "1234567890"
+              }
+            }
+          },
+          import: class_import
+        )
+        create(
+          :patient_changeset,
+          data: {
+            upload: {
+              child: {
+                nhs_number: "1234567890"
+              }
+            }
+          },
+          import: class_import
+        )
+        create(:patient_changeset, import: class_import)
+      end
+
+      it "marks the import as changesets_are_invalid and records errors" do
+        validate_changeset_uniqueness!
+
+        expect(class_import.reload.status).to eq("changesets_are_invalid")
+        expect(class_import.serialized_errors.values.flatten).to include(
+          "More than 1 row in this file has the same NHS number."
+        )
+      end
+    end
+
+    context "when duplicate Mavis patient records exist" do
+      before do
+        patient = create(:patient)
+        create(:patient_changeset, import: class_import, patient:)
+        create(:patient_changeset, import: class_import, patient:)
+      end
+
+      it "marks the import as changesets_are_invalid and includes Mavis duplicate error" do
+        validate_changeset_uniqueness!
+
+        expect(class_import.reload.status).to eq("changesets_are_invalid")
+        expect(class_import.serialized_errors.values.flatten).to include(
+          "More than 1 row in this file matches a patient already in the Mavis database."
+        )
+      end
+    end
+  end
 end

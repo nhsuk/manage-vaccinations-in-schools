@@ -19,13 +19,6 @@ class CommitPatientChangesetsJob
 
   def perform(import_global_id)
     import = GlobalID::Locator.locate(import_global_id)
-
-    if Flipper.enabled?(:import_search_pds) &&
-         Flipper.enabled?(:import_low_pds_match_rate)
-      import.validate_pds_match_rate!
-      return if import.low_pds_match_rate?
-    end
-
     counts = import.class.const_get(:COUNT_COLUMNS).index_with(0)
     imported_school_move_ids = []
 

@@ -13,11 +13,23 @@ class ProcessPatientChangesetJob < ApplicationJob
       patient_changeset.pds_nhs_number = unique_nhs_number
     end
 
+    patient_changeset.assign_patient_id
     patient_changeset.processed!
     patient_changeset.save!
 
     if patient_changeset.import.changesets.pending.none?
-      CommitImportJob.perform_async(patient_changeset.import.to_global_id.to_s)
+      import = patient_changeset.import
+
+      if Flipper.enabled?(:import_search_pds) &&
+           Flipper.enabled?(:import_low_pds_match_rate)
+        import.validate_pds_match_rate!
+        return if import.low_pds_match_rate?
+      end
+
+      import.validate_changeset_uniqueness!
+      return if import.changesets_are_invalid?
+
+      CommitImportJob.perform_async(import.to_global_id.to_s)
     end
   end
 

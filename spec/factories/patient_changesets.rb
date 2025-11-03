@@ -33,7 +33,7 @@
 #
 FactoryBot.define do
   factory :patient_changeset do
-    row_number { 1 }
+    sequence(:row_number) { it }
     status { :pending }
 
     trait :class_import do

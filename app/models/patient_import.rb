@@ -24,6 +24,7 @@ class PatientImport < ApplicationRecord
     return if valid_pds_match_rate? || changesets.count < CHANGESET_THRESHOLD
 
     update!(status: :low_pds_match_rate)
+    changesets.update_all(status: :import_invalid)
   end
 
   def pds_match_rate
@@ -33,6 +34,44 @@ class PatientImport < ApplicationRecord
     attempted = changesets.with_pds_search_attempted.count
 
     (matched / attempted * 100).round(2)
+  end
+
+  def validate_changeset_uniqueness!
+    row_errors = {}
+
+    nhs_duplicates =
+      changesets
+        .group_by(&:nhs_number)
+        .select { |nhs, cs| nhs.present? && cs.size > 1 }
+
+    nhs_duplicates.each_value do |changesets|
+      changesets.each do |cs|
+        row_errors["Row #{cs.row_number}"] ||= [[]]
+        row_errors["Row #{cs.row_number}"][
+          0
+        ] << "More than 1 row in this file has the same NHS number."
+      end
+    end
+
+    patient_duplicates =
+      changesets
+        .group_by(&:patient_id)
+        .select { |pid, cs| pid.present? && cs.size > 1 }
+
+    patient_duplicates.each_value do |changesets|
+      changesets.each do |cs|
+        row_errors["Row #{cs.row_number}"] ||= [[]]
+        row_errors["Row #{cs.row_number}"][
+          0
+        ] << "More than 1 row in this file matches a patient already in the Mavis database."
+      end
+    end
+
+    if row_errors.any?
+      update!(status: :changesets_are_invalid)
+      update!(serialized_errors: row_errors)
+      changesets.update_all(status: :import_invalid)
+    end
   end
 
   private

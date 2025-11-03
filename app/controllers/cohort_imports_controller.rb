@@ -33,7 +33,10 @@ class CohortImportsController < ApplicationController
   end
 
   def show
-    @cohort_import.load_serialized_errors! if @cohort_import.rows_are_invalid?
+    if @cohort_import.rows_are_invalid? ||
+         @cohort_import.changesets_are_invalid?
+      @cohort_import.load_serialized_errors!
+    end
 
     @pagy, @patients = pagy(@cohort_import.patients.includes(:school))
 

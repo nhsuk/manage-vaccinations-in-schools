@@ -82,7 +82,7 @@ class PatientChangeset < ApplicationRecord
   belongs_to :patient, optional: true
   belongs_to :school, class_name: "Location", optional: true
 
-  enum :status, { pending: 0, processed: 1 }, validate: true
+  enum :status, { pending: 0, processed: 1, import_invalid: 2 }, validate: true
 
   scope :nhs_number_discrepancies,
         -> do
