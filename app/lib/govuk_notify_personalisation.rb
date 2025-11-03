@@ -43,6 +43,7 @@ class GovukNotifyPersonalisation
       consent_link:,
       consented_vaccine_methods_message:,
       day_month_year_of_vaccination:,
+      delay_vaccination_review_context:,
       full_and_preferred_patient_name:,
       has_multiple_dates:,
       location_name:,
@@ -201,6 +202,23 @@ class GovukNotifyPersonalisation
         "child needs a second dose of the vaccine. Our team will be in " \
         "touch about this soon."
     ].join("\n\n")
+  end
+
+  def delay_vaccination_review_context
+    return if patient.nil?
+
+    latest_delayed_triage =
+      patient.triages.delay_vaccination.order(created_at: :desc).first
+    return if latest_delayed_triage.nil?
+
+    session_date = next_or_today_session_date.to_date
+    triage_date = latest_delayed_triage.created_at.to_date
+
+    if session_date && triage_date == session_date
+      "assessed #{short_patient_name} in the vaccination session"
+    else
+      "reviewed the answers you gave to the health questions about #{short_patient_name}"
+    end
   end
 
   def next_or_today_session_date

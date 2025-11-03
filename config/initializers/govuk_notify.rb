@@ -37,6 +37,7 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   triage_vaccination_at_clinic_ryg: "9faef718-bd76-4c30-93ea-fbe8584388a6",
   triage_vaccination_will_happen: "279c517c-4c52-4a69-96cb-31355bfa4e21",
   triage_vaccination_wont_happen: "d1faf47e-ccc3-4481-975b-1ec34211a21f",
+  triage_delay_vaccination: "0e37d12a-5469-4ad2-aa09-83e0ef56e03e",
   vaccination_administered_flu: "7238ee27-5840-40e5-b9b9-3130ba4cd4fa",
   vaccination_administered_hpv: "8a65d7b5-045c-4f26-8f76-6e593c14cb6d",
   vaccination_administered_menacwy: "38727494-9a81-42b3-9c1f-5c31e55333e7",
