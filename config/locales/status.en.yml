@@ -10,10 +10,9 @@ en:
       label:
         conflicts: Conflicting consent
         given: Consent given
-        given_injection: Consent given for injection
+        given_injection: Consent given
         given_injection_without_gelatine: Consent given for gelatine-free injection
         given_nasal: Consent given for nasal spray
-        given_without_gelatine: Consent given for gelatine-free injection
         no_response: No response
         not_required: No consent needed
         refused: Consent refused
@@ -23,7 +22,6 @@ en:
         given_injection: aqua-green
         given_injection_without_gelatine: aqua-green
         given_nasal: aqua-green
-        given_without_gelatine: aqua-green
         no_response: grey
         not_required: grey
         refused: red
@@ -53,9 +51,9 @@ en:
         not_required: No triage needed
         required: Needs triage
         safe_to_vaccinate: Safe to vaccinate
-        safe_to_vaccinate_injection: Safe to vaccinate with injection
+        safe_to_vaccinate_injection: Safe to vaccinate
         safe_to_vaccinate_nasal: Safe to vaccinate with nasal spray
-        safe_to_vaccinate_without_gelatine: Safe to vaccinate with gelatine-free vaccine
+        safe_to_vaccinate_injection_without_gelatine: Safe to vaccinate with gelatine-free injection
       colour:
         delay_vaccination: dark-orange
         invite_to_clinic: yellow
@@ -65,7 +63,7 @@ en:
         safe_to_vaccinate: aqua-green
         safe_to_vaccinate_injection: aqua-green
         safe_to_vaccinate_nasal: aqua-green
-        safe_to_vaccinate_without_gelatine: aqua-green
+        safe_to_vaccinate_injection_without_gelatine: aqua-green
     vaccination:
       label:
         due: Due vaccination

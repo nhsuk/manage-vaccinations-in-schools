@@ -267,15 +267,28 @@ class Patient < ApplicationRecord
         end
 
   scope :has_triage_status,
-        ->(status, programme:, academic_year:) do
-          where(
+        ->(
+          status,
+          programme:,
+          academic_year:,
+          vaccine_method: nil,
+          without_gelatine: nil
+        ) do
+          triage_status_scope =
             Patient::TriageStatus
               .select("1")
               .where("patient_id = patients.id")
               .where(status:, programme:, academic_year:)
-              .arel
-              .exists
-          )
+
+          unless vaccine_method.nil?
+            triage_status_scope = triage_status_scope.where(vaccine_method:)
+          end
+
+          unless without_gelatine.nil?
+            triage_status_scope = triage_status_scope.where(without_gelatine:)
+          end
+
+          where(triage_status_scope.arel.exists)
         end
 
   scope :has_vaccine_criteria,
