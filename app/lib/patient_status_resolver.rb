@@ -5,11 +5,11 @@
 # `AppAttachedTagsComponent` used to render the various statuses of any
 # particular patient, programme and academic year combination.
 class PatientStatusResolver
-  def initialize(patient, programme:, academic_year:, context_location: nil)
+  def initialize(patient, programme:, academic_year:, context_location_id: nil)
     @patient = patient
     @programme = programme
     @academic_year = academic_year
-    @context_location = context_location
+    @context_location_id = context_location_id
   end
 
   def consent
@@ -62,8 +62,8 @@ class PatientStatusResolver
       details_text =
         if vaccination_status.latest_session_status_already_had?
           "Already had the vaccine"
-        elsif context_location.nil? ||
-              vaccination_status.latest_location_id == context_location.id
+        elsif context_location_id.nil? ||
+              vaccination_status.latest_location_id == context_location_id
           "Vaccinated on #{vaccination_status.latest_date.to_fs(:long)}"
         else
           "Vaccinated elsewhere"
@@ -120,7 +120,7 @@ class PatientStatusResolver
 
   private
 
-  attr_reader :patient, :programme, :academic_year, :context_location
+  attr_reader :patient, :programme, :academic_year, :context_location_id
 
   def tag_hash(status, context:)
     text = I18n.t(status, scope: [:status, context, :label])
