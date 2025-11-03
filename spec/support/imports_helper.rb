@@ -7,7 +7,7 @@ module ImportsHelper
     perform_enqueued_jobs_while_exists(only: PDSCascadingSearchJob)
     perform_enqueued_jobs_while_exists(only: ProcessPatientChangesetJob)
 
-    CommitPatientChangesetsJob.drain
+    CommitImportJob.drain
     click_on_most_recent_import(import_class)
   end
 

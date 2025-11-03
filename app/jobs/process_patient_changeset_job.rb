@@ -23,9 +23,7 @@ class ProcessPatientChangesetJob < ApplicationJob
     patient_changeset.save!
 
     if patient_changeset.import.changesets.pending.none?
-      CommitPatientChangesetsJob.perform_async(
-        patient_changeset.import.to_global_id.to_s
-      )
+      CommitImportJob.perform_async(patient_changeset.import.to_global_id.to_s)
     end
   end
 

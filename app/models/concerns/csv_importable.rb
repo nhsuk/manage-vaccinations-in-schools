@@ -143,7 +143,7 @@ module CSVImportable
       else
         changesets.each(&:processed!)
 
-        CommitPatientChangesetsJob.perform_async(to_global_id.to_s)
+        CommitImportJob.perform_async(to_global_id.to_s)
       end
 
       return

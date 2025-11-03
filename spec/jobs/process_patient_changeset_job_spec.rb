@@ -36,10 +36,10 @@ describe ProcessPatientChangesetJob do
         )
       end
 
-      it "does not enqueue CommitPatientChangesetsJob" do
+      it "does not enqueue CommitImportJob" do
         expect {
           described_class.perform_now(patient_changeset.id)
-        }.not_to enqueue_sidekiq_job(CommitPatientChangesetsJob)
+        }.not_to enqueue_sidekiq_job(CommitImportJob)
       end
     end
 
@@ -167,12 +167,10 @@ describe ProcessPatientChangesetJob do
         create(:patient_changeset, import: import, status: :processed)
       end
 
-      it "enqueues CommitPatientChangesetsJob" do
+      it "enqueues CommitImportJob" do
         expect {
           described_class.perform_now(patient_changeset.id)
-        }.to enqueue_sidekiq_job(CommitPatientChangesetsJob).with(
-          import.to_global_id.to_s
-        )
+        }.to enqueue_sidekiq_job(CommitImportJob).with(import.to_global_id.to_s)
       end
     end
 
@@ -193,10 +191,10 @@ describe ProcessPatientChangesetJob do
         create(:patient_changeset, import: import, status: :pending)
       end
 
-      it "does not enqueue CommitPatientChangesetsJob" do
+      it "does not enqueue CommitImportJob" do
         expect {
           described_class.perform_now(patient_changeset.id)
-        }.not_to have_enqueued_job(CommitPatientChangesetsJob)
+        }.not_to have_enqueued_job(CommitImportJob)
       end
     end
 
@@ -217,10 +215,10 @@ describe ProcessPatientChangesetJob do
         create(:patient_changeset, import: import, status: :pending)
       end
 
-      it "does not enqueue CommitPatientChangesetsJob" do
+      it "does not enqueue CommitImportJob" do
         expect {
           described_class.perform_now(patient_changeset.id)
-        }.not_to have_enqueued_job(CommitPatientChangesetsJob)
+        }.not_to have_enqueued_job(CommitImportJob)
       end
     end
 

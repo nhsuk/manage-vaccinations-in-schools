@@ -53,7 +53,7 @@ describe API::Testing::TeamsController do
       TeamSessionsFactory.call(team, academic_year: AcademicYear.current)
 
       cohort_import.process!
-      CommitPatientChangesetsJob.drain
+      CommitImportJob.drain
       immunisation_import.process!
 
       Patient.find_each do |patient|
