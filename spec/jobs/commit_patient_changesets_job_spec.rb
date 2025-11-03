@@ -418,35 +418,52 @@ describe CommitPatientChangesetsJob do
       before { Flipper.enable(:import_low_pds_match_rate) }
       after { Flipper.disable(:import_low_pds_match_rate) }
 
-      context "and import is below match rate threshold" do
-        before do
-          create_list(:patient_changeset, 6, :with_pds_match, import:)
-          create_list(:patient_changeset, 4, import:)
-          import.validate_pds_match_rate!
-        end
+      context "and PDS search is disabled" do
+        before { Flipper.disable(:import_search_pds) }
+        after { Flipper.enable(:import_search_pds) }
 
-        it "marks the import as low_pds_match_rate and stops processing" do
-          expect(import).to receive(:validate_pds_match_rate!).and_call_original
-          expect(import).not_to receive(:postprocess_rows!)
-          allow(ClassImport).to receive(:find).with(import.id.to_s).and_return(
-            import
-          )
-
-          perform_job
-          expect(import.reload.status).to eq("low_pds_match_rate")
+        it "processes the import normally" do
+          expect { perform_job }.to change(Patient, :count).by(4)
+          expect(import.reload.status).to eq("processed")
         end
       end
 
-      context "and import is above match rate threshold" do
-        before do
-          create_list(:patient_changeset, 7, :with_pds_match, import:)
-          create_list(:patient_changeset, 3, import:)
-          import.validate_pds_match_rate!
+      context "and PDS search is enabled" do
+        before { Flipper.enable(:import_search_pds) }
+        after { Flipper.disable(:import_search_pds) }
+
+        context "and import is below match rate threshold" do
+          before do
+            create_list(:patient_changeset, 6, :with_pds_match, import:)
+            create_list(:patient_changeset, 4, import:)
+            import.validate_pds_match_rate!
+          end
+
+          it "marks the import as low_pds_match_rate and stops processing" do
+            expect(import).to receive(
+              :validate_pds_match_rate!
+            ).and_call_original
+            expect(import).not_to receive(:postprocess_rows!)
+            allow(ClassImport).to receive(:find).with(
+              import.id.to_s
+            ).and_return(import)
+
+            perform_job
+            expect(import.reload.status).to eq("low_pds_match_rate")
+          end
         end
 
-        it "continues processing normally" do
-          expect { perform_job }.to change(Patient, :count).by(4)
-          expect(import.reload.status).to eq("processed")
+        context "and import is above match rate threshold" do
+          before do
+            create_list(:patient_changeset, 7, :with_pds_match, import:)
+            create_list(:patient_changeset, 3, import:)
+            import.validate_pds_match_rate!
+          end
+
+          it "continues processing normally" do
+            expect { perform_job }.to change(Patient, :count).by(4)
+            expect(import.reload.status).to eq("processed")
+          end
         end
       end
     end
