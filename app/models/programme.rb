@@ -36,7 +36,8 @@ class Programme < ApplicationRecord
   has_many :teams, through: :team_programmes
 
   scope :supports_delegation, -> { flu }
-  scope :can_sync_to_immunisations_api, -> { flu.or(hpv) }
+  scope :can_sync_to_immunisations_api,
+        -> { flu.or(hpv).or(menacwy).or(td_ipv).or(mmr) }
   scope :can_search_in_immunisations_api, -> { flu }
 
   enum :type,
@@ -159,7 +160,14 @@ class Programme < ApplicationRecord
 
   SNOMED_TARGET_DISEASE_TERMS = {
     "hpv" => ["Human papillomavirus infection"],
-    "flu" => ["Influenza"]
+    "flu" => ["Influenza"],
+    "menacwy" => ["Meningococcal infectious disease"],
+    "mmr" => %w[Measles Mumps Rubella],
+    "td_ipv" => [
+      "Tetanus",
+      "Diphtheria caused by Corynebacterium diphtheriae",
+      "Acute poliomyelitis"
+    ]
   }.freeze
 
   def snomed_target_disease_terms
@@ -172,7 +180,8 @@ class Programme < ApplicationRecord
     SNOMED_TARGET_DISEASE_NAMES.fetch(type)
   end
 
-  def can_sync_to_immunisations_api? = hpv? || flu?
+  def can_sync_to_immunisations_api? =
+    hpv? || flu? || menacwy? || td_ipv? || mmr?
 
   def can_search_in_immunisations_api? = flu?
 
