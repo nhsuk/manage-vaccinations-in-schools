@@ -33,7 +33,7 @@
 
   <%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
     <div class="nhsuk-button-group">
-      <%= f.govuk_submit "Keep session dates", inverse: true %>
+      <%= f.govuk_submit "Keep session dates", class: "nhsuk-button--reverse" %>
       <%= link_to "Remove session dates", draft_session_path("dates") %>
     </div>
   <% end %>
