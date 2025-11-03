@@ -213,12 +213,16 @@ describe "Manage children" do
         given_name: "Jane",
         family_name: "Doe"
       )
+
+    StatusUpdater.call(session: @session)
   end
 
   def given_many_patients_exist
     @session = create(:session, team: @team, programmes: [@hpv])
 
     create_list(:patient, 100, session: @session)
+
+    StatusUpdater.call(session: @session)
   end
 
   def given_an_invalidated_patient_exists
@@ -234,6 +238,8 @@ describe "Manage children" do
       )
 
     create(:patient, session:, nhs_number: nil)
+
+    StatusUpdater.call(session: @session)
   end
 
   def and_the_patient_is_vaccinated
@@ -296,7 +302,7 @@ describe "Manage children" do
   end
 
   def when_i_filter_for_children
-    check "HPV"
+    check "No response"
     click_on "Update results"
   end
 
@@ -326,7 +332,7 @@ describe "Manage children" do
 
   def when_i_click_on_view_aged_out_children
     find(".nhsuk-details__summary").click
-    uncheck "HPV"
+    uncheck "No response"
     check "Children aged out of programmes"
     click_on "Update results"
   end

@@ -6,7 +6,6 @@
           @form,
           url: patients_path,
           heading_level: 2,
-          programmes: policy_scope(Programme),
           consent_statuses: %w[no_response given refused conflicts],
           triage_statuses: %w[required delay_vaccination do_not_vaccinate safe_to_vaccinate],
           vaccination_statuses: Patient::VaccinationStatus.statuses.keys,
