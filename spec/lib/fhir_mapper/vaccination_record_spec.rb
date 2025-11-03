@@ -282,7 +282,7 @@ describe FHIRMapper::VaccinationRecord do
       it { should be_a FHIR::Immunization::ProtocolApplied }
 
       describe "targetDisease" do
-        subject(:target_disease) { protocol_applied.targetDisease.sole }
+        subject(:target_disease) { protocol_applied.targetDisease }
 
         it { should eq programme.fhir_target_disease_coding }
       end

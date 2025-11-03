@@ -10,6 +10,7 @@ imms_api_search_job: Flag to switch off any automated receipt of vaccination rec
 
 imms_api_sync_job: Flag to switch off any automated sending of vaccination records
   (Create, Update, Delete), triggered by the creation/edit/delete of any vaccination records.
+  This can be controlled on a per-programme basis.
 
 import_choose_academic_year: Add an option to choose the academic year when
   importing patients during the preparation period.
