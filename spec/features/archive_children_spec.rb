@@ -13,7 +13,7 @@ describe "Archive children" do
     and_an_archived_patient_exists
 
     when_i_visit_the_children_page
-    and_i_filter_for_flu
+    and_i_filter_for_the_child
     then_i_see_only_the_unarchived_patient
 
     when_i_filter_to_see_only_archived_patients
@@ -52,7 +52,7 @@ describe "Archive children" do
     and_i_see_a_success_message
 
     when_i_visit_the_children_page
-    and_i_filter_for_flu
+    and_i_filter_for_the_duplicate_patient
     then_i_see_only_the_duplicate_patient
   end
 
@@ -149,8 +149,8 @@ describe "Archive children" do
     visit patients_path
   end
 
-  def and_i_filter_for_flu
-    check "Flu"
+  def and_i_filter_for_the_child
+    fill_in "Search", with: @unarchived_patient.full_name
     click_button "Update results"
   end
 
@@ -160,7 +160,7 @@ describe "Archive children" do
   end
 
   def when_i_filter_to_see_only_archived_patients
-    uncheck "Flu"
+    fill_in "Search", with: ""
     find(".nhsuk-details__summary").click
     check "Archived records"
     click_on "Search"
@@ -226,6 +226,11 @@ describe "Archive children" do
   def and_i_see_an_activity_log_entry
     click_on "Activity log"
     expect(page).to have_content("Record archived:")
+  end
+
+  def and_i_filter_for_the_duplicate_patient
+    fill_in "Search", with: @duplicate_patient.full_name
+    click_on "Update results"
   end
 
   def then_i_see_only_the_duplicate_patient
