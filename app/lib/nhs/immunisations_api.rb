@@ -290,7 +290,7 @@ module NHS::ImmunisationsAPI
         "patient.identifier" =>
           "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}",
         "-immunization.target" =>
-          programmes.map(&:snomed_target_disease_name).join(","),
+          programmes.map(&:snomed_target_disease_name).sort.join(","),
         "-date.from" => date_from&.strftime("%F"),
         "-date.to" => date_to&.strftime("%F")
       }.compact

@@ -385,7 +385,7 @@ describe SearchVaccinationRecordsInNHSJob do
       {
         "patient.identifier" =>
           "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}",
-        "-immunization.target" => "FLU"
+        "-immunization.target" => "3IN1,FLU,HPV,MENACWY,MMR"
       }
     end
     let(:status) { 200 }
