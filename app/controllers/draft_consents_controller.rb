@@ -73,6 +73,10 @@ class DraftConsentsController < ApplicationController
 
       @consent.save!
 
+      unless includes_triage_step?
+        @consent.invalidate_existing_triage_and_patient_specific_directions!
+      end
+
       @consent.update_vaccination_records_no_notify!
 
       StatusUpdater.call(patient: @patient)
