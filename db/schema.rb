@@ -593,6 +593,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_29_071245) do
     t.index ["vaccine_id"], name: "index_patient_specific_directions_on_vaccine_id"
   end
 
+  create_table "patient_teams", primary_key: ["team_id", "patient_id"], force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.bigint "team_id", null: false
+    t.integer "sources", null: false, array: true
+    t.index ["patient_id", "team_id"], name: "index_patient_teams_on_patient_id_and_team_id"
+    t.index ["patient_id"], name: "index_patient_teams_on_patient_id"
+    t.index ["sources"], name: "index_patient_teams_on_sources", using: :gin
+    t.index ["team_id"], name: "index_patient_teams_on_team_id"
+  end
+
   create_table "patient_triage_statuses", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
@@ -1023,6 +1033,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_29_071245) do
   add_foreign_key "patient_specific_directions", "teams"
   add_foreign_key "patient_specific_directions", "users", column: "created_by_user_id"
   add_foreign_key "patient_specific_directions", "vaccines"
+  add_foreign_key "patient_teams", "patients", on_delete: :cascade
+  add_foreign_key "patient_teams", "teams", on_delete: :cascade
   add_foreign_key "patient_triage_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_triage_statuses", "programmes"
   add_foreign_key "patient_vaccination_statuses", "locations", column: "latest_location_id"
