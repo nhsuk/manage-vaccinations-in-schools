@@ -6,10 +6,10 @@ describe "Parental consent" do
     when_i_go_to_the_consent_form
     then_i_see_the_consent_form
 
-    when_i_give_consent
+    when_i_give_consent(nasal_spray: true)
     then_i_see_the_first_health_question
 
-    when_i_answer_no_to_all_health_questions
+    when_i_answer_no_to_all_health_questions(nasal_spray: true)
     then_i_see_the_confirmation_page
 
     when_i_change_my_answer_to_the_first_health_question
@@ -19,7 +19,7 @@ describe "Parental consent" do
     then_i_see_the_confirmation_page
   end
 
-  scenario "Flu - already has a PSD" do
+  scenario "Flu - already has a PSD won't need triage and consented to nasal" do
     stub_pds_search_to_return_no_patients
 
     given_a_flu_programme_is_underway
@@ -28,7 +28,41 @@ describe "Parental consent" do
     when_i_go_to_the_consent_form
     then_i_see_the_consent_form
 
-    when_i_give_consent
+    when_i_give_consent(nasal_spray: true)
+    when_i_answer_no_to_all_health_questions(nasal_spray: true)
+    then_i_see_the_confirmation_page
+
+    when_i_submit_the_consent_form
+    then_the_psd_is_not_invalidated
+  end
+
+  scenario "Flu - already has a PSD won't need triage but refused nasal" do
+    stub_pds_search_to_return_no_patients
+
+    given_a_flu_programme_is_underway
+    and_the_child_has_a_psd
+
+    when_i_go_to_the_consent_form
+    then_i_see_the_consent_form
+
+    when_i_give_consent(nasal_spray: false)
+    when_i_answer_no_to_all_health_questions(nasal_spray: false)
+    then_i_see_the_confirmation_page
+
+    when_i_submit_the_consent_form
+    then_the_psd_is_invalidated
+  end
+
+  scenario "Flu - already has a PSD will need triage" do
+    stub_pds_search_to_return_no_patients
+
+    given_a_flu_programme_is_underway
+    and_the_child_has_a_psd
+
+    when_i_go_to_the_consent_form
+    then_i_see_the_consent_form
+
+    when_i_give_consent(nasal_spray: true)
     when_i_answer_yes_to_all_health_questions
     then_i_see_the_confirmation_page
 
@@ -61,7 +95,7 @@ describe "Parental consent" do
     expect(page).to have_content("Give or refuse consent for vaccinations")
   end
 
-  def when_i_give_consent
+  def when_i_give_consent(nasal_spray:)
     click_button "Start now"
 
     # What is your child's name?
@@ -86,12 +120,16 @@ describe "Parental consent" do
     fill_in "Email address", with: "jane@example.com"
     click_button "Continue"
 
-    # Do you agree?
-    choose "Yes, I agree to them having the nasal spray vaccine"
-    click_button "Continue"
+    if nasal_spray
+      # Do you agree?
+      choose "Yes, I agree to them having the nasal spray vaccine"
+      click_button "Continue"
 
-    # Injection alternative
-    choose "Yes"
+      # Injection alternative
+      choose "Yes"
+    else
+      choose "Yes, I agree to the alternative flu injection"
+    end
     click_button "Continue"
 
     # Home address
@@ -105,8 +143,8 @@ describe "Parental consent" do
     expect(page).to have_content("Has your child been diagnosed with asthma?")
   end
 
-  def when_i_answer_no_to_all_health_questions
-    9.times do
+  def when_i_answer_no_to_all_health_questions(nasal_spray:)
+    (nasal_spray ? 9 : 4).times do
       choose "No"
       click_button "Continue"
     end
@@ -157,5 +195,9 @@ describe "Parental consent" do
 
   def then_the_psd_is_invalidated
     expect(@patient_specific_direction.reload).to be_invalidated
+  end
+
+  def then_the_psd_is_not_invalidated
+    expect(@patient_specific_direction.reload).not_to be_invalidated
   end
 end
