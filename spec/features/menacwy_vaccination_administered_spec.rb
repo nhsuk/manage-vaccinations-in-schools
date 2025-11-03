@@ -185,7 +185,7 @@ describe "MenACWY vaccination" do
     click_on Date.current.to_fs(:long)
 
     expect(page).to have_content("Vaccination details")
-    expect(page).to have_content("Dose numberUnknown")
+    expect(page).not_to have_content("Dose number")
   end
 
   def when_vaccination_confirmations_are_sent
