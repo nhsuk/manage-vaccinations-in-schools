@@ -303,6 +303,9 @@ describe FHIRMapper::VaccinationRecord do
     around { |example| travel_to(Date.new(2025, 11, 20)) { example.run } }
 
     let(:programme) { CachedProgramme.flu }
+    let(:fhir_immunization) do
+      FHIR.from_contents(file_fixture(fixture_file_name).read)
+    end
 
     shared_examples "a mapped vaccination record (common fields)" do
       its(:persisted?) { should be false }
@@ -341,11 +344,7 @@ describe FHIRMapper::VaccinationRecord do
         )
       end
 
-      let(:fhir_immunization) do
-        FHIR.from_contents(
-          file_fixture("/fhir/fhir_record_half_dose.json").read
-        )
-      end
+      let(:fixture_file_name) { "/fhir/fhir_record_half_dose.json" }
 
       context "when vaccine is nasal flu" do
         context "when dose quantity is 0.5" do
@@ -408,9 +407,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "with a full fhir record" do
-      let(:fhir_immunization) do
-        FHIR.from_contents(file_fixture("/fhir/fhir_record_full.json").read)
-      end
+      let(:fixture_file_name) { "/fhir/fhir_record_full.json" }
 
       include_examples "a mapped vaccination record (common fields)"
 
@@ -444,11 +441,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "with a record with not full dose" do
-      let(:fhir_immunization) do
-        FHIR.from_contents(
-          file_fixture("/fhir/fhir_record_half_dose.json").read
-        )
-      end
+      let(:fixture_file_name) { "/fhir/fhir_record_half_dose.json" }
 
       include_examples "a mapped vaccination record (common fields)"
 
@@ -482,11 +475,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "with a record with an unexpected dose unit, and is nasal flu" do
-      let(:fhir_immunization) do
-        FHIR.from_contents(
-          file_fixture("/fhir/fhir_record_unexpected_dose_unit.json").read
-        )
-      end
+      let(:fixture_file_name) { "/fhir/fhir_record_unexpected_dose_unit.json" }
 
       include_examples "a mapped vaccination record (common fields)"
 
@@ -519,11 +508,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "with a record with extended milliliter description" do
-      let(:fhir_immunization) do
-        FHIR.from_contents(
-          file_fixture("/fhir/fhir_record_extended_milliliter.json").read
-        )
-      end
+      let(:fixture_file_name) { "/fhir/fhir_record_extended_milliliter.json" }
 
       include_examples "a mapped vaccination record (common fields)"
 
@@ -557,11 +542,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "with a record that has an unknown vaccine" do
-      let(:fhir_immunization) do
-        FHIR.from_contents(
-          file_fixture("fhir/fhir_record_unknown_vaccine.json").read
-        )
-      end
+      let(:fixture_file_name) { "fhir/fhir_record_unknown_vaccine.json" }
 
       include_examples "a mapped vaccination record (common fields)"
 
@@ -595,9 +576,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "with a record from a GP which is very sparse" do
-      let(:fhir_immunization) do
-        FHIR.from_contents(file_fixture("fhir/fhir_record_gp.json").read)
-      end
+      let(:fixture_file_name) { "fhir/fhir_record_gp.json" }
 
       include_examples "a mapped vaccination record (common fields)"
 
@@ -622,11 +601,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "with a record that is nasal flu, and is missing dose quantity (from real GP)" do
-      let(:fhir_immunization) do
-        FHIR.from_contents(
-          file_fixture("fhir/fhir_record_nasal_missing_dose.json").read
-        )
-      end
+      let(:fixture_file_name) { "fhir/fhir_record_nasal_missing_dose.json" }
 
       include_examples "a mapped vaccination record (common fields)"
 
@@ -647,11 +622,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "with a record that is im flu, and is missing dose quantity" do
-      let(:fhir_immunization) do
-        FHIR.from_contents(
-          file_fixture("fhir/fhir_record_im_missing_dose.json").read
-        )
-      end
+      let(:fixture_file_name) { "fhir/fhir_record_im_missing_dose.json" }
 
       include_examples "a mapped vaccination record (common fields)"
 
@@ -672,11 +643,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "with a record with a short batch number" do
-      let(:fhir_immunization) do
-        FHIR.from_contents(
-          file_fixture("/fhir/fhir_record_short_batch.json").read
-        )
-      end
+      let(:fixture_file_name) { "/fhir/fhir_record_short_batch.json" }
 
       include_examples "a mapped vaccination record (common fields)"
 
@@ -701,11 +668,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "with a record that has an unknown location" do
-      let(:fhir_immunization) do
-        FHIR.from_contents(
-          file_fixture("fhir/fhir_record_unknown_location.json").read
-        )
-      end
+      let(:fixture_file_name) { "fhir/fhir_record_unknown_location.json" }
 
       include_examples "a mapped vaccination record (common fields)"
 
@@ -732,11 +695,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "with a record that is the minimum which can be created via the API" do
-      let(:fhir_immunization) do
-        FHIR.from_contents(
-          file_fixture("fhir/fhir_record_minimum_api_create.json").read
-        )
-      end
+      let(:fixture_file_name) { "fhir/fhir_record_minimum_api_create.json" }
 
       include_examples "a mapped vaccination record (common fields)"
 
@@ -764,11 +723,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "with a record that is the minimum which can be created based on the spec (for CSV bulk upload)" do
-      let(:fhir_immunization) do
-        FHIR.from_contents(
-          file_fixture("fhir/fhir_record_minimum_bulk_spec.json").read
-        )
-      end
+      let(:fixture_file_name) { "fhir/fhir_record_minimum_bulk_spec.json" }
 
       include_examples "a mapped vaccination record (common fields)"
 
