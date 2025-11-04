@@ -96,7 +96,7 @@ class StatusGenerator::Triage
 
   def status_should_be_delay_vaccination?
     return false if vaccinated?
-    latest_triage&.delay_vaccination?
+    latest_triage&.delay_vaccination? && !latest_triage.expired?
   end
 
   def status_should_be_invite_to_clinic?
@@ -107,6 +107,7 @@ class StatusGenerator::Triage
   def status_should_be_required?
     return false if vaccinated?
     return true if latest_triage&.keep_in_triage?
+    return true if latest_triage&.expired?
 
     return false if latest_consents.empty?
 

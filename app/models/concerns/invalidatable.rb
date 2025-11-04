@@ -11,16 +11,7 @@ module Invalidatable
           -> { not_invalidated.update_all(invalidated_at: Time.current) }
   end
 
-  def invalidated?
-    invalidated_at != nil
-  end
+  def invalidated? = invalidated_at != nil
 
-  def not_invalidated?
-    invalidated_at.nil?
-  end
-
-  def should_be_invalidated?
-    delay_vaccination? && delay_vaccination_until.present? &&
-      delay_vaccination_until < Date.current
-  end
+  def not_invalidated? = invalidated_at.nil?
 end
