@@ -338,7 +338,7 @@ describe NHS::ImmunisationsAPI do
     end
 
     let(:status) { 200 }
-    let(:body) { file_fixture("fhir/fhir_record_full.json").read }
+    let(:body) { file_fixture("fhir/flu/fhir_record_full.json").read }
     let(:headers) { { "content-type" => "application/fhir+json" } }
 
     let!(:request_stub) do
@@ -409,7 +409,7 @@ describe NHS::ImmunisationsAPI do
     end
 
     let(:status) { 200 }
-    let(:body) { file_fixture("fhir/fhir_record_full.json").read }
+    let(:body) { file_fixture("fhir/flu/fhir_record_full.json").read }
     let(:headers) { { "content-type" => "application/fhir+json" } }
 
     let!(:request_stub) do
