@@ -45,117 +45,6 @@ describe Triage do
     it { should belong_to(:performed_by) }
   end
 
-  describe "scopes" do
-    describe "#delay_vaccination_until_in_past" do
-      subject(:scope) { described_class.delay_vaccination_until_in_past }
-
-      it { should be_empty }
-
-      context "with a triage safe to vaccinate" do
-        before { create(:triage, :safe_to_vaccinate) }
-
-        it { should be_empty }
-      end
-
-      context "with a triage delayed until tomorrow" do
-        before do
-          create(
-            :triage,
-            :delay_vaccination,
-            delay_vaccination_until: Date.tomorrow
-          )
-        end
-
-        it { should be_empty }
-      end
-
-      context "with a triage delayed until today" do
-        before do
-          create(
-            :triage,
-            :delay_vaccination,
-            delay_vaccination_until: Date.current
-          )
-        end
-
-        it { should be_empty }
-      end
-
-      context "with a triage delayed until yesterday" do
-        let!(:triage) do
-          create(
-            :triage,
-            :delay_vaccination,
-            delay_vaccination_until: Date.yesterday
-          )
-        end
-
-        it { should include(triage) }
-      end
-    end
-
-    describe "#should_be_invalidated" do
-      subject(:scope) { described_class.should_be_invalidated }
-
-      it { should be_empty }
-
-      context "with a triage safe to vaccinate" do
-        before { create(:triage, :safe_to_vaccinate) }
-
-        it { should be_empty }
-      end
-
-      context "with a triage delayed until tomorrow" do
-        before do
-          create(
-            :triage,
-            :delay_vaccination,
-            delay_vaccination_until: Date.tomorrow
-          )
-        end
-
-        it { should be_empty }
-      end
-
-      context "with a triage delayed until today" do
-        before do
-          create(
-            :triage,
-            :delay_vaccination,
-            delay_vaccination_until: Date.current
-          )
-        end
-
-        it { should be_empty }
-      end
-
-      context "with a triage delayed until yesterday" do
-        let!(:triage) do
-          create(
-            :triage,
-            :delay_vaccination,
-            delay_vaccination_until: Date.yesterday
-          )
-        end
-
-        it { should include(triage) }
-      end
-
-      context "with a triage delayed until yesterday but already invalidated" do
-        before do
-          create(
-            :triage,
-            :delay_vaccination,
-            :invalidated,
-            delay_vaccination_until: Date.yesterday
-          )
-        end
-
-        it { should be_empty }
-      end
-    end
-  end
-
   describe "validations" do
     context "when safe to vaccinate" do
       subject(:triage) { build(:triage, :safe_to_vaccinate) }
@@ -185,6 +74,46 @@ describe Triage do
       subject(:triage) { build(:triage, :delay_vaccination) }
 
       it { should_not validate_absence_of(:delay_vaccination_until) }
+    end
+  end
+
+  describe "#expired?" do
+    subject(:expired?) { triage.expired? }
+
+    context "when safe to vaccinate" do
+      let(:triage) { build(:triage, :safe_to_vaccinate) }
+
+      it { should be(false) }
+    end
+
+    context "when do not vaccinate" do
+      let(:triage) { build(:triage, :do_not_vaccinate) }
+
+      it { should be(false) }
+    end
+
+    context "when keep in triage" do
+      let(:triage) { build(:triage, :keep_in_triage) }
+
+      it { should be(false) }
+    end
+
+    context "when delay vaccination" do
+      let(:triage) { build(:triage, :delay_vaccination) }
+
+      it { should be(false) }
+
+      context "and the delay until date is in the past" do
+        let(:triage) do
+          build(
+            :triage,
+            :delay_vaccination,
+            delay_vaccination_until: Date.yesterday
+          )
+        end
+
+        it { should be(true) }
+      end
     end
   end
 end

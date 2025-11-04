@@ -298,10 +298,8 @@ class VaccinationRecord < ApplicationRecord
       notes: "Next dose #{new_delay_date.to_fs(:long)}"
     )
 
-    if next_dose_delay_triage.should_be_invalidated?
-      next_dose_delay_triage.assign_attributes(invalidated_at: Time.current)
-    end
-
     next_dose_delay_triage.save!
+
+    StatusUpdater.call(patient:)
   end
 end

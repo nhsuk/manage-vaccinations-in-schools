@@ -114,6 +114,34 @@ describe StatusGenerator::Triage do
       it { should be(:delay_vaccination) }
     end
 
+    context "with a delay vaccination which expires in the future" do
+      before do
+        create(
+          :triage,
+          :delay_vaccination,
+          delay_vaccination_until: Date.tomorrow,
+          patient:,
+          programme:
+        )
+      end
+
+      it { should be(:delay_vaccination) }
+    end
+
+    context "with a delay vaccination which has since expired" do
+      before do
+        create(
+          :triage,
+          :delay_vaccination,
+          delay_vaccination_until: Date.yesterday,
+          patient:,
+          programme:
+        )
+      end
+
+      it { should be(:required) }
+    end
+
     context "with an invalidated safe to vaccinate triage" do
       before do
         create(:triage, :safe_to_vaccinate, :invalidated, patient:, programme:)

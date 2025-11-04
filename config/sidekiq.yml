@@ -25,10 +25,6 @@
       cron: "0 2 * * *"
       class: InvalidateSelfConsentsJob
       description: Invalidate all self-consents and associated triage for the previous day
-    invalidate_delay_triages:
-      cron: "0 4 * * *"
-      class: InvalidateDelayTriagesJob
-      description: Invalidate all delay vaccination triages that have expired
     patients_aged_out_of_school:
       cron: "0 5 * * *"
       class: EnqueuePatientsAgedOutOfSchoolsJob
