@@ -46,6 +46,8 @@ class StatusGenerator::Triage
   end
 
   def vaccination_history_requires_triage?
+    return false unless programme.triage_on_vaccination_history?
+
     existing_records =
       vaccination_records.select { it.programme_id == programme_id }
 
