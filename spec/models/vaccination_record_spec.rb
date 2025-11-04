@@ -473,10 +473,12 @@ describe VaccinationRecord do
     end
 
     let(:programme) { create(:programme, :mmr) }
+
     let(:next_dose_delay_triage) do
       create(
         :triage,
-        status: "delay_vaccination",
+        :delay_vaccination,
+        programme:,
         delay_vaccination_until: Date.current + 28.days
       )
     end
