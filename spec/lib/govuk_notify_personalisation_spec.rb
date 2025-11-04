@@ -192,7 +192,14 @@ describe GovukNotifyPersonalisation do
           create(:session, :today, location:, team:, programmes:)
         end
 
-        before { create(:triage, :delay_vaccination, patient:) }
+        before do
+          create(
+            :triage,
+            :delay_vaccination,
+            patient:,
+            programme: programmes.first
+          )
+        end
 
         it do
           expect(to_h).to match(
@@ -214,7 +221,8 @@ describe GovukNotifyPersonalisation do
             :triage,
             :delay_vaccination,
             patient:,
-            created_at: Date.yesterday
+            created_at: Date.yesterday,
+            programme: programmes.first
           )
         end
 
