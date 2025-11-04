@@ -543,6 +543,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_121101) do
     t.bigint "patient_id"
     t.string "pds_nhs_number"
     t.jsonb "pending_changes", default: {}
+    t.datetime "processed_at"
     t.integer "record_type", default: 1, null: false
     t.integer "row_number"
     t.bigint "school_id"
