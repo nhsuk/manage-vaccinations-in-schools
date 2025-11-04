@@ -1,6 +1,7 @@
-SELECT DISTINCT ON (p.id, prog.id, t.id, s.academic_year)
-  -- Unique identifier for concurrent refresh support
-  CONCAT(p.id, '-', prog.id, '-', t.id, '-', s.academic_year) AS id,
+WITH base_data AS (
+  SELECT
+    -- Unique identifier for concurrent refresh support
+    CONCAT(p.id, '-', prog.id, '-', t.id, '-', s.academic_year) AS id,
   -- Patient identifiers (minimal)
   p.id AS patient_id,
   CASE p.gender_code
@@ -70,7 +71,12 @@ SELECT DISTINCT ON (p.id, prog.id, t.id, s.academic_year)
   CASE
     WHEN child_refused.patient_id IS NOT NULL THEN true
     ELSE false
-  END AS child_refused_vaccination_current_year
+  END AS child_refused_vaccination_current_year,
+  -- Row number for deduplication (replaces DISTINCT ON)
+  ROW_NUMBER() OVER (
+    PARTITION BY p.id, prog.id, t.id, s.academic_year
+    ORDER BY patient_school_org.id NULLS LAST
+  ) AS rn
 
 FROM patients p
 -- Join to get team-patient-programme relationships via sessions
@@ -173,11 +179,15 @@ LEFT JOIN (
   GROUP BY vr.patient_id, vr.programme_id, vr_s.team_id
 ) vr_recent ON vr_recent.patient_id = p.id AND vr_recent.programme_id = prog.id AND vr_recent.team_id = t.id
 
--- Left join patient consent statuses
-LEFT JOIN patient_consent_statuses pcs
-  ON pcs.patient_id = p.id
-  AND pcs.programme_id = prog.id
-  AND pcs.academic_year = s.academic_year
+-- Left join patient consent statuses (LATERAL for better index usage)
+LEFT JOIN LATERAL (
+  SELECT status, vaccine_methods
+  FROM patient_consent_statuses pcs
+  WHERE pcs.patient_id = p.id
+    AND pcs.programme_id = prog.id
+    AND pcs.academic_year = s.academic_year
+  LIMIT 1
+) pcs ON true
 
 -- Left join to check if parent refused consent (consent_refusal vaccination records)
 LEFT JOIN (
@@ -211,5 +221,34 @@ LEFT JOIN (
 
 WHERE p.invalidated_at IS NULL
   AND p.restricted_at IS NULL
-
-ORDER BY p.id, prog.id, t.id, s.academic_year, patient_school_org.id NULLS LAST
+)
+SELECT
+  id,
+  patient_id,
+  patient_gender,
+  programme_id,
+  programme_type,
+  academic_year,
+  team_id,
+  team_name,
+  organisation_id,
+  patient_school_local_authority_code,
+  patient_local_authority_code,
+  patient_school_id,
+  patient_school_name,
+  session_location_id,
+  patient_year_group,
+  has_any_vaccination,
+  vaccinated_by_sais_current_year,
+  vaccinated_elsewhere_declared_current_year,
+  vaccinated_elsewhere_recorded_current_year,
+  vaccinated_in_previous_years,
+  sais_vaccinations_count,
+  most_recent_vaccination_month,
+  most_recent_vaccination_year,
+  consent_status,
+  consent_vaccine_methods,
+  parent_refused_consent_current_year,
+  child_refused_vaccination_current_year
+FROM base_data
+WHERE rn = 1
