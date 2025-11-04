@@ -9,7 +9,6 @@
 #  import_type           :string           not null
 #  matched_on_nhs_number :boolean
 #  pds_nhs_number        :string
-#  pending_changes       :jsonb            not null
 #  record_type           :integer          default(1), not null
 #  row_number            :integer
 #  status                :integer          default("pending"), not null
@@ -32,6 +31,8 @@
 #  fk_rails_...  (school_id => locations.id)
 #
 class PatientChangeset < ApplicationRecord
+  self.ignored_columns = %w[pending_changes]
+
   attribute :pending_changes,
             :jsonb,
             default: {
