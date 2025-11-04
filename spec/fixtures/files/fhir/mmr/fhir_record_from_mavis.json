@@ -1,0 +1,139 @@
+{
+  "id": "11112222-3333-4444-5555-666677779999",
+  "meta": {
+    "versionId": "1"
+  },
+  "extension": [
+    {
+      "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "38598009",
+            "display": "Administration of vaccine product containing only Measles morbillivirus and Mumps orthorubulavirus and Rubella virus antigens (procedure)"
+          }
+        ]
+      }
+    }
+  ],
+  "identifier": [
+    {
+      "use": "official",
+      "system": "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records",
+      "value": "aaaabbbb-0000-1111-3333-ffff77773333"
+    }
+  ],
+  "status": "completed",
+  "vaccineCode": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "13968211000001108",
+        "display": "M-M-RVAXPRO vaccine powder and solvent for suspension for injection 0.5ml pre-filled syringes (Merck Sharp & Dohme (UK) Ltd) (product)"
+      }
+    ]
+  },
+  "patient": {
+    "reference": "urn:uuid:042032b8-aa87-493f-abee-2ad12a8b0274",
+    "type": "Patient",
+    "identifier": {
+      "system": "https://fhir.nhs.uk/Id/nhs-number",
+      "value": "9990002142"
+    }
+  },
+  "occurrenceDateTime": "2025-11-03T15:11:11+00:00",
+  "recorded": "2025-11-03T15:11:15.346000+00:00",
+  "primarySource": true,
+  "location": {
+    "identifier": {
+      "system": "https://fhir.hl7.org.uk/Id/urn-school-number",
+      "value": "100006"
+    }
+  },
+  "manufacturer": {
+    "display": "Merck Sharp & Dohme"
+  },
+  "lotNumber": "ABC123",
+  "expirationDate": "2025-11-10",
+  "site": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "368208006",
+        "display": "Left upper arm structure"
+      }
+    ]
+  },
+  "route": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "78421000",
+        "display": "Intramuscular"
+      }
+    ]
+  },
+  "doseQuantity": {
+    "value": 0.5,
+    "unit": "ml",
+    "system": "http://snomed.info/sct",
+    "code": "258773002"
+  },
+  "performer": [
+    {
+      "actor": {
+        "type": "Organization",
+        "identifier": {
+          "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+          "value": "R1L"
+        }
+      }
+    }
+  ],
+  "reasonCode": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "723620004"
+        }
+      ]
+    }
+  ],
+  "protocolApplied": [
+    {
+      "targetDisease": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "14189004",
+              "display": "Measles"
+            }
+          ]
+        },
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "36989005",
+              "display": "Mumps"
+            }
+          ]
+        },
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "36653000",
+              "display": "Rubella"
+            }
+          ]
+        }
+      ],
+      "doseNumberString": "Unknown"
+    }
+  ],
+  "resourceType": "Immunization"
+}

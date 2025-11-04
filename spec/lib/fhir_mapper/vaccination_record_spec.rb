@@ -771,5 +771,157 @@ describe FHIRMapper::VaccinationRecord do
         its(:notes) { should be_nil }
       end
     end
+
+    context "for hpv" do
+      let(:programme) { CachedProgramme.hpv }
+
+      context "with a fhir record from Mavis" do
+        let(:fixture_file_name) { "fhir/hpv/fhir_record_from_mavis.json" }
+
+        include_examples "a mapped vaccination record (common fields)"
+
+        its(:nhs_immunisations_api_identifier_system) do
+          should eq "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records"
+        end
+
+        its(:nhs_immunisations_api_identifier_value) do
+          should eq "aaaabbbb-0000-1111-3333-ffff77773333"
+        end
+
+        its(:performed_by_given_name) { should be_nil }
+        its(:performed_by_family_name) { should be_nil }
+        its(:batch) { should have_attributes(name: "GU9271") }
+
+        its(:vaccine) do
+          should have_attributes(snomed_product_code: "33493111000001108")
+        end
+
+        its(:performed_at) { should eq Time.parse("2025-11-03T15:30:34+00:00") }
+        its(:delivery_method) { should eq "intramuscular" }
+        its(:delivery_site) { should eq "left_arm_upper_position" }
+        its(:full_dose) { should be true }
+        its(:outcome) { should eq "administered" }
+        its(:location) { should have_attributes(urn: "100006") }
+        its(:location_name) { should be_nil }
+        its(:performed_ods_code) { should eq "R1L" }
+        its(:nhs_immunisations_api_primary_source) { should be true }
+
+        its(:notes) { should be_nil }
+      end
+    end
+
+    context "for menacwy" do
+      let(:programme) { CachedProgramme.menacwy }
+
+      context "with a fhir record from Mavis" do
+        let(:fixture_file_name) { "fhir/menacwy/fhir_record_from_mavis.json" }
+
+        include_examples "a mapped vaccination record (common fields)"
+
+        its(:nhs_immunisations_api_identifier_system) do
+          should eq "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records"
+        end
+
+        its(:nhs_immunisations_api_identifier_value) do
+          should eq "aaaabbbb-0000-1111-3333-ffff77773333"
+        end
+
+        its(:performed_by_given_name) { should be_nil }
+        its(:performed_by_family_name) { should be_nil }
+        its(:batch) { should have_attributes(name: "TK6780") }
+
+        its(:vaccine) do
+          should have_attributes(snomed_product_code: "39779611000001104")
+        end
+
+        its(:performed_at) { should eq Time.parse("2025-11-03T15:31:07+00:00") }
+        its(:delivery_method) { should eq "intramuscular" }
+        its(:delivery_site) { should eq "left_arm_upper_position" }
+        its(:full_dose) { should be true }
+        its(:outcome) { should eq "administered" }
+        its(:location) { should have_attributes(urn: "100006") }
+        its(:location_name) { should be_nil }
+        its(:performed_ods_code) { should eq "R1L" }
+        its(:nhs_immunisations_api_primary_source) { should be true }
+
+        its(:notes) { should be_nil }
+      end
+    end
+
+    context "for td_ipv" do
+      let(:programme) { CachedProgramme.td_ipv }
+
+      context "with a fhir record from Mavis" do
+        let(:fixture_file_name) { "fhir/td_ipv/fhir_record_from_mavis.json" }
+
+        include_examples "a mapped vaccination record (common fields)"
+
+        its(:nhs_immunisations_api_identifier_system) do
+          should eq "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records"
+        end
+
+        its(:nhs_immunisations_api_identifier_value) do
+          should eq "aaaabbbb-0000-1111-3333-ffff77773333"
+        end
+
+        its(:performed_by_given_name) { should be_nil }
+        its(:performed_by_family_name) { should be_nil }
+        its(:batch) { should have_attributes(name: "SP3485") }
+
+        its(:vaccine) do
+          should have_attributes(snomed_product_code: "7374511000001107")
+        end
+
+        its(:performed_at) { should eq Time.parse("2025-11-03T15:31:37+00:00") }
+        its(:delivery_method) { should eq "intramuscular" }
+        its(:delivery_site) { should eq "left_arm_upper_position" }
+        its(:full_dose) { should be true }
+        its(:outcome) { should eq "administered" }
+        its(:location) { should have_attributes(urn: "100006") }
+        its(:location_name) { should be_nil }
+        its(:performed_ods_code) { should eq "R1L" }
+        its(:nhs_immunisations_api_primary_source) { should be true }
+
+        its(:notes) { should be_nil }
+      end
+    end
+
+    context "for mmr" do
+      let(:programme) { CachedProgramme.mmr }
+
+      context "with a fhir record from Mavis" do
+        let(:fixture_file_name) { "fhir/mmr/fhir_record_from_mavis.json" }
+
+        include_examples "a mapped vaccination record (common fields)"
+
+        its(:nhs_immunisations_api_identifier_system) do
+          should eq "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records"
+        end
+
+        its(:nhs_immunisations_api_identifier_value) do
+          should eq "aaaabbbb-0000-1111-3333-ffff77773333"
+        end
+
+        its(:performed_by_given_name) { should be_nil }
+        its(:performed_by_family_name) { should be_nil }
+        its(:batch) { should have_attributes(name: "ABC123") }
+
+        its(:vaccine) do
+          should have_attributes(snomed_product_code: "13968211000001108")
+        end
+
+        its(:performed_at) { should eq Time.parse("2025-11-03T15:11:11+00:00") }
+        its(:delivery_method) { should eq "intramuscular" }
+        its(:delivery_site) { should eq "left_arm_upper_position" }
+        its(:full_dose) { should be true }
+        its(:outcome) { should eq "administered" }
+        its(:location) { should have_attributes(urn: "100006") }
+        its(:location_name) { should be_nil }
+        its(:performed_ods_code) { should eq "R1L" }
+        its(:nhs_immunisations_api_primary_source) { should be true }
+
+        its(:notes) { should be_nil }
+      end
+    end
   end
 end

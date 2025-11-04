@@ -1,0 +1,121 @@
+{
+  "id": "11112222-3333-4444-5555-666677779999",
+  "meta": {
+    "versionId": "1"
+  },
+  "extension": [
+    {
+      "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "871874000",
+            "display": "Administration of vaccine product containing only Neisseria meningitidis serogroup A, C, W135 and Y antigens (procedure)"
+          }
+        ]
+      }
+    }
+  ],
+  "identifier": [
+    {
+      "use": "official",
+      "system": "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records",
+      "value": "aaaabbbb-0000-1111-3333-ffff77773333"
+    }
+  ],
+  "status": "completed",
+  "vaccineCode": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "39779611000001104",
+        "display": "MenQuadfi vaccine solution for injection 0.5ml vials (Sanofi) (product)"
+      }
+    ]
+  },
+  "patient": {
+    "reference": "urn:uuid:042032b8-aa87-493f-abee-2ad12a8b0274",
+    "type": "Patient",
+    "identifier": {
+      "system": "https://fhir.nhs.uk/Id/nhs-number",
+      "value": "9990002142"
+    }
+  },
+  "occurrenceDateTime": "2025-11-03T15:31:07+00:00",
+  "recorded": "2025-11-03T15:31:11.610000+00:00",
+  "primarySource": true,
+  "location": {
+    "identifier": {
+      "system": "https://fhir.hl7.org.uk/Id/urn-school-number",
+      "value": "100006"
+    }
+  },
+  "manufacturer": {
+    "display": "GlaxoSmithKline"
+  },
+  "lotNumber": "TK6780",
+  "expirationDate": "2025-11-20",
+  "site": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "368208006",
+        "display": "Left upper arm structure"
+      }
+    ]
+  },
+  "route": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "78421000",
+        "display": "Intramuscular"
+      }
+    ]
+  },
+  "doseQuantity": {
+    "value": 0.5,
+    "unit": "ml",
+    "system": "http://snomed.info/sct",
+    "code": "258773002"
+  },
+  "performer": [
+    {
+      "actor": {
+        "type": "Organization",
+        "identifier": {
+          "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+          "value": "R1L"
+        }
+      }
+    }
+  ],
+  "reasonCode": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "723620004"
+        }
+      ]
+    }
+  ],
+  "protocolApplied": [
+    {
+      "targetDisease": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "23511006",
+              "display": "Meningococcal infectious disease"
+            }
+          ]
+        }
+      ],
+      "doseNumberString": "Unknown"
+    }
+  ],
+  "resourceType": "Immunization"
+}
