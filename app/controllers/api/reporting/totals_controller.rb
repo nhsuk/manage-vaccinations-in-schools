@@ -6,7 +6,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
     academic_year: :academic_year,
     programme: :programme_type,
     organisation_id: :organisation_id,
-    gender: :patient_gender_code,
+    gender: :patient_gender,
     year_group: :patient_year_group,
     school_local_authority: :patient_school_local_authority_code,
     local_authority: :patient_local_authority_code
@@ -16,14 +16,14 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
     local_authority: :patient_local_authority_code,
     school: :patient_school_name,
     year_group: :patient_year_group,
-    gender: :patient_gender_code
+    gender: :patient_gender
   }.freeze
 
   GROUP_HEADERS = {
     patient_local_authority_code: "Local Authority",
     patient_school_name: "School",
     patient_year_group: "Year Group",
-    patient_gender_code: "Gender"
+    patient_gender: "Gender"
   }.freeze
 
   METRIC_HEADERS = {

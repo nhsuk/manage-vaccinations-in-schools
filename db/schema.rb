@@ -1084,7 +1084,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_03_182041) do
   create_view "reporting_api_patient_programme_statuses", materialized: true, sql_definition: <<-SQL
       SELECT DISTINCT ON (p.id, prog.id, t.id, s.academic_year) concat(p.id, '-', prog.id, '-', t.id, '-', s.academic_year) AS id,
       p.id AS patient_id,
-      p.gender_code AS patient_gender_code,
+          CASE p.gender_code
+              WHEN 0 THEN 'not known'::text
+              WHEN 1 THEN 'male'::text
+              WHEN 2 THEN 'female'::text
+              WHEN 9 THEN 'not specified'::text
+              ELSE NULL::text
+          END AS patient_gender,
       prog.id AS programme_id,
       prog.type AS programme_type,
       s.academic_year,
@@ -1092,9 +1098,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_03_182041) do
       t.name AS team_name,
       COALESCE(patient_school_org.id, patient_location_org.id) AS organisation_id,
       COALESCE(school_la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
-      COALESCE(la.mhclg_code, ''::character varying) AS patient_local_authority_code,
+      COALESCE(school_la.mhclg_code, ''::character varying) AS patient_local_authority_code,
       school.id AS patient_school_id,
-      school.name AS patient_school_name,
+          CASE
+              WHEN (school.name IS NOT NULL) THEN school.name
+              WHEN (p.home_educated = true) THEN 'Home educated'::text
+              ELSE 'Unknown'::text
+          END AS patient_school_name,
       pl.location_id AS session_location_id,
           CASE
               WHEN (p.birth_academic_year IS NOT NULL) THEN ((s.academic_year - p.birth_academic_year) - 5)
@@ -1133,7 +1143,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_03_182041) do
               WHEN (child_refused.patient_id IS NOT NULL) THEN true
               ELSE false
           END AS child_refused_vaccination_current_year
-     FROM ((((((((((((((((((((((((((patients p
+     FROM ((((((((((((((((((((((((patients p
        JOIN patient_locations pl ON ((pl.patient_id = p.id)))
        JOIN sessions s ON (((s.location_id = pl.location_id) AND (s.academic_year = pl.academic_year))))
        JOIN teams t ON ((t.id = s.team_id)))
@@ -1148,8 +1158,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_03_182041) do
        LEFT JOIN subteams current_location_subteam ON ((current_location_subteam.id = current_location.subteam_id)))
        LEFT JOIN teams current_location_team ON ((current_location_team.id = current_location_subteam.team_id)))
        LEFT JOIN organisations patient_location_org ON ((patient_location_org.id = current_location_team.organisation_id)))
-       LEFT JOIN local_authority_postcodes lap ON (((lap.value)::text = (p.address_postcode)::text)))
-       LEFT JOIN local_authorities la ON (((la.gss_code)::text = (lap.gss_code)::text)))
        LEFT JOIN ( SELECT DISTINCT vr.patient_id,
               vr.programme_id,
               vr_s.academic_year
@@ -1216,4 +1224,5 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_03_182041) do
   add_index "reporting_api_patient_programme_statuses", ["patient_school_local_authority_code", "programme_type"], name: "ix_rapi_pps_school_la_prog"
   add_index "reporting_api_patient_programme_statuses", ["programme_id", "team_id", "academic_year"], name: "ix_rapi_pps_prog_team_year"
   add_index "reporting_api_patient_programme_statuses", ["team_id", "academic_year"], name: "ix_rapi_pps_team_year"
+
 end

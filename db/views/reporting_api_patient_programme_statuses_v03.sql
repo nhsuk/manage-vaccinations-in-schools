@@ -3,7 +3,13 @@ SELECT DISTINCT ON (p.id, prog.id, t.id, s.academic_year)
   CONCAT(p.id, '-', prog.id, '-', t.id, '-', s.academic_year) AS id,
   -- Patient identifiers (minimal)
   p.id AS patient_id,
-  p.gender_code AS patient_gender_code,
+  CASE p.gender_code
+    WHEN 0 THEN 'not known'
+    WHEN 1 THEN 'male'
+    WHEN 2 THEN 'female'
+    WHEN 9 THEN 'not specified'
+    ELSE NULL
+  END AS patient_gender,
   -- Programme info
   prog.id AS programme_id,
   prog.type AS programme_type,
@@ -15,9 +21,13 @@ SELECT DISTINCT ON (p.id, prog.id, t.id, s.academic_year)
   COALESCE(patient_school_org.id, patient_location_org.id) AS organisation_id,
   -- Patient location info (minimal for filtering)
   COALESCE(school_la.mhclg_code, '') AS patient_school_local_authority_code,
-  COALESCE(la.mhclg_code, '') AS patient_local_authority_code,
+  COALESCE(school_la.mhclg_code, '') AS patient_local_authority_code,
   school.id AS patient_school_id,
-  school.name AS patient_school_name,
+  CASE
+    WHEN school.name IS NOT NULL THEN school.name
+    WHEN p.home_educated = true THEN 'Home educated'
+    ELSE 'Unknown'
+  END AS patient_school_name,
   pl.location_id AS session_location_id,
   -- Calculate patient year group for the academic year
   CASE
@@ -82,10 +92,6 @@ LEFT JOIN locations current_location ON current_location.id = pl.location_id
 LEFT JOIN subteams current_location_subteam ON current_location_subteam.id = current_location.subteam_id
 LEFT JOIN teams current_location_team ON current_location_team.id = current_location_subteam.team_id
 LEFT JOIN organisations patient_location_org ON patient_location_org.id = current_location_team.organisation_id
-
--- Left join patient postcode for local authority info via postcode lookup
-LEFT JOIN local_authority_postcodes lap ON lap.value = p.address_postcode
-LEFT JOIN local_authorities la ON la.gss_code = lap.gss_code
 
 -- Left join to check if patient has any vaccination (administered or already_had) in current academic year
 LEFT JOIN (

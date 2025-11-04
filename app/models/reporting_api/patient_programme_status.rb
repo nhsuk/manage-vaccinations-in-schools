@@ -13,7 +13,7 @@
 #  most_recent_vaccination_month              :decimal(, )
 #  most_recent_vaccination_year               :decimal(, )
 #  parent_refused_consent_current_year        :boolean
-#  patient_gender_code                        :integer
+#  patient_gender                             :text
 #  patient_local_authority_code               :string
 #  patient_school_local_authority_code        :string
 #  patient_school_name                        :text
