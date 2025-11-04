@@ -6,9 +6,13 @@
 #
 #  id                                         :text             primary key
 #  academic_year                              :integer
+#  child_refused_vaccination_current_year     :boolean
+#  consent_status                             :integer
+#  consent_vaccine_methods                    :integer          is an Array
 #  has_any_vaccination                        :boolean
 #  most_recent_vaccination_month              :decimal(, )
 #  most_recent_vaccination_year               :decimal(, )
+#  parent_refused_consent_current_year        :boolean
 #  patient_gender_code                        :integer
 #  patient_local_authority_code               :string
 #  patient_school_local_authority_code        :string
@@ -60,6 +64,15 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
           where(patient_local_authority_code:)
         end
 
+  scope :consent_given, -> { where(consent_status: 1) }
+  scope :consent_refused, -> { where(consent_status: 2) }
+  scope :consent_no_response, -> { where(consent_status: [0, nil]) }
+  scope :consent_conflicts, -> { where(consent_status: 3) }
+  scope :parent_refused_consent,
+        -> { where(parent_refused_consent_current_year: true) }
+  scope :child_refused_vaccination,
+        -> { where(child_refused_vaccination_current_year: true) }
+
   def readonly? = true
 
   def self.with_aggregate_metrics
@@ -77,7 +90,17 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
       "COUNT(DISTINCT CASE WHEN vaccinated_elsewhere_recorded_current_year = true THEN patient_id END)" \
         "AS vaccinated_elsewhere_recorded",
       "COUNT(DISTINCT CASE WHEN vaccinated_in_previous_years = true THEN patient_id END)" \
-        "AS vaccinated_previously"
+        "AS vaccinated_previously",
+      "COUNT(DISTINCT CASE WHEN consent_status = 1 THEN patient_id END)" \
+        "AS consent_given",
+      "COUNT(DISTINCT CASE WHEN consent_status = 0 OR consent_status IS NULL THEN patient_id END)" \
+        "AS consent_no_response",
+      "COUNT(DISTINCT CASE WHEN consent_status = 3 THEN patient_id END)" \
+        "AS consent_conflicts",
+      "COUNT(DISTINCT CASE WHEN parent_refused_consent_current_year = true THEN patient_id END)" \
+        "AS parent_refused_consent",
+      "COUNT(DISTINCT CASE WHEN child_refused_vaccination_current_year = true THEN patient_id END)" \
+        "AS child_refused_vaccination"
     )
   end
 
@@ -136,5 +159,25 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
         end
     months.sort_by! { [it[:year], Date::MONTHNAMES.index(it[:month])] }
     months
+  end
+
+  def self.consent_given_count
+    consent_given.distinct.count(:patient_id)
+  end
+
+  def self.consent_no_response_count
+    consent_no_response.distinct.count(:patient_id)
+  end
+
+  def self.consent_conflicts_count
+    consent_conflicts.distinct.count(:patient_id)
+  end
+
+  def self.parent_refused_consent_count
+    parent_refused_consent.distinct.count(:patient_id)
+  end
+
+  def self.child_refused_vaccination_count
+    child_refused_vaccination.distinct.count(:patient_id)
   end
 end

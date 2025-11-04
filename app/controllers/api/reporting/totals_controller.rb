@@ -33,7 +33,12 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
     vaccinated_by_sais: "Vaccinated by SAIS",
     vaccinated_elsewhere_declared: "Vaccinated Elsewhere (Declared)",
     vaccinated_elsewhere_recorded: "Vaccinated Elsewhere (Recorded)",
-    vaccinated_previously: "Vaccinated Previously"
+    vaccinated_previously: "Vaccinated Previously",
+    consent_given: "Consent Given",
+    consent_no_response: "No Consent Response",
+    consent_conflicts: "Conflicting Consent",
+    parent_refused_consent: "Parent Refused Consent",
+    child_refused_vaccination: "Child Refused Vaccination"
   }.freeze
 
   before_action :set_default_filters, :set_filters, :set_scope
@@ -119,7 +124,14 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
                @scope.vaccinated_elsewhere_recorded_count,
              vaccinated_previously: @scope.vaccinated_previously_count,
              vaccinations_given: @scope.vaccinations_given_count,
-             monthly_vaccinations_given: @scope.monthly_vaccinations_given
+             monthly_vaccinations_given: @scope.monthly_vaccinations_given,
+             consent_given: @scope.consent_given_count,
+             consent_no_response: @scope.consent_no_response_count,
+             consent_conflicts: @scope.consent_conflicts_count,
+             parent_refused_consent: @scope.parent_refused_consent_count,
+             child_refused_vaccination: @scope.child_refused_vaccination_count,
+             refusal_reasons: consent_refusal_reasons,
+             consent_routes: consent_routes_breakdown
            }
   end
 
@@ -154,5 +166,35 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
         .where(lpyg_table[:programme_id].eq(programme.id))
 
     @scope = @scope.where(Arel::Nodes::Exists.new(subquery))
+  end
+
+  def consent_refusal_reasons
+    Consent
+      .joins(:patient)
+      .where(
+        patient_id: @scope.select(:patient_id),
+        programme_id: @scope.select(:programme_id).distinct,
+        academic_year: @scope.select(:academic_year).distinct,
+        response: :refused
+      )
+      .not_invalidated
+      .not_withdrawn
+      .group(:reason_for_refusal)
+      .count
+  end
+
+  def consent_routes_breakdown
+    Consent
+      .joins(:patient)
+      .where(
+        patient_id: @scope.select(:patient_id),
+        programme_id: @scope.select(:programme_id).distinct,
+        academic_year: @scope.select(:academic_year).distinct
+      )
+      .not_invalidated
+      .not_withdrawn
+      .response_provided
+      .group(:route)
+      .count
   end
 end

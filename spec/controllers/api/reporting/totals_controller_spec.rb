@@ -559,5 +559,166 @@ describe API::Reporting::TotalsController do
       refresh_and_get_totals(programme_type: "td_ipv")
       expect(cohort).to eq(0)
     end
+
+    it "counts children with consent given" do
+      patient = create(:patient, session: hpv_session)
+      create(:consent, :given, patient:, programme: hpv_programme, team:)
+
+      StatusUpdater.call(patient:)
+      refresh_and_get_totals
+
+      expect(cohort).to eq(1)
+      expect(parsed_response["consent_given"]).to eq(1)
+      expect(parsed_response["consent_no_response"]).to eq(0)
+    end
+
+    it "counts children with no consent response" do
+      create(:patient, session: hpv_session)
+
+      refresh_and_get_totals
+
+      expect(cohort).to eq(1)
+      expect(parsed_response["consent_given"]).to eq(0)
+      expect(parsed_response["consent_no_response"]).to eq(1)
+    end
+
+    it "counts children with conflicting consent" do
+      patient = create(:patient, session: hpv_session)
+      parent1 = create(:parent)
+      parent2 = create(:parent)
+      create(:parent_relationship, patient:, parent: parent1)
+      create(:parent_relationship, patient:, parent: parent2)
+
+      create(
+        :consent,
+        :given,
+        patient:,
+        programme: hpv_programme,
+        team:,
+        parent: parent1
+      )
+      create(
+        :consent,
+        :refused,
+        patient:,
+        programme: hpv_programme,
+        team:,
+        parent: parent2
+      )
+
+      StatusUpdater.call(patient:)
+      refresh_and_get_totals
+
+      expect(cohort).to eq(1)
+      expect(parsed_response["consent_conflicts"]).to eq(1)
+    end
+
+    it "distinguishes parent refused vs child refused" do
+      patient1 = create(:patient, session: hpv_session)
+      create(
+        :vaccination_record,
+        patient: patient1,
+        programme: hpv_programme,
+        session: nil,
+        source: "consent_refusal",
+        outcome: "refused",
+        performed_at: Time.current
+      )
+
+      patient2 = create(:patient, session: hpv_session)
+      create(
+        :vaccination_record,
+        patient: patient2,
+        programme: hpv_programme,
+        session: hpv_session,
+        outcome: "refused",
+        performed_at: Time.current
+      )
+
+      refresh_and_get_totals
+
+      expect(cohort).to eq(2)
+      expect(parsed_response["parent_refused_consent"]).to eq(1)
+      expect(parsed_response["child_refused_vaccination"]).to eq(1)
+    end
+
+    it "returns consent refusal reasons breakdown" do
+      patient1 = create(:patient, session: hpv_session)
+      create(
+        :consent,
+        :refused,
+        patient: patient1,
+        programme: hpv_programme,
+        team:,
+        reason_for_refusal: "personal_choice"
+      )
+
+      patient2 = create(:patient, session: hpv_session)
+      create(
+        :consent,
+        :refused,
+        patient: patient2,
+        programme: hpv_programme,
+        team:,
+        reason_for_refusal: "personal_choice"
+      )
+
+      patient3 = create(:patient, session: hpv_session)
+      create(
+        :consent,
+        :refused,
+        patient: patient3,
+        programme: hpv_programme,
+        team:,
+        reason_for_refusal: "already_vaccinated"
+      )
+
+      refresh_and_get_totals
+
+      refusal_reasons = parsed_response["refusal_reasons"]
+      expect(refusal_reasons).to be_a(Hash)
+      expect(refusal_reasons["personal_choice"]).to eq(2)
+      expect(refusal_reasons["already_vaccinated"]).to eq(1)
+    end
+
+    it "returns consent routes breakdown" do
+      patient1 = create(:patient, session: hpv_session)
+      create(
+        :consent,
+        :given,
+        patient: patient1,
+        programme: hpv_programme,
+        team:,
+        route: "website"
+      )
+
+      patient2 = create(:patient, session: hpv_session)
+      create(
+        :consent,
+        :given,
+        patient: patient2,
+        programme: hpv_programme,
+        team:,
+        route: "website"
+      )
+
+      patient3 = create(:patient, session: hpv_session)
+      create(
+        :consent,
+        :given,
+        patient: patient3,
+        programme: hpv_programme,
+        team:,
+        route: "phone",
+        recorded_by: create(:user)
+      )
+
+      refresh_and_get_totals
+
+      consent_routes = parsed_response["consent_routes"]
+      expect(consent_routes).to be_a(Hash)
+      expect(consent_routes["website"]).to eq(2)
+      expect(consent_routes["phone"]).to eq(1)
+    end
   end
 end

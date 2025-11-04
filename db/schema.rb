@@ -1122,8 +1122,18 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_03_182041) do
           END AS vaccinated_in_previous_years,
       COALESCE(vr_counts.sais_vaccinations_count, (0)::bigint) AS sais_vaccinations_count,
       vr_recent.most_recent_vaccination_month,
-      vr_recent.most_recent_vaccination_year
-     FROM (((((((((((((((((((((((patients p
+      vr_recent.most_recent_vaccination_year,
+      COALESCE(pcs.status, 0) AS consent_status,
+      pcs.vaccine_methods AS consent_vaccine_methods,
+          CASE
+              WHEN (parent_refused.patient_id IS NOT NULL) THEN true
+              ELSE false
+          END AS parent_refused_consent_current_year,
+          CASE
+              WHEN (child_refused.patient_id IS NOT NULL) THEN true
+              ELSE false
+          END AS child_refused_vaccination_current_year
+     FROM ((((((((((((((((((((((((((patients p
        JOIN patient_locations pl ON ((pl.patient_id = p.id)))
        JOIN sessions s ON (((s.location_id = pl.location_id) AND (s.academic_year = pl.academic_year))))
        JOIN teams t ON ((t.id = s.team_id)))
@@ -1184,6 +1194,19 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_03_182041) do
                JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
             WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 0))
             GROUP BY vr.patient_id, vr.programme_id, vr_s.team_id) vr_recent ON (((vr_recent.patient_id = p.id) AND (vr_recent.programme_id = prog.id) AND (vr_recent.team_id = t.id))))
+       LEFT JOIN patient_consent_statuses pcs ON (((pcs.patient_id = p.id) AND (pcs.programme_id = prog.id) AND (pcs.academic_year = s.academic_year))))
+       LEFT JOIN ( SELECT DISTINCT vr.patient_id,
+              vr.programme_id,
+              COALESCE((vr_s.academic_year)::numeric, EXTRACT(year FROM vr.performed_at)) AS academic_year
+             FROM (vaccination_records vr
+               LEFT JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
+            WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 1) AND (vr.source = 3))) parent_refused ON (((parent_refused.patient_id = p.id) AND (parent_refused.programme_id = prog.id) AND (parent_refused.academic_year = (s.academic_year)::numeric))))
+       LEFT JOIN ( SELECT DISTINCT vr.patient_id,
+              vr.programme_id,
+              vr_s.academic_year
+             FROM (vaccination_records vr
+               JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
+            WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 1) AND ((vr.source IS NULL) OR (vr.source <> 3)))) child_refused ON (((child_refused.patient_id = p.id) AND (child_refused.programme_id = prog.id) AND (child_refused.academic_year = s.academic_year))))
     WHERE ((p.invalidated_at IS NULL) AND (p.restricted_at IS NULL))
     ORDER BY p.id, prog.id, t.id, s.academic_year, patient_school_org.id;
   SQL
@@ -1193,5 +1216,4 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_03_182041) do
   add_index "reporting_api_patient_programme_statuses", ["patient_school_local_authority_code", "programme_type"], name: "ix_rapi_pps_school_la_prog"
   add_index "reporting_api_patient_programme_statuses", ["programme_id", "team_id", "academic_year"], name: "ix_rapi_pps_prog_team_year"
   add_index "reporting_api_patient_programme_statuses", ["team_id", "academic_year"], name: "ix_rapi_pps_team_year"
-
 end
