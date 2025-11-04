@@ -33,7 +33,9 @@ module ContributesToPatientTeams
             patient_id_source: "vaccination_records.patient_id",
             team_id_source: "tms.id",
             contribution_scope:
-              joins(join_teams_to_vaccinations_via_organisation)
+              joins(join_teams_to_vaccinations_via_organisation).where(
+                session_id: nil
+              )
           }
         }
       when "school_moves"
@@ -71,7 +73,9 @@ module ContributesToPatientTeams
             patient_id_source: "vacs.patient_id",
             team_id_source: "teams.id",
             contribution_scope:
-              joins(join_vaccination_records_to_organisation).joins(:teams)
+              joins(join_vaccination_records_to_organisation).joins(
+                :teams
+              ).where("vacs.session_id IS NULL")
           }
         }
       when "teams"
@@ -82,7 +86,7 @@ module ContributesToPatientTeams
             contribution_scope:
               joins(:organisation).joins(
                 join_vaccination_records_to_organisation
-              )
+              ).where("vacs.session_id IS NULL")
           }
         }
       when "locations"
@@ -217,7 +221,7 @@ module ContributesToPatientTeams
       transaction { add_patient_team_relationships }
     end
 
-    def sync_patient_teams_table_on_patient_ids(patient_ids)
+    def sync_patient_teams_table_on_patient_ids(pk_ids)
       transaction do
         contributing_subqueries.each do |key, subquery|
           patient_id_source =
@@ -225,7 +229,7 @@ module ContributesToPatientTeams
           sterile_key = connection.quote(PatientTeam.sources.fetch(key.to_s))
           patient_relationships_to_remove =
             select("#{patient_id_source} as patient_id")
-              .where("#{table_name}.id = ANY(ARRAY[?])", patient_ids)
+              .where("#{table_name}.id = ANY(ARRAY[?])", pk_ids)
               .distinct
               .to_sql
           connection.execute <<-SQL
@@ -238,7 +242,7 @@ module ContributesToPatientTeams
 
         where(
           "#{table_name}.id = ANY(ARRAY[?])",
-          patient_ids
+          pk_ids
         ).distinct.add_patient_team_relationships
 
         PatientTeam.missing_sources.delete_all
