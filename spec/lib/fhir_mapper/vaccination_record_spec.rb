@@ -327,6 +327,86 @@ describe FHIRMapper::VaccinationRecord do
       end
     end
 
+    describe "the parsed full_dose value" do
+      subject { record.full_dose }
+
+      before do
+        allow(fhir_immunization).to receive("doseQuantity").and_return(
+          FHIR::R4::Quantity.new(
+            value: dose_quantity,
+            unit: "ml",
+            system: "http://snomed.info/sct",
+            code: "258773002"
+          )
+        )
+      end
+
+      let(:fhir_immunization) do
+        FHIR.from_contents(
+          file_fixture("/fhir/fhir_record_half_dose.json").read
+        )
+      end
+
+      context "when vaccine is nasal flu" do
+        context "when dose quantity is 0.5" do
+          let(:dose_quantity) { 0.5 }
+
+          it { should be_nil }
+        end
+
+        context "when dose quantity is 0.075" do
+          let(:dose_quantity) { 0.075 }
+
+          it { should be_nil }
+        end
+
+        context "when dose quantity is 0.1" do
+          let(:dose_quantity) { 0.1 }
+
+          it { should be false }
+        end
+
+        context "when dose quantity is 0.2" do
+          let(:dose_quantity) { 0.2 }
+
+          it { should be true }
+        end
+      end
+
+      context "when vaccine is not nasal flu" do
+        before do
+          # Injectable flu
+          allow(fhir_immunization.vaccineCode.coding.first).to receive(
+            "code"
+          ).and_return("43207411000001105")
+        end
+
+        context "when dose quantity is 0.5" do
+          let(:dose_quantity) { 0.5 }
+
+          it { should be true }
+        end
+
+        context "when dose quantity is 0.075" do
+          let(:dose_quantity) { 0.075 }
+
+          it { should be true }
+        end
+
+        context "when dose quantity is 0.1" do
+          let(:dose_quantity) { 0.1 }
+
+          it { should be true }
+        end
+
+        context "when dose quantity is 0.2" do
+          let(:dose_quantity) { 0.2 }
+
+          it { should be true }
+        end
+      end
+    end
+
     context "with a full fhir record" do
       let(:fhir_immunization) do
         FHIR.from_contents(file_fixture("/fhir/fhir_record_full.json").read)
@@ -399,46 +479,6 @@ describe FHIRMapper::VaccinationRecord do
       its(:nhs_immunisations_api_primary_source) { should be true }
 
       its(:notes) { should be_nil }
-    end
-
-    describe "the parsed full_dose value" do
-      subject { record.full_dose }
-
-      before do
-        allow(fhir_immunization).to receive("doseQuantity").and_return(
-          FHIR::R4::Quantity.new(
-            value: dose_quantity,
-            unit: "ml",
-            system: "http://snomed.info/sct",
-            code: "258773002"
-          )
-        )
-      end
-
-      let(:dose_quantity) { nil }
-      let(:fhir_immunization) do
-        FHIR.from_contents(
-          file_fixture("/fhir/fhir_record_half_dose.json").read
-        )
-      end
-
-      context "when dose quantity is 0.5" do
-        let(:dose_quantity) { 0.5 }
-
-        it { should be_nil }
-      end
-
-      context "when dose quantity is 0.075" do
-        let(:dose_quantity) { 0.075 }
-
-        it { should be_nil }
-      end
-
-      context "when dose quantity is 0.1" do
-        let(:dose_quantity) { 0.1 }
-
-        it { should be false }
-      end
     end
 
     context "with a record with an unexpected dose unit, and is nasal flu" do
