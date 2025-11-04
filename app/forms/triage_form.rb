@@ -40,7 +40,7 @@ class TriageForm
   end
 
   def notes
-    if programme.mmr? && delay_vaccination_until.present?
+    if delayed_mmr_dose?
       "Next dose #{delay_vaccination_until.strftime("%d %B %Y")}"
     else
       super
@@ -54,8 +54,14 @@ class TriageForm
   def save!
     ActiveRecord::Base.transaction do
       handle_patient_specific_direction
-      Triage.create!(triage_attributes)
+      triage = Triage.create!(triage_attributes)
+      associate_triage_with_vaccination_record(triage) if delayed_mmr_dose?
+      triage
     end
+  end
+
+  def delayed_mmr_dose?
+    programme.mmr? && delay_vaccination_until.present?
   end
 
   def safe_to_vaccinate_options
@@ -85,6 +91,12 @@ class TriageForm
   def show_add_patient_specific_direction?(option)
     session.psd_enabled? && option == "safe_to_vaccinate_nasal" &&
       can_create_patient_specific_directions?
+  end
+
+  def next_mmr_dose_date
+    vaccination_statuses = patient.vaccination_statuses.where(programme:)
+    vaccinated_on = vaccination_statuses.last&.latest_date
+    (vaccinated_on || Time.zone.today) + 28.days
   end
 
   private
@@ -227,21 +239,20 @@ class TriageForm
       )
     end
 
-    if programme.mmr?
-      next_mmr_dose_date = calculate_next_mmr_dose_date
-
-      if delay_vaccination_until < next_mmr_dose_date
-        errors.add(
-          :delay_vaccination_until,
-          "The vaccination cannot take place before #{next_mmr_dose_date.to_fs(:long)}"
-        )
-      end
+    if programme.mmr? && (delay_vaccination_until < next_mmr_dose_date)
+      errors.add(
+        :delay_vaccination_until,
+        "The vaccination cannot take place before #{next_mmr_dose_date.to_fs(:long)}"
+      )
     end
   end
 
-  def calculate_next_mmr_dose_date
-    vaccination_statuses = patient.vaccination_statuses.where(programme:)
-    vaccinated_on = vaccination_statuses.last&.latest_date
-    (vaccinated_on || Time.zone.today) + 28.days
+  def associate_triage_with_vaccination_record(next_dose_delay_triage)
+    vaccination_record =
+      patient.vaccination_records.where(programme:).order(:performed_at).last
+
+    if vaccination_record.present?
+      vaccination_record.update!(next_dose_delay_triage:)
+    end
   end
 end

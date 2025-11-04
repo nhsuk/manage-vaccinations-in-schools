@@ -52,6 +52,8 @@ module TriageMailerConcern
       :triage_vaccination_will_happen
     when "do_not_vaccinate"
       :triage_vaccination_wont_happen
+    when "delay_vaccination"
+      :triage_delay_vaccination
     when "invite_to_clinic"
       resolve_email_template(:triage_vaccination_at_clinic, organisation)
     else

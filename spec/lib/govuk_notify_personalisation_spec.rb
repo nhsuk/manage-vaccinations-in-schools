@@ -185,6 +185,49 @@ describe GovukNotifyPersonalisation do
         )
       end
     end
+
+    context "delayed triage" do
+      context "created on day of session" do
+        let(:session) do
+          create(:session, :today, location:, team:, programmes:)
+        end
+
+        before { create(:triage, :delay_vaccination, patient:) }
+
+        it do
+          expect(to_h).to match(
+            hash_including(
+              delay_vaccination_review_context:
+                "assessed John in the vaccination session"
+            )
+          )
+        end
+      end
+
+      context "created before session starts" do
+        let(:session) do
+          create(:session, :today, location:, team:, programmes:)
+        end
+
+        before do
+          create(
+            :triage,
+            :delay_vaccination,
+            patient:,
+            created_at: Date.yesterday
+          )
+        end
+
+        it do
+          expect(to_h).to match(
+            hash_including(
+              delay_vaccination_review_context:
+                "reviewed the answers you gave to the health questions about John"
+            )
+          )
+        end
+      end
+    end
   end
 
   context "with a consent" do

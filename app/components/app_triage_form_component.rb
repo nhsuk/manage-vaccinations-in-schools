@@ -18,6 +18,18 @@ class AppTriageFormComponent < ViewComponent::Base
 
   def builder = GOVUKDesignSystemFormBuilder::FormBuilder
 
+  def hint_text
+    if programme.mmr? &&
+         !patient.vaccination_status(
+           programme:,
+           academic_year: session.academic_year
+         ).vaccinated?
+      "2nd dose is not due until #{form.next_mmr_dose_date.to_fs(:long)}"
+    else
+      "For example, #{hint_date.to_fs(:long)} "
+    end
+  end
+
   def hint_date
     Time.zone.today + 28.days
   end

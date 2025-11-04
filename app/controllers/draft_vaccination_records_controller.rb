@@ -283,15 +283,18 @@ class DraftVaccinationRecordsController < ApplicationController
 
     delay_date = @vaccination_record.performed_at + 28.days
 
-    Triage.create!(
-      patient: @patient,
-      team: @session.team,
-      programme: @programme,
-      performed_by: current_user,
-      status: "delay_vaccination",
-      academic_year: @session.academic_year,
-      notes: "Next dose #{delay_date.strftime("%d %B %Y")}",
-      delay_vaccination_until: delay_date
-    )
+    next_dose_delay_triage =
+      Triage.create!(
+        patient: @patient,
+        team: @session.team,
+        programme: @programme,
+        performed_by: current_user,
+        status: "delay_vaccination",
+        academic_year: @session.academic_year,
+        notes: "Next dose #{delay_date.strftime("%d %B %Y")}",
+        delay_vaccination_until: delay_date
+      )
+
+    @vaccination_record.update!(next_dose_delay_triage:)
   end
 end

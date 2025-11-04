@@ -66,4 +66,32 @@ describe TriageForm do
       expect(triage.notes).to eq("test")
     end
   end
+
+  describe "when the patient has a delayed vaccination for MMR" do
+    subject(:form) do
+      described_class.new(
+        patient:,
+        session:,
+        programme:,
+        current_user: create(:user),
+        notes: "test",
+        status_option: "delay_vaccination",
+        delay_vaccination_until: Date.tomorrow
+      )
+    end
+
+    let(:programme) { create(:programme, :mmr) }
+    let(:patient) { create(:patient, :consent_given_triage_needed, session:) }
+    let(:vaccination_record) do
+      create(:vaccination_record, patient:, programme:)
+    end
+
+    it "associates the triage with the vaccination record" do
+      vaccination_record = create(:vaccination_record, patient:, programme:)
+
+      triage = form.save!
+
+      expect(vaccination_record.reload.next_dose_delay_triage).to eq(triage)
+    end
+  end
 end
