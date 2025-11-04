@@ -81,6 +81,8 @@ class Programme < ApplicationRecord
 
   def can_save_to_todays_batch? = !mmr?
 
+  def triage_on_vaccination_history? = td_ipv?
+
   DEFAULT_YEAR_GROUPS_BY_TYPE = {
     "flu" => (0..11).to_a,
     "hpv" => (8..11).to_a,
