@@ -559,6 +559,48 @@ describe ConsentForm do
         it { should be(true) }
       end
     end
+
+    context "when providing an answer to the any other medical conditions question" do
+      let(:team) { create(:team, ods_code: "ABC") }
+
+      let(:consent_form) do
+        build(
+          :consent_form,
+          team:,
+          health_answers: [
+            HealthAnswer.new(
+              id: 0,
+              question:
+                "Does the child have any severe allergies that have led to an anaphylactic reaction?",
+              next_question: 1,
+              response: "no",
+              would_require_triage: true
+            ),
+            HealthAnswer.new(
+              id: 1,
+              question:
+                "Does your child have any other medical conditions the immunisation team should be aware of?",
+              response: "yes",
+              would_require_triage: false
+            )
+          ]
+        )
+      end
+
+      it { should be(false) }
+
+      context "and when acting as Leicestershire" do
+        let(:team) do
+          create(:team, ods_code: "RT5", workgroup: "leicestershiresais")
+        end
+
+        before do
+          HealthAnswer.remove_instance_variable(:@leicestershire_team_id)
+        end
+
+        it { should be(true) }
+      end
+    end
   end
 
   describe "#vaccine_may_contain_gelatine?" do

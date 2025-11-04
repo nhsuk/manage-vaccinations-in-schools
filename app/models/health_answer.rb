@@ -40,9 +40,27 @@ class HealthAnswer
     super(attrs)
   end
 
-  def would_require_triage?
+  ANY_OTHER_MEDICAL_CONDITIONS_QUESTION =
+    "Does your child have any other medical conditions the immunisation team should be aware of?"
+
+  def would_require_triage?(team_id:)
+    # TODO: This is a quick fix to resolve an incident with the intention
+    #  to design a long term solution to this problem. Specifically, we know
+    #  that some teams don't want this question to triage, but some do.
+    #  https://nhsd-jira.digital.nhs.uk/browse/MAV-2480
+
+    if team_id == HealthAnswer.leicestershire_team_id &&
+         question == ANY_OTHER_MEDICAL_CONDITIONS_QUESTION
+      return true
+    end
+
     # `nil` to support historical health answers without this attribute
     [nil, true].include?(would_require_triage)
+  end
+
+  def self.leicestershire_team_id
+    return @leicestershire_team_id if defined?(@leicestershire_team_id)
+    @leicestershire_team_id = Team.find_by(workgroup: "leicestershiresais")&.id
   end
 
   def ask_notes? = follow_up_question.nil?
