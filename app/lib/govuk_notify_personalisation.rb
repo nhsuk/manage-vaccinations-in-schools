@@ -205,10 +205,17 @@ class GovukNotifyPersonalisation
   end
 
   def delay_vaccination_review_context
-    return if patient.nil?
+    return if patient.nil? || session.nil?
 
     latest_delayed_triage =
-      patient.triages.delay_vaccination.order(created_at: :desc).first
+      patient
+        .triages
+        .not_invalidated
+        .where(programme: session.programmes)
+        .delay_vaccination
+        .order(created_at: :desc)
+        .first
+
     return if latest_delayed_triage.nil?
 
     session_date = next_or_today_session_date.to_date
