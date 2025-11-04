@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class TeamSessionsFactory
-  def initialize(team, academic_year:)
+  def initialize(team, academic_year:, sync_patient_teams_now: false)
     @team = team
     @academic_year = academic_year
+    @sync_patient_teams_now = sync_patient_teams_now
   end
 
   def call
@@ -17,14 +18,20 @@ class TeamSessionsFactory
 
   private
 
-  attr_reader :team, :academic_year
+  attr_reader :team, :academic_year, :sync_patient_teams_now
 
   def create_missing_sessions!
     ActiveRecord::Base.transaction do
       team
         .locations
         .includes(:team, :programmes)
-        .find_each { LocationSessionsFactory.call(it, academic_year:) }
+        .find_each do
+          LocationSessionsFactory.call(
+            it,
+            academic_year:,
+            sync_patient_teams_now:
+          )
+        end
     end
   end
 

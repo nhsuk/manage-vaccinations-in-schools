@@ -185,7 +185,7 @@ def setup_clinic(team)
     PatientLocation.import(
       new_patient_location_records,
       on_duplicate_key_ignore: :all
-    )
+    ).ids
   SyncPatientTeamJob.perform_now(PatientLocation, imported_ids)
 end
 
@@ -323,7 +323,11 @@ create_imports(user, team)
 create_school_moves(team)
 
 Team.find_each do |team|
-  TeamSessionsFactory.call(team, academic_year: AcademicYear.current)
+  TeamSessionsFactory.call(
+    team,
+    academic_year: AcademicYear.current,
+    sync_patient_teams_now: true
+  )
 end
 
 Rake::Task["status:update:all"].execute
