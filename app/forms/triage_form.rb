@@ -239,7 +239,8 @@ class TriageForm
       )
     end
 
-    if programme.mmr? && (delay_vaccination_until < next_mmr_dose_date)
+    if programme.mmr? && patient_eligible_for_additional_dose? &&
+         (delay_vaccination_until < next_mmr_dose_date)
       errors.add(
         :delay_vaccination_until,
         "The vaccination cannot take place before #{next_mmr_dose_date.to_fs(:long)}"
@@ -254,5 +255,15 @@ class TriageForm
     if vaccination_record.present?
       vaccination_record.update!(next_dose_delay_triage:)
     end
+  end
+
+  def patient_eligible_for_additional_dose?
+    next_dose =
+      patient.vaccination_status(
+        programme: programme,
+        academic_year: session.academic_year
+      ).dose_sequence
+
+    next_dose == programme.maximum_dose_sequence
   end
 end

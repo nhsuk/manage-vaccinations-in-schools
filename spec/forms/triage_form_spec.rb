@@ -94,4 +94,52 @@ describe TriageForm do
       expect(vaccination_record.reload.next_dose_delay_triage).to eq(triage)
     end
   end
+
+  context "programme is MMR" do
+    let(:programme) { create(:programme, :mmr) }
+
+    describe "validation for delay_vaccination_until" do
+      subject(:validation_errors) do
+        form.save # rubocop:disable Rails/SaveBang
+        form.errors.full_messages
+      end
+
+      let(:delay_vaccination_until) { nil }
+
+      let(:form) do
+        described_class.new(
+          patient:,
+          session:,
+          programme:,
+          delay_vaccination_until:,
+          current_user: create(:user),
+          status_option: "delay_vaccination"
+        )
+      end
+
+      context "patient hasn't received any doses" do
+        let(:delay_vaccination_until) { Date.tomorrow }
+
+        it "doesn't produce any validation errors" do
+          expect(validation_errors).to be_empty
+        end
+      end
+
+      context "patient has had their first dose" do
+        let(:delay_vaccination_until) { Date.tomorrow }
+
+        before do
+          create(:vaccination_record, patient:, programme:, session:)
+
+          StatusUpdater.call(patient:)
+        end
+
+        it "doesn't produce any validation errors" do
+          expect(validation_errors.join).to include(
+            "The vaccination cannot take place before"
+          )
+        end
+      end
+    end
+  end
 end
