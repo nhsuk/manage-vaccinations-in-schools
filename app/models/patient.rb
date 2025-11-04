@@ -143,7 +143,11 @@ class Patient < ApplicationRecord
 
   scope :includes_statuses,
         -> do
-          includes(:consent_statuses, :triage_statuses, :vaccination_statuses)
+          includes(
+            :consent_statuses,
+            :triage_statuses,
+            vaccination_statuses: :latest_location
+          )
         end
 
   scope :has_vaccination_records_dont_notify_parents,

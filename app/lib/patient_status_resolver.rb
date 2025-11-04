@@ -63,10 +63,11 @@ class PatientStatusResolver
         if vaccination_status.latest_session_status_already_had?
           "Already had the vaccine"
         elsif context_location_id.nil? ||
+              vaccination_status.latest_location_id.nil? ||
               vaccination_status.latest_location_id == context_location_id
           "Vaccinated on #{vaccination_status.latest_date.to_fs(:long)}"
         else
-          "Vaccinated elsewhere"
+          "Vaccinated at #{vaccination_status.latest_location.name}"
         end
 
       tag_hash("vaccinated", context: :vaccination).merge(details_text:)
