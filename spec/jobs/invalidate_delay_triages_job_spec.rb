@@ -50,6 +50,12 @@ describe InvalidateDelayTriagesJob do
       expect(StatusUpdater).to receive(:call).with(patient: [triage.patient_id])
       perform_now
     end
+
+    it "keeps the patient in triage" do
+      expect { perform_now }.to change { Triage.keep_in_triage.count }.from(
+        0
+      ).to(1)
+    end
   end
 
   context "with a triage that delays until yesterday but is already invalidated" do

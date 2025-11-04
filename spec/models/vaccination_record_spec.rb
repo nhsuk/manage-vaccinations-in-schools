@@ -483,10 +483,17 @@ describe VaccinationRecord do
       )
     end
 
-    it "marks next_dose_delay_triage invalid if it's gone past 28 days" do
+    before do
       vaccination_record.performed_at = Date.current - 29.days
       vaccination_record.save!
+    end
+
+    it "marks next_dose_delay_triage invalid if it's gone past 28 days" do
       expect(next_dose_delay_triage.reload).to be_invalidated
+    end
+
+    it "keeps the patient in triage" do
+      expect(Triage.keep_in_triage.count).to eq(1)
     end
   end
 end

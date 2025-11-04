@@ -293,15 +293,15 @@ class VaccinationRecord < ApplicationRecord
     new_delay_date =
       next_dose_delay_triage.delay_vaccination_until + days_difference.days
 
-    next_dose_delay_triage.assign_attributes(
+    next_dose_delay_triage.update!(
       delay_vaccination_until: new_delay_date,
       notes: "Next dose #{new_delay_date.to_fs(:long)}"
     )
 
     if next_dose_delay_triage.should_be_invalidated?
-      next_dose_delay_triage.assign_attributes(invalidated_at: Time.current)
+      InvalidateDelayTriagesJob.perform_now(
+        delay_triage: next_dose_delay_triage
+      )
     end
-
-    next_dose_delay_triage.save!
   end
 end
