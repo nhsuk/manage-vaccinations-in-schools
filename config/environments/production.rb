@@ -76,6 +76,10 @@ Rails.application.configure do
     :redis_cache_store,
     {
       url: ENV.fetch("REDIS_CACHE_URL"),
+      # We've been seeing timeouts when calling UNLINK with the default
+      # timeout of 1 second.
+      connect_timeout: 5,
+      write_timeout: 5,
       error_handler: ->(method:, returning:, exception:) do
         Sentry.capture_exception(
           exception,
