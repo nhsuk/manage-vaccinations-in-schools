@@ -34,31 +34,6 @@
 class PatientChangeset < ApplicationRecord
   include PatientImportConcern
 
-  self.ignored_columns = %w[pending_changes]
-
-  attribute :pending_changes,
-            :jsonb,
-            default: {
-              upload: {
-                child: {
-                },
-                parent_1: {
-                },
-                parent_2: {
-                },
-                academic_year: nil,
-                home_educated: nil,
-                school_move_source: nil
-              },
-              search_results: [],
-              review: {
-                patient: {
-                },
-                school_move: {
-                }
-              }
-            }
-
   attribute :data,
             :jsonb,
             default: {
@@ -117,7 +92,7 @@ class PatientChangeset < ApplicationRecord
   scope :with_pds_search_attempted,
         -> do
           where("data -> 'search_results' != '[]'::jsonb").where.not(
-            "jsonb_array_length(data -> 'search_results') = 1 AND 
+            "jsonb_array_length(data -> 'search_results') = 1 AND
             (data -> 'search_results' -> 0 ->> 'result') = 'no_postcode'"
           )
         end
@@ -170,10 +145,6 @@ class PatientChangeset < ApplicationRecord
   end
 
   delegate :team, to: :import
-
-  def data
-    super || pending_changes
-  end
 
   def review_data = data["review"]
 
