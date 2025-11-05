@@ -103,6 +103,16 @@ class PatientChangeset < ApplicationRecord
           )
         end
 
+  scope :with_postcode,
+        -> do
+          where("data -> 'upload' -> 'child' -> 'address_postcode' IS NOT NULL")
+        end
+
+  scope :without_postcode,
+        -> do
+          where("data -> 'upload' -> 'child' -> 'address_postcode' IS NULL")
+        end
+
   def self.from_import_row(row:, import:, row_number:)
     create!(
       import:,

@@ -128,10 +128,17 @@ describe ClassImport do
       before { Flipper.enable(:import_search_pds) }
       after { Flipper.disable(:import_search_pds) }
 
-      it "enqueues PDSCascadingSearchJob for each changeset" do
+      it "enqueues PDSCascadingSearchJob for each changeset with a postcode" do
         process!
 
-        expect(configured_job).to have_received(:perform_later).exactly(4).times
+        expect(configured_job).to have_received(:perform_later).exactly(3).times
+        without_postcode =
+          PatientChangeset.select { it.given_name == "Gae" }.sole
+
+        expect(without_postcode.search_results.count).to eq(1)
+        expect(without_postcode.search_results.first["result"]).to eq(
+          "no_postcode"
+        )
 
         expect(CommitImportJob).not_to have_enqueued_sidekiq_job
       end
