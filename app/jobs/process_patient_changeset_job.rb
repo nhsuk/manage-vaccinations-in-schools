@@ -4,7 +4,13 @@ class ProcessPatientChangesetJob < ApplicationJob
   queue_as :imports
 
   def perform(patient_changeset_id)
-    patient_changeset = PatientChangeset.find(patient_changeset_id)
+    patient_changeset =
+      if patient_changeset_id.is_a?(PatientChangeset)
+        patient_changeset_id
+      else
+        PatientChangeset.find(patient_changeset_id)
+      end
+
     return if patient_changeset.processed?
 
     unique_nhs_number = get_unique_nhs_number(patient_changeset)
