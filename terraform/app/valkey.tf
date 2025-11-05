@@ -130,12 +130,13 @@ resource "aws_security_group" "rails_valkey" {
 }
 
 resource "aws_security_group_rule" "rails_valkey_ingress" {
+  count                    = length(local.db_access_sg_ids)
   type                     = "ingress"
   from_port                = aws_elasticache_serverless_cache.rails_cache.endpoint[0].port
   to_port                  = aws_elasticache_serverless_cache.rails_cache.endpoint[0].port
   protocol                 = "tcp"
   security_group_id        = aws_security_group.rails_valkey.id
-  source_security_group_id = module.web_service.security_group_id
+  source_security_group_id = local.db_access_sg_ids[count.index]
 
   lifecycle {
     create_before_destroy = true
