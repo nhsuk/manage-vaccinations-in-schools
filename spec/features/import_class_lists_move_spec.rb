@@ -61,7 +61,7 @@ describe "Import class lists - Moving patients" do
   end
 
   def given_an_hpv_programme_is_underway
-    programmes = [create(:programme, :hpv)]
+    programmes = [CachedProgramme.hpv]
 
     @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
     @user = @team.users.first

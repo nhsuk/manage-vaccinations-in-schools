@@ -109,7 +109,7 @@ describe VaccinationRecord do
         build(:vaccination_record, programme:, session:)
       end
 
-      let(:programme) { create(:programme) }
+      let(:programme) { CachedProgramme.sample }
       let(:session) { create(:session, programmes: [programme]) }
 
       it { should validate_absence_of(:location_name) }
@@ -120,7 +120,7 @@ describe VaccinationRecord do
         build(:vaccination_record, programme:, session:)
       end
 
-      let(:programme) { create(:programme) }
+      let(:programme) { CachedProgramme.sample }
       let(:team) do
         create(:team, :with_generic_clinic, programmes: [programme])
       end
@@ -156,7 +156,7 @@ describe VaccinationRecord do
   describe "#dose_volume_ml" do
     subject { vaccination_record.dose_volume_ml }
 
-    let(:programme) { create(:programme) }
+    let(:programme) { CachedProgramme.sample }
 
     let(:vaccine) { build(:vaccine, programme:, dose_volume_ml: 10) }
 
@@ -231,7 +231,7 @@ describe VaccinationRecord do
     subject { vaccination_record.show_in_academic_year?(academic_year) }
 
     context "with a seasonal record performed in the 2023/24 academic year" do
-      let(:programme) { create(:programme, :flu) }
+      let(:programme) { CachedProgramme.flu }
       let(:vaccination_record) do
         build(
           :vaccination_record,
@@ -254,7 +254,7 @@ describe VaccinationRecord do
     end
 
     context "with a non-seasonal record performed in the 2023/24 academic year" do
-      let(:programme) { create(:programme, :hpv) }
+      let(:programme) { CachedProgramme.hpv }
       let(:vaccination_record) do
         build(
           :vaccination_record,

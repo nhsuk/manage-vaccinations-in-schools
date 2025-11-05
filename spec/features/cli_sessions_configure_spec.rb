@@ -31,7 +31,7 @@ describe "mavis sessions delegation" do
   end
 
   def given_a_team_exists
-    @programmes = [create(:programme, :hpv), create(:programme, :flu)]
+    @programmes = [CachedProgramme.hpv, CachedProgramme.flu]
     @team = create(:team, workgroup: "team", programmes: @programmes)
   end
 

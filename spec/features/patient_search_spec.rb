@@ -62,7 +62,7 @@ describe "Patient search" do
   end
 
   def given_that_i_am_signed_in
-    programmes = [create(:programme, :hpv)]
+    programmes = [CachedProgramme.hpv]
     team = create(:team, :with_one_nurse, programmes:)
 
     location = create(:school, name: "Waterloo Road", team:)

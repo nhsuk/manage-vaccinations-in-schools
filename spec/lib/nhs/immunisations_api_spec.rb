@@ -17,7 +17,7 @@ describe NHS::ImmunisationsAPI do
     )
   end
   let(:nhs_number) { "9449310475" }
-  let(:programme) { create(:programme, :hpv) }
+  let(:programme) { CachedProgramme.hpv }
   let(:location) { create(:community_clinic, team:, ods_code: nil) }
   let(:vaccine) { programme.vaccines.find_by!(brand: "Gardasil") }
   let(:batch) do
@@ -696,7 +696,7 @@ describe NHS::ImmunisationsAPI do
     end
 
     context "when the programme type is not one of those synced to the API" do
-      let(:programme) { create(:programme, :menacwy) }
+      let(:programme) { CachedProgramme.menacwy }
       let(:vaccine) { programme.vaccines.first }
 
       it { should be false }
@@ -841,7 +841,7 @@ describe NHS::ImmunisationsAPI do
     end
 
     let(:nhs_number) { "9449308357" }
-    let(:programmes) { [create(:programme, :flu)] }
+    let(:programmes) { [CachedProgramme.flu] }
     let(:date_from) { Time.new(2025, 8, 1, 12, 30, 37, "+01:00") }
     let(:date_to) { Time.new(2025, 10, 1, 10, 35, 32, "+01:00") }
 
@@ -885,7 +885,7 @@ describe NHS::ImmunisationsAPI do
     end
 
     context "with the wrong programmes" do
-      let(:programmes) { [create(:programme, :hpv)] }
+      let(:programmes) { [CachedProgramme.hpv] }
 
       it "raises an error" do
         expect { perform_request }.to raise_error(

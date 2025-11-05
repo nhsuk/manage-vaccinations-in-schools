@@ -62,8 +62,8 @@ describe "Inspect graph PII access logging", :cis2 do
   end
 
   def prepare_hpv_programme_with_one_patient
-    @team = create(:team, :with_one_nurse)
-    @programme = create(:programme, :hpv, teams: [@team])
+    @programme = CachedProgramme.hpv
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
     @session =
       create(
         :session,
@@ -89,8 +89,8 @@ describe "Inspect graph PII access logging", :cis2 do
   end
 
   def prepare_hpv_programme_with_two_patients
-    @team = create(:team, :with_one_nurse)
-    @programme = create(:programme, :hpv, teams: [@team])
+    @programme = CachedProgramme.hpv
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
     @session =
       create(
         :session,

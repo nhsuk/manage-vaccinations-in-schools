@@ -63,7 +63,7 @@ describe AppPatientSearchResultCardComponent do
   end
 
   context "when given programmes" do
-    let(:programme) { create(:programme, :flu) }
+    let(:programme) { CachedProgramme.flu }
     let(:programmes) { [programme] }
     let(:academic_year) { AcademicYear.current }
 

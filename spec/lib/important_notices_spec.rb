@@ -101,7 +101,7 @@ describe ImportantNotices do
     end
 
     context "when patient has multiple vaccination records with the same notify_parents values" do
-      let(:other_programme) { create(:programme, :flu) }
+      let(:other_programme) { CachedProgramme.flu }
 
       let(:notify_record) do
         create(
@@ -127,7 +127,7 @@ describe ImportantNotices do
     end
 
     context "when patient has multiple vaccination records with different notify_parents values" do
-      let(:other_programme) { create(:programme, :flu) }
+      let(:other_programme) { CachedProgramme.flu }
 
       let(:notify_record) do
         create(
@@ -182,7 +182,7 @@ describe ImportantNotices do
   end
 
   let(:patient) { create(:patient) }
-  let(:programme) { create(:programme, :hpv) }
+  let(:programme) { CachedProgramme.hpv }
 
   context "with a patient scope" do
     subject(:notices) { described_class.call(patient_scope:) }

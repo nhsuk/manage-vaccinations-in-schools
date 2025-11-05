@@ -7,7 +7,7 @@ describe AppSessionCardComponent do
 
   let(:today) { Date.new(2025, 7, 1) }
 
-  let(:programme) { create(:programme, :flu) }
+  let(:programme) { CachedProgramme.flu }
   let(:date) { Date.new(2025, 9, 1) }
 
   let(:session) do

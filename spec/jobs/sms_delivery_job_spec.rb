@@ -41,7 +41,7 @@ describe SMSDeliveryJob do
     end
 
     let(:template_name) { GOVUK_NOTIFY_SMS_TEMPLATES.keys.first }
-    let(:programmes) { [create(:programme)] }
+    let(:programmes) { [CachedProgramme.sample] }
     let(:session) { create(:session, programmes:) }
     let(:parent) { create(:parent, phone: "01234 567890") }
     let(:consent) { nil }

@@ -5,7 +5,7 @@ describe PDSCascadingSearchJob do
   include ImportsHelper
 
   let(:today) { Time.zone.local(2025, 9, 1, 12, 0, 0) }
-  let(:programme) { create(:programme, :hpv) }
+  let(:programme) { CachedProgramme.hpv }
   let(:school) { create(:school, urn: "123456", team:) }
   let(:team) { create(:team, programmes: [programme]) }
   let(:session) do

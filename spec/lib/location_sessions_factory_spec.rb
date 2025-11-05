@@ -4,7 +4,7 @@ describe LocationSessionsFactory do
   describe "#call" do
     subject(:call) { described_class.call(location, academic_year:) }
 
-    let(:programmes) { [create(:programme, :hpv)] }
+    let(:programmes) { [CachedProgramme.hpv] }
     let(:team) { create(:team, programmes:) }
     let(:academic_year) { AcademicYear.current }
 
@@ -21,7 +21,7 @@ describe LocationSessionsFactory do
       end
 
       context "with MMR" do
-        let(:programmes) { [create(:programme, :mmr)] }
+        let(:programmes) { [CachedProgramme.mmr] }
 
         it "doesn't create a session on its own" do
           expect { call }.not_to change(team.sessions, :count)
@@ -177,10 +177,10 @@ describe LocationSessionsFactory do
 
     context "with all programmes" do
       let(:doubles_programmes) do
-        [create(:programme, :menacwy), create(:programme, :td_ipv)]
+        [CachedProgramme.menacwy, CachedProgramme.td_ipv]
       end
-      let(:flu_programmes) { [create(:programme, :flu)] }
-      let(:hpv_programmes) { [create(:programme, :hpv)] }
+      let(:flu_programmes) { [CachedProgramme.flu] }
+      let(:hpv_programmes) { [CachedProgramme.hpv] }
 
       let(:programmes) { flu_programmes + hpv_programmes + doubles_programmes }
 

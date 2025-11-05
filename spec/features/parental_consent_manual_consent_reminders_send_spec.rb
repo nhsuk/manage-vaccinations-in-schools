@@ -27,7 +27,7 @@ describe "Manual consent reminders" do
   end
 
   def given_a_session_with_patients_having_no_consent_response
-    programmes = [create(:programme, :hpv)]
+    programmes = [CachedProgramme.hpv]
 
     @team = create(:team, :with_one_nurse, programmes:)
     @user = @team.users.first
@@ -74,7 +74,7 @@ describe "Manual consent reminders" do
   end
 
   def given_a_session_with_patients_having_consent_responses
-    programmes = [create(:programme, :hpv)]
+    programmes = [CachedProgramme.hpv]
 
     @team = create(:team, :with_one_nurse, programmes:)
     @user = @team.users.first

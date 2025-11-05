@@ -5,16 +5,12 @@ describe AppProgrammeTagsComponent do
 
   let(:component) { described_class.new(programmes) }
 
-  let(:programmes) do
-    [create(:programme, :menacwy), create(:programme, :td_ipv)]
-  end
+  let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
 
   it { should have_content("MenACWY Td/IPV") }
 
   context "with unordered programmes" do
-    let(:programmes) do
-      [create(:programme, :td_ipv), create(:programme, :menacwy)]
-    end
+    let(:programmes) { [CachedProgramme.td_ipv, CachedProgramme.menacwy] }
 
     it { should have_content("MenACWY Td/IPV") }
   end

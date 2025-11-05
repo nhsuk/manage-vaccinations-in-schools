@@ -35,6 +35,6 @@ FactoryBot.define do
       )
     end
 
-    programme
+    programme { CachedProgramme.sample }
   end
 end

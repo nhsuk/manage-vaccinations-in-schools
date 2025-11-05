@@ -4,8 +4,8 @@ describe "Immunisation imports" do
   around { |example| travel_to(Date.new(2025, 5, 20)) { example.run } }
 
   scenario "User uploads a file, views cohort and vaccination records" do
-    given_i_am_signed_in
-    and_an_hpv_programme_is_underway
+    given_an_hpv_programme_is_underway
+    and_i_am_signed_in
     and_school_locations_exist
 
     when_i_go_to_the_import_page
@@ -34,15 +34,16 @@ describe "Immunisation imports" do
     then_i_should_see_no_children_in_the_cohorts
   end
 
-  def given_i_am_signed_in
-    @team = create(:team, :with_one_nurse, ods_code: "R1L")
-    sign_in @team.users.first
-  end
-
-  def and_an_hpv_programme_is_underway
-    programme = create(:programme, :hpv, teams: [@team])
+  def given_an_hpv_programme_is_underway
+    programme = CachedProgramme.hpv
+    @team =
+      create(:team, :with_one_nurse, ods_code: "R1L", programmes: [programme])
     location = create(:school, team: @team)
     @session = create(:session, programmes: [programme], location:, team: @team)
+  end
+
+  def and_i_am_signed_in
+    sign_in @team.users.first
   end
 
   def and_school_locations_exist

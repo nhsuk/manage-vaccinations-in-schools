@@ -20,7 +20,7 @@ describe SessionSearchForm do
   context "when filtering by academic year" do
     let(:params) { { "academic_year" => "2025" } }
 
-    let(:programmes) { [create(:programme)] }
+    let(:programmes) { [CachedProgramme.sample] }
 
     let!(:session_to_include) do
       create(
@@ -48,8 +48,8 @@ describe SessionSearchForm do
   context "when filtering by programmes" do
     let(:params) { { "programmes" => %w[flu] } }
 
-    let(:flu_programmes) { create(:programme, :flu) }
-    let(:hpv_programmes) { create(:programme, :hpv) }
+    let(:flu_programmes) { CachedProgramme.flu }
+    let(:hpv_programmes) { CachedProgramme.hpv }
 
     let!(:session_to_include) { create(:session, programmes: [flu_programmes]) }
 
@@ -63,7 +63,7 @@ describe SessionSearchForm do
   context "when filtering by name" do
     let(:params) { { "q" => "School" } }
 
-    let(:programmes) { [create(:programme)] }
+    let(:programmes) { [CachedProgramme.sample] }
 
     let!(:session_to_include) do
       create(:session, location: create(:school, name: "School"), programmes:)
@@ -85,7 +85,7 @@ describe SessionSearchForm do
   context "when filtering on the type" do
     let(:params) { { "type" => "school" } }
 
-    let(:programmes) { [create(:programme)] }
+    let(:programmes) { [CachedProgramme.sample] }
 
     let!(:session_to_include) do
       create(:session, location: create(:school, name: "School"), programmes:)
@@ -105,7 +105,7 @@ describe SessionSearchForm do
   end
 
   context "when filtering on the status" do
-    let(:programmes) { [create(:programme)] }
+    let(:programmes) { [CachedProgramme.sample] }
 
     let!(:today_session) { create(:session, :today, programmes:) }
     let!(:unscheduled_session) { create(:session, :unscheduled, programmes:) }

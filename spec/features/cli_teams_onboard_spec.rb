@@ -53,7 +53,7 @@ describe "mavis teams onboard" do
   end
 
   def given_programmes_and_schools_exist
-    create(:programme, :hpv)
+    CachedProgramme.hpv
 
     create(:school, :secondary, :open, urn: "123456")
     create(:school, :secondary, :open, urn: "234567")

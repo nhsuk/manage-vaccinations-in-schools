@@ -103,7 +103,7 @@ describe "Offline vaccination" do
   end
 
   def given_an_hpv_programme_is_underway(clinic: false)
-    programmes = [create(:programme, :hpv)]
+    programmes = [CachedProgramme.hpv]
 
     @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
     school = create(:school, team: @team)
@@ -193,7 +193,7 @@ describe "Offline vaccination" do
   end
 
   def given_an_hpv_programme_is_underway_with_a_single_patient
-    programmes = [create(:programme, :hpv)]
+    programmes = [CachedProgramme.hpv]
 
     @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
     school = create(:school, team: @team)
@@ -217,7 +217,7 @@ describe "Offline vaccination" do
   end
 
   def given_a_flu_programme_is_underway_with_a_single_patient
-    programmes = [create(:programme, :flu)]
+    programmes = [CachedProgramme.flu]
 
     @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
     school = create(:school, team: @team)

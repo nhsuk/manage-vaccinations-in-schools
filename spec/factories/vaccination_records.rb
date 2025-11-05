@@ -81,7 +81,7 @@ FactoryBot.define do
       end
     end
 
-    programme
+    programme { CachedProgramme.sample }
 
     performed_ods_code { team.organisation.ods_code }
 

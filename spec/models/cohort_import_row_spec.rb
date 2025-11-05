@@ -16,7 +16,7 @@ describe CohortImportRow do
 
   let(:today) { Date.new(2024, 12, 1) }
 
-  let(:programme) { create(:programme) }
+  let(:programme) { CachedProgramme.sample }
   let(:team) { create(:team, programmes: [programme]) }
   let(:academic_year) { AcademicYear.pending }
 

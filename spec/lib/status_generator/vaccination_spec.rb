@@ -19,7 +19,7 @@ describe StatusGenerator::Vaccination do
   end
 
   let(:patient) { create(:patient) }
-  let(:programme) { create(:programme) }
+  let(:programme) { CachedProgramme.sample }
   let(:session) { create(:session, programmes: [programme]) }
 
   describe "#status" do
@@ -30,7 +30,7 @@ describe StatusGenerator::Vaccination do
     end
 
     context "with a flu programme" do
-      let(:programme) { create(:programme, :flu) }
+      let(:programme) { CachedProgramme.flu }
 
       context "when eligible" do
         let(:session) { create(:session, programmes: [programme]) }
@@ -118,7 +118,7 @@ describe StatusGenerator::Vaccination do
     end
 
     context "with an HPV programme" do
-      let(:programme) { create(:programme, :hpv) }
+      let(:programme) { CachedProgramme.hpv }
 
       context "when eligible" do
         let(:session) { create(:session, programmes: [programme]) }
@@ -177,7 +177,7 @@ describe StatusGenerator::Vaccination do
     end
 
     context "with a MenACWY programme" do
-      let(:programme) { create(:programme, :menacwy) }
+      let(:programme) { CachedProgramme.menacwy }
 
       context "when eligible" do
         let(:session) { create(:session, programmes: [programme]) }
@@ -272,7 +272,7 @@ describe StatusGenerator::Vaccination do
     end
 
     context "with an MMR programme" do
-      let(:programme) { create(:programme, :mmr) }
+      let(:programme) { CachedProgramme.mmr }
 
       context "when eligible" do
         let(:session) { create(:session, programmes: [programme]) }
@@ -329,7 +329,7 @@ describe StatusGenerator::Vaccination do
     end
 
     context "with an Td/IPV programme" do
-      let(:programme) { create(:programme, :td_ipv) }
+      let(:programme) { CachedProgramme.td_ipv }
 
       context "when eligible" do
         let(:session) { create(:session, programmes: [programme]) }
@@ -493,7 +493,7 @@ describe StatusGenerator::Vaccination do
     it { should be_nil }
 
     context "for MMR programme" do
-      let(:programme) { create(:programme, :mmr) }
+      let(:programme) { CachedProgramme.mmr }
       let(:session) { create(:session, programmes: [programme]) }
       let(:patient) do
         create(:patient, :consent_given_triage_not_needed, session:)
@@ -517,7 +517,7 @@ describe StatusGenerator::Vaccination do
     let(:performed_at) { 1.day.ago.to_date }
     let(:created_at) { 2.days.ago.to_date }
 
-    let(:programme) { create(:programme, :hpv) }
+    let(:programme) { CachedProgramme.hpv }
 
     context "with a vaccination administered" do
       before do
@@ -672,7 +672,7 @@ describe StatusGenerator::Vaccination do
     subject { generator.latest_location_id }
 
     context "with a flu programme" do
-      let(:programme) { create(:programme, :flu) }
+      let(:programme) { CachedProgramme.flu }
 
       it { should be_nil }
 
@@ -748,7 +748,7 @@ describe StatusGenerator::Vaccination do
     end
 
     context "with an HPV programme" do
-      let(:programme) { create(:programme, :hpv) }
+      let(:programme) { CachedProgramme.hpv }
 
       it { should be_nil }
 
@@ -795,7 +795,7 @@ describe StatusGenerator::Vaccination do
     end
 
     context "with a MenACWY programme" do
-      let(:programme) { create(:programme, :menacwy) }
+      let(:programme) { CachedProgramme.menacwy }
       let(:patient) { create(:patient, programmes: [programme]) }
 
       it { should be_nil }
@@ -874,7 +874,7 @@ describe StatusGenerator::Vaccination do
     end
 
     context "with an Td/IPV programme" do
-      let(:programme) { create(:programme, :td_ipv) }
+      let(:programme) { CachedProgramme.td_ipv }
       let(:patient) { create(:patient, date_of_birth: 15.years.ago.to_date) }
 
       it { should be_nil }
@@ -1002,7 +1002,7 @@ describe StatusGenerator::Vaccination do
   describe "#latest_session_status" do
     subject(:latest_session_status) { generator.latest_session_status }
 
-    let(:programme) { create(:programme, :hpv) }
+    let(:programme) { CachedProgramme.hpv }
     let(:patient) { create(:patient, session:) }
 
     context "with no vaccination record" do

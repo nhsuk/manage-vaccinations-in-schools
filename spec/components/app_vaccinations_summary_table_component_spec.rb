@@ -6,8 +6,8 @@ describe AppVaccinationsSummaryTableComponent do
   let(:request_session) { {} }
   let(:current_user) { build(:user) }
 
-  let(:flu_programme) { create(:programme, :flu) }
-  let(:hpv_programme) { create(:programme, :hpv) }
+  let(:flu_programme) { CachedProgramme.flu }
+  let(:hpv_programme) { CachedProgramme.hpv }
   let(:programmes) { [hpv_programme] }
   let(:session) { create(:session, :today, programmes:, team:) }
   let(:team) { create(:team, :with_generic_clinic, programmes:) }

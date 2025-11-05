@@ -32,7 +32,7 @@ describe "Triage" do
   end
 
   scenario "HCAs cannot triage" do
-    given_a_programme_with_a_running_session
+    given_a_flu_programme_with_a_running_session
     and_a_patient_who_needs_triage_exists
     and_i_am_signed_in_as_a_healthcare_assistant
 
@@ -116,7 +116,7 @@ describe "Triage" do
   end
 
   def given_a_programme_with_a_running_session
-    programmes = [create(:programme, :hpv)]
+    programmes = [CachedProgramme.hpv]
     @team = create(:team, :with_one_nurse, programmes:)
 
     @batch =
@@ -126,7 +126,7 @@ describe "Triage" do
   end
 
   def given_a_flu_programme_with_a_running_session
-    programmes = [create(:programme, :flu)]
+    programmes = [CachedProgramme.flu]
     @team = create(:team, :with_one_nurse, programmes:)
 
     @batch =
@@ -136,7 +136,7 @@ describe "Triage" do
   end
 
   def and_a_flu_programme_with_a_running_session_with_psd_enabled
-    programmes = [create(:programme, :flu)]
+    programmes = [CachedProgramme.flu]
     @team = create(:team, :with_one_nurse, programmes:)
 
     @batch =

@@ -31,8 +31,8 @@ describe "Tallying" do
   end
 
   def given_a_session_for_hpv_and_flu_is_running_today
-    @flu_programme = create(:programme, :flu)
-    @hpv_programme = create(:programme, :hpv)
+    @flu_programme = CachedProgramme.flu
+    @hpv_programme = CachedProgramme.hpv
 
     programmes = [@hpv_programme, @flu_programme]
     team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)

@@ -34,7 +34,7 @@
 describe CohortImport do
   subject(:cohort_import) { create(:cohort_import, csv:, team:) }
 
-  let(:programmes) { [create(:programme, :hpv)] }
+  let(:programmes) { [CachedProgramme.hpv] }
   let(:team) { create(:team, :with_generic_clinic, programmes:) }
 
   let(:file) { "valid.csv" }

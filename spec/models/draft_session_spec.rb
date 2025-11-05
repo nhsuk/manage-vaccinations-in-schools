@@ -20,9 +20,9 @@ describe DraftSession do
   let(:current_user) { team.users.first }
 
   let(:existing_programmes) do
-    [create(:programme, :menacwy), create(:programme, :td_ipv)]
+    [CachedProgramme.menacwy, CachedProgramme.td_ipv]
   end
-  let(:new_programme) { create(:programme, :hpv) }
+  let(:new_programme) { CachedProgramme.hpv }
 
   let(:session) { create(:session, team:, programmes: existing_programmes) }
   let(:programme_ids) { existing_programmes.map(&:id) + [new_programme.id] }

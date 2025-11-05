@@ -10,7 +10,7 @@ describe AppPatientCardComponent do
     )
   end
 
-  let(:programmes) { [create(:programme, :hpv)] }
+  let(:programmes) { [CachedProgramme.hpv] }
   let(:team) { create(:team, programmes:) }
   let(:school) { create(:school, team:) }
 

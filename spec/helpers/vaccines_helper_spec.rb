@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe VaccinesHelper do
-  let(:vaccine) { create(:vaccine, :fluenz) }
+  let(:vaccine) { Vaccine.find_by!(brand: "Fluenz") }
 
   describe "#vaccine_heading" do
     subject { helper.vaccine_heading(vaccine) }

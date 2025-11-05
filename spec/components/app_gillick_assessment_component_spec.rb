@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe AppGillickAssessmentComponent do
-  let(:programmes) { [create(:programme, :hpv)] }
+  let(:programmes) { [CachedProgramme.hpv] }
 
   let(:component) do
     described_class.new(patient:, session:, programme: programmes.first)

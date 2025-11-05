@@ -9,7 +9,7 @@ describe "mavis generate cohort-imports" do
   end
 
   def given_an_organisation_exists
-    @programme = create(:programme, :hpv)
+    @programme = CachedProgramme.hpv
     @team = create(:team, workgroup: "r1y", programmes: [@programme])
   end
 

@@ -121,7 +121,8 @@ describe "Class list imports duplicates" do
   end
 
   def and_an_hpv_programme_is_underway
-    programmes = [create(:programme, :hpv, teams: [@team])]
+    programme = CachedProgramme.hpv
+    @team.programmes << programme
 
     @location = create(:school, :secondary, name: "Waterloo Road", team: @team)
     @session =
@@ -130,7 +131,7 @@ describe "Class list imports duplicates" do
         :unscheduled,
         team: @team,
         location: @location,
-        programmes:
+        programmes: [programme]
       )
   end
 

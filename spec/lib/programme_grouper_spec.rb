@@ -4,9 +4,9 @@ describe ProgrammeGrouper do
   describe "#call" do
     subject(:call) { described_class.call(programmes) }
 
-    let(:hpv) { create(:programme, :hpv) }
-    let(:menacwy) { create(:programme, :menacwy) }
-    let(:td_ipv) { create(:programme, :td_ipv) }
+    let(:hpv) { CachedProgramme.hpv }
+    let(:menacwy) { CachedProgramme.menacwy }
+    let(:td_ipv) { CachedProgramme.td_ipv }
 
     context "with only HPV" do
       let(:programmes) { [hpv] }

@@ -6,9 +6,7 @@ describe HealthAnswersDeduplicator do
   let(:vaccines) { Vaccine.where(programme: programmes) }
 
   context "with doubles programmes" do
-    let(:programmes) do
-      [create(:programme, :menacwy), create(:programme, :td_ipv)]
-    end
+    let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
 
     it "generates the correct health answers" do
       expect(health_answers.count).to eq(6)
@@ -52,7 +50,7 @@ describe HealthAnswersDeduplicator do
   end
 
   context "with a flu programme" do
-    let(:programmes) { [create(:programme, :flu)] }
+    let(:programmes) { [CachedProgramme.flu] }
 
     it "generates the correct health answers" do
       expect(health_answers.count).to eq(11)

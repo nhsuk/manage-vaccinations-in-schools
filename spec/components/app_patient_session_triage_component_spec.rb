@@ -7,7 +7,7 @@ describe AppPatientSessionTriageComponent do
     described_class.new(patient:, session:, programme:, current_user:)
   end
 
-  let(:programme) { create(:programme) }
+  let(:programme) { CachedProgramme.sample }
   let(:session) { create(:session, programmes: [programme]) }
   let(:patient) { create(:patient, session:) }
   let(:current_user) { create(:nurse) }
@@ -19,7 +19,7 @@ describe AppPatientSessionTriageComponent do
   end
 
   context "when consent is given and triage is not needed" do
-    let(:programme) { create(:programme, :hpv) }
+    let(:programme) { CachedProgramme.hpv }
     let(:patient) do
       create(:patient, :consent_given_triage_not_needed, session:)
     end

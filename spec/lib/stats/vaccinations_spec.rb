@@ -2,9 +2,9 @@
 
 describe Stats::Vaccinations do
   describe "#call" do
-    let(:programme_flu) { create(:programme, :flu) }
-    let(:programme_hpv) { create(:programme, :hpv) }
-    let(:programme_menacwy) { create(:programme, :menacwy) }
+    let(:programme_flu) { CachedProgramme.flu }
+    let(:programme_hpv) { CachedProgramme.hpv }
+    let(:programme_menacwy) { CachedProgramme.menacwy }
 
     let(:target_organisation) { create(:organisation, ods_code: "TARGET123") }
     let(:target_team) do

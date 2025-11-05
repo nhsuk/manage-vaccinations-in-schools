@@ -15,7 +15,7 @@ describe "Patient invalidation deletes vaccination record from API" do
   end
 
   def given_a_patient_has_a_vaccination_record_eligible_for_api
-    @programme = create(:programme, :hpv)
+    @programme = CachedProgramme.hpv
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @session =
       create(:session, :scheduled, team: @team, programmes: [@programme])

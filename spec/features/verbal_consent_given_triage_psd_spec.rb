@@ -29,7 +29,7 @@ describe "Verbal consent" do
   end
 
   def given_a_flu_programme_is_underway
-    @programme = create(:programme, :flu)
+    @programme = CachedProgramme.flu
     programmes = [@programme]
     @team = create(:team, :with_one_nurse, programmes:)
     @session = create(:session, :psd_enabled, team: @team, programmes:)

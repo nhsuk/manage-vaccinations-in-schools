@@ -45,7 +45,7 @@ describe "mavis vaccination-records sync" do
 
   def given_a_vaccination_record_exists
     team = create(:team)
-    programme = create(:programme, :hpv)
+    programme = CachedProgramme.hpv
     session = create(:session, programmes: [programme], team:)
     patient = create(:patient, team:)
     vaccine = programme.vaccines.find_by!(brand: "Gardasil")
@@ -65,7 +65,7 @@ describe "mavis vaccination-records sync" do
 
   def given_a_synced_vaccination_record_exists
     team = create(:team)
-    programme = create(:programme, :hpv)
+    programme = CachedProgramme.hpv
     patient = create(:patient, team:)
     @synced_vaccination_record =
       create(

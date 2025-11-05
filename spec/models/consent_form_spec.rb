@@ -60,7 +60,7 @@ describe ConsentForm do
   end
 
   describe "scopes" do
-    let(:programme) { create(:programme) }
+    let(:programme) { CachedProgramme.sample }
     let(:session) { create(:session, programmes: [programme]) }
 
     describe "#unmatched" do
@@ -110,7 +110,7 @@ describe ConsentForm do
     let(:reason_for_refusal) { nil }
     let(:response) { nil }
     let(:session) { create(:session, programmes:) }
-    let(:programmes) { [create(:programme, :hpv)] }
+    let(:programmes) { [CachedProgramme.hpv] }
     let(:use_preferred_name) { false }
     let(:wizard_step) { nil }
 
@@ -191,9 +191,7 @@ describe ConsentForm do
     context "when wizard_step is :response_doubles" do
       let(:wizard_step) { :response_doubles }
 
-      let(:programmes) do
-        [create(:programme, :menacwy), create(:programme, :td_ipv)]
-      end
+      let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
 
       context "runs validations from previous steps" do
         it { should validate_presence_of(:given_name).on(:update) }
@@ -210,7 +208,7 @@ describe ConsentForm do
     context "when wizard_step is :response_flu" do
       let(:wizard_step) { :response_flu }
 
-      let(:programmes) { [create(:programme, :flu)] }
+      let(:programmes) { [CachedProgramme.flu] }
 
       context "runs validations from previous steps" do
         it { should validate_presence_of(:given_name).on(:update) }
@@ -613,13 +611,13 @@ describe ConsentForm do
     before { consent_form.strict_loading!(false) }
 
     context "if the flu programme offers both injection and nasal vaccines" do
-      let(:programmes) { [create(:programme, :flu)] }
+      let(:programmes) { [CachedProgramme.flu] }
 
       it { should be(true) }
     end
 
     context "for an HPV programme" do
-      let(:programmes) { [create(:programme, :hpv)] }
+      let(:programmes) { [CachedProgramme.hpv] }
 
       it { should be(false) }
     end
@@ -628,7 +626,7 @@ describe ConsentForm do
   describe "#session" do
     subject { consent_form.session }
 
-    let(:programmes) { [create(:programme, :hpv)] }
+    let(:programmes) { [CachedProgramme.hpv] }
     let(:team) { create(:team, programmes:) }
 
     let!(:school) { create(:school, team:) }
@@ -747,7 +745,7 @@ describe ConsentForm do
     consent_form =
       create(
         :consent_form,
-        session: create(:session, programmes: [create(:programme, :hpv)]),
+        session: create(:session, programmes: [CachedProgramme.hpv]),
         response: "refused"
       )
 
@@ -770,7 +768,7 @@ describe ConsentForm do
       create(
         :consent_form,
         :with_health_answers_no_branching,
-        session: create(:session, programmes: [create(:programme, :flu)]),
+        session: create(:session, programmes: [CachedProgramme.flu]),
         response: nil
       )
 
@@ -783,8 +781,8 @@ describe ConsentForm do
   end
 
   it "combines health questions from multiple active vaccines" do
-    programme1 = create(:programme, :menacwy)
-    programme2 = create(:programme, :td_ipv)
+    programme1 = CachedProgramme.menacwy
+    programme2 = CachedProgramme.td_ipv
 
     session = create(:session, programmes: [programme1, programme2])
 
@@ -806,8 +804,8 @@ describe ConsentForm do
   end
 
   it "only shows the health questions for the chosen vaccine" do
-    programme1 = create(:programme, :menacwy)
-    programme2 = create(:programme, :td_ipv)
+    programme1 = CachedProgramme.menacwy
+    programme2 = CachedProgramme.td_ipv
     consent_form =
       create(
         :consent_form,
@@ -838,7 +836,7 @@ describe ConsentForm do
       create(
         :consent_form,
         :with_health_answers_no_branching,
-        session: create(:session, programmes: [create(:programme, :hpv)]),
+        session: create(:session, programmes: [CachedProgramme.hpv]),
         response: nil
       )
 
@@ -884,7 +882,7 @@ describe ConsentForm do
       consent_form.match_with_patient!(patient, current_user:)
     end
 
-    let(:programme) { create(:programme) }
+    let(:programme) { CachedProgramme.sample }
     let(:team) { create(:team, programmes: [programme]) }
 
     let(:school) { create(:school) }
@@ -1030,7 +1028,7 @@ describe ConsentForm do
   end
 
   it "resets unused fields" do
-    programmes = [create(:programme)]
+    programmes = [CachedProgramme.sample]
 
     session = create(:session, programmes:)
 

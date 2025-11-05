@@ -8,7 +8,7 @@ describe PatientsRefusedConsentAlreadyVaccinatedJob do
 
   around { |example| travel_to(today) { example.run } }
 
-  let(:programmes) { create_list(:programme, 1, :flu) }
+  let(:programmes) { [CachedProgramme.flu] }
   let(:session) { create(:session, programmes:) }
 
   context "during the preparation period" do

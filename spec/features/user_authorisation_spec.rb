@@ -23,7 +23,7 @@ describe "User authorisation" do
   end
 
   def given_an_hpv_programme_is_underway_with_two_teams
-    @programme = create(:programme, :hpv)
+    @programme = CachedProgramme.hpv
 
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @other_team = create(:team, :with_one_nurse, programmes: [@programme])

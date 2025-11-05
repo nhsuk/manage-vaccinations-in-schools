@@ -95,7 +95,7 @@ describe API::Reporting::BaseController do
 
   describe "#to_csv" do
     context "given some records" do
-      let!(:programme) { create(:programme, :hpv) }
+      let!(:programme) { CachedProgramme.hpv }
       let(:patient) { create(:patient, random_nhs_number: true) }
       let(:records) { VaccinationRecord.where("id > 0") }
       let(:result) { controller.send(:to_csv, records:, header_mappings:) }

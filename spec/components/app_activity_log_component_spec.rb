@@ -7,7 +7,7 @@ describe AppActivityLogComponent do
 
   let(:today) { Date.new(2026, 1, 1) }
 
-  let(:programmes) { [create(:programme, :hpv), create(:programme, :flu)] }
+  let(:programmes) { [CachedProgramme.hpv, CachedProgramme.flu] }
   let(:team) { create(:team, programmes:) }
   let(:user) { create(:user, team:, family_name: "Joy", given_name: "Nurse") }
   let(:location) { create(:school, name: "Hogwarts", programmes:) }
@@ -447,7 +447,7 @@ describe AppActivityLogComponent do
   end
 
   describe "gillick assessments" do
-    let(:programmes) { [create(:programme, :td_ipv)] }
+    let(:programmes) { [CachedProgramme.td_ipv] }
 
     before do
       create(
@@ -487,7 +487,7 @@ describe AppActivityLogComponent do
   end
 
   describe "notes" do
-    let(:programmes) { [create(:programme, :hpv)] }
+    let(:programmes) { [CachedProgramme.hpv] }
     let(:session) { create(:session, programmes:) }
 
     before do
@@ -550,10 +550,10 @@ describe AppActivityLogComponent do
 
   describe "decision expiration events" do
     let(:hpv_programme) do
-      Programme.find_by(type: "hpv") || create(:programme, :hpv)
+      Programme.find_by(type: "hpv") || CachedProgramme.hpv
     end
     let(:flu_programme) do
-      Programme.find_by(type: "flu") || create(:programme, :flu)
+      Programme.find_by(type: "flu") || CachedProgramme.flu
     end
     let(:programmes) { [hpv_programme, flu_programme] }
 

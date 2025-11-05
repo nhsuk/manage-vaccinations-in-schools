@@ -29,7 +29,7 @@ describe Patient::ConsentStatus do
   end
 
   let(:patient) { create(:patient) }
-  let(:programme) { create(:programme, :hpv) }
+  let(:programme) { CachedProgramme.hpv }
 
   before { patient.strict_loading!(false) }
 
@@ -242,7 +242,7 @@ describe Patient::ConsentStatus do
       let(:current_academic_year) { AcademicYear.current }
       let(:previous_academic_year) { current_academic_year - 1 }
       let(:patient) { create(:patient) }
-      let(:programme) { create(:programme) }
+      let(:programme) { CachedProgramme.sample }
       let(:parent) { create(:parent) }
 
       describe "with consents from different academic years" do

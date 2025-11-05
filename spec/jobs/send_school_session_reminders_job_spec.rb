@@ -4,7 +4,7 @@ describe SendSchoolSessionRemindersJob do
   subject(:perform_now) { described_class.perform_now }
 
   let(:team) { create(:team, programmes:) }
-  let(:programmes) { [create(:programme)] }
+  let(:programmes) { [CachedProgramme.sample] }
   let(:parents) { create_list(:parent, 2) }
   let(:patient) do
     create(:patient, :consent_given_triage_not_needed, parents:, programmes:)
