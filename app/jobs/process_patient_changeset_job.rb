@@ -29,7 +29,14 @@ class ProcessPatientChangesetJob < ApplicationJob
       import.validate_changeset_uniqueness!
       return if import.changesets_are_invalid?
 
-      CommitImportJob.perform_async(import.to_global_id.to_s)
+      unless Flipper.enabled?(:import_review_screen)
+        CommitImportJob.perform_async(import.to_global_id.to_s)
+        return
+      end
+    end
+
+    if Flipper.enabled?(:import_review_screen)
+      ReviewPatientChangesetJob.perform_later(patient_changeset.id)
     end
   end
 

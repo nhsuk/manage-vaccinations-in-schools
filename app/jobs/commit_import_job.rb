@@ -32,6 +32,7 @@ class CommitImportJob
     ActiveRecord::Base.transaction do
       import
         .changesets
+        .from_file
         .includes(:school)
         .find_in_batches(batch_size: 100) do |changesets|
           increment_column_counts!(import, counts, changesets)

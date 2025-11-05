@@ -84,7 +84,19 @@ class PatientChangeset < ApplicationRecord
   belongs_to :patient, optional: true
   belongs_to :school, class_name: "Location", optional: true
 
-  enum :status, { pending: 0, processed: 1, import_invalid: 2 }, validate: true
+  enum :status,
+       {
+         pending: 0,
+         processed: 1,
+         import_invalid: 2,
+         calculating_review: 3,
+         ready_for_review: 4
+       },
+       validate: true
+
+  enum :record_type,
+       { auto_match: 0, new_patient: 1, import_issue: 2, not_in_file: 3 },
+       validate: true
 
   scope :nhs_number_discrepancies,
         -> do
@@ -416,5 +428,48 @@ class PatientChangeset < ApplicationRecord
       existing_patient.restore_attributes(auto_accepted_changes)
       child_attributes.merge!(@extracted_address) if @extracted_address
     end
+  end
+
+  def changeset_type
+    if patient.id.nil?
+      :new_patient
+    elsif patient.pending_changes.any?
+      :import_issue
+    else
+      :auto_match
+    end
+  end
+
+  def auto_confirmable_school_move?
+    (school_move.patient.school.nil? && !school_move.patient.home_educated) ||
+      school_move.patient.not_in_team?(
+        team: import.team,
+        academic_year: import.academic_year
+      ) || school_move.patient.archived?(team: import.team)
+  end
+
+  def calculate_review_data!
+    clear_review_data!
+
+    update_column(:record_type, changeset_type)
+    return if new_patient?
+
+    data["review"]["patient"]["id"] = patient.id
+
+    if patient.pending_changes.any?
+      data["review"]["patient"]["pending_changes"] = patient.pending_changes
+    end
+
+    if school_move.present? && !auto_confirmable_school_move?
+      data["review"]["school_move"]["school_id"] = school_move.school_id
+      data["review"]["school_move"]["home_educated"] = school_move.home_educated
+    end
+
+    save!
+  end
+
+  def clear_review_data!
+    data["review"] = { patient: {}, school_move: {} }
+    save!
   end
 end
