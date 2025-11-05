@@ -127,16 +127,25 @@ describe TriageForm do
 
       context "patient has had their first dose" do
         let(:delay_vaccination_until) { Date.tomorrow }
-
-        before do
-          create(:vaccination_record, patient:, programme:, session:)
-
-          StatusUpdater.call(patient:)
+        let(:expected_mmr_next_dose) do
+          (vaccination_record.performed_at + 28.days).to_date
         end
 
-        it "doesn't produce any validation errors" do
+        let!(:vaccination_record) do
+          create(
+            :vaccination_record,
+            patient:,
+            programme:,
+            session:,
+            performed_at: 1.week.ago
+          )
+        end
+
+        before { StatusUpdater.call(patient:) }
+
+        it "produces validation errors" do
           expect(validation_errors.join).to include(
-            "The vaccination cannot take place before"
+            "The vaccination cannot take place before #{expected_mmr_next_dose.to_fs(:long)}"
           )
         end
       end
