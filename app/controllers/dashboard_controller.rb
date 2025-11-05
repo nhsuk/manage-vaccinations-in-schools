@@ -19,6 +19,10 @@ class DashboardController < ApplicationController
   end
 
   def dashboard_cards_partial
-    team_has_upload_access_only? ? "dashboard_cards_upload_only" : "dashboard_cards_default"
+    if team_has_upload_access_only?
+      "dashboard_cards_upload_only"
+    else
+      "dashboard_cards_default"
+    end
   end
 end

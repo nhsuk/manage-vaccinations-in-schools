@@ -121,9 +121,7 @@ class Team < ApplicationRecord
   end
 
   def has_poc_access?
-    unless Flipper.enabled?(:bulk_upload)
-      return true
-    end
+    return true unless Flipper.enabled?(:bulk_upload)
 
     type_poc_only? || type_poc_with_legacy_upload?
   end
