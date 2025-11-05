@@ -53,9 +53,33 @@ describe Stats::Session do
       end
     end
 
+    context "with a patient not suitable for the programme" do
+      let(:hpv_programme) { create(:programme, :hpv) }
+      let(:menacwy_programme) { create(:programme, :menacwy) }
+      let(:programme) { menacwy_programme }
+      let(:session) do
+        create(:session, programmes: [hpv_programme, menacwy_programme])
+      end
+
+      before do
+        create(:patient, session:, year_group: 8).tap do |patient|
+          create(:patient_consent_status, :no_response, patient:, programme:)
+        end
+      end
+
+      it "returns correct counts for each category" do
+        expect(stats).to eq(
+          eligible_children: 0,
+          consent_no_response: 0,
+          consent_given_injection: 0,
+          consent_refused: 0,
+          vaccinated: 0
+        )
+      end
+    end
+
     context "with flu programme (multiple vaccine methods)" do
       let(:programme) { create(:programme, :flu) }
-      let(:session) { create(:session, programmes: [programme]) }
 
       before do
         create(:patient, session:, year_group: 9).tap do |patient|
