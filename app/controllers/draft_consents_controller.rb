@@ -63,8 +63,10 @@ class DraftConsentsController < ApplicationController
 
     @draft_consent.write_to!(@consent, triage_form: @triage_form)
 
+    @triage = nil
+
     ActiveRecord::Base.transaction do
-      @triage_form&.save! if @draft_consent.response_given?
+      @triage = @triage_form&.save! if @draft_consent.response_given?
 
       if (parent = @consent.parent)
         parent.save! if parent.changed?
@@ -82,10 +84,14 @@ class DraftConsentsController < ApplicationController
       StatusUpdater.call(patient: @patient)
     end
 
-    set_patient # reload with new statuses
-
     if @draft_consent.send_confirmation?
-      send_triage_confirmation(@patient, @session, @programme, @consent)
+      send_triage_confirmation(
+        @patient,
+        @session,
+        @programme,
+        @consent,
+        @triage
+      )
     end
 
     heading_link_href =

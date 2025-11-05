@@ -21,11 +21,18 @@ describe TriageMailerConcern do
 
   describe "#send_triage_confirmation" do
     subject(:send_triage_confirmation) do
-      sample.send_triage_confirmation(patient, session, programme, consent)
+      sample.send_triage_confirmation(
+        patient,
+        session,
+        programme,
+        consent,
+        triage
+      )
     end
 
     let(:session) { create(:session, programmes:) }
     let(:consent) { patient.consents.first }
+    let(:triage) { patient.triages.first }
 
     context "when the parents agree, triage is required and it is safe to vaccinate" do
       let(:patient) do
