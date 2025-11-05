@@ -59,8 +59,8 @@
       description: Send school session reminder emails to parents
     status_updater:
       cron: "0 3 * * *"
-      class: EnqueueDailyStatusUpdatesJob
-      description: Enqueues jobs to update statuses of all patients
+      class: StatusUpdaterJob
+      description: Updates the status of all patients
     trim_active_record_sessions:
       cron: "0 2 * * *"
       class: TrimActiveRecordSessionsJob
