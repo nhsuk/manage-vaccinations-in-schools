@@ -48,7 +48,7 @@ describe AppSessionOverviewTalliesComponent do
                      0
     include_examples "displays correct count",
                      "Flu",
-                     "Consent given for injection",
+                     "Consent given for gelatine-free injection",
                      0
     include_examples "displays correct count", "Flu", "Consent refused", 0
     include_examples "displays correct count", "Flu", "Vaccinated", 0
@@ -81,7 +81,7 @@ describe AppSessionOverviewTalliesComponent do
                        0
       include_examples "displays correct count",
                        "Flu",
-                       "Consent given for injection",
+                       "Consent given for gelatine-free injection",
                        0
       include_examples "displays correct count", "Flu", "Consent refused", 0
       include_examples "displays correct count", "Flu", "Vaccinated", 1
@@ -93,7 +93,7 @@ describe AppSessionOverviewTalliesComponent do
       before do
         create(
           :patient_consent_status,
-          :given_injection_only,
+          :given_without_gelatine,
           patient: patients.first,
           programme: flu_programme
         )
@@ -114,7 +114,7 @@ describe AppSessionOverviewTalliesComponent do
                        1
       include_examples "displays correct count",
                        "Flu",
-                       "Consent given for injection",
+                       "Consent given for gelatine-free injection",
                        1
       include_examples "displays correct count", "Flu", "Consent refused", 0
       include_examples "displays correct count", "Flu", "Vaccinated", 0
@@ -138,7 +138,7 @@ describe AppSessionOverviewTalliesComponent do
                        0
       include_examples "displays correct count",
                        "Flu",
-                       "Consent given for injection",
+                       "Consent given for gelatine-free injection",
                        0
       include_examples "displays correct count", "Flu", "Consent refused", 1
       include_examples "displays correct count", "Flu", "Vaccinated", 0
@@ -181,7 +181,7 @@ describe AppSessionOverviewTalliesComponent do
                        0
       include_examples "displays correct count",
                        "Flu",
-                       "Consent given for injection",
+                       "Consent given for gelatine-free injection",
                        0
       include_examples "displays correct count", "Flu", "Consent refused", 0
       include_examples "displays correct count", "Flu", "Vaccinated", 0

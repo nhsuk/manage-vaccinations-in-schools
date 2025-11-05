@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 describe Stats::Session do
-  describe ".call" do
-    subject(:stats) { described_class.call(session:, programme:) }
+  describe "#call" do
+    subject(:stats) { described_class.call(session, programme:) }
 
     let(:programme) { create(:programme, :hpv) }
     let(:session) { create(:session, programmes: [programme]) }
@@ -11,9 +11,9 @@ describe Stats::Session do
       it "returns zero counts for all stats" do
         expect(stats).to eq(
           eligible_children: 0,
-          no_response: 0,
-          consent_given: 0,
-          did_not_consent: 0,
+          consent_no_response: 0,
+          consent_given_injection: 0,
+          consent_refused: 0,
           vaccinated: 0
         )
       end
@@ -45,17 +45,41 @@ describe Stats::Session do
       it "returns correct counts for each category" do
         expect(stats).to eq(
           eligible_children: 5,
-          no_response: 1,
-          consent_given: 1,
-          did_not_consent: 2,
+          consent_no_response: 1,
+          consent_given_injection: 1,
+          consent_refused: 2,
           vaccinated: 1
+        )
+      end
+    end
+
+    context "with a patient not suitable for the programme" do
+      let(:hpv_programme) { create(:programme, :hpv) }
+      let(:menacwy_programme) { create(:programme, :menacwy) }
+      let(:programme) { menacwy_programme }
+      let(:session) do
+        create(:session, programmes: [hpv_programme, menacwy_programme])
+      end
+
+      before do
+        create(:patient, session:, year_group: 8).tap do |patient|
+          create(:patient_consent_status, :no_response, patient:, programme:)
+        end
+      end
+
+      it "returns correct counts for each category" do
+        expect(stats).to eq(
+          eligible_children: 0,
+          consent_no_response: 0,
+          consent_given_injection: 0,
+          consent_refused: 0,
+          vaccinated: 0
         )
       end
     end
 
     context "with flu programme (multiple vaccine methods)" do
       let(:programme) { create(:programme, :flu) }
-      let(:session) { create(:session, programmes: [programme]) }
 
       before do
         create(:patient, session:, year_group: 9).tap do |patient|
@@ -70,7 +94,7 @@ describe Stats::Session do
         create(:patient, session:, year_group: 9).tap do |patient|
           create(
             :patient_consent_status,
-            :given_injection_only,
+            :given_without_gelatine,
             patient:,
             programme:
           )
@@ -79,7 +103,7 @@ describe Stats::Session do
         create(:patient, session:, year_group: 9).tap do |patient|
           create(
             :patient_consent_status,
-            :given_injection_only,
+            :given_without_gelatine,
             patient:,
             programme:
           )
@@ -90,7 +114,7 @@ describe Stats::Session do
         expect(stats).to include(
           eligible_children: 3,
           consent_given_nasal: 1,
-          consent_given_injection: 2
+          consent_given_injection_without_gelatine: 2
         )
       end
     end
