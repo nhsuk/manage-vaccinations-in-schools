@@ -1133,7 +1133,7 @@ describe Patient do
     end
 
     let(:patient) { create(:patient, nhs_number: "9449310475") }
-    let(:programme) { create(:programme, type: "hpv") }
+    let(:programme) { create(:programme, :hpv) }
     let(:session) { create(:session, programmes: [programme]) }
     let(:vaccination_record) do
       create(:vaccination_record, patient:, programme:, session:)

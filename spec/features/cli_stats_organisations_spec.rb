@@ -68,9 +68,9 @@ describe "mavis stats organisations" do
 
   def given_organisation_has_complete_data_with_filters
     @organisation = create(:organisation, ods_code: "TEST002")
-    programme_flu = create(:programme, type: "flu")
-    programme_hpv = create(:programme, type: "hpv")
-    programme_menacwy = create(:programme, type: "menacwy")
+    programme_flu = create(:programme, :flu)
+    programme_hpv = create(:programme, :hpv)
+    programme_menacwy = create(:programme, :menacwy)
 
     @team_a = create(:team, organisation: @organisation, name: "North Team")
     @team_b = create(:team, organisation: @organisation, name: "South Team")

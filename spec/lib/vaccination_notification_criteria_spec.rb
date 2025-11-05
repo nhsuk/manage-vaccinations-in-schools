@@ -24,7 +24,7 @@ describe VaccinationNotificationCriteria do
     context "when patient has consents for different programmes" do
       before do
         other_programme_type = (Programme.types.keys - [programme.type]).sample
-        other_programme = create(:programme, type: other_programme_type)
+        other_programme = create(:programme, :"#{other_programme_type}")
         create(
           :consent,
           :self_consent,
@@ -353,7 +353,7 @@ describe VaccinationNotificationCriteria do
 
         # Consents for other programmes (should be ignored)
         other_programme_type = (Programme.types.keys - [programme.type]).sample
-        other_programme = create(:programme, type: other_programme_type)
+        other_programme = create(:programme, :"#{other_programme_type}")
         create(
           :consent,
           :self_consent,

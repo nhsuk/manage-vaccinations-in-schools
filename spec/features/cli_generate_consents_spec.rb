@@ -12,7 +12,7 @@ describe "mavis generate consents" do
 
   def given_an_team_exists
     @team = create(:team)
-    @programme = create(:programme, type: "hpv")
+    @programme = create(:programme, :hpv)
   end
 
   def and_there_are_three_patients_in_a_session

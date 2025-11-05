@@ -46,8 +46,8 @@ describe "mavis stats consents-by-school", type: :integration do
 
   def given_organisation_has_consent_data
     @organisation = create(:organisation, ods_code: "TEST003")
-    programme_flu = create(:programme, type: "flu")
-    programme_hpv = create(:programme, type: "hpv")
+    programme_flu = create(:programme, :flu)
+    programme_hpv = create(:programme, :hpv)
 
     @team_a =
       create(:team, organisation: @organisation, workgroup: "ImmunisationNorth")
