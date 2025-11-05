@@ -42,7 +42,7 @@ describe ImmunisationImport do
     create(:school, urn: "144012")
   end
 
-  let(:programmes) { [create(:programme, :flu_all_vaccines)] }
+  let(:programmes) { [create(:programme, :flu)] }
   let(:team) do
     create(:team, :with_generic_clinic, ods_code: "R1L", programmes:)
   end
@@ -81,7 +81,7 @@ describe ImmunisationImport do
     around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
 
     context "with valid flu rows" do
-      let(:programmes) { [create(:programme, :flu_all_vaccines)] }
+      let(:programmes) { [create(:programme, :flu)] }
       let(:file) { "valid_flu.csv" }
 
       it "populates the rows" do
@@ -91,7 +91,7 @@ describe ImmunisationImport do
     end
 
     context "with valid HPV rows" do
-      let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
+      let(:programmes) { [create(:programme, :hpv)] }
       let(:file) { "valid_hpv.csv" }
 
       it "populates the rows" do
@@ -113,7 +113,7 @@ describe ImmunisationImport do
     context "with a SystmOne file" do
       let(:programmes) do
         [
-          create(:programme, :hpv_all_vaccines),
+          create(:programme, :hpv),
           create(:programme, :menacwy),
           create(:programme, :flu)
         ]
@@ -143,7 +143,7 @@ describe ImmunisationImport do
     around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
 
     context "with valid flu rows" do
-      let(:programmes) { [create(:programme, :flu_all_vaccines)] }
+      let(:programmes) { [create(:programme, :flu)] }
       let(:file) { "valid_flu.csv" }
 
       it "creates locations, patients, and vaccination records" do
@@ -197,7 +197,7 @@ describe ImmunisationImport do
     end
 
     context "with valid HPV rows" do
-      let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
+      let(:programmes) { [create(:programme, :hpv)] }
       let(:file) { "valid_hpv.csv" }
 
       it "creates locations, patients, and vaccination records" do
@@ -307,7 +307,7 @@ describe ImmunisationImport do
     context "with a SystmOne file format" do
       let(:programmes) do
         [
-          create(:programme, :hpv_all_vaccines),
+          create(:programme, :hpv),
           create(:programme, :menacwy),
           create(:programme, :flu)
         ]
@@ -337,7 +337,7 @@ describe ImmunisationImport do
     end
 
     context "with an existing patient matching the name" do
-      let(:programmes) { [create(:programme, :flu_all_vaccines)] }
+      let(:programmes) { [create(:programme, :flu)] }
       let(:file) { "valid_flu.csv" }
 
       let!(:patient) do
@@ -360,7 +360,7 @@ describe ImmunisationImport do
     end
 
     context "with an existing patient matching the name but with a different case" do
-      let(:programmes) { [create(:programme, :flu_all_vaccines)] }
+      let(:programmes) { [create(:programme, :flu)] }
       let(:file) { "valid_flu.csv" }
 
       before do
@@ -379,7 +379,7 @@ describe ImmunisationImport do
     end
 
     context "with a patient record that has different attributes" do
-      let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
+      let(:programmes) { [create(:programme, :hpv)] }
       let(:file) { "valid_hpv_with_changes.csv" }
       let!(:existing_patient) do
         create(
@@ -400,7 +400,7 @@ describe ImmunisationImport do
     end
 
     context "when vaccination discovered notifications shouldn't be sent" do
-      let(:programmes) { [create(:programme, :flu_all_vaccines)] }
+      let(:programmes) { [create(:programme, :flu)] }
       let(:file) { "valid_flu.csv" }
 
       let!(:patient) do

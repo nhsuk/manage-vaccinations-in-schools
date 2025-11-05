@@ -163,7 +163,7 @@ describe AppActivityLogComponent do
         performed_at: Time.zone.local(2025, 5, 31, 12, 0, 0, 1),
         performed_by: nil,
         notes: "Some notes millisecond later",
-        vaccine: create(:vaccine, :cervarix, programme: programmes.first)
+        vaccine: programmes.first.vaccines.find_by!(nivs_name: "Cervarix")
       )
 
       create(
@@ -302,7 +302,7 @@ describe AppActivityLogComponent do
         performed_at: Time.zone.local(2025, 5, 31, 13),
         performed_by: user,
         notes: "Some notes.",
-        vaccine: create(:vaccine, :gardasil, programme: programmes.first)
+        vaccine: programmes.first.vaccines.find_by!(nivs_name: "Gardasil")
       )
     end
 

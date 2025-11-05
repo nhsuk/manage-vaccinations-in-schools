@@ -20,11 +20,6 @@ FactoryBot.define do
 
     trait :hpv do
       type { "hpv" }
-      vaccines { [association(:vaccine, :gardasil_9, programme: instance)] }
-    end
-
-    trait :hpv_all_vaccines do
-      hpv
       vaccines do
         [
           association(:vaccine, :cervarix, programme: instance),
@@ -38,16 +33,6 @@ FactoryBot.define do
       type { "flu" }
       vaccines do
         [
-          association(:vaccine, :cell_based_trivalent, programme: instance),
-          association(:vaccine, :fluenz, programme: instance)
-        ]
-      end
-    end
-
-    trait :flu_all_vaccines do
-      flu
-      vaccines do
-        [
           association(:vaccine, :fluenz, programme: instance),
           association(:vaccine, :cell_based_trivalent, programme: instance),
           association(:vaccine, :vaxigrip, programme: instance),
@@ -56,18 +41,8 @@ FactoryBot.define do
       end
     end
 
-    trait :flu_nasal_only do
-      flu
-      vaccines { [association(:vaccine, :fluenz, programme: instance)] }
-    end
-
     trait :menacwy do
       type { "menacwy" }
-      vaccines { [association(:vaccine, :menquadfi, programme: instance)] }
-    end
-
-    trait :menacwy_all_vaccines do
-      menacwy
       vaccines do
         [
           association(:vaccine, :menquadfi, programme: instance),
@@ -89,11 +64,6 @@ FactoryBot.define do
 
     trait :td_ipv do
       type { "td_ipv" }
-      vaccines { [association(:vaccine, :revaxis, programme: instance)] }
-    end
-
-    trait :td_ipv_all_vaccines do
-      td_ipv
       vaccines { [association(:vaccine, :revaxis, programme: instance)] }
     end
   end

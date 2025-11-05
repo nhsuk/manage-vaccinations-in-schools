@@ -19,7 +19,7 @@ describe NHS::ImmunisationsAPI do
   let(:nhs_number) { "9449310475" }
   let(:programme) { create(:programme, :hpv) }
   let(:location) { create(:community_clinic, team:, ods_code: nil) }
-  let(:vaccine) { create(:vaccine, :gardasil, programme:) }
+  let(:vaccine) { programme.vaccines.find_by!(brand: "Gardasil") }
   let(:batch) do
     create(:batch, vaccine:, expiry: "2023-03-20", name: "X8U375AL")
   end
@@ -697,6 +697,7 @@ describe NHS::ImmunisationsAPI do
 
     context "when the programme type is not one of those synced to the API" do
       let(:programme) { create(:programme, :menacwy) }
+      let(:vaccine) { programme.vaccines.first }
 
       it { should be false }
     end

@@ -32,7 +32,7 @@ describe "mavis vaccination-records generate-fhir" do
     team = create(:team)
     programme = create(:programme, type: "hpv")
     patient = create(:patient, team:)
-    vaccine = create(:vaccine, :gardasil, programme:)
+    vaccine = programme.vaccines.first
     batch = create(:batch, vaccine:, expiry: "2023-03-20", name: "X8U375AL")
 
     @vaccination_record =

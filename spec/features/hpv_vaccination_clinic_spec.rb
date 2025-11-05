@@ -29,7 +29,7 @@ describe "HPV vaccination" do
   end
 
   def given_i_am_signed_in
-    programme = create(:programme, :hpv_all_vaccines)
+    programme = create(:programme, :hpv)
     team = create(:team, :with_one_nurse, programmes: [programme])
     location = create(:generic_clinic, team:)
 

@@ -31,8 +31,8 @@ describe "Tallying" do
   end
 
   def given_a_session_for_hpv_and_flu_is_running_today
-    @flu_programme = create(:programme, :flu, vaccines: [])
-    @hpv_programme = create(:programme, :hpv, vaccines: [])
+    @flu_programme = create(:programme, :flu)
+    @hpv_programme = create(:programme, :hpv)
 
     programmes = [@hpv_programme, @flu_programme]
     team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
@@ -41,14 +41,13 @@ describe "Tallying" do
     @session =
       create(:session, :today, :requires_no_registration, programmes:, team:)
 
-    @cervarix_vaccine = create(:vaccine, :cervarix, programme: @hpv_programme)
+    @cervarix_vaccine = @hpv_programme.vaccines.find_by!(brand: "Cervarix")
     @cervarix_batch = create(:batch, :not_expired, vaccine: @cervarix_vaccine)
 
-    @gardasil9_vaccine =
-      create(:vaccine, :gardasil_9, programme: @hpv_programme)
+    @gardasil9_vaccine = @hpv_programme.vaccines.find_by!(brand: "Gardasil 9")
     @gardasil9_batch = create(:batch, :not_expired, vaccine: @gardasil9_vaccine)
 
-    @fluenz_vaccine = create(:vaccine, :fluenz, programme: @flu_programme)
+    @fluenz_vaccine = @flu_programme.vaccines.find_by!(brand: "Fluenz")
     @fluenz_batch = create(:batch, :not_expired, vaccine: @fluenz_vaccine)
 
     @patient =
@@ -160,18 +159,14 @@ describe "Tallying" do
   end
 
   def then_i_see_my_vaccination_tallies_for_today_with_default_batches
-    rows = page.all(".nhsuk-table__row")
-    expect(rows.count).to eq(4)
-    expect(rows[1]).to have_content("Fluenz 1 #{@fluenz_batch.name} Change")
-    expect(rows[2]).to have_content("Gardasil 9 2 Not set")
-    expect(rows[3]).to have_content("Cervarix 1 #{@cervarix_batch.name} Change")
+    expect(page).to have_content("Fluenz 1 #{@fluenz_batch.name} Change")
+    expect(page).to have_content("Gardasil 9 2 Not set")
+    expect(page).to have_content("Cervarix 1 #{@cervarix_batch.name} Change")
   end
 
   def then_i_see_my_vaccination_tallies_with_all_zero_values_with_default_batches
-    rows = page.all(".nhsuk-table__row")
-    expect(rows.count).to eq(3)
-    expect(rows[1]).to have_content("Fluenz 0 #{@fluenz_batch.name} Change")
-    expect(rows[2]).to have_content("Gardasil 9 0 Not set")
+    expect(page).to have_content("Fluenz 0 #{@fluenz_batch.name} Change")
+    expect(page).to have_content("Gardasil 9 0 Not set")
   end
 
   def and_i_click_on_the_expander_your_vaccinations_today

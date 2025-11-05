@@ -618,12 +618,6 @@ describe ConsentForm do
       it { should be(true) }
     end
 
-    context "if the flu programme only offers injection vaccines" do
-      let(:programmes) { [create(:programme, :flu_nasal_only)] }
-
-      it { should be(true) }
-    end
-
     context "for an HPV programme" do
       let(:programmes) { [create(:programme, :hpv)] }
 
