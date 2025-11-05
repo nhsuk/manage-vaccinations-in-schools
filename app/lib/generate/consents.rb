@@ -25,7 +25,7 @@ class Generate::Consents
     create_consents(:given, @given)
     create_consents(:needing_triage, @given_needs_triage)
 
-    StatusUpdater.call(patient: @updated_patients)
+    StatusUpdater.call(patient: Patient.where(id: @updated_patients.map(&:id)))
   end
 
   def self.call(...) = new(...).call

@@ -54,7 +54,9 @@ class Generate::VaccinationRecords
     imported_ids = VaccinationRecord.import!(vaccination_records).ids
     SyncPatientTeamJob.perform_later(VaccinationRecord, imported_ids)
 
-    StatusUpdater.call(patient: vaccination_records.map(&:patient))
+    StatusUpdater.call(
+      patient: Patient.where(id: vaccination_records.map(&:patient_id))
+    )
   end
 
   def random_patients_for(session:)

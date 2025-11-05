@@ -2,7 +2,15 @@
 
 class StatusUpdater
   def initialize(patient: nil, academic_years: nil)
-    @patient = patient
+    @patient_scope =
+      if patient.is_a?(Patient)
+        Patient.where(id: patient.id)
+      elsif patient # assume it's an ActiveRecord relation
+        patient
+      else
+        Patient.all
+      end
+
     @academic_years = academic_years || AcademicYear.all
   end
 
@@ -19,7 +27,7 @@ class StatusUpdater
 
   private
 
-  attr_reader :patient, :academic_years
+  attr_reader :patient_scope, :academic_years
 
   def update_consent_statuses!
     Patient::ConsentStatus.import!(
@@ -29,8 +37,9 @@ class StatusUpdater
     )
 
     Patient::ConsentStatus
-      .then { patient ? it.where(patient:) : it }
       .where(academic_year: academic_years)
+      .joins(:patient)
+      .merge(patient_scope)
       .includes(:consents, :patient, :programme, :vaccination_records)
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)
@@ -54,8 +63,9 @@ class StatusUpdater
 
     Patient::RegistrationStatus
       .joins(:session)
-      .then { patient ? it.where(patient:) : it }
       .where(session: { academic_year: academic_years })
+      .joins(:patient)
+      .merge(patient_scope)
       .includes(
         :patient,
         :attendance_records,
@@ -83,8 +93,9 @@ class StatusUpdater
     )
 
     Patient::TriageStatus
-      .then { patient ? it.where(patient:) : it }
       .where(academic_year: academic_years)
+      .joins(:patient)
+      .merge(patient_scope)
       .includes(:patient, :programme, :consents, :triages, :vaccination_records)
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)
@@ -107,8 +118,9 @@ class StatusUpdater
     )
 
     Patient::VaccinationStatus
-      .then { patient ? it.where(patient:) : it }
       .where(academic_year: academic_years)
+      .joins(:patient)
+      .merge(patient_scope)
       .includes(
         :attendance_record,
         :consents,
@@ -139,8 +151,7 @@ class StatusUpdater
 
   def patient_statuses_to_import
     @patient_statuses_to_import ||=
-      Patient
-        .then { patient ? it.where(id: patient) : it }
+      patient_scope
         .pluck(:id, :birth_academic_year)
         .flat_map do |patient_id, birth_academic_year|
           academic_years.flat_map do |academic_year|
@@ -155,10 +166,10 @@ class StatusUpdater
 
   def patient_location_statuses_to_import
     PatientLocation
-      .joins(:patient)
       .joins_sessions
-      .then { patient ? it.where(patient:) : it }
       .where(sessions: { academic_year: academic_years })
+      .joins(:patient)
+      .merge(patient_scope)
       .pluck(
         "patients.id",
         "sessions.id",
