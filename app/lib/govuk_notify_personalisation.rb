@@ -218,7 +218,7 @@ class GovukNotifyPersonalisation
 
     return if latest_delayed_triage.nil?
 
-    session_date = next_or_today_session_date.to_date
+    session_date = session.next_date(include_today: true)
     triage_date = latest_delayed_triage.created_at.to_date
 
     if session_date && triage_date == session_date
