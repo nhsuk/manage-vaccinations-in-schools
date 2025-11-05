@@ -6,6 +6,7 @@ class StatusUpdaterJob < ApplicationJob
   queue_as :cache
 
   def perform(patient: nil, session: nil)
-    StatusUpdater.call(patient:, session:)
+    academic_years = [AcademicYear.current, AcademicYear.pending].uniq
+    StatusUpdater.call(patient:, session:, academic_years:)
   end
 end
