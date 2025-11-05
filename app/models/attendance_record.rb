@@ -31,6 +31,11 @@ class AttendanceRecord < ApplicationRecord
 
   scope :today, -> { where(date: Date.current) }
 
+  scope :for_academic_year,
+        ->(academic_year) do
+          where(date: academic_year.to_academic_year_date_range)
+        end
+
   delegate :today?, to: :date
 
   # This is needed to be able to pass a session to the policy.
