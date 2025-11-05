@@ -3,57 +3,101 @@
 describe "Triage" do
   around { |example| travel_to(Date.new(2025, 7, 1)) { example.run } }
 
-  scenario "delay vaccination" do
+  scenario "invite to clinic consent given no triage needed" do
     given_a_programme_with_a_running_session
     and_i_am_signed_in
-    when_i_go_to_the_triage_page
+    and_a_patient_who_doesnt_need_triage_exists
+
+    when_i_go_to_the_consent_page
 
     when_i_click_on_a_patient
-    and_i_choose_to_delay_vaccination
-    and_i_enter_a_date_beyond_the_current_academic_year
-    and_i_save_triage
-    then_i_see_an_error_that_date_cannot_be_beyond_academic_year
-
-    when_i_enter_valid_date
-    and_i_save_triage
+    and_i_click_on_update_triage_outcome
+    and_i_enter_a_note_and_invite_to_clinic
     then_i_see_an_alert_saying_the_record_was_saved
+    and_a_vaccination_at_clinic_email_is_sent_to_the_parent
 
-    when_i_filter_by_delay_vaccination
+    when_i_filter_by_invited_to_clinic
+    then_i_see_the_patient
+
+    when_i_access_the_vaccinate_later_page
     then_i_see_the_patient
 
     when_i_view_the_child_record
-    then_they_should_have_the_status_banner_delay_vaccination
+    then_they_should_have_the_status_banner_invited_to_clinic
+    and_i_am_not_able_to_record_a_vaccination
+    and_i_am_able_to_update_the_triage
+  end
+
+  scenario "invite to clinic consent given and needs triage" do
+    given_a_programme_with_a_running_session
+    and_i_am_signed_in
+    and_a_patient_who_needs_triage_exists
+
+    when_i_go_to_the_triage_page
+
+    when_i_click_on_a_patient
+    and_i_enter_a_note_and_invite_to_clinic
+    then_i_see_an_alert_saying_the_record_was_saved
+    and_a_vaccination_at_clinic_email_is_sent_to_the_parent
+
+    when_i_filter_by_invited_to_clinic
+    then_i_see_the_patient
+
+    when_i_access_the_vaccinate_later_page
+    then_i_see_the_patient
+
+    when_i_view_the_child_record
+    then_they_should_have_the_status_banner_invited_to_clinic
+    and_i_am_not_able_to_record_a_vaccination
+    and_i_am_able_to_update_the_triage
   end
 
   def given_a_programme_with_a_running_session
     programmes = [create(:programme, :hpv)]
     @team = create(:team, :with_one_nurse, programmes:)
     @school = create(:school, team: @team)
-    session =
-      create(
-        :session,
-        team: @team,
-        programmes:,
-        location: @school,
-        date: Time.zone.today
-      )
+
+    @session = create(:session, team: @team, programmes:, location: @school)
+  end
+
+  def and_a_patient_who_needs_triage_exists
     @patient =
-      create(:patient, :consent_given_triage_needed, :in_attendance, session:)
+      create(
+        :patient,
+        :consent_given_triage_needed,
+        :in_attendance,
+        session: @session
+      )
+  end
+
+  def and_a_patient_who_doesnt_need_triage_exists
+    @patient =
+      create(
+        :patient,
+        :consent_given_triage_not_needed,
+        :in_attendance,
+        session: @session
+      )
   end
 
   def and_i_am_signed_in
     sign_in @team.users.first
   end
 
+  def when_i_go_to_the_consent_page
+    visit session_consent_path(@session)
+  end
+
   def when_i_go_to_the_triage_page
-    visit "/dashboard"
-    click_link "Sessions", match: :first
-    click_link @school.name
-    click_link "Triage"
+    visit session_triage_path(@session)
   end
 
   def when_i_click_on_a_patient
     click_link @patient.full_name
+  end
+
+  def and_i_click_on_update_triage_outcome
+    click_on "Update triage outcome"
   end
 
   def and_i_enter_a_note_and_invite_to_clinic
