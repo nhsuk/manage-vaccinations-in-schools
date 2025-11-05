@@ -7,9 +7,32 @@ describe StatusUpdaterJob do
     let(:patient) { build(:patient) }
     let(:session) { build(:session) }
 
-    it "calls the service class" do
-      expect(StatusUpdater).to receive(:call).with(patient:, session:)
-      perform_now
+    context "during the preparation period" do
+      around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
+
+      it "calls the service class with the current and pending academic years" do
+        expect(StatusUpdater).to receive(:call).with(
+          patient:,
+          session:,
+          academic_years: [2024, 2025]
+        )
+
+        perform_now
+      end
+    end
+
+    context "outside the preparation period" do
+      around { |example| travel_to(Date.new(2025, 9, 1)) { example.run } }
+
+      it "calls the service class with the current and pending academic years" do
+        expect(StatusUpdater).to receive(:call).with(
+          patient:,
+          session:,
+          academic_years: [2025]
+        )
+
+        perform_now
+      end
     end
   end
 end

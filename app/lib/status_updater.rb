@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 class StatusUpdater
-  def initialize(patient: nil, session: nil)
+  def initialize(patient: nil, session: nil, academic_years: nil)
+    @academic_years = academic_years || AcademicYear.all
+
     scope = PatientLocation.joins_sessions
 
     scope = scope.where(patient:) if patient
@@ -28,7 +30,7 @@ class StatusUpdater
 
   private
 
-  attr_reader :patient_locations
+  attr_reader :patient_locations, :academic_years
 
   def update_consent_statuses!
     Patient::ConsentStatus.import!(
@@ -142,10 +144,6 @@ class StatusUpdater
           }
         )
       end
-  end
-
-  def academic_years
-    @academic_years ||= AcademicYear.all
   end
 
   def patient_statuses_to_import
