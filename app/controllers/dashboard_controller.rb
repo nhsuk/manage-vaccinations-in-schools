@@ -3,7 +3,7 @@
 class DashboardController < ApplicationController
   skip_after_action :verify_policy_scoped, only: :index
 
-  helper_method :dashboard_cards_partial, :is_upload_only?
+  helper_method :dashboard_cards_partial, :team_has_upload_access_only?
 
   layout "full"
 
@@ -14,11 +14,11 @@ class DashboardController < ApplicationController
       end
   end
 
-  def is_upload_only?
-    current_team.is_upload_only? && Flipper.enabled?(:bulk_upload)
+  def team_has_upload_access_only?
+    current_team.has_upload_access_only?
   end
 
   def dashboard_cards_partial
-    is_upload_only? ? "dashboard_cards_upload_only" : "dashboard_cards_default"
+    team_has_upload_access_only? ? "dashboard_cards_upload_only" : "dashboard_cards_default"
   end
 end

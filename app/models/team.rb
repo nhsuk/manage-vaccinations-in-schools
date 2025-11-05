@@ -116,7 +116,15 @@ class Team < ApplicationRecord
       .find_or_create_by!(academic_year:, location: generic_clinic)
   end
 
-  def is_upload_only?
-    type_upload_only?
+  def has_upload_access_only?
+    Flipper.enabled?(:bulk_upload) && type_upload_only?
+  end
+
+  def has_poc_access?
+    unless Flipper.enabled?(:bulk_upload)
+      return true
+    end
+
+    type_poc_only? || type_poc_with_legacy_upload?
   end
 end

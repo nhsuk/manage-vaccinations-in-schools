@@ -17,7 +17,7 @@
 <%= render dashboard_cards_partial %>
 
 <ul class="nhsuk-grid-row nhsuk-card-group">
-  <% unless is_upload_only? %>
+  <% unless team_has_upload_access_only? %>
     <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
       <%= render AppCardComponent.new(link_to: consent_forms_path, secondary: true) do |card| %>
         <% card.with_heading(level: 2, size: "s") { t("consent_forms.index.title") } %>
