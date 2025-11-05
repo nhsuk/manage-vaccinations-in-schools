@@ -94,9 +94,14 @@ class TriageForm
   end
 
   def next_mmr_dose_date
-    vaccination_statuses = patient.vaccination_statuses.where(programme:)
-    vaccinated_on = vaccination_statuses.last&.latest_date
-    (vaccinated_on || Time.zone.today) + 28.days
+    vaccination_status = patient.vaccination_status(programme:, academic_year:)
+
+    first_dose_date =
+      if vaccination_status.eligible? || vaccination_status.due?
+        vaccination_status.latest_date
+      end
+
+    (first_dose_date || Date.current) + 28.days
   end
 
   private
@@ -224,14 +229,15 @@ class TriageForm
   def validate_delay_vaccination_until_date
     return if delay_vaccination_until.nil?
 
-    if delay_vaccination_until < Time.zone.today
+    if delay_vaccination_until < Date.current
       errors.add(
         :delay_vaccination_until,
         "The vaccination cannot be in the past"
       )
     end
 
-    cutoff_date = AcademicYear.current.to_academic_year_date_range.end
+    cutoff_date = academic_year.to_academic_year_date_range.end
+
     if delay_vaccination_until > cutoff_date
       errors.add(
         :delay_vaccination_until,
@@ -240,7 +246,7 @@ class TriageForm
     end
 
     if programme.mmr? && patient_eligible_for_additional_dose? &&
-         (delay_vaccination_until < next_mmr_dose_date)
+         delay_vaccination_until < next_mmr_dose_date
       errors.add(
         :delay_vaccination_until,
         "The vaccination cannot take place before #{next_mmr_dose_date.to_fs(:long)}"
