@@ -6,10 +6,12 @@ module PatientMergeFormConcern
   include ActiveModel::Model
   include ActiveModel::Attributes
 
-  included { attribute :nhs_number, :string }
+  included do
+    attribute :nhs_number, :string
 
-  def nhs_number=(value)
-    super(value.blank? ? nil : value.gsub(/\s/, ""))
+    def nhs_number=(value)
+      super(value.blank? ? nil : value.gsub(/\s/, ""))
+    end
   end
 
   def existing_patient

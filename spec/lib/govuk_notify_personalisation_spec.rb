@@ -185,6 +185,81 @@ describe GovukNotifyPersonalisation do
         )
       end
     end
+
+    context "delayed triage" do
+      context "created on day of session" do
+        let(:session) do
+          create(:session, :today, location:, team:, programmes:)
+        end
+
+        before do
+          create(
+            :triage,
+            :delay_vaccination,
+            patient:,
+            programme: programmes.first
+          )
+        end
+
+        it do
+          expect(to_h).to match(
+            hash_including(
+              delay_vaccination_review_context:
+                "assessed John in the vaccination session"
+            )
+          )
+        end
+      end
+
+      context "created before session starts" do
+        let(:session) do
+          create(:session, :today, location:, team:, programmes:)
+        end
+
+        before do
+          create(
+            :triage,
+            :delay_vaccination,
+            patient:,
+            created_at: Date.yesterday,
+            programme: programmes.first
+          )
+        end
+
+        it do
+          expect(to_h).to match(
+            hash_including(
+              delay_vaccination_review_context:
+                "reviewed the answers you gave to the health questions about John"
+            )
+          )
+        end
+      end
+
+      context "created after session starts" do
+        let(:session) do
+          create(:session, :yesterday, location:, team:, programmes:)
+        end
+
+        before do
+          create(
+            :triage,
+            :delay_vaccination,
+            patient:,
+            programme: programmes.first
+          )
+        end
+
+        it do
+          expect(to_h).to match(
+            hash_including(
+              delay_vaccination_review_context:
+                "reviewed the answers you gave to the health questions about John"
+            )
+          )
+        end
+      end
+    end
   end
 
   context "with a consent" do
@@ -385,7 +460,7 @@ describe GovukNotifyPersonalisation do
           today_or_date_of_vaccination: "on 1 January 2024",
           outcome_administered: "yes",
           outcome_not_administered: "no",
-          vaccine_and_dose: "HPV first dose",
+          vaccine_and_dose: "HPV 1st dose",
           vaccine_brand: "Vaccine"
         )
       )

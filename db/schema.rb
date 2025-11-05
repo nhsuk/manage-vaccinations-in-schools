@@ -10,39 +10,39 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_03_182041) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
 
   create_table "access_log_entries", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "patient_id", null: false
-    t.integer "controller", null: false
     t.integer "action", null: false
+    t.integer "controller", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.bigint "patient_id", null: false
     t.jsonb "request_details"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["patient_id"], name: "index_access_log_entries_on_patient_id"
     t.index ["user_id"], name: "index_access_log_entries_on_user_id"
   end
 
   create_table "active_record_sessions", force: :cascade do |t|
-    t.string "session_id", null: false
-    t.jsonb "data"
     t.datetime "created_at", null: false
+    t.jsonb "data"
+    t.string "session_id", null: false
     t.datetime "updated_at", null: false
     t.index ["session_id"], name: "index_active_record_sessions_on_session_id", unique: true
     t.index ["updated_at"], name: "index_active_record_sessions_on_updated_at"
   end
 
   create_table "archive_reasons", force: :cascade do |t|
-    t.bigint "team_id", null: false
-    t.bigint "patient_id", null: false
-    t.bigint "created_by_user_id"
-    t.integer "type", null: false
-    t.string "other_details", default: "", null: false
     t.datetime "created_at", null: false
+    t.bigint "created_by_user_id"
+    t.string "other_details", default: "", null: false
+    t.bigint "patient_id", null: false
+    t.bigint "team_id", null: false
+    t.integer "type", null: false
     t.datetime "updated_at", null: false
     t.index ["created_by_user_id"], name: "index_archive_reasons_on_created_by_user_id"
     t.index ["patient_id", "team_id"], name: "index_archive_reasons_on_patient_id_and_team_id", unique: true
@@ -54,30 +54,30 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   create_table "attendance_records", force: :cascade do |t|
     t.boolean "attending", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "patient_id", null: false
     t.date "date", null: false
     t.bigint "location_id", null: false
+    t.bigint "patient_id", null: false
+    t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_attendance_records_on_location_id"
     t.index ["patient_id", "location_id", "date"], name: "idx_on_patient_id_location_id_date_e5912f40c4", unique: true
     t.index ["patient_id"], name: "index_attendance_records_on_patient_id"
   end
 
   create_table "audits", force: :cascade do |t|
-    t.integer "auditable_id"
-    t.string "auditable_type"
+    t.string "action"
     t.integer "associated_id"
     t.string "associated_type"
+    t.integer "auditable_id"
+    t.string "auditable_type"
+    t.jsonb "audited_changes"
+    t.string "comment"
+    t.datetime "created_at"
+    t.string "remote_address"
+    t.string "request_uuid"
     t.integer "user_id"
     t.string "user_type"
     t.string "username"
-    t.string "action"
-    t.jsonb "audited_changes"
     t.integer "version", default: 0
-    t.string "comment"
-    t.string "remote_address"
-    t.string "request_uuid"
-    t.datetime "created_at"
     t.index ["associated_type", "associated_id"], name: "associated_index"
     t.index ["auditable_type", "auditable_id", "version"], name: "auditable_index"
     t.index ["created_at"], name: "index_audits_on_created_at"
@@ -86,41 +86,41 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "batches", force: :cascade do |t|
-    t.string "name", null: false
-    t.date "expiry"
-    t.bigint "vaccine_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "team_id"
     t.datetime "archived_at"
+    t.datetime "created_at", null: false
+    t.date "expiry"
+    t.string "name", null: false
+    t.bigint "team_id"
+    t.datetime "updated_at", null: false
+    t.bigint "vaccine_id", null: false
     t.index ["team_id", "name", "expiry", "vaccine_id"], name: "index_batches_on_team_id_and_name_and_expiry_and_vaccine_id", unique: true
     t.index ["vaccine_id"], name: "index_batches_on_vaccine_id"
   end
 
   create_table "batches_immunisation_imports", id: false, force: :cascade do |t|
-    t.bigint "immunisation_import_id", null: false
     t.bigint "batch_id", null: false
+    t.bigint "immunisation_import_id", null: false
     t.index ["immunisation_import_id", "batch_id"], name: "idx_on_immunisation_import_id_batch_id_d039b76103", unique: true
   end
 
   create_table "class_imports", force: :cascade do |t|
+    t.integer "academic_year", null: false
     t.integer "changed_record_count"
+    t.datetime "created_at", null: false
     t.text "csv_data"
     t.text "csv_filename"
     t.datetime "csv_removed_at"
     t.integer "exact_duplicate_record_count"
+    t.bigint "location_id", null: false
     t.integer "new_record_count"
     t.datetime "processed_at"
+    t.integer "rows_count"
     t.jsonb "serialized_errors"
     t.integer "status", default: 0, null: false
     t.bigint "team_id", null: false
-    t.bigint "uploaded_by_user_id", null: false
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "rows_count"
+    t.bigint "uploaded_by_user_id", null: false
     t.integer "year_groups", default: [], null: false, array: true
-    t.bigint "location_id", null: false
-    t.integer "academic_year", null: false
     t.index ["location_id"], name: "index_class_imports_on_location_id"
     t.index ["team_id"], name: "index_class_imports_on_team_id"
     t.index ["uploaded_by_user_id"], name: "index_class_imports_on_uploaded_by_user_id"
@@ -145,21 +145,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "cohort_imports", force: :cascade do |t|
-    t.datetime "csv_removed_at"
-    t.datetime "processed_at"
+    t.integer "academic_year", null: false
+    t.integer "changed_record_count"
+    t.datetime "created_at", null: false
     t.text "csv_data"
     t.text "csv_filename"
-    t.integer "new_record_count"
+    t.datetime "csv_removed_at"
     t.integer "exact_duplicate_record_count"
-    t.bigint "uploaded_by_user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "changed_record_count"
-    t.bigint "team_id", null: false
-    t.integer "status", default: 0, null: false
-    t.jsonb "serialized_errors"
+    t.integer "new_record_count"
+    t.datetime "processed_at"
     t.integer "rows_count"
-    t.integer "academic_year", null: false
+    t.jsonb "serialized_errors"
+    t.integer "status", default: 0, null: false
+    t.bigint "team_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "uploaded_by_user_id", null: false
     t.index ["team_id"], name: "index_cohort_imports_on_team_id"
     t.index ["uploaded_by_user_id"], name: "index_cohort_imports_on_uploaded_by_user_id"
   end
@@ -183,49 +183,49 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "consent_form_programmes", force: :cascade do |t|
-    t.bigint "programme_id", null: false
     t.bigint "consent_form_id", null: false
+    t.text "notes", default: "", null: false
+    t.bigint "programme_id", null: false
+    t.integer "reason_for_refusal"
     t.integer "response"
     t.integer "vaccine_methods", default: [], null: false, array: true
-    t.integer "reason_for_refusal"
-    t.text "notes", default: "", null: false
     t.boolean "without_gelatine"
     t.index ["consent_form_id"], name: "index_consent_form_programmes_on_consent_form_id"
     t.index ["programme_id", "consent_form_id"], name: "idx_on_programme_id_consent_form_id_2113cb7f37", unique: true
   end
 
   create_table "consent_forms", force: :cascade do |t|
-    t.datetime "recorded_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text "given_name"
-    t.text "family_name"
-    t.boolean "use_preferred_name"
-    t.date "date_of_birth"
+    t.integer "academic_year", null: false
     t.string "address_line_1"
     t.string "address_line_2"
-    t.string "address_town"
     t.string "address_postcode"
+    t.string "address_town"
+    t.datetime "archived_at"
+    t.datetime "created_at", null: false
+    t.date "date_of_birth"
+    t.integer "education_setting"
+    t.text "family_name"
+    t.text "given_name"
     t.jsonb "health_answers", default: [], null: false
+    t.bigint "location_id", null: false
+    t.string "nhs_number"
+    t.text "notes", default: "", null: false
     t.string "parent_contact_method_other_details"
     t.string "parent_contact_method_type"
     t.string "parent_email"
     t.string "parent_full_name"
     t.string "parent_phone"
+    t.boolean "parent_phone_receive_updates", default: false, null: false
     t.string "parent_relationship_other_name"
     t.string "parent_relationship_type"
-    t.boolean "parent_phone_receive_updates", default: false, null: false
-    t.boolean "school_confirmed"
-    t.bigint "location_id", null: false
-    t.bigint "team_id", null: false
-    t.bigint "school_id"
-    t.string "preferred_given_name"
     t.string "preferred_family_name"
-    t.integer "education_setting"
-    t.string "nhs_number"
-    t.datetime "archived_at"
-    t.text "notes", default: "", null: false
-    t.integer "academic_year", null: false
+    t.string "preferred_given_name"
+    t.datetime "recorded_at"
+    t.boolean "school_confirmed"
+    t.bigint "school_id"
+    t.bigint "team_id", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "use_preferred_name"
     t.index ["academic_year"], name: "index_consent_forms_on_academic_year"
     t.index ["location_id"], name: "index_consent_forms_on_location_id"
     t.index ["nhs_number"], name: "index_consent_forms_on_nhs_number"
@@ -234,8 +234,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "consent_notification_programmes", force: :cascade do |t|
-    t.bigint "programme_id", null: false
     t.bigint "consent_notification_id", null: false
+    t.bigint "programme_id", null: false
     t.index ["consent_notification_id"], name: "idx_on_consent_notification_id_bde310472f"
     t.index ["programme_id", "consent_notification_id"], name: "idx_on_programme_id_consent_notification_id_e185bde5f5", unique: true
   end
@@ -243,36 +243,36 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   create_table "consent_notifications", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
-    t.integer "type", null: false
     t.bigint "sent_by_user_id"
     t.bigint "session_id", null: false
+    t.integer "type", null: false
     t.index ["patient_id"], name: "index_consent_notifications_on_patient_id"
     t.index ["sent_by_user_id"], name: "index_consent_notifications_on_sent_by_user_id"
     t.index ["session_id"], name: "index_consent_notifications_on_session_id"
   end
 
   create_table "consents", force: :cascade do |t|
+    t.integer "academic_year", null: false
+    t.bigint "consent_form_id"
+    t.datetime "created_at", null: false
+    t.jsonb "health_answers", default: [], null: false
+    t.datetime "invalidated_at"
+    t.text "notes", default: "", null: false
+    t.boolean "notify_parent_on_refusal"
+    t.boolean "notify_parents_on_vaccination"
+    t.bigint "parent_id"
+    t.datetime "patient_already_vaccinated_notification_sent_at"
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
-    t.integer "response", null: false
     t.integer "reason_for_refusal"
-    t.text "notes", default: "", null: false
-    t.integer "route", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.jsonb "health_answers", default: [], null: false
     t.bigint "recorded_by_user_id"
-    t.bigint "parent_id"
-    t.bigint "team_id", null: false
-    t.datetime "withdrawn_at"
-    t.datetime "invalidated_at"
-    t.boolean "notify_parents_on_vaccination"
+    t.integer "response", null: false
+    t.integer "route", null: false
     t.datetime "submitted_at", null: false
+    t.bigint "team_id", null: false
+    t.datetime "updated_at", null: false
     t.integer "vaccine_methods", default: [], null: false, array: true
-    t.integer "academic_year", null: false
-    t.boolean "notify_parent_on_refusal"
-    t.bigint "consent_form_id"
-    t.datetime "patient_already_vaccinated_notification_sent_at"
+    t.datetime "withdrawn_at"
     t.boolean "without_gelatine"
     t.index ["academic_year"], name: "index_consents_on_academic_year"
     t.index ["consent_form_id"], name: "index_consents_on_consent_form_id"
@@ -284,34 +284,34 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "flipper_features", force: :cascade do |t|
-    t.string "key", null: false
     t.datetime "created_at", null: false
+    t.string "key", null: false
     t.datetime "updated_at", null: false
     t.index ["key"], name: "index_flipper_features_on_key", unique: true
   end
 
   create_table "flipper_gates", force: :cascade do |t|
+    t.datetime "created_at", null: false
     t.string "feature_key", null: false
     t.string "key", null: false
-    t.text "value"
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "value"
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
   end
 
   create_table "gillick_assessments", force: :cascade do |t|
-    t.text "notes", default: "", null: false
-    t.bigint "performed_by_user_id", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "knows_vaccination", null: false
-    t.boolean "knows_disease", null: false
     t.boolean "knows_consequences", null: false
     t.boolean "knows_delivery", null: false
+    t.boolean "knows_disease", null: false
     t.boolean "knows_side_effects", null: false
-    t.bigint "programme_id", null: false
+    t.boolean "knows_vaccination", null: false
+    t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
+    t.bigint "performed_by_user_id", null: false
+    t.bigint "programme_id", null: false
     t.bigint "session_date_id", null: false
+    t.datetime "updated_at", null: false
     t.index ["patient_id"], name: "index_gillick_assessments_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_gillick_assessments_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_gillick_assessments_on_programme_id"
@@ -319,46 +319,46 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "health_questions", force: :cascade do |t|
-    t.string "title", null: false
-    t.bigint "vaccine_id", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.bigint "follow_up_question_id"
+    t.string "give_details_hint"
     t.string "hint"
     t.jsonb "metadata", default: {}, null: false
-    t.bigint "follow_up_question_id"
     t.bigint "next_question_id"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "vaccine_id", null: false
     t.boolean "would_require_triage", default: true, null: false
-    t.string "give_details_hint"
     t.index ["follow_up_question_id"], name: "index_health_questions_on_follow_up_question_id"
     t.index ["next_question_id"], name: "index_health_questions_on_next_question_id"
     t.index ["vaccine_id"], name: "index_health_questions_on_vaccine_id"
   end
 
   create_table "identity_checks", force: :cascade do |t|
-    t.boolean "confirmed_by_patient", null: false
     t.string "confirmed_by_other_name", default: "", null: false
     t.string "confirmed_by_other_relationship", default: "", null: false
-    t.bigint "vaccination_record_id", null: false
+    t.boolean "confirmed_by_patient", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "vaccination_record_id", null: false
     t.index ["vaccination_record_id"], name: "index_identity_checks_on_vaccination_record_id"
   end
 
   create_table "immunisation_imports", force: :cascade do |t|
-    t.text "csv_data"
-    t.bigint "uploaded_by_user_id", null: false
+    t.integer "changed_record_count"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "processed_at"
-    t.integer "new_record_count"
-    t.integer "exact_duplicate_record_count"
+    t.text "csv_data"
     t.text "csv_filename", null: false
     t.datetime "csv_removed_at"
-    t.integer "changed_record_count"
-    t.bigint "team_id", null: false
-    t.integer "status", default: 0, null: false
-    t.jsonb "serialized_errors"
+    t.integer "exact_duplicate_record_count"
+    t.integer "new_record_count"
+    t.datetime "processed_at"
     t.integer "rows_count"
+    t.jsonb "serialized_errors"
+    t.integer "status", default: 0, null: false
+    t.bigint "team_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "uploaded_by_user_id", null: false
     t.index ["team_id"], name: "index_immunisation_imports_on_team_id"
     t.index ["uploaded_by_user_id"], name: "index_immunisation_imports_on_uploaded_by_user_id"
   end
@@ -388,16 +388,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "local_authorities", id: false, force: :cascade do |t|
-    t.string "mhclg_code", null: false
-    t.string "gss_code"
-    t.integer "gias_code"
-    t.string "official_name", null: false
-    t.string "short_name", null: false
-    t.string "gov_uk_slug"
-    t.string "nation", null: false
-    t.string "region"
-    t.date "end_date"
     t.datetime "created_at", null: false
+    t.date "end_date"
+    t.integer "gias_code"
+    t.string "gov_uk_slug"
+    t.string "gss_code"
+    t.string "mhclg_code", null: false
+    t.string "nation", null: false
+    t.string "official_name", null: false
+    t.string "region"
+    t.string "short_name", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_local_authorities_on_created_at"
     t.index ["gias_code"], name: "index_local_authorities_on_gias_code", unique: true
@@ -408,56 +408,52 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "local_authority_postcodes", id: false, force: :cascade do |t|
-    t.string "gss_code", null: false
-    t.string "value", null: false
     t.datetime "created_at", null: false
+    t.string "gss_code", null: false
     t.datetime "updated_at", null: false
+    t.string "value", null: false
     t.index ["gss_code"], name: "index_local_authority_postcodes_on_gss_code"
     t.index ["value"], name: "index_local_authority_postcodes_on_value", unique: true
   end
 
   create_table "location_programme_year_groups", force: :cascade do |t|
-    t.bigint "location_id"
-    t.bigint "programme_id", null: false
-    t.integer "year_group"
-    t.integer "academic_year"
     t.bigint "location_year_group_id", null: false
-    t.index ["location_id", "academic_year", "programme_id", "year_group"], name: "idx_on_location_id_academic_year_programme_id_year__6ad5e2b67d", unique: true
+    t.bigint "programme_id", null: false
     t.index ["location_year_group_id", "programme_id"], name: "idx_on_location_year_group_id_programme_id_405f51181e", unique: true
     t.index ["location_year_group_id"], name: "index_location_programme_year_groups_on_location_year_group_id"
     t.index ["programme_id"], name: "index_location_programme_year_groups_on_programme_id"
   end
 
   create_table "location_year_groups", force: :cascade do |t|
-    t.bigint "location_id", null: false
     t.integer "academic_year", null: false
-    t.integer "value", null: false
-    t.integer "source", null: false
     t.datetime "created_at", null: false
+    t.bigint "location_id", null: false
+    t.integer "source", null: false
     t.datetime "updated_at", null: false
+    t.integer "value", null: false
     t.index ["location_id", "academic_year", "value"], name: "idx_on_location_id_academic_year_value_d553b03752", unique: true
     t.index ["location_id"], name: "index_location_year_groups_on_location_id"
   end
 
   create_table "locations", force: :cascade do |t|
-    t.text "name", null: false
     t.text "address_line_1"
     t.text "address_line_2"
-    t.text "address_town"
     t.text "address_postcode"
-    t.text "url"
+    t.text "address_town"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "urn"
-    t.integer "type", null: false
-    t.string "ods_code"
-    t.bigint "subteam_id"
-    t.integer "gias_local_authority_code"
     t.integer "gias_establishment_number"
-    t.integer "status", default: 0, null: false
-    t.string "site"
-    t.string "systm_one_code"
+    t.integer "gias_local_authority_code"
     t.integer "gias_year_groups", default: [], null: false, array: true
+    t.text "name", null: false
+    t.string "ods_code"
+    t.string "site"
+    t.integer "status", default: 0, null: false
+    t.bigint "subteam_id"
+    t.string "systm_one_code"
+    t.integer "type", null: false
+    t.datetime "updated_at", null: false
+    t.text "url"
+    t.string "urn"
     t.index ["ods_code"], name: "index_locations_on_ods_code", unique: true
     t.index ["subteam_id"], name: "index_locations_on_subteam_id"
     t.index ["systm_one_code"], name: "index_locations_on_systm_one_code", unique: true
@@ -466,11 +462,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "notes", force: :cascade do |t|
+    t.text "body", null: false
+    t.datetime "created_at", null: false
     t.bigint "created_by_user_id", null: false
     t.bigint "patient_id", null: false
     t.bigint "session_id", null: false
-    t.text "body", null: false
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_by_user_id"], name: "index_notes_on_created_by_user_id"
     t.index ["patient_id"], name: "index_notes_on_patient_id"
@@ -478,18 +474,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "notify_log_entries", force: :cascade do |t|
-    t.integer "type", null: false
-    t.uuid "template_id", null: false
-    t.datetime "created_at", null: false
     t.bigint "consent_form_id"
-    t.bigint "patient_id"
-    t.bigint "sent_by_user_id"
+    t.datetime "created_at", null: false
     t.uuid "delivery_id"
     t.integer "delivery_status", default: 0, null: false
     t.bigint "parent_id"
-    t.string "recipient_deterministic"
-    t.string "recipient", null: false
+    t.bigint "patient_id"
     t.integer "programme_ids", default: [], null: false, array: true
+    t.string "recipient", null: false
+    t.bigint "sent_by_user_id"
+    t.uuid "template_id", null: false
+    t.integer "type", null: false
     t.index ["consent_form_id"], name: "index_notify_log_entries_on_consent_form_id"
     t.index ["delivery_id"], name: "index_notify_log_entries_on_delivery_id"
     t.index ["parent_id"], name: "index_notify_log_entries_on_parent_id"
@@ -498,70 +493,70 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "organisations", force: :cascade do |t|
-    t.string "ods_code", null: false
     t.datetime "created_at", null: false
+    t.string "ods_code", null: false
     t.datetime "updated_at", null: false
     t.index ["ods_code"], name: "index_organisations_on_ods_code", unique: true
   end
 
   create_table "parent_relationships", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "other_name"
     t.bigint "parent_id", null: false
     t.bigint "patient_id", null: false
     t.string "type", null: false
-    t.string "other_name"
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["parent_id", "patient_id"], name: "index_parent_relationships_on_parent_id_and_patient_id", unique: true
     t.index ["patient_id"], name: "index_parent_relationships_on_patient_id"
   end
 
   create_table "parents", force: :cascade do |t|
-    t.string "full_name"
-    t.string "email"
-    t.string "phone"
     t.text "contact_method_other_details"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.string "contact_method_type"
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.string "full_name"
+    t.string "phone"
     t.boolean "phone_receive_updates", default: false, null: false
+    t.datetime "updated_at", null: false
     t.index ["email"], name: "index_parents_on_email"
   end
 
   create_table "patient_changesets", force: :cascade do |t|
-    t.bigint "patient_id"
-    t.jsonb "pending_changes", default: {}, null: false
-    t.string "import_type", null: false
-    t.bigint "import_id", null: false
-    t.integer "row_number", null: false
-    t.integer "status", default: 0, null: false
-    t.bigint "school_id"
     t.datetime "created_at", null: false
+    t.bigint "import_id", null: false
+    t.string "import_type", null: false
+    t.boolean "matched_on_nhs_number"
+    t.bigint "patient_id"
+    t.string "pds_nhs_number"
+    t.jsonb "pending_changes", default: {}, null: false
+    t.integer "row_number", null: false
+    t.bigint "school_id"
+    t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.string "uploaded_nhs_number"
-    t.string "pds_nhs_number"
-    t.boolean "matched_on_nhs_number"
     t.index ["import_type", "import_id"], name: "index_patient_changesets_on_import"
     t.index ["patient_id"], name: "index_patient_changesets_on_patient_id"
     t.index ["status"], name: "index_patient_changesets_on_status"
   end
 
   create_table "patient_consent_statuses", force: :cascade do |t|
+    t.integer "academic_year", null: false
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
     t.integer "status", default: 0, null: false
     t.integer "vaccine_methods", default: [], null: false, array: true
-    t.integer "academic_year", null: false
     t.boolean "without_gelatine"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_1d3170e398", unique: true
     t.index ["status"], name: "index_patient_consent_statuses_on_status"
   end
 
   create_table "patient_locations", force: :cascade do |t|
-    t.bigint "patient_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.integer "academic_year", null: false
+    t.datetime "created_at", null: false
     t.bigint "location_id", null: false
+    t.bigint "patient_id", null: false
+    t.datetime "updated_at", null: false
     t.index ["location_id", "academic_year", "patient_id"], name: "idx_on_location_id_academic_year_patient_id_3237b32fa0", unique: true
     t.index ["location_id", "academic_year"], name: "index_patient_locations_on_location_id_and_academic_year"
     t.index ["location_id"], name: "index_patient_locations_on_location_id"
@@ -569,9 +564,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "patient_registration_statuses", force: :cascade do |t|
-    t.integer "status", default: 0, null: false
     t.bigint "patient_id", null: false
     t.bigint "session_id", null: false
+    t.integer "status", default: 0, null: false
     t.index ["patient_id", "session_id"], name: "idx_on_patient_id_session_id_2ff02d8889", unique: true
     t.index ["patient_id"], name: "index_patient_registration_statuses_on_patient_id"
     t.index ["session_id"], name: "index_patient_registration_statuses_on_session_id"
@@ -579,17 +574,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "patient_specific_directions", force: :cascade do |t|
+    t.integer "academic_year", null: false
+    t.datetime "created_at", null: false
     t.bigint "created_by_user_id", null: false
+    t.integer "delivery_site", null: false
+    t.datetime "invalidated_at"
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
+    t.bigint "team_id", null: false
+    t.datetime "updated_at", null: false
     t.bigint "vaccine_id", null: false
     t.integer "vaccine_method", null: false
-    t.integer "delivery_site", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "academic_year", null: false
-    t.datetime "invalidated_at"
-    t.bigint "team_id", null: false
     t.index ["academic_year"], name: "index_patient_specific_directions_on_academic_year"
     t.index ["created_by_user_id"], name: "index_patient_specific_directions_on_created_by_user_id"
     t.index ["patient_id"], name: "index_patient_specific_directions_on_patient_id"
@@ -598,58 +593,67 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
     t.index ["vaccine_id"], name: "index_patient_specific_directions_on_vaccine_id"
   end
 
+  create_table "patient_teams", primary_key: ["team_id", "patient_id"], force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.integer "sources", null: false, array: true
+    t.bigint "team_id", null: false
+    t.index ["patient_id", "team_id"], name: "index_patient_teams_on_patient_id_and_team_id"
+    t.index ["patient_id"], name: "index_patient_teams_on_patient_id"
+    t.index ["sources"], name: "index_patient_teams_on_sources", using: :gin
+    t.index ["team_id"], name: "index_patient_teams_on_team_id"
+  end
+
   create_table "patient_triage_statuses", force: :cascade do |t|
+    t.integer "academic_year", null: false
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
     t.integer "status", default: 0, null: false
     t.integer "vaccine_method"
-    t.integer "academic_year", null: false
     t.boolean "without_gelatine"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_6cf32349df", unique: true
     t.index ["status"], name: "index_patient_triage_statuses_on_status"
   end
 
   create_table "patient_vaccination_statuses", force: :cascade do |t|
+    t.integer "academic_year", null: false
+    t.integer "dose_sequence"
+    t.date "latest_date"
+    t.bigint "latest_location_id"
+    t.integer "latest_session_status"
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
     t.integer "status", default: 0, null: false
-    t.integer "academic_year", null: false
-    t.integer "latest_session_status"
-    t.datetime "status_changed_at"
-    t.bigint "latest_location_id"
-    t.date "latest_date"
-    t.integer "dose_sequence"
     t.index ["latest_location_id"], name: "index_patient_vaccination_statuses_on_latest_location_id"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_fc0b47b743", unique: true
     t.index ["status"], name: "index_patient_vaccination_statuses_on_status"
   end
 
   create_table "patients", force: :cascade do |t|
-    t.date "date_of_birth", null: false
-    t.string "nhs_number"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "given_name", null: false
-    t.string "family_name", null: false
-    t.bigint "school_id"
     t.string "address_line_1"
     t.string "address_line_2"
-    t.string "address_town"
     t.string "address_postcode"
-    t.integer "gender_code", default: 0, null: false
-    t.boolean "home_educated"
-    t.jsonb "pending_changes", default: {}, null: false
-    t.string "registration"
+    t.string "address_town"
+    t.integer "birth_academic_year", null: false
+    t.datetime "created_at", null: false
+    t.date "date_of_birth", null: false
     t.date "date_of_death"
     t.datetime "date_of_death_recorded_at"
-    t.datetime "restricted_at"
-    t.datetime "invalidated_at"
-    t.string "preferred_given_name"
-    t.string "preferred_family_name"
-    t.datetime "updated_from_pds_at"
+    t.string "family_name", null: false
+    t.integer "gender_code", default: 0, null: false
+    t.string "given_name", null: false
     t.bigint "gp_practice_id"
-    t.integer "birth_academic_year", null: false
+    t.boolean "home_educated"
+    t.datetime "invalidated_at"
+    t.string "nhs_number"
+    t.jsonb "pending_changes", default: {}, null: false
+    t.string "preferred_family_name"
+    t.string "preferred_given_name"
+    t.string "registration"
     t.integer "registration_academic_year"
+    t.datetime "restricted_at"
+    t.bigint "school_id"
+    t.datetime "updated_at", null: false
+    t.datetime "updated_from_pds_at"
     t.index ["family_name", "given_name"], name: "index_patients_on_names_family_first"
     t.index ["family_name"], name: "index_patients_on_family_name_trigram", opclass: :gin_trgm_ops, using: :gin
     t.index ["given_name", "family_name"], name: "index_patients_on_names_given_first"
@@ -661,26 +665,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "pds_search_results", force: :cascade do |t|
-    t.bigint "patient_id", null: false
-    t.string "import_type"
-    t.bigint "import_id"
-    t.integer "step", null: false
-    t.integer "result", null: false
-    t.string "nhs_number"
     t.datetime "created_at", null: false
+    t.bigint "import_id"
+    t.string "import_type"
+    t.string "nhs_number"
+    t.bigint "patient_id", null: false
+    t.integer "result", null: false
+    t.integer "step", null: false
     t.datetime "updated_at", null: false
     t.index ["import_type", "import_id"], name: "index_pds_search_results_on_import"
     t.index ["patient_id"], name: "index_pds_search_results_on_patient_id"
   end
 
   create_table "pre_screenings", force: :cascade do |t|
-    t.bigint "performed_by_user_id", null: false
-    t.text "notes", default: "", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "programme_id", null: false
+    t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
+    t.bigint "performed_by_user_id", null: false
+    t.bigint "programme_id", null: false
     t.bigint "session_date_id", null: false
+    t.datetime "updated_at", null: false
     t.index ["patient_id"], name: "index_pre_screenings_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_pre_screenings_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_pre_screenings_on_programme_id"
@@ -689,41 +693,41 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
 
   create_table "programmes", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.string "type", null: false
+    t.datetime "updated_at", null: false
     t.index ["type"], name: "index_programmes_on_type", unique: true
   end
 
   create_table "reporting_api_one_time_tokens", primary_key: "token", id: :string, force: :cascade do |t|
-    t.bigint "user_id", null: false
     t.jsonb "cis2_info", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["created_at"], name: "index_reporting_api_one_time_tokens_on_created_at"
     t.index ["token"], name: "index_reporting_api_one_time_tokens_on_token", unique: true
     t.index ["user_id"], name: "index_reporting_api_one_time_tokens_on_user_id", unique: true
   end
 
   create_table "school_move_log_entries", force: :cascade do |t|
-    t.bigint "patient_id", null: false
-    t.bigint "user_id"
-    t.bigint "school_id"
-    t.boolean "home_educated"
     t.datetime "created_at", null: false
+    t.boolean "home_educated"
+    t.bigint "patient_id", null: false
+    t.bigint "school_id"
+    t.bigint "user_id"
     t.index ["patient_id"], name: "index_school_move_log_entries_on_patient_id"
     t.index ["school_id"], name: "index_school_move_log_entries_on_school_id"
     t.index ["user_id"], name: "index_school_move_log_entries_on_user_id"
   end
 
   create_table "school_moves", force: :cascade do |t|
-    t.bigint "patient_id", null: false
-    t.integer "source", null: false
-    t.bigint "school_id"
-    t.bigint "team_id"
-    t.boolean "home_educated"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.integer "academic_year", null: false
+    t.datetime "created_at", null: false
+    t.boolean "home_educated"
+    t.bigint "patient_id", null: false
+    t.bigint "school_id"
+    t.integer "source", null: false
+    t.bigint "team_id"
+    t.datetime "updated_at", null: false
     t.index ["patient_id", "school_id"], name: "index_school_moves_on_patient_id_and_school_id"
     t.index ["patient_id"], name: "index_school_moves_on_patient_id", unique: true
     t.index ["school_id"], name: "index_school_moves_on_school_id"
@@ -738,36 +742,36 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
 
   create_table "session_notifications", force: :cascade do |t|
     t.bigint "patient_id", null: false
-    t.bigint "session_id", null: false
-    t.date "session_date", null: false
     t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
-    t.integer "type", null: false
     t.bigint "sent_by_user_id"
+    t.date "session_date", null: false
+    t.bigint "session_id", null: false
+    t.integer "type", null: false
     t.index ["patient_id", "session_id", "session_date"], name: "idx_on_patient_id_session_id_session_date_f7f30a3aa3"
     t.index ["sent_by_user_id"], name: "index_session_notifications_on_sent_by_user_id"
     t.index ["session_id"], name: "index_session_notifications_on_session_id"
   end
 
   create_table "session_programmes", force: :cascade do |t|
-    t.bigint "session_id", null: false
     t.bigint "programme_id", null: false
+    t.bigint "session_id", null: false
     t.index ["programme_id"], name: "index_session_programmes_on_programme_id"
     t.index ["session_id", "programme_id"], name: "index_session_programmes_on_session_id_and_programme_id", unique: true
   end
 
   create_table "sessions", force: :cascade do |t|
-    t.bigint "location_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.date "send_consent_requests_at"
-    t.bigint "team_id", null: false
     t.integer "academic_year", null: false
+    t.datetime "created_at", null: false
     t.integer "days_before_consent_reminders"
-    t.string "slug", null: false
-    t.date "send_invitations_at"
-    t.boolean "requires_registration", default: true, null: false
-    t.boolean "psd_enabled", default: false, null: false
+    t.bigint "location_id", null: false
     t.boolean "national_protocol_enabled", default: false, null: false
+    t.boolean "psd_enabled", default: false, null: false
+    t.boolean "requires_registration", default: true, null: false
+    t.date "send_consent_requests_at"
+    t.date "send_invitations_at"
+    t.string "slug", null: false
+    t.bigint "team_id", null: false
+    t.datetime "updated_at", null: false
     t.index ["academic_year", "location_id", "team_id"], name: "index_sessions_on_academic_year_and_location_id_and_team_id"
     t.index ["location_id", "academic_year", "team_id"], name: "index_sessions_on_location_id_and_academic_year_and_team_id"
     t.index ["location_id"], name: "index_sessions_on_location_id"
@@ -776,39 +780,39 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "subteams", force: :cascade do |t|
-    t.bigint "team_id", null: false
-    t.string "name", null: false
-    t.string "email", null: false
-    t.string "phone", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.uuid "reply_to_id"
+    t.string "email", null: false
+    t.string "name", null: false
+    t.string "phone", null: false
     t.string "phone_instructions"
+    t.uuid "reply_to_id"
+    t.bigint "team_id", null: false
+    t.datetime "updated_at", null: false
     t.index ["team_id", "name"], name: "index_subteams_on_team_id_and_name", unique: true
   end
 
   create_table "team_programmes", force: :cascade do |t|
-    t.bigint "team_id", null: false
     t.bigint "programme_id", null: false
+    t.bigint "team_id", null: false
     t.index ["programme_id"], name: "index_team_programmes_on_programme_id"
     t.index ["team_id", "programme_id"], name: "index_team_programmes_on_team_id_and_programme_id", unique: true
   end
 
   create_table "teams", force: :cascade do |t|
-    t.text "name", null: false
+    t.string "careplus_venue_code", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer "days_before_consent_reminders", default: 7, null: false
+    t.integer "days_before_consent_requests", default: 21, null: false
+    t.integer "days_before_invitations", default: 21, null: false
     t.string "email"
+    t.text "name", null: false
+    t.bigint "organisation_id", null: false
+    t.string "phone"
+    t.string "phone_instructions"
+    t.string "privacy_notice_url", null: false
     t.string "privacy_policy_url", null: false
     t.uuid "reply_to_id"
-    t.string "phone"
-    t.integer "days_before_consent_requests", default: 21, null: false
-    t.integer "days_before_consent_reminders", default: 7, null: false
-    t.integer "days_before_invitations", default: 21, null: false
-    t.string "careplus_venue_code", null: false
-    t.string "privacy_notice_url", null: false
-    t.string "phone_instructions"
-    t.bigint "organisation_id", null: false
+    t.datetime "updated_at", null: false
     t.string "workgroup", null: false
     t.index ["name"], name: "index_teams_on_name", unique: true
     t.index ["organisation_id"], name: "index_teams_on_organisation_id"
@@ -823,18 +827,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "triages", force: :cascade do |t|
-    t.integer "status", null: false
-    t.text "notes", default: "", null: false
+    t.integer "academic_year", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.date "delay_vaccination_until"
+    t.datetime "invalidated_at"
+    t.text "notes", default: "", null: false
+    t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
     t.bigint "programme_id", null: false
-    t.bigint "patient_id", null: false
+    t.integer "status", null: false
     t.bigint "team_id", null: false
-    t.datetime "invalidated_at"
+    t.datetime "updated_at", null: false
     t.integer "vaccine_method"
-    t.integer "academic_year", null: false
-    t.date "delay_vaccination_until"
     t.boolean "without_gelatine"
     t.index ["academic_year"], name: "index_triages_on_academic_year"
     t.index ["patient_id"], name: "index_triages_on_patient_id"
@@ -844,69 +848,71 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "current_sign_in_at"
+    t.string "current_sign_in_ip"
     t.string "email"
     t.string "encrypted_password", default: "", null: false
-    t.datetime "remember_created_at"
-    t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.string "current_sign_in_ip"
-    t.string "last_sign_in_ip"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "provider"
-    t.string "uid"
-    t.string "given_name", null: false
-    t.string "family_name", null: false
-    t.string "session_token"
     t.integer "fallback_role"
+    t.string "family_name", null: false
+    t.string "given_name", null: false
+    t.datetime "last_sign_in_at"
+    t.string "last_sign_in_ip"
+    t.string "provider"
+    t.datetime "remember_created_at"
     t.string "reporting_api_session_token"
+    t.string "session_token"
     t.boolean "show_in_suppliers", default: false, null: false
+    t.integer "sign_in_count", default: 0, null: false
+    t.string "uid"
+    t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
     t.index ["reporting_api_session_token"], name: "index_users_on_reporting_api_session_token", unique: true
   end
 
   create_table "vaccination_records", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "delivery_site"
-    t.integer "outcome", null: false
     t.bigint "batch_id"
-    t.integer "delivery_method"
-    t.bigint "performed_by_user_id"
-    t.text "notes"
-    t.integer "dose_sequence"
-    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
-    t.datetime "performed_at", null: false
-    t.string "performed_by_given_name"
-    t.string "performed_by_family_name"
-    t.jsonb "pending_changes", default: {}, null: false
-    t.bigint "programme_id", null: false
-    t.string "location_name"
-    t.datetime "discarded_at"
     t.datetime "confirmation_sent_at"
-    t.bigint "patient_id", null: false
-    t.bigint "session_id"
-    t.string "performed_ods_code"
-    t.bigint "vaccine_id"
+    t.datetime "created_at", null: false
+    t.integer "delivery_method"
+    t.integer "delivery_site"
+    t.datetime "discarded_at"
+    t.integer "dose_sequence"
     t.boolean "full_dose"
-    t.datetime "nhs_immunisations_api_synced_at"
+    t.bigint "location_id"
+    t.string "location_name"
+    t.bigint "next_dose_delay_triage_id"
     t.string "nhs_immunisations_api_etag"
     t.string "nhs_immunisations_api_id"
-    t.integer "protocol"
-    t.datetime "nhs_immunisations_api_sync_pending_at"
-    t.boolean "notify_parents"
-    t.bigint "location_id"
-    t.bigint "supplied_by_user_id"
-    t.integer "source", null: false
-    t.boolean "nhs_immunisations_api_primary_source"
     t.string "nhs_immunisations_api_identifier_system"
     t.string "nhs_immunisations_api_identifier_value"
+    t.boolean "nhs_immunisations_api_primary_source"
+    t.datetime "nhs_immunisations_api_sync_pending_at"
+    t.datetime "nhs_immunisations_api_synced_at"
+    t.text "notes"
+    t.boolean "notify_parents"
+    t.integer "outcome", null: false
+    t.bigint "patient_id", null: false
+    t.jsonb "pending_changes", default: {}, null: false
+    t.datetime "performed_at", null: false
+    t.string "performed_by_family_name"
+    t.string "performed_by_given_name"
+    t.bigint "performed_by_user_id"
+    t.string "performed_ods_code"
+    t.bigint "programme_id", null: false
+    t.integer "protocol"
+    t.bigint "session_id"
+    t.integer "source", null: false
+    t.bigint "supplied_by_user_id"
+    t.datetime "updated_at", null: false
+    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
+    t.bigint "vaccine_id"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
     t.index ["id"], name: "index_vaccination_records_on_pending_changes_not_empty", where: "(pending_changes <> '{}'::jsonb)"
     t.index ["location_id"], name: "index_vaccination_records_on_location_id"
+    t.index ["next_dose_delay_triage_id"], name: "index_vaccination_records_on_next_dose_delay_triage_id"
     t.index ["nhs_immunisations_api_id"], name: "index_vaccination_records_on_nhs_immunisations_api_id", unique: true
     t.index ["patient_id", "session_id"], name: "index_vaccination_records_on_patient_id_and_session_id"
     t.index ["patient_id"], name: "index_vaccination_records_on_patient_id"
@@ -921,19 +927,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   end
 
   create_table "vaccines", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.text "brand", null: false
-    t.integer "method", null: false
-    t.text "manufacturer", null: false
-    t.decimal "dose_volume_ml", null: false
-    t.string "snomed_product_code", null: false
-    t.string "snomed_product_term", null: false
-    t.text "nivs_name", null: false
+    t.boolean "contains_gelatine", null: false
+    t.datetime "created_at", null: false
     t.boolean "discontinued", default: false, null: false
+    t.decimal "dose_volume_ml", null: false
+    t.text "manufacturer", null: false
+    t.integer "method", null: false
+    t.text "nivs_name", null: false
     t.bigint "programme_id", null: false
     t.integer "side_effects", default: [], null: false, array: true
-    t.boolean "contains_gelatine", null: false
+    t.string "snomed_product_code", null: false
+    t.string "snomed_product_term", null: false
+    t.datetime "updated_at", null: false
     t.index ["manufacturer", "brand"], name: "index_vaccines_on_manufacturer_and_brand", unique: true
     t.index ["nivs_name"], name: "index_vaccines_on_nivs_name", unique: true
     t.index ["programme_id"], name: "index_vaccines_on_programme_id"
@@ -1004,7 +1010,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   add_foreign_key "immunisation_imports_vaccination_records", "immunisation_imports", on_delete: :cascade
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records", on_delete: :cascade
   add_foreign_key "location_programme_year_groups", "location_year_groups", on_delete: :cascade
-  add_foreign_key "location_programme_year_groups", "locations", on_delete: :cascade
   add_foreign_key "location_programme_year_groups", "programmes", on_delete: :cascade
   add_foreign_key "location_year_groups", "locations", on_delete: :cascade
   add_foreign_key "locations", "subteams"
@@ -1030,6 +1035,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   add_foreign_key "patient_specific_directions", "teams"
   add_foreign_key "patient_specific_directions", "users", column: "created_by_user_id"
   add_foreign_key "patient_specific_directions", "vaccines"
+  add_foreign_key "patient_teams", "patients", on_delete: :cascade
+  add_foreign_key "patient_teams", "teams", on_delete: :cascade
   add_foreign_key "patient_triage_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_triage_statuses", "programmes"
   add_foreign_key "patient_vaccination_statuses", "locations", column: "latest_location_id"
@@ -1068,6 +1075,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_16_180616) do
   add_foreign_key "vaccination_records", "patients"
   add_foreign_key "vaccination_records", "programmes"
   add_foreign_key "vaccination_records", "sessions"
+  add_foreign_key "vaccination_records", "triages", column: "next_dose_delay_triage_id"
   add_foreign_key "vaccination_records", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "users", column: "supplied_by_user_id"
   add_foreign_key "vaccination_records", "vaccines"

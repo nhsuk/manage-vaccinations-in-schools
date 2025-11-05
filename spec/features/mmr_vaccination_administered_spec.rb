@@ -23,6 +23,12 @@ describe "MMR vaccination" do
 
     when_i_visit_the_patient_mmr_tab
     then_i_should_see_a_triage_for_the_next_vaccination_dose
+
+    when_i_click_on_update_triage_outcome
+    and_i_should_see_a_hint_text_when_the_next_dose_is_due
+    when_i_enter_valid_date
+    and_i_save_triage
+    then_i_should_see_a_triage_with_the_new_date_for_vaccination
   end
 
   scenario "administered without gelatine" do
@@ -61,6 +67,14 @@ describe "MMR vaccination" do
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_to_the_parent_confirming_the_vaccination
     and_a_text_is_sent_to_the_parent_confirming_the_vaccination
+
+    when_i_go_to_the_vaccination_record_for_the_patient
+    and_i_click_on_edit_vaccination_record
+    and_i_click_on_change_date
+    and_i_enter_date_in_the_past
+    and_i_click_on_continue
+    and_i_click_on_save_changes
+    then_the_delayed_triage_is_updated_to_the_new_date
   end
 
   def given_i_am_signed_in_with_mmr_programme
@@ -236,8 +250,63 @@ describe "MMR vaccination" do
     visit session_patient_programme_path(@session, @patient, @programme)
   end
 
+  def when_i_go_to_the_vaccination_record_for_the_patient
+    when_i_visit_the_patient_mmr_tab
+    click_on Date.current.to_fs(:long)
+  end
+
+  def and_i_click_on_edit_vaccination_record
+    click_on "Edit vaccination record"
+  end
+
   def then_i_should_see_a_triage_for_the_next_vaccination_dose
     expect(page).to have_content("MMR: Delay vaccination")
     expect(page).to have_content("Next dose 29 October 2024")
+  end
+
+  def then_i_should_see_a_triage_with_the_new_date_for_vaccination
+    expect(page).to have_content("Next dose 05 November 2024")
+  end
+
+  def and_i_save_triage
+    click_button "Save triage"
+  end
+
+  def when_i_click_on_update_triage_outcome
+    click_on "Update triage outcome"
+  end
+
+  def when_i_enter_valid_date
+    fill_in_date(5.weeks.from_now)
+  end
+
+  def and_i_enter_date_in_the_past
+    fill_in_date(2.days.ago)
+  end
+
+  def and_i_should_see_a_hint_text_when_the_next_dose_is_due
+    expect(page).to have_content("2nd dose is not due until 29 October 2024")
+  end
+
+  def fill_in_date(date)
+    fill_in "Day", with: date.day
+    fill_in "Month", with: date.month
+    fill_in "Year", with: date.year
+  end
+
+  def and_i_click_on_change_date
+    click_on "Change date"
+  end
+
+  def and_i_click_on_continue
+    click_on "Continue"
+  end
+
+  def and_i_click_on_save_changes
+    click_on "Save changes"
+  end
+
+  def then_the_delayed_triage_is_updated_to_the_new_date
+    expect(page).to have_content("Next dose 27 October 2024")
   end
 end

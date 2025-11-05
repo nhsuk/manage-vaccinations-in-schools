@@ -77,7 +77,9 @@ class ClassImport < PatientImport
         )
       end
 
-    SchoolMove.import!(school_moves, on_duplicate_key_ignore: true)
+    imported_ids =
+      SchoolMove.import!(school_moves, on_duplicate_key_ignore: true).ids
+    SyncPatientTeamJob.perform_later(SchoolMove, imported_ids)
 
     PatientsAgedOutOfSchoolJob.perform_async(location_id)
   end

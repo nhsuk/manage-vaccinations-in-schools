@@ -50,7 +50,8 @@ class Triage < ApplicationRecord
          safe_to_vaccinate: 0,
          do_not_vaccinate: 1,
          keep_in_triage: 2,
-         delay_vaccination: 3
+         delay_vaccination: 3,
+         invite_to_clinic: 4
        },
        validate: true
 
@@ -60,16 +61,15 @@ class Triage < ApplicationRecord
          if: :safe_to_vaccinate?
        }
 
-  scope :delay_vaccination_until_in_past,
-        -> { where(delay_vaccination_until: ...Date.current) }
-
-  scope :should_be_invalidated,
-        -> { delay_vaccination_until_in_past.not_invalidated }
-
   validates :delay_vaccination_until, absence: true, unless: :delay_vaccination?
 
   with_options if: :safe_to_vaccinate? do
     validates :vaccine_method, presence: true
     validates :without_gelatine, inclusion: [true, false]
+  end
+
+  def expired?
+    delay_vaccination? && delay_vaccination_until.present? &&
+      delay_vaccination_until < Date.current
   end
 end

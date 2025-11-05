@@ -83,9 +83,12 @@ class Patient < ApplicationRecord
   has_many :vaccination_records, -> { kept }
   has_many :vaccination_statuses
   has_many :patient_specific_directions
+  has_many :patient_teams
 
   has_many :locations, through: :patient_locations
+  has_many :location_programme_year_groups, through: :locations
   has_many :parents, through: :parent_relationships
+  has_many :teams, through: :patient_teams
 
   has_and_belongs_to_many :class_imports
   has_and_belongs_to_many :cohort_imports
@@ -266,15 +269,28 @@ class Patient < ApplicationRecord
         end
 
   scope :has_triage_status,
-        ->(status, programme:, academic_year:) do
-          where(
+        ->(
+          status,
+          programme:,
+          academic_year:,
+          vaccine_method: nil,
+          without_gelatine: nil
+        ) do
+          triage_status_scope =
             Patient::TriageStatus
               .select("1")
               .where("patient_id = patients.id")
               .where(status:, programme:, academic_year:)
-              .arel
-              .exists
-          )
+
+          unless vaccine_method.nil?
+            triage_status_scope = triage_status_scope.where(vaccine_method:)
+          end
+
+          unless without_gelatine.nil?
+            triage_status_scope = triage_status_scope.where(without_gelatine:)
+          end
+
+          where(triage_status_scope.arel.exists)
         end
 
   scope :has_vaccine_criteria,
@@ -794,13 +810,15 @@ class Patient < ApplicationRecord
         ArchiveReason.new(team:, patient: self, type: :deceased)
       end
 
-    ArchiveReason.import!(
-      archive_reasons,
-      on_duplicate_key_update: {
-        conflict_target: %i[team_id patient_id],
-        columns: %i[type]
-      }
-    )
+    imported_ids =
+      ArchiveReason.import!(
+        archive_reasons,
+        on_duplicate_key_update: {
+          conflict_target: %i[team_id patient_id],
+          columns: %i[type]
+        }
+      ).ids
+    SyncPatientTeamJob.perform_later(ArchiveReason, imported_ids)
   end
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::Patient.new(self)

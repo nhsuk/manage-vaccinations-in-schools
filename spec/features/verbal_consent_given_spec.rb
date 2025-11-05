@@ -27,6 +27,21 @@ describe "Verbal consent" do
     and_a_text_is_sent_to_the_parent_confirming_their_consent
   end
 
+  scenario "Given flu injection with a PSD already" do
+    given_a_flu_programme_is_underway
+    and_i_am_signed_in
+    and_the_patient_has_a_psd
+
+    when_i_record_that_verbal_injection_consent_was_given
+    then_i_see_the_check_and_confirm_page
+    and_i_see_the_flu_injection_consent_given
+
+    when_i_confirm_the_consent_response
+    then_an_email_is_sent_to_the_parent_confirming_their_consent
+    and_a_text_is_sent_to_the_parent_confirming_their_consent
+    and_the_psd_is_invalidated
+  end
+
   scenario "Given flu nasal spray" do
     given_a_flu_programme_is_underway
     and_i_am_signed_in
@@ -91,10 +106,6 @@ describe "Verbal consent" do
     create_programme(:mmr)
   end
 
-  def and_i_am_signed_in
-    sign_in @team.users.first
-  end
-
   def create_programme(programme_type)
     @programme = create(:programme, programme_type)
     programmes = [@programme]
@@ -105,6 +116,19 @@ describe "Verbal consent" do
     @patient = create(:patient, session: @session, parents: [@parent])
 
     StatusUpdater.call
+  end
+
+  def and_i_am_signed_in
+    sign_in @team.users.first
+  end
+
+  def and_the_patient_has_a_psd
+    @patient_specific_direction =
+      create(
+        :patient_specific_direction,
+        patient: @patient,
+        programme: @programme
+      )
   end
 
   def when_i_record_that_verbal_consent_was_given
@@ -268,5 +292,9 @@ describe "Verbal consent" do
 
   def and_a_text_is_sent_to_the_parent_confirming_their_consent
     expect_sms_to(@parent.phone, :consent_confirmation_given)
+  end
+
+  def and_the_psd_is_invalidated
+    expect(@patient_specific_direction.reload).to be_invalidated
   end
 end

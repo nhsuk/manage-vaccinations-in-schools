@@ -131,6 +131,30 @@ class Consent < ApplicationRecord
     response_given? && health_answers_require_triage?
   end
 
+  alias_method :should_invalidate_existing_triages?, :requires_triage?
+
+  def should_invalidate_existing_patient_specific_directions?
+    return true if should_invalidate_existing_triages?
+
+    # TODO: Make this more generic. At the moment PSD is only used for nasal
+    #  flu, but no reason it couldn't be applied to other programmes in the
+    #  future.
+    programme.flu? && !vaccine_method_nasal?
+  end
+
+  def invalidate_existing_triage_and_patient_specific_directions!
+    if should_invalidate_existing_patient_specific_directions?
+      patient
+        .patient_specific_directions
+        .where(academic_year:, programme:)
+        .invalidate_all
+    end
+
+    if should_invalidate_existing_triages?
+      patient.triages.where(academic_year:, programme:).invalidate_all
+    end
+  end
+
   def parent_relationship
     patient.parent_relationships.find { it.parent_id == parent_id }
   end

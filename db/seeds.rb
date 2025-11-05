@@ -66,11 +66,13 @@ def attach_sample_of_schools_to(team)
     .where(subteam_id: nil)
     .order("RANDOM()")
     .limit(50)
-    .update_all(subteam_id: team.subteams.first.id)
+    .update_all_and_sync_patient_teams(subteam_id: team.subteams.first.id)
 end
 
 def attach_specific_school_to_team_if_present(team:, urn:)
-  Location.where(urn:).update_all(subteam_id: team.subteams.first.id)
+  Location.where(urn:).update_all_and_sync_patient_teams(
+    subteam_id: team.subteams.first.id
+  )
 end
 
 def create_session(user, team, programmes:, completed: false, year_groups: nil)
@@ -167,8 +169,7 @@ def setup_clinic(team)
 
   # All unknown school or home-schooled patients belong to the community clinic.
   # This is normally handled by school moves, but here we need to do it manually.
-
-  PatientLocation.import(
+  new_patient_location_records =
     team
       .patients
       .where(school: nil)
@@ -178,9 +179,14 @@ def setup_clinic(team)
           location: clinic_session.location,
           academic_year: clinic_session.academic_year
         )
-      end,
-    on_duplicate_key_ignore: :all
-  )
+      end
+
+  imported_ids =
+    PatientLocation.import(
+      new_patient_location_records,
+      on_duplicate_key_ignore: :all
+    ).ids
+  SyncPatientTeamJob.perform_now(PatientLocation, imported_ids)
 end
 
 def create_patients(team)
@@ -317,7 +323,11 @@ create_imports(user, team)
 create_school_moves(team)
 
 Team.find_each do |team|
-  TeamSessionsFactory.call(team, academic_year: AcademicYear.current)
+  TeamSessionsFactory.call(
+    team,
+    academic_year: AcademicYear.current,
+    sync_patient_teams_now: true
+  )
 end
 
 Rake::Task["status:update:all"].execute

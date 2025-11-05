@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class LocationSessionsFactory
-  def initialize(location, academic_year:)
+  def initialize(location, academic_year:, sync_patient_teams_now: false)
     @location = location
     @academic_year = academic_year
+    @sync_patient_teams_now = sync_patient_teams_now
   end
 
   def call
@@ -29,7 +30,7 @@ class LocationSessionsFactory
 
   private
 
-  attr_reader :location, :academic_year
+  attr_reader :location, :academic_year, :sync_patient_teams_now
 
   delegate :team, to: :location
 
@@ -60,11 +61,17 @@ class LocationSessionsFactory
   end
 
   def add_patients!
-    PatientLocation.import!(
-      %i[patient_id location_id academic_year],
-      patient_ids.map { [it, location.id, academic_year] },
-      on_duplicate_key_ignore: true
-    )
+    imported_ids =
+      PatientLocation.import!(
+        %i[patient_id location_id academic_year],
+        patient_ids.map { [it, location.id, academic_year] },
+        on_duplicate_key_ignore: true
+      ).ids
+    if sync_patient_teams_now
+      SyncPatientTeamJob.perform_now(PatientLocation, imported_ids)
+    else
+      SyncPatientTeamJob.perform_later(PatientLocation, imported_ids)
+    end
   end
 
   def patient_ids

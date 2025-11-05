@@ -13,9 +13,12 @@ describe "Parental consent manual matching" do
 
     when_i_choose_a_consent_response
     then_i_am_on_the_consent_matching_page
+    and_i_see_no_patients
 
     when_i_search_for_the_child
-    and_i_select_the_child_record
+    then_i_see_patients
+
+    when_i_select_the_child_record
     then_i_can_review_the_match
 
     when_i_link_the_response_with_the_record
@@ -37,9 +40,12 @@ describe "Parental consent manual matching" do
 
     when_i_choose_a_consent_response
     then_i_am_on_the_consent_matching_page
+    and_i_see_no_patients
 
     when_i_search_for_the_aged_out_child
-    and_i_select_the_child_record
+    then_i_see_patients
+
+    when_i_select_the_child_record
     then_i_can_review_the_match
 
     when_i_link_the_response_with_the_record
@@ -114,6 +120,16 @@ describe "Parental consent manual matching" do
     expect(page).to have_content("Search for a child record")
   end
 
+  def and_i_see_no_patients
+    expect(page).to have_content(
+      "Search for a child or use filters to see children matching your selection."
+    )
+  end
+
+  def then_i_see_patients
+    expect(page).to have_content(@patient.full_name)
+  end
+
   def when_i_search_for_the_child
     fill_in "Search", with: @patient.full_name
     click_button "Search"
@@ -126,7 +142,7 @@ describe "Parental consent manual matching" do
     click_button "Search"
   end
 
-  def and_i_select_the_child_record
+  def when_i_select_the_child_record
     click_link @patient.full_name
   end
 

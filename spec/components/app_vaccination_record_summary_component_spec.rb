@@ -149,24 +149,32 @@ describe AppVaccinationRecordSummaryComponent do
 
   describe "dose number row" do
     context "for an HPV programme" do
-      before { vaccination_record.dose_sequence = 2 }
+      context "and a unknown dose sequence" do
+        before { vaccination_record.dose_sequence = nil }
 
-      it do
-        expect(rendered).to have_css(
-          ".nhsuk-summary-list__row",
-          text: "Dose numberSecond"
-        )
+        it { should have_content("Dose numberUnknown") }
+      end
+
+      context "and a specific dose sequence" do
+        before { vaccination_record.dose_sequence = 2 }
+
+        it { should have_content("Dose number2nd") }
       end
     end
 
-    context "for a seasonal programme" do
-      let(:programme) { create(:programme, :flu) }
+    context "for an MMR programme" do
+      let(:programme) { create(:programme, :mmr) }
 
-      it do
-        expect(rendered).to have_css(
-          ".nhsuk-summary-list__row",
-          text: "Dose numberFirst"
-        )
+      context "and a unknown dose sequence" do
+        before { vaccination_record.dose_sequence = nil }
+
+        it { should_not have_content("Dose number") }
+      end
+
+      context "and a specific dose sequence" do
+        before { vaccination_record.dose_sequence = 2 }
+
+        it { should have_content("Dose number2nd") }
       end
     end
   end

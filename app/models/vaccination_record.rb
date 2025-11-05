@@ -33,6 +33,7 @@
 #  updated_at                              :datetime         not null
 #  batch_id                                :bigint
 #  location_id                             :bigint
+#  next_dose_delay_triage_id               :bigint
 #  nhs_immunisations_api_id                :string
 #  patient_id                              :bigint           not null
 #  performed_by_user_id                    :bigint
@@ -46,6 +47,7 @@
 #  index_vaccination_records_on_batch_id                           (batch_id)
 #  index_vaccination_records_on_discarded_at                       (discarded_at)
 #  index_vaccination_records_on_location_id                        (location_id)
+#  index_vaccination_records_on_next_dose_delay_triage_id          (next_dose_delay_triage_id)
 #  index_vaccination_records_on_nhs_immunisations_api_id           (nhs_immunisations_api_id) UNIQUE
 #  index_vaccination_records_on_patient_id                         (patient_id)
 #  index_vaccination_records_on_patient_id_and_session_id          (patient_id,session_id)
@@ -61,6 +63,7 @@
 # Foreign Keys
 #
 #  fk_rails_...  (batch_id => batches.id)
+#  fk_rails_...  (next_dose_delay_triage_id => triages.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
 #  fk_rails_...  (programme_id => programmes.id)
@@ -69,12 +72,17 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class VaccinationRecord < ApplicationRecord
+  include ContributesToPatientTeams
   include Discard::Model
   include HasDoseVolume
   include Notable
   include PendingChangesConcern
   include VaccinationRecordPerformedByConcern
   include VaccinationRecordSyncToNHSImmunisationsAPIConcern
+
+  class ActiveRecord_Relation < ActiveRecord::Relation
+    include ContributesToPatientTeams::Relation
+  end
 
   audited associated_with: :patient
 
@@ -106,6 +114,8 @@ class VaccinationRecord < ApplicationRecord
              foreign_key: :supplied_by_user_id,
              optional: true
 
+  belongs_to :next_dose_delay_triage, class_name: "Triage", optional: true
+
   has_and_belongs_to_many :immunisation_imports
 
   belongs_to :location, optional: true
@@ -116,6 +126,9 @@ class VaccinationRecord < ApplicationRecord
   has_one :organisation, through: :session
   has_one :subteam, through: :session
   has_one :team, through: :session
+
+  after_update :recalculate_next_dose_delay_triage_date,
+               if: :saved_change_to_performed_at?
 
   scope :for_academic_year,
         ->(academic_year) do
@@ -266,5 +279,27 @@ class VaccinationRecord < ApplicationRecord
 
   def fhir_mapper
     @fhir_mapper ||= FHIRMapper::VaccinationRecord.new(self)
+  end
+
+  def recalculate_next_dose_delay_triage_date
+    return if next_dose_delay_triage.blank?
+    return unless administered?
+
+    previous_performed_at, current_performed_at = saved_change_to_performed_at
+
+    days_difference =
+      (current_performed_at.to_date - previous_performed_at.to_date).to_i
+
+    new_delay_date =
+      next_dose_delay_triage.delay_vaccination_until + days_difference.days
+
+    next_dose_delay_triage.assign_attributes(
+      delay_vaccination_until: new_delay_date,
+      notes: "Next dose #{new_delay_date.to_fs(:long)}"
+    )
+
+    next_dose_delay_triage.save!
+
+    StatusUpdater.call(patient:)
   end
 end

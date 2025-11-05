@@ -73,5 +73,13 @@ FactoryBot.define do
     trait :invalidated do
       invalidated_at { Time.current }
     end
+
+    trait :delay_vaccination do
+      status { "delay_vaccination" }
+    end
+
+    trait :expired do
+      delay_vaccination_until { Date.yesterday }
+    end
   end
 end

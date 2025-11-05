@@ -124,7 +124,7 @@ describe "Tallying on session overview page" do
 
     and_i_visit_the_session_record_tab
 
-    click_link "Consent given for injection"
+    click_link "Consent given for gelatine-free injection"
     expect(page).to have_content("Showing 1 to 1 of 1 children")
     expect(page).to have_content(@patients.third.given_name)
 

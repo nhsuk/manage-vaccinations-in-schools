@@ -4,6 +4,7 @@ class Sessions::ConsentController < ApplicationController
   include PatientSearchFormConcern
 
   before_action :set_session
+  before_action :set_statuses
   before_action :set_patient_search_form
 
   layout "full"
@@ -11,12 +12,6 @@ class Sessions::ConsentController < ApplicationController
   def show
     statuses_except_not_required =
       Patient::ConsentStatus.statuses.keys - %w[not_required]
-
-    @statuses =
-      insert_status_for_programmes(
-        statuses_except_not_required,
-        @session.programmes
-      )
 
     scope =
       @session
@@ -41,28 +36,23 @@ class Sessions::ConsentController < ApplicationController
       )
   end
 
-  def insert_status_for_programmes(statuses, programmes)
-    insert_index = statuses.index("given") + 1
+  def set_statuses
+    programmes = @session.programmes
 
-    # TODO: Make this more generic, rather than specific to programme
-    #  combinations.
+    @statuses = %w[no_response]
 
-    result = statuses.dup
-
-    if programmes.any?(&:flu?)
-      result.insert(
-        insert_index,
-        "given_nasal",
-        "given_injection_without_gelatine"
-      )
+    unless programmes.all?(&:has_multiple_vaccine_methods?)
+      @statuses << "given_injection"
     end
 
-    if programmes.any?(&:mmr?) && programmes.none?(&:flu?)
-      result.insert(insert_index, "given_injection_without_gelatine")
+    if programmes.any?(&:has_multiple_vaccine_methods?)
+      @statuses << "given_nasal"
     end
 
-    result.delete("given") if programmes.all?(&:flu?)
+    if programmes.any?(&:vaccine_may_contain_gelatine?)
+      @statuses << "given_injection_without_gelatine"
+    end
 
-    result
+    @statuses += %w[refused conflicts]
   end
 end

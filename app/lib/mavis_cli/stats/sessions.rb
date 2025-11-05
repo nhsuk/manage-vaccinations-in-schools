@@ -18,7 +18,7 @@ module MavisCLI
           puts "Programme: #{programme.name}, Location: #{location_formatted}"
 
           headers = build_headers(programme)
-          rows = [::Stats::Session.call(session:, programme:)]
+          rows = [::Stats::Session.call(session, programme:)]
 
           table = TableTennis.new(rows, headers:)
           puts table

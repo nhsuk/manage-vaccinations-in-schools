@@ -20,7 +20,8 @@ class CommitPatientChangesetsJob
   def perform(import_global_id)
     import = GlobalID::Locator.locate(import_global_id)
 
-    if Flipper.enabled?(:import_low_pds_match_rate)
+    if Flipper.enabled?(:import_search_pds) &&
+         Flipper.enabled?(:import_low_pds_match_rate)
       import.validate_pds_match_rate!
       return if import.low_pds_match_rate?
     end
@@ -42,6 +43,8 @@ class CommitPatientChangesetsJob
         end
 
       import.postprocess_rows!
+
+      reset_counts(import)
 
       import.update_columns(
         processed_at: Time.zone.now,
@@ -118,11 +121,13 @@ class CommitPatientChangesetsJob
       # the duplicates won't be persisted, so we can skip those
       school_move.confirm! if school_move.patient.persisted?
     end
-
-    SchoolMove.import!(
-      importable_school_moves.to_a,
-      on_duplicate_key_update: :all
-    )
+    school_move_import_records = importable_school_moves.to_a
+    imported_ids =
+      SchoolMove.import!(
+        school_move_import_records,
+        on_duplicate_key_update: :all
+      ).ids
+    SyncPatientTeamJob.perform_later(SchoolMove, imported_ids)
   end
 
   def import_pds_search_results(changesets, import)
@@ -179,5 +184,11 @@ class CommitPatientChangesetsJob
         team: import.team,
         academic_year: import.academic_year
       ) || school_move.patient.archived?(team: import.team)
+  end
+
+  def reset_counts(import)
+    cached_counts = TeamCachedCounts.new(import.team)
+    cached_counts.reset_import_issues!
+    cached_counts.reset_school_moves!
   end
 end

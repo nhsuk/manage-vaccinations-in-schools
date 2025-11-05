@@ -14,7 +14,12 @@
 #  index_organisations_on_ods_code  (ods_code) UNIQUE
 #
 class Organisation < ApplicationRecord
+  include ContributesToPatientTeams
   include ODSCodeConcern
+
+  class ActiveRecord_Relation < ActiveRecord::Relation
+    include ContributesToPatientTeams::Relation
+  end
 
   audited
   has_associated_audits
@@ -27,6 +32,10 @@ class Organisation < ApplicationRecord
 
   class << self
     delegate :fhir_reference, to: FHIRMapper::Organisation
+  end
+
+  def flipper_id
+    "Organisation:#{ods_code}"
   end
 
   private

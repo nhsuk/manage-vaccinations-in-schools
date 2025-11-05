@@ -74,6 +74,10 @@ locals {
     {
       name  = "RAILS_ENV"
       value = var.environment == "production" ? "production" : "staging"
+    },
+    {
+      name  = "REDIS_CACHE_URL"
+      value = "not_needed"
     }
   ]
   task_secrets = [

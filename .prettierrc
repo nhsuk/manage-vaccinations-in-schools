@@ -1,3 +1,11 @@
 {
-  "plugins": ["@prettier/plugin-ruby"]
+  "plugins": ["@prettier/plugin-ruby"],
+  "overrides": [
+    {
+      "files": ["*.rb", "*.md"],
+      "options": {
+        "trailingComma": "none"
+      }
+    }
+  ]
 }

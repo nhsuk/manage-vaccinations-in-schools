@@ -50,7 +50,7 @@ Rails.application.configure do
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = { request_id: :request_id }
 
-  # Change to "debug" to log everything (including potentially personally-identifiable information!)
+  # Change to "debug" to log everything (including potentially personally-identifiable information!).
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
   # Prevent health checks from clogging up the logs.
@@ -72,7 +72,25 @@ Rails.application.configure do
   )
 
   # Replace the default in-process memory cache store with a durable alternative.
-  # config.cache_store = :mem_cache_store
+  config.cache_store =
+    :redis_cache_store,
+    {
+      url: ENV.fetch("REDIS_CACHE_URL"),
+      # We've been seeing timeouts when calling UNLINK with the default
+      # timeout of 1 second.
+      connect_timeout: 5,
+      write_timeout: 5,
+      error_handler: ->(method:, returning:, exception:) do
+        Sentry.capture_exception(
+          exception,
+          level: "warning",
+          tags: {
+            method:,
+            returning:
+          }
+        )
+      end
+    }
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
   # config.active_job.queue_adapter = :resque
@@ -92,6 +110,7 @@ Rails.application.configure do
   #   "example.com",     # Allow requests from example.com
   #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
   # ]
+  #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 end

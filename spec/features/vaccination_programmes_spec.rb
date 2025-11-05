@@ -10,6 +10,7 @@ describe "Vaccination programmes table" do
     and_the_patient_is_vaccinated_for_hpv
 
     when_i_click_on_children
+    and_i_filter_for_the_child
     and_i_click_on_a_child
 
     then_the_table_has_a_row_showing_hpv_vaccinated
@@ -21,6 +22,7 @@ describe "Vaccination programmes table" do
     and_the_patient_had_two_flu_doses_last_year
 
     when_i_click_on_children
+    and_i_filter_for_the_child
     and_i_click_on_a_child
 
     then_the_table_has_two_rows_showing_flu_vaccinated
@@ -31,6 +33,7 @@ describe "Vaccination programmes table" do
     and_the_patient_has_an_outcome_other_than_vaccinated
 
     when_i_click_on_children
+    and_i_filter_for_the_child
     and_i_click_on_a_child
 
     then_the_table_displays_the_outcome
@@ -83,6 +86,11 @@ describe "Vaccination programmes table" do
 
     visit "/dashboard"
     click_on "Children", match: :first
+  end
+
+  def and_i_filter_for_the_child
+    fill_in "Search", with: "John Smith"
+    click_button "Update results"
   end
 
   def and_i_click_on_a_child

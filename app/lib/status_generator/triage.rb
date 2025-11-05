@@ -24,6 +24,8 @@ class StatusGenerator::Triage
       :do_not_vaccinate
     elsif status_should_be_delay_vaccination?
       :delay_vaccination
+    elsif status_should_be_invite_to_clinic?
+      :invite_to_clinic
     elsif status_should_be_required?
       :required
     else
@@ -94,12 +96,18 @@ class StatusGenerator::Triage
 
   def status_should_be_delay_vaccination?
     return false if vaccinated?
-    latest_triage&.delay_vaccination?
+    latest_triage&.delay_vaccination? && !latest_triage.expired?
+  end
+
+  def status_should_be_invite_to_clinic?
+    return false if vaccinated?
+    latest_triage&.invite_to_clinic?
   end
 
   def status_should_be_required?
     return false if vaccinated?
     return true if latest_triage&.keep_in_triage?
+    return true if latest_triage&.expired?
 
     return false if latest_consents.empty?
 

@@ -149,7 +149,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
           end
         end
 
-        if dose_number.present?
+        if show_dose_number?
           summary_list.with_row do |row|
             row.with_key { "Dose number" }
             row.with_value { dose_number_value }
@@ -402,24 +402,20 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
     highlight_if(@vaccination_record.notes, @vaccination_record.notes_changed?)
   end
 
+  def show_dose_number?
+    @vaccination_record.dose_sequence.present? ||
+      @programme.default_dose_sequence.present?
+  end
+
   def dose_number_value
-    highlight_if(dose_number, @vaccination_record.dose_sequence_changed?)
+    highlight_if(
+      @vaccination_record.dose_sequence&.ordinalize || "Unknown",
+      @vaccination_record.dose_sequence_changed?
+    )
   end
 
   def discarded_value
     @vaccination_record&.discarded_at&.to_fs(:long)
-  end
-
-  def dose_number
-    dose_sequence = @vaccination_record.dose_sequence
-
-    if dose_sequence.nil?
-      "Unknown"
-    elsif dose_sequence <= 10
-      I18n.t(dose_sequence, scope: :ordinal_number).upcase_first
-    else
-      dose_sequence.ordinalize
-    end
   end
 
   def highlight_if(value, condition)

@@ -66,4 +66,89 @@ describe TriageForm do
       expect(triage.notes).to eq("test")
     end
   end
+
+  describe "when the patient has a delayed vaccination for MMR" do
+    subject(:form) do
+      described_class.new(
+        patient:,
+        session:,
+        programme:,
+        current_user: create(:user),
+        notes: "test",
+        status_option: "delay_vaccination",
+        delay_vaccination_until: Date.tomorrow
+      )
+    end
+
+    let(:programme) { create(:programme, :mmr) }
+    let(:patient) { create(:patient, :consent_given_triage_needed, session:) }
+    let(:vaccination_record) do
+      create(:vaccination_record, patient:, programme:)
+    end
+
+    it "associates the triage with the vaccination record" do
+      vaccination_record = create(:vaccination_record, patient:, programme:)
+
+      triage = form.save!
+
+      expect(vaccination_record.reload.next_dose_delay_triage).to eq(triage)
+    end
+  end
+
+  context "programme is MMR" do
+    let(:programme) { create(:programme, :mmr) }
+
+    describe "validation for delay_vaccination_until" do
+      subject(:validation_errors) do
+        form.save # rubocop:disable Rails/SaveBang
+        form.errors.full_messages
+      end
+
+      let(:delay_vaccination_until) { nil }
+
+      let(:form) do
+        described_class.new(
+          patient:,
+          session:,
+          programme:,
+          delay_vaccination_until:,
+          current_user: create(:user),
+          status_option: "delay_vaccination"
+        )
+      end
+
+      context "patient hasn't received any doses" do
+        let(:delay_vaccination_until) { Date.tomorrow }
+
+        it "doesn't produce any validation errors" do
+          expect(validation_errors).to be_empty
+        end
+      end
+
+      context "patient has had their first dose" do
+        let(:delay_vaccination_until) { Date.tomorrow }
+        let(:expected_mmr_next_dose) do
+          (vaccination_record.performed_at + 28.days).to_date
+        end
+
+        let!(:vaccination_record) do
+          create(
+            :vaccination_record,
+            patient:,
+            programme:,
+            session:,
+            performed_at: 1.week.ago
+          )
+        end
+
+        before { StatusUpdater.call(patient:) }
+
+        it "produces validation errors" do
+          expect(validation_errors.join).to include(
+            "The vaccination cannot take place before #{expected_mmr_next_dose.to_fs(:long)}"
+          )
+        end
+      end
+    end
+  end
 end

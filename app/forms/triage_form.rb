@@ -3,6 +3,7 @@
 class TriageForm
   include ActiveModel::Model
   include ActiveModel::Attributes
+  include ActiveRecord::AttributeAssignment
 
   include Notable
 
@@ -13,6 +14,7 @@ class TriageForm
   attribute :consent_without_gelatine, :boolean
   attribute :notes, :string
   attribute :status_option, :string
+  attribute :delay_vaccination_until, :date
 
   validates :add_patient_specific_direction,
             inclusion: {
@@ -20,6 +22,9 @@ class TriageForm
             },
             if: :requires_add_patient_specific_direction?
   validates :status_option, inclusion: { in: :status_options }
+
+  validates :delay_vaccination_until, presence: true, if: :delay_vaccination?
+  validate :validate_delay_vaccination_until_date
 
   def triage=(triage)
     self.status_option =
@@ -34,6 +39,14 @@ class TriageForm
       end
   end
 
+  def notes
+    if delayed_mmr_dose?
+      "Next dose #{delay_vaccination_until.strftime("%d %B %Y")}"
+    else
+      super
+    end
+  end
+
   def save
     save! if valid?
   end
@@ -41,8 +54,14 @@ class TriageForm
   def save!
     ActiveRecord::Base.transaction do
       handle_patient_specific_direction
-      Triage.create!(triage_attributes)
+      triage = Triage.create!(triage_attributes)
+      associate_triage_with_vaccination_record(triage) if delayed_mmr_dose?
+      triage
     end
+  end
+
+  def delayed_mmr_dose?
+    programme.mmr? && delay_vaccination_until.present?
   end
 
   def safe_to_vaccinate_options
@@ -58,7 +77,7 @@ class TriageForm
   end
 
   def other_options
-    %w[keep_in_triage delay_vaccination do_not_vaccinate]
+    %w[keep_in_triage invite_to_clinic delay_vaccination do_not_vaccinate]
   end
 
   def status_options
@@ -74,9 +93,24 @@ class TriageForm
       can_create_patient_specific_directions?
   end
 
+  def next_mmr_dose_date
+    vaccination_status = patient.vaccination_status(programme:, academic_year:)
+
+    first_dose_date =
+      if vaccination_status.eligible? || vaccination_status.due?
+        vaccination_status.latest_date
+      end
+
+    (first_dose_date || Date.current) + 28.days
+  end
+
   private
 
   delegate :academic_year, :team, to: :session
+
+  def delay_vaccination?
+    status_option == "delay_vaccination"
+  end
 
   def consented_vaccine_methods
     @consented_vaccine_methods ||=
@@ -106,7 +140,8 @@ class TriageForm
       status:,
       team:,
       vaccine_method:,
-      without_gelatine:
+      without_gelatine:,
+      delay_vaccination_until:
     }
   end
 
@@ -189,5 +224,52 @@ class TriageForm
       .patient_specific_directions
       .where(academic_year:, programme:, team:)
       .invalidate_all
+  end
+
+  def validate_delay_vaccination_until_date
+    return if delay_vaccination_until.nil?
+
+    if delay_vaccination_until < Date.current
+      errors.add(
+        :delay_vaccination_until,
+        "The vaccination cannot be in the past"
+      )
+    end
+
+    cutoff_date = academic_year.to_academic_year_date_range.end
+
+    if delay_vaccination_until > cutoff_date
+      errors.add(
+        :delay_vaccination_until,
+        "The vaccination date cannot go beyond #{cutoff_date.strftime("%d %B %Y")}"
+      )
+    end
+
+    if programme.mmr? && patient_eligible_for_additional_dose? &&
+         delay_vaccination_until < next_mmr_dose_date
+      errors.add(
+        :delay_vaccination_until,
+        "The vaccination cannot take place before #{next_mmr_dose_date.to_fs(:long)}"
+      )
+    end
+  end
+
+  def associate_triage_with_vaccination_record(next_dose_delay_triage)
+    vaccination_record =
+      patient.vaccination_records.where(programme:).order(:performed_at).last
+
+    if vaccination_record.present?
+      vaccination_record.update!(next_dose_delay_triage:)
+    end
+  end
+
+  def patient_eligible_for_additional_dose?
+    next_dose =
+      patient.vaccination_status(
+        programme: programme,
+        academic_year: session.academic_year
+      ).dose_sequence
+
+    next_dose == programme.maximum_dose_sequence
   end
 end

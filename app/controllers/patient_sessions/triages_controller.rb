@@ -38,7 +38,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
         **triage_form_params
       )
 
-    if @triage_form.save
+    if (triage = @triage_form.save)
       StatusUpdater.call(patient: @patient)
 
       ConsentGrouper
@@ -47,7 +47,9 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
           programme_id: @programme.id,
           academic_year: @academic_year
         )
-        .each { send_triage_confirmation(@patient, @session, @programme, it) }
+        .each do
+          send_triage_confirmation(@patient, @session, @programme, it, triage)
+        end
 
       redirect_to redirect_path, flash: { success: "Triage outcome updated" }
     else
@@ -59,7 +61,14 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
 
   def triage_form_params
     params.expect(
-      triage_form: %i[status_option notes add_patient_specific_direction]
+      triage_form: %i[
+        status_option
+        notes
+        add_patient_specific_direction
+        delay_vaccination_until(3i)
+        delay_vaccination_until(2i)
+        delay_vaccination_until(1i)
+      ]
     )
   end
 

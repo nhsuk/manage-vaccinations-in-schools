@@ -32,10 +32,15 @@
 #
 class Session < ApplicationRecord
   include Consentable
+  include ContributesToPatientTeams
   include DaysBeforeToWeeksBefore
   include Delegatable
   include GelatineVaccinesConcern
   include HasLocationProgrammeYearGroups
+
+  class ActiveRecord_Relation < ActiveRecord::Relation
+    include ContributesToPatientTeams::Relation
+  end
 
   audited associated_with: :location
   has_associated_audits

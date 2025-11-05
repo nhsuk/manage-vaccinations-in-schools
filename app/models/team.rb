@@ -32,8 +32,13 @@
 #  fk_rails_...  (organisation_id => organisations.id)
 #
 class Team < ApplicationRecord
+  include ContributesToPatientTeams
   include DaysBeforeToWeeksBefore
   include HasLocationProgrammeYearGroups
+
+  class ActiveRecord_Relation < ActiveRecord::Relation
+    include ContributesToPatientTeams::Relation
+  end
 
   audited associated_with: :organisation
   has_associated_audits
@@ -50,7 +55,9 @@ class Team < ApplicationRecord
   has_many :sessions
   has_many :subteams
   has_many :team_programmes, -> { joins(:programme).order(:"programmes.type") }
+  has_many :patient_teams
 
+  has_many :patients, through: :patient_teams
   has_many :community_clinics, through: :subteams
   has_many :locations, through: :subteams
   has_many :programmes, through: :team_programmes
@@ -78,6 +85,14 @@ class Team < ApplicationRecord
 
   def patients
     Patient.joins_sessions.where(sessions: { team_id: id })
+  end
+
+  def year_groups(academic_year: nil)
+    academic_year ||= AcademicYear.pending
+    location_programme_year_groups
+      .joins(:location_year_group)
+      .where(location_year_group: { academic_year: })
+      .pluck_year_groups
   end
 
   def generic_clinic = locations.generic_clinic.first

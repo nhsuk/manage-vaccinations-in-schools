@@ -6,6 +6,8 @@ class ConsentFormsController < ApplicationController
   before_action :set_patient_search_form, only: :search
   before_action :set_consent_form, except: :index
   before_action :set_patient, only: %i[edit_match update_match]
+  before_action :set_search_params_present, only: :search
+  skip_after_action :verify_policy_scoped, only: %i[search]
 
   def index
     consent_forms = policy_scope(ConsentForm).unmatched.order(:recorded_at)
@@ -26,9 +28,13 @@ class ConsentFormsController < ApplicationController
 
   def search
     patients =
-      @form.apply(
-        policy_scope(Patient).includes(:school, parent_relationships: :parent)
-      )
+      if @search_params_present
+        @form.apply(
+          policy_scope(Patient).includes(:school, parent_relationships: :parent)
+        )
+      else
+        Patient.none
+      end
 
     @pagy, @patients = pagy(patients)
 
@@ -41,6 +47,8 @@ class ConsentFormsController < ApplicationController
 
   def update_match
     @consent_form.match_with_patient!(@patient, current_user:)
+
+    reset_count!
 
     session =
       @patient
@@ -115,6 +123,8 @@ class ConsentFormsController < ApplicationController
       school_move.confirm!(user: current_user)
 
       @consent_form.match_with_patient!(patient, current_user:)
+
+      reset_count!
     end
 
     if patient.nhs_number.nil?
@@ -149,5 +159,13 @@ class ConsentFormsController < ApplicationController
 
   def archive_params
     params.expect(consent_form: :notes).merge(archived_at: Time.current)
+  end
+
+  def reset_count!
+    TeamCachedCounts.new(current_team).reset_unmatched_consent_responses!
+  end
+
+  def set_search_params_present
+    @search_params_present = @form.any_filters_applied?
   end
 end

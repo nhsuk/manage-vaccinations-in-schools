@@ -51,16 +51,20 @@
           show_aged_out_of_programmes: true,
         ) %>
 
-    <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
-      <% @patients.each do |patient| %>
-        <%= render AppPatientSearchResultCardComponent.new(
-              patient,
-              link_to: match_consent_form_path(@consent_form, patient),
-              show_parents: true,
-              show_postcode: true,
-              show_school: true,
-            ) %>
+    <% if @search_params_present %>
+      <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
+        <% @patients.each do |patient| %>
+          <%= render AppPatientSearchResultCardComponent.new(
+                patient,
+                link_to: match_consent_form_path(@consent_form, patient),
+                show_parents: true,
+                show_postcode: true,
+                show_school: true,
+              ) %>
+        <% end %>
       <% end %>
+    <% else %>
+       <%= render AppSearchResultsComponent.new(@pagy, label: "children", no_results_text: "Search for a child or use filters to see children matching your selection.") %>
     <% end %>
   </div>
 </div>

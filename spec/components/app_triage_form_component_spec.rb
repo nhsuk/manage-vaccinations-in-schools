@@ -118,4 +118,28 @@ describe AppTriageFormComponent do
       expect(rendered).not_to have_text("The parent has consented to")
     end
   end
+
+  context "hint text for delayed triage when programme is MMR" do
+    context "when the patient has not received any dose" do
+      let(:programme) { create(:programme, :mmr) }
+
+      it "doesn't show the specific hint text about the 2nd dose" do
+        expect(rendered).not_to have_text("2nd dose is not due until")
+      end
+    end
+
+    context "when the patient has received the 1st dose" do
+      let(:programme) { create(:programme, :mmr) }
+
+      before do
+        create(:vaccination_record, patient:, programme:, session:)
+
+        StatusUpdater.call(patient:)
+      end
+
+      it "doesn't show the specific hint text about the 2nd dose" do
+        expect(rendered).to have_text("2nd dose is not due until")
+      end
+    end
+  end
 end
