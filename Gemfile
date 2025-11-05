@@ -112,6 +112,7 @@ group :test do
   gem "capybara-screenshot"
   gem "climate_control"
   gem "cuprite"
+  gem "database_cleaner-active_record"
   gem "its"
   gem "rack_session_access"
   gem "rspec"

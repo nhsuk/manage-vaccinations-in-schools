@@ -200,6 +200,10 @@ GEM
     cuprite (0.17)
       capybara (~> 3.0)
       ferrum (~> 0.17.0)
+    database_cleaner-active_record (2.2.2)
+      activerecord (>= 5.a)
+      database_cleaner-core (~> 2.0)
+    database_cleaner-core (2.0.1)
     date (3.5.0)
     date_time_precision (0.8.1)
     debug (1.11.0)
@@ -800,6 +804,7 @@ DEPENDENCIES
   cssbundling-rails
   csv
   cuprite
+  database_cleaner-active_record
   debug
   devise
   discard
