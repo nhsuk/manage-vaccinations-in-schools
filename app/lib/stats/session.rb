@@ -10,23 +10,24 @@ class Stats::Session
   def call
     stats = {
       eligible_children: patient_ids.size,
-      vaccinated: vaccinated_count,
-      consent_no_response: consent_count_for("no_response"),
-      consent_refused:
-        consent_count_for("refused") + consent_count_for("conflicts"),
-      consent_given: consent_count_for("given")
+      consent_no_response: consent_count_for("no_response")
     }
 
-    if programme.has_multiple_vaccine_methods?
-      programme.vaccine_methods.each do |vaccine_method|
-        stats[:"consent_given_#{vaccine_method}"] = consent_count_for(
-          "given",
-          vaccine_method:
-        )
-      end
+    consent_given_statuses.each do |consent_given_status|
+      options =
+        PatientSearchForm::CONSENT_GIVEN_PREDICATES.fetch(consent_given_status)
+
+      stats[:"consent_#{consent_given_status}"] = consent_count_for(
+        "given",
+        **options
+      )
     end
 
-    stats
+    stats.merge(
+      consent_refused:
+        consent_count_for("refused") + consent_count_for("conflicts"),
+      vaccinated: vaccinated_count
+    )
   end
 
   def self.call(...) = new(...).call
@@ -45,17 +46,32 @@ class Stats::Session
         .count
   end
 
-  def consent_count_for(status, vaccine_method: nil)
+  def consent_given_statuses
+    if programme.has_multiple_vaccine_methods?
+      %w[given_nasal given_injection_without_gelatine]
+    elsif programme.vaccine_may_contain_gelatine?
+      %w[given_injection given_injection_without_gelatine]
+    else
+      %w[given_injection]
+    end
+  end
+
+  def consent_count_for(status, vaccine_method: nil, without_gelatine: nil)
     vaccine_method_value =
       if vaccine_method
         Patient::ConsentStatus.vaccine_methods.fetch(vaccine_method)
       end
 
-    consent_counts.sum do |(counted_status, counted_vaccine_methods), count|
+    consent_counts.sum do |(counted_status, counted_vaccine_methods, counted_without_gelatine), count|
       next 0 unless counted_status == status
 
       unless vaccine_method_value.nil? ||
                counted_vaccine_methods.include?(vaccine_method_value)
+        next 0
+      end
+
+      unless without_gelatine.nil? ||
+               counted_without_gelatine == without_gelatine
         next 0
       end
 
@@ -67,7 +83,7 @@ class Stats::Session
     @consent_counts ||=
       Patient::ConsentStatus
         .where(patient_id: patient_ids, programme:, academic_year:)
-        .group(:status, :vaccine_methods)
+        .group(:status, :vaccine_methods, :without_gelatine)
         .count
   end
 

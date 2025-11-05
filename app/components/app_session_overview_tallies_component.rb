@@ -39,88 +39,51 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
   end
 
   def cards_for_programme(programme)
-    stats = stats_for_programme(programme)
+    stats_for_programme(programme)
+      .except(:eligible_children)
+      .map do |key, value|
+        string_key = key.to_s
+        {
+          heading: card_heading_for(string_key),
+          colour: card_colour_for(string_key),
+          count: value.to_s,
+          link_to: card_link_to_for(string_key, programme:)
+        }
+      end
+  end
 
-    [
-      {
-        heading: "No response",
-        colour: "grey",
-        count: stats[:consent_no_response].to_s,
-        link_to:
-          session_consent_path(
-            session,
-            consent_statuses: %w[no_response],
-            programme_types: [programme.type]
-          )
-      },
-      (
-        if programme.has_multiple_vaccine_methods?
-          programme.vaccine_methods.map do |vaccine_method|
-            method_string =
-              Vaccine.human_enum_name(:method, vaccine_method).downcase
+  def card_heading_for(key)
+    if key.starts_with?("consent_")
+      I18n.t(key[8..], scope: %i[status consent label])
+    elsif key == "vaccinated"
+      I18n.t("status.vaccination.label.vaccinated")
+    end
+  end
 
-            # Flu injection is always without gelatine.
-            consent_status =
-              (
-                if vaccine_method == "injection"
-                  "given_injection_without_gelatine"
-                else
-                  "given_nasal"
-                end
-              )
+  def card_colour_for(key)
+    if key.starts_with?("consent_")
+      I18n.t(key[8..], scope: %i[status consent colour])
+    elsif key == "vaccinated"
+      I18n.t("status.vaccination.colour.vaccinated")
+    end
+  end
 
-            {
-              heading: "Consent given for #{method_string}",
-              colour: "aqua-green",
-              count: stats[:"consent_given_#{vaccine_method}"].to_s,
-              link_to:
-                session_consent_path(
-                  session,
-                  consent_statuses: [consent_status],
-                  programme_types: [programme.type]
-                )
-            }
-          end
-        else
-          [
-            {
-              heading: "Consent given",
-              colour: "aqua-green",
-              count: stats[:consent_given].to_s,
-              link_to:
-                session_consent_path(
-                  session,
-                  consent_statuses: %w[given],
-                  programme_types: [programme.type]
-                )
-            }
-          ]
-        end
-      ),
-      {
-        heading: "Consent refused",
-        colour: "red",
-        count: stats[:consent_refused].to_s,
-        link_to:
-          session_consent_path(
-            session,
-            consent_statuses: %w[refused conflicts],
-            programme_types: [programme.type]
-          )
-      },
-      {
-        heading: "Vaccinated",
-        colour: "green",
-        count: stats[:vaccinated].to_s,
-        link_to:
-          session_patients_path(
-            session,
-            programme_types: [programme.type],
-            vaccination_status: "vaccinated",
-            eligible_children: 1
-          )
-      }
-    ].flatten
+  def card_link_to_for(key, programme:)
+    programme_types = [programme.type]
+
+    if key.starts_with?("consent_")
+      consent_statuses = [key[8..]]
+      consent_statuses << "conflicts" if key == "consent_refused"
+
+      session_consent_path(session, consent_statuses:, programme_types:)
+    elsif key == "vaccinated"
+      session_patients_path(
+        session,
+        programme_types: [programme.type],
+        vaccination_status: "vaccinated",
+        eligible_children: 1
+      )
+    end
   end
 
   def eligible_children_count(programme)

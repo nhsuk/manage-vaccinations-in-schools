@@ -12,7 +12,7 @@ describe Stats::Session do
         expect(stats).to eq(
           eligible_children: 0,
           consent_no_response: 0,
-          consent_given: 0,
+          consent_given_injection: 0,
           consent_refused: 0,
           vaccinated: 0
         )
@@ -46,7 +46,7 @@ describe Stats::Session do
         expect(stats).to eq(
           eligible_children: 5,
           consent_no_response: 1,
-          consent_given: 1,
+          consent_given_injection: 1,
           consent_refused: 2,
           vaccinated: 1
         )
@@ -70,7 +70,7 @@ describe Stats::Session do
         create(:patient, session:, year_group: 9).tap do |patient|
           create(
             :patient_consent_status,
-            :given_injection_only,
+            :given_without_gelatine,
             patient:,
             programme:
           )
@@ -79,7 +79,7 @@ describe Stats::Session do
         create(:patient, session:, year_group: 9).tap do |patient|
           create(
             :patient_consent_status,
-            :given_injection_only,
+            :given_without_gelatine,
             patient:,
             programme:
           )
@@ -90,7 +90,7 @@ describe Stats::Session do
         expect(stats).to include(
           eligible_children: 3,
           consent_given_nasal: 1,
-          consent_given_injection: 2
+          consent_given_injection_without_gelatine: 2
         )
       end
     end
