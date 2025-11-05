@@ -235,6 +235,30 @@ describe GovukNotifyPersonalisation do
           )
         end
       end
+
+      context "created after session starts" do
+        let(:session) do
+          create(:session, :yesterday, location:, team:, programmes:)
+        end
+
+        before do
+          create(
+            :triage,
+            :delay_vaccination,
+            patient:,
+            programme: programmes.first
+          )
+        end
+
+        it do
+          expect(to_h).to match(
+            hash_including(
+              delay_vaccination_review_context:
+                "reviewed the answers you gave to the health questions about John"
+            )
+          )
+        end
+      end
     end
   end
 
