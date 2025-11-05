@@ -174,7 +174,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = true
+  config.use_transactional_fixtures = false
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
@@ -215,6 +215,13 @@ RSpec.configure do |config|
   config.before(:all, type: :feature) do
     MavisCLI.instance_variable_set(:@progress_bar, nil)
   end
+
+  config.before(:suite) do
+    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.around { |example| DatabaseCleaner.cleaning { example.run } }
 
   config.include ActiveJob::TestHelper, type: :feature
   config.include ActiveSupport::Testing::TimeHelpers
