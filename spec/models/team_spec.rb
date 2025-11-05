@@ -72,21 +72,19 @@ describe Team do
   end
 
   describe "#has_upload_access_only?" do
+    subject { team.has_upload_access_only? }
+
     context "given the bulk upload feature flag is disabled" do
       context "when type is upload_only" do
-        let(:team) { build(:team, type: :upload_only) }
+        before { team.type = :upload_only }
 
-        it "returns false" do
-          expect(team.has_upload_access_only?).to be false
-        end
+        it { should be false }
       end
 
       context "when type is poc_only" do
-        let(:team) { build(:team, type: :poc_only) }
+        before { team.type = :poc_only }
 
-        it "returns false" do
-          expect(team.has_upload_access_only?).to be false
-        end
+        it { should be false }
       end
     end
 
@@ -94,47 +92,39 @@ describe Team do
       before { Flipper.enable(:bulk_upload) }
 
       context "when type is upload_only" do
-        let(:team) { build(:team, type: :upload_only) }
+        before { team.type = :upload_only }
 
-        it "returns true" do
-          expect(team.has_upload_access_only?).to be true
-        end
+        it { should be true }
       end
 
       context "when type is poc_only" do
-        let(:team) { build(:team, type: :poc_only) }
+        before { team.type = :poc_only }
 
-        it "returns false" do
-          expect(team.has_upload_access_only?).to be false
-        end
+        it { should be false }
       end
 
       context "when type is poc_with_legacy_upload" do
-        let(:team) { build(:team, type: :poc_with_legacy_upload) }
+        before { team.type = :poc_with_legacy_upload }
 
-        it "returns false" do
-          expect(team.has_upload_access_only?).to be false
-        end
+        it { should be false }
       end
     end
   end
 
   describe "#has_poc_access?" do
+    subject { team.has_poc_access? }
+
     context "given the bulk upload feature flag is disabled" do
       context "when type is poc_only" do
-        let(:team) { build(:team, type: :poc_only) }
+        before { team.type = :poc_only }
 
-        it "returns true" do
-          expect(team.has_poc_access?).to be true
-        end
+        it { should be true }
       end
 
       context "when type is upload_only" do
-        let(:team) { build(:team, type: :upload_only) }
+        before { team.type = :upload_only }
 
-        it "returns true" do
-          expect(team.has_poc_access?).to be true
-        end
+        it { should be true }
       end
     end
 
@@ -142,27 +132,21 @@ describe Team do
       before { Flipper.enable(:bulk_upload) }
 
       context "when type is poc_only" do
-        let(:team) { build(:team, type: :poc_only) }
+        before { team.type = :poc_only }
 
-        it "returns true" do
-          expect(team.has_poc_access?).to be true
-        end
+        it { should be true }
       end
 
       context "when type is poc_with_legacy_upload" do
-        let(:team) { build(:team, type: :poc_with_legacy_upload) }
+        before { team.type = :poc_with_legacy_upload }
 
-        it "returns true" do
-          expect(team.has_poc_access?).to be true
-        end
+        it { should be true }
       end
 
       context "when type is upload_only" do
-        let(:team) { build(:team, type: :upload_only) }
+        before { team.type = :upload_only }
 
-        it "returns false" do
-          expect(team.has_poc_access?).to be false
-        end
+        it { should be false }
       end
     end
   end
