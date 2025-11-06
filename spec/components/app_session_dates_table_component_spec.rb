@@ -68,6 +68,12 @@ describe AppSessionDatesTableComponent do
 
       create_vaccination_record(hpv_programme, yesterday, year_group: 9)
       create_vaccination_record(
+        hpv_programme,
+        yesterday,
+        year_group: 9,
+        discarded: true
+      )
+      create_vaccination_record(
         flu_programme,
         session_date_today.value,
         year_group: 9,
@@ -164,16 +170,21 @@ describe AppSessionDatesTableComponent do
     programme,
     performed_at,
     year_group:,
-    vaccine: nil
+    vaccine: nil,
+    discarded: false
   )
     patient = create(:patient, session:, year_group:)
+    delivery_method = vaccine&.nasal? ? "nasal_spray" : "intramuscular"
+    discarded_at = discarded ? Time.current : nil
 
     create(
       :vaccination_record,
-      session:,
-      programme:,
-      performed_at:,
+      delivery_method:,
+      discarded_at:,
       patient:,
+      performed_at:,
+      programme:,
+      session:,
       vaccine:
     )
   end
