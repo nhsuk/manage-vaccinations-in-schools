@@ -78,11 +78,12 @@ class AppSessionDatesTableComponent < ViewComponent::Base
   def vaccination_records_by_date(programme)
     @vaccination_records_by_date ||= {}
     @vaccination_records_by_date[programme.id] ||= VaccinationRecord
+      .administered
+      .kept
       .where(
         programme:,
         session:,
-        patient_id: patients_for_programme(programme),
-        outcome: :administered
+        patient_id: patients_for_programme(programme)
       )
       .group_by { |record| record.performed_at.to_date }
   end
