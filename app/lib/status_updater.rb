@@ -14,6 +14,8 @@ class StatusUpdater
       scope = scope.where(sessions: { id: session.pluck(:id) })
     end
 
+    scope = scope.where(academic_year: @academic_years)
+
     @patient_locations = scope
   end
 
@@ -41,6 +43,7 @@ class StatusUpdater
 
     Patient::ConsentStatus
       .where(patient: patient_locations.select(:patient_id))
+      .where(academic_year: academic_years)
       .includes(:consents, :patient, :programme, :vaccination_records)
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)
@@ -95,6 +98,7 @@ class StatusUpdater
 
     Patient::TriageStatus
       .where(patient: patient_locations.select(:patient_id))
+      .where(academic_year: academic_years)
       .includes(:patient, :programme, :consents, :triages, :vaccination_records)
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)
@@ -118,6 +122,7 @@ class StatusUpdater
 
     Patient::VaccinationStatus
       .where(patient: patient_locations.select(:patient_id))
+      .where(academic_year: academic_years)
       .includes(
         :attendance_record,
         :consents,
@@ -191,6 +196,7 @@ class StatusUpdater
     @programme_ids_per_year_group ||=
       Location::ProgrammeYearGroup
         .joins(:location_year_group)
+        .where(location_year_group: { academic_year: academic_years })
         .distinct
         .pluck(:programme_id, :"location_year_group.value")
         .each_with_object({}) do |(programme_id, year_group), hash|
@@ -203,6 +209,7 @@ class StatusUpdater
     @programme_ids_per_location_id_and_year_group ||=
       Location::ProgrammeYearGroup
         .joins(:location_year_group)
+        .where(location_year_group: { academic_year: academic_years })
         .pluck(
           :"location_year_group.location_id",
           :programme_id,
