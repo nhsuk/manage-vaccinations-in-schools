@@ -36,25 +36,4 @@ describe "status:update" do
       invoke
     end
   end
-
-  context "with a session" do
-    subject(:invoke) do
-      Rake::Task["status:update:session"].invoke(session.slug)
-    end
-
-    after { Rake.application["status:update:session"].reenable }
-
-    let(:session) { create(:session) }
-
-    before { create(:patient_location, session:) }
-
-    it "doesn't raise an error" do
-      expect { invoke }.not_to raise_error
-    end
-
-    it "calls the status updater" do
-      expect(StatusUpdater).to receive(:call).with(session:)
-      invoke
-    end
-  end
 end

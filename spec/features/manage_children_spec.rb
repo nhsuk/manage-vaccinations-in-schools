@@ -214,7 +214,7 @@ describe "Manage children" do
         family_name: "Doe"
       )
 
-    StatusUpdater.call(session: @session)
+    StatusUpdater.call
   end
 
   def given_many_patients_exist
@@ -222,7 +222,7 @@ describe "Manage children" do
 
     create_list(:patient, 100, session: @session)
 
-    StatusUpdater.call(session: @session)
+    StatusUpdater.call
   end
 
   def given_an_invalidated_patient_exists
@@ -239,7 +239,7 @@ describe "Manage children" do
 
     create(:patient, session:, nhs_number: nil)
 
-    StatusUpdater.call(session: @session)
+    StatusUpdater.call
   end
 
   def and_the_patient_is_vaccinated
