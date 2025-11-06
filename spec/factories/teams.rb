@@ -15,6 +15,7 @@
 #  phone_instructions            :string
 #  privacy_notice_url            :string           not null
 #  privacy_policy_url            :string           not null
+#  type                          :integer          not null
 #  workgroup                     :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
@@ -47,6 +48,7 @@ FactoryBot.define do
     careplus_venue_code { identifier.to_s }
     privacy_notice_url { "https://example.com/privacy-notice" }
     privacy_policy_url { "https://example.com/privacy-policy" }
+    type { :poc_only }
 
     trait :with_one_nurse do
       users { [create(:user, :nurse, team: instance)] }

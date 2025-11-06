@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_03_182041) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_05_213843) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -812,6 +812,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_03_182041) do
     t.string "privacy_notice_url", null: false
     t.string "privacy_policy_url", null: false
     t.uuid "reply_to_id"
+    t.integer "type", null: false
     t.datetime "updated_at", null: false
     t.string "workgroup", null: false
     t.index ["name"], name: "index_teams_on_name", unique: true

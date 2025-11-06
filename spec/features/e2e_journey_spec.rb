@@ -4,9 +4,13 @@ describe "End-to-end journey" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
   scenario "Cohorting, session creation, verbal consent, vaccination" do
-    # Cohorting
+    # Homepage
     given_an_hpv_programme_is_underway
     and_i_am_a_nurse_signed_into_the_service
+    then_i_should_see_the_default_dashboard_cards
+    and_the_default_navigation_items
+
+    # Cohorting
     when_i_upload_the_cohort_import_containing_one_child
     then_i_see_that_the_cohort_has_been_uploaded
 
@@ -75,6 +79,23 @@ describe "End-to-end journey" do
   def and_i_am_a_nurse_signed_into_the_service
     sign_in @team.users.first
     visit "/dashboard"
+  end
+
+  def then_i_should_see_the_default_dashboard_cards
+    cards = page.all(".nhsuk-card-group__item")
+    expect(cards[0].first("h2")).to have_content("Programmes")
+    expect(cards[1].first("h2")).to have_content("Sessions")
+    expect(cards[2].first("h2")).to have_content("Children")
+  end
+
+  def and_the_default_navigation_items
+    navigation_items = page.all(".nhsuk-header__navigation-item")
+    expect(navigation_items.count).to eq(8)
+    expect(navigation_items[0]).to have_link(
+      "Programmes",
+      href: programmes_path
+    )
+    expect(navigation_items[7]).to have_link("Your team", href: team_path)
   end
 
   def when_i_upload_the_cohort_import_containing_one_child

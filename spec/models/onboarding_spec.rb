@@ -85,6 +85,7 @@ describe Onboarding do
           "team.phone": ["can't be blank", "is invalid"],
           "team.privacy_notice_url": ["can't be blank"],
           "team.privacy_policy_url": ["can't be blank"],
+          "team.type": ["is not included in the list"],
           "team.workgroup": ["can't be blank"],
           "school.0.subteam": ["can't be blank"],
           "school.1.subteam": ["can't be blank"],

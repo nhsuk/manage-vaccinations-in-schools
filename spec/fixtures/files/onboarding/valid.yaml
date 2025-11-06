@@ -9,6 +9,7 @@ team:
   careplus_venue_code: EXAMPLE
   privacy_notice_url: https://example.com/privacy-notice
   privacy_policy_url: https://example.com/privacy-policy
+  type: 0
   workgroup: nhstrust
 
 programmes: [hpv]

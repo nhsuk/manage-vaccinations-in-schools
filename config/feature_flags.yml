@@ -35,3 +35,7 @@ testing_api: Basic API useful for automated testing.
 reporting_api: Enables the Commissioner reporting component to authenticate to Mavis via OAUTH 2.0
   Authorization Code Flow (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), and retrieve
   statistics from /api/reporting/
+
+bulk_upload: |
+  Enables use of Mavis as a replacement for teams migrating from the legacy NIVS bulk upload,
+  in order to flow vaccination records to NHS England.
