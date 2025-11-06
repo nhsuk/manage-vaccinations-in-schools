@@ -45,32 +45,45 @@ module MavisCLI
             CSV.foreach(file, headers: true)
           end
 
-        enumerator.each do |row|
+        enumerator.each_with_index do |row, idx|
+          row_num = idx + 1
           id = row["id"]&.to_s&.strip
           if id.blank?
-            warn "Row #{total}: missing id"
+            warn "Row #{row_num}: missing id"
             next
           end
 
-          # Build key=value pairs for attributes with non-empty values, excluding id
-          updates = []
+          # Build hash
+          updates = {}
           row.headers.each do |header|
             next if header.nil?
             key = header.to_s
             next if key == "id"
             value = row[header]
             next if value&.to_s&.strip.blank?
-            updates << "#{key}=#{value}"
+            updates[key] = value
           end
 
           if updates.empty?
-            puts "Row #{total} (id=#{id}): no updates provided, skipping"
+            puts "Row #{row_num} (id=#{id}): no updates provided, skipping"
             next
           end
 
-          args = ["vaccination-records", "edit", id, *updates]
+          vaccination_record = ::VaccinationRecord.find_by(id:)
+          if vaccination_record.nil?
+            warn "Row #{row_num} (id=#{id}): vaccination record not found"
+            next
+          end
 
-          Dry::CLI.new(MavisCLI).call(arguments: args)
+          begin
+            ::VaccinationRecordTechnicalFieldsUpdater.call(
+              vaccination_record: vaccination_record,
+              updates: updates
+            )
+            puts "Row #{row_num} (id=#{id}): Successfully updated VaccinationRecord ##{id}"
+          rescue StandardError => e
+            warn "Row #{row_num} (id=#{id}): Error: #{e.message}"
+          end
         end
       end
     end
