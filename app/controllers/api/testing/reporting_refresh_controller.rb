@@ -2,7 +2,7 @@
 
 class API::Testing::ReportingRefreshController < API::Testing::BaseController
   def create
-    ReportingAPI::PatientProgrammeStatus.refresh!
-    redirect_to "/reports"
+    ReportingAPI::RefreshJob.perform_later
+    render status: :accepted
   end
 end
