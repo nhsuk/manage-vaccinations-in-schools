@@ -18,11 +18,20 @@ module AuthenticationConcern
     def authenticate_user!
       if !user_signed_in?
         if request.path != start_path && request.path != new_users_teams_path
-          store_location_for(:user, request.fullpath)
+          location = Addressable::URI.parse(request.fullpath)
+          location.query_values =
+            (location.query_values || {}).delete("timeout")
+          store_location_for(:user, location.to_s)
         end
 
         if cis2_enabled? || request.path != new_user_session_path
-          flash[:info] = "You must be logged in to access this page."
+          flash[:info] = (
+            if session_timed_out?
+              "You've been signed out for your security. Please sign in again."
+            else
+              "You must be logged in to access this page."
+            end
+          )
           redirect_to start_path
         end
       elsif cis2_enabled?
@@ -177,5 +186,7 @@ module AuthenticationConcern
           it["org_code"] == selected_cis2_nrbac_role["org_code"]
         end
     end
+
+    def session_timed_out? = params.key?(:timeout)
   end
 end

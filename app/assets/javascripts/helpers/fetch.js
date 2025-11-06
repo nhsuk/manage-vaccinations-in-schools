@@ -1,8 +1,8 @@
 function checkResponseStatus(response) {
   // Reload the page if the user is not authenticated
-  // to trigger a server side redirect to the login page
+  // to trigger a server side redirect to the start page
   if (response.status === 401 || response.status === 403) {
-    window.location.reload();
+    window.location.href = `${window.location.origin}${window.location.pathname}?timeout`;
   }
   if (!response.ok) {
     throw new Error(`${response.status} ${response.statusText}`);
