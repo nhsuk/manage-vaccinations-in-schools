@@ -1,18 +1,12 @@
 # frozen_string_literal: true
 
 class StatusUpdater
-  def initialize(patient: nil, session: nil, academic_years: nil)
+  def initialize(patient: nil, academic_years: nil)
     @academic_years = academic_years || AcademicYear.all
 
     scope = PatientLocation.joins_sessions
 
     scope = scope.where(patient:) if patient
-
-    if session.is_a?(Session)
-      scope = scope.where(sessions: { id: session.id })
-    elsif session
-      scope = scope.where(sessions: { id: session.pluck(:id) })
-    end
 
     scope = scope.where(academic_year: @academic_years)
 

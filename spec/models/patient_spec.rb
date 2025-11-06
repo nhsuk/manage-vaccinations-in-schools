@@ -456,7 +456,7 @@ describe Patient do
                 session:,
                 patient:
               )
-              StatusUpdater.call(session:, patient:)
+              StatusUpdater.call(patient:)
             end
 
             it { should_not include(patient) }

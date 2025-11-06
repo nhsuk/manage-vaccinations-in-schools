@@ -12,11 +12,5 @@ namespace :status do
       patient = Patient.find(args[:id])
       StatusUpdater.call(patient:)
     end
-
-    desc "Update the statuses of all the patients in a session."
-    task :session, [:slug] => :environment do |_, args|
-      session = Session.find_by!(slug: args[:slug])
-      StatusUpdater.call(session:)
-    end
   end
 end

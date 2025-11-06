@@ -199,7 +199,9 @@ class DraftSessionsController < ApplicationController
       @draft_session.create_location_programme_year_groups!
     end
 
-    StatusUpdaterJob.perform_later(session: @session)
+    @session.patients.find_each do |patient|
+      StatusUpdaterJob.perform_later(patient:)
+    end
   end
 
   def finish_wizard_path = session_path(@session)
