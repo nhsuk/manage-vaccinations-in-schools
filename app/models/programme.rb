@@ -51,6 +51,10 @@ class Programme < ApplicationRecord
 
   delegate :fhir_target_disease_coding, to: :fhir_mapper
 
+  def flipper_id
+    "Programme:#{type}"
+  end
+
   def to_param = type
 
   def name = human_enum_name(:type)
