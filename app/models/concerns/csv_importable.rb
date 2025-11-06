@@ -285,8 +285,6 @@ module CSVImportable
   def ensure_processed_with_count_statistics
     if processed? && COUNT_COLUMNS.any? { |column| send(column).nil? }
       raise "Count statistics must be set for a processed import."
-    elsif !processed? && COUNT_COLUMNS.any? { |column| !send(column).nil? }
-      raise "Count statistics must not be set for a non-processed import."
     end
   end
 
