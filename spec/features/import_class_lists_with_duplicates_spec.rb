@@ -44,10 +44,11 @@ describe "Class list imports duplicates" do
     and_a_fourth_record_should_exist
   end
 
-  context "when PDS lookup during import is enabled" do
+  context "when PDS lookup during import and import_review_screen is enabled" do
     scenario "User reviews and selects between duplicate records" do
       given_i_am_signed_in
       and_pds_lookup_during_import_is_enabled
+      and_import_review_screen_is_enabled
       and_an_hpv_programme_is_underway
       and_existing_patient_records_exist
 
@@ -118,6 +119,10 @@ describe "Class list imports duplicates" do
       "birthdate" => "eq2010-02-02",
       "address-postalcode" => "SW1A 2BB"
     )
+  end
+
+  def and_import_review_screen_is_enabled
+    Flipper.enable(:import_review_screen)
   end
 
   def and_an_hpv_programme_is_underway

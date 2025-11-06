@@ -50,10 +50,11 @@ describe "Child record imports duplicates" do
     then_i_should_see_no_import_issues_with_the_count
   end
 
-  context "when PDS lookup during import is enabled" do
+  context "when PDS lookup during import and import_review_screen is enabled" do
     scenario "User reviews and selects between duplicate records" do
       given_i_am_signed_in
       and_pds_lookup_during_import_is_enabled
+      and_import_review_screen_is_enabled
       and_an_hpv_programme_is_underway
       and_an_existing_patient_record_exists
 
@@ -180,6 +181,10 @@ describe "Child record imports duplicates" do
       "birthdate" => "eq2010-01-03",
       "address-postalcode" => "SW1A 1AA"
     )
+  end
+
+  def and_import_review_screen_is_enabled
+    Flipper.enable(:import_review_screen)
   end
 
   def and_an_hpv_programme_is_underway
