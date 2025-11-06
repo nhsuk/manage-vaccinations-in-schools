@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_03_182041) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_06_142201) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -547,6 +547,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_03_182041) do
     t.integer "status", default: 0, null: false
     t.integer "vaccine_methods", default: [], null: false, array: true
     t.boolean "without_gelatine"
+    t.index ["academic_year", "patient_id"], name: "index_patient_consent_statuses_on_academic_year_and_patient_id"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_1d3170e398", unique: true
     t.index ["status"], name: "index_patient_consent_statuses_on_status"
   end
@@ -610,6 +611,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_03_182041) do
     t.integer "status", default: 0, null: false
     t.integer "vaccine_method"
     t.boolean "without_gelatine"
+    t.index ["academic_year", "patient_id"], name: "index_patient_triage_statuses_on_academic_year_and_patient_id"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_6cf32349df", unique: true
     t.index ["status"], name: "index_patient_triage_statuses_on_status"
   end
@@ -623,6 +625,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_03_182041) do
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
     t.integer "status", default: 0, null: false
+    t.index ["academic_year", "patient_id"], name: "idx_on_academic_year_patient_id_9c400fc863"
     t.index ["latest_location_id"], name: "index_patient_vaccination_statuses_on_latest_location_id"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_fc0b47b743", unique: true
     t.index ["status"], name: "index_patient_vaccination_statuses_on_status"
