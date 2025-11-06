@@ -2,10 +2,10 @@
 
 describe API::Testing::ReportingRefreshController do
   describe "#create" do
-    it "calls refresh! and redirects" do
-      expect(ReportingAPI::PatientProgrammeStatus).to receive(:refresh!)
+    it "performs the refresh job and responds with accepted status" do
+      expect(ReportingAPI::RefreshJob).to receive(:perform_later)
       get :create
-      expect(response).to redirect_to("/reports")
+      expect(response).to have_http_status(:accepted)
     end
   end
 end
