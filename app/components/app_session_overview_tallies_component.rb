@@ -44,7 +44,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
       .map do |key, value|
         string_key = key.to_s
         {
-          heading: card_heading_for(string_key),
+          heading: card_heading_for(string_key, programme:),
           colour: card_colour_for(string_key),
           count: value.to_s,
           link_to: card_link_to_for(string_key, programme:)
@@ -52,11 +52,17 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
       end
   end
 
-  def card_heading_for(key)
+  def card_heading_for(key, programme:)
     if key.starts_with?("consent_")
       I18n.t(key[8..], scope: %i[status consent label])
     elsif key == "vaccinated"
-      I18n.t("status.vaccination.label.vaccinated")
+      if programme.mmr?
+        # TODO: Apply this to all multi-dose programmes (Td/IPV) once we
+        #  have confidence in the change.
+        "Fully vaccinated"
+      else
+        I18n.t("status.vaccination.label.vaccinated")
+      end
     end
   end
 
