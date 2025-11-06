@@ -65,7 +65,11 @@ class ClassImport < PatientImport
           .exists
       )
 
-    unknown_patients = existing_patients - patients
+    patients_in_import =
+      changesets.from_file - changesets.cancelled - changesets.processed
+
+    unknown_patients =
+      existing_patients - patients - patients_in_import.map(&:patient)
 
     school_moves =
       unknown_patients.map do |patient|

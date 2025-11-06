@@ -4,7 +4,7 @@ class CohortImportsController < ApplicationController
   include Pagy::Backend
 
   before_action :set_draft_import, only: %i[new create]
-  before_action :set_cohort_import, only: %i[show update]
+  before_action :set_cohort_import, only: %i[show update approve cancel]
 
   skip_after_action :verify_policy_scoped, only: %i[new create]
 
@@ -71,6 +71,49 @@ class CohortImportsController < ApplicationController
     @cohort_import.process!
 
     redirect_to cohort_import_path(@cohort_import)
+  end
+
+  def approve
+    @cohort_import.reviewed_by_user_ids << current_user.id
+    @cohort_import.reviewed_at << Time.zone.now
+    @cohort_import.committing!
+
+    @cohort_import
+      .changesets
+      .from_file
+      .ready_for_review
+      .in_batches(of: 100) do |batch|
+        CommitPatientChangesetsJob.perform_async(batch.ids)
+      end
+
+    @cohort_import.changesets.from_file.ready_for_review.each(&:committing!)
+
+    redirect_to imports_path, flash: { info: "Import started" }
+  end
+
+  def cancel
+    @cohort_import.reviewed_by_user_ids << current_user.id
+    @cohort_import.reviewed_at << Time.zone.now
+
+    # some changesets were processed after first review, but the second review was cancelled
+    if @cohort_import.changesets.processed.any?
+      @cohort_import.update_columns(
+        processed_at: Time.zone.now,
+        status: :partially_processed
+      )
+      @cohort_import.changesets.from_file.ready_for_review.find_each(
+        &:cancelled!
+      )
+
+      @cohort_import.postprocess_rows!
+
+      redirect_to imports_path, flash: { success: "Import partially completed" }
+    else
+      @cohort_import.update!(status: :cancelled)
+      @cohort_import.changesets.from_file.each(&:cancelled!)
+
+      redirect_to imports_path, flash: { success: "Import cancelled" }
+    end
   end
 
   private

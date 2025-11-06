@@ -4,7 +4,7 @@ class ClassImportsController < ApplicationController
   include Pagy::Backend
 
   before_action :set_draft_import, only: %i[new create]
-  before_action :set_class_import, only: %i[show update]
+  before_action :set_class_import, only: %i[show update approve cancel]
 
   skip_after_action :verify_policy_scoped, only: %i[new create]
 
@@ -72,6 +72,49 @@ class ClassImportsController < ApplicationController
     @class_import.process!
 
     redirect_to class_import_path(@class_import)
+  end
+
+  def approve
+    @class_import.reviewed_by_user_ids << current_user.id
+    @class_import.reviewed_at << Time.zone.now
+    @class_import.committing!
+
+    @class_import
+      .changesets
+      .from_file
+      .ready_for_review
+      .in_batches(of: 100) do |batch|
+        CommitPatientChangesetsJob.perform_async(batch.ids)
+      end
+
+    @class_import.changesets.from_file.ready_for_review.each(&:committing!)
+
+    redirect_to imports_path, flash: { info: "Import started" }
+  end
+
+  def cancel
+    @class_import.reviewed_by_user_ids << current_user.id
+    @class_import.reviewed_at << Time.zone.now
+
+    # some changesets were processed after first review, but the second review was cancelled
+    if @class_import.changesets.processed.any?
+      @class_import.update_columns(
+        processed_at: Time.zone.now,
+        status: :partially_processed
+      )
+      @class_import.changesets.from_file.ready_for_review.find_each(
+        &:cancelled!
+      )
+
+      @class_import.postprocess_rows!
+
+      redirect_to imports_path, flash: { success: "Import partially completed" }
+    else
+      @class_import.update!(status: :cancelled)
+      @class_import.changesets.from_file.each(&:cancelled!)
+
+      redirect_to imports_path, flash: { success: "Import cancelled" }
+    end
   end
 
   private

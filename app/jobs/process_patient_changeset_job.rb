@@ -14,8 +14,11 @@ class ProcessPatientChangesetJob < ApplicationJob
     end
 
     patient_changeset.assign_patient_id
-    patient_changeset.processed!
-    patient_changeset.save!
+    if Flipper.enabled?(:import_review_screen)
+      patient_changeset.calculating_review!
+    else
+      patient_changeset.committing!
+    end
 
     if patient_changeset.import.changesets.pending.none?
       import = patient_changeset.import

@@ -28,7 +28,10 @@ module CSVImportable
            changesets_are_invalid: 4,
            in_review: 5,
            calculating_re_review: 6,
-           in_re_review: 7
+           in_re_review: 7,
+           committing: 8,
+           partially_processed: 9,
+           cancelled: 10
          },
          default: :pending_import,
          validate: true

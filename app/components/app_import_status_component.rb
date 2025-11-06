@@ -18,8 +18,11 @@ class AppImportStatusComponent < ViewComponent::Base
       "in_review" => "Needs review",
       "calculating_re_review" => "Processing",
       "in_re_review" => "Needs re-review",
+      "committing" => "Importing",
       "processed" => "Completed",
-      "low_pds_match_rate" => "Failed"
+      "partially_processed" => "Partially completed",
+      "low_pds_match_rate" => "Failed",
+      "cancelled" => "Cancelled"
     }.fetch(@import.status)
   end
 
@@ -31,8 +34,11 @@ class AppImportStatusComponent < ViewComponent::Base
       "in_review" => "yellow",
       "calculating_re_review" => "blue",
       "in_re_review" => "yellow",
+      "committing" => "blue",
       "processed" => "green",
-      "low_pds_match_rate" => "red"
+      "partially_processed" => "green",
+      "low_pds_match_rate" => "red",
+      "cancelled" => "grey"
     }.fetch(@import.status)
   end
 end
