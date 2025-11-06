@@ -4,7 +4,9 @@ class ClassImportsController < ApplicationController
   include Pagy::Backend
 
   before_action :set_draft_import, only: %i[new create]
-  before_action :set_class_import, only: %i[show update approve cancel]
+  before_action :set_class_import,
+                only: %i[show update approve cancel re_review imported_records]
+  before_action :set_review_records, only: %i[re_review imported_records]
 
   skip_after_action :verify_policy_scoped, only: %i[new create]
 
@@ -39,27 +41,37 @@ class ClassImportsController < ApplicationController
       @class_import.load_serialized_errors!
     end
 
-    @pagy, @patients = pagy(@class_import.patients.includes(:school))
+    set_review_records if @class_import.in_review?
 
-    @duplicates =
-      @patients.with_pending_changes_for_team(team: current_team).distinct
+    if @class_import.in_re_review?
+      redirect_to re_review_class_import_path(@class_import) and return
+    end
 
-    @issues_text =
-      @duplicates.each_with_object({}) do |patient, hash|
-        changeset = @class_import.changesets.find_by(patient_id: patient.id)
+    if @class_import.processed? || @class_import.partially_processed?
+      @pagy, @patients = pagy(@class_import.patients.includes(:school))
 
-        issue_groups =
-          helpers.issue_categories_for(patient.pending_changes.keys)
+      @duplicates =
+        @patients.with_pending_changes_for_team(team: current_team).distinct
 
-        hash[patient.full_name] = if changeset&.matched_on_nhs_number
-          "Matched on NHS number. #{issue_groups.to_sentence.capitalize}" +
-            (issue_groups.size == 1 ? " does not match." : " do not match.")
-        else
-          "Possible match found. Review and confirm."
+      @issues_text =
+        @duplicates.each_with_object({}) do |patient, hash|
+          changeset = @class_import.changesets.find_by(patient_id: patient.id)
+
+          issue_groups =
+            helpers.issue_categories_for(patient.pending_changes.keys)
+
+          hash[patient.full_name] = if changeset&.matched_on_nhs_number
+            "Matched on NHS number. #{issue_groups.to_sentence.capitalize}" +
+              (issue_groups.size == 1 ? " does not match." : " do not match.")
+          else
+            "Possible match found. Review and confirm."
+          end
         end
-      end
 
-    @nhs_discrepancies = @class_import.changesets.nhs_number_discrepancies
+      @nhs_discrepancies = @class_import.changesets.nhs_number_discrepancies
+
+      @cancelled = @class_import.changesets.from_file.cancelled
+    end
 
     render template: "imports/show",
            layout: "full",
@@ -72,6 +84,22 @@ class ClassImportsController < ApplicationController
     @class_import.process!
 
     redirect_to class_import_path(@class_import)
+  end
+
+  def re_review
+    render template: "imports/re_review",
+           layout: "full",
+           locals: {
+             import: @class_import
+           }
+  end
+
+  def imported_records
+    render template: "imports/imported_records",
+           layout: "full",
+           locals: {
+             import: @class_import
+           }
   end
 
   def approve
@@ -102,16 +130,14 @@ class ClassImportsController < ApplicationController
         processed_at: Time.zone.now,
         status: :partially_processed
       )
-      @class_import.changesets.from_file.ready_for_review.find_each(
-        &:cancelled!
-      )
+      @class_import.changesets.ready_for_review.find_each(&:cancelled!)
 
       @class_import.postprocess_rows!
 
       redirect_to imports_path, flash: { success: "Import partially completed" }
     else
       @class_import.update!(status: :cancelled)
-      @class_import.changesets.from_file.each(&:cancelled!)
+      @class_import.changesets.each(&:cancelled!)
 
       redirect_to imports_path, flash: { success: "Import cancelled" }
     end
@@ -134,5 +160,15 @@ class ClassImportsController < ApplicationController
 
   def class_import_params
     params.fetch(:class_import, {}).permit(:csv)
+  end
+
+  def set_review_records
+    @pagy, @patients = pagy(@class_import.patients.includes(:school))
+    @new_records = @class_import.changesets.ready_for_review.new_patient
+    @auto_matched_records = @class_import.changesets.ready_for_review.auto_match
+    @import_issues = @class_import.changesets.ready_for_review.import_issue
+    @school_moves = @class_import.changesets.ready_for_review.with_school_moves
+    @re_review =
+      @new_records + @auto_matched_records + @import_issues + @school_moves
   end
 end
