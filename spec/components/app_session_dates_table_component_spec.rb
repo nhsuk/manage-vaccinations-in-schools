@@ -167,13 +167,15 @@ describe AppSessionDatesTableComponent do
     vaccine: nil
   )
     patient = create(:patient, session:, year_group:)
+    delivery_method = vaccine&.nasal? ? "nasal_spray" : "intramuscular"
 
     create(
       :vaccination_record,
-      session:,
-      programme:,
-      performed_at:,
+      delivery_method:,
       patient:,
+      performed_at:,
+      programme:,
+      session:,
       vaccine:
     )
   end

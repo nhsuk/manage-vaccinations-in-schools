@@ -68,12 +68,14 @@
       </div>
     <% end %>
   </section>
+
   <section>
     <%= render AppCardComponent.new do |card| %>
       <% card.with_heading(level: 3) { "Action required" } %>
       <%= render AppSessionActionsComponent.new(session, show_heading: false) %>
     <% end %>
   </section>
+
   <section>
     <%= render AppCardComponent.new do |card| %>
       <% card.with_heading(level: 3) { session.clinic? ? "About this clinic" : "About this school" } %>

@@ -240,9 +240,7 @@ class VaccinationRecord < ApplicationRecord
 
   def academic_year = performed_at.to_date.academic_year
 
-  def not_administered?
-    !administered?
-  end
+  def not_administered? = !administered?
 
   def confirmation_sent?
     confirmation_sent_at != nil
@@ -258,6 +256,10 @@ class VaccinationRecord < ApplicationRecord
     else
       academic_year <= current_academic_year
     end
+  end
+
+  def delivery_method_injection?
+    delivery_method_intramuscular? || delivery_method_subcutaneous?
   end
 
   def delivery_method_snomed_code

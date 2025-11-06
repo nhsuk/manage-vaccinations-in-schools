@@ -10,7 +10,7 @@
 <div class="nhsuk-grid-row">
   <% if tallying_enabled? %>
     <%= render AppSessionOverviewTalliesComponent.new(@session) %>
-    <% else %>
+  <% else %>
     <div class="nhsuk-grid-column-three-quarters">
       <%= render AppCardComponent.new do |card| %>
         <% card.with_heading { @session.clinic? ? "Community clinic" : "School session" } %>

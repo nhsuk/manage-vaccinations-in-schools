@@ -60,9 +60,8 @@ class AppSessionDatesTableComponent < ViewComponent::Base
 
   def count_by_vaccine_method(vaccination_records)
     nasal_spray_count =
-      vaccination_records.count { it.vaccine.method == "nasal" }
-    injection_count =
-      vaccination_records.count { it.vaccine.method == "injection" }
+      vaccination_records.count(&:delivery_method_nasal_spray?)
+    injection_count = vaccination_records.count(&:delivery_method_injection?)
     [nasal_spray_count, injection_count]
   end
 
