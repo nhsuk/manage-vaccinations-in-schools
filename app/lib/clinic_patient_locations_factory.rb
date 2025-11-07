@@ -44,7 +44,5 @@ class ClinicPatientLocationsFactory
     @session_date ||= generic_clinic_session.next_date(include_today: true)
   end
 
-  def patients_in_school
-    school_session.patients.includes(:consent_statuses, :vaccination_statuses)
-  end
+  def patients_in_school = school_session.patients.includes_statuses
 end

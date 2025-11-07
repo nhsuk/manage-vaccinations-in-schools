@@ -141,6 +141,15 @@ class Patient < ApplicationRecord
   scope :not_deceased, -> { where(date_of_death: nil) }
   scope :restricted, -> { where.not(restricted_at: nil) }
 
+  scope :includes_statuses,
+        -> do
+          includes(
+            :consent_statuses,
+            :triage_statuses,
+            vaccination_statuses: :latest_location
+          )
+        end
+
   scope :has_vaccination_records_dont_notify_parents,
         -> do
           where(
