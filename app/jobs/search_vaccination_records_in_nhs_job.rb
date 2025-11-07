@@ -2,7 +2,7 @@
 
 class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
   def perform(patient_id)
-    patient = Patient.find(patient_id)
+    patient = Patient.includes(teams: :organisation).find(patient_id)
 
     tx_id = SecureRandom.urlsafe_base64(16)
 
@@ -13,6 +13,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
         patient.teams.any? do
           Flipper.enabled?(:imms_api_search_job, it.organisation)
         end
+
       return unless feature_flag_enabled
 
       programmes = Programme.can_search_in_immunisations_api
