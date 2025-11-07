@@ -139,3 +139,33 @@ resource "aws_iam_role_policy_attachment" "deploy_ecs_service" {
   role       = aws_iam_role.deploy_ecs_service.name
   policy_arn = each.value
 }
+
+################ Run performance tests ################
+
+resource "aws_iam_role" "github_performancetest" {
+  count       = var.environment == "development" ? 1 : 0
+  name        = "GitHubPerformancetestRole"
+  description = "Grants permissions for running performance tests on ECS"
+  assume_role_policy = templatefile("resources/iam_role_github_trust_policy_${var.environment}.json.tftpl", {
+    account_id = var.account_id,
+    repository_list = [
+      "repo:NHSDigital/manage-vaccinations-in-schools-testing:*"
+    ]
+  })
+}
+
+resource "aws_iam_policy" "run_ecs_task" {
+  count       = var.environment == "development" ? 1 : 0
+  name        = "RunEcsTask"
+  description = "Permissions for running an ECS task"
+  policy      = file("resources/iam_policy_RunECSTask.json")
+  lifecycle {
+    ignore_changes = [description]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "run_ecs_task" {
+  count      = var.environment == "development" ? 1 : 0
+  role       = aws_iam_role.github_performancetest[0].arn
+  policy_arn = aws_iam_policy.run_ecs_task[0].value
+}
