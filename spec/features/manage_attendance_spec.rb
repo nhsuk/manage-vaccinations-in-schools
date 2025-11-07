@@ -87,7 +87,7 @@ describe "Manage attendance" do
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
-    @programmes = [create(:programme, :hpv_all_vaccines)]
+    @programmes = [CachedProgramme.hpv]
     @team =
       create(
         :team,

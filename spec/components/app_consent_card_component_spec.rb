@@ -5,7 +5,7 @@ describe AppConsentCardComponent do
 
   let(:component) { described_class.new(consent, session:) }
 
-  let(:programme) { create(:programme) }
+  let(:programme) { CachedProgramme.sample }
   let(:team) { create(:team, programmes: [programme]) }
 
   let(:consent) do
@@ -40,7 +40,7 @@ describe AppConsentCardComponent do
   it { should have_content("Consent given") }
 
   context "with the flu programme" do
-    let(:programme) { create(:programme, :flu) }
+    let(:programme) { CachedProgramme.flu }
     let(:consent) { create(:consent, programme:, vaccine_methods: %w[nasal]) }
 
     it { should have_content("Chosen vaccineNasal spray only") }

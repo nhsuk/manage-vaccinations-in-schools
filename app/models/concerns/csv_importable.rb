@@ -143,7 +143,7 @@ module CSVImportable
       else
         changesets.each(&:processed!)
 
-        CommitPatientChangesetsJob.perform_async(to_global_id.to_s)
+        CommitImportJob.perform_async(to_global_id.to_s)
       end
 
       return
@@ -165,6 +165,7 @@ module CSVImportable
       update_columns(processed_at: Time.zone.now, status: :processed, **counts)
     end
 
+    post_commit!
     UpdatePatientsFromPDS.call(patients, queue: :imports)
   end
 

@@ -5,7 +5,7 @@ describe PatientsAgedOutOfSchoolJob do
 
   around { |example| travel_to(today) { example.run } }
 
-  let(:programme) { create(:programme, :flu) }
+  let(:programme) { CachedProgramme.flu }
   let(:team) { create(:team, :with_generic_clinic, programmes: [programme]) }
   let(:school) { create(:school, :secondary, team:) }
 

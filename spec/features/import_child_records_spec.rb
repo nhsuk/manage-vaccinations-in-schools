@@ -124,9 +124,9 @@ describe "Import child records" do
 
   def given_the_app_is_setup
     programmes = [
-      create(:programme, :hpv),
-      create(:programme, :menacwy),
-      create(:programme, :td_ipv)
+      CachedProgramme.hpv,
+      CachedProgramme.menacwy,
+      CachedProgramme.td_ipv
     ]
 
     @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
@@ -327,7 +327,7 @@ describe "Import child records" do
     perform_enqueued_jobs(only: ProcessImportJob)
     perform_enqueued_jobs(only: PDSCascadingSearchJob)
     perform_enqueued_jobs(only: ProcessPatientChangesetJob)
-    perform_enqueued_jobs(only: CommitPatientChangesetsJob)
+    perform_enqueued_jobs(only: CommitImportJob)
   end
 
   def then_i_should_see_the_holding_page

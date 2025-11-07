@@ -3,8 +3,8 @@
 describe AppSessionOverviewTalliesComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:hpv_programme) { create(:programme, :hpv) }
-  let(:flu_programme) { create(:programme, :flu) }
+  let(:hpv_programme) { CachedProgramme.hpv }
+  let(:flu_programme) { CachedProgramme.flu }
   let(:session) { create(:session, programmes: [hpv_programme, flu_programme]) }
 
   let(:component) { described_class.new(session) }

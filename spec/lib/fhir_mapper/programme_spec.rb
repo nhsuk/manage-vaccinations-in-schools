@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe FHIRMapper::Programme do
-  let(:programme) { create(:programme, :hpv) }
+  let(:programme) { CachedProgramme.hpv }
   let(:mapper) { described_class.new(programme) }
 
   describe "#target_disease_coding" do

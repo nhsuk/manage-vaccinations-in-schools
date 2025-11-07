@@ -40,7 +40,7 @@ describe "Filtering" do
   end
 
   def given_a_session_exists_with_programmes(programme_types)
-    programmes = programme_types.map { |type| create(:programme, type) }
+    programmes = programme_types.map { CachedProgramme.send(it) }
     team = create(:team, programmes:)
     @nurse = create(:nurse, team:)
     @session = create(:session, team:, programmes:)

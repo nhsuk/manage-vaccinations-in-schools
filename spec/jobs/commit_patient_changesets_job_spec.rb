@@ -5,7 +5,7 @@ describe CommitPatientChangesetsJob do
     described_class.new.perform(import.to_global_id.to_s)
   end
 
-  let(:programmes) { [create(:programme, :hpv)] }
+  let(:programmes) { [CachedProgramme.hpv] }
   let(:team) { create(:team, :with_generic_clinic, programmes:) }
   let(:location) { create(:school, team:) }
   let(:session) { create(:session, location:, programmes:, team:) }

@@ -5,7 +5,7 @@ describe AppSessionSummaryComponent do
 
   let(:component) { described_class.new(session) }
 
-  let(:programmes) { [create(:programme, :hpv)] }
+  let(:programmes) { [CachedProgramme.hpv] }
   let(:location) do
     create(
       :school,

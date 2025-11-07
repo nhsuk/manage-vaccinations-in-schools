@@ -84,7 +84,7 @@ describe AppConsentSummaryComponent do
   it { should_not have_content("Consent also given for injected vaccine?") }
 
   context "with the flu programme" do
-    let(:programme) { create(:programme, :flu) }
+    let(:programme) { CachedProgramme.flu }
     let(:consent) { create(:consent, programme:, vaccine_methods: %w[nasal]) }
 
     it { should have_content("ResponseConsent given") }

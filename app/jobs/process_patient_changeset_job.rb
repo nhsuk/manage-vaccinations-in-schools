@@ -3,7 +3,14 @@
 class ProcessPatientChangesetJob < ApplicationJob
   queue_as :imports
 
-  def perform(patient_changeset)
+  def perform(patient_changeset_id)
+    patient_changeset =
+      if patient_changeset_id.is_a?(PatientChangeset)
+        patient_changeset_id
+      else
+        PatientChangeset.find(patient_changeset_id)
+      end
+
     return if patient_changeset.processed?
 
     unique_nhs_number = get_unique_nhs_number(patient_changeset)
@@ -16,9 +23,7 @@ class ProcessPatientChangesetJob < ApplicationJob
     patient_changeset.save!
 
     if patient_changeset.import.changesets.pending.none?
-      CommitPatientChangesetsJob.perform_async(
-        patient_changeset.import.to_global_id.to_s
-      )
+      CommitImportJob.perform_async(patient_changeset.import.to_global_id.to_s)
     end
   end
 

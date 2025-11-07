@@ -84,6 +84,9 @@ class ClassImport < PatientImport
     PatientsAgedOutOfSchoolJob.perform_async(location_id)
   end
 
+  def post_commit!
+  end
+
   private
 
   def parse_row(data)

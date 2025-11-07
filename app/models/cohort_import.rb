@@ -47,6 +47,9 @@ class CohortImport < PatientImport
     PatientsAgedOutOfSchoolJob.perform_bulk(ids.zip)
   end
 
+  def post_commit!
+  end
+
   private
 
   def parse_row(data)

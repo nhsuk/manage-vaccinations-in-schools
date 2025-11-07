@@ -18,7 +18,6 @@ class Generate::Consents
     @given = given
     @given_needs_triage = given_needs_triage
     @updated_patients = []
-    @updated_sessions = Set.new
   end
 
   def call
@@ -26,7 +25,7 @@ class Generate::Consents
     create_consents(:given, @given)
     create_consents(:needing_triage, @given_needs_triage)
 
-    StatusUpdater.call(patient: @updated_patients, session: @updated_sessions)
+    StatusUpdater.call(patient: @updated_patients)
   end
 
   def self.call(...) = new(...).call
@@ -95,7 +94,6 @@ class Generate::Consents
         school = session.location.school? ? session.location : patient.school
 
         @updated_patients << patient
-        @updated_sessions << session
 
         FactoryBot.build(
           :consent_form,

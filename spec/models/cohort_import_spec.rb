@@ -34,7 +34,7 @@
 describe CohortImport do
   subject(:cohort_import) { create(:cohort_import, csv:, team:) }
 
-  let(:programmes) { [create(:programme, :hpv)] }
+  let(:programmes) { [CachedProgramme.hpv] }
   let(:team) { create(:team, :with_generic_clinic, programmes:) }
 
   let(:file) { "valid.csv" }
@@ -152,17 +152,17 @@ describe CohortImport do
 
         expect(configured_job).to have_received(:perform_later).exactly(3).times
 
-        expect(CommitPatientChangesetsJob).not_to have_enqueued_sidekiq_job
+        expect(CommitImportJob).not_to have_enqueued_sidekiq_job
       end
     end
 
     context "when import_search_pds flag is disabled" do
       before { Flipper.disable(:import_search_pds) }
 
-      it "marks all changesets as processed and enqueues CommitPatientChangesetsJob" do
+      it "marks all changesets as processed and enqueues CommitImportJob" do
         process!
 
-        expect(CommitPatientChangesetsJob).to have_enqueued_sidekiq_job(
+        expect(CommitImportJob).to have_enqueued_sidekiq_job(
           cohort_import.to_global_id.to_s
         )
 

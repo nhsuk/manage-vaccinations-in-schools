@@ -30,7 +30,7 @@ describe "Edit session dates" do
   end
 
   def given_a_session_exists
-    programmes = [create(:programme, :hpv)]
+    programmes = [CachedProgramme.hpv]
 
     @team = create(:team, :with_one_nurse, programmes:)
     @session = create(:session, :unscheduled, programmes:, team: @team)

@@ -564,35 +564,35 @@ describe Reports::ProgrammeVaccinationsExporter do
   end
 
   context "Flu programme" do
-    let(:programme) { create(:programme, :flu) }
+    let(:programme) { CachedProgramme.flu }
     let(:expected_consent_status) { "Consent given for injection" }
 
     include_examples "generates a report"
   end
 
   context "HPV programme" do
-    let(:programme) { create(:programme, :hpv) }
+    let(:programme) { CachedProgramme.hpv }
     let(:expected_consent_status) { "Consent given" }
 
     include_examples "generates a report"
   end
 
   context "MenACWY programme" do
-    let(:programme) { create(:programme, :menacwy) }
+    let(:programme) { CachedProgramme.menacwy }
     let(:expected_consent_status) { "Consent given" }
 
     include_examples "generates a report"
   end
 
   context "MMR programme" do
-    let(:programme) { create(:programme, :mmr) }
+    let(:programme) { CachedProgramme.mmr }
     let(:expected_consent_status) { "Consent given" }
 
     include_examples "generates a report"
   end
 
   context "Td/IPV programme" do
-    let(:programme) { create(:programme, :td_ipv) }
+    let(:programme) { CachedProgramme.td_ipv }
     let(:expected_consent_status) { "Consent given" }
 
     include_examples "generates a report"

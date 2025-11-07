@@ -22,7 +22,7 @@ describe ClassImportRow do
 
   let(:today) { Date.new(2024, 12, 1) }
 
-  let(:programmes) { [create(:programme)] }
+  let(:programmes) { [CachedProgramme.sample] }
   let(:team) { create(:team, programmes:) }
   let(:academic_year) { AcademicYear.pending }
   let(:school) { create(:school, team:) }

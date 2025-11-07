@@ -3,7 +3,7 @@
 describe AppTriageTableComponent do
   let(:component) { described_class.new(patient:, session:, programme:) }
 
-  let(:programme) { create(:programme) }
+  let(:programme) { CachedProgramme.sample }
   let(:session) { create(:session, programmes: [programme]) }
   let(:patient) { create(:patient, session:) }
 

@@ -10,7 +10,7 @@ describe DraftConsent do
   let(:request_session) { {} }
   let(:current_user) { team.users.first }
 
-  let(:programme) { create(:programme, :hpv) }
+  let(:programme) { CachedProgramme.hpv }
   let(:session) { create(:session, team:, programmes: [programme]) }
   let(:patient) { create(:patient, session:) }
 

@@ -87,8 +87,8 @@ describe SessionPolicy do
 
       let(:user) { create(:user, team:) }
 
-      let!(:flu_programme) { create(:programme, :flu) }
-      let!(:hpv_programme) { create(:programme, :hpv) }
+      let!(:flu_programme) { CachedProgramme.flu }
+      let!(:hpv_programme) { CachedProgramme.hpv }
 
       let(:users_teams_session) { create(:session, team:, programmes:) }
       let(:another_teams_session) { create(:session, programmes:) }

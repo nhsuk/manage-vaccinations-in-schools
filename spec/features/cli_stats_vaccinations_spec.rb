@@ -68,9 +68,9 @@ describe "mavis stats vaccinations" do
   end
 
   def given_comprehensive_vaccination_data_exists
-    @programme_flu = create(:programme, type: "flu")
-    @programme_hpv = create(:programme, type: "hpv")
-    @programme_menacwy = create(:programme, type: "menacwy")
+    @programme_flu = CachedProgramme.flu
+    @programme_hpv = CachedProgramme.hpv
+    @programme_menacwy = CachedProgramme.menacwy
 
     @target_organisation = create(:organisation, ods_code: "TARGET123")
     @target_team =

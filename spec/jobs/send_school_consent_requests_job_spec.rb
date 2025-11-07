@@ -4,7 +4,7 @@ describe SendSchoolConsentRequestsJob do
   subject(:perform_now) { described_class.perform_now(session) }
 
   let(:today) { Date.new(2025, 7, 1) }
-  let(:programmes) { [create(:programme)] }
+  let(:programmes) { [CachedProgramme.sample] }
   let(:parents) { create_list(:parent, 2) }
   let(:patient_with_request_sent) do
     create(
@@ -71,9 +71,7 @@ describe SendSchoolConsentRequestsJob do
     end
 
     context "with Td/IPV and MenACWY" do
-      let(:programmes) do
-        [create(:programme, :menacwy), create(:programme, :td_ipv)]
-      end
+      let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
 
       it "sends one notification to one patient" do
         expect(ConsentNotification).to receive(:create_and_send!).once.with(
@@ -88,9 +86,9 @@ describe SendSchoolConsentRequestsJob do
     end
 
     context "with HPV, Td/IPV and MenACWY" do
-      let(:hpv_programme) { create(:programme, :hpv) }
-      let(:menacwy_programme) { create(:programme, :menacwy) }
-      let(:td_ipv_programme) { create(:programme, :td_ipv) }
+      let(:hpv_programme) { CachedProgramme.hpv }
+      let(:menacwy_programme) { CachedProgramme.menacwy }
+      let(:td_ipv_programme) { CachedProgramme.td_ipv }
 
       let(:programmes) { [hpv_programme, menacwy_programme, td_ipv_programme] }
 

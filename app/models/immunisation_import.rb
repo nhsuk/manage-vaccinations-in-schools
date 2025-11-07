@@ -59,6 +59,9 @@ class ImmunisationImport < ApplicationRecord
     @patients_batch ||= Set.new
     @patient_locations_batch ||= Set.new
 
+    @imported_vaccination_record_ids ||= []
+    @imported_patient_location_ids ||= []
+
     @vaccination_records_batch.add(vaccination_record)
     if (batch = vaccination_record.batch)
       @batches_batch.add(batch)
@@ -80,23 +83,21 @@ class ImmunisationImport < ApplicationRecord
     vaccination_records = @vaccination_records_batch.to_a
     patient_locations = @patient_locations_batch.to_a
 
-    imported_ids =
+    @imported_vaccination_record_ids |=
       VaccinationRecord.import(
         vaccination_records,
         on_duplicate_key_update: :all
       ).ids
-    SyncPatientTeamJob.perform_later(VaccinationRecord, imported_ids)
 
     vaccination_records.each do |vaccination_record|
       AlreadyHadNotificationSender.call(vaccination_record:)
     end
 
-    imported_ids =
+    @imported_patient_location_ids |=
       PatientLocation.import(
         patient_locations,
         on_duplicate_key_ignore: :all
       ).ids
-    SyncPatientTeamJob.perform_later(PatientLocation, imported_ids)
 
     [
       [:vaccination_records, vaccination_records],
@@ -124,7 +125,17 @@ class ImmunisationImport < ApplicationRecord
 
   def postprocess_rows!
     StatusUpdater.call(patient: patients)
+  end
 
+  def post_commit!
+    SyncPatientTeamJob.perform_later(
+      VaccinationRecord,
+      @imported_vaccination_record_ids
+    )
+    SyncPatientTeamJob.perform_later(
+      PatientLocation,
+      @imported_patient_location_ids
+    )
     vaccination_records.sync_all_to_nhs_immunisations_api
   end
 end

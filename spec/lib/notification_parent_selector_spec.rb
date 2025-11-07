@@ -8,7 +8,7 @@ describe NotificationParentSelector do
   describe "#parents" do
     subject(:parents) { notification_parent_selector.parents }
 
-    let(:programme) { create(:programme) }
+    let(:programme) { CachedProgramme.sample }
     let(:academic_year) { AcademicYear.current }
     let(:patient) { create(:patient, programmes: [programme]) }
     let(:vaccination_record) do

@@ -14,8 +14,9 @@
 #
 # Indexes
 #
-#  idx_on_patient_id_programme_id_academic_year_1d3170e398  (patient_id,programme_id,academic_year) UNIQUE
-#  index_patient_consent_statuses_on_status                 (status)
+#  idx_on_patient_id_programme_id_academic_year_1d3170e398         (patient_id,programme_id,academic_year) UNIQUE
+#  index_patient_consent_statuses_on_academic_year_and_patient_id  (academic_year,patient_id)
+#  index_patient_consent_statuses_on_status                        (status)
 #
 # Foreign Keys
 #
@@ -28,7 +29,7 @@ describe Patient::ConsentStatus do
   end
 
   let(:patient) { create(:patient) }
-  let(:programme) { create(:programme, :hpv) }
+  let(:programme) { CachedProgramme.hpv }
 
   before { patient.strict_loading!(false) }
 
@@ -241,7 +242,7 @@ describe Patient::ConsentStatus do
       let(:current_academic_year) { AcademicYear.current }
       let(:previous_academic_year) { current_academic_year - 1 }
       let(:patient) { create(:patient) }
-      let(:programme) { create(:programme) }
+      let(:programme) { CachedProgramme.sample }
       let(:parent) { create(:parent) }
 
       describe "with consents from different academic years" do

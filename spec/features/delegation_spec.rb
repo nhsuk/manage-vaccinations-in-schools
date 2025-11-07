@@ -21,7 +21,7 @@ describe "Delegation" do
   end
 
   def given_a_flu_session_exists
-    @programme = create(:programme, :flu)
+    @programme = CachedProgramme.flu
     @team = create(:team, programmes: [@programme])
     @nurse = create(:nurse, teams: [@team])
 
@@ -29,7 +29,7 @@ describe "Delegation" do
   end
 
   def given_an_hpv_session_exists
-    @programme = create(:programme, :hpv)
+    @programme = CachedProgramme.hpv
     @team = create(:team, programmes: [@programme])
     @nurse = create(:nurse, teams: [@team])
 

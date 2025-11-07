@@ -6,7 +6,7 @@
 describe FHIRMapper::VaccinationRecord do
   let(:organisation) { create(:organisation) }
   let(:team) { create(:team, organisation:, programmes: [programme]) }
-  let(:programme) { create(:programme, :hpv) }
+  let(:programme) { CachedProgramme.hpv }
   let(:school) { create(:school, urn: "100006") }
   let(:session) do
     create(:session, location: school, programmes: [programme], team:)
@@ -302,7 +302,7 @@ describe FHIRMapper::VaccinationRecord do
 
     around { |example| travel_to(Date.new(2025, 11, 20)) { example.run } }
 
-    let(:programme) { create(:programme, :flu) }
+    let(:programme) { CachedProgramme.flu }
 
     shared_examples "a mapped vaccination record (common fields)" do
       its(:persisted?) { should be false }

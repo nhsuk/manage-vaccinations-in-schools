@@ -9,7 +9,7 @@ describe API::Testing::TeamsController do
   around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
 
   describe "DELETE" do
-    let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
+    let(:programmes) { [CachedProgramme.hpv] }
 
     let(:team) do
       create(
@@ -53,7 +53,7 @@ describe API::Testing::TeamsController do
       TeamSessionsFactory.call(team, academic_year: AcademicYear.current)
 
       cohort_import.process!
-      CommitPatientChangesetsJob.drain
+      CommitImportJob.drain
       immunisation_import.process!
 
       Patient.find_each do |patient|

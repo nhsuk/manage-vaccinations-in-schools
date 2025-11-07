@@ -42,7 +42,7 @@ describe SessionNotification do
 
     let(:parents) { create_list(:parent, 2) }
     let(:patient) { create(:patient, parents:, year_group: 10, session:) }
-    let(:programme) { create(:programme, :td_ipv) }
+    let(:programme) { CachedProgramme.td_ipv }
     let(:programmes) { [programme] }
     let(:team) { create(:team, programmes:) }
     let(:location) { create(:school, team:) }
@@ -94,9 +94,7 @@ describe SessionNotification do
         let(:consented_programmes) { [programme] }
 
         # No consent for MenACWY
-        let(:programmes) do
-          consented_programmes + [create(:programme, :menacwy)]
-        end
+        let(:programmes) { consented_programmes + [CachedProgramme.menacwy] }
 
         it "enqueues an email per parent who gave consent" do
           expect { create_and_send! }.to have_delivered_email(
@@ -174,9 +172,7 @@ describe SessionNotification do
       end
 
       context "when the session administers two programmes but the patient only needs one" do
-        let(:programmes) do
-          [create(:programme, :flu), create(:programme, :hpv)]
-        end
+        let(:programmes) { [CachedProgramme.flu, CachedProgramme.hpv] }
 
         before do
           create(:vaccination_record, patient:, programme: programmes.first)

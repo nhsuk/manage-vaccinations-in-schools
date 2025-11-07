@@ -2,11 +2,11 @@
 
 describe SendManualSchoolConsentRemindersJob do
   subject(:perform_now) do
-    StatusUpdater.call(session:)
+    StatusUpdater.call
     described_class.perform_now(session, current_user: user)
   end
 
-  let(:programmes) { [create(:programme, :flu)] }
+  let(:programmes) { [CachedProgramme.flu] }
 
   let(:request_notification) do
     create(

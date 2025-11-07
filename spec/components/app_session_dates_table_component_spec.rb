@@ -3,17 +3,11 @@
 describe AppSessionDatesTableComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:flu_injection_vaccine) { build(:vaccine, :cell_based_trivalent) }
-  let(:flu_nasal_vaccine) { build(:vaccine, :fluenz) }
-  let(:hpv_programme) { create(:programme, :hpv) }
-  let(:menacwy_programme) { create(:programme, :menacwy) }
-  let(:flu_programme) do
-    create(
-      :programme,
-      :flu,
-      vaccines: [flu_injection_vaccine, flu_nasal_vaccine]
-    )
-  end
+  let(:hpv_programme) { CachedProgramme.hpv }
+  let(:menacwy_programme) { CachedProgramme.menacwy }
+  let(:flu_programme) { CachedProgramme.flu }
+  let(:flu_injection_vaccine) { flu_programme.vaccines.injection.first }
+  let(:flu_nasal_vaccine) { flu_programme.vaccines.nasal.first }
   let(:session) do
     create(
       :session,
@@ -67,6 +61,12 @@ describe AppSessionDatesTableComponent do
       session.session_dates.create!(value: yesterday)
 
       create_vaccination_record(hpv_programme, yesterday, year_group: 9)
+      create_vaccination_record(
+        hpv_programme,
+        yesterday,
+        year_group: 9,
+        discarded: true
+      )
       create_vaccination_record(
         flu_programme,
         session_date_today.value,
@@ -164,16 +164,21 @@ describe AppSessionDatesTableComponent do
     programme,
     performed_at,
     year_group:,
-    vaccine: nil
+    vaccine: nil,
+    discarded: false
   )
     patient = create(:patient, session:, year_group:)
+    delivery_method = vaccine&.nasal? ? "nasal_spray" : "intramuscular"
+    discarded_at = discarded ? Time.current : nil
 
     create(
       :vaccination_record,
-      session:,
-      programme:,
-      performed_at:,
+      delivery_method:,
+      discarded_at:,
       patient:,
+      performed_at:,
+      programme:,
+      session:,
       vaccine:
     )
   end

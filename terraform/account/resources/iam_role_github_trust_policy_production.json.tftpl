@@ -9,10 +9,12 @@
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringEquals": {
-          "token.actions.githubusercontent.com:sub": [
-            "repo:nhsuk/manage-vaccinations-in-schools:ref:refs/heads/main",
-            "repo:nhsuk/manage-vaccinations-in-schools:environment:production"
-          ],
+          "token.actions.githubusercontent.com:sub": ${jsonencode(flatten([
+            for repo in repository_list : [
+              "${repo}:ref:refs/heads/main",
+              "${repo}:environment:production"
+            ]
+          ]))},
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
         }
       }

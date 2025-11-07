@@ -35,7 +35,7 @@ FactoryBot.define do
   factory :vaccine do
     transient { type { Programme.types.keys.sample } }
 
-    programme { association :programme, type: }
+    programme { CachedProgramme.send(type) }
 
     brand { Faker::Commerce.product_name }
     manufacturer { Faker::Company.name }

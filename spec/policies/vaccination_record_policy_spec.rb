@@ -3,7 +3,7 @@
 describe VaccinationRecordPolicy do
   subject(:policy) { described_class.new(user, vaccination_record) }
 
-  let(:programme) { create(:programme) }
+  let(:programme) { CachedProgramme.sample }
   let(:team) { create(:team, programmes: [programme]) }
 
   describe "update?" do
@@ -127,7 +127,7 @@ describe VaccinationRecordPolicy do
       VaccinationRecordPolicy::Scope.new(user, VaccinationRecord).resolve
     end
 
-    let(:programme) { create(:programme) }
+    let(:programme) { CachedProgramme.sample }
     let(:organisation) { create(:organisation) }
 
     let(:team) { create(:team, organisation:, programmes: [programme]) }

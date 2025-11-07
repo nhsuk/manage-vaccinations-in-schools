@@ -114,8 +114,8 @@ describe "Archive children" do
   end
 
   def given_an_team_exists
-    hpv = create(:programme, :hpv)
-    flu = create(:programme, :flu)
+    hpv = CachedProgramme.hpv
+    flu = CachedProgramme.flu
     programmes = [hpv, flu]
     @team = create(:team, :with_generic_clinic, programmes:)
 

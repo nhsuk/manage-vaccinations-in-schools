@@ -5,8 +5,8 @@ describe ProgrammePolicy do
     describe "#resolve" do
       subject { described_class.new(user, Programme).resolve }
 
-      let(:flu_programme) { create(:programme, :flu) }
-      let(:hpv_programme) { create(:programme, :hpv) }
+      let(:flu_programme) { CachedProgramme.flu }
+      let(:hpv_programme) { CachedProgramme.hpv }
 
       let(:team) { create(:team, programmes: [flu_programme, hpv_programme]) }
 

@@ -17,7 +17,7 @@ describe AppConsentConfirmationComponent do
   end
 
   context "with Flu programme" do
-    let(:programme) { create(:programme, :flu) }
+    let(:programme) { CachedProgramme.flu }
     let(:session) { create(:session, programmes: [programme]) }
     let(:consent_form) { create(:consent_form, :given, session:) }
 
@@ -60,7 +60,7 @@ describe AppConsentConfirmationComponent do
       create(
         :session,
         dates: [Date.yesterday, Date.tomorrow],
-        programmes: [create(:programme, :menacwy), create(:programme, :td_ipv)]
+        programmes: [CachedProgramme.menacwy, CachedProgramme.td_ipv]
       )
     end
     let(:consent_form) { create(:consent_form, :given, session:) }
@@ -86,7 +86,7 @@ describe AppConsentConfirmationComponent do
       create(
         :session,
         dates: [Date.yesterday, Date.tomorrow],
-        programmes: [create(:programme, :menacwy), create(:programme, :td_ipv)]
+        programmes: [CachedProgramme.menacwy, CachedProgramme.td_ipv]
       )
     end
     let(:consent_form) { create(:consent_form, response: "given", session:) }
@@ -103,7 +103,7 @@ describe AppConsentConfirmationComponent do
   end
 
   context "consent refused for HPV" do
-    let(:session) { create(:session, programmes: [create(:programme, :hpv)]) }
+    let(:session) { create(:session, programmes: [CachedProgramme.hpv]) }
     let(:consent_form) { create(:consent_form, response: "refused", session:) }
 
     it { should have_text("Consent refused") }
@@ -120,7 +120,7 @@ describe AppConsentConfirmationComponent do
     let(:session) do
       create(
         :session,
-        programmes: [create(:programme, :menacwy), create(:programme, :td_ipv)]
+        programmes: [CachedProgramme.menacwy, CachedProgramme.td_ipv]
       )
     end
     let(:consent_form) { create(:consent_form, response: "refused", session:) }
@@ -140,7 +140,7 @@ describe AppConsentConfirmationComponent do
     let(:session) do
       create(
         :session,
-        programmes: [create(:programme, :hpv)],
+        programmes: [CachedProgramme.hpv],
         dates: [10.days.from_now, 11.days.from_now, 13.days.from_now]
       )
     end

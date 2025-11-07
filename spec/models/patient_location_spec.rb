@@ -27,7 +27,7 @@
 describe PatientLocation do
   subject(:patient_location) { create(:patient_location, session:) }
 
-  let(:programme) { create(:programme) }
+  let(:programme) { CachedProgramme.sample }
   let(:session) { create(:session, programmes: [programme]) }
 
   describe "associations" do
@@ -92,7 +92,7 @@ describe PatientLocation do
           .appear_in_programmes(programmes)
       end
 
-      let(:programmes) { create_list(:programme, 1, :td_ipv) }
+      let(:programmes) { [CachedProgramme.td_ipv] }
       let(:session) { create(:session, programmes:) }
 
       let(:patient_location) { create(:patient_location, patient:, session:) }

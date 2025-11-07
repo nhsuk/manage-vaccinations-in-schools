@@ -60,7 +60,7 @@ describe "Filter states" do
   end
 
   def given_i_am_signed_in
-    @programme = create(:programme, :hpv)
+    @programme = CachedProgramme.hpv
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @session = create(:session, team: @team, programmes: [@programme])
 
@@ -123,12 +123,7 @@ describe "Filter states" do
 
   def then_i_should_be_on_the_record_page
     expect(page).to have_current_path(
-      session_record_path(
-        @session,
-        search_form: {
-          programme_types: [@programme.type]
-        }
-      )
+      session_record_path(@session, programme_types: [@programme.type])
     )
   end
 

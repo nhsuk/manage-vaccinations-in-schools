@@ -41,10 +41,10 @@ describe "Vaccination programmes table" do
 
   def given_my_team_exists
     @programmes = [
-      @flu_programme = create(:programme, :flu),
-      @hpv_programme = create(:programme, :hpv),
-      @menacwy_programme = create(:programme, :menacwy),
-      @td_ipv_programme = create(:programme, :td_ipv)
+      @flu_programme = CachedProgramme.flu,
+      @hpv_programme = CachedProgramme.hpv,
+      @menacwy_programme = CachedProgramme.menacwy,
+      @td_ipv_programme = CachedProgramme.td_ipv
     ]
 
     @team =

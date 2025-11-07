@@ -205,9 +205,7 @@ describe Consent do
         )
       end
 
-      let(:programmes) do
-        [create(:programme, :menacwy), create(:programme, :td_ipv)]
-      end
+      let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
       let(:patient) { create(:patient) }
       let(:current_user) { create(:user) }
       let(:team) { create(:team, programmes:) }
@@ -260,8 +258,8 @@ describe Consent do
   it "resets health answer notes if a 'yes' changes to a 'no'" do
     consent =
       build(:consent, :given, :health_question_notes, parent: create(:parent))
-    expect(consent.health_answers.first.response).to eq("yes")
-    expect(consent.health_answers.first.notes).to be_present
+    expect(consent.health_answers.last.response).to eq("yes")
+    expect(consent.health_answers.last.notes).to be_present
 
     param =
       ActionController::Parameters.new(
@@ -269,12 +267,12 @@ describe Consent do
       )
     param.permit!
 
-    consent.health_answers.first.assign_attributes(param)
+    consent.health_answers.last.assign_attributes(param)
     consent.save!
     consent.reload
 
-    expect(consent.health_answers.first.response).to eq("no")
-    expect(consent.health_answers.first.notes).to be_nil
+    expect(consent.health_answers.last.response).to eq("no")
+    expect(consent.health_answers.last.notes).to be_nil
   end
 
   describe "#for_academic_year" do
@@ -283,7 +281,7 @@ describe Consent do
     let(:next_academic_year) { current_academic_year + 1 }
 
     let(:patient) { create(:patient) }
-    let(:programme) { create(:programme) }
+    let(:programme) { CachedProgramme.sample }
     let(:parent) { create(:parent) }
 
     let!(:consent_current_year_start) do
@@ -354,7 +352,7 @@ describe Consent do
 
   describe "#update_vaccination_records_no_notify" do
     let(:patient) { create(:patient) }
-    let(:programme) { create(:programme, :hpv) }
+    let(:programme) { CachedProgramme.hpv }
     let(:consent) { create(:consent, patient:, programme:) }
 
     context "when vaccination records exist for the patient and programme" do
@@ -376,7 +374,7 @@ describe Consent do
         create(
           :vaccination_record,
           patient:,
-          programme: create(:programme, :flu),
+          programme: CachedProgramme.flu,
           notify_parents: false
         )
       end

@@ -247,10 +247,7 @@ describe Reports::CareplusExporter do
       patient = create(:patient, session:)
 
       other_programme =
-        create(
-          :programme,
-          type: (Programme.types.values - [programme.type]).sample
-        )
+        CachedProgramme.send((Programme.types.values - [programme.type]).sample)
 
       create(
         :vaccination_record,
@@ -316,7 +313,7 @@ describe Reports::CareplusExporter do
   end
 
   context "Flu programme" do
-    let(:programme) { create(:programme, :flu) }
+    let(:programme) { CachedProgramme.flu }
     let(:delivery_method) { :intramuscular }
     let(:expected_vaccine_code) { "FLU" }
 
@@ -324,7 +321,7 @@ describe Reports::CareplusExporter do
   end
 
   context "Flu programme using nasal spray" do
-    let(:programme) { create(:programme, :flu) }
+    let(:programme) { CachedProgramme.flu }
     let(:delivery_method) { :nasal_spray }
     let(:expected_vaccine_code) { "FLUENZ" }
 
@@ -332,7 +329,7 @@ describe Reports::CareplusExporter do
   end
 
   context "HPV programme" do
-    let(:programme) { create(:programme, :hpv) }
+    let(:programme) { CachedProgramme.hpv }
     let(:delivery_method) { :intramuscular }
     let(:expected_vaccine_code) { "HPV" }
 
@@ -340,7 +337,7 @@ describe Reports::CareplusExporter do
   end
 
   context "MenACWY programme" do
-    let(:programme) { create(:programme, :menacwy) }
+    let(:programme) { CachedProgramme.menacwy }
     let(:delivery_method) { :intramuscular }
     let(:expected_vaccine_code) { "ACWYX14" }
 
@@ -348,7 +345,7 @@ describe Reports::CareplusExporter do
   end
 
   context "MMR programme" do
-    let(:programme) { create(:programme, :mmr) }
+    let(:programme) { CachedProgramme.mmr }
     let(:delivery_method) { :intramuscular }
     let(:expected_vaccine_code) { "MMR" }
 
@@ -356,7 +353,7 @@ describe Reports::CareplusExporter do
   end
 
   context "Td/IPV programme" do
-    let(:programme) { create(:programme, :td_ipv) }
+    let(:programme) { CachedProgramme.td_ipv }
     let(:delivery_method) { :intramuscular }
     let(:expected_vaccine_code) { "3IN1" }
 

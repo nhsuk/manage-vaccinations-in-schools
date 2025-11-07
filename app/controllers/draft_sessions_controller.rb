@@ -199,7 +199,8 @@ class DraftSessionsController < ApplicationController
       @draft_session.create_location_programme_year_groups!
     end
 
-    StatusUpdaterJob.perform_later(session: @session)
+    patient_ids = @session.patients.pluck(:id)
+    StatusUpdaterJob.perform_bulk(patient_ids.zip)
   end
 
   def finish_wizard_path = session_path(@session)

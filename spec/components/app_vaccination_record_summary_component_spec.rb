@@ -9,11 +9,11 @@ describe AppVaccinationRecordSummaryComponent do
   let(:performed_at) { Time.zone.local(2024, 9, 6, 12) }
   let(:outcome) { "administered" }
   let(:location) { create(:school, name: "Hogwarts") }
-  let(:programme) { create(:programme, :hpv) }
+  let(:programme) { CachedProgramme.hpv }
   let(:team) { create(:team, programmes: [programme]) }
   let(:session) { create(:session, programmes: [programme], location:, team:) }
   let(:patient) { create(:patient) }
-  let(:vaccine) { programme.vaccines.first }
+  let(:vaccine) { programme.vaccines.find_by!(brand: "Gardasil 9") }
   let(:batch) do
     create(:batch, name: "ABC", expiry: Date.new(2026, 1, 1), vaccine:)
   end
@@ -163,7 +163,8 @@ describe AppVaccinationRecordSummaryComponent do
     end
 
     context "for an MMR programme" do
-      let(:programme) { create(:programme, :mmr) }
+      let(:programme) { CachedProgramme.mmr }
+      let(:vaccine) { programme.vaccines.find_by!(brand: "Priorix") }
 
       context "and a unknown dose sequence" do
         before { vaccination_record.dose_sequence = nil }

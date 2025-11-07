@@ -38,7 +38,7 @@
 describe ClassImport do
   subject(:class_import) { create(:class_import, csv:, session:, team:) }
 
-  let(:programmes) { [create(:programme, :hpv)] }
+  let(:programmes) { [CachedProgramme.hpv] }
   let(:team) { create(:team, :with_generic_clinic, programmes:) }
   let(:location) { create(:school, team:) }
   let(:session) { create(:session, location:, programmes:, team:) }
@@ -133,17 +133,17 @@ describe ClassImport do
 
         expect(configured_job).to have_received(:perform_later).exactly(4).times
 
-        expect(CommitPatientChangesetsJob).not_to have_enqueued_sidekiq_job
+        expect(CommitImportJob).not_to have_enqueued_sidekiq_job
       end
     end
 
     context "when import_search_pds flag is disabled" do
       before { Flipper.disable(:import_search_pds) }
 
-      it "marks all changesets as processed and enqueues CommitPatientChangesetsJob" do
+      it "marks all changesets as processed and enqueues CommitImportJob" do
         process!
 
-        expect(CommitPatientChangesetsJob).to have_enqueued_sidekiq_job(
+        expect(CommitImportJob).to have_enqueued_sidekiq_job(
           class_import.to_global_id.to_s
         )
 

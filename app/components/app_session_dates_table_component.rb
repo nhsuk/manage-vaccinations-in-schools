@@ -60,9 +60,8 @@ class AppSessionDatesTableComponent < ViewComponent::Base
 
   def count_by_vaccine_method(vaccination_records)
     nasal_spray_count =
-      vaccination_records.count { it.vaccine.method == "nasal" }
-    injection_count =
-      vaccination_records.count { it.vaccine.method == "injection" }
+      vaccination_records.count(&:delivery_method_nasal_spray?)
+    injection_count = vaccination_records.count(&:delivery_method_injection?)
     [nasal_spray_count, injection_count]
   end
 
@@ -79,11 +78,12 @@ class AppSessionDatesTableComponent < ViewComponent::Base
   def vaccination_records_by_date(programme)
     @vaccination_records_by_date ||= {}
     @vaccination_records_by_date[programme.id] ||= VaccinationRecord
+      .administered
+      .kept
       .where(
         programme:,
         session:,
-        patient_id: patients_for_programme(programme),
-        outcome: :administered
+        patient_id: patients_for_programme(programme)
       )
       .group_by { |record| record.performed_at.to_date }
   end

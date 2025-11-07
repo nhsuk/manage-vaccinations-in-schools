@@ -11,7 +11,7 @@ describe "Verbal consent" do
   end
 
   def given_i_am_signed_in
-    programmes = [create(:programme, :hpv)]
+    programmes = [CachedProgramme.hpv]
     team = create(:team, :with_one_nurse, programmes:)
     @session = create(:session, team:, programmes:)
 

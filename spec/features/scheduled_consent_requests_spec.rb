@@ -20,7 +20,7 @@ describe "Scheduled consent requests" do
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
-    programmes = [create(:programme, :hpv)]
+    programmes = [CachedProgramme.hpv]
     @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
     @location = create(:school, :secondary, team: @team)
     @session =
@@ -105,6 +105,7 @@ describe "Scheduled consent requests" do
   def then_no_consent_requests_have_been_sent
     EnqueueSchoolConsentRequestsJob.perform_now
     perform_enqueued_jobs
+    Sidekiq::Job.drain_all
 
     expect(email_deliveries).to be_empty
     expect(sms_deliveries).to be_empty
@@ -113,6 +114,7 @@ describe "Scheduled consent requests" do
   def then_all_four_parents_received_consent_requests
     EnqueueSchoolConsentRequestsJob.perform_now
     perform_enqueued_jobs
+    Sidekiq::Job.drain_all
 
     expect_email_to(
       "parent1.child1@example.com",

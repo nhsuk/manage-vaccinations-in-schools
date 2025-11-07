@@ -14,7 +14,7 @@ describe "Filtering" do
   end
 
   def given_a_session_exists
-    @programme = create(:programme, :hpv)
+    @programme = CachedProgramme.hpv
     programmes = [@programme]
     team = create(:team, programmes:)
     @nurse = create(:nurse, team:)

@@ -313,6 +313,11 @@ Rails.application.routes.draw do
     get "role-not-found", controller: :errors
 
     resource :teams, only: %i[new create]
+
+    devise_scope :user do
+      get "sessions/time-remaining", to: "sessions#time_remaining"
+      post "sessions/refresh", to: "sessions#refresh"
+    end
   end
 
   scope via: :all do

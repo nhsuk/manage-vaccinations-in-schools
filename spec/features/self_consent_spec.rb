@@ -42,7 +42,7 @@ describe "Self-consent" do
   end
 
   def given_an_hpv_programme_is_underway
-    @programme = create(:programme, :hpv)
+    @programme = CachedProgramme.hpv
 
     @team = create(:team, :with_one_nurse, programmes: [@programme])
 

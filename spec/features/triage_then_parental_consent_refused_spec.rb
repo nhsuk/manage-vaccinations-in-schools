@@ -22,7 +22,7 @@ describe "Triage" do
   end
 
   def given_a_programme_with_a_running_session
-    @programme = create(:programme, :hpv)
+    @programme = CachedProgramme.hpv
     @team = create(:team, :with_one_nurse, programmes: [@programme])
 
     @session =

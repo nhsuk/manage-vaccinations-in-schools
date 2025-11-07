@@ -5,7 +5,7 @@ describe AppSessionDetailsSummaryComponent do
 
   let(:component) { described_class.new(session) }
 
-  let(:programme) { create(:programme, :hpv) }
+  let(:programme) { CachedProgramme.hpv }
   let(:session) { create(:session, programmes: [programme]) }
 
   it { should have_text("CohortNo children") }

@@ -54,8 +54,8 @@ describe "Parental consent" do
   end
 
   def given_a_doubles_programme_is_underway
-    @programme1 = create(:programme, :menacwy)
-    @programme2 = create(:programme, :td_ipv)
+    @programme1 = CachedProgramme.menacwy
+    @programme2 = CachedProgramme.td_ipv
     @team =
       create(:team, :with_one_nurse, programmes: [@programme1, @programme2])
     location = create(:school, name: "Pilot School")

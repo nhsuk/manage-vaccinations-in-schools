@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe ImportDuplicateForm do
-  let(:programme) { create(:programme) }
+  let(:programme) { CachedProgramme.sample }
 
   describe "#can_apply?" do
     subject { form.can_apply? }

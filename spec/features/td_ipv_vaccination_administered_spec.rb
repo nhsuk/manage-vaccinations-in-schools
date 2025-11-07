@@ -51,7 +51,7 @@ describe "Td/IPV vaccination" do
   end
 
   def given_i_am_signed_in
-    programme = create(:programme, :td_ipv)
+    programme = CachedProgramme.td_ipv
     team = create(:team, :with_one_nurse, programmes: [programme])
     location = create(:school, team:)
 

@@ -5,7 +5,7 @@ describe AppVaccinationRecordAPISyncStatusComponent do
     build(:vaccination_record, outcome:, programme:, session:)
   end
   let(:outcome) { "administered" }
-  let(:programme) { create(:programme, type: "flu") }
+  let(:programme) { CachedProgramme.flu }
   let(:session) { create(:session, programmes: [programme]) }
 
   let(:component) { described_class.new(vaccination_record) }
@@ -70,7 +70,7 @@ describe AppVaccinationRecordAPISyncStatusComponent do
           )
         end
 
-        let(:programme) { create(:programme, type: "menacwy") }
+        let(:programme) { CachedProgramme.menacwy }
 
         it do
           expect(formatted_status).to include(
@@ -103,7 +103,7 @@ describe AppVaccinationRecordAPISyncStatusComponent do
           )
         end
 
-        let(:programme) { create(:programme, type: "menacwy") }
+        let(:programme) { CachedProgramme.menacwy }
 
         it do
           expect(formatted_status).to include(

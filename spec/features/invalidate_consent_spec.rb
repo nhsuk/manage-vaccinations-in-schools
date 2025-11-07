@@ -72,7 +72,7 @@ describe "Invalidate consent" do
   end
 
   def given_i_am_signed_in
-    @programme = create(:programme, :hpv)
+    @programme = CachedProgramme.hpv
     team = create(:team, :with_one_nurse, programmes: [@programme])
     @session = create(:session, team:, programmes: [@programme])
     @patient = create(:patient, session: @session)

@@ -10,7 +10,7 @@ describe FHIRMapper::Vaccine do
       snomed_product_code: "183817183",
       snomed_product_term: "This is one great vaccine!!!",
       manufacturer: "Merck Sharp & Dohme",
-      programme: create(:programme, :hpv)
+      programme: CachedProgramme.hpv
     )
   end
 

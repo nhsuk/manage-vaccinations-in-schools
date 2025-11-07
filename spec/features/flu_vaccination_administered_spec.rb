@@ -101,7 +101,7 @@ describe "Flu vaccination" do
   end
 
   def given_i_am_signed_in_with_flu_programme
-    @programme = create(:programme, :flu)
+    @programme = CachedProgramme.flu
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @location = create(:school, team: @team)
     @session =

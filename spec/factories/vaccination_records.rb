@@ -44,6 +44,7 @@
 #
 # Indexes
 #
+#  idx_vr_fast_lookup                                              (patient_id,programme_id,outcome) WHERE (discarded_at IS NULL)
 #  index_vaccination_records_on_batch_id                           (batch_id)
 #  index_vaccination_records_on_discarded_at                       (discarded_at)
 #  index_vaccination_records_on_location_id                        (location_id)
@@ -80,7 +81,7 @@ FactoryBot.define do
       end
     end
 
-    programme
+    programme { CachedProgramme.sample }
 
     performed_ods_code { team.organisation.ods_code }
 

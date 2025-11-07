@@ -5,7 +5,7 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
     build(:vaccination_record, outcome:, programme:, session:)
   end
   let(:outcome) { "administered" }
-  let(:programme) { create(:programme, type: "flu") }
+  let(:programme) { CachedProgramme.flu }
   let(:session) { create(:session, programmes: [programme]) }
 
   describe "#sync_to_nhs_immunisations_api!" do
@@ -129,7 +129,7 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
       next if programme_type.in? %w[flu hpv]
 
       context "when the programme type is #{programme_type}" do
-        let(:programme) { create(:programme, type: programme_type) }
+        let(:programme) { CachedProgramme.send(programme_type) }
 
         it { should be true }
       end

@@ -41,7 +41,7 @@ describe ConsentNotification do
 
     let(:parents) { create_list(:parent, 2) }
     let(:patient) { create(:patient, parents:, session:) }
-    let(:programmes) { [create(:programme, :hpv)] }
+    let(:programmes) { [CachedProgramme.hpv] }
     let(:team) { create(:team, programmes:) }
     let(:location) { create(:school, team:) }
     let(:session) { create(:session, location:, programmes:, team:) }
@@ -79,9 +79,7 @@ describe ConsentNotification do
       end
 
       context "with Td/IPV and MenACWY programmes" do
-        let(:programmes) do
-          [create(:programme, :menacwy), create(:programme, :td_ipv)]
-        end
+        let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
 
         it "enqueues an email per parent" do
           expect { create_and_send! }.to have_delivered_email(
@@ -97,7 +95,7 @@ describe ConsentNotification do
       end
 
       context "with the Flu programme" do
-        let(:programmes) { [create(:programme, :flu)] }
+        let(:programmes) { [CachedProgramme.flu] }
 
         it "enqueues an email per parent" do
           expect { create_and_send! }.to have_delivered_email(
@@ -250,9 +248,7 @@ describe ConsentNotification do
       end
 
       context "with Td/IPV and MenACWY programmes" do
-        let(:programmes) do
-          [create(:programme, :menacwy), create(:programme, :td_ipv)]
-        end
+        let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
 
         it "enqueues an email per parent" do
           expect { create_and_send! }.to have_delivered_email(
@@ -268,7 +264,7 @@ describe ConsentNotification do
       end
 
       context "with the Flu programme" do
-        let(:programmes) { [create(:programme, :flu)] }
+        let(:programmes) { [CachedProgramme.flu] }
 
         it "enqueues an email per parent" do
           expect { create_and_send! }.to have_delivered_email(
@@ -354,9 +350,7 @@ describe ConsentNotification do
       end
 
       context "with Td/IPV and MenACWY programmes" do
-        let(:programmes) do
-          [create(:programme, :menacwy), create(:programme, :td_ipv)]
-        end
+        let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
 
         it "enqueues an email per parent" do
           expect { create_and_send! }.to have_delivered_email(
@@ -372,7 +366,7 @@ describe ConsentNotification do
       end
 
       context "with the Flu programme" do
-        let(:programmes) { [create(:programme, :flu)] }
+        let(:programmes) { [CachedProgramme.flu] }
 
         it "enqueues an email per parent" do
           expect { create_and_send! }.to have_delivered_email(
