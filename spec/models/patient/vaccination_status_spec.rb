@@ -17,10 +17,11 @@
 #
 # Indexes
 #
-#  idx_on_academic_year_patient_id_9c400fc863                (academic_year,patient_id)
-#  idx_on_patient_id_programme_id_academic_year_fc0b47b743   (patient_id,programme_id,academic_year) UNIQUE
-#  index_patient_vaccination_statuses_on_latest_location_id  (latest_location_id)
-#  index_patient_vaccination_statuses_on_status              (status)
+#  idx_on_academic_year_patient_id_9c400fc863                 (academic_year,patient_id)
+#  idx_on_patient_id_programme_id_academic_year_fc0b47b743    (patient_id,programme_id,academic_year) UNIQUE
+#  idx_on_patient_id_programme_type_academic_year_962639d2ac  (patient_id,programme_type,academic_year) UNIQUE
+#  index_patient_vaccination_statuses_on_latest_location_id   (latest_location_id)
+#  index_patient_vaccination_statuses_on_status               (status)
 #
 # Foreign Keys
 #
