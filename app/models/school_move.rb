@@ -63,13 +63,15 @@ class SchoolMove < ApplicationRecord
   end
 
   def confirm!(user: nil)
+    imported_archive_reason_ids = []
     ActiveRecord::Base.transaction do
       update_patient!
-      update_archive_reasons!(user:)
+      imported_archive_reason_ids = update_archive_reasons!(user:)
       update_sessions!
       create_log_entry!(user:)
       destroy! if persisted?
     end
+    SyncPatientTeamJob.perform_later(ArchiveReason, imported_archive_reason_ids)
   end
 
   def ignore!
@@ -99,9 +101,7 @@ class SchoolMove < ApplicationRecord
         )
       end
 
-    imported_ids =
-      ArchiveReason.import!(archive_reasons, on_duplicate_key_ignore: true).ids
-    SyncPatientTeamJob.perform_later(ArchiveReason, imported_ids)
+    ArchiveReason.import!(archive_reasons, on_duplicate_key_ignore: true).ids
   end
 
   def update_sessions!

@@ -229,7 +229,7 @@ module ContributesToPatientTeams
           sterile_key = connection.quote(PatientTeam.sources.fetch(key.to_s))
           patient_relationships_to_remove =
             select("#{patient_id_source} as patient_id")
-              .where("#{table_name}.id = ANY(ARRAY[?])", pk_ids)
+              .where("#{table_name}.id = ANY(ARRAY[?]::bigint[])", pk_ids)
               .distinct
               .to_sql
           connection.execute <<-SQL
@@ -241,7 +241,7 @@ module ContributesToPatientTeams
         end
 
         where(
-          "#{table_name}.id = ANY(ARRAY[?])",
+          "#{table_name}.id = ANY(ARRAY[?]::bigint[])",
           pk_ids
         ).distinct.add_patient_team_relationships
 

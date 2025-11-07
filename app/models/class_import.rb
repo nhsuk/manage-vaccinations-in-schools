@@ -50,7 +50,6 @@ class ClassImport < PatientImport
 
   def postprocess_rows!
     # Remove patients already in the sessions but not in the class list.
-
     birth_academic_years =
       year_groups.map { it.to_birth_academic_year(academic_year:) }
 
@@ -77,14 +76,15 @@ class ClassImport < PatientImport
         )
       end
 
-    imported_ids =
+    @imported_school_move_ids ||= []
+    @imported_school_move_ids |=
       SchoolMove.import!(school_moves, on_duplicate_key_ignore: true).ids
-    SyncPatientTeamJob.perform_later(SchoolMove, imported_ids)
 
     PatientsAgedOutOfSchoolJob.perform_async(location_id)
   end
 
   def post_commit!
+    SyncPatientTeamJob.perform_later(SchoolMove, @imported_school_move_ids)
   end
 
   private

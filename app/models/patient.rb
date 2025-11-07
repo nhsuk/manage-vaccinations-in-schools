@@ -661,12 +661,13 @@ class Patient < ApplicationRecord
       raise NHSNumberMismatch
     end
 
+    archived_ids = []
     ActiveRecord::Base.transaction do
       self.date_of_death = pds_patient.date_of_death
 
       if date_of_death_changed?
         if date_of_death.present?
-          archive_due_to_deceased!
+          archived_ids = archive_due_to_deceased!
           clear_pending_sessions!
         end
 
@@ -697,6 +698,8 @@ class Patient < ApplicationRecord
 
       save!
     end
+
+    SyncPatientTeamJob.perform_later(ArchiveReason, archived_ids)
   end
 
   def invalidate!
@@ -810,15 +813,13 @@ class Patient < ApplicationRecord
         ArchiveReason.new(team:, patient: self, type: :deceased)
       end
 
-    imported_ids =
-      ArchiveReason.import!(
-        archive_reasons,
-        on_duplicate_key_update: {
-          conflict_target: %i[team_id patient_id],
-          columns: %i[type]
-        }
-      ).ids
-    SyncPatientTeamJob.perform_later(ArchiveReason, imported_ids)
+    ArchiveReason.import!(
+      archive_reasons,
+      on_duplicate_key_update: {
+        conflict_target: %i[team_id patient_id],
+        columns: %i[type]
+      }
+    ).ids
   end
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::Patient.new(self)

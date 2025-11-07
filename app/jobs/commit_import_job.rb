@@ -27,6 +27,7 @@ class CommitImportJob
     end
 
     counts = import.class.const_get(:COUNT_COLUMNS).index_with(0)
+    imported_school_move_ids = []
 
     ActiveRecord::Base.transaction do
       import
@@ -37,11 +38,10 @@ class CommitImportJob
 
           import_patients_and_parents(changesets, import)
 
-          import_school_moves(changesets, import)
+          imported_school_move_ids |= import_school_moves(changesets, import)
 
           import_pds_search_results(changesets, import)
         end
-
       import.postprocess_rows!
 
       reset_counts(import)
@@ -52,7 +52,7 @@ class CommitImportJob
         **counts
       )
     end
-
+    SyncPatientTeamJob.perform_later(SchoolMove, imported_school_move_ids)
     import.post_commit!
   end
 
@@ -124,12 +124,11 @@ class CommitImportJob
       school_move.confirm! if school_move.patient.persisted?
     end
     school_move_import_records = importable_school_moves.to_a
-    imported_ids =
-      SchoolMove.import!(
-        school_move_import_records,
-        on_duplicate_key_update: :all
-      ).ids
-    SyncPatientTeamJob.perform_later(SchoolMove, imported_ids)
+
+    SchoolMove.import!(
+      school_move_import_records,
+      on_duplicate_key_update: :all
+    ).ids
   end
 
   def import_pds_search_results(changesets, import)
