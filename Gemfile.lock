@@ -611,9 +611,9 @@ GEM
     ruby-prof (1.7.2)
       base64
     ruby-progressbar (1.13.0)
-    rubyXL (3.4.33)
+    rubyXL (3.4.35)
       nokogiri (>= 1.10.8)
-      rubyzip (>= 1.3.0)
+      rubyzip (>= 3.2.2)
     rubyntlm (0.6.5)
       base64
     rubyzip (3.2.2)
