@@ -41,6 +41,13 @@ data "aws_iam_policy_document" "additional_task_execution_permissions" {
     resources = ["${aws_s3_bucket.this.arn}/*"]
     effect    = "Allow"
   }
+  statement {
+    effect    = "Allow"
+    resources = ["arn:aws:secretsmanager:eu-west-2:393416225559:secret:performancetest/auth-token-e8yMWw"]
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+  }
 }
 
 resource "aws_iam_policy" "additional_task_execution_permissions" {

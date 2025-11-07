@@ -149,7 +149,7 @@ resource "aws_iam_role" "github_performancetest" {
   assume_role_policy = templatefile("resources/iam_role_github_trust_policy_${var.environment}.json.tftpl", {
     account_id = var.account_id,
     repository_list = [
-      "repo:NHSDigital/manage-vaccinations-in-schools-testing:*"
+      "repo:NHSDigital/manage-vaccinations-in-schools-testing"
     ]
   })
 }
@@ -164,8 +164,20 @@ resource "aws_iam_policy" "run_ecs_task" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "run_ecs_task" {
+resource "aws_iam_role_policy_attachment" "run_ecs_task_custom" {
   count      = var.environment == "development" ? 1 : 0
-  role       = aws_iam_role.github_performancetest[0].arn
-  policy_arn = aws_iam_policy.run_ecs_task[0].value
+  role       = aws_iam_role.github_performancetest[0].name
+  policy_arn = aws_iam_policy.run_ecs_task[0].arn
+}
+
+resource "aws_iam_role_policy_attachment" "run_ecs_task_readonly" {
+  count      = var.environment == "development" ? 1 : 0
+  role       = aws_iam_role.github_performancetest[0].name
+  policy_arn = local.base_policies.read
+}
+
+resource "aws_iam_role_policy_attachment" "run_ecs_task_tagging" {
+  count      = var.environment == "development" ? 1 : 0
+  role       = aws_iam_role.github_performancetest[0].name
+  policy_arn = local.base_policies.tagging
 }

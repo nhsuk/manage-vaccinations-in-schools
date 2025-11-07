@@ -16,12 +16,21 @@
         "ecs:ListContainerInstances",
         "ecs:ListTaskDefinitionFamilies",
         "ecs:ListTasks",
+        "ecs:RunTask",
         "ecr:PutImage",
         "ecr:InitiateLayerUpload",
         "ecr:UploadLayerPart",
         "ecr:CompleteLayerUpload"
       ],
       "Resource": ["*"]
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["iam:PassRole"],
+      "Resource": [
+        "arn:aws:iam::*:role/EcsTaskRole",
+        "arn:aws:iam::*:role/ecsTaskExecutionRole-performancetest"
+      ]
     }
   ]
 }
