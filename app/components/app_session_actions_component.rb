@@ -130,13 +130,7 @@ class AppSessionActionsComponent < ViewComponent::Base
               count:,
               programme: programme.name_in_sentence
             )
-          href =
-            session_record_path(
-              session,
-              search_form: {
-                programme_types: [programme.type]
-              }
-            )
+          href = session_record_path(session, programme_types: [programme.type])
           count.positive? ? helpers.link_to(text, href) : text
         end
       end
