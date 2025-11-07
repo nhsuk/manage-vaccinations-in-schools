@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 describe StatusUpdaterJob do
-  describe "#perform_now" do
-    subject(:perform_now) { described_class.perform_now(patient:) }
+  describe "#perform" do
+    subject(:perform) { described_class.new.perform(patient.id) }
 
-    let(:patient) { build(:patient) }
+    let(:patient) { create(:patient) }
 
     context "during the preparation period" do
       around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
@@ -15,7 +15,7 @@ describe StatusUpdaterJob do
           academic_years: [2024, 2025]
         )
 
-        perform_now
+        perform
       end
     end
 
@@ -28,7 +28,7 @@ describe StatusUpdaterJob do
           academic_years: [2025]
         )
 
-        perform_now
+        perform
       end
     end
   end
