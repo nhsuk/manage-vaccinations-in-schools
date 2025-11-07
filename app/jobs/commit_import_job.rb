@@ -52,6 +52,8 @@ class CommitImportJob
         **counts
       )
     end
+
+    import.post_commit!
   end
 
   def import_patients_and_parents(changesets, import)

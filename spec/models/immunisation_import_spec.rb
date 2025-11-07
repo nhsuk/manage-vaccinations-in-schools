@@ -498,12 +498,9 @@ describe ImmunisationImport do
     end
 
     it "syncs the flu vaccination record to the NHS Immunisations API" do
-      expect {
-        immunisation_import.send(:postprocess_rows!)
-      }.to enqueue_sidekiq_job(SyncVaccinationRecordToNHSJob)
-        .with(vaccination_record.id)
-        .once
-        .on("immunisations_api")
+      expect { immunisation_import.send(:post_commit!) }.to enqueue_sidekiq_job(
+        SyncVaccinationRecordToNHSJob
+      ).with(vaccination_record.id).once.on("immunisations_api")
     end
   end
 end

@@ -125,7 +125,9 @@ class ImmunisationImport < ApplicationRecord
 
   def postprocess_rows!
     StatusUpdater.call(patient: patients)
+  end
 
+  def post_commit!
     SyncPatientTeamJob.perform_later(
       VaccinationRecord,
       @imported_vaccination_record_ids
@@ -134,7 +136,6 @@ class ImmunisationImport < ApplicationRecord
       PatientLocation,
       @imported_patient_location_ids
     )
-
     vaccination_records.sync_all_to_nhs_immunisations_api
   end
 end

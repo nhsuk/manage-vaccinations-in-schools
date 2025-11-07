@@ -165,6 +165,7 @@ module CSVImportable
       update_columns(processed_at: Time.zone.now, status: :processed, **counts)
     end
 
+    post_commit!
     UpdatePatientsFromPDS.call(patients, queue: :imports)
   end
 
