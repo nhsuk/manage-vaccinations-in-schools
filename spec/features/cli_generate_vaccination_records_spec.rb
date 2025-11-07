@@ -11,7 +11,7 @@ describe "mavis generate vaccination-records" do
   end
 
   def given_an_team_exists
-    @programme = create(:programme, type: "hpv")
+    @programme = CachedProgramme.hpv
     @team = create(:team, programmes: [@programme])
   end
 

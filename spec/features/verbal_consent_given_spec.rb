@@ -95,19 +95,19 @@ describe "Verbal consent" do
   end
 
   def given_an_hpv_programme_is_underway
-    create_programme(:hpv)
+    create_programme(CachedProgramme.hpv)
   end
 
   def given_a_flu_programme_is_underway
-    create_programme(:flu)
+    create_programme(CachedProgramme.flu)
   end
 
   def given_an_mmr_programme_is_underway
-    create_programme(:mmr)
+    create_programme(CachedProgramme.mmr)
   end
 
-  def create_programme(programme_type)
-    @programme = create(:programme, programme_type)
+  def create_programme(programme)
+    @programme = programme
     programmes = [@programme]
     @team = create(:team, :with_one_nurse, programmes:)
     @session = create(:session, team: @team, programmes:)

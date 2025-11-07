@@ -4,7 +4,7 @@ describe GenericClinicFactory do
   describe "#call" do
     subject(:call) { described_class.call(team:, academic_year:) }
 
-    let(:programmes) { [create(:programme, :hpv), create(:programme, :flu)] }
+    let(:programmes) { [CachedProgramme.hpv, CachedProgramme.flu] }
     let(:academic_year) { AcademicYear.pending }
 
     context "with a new team" do

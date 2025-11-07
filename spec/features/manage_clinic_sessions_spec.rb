@@ -64,7 +64,7 @@ describe "Manage clinic sessions" do
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
-    @programme = create(:programme, :hpv)
+    @programme = CachedProgramme.hpv
     @team =
       create(
         :team,

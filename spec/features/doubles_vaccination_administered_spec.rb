@@ -25,7 +25,7 @@ describe "MenACWY and Td/IPV vaccination" do
   end
 
   def given_a_doubles_session_exists
-    programmes = [create(:programme, :menacwy), create(:programme, :td_ipv)]
+    programmes = [CachedProgramme.menacwy, CachedProgramme.td_ipv]
 
     team = create(:team, programmes:)
     location = create(:school, team:)

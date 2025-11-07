@@ -27,7 +27,7 @@ describe "mavis teams create-sessions" do
   end
 
   def given_the_team_exists
-    @programmes = [create(:programme, :flu), create(:programme, :hpv)]
+    @programmes = [CachedProgramme.flu, CachedProgramme.hpv]
     @team = create(:team, workgroup: "abc", programmes: @programmes)
   end
 

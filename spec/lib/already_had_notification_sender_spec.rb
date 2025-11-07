@@ -4,7 +4,7 @@ describe AlreadyHadNotificationSender do
   describe "#call" do
     subject(:call) { described_class.call(vaccination_record:) }
 
-    let(:programme) { create(:programme) }
+    let(:programme) { CachedProgramme.sample }
     let(:academic_year) { AcademicYear.current }
     let(:session) do
       create(:session, :scheduled, programmes: [programme], academic_year:)

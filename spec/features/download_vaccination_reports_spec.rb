@@ -60,8 +60,8 @@ describe "Download vaccination reports" do
   end
 
   def given_an_hpv_programme_is_underway
-    @team = create(:team, :with_one_nurse)
-    @programme = create(:programme, :hpv, teams: [@team])
+    @programme = CachedProgramme.hpv
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
 
     @session = create(:session, team: @team, programmes: [@programme])
 
@@ -80,8 +80,8 @@ describe "Download vaccination reports" do
   end
 
   def given_a_menacwy_programme_is_underway
-    @team = create(:team, :with_one_nurse)
-    @programme = create(:programme, :menacwy, teams: [@team])
+    @programme = CachedProgramme.menacwy
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
 
     @session = create(:session, team: @team, programmes: [@programme])
 

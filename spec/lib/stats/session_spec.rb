@@ -4,7 +4,7 @@ describe Stats::Session do
   describe "#call" do
     subject(:stats) { described_class.call(session, programme:) }
 
-    let(:programme) { create(:programme, :hpv) }
+    let(:programme) { CachedProgramme.hpv }
     let(:session) { create(:session, programmes: [programme]) }
 
     context "with no patients" do
@@ -54,8 +54,8 @@ describe Stats::Session do
     end
 
     context "with a patient not suitable for the programme" do
-      let(:hpv_programme) { create(:programme, :hpv) }
-      let(:menacwy_programme) { create(:programme, :menacwy) }
+      let(:hpv_programme) { CachedProgramme.hpv }
+      let(:menacwy_programme) { CachedProgramme.menacwy }
       let(:programme) { menacwy_programme }
       let(:session) do
         create(:session, programmes: [hpv_programme, menacwy_programme])
@@ -79,7 +79,7 @@ describe Stats::Session do
     end
 
     context "with flu programme (multiple vaccine methods)" do
-      let(:programme) { create(:programme, :flu) }
+      let(:programme) { CachedProgramme.flu }
 
       before do
         create(:patient, session:, year_group: 9).tap do |patient|

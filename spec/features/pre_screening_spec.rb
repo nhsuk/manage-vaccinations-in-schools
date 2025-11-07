@@ -63,7 +63,7 @@ describe "Pre-screening" do
   end
 
   def given_a_session_exists(programme_type, vaccine_method: "injection")
-    programme = create(:programme, programme_type)
+    programme = CachedProgramme.send(programme_type)
     team = create(:team, programmes: [programme])
 
     @nurse = create(:nurse, teams: [team])

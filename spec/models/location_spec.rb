@@ -246,7 +246,7 @@ describe Location do
       location.import_default_programme_year_groups!(programmes, academic_year:)
     end
 
-    let(:programmes) { [create(:programme, :flu)] } # years 0 to 11
+    let(:programmes) { [CachedProgramme.flu] } # years 0 to 11
     let(:academic_year) { AcademicYear.pending }
 
     context "when the location has no year groups" do

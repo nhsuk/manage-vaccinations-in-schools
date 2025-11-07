@@ -30,9 +30,9 @@ describe "mavis vaccination-records generate-fhir" do
 
   def given_a_vaccination_record_exists
     team = create(:team)
-    programme = create(:programme, type: "hpv")
+    programme = CachedProgramme.hpv
     patient = create(:patient, team:)
-    vaccine = create(:vaccine, :gardasil, programme:)
+    vaccine = programme.vaccines.first
     batch = create(:batch, vaccine:, expiry: "2023-03-20", name: "X8U375AL")
 
     @vaccination_record =
@@ -48,7 +48,7 @@ describe "mavis vaccination-records generate-fhir" do
 
   def given_a_not_administered_vaccination_record_exists
     team = create(:team)
-    programme = create(:programme, type: "hpv")
+    programme = CachedProgramme.hpv
     patient = create(:patient, team:)
 
     @not_administered_vaccination_record =

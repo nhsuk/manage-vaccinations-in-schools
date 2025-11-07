@@ -20,7 +20,7 @@ describe "Parental consent" do
   end
 
   def given_a_patient_without_consent_exists
-    programmes = [create(:programme, :hpv)]
+    programmes = [CachedProgramme.hpv]
 
     @team = create(:team, :with_one_nurse, programmes:)
     @user = @team.users.first

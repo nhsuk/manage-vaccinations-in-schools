@@ -48,8 +48,8 @@ describe Note do
     let(:note) { create(:note, patient:, session:) }
 
     let(:patient) { create(:patient, year_group: 8) }
-    let(:hpv_programme) { create(:programme, :hpv) }
-    let(:menacwy_programme) { create(:programme, :menacwy) }
+    let(:hpv_programme) { CachedProgramme.hpv }
+    let(:menacwy_programme) { CachedProgramme.menacwy }
     let(:session) do
       create(:session, programmes: [hpv_programme, menacwy_programme])
     end

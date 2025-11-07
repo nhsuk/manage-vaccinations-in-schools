@@ -175,8 +175,8 @@ describe "Manage children" do
   end
 
   def given_my_team_exists
-    @hpv = create(:programme, :hpv)
-    @flu = create(:programme, :flu)
+    @hpv = CachedProgramme.hpv
+    @flu = CachedProgramme.flu
     @team =
       create(
         :team,

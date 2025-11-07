@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe AppImportFormatDetailsComponent do
-  let(:programme) { create(:programme, :hpv) }
+  let(:programme) { CachedProgramme.hpv }
   let(:team) { create(:team, programmes: [programme]) }
 
   it "renders the correct summary text for ClassImport" do

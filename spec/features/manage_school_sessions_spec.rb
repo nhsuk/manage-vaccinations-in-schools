@@ -80,8 +80,8 @@ describe "Manage school sessions" do
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
-    @programme = create(:programme, :hpv)
-    @other_programme = create(:programme, :flu)
+    @programme = CachedProgramme.hpv
+    @other_programme = CachedProgramme.flu
     @team =
       create(
         :team,

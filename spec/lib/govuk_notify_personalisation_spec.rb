@@ -12,7 +12,10 @@ describe GovukNotifyPersonalisation do
     ).to_h
   end
 
-  let(:programmes) { [create(:programme, :hpv)] }
+  let(:hpv_programme) { CachedProgramme.hpv }
+  let(:flu_programme) { CachedProgramme.flu }
+  let(:programmes) { [hpv_programme] }
+
   let(:team) do
     create(
       :team,
@@ -138,9 +141,7 @@ describe GovukNotifyPersonalisation do
   end
 
   context "with multiple programmes" do
-    let(:programmes) do
-      [create(:programme, :menacwy), create(:programme, :td_ipv)]
-    end
+    let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
 
     it { should include(vaccination: "MenACWY and Td/IPV vaccinations") }
   end
@@ -283,7 +284,7 @@ describe GovukNotifyPersonalisation do
     end
 
     context "for the flu programme" do
-      let(:programmes) { [create(:programme, :flu)] }
+      let(:programmes) { [CachedProgramme.flu] }
 
       it do
         expect(to_h).to include(
@@ -317,7 +318,7 @@ describe GovukNotifyPersonalisation do
     end
 
     context "for the MMR programme" do
-      let(:programmes) { [create(:programme, :mmr)] }
+      let(:programmes) { [CachedProgramme.mmr] }
 
       it { expect(to_h).to include(consented_vaccine_methods_message: "") }
 
@@ -375,7 +376,7 @@ describe GovukNotifyPersonalisation do
     end
 
     context "for the flu programme" do
-      let(:programmes) { [create(:programme, :flu)] }
+      let(:programmes) { [CachedProgramme.flu] }
 
       it do
         expect(to_h).to include(
@@ -417,7 +418,7 @@ describe GovukNotifyPersonalisation do
     end
 
     context "for the MMR programme" do
-      let(:programmes) { [create(:programme, :mmr)] }
+      let(:programmes) { [CachedProgramme.mmr] }
 
       it { expect(to_h).to include(consented_vaccine_methods_message: "") }
 
@@ -467,7 +468,7 @@ describe GovukNotifyPersonalisation do
     end
 
     context "for the MMR programme" do
-      let(:programmes) { [create(:programme, :mmr)] }
+      let(:programmes) { [CachedProgramme.mmr] }
 
       let(:patient) do
         create(:patient, date_of_birth: Date.new(2018, 2, 1), session:)
@@ -544,7 +545,7 @@ describe GovukNotifyPersonalisation do
     end
 
     context "and a nasal spray programme" do
-      let(:programmes) { [create(:programme, :flu)] }
+      let(:programmes) { [CachedProgramme.flu] }
 
       before do
         create(
@@ -561,14 +562,14 @@ describe GovukNotifyPersonalisation do
     end
 
     context "and multiple programmes" do
-      let(:programmes) { [create(:programme, :hpv), create(:programme, :flu)] }
+      let(:programmes) { [hpv_programme, flu_programme] }
 
       before do
         create(
           :patient_consent_status,
           :given,
           patient:,
-          programme: programmes.first,
+          programme: hpv_programme,
           academic_year: session.academic_year,
           vaccine_methods: %w[nasal injection]
         )
@@ -576,7 +577,7 @@ describe GovukNotifyPersonalisation do
           :patient_consent_status,
           :given,
           patient:,
-          programme: programmes.second,
+          programme: flu_programme,
           academic_year: session.academic_year
         )
       end
@@ -592,7 +593,10 @@ describe GovukNotifyPersonalisation do
 
   context "with vaccine side effects" do
     before do
-      programmes.first.vaccines.first.update!(side_effects: %w[swelling unwell])
+      Vaccine
+        .active
+        .find_by(programme: hpv_programme)
+        .update!(side_effects: %w[swelling unwell])
     end
 
     it { should include(vaccine_side_effects: "") }
@@ -604,7 +608,7 @@ describe GovukNotifyPersonalisation do
           :safe_to_vaccinate,
           :injection,
           patient:,
-          programme: programmes.first,
+          programme: hpv_programme,
           academic_year: session.academic_year
         )
       end
@@ -621,7 +625,7 @@ describe GovukNotifyPersonalisation do
   end
 
   context "with the flu programme" do
-    let(:programmes) { [create(:programme, :flu)] }
+    let(:programmes) { [CachedProgramme.flu] }
 
     it do
       expect(to_h).to include(

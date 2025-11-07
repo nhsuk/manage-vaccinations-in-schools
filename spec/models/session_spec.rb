@@ -36,8 +36,8 @@ describe Session do
     describe "#programmes" do
       subject(:programmes) { session.reload.programmes }
 
-      let(:hpv_programme) { create(:programme, :hpv) }
-      let(:menacwy_programme) { create(:programme, :menacwy) }
+      let(:hpv_programme) { CachedProgramme.hpv }
+      let(:menacwy_programme) { CachedProgramme.menacwy }
 
       let(:session) do
         create(:session, programmes: [menacwy_programme, hpv_programme])
@@ -50,7 +50,7 @@ describe Session do
   end
 
   describe "scopes" do
-    let(:programmes) { [create(:programme)] }
+    let(:programmes) { [CachedProgramme.sample] }
 
     let(:closed_session) { create(:session, :closed, programmes:) }
     let(:completed_session) { create(:session, :completed, programmes:) }
@@ -62,25 +62,21 @@ describe Session do
       subject(:scope) { described_class.has_programmes(programmes) }
 
       context "with a session matching the search" do
-        let(:programmes) { [create(:programme)] }
+        let(:programmes) { [CachedProgramme.sample] }
         let(:session) { create(:session, programmes:) }
 
         it { should include(session) }
       end
 
       context "with a session not matching the search" do
-        let(:programmes) { [create(:programme, :hpv)] }
-        let(:session) do
-          create(:session, programmes: [create(:programme, :flu)])
-        end
+        let(:programmes) { [CachedProgramme.hpv] }
+        let(:session) { create(:session, programmes: [CachedProgramme.flu]) }
 
         it { should_not include(session) }
       end
 
       context "with a session with multiple programmes" do
-        let(:programmes) do
-          [create(:programme, :menacwy), create(:programme, :td_ipv)]
-        end
+        let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
         let(:session) { create(:session, programmes:) }
 
         it { should include(session) }
@@ -91,9 +87,9 @@ describe Session do
           create(
             :session,
             programmes: [
-              create(:programme, :hpv),
-              create(:programme, :menacwy),
-              create(:programme, :td_ipv)
+              CachedProgramme.hpv,
+              CachedProgramme.menacwy,
+              CachedProgramme.td_ipv
             ]
           )
         end
@@ -106,8 +102,8 @@ describe Session do
     describe "#supports_delegation" do
       subject(:scope) { described_class.supports_delegation }
 
-      let!(:hpv_programme) { create(:programme, :hpv) }
-      let!(:flu_programme) { create(:programme, :flu) }
+      let!(:hpv_programme) { CachedProgramme.hpv }
+      let!(:flu_programme) { CachedProgramme.flu }
       let(:session) { create(:session, programmes:) }
 
       context "with a session for flu" do
@@ -154,7 +150,7 @@ describe Session do
 
       let(:today) { Date.new(2025, 1, 1) }
 
-      let(:programmes) { create_list(:programme, 1, :hpv) }
+      let(:programmes) { [CachedProgramme.hpv] }
 
       let(:first_session_before_today) do
         create(:session, date: Date.new(2024, 12, 1), programmes:)
@@ -244,19 +240,19 @@ describe Session do
     let(:session) { create(:session, programmes:) }
 
     context "with only a flu programme" do
-      let(:programmes) { [create(:programme, :flu)] }
+      let(:programmes) { [CachedProgramme.flu] }
 
       it { should be(true) }
     end
 
     context "with a flu and HPV programme" do
-      let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
+      let(:programmes) { [CachedProgramme.flu, CachedProgramme.hpv] }
 
       it { should be(true) }
     end
 
     context "with only an HPV programme" do
-      let(:programmes) { [create(:programme, :hpv)] }
+      let(:programmes) { [CachedProgramme.hpv] }
 
       it { should be(false) }
     end
@@ -268,19 +264,19 @@ describe Session do
     let(:session) { create(:session, programmes:) }
 
     context "with only a flu programme" do
-      let(:programmes) { [create(:programme, :flu)] }
+      let(:programmes) { [CachedProgramme.flu] }
 
       it { should be(true) }
     end
 
     context "with a flu and HPV programme" do
-      let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
+      let(:programmes) { [CachedProgramme.flu, CachedProgramme.hpv] }
 
       it { should be(true) }
     end
 
     context "with only an HPV programme" do
-      let(:programmes) { [create(:programme, :hpv)] }
+      let(:programmes) { [CachedProgramme.hpv] }
 
       it { should be(false) }
     end
@@ -289,7 +285,7 @@ describe Session do
   describe "#patients_with_no_consent_response_count" do
     subject(:count) { session.patients_with_no_consent_response_count }
 
-    let(:programme) { create(:programme) }
+    let(:programme) { CachedProgramme.sample }
     let(:session) { create(:session, programmes: [programme]) }
 
     context "when there are no patients" do
@@ -319,8 +315,8 @@ describe Session do
   describe "#year_groups" do
     subject { session.year_groups }
 
-    let(:flu_programme) { create(:programme, :flu) }
-    let(:hpv_programme) { create(:programme, :hpv) }
+    let(:flu_programme) { CachedProgramme.flu }
+    let(:hpv_programme) { CachedProgramme.hpv }
 
     let(:session) do
       create(:session, programmes: [flu_programme, hpv_programme])
@@ -332,8 +328,8 @@ describe Session do
   describe "#vaccine_methods" do
     subject { session.vaccine_methods }
 
-    let(:flu_programme) { create(:programme, :flu) }
-    let(:hpv_programme) { create(:programme, :hpv) }
+    let(:flu_programme) { CachedProgramme.flu }
+    let(:hpv_programme) { CachedProgramme.hpv }
 
     let(:session) do
       create(:session, programmes: [flu_programme, hpv_programme])
@@ -348,13 +344,13 @@ describe Session do
     let(:session) { create(:session, programmes: [programme]) }
 
     context "with a flu session" do
-      let(:programme) { create(:programme, :flu) }
+      let(:programme) { CachedProgramme.flu }
 
       it { should be(true) }
     end
 
     context "with an HPV session" do
-      let(:programme) { create(:programme, :hpv) }
+      let(:programme) { CachedProgramme.hpv }
 
       it { should be(false) }
     end

@@ -4,7 +4,7 @@ describe PatientPolicy do
   describe "Scope#resolve" do
     subject { PatientPolicy::Scope.new(user, Patient).resolve }
 
-    let(:programmes) { [create(:programme)] }
+    let(:programmes) { [CachedProgramme.sample] }
     let(:organisation) { create(:organisation) }
     let(:team) { create(:team, organisation:, programmes:) }
     let(:another_team) { create(:team, organisation:, programmes:) }

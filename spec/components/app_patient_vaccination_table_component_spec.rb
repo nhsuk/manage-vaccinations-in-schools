@@ -25,7 +25,7 @@ describe AppPatientVaccinationTableComponent do
       )
     end
 
-    let(:vaccination_record_programme) { create(:programme, :hpv) }
+    let(:vaccination_record_programme) { CachedProgramme.hpv }
 
     let(:performed_at) { Time.zone.local(2024, 1, 1) }
 
@@ -57,8 +57,8 @@ describe AppPatientVaccinationTableComponent do
     end
 
     context "with a vaccination record from a different programme" do
-      let(:programme) { create(:programme, :hpv) }
-      let(:vaccination_record_programme) { create(:programme, :flu) }
+      let(:programme) { CachedProgramme.hpv }
+      let(:vaccination_record_programme) { CachedProgramme.flu }
 
       it { should_not have_link("1 January 2024") }
       it { should_not have_content("Test School") }
@@ -68,7 +68,7 @@ describe AppPatientVaccinationTableComponent do
     end
 
     context "with a Flu vaccination record from a previous year" do
-      let(:vaccination_record_programme) { create(:programme, :flu) }
+      let(:vaccination_record_programme) { CachedProgramme.flu }
       let(:programme) { vaccination_record_programme }
       let(:performed_at) { Time.zone.local(2022, 1, 1) }
 

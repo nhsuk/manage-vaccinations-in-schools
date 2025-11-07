@@ -5,7 +5,7 @@ describe AppPatientSessionConsentComponent do
 
   let(:component) { described_class.new(patient:, session:, programme:) }
 
-  let(:programme) { create(:programme, :hpv) }
+  let(:programme) { CachedProgramme.hpv }
   let(:session) { create(:session, programmes: [programme]) }
   let(:patient) { create(:patient, session:) }
 
@@ -67,7 +67,7 @@ describe AppPatientSessionConsentComponent do
     it { should_not have_css("a", text: "Contact #{consent.parent.full_name}") }
 
     context "and the programme is flu" do
-      let(:programme) { create(:programme, :flu) }
+      let(:programme) { CachedProgramme.flu }
 
       let(:patient) do
         create(:patient, :consent_given_nasal_only_triage_not_needed, session:)

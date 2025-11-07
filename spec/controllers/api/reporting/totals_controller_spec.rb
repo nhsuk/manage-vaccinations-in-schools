@@ -30,7 +30,8 @@ describe API::Reporting::TotalsController do
 
     it "calculates statistics correctly" do
       team = Team.last # The most recently created team from valid_jwt
-      programme = create(:programme, teams: [team])
+      programme = CachedProgramme.sample
+      team.programmes << programme
       session = create(:session, team:, programmes: [programme])
 
       # Patient 1: Vaccinated
@@ -81,7 +82,8 @@ describe API::Reporting::TotalsController do
 
     it "filters by multiple year groups" do
       team = Team.last
-      programme = create(:programme, teams: [team])
+      programme = CachedProgramme.sample
+      team.programmes << programme
       session = create(:session, team:, programmes: [programme])
 
       create(:patient, session:, year_group: 8)
@@ -99,10 +101,14 @@ describe API::Reporting::TotalsController do
     end
 
     it "filters by workgroup" do
-      team = Team.last
-      other_team = create(:team, organisation: team.organisation)
+      programme = CachedProgramme.sample
 
-      programme = create(:programme, teams: [team, other_team])
+      team = Team.last
+      team.programmes << programme
+
+      other_team = create(:team, organisation: team.organisation)
+      other_team.programmes << programme
+
       session = create(:session, team:, programmes: [programme])
       other_session =
         create(:session, team: other_team, programmes: [programme])
@@ -123,7 +129,8 @@ describe API::Reporting::TotalsController do
   describe "#index.csv" do
     it "returns grouped CSV data by year group" do
       team = Team.last
-      programme = create(:programme, :hpv, teams: [team])
+      programme = CachedProgramme.hpv
+      team.programmes << programme
       session = create(:session, team:, programmes: [programme])
 
       create(:patient, session:, year_group: 8)
@@ -145,19 +152,6 @@ describe API::Reporting::TotalsController do
 
   describe "Dashboard acceptance criteria" do
     let(:team) { Team.last }
-    let(:hpv_programme) { create(:programme, :hpv, teams: [team]) }
-    let(:hpv_session) { create(:session, team:, programmes: [hpv_programme]) }
-    let(:flu_programme) { create(:programme, :flu, teams: [team]) }
-    let(:flu_session) { create(:session, team:, programmes: [flu_programme]) }
-    let(:menacwy_programme) { create(:programme, :menacwy, teams: [team]) }
-    let(:menacwy_session) do
-      create(:session, team:, programmes: [menacwy_programme])
-    end
-    let(:td_ipv_programme) { create(:programme, :td_ipv, teams: [team]) }
-    let(:td_ipv_session) do
-      create(:session, team:, programmes: [td_ipv_programme])
-    end
-
     let(:cohort) { parsed_response["cohort"] }
     let(:vaccinated) { parsed_response["vaccinated"] }
     let(:not_vaccinated) { parsed_response["not_vaccinated"] }
@@ -171,6 +165,25 @@ describe API::Reporting::TotalsController do
     let(:vaccinations_given) { parsed_response["vaccinations_given"] }
     let(:monthly_vaccinations_given) do
       parsed_response["monthly_vaccinations_given"]
+    end
+    let(:hpv_programme) { CachedProgramme.hpv }
+    let(:hpv_session) { create(:session, team:, programmes: [hpv_programme]) }
+    let(:flu_programme) { CachedProgramme.flu }
+    let(:flu_session) { create(:session, team:, programmes: [flu_programme]) }
+    let(:menacwy_programme) { CachedProgramme.menacwy }
+    let(:menacwy_session) do
+      create(:session, team:, programmes: [menacwy_programme])
+    end
+    let(:td_ipv_programme) { CachedProgramme.td_ipv }
+    let(:td_ipv_session) do
+      create(:session, team:, programmes: [td_ipv_programme])
+    end
+
+    before do
+      team.programmes << hpv_programme
+      team.programmes << flu_programme
+      team.programmes << menacwy_programme
+      team.programmes << td_ipv_programme
     end
 
     def refresh_and_get_totals(programme_type: "hpv")

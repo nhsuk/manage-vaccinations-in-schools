@@ -11,7 +11,7 @@ describe "Verbal consent recorded by admin" do
   end
 
   def given_i_am_signed_in_as_an_admin
-    programmes = [create(:programme, :hpv)]
+    programmes = [CachedProgramme.hpv]
     team = create(:team, :with_one_admin, programmes:)
     @session = create(:session, team:, programmes:)
 

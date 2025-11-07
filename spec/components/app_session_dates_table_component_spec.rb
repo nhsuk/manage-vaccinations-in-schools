@@ -3,17 +3,11 @@
 describe AppSessionDatesTableComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:flu_injection_vaccine) { build(:vaccine, :cell_based_trivalent) }
-  let(:flu_nasal_vaccine) { build(:vaccine, :fluenz) }
-  let(:hpv_programme) { create(:programme, :hpv) }
-  let(:menacwy_programme) { create(:programme, :menacwy) }
-  let(:flu_programme) do
-    create(
-      :programme,
-      :flu,
-      vaccines: [flu_injection_vaccine, flu_nasal_vaccine]
-    )
-  end
+  let(:hpv_programme) { CachedProgramme.hpv }
+  let(:menacwy_programme) { CachedProgramme.menacwy }
+  let(:flu_programme) { CachedProgramme.flu }
+  let(:flu_injection_vaccine) { flu_programme.vaccines.injection.first }
+  let(:flu_nasal_vaccine) { flu_programme.vaccines.nasal.first }
   let(:session) do
     create(
       :session,

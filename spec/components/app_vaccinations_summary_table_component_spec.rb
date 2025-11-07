@@ -6,8 +6,8 @@ describe AppVaccinationsSummaryTableComponent do
   let(:request_session) { {} }
   let(:current_user) { build(:user) }
 
-  let(:flu_programme) { create(:programme, :flu, vaccines: []) }
-  let(:hpv_programme) { create(:programme, :hpv, vaccines: []) }
+  let(:flu_programme) { CachedProgramme.flu }
+  let(:hpv_programme) { CachedProgramme.hpv }
   let(:programmes) { [hpv_programme] }
   let(:session) { create(:session, :today, programmes:, team:) }
   let(:team) { create(:team, :with_generic_clinic, programmes:) }
@@ -19,22 +19,20 @@ describe AppVaccinationsSummaryTableComponent do
   before { stub_authorization(allowed: true) }
 
   context "with an active vaccine" do
-    let(:hpv_vaccine) { create(:vaccine, programme: hpv_programme) }
+    let(:hpv_vaccine) { hpv_programme.vaccines.active.first }
 
     it { should have_content(hpv_vaccine.brand) }
   end
 
   context "with a discontinued vaccine" do
-    let(:hpv_vaccine) do
-      create(:vaccine, :discontinued, programme: hpv_programme)
-    end
+    let(:hpv_vaccine) { hpv_programme.vaccines.discontinued.first }
 
     it { should_not have_content(hpv_vaccine.brand) }
   end
 
   context "bad data exists where we have Flu vaccination records in an HPV session" do
-    let(:hpv_vaccine) { create(:vaccine, programme: hpv_programme) }
-    let(:flu_vaccine) { create(:vaccine, programme: flu_programme) }
+    let(:hpv_vaccine) { hpv_programme.vaccines.first }
+    let(:flu_vaccine) { flu_programme.vaccines.first }
     let(:hpv_batch) { create(:batch, :not_expired, vaccine: hpv_vaccine) }
     let(:flu_batch) { create(:batch, :not_expired, vaccine: flu_vaccine) }
 

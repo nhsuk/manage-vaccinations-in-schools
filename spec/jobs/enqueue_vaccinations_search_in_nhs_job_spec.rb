@@ -4,7 +4,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
   include ActiveJob::TestHelper
 
   let(:team) { create(:team) }
-  let(:flu) { create(:programme, :flu) }
+  let(:flu) { CachedProgramme.flu }
   let(:location) { create(:school, team:, programmes: [flu]) }
   let(:school) { location }
   let!(:patient) { create(:patient, team:, school:, session:) }

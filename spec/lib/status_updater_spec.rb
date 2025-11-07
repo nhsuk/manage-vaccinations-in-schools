@@ -10,7 +10,7 @@ describe StatusUpdater do
   before { create(:patient_location, patient:, session:) }
 
   context "with an HPV session and ineligible patient" do
-    let(:programmes) { [create(:programme, :hpv)] }
+    let(:programmes) { [CachedProgramme.hpv] }
     let(:patient) { create(:patient, year_group: 7) }
 
     it "doesn't create any consent statuses" do
@@ -31,7 +31,7 @@ describe StatusUpdater do
   end
 
   context "with an flu session and eligible patient" do
-    let(:programmes) { [create(:programme, :flu)] }
+    let(:programmes) { [CachedProgramme.flu] }
     let(:patient) { create(:patient, year_group: 8) }
 
     it "creates a consent status" do
@@ -65,7 +65,7 @@ describe StatusUpdater do
   end
 
   context "with an HPV session and eligible patient" do
-    let(:programmes) { [create(:programme, :hpv)] }
+    let(:programmes) { [CachedProgramme.hpv] }
     let(:patient) { create(:patient, year_group: 8) }
 
     it "creates a consent status" do
@@ -90,9 +90,7 @@ describe StatusUpdater do
   end
 
   context "with a doubles session and ineligible patient" do
-    let(:programmes) do
-      [create(:programme, :menacwy), create(:programme, :td_ipv)]
-    end
+    let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
     let(:patient) { create(:patient, year_group: 8) }
 
     it "doesn't create any consent statuses" do
@@ -113,9 +111,7 @@ describe StatusUpdater do
   end
 
   context "with an doubles session and eligible patient" do
-    let(:programmes) do
-      [create(:programme, :menacwy), create(:programme, :td_ipv)]
-    end
+    let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
     let(:patient) { create(:patient, year_group: 9) }
 
     it "creates a consent status for both programmes" do

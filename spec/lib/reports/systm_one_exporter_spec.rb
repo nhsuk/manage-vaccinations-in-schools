@@ -16,7 +16,7 @@ describe Reports::SystmOneExporter do
       end_date: Date.current
     )
   end
-  let(:programme) { create(:programme, :hpv) }
+  let(:programme) { CachedProgramme.hpv }
   let(:academic_year) { AcademicYear.current }
   let(:team) { create(:team, ods_code: "ABC123", programmes: [programme]) }
   let(:location) { create(:school) }
@@ -117,10 +117,8 @@ describe Reports::SystmOneExporter do
 
   context "with vaccination records for a different programme" do
     let(:other_programme) do
-      create(
-        :programme,
-        type: (Programme.types.values - [programme.type]).sample
-      )
+      type = (Programme.types.values - [programme.type]).sample
+      CachedProgramme.send(type)
     end
 
     let(:vaccination_record) do
@@ -207,7 +205,7 @@ describe Reports::SystmOneExporter do
     end
 
     context "flu" do
-      let(:programme) { create(:programme, :flu_all_vaccines) }
+      let(:programme) { CachedProgramme.flu }
       let(:dose_sequence) { 1 }
 
       context "Cell-based Trivalent Influenza Vaccine Seqirus" do
@@ -256,7 +254,7 @@ describe Reports::SystmOneExporter do
     end
 
     context "MenACWY" do
-      let(:programme) { create(:programme, :menacwy_all_vaccines) }
+      let(:programme) { CachedProgramme.menacwy }
       let(:dose_sequence) { nil }
 
       context "MenQuadfi" do
@@ -279,7 +277,7 @@ describe Reports::SystmOneExporter do
     end
 
     context "MMR" do
-      let(:programme) { create(:programme, :mmr) }
+      let(:programme) { CachedProgramme.mmr }
       let(:dose_sequence) { nil }
 
       context "Priorix" do
@@ -296,10 +294,10 @@ describe Reports::SystmOneExporter do
     end
 
     context "Td/IPV" do
-      let(:programme) { create(:programme, :td_ipv_all_vaccines) }
+      let(:programme) { CachedProgramme.td_ipv }
       let(:dose_sequence) { nil }
 
-      context "Revaxis with unknon dose sequence" do
+      context "Revaxis with unknown dose sequence" do
         let(:vaccine) { Vaccine.find_by!(brand: "Revaxis") }
 
         it { should eq("x05ub") }
@@ -315,7 +313,7 @@ describe Reports::SystmOneExporter do
     end
 
     context "unknown vaccine and no dose sequence" do
-      let(:programme) { create(:programme, :hpv_all_vaccines) }
+      let(:programme) { CachedProgramme.hpv }
       let(:vaccine) { Vaccine.find_by!(brand: "Gardasil") }
       let(:dose_sequence) { nil }
 
@@ -323,7 +321,7 @@ describe Reports::SystmOneExporter do
     end
 
     context "unknown vaccine and a dose sequence" do
-      let(:programme) { create(:programme, :hpv_all_vaccines) }
+      let(:programme) { CachedProgramme.hpv }
       let(:vaccine) { Vaccine.find_by!(brand: "Gardasil") }
       let(:dose_sequence) { 1 }
 
@@ -424,7 +422,7 @@ describe Reports::SystmOneExporter do
     end
 
     context "for flu nasal" do
-      let(:programme) { create(:programme, :flu) }
+      let(:programme) { CachedProgramme.flu }
       let(:vaccine) { Vaccine.find_by(brand: "Fluenz") }
       let(:delivery_method) { :nasal_spray }
       let(:delivery_site) { :nose }
@@ -439,7 +437,7 @@ describe Reports::SystmOneExporter do
     end
 
     context "for flu injection" do
-      let(:programme) { create(:programme, :flu) }
+      let(:programme) { CachedProgramme.flu }
       let(:vaccine) do
         Vaccine.find_by(brand: "Cell-based Trivalent Influenza Vaccine Seqirus")
       end

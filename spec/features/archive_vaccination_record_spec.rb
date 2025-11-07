@@ -113,8 +113,14 @@ describe "Archive vaccination record" do
   end
 
   def given_an_hpv_programme_is_underway
-    @team = create(:team, :with_generic_clinic, :with_one_nurse)
-    @programme = create(:programme, :hpv, teams: [@team])
+    @programme = CachedProgramme.hpv
+    @team =
+      create(
+        :team,
+        :with_generic_clinic,
+        :with_one_nurse,
+        programmes: [@programme]
+      )
 
     @session =
       create(

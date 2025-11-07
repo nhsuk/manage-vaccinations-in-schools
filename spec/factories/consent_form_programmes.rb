@@ -26,7 +26,7 @@
 FactoryBot.define do
   factory :consent_form_programmes do
     consent_form
-    programme
+    programme { CachedProgramme.sample }
 
     trait :given do
       response { "given" }

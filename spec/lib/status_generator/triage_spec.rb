@@ -13,7 +13,7 @@ describe StatusGenerator::Triage do
   end
 
   let(:patient) { create(:patient) }
-  let(:programme) { create(:programme, :hpv) }
+  let(:programme) { CachedProgramme.hpv }
 
   describe "#status" do
     subject { generator.status }
@@ -69,7 +69,7 @@ describe StatusGenerator::Triage do
     end
 
     context "with a historical vaccination that needs triage" do
-      let(:programme) { create(:programme, :td_ipv) }
+      let(:programme) { CachedProgramme.td_ipv }
 
       before do
         create(:vaccination_record, patient:, programme:, dose_sequence: 1)
@@ -190,7 +190,7 @@ describe StatusGenerator::Triage do
       let(:current_academic_year) { AcademicYear.current }
       let(:previous_academic_year) { current_academic_year - 1 }
       let(:patient) { create(:patient) }
-      let(:programme) { create(:programme) }
+      let(:programme) { CachedProgramme.sample }
 
       context "with a ready to vaccinate triage from the current academic year" do
         before do
@@ -278,7 +278,7 @@ describe StatusGenerator::Triage do
     end
 
     context "with a historical vaccination that needs triage" do
-      let(:programme) { create(:programme, :td_ipv) }
+      let(:programme) { CachedProgramme.td_ipv }
 
       before do
         create(:vaccination_record, patient:, programme:, dose_sequence: 1)
@@ -344,7 +344,7 @@ describe StatusGenerator::Triage do
   describe "#without_gelatine" do
     subject { generator.without_gelatine }
 
-    let(:programme) { create(:programme, :mmr) }
+    let(:programme) { CachedProgramme.mmr }
 
     context "with no triage" do
       it { should be_nil }

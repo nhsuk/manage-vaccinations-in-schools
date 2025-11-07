@@ -74,7 +74,7 @@ describe "Td/IPV" do
   end
 
   def given_a_td_ipv_programme_with_a_session(clinic:)
-    @programme = create(:programme, :td_ipv)
+    @programme = CachedProgramme.td_ipv
     programmes = [@programme]
 
     team = create(:team, programmes:)

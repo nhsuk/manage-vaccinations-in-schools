@@ -5,7 +5,7 @@ describe SchoolMovePolicy do
     describe "#resolve" do
       subject { described_class.new(user, SchoolMove).resolve }
 
-      let(:programme) { create(:programme) }
+      let(:programme) { CachedProgramme.sample }
       let(:organisation) { create(:organisation) }
 
       let(:team) { create(:team, organisation:, programmes: [programme]) }

@@ -14,7 +14,7 @@ describe "mavis schools remove-programme-year-group" do
     it "displays an error message" do
       given_the_school_exists
 
-      when_i_run_the_command_expecting_an_error
+      when_i_run_the_command_with_invalid_programme
       then_a_programme_not_found_error_message_is_displayed
     end
   end
@@ -38,12 +38,18 @@ describe "mavis schools remove-programme-year-group" do
     )
   end
 
+  def command_with_invalid_programme
+    Dry::CLI.new(MavisCLI).call(
+      arguments: %w[schools remove-programme-year-group 123456 invalid 9 10 11]
+    )
+  end
+
   def given_the_school_exists
     @school = create(:school, urn: "123456")
   end
 
   def and_the_programme_exists
-    @programme = create(:programme, :flu)
+    @programme = CachedProgramme.flu
   end
 
   def and_existing_programme_year_groups_exist
@@ -63,6 +69,10 @@ describe "mavis schools remove-programme-year-group" do
 
   def when_i_run_the_command_expecting_an_error
     @output = capture_error { command }
+  end
+
+  def when_i_run_the_command_with_invalid_programme
+    @output = capture_error { command_with_invalid_programme }
   end
 
   def then_a_school_not_found_error_message_is_displayed

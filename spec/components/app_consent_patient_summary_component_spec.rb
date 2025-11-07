@@ -5,7 +5,7 @@ describe AppConsentPatientSummaryComponent do
 
   let(:component) { described_class.new(consent) }
 
-  let(:programme) { create(:programme) }
+  let(:programme) { CachedProgramme.sample }
   let(:team) { create(:team, programmes: [programme]) }
 
   let(:consent) { create(:consent, patient:, consent_form:, programme:, team:) }

@@ -28,7 +28,7 @@ describe "Programme" do
 
   def given_an_hpv_programme_is_underway
     @academic_year = AcademicYear.current
-    @programme = create(:programme, :hpv)
+    @programme = CachedProgramme.hpv
     @team =
       create(
         :team,
@@ -59,8 +59,8 @@ describe "Programme" do
   end
 
   def given_a_school_has_separate_sessions_for_different_year_groups
-    td_ipv_programme = create(:programme, :td_ipv)
-    hpv_programme = create(:programme, :hpv)
+    td_ipv_programme = CachedProgramme.td_ipv
+    hpv_programme = CachedProgramme.hpv
 
     @academic_year = AcademicYear.current
     @location =

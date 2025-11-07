@@ -12,7 +12,7 @@ describe "schools move-patients" do
   let(:other_subteam) { create(:subteam, team:) }
   let(:source_school) { create(:school, team:, subteam:) }
   let(:target_school) { create(:school, team:) }
-  let(:programmes) { [create(:programme, :hpv)] }
+  let(:programmes) { [CachedProgramme.hpv] }
   let(:location_programme_year_group) do
     create(
       :location_programme_year_group,
