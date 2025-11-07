@@ -32,4 +32,13 @@ describe StatusUpdaterJob do
       end
     end
   end
+
+  describe "#perform_async" do
+    context "with no arguments" do
+      it "queues and runs a job" do
+        expect { described_class.perform_async }.not_to raise_error
+        expect { described_class.drain }.not_to raise_error
+      end
+    end
+  end
 end

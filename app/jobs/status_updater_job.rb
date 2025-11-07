@@ -7,7 +7,7 @@ class StatusUpdaterJob
   sidekiq_options queue: :cache
   sidekiq_throttle concurrency: {
                      limit: 1,
-                     key_suffix: ->(patient_id) do
+                     key_suffix: ->(patient_id = nil) do
                        patient_id ? patient_id.to_s : "all"
                      end
                    }
