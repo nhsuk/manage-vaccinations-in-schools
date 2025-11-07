@@ -201,6 +201,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
     t.boolean "without_gelatine"
     t.index ["consent_form_id"], name: "index_consent_form_programmes_on_consent_form_id"
     t.index ["programme_id", "consent_form_id"], name: "idx_on_programme_id_consent_form_id_2113cb7f37", unique: true
+    t.index ["programme_type", "consent_form_id"], name: "idx_on_programme_type_consent_form_id_805eb5d685", unique: true
   end
 
   create_table "consent_forms", force: :cascade do |t|
@@ -291,6 +292,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
     t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"
     t.index ["programme_id"], name: "index_consents_on_programme_id"
+    t.index ["programme_type"], name: "index_consents_on_programme_type"
     t.index ["recorded_by_user_id"], name: "index_consents_on_recorded_by_user_id"
     t.index ["team_id"], name: "index_consents_on_team_id"
   end
@@ -331,6 +333,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
     t.index ["patient_id"], name: "index_gillick_assessments_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_gillick_assessments_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_gillick_assessments_on_programme_id"
+    t.index ["programme_type"], name: "index_gillick_assessments_on_programme_type"
     t.index ["session_date_id"], name: "index_gillick_assessments_on_session_date_id"
   end
 
@@ -437,8 +440,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
     t.bigint "programme_id", null: false
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.index ["location_year_group_id", "programme_id"], name: "idx_on_location_year_group_id_programme_id_405f51181e", unique: true
+    t.index ["location_year_group_id", "programme_type"], name: "idx_on_location_year_group_id_programme_type_904fa3b284", unique: true
     t.index ["location_year_group_id"], name: "index_location_programme_year_groups_on_location_year_group_id"
     t.index ["programme_id"], name: "index_location_programme_year_groups_on_programme_id"
+    t.index ["programme_type"], name: "index_location_programme_year_groups_on_programme_type"
   end
 
   create_table "location_year_groups", force: :cascade do |t|
@@ -572,6 +577,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
     t.boolean "without_gelatine"
     t.index ["academic_year", "patient_id"], name: "index_patient_consent_statuses_on_academic_year_and_patient_id"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_1d3170e398", unique: true
+    t.index ["patient_id", "programme_type", "academic_year"], name: "idx_on_patient_id_programme_type_academic_year_89a70c9513", unique: true
     t.index ["status"], name: "index_patient_consent_statuses_on_status"
   end
 
@@ -614,6 +620,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
     t.index ["created_by_user_id"], name: "index_patient_specific_directions_on_created_by_user_id"
     t.index ["patient_id"], name: "index_patient_specific_directions_on_patient_id"
     t.index ["programme_id"], name: "index_patient_specific_directions_on_programme_id"
+    t.index ["programme_type"], name: "index_patient_specific_directions_on_programme_type"
     t.index ["team_id"], name: "index_patient_specific_directions_on_team_id"
     t.index ["vaccine_id"], name: "index_patient_specific_directions_on_vaccine_id"
   end
@@ -638,6 +645,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
     t.boolean "without_gelatine"
     t.index ["academic_year", "patient_id"], name: "index_patient_triage_statuses_on_academic_year_and_patient_id"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_6cf32349df", unique: true
+    t.index ["patient_id", "programme_type", "academic_year"], name: "idx_on_patient_id_programme_type_academic_year_b66791407e", unique: true
     t.index ["status"], name: "index_patient_triage_statuses_on_status"
   end
 
@@ -654,6 +662,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
     t.index ["academic_year", "patient_id"], name: "idx_on_academic_year_patient_id_9c400fc863"
     t.index ["latest_location_id"], name: "index_patient_vaccination_statuses_on_latest_location_id"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_fc0b47b743", unique: true
+    t.index ["patient_id", "programme_type", "academic_year"], name: "idx_on_patient_id_programme_type_academic_year_962639d2ac", unique: true
     t.index ["status"], name: "index_patient_vaccination_statuses_on_status"
   end
 
@@ -721,6 +730,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
     t.index ["patient_id"], name: "index_pre_screenings_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_pre_screenings_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_pre_screenings_on_programme_id"
+    t.index ["programme_type"], name: "index_pre_screenings_on_programme_type"
     t.index ["session_date_id"], name: "index_pre_screenings_on_session_date_id"
   end
 
@@ -882,6 +892,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
     t.index ["patient_id"], name: "index_triages_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_triages_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_triages_on_programme_id"
+    t.index ["programme_type"], name: "index_triages_on_programme_type"
     t.index ["team_id"], name: "index_triages_on_team_id"
   end
 
@@ -954,11 +965,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
     t.index ["next_dose_delay_triage_id"], name: "index_vaccination_records_on_next_dose_delay_triage_id"
     t.index ["nhs_immunisations_api_id"], name: "index_vaccination_records_on_nhs_immunisations_api_id", unique: true
     t.index ["patient_id", "programme_id", "outcome"], name: "idx_vr_fast_lookup", where: "(discarded_at IS NULL)"
+    t.index ["patient_id", "programme_type", "outcome"], name: "idx_on_patient_id_programme_type_outcome_453b557b54", where: "(discarded_at IS NULL)"
     t.index ["patient_id", "session_id"], name: "index_vaccination_records_on_patient_id_and_session_id"
     t.index ["patient_id"], name: "index_vaccination_records_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
     t.index ["performed_ods_code", "patient_id"], name: "index_vaccination_records_on_performed_ods_code_and_patient_id", where: "(session_id IS NULL)"
     t.index ["programme_id"], name: "index_vaccination_records_on_programme_id"
+    t.index ["programme_type"], name: "index_vaccination_records_on_programme_type"
     t.index ["session_id"], name: "index_vaccination_records_on_session_id"
     t.index ["supplied_by_user_id"], name: "index_vaccination_records_on_supplied_by_user_id"
     t.index ["uuid"], name: "index_vaccination_records_on_uuid", unique: true
@@ -984,6 +997,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
     t.index ["manufacturer", "brand"], name: "index_vaccines_on_manufacturer_and_brand", unique: true
     t.index ["nivs_name"], name: "index_vaccines_on_nivs_name", unique: true
     t.index ["programme_id"], name: "index_vaccines_on_programme_id"
+    t.index ["programme_type"], name: "index_vaccines_on_programme_type"
     t.index ["snomed_product_code"], name: "index_vaccines_on_snomed_product_code", unique: true
     t.index ["snomed_product_term"], name: "index_vaccines_on_snomed_product_term", unique: true
   end
