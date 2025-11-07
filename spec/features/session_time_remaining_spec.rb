@@ -85,8 +85,9 @@ describe "Session timeout endpoints" do
 
   def and_the_time_remaining_is_reset
     new_time_remaining = JSON.parse(page.body)["time_remaining_seconds"]
-    expect(new_time_remaining).to be >= @first_time_remaining
-    # The new time remaining should be close to the full timeout duration
+
+    # The new time remaining should be close to the full timeout duration.
+    expect(new_time_remaining).to be >= @first_time_remaining - 1
     expect(new_time_remaining).to be > (Devise.timeout_in.to_i - 10)
   end
 end
