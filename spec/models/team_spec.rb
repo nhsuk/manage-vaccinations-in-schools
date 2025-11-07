@@ -15,6 +15,7 @@
 #  phone_instructions            :string
 #  privacy_notice_url            :string           not null
 #  privacy_policy_url            :string           not null
+#  programme_types               :enum             is an Array
 #  workgroup                     :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
@@ -25,6 +26,7 @@
 #
 #  index_teams_on_name             (name) UNIQUE
 #  index_teams_on_organisation_id  (organisation_id)
+#  index_teams_on_programme_types  (programme_types) USING gin
 #  index_teams_on_workgroup        (workgroup) UNIQUE
 #
 # Foreign Keys

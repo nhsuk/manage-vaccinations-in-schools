@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_07_121101) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -190,6 +190,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
     t.bigint "consent_form_id", null: false
     t.text "notes", default: "", null: false
     t.bigint "programme_id", null: false
+    t.enum "programme_type", enum_type: "programme_type"
     t.integer "reason_for_refusal"
     t.integer "response"
     t.integer "vaccine_methods", default: [], null: false, array: true
@@ -246,11 +247,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
 
   create_table "consent_notifications", force: :cascade do |t|
     t.bigint "patient_id", null: false
+    t.enum "programme_types", array: true, enum_type: "programme_type"
     t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.bigint "sent_by_user_id"
     t.bigint "session_id", null: false
     t.integer "type", null: false
     t.index ["patient_id"], name: "index_consent_notifications_on_patient_id"
+    t.index ["programme_types"], name: "index_consent_notifications_on_programme_types", using: :gin
     t.index ["sent_by_user_id"], name: "index_consent_notifications_on_sent_by_user_id"
     t.index ["session_id"], name: "index_consent_notifications_on_session_id"
   end
@@ -268,6 +271,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
     t.datetime "patient_already_vaccinated_notification_sent_at"
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
+    t.enum "programme_type", enum_type: "programme_type"
     t.integer "reason_for_refusal"
     t.bigint "recorded_by_user_id"
     t.integer "response", null: false
@@ -314,6 +318,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
     t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
     t.bigint "programme_id", null: false
+    t.enum "programme_type", enum_type: "programme_type"
     t.bigint "session_date_id", null: false
     t.datetime "updated_at", null: false
     t.index ["patient_id"], name: "index_gillick_assessments_on_patient_id"
@@ -423,6 +428,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
   create_table "location_programme_year_groups", force: :cascade do |t|
     t.bigint "location_year_group_id", null: false
     t.bigint "programme_id", null: false
+    t.enum "programme_type", enum_type: "programme_type"
     t.index ["location_year_group_id", "programme_id"], name: "idx_on_location_year_group_id_programme_id_405f51181e", unique: true
     t.index ["location_year_group_id"], name: "index_location_programme_year_groups_on_location_year_group_id"
     t.index ["programme_id"], name: "index_location_programme_year_groups_on_programme_id"
@@ -485,6 +491,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
     t.bigint "parent_id"
     t.bigint "patient_id"
     t.integer "programme_ids", default: [], null: false, array: true
+    t.enum "programme_types", array: true, enum_type: "programme_type"
     t.string "recipient", null: false
     t.bigint "sent_by_user_id"
     t.uuid "template_id", null: false
@@ -493,6 +500,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
     t.index ["delivery_id"], name: "index_notify_log_entries_on_delivery_id"
     t.index ["parent_id"], name: "index_notify_log_entries_on_parent_id"
     t.index ["patient_id"], name: "index_notify_log_entries_on_patient_id"
+    t.index ["programme_types"], name: "index_notify_log_entries_on_programme_types", using: :gin
     t.index ["sent_by_user_id"], name: "index_notify_log_entries_on_sent_by_user_id"
   end
 
@@ -550,6 +558,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
     t.integer "academic_year", null: false
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
+    t.enum "programme_type", enum_type: "programme_type"
     t.integer "status", default: 0, null: false
     t.integer "vaccine_methods", default: [], null: false, array: true
     t.boolean "without_gelatine"
@@ -588,6 +597,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
     t.datetime "invalidated_at"
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
+    t.enum "programme_type", enum_type: "programme_type"
     t.bigint "team_id", null: false
     t.datetime "updated_at", null: false
     t.bigint "vaccine_id", null: false
@@ -614,6 +624,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
     t.integer "academic_year", null: false
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
+    t.enum "programme_type", enum_type: "programme_type"
     t.integer "status", default: 0, null: false
     t.integer "vaccine_method"
     t.boolean "without_gelatine"
@@ -630,6 +641,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
     t.integer "latest_session_status"
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
+    t.enum "programme_type", enum_type: "programme_type"
     t.integer "status", default: 0, null: false
     t.index ["academic_year", "patient_id"], name: "idx_on_academic_year_patient_id_9c400fc863"
     t.index ["latest_location_id"], name: "index_patient_vaccination_statuses_on_latest_location_id"
@@ -692,6 +704,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
     t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
     t.bigint "programme_id", null: false
+    t.enum "programme_type", enum_type: "programme_type"
     t.bigint "session_date_id", null: false
     t.datetime "updated_at", null: false
     t.index ["patient_id"], name: "index_pre_screenings_on_patient_id"
@@ -774,6 +787,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
     t.integer "days_before_consent_reminders"
     t.bigint "location_id", null: false
     t.boolean "national_protocol_enabled", default: false, null: false
+    t.enum "programme_types", array: true, enum_type: "programme_type"
     t.boolean "psd_enabled", default: false, null: false
     t.boolean "requires_registration", default: true, null: false
     t.date "send_consent_requests_at"
@@ -784,6 +798,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
     t.index ["academic_year", "location_id", "team_id"], name: "index_sessions_on_academic_year_and_location_id_and_team_id"
     t.index ["location_id", "academic_year", "team_id"], name: "index_sessions_on_location_id_and_academic_year_and_team_id"
     t.index ["location_id"], name: "index_sessions_on_location_id"
+    t.index ["programme_types"], name: "index_sessions_on_programme_types", using: :gin
     t.index ["team_id", "academic_year"], name: "index_sessions_on_team_id_and_academic_year"
     t.index ["team_id", "location_id"], name: "index_sessions_on_team_id_and_location_id"
   end
@@ -820,11 +835,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
     t.string "phone_instructions"
     t.string "privacy_notice_url", null: false
     t.string "privacy_policy_url", null: false
+    t.enum "programme_types", array: true, enum_type: "programme_type"
     t.uuid "reply_to_id"
     t.datetime "updated_at", null: false
     t.string "workgroup", null: false
     t.index ["name"], name: "index_teams_on_name", unique: true
     t.index ["organisation_id"], name: "index_teams_on_organisation_id"
+    t.index ["programme_types"], name: "index_teams_on_programme_types", using: :gin
     t.index ["workgroup"], name: "index_teams_on_workgroup", unique: true
   end
 
@@ -844,6 +861,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
     t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
     t.bigint "programme_id", null: false
+    t.enum "programme_type", enum_type: "programme_type"
     t.integer "status", null: false
     t.bigint "team_id", null: false
     t.datetime "updated_at", null: false
@@ -910,6 +928,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
     t.bigint "performed_by_user_id"
     t.string "performed_ods_code"
     t.bigint "programme_id", null: false
+    t.enum "programme_type", enum_type: "programme_type"
     t.integer "protocol"
     t.bigint "session_id"
     t.integer "source", null: false
@@ -946,6 +965,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_120736) do
     t.integer "method", null: false
     t.text "nivs_name", null: false
     t.bigint "programme_id", null: false
+    t.enum "programme_type", enum_type: "programme_type"
     t.integer "side_effects", default: [], null: false, array: true
     t.string "snomed_product_code", null: false
     t.string "snomed_product_term", null: false
