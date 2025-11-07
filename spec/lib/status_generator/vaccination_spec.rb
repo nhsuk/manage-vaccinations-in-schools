@@ -303,6 +303,8 @@ describe StatusGenerator::Vaccination do
             programme:,
             performed_at: patient.date_of_birth + 1.year
           )
+
+          create(:triage, :delay_vaccination, patient:, programme:)
         end
 
         it { should be(:eligible) }

@@ -174,6 +174,40 @@ describe Programme do
     end
   end
 
+  describe "#triage_on_vaccination_history?" do
+    subject { programme.triage_on_vaccination_history? }
+
+    context "with a flu programme" do
+      let(:programme) { build(:programme, :flu) }
+
+      it { should be(false) }
+    end
+
+    context "with an HPV programme" do
+      let(:programme) { build(:programme, :hpv) }
+
+      it { should be(false) }
+    end
+
+    context "with an MenACWY programme" do
+      let(:programme) { build(:programme, :menacwy) }
+
+      it { should be(false) }
+    end
+
+    context "with an MMR programme" do
+      let(:programme) { build(:programme, :mmr) }
+
+      it { should be(false) }
+    end
+
+    context "with an Td/IPV programme" do
+      let(:programme) { build(:programme, :td_ipv) }
+
+      it { should be(true) }
+    end
+  end
+
   describe "#default_year_groups" do
     subject { programme.default_year_groups }
 
