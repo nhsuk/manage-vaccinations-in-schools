@@ -133,41 +133,59 @@ describe PatientLocation do
   end
 
   describe "#safe_to_destroy?" do
-    subject(:safe_to_destroy?) { patient_location.safe_to_destroy? }
+    subject { patient_location.safe_to_destroy? }
 
     let(:patient_location) { create(:patient_location, session:) }
     let(:patient) { patient_location.patient }
+    let(:location) { patient_location.location }
 
-    context "when safe to destroy" do
-      it { should be true }
+    it { should be(true) }
 
-      it "is safe with only absent attendances" do
-        create(:attendance_record, :absent, patient:, session:)
-        expect(safe_to_destroy?).to be true
-      end
+    context "with only absent attendance records" do
+      before { create(:attendance_record, :absent, patient:, session:) }
+
+      it { should be(true) }
     end
 
-    context "when unsafe to destroy" do
-      it "is unsafe with vaccination records" do
-        create(:vaccination_record, programme:, patient:, session:)
-        expect(safe_to_destroy?).to be false
+    context "with a vaccination record" do
+      before { create(:vaccination_record, programme:, patient:, session:) }
+
+      it { should be(false) }
+    end
+
+    context "with a Gillick assessment" do
+      before { create(:gillick_assessment, :competent, patient:, session:) }
+
+      it { should be(false) }
+    end
+
+    context "with an attendance record" do
+      before { create(:attendance_record, :present, patient:, session:) }
+
+      it { should be(false) }
+    end
+
+    context "with an attendance record from a different academic year" do
+      before do
+        create(
+          :attendance_record,
+          :present,
+          patient:,
+          location:,
+          date: 1.year.ago
+        )
       end
 
-      it "is unsafe with gillick assessment" do
-        create(:gillick_assessment, :competent, patient:, session:)
-        expect(safe_to_destroy?).to be false
-      end
+      it { should be(true) }
+    end
 
-      it "is unsafe with present attendances" do
-        create(:attendance_record, :present, patient:, session:)
-        expect(safe_to_destroy?).to be false
-      end
-
-      it "is unsafe with mixed conditions" do
+    context "with a mix of conditions" do
+      before do
         create(:attendance_record, :absent, patient:, session:)
         create(:vaccination_record, programme:, patient:, session:)
-        expect(safe_to_destroy?).to be false
       end
+
+      it { should be(false) }
     end
   end
 end
