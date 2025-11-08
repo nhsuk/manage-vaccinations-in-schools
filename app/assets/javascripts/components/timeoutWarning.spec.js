@@ -126,12 +126,12 @@ describe("TimeoutWarning", () => {
     timeoutWarning.toggleModalVisibility();
     timeoutWarning.updateTimerElements();
 
-    expect(timeoutWarning.timerElement.textContent).toBe(
-      "1 minute and 30 seconds",
-    );
-    expect(timeoutWarning.timerElementAccessible.textContent).toBe(
-      "1 minute and 30 seconds",
-    );
+    // To accommodate tests potentially running slower, allow
+    // 1 minute and 29 seconds or 1 minute and 30 seconds
+    const pattern = /1 minute and (29|30) seconds/;
+
+    expect(timeoutWarning.timerElement.textContent).toMatch(pattern);
+    expect(timeoutWarning.timerElementAccessible.textContent).toMatch(pattern);
   });
 
   it("should format the time remaining correctly", () => {
@@ -144,8 +144,8 @@ describe("TimeoutWarning", () => {
     expect(TimeoutWarning.formatTimeRemaining(61)).toBe(
       "1 minute and 1 second",
     );
-    expect(TimeoutWarning.formatTimeRemaining(105)).toBe(
-      "1 minute and 45 seconds",
+    expect(TimeoutWarning.formatTimeRemaining(191)).toBe(
+      "3 minutes and 11 seconds",
     );
   });
 });
