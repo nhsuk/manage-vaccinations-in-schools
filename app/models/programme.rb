@@ -18,7 +18,7 @@ class Programme < ApplicationRecord
 
   self.inheritance_column = nil
 
-  scope :supports_delegation, -> { flu }
+  TYPES_SUPPORTING_DELEGATION = %w[flu].freeze
 
   enum :type,
        {

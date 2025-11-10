@@ -17,22 +17,6 @@
 describe Programme do
   subject(:programme) { build(:programme) }
 
-  describe "scopes" do
-    describe "#supports_delegation" do
-      subject(:scope) { described_class.supports_delegation }
-
-      let(:flu_programme) { CachedProgramme.flu }
-      let(:hpv_programme) { CachedProgramme.hpv }
-      let(:menacwy_programme) { CachedProgramme.menacwy }
-      let(:td_ipv_programme) { CachedProgramme.td_ipv }
-
-      it { should include(flu_programme) }
-      it { should_not include(hpv_programme) }
-      it { should_not include(menacwy_programme) }
-      it { should_not include(td_ipv_programme) }
-    end
-  end
-
   describe "validations" do
     it { should validate_presence_of(:type) }
     it { should validate_inclusion_of(:type).in_array(%w[flu hpv]) }
