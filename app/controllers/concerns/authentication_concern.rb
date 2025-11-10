@@ -27,7 +27,7 @@ module AuthenticationConcern
         if cis2_enabled? || request.path != new_user_session_path
           flash[:info] = (
             if session_timed_out?
-              "You've been signed out for your security. Please sign in again."
+              "You've been logged out for your security. Please log in again."
             else
               "You must be logged in to access this page."
             end
