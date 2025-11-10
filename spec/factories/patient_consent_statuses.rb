@@ -11,7 +11,7 @@
 #  vaccine_methods  :integer          default([]), not null, is an Array
 #  without_gelatine :boolean
 #  patient_id       :bigint           not null
-#  programme_id     :bigint           not null
+#  programme_id     :bigint
 #
 # Indexes
 #

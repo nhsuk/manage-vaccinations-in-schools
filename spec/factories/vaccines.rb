@@ -18,7 +18,7 @@
 #  snomed_product_term :string           not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  programme_id        :bigint           not null
+#  programme_id        :bigint
 #
 # Indexes
 #

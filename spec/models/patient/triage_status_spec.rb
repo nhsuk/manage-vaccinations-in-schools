@@ -11,7 +11,7 @@
 #  vaccine_method   :integer
 #  without_gelatine :boolean
 #  patient_id       :bigint           not null
-#  programme_id     :bigint           not null
+#  programme_id     :bigint
 #
 # Indexes
 #

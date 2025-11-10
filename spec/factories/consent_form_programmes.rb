@@ -12,7 +12,7 @@
 #  vaccine_methods    :integer          default([]), not null, is an Array
 #  without_gelatine   :boolean
 #  consent_form_id    :bigint           not null
-#  programme_id       :bigint           not null
+#  programme_id       :bigint
 #
 # Indexes
 #

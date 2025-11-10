@@ -25,7 +25,7 @@
 #  consent_form_id                                 :bigint
 #  parent_id                                       :bigint
 #  patient_id                                      :bigint           not null
-#  programme_id                                    :bigint           not null
+#  programme_id                                    :bigint
 #  recorded_by_user_id                             :bigint
 #  team_id                                         :bigint           not null
 #
