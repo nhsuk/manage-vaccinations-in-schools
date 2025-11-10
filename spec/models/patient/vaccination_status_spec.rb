@@ -9,7 +9,7 @@
 #  dose_sequence         :integer
 #  latest_date           :date
 #  latest_session_status :integer
-#  programme_type        :enum
+#  programme_type        :enum             not null
 #  status                :integer          default("not_eligible"), not null
 #  latest_location_id    :bigint
 #  patient_id            :bigint           not null

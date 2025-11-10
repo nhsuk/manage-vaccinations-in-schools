@@ -12,7 +12,7 @@
 #  manufacturer        :text             not null
 #  method              :integer          not null
 #  nivs_name           :text             not null
-#  programme_type      :enum
+#  programme_type      :enum             not null
 #  side_effects        :integer          default([]), not null, is an Array
 #  snomed_product_code :string           not null
 #  snomed_product_term :string           not null

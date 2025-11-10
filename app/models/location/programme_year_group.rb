@@ -5,7 +5,7 @@
 # Table name: location_programme_year_groups
 #
 #  id                     :bigint           not null, primary key
-#  programme_type         :enum
+#  programme_type         :enum             not null
 #  location_year_group_id :bigint           not null
 #  programme_id           :bigint           not null
 #

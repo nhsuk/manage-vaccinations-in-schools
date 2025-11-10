@@ -8,7 +8,7 @@
 #  academic_year      :integer          not null
 #  delivery_site      :integer          not null
 #  invalidated_at     :datetime
-#  programme_type     :enum
+#  programme_type     :enum             not null
 #  vaccine_method     :integer          not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null

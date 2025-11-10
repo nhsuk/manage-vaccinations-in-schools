@@ -7,7 +7,7 @@
 #  id                   :bigint           not null, primary key
 #  date                 :date             not null
 #  notes                :text             default(""), not null
-#  programme_type       :enum
+#  programme_type       :enum             not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  location_id          :bigint           not null
