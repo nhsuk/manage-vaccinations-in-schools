@@ -8,7 +8,7 @@ development:
   database: manage_vaccinations_development
 test:
   <<: *default
-  database: manage_vaccinations_test
+  database: manage_vaccinations_test<%= ENV['TEST_ENV_NUMBER'] %>
 staging:
   <<: *default
   database: manage_vaccinations_staging
