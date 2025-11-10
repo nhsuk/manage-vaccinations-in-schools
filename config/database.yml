@@ -9,6 +9,10 @@ development:
 test:
   <<: *default
   database: manage_vaccinations_test<%= ENV['TEST_ENV_NUMBER'] %>
+  # Needed by CI server
+  host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+  username: <%= ENV.fetch("DATABASE_USER", "") %>
+  password: <%= ENV.fetch("DATABASE_PASSWORD", "") %>
 staging:
   <<: *default
   database: manage_vaccinations_staging
