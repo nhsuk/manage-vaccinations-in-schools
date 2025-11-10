@@ -39,6 +39,7 @@ class Session < ApplicationRecord
   include Delegatable
   include GelatineVaccinesConcern
   include HasLocationProgrammeYearGroups
+  include HasManyProgrammes
 
   class ActiveRecord_Relation < ActiveRecord::Relation
     include ContributesToPatientTeams::Relation

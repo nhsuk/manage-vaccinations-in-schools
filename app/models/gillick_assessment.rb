@@ -34,6 +34,7 @@
 #  fk_rails_...  (session_date_id => session_dates.id)
 #
 class GillickAssessment < ApplicationRecord
+  include BelongsToProgramme
   include BelongsToSessionDate
   include Notable
   include PerformableByUser
@@ -41,7 +42,6 @@ class GillickAssessment < ApplicationRecord
   audited associated_with: :patient
 
   belongs_to :patient
-  belongs_to :programme
 
   validates :knows_consequences,
             :knows_delivery,

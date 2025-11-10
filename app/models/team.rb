@@ -37,6 +37,7 @@ class Team < ApplicationRecord
   include ContributesToPatientTeams
   include DaysBeforeToWeeksBefore
   include HasLocationProgrammeYearGroups
+  include HasManyProgrammes
 
   class ActiveRecord_Relation < ActiveRecord::Relation
     include ContributesToPatientTeams::Relation

@@ -74,6 +74,7 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class VaccinationRecord < ApplicationRecord
+  include BelongsToProgramme
   include ContributesToPatientTeams
   include Discard::Model
   include HasDoseVolume
@@ -108,7 +109,6 @@ class VaccinationRecord < ApplicationRecord
 
   belongs_to :batch, optional: true
   belongs_to :vaccine, optional: true
-  belongs_to :programme
 
   belongs_to :performed_by_user, class_name: "User", optional: true
   belongs_to :supplied_by,

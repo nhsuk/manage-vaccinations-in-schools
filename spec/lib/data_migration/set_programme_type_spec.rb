@@ -21,11 +21,9 @@ describe DataMigration::SetProgrammeType do
     let(:hpv_programme) { CachedProgramme.hpv }
 
     let(:team) do
-      create(
-        :team,
-        programmes: [flu_programme, hpv_programme],
-        programme_types: nil
-      )
+      create(:team, programmes: [flu_programme, hpv_programme]).tap do
+        it.update_column(:programme_types, nil)
+      end
     end
 
     it "sets the programme types" do
@@ -41,7 +39,8 @@ describe DataMigration::SetProgrammeType do
 
     let(:notify_log_entry) do
       create(
-        :team,
+        :notify_log_entry,
+        :sms,
         programme_ids: [flu_programme.id, hpv_programme.id],
         programme_types: nil
       )

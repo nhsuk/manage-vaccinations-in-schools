@@ -26,6 +26,7 @@
 #  fk_rails_...  (session_id => sessions.id)
 #
 class ConsentNotification < ApplicationRecord
+  include HasManyProgrammes
   include Sendable
 
   self.inheritance_column = nil

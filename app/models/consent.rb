@@ -50,6 +50,7 @@
 #
 
 class Consent < ApplicationRecord
+  include BelongsToProgramme
   include GelatineVaccinesConcern
   include HasHealthAnswers
   include HasVaccineMethods
@@ -60,7 +61,6 @@ class Consent < ApplicationRecord
   audited associated_with: :patient
 
   belongs_to :patient
-  belongs_to :programme
   belongs_to :team
 
   belongs_to :consent_form, optional: true

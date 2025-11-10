@@ -25,11 +25,11 @@
 #  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
 #
 class ConsentFormProgramme < ApplicationRecord
+  include BelongsToProgramme
   include HasVaccineMethods
   include Refusable
 
   belongs_to :consent_form
-  belongs_to :programme
 
   scope :ordered, -> { joins(:programme).order(:"programme.type") }
 

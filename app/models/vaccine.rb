@@ -33,12 +33,11 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class Vaccine < ApplicationRecord
+  include BelongsToProgramme
   include HasSideEffects
 
   audited associated_with: :programme
   has_associated_audits
-
-  belongs_to :programme
 
   has_many :health_questions, dependent: :destroy
   has_many :batches

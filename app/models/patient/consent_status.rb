@@ -25,10 +25,10 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class Patient::ConsentStatus < ApplicationRecord
+  include BelongsToProgramme
   include HasVaccineMethods
 
   belongs_to :patient
-  belongs_to :programme
 
   has_many :consents,
            -> { not_invalidated.response_provided.includes(:parent, :patient) },

@@ -29,8 +29,9 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class Patient::VaccinationStatus < ApplicationRecord
+  include BelongsToProgramme
+
   belongs_to :patient
-  belongs_to :programme
 
   belongs_to :latest_location, class_name: "Location", optional: true
 

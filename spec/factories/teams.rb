@@ -50,6 +50,10 @@ FactoryBot.define do
     privacy_notice_url { "https://example.com/privacy-notice" }
     privacy_policy_url { "https://example.com/privacy-policy" }
 
+    after(:build) do |team, evaluator|
+      team.programme_types = evaluator.programmes.map(&:type)
+    end
+
     trait :with_one_nurse do
       users { [create(:user, :nurse, team: instance)] }
     end

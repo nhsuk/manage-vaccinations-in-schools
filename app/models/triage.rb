@@ -36,6 +36,7 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class Triage < ApplicationRecord
+  include BelongsToProgramme
   include Invalidatable
   include Notable
   include PerformableByUser
@@ -43,7 +44,6 @@ class Triage < ApplicationRecord
   audited associated_with: :patient
 
   belongs_to :patient
-  belongs_to :programme
   belongs_to :team
 
   enum :status,
