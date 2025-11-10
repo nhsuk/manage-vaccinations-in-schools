@@ -192,7 +192,7 @@ describe Programme do
     context "with an MenACWY programme" do
       let(:programme) { build(:programme, :menacwy) }
 
-      it { should be(false) }
+      it { should be(true) }
     end
 
     context "with an MMR programme" do
