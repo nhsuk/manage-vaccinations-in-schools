@@ -35,7 +35,6 @@
 #  index_consents_on_consent_form_id      (consent_form_id)
 #  index_consents_on_parent_id            (parent_id)
 #  index_consents_on_patient_id           (patient_id)
-#  index_consents_on_programme_id         (programme_id)
 #  index_consents_on_programme_type       (programme_type)
 #  index_consents_on_recorded_by_user_id  (recorded_by_user_id)
 #  index_consents_on_team_id              (team_id)

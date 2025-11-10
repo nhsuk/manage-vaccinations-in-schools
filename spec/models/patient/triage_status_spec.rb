@@ -15,7 +15,6 @@
 #
 # Indexes
 #
-#  idx_on_patient_id_programme_id_academic_year_6cf32349df        (patient_id,programme_id,academic_year) UNIQUE
 #  idx_on_patient_id_programme_type_academic_year_b66791407e      (patient_id,programme_type,academic_year) UNIQUE
 #  index_patient_triage_statuses_on_academic_year_and_patient_id  (academic_year,patient_id)
 #  index_patient_triage_statuses_on_status                        (status)
