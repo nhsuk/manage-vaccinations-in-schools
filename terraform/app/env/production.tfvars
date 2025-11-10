@@ -26,6 +26,4 @@ container_insights        = "enhanced"
 enable_backup_to_vault        = true
 enable_enhanced_db_monitoring = true
 
-active_target_group = "green"
-
 enable_ops_service = true
