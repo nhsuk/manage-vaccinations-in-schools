@@ -20,7 +20,7 @@ class AppImportsNavigationComponent < ViewComponent::Base
         selected: active == :issues
       )
 
-      if policy(:notices).index?
+      if policy(ImportantNotice).index?
         nav.with_item(
           href: imports_notices_path,
           text: notices_text,
@@ -42,7 +42,7 @@ class AppImportsNavigationComponent < ViewComponent::Base
   end
 
   def notices_text
-    count = ImportantNotices.call(patient_scope: policy_scope(Patient)).length
+    count = policy_scope(ImportantNotice).count
 
     text_with_count("Important notices", count)
   end
