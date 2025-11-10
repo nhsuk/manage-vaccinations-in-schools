@@ -1,0 +1,27 @@
+name: Test calling the functional tests
+
+on:
+  push:
+    branches:
+      - try-calling-workflow
+
+jobs:
+  call-functional-tests:
+    uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/functional_selected_device.yaml@make-workflow-callable
+    with:
+      tests: ''
+      device: 'Desktop Chrome'
+      programmes: 'FLU,HPV,MENACWY,MMR,TD_IPV'
+      environment: 'qa'
+      screenshot_all_steps: 'false'
+      enable_reruns: 'true'
+      test_workers: '4'
+      set_feature_flags: 'false'
+      additional_feature_flags: ''
+    secrets:
+      HTTP_AUTH_TOKEN_FOR_TESTS: ${{ secrets.HTTP_AUTH_TOKEN_FOR_TESTS }}
+    #   IMMS_API_KEY: ${{ secrets.IMMS_API_KEY }}
+    #   IMMS_API_KID: ${{ secrets.IMMS_API_KID }}
+    #   IMMS_API_PEM: ${{ secrets.IMMS_API_PEM }}
+    #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #
