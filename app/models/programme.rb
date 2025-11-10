@@ -18,20 +18,6 @@ class Programme < ApplicationRecord
 
   self.inheritance_column = nil
 
-  has_many :consent_forms
-  has_many :consent_notification_programmes
-  has_many :consents
-  has_many :gillick_assessments
-  has_many :immunisation_imports
-  has_many :team_programmes
-  has_many :pre_screenings
-  has_many :session_programmes
-  has_many :triages
-  has_many :vaccination_records, -> { kept }
-  has_many :vaccines
-
-  has_many :teams, through: :team_programmes
-
   scope :supports_delegation, -> { flu }
   scope :can_sync_to_immunisations_api, -> { flu.or(hpv) }
   scope :can_search_in_immunisations_api, -> { flu }
@@ -90,6 +76,10 @@ class Programme < ApplicationRecord
 
   def default_year_groups
     DEFAULT_YEAR_GROUPS_BY_TYPE.fetch(type)
+  end
+
+  def vaccines
+    @vaccines ||= Vaccine.where_programme(self)
   end
 
   def vaccine_methods = vaccines.map(&:method).uniq

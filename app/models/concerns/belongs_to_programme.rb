@@ -3,7 +3,11 @@
 module BelongsToProgramme
   extend ActiveSupport::Concern
 
-  included { belongs_to :programme }
+  included do
+    belongs_to :programme
+
+    scope :where_programme, -> { where(programme_type: it.type) }
+  end
 
   def programme=(programme)
     super

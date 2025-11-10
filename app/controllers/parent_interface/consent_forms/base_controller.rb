@@ -22,7 +22,7 @@ module ParentInterface
 
     def set_consent_form
       @consent_form =
-        ConsentForm.includes(:programmes, :vaccines).find(
+        ConsentForm.includes(:programmes).find(
           params[:consent_form_id] || params[:id]
         )
     end

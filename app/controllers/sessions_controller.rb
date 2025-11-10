@@ -83,10 +83,7 @@ class SessionsController < ApplicationController
   private
 
   def set_session
-    @session =
-      authorize policy_scope(Session).includes(programmes: :vaccines).find_by!(
-                  slug: params[:slug]
-                )
+    @session = authorize policy_scope(Session).find_by!(slug: params[:slug])
   end
 
   def patient_counts_for_sessions(sessions)

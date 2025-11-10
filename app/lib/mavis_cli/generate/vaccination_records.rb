@@ -36,7 +36,7 @@ module MavisCLI
 
         ::Generate::VaccinationRecords.call(
           team: Team.find_by(workgroup: team_workgroup),
-          programme: Programme.includes(:teams).find_by(type: programme_type),
+          programme: Programme.find_by(type: programme_type),
           session:,
           administered: administered.to_i
         )

@@ -8,4 +8,9 @@ module HasManyProgrammes
   def set_programme_types
     self.programme_types = programmes.map(&:type).sort
   end
+
+  def vaccines
+    @vaccines ||=
+      Vaccine.includes(:programme).where(programme_type: programme_types)
+  end
 end

@@ -131,7 +131,7 @@ class GovukNotifyPersonalisation
       if consent
         [consent]
       else
-        consent_form.consent_form_programmes.includes(programme: :vaccines)
+        consent_form.consent_form_programmes.includes(:programme)
       end
 
     programmes = consent_form_programmes.map(&:programme)

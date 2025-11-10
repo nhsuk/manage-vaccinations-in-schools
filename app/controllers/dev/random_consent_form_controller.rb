@@ -8,9 +8,9 @@ class Dev::RandomConsentFormController < ApplicationController
 
     session =
       if params[:slug].present?
-        Session.includes(programmes: :vaccines).find_by(slug: params[:slug])
+        Session.find_by(slug: params[:slug])
       else
-        Session.includes(programmes: :vaccines).find(params[:session_id])
+        Session.find(params[:session_id])
       end
 
     attributes =

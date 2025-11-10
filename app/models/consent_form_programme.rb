@@ -39,7 +39,7 @@ class ConsentFormProgramme < ApplicationRecord
 
   def vaccines
     VaccineCriteria.from_consentable(self).apply(
-      Vaccine.active.where(programme_id:)
+      Vaccine.active.where(programme_type:)
     )
   end
 

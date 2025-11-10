@@ -144,7 +144,7 @@ class ConsentFormsController < ApplicationController
   def set_consent_form
     @consent_form =
       policy_scope(ConsentForm)
-        .includes(:programmes, :vaccines)
+        .includes(:programmes)
         .unmatched
         .find(params[:id])
   end
