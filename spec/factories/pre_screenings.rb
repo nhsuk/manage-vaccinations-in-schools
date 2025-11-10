@@ -13,7 +13,7 @@
 #  location_id          :bigint
 #  patient_id           :bigint           not null
 #  performed_by_user_id :bigint           not null
-#  programme_id         :bigint           not null
+#  programme_id         :bigint
 #  session_date_id      :bigint           not null
 #
 # Indexes

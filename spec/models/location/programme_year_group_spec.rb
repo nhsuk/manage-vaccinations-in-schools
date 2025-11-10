@@ -7,7 +7,7 @@
 #  id                     :bigint           not null, primary key
 #  programme_type         :enum             not null
 #  location_year_group_id :bigint           not null
-#  programme_id           :bigint           not null
+#  programme_id           :bigint
 #
 # Indexes
 #

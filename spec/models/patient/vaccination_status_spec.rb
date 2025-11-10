@@ -13,7 +13,7 @@
 #  status                :integer          default("not_eligible"), not null
 #  latest_location_id    :bigint
 #  patient_id            :bigint           not null
-#  programme_id          :bigint           not null
+#  programme_id          :bigint
 #
 # Indexes
 #
