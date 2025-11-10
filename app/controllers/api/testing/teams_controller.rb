@@ -75,6 +75,10 @@ class API::Testing::TeamsController < API::Testing::BaseController
 
     log_destroy(ParentRelationship.where(patient_id: patient_ids))
     log_destroy(Patient.where(id: patient_ids))
+
+    log_destroy(
+      Consent.where(parent: Parent.where.missing(:parent_relationships))
+    )
     log_destroy(Parent.where.missing(:parent_relationships))
 
     log_destroy(
