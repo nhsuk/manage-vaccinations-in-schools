@@ -28,8 +28,8 @@
       "Effect": "Allow",
       "Action": ["iam:PassRole"],
       "Resource": [
-        "arn:aws:iam::*:role/EcsTaskRole",
-        "arn:aws:iam::*:role/ecsTaskExecutionRole-performancetest"
+        "arn:aws:iam::*:role/EcsTaskRole-performancetest",
+        "arn:aws:iam::*:role/EcsTaskExecutionRole-performancetest"
       ]
     }
   ]

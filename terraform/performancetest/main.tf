@@ -46,7 +46,13 @@ resource "aws_ecr_lifecycle_policy" "this" {
   })
 }
 
-resource "aws_s3_bucket" "this" {
-  bucket_prefix = var.identifier
-  force_destroy = true
+data "aws_s3_bucket" "access_logs" {
+  bucket = "nhse-mavis-access-logs"
+}
+
+module "s3_performance_reports" {
+  source                   = "../modules/s3"
+  bucket_name              = "performancetest-reports"
+  logging_target_bucket_id = data.aws_s3_bucket.access_logs.id
+  logging_target_prefix    = "performancetest-reports/"
 }
