@@ -541,13 +541,15 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_06_142201) do
 
   create_table "patient_changesets", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.jsonb "data"
     t.bigint "import_id", null: false
     t.string "import_type", null: false
     t.boolean "matched_on_nhs_number"
     t.bigint "patient_id"
     t.string "pds_nhs_number"
     t.jsonb "pending_changes", default: {}, null: false
-    t.integer "row_number", null: false
+    t.integer "record_type", default: 1, null: false
+    t.integer "row_number"
     t.bigint "school_id"
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false

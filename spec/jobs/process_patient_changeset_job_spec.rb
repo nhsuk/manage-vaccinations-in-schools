@@ -12,14 +12,16 @@ describe ProcessPatientChangesetJob do
       :patient_changeset,
       import: import,
       status: :pending,
-      pending_changes: {
-        "child" => {
-          "given_name" => "Betty",
-          "family_name" => "Samson",
-          "date_of_birth" => "2010-01-01",
-          "address_postcode" => "SW1A 1AA"
+      data: {
+        upload: {
+          child: {
+            given_name: "Betty",
+            family_name: "Samson",
+            date_of_birth: "2010-01-01",
+            address_postcode: "SW1A 1AA"
+          }
         },
-        "search_results" => search_results
+        search_results:
       }
     )
   end
