@@ -18,9 +18,6 @@ class Programme < ApplicationRecord
 
   self.inheritance_column = nil
 
-  audited
-  has_associated_audits
-
   has_many :consent_forms
   has_many :consent_notification_programmes
   has_many :consents

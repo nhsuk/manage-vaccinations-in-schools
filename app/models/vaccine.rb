@@ -36,7 +36,7 @@ class Vaccine < ApplicationRecord
   include BelongsToProgramme
   include HasSideEffects
 
-  audited associated_with: :programme
+  audited
   has_associated_audits
 
   has_many :health_questions, dependent: :destroy
