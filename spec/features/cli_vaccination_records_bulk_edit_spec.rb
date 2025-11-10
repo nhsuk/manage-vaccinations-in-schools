@@ -1,17 +1,26 @@
 # frozen_string_literal: true
 
 describe "mavis vaccination-records bulk_edit" do
-  let(:programme) { create(:programme, type: "hpv") }
+  let(:programme) { CachedProgramme.hpv }
   let(:vaccination_records) do
-    create_list(:vaccination_record, 2, programme: programme)
+    create_list(
+      :vaccination_record,
+      2,
+      :sourced_from_nhs_immunisations_api,
+      programme:
+    )
   end
 
   it "updates multiple records from CSV via edit command" do
     Tempfile.create(%w[bulk .csv]) do |file|
-      file.write("id,uuid,nhs_immunisations_api_primary_source\n")
-      file.write("#{vaccination_records.first.id},#{SecureRandom.uuid},true\n")
       file.write(
-        "#{vaccination_records.second.id},#{SecureRandom.uuid},false\n"
+        "id,uuid,nhs_immunisations_api_primary_source,nhs_immunisations_api_id\n"
+      )
+      file.write(
+        "#{vaccination_records.first.id},#{SecureRandom.uuid},false,#{SecureRandom.uuid}\n"
+      )
+      file.write(
+        "#{vaccination_records.second.id},#{SecureRandom.uuid},false,#{SecureRandom.uuid}\n"
       )
       file.flush
 

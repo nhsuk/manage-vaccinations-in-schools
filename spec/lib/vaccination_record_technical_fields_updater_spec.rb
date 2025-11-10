@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 describe VaccinationRecordTechnicalFieldsUpdater do
-  let(:vaccination_record) { create(:vaccination_record) }
+  let(:updated_at) { Time.zone.local(2025, 1, 1) }
+  let(:vaccination_record) { create(:vaccination_record, updated_at:) }
 
   describe "#call" do
     describe "updating allowed attributes" do
@@ -10,18 +11,26 @@ describe VaccinationRecordTechnicalFieldsUpdater do
         vaccination_record.reload
       end
 
+      shared_examples "doesn't change the updated_at time" do
+        its(:updated_at) { should eq updated_at }
+      end
+
       context "updates allowed string attributes (uuid)" do
         let(:new_uuid) { SecureRandom.uuid }
 
         let(:updates) { { uuid: new_uuid } }
 
         its(:uuid) { should eq new_uuid }
+
+        include_examples "doesn't change the updated_at time"
       end
 
       context "coerces integer attributes from string (source)" do
-        let(:updates) { { source: "2" } }
+        let(:updates) { { source: "1" } }
 
-        its(:source_before_type_cast) { should eq 2 }
+        its(:source_before_type_cast) { should eq 1 }
+
+        include_examples "doesn't change the updated_at time"
       end
 
       context "coerces datetime attributes from string (confirmation_sent_at)" do
@@ -32,32 +41,53 @@ describe VaccinationRecordTechnicalFieldsUpdater do
         its(:confirmation_sent_at) do
           should be_within(1.second).of(Time.zone.parse(time_str))
         end
+
+        include_examples "doesn't change the updated_at time"
       end
 
       context "sets attributes to nil when given 'nil' string" do
         before do
-          vaccination_record.update!(nhs_immunisations_api_etag: "etag-123")
+          vaccination_record.update_columns(
+            nhs_immunisations_api_etag: "etag-123"
+          )
         end
 
         let(:updates) { { nhs_immunisations_api_etag: "nil" } }
 
         its(:nhs_immunisations_api_etag) { should be_nil }
+
+        include_examples "doesn't change the updated_at time"
       end
 
       context "coerces true attributes from string" do
-        let(:updates) { { nhs_immunisations_api_primary_source: "true" } }
+        let(:updates) do
+          {
+            nhs_immunisations_api_primary_source: "true",
+            nhs_immunisations_api_id: SecureRandom.uuid
+          }
+        end
 
         its(:nhs_immunisations_api_primary_source) { should be true }
+
+        include_examples "doesn't change the updated_at time"
       end
 
       context "coerces false attributes from string" do
         let(:updates) { { nhs_immunisations_api_primary_source: "false" } }
 
         its(:nhs_immunisations_api_primary_source) { should be false }
+
+        include_examples "doesn't change the updated_at time"
+      end
+
+      context "actively updates updated_at timestamp" do
+        let(:updates) { { updated_at: Time.zone.local(2025, 2, 1) } }
+
+        its(:updated_at) { should eq Time.zone.local(2025, 2, 1) }
       end
     end
 
-    describe "rejects invalid attributes" do
+    describe "rejects invalid records" do
       subject(:call) do
         described_class.call(vaccination_record: vaccination_record, updates:)
       end
@@ -102,6 +132,14 @@ describe VaccinationRecordTechnicalFieldsUpdater do
 
         it "raises RuntimeError" do
           expect { call }.to raise_error(RuntimeError, /updates must be a Hash/)
+        end
+      end
+
+      context "tries to save an invalid record" do
+        let(:updates) { { nhs_immunisations_api_id: SecureRandom.uuid } }
+
+        it "raises ActiveRecord::RecordInvalid" do
+          expect { call }.to raise_error(ActiveRecord::RecordInvalid)
         end
       end
     end

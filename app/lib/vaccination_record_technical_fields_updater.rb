@@ -54,7 +54,8 @@ class VaccinationRecordTechnicalFieldsUpdater
       parsed_updates[key] = coerce_value(key, raw_value)
     end
 
-    ActiveRecord::Base.transaction { record.update_columns(parsed_updates) }
+    record.assign_attributes(parsed_updates)
+    record.save!(touch: false)
   end
 
   def self.call(...) = new(...).call
