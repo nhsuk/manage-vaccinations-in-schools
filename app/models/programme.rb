@@ -18,9 +18,7 @@ class Programme < ApplicationRecord
 
   self.inheritance_column = nil
 
-  scope :supports_delegation, -> { flu }
-  scope :can_sync_to_immunisations_api, -> { flu.or(hpv) }
-  scope :can_search_in_immunisations_api, -> { flu }
+  TYPES_SUPPORTING_DELEGATION = %w[flu].freeze
 
   enum :type,
        {

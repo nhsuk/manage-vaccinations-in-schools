@@ -18,7 +18,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
 
       return unless feature_flag_enabled
 
-      programmes = Programme.can_search_in_immunisations_api
+      programmes = Programme.all.select(&:can_search_in_immunisations_api?)
 
       if patient.nhs_number.nil?
         incoming_vaccination_records = []

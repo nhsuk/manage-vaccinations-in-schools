@@ -14,7 +14,11 @@ class ProgrammePolicy < ApplicationPolicy
       scope
         .where(type: team.programme_types)
         .then do |scope|
-          user.is_healthcare_assistant? ? scope.supports_delegation : scope
+          if user.is_healthcare_assistant?
+            scope.where(type: Programme::TYPES_SUPPORTING_DELEGATION)
+          else
+            scope
+          end
         end
     end
   end

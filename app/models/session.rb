@@ -120,7 +120,7 @@ class Session < ApplicationRecord
         end
 
   scope :supports_delegation,
-        -> { has_programmes(Programme.supports_delegation) }
+        -> { has_programmes(Programme.all.select(&:supports_delegation?)) }
 
   scope :in_progress, -> { has_date(Date.current) }
   scope :unscheduled, -> { where.not(SessionDate.for_session.arel.exists) }
