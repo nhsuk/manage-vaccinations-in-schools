@@ -12,7 +12,7 @@
 #  notify_parent_on_refusal                        :boolean
 #  notify_parents_on_vaccination                   :boolean
 #  patient_already_vaccinated_notification_sent_at :datetime
-#  programme_type                                  :enum
+#  programme_type                                  :enum             not null
 #  reason_for_refusal                              :integer
 #  response                                        :integer          not null
 #  route                                           :integer          not null

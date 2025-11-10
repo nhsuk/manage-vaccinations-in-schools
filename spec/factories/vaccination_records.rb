@@ -26,7 +26,7 @@
 #  performed_by_family_name                :string
 #  performed_by_given_name                 :string
 #  performed_ods_code                      :string
-#  programme_type                          :enum
+#  programme_type                          :enum             not null
 #  protocol                                :integer
 #  source                                  :integer          not null
 #  uuid                                    :uuid             not null

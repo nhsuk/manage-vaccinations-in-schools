@@ -6,7 +6,7 @@
 #
 #  id                 :bigint           not null, primary key
 #  notes              :text             default(""), not null
-#  programme_type     :enum
+#  programme_type     :enum             not null
 #  reason_for_refusal :integer
 #  response           :integer
 #  vaccine_methods    :integer          default([]), not null, is an Array

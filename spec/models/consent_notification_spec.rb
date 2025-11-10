@@ -5,7 +5,7 @@
 # Table name: consent_notifications
 #
 #  id              :bigint           not null, primary key
-#  programme_types :enum             is an Array
+#  programme_types :enum             not null, is an Array
 #  sent_at         :datetime         not null
 #  type            :integer          not null
 #  patient_id      :bigint           not null

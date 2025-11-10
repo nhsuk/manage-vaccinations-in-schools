@@ -9,7 +9,7 @@
 #  delay_vaccination_until :date
 #  invalidated_at          :datetime
 #  notes                   :text             default(""), not null
-#  programme_type          :enum
+#  programme_type          :enum             not null
 #  status                  :integer          not null
 #  vaccine_method          :integer
 #  without_gelatine        :boolean
