@@ -137,6 +137,8 @@ class PatientMerger
       StatusUpdater.call(patient: patient_to_keep)
     end
 
+    SearchVaccinationRecordsInNHSJob.perform_async(patient_to_keep.id)
+
     VaccinationRecord.where(
       id: vaccination_record_ids
     ).sync_all_to_nhs_immunisations_api
