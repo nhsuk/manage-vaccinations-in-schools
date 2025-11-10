@@ -16,7 +16,6 @@
 #
 # Indexes
 #
-#  idx_on_programme_id_consent_form_id_2113cb7f37    (programme_id,consent_form_id) UNIQUE
 #  idx_on_programme_type_consent_form_id_805eb5d685  (programme_type,consent_form_id) UNIQUE
 #  index_consent_form_programmes_on_consent_form_id  (consent_form_id)
 #

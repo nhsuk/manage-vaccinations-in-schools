@@ -24,7 +24,6 @@
 #
 #  index_vaccines_on_manufacturer_and_brand  (manufacturer,brand) UNIQUE
 #  index_vaccines_on_nivs_name               (nivs_name) UNIQUE
-#  index_vaccines_on_programme_id            (programme_id)
 #  index_vaccines_on_programme_type          (programme_type)
 #  index_vaccines_on_snomed_product_code     (snomed_product_code) UNIQUE
 #  index_vaccines_on_snomed_product_term     (snomed_product_term) UNIQUE

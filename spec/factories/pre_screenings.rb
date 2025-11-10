@@ -21,7 +21,6 @@
 #  index_pre_screenings_on_location_id           (location_id)
 #  index_pre_screenings_on_patient_id            (patient_id)
 #  index_pre_screenings_on_performed_by_user_id  (performed_by_user_id)
-#  index_pre_screenings_on_programme_id          (programme_id)
 #  index_pre_screenings_on_programme_type        (programme_type)
 #  index_pre_screenings_on_session_date_id       (session_date_id)
 #
