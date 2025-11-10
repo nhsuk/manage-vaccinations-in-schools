@@ -189,6 +189,15 @@ To run the Rails tests:
 bin/bundle exec rspec
 ```
 
+or run them in parallel using the `parallel_tests` gem
+
+```shell
+# Setup
+rake parallel:create parallel:prepare
+
+rake parallel:spec
+```
+
 To run the JS unit tests:
 
 ```shell
