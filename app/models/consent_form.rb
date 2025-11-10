@@ -131,7 +131,6 @@ class ConsentForm < ApplicationRecord
   has_one :subteam, through: :location
 
   has_many :eligible_schools, through: :team, source: :schools
-  has_many :vaccines, through: :programmes
 
   enum :parent_contact_method_type,
        Parent.contact_method_types,
@@ -410,6 +409,12 @@ class ConsentForm < ApplicationRecord
           sessions_to_search.find(&:unscheduled?) || sessions_to_search.first ||
           team.generic_clinic_session(academic_year:)
       end
+  end
+
+  def programme_types = programmes.map(&:type)
+
+  def vaccines
+    @vaccines ||= Vaccine.where(programme_type: programme_types)
   end
 
   def find_or_create_parent_with_relationship_to!(patient:)

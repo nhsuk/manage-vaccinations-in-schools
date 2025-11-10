@@ -355,8 +355,7 @@ class ImmunisationImportRow
   end
 
   def vaccine
-    @vaccine ||=
-      team.vaccines.includes(:programme).find_by(nivs_name: vaccine_nivs_name)
+    @vaccine ||= team.vaccines.find_by(nivs_name: vaccine_nivs_name)
   end
 
   def batch

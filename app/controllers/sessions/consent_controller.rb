@@ -29,10 +29,7 @@ class Sessions::ConsentController < Sessions::BaseController
   private
 
   def set_session
-    @session =
-      policy_scope(Session).includes(programmes: :vaccines).find_by!(
-        slug: params[:session_slug]
-      )
+    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
   end
 
   def set_statuses

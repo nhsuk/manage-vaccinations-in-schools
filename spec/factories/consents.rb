@@ -63,7 +63,8 @@ FactoryBot.define do
 
     programme { CachedProgramme.sample }
     team do
-      programme.teams.first || association(:team, programmes: [programme])
+      Team.has_programmes([programme]).first ||
+        association(:team, programmes: [programme])
     end
 
     patient

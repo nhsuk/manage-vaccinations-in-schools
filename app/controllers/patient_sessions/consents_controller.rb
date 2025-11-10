@@ -112,7 +112,6 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
           :consent_form,
           :parent,
           :programme,
-          :vaccines,
           patient: :parent_relationships
         )
         .find(params[:id])

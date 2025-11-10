@@ -78,7 +78,6 @@ class Session < ApplicationRecord
   has_one :organisation, through: :team
   has_one :subteam, through: :location
   has_many :programmes, through: :session_programmes
-  has_many :vaccines, through: :programmes
 
   has_many :location_year_groups,
            -> { where(academic_year: it.academic_year) },

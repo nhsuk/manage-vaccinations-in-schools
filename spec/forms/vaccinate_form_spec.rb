@@ -3,7 +3,7 @@
 describe VaccinateForm do
   subject(:form) { described_class.new(programme:, current_user:, session:) }
 
-  let(:programme) { build(:programme) }
+  let(:programme) { CachedProgramme.sample }
   let(:current_user) do
     build(:user, show_in_suppliers: user_designated_as_supplier)
   end

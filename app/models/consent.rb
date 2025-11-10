@@ -70,8 +70,6 @@ class Consent < ApplicationRecord
              optional: true,
              foreign_key: :recorded_by_user_id
 
-  has_many :vaccines, through: :programme
-
   scope :withdrawn, -> { where.not(withdrawn_at: nil) }
   scope :not_withdrawn, -> { where(withdrawn_at: nil) }
 
@@ -101,6 +99,8 @@ class Consent < ApplicationRecord
   def name
     via_self_consent? ? patient.full_name : parent.label
   end
+
+  delegate :vaccines, to: :programme
 
   def response_provided? = !response_not_provided?
 

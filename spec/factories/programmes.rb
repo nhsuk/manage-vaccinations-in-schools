@@ -16,55 +16,51 @@
 FactoryBot.define do
   factory :programme do
     type { Programme.types.keys.sample }
-    vaccines { [association(:vaccine, programme: instance)] }
 
     trait :hpv do
       type { "hpv" }
-      vaccines do
-        [
-          association(:vaccine, :cervarix, programme: instance),
-          association(:vaccine, :gardasil, programme: instance),
-          association(:vaccine, :gardasil_9, programme: instance)
-        ]
+
+      after(:create) do |programme|
+        create(:vaccine, :cervarix, programme:)
+        create(:vaccine, :gardasil, programme:)
+        create(:vaccine, :gardasil_9, programme:)
       end
     end
 
     trait :flu do
       type { "flu" }
-      vaccines do
-        [
-          association(:vaccine, :fluenz, programme: instance),
-          association(:vaccine, :cell_based_trivalent, programme: instance),
-          association(:vaccine, :vaxigrip, programme: instance),
-          association(:vaccine, :viatris, programme: instance)
-        ]
+
+      after(:create) do |programme|
+        create(:vaccine, :fluenz, programme:)
+        create(:vaccine, :cell_based_trivalent, programme:)
+        create(:vaccine, :vaxigrip, programme:)
+        create(:vaccine, :viatris, programme:)
       end
     end
 
     trait :menacwy do
       type { "menacwy" }
-      vaccines do
-        [
-          association(:vaccine, :menquadfi, programme: instance),
-          association(:vaccine, :menveo, programme: instance),
-          association(:vaccine, :nimenrix, programme: instance)
-        ]
+
+      after(:create) do |programme|
+        create(:vaccine, :menquadfi, programme:)
+        create(:vaccine, :menveo, programme:)
+        create(:vaccine, :nimenrix, programme:)
       end
     end
 
     trait :mmr do
       type { "mmr" }
-      vaccines do
-        [
-          association(:vaccine, :priorix, programme: instance),
-          association(:vaccine, :vaxpro, programme: instance)
-        ]
+
+      after(:create) do |programme|
+        create(:vaccine, :priorix, programme:)
+        create(:vaccine, :vaxpro, programme:)
       end
     end
 
     trait :td_ipv do
       type { "td_ipv" }
-      vaccines { [association(:vaccine, :revaxis, programme: instance)] }
+
+      after(:create) { |programme| create(:vaccine, :revaxis, programme:) }
     end
   end
 end

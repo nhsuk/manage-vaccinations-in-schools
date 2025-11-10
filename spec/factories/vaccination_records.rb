@@ -77,7 +77,7 @@ FactoryBot.define do
   factory :vaccination_record do
     transient do
       team do
-        programme.teams.includes(:organisation).first ||
+        Team.has_programmes([programme]).first ||
           association(:team, programmes: [programme])
       end
     end
