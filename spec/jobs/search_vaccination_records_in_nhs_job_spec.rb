@@ -432,6 +432,24 @@ describe SearchVaccinationRecordsInNHSJob do
           ).not_to have_been_made
         end
       end
+
+      context "no organisation" do
+        before { Flipper.enable(:imms_api_search_job, organisation) }
+
+        let(:team) { nil }
+        let(:session) { nil }
+
+        it "searches as expected" do
+          perform
+
+          expect(
+            a_request(
+              :get,
+              "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
+            ).with(query: expected_query)
+          ).to have_been_made.once
+        end
+      end
     end
 
     context "with 2 new incoming records" do
