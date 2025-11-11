@@ -6,6 +6,7 @@ describe AppSessionOverviewTalliesComponent do
   let(:hpv_programme) { CachedProgramme.hpv }
   let(:flu_programme) { CachedProgramme.flu }
   let(:session) { create(:session, programmes: [hpv_programme, flu_programme]) }
+  let(:latest_location) { session.location }
 
   let(:component) { described_class.new(session) }
 
@@ -69,7 +70,8 @@ describe AppSessionOverviewTalliesComponent do
           :patient_vaccination_status,
           :vaccinated,
           patient:,
-          programme: flu_programme
+          programme: flu_programme,
+          latest_location:
         )
       end
 
@@ -268,7 +270,8 @@ describe AppSessionOverviewTalliesComponent do
         :patient_vaccination_status,
         :vaccinated,
         programme: hpv_programme,
-        patient: patients.second
+        patient: patients.second,
+        latest_location:
       )
       create(
         :patient_consent_status,
