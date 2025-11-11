@@ -17,7 +17,7 @@ describe NHS::ImmunisationsAPI do
     )
   end
   let(:nhs_number) { "9449310475" }
-  let(:programme) { CachedProgramme.hpv }
+  let(:programme) { Programme.hpv }
   let(:location) { create(:community_clinic, team:, ods_code: nil) }
   let(:vaccine) { programme.vaccines.find_by!(brand: "Gardasil") }
   let(:batch) do
@@ -844,11 +844,11 @@ describe NHS::ImmunisationsAPI do
     let(:nhs_number) { "9449308357" }
     let(:programmes) do
       [
-        CachedProgramme.hpv,
-        CachedProgramme.flu,
-        CachedProgramme.menacwy,
-        CachedProgramme.td_ipv,
-        CachedProgramme.mmr
+        Programme.hpv,
+        Programme.flu,
+        Programme.menacwy,
+        Programme.td_ipv,
+        Programme.mmr
       ]
     end
     let(:date_from) { Time.new(2025, 8, 1, 12, 30, 37, "+01:00") }

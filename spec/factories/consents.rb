@@ -60,7 +60,7 @@ FactoryBot.define do
       end
     end
 
-    programme { CachedProgramme.sample }
+    programme { Programme.sample }
     team do
       Team.has_all_programmes_of([programme]).first ||
         association(:team, programmes: [programme])

@@ -43,7 +43,7 @@ module MavisCLI
         teams = resolve_teams(ods_code, workgroup)
         return unless teams
 
-        # programme = Programme.find_by(type: programme) if programme
+        # programme = Programme.find(programme) if programme
 
         service =
           ::Stats::Vaccinations.new(

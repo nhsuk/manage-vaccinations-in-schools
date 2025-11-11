@@ -9,7 +9,7 @@ describe TimelineRecords do
     )
   end
 
-  let(:programme) { CachedProgramme.hpv }
+  let(:programme) { Programme.hpv }
   let(:detail_config) { {} }
   let(:show_pii) { false }
   let(:team) { create(:team, programmes: [programme]) }

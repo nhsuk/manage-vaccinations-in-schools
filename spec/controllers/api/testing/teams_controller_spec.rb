@@ -9,7 +9,7 @@ describe API::Testing::TeamsController do
   around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
 
   describe "DELETE" do
-    let(:programmes) { [CachedProgramme.hpv] }
+    let(:programmes) { [Programme.hpv] }
 
     let(:team) do
       create(

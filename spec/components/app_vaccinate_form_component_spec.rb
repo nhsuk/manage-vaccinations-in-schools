@@ -3,7 +3,7 @@
 describe AppVaccinateFormComponent do
   subject { render_inline(component) }
 
-  let(:programme) { CachedProgramme.sample }
+  let(:programme) { Programme.sample }
   let(:programmes) { [programme] }
 
   let(:team) { create(:team, programmes:) }
@@ -30,7 +30,7 @@ describe AppVaccinateFormComponent do
   it { should have_css(".nhsuk-card") }
 
   context "with a flu programme and consent to nasal spray" do
-    let(:programme) { CachedProgramme.flu }
+    let(:programme) { Programme.flu }
     let(:academic_year) { AcademicYear.current }
 
     before do
@@ -54,7 +54,7 @@ describe AppVaccinateFormComponent do
   end
 
   context "with a Flu programme" do
-    let(:programme) { CachedProgramme.flu }
+    let(:programme) { Programme.flu }
 
     it { should have_content("Has Hari confirmed their identity?") }
     it { should have_field("No, it was confirmed by somebody else") }
@@ -71,7 +71,7 @@ describe AppVaccinateFormComponent do
   end
 
   context "with a flu programme, consent to nasal spray, but triaged for injection" do
-    let(:programme) { CachedProgramme.flu }
+    let(:programme) { Programme.flu }
     let(:academic_year) { AcademicYear.current }
 
     before do
@@ -96,7 +96,7 @@ describe AppVaccinateFormComponent do
   end
 
   context "with an HPV programme" do
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
 
     it { should have_content("Has Hari confirmed their identity?") }
     it { should have_field("No, it was confirmed by somebody else") }

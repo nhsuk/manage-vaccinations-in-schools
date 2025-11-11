@@ -19,7 +19,7 @@ module MavisCLI
           return
         end
 
-        programme = Programme.find_by(type:)
+        programme = Programme.find(type)
 
         if programme.nil?
           warn "Could not find programme."
@@ -31,10 +31,11 @@ module MavisCLI
           return
         end
 
+        programme_types = (team.programme_types + [type]).sort.uniq
         academic_year = AcademicYear.pending
 
         ActiveRecord::Base.transaction do
-          team.update!(programmes: team.programmes + [programme])
+          team.update!(programme_types:)
 
           GenericClinicFactory.call(team: team.reload, academic_year:)
 

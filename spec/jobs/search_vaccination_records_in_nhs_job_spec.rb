@@ -8,7 +8,7 @@ describe SearchVaccinationRecordsInNHSJob do
   let(:patient) { create(:patient, team:, school:, nhs_number:) }
   let(:session) { create(:session, programmes: [programme], location: school) }
   let(:nhs_number) { "9449308357" }
-  let!(:programme) { CachedProgramme.flu }
+  let!(:programme) { Programme.flu }
 
   before do
     Flipper.enable(:imms_api_integration)
@@ -43,16 +43,12 @@ describe SearchVaccinationRecordsInNHSJob do
     end
 
     let(:vaccination_records) { [flu_record, hpv_record] }
-    let(:flu_record) do
-      create(:vaccination_record, programme: CachedProgramme.flu)
-    end
-    let(:hpv_record) do
-      create(:vaccination_record, programme: CachedProgramme.hpv)
-    end
+    let(:flu_record) { create(:vaccination_record, programme: Programme.flu) }
+    let(:hpv_record) { create(:vaccination_record, programme: Programme.hpv) }
 
     before do
       Flipper.disable(:imms_api_search_job)
-      Flipper.enable(:imms_api_search_job, CachedProgramme.flu)
+      Flipper.enable(:imms_api_search_job, Programme.flu)
     end
 
     it "rejects the hpv record, and keeps the flu record" do
@@ -207,7 +203,7 @@ describe SearchVaccinationRecordsInNHSJob do
         build(
           :vaccination_record,
           :sourced_from_nhs_immunisations_api,
-          programme: CachedProgramme.hpv,
+          programme: Programme.hpv,
           patient:,
           nhs_immunisations_api_primary_source: false,
           performed_at:
@@ -314,7 +310,7 @@ describe SearchVaccinationRecordsInNHSJob do
         build(
           :vaccination_record,
           :sourced_from_nhs_immunisations_api,
-          programme: CachedProgramme.hpv,
+          programme: Programme.hpv,
           patient:,
           nhs_immunisations_api_primary_source: third_primary_source,
           performed_at: Time.zone.local(2025, 10, 9)
@@ -585,7 +581,7 @@ describe SearchVaccinationRecordsInNHSJob do
       before do
         Flipper.disable(:imms_api_search_job)
         # Not enabled for flu, which is the incoming record's programme
-        Flipper.enable(:imms_api_search_job, CachedProgramme.hpv)
+        Flipper.enable(:imms_api_search_job, Programme.hpv)
       end
 
       it "does not change any records locally" do
@@ -598,7 +594,7 @@ describe SearchVaccinationRecordsInNHSJob do
     context "with the per-programme feature flag enabled" do
       before do
         Flipper.disable(:imms_api_search_job)
-        Flipper.enable(:imms_api_search_job, CachedProgramme.flu)
+        Flipper.enable(:imms_api_search_job, Programme.flu)
       end
 
       it "creates new vaccination records for incoming Immunizations" do

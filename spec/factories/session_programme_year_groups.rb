@@ -18,7 +18,7 @@
 #
 FactoryBot.define do
   factory :session_programme_year_group do
-    transient { programme { CachedProgramme.sample } }
+    transient { programme { Programme.sample } }
 
     session
     programme_type { programme.type }

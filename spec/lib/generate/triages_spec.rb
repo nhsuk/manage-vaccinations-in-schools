@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Generate::Triages do
-  let(:programme) { Programme.hpv&.first || CachedProgramme.hpv }
+  let(:programme) { Programme.hpv }
   let(:team) { create(:team, programmes: [programme]) }
   let(:user) { create(:user, team:) }
   let(:patient) do

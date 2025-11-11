@@ -53,7 +53,7 @@ describe "Import class lists" do
   end
 
   def given_i_am_signed_in
-    @programme = CachedProgramme.hpv
+    @programme = Programme.hpv
     @team = create(:team, :with_one_nurse, programmes: [@programme])
 
     sign_in @team.users.first

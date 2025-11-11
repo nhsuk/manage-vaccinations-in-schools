@@ -56,7 +56,7 @@ describe "Flu vaccination" do
     psd_enabled: false,
     national_protocol_enabled: true
   )
-    @programme = CachedProgramme.flu
+    @programme = Programme.flu
     programmes = [@programme]
 
     @team = create(:team, programmes:)

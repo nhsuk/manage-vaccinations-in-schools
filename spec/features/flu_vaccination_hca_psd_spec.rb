@@ -88,7 +88,7 @@ describe "Flu vaccination" do
   end
 
   def given_a_flu_session_exists(user_type:, national_protocol_enabled: false)
-    @programme = CachedProgramme.flu
+    @programme = Programme.flu
     @programmes = [@programme]
     @team = create(:team, user_type, programmes: @programmes)
     @user = create(:nurse, team: @team)

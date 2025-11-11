@@ -37,7 +37,7 @@
 
 describe Session do
   describe "scopes" do
-    let(:programmes) { [CachedProgramme.sample] }
+    let(:programmes) { [Programme.sample] }
 
     let(:closed_session) { create(:session, :closed, programmes:) }
     let(:completed_session) { create(:session, :completed, programmes:) }
@@ -49,21 +49,21 @@ describe Session do
       subject(:scope) { described_class.has_all_programmes_of(programmes) }
 
       context "with a session matching the search" do
-        let(:programmes) { [CachedProgramme.sample] }
+        let(:programmes) { [Programme.sample] }
         let(:session) { create(:session, programmes:) }
 
         it { should include(session) }
       end
 
       context "with a session not matching the search" do
-        let(:programmes) { [CachedProgramme.hpv] }
-        let(:session) { create(:session, programmes: [CachedProgramme.flu]) }
+        let(:programmes) { [Programme.hpv] }
+        let(:session) { create(:session, programmes: [Programme.flu]) }
 
         it { should_not include(session) }
       end
 
       context "with a session with multiple programmes" do
-        let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
+        let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
         let(:session) { create(:session, programmes:) }
 
         it { should include(session) }
@@ -73,11 +73,7 @@ describe Session do
         let(:session) do
           create(
             :session,
-            programmes: [
-              CachedProgramme.hpv,
-              CachedProgramme.menacwy,
-              CachedProgramme.td_ipv
-            ]
+            programmes: [Programme.hpv, Programme.menacwy, Programme.td_ipv]
           )
         end
         let(:programmes) { [session.programmes.first] }
@@ -89,8 +85,8 @@ describe Session do
     describe "#supports_delegation" do
       subject(:scope) { described_class.supports_delegation }
 
-      let!(:hpv_programme) { CachedProgramme.hpv }
-      let!(:flu_programme) { CachedProgramme.flu }
+      let!(:hpv_programme) { Programme.hpv }
+      let!(:flu_programme) { Programme.flu }
       let(:session) { create(:session, programmes:) }
 
       context "with a session for flu" do
@@ -137,7 +133,7 @@ describe Session do
 
       let(:today) { Date.new(2025, 1, 1) }
 
-      let(:programmes) { [CachedProgramme.hpv] }
+      let(:programmes) { [Programme.hpv] }
 
       let(:first_session_before_today) do
         create(:session, date: Date.new(2024, 12, 1), programmes:)
@@ -225,7 +221,7 @@ describe Session do
     subject(:started?) { travel_to(today) { session.reload.started? } }
 
     let(:today) { Date.new(2025, 1, 15) }
-    let(:programmes) { [CachedProgramme.sample] }
+    let(:programmes) { [Programme.sample] }
 
     context "when session has no dates" do
       let(:session) { create(:session, date: nil, programmes:) }
@@ -289,19 +285,19 @@ describe Session do
     let(:session) { create(:session, programmes:) }
 
     context "with only a flu programme" do
-      let(:programmes) { [CachedProgramme.flu] }
+      let(:programmes) { [Programme.flu] }
 
       it { should be(true) }
     end
 
     context "with a flu and HPV programme" do
-      let(:programmes) { [CachedProgramme.flu, CachedProgramme.hpv] }
+      let(:programmes) { [Programme.flu, Programme.hpv] }
 
       it { should be(true) }
     end
 
     context "with only an HPV programme" do
-      let(:programmes) { [CachedProgramme.hpv] }
+      let(:programmes) { [Programme.hpv] }
 
       it { should be(false) }
     end
@@ -313,19 +309,19 @@ describe Session do
     let(:session) { create(:session, programmes:) }
 
     context "with only a flu programme" do
-      let(:programmes) { [CachedProgramme.flu] }
+      let(:programmes) { [Programme.flu] }
 
       it { should be(true) }
     end
 
     context "with a flu and HPV programme" do
-      let(:programmes) { [CachedProgramme.flu, CachedProgramme.hpv] }
+      let(:programmes) { [Programme.flu, Programme.hpv] }
 
       it { should be(true) }
     end
 
     context "with only an HPV programme" do
-      let(:programmes) { [CachedProgramme.hpv] }
+      let(:programmes) { [Programme.hpv] }
 
       it { should be(false) }
     end
@@ -334,7 +330,7 @@ describe Session do
   describe "#patients_with_no_consent_response_count" do
     subject(:count) { session.patients_with_no_consent_response_count }
 
-    let(:programme) { CachedProgramme.sample }
+    let(:programme) { Programme.sample }
     let(:session) { create(:session, programmes: [programme]) }
 
     context "when there are no patients" do
@@ -364,8 +360,8 @@ describe Session do
   describe "#year_groups" do
     subject { session.year_groups }
 
-    let(:flu_programme) { CachedProgramme.flu }
-    let(:hpv_programme) { CachedProgramme.hpv }
+    let(:flu_programme) { Programme.flu }
+    let(:hpv_programme) { Programme.hpv }
 
     let(:session) do
       create(:session, programmes: [flu_programme, hpv_programme])
@@ -377,8 +373,8 @@ describe Session do
   describe "#vaccine_methods" do
     subject { session.vaccine_methods }
 
-    let(:flu_programme) { CachedProgramme.flu }
-    let(:hpv_programme) { CachedProgramme.hpv }
+    let(:flu_programme) { Programme.flu }
+    let(:hpv_programme) { Programme.hpv }
 
     let(:session) do
       create(:session, programmes: [flu_programme, hpv_programme])
@@ -393,13 +389,13 @@ describe Session do
     let(:session) { create(:session, programmes: [programme]) }
 
     context "with a flu session" do
-      let(:programme) { CachedProgramme.flu }
+      let(:programme) { Programme.flu }
 
       it { should be(true) }
     end
 
     context "with an HPV session" do
-      let(:programme) { CachedProgramme.hpv }
+      let(:programme) { Programme.hpv }
 
       it { should be(false) }
     end
@@ -527,7 +523,7 @@ describe Session do
     # The factory creates these by default.
     before { session.session_programme_year_groups.delete_all }
 
-    let(:programmes) { [CachedProgramme.hpv, CachedProgramme.flu] }
+    let(:programmes) { [Programme.hpv, Programme.flu] }
     let(:location) { create(:school, programmes:) }
 
     context "when session has both programmes" do
@@ -542,9 +538,7 @@ describe Session do
     end
 
     context "when session has only one of the programmes" do
-      let(:session) do
-        create(:session, location:, programmes: [CachedProgramme.hpv])
-      end
+      let(:session) { create(:session, location:, programmes: [Programme.hpv]) }
 
       it "creates session programme year groups" do
         expect { sync_location_programme_year_groups! }.to change(

@@ -41,7 +41,7 @@ describe EmailDeliveryJob do
     end
 
     let(:template_name) { GOVUK_NOTIFY_EMAIL_TEMPLATES.keys.first }
-    let(:programmes) { [CachedProgramme.sample] }
+    let(:programmes) { [Programme.sample] }
     let(:programme_types) { programmes.map(&:type) }
     let(:team) do
       create(

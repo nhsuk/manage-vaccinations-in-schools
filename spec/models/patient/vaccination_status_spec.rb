@@ -33,7 +33,7 @@ describe Patient::VaccinationStatus do
   end
 
   let(:patient) { create(:patient, programmes: [programme]) }
-  let(:programme) { CachedProgramme.sample }
+  let(:programme) { Programme.sample }
 
   it { should belong_to(:patient) }
 

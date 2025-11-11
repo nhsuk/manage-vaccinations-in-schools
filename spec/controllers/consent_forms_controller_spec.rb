@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe ConsentFormsController do
-  let(:programme) { CachedProgramme.hpv }
+  let(:programme) { Programme.hpv }
   let(:team) { create(:team, :with_generic_clinic, programmes: [programme]) }
   let(:user) { create(:user, :nurse, team:) }
   let(:location) { create(:school, team:, programmes: [programme]) }

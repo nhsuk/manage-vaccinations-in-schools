@@ -46,11 +46,11 @@ describe "mavis teams add-programme" do
   end
 
   def and_is_already_set_up_for_hpv
-    @team.programmes << CachedProgramme.hpv
+    @team.programmes << Programme.hpv
   end
 
   def and_the_programme_exists
-    @programme = CachedProgramme.flu
+    @programme = Programme.flu
   end
 
   def when_i_run_the_command

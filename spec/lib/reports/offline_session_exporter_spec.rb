@@ -527,13 +527,13 @@ describe Reports::OfflineSessionExporter do
           before do
             create(:patient_location, patient:, session:)
 
-            other_programme = (Programme.types.keys - [programme.type]).sample
+            other_programme = (Programme::TYPES - [programme.type]).sample
             create(
               :vaccination_record,
               performed_at:,
               batch:,
               patient:,
-              programme: CachedProgramme.send(other_programme),
+              programme: Programme.find(other_programme),
               performed_by: user,
               notes: "Some notes.",
               location_name: "Waterloo Road"
@@ -744,7 +744,7 @@ describe Reports::OfflineSessionExporter do
         before do
           create(:patient, session:)
 
-          other_programme = (Programme.types.keys - [programme.type]).sample
+          other_programme = (Programme::TYPES - [programme.type]).sample
           create(
             :batch,
             :not_expired,
@@ -1055,7 +1055,7 @@ describe Reports::OfflineSessionExporter do
         before do
           create(:patient, session:)
 
-          other_programme = (Programme.types.keys - [programme.type]).sample
+          other_programme = (Programme::TYPES - [programme.type]).sample
           create(
             :batch,
             :not_expired,
@@ -1076,7 +1076,7 @@ describe Reports::OfflineSessionExporter do
   end
 
   context "Flu programme" do
-    let(:programme) { CachedProgramme.flu }
+    let(:programme) { Programme.flu }
     let(:expected_programme) { "Flu" }
     let(:expected_dose_sequence) { 1 }
     let(:expected_consent_status) do
@@ -1110,7 +1110,7 @@ describe Reports::OfflineSessionExporter do
   end
 
   context "HPV programme" do
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
     let(:expected_programme) { "HPV" }
     let(:expected_dose_sequence) { 1 }
     let(:expected_consent_status) { "Consent given" }
@@ -1119,7 +1119,7 @@ describe Reports::OfflineSessionExporter do
   end
 
   context "MenACWY programme" do
-    let(:programme) { CachedProgramme.menacwy }
+    let(:programme) { Programme.menacwy }
     let(:expected_programme) { "ACWYX4" }
     let(:expected_dose_sequence) { nil }
     let(:expected_consent_status) { "Consent given" }
@@ -1128,7 +1128,7 @@ describe Reports::OfflineSessionExporter do
   end
 
   context "MMR programme" do
-    let(:programme) { CachedProgramme.mmr }
+    let(:programme) { Programme.mmr }
     let(:expected_programme) { "MMR" }
     let(:expected_dose_sequence) { nil }
     let(:expected_consent_status) { "Consent given" }
@@ -1137,7 +1137,7 @@ describe Reports::OfflineSessionExporter do
   end
 
   context "Td/IPV programme" do
-    let(:programme) { CachedProgramme.td_ipv }
+    let(:programme) { Programme.td_ipv }
     let(:expected_programme) { "3-in-1" }
     let(:expected_dose_sequence) { nil }
     let(:expected_consent_status) { "Consent given" }

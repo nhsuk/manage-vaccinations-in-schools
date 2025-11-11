@@ -35,7 +35,7 @@ describe "Immunisation imports" do
   end
 
   def given_an_hpv_programme_is_underway
-    programme = CachedProgramme.hpv
+    programme = Programme.hpv
     @team =
       create(:team, :with_one_nurse, ods_code: "R1L", programmes: [programme])
     location = create(:school, team: @team)

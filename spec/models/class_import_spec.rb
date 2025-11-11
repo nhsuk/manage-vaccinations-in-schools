@@ -40,7 +40,7 @@
 describe ClassImport do
   subject(:class_import) { create(:class_import, csv:, session:, team:) }
 
-  let(:programmes) { [CachedProgramme.hpv] }
+  let(:programmes) { [Programme.hpv] }
   let(:team) { create(:team, :with_generic_clinic, programmes:) }
   let(:location) { create(:school, team:) }
   let(:session) { create(:session, location:, programmes:, team:) }

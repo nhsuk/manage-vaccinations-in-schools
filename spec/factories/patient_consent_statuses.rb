@@ -26,7 +26,7 @@
 FactoryBot.define do
   factory :patient_consent_status, class: "Patient::ConsentStatus" do
     patient
-    programme
+    programme { Programme.sample }
     academic_year { AcademicYear.current }
 
     traits_for_enum :status

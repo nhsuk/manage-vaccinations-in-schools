@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 describe FHIRMapper::Programme do
+  let(:programme) { Programme.hpv }
   let(:mapper) { described_class.new(programme) }
 
   describe "#target_disease_coding" do
     subject(:target_disease_coding) { mapper.fhir_target_disease_coding }
 
     shared_examples "maps target disease coding correctly" do |pt|
-      let(:programme) { CachedProgramme.public_send(pt) }
+      let(:programme) { Programme.public_send(pt) }
 
       it "returns a FHIR CodeableConcept with the correct coding" do
         codings = target_disease_coding.map { it.coding.first }

@@ -100,12 +100,7 @@ class DraftSession
         .find(location_id)
   end
 
-  def programmes
-    ProgrammePolicy::Scope
-      .new(@current_user, Programme)
-      .resolve
-      .where(type: programme_types)
-  end
+  def programmes = Programme.find_all(programme_types)
 
   def programme_types=(values)
     super(values&.compact_blank || [])
@@ -230,7 +225,7 @@ class DraftSession
   end
 
   def new_programmes
-    @new_programmes ||= Programme.where(type: new_programme_types)
+    @new_programmes ||= Programme.find_all(new_programme_types)
   end
 
   def valid_session_dates

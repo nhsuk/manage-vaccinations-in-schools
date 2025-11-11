@@ -24,7 +24,7 @@ module MavisCLI
           return
         end
 
-        programme = Programme.find_by(type: programme_type)
+        programme = Programme.find(programme_type)
 
         if programme.nil?
           warn "Could not find programme."

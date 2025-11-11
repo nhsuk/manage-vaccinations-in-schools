@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe ConsentNotificationPolicy do
-  let(:programmes) { [CachedProgramme.hpv] }
+  let(:programmes) { [Programme.hpv] }
   let(:team) { create(:team, programmes: programmes) }
   let(:user) do
     user = create(:user, team:)

@@ -95,15 +95,15 @@ describe "Verbal consent" do
   end
 
   def given_an_hpv_programme_is_underway
-    create_programme(CachedProgramme.hpv)
+    create_programme(Programme.hpv)
   end
 
   def given_a_flu_programme_is_underway
-    create_programme(CachedProgramme.flu)
+    create_programme(Programme.flu)
   end
 
   def given_an_mmr_programme_is_underway
-    create_programme(CachedProgramme.mmr)
+    create_programme(Programme.mmr)
   end
 
   def create_programme(programme)

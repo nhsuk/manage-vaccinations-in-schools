@@ -49,7 +49,7 @@ describe "mavis schools remove-programme-year-group" do
   end
 
   def and_the_programme_exists
-    @programme = CachedProgramme.flu
+    @programme = Programme.flu
   end
 
   def and_existing_programme_year_groups_exist

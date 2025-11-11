@@ -327,11 +327,10 @@ module FHIRMapper
             .code
         end
 
-      ::Programme.find_by(
-        type:
-          ::Programme::SNOMED_TARGET_DISEASE_CODES.key(
-            target_disease_codes.to_set
-          )
+      ::Programme.find(
+        ::Programme::SNOMED_TARGET_DISEASE_CODES.key(
+          target_disease_codes.to_set
+        )
       )
     end
 

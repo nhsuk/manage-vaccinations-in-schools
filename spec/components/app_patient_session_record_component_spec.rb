@@ -14,7 +14,7 @@ describe AppPatientSessionRecordComponent do
   end
 
   let(:current_user) { create(:user) }
-  let(:programmes) { [CachedProgramme.hpv] }
+  let(:programmes) { [Programme.hpv] }
   let(:session) { create(:session, :today, programmes:) }
   let(:patient) do
     create(:patient, :consent_given_triage_not_needed, :in_attendance, session:)

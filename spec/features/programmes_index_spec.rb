@@ -11,11 +11,7 @@ describe "Programmes index" do
   end
 
   def given_an_team_exists_that_administered_all_programmes
-    programmes = [
-      CachedProgramme.hpv,
-      CachedProgramme.menacwy,
-      CachedProgramme.td_ipv
-    ]
+    programmes = [Programme.hpv, Programme.menacwy, Programme.td_ipv]
 
     @team = create(:team, programmes:)
   end

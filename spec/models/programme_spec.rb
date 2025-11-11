@@ -15,24 +15,19 @@
 #
 
 describe Programme do
-  subject(:programme) { build(:programme) }
-
-  describe "validations" do
-    it { should validate_presence_of(:type) }
-    it { should validate_inclusion_of(:type).in_array(%w[flu hpv]) }
-  end
+  subject(:programme) { described_class.sample }
 
   describe "#name" do
     subject { programme.name }
 
     context "with a flu programme" do
-      let(:programme) { build(:programme, :flu) }
+      let(:programme) { described_class.flu }
 
       it { should eq("Flu") }
     end
 
     context "with an HPV programme" do
-      let(:programme) { build(:programme, :hpv) }
+      let(:programme) { described_class.hpv }
 
       it { should eq("HPV") }
     end
@@ -42,13 +37,13 @@ describe Programme do
     subject(:name) { programme.name_in_sentence }
 
     context "with a flu programme" do
-      let(:programme) { build(:programme, :flu) }
+      let(:programme) { described_class.flu }
 
       it { should eq("flu") }
     end
 
     context "with an HPV programme" do
-      let(:programme) { build(:programme, :hpv) }
+      let(:programme) { described_class.hpv }
 
       it { should eq("HPV") }
     end
@@ -58,25 +53,25 @@ describe Programme do
     subject { programme.seasonal? }
 
     context "with a flu programme" do
-      let(:programme) { build(:programme, :flu) }
+      let(:programme) { described_class.flu }
 
       it { should be(true) }
     end
 
     context "with an HPV programme" do
-      let(:programme) { build(:programme, :hpv) }
+      let(:programme) { described_class.hpv }
 
       it { should be(false) }
     end
 
     context "with an MenACWY programme" do
-      let(:programme) { build(:programme, :menacwy) }
+      let(:programme) { described_class.menacwy }
 
       it { should be(false) }
     end
 
     context "with an Td/IPV programme" do
-      let(:programme) { build(:programme, :td_ipv) }
+      let(:programme) { described_class.td_ipv }
 
       it { should be(false) }
     end
@@ -86,25 +81,25 @@ describe Programme do
     subject { programme.supports_delegation? }
 
     context "with a flu programme" do
-      let(:programme) { build(:programme, :flu) }
+      let(:programme) { described_class.flu }
 
       it { should be(true) }
     end
 
     context "with an HPV programme" do
-      let(:programme) { build(:programme, :hpv) }
+      let(:programme) { described_class.hpv }
 
       it { should be(false) }
     end
 
     context "with an MenACWY programme" do
-      let(:programme) { build(:programme, :menacwy) }
+      let(:programme) { described_class.menacwy }
 
       it { should be(false) }
     end
 
     context "with an Td/IPV programme" do
-      let(:programme) { build(:programme, :td_ipv) }
+      let(:programme) { described_class.td_ipv }
 
       it { should be(false) }
     end
@@ -114,31 +109,31 @@ describe Programme do
     subject { programme.triage_on_vaccination_history? }
 
     context "with a flu programme" do
-      let(:programme) { build(:programme, :flu) }
+      let(:programme) { described_class.flu }
 
       it { should be(false) }
     end
 
     context "with an HPV programme" do
-      let(:programme) { build(:programme, :hpv) }
+      let(:programme) { described_class.hpv }
 
       it { should be(false) }
     end
 
     context "with an MenACWY programme" do
-      let(:programme) { build(:programme, :menacwy) }
+      let(:programme) { described_class.menacwy }
 
       it { should be(true) }
     end
 
     context "with an MMR programme" do
-      let(:programme) { build(:programme, :mmr) }
+      let(:programme) { described_class.mmr }
 
       it { should be(false) }
     end
 
     context "with an Td/IPV programme" do
-      let(:programme) { build(:programme, :td_ipv) }
+      let(:programme) { described_class.td_ipv }
 
       it { should be(true) }
     end
@@ -148,25 +143,25 @@ describe Programme do
     subject { programme.default_year_groups }
 
     context "with a flu programme" do
-      let(:programme) { build(:programme, :flu) }
+      let(:programme) { described_class.flu }
 
       it { should eq([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]) }
     end
 
     context "with an HPV programme" do
-      let(:programme) { build(:programme, :hpv) }
+      let(:programme) { described_class.hpv }
 
       it { should eq([8, 9, 10, 11]) }
     end
 
     context "with a MenACWY programme" do
-      let(:programme) { build(:programme, :menacwy) }
+      let(:programme) { described_class.menacwy }
 
       it { should eq([9, 10, 11]) }
     end
 
     context "with an Td/IPV programme" do
-      let(:programme) { build(:programme, :td_ipv) }
+      let(:programme) { described_class.td_ipv }
 
       it { should eq([9, 10, 11]) }
     end
@@ -176,13 +171,13 @@ describe Programme do
     subject { programme.vaccine_methods }
 
     context "with a flu programme" do
-      let(:programme) { build(:programme, :flu) }
+      let(:programme) { described_class.flu }
 
       it { should contain_exactly("injection", "nasal") }
     end
 
     context "with an HPV programme" do
-      let(:programme) { build(:programme, :hpv) }
+      let(:programme) { described_class.hpv }
 
       it { should contain_exactly("injection") }
     end
@@ -192,25 +187,25 @@ describe Programme do
     subject { programme.vaccine_may_contain_gelatine? }
 
     context "with a flu programme" do
-      let(:programme) { build(:programme, :flu) }
+      let(:programme) { described_class.flu }
 
       it { should be(true) }
     end
 
     context "with an HPV programme" do
-      let(:programme) { build(:programme, :hpv) }
+      let(:programme) { described_class.hpv }
 
       it { should be(false) }
     end
 
     context "with an MenACWY programme" do
-      let(:programme) { build(:programme, :menacwy) }
+      let(:programme) { described_class.menacwy }
 
       it { should be(false) }
     end
 
     context "with an Td/IPV programme" do
-      let(:programme) { build(:programme, :td_ipv) }
+      let(:programme) { described_class.td_ipv }
 
       it { should be(false) }
     end
@@ -220,25 +215,25 @@ describe Programme do
     subject(:default_dose_sequence) { programme.default_dose_sequence }
 
     context "with a flu programme" do
-      let(:programme) { build(:programme, :flu) }
+      let(:programme) { described_class.flu }
 
       it { should eq(1) }
     end
 
     context "with an HPV programme" do
-      let(:programme) { build(:programme, :hpv) }
+      let(:programme) { described_class.hpv }
 
       it { should eq(1) }
     end
 
     context "with a MenACWY programme" do
-      let(:programme) { build(:programme, :menacwy) }
+      let(:programme) { described_class.menacwy }
 
       it { should be_nil }
     end
 
     context "with an Td/IPV programme" do
-      let(:programme) { build(:programme, :td_ipv) }
+      let(:programme) { described_class.td_ipv }
 
       it { should be_nil }
     end
@@ -248,25 +243,25 @@ describe Programme do
     subject(:maximum_dose_sequence) { programme.maximum_dose_sequence }
 
     context "with a flu programme" do
-      let(:programme) { build(:programme, :flu) }
+      let(:programme) { described_class.flu }
 
       it { should eq(2) }
     end
 
     context "with an HPV programme" do
-      let(:programme) { build(:programme, :hpv) }
+      let(:programme) { described_class.hpv }
 
       it { should eq(3) }
     end
 
     context "with a MenACWY programme" do
-      let(:programme) { build(:programme, :menacwy) }
+      let(:programme) { described_class.menacwy }
 
       it { should eq(3) }
     end
 
     context "with an Td/IPV programme" do
-      let(:programme) { build(:programme, :td_ipv) }
+      let(:programme) { described_class.td_ipv }
 
       it { should eq(5) }
     end

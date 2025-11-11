@@ -4,7 +4,7 @@ describe SendClinicInitialInvitationsJob do
   subject(:perform_now) { described_class.perform_now(session) }
 
   let(:today) { Date.new(2025, 7, 1) }
-  let(:programmes) { [CachedProgramme.hpv] }
+  let(:programmes) { [Programme.hpv] }
   let(:team) { create(:team, programmes:) }
   let(:parents) { create_list(:parent, 2) }
   let(:patient) { create(:patient, parents:, year_group: 9, session:) }
@@ -79,7 +79,7 @@ describe SendClinicInitialInvitationsJob do
   end
 
   context "when vaccinated for one programme and consent refused for another" do
-    let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
+    let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
 
     before do
       create(:vaccination_record, patient:, programme: programmes.first)

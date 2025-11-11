@@ -104,7 +104,7 @@ class Session < ApplicationRecord
     AND location_year_groups.value = sessions.academic_year - patients.birth_academic_year - #{Integer::AGE_CHILDREN_START_SCHOOL}
     INNER JOIN location_programme_year_groups
     ON location_programme_year_groups.location_year_group_id = location_year_groups.id
-    AND location_programme_year_groups.programme_type = ANY(sessions.programme_types)
+    AND location_programme_year_groups.programme_type = ANY (sessions.programme_types)
   SQL
 
   scope :has_date, ->(value) { where("dates @> ARRAY[?]::date[]", value) }

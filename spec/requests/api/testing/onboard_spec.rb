@@ -19,7 +19,7 @@ describe "/api/testing/onboard" do
       let(:filename) { "onboarding/valid.yaml" }
 
       before do
-        CachedProgramme.hpv
+        Programme.hpv
         create(:school, :secondary, :open, urn: "123456")
         create(:school, :secondary, :open, urn: "234567")
         create(:school, :secondary, :open, urn: "345678")

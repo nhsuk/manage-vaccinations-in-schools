@@ -250,10 +250,10 @@ def create_school_moves(team)
 end
 
 def create_team_sessions(user, team)
-  flu = Programme.find_by!(type: "flu")
-  hpv = Programme.find_by!(type: "hpv")
-  menacwy = Programme.find_by!(type: "menacwy")
-  td_ipv = Programme.find_by!(type: "td_ipv")
+  flu = Programme.flu
+  hpv = Programme.hpv
+  menacwy = Programme.menacwy
+  td_ipv = Programme.td_ipv
 
   # Flu-only sessions
   create_session(user, team, programmes: [flu], completed: false)

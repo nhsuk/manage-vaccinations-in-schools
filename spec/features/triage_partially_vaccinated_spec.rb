@@ -28,7 +28,7 @@ describe "Triage" do
   end
 
   def given_a_td_ipv_programme_with_a_session
-    @programme = CachedProgramme.td_ipv
+    @programme = Programme.td_ipv
 
     team = create(:team, :with_generic_clinic, programmes: [@programme])
     @user = create(:nurse, teams: [team])

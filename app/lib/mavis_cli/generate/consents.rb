@@ -47,7 +47,7 @@ module MavisCLI
 
         ::Generate::Consents.call(
           team: Team.find_by(workgroup: team_workgroup),
-          programme: Programme.find_by(type: programme_type),
+          programme: Programme.find(programme_type),
           session:,
           given: given.to_i,
           given_needs_triage: needing_triage.to_i,

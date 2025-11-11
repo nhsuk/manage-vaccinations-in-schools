@@ -10,7 +10,7 @@ namespace :vaccines do
     all_data.each_value do |data|
       next if type.present? && data["type"] != type
 
-      programme = Programme.find_or_create_by!(type: data["type"])
+      programme = Programme.find(data["type"])
 
       vaccine =
         Vaccine.find_or_initialize_by(

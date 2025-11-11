@@ -35,7 +35,7 @@ FactoryBot.define do
   factory :vaccine do
     transient { programme { nil } }
 
-    programme_type { programme&.type || Programme.types.keys.sample }
+    programme_type { programme&.type || Programme::TYPES.sample }
 
     brand { Faker::Commerce.product_name }
     manufacturer { Faker::Company.name }

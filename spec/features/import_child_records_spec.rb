@@ -124,11 +124,7 @@ describe "Import child records" do
   end
 
   def given_the_app_is_setup
-    programmes = [
-      CachedProgramme.hpv,
-      CachedProgramme.menacwy,
-      CachedProgramme.td_ipv
-    ]
+    programmes = [Programme.hpv, Programme.menacwy, Programme.td_ipv]
 
     @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
 
