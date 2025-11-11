@@ -1,0 +1,147 @@
+organisation:
+  ods_code: AJC
+
+# TODO add careplus code
+team:
+  workgroup: vaccsukscarboroughsais
+  name: Vaccination UK - Scarborough
+  email: scarborough@v-uk.co.uk
+  phone: "01723 331506"
+  careplus_venue_code: UNUSED
+  privacy_notice_url: https://www.schoolvaccination.uk/privacy-policy
+  privacy_policy_url: https://www.schoolvaccination.uk/privacy-policy
+  reply_to_id: 2124b0bb-8c53-402e-9df7-01f0cbf38815
+  type: poc_only
+
+programmes: [hpv, menacwy, td_ipv, flu]
+
+subteams:
+  scarborough:
+    name: Vaccination UK - Scarborough
+    email: scarborough@v-uk.co.uk
+    phone: "01723 331506"
+    reply_to_id: 2124b0bb-8c53-402e-9df7-01f0cbf38815
+
+# Replaced the following schools with their successors
+# Replaced URN 121497 → 150395
+# Replaced URN 121454 → 150700
+# Replaced URN 121681 → 150644
+# Replaced URN 121665 → 148377
+# Replaced URN 121539 → 150701
+# Replaced URN 121327 → 151092
+# Replaced URN 121526 → 150396
+schools:
+  scarborough:
+    - 144679
+    - 121370
+    - 121314
+    - 146312
+    - 121373
+    - 149474
+    - 134660
+    - 144680
+    - 121358
+    - 121486
+    - 121377
+    - 143290
+    - 121610
+    - 144274
+    - 121459
+    - 149205
+    - 121492
+    - 147448
+    - 121733
+    - 121528
+    - 146819
+    - 121493
+    - 121319
+    - 144678
+    - 121296
+    - 146769
+    - 150395
+    - 121498
+    - 148376
+    - 121534
+    - 121451
+    - 148374
+    - 148602
+    - 121452
+    - 144682
+    - 121453
+    - 121362
+    - 150700
+    - 121507
+    - 148714
+    - 150644
+    - 121306
+    - 145633
+    - 121321
+    - 136728
+    - 121456
+    - 149226
+    - 121336
+    - 121363
+    - 121356
+    - 147762
+    - 121313
+    - 121525
+    - 148377
+    - 121513
+    - 143288
+    - 121730
+    - 132027
+    - 121357
+    - 121301
+    - 121538
+    - 150701
+    - 121342
+    - 148375
+    - 121491
+    - 121322
+    - 121515
+    - 121772
+    - 147212
+    - 147274
+    - 147211
+    - 148022
+    - 147243
+    - 121615
+    - 147258
+    - 147278
+    - 146112
+    - 121616
+    - 121732
+    - 139482
+    - 140018
+    - 147763
+    - 142884
+    - 121523
+    - 151092
+    - 121766
+    - 144681
+    - 121541
+    - 121349
+    - 121349
+    - 121667
+    - 150396
+
+clinics:
+  scarborough:
+    - name: Pickering Clinic
+      address_line_1: Quaker Meeting House
+      address_line_2: 19 Castle Gate
+      address_town: Pickering
+      address_postcode: YO18 7AX
+      ods_code:
+    - name: Scarborough Clinic
+      address_line_1: Unit 19, Cayley Court
+      address_line_2: Hopper Hill Road, Eastfield
+      address_town: Scarborough
+      address_postcode: YO11 3YJ
+      ods_code:
+    - name: Whitby Clinic
+      address_line_1: Springvale Medical Centre
+      address_line_2: Rievaulx Road
+      address_town: Whitby
+      address_postcode: YO21 1SD
+      ods_code:

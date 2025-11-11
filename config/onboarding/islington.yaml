@@ -1,0 +1,119 @@
+organisation:
+  ods_code: AJC
+
+# TODO add careplus code
+team:
+  workgroup: vaccsukislingtonais
+  name: Vaccination UK - Islington
+  email: islington@v-uk.co.uk
+  phone: "0208 017 7925"
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/policies
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id: 431cfe7b-7854-4a2c-b3ef-3112ab6650ee
+  type: poc_only
+
+programmes: [hpv, menacwy, td_ipv, flu]
+
+subteams:
+  islington:
+    name: Vaccination UK - Islington
+    email: islington@v-uk.co.uk
+    phone: "0208 017 7925"
+    reply_to_id: 431cfe7b-7854-4a2c-b3ef-3112ab6650ee
+
+# Removed 133815 as it is a university
+schools:
+  islington:
+    - 100384
+    - 100385
+    - 100386
+    - 100388
+    - 100391
+    - 100397
+    - 100402
+    - 100403
+    - 100405
+    - 100406
+    - 100407
+    - 100408
+    - 100411
+    - 100415
+    - 100418
+    - 100422
+    - 100425
+    - 100426
+    - 100428
+    - 100429
+    - 100430
+    - 100432
+    - 100434
+    - 100437
+    - 100438
+    - 100439
+    - 100440
+    - 100441
+    - 100443
+    - 100444
+    - 100446
+    - 100447
+    - 100448
+    - 100449
+    - 100450
+    - 100453
+    - 100455
+    - 100457
+    - 100458
+    - 100462
+    - 100467
+    - 100469
+    - 130243
+    - 131325
+    - 131362
+    - 131690
+    - 131740
+    - 131773
+    - 131842
+    - 134274
+    - 134314
+    - 134782
+    - 135587
+    - 137393
+    - 137566
+    - 139418
+    - 139973
+    - 140495
+    - 141130
+    - 141250
+    - 141605
+    - 143020
+    - 143217
+    - 143659
+    - 143702
+    - 144786
+    - 144962
+    - 145731
+    - 146031
+    - 150522
+    - 151990
+
+
+clinics:
+  islington:
+    - name: The Village Practice
+      address_line_1: 115 Isledon Rd
+      address_town: London
+      address_postcode: N7 7JJ
+      ods_code: F83664
+    - name: Lift Community Centre
+      address_line_1: 45 White Lion St
+      address_town: London
+      address_postcode: N1 9PW
+      ods_code:
+    - name: Mildmay Medical Practice
+      address_line_1: 2A Green Lanes
+      address_line_2: Newington Green
+      address_town: London
+      address_postcode: N16 9NF
+      ods_code: N16 9NF
+

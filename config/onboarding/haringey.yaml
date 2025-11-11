@@ -1,0 +1,147 @@
+# Imported locally without issue
+organisation:
+  ods_code: AJC
+
+# TODO add careplus code
+team:
+  workgroup: vaccsukharingeysais
+  name: Vaccination UK - Haringey
+  email: haringey@v-uk.co.uk
+  phone: "0208 017 7925"
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/policies
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id: 74533cb7-d0d4-46b9-aac7-4eb311ebfa63
+  type: poc_only
+
+programmes: [hpv, menacwy, td_ipv, flu]
+
+subteams:
+  haringey:
+    name: Vaccination UK - Haringey
+    email: haringey@v-uk.qco.uk
+    phone: "0208 017 7925"
+    reply_to_id: 74533cb7-d0d4-46b9-aac7-4eb311ebfa63
+
+
+schools:
+  haringey:
+    - 101959
+    - 102071
+    - 102072
+    - 102073
+    - 102078
+    - 102079
+    - 102080
+    - 102081
+    - 102084
+    - 102085
+    - 102087
+    - 102091
+    - 102092
+    - 102094
+    - 102097
+    - 102098
+    - 102106
+    - 102107
+    - 102110
+    - 102111
+    - 102115
+    - 102121
+    - 102124
+    - 102125
+    - 102127
+    - 102128
+    - 102129
+    - 102130
+    - 102131
+    - 102132
+    - 102135
+    - 102136
+    - 102139
+    - 102142
+    - 102143
+    - 102144
+    - 102145
+    - 102146
+    - 102147
+    - 102149
+    - 102150
+    - 102152
+    - 102153
+    - 102154
+    - 102156
+    - 102157
+    - 102162
+    - 102163
+    - 102165
+    - 102175
+    - 102176
+    - 102177
+    - 102178
+    - 103111
+    - 130358
+    - 131096
+    - 131478
+    - 131584
+    - 131595
+    - 131731
+    - 131757
+    - 131871
+    - 131879
+    - 132253
+    - 133386
+    - 133707
+    - 134084
+    - 134680
+    - 134681
+    - 134800
+    - 135534
+    - 135683
+    - 135988
+    - 136808
+    - 137531
+    - 137745
+    - 138446
+    - 138447
+    - 138588
+    - 138589
+    - 139169
+    - 139175
+    - 139176
+    - 139177
+    - 139240
+    - 139243
+    - 139362
+    - 139363
+    - 139616
+    - 140935
+    - 141209
+    - 141243
+    - 141859
+    - 144753
+    - 144900
+    - 145295
+    - 145917
+    - 151473
+
+
+
+clinics:
+  haringey:
+    - name: Wood Green Library
+      address_line_1: 187-197A High Rd
+      address_town: London
+      address_postcode: N22 6XD
+      ods_code:
+    - name: The Christchurch Hall Surgery
+      address_line_1: 20 Edison Rd
+      address_town: London
+      address_postcode: N8 8AE
+      ods_code: F85061
+    - name: Somerset Gardens Family Health Centre
+      address_line_1: 4 Creighton Rd
+      address_town: London
+      address_postcode: N17 8NW
+      ods_code: F85030
+

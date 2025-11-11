@@ -1,0 +1,351 @@
+organisation:
+  ods_code: AJC
+
+# TODO add careplus code
+team:
+  workgroup: vaccsukworcestersais
+  name: Vaccination UK - Worcestershire
+  email: worcestershire@v-uk.co.uk
+  phone: "01527 390030"
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/policies
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id: 311c37a9-eaa0-47c3-bb22-83632d2bb749
+  type: poc_only
+
+programmes: [hpv, menacwy, td_ipv, flu]
+
+subteams:
+  worcestershire:
+    name: Vaccination UK - Worcestershire
+    email: worcestershire@v-uk.co.uk
+    phone: "01527 390030"
+    reply_to_id: 311c37a9-eaa0-47c3-bb22-83632d2bb749
+
+# Replaced the following schools with their successors
+# Replaced URN 116652 → 152048
+# Replaced URN 116665 → 150677
+# Replaced URN 116658 → 150048
+# Replaced URN 116958 → 150518
+# Replaced URN 117062 → 151583
+# Replaced URN 116659 → 150394
+# Replaced URN 116792 → 151572
+# Replaced URN 116675 → 151581
+# Replaced URN 135034 → 149304
+# Replaced URN 135067 → 151298
+# Replaced URN 132060 → 150630
+# Replaced URN 135114 → 117037
+# Replaced URN 116776 → 149515
+# Replaced URN 116928 → 149682
+# Replaced URN 132820 → 150403
+# Replaced URN 116921 → 151074
+# Replaced URN 117056 → 149091
+# Replaced URN 139029 → 149437
+# Replaced URN 116847 → 149476
+# Replaced URN 116924 → 151075
+# Replaced URN 116925 → 151076
+# Replaced URN 116876 → 151072
+# Replaced URN 116844 → 150742
+# Replaced URN 116735 → 151582
+# Replaced URN 117014 → 117012
+schools:
+  worcestershire:
+    - 116780
+    - 116716
+    - 142541
+    - 143507
+    - 138505
+    - 116650
+    - 116864
+    - 116957
+    - 140258
+    - 145000
+    - 116721
+    - 144367
+    - 116781
+    - 116768
+    - 116782
+    - 140932
+    - 152048
+    - 135076
+    - 144650
+    - 146699
+    - 138107
+    - 116960
+    - 150677
+    - 116784
+    - 116999
+    - 116868
+    - 143395
+    - 145001
+    - 147497
+    - 116870
+    - 116656
+    - 146433
+    - 147498
+    - 143416
+    - 145837
+    - 150048
+    - 150518
+    - 135046
+    - 151583
+    - 150394
+    - 116672
+    - 148183
+    - 136890
+    - 142543
+    - 151572
+    - 116793
+    - 116794
+    - 116796
+    - 116669
+    - 135047
+    - 139648
+    - 135048
+    - 137697
+    - 139825
+    - 143394
+    - 116800
+    - 144335
+    - 116646
+    - 141412
+    - 116802
+    - 146667
+    - 116670
+    - 136927
+    - 137186
+    - 116806
+    - 116807
+    - 116808
+    - 151581
+    - 149304
+    - 148115
+    - 116660
+    - 116879
+    - 116676
+    - 145483
+    - 131534
+    - 135050
+    - 136984
+    - 142706
+    - 116815
+    - 151298
+    - 141414
+    - 116678
+    - 116882
+    - 116816
+    - 137101
+    - 144262
+    - 144261
+    - 116819
+    - 136898
+    - 141246
+    - 116821
+    - 116822
+    - 140933
+    - 116908
+    - 141105
+    - 146719
+    - 150630
+    - 139749
+    - 144859
+    - 139020
+    - 144256
+    - 138032
+    - 140404
+    - 117037
+    - 117037
+    - 149515
+    - 116661
+    - 116773
+    - 137825
+    - 116895
+    - 144259
+    - 117017
+    - 144258
+    - 117018
+    - 137292
+    - 116902
+    - 147499
+    - 140309
+    - 116763
+    - 116662
+    - 116663
+    - 116765
+    - 148348
+    - 149682
+    - 147190
+    - 147284
+    - 143396
+    - 144586
+    - 137051
+    - 145836
+    - 150403
+    - 140041
+    - 143814
+    - 135052
+    - 147550
+    - 116905
+    - 144457
+    - 141058
+    - 151074
+    - 136260
+    - 116837
+    - 116959
+    - 116715
+    - 116838
+    - 139001
+    - 130984
+    - 136925
+    - 144260
+    - 149091
+    - 116769
+    - 145838
+    - 136469
+    - 116859
+    - 140261
+    - 147783
+    - 117038
+    - 149437
+    - 117049
+    - 140397
+    - 116846
+    - 117038
+    - 148140
+    - 149476
+    - 116848
+    - 137292
+    - 140292
+    - 141413
+    - 116811
+    - 116865
+    - 135036
+    - 141063
+    - 144334
+    - 116858
+    - 143833
+    - 141064
+    - 135051
+    - 141443
+    - 116984
+    - 144998
+    - 151075
+    - 146754
+    - 116923
+    - 116903
+    - 139286
+    - 144999
+    - 151076
+    - 151072
+    - 116901
+    - 150742
+    - 143636
+    - 143638
+    - 135057
+    - 147903
+    - 144456
+    - 143397
+    - 141066
+    - 116810
+    - 147165
+    - 147714
+    - 141444
+    - 146452
+    - 151582
+    - 143508
+    - 136983
+    - 146749
+    - 116673
+    - 116916
+    - 116917
+    - 116729
+    - 142448
+    - 141169
+    - 141034
+    - 130987
+    - 135035
+    - 136897
+    - 137625
+    - 148338
+    - 136161
+    - 117037
+    - 143816
+    - 144580
+    - 148386
+    - 137162
+    - 137960
+    - 116851
+    - 137167
+    - 140731
+    - 135913
+    - 148114
+    - 147761
+    - 116854
+    - 116853
+    - 148347
+    - 139185
+    - 138664
+    - 138026
+    - 146678
+    - 116778
+    - 116671
+    - 116856
+    - 144800
+    - 148329
+    - 135061
+    - 146074
+    - 138208
+    - 116730
+    - 136924
+    - 146027
+    - 116830
+    - 135791
+    - 142833
+    - 148156
+    - 117030
+    - 147465
+    - 148419
+    - 136262
+    - 117064
+    - 117034
+    - 143106
+    - 117012
+    - 117020
+    - 117033
+    - 145493
+    - 117012
+    - 117041
+    - 117044
+    - 149698
+    - 149718
+    - 149911
+    - 150103
+
+# MET Locations are stored in Mavis as Clinics
+clinics:
+  worcestershire:
+    - name: Stourport Sports Club
+      address_line_1: Kingsway
+      address_town: Stourport on Severn
+      address_postcode: DY13 8BQ
+      ods_code:
+    - name: Artrix Bromsgrove
+      address_line_1: Slideslowe
+      address_town: Bromsgrove
+      address_postcode: B60 1GN
+      ods_code:
+    - name: Batchley Community Centre
+      address_line_1: Cherry Tree Walk
+      address_line_2: Batchley
+      address_town: Redditch
+      address_postcode: B97 6PD
+      ods_code:
+    - name: Warndon Community Hub
+      address_line_1: Shap Drive
+      address_line_2: Warndon
+      address_town: Worcestershire
+      address_postcode: WR4 9NX
+      ods_code:
+    - name: MET Worcester
+    - name: MET Kidderminster
+    - name: MET Redditch

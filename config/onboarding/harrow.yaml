@@ -1,0 +1,113 @@
+organisation:
+  ods_code: AJC
+
+# TODO add careplus code
+team:
+  workgroup: vaccsukharrowsais
+  name: Vaccination UK - Harrow
+  email: harrow@v-uk.co.uk
+  phone: "2084327075"
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/policies
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id: 6c788a1b-507e-4c57-b0b8-6afab7b39a90
+  type: poc_only
+
+programmes: [hpv, menacwy, td_ipv, flu]
+
+subteams:
+  harrow:
+    name: Vaccination UK - Harrow
+    email: harrow@v-uk.co.uk
+    phone: "2084327075"
+    reply_to_id: 6c788a1b-507e-4c57-b0b8-6afab7b39a90
+
+schools:
+  harrow:
+    - 140122
+    - 102250
+    - 145142
+    - 138227
+    - 140657
+    - 102189
+    - 137178
+    - 101568
+    - 102188
+    - 102204
+    - 137199
+    - 135211
+    - 144883
+    - 102211
+    - 144738
+    - 102224
+    - 102202
+    - 102187
+    - 137177
+    - 102245
+    - 137204
+    - 135687
+    - 141054
+    - 143925
+    - 102247
+    - 102212
+    - 102193
+    - 133317
+    - 138688
+    - 102199
+    - 102186
+    - 102181
+    - 102222
+    - 102257
+    - 137028
+    - 102248
+    - 137075
+    - 142864
+    - 102207
+    - 131577
+    - 146750
+    - 102253
+    - 137198
+    - 102213
+    - 102185
+    - 146245
+    - 138458
+    - 148415
+    - 102260
+    - 102230
+    - 142558
+    - 146176
+    - 142904
+    - 146178
+    - 134929
+    - 146246
+    - 102231
+    - 102209
+    - 102214
+    - 102180
+    - 139925
+    - 102223
+    - 102215
+    - 146782
+    - 102216
+    - 131316
+    - 141071
+    - 102239
+    - 133316
+
+clinics:
+  harrow:
+    - name: Hillview Children's Centre
+      address_line_1: 2 Grange Rd
+      address_town: Harrow
+      address_postcode: HA2 0LW
+      ods_code:
+    - name: Harrow Leisure Centre
+      address_line_1: Whittlesea Road
+      address_town: Harrow
+      address_postcode: HA3 6LS
+      ods_code:
+    - name: Kenmore Park Children's Centre
+      address_line_1: Warneford Road
+      address_town: Kenton
+      address_postcode: HA3 9HZ
+      ods_code:
