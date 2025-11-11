@@ -8,7 +8,7 @@
 <%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_collection_check_boxes :programme_ids, policy_scope(Programme), :id, :name,
+  <%= f.govuk_collection_check_boxes :programme_types, policy_scope(Programme), :type, :name,
                                      legend: { text: legend, size: "l", tag: "h1" },
                                      caption: { text: @session.location.name, size: "l" } %>
 

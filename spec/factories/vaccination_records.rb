@@ -38,7 +38,6 @@
 #  nhs_immunisations_api_id                :string
 #  patient_id                              :bigint           not null
 #  performed_by_user_id                    :bigint
-#  programme_id                            :bigint
 #  session_id                              :bigint
 #  supplied_by_user_id                     :bigint
 #  vaccine_id                              :bigint
@@ -77,7 +76,7 @@ FactoryBot.define do
   factory :vaccination_record do
     transient do
       team do
-        Team.has_programmes([programme]).first ||
+        Team.has_all_programmes_of([programme]).first ||
           association(:team, programmes: [programme])
       end
     end

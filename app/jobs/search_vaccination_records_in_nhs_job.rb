@@ -11,7 +11,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     SemanticLogger.tagged(tx_id:, job_id:) do
       Sentry.set_tags(tx_id:, job_id:)
 
-      programmes = Programme.all
+      programmes = Programme.all.to_a
 
       feature_flag_enabled =
         programmes.any? do |programme|
@@ -43,8 +43,9 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
       existing_vaccination_records =
         patient
           .vaccination_records
-          .includes(:identity_check, :programme)
-          .where(programme: programmes, source: :nhs_immunisations_api)
+          .includes(:identity_check)
+          .sourced_from_nhs_immunisations_api
+          .where_programme(programmes)
 
       existing_vaccination_records.find_each do |vaccination_record|
         incoming_vaccination_record =
@@ -99,7 +100,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
 
     grouped_vaccination_records =
       vaccination_records.group_by do
-        [it.performed_at.to_date, it.programme_id]
+        [it.performed_at.to_date, it.programme_type]
       end
 
     deduplicated_vaccination_records = []

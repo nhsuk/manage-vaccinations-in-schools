@@ -103,7 +103,7 @@ describe "Filtering" do
       ).tap do
         it
           .consent_statuses
-          .find_by(programme: @session.programmes.first)
+          .find_by(programme_type: @session.programme_types.first)
           .update!(without_gelatine: true)
       end
   end

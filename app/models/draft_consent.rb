@@ -27,7 +27,6 @@ class DraftConsent
   attribute :parent_relationship_type, :string
   attribute :parent_responsibility, :boolean
   attribute :patient_id, :integer
-  attribute :programme_id, :integer
   attribute :programme_type, :string
   attribute :reason_for_refusal, :string
   attribute :recorded_by_user_id, :integer
@@ -177,9 +176,9 @@ class DraftConsent
       self.route = nil
       self.parent =
         patient.parents.find_by(id: value) ||
-          Parent.where(consents: patient.consents.where(programme:)).find_by(
-            id: value
-          )
+          Parent.where(
+            consents: patient.consents.where_programme(programme)
+          ).find_by(id: value)
     end
   end
 
@@ -282,16 +281,15 @@ class DraftConsent
   end
 
   def programme
-    return nil if programme_id.nil?
+    return nil if programme_type.nil?
 
     ProgrammePolicy::Scope
       .new(@current_user, Programme)
       .resolve
-      .find(programme_id)
+      .find_by(type: programme_type)
   end
 
   def programme=(value)
-    self.programme_id = value.id
     self.programme_type = value.type
   end
 
@@ -428,7 +426,6 @@ class DraftConsent
       notify_parent_on_refusal
       notify_parents_on_vaccination
       patient_id
-      programme_id
       programme_type
       reason_for_refusal
       recorded_by_user_id

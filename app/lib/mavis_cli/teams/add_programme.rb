@@ -34,7 +34,7 @@ module MavisCLI
         academic_year = AcademicYear.pending
 
         ActiveRecord::Base.transaction do
-          TeamProgramme.create!(team:, programme:)
+          team.update!(programmes: team.programmes + [programme])
 
           GenericClinicFactory.call(team: team.reload, academic_year:)
 

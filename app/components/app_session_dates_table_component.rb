@@ -75,20 +75,17 @@ class AppSessionDatesTableComponent < ViewComponent::Base
 
   def vaccination_records_by_date(programme)
     @vaccination_records_by_date ||= {}
-    @vaccination_records_by_date[programme.id] ||= VaccinationRecord
+    @vaccination_records_by_date[programme.type] ||= VaccinationRecord
       .administered
       .kept
-      .where(
-        programme:,
-        session:,
-        patient_id: patients_for_programme(programme)
-      )
+      .where_programme(programme)
+      .where(session:, patient_id: patients_for_programme(programme))
       .group_by { |record| record.performed_at.to_date }
   end
 
   def patients_for_programme(programme)
     @patients_for_programme ||= {}
-    @patients_for_programme[programme.id] ||= begin
+    @patients_for_programme[programme.type] ||= begin
       birth_academic_years =
         session.programme_year_groups.birth_academic_years(programme)
       session.patients.where(birth_academic_year: birth_academic_years)

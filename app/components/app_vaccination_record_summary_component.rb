@@ -302,7 +302,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def programme_value
-    highlight_if(@programme.name, @vaccination_record.programme_id_changed?)
+    highlight_if(@programme.name, @vaccination_record.programme_type_changed?)
   end
 
   def vaccine_value

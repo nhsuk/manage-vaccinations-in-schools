@@ -4,20 +4,20 @@ class Stats::Vaccinations
   def initialize(
     since_date: nil,
     until_date: nil,
-    programme: nil,
+    programme_type: nil,
     outcome: nil,
     teams: nil
   )
     @since_date = since_date
     @until_date = until_date
-    @programme = programme
+    @programme_type = programme_type
     @outcome = outcome
     @teams = teams
   end
 
   def call
     vaccinations = build_base_query
-    results = vaccinations.group(:programme_id, :outcome).count
+    results = vaccinations.group(:programme_type, :outcome).count
     transform_results(results)
   end
 
@@ -25,7 +25,7 @@ class Stats::Vaccinations
 
   private
 
-  attr_reader :since_date, :until_date, :programme, :outcome, :teams
+  attr_reader :since_date, :until_date, :programme_type, :outcome, :teams
 
   def build_base_query
     vaccinations = VaccinationRecord.recorded_in_service
@@ -45,11 +45,7 @@ class Stats::Vaccinations
         Date.parse(until_date)
       ) if until_date
 
-    if programme
-      programme_record = Programme.find_by(type: programme)
-      vaccinations = vaccinations.where(programme_id: programme_record.id)
-    end
-
+    vaccinations = vaccinations.where(programme_type:) if programme_type
     vaccinations = vaccinations.where(outcome: outcome) if outcome
 
     vaccinations
@@ -58,24 +54,11 @@ class Stats::Vaccinations
   def transform_results(results)
     programme_results = {}
 
-    if programme
-      results.each do |(_programme_id, outcome_value), count|
-        programme_results[programme] ||= {}
-        programme_results[programme][outcome_value] = count
-      end
-    else
-      programme_ids = results.keys.map(&:first).uniq
-      programmes = Programme.where(id: programme_ids).index_by(&:id)
-
-      results.each do |(programme_id, outcome_value), count|
-        programme_record = programmes[programme_id]
-        next unless programme_record
-
-        programme_type = programme_record.type
-        programme_results[programme_type] ||= {}
-        programme_results[programme_type][outcome_value] = count
-      end
+    results.each do |(programme_type, outcome_value), count|
+      programme_results[programme_type] ||= {}
+      programme_results[programme_type][outcome_value] = count
     end
+
     programme_results
   end
 end

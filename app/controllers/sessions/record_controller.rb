@@ -77,7 +77,10 @@ class Sessions::RecordController < Sessions::BaseController
 
   def set_batches
     vaccines =
-      @session.vaccines.where(programme: @programme, method: @vaccine_method)
+      @session
+        .vaccines
+        .where_programme(@programme)
+        .where(method: @vaccine_method)
 
     @batches =
       policy_scope(Batch)

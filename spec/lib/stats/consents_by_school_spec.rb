@@ -5,7 +5,7 @@ describe Stats::ConsentsBySchool do
     subject(:service) do
       described_class.new(
         teams: [team],
-        programmes: [programme_flu, programme_hpv],
+        programme_types: %w[flu hpv],
         academic_year:
       )
     end
@@ -90,7 +90,7 @@ describe Stats::ConsentsBySchool do
       subject(:flu_only_service) do
         described_class.new(
           teams: [team],
-          programmes: [programme_flu],
+          programme_types: %w[flu],
           academic_year:
         )
       end
@@ -131,7 +131,7 @@ describe Stats::ConsentsBySchool do
       subject(:previous_year_service) do
         described_class.new(
           teams: [team],
-          programmes: [programme_flu],
+          programme_types: %w[flu],
           academic_year: previous_year
         )
       end

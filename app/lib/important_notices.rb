@@ -31,7 +31,7 @@ class ImportantNotices
     if patient
       [patient]
     else
-      patient_scope_with_notices.includes(vaccination_records: :programme)
+      patient_scope_with_notices.includes(:vaccination_records)
     end
   end
 

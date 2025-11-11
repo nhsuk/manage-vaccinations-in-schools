@@ -47,7 +47,7 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   end
 
   def vaccinated_scope(session:)
-    session.vaccination_records.where(programme:).administered
+    session.vaccination_records.where_programme(programme).administered
   end
 
   def vaccinated_count(session:)

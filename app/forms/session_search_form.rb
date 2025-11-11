@@ -32,11 +32,7 @@ class SessionSearchForm < SearchForm
   end
 
   def filter_programmes(scope)
-    if programmes.present?
-      scope.has_programmes(Programme.where(type: programmes))
-    else
-      scope
-    end
+    programmes.present? ? scope.has_all_programme_types_of(programmes) : scope
   end
 
   def filter_name(scope)

@@ -38,7 +38,6 @@ class ImmunisationImportsController < ApplicationController
     vaccination_records =
       @immunisation_import.vaccination_records.includes(
         :location,
-        :programme,
         :session,
         patient: :school
       )

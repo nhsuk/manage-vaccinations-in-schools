@@ -34,7 +34,7 @@ describe EmailDeliveryJob do
         consent_form:,
         parent:,
         patient:,
-        programmes:,
+        programme_types:,
         sent_by:,
         vaccination_record:
       )
@@ -42,6 +42,7 @@ describe EmailDeliveryJob do
 
     let(:template_name) { GOVUK_NOTIFY_EMAIL_TEMPLATES.keys.first }
     let(:programmes) { [CachedProgramme.sample] }
+    let(:programme_types) { programmes.map(&:type) }
     let(:team) do
       create(
         :team,
@@ -64,7 +65,7 @@ describe EmailDeliveryJob do
         consent_form:,
         parent:,
         patient:,
-        programmes:,
+        programme_types:,
         vaccination_record:
       ).and_call_original
       perform_now
@@ -105,7 +106,7 @@ describe EmailDeliveryJob do
       )
       expect(notify_log_entry.parent).to eq(parent)
       expect(notify_log_entry.patient).to eq(patient)
-      expect(notify_log_entry.programme_ids).to eq(programmes.map(&:id))
+      expect(notify_log_entry.programme_types).to eq(programme_types)
       expect(notify_log_entry.sent_by).to eq(sent_by)
     end
 
@@ -159,7 +160,7 @@ describe EmailDeliveryJob do
           GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name]
         )
         expect(notify_log_entry.consent_form).to eq(consent_form)
-        expect(notify_log_entry.programme_ids).to eq(programmes.map(&:id))
+        expect(notify_log_entry.programme_types).to eq(programme_types)
       end
 
       context "when the parent doesn't have a phone number" do

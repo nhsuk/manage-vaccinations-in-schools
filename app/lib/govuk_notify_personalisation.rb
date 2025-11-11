@@ -11,7 +11,7 @@ class GovukNotifyPersonalisation
     consent_form: nil,
     parent: nil,
     patient: nil,
-    programmes: nil,
+    programme_types: nil,
     session: nil,
     vaccination_record: nil
   )
@@ -23,9 +23,9 @@ class GovukNotifyPersonalisation
     @consent_form = consent_form
     @parent = parent || consent&.parent
     @patient = patient || consent&.patient || vaccination_record&.patient
-    @programmes =
-      programmes.presence || consent_form&.programmes.presence ||
-        [consent&.programme || vaccination_record&.programme].compact
+    @programme_types =
+      programme_types.presence || consent_form&.programme_types.presence ||
+        [consent&.programme_type || vaccination_record&.programme_type].compact
     @session = session || consent_form&.session || vaccination_record&.session
     @team =
       session&.team || consent_form&.team || consent&.team ||
@@ -89,7 +89,7 @@ class GovukNotifyPersonalisation
               :consent_form,
               :parent,
               :patient,
-              :programmes,
+              :programme_types,
               :session,
               :subteam,
               :team,
@@ -128,11 +128,7 @@ class GovukNotifyPersonalisation
     return if consent.nil? && consent_form.nil?
 
     consent_form_programmes =
-      if consent
-        [consent]
-      else
-        consent_form.consent_form_programmes.includes(:programme)
-      end
+      (consent ? [consent] : consent_form.consent_form_programmes)
 
     programmes = consent_form_programmes.map(&:programme)
 
@@ -211,7 +207,7 @@ class GovukNotifyPersonalisation
       patient
         .triages
         .not_invalidated
-        .where(programme: session.programmes)
+        .where(programme_type: session.programme_types)
         .delay_vaccination
         .order(created_at: :desc)
         .first
@@ -424,7 +420,7 @@ class GovukNotifyPersonalisation
               .first == method
           end
         else
-          Vaccine.where(programme: programmes, method:).exists?
+          Vaccine.where_programme(programmes).exists?(method:)
         end
 
       any_vaccines_with_method ? "yes" : "no"
@@ -446,10 +442,13 @@ class GovukNotifyPersonalisation
                 .vaccine_criteria(programme:, academic_year:)
                 .vaccine_methods
                 .first
-            Vaccine.where(programme:, method:).flat_map(&:side_effects)
+            Vaccine
+              .where_programme(programme)
+              .where(method:)
+              .flat_map(&:side_effects)
           end
         else
-          Vaccine.where(programme: programmes).flat_map(&:side_effects)
+          Vaccine.where_programme(programmes).flat_map(&:side_effects)
         end
       end
 
@@ -474,6 +473,10 @@ class GovukNotifyPersonalisation
 
   def patient_year_group
     @patient_year_group ||= patient.year_group(academic_year:)
+  end
+
+  def programmes
+    @programmes ||= programme_types.map { Programme.new(type: it) }
   end
 
   def programme_names

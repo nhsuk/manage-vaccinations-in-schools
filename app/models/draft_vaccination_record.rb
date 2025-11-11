@@ -27,7 +27,7 @@ class DraftVaccinationRecord
   attribute :performed_by_user_id, :integer
   attribute :protocol, :string
   attribute :performed_ods_code, :string
-  attribute :programme_id, :integer
+  attribute :programme_type, :string
   attribute :session_id, :integer
   attribute :supplied_by_user_id, :integer
 
@@ -167,26 +167,22 @@ class DraftVaccinationRecord
   end
 
   def programme
-    return nil if programme_id.nil?
+    return nil if programme_type.nil?
 
     ProgrammePolicy::Scope
       .new(@current_user, Programme)
       .resolve
-      .find(programme_id)
+      .find_by!(type: programme_type)
   end
 
   def programme=(value)
-    self.programme_id = value.id
+    self.programme_type = value.type
   end
 
   def session
     return nil if session_id.nil?
 
-    SessionPolicy::Scope
-      .new(@current_user, Session)
-      .resolve
-      .includes(:programmes)
-      .find(session_id)
+    SessionPolicy::Scope.new(@current_user, Session).resolve.find(session_id)
   end
 
   def session=(value)
@@ -321,7 +317,7 @@ class DraftVaccinationRecord
       performed_by_given_name
       performed_by_user_id
       performed_ods_code
-      programme_id
+      programme_type
       protocol
       session_id
       supplied_by_user_id

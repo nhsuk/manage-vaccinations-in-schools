@@ -25,7 +25,6 @@
 #  consent_form_id                                 :bigint
 #  parent_id                                       :bigint
 #  patient_id                                      :bigint           not null
-#  programme_id                                    :bigint
 #  recorded_by_user_id                             :bigint
 #  team_id                                         :bigint           not null
 #
@@ -137,7 +136,8 @@ describe Consent do
       it "copies over attributes from consent form" do
         expect(consent).to(
           have_attributes(
-            programme: consent_form.programmes.first,
+            programme_type:
+              consent_form.consent_form_programmes.first.programme_type,
             patient:,
             consent_form:,
             reason_for_refusal: consent_form.reason_for_refusal,

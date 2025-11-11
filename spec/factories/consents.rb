@@ -25,7 +25,6 @@
 #  consent_form_id                                 :bigint
 #  parent_id                                       :bigint
 #  patient_id                                      :bigint           not null
-#  programme_id                                    :bigint
 #  recorded_by_user_id                             :bigint
 #  team_id                                         :bigint           not null
 #
@@ -63,7 +62,7 @@ FactoryBot.define do
 
     programme { CachedProgramme.sample }
     team do
-      Team.has_programmes([programme]).first ||
+      Team.has_all_programmes_of([programme]).first ||
         association(:team, programmes: [programme])
     end
 

@@ -42,7 +42,8 @@ class Stats::Session
     @vaccinated_count ||=
       Patient::VaccinationStatus
         .vaccinated
-        .where(patient_id: patient_ids, programme:, academic_year:)
+        .where_programme(programme)
+        .where(patient_id: patient_ids, academic_year:)
         .count
   end
 
@@ -82,7 +83,8 @@ class Stats::Session
   def consent_counts
     @consent_counts ||=
       Patient::ConsentStatus
-        .where(patient_id: patient_ids, programme:, academic_year:)
+        .where_programme(programme)
+        .where(patient_id: patient_ids, academic_year:)
         .group(:status, :vaccine_methods, :without_gelatine)
         .count
   end

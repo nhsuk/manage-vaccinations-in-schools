@@ -18,7 +18,7 @@ class VaccinateForm
   attribute :vaccine_method, :string
   attribute :delivery_site, :string
   attribute :dose_sequence, :integer
-  attribute :programme_id, :integer
+  attribute :programme_type, :string
 
   validates :identity_check_confirmed_by_patient,
             inclusion: {
@@ -96,7 +96,7 @@ class VaccinateForm
   def has_patient_specific_direction?
     patient.has_patient_specific_direction?(
       academic_year:,
-      programme:,
+      programme_type: programme.type,
       team: current_user.selected_team,
       vaccine_method:
     )
@@ -169,7 +169,7 @@ class VaccinateForm
         .order(created_at: :desc)
         .find_by(
           academic_year:,
-          programme:,
+          programme_type: programme.type,
           team: current_user.selected_team,
           vaccine_method:
         )

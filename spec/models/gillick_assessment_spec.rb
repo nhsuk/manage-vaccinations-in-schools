@@ -18,7 +18,6 @@
 #  location_id          :bigint           not null
 #  patient_id           :bigint           not null
 #  performed_by_user_id :bigint           not null
-#  programme_id         :bigint
 #
 # Indexes
 #
@@ -39,7 +38,7 @@ describe GillickAssessment do
 
   describe "associations" do
     it { should belong_to(:patient) }
-    it { should belong_to(:programme) }
+    it { should belong_to(:location) }
   end
 
   describe "validations" do

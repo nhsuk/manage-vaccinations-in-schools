@@ -44,7 +44,7 @@ module MavisCLI
 
             Location::ProgrammeYearGroup.find_or_create_by!(
               location_year_group:,
-              programme:
+              programme_type:
             )
           end
 

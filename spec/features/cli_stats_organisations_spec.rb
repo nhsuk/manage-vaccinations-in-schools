@@ -72,11 +72,20 @@ describe "mavis stats organisations" do
     programme_hpv = CachedProgramme.hpv
     programme_menacwy = CachedProgramme.menacwy
 
-    @team_a = create(:team, organisation: @organisation, name: "North Team")
-    @team_b = create(:team, organisation: @organisation, name: "South Team")
-
-    @team_a.programmes << [programme_flu, programme_hpv, programme_menacwy]
-    @team_b.programmes << [programme_flu, programme_hpv, programme_menacwy]
+    @team_a =
+      create(
+        :team,
+        organisation: @organisation,
+        name: "North Team",
+        programmes: [programme_flu, programme_hpv, programme_menacwy]
+      )
+    @team_b =
+      create(
+        :team,
+        organisation: @organisation,
+        name: "South Team",
+        programmes: [programme_flu, programme_hpv, programme_menacwy]
+      )
 
     school1 =
       create(

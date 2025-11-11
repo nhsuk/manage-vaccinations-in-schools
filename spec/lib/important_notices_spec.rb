@@ -198,7 +198,7 @@ describe ImportantNotices do
     end
 
     let(:patient_with_preloaded_associations) do
-      Patient.includes(vaccination_records: :programme).find(patient.id)
+      Patient.includes(:vaccination_records).find(patient.id)
     end
 
     include_examples "generates notices"

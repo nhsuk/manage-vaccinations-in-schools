@@ -221,7 +221,7 @@ class DraftConsentsController < ApplicationController
         @patient.parent_relationships.includes(:parent) +
           @patient
             .consents
-            .select { it.programme_id == @programme.id }
+            .select { it.programme_type == @programme.type }
             .filter_map(&:parent_relationship)
       ).compact.uniq.sort_by(&:label)
   end

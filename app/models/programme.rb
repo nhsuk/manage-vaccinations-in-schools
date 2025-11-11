@@ -38,23 +38,17 @@ class Programme < ApplicationRecord
 
   def to_param = type
 
+  def ==(other) = type == other.type
+
+  def eql?(other) = other.is_a?(Programme) && type.eql?(other.type)
+
+  def <=>(other) = type <=> other.type
+
+  delegate :hash, to: :type
+
   def name = human_enum_name(:type)
 
   def name_in_sentence = flu? ? name.downcase : name
-
-  def group
-    if flu?
-      :flu
-    elsif hpv?
-      :hpv
-    elsif doubles?
-      :doubles
-    elsif mmr?
-      :mmr
-    else
-      raise UnsupportedProgramme, self
-    end
-  end
 
   def doubles? = menacwy? || td_ipv?
 

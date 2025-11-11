@@ -13,14 +13,15 @@ class AppProgrammeStatsComponent < ViewComponent::Base
     helpers
       .policy_scope(VaccinationRecord)
       .administered
-      .where(patient_id: patient_ids, programme:)
+      .where_programme(programme)
+      .where(patient_id: patient_ids)
       .count
   end
 
   def consent_notifications_count
     helpers
       .policy_scope(ConsentNotification)
-      .has_programme(programme)
+      .has_all_programmes_of([programme])
       .joins(:session)
       .where(session: { academic_year: })
       .where(patient_id: patient_ids)

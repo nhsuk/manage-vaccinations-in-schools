@@ -5,7 +5,7 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
 
   included do
     scope :syncable_to_nhs_immunisations_api,
-          -> { includes(:patient, :programme).recorded_in_service }
+          -> { includes(:patient).recorded_in_service }
 
     scope :sync_all_to_nhs_immunisations_api,
           -> do
@@ -13,8 +13,8 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
               Programme.select { Flipper.enabled?(:imms_api_sync_job, it) }
 
             ids =
-              syncable_to_nhs_immunisations_api.where(
-                programme: programmes
+              syncable_to_nhs_immunisations_api.where_programme(
+                programmes
               ).pluck(:id)
 
             VaccinationRecord.where(id: ids).update_all(

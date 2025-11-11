@@ -61,12 +61,10 @@ class Team < ApplicationRecord
   has_many :patient_teams
   has_many :sessions
   has_many :subteams
-  has_many :team_programmes, -> { joins(:programme).order(:"programmes.type") }
 
   has_many :patients, through: :patient_teams
   has_many :community_clinics, through: :subteams
   has_many :locations, through: :subteams
-  has_many :programmes, through: :team_programmes
   has_many :schools, through: :subteams
   has_many :vaccination_records, through: :sessions
 
@@ -76,14 +74,6 @@ class Team < ApplicationRecord
            through: :location_year_groups
 
   has_and_belongs_to_many :users
-
-  scope :has_programmes,
-        ->(programmes) do
-          where(
-            "programme_types @> ARRAY[?]::programme_type[]",
-            programmes.map(&:type)
-          )
-        end
 
   normalizes :email, with: EmailAddressNormaliser.new
   normalizes :phone, with: PhoneNumberNormaliser.new
@@ -113,8 +103,8 @@ class Team < ApplicationRecord
 
   def generic_clinic_session(academic_year:)
     sessions
-      .includes(:location, :location_programme_year_groups, :programmes)
-      .create_with(programmes:, dates: [])
+      .includes(:location, :location_programme_year_groups)
+      .create_with(programme_types:, dates: [])
       .find_or_create_by!(academic_year:, location: generic_clinic)
       .tap(&:sync_location_programme_year_groups!)
   end

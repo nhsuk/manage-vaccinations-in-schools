@@ -44,8 +44,6 @@ class User < ApplicationRecord
   has_and_belongs_to_many :teams
   has_many :organisations, -> { distinct }, through: :teams
 
-  has_many :programmes, through: :teams
-
   has_one :reporting_api_one_time_token,
           class_name: "ReportingAPI::OneTimeToken"
 

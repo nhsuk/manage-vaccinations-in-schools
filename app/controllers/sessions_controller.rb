@@ -9,7 +9,7 @@ class SessionsController < ApplicationController
   def index
     @programmes = current_user.selected_team.programmes
 
-    scope = policy_scope(Session).includes(:location, :programmes)
+    scope = policy_scope(Session).includes(:location)
 
     sessions = @form.apply(scope)
 

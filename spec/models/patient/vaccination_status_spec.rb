@@ -13,7 +13,6 @@
 #  status                :integer          default("not_eligible"), not null
 #  latest_location_id    :bigint
 #  patient_id            :bigint           not null
-#  programme_id          :bigint
 #
 # Indexes
 #
@@ -37,7 +36,6 @@ describe Patient::VaccinationStatus do
   let(:programme) { CachedProgramme.sample }
 
   it { should belong_to(:patient) }
-  it { should belong_to(:programme) }
 
   it do
     expect(patient_vaccination_status).to define_enum_for(:status).with_values(

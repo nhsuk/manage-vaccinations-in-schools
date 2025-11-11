@@ -2,9 +2,9 @@
 
 module Stats
   class ConsentsBySchool
-    def initialize(teams:, programmes:, academic_year:)
+    def initialize(teams:, programme_types:, academic_year:)
       @teams = teams
-      @programmes = programmes
+      @programme_types = programme_types
       @academic_year = academic_year
     end
 
@@ -21,19 +21,13 @@ module Stats
 
     private
 
-    attr_reader :teams, :programmes, :academic_year
+    attr_reader :teams, :programme_types, :academic_year
 
     def sessions
       @sessions ||=
         ::Session
-          .joins(:session_programmes)
-          .where(
-            team: @teams,
-            academic_year: @academic_year,
-            session_programmes: {
-              programme: @programmes
-            }
-          )
+          .where(team: @teams, academic_year: @academic_year)
+          .has_any_programme_types_of(programme_types)
           .eager_load(:location)
     end
 
@@ -51,11 +45,11 @@ module Stats
           .includes(patient: { consents: %i[consent_form parent] })
           .find_each do |patient_location|
             grouped_consents =
-              @programmes.map do |programme|
+              programme_types.map do |programme_type|
                 ConsentGrouper.call(
                   patient_location.patient.consents,
-                  programme_id: programme.id,
-                  academic_year: @academic_year
+                  programme_type:,
+                  academic_year:
                 )&.min_by(&:created_at)
               end
 

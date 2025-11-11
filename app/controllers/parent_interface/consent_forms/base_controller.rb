@@ -22,7 +22,7 @@ module ParentInterface
 
     def set_consent_form
       @consent_form =
-        ConsentForm.includes(:programmes).find(
+        ConsentForm.includes(:consent_form_programmes).find(
           params[:consent_form_id] || params[:id]
         )
     end
@@ -47,9 +47,10 @@ module ParentInterface
     def set_programmes
       @programmes =
         if @consent_form.present?
-          @consent_form.programmes
+          @consent_form.consent_form_programmes.map(&:programme)
         elsif @session.present? && params[:programme_types].present?
-          @session.programmes.where(type: params[:programme_types].split("-"))
+          types = params[:programme_types].split("-")
+          @session.programmes.select { it.type.in?(types) }
         end
     end
 

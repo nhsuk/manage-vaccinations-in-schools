@@ -58,6 +58,7 @@ FactoryBot.define do
   factory :consent_form do
     transient do
       session { association :session }
+      programmes { session.programmes }
       response { "given" }
       reason_for_refusal { nil }
       reason_for_refusal_notes { "" }
@@ -92,9 +93,7 @@ FactoryBot.define do
 
     parental_responsibility { "yes" }
 
-    programmes { session.programmes }
     team { session.team }
-
     location { session.location }
     school { location.school? ? location : association(:school, team:) }
     school_confirmed { true }
@@ -107,6 +106,12 @@ FactoryBot.define do
           response: "no"
         )
       ]
+    end
+
+    after(:build) do |consent_form, evaluator|
+      evaluator.programmes.each do |programme|
+        consent_form.consent_form_programmes.build(programme:)
+      end
     end
 
     trait :archived do

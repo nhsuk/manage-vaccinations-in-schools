@@ -41,7 +41,7 @@ class DraftImportsController < ApplicationController
     year_groups =
       @location
         .location_programme_year_groups
-        .where(programme: current_team.programmes)
+        .where_programme(current_team.programmes)
         .pluck_year_groups
 
     @year_group_options =

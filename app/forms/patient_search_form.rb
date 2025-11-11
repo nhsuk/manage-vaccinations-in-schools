@@ -42,7 +42,7 @@ class PatientSearchForm < SearchForm
   def programmes
     @programmes ||=
       if programme_types.present?
-        Programme.where(type: programme_types)
+        Programme.where(type: programme_types).to_a
       else
         session&.programmes || team&.programmes || []
       end

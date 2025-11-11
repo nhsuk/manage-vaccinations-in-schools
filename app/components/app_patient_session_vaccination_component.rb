@@ -18,8 +18,7 @@ class AppPatientSessionVaccinationComponent < AppPatientSessionSectionComponent
   def render?
     patient
       .vaccination_records
-      .where(programme:)
-      .includes(:programme)
+      .where_programme(programme)
       .any? { it.show_in_academic_year?(academic_year) }
   end
 

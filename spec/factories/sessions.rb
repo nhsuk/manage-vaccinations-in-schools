@@ -39,13 +39,15 @@ FactoryBot.define do
     transient do
       date { Date.current }
       subteam { association(:subteam, team:) }
+      programmes { [CachedProgramme.sample] }
     end
 
     sequence(:slug) { |n| "session-#{n}" }
 
     dates { [date].compact }
     academic_year { (dates.first || Date.current).academic_year }
-    programmes { [CachedProgramme.sample] }
+    programme_types { programmes.map(&:type) }
+
     team { association(:team, programmes:) }
     location { association(:school, subteam:, academic_year:, programmes:) }
 
