@@ -1,0 +1,309 @@
+organisation:
+  ods_code: RYW
+
+team:
+  workgroup: birminghamsais
+  name: Birmingham and Solihull Immunisation Team
+  email: bchnt.birminghamimms@nhs.net
+  phone: "01214663410"
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.bhamcommunity.nhs.uk/patient-privacy-notice/
+  privacy_notice_url: https://www.bhamcommunity.nhs.uk/download.cfm?doc=docm93jijm4n6296.pdf&ver=11443
+  reply_to_id: 57c9f60f-d430-4a47-9ef5-a7caf9ca7885
+  type: poc_only
+
+programmes: [hpv, menacwy, td_ipv, flu]
+
+subteams:
+  springfield:
+    name: Springfield Team
+    email: BCHNT.HPVTeamsouth@nhs.net
+    phone: "01214663410"
+    reply_to_id: 9dac769c-f5a8-4d42-a269-2421ad4ab953
+  lansdowne:
+    name: Lansdowne Team
+    email: BCHNT.hpvteamcentral@nhs.net
+    phone: "0121 245 5763"
+    reply_to_id: 7f60d1e7-0601-491a-92ee-30d51635744d
+  solihull:
+    name: Solihull Team
+    email: bchnt.solihullimms@nhs.net
+    phone: "01214666545"
+    reply_to_id: 70b686e7-b02d-41a6-ac45-70bbcf7422ce
+  clinics:
+    name: Birmingham and Solihull Immunisation Team (Clinics)
+    email: bchnt.birminghamimms@nhs.net
+    phone: "01214663410"
+
+schools:
+  springfield:
+    - 130461 South and City College Birmingham Longbridge
+    - 148722 Lea Hall Academy (also known as Kitts Green Academy)
+    - 142388 Cocks Hill Technology College (succeeded by Cockshut Hill School)
+    - 134034 Al-Burhan Grammar School
+    - 145859 Arc Oakbridge School
+    - 146124 Archbishop Ilsley Catholic School
+    - 140014 Ark Boulton Academy
+    - 137578 Ark Kings Academy
+    - 135970 Ark St Alban's Academy
+    - 141752 Ark Victoria Academy
+    - 139962 Aspire Ap School
+    - 136589 Bartley Green School
+    - 103606 Baskerville School
+    - 143418 Birmingham Independent College
+    - 103560 Bishop Challoner Catholic College
+    - 141318 Bournville School
+    - 141252 Calthorpe Academy
+    - 133227 Centre for Accelerated Learning
+    - 148589 Christ Church, Church of England Secondary Academy
+    - 103563 Colmers School and Sixth Form College
+    - 143438 Dame Elizabeth Cadbury School
+    - 103586 Darul Uloom Islamic High School
+    - 103567 Edgbaston High School for Girls
+    - 134908 Elmhurst Ballet School
+    - 139131 Lift Four Dwellings Primary
+    - 139047 Lift Four Dwellings Secondary
+    - 103625 Fox Hollies School
+    - 131164 Green Oak Academy
+    - 137858 Hall Green School
+    - 144336 Hallmoor School
+    - 136213 Harborne Academy
+    - 136123 Hazrat Khadijatul Kubra Girls School
+    - 147038 Heritage Academy
+    - 137346 Hillcrest School and Sixth Form Centre
+    - 144719 Holy Trinity Catholic School
+    - 146780 Hopwood Hall School
+    - 139526 James Brindley School
+    - 134571 Jamia Islamia Birmingham
+    - 141242 Kimichi School
+    - 147440 King Edward VI Balaam Wood Academy
+    - 137044 King Edward VI Camp Hill School for Girls
+    - 137046 King Edward VI Five Ways School
+    - 103585 King Edward VI High School for Girls
+    - 150320 King Edward VI King's Norton School for Boys
+    - 148684 King Edward VI Northfield School for Girls
+    - 136152 King Edward VI Sheldon Heath Academy
+    - 103584 King Edward's School
+    - 134098 Kings Heath Primary School
+    - 103486 Kings Heath Secondary School
+    - 136590 Kings Norton Girls' School
+    - 103632 Lindsworth School
+    - 103519 Moseley School and Sixth Form
+    - 145417 New Ways School
+    - 136406 Ninestiles, an Academy
+    - 103566 Priory School
+    - 103497 Queensbridge School
+    - 139706 R.Y.A.N Education Academy
+    - 139671 Reach School
+    - 142338 Riverside Education
+    - 103613 Selly Oak Trust School
+    - 103498 Selly Park Girls' School
+    - 135911 Shenley Academy
+    - 138971 Silver Birch School
+    - 144464 Small Heath Leadership Academy
+    - 103564 St George's School Edgbaston
+    - 135208 St Paul's School Hertford St
+    - 141835 St Thomas Aquinas Catholic School
+    - 151403 Swanshurst School
+    - 142071 The Edge Academy
+    - 140863 The University of Birmingham School
+    - 144306 Tile Cross Academy
+    - 148521 Turves Green Boys' School
+    - 103605 Uffculme School
+    - 103601 Victoria School
+    - 139888 Washwood Heath Academy
+    - 103501 Wheelers Lane Technology College
+    - 139994 Yardleys School
+  lansdowne:
+    - 144721 John Wilmott School (succeeded by The Royal Sutton School)
+    - 149155 King Solomon International Business School
+    - 103146 City of Birmingham School
+    - 145580 Arena Academy
+    - 136882 Aston Manor Academy
+    - 138222 Aston University Engineering Academy
+    - 137988 Bishop Vesey's Grammar School
+    - 140524 Bishop Walsh Catholic School
+    - 143039 Blackwater Academy
+    - 149042 BOA Digital Technologies Academy
+    - 103611 Braidwood School for the Deaf
+    - 139841 Broadway Academy
+    - 103539 Cardinal Wiseman Catholic School
+    - 148187 City Academy
+    - 137819 City United Academy (CUA)
+    - 138775 East Birmingham Network Academy
+    - 141739 Ebn Academy  2
+    - 141969 Eden Boys' School, Birmingham
+    - 143413 Erdington Academy
+    - 136908 Fairfax
+    - 135561 Flexible Learning School
+    - 143435 Fortis Academy
+    - 138695 George Dixon Academy
+    - 139048 Greenwood Academy
+    - 139746 Hamstead Hall Academy
+    - 135907 Heartlands Academy
+    - 103576 Highclare School
+    - 103503 Hodge Hill College
+    - 103483 Hodge Hill Girls' School
+    - 103509 Holte School
+    - 137034 Holyhead School
+    - 141003 Jewellery Quarter Academy
+    - 137043 King Edward VI Aston School
+    - 143562 King Edward VI Handsworth Grammar School for Boys
+    - 138937 King Edward VI Handsworth Wood Girls' Academy
+    - 137047 King Edward VI Handsworth Grammar School for Girls
+    - 145120 Lordswood Boys' School
+    - 136592 King Edward VI Lordswood Girls' School and Sixth Form Centre
+    - 148225 Mayfield School
+    - 148644 Myles Academy
+    - 143174 Newbury Independent School
+    - 138586 Nishkam High School
+    - 136032 North Birmingham Academy
+    - 151642 Oscott Manor School
+    - 137053 Plantsbrook School
+    - 103614 Priestley Smith School
+    - 148553 Prince Albert High School
+    - 146858 Queensbury School
+    - 134982 Spring Hill High School
+    - 147707 St Edmund Campion Catholic School
+    - 103534 St John Wall Catholic School
+    - 103531 St Paul's School for Girls
+    - 138137 Stockland Green School
+    - 136778 Sutton Coldfield Grammar School for Girls
+    - 138136 The Arthur Terry School
+    - 103622 The Pines Special School
+    - 150101 The Pioneers Academy
+    - 139731 Titan St Georges Academy
+    - 138281 Wilson Stuart School
+  solihull:
+    - 149753 The Heights
+    - 135971 Park Hall Academy
+    - 136994 Alderbrook School
+    - 136333 Arden
+    - 103493 Bordesley Green Girls' School & Sixth Form
+    - 141171 Castlewood School
+    - 149062 Daylesford Academy
+    - 145878 Eden Boys' Leadership Academy, Birmingham East
+    - 147201 Eden Girls'  Leadership Academy, Birmingham
+    - 104132 Forest Oak School
+    - 129342 Grace Academy Solihull
+    - 131687 Hamd House School
+    - 104130 Hazel Oak School
+    - 136909 Heart of England School
+    - 136347 John Henry Newman Catholic College
+    - 103630 Langley School
+    - 137231 Light Hall School
+    - 137008 Lode Heath School
+    - 142075 Lyndon School
+    - 104133 Merstone School
+    - 104131 Reynalds Cross School
+    - 138059 Rockwood Academy
+    - 141668 Saltley Academy
+    - 143895 Smith's Wood Academy
+    - 143918 Solihull Alternative Provision Academy (splits into two with Saturn Centre)
+    - 104124 Solihull School
+    - 134476 St Peter's Catholic School
+    - 147757 Starbank School (Hobmoor Road)
+    - 135453 The Island Project School
+    - 104038 Triple Crown Centre
+    - 146379 Tudor Grange Academy Kingshurst
+    - 136310 Tudor Grange Academy, Solihull
+    - 142219 Waverley
+
+clinics:
+  springfield:
+  lansdowne:
+  solihull:
+    - name: Jaffray Resource Centre
+      address_line_1: 7 Jaffray Crescent
+      address_line_2: Erdington
+      address_town: Birmingham
+      address_postcode:
+      ods_code: RYW42
+    - name: Landsdowne Health Centre
+      address_line_1: 34 Lansdowne Street
+      address_line_2: Winson Green
+      address_town: Birmingham
+      address_postcode:
+      ods_code: RYW44
+    - name: Poplar Primary Care Centre
+      address_line_1: 58 Poplar Road
+      address_line_2: Kings Heath
+      address_town: Birmingham
+      address_postcode: B14 7AG
+      ods_code: 5M152
+    - name: Hall Green Health Centre
+      address_line_1: 977-979 Stratford Rd
+      address_town: Birmingham
+      address_postcode:
+      ods_code: 5M176
+    - name: Solihull Methodist Church
+      address_line_1: Solihull Methodist Church
+      address_line_2: Blossomfield Rd
+      address_town: Solihull
+      address_postcode:
+      ods_code:
+    - name: Hobmoor Road Centre
+      address_line_1: 192 Hob Moor road
+      address_line_2: Small Heath
+      address_town: Birmingham
+      address_postcode:
+      ods_code: RYW41
+    - name: Castle Vale Primary Care Centre
+      address_line_1: 70 Tangmere Drive
+      address_line_2: Castle vale
+      address_town: Birmingham
+      address_postcode:
+      ods_code: RYW30
+    - name: Sutton Cottage Hospital
+      address_line_1: 27a Birmingham Road
+      address_line_2: Sutton Coldfield
+      address_town: Birmingham
+      address_postcode:
+      ods_code: RYW20
+    - name: St Margaret's Church Olton
+      address_line_1: St Margaret's Rd
+      address_line_2: Olton
+      address_town: Solihull
+      address_postcode:
+      ods_code: SMCO
+    - name: Solihull School
+      address_line_1: 793 Warwick Road
+      address_town: Solihull
+      address_postcode:
+      ods_code: EE104124
+    - name: Saltley Health Centre
+      address_line_1: 48 Cradock Rd
+      address_line_2: Saltley
+      address_town: Birmingham
+      address_postcode:
+      ods_code: RYW55
+    - name: Riverside Lodge Intermediate Care Centre
+      address_line_1: 160 Hobmoor Road
+      address_line_2: Small Heath
+      address_town: Birmingham
+      address_postcode:
+      ods_code: RYW13
+    - name: Springfields Centre for Health Promotion
+      address_line_1: Raddlebarn Road
+      address_line_2: Selly Oak
+      address_town: Birmingham
+      address_postcode:
+      ods_code: RYW60
+    - name: West Heath Hospital
+      address_line_1: Rednal Road
+      address_line_2: West Heath
+      address_town: Birmingham
+      address_postcode:
+      ods_code: RYW24
+    - name: Quinton Lane Care Centre
+      address_line_1: 27 Quinton Ln
+      address_line_2: Quinton
+      address_town: Birmingham
+      address_postcode:
+      ods_code: RYW53
+    - name: Shirley Road Health Centre
+      address_line_1: 189 Shirley Rd
+      address_town: Birmingham
+      address_postcode:
+      ods_code: RYW57
+
