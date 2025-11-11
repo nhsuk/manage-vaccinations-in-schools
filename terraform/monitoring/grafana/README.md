@@ -9,6 +9,22 @@ This module creates Grafana dashboards from the dashboard configuration that is 
 A service account token is required for the Grafana provider. The [tf_grafana.sh](../tf_grafana.sh) script shall be used
 for any terraform commands. It takes care of obtaining a valid service account token as well as deleting expired tokens.
 
+### Managing group membership
+
+Assignment of AD groups to Grafana roles is done in [variables.tf](../aws/variables.tf). This requires knowledge of the group id.
+
+1. Find the identity store id:
+
+```
+aws sso-admin list-instances
+```
+
+2. Find the group id:
+
+```
+aws identitystore list-groups --identity-store-id <IDENTITY_STORE_ID> --filters AttributePath=DisplayName,AttributeValue=<GROUP_NAME>
+```
+
 ## Variables
 
 - `service_account_token`: Grafana service account token (required)
