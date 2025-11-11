@@ -110,7 +110,7 @@ class ImmunisationImportRow
       performed_at:,
       performed_by_user:,
       performed_ods_code: performed_ods_code&.to_s,
-      programme:,
+      programme_type: programme.type,
       protocol:,
       session:,
       supplied_by:
@@ -324,7 +324,7 @@ class ImmunisationImportRow
         team
           .sessions
           .where(academic_year: AcademicYear.current)
-          .includes(:location, :programmes, :session_dates)
+          .includes(:location, :session_dates)
           .find_by(id:)
       end
   end
@@ -333,11 +333,10 @@ class ImmunisationImportRow
     if imms_api_record?
       nil
     elsif supplied_by && supplied_by != performed_by_user
-      if patient.patient_specific_directions.exists?(
-           programme:,
-           academic_year:,
-           delivery_site: delivery_site_value
-         )
+      if patient
+           .patient_specific_directions
+           .where_programme(programme)
+           .exists?(academic_year:, delivery_site: delivery_site_value)
         "psd"
       elsif delivery_method_value == "nasal_spray"
         "pgd"
@@ -1006,7 +1005,7 @@ class ImmunisationImportRow
     field = vaccine_name.presence || combined_vaccination_and_dose_sequence
 
     if vaccine
-      if programme && vaccine.programme_id != programme.id
+      if programme && vaccine.programme_type != programme.type
         errors.add(
           field.header,
           "is not given in the #{programme.name_in_sentence} programme"

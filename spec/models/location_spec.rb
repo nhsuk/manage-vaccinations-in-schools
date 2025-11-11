@@ -43,12 +43,6 @@ describe Location do
   describe "associations" do
     it { should have_many(:location_programme_year_groups) }
 
-    it do
-      expect(location).to have_many(:programmes).through(
-        :location_programme_year_groups
-      ).order(:type)
-    end
-
     describe "local_authority" do
       context "when the location has a gias_local_authority_code" do
         let!(:local_authority) { create(:local_authority, gias_code: 111) }

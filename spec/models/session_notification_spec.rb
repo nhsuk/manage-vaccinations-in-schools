@@ -44,6 +44,7 @@ describe SessionNotification do
     let(:patient) { create(:patient, parents:, year_group: 10, session:) }
     let(:programme) { CachedProgramme.td_ipv }
     let(:programmes) { [programme] }
+    let(:programme_types) { programmes.map(&:type) }
     let(:team) { create(:team, programmes:) }
     let(:location) { create(:school, team:) }
     let(:session) { create(:session, location:, programmes:, team:) }
@@ -73,13 +74,25 @@ describe SessionNotification do
       it "enqueues an email per parent who gave consent" do
         expect { create_and_send! }.to have_delivered_email(
           :session_school_reminder
-        ).with(parent:, patient:, programmes:, session:, sent_by: current_user)
+        ).with(
+          parent:,
+          patient:,
+          programme_types:,
+          session:,
+          sent_by: current_user
+        )
       end
 
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_delivered_sms(
           :session_school_reminder
-        ).with(parent:, patient:, programmes:, session:, sent_by: current_user)
+        ).with(
+          parent:,
+          patient:,
+          programme_types:,
+          session:,
+          sent_by: current_user
+        )
       end
 
       context "when parent doesn't want to receive updates by text" do
@@ -102,7 +115,7 @@ describe SessionNotification do
           ).with(
             parent:,
             patient:,
-            programmes: consented_programmes,
+            programme_types: consented_programmes.map(&:type),
             session:,
             sent_by: current_user
           )
@@ -114,7 +127,7 @@ describe SessionNotification do
           ).with(
             parent:,
             patient:,
-            programmes: consented_programmes,
+            programme_types: consented_programmes.map(&:type),
             session:,
             sent_by: current_user
           )
@@ -141,13 +154,13 @@ describe SessionNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programmes:,
+          programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_email(:session_clinic_initial_invitation).with(
                 parent: parents.second,
                 patient:,
-                programmes:,
+                programme_types:,
                 session:,
                 sent_by: current_user
               )
@@ -159,13 +172,13 @@ describe SessionNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programmes:,
+          programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_sms(:session_clinic_initial_invitation).with(
                 parent: parents.second,
                 patient:,
-                programmes:,
+                programme_types:,
                 session:,
                 sent_by: current_user
               )
@@ -185,7 +198,7 @@ describe SessionNotification do
           ).with(
             parent: parents.first,
             patient:,
-            programmes: [programmes.second],
+            programme_types: [programmes.second.type],
             session:,
             sent_by: current_user
           )
@@ -197,7 +210,7 @@ describe SessionNotification do
           ).with(
             parent: parents.first,
             patient:,
-            programmes: [programmes.second],
+            programme_types: [programmes.second.type],
             session:,
             sent_by: current_user
           )
@@ -213,7 +226,7 @@ describe SessionNotification do
           ).with(
             parent: parents.first,
             patient:,
-            programmes:,
+            programme_types:,
             session:,
             sent_by: current_user
           )
@@ -225,7 +238,7 @@ describe SessionNotification do
           ).with(
             parent: parents.first,
             patient:,
-            programmes:,
+            programme_types:,
             session:,
             sent_by: current_user
           )
@@ -241,7 +254,7 @@ describe SessionNotification do
           ).with(
             parent: parents.first,
             patient: patient,
-            programmes:,
+            programme_types:,
             session: session,
             sent_by: current_user
           )
@@ -253,7 +266,7 @@ describe SessionNotification do
           ).with(
             parent: parents.first,
             patient: patient,
-            programmes:,
+            programme_types:,
             session: session,
             sent_by: current_user
           )
@@ -271,7 +284,7 @@ describe SessionNotification do
           ).with(
             parent:,
             patient:,
-            programmes:,
+            programme_types:,
             session:,
             sent_by: current_user
           )
@@ -298,13 +311,13 @@ describe SessionNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programmes:,
+          programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_email(:session_clinic_subsequent_invitation).with(
                 parent: parents.second,
                 patient:,
-                programmes:,
+                programme_types:,
                 session:,
                 sent_by: current_user
               )
@@ -316,13 +329,13 @@ describe SessionNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programmes:,
+          programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_sms(:session_clinic_subsequent_invitation).with(
                 parent: parents.second,
                 patient:,
-                programmes:,
+                programme_types:,
                 session:,
                 sent_by: current_user
               )
@@ -339,7 +352,7 @@ describe SessionNotification do
           ).with(
             parent:,
             patient:,
-            programmes:,
+            programme_types:,
             session:,
             sent_by: current_user
           )

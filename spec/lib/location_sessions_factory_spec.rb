@@ -14,7 +14,7 @@ describe LocationSessionsFactory do
       it "creates missing sessions" do
         expect { call }.to change(team.sessions, :count).by(1)
 
-        session = team.sessions.includes(:location, :programmes).first
+        session = team.sessions.includes(:location).first
         expect(session.location).to eq(location)
         expect(session.academic_year).to eq(academic_year)
         expect(session.programmes).to eq(programmes)
@@ -78,7 +78,7 @@ describe LocationSessionsFactory do
       it "creates missing sessions" do
         expect { call }.to change(team.sessions, :count).by(1)
 
-        session = team.sessions.includes(:location, :programmes).first
+        session = team.sessions.includes(:location).first
         expect(session.location).to eq(location)
         expect(session.academic_year).to eq(academic_year)
         expect(session.programmes).to eq(programmes)
@@ -190,8 +190,7 @@ describe LocationSessionsFactory do
         it "creates missing sessions for each programme group" do
           expect { call }.to change(team.sessions, :count).by(1)
 
-          session =
-            team.sessions.includes(:location, :programmes).find_by(location:)
+          session = team.sessions.includes(:location).find_by(location:)
           expect(session.programmes).to match_array(programmes)
         end
       end
@@ -202,12 +201,7 @@ describe LocationSessionsFactory do
         it "creates missing sessions for each programme group" do
           expect { call }.to change(team.sessions, :count).by(3)
 
-          session =
-            team
-              .sessions
-              .order(:created_at)
-              .where(location:)
-              .includes(:programmes)
+          session = team.sessions.order(:created_at).where(location:)
           expect(session.first.programmes).to eq(flu_programmes)
           expect(session.second.programmes).to eq(hpv_programmes)
           expect(session.third.programmes).to eq(doubles_programmes)

@@ -61,7 +61,7 @@ class SessionNotification < ApplicationRecord
             ConsentGrouper
               .call(
                 patient.consents,
-                programme_id: programme.id,
+                programme_type: programme.type,
                 academic_year:
               )
               .select(&:response_given?)
@@ -113,7 +113,7 @@ class SessionNotification < ApplicationRecord
       params = {
         parent:,
         patient:,
-        programmes:,
+        programme_types: programmes.map(&:type),
         session:,
         sent_by: current_user
       }

@@ -19,9 +19,9 @@
                                            size: "s",
                                            text: "Which vaccinations do you give consent for?",
                                          } do %>
-        <% @consent_form.programmes.each do |programme| %>
-          <%= f.govuk_radio_button :chosen_programme, programme.type,
-                                   label: { text: programme.name } %>
+        <% @consent_form.consent_form_programmes.each do |consent_form_programme| %>
+          <%= f.govuk_radio_button :chosen_programme, consent_form_programme.programme_type,
+                                   label: { text: consent_form_programme.programme.name } %>
         <% end %>
       <% end %>
     <% end %>

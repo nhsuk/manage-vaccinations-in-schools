@@ -130,7 +130,7 @@
       <% end %>
 
       <%= f.hidden_field :dose_sequence, value: dose_sequence %>
-      <%= f.hidden_field :programme_id, value: programme.id %>
+      <%= f.hidden_field :programme_type, value: programme.type %>
 
       <%= f.govuk_submit "Continue", class: "nhsuk-u-margin-bottom-0" %>
     </section>

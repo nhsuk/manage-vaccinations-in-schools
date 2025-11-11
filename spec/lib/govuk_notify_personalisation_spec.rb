@@ -7,7 +7,7 @@ describe GovukNotifyPersonalisation do
       session:,
       consent:,
       consent_form:,
-      programmes:,
+      programme_types:,
       vaccination_record:
     ).to_h
   end
@@ -15,6 +15,7 @@ describe GovukNotifyPersonalisation do
   let(:hpv_programme) { CachedProgramme.hpv }
   let(:flu_programme) { CachedProgramme.flu }
   let(:programmes) { [hpv_programme] }
+  let(:programme_types) { programmes.map(&:type) }
 
   let(:team) do
     create(
@@ -594,7 +595,8 @@ describe GovukNotifyPersonalisation do
     before do
       Vaccine
         .active
-        .find_by(programme: hpv_programme)
+        .where_programme(hpv_programme)
+        .first
         .update!(side_effects: %w[swelling unwell])
     end
 

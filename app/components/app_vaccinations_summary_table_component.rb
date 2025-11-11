@@ -16,15 +16,17 @@ class AppVaccinationsSummaryTableComponent < ViewComponent::Base
   def render? = policy(VaccinationRecord.new).new?
 
   def count_by_vaccine
-    vaccines = session.vaccines.active.includes(:programme).order(:brand)
+    vaccines = session.vaccines.active.order(:brand)
 
     vaccination_records =
       session
         .vaccination_records
-        .includes(vaccine: :programme)
+        .includes(:vaccine)
         .administered
-        .where(performed_by_user: current_user)
-        .where(performed_at: Date.current.all_day)
+        .where(
+          performed_by_user: current_user,
+          performed_at: Date.current.all_day
+        )
 
     results = vaccines.index_with { 0 }
 

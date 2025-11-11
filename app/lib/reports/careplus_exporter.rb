@@ -69,7 +69,8 @@ class Reports::CareplusExporter
     scope =
       VaccinationRecord
         .kept
-        .where(session: { team: }, programme:)
+        .where_programme(programme)
+        .where(session: { team: })
         .for_academic_year(academic_year)
         .administered
         .order(:performed_at)
@@ -108,11 +109,8 @@ class Reports::CareplusExporter
     @consents ||=
       Consent
         .select("DISTINCT ON (patient_id) consents.*")
-        .where(
-          patient: vaccination_records.select(:patient_id),
-          programme:,
-          academic_year:
-        )
+        .where_programme(programme)
+        .where(patient: vaccination_records.select(:patient_id), academic_year:)
         .not_invalidated
         .response_given
         .order(:patient_id, created_at: :desc)

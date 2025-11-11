@@ -28,7 +28,7 @@ describe DraftVaccinationRecord do
       notes: "Some notes.",
       outcome: "administered",
       patient_id: patient.id,
-      programme_id: programme.id,
+      programme_type: programme.type,
       session_id: session.id
     }
   end
@@ -37,7 +37,7 @@ describe DraftVaccinationRecord do
     {
       notes: "Some notes.",
       patient_id: patient.id,
-      programme_id: programme.id,
+      programme_type: programme.type,
       session_id: session.id,
       outcome: "unwell"
     }

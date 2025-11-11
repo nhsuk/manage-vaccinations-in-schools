@@ -14,7 +14,7 @@ class AppPatientSessionConsentComponent < AppPatientSessionSectionComponent
       patient
         .consent_notifications
         .request
-        .has_programme(programme)
+        .has_all_programmes_of([programme])
         .joins(:session)
         .where(session: { academic_year: })
         .order(sent_at: :desc)
@@ -25,8 +25,9 @@ class AppPatientSessionConsentComponent < AppPatientSessionSectionComponent
     @consents ||=
       patient
         .consents
-        .where(academic_year:, programme:)
-        .includes(:consent_form, :parent, :programme)
+        .where_programme(programme)
+        .where(academic_year:)
+        .includes(:consent_form, :parent)
         .order(created_at: :desc)
   end
 
@@ -47,7 +48,11 @@ class AppPatientSessionConsentComponent < AppPatientSessionSectionComponent
 
   def grouped_consents
     @grouped_consents ||=
-      ConsentGrouper.call(consents, programme_id: programme.id, academic_year:)
+      ConsentGrouper.call(
+        consents,
+        programme_type: programme.type,
+        academic_year:
+      )
   end
 
   def who_refused

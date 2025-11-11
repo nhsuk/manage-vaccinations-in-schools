@@ -3,7 +3,8 @@
 class VaccinePolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.joins(:programme).where(programme: user.selected_team.programmes)
+      team = user.selected_team
+      scope.where(programme_type: team.programme_types)
     end
   end
 end

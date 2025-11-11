@@ -25,19 +25,21 @@ describe DraftSession do
   let(:new_programme) { CachedProgramme.hpv }
 
   let(:session) { create(:session, team:, programmes: existing_programmes) }
-  let(:programme_ids) { existing_programmes.map(&:id) + [new_programme.id] }
+  let(:programme_types) do
+    existing_programmes.map(&:type) + [new_programme.type]
+  end
 
-  let(:attributes) { { programme_ids:, wizard_step: :programmes } }
+  let(:attributes) { { programme_types:, wizard_step: :programmes } }
 
   describe "validations" do
     it { should be_valid }
 
     context "when attempting to remove a programme" do
-      let(:programme_ids) { [existing_programmes.first.id] }
+      let(:programme_types) { [existing_programmes.first.id] }
 
       it "is invalid" do
         expect(draft_session.save(context: :update)).to be(false)
-        expect(draft_session.errors[:programme_ids]).to include(
+        expect(draft_session.errors[:programme_types]).to include(
           "You cannot remove a programme from the session once it has been added"
         )
       end
@@ -48,9 +50,9 @@ describe DraftSession do
     subject(:write_to!) { draft_session.write_to!(session) }
 
     it "adds the sessions to the programme" do
-      expect { write_to! }.to change { session.session_programmes.size }.by(1)
+      expect { write_to! }.to change { session.programme_types.size }.by(1)
 
-      expect(session.session_programmes.map(&:programme)).to contain_exactly(
+      expect(session.programmes).to contain_exactly(
         *existing_programmes,
         new_programme
       )

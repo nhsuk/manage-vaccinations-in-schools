@@ -14,7 +14,7 @@ class DraftSession
   attribute :days_before_consent_reminders, :integer
   attribute :location_id, :integer
   attribute :national_protocol_enabled, :boolean
-  attribute :programme_ids, array: true, default: []
+  attribute :programme_types, array: true, default: []
   attribute :psd_enabled, :boolean
   attribute :requires_registration, :boolean
   attribute :send_consent_requests_at, :date
@@ -52,7 +52,7 @@ class DraftSession
   end
 
   on_wizard_step :programmes, exact: true do
-    validates :programme_ids, presence: true
+    validates :programme_types, presence: true
     validate :cannot_remove_programmes
   end
 
@@ -104,16 +104,16 @@ class DraftSession
     ProgrammePolicy::Scope
       .new(@current_user, Programme)
       .resolve
-      .where(id: programme_ids)
+      .where(type: programme_types)
   end
 
-  def programme_ids=(values)
-    super(values&.compact_blank&.map(&:to_i) || [])
+  def programme_types=(values)
+    super(values&.compact_blank || [])
   end
 
   def location_programme_year_groups
     @location_programme_year_groups ||=
-      session.location_programme_year_groups.includes(:programme).to_a +
+      session.location_programme_year_groups.to_a +
         new_programmes.flat_map do |programme|
           programme.default_year_groups.map do |value|
             location_year_group =
@@ -132,7 +132,7 @@ class DraftSession
 
     programmes.select do |programme|
       location_programme_year_groups.any? do
-        it.programme_id == programme.id && it.year_group == year_group
+        it.programme_type == programme.type && it.year_group == year_group
       end
     end
   end
@@ -185,9 +185,8 @@ class DraftSession
   def write_to!(session)
     super(session)
 
-    new_programme_ids.each do |programme_id|
-      session.session_programmes.build(programme_id:)
-    end
+    session.programme_types =
+      (session.programme_types + new_programme_types).sort.uniq
 
     session.session_dates.each do |session_date|
       unless session_dates.any? { it.id == session_date.id }
@@ -209,7 +208,9 @@ class DraftSession
   def create_location_programme_year_groups!
     programmes_to_create =
       new_programmes.reject do |programme|
-        location.location_programme_year_groups.exists?(programme:)
+        location.location_programme_year_groups.exists?(
+          programme_type: programme.type
+        )
       end
 
     location.import_default_programme_year_groups!(
@@ -230,7 +231,7 @@ class DraftSession
   end
 
   def writable_attribute_names
-    super - %w[location_id session_dates programme_ids]
+    super - %w[location_id programme_types session_dates]
   end
 
   def include_notification_steps?
@@ -238,12 +239,12 @@ class DraftSession
       session.session_notifications.empty?
   end
 
-  def new_programme_ids
-    @new_programme_ids ||= programme_ids - session.programme_ids
+  def new_programme_types
+    @new_programme_types ||= programme_types - session.programme_types
   end
 
   def new_programmes
-    @new_programmes ||= Programme.where(id: new_programme_ids)
+    @new_programmes ||= Programme.where(type: new_programme_types)
   end
 
   def valid_session_dates
@@ -281,8 +282,8 @@ class DraftSession
   end
 
   def cannot_remove_programmes
-    if (session.programme_ids - programme_ids).present?
-      errors.add(:programme_ids, :inclusion)
+    if (session.programme_types - programme_types).present?
+      errors.add(:programme_types, :inclusion)
     end
   end
 

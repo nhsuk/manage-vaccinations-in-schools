@@ -18,15 +18,19 @@ class InvalidateSelfConsentsJob < ApplicationJob
         consents =
           Consent
             .via_self_consent
-            .where(academic_year:, team:, programme:)
-            .where(patient: patients)
+            .where_programme(programme)
+            .where(academic_year:, team:, patient: patients)
             .where("created_at < ?", Date.current.beginning_of_day)
             .not_withdrawn
 
         triages =
           Triage
-            .where(academic_year:, team:, programme:)
-            .where(patient_id: consents.pluck(:patient_id))
+            .where_programme(programme)
+            .where(
+              academic_year:,
+              team:,
+              patient_id: consents.pluck(:patient_id)
+            )
             .where("created_at < ?", Date.current.beginning_of_day)
 
         ActiveRecord::Base.transaction do

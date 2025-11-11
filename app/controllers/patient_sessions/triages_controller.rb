@@ -14,7 +14,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
         .where(academic_year: @session.academic_year)
         .not_invalidated
         .order(created_at: :desc)
-        .find_or_initialize_by(programme: @programme)
+        .find_or_initialize_by(programme_type: @programme.type)
 
     @triage_form =
       TriageForm.new(
@@ -44,7 +44,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
       ConsentGrouper
         .call(
           @patient.reload.consents,
-          programme_id: @programme.id,
+          programme_type: @programme.type,
           academic_year: @academic_year
         )
         .each do

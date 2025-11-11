@@ -38,12 +38,13 @@ FactoryBot.define do
       date { Date.current }
       dates { [] }
       subteam { association(:subteam, team:) }
+      programmes { [CachedProgramme.sample] }
     end
 
     sequence(:slug) { |n| "session-#{n}" }
 
     academic_year { (date || Date.current).academic_year }
-    programmes { [CachedProgramme.sample] }
+    programme_types { programmes.map(&:type) }
     team { association(:team, programmes:) }
     location { association(:school, subteam:, academic_year:, programmes:) }
 

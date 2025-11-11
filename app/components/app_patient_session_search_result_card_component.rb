@@ -270,10 +270,10 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def has_patient_specific_direction?
-    programme_ids = programmes.map(&:id)
+    programme_types = programmes.map(&:type)
     patient.patient_specific_directions.any? do
-      it.programme_id.in?(programme_ids) && it.academic_year == academic_year &&
-        !it.invalidated?
+      it.programme_type.in?(programme_types) &&
+        it.academic_year == academic_year && !it.invalidated?
     end
   end
 

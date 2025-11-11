@@ -11,7 +11,6 @@
 #  vaccine_method   :integer
 #  without_gelatine :boolean
 #  patient_id       :bigint           not null
-#  programme_id     :bigint
 #
 # Indexes
 #
@@ -35,7 +34,6 @@ describe Patient::TriageStatus do
   before { patient.strict_loading!(false) }
 
   it { should belong_to(:patient) }
-  it { should belong_to(:programme) }
 
   it do
     expect(patient_triage_status).to define_enum_for(:status).with_values(

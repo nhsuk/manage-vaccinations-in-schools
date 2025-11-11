@@ -16,7 +16,7 @@
     <span class="nhsuk-u-visually-hidden">Information: </span>
     <p><%= @parent.label %> has submitted the following consent responses for this child:</p>
     <ul class="govuk-list govuk-list--bullet">
-      <% @patient.consents.includes(:programme).not_invalidated.where(parent: @parent).find_each do |consent| %>
+      <% @patient.consents.not_invalidated.where(parent: @parent).find_each do |consent| %>
         <li><%= consent.human_enum_name(:response).upcase_first %> (<%= consent.created_at.to_date.to_fs(:long) %> for <%= consent.programme.name_in_sentence %>)</li>
       <% end %>
     </ul>

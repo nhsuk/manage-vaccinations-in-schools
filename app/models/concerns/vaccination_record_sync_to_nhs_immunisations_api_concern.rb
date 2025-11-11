@@ -5,7 +5,7 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
 
   included do
     scope :syncable_to_nhs_immunisations_api,
-          -> { includes(:patient, :programme).recorded_in_service }
+          -> { includes(:patient).recorded_in_service }
 
     scope :sync_all_to_nhs_immunisations_api,
           -> do

@@ -30,7 +30,7 @@
 <ul class="app-action-list">
   <% if @programme && @session.psd_enabled? %>
     <li class="app-action-list__item">
-      <% if @patient.has_patient_specific_direction?(academic_year: @academic_year, programme: @programme, team: current_team) %>
+      <% if @patient.has_patient_specific_direction?(academic_year: @academic_year, programme_type: @programme.type, team: current_team) %>
         <%= render AppStatusTagComponent.new(:added, context: :patient_specific_direction) %>
       <% else %>
         <%= render AppStatusTagComponent.new(:not_added, context: :patient_specific_direction) %>

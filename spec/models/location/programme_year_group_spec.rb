@@ -7,7 +7,6 @@
 #  id                     :bigint           not null, primary key
 #  programme_type         :enum             not null
 #  location_year_group_id :bigint           not null
-#  programme_id           :bigint
 #
 # Indexes
 #
@@ -25,6 +24,5 @@ describe Location::ProgrammeYearGroup do
 
   describe "associations" do
     it { should belong_to(:location_year_group) }
-    it { should belong_to(:programme) }
   end
 end

@@ -18,7 +18,6 @@
 #  snomed_product_term :string           not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  programme_id        :bigint
 #
 # Indexes
 #
@@ -34,9 +33,9 @@
 #
 FactoryBot.define do
   factory :vaccine do
-    transient { type { Programme.types.keys.sample } }
+    transient { programme { nil } }
 
-    programme { CachedProgramme.send(type) }
+    programme_type { programme&.type || Programme.types.keys.sample }
 
     brand { Faker::Commerce.product_name }
     manufacturer { Faker::Company.name }
@@ -58,7 +57,7 @@ FactoryBot.define do
     end
 
     trait :flu do
-      type { "flu" }
+      programme_type { "flu" }
 
       after(:create) do |vaccine|
         if vaccine.nasal?
@@ -100,7 +99,7 @@ FactoryBot.define do
     end
 
     trait :hpv do
-      type { "hpv" }
+      programme_type { "hpv" }
 
       after(:create) do |vaccine|
         severe_allergies = create(:health_question, :severe_allergies, vaccine:)
@@ -116,7 +115,7 @@ FactoryBot.define do
     end
 
     trait :menacwy do
-      type { "menacwy" }
+      programme_type { "menacwy" }
 
       after(:create) do |vaccine|
         bleeding_disorder =
@@ -135,7 +134,7 @@ FactoryBot.define do
     end
 
     trait :mmr do
-      type { "mmr" }
+      programme_type { "mmr" }
       injection
 
       after(:create) do |vaccine|
@@ -150,7 +149,7 @@ FactoryBot.define do
     end
 
     trait :td_ipv do
-      type { "td_ipv" }
+      programme_type { "td_ipv" }
 
       after(:create) do |vaccine|
         bleeding_disorder =

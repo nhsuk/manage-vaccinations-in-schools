@@ -68,15 +68,15 @@ class ConsentForm < ApplicationRecord
 
   scope :unmatched, -> { recorded.not_archived.where.missing(:consents) }
 
-  scope :has_any_programmes_of,
-        ->(programmes) do
+  scope :has_any_programme_types_of,
+        ->(programme_types) do
           where(
             ConsentFormProgramme
               .select("1")
               .where(
                 "consent_form_programmes.consent_form_id = consent_forms.id"
               )
-              .where(programme: programmes)
+              .where(programme_type: programme_types)
               .arel
               .exists
           )
@@ -88,7 +88,7 @@ class ConsentForm < ApplicationRecord
             academic_year: session.academic_year,
             location: session.location,
             team: session.team
-          ).has_any_programmes_of(session.programmes)
+          ).has_any_programme_types_of(session.programme_types)
         end
 
   attr_accessor :health_question_number,
@@ -106,27 +106,18 @@ class ConsentForm < ApplicationRecord
   belongs_to :team
 
   has_many :consents
-
   has_many :notify_log_entries
+
   has_many :consent_form_programmes,
            -> { ordered },
            dependent: :destroy,
            autosave: true
-
   has_many :given_consent_form_programmes,
            -> { ordered.response_given },
            class_name: "ConsentFormProgramme"
   has_many :refused_consent_form_programmes,
            -> { ordered.response_refused },
            class_name: "ConsentFormProgramme"
-
-  has_many :programmes, through: :consent_form_programmes
-  has_many :given_programmes,
-           through: :given_consent_form_programmes,
-           source: :programme
-  has_many :refused_programmes,
-           through: :refused_consent_form_programmes,
-           source: :programme
 
   has_one :subteam, through: :location
 
@@ -301,7 +292,10 @@ class ConsentForm < ApplicationRecord
     refused_and_given = response_refused? && response_given?
 
     response_steps =
-      ProgrammeGrouper.call(programmes).keys.map { :"response_#{it}" }
+      ProgrammeGrouper
+        .call(consent_form_programmes)
+        .keys
+        .map { :"response_#{it}" }
 
     [
       :name,
@@ -371,8 +365,9 @@ class ConsentForm < ApplicationRecord
 
   def can_offer_without_gelatine?
     response_given? &&
-      programmes.any? do
-        it.vaccine_may_contain_gelatine? && !it.has_multiple_vaccine_methods?
+      consent_form_programmes.any? do
+        it.programme.vaccine_may_contain_gelatine? &&
+          !it.programme.has_multiple_vaccine_methods?
       end
   end
 
@@ -399,7 +394,7 @@ class ConsentForm < ApplicationRecord
         session_location = school || location
 
         sessions_to_search =
-          Session.has_programmes(programmes).where(
+          Session.has_all_programme_types_of(programme_types).where(
             academic_year:,
             location: session_location,
             team:
@@ -411,7 +406,7 @@ class ConsentForm < ApplicationRecord
       end
   end
 
-  def programme_types = programmes.map(&:type)
+  def programme_types = consent_form_programmes.map(&:programme_type)
 
   def vaccines
     @vaccines ||= Vaccine.where(programme_type: programme_types)

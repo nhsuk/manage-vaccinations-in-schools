@@ -79,7 +79,7 @@ describe "mavis teams add-programme" do
     expect(@team.programmes).to include(@programme)
 
     location_programme_year_groups =
-      @school.location_programme_year_groups.where(programme: @programme)
+      @school.location_programme_year_groups.where_programme(@programme)
     expect(location_programme_year_groups.count).to eq(5)
   end
 end

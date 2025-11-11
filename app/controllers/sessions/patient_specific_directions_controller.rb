@@ -8,7 +8,7 @@ class Sessions::PatientSpecificDirectionsController < Sessions::BaseController
   before_action :set_patient_search_form
 
   def show
-    scope = @session.patients.includes(patient_specific_directions: :programme)
+    scope = @session.patients.includes(:patient_specific_directions)
 
     @eligible_for_bulk_psd_count = patients_allowed_psd.count
 
@@ -54,7 +54,7 @@ class Sessions::PatientSpecificDirectionsController < Sessions::BaseController
         created_by: current_user,
         delivery_site: "nose",
         patient:,
-        programme: @programme,
+        programme_type: @programme.type,
         team: current_team,
         vaccine: @vaccine,
         vaccine_method: "nasal"

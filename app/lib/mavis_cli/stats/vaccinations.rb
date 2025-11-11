@@ -49,7 +49,7 @@ module MavisCLI
           ::Stats::Vaccinations.new(
             since_date:,
             until_date:,
-            programme:,
+            programme_type: programme,
             outcome:,
             teams:
           )

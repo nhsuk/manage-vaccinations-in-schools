@@ -138,13 +138,7 @@ class Reports::OfflineSessionExporter
           :consent_statuses,
           :school,
           parent_relationships: :parent,
-          vaccination_records: %i[
-            batch
-            performed_by_user
-            vaccine
-            programme
-            session
-          ]
+          vaccination_records: %i[batch performed_by_user vaccine session]
         )
         .order_by_name
   end
@@ -158,11 +152,11 @@ class Reports::OfflineSessionExporter
         .group_by(&:patient_id)
         .transform_values do |consents_for_patient|
           consents_for_patient
-            .group_by(&:programme_id)
-            .each_with_object({}) do |(programme_id, consents), hash|
-              hash[programme_id] = ConsentGrouper.call(
+            .group_by(&:programme_type)
+            .each_with_object({}) do |(programme_type, consents), hash|
+              hash[programme_type] = ConsentGrouper.call(
                 consents,
-                programme_id:,
+                programme_type:,
                 academic_year:
               )
             end
@@ -172,14 +166,16 @@ class Reports::OfflineSessionExporter
   def gillick_assessments
     @gillick_assessments ||=
       GillickAssessment
-        .select("DISTINCT ON (patient_id, programme_id) gillick_assessments.*")
+        .select(
+          "DISTINCT ON (patient_id, programme_type) gillick_assessments.*"
+        )
         .joins(:session)
         .where(session_dates: { session: }, patient_id: patients.select(:id))
-        .order(:patient_id, :programme_id, created_at: :desc)
+        .order(:patient_id, :programme_type, created_at: :desc)
         .includes(:performed_by)
         .group_by(&:patient_id)
         .transform_values do
-          it.group_by(&:programme_id).transform_values(&:first)
+          it.group_by(&:programme_type).transform_values(&:first)
         end
   end
 
@@ -187,29 +183,29 @@ class Reports::OfflineSessionExporter
     @patient_specific_directions ||=
       PatientSpecificDirection
         .select(
-          "DISTINCT ON (patient_id, programme_id) patient_specific_directions.*"
+          "DISTINCT ON (patient_id, programme_type) patient_specific_directions.*"
         )
         .where(academic_year:, patient_id: patients.select(:id))
         .not_invalidated
-        .order(:patient_id, :programme_id, created_at: :desc)
+        .order(:patient_id, :programme_type, created_at: :desc)
         .includes(:created_by)
         .group_by(&:patient_id)
         .transform_values do
-          it.group_by(&:programme_id).transform_values(&:first)
+          it.group_by(&:programme_type).transform_values(&:first)
         end
   end
 
   def triages
     @triages ||=
       Triage
-        .select("DISTINCT ON (patient_id, programme_id) triages.*")
+        .select("DISTINCT ON (patient_id, programme_type) triages.*")
         .where(academic_year:, patient_id: patients.select(:id))
         .not_invalidated
-        .order(:patient_id, :programme_id, created_at: :desc)
+        .order(:patient_id, :programme_type, created_at: :desc)
         .includes(:performed_by)
         .group_by(&:patient_id)
         .transform_values do
-          it.group_by(&:programme_id).transform_values(&:first)
+          it.group_by(&:programme_type).transform_values(&:first)
         end
   end
 
@@ -237,7 +233,7 @@ class Reports::OfflineSessionExporter
 
         vaccination_records =
           patient.vaccination_records.to_a.select do
-            it.programme_id == programme.id
+            it.programme_type == programme.type
           end
 
         if vaccination_records.any?
@@ -259,11 +255,11 @@ class Reports::OfflineSessionExporter
   end
 
   def add_patient_cells(row, patient:, programme:)
-    gillick_assessment = gillick_assessments.dig(patient.id, programme.id)
-    grouped_consents = consents.dig(patient.id, programme.id) || []
+    gillick_assessment = gillick_assessments.dig(patient.id, programme.type)
+    grouped_consents = consents.dig(patient.id, programme.type) || []
     patient_specific_direction =
-      patient_specific_directions.dig(patient.id, programme.id)
-    triage = triages.dig(patient.id, programme.id)
+      patient_specific_directions.dig(patient.id, programme.type)
+    triage = triages.dig(patient.id, programme.type)
 
     row[:person_forename] = patient.given_name
     row[:person_surname] = patient.family_name
@@ -413,7 +409,10 @@ class Reports::OfflineSessionExporter
   end
 
   def vaccine_values_for_programme(programme)
-    @vaccines[programme] ||= Vaccine.active.where(programme:).pluck(:nivs_name)
+    @vaccines[programme] ||= Vaccine
+      .active
+      .where_programme(programme)
+      .pluck(:nivs_name)
   end
 
   def batch_values_for_programme(programme, existing_batch: nil)
@@ -424,7 +423,7 @@ class Reports::OfflineSessionExporter
           .not_archived
           .not_expired
           .joins(:vaccine)
-          .where(vaccine: { programme: })
+          .where(vaccine: { programme_type: programme.type })
           .pluck(:name)
       )
 

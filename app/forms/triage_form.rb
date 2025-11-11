@@ -206,7 +206,7 @@ class TriageForm
       delivery_site: "nose",
       invalidated_at: nil,
       patient:,
-      programme:,
+      programme_type: programme.type,
       team:,
       vaccine:,
       vaccine_method:
@@ -223,7 +223,8 @@ class TriageForm
   def invalidate_patient_specific_directions!
     patient
       .patient_specific_directions
-      .where(academic_year:, programme:, team:)
+      .where_programme(programme)
+      .where(academic_year:, team:)
       .invalidate_all
   end
 
@@ -257,7 +258,11 @@ class TriageForm
 
   def associate_triage_with_vaccination_record(next_dose_delay_triage)
     vaccination_record =
-      patient.vaccination_records.where(programme:).order(:performed_at).last
+      patient
+        .vaccination_records
+        .where_programme(programme)
+        .order(:performed_at)
+        .last
 
     if vaccination_record.present?
       vaccination_record.update!(next_dose_delay_triage:)

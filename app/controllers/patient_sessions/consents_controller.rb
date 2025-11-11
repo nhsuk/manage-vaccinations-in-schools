@@ -108,12 +108,7 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
       @patient
         .consents
         .where(academic_year: @session.academic_year)
-        .includes(
-          :consent_form,
-          :parent,
-          :programme,
-          patient: :parent_relationships
-        )
+        .includes(:consent_form, :parent, patient: :parent_relationships)
         .find(params[:id])
   end
 
@@ -122,7 +117,7 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
       .triages
       .where(
         academic_year: @session.academic_year,
-        programme_id: @consent.programme_id
+        programme_type: @consent.programme_type
       )
       .invalidate_all
 
@@ -130,7 +125,7 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
       .patient_specific_directions
       .where(
         academic_year: @session.academic_year,
-        programme_id: @consent.programme_id
+        programme_type: @consent.programme_type
       )
       .invalidate_all
 

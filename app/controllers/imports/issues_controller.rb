@@ -32,9 +32,9 @@ class Imports::IssuesController < ApplicationController
         :batch,
         :location,
         :performed_by_user,
+        :vaccine,
         session: :location,
-        patient: %i[gp_practice school],
-        vaccine: :programme
+        patient: %i[gp_practice school]
       )
 
     @patients =

@@ -38,9 +38,11 @@ FactoryBot.define do
     transient do
       sequence(:identifier)
       ods_code { generate(:ods_code) }
+      programmes { [] }
     end
 
     organisation { association(:organisation, ods_code:) }
+    programme_types { programmes.map(&:type) }
 
     workgroup { "w#{identifier}" }
     name { "SAIS Team #{identifier}" }
@@ -49,10 +51,6 @@ FactoryBot.define do
     careplus_venue_code { identifier.to_s }
     privacy_notice_url { "https://example.com/privacy-notice" }
     privacy_policy_url { "https://example.com/privacy-policy" }
-
-    after(:build) do |team, evaluator|
-      team.programme_types = evaluator.programmes.map(&:type)
-    end
 
     trait :with_one_nurse do
       users { [create(:user, :nurse, team: instance)] }

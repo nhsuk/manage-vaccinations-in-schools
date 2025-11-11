@@ -73,10 +73,6 @@ class Location < ApplicationRecord
            -> { includes(:location_year_group) },
            through: :location_year_groups
 
-  has_many :programmes,
-           -> { distinct.order(:type) },
-           through: :location_programme_year_groups
-
   # This is based on the school statuses from the DfE GIAS data.
   enum :status,
        { unknown: 0, open: 1, closed: 2, closing: 3, opening: 4 },
@@ -157,6 +153,10 @@ class Location < ApplicationRecord
     @year_groups ||= location_year_groups.pluck_values
   end
 
+  def programmes
+    location_programme_year_groups.map(&:programme).sort.uniq
+  end
+
   def clinic? = generic_clinic? || community_clinic?
 
   def dfe_number
@@ -192,13 +192,13 @@ class Location < ApplicationRecord
       programmes.flat_map do |programme|
         programme.default_year_groups.filter_map do |year_group|
           if (year_group_id = year_group_ids[year_group])
-            [year_group_id, programme.id, programme.type]
+            [year_group_id, programme.type]
           end
         end
       end
 
     Location::ProgrammeYearGroup.import!(
-      %i[location_year_group_id programme_id programme_type],
+      %i[location_year_group_id programme_type],
       rows,
       on_duplicate_key_ignore: true
     )

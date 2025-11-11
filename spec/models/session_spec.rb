@@ -34,23 +34,6 @@
 #
 
 describe Session do
-  describe "associations" do
-    describe "#programmes" do
-      subject(:programmes) { session.reload.programmes }
-
-      let(:hpv_programme) { CachedProgramme.hpv }
-      let(:menacwy_programme) { CachedProgramme.menacwy }
-
-      let(:session) do
-        create(:session, programmes: [menacwy_programme, hpv_programme])
-      end
-
-      it "is ordered by name" do
-        expect(programmes).to eq([hpv_programme, menacwy_programme])
-      end
-    end
-  end
-
   describe "scopes" do
     let(:programmes) { [CachedProgramme.sample] }
 
@@ -60,8 +43,8 @@ describe Session do
     let(:today_session) { create(:session, :today, programmes:) }
     let(:unscheduled_session) { create(:session, :unscheduled, programmes:) }
 
-    describe "#has_programmes" do
-      subject(:scope) { described_class.has_programmes(programmes) }
+    describe "#has_all_programmes_of" do
+      subject(:scope) { described_class.has_all_programmes_of(programmes) }
 
       context "with a session matching the search" do
         let(:programmes) { [CachedProgramme.sample] }

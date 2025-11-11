@@ -55,10 +55,6 @@ class Session < ApplicationRecord
   has_many :notes
   has_many :session_dates, -> { order(:value) }, autosave: true
   has_many :session_notifications
-  has_many :session_programmes,
-           -> { joins(:programme).order(:"programmes.type") },
-           dependent: :destroy,
-           autosave: true
   has_many :vaccination_records, -> { kept }
 
   has_and_belongs_to_many :immunisation_imports
@@ -70,7 +66,6 @@ class Session < ApplicationRecord
   has_one :organisation, through: :team
   has_one :subteam, through: :location
   has_many :pre_screenings, through: :session_dates
-  has_many :programmes, through: :session_programmes
   has_many :gillick_assessments, through: :session_dates
 
   has_many :location_year_groups,
@@ -79,7 +74,9 @@ class Session < ApplicationRecord
 
   has_many :location_programme_year_groups,
            -> do
-             includes(:location_year_group).where(programme: it.programmes)
+             includes(:location_year_group).where(
+               programme_type: it.programme_types
+             )
            end,
            through: :location_year_groups
 
@@ -101,26 +98,16 @@ class Session < ApplicationRecord
     AND location_year_groups.value = sessions.academic_year - patients.birth_academic_year - #{Integer::AGE_CHILDREN_START_SCHOOL}
     INNER JOIN location_programme_year_groups
     ON location_programme_year_groups.location_year_group_id = location_year_groups.id
-    AND location_programme_year_groups.programme_id = session_programmes.programme_id
+    AND location_programme_year_groups.programme_type = ANY(sessions.programme_types)
   SQL
 
   scope :has_date,
         ->(value) { where(SessionDate.for_session.where(value:).arel.exists) }
 
-  scope :has_programmes,
-        ->(programmes) do
-          where(
-            "(?) >= ?",
-            SessionProgramme
-              .select("COUNT(session_programmes.id)")
-              .where("sessions.id = session_programmes.session_id")
-              .where(programme: programmes),
-            programmes.count
-          )
-        end
-
   scope :supports_delegation,
-        -> { has_programmes(Programme.all.select(&:supports_delegation?)) }
+        -> do
+          has_any_programme_types_of(Programme::TYPES_SUPPORTING_DELEGATION)
+        end
 
   scope :in_progress, -> { has_date(Date.current) }
   scope :unscheduled, -> { where.not(SessionDate.for_session.arel.exists) }
@@ -222,7 +209,7 @@ class Session < ApplicationRecord
 
     programmes.select do |programme|
       location_programme_year_groups.any? do
-        it.programme_id == programme.id &&
+        it.programme_type == programme.type &&
           it.location_year_group.value == year_group
       end
     end

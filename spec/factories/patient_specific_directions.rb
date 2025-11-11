@@ -14,7 +14,6 @@
 #  updated_at         :datetime         not null
 #  created_by_user_id :bigint           not null
 #  patient_id         :bigint           not null
-#  programme_id       :bigint
 #  team_id            :bigint           not null
 #  vaccine_id         :bigint           not null
 #

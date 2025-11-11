@@ -56,7 +56,7 @@ describe NotificationParentSelector do
       before do
         allow(ConsentGrouper).to receive(:call).with(
           consents,
-          programme_id: programme.id,
+          programme_type: programme.type,
           academic_year:
         ).and_return(consents)
       end
@@ -83,7 +83,7 @@ describe NotificationParentSelector do
         before do
           allow(ConsentGrouper).to receive(:call).with(
             consents,
-            programme_id: programme.id,
+            programme_type: programme.type,
             academic_year:
           ).and_return(consents)
           allow(consent_without_response).to receive(
@@ -124,7 +124,7 @@ describe NotificationParentSelector do
         before do
           allow(ConsentGrouper).to receive(:call).with(
             consents,
-            programme_id: programme.id,
+            programme_type: programme.type,
             academic_year:
           ).and_return(consents)
           allow(self_consent).to receive(:via_self_consent?).and_return(true)
@@ -209,7 +209,7 @@ describe NotificationParentSelector do
         before do
           allow(ConsentGrouper).to receive(:call).with(
             consents,
-            programme_id: programme.id,
+            programme_type: programme.type,
             academic_year:
           ).and_return([])
         end
