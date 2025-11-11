@@ -1,0 +1,141 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukherefordsais
+  name: Vaccination UK - Herefordshire
+  email: herefordshire@v-uk.co.uk
+  phone: "01432 663085"
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/policies
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id:
+  type: poc_only
+
+programmes: [menacwy, td_ipv]
+
+subteams:
+  herefordshire:
+    name: Vaccination UK - Herefordshire
+    email: herefordshire@v-uk.co.uk
+    phone: "01432 663085"
+
+schools:
+  herefordshire:
+    - 116880
+    - 117035
+    - 116645
+    - 116731
+    - 136532
+    - 116936
+    - 139607
+    - 116991
+    - 151214
+    - 116785
+    - 116867
+    - 149323
+    - 116869
+    - 116679
+    - 137624
+    - 149855
+    - 139608
+    - 143454
+    - 117048
+    - 139308
+    - 117036
+    - 116795
+    - 116668
+    - 116797
+    - 116874
+    - 116804
+    - 116941
+    - 143974
+    - 116674
+    - 140868
+    - 116677
+    - 150530
+    - 116814
+    - 116680
+    - 135662
+    - 144717
+    - 137731
+    - 116894
+    - 136399
+    - 136803
+    - 136759
+    - 116891
+    - 137073
+    - 137415
+    - 116701
+    - 137608
+    - 116892
+    - 116702
+    - 116893
+    - 140617
+    - 116828
+    - 139313
+    - 116705
+    - 136761
+    - 117045
+    - 138035
+    - 116707
+    - 116708
+    - 140526
+    - 151069
+    - 116714
+    - 140464
+    - 116833
+    - 151252
+    - 116836
+    - 116883
+    - 147220
+    - 151253
+    - 116907
+    - 116718
+    - 137703
+    - 131353
+    - 128077
+    - 117042
+    - 116734
+    - 130991
+    - 116884
+    - 151073
+    - 116911
+    - 151070
+    - 139241
+    - 116799
+    - 116992
+    - 143455
+    - 138037
+    - 149258
+    - 140183
+    - 147406
+    - 116913
+    - 135672
+    - 150128
+    - 138055
+    - 136765
+    - 117002
+    - 117003
+    - 135672
+    - 116686
+    - 116743
+    - 151071
+    - 116952
+    - 116746
+    - 117055
+    - 116918
+    - 116919
+    - 139189
+    - 136405
+    - 136374
+    - 116748
+    - 116890
+
+clinics:
+  herefordshire:
+    - name: Thorn Office Centre
+      address_line_1: Straight Mile Road
+      address_town: Rotherwas
+      address_postcode: HR2 6NR
+      ods_code:
