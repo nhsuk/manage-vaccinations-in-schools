@@ -6,6 +6,7 @@ describe Stats::Session do
 
     let(:programme) { CachedProgramme.hpv }
     let(:session) { create(:session, programmes: [programme]) }
+    let(:latest_location) { session.location }
 
     context "with no patients" do
       it "returns zero counts for all stats" do
@@ -30,7 +31,13 @@ describe Stats::Session do
         end
 
         create(:patient, session:, year_group: 9).tap do |patient|
-          create(:patient_vaccination_status, :vaccinated, patient:, programme:)
+          create(
+            :patient_vaccination_status,
+            :vaccinated,
+            patient:,
+            programme:,
+            latest_location:
+          )
         end
 
         create(:patient, session:, year_group: 9).tap do |patient|
@@ -133,6 +140,24 @@ describe Stats::Session do
 
       it "doesn't include them in eligible children" do
         expect(stats).to include(eligible_children: 0)
+      end
+    end
+
+    context "patient is vaccinated but the location is unknown" do
+      before do
+        create(:patient, session:, year_group: 9).tap do |patient|
+          create(
+            :patient_vaccination_status,
+            :vaccinated,
+            patient:,
+            programme:,
+            latest_location: nil
+          )
+        end
+      end
+
+      it "doesn't count the vaccination" do
+        expect(stats).to include(vaccinated: 0)
       end
     end
   end

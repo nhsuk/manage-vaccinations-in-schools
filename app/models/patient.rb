@@ -397,7 +397,8 @@ class Patient < ApplicationRecord
   scope :eligible_for_programmes,
         ->(programmes, location:, academic_year:) do
           # We exclude patients who were vaccinated in a previous
-          # academic year, or vaccinated at a different location.
+          # academic year, or vaccinated at a different location,
+          # or the location is not known.
 
           not_eligible_criteria =
             programmes.map do |programme|
@@ -409,9 +410,10 @@ class Patient < ApplicationRecord
                   .vaccinated
 
               scope =
-                vaccinated_statuses
-                  .where(academic_year:)
-                  .where.not(latest_location: location)
+                vaccinated_statuses.where(academic_year:).where(
+                  "latest_location_id IS NULL OR latest_location_id != ?",
+                  location.id
+                )
 
               unless programme.seasonal?
                 scope =
