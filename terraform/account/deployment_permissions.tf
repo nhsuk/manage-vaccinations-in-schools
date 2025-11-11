@@ -140,12 +140,12 @@ resource "aws_iam_role_policy_attachment" "deploy_ecs_service" {
   policy_arn = each.value
 }
 
-################ Run performance tests ################
+################ Run tasks for assurance tests ################
 
-resource "aws_iam_role" "github_performancetest" {
+resource "aws_iam_role" "github_assurance" {
   count       = var.environment == "development" ? 1 : 0
-  name        = "GitHubPerformancetestRole"
-  description = "Grants permissions for running performance tests on ECS"
+  name        = "GitHubAssuranceTestRole"
+  description = "Grants permissions for running assurance tests on ECS"
   assume_role_policy = templatefile("resources/iam_role_github_trust_policy_${var.environment}.json.tftpl", {
     account_id = var.account_id,
     repository_list = [
@@ -166,18 +166,18 @@ resource "aws_iam_policy" "run_ecs_task" {
 
 resource "aws_iam_role_policy_attachment" "run_ecs_task_custom" {
   count      = var.environment == "development" ? 1 : 0
-  role       = aws_iam_role.github_performancetest[0].name
+  role       = aws_iam_role.github_assurance[0].name
   policy_arn = aws_iam_policy.run_ecs_task[0].arn
 }
 
 resource "aws_iam_role_policy_attachment" "run_ecs_task_readonly" {
   count      = var.environment == "development" ? 1 : 0
-  role       = aws_iam_role.github_performancetest[0].name
+  role       = aws_iam_role.github_assurance[0].name
   policy_arn = local.base_policies.read
 }
 
 resource "aws_iam_role_policy_attachment" "run_ecs_task_tagging" {
   count      = var.environment == "development" ? 1 : 0
-  role       = aws_iam_role.github_performancetest[0].name
+  role       = aws_iam_role.github_assurance[0].name
   policy_arn = local.base_policies.tagging
 }

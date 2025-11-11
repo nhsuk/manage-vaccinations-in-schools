@@ -12,8 +12,8 @@ resource "aws_cloudwatch_log_group" "this" {
   skip_destroy      = false
 }
 
-resource "aws_ecs_task_definition" "this" {
-  family                   = "${var.identifier}-task-definition-template"
+resource "aws_ecs_task_definition" "performance" {
+  family                   = "${var.identifier}-performance-task-definition-template"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 2048
@@ -22,9 +22,9 @@ resource "aws_ecs_task_definition" "this" {
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   container_definitions = jsonencode([
     {
-      name                   = "${var.identifier}-container"
-      image                  = "CHANGE_ME"
-      essential              = true
+      name      = "performancetest-container"
+      image     = "CHANGE_ME"
+      essential = true
       logConfiguration = {
         logDriver = "awslogs"
         options = {
@@ -37,12 +37,12 @@ resource "aws_ecs_task_definition" "this" {
   ])
 
   tags = {
-    Name = var.identifier
+    Name = "${var.identifier}-performance"
   }
 }
 
-resource "aws_security_group" "ecs_task_sg" {
-  name        = "${var.identifier}-sg"
+resource "aws_security_group" "performance" {
+  name        = "${var.identifier}-performance-sg"
   description = "Security group for ${var.identifier} ecs task"
   vpc_id      = aws_vpc.vpc.id
   lifecycle {
@@ -50,14 +50,14 @@ resource "aws_security_group" "ecs_task_sg" {
   }
 }
 
-resource "aws_security_group_rule" "ecs_task_egress" {
+resource "aws_security_group_rule" "performance_egress" {
   type              = "egress"
   description       = "Allow all egress"
   from_port         = 0
   to_port           = 0
   protocol          = -1
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.ecs_task_sg.id
+  security_group_id = aws_security_group.performance.id
   lifecycle {
     create_before_destroy = true
   }

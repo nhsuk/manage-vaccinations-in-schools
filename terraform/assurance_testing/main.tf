@@ -12,7 +12,7 @@ terraform {
     use_lockfile = true
     encrypt      = true
     bucket       = "nhse-mavis-terraform-state"
-    key          = "terraform-performancetest.tfstate"
+    key          = "terraform-assurance-testing.tfstate"
   }
 }
 
@@ -20,13 +20,13 @@ provider "aws" {
   region = "eu-west-2"
 }
 
-resource "aws_ecr_repository" "this" {
-  name                 = var.identifier
+resource "aws_ecr_repository" "performance" {
+  name                 = "performancetest"
   image_tag_mutability = "IMMUTABLE"
 }
 
-resource "aws_ecr_lifecycle_policy" "this" {
-  repository = aws_ecr_repository.this.name
+resource "aws_ecr_lifecycle_policy" "performance" {
+  repository = aws_ecr_repository.performance.name
   policy = jsonencode({
     rules = [
       {

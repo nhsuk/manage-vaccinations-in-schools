@@ -1,6 +1,6 @@
 variable "identifier" {
   type        = string
-  default     = "performancetest"
+  default     = "assurance-testing"
   description = "Unique identifier for use in resource naming."
   nullable    = false
 }
