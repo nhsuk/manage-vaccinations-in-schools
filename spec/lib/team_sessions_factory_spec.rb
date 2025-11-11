@@ -4,7 +4,7 @@ describe TeamSessionsFactory do
   describe "#call" do
     subject(:call) { described_class.call(team, academic_year:) }
 
-    let(:programmes) { [CachedProgramme.hpv] }
+    let(:programmes) { [Programme.hpv] }
     let(:team) { create(:team, programmes:) }
     let(:academic_year) { AcademicYear.current }
 
@@ -38,7 +38,7 @@ describe TeamSessionsFactory do
             :unscheduled,
             location:,
             team:,
-            programmes: [CachedProgramme.flu]
+            programmes: [Programme.flu]
           )
         end
 
@@ -97,11 +97,9 @@ describe TeamSessionsFactory do
     end
 
     context "with all programmes" do
-      let(:doubles_programmes) do
-        [CachedProgramme.menacwy, CachedProgramme.td_ipv]
-      end
-      let(:flu_programmes) { [CachedProgramme.flu] }
-      let(:hpv_programmes) { [CachedProgramme.hpv] }
+      let(:doubles_programmes) { [Programme.menacwy, Programme.td_ipv] }
+      let(:flu_programmes) { [Programme.flu] }
+      let(:hpv_programmes) { [Programme.hpv] }
 
       let(:programmes) { flu_programmes + hpv_programmes + doubles_programmes }
 

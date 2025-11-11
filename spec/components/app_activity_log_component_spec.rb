@@ -7,7 +7,7 @@ describe AppActivityLogComponent do
 
   let(:today) { Date.new(2026, 1, 1) }
 
-  let(:programmes) { [CachedProgramme.hpv, CachedProgramme.flu] }
+  let(:programmes) { [Programme.hpv, Programme.flu] }
   let(:team) { create(:team, programmes:) }
   let(:user) { create(:user, team:, family_name: "Joy", given_name: "Nurse") }
   let(:location) { create(:school, name: "Hogwarts", programmes:) }
@@ -447,7 +447,7 @@ describe AppActivityLogComponent do
   end
 
   describe "gillick assessments" do
-    let(:programmes) { [CachedProgramme.td_ipv] }
+    let(:programmes) { [Programme.td_ipv] }
 
     before do
       create(
@@ -487,7 +487,7 @@ describe AppActivityLogComponent do
   end
 
   describe "notes" do
-    let(:programmes) { [CachedProgramme.hpv] }
+    let(:programmes) { [Programme.hpv] }
     let(:session) { create(:session, programmes:) }
 
     before do
@@ -549,12 +549,8 @@ describe AppActivityLogComponent do
   end
 
   describe "decision expiration events" do
-    let(:hpv_programme) do
-      Programme.find_by(type: "hpv") || CachedProgramme.hpv
-    end
-    let(:flu_programme) do
-      Programme.find_by(type: "flu") || CachedProgramme.flu
-    end
+    let(:hpv_programme) { Programme.hpv }
+    let(:flu_programme) { Programme.flu }
     let(:programmes) { [hpv_programme, flu_programme] }
 
     context "with expired consent, triage, and PSD" do

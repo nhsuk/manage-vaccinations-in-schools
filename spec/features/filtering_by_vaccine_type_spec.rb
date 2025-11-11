@@ -4,7 +4,7 @@ describe "Filtering" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
   scenario "By vaccine type" do
-    given_a_session_exists_with_programmes(%i[flu hpv])
+    given_a_session_exists_with_programmes(%w[flu hpv])
     and_patients_are_in_the_flu_hpv_session
 
     when_i_visit_the_record_vaccinations_tab
@@ -19,7 +19,7 @@ describe "Filtering" do
   end
 
   scenario "With no flu programme in session" do
-    given_a_session_exists_with_programmes(%i[td_ipv menacwy])
+    given_a_session_exists_with_programmes(%w[td_ipv menacwy])
     and_patients_are_in_the_doubles_session
 
     when_i_visit_the_record_vaccinations_tab
@@ -28,7 +28,7 @@ describe "Filtering" do
   end
 
   scenario "By programme and vaccine type" do
-    given_a_session_exists_with_programmes(%i[flu hpv])
+    given_a_session_exists_with_programmes(%w[flu hpv])
     and_patients_are_in_the_flu_hpv_session
 
     when_i_visit_the_record_vaccinations_tab
@@ -46,7 +46,7 @@ describe "Filtering" do
   end
 
   def given_a_session_exists_with_programmes(programme_types)
-    programmes = programme_types.map { CachedProgramme.send(it) }
+    programmes = programme_types.map { Programme.find(it) }
     team = create(:team, programmes:)
     @nurse = create(:nurse, team:)
     @session = create(:session, team:, programmes:)

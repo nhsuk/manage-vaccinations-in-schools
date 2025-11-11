@@ -71,7 +71,7 @@ describe "Parental consent" do
   end
 
   def given_a_flu_programme_is_underway
-    @programme = CachedProgramme.flu
+    @programme = Programme.flu
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     location = create(:school, name: "Pilot School", programmes: [@programme])
     @session = create(:session, :scheduled, programmes: [@programme], location:)

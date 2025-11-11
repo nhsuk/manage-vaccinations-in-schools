@@ -30,7 +30,7 @@ module MavisCLI
         MavisCLI.load_rails
 
         team = Team.find_by!(workgroup:)
-        programme = Programme.find_by!(type: programme_type)
+        programme = Programme.find(programme_type)
 
         attributes = {
           requires_registration:,

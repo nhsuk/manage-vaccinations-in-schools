@@ -209,7 +209,7 @@ def write_vaccination_records_to_file(vaccination_records)
 end
 
 def create_students_and_vaccinations_for(school:, team:, year_size_estimate:)
-  programme = Programme.find_by(type: "hpv")
+  programme = Programme.hpv
   gardasil = Vaccine.find_by(brand: "Gardasil")
   gardasil9 = Vaccine.find_by(brand: "Gardasil 9")
 

@@ -5,7 +5,7 @@ describe GraphRecords do
 
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
-  let!(:programmes) { [CachedProgramme.hpv] }
+  let!(:programmes) { [Programme.hpv] }
   let!(:team) { create(:team, programmes:) }
   let!(:session) { create(:session, team:, programmes:) }
   let!(:class_import) { create(:class_import, session:) }

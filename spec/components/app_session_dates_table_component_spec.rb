@@ -3,9 +3,9 @@
 describe AppSessionDatesTableComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:hpv_programme) { CachedProgramme.hpv }
-  let(:menacwy_programme) { CachedProgramme.menacwy }
-  let(:flu_programme) { CachedProgramme.flu }
+  let(:hpv_programme) { Programme.hpv }
+  let(:menacwy_programme) { Programme.menacwy }
+  let(:flu_programme) { Programme.flu }
   let(:flu_injection_vaccine) { flu_programme.vaccines.injection.first }
   let(:flu_nasal_vaccine) { flu_programme.vaccines.nasal.first }
   let(:session) do

@@ -116,7 +116,7 @@ describe "Triage" do
   end
 
   def given_a_programme_with_a_running_session
-    programmes = [CachedProgramme.hpv]
+    programmes = [Programme.hpv]
     @team = create(:team, :with_one_nurse, programmes:)
 
     @batch =
@@ -126,7 +126,7 @@ describe "Triage" do
   end
 
   def given_a_flu_programme_with_a_running_session
-    programmes = [CachedProgramme.flu]
+    programmes = [Programme.flu]
     @team = create(:team, :with_one_nurse, programmes:)
 
     @batch =
@@ -136,7 +136,7 @@ describe "Triage" do
   end
 
   def and_a_flu_programme_with_a_running_session_with_psd_enabled
-    programmes = [CachedProgramme.flu]
+    programmes = [Programme.flu]
     @team = create(:team, :with_one_nurse, programmes:)
 
     @batch =

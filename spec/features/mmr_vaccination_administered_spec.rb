@@ -78,7 +78,7 @@ describe "MMR vaccination" do
   end
 
   def given_i_am_signed_in_with_mmr_programme
-    @programme = CachedProgramme.mmr
+    @programme = Programme.mmr
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @location = create(:school, team: @team)
     @session =

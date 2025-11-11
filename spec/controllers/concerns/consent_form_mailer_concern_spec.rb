@@ -41,8 +41,8 @@ describe ConsentFormMailerConcern do
     end
 
     context "when user only consents to one programme" do
-      let(:menacwy_programme) { CachedProgramme.menacwy }
-      let(:td_ipv_programme) { CachedProgramme.td_ipv }
+      let(:menacwy_programme) { Programme.menacwy }
+      let(:td_ipv_programme) { Programme.td_ipv }
       let(:programmes) { [menacwy_programme, td_ipv_programme] }
       let(:session) { create(:session, programmes:) }
 
@@ -94,7 +94,7 @@ describe ConsentFormMailerConcern do
     end
 
     context "when there are no upcoming sessions" do
-      let(:programmes) { [CachedProgramme.sample] }
+      let(:programmes) { [Programme.sample] }
       let(:team) { create(:team, :with_generic_clinic, programmes:) }
       let(:consent_form) do
         create(

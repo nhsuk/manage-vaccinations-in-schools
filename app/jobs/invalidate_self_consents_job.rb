@@ -4,9 +4,10 @@ class InvalidateSelfConsentsJob < ApplicationJob
   queue_as :consents
 
   def perform
+    programmes = Programme.all
     academic_year = AcademicYear.current
 
-    Programme.find_each do |programme|
+    programmes.each do |programme|
       patients =
         Patient.has_vaccination_status(
           %i[not_eligible eligible due],

@@ -28,7 +28,7 @@ describe Patient::RegistrationStatus do
 
   around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
 
-  let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
+  let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
   let(:patient) { create(:patient, year_group: 9) }
   let(:session) do
     create(:session, dates: [Date.yesterday, Date.current], programmes:)

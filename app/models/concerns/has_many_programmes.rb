@@ -28,7 +28,7 @@ module HasManyProgrammes
   end
 
   def programmes
-    programme_types.map { Programme.new(type: it) }
+    programme_types.map { Programme.find(it) }
   end
 
   def programmes=(value)

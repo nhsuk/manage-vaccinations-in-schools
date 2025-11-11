@@ -5,7 +5,7 @@ describe Onboarding do
 
   let(:config) { YAML.safe_load(file_fixture(filename).read) }
 
-  let!(:programme) { CachedProgramme.hpv }
+  let!(:programme) { Programme.hpv }
   # rubocop:disable RSpec/IndexedLet
   let!(:school1) { create(:school, :secondary, :open, urn: "123456") }
   let!(:school2) { create(:school, :secondary, :open, urn: "234567") }

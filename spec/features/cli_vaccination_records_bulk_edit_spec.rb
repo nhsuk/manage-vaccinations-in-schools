@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "mavis vaccination-records bulk_edit" do
-  let(:programme) { CachedProgramme.hpv }
+  let(:programme) { Programme.hpv }
   let(:vaccination_records) do
     create_list(
       :vaccination_record,

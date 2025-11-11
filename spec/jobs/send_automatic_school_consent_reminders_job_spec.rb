@@ -3,7 +3,7 @@
 describe SendAutomaticSchoolConsentRemindersJob do
   subject(:perform_now) { described_class.perform_now(session) }
 
-  let(:programmes) { [CachedProgramme.flu] }
+  let(:programmes) { [Programme.flu] }
   let(:user) { create(:user, team:) }
 
   let(:parents) { create_list(:parent, 2) }

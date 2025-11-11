@@ -18,7 +18,7 @@ describe "mavis vaccination-records edit" do
 
   def given_a_vaccination_record_exists
     team = create(:team)
-    programme = CachedProgramme.hpv
+    programme = Programme.hpv
     patient = create(:patient, team:)
     @vaccination_record = create(:vaccination_record, patient:, programme:)
   end

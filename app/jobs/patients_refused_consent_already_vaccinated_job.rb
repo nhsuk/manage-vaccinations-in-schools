@@ -6,10 +6,12 @@ class PatientsRefusedConsentAlreadyVaccinatedJob < ApplicationJob
   def perform
     return unless should_perform?
 
-    Programme.find_each { |programme| handle_programme!(programme) }
+    programmes.each { |programme| handle_programme!(programme) }
   end
 
   private
+
+  def programmes = Programme.all
 
   def academic_year = AcademicYear.current
 

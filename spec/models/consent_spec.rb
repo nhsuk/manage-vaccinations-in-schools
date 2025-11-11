@@ -206,7 +206,7 @@ describe Consent do
         )
       end
 
-      let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
+      let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
       let(:patient) { create(:patient) }
       let(:current_user) { create(:user) }
       let(:team) { create(:team, programmes:) }
@@ -282,7 +282,7 @@ describe Consent do
     let(:next_academic_year) { current_academic_year + 1 }
 
     let(:patient) { create(:patient) }
-    let(:programme) { CachedProgramme.sample }
+    let(:programme) { Programme.sample }
     let(:parent) { create(:parent) }
 
     let!(:consent_current_year_start) do
@@ -353,7 +353,7 @@ describe Consent do
 
   describe "#update_vaccination_records_no_notify" do
     let(:patient) { create(:patient) }
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
     let(:consent) { create(:consent, patient:, programme:) }
 
     context "when vaccination records exist for the patient and programme" do
@@ -375,7 +375,7 @@ describe Consent do
         create(
           :vaccination_record,
           patient:,
-          programme: CachedProgramme.flu,
+          programme: Programme.flu,
           notify_parents: false
         )
       end

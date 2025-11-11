@@ -8,7 +8,7 @@ class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
       if sessions
         Session.where(id: sessions.map(&:id))
       else
-        flu = Programme.flu.sole
+        flu = Programme.flu
 
         scope =
           Session

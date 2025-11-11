@@ -3,7 +3,7 @@
 describe ProcessPatientChangesetJob do
   include ActiveJob::TestHelper
 
-  let(:programme) { CachedProgramme.hpv }
+  let(:programme) { Programme.hpv }
   let(:team) { create(:team, programmes: [programme]) }
   let(:import) { create(:cohort_import, team:) }
 

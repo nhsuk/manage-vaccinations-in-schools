@@ -167,12 +167,7 @@ class DraftVaccinationRecord
   end
 
   def programme
-    return nil if programme_type.nil?
-
-    ProgrammePolicy::Scope
-      .new(@current_user, Programme)
-      .resolve
-      .find_by!(type: programme_type)
+    Programme.find(programme_type) if programme_type
   end
 
   def programme=(value)

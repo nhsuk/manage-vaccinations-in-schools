@@ -68,7 +68,8 @@ class Sessions::RecordController < Sessions::BaseController
   private
 
   def set_programme
-    @programme = policy_scope(Programme).find_by!(type: params[:programme_type])
+    @programme =
+      current_user.programmes.find { it.type == params[:programme_type] }
   end
 
   def set_vaccine_method

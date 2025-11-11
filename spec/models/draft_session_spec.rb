@@ -19,10 +19,8 @@ describe DraftSession do
   let(:request_session) { {} }
   let(:current_user) { team.users.first }
 
-  let(:existing_programmes) do
-    [CachedProgramme.menacwy, CachedProgramme.td_ipv]
-  end
-  let(:new_programme) { CachedProgramme.hpv }
+  let(:existing_programmes) { [Programme.menacwy, Programme.td_ipv] }
+  let(:new_programme) { Programme.hpv }
 
   let(:session) { create(:session, team:, programmes: existing_programmes) }
   let(:programme_types) do

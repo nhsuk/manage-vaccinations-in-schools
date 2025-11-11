@@ -7,7 +7,7 @@ describe AppVaccinationRecordTableComponent do
     described_class.new(vaccination_records, current_user:, count: 10)
   end
 
-  let(:programme) { CachedProgramme.sample }
+  let(:programme) { Programme.sample }
   let(:vaccination_records) do
     [
       create(

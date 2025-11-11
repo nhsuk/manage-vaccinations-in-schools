@@ -3,20 +3,20 @@
     {
       "warning_type": "File Access",
       "warning_code": 16,
-      "fingerprint": "2d210ea9765576c7e2daeeab6615fd785dc531224c2bb3ffab15d8d64a45fd14",
+      "fingerprint": "d1c86d018389c98f1e79ce464b868fda33c00e382a08bd1eee9d678f2480e7fc",
       "check_name": "SendFile",
-      "message": "Parameter value used in file name",
+      "message": "Model attribute used in file name",
       "file": "app/controllers/programmes_controller.rb",
-      "line": 13,
+      "line": 14,
       "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
-      "code": "send_file(\"public/consent_forms/#{authorize(policy_scope(Programme).find_by!(:type => params[:type])).type}.pdf\", :filename => (\"#{authorize(policy_scope(Programme).find_by!(:type => params[:type])).name} Consent Form.pdf\"), :disposition => \"attachment\")",
+      "code": "send_file(\"public/consent_forms/#{authorize(current_user.programmes.find do\n (it.type == params[:type])\n end).type}.pdf\", :filename => (\"#{authorize(current_user.programmes.find do\n (it.type == params[:type])\n end).name} Consent Form.pdf\"), :disposition => \"attachment\")",
       "render_path": null,
       "location": {
         "type": "method",
         "class": "ProgrammesController",
         "method": "consent_form"
       },
-      "user_input": "params[:type]",
+      "user_input": "current_user.programmes.find",
       "confidence": "Weak",
       "cwe_id": [
         22
@@ -24,5 +24,5 @@
       "note": "Programme names/types come from a limited set of enums."
     }
   ],
-  "brakeman_version": "7.1.0"
+  "brakeman_version": "7.1.1"
 }

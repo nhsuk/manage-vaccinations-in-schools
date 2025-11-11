@@ -5,7 +5,7 @@ describe AppSessionActionsComponent do
 
   let(:component) { described_class.new(session) }
 
-  let(:programmes) { [CachedProgramme.hpv] }
+  let(:programmes) { [Programme.hpv] }
   let(:session) { create(:session, programmes:) }
 
   let(:year_group) { 8 }

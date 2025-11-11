@@ -30,7 +30,7 @@ describe API::Reporting::TotalsController do
 
     it "calculates statistics correctly" do
       team = Team.last # The most recently created team from valid_jwt
-      programme = CachedProgramme.sample
+      programme = Programme.sample
       team.programmes << programme
       session = create(:session, team:, programmes: [programme])
 
@@ -82,7 +82,7 @@ describe API::Reporting::TotalsController do
 
     it "filters by multiple year groups" do
       team = Team.last
-      programme = CachedProgramme.sample
+      programme = Programme.sample
       team.programmes << programme
       session = create(:session, team:, programmes: [programme])
 
@@ -101,7 +101,7 @@ describe API::Reporting::TotalsController do
     end
 
     it "filters by workgroup" do
-      programme = CachedProgramme.sample
+      programme = Programme.sample
 
       team = Team.last
       team.programmes << programme
@@ -129,7 +129,7 @@ describe API::Reporting::TotalsController do
   describe "#index.csv" do
     it "returns grouped CSV data by year group" do
       team = Team.last
-      programme = CachedProgramme.hpv
+      programme = Programme.hpv
       team.programmes << programme
       session = create(:session, team:, programmes: [programme])
 
@@ -166,15 +166,15 @@ describe API::Reporting::TotalsController do
     let(:monthly_vaccinations_given) do
       parsed_response["monthly_vaccinations_given"]
     end
-    let(:hpv_programme) { CachedProgramme.hpv }
+    let(:hpv_programme) { Programme.hpv }
     let(:hpv_session) { create(:session, team:, programmes: [hpv_programme]) }
-    let(:flu_programme) { CachedProgramme.flu }
+    let(:flu_programme) { Programme.flu }
     let(:flu_session) { create(:session, team:, programmes: [flu_programme]) }
-    let(:menacwy_programme) { CachedProgramme.menacwy }
+    let(:menacwy_programme) { Programme.menacwy }
     let(:menacwy_session) do
       create(:session, team:, programmes: [menacwy_programme])
     end
-    let(:td_ipv_programme) { CachedProgramme.td_ipv }
+    let(:td_ipv_programme) { Programme.td_ipv }
     let(:td_ipv_session) do
       create(:session, team:, programmes: [td_ipv_programme])
     end

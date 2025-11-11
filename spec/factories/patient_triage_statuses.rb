@@ -26,7 +26,7 @@
 FactoryBot.define do
   factory :patient_triage_status, class: "Patient::TriageStatus" do
     patient
-    programme { CachedProgramme.sample }
+    programme { Programme.sample }
     academic_year { AcademicYear.current }
 
     traits_for_enum :status

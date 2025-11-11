@@ -18,7 +18,7 @@ module BelongsToProgramme
 
   def programme
     if (type = programme_type)
-      Programme.new(type:)
+      Programme.find(type)
     end
   end
 

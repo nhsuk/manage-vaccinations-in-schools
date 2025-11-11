@@ -14,7 +14,7 @@ describe "Manage vaccines" do
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
-    programme = CachedProgramme.hpv
+    programme = Programme.hpv
     @team = create(:team, :with_one_nurse, programmes: [programme])
   end
 

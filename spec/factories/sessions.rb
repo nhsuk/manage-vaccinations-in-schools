@@ -38,7 +38,7 @@ FactoryBot.define do
       date { Date.current }
       dates { [] }
       subteam { association(:subteam, team:) }
-      programmes { [CachedProgramme.sample] }
+      programmes { [Programme.sample] }
     end
 
     sequence(:slug) { |n| "session-#{n}" }

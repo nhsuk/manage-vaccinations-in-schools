@@ -12,7 +12,7 @@ describe "mavis gias check_import" do
 
   def given_an_team_exists
     @team = create(:team, ods_code: "A9A5A")
-    @programme = CachedProgramme.hpv
+    @programme = Programme.hpv
   end
 
   def and_there_are_schools_with_future_sessions

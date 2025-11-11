@@ -37,7 +37,7 @@
 FactoryBot.define do
   factory :triage do
     patient
-    programme { CachedProgramme.sample }
+    programme { Programme.sample }
 
     performed_by
     team { performed_by.teams.first }

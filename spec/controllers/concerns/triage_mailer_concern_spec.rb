@@ -16,7 +16,7 @@ describe TriageMailerConcern do
   let(:sample) { SampleClass.new(current_user:) }
   let(:current_user) { create(:user) }
 
-  let(:programme) { CachedProgramme.sample }
+  let(:programme) { Programme.sample }
   let(:programmes) { [programme] }
 
   describe "#send_triage_confirmation" do

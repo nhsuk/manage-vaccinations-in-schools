@@ -76,7 +76,7 @@ describe "Import class lists" do
   end
 
   def given_an_hpv_programme_is_underway
-    programmes = [CachedProgramme.hpv]
+    programmes = [Programme.hpv]
     @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
 
     location = create(:school, name: "Waterloo Road", team: @team)

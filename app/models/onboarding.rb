@@ -191,7 +191,7 @@ class Onboarding
     validates :programme, presence: true
 
     def programme
-      @programme ||= Programme.find_by(type:)
+      @programme ||= Programme.find(type)
     end
 
     def save!

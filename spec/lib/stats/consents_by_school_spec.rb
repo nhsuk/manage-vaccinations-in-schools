@@ -11,8 +11,8 @@ describe Stats::ConsentsBySchool do
     end
 
     let(:organisation) { create(:organisation, ods_code: "TEST003") }
-    let(:programme_flu) { CachedProgramme.flu }
-    let(:programme_hpv) { CachedProgramme.hpv }
+    let(:programme_flu) { Programme.flu }
+    let(:programme_hpv) { Programme.hpv }
     let(:team) { create(:team, organisation: organisation, name: "Test Team") }
     let(:academic_year) { AcademicYear.current }
     let(:school) { create(:school, name: "Test School", team:) }

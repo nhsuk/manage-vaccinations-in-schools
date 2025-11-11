@@ -48,7 +48,7 @@ describe "mavis schools add-programme-year-group" do
   end
 
   def and_the_programme_exists
-    @programme = CachedProgramme.flu
+    @programme = Programme.flu
   end
 
   def when_i_run_the_command
