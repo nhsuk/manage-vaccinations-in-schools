@@ -357,33 +357,9 @@ describe SearchVaccinationRecordsInNHSJob do
       end
     end
 
-    shared_examples "sends discovery comms if required once" do
-      it "calls send_vaccination_already_had_if_required once" do
-        expect(AlreadyHadNotificationSender).to receive(:call).once
-
-        perform
-      end
-    end
-
-    shared_examples "sends discovery comms if required twice" do
-      it "calls send_vaccination_already_had_if_required twice" do
-        expect(AlreadyHadNotificationSender).to receive(:call).twice
-
-        perform
-      end
-    end
-
-    shared_examples "sends discovery comms if required 5 times" do
-      it "calls send_vaccination_already_had_if_required 5 times" do
-        expect(AlreadyHadNotificationSender).to receive(:call).exactly(5).times
-
-        perform
-      end
-    end
-
-    shared_examples "doesn't send discovery comms" do
-      it "does not call send_vaccination_already_had_if_required" do
-        expect(AlreadyHadNotificationSender).not_to receive(:call)
+    shared_examples "sends discovery comms if required n times" do |n|
+      it "calls send_vaccination_already_had_if_required n times" do
+        expect(AlreadyHadNotificationSender).to receive(:call).exactly(n).times
 
         perform
       end
@@ -435,7 +411,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect { perform }.to change { patient.vaccination_records.count }.by(2)
       end
 
-      include_examples "sends discovery comms if required twice"
+      include_examples "sends discovery comms if required n times", 2
       include_examples "calls StatusUpdater"
     end
 
@@ -456,7 +432,7 @@ describe SearchVaccinationRecordsInNHSJob do
         )
       end
 
-      include_examples "sends discovery comms if required once"
+      include_examples "sends discovery comms if required n times", 1
       include_examples "calls StatusUpdater"
     end
 
@@ -518,7 +494,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect { perform }.not_to(change { patient.vaccination_records.count })
       end
 
-      include_examples "doesn't send discovery comms"
+      include_examples "sends discovery comms if required n times", 0
       include_examples "calls StatusUpdater"
     end
 
@@ -531,7 +507,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect { perform }.not_to(change { patient.vaccination_records.count })
       end
 
-      include_examples "doesn't send discovery comms"
+      include_examples "sends discovery comms if required n times", 0
       include_examples "calls StatusUpdater"
     end
 
@@ -542,7 +518,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect { perform }.not_to(change { patient.vaccination_records.count })
       end
 
-      include_examples "doesn't send discovery comms"
+      include_examples "sends discovery comms if required n times", 0
     end
 
     context "with the per-programme feature flag disabled" do
@@ -556,7 +532,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect { perform }.not_to(change { patient.vaccination_records.count })
       end
 
-      include_examples "doesn't send discovery comms"
+      include_examples "sends discovery comms if required n times", 0
     end
 
     context "with the per-programme feature flag enabled" do
@@ -569,7 +545,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect { perform }.to change { patient.vaccination_records.count }.by(2)
       end
 
-      include_examples "sends discovery comms if required twice"
+      include_examples "sends discovery comms if required n times", 2
       include_examples "calls StatusUpdater"
     end
 
@@ -589,7 +565,7 @@ describe SearchVaccinationRecordsInNHSJob do
         )
       end
 
-      include_examples "sends discovery comms if required twice"
+      include_examples "sends discovery comms if required n times", 2
       include_examples "calls StatusUpdater"
     end
 
@@ -609,7 +585,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect(patient.vaccination_records.count).to eq(0)
       end
 
-      include_examples "doesn't send discovery comms"
+      include_examples "sends discovery comms if required n times", 0
       include_examples "calls StatusUpdater"
     end
 
@@ -623,7 +599,7 @@ describe SearchVaccinationRecordsInNHSJob do
           )
         end
 
-        include_examples "sends discovery comms if required once"
+        include_examples "sends discovery comms if required n times", 1
         include_examples "calls StatusUpdater"
       end
     end
