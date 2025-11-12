@@ -26,7 +26,38 @@
 #  fk_rails_...  (patient_id => patients.id) ON DELETE => cascade
 #
 describe Patient::ProgrammeStatus do
+  subject(:patient_programme_status) { build(:patient_programme_status) }
+
   describe "associations" do
     it { should belong_to(:patient) }
+  end
+
+  describe "#assign" do
+    subject(:assign) { patient_programme_status.assign }
+
+    let(:programme_generator) { instance_double(StatusGenerator::Programme) }
+
+    before do
+      allow(StatusGenerator::Programme).to receive(:new).and_return(
+        programme_generator
+      )
+      allow(programme_generator).to receive_messages(
+        date: Date.new(2020, 1, 1),
+        dose_sequence: 1,
+        status: "vaccinated",
+        vaccine_methods: %w[injection],
+        without_gelatine: true
+      )
+    end
+
+    it "calls the status generator" do
+      assign
+
+      expect(patient_programme_status.date).to eq(Date.new(2020, 1, 1))
+      expect(patient_programme_status.dose_sequence).to eq(1)
+      expect(patient_programme_status.status).to eq("vaccinated")
+      expect(patient_programme_status.vaccine_methods).to eq(%w[injection])
+      expect(patient_programme_status.without_gelatine).to be(true)
+    end
   end
 end
