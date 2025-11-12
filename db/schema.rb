@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_07_121101) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -313,11 +313,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_121101) do
 
   create_table "gillick_assessments", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.date "date"
     t.boolean "knows_consequences", null: false
     t.boolean "knows_delivery", null: false
     t.boolean "knows_disease", null: false
     t.boolean "knows_side_effects", null: false
     t.boolean "knows_vaccination", null: false
+    t.bigint "location_id"
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
@@ -325,6 +327,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_121101) do
     t.enum "programme_type", enum_type: "programme_type"
     t.bigint "session_date_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_gillick_assessments_on_location_id"
     t.index ["patient_id"], name: "index_gillick_assessments_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_gillick_assessments_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_gillick_assessments_on_programme_id"
@@ -705,6 +708,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_121101) do
 
   create_table "pre_screenings", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.date "date"
+    t.bigint "location_id"
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
@@ -712,6 +717,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_121101) do
     t.enum "programme_type", enum_type: "programme_type"
     t.bigint "session_date_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_pre_screenings_on_location_id"
     t.index ["patient_id"], name: "index_pre_screenings_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_pre_screenings_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_pre_screenings_on_programme_id"
@@ -1026,6 +1032,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_121101) do
   add_foreign_key "consents", "programmes"
   add_foreign_key "consents", "teams"
   add_foreign_key "consents", "users", column: "recorded_by_user_id"
+  add_foreign_key "gillick_assessments", "locations"
   add_foreign_key "gillick_assessments", "patients"
   add_foreign_key "gillick_assessments", "programmes"
   add_foreign_key "gillick_assessments", "session_dates"
@@ -1080,6 +1087,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_121101) do
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "pds_search_results", "patients"
+  add_foreign_key "pre_screenings", "locations"
   add_foreign_key "pre_screenings", "patients"
   add_foreign_key "pre_screenings", "programmes"
   add_foreign_key "pre_screenings", "session_dates"
