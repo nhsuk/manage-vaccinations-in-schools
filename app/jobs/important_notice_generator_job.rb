@@ -33,7 +33,9 @@ class ImportantNoticeGeneratorJob < ApplicationJob
     patient_ids = patients.map(&:id)
 
     existing_notices =
-      ImportantNotice.where(patient_id: patient_ids).index_by { notice_key(it) }
+      ImportantNotice
+        .where(patient_id: patient_ids)
+        .index_by { |n| notice_key(n) }
 
     patient_team_ids =
       patients.each_with_object({}) do |patient, hash|
@@ -51,7 +53,7 @@ class ImportantNoticeGeneratorJob < ApplicationJob
     end
 
     if notices_to_create.any?
-      ImportantNotice.import!(notices_to_create, on_duplicate_key_ignore: true)
+      ImportantNotice.import(notices_to_create, validate: false)
     end
 
     if notice_ids_to_dismiss.any?
