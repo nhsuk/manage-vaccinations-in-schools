@@ -12,12 +12,12 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
       Sentry.set_tags(tx_id:, job_id:)
 
       feature_flag_enabled =
-        Programme.can_search_in_immunisations_api.any? do |programme|
+        Programme.any? do |programme|
           Flipper.enabled?(:imms_api_search_job, programme)
         end
       return unless feature_flag_enabled
 
-      programmes = Programme.can_search_in_immunisations_api
+      programmes = Programme.all
 
       if patient.nhs_number.nil?
         incoming_vaccination_records = []

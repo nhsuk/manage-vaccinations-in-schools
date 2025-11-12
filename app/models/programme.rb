@@ -37,8 +37,6 @@ class Programme < ApplicationRecord
 
   scope :supports_delegation, -> { flu }
   scope :can_sync_to_immunisations_api, -> { flu.or(hpv) }
-  scope :can_search_in_immunisations_api,
-        -> { flu.or(hpv).or(menacwy).or(td_ipv).or(mmr) }
 
   enum :type,
        {
@@ -180,9 +178,6 @@ class Programme < ApplicationRecord
   end
 
   def can_sync_to_immunisations_api? = hpv? || flu?
-
-  def can_search_in_immunisations_api? =
-    hpv? || flu? || menacwy? || td_ipv? || mmr?
 
   private
 
