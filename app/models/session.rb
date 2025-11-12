@@ -69,9 +69,7 @@ class Session < ApplicationRecord
 
   has_one :organisation, through: :team
   has_one :subteam, through: :location
-  has_many :pre_screenings, through: :session_dates
   has_many :programmes, through: :session_programmes
-  has_many :gillick_assessments, through: :session_dates
   has_many :vaccines, through: :programmes
 
   has_many :location_year_groups,

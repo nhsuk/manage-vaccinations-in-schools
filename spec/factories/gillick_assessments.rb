@@ -19,7 +19,6 @@
 #  patient_id           :bigint           not null
 #  performed_by_user_id :bigint           not null
 #  programme_id         :bigint           not null
-#  session_date_id      :bigint
 #
 # Indexes
 #
@@ -39,10 +38,12 @@
 #
 FactoryBot.define do
   factory :gillick_assessment do
-    transient { session }
+    transient do
+      session { association(:session) }
+      session_date { session.session_dates.first }
+    end
 
     patient
-    session_date { session.session_dates.first }
     location { session.location }
     date { session_date.value }
     programme { session.programmes.first }

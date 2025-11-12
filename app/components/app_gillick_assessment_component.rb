@@ -18,7 +18,7 @@ class AppGillickAssessmentComponent < ViewComponent::Base
       patient
         .gillick_assessments
         .order(created_at: :desc)
-        .where_session(session)
+        .for_session(session)
         .find_by(programme:)
   end
 

@@ -19,7 +19,6 @@
 #  patient_id           :bigint           not null
 #  performed_by_user_id :bigint           not null
 #  programme_id         :bigint           not null
-#  session_date_id      :bigint
 #
 # Indexes
 #
@@ -42,10 +41,7 @@ describe GillickAssessment do
 
   describe "associations" do
     it { should belong_to(:patient) }
-    it { should belong_to(:session_date) }
     it { should belong_to(:programme) }
-
-    it { should have_one(:session).through(:session_date) }
   end
 
   describe "validations" do

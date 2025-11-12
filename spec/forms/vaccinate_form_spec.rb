@@ -1,16 +1,13 @@
 # frozen_string_literal: true
 
 describe VaccinateForm do
-  subject(:form) do
-    described_class.new(programme:, current_user:, session_date:)
-  end
+  subject(:form) { described_class.new(programme:, current_user:, session:) }
 
   let(:programme) { build(:programme) }
   let(:current_user) do
     build(:user, show_in_suppliers: user_designated_as_supplier)
   end
   let(:session) { build(:session, psd_enabled:, national_protocol_enabled:) }
-  let(:session_date) { session.session_dates.first }
 
   let(:psd_enabled) { false }
   let(:national_protocol_enabled) { false }
@@ -41,7 +38,7 @@ describe VaccinateForm do
           identity_check_confirmed_by_patient: false,
           programme:,
           current_user:,
-          session_date:
+          session:
         )
       end
 

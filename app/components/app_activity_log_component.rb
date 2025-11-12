@@ -47,7 +47,7 @@ class AppActivityLogComponent < ViewComponent::Base
         .gillick_assessments
         .includes(:performed_by)
         .order(:created_at)
-        .then { |scope| session ? scope.where_session(session) : scope }
+        .then { |scope| session ? scope.for_session(session) : scope }
 
     @notes =
       @patient
@@ -83,7 +83,7 @@ class AppActivityLogComponent < ViewComponent::Base
       @patient
         .pre_screenings
         .includes(:performed_by)
-        .then { |scope| session ? scope.where_session(session) : scope }
+        .then { |scope| session ? scope.for_session(session) : scope }
 
     @triages =
       @patient
