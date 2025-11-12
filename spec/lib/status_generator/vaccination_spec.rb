@@ -516,10 +516,8 @@ describe StatusGenerator::Vaccination do
   describe "#latest_date" do
     subject(:date) { generator.latest_date }
 
-    let(:performed_at) { 1.day.ago.to_date }
-    let(:created_at) { 2.days.ago.to_date }
-
     let(:programme) { CachedProgramme.hpv }
+    let(:performed_at) { 1.day.ago.to_date }
 
     context "with a vaccination administered" do
       before do
@@ -597,10 +595,16 @@ describe StatusGenerator::Vaccination do
 
     context "with absent from session attendance" do
       before do
-        create(:attendance_record, :absent, patient:, session:, created_at:)
+        create(
+          :attendance_record,
+          :absent,
+          patient:,
+          session:,
+          date: performed_at.to_date
+        )
       end
 
-      it { should eq(created_at) }
+      it { should eq(performed_at.to_date) }
     end
 
     context "with absent from both vaccination record and session attendance" do
@@ -623,7 +627,7 @@ describe StatusGenerator::Vaccination do
             :absent,
             patient:,
             session:,
-            created_at: later_date
+            date: later_date
           )
         end
 
@@ -646,7 +650,7 @@ describe StatusGenerator::Vaccination do
             :absent,
             patient:,
             session:,
-            created_at: earlier_date
+            date: earlier_date
           )
         end
 
