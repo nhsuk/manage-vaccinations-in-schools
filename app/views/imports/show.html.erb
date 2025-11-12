@@ -74,7 +74,7 @@
   <% end %>
 <% end %>
 
-<% if import.rows_are_invalid? %>
+<% if import.rows_are_invalid? || import.changesets_are_invalid? %>
   <%= render AppImportErrorsComponent.new(errors: import.errors) do %>
     <p class="nhsuk-u-reading-width">
       The records cannot be uploaded due to errors in the CSV file.

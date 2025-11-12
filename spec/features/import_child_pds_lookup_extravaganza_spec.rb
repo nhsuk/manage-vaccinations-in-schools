@@ -12,8 +12,13 @@ describe "Import child records" do
 
     when_i_visit_the_import_page
     and_pds_lookups_dont_return_any_matches
-    and_i_upload_import_file("pds_extravaganza.csv")
+    and_i_upload_import_file("pds_extravaganza_invalid.csv")
     then_i_should_see_the_import_failed
+
+    when_i_visit_the_import_page
+    and_pds_lookup_during_import_is_enabled
+    and_i_upload_import_file("pds_extravaganza_invalid.csv")
+    then_i_should_see_the_import_is_invalid
 
     when_i_visit_the_import_page
     and_pds_lookup_during_import_is_enabled
@@ -473,6 +478,13 @@ describe "Import child records" do
     expect(page).to have_content("12 unmatched records")
   end
 
+  def then_i_should_see_the_import_is_invalid
+    expect(page).to have_content("Records could not be imported")
+    expect(page).to have_content(
+      "More than 1 row in this file has the same NHS number."
+    )
+  end
+
   def and_i_start_adding_children_to_the_session
     click_on "Import class lists"
   end
@@ -812,7 +824,7 @@ describe "Import child records" do
 
   def then_i_see_one_record_is_an_exact_match
     expect(page).to have_content(
-      "3 records were not imported because they already exist in Mavis"
+      "2 records were not imported because they already exist in Mavis"
     )
   end
 

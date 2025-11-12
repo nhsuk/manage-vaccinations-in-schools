@@ -164,39 +164,269 @@ describe ProcessPatientChangesetJob do
         ]
       end
 
-      before do
-        create(:patient_changeset, import: import, status: :processed)
-        create(:patient_changeset, import: import, status: :processed)
+      context "when <70% pds match rate" do
+        before do
+          create_list(
+            :patient_changeset,
+            6,
+            :with_pds_match,
+            import:,
+            status: :processed
+          )
+          create_list(:patient_changeset, 4, import:, status: :processed)
+        end
+
+        context "when import_search_pds flag is disabled" do
+          context "when low_pds_match_rate flag is disabled" do
+            it "doesn't change import status" do
+              described_class.perform_now(patient_changeset.id)
+              expect(import.reload.status).to eq("pending_import")
+            end
+
+            it "enqueues CommitImportJob" do
+              expect {
+                described_class.perform_now(patient_changeset.id)
+              }.to enqueue_sidekiq_job(CommitImportJob).with(
+                import.to_global_id.to_s
+              )
+            end
+          end
+
+          context "when low_pds_match_rate flag is enabled" do
+            before { Flipper.enable(:import_low_pds_match_rate) }
+
+            it "doesn't change import status" do
+              described_class.perform_now(patient_changeset.id)
+              expect(import.reload.status).to eq("pending_import")
+            end
+
+            it "enqueues CommitImportJob" do
+              expect {
+                described_class.perform_now(patient_changeset.id)
+              }.to enqueue_sidekiq_job(CommitImportJob).with(
+                import.to_global_id.to_s
+              )
+            end
+          end
+        end
+
+        context "when import_search_pds flag is enabled" do
+          before { Flipper.enable(:import_search_pds) }
+
+          context "when low_pds_match_rate flag is enabled" do
+            before { Flipper.enable(:import_low_pds_match_rate) }
+
+            it "marks import as low_pds_match_rate and stops" do
+              described_class.perform_now(patient_changeset.id)
+              expect(import.reload.status).to eq("low_pds_match_rate")
+            end
+
+            it "updates changesets to import_invalid and stops" do
+              described_class.perform_now(patient_changeset.id)
+              expect(import.changesets.pluck(:status).uniq).to eq(
+                ["import_invalid"]
+              )
+            end
+
+            it "doesn't enqueue CommitImportJob" do
+              expect {
+                described_class.perform_now(patient_changeset.id)
+              }.not_to enqueue_sidekiq_job(CommitImportJob)
+            end
+          end
+
+          context "when low_pds_match_rate flag is disabled" do
+            it "doesn't change import status" do
+              described_class.perform_now(patient_changeset.id)
+              expect(import.reload.status).to eq("pending_import")
+            end
+
+            it "enqueues CommitImportJob" do
+              expect {
+                described_class.perform_now(patient_changeset.id)
+              }.to enqueue_sidekiq_job(CommitImportJob).with(
+                import.to_global_id.to_s
+              )
+            end
+          end
+        end
       end
 
-      it "enqueues CommitImportJob" do
-        expect {
-          described_class.perform_now(patient_changeset.id)
-        }.to enqueue_sidekiq_job(CommitImportJob).with(import.to_global_id.to_s)
-      end
-    end
+      context "when >70% pds match rate" do
+        let(:changeset_a) do
+          create(
+            :patient_changeset,
+            :with_pds_match,
+            import:,
+            status: :processed
+          )
+        end
+        let(:changeset_b) do
+          create(
+            :patient_changeset,
+            :with_pds_match,
+            import:,
+            status: :processed
+          )
+        end
+        let(:patient_a) { create(:patient) }
+        let(:patient_b) { create(:patient) }
 
-    context "when other changesets are still pending" do
-      let(:search_results) do
-        [
-          {
-            "step" => "no_fuzzy_with_history",
-            "result" => "one_match",
-            "nhs_number" => "9449306168",
-            "created_at" => Time.current.iso8601(3)
-          }
-        ]
-      end
+        before do
+          create_list(
+            :patient_changeset,
+            7,
+            :with_pds_match,
+            import:,
+            status: :processed
+          )
+          create_list(:patient_changeset, 1, import:, status: :processed)
+        end
 
-      before do
-        create(:patient_changeset, import: import, status: :pending)
-        create(:patient_changeset, import: import, status: :pending)
-      end
+        context "when changesets have unique NHS numbers and unique patients" do
+          it "enqueues CommitImportJob" do
+            expect {
+              described_class.perform_now(patient_changeset.id)
+            }.to enqueue_sidekiq_job(CommitImportJob).with(
+              import.to_global_id.to_s
+            )
+          end
+        end
 
-      it "does not enqueue CommitImportJob" do
-        expect {
-          described_class.perform_now(patient_changeset.id)
-        }.not_to have_enqueued_job(CommitImportJob)
+        context "when changesets share NHS number but different patients" do
+          before do
+            changeset_a.update!(
+              data: {
+                upload: {
+                  child: {
+                    nhs_number: "1111111111"
+                  }
+                }
+              }
+            )
+            changeset_a.update!(patient_id: patient_a.id)
+            changeset_b.update!(
+              data: {
+                upload: {
+                  child: {
+                    nhs_number: "1111111111"
+                  }
+                }
+              }
+            )
+            changeset_b.update!(patient_id: patient_b.id)
+          end
+
+          it "marks import as changesets_are_invalid" do
+            described_class.perform_now(patient_changeset.id)
+            expect(import.reload.status).to eq("changesets_are_invalid")
+          end
+
+          it "adds duplicate NHS number error to import" do
+            described_class.perform_now(patient_changeset.id)
+            expect(import.reload.serialized_errors.values.flatten).to include(
+              "More than 1 row in this file has the same NHS number."
+            )
+          end
+
+          it "updates the status of changesets to import_invalid" do
+            described_class.perform_now(patient_changeset.id)
+            expect(import.changesets.pluck(:status).uniq).to eq(
+              ["import_invalid"]
+            )
+          end
+        end
+
+        context "when changesets share patient but different NHS numbers" do
+          before do
+            changeset_a.update!(
+              data: {
+                upload: {
+                  child: {
+                    nhs_number: "1111111111"
+                  }
+                }
+              }
+            )
+            changeset_a.update!(patient_id: patient_a.id)
+            changeset_b.update!(
+              data: {
+                upload: {
+                  child: {
+                    nhs_number: "2222222222"
+                  }
+                }
+              }
+            )
+            changeset_b.update!(patient_id: patient_a.id)
+          end
+
+          it "marks import as changesets_are_invalid" do
+            described_class.perform_now(patient_changeset.id)
+            expect(import.reload.status).to eq("changesets_are_invalid")
+          end
+
+          it "adds duplicate patient error to import" do
+            described_class.perform_now(patient_changeset.id)
+            import.load_serialized_errors!
+            expect(import.reload.serialized_errors.values.flatten).to include(
+              "More than 1 row in this file matches a patient already in the Mavis database."
+            )
+          end
+
+          it "updates the status of changesets to import_invalid" do
+            described_class.perform_now(patient_changeset.id)
+            expect(import.changesets.pluck(:status).uniq).to eq(
+              ["import_invalid"]
+            )
+          end
+        end
+
+        context "when changesets share both patient and NHS number" do
+          before do
+            changeset_a.update!(
+              data: {
+                upload: {
+                  child: {
+                    nhs_number: "1111111111"
+                  }
+                }
+              }
+            )
+            changeset_a.update!(patient_id: patient_a.id)
+            changeset_b.update!(
+              data: {
+                upload: {
+                  child: {
+                    nhs_number: "1111111111"
+                  }
+                }
+              }
+            )
+            changeset_b.update!(patient_id: patient_a.id)
+          end
+
+          it "marks import as changesets_are_invalid" do
+            described_class.perform_now(patient_changeset.id)
+            expect(import.reload.status).to eq("changesets_are_invalid")
+          end
+
+          it "adds both duplicate NHS number and duplicate patient errors to import" do
+            described_class.perform_now(patient_changeset.id)
+            import.load_serialized_errors!
+            expect(import.reload.serialized_errors.values.flatten).to include(
+              "More than 1 row in this file matches a patient already in the Mavis database.",
+              "More than 1 row in this file has the same NHS number."
+            )
+          end
+
+          it "updates the status of changesets to import_invalid" do
+            described_class.perform_now(patient_changeset.id)
+            expect(import.changesets.pluck(:status).uniq).to eq(
+              ["import_invalid"]
+            )
+          end
+        end
       end
     end
 
@@ -213,8 +443,8 @@ describe ProcessPatientChangesetJob do
       end
 
       before do
-        create(:patient_changeset, import: import, status: :processed)
-        create(:patient_changeset, import: import, status: :pending)
+        create(:patient_changeset, import:, status: :processed)
+        create(:patient_changeset, import:, status: :pending)
       end
 
       it "does not enqueue CommitImportJob" do

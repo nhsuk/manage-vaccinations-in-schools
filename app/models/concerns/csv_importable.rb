@@ -24,7 +24,8 @@ module CSVImportable
            pending_import: 0,
            rows_are_invalid: 1,
            processed: 2,
-           low_pds_match_rate: 3
+           low_pds_match_rate: 3,
+           changesets_are_invalid: 4
          },
          default: :pending_import,
          validate: true
@@ -141,7 +142,13 @@ module CSVImportable
           )
         end
       else
-        changesets.each(&:processed!)
+        changesets.each do |patient_changeset|
+          patient_changeset.assign_patient_id
+          patient_changeset.processed!
+        end
+
+        validate_changeset_uniqueness!
+        return if changesets_are_invalid?
 
         CommitImportJob.perform_async(to_global_id.to_s)
       end
