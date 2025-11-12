@@ -33,6 +33,7 @@ on:
           - production
           - sandbox-alpha
           - sandbox-beta
+          - performance
       server_types:
         description: Server types to deploy
         required: true
