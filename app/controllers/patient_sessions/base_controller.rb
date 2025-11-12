@@ -31,9 +31,10 @@ class PatientSessions::BaseController < ApplicationController
 
   def set_patient
     @patient =
-      policy_scope(Patient).includes(parent_relationships: :parent).find(
-        params.fetch(:patient_id, params[:id])
-      )
+      policy_scope(Patient)
+        .includes_statuses
+        .includes(parent_relationships: :parent)
+        .find(params.fetch(:patient_id, params[:id]))
   end
 
   def set_patient_location

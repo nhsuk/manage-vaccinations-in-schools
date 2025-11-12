@@ -18,14 +18,16 @@ describe PDSCascadingSearchJob do
     create(
       :patient_changeset,
       import: import,
-      pending_changes: {
-        "child" => {
-          "given_name" => "Betty",
-          "family_name" => "Samson",
-          "date_of_birth" => "2010-01-01",
-          "address_postcode" => "SW1A 1AA"
+      data: {
+        upload: {
+          child: {
+            given_name: "Betty",
+            family_name: "Samson",
+            date_of_birth: "2010-01-01",
+            address_postcode: "SW1A 1AA"
+          }
         },
-        "search_results" => []
+        search_results: []
       }
     )
   end
@@ -86,14 +88,16 @@ describe PDSCascadingSearchJob do
         create(
           :patient_changeset,
           import: import,
-          pending_changes: {
-            "child" => {
-              "given_name" => "Charlie",
-              "family_name" => "Brown",
-              "date_of_birth" => "2010-01-01",
-              "address_postcode" => nil
+          data: {
+            upload: {
+              child: {
+                given_name: "Charlie",
+                family_name: "Brown",
+                date_of_birth: "2010-01-01",
+                address_postcode: nil
+              }
             },
-            "search_results" => []
+            search_results: []
           }
         )
       end
@@ -119,14 +123,16 @@ describe PDSCascadingSearchJob do
         create(
           :patient_changeset,
           import: import,
-          pending_changes: {
-            "child" => {
-              "given_name" => "Ed",
-              "family_name" => "Li",
-              "date_of_birth" => "2010-01-01",
-              "address_postcode" => "SW1A 1AA"
+          data: {
+            upload: {
+              child: {
+                given_name: "Ed",
+                family_name: "Li",
+                date_of_birth: "2010-01-01",
+                address_postcode: "SW1A 1AA"
+              }
             },
-            "search_results" => []
+            search_results: []
           }
         )
       end

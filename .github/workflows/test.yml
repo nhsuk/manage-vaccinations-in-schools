@@ -58,8 +58,10 @@ jobs:
         ports:
           - 5432:5432
     env:
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/manage_vaccinations_test
       RAILS_ENV: test
+      DATABASE_HOST: localhost
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v6
@@ -69,12 +71,14 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Setup database
-        run: bin/rails db:test:prepare
+      - name: Setup Database
+        run: |
+          bin/rails parallel:create
+          bin/rails parallel:load_schema
       - name: Precompile assets
         run: bin/rails assets:precompile
       - name: Run rspec
-        run: bundle exec rspec spec
+        run: bin/rails parallel:spec
 
   jest:
     name: Jest

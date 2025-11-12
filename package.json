@@ -4,11 +4,11 @@
   "dependencies": {
     "@hotwired/turbo-rails": "^8.0.20",
     "accessible-autocomplete": "^3.0.1",
-    "esbuild": "^0.25.12",
+    "esbuild": "^0.27.0",
     "govuk-frontend": "^5.13.0",
     "idb": "^8.0.3",
     "nhsuk-frontend": "^10.1.0",
-    "sass": "^1.93.3"
+    "sass": "^1.94.0"
   },
   "scripts": {
     "build:css": "sass ./app/assets/stylesheets:./app/assets/builds --no-source-map --pkg-importer=node --quiet-deps --style compressed",

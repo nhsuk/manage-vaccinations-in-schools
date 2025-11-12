@@ -85,7 +85,8 @@ describe "Tallying on session overview page" do
       :patient_vaccination_status,
       :vaccinated,
       patient: @patients.fifth,
-      programme: @flu_programme
+      programme: @flu_programme,
+      latest_location: @session.location
     )
   end
 

@@ -2,11 +2,17 @@
 
 describe PatientStatusResolver do
   subject(:status_attached_tag_resolver) do
-    described_class.new(patient, programme:, academic_year:)
+    described_class.new(
+      Patient.includes_statuses.find(patient.id),
+      programme:,
+      academic_year:,
+      context_location_id:
+    )
   end
 
   let(:patient) { create(:patient) }
   let(:academic_year) { AcademicYear.current }
+  let(:context_location_id) { nil }
 
   describe "#consent" do
     subject { status_attached_tag_resolver.consent }
@@ -77,6 +83,35 @@ describe PatientStatusResolver do
             text: "Vaccinated",
             colour: "green",
             details_text: "Already had the vaccine"
+          }
+        )
+      end
+    end
+
+    context "with a vaccinated elsewhere vaccination record" do
+      let(:patient) do
+        create(:patient, :consent_given_triage_not_needed, session:)
+      end
+
+      let(:context_location_id) { session.location_id }
+
+      before do
+        create(
+          :vaccination_record,
+          patient:,
+          programme:,
+          location: create(:school, name: "Different school")
+        )
+        StatusUpdater.call(patient:)
+        patient.reload
+      end
+
+      it do
+        expect(hash).to eq(
+          {
+            text: "Vaccinated",
+            colour: "green",
+            details_text: "Vaccinated at Different school"
           }
         )
       end

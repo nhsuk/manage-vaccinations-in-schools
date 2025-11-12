@@ -77,6 +77,7 @@ group :development, :test do
   gem "brakeman", require: false
   gem "debug", platforms: %i[mri windows]
   gem "factory_bot_instruments"
+  gem "parallel_tests"
   gem "pry-rails"
   gem "rspec-rails"
 end

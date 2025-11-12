@@ -141,6 +141,15 @@ class Patient < ApplicationRecord
   scope :not_deceased, -> { where(date_of_death: nil) }
   scope :restricted, -> { where.not(restricted_at: nil) }
 
+  scope :includes_statuses,
+        -> do
+          includes(
+            :consent_statuses,
+            :triage_statuses,
+            vaccination_statuses: :latest_location
+          )
+        end
+
   scope :has_vaccination_records_dont_notify_parents,
         -> do
           where(
@@ -387,7 +396,8 @@ class Patient < ApplicationRecord
   scope :eligible_for_programmes,
         ->(programmes, location:, academic_year:) do
           # We exclude patients who were vaccinated in a previous
-          # academic year, or vaccinated at a different location.
+          # academic year, or vaccinated at a different location,
+          # or the location is not known.
 
           not_eligible_criteria =
             programmes.map do |programme|
@@ -399,9 +409,10 @@ class Patient < ApplicationRecord
                   .vaccinated
 
               scope =
-                vaccinated_statuses
-                  .where(academic_year:)
-                  .where.not(latest_location: location)
+                vaccinated_statuses.where(academic_year:).where(
+                  "latest_location_id IS NULL OR latest_location_id != ?",
+                  location.id
+                )
 
               unless programme.seasonal?
                 scope =
@@ -525,15 +536,6 @@ class Patient < ApplicationRecord
       .joins_location_programme_year_groups
       .where(patients: { id: })
       .distinct
-  end
-
-  def teams
-    Team.distinct.joins(:sessions).joins(<<-SQL)
-      INNER JOIN patient_locations
-      ON patient_locations.patient_id = #{id}
-      AND patient_locations.location_id = sessions.location_id
-      AND patient_locations.academic_year = sessions.academic_year
-    SQL
   end
 
   def archived?(team:)
@@ -661,12 +663,13 @@ class Patient < ApplicationRecord
       raise NHSNumberMismatch
     end
 
+    archived_ids = []
     ActiveRecord::Base.transaction do
       self.date_of_death = pds_patient.date_of_death
 
       if date_of_death_changed?
         if date_of_death.present?
-          archive_due_to_deceased!
+          archived_ids = archive_due_to_deceased!
           clear_pending_sessions!
         end
 
@@ -697,6 +700,8 @@ class Patient < ApplicationRecord
 
       save!
     end
+
+    SyncPatientTeamJob.perform_later(ArchiveReason, archived_ids)
   end
 
   def invalidate!
@@ -810,15 +815,13 @@ class Patient < ApplicationRecord
         ArchiveReason.new(team:, patient: self, type: :deceased)
       end
 
-    imported_ids =
-      ArchiveReason.import!(
-        archive_reasons,
-        on_duplicate_key_update: {
-          conflict_target: %i[team_id patient_id],
-          columns: %i[type]
-        }
-      ).ids
-    SyncPatientTeamJob.perform_later(ArchiveReason, imported_ids)
+    ArchiveReason.import!(
+      archive_reasons,
+      on_duplicate_key_update: {
+        conflict_target: %i[team_id patient_id],
+        columns: %i[type]
+      }
+    ).ids
   end
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::Patient.new(self)

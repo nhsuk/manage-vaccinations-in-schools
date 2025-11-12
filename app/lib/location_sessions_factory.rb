@@ -8,19 +8,31 @@ class LocationSessionsFactory
   end
 
   def call
-    ActiveRecord::Base.transaction do
-      if location.generic_clinic?
-        find_or_create_session!(programmes: location.programmes)
-      else
-        ProgrammeGrouper
-          .call(location.programmes)
-          .values
-          .reject { |programmes| catch_up_only?(programmes:) }
-          .reject { |programmes| already_exists?(programmes:) }
-          .map { |programmes| create_session!(programmes:) }
-      end
+    imported_patient_location_ids =
+      ActiveRecord::Base.transaction do
+        if location.generic_clinic?
+          find_or_create_session!(programmes: location.programmes)
+        else
+          ProgrammeGrouper
+            .call(location.programmes)
+            .values
+            .reject { |programmes| catch_up_only?(programmes:) }
+            .reject { |programmes| already_exists?(programmes:) }
+            .map { |programmes| create_session!(programmes:) }
+        end
 
-      add_patients!
+        add_patients!
+      end
+    if sync_patient_teams_now
+      SyncPatientTeamJob.perform_now(
+        PatientLocation,
+        imported_patient_location_ids
+      )
+    else
+      SyncPatientTeamJob.perform_later(
+        PatientLocation,
+        imported_patient_location_ids
+      )
     end
   end
 
@@ -61,17 +73,11 @@ class LocationSessionsFactory
   end
 
   def add_patients!
-    imported_ids =
-      PatientLocation.import!(
-        %i[patient_id location_id academic_year],
-        patient_ids.map { [it, location.id, academic_year] },
-        on_duplicate_key_ignore: true
-      ).ids
-    if sync_patient_teams_now
-      SyncPatientTeamJob.perform_now(PatientLocation, imported_ids)
-    else
-      SyncPatientTeamJob.perform_later(PatientLocation, imported_ids)
-    end
+    PatientLocation.import!(
+      %i[patient_id location_id academic_year],
+      patient_ids.map { [it, location.id, academic_year] },
+      on_duplicate_key_ignore: true
+    ).ids
   end
 
   def patient_ids

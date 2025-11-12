@@ -85,7 +85,7 @@ class Generate::VaccinationRecords
 
     session
       .patients
-      .includes(:consent_statuses, :vaccination_statuses, :triage_statuses)
+      .includes_statuses
       .appear_in_programmes([programme], academic_year:)
       .has_consent_status("given", programme:, academic_year:)
       .select do

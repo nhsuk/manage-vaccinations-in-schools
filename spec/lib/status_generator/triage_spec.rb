@@ -90,6 +90,28 @@ describe StatusGenerator::Triage do
       end
     end
 
+    context "with a historical vaccination that doesn't need triage" do
+      let(:programme) { CachedProgramme.mmr }
+
+      before do
+        create(:vaccination_record, patient:, programme:, dose_sequence: 1)
+      end
+
+      it { should be(:not_required) }
+
+      context "when consent is given" do
+        before { create(:consent, :given, patient:, programme:) }
+
+        it { should be(:not_required) }
+      end
+
+      context "when consent is refused" do
+        before { create(:consent, :refused, patient:, programme:) }
+
+        it { should be(:not_required) }
+      end
+    end
+
     context "with a safe to vaccinate triage" do
       before { create(:triage, :safe_to_vaccinate, patient:, programme:) }
 

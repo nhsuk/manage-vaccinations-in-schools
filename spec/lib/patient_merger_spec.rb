@@ -225,6 +225,12 @@ describe PatientMerger do
       }.to(patient_to_keep)
     end
 
+    it "enqueues search job for kept patient" do
+      expect { call }.to enqueue_sidekiq_job(
+        SearchVaccinationRecordsInNHSJob
+      ).with(patient_to_keep.id)
+    end
+
     it "enqueues sync jobs for vaccination records" do
       Flipper.enable(:imms_api_sync_job)
       expect { call }.to enqueue_sidekiq_job(

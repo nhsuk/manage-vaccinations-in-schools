@@ -47,7 +47,11 @@ class PatientLocation < ApplicationRecord
   has_one :team, through: :location
 
   has_many :attendance_records,
-           -> { where(patient_id: it.patient_id) },
+           -> do
+             where(patient_id: it.patient_id).for_academic_year(
+               it.academic_year
+             )
+           end,
            through: :location
 
   has_many :gillick_assessments,
