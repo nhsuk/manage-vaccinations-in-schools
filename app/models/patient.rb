@@ -147,6 +147,7 @@ class Patient < ApplicationRecord
         -> do
           includes(
             :consent_statuses,
+            :programme_statuses,
             :triage_statuses,
             vaccination_statuses: :latest_location
           )
@@ -580,6 +581,10 @@ class Patient < ApplicationRecord
 
   def consent_status(programme:, academic_year:)
     patient_status(consent_statuses, programme:, academic_year:)
+  end
+
+  def programme_status(programme, academic_year:)
+    patient_status(programme_statuses, programme:, academic_year:)
   end
 
   def registration_status(session:)

@@ -224,6 +224,16 @@ FactoryBot.define do
     end
 
     trait :due_for_vaccination do
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :due,
+            patient: instance,
+            programme:
+          )
+        end
+      end
       vaccination_statuses do
         programmes.map do |programme|
           association(
@@ -930,6 +940,16 @@ FactoryBot.define do
             programme:,
             team:,
             notes: "Delay vaccination"
+          )
+        end
+      end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :cannot_vaccinate_delay_vaccination,
+            patient: instance,
+            programme:
           )
         end
       end

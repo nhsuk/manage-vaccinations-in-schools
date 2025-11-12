@@ -32,5 +32,10 @@ FactoryBot.define do
     programme { Programme.sample }
 
     traits_for_enum :status
+
+    trait :cannot_vaccinate_delay_vaccination do
+      status { "cannot_vaccinate_delay_vaccination" }
+      date { Date.tomorrow }
+    end
   end
 end
