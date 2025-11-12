@@ -296,11 +296,11 @@ en:
           right_arm_lower_position: Right arm (lower position)
           right_arm_upper_position: Right arm (upper position)
         outcomes:
-          absent_from_session: Absent from session
+          absent: Absent from session
           administered: Vaccinated
           already_had: Already had the vaccine
-          contraindications: Had contraindications
-          not_well: Unwell
+          contraindicated: Had contraindications
+          unwell: Unwell
           refused: Refused vaccine
         protocols:
           national: National protocol
@@ -628,10 +628,10 @@ en:
         will_be_vaccinated_elsewhere: they will be given the vaccine elsewhere
     vaccination_mailer:
       reasons_did_not_vaccinate:
-        absent_from_session: they were not in the vaccination session
+        absent: they were not in the vaccination session
         already_had: they've already had the vaccine
-        contraindications: they had contraindications
-        not_well: the nurse decided %{short_patient_name} was not well
+        contraindicated: they had contraindications
+        unwell: the nurse decided %{short_patient_name} was not well
         refused: they refused when the nurse offered the vaccination
   notification_banner:
     info: Information

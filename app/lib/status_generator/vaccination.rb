@@ -117,7 +117,7 @@ class StatusGenerator::Vaccination
   def status_should_be_eligible? = is_eligible?
 
   def latest_session_status_should_be_contraindicated?
-    vaccination_records.first&.contraindications?
+    vaccination_records.first&.contraindicated?
   end
 
   def latest_session_status_should_be_refused?
@@ -125,12 +125,11 @@ class StatusGenerator::Vaccination
   end
 
   def latest_session_status_should_be_absent?
-    vaccination_records.first&.absent_from_session? ||
-      attendance_record&.attending == false
+    vaccination_records.first&.absent? || attendance_record&.attending == false
   end
 
   def latest_session_status_should_be_unwell?
-    vaccination_records.first&.not_well?
+    vaccination_records.first&.unwell?
   end
 
   def latest_session_status_should_be_already_had?

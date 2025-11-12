@@ -18,10 +18,10 @@ module MavisCLI
       option :outcome,
              values: %w[
                administered
-               not_well
+               unwell
                already_had
-               contraindications
-               absent_from_session
+               contraindicated
+               absent
                refused
              ],
              desc: "Filter by specific outcome"

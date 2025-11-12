@@ -134,7 +134,7 @@ FactoryBot.define do
     trait :not_administered do
       delivery_site { nil }
       delivery_method { nil }
-      outcome { "not_well" }
+      outcome { "unwell" }
       vaccine { nil }
       dose_sequence { nil }
       full_dose { nil }
@@ -145,9 +145,9 @@ FactoryBot.define do
       outcome { "already_had" }
     end
 
-    trait :contraindications do
+    trait :contraindicated do
       not_administered
-      outcome { "contraindications" }
+      outcome { "contraindicated" }
     end
 
     trait :refused do
@@ -155,9 +155,9 @@ FactoryBot.define do
       outcome { "refused" }
     end
 
-    trait :absent_from_session do
+    trait :absent do
       not_administered
-      outcome { "absent_from_session" }
+      outcome { "absent" }
     end
 
     trait :performed_by_not_user do

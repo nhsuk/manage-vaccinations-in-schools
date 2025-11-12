@@ -14,7 +14,7 @@ class PatientSearchForm < SearchForm
   attribute :patient_specific_direction_status, :string
   attribute :programme_types, array: true
   attribute :q, :string
-  attribute :register_status, :string
+  attribute :registration_status, :string
   attribute :still_to_vaccinate, :boolean
   attribute :triage_status, :string
   attribute :vaccination_status, :string
@@ -84,7 +84,7 @@ class PatientSearchForm < SearchForm
     scope = filter_programmes(scope)
     scope = filter_consent_statuses(scope)
     scope = filter_vaccination_statuses(scope)
-    scope = filter_register_status(scope)
+    scope = filter_registration_status(scope)
     scope = filter_triage_status(scope)
     scope = filter_vaccine_criteria(scope)
     scope = filter_patient_specific_direction_status(scope)
@@ -237,8 +237,8 @@ class PatientSearchForm < SearchForm
     end
   end
 
-  def filter_register_status(scope)
-    if (status = register_status&.to_sym).present?
+  def filter_registration_status(scope)
+    if (status = registration_status&.to_sym).present?
       scope.has_registration_status(status, session:)
     else
       scope

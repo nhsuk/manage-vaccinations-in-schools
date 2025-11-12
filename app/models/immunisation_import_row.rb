@@ -75,10 +75,10 @@ class ImmunisationImportRow
 
   REASONS_NOT_ADMINISTERED = {
     "refused" => :refused,
-    "unwell" => :not_well,
-    "vaccination contraindicated" => :contraindications,
+    "unwell" => :unwell,
+    "vaccination contraindicated" => :contraindicated,
     "already had elsewhere" => :already_had,
-    "did not attend" => :absent_from_session
+    "did not attend" => :absent
   }.freeze
 
   SCHOOL_URN_HOME_EDUCATED = "999999"

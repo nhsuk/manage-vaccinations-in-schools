@@ -57,7 +57,7 @@ describe AppVaccinationRecordSummaryComponent do
     end
 
     context "when not administered" do
-      let(:outcome) { :not_well }
+      let(:outcome) { :unwell }
 
       it do
         expect(rendered).to have_css(
@@ -86,7 +86,7 @@ describe AppVaccinationRecordSummaryComponent do
     end
 
     context "without a vaccine" do
-      let(:outcome) { :not_well }
+      let(:outcome) { :unwell }
       let(:vaccine) { nil }
       let(:batch) { nil }
       let(:other_batch) { nil }
@@ -122,7 +122,7 @@ describe AppVaccinationRecordSummaryComponent do
     end
 
     context "without a vaccine" do
-      let(:outcome) { :not_well }
+      let(:outcome) { :unwell }
       let(:vaccine) { nil }
       let(:batch) { nil }
       let(:other_batch) { nil }
@@ -184,7 +184,7 @@ describe AppVaccinationRecordSummaryComponent do
     it { should have_css(".nhsuk-summary-list__row", text: "Batch IDABC") }
 
     context "without a vaccine" do
-      let(:outcome) { :not_well }
+      let(:outcome) { :unwell }
       let(:vaccine) { nil }
       let(:batch) { nil }
       let(:other_batch) { nil }
@@ -202,7 +202,7 @@ describe AppVaccinationRecordSummaryComponent do
     end
 
     context "without a vaccine" do
-      let(:outcome) { :not_well }
+      let(:outcome) { :unwell }
       let(:vaccine) { nil }
       let(:batch) { nil }
       let(:other_batch) { nil }

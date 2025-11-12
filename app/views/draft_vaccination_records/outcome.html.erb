@@ -21,11 +21,11 @@
 
     <%= f.govuk_radio_button :outcome, "already_had",
                              label: { text: "They have already had the vaccine" } %>
-    <%= f.govuk_radio_button :outcome, "contraindications",
+    <%= f.govuk_radio_button :outcome, "contraindicated",
                              label: { text: "They had contraindications" } %>
     <%= f.govuk_radio_button :outcome, "refused",
                              label: { text: "They refused it" } %>
-    <%= f.govuk_radio_button :outcome, "not_well",
+    <%= f.govuk_radio_button :outcome, "unwell",
                              label: { text: "They were not well enough" } %>
   <% end %>
 
