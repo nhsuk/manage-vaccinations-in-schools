@@ -27,10 +27,6 @@
 #  index_vaccines_on_snomed_product_code     (snomed_product_code) UNIQUE
 #  index_vaccines_on_snomed_product_term     (snomed_product_term) UNIQUE
 #
-# Foreign Keys
-#
-#  fk_rails_...  (programme_id => programmes.id)
-#
 FactoryBot.define do
   factory :vaccine do
     transient { programme { nil } }

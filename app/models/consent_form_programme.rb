@@ -21,7 +21,6 @@
 # Foreign Keys
 #
 #  fk_rails_...  (consent_form_id => consent_forms.id) ON DELETE => cascade
-#  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
 #
 class ConsentFormProgramme < ApplicationRecord
   include BelongsToProgramme

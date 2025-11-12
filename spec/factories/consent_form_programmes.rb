@@ -21,7 +21,6 @@
 # Foreign Keys
 #
 #  fk_rails_...  (consent_form_id => consent_forms.id) ON DELETE => cascade
-#  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
 #
 FactoryBot.define do
   factory :consent_form_programmes do

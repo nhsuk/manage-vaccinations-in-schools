@@ -67,7 +67,6 @@
 #  fk_rails_...  (next_dose_delay_triage_id => triages.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
-#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (session_id => sessions.id)
 #  fk_rails_...  (supplied_by_user_id => users.id)
 #  fk_rails_...  (vaccine_id => vaccines.id)

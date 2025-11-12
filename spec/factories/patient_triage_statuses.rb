@@ -21,7 +21,6 @@
 # Foreign Keys
 #
 #  fk_rails_...  (patient_id => patients.id) ON DELETE => cascade
-#  fk_rails_...  (programme_id => programmes.id)
 #
 FactoryBot.define do
   factory :patient_triage_status, class: "Patient::TriageStatus" do

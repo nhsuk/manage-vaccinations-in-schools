@@ -31,7 +31,6 @@
 #
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
-#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (team_id => teams.id)
 #
 
