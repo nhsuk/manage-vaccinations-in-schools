@@ -31,6 +31,32 @@ class Patient::ProgrammeStatus < ApplicationRecord
 
   belongs_to :patient
 
+  has_many :patient_locations,
+           -> { includes(location: :location_programme_year_groups) },
+           through: :patient
+
+  has_many :consents,
+           -> do
+             not_invalidated
+               .response_provided
+               .includes(:parent, :patient)
+               .order(created_at: :desc)
+           end,
+           through: :patient
+
+  has_many :triages,
+           -> { not_invalidated.order(created_at: :desc) },
+           through: :patient
+
+  has_many :vaccination_records,
+           -> { kept.order(performed_at: :desc) },
+           through: :patient
+
+  has_one :attendance_record,
+          -> { today },
+          through: :patient,
+          source: :attendance_records
+
   NOT_ELIGIBLE_STATUSES = { "not_eligible" => 0 }.freeze
 
   NEEDS_CONSENT_STATUSES = {
@@ -92,4 +118,28 @@ class Patient::ProgrammeStatus < ApplicationRecord
   def cannot_vaccinate? = status.in?(CANNOT_VACCINATE_STATUSES.keys)
 
   def vaccinated? = status.in?(VACCINATED_STATUSES.keys)
+
+  def assign
+    self.date = generator.date
+    self.dose_sequence = generator.dose_sequence
+    self.status = generator.status
+    self.vaccine_methods = generator.vaccine_methods
+    self.without_gelatine = generator.without_gelatine
+  end
+
+  private
+
+  def generator
+    @generator ||=
+      StatusGenerator::Programme.new(
+        programme:,
+        academic_year:,
+        patient:,
+        patient_locations:,
+        consents:,
+        triages:,
+        attendance_record:,
+        vaccination_records:
+      )
+  end
 end
