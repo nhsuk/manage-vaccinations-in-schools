@@ -191,37 +191,6 @@ describe CommitPatientChangesetsJob do
           expect(parent_relationship).to be_father
         end
       end
-
-      context "with a patient currently in the imported school but with an outstanding move to another school" do
-        let(:other_school) { create(:school, team:) }
-
-        let(:existing_patient) do
-          create(
-            :patient,
-            given_name: "Jimmy",
-            family_name: "Smith",
-            date_of_birth: Date.new(2010, 1, 2),
-            nhs_number: nil,
-            team:,
-            session:
-          )
-        end
-
-        before do
-          create(
-            :school_move,
-            :to_school,
-            patient: existing_patient,
-            school: other_school
-          )
-        end
-
-        it "removes the outstanding school move when import confirms current school" do
-          expect { perform_job }.to change {
-            existing_patient.reload.school_moves.count
-          }.from(1).to(0)
-        end
-      end
     end
 
     context "with an existing patient matching the name but a different case" do
@@ -393,6 +362,37 @@ describe CommitPatientChangesetsJob do
         expect { perform_job }.not_to(
           change { existing_patient.reload.school_moves.count }
         )
+      end
+
+      context "with a patient currently in the imported school but with an outstanding move to another school" do
+        let(:other_school) { create(:school, team:) }
+
+        let(:existing_patient) do
+          create(
+            :patient,
+            given_name: "Jimmy",
+            family_name: "Smith",
+            date_of_birth: Date.new(2010, 1, 2),
+            nhs_number: nil,
+            team:,
+            session:
+          )
+        end
+
+        before do
+          create(
+            :school_move,
+            :to_school,
+            patient: existing_patient,
+            school: other_school
+          )
+        end
+
+        it "removes the outstanding school move when import confirms current school" do
+          expect { perform_job }.to change {
+            existing_patient.reload.school_moves.count
+          }.from(1).to(0)
+        end
       end
     end
 
