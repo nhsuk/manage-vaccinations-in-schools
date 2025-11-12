@@ -129,33 +129,38 @@ module CSVImportable
     return if invalid?
 
     if is_a?(PatientImport)
-      changesets =
-        rows.each_with_index.map do |row, row_number|
-          PatientChangeset.from_import_row(row:, import: self, row_number:)
-        end
+      process_patient_import!
+    else
+      process_immunisation_import!
+    end
+  end
 
-      if Flipper.enabled?(:import_search_pds)
-        changesets.each do |patient_changeset|
-          PDSCascadingSearchJob.set(queue: :imports).perform_later(
-            patient_changeset,
-            queue: :imports
-          )
-        end
-      else
-        changesets.each do |patient_changeset|
-          patient_changeset.assign_patient_id
-          patient_changeset.processed!
-        end
-
-        validate_changeset_uniqueness!
-        return if changesets_are_invalid?
-
-        CommitImportJob.perform_async(to_global_id.to_s)
+  def process_patient_import!
+    changesets =
+      rows.each_with_index.map do |row, row_number|
+        PatientChangeset.from_import_row(row:, import: self, row_number:)
       end
 
-      return
+    if Flipper.enabled?(:import_search_pds)
+      process_no_postcode_changesets(self.changesets.without_postcode)
+      if self.changesets.with_postcode.any?
+        enqueue_pds_cascading_searches(self.changesets.with_postcode)
+        return
+      end
     end
 
+    changesets.each do |patient_changeset|
+      patient_changeset.assign_patient_id
+      patient_changeset.processed!
+    end
+
+    validate_changeset_uniqueness!
+    return if changesets_are_invalid?
+
+    CommitImportJob.perform_async(to_global_id.to_s)
+  end
+
+  def process_immunisation_import!
     counts = COUNT_COLUMNS.index_with(0)
 
     ActiveRecord::Base.transaction do
@@ -174,6 +179,28 @@ module CSVImportable
 
     post_commit!
     UpdatePatientsFromPDS.call(patients, queue: :imports)
+  end
+
+  def process_no_postcode_changesets(changesets)
+    changesets.find_each do |cs|
+      cs.search_results << {
+        step: :no_fuzzy_with_history,
+        result: :no_postcode,
+        nhs_number: nil,
+        created_at: Time.current
+      }
+
+      cs.processed!
+    end
+  end
+
+  def enqueue_pds_cascading_searches(changesets)
+    changesets.find_each do |cs|
+      PDSCascadingSearchJob.set(queue: :imports).perform_later(
+        cs,
+        queue: :imports
+      )
+    end
   end
 
   def remove!
