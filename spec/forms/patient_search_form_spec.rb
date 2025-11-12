@@ -32,7 +32,7 @@ describe PatientSearchForm do
   let(:vaccination_status) { nil }
   let(:programme_types) { nil }
   let(:q) { "query" }
-  let(:register_status) { nil }
+  let(:registration_status) { nil }
   let(:triage_status) { nil }
   let(:vaccine_criteria) { nil }
   let(:still_to_vaccinate) { nil }
@@ -53,7 +53,7 @@ describe PatientSearchForm do
       patient_specific_direction_status:,
       programme_types:,
       q:,
-      register_status:,
+      registration_status:,
       triage_status:,
       vaccine_criteria:,
       year_groups:
@@ -79,7 +79,7 @@ describe PatientSearchForm do
       let(:missing_nhs_number) { nil }
       let(:vaccination_status) { nil }
       let(:q) { nil }
-      let(:register_status) { nil }
+      let(:registration_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -129,7 +129,7 @@ describe PatientSearchForm do
       let(:missing_nhs_number) { nil }
       let(:vaccination_status) { nil }
       let(:q) { nil }
-      let(:register_status) { nil }
+      let(:registration_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -175,7 +175,7 @@ describe PatientSearchForm do
       let(:missing_nhs_number) { nil }
       let(:vaccination_status) { nil }
       let(:q) { nil }
-      let(:register_status) { nil }
+      let(:registration_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -231,7 +231,7 @@ describe PatientSearchForm do
       let(:vaccination_status) { nil }
       let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
-      let(:register_status) { nil }
+      let(:registration_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -328,7 +328,7 @@ describe PatientSearchForm do
       let(:vaccination_status) { nil }
       let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
-      let(:register_status) { nil }
+      let(:registration_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -361,7 +361,7 @@ describe PatientSearchForm do
       let(:vaccination_status) { "vaccinated" }
       let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
-      let(:register_status) { nil }
+      let(:registration_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -386,7 +386,7 @@ describe PatientSearchForm do
       let(:missing_nhs_number) { nil }
       let(:vaccination_status) { nil }
       let(:q) { nil }
-      let(:register_status) { "attending" }
+      let(:registration_status) { "attending" }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -407,7 +407,7 @@ describe PatientSearchForm do
       let(:vaccination_status) { nil }
       let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
-      let(:register_status) { nil }
+      let(:registration_status) { nil }
       let(:triage_status) { "required" }
       let(:year_groups) { nil }
 
@@ -475,7 +475,7 @@ describe PatientSearchForm do
       let(:vaccination_status) { nil }
       let(:programme_types) { nil }
       let(:q) { nil }
-      let(:register_status) { nil }
+      let(:registration_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -519,7 +519,7 @@ describe PatientSearchForm do
       let(:vaccination_status) { nil }
       let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
-      let(:register_status) { nil }
+      let(:registration_status) { nil }
       let(:triage_status) { nil }
       let(:vaccine_criteria) { "nasal" }
       let(:year_groups) { nil }
@@ -563,7 +563,7 @@ describe PatientSearchForm do
       let(:missing_nhs_number) { nil }
       let(:vaccination_status) { nil }
       let(:q) { nil }
-      let(:register_status) { nil }
+      let(:registration_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -636,7 +636,7 @@ describe PatientSearchForm do
       let(:vaccination_status) { nil }
       let(:programme_types) { nil }
       let(:q) { nil }
-      let(:register_status) { nil }
+      let(:registration_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
       let(:still_to_vaccinate) { "1" }

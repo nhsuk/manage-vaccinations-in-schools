@@ -170,7 +170,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     when :record
       []
     when :register
-      [register_status_tag, vaccination_status_tag]
+      [registration_status_tag, vaccination_status_tag]
     when :consent
       [consent_status_tag]
     when :triage
@@ -196,14 +196,14 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     }
   end
 
-  def register_status_tag
+  def registration_status_tag
     {
-      key: :register,
+      key: :registration,
       value:
         render(
           AppStatusTagComponent.new(
             patient.registration_status(session:)&.status || "unknown",
-            context: :register
+            context: :registration
           )
         )
     }

@@ -86,16 +86,16 @@ class AppPatientSearchFormComponent < ViewComponent::Base
           <% end %>
         <% end %>
 
-        <% if register_statuses.any? %>
-          <%= f.govuk_radio_buttons_fieldset :register_status,
+        <% if registration_statuses.any? %>
+          <%= f.govuk_radio_buttons_fieldset :registration_status,
                                              legend: { text: "Registration status", size: "s" },
                                              small: true do %>
-            <%= f.govuk_radio_button :register_status, "", checked: form.register_status.blank?, label: { text: "Any" } %>
-            <% register_statuses.each do |status| %>
-              <%= f.govuk_radio_button :register_status,
+            <%= f.govuk_radio_button :registration_status, "", checked: form.registration_status.blank?, label: { text: "Any" } %>
+            <% registration_statuses.each do |status| %>
+              <%= f.govuk_radio_button :registration_status,
                                        status,
-                                       checked: form.register_status == status,
-                                       label: { text: t(status, scope: %i[status register label]) } %>
+                                       checked: form.registration_status == status,
+                                       label: { text: t(status, scope: %i[status registration label]) } %>
             <% end %>
           <% end %>
         <% end %>
@@ -236,7 +236,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     url:,
     programmes: [],
     consent_statuses: [],
-    register_statuses: [],
+    registration_statuses: [],
     triage_statuses: [],
     vaccination_statuses: [],
     patient_specific_direction_statuses: [],
@@ -252,7 +252,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
 
     @programmes = programmes
     @consent_statuses = consent_statuses
-    @register_statuses = register_statuses
+    @registration_statuses = registration_statuses
     @triage_statuses = triage_statuses
     @vaccination_statuses = vaccination_statuses
     @patient_specific_direction_statuses = patient_specific_direction_statuses
@@ -270,7 +270,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               :url,
               :programmes,
               :consent_statuses,
-              :register_statuses,
+              :registration_statuses,
               :triage_statuses,
               :vaccination_statuses,
               :patient_specific_direction_statuses,
@@ -296,7 +296,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
   def show_buttons_in_details?
     !(
       consent_statuses.any? || vaccination_statuses.any? ||
-        register_statuses.any? || triage_statuses.any? || year_groups.any?
+        registration_statuses.any? || triage_statuses.any? || year_groups.any?
     )
   end
 
