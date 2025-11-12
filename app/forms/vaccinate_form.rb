@@ -209,6 +209,8 @@ class VaccinateForm
   def pre_screening
     @pre_screening ||=
       patient.pre_screenings.build(
+        date: session_date.value,
+        location: session.location,
         notes: pre_screening_notes,
         performed_by: current_user,
         programme:,
