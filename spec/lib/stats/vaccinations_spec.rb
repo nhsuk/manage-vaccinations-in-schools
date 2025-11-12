@@ -78,7 +78,7 @@ describe Stats::Vaccinations do
           :vaccination_record,
           patient: target_patient_b,
           programme: programme_menacwy,
-          outcome: "absent_from_session",
+          outcome: "absent",
           session: target_session_b
         )
 
@@ -93,7 +93,7 @@ describe Stats::Vaccinations do
           :vaccination_record,
           patient: other_patient,
           programme: programme_flu,
-          outcome: "contraindications",
+          outcome: "contraindicated",
           session: other_session
         )
       end
@@ -104,9 +104,9 @@ describe Stats::Vaccinations do
         expect(result).to include("flu", "hpv", "menacwy")
         expect(result.dig("flu", "administered")).to eq(3)
         expect(result.dig("flu", "refused")).to eq(1)
-        expect(result.dig("flu", "contraindications")).to eq(1)
+        expect(result.dig("flu", "contraindicated")).to eq(1)
         expect(result.dig("hpv", "administered")).to eq(1)
-        expect(result.dig("menacwy", "absent_from_session")).to eq(1)
+        expect(result.dig("menacwy", "absent")).to eq(1)
 
         total_count = result.values.map(&:values).flatten.sum
         expect(total_count).to eq(7)
@@ -132,7 +132,7 @@ describe Stats::Vaccinations do
         expect(result).not_to include("hpv", "menacwy")
         expect(result.dig("flu", "administered")).to eq(3)
         expect(result.dig("flu", "refused")).to eq(1)
-        expect(result.dig("flu", "contraindications")).to eq(1)
+        expect(result.dig("flu", "contraindicated")).to eq(1)
 
         total_count = result.values.map(&:values).flatten.sum
         expect(total_count).to eq(5)

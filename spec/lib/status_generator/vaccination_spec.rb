@@ -554,7 +554,7 @@ describe StatusGenerator::Vaccination do
       before do
         create(
           :vaccination_record,
-          :contraindications,
+          :contraindicated,
           patient:,
           session:,
           programme:,
@@ -584,7 +584,7 @@ describe StatusGenerator::Vaccination do
       before do
         create(
           :vaccination_record,
-          :absent_from_session,
+          :absent,
           patient:,
           session:,
           programme:,
@@ -611,7 +611,7 @@ describe StatusGenerator::Vaccination do
         before do
           create(
             :vaccination_record,
-            :absent_from_session,
+            :absent,
             patient:,
             session:,
             programme:,
@@ -634,7 +634,7 @@ describe StatusGenerator::Vaccination do
         before do
           create(
             :vaccination_record,
-            :absent_from_session,
+            :absent,
             patient:,
             session:,
             programme:,
@@ -1059,7 +1059,7 @@ describe StatusGenerator::Vaccination do
         create(
           :vaccination_record,
           :not_administered,
-          outcome: "not_well",
+          outcome: "unwell",
           patient:,
           session:,
           programme:,

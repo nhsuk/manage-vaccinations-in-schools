@@ -163,10 +163,10 @@ class VaccinationRecord < ApplicationRecord
        {
          administered: 0,
          refused: 1,
-         not_well: 2,
-         contraindications: 3,
+         unwell: 2,
+         contraindicated: 3,
          already_had: 4,
-         absent_from_session: 6
+         absent: 6
        },
        validate: true
 

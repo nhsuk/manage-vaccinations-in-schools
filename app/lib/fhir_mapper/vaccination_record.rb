@@ -136,8 +136,7 @@ module FHIRMapper
       case outcome
       when "administered"
         "completed"
-      when "refused", "not_well", "contraindications", "already_had",
-           "absent_from_school", "absent_from_session"
+      when "refused", "unwell", "contraindicated", "already_had", "absent"
         "not-done"
       else
         raise ArgumentError, "Unknown outcome: #{outcome}"

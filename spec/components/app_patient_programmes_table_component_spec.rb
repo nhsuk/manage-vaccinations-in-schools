@@ -76,7 +76,7 @@ describe AppPatientProgrammesTableComponent do
           :vaccination_record,
           patient:,
           programme: programmes.first,
-          outcome: :contraindications,
+          outcome: :contraindicated,
           performed_at: today,
           session:
         )
@@ -95,7 +95,7 @@ describe AppPatientProgrammesTableComponent do
           :vaccination_record,
           patient:,
           programme: programmes.first,
-          outcome: :not_well,
+          outcome: :unwell,
           performed_at: today,
           session:
         )
