@@ -25,7 +25,6 @@
 #
 #  fk_rails_...  (latest_location_id => locations.id)
 #  fk_rails_...  (patient_id => patients.id) ON DELETE => cascade
-#  fk_rails_...  (programme_id => programmes.id)
 #
 class Patient::VaccinationStatus < ApplicationRecord
   include BelongsToProgramme
