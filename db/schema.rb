@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_12_203653) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -325,13 +325,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
     t.bigint "performed_by_user_id", null: false
     t.bigint "programme_id", null: false
     t.enum "programme_type", enum_type: "programme_type"
-    t.bigint "session_date_id"
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_gillick_assessments_on_location_id"
     t.index ["patient_id"], name: "index_gillick_assessments_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_gillick_assessments_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_gillick_assessments_on_programme_id"
-    t.index ["session_date_id"], name: "index_gillick_assessments_on_session_date_id"
   end
 
   create_table "health_questions", force: :cascade do |t|
@@ -715,13 +713,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
     t.bigint "performed_by_user_id", null: false
     t.bigint "programme_id", null: false
     t.enum "programme_type", enum_type: "programme_type"
-    t.bigint "session_date_id"
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_pre_screenings_on_location_id"
     t.index ["patient_id"], name: "index_pre_screenings_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_pre_screenings_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_pre_screenings_on_programme_id"
-    t.index ["session_date_id"], name: "index_pre_screenings_on_session_date_id"
   end
 
   create_table "programmes", force: :cascade do |t|
@@ -1035,7 +1031,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
   add_foreign_key "gillick_assessments", "locations"
   add_foreign_key "gillick_assessments", "patients"
   add_foreign_key "gillick_assessments", "programmes"
-  add_foreign_key "gillick_assessments", "session_dates"
   add_foreign_key "gillick_assessments", "users", column: "performed_by_user_id"
   add_foreign_key "health_questions", "health_questions", column: "follow_up_question_id"
   add_foreign_key "health_questions", "health_questions", column: "next_question_id"
@@ -1090,7 +1085,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
   add_foreign_key "pre_screenings", "locations"
   add_foreign_key "pre_screenings", "patients"
   add_foreign_key "pre_screenings", "programmes"
-  add_foreign_key "pre_screenings", "session_dates"
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
   add_foreign_key "reporting_api_one_time_tokens", "users"
   add_foreign_key "school_move_log_entries", "locations", column: "school_id"
