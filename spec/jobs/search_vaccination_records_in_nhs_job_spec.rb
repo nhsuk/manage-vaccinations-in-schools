@@ -373,6 +373,14 @@ describe SearchVaccinationRecordsInNHSJob do
       end
     end
 
+    shared_examples "sends discovery comms if required 5 times" do
+      it "calls send_vaccination_already_had_if_required 5 times" do
+        expect(AlreadyHadNotificationSender).to receive(:call).exactly(5).times
+
+        perform
+      end
+    end
+
     shared_examples "doesn't send discovery comms" do
       it "does not call send_vaccination_already_had_if_required" do
         expect(AlreadyHadNotificationSender).not_to receive(:call)
