@@ -179,5 +179,9 @@ FactoryBot.define do
     trait :confirmation_sent do
       confirmation_sent_at { Time.current }
     end
+
+    trait :yesterday do
+      performed_at { 1.day.ago }
+    end
   end
 end
