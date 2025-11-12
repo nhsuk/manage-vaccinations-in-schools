@@ -418,6 +418,14 @@ module NHS::ImmunisationsAPI
           key == "immunization.target" ? "-immunization.target" : key
         end
 
+      # We don't care about the order of the target values
+      tweaked_bundle_params["-immunization.target"] = tweaked_bundle_params[
+        "-immunization.target"
+      ].split(",").sort
+      request_params["-immunization.target"] = request_params[
+        "-immunization.target"
+      ].split(",").sort
+
       unless tweaked_bundle_params == request_params ||
                bundle_params == request_params
         raise NHS::ImmunisationsAPI::BundleLinkParamsMismatch,
