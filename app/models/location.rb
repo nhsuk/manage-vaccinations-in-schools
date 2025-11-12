@@ -192,13 +192,13 @@ class Location < ApplicationRecord
       programmes.flat_map do |programme|
         programme.default_year_groups.filter_map do |year_group|
           if (year_group_id = year_group_ids[year_group])
-            [year_group_id, programme.id]
+            [year_group_id, programme.id, programme.type]
           end
         end
       end
 
     Location::ProgrammeYearGroup.import!(
-      %i[location_year_group_id programme_id],
+      %i[location_year_group_id programme_id programme_type],
       rows,
       on_duplicate_key_ignore: true
     )

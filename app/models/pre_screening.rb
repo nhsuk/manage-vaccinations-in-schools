@@ -6,6 +6,7 @@
 #
 #  id                   :bigint           not null, primary key
 #  notes                :text             default(""), not null
+#  programme_type       :enum
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  patient_id           :bigint           not null
@@ -28,6 +29,7 @@
 #  fk_rails_...  (session_date_id => session_dates.id)
 #
 class PreScreening < ApplicationRecord
+  include BelongsToProgramme
   include BelongsToSessionDate
   include Notable
   include PerformableByUser
@@ -35,5 +37,4 @@ class PreScreening < ApplicationRecord
   audited associated_with: :patient
 
   belongs_to :patient
-  belongs_to :programme
 end

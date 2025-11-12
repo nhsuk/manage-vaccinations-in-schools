@@ -9,6 +9,7 @@
 #  dose_sequence         :integer
 #  latest_date           :date
 #  latest_session_status :integer
+#  programme_type        :enum
 #  status                :integer          default("not_eligible"), not null
 #  latest_location_id    :bigint
 #  patient_id            :bigint           not null
@@ -28,8 +29,9 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class Patient::VaccinationStatus < ApplicationRecord
+  include BelongsToProgramme
+
   belongs_to :patient
-  belongs_to :programme
 
   belongs_to :latest_location, class_name: "Location", optional: true
 

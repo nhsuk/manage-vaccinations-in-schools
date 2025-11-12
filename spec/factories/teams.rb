@@ -15,6 +15,7 @@
 #  phone_instructions            :string
 #  privacy_notice_url            :string           not null
 #  privacy_policy_url            :string           not null
+#  programme_types               :enum             is an Array
 #  workgroup                     :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
@@ -25,6 +26,7 @@
 #
 #  index_teams_on_name             (name) UNIQUE
 #  index_teams_on_organisation_id  (organisation_id)
+#  index_teams_on_programme_types  (programme_types) USING gin
 #  index_teams_on_workgroup        (workgroup) UNIQUE
 #
 # Foreign Keys
@@ -47,6 +49,10 @@ FactoryBot.define do
     careplus_venue_code { identifier.to_s }
     privacy_notice_url { "https://example.com/privacy-notice" }
     privacy_policy_url { "https://example.com/privacy-policy" }
+
+    after(:build) do |team, evaluator|
+      team.programme_types = evaluator.programmes.map(&:type)
+    end
 
     trait :with_one_nurse do
       users { [create(:user, :nurse, team: instance)] }

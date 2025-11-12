@@ -23,7 +23,7 @@ class StatusUpdater
 
   def update_consent_statuses!
     Patient::ConsentStatus.import!(
-      %i[patient_id programme_id academic_year],
+      %i[patient_id programme_id programme_type academic_year],
       patient_statuses_to_import,
       on_duplicate_key_ignore: true
     )
@@ -77,7 +77,7 @@ class StatusUpdater
 
   def update_triage_statuses!
     Patient::TriageStatus.import!(
-      %i[patient_id programme_id academic_year],
+      %i[patient_id programme_id programme_type academic_year],
       patient_statuses_to_import,
       on_duplicate_key_ignore: true
     )
@@ -101,7 +101,7 @@ class StatusUpdater
 
   def update_vaccination_statuses!
     Patient::VaccinationStatus.import!(
-      %i[patient_id programme_id academic_year],
+      %i[patient_id programme_id programme_type academic_year],
       patient_statuses_to_import,
       on_duplicate_key_ignore: true
     )
@@ -148,7 +148,14 @@ class StatusUpdater
 
             programme_ids_per_year_group
               .fetch(year_group, [])
-              .map { |programme_id| [patient_id, programme_id, academic_year] }
+              .map do |programme_id|
+                [
+                  patient_id,
+                  programme_id,
+                  programme_types.fetch(programme_id),
+                  academic_year
+                ]
+              end
           end
         end
   end
@@ -178,6 +185,10 @@ class StatusUpdater
 
         [patient_id, session_id]
       end
+  end
+
+  def programme_types
+    @programme_types ||= Programme.pluck(:id, :type).to_h
   end
 
   def programme_ids_per_year_group

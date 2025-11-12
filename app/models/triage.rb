@@ -9,6 +9,7 @@
 #  delay_vaccination_until :date
 #  invalidated_at          :datetime
 #  notes                   :text             default(""), not null
+#  programme_type          :enum
 #  status                  :integer          not null
 #  vaccine_method          :integer
 #  without_gelatine        :boolean
@@ -35,6 +36,7 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class Triage < ApplicationRecord
+  include BelongsToProgramme
   include Invalidatable
   include Notable
   include PerformableByUser
@@ -42,7 +44,6 @@ class Triage < ApplicationRecord
   audited associated_with: :patient
 
   belongs_to :patient
-  belongs_to :programme
   belongs_to :team
 
   enum :status,

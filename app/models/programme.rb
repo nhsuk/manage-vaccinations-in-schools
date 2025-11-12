@@ -44,8 +44,8 @@ class Programme < ApplicationRecord
          flu: "flu",
          hpv: "hpv",
          menacwy: "menacwy",
-         td_ipv: "td_ipv",
-         mmr: "mmr"
+         mmr: "mmr",
+         td_ipv: "td_ipv"
        },
        validate: true
 

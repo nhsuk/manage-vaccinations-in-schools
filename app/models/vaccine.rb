@@ -12,6 +12,7 @@
 #  manufacturer        :text             not null
 #  method              :integer          not null
 #  nivs_name           :text             not null
+#  programme_type      :enum
 #  side_effects        :integer          default([]), not null, is an Array
 #  snomed_product_code :string           not null
 #  snomed_product_term :string           not null
@@ -32,12 +33,11 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class Vaccine < ApplicationRecord
+  include BelongsToProgramme
   include HasSideEffects
 
   audited associated_with: :programme
   has_associated_audits
-
-  belongs_to :programme
 
   has_many :health_questions, dependent: :destroy
   has_many :batches

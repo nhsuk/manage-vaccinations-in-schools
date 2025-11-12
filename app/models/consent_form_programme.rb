@@ -6,6 +6,7 @@
 #
 #  id                 :bigint           not null, primary key
 #  notes              :text             default(""), not null
+#  programme_type     :enum
 #  reason_for_refusal :integer
 #  response           :integer
 #  vaccine_methods    :integer          default([]), not null, is an Array
@@ -24,11 +25,11 @@
 #  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
 #
 class ConsentFormProgramme < ApplicationRecord
+  include BelongsToProgramme
   include HasVaccineMethods
   include Refusable
 
   belongs_to :consent_form
-  belongs_to :programme
 
   scope :ordered, -> { joins(:programme).order(:"programme.type") }
 
