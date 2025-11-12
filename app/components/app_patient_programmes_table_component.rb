@@ -64,25 +64,22 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   end
 
   def status_for_programme(programme:, academic_year:)
-    hash = vaccination_status_hash(programme:, academic_year:)
+    hash = programme_status_hash(programme:, academic_year:)
     tag.strong(hash[:text], class: "nhsuk-tag nhsuk-tag--#{hash[:colour]}")
   end
 
   def notes_for_programme(programme:, academic_year:)
-    vaccination_status_hash(programme:, academic_year:)[
-      :details_text
-    ].presence || ""
+    programme_status_hash(programme:, academic_year:)[:details_text].presence ||
+      ""
   end
 
-  def vaccination_status_hash(programme:, academic_year:)
-    @vaccination_status_hash ||= {}
-    @vaccination_status_hash[programme.type] ||= {}
-    @vaccination_status_hash[programme.type][
+  def programme_status_hash(programme:, academic_year:)
+    @programme_status_hash ||= {}
+    @programme_status_hash[programme.type] ||= {}
+    @programme_status_hash[programme.type][
       academic_year
-    ] ||= PatientStatusResolver.new(
-      patient,
-      programme:,
-      academic_year:
-    ).vaccination
+    ] ||= PatientStatusResolver.new(patient, programme:, academic_year:).send(
+      Flipper.enabled?(:programme_status) ? :programme : :vaccination
+    )
   end
 end
