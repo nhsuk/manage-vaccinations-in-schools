@@ -93,11 +93,12 @@ describe "Import child records" do
     then_i_should_see_the_children_for_doubles_in_current_academic_year
   end
 
-  context "when PDS lookup during import is enabled" do
+  context "when PDS lookup during import and review screen is enabled" do
     scenario "User uploads a file during preparation period" do
       given_today_is_the_start_of_the_2023_24_preparation_period
       and_the_app_is_setup
       and_pds_lookup_during_import_is_enabled
+      and_import_review_screen_is_enabled
 
       then_i_should_be_in_the_preparation_period
 
@@ -130,6 +131,7 @@ describe "Import child records" do
       and_i_can_choose_the_academic_year_on_import
       and_the_app_is_setup
       and_pds_lookup_during_import_is_enabled
+      and_import_review_screen_is_enabled
       then_i_should_be_in_the_preparation_period
 
       when_i_visit_the_import_page
@@ -161,6 +163,7 @@ describe "Import child records" do
       and_i_can_choose_the_academic_year_on_import
       and_the_app_is_setup
       and_pds_lookup_during_import_is_enabled
+      and_import_review_screen_is_enabled
       then_i_should_be_in_the_preparation_period
 
       when_i_visit_the_import_page
@@ -230,6 +233,10 @@ describe "Import child records" do
       "birthdate" => "eq2010-01-03",
       "address-postalcode" => "SW1A 1AA"
     )
+  end
+
+  def and_import_review_screen_is_enabled
+    Flipper.enable(:import_review_screen)
   end
 
   def and_i_can_choose_the_academic_year_on_import

@@ -80,7 +80,7 @@ describe ProcessPatientChangesetJob do
       it "marks changeset as processed" do
         described_class.perform_now(patient_changeset.id)
 
-        expect(patient_changeset.reload).to be_processed
+        expect(patient_changeset.reload).to be_committing
       end
     end
 
@@ -114,7 +114,7 @@ describe ProcessPatientChangesetJob do
       it "marks changeset as processed" do
         described_class.perform_now(patient_changeset.id)
 
-        expect(patient_changeset.reload).to be_processed
+        expect(patient_changeset.reload).to be_committing
       end
     end
 
@@ -148,7 +148,7 @@ describe ProcessPatientChangesetJob do
       it "marks changeset as processed" do
         described_class.perform_now(patient_changeset.id)
 
-        expect(patient_changeset.reload).to be_processed
+        expect(patient_changeset.reload).to be_committing
       end
     end
 
@@ -451,6 +451,28 @@ describe ProcessPatientChangesetJob do
         expect {
           described_class.perform_now(patient_changeset.id)
         }.not_to have_enqueued_job(CommitImportJob)
+      end
+    end
+
+    context "when passed a PatientChangeset object" do
+      let(:search_results) do
+        [
+          {
+            "step" => "no_fuzzy_with_history",
+            "result" => "one_match",
+            "nhs_number" => "9449306168",
+            "created_at" => Time.current.iso8601(3)
+          }
+        ]
+      end
+
+      it "processes the changeset correctly" do
+        described_class.perform_now(patient_changeset.id)
+
+        expect(patient_changeset.reload).to be_committing
+        expect(patient_changeset.child_attributes["nhs_number"]).to eq(
+          "9449306168"
+        )
       end
     end
   end

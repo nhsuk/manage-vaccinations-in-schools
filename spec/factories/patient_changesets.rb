@@ -9,6 +9,7 @@
 #  import_type           :string           not null
 #  matched_on_nhs_number :boolean
 #  pds_nhs_number        :string
+#  processed_at          :datetime
 #  record_type           :integer          default(1), not null
 #  row_number            :integer
 #  status                :integer          default("pending"), not null

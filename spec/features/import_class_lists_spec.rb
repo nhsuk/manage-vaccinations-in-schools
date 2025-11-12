@@ -37,10 +37,11 @@ describe "Import class lists" do
     then_i_should_see_the_children_added_to_the_session
   end
 
-  context "when PDS lookup during import is enabled" do
+  context "when PDS lookup during import and import_review_screen is enabled" do
     scenario "User uploads a file" do
       given_an_hpv_programme_is_underway
       and_pds_lookup_during_import_is_enabled
+      and_import_review_screen_is_enabled
 
       when_i_visit_a_session_page_for_the_hpv_programme
       and_i_start_adding_children_to_the_session
@@ -120,6 +121,10 @@ describe "Import class lists" do
       "birthdate" => "eq2010-01-03",
       "address-postalcode" => "SW1A 1AA"
     )
+  end
+
+  def and_import_review_screen_is_enabled
+    Flipper.enable(:import_review_screen)
   end
 
   def when_i_visit_a_session_page_for_the_hpv_programme

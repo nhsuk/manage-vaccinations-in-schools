@@ -118,9 +118,25 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :class_imports, path: "class-imports", except: %i[index destroy]
+  resources :class_imports, path: "class-imports", except: %i[index destroy] do
+    member do
+      get :re_review, to: "class_imports#re_review"
+      get :imported_records, to: "class_imports#imported_records"
+      post :approve, to: "class_imports#approve"
+      post :cancel, to: "class_imports#cancel"
+    end
+  end
 
-  resources :cohort_imports, path: "cohort-imports", except: %i[index destroy]
+  resources :cohort_imports,
+            path: "cohort_imports",
+            except: %i[index destroy] do
+    member do
+      get :re_review, to: "cohort_imports#re_review"
+      get :imported_records, to: "cohort_imports#imported_records"
+      post :approve, to: "cohort_imports#approve"
+      post :cancel, to: "cohort_imports#cancel"
+    end
+  end
 
   resources :consent_forms, path: "consent-forms", only: %i[index show] do
     member do

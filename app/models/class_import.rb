@@ -13,6 +13,8 @@
 #  exact_duplicate_record_count :integer
 #  new_record_count             :integer
 #  processed_at                 :datetime
+#  reviewed_at                  :datetime         default([]), not null, is an Array
+#  reviewed_by_user_ids         :bigint           default([]), not null, is an Array
 #  rows_count                   :integer
 #  serialized_errors            :jsonb
 #  status                       :integer          default("pending_import"), not null
@@ -63,7 +65,11 @@ class ClassImport < PatientImport
           .exists
       )
 
-    unknown_patients = existing_patients - patients
+    patients_in_import =
+      changesets.from_file - changesets.cancelled - changesets.processed
+
+    unknown_patients =
+      existing_patients - patients - patients_in_import.map(&:patient)
 
     school_moves =
       unknown_patients.map do |patient|

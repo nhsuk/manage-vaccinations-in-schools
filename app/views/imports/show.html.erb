@@ -33,42 +33,56 @@
     <%= summary_list.with_row do |row| %>
       <%= row.with_key { "Type" } %>
       <%= row.with_value {
-            { "ClassImport" => "Class list",
-              "CohortImport" => "Cohort list",
-              "ImmunisationImport" => "Immunisation list" }[import.class.name]
+            { "ClassImport" => "Class list records",
+              "CohortImport" => "Child records",
+              "ImmunisationImport" => "Vaccination records" }[import.class.name]
           } %>
     <% end %>
 
     <% if import.is_a?(ClassImport) %>
+      <%= summary_list.with_row do |row| %>
+        <%= row.with_key { "School" } %>
+        <%= row.with_value { import.location.name } %>
+      <% end %>
+
       <%= summary_list.with_row do |row| %>
         <%= row.with_key { "Year groups" } %>
         <%= row.with_value { import.year_groups.map { format_year_group(it) }.to_sentence } %>
       <% end %>
     <% end %>
 
-    <% if import.exact_duplicate_record_count.present? %>
+    <% if import.in_review? || import.in_re_review? %>
       <%= summary_list.with_row do |row| %>
-        <%= row.with_key { "Duplicates not imported" } %>
-        <%= row.with_value do %>
-          <% if import.exact_duplicate_record_count.zero? %>
-            None
-          <% else %>
-            <%= import.exact_duplicate_record_count == 1 ?
-                  "1 record was not imported because it already exists in Mavis" :
-                  "#{import.exact_duplicate_record_count} records were not imported because they already exist in Mavis" %>
-          <% end %>
-        <% end %>
+        <%= row.with_key { "Uploaded records" } %>
+        <%= row.with_value { import.changesets.from_file.count.to_s } %>
       <% end %>
     <% end %>
 
-    <% if @duplicates.present? %>
-      <%= summary_list.with_row do |row| %>
-        <%= row.with_key { "Import issues" } %>
-        <%= row.with_value {
-              @duplicates.count == 1 ?
-                "1 record has import issues to resolve before it can be imported into Mavis" :
-                "#{@duplicates.count} records have import issues to resolve before they can be imported into Mavis"
-            } %>
+    <% if import.processed? || import.partially_processed? %>
+      <% if import.exact_duplicate_record_count.present? %>
+        <%= summary_list.with_row do |row| %>
+          <%= row.with_key { "Duplicates not imported" } %>
+          <%= row.with_value do %>
+            <% if import.exact_duplicate_record_count.zero? %>
+              None
+            <% else %>
+              <%= import.exact_duplicate_record_count == 1 ?
+                    "1 record was not imported because it already exists in Mavis" :
+                    "#{import.exact_duplicate_record_count} records were not imported because they already exist in Mavis" %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <% if @duplicates.present? %>
+        <%= summary_list.with_row do |row| %>
+          <%= row.with_key { "Import issues" } %>
+          <%= row.with_value {
+                @duplicates.count == 1 ?
+                  "1 record has import issues to resolve before it can be imported into Mavis" :
+                  "#{@duplicates.count} records have import issues to resolve before they can be imported into Mavis"
+              } %>
+        <% end %>
       <% end %>
     <% end %>
   <% end %>
@@ -112,7 +126,31 @@
   </details>
 <% end %>
 
-<% if import.processed? %>
+<% if import.in_review? %>
+  <%= render AppImportReviewComponent.new(
+        import:,
+        new_records: @new_records,
+        auto_matched_records: @auto_matched_records,
+        import_issues: @import_issues,
+        school_moves: @school_moves,
+      ) %>
+<% end %>
+
+<% if import.processed? || import.partially_processed? %>
+
+  <% if @cancelled.present? %>
+    <details class="nhsuk-details nhsuk-expander">
+      <summary class="nhsuk-details__summary" data-module="app-sticky">
+        <span class="nhsuk-details__summary-text">
+          <%= @cancelled.count %> records not imported
+        </span>
+      </summary>
+      <div class="nhsuk-details__text">
+        <%= render AppImportReviewRecordsSummaryComponent.new(changesets: @cancelled) %>
+      </div>
+    </details>
+  <% end %>
+
   <% if @nhs_discrepancies.present? %>
       <%= render AppPatientPDSDiscrepancyTableComponent.new(discrepancies: @nhs_discrepancies, current_user:) %>
     <% end %>

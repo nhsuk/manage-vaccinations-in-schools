@@ -25,7 +25,13 @@ module CSVImportable
            rows_are_invalid: 1,
            processed: 2,
            low_pds_match_rate: 3,
-           changesets_are_invalid: 4
+           changesets_are_invalid: 4,
+           in_review: 5,
+           calculating_re_review: 6,
+           in_re_review: 7,
+           committing: 8,
+           partially_processed: 9,
+           cancelled: 10
          },
          default: :pending_import,
          validate: true
@@ -149,15 +155,18 @@ module CSVImportable
       end
     end
 
-    changesets.each do |patient_changeset|
-      patient_changeset.assign_patient_id
-      patient_changeset.processed!
-    end
+    changesets.each(&:assign_patient_id)
 
     validate_changeset_uniqueness!
     return if changesets_are_invalid?
 
-    CommitImportJob.perform_async(to_global_id.to_s)
+    if Flipper.enabled?(:import_review_screen)
+      enqueue_review_jobs(self.changesets)
+    else
+      changesets.each(&:committing!)
+
+      CommitImportJob.perform_async(to_global_id.to_s)
+    end
   end
 
   def process_immunisation_import!
@@ -189,8 +198,27 @@ module CSVImportable
         nhs_number: nil,
         created_at: Time.current
       }
+      if Flipper.enabled?(:import_review_screen)
+        cs.calculating_review!
+        ReviewPatientChangesetJob.perform_later(cs.id)
+      else
+        cs.assign_patient_id
+        cs.committing!
+      end
+    end
+  end
 
-      cs.processed!
+  def enqueue_review_jobs(changesets)
+    review_changesets =
+      if Flipper.enabled?(:import_search_pds)
+        changesets.with_postcode
+      else
+        changesets
+      end
+
+    review_changesets.each do |cs|
+      cs.calculating_review!
+      ReviewPatientChangesetJob.perform_later(cs.id)
     end
   end
 
@@ -257,8 +285,6 @@ module CSVImportable
   def ensure_processed_with_count_statistics
     if processed? && COUNT_COLUMNS.any? { |column| send(column).nil? }
       raise "Count statistics must be set for a processed import."
-    elsif !processed? && COUNT_COLUMNS.any? { |column| !send(column).nil? }
-      raise "Count statistics must not be set for a non-processed import."
     end
   end
 
