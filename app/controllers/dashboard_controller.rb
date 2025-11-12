@@ -7,6 +7,8 @@ class DashboardController < ApplicationController
 
   def index
     @notices_count =
-      (policy_scope(ImportantNotice).count if policy(ImportantNotice).index?)
+      if policy(:notices).index?
+        ImportantNotices.call(patient_scope: policy_scope(Patient)).length
+      end
   end
 end
