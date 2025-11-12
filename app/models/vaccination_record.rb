@@ -309,11 +309,7 @@ class VaccinationRecord < ApplicationRecord
   end
 
   def should_generate_important_notice?
-    if id_previously_changed? # new_record? is not available in after_save
-      !notify_parents # important notices are only generated if this is false
-    else
-      notify_parents_previously_changed?
-    end
+    notify_parents_previously_changed?
   end
 
   def generate_important_notice_if_needed
