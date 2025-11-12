@@ -17,7 +17,6 @@
 # Foreign Keys
 #
 #  fk_rails_...  (location_year_group_id => location_year_groups.id) ON DELETE => cascade
-#  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
 #
 FactoryBot.define do
   factory :location_programme_year_group,
