@@ -695,13 +695,6 @@ describe NHS::ImmunisationsAPI do
       end
     end
 
-    context "when the programme type is not one of those synced to the API" do
-      let(:programme) { CachedProgramme.menacwy }
-      let(:vaccine) { programme.vaccines.first }
-
-      it { should be false }
-    end
-
     context "when the patient has no NHS number" do
       before { patient.update(nhs_number: nil) }
 

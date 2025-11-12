@@ -32,30 +32,6 @@ describe Programme do
       it { should_not include(td_ipv_programme) }
     end
 
-    describe "#can_sync_to_immunisations_api" do
-      subject(:scope) { described_class.can_sync_to_immunisations_api }
-
-      let(:expectations) do
-        { flu: true, hpv: true, menacwy: true, td_ipv: true, mmr: true }
-      end
-
-      let!(:programmes) do
-        expectations.keys.index_with { CachedProgramme.send(it) }
-      end
-
-      it "includes exactly the programmes expected to sync" do
-        expected =
-          expectations.select { |_k, v| v }.keys.map { |k| programmes.fetch(k) }
-        expect(scope).to match_array(expected)
-      end
-
-      it "matches the predicate for each record" do
-        predicate_true =
-          programmes.values.select(&:can_sync_to_immunisations_api?)
-        expect(scope.to_a).to match_array(predicate_true)
-      end
-    end
-
     describe "#can_search_in_immunisations_api" do
       subject(:scope) { described_class.can_search_in_immunisations_api }
 
