@@ -5,7 +5,7 @@
 # Table name: gillick_assessments
 #
 #  id                   :bigint           not null, primary key
-#  date                 :date
+#  date                 :date             not null
 #  knows_consequences   :boolean          not null
 #  knows_delivery       :boolean          not null
 #  knows_disease        :boolean          not null
@@ -15,11 +15,11 @@
 #  programme_type       :enum
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  location_id          :bigint
+#  location_id          :bigint           not null
 #  patient_id           :bigint           not null
 #  performed_by_user_id :bigint           not null
 #  programme_id         :bigint           not null
-#  session_date_id      :bigint           not null
+#  session_date_id      :bigint
 #
 # Indexes
 #
@@ -43,6 +43,8 @@ FactoryBot.define do
 
     patient
     session_date { session.session_dates.first }
+    location { session.location }
+    date { session_date.value }
     programme { session.programmes.first }
     performed_by
 
