@@ -37,6 +37,10 @@ ops_tools: Enable the operational support tools; timeline and graph.
 
 pds_cascading_search: Enable cascading PDS searches for patients without an NHS number.
 
+programme_status: |
+  Whether to use the new consolidated programme status instead of the old
+  consent, triage and vaccination statuses.
+
 statuses_changed_banner: Whether to show the banner outlining the changes to statuses.
 
 testing_api: Basic API useful for automated testing.
