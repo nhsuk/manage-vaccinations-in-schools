@@ -17,6 +17,10 @@ describe StatusUpdater do
       expect { call }.not_to change(Patient::ConsentStatus, :count)
     end
 
+    it "doesn't create any programme statuses" do
+      expect { call }.not_to change(Patient::ProgrammeStatus, :count)
+    end
+
     it "doesn't create any registration statuses" do
       expect { call }.not_to change(Patient::RegistrationStatus, :count)
     end
@@ -25,7 +29,7 @@ describe StatusUpdater do
       expect { call }.not_to change(Patient::TriageStatus, :count)
     end
 
-    it "doesn't create any patient vaccination statuses" do
+    it "doesn't create any vaccination statuses" do
       expect { call }.not_to change(Patient::VaccinationStatus, :count)
     end
   end
@@ -48,6 +52,11 @@ describe StatusUpdater do
       end
     end
 
+    it "creates a programme status" do
+      expect { call }.to change(patient.programme_statuses, :count).by(1)
+      expect(patient.programme_statuses.first).to be_needs_consent_no_response
+    end
+
     it "creates a registration status" do
       expect { call }.to change(patient.registration_statuses, :count).by(1)
       expect(patient.registration_statuses.first).to be_unknown
@@ -58,7 +67,7 @@ describe StatusUpdater do
       expect(patient.triage_statuses.first).to be_not_required
     end
 
-    it "creates a patient vaccination status" do
+    it "creates a vaccination status" do
       expect { call }.to change(patient.vaccination_statuses, :count).by(1)
       expect(patient.vaccination_statuses.first).to be_eligible
     end
@@ -73,6 +82,11 @@ describe StatusUpdater do
       expect(patient.consent_statuses.first).to be_no_response
     end
 
+    it "creates a programme status" do
+      expect { call }.to change(patient.programme_statuses, :count).by(1)
+      expect(patient.programme_statuses.first).to be_needs_consent_no_response
+    end
+
     it "creates a registration status" do
       expect { call }.to change(patient.registration_statuses, :count).by(1)
       expect(patient.registration_statuses.first).to be_unknown
@@ -83,7 +97,7 @@ describe StatusUpdater do
       expect(patient.triage_statuses.first).to be_not_required
     end
 
-    it "creates a patient vaccination status" do
+    it "creates a vaccination status" do
       expect { call }.to change(patient.vaccination_statuses, :count).by(1)
       expect(patient.vaccination_statuses.first).to be_eligible
     end
@@ -97,6 +111,10 @@ describe StatusUpdater do
       expect { call }.not_to change(Patient::ConsentStatus, :count)
     end
 
+    it "doesn't create any programme statuses" do
+      expect { call }.not_to change(Patient::ProgrammeStatus, :count)
+    end
+
     it "doesn't create any registration statuses" do
       expect { call }.not_to change(Patient::RegistrationStatus, :count)
     end
@@ -105,7 +123,7 @@ describe StatusUpdater do
       expect { call }.not_to change(Patient::TriageStatus, :count)
     end
 
-    it "doesn't create any patient vaccination statuses" do
+    it "doesn't create any vaccination statuses" do
       expect { call }.not_to change(Patient::VaccinationStatus, :count)
     end
   end
@@ -118,6 +136,12 @@ describe StatusUpdater do
       expect { call }.to change(patient.consent_statuses, :count).by(2)
       expect(patient.consent_statuses.first).to be_no_response
       expect(patient.consent_statuses.second).to be_no_response
+    end
+
+    it "creates a programme status for both programmes" do
+      expect { call }.to change(patient.programme_statuses, :count).by(2)
+      expect(patient.programme_statuses.first).to be_needs_consent_no_response
+      expect(patient.programme_statuses.second).to be_needs_consent_no_response
     end
 
     it "creates a registration status" do
