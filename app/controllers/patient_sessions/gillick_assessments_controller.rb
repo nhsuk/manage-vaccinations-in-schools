@@ -33,8 +33,7 @@ class PatientSessions::GillickAssessmentsController < PatientSessions::BaseContr
         .find_or_initialize_by(
           date: Date.current,
           location: @session.location,
-          programme: @programme,
-          session_date: @session_date
+          programme: @programme
         )
   end
 

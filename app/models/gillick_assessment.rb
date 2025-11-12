@@ -19,7 +19,6 @@
 #  patient_id           :bigint           not null
 #  performed_by_user_id :bigint           not null
 #  programme_id         :bigint           not null
-#  session_date_id      :bigint
 #
 # Indexes
 #
@@ -39,9 +38,11 @@
 #
 class GillickAssessment < ApplicationRecord
   include BelongsToProgramme
-  include BelongsToSessionDate
+  include BelongsToLocationAndDate
   include Notable
   include PerformableByUser
+
+  self.ignored_columns = %w[session_date_id]
 
   audited associated_with: :patient
 

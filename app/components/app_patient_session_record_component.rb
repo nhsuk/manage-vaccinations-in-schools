@@ -45,12 +45,11 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
 
   def default_vaccinate_form
     pre_screening_confirmed = patient.pre_screenings.today.exists?(programme:)
-    session_date = session.session_dates.today.first
 
     VaccinateForm.new(
       current_user:,
       patient:,
-      session_date:,
+      session:,
       programme:,
       pre_screening_confirmed:
     )
