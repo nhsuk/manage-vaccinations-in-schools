@@ -38,7 +38,13 @@ module MavisCLI
         end
 
         programmes =
-          programme_types.map { |type| Programme.find_by(type: type.downcase) }
+          if programme_types.empty?
+            Programme.all
+          else
+            programme_types.map do |type|
+              Programme.find_by(type: type.downcase)
+            end
+          end
         if programmes.any?(&:nil?)
           puts "Error: One or more programmes not found in database; " \
                  "available types are: #{Programme.types.keys.join(", ")}"

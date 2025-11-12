@@ -36,6 +36,7 @@ class Programme < ApplicationRecord
   has_many :teams, through: :team_programmes
 
   scope :supports_delegation, -> { flu }
+  scope :can_sync_to_immunisations_api, -> { flu.or(hpv) }
   scope :can_search_in_immunisations_api,
         -> { flu.or(hpv).or(menacwy).or(td_ipv).or(mmr) }
 
@@ -184,6 +185,8 @@ class Programme < ApplicationRecord
   def snomed_target_disease_name
     SNOMED_TARGET_DISEASE_NAMES.fetch(type)
   end
+
+  def can_sync_to_immunisations_api? = hpv? || flu?
 
   def can_search_in_immunisations_api? =
     hpv? || flu? || menacwy? || td_ipv? || mmr?

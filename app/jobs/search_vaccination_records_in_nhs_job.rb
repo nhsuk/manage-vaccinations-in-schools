@@ -11,7 +11,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     SemanticLogger.tagged(tx_id:, job_id:) do
       Sentry.set_tags(tx_id:, job_id:)
 
-      programmes = Programme.can_search_in_immunisations_api
+      programmes = Programme.all
 
       feature_flag_enabled =
         programmes.any? do |programme|

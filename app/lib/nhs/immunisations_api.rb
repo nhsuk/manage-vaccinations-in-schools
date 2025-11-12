@@ -278,8 +278,6 @@ module NHS::ImmunisationsAPI
 
       if programmes.empty?
         raise "Cannot search for vaccination records in the immunisations API; no programmes provided."
-      elsif !programmes.all?(&:can_search_in_immunisations_api?)
-        raise "Cannot search for vaccination records in the immunisations API; one or more programmes is not supported."
       end
 
       Rails.logger.info(

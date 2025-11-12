@@ -473,7 +473,31 @@ describe SearchVaccinationRecordsInNHSJob do
         )
       end
 
-      include_examples "doesn't send discovery comms"
+      include_examples "sends discovery comms if required n times", 0
+      include_examples "calls StatusUpdater"
+    end
+
+    context "with a record for each programme (total 5)" do
+      let(:body) do
+        file_fixture("fhir/search_response_all_programmes.json").read
+      end
+
+      it "creates new vaccination records for incoming Immunizations" do
+        expect { perform }.to change { patient.vaccination_records.count }.by(5)
+      end
+
+      it "creates one vaccination record of each programme" do
+        perform
+
+        expect(
+          patient.vaccination_records.map do
+            it.strict_loading!(false)
+            it.programme
+          end
+        ).to match_array(Programme.all)
+      end
+
+      include_examples "sends discovery comms if required n times", 5
       include_examples "calls StatusUpdater"
     end
 
