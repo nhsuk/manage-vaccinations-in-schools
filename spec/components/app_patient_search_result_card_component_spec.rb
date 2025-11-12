@@ -71,6 +71,12 @@ describe AppPatientSearchResultCardComponent do
     it { should_not have_text("Triage status") }
     it { should_not have_text("Consent status") }
 
+    context "when programme status is enabled" do
+      before { Flipper.enable(:programme_status) }
+
+      it { should have_text("Programme statusFluNot eligible") }
+    end
+
     context "when showing the consent status" do
       let(:show_consent_status) { true }
 
