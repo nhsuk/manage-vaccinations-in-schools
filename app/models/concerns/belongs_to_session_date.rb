@@ -5,7 +5,7 @@ module BelongsToSessionDate
 
   included do
     belongs_to :session_date
-    belongs_to :location, optional: true
+    belongs_to :location
 
     has_one :session, through: :session_date
 
