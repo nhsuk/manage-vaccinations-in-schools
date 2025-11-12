@@ -68,7 +68,6 @@ class Patient < ApplicationRecord
   has_many :consent_statuses
   has_many :consents
   has_many :gillick_assessments
-  has_many :important_notices, dependent: :destroy
   has_many :notes
   has_many :notify_log_entries
   has_many :parent_relationships, -> { order(:created_at) }
@@ -455,7 +454,6 @@ class Patient < ApplicationRecord
              end
 
   after_update :sync_vaccinations_to_nhs_immunisations_api
-  after_update :generate_important_notice_if_needed
   after_commit :search_vaccinations_from_nhs_immunisations_api, on: :update
   before_destroy :destroy_childless_parents
 
@@ -845,18 +843,6 @@ class Patient < ApplicationRecord
   def search_vaccinations_from_nhs_immunisations_api
     if should_search_vaccinations_from_nhs_immunisations_api?
       SearchVaccinationRecordsInNHSJob.perform_async(id)
-    end
-  end
-
-  def should_generate_important_notice?
-    nhs_number_previously_changed? || invalidated_at_previously_changed? ||
-      restricted_at_previously_changed? ||
-      date_of_death_recorded_at_previously_changed?
-  end
-
-  def generate_important_notice_if_needed
-    if should_generate_important_notice?
-      ImportantNoticeGeneratorJob.perform_now(id)
     end
   end
 end

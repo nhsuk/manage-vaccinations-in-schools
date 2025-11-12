@@ -160,23 +160,14 @@ FactoryBot.define do
     trait :deceased do
       date_of_death { Date.current }
       date_of_death_recorded_at { Time.current }
-      after(:create) do |instance|
-        ImportantNoticeGeneratorJob.perform_now(instance.id)
-      end
     end
 
     trait :invalidated do
       invalidated_at { Time.current }
-      after(:create) do |instance|
-        ImportantNoticeGeneratorJob.perform_now(instance.id)
-      end
     end
 
     trait :restricted do
       restricted_at { Time.current }
-      after(:create) do |instance|
-        ImportantNoticeGeneratorJob.perform_now(instance.id)
-      end
     end
 
     trait :archived do
