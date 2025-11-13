@@ -55,10 +55,10 @@ class Team < ApplicationRecord
   has_many :consents
   has_many :locations
   has_many :patient_specific_directions
+  has_many :patient_teams
   has_many :sessions
   has_many :subteams
   has_many :team_programmes, -> { joins(:programme).order(:"programmes.type") }
-  has_many :patient_teams
 
   has_many :patients, through: :patient_teams
   has_many :community_clinics, through: :subteams
@@ -85,10 +85,6 @@ class Team < ApplicationRecord
   validates :privacy_notice_url, presence: true
   validates :privacy_policy_url, presence: true
   validates :workgroup, presence: true, uniqueness: true
-
-  def patients
-    Patient.joins_sessions.where(sessions: { team_id: id })
-  end
 
   def year_groups(academic_year: nil)
     academic_year ||= AcademicYear.pending
