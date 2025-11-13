@@ -63,8 +63,8 @@ jobs:
   launch-dockerized-devimage:
     needs: [ check-image-presence, build-and-push-regression-image ]
     if: ${{ !cancelled() &&
-      (needs.build-and-push.result == 'success' ||
-      (needs.check-image-presence.result == 'success' && needs.build-and-push.result == 'skipped')
+      (needs.build-and-push-regression-image.result == 'success' ||
+      (needs.check-image-presence.result == 'success' && needs.build-and-push-regression-image.result == 'skipped')
       ) }}
     runs-on: ubuntu-latest
     permissions:
