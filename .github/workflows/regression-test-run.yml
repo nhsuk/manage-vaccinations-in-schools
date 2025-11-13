@@ -1,0 +1,168 @@
+name: Regression test run
+
+on:
+  workflow_call:
+
+permissions: { }
+
+jobs:
+  check-image-presence:
+    name: Check if docker image already exists
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    outputs:
+      build-needed: ${{ steps.check-image.outputs.build-needed }}
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
+          aws-region: eu-west-2
+      - name: Check if image exists
+        id: check-image
+        run: |
+          if aws ecr describe-images --repository-name mavis-regression --image-ids imageTag=${{ github.sha }} > /dev/null 2>&1; then
+            echo "Docker image with given tag already exists"
+          else
+            echo "Docker image does not exist. Build needed"
+            echo "build-needed=true" >> $GITHUB_OUTPUT
+          fi
+  build-and-push-webapp-image:
+    permissions:
+      id-token: write
+    uses: ./.github/workflows/build-and-push-image.yml
+    with:
+      git_sha: ${{ github.sha }}
+      webapp-only-build: true
+  build-and-push-regression-image:
+    needs: [check-image-presence, build-and-push-webapp-image]
+    if: needs.check-image-presence.outputs.build-needed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
+          aws-region: eu-west-2
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build and push mavis/regression docker image
+        run: |
+          docker build \
+            --build-arg IMAGE_TAG=${{ github.sha }} \
+            --build-arg REPOSITORY=393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp \
+            -t "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/regression:${{ github.sha }}" \
+            -f regression.Dockerfile .
+          docker push "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/regression:${{ github.sha }}"
+  launch-dockerized-devimage:
+    needs: [ check-image-presence, build-and-push-regression-image ]
+    if: ${{ !cancelled() &&
+      (needs.build-and-push.result == 'success' ||
+      (needs.check-image-presence.result == 'success' && needs.build-and-push.result == 'skipped')
+      ) }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    outputs:
+      task_arn: ${{ steps.compile-outputs.outputs.task_arn }}
+      container_ip: ${{ steps.compile-outputs.outputs.container_ip }}
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
+          aws-region: eu-west-2
+      - name: Render task definition
+        id: render-task-definition
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition-family: "assurance-testing-regression-task-definition-template"
+          container-name: "mavis-regression"
+          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/regression:${{ github.sha }}"
+      - name: Prepare deployment
+        id: prepare-deployment
+        run: |
+          file_path="assurance-testing-regression-task-definition.json"
+          family_name="assurance-testing-regression-task-definition"
+          echo "$(jq --arg f "$family_name" '.family = $f' "${{ steps.render-task-definition.outputs.task-definition }}")" > "$file_path"
+          cat "$file_path" #TODO: Debugging, remove later
+          
+          subnet_id=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=assurance-testing-subnet --query 'Subnets[0].SubnetId' --output text)
+          security_group_id=$(aws ec2 describe-security-groups --filters Name=group-name,Values=assurance-testing-regression-sg --query 'SecurityGroups[0].GroupId' --output text)
+          
+          echo "run-task-subnets=$subnet_id" >> $GITHUB_OUTPUT
+          echo "run-task-security-groups=$security_group_id" >> $GITHUB_OUTPUT
+      - name: Deploy task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        id: run-task
+        with:
+          task-definition: 'assurance-testing-regression-task-definition.json'
+          cluster: assurance-testing
+          run-task: true
+          run-task-subnets: ${{ steps.prepare-deployment.outputs.run-task-subnets }}
+          run-task-launch-type: 'FARGATE'
+          run-task-security-groups: ${{ steps.prepare-deployment.outputs.run-task-security-groups }}
+          run-task-assign-public-IP: true
+      - name: Compile outputs
+        id: compile-outputs
+        run: |
+          TASK_ARN=$(echo ${{ steps.run-task.outputs.run-task-arn }} | jq -r '.[0]')
+          TASK_ID=$(sed 's:^.*/::' <<< $TASK_ARN)
+          CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-regression\$252F${TASK_ID}\$3Fstart\$3D${date +%s}000\$26end\$3D$(date -d '+30 minutes' +%s)000"
+          echo "**Task ID:** $TASK_ID" >> $GITHUB_STEP_SUMMARY
+          echo "**Container Logs:** $CLOUDWATCH_URL" >> $GITHUB_STEP_SUMMARY
+          NETWORK_INTERFACE=$(aws ecs describe-tasks \
+            --cluster assurance-testing \
+            --tasks "$TASK_ARN" \
+            | jq -r '.tasks[0].attachments[0].details[] | select(.name == "networkInterfaceId") | .value')
+          CONTAINER_IP=$(aws ec2 describe-network-interfaces \
+            --network-interface-ids $NETWORK_INTERFACE \
+            --query 'NetworkInterfaces[0].Association.PublicIp' \
+            --output text)
+          echo "container_ip=$CONTAINER_IP" >> $GITHUB_OUTPUT
+          echo "task_arn=$TASK_ARN" >> $GITHUB_OUTPUT
+          echo "Started task: $TASK_ARN"
+          echo "Logs for server: ${CLOUDWATCH_URL}"
+  call-functional-tests:
+    needs: launch-dockerized-devimage
+    if: ${{ !cancelled() && needs.launch-dockerized-devimage.result == 'success'}}
+    uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/functional_selected_device.yaml@make-workflow-callable
+    permissions:
+      contents: write
+    with:
+      tests: ''
+      device: 'Desktop Chrome'
+      programmes: 'FLU,HPV,MENACWY,MMR,TD_IPV'
+      endpoint: "${{ needs.launch-dockerized-devimage.outputs.container_ip }}:4000"
+      screenshot_all_steps: 'false'
+      enable_reruns: 'true'
+      test_workers: '4'
+      set_feature_flags: 'false'
+      additional_feature_flags: ''
+    secrets:
+      HTTP_AUTH_TOKEN_FOR_TESTS: ${{ secrets.HTTP_AUTH_TOKEN_FOR_TESTS }}
+    #   IMMS_API_KEY: ${{ secrets.IMMS_API_KEY }}
+    #   IMMS_API_KID: ${{ secrets.IMMS_API_KID }}
+    #   IMMS_API_PEM: ${{ secrets.IMMS_API_PEM }}
+    #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #
+  stop-docker-environment:
+    needs: [call-functional-tests, launch-dockerized-devimage]
+    if: ${{ always() && needs.launch-dockerized-devimage.result != 'skipped'}}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
+          aws-region: eu-west-2
+      - name: Stop dockerized dev image
+        run: aws ecs stop-task --cluster assurance-testing --task ${{ needs.start-docker-environment.outputs.task_arn }}
