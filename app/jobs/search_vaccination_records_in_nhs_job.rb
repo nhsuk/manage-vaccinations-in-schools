@@ -11,7 +11,11 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     SemanticLogger.tagged(tx_id:, job_id:) do
       Sentry.set_tags(tx_id:, job_id:)
 
-      return unless Flipper.enabled?(:imms_api_search_job)
+      feature_flag_enabled =
+        Programme.can_search_in_immunisations_api.any? do |programme|
+          Flipper.enabled?(:imms_api_search_job, programme)
+        end
+      return unless feature_flag_enabled
 
       programmes = Programme.can_search_in_immunisations_api
 
@@ -34,6 +38,9 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
 
         incoming_vaccination_records =
           reject_mavis_records(incoming_vaccination_records)
+
+        incoming_vaccination_records =
+          select_programme_feature_flagged_records(incoming_vaccination_records)
       end
 
       existing_vaccination_records =
@@ -79,6 +86,12 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     vaccination_records.reject do
       it.nhs_immunisations_api_identifier_system ==
         FHIRMapper::VaccinationRecord::MAVIS_SYSTEM_NAME
+    end
+  end
+
+  def select_programme_feature_flagged_records(vaccination_records)
+    vaccination_records.select do
+      Flipper.enabled?(:imms_api_search_job, it.programme)
     end
   end
 
