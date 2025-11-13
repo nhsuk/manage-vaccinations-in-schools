@@ -12,6 +12,8 @@ class PatientSearchForm < SearchForm
   attribute :eligible_children, :boolean
   attribute :missing_nhs_number, :boolean
   attribute :patient_specific_direction_status, :string
+  attribute :programme_status_group, :string
+  attribute :programme_statuses, array: true
   attribute :programme_types, array: true
   attribute :q, :string
   attribute :registration_status, :string
@@ -28,6 +30,10 @@ class PatientSearchForm < SearchForm
   end
 
   def programme_types=(values)
+    super(values&.compact_blank || [])
+  end
+
+  def programme_statuses=(values)
     super(values&.compact_blank || [])
   end
 
@@ -86,6 +92,7 @@ class PatientSearchForm < SearchForm
     scope = filter_vaccination_statuses(scope)
     scope = filter_registration_status(scope)
     scope = filter_triage_status(scope)
+    scope = filter_programme_statuses(scope)
     scope = filter_vaccine_criteria(scope)
     scope = filter_patient_specific_direction_status(scope)
     scope = filter_for_eligible_children_only(scope)
@@ -288,6 +295,45 @@ class PatientSearchForm < SearchForm
       )
     else
       scope
+    end
+  end
+
+  def filter_programme_statuses(scope)
+    return scope if programme_status_group.blank?
+
+    statuses =
+      programme_statuses&.select { it.starts_with?(programme_status_group) }
+
+    if statuses.blank?
+      statuses =
+        Patient::ProgrammeStatus.statuses.keys.select do
+          it.starts_with?(programme_status_group)
+        end
+    end
+
+    return scope if statuses.empty?
+
+    or_scope = programme_status_scope_for(statuses.first, scope)
+
+    statuses
+      .drop(1)
+      .each do |value|
+        or_scope = or_scope.or(programme_status_scope_for(value, scope))
+      end
+
+    or_scope
+  end
+
+  def programme_status_scope_for(value, scope)
+    if (predicate = PROGRAMME_DUE_PREDICATES[value])
+      scope.has_programme_status(
+        "due",
+        programme: programmes,
+        academic_year:,
+        **predicate
+      )
+    else
+      scope.has_programme_status(value, programme: programmes, academic_year:)
     end
   end
 
