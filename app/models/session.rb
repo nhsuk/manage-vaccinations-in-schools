@@ -209,7 +209,7 @@ class Session < ApplicationRecord
 
   def started?
     return false if dates.empty?
-    Date.current > dates.min
+    Date.current >= dates.min
   end
 
   def vaccine_methods

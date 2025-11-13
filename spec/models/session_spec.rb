@@ -236,6 +236,68 @@ describe Session do
     end
   end
 
+  describe "#started?" do
+    subject(:started?) { travel_to(today) { session.reload.started? } }
+
+    let(:today) { Date.new(2025, 1, 15) }
+    let(:programmes) { [CachedProgramme.sample] }
+
+    context "when session has no dates" do
+      let(:session) { create(:session, date: nil, programmes:) }
+
+      it { should be(false) }
+    end
+
+    context "when today is before the first session date" do
+      let(:first_date) { Date.new(2025, 1, 20) }
+      let(:session) { create(:session, date: first_date, programmes:) }
+
+      it { should be(false) }
+    end
+
+    context "when today is the first session date" do
+      let(:first_date) { Date.new(2025, 1, 15) }
+      let(:session) { create(:session, date: first_date, programmes:) }
+
+      it { should be(true) }
+    end
+
+    context "when today is after the first session date but before the last" do
+      let(:first_date) { Date.new(2025, 1, 10) }
+      let(:second_date) { Date.new(2025, 1, 20) }
+      let(:session) do
+        create(:session, dates: [first_date, second_date], programmes:)
+      end
+
+      it { should be(true) }
+    end
+
+    context "when today is after the last session date" do
+      let(:first_date) { Date.new(2025, 1, 10) }
+      let(:last_date) { Date.new(2025, 1, 12) }
+      let(:session) do
+        create(:session, dates: [first_date, last_date], programmes:)
+      end
+
+      it { should be(true) }
+    end
+
+    context "when session has multiple dates and today equals the first date" do
+      let(:first_date) { Date.new(2025, 1, 15) }
+      let(:second_date) { Date.new(2025, 1, 16) }
+      let(:third_date) { Date.new(2025, 1, 17) }
+      let(:session) do
+        create(
+          :session,
+          dates: [first_date, second_date, third_date],
+          programmes:
+        )
+      end
+
+      it { should be(true) }
+    end
+  end
+
   describe "#supports_delegation?" do
     subject { session.supports_delegation? }
 
