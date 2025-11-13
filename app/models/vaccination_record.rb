@@ -175,7 +175,8 @@ class VaccinationRecord < ApplicationRecord
          service: 0,
          historical_upload: 1,
          nhs_immunisations_api: 2,
-         consent_refusal: 3
+         consent_refusal: 3,
+         bulk_upload: 4
        },
        prefix: "sourced_from",
        validate: true
