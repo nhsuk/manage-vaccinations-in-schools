@@ -11,7 +11,8 @@ class AppSessionOverviewComponent < ViewComponent::Base
 
   delegate :academic_year, :dates, :location, :programmes, to: :session
 
-  delegate :govuk_table,
+  delegate :grid_column_class,
+           :govuk_table,
            :govuk_button_link_to,
            :govuk_inset_text,
            :govuk_summary_list,
@@ -39,21 +40,25 @@ class AppSessionOverviewComponent < ViewComponent::Base
   end
 
   def cards_for_programme(programme)
-    stats_for_programme(programme)
-      .except(:eligible_children)
-      .map do |key, value|
-        string_key = key.to_s
-        {
-          heading: card_heading_for(string_key, programme:),
-          colour: card_colour_for(string_key),
-          count: value.to_s,
-          link_to: card_link_to_for(string_key, programme:)
-        }
-      end
+    stats =
+      stats_for_programme(programme).except(:eligible_children).stringify_keys
+
+    stats.map { |key, value| card_for(key, value, programme:) }
+  end
+
+  def card_for(key, value, programme:)
+    {
+      heading: card_heading_for(key, programme:),
+      colour: card_colour_for(key),
+      count: value.to_s,
+      link_to: card_link_to_for(key, programme:)
+    }
   end
 
   def card_heading_for(key, programme:)
-    if key.starts_with?("consent_")
+    if Flipper.enabled?(:programme_status)
+      I18n.t(key, scope: %i[status programme label])
+    elsif key.starts_with?("consent_")
       I18n.t(key[8..], scope: %i[status consent label])
     elsif key == "vaccinated"
       if programme.mmr?
@@ -67,7 +72,9 @@ class AppSessionOverviewComponent < ViewComponent::Base
   end
 
   def card_colour_for(key)
-    if key.starts_with?("consent_")
+    if Flipper.enabled?(:programme_status)
+      I18n.t(key, scope: %i[status programme colour])
+    elsif key.starts_with?("consent_")
       I18n.t(key[8..], scope: %i[status consent colour])
     elsif key == "vaccinated"
       I18n.t("status.vaccination.colour.vaccinated")
@@ -77,7 +84,25 @@ class AppSessionOverviewComponent < ViewComponent::Base
   def card_link_to_for(key, programme:)
     programme_types = [programme.type]
 
-    if key.starts_with?("consent_")
+    if Flipper.enabled?(:programme_status)
+      if key.starts_with?("due_")
+        session_patients_path(
+          session,
+          programme_types: [programme.type],
+          programme_status_group: "due",
+          programme_statuses: [key],
+          eligible_children: 1
+        )
+      else
+        session_patients_path(
+          session,
+          programme_types: [programme.type],
+          programme_status_group: key,
+          programme_statuses: [],
+          eligible_children: 1
+        )
+      end
+    elsif key.starts_with?("consent_")
       consent_statuses = [key[8..]]
       consent_statuses << "conflicts" if key == "consent_refused"
 
