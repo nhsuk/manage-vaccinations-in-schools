@@ -5,7 +5,6 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
   include VaccinationMailerConcern
 
   before_action :set_todays_batch
-  before_action :set_session_date
 
   after_action :verify_authorized
 

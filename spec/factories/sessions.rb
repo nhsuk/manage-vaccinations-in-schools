@@ -65,14 +65,6 @@ FactoryBot.define do
       end
     end
 
-    session_dates do
-      if dates.present?
-        dates.map { build(:session_date, session: instance, value: it) }
-      else
-        []
-      end
-    end
-
     trait :today do
       date { Date.current }
     end

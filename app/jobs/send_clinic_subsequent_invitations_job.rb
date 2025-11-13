@@ -8,15 +8,15 @@ class SendClinicSubsequentInvitationsJob < ApplicationJob
   def perform(session)
     raise InvalidLocation unless session.clinic?
 
-    session_date = session.next_date(include_today: true)
-    raise NoSessionDates if session_date.nil?
+    date = session.next_date(include_today: true)
+    raise NoSessionDates if date.nil?
 
-    patients(session, session_date:).each do |patient|
-      send_notification(patient:, session:, session_date:)
+    patients(session, date:).each do |patient|
+      send_notification(patient:, session:, date:)
     end
   end
 
-  def patients(session, session_date:)
+  def patients(session, date:)
     programmes = session.programmes
 
     # We only send subsequent invitations (reminders) to patients who
@@ -33,12 +33,7 @@ class SendClinicSubsequentInvitationsJob < ApplicationJob
       )
       .select { it.session_notifications.any? { it.session_id == session.id } }
       .select do |patient|
-        should_send_notification?(
-          patient:,
-          session:,
-          programmes:,
-          session_date:
-        )
+        should_send_notification?(patient:, session:, programmes:, date:)
       end
   end
 end

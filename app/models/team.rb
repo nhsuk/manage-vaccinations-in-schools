@@ -106,12 +106,7 @@ class Team < ApplicationRecord
 
   def generic_clinic_session(academic_year:)
     sessions
-      .includes(
-        :location,
-        :location_programme_year_groups,
-        :programmes,
-        :session_dates
-      )
+      .includes(:location, :location_programme_year_groups, :programmes)
       .create_with(programmes:, dates: [])
       .find_or_create_by!(academic_year:, location: generic_clinic)
   end

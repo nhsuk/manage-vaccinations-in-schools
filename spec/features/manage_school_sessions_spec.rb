@@ -107,8 +107,7 @@ describe "Manage school sessions" do
     clinic_session =
       @team.generic_clinic_session(academic_year: AcademicYear.current)
 
-    clinic_session.session_dates.create!(value: 1.month.from_now.to_date)
-
+    clinic_session.dates << 1.month.from_now.to_date
     clinic_session.days_before_consent_reminders = nil
     clinic_session.send_consent_requests_at = nil
     clinic_session.send_invitations_at =

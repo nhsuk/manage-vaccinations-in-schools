@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class PatientSessions::AttendancesController < PatientSessions::BaseController
-  before_action :set_session_date
   before_action :set_attendance_record
 
   def edit
@@ -42,7 +41,7 @@ class PatientSessions::AttendancesController < PatientSessions::BaseController
     attendance_record =
       @patient.attendance_records.find_or_initialize_by(
         location: @session.location,
-        date: @session_date.value
+        date: Date.current
       )
 
     attendance_record.session = @session

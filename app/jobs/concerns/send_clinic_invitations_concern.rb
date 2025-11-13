@@ -3,7 +3,7 @@
 module SendClinicInvitationsConcern
   extend ActiveSupport::Concern
 
-  def send_notification(patient:, session:, session_date:)
+  def send_notification(patient:, session:, date:)
     type =
       if patient.session_notifications.exists?(session:)
         :clinic_subsequent_invitation
@@ -14,16 +14,16 @@ module SendClinicInvitationsConcern
     SessionNotification.create_and_send!(
       patient:,
       session:,
-      session_date:,
+      session_date: date,
       type:
     )
   end
 
-  def should_send_notification?(patient:, session:, programmes:, session_date:)
+  def should_send_notification?(patient:, session:, programmes:, date:)
     return false unless patient.send_notifications?(team: session.team)
 
     already_sent_notification =
-      patient.session_notifications.exists?(session:, session_date:)
+      patient.session_notifications.exists?(session:, session_date: date)
 
     return false if already_sent_notification
 
@@ -31,7 +31,7 @@ module SendClinicInvitationsConcern
 
     return false if eligible_programmes.empty?
 
-    academic_year = session_date.academic_year
+    academic_year = date.academic_year
 
     eligible_programmes.any? do |programme|
       !patient.vaccination_status(programme:, academic_year:).vaccinated? &&

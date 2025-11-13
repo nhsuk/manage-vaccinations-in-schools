@@ -9,8 +9,7 @@ class SessionsController < ApplicationController
   def index
     @programmes = current_user.selected_team.programmes
 
-    scope =
-      policy_scope(Session).includes(:location, :programmes, :session_dates)
+    scope = policy_scope(Session).includes(:location, :programmes)
 
     sessions = @form.apply(scope)
 
@@ -70,7 +69,7 @@ class SessionsController < ApplicationController
     date = Date.current
 
     if date.in?(valid_date_range)
-      @session.session_dates.find_or_create_by!(value: date)
+      @session.update!(dates: (@session.dates + [date]).sort.uniq)
       redirect_to session_path, flash: { success: "Session is now in progress" }
     else
       redirect_to session_path,

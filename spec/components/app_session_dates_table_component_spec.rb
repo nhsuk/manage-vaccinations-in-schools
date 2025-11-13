@@ -11,10 +11,11 @@ describe AppSessionDatesTableComponent do
   let(:session) do
     create(
       :session,
-      programmes: [hpv_programme, flu_programme, menacwy_programme]
+      programmes: [hpv_programme, flu_programme, menacwy_programme],
+      date: today
     )
   end
-  let(:session_date_today) { session.session_dates.first }
+  let(:today) { Date.current }
   let(:component) { described_class.new(session) }
 
   def expect_tally(session_date, column_name, count)
@@ -33,13 +34,11 @@ describe AppSessionDatesTableComponent do
     "Expected #{column_name} for #{session_date} to be #{count} but got #{cell_value}"
   end
 
-  def formatted_date(date)
-    date.strftime("%e %B %Y")
-  end
+  def formatted_date(date) = date.strftime("%e %B %Y")
 
   context "with session in progress but no vaccinations" do
     it "displays zero tallies for all programmes" do
-      today_formatted = formatted_date(session_date_today.value)
+      today_formatted = formatted_date(today)
 
       rendered
 
@@ -55,11 +54,17 @@ describe AppSessionDatesTableComponent do
   context "with vaccinations across multiple session dates" do
     let(:yesterday) { Date.yesterday }
     let(:yesterday_formatted) { formatted_date(yesterday) }
-    let(:today_formatted) { formatted_date(session_date_today.value) }
+    let(:today_formatted) { formatted_date(today) }
+
+    let(:session) do
+      create(
+        :session,
+        programmes: [hpv_programme, flu_programme, menacwy_programme],
+        dates: [yesterday, Date.current]
+      )
+    end
 
     before do
-      session.session_dates.create!(value: yesterday)
-
       create_vaccination_record(hpv_programme, yesterday, year_group: 9)
       create_vaccination_record(
         hpv_programme,
@@ -69,19 +74,19 @@ describe AppSessionDatesTableComponent do
       )
       create_vaccination_record(
         flu_programme,
-        session_date_today.value,
+        today,
         year_group: 9,
         vaccine: flu_injection_vaccine
       )
       create_vaccination_record(
         flu_programme,
-        session_date_today.value,
+        today,
         year_group: 9,
         vaccine: flu_injection_vaccine
       )
       create_vaccination_record(
         flu_programme,
-        session_date_today.value,
+        today,
         year_group: 9,
         vaccine: flu_nasal_vaccine
       )
@@ -105,9 +110,15 @@ describe AppSessionDatesTableComponent do
     let(:yesterday) { Date.yesterday }
     let(:yesterday_formatted) { formatted_date(yesterday) }
 
-    before do
-      session.session_dates.create!(value: yesterday)
+    let(:session) do
+      create(
+        :session,
+        programmes: [hpv_programme, flu_programme, menacwy_programme],
+        dates: [yesterday, Date.current]
+      )
+    end
 
+    before do
       # HPV: Create vaccinations for Years 7, 8, 9 (only 8, 9 should count)
       create_vaccination_record(hpv_programme, yesterday, year_group: 7)
       create_vaccination_record(hpv_programme, yesterday, year_group: 8)
