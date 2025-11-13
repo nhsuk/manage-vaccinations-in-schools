@@ -6,10 +6,11 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     url:,
     programmes: [],
     consent_statuses: [],
+    programme_statuses: [],
+    patient_specific_direction_statuses: [],
     registration_statuses: [],
     triage_statuses: [],
     vaccination_statuses: [],
-    patient_specific_direction_statuses: [],
     vaccine_criterias: [],
     year_groups: [],
     heading_level: 3,
@@ -22,10 +23,11 @@ class AppPatientSearchFormComponent < ViewComponent::Base
 
     @programmes = programmes
     @consent_statuses = consent_statuses
+    @patient_specific_direction_statuses = patient_specific_direction_statuses
+    @programme_statuses = programme_statuses
     @registration_statuses = registration_statuses
     @triage_statuses = triage_statuses
     @vaccination_statuses = vaccination_statuses
-    @patient_specific_direction_statuses = patient_specific_direction_statuses
     @vaccine_criterias = vaccine_criterias
     @year_groups = year_groups
     @heading_level = heading_level
@@ -40,10 +42,11 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               :url,
               :programmes,
               :consent_statuses,
+              :patient_specific_direction_statuses,
+              :programme_statuses,
               :registration_statuses,
               :triage_statuses,
               :vaccination_statuses,
-              :patient_specific_direction_statuses,
               :vaccine_criterias,
               :year_groups,
               :heading_level,

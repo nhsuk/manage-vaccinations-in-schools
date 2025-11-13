@@ -4,10 +4,11 @@ class PatientsController < ApplicationController
   include PatientSearchFormConcern
 
   before_action :set_patient_search_form, only: :index
+  before_action :set_search_params_present, only: :index
+  before_action :set_programme_statuses, only: :index
   before_action :set_patient, except: :index
   before_action :set_in_generic_clinic, only: :show
   before_action :record_access_log_entry, only: %i[show log]
-  before_action :set_search_params_present, only: :index
   skip_after_action :verify_policy_scoped, only: :index
 
   layout "full"
@@ -77,6 +78,21 @@ class PatientsController < ApplicationController
 
   private
 
+  def set_search_params_present
+    @search_params_present = @form.any_filters_applied?
+  end
+
+  def set_programme_statuses
+    @programme_statuses =
+      Patient::ProgrammeStatus.statuses.keys -
+        %w[
+          needs_consent_request_not_scheduled
+          needs_consent_request_scheduled
+          needs_consent_request_failed
+          needs_consent_follow_up_requested
+        ]
+  end
+
   def set_patient
     @patient =
       policy_scope(Patient).includes(
@@ -102,9 +118,5 @@ class PatientsController < ApplicationController
       controller: "patients",
       action: action_name
     )
-  end
-
-  def set_search_params_present
-    @search_params_present = @form.any_filters_applied?
   end
 end
