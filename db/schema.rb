@@ -118,8 +118,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_121101) do
     t.bigint "location_id", null: false
     t.integer "new_record_count"
     t.datetime "processed_at"
-    t.datetime "reviewed_at", default: [], null: false, array: true
-    t.bigint "reviewed_by_user_ids", default: [], null: false, array: true
     t.integer "rows_count"
     t.jsonb "serialized_errors"
     t.integer "status", default: 0, null: false
@@ -160,8 +158,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_121101) do
     t.integer "exact_duplicate_record_count"
     t.integer "new_record_count"
     t.datetime "processed_at"
-    t.datetime "reviewed_at", default: [], null: false, array: true
-    t.bigint "reviewed_by_user_ids", default: [], null: false, array: true
     t.integer "rows_count"
     t.jsonb "serialized_errors"
     t.integer "status", default: 0, null: false
@@ -547,7 +543,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_121101) do
     t.bigint "patient_id"
     t.string "pds_nhs_number"
     t.jsonb "pending_changes", default: {}
-    t.datetime "processed_at"
     t.integer "record_type", default: 1, null: false
     t.integer "row_number"
     t.bigint "school_id"

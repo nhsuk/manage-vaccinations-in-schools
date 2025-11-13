@@ -15,14 +15,8 @@ class AppImportStatusComponent < ViewComponent::Base
       "pending_import" => "Processing",
       "rows_are_invalid" => "Invalid",
       "changesets_are_invalid" => "Failed",
-      "in_review" => "Needs review",
-      "calculating_re_review" => "Processing",
-      "in_re_review" => "Needs re-review",
-      "committing" => "Importing",
       "processed" => "Completed",
-      "partially_processed" => "Partially completed",
-      "low_pds_match_rate" => "Failed",
-      "cancelled" => "Cancelled"
+      "low_pds_match_rate" => "Failed"
     }.fetch(@import.status)
   end
 
@@ -31,14 +25,8 @@ class AppImportStatusComponent < ViewComponent::Base
       "pending_import" => "blue",
       "rows_are_invalid" => "red",
       "changesets_are_invalid" => "red",
-      "in_review" => "yellow",
-      "calculating_re_review" => "blue",
-      "in_re_review" => "yellow",
-      "committing" => "blue",
       "processed" => "green",
-      "partially_processed" => "green",
-      "low_pds_match_rate" => "red",
-      "cancelled" => "grey"
+      "low_pds_match_rate" => "red"
     }.fetch(@import.status)
   end
 end

@@ -14,11 +14,8 @@ class ProcessPatientChangesetJob < ApplicationJob
     end
 
     patient_changeset.assign_patient_id
-    if Flipper.enabled?(:import_review_screen)
-      patient_changeset.calculating_review!
-    else
-      patient_changeset.committing!
-    end
+    patient_changeset.processed!
+    patient_changeset.save!
 
     if patient_changeset.import.changesets.pending.none?
       import = patient_changeset.import
@@ -32,14 +29,7 @@ class ProcessPatientChangesetJob < ApplicationJob
       import.validate_changeset_uniqueness!
       return if import.changesets_are_invalid?
 
-      unless Flipper.enabled?(:import_review_screen)
-        CommitImportJob.perform_async(import.to_global_id.to_s)
-        return
-      end
-    end
-
-    if Flipper.enabled?(:import_review_screen)
-      ReviewPatientChangesetJob.perform_later(patient_changeset.id)
+      CommitImportJob.perform_async(import.to_global_id.to_s)
     end
   end
 

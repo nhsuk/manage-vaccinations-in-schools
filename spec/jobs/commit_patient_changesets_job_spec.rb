@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 describe CommitPatientChangesetsJob do
-  subject(:perform_job) { described_class.new.perform(changesets.pluck(:id)) }
+  subject(:perform_job) do
+    described_class.new.perform(import.to_global_id.to_s)
+  end
 
   let(:programmes) { [CachedProgramme.hpv] }
   let(:team) { create(:team, :with_generic_clinic, programmes:) }
@@ -12,16 +14,12 @@ describe CommitPatientChangesetsJob do
   let(:csv) { fixture_file_upload("spec/fixtures/class_import/#{file}") }
   let(:import) { create(:class_import, csv:, session:, team:) }
 
-  let!(:changesets) do
+  before do
     import.load_data!
     import.parse_rows!
     import.rows.each_with_index.map do |row, row_number|
       PatientChangeset.from_import_row(row:, import:, row_number:)
     end
-  end
-
-  before do
-    PatientChangeset.find_each(&:committing!)
     import.save!
   end
 
@@ -186,7 +184,6 @@ describe CommitPatientChangesetsJob do
         end
 
         it "doesn't create an additional patient" do
-          PatientChangeset.all.map(&:calculate_review_data!)
           expect { perform_job }.to change(Parent, :count).by(4)
 
           parent_relationship = patient.reload.parent_relationships.first
@@ -233,17 +230,7 @@ describe CommitPatientChangesetsJob do
       let(:patient) do
         create(
           :patient,
-          given_name: "Jennifer",
-          family_name: "Clarke",
-          date_of_birth: Date.new(2010, 1, 1),
-          address_postcode: "SW1A 1AA",
           nhs_number: "9990000018",
-          address_town: "London",
-          registration: "ABC",
-          address_line_1: "10 Downing Street",
-          address_line_2: nil,
-          year_group: 9,
-          preferred_given_name: "Jenny",
           school: location,
           session:
             create(
@@ -260,8 +247,6 @@ describe CommitPatientChangesetsJob do
       it "adds the patient to the upcoming session" do
         expect(patient.sessions).not_to include(session)
 
-        PatientChangeset.all.map(&:calculate_review_data!)
-
         expect { perform_job }.to change { patient.reload.sessions.count }.by(1)
 
         expect(patient.sessions).to include(session)
@@ -273,16 +258,6 @@ describe CommitPatientChangesetsJob do
         create(
           :patient,
           nhs_number: "9990000018",
-          given_name: "Jennifer",
-          family_name: "Clarke",
-          date_of_birth: Date.new(2010, 1, 1),
-          address_postcode: "SW1A 1AA",
-          address_town: "London",
-          registration: "ABC",
-          address_line_1: "10 Downing Street",
-          address_line_2: nil,
-          year_group: 9,
-          preferred_given_name: "Jenny",
           school: location,
           session: create(:session, programmes:)
         )
@@ -290,27 +265,16 @@ describe CommitPatientChangesetsJob do
 
       it "adds the patient to the session" do
         expect(patient.sessions).not_to include(session)
-        PatientChangeset.all.map(&:calculate_review_data!)
         perform_job
         expect(patient.reload.sessions).to include(session)
       end
     end
 
     context "with an existing patient already in the team but in a different school" do
-      let!(:patient) do
+      let(:patient) do
         create(
           :patient,
           nhs_number: "9990000018",
-          given_name: "Jennifer",
-          family_name: "Clarke",
-          date_of_birth: Date.new(2010, 1, 1),
-          address_postcode: "SW1A 1AA",
-          address_town: "London",
-          registration: "ABC",
-          address_line_1: "10 Downing Street",
-          address_line_2: nil,
-          year_group: 9,
-          preferred_given_name: "Jenny",
           school: create(:school),
           session: create(:session, team:, programmes:)
         )
@@ -318,7 +282,7 @@ describe CommitPatientChangesetsJob do
 
       it "proposes a school move for the child" do
         expect(patient.school_moves).to be_empty
-        PatientChangeset.all.map(&:calculate_review_data!)
+
         expect { perform_job }.to change {
           patient.reload.school_moves.count
         }.by(1)
@@ -399,6 +363,37 @@ describe CommitPatientChangesetsJob do
           change { existing_patient.reload.school_moves.count }
         )
       end
+
+      context "with a patient currently in the imported school but with an outstanding move to another school" do
+        let(:other_school) { create(:school, team:) }
+
+        let(:existing_patient) do
+          create(
+            :patient,
+            given_name: "Jimmy",
+            family_name: "Smith",
+            date_of_birth: Date.new(2010, 1, 2),
+            nhs_number: nil,
+            team:,
+            session:
+          )
+        end
+
+        before do
+          create(
+            :school_move,
+            :to_school,
+            patient: existing_patient,
+            school: other_school
+          )
+        end
+
+        it "removes the outstanding school move when import confirms current school" do
+          expect { perform_job }.to change {
+            existing_patient.reload.school_moves.count
+          }.from(1).to(0)
+        end
+      end
     end
 
     context "with an existing twin" do
@@ -423,7 +418,6 @@ describe CommitPatientChangesetsJob do
       end
 
       it "doesn't auto-accept changes for potential twins, but queues them for manual review" do
-        PatientChangeset.all.map(&:calculate_review_data!)
         expect { perform_job }.to change { twin.reload.pending_changes }.from(
           {}
         ).to(
@@ -440,40 +434,6 @@ describe CommitPatientChangesetsJob do
                                   twin,
                                   :registration
                                 )
-      end
-    end
-
-    context "with a patient currently in the imported school but with an outstanding move to another school" do
-      let(:other_school) { create(:school, team:) }
-
-      let(:existing_patient) do
-        create(
-          :patient,
-          nhs_number: "9990000026",
-          given_name: "Jimmy",
-          family_name: "Smith",
-          team:,
-          session:
-        )
-      end
-
-      before do
-        create(
-          :school_move,
-          :to_school,
-          patient: existing_patient,
-          school: other_school
-        )
-
-        # Review data is required for the existing patient to be committed, causing the
-        # school move to be removed.
-        PatientChangeset.all.map(&:calculate_review_data!)
-      end
-
-      it "removes the outstanding school move when import confirms current school" do
-        expect { perform_job }.to change {
-          existing_patient.reload.school_moves.count
-        }.from(1).to(0)
       end
     end
   end

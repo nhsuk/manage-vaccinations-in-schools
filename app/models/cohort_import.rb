@@ -13,8 +13,6 @@
 #  exact_duplicate_record_count :integer
 #  new_record_count             :integer
 #  processed_at                 :datetime
-#  reviewed_at                  :datetime         default([]), not null, is an Array
-#  reviewed_by_user_ids         :bigint           default([]), not null, is an Array
 #  rows_count                   :integer
 #  serialized_errors            :jsonb
 #  status                       :integer          default("pending_import"), not null

@@ -3,101 +3,210 @@
 class CommitPatientChangesetsJob
   include Sidekiq::Job
   include Sidekiq::Throttled::Job
-  include PatientImportConcern
 
-  # sidekiq_throttle concurrency: {
-  #                    limit: 1,
-  #                    key_suffix: ->(_) do
-  #                      if Flipper.enabled?(:import_concurrency_per_server)
-  #                        Socket.gethostname
-  #                      else
-  #                        ""
-  #                      end
-  #                    end
-  #                  }
+  sidekiq_throttle concurrency: {
+                     limit: 1,
+                     key_suffix: ->(_) do
+                       if Flipper.enabled?(:import_concurrency_per_server)
+                         Socket.gethostname
+                       else
+                         ""
+                       end
+                     end
+                   }
 
   queue_as :imports
 
-  def perform(patient_changeset_ids)
-    changesets = PatientChangeset.where(id: patient_changeset_ids)
-    import = changesets.first.import
+  def perform(import_global_id)
+    import = GlobalID::Locator.locate(import_global_id)
+    counts = import.class.const_get(:COUNT_COLUMNS).index_with(0)
     imported_school_move_ids = []
 
-    counts =
-      import
-        .class
-        .const_get(:COUNT_COLUMNS)
-        .index_with { |col| import.public_send(col) || 0 }
-
     ActiveRecord::Base.transaction do
-      to_process = changesets.select { review_consistent?(it) }
+      import
+        .changesets
+        .includes(:school)
+        .find_in_batches(batch_size: 100) do |changesets|
+          increment_column_counts!(import, counts, changesets)
 
-      if to_process.any?
-        increment_column_counts!(import, counts, to_process)
-        import_patients_and_parents(to_process, import)
-        imported_school_move_ids = import_school_moves(to_process, import)
-        import_pds_search_results(to_process, import)
-        to_process.each(&:processed!)
-      end
-    end
+          import_patients_and_parents(changesets, import)
 
-    if import.changesets.committing.none?
-      if import.changesets.needs_re_review.any?
-        trigger_re_review(import)
-      else
-        import.update_columns(processed_at: Time.zone.now, status: :processed)
-      end
+          imported_school_move_ids |= import_school_moves(changesets, import)
+
+          import_pds_search_results(changesets, import)
+        end
       import.postprocess_rows!
+
       reset_counts(import)
-      import.update_columns(**counts)
+
+      import.update_columns(
+        processed_at: Time.zone.now,
+        status: :processed,
+        **counts
+      )
     end
     SyncPatientTeamJob.perform_later(SchoolMove, imported_school_move_ids)
     import.post_commit!
   end
 
-  private
+  def import_patients_and_parents(changesets, import)
+    patients = changesets.map(&:patient)
+    parents = changesets.flat_map(&:parents).uniq
+    relationships =
+      changesets
+        .flat_map(&:parent_relationships)
+        .uniq { [_1.parent, _1.patient] }
 
-  def review_consistent?(changeset)
-    current_patient = changeset.patient
-    current_school_move = changeset.school_move
-    reviewed_data = changeset.review_data || {}
+    deduplicate_patients!(patients, relationships)
 
-    current_pending_changes = current_patient.pending_changes
-    reviewed_pending_changes =
-      reviewed_data.dig("patient", "pending_changes") || {}
-    if reviewed_pending_changes.key?("date_of_birth")
-      reviewed_pending_changes["date_of_birth"] = reviewed_pending_changes[
-        "date_of_birth"
-      ].to_date
-    end
+    patients_with_nhs_number_changes =
+      patients.select(&:nhs_number_previously_changed?)
 
-    current_school_id =
-      if current_school_move.present? &&
-           !has_auto_confirmable_school_move?(
-             current_school_move,
-             changeset.import
-           )
-        current_school_move.school_id
-      end
-    reviewed_school_id = reviewed_data.dig("school_move", "school_id")
+    Patient.import(patients.to_a, on_duplicate_key_update: :all)
+    link_records_to_import(import, Patient, patients)
 
-    current_record_type = changeset.changeset_type
+    SearchVaccinationRecordsInNHSJob.perform_bulk(
+      patients_with_nhs_number_changes.pluck(:id).zip
+    )
 
-    inconsistent =
-      current_pending_changes != reviewed_pending_changes ||
-        current_school_id != reviewed_school_id ||
-        current_record_type.to_s != changeset.record_type.to_s
+    changesets.each(&:assign_patient_id)
+    PatientChangeset.import(changesets, on_duplicate_key_update: :all)
 
-    changeset.needs_re_review! if inconsistent
+    Parent.import(parents.to_a, on_duplicate_key_update: :all)
+    link_records_to_import(import, Parent, parents)
 
-    !inconsistent
+    ParentRelationship.import(
+      relationships.to_a,
+      on_duplicate_key_update: {
+        conflict_target: %i[parent_id patient_id],
+        columns: %i[type other_name]
+      }
+    )
+    link_records_to_import(import, ParentRelationship, relationships)
   end
 
-  def trigger_re_review(import)
-    import.calculating_re_review!
-    import.changesets.needs_re_review.each do |changeset|
-      changeset.calculating_review!
-      ReviewPatientChangesetJob.perform_later(changeset.id)
+  def deduplicate_patients!(patients, relationships)
+    @patients_by_nhs_number ||= {}
+
+    patients.reject! do |patient|
+      next false if patient.nhs_number.blank?
+
+      existing_patient = @patients_by_nhs_number[patient.nhs_number]
+      if patient.persisted? || existing_patient.nil?
+        @patients_by_nhs_number[patient.nhs_number] = patient
+        next false
+      else
+        relationships
+          .select { _1.patient == patient }
+          .each { _1.patient = existing_patient }
+        next true
+      end
     end
+    patients.uniq!
+  end
+
+  def import_school_moves(changesets, import)
+    school_moves = changesets.map(&:school_move).compact.uniq(&:patient)
+
+    auto_confirmable_school_moves, importable_school_moves =
+      school_moves.partition { has_auto_confirmable_school_move?(it, import) }
+
+    auto_confirmable_school_moves.each do |school_move|
+      # if the same patient appears multiple times in the file,
+      # the duplicates won't be persisted, so we can skip those
+      school_move.confirm! if school_move.patient.persisted?
+    end
+    school_move_import_records = importable_school_moves.to_a
+
+    SchoolMove.import!(
+      school_move_import_records,
+      on_duplicate_key_update: :all
+    ).ids
+  end
+
+  def import_pds_search_results(changesets, import)
+    pds_search_records = []
+
+    changesets.each do |changeset|
+      next if changeset.search_results.blank?
+
+      patient = changeset.patient
+      next unless patient.persisted?
+
+      changeset.search_results.each do |result|
+        pds_search_records << PDSSearchResult.new(
+          patient_id: patient.id,
+          step: PDSSearchResult.steps[result["step"]],
+          result: PDSSearchResult.results[result["result"]],
+          nhs_number: result["nhs_number"],
+          import:,
+          created_at: result["created_at"]
+        )
+      end
+    end
+
+    PDSSearchResult.import(pds_search_records, on_duplicate_key_ignore: true)
+  end
+
+  def link_records_to_import(import_source, record_class, records)
+    source_type = import_source.class.name
+    record_type = record_class.name
+
+    join_table_class = "#{source_type.pluralize}#{record_type}".constantize
+    join_table_class.import(
+      ["#{source_type.underscore}_id", "#{record_type.underscore}_id"],
+      records.map { [import_source.id, it.id] },
+      on_duplicate_key_ignore: true
+    )
+  end
+
+  def increment_column_counts!(import, counts, changesets)
+    changesets.each do |changeset|
+      count_column_to_increment =
+        import.count_column(
+          changeset.patient,
+          changeset.parents.uniq,
+          changeset.parent_relationships.uniq
+        )
+      counts[count_column_to_increment] += 1
+    end
+  end
+
+  def has_auto_confirmable_school_move?(school_move, import)
+    patient = school_move.patient
+    team = import.team
+    academic_year = import.academic_year
+
+    patient_has_no_education_location_yet?(patient:) ||
+      team_would_not_be_able_to_confirm_school_move?(
+        patient:,
+        team:,
+        academic_year:
+      ) || school_move_does_not_move_patient?(school_move:, patient:)
+  end
+
+  private
+
+  def patient_has_no_education_location_yet?(patient:)
+    patient.school.nil? && !patient.home_educated
+  end
+
+  def team_would_not_be_able_to_confirm_school_move?(
+    patient:,
+    team:,
+    academic_year:
+  )
+    patient.not_in_team?(team:, academic_year:) || patient.archived?(team:)
+  end
+
+  def school_move_does_not_move_patient?(school_move:, patient:)
+    school_move.school == patient.school &&
+      school_move.home_educated == patient.home_educated
+  end
+
+  def reset_counts(import)
+    cached_counts = TeamCachedCounts.new(import.team)
+    cached_counts.reset_import_issues!
+    cached_counts.reset_school_moves!
   end
 end

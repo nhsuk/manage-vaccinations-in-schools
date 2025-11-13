@@ -4,9 +4,7 @@ class CohortImportsController < ApplicationController
   include Pagy::Backend
 
   before_action :set_draft_import, only: %i[new create]
-  before_action :set_cohort_import,
-                only: %i[show update approve cancel re_review imported_records]
-  before_action :set_review_records, only: %i[re_review imported_records]
+  before_action :set_cohort_import, only: %i[show update]
 
   skip_after_action :verify_policy_scoped, only: %i[new create]
 
@@ -40,37 +38,27 @@ class CohortImportsController < ApplicationController
       @cohort_import.load_serialized_errors!
     end
 
-    set_review_records if @cohort_import.in_review?
+    @pagy, @patients = pagy(@cohort_import.patients.includes(:school))
 
-    if @cohort_import.in_re_review?
-      redirect_to re_review_cohort_import_path(@cohort_import) and return
-    end
+    @duplicates =
+      @patients.with_pending_changes_for_team(team: current_team).distinct
 
-    if @cohort_import.processed? || @cohort_import.partially_processed?
-      @pagy, @patients = pagy(@cohort_import.patients.includes(:school))
+    @issues_text =
+      @duplicates.each_with_object({}) do |patient, hash|
+        changeset = @cohort_import.changesets.find_by(patient_id: patient.id)
 
-      @duplicates =
-        @patients.with_pending_changes_for_team(team: current_team).distinct
+        issue_groups =
+          helpers.issue_categories_for(patient.pending_changes.keys)
 
-      @issues_text =
-        @duplicates.each_with_object({}) do |patient, hash|
-          changeset = @cohort_import.changesets.find_by(patient_id: patient.id)
-
-          issue_groups =
-            helpers.issue_categories_for(patient.pending_changes.keys)
-
-          hash[patient.full_name] = if changeset&.matched_on_nhs_number
-            "Matched on NHS number. #{issue_groups.to_sentence.capitalize}" +
-              (issue_groups.size == 1 ? " does not match." : " do not match.")
-          else
-            "Possible match found. Review and confirm."
-          end
+        hash[patient.full_name] = if changeset&.matched_on_nhs_number
+          "Matched on NHS number. #{issue_groups.to_sentence.capitalize}" +
+            (issue_groups.size == 1 ? " does not match." : " do not match.")
+        else
+          "Possible match found. Review and confirm."
         end
+      end
 
-      @nhs_discrepancies = @cohort_import.changesets.nhs_number_discrepancies
-
-      @cancelled = @cohort_import.changesets.from_file.cancelled
-    end
+    @nhs_discrepancies = @cohort_import.changesets.nhs_number_discrepancies
 
     render template: "imports/show",
            layout: "full",
@@ -83,63 +71,6 @@ class CohortImportsController < ApplicationController
     @cohort_import.process!
 
     redirect_to cohort_import_path(@cohort_import)
-  end
-
-  def re_review
-    render template: "imports/re_review",
-           layout: "full",
-           locals: {
-             import: @cohort_import
-           }
-  end
-
-  def imported_records
-    render template: "imports/imported_records",
-           layout: "full",
-           locals: {
-             import: @cohort_import
-           }
-  end
-
-  def approve
-    @cohort_import.reviewed_by_user_ids << current_user.id
-    @cohort_import.reviewed_at << Time.zone.now
-    @cohort_import.committing!
-
-    @cohort_import
-      .changesets
-      .from_file
-      .ready_for_review
-      .in_batches(of: 100) do |batch|
-        CommitPatientChangesetsJob.perform_async(batch.ids)
-      end
-
-    @cohort_import.changesets.from_file.ready_for_review.each(&:committing!)
-
-    redirect_to imports_path, flash: { info: "Import started" }
-  end
-
-  def cancel
-    @cohort_import.reviewed_by_user_ids << current_user.id
-    @cohort_import.reviewed_at << Time.zone.now
-
-    # some changesets were processed after first review, but the second review was cancelled
-    if @cohort_import.changesets.processed.any?
-      @cohort_import.update_columns(
-        processed_at: Time.zone.now,
-        status: :partially_processed
-      )
-      @cohort_import.changesets.ready_for_review.find_each(&:cancelled!)
-
-      @cohort_import.postprocess_rows!
-
-      redirect_to imports_path, flash: { success: "Import partially completed" }
-    else
-      @cohort_import.update!(status: :cancelled)
-      @cohort_import.changesets.each(&:cancelled!)
-
-      redirect_to imports_path, flash: { success: "Import cancelled" }
-    end
   end
 
   private
@@ -156,16 +87,5 @@ class CohortImportsController < ApplicationController
 
   def cohort_import_params
     params.fetch(:cohort_import, {}).permit(:csv)
-  end
-
-  def set_review_records
-    @pagy, @patients = pagy(@cohort_import.patients.includes(:school))
-    @new_records = @cohort_import.changesets.ready_for_review.new_patient
-    @auto_matched_records =
-      @cohort_import.changesets.ready_for_review.auto_match
-    @import_issues = @cohort_import.changesets.ready_for_review.import_issue
-    @school_moves = @cohort_import.changesets.ready_for_review.with_school_moves
-    @re_review =
-      @new_records + @auto_matched_records + @import_issues + @school_moves
   end
 end
