@@ -63,7 +63,7 @@ describe FHIRMapper::Vaccine do
 
     context "with a populated code" do
       let(:fhir_record) do
-        FHIR.from_contents(file_fixture("/fhir/fhir_record_full.json").read)
+        FHIR.from_contents(file_fixture("/fhir/flu/fhir_record_full.json").read)
       end
 
       it { should eq(vaccine) }
@@ -72,7 +72,7 @@ describe FHIRMapper::Vaccine do
     context "with an unknown code" do
       let(:fhir_record) do
         FHIR.from_contents(
-          file_fixture("/fhir/fhir_record_unknown_vaccine.json").read
+          file_fixture("/fhir/flu/fhir_record_unknown_vaccine.json").read
         )
       end
 
@@ -81,7 +81,7 @@ describe FHIRMapper::Vaccine do
 
     context "with a null code" do
       let(:fhir_record) do
-        FHIR.from_contents(file_fixture("/fhir/fhir_record_gp.json").read)
+        FHIR.from_contents(file_fixture("/fhir/flu/fhir_record_gp.json").read)
       end
 
       it { should be_nil }
@@ -90,7 +90,7 @@ describe FHIRMapper::Vaccine do
     context "with no code at all" do
       let(:fhir_record) do
         FHIR.from_contents(
-          file_fixture("/fhir/fhir_record_minimum_api_create.json").read
+          file_fixture("/fhir/flu/fhir_record_minimum_api_create.json").read
         )
       end
 

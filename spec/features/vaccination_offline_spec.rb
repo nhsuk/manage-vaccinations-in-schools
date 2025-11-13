@@ -237,7 +237,7 @@ describe "Offline vaccination" do
 
   def and_the_patients_record_is_sourced_from_nhs_api
     fhir_record =
-      FHIR.from_contents(file_fixture("fhir/fhir_record_full.json").read)
+      FHIR.from_contents(file_fixture("fhir/flu/fhir_record_full.json").read)
     @nhs_api_vaccination_record =
       FHIRMapper::VaccinationRecord.from_fhir_record(
         fhir_record,

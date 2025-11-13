@@ -11,7 +11,9 @@ class SyncVaccinationRecordToNHSJob < ImmunisationsAPIJob
     SemanticLogger.tagged(tx_id:, job_id:) do
       Sentry.set_tags(tx_id:, job_id:)
 
-      return unless Flipper.enabled?(:imms_api_sync_job)
+      unless Flipper.enabled?(:imms_api_sync_job, vaccination_record.programme)
+        return
+      end
 
       NHS::ImmunisationsAPI.sync_immunisation(vaccination_record)
     end
