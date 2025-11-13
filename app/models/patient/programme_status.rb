@@ -57,6 +57,16 @@ class Patient::ProgrammeStatus < ApplicationRecord
           through: :patient,
           source: :attendance_records
 
+  GROUPS = %w[
+    not_eligible
+    needs_consent
+    has_refusal
+    needs_triage
+    due
+    cannot_vaccinate
+    vaccinated
+  ].freeze
+
   NOT_ELIGIBLE_STATUSES = { "not_eligible" => 0 }.freeze
 
   NEEDS_CONSENT_STATUSES = {
@@ -118,6 +128,8 @@ class Patient::ProgrammeStatus < ApplicationRecord
   def cannot_vaccinate? = status.in?(CANNOT_VACCINATE_STATUSES.keys)
 
   def vaccinated? = status.in?(VACCINATED_STATUSES.keys)
+
+  def group = GROUPS.find { status.starts_with?(it) }
 
   def assign
     self.date = generator.date

@@ -37,5 +37,23 @@ FactoryBot.define do
       status { "cannot_vaccinate_delay_vaccination" }
       date { Date.tomorrow }
     end
+
+    trait :due_injection_only do
+      due
+      vaccine_methods { %w[injection] }
+      without_gelatine { false }
+    end
+
+    trait :due_nasal_only do
+      due
+      vaccine_methods { %w[nasal] }
+      without_gelatine { false }
+    end
+
+    trait :due_injection_without_gelatine do
+      due
+      vaccine_methods { %w[injection] }
+      without_gelatine { true }
+    end
   end
 end

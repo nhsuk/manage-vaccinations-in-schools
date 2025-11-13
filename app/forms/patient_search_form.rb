@@ -291,6 +291,21 @@ class PatientSearchForm < SearchForm
     end
   end
 
+  PROGRAMME_DUE_PREDICATES = {
+    "due_injection" => {
+      vaccine_method: "injection",
+      without_gelatine: false
+    },
+    "due_nasal" => {
+      vaccine_method: "nasal",
+      without_gelatine: false
+    },
+    "due_injection_without_gelatine" => {
+      vaccine_method: "injection",
+      without_gelatine: true
+    }
+  }.freeze
+
   def filter_vaccine_criteria(scope)
     return scope if vaccine_criteria.blank?
 
