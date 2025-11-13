@@ -287,4 +287,71 @@ describe AppSessionOverviewTalliesComponent do
     include_examples "displays correct count", "HPV", "Consent refused", 1
     include_examples "displays correct count", "HPV", "Vaccinated", 1
   end
+
+  describe "rendering vaccination table" do
+    subject(:rendered) { travel_to(today) { render_inline(component) } }
+
+    let(:today) { Date.new(2025, 1, 15) }
+    let(:programmes) { [CachedProgramme.hpv] }
+    let(:session) { create(:session, programmes:, dates:) }
+    let(:dates) { [Date.new(2025, 1, 15)] }
+
+    context "when session has started" do
+      context "when today is the first session date" do
+        let(:dates) { [Date.new(2025, 1, 15)] }
+
+        it "renders the vaccinations table" do
+          expect(rendered).to have_content("Vaccinations given")
+          expect(rendered).to have_content("Session date")
+        end
+
+        it "does not render the scheduled dates list" do
+          expect(rendered).not_to have_content("Wednesday, 15 January 2025")
+        end
+      end
+
+      context "when today is after the first session date" do
+        let(:dates) { [Date.new(2025, 1, 10), Date.new(2025, 1, 20)] }
+
+        it "renders the vaccinations table" do
+          expect(rendered).to have_content("Vaccinations given")
+          expect(rendered).to have_content("Session date")
+        end
+      end
+
+      context "when session has vaccination records on the first date" do
+        let(:dates) { [Date.new(2025, 1, 15)] }
+        let(:patient) { create(:patient, session:, year_group: 9) }
+
+        before do
+          create(
+            :vaccination_record,
+            patient:,
+            session:,
+            programme: programmes.first,
+            performed_at: Date.new(2025, 1, 15).beginning_of_day
+          )
+        end
+
+        it "shows vaccinations in the table" do
+          expect(rendered).to have_content("Vaccinations given")
+          expect(rendered).to have_content("Session date")
+        end
+      end
+    end
+
+    context "when session has not started" do
+      let(:dates) { [Date.new(2025, 1, 20)] }
+
+      it "renders the scheduled dates list instead of the table" do
+        expect(rendered).to have_content("Monday, 20 January 2025")
+        expect(rendered).not_to have_content("Vaccinations given")
+        expect(rendered).not_to have_content("Session date")
+      end
+
+      it "displays the consent period information" do
+        expect(rendered).to have_content("Consent period")
+      end
+    end
+  end
 end
