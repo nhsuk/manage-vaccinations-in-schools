@@ -15,6 +15,7 @@
             @form,
             url: session_register_path(@session),
             programmes: @session.programmes,
+            programme_statuses: @programme_statuses,
             vaccination_statuses: Patient::VaccinationStatus.statuses.keys,
             registration_statuses: @statuses,
             year_groups: @session.year_groups,

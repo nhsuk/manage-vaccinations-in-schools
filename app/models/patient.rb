@@ -244,6 +244,34 @@ class Patient < ApplicationRecord
 
   scope :search_by_nhs_number, ->(nhs_number) { where(nhs_number:) }
 
+  scope :has_programme_status,
+        ->(
+          status,
+          programme:,
+          academic_year:,
+          vaccine_method: nil,
+          without_gelatine: nil
+        ) do
+          programme_status_scope =
+            Patient::ProgrammeStatus
+              .select("1")
+              .where("patient_id = patients.id")
+              .where_programme(programme)
+              .where(status:, academic_year:)
+
+          unless vaccine_method.nil?
+            programme_status_scope =
+              programme_status_scope.has_vaccine_method(vaccine_method)
+          end
+
+          unless without_gelatine.nil?
+            programme_status_scope =
+              programme_status_scope.where(without_gelatine:)
+          end
+
+          where(programme_status_scope.arel.exists)
+        end
+
   scope :has_vaccination_status,
         ->(status, programme:, academic_year:) do
           where(
