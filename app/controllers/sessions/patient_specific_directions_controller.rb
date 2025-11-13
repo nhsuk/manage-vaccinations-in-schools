@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-class Sessions::PatientSpecificDirectionsController < ApplicationController
+class Sessions::PatientSpecificDirectionsController < Sessions::BaseController
   include PatientSearchFormConcern
 
-  before_action :set_session
   before_action :set_programme
   before_action :set_vaccine
   before_action :set_patient_search_form
@@ -37,10 +36,6 @@ class Sessions::PatientSpecificDirectionsController < ApplicationController
   end
 
   private
-
-  def set_session
-    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
-  end
 
   def set_programme
     # TODO: Handle PSDs in sessions with multiple programmes.
