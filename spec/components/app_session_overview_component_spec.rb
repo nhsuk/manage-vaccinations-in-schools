@@ -42,23 +42,50 @@ describe AppSessionOverviewComponent do
 
   context "with no patient sessions" do
     include_examples "displays correct children due vaccination", "Flu", 0
-    include_examples "displays correct count", "Flu", "No response", 0
-    include_examples "displays correct count",
-                     "Flu",
-                     "Consent given for nasal",
-                     0
-    include_examples "displays correct count",
-                     "Flu",
-                     "Consent given for gelatine-free injection",
-                     0
-    include_examples "displays correct count", "Flu", "Consent refused", 0
-    include_examples "displays correct count", "Flu", "Vaccinated", 0
-
     include_examples "displays correct children due vaccination", "HPV", 0
-    include_examples "displays correct count", "HPV", "No response", 0
-    include_examples "displays correct count", "HPV", "Consent given", 0
-    include_examples "displays correct count", "HPV", "Consent refused", 0
-    include_examples "displays correct count", "HPV", "Vaccinated", 0
+
+    context "with programme status enabled" do
+      before { Flipper.enable(:programme_status) }
+
+      include_examples "displays correct count", "Flu", "Needs consent", 0
+      include_examples "displays correct count", "Flu", "Needs triage", 0
+      include_examples "displays correct count", "Flu", "Has a refusal", 0
+      include_examples "displays correct count", "Flu", "Unable to vaccinate", 0
+      include_examples "displays correct count", "Flu", "Due nasal spray", 0
+      include_examples "displays correct count",
+                       "Flu",
+                       "Due gelatine-free injection",
+                       0
+      include_examples "displays correct count", "Flu", "Vaccinated", 0
+
+      include_examples "displays correct count", "HPV", "Needs consent", 0
+      include_examples "displays correct count", "HPV", "Needs triage", 0
+      include_examples "displays correct count", "HPV", "Has a refusal", 0
+      include_examples "displays correct count", "HPV", "Unable to vaccinate", 0
+      include_examples "displays correct count", "HPV", "Due injection", 0
+      include_examples "displays correct count", "HPV", "Vaccinated", 0
+    end
+
+    context "with programme status disabled" do
+      before { Flipper.disable(:programme_status) }
+
+      include_examples "displays correct count", "Flu", "No response", 0
+      include_examples "displays correct count",
+                       "Flu",
+                       "Consent given for nasal",
+                       0
+      include_examples "displays correct count",
+                       "Flu",
+                       "Consent given for gelatine-free injection",
+                       0
+      include_examples "displays correct count", "Flu", "Consent refused", 0
+      include_examples "displays correct count", "Flu", "Vaccinated", 0
+
+      include_examples "displays correct count", "HPV", "No response", 0
+      include_examples "displays correct count", "HPV", "Consent given", 0
+      include_examples "displays correct count", "HPV", "Consent refused", 0
+      include_examples "displays correct count", "HPV", "Vaccinated", 0
+    end
   end
 
   context "when a patient exists in year 9" do
