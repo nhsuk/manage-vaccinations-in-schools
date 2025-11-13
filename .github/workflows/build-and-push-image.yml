@@ -12,6 +12,11 @@ on:
       git_sha:
         description: The git commit sha to build the image from.
         type: string
+      webapp-only-build:
+        description: Only build the webapp image.
+        type: boolean
+        required: false
+        default: false
 
 env:
   PUSH_IMAGE_TO_PRODUCTION: ${{ github.ref_name == 'main' }}
@@ -29,7 +34,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        image_type: ["webapp", "ops"]
+        image_type: ${{ inputs.webapp-only-build && fromJson('["webapp"]') || fromJson('["webapp", "ops"]') }}
     permissions:
       id-token: write
     outputs:
@@ -104,10 +109,13 @@ jobs:
           name: webapp-image
           path: image.tar
       - name: Build ops docker image
+        if: ${{ !inputs.webapp-only-build }}
         run: docker build -f ops.Dockerfile -t "mavis-ops:latest" .
       - name: Save ops image
+        if: ${{ !inputs.webapp-only-build }}
         run: docker save -o image.tar mavis-ops:latest
       - name: Upload ops image
+        if: ${{ !inputs.webapp-only-build }}
         uses: actions/upload-artifact@v5
         with:
           name: ops-image
@@ -120,7 +128,7 @@ jobs:
     strategy:
       matrix:
         aws-role: ${{ fromJSON(needs.define-matrix.outputs.aws-roles) }}
-        image_type: ["webapp", "ops"]
+        image_type: ${{ inputs.webapp-only-build && fromJson('["webapp"]') || fromJson('["webapp", "ops"]') }}
     steps:
       - name: Download Docker image
         uses: actions/download-artifact@v6
