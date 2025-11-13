@@ -149,10 +149,91 @@ jobs:
     environment: ${{ inputs.environment }}
     steps:
       - run: echo "Proceeding with deployment to $environment"
+
+  run-migrations:
+    name: Run migrations
+    runs-on: ubuntu-latest
+    needs: [ approve-deployments ]
+    if: ${{ inputs.server_types == 'all' || inputs.server_types == 'ops' }}
+    permissions:
+      id-token: write
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Download ops task definition artifact
+        uses: actions/download-artifact@v6
+        with:
+          path: ${{ runner.temp }}
+          name: ${{ inputs.environment }}-ops-task-definition
+      - name: Change family of task definition
+        run: |
+          file_path="${{ runner.temp }}/ops-task-definition.json"
+          family_name="mavis-ops-task-definition-$environment"
+          echo "$(jq --arg f "$family_name" '.family = $f' "$file_path")" > "$file_path"
+      - name: Get network config
+        id: get-network-config
+        run: |
+          subnet_id=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=private-subnet-$environment-a --query 'Subnets[0].SubnetId' --output text)
+          security_group_id=$(aws ec2 describe-security-groups --filters Name=group-name,Values=ops-service-$environment --query 'SecurityGroups[0].GroupId' --output text)
+          
+          echo "subnet_id=$subnet_id" >> $GITHUB_OUTPUT
+          echo "security_group_id=$security_group_id" >> $GITHUB_OUTPUT
+      - name: Run migrations
+        id: run-migration
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ runner.temp }}/ops-task-definition.json
+          cluster: ${{ env.cluster_name }}
+          run-task: true
+          run-task-subnets: ${{ steps.get-network-config.outputs.subnet_id }}
+          run-task-security-groups: ${{ steps.get-network-config.outputs.security_group_id }}
+          run-task-launch-type: FARGATE
+          run-task-container-overrides: '[{
+                "name": "application",
+                "command": ["bin/rails","db:migrate"]
+              }]'
+      - name: Wait for task to complete
+        run: |
+          TASK_ARN=${{ fromJSON(steps.run-migration.outputs.run-task-arn)[0] }}
+          echo "Waiting for task to complete: $TASK_ARN"
+          TASK_ID=$(sed 's:^.*/::' <<< $TASK_ARN)
+          
+          echo "View logs in AWS Console: https://eu-west-2.console.aws.amazon.com/ecs/v2/clusters/$cluster_name/tasks/$TASK_ID/logs"
+          
+          while true; do
+            TASK_STATUS=$(aws ecs describe-tasks \
+              --cluster $cluster_name \
+              --tasks $TASK_ARN \
+              --query 'tasks[0].lastStatus' \
+              --output text)
+            
+            if [ "$TASK_STATUS" == "STOPPED" ]; then
+              echo "Task has stopped"
+              break
+            fi
+            sleep 30 # Poll every 30 seconds
+          done
+
+          EXIT_CODE=$(aws ecs describe-tasks \
+            --cluster mavis-$environment \
+            --tasks $TASK_ARN \
+            --query 'tasks[0].containers[0].exitCode' \
+            --output text)
+          
+          echo "Container exit code: $EXIT_CODE"
+          
+          if [ "$EXIT_CODE" != "0" ]; then
+            echo "ECS task failed with exit code: $EXIT_CODE"
+            exit 1
+          fi
+
   deploy-service:
     name: Deploy service
     runs-on: ubuntu-latest
-    needs: [ prepare-deployment, approve-deployments ]
+    needs: [ prepare-deployment, approve-deployments, run-migrations ]
     permissions:
       id-token: write
     strategy:
