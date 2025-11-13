@@ -88,7 +88,9 @@ module CSVImportable
     return if invalid?
 
     self.rows =
-      remove_trailing_blank_rows(data).map { |row_data| parse_row(row_data) }
+      remove_trailing_blank_rows(data)
+        .then { |rows| has_instruction_row? ? rows.drop(1) : rows }
+        .map { |row_data| parse_row(row_data) }
 
     if invalid?
       self.serialized_errors = errors.to_hash
@@ -116,6 +118,11 @@ module CSVImportable
       end
 
     filtered_rows.reverse
+  end
+
+  def has_instruction_row?
+    load_data! if data.nil?
+    data.first[0]&.to_s&.match?(/\A(Required|Optional)[,.:]/)
   end
 
   COUNT_COLUMNS = %i[
@@ -253,7 +260,9 @@ module CSVImportable
   def csv_has_records
     return unless data
 
-    errors.add(:csv, :empty) if data.empty?
+    csv_has_no_records =
+      data.empty? || (data.count == 1 && has_instruction_row?)
+    errors.add(:csv, :empty) if csv_has_no_records
   end
 
   def rows_are_valid
@@ -262,6 +271,8 @@ module CSVImportable
     rows.each(&:validate)
 
     check_rows_are_unique
+
+    row_offset = has_instruction_row? ? 3 : 2
 
     rows.each.with_index do |row, index|
       next if row.errors.empty?
@@ -278,7 +289,7 @@ module CSVImportable
           end
         end
 
-      errors.add("row_#{index + 2}".to_sym, formatted_errors)
+      errors.add("row_#{index + row_offset}".to_sym, formatted_errors)
     end
   end
 

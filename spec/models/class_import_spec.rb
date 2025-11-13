@@ -95,6 +95,29 @@ describe ClassImport do
       end
     end
 
+    describe "with an instruction row, otherwise valid" do
+      let(:file) { "valid_instruction_row.csv" }
+
+      it "populates rows" do
+        expect(class_import).to be_valid
+        expect(class_import.rows.count).to eq(1)
+      end
+    end
+
+    describe "with an instruction row and an error" do
+      let(:file) { "invalid_instruction_row.csv" }
+
+      it "populates rows" do
+        expect(class_import).not_to be_valid
+        expect(class_import.rows.count).to eq(1)
+      end
+
+      it "shows the right error information" do
+        expect(class_import.errors.count).to eq(1)
+        expect(class_import.errors.to_a[0]).to start_with("Row 3")
+      end
+    end
+
     describe "with valid fields" do
       let(:file) { "valid.csv" }
 
@@ -109,6 +132,20 @@ describe ClassImport do
       it "is valid" do
         expect(class_import).to be_valid
         expect(class_import.rows.count).to eq(1)
+      end
+    end
+
+    describe "with minimal fields and an error" do
+      let(:file) { "invalid_minimal.csv" }
+
+      it "populates rows" do
+        expect(class_import).not_to be_valid
+        expect(class_import.rows.count).to eq(1)
+      end
+
+      it "shows the right error information" do
+        expect(class_import.errors.count).to eq(1)
+        expect(class_import.errors.to_a[0]).to start_with("Row 2")
       end
     end
   end
