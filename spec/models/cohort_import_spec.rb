@@ -91,6 +91,29 @@ describe CohortImport do
       end
     end
 
+    describe "with an instruction row, otherwise valid" do
+      let(:file) { "valid_instruction_row.csv" }
+
+      it "populates rows" do
+        expect(cohort_import).to be_valid
+        expect(cohort_import.rows.count).to eq(1)
+      end
+    end
+
+    describe "with an instruction row and an error" do
+      let(:file) { "invalid_instruction_row.csv" }
+
+      it "populates rows" do
+        expect(cohort_import).not_to be_valid
+        expect(cohort_import.rows.count).to eq(1)
+      end
+
+      it "shows the right error information" do
+        expect(cohort_import.errors.count).to eq(1)
+        expect(cohort_import.errors.to_a[0]).to start_with("Row 3")
+      end
+    end
+
     describe "with valid fields" do
       let(:file) { "valid.csv" }
 
@@ -105,6 +128,20 @@ describe CohortImport do
       it "is valid" do
         expect(cohort_import).to be_valid
         expect(cohort_import.rows.count).to eq(1)
+      end
+    end
+
+    describe "with minimal fields and an error" do
+      let(:file) { "invalid_minimal.csv" }
+
+      it "populates rows" do
+        expect(cohort_import).not_to be_valid
+        expect(cohort_import.rows.count).to eq(1)
+      end
+
+      it "shows the right error information" do
+        expect(cohort_import.errors.count).to eq(1)
+        expect(cohort_import.errors.to_a[0]).to start_with("Row 2")
       end
     end
 
