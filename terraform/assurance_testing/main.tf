@@ -25,8 +25,36 @@ resource "aws_ecr_repository" "performance" {
   image_tag_mutability = "IMMUTABLE"
 }
 
+resource "aws_ecr_repository" "regression" {
+  name                 = "mavis/regression"
+  image_tag_mutability = "IMMUTABLE"
+}
+
+
 resource "aws_ecr_lifecycle_policy" "performance" {
   repository = aws_ecr_repository.performance.name
+  policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1,
+        description  = "Expire images older than 1 month",
+        selection = {
+          tagStatus   = "any",
+          countType   = "sinceImagePushed",
+          countUnit   = "days",
+          countNumber = 30
+        },
+        action = {
+          type = "expire"
+        }
+      }
+    ]
+  })
+}
+
+
+resource "aws_ecr_lifecycle_policy" "regression" {
+  repository = aws_ecr_repository.regression.name
   policy = jsonencode({
     rules = [
       {

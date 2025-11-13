@@ -79,6 +79,9 @@ resource "aws_iam_policy" "additional_task_permissions" {
   policy = data.aws_iam_policy_document.additional_task_permissions.json
 }
 
+data "aws_iam_policy" "session_manager_access" {
+  name = "SessionManagerAccess"
+}
 
 ################################# IAM Role/Policy Attachments #################################
 
@@ -95,4 +98,9 @@ resource "aws_iam_role_policy_attachment" "additional" {
 resource "aws_iam_role_policy_attachment" "task_attachment" {
   role       = aws_iam_role.ecs_task_role.name
   policy_arn = aws_iam_policy.additional_task_permissions.arn
+}
+
+resource "aws_iam_role_policy_attachment" "session_manager_access" {
+  role       = aws_iam_role.ecs_task_role.name
+  policy_arn = data.aws_iam_policy.session_manager_access.arn
 }

@@ -149,7 +149,8 @@ resource "aws_iam_role" "github_assurance" {
   assume_role_policy = templatefile("resources/iam_role_github_trust_policy_${var.environment}.json.tftpl", {
     account_id = var.account_id,
     repository_list = [
-      "repo:NHSDigital/manage-vaccinations-in-schools-testing"
+      "repo:NHSDigital/manage-vaccinations-in-schools-testing",
+      "repo:nhsuk/manage-vaccinations-in-schools"
     ]
   })
   max_session_duration = 14400 # 4 hours
