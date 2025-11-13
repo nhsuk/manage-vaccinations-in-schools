@@ -2,8 +2,8 @@
 
 module FHIRMapper
   class Programme
-    delegate :snomed_target_disease_code,
-             :snomed_target_disease_term,
+    delegate :snomed_target_disease_codes,
+             :snomed_target_disease_terms,
              to: :@programme
 
     def initialize(programme)
@@ -11,15 +11,19 @@ module FHIRMapper
     end
 
     def fhir_target_disease_coding
-      FHIR::CodeableConcept.new(
-        coding: [
-          FHIR::Coding.new(
-            system: "http://snomed.info/sct",
-            code: snomed_target_disease_code,
-            display: snomed_target_disease_term
+      snomed_target_disease_codes
+        .zip(snomed_target_disease_terms)
+        .map do
+          FHIR::CodeableConcept.new(
+            coding: [
+              FHIR::Coding.new(
+                system: "http://snomed.info/sct",
+                code: it.first,
+                display: it.second
+              )
+            ]
           )
-        ]
-      )
+        end
     end
   end
 end
