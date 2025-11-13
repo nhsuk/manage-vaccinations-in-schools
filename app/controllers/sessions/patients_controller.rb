@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-class Sessions::PatientsController < ApplicationController
+class Sessions::PatientsController < Sessions::BaseController
   include PatientSearchFormConcern
 
-  before_action :set_session
   before_action :set_patient_search_form
 
   layout "full"
@@ -17,14 +16,5 @@ class Sessions::PatientsController < ApplicationController
 
     @pagy, @patients =
       patients.is_a?(Array) ? pagy_array(patients) : pagy(patients)
-  end
-
-  private
-
-  def set_session
-    @session =
-      policy_scope(Session).includes(:location_programme_year_groups).find_by!(
-        slug: params[:session_slug]
-      )
   end
 end

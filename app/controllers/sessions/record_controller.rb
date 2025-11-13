@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
-class Sessions::RecordController < ApplicationController
+class Sessions::RecordController < Sessions::BaseController
   include PatientSearchFormConcern
   include TodaysBatchConcern
 
-  before_action :set_session
   before_action :set_patient_search_form
 
   before_action :set_programme, except: :show
@@ -67,13 +66,6 @@ class Sessions::RecordController < ApplicationController
   end
 
   private
-
-  def set_session
-    @session =
-      policy_scope(Session).includes(programmes: :vaccines).find_by!(
-        slug: params[:session_slug]
-      )
-  end
 
   def set_programme
     @programme = policy_scope(Programme).find_by!(type: params[:programme_type])
