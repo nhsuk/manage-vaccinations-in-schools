@@ -25,19 +25,19 @@ describe PatientSearchForm do
   let(:aged_out_of_programmes) { nil }
   let(:archived) { nil }
   let(:consent_statuses) { nil }
-  let(:date_of_birth_day) { Date.current.day }
-  let(:date_of_birth_month) { Date.current.month }
-  let(:date_of_birth_year) { Date.current.year }
-  let(:missing_nhs_number) { true }
+  let(:date_of_birth_day) { nil }
+  let(:date_of_birth_month) { nil }
+  let(:date_of_birth_year) { nil }
+  let(:missing_nhs_number) { nil }
   let(:vaccination_status) { nil }
   let(:programme_types) { nil }
-  let(:q) { "query" }
+  let(:q) { nil }
   let(:registration_status) { nil }
   let(:triage_status) { nil }
   let(:vaccine_criteria) { nil }
   let(:still_to_vaccinate) { nil }
   let(:patient_specific_direction_status) { nil }
-  let(:year_groups) { %w[8 9 10 11] }
+  let(:year_groups) { nil }
 
   let(:params) do
     {
@@ -48,19 +48,17 @@ describe PatientSearchForm do
       date_of_birth_month:,
       date_of_birth_year:,
       missing_nhs_number:,
-      vaccination_status:,
-      still_to_vaccinate:,
       patient_specific_direction_status:,
       programme_types:,
       q:,
       registration_status:,
+      still_to_vaccinate:,
       triage_status:,
+      vaccination_status:,
       vaccine_criteria:,
       year_groups:
     }
   end
-
-  let(:empty_params) { {} }
 
   describe "#apply" do
     let(:scope) { Patient.all }
@@ -72,17 +70,6 @@ describe PatientSearchForm do
     end
 
     context "filtering on aged out of programmes" do
-      let(:consent_statuses) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
-      let(:q) { nil }
-      let(:registration_status) { nil }
-      let(:triage_status) { nil }
-      let(:year_groups) { nil }
-
       let(:programmes) { [CachedProgramme.flu] }
       let(:location) do
         create(:school, programmes:, gias_year_groups: [11, 12])
@@ -97,8 +84,6 @@ describe PatientSearchForm do
       end
 
       context "when not filtering on aged out patients" do
-        let(:aged_out_of_programmes) { nil }
-
         it "includes the not aged out patient" do
           expect(form.apply(scope)).to include(not_aged_out_patient)
         end
@@ -122,17 +107,6 @@ describe PatientSearchForm do
     end
 
     context "filtering on archived" do
-      let(:consent_statuses) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
-      let(:q) { nil }
-      let(:registration_status) { nil }
-      let(:triage_status) { nil }
-      let(:year_groups) { nil }
-
       let!(:unarchived_patient) do
         create(:patient, session: session_for_patients)
       end
@@ -143,8 +117,6 @@ describe PatientSearchForm do
       end
 
       context "when not filtering on archived patients" do
-        let(:archived) { nil }
-
         it "includes the unarchived patient" do
           expect(form.apply(scope)).to include(unarchived_patient)
         end
@@ -168,17 +140,6 @@ describe PatientSearchForm do
     end
 
     context "filtering on date of birth" do
-      let(:consent_statuses) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
-      let(:q) { nil }
-      let(:registration_status) { nil }
-      let(:triage_status) { nil }
-      let(:year_groups) { nil }
-
       let(:patient) do
         create(
           :patient,
@@ -224,16 +185,7 @@ describe PatientSearchForm do
 
     context "filtering on consent status" do
       let(:consent_statuses) { %w[given refused] }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
       let(:programme_types) { programmes.map(&:type) }
-      let(:q) { nil }
-      let(:registration_status) { nil }
-      let(:triage_status) { nil }
-      let(:year_groups) { nil }
 
       let(:session) { session_for_patients }
 
@@ -320,17 +272,7 @@ describe PatientSearchForm do
     end
 
     context "filtering on programmes" do
-      let(:consent_status) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
       let(:programme_types) { programmes.map(&:type) }
-      let(:q) { nil }
-      let(:registration_status) { nil }
-      let(:triage_status) { nil }
-      let(:year_groups) { nil }
 
       let(:programme) { CachedProgramme.menacwy }
       let(:programmes) { [programme] }
@@ -353,17 +295,8 @@ describe PatientSearchForm do
     end
 
     context "filtering on programme status" do
-      let(:consent_statuses) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
       let(:vaccination_status) { "vaccinated" }
       let(:programme_types) { programmes.map(&:type) }
-      let(:q) { nil }
-      let(:registration_status) { nil }
-      let(:triage_status) { nil }
-      let(:year_groups) { nil }
 
       it "filters on programme status" do
         patient =
@@ -379,16 +312,7 @@ describe PatientSearchForm do
     end
 
     context "filtering on register status" do
-      let(:consent_statuses) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
-      let(:q) { nil }
       let(:registration_status) { "attending" }
-      let(:triage_status) { nil }
-      let(:year_groups) { nil }
 
       let(:session) { session_for_patients }
 
@@ -399,17 +323,8 @@ describe PatientSearchForm do
     end
 
     context "filtering on triage status" do
-      let(:consent_statuses) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
       let(:programme_types) { programmes.map(&:type) }
-      let(:q) { nil }
-      let(:registration_status) { nil }
       let(:triage_status) { "required" }
-      let(:year_groups) { nil }
 
       let(:session) { session_for_patients }
 
@@ -467,18 +382,6 @@ describe PatientSearchForm do
     end
 
     context "filtering on patient specific direction status" do
-      let(:consent_statuses) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
-      let(:programme_types) { nil }
-      let(:q) { nil }
-      let(:registration_status) { nil }
-      let(:triage_status) { nil }
-      let(:year_groups) { nil }
-
       let(:session) { session_for_patients }
 
       let!(:patient_with_psd) { create(:patient, session:) }
@@ -511,18 +414,8 @@ describe PatientSearchForm do
     end
 
     context "filtering on vaccine criteria" do
-      let(:consent_statuses) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
       let(:programme_types) { programmes.map(&:type) }
-      let(:q) { nil }
-      let(:registration_status) { nil }
-      let(:triage_status) { nil }
       let(:vaccine_criteria) { "nasal" }
-      let(:year_groups) { nil }
 
       let(:session) { session_for_patients }
 
@@ -556,17 +449,6 @@ describe PatientSearchForm do
     end
 
     context "searching on name" do
-      let(:consent_statuses) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
-      let(:q) { nil }
-      let(:registration_status) { nil }
-      let(:triage_status) { nil }
-      let(:year_groups) { nil }
-
       let(:patient_a) do
         create(
           :patient,
@@ -628,17 +510,6 @@ describe PatientSearchForm do
     end
 
     context "when still_to_vaccinate is true" do
-      let(:consent_statuses) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:vaccination_status) { nil }
-      let(:programme_types) { nil }
-      let(:q) { nil }
-      let(:registration_status) { nil }
-      let(:triage_status) { nil }
-      let(:year_groups) { nil }
       let(:still_to_vaccinate) { "1" }
 
       let(:session) { session_for_patients }
@@ -836,11 +707,6 @@ describe PatientSearchForm do
   end
 
   context "using PatientPolicy scope" do
-    let(:q) { nil }
-    let(:date_of_birth_day) { nil }
-    let(:date_of_birth_month) { nil }
-    let(:date_of_birth_year) { nil }
-    let(:year_groups) { nil }
     let(:missing_nhs_number) { false }
     let(:programme_types) { programmes.map(&:type) }
 
