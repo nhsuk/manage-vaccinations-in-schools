@@ -48,7 +48,7 @@ class AppConsentConfirmationComponent < ViewComponent::Base
         END_OF_TEXT
       else
         "#{full_name} is due to get the #{given_vaccinations}#{location}" +
-          (session_dates.present? ? " on #{session_dates}" : "")
+          (dates.present? ? " on #{dates}" : "")
       end
     else
       "You’ve told us that you do not want #{full_name} to get the" \
@@ -86,7 +86,7 @@ class AppConsentConfirmationComponent < ViewComponent::Base
     "#{given_vaccinations} #{given_consent_form_programmes.one? ? "is" : "are"}"
   end
 
-  def session_dates
+  def dates
     @consent_form
       .session
       .today_or_future_dates

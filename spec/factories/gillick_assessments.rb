@@ -36,14 +36,11 @@
 #
 FactoryBot.define do
   factory :gillick_assessment do
-    transient do
-      session { association(:session) }
-      session_date { session.session_dates.first }
-    end
+    transient { session { association(:session) } }
 
     patient
     location { session.location }
-    date { session_date.value }
+    date { session.dates.first }
     programme { session.programmes.first }
     performed_by
 

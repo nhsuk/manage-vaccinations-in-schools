@@ -213,12 +213,12 @@ describe Session do
   describe "#unscheduled?" do
     subject { session.reload.unscheduled? }
 
-    let(:session) { create(:session, date: nil) }
+    let(:session) { create(:session, dates: []) }
 
     it { should be(true) }
 
     context "with a date" do
-      before { create(:session_date, session:) }
+      let(:session) { create(:session, dates: [Date.current]) }
 
       it { should be(false) }
     end
@@ -232,7 +232,7 @@ describe Session do
     it { should be(false) }
 
     context "with a date" do
-      before { create(:session_date, session:) }
+      let(:session) { create(:session, dates: [Date.current]) }
 
       it { should be(true) }
     end
@@ -458,6 +458,33 @@ describe Session do
     end
   end
 
+  describe "#has_been_attended?" do
+    subject { session.has_been_attended?(date:) }
+
+    let(:session) { create(:session) }
+    let(:date) { session.dates.first }
+
+    it { should be(false) }
+
+    context "with a Gillick assessment" do
+      before { create(:gillick_assessment, :competent, session:) }
+
+      it { should be(true) }
+    end
+
+    context "with a pre-screening" do
+      before { create(:pre_screening, session:) }
+
+      it { should be(true) }
+    end
+
+    context "with a session attendance" do
+      before { create(:attendance_record, :present, session:) }
+
+      it { should be(true) }
+    end
+  end
+
   describe "#close_consent_at" do
     subject(:close_consent_at) { session.close_consent_at }
 
@@ -475,8 +502,7 @@ describe Session do
 
     context "with two dates" do
       let(:date) { Date.new(2020, 1, 2) }
-
-      before { session.session_dates.create!(value: date + 1.day) }
+      let(:session) { create(:session, dates: [date, date + 1.day]) }
 
       it { should eq(Date.new(2020, 1, 2)) }
     end

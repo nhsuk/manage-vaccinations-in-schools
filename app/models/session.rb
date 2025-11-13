@@ -55,7 +55,6 @@ class Session < ApplicationRecord
 
   has_many :consent_notifications
   has_many :notes
-  has_many :session_dates, -> { order(:value) }, autosave: true
   has_many :session_notifications
   has_many :session_programmes,
            -> { joins(:programme).order(:"programmes.type") },
@@ -64,6 +63,12 @@ class Session < ApplicationRecord
   has_many :vaccination_records, -> { kept }
 
   has_and_belongs_to_many :immunisation_imports
+
+  has_many :gillick_assessments,
+           -> { where(date: it.dates) },
+           through: :location
+  has_many :pre_screenings, -> { where(date: it.dates) }, through: :location
+  has_many :attendance_records, -> { where(date: it.dates) }, through: :location
 
   has_many :patient_locations,
            -> { where(academic_year: it.academic_year) },
@@ -105,8 +110,7 @@ class Session < ApplicationRecord
     AND location_programme_year_groups.programme_id = session_programmes.programme_id
   SQL
 
-  scope :has_date,
-        ->(value) { where(SessionDate.for_session.where(value:).arel.exists) }
+  scope :has_date, ->(value) { where("dates @> ARRAY[?]::date[]", value) }
 
   scope :has_programmes,
         ->(programmes) do
@@ -124,44 +128,35 @@ class Session < ApplicationRecord
         -> { has_programmes(Programme.supports_delegation) }
 
   scope :in_progress, -> { has_date(Date.current) }
-  scope :unscheduled, -> { where.not(SessionDate.for_session.arel.exists) }
+  scope :unscheduled, -> { where(dates: []) }
   scope :scheduled,
         -> do
           where(
-            "? <= (?)",
-            Date.current,
-            SessionDate.for_session.select("MAX(value)")
+            "? <= (SELECT max(date_value) FROM unnest(dates) date_value)",
+            Date.current
           )
         end
   scope :completed,
         -> do
           where(
-            "? > (?)",
-            Date.current,
-            SessionDate.for_session.select("MAX(value)")
+            "? > (SELECT max(date_value) FROM unnest(dates) date_value)",
+            Date.current
           )
         end
 
   scope :search_by_name,
         ->(query) { joins(:location).merge(Location.search_by_name(query)) }
 
-  scope :join_earliest_date,
-        -> do
-          joins(
-            "LEFT JOIN (SELECT session_id, MIN(value) AS value " \
-              "FROM session_dates GROUP BY session_id) earliest_session_dates " \
-              "ON sessions.id = earliest_session_dates.session_id"
-          )
-        end
-
   scope :order_by_earliest_date,
         -> do
-          join_earliest_date.order(
+          order(
             Arel.sql(
-              "CASE WHEN earliest_session_dates.value >= ? THEN 1 ELSE 2 END",
+              "CASE WHEN (SELECT min(date_value) FROM unnest(sessions.dates) date_value) >= ? THEN 1 ELSE 2 END",
               Date.current
             ),
-            "earliest_session_dates.value ASC NULLS LAST"
+            Arel.sql(
+              "(SELECT min(date_value) FROM unnest(sessions.dates) date_value) ASC NULLS LAST"
+            )
           )
         end
 
@@ -170,9 +165,8 @@ class Session < ApplicationRecord
   scope :send_consent_reminders,
         -> do
           scheduled.where(
-            "? >= (?) - days_before_consent_reminders",
-            Date.current,
-            SessionDate.for_session.select("MIN(value)")
+            "? >= (SELECT min(date_value) FROM unnest(dates) date_value) - days_before_consent_reminders",
+            Date.current
           )
         end
   scope :send_invitations,
@@ -229,20 +223,20 @@ class Session < ApplicationRecord
     end
   end
 
-  def dates
-    session_dates.map(&:value).compact
-  end
-
   def today_or_future_dates
     dates.select { it.today? || it.future? }
   end
 
-  def future_dates
-    dates.select(&:future?)
-  end
+  def future_dates = dates.select(&:future?)
 
   def next_date(include_today:)
     (include_today ? today_or_future_dates : future_dates).first
+  end
+
+  def has_been_attended?(date:)
+    gillick_assessments.any? { it.date == date } ||
+      pre_screenings.any? { it.date == date } ||
+      attendance_records.any? { it.date == date }
   end
 
   def can_send_clinic_invitations?

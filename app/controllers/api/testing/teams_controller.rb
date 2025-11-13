@@ -71,8 +71,6 @@ class API::Testing::TeamsController < API::Testing::BaseController
       sync_patient_teams: true
     )
 
-    log_destroy(SessionDate.joins(:session).where(session: { team: }))
-
     log_destroy(ParentRelationship.where(patient_id: patient_ids))
     log_destroy(Patient.where(id: patient_ids))
 
