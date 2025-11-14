@@ -300,6 +300,31 @@ describe API::Reporting::TotalsController do
       expect(monthly_vaccinations_given).to be_empty
     end
 
+    it "current hpv record uploaded" do
+      patient = create(:patient, session: hpv_session)
+      create(
+        :vaccination_record,
+        patient:,
+        programme: hpv_programme,
+        session: nil,
+        source: "historical_upload",
+        outcome: "administered",
+        performed_at: 3.months.ago
+      )
+
+      refresh_and_get_totals
+
+      expect(cohort).to eq(1)
+      expect(vaccinated).to eq(1)
+      expect(not_vaccinated).to eq(0)
+      expect(vaccinated_previously).to eq(0)
+      expect(vaccinated_by_sais).to eq(0)
+      expect(vaccinated_elsewhere_declared).to eq(0)
+      expect(vaccinated_elsewhere_recorded).to eq(1)
+      expect(vaccinations_given).to eq(0)
+      expect(monthly_vaccinations_given).to be_empty
+    end
+
     it "historic flu record uploaded" do
       patient = create(:patient, session: flu_session)
       create(
