@@ -22,6 +22,7 @@ namespace :data_masking do
     ActiveRecord::Base.connection.execute("CREATE EXTENSION IF NOT EXISTS pgcrypto")
     
     begin
+      TableAnonymizer.new
       # Archive Reasons
       TableAnonymizer.anonymize_table("archive_reasons", [
         { name: "type", type: :text, length: 30 },
@@ -210,6 +211,12 @@ namespace :data_masking do
 end
 
 class TableAnonymizer
+  def initialize
+    define_generate_valid_nhs_number
+    define_generate_random_nhs_9digits
+    define_calculate_nhs_checksum
+  end
+
   def self.anonymize_table(table_name, columns, salt, batch_size)
     conn = ActiveRecord::Base.connection
 
@@ -246,7 +253,7 @@ class TableAnonymizer
           nil
         when :nhs_number
           # Generate 10-digit NHS number
-          # TODO
+          "#{col_name} = generate_valid_nhs_number()"
         when :date
           # Shift date within the same academic year (September 1 to August 31)
           # Academic year starts Sept 1, so for a date, find its academic year bounds and shift within that
@@ -368,5 +375,101 @@ class TableAnonymizer
       # For any other type, convert to string and hash
       OpenSSL::HMAC.hexdigest('sha256', salt, obj.to_s)[0..31]
     end
+  end
+
+  def define_generate_valid_nhs_number
+    ActiveRecord::Base.connection.execute(<<~SQL)
+        CREATE OR REPLACE FUNCTION generate_valid_nhs_number()
+        RETURNS TEXT AS $$
+        DECLARE
+          first_nine TEXT;
+          checksum INTEGER;
+          attempts INTEGER := 0;
+          max_attempts INTEGER := 100;
+        BEGIN
+          LOOP
+            attempts := attempts + 1;
+            
+            -- Generate random 9 digits
+            first_nine := generate_random_nhs_9digits();
+            
+            -- Calculate checksum
+            checksum := calculate_nhs_checksum(first_nine);
+            
+            -- If checksum is valid (not 10), return the complete number
+            IF checksum < 10 THEN
+              RETURN first_nine || checksum::TEXT;
+            END IF;
+            
+            -- Safety check to prevent infinite loop
+            IF attempts >= max_attempts THEN
+              RAISE EXCEPTION 'Failed to generate valid NHS number after % attempts', max_attempts;
+            END IF;
+          END LOOP;
+        END;
+        $$ LANGUAGE plpgsql VOLATILE;
+      SQL
+  end
+
+  def define_generate_random_nhs_9digits
+    ActiveRecord::Base.connection.execute(<<~SQL)
+        CREATE OR REPLACE FUNCTION generate_random_nhs_9digits()
+        RETURNS TEXT AS $$
+        DECLARE
+          range_selector INTEGER;
+          random_number INTEGER;
+          result TEXT;
+        BEGIN
+          -- Select range randomly (weighted by size)
+          -- 0-5 = range 1 (20M), 6-35 = range 2 (100M), 36-99 = range 3 (200M)
+          range_selector := FLOOR(RANDOM() * 100)::INTEGER;
+          
+          IF range_selector < 6 THEN
+            -- Range 1: 300,000,000 - 319,999,999
+            random_number := 300000000 + FLOOR(RANDOM() * 20000000)::INTEGER;
+          ELSIF range_selector < 36 THEN
+            -- Range 2: 400,000,000 - 499,999,999
+            random_number := 400000000 + FLOOR(RANDOM() * 100000000)::INTEGER;
+          ELSE
+            -- Range 3: 600,000,000 - 799,999,999
+            random_number := 600000000 + FLOOR(RANDOM() * 200000000)::INTEGER;
+          END IF;
+          
+          -- Return as 9-digit string
+          result := LPAD(random_number::TEXT, 9, '0');
+          RETURN result;
+        END;
+        $$ LANGUAGE plpgsql VOLATILE;
+      SQL
+  end
+
+  def define_calculate_nhs_checksum
+    ActiveRecord::Base.connection.execute(<<~SQL)
+        CREATE OR REPLACE FUNCTION calculate_nhs_checksum(first_nine TEXT)
+        RETURNS INTEGER AS $$
+        DECLARE
+          digit_sum INTEGER := 0;
+          remainder INTEGER;
+          checksum INTEGER;
+        BEGIN
+          -- Calculate weighted sum of first 9 digits
+          FOR i IN 1..9 LOOP
+            digit_sum := digit_sum + (SUBSTRING(first_nine FROM i FOR 1)::INTEGER * (11 - i));
+          END LOOP;
+          
+          -- Calculate remainder
+          remainder := digit_sum % 11;
+          
+          -- Calculate checksum
+          IF remainder = 0 THEN
+            checksum := 0;
+          ELSE
+            checksum := 11 - remainder;
+          END IF;
+          
+          RETURN checksum;
+        END;
+        $$ LANGUAGE plpgsql IMMUTABLE;
+      SQL
   end
 end
