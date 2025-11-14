@@ -146,7 +146,15 @@ describe GovukNotifyPersonalisation do
   end
 
   context "with multiple dates" do
-    before { session.session_dates.create!(value: Date.new(2026, 1, 2)) }
+    let(:session) do
+      create(
+        :session,
+        location:,
+        team:,
+        programmes:,
+        dates: [Date.new(2026, 1, 1), Date.new(2026, 1, 2)]
+      )
+    end
 
     it do
       expect(to_h).to match(

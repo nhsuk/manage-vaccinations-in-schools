@@ -122,7 +122,7 @@ describe Reports::CareplusExporter do
           team:,
           programmes:,
           location:,
-          dates: [4.weeks.ago, Date.current]
+          dates: [4.weeks.ago.to_date, Date.current]
         )
       end
 

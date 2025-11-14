@@ -12,10 +12,14 @@ describe SendClinicSubsequentInvitationsJob do
   let(:location) { create(:generic_clinic, team:, academic_year: 2024) }
 
   let(:session) do
-    create(:session, programmes:, date: 1.week.ago.to_date, location:, team:)
+    create(
+      :session,
+      programmes:,
+      dates: [1.week.ago.to_date, 1.week.from_now.to_date],
+      location:,
+      team:
+    )
   end
-
-  before { session.session_dates.create!(value: 1.week.from_now.to_date) }
 
   it "doesn't send any notifications" do
     expect(SessionNotification).not_to receive(:create_and_send!)

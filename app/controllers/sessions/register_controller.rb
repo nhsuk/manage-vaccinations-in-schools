@@ -4,7 +4,6 @@ class Sessions::RegisterController < Sessions::BaseController
   include PatientSearchFormConcern
 
   before_action :set_patient_search_form, only: :show
-  before_action :set_session_date, only: :create
   before_action :set_patient, only: :create
 
   layout "full"
@@ -26,7 +25,7 @@ class Sessions::RegisterController < Sessions::BaseController
     attendance_record =
       @patient.attendance_records.find_or_initialize_by(
         location: @session.location,
-        date: @session_date.value
+        date: Date.current
       )
 
     attendance_record.session = @session
@@ -50,10 +49,6 @@ class Sessions::RegisterController < Sessions::BaseController
   end
 
   private
-
-  def set_session_date
-    @session_date = @session.session_dates.find_by!(value: Date.current)
-  end
 
   def set_patient
     @patient = policy_scope(Patient).find(params[:patient_id])

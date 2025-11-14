@@ -74,10 +74,7 @@ class Generate::VaccinationRecords
   end
 
   def sessions
-    (
-      @sessions ||=
-        session ? [session] : team.sessions.includes(:location, :session_dates)
-    )
+    @sessions ||= session ? [session] : team.sessions.includes(:location)
   end
 
   def patients_for(session:)

@@ -141,7 +141,9 @@ describe AppConsentConfirmationComponent do
       create(
         :session,
         programmes: [CachedProgramme.hpv],
-        dates: [10.days.from_now, 11.days.from_now, 13.days.from_now]
+        dates: [10.days.from_now, 11.days.from_now, 13.days.from_now].map(
+          &:to_date
+        )
       )
     end
     let(:consent_form) { create(:consent_form, response: "given", session:) }
