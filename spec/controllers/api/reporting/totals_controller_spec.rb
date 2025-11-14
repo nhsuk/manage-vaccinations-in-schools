@@ -186,6 +186,7 @@ describe API::Reporting::TotalsController do
     let(:vaccinated) { parsed_response["vaccinated"] }
     let(:not_vaccinated) { parsed_response["not_vaccinated"] }
     let(:vaccinated_by_sais) { parsed_response["vaccinated_by_sais"] }
+    let(:vaccinated_previously) { parsed_response["vaccinated_previously"] }
     let(:vaccinated_elsewhere_declared) do
       parsed_response["vaccinated_elsewhere_declared"]
     end
@@ -276,7 +277,7 @@ describe API::Reporting::TotalsController do
       expect(final_response["monthly_vaccinations_given"]).to eq(initial_response["monthly_vaccinations_given"])
     end
 
-    it "historic record uploaded" do
+    it "historic hpv record uploaded" do
       patient = create(:patient, session: hpv_session)
       create(
         :vaccination_record,
@@ -293,7 +294,8 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(parsed_response["vaccinated_previously"]).to eq(1)
+      expect(vaccinated_previously).to eq(1)
+      expect(vaccinated_elsewhere_recorded).to eq(0)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end
