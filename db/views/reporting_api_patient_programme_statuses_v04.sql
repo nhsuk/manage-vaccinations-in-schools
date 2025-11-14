@@ -1,4 +1,20 @@
-WITH base_data AS (
+WITH vaccination_summary AS (
+  SELECT
+    vr.patient_id,
+    vr.programme_id,
+    vr_s.team_id,
+    vr_s.academic_year,
+    COUNT(*) FILTER (WHERE vr.outcome = 0) AS sais_vaccinations_count,
+    BOOL_OR(vr.outcome = 0) AS has_sais_vaccination,
+    MAX(vr.performed_at) FILTER (WHERE vr.outcome = 0) AS most_recent_vaccination,
+    BOOL_OR(vr.outcome = 0 AND vr.delivery_method = 2) AS has_nasal,
+    BOOL_OR(vr.outcome = 0 AND vr.delivery_method IN (0, 1)) AS has_injection
+  FROM vaccination_records vr
+  INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
+  WHERE vr.discarded_at IS NULL
+  GROUP BY vr.patient_id, vr.programme_id, vr_s.team_id, vr_s.academic_year
+),
+base_data AS (
   SELECT
     -- Unique identifier for concurrent refresh support
     CONCAT(p.id, '-', prog.id, '-', t.id, '-', s.academic_year) AS id,
@@ -48,22 +64,22 @@ WITH base_data AS (
   END AS patient_year_group,
   -- Vaccination status booleans
   (vr_any.patient_id IS NOT NULL OR vr_previous.patient_id IS NOT NULL) AS has_any_vaccination,
-  (vr_sais_current.patient_id IS NOT NULL) AS vaccinated_by_sais_current_year,
+  (vaccination_summary.has_sais_vaccination) AS vaccinated_by_sais_current_year,
   (vr_elsewhere_declared.patient_id IS NOT NULL AND vr_elsewhere_recorded.patient_id IS NULL) AS vaccinated_elsewhere_declared_current_year,
   (vr_elsewhere_recorded.patient_id IS NOT NULL) AS vaccinated_elsewhere_recorded_current_year,
   (vr_previous.patient_id IS NOT NULL) AS vaccinated_in_previous_years,
   -- Vaccination counts
-  COALESCE(vr_counts.sais_vaccinations_count, 0) AS sais_vaccinations_count,
-  vr_recent.most_recent_vaccination_month,
-  vr_recent.most_recent_vaccination_year,
+  COALESCE(vaccination_summary.sais_vaccinations_count, 0) AS sais_vaccinations_count,
+  EXTRACT(MONTH FROM vaccination_summary.most_recent_vaccination) AS most_recent_vaccination_month,
+  EXTRACT(YEAR FROM vaccination_summary.most_recent_vaccination) AS most_recent_vaccination_year,
   -- Consent information
   COALESCE(pcs.status, 0) AS consent_status,
   pcs.vaccine_methods AS consent_vaccine_methods,
   (parent_refused.patient_id IS NOT NULL) AS parent_refused_consent_current_year,
   (child_refused.patient_id IS NOT NULL) AS child_refused_vaccination_current_year,
   -- Vaccination by delivery method (flu programme)
-  (vr_nasal_current.patient_id IS NOT NULL) AS vaccinated_nasal_current_year,
-  (vr_injection_current.patient_id IS NOT NULL) AS vaccinated_injection_current_year,
+  (vaccination_summary.has_nasal) AS vaccinated_nasal_current_year,
+  (vaccination_summary.has_injection) AS vaccinated_injection_current_year,
   -- Flag for patients outside the team's cohort (vaccinated but not enrolled)
   (pl.patient_id IS NULL) AS outside_cohort,
   -- Row number for deduplication (replaces DISTINCT ON)
@@ -71,7 +87,7 @@ WITH base_data AS (
   ROW_NUMBER() OVER (
     PARTITION BY p.id, prog.id, t.id, s.academic_year
     ORDER BY
-      (COALESCE(vr_counts.sais_vaccinations_count, 0) > 0) DESC,  -- Rows with vaccinations first
+      (COALESCE(vaccination_summary.sais_vaccinations_count, 0) > 0) DESC,  -- Rows with vaccinations first
       (pl.patient_id IS NOT NULL) DESC,  -- Then enrollment rows
       patient_school_org.id NULLS LAST
   ) AS rn
@@ -150,6 +166,11 @@ LEFT JOIN subteams current_location_subteam ON current_location_subteam.id = cur
 LEFT JOIN teams current_location_team ON current_location_team.id = current_location_subteam.team_id
 LEFT JOIN organisations patient_location_org ON patient_location_org.id = current_location_team.organisation_id
 
+LEFT JOIN vaccination_summary ON vaccination_summary.patient_id = p.id
+  AND vaccination_summary.programme_id = prog.id
+  AND vaccination_summary.team_id = t.id
+  AND vaccination_summary.academic_year = s.academic_year
+
 -- Left join to check if patient has any vaccination (administered or already_had) in current academic year
 LEFT JOIN (
   SELECT DISTINCT vr.patient_id, vr.programme_id, vr_s.academic_year
@@ -170,18 +191,6 @@ LEFT JOIN (
     AND vr.source IN (1, 2) -- historical_upload or nhs_immunisations_api
     AND vr.session_id IS NULL
 ) vr_any ON vr_any.patient_id = p.id AND vr_any.programme_id = prog.id AND vr_any.academic_year = s.academic_year
-
--- Left join to check if patient was vaccinated by SAIS in current academic year
-LEFT JOIN (
-  SELECT DISTINCT vr.patient_id, vr.programme_id, vr_s.team_id, vr_s.academic_year
-  FROM vaccination_records vr
-  INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
-  WHERE vr.discarded_at IS NULL
-    AND vr.outcome = 0 -- administered
-) vr_sais_current ON vr_sais_current.patient_id = p.id
-  AND vr_sais_current.programme_id = prog.id
-  AND vr_sais_current.academic_year = s.academic_year
-  AND vr_sais_current.team_id = t.id
 
 -- Left join to check if patient declared they were already vaccinated elsewhere
 LEFT JOIN (
@@ -243,37 +252,6 @@ LEFT JOIN (
   AND vr_previous.programme_id = prog.id
   AND vr_previous.academic_year < s.academic_year
 
--- Left join to count SAIS vaccinations (administered by current team in current academic year)
-LEFT JOIN (
-  SELECT
-    vr.patient_id,
-    vr.programme_id,
-    vr_s.team_id,
-    vr_s.academic_year,
-    COUNT(*) AS sais_vaccinations_count
-  FROM vaccination_records vr
-  INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
-  WHERE vr.discarded_at IS NULL
-    AND vr.outcome = 0 -- administered
-  GROUP BY vr.patient_id, vr.programme_id, vr_s.team_id, vr_s.academic_year
-) vr_counts ON vr_counts.patient_id = p.id AND vr_counts.programme_id = prog.id
-  AND vr_counts.team_id = t.id AND vr_counts.academic_year = s.academic_year
-
--- Left join to get most recent vaccination date for time series (by current team only)
-LEFT JOIN (
-  SELECT
-    vr.patient_id,
-    vr.programme_id,
-    vr_s.team_id,
-    EXTRACT(MONTH FROM MAX(vr.performed_at)) AS most_recent_vaccination_month,
-    EXTRACT(YEAR FROM MAX(vr.performed_at)) AS most_recent_vaccination_year
-  FROM vaccination_records vr
-  INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
-  WHERE vr.discarded_at IS NULL
-    AND vr.outcome = 0 -- administered
-  GROUP BY vr.patient_id, vr.programme_id, vr_s.team_id
-) vr_recent ON vr_recent.patient_id = p.id AND vr_recent.programme_id = prog.id AND vr_recent.team_id = t.id
-
 -- Left join patient consent statuses (LATERAL for better index usage)
 LEFT JOIN LATERAL (
   SELECT status, vaccine_methods
@@ -313,30 +291,6 @@ LEFT JOIN (
 ) child_refused ON child_refused.patient_id = p.id
   AND child_refused.programme_id = prog.id
   AND child_refused.academic_year = s.academic_year
-
--- Left join to check if patient was vaccinated with nasal spray in current academic year
-LEFT JOIN (
-  SELECT DISTINCT vr.patient_id, vr.programme_id, vr_s.academic_year
-  FROM vaccination_records vr
-  INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
-  WHERE vr.discarded_at IS NULL
-    AND vr.outcome = 0 -- administered
-    AND vr.delivery_method = 2 -- nasal_spray
-) vr_nasal_current ON vr_nasal_current.patient_id = p.id
-  AND vr_nasal_current.programme_id = prog.id
-  AND vr_nasal_current.academic_year = s.academic_year
-
--- Left join to check if patient was vaccinated with injection in current academic year
-LEFT JOIN (
-  SELECT DISTINCT vr.patient_id, vr.programme_id, vr_s.academic_year
-  FROM vaccination_records vr
-  INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
-  WHERE vr.discarded_at IS NULL
-    AND vr.outcome = 0 -- administered
-    AND vr.delivery_method IN (0, 1) -- intramuscular or subcutaneous
-) vr_injection_current ON vr_injection_current.patient_id = p.id
-  AND vr_injection_current.programme_id = prog.id
-  AND vr_injection_current.academic_year = s.academic_year
 
 WHERE p.invalidated_at IS NULL
   AND p.restricted_at IS NULL
