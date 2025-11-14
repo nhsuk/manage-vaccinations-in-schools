@@ -17,7 +17,6 @@ class PatientsController < ApplicationController
       scope =
         policy_scope(Patient).includes(
           :consent_statuses,
-          :location_programme_year_groups,
           :school,
           :triage_statuses,
           :vaccination_statuses
