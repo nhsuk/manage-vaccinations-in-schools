@@ -88,7 +88,7 @@ class SessionsController < ApplicationController
   def patient_counts_for_sessions(sessions)
     Patient
       .joins_sessions
-      .in_eligible_year_group_for_session_programme
+      .joins_session_programme_year_groups
       .where("sessions.id = ANY(ARRAY[?]::bigint[])", sessions.map(&:id))
       .group("sessions.id")
       .count("DISTINCT patients.id")

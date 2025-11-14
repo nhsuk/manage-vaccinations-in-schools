@@ -9,7 +9,6 @@
 #  dates                         :date             not null, is an Array
 #  days_before_consent_reminders :integer
 #  national_protocol_enabled     :boolean          default(FALSE), not null
-#  programme_types               :enum             is an Array
 #  psd_enabled                   :boolean          default(FALSE), not null
 #  requires_registration         :boolean          default(TRUE), not null
 #  send_consent_requests_at      :date
@@ -46,7 +45,6 @@ FactoryBot.define do
 
     dates { [date].compact }
     academic_year { (dates.first || Date.current).academic_year }
-    programme_types { programmes.map(&:type) }
 
     team { association(:team, programmes:) }
     location { association(:school, subteam:, academic_year:, programmes:) }
@@ -67,7 +65,11 @@ FactoryBot.define do
       end
     end
 
-    after(:create, &:sync_location_programme_year_groups!)
+    after(:create) do |session, evaulator|
+      session.sync_location_programme_year_groups!(
+        programmes: evaulator.programmes
+      )
+    end
 
     trait :today do
       date { Date.current }

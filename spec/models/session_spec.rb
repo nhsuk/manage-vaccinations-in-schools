@@ -9,7 +9,6 @@
 #  dates                         :date             not null, is an Array
 #  days_before_consent_reminders :integer
 #  national_protocol_enabled     :boolean          default(FALSE), not null
-#  programme_types               :enum             is an Array
 #  psd_enabled                   :boolean          default(FALSE), not null
 #  requires_registration         :boolean          default(TRUE), not null
 #  send_consent_requests_at      :date
@@ -517,17 +516,14 @@ describe Session do
 
   describe "#sync_location_programme_year_groups!" do
     subject(:sync_location_programme_year_groups!) do
-      session.sync_location_programme_year_groups!
+      session.sync_location_programme_year_groups!(programmes:)
     end
 
-    # The factory creates these by default.
-    before { session.session_programme_year_groups.delete_all }
-
-    let(:programmes) { [Programme.hpv, Programme.flu] }
     let(:location) { create(:school, programmes:) }
 
     context "when session has both programmes" do
-      let(:session) { create(:session, location:, programmes:) }
+      let(:session) { create(:session, location:, programmes: []) }
+      let(:programmes) { [Programme.flu, Programme.hpv] }
 
       it "creates session programme year groups" do
         expect { sync_location_programme_year_groups! }.to change(
@@ -538,7 +534,8 @@ describe Session do
     end
 
     context "when session has only one of the programmes" do
-      let(:session) { create(:session, location:, programmes: [Programme.hpv]) }
+      let(:session) { create(:session, location:, programmes: []) }
+      let(:programmes) { [Programme.hpv] }
 
       it "creates session programme year groups" do
         expect { sync_location_programme_year_groups! }.to change(

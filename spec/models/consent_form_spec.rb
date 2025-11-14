@@ -885,7 +885,7 @@ describe ConsentForm do
     let(:programme) { Programme.sample }
     let(:team) { create(:team, programmes: [programme]) }
 
-    let(:school) { create(:school) }
+    let(:school) { create(:school, programmes: [programme]) }
     let(:location) { school }
     let(:session) do
       create(:session, team:, programmes: [programme], location:)

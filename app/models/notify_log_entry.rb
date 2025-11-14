@@ -34,6 +34,7 @@
 #  fk_rails_...  (sent_by_user_id => users.id)
 #
 class NotifyLogEntry < ApplicationRecord
+  include HasManyProgrammes
   include Sendable
 
   self.inheritance_column = nil
@@ -55,6 +56,9 @@ class NotifyLogEntry < ApplicationRecord
 
   validates :recipient, presence: true
   validates :template_id, presence: true
+
+  scope :for_session,
+        ->(session) { has_all_programme_types_of(session.programme_types) }
 
   encrypts :recipient, deterministic: true
 

@@ -90,8 +90,8 @@ describe "Parental consent manual matching" do
   end
 
   def given_the_patient_has_aged_out_of_the_programme
-    @consent_form.update!(date_of_birth: @consent_form.date_of_birth - 10.years)
-    @patient.update!(birth_academic_year: @patient.birth_academic_year - 10)
+    @consent_form.update!(date_of_birth: @consent_form.date_of_birth - 5.years)
+    @patient.update!(birth_academic_year: @patient.birth_academic_year - 5)
   end
 
   def when_i_go_to_the_dashboard
