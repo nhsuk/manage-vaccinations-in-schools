@@ -56,6 +56,7 @@ class Session < ApplicationRecord
   has_many :consent_notifications
   has_many :notes
   has_many :session_notifications
+  has_many :session_programme_year_groups, dependent: :destroy
   has_many :session_programmes,
            -> { joins(:programme).order(:"programmes.type") },
            dependent: :destroy,
