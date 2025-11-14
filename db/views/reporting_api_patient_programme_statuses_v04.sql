@@ -44,7 +44,7 @@ WITH base_data AS (
   END AS patient_year_group,
   -- Vaccination status booleans
   CASE
-    WHEN vr_any.patient_id IS NOT NULL THEN true
+    WHEN vr_any.patient_id IS NOT NULL OR vr_previous.patient_id IS NOT NULL THEN true
     ELSE false
   END AS has_any_vaccination,
   CASE
@@ -124,6 +124,18 @@ LEFT JOIN (
   INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
   WHERE vr.discarded_at IS NULL
     AND vr.outcome IN (0, 4) -- administered or already_had
+  UNION
+  SELECT DISTINCT vr.patient_id, vr.programme_id,
+    CASE
+      WHEN EXTRACT(MONTH FROM vr.performed_at) >= 9
+      THEN EXTRACT(YEAR FROM vr.performed_at)::integer
+      ELSE EXTRACT(YEAR FROM vr.performed_at)::integer - 1
+    END AS academic_year
+  FROM vaccination_records vr
+  WHERE vr.discarded_at IS NULL
+    AND vr.outcome IN (0, 4) -- administered or already_had
+    AND vr.source IN (1, 2) -- historical_upload or nhs_immunisations_api
+    AND vr.session_id IS NULL
 ) vr_any ON vr_any.patient_id = p.id AND vr_any.programme_id = prog.id AND vr_any.academic_year = s.academic_year
 
 -- Left join to check if patient was vaccinated by SAIS in current academic year
@@ -157,7 +169,12 @@ LEFT JOIN (
   WHERE vr.discarded_at IS NULL
     AND vr.outcome = 0 -- administered (actual vaccination record)
   UNION
-  SELECT DISTINCT vr.patient_id, vr.programme_id, NULL::bigint AS team_id, EXTRACT(YEAR FROM vr.performed_at)::integer AS academic_year
+  SELECT DISTINCT vr.patient_id, vr.programme_id, NULL::bigint AS team_id,
+    CASE
+      WHEN EXTRACT(MONTH FROM vr.performed_at) >= 9
+      THEN EXTRACT(YEAR FROM vr.performed_at)::integer
+      ELSE EXTRACT(YEAR FROM vr.performed_at)::integer - 1
+    END AS academic_year
   FROM vaccination_records vr
   WHERE vr.discarded_at IS NULL
     AND vr.outcome = 0 -- administered (actual vaccination record)
@@ -175,6 +192,18 @@ LEFT JOIN (
   INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
   WHERE vr.discarded_at IS NULL
     AND vr.outcome IN (0, 4) -- administered or already_had
+  UNION
+  SELECT DISTINCT vr.patient_id, vr.programme_id,
+    CASE
+      WHEN EXTRACT(MONTH FROM vr.performed_at) >= 9
+      THEN EXTRACT(YEAR FROM vr.performed_at)::integer
+      ELSE EXTRACT(YEAR FROM vr.performed_at)::integer - 1
+    END AS academic_year
+  FROM vaccination_records vr
+  WHERE vr.discarded_at IS NULL
+    AND vr.outcome IN (0, 4) -- administered or already_had
+    AND vr.source IN (1, 2) -- historical_upload or nhs_immunisations_api
+    AND vr.session_id IS NULL
 ) vr_previous ON vr_previous.patient_id = p.id
   AND vr_previous.programme_id = prog.id
   AND vr_previous.academic_year < s.academic_year
