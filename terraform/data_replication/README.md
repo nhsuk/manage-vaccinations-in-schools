@@ -9,6 +9,14 @@ It creates
 - A replication of a given database based on a provided snapshot
 - A dedicated ECS service connected to the database
 
+## Masked snapshot requirement
+
+To reduce the access level required for the replication environment, the snapshot used to build the replicated database MUST have the tag `masked=true`. Raw production snapshots containing PII must never be passed directly to this module.
+
+A separate workflow `mask-database-snapshot.yml` takes in the URN of an existing snapshot, anonymizes that and produces a new snapshot tagged `masked=true`. The temporary resources are destroyed afterwards.
+
+Terraform enforces the presence of the `masked=true` tag and will fail if it is missing.
+
 ## Setup
 
 This module is managed via a GitHub Actions workflow. To separate it from the rest of the infrastructure, the workflow uses a dedicated IAM role called `GithubDeployDataReplicationInfrastructure`.
