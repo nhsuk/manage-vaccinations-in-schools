@@ -128,7 +128,7 @@ LEFT JOIN (
 
 -- Left join to check if patient was vaccinated by SAIS in current academic year
 LEFT JOIN (
-  SELECT DISTINCT vr.patient_id, vr.programme_id, vr_s.academic_year
+  SELECT DISTINCT vr.patient_id, vr.programme_id, vr_s.team_id, vr_s.academic_year
   FROM vaccination_records vr
   INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
   WHERE vr.discarded_at IS NULL
@@ -136,6 +136,7 @@ LEFT JOIN (
 ) vr_sais_current ON vr_sais_current.patient_id = p.id
   AND vr_sais_current.programme_id = prog.id
   AND vr_sais_current.academic_year = s.academic_year
+  AND vr_sais_current.team_id = t.id
 
 -- Left join to check if patient declared they were already vaccinated elsewhere
 LEFT JOIN (
@@ -148,16 +149,24 @@ LEFT JOIN (
   AND vr_elsewhere_declared.programme_id = prog.id
   AND vr_elsewhere_declared.academic_year = s.academic_year
 
--- Left join to check if patient has externally recorded vaccination (from uploads/NHS API)
+-- Left join to check if patient has externally recorded vaccination (from uploads/NHS API or other teams)
 LEFT JOIN (
-  SELECT DISTINCT vr.patient_id, vr.programme_id, EXTRACT(YEAR FROM vr.performed_at) AS academic_year
+  SELECT DISTINCT vr.patient_id, vr.programme_id, vr_s.team_id, vr_s.academic_year
+  FROM vaccination_records vr
+  INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
+  WHERE vr.discarded_at IS NULL
+    AND vr.outcome = 0 -- administered (actual vaccination record)
+  UNION
+  SELECT DISTINCT vr.patient_id, vr.programme_id, NULL::bigint AS team_id, EXTRACT(YEAR FROM vr.performed_at)::integer AS academic_year
   FROM vaccination_records vr
   WHERE vr.discarded_at IS NULL
     AND vr.outcome = 0 -- administered (actual vaccination record)
     AND vr.source IN (1, 2) -- historical_upload or nhs_immunisations_api
+    AND vr.session_id IS NULL
 ) vr_elsewhere_recorded ON vr_elsewhere_recorded.patient_id = p.id
   AND vr_elsewhere_recorded.programme_id = prog.id
   AND vr_elsewhere_recorded.academic_year = s.academic_year
+  AND (vr_elsewhere_recorded.team_id IS NULL OR vr_elsewhere_recorded.team_id != t.id)
 
 -- Left join to check if patient was vaccinated in previous years
 LEFT JOIN (

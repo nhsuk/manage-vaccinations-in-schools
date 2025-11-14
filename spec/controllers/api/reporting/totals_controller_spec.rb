@@ -464,7 +464,8 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinated_by_sais).to eq(1)
+      expect(vaccinated_by_sais).to eq(0)
+      expect(vaccinated_elsewhere_recorded).to eq(1)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end
