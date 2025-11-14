@@ -40,7 +40,6 @@ class Session < ApplicationRecord
   include DaysBeforeToWeeksBefore
   include Delegatable
   include GelatineVaccinesConcern
-  include HasLocationProgrammeYearGroups
   include HasManyProgrammes
 
   class ActiveRecord_Relation < ActiveRecord::Relation
@@ -80,16 +79,6 @@ class Session < ApplicationRecord
   has_many :programmes, through: :session_programmes
   has_many :vaccines, through: :programmes
 
-  has_many :location_year_groups,
-           -> { where(academic_year: it.academic_year) },
-           through: :location
-
-  has_many :location_programme_year_groups,
-           -> do
-             includes(:location_year_group).where(programme: it.programmes)
-           end,
-           through: :location_year_groups
-
   scope :joins_patient_locations, -> { joins(<<-SQL) }
     INNER JOIN patient_locations
     ON patient_locations.location_id = sessions.location_id
@@ -101,14 +90,10 @@ class Session < ApplicationRecord
     ON patients.id = patient_locations.patient_id
   SQL
 
-  scope :joins_location_programme_year_groups, -> { joins(<<-SQL) }
-    INNER JOIN location_year_groups
-    ON location_year_groups.location_id = sessions.location_id
-    AND location_year_groups.academic_year = sessions.academic_year
-    AND location_year_groups.value = sessions.academic_year - patients.birth_academic_year - #{Integer::AGE_CHILDREN_START_SCHOOL}
-    INNER JOIN location_programme_year_groups
-    ON location_programme_year_groups.location_year_group_id = location_year_groups.id
-    AND location_programme_year_groups.programme_id = session_programmes.programme_id
+  scope :joins_session_programme_year_groups, -> { joins(<<-SQL) }
+    INNER JOIN session_programme_year_groups
+    ON session_programme_year_groups.session_id = sessions.id
+    AND session_programme_year_groups.year_group = sessions.academic_year - patients.birth_academic_year - #{Integer::AGE_CHILDREN_START_SCHOOL}
   SQL
 
   scope :has_date, ->(value) { where("dates @> ARRAY[?]::date[]", value) }
@@ -179,17 +164,34 @@ class Session < ApplicationRecord
 
   delegate :clinic?, :generic_clinic?, :school?, to: :location
 
-  def patients
-    birth_academic_years =
-      location_programme_year_groups.pluck_birth_academic_years
+  def to_param = slug
 
+  def year_groups(programme: nil)
+    if programme
+      session_programme_year_groups.where(
+        programme_type: programme.type
+      ).pluck_year_groups
+    else
+      session_programme_year_groups.pluck_year_groups
+    end
+  end
+
+  def birth_academic_years(programme: nil)
+    if programme
+      session_programme_year_groups.where(
+        programme_type: programme.type
+      ).pluck_birth_academic_years
+    else
+      session_programme_year_groups.pluck_birth_academic_years
+    end
+  end
+
+  def patients
     Patient
       .joins_sessions
       .where(sessions: { id: })
       .where(birth_academic_year: birth_academic_years)
   end
-
-  def to_param = slug
 
   def today? = dates.any?(&:today?)
 
@@ -217,9 +219,8 @@ class Session < ApplicationRecord
     year_group ||= patient.year_group(academic_year:)
 
     programmes.select do |programme|
-      location_programme_year_groups.any? do
-        it.programme_id == programme.id &&
-          it.location_year_group.value == year_group
+      session_programme_year_groups.any? do
+        it.programme_type == programme.type && it.year_group == year_group
       end
     end
   end
@@ -260,9 +261,21 @@ class Session < ApplicationRecord
   end
 
   def sync_location_programme_year_groups!
+    location_programme_year_groups =
+      Location::ProgrammeYearGroup
+        .joins(:location_year_group)
+        .where(
+          location_year_group: {
+            location_id:,
+            academic_year:
+          },
+          programme: programmes
+        )
+        .pluck(:programme_type, :"location_year_group.value")
+
     rows =
-      location_programme_year_groups.map do |lpyg|
-        [id, lpyg.programme_type, lpyg.year_group]
+      location_programme_year_groups.map do |programme_type, year_group|
+        [id, programme_type, year_group]
       end
 
     ActiveRecord::Base.transaction do

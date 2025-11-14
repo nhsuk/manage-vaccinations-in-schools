@@ -9,7 +9,6 @@ class DraftSession
   include Consentable
   include DaysBeforeToWeeksBefore
   include Delegatable
-  include HasLocationProgrammeYearGroups
 
   attribute :days_before_consent_reminders, :integer
   attribute :location_id, :integer
@@ -111,37 +110,33 @@ class DraftSession
     super(values&.compact_blank&.map(&:to_i) || [])
   end
 
-  def location_programme_year_groups
-    @location_programme_year_groups ||=
-      session.location_programme_year_groups.includes(:programme).to_a +
+  def session_programme_year_groups
+    @session_programme_year_groups ||=
+      session.session_programme_year_groups.to_a +
         new_programmes.flat_map do |programme|
-          programme.default_year_groups.map do |value|
-            location_year_group =
-              Location::YearGroup.new(location:, academic_year:, value:)
-            Location::ProgrammeYearGroup.new(location_year_group:, programme:)
+          programme.default_year_groups.map do |year_group|
+            SessionProgrammeYearGroup.new(session:, programme:, year_group:)
           end
         end
   end
 
   def year_groups
-    location_programme_year_groups.map(&:year_group).sort.uniq
+    session_programme_year_groups.map(&:year_group).sort.uniq
   end
 
   def programmes_for(year_group: nil, patient: nil)
     year_group ||= patient.year_group(academic_year:)
 
     programmes.select do |programme|
-      location_programme_year_groups.any? do
-        it.programme_id == programme.id && it.year_group == year_group
+      session_programme_year_groups.any? do
+        it.programme_type == programme.type && it.year_group == year_group
       end
     end
   end
 
   def patient_is_catch_up?(patient, programmes:)
     year_group = patient.year_group(academic_year:)
-    programmes.any? do |programme|
-      programme_year_groups.is_catch_up?(year_group, programme:)
-    end
+    programmes.any? { it.is_catch_up?(year_group:) }
   end
 
   def dates = session_dates.map(&:value).compact.sort.uniq

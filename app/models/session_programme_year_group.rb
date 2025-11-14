@@ -36,4 +36,8 @@ class SessionProgrammeYearGroup < ApplicationRecord
         end
 
   delegate :academic_year, to: :session
+
+  def programme=(value)
+    self.programme_type = value.type
+  end
 end

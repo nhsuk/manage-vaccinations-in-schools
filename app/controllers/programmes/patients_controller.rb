@@ -7,9 +7,15 @@ class Programmes::PatientsController < Programmes::BaseController
 
   def index
     @year_groups =
-      current_team.programme_year_groups(academic_year: @academic_year)[
-        @programme
-      ]
+      current_team
+        .location_programme_year_groups
+        .where(
+          programme: @programme,
+          location_year_group: {
+            academic_year: @academic_year
+          }
+        )
+        .pluck_year_groups
 
     scope =
       Patient
