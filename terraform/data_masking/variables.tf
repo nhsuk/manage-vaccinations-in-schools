@@ -53,7 +53,7 @@ variable "rails_master_key_path" {
 }
 
 locals {
-  name_prefix                        = "data-masking"
+  name_prefix                        = "mavis-${var.environment}-data-masking"
   subnet_list                        = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
   shared_egress_infrastructure_count = min(length(var.allowed_egress_cidr_blocks), 1)
 
