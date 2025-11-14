@@ -22,7 +22,7 @@ resource "aws_rds_cluster" "cluster" {
   engine_mode            = "provisioned"
   database_name          = "manage_vaccinations"
   master_username        = "postgres"
-  snapshot_identifier    = var.imported_snapshot
+  snapshot_identifier    = local.imported_snapshot_identifier
   db_subnet_group_name   = aws_db_subnet_group.dbsg.name
   vpc_security_group_ids = [aws_security_group.rds.id]
   storage_encrypted      = true
@@ -38,6 +38,8 @@ resource "aws_rds_cluster" "cluster" {
   lifecycle {
     ignore_changes = [cluster_identifier]
   }
+
+  depends_on = [null_resource.validate_snapshot]
 }
 
 resource "aws_rds_cluster_instance" "instance" {
@@ -51,5 +53,27 @@ resource "aws_rds_cluster_instance" "instance" {
 
   lifecycle {
     ignore_changes = [identifier]
+  }
+}
+
+# Validate snapshot has sanitized=true tag
+data "aws_db_cluster_snapshot" "imported" {
+  db_cluster_snapshot_identifier = local.imported_snapshot_identifier
+}
+
+locals {
+  snapshot_tags_map = { for t in data.aws_db_cluster_snapshot.imported.tags : t.key => t.value }
+  snapshot_is_sanitized = try(data.aws_db_cluster_snapshot.imported.tags["sanitized"] == "true", false)
+}
+
+resource "null_resource" "validate_snapshot" {
+  triggers = {
+    id        = data.aws_db_cluster_snapshot.imported.id
+    sanitized = tostring(local.snapshot_is_sanitized)
+  }
+
+  provisioner "local-exec" {
+    when    = create
+    command = "[ \"${local.snapshot_is_sanitized}\" = \"true\" ] || { echo 'Snapshot must have tag sanitized=true'; exit 1; }"
   }
 }

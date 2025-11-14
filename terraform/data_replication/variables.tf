@@ -27,7 +27,7 @@ variable "db_engine_version" {
 
 variable "imported_snapshot" {
   type        = string
-  description = "ARN of snapshot to create DB cluster from. This is the basis for replicating the existing DB."
+  description = "ARN of snapshot to create DB cluster from. This is the basis for replicating the existing DB. The snapshot must have the tag \"sanitized=true\""
   nullable    = false
 }
 
@@ -90,6 +90,9 @@ locals {
       valueFrom = var.rails_master_key_path
     }
   ]
+
+  # Extract the snapshot identifier if an ARN was provided (ARN format ends with cluster-snapshot:<identifier>)
+  imported_snapshot_identifier = try(regex("cluster-snapshot:(.+)$", var.imported_snapshot)[0], var.imported_snapshot)
 }
 
 variable "allowed_egress_cidr_blocks" {

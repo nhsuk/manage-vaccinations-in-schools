@@ -83,15 +83,35 @@ jobs:
         run: |
           set -e
           if [ -z "$db_snapshot_arn" ]; then
-              echo "No snapshot ARN provided, fetching the latest snapshot"
-              SNAPSHOT_ARN=$(aws rds describe-db-cluster-snapshots \
+              echo "No snapshot ARN provided, fetching the latest snapshot with tag sanitized=true"
+              SNAPSHOTS=$(aws rds describe-db-cluster-snapshots \
               --query "DBClusterSnapshots[?DBClusterIdentifier=='mavis-$environment'].[DBClusterSnapshotArn, SnapshotCreateTime]" \
-              --output text | sort -k2 -r | head -n 1 | cut -f1)
+              --output text | sort -k2 -r)
 
-              if [ -z "$SNAPSHOT_ARN" ]; then
+              if [ -z "$SNAPSHOTS" ]; then
                   echo "No snapshots found for mavis-$environment"
                   exit 1
               fi
+          
+              SNAPSHOT_ARN=""
+              
+              # Loop over sorted snapshots and find the first with matching tag
+              while read -r ARN TIME; do
+                  TAGS=$(aws rds list-tags-for-resource --resource-name "$ARN" \
+                    --query "TagList[?Key=='sanitized' && Value=='true']" \
+                    --output text)
+                  
+                  if [ -n "$TAGS" ]; then
+                      SNAPSHOT_ARN="$ARN"
+                      break
+                  fi
+              done <<< "$SNAPSHOTS"
+              
+              if [ -z "$SNAPSHOT_ARN" ]; then
+                  echo "No snapshots found with tag sanitized=true"
+                  exit 1
+              fi
+              
           else
               echo "Using provided snapshot ARN: $db_snapshot_arn"
               SNAPSHOT_ARN="$db_snapshot_arn"
