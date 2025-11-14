@@ -300,7 +300,7 @@ describe ClassImport do
 
         expect(class_import.reload.status).to eq("changesets_are_invalid")
         expect(class_import.serialized_errors.values.flatten).to include(
-          "More than 1 row in this file has the same NHS number."
+          /The details on this row match row \d+\. Mavis has found the NHS number 1234567890\./
         )
       end
     end
@@ -317,7 +317,7 @@ describe ClassImport do
 
         expect(class_import.reload.status).to eq("changesets_are_invalid")
         expect(class_import.serialized_errors.values.flatten).to include(
-          "More than 1 row in this file matches a patient already in the Mavis database."
+          /The record on this row appears to be a duplicate of row \d+\./
         )
       end
     end

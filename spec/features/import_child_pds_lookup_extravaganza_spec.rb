@@ -481,7 +481,10 @@ describe "Import child records" do
   def then_i_should_see_the_import_is_invalid
     expect(page).to have_content("Records could not be imported")
     expect(page).to have_content(
-      "More than 1 row in this file has the same NHS number."
+      "The details on this row match row 5. Mavis has found the NHS number 9876543210."
+    )
+    expect(page).to have_content(
+      "The record on this row appears to be a duplicate of row 5."
     )
   end
 

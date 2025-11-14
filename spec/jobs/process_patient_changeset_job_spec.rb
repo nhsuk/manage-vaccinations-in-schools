@@ -325,7 +325,7 @@ describe ProcessPatientChangesetJob do
           it "adds duplicate NHS number error to import" do
             described_class.perform_now(patient_changeset.id)
             expect(import.reload.serialized_errors.values.flatten).to include(
-              "More than 1 row in this file has the same NHS number."
+              /The details on this row match row \d+\. Mavis has found the NHS number 1111111111\./
             )
           end
 
@@ -370,7 +370,7 @@ describe ProcessPatientChangesetJob do
             described_class.perform_now(patient_changeset.id)
             import.load_serialized_errors!
             expect(import.reload.serialized_errors.values.flatten).to include(
-              "More than 1 row in this file matches a patient already in the Mavis database."
+              /The record on this row appears to be a duplicate of row \d+./
             )
           end
 
@@ -415,8 +415,8 @@ describe ProcessPatientChangesetJob do
             described_class.perform_now(patient_changeset.id)
             import.load_serialized_errors!
             expect(import.reload.serialized_errors.values.flatten).to include(
-              "More than 1 row in this file matches a patient already in the Mavis database.",
-              "More than 1 row in this file has the same NHS number."
+              /The details on this row match row \d+\. Mavis has found the NHS number 1111111111\./,
+              /The record on this row appears to be a duplicate of row \d+\./
             )
           end
 
