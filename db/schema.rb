@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_13_130126) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -790,6 +790,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_130126) do
     t.index ["session_id"], name: "index_session_notifications_on_session_id"
   end
 
+  create_table "session_programme_year_groups", primary_key: ["session_id", "programme_type", "year_group"], force: :cascade do |t|
+    t.enum "programme_type", null: false, enum_type: "programme_type"
+    t.bigint "session_id", null: false
+    t.integer "year_group", null: false
+    t.index ["session_id"], name: "index_session_programme_year_groups_on_session_id"
+  end
+
   create_table "session_programmes", force: :cascade do |t|
     t.bigint "programme_id", null: false
     t.bigint "session_id", null: false
@@ -1113,6 +1120,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_130126) do
   add_foreign_key "session_notifications", "patients"
   add_foreign_key "session_notifications", "sessions"
   add_foreign_key "session_notifications", "users", column: "sent_by_user_id"
+  add_foreign_key "session_programme_year_groups", "sessions", on_delete: :cascade
   add_foreign_key "session_programmes", "programmes", on_delete: :cascade
   add_foreign_key "session_programmes", "sessions", on_delete: :cascade
   add_foreign_key "sessions", "teams"
