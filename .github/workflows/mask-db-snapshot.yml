@@ -28,8 +28,8 @@ env:
   environment: ${{ inputs.environment }}
   git_ref_to_deploy: ${{ inputs.git_ref_to_deploy }}
   aws_role: ${{ inputs.environment == 'production'
-    && 'arn:aws:iam::820242920762:role/GithubDeployDataReplicationInfrastructure'
-    || 'arn:aws:iam::393416225559:role/GithubDeployDataReplicationInfrastructure' }}
+    && 'arn:aws:iam::820242920762:role/GithubDeployDataMaskingInfrastructure'
+    || 'arn:aws:iam::393416225559:role/GithubDeployDataMaskingInfrastructure' }}
   aws_account_id: ${{ inputs.environment == 'production' && '820242920762' || '393416225559' }}
 
 concurrency:

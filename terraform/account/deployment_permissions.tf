@@ -48,6 +48,32 @@ resource "aws_iam_role_policy_attachment" "data_replication" {
   policy_arn = each.value
 }
 
+################# Data masking ######################
+
+resource "aws_iam_role" "data_masking_deploy" {
+  name        = "GithubDeployDataMaskingInfrastructure"
+  description = "Role to be assumed by github workflows dealing with the creation and destruction of the data-masking infrastructure."
+  assume_role_policy = templatefile("resources/iam_role_github_trust_policy_${var.environment}.json.tftpl", {
+    account_id      = var.account_id
+    repository_list = ["repo:nhsuk/manage-vaccinations-in-schools"]
+  })
+}
+
+resource "aws_iam_policy" "data_masking_deploy" {
+  name        = "DeployDataMaskingResources"
+  description = "Policy for deploying resources needed to set up the data-masking construction."
+  policy      = file("resources/iam_policy_DeployDataMaskingResources.json")
+  lifecycle {
+    ignore_changes = [description]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "data_masking" {
+  for_each   = local.data_masking_policies
+  role       = aws_iam_role.data_masking_deploy.name
+  policy_arn = each.value
+}
+
 ################# DB Snapshot Policy ################
 
 resource "aws_iam_role" "data_replication_snapshot" {

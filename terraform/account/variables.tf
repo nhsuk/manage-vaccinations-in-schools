@@ -29,6 +29,11 @@ locals {
     mavis_deploy            = aws_iam_policy.mavis_deploy.arn
   })
 
+  data_masking_policies = merge(local.base_policies, {
+    data_masking_deploy = aws_iam_policy.data_masking_deploy.arn
+    mavis_deploy            = aws_iam_policy.mavis_deploy.arn
+  })
+
   monitoring_policies = merge(local.base_policies, {
     monitoring_deploy = aws_iam_policy.monitoring_deploy.arn
   })

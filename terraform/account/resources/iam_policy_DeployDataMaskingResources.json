@@ -1,0 +1,17 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "rds:DescribeDBClusterSnapshots",
+        "ec2:DescribeVpcEndpoints",
+        "ec2:CreateVpcEndpoint",
+        "ec2:ModifyVpcEndpoint",
+        "ec2:DeleteVpcEndpoints",
+        "rds:RestoreDBClusterFromSnapshot"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
