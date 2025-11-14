@@ -11,11 +11,9 @@
 #  vaccine_method   :integer
 #  without_gelatine :boolean
 #  patient_id       :bigint           not null
-#  programme_id     :bigint           not null
 #
 # Indexes
 #
-#  idx_on_patient_id_programme_id_academic_year_6cf32349df        (patient_id,programme_id,academic_year) UNIQUE
 #  idx_on_patient_id_programme_type_academic_year_b66791407e      (patient_id,programme_type,academic_year) UNIQUE
 #  index_patient_triage_statuses_on_academic_year_and_patient_id  (academic_year,patient_id)
 #  index_patient_triage_statuses_on_status                        (status)
@@ -31,12 +29,11 @@ describe Patient::TriageStatus do
   end
 
   let(:patient) { create(:patient, year_group: 9) }
-  let(:programme) { CachedProgramme.sample }
+  let(:programme) { Programme.sample }
 
   before { patient.strict_loading!(false) }
 
   it { should belong_to(:patient) }
-  it { should belong_to(:programme) }
 
   it do
     expect(patient_triage_status).to define_enum_for(:status).with_values(
@@ -105,7 +102,7 @@ describe Patient::TriageStatus do
     end
 
     context "with a historical vaccination that needs triage" do
-      let(:programme) { CachedProgramme.td_ipv }
+      let(:programme) { Programme.td_ipv }
 
       before do
         create(:vaccination_record, patient:, programme:, dose_sequence: 1)
@@ -164,7 +161,7 @@ describe Patient::TriageStatus do
           create(:triage, triage_trait, patient:, programme:) if triage_trait
         end
 
-        let(:programme) { CachedProgramme.hpv }
+        let(:programme) { Programme.hpv }
 
         it { should be(:not_required) }
       end
@@ -214,7 +211,7 @@ describe Patient::TriageStatus do
     end
 
     context "with a historical vaccination that needs triage" do
-      let(:programme) { CachedProgramme.td_ipv }
+      let(:programme) { Programme.td_ipv }
 
       before do
         create(:vaccination_record, patient:, programme:, dose_sequence: 1)
@@ -247,7 +244,7 @@ describe Patient::TriageStatus do
         create(:vaccination_record, patient:, programme:)
       end
 
-      let(:programme) { CachedProgramme.hpv }
+      let(:programme) { Programme.hpv }
 
       it { should be_nil }
     end
@@ -283,7 +280,7 @@ describe Patient::TriageStatus do
     let(:current_academic_year) { AcademicYear.current }
     let(:previous_academic_year) { current_academic_year - 1 }
     let(:patient) { create(:patient) }
-    let(:programme) { CachedProgramme.sample }
+    let(:programme) { Programme.sample }
 
     describe "with triages from different academic years" do
       subject(:status) do

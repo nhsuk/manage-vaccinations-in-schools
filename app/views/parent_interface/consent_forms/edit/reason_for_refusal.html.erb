@@ -3,8 +3,8 @@
 <% end %>
 
 <% title = "Please tell us why you do not agree to your child having the " \
-   "#{@consent_form.refused_programmes.map(&:name).to_sentence} " \
-   "#{"vaccination".pluralize(@consent_form.refused_programmes.count)} in school" %>
+   "#{@consent_form.refused_consent_form_programmes.map { it.programme.name }.to_sentence} " \
+   "#{"vaccination".pluralize(@consent_form.refused_consent_form_programmes.count)} in school" %>
 <% content_for :page_title, title %>
 
 <%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>

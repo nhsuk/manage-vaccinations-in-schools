@@ -3,7 +3,7 @@
 describe AppPatientSessionVaccinationComponent do
   let(:component) { described_class.new(patient:, session:, programme:) }
 
-  let(:programme) { CachedProgramme.hpv }
+  let(:programme) { Programme.hpv }
   let(:session) { create(:session, programmes: [programme]) }
   let(:patient) { create(:patient, session:) }
 
@@ -19,9 +19,7 @@ describe AppPatientSessionVaccinationComponent do
     end
 
     context "with a vaccination record for a different programme" do
-      before do
-        create(:vaccination_record, patient:, programme: CachedProgramme.mmr)
-      end
+      before { create(:vaccination_record, patient:, programme: Programme.mmr) }
 
       it { should be(false) }
     end

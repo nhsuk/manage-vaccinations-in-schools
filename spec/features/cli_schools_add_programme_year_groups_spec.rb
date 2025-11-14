@@ -48,7 +48,7 @@ describe "mavis schools add-programme-year-group" do
   end
 
   def and_the_programme_exists
-    @programme = CachedProgramme.flu
+    @programme = Programme.flu
   end
 
   def when_i_run_the_command
@@ -75,7 +75,7 @@ describe "mavis schools add-programme-year-group" do
     year_groups =
       @school
         .location_programme_year_groups
-        .where(programme: @programme)
+        .where_programme(@programme)
         .pluck_year_groups
 
     expect(year_groups).to contain_exactly(12, 13, 14)

@@ -11,11 +11,9 @@
 #  vaccine_methods  :integer          default([]), not null, is an Array
 #  without_gelatine :boolean
 #  patient_id       :bigint           not null
-#  programme_id     :bigint           not null
 #
 # Indexes
 #
-#  idx_on_patient_id_programme_id_academic_year_1d3170e398         (patient_id,programme_id,academic_year) UNIQUE
 #  idx_on_patient_id_programme_type_academic_year_89a70c9513       (patient_id,programme_type,academic_year) UNIQUE
 #  index_patient_consent_statuses_on_academic_year_and_patient_id  (academic_year,patient_id)
 #  index_patient_consent_statuses_on_status                        (status)
@@ -28,7 +26,7 @@
 FactoryBot.define do
   factory :patient_consent_status, class: "Patient::ConsentStatus" do
     patient
-    programme
+    programme { Programme.sample }
     academic_year { AcademicYear.current }
 
     traits_for_enum :status

@@ -214,7 +214,7 @@ class DraftSessionsController < ApplicationController
       delegation: %i[psd_enabled national_protocol_enabled],
       invitations: %i[send_invitations_at],
       programmes: {
-        programme_ids: []
+        programme_types: []
       },
       register_attendance: %i[requires_registration]
     }.fetch(current_step)

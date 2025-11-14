@@ -5,7 +5,7 @@ describe AppProgrammeSessionTableComponent do
 
   let(:component) { described_class.new(sessions, programme:, academic_year:) }
 
-  let(:programme) { CachedProgramme.sample }
+  let(:programme) { Programme.sample }
   let(:academic_year) { AcademicYear.current }
   let(:location) do
     create(:school, name: "Waterloo Road", programmes: [programme])
@@ -38,7 +38,7 @@ describe AppProgrammeSessionTableComponent do
   it { should have_content(/Vaccinated(\s+)1(\s+)20%/) }
 
   context "when the patient is not eligible for the programme" do
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
     let(:patient) { create(:patient, session:, year_group: 7) }
 
     it { should have_content(/Cohort(\s+)4/) }

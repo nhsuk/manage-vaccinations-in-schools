@@ -53,8 +53,8 @@ class ConsentFormsController < ApplicationController
     session =
       @patient
         .sessions
-        .includes(:location_programme_year_groups, :programmes)
-        .has_programmes(@consent_form.programmes)
+        .includes(:location_programme_year_groups)
+        .has_all_programme_types_of(@consent_form.programme_types)
         .find_by(academic_year: AcademicYear.pending) || @consent_form.session
 
     programme = session.programmes_for(patient: @patient).first
@@ -142,11 +142,7 @@ class ConsentFormsController < ApplicationController
   private
 
   def set_consent_form
-    @consent_form =
-      policy_scope(ConsentForm)
-        .includes(:programmes, :vaccines)
-        .unmatched
-        .find(params[:id])
+    @consent_form = policy_scope(ConsentForm).unmatched.find(params[:id])
   end
 
   def set_patient

@@ -6,7 +6,7 @@
 #
 #  id              :bigint           not null, primary key
 #  delivery_status :integer          default("sending"), not null
-#  programme_ids   :integer          default([]), not null, is an Array
+#  programme_ids   :integer          is an Array
 #  programme_types :enum             default([]), not null, is an Array
 #  recipient       :string           not null
 #  type            :integer          not null

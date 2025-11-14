@@ -10,7 +10,7 @@ describe AppConsentRefusedTableComponent do
   let(:consents) { Consent.all }
   let(:vaccine_may_contain_gelatine) { true }
 
-  let(:programme) { CachedProgramme.sample }
+  let(:programme) { Programme.sample }
 
   before do
     create(

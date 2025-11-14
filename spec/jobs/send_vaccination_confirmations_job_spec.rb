@@ -6,7 +6,7 @@ describe SendVaccinationConfirmationsJob do
   describe "#perform" do
     subject(:perform) { job.perform }
 
-    let(:programme) { CachedProgramme.sample }
+    let(:programme) { Programme.sample }
 
     let(:existing_vaccination_record_already_sent) do
       create(

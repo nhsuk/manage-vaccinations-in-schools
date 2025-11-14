@@ -18,7 +18,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
 
       return unless feature_flag_enabled
 
-      programmes = Programme.can_search_in_immunisations_api
+      programmes = Programme.all.select(&:can_search_in_immunisations_api?)
 
       if patient.nhs_number.nil?
         incoming_vaccination_records = []
@@ -45,7 +45,8 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
         patient
           .vaccination_records
           .includes(:identity_check)
-          .where(programme: programmes, source: :nhs_immunisations_api)
+          .sourced_from_nhs_immunisations_api
+          .where_programme(programmes)
 
       existing_vaccination_records.find_each do |vaccination_record|
         incoming_vaccination_record =
@@ -97,7 +98,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
   def deduplicate_vaccination_records(vaccination_records)
     grouped_vaccination_records =
       vaccination_records.group_by do
-        [it.performed_at.to_date, it.programme_id]
+        [it.performed_at.to_date, it.programme_type]
       end
 
     deduplicated_vaccination_records = []

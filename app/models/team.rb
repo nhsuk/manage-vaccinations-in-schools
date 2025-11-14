@@ -58,15 +58,12 @@ class Team < ApplicationRecord
   has_many :patient_teams
   has_many :sessions
   has_many :subteams
-  has_many :team_programmes, -> { joins(:programme).order(:"programmes.type") }
 
   has_many :patients, through: :patient_teams
   has_many :community_clinics, through: :subteams
   has_many :locations, through: :subteams
-  has_many :programmes, through: :team_programmes
   has_many :schools, through: :subteams
   has_many :vaccination_records, through: :sessions
-  has_many :vaccines, through: :programmes
 
   has_many :location_year_groups, through: :locations
   has_many :location_programme_year_groups,
@@ -98,13 +95,8 @@ class Team < ApplicationRecord
 
   def generic_clinic_session(academic_year:)
     sessions
-      .includes(
-        :location,
-        :location_programme_year_groups,
-        :programmes,
-        :session_dates
-      )
-      .create_with(programmes:)
+      .includes(:location, :location_programme_year_groups, :session_dates)
+      .create_with(programme_types:)
       .find_or_create_by!(academic_year:, location: generic_clinic)
   end
 end

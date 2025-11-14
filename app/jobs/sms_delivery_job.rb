@@ -11,7 +11,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
     consent_form: nil,
     parent: nil,
     patient: nil,
-    programmes: [],
+    programme_types: [],
     sent_by: nil,
     session: nil,
     vaccination_record: nil
@@ -26,7 +26,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
         consent_form:,
         parent:,
         patient:,
-        programmes:,
+        programme_types:,
         vaccination_record:
       )
 
@@ -75,8 +75,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
       delivery_status:,
       parent: personalisation.parent,
       patient: personalisation.patient,
-      programme_ids: personalisation.programmes.map(&:id),
-      programme_types: personalisation.programmes.map(&:type),
+      programme_types: personalisation.programme_types,
       recipient: phone_number,
       sent_by:,
       template_id:,

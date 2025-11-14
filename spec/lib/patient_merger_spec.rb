@@ -23,7 +23,7 @@ describe PatientMerger do
 
     let(:user) { create(:user) }
 
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
     let(:team) { create(:team, programmes: [programme]) }
     let(:session) { create(:session, team:, programmes: [programme]) }
 

@@ -34,11 +34,7 @@ module MavisCLI
         end
 
         programmes =
-          if programmes.empty?
-            team.programmes
-          else
-            Programme.where(type: programmes)
-          end
+          (programmes.empty? ? team.programmes : Programme.find_all(programmes))
 
         academic_year = AcademicYear.pending
 

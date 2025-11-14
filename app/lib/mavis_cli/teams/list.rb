@@ -19,9 +19,9 @@ module MavisCLI
                     "Could not find organisation with ODS code: #{ods_code}"
             end
 
-            organisation.teams.includes(:programmes)
+            organisation.teams
           else
-            Team.includes(:programmes)
+            Team.all
           end
 
         rows =

@@ -2,9 +2,9 @@
 
 describe Stats::Vaccinations do
   describe "#call" do
-    let(:programme_flu) { CachedProgramme.flu }
-    let(:programme_hpv) { CachedProgramme.hpv }
-    let(:programme_menacwy) { CachedProgramme.menacwy }
+    let(:programme_flu) { Programme.flu }
+    let(:programme_hpv) { Programme.hpv }
+    let(:programme_menacwy) { Programme.menacwy }
 
     let(:target_organisation) { create(:organisation, ods_code: "TARGET123") }
     let(:target_team) do
@@ -126,7 +126,7 @@ describe Stats::Vaccinations do
       end
 
       it "filters by programme" do
-        result = described_class.call(programme: "flu")
+        result = described_class.call(programme_type: "flu")
 
         expect(result).to include("flu")
         expect(result).not_to include("hpv", "menacwy")
@@ -174,7 +174,7 @@ describe Stats::Vaccinations do
         result =
           described_class.call(
             teams: [target_team],
-            programme: "flu",
+            programme_type: "flu",
             outcome: "administered"
           )
 

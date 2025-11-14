@@ -8,12 +8,12 @@ class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
       if sessions
         Session.where(id: sessions.map(&:id))
       else
-        flu = Programme.flu.sole
+        flu = Programme.flu
 
         scope =
           Session
             .includes(:session_dates)
-            .has_programmes([flu])
+            .has_all_programmes_of([flu])
             .where("session_dates.value >= ?", Time.zone.today)
             .references(:session_dates)
 

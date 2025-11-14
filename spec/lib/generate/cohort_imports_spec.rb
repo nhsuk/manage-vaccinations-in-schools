@@ -5,7 +5,7 @@ describe Generate::CohortImports do
     described_class.new(team:, programmes: [programme])
   end
 
-  let(:programme) { CachedProgramme.hpv }
+  let(:programme) { Programme.hpv }
   let(:team) { create(:team, programmes: [programme]) }
 
   before do

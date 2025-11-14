@@ -6,7 +6,7 @@ class VaccinesController < ApplicationController
   layout "full"
 
   def index
-    @vaccines = policy_scope(Vaccine).includes(:programme).active.order(:brand)
+    @vaccines = policy_scope(Vaccine).active.order(:brand)
 
     @batches_by_vaccine_id =
       policy_scope(Batch)
@@ -16,7 +16,7 @@ class VaccinesController < ApplicationController
         .group_by(&:vaccine_id)
 
     @todays_batch_id_by_programme_and_vaccine_methods =
-      policy_scope(Programme).index_with do |programme|
+      current_user.programmes.index_with do |programme|
         programme.vaccine_methods.index_with do |vaccine_method|
           todays_batch_id(programme:, vaccine_method:)
         end

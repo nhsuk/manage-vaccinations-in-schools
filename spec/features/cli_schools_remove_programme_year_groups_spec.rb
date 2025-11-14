@@ -49,7 +49,7 @@ describe "mavis schools remove-programme-year-group" do
   end
 
   def and_the_programme_exists
-    @programme = CachedProgramme.flu
+    @programme = Programme.flu
   end
 
   def and_existing_programme_year_groups_exist
@@ -59,7 +59,9 @@ describe "mavis schools remove-programme-year-group" do
           value: year_group,
           academic_year: AcademicYear.current
         )
-      location_year_group.programmes << @programme
+      location_year_group.location_programme_year_groups.create!(
+        programme_type: @programme.type
+      )
     end
   end
 
@@ -87,7 +89,7 @@ describe "mavis schools remove-programme-year-group" do
     year_groups =
       @school
         .location_programme_year_groups
-        .where(programme: @programme)
+        .where_programme(@programme)
         .pluck_year_groups
 
     expect(year_groups).not_to include(9)

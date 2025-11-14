@@ -12,7 +12,7 @@ describe StatusGenerator::Consent do
   end
 
   let(:patient) { create(:patient) }
-  let(:programme) { CachedProgramme.sample }
+  let(:programme) { Programme.sample }
 
   describe "#status" do
     subject { generator.status }
@@ -178,7 +178,7 @@ describe StatusGenerator::Consent do
       let(:current_academic_year) { AcademicYear.current }
       let(:previous_academic_year) { current_academic_year - 1 }
       let(:patient) { create(:patient) }
-      let(:programme) { CachedProgramme.sample }
+      let(:programme) { Programme.sample }
       let(:parent) { create(:parent) }
 
       context "with a given consent from the current academic year" do
@@ -412,7 +412,7 @@ describe StatusGenerator::Consent do
   describe "#without_gelatine" do
     subject { generator.without_gelatine }
 
-    let(:programme) { CachedProgramme.mmr }
+    let(:programme) { Programme.mmr }
 
     context "with no consent" do
       it { should be_nil }

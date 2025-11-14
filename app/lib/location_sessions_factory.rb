@@ -23,6 +23,7 @@ class LocationSessionsFactory
 
         add_patients!
       end
+
     if sync_patient_teams_now
       SyncPatientTeamJob.perform_now(
         PatientLocation,
@@ -51,7 +52,10 @@ class LocationSessionsFactory
   end
 
   def already_exists?(programmes:)
-    team.sessions.has_programmes(programmes).exists?(academic_year:, location:)
+    team
+      .sessions
+      .has_all_programmes_of(programmes)
+      .exists?(academic_year:, location:)
   end
 
   def create_session!(programmes:)
@@ -59,16 +63,17 @@ class LocationSessionsFactory
   end
 
   def find_or_create_session!(programmes:)
+    programme_types = programmes.map(&:type)
+
     team
       .sessions
-      .create_with(programmes:)
+      .includes(:location)
+      .create_with(programme_types:)
       .find_or_create_by!(academic_year:, location:)
       .tap do |session|
-        programmes.each do |programme|
-          unless programme.in?(session.programmes)
-            session.programmes << programme
-          end
-        end
+        session.update!(
+          programme_types: (session.programme_types + programme_types).sort.uniq
+        )
       end
   end
 

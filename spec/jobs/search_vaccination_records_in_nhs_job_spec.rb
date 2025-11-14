@@ -9,7 +9,7 @@ describe SearchVaccinationRecordsInNHSJob do
   let(:school) { create(:school, team:) }
   let(:patient) { create(:patient, team:, session:, school:, nhs_number:) }
   let(:nhs_number) { "9449308357" }
-  let!(:programme) { CachedProgramme.flu }
+  let!(:programme) { Programme.flu }
 
   before do
     Flipper.enable(:imms_api_integration)
@@ -163,7 +163,7 @@ describe SearchVaccinationRecordsInNHSJob do
         create(
           :vaccination_record,
           :sourced_from_nhs_immunisations_api,
-          programme: CachedProgramme.hpv,
+          programme: Programme.hpv,
           patient:,
           nhs_immunisations_api_primary_source: false,
           performed_at:
@@ -270,7 +270,7 @@ describe SearchVaccinationRecordsInNHSJob do
         create(
           :vaccination_record,
           :sourced_from_nhs_immunisations_api,
-          programme: CachedProgramme.hpv,
+          programme: Programme.hpv,
           patient:,
           nhs_immunisations_api_primary_source: third_primary_source,
           performed_at: Time.zone.local(2025, 10, 9)

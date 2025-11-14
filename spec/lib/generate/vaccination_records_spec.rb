@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Generate::VaccinationRecords do
-  let(:programme) { Programme.hpv&.first || CachedProgramme.hpv }
+  let(:programme) { Programme.hpv }
   let(:team) { create(:team, programmes: [programme]) }
   let(:session) { create(:session, team:, programmes: [programme]) }
   let(:user) { create(:user, team:) }

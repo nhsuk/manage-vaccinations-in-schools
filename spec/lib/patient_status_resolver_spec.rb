@@ -17,7 +17,7 @@ describe PatientStatusResolver do
   describe "#consent" do
     subject { status_attached_tag_resolver.consent }
 
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
 
     it { should eq({ text: "No response", colour: "grey" }) }
   end
@@ -25,7 +25,7 @@ describe PatientStatusResolver do
   describe "#triage" do
     subject { status_attached_tag_resolver.triage }
 
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
 
     it { should eq({ text: "No triage needed", colour: "grey" }) }
   end
@@ -33,7 +33,7 @@ describe PatientStatusResolver do
   describe "#vaccination" do
     subject(:hash) { status_attached_tag_resolver.vaccination }
 
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
     let(:session) { create(:session, programmes: [programme]) }
 
     it { should eq({ text: "Not eligible", colour: "grey" }) }
@@ -134,7 +134,7 @@ describe PatientStatusResolver do
     end
 
     context "for MMR programme" do
-      let(:programme) { CachedProgramme.mmr }
+      let(:programme) { Programme.mmr }
 
       context "and eligible for 1st dose" do
         let(:patient) { create(:patient, session:) }

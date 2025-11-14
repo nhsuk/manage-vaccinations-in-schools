@@ -5,7 +5,7 @@ describe AttendanceRecordPolicy do
 
   let(:user) { create(:nurse) }
 
-  let(:programmes) { [CachedProgramme.hpv, CachedProgramme.flu] }
+  let(:programmes) { [Programme.hpv, Programme.flu] }
   let(:team) { create(:team, programmes:) }
   let(:session) { create(:session, team:, programmes:) }
   let(:patient) { create(:patient, session:, year_group: 8) }

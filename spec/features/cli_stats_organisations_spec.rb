@@ -68,15 +68,24 @@ describe "mavis stats organisations" do
 
   def given_organisation_has_complete_data_with_filters
     @organisation = create(:organisation, ods_code: "TEST002")
-    programme_flu = CachedProgramme.flu
-    programme_hpv = CachedProgramme.hpv
-    programme_menacwy = CachedProgramme.menacwy
+    programme_flu = Programme.flu
+    programme_hpv = Programme.hpv
+    programme_menacwy = Programme.menacwy
 
-    @team_a = create(:team, organisation: @organisation, name: "North Team")
-    @team_b = create(:team, organisation: @organisation, name: "South Team")
-
-    @team_a.programmes << [programme_flu, programme_hpv, programme_menacwy]
-    @team_b.programmes << [programme_flu, programme_hpv, programme_menacwy]
+    @team_a =
+      create(
+        :team,
+        organisation: @organisation,
+        name: "North Team",
+        programmes: [programme_flu, programme_hpv, programme_menacwy]
+      )
+    @team_b =
+      create(
+        :team,
+        organisation: @organisation,
+        name: "South Team",
+        programmes: [programme_flu, programme_hpv, programme_menacwy]
+      )
 
     school1 =
       create(

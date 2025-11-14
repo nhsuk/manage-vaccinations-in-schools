@@ -24,7 +24,7 @@ module MavisCLI
           return
         end
 
-        programme = Programme.find_by(type: programme_type)
+        programme = Programme.find(programme_type)
 
         if programme.nil?
           warn "Could not find programme."
@@ -33,7 +33,8 @@ module MavisCLI
 
         location
           .location_programme_year_groups
-          .where(location_year_group: { value: year_groups }, programme:)
+          .where_programme(programme)
+          .where(location_year_group: { value: year_groups })
           .destroy_all
       end
     end

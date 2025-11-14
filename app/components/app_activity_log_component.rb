@@ -21,7 +21,7 @@ class AppActivityLogComponent < ViewComponent::Base
       @patient.archive_reasons.where(team:).includes(:created_by)
 
     @attendance_records =
-      (patient || patient_session)
+      patient
         .attendance_records
         .includes(:location)
         .then do |scope|
@@ -35,11 +35,10 @@ class AppActivityLogComponent < ViewComponent::Base
           :consent_form,
           :parent,
           :recorded_by,
-          :programme,
           patient: :parent_relationships
         )
         .then do |scope|
-          session ? scope.where(programme: session.programmes) : scope
+          session ? scope.where(programme_type: session.programme_types) : scope
         end
 
     @gillick_assessments =
@@ -52,7 +51,7 @@ class AppActivityLogComponent < ViewComponent::Base
     @notes =
       @patient
         .notes
-        .includes(:created_by, :patient, session: :programmes)
+        .includes(:created_by, :patient, :session)
         .then { |scope| session ? scope.where(session:) : scope }
 
     @notify_log_entries =
@@ -60,7 +59,11 @@ class AppActivityLogComponent < ViewComponent::Base
         .notify_log_entries
         .includes(:sent_by)
         .then do |scope|
-          session ? scope.where(programme_ids: session.programmes.ids) : scope
+          if session
+            scope.where(programme_types: session.programme_types)
+          else
+            scope
+          end
         end
 
     @patient_locations =
@@ -76,7 +79,7 @@ class AppActivityLogComponent < ViewComponent::Base
         .patient_specific_directions
         .includes(:created_by)
         .then do |scope|
-          session ? scope.where(programme: session.programmes) : scope
+          session ? scope.where(programme_type: session.programme_types) : scope
         end
 
     @pre_screenings =
@@ -90,7 +93,7 @@ class AppActivityLogComponent < ViewComponent::Base
         .triages
         .includes(:performed_by)
         .then do |scope|
-          session ? scope.where(programme: session.programmes) : scope
+          session ? scope.where(programme_type: session.programme_types) : scope
         end
 
     @vaccination_records =
@@ -429,17 +432,17 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def programmes_for(object)
-    if object.respond_to?(:programme_ids)
-      object.programme_ids.map { programmes_by_id.fetch(it) }
-    elsif object.respond_to?(:programme_id)
-      [programmes_by_id.fetch(object.programme_id)]
+    if object.respond_to?(:programme_types)
+      object.programme_types.map { programmes_by_type.fetch(it) }
+    elsif object.respond_to?(:programme_type)
+      [programmes_by_type.fetch(object.programme_type)]
     else
       object.programmes
     end
   end
 
-  def programmes_by_id
-    @programmes_by_id ||= Programme.all.index_by(&:id)
+  def programmes_by_type
+    @programmes_by_type ||= Programme.all.index_by(&:type)
   end
 
   private

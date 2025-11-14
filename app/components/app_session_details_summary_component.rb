@@ -50,11 +50,12 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
   end
 
   def vaccinated_row
-    counts = session.vaccination_records.administered.group(:programme_id).count
+    counts =
+      session.vaccination_records.administered.group(:programme_type).count
 
     texts =
       session.programmes.map do |programme|
-        count = counts.fetch(programme.id, 0)
+        count = counts.fetch(programme.type, 0)
         "#{I18n.t("vaccinations_given", count:)} for #{programme.name_in_sentence}"
       end
 

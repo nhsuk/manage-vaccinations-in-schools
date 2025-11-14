@@ -116,7 +116,7 @@ class Reports::SystmOneExporter
       team
         .vaccination_records
         .administered
-        .where(programme:)
+        .where_programme(programme)
         .for_academic_year(academic_year)
         .includes(
           :batch,

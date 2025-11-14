@@ -43,7 +43,8 @@ describe ConsentNotification do
 
     let(:parents) { create_list(:parent, 2) }
     let(:patient) { create(:patient, parents:, session:) }
-    let(:programmes) { [CachedProgramme.hpv] }
+    let(:programmes) { [Programme.hpv] }
+    let(:programme_types) { programmes.map(&:type) }
     let(:team) { create(:team, programmes:) }
     let(:location) { create(:school, team:) }
     let(:session) { create(:session, location:, programmes:, team:) }
@@ -57,7 +58,7 @@ describe ConsentNotification do
 
         consent_notification = described_class.last
         expect(consent_notification).not_to be_an_automated_reminder
-        expect(consent_notification.programmes).to eq(programmes)
+        expect(consent_notification.programme_types).to eq(programme_types)
         expect(consent_notification.patient).to eq(patient)
         expect(consent_notification.sent_at).to eq(today)
       end
@@ -68,20 +69,20 @@ describe ConsentNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programmes:,
+          programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_email(:consent_school_request_hpv).with(
                 parent: parents.second,
                 patient:,
-                programmes:,
+                programme_types:,
                 session:,
                 sent_by: current_user
               )
       end
 
       context "with Td/IPV and MenACWY programmes" do
-        let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
+        let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
 
         it "enqueues an email per parent" do
           expect { create_and_send! }.to have_delivered_email(
@@ -89,7 +90,7 @@ describe ConsentNotification do
           ).with(
             parent: parents.first,
             patient:,
-            programmes:,
+            programme_types:,
             session:,
             sent_by: current_user
           )
@@ -97,7 +98,7 @@ describe ConsentNotification do
       end
 
       context "with the Flu programme" do
-        let(:programmes) { [CachedProgramme.flu] }
+        let(:programmes) { [Programme.flu] }
 
         it "enqueues an email per parent" do
           expect { create_and_send! }.to have_delivered_email(
@@ -105,7 +106,7 @@ describe ConsentNotification do
           ).with(
             parent: parents.first,
             patient:,
-            programmes:,
+            programme_types:,
             session:,
             sent_by: current_user
           )
@@ -118,13 +119,13 @@ describe ConsentNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programmes:,
+          programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_sms(:consent_school_request).with(
                 parent: parents.second,
                 patient:,
-                programmes:,
+                programme_types:,
                 session:,
                 sent_by: current_user
               )
@@ -141,7 +142,7 @@ describe ConsentNotification do
           ).with(
             parent:,
             patient:,
-            programmes:,
+            programme_types:,
             session:,
             sent_by: current_user
           )
@@ -169,13 +170,13 @@ describe ConsentNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programmes:,
+          programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_email(:consent_clinic_request).with(
                 parent: parents.second,
                 patient:,
-                programmes:,
+                programme_types:,
                 session:,
                 sent_by: current_user
               )
@@ -187,13 +188,13 @@ describe ConsentNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programmes:,
+          programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_sms(:consent_clinic_request).with(
                 parent: parents.second,
                 patient:,
-                programmes:,
+                programme_types:,
                 session:,
                 sent_by: current_user
               )
@@ -210,7 +211,7 @@ describe ConsentNotification do
           ).with(
             parent:,
             patient:,
-            programmes:,
+            programme_types:,
             session:,
             sent_by: current_user
           )
@@ -237,20 +238,20 @@ describe ConsentNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programmes:,
+          programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_email(:consent_school_initial_reminder_hpv).with(
                 parent: parents.second,
                 patient:,
-                programmes:,
+                programme_types:,
                 session:,
                 sent_by: current_user
               )
       end
 
       context "with Td/IPV and MenACWY programmes" do
-        let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
+        let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
 
         it "enqueues an email per parent" do
           expect { create_and_send! }.to have_delivered_email(
@@ -258,7 +259,7 @@ describe ConsentNotification do
           ).with(
             parent: parents.first,
             patient:,
-            programmes:,
+            programme_types:,
             session:,
             sent_by: current_user
           )
@@ -266,7 +267,7 @@ describe ConsentNotification do
       end
 
       context "with the Flu programme" do
-        let(:programmes) { [CachedProgramme.flu] }
+        let(:programmes) { [Programme.flu] }
 
         it "enqueues an email per parent" do
           expect { create_and_send! }.to have_delivered_email(
@@ -274,7 +275,7 @@ describe ConsentNotification do
           ).with(
             parent: parents.first,
             patient:,
-            programmes:,
+            programme_types:,
             session:,
             sent_by: current_user
           )
@@ -287,13 +288,13 @@ describe ConsentNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programmes:,
+          programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_sms(:consent_school_reminder).with(
                 parent: parents.second,
                 patient:,
-                programmes:,
+                programme_types:,
                 session:,
                 sent_by: current_user
               )
@@ -310,7 +311,7 @@ describe ConsentNotification do
           ).with(
             parent:,
             patient:,
-            programmes:,
+            programme_types:,
             session:,
             sent_by: current_user
           )
@@ -337,7 +338,7 @@ describe ConsentNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programmes:,
+          programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_email(
@@ -345,14 +346,14 @@ describe ConsentNotification do
               ).with(
                 parent: parents.second,
                 patient:,
-                programmes:,
+                programme_types:,
                 session:,
                 sent_by: current_user
               )
       end
 
       context "with Td/IPV and MenACWY programmes" do
-        let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
+        let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
 
         it "enqueues an email per parent" do
           expect { create_and_send! }.to have_delivered_email(
@@ -360,7 +361,7 @@ describe ConsentNotification do
           ).with(
             parent: parents.first,
             patient:,
-            programmes:,
+            programme_types:,
             session:,
             sent_by: current_user
           )
@@ -368,7 +369,7 @@ describe ConsentNotification do
       end
 
       context "with the Flu programme" do
-        let(:programmes) { [CachedProgramme.flu] }
+        let(:programmes) { [Programme.flu] }
 
         it "enqueues an email per parent" do
           expect { create_and_send! }.to have_delivered_email(
@@ -376,7 +377,7 @@ describe ConsentNotification do
           ).with(
             parent: parents.first,
             patient:,
-            programmes:,
+            programme_types:,
             session:,
             sent_by: current_user
           )
@@ -389,13 +390,13 @@ describe ConsentNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programmes:,
+          programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_sms(:consent_school_reminder).with(
                 parent: parents.second,
                 patient:,
-                programmes:,
+                programme_types:,
                 session:,
                 sent_by: current_user
               )
@@ -412,7 +413,7 @@ describe ConsentNotification do
           ).with(
             parent:,
             patient:,
-            programmes:,
+            programme_types:,
             session:,
             sent_by: current_user
           )

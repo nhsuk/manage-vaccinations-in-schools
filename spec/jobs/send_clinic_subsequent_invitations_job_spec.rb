@@ -5,7 +5,7 @@ describe SendClinicSubsequentInvitationsJob do
 
   around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
 
-  let(:programmes) { [CachedProgramme.hpv] }
+  let(:programmes) { [Programme.hpv] }
   let(:team) { create(:team, programmes:) }
   let(:parents) { create_list(:parent, 2) }
   let(:patient) { create(:patient, parents:, year_group: 8, session:) }

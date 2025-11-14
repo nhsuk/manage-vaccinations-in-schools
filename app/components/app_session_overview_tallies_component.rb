@@ -111,7 +111,7 @@ class AppSessionOverviewTalliesComponent < ViewComponent::Base
 
   def stats_for_programme(programme)
     @stats_by_programme ||= {}
-    @stats_by_programme[programme.id] ||= Stats::Session.call(
+    @stats_by_programme[programme.type] ||= Stats::Session.call(
       session,
       programme:
     )

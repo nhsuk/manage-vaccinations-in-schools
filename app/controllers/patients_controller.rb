@@ -82,9 +82,9 @@ class PatientsController < ApplicationController
       policy_scope(Patient).includes(
         :gp_practice,
         :school,
+        :vaccination_records,
         consents: %i[parent patient],
-        parent_relationships: :parent,
-        vaccination_records: :programme
+        parent_relationships: :parent
       ).find(params[:id])
   end
 

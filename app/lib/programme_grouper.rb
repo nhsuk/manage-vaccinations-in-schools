@@ -17,11 +17,26 @@ class ProgrammeGrouper
 
   attr_reader :objects
 
-  def programme(object) = object.try(:programme) || object
+  GROUPS = {
+    "flu" => :flu,
+    "hpv" => :hpv,
+    "menacwy" => :doubles,
+    "mmr" => :mmr,
+    "td_ipv" => :doubles
+  }.freeze
 
-  def group(object) = programme(object).group
-
-  def type(object) = programme(object).type
+  def group(object)
+    key = type(object)
+    if (value = GROUPS[key])
+      value
+    else
+      raise UnsupportedProgramme, programme(object)
+    end
+  end
 
   def sorted(objects) = objects.sort_by { type(it) }
+
+  def type(object) = object.try(:programme_type) || programme(object).type
+
+  def programme(object) = object.try(:programme) || object
 end

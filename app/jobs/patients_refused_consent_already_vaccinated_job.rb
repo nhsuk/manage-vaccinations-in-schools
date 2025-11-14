@@ -6,22 +6,24 @@ class PatientsRefusedConsentAlreadyVaccinatedJob < ApplicationJob
   def perform
     return unless should_perform?
 
-    Programme.find_each { |programme| handle_programme!(programme) }
+    programmes.each { |programme| handle_programme!(programme) }
   end
 
   private
+
+  def programmes = Programme.all
 
   def academic_year = AcademicYear.current
 
   def should_perform? = AcademicYear.pending > academic_year
 
   def handle_programme!(programme)
-    programme_id = programme.id
+    programme_type = programme.type
 
     ActiveRecord::Base.transaction do
       patients_with_consent_refused(programme).find_each do |patient|
         consents =
-          ConsentGrouper.call(patient.consents, programme_id:, academic_year:)
+          ConsentGrouper.call(patient.consents, programme_type:, academic_year:)
 
         if should_record_already_vaccinated?(consents:)
           record_already_vaccinated!(patient, programme:, consents:)

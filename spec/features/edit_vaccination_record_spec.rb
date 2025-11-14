@@ -254,7 +254,7 @@ describe "Edit vaccination record" do
   end
 
   def given_an_hpv_programme_is_underway
-    @programme = CachedProgramme.hpv
+    @programme = Programme.hpv
 
     @team =
       create(

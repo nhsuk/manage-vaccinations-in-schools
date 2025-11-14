@@ -12,9 +12,7 @@ class AppConsentFormCardComponent < ViewComponent::Base
       govuk_summary_list do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "Programmes" }
-          row.with_value do
-            render AppProgrammeTagsComponent.new(@consent_form.programmes)
-          end
+          row.with_value { render AppProgrammeTagsComponent.new(programmes) }
         end
 
         summary_list.with_row do |row|
@@ -40,6 +38,10 @@ class AppConsentFormCardComponent < ViewComponent::Base
   private
 
   delegate :govuk_summary_list, to: :helpers
+
+  def programmes
+    @consent_form.consent_form_programmes.map(&:programme)
+  end
 
   def refusal_reason
     {

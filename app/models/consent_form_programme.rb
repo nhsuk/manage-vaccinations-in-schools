@@ -12,11 +12,9 @@
 #  vaccine_methods    :integer          default([]), not null, is an Array
 #  without_gelatine   :boolean
 #  consent_form_id    :bigint           not null
-#  programme_id       :bigint           not null
 #
 # Indexes
 #
-#  idx_on_programme_id_consent_form_id_2113cb7f37    (programme_id,consent_form_id) UNIQUE
 #  idx_on_programme_type_consent_form_id_805eb5d685  (programme_type,consent_form_id) UNIQUE
 #  index_consent_form_programmes_on_consent_form_id  (consent_form_id)
 #
@@ -32,15 +30,17 @@ class ConsentFormProgramme < ApplicationRecord
 
   belongs_to :consent_form
 
-  scope :ordered, -> { joins(:programme).order(:"programme.type") }
+  scope :ordered, -> { order(:programme_type) }
 
   enum :response, { given: 0, refused: 1 }, prefix: true
 
   delegate :flu?, :hpv?, :menacwy?, :mmr?, :td_ipv?, to: :programme
 
+  def programme = Programme.new(type: programme_type)
+
   def vaccines
     VaccineCriteria.from_consentable(self).apply(
-      Vaccine.active.where(programme_id:)
+      Vaccine.active.where(programme_type:)
     )
   end
 

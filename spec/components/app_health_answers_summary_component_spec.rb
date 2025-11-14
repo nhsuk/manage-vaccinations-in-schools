@@ -34,7 +34,7 @@ describe AppHealthAnswersSummaryComponent do
   end
 
   context "with two consents given" do
-    let(:programme) { CachedProgramme.sample }
+    let(:programme) { Programme.sample }
     let(:consents) do
       [
         create(
@@ -74,7 +74,7 @@ describe AppHealthAnswersSummaryComponent do
   end
 
   context "with two consents, one refused" do
-    let(:programme) { CachedProgramme.sample }
+    let(:programme) { Programme.sample }
     let(:consents) do
       [
         create(

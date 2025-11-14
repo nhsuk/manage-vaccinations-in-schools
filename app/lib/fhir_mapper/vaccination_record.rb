@@ -329,8 +329,8 @@ module FHIRMapper
       # TODO: This may need to change when we start consuming programmes which have multiple target diseases, eg MMR
       target_disease_code = target_diseases_codes.sole
 
-      ::Programme.find_by(
-        type: ::Programme::SNOMED_TARGET_DISEASE_CODES.key(target_disease_code)
+      ::Programme.find(
+        ::Programme::SNOMED_TARGET_DISEASE_CODES.key(target_disease_code)
       )
     end
 

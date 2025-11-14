@@ -77,7 +77,7 @@ describe "Inspect tools", :cis2 do
   end
 
   def given_an_hpv_programme_is_underway
-    @programme = CachedProgramme.hpv
+    @programme = Programme.hpv
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @session =
       create(

@@ -21,6 +21,8 @@ class AppPatientSessionTriageComponent < AppPatientSessionSectionComponent
 
   delegate :govuk_button_link_to, to: :helpers
 
+  def programme_type = programme.type
+
   def resolved_status
     @resolved_status ||= patient_status_resolver.triage
   end
@@ -29,8 +31,8 @@ class AppPatientSessionTriageComponent < AppPatientSessionSectionComponent
     @triage_status ||=
       patient
         .triage_statuses
-        .includes(:consents, :programme, :vaccination_records)
-        .find_or_initialize_by(programme:, academic_year:)
+        .includes(:consents, :vaccination_records)
+        .find_or_initialize_by(programme_type:, academic_year:)
   end
 
   def consent_status
@@ -45,7 +47,7 @@ class AppPatientSessionTriageComponent < AppPatientSessionSectionComponent
     @latest_triage ||=
       TriageFinder.call(
         patient.triages.includes(:performed_by),
-        programme_id: programme.id,
+        programme_type: programme.type,
         academic_year:
       )
   end

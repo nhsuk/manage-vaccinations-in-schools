@@ -89,7 +89,7 @@ describe "Class list imports duplicates" do
   end
 
   def given_i_am_signed_in
-    @team = create(:team, :with_one_nurse)
+    @team = create(:team, :with_one_nurse, programmes: [Programme.hpv])
     sign_in @team.users.first
   end
 
@@ -126,8 +126,7 @@ describe "Class list imports duplicates" do
   end
 
   def and_an_hpv_programme_is_underway
-    programme = CachedProgramme.hpv
-    @team.programmes << programme
+    programme = Programme.hpv
 
     @location = create(:school, :secondary, name: "Waterloo Road", team: @team)
     @session =

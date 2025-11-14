@@ -44,8 +44,6 @@ class User < ApplicationRecord
   has_and_belongs_to_many :teams
   has_many :organisations, -> { distinct }, through: :teams
 
-  has_many :programmes, through: :teams
-
   has_one :reporting_api_one_time_token,
           class_name: "ReportingAPI::OneTimeToken"
 
@@ -120,6 +118,14 @@ class User < ApplicationRecord
   def selected_organisation = cis2_info.organisation
 
   def selected_team = cis2_info.team
+
+  def programmes
+    if is_healthcare_assistant?
+      selected_team&.programmes&.select(&:supports_delegation?)
+    else
+      selected_team&.programmes
+    end
+  end
 
   def role_name
     cis2_info.role_name if cis2_enabled?

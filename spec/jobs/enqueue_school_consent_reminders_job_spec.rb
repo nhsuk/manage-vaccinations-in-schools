@@ -3,7 +3,7 @@
 describe EnqueueSchoolConsentRemindersJob do
   subject(:perform_now) { described_class.perform_now }
 
-  let(:programmes) { [CachedProgramme.sample] }
+  let(:programmes) { [Programme.sample] }
   let(:team) { create(:team, programmes:) }
   let(:location) { create(:school, team:) }
 

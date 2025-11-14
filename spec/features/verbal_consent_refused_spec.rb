@@ -32,11 +32,11 @@ describe "Verbal consent" do
   end
 
   def given_flu_programme
-    @programmes = [CachedProgramme.flu]
+    @programmes = [Programme.flu]
   end
 
   def given_hpv_programme
-    @programmes = [CachedProgramme.hpv]
+    @programmes = [Programme.hpv]
   end
 
   def and_i_am_signed_in

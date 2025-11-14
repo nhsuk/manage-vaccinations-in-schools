@@ -5,7 +5,7 @@ describe AppImportsTableComponent do
 
   let(:component) { described_class.new(team:) }
 
-  let(:programmes) { [CachedProgramme.sample] }
+  let(:programmes) { [Programme.sample] }
   let(:team) { create(:team, programmes:) }
   let(:school) { create(:school, team:, name: "Test School") }
   let(:session) { create(:session, programmes:, location: school) }

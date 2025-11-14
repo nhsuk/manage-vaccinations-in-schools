@@ -24,7 +24,7 @@ class TeamSessionsFactory
     ActiveRecord::Base.transaction do
       team
         .locations
-        .includes(:team, :programmes)
+        .includes(:team, :location_programme_year_groups)
         .find_each do
           LocationSessionsFactory.call(
             it,
@@ -39,7 +39,7 @@ class TeamSessionsFactory
     ActiveRecord::Base.transaction do
       team
         .sessions
-        .includes(:location, :session_programmes)
+        .includes(:location)
         .unscheduled
         .where(academic_year:)
         .where.not(location: team.locations)

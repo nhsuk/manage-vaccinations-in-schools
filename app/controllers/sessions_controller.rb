@@ -9,8 +9,7 @@ class SessionsController < ApplicationController
   def index
     @programmes = current_user.selected_team.programmes
 
-    scope =
-      policy_scope(Session).includes(:location, :programmes, :session_dates)
+    scope = policy_scope(Session).includes(:location, :session_dates)
 
     sessions = @form.apply(scope)
 
@@ -83,10 +82,7 @@ class SessionsController < ApplicationController
   private
 
   def set_session
-    @session =
-      authorize policy_scope(Session).includes(programmes: :vaccines).find_by!(
-                  slug: params[:slug]
-                )
+    @session = authorize policy_scope(Session).find_by!(slug: params[:slug])
   end
 
   def patient_counts_for_sessions(sessions)
