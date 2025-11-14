@@ -5,7 +5,6 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   FILTERS = {
     academic_year: :academic_year,
     programme: :programme_type,
-    organisation_id: :organisation_id,
     gender: :patient_gender,
     year_group: :patient_year_group,
     school_local_authority: :patient_school_local_authority_code,
@@ -14,7 +13,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
 
   GROUPS = {
     local_authority: :patient_local_authority_code,
-    school: :patient_school_name,
+    school: %i[patient_school_name patient_school_urn],
     year_group: :patient_year_group,
     gender: :patient_gender
   }.freeze
@@ -22,6 +21,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   GROUP_HEADERS = {
     patient_local_authority_code: "Local Authority",
     patient_school_name: "School",
+    patient_school_urn: "School URN",
     patient_year_group: "Year Group",
     patient_gender: "Gender"
   }.freeze
@@ -39,6 +39,14 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
     consent_conflicts: "Conflicting Consent",
     parent_refused_consent: "Parent Refused Consent",
     child_refused_vaccination: "Child Refused Vaccination"
+  }.freeze
+
+  FLU_SPECIFIC_METRIC_HEADERS = {
+    vaccinated_nasal: "Vaccinated (Nasal)",
+    vaccinated_injection: "Vaccinated (Injection)",
+    consent_given_nasal_only: "Consent Given (Nasal Only)",
+    consent_given_injection_only: "Consent Given (Injection Only)",
+    consent_given_both_methods: "Consent Given (Both Methods)"
   }.freeze
 
   before_action :set_default_filters, :set_filters, :set_scope
@@ -78,13 +86,15 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   end
 
   def set_scope
-    @scope =
+    @base_scope =
       ReportingAPI::PatientProgrammeStatus.where(
-        organisation_id: current_user.organisation_ids
+        team_id: current_user.team_ids
       ).where(@filters.to_where_clause)
 
     apply_workgroup_filter if params[:workgroup].present?
     apply_default_year_group_filter
+
+    @scope = @base_scope.not_archived
   end
 
   def csv_headers(groups)
@@ -93,6 +103,10 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
     groups.each { |group_attr| headers[GROUP_HEADERS[group_attr]] = group_attr }
 
     METRIC_HEADERS.each { |attr, header| headers[header] = attr }
+
+    if params[:programme] == "flu"
+      FLU_SPECIFIC_METRIC_HEADERS.each { |attr, header| headers[header] = attr }
+    end
 
     headers
   end
@@ -104,6 +118,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
         .split(",")
         .map { GROUPS[it.strip.to_sym] }
         .compact
+        .flatten
         .uniq
 
     @scope = @scope.group(groups).select(groups) if groups.any?
@@ -113,35 +128,41 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   end
 
   def render_format_json
-    render json: {
-             cohort: @scope.cohort_count,
-             vaccinated: @scope.vaccinated_count,
-             not_vaccinated: @scope.not_vaccinated_count,
-             vaccinated_by_sais: @scope.vaccinated_by_sais_count,
-             vaccinated_elsewhere_declared:
-               @scope.vaccinated_elsewhere_declared_count,
-             vaccinated_elsewhere_recorded:
-               @scope.vaccinated_elsewhere_recorded_count,
-             vaccinated_previously: @scope.vaccinated_previously_count,
-             vaccinations_given: @scope.vaccinations_given_count,
-             monthly_vaccinations_given: @scope.monthly_vaccinations_given,
-             consent_given: @scope.consent_given_count,
-             consent_no_response: @scope.consent_no_response_count,
-             consent_conflicts: @scope.consent_conflicts_count,
-             parent_refused_consent: @scope.parent_refused_consent_count,
-             child_refused_vaccination: @scope.child_refused_vaccination_count,
-             refusal_reasons: consent_refusal_reasons,
-             consent_routes: consent_routes_breakdown
-           }
+    response_data = {
+      cohort: @scope.cohort_count,
+      vaccinated: @scope.vaccinated_count,
+      not_vaccinated: @scope.not_vaccinated_count,
+      vaccinated_by_sais: @scope.vaccinated_by_sais_count,
+      vaccinated_elsewhere_declared: @scope.vaccinated_elsewhere_declared_count,
+      vaccinated_elsewhere_recorded: @scope.vaccinated_elsewhere_recorded_count,
+      vaccinated_previously: @scope.vaccinated_previously_count,
+      vaccinations_given: @base_scope.vaccinations_given_count,
+      monthly_vaccinations_given: @base_scope.monthly_vaccinations_given,
+      consent_given: @scope.consent_given_count,
+      consent_no_response: @scope.consent_no_response_count,
+      consent_conflicts: @scope.consent_conflicts_count,
+      parent_refused_consent: @scope.parent_refused_consent_count,
+      child_refused_vaccination: @scope.child_refused_vaccination_count,
+      refusal_reasons: consent_refusal_reasons,
+      consent_routes: consent_routes_breakdown
+    }
+
+    if params[:programme] == "flu"
+      response_data.merge!(
+        vaccinated_nasal: @scope.vaccinated_nasal_count,
+        vaccinated_injection: @scope.vaccinated_injection_count,
+        consent_given_nasal_only: @scope.consent_given_nasal_only_count,
+        consent_given_injection_only: @scope.consent_given_injection_only_count,
+        consent_given_both_methods: @scope.consent_given_both_methods_count
+      )
+    end
+
+    render json: response_data
   end
 
   def apply_workgroup_filter
-    team =
-      Team.find_by(
-        workgroup: params[:workgroup],
-        organisation_id: current_user.organisation_ids
-      )
-    @scope = @scope.where(team_id: team.id) if team
+    team = current_user.teams.find_by(workgroup: params[:workgroup])
+    @base_scope = @base_scope.where(team_id: team.id) if team
   end
 
   def apply_default_year_group_filter
@@ -165,7 +186,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
         .where(lyg_table[:academic_year].eq(patient_table[:academic_year]))
         .where(lpyg_table[:programme_id].eq(programme.id))
 
-    @scope = @scope.where(Arel::Nodes::Exists.new(subquery))
+    @base_scope = @base_scope.where(Arel::Nodes::Exists.new(subquery))
   end
 
   def consent_refusal_reasons
