@@ -120,6 +120,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def action_required
+    return if Flipper.enabled?(:programme_status)
     return unless %i[register record].include?(context)
 
     next_activities =
