@@ -10,6 +10,7 @@
 #  consent_status                             :integer
 #  consent_vaccine_methods                    :integer          is an Array
 #  has_any_vaccination                        :boolean
+#  is_archived                                :boolean
 #  most_recent_vaccination_month              :decimal(, )
 #  most_recent_vaccination_year               :decimal(, )
 #  parent_refused_consent_current_year        :boolean
@@ -67,6 +68,7 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
           where(patient_local_authority_code:)
         end
 
+  scope :not_archived, -> { where(is_archived: false) }
   scope :consent_given, -> { where(consent_status: 1) }
   scope :consent_refused, -> { where(consent_status: 2) }
   scope :consent_no_response, -> { where(consent_status: [0, nil]) }

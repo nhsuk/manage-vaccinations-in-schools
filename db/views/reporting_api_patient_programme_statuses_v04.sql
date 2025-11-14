@@ -18,6 +18,11 @@ WITH base_data AS (
   -- Team info
   t.id AS team_id,
   t.name AS team_name,
+  -- Archive status - check if there's an archive reason for this patient-team pair
+  CASE
+    WHEN ar.patient_id IS NOT NULL THEN true
+    ELSE false
+  END AS is_archived,
   -- Patient's current organisation (where enrolled)
   COALESCE(patient_school_org.id, patient_location_org.id) AS organisation_id,
   -- Patient location info (minimal for filtering)
@@ -95,6 +100,9 @@ INNER JOIN sessions s ON s.location_id = pl.location_id AND s.academic_year = pl
 INNER JOIN teams t ON t.id = s.team_id
 INNER JOIN session_programmes sp ON sp.session_id = s.id
 INNER JOIN programmes prog ON prog.id = sp.programme_id
+
+-- Left join to check if patient is archived for this team
+LEFT JOIN archive_reasons ar ON ar.patient_id = p.id AND ar.team_id = t.id
 
 -- Left join patient school for local authority info and organisation
 LEFT JOIN locations school ON school.id = p.school_id
@@ -269,6 +277,7 @@ SELECT
   academic_year,
   team_id,
   team_name,
+  is_archived,
   organisation_id,
   patient_school_local_authority_code,
   patient_local_authority_code,

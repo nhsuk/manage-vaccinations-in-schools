@@ -1140,6 +1140,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
               s.academic_year,
               t.id AS team_id,
               t.name AS team_name,
+                  CASE
+                      WHEN (ar.patient_id IS NOT NULL) THEN true
+                      ELSE false
+                  END AS is_archived,
               COALESCE(patient_school_org.id, patient_location_org.id) AS organisation_id,
               COALESCE(school_la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
               COALESCE(school_la.mhclg_code, ''::character varying) AS patient_local_authority_code,
@@ -1197,12 +1201,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
                       ELSE false
                   END AS vaccinated_injection_current_year,
               row_number() OVER (PARTITION BY p.id, prog.id, t.id, s.academic_year ORDER BY patient_school_org.id) AS rn
-             FROM ((((((((((((((((((((((((((patients p
+             FROM (((((((((((((((((((((((((((patients p
                JOIN patient_locations pl ON ((pl.patient_id = p.id)))
                JOIN sessions s ON (((s.location_id = pl.location_id) AND (s.academic_year = pl.academic_year))))
                JOIN teams t ON ((t.id = s.team_id)))
                JOIN session_programmes sp ON ((sp.session_id = s.id)))
                JOIN programmes prog ON ((prog.id = sp.programme_id)))
+               LEFT JOIN archive_reasons ar ON (((ar.patient_id = p.id) AND (ar.team_id = t.id))))
                LEFT JOIN locations school ON ((school.id = p.school_id)))
                LEFT JOIN subteams school_subteam ON ((school_subteam.id = school.subteam_id)))
                LEFT JOIN teams school_team ON ((school_team.id = school_subteam.team_id)))
@@ -1298,6 +1303,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
       academic_year,
       team_id,
       team_name,
+      is_archived,
       organisation_id,
       patient_school_local_authority_code,
       patient_local_authority_code,

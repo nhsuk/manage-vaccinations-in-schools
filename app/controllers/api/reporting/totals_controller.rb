@@ -87,13 +87,15 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   end
 
   def set_scope
-    @scope =
+    @base_scope =
       ReportingAPI::PatientProgrammeStatus.where(
         organisation_id: current_user.organisation_ids
       ).where(@filters.to_where_clause)
 
     apply_workgroup_filter if params[:workgroup].present?
     apply_default_year_group_filter
+
+    @scope = @base_scope.not_archived
   end
 
   def csv_headers(groups)
@@ -135,8 +137,8 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
       vaccinated_elsewhere_declared: @scope.vaccinated_elsewhere_declared_count,
       vaccinated_elsewhere_recorded: @scope.vaccinated_elsewhere_recorded_count,
       vaccinated_previously: @scope.vaccinated_previously_count,
-      vaccinations_given: @scope.vaccinations_given_count,
-      monthly_vaccinations_given: @scope.monthly_vaccinations_given,
+      vaccinations_given: @base_scope.vaccinations_given_count,
+      monthly_vaccinations_given: @base_scope.monthly_vaccinations_given,
       consent_given: @scope.consent_given_count,
       consent_no_response: @scope.consent_no_response_count,
       consent_conflicts: @scope.consent_conflicts_count,
@@ -165,7 +167,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
         workgroup: params[:workgroup],
         organisation_id: current_user.organisation_ids
       )
-    @scope = @scope.where(team_id: team.id) if team
+    @base_scope = @base_scope.where(team_id: team.id) if team
   end
 
   def apply_default_year_group_filter
@@ -189,7 +191,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
         .where(lyg_table[:academic_year].eq(patient_table[:academic_year]))
         .where(lpyg_table[:programme_id].eq(programme.id))
 
-    @scope = @scope.where(Arel::Nodes::Exists.new(subquery))
+    @base_scope = @base_scope.where(Arel::Nodes::Exists.new(subquery))
   end
 
   def consent_refusal_reasons
