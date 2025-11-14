@@ -185,7 +185,9 @@ describe "Manage school sessions" do
   def then_i_see_the_school_session
     expect(page).to have_content(@location.name)
     expect(page).to have_content(@location.urn)
-    expect(page).to have_content("No sessions scheduled")
+    expect(page).to have_content(
+      "There are currently no sessions scheduled at this school."
+    )
     expect(page).to have_content("Schedule sessions")
   end
 

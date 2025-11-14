@@ -32,8 +32,6 @@ pds_cascading_search: Enable cascading PDS searches for patients without an NHS 
 
 statuses_changed_banner: Whether to show the banner outlining the changes to statuses.
 
-tallying: Enables the session tally-based overview page
-
 testing_api: Basic API useful for automated testing.
 
 reporting_api: Enables the Commissioner reporting component to authenticate to Mavis via OAUTH 2.0
