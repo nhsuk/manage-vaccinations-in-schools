@@ -249,13 +249,13 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ runner.temp }}/data-masking-task-definition.json
-          cluster: mavis-${{ inputs.environment }}-data-masking
+          cluster: data-masking
           service: mavis-${{ inputs.environment }}-data-masking
           force-new-deployment: true
           wait-for-service-stability: true
       - name: Check if deployment was successful
         run: |
-          current_task_definition_arn=$(aws ecs describe-services --cluster mavis-$environment-data-masking --services mavis-$environment-data-masking --query services[0].deployments[0].taskDefinition | jq -r ".")
+          current_task_definition_arn=$(aws ecs describe-services --cluster data-masking --services mavis-$environment-data-masking --query services[0].deployments[0].taskDefinition | jq -r ".")
           new_task_definition_arn=${{ steps.ecs-deploy.outputs.task-definition-arn }}
           echo "Current task definition arn: $current_task_definition_arn"
           echo "Expected task definition arn after deployment: $new_task_definition_arn"
@@ -284,7 +284,7 @@ jobs:
               --region eu-west-2 \
               --cluster data-masking \
               --task "$task_id" \
-              --command 'bundle exec rake data_masking:anonymize_child_names' \
+              --command 'bundle exec rake data_masking:anonymize_all' \
               --interactive
   create-masked-snapshot:
     name: Create Masked Snapshot
