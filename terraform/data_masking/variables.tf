@@ -80,6 +80,18 @@ locals {
     {
       name  = "REDIS_CACHE_URL"
       value = "not_needed"
+    },
+    {
+      name  = "MAVIS__SPLUNK__ENABLED"
+      value = false
+    },
+    {
+      name  = "MAVIS__CIS2__ENABLED"
+      value = false
+    },
+    {
+      name  = "MAVIS__PDS__ENQUEUE_BULK_UPDATES"
+      value = false
     }
   ]
   task_secrets = [

@@ -30,7 +30,7 @@ module "db_access_service" {
     vpc_id  = aws_vpc.vpc.id
   }
   server_type      = "none"
-  server_type_name = "ops"
+  server_type_name = "data-masking"
   task_config = {
     environment          = local.task_envs
     secrets              = local.task_secrets
