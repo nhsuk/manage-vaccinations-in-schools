@@ -95,6 +95,16 @@ class Programme < ApplicationRecord
     DEFAULT_YEAR_GROUPS_BY_TYPE.fetch(type)
   end
 
+  def is_catch_up?(year_group:)
+    return nil if seasonal?
+    return true if catch_up_only?
+
+    # NOTE: This logic only works if no teams administer programmes to year
+    #  groups earlier than the first default year group for that programme.
+    #  We only know of teams administering beyond the default year groups.
+    default_year_groups.first != year_group
+  end
+
   def vaccine_methods = vaccines.map(&:method).uniq
 
   def has_multiple_vaccine_methods?
