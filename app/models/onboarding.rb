@@ -139,15 +139,12 @@ class Onboarding
       # Reload to ensure the programmes are loaded.
       team.reload
 
-      GenericClinicFactory.call(team:, academic_year:)
-
       @users.each { |user| user.teams << team }
 
-      TeamSessionsFactory.call(team, academic_year:)
+      create_sessions!(academic_year:)
 
       if create_sessions_for_previous_academic_year
-        GenericClinicFactory.call(team:, academic_year: academic_year - 1)
-        TeamSessionsFactory.call(team, academic_year: academic_year - 1)
+        create_sessions!(academic_year: academic_year - 1)
       end
     end
   end
@@ -181,6 +178,11 @@ class Onboarding
         errors.import(error, attribute: "#{prefix}.#{error.attribute}")
       end
     end
+  end
+
+  def create_sessions!(academic_year:)
+    GenericClinicFactory.call(team:, academic_year:)
+    TeamSessionsFactory.call(team, academic_year:)
   end
 
   class ExistingProgramme

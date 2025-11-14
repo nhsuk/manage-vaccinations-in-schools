@@ -65,6 +65,8 @@ FactoryBot.define do
       end
     end
 
+    after(:create, &:sync_location_programme_year_groups!)
+
     trait :today do
       date { Date.current }
     end
