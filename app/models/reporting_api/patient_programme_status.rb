@@ -75,6 +75,9 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
         -> { where(parent_refused_consent_current_year: true) }
   scope :child_refused_vaccination,
         -> { where(child_refused_vaccination_current_year: true) }
+  scope :vaccinated_nasal, -> { where(vaccinated_nasal_current_year: true) }
+  scope :vaccinated_injection,
+        -> { where(vaccinated_injection_current_year: true) }
 
   def readonly? = true
 
@@ -103,7 +106,17 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
       "COUNT(DISTINCT CASE WHEN parent_refused_consent_current_year = true THEN patient_id END)" \
         "AS parent_refused_consent",
       "COUNT(DISTINCT CASE WHEN child_refused_vaccination_current_year = true THEN patient_id END)" \
-        "AS child_refused_vaccination"
+        "AS child_refused_vaccination",
+      "COUNT(DISTINCT CASE WHEN vaccinated_nasal_current_year = true THEN patient_id END)" \
+        "AS vaccinated_nasal",
+      "COUNT(DISTINCT CASE WHEN vaccinated_injection_current_year = true THEN patient_id END)" \
+        "AS vaccinated_injection",
+      "COUNT(DISTINCT CASE WHEN consent_vaccine_methods = ARRAY[1] THEN patient_id END)" \
+        "AS consent_given_nasal_only",
+      "COUNT(DISTINCT CASE WHEN consent_vaccine_methods = ARRAY[0] THEN patient_id END)" \
+        "AS consent_given_injection_only",
+      "COUNT(DISTINCT CASE WHEN consent_vaccine_methods @> ARRAY[0,1] THEN patient_id END)" \
+        "AS consent_given_both_methods"
     )
   end
 
@@ -182,5 +195,25 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
 
   def self.child_refused_vaccination_count
     child_refused_vaccination.distinct.count(:patient_id)
+  end
+
+  def self.vaccinated_nasal_count
+    vaccinated_nasal.distinct.count(:patient_id)
+  end
+
+  def self.vaccinated_injection_count
+    vaccinated_injection.distinct.count(:patient_id)
+  end
+
+  def self.consent_given_nasal_only_count
+    where(consent_vaccine_methods: [1]).distinct.count(:patient_id)
+  end
+
+  def self.consent_given_injection_only_count
+    where(consent_vaccine_methods: [0]).distinct.count(:patient_id)
+  end
+
+  def self.consent_given_both_methods_count
+    where("consent_vaccine_methods @> ARRAY[0,1]").distinct.count(:patient_id)
   end
 end

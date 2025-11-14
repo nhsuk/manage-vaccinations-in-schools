@@ -28,6 +28,28 @@ describe API::Reporting::TotalsController do
       expect(parsed_response).to have_key("monthly_vaccinations_given")
     end
 
+    it "does not include flu-specific keys for non-flu programmes" do
+      get :index
+
+      expect(response).to have_http_status(:ok)
+      expect(parsed_response).not_to have_key("vaccinated_nasal")
+      expect(parsed_response).not_to have_key("vaccinated_injection")
+      expect(parsed_response).not_to have_key("consent_given_nasal_only")
+      expect(parsed_response).not_to have_key("consent_given_injection_only")
+      expect(parsed_response).not_to have_key("consent_given_both_methods")
+    end
+
+    it "includes flu-specific keys when filtering by flu programme" do
+      get :index, params: { programme: "flu" }
+
+      expect(response).to have_http_status(:ok)
+      expect(parsed_response).to have_key("vaccinated_nasal")
+      expect(parsed_response).to have_key("vaccinated_injection")
+      expect(parsed_response).to have_key("consent_given_nasal_only")
+      expect(parsed_response).to have_key("consent_given_injection_only")
+      expect(parsed_response).to have_key("consent_given_both_methods")
+    end
+
     it "calculates statistics correctly" do
       team = Team.last # The most recently created team from valid_jwt
       programme = CachedProgramme.sample
@@ -147,6 +169,14 @@ describe API::Reporting::TotalsController do
       csv = CSV.parse(response.body, headers: true)
       expect(csv.headers).to include("Year Group", "Cohort", "Vaccinated")
       expect(csv.length).to eq(2)
+    end
+
+    it "includes URN when grouping by school" do
+      request.headers["Accept"] = "text/csv"
+      get :index, params: { group: "school" }, format: :csv
+
+      csv = CSV.parse(response.body, headers: true)
+      expect(csv.headers).to include("School", "School URN")
     end
   end
 
@@ -732,6 +762,94 @@ describe API::Reporting::TotalsController do
       expect(consent_routes).to be_a(Hash)
       expect(consent_routes["website"]).to eq(2)
       expect(consent_routes["phone"]).to eq(1)
+    end
+
+    it "counts vaccinations by delivery method for flu" do
+      patient1 = create(:patient, session: flu_session)
+      create(
+        :vaccination_record,
+        patient: patient1,
+        programme: flu_programme,
+        session: flu_session,
+        outcome: "administered",
+        delivery_method: "nasal_spray",
+        performed_at: Time.current
+      )
+
+      patient2 = create(:patient, session: flu_session)
+      create(
+        :vaccination_record,
+        patient: patient2,
+        programme: flu_programme,
+        session: flu_session,
+        outcome: "administered",
+        delivery_method: "intramuscular",
+        performed_at: Time.current
+      )
+
+      patient3 = create(:patient, session: flu_session)
+      create(
+        :vaccination_record,
+        patient: patient3,
+        programme: flu_programme,
+        session: flu_session,
+        outcome: "administered",
+        delivery_method: "subcutaneous",
+        performed_at: Time.current
+      )
+
+      refresh_and_get_totals(programme_type: "flu")
+
+      expect(cohort).to eq(3)
+      expect(vaccinated).to eq(3)
+      expect(parsed_response["vaccinated_nasal"]).to eq(1)
+      expect(parsed_response["vaccinated_injection"]).to eq(2)
+    end
+
+    it "counts consent by vaccine method for flu" do
+      create(:vaccine, programme: flu_programme, method: "nasal")
+      create(:vaccine, programme: flu_programme, method: "injection")
+
+      patient1 = create(:patient, session: flu_session)
+      create(
+        :consent,
+        :given,
+        patient: patient1,
+        programme: flu_programme,
+        team:,
+        vaccine_methods: ["nasal"]
+      )
+
+      patient2 = create(:patient, session: flu_session)
+      create(
+        :consent,
+        :given,
+        patient: patient2,
+        programme: flu_programme,
+        team:,
+        vaccine_methods: ["injection"]
+      )
+
+      patient3 = create(:patient, session: flu_session)
+      create(
+        :consent,
+        :given,
+        patient: patient3,
+        programme: flu_programme,
+        team:,
+        vaccine_methods: %w[nasal injection]
+      )
+
+      StatusUpdater.call(patient: patient1)
+      StatusUpdater.call(patient: patient2)
+      StatusUpdater.call(patient: patient3)
+
+      refresh_and_get_totals(programme_type: "flu")
+
+      expect(cohort).to eq(3)
+      expect(parsed_response["consent_given_nasal_only"]).to eq(1)
+      expect(parsed_response["consent_given_injection_only"]).to eq(1)
+      expect(parsed_response["consent_given_both_methods"]).to eq(1)
     end
   end
 end
