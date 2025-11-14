@@ -600,6 +600,14 @@ describe NHS::ImmunisationsAPI do
       end
     end
 
+    it "sets the nhs_immunisations_api_id to nil" do
+      freeze_time do
+        perform_request
+
+        expect(vaccination_record.nhs_immunisations_api_id).to be_nil
+      end
+    end
+
     it "does not change the updated_at timestamp" do
       original_updated_at = vaccination_record.updated_at
 

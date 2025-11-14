@@ -239,9 +239,11 @@ module NHS::ImmunisationsAPI
         # experiments show (by deleting and then re-creating a vaccination
         # record with an "update") that it appears that the e-tag is incremented
         # on the reviving update.
-        vaccination_record.update_columns(
-          nhs_immunisations_api_synced_at: Time.current
-        )
+        vaccination_record.nhs_immunisations_api_id = nil
+        vaccination_record.nhs_immunisations_api_primary_source = nil
+        vaccination_record.nhs_immunisations_api_synced_at = Time.current
+
+        vaccination_record.save!(touch: false)
       else
         raise "Error deleting vaccination record #{vaccination_record.id} from" \
                 " Immunisations API: unexpected response status" \
