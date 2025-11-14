@@ -1140,10 +1140,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
               s.academic_year,
               t.id AS team_id,
               t.name AS team_name,
-                  CASE
-                      WHEN (ar.patient_id IS NOT NULL) THEN true
-                      ELSE false
-                  END AS is_archived,
+              (ar.patient_id IS NOT NULL) AS is_archived,
                   CASE
                       WHEN (pl.patient_id IS NULL) THEN t.organisation_id
                       ELSE COALESCE(patient_school_org.id, patient_location_org.id, t.organisation_id)
@@ -1165,47 +1162,20 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
                       WHEN (p.birth_academic_year IS NOT NULL) THEN ((s.academic_year - p.birth_academic_year) - 5)
                       ELSE NULL::integer
                   END AS patient_year_group,
-                  CASE
-                      WHEN ((vr_any.patient_id IS NOT NULL) OR (vr_previous.patient_id IS NOT NULL)) THEN true
-                      ELSE false
-                  END AS has_any_vaccination,
-                  CASE
-                      WHEN (vr_sais_current.patient_id IS NOT NULL) THEN true
-                      ELSE false
-                  END AS vaccinated_by_sais_current_year,
-                  CASE
-                      WHEN ((vr_elsewhere_declared.patient_id IS NOT NULL) AND (vr_elsewhere_recorded.patient_id IS NULL)) THEN true
-                      ELSE false
-                  END AS vaccinated_elsewhere_declared_current_year,
-                  CASE
-                      WHEN (vr_elsewhere_recorded.patient_id IS NOT NULL) THEN true
-                      ELSE false
-                  END AS vaccinated_elsewhere_recorded_current_year,
-                  CASE
-                      WHEN (vr_previous.patient_id IS NOT NULL) THEN true
-                      ELSE false
-                  END AS vaccinated_in_previous_years,
+              ((vr_any.patient_id IS NOT NULL) OR (vr_previous.patient_id IS NOT NULL)) AS has_any_vaccination,
+              (vr_sais_current.patient_id IS NOT NULL) AS vaccinated_by_sais_current_year,
+              ((vr_elsewhere_declared.patient_id IS NOT NULL) AND (vr_elsewhere_recorded.patient_id IS NULL)) AS vaccinated_elsewhere_declared_current_year,
+              (vr_elsewhere_recorded.patient_id IS NOT NULL) AS vaccinated_elsewhere_recorded_current_year,
+              (vr_previous.patient_id IS NOT NULL) AS vaccinated_in_previous_years,
               COALESCE(vr_counts.sais_vaccinations_count, (0)::bigint) AS sais_vaccinations_count,
               vr_recent.most_recent_vaccination_month,
               vr_recent.most_recent_vaccination_year,
               COALESCE(pcs.status, 0) AS consent_status,
               pcs.vaccine_methods AS consent_vaccine_methods,
-                  CASE
-                      WHEN (parent_refused.patient_id IS NOT NULL) THEN true
-                      ELSE false
-                  END AS parent_refused_consent_current_year,
-                  CASE
-                      WHEN (child_refused.patient_id IS NOT NULL) THEN true
-                      ELSE false
-                  END AS child_refused_vaccination_current_year,
-                  CASE
-                      WHEN (vr_nasal_current.patient_id IS NOT NULL) THEN true
-                      ELSE false
-                  END AS vaccinated_nasal_current_year,
-                  CASE
-                      WHEN (vr_injection_current.patient_id IS NOT NULL) THEN true
-                      ELSE false
-                  END AS vaccinated_injection_current_year,
+              (parent_refused.patient_id IS NOT NULL) AS parent_refused_consent_current_year,
+              (child_refused.patient_id IS NOT NULL) AS child_refused_vaccination_current_year,
+              (vr_nasal_current.patient_id IS NOT NULL) AS vaccinated_nasal_current_year,
+              (vr_injection_current.patient_id IS NOT NULL) AS vaccinated_injection_current_year,
               (pl.patient_id IS NULL) AS outside_cohort,
               row_number() OVER (PARTITION BY p.id, prog.id, t.id, s.academic_year ORDER BY (COALESCE(vr_counts.sais_vaccinations_count, (0)::bigint) > 0) DESC, (pl.patient_id IS NOT NULL) DESC, patient_school_org.id) AS rn
              FROM (((((((((((((((((((((((((((patients p
@@ -1220,7 +1190,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
                        JOIN teams t_1 ON ((t_1.id = s_1.team_id)))
                        JOIN session_programmes sp ON ((sp.session_id = s_1.id)))
                        JOIN programmes prog_1 ON ((prog_1.id = sp.programme_id)))
-                  UNION
+                  UNION ALL
                    SELECT DISTINCT vr.patient_id,
                       s_1.location_id,
                       vr.session_id,
