@@ -200,10 +200,12 @@ LEFT JOIN (
       ELSE EXTRACT(YEAR FROM vr.performed_at)::integer - 1
     END AS academic_year
   FROM vaccination_records vr
+  INNER JOIN programmes prog_vr ON prog_vr.id = vr.programme_id
   WHERE vr.discarded_at IS NULL
     AND vr.outcome IN (0, 4) -- administered or already_had
     AND vr.source IN (1, 2) -- historical_upload or nhs_immunisations_api
     AND vr.session_id IS NULL
+    AND prog_vr.type != 'flu' -- exclude flu (seasonal programme)
 ) vr_previous ON vr_previous.patient_id = p.id
   AND vr_previous.programme_id = prog.id
   AND vr_previous.academic_year < s.academic_year

@@ -309,7 +309,7 @@ describe API::Reporting::TotalsController do
         session: nil,
         source: "historical_upload",
         outcome: "administered",
-        performed_at: 3.months.ago
+        performed_at: Time.current
       )
 
       refresh_and_get_totals
@@ -450,9 +450,10 @@ describe API::Reporting::TotalsController do
       refresh_and_get_totals(programme_type: "flu")
 
       expect(cohort).to eq(1)
-      expect(vaccinated).to eq(1)
-      expect(not_vaccinated).to eq(0)
-      expect(parsed_response["vaccinated_previously"]).to eq(1)
+      # flu is seasonal so vaccinations from a previous year don't count
+      expect(vaccinated).to eq(0)
+      expect(not_vaccinated).to eq(1)
+      expect(parsed_response["vaccinated_previously"]).to eq(0)
       expect(vaccinated_elsewhere_recorded).to eq(0)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty

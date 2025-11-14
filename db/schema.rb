@@ -1275,8 +1275,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
                               WHEN (EXTRACT(month FROM vr.performed_at) >= (9)::numeric) THEN (EXTRACT(year FROM vr.performed_at))::integer
                               ELSE ((EXTRACT(year FROM vr.performed_at))::integer - 1)
                           END AS academic_year
-                     FROM vaccination_records vr
-                    WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = ANY (ARRAY[0, 4])) AND (vr.source = ANY (ARRAY[1, 2])) AND (vr.session_id IS NULL))) vr_previous ON (((vr_previous.patient_id = p.id) AND (vr_previous.programme_id = prog.id) AND (vr_previous.academic_year < s.academic_year))))
+                     FROM (vaccination_records vr
+                       JOIN programmes prog_vr ON ((prog_vr.id = vr.programme_id)))
+                    WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = ANY (ARRAY[0, 4])) AND (vr.source = ANY (ARRAY[1, 2])) AND (vr.session_id IS NULL) AND ((prog_vr.type)::text <> 'flu'::text))) vr_previous ON (((vr_previous.patient_id = p.id) AND (vr_previous.programme_id = prog.id) AND (vr_previous.academic_year < s.academic_year))))
                LEFT JOIN ( SELECT vr.patient_id,
                       vr.programme_id,
                       vr_s.team_id,
