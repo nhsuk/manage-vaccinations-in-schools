@@ -537,11 +537,12 @@ describe API::Reporting::TotalsController do
     end
 
     it "child moves out with eligible vaccination record" do
-      other_team = create(:team, programmes: [flu_programme])
-      other_session =
-        create(:session, team: other_team, programmes: [flu_programme])
+      other_org = create(:organisation)
+      other_team =
+        create(:team, programmes: [flu_programme], organisation: other_org)
+      other_school = create(:school, team: other_team)
 
-      patient = create(:patient, session: other_session)
+      patient = create(:patient, session: flu_session)
       create(
         :vaccination_record,
         patient:,
@@ -550,6 +551,13 @@ describe API::Reporting::TotalsController do
         outcome: "administered",
         performed_at: Time.current # Current academic year for monthly breakdown
       )
+
+      SchoolMove.create!(
+        patient:,
+        school: other_school,
+        academic_year: AcademicYear.current,
+        source: :cohort_import
+      ).confirm!(user: create(:user))
 
       refresh_and_get_totals(programme_type: "flu")
 

@@ -1181,10 +1181,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
               t.id AS team_id,
               t.name AS team_name,
               (ar.patient_id IS NOT NULL) AS is_archived,
-                  CASE
-                      WHEN (pl.patient_id IS NULL) THEN t.organisation_id
-                      ELSE COALESCE(patient_school_org.id, patient_location_org.id, t.organisation_id)
-                  END AS organisation_id,
               COALESCE(school_la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
               COALESCE(school_la.mhclg_code, ''::character varying) AS patient_local_authority_code,
               school.id AS patient_school_id,
@@ -1312,7 +1308,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
       team_id,
       team_name,
       is_archived,
-      organisation_id,
       patient_school_local_authority_code,
       patient_local_authority_code,
       patient_school_id,
@@ -1340,7 +1335,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
   SQL
   add_index "reporting_api_patient_programme_statuses", ["academic_year", "programme_type"], name: "ix_rapi_pps_year_prog_type"
   add_index "reporting_api_patient_programme_statuses", ["id"], name: "ix_rapi_pps_id", unique: true
-  add_index "reporting_api_patient_programme_statuses", ["organisation_id", "academic_year", "programme_type"], name: "ix_rapi_pps_org_year_prog"
   add_index "reporting_api_patient_programme_statuses", ["patient_school_local_authority_code", "programme_type"], name: "ix_rapi_pps_school_la_prog"
   add_index "reporting_api_patient_programme_statuses", ["programme_id", "team_id", "academic_year"], name: "ix_rapi_pps_prog_team_year"
   add_index "reporting_api_patient_programme_statuses", ["team_id", "academic_year"], name: "ix_rapi_pps_team_year"

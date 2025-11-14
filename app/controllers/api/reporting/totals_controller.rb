@@ -5,7 +5,6 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   FILTERS = {
     academic_year: :academic_year,
     programme: :programme_type,
-    organisation_id: :organisation_id,
     gender: :patient_gender,
     year_group: :patient_year_group,
     school_local_authority: :patient_school_local_authority_code,
@@ -89,7 +88,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   def set_scope
     @base_scope =
       ReportingAPI::PatientProgrammeStatus.where(
-        organisation_id: current_user.organisation_ids
+        team_id: current_user.team_ids
       ).where(@filters.to_where_clause)
 
     apply_workgroup_filter if params[:workgroup].present?
@@ -162,11 +161,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   end
 
   def apply_workgroup_filter
-    team =
-      Team.find_by(
-        workgroup: params[:workgroup],
-        organisation_id: current_user.organisation_ids
-      )
+    team = current_user.teams.find_by(workgroup: params[:workgroup])
     @base_scope = @base_scope.where(team_id: team.id) if team
   end
 

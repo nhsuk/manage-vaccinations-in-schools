@@ -70,12 +70,6 @@ base_data AS (
   t.name AS team_name,
   -- Archive status - check if there's an archive reason for this patient-team pair
   (ar.patient_id IS NOT NULL) AS is_archived,
-  -- Patient's current organisation (where enrolled) or team's organisation (for moved-out patients)
-  -- Use team's org directly if patient not enrolled at this location
-  CASE
-    WHEN pl.patient_id IS NULL THEN t.organisation_id
-    ELSE COALESCE(patient_school_org.id, patient_location_org.id, t.organisation_id)
-  END AS organisation_id,
   -- Patient location info (minimal for filtering)
   COALESCE(school_la.mhclg_code, '') AS patient_school_local_authority_code,
   COALESCE(school_la.mhclg_code, '') AS patient_local_authority_code,
@@ -284,7 +278,6 @@ SELECT DISTINCT ON (patient_id, programme_id, team_id, academic_year)
   team_id,
   team_name,
   is_archived,
-  organisation_id,
   patient_school_local_authority_code,
   patient_local_authority_code,
   patient_school_id,
