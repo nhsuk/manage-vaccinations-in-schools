@@ -54,7 +54,6 @@ class AppPatientSearchFormComponent < ViewComponent::Base
   delegate :format_year_group,
            :govuk_button_link_to,
            :govuk_details,
-           :tallying_enabled?,
            to: :helpers
 
   def open_details?

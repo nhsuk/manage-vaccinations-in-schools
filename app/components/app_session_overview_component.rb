@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppSessionOverviewTalliesComponent < ViewComponent::Base
+class AppSessionOverviewComponent < ViewComponent::Base
   def initialize(session)
     @session = session
   end

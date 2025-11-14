@@ -31,14 +31,6 @@ describe "Filter states" do
     given_i_am_signed_in
 
     when_i_visit_the_session_overview_page
-    and_i_click_the_consent_refused_link
-    then_the_consent_refused_filter_is_applied
-
-    when_i_visit_the_session_overview_page
-    and_i_click_the_vaccinated_link
-    then_the_vaccinated_filter_is_applied
-
-    when_i_visit_the_session_overview_page
     and_i_click_the_no_consent_response_link
     then_the_no_consent_response_filter_is_applied
 
@@ -91,14 +83,6 @@ describe "Filter states" do
 
   def when_i_visit_the_session_overview_page
     visit session_path(@session)
-  end
-
-  def and_i_click_the_consent_refused_link
-    click_on "Review consent refused"
-  end
-
-  def and_i_click_the_vaccinated_link
-    click_on "Review vaccinated"
   end
 
   def and_i_click_the_no_consent_response_link

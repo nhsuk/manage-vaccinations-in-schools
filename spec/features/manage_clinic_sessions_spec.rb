@@ -121,7 +121,9 @@ describe "Manage clinic sessions" do
 
   def then_i_see_the_clinic_session
     expect(page).to have_content("Community clinic")
-    expect(page).to have_content("No sessions scheduled")
+    expect(page).to have_content(
+      "There are currently no sessions scheduled at this clinic."
+    )
     expect(page).to have_content("Schedule sessions")
   end
 

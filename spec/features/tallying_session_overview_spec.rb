@@ -3,7 +3,6 @@
 describe "Tallying on session overview page" do
   scenario "confirming the numbers and visiting the filters" do
     given_a_session_for_flu_is_running_today
-    and_the_tallying_feature_flag_is_enabled
     and_there_is_five_children_eligible_for_vaccination
     and_one_has_no_response
     and_one_has_given_consent_for_nasal_spray
@@ -36,10 +35,6 @@ describe "Tallying on session overview page" do
 
   alias_method :when_i_visit_the_session_record_tab,
                :and_i_visit_the_session_record_tab
-
-  def and_the_tallying_feature_flag_is_enabled
-    Flipper.enable(:tallying)
-  end
 
   def and_there_is_five_children_eligible_for_vaccination
     @patients = create_list(:patient, 5, session: @session, year_group: 9)

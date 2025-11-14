@@ -61,6 +61,4 @@ or set it with content_for(:page_title)."
   def opengraph_image_tag(service_url, name)
     tag.meta(property: "og:image", content: "#{service_url}#{asset_path(name)}")
   end
-
-  def tallying_enabled? = Flipper.enabled?(:tallying)
 end

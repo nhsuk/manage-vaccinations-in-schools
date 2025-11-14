@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppSessionOverviewTalliesComponent do
+describe AppSessionOverviewComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:hpv_programme) { CachedProgramme.hpv }
