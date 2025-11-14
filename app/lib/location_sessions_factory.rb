@@ -55,13 +55,13 @@ class LocationSessionsFactory
   end
 
   def create_session!(programmes:)
-    team.sessions.create!(academic_year:, location:, programmes:)
+    team.sessions.create!(academic_year:, location:, programmes:, dates: [])
   end
 
   def find_or_create_session!(programmes:)
     team
       .sessions
-      .create_with(programmes:)
+      .create_with(programmes:, dates: [])
       .find_or_create_by!(academic_year:, location:)
       .tap do |session|
         programmes.each do |programme|

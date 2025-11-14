@@ -104,7 +104,7 @@ class Team < ApplicationRecord
         :programmes,
         :session_dates
       )
-      .create_with(programmes:)
+      .create_with(programmes:, dates: [])
       .find_or_create_by!(academic_year:, location: generic_clinic)
   end
 end
