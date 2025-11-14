@@ -43,8 +43,12 @@ module ReportingAPI::TokenAuthenticationConcern
             )
           )
         if @current_user
-          session["user"] = data["user"]
           session["cis2_info"] = data["cis2_info"]
+
+          # Establish a Warden session with activity tracking
+          # which enables Devise's timeoutable module
+          sign_in @current_user, event: :authentication
+
           authenticate_user!
         else
           session.clear
