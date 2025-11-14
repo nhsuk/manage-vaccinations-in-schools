@@ -9,12 +9,11 @@
         <%= t(".eligibility_message", count: eligible_children_count(programme)) %>
       </p>
 
-      <% tally_cards = cards_for_programme(programme) %>
-      <% column_class = tally_cards.length == 4 ? "one-quarter" : "one-fifth" %>
+      <% cards = cards_for_programme(programme) %>
 
       <ul class="nhsuk-grid-row nhsuk-card-group">
-        <% tally_cards.each do |card_data| %>
-          <li class="nhsuk-grid-column-<%= column_class %> nhsuk-card-group__item">
+        <% cards.each do |card_data| %>
+          <li class="nhsuk-grid-column-<%= grid_column_class(cards.length) %> nhsuk-card-group__item">
             <%= render AppCardComponent.new(compact: true,
                                             colour: card_data[:colour],
                                             link_to: card_data[:link_to]) do |card| %>

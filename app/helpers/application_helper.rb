@@ -62,5 +62,15 @@ or set it with content_for(:page_title)."
     tag.meta(property: "og:image", content: "#{service_url}#{asset_path(name)}")
   end
 
+  def grid_column_class(count)
+    if (count % 5).zero?
+      "one-fifth"
+    elsif (count % 3).zero?
+      "one-third"
+    else
+      "one-quarter"
+    end
+  end
+
   def tallying_enabled? = Flipper.enabled?(:tallying)
 end

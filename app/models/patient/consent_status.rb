@@ -36,14 +36,6 @@ class Patient::ConsentStatus < ApplicationRecord
            -> { kept.order(performed_at: :desc) },
            through: :patient
 
-  scope :has_vaccine_method,
-        ->(vaccine_method) do
-          where(
-            "vaccine_methods[1] IN (?)",
-            Array(vaccine_method).map { vaccine_methods.fetch(it) }
-          )
-        end
-
   enum :status,
        { no_response: 0, given: 1, refused: 2, conflicts: 3, not_required: 4 },
        default: :no_response,
