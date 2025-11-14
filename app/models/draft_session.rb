@@ -134,9 +134,7 @@ class DraftSession
 
   def patient_is_catch_up?(patient, programmes:)
     year_group = patient.year_group(academic_year:)
-    programmes.any? do |programme|
-      programme_year_groups.is_catch_up?(year_group, programme:)
-    end
+    programmes.any? { it.is_catch_up?(year_group:) }
   end
 
   def dates = session_dates.map(&:value).compact.sort.uniq

@@ -76,10 +76,7 @@ class DraftSessionsController < ApplicationController
         @draft_session
           .programmes_for(patient:)
           .all? do |programme|
-            if @draft_session.programme_year_groups.is_catch_up?(
-                 year_group,
-                 programme:
-               )
+            if programme.is_catch_up?(year_group:)
               patient.vaccination_status(programme:, academic_year:).vaccinated?
             else
               true
@@ -257,10 +254,7 @@ class DraftSessionsController < ApplicationController
   def programme_has_high_unvaccinated_count?(programme)
     catch_up_year_groups =
       @draft_session.year_groups.select do |year_group|
-        @draft_session.programme_year_groups.is_catch_up?(
-          year_group,
-          programme:
-        )
+        programme.is_catch_up?(year_group:)
       end
 
     return false if catch_up_year_groups.empty?
