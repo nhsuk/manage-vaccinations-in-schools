@@ -14,6 +14,40 @@ WITH vaccination_summary AS (
   WHERE vr.discarded_at IS NULL
   GROUP BY vr.patient_id, vr.programme_id, vr_s.team_id, vr_s.academic_year
 ),
+all_vaccinations_by_year AS (
+  SELECT
+    vr.patient_id,
+    vr.programme_id,
+    vr_s.academic_year,
+    vr_s.team_id,
+    vr.outcome,
+    vr.source,
+    prog_vr.type AS programme_type
+  FROM vaccination_records vr
+  INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
+  INNER JOIN programmes prog_vr ON prog_vr.id = vr.programme_id
+  WHERE vr.discarded_at IS NULL
+
+  UNION ALL
+
+  SELECT
+    vr.patient_id,
+    vr.programme_id,
+    CASE
+      WHEN EXTRACT(MONTH FROM vr.performed_at) >= 9
+      THEN EXTRACT(YEAR FROM vr.performed_at)::integer
+      ELSE EXTRACT(YEAR FROM vr.performed_at)::integer - 1
+    END AS academic_year,
+    NULL AS team_id,
+    vr.outcome,
+    vr.source,
+    prog_vr.type AS programme_type
+  FROM vaccination_records vr
+  INNER JOIN programmes prog_vr ON prog_vr.id = vr.programme_id
+  WHERE vr.discarded_at IS NULL
+    AND vr.source IN (1, 2)
+    AND vr.session_id IS NULL
+),
 base_data AS (
   SELECT
     -- Unique identifier for concurrent refresh support
@@ -81,16 +115,7 @@ base_data AS (
   (vaccination_summary.has_nasal) AS vaccinated_nasal_current_year,
   (vaccination_summary.has_injection) AS vaccinated_injection_current_year,
   -- Flag for patients outside the team's cohort (vaccinated but not enrolled)
-  (pl.patient_id IS NULL) AS outside_cohort,
-  -- Row number for deduplication (replaces DISTINCT ON)
-  -- Prefer vaccination rows (with sais count) over enrollment-only rows, then enrollment over vaccination
-  ROW_NUMBER() OVER (
-    PARTITION BY p.id, prog.id, t.id, s.academic_year
-    ORDER BY
-      (COALESCE(vaccination_summary.sais_vaccinations_count, 0) > 0) DESC,  -- Rows with vaccinations first
-      (pl.patient_id IS NOT NULL) DESC,  -- Then enrollment rows
-      patient_school_org.id NULLS LAST
-  ) AS rn
+  (pl.patient_id IS NULL) AS outside_cohort
 
 FROM patients p
 -- Join to get team-patient-programme relationships via sessions
@@ -171,25 +196,10 @@ LEFT JOIN vaccination_summary ON vaccination_summary.patient_id = p.id
   AND vaccination_summary.team_id = t.id
   AND vaccination_summary.academic_year = s.academic_year
 
--- Left join to check if patient has any vaccination (administered or already_had) in current academic year
 LEFT JOIN (
-  SELECT DISTINCT vr.patient_id, vr.programme_id, vr_s.academic_year
-  FROM vaccination_records vr
-  INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
-  WHERE vr.discarded_at IS NULL
-    AND vr.outcome IN (0, 4) -- administered or already_had
-  UNION
-  SELECT DISTINCT vr.patient_id, vr.programme_id,
-    CASE
-      WHEN EXTRACT(MONTH FROM vr.performed_at) >= 9
-      THEN EXTRACT(YEAR FROM vr.performed_at)::integer
-      ELSE EXTRACT(YEAR FROM vr.performed_at)::integer - 1
-    END AS academic_year
-  FROM vaccination_records vr
-  WHERE vr.discarded_at IS NULL
-    AND vr.outcome IN (0, 4) -- administered or already_had
-    AND vr.source IN (1, 2) -- historical_upload or nhs_immunisations_api
-    AND vr.session_id IS NULL
+  SELECT DISTINCT patient_id, programme_id, academic_year
+  FROM all_vaccinations_by_year
+  WHERE outcome IN (0, 4)
 ) vr_any ON vr_any.patient_id = p.id AND vr_any.programme_id = prog.id AND vr_any.academic_year = s.academic_year
 
 -- Left join to check if patient declared they were already vaccinated elsewhere
@@ -203,51 +213,20 @@ LEFT JOIN (
   AND vr_elsewhere_declared.programme_id = prog.id
   AND vr_elsewhere_declared.academic_year = s.academic_year
 
--- Left join to check if patient has externally recorded vaccination (from uploads/NHS API or other teams)
 LEFT JOIN (
-  SELECT DISTINCT vr.patient_id, vr.programme_id, vr_s.team_id, vr_s.academic_year
-  FROM vaccination_records vr
-  INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
-  WHERE vr.discarded_at IS NULL
-    AND vr.outcome = 0 -- administered (actual vaccination record)
-  UNION
-  SELECT DISTINCT vr.patient_id, vr.programme_id, NULL::bigint AS team_id,
-    CASE
-      WHEN EXTRACT(MONTH FROM vr.performed_at) >= 9
-      THEN EXTRACT(YEAR FROM vr.performed_at)::integer
-      ELSE EXTRACT(YEAR FROM vr.performed_at)::integer - 1
-    END AS academic_year
-  FROM vaccination_records vr
-  WHERE vr.discarded_at IS NULL
-    AND vr.outcome = 0 -- administered (actual vaccination record)
-    AND vr.source IN (1, 2) -- historical_upload or nhs_immunisations_api
-    AND vr.session_id IS NULL
+  SELECT DISTINCT patient_id, programme_id, team_id, academic_year
+  FROM all_vaccinations_by_year
+  WHERE outcome = 0
 ) vr_elsewhere_recorded ON vr_elsewhere_recorded.patient_id = p.id
   AND vr_elsewhere_recorded.programme_id = prog.id
   AND vr_elsewhere_recorded.academic_year = s.academic_year
   AND (vr_elsewhere_recorded.team_id IS NULL OR vr_elsewhere_recorded.team_id != t.id)
 
--- Left join to check if patient was vaccinated in previous years
 LEFT JOIN (
-  SELECT DISTINCT vr.patient_id, vr.programme_id, vr_s.academic_year
-  FROM vaccination_records vr
-  INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
-  WHERE vr.discarded_at IS NULL
-    AND vr.outcome IN (0, 4) -- administered or already_had
-  UNION
-  SELECT DISTINCT vr.patient_id, vr.programme_id,
-    CASE
-      WHEN EXTRACT(MONTH FROM vr.performed_at) >= 9
-      THEN EXTRACT(YEAR FROM vr.performed_at)::integer
-      ELSE EXTRACT(YEAR FROM vr.performed_at)::integer - 1
-    END AS academic_year
-  FROM vaccination_records vr
-  INNER JOIN programmes prog_vr ON prog_vr.id = vr.programme_id
-  WHERE vr.discarded_at IS NULL
-    AND vr.outcome IN (0, 4) -- administered or already_had
-    AND vr.source IN (1, 2) -- historical_upload or nhs_immunisations_api
-    AND vr.session_id IS NULL
-    AND prog_vr.type != 'flu' -- exclude flu (seasonal programme)
+  SELECT DISTINCT patient_id, programme_id, academic_year
+  FROM all_vaccinations_by_year
+  WHERE outcome IN (0, 4)
+    AND (team_id IS NOT NULL OR programme_type != 'flu')
 ) vr_previous ON vr_previous.patient_id = p.id
   AND vr_previous.programme_id = prog.id
   AND vr_previous.academic_year < s.academic_year
@@ -295,7 +274,7 @@ LEFT JOIN (
 WHERE p.invalidated_at IS NULL
   AND p.restricted_at IS NULL
 )
-SELECT
+SELECT DISTINCT ON (patient_id, programme_id, team_id, academic_year)
   id,
   patient_id,
   patient_gender,
@@ -329,4 +308,8 @@ SELECT
   vaccinated_injection_current_year,
   outside_cohort
 FROM base_data
-WHERE rn = 1
+ORDER BY
+  patient_id, programme_id, team_id, academic_year,
+  (sais_vaccinations_count > 0) DESC,
+  (outside_cohort = false) DESC,
+  patient_school_id NULLS LAST
