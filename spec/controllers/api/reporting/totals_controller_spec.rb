@@ -368,6 +368,7 @@ describe API::Reporting::TotalsController do
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
       expect(vaccinated_elsewhere_declared).to eq(1)
+      expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end
 
@@ -391,6 +392,7 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
+      expect(vaccinated_previously).to eq(0)
       expect(vaccinated_elsewhere_recorded).to eq(1)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
@@ -426,6 +428,7 @@ describe API::Reporting::TotalsController do
       expect(not_vaccinated).to eq(0)
       expect(vaccinated_elsewhere_declared).to eq(0)
       expect(vaccinated_elsewhere_recorded).to eq(1)
+      expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end
 
@@ -545,8 +548,17 @@ describe API::Reporting::TotalsController do
       expect(vaccinated).to eq(0)
       expect(not_vaccinated).to eq(0)
       expect(vaccinated_by_sais).to eq(0)
-      expect(vaccinations_given).to eq(0)
-      expect(monthly_vaccinations_given).to be_empty
+
+      # Child moved out, but vaccination was given by this team
+      # so it should be counted as given
+      expect(vaccinations_given).to eq(1)
+      monthly =
+        monthly_vaccinations_given.find do
+          it["year"] == Time.current.year &&
+            it["month"] == Date::MONTHNAMES[Time.current.month]
+        end
+      expect(monthly).to be_present
+      expect(monthly["count"]).to eq(1)
     end
 
     it "counts HPV cohort correctly across years 8 to 11" do
