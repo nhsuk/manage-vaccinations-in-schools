@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ErrorsController < ActionController::Base
+  include UserSessionLoggingConcern
+
   before_action :set_assets_name
 
   layout "two_thirds"
