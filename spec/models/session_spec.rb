@@ -535,4 +535,40 @@ describe Session do
       it { should be(false) }
     end
   end
+
+  describe "#sync_location_programme_year_groups!" do
+    subject(:sync_location_programme_year_groups!) do
+      session.sync_location_programme_year_groups!
+    end
+
+    # The factory creates these by default.
+    before { session.session_programme_year_groups.delete_all }
+
+    let(:programmes) { [CachedProgramme.hpv, CachedProgramme.flu] }
+    let(:location) { create(:school, programmes:) }
+
+    context "when session has both programmes" do
+      let(:session) { create(:session, location:, programmes:) }
+
+      it "creates session programme year groups" do
+        expect { sync_location_programme_year_groups! }.to change(
+          SessionProgrammeYearGroup,
+          :count
+        ).by(16)
+      end
+    end
+
+    context "when session has only one of the programmes" do
+      let(:session) do
+        create(:session, location:, programmes: [CachedProgramme.hpv])
+      end
+
+      it "creates session programme year groups" do
+        expect { sync_location_programme_year_groups! }.to change(
+          SessionProgrammeYearGroup,
+          :count
+        ).by(4)
+      end
+    end
+  end
 end

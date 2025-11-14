@@ -39,7 +39,11 @@ class TeamSessionsFactory
     ActiveRecord::Base.transaction do
       team
         .sessions
-        .includes(:location, :session_programmes)
+        .includes(
+          :location,
+          :session_programmes,
+          :session_programme_year_groups
+        )
         .unscheduled
         .where(academic_year:)
         .where.not(location: team.locations)
