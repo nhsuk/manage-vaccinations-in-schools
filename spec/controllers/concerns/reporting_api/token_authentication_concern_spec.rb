@@ -12,6 +12,9 @@ describe ReportingAPI::TokenAuthenticationConcern do
         def authenticate_user!
         end
 
+        def sign_in(user, options = {})
+        end
+
         def initialize(request: nil, session: {})
           @request = request
           @session = session
@@ -201,18 +204,18 @@ describe ReportingAPI::TokenAuthenticationConcern do
       context "when a User exists with the values of id, session_token and reporting_api_session_token" do
         let(:user_id) { user.id }
 
-        it "copies the user key into session['user']" do
-          an_object_which_includes_the_concern.send(:authenticate_user_by_jwt!)
-          expect(an_object_which_includes_the_concern.session["user"]).to eq(
-            user_info.first["data"]["user"]
-          )
-        end
-
         it "copies the cis2_info key into session['cis2_info']" do
           an_object_which_includes_the_concern.send(:authenticate_user_by_jwt!)
           expect(
             an_object_which_includes_the_concern.session["cis2_info"]
           ).to eq(user_info.first["data"]["cis2_info"])
+        end
+
+        it "signs in the user through Devise/Warden" do
+          expect(an_object_which_includes_the_concern).to receive(
+            :sign_in
+          ).with(user, event: :authentication)
+          an_object_which_includes_the_concern.send(:authenticate_user_by_jwt!)
         end
 
         it "calls authenticate_user!" do
