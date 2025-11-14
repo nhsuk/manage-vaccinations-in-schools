@@ -275,10 +275,17 @@ jobs:
         with:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
-      - name: Run commands
+      - name: Run data masking rake task
         run: |
             task_id=$(aws ecs list-tasks --cluster data-masking --service-name mavis-${{ env.environment }}-data-masking --desired-status RUNNING --query 'taskArns[0]' --output text)
-            aws ecs execute-command --region eu-west-2 --cluster data-masking --task $task_id --command 'echo "Hello world"' --interactive
+            
+            echo "Running anonymization rake task on ECS task: $task_id"
+            aws ecs execute-command \
+              --region eu-west-2 \
+              --cluster data-masking \
+              --task "$task_id" \
+              --command 'bundle exec rake data_masking:anonymize_child_names' \
+              --interactive
   create-masked-snapshot:
     name: Create Masked Snapshot
     runs-on: ubuntu-latest
