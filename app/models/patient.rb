@@ -86,7 +86,6 @@ class Patient < ApplicationRecord
   has_many :patient_teams
 
   has_many :locations, through: :patient_locations
-  has_many :location_programme_year_groups, through: :locations
   has_many :parents, through: :parent_relationships
   has_many :teams, through: :patient_teams
 
