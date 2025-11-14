@@ -4,13 +4,7 @@ class VaccinateForm
   include ActiveModel::Model
   include ActiveModel::Attributes
 
-  attr_accessor :patient,
-                :session_date,
-                :programme,
-                :current_user,
-                :todays_batch
-
-  delegate :session, to: :session_date
+  attr_accessor :patient, :session, :programme, :current_user, :todays_batch
 
   attribute :identity_check_confirmed_by_other_name, :string
   attribute :identity_check_confirmed_by_other_relationship, :string
@@ -209,12 +203,11 @@ class VaccinateForm
   def pre_screening
     @pre_screening ||=
       patient.pre_screenings.build(
-        date: session_date.value,
+        date: Date.current,
         location: session.location,
         notes: pre_screening_notes,
         performed_by: current_user,
-        programme:,
-        session_date:
+        programme:
       )
   end
 end

@@ -5,16 +5,15 @@
 # Table name: pre_screenings
 #
 #  id                   :bigint           not null, primary key
-#  date                 :date
+#  date                 :date             not null
 #  notes                :text             default(""), not null
 #  programme_type       :enum
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  location_id          :bigint
+#  location_id          :bigint           not null
 #  patient_id           :bigint           not null
 #  performed_by_user_id :bigint           not null
 #  programme_id         :bigint           not null
-#  session_date_id      :bigint           not null
 #
 # Indexes
 #
@@ -37,7 +36,6 @@ describe PreScreening do
 
   describe "associations" do
     it { should belong_to(:patient) }
-    it { should belong_to(:session_date) }
     it { should belong_to(:programme) }
   end
 

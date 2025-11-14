@@ -5,16 +5,15 @@
 # Table name: pre_screenings
 #
 #  id                   :bigint           not null, primary key
-#  date                 :date
+#  date                 :date             not null
 #  notes                :text             default(""), not null
 #  programme_type       :enum
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  location_id          :bigint
+#  location_id          :bigint           not null
 #  patient_id           :bigint           not null
 #  performed_by_user_id :bigint           not null
 #  programme_id         :bigint           not null
-#  session_date_id      :bigint           not null
 #
 # Indexes
 #
@@ -34,9 +33,11 @@
 #
 class PreScreening < ApplicationRecord
   include BelongsToProgramme
-  include BelongsToSessionDate
+  include BelongsToLocationAndDate
   include Notable
   include PerformableByUser
+
+  self.ignored_columns = %w[session_date_id]
 
   audited associated_with: :patient
 

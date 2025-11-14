@@ -55,12 +55,20 @@ class PatientLocation < ApplicationRecord
            through: :location
 
   has_many :gillick_assessments,
-           -> { where(patient_id: it.patient_id) },
-           through: :sessions
+           -> do
+             where(patient_id: it.patient_id).for_academic_year(
+               it.academic_year
+             )
+           end,
+           through: :location
 
   has_many :pre_screenings,
-           -> { where(patient_id: it.patient_id) },
-           through: :sessions
+           -> do
+             where(patient_id: it.patient_id).for_academic_year(
+               it.academic_year
+             )
+           end,
+           through: :location
 
   has_many :vaccination_records,
            -> { where(patient_id: it.patient_id) },
