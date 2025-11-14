@@ -9,15 +9,15 @@ describe AppSessionSummaryComponent do
   let(:location) do
     create(
       :school,
+      :secondary,
       name: "Streeling University",
       urn: 123_456,
-      address_postcode: "SW1A 1AA"
+      address_postcode: "SW1A 1AA",
+      programmes:
     )
   end
   let(:team) { create(:team, programmes:) }
-  let(:session) do
-    create(:session, location:, date: Date.new(2024, 1, 1), programmes:, team:)
-  end
+  let(:session) { create(:session, location:, programmes:, team:) }
 
   it { should have_content("Streeling University") }
   it { should have_link("Import class lists") }

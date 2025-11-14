@@ -29,9 +29,7 @@ class Programme
 
   def self.sample = find(TYPES.sample)
 
-  def flipper_id
-    "Programme:#{type}"
-  end
+  def flipper_id = "Programme:#{type}"
 
   def to_param = type
 
