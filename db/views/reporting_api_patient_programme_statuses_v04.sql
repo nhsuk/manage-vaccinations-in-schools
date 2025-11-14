@@ -162,17 +162,21 @@ LEFT JOIN (
   AND vr_previous.programme_id = prog.id
   AND vr_previous.academic_year < s.academic_year
 
--- Left join to count SAIS vaccinations (administered)
+-- Left join to count SAIS vaccinations (administered by current team in current academic year)
 LEFT JOIN (
   SELECT
     vr.patient_id,
     vr.programme_id,
+    vr_s.team_id,
+    vr_s.academic_year,
     COUNT(*) AS sais_vaccinations_count
   FROM vaccination_records vr
+  INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
   WHERE vr.discarded_at IS NULL
     AND vr.outcome = 0 -- administered
-  GROUP BY vr.patient_id, vr.programme_id
+  GROUP BY vr.patient_id, vr.programme_id, vr_s.team_id, vr_s.academic_year
 ) vr_counts ON vr_counts.patient_id = p.id AND vr_counts.programme_id = prog.id
+  AND vr_counts.team_id = t.id AND vr_counts.academic_year = s.academic_year
 
 -- Left join to get most recent vaccination date for time series (by current team only)
 LEFT JOIN (
