@@ -64,10 +64,15 @@ module MavisCLI
           end
 
           puts Rainbow("programmes:").bright
-          pyg = location.programme_year_groups(academic_year:)
           location.programmes.each do |programme|
+            year_groups =
+              location
+                .location_programme_year_groups
+                .where(programme:, academic_year:)
+                .pluck_year_groups
+
             puts "  #{Rainbow(programme.type).bright}:"
-            puts "    #{Rainbow("year groups").bright}: #{pyg[programme].join(", ")}"
+            puts "    #{Rainbow("year groups").bright}: #{year_groups.join(", ")}"
           end
 
           puts "" if locations.count > 1

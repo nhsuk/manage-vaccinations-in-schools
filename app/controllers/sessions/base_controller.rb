@@ -8,7 +8,7 @@ class Sessions::BaseController < ApplicationController
   def set_session
     @session =
       policy_scope(Session).includes(
-        :location_programme_year_groups,
+        :session_programme_year_groups,
         programmes: :vaccines
       ).find_by!(slug: params[:session_slug])
   end

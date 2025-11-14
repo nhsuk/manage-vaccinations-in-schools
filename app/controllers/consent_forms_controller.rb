@@ -53,7 +53,7 @@ class ConsentFormsController < ApplicationController
     session =
       @patient
         .sessions
-        .includes(:location_programme_year_groups, :programmes)
+        .includes(:session_programme_year_groups, :programmes)
         .has_programmes(@consent_form.programmes)
         .find_by(academic_year: AcademicYear.pending) || @consent_form.session
 

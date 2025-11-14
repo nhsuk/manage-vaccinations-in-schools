@@ -63,16 +63,10 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
 
   def patients(session:)
     @patients ||= {}
-    @patients[session] = session.patients.where(
-      birth_academic_year: birth_academic_years(session:)
+    @patients[session] = session.patients.appear_in_programmes(
+      [programme],
+      session:
     )
-  end
-
-  def birth_academic_years(session:)
-    @birth_academic_years ||= {}
-    @birth_academic_years[
-      session
-    ] = session.programme_year_groups.birth_academic_years(programme)
   end
 
   def format_number(count) = count.to_s
