@@ -9,7 +9,7 @@
 #  delay_vaccination_until :date
 #  invalidated_at          :datetime
 #  notes                   :text             default(""), not null
-#  programme_type          :enum
+#  programme_type          :enum             not null
 #  status                  :integer          not null
 #  vaccine_method          :integer
 #  without_gelatine        :boolean
@@ -26,6 +26,7 @@
 #  index_triages_on_patient_id            (patient_id)
 #  index_triages_on_performed_by_user_id  (performed_by_user_id)
 #  index_triages_on_programme_id          (programme_id)
+#  index_triages_on_programme_type        (programme_type)
 #  index_triages_on_team_id               (team_id)
 #
 # Foreign Keys
