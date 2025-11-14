@@ -259,6 +259,21 @@ class Session < ApplicationRecord
     ).count
   end
 
+  def sync_location_programme_year_groups!
+    rows =
+      location_programme_year_groups.map do |lpyg|
+        [id, lpyg.programme_type, lpyg.year_group]
+      end
+
+    ActiveRecord::Base.transaction do
+      SessionProgrammeYearGroup.where(session_id: id).delete_all
+      SessionProgrammeYearGroup.import!(
+        %i[session_id programme_type year_group],
+        rows
+      )
+    end
+  end
+
   private
 
   def set_slug

@@ -47,6 +47,11 @@ module MavisCLI
               programme:
             )
           end
+
+          location
+            .sessions
+            .includes(:location_programme_year_groups)
+            .find_each(&:sync_location_programme_year_groups!)
         end
       end
     end

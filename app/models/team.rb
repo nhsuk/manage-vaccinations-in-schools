@@ -101,5 +101,6 @@ class Team < ApplicationRecord
       .includes(:location, :location_programme_year_groups, :programmes)
       .create_with(programmes:, dates: [])
       .find_or_create_by!(academic_year:, location: generic_clinic)
+      .tap(&:sync_location_programme_year_groups!)
   end
 end
