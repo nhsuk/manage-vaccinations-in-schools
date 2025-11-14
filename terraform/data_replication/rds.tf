@@ -62,7 +62,6 @@ data "aws_db_cluster_snapshot" "imported" {
 }
 
 locals {
-  snapshot_tags_map = { for t in data.aws_db_cluster_snapshot.imported.tags : t.key => t.value }
   snapshot_is_sanitized = try(data.aws_db_cluster_snapshot.imported.tags["sanitized"] == "true", false)
 }
 

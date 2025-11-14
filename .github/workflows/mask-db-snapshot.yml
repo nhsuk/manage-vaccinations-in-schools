@@ -98,6 +98,7 @@ jobs:
           echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_OUTPUT
       - name: Terraform Plan
         id: plan
+        working-directory: terraform/data_masking
         run: |
           set -eo pipefail
           terraform init -backend-config="env/$environment-backend.hcl" -upgrade
@@ -167,6 +168,7 @@ jobs:
         with:
           terraform_version: 1.13.3
       - name: Apply the changes
+        working-directory: terraform/data_masking
         run: |
           set -e
           terraform init -backend-config="env/$environment-backend.hcl" -upgrade

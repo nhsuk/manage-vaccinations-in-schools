@@ -6,9 +6,9 @@ variable "environment" {
 
   validation {
     condition = contains([
-      "development", "production"
+      "sandbox-alpha", "sandbox-beta", "qa", "test", "training", "preview", "production"
     ], var.environment)
-    error_message = "Valid values for environment: development, production."
+    error_message = "Valid values for environment: sandbox-alpha, sandbox-beta, qa, test, training, preview, production."
   }
 }
 
