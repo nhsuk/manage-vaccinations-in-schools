@@ -139,6 +139,12 @@ describe AppPatientSessionSearchResultCardComponent do
         it { should have_text("Vaccine type") }
         it { should have_text("Nasal") }
       end
+
+      context "when programme status is enabled" do
+        before { Flipper.enable(:programme_status) }
+
+        it { should_not have_text("Action required") }
+      end
     end
 
     context "when not allowed to record attendance" do
@@ -156,6 +162,12 @@ describe AppPatientSessionSearchResultCardComponent do
         it { should have_text("Vaccine type") }
         it { should have_text("Nasal") }
       end
+
+      context "when programme status is enabled" do
+        before { Flipper.enable(:programme_status) }
+
+        it { should_not have_text("Action required") }
+      end
     end
   end
 
@@ -163,6 +175,12 @@ describe AppPatientSessionSearchResultCardComponent do
     let(:context) { :record }
 
     it { should have_text("Action requiredRecord vaccination for HPV") }
+
+    context "when programme status is enabled" do
+      before { Flipper.enable(:programme_status) }
+
+      it { should_not have_text("Action required") }
+    end
 
     context "and the programme is flu" do
       let(:programme) { Programme.flu }
