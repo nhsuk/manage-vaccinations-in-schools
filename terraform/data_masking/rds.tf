@@ -17,7 +17,7 @@ resource "aws_security_group_rule" "rds_inbound" {
 }
 
 data "aws_db_cluster_snapshot" "source_snapshot" {
-  db_cluster_identifier = var.source_rds_cluster
+  db_cluster_identifier = "mavis-${var.environment}"
   most_recent           = true
 }
 

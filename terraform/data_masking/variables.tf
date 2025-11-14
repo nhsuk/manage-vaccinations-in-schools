@@ -26,13 +26,6 @@ variable "db_engine_version" {
   nullable    = false
 }
 
-variable "source_rds_cluster" {
-  type        = string
-  description = "RDS cluster to take the latest snapshot from"
-  default     = "mavis-training"
-  nullable    = false
-}
-
 variable "max_aurora_capacity_units" {
   type        = number
   default     = 8

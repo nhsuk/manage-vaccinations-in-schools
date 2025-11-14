@@ -1,0 +1,327 @@
+name: Mask DB Snapshot
+run-name: Mask DB Snapshot of ${{ inputs.environment }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Source environment to take the DB snapshot
+        required: true
+        type: choice
+        options:
+          - training
+          - production
+          - test
+          - qa
+          - sandbox-alpha
+          - sandbox-beta
+      git_ref_to_deploy:
+        description:
+          | # Use blank unicode character (U+2800) to force line-break
+          Use code from: ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+          (Git ref to deploy, for example, a tag, branch name or commit SHA. Will use workflow ref if not provided.)
+        type: string
+
+permissions: {}
+
+env:
+  environment: ${{ inputs.environment }}
+  git_ref_to_deploy: ${{ inputs.git_ref_to_deploy }}
+  aws_role: ${{ inputs.environment == 'production'
+    && 'arn:aws:iam::820242920762:role/GithubDeployDataReplicationInfrastructure'
+    || 'arn:aws:iam::393416225559:role/GithubDeployDataReplicationInfrastructure' }}
+  aws_account_id: ${{ inputs.environment == 'production' && '820242920762' || '393416225559' }}
+
+concurrency:
+  group: mask-db-snapshot-${{ inputs.environment }}
+
+jobs:
+  validate-inputs:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Validate inputs
+        run: |
+          if [[ "$environment" == "preview" || "$environment" == "production" ]]; then
+            if [[ -z "$git_ref_to_deploy" ]]; then
+              echo "Error: git_ref_to_deploy is required for preview and production environments."
+              exit 1
+            fi
+          fi
+
+  determine-git-sha:
+    runs-on: ubuntu-latest
+    permissions: {}
+    needs: validate-inputs
+    outputs:
+      git-sha: ${{ steps.get-git-sha.outputs.git-sha }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.git_ref_to_deploy }}
+      - name: Get git sha
+        id: get-git-sha
+        run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+  build-and-push-image:
+    permissions:
+      id-token: write
+    needs: determine-git-sha
+    uses: ./.github/workflows/build-and-push-image.yml
+    with:
+      git_sha: ${{ needs.determine-git-sha.outputs.git-sha }}
+
+  plan:
+    name: Terraform plan
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.13.3
+      - name: Get db secret arn
+        id: get-db-secret-arn
+        working-directory: terraform/app
+        run: |
+          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
+          DB_SECRET_ARN=$(terraform output --raw db_secret_arn)
+          echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_OUTPUT
+      - name: Terraform Plan
+        id: plan
+        run: |
+          set -eo pipefail
+          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
+
+          PLAN_ARGS=(
+            "plan"
+            "-var=db_secret_arn=${{ steps.get-db-secret-arn.outputs.DB_SECRET_ARN }}"
+            "-var-file=env/$environment.tfvars"
+            "-out=${{ runner.temp }}/tfplan"
+          )
+
+          terraform "${PLAN_ARGS[@]}" | tee ${{ runner.temp }}/tf_stdout
+      - name: Upload artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: tfplan_infrastructure-${{ inputs.environment }}
+          path: ${{ runner.temp }}/tfplan
+
+  notify-approval-required:
+    name: Notify on approval required
+    runs-on: ubuntu-latest
+    needs: plan
+    if: ${{ inputs.environment == 'production' }}
+    steps:
+      - name: Notify pending approval
+        if: inputs.environment == 'production'
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
+        with:
+          webhook: ${{ secrets.SLACK_MAVIS_TECH_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: ":hourglass: Approval required :hourglass:"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "${{ github.workflow }} requires approval"
+              - type: "section"
+                fields:
+                  - type: "mrkdwn"
+                    text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow run>"
+                  - type: "mrkdwn"
+                    text: "*Triggered by:*\n${{ github.actor }}"
+
+  apply:
+    name: Terraform apply
+    runs-on: ubuntu-latest
+    needs: plan
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Download artifact
+        uses: actions/download-artifact@v6
+        with:
+          name: tfplan_infrastructure-${{ inputs.environment }}
+          path: ${{ runner.temp }}
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.13.3
+      - name: Apply the changes
+        run: |
+          set -e
+          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
+          terraform apply ${{ runner.temp }}/tfplan
+
+  prepare-deployment:
+    name: Prepare deployment
+    runs-on: ubuntu-latest
+    needs: [build-and-push-image, determine-git-sha, apply]
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.git_ref_to_deploy }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Get image digest
+        id: get-image-digest
+        run: |
+          digest=$(aws ecr describe-images \
+            --repository-name mavis/webapp \
+            --image-ids imageTag=${{ needs.determine-git-sha.outputs.git-sha }} \
+            --query 'imageDetails[0].imageDigest' \
+            --output text)
+          echo "digest=$digest" >> $GITHUB_OUTPUT
+      - name: Populate web task definition
+        id: create-task-definition
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition-family: "mavis-data-masking-task-definition-${{ inputs.environment }}-template"
+          container-name: "application"
+          image: "${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}"
+      - name: Rename task definition file
+        run: mv ${{ steps.create-task-definition.outputs.task-definition }} ${{ runner.temp }}/data-masking-task-definition.json
+      - name: Upload artifact for data-masking task definition
+        uses: actions/upload-artifact@v5
+        with:
+          name: ${{ inputs.environment }}-data-masking-task-definition
+          path: ${{ runner.temp }}/data-masking-task-definition.json
+
+  approve-deployments:
+    name: Wait for approval if required
+    runs-on: ubuntu-latest
+    needs: prepare-deployment
+    environment: ${{ inputs.environment }}
+    steps:
+      - run: echo "Proceeding with deployment to $environment environment"
+
+  deploy-masking-infrastructure:
+    name: Deploy data-masking service
+    runs-on: ubuntu-latest
+    needs: [prepare-deployment, approve-deployments]
+    permissions:
+      id-token: write
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Download data-masking task definition artifact
+        uses: actions/download-artifact@v6
+        with:
+          path: ${{ runner.temp }}
+          name: ${{ inputs.environment }}-data-masking-task-definition
+      - name: Change family of task definition
+        run: |
+          file_path="${{ runner.temp }}/data-masking-task-definition.json"
+          family_name="mavis-data-masking-task-definition-$environment"
+          echo "$(jq --arg f "$family_name" '.family = $f' "$file_path")" > "$file_path"
+      - name: Deploy data-masking service
+        id: ecs-deploy
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ runner.temp }}/data-masking-task-definition.json
+          cluster: mavis-${{ inputs.environment }}-data-masking
+          service: mavis-${{ inputs.environment }}-data-masking
+          force-new-deployment: true
+          wait-for-service-stability: true
+      - name: Check if deployment was successful
+        run: |
+          current_task_definition_arn=$(aws ecs describe-services --cluster mavis-$environment-data-masking --services mavis-$environment-data-masking --query services[0].deployments[0].taskDefinition | jq -r ".")
+          new_task_definition_arn=${{ steps.ecs-deploy.outputs.task-definition-arn }}
+          echo "Current task definition arn: $current_task_definition_arn"
+          echo "Expected task definition arn after deployment: $new_task_definition_arn"
+          if [ "$current_task_definition_arn" != "$new_task_definition_arn" ]; then
+            echo "Task definition arns don't match, likely due to a rollback to the previous version. Deployment failed."
+            exit 1
+          fi
+  execute-data-masking:
+    name: Execute data masking
+    runs-on: ubuntu-latest
+    needs: [deploy-masking-infrastructure]
+    permissions:
+      id-token: write
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Run commands
+        run: |
+            task_id=$(aws ecs list-tasks --cluster data-masking --service-name mavis-${{ env.environment }}-data-masking --desired-status RUNNING --query 'taskArns[0]' --output text)
+            aws ecs execute-command --region eu-west-2 --cluster data-masking --task $task_id --command 'echo "Hello world"' --interactive
+  create-masked-snapshot:
+    name: Create Masked Snapshot
+    runs-on: ubuntu-latest
+    needs: [deploy-masking-infrastructure, execute-data-masking]
+    permissions:
+      id-token: write
+    outputs:
+      masked_snapshot_arn: ${{ steps.create-snapshot.outputs.snapshot_arn }}
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+
+      - name: Create snapshot from masked cluster
+        id: create-snapshot
+        run: |
+            timestamp=$(date +%Y%m%d-%H%M%S)
+            snapshot_id="masked-snapshot-${timestamp}"
+            
+            echo "Creating snapshot: $snapshot_id"
+            aws rds create-db-cluster-snapshot \
+                --db-cluster-snapshot-identifier "$snapshot_id" \
+                --db-cluster-identifier data-masking-rds \
+                --region eu-west-2
+            
+            echo "Waiting for snapshot to be available..."
+            aws rds wait db-cluster-snapshot-available \
+                --db-cluster-snapshot-identifier "$snapshot_id" \
+                --region eu-west-2
+            
+            snapshot_arn=$(aws rds describe-db-cluster-snapshots \
+                --db-cluster-snapshot-identifier "$snapshot_id" \
+                --region eu-west-2 \
+                --query 'DBClusterSnapshots[0].DBClusterSnapshotArn' \
+                --output text)
+            
+            echo "snapshot_arn=$snapshot_arn" >> $GITHUB_OUTPUT
+            echo "Snapshot created: $snapshot_arn"
+
+      - name: Tag snapshot as masked
+        run: |
+          echo "Tagging snapshot as masked=true"
+          aws rds add-tags-to-resource \
+            --resource-name "${{ steps.create-snapshot.outputs.snapshot_arn }}" \
+            --tags Key=masked,Value=true \
+            --region eu-west-2
