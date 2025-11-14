@@ -17,6 +17,7 @@
 #  patient_local_authority_code               :string
 #  patient_school_local_authority_code        :string
 #  patient_school_name                        :text
+#  patient_school_urn                         :string
 #  patient_year_group                         :integer
 #  programme_type                             :string
 #  sais_vaccinations_count                    :bigint
@@ -25,6 +26,8 @@
 #  vaccinated_elsewhere_declared_current_year :boolean
 #  vaccinated_elsewhere_recorded_current_year :boolean
 #  vaccinated_in_previous_years               :boolean
+#  vaccinated_injection_current_year          :boolean
+#  vaccinated_nasal_current_year              :boolean
 #  organisation_id                            :bigint
 #  patient_id                                 :bigint
 #  patient_school_id                          :bigint

@@ -24,6 +24,7 @@ WITH base_data AS (
   COALESCE(school_la.mhclg_code, '') AS patient_school_local_authority_code,
   COALESCE(school_la.mhclg_code, '') AS patient_local_authority_code,
   school.id AS patient_school_id,
+  school.urn AS patient_school_urn,
   CASE
     WHEN school.name IS NOT NULL THEN school.name
     WHEN p.home_educated = true THEN 'Home educated'
@@ -72,6 +73,15 @@ WITH base_data AS (
     WHEN child_refused.patient_id IS NOT NULL THEN true
     ELSE false
   END AS child_refused_vaccination_current_year,
+  -- Vaccination by delivery method (flu programme)
+  CASE
+    WHEN vr_nasal_current.patient_id IS NOT NULL THEN true
+    ELSE false
+  END AS vaccinated_nasal_current_year,
+  CASE
+    WHEN vr_injection_current.patient_id IS NOT NULL THEN true
+    ELSE false
+  END AS vaccinated_injection_current_year,
   -- Row number for deduplication (replaces DISTINCT ON)
   ROW_NUMBER() OVER (
     PARTITION BY p.id, prog.id, t.id, s.academic_year
@@ -219,6 +229,30 @@ LEFT JOIN (
   AND child_refused.programme_id = prog.id
   AND child_refused.academic_year = s.academic_year
 
+-- Left join to check if patient was vaccinated with nasal spray in current academic year
+LEFT JOIN (
+  SELECT DISTINCT vr.patient_id, vr.programme_id, vr_s.academic_year
+  FROM vaccination_records vr
+  INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
+  WHERE vr.discarded_at IS NULL
+    AND vr.outcome = 0 -- administered
+    AND vr.delivery_method = 2 -- nasal_spray
+) vr_nasal_current ON vr_nasal_current.patient_id = p.id
+  AND vr_nasal_current.programme_id = prog.id
+  AND vr_nasal_current.academic_year = s.academic_year
+
+-- Left join to check if patient was vaccinated with injection in current academic year
+LEFT JOIN (
+  SELECT DISTINCT vr.patient_id, vr.programme_id, vr_s.academic_year
+  FROM vaccination_records vr
+  INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
+  WHERE vr.discarded_at IS NULL
+    AND vr.outcome = 0 -- administered
+    AND vr.delivery_method IN (0, 1) -- intramuscular or subcutaneous
+) vr_injection_current ON vr_injection_current.patient_id = p.id
+  AND vr_injection_current.programme_id = prog.id
+  AND vr_injection_current.academic_year = s.academic_year
+
 WHERE p.invalidated_at IS NULL
   AND p.restricted_at IS NULL
 )
@@ -235,6 +269,7 @@ SELECT
   patient_school_local_authority_code,
   patient_local_authority_code,
   patient_school_id,
+  patient_school_urn,
   patient_school_name,
   session_location_id,
   patient_year_group,
@@ -249,6 +284,8 @@ SELECT
   consent_status,
   consent_vaccine_methods,
   parent_refused_consent_current_year,
-  child_refused_vaccination_current_year
+  child_refused_vaccination_current_year,
+  vaccinated_nasal_current_year,
+  vaccinated_injection_current_year
 FROM base_data
 WHERE rn = 1
