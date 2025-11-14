@@ -1144,7 +1144,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
                       WHEN (ar.patient_id IS NOT NULL) THEN true
                       ELSE false
                   END AS is_archived,
-              COALESCE(patient_school_org.id, patient_location_org.id) AS organisation_id,
+                  CASE
+                      WHEN (pl.patient_id IS NULL) THEN t.organisation_id
+                      ELSE COALESCE(patient_school_org.id, patient_location_org.id, t.organisation_id)
+                  END AS organisation_id,
               COALESCE(school_la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
               COALESCE(school_la.mhclg_code, ''::character varying) AS patient_local_authority_code,
               school.id AS patient_school_id,
@@ -1154,7 +1157,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
                       WHEN (p.home_educated = true) THEN 'Home educated'::text
                       ELSE 'Unknown'::text
                   END AS patient_school_name,
-              pl.location_id AS session_location_id,
+                  CASE
+                      WHEN (pl.patient_id IS NULL) THEN patient_team_prog.location_id
+                      ELSE pl.location_id
+                  END AS session_location_id,
                   CASE
                       WHEN (p.birth_academic_year IS NOT NULL) THEN ((s.academic_year - p.birth_academic_year) - 5)
                       ELSE NULL::integer
@@ -1200,20 +1206,49 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
                       WHEN (vr_injection_current.patient_id IS NOT NULL) THEN true
                       ELSE false
                   END AS vaccinated_injection_current_year,
-              row_number() OVER (PARTITION BY p.id, prog.id, t.id, s.academic_year ORDER BY patient_school_org.id) AS rn
+              (pl.patient_id IS NULL) AS outside_cohort,
+              row_number() OVER (PARTITION BY p.id, prog.id, t.id, s.academic_year ORDER BY (COALESCE(vr_counts.sais_vaccinations_count, (0)::bigint) > 0) DESC, (pl.patient_id IS NOT NULL) DESC, patient_school_org.id) AS rn
              FROM (((((((((((((((((((((((((((patients p
-               JOIN patient_locations pl ON ((pl.patient_id = p.id)))
-               JOIN sessions s ON (((s.location_id = pl.location_id) AND (s.academic_year = pl.academic_year))))
-               JOIN teams t ON ((t.id = s.team_id)))
-               JOIN session_programmes sp ON ((sp.session_id = s.id)))
-               JOIN programmes prog ON ((prog.id = sp.programme_id)))
+               JOIN ( SELECT pl_1.patient_id,
+                      pl_1.location_id,
+                      s_1.id AS session_id,
+                      s_1.academic_year,
+                      t_1.id AS team_id,
+                      prog_1.id AS programme_id
+                     FROM ((((patient_locations pl_1
+                       JOIN sessions s_1 ON (((s_1.location_id = pl_1.location_id) AND (s_1.academic_year = pl_1.academic_year))))
+                       JOIN teams t_1 ON ((t_1.id = s_1.team_id)))
+                       JOIN session_programmes sp ON ((sp.session_id = s_1.id)))
+                       JOIN programmes prog_1 ON ((prog_1.id = sp.programme_id)))
+                  UNION
+                   SELECT DISTINCT vr.patient_id,
+                      s_1.location_id,
+                      vr.session_id,
+                      s_1.academic_year,
+                      t_1.id AS team_id,
+                      vr.programme_id
+                     FROM ((vaccination_records vr
+                       JOIN sessions s_1 ON ((s_1.id = vr.session_id)))
+                       JOIN teams t_1 ON ((t_1.id = s_1.team_id)))
+                    WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 0) AND (NOT (EXISTS ( SELECT 1
+                             FROM (patient_locations pl_check
+                               JOIN sessions s_check ON (((s_check.location_id = pl_check.location_id) AND (s_check.team_id = t_1.id) AND (s_check.academic_year = pl_check.academic_year))))
+                            WHERE ((pl_check.patient_id = vr.patient_id) AND (pl_check.academic_year = s_1.academic_year))))))) patient_team_prog ON ((patient_team_prog.patient_id = p.id)))
+               LEFT JOIN patient_locations pl ON (((pl.patient_id = p.id) AND (pl.location_id = patient_team_prog.location_id) AND (pl.academic_year = patient_team_prog.academic_year))))
+               JOIN sessions s ON ((s.id = patient_team_prog.session_id)))
+               JOIN teams t ON ((t.id = patient_team_prog.team_id)))
+               JOIN programmes prog ON ((prog.id = patient_team_prog.programme_id)))
                LEFT JOIN archive_reasons ar ON (((ar.patient_id = p.id) AND (ar.team_id = t.id))))
                LEFT JOIN locations school ON ((school.id = p.school_id)))
                LEFT JOIN subteams school_subteam ON ((school_subteam.id = school.subteam_id)))
                LEFT JOIN teams school_team ON ((school_team.id = school_subteam.team_id)))
                LEFT JOIN organisations patient_school_org ON ((patient_school_org.id = school_team.organisation_id)))
                LEFT JOIN local_authorities school_la ON ((school_la.gias_code = school.gias_local_authority_code)))
-               LEFT JOIN locations current_location ON ((current_location.id = pl.location_id)))
+               LEFT JOIN locations current_location ON ((current_location.id =
+                  CASE
+                      WHEN (pl.patient_id IS NULL) THEN patient_team_prog.location_id
+                      ELSE pl.location_id
+                  END)))
                LEFT JOIN subteams current_location_subteam ON ((current_location_subteam.id = current_location.subteam_id)))
                LEFT JOIN teams current_location_team ON ((current_location_team.id = current_location_subteam.team_id)))
                LEFT JOIN organisations patient_location_org ON ((patient_location_org.id = current_location_team.organisation_id)))
@@ -1357,7 +1392,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
       parent_refused_consent_current_year,
       child_refused_vaccination_current_year,
       vaccinated_nasal_current_year,
-      vaccinated_injection_current_year
+      vaccinated_injection_current_year,
+      outside_cohort
      FROM base_data
     WHERE (rn = 1);
   SQL

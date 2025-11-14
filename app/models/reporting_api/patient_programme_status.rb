@@ -13,6 +13,7 @@
 #  is_archived                                :boolean
 #  most_recent_vaccination_month              :decimal(, )
 #  most_recent_vaccination_year               :decimal(, )
+#  outside_cohort                             :boolean
 #  parent_refused_consent_current_year        :boolean
 #  patient_gender                             :text
 #  patient_local_authority_code               :string
@@ -69,6 +70,7 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
         end
 
   scope :not_archived, -> { where(is_archived: false) }
+  scope :outside_cohort, -> { where(outside_cohort: true) }
   scope :consent_given, -> { where(consent_status: 1) }
   scope :consent_refused, -> { where(consent_status: 2) }
   scope :consent_no_response, -> { where(consent_status: [0, nil]) }
@@ -85,39 +87,39 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
 
   def self.with_aggregate_metrics
     select(
-      "COUNT(DISTINCT patient_id)" \
+      "COUNT(DISTINCT CASE WHEN outside_cohort = false THEN patient_id END)" \
         "AS cohort",
-      "COUNT(DISTINCT CASE WHEN has_any_vaccination = true THEN patient_id END)" \
+      "COUNT(DISTINCT CASE WHEN has_any_vaccination = true AND outside_cohort = false THEN patient_id END)" \
         "AS vaccinated",
-      "COUNT(DISTINCT CASE WHEN has_any_vaccination = false THEN patient_id END)" \
+      "COUNT(DISTINCT CASE WHEN has_any_vaccination = false AND outside_cohort = false THEN patient_id END)" \
         "AS not_vaccinated",
-      "COUNT(DISTINCT CASE WHEN vaccinated_by_sais_current_year = true THEN patient_id END)" \
-        "AS vaccinated_by_sais",
-      "COUNT(DISTINCT CASE WHEN vaccinated_elsewhere_declared_current_year = true THEN patient_id END)" \
-        "AS vaccinated_elsewhere_declared",
-      "COUNT(DISTINCT CASE WHEN vaccinated_elsewhere_recorded_current_year = true THEN patient_id END)" \
-        "AS vaccinated_elsewhere_recorded",
-      "COUNT(DISTINCT CASE WHEN vaccinated_in_previous_years = true THEN patient_id END)" \
+      "COUNT(DISTINCT CASE WHEN vaccinated_by_sais_current_year = true " \
+        "AND outside_cohort = false THEN patient_id END) AS vaccinated_by_sais",
+      "COUNT(DISTINCT CASE WHEN vaccinated_elsewhere_declared_current_year = true " \
+        "AND outside_cohort = false THEN patient_id END) AS vaccinated_elsewhere_declared",
+      "COUNT(DISTINCT CASE WHEN vaccinated_elsewhere_recorded_current_year = true " \
+        "AND outside_cohort = false THEN patient_id END) AS vaccinated_elsewhere_recorded",
+      "COUNT(DISTINCT CASE WHEN vaccinated_in_previous_years = true AND outside_cohort = false THEN patient_id END)" \
         "AS vaccinated_previously",
-      "COUNT(DISTINCT CASE WHEN consent_status = 1 THEN patient_id END)" \
+      "COUNT(DISTINCT CASE WHEN consent_status = 1 AND outside_cohort = false THEN patient_id END)" \
         "AS consent_given",
-      "COUNT(DISTINCT CASE WHEN consent_status = 0 OR consent_status IS NULL THEN patient_id END)" \
-        "AS consent_no_response",
-      "COUNT(DISTINCT CASE WHEN consent_status = 3 THEN patient_id END)" \
+      "COUNT(DISTINCT CASE WHEN (consent_status = 0 OR consent_status IS NULL) " \
+        "AND outside_cohort = false THEN patient_id END) AS consent_no_response",
+      "COUNT(DISTINCT CASE WHEN consent_status = 3 AND outside_cohort = false THEN patient_id END)" \
         "AS consent_conflicts",
-      "COUNT(DISTINCT CASE WHEN parent_refused_consent_current_year = true THEN patient_id END)" \
-        "AS parent_refused_consent",
-      "COUNT(DISTINCT CASE WHEN child_refused_vaccination_current_year = true THEN patient_id END)" \
-        "AS child_refused_vaccination",
-      "COUNT(DISTINCT CASE WHEN vaccinated_nasal_current_year = true THEN patient_id END)" \
-        "AS vaccinated_nasal",
-      "COUNT(DISTINCT CASE WHEN vaccinated_injection_current_year = true THEN patient_id END)" \
-        "AS vaccinated_injection",
-      "COUNT(DISTINCT CASE WHEN consent_vaccine_methods = ARRAY[1] THEN patient_id END)" \
+      "COUNT(DISTINCT CASE WHEN parent_refused_consent_current_year = true " \
+        "AND outside_cohort = false THEN patient_id END) AS parent_refused_consent",
+      "COUNT(DISTINCT CASE WHEN child_refused_vaccination_current_year = true " \
+        "AND outside_cohort = false THEN patient_id END) AS child_refused_vaccination",
+      "COUNT(DISTINCT CASE WHEN vaccinated_nasal_current_year = true " \
+        "AND outside_cohort = false THEN patient_id END) AS vaccinated_nasal",
+      "COUNT(DISTINCT CASE WHEN vaccinated_injection_current_year = true " \
+        "AND outside_cohort = false THEN patient_id END) AS vaccinated_injection",
+      "COUNT(DISTINCT CASE WHEN consent_vaccine_methods = ARRAY[1] AND outside_cohort = false THEN patient_id END)" \
         "AS consent_given_nasal_only",
-      "COUNT(DISTINCT CASE WHEN consent_vaccine_methods = ARRAY[0] THEN patient_id END)" \
+      "COUNT(DISTINCT CASE WHEN consent_vaccine_methods = ARRAY[0] AND outside_cohort = false THEN patient_id END)" \
         "AS consent_given_injection_only",
-      "COUNT(DISTINCT CASE WHEN consent_vaccine_methods @> ARRAY[0,1] THEN patient_id END)" \
+      "COUNT(DISTINCT CASE WHEN consent_vaccine_methods @> ARRAY[0,1] AND outside_cohort = false THEN patient_id END)" \
         "AS consent_given_both_methods"
     )
   end
@@ -131,11 +133,13 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
   end
 
   def self.cohort_count
-    distinct.count(:patient_id)
+    where(outside_cohort: false).distinct.count(:patient_id)
   end
 
   def self.vaccinated_count
-    where(has_any_vaccination: true).distinct.count(:patient_id)
+    where(has_any_vaccination: true, outside_cohort: false).distinct.count(
+      :patient_id
+    )
   end
 
   def self.not_vaccinated_count
@@ -143,23 +147,31 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
   end
 
   def self.vaccinated_by_sais_count
-    where(vaccinated_by_sais_current_year: true).distinct.count(:patient_id)
+    where(
+      vaccinated_by_sais_current_year: true,
+      outside_cohort: false
+    ).distinct.count(:patient_id)
   end
 
   def self.vaccinated_elsewhere_declared_count
-    where(vaccinated_elsewhere_declared_current_year: true).distinct.count(
-      :patient_id
-    )
+    where(
+      vaccinated_elsewhere_declared_current_year: true,
+      outside_cohort: false
+    ).distinct.count(:patient_id)
   end
 
   def self.vaccinated_elsewhere_recorded_count
-    where(vaccinated_elsewhere_recorded_current_year: true).distinct.count(
-      :patient_id
-    )
+    where(
+      vaccinated_elsewhere_recorded_current_year: true,
+      outside_cohort: false
+    ).distinct.count(:patient_id)
   end
 
   def self.vaccinated_previously_count
-    where(vaccinated_in_previous_years: true).distinct.count(:patient_id)
+    where(
+      vaccinated_in_previous_years: true,
+      outside_cohort: false
+    ).distinct.count(:patient_id)
   end
 
   def self.vaccinations_given_count
@@ -180,42 +192,58 @@ class ReportingAPI::PatientProgrammeStatus < ApplicationRecord
   end
 
   def self.consent_given_count
-    consent_given.distinct.count(:patient_id)
+    consent_given.where(outside_cohort: false).distinct.count(:patient_id)
   end
 
   def self.consent_no_response_count
-    consent_no_response.distinct.count(:patient_id)
+    consent_no_response.where(outside_cohort: false).distinct.count(:patient_id)
   end
 
   def self.consent_conflicts_count
-    consent_conflicts.distinct.count(:patient_id)
+    consent_conflicts.where(outside_cohort: false).distinct.count(:patient_id)
   end
 
   def self.parent_refused_consent_count
-    parent_refused_consent.distinct.count(:patient_id)
+    parent_refused_consent
+      .where(outside_cohort: false)
+      .distinct
+      .count(:patient_id)
   end
 
   def self.child_refused_vaccination_count
-    child_refused_vaccination.distinct.count(:patient_id)
+    child_refused_vaccination
+      .where(outside_cohort: false)
+      .distinct
+      .count(:patient_id)
   end
 
   def self.vaccinated_nasal_count
-    vaccinated_nasal.distinct.count(:patient_id)
+    vaccinated_nasal.where(outside_cohort: false).distinct.count(:patient_id)
   end
 
   def self.vaccinated_injection_count
-    vaccinated_injection.distinct.count(:patient_id)
+    vaccinated_injection
+      .where(outside_cohort: false)
+      .distinct
+      .count(:patient_id)
   end
 
   def self.consent_given_nasal_only_count
-    where(consent_vaccine_methods: [1]).distinct.count(:patient_id)
+    where(consent_vaccine_methods: [1], outside_cohort: false).distinct.count(
+      :patient_id
+    )
   end
 
   def self.consent_given_injection_only_count
-    where(consent_vaccine_methods: [0]).distinct.count(:patient_id)
+    where(consent_vaccine_methods: [0], outside_cohort: false).distinct.count(
+      :patient_id
+    )
   end
 
   def self.consent_given_both_methods_count
-    where("consent_vaccine_methods @> ARRAY[0,1]").distinct.count(:patient_id)
+    where("consent_vaccine_methods @> ARRAY[0,1]")
+      .where(outside_cohort: false)
+      .distinct
+      .count(:patient_id)
   end
 end

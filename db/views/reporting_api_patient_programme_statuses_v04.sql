@@ -23,8 +23,12 @@ WITH base_data AS (
     WHEN ar.patient_id IS NOT NULL THEN true
     ELSE false
   END AS is_archived,
-  -- Patient's current organisation (where enrolled)
-  COALESCE(patient_school_org.id, patient_location_org.id) AS organisation_id,
+  -- Patient's current organisation (where enrolled) or team's organisation (for moved-out patients)
+  -- Use team's org directly if patient not enrolled at this location
+  CASE
+    WHEN pl.patient_id IS NULL THEN t.organisation_id
+    ELSE COALESCE(patient_school_org.id, patient_location_org.id, t.organisation_id)
+  END AS organisation_id,
   -- Patient location info (minimal for filtering)
   COALESCE(school_la.mhclg_code, '') AS patient_school_local_authority_code,
   COALESCE(school_la.mhclg_code, '') AS patient_local_authority_code,
@@ -35,7 +39,10 @@ WITH base_data AS (
     WHEN p.home_educated = true THEN 'Home educated'
     ELSE 'Unknown'
   END AS patient_school_name,
-  pl.location_id AS session_location_id,
+  CASE
+    WHEN pl.patient_id IS NULL THEN patient_team_prog.location_id
+    ELSE pl.location_id
+  END AS session_location_id,
   -- Calculate patient year group for the academic year
   CASE
     WHEN p.birth_academic_year IS NOT NULL
@@ -87,19 +94,70 @@ WITH base_data AS (
     WHEN vr_injection_current.patient_id IS NOT NULL THEN true
     ELSE false
   END AS vaccinated_injection_current_year,
+  -- Flag for patients outside the team's cohort (vaccinated but not enrolled)
+  (pl.patient_id IS NULL) AS outside_cohort,
   -- Row number for deduplication (replaces DISTINCT ON)
+  -- Prefer vaccination rows (with sais count) over enrollment-only rows, then enrollment over vaccination
   ROW_NUMBER() OVER (
     PARTITION BY p.id, prog.id, t.id, s.academic_year
-    ORDER BY patient_school_org.id NULLS LAST
+    ORDER BY
+      (COALESCE(vr_counts.sais_vaccinations_count, 0) > 0) DESC,  -- Rows with vaccinations first
+      (pl.patient_id IS NOT NULL) DESC,  -- Then enrollment rows
+      patient_school_org.id NULLS LAST
   ) AS rn
 
 FROM patients p
 -- Join to get team-patient-programme relationships via sessions
-INNER JOIN patient_locations pl ON pl.patient_id = p.id
-INNER JOIN sessions s ON s.location_id = pl.location_id AND s.academic_year = pl.academic_year
-INNER JOIN teams t ON t.id = s.team_id
-INNER JOIN session_programmes sp ON sp.session_id = s.id
-INNER JOIN programmes prog ON prog.id = sp.programme_id
+-- UNION of: (1) enrolled patients and (2) patients vaccinated by teams where they're not enrolled
+INNER JOIN (
+  -- Part 1: Patients enrolled in sessions (for cohort tracking)
+  SELECT
+    pl.patient_id,
+    pl.location_id,
+    s.id AS session_id,
+    s.academic_year,
+    t.id AS team_id,
+    prog.id AS programme_id
+  FROM patient_locations pl
+  INNER JOIN sessions s ON s.location_id = pl.location_id AND s.academic_year = pl.academic_year
+  INNER JOIN teams t ON t.id = s.team_id
+  INNER JOIN session_programmes sp ON sp.session_id = s.id
+  INNER JOIN programmes prog ON prog.id = sp.programme_id
+
+  UNION
+
+  -- Part 2: Patients with vaccinations administered by teams where NOT enrolled
+  -- (only creates rows when patient doesn't have enrollment with this team)
+  SELECT DISTINCT
+    vr.patient_id,
+    s.location_id,
+    vr.session_id,
+    s.academic_year,
+    t.id AS team_id,
+    vr.programme_id
+  FROM vaccination_records vr
+  INNER JOIN sessions s ON s.id = vr.session_id
+  INNER JOIN teams t ON t.id = s.team_id
+  WHERE vr.discarded_at IS NULL
+    AND vr.outcome = 0 -- administered
+    -- Only include if patient is NOT enrolled with this team in this academic year
+    AND NOT EXISTS (
+      SELECT 1
+      FROM patient_locations pl_check
+      INNER JOIN sessions s_check ON s_check.location_id = pl_check.location_id
+        AND s_check.team_id = t.id
+        AND s_check.academic_year = pl_check.academic_year
+      WHERE pl_check.patient_id = vr.patient_id
+        AND pl_check.academic_year = s.academic_year
+    )
+) patient_team_prog ON patient_team_prog.patient_id = p.id
+-- Left join patient_locations to allow for patients who moved out but were vaccinated
+LEFT JOIN patient_locations pl ON pl.patient_id = p.id
+  AND pl.location_id = patient_team_prog.location_id
+  AND pl.academic_year = patient_team_prog.academic_year
+INNER JOIN sessions s ON s.id = patient_team_prog.session_id
+INNER JOIN teams t ON t.id = patient_team_prog.team_id
+INNER JOIN programmes prog ON prog.id = patient_team_prog.programme_id
 
 -- Left join to check if patient is archived for this team
 LEFT JOIN archive_reasons ar ON ar.patient_id = p.id AND ar.team_id = t.id
@@ -112,7 +170,12 @@ LEFT JOIN organisations patient_school_org ON patient_school_org.id = school_tea
 LEFT JOIN local_authorities school_la ON school_la.gias_code = school.gias_local_authority_code
 
 -- Left join current patient location for organisation (fallback if no school)
-LEFT JOIN locations current_location ON current_location.id = pl.location_id
+-- Use vaccination location if pl is NULL (not enrolled), otherwise use enrollment location
+LEFT JOIN locations current_location ON current_location.id =
+  CASE
+    WHEN pl.patient_id IS NULL THEN patient_team_prog.location_id
+    ELSE pl.location_id
+  END
 LEFT JOIN subteams current_location_subteam ON current_location_subteam.id = current_location.subteam_id
 LEFT JOIN teams current_location_team ON current_location_team.id = current_location_subteam.team_id
 LEFT JOIN organisations patient_location_org ON patient_location_org.id = current_location_team.organisation_id
@@ -339,6 +402,7 @@ SELECT
   parent_refused_consent_current_year,
   child_refused_vaccination_current_year,
   vaccinated_nasal_current_year,
-  vaccinated_injection_current_year
+  vaccinated_injection_current_year,
+  outside_cohort
 FROM base_data
 WHERE rn = 1

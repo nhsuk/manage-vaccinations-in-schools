@@ -271,10 +271,18 @@ describe API::Reporting::TotalsController do
       final_response = JSON.parse(response.body)
 
       expect(final_response["cohort"]).to eq(initial_response["cohort"] - 1)
-      expect(final_response["vaccinated"]).to eq(initial_response["vaccinated"] - 1)
-      expect(final_response["not_vaccinated"]).to eq(initial_response["not_vaccinated"])
-      expect(final_response["vaccinations_given"]).to eq(initial_response["vaccinations_given"])
-      expect(final_response["monthly_vaccinations_given"]).to eq(initial_response["monthly_vaccinations_given"])
+      expect(final_response["vaccinated"]).to eq(
+        initial_response["vaccinated"] - 1
+      )
+      expect(final_response["not_vaccinated"]).to eq(
+        initial_response["not_vaccinated"]
+      )
+      expect(final_response["vaccinations_given"]).to eq(
+        initial_response["vaccinations_given"]
+      )
+      expect(final_response["monthly_vaccinations_given"]).to eq(
+        initial_response["monthly_vaccinations_given"]
+      )
     end
 
     it "historic hpv record uploaded" do
@@ -540,7 +548,7 @@ describe API::Reporting::TotalsController do
         programme: flu_programme,
         session: flu_session,
         outcome: "administered",
-        performed_at: 2.months.ago
+        performed_at: Time.current # Current academic year for monthly breakdown
       )
 
       refresh_and_get_totals(programme_type: "flu")
