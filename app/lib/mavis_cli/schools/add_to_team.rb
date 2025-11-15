@@ -20,6 +20,7 @@ module MavisCLI
         MavisCLI.load_rails
 
         team = Team.find_by(workgroup:)
+        AcademicYear.current
 
         if team.nil?
           warn "Could not find team."
@@ -27,11 +28,6 @@ module MavisCLI
         end
 
         subteam = team.subteams.find_by(name: subteam)
-
-        if subteam.nil?
-          warn "Could not find subteam."
-          return
-        end
 
         programmes =
           (programmes.empty? ? team.programmes : Programme.find_all(programmes))
@@ -51,7 +47,7 @@ module MavisCLI
               warn "#{urn} previously belonged to #{location.subteam.name}"
             end
 
-            location.update!(subteam:)
+            location.attach_to_team!(team, academic_year:, subteam:)
             location.import_year_groups_from_gias!(academic_year:)
             location.import_default_programme_year_groups!(
               programmes,

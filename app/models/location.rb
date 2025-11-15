@@ -175,6 +175,13 @@ class Location < ApplicationRecord
     ).merge("is_attached_to_team" => !subteam_id.nil?)
   end
 
+  def attach_to_team!(team, academic_year:, subteam:)
+    ActiveRecord::Base.transaction do
+      team_locations.find_or_create_by!(team:, academic_year:).update!(subteam:)
+      update!(subteam:)
+    end
+  end
+
   def import_year_groups!(values, academic_year:, source:)
     Location::YearGroup.import!(
       %i[location_id academic_year value source],
