@@ -178,7 +178,7 @@
         },
         "occurrenceDateTime": "2025-08-22T14:16:03+01:00",
         "recorded": "2025-08-22T00:00:00.000000+01:00",
-        "primarySource": false,
+        "primarySource": true,
         "location": {
           "identifier": {
             "system": "https://fhir.hl7.org.uk/Id/urn-school-number",
