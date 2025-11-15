@@ -277,15 +277,26 @@ jobs:
           aws-region: eu-west-2
       - name: Run data masking rake task
         run: |
-            task_id=$(aws ecs list-tasks --cluster data-masking --service-name mavis-${{ env.environment }}-data-masking --desired-status RUNNING --query 'taskArns[0]' --output text)
-            
-            echo "Running anonymization rake task on ECS task: $task_id"
-            aws ecs execute-command \
-              --region eu-west-2 \
+            subnet_id="subnet-0d60bd87fd236aa7c"
+            security_group_id="sg-0d15abf1d8dc41b0c"
+            task_definition_arn="arn:aws:ecs:eu-west-2:393416225559:task-definition/mavis-data-masking-task-definition-training:2"
+
+            task_arn=$(aws ecs run-task \
               --cluster data-masking \
-              --task "$task_id" \
-              --command 'bundle exec rake data_masking:anonymize_all' \
-              --interactive
+              --task-definition "$task_definition_arn" \
+              --launch-type FARGATE \
+              --network-configuration "awsvpcConfiguration={subnets=[$subnet_id],securityGroups=[$security_group_id]}" \
+              --overrides '{
+                "containerOverrides": [{
+                  "name": "application",
+                  "command": ["bundle", "exec", "rake", "data_masking:anonymize_all"]
+                }]
+              }' \
+              --query 'tasks[0].taskArn' \
+              --output text)
+            
+            echo "Task started: $task_arn"
+
   create-masked-snapshot:
     name: Create Masked Snapshot
     runs-on: ubuntu-latest
