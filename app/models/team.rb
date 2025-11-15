@@ -61,6 +61,7 @@ class Team < ApplicationRecord
   has_many :patient_teams
   has_many :sessions
   has_many :subteams
+  has_many :team_locations
 
   has_many :patients, through: :patient_teams
   has_many :community_clinics, through: :subteams

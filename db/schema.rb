@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -824,6 +824,19 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
     t.index ["team_id", "name"], name: "index_subteams_on_team_id_and_name", unique: true
   end
 
+  create_table "team_locations", force: :cascade do |t|
+    t.integer "academic_year", null: false
+    t.datetime "created_at", null: false
+    t.bigint "location_id", null: false
+    t.bigint "subteam_id"
+    t.bigint "team_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_team_locations_on_location_id"
+    t.index ["subteam_id"], name: "index_team_locations_on_subteam_id"
+    t.index ["team_id", "academic_year", "location_id"], name: "idx_on_team_id_academic_year_location_id_1717f14a0c", unique: true
+    t.index ["team_id"], name: "index_team_locations_on_team_id"
+  end
+
   create_table "team_programmes", force: :cascade do |t|
     t.bigint "programme_id", null: false
     t.bigint "team_id", null: false
@@ -1104,6 +1117,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
   add_foreign_key "session_programmes", "sessions", on_delete: :cascade
   add_foreign_key "sessions", "teams"
   add_foreign_key "subteams", "teams"
+  add_foreign_key "team_locations", "locations"
+  add_foreign_key "team_locations", "subteams"
+  add_foreign_key "team_locations", "teams"
   add_foreign_key "team_programmes", "programmes", on_delete: :cascade
   add_foreign_key "team_programmes", "teams", on_delete: :cascade
   add_foreign_key "teams", "organisations"

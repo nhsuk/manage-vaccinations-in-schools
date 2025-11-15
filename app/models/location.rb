@@ -68,6 +68,7 @@ class Location < ApplicationRecord
   has_many :patient_locations
   has_many :pre_screenings
   has_many :sessions
+  has_many :team_locations
 
   has_one :team, through: :subteam
 
