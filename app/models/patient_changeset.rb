@@ -408,13 +408,13 @@ class PatientChangeset < ApplicationRecord
       child_attributes["address_line_2"] ||= nil
       child_attributes["address_town"] ||= nil
     elsif auto_overwrite_address?(existing_patient)
-      @extracted_address =
-        child_attributes.extract!(
+      existing_patient.assign_attributes(
+        child_attributes.slice(
           "address_line_1",
           "address_line_2",
           "address_town"
-        )
-      existing_patient.assign_attributes(@extracted_address.compact)
+        ).compact
+      )
     end
   end
 
@@ -444,7 +444,6 @@ class PatientChangeset < ApplicationRecord
         existing_patient.slice(*auto_accepted_changes)
       )
       existing_patient.restore_attributes(auto_accepted_changes)
-      child_attributes.merge!(@extracted_address) if @extracted_address
     end
   end
 

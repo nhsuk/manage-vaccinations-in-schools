@@ -48,6 +48,9 @@ describe "Child record imports duplicates" do
 
     when_i_go_to_the_import_page
     then_i_should_see_no_import_issues_with_the_count
+
+    when_i_go_to_the_fourth_uploaded_record
+    then_i_should_see_the_address_is_updated
   end
 
   context "when PDS lookup during import and import_review_screen is enabled" do
@@ -93,6 +96,9 @@ describe "Child record imports duplicates" do
 
       when_i_go_to_the_import_page
       then_i_should_see_no_import_issues_with_the_count
+
+      when_i_go_to_the_fourth_uploaded_record
+      then_i_should_see_the_address_is_updated
     end
   end
 
@@ -200,7 +206,7 @@ describe "Child record imports duplicates" do
         :patient,
         given_name: "Jennifer",
         family_name: "Clarke",
-        nhs_number: "9990000018", # First row of valid.csv
+        nhs_number: "9990000018", # First row of valid_with_duplicates.csv
         date_of_birth: Date.new(2010, 1, 1),
         gender_code: :female,
         address_line_1: "10 Downing Street",
@@ -216,7 +222,7 @@ describe "Child record imports duplicates" do
         :patient,
         given_name: "James", # The upload will change this to Jimmy
         family_name: "Smith",
-        nhs_number: "9990000026", # Second row of valid.csv
+        nhs_number: "9990000026", # Second row of valid_with_duplicates.csv
         date_of_birth: Date.new(2010, 1, 2),
         gender_code: :male,
         address_line_1: "10 Downing Street",
@@ -230,7 +236,7 @@ describe "Child record imports duplicates" do
     @third_patient =
       create(
         :patient,
-        given_name: "Mark", # 3/4 match to third row of valid.csv on first name, last name and postcode
+        given_name: "Mark", # 3/4 match to third row of valid_with_duplicates.csv on first name, last name and postcode
         family_name: "Doe",
         nhs_number: nil,
         date_of_birth: Date.new(2013, 3, 3), # different date of birth
@@ -240,6 +246,23 @@ describe "Child record imports duplicates" do
         address_town: "London",
         address_postcode: "SW1A 1AA",
         school: @school,
+        session: @session
+      )
+
+    @fourth_patient =
+      create(
+        :patient,
+        given_name: "Catherine",
+        family_name: "Ebury",
+        nhs_number: "9435807194", # Fourth row of valid_with_duplicates.csv
+        date_of_birth: Date.new(2010, 1, 1),
+        gender_code: :female,
+        address_line_1: "11 Downing Street", # Different address line, should be silently updated
+        address_line_2: "",
+        address_town: "London",
+        address_postcode: "SW11 1AA", # Same postcode as valid_with_duplicates.csv
+        school: nil,
+        year_group: 10,
         session: @session
       )
   end
@@ -256,7 +279,10 @@ describe "Child record imports duplicates" do
   end
 
   def and_i_upload_a_file_with_duplicate_records
-    attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
+    attach_file(
+      "cohort_import[csv]",
+      "spec/fixtures/cohort_import/valid_with_duplicates.csv"
+    )
     click_on "Continue"
     wait_for_import_to_complete(CohortImport)
   end
@@ -369,7 +395,7 @@ describe "Child record imports duplicates" do
   end
 
   def and_a_new_patient_record_should_be_created
-    expect(Patient.count).to eq(4)
+    expect(Patient.count).to eq(5)
 
     patient = Patient.last
     expect(patient.given_name).to eq("Mark")
@@ -414,6 +440,15 @@ describe "Child record imports duplicates" do
     expect(page).to have_selector(".app-count", text: "(0)")
   end
 
+  def when_i_go_to_the_fourth_uploaded_record
+    visit patient_path(@fourth_patient)
+  end
+
+  def then_i_should_see_the_address_is_updated
+    expect(page).to have_content("10 Downing Street")
+    expect(page).not_to have_content("11 Downing Street")
+  end
+
   def and_the_required_feature_flags_are_enabled
     Flipper.enable(:imms_api_integration)
     Flipper.enable(:imms_api_search_job)
@@ -425,7 +460,7 @@ describe "Child record imports duplicates" do
         :patient,
         given_name: "Jennifer",
         family_name: "Clarke",
-        nhs_number: nil, # 9990000018 in valid.csv, will raise a duplicate to review
+        nhs_number: nil, # 9990000018 in valid_with_duplicates.csv, will raise a duplicate to review
         date_of_birth: Date.new(2010, 1, 1),
         gender_code: :female,
         address_line_1: "10 Downing Street",
@@ -441,7 +476,7 @@ describe "Child record imports duplicates" do
         :patient,
         given_name: "Jimmy",
         family_name: "Smith",
-        nhs_number: nil, # 999 000 0026 in valid.csv, will raise a duplicate to review
+        nhs_number: nil, # 999 000 0026 in valid_with_duplicates.csv, will raise a duplicate to review
         date_of_birth: Date.new(2010, 1, 2),
         gender_code: :male,
         address_line_1: "10 Downing Street",
@@ -457,7 +492,7 @@ describe "Child record imports duplicates" do
         :patient,
         given_name: "Mark",
         family_name: "Doe",
-        nhs_number: "9999075320", # nil in valid.csv, will be implicitly accepted
+        nhs_number: "9999075320", # nil in valid_with_duplicates.csv, will be implicitly accepted
         date_of_birth: Date.new(2010, 1, 3),
         gender_code: :male,
         address_line_1: "10 Downing Street",
