@@ -81,8 +81,7 @@ describe ImmunisationImportRow do
       "VACCINATED" => "Y",
       "PERFORMING_PROFESSIONAL_FORENAME" => vaccinator.given_name,
       "PERFORMING_PROFESSIONAL_SURNAME" => vaccinator.family_name,
-      # This is not on the NIVS spec, but needs to be temporarily compatible with the Mavis spec for the tests to run:
-      "VACCINE_GIVEN" => "AstraZeneca Fluenz"
+      "VACCINE_GIVEN" => "AstraZeneca Fluenz LAIV"
     )
   end
   let(:valid_bulk_hpv_data) do
@@ -909,7 +908,7 @@ describe ImmunisationImportRow do
                                                                "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required",
                                                                "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
                                                                "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required",
-                                                           )
+                                                             )
           end
         end
       end
@@ -917,6 +916,9 @@ describe ImmunisationImportRow do
       shared_examples "with an (almost) empty row where `VACCINATED` is `Y`" do
         it "requires the mandatory fields" do
           expect(immunisation_import_row).to be_invalid
+          expect(immunisation_import_row.errors[:base]).to include(
+                                                             "<code>VACCINE_GIVEN</code> is required",
+                                                           )
         end
       end
 
@@ -2017,6 +2019,18 @@ describe ImmunisationImportRow do
       let(:programmes) { [CachedProgramme.hpv, CachedProgramme.flu] }
 
       context "of type flu" do
+        shared_examples "accepts a VACCINE_GIVEN code" do |vaccine_given, snomed_product_code|
+          context "with code: #{vaccine_given}" do
+            let(:data) do
+              valid_bulk_flu_data.merge("VACCINE_GIVEN" => vaccine_given)
+            end
+
+            it { should be_valid }
+
+            its(:vaccine) { should have_attributes(snomed_product_code:) }
+          end
+        end
+
         let(:import_type) { "bulk_flu" }
 
         let(:data) { valid_bulk_flu_data }
@@ -2026,9 +2040,25 @@ describe ImmunisationImportRow do
         its(:programme) { should eq(CachedProgramme.flu) }
 
         its(:source) { should eq("bulk_upload") }
+
+        include_examples "accepts a VACCINE_GIVEN code", "AstraZeneca Fluenz LAIV", "43208811000001106"
+        include_examples "accepts a VACCINE_GIVEN code", "Viatris Quadrivalent Influvac sub - unit Tetra - QIVe", "45354911000001100"
+        include_examples "accepts a VACCINE_GIVEN code", "Seqirus Cell-Based Trivalent IIVc", "43207411000001105"
       end
 
       context "of type hpv" do
+        shared_examples "accepts a VACCINE_GIVEN code" do |vaccine_given, snomed_product_code|
+          context "with code: #{vaccine_given}" do
+            let(:data) do
+              valid_bulk_hpv_data.merge("VACCINE_GIVEN" => vaccine_given)
+            end
+
+            it { should be_valid }
+
+            its(:vaccine) { should have_attributes(snomed_product_code:) }
+          end
+        end
+
         let(:import_type) { "bulk_hpv" }
 
         let(:data) { valid_bulk_hpv_data }
@@ -2038,6 +2068,10 @@ describe ImmunisationImportRow do
         its(:programme) { should eq(CachedProgramme.hpv) }
 
         its(:source) { should eq("bulk_upload") }
+
+        include_examples "accepts a VACCINE_GIVEN code", "Gardasil", "10880211000001104"
+        include_examples "accepts a VACCINE_GIVEN code", "Gardasil9", "33493111000001108"
+        include_examples "accepts a VACCINE_GIVEN code", "Cervarix", "12238911000001100"
       end
     end
   end
