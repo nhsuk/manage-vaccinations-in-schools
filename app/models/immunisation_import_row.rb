@@ -318,7 +318,12 @@ class ImmunisationImportRow
 
   def programme
     @programme ||=
-      begin
+      case @type
+      when :bulk_flu
+        Programme.flu
+      when :bulk_hpv
+        Programme.hpv
+      else
         name =
           parsed_vaccination_description_string&.dig(:programme_name) ||
             programme_name&.to_s

@@ -2014,6 +2014,8 @@ describe ImmunisationImportRow do
 
         it { should be_administered }
 
+        its(:programme) { should eq(Programme.flu) }
+
         include_examples "with pseudo-postcodes"
       end
 
@@ -2023,6 +2025,8 @@ describe ImmunisationImportRow do
         let(:data) { valid_bulk_hpv_data }
 
         it { should be_administered }
+
+        its(:programme) { should eq(Programme.hpv) }
 
         include_examples "with pseudo-postcodes"
       end
