@@ -25,10 +25,10 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
     "5462c441-81c0-4ac0-821f-713b4178f8ba",
   consent_unknown_contact_details_warning:
     "6d746839-a20e-4d50-8a1d-6f3900ff69b2",
-  session_clinic_initial_invitation: "88d21cfc-39f6-44a2-98c3-9588e7214ae4",
+  session_clinic_initial_invitation: "ceea5ff5-2250-4eb2-ab35-4e9e840b2a6f",
   session_clinic_subsequent_invitation: "a86a3b3f-a848-41d8-9a6f-d38174981388",
-  session_clinic_initial_invitation_rt5: "e1b6a2f6-728a-4de3-88ec-40194b354eac",
-  session_clinic_initial_invitation_ryg: "fc99ac81-9eeb-4df8-9aa0-04f0eb48e37f",
+  session_clinic_initial_invitation_rt5: "17e63d67-53fc-4e9a-a533-74974412aac0",
+  session_clinic_initial_invitation_ryg: "5fe4fb4d-6f0a-4149-a80a-232bdfdf4f73",
   session_clinic_subsequent_invitation_ryg:
     "eee59c1b-3af4-4ccd-8653-940887066390",
   session_school_reminder: "8b8a9566-bb03-4b3c-8abc-5bd5a4b8797d",

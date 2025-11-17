@@ -72,6 +72,11 @@ describe GovukNotifyPersonalisation do
         full_and_preferred_patient_name: "John Smith",
         has_multiple_dates: "no",
         location_name: "Hogwarts",
+        is_mmr_programme: false,
+        invitation_to_clinic_generic_message:
+          "They can have this vaccination at a community clinic. If you’d like " \
+            "to book a clinic appointment, please contact us using the details " \
+            "below.",
         next_or_today_session_date: "Thursday 1 January",
         next_or_today_session_dates: "Thursday 1 January",
         next_or_today_session_dates_or: "Thursday 1 January",
@@ -314,6 +319,17 @@ describe GovukNotifyPersonalisation do
           )
         end
       end
+
+      context "generic message inviting patient to clinic generic" do
+        it do
+          expect(to_h).to include(
+            invitation_to_clinic_generic_message:
+              "They can have this vaccination at a community clinic. " \
+                "If you’d like to book a clinic appointment, please contact us using " \
+                "the details below."
+          )
+        end
+      end
     end
 
     context "for the MMR programme" do
@@ -328,6 +344,54 @@ describe GovukNotifyPersonalisation do
           expect(to_h).to include(
             consented_vaccine_methods_message:
               "You’ve agreed for John to have the vaccine without gelatine."
+          )
+        end
+      end
+
+      context "generic message inviting patient to clinic generic" do
+        it do
+          expect(to_h).to include(
+            is_mmr_programme: true,
+            invitation_to_clinic_generic_message:
+              "If you would like your local GP surgery to give John their 2nd dose, " \
+                "contact the surgery in the usual way.\n\n" \
+                "Alternatively, they can have this vaccination at a community clinic. " \
+                "If you’d like to book a clinic appointment, please contact us using " \
+                "the details below.\n\n" \
+                "It’s important to wait at least 28 days after the 1st dose of an MMR " \
+                "vaccination before getting the 2nd dose. John should not get the 2nd " \
+                "dose until 15 December 2025. Please keep this in mind when booking " \
+                "the appointment."
+          )
+        end
+      end
+
+      context "Leicestershire message inviting patient to clinic" do
+        it do
+          expect(to_h).to include(
+            is_mmr_programme: true,
+            mmr_invitation_to_rt5_clinic_message:
+              "It’s important to wait at least 28 days after the 1st dose of an MMR " \
+                "vaccination before getting the 2nd dose. John should not get the 2nd " \
+                "dose until 15 December 2025. Please keep this in mind when booking " \
+                "the appointment.\n\n" \
+                "It’s also possible for John to be vaccinated at your local GP surgery. " \
+                "To book an appointment, contact the surgery in the usual way."
+          )
+        end
+      end
+
+      context "Coventry & Warwickshire message inviting patient to clinic" do
+        it do
+          expect(to_h).to include(
+            mmr_invitation_to_ryg_clinic_message:
+              "It’s important to wait at least 28 days after the 1st dose of an MMR " \
+                "vaccination before getting the 2nd dose. John should not get the 2nd " \
+                "dose until 15 December 2025. Please keep this in mind when booking " \
+                "the appointment.\n\n" \
+                "## You have 2 options for booking the vaccination\n\n" \
+                "You can ask your local GP surgery to give John their 2nd dose. To " \
+                "book an appointment, contact the surgery in the usual way."
           )
         end
       end
