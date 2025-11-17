@@ -103,10 +103,10 @@ describe "Immunisation imports" do
     expect(page).to have_content(
       "How to format your Mavis CSV file for vaccination records"
     )
-    expect(page).to have_content("Row 2")
+    expect(page).to have_content("Row 3")
     expect(page).to have_content("VACCINATED:")
 
-    expect(page).to have_content("Row 2")
+    expect(page).to have_content("Row 3")
     expect(page).to have_content("BATCH_EXPIRY_DATE:")
     expect(page).to have_content("VACCINE_GIVEN:")
   end

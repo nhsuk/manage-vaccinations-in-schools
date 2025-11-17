@@ -121,8 +121,7 @@ module CSVImportable
   end
 
   def has_instruction_row?
-    load_data! if data.nil?
-    data.first[0]&.to_s&.match?(/\A(Required|Optional)[,.:]/)
+    data&.first&.[](0)&.to_s&.match?(/\A(Required|Optional)([,.:]|$)/)
   end
 
   COUNT_COLUMNS = %i[
