@@ -150,8 +150,30 @@ describe VaccinationRecord do
       it "has an error" do
         expect(vaccination_record).to be_invalid
         expect(vaccination_record.errors[:performed_at]).to include(
-          "Enter a time in the past"
-        )
+                                                              "Enter a time in the past"
+                                                            )
+      end
+    end
+
+    context "when outcome is `consent_not_given`" do
+      let(:vaccination_record) do
+        build(:vaccination_record, source:, outcome: "consent_not_given")
+      end
+
+      context "when sourced from bulk upload" do
+        let(:source) { "bulk_upload" }
+
+        it "is invalid" do
+          expect(vaccination_record).to be_valid
+        end
+      end
+
+      context "when sourced from service" do
+        let(:source) { "service" }
+
+        it "is invalid" do
+          expect(vaccination_record).to be_invalid
+        end
       end
     end
   end
@@ -214,10 +236,10 @@ describe VaccinationRecord do
 
       it do
         expect(performed_by).to have_attributes(
-          given_name: "John",
-          family_name: "Smith",
-          full_name: "SMITH, John"
-        )
+                                  given_name: "John",
+                                  family_name: "Smith",
+                                  full_name: "SMITH, John"
+                                )
       end
     end
 
@@ -438,8 +460,8 @@ describe VaccinationRecord do
       academic_year = vaccination_record.academic_year
 
       expect(described_class.for_academic_year(academic_year)).to include(
-        vaccination_record
-      )
+                                                                    vaccination_record
+                                                                  )
 
       expect(
         described_class.for_academic_year(academic_year + 1)

@@ -168,7 +168,8 @@ class VaccinationRecord < ApplicationRecord
          unwell: 2,
          contraindicated: 3,
          already_had: 4,
-         absent: 6
+         absent: 6,
+         consent_not_given: 7
        },
        validate: true
 
@@ -234,6 +235,12 @@ class VaccinationRecord < ApplicationRecord
             },
             absence: {
               unless: :nhs_immunisations_api_id
+            }
+
+  validates :outcome,
+            exclusion: {
+              in: ["consent_not_given"],
+              unless: :sourced_from_bulk_upload?
             }
 
   delegate :fhir_record, to: :fhir_mapper

@@ -2052,6 +2052,22 @@ describe ImmunisationImportRow do
         include_examples "accepts a VACCINE_GIVEN code", "AstraZeneca Fluenz LAIV", "43208811000001106"
         include_examples "accepts a VACCINE_GIVEN code", "Viatris Quadrivalent Influvac sub - unit Tetra - QIVe", "45354911000001100"
         include_examples "accepts a VACCINE_GIVEN code", "Seqirus Cell-Based Trivalent IIVc", "43207411000001105"
+
+        context "when not given" do
+          let(:data) do
+            valid_bulk_common_data.deep_dup.merge(
+              "ANATOMICAL_SITE" => nil,
+              "BATCH_EXPIRY_DATE" => nil,
+              "BATCH_NUMBER" => nil,
+              "VACCINATED" => "N",
+              "REASON_NOT_VACCINATED" => "consent not given"
+            )
+          end
+
+          it {should be_valid}
+
+          its(:outcome) { should eq "consent_not_given" }
+        end
       end
 
       context "of type hpv" do
