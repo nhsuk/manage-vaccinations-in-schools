@@ -868,20 +868,43 @@ class ImmunisationImportRow
   end
 
   def validate_performed_by
-    if offline_recording?
-      if performed_by_user.nil?
-        if performed_by_email.nil?
-          errors.add(
-            :base,
-            "<code>PERFORMING_PROFESSIONAL_EMAIL</code> is required"
-          )
-        else
-          errors.add(performed_by_email.header, "Enter a valid email address.")
+    if poc?
+      if offline_recording?
+        if performed_by_user.nil?
+          if performed_by_email.nil?
+            errors.add(
+              :base,
+              "<code>PERFORMING_PROFESSIONAL_EMAIL</code> is required"
+            )
+          else
+            errors.add(
+              performed_by_email.header,
+              "Enter a valid email address."
+            )
+          end
+        end
+      elsif performed_by_email.present?
+        if performed_by_user.nil?
+          errors.add(performed_by_email.header, "Enter a valid email address")
         end
       end
-    elsif performed_by_email.present?
-      if performed_by_user.nil?
-        errors.add(performed_by_email.header, "Enter a valid email address")
+    elsif bulk_flu? && administered
+      if performed_by_given_name.nil?
+        errors.add(
+          :base,
+          "<code>PERFORMING_PROFESSIONAL_FORENAME</code> is required"
+        )
+      elsif performed_by_given_name.blank?
+        errors.add(performed_by_given_name.header, "Enter a forename")
+      end
+
+      if performed_by_family_name.nil?
+        errors.add(
+          :base,
+          "<code>PERFORMING_PROFESSIONAL_SURNAME</code> is required"
+        )
+      elsif performed_by_family_name.blank?
+        errors.add(performed_by_family_name.header, "Enter a surname")
       end
     end
   end
