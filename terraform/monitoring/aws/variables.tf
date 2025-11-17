@@ -24,7 +24,8 @@ variable "sso_group_ids" {
 locals {
   group_ids = {
     ADMIN = {
-      AWS-Mavis-Admins = "96f2a2a4-3031-70a2-01be-db6c0030cb03"
+      AWS-Mavis-Admins       = "96f2a2a4-3031-70a2-01be-db6c0030cb03"
+      AWS-Mavis-NonPIIAdmins = "b6920264-2031-70c0-9aec-c4626172bee0"
     }
     EDITOR = {
       AWS-Mavis-Developers            = "f68222d4-c0b1-700b-b09f-81572d4dee95"

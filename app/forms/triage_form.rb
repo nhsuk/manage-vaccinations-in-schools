@@ -108,9 +108,9 @@ class TriageForm
 
   delegate :academic_year, :team, to: :session
 
-  def delay_vaccination?
-    status_option == "delay_vaccination"
-  end
+  def safe_to_vaccinate? = status_option.starts_with?("safe_to_vaccinate")
+
+  def delay_vaccination? = status_option == "delay_vaccination"
 
   def consented_vaccine_methods
     @consented_vaccine_methods ||=
@@ -139,9 +139,10 @@ class TriageForm
       programme:,
       status:,
       team:,
-      vaccine_method:,
-      without_gelatine:,
+      vaccine_method: safe_to_vaccinate? ? vaccine_method : nil,
+      without_gelatine: safe_to_vaccinate? ? without_gelatine : nil,
       delay_vaccination_until:
+        delay_vaccination? ? delay_vaccination_until : nil
     }
   end
 

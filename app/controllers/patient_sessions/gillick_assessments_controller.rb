@@ -31,8 +31,10 @@ class PatientSessions::GillickAssessmentsController < PatientSessions::BaseContr
         .gillick_assessments
         .order(created_at: :desc)
         .find_or_initialize_by(
-          session_date: @session_date,
-          programme: @programme
+          date: Date.current,
+          location: @session.location,
+          programme: @programme,
+          session_date: @session_date
         )
   end
 

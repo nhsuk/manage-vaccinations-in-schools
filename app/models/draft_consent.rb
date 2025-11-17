@@ -28,6 +28,7 @@ class DraftConsent
   attribute :parent_responsibility, :boolean
   attribute :patient_id, :integer
   attribute :programme_id, :integer
+  attribute :programme_type, :string
   attribute :reason_for_refusal, :string
   attribute :recorded_by_user_id, :integer
   attribute :response, :string
@@ -291,6 +292,7 @@ class DraftConsent
 
   def programme=(value)
     self.programme_id = value.id
+    self.programme_type = value.type
   end
 
   def session
@@ -427,6 +429,7 @@ class DraftConsent
       notify_parents_on_vaccination
       patient_id
       programme_id
+      programme_type
       reason_for_refusal
       recorded_by_user_id
       response

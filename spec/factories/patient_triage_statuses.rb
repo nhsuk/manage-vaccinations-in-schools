@@ -6,6 +6,7 @@
 #
 #  id               :bigint           not null, primary key
 #  academic_year    :integer          not null
+#  programme_type   :enum
 #  status           :integer          default("not_required"), not null
 #  vaccine_method   :integer
 #  without_gelatine :boolean

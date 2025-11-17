@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class Sessions::InviteToClinicController < ApplicationController
-  before_action :set_session
+class Sessions::InviteToClinicController < Sessions::BaseController
+  before_action :check_can_send_clinic_invitations
   before_action :set_generic_clinic_session
   before_action :set_patients_to_invite
   before_action :set_invitations_to_send
@@ -31,12 +31,7 @@ class Sessions::InviteToClinicController < ApplicationController
 
   private
 
-  def set_session
-    @session =
-      authorize Session.includes(:programmes).find_by!(
-                  slug: params[:session_slug]
-                )
-
+  def check_can_send_clinic_invitations
     render status: :not_found unless @session.can_send_clinic_invitations?
   end
 

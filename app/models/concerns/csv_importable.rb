@@ -24,7 +24,14 @@ module CSVImportable
            pending_import: 0,
            rows_are_invalid: 1,
            processed: 2,
-           low_pds_match_rate: 3
+           low_pds_match_rate: 3,
+           changesets_are_invalid: 4,
+           in_review: 5,
+           calculating_re_review: 6,
+           in_re_review: 7,
+           committing: 8,
+           partially_processed: 9,
+           cancelled: 10
          },
          default: :pending_import,
          validate: true
@@ -128,27 +135,41 @@ module CSVImportable
     return if invalid?
 
     if is_a?(PatientImport)
-      changesets =
-        rows.each_with_index.map do |row, row_number|
-          PatientChangeset.from_import_row(row:, import: self, row_number:)
-        end
+      process_patient_import!
+    else
+      process_immunisation_import!
+    end
+  end
 
-      if Flipper.enabled?(:import_search_pds)
-        changesets.each do |patient_changeset|
-          PDSCascadingSearchJob.set(queue: :imports).perform_later(
-            patient_changeset,
-            queue: :imports
-          )
-        end
-      else
-        changesets.each(&:processed!)
-
-        CommitImportJob.perform_async(to_global_id.to_s)
+  def process_patient_import!
+    changesets =
+      rows.each_with_index.map do |row, row_number|
+        PatientChangeset.from_import_row(row:, import: self, row_number:)
       end
 
-      return
+    if Flipper.enabled?(:import_search_pds)
+      process_no_postcode_changesets(self.changesets.without_postcode)
+      if self.changesets.with_postcode.any?
+        enqueue_pds_cascading_searches(self.changesets.with_postcode)
+        return
+      end
     end
 
+    changesets.each(&:assign_patient_id)
+
+    validate_changeset_uniqueness!
+    return if changesets_are_invalid?
+
+    if Flipper.enabled?(:import_review_screen)
+      enqueue_review_jobs(self.changesets)
+    else
+      changesets.each(&:committing!)
+
+      CommitImportJob.perform_async(to_global_id.to_s)
+    end
+  end
+
+  def process_immunisation_import!
     counts = COUNT_COLUMNS.index_with(0)
 
     ActiveRecord::Base.transaction do
@@ -167,6 +188,47 @@ module CSVImportable
 
     post_commit!
     UpdatePatientsFromPDS.call(patients, queue: :imports)
+  end
+
+  def process_no_postcode_changesets(changesets)
+    changesets.find_each do |cs|
+      cs.search_results << {
+        step: :no_fuzzy_with_history,
+        result: :no_postcode,
+        nhs_number: nil,
+        created_at: Time.current
+      }
+      if Flipper.enabled?(:import_review_screen)
+        cs.calculating_review!
+        ReviewPatientChangesetJob.perform_later(cs.id)
+      else
+        cs.assign_patient_id
+        cs.committing!
+      end
+    end
+  end
+
+  def enqueue_review_jobs(changesets)
+    review_changesets =
+      if Flipper.enabled?(:import_search_pds)
+        changesets.with_postcode
+      else
+        changesets
+      end
+
+    review_changesets.each do |cs|
+      cs.calculating_review!
+      ReviewPatientChangesetJob.perform_later(cs.id)
+    end
+  end
+
+  def enqueue_pds_cascading_searches(changesets)
+    changesets.find_each do |cs|
+      PDSCascadingSearchJob.set(queue: :imports).perform_later(
+        cs,
+        queue: :imports
+      )
+    end
   end
 
   def remove!
@@ -223,8 +285,6 @@ module CSVImportable
   def ensure_processed_with_count_statistics
     if processed? && COUNT_COLUMNS.any? { |column| send(column).nil? }
       raise "Count statistics must be set for a processed import."
-    elsif !processed? && COUNT_COLUMNS.any? { |column| !send(column).nil? }
-      raise "Count statistics must not be set for a non-processed import."
     end
   end
 

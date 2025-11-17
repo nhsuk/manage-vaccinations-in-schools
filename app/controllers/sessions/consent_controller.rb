@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-class Sessions::ConsentController < ApplicationController
+class Sessions::ConsentController < Sessions::BaseController
   include PatientSearchFormConcern
 
-  before_action :set_session
   before_action :set_statuses
   before_action :set_patient_search_form
 

@@ -42,7 +42,7 @@
     <% attendance_record = @patient.attendance_records.find_or_initialize_by(location: @session.location, date:) %>
 
     <li class="app-action-list__item">
-      <%= render AppStatusTagComponent.new(@patient.registration_status(session: @session)&.status || "unknown", context: :register) %>
+      <%= render AppStatusTagComponent.new(@patient.registration_status(session: @session)&.status || "unknown", context: :registration) %>
     </li>
 
     <% attendance_record.session = @session %>

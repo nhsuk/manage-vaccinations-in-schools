@@ -133,7 +133,7 @@ describe "mavis stats vaccinations" do
       :vaccination_record,
       patient: target_patient2,
       programme: @programme_menacwy,
-      outcome: "absent_from_session",
+      outcome: "absent",
       session: target_session2
     )
     create(
@@ -147,7 +147,7 @@ describe "mavis stats vaccinations" do
       :vaccination_record,
       patient: other_patient,
       programme: @programme_flu,
-      outcome: "contraindications",
+      outcome: "contraindicated",
       session: other_session
     )
   end
@@ -191,8 +191,8 @@ describe "mavis stats vaccinations" do
     expect(@output).to include("menacwy:")
     expect(@output).to match(/administered.*\|\s*3/)
     expect(@output).to match(/refused.*\|\s*1/)
-    expect(@output).to match(/absent_from_session.*\|\s*1/)
-    expect(@output).to match(/contraindications.*\|\s*1/)
+    expect(@output).to match(/absent.*\|\s*1/)
+    expect(@output).to match(/contraindicated.*\|\s*1/)
     expect(@output).to match(/Grand Total: 7/)
   end
 
@@ -205,8 +205,8 @@ describe "mavis stats vaccinations" do
     expect(@output).to include("menacwy:")
     expect(@output).to match(/administered.*\|\s*2/)
     expect(@output).to match(/refused.*\|\s*1/)
-    expect(@output).to match(/absent_from_session.*\|\s*1/)
-    expect(@output).not_to match(/contraindications/)
+    expect(@output).to match(/absent.*\|\s*1/)
+    expect(@output).not_to match(/contraindicated/)
     expect(@output).to match(/Grand Total: 5/)
   end
 
@@ -217,7 +217,7 @@ describe "mavis stats vaccinations" do
     expect(@output).not_to include("menacwy:")
     expect(@output).to match(/administered.*\|\s*1/)
     expect(@output).to match(/refused.*\|\s*1/)
-    expect(@output).not_to match(/absent_from_session/)
+    expect(@output).not_to match(/absent/)
     expect(@output).to match(/Grand Total: 3/)
   end
 
@@ -227,8 +227,8 @@ describe "mavis stats vaccinations" do
     expect(@output).not_to include("menacwy:")
     expect(@output).to match(/administered.*\|\s*3/)
     expect(@output).to match(/refused.*\|\s*1/)
-    expect(@output).to match(/contraindications.*\|\s*1/)
-    expect(@output).not_to match(/absent_from_session/)
+    expect(@output).to match(/contraindicated.*\|\s*1/)
+    expect(@output).not_to match(/absent/)
     expect(@output).to match(/Grand Total: 5/)
   end
 

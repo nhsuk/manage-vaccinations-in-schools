@@ -26,6 +26,7 @@
 #  performed_by_family_name                :string
 #  performed_by_given_name                 :string
 #  performed_ods_code                      :string
+#  programme_type                          :enum
 #  protocol                                :integer
 #  source                                  :integer          not null
 #  uuid                                    :uuid             not null
@@ -73,6 +74,7 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class VaccinationRecord < ApplicationRecord
+  include BelongsToProgramme
   include ContributesToPatientTeams
   include Discard::Model
   include HasDoseVolume
@@ -107,7 +109,6 @@ class VaccinationRecord < ApplicationRecord
 
   belongs_to :batch, optional: true
   belongs_to :vaccine, optional: true
-  belongs_to :programme
 
   belongs_to :performed_by_user, class_name: "User", optional: true
   belongs_to :supplied_by,
@@ -162,10 +163,10 @@ class VaccinationRecord < ApplicationRecord
        {
          administered: 0,
          refused: 1,
-         not_well: 2,
-         contraindications: 3,
+         unwell: 2,
+         contraindicated: 3,
          already_had: 4,
-         absent_from_session: 6
+         absent: 6
        },
        validate: true
 

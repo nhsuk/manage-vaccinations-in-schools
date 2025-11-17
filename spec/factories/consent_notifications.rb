@@ -5,6 +5,7 @@
 # Table name: consent_notifications
 #
 #  id              :bigint           not null, primary key
+#  programme_types :enum             is an Array
 #  sent_at         :datetime         not null
 #  type            :integer          not null
 #  patient_id      :bigint           not null
@@ -14,6 +15,7 @@
 # Indexes
 #
 #  index_consent_notifications_on_patient_id       (patient_id)
+#  index_consent_notifications_on_programme_types  (programme_types) USING gin
 #  index_consent_notifications_on_sent_by_user_id  (sent_by_user_id)
 #  index_consent_notifications_on_session_id       (session_id)
 #

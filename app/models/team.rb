@@ -15,6 +15,7 @@
 #  phone_instructions            :string
 #  privacy_notice_url            :string           not null
 #  privacy_policy_url            :string           not null
+#  programme_types               :enum             is an Array
 #  workgroup                     :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
@@ -25,6 +26,7 @@
 #
 #  index_teams_on_name             (name) UNIQUE
 #  index_teams_on_organisation_id  (organisation_id)
+#  index_teams_on_programme_types  (programme_types) USING gin
 #  index_teams_on_workgroup        (workgroup) UNIQUE
 #
 # Foreign Keys
@@ -35,6 +37,7 @@ class Team < ApplicationRecord
   include ContributesToPatientTeams
   include DaysBeforeToWeeksBefore
   include HasLocationProgrammeYearGroups
+  include HasManyProgrammes
 
   class ActiveRecord_Relation < ActiveRecord::Relation
     include ContributesToPatientTeams::Relation
@@ -52,10 +55,10 @@ class Team < ApplicationRecord
   has_many :consents
   has_many :locations
   has_many :patient_specific_directions
+  has_many :patient_teams
   has_many :sessions
   has_many :subteams
   has_many :team_programmes, -> { joins(:programme).order(:"programmes.type") }
-  has_many :patient_teams
 
   has_many :patients, through: :patient_teams
   has_many :community_clinics, through: :subteams
@@ -82,10 +85,6 @@ class Team < ApplicationRecord
   validates :privacy_notice_url, presence: true
   validates :privacy_policy_url, presence: true
   validates :workgroup, presence: true, uniqueness: true
-
-  def patients
-    Patient.joins_sessions.where(sessions: { team_id: id })
-  end
 
   def year_groups(academic_year: nil)
     academic_year ||= AcademicYear.pending

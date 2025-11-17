@@ -28,17 +28,29 @@ describe TriageForm do
         programme:,
         current_user: create(:user),
         notes: "test",
-        status_option: "safe_to_vaccinate"
+        status_option: "safe_to_vaccinate",
+        delay_vaccination_until:
       )
     end
 
     let(:programme) { CachedProgramme.hpv }
     let(:patient) { create(:patient, :consent_given_triage_needed, session:) }
+    let(:delay_vaccination_until) { nil }
 
     it "sets the vaccine method to injection" do
       triage = form.save!
 
       expect(triage.vaccine_method).to eq("injection")
+    end
+
+    context "and delay vaccination until is set" do
+      let(:delay_vaccination_until) { Date.tomorrow }
+
+      it "ignores it" do
+        triage = form.save!
+
+        expect(triage.delay_vaccination_until).to be_nil
+      end
     end
   end
 

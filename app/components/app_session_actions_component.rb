@@ -96,7 +96,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     status = "unknown"
     count = patients.has_registration_status(status, session:).count
-    href = session_register_path(session, register_status: status)
+    href = session_register_path(session, registration_status: status)
 
     generate_row(:children_to_register, count:, href:)
   end

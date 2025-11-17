@@ -5,6 +5,7 @@
 # Table name: location_programme_year_groups
 #
 #  id                     :bigint           not null, primary key
+#  programme_type         :enum
 #  location_year_group_id :bigint           not null
 #  programme_id           :bigint           not null
 #
@@ -20,10 +21,11 @@
 #  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
 #
 class Location::ProgrammeYearGroup < ApplicationRecord
+  include BelongsToProgramme
+
   audited associated_with: :location_year_group
 
   belongs_to :location_year_group, class_name: "Location::YearGroup"
-  belongs_to :programme
 
   has_one :location, through: :location_year_group
 

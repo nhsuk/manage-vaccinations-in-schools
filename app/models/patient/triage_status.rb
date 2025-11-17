@@ -6,6 +6,7 @@
 #
 #  id               :bigint           not null, primary key
 #  academic_year    :integer          not null
+#  programme_type   :enum
 #  status           :integer          default("not_required"), not null
 #  vaccine_method   :integer
 #  without_gelatine :boolean
@@ -24,8 +25,9 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class Patient::TriageStatus < ApplicationRecord
+  include BelongsToProgramme
+
   belongs_to :patient
-  belongs_to :programme
 
   has_many :consents,
            -> { not_invalidated.response_provided.includes(:parent, :patient) },

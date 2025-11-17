@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-class Sessions::TriageController < ApplicationController
+class Sessions::TriageController < Sessions::BaseController
   include PatientSearchFormConcern
 
-  before_action :set_session
   before_action :set_statuses
   before_action :set_patient_search_form
 
@@ -28,13 +27,6 @@ class Sessions::TriageController < ApplicationController
   end
 
   private
-
-  def set_session
-    @session =
-      policy_scope(Session).includes(programmes: :vaccines).find_by!(
-        slug: params[:session_slug]
-      )
-  end
 
   def set_statuses
     programmes = @session.programmes

@@ -7,6 +7,7 @@
 #  id              :bigint           not null, primary key
 #  delivery_status :integer          default("sending"), not null
 #  programme_ids   :integer          default([]), not null, is an Array
+#  programme_types :enum             is an Array
 #  recipient       :string           not null
 #  type            :integer          not null
 #  created_at      :datetime         not null
@@ -23,6 +24,7 @@
 #  index_notify_log_entries_on_delivery_id      (delivery_id)
 #  index_notify_log_entries_on_parent_id        (parent_id)
 #  index_notify_log_entries_on_patient_id       (patient_id)
+#  index_notify_log_entries_on_programme_types  (programme_types) USING gin
 #  index_notify_log_entries_on_sent_by_user_id  (sent_by_user_id)
 #
 # Foreign Keys

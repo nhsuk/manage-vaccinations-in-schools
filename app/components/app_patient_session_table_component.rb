@@ -61,11 +61,6 @@ class AppPatientSessionTableComponent < ViewComponent::Base
       patient
         .sessions
         .where(team: current_team)
-        .includes(
-          :location,
-          :location_programme_year_groups,
-          :programmes,
-          :session_dates
-        )
+        .includes(:location, :programmes, :session_dates)
   end
 end

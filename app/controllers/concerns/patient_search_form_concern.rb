@@ -30,7 +30,7 @@ module PatientSearchFormConcern
       :missing_nhs_number,
       :patient_specific_direction_status,
       :q,
-      :register_status,
+      :registration_status,
       :still_to_vaccinate,
       :triage_status,
       :vaccination_status,

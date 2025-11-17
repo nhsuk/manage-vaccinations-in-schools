@@ -42,6 +42,13 @@ describe AppImportStatusComponent do
     it { should_not have_content("2 minutes") }
   end
 
+  context "when status is changesets_are_invalid" do
+    let(:status) { "changesets_are_invalid" }
+
+    it { should have_css(".nhsuk-tag--red", text: "Failed") }
+    it { should_not have_content("2 minutes") }
+  end
+
   context "when status is processed" do
     let(:status) { "processed" }
 

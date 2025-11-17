@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-class Sessions::RegisterController < ApplicationController
+class Sessions::RegisterController < Sessions::BaseController
   include PatientSearchFormConcern
 
-  before_action :set_session
   before_action :set_patient_search_form, only: :show
   before_action :set_session_date, only: :create
   before_action :set_patient, only: :create
@@ -51,13 +50,6 @@ class Sessions::RegisterController < ApplicationController
   end
 
   private
-
-  def set_session
-    @session =
-      policy_scope(Session).includes(programmes: :vaccines).find_by!(
-        slug: params[:session_slug]
-      )
-  end
 
   def set_session_date
     @session_date = @session.session_dates.find_by!(value: Date.current)

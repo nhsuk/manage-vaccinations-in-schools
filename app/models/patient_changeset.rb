@@ -9,8 +9,8 @@
 #  import_type           :string           not null
 #  matched_on_nhs_number :boolean
 #  pds_nhs_number        :string
-#  pending_changes       :jsonb            not null
-#  record_type           :integer          default(1), not null
+#  processed_at          :datetime
+#  record_type           :integer          default("new_patient"), not null
 #  row_number            :integer
 #  status                :integer          default("pending"), not null
 #  uploaded_nhs_number   :string
@@ -32,6 +32,10 @@
 #  fk_rails_...  (school_id => locations.id)
 #
 class PatientChangeset < ApplicationRecord
+  include PatientImportConcern
+
+  self.ignored_columns = %w[pending_changes]
+
   attribute :pending_changes,
             :jsonb,
             default: {
@@ -82,7 +86,22 @@ class PatientChangeset < ApplicationRecord
   belongs_to :patient, optional: true
   belongs_to :school, class_name: "Location", optional: true
 
-  enum :status, { pending: 0, processed: 1 }, validate: true
+  enum :status,
+       {
+         pending: 0,
+         processed: 1,
+         import_invalid: 2,
+         calculating_review: 3,
+         ready_for_review: 4,
+         committing: 5,
+         needs_re_review: 6,
+         cancelled: 7
+       },
+       validate: true
+
+  enum :record_type,
+       { auto_match: 0, new_patient: 1, import_issue: 2, not_in_file: 3 },
+       validate: true
 
   scope :nhs_number_discrepancies,
         -> do
@@ -101,6 +120,25 @@ class PatientChangeset < ApplicationRecord
             "jsonb_array_length(data -> 'search_results') = 1 AND 
             (data -> 'search_results' -> 0 ->> 'result') = 'no_postcode'"
           )
+        end
+
+  scope :from_file, -> { where.not(row_number: nil) }
+
+  scope :with_postcode,
+        -> do
+          where("data -> 'upload' -> 'child' -> 'address_postcode' IS NOT NULL")
+        end
+
+  scope :without_postcode,
+        -> do
+          where("data -> 'upload' -> 'child' -> 'address_postcode' IS NULL")
+        end
+
+  scope :with_school_moves,
+        -> do
+          where(
+            "data -> 'review' -> 'school_move' -> 'school_id' IS NOT NULL"
+          ).where.not(status: :processed)
         end
 
   def self.from_import_row(row:, import:, row_number:)
@@ -165,6 +203,10 @@ class PatientChangeset < ApplicationRecord
 
   def invalidate!
     data["upload"]["child"]["invalidated_at"] = Time.current
+  end
+
+  def processed!
+    update!(status: :processed, processed_at: Time.zone.now)
   end
 
   def patient
@@ -247,7 +289,7 @@ class PatientChangeset < ApplicationRecord
         if patient.new_record? || patient.school != school ||
              patient.home_educated != home_educated ||
              patient.not_in_team?(team:, academic_year:) ||
-             patient.archived?(team:)
+             patient.archived?(team:) || patient.school_moves.any?
           school_move = SchoolMove.find_or_initialize_by(patient:)
           school_move.assign_from(school:, home_educated:, team:)
           school_move.assign_attributes(
@@ -366,11 +408,13 @@ class PatientChangeset < ApplicationRecord
       child_attributes["address_line_2"] ||= nil
       child_attributes["address_town"] ||= nil
     elsif auto_overwrite_address?(existing_patient)
-      existing_patient.address_line_1 =
-        child_attributes.delete("address_line_1")
-      existing_patient.address_line_2 =
-        child_attributes.delete("address_line_2")
-      existing_patient.address_town = child_attributes.delete("address_town")
+      existing_patient.assign_attributes(
+        child_attributes.slice(
+          "address_line_1",
+          "address_line_2",
+          "address_town"
+        ).compact
+      )
     end
   end
 
@@ -401,5 +445,41 @@ class PatientChangeset < ApplicationRecord
       )
       existing_patient.restore_attributes(auto_accepted_changes)
     end
+  end
+
+  def changeset_type
+    if patient.id.nil?
+      :new_patient
+    elsif patient.pending_changes.any?
+      :import_issue
+    else
+      :auto_match
+    end
+  end
+
+  def calculate_review_data!
+    clear_review_data!
+
+    update_column(:record_type, changeset_type)
+    return if new_patient?
+
+    data["review"]["patient"]["id"] = patient.id
+
+    if patient.pending_changes.any?
+      data["review"]["patient"]["pending_changes"] = patient.pending_changes
+    end
+
+    if school_move.present? &&
+         !has_auto_confirmable_school_move?(school_move, import)
+      data["review"]["school_move"]["school_id"] = school_move.school_id
+      data["review"]["school_move"]["home_educated"] = school_move.home_educated
+    end
+
+    save!
+  end
+
+  def clear_review_data!
+    data["review"] = { patient: {}, school_move: {} }
+    save!
   end
 end

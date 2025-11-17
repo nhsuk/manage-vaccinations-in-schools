@@ -3,7 +3,7 @@ en:
     label:
       consent: Consent status
       patient_specific_direction: PSD status
-      register: Registration status
+      registration: Registration status
       triage: Triage status
       vaccination: Programme status
     consent:
@@ -32,7 +32,7 @@ en:
       colour:
         added: green
         not_added: grey
-    register:
+    registration:
       label:
         attending: Attending session
         completed: Completed session

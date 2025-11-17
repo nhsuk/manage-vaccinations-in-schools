@@ -9,8 +9,8 @@
 #  import_type           :string           not null
 #  matched_on_nhs_number :boolean
 #  pds_nhs_number        :string
-#  pending_changes       :jsonb            not null
-#  record_type           :integer          default(1), not null
+#  processed_at          :datetime
+#  record_type           :integer          default("new_patient"), not null
 #  row_number            :integer
 #  status                :integer          default("pending"), not null
 #  uploaded_nhs_number   :string
@@ -33,7 +33,7 @@
 #
 FactoryBot.define do
   factory :patient_changeset do
-    row_number { 1 }
+    sequence(:row_number) { it }
     status { :pending }
 
     trait :class_import do

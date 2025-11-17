@@ -24,6 +24,7 @@ class PatientImport < ApplicationRecord
     return if valid_pds_match_rate? || changesets.count < CHANGESET_THRESHOLD
 
     update!(status: :low_pds_match_rate)
+    changesets.update_all(status: :import_invalid)
   end
 
   def pds_match_rate
@@ -33,6 +34,47 @@ class PatientImport < ApplicationRecord
     attempted = changesets.with_pds_search_attempted.count
 
     (matched / attempted * 100).round(2)
+  end
+
+  def validate_changeset_uniqueness!
+    row_errors = {}
+
+    nhs_duplicates =
+      changesets
+        .group_by(&:nhs_number)
+        .select { |nhs, cs| nhs.present? && cs.size > 1 }
+
+    nhs_duplicates.each do |nhs_number, changesets|
+      changesets.each do |cs|
+        other_rows_text = generate_other_rows_text(cs, changesets)
+        row_errors["Row #{cs.row_number + 2}"] ||= [[]]
+        row_errors["Row #{cs.row_number + 2}"][
+          0
+        ] << "The details on this row match #{other_rows_text}. " \
+          "Mavis has found the NHS number #{nhs_number}."
+      end
+    end
+
+    patient_duplicates =
+      changesets
+        .group_by(&:patient_id)
+        .select { |pid, cs| pid.present? && cs.size > 1 }
+
+    patient_duplicates.each_value do |changesets|
+      changesets.each do |cs|
+        other_rows_text = generate_other_rows_text(cs, changesets)
+        row_errors["Row #{cs.row_number + 2}"] ||= [[]]
+        row_errors["Row #{cs.row_number + 2}"][
+          0
+        ] << "The record on this row appears to be a duplicate of #{other_rows_text}."
+      end
+    end
+
+    if row_errors.any?
+      update!(status: :changesets_are_invalid)
+      update!(serialized_errors: row_errors)
+      changesets.update_all(status: :import_invalid)
+    end
   end
 
   private
@@ -57,5 +99,19 @@ class PatientImport < ApplicationRecord
 
   def valid_pds_match_rate?
     pds_match_rate / 100 >= PDS_MATCH_THRESHOLD
+  end
+
+  def generate_other_rows_text(current_row, duplicate_rows, count = 5)
+    current_row_index =
+      duplicate_rows.index { it.row_number == current_row.row_number }
+    start_row = [current_row_index - count, 0].max
+    other_rows = duplicate_rows[start_row, count + 1] - [current_row]
+    other_row_numbers = other_rows.map { it.row_number + 2 }
+
+    if other_row_numbers.size == 1
+      "row #{other_row_numbers.first}"
+    else
+      "rows #{other_row_numbers[0..-2].join(", ")} and #{other_row_numbers[-1]}"
+    end
   end
 end
