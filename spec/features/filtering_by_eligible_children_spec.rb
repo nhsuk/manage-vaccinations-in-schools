@@ -4,7 +4,6 @@ describe "Filtering" do
   scenario "By eligible children" do
     given_a_session_exists
     and_patients_are_in_the_session_included_a_deceased_patient
-    and_the_tallying_feature_flag_is_enabled
 
     when_i_visit_the_session_patients
     then_i_see_all_the_patients
@@ -58,9 +57,5 @@ describe "Filtering" do
   def when_i_filter_eligible_children
     check "Eligible this academic year and not vaccinated elsewhere"
     click_on "Update results"
-  end
-
-  def and_the_tallying_feature_flag_is_enabled
-    Flipper.enable(:tallying)
   end
 end

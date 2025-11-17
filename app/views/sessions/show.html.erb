@@ -7,59 +7,7 @@
 
 <%= render "header" %>
 
-<div class="nhsuk-grid-row">
-  <% if tallying_enabled? %>
-    <%= render AppSessionOverviewTalliesComponent.new(@session) %>
-  <% else %>
-    <div class="nhsuk-grid-column-three-quarters">
-      <%= render AppCardComponent.new do |card| %>
-        <% card.with_heading { @session.clinic? ? "Community clinic" : "School session" } %>
-
-        <p class="nhsuk-body"><%= session_status_tag(@session) %></p>
-
-        <% if (dates = @session.dates).present? %>
-          <h4 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Session dates</h4>
-          <%= tag.ul(class: "nhsuk-list") do %>
-            <% dates.each do |date| %>
-              <%= tag.li(date.to_fs(:long_day_of_week)) %>
-            <% end %>
-          <% end %>
-
-          <p class="nhsuk-body">Consent period <%= session_consent_period(@session).downcase_first %></p>
-        <% end %>
-
-        <h4 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Session details</h4>
-
-        <%= render AppSessionDetailsSummaryComponent.new(@session) %>
-
-        <% if @session.unscheduled? %>
-          <% if policy(@session).edit? %>
-            <%= govuk_button_link_to "Schedule sessions", edit_session_path(@session), secondary: true %>
-          <% end %>
-        <% else %>
-          <%= render AppSessionActionsComponent.new(@session) %>
-
-          <div class="nhsuk-button-group">
-            <% if policy(@session).edit? %>
-              <%= govuk_button_link_to "Edit session", edit_session_path(@session), secondary: true %>
-            <% end %>
-
-            <%= link_to "Record offline", session_path(@session, format: :xlsx) %>
-
-            <% if @session.clinic? && @session.can_send_clinic_invitations? %>
-              <%= link_to "Send booking reminders", edit_session_invite_to_clinic_path(@session) %>
-            <% elsif @session.school? && @session.can_send_clinic_invitations? %>
-              <%= link_to "Send clinic invitations", edit_session_invite_to_clinic_path(@session) %>
-            <% end %>
-          </div>
-        <% end %>
-      <% end %>
-    </div>
-    <div class="nhsuk-grid-column-one-quarter">
-      <%= render AppSessionSummaryComponent.new(@session) %>
-    </div>
-  <% end %>
-</div>
+<%= render AppSessionOverviewComponent.new(@session) %>
 
 <% content_for :after_main do %>
   <%= render(AppDevToolsComponent.new) do %>

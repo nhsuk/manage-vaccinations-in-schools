@@ -30,7 +30,7 @@
       <% end %>
     <% end %>
 
-    <% if tallying_enabled? && (show_still_to_vaccinate || show_eligible_children) %>
+    <% if show_still_to_vaccinate || show_eligible_children %>
       <%= f.govuk_check_boxes_fieldset :show_only,
                                        multiple: true,
                                        legend: { text: "Show only", size: "s" },
