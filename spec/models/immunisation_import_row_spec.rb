@@ -68,7 +68,7 @@ describe ImmunisationImportRow do
 
   let(:valid_bulk_common_data) do
     valid_patient_data.deep_dup.merge(
-      "ANATOMICAL_SITE" => "left upper arm",
+      "ANATOMICAL_SITE" => "Left Deltoid",
       "BATCH_EXPIRY_DATE" => Date.tomorrow.strftime("%Y%m%d"),
       "DATE_OF_VACCINATION" => Date.current.strftime("%Y%m%d"),
       "BATCH_NUMBER" => "123",
@@ -929,7 +929,8 @@ describe ImmunisationImportRow do
         it "requires the mandatory fields" do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors[:base]).to include(
-            "<code>VACCINE_GIVEN</code> is required"
+            "<code>VACCINE_GIVEN</code> is required",
+            "<code>ANATOMICAL_SITE</code> is required"
           )
         end
       end
