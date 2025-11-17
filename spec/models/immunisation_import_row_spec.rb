@@ -41,7 +41,7 @@ describe ImmunisationImportRow do
       "VACCINATED" => "Y",
       "BATCH_EXPIRY_DATE" => "20210101",
       "BATCH_NUMBER" => "123"
-      )
+    )
   end
   let(:valid_flu_data) do
     valid_common_data.deep_dup.merge(
@@ -74,7 +74,7 @@ describe ImmunisationImportRow do
       "BATCH_NUMBER" => "123",
       "LOCAL_PATIENT_ID" => "CIN-OXFORD-pat123456",
       "LOCAL_PATIENT_ID_URI" => "https://cinnamon.nhs.uk/0de/system1"
-      )
+    )
   end
   let(:valid_bulk_flu_data) do
     valid_bulk_common_data.deep_dup.merge(
@@ -1953,17 +1953,21 @@ describe ImmunisationImportRow do
       context "of type flu" do
         let(:import_type) { "bulk_flu" }
 
-        let(:data) {valid_bulk_flu_data}
+        let(:data) { valid_bulk_flu_data }
 
         it { should be_administered }
+
+        its(:programme) { should eq(CachedProgramme.flu) }
       end
 
       context "of type hpv" do
         let(:import_type) { "bulk_hpv" }
 
-        let(:data) {valid_bulk_hpv_data}
+        let(:data) { valid_bulk_hpv_data }
 
         it { should be_administered }
+
+        its(:programme) { should eq(CachedProgramme.hpv) }
       end
     end
   end
