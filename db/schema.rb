@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -313,19 +313,19 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
 
   create_table "gillick_assessments", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.date "date"
+    t.date "date", null: false
     t.boolean "knows_consequences", null: false
     t.boolean "knows_delivery", null: false
     t.boolean "knows_disease", null: false
     t.boolean "knows_side_effects", null: false
     t.boolean "knows_vaccination", null: false
-    t.bigint "location_id"
+    t.bigint "location_id", null: false
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
     t.bigint "programme_id", null: false
     t.enum "programme_type", enum_type: "programme_type"
-    t.bigint "session_date_id", null: false
+    t.bigint "session_date_id"
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_gillick_assessments_on_location_id"
     t.index ["patient_id"], name: "index_gillick_assessments_on_patient_id"
@@ -708,14 +708,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
 
   create_table "pre_screenings", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.date "date"
-    t.bigint "location_id"
+    t.date "date", null: false
+    t.bigint "location_id", null: false
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
     t.bigint "programme_id", null: false
     t.enum "programme_type", enum_type: "programme_type"
-    t.bigint "session_date_id", null: false
+    t.bigint "session_date_id"
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_pre_screenings_on_location_id"
     t.index ["patient_id"], name: "index_pre_screenings_on_patient_id"

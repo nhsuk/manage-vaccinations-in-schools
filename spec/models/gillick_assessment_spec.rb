@@ -5,7 +5,7 @@
 # Table name: gillick_assessments
 #
 #  id                   :bigint           not null, primary key
-#  date                 :date
+#  date                 :date             not null
 #  knows_consequences   :boolean          not null
 #  knows_delivery       :boolean          not null
 #  knows_disease        :boolean          not null
@@ -15,11 +15,10 @@
 #  programme_type       :enum
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  location_id          :bigint
+#  location_id          :bigint           not null
 #  patient_id           :bigint           not null
 #  performed_by_user_id :bigint           not null
 #  programme_id         :bigint           not null
-#  session_date_id      :bigint           not null
 #
 # Indexes
 #
@@ -42,10 +41,7 @@ describe GillickAssessment do
 
   describe "associations" do
     it { should belong_to(:patient) }
-    it { should belong_to(:session_date) }
     it { should belong_to(:programme) }
-
-    it { should have_one(:session).through(:session_date) }
   end
 
   describe "validations" do

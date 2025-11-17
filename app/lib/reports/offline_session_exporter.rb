@@ -173,8 +173,8 @@ class Reports::OfflineSessionExporter
     @gillick_assessments ||=
       GillickAssessment
         .select("DISTINCT ON (patient_id, programme_id) gillick_assessments.*")
-        .joins(:session)
-        .where(session_dates: { session: }, patient_id: patients.select(:id))
+        .where(patient_id: patients.select(:id))
+        .for_session(session)
         .order(:patient_id, :programme_id, created_at: :desc)
         .includes(:performed_by)
         .group_by(&:patient_id)

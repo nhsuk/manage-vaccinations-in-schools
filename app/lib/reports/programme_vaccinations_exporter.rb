@@ -152,22 +152,20 @@ class Reports::ProgrammeVaccinationsExporter
     @gillick_assessments ||=
       GillickAssessment
         .select(
-          "DISTINCT ON (patient_id, session_id) gillick_assessments.*, session_id"
+          "DISTINCT ON (patient_id, location_id, date) gillick_assessments.*"
         )
-        .joins(:session)
         .where(
           patient_id: vaccination_records.select(:patient_id),
           programme:,
-          session: {
-            id: vaccination_records.select(:session_id),
-            academic_year:
-          }
+          location_id: vaccination_records.select(:location_id)
         )
-        .order(:patient_id, :session_id, created_at: :desc)
+        .order(:patient_id, :location_id, :date, created_at: :desc)
         .includes(:performed_by)
         .group_by(&:patient_id)
         .transform_values do
-          it.group_by(&:session_id).transform_values(&:first)
+          it
+            .group_by(&:location_id)
+            .transform_values { it.group_by(&:date).transform_values(&:first) }
         end
   end
 
@@ -192,10 +190,11 @@ class Reports::ProgrammeVaccinationsExporter
     patient = vaccination_record.patient
     session = vaccination_record.session
     vaccine = vaccination_record.vaccine
+    date = vaccination_record.performed_at.to_date
 
     grouped_consents = consents.fetch(patient.id, [])
     triage = triages[patient.id]
-    gillick_assessment = gillick_assessments.dig(patient.id, session.id)
+    gillick_assessment = gillick_assessments.dig(patient.id, location&.id, date)
     academic_year = session.academic_year
 
     [
