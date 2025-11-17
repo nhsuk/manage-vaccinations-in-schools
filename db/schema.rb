@@ -360,6 +360,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_01_152312) do
     t.jsonb "serialized_errors"
     t.integer "status", default: 0, null: false
     t.bigint "team_id", null: false
+    t.integer "type", default: 0, null: false
     t.datetime "updated_at", null: false
     t.bigint "uploaded_by_user_id", null: false
     t.index ["team_id"], name: "index_immunisation_imports_on_team_id"

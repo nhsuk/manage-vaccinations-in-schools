@@ -2,7 +2,7 @@
 
 describe ImmunisationImportRow do
   subject(:immunisation_import_row) do
-    described_class.new(data: data_as_csv_row, team:)
+    described_class.new(data: data_as_csv_row, team:, type: import_type)
   end
 
   # FIXME: Don't re-implement behaviour of `CSVParser`.
@@ -63,6 +63,8 @@ describe ImmunisationImportRow do
   let(:valid_data) { valid_hpv_data }
 
   let!(:location) { create(:school, urn: "123456", name: "Waterloo Road") }
+
+  let(:import_type) { "poc" }
 
   describe "validations" do
     context "with an empty row" do
