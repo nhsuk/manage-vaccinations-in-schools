@@ -991,6 +991,9 @@ describe ImmunisationImportRow do
 
           it "requires the mandatory fields specific to HPV" do
             expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors[:base]).to include(
+              "<code>DOSE_SEQUENCE</code> or <code>Vaccination type</code> is required"
+            )
           end
         end
 
