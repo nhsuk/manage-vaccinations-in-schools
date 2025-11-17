@@ -740,7 +740,7 @@ class ImmunisationImportRow
           )
         end
       end
-    elsif administered && offline_recording? && default_dose_sequence.present?
+    elsif administered && ((offline_recording? && default_dose_sequence.present? ) || bulk_hpv?)
       if field.nil?
         errors.add(
           :base,
