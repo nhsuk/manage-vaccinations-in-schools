@@ -1997,6 +1997,8 @@ describe ImmunisationImportRow do
         let(:data) { valid_bulk_flu_data }
 
         it { should be_administered }
+
+        its(:programme) { should eq(Programme.flu) }
       end
 
       context "of type hpv" do
@@ -2005,6 +2007,8 @@ describe ImmunisationImportRow do
         let(:data) { valid_bulk_hpv_data }
 
         it { should be_administered }
+
+        its(:programme) { should eq(Programme.hpv) }
       end
     end
   end
