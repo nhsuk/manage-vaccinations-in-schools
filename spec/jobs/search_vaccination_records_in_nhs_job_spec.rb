@@ -33,6 +33,32 @@ describe SearchVaccinationRecordsInNHSJob do
     end
   end
 
+  describe "#select_programme_feature_flagged_records" do
+    subject(:selected_records) do
+      described_class.new.send(
+        :select_programme_feature_flagged_records,
+        vaccination_records
+      )
+    end
+
+    let(:vaccination_records) { [flu_record, hpv_record] }
+    let(:flu_record) do
+      create(:vaccination_record, programme: CachedProgramme.flu)
+    end
+    let(:hpv_record) do
+      create(:vaccination_record, programme: CachedProgramme.hpv)
+    end
+
+    before do
+      Flipper.disable(:imms_api_search_job)
+      Flipper.enable(:imms_api_search_job, CachedProgramme.flu)
+    end
+
+    it "rejects the hpv record, and keeps the flu record" do
+      expect(selected_records).to match_array(flu_record)
+    end
+  end
+
   describe "#deduplicate_vaccination_records" do
     subject(:deduplicate) do
       described_class.new.send(
@@ -485,6 +511,34 @@ describe SearchVaccinationRecordsInNHSJob do
       end
 
       include_examples "doesn't send discovery comms"
+    end
+
+    context "with the per-programme feature flag disabled" do
+      before do
+        Flipper.disable(:imms_api_search_job)
+        # Not enabled for flu, which is the incoming record's programme
+        Flipper.enable(:imms_api_search_job, CachedProgramme.hpv)
+      end
+
+      it "does not change any records locally" do
+        expect { perform }.not_to(change { patient.vaccination_records.count })
+      end
+
+      include_examples "doesn't send discovery comms"
+    end
+
+    context "with the per-programme feature flag enabled" do
+      before do
+        Flipper.disable(:imms_api_search_job)
+        Flipper.enable(:imms_api_search_job, CachedProgramme.flu)
+      end
+
+      it "creates new vaccination records for incoming Immunizations" do
+        expect { perform }.to change { patient.vaccination_records.count }.by(2)
+      end
+
+      include_examples "sends discovery comms if required twice"
+      include_examples "calls StatusUpdater"
     end
 
     context "with a non-api record already on the patient" do
