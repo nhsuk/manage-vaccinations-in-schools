@@ -400,7 +400,11 @@ class ImmunisationImportRow
   end
 
   def vaccine
-    @vaccine ||= team.vaccines.find_by(upload_name: vaccine_upload_name)
+    return if vaccine_upload_name.nil?
+
+    @vaccine ||=
+      team.vaccines.find_by(upload_name: vaccine_upload_name) ||
+        team.vaccines.find_by(nivs_name: vaccine_upload_name)
   end
 
   def batch
