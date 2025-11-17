@@ -9,6 +9,8 @@
         "ec2:CreateVpcEndpoint",
         "ec2:ModifyVpcEndpoint",
         "ec2:DeleteVpcEndpoints",
+        "ecs:ExecuteCommand",
+        "rds:CreateDBClusterSnapshot",
         "rds:RestoreDBClusterFromSnapshot"
       ],
       "Resource": "*"
