@@ -2178,6 +2178,42 @@ describe ImmunisationImportRow do
 
           it { should be_nil }
         end
+
+        context "when Mavis columns are present, which the bulk upload should ignore" do
+          let(:data) do
+            valid_bulk_flu_data.merge(
+              {
+                "PROGRAMME" => "HPV",
+                "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,
+                "NOTES" => "Here are some notes",
+                "CARE_SETTING" => 2,
+                "CLINIC_NAME" => "The Hog's Head",
+                "SESSION_ID" => session.id,
+                "UUID" => "ABCD1234-26cc-44e4-b886-c3cc90ba01b6"
+              }
+            )
+          end
+
+          let(:session) { create(:session, team:, programmes:) }
+
+          it "creates a valid vaccination record" do
+            expect(vaccination_record).to be_valid
+          end
+
+          its(:programme) { should be Programme.flu }
+
+          its(:performed_by_user) { should be_nil }
+          its(:performed_by_given_name) { should eq vaccinator.given_name }
+          its(:performed_by_family_name) { should eq vaccinator.family_name }
+
+          its(:notes) { should be_nil }
+
+          its(:location) { should eq location }
+
+          its(:session) { should be_nil }
+
+          its(:uuid) { should_not eq "ABCD1234-26cc-44e4-b886-c3cc90ba01b6" }
+        end
       end
 
       context "of type hpv" do
@@ -2236,6 +2272,38 @@ describe ImmunisationImportRow do
           let(:data) { { "VACCINATED" => "N" } }
 
           it { should be_nil }
+        end
+
+        context "when Mavis columns are present, which the bulk upload should ignore" do
+          let(:data) do
+            valid_bulk_hpv_data.merge(
+              {
+                "PROGRAMME" => "Flu",
+                "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,
+                "NOTES" => "Here are some notes",
+                "CARE_SETTING" => 2,
+                "CLINIC_NAME" => "The Hog's Head",
+                "SESSION_ID" => session.id,
+                "UUID" => "ABCD1234-26cc-44e4-b886-c3cc90ba01b6"
+              }
+            )
+          end
+
+          let(:session) { create(:session, team:, programmes:) }
+
+          it "creates a valid vaccination record" do
+            expect(vaccination_record).to be_valid
+          end
+
+          its(:programme) { should be Programme.hpv }
+
+          its(:performed_by_user) { should be_nil }
+
+          its(:notes) { should be_nil }
+
+          its(:session) { should be_nil }
+
+          its(:uuid) { should_not eq "ABCD1234-26cc-44e4-b886-c3cc90ba01b6" }
         end
       end
     end
