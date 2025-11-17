@@ -46,8 +46,11 @@ class GovukNotifyPersonalisation
       delay_vaccination_review_context:,
       full_and_preferred_patient_name:,
       has_multiple_dates:,
+      invitation_to_clinic_generic_message:,
       location_name:,
+      invitation_to_clinic_custom_mmr_message:,
       mmr_second_dose_message:,
+      mmr_second_dose_required:,
       next_or_today_session_date:,
       next_or_today_session_dates:,
       next_or_today_session_dates_or:,
@@ -183,12 +186,11 @@ class GovukNotifyPersonalisation
   end
 
   def mmr_second_dose_message
-    return if patient.nil?
+    return unless patient
+    return unless mmr_programme
 
-    programme = programmes.find(&:mmr?)
-    return if programme.nil?
-
-    vaccination_status = patient.vaccination_status(programme:, academic_year:)
+    vaccination_status =
+      patient.vaccination_status(programme: mmr_programme, academic_year:)
 
     return "" if vaccination_status.vaccinated?
 
@@ -198,6 +200,90 @@ class GovukNotifyPersonalisation
         "child needs a second dose of the vaccine. Our team will be in " \
         "touch about this soon."
     ].join("\n\n")
+  end
+
+  def mmr_second_dose_required
+    mmr_programme.present? && patient_eligible_for_additional_dose?
+  end
+
+  def invitation_to_clinic_generic_message
+    [
+      (
+        if mmr_second_dose_required
+          "If you would like your local GP surgery to give #{short_patient_name} " \
+            "their 2nd dose, contact the surgery in the usual way."
+        end
+      ),
+      "#{mmr_second_dose_required ? "Alternatively, they" : "They"} can have this vaccination " \
+        "at a community clinic. If you’d like to book a clinic appointment, please contact " \
+        "us using the details below.",
+      (mmr_second_dose_waiting_period_message if mmr_second_dose_required)
+    ].compact.join("\n\n")
+  end
+
+  def invitation_to_clinic_custom_mmr_message
+    return "" unless mmr_second_dose_required
+
+    case session&.organisation&.ods_code
+    when "RT5" # Leicestershire Partnership Trust (LPT)
+      [
+        mmr_second_dose_waiting_period_message,
+        "It’s also possible for #{short_patient_name} to be vaccinated at your local GP surgery. " \
+          "To book an appointment, contact the surgery in the usual way."
+      ].join("\n\n")
+    when "RYG" # Coventry & Warwickshire Partnership NHS Trust (CWPT)
+      [
+        mmr_second_dose_waiting_period_message,
+        "## You have 2 options for booking the vaccination",
+        "You can ask your local GP surgery to give #{short_patient_name} their 2nd dose. " \
+          "To book an appointment, contact the surgery in the usual way."
+      ].join("\n\n")
+    end
+  end
+
+  def mmr_second_dose_waiting_period_message
+    "It’s important to wait at least 28 days after the 1st dose of an MMR " \
+      "vaccination before getting the 2nd dose. #{short_patient_name} " \
+      "should not get the 2nd dose until #{next_mmr_dose_date}. Please keep this in " \
+      "mind when booking the appointment."
+  end
+
+  def next_mmr_dose_date
+    return if patient.nil?
+
+    return if mmr_programme.nil?
+
+    vaccination_status =
+      patient.vaccination_status(programme: mmr_programme, academic_year:)
+
+    first_dose_date =
+      if vaccination_status.eligible? || vaccination_status.due?
+        vaccination_status.latest_date
+      end
+
+    (first_dose_date + 28.days).to_date.to_fs(:long) if first_dose_date
+  end
+
+  def patient_eligible_for_additional_dose?
+    return unless patient
+
+    @patient_eligible_for_additional_dose =
+      begin
+        next_dose =
+          patient
+            .reload
+            .vaccination_status(
+              programme: mmr_programme,
+              academic_year: session.academic_year
+            )
+            .dose_sequence
+
+        next_dose == mmr_programme.maximum_dose_sequence
+      end
+  end
+
+  def mmr_programme
+    @mmr_programme = programmes.find(&:mmr?)
   end
 
   def delay_vaccination_review_context
@@ -367,9 +453,13 @@ class GovukNotifyPersonalisation
   end
 
   def vaccination
-    "#{programme_names.to_sentence} vaccination".pluralize(
-      programme_names.length
-    )
+    names = programme_names
+
+    if mmr_second_dose_required
+      names = names.map { it == "MMR" ? "2nd dose of the MMR" : it }
+    end
+
+    "#{names.to_sentence} vaccination".pluralize(names.length)
   end
 
   def vaccination_and_method
