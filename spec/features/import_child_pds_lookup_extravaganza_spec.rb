@@ -481,6 +481,9 @@ describe "Import child records" do
   def then_i_should_see_the_import_is_invalid
     expect(page).to have_content("Records could not be imported")
     expect(page).to have_content(
+      "This may include errors identified after Mavis added a missing NHS number or replaced an incorrect NHS number."
+    )
+    expect(page).to have_content(
       "The details on this row match row 5. Mavis has found the NHS number 9876543210."
     )
     expect(page).to have_content(
