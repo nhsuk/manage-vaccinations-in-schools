@@ -16,6 +16,7 @@ class ImmunisationImportsController < ApplicationController
       ImmunisationImport.new(
         team: current_team,
         uploaded_by: current_user,
+        type:,
         **immunisation_import_params
       )
 
@@ -60,6 +61,10 @@ class ImmunisationImportsController < ApplicationController
   end
 
   private
+
+  def type
+    current_team.type_upload_only? ? "bulk_#{params[:programme]}" : "poc"
+  end
 
   def set_immunisation_import
     @immunisation_import = policy_scope(ImmunisationImport).find(params[:id])
