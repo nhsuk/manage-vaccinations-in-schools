@@ -15,6 +15,7 @@
 #  rows_count                   :integer
 #  serialized_errors            :jsonb
 #  status                       :integer          default("pending_import"), not null
+#  type                         :integer          default("historical"), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  team_id                      :bigint           not null
@@ -33,6 +34,10 @@
 class ImmunisationImport < ApplicationRecord
   include CSVImportable
 
+  self.inheritance_column = nil
+
+  enum :type, { historical: 0, bulk_flu: 1, bulk_hpv: 2 }, validate: true
+
   has_and_belongs_to_many :batches
   has_and_belongs_to_many :patient_locations
   has_and_belongs_to_many :sessions
@@ -45,7 +50,7 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def parse_row(data)
-    ImmunisationImportRow.new(data:, team:)
+    ImmunisationImportRow.new(data:, team:, type:)
   end
 
   def process_row(row)
