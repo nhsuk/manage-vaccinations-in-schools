@@ -15,6 +15,7 @@ on:
           - training
           - sandbox-alpha
           - sandbox-beta
+          - performance
 
 env:
   environment: ${{ inputs.environment }}
