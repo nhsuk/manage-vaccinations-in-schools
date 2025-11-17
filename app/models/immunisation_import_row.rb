@@ -376,7 +376,11 @@ class ImmunisationImportRow
   end
 
   def vaccine
-    @vaccine ||= team.vaccines.find_by(upload_name: vaccine_upload_name)
+    return if vaccine_upload_name.nil?
+
+    @vaccine ||=
+      team.vaccines.find_by(upload_name: vaccine_upload_name) ||
+        team.vaccines.find_by(nivs_name: vaccine_upload_name)
   end
 
   def batch
@@ -1035,7 +1039,7 @@ class ImmunisationImportRow
       end
     elsif vaccine_upload_name.present?
       errors.add(field.header, "This vaccine is not available in this session.")
-    elsif offline_recording? && administered
+    elsif (offline_recording? || bulk?) && administered
       if vaccine_name.nil?
         errors.add(:base, "<code>VACCINE_GIVEN</code> is required")
       elsif vaccine_name.blank?
