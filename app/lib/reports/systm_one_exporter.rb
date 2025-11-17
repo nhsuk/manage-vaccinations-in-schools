@@ -8,6 +8,9 @@ class Reports::SystmOneExporter
     not_known: "U"
   }.with_indifferent_access.freeze
 
+  # We think these are CVT3 Read codes still used within SystmOne
+  # They have been looked up from the SystmOne Code Browser
+  # They are also available online here: https://biobank.ndph.ox.ac.uk/ukb/coding.cgi?id=8708&nl=1
   VACCINE_DOSE_MAPPINGS = {
     "Cell-based Trivalent Influenza Vaccine Seqirus" => {
       1 => "YcjYj"
