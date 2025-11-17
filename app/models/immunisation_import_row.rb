@@ -107,8 +107,12 @@ class ImmunisationImportRow
     source =
       if imms_api_record?
         "nhs_immunisations_api"
+      elsif offline_recording?
+        "service"
+      elsif poc?
+        "historical_upload"
       else
-        offline_recording? ? "service" : "historical_upload"
+        "bulk_upload"
       end
 
     attributes = {
