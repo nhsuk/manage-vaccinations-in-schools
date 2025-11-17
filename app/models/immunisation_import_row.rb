@@ -424,6 +424,10 @@ class ImmunisationImportRow
       )
   end
 
+  def dose_sequence_required? =
+    administered &&
+      ((offline_recording? && default_dose_sequence.present?) || bulk_hpv?)
+
   def academic_year = date_of_vaccination.to_date.academic_year
 
   def existing_patients
@@ -737,7 +741,7 @@ class ImmunisationImportRow
           )
         end
       end
-    elsif administered && offline_recording? && default_dose_sequence.present?
+    elsif dose_sequence_required?
       if field.nil?
         errors.add(
           :base,
