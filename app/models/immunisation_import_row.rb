@@ -324,7 +324,15 @@ class ImmunisationImportRow
           parsed_vaccination_description_string&.dig(:programme_name) ||
             programme_name&.to_s
 
-        programmes_by_name[name] || vaccine&.programme
+        programmes_by_name[name] || vaccine&.programme ||
+          (
+            case @type
+            when :bulk_flu
+              Programme.flu
+            when :bulk_hpv
+              Programme.hpv
+            end
+          )
       end
   end
 
