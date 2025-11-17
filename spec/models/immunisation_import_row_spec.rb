@@ -969,6 +969,10 @@ describe ImmunisationImportRow do
 
           it "requires the mandatory fields specific to flu when vaccinated" do
             expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors[:base]).to include(
+              "<code>PERFORMING_PROFESSIONAL_FORENAME</code> is required",
+              "<code>PERFORMING_PROFESSIONAL_SURNAME</code> is required"
+            )
           end
         end
 
