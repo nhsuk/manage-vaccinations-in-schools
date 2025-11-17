@@ -14,15 +14,24 @@ but can also point to hotfix branches as necessary.
 Releasing follows these steps, performed once approval for release has been
 given:
 
-1. Create a PR to merge `next` into `main`; approve and merge.
-2. Create a draft release by running the `Draft new release` workflow. This
-   creates a draft release in GitHub with initial release notes.
+1. Create a PR to merge `next` into `main`. GitHub will have a warning that
+   `next` isn't up-to-date with `main`, but that is likely caused by the
+   existance of a merge commit from the last deploy. You can double check
+   locally by updating `main` and `next`, and using git (
+   `git rev-list --oneline main ^next`) or jj (`jj log -r '::main ~ ::next'`),
+   or by [comparing the branches on
+   GitHub](https://github.com/nhsuk/manage-vaccinations-in-schools/compare/next...main).
+2. Create a draft release by running the [`Draft new release`
+   workflow](https://github.com/nhsuk/manage-vaccinations-in-schools/actions/workflows/draft-new-release.yml).
+   This creates a draft release in GitHub with initial release notes.
 3. Update the release notes with information about the changes. This is
    generated from the Jira tickets by a team member.
 4. Publish the release in GitHub. This will create the tag.
 5. Check the notes for pre and post-release tasks and ensure these are performed
    before and after releasing to the environments below.
-6. Deploy the release to the `preview` and `training` envs, if not already done.
+6. Deploy the release to the `preview` and `training` envs, first checking that
+   they haven't had a specific branch deployed to them (check [recent
+   deploys](https://github.com/nhsuk/manage-vaccinations-in-schools/actions/workflows/deploy.yml)).
    This can be used as a test that the tag deploys as expected.
 7. If there are migrations that need testing (e.g. a data migration or a
    long-running migration), deploy this release to `data-replication` and test
