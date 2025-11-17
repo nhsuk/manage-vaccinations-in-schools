@@ -382,25 +382,12 @@ def create_mmr_health_questions(vaccine)
 
   severe_reaction_neomycin.update!(next_question: immune_system)
 
-  household_immune_system =
-    vaccine.health_questions.create!(
-      title:
-        "Is your child in regular close contact with anyone currently " \
-          "having treatment that severely affects their immune system?",
-      give_details_hint:
-        "Let us know if they can avoid contact with this person for 2 weeks"
-    )
-
-  immune_system.update!(next_question: household_immune_system)
-
   contraindications =
     vaccine.health_questions.create!(
       title:
-        "Has your child recently had, or are they soon due to have a " \
-          "TB skin test, chickenpox vaccine or yellow fever vaccine?"
+        "Has your child had any of the following in the last 4 weeks, or are they due " \
+          "to have them in the next 4 weeks: TB skin test, chickenpox vaccine, or yellow fever vaccine?"
     )
-
-  household_immune_system.update!(next_question: contraindications)
 
   medical_conditions =
     vaccine.health_questions.create!(
