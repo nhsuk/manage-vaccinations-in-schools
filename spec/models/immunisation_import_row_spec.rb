@@ -1940,6 +1940,28 @@ describe ImmunisationImportRow do
         end
       end
 
+      describe "#source" do
+        context "with a historical record" do
+          its(:source) { should eq "historical_upload" }
+        end
+
+        context "with an offline spreadsheet" do
+          let(:data) do
+            valid_data.merge(
+              "DATE_OF_VACCINATION" => session.dates.first.strftime("%Y%m%d"),
+              "SESSION_ID" => session.id.to_s,
+              "ORGANISATION_CODE" => team.organisation.ods_code,
+              "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,
+              "DOSE_SEQUENCE" => "1"
+            )
+          end
+
+          let(:session) { create(:session, team:, programmes:) }
+
+          its(:source) { should eq "service" }
+        end
+      end
+
       context "without an expiry date" do
         let(:data) { valid_data.merge("BATCH_EXPIRY_DATE" => "") }
 
@@ -1958,6 +1980,8 @@ describe ImmunisationImportRow do
         it { should be_administered }
 
         its(:programme) { should eq(CachedProgramme.flu) }
+
+        its(:source) { should eq("bulk_upload") }
       end
 
       context "of type hpv" do
@@ -1968,6 +1992,8 @@ describe ImmunisationImportRow do
         it { should be_administered }
 
         its(:programme) { should eq(CachedProgramme.hpv) }
+
+        its(:source) { should eq("bulk_upload") }
       end
     end
   end
