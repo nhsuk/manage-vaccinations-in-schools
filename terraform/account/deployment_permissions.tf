@@ -152,6 +152,7 @@ resource "aws_iam_role" "github_assurance" {
       "repo:NHSDigital/manage-vaccinations-in-schools-testing"
     ]
   })
+  max_session_duration = 14400 # 4 hours
 }
 
 resource "aws_iam_policy" "run_ecs_task" {
