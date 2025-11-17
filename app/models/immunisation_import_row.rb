@@ -621,7 +621,7 @@ class ImmunisationImportRow
   end
 
   def validate_clinic_name
-    clinic_name_required = offline_recording? && is_community_setting?
+    clinic_name_required = offline_recording? && is_community_setting? && poc?
 
     if clinic_name.present?
       if clinic_name.to_s.length > MAX_FIELD_LENGTH
