@@ -190,9 +190,10 @@ class ImmunisationImportRow
   def batch_name =
     @data[:batch_number].presence || @data[:vaccination_batch_number]
 
-  def care_setting = @data[:care_setting]
+  def care_setting = poc? ? @data[:care_setting] : nil
 
-  def clinic_name = @data[:clinic_name].presence || @data[:event_done_at]
+  def clinic_name =
+    poc? ? @data[:clinic_name].presence || @data[:event_done_at] : nil
 
   def combined_vaccination_and_dose_sequence = @data[:vaccination_type]
 
@@ -205,7 +206,7 @@ class ImmunisationImportRow
 
   def location_type = @data[:event_location_type]
 
-  def notes = @data[:notes]
+  def notes = poc? ? @data[:notes] : nil
 
   def patient_date_of_birth =
     @data[:person_dob].presence || @data[:date_of_birth]
@@ -223,7 +224,7 @@ class ImmunisationImportRow
 
   def patient_postcode = @data[:person_postcode].presence || @data[:postcode]
 
-  def performed_by_email = @data[:performing_professional_email]
+  def performed_by_email = poc? ? @data[:performing_professional_email] : nil
 
   def performed_by_family_name = @data[:performing_professional_surname]
 
@@ -231,24 +232,26 @@ class ImmunisationImportRow
 
   def performed_ods_code = @data[:organisation_code]
 
-  def programme_name = @data[:programme]
+  def programme_name = poc? ? @data[:programme] : nil
 
   def reason_not_administered = @data[:reason_not_vaccinated]
 
   def school_name =
-    @data[:school_name].presence || @data[:school].presence ||
-      @data[:event_done_at]
+    if poc?
+      @data[:school_name].presence || @data[:school].presence ||
+        @data[:event_done_at]
+    end
 
   def school_urn = @data[:school_urn].presence || @data[:school_code]
 
-  def session_id = @data[:session_id]
+  def session_id = poc? ? @data[:session_id] : nil
 
   def supplied_by_email = @data[:supplier_email]
 
   def time_of_vaccination =
     @data[:time_of_vaccination].presence || @data[:event_time]
 
-  def uuid = @data[:uuid]
+  def uuid = poc? ? @data[:uuid] : nil
 
   def vaccinated = @data[:vaccinated]
 
