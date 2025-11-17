@@ -92,6 +92,10 @@
   <%= render AppImportErrorsComponent.new(errors: import.errors) do %>
     <p class="nhsuk-u-reading-width">
       The records cannot be uploaded due to errors in the CSV file.
+
+      <% if import.changesets_are_invalid? %>
+        This may include errors identified after Mavis added a missing NHS number or replaced an incorrect NHS number.
+      <% end %>  
     </p>
 
     <%= render AppImportFormatDetailsComponent.new(import:) %>

@@ -44,12 +44,14 @@ class PatientImport < ApplicationRecord
         .group_by(&:nhs_number)
         .select { |nhs, cs| nhs.present? && cs.size > 1 }
 
-    nhs_duplicates.each_value do |changesets|
+    nhs_duplicates.each do |nhs_number, changesets|
       changesets.each do |cs|
-        row_errors["Row #{cs.row_number}"] ||= [[]]
-        row_errors["Row #{cs.row_number}"][
+        other_rows_text = generate_other_rows_text(cs, changesets)
+        row_errors["Row #{cs.row_number + 2}"] ||= [[]]
+        row_errors["Row #{cs.row_number + 2}"][
           0
-        ] << "More than 1 row in this file has the same NHS number."
+        ] << "The details on this row match #{other_rows_text}. " \
+          "Mavis has found the NHS number #{nhs_number}."
       end
     end
 
@@ -60,10 +62,11 @@ class PatientImport < ApplicationRecord
 
     patient_duplicates.each_value do |changesets|
       changesets.each do |cs|
-        row_errors["Row #{cs.row_number}"] ||= [[]]
-        row_errors["Row #{cs.row_number}"][
+        other_rows_text = generate_other_rows_text(cs, changesets)
+        row_errors["Row #{cs.row_number + 2}"] ||= [[]]
+        row_errors["Row #{cs.row_number + 2}"][
           0
-        ] << "More than 1 row in this file matches a patient already in the Mavis database."
+        ] << "The record on this row appears to be a duplicate of #{other_rows_text}."
       end
     end
 
@@ -96,5 +99,19 @@ class PatientImport < ApplicationRecord
 
   def valid_pds_match_rate?
     pds_match_rate / 100 >= PDS_MATCH_THRESHOLD
+  end
+
+  def generate_other_rows_text(current_row, duplicate_rows, count = 5)
+    current_row_index =
+      duplicate_rows.index { it.row_number == current_row.row_number }
+    start_row = [current_row_index - count, 0].max
+    other_rows = duplicate_rows[start_row, count + 1] - [current_row]
+    other_row_numbers = other_rows.map { it.row_number + 2 }
+
+    if other_row_numbers.size == 1
+      "row #{other_row_numbers.first}"
+    else
+      "rows #{other_row_numbers[0..-2].join(", ")} and #{other_row_numbers[-1]}"
+    end
   end
 end
