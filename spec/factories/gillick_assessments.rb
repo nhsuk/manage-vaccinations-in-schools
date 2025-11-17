@@ -12,7 +12,7 @@
 #  knows_side_effects   :boolean          not null
 #  knows_vaccination    :boolean          not null
 #  notes                :text             default(""), not null
-#  programme_type       :enum
+#  programme_type       :enum             not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  location_id          :bigint           not null
@@ -26,6 +26,7 @@
 #  index_gillick_assessments_on_patient_id            (patient_id)
 #  index_gillick_assessments_on_performed_by_user_id  (performed_by_user_id)
 #  index_gillick_assessments_on_programme_id          (programme_id)
+#  index_gillick_assessments_on_programme_type        (programme_type)
 #  index_gillick_assessments_on_session_date_id       (session_date_id)
 #
 # Foreign Keys
