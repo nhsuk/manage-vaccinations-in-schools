@@ -117,12 +117,10 @@ class Team < ApplicationRecord
   end
 
   def has_upload_access_only?
-    Flipper.enabled?(:bulk_upload) && type_upload_only?
+    type_upload_only?
   end
 
   def has_poc_access?
-    return true unless Flipper.enabled?(:bulk_upload)
-
     type_poc_only? || type_poc_with_legacy_upload?
   end
 end

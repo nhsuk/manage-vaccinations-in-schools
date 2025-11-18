@@ -3,7 +3,6 @@
 describe "Upload-only team homepage and navigation" do
   scenario "Homepage shows upload-only cards" do
     given_i_am_signed_in_as_an_upload_only_team
-    and_the_bulk_upload_feature_flag_is_enabled
     when_i_visit_the_dashboard
     then_i_should_see_the_upload_only_cards
     and_i_should_see_the_import_records_card
@@ -13,7 +12,6 @@ describe "Upload-only team homepage and navigation" do
 
   scenario "Navigation shows only import and your team" do
     given_i_am_signed_in_as_an_upload_only_team
-    and_the_bulk_upload_feature_flag_is_enabled
     when_i_visit_the_dashboard
     then_i_should_see_only_import_and_team_navigation_items
   end
@@ -21,10 +19,6 @@ describe "Upload-only team homepage and navigation" do
   def given_i_am_signed_in_as_an_upload_only_team
     @team = create(:team, :with_one_admin, ods_code: "XX99", type: :upload_only)
     sign_in @team.users.first
-  end
-
-  def and_the_bulk_upload_feature_flag_is_enabled
-    Flipper.enable(:bulk_upload)
   end
 
   def when_i_visit_the_dashboard

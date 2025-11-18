@@ -74,80 +74,44 @@ describe Team do
   describe "#has_upload_access_only?" do
     subject { team.has_upload_access_only? }
 
-    context "given the bulk upload feature flag is disabled" do
-      context "when type is upload_only" do
-        before { team.type = :upload_only }
+    context "when type is upload_only" do
+      before { team.type = :upload_only }
 
-        it { should be false }
-      end
-
-      context "when type is poc_only" do
-        before { team.type = :poc_only }
-
-        it { should be false }
-      end
+      it { should be true }
     end
 
-    context "given the bulk upload feature flag is enabled" do
-      before { Flipper.enable(:bulk_upload) }
+    context "when type is poc_only" do
+      before { team.type = :poc_only }
 
-      context "when type is upload_only" do
-        before { team.type = :upload_only }
+      it { should be false }
+    end
 
-        it { should be true }
-      end
+    context "when type is poc_with_legacy_upload" do
+      before { team.type = :poc_with_legacy_upload }
 
-      context "when type is poc_only" do
-        before { team.type = :poc_only }
-
-        it { should be false }
-      end
-
-      context "when type is poc_with_legacy_upload" do
-        before { team.type = :poc_with_legacy_upload }
-
-        it { should be false }
-      end
+      it { should be false }
     end
   end
 
   describe "#has_poc_access?" do
     subject { team.has_poc_access? }
 
-    context "given the bulk upload feature flag is disabled" do
-      context "when type is poc_only" do
-        before { team.type = :poc_only }
+    context "when type is poc_only" do
+      before { team.type = :poc_only }
 
-        it { should be true }
-      end
-
-      context "when type is upload_only" do
-        before { team.type = :upload_only }
-
-        it { should be true }
-      end
+      it { should be true }
     end
 
-    context "given the bulk upload feature flag is enabled" do
-      before { Flipper.enable(:bulk_upload) }
+    context "when type is poc_with_legacy_upload" do
+      before { team.type = :poc_with_legacy_upload }
 
-      context "when type is poc_only" do
-        before { team.type = :poc_only }
+      it { should be true }
+    end
 
-        it { should be true }
-      end
+    context "when type is upload_only" do
+      before { team.type = :upload_only }
 
-      context "when type is poc_with_legacy_upload" do
-        before { team.type = :poc_with_legacy_upload }
-
-        it { should be true }
-      end
-
-      context "when type is upload_only" do
-        before { team.type = :upload_only }
-
-        it { should be false }
-      end
+      it { should be false }
     end
   end
 end
