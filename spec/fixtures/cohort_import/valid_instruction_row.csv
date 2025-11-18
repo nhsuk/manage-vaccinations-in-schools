@@ -1,0 +1,3 @@
+CHILD_FIRST_NAME,CHILD_LAST_NAME,CHILD_DATE_OF_BIRTH,CHILD_POSTCODE,CHILD_SCHOOL_URN
+"Required: Free text","Required: Free text","Required: DD/MM/YYYY","Required: Valid postcode format","Required, 6 digits, numeric, use 888888 for school unknown and 999999 for homeschooled"
+Jennifer,Clarke,2010-01-01,SW1A 1AA,123456

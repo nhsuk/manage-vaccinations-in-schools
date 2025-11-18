@@ -110,6 +110,16 @@ describe ImmunisationImport do
       end
     end
 
+    context "with valid hpv rows, and an instruction row" do
+      let(:programmes) { [CachedProgramme.hpv] }
+      let(:file) { "valid_hpv_with_instruction_row.csv" }
+
+      it "populates the rows" do
+        expect(immunisation_import).to be_valid
+        expect(immunisation_import.rows).not_to be_empty
+      end
+    end
+
     context "with a SystmOne file" do
       let(:programmes) do
         [CachedProgramme.hpv, CachedProgramme.menacwy, CachedProgramme.flu]
@@ -128,7 +138,8 @@ describe ImmunisationImport do
       it "is invalid" do
         expect(immunisation_import).to be_invalid
         expect(immunisation_import.errors).not_to include(:row_1) # Header row
-        expect(immunisation_import.errors).to include(:row_2, :row_3)
+        expect(immunisation_import.errors).not_to include(:row_2) # Instruction row
+        expect(immunisation_import.errors).to include(:row_3, :row_4)
       end
     end
   end
