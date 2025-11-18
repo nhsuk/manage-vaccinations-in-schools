@@ -54,6 +54,13 @@ resource "aws_ecs_task_definition" "regression" {
       name      = "mavis-regression"
       image     = "CHANGE_ME"
       essential = true
+      portMappings = [
+        {
+          containerPort = 4000
+          hostPort      = 4000
+          protocol      = "tcp"
+        }
+      ]
       logConfiguration = {
         logDriver = "awslogs"
         options = {
@@ -62,6 +69,11 @@ resource "aws_ecs_task_definition" "regression" {
           awslogs-stream-prefix = "${var.identifier}-logs"
         }
       }
+    },
+    {
+      name      = "mavis-regression-db"
+      image     = "CHANGE_ME"
+      essential = false
     }
   ])
   tags = {

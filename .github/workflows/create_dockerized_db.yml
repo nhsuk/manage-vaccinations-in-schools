@@ -1,0 +1,64 @@
+name: Create Dockerized Database
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  setup-development-database:
+    name: Setup Development Database
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16.11
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: manage_vaccinations_development
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    env:
+      RAILS_ENV: development
+      DATABASE_HOST: localhost
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      BUNDLE_WITHOUT: test
+      RAILS_MASTER_KEY: intentionally-insecure-dev-key00
+      SKIP_TEST_DATABASE: true
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .tool-versions
+          cache: yarn
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
+          aws-region: eu-west-2
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Setup Development Database
+        run: bin/rails db:setup
+      - name: Get postgres container ID
+        id: get-container-id
+        run: |
+          CONTAINER_ID=$(docker ps -q --filter "ancestor=postgres:16.11")
+          echo "container-id=$CONTAINER_ID" >> $GITHUB_OUTPUT
+      - name: Commit postgres container with database
+        run: |
+          docker commit ${{ steps.get-container-id.outputs.container-id }} ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db:latest
+      - name: Push image to repository foo
+        run: |
+          docker push ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db:latest
