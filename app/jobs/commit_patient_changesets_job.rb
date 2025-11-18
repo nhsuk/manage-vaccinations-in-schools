@@ -41,16 +41,10 @@ class CommitPatientChangesetsJob
       end
     end
 
-    if import.changesets.committing.none?
-      if import.changesets.needs_re_review.any?
-        trigger_re_review(import)
-      else
-        import.update_columns(processed_at: Time.zone.now, status: :processed)
-      end
-      import.postprocess_rows!
-      reset_counts(import)
-      import.update_columns(**counts)
+    if finished_committing_changesets?(import)
+      run_post_commit_tasks(import, counts)
     end
+
     SyncPatientTeamJob.perform_later(SchoolMove, imported_school_move_ids)
     import.post_commit!
   end
@@ -91,6 +85,22 @@ class CommitPatientChangesetsJob
     changeset.needs_re_review! if inconsistent
 
     !inconsistent
+  end
+
+  def finished_committing_changesets?(import)
+    import.changesets.committing.none?
+  end
+
+  # Tasks that get run after all the other batches have run
+  def run_post_commit_tasks(import, counts)
+    if import.changesets.needs_re_review.any?
+      trigger_re_review(import)
+    else
+      import.update_columns(processed_at: Time.zone.now, status: :processed)
+    end
+    import.postprocess_rows!
+    reset_counts(import)
+    import.update_columns(**counts)
   end
 
   def trigger_re_review(import)
