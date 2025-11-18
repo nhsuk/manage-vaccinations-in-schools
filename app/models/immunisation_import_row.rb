@@ -357,13 +357,13 @@ class ImmunisationImportRow
     end
   end
 
-  def vaccine_nivs_name
+  def vaccine_upload_name
     parsed_vaccination_description_string&.dig(:vaccine_name) ||
       vaccine_name&.to_s
   end
 
   def vaccine
-    @vaccine ||= team.vaccines.find_by(nivs_name: vaccine_nivs_name)
+    @vaccine ||= team.vaccines.find_by(upload_name: vaccine_upload_name)
   end
 
   def batch
@@ -1023,7 +1023,7 @@ class ImmunisationImportRow
           "is not given in the #{programme.name_in_sentence} programme"
         )
       end
-    elsif vaccine_nivs_name.present?
+    elsif vaccine_upload_name.present?
       errors.add(field.header, "This vaccine is not available in this session.")
     elsif offline_recording? && administered
       if vaccine_name.nil?
