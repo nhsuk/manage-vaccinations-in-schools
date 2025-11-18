@@ -49,6 +49,36 @@ namespace :vaccines do
         end
       end
     end
+
+    puts "Checking for unlinked chains of questions..."
+    # rubocop:disable Style/BlockDelimiters
+    problematic_programmes =
+      Vaccine
+        .all
+        .map do
+          [
+            it.programme_type,
+            (
+              begin
+                it.first_health_question.id
+              rescue StandardError
+                nil
+              end
+            )
+          ]
+        end
+        .select { |_, question_id| question_id.nil? }
+        .map(&:first)
+        .uniq
+    # rubocop:enable Style/BlockDelimiters
+
+    if problematic_programmes.any?
+      problematic_programmes.each do |programme_type|
+        puts "- Error: health question chain for #{programme_type.upcase} vaccine is broken"
+      end
+    else
+      puts "All vaccine health question chains are correctly linked"
+    end
   end
 end
 
@@ -388,6 +418,8 @@ def create_mmr_health_questions(vaccine)
         "Has your child had any of the following in the last 4 weeks, or are they due " \
           "to have them in the next 4 weeks: TB skin test, chickenpox vaccine, or yellow fever vaccine?"
     )
+
+  immune_system.update!(next_question: contraindications)
 
   medical_conditions =
     vaccine.health_questions.create!(
