@@ -311,7 +311,7 @@ describe Reports::OfflineSessionExporter do
                 "TRIAGE_NOTES" => nil,
                 "TRIAGE_STATUS" => nil,
                 "VACCINATED" => "Y",
-                "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
+                "VACCINE_GIVEN" => vaccination_record.vaccine.upload_name,
                 "UUID" => vaccination_record.uuid,
                 "YEAR_GROUP" => patient.year_group(academic_year:),
                 "REGISTRATION" => patient.registration
@@ -507,7 +507,7 @@ describe Reports::OfflineSessionExporter do
                 "TRIAGE_NOTES" => nil,
                 "TRIAGE_STATUS" => nil,
                 "VACCINATED" => "Y",
-                "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
+                "VACCINE_GIVEN" => vaccination_record.vaccine.upload_name,
                 "UUID" => vaccination_record.uuid,
                 "YEAR_GROUP" => patient.year_group(academic_year:),
                 "REGISTRATION" => patient.registration
@@ -955,7 +955,7 @@ describe Reports::OfflineSessionExporter do
                 "TRIAGE_NOTES" => nil,
                 "TRIAGE_STATUS" => nil,
                 "VACCINATED" => "Y",
-                "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
+                "VACCINE_GIVEN" => vaccination_record.vaccine.upload_name,
                 "UUID" => vaccination_record.uuid,
                 "YEAR_GROUP" => patient.year_group(academic_year:),
                 "REGISTRATION" => patient.registration

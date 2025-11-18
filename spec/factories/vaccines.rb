@@ -36,7 +36,7 @@ FactoryBot.define do
 
     brand { Faker::Commerce.product_name }
     manufacturer { Faker::Company.name }
-    sequence(:nivs_name) { |n| "#{brand.parameterize}-#{n}" }
+    sequence(:upload_name) { |n| "#{brand.parameterize}-#{n}" }
     dose_volume_ml { Faker::Number.decimal(l_digits: 0) }
     snomed_product_code { Faker::Number.decimal_part(digits: 17) }
     snomed_product_term { Faker::Lorem.sentence }
@@ -192,7 +192,7 @@ FactoryBot.define do
         disease_types { data["disease_types"] }
         manufacturer { data["manufacturer"] }
         add_attribute(:method) { data["method"] }
-        nivs_name { data["nivs_name"] }
+        upload_name { data["upload_name"] }
         snomed_product_code { data["snomed_product_code"] }
         snomed_product_term { data["snomed_product_term"] }
       end
