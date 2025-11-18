@@ -25,6 +25,7 @@ describe "Import class lists" do
     and_an_hpv_programme_is_underway
     and_one_patient_exists_in_the_school
     and_import_review_is_enabled
+    and_pds_lookup_during_import_is_enabled
 
     when_i_visit_a_session_page_for_the_hpv_programme
     and_i_start_adding_children_to_the_session
@@ -92,6 +93,58 @@ describe "Import class lists" do
 
   def and_import_review_is_enabled
     Flipper.enable(:import_review_screen)
+  end
+
+  def and_pds_lookup_during_import_is_enabled
+    Flipper.enable(:import_search_pds)
+
+    stub_pds_search_to_return_a_patient(
+      "9435753973",
+      "family" => "Klein",
+      "given" => "Calvin",
+      "birthdate" => "eq2014-11-19",
+      "address-postalcode" => "KT2 9HF"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9435769047",
+      "family" => "Lauren",
+      "given" => "Ralph",
+      "birthdate" => "eq2015-10-14",
+      "address-postalcode" => "RH3 1HG"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9435769047",
+      "family" => "Lauren",
+      "given" => "Ralphie",
+      "birthdate" => "eq2015-10-14",
+      "address-postalcode" => "RH3 1HG"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9435797237",
+      "family" => "Kors",
+      "given" => "Michael",
+      "birthdate" => "eq2015-08-09",
+      "address-postalcode" => "W8 6DF"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9435777066",
+      "family" => "Chanel",
+      "given" => "Coco",
+      "birthdate" => "eq2010-09-10",
+      "address-postalcode" => "SW7 5LE"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9435783309",
+      "family" => "Smith",
+      "given" => "John",
+      "birthdate" => "eq2009-10-29",
+      "address-postalcode" => "SW1 1AA"
+    )
   end
 
   def when_i_visit_the_import_page
