@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_17_144500) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_18_091300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -993,19 +993,19 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_17_144500) do
     t.decimal "dose_volume_ml", null: false
     t.text "manufacturer", null: false
     t.integer "method", null: false
-    t.text "nivs_name", null: false
     t.bigint "programme_id", null: false
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "side_effects", default: [], null: false, array: true
     t.string "snomed_product_code", null: false
     t.string "snomed_product_term", null: false
     t.datetime "updated_at", null: false
+    t.text "upload_name", null: false
     t.index ["manufacturer", "brand"], name: "index_vaccines_on_manufacturer_and_brand", unique: true
-    t.index ["nivs_name"], name: "index_vaccines_on_nivs_name", unique: true
     t.index ["programme_id"], name: "index_vaccines_on_programme_id"
     t.index ["programme_type"], name: "index_vaccines_on_programme_type"
     t.index ["snomed_product_code"], name: "index_vaccines_on_snomed_product_code", unique: true
     t.index ["snomed_product_term"], name: "index_vaccines_on_snomed_product_term", unique: true
+    t.index ["upload_name"], name: "index_vaccines_on_upload_name", unique: true
   end
 
   add_foreign_key "access_log_entries", "patients"

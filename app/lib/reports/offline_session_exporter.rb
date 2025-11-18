@@ -337,7 +337,7 @@ class Reports::OfflineSessionExporter
     )
     row[:programme] = programme.import_names.first
     row[:vaccine_given] = Cell.new(
-      vaccine&.nivs_name,
+      vaccine&.upload_name,
       allowed_values: vaccine_values_for_programme(programme)
     )
     row[:performing_professional_email] = Cell.new(
@@ -413,7 +413,7 @@ class Reports::OfflineSessionExporter
   end
 
   def vaccine_values_for_programme(programme)
-    @vaccines[programme] ||= Vaccine.active.where(programme:).pluck(:nivs_name)
+    @vaccines[programme] ||= Vaccine.active.where(programme:).pluck(:upload_name)
   end
 
   def batch_values_for_programme(programme, existing_batch: nil)
