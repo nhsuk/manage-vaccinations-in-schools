@@ -7,6 +7,7 @@ cell_based_trivalent:
   manufacturer: Sequirus
   contains_gelatine: false
   upload_name: Sequirus Cell-based Trivalent
+  nivs_name: Seqirus Cell-Based Trivalent IIVc
   dose_volume_ml: 0.5
   snomed_product_code: 43207411000001105
   snomed_product_term: Cell-based trivalent influenza vaccine (surface
@@ -20,6 +21,7 @@ fluenz:
   manufacturer: AstraZeneca
   contains_gelatine: true
   upload_name: AstraZeneca Fluenz
+  nivs_name: AstraZeneca Fluenz LAIV
   dose_volume_ml: 0.2
   snomed_product_code: 43208811000001106
   snomed_product_term: Fluenz (trivalent) vaccine nasal suspension 0.2ml unit
@@ -44,6 +46,7 @@ viatris:
   manufacturer: Viatris
   contains_gelatine: false
   upload_name: Viatris
+  nivs_name: Viatris Quadrivalent Influvac sub - unit Tetra - QIVe
   dose_volume_ml: 0.5
   snomed_product_code: 45354911000001100
   snomed_product_term: Influenza TIV MYL vaccine suspension for injection
@@ -59,6 +62,7 @@ cervarix:
   manufacturer: GlaxoSmithKline
   contains_gelatine: false
   upload_name: Cervarix
+  nivs_name: Cervarix
   dose_volume_ml: 0.5
   snomed_product_code: 12238911000001100
   snomed_product_term:
@@ -73,6 +77,7 @@ gardasil:
   manufacturer: Merck Sharp & Dohme
   contains_gelatine: false
   upload_name: Gardasil
+  nivs_name: Gardasil
   dose_volume_ml: 0.5
   snomed_product_code: 10880211000001104
   snomed_product_term:
@@ -86,6 +91,7 @@ gardasil_9:
   manufacturer: Merck Sharp & Dohme
   contains_gelatine: false
   upload_name: Gardasil9
+  nivs_name: Gardasil9
   dose_volume_ml: 0.5
   snomed_product_code: 33493111000001108
   snomed_product_term:

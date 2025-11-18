@@ -176,6 +176,7 @@ FactoryBot.define do
         manufacturer { data["manufacturer"] }
         add_attribute(:method) { data["method"] }
         upload_name { data["upload_name"] }
+        nivs_name { data["nivs_name"] }
         snomed_product_code { data["snomed_product_code"] }
         snomed_product_term { data["snomed_product_term"] }
       end
