@@ -185,6 +185,8 @@ class DraftSession
   def write_to!(session)
     super(session)
 
+    session.dates = dates
+
     new_programme_ids.each do |programme_id|
       session.session_programmes.build(programme_id:)
     end
@@ -226,11 +228,11 @@ class DraftSession
   def request_session_key = "session"
 
   def readable_attribute_names
-    super - %w[session_dates]
+    super - %w[dates session_dates]
   end
 
   def writable_attribute_names
-    super - %w[location_id session_dates programme_ids]
+    super - %w[dates location_id session_dates programme_ids]
   end
 
   def include_notification_steps?

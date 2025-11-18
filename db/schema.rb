@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_13_123648) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -805,6 +805,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
   create_table "sessions", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.datetime "created_at", null: false
+    t.date "dates", array: true
     t.integer "days_before_consent_reminders"
     t.bigint "location_id", null: false
     t.boolean "national_protocol_enabled", default: false, null: false
@@ -817,6 +818,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_193811) do
     t.bigint "team_id", null: false
     t.datetime "updated_at", null: false
     t.index ["academic_year", "location_id", "team_id"], name: "index_sessions_on_academic_year_and_location_id_and_team_id"
+    t.index ["dates"], name: "index_sessions_on_dates", using: :gin
     t.index ["location_id", "academic_year", "team_id"], name: "index_sessions_on_location_id_and_academic_year_and_team_id"
     t.index ["location_id"], name: "index_sessions_on_location_id"
     t.index ["programme_types"], name: "index_sessions_on_programme_types", using: :gin
