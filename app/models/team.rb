@@ -16,6 +16,7 @@
 #  privacy_notice_url            :string           not null
 #  privacy_policy_url            :string           not null
 #  programme_types               :enum             not null, is an Array
+#  type                          :integer          not null
 #  workgroup                     :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
@@ -45,6 +46,8 @@ class Team < ApplicationRecord
 
   audited associated_with: :organisation
   has_associated_audits
+
+  self.inheritance_column = nil
 
   belongs_to :organisation
 
@@ -78,6 +81,11 @@ class Team < ApplicationRecord
   normalizes :email, with: EmailAddressNormaliser.new
   normalizes :phone, with: PhoneNumberNormaliser.new
 
+  enum :type,
+       { poc_only: 0, upload_only: 1, poc_with_legacy_upload: 2 },
+       validate: true,
+       prefix: true
+
   validates :careplus_venue_code, presence: true
   validates :email, notify_safe_email: true
   validates :name, presence: true, uniqueness: true
@@ -106,5 +114,13 @@ class Team < ApplicationRecord
       )
       .create_with(programmes:, dates: [])
       .find_or_create_by!(academic_year:, location: generic_clinic)
+  end
+
+  def has_upload_access_only?
+    type_upload_only?
+  end
+
+  def has_poc_access?
+    type_poc_only? || type_poc_with_legacy_upload?
   end
 end

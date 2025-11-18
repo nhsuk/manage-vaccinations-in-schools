@@ -1,0 +1,34 @@
+<ul class="nhsuk-grid-row nhsuk-card-group">
+  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: imports_path) do |card| %>
+      <% card.with_heading(level: 2) { t("imports.index.title") } %>
+      <p class="nhsuk-body">Use this area to:</p>
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <li>upload vaccination records</li>
+        <li>check the status of your uploads</li>
+        <li>view previous uploads</li>
+      </ul>
+    <% end %>
+  </li>
+
+  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(disabled: true) do |card| %>
+      <% card.with_heading(level: 2) { "Vaccination records" } %>
+      <p class="nhsuk-body">Use this area to:</p>
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <li>find vaccination records</li>
+        <li>edit vaccination records</li>
+      </ul>
+    <% end %>
+  </li>
+
+  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(disabled: true) do |card| %>
+      <% card.with_heading(level: 2) { "Reports" } %>
+      <p class="nhsuk-body">Use this area to:</p>
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <li>view reports on vaccination records</li>
+      </ul>
+    <% end %>
+  </li>
+</ul>
