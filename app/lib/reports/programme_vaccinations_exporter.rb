@@ -232,7 +232,7 @@ class Reports::ProgrammeVaccinationsExporter
       vaccination_record.performed_at.to_date.iso8601,
       vaccination_record.performed_at.strftime("%H:%M:%S"),
       programme.name,
-      vaccine&.nivs_name || "",
+      vaccine&.upload_name || "",
       vaccination_record.protocol || "",
       vaccination_record.performed_by_user&.email || "",
       vaccination_record.performed_by&.given_name || "",
