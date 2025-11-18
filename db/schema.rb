@@ -554,7 +554,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_123648) do
     t.boolean "matched_on_nhs_number"
     t.bigint "patient_id"
     t.string "pds_nhs_number"
-    t.jsonb "pending_changes", default: {}
     t.datetime "processed_at"
     t.integer "record_type", default: 1, null: false
     t.integer "row_number"
