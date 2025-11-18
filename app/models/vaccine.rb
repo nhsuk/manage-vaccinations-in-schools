@@ -11,21 +11,21 @@
 #  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
 #  method              :integer          not null
-#  nivs_name           :text             not null
 #  programme_type      :enum             not null
 #  side_effects        :integer          default([]), not null, is an Array
 #  snomed_product_code :string           not null
 #  snomed_product_term :string           not null
+#  upload_name         :text             not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #
 # Indexes
 #
 #  index_vaccines_on_manufacturer_and_brand  (manufacturer,brand) UNIQUE
-#  index_vaccines_on_nivs_name               (nivs_name) UNIQUE
 #  index_vaccines_on_programme_type          (programme_type)
 #  index_vaccines_on_snomed_product_code     (snomed_product_code) UNIQUE
 #  index_vaccines_on_snomed_product_term     (snomed_product_term) UNIQUE
+#  index_vaccines_on_upload_name             (upload_name) UNIQUE
 #
 class Vaccine < ApplicationRecord
   include BelongsToProgramme
