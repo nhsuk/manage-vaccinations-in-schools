@@ -153,7 +153,7 @@ describe "Immunisation imports duplicates" do
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
-    expect(page).to have_content("2 records with import issues to review")
+    expect(page).to have_content("2 upload issues")
   end
 
   def when_i_choose_to_keep_the_duplicate_record
@@ -175,6 +175,7 @@ describe "Immunisation imports duplicates" do
   end
 
   def when_i_review_the_first_duplicate_record
+    find(".nhsuk-details__summary", text: "2 upload issues").click
     click_on "Review ATTWATER, Caden"
   end
 

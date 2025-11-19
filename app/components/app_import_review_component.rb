@@ -51,7 +51,8 @@ class AppImportReviewComponent < ViewComponent::Base
         ) do
           render(
             AppImportReviewIssuesSummaryComponent.new(
-              changesets: @import_issues
+              import: @import,
+              records: @import_issues
             )
           )
         end,

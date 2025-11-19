@@ -289,7 +289,6 @@ describe "Child record imports duplicates" do
 
   def then_i_should_see_the_import_page_with_duplicate_records
     expect(page).to have_content("Imports (3)")
-    expect(page).to have_content("3 records with import issues to review")
   end
 
   def given_i_archive_the_patient_record
@@ -343,6 +342,7 @@ describe "Child record imports duplicates" do
   end
 
   def when_i_review_the_first_duplicate_record
+    find(".nhsuk-details__summary", text: "3 upload issues").click
     click_on "Review CLARKE, Jennifer"
   end
 
