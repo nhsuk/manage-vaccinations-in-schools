@@ -96,15 +96,6 @@ class Patient < ApplicationRecord
   # https://www.datadictionary.nhs.uk/attributes/person_gender_code.html
   enum :gender_code, { not_known: 0, male: 1, female: 2, not_specified: 9 }
 
-  scope :joins_archive_reasons,
-        ->(team:) do
-          joins(
-            "LEFT OUTER JOIN archive_reasons " \
-              "ON archive_reasons.patient_id = patients.id " \
-              "AND archive_reasons.team_id = #{team.id}"
-          )
-        end
-
   scope :joins_sessions, -> { joins(:patient_locations).joins(<<-SQL) }
     INNER JOIN sessions
     ON sessions.location_id = patient_locations.location_id
@@ -122,12 +113,26 @@ class Patient < ApplicationRecord
 
   scope :archived,
         ->(team:) do
-          joins_archive_reasons(team:).where("archive_reasons.id IS NOT NULL")
+          joins(:patient_teams).where(
+            patient_teams: {
+              team_id: team.id
+            }
+          ).where(
+            "patient_teams.sources @> ARRAY[?]::integer[]",
+            PatientTeam.sources.fetch("archive_reason")
+          )
         end
 
   scope :not_archived,
         ->(team:) do
-          joins_archive_reasons(team:).where("archive_reasons.id IS NULL")
+          joins(:patient_teams).where(
+            patient_teams: {
+              team_id: team.id
+            }
+          ).where(
+            "NOT patient_teams.sources @> ARRAY[?]::integer[]",
+            PatientTeam.sources.fetch("archive_reason")
+          )
         end
 
   scope :with_pending_changes_for_team,
