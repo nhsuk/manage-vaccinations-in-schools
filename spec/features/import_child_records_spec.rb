@@ -207,6 +207,7 @@ describe "Import child records" do
   end
 
   def when_i_click_on_a_patient
+    find(".nhsuk-details__summary", text: "3 imported records").click
     click_on "DOE, Mark"
   end
 
