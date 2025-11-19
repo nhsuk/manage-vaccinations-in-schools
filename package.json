@@ -8,7 +8,7 @@
     "govuk-frontend": "^5.13.0",
     "idb": "^8.0.3",
     "nhsuk-frontend": "^10.1.0",
-    "sass": "^1.94.0"
+    "sass": "^1.94.1"
   },
   "scripts": {
     "build:css": "sass ./app/assets/stylesheets:./app/assets/builds --no-source-map --pkg-importer=node --quiet-deps --style compressed",
