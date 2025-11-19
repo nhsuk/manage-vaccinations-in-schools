@@ -21,10 +21,6 @@ class PatientSessions::BaseController < ApplicationController
       ).find_by!(slug: params.fetch(:session_slug, params[:slug]))
   end
 
-  def set_session_date
-    @session_date = @session.session_dates.find_by!(value: Date.current)
-  end
-
   def set_academic_year
     @academic_year = @session.academic_year
   end

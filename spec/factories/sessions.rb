@@ -6,7 +6,7 @@
 #
 #  id                            :bigint           not null, primary key
 #  academic_year                 :integer          not null
-#  dates                         :date             is an Array
+#  dates                         :date             not null, is an Array
 #  days_before_consent_reminders :integer
 #  national_protocol_enabled     :boolean          default(FALSE), not null
 #  programme_types               :enum             not null, is an Array
@@ -38,38 +38,30 @@ FactoryBot.define do
   factory :session do
     transient do
       date { Date.current }
-      dates { [] }
       subteam { association(:subteam, team:) }
     end
 
     sequence(:slug) { |n| "session-#{n}" }
 
-    academic_year { (date || Date.current).academic_year }
+    dates { [date].compact }
+    academic_year { (dates.first || Date.current).academic_year }
     programmes { [CachedProgramme.sample] }
     team { association(:team, programmes:) }
     location { association(:school, subteam:, academic_year:, programmes:) }
 
     days_before_consent_reminders do
-      team.days_before_consent_reminders if date && !location.generic_clinic?
+      if dates.first && !location.generic_clinic?
+        team.days_before_consent_reminders
+      end
     end
     send_consent_requests_at do
-      if date && !location.generic_clinic?
-        (date - team.days_before_consent_requests.days)
+      if dates.first && !location.generic_clinic?
+        (dates.first - team.days_before_consent_requests.days)
       end
     end
     send_invitations_at do
-      if date && location.generic_clinic?
-        (date - team.days_before_invitations.days)
-      end
-    end
-
-    session_dates do
-      if dates.present?
-        dates.map { build(:session_date, session: instance, value: _1) }
-      elsif date.present?
-        [build(:session_date, session: instance, value: date)]
-      else
-        []
+      if dates.first && location.generic_clinic?
+        (dates.first - team.days_before_invitations.days)
       end
     end
 

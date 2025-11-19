@@ -5,30 +5,27 @@ class DraftSessionDate
   include ActiveModel::Attributes
   include ActiveRecord::AttributeAssignment
 
-  attribute :id, :integer
+  attribute :index, :integer
   attribute :value, :date
 
   validates :value, presence: true
 
   def attributes
-    { "id" => id, "value" => value&.iso8601 }
+    { "index" => index, "value" => value&.iso8601 }
   end
 
-  def session_date = SessionDate.find_by(id:)
+  def persisted? = index != nil
 
-  def has_been_attended?
-    session_date&.has_been_attended? || false
-  end
-
-  def persisted? = id != nil
-
-  def new_record? = id.nil?
+  def new_record? = index.nil?
 
   class ArraySerializer
     def self.load(arr)
       return if arr.nil?
       arr.map do |item|
-        DraftSessionDate.new(id: item.fetch("id"), value: item.fetch("value"))
+        DraftSessionDate.new(
+          index: item.fetch("index"),
+          value: item.fetch("value")
+        )
       end
     end
 

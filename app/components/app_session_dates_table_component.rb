@@ -9,9 +9,7 @@ class AppSessionDatesTableComponent < ViewComponent::Base
     @session_column_names ||= build_column_names
   end
 
-  def rows
-    session_dates_rows + [total_row]
-  end
+  def rows = session_dates_rows + [total_row]
 
   private
 
@@ -33,10 +31,10 @@ class AppSessionDatesTableComponent < ViewComponent::Base
 
   def session_dates_rows
     @session_dates_rows ||=
-      session.session_dates.map do |session_date|
+      session.dates.map do |date|
         {
-          label: session_date.value.strftime("%e %B %Y"),
-          tallies: tally_vaccination_counts_for_date(session_date)
+          label: date.strftime("%e %B %Y"),
+          tallies: tally_vaccination_counts_for_date(date)
         }
       end
   end
@@ -45,10 +43,10 @@ class AppSessionDatesTableComponent < ViewComponent::Base
     { label: "Total", tallies: compute_total_tallies }
   end
 
-  def tally_vaccination_counts_for_date(session_date)
+  def tally_vaccination_counts_for_date(date)
     programmes.flat_map do |programme|
       vaccination_records_for_date =
-        vaccination_records_by_date(programme).fetch(session_date.value, [])
+        vaccination_records_by_date(programme).fetch(date, [])
 
       if programme.has_multiple_vaccine_methods?
         count_by_vaccine_method(vaccination_records_for_date)

@@ -20,8 +20,8 @@ module MavisCLI
             Set.new(
               Location
                 .school
-                .joins(sessions: :session_dates)
-                .where("session_dates.value >= ?", Time.zone.today)
+                .joins(:sessions)
+                .merge(Session.scheduled)
                 .pluck(:urn)
             ),
           closed: Set.new,
