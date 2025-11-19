@@ -338,7 +338,7 @@ describe NHS::ImmunisationsAPI do
     end
 
     let(:status) { 200 }
-    let(:body) { file_fixture("fhir/fhir_record_full.json").read }
+    let(:body) { file_fixture("fhir/flu/fhir_record_full.json").read }
     let(:headers) { { "content-type" => "application/fhir+json" } }
 
     let!(:request_stub) do
@@ -409,7 +409,7 @@ describe NHS::ImmunisationsAPI do
     end
 
     let(:status) { 200 }
-    let(:body) { file_fixture("fhir/fhir_record_full.json").read }
+    let(:body) { file_fixture("fhir/flu/fhir_record_full.json").read }
     let(:headers) { { "content-type" => "application/fhir+json" } }
 
     let!(:request_stub) do
@@ -834,7 +834,15 @@ describe NHS::ImmunisationsAPI do
     end
 
     let(:nhs_number) { "9449308357" }
-    let(:programmes) { [CachedProgramme.flu] }
+    let(:programmes) do
+      [
+        CachedProgramme.hpv,
+        CachedProgramme.flu,
+        CachedProgramme.menacwy,
+        CachedProgramme.td_ipv,
+        CachedProgramme.mmr
+      ]
+    end
     let(:date_from) { Time.new(2025, 8, 1, 12, 30, 37, "+01:00") }
     let(:date_to) { Time.new(2025, 10, 1, 10, 35, 32, "+01:00") }
 
@@ -849,7 +857,7 @@ describe NHS::ImmunisationsAPI do
       {
         "patient.identifier" =>
           "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}",
-        "-immunization.target" => "FLU",
+        "-immunization.target" => "3IN1,FLU,HPV,MENACWY,MMR",
         "-date.from" => "2025-08-01",
         "-date.to" => "2025-10-01"
       }
@@ -877,16 +885,6 @@ describe NHS::ImmunisationsAPI do
       expect(request_stub).to have_been_made
     end
 
-    context "with the wrong programmes" do
-      let(:programmes) { [CachedProgramme.hpv] }
-
-      it "raises an error" do
-        expect { perform_request }.to raise_error(
-          "Cannot search for vaccination records in the immunisations API; one or more programmes is not supported."
-        )
-      end
-    end
-
     context "with non-matching `Bundle.link` parameters" do
       let(:date_to) { nil }
 
@@ -894,7 +892,7 @@ describe NHS::ImmunisationsAPI do
         {
           "patient.identifier" =>
             "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}",
-          "-immunization.target" => "FLU",
+          "-immunization.target" => "3IN1,FLU,HPV,MENACWY,MMR",
           "-date.from" => "2025-08-01"
         }
       end

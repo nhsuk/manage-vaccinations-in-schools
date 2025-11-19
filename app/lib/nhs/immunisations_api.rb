@@ -278,8 +278,6 @@ module NHS::ImmunisationsAPI
 
       if programmes.empty?
         raise "Cannot search for vaccination records in the immunisations API; no programmes provided."
-      elsif !programmes.all?(&:can_search_in_immunisations_api?)
-        raise "Cannot search for vaccination records in the immunisations API; one or more programmes is not supported."
       end
 
       Rails.logger.info(
@@ -290,7 +288,7 @@ module NHS::ImmunisationsAPI
         "patient.identifier" =>
           "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}",
         "-immunization.target" =>
-          programmes.map(&:snomed_target_disease_name).join(","),
+          programmes.map(&:snomed_target_disease_name).sort.join(","),
         "-date.from" => date_from&.strftime("%F"),
         "-date.to" => date_to&.strftime("%F")
       }.compact
@@ -419,6 +417,14 @@ module NHS::ImmunisationsAPI
         bundle_params.transform_keys do |key|
           key == "immunization.target" ? "-immunization.target" : key
         end
+
+      # We don't care about the order of the target values
+      tweaked_bundle_params["-immunization.target"] = tweaked_bundle_params[
+        "-immunization.target"
+      ].split(",").sort
+      request_params["-immunization.target"] = request_params[
+        "-immunization.target"
+      ].split(",").sort
 
       unless tweaked_bundle_params == request_params ||
                bundle_params == request_params

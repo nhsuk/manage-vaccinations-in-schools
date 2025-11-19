@@ -357,25 +357,9 @@ describe SearchVaccinationRecordsInNHSJob do
       end
     end
 
-    shared_examples "sends discovery comms if required once" do
-      it "calls send_vaccination_already_had_if_required once" do
-        expect(AlreadyHadNotificationSender).to receive(:call).once
-
-        perform
-      end
-    end
-
-    shared_examples "sends discovery comms if required twice" do
-      it "calls send_vaccination_already_had_if_required twice" do
-        expect(AlreadyHadNotificationSender).to receive(:call).twice
-
-        perform
-      end
-    end
-
-    shared_examples "doesn't send discovery comms" do
-      it "does not call send_vaccination_already_had_if_required" do
-        expect(AlreadyHadNotificationSender).not_to receive(:call)
+    shared_examples "sends discovery comms if required n times" do |n|
+      it "calls send_vaccination_already_had_if_required n times" do
+        expect(AlreadyHadNotificationSender).to receive(:call).exactly(n).times
 
         perform
       end
@@ -385,7 +369,7 @@ describe SearchVaccinationRecordsInNHSJob do
       {
         "patient.identifier" =>
           "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}",
-        "-immunization.target" => "FLU"
+        "-immunization.target" => "3IN1,FLU,HPV,MENACWY,MMR"
       }
     end
     let(:status) { 200 }
@@ -427,7 +411,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect { perform }.to change { patient.vaccination_records.count }.by(2)
       end
 
-      include_examples "sends discovery comms if required twice"
+      include_examples "sends discovery comms if required n times", 2
       include_examples "calls StatusUpdater"
     end
 
@@ -448,7 +432,7 @@ describe SearchVaccinationRecordsInNHSJob do
         )
       end
 
-      include_examples "sends discovery comms if required once"
+      include_examples "sends discovery comms if required n times", 1
       include_examples "calls StatusUpdater"
     end
 
@@ -473,7 +457,36 @@ describe SearchVaccinationRecordsInNHSJob do
         )
       end
 
-      include_examples "doesn't send discovery comms"
+      include_examples "sends discovery comms if required n times", 0
+      include_examples "calls StatusUpdater"
+    end
+
+    context "with a record for each programme (total 5)" do
+      let(:body) do
+        file_fixture("fhir/search_response_all_programmes.json").read
+      end
+
+      before do
+        # Fully enable feature flag
+        Flipper.enable(:imms_api_search_job)
+      end
+
+      it "creates new vaccination records for incoming Immunizations" do
+        expect { perform }.to change { patient.vaccination_records.count }.by(5)
+      end
+
+      it "creates one vaccination record of each programme" do
+        perform
+
+        expect(
+          patient.vaccination_records.map do
+            it.strict_loading!(false)
+            it.programme
+          end
+        ).to match_array(Programme.all)
+      end
+
+      include_examples "sends discovery comms if required n times", 5
       include_examples "calls StatusUpdater"
     end
 
@@ -486,7 +499,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect { perform }.not_to(change { patient.vaccination_records.count })
       end
 
-      include_examples "doesn't send discovery comms"
+      include_examples "sends discovery comms if required n times", 0
       include_examples "calls StatusUpdater"
     end
 
@@ -499,7 +512,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect { perform }.not_to(change { patient.vaccination_records.count })
       end
 
-      include_examples "doesn't send discovery comms"
+      include_examples "sends discovery comms if required n times", 0
       include_examples "calls StatusUpdater"
     end
 
@@ -510,7 +523,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect { perform }.not_to(change { patient.vaccination_records.count })
       end
 
-      include_examples "doesn't send discovery comms"
+      include_examples "sends discovery comms if required n times", 0
     end
 
     context "with the per-programme feature flag disabled" do
@@ -524,7 +537,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect { perform }.not_to(change { patient.vaccination_records.count })
       end
 
-      include_examples "doesn't send discovery comms"
+      include_examples "sends discovery comms if required n times", 0
     end
 
     context "with the per-programme feature flag enabled" do
@@ -537,7 +550,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect { perform }.to change { patient.vaccination_records.count }.by(2)
       end
 
-      include_examples "sends discovery comms if required twice"
+      include_examples "sends discovery comms if required n times", 2
       include_examples "calls StatusUpdater"
     end
 
@@ -557,7 +570,7 @@ describe SearchVaccinationRecordsInNHSJob do
         )
       end
 
-      include_examples "sends discovery comms if required twice"
+      include_examples "sends discovery comms if required n times", 2
       include_examples "calls StatusUpdater"
     end
 
@@ -577,7 +590,7 @@ describe SearchVaccinationRecordsInNHSJob do
         expect(patient.vaccination_records.count).to eq(0)
       end
 
-      include_examples "doesn't send discovery comms"
+      include_examples "sends discovery comms if required n times", 0
       include_examples "calls StatusUpdater"
     end
 
@@ -591,7 +604,7 @@ describe SearchVaccinationRecordsInNHSJob do
           )
         end
 
-        include_examples "sends discovery comms if required once"
+        include_examples "sends discovery comms if required n times", 1
         include_examples "calls StatusUpdater"
       end
     end
