@@ -18,6 +18,7 @@
 #  updated_at                    :datetime         not null
 #  location_id                   :bigint           not null
 #  team_id                       :bigint           not null
+#  team_location_id              :bigint
 #
 # Indexes
 #
@@ -28,10 +29,12 @@
 #  index_sessions_on_programme_types                            (programme_types) USING gin
 #  index_sessions_on_team_id_and_academic_year                  (team_id,academic_year)
 #  index_sessions_on_team_id_and_location_id                    (team_id,location_id)
+#  index_sessions_on_team_location_id                           (team_location_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (team_id => teams.id)
+#  fk_rails_...  (team_location_id => team_locations.id)
 #
 FactoryBot.define do
   factory :session do
