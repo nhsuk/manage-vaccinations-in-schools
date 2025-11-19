@@ -14,6 +14,7 @@
 #  index_patient_teams_on_patient_id_and_team_id  (patient_id,team_id)
 #  index_patient_teams_on_sources                 (sources) USING gin
 #  index_patient_teams_on_team_id                 (team_id)
+#  index_patient_teams_on_team_id_and_patient_id  (team_id,patient_id) WHERE (NOT (sources @> '{1}'::integer[]))
 #
 # Foreign Keys
 #
