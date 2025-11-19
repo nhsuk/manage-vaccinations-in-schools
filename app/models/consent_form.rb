@@ -5,7 +5,7 @@
 # Table name: consent_forms
 #
 #  id                                  :bigint           not null, primary key
-#  academic_year                       :integer          not null
+#  academic_year                       :integer
 #  address_line_1                      :string
 #  address_line_2                      :string
 #  address_postcode                    :string
@@ -33,10 +33,10 @@
 #  use_preferred_name                  :boolean
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
-#  location_id                         :bigint           not null
+#  location_id                         :bigint
 #  school_id                           :bigint
-#  team_id                             :bigint           not null
-#  team_location_id                    :bigint
+#  team_id                             :bigint
+#  team_location_id                    :bigint           not null
 #
 # Indexes
 #
@@ -101,13 +101,13 @@ class ConsentForm < ApplicationRecord
                 :injection_alternative,
                 :without_gelatine
 
-  audited associated_with: :team
+  audited associated_with: :team_location
   has_associated_audits
 
-  belongs_to :location
+  belongs_to :location, optional: true
   belongs_to :school, class_name: "Location", optional: true
-  belongs_to :team
-  belongs_to :team_location, optional: true
+  belongs_to :team, optional: true
+  belongs_to :team_location
 
   has_many :consents
   has_many :notify_log_entries
