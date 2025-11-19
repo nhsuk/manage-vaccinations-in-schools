@@ -150,8 +150,7 @@ describe "Immunisation imports" do
   end
 
   def then_i_should_see_the_upload
-    expect(page).to have_content("Imported on")
-    expect(page).to have_content("Imported byUSER, Test")
+    expect(page).to have_content("Uploaded byUSER, Test")
   end
 
   def when_i_click_on_a_vaccination_record

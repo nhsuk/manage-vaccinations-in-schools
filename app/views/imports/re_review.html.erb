@@ -5,53 +5,9 @@
                                         ]) %>
 <% end %>
 
-<%= h1 "Import (#{import.created_at.to_fs(:long)})" %>
+<%= h1 "Upload (#{import.created_at.to_fs(:long)})" %>
 
-<p>
-  <%= render AppImportStatusComponent.new(import:) %>
-</p>
-
-<%= render AppCardComponent.new do |card| %>
-  <% card.with_heading(level: 2) { "Details" } %>
-
-  <%= govuk_summary_list do |summary_list| %>
-    <%= summary_list.with_row do |row| %>
-      <%= row.with_key { "Uploaded by" } %>
-      <%= row.with_value { import.uploaded_by.full_name } %>
-    <% end %>
-
-    <%= summary_list.with_row do |row| %>
-      <%= row.with_key { "File" } %>
-      <%= row.with_value { import.csv_filename } %>
-    <% end %>
-
-    <%= summary_list.with_row do |row| %>
-      <%= row.with_key { "Type" } %>
-      <%= row.with_value {
-            { "ClassImport" => "Class list records",
-              "CohortImport" => "Child records",
-              "ImmunisationImport" => "Vaccination records" }[import.class.name]
-          } %>
-    <% end %>
-
-    <% if import.is_a?(ClassImport) %>
-      <%= summary_list.with_row do |row| %>
-        <%= row.with_key { "School" } %>
-        <%= row.with_value { import.location.name } %>
-      <% end %>
-
-      <%= summary_list.with_row do |row| %>
-        <%= row.with_key { "Year groups" } %>
-        <%= row.with_value { import.year_groups.map { format_year_group(it) }.to_sentence } %>
-      <% end %>
-    <% end %>
-
-    <%= summary_list.with_row do |row| %>
-      <%= row.with_key { "Uploaded records" } %>
-      <%= row.with_value { import.changesets.from_file.count.to_s } %>
-    <% end %>
-  <% end %>
-<% end %>
+<%= render AppImportSummaryComponent.new(import:) %>
 
 <%= render AppSecondaryNavigationComponent.new do |nav| %>
   <%= nav.with_item(

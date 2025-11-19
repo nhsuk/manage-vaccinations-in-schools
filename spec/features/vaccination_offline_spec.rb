@@ -624,15 +624,10 @@ describe "Offline vaccination" do
     expect(page).not_to have_content("Invalid")
 
     expect(page).to have_content("4 vaccination records")
-    expect(page).to have_content(
-      "2 records were not imported because they already exist in Mavis"
-    )
   end
 
   def then_i_see_a_duplicate_record_needs_review
-    expect(page).to have_content(
-      "1 record has import issues to resolve before it can be imported into Mavis"
-    )
+    expect(page).to have_content("1 record with import issues to review")
   end
 
   def then_i_see_that_no_records_need_review
