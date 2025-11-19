@@ -405,6 +405,7 @@ describe "Offline vaccination" do
   end
 
   def when_i_review_the_duplicate_record
+    find(".nhsuk-details__summary", text: "1 upload issue").click
     click_on "Review"
   end
   alias_method :and_i_review_the_duplicate_record,
@@ -623,15 +624,15 @@ describe "Offline vaccination" do
     expect(page).to have_content("Completed")
     expect(page).not_to have_content("Invalid")
 
-    expect(page).to have_content("4 vaccination records")
+    expect(page).to have_content("4 imported records")
   end
 
   def then_i_see_a_duplicate_record_needs_review
-    expect(page).to have_content("1 record with import issues to review")
+    expect(page).to have_content("1 upload issue")
   end
 
   def then_i_see_that_no_records_need_review
-    expect(page).not_to have_content("has import issues")
+    expect(page).not_to have_content("upload issue")
   end
 
   def then_i_should_see_a_success_message

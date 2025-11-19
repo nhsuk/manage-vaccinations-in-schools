@@ -64,10 +64,13 @@
 <% if import.processed? || import.partially_processed? %>
 
   <% if @cancelled.present? %>
+    <h3 class="nhsuk-u-reading-width">
+      Records not imported
+    </h3>
     <details class="nhsuk-details nhsuk-expander">
       <summary class="nhsuk-details__summary" data-module="app-sticky">
         <span class="nhsuk-details__summary-text">
-          <%= @cancelled.count %> records not imported
+          <%= pluralize(@cancelled.count, "record") %> not imported
         </span>
       </summary>
       <div class="nhsuk-details__text">
@@ -77,72 +80,49 @@
   <% end %>
 
   <% if @nhs_discrepancies.present? %>
-      <%= render AppPatientPDSDiscrepancyTableComponent.new(discrepancies: @nhs_discrepancies, current_user:) %>
+    <h3 class="nhsuk-u-reading-width">
+      NHS numbers updated from PDS
+    </h3>
+    <p class="nhsuk-hint">
+      <%= pluralize(@nhs_discrepancies.count, "incorrect NHS number") %>
+      updated with <%= @nhs_discrepancies.count == 1 ? "that" : "those" %> found on Spine.
+      Update your original data source if necessary.
+    </p>
+    <%= render AppPatientPDSDiscrepancyTableComponent.new(discrepancies: @nhs_discrepancies, current_user:) %>
     <% end %>
 
   <% if @duplicates.present? %>
-    <div class="nhsuk-table__panel-with-heading-tab">
-      <h3 class="nhsuk-table__heading-tab">
-        <%= pluralize(@duplicates.count,
-                      "record") %> with import issues to review
-      </h3>
-      <%= govuk_table(html_attributes: {
-                        class: "nhsuk-table-responsive",
-                      }) do |table| %>
-        <% table.with_head do |head| %>
-          <% head.with_row do |row| %>
-            <% row.with_cell(text: "Child record") %>
-            <% row.with_cell(text: "Issue to review") %>
-            <% row.with_cell(text: "Actions") %>
-          <% end %>
-        <% end %>
-
-        <% table.with_body do |body| %>
-          <% @duplicates.each do |record| %>
-            <% body.with_row do |row| %>
-              <% row.with_cell do %>
-                <span class="nhsuk-table-responsive__heading">Child record</span>
-                <%= record.respond_to?(:patient) ?
-                      record.patient.full_name :
-                      record.full_name %>
-              <% end %>
-
-              <% row.with_cell do %>
-                <span class="nhsuk-table-responsive__heading">
-                  Issue to review
-                </span>
-                <% patient_name = record.respond_to?(:patient) ? record.patient.full_name : record.full_name %>
-                <%= @issues_text&.dig(patient_name) || "A field in a duplicate record does not match a previously uploaded record" %>
-              <% end %>
-
-              <% row.with_cell do %>
-                <span class="nhsuk-table-responsive__heading">Actions</span>
-                <%= link_to imports_issue_path(
-                      record,
-                      type: record.is_a?(VaccinationRecord) ?
-                        "vaccination-record" :
-                        "patient",
-                    ) do %>
-                  Review
-                  <span class="nhsuk-u-visually-hidden">
-                    <%= record.respond_to?(:patient) ?
-                          record.patient.full_name :
-                          record.full_name %>
-                  </span>
-                <% end %>
-              <% end %>
-            <% end %>
-          <% end %>
-        <% end %>
-      <% end %>
-    </div>
+    <h3 class="nhsuk-u-reading-width">
+      Close matches to existing records - needs review
+    </h3>
+    <p class="nhsuk-hint">
+      <%= pluralize(@duplicates.count,
+                    "record") %> flagged with upload issues for review
+    </p>
+    <details class="nhsuk-details nhsuk-expander">
+      <summary class="nhsuk-details__summary" data-module="app-sticky">
+        <span class="nhsuk-details__summary-text">
+          <%= pluralize(@duplicates.count,
+                        "upload issue") %>
+        </span>
+      </summary>
+      <div class="nhsuk-details__text">
+        <%= render AppImportReviewIssuesSummaryComponent.new(import:, records: @duplicates, show_actions: true) %>
+      </div>
+    </details>
   <% end %>
 
   <% if @patients.present? %>
+    <h3 class="nhsuk-u-reading-width">
+      Imported records
+    </h3>
     <%= render AppPatientTableComponent.new(@patients, current_user:, count: @pagy.count) %>
   <% end %>
 
   <% if @vaccination_records.present? %>
+    <h3 class="nhsuk-u-reading-width">
+      Imported records
+    </h3>
     <%= render AppVaccinationRecordTableComponent.new(@vaccination_records, current_user:, count: @pagy.count) %>
   <% end %>
 

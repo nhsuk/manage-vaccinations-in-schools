@@ -442,15 +442,13 @@ describe "Import child records" do
   end
 
   def when_i_click_on_alberts_pds_history
+    find(".nhsuk-details__summary", text: "10 imported records").click
     click_on "TWEEDLE, Albert"
     click_link "PDS history"
   end
 
   def when_i_click_review_for(name)
-    within(
-      :xpath,
-      "//div[h3[contains(text(), 'records with import issues')]]"
-    ) do
+    within(:xpath, "//div[h3[contains(text(), 'Close matches')]]") do
       within(:xpath, ".//tr[contains(., '#{name}')]") { click_link "Review" }
     end
   end
@@ -534,7 +532,7 @@ describe "Import child records" do
   def when_i_click_review_for(name)
     within(
       :xpath,
-      "//div[h3[contains(text(), 'records with import issues')]]"
+      "//h3[contains(text(), 'Close matches')]/following-sibling::details[1]"
     ) do
       within(:xpath, ".//tr[contains(., '#{name}')]") { click_link "Review" }
     end
@@ -588,19 +586,22 @@ describe "Import child records" do
   end
 
   def then_i_do_not_see_an_import_review_for_the_first_patient_uploaded_without_nhs_number
-    expect(page).not_to have_content("Actions Review SAMSON, Betty")
+    find(".nhsuk-details__summary", text: "2 upload issues").click
+    expect(page).not_to have_content("ActionsReview SAMSON, Betty")
   end
 
   def when_i_click_on_the_patient_without_review
+    find(".nhsuk-details__summary", text: "10 imported records").click
     click_link "SAMSON, Betty"
   end
 
   def then_i_see_an_import_review_for_the_second_patient_uploaded_without_nhs_number
-    expect(page).to have_content("Actions Review WILLIAMS, Catherine")
+    find(".nhsuk-details__summary", text: "2 upload issues").click
     expect(page).to have_content("Matched on NHS number.")
   end
 
   def when_i_click_on_new_patient_uploaded_without_an_nhs_number
+    find(".nhsuk-details__summary", text: "10 imported records").click
     click_link "BROWN, Charlie"
   end
 
@@ -717,6 +718,7 @@ describe "Import child records" do
   end
 
   def when_i_click_on_home_educated_patient
+    find(".nhsuk-details__summary", text: "10 imported records").click
     click_link "HOMESCHOOL, Emma"
   end
 
@@ -790,6 +792,7 @@ describe "Import child records" do
   end
 
   def when_i_click_on_patient_with_unknown_relationship
+    find(".nhsuk-details__summary", text: "10 imported records").click
     click_link "GREEN, Oliver"
   end
 
@@ -812,7 +815,7 @@ describe "Import child records" do
   end
 
   def and_i_should_see_no_duplicate_reviews
-    expect(page).not_to have_content("Actions Review")
+    expect(page).not_to have_content("upload issues")
   end
 
   def and_the_registration_on_albert_should_be_set
@@ -832,7 +835,7 @@ describe "Import child records" do
   end
 
   def then_i_see_an_nhs_discrepancy
-    expect(page).to have_content("1 NHS number was updated")
+    expect(page).to have_content("1 NHS number updated")
   end
 
   def and_lucy_has_the_pds_nhs_number
@@ -841,7 +844,8 @@ describe "Import child records" do
   end
 
   def and_there_is_an_import_review_for_maia
-    expect(page).to have_content("Actions Review SMITH, Maia")
+    find(".nhsuk-details__summary", text: "1 upload issue").click
+    expect(page).to have_content("ActionsReview SMITH, Maia")
     expect(page).to have_content("Possible match found. Review and confirm.")
   end
 

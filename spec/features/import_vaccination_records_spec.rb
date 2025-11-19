@@ -154,6 +154,7 @@ describe "Immunisation imports" do
   end
 
   def when_i_click_on_a_vaccination_record
+    find(".nhsuk-details__summary", text: "1 imported record").click
     click_on "PICKLE, Chyna"
   end
 

@@ -31,35 +31,62 @@ describe AppPatientTableComponent do
 
   let(:count) { 10 }
 
-  it "renders a heading tab" do
+  it "renders a summary with record count" do
     expect(rendered).to have_css(
-      ".nhsuk-table__heading-tab",
-      text: "10 children"
+      ".nhsuk-details__summary-text",
+      text: "10 imported records"
     )
   end
 
   it "renders the headers" do
     expect(rendered).to have_css(
       ".nhsuk-table__header",
-      text: "Name and NHS number"
+      text: "Name and NHS number",
+      visible: :hidden
     )
-    expect(rendered).to have_css(".nhsuk-table__header", text: "Postcode")
-    expect(rendered).to have_css(".nhsuk-table__header", text: "School")
-    expect(rendered).to have_css(".nhsuk-table__header", text: "Date of birth")
+    expect(rendered).to have_css(
+      ".nhsuk-table__header",
+      text: "Postcode",
+      visible: :hidden
+    )
+    expect(rendered).to have_css(
+      ".nhsuk-table__header",
+      text: "School",
+      visible: :hidden
+    )
+    expect(rendered).to have_css(
+      ".nhsuk-table__header",
+      text: "Date of birth",
+      visible: :hidden
+    )
   end
 
   it "renders the rows" do
     expect(rendered).to have_css(
       ".nhsuk-table__body .nhsuk-table__row",
-      count: 10
+      count: 10,
+      visible: :hidden
     )
-    expect(rendered).to have_css(".nhsuk-table__cell", text: "SMITH, John")
     expect(rendered).to have_css(
-      ".nhsuk-table__cell .nhsuk-u-nowrap",
-      text: "999 100 0003"
+      ".nhsuk-table__cell",
+      text: "SMITH, John",
+      visible: :hidden
     )
-    expect(rendered).to have_css(".nhsuk-table__cell", text: "28 May 2000")
-    expect(rendered).to have_css(".nhsuk-table__cell", text: "SW1A 1AA")
+    expect(rendered).to have_css(
+      ".nhsuk-table__cell",
+      text: "999 100 0003",
+      visible: :hidden
+    )
+    expect(rendered).to have_css(
+      ".nhsuk-table__cell",
+      text: "28 May 2000",
+      visible: :hidden
+    )
+    expect(rendered).to have_css(
+      ".nhsuk-table__cell",
+      text: "SW1A 1AA",
+      visible: :hidden
+    )
   end
 
   it "doesn't show postcode of restricted patients" do
@@ -80,7 +107,7 @@ describe AppPatientTableComponent do
     before { create(:patient_location, patient: patients.first, session:) }
 
     it "renders links" do
-      expect(rendered).to have_link("SMITH, John")
+      expect(rendered).to have_link("SMITH, John", visible: :hidden)
     end
   end
 end
