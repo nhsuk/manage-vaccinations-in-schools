@@ -38,8 +38,17 @@ describe "/api/testing/onboard" do
 
       it "creates sessions for the current and previous academic years" do
         request
+
         expect(Session.count).to eq(10)
-        expect(Session.order(:academic_year).pluck(:academic_year).uniq).to eq(
+
+        academic_years =
+          Session
+            .joins(:team_location)
+            .order(:"team_location.academic_year")
+            .pluck(:"team_location.academic_year")
+            .uniq
+
+        expect(academic_years).to eq(
           [AcademicYear.pending - 1, AcademicYear.pending]
         )
       end

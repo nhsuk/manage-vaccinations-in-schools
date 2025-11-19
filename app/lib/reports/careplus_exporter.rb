@@ -70,11 +70,16 @@ class Reports::CareplusExporter
       VaccinationRecord
         .kept
         .where_programme(programme)
-        .where(session: { team: })
+        .where(team_location: { team_id: team.id })
         .for_academic_year(academic_year)
         .administered
         .order(:performed_at)
-        .includes(:batch, :patient, :vaccine, session: :location)
+        .includes(
+          :batch,
+          :patient,
+          :vaccine,
+          session: %i[location team_location]
+        )
 
     if start_date.present?
       scope =

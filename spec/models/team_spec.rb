@@ -65,14 +65,6 @@ describe Team do
   it_behaves_like "a model with a normalised email address"
   it_behaves_like "a model with a normalised phone number"
 
-  describe "#community_clinics" do
-    let(:clinic_locations) { create_list(:community_clinic, 3, team:) }
-
-    it "returns the clinic locations" do
-      expect(team.community_clinics).to match_array(clinic_locations)
-    end
-  end
-
   describe "#has_upload_access_only?" do
     subject { team.has_upload_access_only? }
 

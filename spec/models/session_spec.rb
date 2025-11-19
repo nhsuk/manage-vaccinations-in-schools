@@ -5,7 +5,6 @@
 # Table name: sessions
 #
 #  id                            :bigint           not null, primary key
-#  academic_year                 :integer
 #  dates                         :date             not null, is an Array
 #  days_before_consent_reminders :integer
 #  national_protocol_enabled     :boolean          default(FALSE), not null
@@ -16,8 +15,6 @@
 #  slug                          :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
-#  location_id                   :bigint
-#  team_id                       :bigint
 #  team_location_id              :bigint           not null
 #
 # Indexes

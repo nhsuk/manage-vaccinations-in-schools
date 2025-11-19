@@ -5,7 +5,6 @@
 # Table name: sessions
 #
 #  id                            :bigint           not null, primary key
-#  academic_year                 :integer
 #  dates                         :date             not null, is an Array
 #  days_before_consent_reminders :integer
 #  national_protocol_enabled     :boolean          default(FALSE), not null
@@ -16,8 +15,6 @@
 #  slug                          :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
-#  location_id                   :bigint
-#  team_id                       :bigint
 #  team_location_id              :bigint           not null
 #
 # Indexes
@@ -36,6 +33,7 @@
 #  fk_rails_...  (team_location_id => team_locations.id)
 #
 class Session < ApplicationRecord
+  include BelongsToTeamLocation
   include Consentable
   include ContributesToPatientTeams
   include DaysBeforeToWeeksBefore
@@ -45,13 +43,6 @@ class Session < ApplicationRecord
   class ActiveRecord_Relation < ActiveRecord::Relation
     include ContributesToPatientTeams::Relation
   end
-
-  audited associated_with: :team_location
-  has_associated_audits
-
-  belongs_to :location, optional: true
-  belongs_to :team, optional: true
-  belongs_to :team_location
 
   has_many :consent_notifications
   has_many :notes
@@ -69,17 +60,15 @@ class Session < ApplicationRecord
   has_many :pre_screenings, -> { where(date: it.dates) }, through: :location
   has_many :attendance_records, -> { where(date: it.dates) }, through: :location
 
-  has_many :patient_locations,
-           -> { where(academic_year: it.academic_year) },
-           through: :location
-
   has_one :organisation, through: :team
-  has_one :subteam, through: :location
+  has_many :patient_locations, through: :team_location
 
   scope :joins_patient_locations, -> { joins(<<-SQL) }
+    INNER JOIN team_locations
+    ON team_locations.id = sessions.team_location_id
     INNER JOIN patient_locations
-    ON patient_locations.location_id = sessions.location_id
-    AND patient_locations.academic_year = sessions.academic_year
+    ON patient_locations.location_id = team_locations.location_id
+    AND patient_locations.academic_year = team_locations.academic_year
   SQL
 
   scope :joins_patients, -> { joins(<<-SQL) }
@@ -90,7 +79,7 @@ class Session < ApplicationRecord
   scope :joins_session_programme_year_groups, -> { joins(<<-SQL) }
     INNER JOIN session_programme_year_groups
     ON session_programme_year_groups.session_id = sessions.id
-    AND session_programme_year_groups.year_group = sessions.academic_year - patients.birth_academic_year - #{Integer::AGE_CHILDREN_START_SCHOOL}
+    AND session_programme_year_groups.year_group = team_locations.academic_year - patients.birth_academic_year - #{Integer::AGE_CHILDREN_START_SCHOOL}
   SQL
 
   scope :has_date, ->(value) { where("dates @> ARRAY[?]::date[]", value) }

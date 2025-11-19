@@ -10,7 +10,7 @@ module ContributesToPatientTeams
         {
           patient_location: {
             patient_id_source: "patient_locations.patient_id",
-            team_id_source: "sessions.team_id",
+            team_id_source: "team_locations.team_id",
             contribution_scope: joins_sessions
           }
         }
@@ -26,8 +26,8 @@ module ContributesToPatientTeams
         {
           vaccination_record_session: {
             patient_id_source: "vaccination_records.patient_id",
-            team_id_source: "sessions.team_id",
-            contribution_scope: joins(:session)
+            team_id_source: "team_locations.team_id",
+            contribution_scope: joins(session: :team_location)
           },
           vaccination_record_organisation: {
             patient_id_source: "vaccination_records.patient_id",
@@ -47,24 +47,23 @@ module ContributesToPatientTeams
           },
           school_move_school: {
             patient_id_source: "school_moves.patient_id",
-            team_id_source: "stm.team_id",
+            team_id_source: "tl.team_id",
             contribution_scope:
-              joins(join_subteams_to_school_moves_via_location).where(
-                "loc.type = 0"
-              )
+              joins(join_team_locations_to_school_moves).where("loc.type = 0")
           }
         }
       when "sessions"
         {
           patient_location: {
             patient_id_source: "patient_locations.patient_id",
-            team_id_source: "sessions.team_id",
+            team_id_source: "team_locations.team_id",
             contribution_scope: joins_patient_locations
           },
           vaccination_record_session: {
             patient_id_source: "vaccination_records.patient_id",
-            team_id_source: "sessions.team_id",
-            contribution_scope: joins(:vaccination_records)
+            team_id_source: "team_locations.team_id",
+            contribution_scope:
+              joins(:team_location).joins(:vaccination_records)
           }
         }
       when "organisations"
@@ -80,6 +79,12 @@ module ContributesToPatientTeams
         }
       when "teams"
         {
+          school_move_school: {
+            patient_id_source: "schlm.patient_id",
+            team_id_source: "team_locations.team_id",
+            contribution_scope:
+              joins(:schools).joins(join_school_moves_to_team_locations)
+          },
           vaccination_record_organisation: {
             patient_id_source: "vacs.patient_id",
             team_id_source: "teams.id",
@@ -89,24 +94,15 @@ module ContributesToPatientTeams
               ).where("vacs.session_id IS NULL")
           }
         }
-      when "locations"
+      when "team_locations"
         {
           school_move_school: {
             patient_id_source: "schlm.patient_id",
-            team_id_source: "subteams.team_id",
+            team_id_source: "team_locations.team_id",
             contribution_scope:
-              joins(:subteam).joins(join_school_moves_to_location).where(
-                type: 0
+              joins(:location).merge(Location.school).joins(
+                join_school_moves_to_team_locations
               )
-          }
-        }
-      when "subteams"
-        {
-          school_move_school: {
-            patient_id_source: "schlm.patient_id",
-            team_id_source: "subteams.id",
-            contribution_scope:
-              joins(:schools).joins(join_school_moves_to_location)
           }
         }
       else
@@ -303,19 +299,21 @@ module ContributesToPatientTeams
       SQL
     end
 
-    def join_subteams_to_school_moves_via_location
+    def join_team_locations_to_school_moves
       <<-SQL
       INNER JOIN locations loc
         ON school_moves.school_id = loc.id
-      INNER JOIN subteams stm
-        ON loc.subteam_id = stm.id
+      INNER JOIN team_locations tl
+        ON loc.id = tl.location_id
+        AND school_moves.academic_year = tl.academic_year
       SQL
     end
 
-    def join_school_moves_to_location
+    def join_school_moves_to_team_locations
       <<-SQL
       INNER JOIN school_moves schlm
-        ON schlm.school_id = locations.id
+        ON schlm.school_id = team_locations.team_id
+        AND schlm.academic_year = team_locations.academic_year
       SQL
     end
   end

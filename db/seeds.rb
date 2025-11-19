@@ -64,15 +64,19 @@ end
 def attach_sample_of_schools_to(team)
   Location
     .school
-    .where(subteam_id: nil)
+    .where
+    .missing(:team_locations)
     .order("RANDOM()")
     .limit(50)
-    .update_all_and_sync_patient_teams(subteam_id: team.subteams.first.id)
+    .find_each do |location|
+      location.attach_to_team!(team, academic_year: AcademicYear.current)
+    end
 end
 
 def attach_specific_school_to_team_if_present(team:, urn:)
-  Location.where(urn:).update_all_and_sync_patient_teams(
-    subteam_id: team.subteams.first.id
+  Location.find_by(urn:)&.attach_to_team!(
+    team,
+    academic_year: AcademicYear.current
   )
 end
 
