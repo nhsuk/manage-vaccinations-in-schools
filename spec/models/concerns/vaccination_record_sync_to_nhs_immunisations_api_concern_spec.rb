@@ -9,7 +9,7 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
   let(:session) { create(:session, programmes: [programme]) }
 
   describe "#sync_to_nhs_immunisations_api!" do
-    before { Flipper.enable(:imms_api_sync_job) }
+    before { Flipper.enable(:imms_api_sync_job, programme) }
 
     it "enqueues the job if the vaccination record is eligible to sync" do
       expect {

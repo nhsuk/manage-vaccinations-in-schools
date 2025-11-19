@@ -81,7 +81,7 @@ describe "MenACWY vaccination" do
   end
 
   def and_imms_api_sync_job_feature_is_enabled
-    Flipper.enable(:imms_api_sync_job)
+    Flipper.enable(:imms_api_sync_job, CachedProgramme.menacwy)
     Flipper.enable(:imms_api_integration)
 
     @stubbed_post_request = stub_immunisations_api_post

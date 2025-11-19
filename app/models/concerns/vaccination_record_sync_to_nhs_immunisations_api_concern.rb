@@ -9,9 +9,13 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
 
     scope :sync_all_to_nhs_immunisations_api,
           -> do
-            return unless Flipper.enabled?(:imms_api_sync_job)
+            programmes =
+              Programme.select { Flipper.enabled?(:imms_api_sync_job, it) }
 
-            ids = syncable_to_nhs_immunisations_api.pluck(:id)
+            ids =
+              syncable_to_nhs_immunisations_api.where(
+                programme: programmes
+              ).pluck(:id)
 
             VaccinationRecord.where(id: ids).update_all(
               nhs_immunisations_api_sync_pending_at: Time.current
@@ -56,14 +60,14 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
   end
 
   def touch_nhs_immunisations_api_sync_pending_at
-    return unless Flipper.enabled?(:imms_api_sync_job)
+    return unless Flipper.enabled?(:imms_api_sync_job, programme)
     return unless syncable_to_nhs_immunisations_api?
 
     self.nhs_immunisations_api_sync_pending_at = Time.current
   end
 
   def queue_sync_to_nhs_immunisations_api
-    return unless Flipper.enabled?(:imms_api_sync_job)
+    return unless Flipper.enabled?(:imms_api_sync_job, programme)
     return unless syncable_to_nhs_immunisations_api?
     return if nhs_immunisations_api_sync_pending_at.nil?
 

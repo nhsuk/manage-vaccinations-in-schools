@@ -33,7 +33,7 @@ describe "Patient invalidation deletes vaccination record from API" do
   end
 
   def and_the_feature_flags_are_enabled
-    Flipper.enable(:imms_api_sync_job)
+    Flipper.enable(:imms_api_sync_job, @programme)
     Flipper.enable(:imms_api_integration)
   end
 
