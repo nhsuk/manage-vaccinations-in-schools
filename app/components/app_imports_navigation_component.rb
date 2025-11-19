@@ -10,14 +10,20 @@ class AppImportsNavigationComponent < ViewComponent::Base
     render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(
         href: imports_path,
-        text: "Recent imports",
-        selected: active == :index
+        text: "Uploaded files",
+        selected: active == :uploaded
       )
 
       nav.with_item(
         href: imports_issues_path,
         text: issues_text,
         selected: active == :issues
+      )
+
+      nav.with_item(
+        href: records_imports_path,
+        text: "Imported records",
+        selected: active == :imported
       )
 
       if policy(:notices).index?
@@ -38,7 +44,7 @@ class AppImportsNavigationComponent < ViewComponent::Base
 
   def issues_text
     count = TeamCachedCounts.new(team).import_issues
-    text_with_count("Import issues", count)
+    text_with_count("Upload issues", count)
   end
 
   def notices_text

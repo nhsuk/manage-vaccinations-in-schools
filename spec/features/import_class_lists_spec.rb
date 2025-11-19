@@ -250,7 +250,7 @@ describe "Import class lists" do
   def when_i_go_back_to_the_upload_page
     click_on "Back"
 
-    click_on "Import records"
+    click_on "Upload records"
     choose "Class list records"
     click_on "Continue"
 

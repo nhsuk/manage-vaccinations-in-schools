@@ -1,6 +1,6 @@
 <%= h1 t("imports.index.title"), size: "xl" %>
 
-<%= govuk_button_to "Import records", imports_path, secondary: true, class: "nhsuk-u-margin-bottom-4" %>
+<%= govuk_button_to "Upload records", imports_path, secondary: true, class: "nhsuk-u-margin-bottom-4" %>
 
 <%= render AppImportsNavigationComponent.new(active: :notices, team: current_team) %>
 
