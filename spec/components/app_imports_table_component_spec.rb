@@ -3,7 +3,7 @@
 describe AppImportsTableComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(team:) }
+  let(:component) { described_class.new(team:, uploaded_files: false) }
 
   let(:programmes) { [Programme.sample] }
   let(:team) { create(:team, programmes:) }

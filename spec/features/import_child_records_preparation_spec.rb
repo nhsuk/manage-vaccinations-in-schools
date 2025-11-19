@@ -277,7 +277,7 @@ describe "Import child records" do
   end
 
   def and_i_choose_to_import_child_records(choose_academic_year: false)
-    click_on "Import records"
+    click_on "Upload records"
 
     # Type of records
     choose "Child records"

@@ -458,7 +458,7 @@ describe "Import child records" do
   def and_i_upload_import_file(filename)
     travel 1.minute
 
-    click_button "Import records"
+    click_button "Upload records"
     choose "Child records"
     click_button "Continue"
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/#{filename}")
@@ -526,7 +526,7 @@ describe "Import child records" do
   end
 
   def when_i_go_back_to_the_import_page
-    visit "/imports"
+    visit "/imports/records"
 
     click_on_most_recent_import(CohortImport)
   end

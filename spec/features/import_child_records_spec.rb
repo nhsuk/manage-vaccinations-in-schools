@@ -181,7 +181,7 @@ describe "Import child records" do
   end
 
   def and_i_choose_to_import_child_records
-    click_on "Import records"
+    click_on "Upload records"
     choose "Child records"
     click_on "Continue"
   end
@@ -314,7 +314,7 @@ describe "Import child records" do
 
   def and_i_go_back_to_the_upload_page
     click_on "Back"
-    click_on "Import records"
+    click_on "Upload records"
     choose "Child records"
     click_on "Continue"
   end
@@ -363,7 +363,7 @@ describe "Import child records" do
   end
 
   def then_i_should_see_import_issues_with_the_count
-    expect(page).to have_link("Import issues")
+    expect(page).to have_link("Upload issues")
     expect(page).to have_selector(".app-count", text: "(1)").twice
   end
 end
