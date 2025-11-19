@@ -54,6 +54,7 @@ describe "Import class lists" do
 
     when_i_ignore_changes
     and_i_see_the_import_is_partially_completed
+    and_reviewer_details_are_displayed
     and_school_moves_for_all_ignored_records_are_created
   end
 
@@ -506,6 +507,11 @@ describe "Import class lists" do
     expect(
       ClassImport.first.changesets.not_from_file.ready_for_review.count
     ).to eq(1)
+  end
+
+  def and_reviewer_details_are_displayed
+    expect(page).to have_content("Approved by\nUSER, Test")
+    expect(page).to have_content("Stopped byUSER, Test")
   end
 
   def and_a_school_move_for_john_is_created
