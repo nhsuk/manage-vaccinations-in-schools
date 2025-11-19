@@ -5,7 +5,7 @@
 # Table name: sessions
 #
 #  id                            :bigint           not null, primary key
-#  academic_year                 :integer          not null
+#  academic_year                 :integer
 #  dates                         :date             not null, is an Array
 #  days_before_consent_reminders :integer
 #  national_protocol_enabled     :boolean          default(FALSE), not null
@@ -16,9 +16,9 @@
 #  slug                          :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
-#  location_id                   :bigint           not null
-#  team_id                       :bigint           not null
-#  team_location_id              :bigint
+#  location_id                   :bigint
+#  team_id                       :bigint
+#  team_location_id              :bigint           not null
 #
 # Indexes
 #
@@ -46,12 +46,12 @@ class Session < ApplicationRecord
     include ContributesToPatientTeams::Relation
   end
 
-  audited associated_with: :location
+  audited associated_with: :team_location
   has_associated_audits
 
-  belongs_to :location
-  belongs_to :team
-  belongs_to :team_location, optional: true
+  belongs_to :location, optional: true
+  belongs_to :team, optional: true
+  belongs_to :team_location
 
   has_many :consent_notifications
   has_many :notes
