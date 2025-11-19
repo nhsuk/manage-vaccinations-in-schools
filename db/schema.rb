@@ -203,7 +203,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_154540) do
   end
 
   create_table "consent_forms", force: :cascade do |t|
-    t.integer "academic_year", null: false
+    t.integer "academic_year"
     t.string "address_line_1"
     t.string "address_line_2"
     t.string "address_postcode"
@@ -215,7 +215,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_154540) do
     t.text "family_name"
     t.text "given_name"
     t.jsonb "health_answers", default: [], null: false
-    t.bigint "location_id", null: false
+    t.bigint "location_id"
     t.string "nhs_number"
     t.text "notes", default: "", null: false
     t.string "parent_contact_method_other_details"
@@ -231,8 +231,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_154540) do
     t.datetime "recorded_at"
     t.boolean "school_confirmed"
     t.bigint "school_id"
-    t.bigint "team_id", null: false
-    t.bigint "team_location_id"
+    t.bigint "team_id"
+    t.bigint "team_location_id", null: false
     t.datetime "updated_at", null: false
     t.boolean "use_preferred_name"
     t.index ["academic_year"], name: "index_consent_forms_on_academic_year"
@@ -792,19 +792,19 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_154540) do
   end
 
   create_table "sessions", force: :cascade do |t|
-    t.integer "academic_year", null: false
+    t.integer "academic_year"
     t.datetime "created_at", null: false
     t.date "dates", null: false, array: true
     t.integer "days_before_consent_reminders"
-    t.bigint "location_id", null: false
+    t.bigint "location_id"
     t.boolean "national_protocol_enabled", default: false, null: false
     t.boolean "psd_enabled", default: false, null: false
     t.boolean "requires_registration", default: true, null: false
     t.date "send_consent_requests_at"
     t.date "send_invitations_at"
     t.string "slug", null: false
-    t.bigint "team_id", null: false
-    t.bigint "team_location_id"
+    t.bigint "team_id"
+    t.bigint "team_location_id", null: false
     t.datetime "updated_at", null: false
     t.index ["academic_year", "location_id", "team_id"], name: "index_sessions_on_academic_year_and_location_id_and_team_id"
     t.index ["dates"], name: "index_sessions_on_dates", using: :gin

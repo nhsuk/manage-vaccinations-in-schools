@@ -40,7 +40,7 @@ module MavisCLI
 
         team
           .sessions
-          .includes(:location)
+          .includes(:location, :team_location)
           .where(academic_year: AcademicYear.pending)
           .has_all_programmes_of([programme])
           .find_each do |session|
