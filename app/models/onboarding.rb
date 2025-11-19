@@ -134,11 +134,21 @@ class Onboarding
   end
 
   def save!(create_sessions_for_previous_academic_year: false)
+    academic_years = [AcademicYear.pending]
+
+    if create_sessions_for_previous_academic_year
+      academic_years << AcademicYear.pending - 1
+    end
+
     ActiveRecord::Base.transaction do
       models.each(&:save!)
 
-      clinics.each do |clinic|
-        clinic.attach_to_team!(team, academic_year:, subteam: clinic.subteam)
+      academic_years.each do |academic_year|
+        schools.each { |school| school.attach_to_team!(academic_year:) }
+
+        clinics.each do |clinic|
+          clinic.attach_to_team!(team, academic_year:, subteam: clinic.subteam)
+        end
       end
 
       # Reload to ensure the programmes are loaded.
@@ -146,11 +156,7 @@ class Onboarding
 
       @users.each { |user| user.teams << team }
 
-      create_sessions!(academic_year:)
-
-      if create_sessions_for_previous_academic_year
-        create_sessions!(academic_year: academic_year - 1)
-      end
+      academic_years.each { |academic_year| create_sessions!(academic_year:) }
     end
   end
 
@@ -163,8 +169,6 @@ class Onboarding
               :users,
               :schools,
               :clinics
-
-  def academic_year = AcademicYear.pending
 
   def models
     [organisation] + [team] + programmes + subteams + users + schools + clinics
@@ -227,8 +231,10 @@ class Onboarding
     delegate :team, to: :subteam
 
     def save!
-      academic_year = AcademicYear.pending
+      # Does nothing
+    end
 
+    def attach_to_team!(academic_year:)
       location.attach_to_team!(team, academic_year:, subteam:)
       location.import_year_groups_from_gias!(academic_year:)
       location.import_default_programme_year_groups!(

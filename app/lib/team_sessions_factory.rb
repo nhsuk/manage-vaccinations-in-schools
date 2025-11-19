@@ -23,12 +23,12 @@ class TeamSessionsFactory
   def create_missing_sessions!
     ActiveRecord::Base.transaction do
       team
-        .locations
-        .includes(:team, :location_programme_year_groups)
-        .find_each do
-          LocationSessionsFactory.call(
-            it,
-            academic_year:,
+        .team_locations
+        .where(academic_year:)
+        .includes(location: :location_programme_year_groups)
+        .find_each do |team_location|
+          TeamLocationSessionsFactory.call(
+            team_location,
             sync_patient_teams_now:
           )
         end
