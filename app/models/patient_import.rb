@@ -8,6 +8,25 @@ class PatientImport < ApplicationRecord
 
   has_many :patient_changesets
 
+  scope :status_for_uploaded_files,
+        -> do
+          where(
+            status: %i[
+              pending_import
+              rows_are_invalid
+              low_pds_match_rate
+              changesets_are_invalid
+              in_review
+              calculating_re_review
+              in_re_review
+              committing
+              cancelled
+            ]
+          )
+        end
+  scope :status_for_imported_records,
+        -> { where(status: %i[processed partially_processed]) }
+
   def count_column(patient, parents, parent_relationships)
     if patient.new_record? || parents.any?(&:new_record?) ||
          parent_relationships.any?(&:new_record?)

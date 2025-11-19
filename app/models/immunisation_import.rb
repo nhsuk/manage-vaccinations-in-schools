@@ -38,6 +38,25 @@ class ImmunisationImport < ApplicationRecord
   has_and_belongs_to_many :sessions
   has_and_belongs_to_many :vaccination_records
 
+  scope :status_for_uploaded_files,
+        -> do
+          where(
+            status: %i[
+              pending_import
+              rows_are_invalid
+              low_pds_match_rate
+              changesets_are_invalid
+              in_review
+              calculating_re_review
+              in_re_review
+              committing
+              cancelled
+            ]
+          )
+        end
+  scope :status_for_imported_records,
+        -> { where(status: %i[processed partially_processed]) }
+
   private
 
   def check_rows_are_unique

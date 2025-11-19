@@ -131,7 +131,7 @@ describe "End-to-end journey" do
     click_on "Programmes", match: :first
     click_on "HPV"
     click_on "Import"
-    click_on "Import records"
+    click_on "Upload records"
     choose "Child records"
     click_on "Continue"
     attach_file "cohort_import[csv]", csv_file.path

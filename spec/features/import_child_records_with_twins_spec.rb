@@ -92,7 +92,7 @@ describe "Child record imports twins" do
   end
 
   def and_i_start_adding_children_to_the_cohort
-    click_button "Import records"
+    click_button "Upload records"
     choose "Child records"
     click_button "Continue"
   end
