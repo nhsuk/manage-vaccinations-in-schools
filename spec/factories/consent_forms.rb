@@ -107,8 +107,10 @@ FactoryBot.define do
 
     parental_responsibility { "yes" }
 
-    team { session.team }
     location { session.location }
+    team { session.team }
+    team_location { session.team_location }
+
     school { location.school? ? location : association(:school, team:) }
     school_confirmed { true }
 

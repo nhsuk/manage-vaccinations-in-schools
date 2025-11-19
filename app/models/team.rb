@@ -102,12 +102,17 @@ class Team < ApplicationRecord
       .pluck_year_groups
   end
 
-  def generic_clinic = locations.generic_clinic.first
+  def generic_clinic = locations.includes(:subteam).generic_clinic.first
 
   def generic_clinic_session(academic_year:)
+    location = generic_clinic
+
+    team_location =
+      TeamLocation.find_or_create_by!(team: self, location:, academic_year:)
+
     sessions
       .includes(:location, :session_programme_year_groups)
-      .create_with(dates: [])
+      .create_with(dates: [], team_location:)
       .find_or_create_by!(academic_year:, location: generic_clinic)
       .tap { it.sync_location_programme_year_groups!(programmes:) }
   end
