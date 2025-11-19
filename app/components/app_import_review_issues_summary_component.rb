@@ -20,13 +20,10 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
 
       table.with_body do |body|
         @changesets.each do |changeset|
-          patient = changeset.patient
-
           body.with_row do |row|
             row.with_cell do
               heading =
-                helpers.content_tag(
-                  :span,
+                tag.span(
                   "Name and NHS number",
                   class: "nhsuk-table-responsive__heading"
                 )
@@ -34,11 +31,12 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
               helpers.safe_join(
                 [
                   heading,
-                  helpers.content_tag(:span, patient.full_name),
-                  helpers.tag.br,
-                  helpers.content_tag(
-                    :span,
-                    helpers.patient_nhs_number(patient),
+                  tag.span(
+                    FullNameFormatter.call(changeset, context: :internal)
+                  ),
+                  tag.br,
+                  tag.span(
+                    helpers.format_nhs_number(changeset.nhs_number),
                     class: "nhsuk-u-secondary-text-colour nhsuk-u-font-size-16"
                   )
                 ]
@@ -47,13 +45,12 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
 
             row.with_cell do
               heading =
-                helpers.content_tag(
-                  :span,
+                tag.span(
                   "Issue to review",
                   class: "nhsuk-table-responsive__heading"
                 )
 
-              pending_changes = patient.pending_changes
+              pending_changes = changeset.review_data["pending_changes"] || {}
               issue_groups = helpers.issue_categories_for(pending_changes.keys)
 
               issue_text =
@@ -64,9 +61,7 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
                   "Possible match found. Review and confirm."
                 end
 
-              helpers.safe_join(
-                [heading, helpers.content_tag(:span, issue_text)]
-              )
+              helpers.safe_join([heading, tag.span(issue_text)])
             end
           end
         end

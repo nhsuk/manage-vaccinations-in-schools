@@ -126,25 +126,18 @@ class AppImportReviewComponent < ViewComponent::Base
 
     helpers.safe_join(
       [
-        helpers.content_tag(:h2, title, class: "nhsuk-heading-m"),
-        helpers.content_tag(:p, description, class: "nhsuk-u-reading-width"),
-        helpers.content_tag(:details, class: "nhsuk-details nhsuk-expander") do
+        tag.h2(title, class: "nhsuk-heading-m"),
+        tag.p(description, class: "nhsuk-u-reading-width"),
+        tag.details(class: "nhsuk-details nhsuk-expander") do
           helpers.safe_join(
             [
-              helpers.content_tag(
-                :summary,
+              tag.summary(
                 class: "nhsuk-details__summary",
                 data: {
                   module: "app-sticky"
                 }
-              ) do
-                helpers.content_tag(
-                  :span,
-                  summary,
-                  class: "nhsuk-details__summary-text"
-                )
-              end,
-              helpers.content_tag(:div, class: "nhsuk-details__text", &block)
+              ) { tag.span(summary, class: "nhsuk-details__summary-text") },
+              tag.div(class: "nhsuk-details__text", &block)
             ]
           )
         end
@@ -153,7 +146,7 @@ class AppImportReviewComponent < ViewComponent::Base
   end
 
   def render_button_group
-    helpers.content_tag(:div, class: "nhsuk-button-group") do
+    tag.div(class: "nhsuk-button-group") do
       helpers.safe_join(
         [
           helpers.govuk_button_to(
