@@ -166,6 +166,8 @@ class PatientChangeset < ApplicationRecord
 
   def academic_year = data["upload"]["academic_year"]
 
+  def birth_academic_year = child_attributes["birth_academic_year"]
+
   def home_educated = data["upload"]["home_educated"]
 
   def school_move_source = data["upload"]["school_move_source"]

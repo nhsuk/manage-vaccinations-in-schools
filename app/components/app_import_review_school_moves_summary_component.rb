@@ -26,15 +26,13 @@ class AppImportReviewSchoolMovesSummaryComponent < ViewComponent::Base
             row.with_cell do
               helpers.safe_join(
                 [
-                  helpers.content_tag(
-                    :span,
+                  tag.span(
                     "Name and NHS number",
                     class: "nhsuk-table-responsive__heading"
                   ),
-                  helpers.content_tag(:span, patient.full_name),
-                  helpers.tag.br,
-                  helpers.content_tag(
-                    :span,
+                  tag.span(patient.full_name),
+                  tag.br,
+                  tag.span(
                     helpers.patient_nhs_number(patient),
                     class: "nhsuk-u-secondary-text-colour nhsuk-u-font-size-16"
                   )
@@ -59,23 +57,18 @@ class AppImportReviewSchoolMovesSummaryComponent < ViewComponent::Base
             row.with_cell do
               helpers.safe_join(
                 [
-                  helpers.content_tag(
-                    :span,
-                    "Move",
-                    class: "nhsuk-table-responsive__heading"
-                  ),
-                  helpers.content_tag(:span) do
+                  tag.span("Move", class: "nhsuk-table-responsive__heading"),
+                  tag.span do
                     helpers.safe_join(
                       [
                         helpers.patient_school(patient),
-                        helpers.tag.br,
-                        helpers.content_tag(
-                          :span,
+                        tag.br,
+                        tag.span(
                           "to",
                           class:
                             "nhsuk-u-secondary-text-colour nhsuk-u-font-size-16"
                         ),
-                        helpers.tag.br,
+                        tag.br,
                         destination_school_name
                       ]
                     )

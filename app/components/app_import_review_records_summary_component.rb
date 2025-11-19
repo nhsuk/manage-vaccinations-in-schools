@@ -2,7 +2,7 @@
 
 class AppImportReviewRecordsSummaryComponent < ViewComponent::Base
   def initialize(changesets:)
-    @changesets = changesets.sort_by(&:row_number)
+    @changesets = changesets.sort_by(&:row_number) || []
   end
 
   def call
@@ -23,12 +23,9 @@ class AppImportReviewRecordsSummaryComponent < ViewComponent::Base
       table.with_body do |body|
         @changesets.each do |changeset|
           body.with_row do |row|
-            patient = changeset.patient
-
             row.with_cell do
               heading =
-                helpers.content_tag(
-                  :span,
+                tag.span(
                   "Name and NHS number",
                   class: "nhsuk-table-responsive__heading"
                 )
@@ -36,11 +33,12 @@ class AppImportReviewRecordsSummaryComponent < ViewComponent::Base
               helpers.safe_join(
                 [
                   heading,
-                  helpers.content_tag(:span, patient.full_name),
-                  helpers.tag.br,
-                  helpers.content_tag(
-                    :span,
-                    helpers.patient_nhs_number(patient),
+                  tag.span(
+                    FullNameFormatter.call(changeset, context: :internal)
+                  ),
+                  tag.br,
+                  tag.span(
+                    helpers.format_nhs_number(changeset.nhs_number),
                     class: "nhsuk-u-secondary-text-colour nhsuk-u-font-size-16"
                   )
                 ]
@@ -49,39 +47,28 @@ class AppImportReviewRecordsSummaryComponent < ViewComponent::Base
 
             row.with_cell do
               heading =
-                helpers.content_tag(
-                  :span,
+                tag.span(
                   "Date of birth",
                   class: "nhsuk-table-responsive__heading"
                 )
-              dob = patient.date_of_birth.to_date&.to_fs(:long)
-              helpers.safe_join([heading, helpers.content_tag(:span, dob)])
+              dob = changeset.date_of_birth.to_date&.to_fs(:long)
+              helpers.safe_join([heading, tag.span(dob)])
             end
 
             row.with_cell do
               heading =
-                helpers.content_tag(
-                  :span,
-                  "Postcode",
-                  class: "nhsuk-table-responsive__heading"
-                )
-              postcode = patient.address_postcode
-              helpers.safe_join([heading, helpers.content_tag(:span, postcode)])
+                tag.span("Postcode", class: "nhsuk-table-responsive__heading")
+              postcode = changeset.address_postcode
+              helpers.safe_join([heading, tag.span(postcode)])
             end
 
             row.with_cell do
               heading =
-                helpers.content_tag(
-                  :span,
-                  "Year group",
-                  class: "nhsuk-table-responsive__heading"
-                )
+                tag.span("Year group", class: "nhsuk-table-responsive__heading")
               year_group =
-                patient.year_group(academic_year: AcademicYear.current)
+                changeset.birth_academic_year.to_year_group(academic_year: 2025)
               formatted_year = helpers.format_year_group(year_group)
-              helpers.safe_join(
-                [heading, helpers.content_tag(:span, formatted_year)]
-              )
+              helpers.safe_join([heading, tag.span(formatted_year)])
             end
           end
         end
