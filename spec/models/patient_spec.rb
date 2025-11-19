@@ -77,17 +77,22 @@ describe Patient do
       let(:team) { create(:team) }
 
       context "without an archive reason" do
+        before { create(:patient_team, team:, patient:) }
+
         it { should_not include(patient) }
       end
 
       context "with an archive reason for the team" do
-        before { create(:archive_reason, :moved_out_of_area, team:, patient:) }
+        before { create(:patient_team, :archive_reason, team:, patient:) }
 
         it { should include(patient) }
       end
 
       context "with an archive reason for a different team" do
-        before { create(:archive_reason, :imported_in_error, patient:) }
+        before do
+          create(:patient_team, team:, patient:)
+          create(:patient_team, :archive_reason, team: create(:team), patient:)
+        end
 
         it { should_not include(patient) }
       end
@@ -100,17 +105,22 @@ describe Patient do
       let(:team) { create(:team) }
 
       context "without an archive reason" do
+        before { create(:patient_team, team:, patient:) }
+
         it { should include(patient) }
       end
 
       context "with an archive reason for the team" do
-        before { create(:archive_reason, :moved_out_of_area, team:, patient:) }
+        before { create(:patient_team, :archive_reason, team:, patient:) }
 
         it { should_not include(patient) }
       end
 
       context "with an archive reason for a different team" do
-        before { create(:archive_reason, :imported_in_error, patient:) }
+        before do
+          create(:patient_team, team:, patient:)
+          create(:patient_team, :archive_reason, team: create(:team), patient:)
+        end
 
         it { should include(patient) }
       end
@@ -121,6 +131,8 @@ describe Patient do
 
       let(:team) { create(:team) }
       let(:patient) { create(:patient) }
+
+      before { create(:patient_team, team:, patient:) }
 
       context "without pending changes" do
         it { should_not include(patient) }
