@@ -21,7 +21,7 @@
 #  patient_school_name                        :text
 #  patient_school_urn                         :string
 #  patient_year_group                         :integer
-#  programme_type                             :string
+#  programme_type                             :enum
 #  sais_vaccinations_count                    :bigint
 #  team_name                                  :text
 #  vaccinated_by_sais_current_year            :boolean
@@ -32,14 +32,12 @@
 #  vaccinated_nasal_current_year              :boolean
 #  patient_id                                 :bigint
 #  patient_school_id                          :bigint
-#  programme_id                               :bigint
 #  session_location_id                        :bigint
 #  team_id                                    :bigint
 #
 # Indexes
 #
 #  ix_rapi_pps_id              (id) UNIQUE
-#  ix_rapi_pps_prog_team_year  (programme_id,team_id,academic_year)
 #  ix_rapi_pps_school_la_prog  (patient_school_local_authority_code,programme_type)
 #  ix_rapi_pps_team_year       (team_id,academic_year)
 #  ix_rapi_pps_year_prog_type  (academic_year,programme_type)
