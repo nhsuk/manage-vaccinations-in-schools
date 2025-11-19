@@ -23,6 +23,8 @@ describe CommitImportJob do
     import.save!
   end
 
+  it_behaves_like "a method that updates team cached counts"
+
   describe "#perform" do
     context "when import_low_pds_match_rate flag is disabled" do
       before { Flipper.disable(:import_low_pds_match_rate) }

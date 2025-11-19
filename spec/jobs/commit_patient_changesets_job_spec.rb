@@ -25,6 +25,8 @@ describe CommitPatientChangesetsJob do
     import.save!
   end
 
+  it_behaves_like "a method that updates team cached counts"
+
   describe "#perform" do
     before { Flipper.disable(:import_low_pds_match_rate) }
 
