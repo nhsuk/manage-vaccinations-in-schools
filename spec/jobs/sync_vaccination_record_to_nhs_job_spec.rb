@@ -11,7 +11,7 @@ describe SyncVaccinationRecordToNHSJob, type: :job do
   let(:vaccination_record) { create(:vaccination_record, programme:) }
 
   context "with the feature flag fully on" do
-    before { Flipper.enable(:imms_api_sync_job) }
+    before { Flipper.enable(:imms_api_sync_job, programme) }
 
     it "syncs the vaccination" do
       perform

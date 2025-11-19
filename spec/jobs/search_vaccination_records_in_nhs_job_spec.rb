@@ -11,7 +11,7 @@ describe SearchVaccinationRecordsInNHSJob do
 
   before do
     Flipper.enable(:imms_api_integration)
-    Flipper.enable(:imms_api_search_job)
+    Flipper.enable(:imms_api_search_job, programme)
   end
 
   after do

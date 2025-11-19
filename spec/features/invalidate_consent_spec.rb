@@ -81,7 +81,7 @@ describe "Invalidate consent" do
   end
 
   def and_the_api_feature_flag_is_enabled
-    Flipper.enable(:imms_api_sync_job)
+    Flipper.enable(:imms_api_sync_job, @programme)
     Flipper.enable(:imms_api_integration)
   end
 

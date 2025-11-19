@@ -257,7 +257,12 @@ class TriageForm
 
   def associate_triage_with_vaccination_record(next_dose_delay_triage)
     vaccination_record =
-      patient.vaccination_records.where(programme:).order(:performed_at).last
+      patient
+        .vaccination_records
+        .includes(:programme)
+        .where(programme:)
+        .order(:performed_at)
+        .last
 
     if vaccination_record.present?
       vaccination_record.update!(next_dose_delay_triage:)

@@ -451,7 +451,7 @@ describe "Child record imports duplicates" do
 
   def and_the_required_feature_flags_are_enabled
     Flipper.enable(:imms_api_integration)
-    Flipper.enable(:imms_api_search_job)
+    Flipper.enable(:imms_api_search_job, @programme)
   end
 
   def and_matching_patient_records_exist_with_different_nhs_numbers

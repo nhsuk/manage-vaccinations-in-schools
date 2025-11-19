@@ -232,7 +232,7 @@ describe PatientMerger do
     end
 
     it "enqueues sync jobs for vaccination records" do
-      Flipper.enable(:imms_api_sync_job)
+      Flipper.enable(:imms_api_sync_job, programme)
       expect { call }.to enqueue_sidekiq_job(
         SyncVaccinationRecordToNHSJob
       ).with(vaccination_record.id)
