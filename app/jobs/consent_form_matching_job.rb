@@ -113,6 +113,8 @@ class ConsentFormMatchingJob < ApplicationJob
   end
 
   def reset_counts
-    TeamCachedCounts.new(@consent_form.team).reset_unmatched_consent_responses!
+    cached_counts = TeamCachedCounts.new(@consent_form.team)
+    cached_counts.reset_unmatched_consent_responses!
+    cached_counts.reset_school_moves!
   end
 end
