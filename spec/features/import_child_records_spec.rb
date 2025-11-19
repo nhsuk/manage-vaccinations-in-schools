@@ -216,8 +216,7 @@ describe "Import child records" do
   end
 
   def then_i_should_see_the_upload
-    expect(page).to have_content("Imported on")
-    expect(page).to have_content("Imported byUSER, Test")
+    expect(page).to have_content("Uploaded byUSER, Test")
   end
 
   def when_i_visit_the_hpv_programme_page
