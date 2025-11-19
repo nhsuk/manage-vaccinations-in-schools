@@ -10,7 +10,6 @@ describe AppVaccinateFormComponent do
   let(:current_user) { create(:user, team:) }
 
   let(:session) { create(:session, :today, team:, programmes:) }
-  let(:session_date) { session.session_dates.first }
 
   let(:patient) do
     create(
@@ -23,7 +22,7 @@ describe AppVaccinateFormComponent do
   end
 
   let(:vaccinate_form) do
-    VaccinateForm.new(current_user:, patient:, session_date:, programme:)
+    VaccinateForm.new(current_user:, patient:, session:, programme:)
   end
 
   let(:component) { described_class.new(vaccinate_form) }

@@ -21,10 +21,12 @@ class SessionDate < ApplicationRecord
 
   belongs_to :session
 
-  has_many :gillick_assessments, dependent: :restrict_with_error
-  has_many :pre_screenings, dependent: :restrict_with_error
-
   has_one :location, through: :session
+
+  has_many :gillick_assessments,
+           -> { where(date: it.value) },
+           through: :location
+  has_many :pre_screenings, -> { where(date: it.value) }, through: :location
   has_many :attendance_records, -> { where(date: it.value) }, through: :location
 
   scope :for_session, -> { where("session_id = sessions.id") }

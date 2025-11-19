@@ -26,7 +26,7 @@
 #  performed_by_family_name                :string
 #  performed_by_given_name                 :string
 #  performed_ods_code                      :string
-#  programme_type                          :enum
+#  programme_type                          :enum             not null
 #  protocol                                :integer
 #  source                                  :integer          not null
 #  uuid                                    :uuid             not null
@@ -45,6 +45,7 @@
 #
 # Indexes
 #
+#  idx_on_patient_id_programme_type_outcome_453b557b54             (patient_id,programme_type,outcome) WHERE (discarded_at IS NULL)
 #  idx_vr_fast_lookup                                              (patient_id,programme_id,outcome) WHERE (discarded_at IS NULL)
 #  index_vaccination_records_on_batch_id                           (batch_id)
 #  index_vaccination_records_on_discarded_at                       (discarded_at)
@@ -57,6 +58,7 @@
 #  index_vaccination_records_on_performed_by_user_id               (performed_by_user_id)
 #  index_vaccination_records_on_performed_ods_code_and_patient_id  (performed_ods_code,patient_id) WHERE (session_id IS NULL)
 #  index_vaccination_records_on_programme_id                       (programme_id)
+#  index_vaccination_records_on_programme_type                     (programme_type)
 #  index_vaccination_records_on_session_id                         (session_id)
 #  index_vaccination_records_on_supplied_by_user_id                (supplied_by_user_id)
 #  index_vaccination_records_on_uuid                               (uuid) UNIQUE
@@ -175,7 +177,8 @@ class VaccinationRecord < ApplicationRecord
          service: 0,
          historical_upload: 1,
          nhs_immunisations_api: 2,
-         consent_refusal: 3
+         consent_refusal: 3,
+         bulk_upload: 4
        },
        prefix: "sourced_from",
        validate: true

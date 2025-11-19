@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_13_123648) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -194,13 +194,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.bigint "consent_form_id", null: false
     t.text "notes", default: "", null: false
     t.bigint "programme_id", null: false
-    t.enum "programme_type", enum_type: "programme_type"
+    t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "reason_for_refusal"
     t.integer "response"
     t.integer "vaccine_methods", default: [], null: false, array: true
     t.boolean "without_gelatine"
     t.index ["consent_form_id"], name: "index_consent_form_programmes_on_consent_form_id"
     t.index ["programme_id", "consent_form_id"], name: "idx_on_programme_id_consent_form_id_2113cb7f37", unique: true
+    t.index ["programme_type", "consent_form_id"], name: "idx_on_programme_type_consent_form_id_805eb5d685", unique: true
   end
 
   create_table "consent_forms", force: :cascade do |t|
@@ -251,7 +252,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
 
   create_table "consent_notifications", force: :cascade do |t|
     t.bigint "patient_id", null: false
-    t.enum "programme_types", array: true, enum_type: "programme_type"
+    t.enum "programme_types", null: false, array: true, enum_type: "programme_type"
     t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.bigint "sent_by_user_id"
     t.bigint "session_id", null: false
@@ -275,7 +276,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.datetime "patient_already_vaccinated_notification_sent_at"
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
-    t.enum "programme_type", enum_type: "programme_type"
+    t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "reason_for_refusal"
     t.bigint "recorded_by_user_id"
     t.integer "response", null: false
@@ -291,6 +292,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"
     t.index ["programme_id"], name: "index_consents_on_programme_id"
+    t.index ["programme_type"], name: "index_consents_on_programme_type"
     t.index ["recorded_by_user_id"], name: "index_consents_on_recorded_by_user_id"
     t.index ["team_id"], name: "index_consents_on_team_id"
   end
@@ -313,24 +315,25 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
 
   create_table "gillick_assessments", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.date "date"
+    t.date "date", null: false
     t.boolean "knows_consequences", null: false
     t.boolean "knows_delivery", null: false
     t.boolean "knows_disease", null: false
     t.boolean "knows_side_effects", null: false
     t.boolean "knows_vaccination", null: false
-    t.bigint "location_id"
+    t.bigint "location_id", null: false
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
     t.bigint "programme_id", null: false
-    t.enum "programme_type", enum_type: "programme_type"
-    t.bigint "session_date_id", null: false
+    t.enum "programme_type", null: false, enum_type: "programme_type"
+    t.bigint "session_date_id"
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_gillick_assessments_on_location_id"
     t.index ["patient_id"], name: "index_gillick_assessments_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_gillick_assessments_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_gillick_assessments_on_programme_id"
+    t.index ["programme_type"], name: "index_gillick_assessments_on_programme_type"
     t.index ["session_date_id"], name: "index_gillick_assessments_on_session_date_id"
   end
 
@@ -435,10 +438,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
   create_table "location_programme_year_groups", force: :cascade do |t|
     t.bigint "location_year_group_id", null: false
     t.bigint "programme_id", null: false
-    t.enum "programme_type", enum_type: "programme_type"
+    t.enum "programme_type", null: false, enum_type: "programme_type"
     t.index ["location_year_group_id", "programme_id"], name: "idx_on_location_year_group_id_programme_id_405f51181e", unique: true
+    t.index ["location_year_group_id", "programme_type"], name: "idx_on_location_year_group_id_programme_type_904fa3b284", unique: true
     t.index ["location_year_group_id"], name: "index_location_programme_year_groups_on_location_year_group_id"
     t.index ["programme_id"], name: "index_location_programme_year_groups_on_programme_id"
+    t.index ["programme_type"], name: "index_location_programme_year_groups_on_programme_type"
   end
 
   create_table "location_year_groups", force: :cascade do |t|
@@ -498,7 +503,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.bigint "parent_id"
     t.bigint "patient_id"
     t.integer "programme_ids", default: [], null: false, array: true
-    t.enum "programme_types", array: true, enum_type: "programme_type"
+    t.enum "programme_types", default: [], null: false, array: true, enum_type: "programme_type"
     t.string "recipient", null: false
     t.bigint "sent_by_user_id"
     t.uuid "template_id", null: false
@@ -549,7 +554,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.boolean "matched_on_nhs_number"
     t.bigint "patient_id"
     t.string "pds_nhs_number"
-    t.jsonb "pending_changes", default: {}
     t.datetime "processed_at"
     t.integer "record_type", default: 1, null: false
     t.integer "row_number"
@@ -566,12 +570,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.integer "academic_year", null: false
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
-    t.enum "programme_type", enum_type: "programme_type"
+    t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "status", default: 0, null: false
     t.integer "vaccine_methods", default: [], null: false, array: true
     t.boolean "without_gelatine"
     t.index ["academic_year", "patient_id"], name: "index_patient_consent_statuses_on_academic_year_and_patient_id"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_1d3170e398", unique: true
+    t.index ["patient_id", "programme_type", "academic_year"], name: "idx_on_patient_id_programme_type_academic_year_89a70c9513", unique: true
     t.index ["status"], name: "index_patient_consent_statuses_on_status"
   end
 
@@ -605,7 +610,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.datetime "invalidated_at"
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
-    t.enum "programme_type", enum_type: "programme_type"
+    t.enum "programme_type", null: false, enum_type: "programme_type"
     t.bigint "team_id", null: false
     t.datetime "updated_at", null: false
     t.bigint "vaccine_id", null: false
@@ -614,6 +619,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.index ["created_by_user_id"], name: "index_patient_specific_directions_on_created_by_user_id"
     t.index ["patient_id"], name: "index_patient_specific_directions_on_patient_id"
     t.index ["programme_id"], name: "index_patient_specific_directions_on_programme_id"
+    t.index ["programme_type"], name: "index_patient_specific_directions_on_programme_type"
     t.index ["team_id"], name: "index_patient_specific_directions_on_team_id"
     t.index ["vaccine_id"], name: "index_patient_specific_directions_on_vaccine_id"
   end
@@ -632,12 +638,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.integer "academic_year", null: false
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
-    t.enum "programme_type", enum_type: "programme_type"
+    t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "status", default: 0, null: false
     t.integer "vaccine_method"
     t.boolean "without_gelatine"
     t.index ["academic_year", "patient_id"], name: "index_patient_triage_statuses_on_academic_year_and_patient_id"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_6cf32349df", unique: true
+    t.index ["patient_id", "programme_type", "academic_year"], name: "idx_on_patient_id_programme_type_academic_year_b66791407e", unique: true
     t.index ["status"], name: "index_patient_triage_statuses_on_status"
   end
 
@@ -649,11 +656,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.integer "latest_session_status"
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
-    t.enum "programme_type", enum_type: "programme_type"
+    t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "status", default: 0, null: false
     t.index ["academic_year", "patient_id"], name: "idx_on_academic_year_patient_id_9c400fc863"
     t.index ["latest_location_id"], name: "index_patient_vaccination_statuses_on_latest_location_id"
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_fc0b47b743", unique: true
+    t.index ["patient_id", "programme_type", "academic_year"], name: "idx_on_patient_id_programme_type_academic_year_962639d2ac", unique: true
     t.index ["status"], name: "index_patient_vaccination_statuses_on_status"
   end
 
@@ -708,19 +716,20 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
 
   create_table "pre_screenings", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.date "date"
-    t.bigint "location_id"
+    t.date "date", null: false
+    t.bigint "location_id", null: false
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
     t.bigint "programme_id", null: false
-    t.enum "programme_type", enum_type: "programme_type"
-    t.bigint "session_date_id", null: false
+    t.enum "programme_type", null: false, enum_type: "programme_type"
+    t.bigint "session_date_id"
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_pre_screenings_on_location_id"
     t.index ["patient_id"], name: "index_pre_screenings_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_pre_screenings_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_pre_screenings_on_programme_id"
+    t.index ["programme_type"], name: "index_pre_screenings_on_programme_type"
     t.index ["session_date_id"], name: "index_pre_screenings_on_session_date_id"
   end
 
@@ -795,10 +804,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
   create_table "sessions", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.datetime "created_at", null: false
+    t.date "dates", array: true
     t.integer "days_before_consent_reminders"
     t.bigint "location_id", null: false
     t.boolean "national_protocol_enabled", default: false, null: false
-    t.enum "programme_types", array: true, enum_type: "programme_type"
+    t.enum "programme_types", null: false, array: true, enum_type: "programme_type"
     t.boolean "psd_enabled", default: false, null: false
     t.boolean "requires_registration", default: true, null: false
     t.date "send_consent_requests_at"
@@ -807,6 +817,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.bigint "team_id", null: false
     t.datetime "updated_at", null: false
     t.index ["academic_year", "location_id", "team_id"], name: "index_sessions_on_academic_year_and_location_id_and_team_id"
+    t.index ["dates"], name: "index_sessions_on_dates", using: :gin
     t.index ["location_id", "academic_year", "team_id"], name: "index_sessions_on_location_id_and_academic_year_and_team_id"
     t.index ["location_id"], name: "index_sessions_on_location_id"
     t.index ["programme_types"], name: "index_sessions_on_programme_types", using: :gin
@@ -846,8 +857,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.string "phone_instructions"
     t.string "privacy_notice_url", null: false
     t.string "privacy_policy_url", null: false
-    t.enum "programme_types", array: true, enum_type: "programme_type"
+    t.enum "programme_types", null: false, array: true, enum_type: "programme_type"
     t.uuid "reply_to_id"
+    t.integer "type", null: false
     t.datetime "updated_at", null: false
     t.string "workgroup", null: false
     t.index ["name"], name: "index_teams_on_name", unique: true
@@ -872,7 +884,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
     t.bigint "programme_id", null: false
-    t.enum "programme_type", enum_type: "programme_type"
+    t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "status", null: false
     t.bigint "team_id", null: false
     t.datetime "updated_at", null: false
@@ -882,6 +894,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.index ["patient_id"], name: "index_triages_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_triages_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_triages_on_programme_id"
+    t.index ["programme_type"], name: "index_triages_on_programme_type"
     t.index ["team_id"], name: "index_triages_on_team_id"
   end
 
@@ -939,7 +952,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.bigint "performed_by_user_id"
     t.string "performed_ods_code"
     t.bigint "programme_id", null: false
-    t.enum "programme_type", enum_type: "programme_type"
+    t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "protocol"
     t.bigint "session_id"
     t.integer "source", null: false
@@ -954,11 +967,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.index ["next_dose_delay_triage_id"], name: "index_vaccination_records_on_next_dose_delay_triage_id"
     t.index ["nhs_immunisations_api_id"], name: "index_vaccination_records_on_nhs_immunisations_api_id", unique: true
     t.index ["patient_id", "programme_id", "outcome"], name: "idx_vr_fast_lookup", where: "(discarded_at IS NULL)"
+    t.index ["patient_id", "programme_type", "outcome"], name: "idx_on_patient_id_programme_type_outcome_453b557b54", where: "(discarded_at IS NULL)"
     t.index ["patient_id", "session_id"], name: "index_vaccination_records_on_patient_id_and_session_id"
     t.index ["patient_id"], name: "index_vaccination_records_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
     t.index ["performed_ods_code", "patient_id"], name: "index_vaccination_records_on_performed_ods_code_and_patient_id", where: "(session_id IS NULL)"
     t.index ["programme_id"], name: "index_vaccination_records_on_programme_id"
+    t.index ["programme_type"], name: "index_vaccination_records_on_programme_type"
     t.index ["session_id"], name: "index_vaccination_records_on_session_id"
     t.index ["supplied_by_user_id"], name: "index_vaccination_records_on_supplied_by_user_id"
     t.index ["uuid"], name: "index_vaccination_records_on_uuid", unique: true
@@ -976,7 +991,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.integer "method", null: false
     t.text "nivs_name", null: false
     t.bigint "programme_id", null: false
-    t.enum "programme_type", enum_type: "programme_type"
+    t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "side_effects", default: [], null: false, array: true
     t.string "snomed_product_code", null: false
     t.string "snomed_product_term", null: false
@@ -984,6 +999,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
     t.index ["manufacturer", "brand"], name: "index_vaccines_on_manufacturer_and_brand", unique: true
     t.index ["nivs_name"], name: "index_vaccines_on_nivs_name", unique: true
     t.index ["programme_id"], name: "index_vaccines_on_programme_id"
+    t.index ["programme_type"], name: "index_vaccines_on_programme_type"
     t.index ["snomed_product_code"], name: "index_vaccines_on_snomed_product_code", unique: true
     t.index ["snomed_product_term"], name: "index_vaccines_on_snomed_product_term", unique: true
   end
@@ -1125,7 +1141,47 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
   add_foreign_key "vaccines", "programmes"
 
   create_view "reporting_api_patient_programme_statuses", materialized: true, sql_definition: <<-SQL
-      WITH base_data AS (
+      WITH vaccination_summary AS (
+           SELECT vr.patient_id,
+              vr.programme_id,
+              vr_s.team_id,
+              vr_s.academic_year,
+              count(*) FILTER (WHERE (vr.outcome = 0)) AS sais_vaccinations_count,
+              bool_or((vr.outcome = 0)) AS has_sais_vaccination,
+              max(vr.performed_at) FILTER (WHERE (vr.outcome = 0)) AS most_recent_vaccination,
+              bool_or(((vr.outcome = 0) AND (vr.delivery_method = 2))) AS has_nasal,
+              bool_or(((vr.outcome = 0) AND (vr.delivery_method = ANY (ARRAY[0, 1])))) AS has_injection
+             FROM (vaccination_records vr
+               JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
+            WHERE (vr.discarded_at IS NULL)
+            GROUP BY vr.patient_id, vr.programme_id, vr_s.team_id, vr_s.academic_year
+          ), all_vaccinations_by_year AS (
+           SELECT vr.patient_id,
+              vr.programme_id,
+              vr_s.academic_year,
+              vr_s.team_id,
+              vr.outcome,
+              vr.source,
+              prog_vr.type AS programme_type
+             FROM ((vaccination_records vr
+               JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
+               JOIN programmes prog_vr ON ((prog_vr.id = vr.programme_id)))
+            WHERE (vr.discarded_at IS NULL)
+          UNION ALL
+           SELECT vr.patient_id,
+              vr.programme_id,
+                  CASE
+                      WHEN (EXTRACT(month FROM vr.performed_at) >= (9)::numeric) THEN (EXTRACT(year FROM vr.performed_at))::integer
+                      ELSE ((EXTRACT(year FROM vr.performed_at))::integer - 1)
+                  END AS academic_year,
+              NULL::bigint AS team_id,
+              vr.outcome,
+              vr.source,
+              prog_vr.type AS programme_type
+             FROM (vaccination_records vr
+               JOIN programmes prog_vr ON ((prog_vr.id = vr.programme_id)))
+            WHERE ((vr.discarded_at IS NULL) AND (vr.source = ANY (ARRAY[1, 2])) AND (vr.session_id IS NULL))
+          ), base_data AS (
            SELECT concat(p.id, '-', prog.id, '-', t.id, '-', s.academic_year) AS id,
               p.id AS patient_id,
                   CASE p.gender_code
@@ -1140,113 +1196,106 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
               s.academic_year,
               t.id AS team_id,
               t.name AS team_name,
-              COALESCE(patient_school_org.id, patient_location_org.id) AS organisation_id,
+              (ar.patient_id IS NOT NULL) AS is_archived,
               COALESCE(school_la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
               COALESCE(school_la.mhclg_code, ''::character varying) AS patient_local_authority_code,
               school.id AS patient_school_id,
+              school.urn AS patient_school_urn,
                   CASE
                       WHEN (school.name IS NOT NULL) THEN school.name
                       WHEN (p.home_educated = true) THEN 'Home educated'::text
                       ELSE 'Unknown'::text
                   END AS patient_school_name,
-              pl.location_id AS session_location_id,
+                  CASE
+                      WHEN (pl.patient_id IS NULL) THEN patient_team_prog.location_id
+                      ELSE pl.location_id
+                  END AS session_location_id,
                   CASE
                       WHEN (p.birth_academic_year IS NOT NULL) THEN ((s.academic_year - p.birth_academic_year) - 5)
                       ELSE NULL::integer
                   END AS patient_year_group,
-                  CASE
-                      WHEN (vr_any.patient_id IS NOT NULL) THEN true
-                      ELSE false
-                  END AS has_any_vaccination,
-                  CASE
-                      WHEN (vr_sais_current.patient_id IS NOT NULL) THEN true
-                      ELSE false
-                  END AS vaccinated_by_sais_current_year,
-                  CASE
-                      WHEN ((vr_elsewhere_declared.patient_id IS NOT NULL) AND (vr_elsewhere_recorded.patient_id IS NULL)) THEN true
-                      ELSE false
-                  END AS vaccinated_elsewhere_declared_current_year,
-                  CASE
-                      WHEN (vr_elsewhere_recorded.patient_id IS NOT NULL) THEN true
-                      ELSE false
-                  END AS vaccinated_elsewhere_recorded_current_year,
-                  CASE
-                      WHEN (vr_previous.patient_id IS NOT NULL) THEN true
-                      ELSE false
-                  END AS vaccinated_in_previous_years,
-              COALESCE(vr_counts.sais_vaccinations_count, (0)::bigint) AS sais_vaccinations_count,
-              vr_recent.most_recent_vaccination_month,
-              vr_recent.most_recent_vaccination_year,
+              ((vr_any.patient_id IS NOT NULL) OR (vr_previous.patient_id IS NOT NULL)) AS has_any_vaccination,
+              vaccination_summary.has_sais_vaccination AS vaccinated_by_sais_current_year,
+              ((vr_elsewhere_declared.patient_id IS NOT NULL) AND (vr_elsewhere_recorded.patient_id IS NULL)) AS vaccinated_elsewhere_declared_current_year,
+              (vr_elsewhere_recorded.patient_id IS NOT NULL) AS vaccinated_elsewhere_recorded_current_year,
+              (vr_previous.patient_id IS NOT NULL) AS vaccinated_in_previous_years,
+              COALESCE(vaccination_summary.sais_vaccinations_count, (0)::bigint) AS sais_vaccinations_count,
+              EXTRACT(month FROM vaccination_summary.most_recent_vaccination) AS most_recent_vaccination_month,
+              EXTRACT(year FROM vaccination_summary.most_recent_vaccination) AS most_recent_vaccination_year,
               COALESCE(pcs.status, 0) AS consent_status,
               pcs.vaccine_methods AS consent_vaccine_methods,
-                  CASE
-                      WHEN (parent_refused.patient_id IS NOT NULL) THEN true
-                      ELSE false
-                  END AS parent_refused_consent_current_year,
-                  CASE
-                      WHEN (child_refused.patient_id IS NOT NULL) THEN true
-                      ELSE false
-                  END AS child_refused_vaccination_current_year,
-              row_number() OVER (PARTITION BY p.id, prog.id, t.id, s.academic_year ORDER BY patient_school_org.id) AS rn
-             FROM ((((((((((((((((((((((((patients p
-               JOIN patient_locations pl ON ((pl.patient_id = p.id)))
-               JOIN sessions s ON (((s.location_id = pl.location_id) AND (s.academic_year = pl.academic_year))))
-               JOIN teams t ON ((t.id = s.team_id)))
-               JOIN session_programmes sp ON ((sp.session_id = s.id)))
-               JOIN programmes prog ON ((prog.id = sp.programme_id)))
+              (parent_refused.patient_id IS NOT NULL) AS parent_refused_consent_current_year,
+              (child_refused.patient_id IS NOT NULL) AS child_refused_vaccination_current_year,
+              vaccination_summary.has_nasal AS vaccinated_nasal_current_year,
+              vaccination_summary.has_injection AS vaccinated_injection_current_year,
+              (pl.patient_id IS NULL) AS outside_cohort
+             FROM (((((((((((((((((((((((patients p
+               JOIN ( SELECT pl_1.patient_id,
+                      pl_1.location_id,
+                      s_1.id AS session_id,
+                      s_1.academic_year,
+                      t_1.id AS team_id,
+                      prog_1.id AS programme_id
+                     FROM ((((patient_locations pl_1
+                       JOIN sessions s_1 ON (((s_1.location_id = pl_1.location_id) AND (s_1.academic_year = pl_1.academic_year))))
+                       JOIN teams t_1 ON ((t_1.id = s_1.team_id)))
+                       JOIN session_programmes sp ON ((sp.session_id = s_1.id)))
+                       JOIN programmes prog_1 ON ((prog_1.id = sp.programme_id)))
+                  UNION ALL
+                   SELECT DISTINCT vr.patient_id,
+                      s_1.location_id,
+                      vr.session_id,
+                      s_1.academic_year,
+                      t_1.id AS team_id,
+                      vr.programme_id
+                     FROM ((vaccination_records vr
+                       JOIN sessions s_1 ON ((s_1.id = vr.session_id)))
+                       JOIN teams t_1 ON ((t_1.id = s_1.team_id)))
+                    WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 0) AND (NOT (EXISTS ( SELECT 1
+                             FROM (patient_locations pl_check
+                               JOIN sessions s_check ON (((s_check.location_id = pl_check.location_id) AND (s_check.team_id = t_1.id) AND (s_check.academic_year = pl_check.academic_year))))
+                            WHERE ((pl_check.patient_id = vr.patient_id) AND (pl_check.academic_year = s_1.academic_year))))))) patient_team_prog ON ((patient_team_prog.patient_id = p.id)))
+               LEFT JOIN patient_locations pl ON (((pl.patient_id = p.id) AND (pl.location_id = patient_team_prog.location_id) AND (pl.academic_year = patient_team_prog.academic_year))))
+               JOIN sessions s ON ((s.id = patient_team_prog.session_id)))
+               JOIN teams t ON ((t.id = patient_team_prog.team_id)))
+               JOIN programmes prog ON ((prog.id = patient_team_prog.programme_id)))
+               LEFT JOIN archive_reasons ar ON (((ar.patient_id = p.id) AND (ar.team_id = t.id))))
                LEFT JOIN locations school ON ((school.id = p.school_id)))
                LEFT JOIN subteams school_subteam ON ((school_subteam.id = school.subteam_id)))
                LEFT JOIN teams school_team ON ((school_team.id = school_subteam.team_id)))
                LEFT JOIN organisations patient_school_org ON ((patient_school_org.id = school_team.organisation_id)))
                LEFT JOIN local_authorities school_la ON ((school_la.gias_code = school.gias_local_authority_code)))
-               LEFT JOIN locations current_location ON ((current_location.id = pl.location_id)))
+               LEFT JOIN locations current_location ON ((current_location.id =
+                  CASE
+                      WHEN (pl.patient_id IS NULL) THEN patient_team_prog.location_id
+                      ELSE pl.location_id
+                  END)))
                LEFT JOIN subteams current_location_subteam ON ((current_location_subteam.id = current_location.subteam_id)))
                LEFT JOIN teams current_location_team ON ((current_location_team.id = current_location_subteam.team_id)))
                LEFT JOIN organisations patient_location_org ON ((patient_location_org.id = current_location_team.organisation_id)))
-               LEFT JOIN ( SELECT DISTINCT vr.patient_id,
-                      vr.programme_id,
-                      vr_s.academic_year
-                     FROM (vaccination_records vr
-                       JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
-                    WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = ANY (ARRAY[0, 4])))) vr_any ON (((vr_any.patient_id = p.id) AND (vr_any.programme_id = prog.id) AND (vr_any.academic_year = s.academic_year))))
-               LEFT JOIN ( SELECT DISTINCT vr.patient_id,
-                      vr.programme_id,
-                      vr_s.academic_year
-                     FROM (vaccination_records vr
-                       JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
-                    WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 0))) vr_sais_current ON (((vr_sais_current.patient_id = p.id) AND (vr_sais_current.programme_id = prog.id) AND (vr_sais_current.academic_year = s.academic_year))))
+               LEFT JOIN vaccination_summary ON (((vaccination_summary.patient_id = p.id) AND (vaccination_summary.programme_id = prog.id) AND (vaccination_summary.team_id = t.id) AND (vaccination_summary.academic_year = s.academic_year))))
+               LEFT JOIN ( SELECT DISTINCT all_vaccinations_by_year.patient_id,
+                      all_vaccinations_by_year.programme_id,
+                      all_vaccinations_by_year.academic_year
+                     FROM all_vaccinations_by_year
+                    WHERE (all_vaccinations_by_year.outcome = ANY (ARRAY[0, 4]))) vr_any ON (((vr_any.patient_id = p.id) AND (vr_any.programme_id = prog.id) AND (vr_any.academic_year = s.academic_year))))
                LEFT JOIN ( SELECT DISTINCT vr.patient_id,
                       vr.programme_id,
                       COALESCE((vr_s.academic_year)::numeric, EXTRACT(year FROM vr.performed_at)) AS academic_year
                      FROM (vaccination_records vr
                        LEFT JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
                     WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 4))) vr_elsewhere_declared ON (((vr_elsewhere_declared.patient_id = p.id) AND (vr_elsewhere_declared.programme_id = prog.id) AND (vr_elsewhere_declared.academic_year = (s.academic_year)::numeric))))
-               LEFT JOIN ( SELECT DISTINCT vr.patient_id,
-                      vr.programme_id,
-                      EXTRACT(year FROM vr.performed_at) AS academic_year
-                     FROM vaccination_records vr
-                    WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 0) AND (vr.source = ANY (ARRAY[1, 2])))) vr_elsewhere_recorded ON (((vr_elsewhere_recorded.patient_id = p.id) AND (vr_elsewhere_recorded.programme_id = prog.id) AND (vr_elsewhere_recorded.academic_year = (s.academic_year)::numeric))))
-               LEFT JOIN ( SELECT DISTINCT vr.patient_id,
-                      vr.programme_id,
-                      vr_s.academic_year
-                     FROM (vaccination_records vr
-                       JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
-                    WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = ANY (ARRAY[0, 4])))) vr_previous ON (((vr_previous.patient_id = p.id) AND (vr_previous.programme_id = prog.id) AND (vr_previous.academic_year < s.academic_year))))
-               LEFT JOIN ( SELECT vr.patient_id,
-                      vr.programme_id,
-                      count(*) AS sais_vaccinations_count
-                     FROM vaccination_records vr
-                    WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 0))
-                    GROUP BY vr.patient_id, vr.programme_id) vr_counts ON (((vr_counts.patient_id = p.id) AND (vr_counts.programme_id = prog.id))))
-               LEFT JOIN ( SELECT vr.patient_id,
-                      vr.programme_id,
-                      vr_s.team_id,
-                      EXTRACT(month FROM max(vr.performed_at)) AS most_recent_vaccination_month,
-                      EXTRACT(year FROM max(vr.performed_at)) AS most_recent_vaccination_year
-                     FROM (vaccination_records vr
-                       JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
-                    WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 0))
-                    GROUP BY vr.patient_id, vr.programme_id, vr_s.team_id) vr_recent ON (((vr_recent.patient_id = p.id) AND (vr_recent.programme_id = prog.id) AND (vr_recent.team_id = t.id))))
+               LEFT JOIN ( SELECT DISTINCT all_vaccinations_by_year.patient_id,
+                      all_vaccinations_by_year.programme_id,
+                      all_vaccinations_by_year.team_id,
+                      all_vaccinations_by_year.academic_year
+                     FROM all_vaccinations_by_year
+                    WHERE (all_vaccinations_by_year.outcome = 0)) vr_elsewhere_recorded ON (((vr_elsewhere_recorded.patient_id = p.id) AND (vr_elsewhere_recorded.programme_id = prog.id) AND (vr_elsewhere_recorded.academic_year = s.academic_year) AND ((vr_elsewhere_recorded.team_id IS NULL) OR (vr_elsewhere_recorded.team_id <> t.id)))))
+               LEFT JOIN ( SELECT DISTINCT all_vaccinations_by_year.patient_id,
+                      all_vaccinations_by_year.programme_id,
+                      all_vaccinations_by_year.academic_year
+                     FROM all_vaccinations_by_year
+                    WHERE ((all_vaccinations_by_year.outcome = ANY (ARRAY[0, 4])) AND ((all_vaccinations_by_year.team_id IS NOT NULL) OR ((all_vaccinations_by_year.programme_type)::text <> 'flu'::text)))) vr_previous ON (((vr_previous.patient_id = p.id) AND (vr_previous.programme_id = prog.id) AND (vr_previous.academic_year < s.academic_year))))
                LEFT JOIN LATERAL ( SELECT pcs_1.status,
                       pcs_1.vaccine_methods
                      FROM patient_consent_statuses pcs_1
@@ -1266,7 +1315,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
                     WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 1) AND ((vr.source IS NULL) OR (vr.source <> 3)))) child_refused ON (((child_refused.patient_id = p.id) AND (child_refused.programme_id = prog.id) AND (child_refused.academic_year = s.academic_year))))
             WHERE ((p.invalidated_at IS NULL) AND (p.restricted_at IS NULL))
           )
-   SELECT id,
+   SELECT DISTINCT ON (patient_id, programme_id, team_id, academic_year) id,
       patient_id,
       patient_gender,
       programme_id,
@@ -1274,10 +1323,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
       academic_year,
       team_id,
       team_name,
-      organisation_id,
+      is_archived,
       patient_school_local_authority_code,
       patient_local_authority_code,
       patient_school_id,
+      patient_school_urn,
       patient_school_name,
       session_location_id,
       patient_year_group,
@@ -1292,13 +1342,15 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_191047) do
       consent_status,
       consent_vaccine_methods,
       parent_refused_consent_current_year,
-      child_refused_vaccination_current_year
+      child_refused_vaccination_current_year,
+      vaccinated_nasal_current_year,
+      vaccinated_injection_current_year,
+      outside_cohort
      FROM base_data
-    WHERE (rn = 1);
+    ORDER BY patient_id, programme_id, team_id, academic_year, (sais_vaccinations_count > 0) DESC, (outside_cohort = false) DESC, patient_school_id;
   SQL
   add_index "reporting_api_patient_programme_statuses", ["academic_year", "programme_type"], name: "ix_rapi_pps_year_prog_type"
   add_index "reporting_api_patient_programme_statuses", ["id"], name: "ix_rapi_pps_id", unique: true
-  add_index "reporting_api_patient_programme_statuses", ["organisation_id", "academic_year", "programme_type"], name: "ix_rapi_pps_org_year_prog"
   add_index "reporting_api_patient_programme_statuses", ["patient_school_local_authority_code", "programme_type"], name: "ix_rapi_pps_school_la_prog"
   add_index "reporting_api_patient_programme_statuses", ["programme_id", "team_id", "academic_year"], name: "ix_rapi_pps_prog_team_year"
   add_index "reporting_api_patient_programme_statuses", ["team_id", "academic_year"], name: "ix_rapi_pps_team_year"

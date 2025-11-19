@@ -6,10 +6,11 @@ dev_tools: Developer tools useful for testing and debugging.
 imms_api_integration: Umbrella flag to switch off ALL API integration (including CLI tools).
 
 imms_api_search_job: Flag to switch off any automated receipt of vaccination records (Search),
-  as part of the search job. This feature flag can be enabled on a per-organisation basis.
+  as part of the search job.
 
 imms_api_sync_job: Flag to switch off any automated sending of vaccination records
   (Create, Update, Delete), triggered by the creation/edit/delete of any vaccination records.
+  This can be controlled on a per-programme basis.
 
 import_choose_academic_year: Add an option to choose the academic year when
   importing patients during the preparation period.
@@ -30,8 +31,6 @@ ops_tools: Enable the operational support tools; timeline and graph.
 pds_cascading_search: Enable cascading PDS searches for patients without an NHS number.
 
 statuses_changed_banner: Whether to show the banner outlining the changes to statuses.
-
-tallying: Enables the session tally-based overview page
 
 testing_api: Basic API useful for automated testing.
 

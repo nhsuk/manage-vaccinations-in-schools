@@ -34,10 +34,6 @@ class Organisation < ApplicationRecord
     delegate :fhir_reference, to: FHIRMapper::Organisation
   end
 
-  def flipper_id
-    "Organisation:#{ods_code}"
-  end
-
   private
 
   def fhir_mapper

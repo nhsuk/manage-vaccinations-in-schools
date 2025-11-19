@@ -3,17 +3,15 @@
 describe SearchVaccinationRecordsInNHSJob do
   subject(:perform) { described_class.new.perform(patient.id) }
 
-  let(:organisation) { create(:organisation) }
-  let(:team) { create(:team, organisation:) }
-  let(:session) { create(:session, team:, programmes: [programme]) }
+  let(:team) { create(:team) }
   let(:school) { create(:school, team:) }
-  let(:patient) { create(:patient, team:, session:, school:, nhs_number:) }
+  let(:patient) { create(:patient, team:, school:, nhs_number:) }
   let(:nhs_number) { "9449308357" }
   let!(:programme) { CachedProgramme.flu }
 
   before do
     Flipper.enable(:imms_api_integration)
-    Flipper.enable(:imms_api_search_job)
+    Flipper.enable(:imms_api_search_job, programme)
   end
 
   after do
@@ -32,6 +30,32 @@ describe SearchVaccinationRecordsInNHSJob do
       records = described_class.new.send(:extract_vaccination_records, bundle)
       expect(records).to all(have_attributes(resourceType: "Immunization"))
       expect(records.size).to eq 2
+    end
+  end
+
+  describe "#select_programme_feature_flagged_records" do
+    subject(:selected_records) do
+      described_class.new.send(
+        :select_programme_feature_flagged_records,
+        vaccination_records
+      )
+    end
+
+    let(:vaccination_records) { [flu_record, hpv_record] }
+    let(:flu_record) do
+      create(:vaccination_record, programme: CachedProgramme.flu)
+    end
+    let(:hpv_record) do
+      create(:vaccination_record, programme: CachedProgramme.hpv)
+    end
+
+    before do
+      Flipper.disable(:imms_api_search_job)
+      Flipper.enable(:imms_api_search_job, CachedProgramme.flu)
+    end
+
+    it "rejects the hpv record, and keeps the flu record" do
+      expect(selected_records).to match_array(flu_record)
     end
   end
 
@@ -398,42 +422,6 @@ describe SearchVaccinationRecordsInNHSJob do
       ).with(query: expected_query).to_return(status:, body:, headers:)
     end
 
-    context "with per-organisation feature flagging" do
-      before { Flipper.disable(:imms_api_search_job) }
-
-      context "correct organisation" do
-        before { Flipper.enable(:imms_api_search_job, organisation) }
-
-        it "searches as expected" do
-          perform
-
-          expect(
-            a_request(
-              :get,
-              "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
-            ).with(query: expected_query)
-          ).to have_been_made.once
-        end
-      end
-
-      context "incorrect organisation" do
-        let(:other_organisation) { create(:organisation) }
-
-        before { Flipper.enable(:imms_api_search_job, other_organisation) }
-
-        it "does not search" do
-          perform
-
-          expect(
-            a_request(
-              :get,
-              "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
-            ).with(query: expected_query)
-          ).not_to have_been_made
-        end
-      end
-    end
-
     context "with 2 new incoming records" do
       it "creates new vaccination records for incoming Immunizations" do
         expect { perform }.to change { patient.vaccination_records.count }.by(2)
@@ -523,6 +511,34 @@ describe SearchVaccinationRecordsInNHSJob do
       end
 
       include_examples "doesn't send discovery comms"
+    end
+
+    context "with the per-programme feature flag disabled" do
+      before do
+        Flipper.disable(:imms_api_search_job)
+        # Not enabled for flu, which is the incoming record's programme
+        Flipper.enable(:imms_api_search_job, CachedProgramme.hpv)
+      end
+
+      it "does not change any records locally" do
+        expect { perform }.not_to(change { patient.vaccination_records.count })
+      end
+
+      include_examples "doesn't send discovery comms"
+    end
+
+    context "with the per-programme feature flag enabled" do
+      before do
+        Flipper.disable(:imms_api_search_job)
+        Flipper.enable(:imms_api_search_job, CachedProgramme.flu)
+      end
+
+      it "creates new vaccination records for incoming Immunizations" do
+        expect { perform }.to change { patient.vaccination_records.count }.by(2)
+      end
+
+      include_examples "sends discovery comms if required twice"
+      include_examples "calls StatusUpdater"
     end
 
     context "with a non-api record already on the patient" do

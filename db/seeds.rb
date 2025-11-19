@@ -19,7 +19,7 @@ def create_gp_practices
   FactoryBot.create_list(:gp_practice, 30)
 end
 
-def create_team(ods_code:, workgroup: nil)
+def create_team(ods_code:, workgroup: nil, type: :poc_only)
   workgroup ||= ods_code.downcase
 
   Team.find_by(workgroup:) ||
@@ -28,7 +28,8 @@ def create_team(ods_code:, workgroup: nil)
       :with_generic_clinic,
       ods_code:,
       programmes: Programme.all,
-      workgroup:
+      workgroup:,
+      type:
     )
 end
 
@@ -278,9 +279,7 @@ set_feature_flags
 seed_vaccines
 create_gp_practices
 
-unless Settings.cis2.enabled
-  # Don't create Nurse Joy's team on a CIS2 env, because password authentication
-  # is not available and password= fails to run.
+def create_nurse_joy_team
   team = create_team(ods_code: "R1L")
   user = create_user(:nurse, team:, email: "nurse.joy@example.com")
   create_user(:medical_secretary, team:, email: "admin.hope@example.com")
@@ -301,6 +300,22 @@ unless Settings.cis2.enabled
   create_patients(team)
   create_imports(user, team)
   create_school_moves(team)
+end
+
+def create_upload_only_team
+  team = create_team(ods_code: "XX99", type: :upload_only)
+  create_user(:medical_secretary, team:, email: "admin.sarah@example.com")
+  create_user(:superuser, team:, email: "superuser.rob@example.com")
+
+  attach_sample_of_schools_to(team)
+end
+
+unless Settings.cis2.enabled
+  # Don't create Nurse Joy's team on a CIS2 env, because password authentication
+  # is not available and password= fails to run.
+  create_nurse_joy_team
+
+  create_upload_only_team
 end
 
 # CIS2 team - the ODS code and user UID need to match the values in the CIS2 env

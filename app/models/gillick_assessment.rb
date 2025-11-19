@@ -5,21 +5,20 @@
 # Table name: gillick_assessments
 #
 #  id                   :bigint           not null, primary key
-#  date                 :date
+#  date                 :date             not null
 #  knows_consequences   :boolean          not null
 #  knows_delivery       :boolean          not null
 #  knows_disease        :boolean          not null
 #  knows_side_effects   :boolean          not null
 #  knows_vaccination    :boolean          not null
 #  notes                :text             default(""), not null
-#  programme_type       :enum
+#  programme_type       :enum             not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  location_id          :bigint
+#  location_id          :bigint           not null
 #  patient_id           :bigint           not null
 #  performed_by_user_id :bigint           not null
 #  programme_id         :bigint           not null
-#  session_date_id      :bigint           not null
 #
 # Indexes
 #
@@ -27,6 +26,7 @@
 #  index_gillick_assessments_on_patient_id            (patient_id)
 #  index_gillick_assessments_on_performed_by_user_id  (performed_by_user_id)
 #  index_gillick_assessments_on_programme_id          (programme_id)
+#  index_gillick_assessments_on_programme_type        (programme_type)
 #  index_gillick_assessments_on_session_date_id       (session_date_id)
 #
 # Foreign Keys
@@ -39,9 +39,11 @@
 #
 class GillickAssessment < ApplicationRecord
   include BelongsToProgramme
-  include BelongsToSessionDate
+  include BelongsToLocationAndDate
   include Notable
   include PerformableByUser
+
+  self.ignored_columns = %w[session_date_id]
 
   audited associated_with: :patient
 

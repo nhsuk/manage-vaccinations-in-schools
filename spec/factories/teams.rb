@@ -15,7 +15,8 @@
 #  phone_instructions            :string
 #  privacy_notice_url            :string           not null
 #  privacy_policy_url            :string           not null
-#  programme_types               :enum             is an Array
+#  programme_types               :enum             not null, is an Array
+#  type                          :integer          not null
 #  workgroup                     :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
@@ -49,6 +50,7 @@ FactoryBot.define do
     careplus_venue_code { identifier.to_s }
     privacy_notice_url { "https://example.com/privacy-notice" }
     privacy_policy_url { "https://example.com/privacy-policy" }
+    type { :poc_only }
 
     after(:build) do |team, evaluator|
       team.programme_types = evaluator.programmes.map(&:type)

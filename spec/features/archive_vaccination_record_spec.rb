@@ -162,7 +162,7 @@ describe "Archive vaccination record" do
     StatusUpdater.call(patient: @patient)
 
     if Flipper.enabled?(:imms_api_integration) &&
-         Flipper.enabled?(:imms_api_sync_job)
+         Flipper.enabled?(:imms_api_sync_job, @vaccination_record.programme)
       Sidekiq::Job.drain_all
       expect(@stubbed_post_request).to have_been_requested
     end
@@ -175,7 +175,7 @@ describe "Archive vaccination record" do
   end
 
   def and_imms_api_sync_job_feature_is_enabled
-    Flipper.enable(:imms_api_sync_job)
+    Flipper.enable(:imms_api_sync_job, @programme)
     Flipper.enable(:imms_api_integration)
 
     uuid = Random.uuid

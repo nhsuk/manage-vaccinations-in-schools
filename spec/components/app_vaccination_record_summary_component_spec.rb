@@ -369,7 +369,7 @@ describe AppVaccinationRecordSummaryComponent do
     context "when the imms_api_integration and imms_api_sync_job feature flags are enabled" do
       before do
         Flipper.enable(:imms_api_integration)
-        Flipper.enable(:imms_api_sync_job)
+        Flipper.enable(:imms_api_sync_job, programme)
       end
 
       it do
@@ -383,7 +383,7 @@ describe AppVaccinationRecordSummaryComponent do
     context "when the imms_api_integration feature flag is disabled" do
       before do
         Flipper.disable(:imms_api_integration)
-        Flipper.enable(:imms_api_sync_job)
+        Flipper.enable(:imms_api_sync_job, programme)
       end
 
       it do

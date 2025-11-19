@@ -23,7 +23,7 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
       VaccinateForm.new(
         current_user:,
         patient: @patient,
-        session_date: @session_date,
+        session: @session,
         programme: @programme,
         todays_batch: @todays_batch,
         **vaccinate_form_params

@@ -34,7 +34,7 @@
     <% end %>
   </div>
 
-  <% if @show_navigation %>
+  <% if @show_navigation && @app_navigation_items.present? %>
     <nav class="nhsuk-header__navigation" aria-label="Menu">
       <div class="nhsuk-header__navigation-container nhsuk-width-container">
         <ul class="nhsuk-header__navigation-list">

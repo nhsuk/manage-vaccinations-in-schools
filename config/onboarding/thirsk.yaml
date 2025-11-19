@@ -1,0 +1,160 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukthirsksais
+  name: Vaccination UK - Thirsk
+  email: thirsk@v-uk.co.uk
+  phone: "01904 237690"
+  careplus_venue_code: UNUSED
+  privacy_notice_url: https://www.schoolvaccination.uk/privacy-policy
+  privacy_policy_url: https://www.schoolvaccination.uk/privacy-policy
+  reply_to_id: 350954c2-88b8-479e-82be-4da25612e878
+  type: poc_only
+
+programmes: [menacwy, td_ipv]
+
+subteams:
+  thirsk:
+    name: Vaccination UK - Thirsk
+    email: thirsk@v-uk.co.uk
+    phone: "01904 237690"
+    reply_to_id: 350954c2-88b8-479e-82be-4da25612e878
+
+schools:
+  thirsk:
+    - 144165
+    - 121472
+    - 148233
+    - 147229
+    - 121368
+    - 121308
+    - 121371
+    - 121602
+    - 121738
+    - 121477
+    - 144155
+    - 121479
+    - 121670
+    - 121480
+    - 121604
+    - 121699
+    - 121382
+    - 121765
+    - 121372
+    - 121481
+    - 151399
+    - 121619
+    - 147216
+    - 121608
+    - 145370
+    - 147593
+    - 112456
+    - 121334
+    - 121483
+    - 121484
+    - 144156
+    - 121752
+    - 151618
+    - 121332
+    - 121487
+    - 121331
+    - 144157
+    - 143289
+    - 149279
+    - 121393
+    - 137348
+    - 121542
+    - 135850
+    - 143523
+    - 121499
+    - 121501
+    - 121302
+    - 151170
+    - 121361
+    - 121503
+    - 147192
+    - 121504
+    - 121611
+    - 121570
+    - 144429
+    - 121338
+    - 121293
+    - 121333
+    - 144159
+    - 121337
+    - 121495
+    - 121543
+    - 121609
+    - 121614
+    - 149551
+    - 151277
+    - 121309
+    - 146969
+    - 150122
+    - 151276
+    - 144976
+    - 148330
+    - 145411
+    - 121510
+    - 121725
+    - 144161
+    - 121311
+    - 121544
+    - 145090
+    - 121663
+    - 121312
+    - 141463
+    - 147276
+    - 151006
+    - 121323
+    - 149416
+    - 144162
+    - 145369
+    - 121517
+    - 147213
+    - 147241
+    - 121524
+    - 121606
+    - 121324
+    - 143612
+    - 141930
+    - 121518
+    - 121771
+    - 121679
+    - 121365
+    - 121666
+    - 121521
+    - 144840
+    - 144164
+    - 144167
+    - 144647
+    - 121344
+    - 121482
+
+clinics:
+  thirsk:
+    - name: Northallerton Clinic
+      address_line_1: Northallerton Library
+      address_line_2: 1 Thirsk Road
+      address_town: Northallerton
+      address_postcode: DL6 1PT
+      ods_code:
+    - name: Richmond Friary Hospital
+      address_line_1: The Friary Hospital
+      address_line_2: Queens Road
+      address_town: Richmond
+      address_postcode: DL10 4UJ
+      ods_code:
+    - name: Stokesley Clinic
+      address_line_1: Stokesley Library
+      address_line_2: Town Close, North Road
+      address_town: Stokesley
+      address_postcode: TS9 5DH
+      ods_code:
+    - name: Thrisk Clinic
+      address_line_1: Thirsk Hurstwood Business Centre
+      address_line_2: York Road
+      address_town: Thirsk
+      address_postcode: YO7 3BX
+      ods_code:
