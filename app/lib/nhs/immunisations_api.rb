@@ -262,7 +262,6 @@ module NHS::ImmunisationsAPI
     )
       vaccination_record.kept? && vaccination_record.recorded_in_service? &&
         vaccination_record.administered? &&
-        vaccination_record.programme.can_sync_to_immunisations_api? &&
         (ignore_nhs_number || vaccination_record.patient.nhs_number.present?) &&
         vaccination_record.notify_parents &&
         vaccination_record.patient.not_invalidated?
