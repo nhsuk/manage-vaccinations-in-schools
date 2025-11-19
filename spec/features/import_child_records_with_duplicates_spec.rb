@@ -289,9 +289,7 @@ describe "Child record imports duplicates" do
 
   def then_i_should_see_the_import_page_with_duplicate_records
     expect(page).to have_content("Imports (3)")
-    expect(page).to have_content(
-      "3 records have import issues to resolve before they can be imported into Mavis"
-    )
+    expect(page).to have_content("3 records with import issues to review")
   end
 
   def given_i_archive_the_patient_record

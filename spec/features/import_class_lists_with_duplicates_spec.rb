@@ -215,9 +215,7 @@ describe "Class list imports duplicates" do
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
-    expect(page).to have_content(
-      "3 records have import issues to resolve before they can be imported into Mavis"
-    )
+    expect(page).to have_content("3 records with import issues to review")
   end
 
   def when_i_review_the_first_duplicate_record

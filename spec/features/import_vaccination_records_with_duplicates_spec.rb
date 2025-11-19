@@ -153,9 +153,7 @@ describe "Immunisation imports duplicates" do
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
-    expect(page).to have_content(
-      "2 records have import issues to resolve before they can be imported into Mavis"
-    )
+    expect(page).to have_content("2 records with import issues to review")
   end
 
   def when_i_choose_to_keep_the_duplicate_record

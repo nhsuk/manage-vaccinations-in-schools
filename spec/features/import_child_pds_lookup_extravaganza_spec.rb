@@ -610,8 +610,7 @@ describe "Import child records" do
   end
 
   def then_i_should_see_the_import_page
-    expect(page).to have_content("Imported on")
-    expect(page).to have_content("Imported byUSER, Test")
+    expect(page).to have_content("Uploaded byUSER, Test")
   end
 
   def and_i_should_see_one_new_patient_created
@@ -829,9 +828,7 @@ describe "Import child records" do
   end
 
   def then_i_see_one_record_is_an_exact_match
-    expect(page).to have_content(
-      "2 records were not imported because they already exist in Mavis"
-    )
+    expect(CohortImport.processed.sole.exact_duplicate_record_count).to eq(2)
   end
 
   def then_i_see_an_nhs_discrepancy
