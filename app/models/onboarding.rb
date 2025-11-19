@@ -105,11 +105,13 @@ class Onboarding
     @clinics =
       config
         .fetch(:clinics, {})
-        .flat_map do |team_name, clinic_configs|
+        .each_with_object({}) do |(team_name, clinic_configs), hash|
           subteam = subteams_by_name[team_name]
           clinic_configs
             .map { it.slice(*CLINIC_ATTRIBUTES) }
-            .map { Location.new(**it, type: :community_clinic, subteam:) }
+            .each do
+              hash[Location.new(**it, type: :community_clinic)] = subteam
+            end
         end
   end
 
@@ -129,7 +131,7 @@ class Onboarding
       merge_errors_from(subteams, errors:, name: "subteam")
       merge_errors_from(users, errors:, name: "user")
       merge_errors_from(schools, errors:, name: "school")
-      merge_errors_from(clinics, errors:, name: "clinic")
+      merge_errors_from(clinics.keys, errors:, name: "clinic")
     end
   end
 
@@ -146,8 +148,8 @@ class Onboarding
       academic_years.each do |academic_year|
         schools.each { |school| school.attach_to_team!(academic_year:) }
 
-        clinics.each do |clinic|
-          clinic.attach_to_team!(team, academic_year:, subteam: clinic.subteam)
+        clinics.each do |clinic, subteam|
+          clinic.attach_to_team!(team, academic_year:, subteam:)
         end
       end
 
@@ -171,7 +173,8 @@ class Onboarding
               :clinics
 
   def models
-    [organisation] + [team] + programmes + subteams + users + schools + clinics
+    [organisation] + [team] + programmes + subteams + users + schools +
+      clinics.keys
   end
 
   def merge_errors_from(objects, errors:, name:)
@@ -215,7 +218,6 @@ class Onboarding
 
     attr_accessor :urn, :subteam, :programmes
 
-    validates :existing_subteam, absence: true
     validates :location, presence: true
     validates :subteam, presence: true
     validates :status, inclusion: %w[open opening]
@@ -225,9 +227,6 @@ class Onboarding
     end
 
     delegate :status, to: :location, allow_nil: true
-
-    def existing_subteam = location&.subteam
-
     delegate :team, to: :subteam
 
     def save!

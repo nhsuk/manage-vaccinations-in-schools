@@ -12,7 +12,7 @@ describe TeamSessionsFactory do
       let!(:location) { create(:school, :secondary, team:) }
 
       it "creates missing unscheduled sessions" do
-        expect { call }.to change(team.sessions, :count).by(1)
+        expect { call }.to change { team.reload.sessions.count }.by(1)
 
         session =
           team
@@ -120,8 +120,11 @@ describe TeamSessionsFactory do
           session =
             team
               .sessions
-              .includes(:location, :session_programme_year_groups)
-              .find_by(location:)
+              .includes(:session_programme_year_groups, :team_location)
+              .order(:created_at)
+              .last
+
+          expect(session.location_id).to eq(location.id)
           expect(session.programmes).to match_array(programmes)
         end
       end
@@ -132,38 +135,19 @@ describe TeamSessionsFactory do
         it "creates missing unscheduled sessions for each programme group" do
           expect { call }.to change(team.sessions, :count).by(3)
 
-          session =
+          sessions =
             team
               .sessions
-              .includes(:session_programme_year_groups)
+              .includes(:session_programme_year_groups, :team_location)
               .order(:created_at)
-              .where(location:)
-          expect(session.first.programmes).to eq(flu_programmes)
-          expect(session.second.programmes).to eq(hpv_programmes)
-          expect(session.third.programmes).to eq(doubles_programmes)
+
+          expect(sessions.first.programmes).to eq(flu_programmes)
+          expect(sessions.first.location_id).to eq(location.id)
+          expect(sessions.second.programmes).to eq(hpv_programmes)
+          expect(sessions.second.location_id).to eq(location.id)
+          expect(sessions.third.programmes).to eq(doubles_programmes)
+          expect(sessions.third.location_id).to eq(location.id)
         end
-      end
-    end
-
-    context "with an unscheduled session for a location no longer managed by the team" do
-      let(:location) { create(:school, :secondary) }
-      let!(:session) do
-        create(:session, :unscheduled, team:, location:, programmes:)
-      end
-
-      it "destroys the session" do
-        expect { call }.to change(Session, :count).by(-1)
-        expect { session.reload }.to raise_error(ActiveRecord::RecordNotFound)
-      end
-    end
-
-    context "with a scheduled session for a location no longer managed by the team" do
-      let(:location) { create(:school, :secondary) }
-
-      before { create(:session, :scheduled, team:, location:, programmes:) }
-
-      it "doesn't destroy the session" do
-        expect { call }.not_to change(Session, :count)
       end
     end
   end

@@ -10,6 +10,7 @@ class API::Testing::TeamsController < API::Testing::BaseController
     keep_itself = ActiveModel::Type::Boolean.new.cast(params[:keep_itself])
 
     team = Team.find_by!(workgroup: params[:workgroup])
+    team_id = team.id
 
     @start_time = Time.zone.now
 
@@ -23,21 +24,37 @@ class API::Testing::TeamsController < API::Testing::BaseController
     log_destroy(Triage.where(team:))
 
     log_destroy(
-      NotifyLogEntry.joins(:consent_form).where(consent_form: { team: })
+      NotifyLogEntry.joins(:team_location).where(team_location: { team_id: })
     )
-    log_destroy(ConsentForm.where(team:))
+    log_destroy(ConsentForm.for_team(team))
 
-    log_destroy(ConsentNotification.joins(:session).where(session: { team: }))
-    log_destroy(SessionNotification.joins(:session).where(session: { team: }))
     log_destroy(
-      VaccinationRecord.joins(:session).where(sessions: { team: }),
+      ConsentNotification.joins(session: :team_location).where(
+        team_location: {
+          team_id:
+        }
+      )
+    )
+    log_destroy(
+      SessionNotification.joins(session: :team_location).where(
+        team_location: {
+          team_id:
+        }
+      )
+    )
+    log_destroy(
+      VaccinationRecord.joins(session: :team_location).where(
+        team_locations: {
+          team_id:
+        }
+      ),
       sync_patient_teams: true
     )
 
     patient_ids = team.patients.pluck(:id)
 
     log_destroy(
-      PatientLocation.joins(location: :subteam).where(subteams: { team: }),
+      PatientLocation.joins_team_locations.where(team_locations: { team_id: }),
       sync_patient_teams: true
     )
 
@@ -93,21 +110,9 @@ class API::Testing::TeamsController < API::Testing::BaseController
     TeamCachedCounts.new(team).reset_all!
 
     unless keep_itself
-      log_destroy(Session.where(team:))
-
-      log_destroy(TeamLocation.where(team:))
-
-      log_destroy(
-        Location.generic_clinic.joins(:subteam).where(subteams: { team: })
-      )
-
-      Location
-        .joins(:subteam)
-        .where(subteams: { team: })
-        .update_all(subteam_id: nil)
-
+      log_destroy(Session.for_team(team))
       log_destroy(Subteam.where(team:))
-
+      log_destroy(TeamLocation.where(team:))
       log_destroy(Team.where(id: team.id))
     end
 

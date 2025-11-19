@@ -21,16 +21,11 @@ describe "schools move-patients" do
     )
   end
   let!(:patient) { create(:patient, school: source_school) }
-  let!(:session) { create(:session, location: source_school, programmes:) }
-  let!(:school_move) { create(:school_move, patient:, school: source_school) }
-  let!(:consent_form) do
-    create(
-      :consent_form,
-      school: source_school,
-      location: source_school,
-      session:
-    )
+  let!(:session) do
+    create(:session, location: source_school, programmes:, team:)
   end
+  let!(:school_move) { create(:school_move, patient:, school: source_school) }
+  let!(:consent_form) { create(:consent_form, school: source_school, session:) }
   let(:other_org_school) { create(:school, subteam: other_subteam) }
 
   let(:source_urn) { source_school.urn.to_s }

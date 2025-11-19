@@ -22,7 +22,6 @@
 #  urn                       :string
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
-#  subteam_id                :bigint
 #
 # Indexes
 #
@@ -38,19 +37,13 @@
 #
 class Location < ApplicationRecord
   include AddressConcern
-  include ContributesToPatientTeams
   include ODSCodeConcern
 
-  class ActiveRecord_Relation < ActiveRecord::Relation
-    include ContributesToPatientTeams::Relation
-  end
-
   self.inheritance_column = nil
+  self.ignored_columns = %w[subteam_id]
 
-  audited associated_with: :subteam
+  audited
   has_associated_audits
-
-  belongs_to :subteam, optional: true
 
   belongs_to :local_authority,
              foreign_key: :gias_local_authority_code,
@@ -62,14 +55,15 @@ class Location < ApplicationRecord
            dependent: :destroy
 
   has_many :attendance_records
-  has_many :consent_forms
   has_many :gillick_assessments
   has_many :patient_locations
   has_many :pre_screenings
-  has_many :sessions
   has_many :team_locations
 
-  has_one :team, through: :subteam
+  has_many :consent_forms, through: :team_locations
+  has_many :sessions, through: :team_locations
+  has_many :teams, through: :team_locations
+  has_many :organisations, through: :teams
 
   has_many :location_programme_year_groups,
            -> { includes(:location_year_group) },
@@ -106,6 +100,17 @@ class Location < ApplicationRecord
           end
         end
 
+  scope :without_team,
+        ->(academic_year:) do
+          where.not(
+            TeamLocation
+              .where("team_locations.location_id = locations.id")
+              .where(academic_year:)
+              .arel
+              .exists
+          )
+        end
+
   scope :clinic, -> { generic_clinic.or(community_clinic) }
 
   validates :name, presence: true
@@ -115,12 +120,11 @@ class Location < ApplicationRecord
   validates :site, uniqueness: { scope: :urn }, allow_nil: true
 
   with_options if: :community_clinic? do
-    validates :ods_code, exclusion: { in: :organisation_ods_code }
+    validates :ods_code, exclusion: { in: :organisation_ods_codes }
   end
 
   with_options if: :generic_clinic? do
     validates :ods_code, absence: true
-    validates :subteam, presence: true
   end
 
   with_options if: :gp_practice? do
@@ -166,21 +170,16 @@ class Location < ApplicationRecord
   end
 
   def as_json
-    super.except(
-      "created_at",
-      "subteam_id",
-      "systm_one_code",
-      "updated_at"
-    ).merge("is_attached_to_team" => !subteam_id.nil?)
+    super.except("created_at", "systm_one_code", "updated_at").merge(
+      "is_attached_to_team" =>
+        team_locations.any? { it.academic_year == AcademicYear.pending }
+    )
   end
 
-  def attach_to_team!(team, academic_year:, subteam:)
-    ActiveRecord::Base.transaction do
-      update!(subteam:)
-      team_locations
-        .find_or_create_by!(team:, academic_year:)
-        .tap { it.update!(subteam:) }
-    end
+  def attach_to_team!(team, academic_year:, subteam: nil)
+    team_locations
+      .find_or_initialize_by(team:, academic_year:)
+      .tap { it.update!(subteam:) }
   end
 
   def import_year_groups!(values, academic_year:, source:)
@@ -217,9 +216,7 @@ class Location < ApplicationRecord
 
   private
 
-  def organisation_ods_code
-    [subteam&.team&.organisation&.ods_code].compact
-  end
+  def organisation_ods_codes = Organisation.pluck(:ods_code)
 
   def fhir_mapper
     @fhir_mapper ||= FHIRMapper::Location.new(self)

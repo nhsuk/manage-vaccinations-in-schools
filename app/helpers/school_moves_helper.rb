@@ -2,10 +2,10 @@
 
 module SchoolMovesHelper
   def school_move_source(school_move)
-    team = school_move.school&.team || school_move.team
+    teams = (school_move.school_teams + [school_move.team].compact)
 
     source =
-      if team == current_team
+      if teams.include?(current_team)
         school_move.human_enum_name(:source)
       else
         "Another SAIS team"

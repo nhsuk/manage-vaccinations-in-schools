@@ -26,7 +26,8 @@ module Stats
     def sessions
       @sessions ||=
         ::Session
-          .where(team: @teams, academic_year: @academic_year)
+          .for_team(teams)
+          .for_academic_year(academic_year)
           .has_any_programme_types_of(programme_types)
           .eager_load(:location)
     end
