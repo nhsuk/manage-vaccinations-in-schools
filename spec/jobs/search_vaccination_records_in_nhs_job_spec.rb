@@ -466,6 +466,11 @@ describe SearchVaccinationRecordsInNHSJob do
         file_fixture("fhir/search_response_all_programmes.json").read
       end
 
+      before do
+        # Fully enable feature flag
+        Flipper.enable(:imms_api_search_job)
+      end
+
       it "creates new vaccination records for incoming Immunizations" do
         expect { perform }.to change { patient.vaccination_records.count }.by(5)
       end
