@@ -83,7 +83,12 @@ describe TeamLocationSessionsFactory do
         it "adds the patients to the new sessions" do
           expect { call }.to change(team.sessions, :count).by(1)
 
-          session = team.sessions.find_by(location:, academic_year:)
+          session =
+            team
+              .sessions
+              .for_location(location)
+              .for_academic_year(academic_year)
+              .first
           expect(session.patients).to include(patient_at_location)
           expect(session.patients).not_to include(patient_at_different_location)
         end
@@ -158,7 +163,12 @@ describe TeamLocationSessionsFactory do
         it "adds the patients to the new sessions" do
           expect { call }.to change(team.sessions, :count).by(1)
 
-          session = team.sessions.find_by(location:, academic_year:)
+          session =
+            team
+              .sessions
+              .for_location(location)
+              .for_academic_year(academic_year)
+              .first
           expect(session.patients).to include(patient_at_location)
           expect(session.patients).not_to include(patient_at_school_location)
         end
@@ -218,7 +228,10 @@ describe TeamLocationSessionsFactory do
             team
               .sessions
               .includes(:location, :session_programme_year_groups)
-              .find_by(location:)
+              .order(:created_at)
+              .last
+
+          expect(session.location).to eq(location)
           expect(session.programmes).to match_array(programmes)
         end
       end
@@ -234,7 +247,8 @@ describe TeamLocationSessionsFactory do
               .sessions
               .includes(:session_programme_year_groups)
               .order(:created_at)
-              .where(location:)
+              .for_location(location)
+
           expect(session.first.programmes).to eq(flu_programmes)
           expect(session.second.programmes).to eq(hpv_programmes)
           expect(session.third.programmes).to eq(doubles_programmes)

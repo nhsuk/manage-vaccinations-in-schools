@@ -18,12 +18,7 @@ module ParentInterface
       consent_form =
         ActiveRecord::Base.transaction do
           consent_form =
-            ConsentForm.create!(
-              academic_year: @session.academic_year,
-              location: @session.location,
-              team: @session.team,
-              team_location: @session.team_location
-            )
+            ConsentForm.create!(team_location: @session.team_location)
 
           @programmes.each do |programme|
             consent_form.consent_form_programmes.create!(programme:)

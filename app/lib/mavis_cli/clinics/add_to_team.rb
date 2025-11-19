@@ -16,7 +16,7 @@ module MavisCLI
         MavisCLI.load_rails
 
         team = Team.find_by(workgroup:)
-        academic_year = AcademicYear.current
+        academic_year = AcademicYear.pending
 
         if team.nil?
           warn "Could not find team."
@@ -34,8 +34,13 @@ module MavisCLI
               next
             end
 
-            if !location.subteam_id.nil? && location.subteam_id != subteam.id
-              warn "#{ods_code} previously belonged to #{location.subteam.name}"
+            if (
+                 existing_team_locations =
+                   location.team_locations.includes(:team).where(academic_year:)
+               )
+              existing_team_locations.each do |existing_team_location|
+                warn "#{ods_code} previously belonged to #{existing_team_location.name}"
+              end
             end
 
             location.attach_to_team!(team, academic_year:, subteam:)

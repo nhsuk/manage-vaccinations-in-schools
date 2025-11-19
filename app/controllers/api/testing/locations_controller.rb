@@ -17,11 +17,20 @@ class API::Testing::LocationsController < API::Testing::BaseController
     end
 
     if (is_attached_to_team = params[:is_attached_to_team]).present?
+      academic_year = AcademicYear.pending
+
+      exists_subquery =
+        TeamLocation
+          .where("team_locations.location_id = locations.id")
+          .where(academic_year:)
+          .arel
+          .exists
+
       @locations =
         if ActiveModel::Type::Boolean.new.cast(is_attached_to_team)
-          @locations.where.not(subteam_id: nil)
+          @locations.where(exists_subquery)
         else
-          @locations.where(subteam_id: nil)
+          @locations.where.not(exists_subquery)
         end
     end
 

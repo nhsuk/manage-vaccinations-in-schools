@@ -21,7 +21,7 @@ class Stats::Organisations
 
   def build_patients_scope
     Patient.distinct.joins_sessions.where(
-      sessions: {
+      team_locations: {
         team_id: teams.map(&:id)
       }
     )
@@ -118,17 +118,19 @@ class Stats::Organisations
 
     comms =
       ConsentNotification
-        .joins(session: :team)
-        .where(sessions: { team: teams })
+        .joins(session: :team_location)
+        .where(team_location: { academic_year:, team_id: teams.map(&:id) })
         .where(patient_id: eligible_patients.map(&:id))
-        .where(sessions: { academic_year: })
         .has_all_programmes_of([programme])
 
     initial_requests = comms.request
     reminders = comms.reminder
 
     schools_involved =
-      comms.joins(:session).distinct.count(:"sessions.location_id")
+      comms
+        .joins(session: :team_location)
+        .distinct
+        .count(:"team_location.location_id")
     patients_with_comms = comms.distinct.count(:patient_id)
     patients_with_requests = initial_requests.distinct.count(:patient_id)
     patients_with_reminders = reminders.distinct.count(:patient_id)

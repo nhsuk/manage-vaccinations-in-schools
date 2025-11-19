@@ -14,7 +14,7 @@ describe GenericClinicFactory do
         expect { call }.to change(Location.generic_clinic, :count).by(1)
 
         location = Location.generic_clinic.first
-        expect(location.team).to eq(team)
+        expect(location.teams).to contain_exactly(team)
 
         expected_year_groups = [
           -3,

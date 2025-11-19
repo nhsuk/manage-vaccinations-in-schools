@@ -11,8 +11,8 @@ describe "mavis gias check_import" do
   end
 
   def given_an_team_exists
-    @team = create(:team, ods_code: "A9A5A")
     @programme = Programme.hpv
+    @team = create(:team, ods_code: "A9A5A", programmes: [@programme])
   end
 
   def and_there_are_schools_with_future_sessions
@@ -28,7 +28,8 @@ describe "mavis gias check_import" do
         :session,
         location: @school_with_future_session,
         date: Date.tomorrow,
-        programmes: [@programme]
+        programmes: [@programme],
+        team: @team
       )
 
     @school2_with_future_session =
@@ -43,7 +44,8 @@ describe "mavis gias check_import" do
         :session,
         location: @school2_with_future_session,
         date: Date.tomorrow,
-        programmes: [@programme]
+        programmes: [@programme],
+        team: @team
       )
 
     @school_without_future_session =
@@ -58,7 +60,8 @@ describe "mavis gias check_import" do
         :session,
         location: @school_without_future_session,
         date: Date.yesterday,
-        programmes: [@programme]
+        programmes: [@programme],
+        team: @team
       )
   end
 
@@ -79,7 +82,7 @@ describe "mavis gias check_import" do
 
   def then_i_should_see_the_correct_counts
     expect(@output).to include("New schools (total): 1")
-    expect(@output).to include("Closed schools (total): 1")
+    expect(@output).to include("Closed schools (total): 2")
     expect(@output).to include("Proposed to be closed schools (total): 1")
 
     expect(@output).to include("Existing schools with future sessions: 2")

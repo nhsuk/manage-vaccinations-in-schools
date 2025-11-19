@@ -41,6 +41,25 @@ class SchoolMove < ApplicationRecord
 
   belongs_to :team, optional: true
 
+  has_many :school_team_locations,
+           -> do
+             where(academic_year: it.academic_year).order(created_at: :desc)
+           end,
+           through: :school,
+           source: :team_locations,
+           class_name: "TeamLocation"
+
+  has_many :school_teams,
+           through: :school_team_locations,
+           source: :team,
+           class_name: "Team"
+
+  scope :joins_team_locations_for_school, -> { joins(<<-SQL) }
+    INNER JOIN team_locations
+    ON team_locations.location_id = school_moves.school_id
+    AND team_locations.academic_year = school_moves.academic_year
+  SQL
+
   enum :source,
        { parental_consent_form: 0, class_list_import: 1, cohort_import: 2 },
        prefix: true,
@@ -64,6 +83,7 @@ class SchoolMove < ApplicationRecord
 
   def confirm!(user: nil)
     imported_archive_reason_ids = []
+
     ActiveRecord::Base.transaction do
       update_patient!
       imported_archive_reason_ids = update_archive_reasons!(user:)
@@ -71,6 +91,7 @@ class SchoolMove < ApplicationRecord
       create_log_entry!(user:)
       destroy! if persisted?
     end
+
     SyncPatientTeamJob.perform_later(ArchiveReason, imported_archive_reason_ids)
   end
 
@@ -85,13 +106,13 @@ class SchoolMove < ApplicationRecord
   end
 
   def update_archive_reasons!(user:)
-    new_team_id = school&.team&.id || team_id
+    new_team_ids = (school_teams.map(&:id) + [team_id]).compact
 
-    patient.archive_reasons.where(team_id: new_team_id).destroy_all
+    patient.archive_reasons.where(team_id: new_team_ids).destroy_all
 
     archive_reasons =
       patient.teams.find_each.filter_map do |team|
-        next if team.id == new_team_id
+        next if team.id.in?(new_team_ids)
 
         ArchiveReason.new(
           patient_id:,

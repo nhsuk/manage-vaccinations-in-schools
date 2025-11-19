@@ -321,9 +321,9 @@ class ImmunisationImportRow
   def session
     @session ||=
       if (id = session_id&.to_i)
-        team
-          .sessions
-          .where(academic_year: AcademicYear.current)
+        Session
+          .joins(:team_location)
+          .where(team_location: { team:, academic_year: AcademicYear.current })
           .includes(:location, :session_programme_year_groups)
           .find_by(id:)
       end
@@ -989,10 +989,13 @@ class ImmunisationImportRow
   def validate_uuid
     return if uuid.blank?
 
-    scope = VaccinationRecord.left_outer_joins(:session).where(uuid: uuid.to_s)
+    scope =
+      VaccinationRecord.left_outer_joins(session: :team_location).where(
+        uuid: uuid.to_s
+      )
 
     scope =
-      scope.where(sessions: { team: }).or(
+      scope.where(team_locations: { team: }).or(
         scope.sourced_from_nhs_immunisations_api
       )
 

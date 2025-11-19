@@ -36,7 +36,10 @@ class CohortImportRow < PatientImportRow
   private
 
   def schools
-    Location.school.eager_load(:team).where(subteam: { team: })
+    Location
+      .school
+      .joins(:team_locations)
+      .where(team_locations: { team:, academic_year: })
   end
 
   def stage_registration?

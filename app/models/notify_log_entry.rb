@@ -43,6 +43,8 @@ class NotifyLogEntry < ApplicationRecord
   belongs_to :patient, optional: true
   belongs_to :parent, optional: true
 
+  has_one :team_location, through: :consent_form
+
   enum :type, { email: 0, sms: 1 }, validate: true
   enum :delivery_status,
        {

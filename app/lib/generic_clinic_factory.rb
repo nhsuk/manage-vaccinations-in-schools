@@ -8,7 +8,7 @@ class GenericClinicFactory
 
   def call
     ActiveRecord::Base.transaction do
-      create_team_location!
+      location.attach_to_team!(team, academic_year:)
       location.import_year_groups!(
         year_groups,
         academic_year:,
@@ -29,31 +29,10 @@ class GenericClinicFactory
 
   delegate :programmes, to: :team
 
-  def create_team_location!
-    TeamLocation.find_or_create_by!(team:, academic_year:, location:).update!(
-      subteam: nil
-    )
-  end
-
-  def subteam
-    team
-      .subteams
-      .create_with(
-        email: team.email,
-        phone: team.phone,
-        phone_instructions: team.phone_instructions
-      )
-      .find_or_create_by!(name: team.name)
-  end
-
   def location
     @location ||=
-      team.locations.find_by(type: :generic_clinic) ||
-        Location.create!(
-          name: "Community clinic",
-          subteam:,
-          type: :generic_clinic
-        )
+      team.generic_clinic ||
+        Location.create!(name: "Community clinic", type: :generic_clinic)
   end
 
   def year_groups = Location::YearGroup::CLINIC_VALUE_RANGE.to_a
