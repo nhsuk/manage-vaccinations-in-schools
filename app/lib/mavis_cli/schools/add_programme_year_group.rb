@@ -51,7 +51,7 @@ module MavisCLI
           location.sessions.find_each do |session|
             if session.programmes.include?(programme)
               session.sync_location_programme_year_groups!(
-                programmes: session.programme
+                programmes: session.programmes
               )
             end
           end
