@@ -79,20 +79,26 @@ describe API::Testing::TeamsController do
       create(:pre_screening, patient: Patient.first, session:)
     end
 
-    it "deletes associated data" do
-      expect { delete :destroy, params: { workgroup: "r1l" } }.to(
-        change(Team, :count)
-          .by(-1)
-          .and(change(Subteam, :count).by(-1))
-          .and(change(Session, :count).by(-3))
-          .and(change(CohortImport, :count).by(-1))
-          .and(change(ImmunisationImport, :count).by(-1))
-          .and(change(NotifyLogEntry, :count).by(-3))
-          .and(change(Parent, :count).by(-4))
-          .and(change(Patient, :count).by(-3))
-          .and(change(PatientLocation, :count).by(-3))
-          .and(change(VaccinationRecord, :count).by(-9))
-      )
+    context "when not keeping itself" do
+      subject(:call) { delete :destroy, params: { workgroup: "r1l" } }
+
+      it "deletes associated data" do
+        expect { call }.to(
+          change(Team, :count)
+            .by(-1)
+            .and(change(Subteam, :count).by(-1))
+            .and(change(Session, :count).by(-3))
+            .and(change(CohortImport, :count).by(-1))
+            .and(change(ImmunisationImport, :count).by(-1))
+            .and(change(NotifyLogEntry, :count).by(-3))
+            .and(change(Parent, :count).by(-4))
+            .and(change(Patient, :count).by(-3))
+            .and(change(PatientLocation, :count).by(-3))
+            .and(change(VaccinationRecord, :count).by(-9))
+        )
+      end
+
+      it_behaves_like "a method that updates team cached counts"
     end
 
     context "when keeping itself" do
@@ -114,6 +120,8 @@ describe API::Testing::TeamsController do
             .and(change(VaccinationRecord, :count).by(-9))
         )
       end
+
+      it_behaves_like "a method that updates team cached counts"
     end
   end
 end
