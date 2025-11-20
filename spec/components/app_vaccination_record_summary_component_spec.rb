@@ -23,6 +23,8 @@ describe AppVaccinationRecordSummaryComponent do
   let(:notes) { "Some notes." }
   let(:location_name) { nil }
   let(:protocol) { :pgd }
+  let(:source) { "service" }
+  let(:nhs_immunisations_api_id) { nil }
 
   let(:vaccination_record) do
     create(
@@ -44,7 +46,8 @@ describe AppVaccinationRecordSummaryComponent do
         batch_id: other_batch&.id,
         delivery_method: :nasal_spray,
         delivery_site: :nose
-      }
+      },
+      source:
     )
   end
 
@@ -361,17 +364,7 @@ describe AppVaccinationRecordSummaryComponent do
   end
 
   describe "synced with NHS England row" do
-    after do
-      Flipper.disable(:imms_api_integration)
-      Flipper.disable(:imms_api_sync_job)
-    end
-
-    context "when the imms_api_integration and imms_api_sync_job feature flags are enabled" do
-      before do
-        Flipper.enable(:imms_api_integration)
-        Flipper.enable(:imms_api_sync_job, programme)
-      end
-
+    shared_examples "should have a `Synced with NHS England?` row" do
       it do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
@@ -380,12 +373,7 @@ describe AppVaccinationRecordSummaryComponent do
       end
     end
 
-    context "when the imms_api_integration feature flag is disabled" do
-      before do
-        Flipper.disable(:imms_api_integration)
-        Flipper.enable(:imms_api_sync_job, programme)
-      end
-
+    shared_examples "should not have a `Synced with NHS England?` row" do
       it do
         expect(rendered).not_to have_css(
           ".nhsuk-summary-list__row",
@@ -394,18 +382,58 @@ describe AppVaccinationRecordSummaryComponent do
       end
     end
 
+    before do
+      Flipper.enable(:imms_api_integration)
+      Flipper.enable(:imms_api_sync_job, programme)
+    end
+
+    after do
+      Flipper.disable(:imms_api_integration)
+      Flipper.disable(:imms_api_sync_job)
+    end
+
+    context "when the imms_api_integration and imms_api_sync_job feature flags are enabled" do
+      it_behaves_like "should have a `Synced with NHS England?` row"
+    end
+
+    context "when the imms_api_integration feature flag is disabled" do
+      before { Flipper.disable(:imms_api_integration) }
+
+      it_behaves_like "should not have a `Synced with NHS England?` row"
+    end
+
     context "when the imms_api_sync_job feature flag is disabled" do
+      before { Flipper.disable(:imms_api_sync_job) }
+
+      it_behaves_like "should not have a `Synced with NHS England?` row"
+    end
+
+    context "when the imms_api_sync_job feature flag is enabled for any programme" do
       before do
-        Flipper.enable(:imms_api_integration)
         Flipper.disable(:imms_api_sync_job)
+        Flipper.enable(:imms_api_sync_job, CachedProgramme.flu)
       end
 
-      it do
-        expect(rendered).not_to have_css(
-          ".nhsuk-summary-list__row",
-          text: "Synced with NHS England?"
+      it_behaves_like "should have a `Synced with NHS England?` row"
+    end
+
+    context "when the vaccination record was sourced from the API" do
+      let(:vaccination_record) do
+        create(
+          :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
+          programme:
         )
       end
+
+      it_behaves_like "should not have a `Synced with NHS England?` row"
+    end
+
+    context "when the vaccination record was sourced from a historical upload" do
+      let(:source) { "historical_upload" }
+      let(:session) { nil }
+
+      it_behaves_like "should not have a `Synced with NHS England?` row"
     end
   end
 

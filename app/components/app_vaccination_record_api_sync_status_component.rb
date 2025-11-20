@@ -61,8 +61,6 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
             "You must let the child’s GP know they were vaccinated."
         elsif recorded_in_service?
           "Records are not synced if the vaccination was not given"
-        elsif vaccination_record.session.nil?
-          "Records are not synced if the vaccination was not recorded in Mavis"
         end
       when :cannot_sync
         "You must add an NHS number to the child's record before this record will sync"
