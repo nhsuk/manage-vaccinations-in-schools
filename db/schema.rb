@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_20_131114) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_20_151321) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1163,16 +1163,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_131114) do
               vaccination_summary.has_injection AS vaccinated_injection_current_year,
               (pl.patient_id IS NULL) AS outside_cohort
              FROM ((((((((((((((((((((((patients p
-               JOIN ( SELECT pl_1.patient_id,
+               JOIN ( SELECT DISTINCT pl_1.patient_id,
                       pl_1.location_id,
                       s_1.id AS session_id,
                       s_1.academic_year,
-                      s_programme_type.s_programme_type,
+                      spyg.programme_type AS s_programme_type,
                       t_1.id AS team_id
                      FROM (((patient_locations pl_1
                        JOIN sessions s_1 ON (((s_1.location_id = pl_1.location_id) AND (s_1.academic_year = pl_1.academic_year))))
                        JOIN teams t_1 ON ((t_1.id = s_1.team_id)))
-                       CROSS JOIN LATERAL unnest(s_1.programme_types) s_programme_type(s_programme_type))
+                       JOIN session_programme_year_groups spyg ON ((spyg.session_id = s_1.id)))
                   UNION ALL
                    SELECT DISTINCT vr.patient_id,
                       s_1.location_id,
