@@ -3,6 +3,8 @@
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version
 ARG RUBY_VERSION=3.4.6
+ARG BUNDLE_WITHOUT="development:test"
+ARG RAILS_ENV="production"
 FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 
 # Rails app lives here
@@ -14,9 +16,9 @@ RUN apt-get update -qq && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set production environment
-ENV RAILS_ENV="production" \
+ENV RAILS_ENV="$RAILS_ENV" \
     NODE_ENV="production" \
-    BUNDLE_WITHOUT="development:test" \
+    BUNDLE_WITHOUT="$BUNDLE_WITHOUT" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle"
 
