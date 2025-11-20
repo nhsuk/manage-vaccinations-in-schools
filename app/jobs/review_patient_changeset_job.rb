@@ -17,8 +17,7 @@ class ReviewPatientChangesetJob < ApplicationJob
 
     import = patient_changeset.import
 
-    unless import.changesets.calculating_review.any? ||
-             import.changesets.import_invalid.any?
+    if all_jobs_finished_and_import_valid(import)
       if import.is_a?(ClassImport)
         ReviewClassImportSchoolMoveJob.perform_later(import.id)
       elsif import.calculating_re_review?
@@ -27,5 +26,12 @@ class ReviewPatientChangesetJob < ApplicationJob
         import.in_review!
       end
     end
+  end
+
+  private
+
+  def all_jobs_finished_and_import_valid(import)
+    import.changesets.still_processing.none? &&
+      import.changesets.import_invalid.none?
   end
 end
