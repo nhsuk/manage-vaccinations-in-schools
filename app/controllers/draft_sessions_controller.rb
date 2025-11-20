@@ -197,6 +197,7 @@ class DraftSessionsController < ApplicationController
     ActiveRecord::Base.transaction do
       @session.save!
       @draft_session.create_location_programme_year_groups!
+      @session.reload.sync_location_programme_year_groups!
     end
 
     patient_ids = @session.patients.pluck(:id)

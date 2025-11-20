@@ -87,12 +87,22 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
   location = FactoryBot.create(:school, team:, gias_year_groups: year_groups)
   date = completed ? 1.week.ago.to_date : Date.current
 
+  academic_year = AcademicYear.current
+
   dates =
     [date - 1.day, date, date + 1.day].select do |value|
-      value.in?(session.academic_year.to_academic_year_date_range)
+      value.in?(academic_year.to_academic_year_date_range)
     end
 
-  session = FactoryBot.create(:session, dates:, team:, programmes:, location:)
+  session =
+    FactoryBot.create(
+      :session,
+      academic_year:,
+      dates:,
+      team:,
+      programmes:,
+      location:
+    )
 
   programmes.each do |programme|
     year_groups.each do |year_group|
@@ -161,7 +171,7 @@ def setup_clinic(team)
 
   dates =
     [Date.current, Date.yesterday, Date.tomorrow].select do |value|
-      value.in?(session.academic_year.to_academic_year_date_range)
+      value.in?(academic_year.to_academic_year_date_range)
     end
 
   clinic_session.update!(dates:, send_invitations_at: Date.current - 3.weeks)

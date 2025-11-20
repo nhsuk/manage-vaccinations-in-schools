@@ -56,6 +56,7 @@ class Session < ApplicationRecord
   has_many :consent_notifications
   has_many :notes
   has_many :session_notifications
+  has_many :session_programme_year_groups, dependent: :destroy
   has_many :session_programmes,
            -> { joins(:programme).order(:"programmes.type") },
            dependent: :destroy,
@@ -256,6 +257,21 @@ class Session < ApplicationRecord
       programme: programmes,
       academic_year:
     ).count
+  end
+
+  def sync_location_programme_year_groups!
+    rows =
+      location_programme_year_groups.map do |lpyg|
+        [id, lpyg.programme_type, lpyg.year_group]
+      end
+
+    ActiveRecord::Base.transaction do
+      SessionProgrammeYearGroup.where(session_id: id).delete_all
+      SessionProgrammeYearGroup.import!(
+        %i[session_id programme_type year_group],
+        rows
+      )
+    end
   end
 
   private
