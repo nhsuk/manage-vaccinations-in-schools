@@ -20,6 +20,8 @@ provider "aws" {
   region = "eu-west-2"
 }
 
+data "aws_caller_identity" "current" {}
+
 resource "aws_ecr_repository" "performance" {
   name                 = "performancetest"
   image_tag_mutability = "IMMUTABLE"
@@ -52,18 +54,16 @@ resource "aws_ecr_lifecycle_policy" "performance" {
   })
 }
 
-
 resource "aws_ecr_lifecycle_policy" "regression" {
   repository = aws_ecr_repository.regression.name
   policy = jsonencode({
     rules = [
       {
         rulePriority = 1,
-        description  = "Expire images older than 1 month",
+        description  = "Keep only 30 images",
         selection = {
           tagStatus   = "any",
-          countType   = "sinceImagePushed",
-          countUnit   = "days",
+          countType   = "imageCountMoreThan",
           countNumber = 30
         },
         action = {

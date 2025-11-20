@@ -17,6 +17,7 @@
         "ecs:ListTaskDefinitionFamilies",
         "ecs:ListTasks",
         "ecs:RunTask",
+        "ecs:StopTask",
         "ecr:PutImage",
         "ecr:InitiateLayerUpload",
         "ecr:UploadLayerPart",

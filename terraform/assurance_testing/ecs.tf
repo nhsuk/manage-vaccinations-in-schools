@@ -54,6 +54,28 @@ resource "aws_ecs_task_definition" "regression" {
       name      = "mavis-regression"
       image     = "CHANGE_ME"
       essential = true
+      environment = [
+        {
+          name  = "DATABASE_HOST"
+          value = "localhost"
+        },
+        {
+          name  = "DATABASE_USER"
+          value = "postgres"
+        },
+        {
+          name  = "DATABASE_PASSWORD"
+          value = "postgres"
+        },
+        {
+          name  = "RAILS_MASTER_KEY"
+          value = "intentionally-insecure-dev-key00"
+        },
+        {
+          name  = "SKIP_TEST_DATABASE"
+          value = "true"
+        }
+      ]
       portMappings = [
         {
           containerPort = 4000
@@ -69,11 +91,31 @@ resource "aws_ecs_task_definition" "regression" {
           awslogs-stream-prefix = "${var.identifier}-logs"
         }
       }
+      healthCheck = {
+        command     = ["CMD-SHELL", "curl -f http://localhost:4000/health/database || exit 1"]
+        interval    = 30
+        timeout     = 5
+        retries     = 3
+        startPeriod = 90
+      }
     },
     {
       name      = "mavis-regression-db"
-      image     = "CHANGE_ME"
+      image     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com/mavis/dev/postgres_db:latest"
       essential = false
+      environment = [
+        {
+          name  = "POSTGRES_HOST_AUTH_METHOD"
+          value = "trust"
+        }
+      ]
+      healthCheck = {
+        command     = ["CMD-SHELL", "pg_isready"]
+        interval    = 10
+        timeout     = 5
+        retries     = 5
+        startPeriod = 60
+      }
     }
   ])
   tags = {
@@ -114,6 +156,19 @@ resource "aws_security_group" "regression" {
 
 resource "aws_security_group_rule" "regression_ingress" {
   type              = "ingress"
+  description       = "Allow all ingress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = -1
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.regression.id
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_security_group_rule" "regression_egress" {
+  type              = "egress"
   description       = "Allow all ingress"
   from_port         = 0
   to_port           = 0

@@ -13,6 +13,7 @@ jobs:
       id-token: write
     outputs:
       build-needed: ${{ steps.check-image.outputs.build-needed }}
+      next-git-sha: ${{ steps.get-next-git-sha.outputs.git-sha }}
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
@@ -22,21 +23,14 @@ jobs:
       - name: Check if image exists
         id: check-image
         run: |
-          if aws ecr describe-images --repository-name mavis-regression --image-ids imageTag=${{ github.sha }} > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name mavis/regression --image-ids imageTag=${{ github.sha }} > /dev/null 2>&1; then
             echo "Docker image with given tag already exists"
           else
             echo "Docker image does not exist. Build needed"
             echo "build-needed=true" >> $GITHUB_OUTPUT
           fi
-  build-and-push-webapp-image:
-    permissions:
-      id-token: write
-    uses: ./.github/workflows/build-and-push-image.yml
-    with:
-      git_sha: ${{ github.sha }}
-      webapp-only-build: true
   build-and-push-regression-image:
-    needs: [check-image-presence, build-and-push-webapp-image]
+    needs: [check-image-presence]
     if: needs.check-image-presence.outputs.build-needed == 'true'
     runs-on: ubuntu-latest
     permissions:
@@ -55,10 +49,10 @@ jobs:
       - name: Build and push mavis/regression docker image
         run: |
           docker build \
-            --build-arg IMAGE_TAG=${{ github.sha }} \
-            --build-arg REPOSITORY=393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp \
+            --build-arg BUNDLE_WITHOUT=test \
+            --build-arg RAILS_ENV=development \
             -t "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/regression:${{ github.sha }}" \
-            -f regression.Dockerfile .
+            .
           docker push "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/regression:${{ github.sha }}"
   launch-dockerized-devimage:
     needs: [ check-image-presence, build-and-push-regression-image ]
@@ -70,8 +64,7 @@ jobs:
     permissions:
       id-token: write
     outputs:
-      task_arn: ${{ steps.compile-outputs.outputs.task_arn }}
-      container_ip: ${{ steps.compile-outputs.outputs.container_ip }}
+      run_task_arn: ${{ steps.run-task.outputs.run-task-arn }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v5
@@ -108,13 +101,82 @@ jobs:
           run-task-subnets: ${{ steps.prepare-deployment.outputs.run-task-subnets }}
           run-task-launch-type: 'FARGATE'
           run-task-security-groups: ${{ steps.prepare-deployment.outputs.run-task-security-groups }}
-          run-task-assign-public-IP: true
+          run-task-assign-public-IP: ENABLED
+  wait-for-task-stability:
+    needs: launch-dockerized-devimage
+    if: ${{ !cancelled() && needs.launch-dockerized-devimage.result == 'success'}}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    outputs:
+      task_arn: ${{ steps.compile-outputs.outputs.task_arn }}
+      container_ip: ${{ steps.compile-outputs.outputs.container_ip }}
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
+          aws-region: eu-west-2
+      - name: Wait for task to stabilise
+        run: |
+          set -euo pipefail
+
+          ELAPSED=0
+          POLL_INTERVAL=10
+          TASK_ARN=$(echo '${{ needs.launch-dockerized-devimage.outputs.run_task_arn }}' | jq -r '.[0]')
+          echo "Waiting for ECS task $TASK_ARN to become HEALTHY"
+
+          while (( ELAPSED < 300 )); do
+            HEALTH_STATUS=$(aws ecs describe-tasks \
+              --cluster "assurance-testing" \
+              --tasks "$TASK_ARN" \
+              --query 'tasks[0].healthStatus' \
+              --output text 2>/dev/null || echo "UNKNOWN")
+
+            LAST_EVENT=$(aws ecs describe-tasks \
+              --cluster "assurance-testing" \
+              --tasks "$TASK_ARN" \
+              --query 'tasks[0].lastStatus' \
+              --output text 2>/dev/null || echo "UNKNOWN")
+
+            case "$HEALTH_STATUS" in
+              "HEALTHY")
+                echo "Task is HEALTHY"
+                exit 0
+                ;;
+              "UNHEALTHY")
+                echo "Task reported UNHEALTHY"
+                aws ecs describe-tasks --cluster "assurance-testing" --tasks "$TASK_ARN" --query 'tasks[0].containers[].{Name:name,Health:health,Reason:lastStatusReason}' --output table
+                exit 1
+                ;;
+              "UNKNOWN"|"")
+                # Task might not exist or API error
+                if [[ "$LAST_EVENT" == "STOPPED" || "$LAST_EVENT" == "DEACTIVATED" ]]; then
+                  echo "Task is no longer running (lastStatus: $LAST_EVENT)"
+                  exit 1
+                fi
+                echo "Task not found or not reporting health yet (healthStatus: UNKNOWN, lastStatus: $LAST_EVENT). Retrying..."
+                ;;
+              *)
+                # HEALTHY/UNHEALTHY not reported yet (common in early lifecycle)
+                echo "Task health check in progress... (healthStatus: $HEALTH_STATUS, lastStatus: $LAST_EVENT)"
+                ;;
+            esac
+
+            sleep "$POLL_INTERVAL"
+            ELAPSED=$((ELAPSED + POLL_INTERVAL))
+          done
+
+          echo "Timeout reached (300 seconds) while waiting for task to become HEALTHY"
+          echo "Final status:"
+          aws ecs describe-tasks --cluster "assurance-testing" --tasks "$TASK_ARN" --query 'tasks[0]' --output json || true
+          exit 1
       - name: Compile outputs
         id: compile-outputs
         run: |
-          TASK_ARN=$(echo ${{ steps.run-task.outputs.run-task-arn }} | jq -r '.[0]')
+          TASK_ARN=$(echo '${{ needs.launch-dockerized-devimage.outputs.run_task_arn }}' | jq -r '.[0]')
           TASK_ID=$(sed 's:^.*/::' <<< $TASK_ARN)
-          CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-regression\$252F${TASK_ID}\$3Fstart\$3D${date +%s}000\$26end\$3D$(date -d '+30 minutes' +%s)000"
+          CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-regression\$252F${TASK_ID}\$3Fstart\$3D$(date +%s)000\$26end\$3D$(date -d '+30 minutes' +%s)000"
           echo "**Task ID:** $TASK_ID" >> $GITHUB_STEP_SUMMARY
           echo "**Container Logs:** $CLOUDWATCH_URL" >> $GITHUB_STEP_SUMMARY
           NETWORK_INTERFACE=$(aws ecs describe-tasks \
@@ -130,8 +192,8 @@ jobs:
           echo "Started task: $TASK_ARN"
           echo "Logs for server: ${CLOUDWATCH_URL}"
   call-functional-tests:
-    needs: launch-dockerized-devimage
-    if: ${{ !cancelled() && needs.launch-dockerized-devimage.result == 'success'}}
+    needs: [launch-dockerized-devimage, wait-for-task-stability]
+    if: ${{ !cancelled() && needs.launch-dockerized-devimage.result == 'success' && needs.wait-for-task-stability.result == 'success'}}
     uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/functional_selected_device.yaml@make-workflow-callable
     permissions:
       contents: write
@@ -139,7 +201,7 @@ jobs:
       tests: ''
       device: 'Desktop Chrome'
       programmes: 'FLU,HPV,MENACWY,MMR,TD_IPV'
-      endpoint: "${{ needs.launch-dockerized-devimage.outputs.container_ip }}:4000"
+      endpoint: "http://${{ needs.wait-for-task-stability.outputs.container_ip }}:4000"
       screenshot_all_steps: 'false'
       enable_reruns: 'true'
       test_workers: '4'
@@ -153,7 +215,7 @@ jobs:
     #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     #
   stop-docker-environment:
-    needs: [call-functional-tests, launch-dockerized-devimage]
+    needs: [call-functional-tests, launch-dockerized-devimage, wait-for-task-stability]
     if: ${{ always() && needs.launch-dockerized-devimage.result != 'skipped'}}
     runs-on: ubuntu-latest
     permissions:
@@ -165,4 +227,4 @@ jobs:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
       - name: Stop dockerized dev image
-        run: aws ecs stop-task --cluster assurance-testing --task ${{ needs.start-docker-environment.outputs.task_arn }}
+        run: aws ecs stop-task --cluster assurance-testing --task ${{ needs.wait-for-task-stability.outputs.task_arn }}
