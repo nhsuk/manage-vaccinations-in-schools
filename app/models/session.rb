@@ -9,7 +9,7 @@
 #  dates                         :date             not null, is an Array
 #  days_before_consent_reminders :integer
 #  national_protocol_enabled     :boolean          default(FALSE), not null
-#  programme_types               :enum             not null, is an Array
+#  programme_types               :enum             is an Array
 #  psd_enabled                   :boolean          default(FALSE), not null
 #  requires_registration         :boolean          default(TRUE), not null
 #  send_consent_requests_at      :date
