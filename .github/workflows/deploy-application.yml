@@ -76,7 +76,7 @@ jobs:
       git-sha: ${{ steps.get-git-sha.outputs.git-sha }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.git_ref_to_deploy || github.sha }}
       - name: Get git sha
@@ -105,7 +105,7 @@ jobs:
       repository_name: ${{ matrix.service == 'ops' && 'mavis/ops' || 'mavis/webapp' }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         id: checkout-code
         with:
           ref: ${{ needs.determine-git-sha.outputs.git-sha }}
