@@ -1,7 +1,12 @@
 name: Create Dockerized Database
+run-name: Creating dockerized image from ${{ github.ref_name }}
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - containerized_regression_tests_for_PRs
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 permissions:
   id-token: write
@@ -49,8 +54,6 @@ jobs:
       - name: Login to ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-      - name: Setup Development Database
-        run: bin/rails db:setup
       - name: Get postgres container ID
         id: get-container-id
         run: |
@@ -59,6 +62,7 @@ jobs:
       - name: Commit postgres container with database
         run: |
           docker commit ${{ steps.get-container-id.outputs.container-id }} ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db:latest
-      - name: Push image to repository foo
+      - name: Push image
         run: |
-          docker push ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db:latest
+          docker tag ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db:latest ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db:${{ github.ref_name }}
+          docker push ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db --all-tags
