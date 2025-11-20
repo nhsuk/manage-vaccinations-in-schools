@@ -217,11 +217,11 @@ module "ops_service" {
     vpc_id  = aws_vpc.application_vpc.id
   }
   task_config = {
-    environment          = local.task_envs["OPS_SERVICE"]
-    secrets              = local.task_secrets["OPS_SERVICE"]
+    environment          = local.task_envs["CORE"]
+    secrets              = local.task_secrets["CORE"]
     cpu                  = 1024
     memory               = 2048
-    execution_role_arn   = aws_iam_role.ecs_task_execution_role["OPS_SERVICE"].arn
+    execution_role_arn   = aws_iam_role.ecs_task_execution_role["CORE"].arn
     task_role_arn        = data.aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
