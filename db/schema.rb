@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_20_131114) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -764,7 +764,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.integer "days_before_consent_reminders"
     t.bigint "location_id", null: false
     t.boolean "national_protocol_enabled", default: false, null: false
-    t.enum "programme_types", null: false, array: true, enum_type: "programme_type"
+    t.enum "programme_types", array: true, enum_type: "programme_type"
     t.boolean "psd_enabled", default: false, null: false
     t.boolean "requires_registration", default: true, null: false
     t.date "send_consent_requests_at"
