@@ -407,6 +407,39 @@ describe AppVaccinationRecordSummaryComponent do
         )
       end
     end
+
+    context "when the vaccination record is from an upload" do
+      let(:vaccination_record) do
+        create(:vaccination_record, source: :historical_upload)
+      end
+
+      it "the row does not appear" do
+        expect(rendered).not_to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Synced with NHS England?"
+        )
+      end
+    end
+
+    context "when the vaccination record is from the NHSE Imms API" do
+      let(:vaccination_record) do
+        create(
+          :vaccination_record,
+          source: :nhs_immunisations_api,
+          nhs_immunisations_api_id: "1",
+          nhs_immunisations_api_primary_source: true,
+          nhs_immunisations_api_identifier_system: "abc",
+          nhs_immunisations_api_identifier_value: "123"
+        )
+      end
+
+      it "the row does not appear" do
+        expect(rendered).not_to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Synced with NHS England?"
+        )
+      end
+    end
   end
 
   describe "with pending changes" do
