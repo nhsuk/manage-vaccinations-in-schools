@@ -5,27 +5,27 @@
                                         ]) %>
 <% end %>
 
-<%= h1 "Upload (#{import.created_at.to_fs(:long)})" %>
+<%= h1 "Further review and approve upload (#{import.created_at.to_fs(:long)})" %>
 
 <%= render AppImportSummaryComponent.new(import:) %>
 
-<%= render AppSecondaryNavigationComponent.new do |nav| %>
-  <%= nav.with_item(
-        href: polymorphic_path([:re_review, import]),
-        text: "Needs re-review",
-        selected: request.path.ends_with?("/re_review"),
-      ) %>
-  <% if @patients.present? %>
+<% if @patients.present? %>
+  <%= render AppSecondaryNavigationComponent.new do |nav| %>
     <%= nav.with_item(
-          href: polymorphic_path([:imported_records, import]),
-          text: "Imported",
-          selected: request.path.ends_with?("/imported_records"),
+          href: polymorphic_path([:re_review, import]),
+          text: "Needs further review",
+          selected: request.path.ends_with?("/re_review"),
         ) %>
+      <%= nav.with_item(
+            href: polymorphic_path([:imported_records, import]),
+            text: "Imported",
+            selected: request.path.ends_with?("/imported_records"),
+          ) %>
   <% end %>
 <% end %>
 
 <% if @patients.present? %>
-<%= render AppPatientTableComponent.new(@patients, current_user:, count: @pagy.count) %>
+  <%= render AppPatientTableComponent.new(@patients, current_user:, count: @pagy.count) %>
 <% else %>
   <p>No patients have been imported.</p>
 <% end %>

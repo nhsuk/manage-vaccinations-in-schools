@@ -5,27 +5,27 @@
                                         ]) %>
 <% end %>
 
-<%= h1 "Upload (#{import.created_at.to_fs(:long)})" %>
+<%= h1 "Further review and approve upload (#{import.created_at.to_fs(:long)})" %>
 
 <%= render AppImportSummaryComponent.new(import:) %>
 
-<%= render AppSecondaryNavigationComponent.new do |nav| %>
-  <%= nav.with_item(
-        href: polymorphic_path([:re_review, import]),
-        text: "Needs re-review",
-        selected: request.path.ends_with?("/re_review"),
-      ) %>
-  <% if @patients.present? %>
+<% if @patients.present? %>
+  <%= render AppSecondaryNavigationComponent.new do |nav| %>
     <%= nav.with_item(
-          href: polymorphic_path([:imported_records, import]),
-          text: "Imported",
-          selected: request.path.ends_with?("/imported_records"),
+          href: polymorphic_path([:re_review, import]),
+          text: "Needs further review",
+          selected: request.path.ends_with?("/re_review"),
         ) %>
+      <%= nav.with_item(
+            href: polymorphic_path([:imported_records, import]),
+            text: "Imported",
+            selected: request.path.ends_with?("/imported_records"),
+          ) %>
   <% end %>
 <% end %>
 
-<%= render AppWarningCalloutComponent.new(heading: "Changes since you approved this import") do %>
-    <p>Since you approved this import, some records have been updated. Confirm that you want to import the following and override later changes.</p>
+<%= render AppWarningCalloutComponent.new(heading: "Changes since you uploaded this file") do %>
+    <p>The records listed below have changed since you uploaded this file. This may be because another import was approved that includes some or all of the records in your file, or a child's school or NHS number may have changed in Mavis. You need to review these records again and confirm you still want to import the remaining changes from your file.</p>
 <% end %>
 
 <%= render AppImportReviewComponent.new(

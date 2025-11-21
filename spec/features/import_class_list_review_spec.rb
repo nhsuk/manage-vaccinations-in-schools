@@ -267,7 +267,7 @@ describe "Import class lists" do
   def then_i_should_see_the_import_review_screen
     page.refresh
     click_on_most_recent_import(ClassImport)
-    expect(page).to have_content("Needs review")
+    expect(page).to have_content("Review and approve")
 
     find(".nhsuk-details__summary", text: "1 new record").click
     expect(page).to have_content("KORS, Michael")
@@ -291,7 +291,7 @@ describe "Import class lists" do
 
   def then_i_should_see_the_first_import_review_screen
     click_on_most_recent_import(ClassImport)
-    expect(page).to have_content("Needs review")
+    expect(page).to have_content("Review and approve")
 
     find(".nhsuk-details__summary", text: "4 new records").click
     expect(page).to have_content("KORS, Michael")
@@ -375,7 +375,7 @@ describe "Import class lists" do
   def then_i_see_the_import_needs_re_review
     wait_for_import_to_complete_until_review(ClassImport)
     visit class_import_path(ClassImport.order(:created_at).first)
-    expect(page).to have_content("Needs re-review")
+    expect(page).to have_content("Further review and approve")
     expect(ClassImport.first.changesets.processed.count).to eq(2)
     expect(ClassImport.first.changesets.ready_for_review.count).to eq(4)
     expect(ClassImport.first.changesets.from_file.ready_for_review.count).to eq(
