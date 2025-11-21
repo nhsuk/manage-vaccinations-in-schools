@@ -454,7 +454,8 @@ class ImmunisationImportRow
         false
       end
     elsif vaccine_name.present? ||
-          combined_vaccination_and_dose_sequence.present?
+          combined_vaccination_and_dose_sequence.present? ||
+          bulk_hpv?
       true
     end
   end
