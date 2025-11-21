@@ -128,7 +128,12 @@ class ClassImportsController < ApplicationController
         processed_at: Time.zone.now,
         status: :partially_processed
       )
-      @class_import.changesets.ready_for_review.find_each(&:cancelled!)
+      @class_import.changesets.from_file.ready_for_review.update_all(
+        status: :cancelled
+      )
+      @class_import.changesets.not_from_file.ready_for_review.update_all(
+        status: :committing
+      )
 
       @class_import.postprocess_rows!
 

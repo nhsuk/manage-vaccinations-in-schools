@@ -50,6 +50,7 @@ describe "Import class lists" do
     when_i_ignore_changes
     then_the_re_review_patients_are_not_imported
     and_i_see_the_import_is_partially_completed
+    and_a_school_move_for_rachel_is_created
   end
 
   def given_i_am_signed_in
@@ -394,6 +395,13 @@ describe "Import class lists" do
   def and_no_school_move_for_rachel_is_created
     rachel = Patient.find_by(given_name: "Rachel", family_name: "Adams")
     expect(rachel.school_moves.count).to eq(0)
+  end
+
+  def and_a_school_move_for_rachel_is_created
+    rachel = Patient.find_by(given_name: "Rachel", family_name: "Adams")
+    expect(rachel.school_moves.count).to eq(1)
+    school_move = rachel.school_moves.first
+    expect(school_move.school_id).to be_nil
   end
 
   def when_i_ignore_changes
