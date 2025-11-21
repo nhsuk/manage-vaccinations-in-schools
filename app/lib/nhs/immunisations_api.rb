@@ -430,8 +430,10 @@ module NHS::ImmunisationsAPI
 
       unless tweaked_bundle_params == request_params ||
                bundle_params == request_params
-        raise NHS::ImmunisationsAPI::BundleLinkParamsMismatch,
-              "Bundle link parameters do not match request parameters: #{tweaked_bundle_params} != #{request_params}"
+        message =
+          "Bundle link parameters do not match request parameters: #{tweaked_bundle_params} != #{request_params}"
+        Rails.logger.warn(message)
+        Sentry.capture_exception(BundleLinkParamsMismatch.new(message))
       end
     end
 
