@@ -137,6 +137,10 @@ class Onboarding
     ActiveRecord::Base.transaction do
       models.each(&:save!)
 
+      clinics.each do |clinic|
+        clinic.attach_to_team!(team, academic_year:, subteam: clinic.subteam)
+      end
+
       # Reload to ensure the programmes are loaded.
       team.reload
 
@@ -218,14 +222,14 @@ class Onboarding
 
     delegate :status, to: :location, allow_nil: true
 
-    def existing_subteam
-      location&.subteam
-    end
+    def existing_subteam = location&.subteam
+
+    delegate :team, to: :subteam
 
     def save!
       academic_year = AcademicYear.pending
 
-      location.update!(subteam:)
+      location.attach_to_team!(team, academic_year:, subteam:)
       location.import_year_groups_from_gias!(academic_year:)
       location.import_default_programme_year_groups!(
         programmes.map(&:programme),

@@ -16,6 +16,7 @@ module MavisCLI
         MavisCLI.load_rails
 
         team = Team.find_by(workgroup:)
+        academic_year = AcademicYear.current
 
         if team.nil?
           warn "Could not find team."
@@ -23,11 +24,6 @@ module MavisCLI
         end
 
         subteam = team.subteams.find_by(name: subteam)
-
-        if subteam.nil?
-          warn "Could not find subteam."
-          return
-        end
 
         ActiveRecord::Base.transaction do
           ods_codes.each do |ods_code|
@@ -42,7 +38,7 @@ module MavisCLI
               warn "#{ods_code} previously belonged to #{location.subteam.name}"
             end
 
-            location.update!(subteam:)
+            location.attach_to_team!(team, academic_year:, subteam:)
           end
         end
       end

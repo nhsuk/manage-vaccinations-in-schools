@@ -68,6 +68,7 @@ class Location < ApplicationRecord
   has_many :patient_locations
   has_many :pre_screenings
   has_many :sessions
+  has_many :team_locations
 
   has_one :team, through: :subteam
 
@@ -172,6 +173,13 @@ class Location < ApplicationRecord
       "systm_one_code",
       "updated_at"
     ).merge("is_attached_to_team" => !subteam_id.nil?)
+  end
+
+  def attach_to_team!(team, academic_year:, subteam:)
+    ActiveRecord::Base.transaction do
+      team_locations.find_or_create_by!(team:, academic_year:).update!(subteam:)
+      update!(subteam:)
+    end
   end
 
   def import_year_groups!(values, academic_year:, source:)

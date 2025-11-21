@@ -13,6 +13,8 @@ class API::Testing::TeamsController < API::Testing::BaseController
 
     @start_time = Time.zone.now
 
+    log_destroy(TeamLocation.where(team:))
+
     log_destroy(CohortImport.where(team:))
     log_destroy(ImmunisationImport.where(team:))
     log_destroy(ClassImport.where(team:))
