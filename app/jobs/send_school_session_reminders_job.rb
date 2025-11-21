@@ -8,7 +8,7 @@ class SendSchoolSessionRemindersJob < ApplicationJob
 
     sessions =
       Session
-        .includes(:location_programme_year_groups)
+        .includes(:session_programme_year_groups)
         .has_date(date)
         .joins(:location)
         .merge(Location.school)

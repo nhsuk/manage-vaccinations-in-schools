@@ -222,10 +222,10 @@ class StatusGenerator::Vaccination
       patient_locations
         .select { it.academic_year == academic_year }
         .any? do |patient_location|
-          location = patient_location.location
-          year_group.in?(
-            location.programme_year_groups(academic_year:)[programme]
-          )
+          patient_location.location.location_programme_year_groups.any? do
+            it.programme_type == programme.type &&
+              it.academic_year == academic_year && it.year_group == year_group
+          end
         end
   end
 
