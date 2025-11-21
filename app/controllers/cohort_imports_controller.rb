@@ -106,15 +106,9 @@ class CohortImportsController < ApplicationController
     @cohort_import.reviewed_at << Time.zone.now
     @cohort_import.committing!
 
-    @cohort_import
-      .changesets
-      .from_file
-      .ready_for_review
-      .in_batches(of: 100) do |batch|
-        CommitPatientChangesetsJob.perform_async(batch.ids)
-      end
-
-    @cohort_import.changesets.from_file.ready_for_review.each(&:committing!)
+    @cohort_import.commit_changesets(
+      @cohort_import.changesets.from_file.ready_for_review
+    )
 
     redirect_to imports_path, flash: { info: "Import started" }
   end

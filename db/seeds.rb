@@ -87,13 +87,22 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
   location = FactoryBot.create(:school, team:, gias_year_groups: year_groups)
   date = completed ? 1.week.ago.to_date : Date.current
 
-  session = FactoryBot.create(:session, date:, team:, programmes:, location:)
+  academic_year = AcademicYear.current
 
-  [date - 1.day, date + 1.day].each do |value|
-    if value.in?(session.academic_year.to_academic_year_date_range)
-      session.session_dates.create!(value:)
+  dates =
+    [date - 1.day, date, date + 1.day].select do |value|
+      value.in?(academic_year.to_academic_year_date_range)
     end
-  end
+
+  session =
+    FactoryBot.create(
+      :session,
+      academic_year:,
+      dates:,
+      team:,
+      programmes:,
+      location:
+    )
 
   programmes.each do |programme|
     year_groups.each do |year_group|
@@ -160,13 +169,12 @@ def setup_clinic(team)
   academic_year = AcademicYear.current
   clinic_session = team.generic_clinic_session(academic_year:)
 
-  [Date.current, Date.yesterday, Date.tomorrow].each do |value|
-    if value.in?(academic_year.to_academic_year_date_range)
-      clinic_session.session_dates.create!(value:)
+  dates =
+    [Date.current, Date.yesterday, Date.tomorrow].select do |value|
+      value.in?(academic_year.to_academic_year_date_range)
     end
-  end
 
-  clinic_session.update!(send_invitations_at: Date.current - 3.weeks)
+  clinic_session.update!(dates:, send_invitations_at: Date.current - 3.weeks)
 
   # All unknown school or home-schooled patients belong to the community clinic.
   # This is normally handled by school moves, but here we need to do it manually.

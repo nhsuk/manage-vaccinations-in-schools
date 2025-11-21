@@ -239,9 +239,11 @@ module NHS::ImmunisationsAPI
         # experiments show (by deleting and then re-creating a vaccination
         # record with an "update") that it appears that the e-tag is incremented
         # on the reviving update.
-        vaccination_record.update_columns(
-          nhs_immunisations_api_synced_at: Time.current
-        )
+        vaccination_record.nhs_immunisations_api_id = nil
+        vaccination_record.nhs_immunisations_api_primary_source = nil
+        vaccination_record.nhs_immunisations_api_synced_at = Time.current
+
+        vaccination_record.save!(touch: false)
       else
         raise "Error deleting vaccination record #{vaccination_record.id} from" \
                 " Immunisations API: unexpected response status" \
@@ -262,7 +264,6 @@ module NHS::ImmunisationsAPI
     )
       vaccination_record.kept? && vaccination_record.recorded_in_service? &&
         vaccination_record.administered? &&
-        vaccination_record.programme.can_sync_to_immunisations_api? &&
         (ignore_nhs_number || vaccination_record.patient.nhs_number.present?) &&
         vaccination_record.notify_parents &&
         vaccination_record.patient.not_invalidated?
@@ -279,8 +280,6 @@ module NHS::ImmunisationsAPI
 
       if programmes.empty?
         raise "Cannot search for vaccination records in the immunisations API; no programmes provided."
-      elsif !programmes.all?(&:can_search_in_immunisations_api?)
-        raise "Cannot search for vaccination records in the immunisations API; one or more programmes is not supported."
       end
 
       Rails.logger.info(
@@ -291,7 +290,7 @@ module NHS::ImmunisationsAPI
         "patient.identifier" =>
           "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}",
         "-immunization.target" =>
-          programmes.map(&:snomed_target_disease_name).join(","),
+          programmes.map(&:snomed_target_disease_name).sort.join(","),
         "-date.from" => date_from&.strftime("%F"),
         "-date.to" => date_to&.strftime("%F")
       }.compact
@@ -420,6 +419,14 @@ module NHS::ImmunisationsAPI
         bundle_params.transform_keys do |key|
           key == "immunization.target" ? "-immunization.target" : key
         end
+
+      # We don't care about the order of the target values
+      tweaked_bundle_params["-immunization.target"] = tweaked_bundle_params[
+        "-immunization.target"
+      ].split(",").sort
+      request_params["-immunization.target"] = request_params[
+        "-immunization.target"
+      ].split(",").sort
 
       unless tweaked_bundle_params == request_params ||
                bundle_params == request_params

@@ -55,12 +55,16 @@ class LocationSessionsFactory
   end
 
   def create_session!(programmes:)
-    team.sessions.create!(academic_year:, location:, programmes:, dates: [])
+    team
+      .sessions
+      .create!(academic_year:, location:, programmes:, dates: [])
+      .tap(&:sync_location_programme_year_groups!)
   end
 
   def find_or_create_session!(programmes:)
     team
       .sessions
+      .includes(:location_programme_year_groups)
       .create_with(programmes:, dates: [])
       .find_or_create_by!(academic_year:, location:)
       .tap do |session|
@@ -69,6 +73,8 @@ class LocationSessionsFactory
             session.programmes << programme
           end
         end
+
+        session.sync_location_programme_year_groups!
       end
   end
 

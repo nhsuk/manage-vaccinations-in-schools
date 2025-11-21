@@ -119,7 +119,7 @@ variable "enable_enhanced_db_monitoring" {
 }
 
 locals {
-  server_types  = toset(["CORE", "REPORTING", "OPS_SERVICE"])
+  server_types  = toset(["CORE", "REPORTING"])
   is_production = var.environment == "production"
   parameter_store_variables = tomap({
     CORE = local.is_production ? {} : tomap({
@@ -148,10 +148,6 @@ locals {
         valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
       }]
       REPORTING = []
-      OPS_SERVICE = [{
-        name      = "DB_CREDENTIALS"
-        valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
-      }]
     }
   )
 
@@ -181,12 +177,6 @@ locals {
           valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.mise_sops_age_key_path}"
         }],
       )
-      OPS_SERVICE = [
-        {
-          name      = "RAILS_MASTER_KEY"
-          valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.rails_master_key_path}"
-        }
-      ]
     }
   )
 
@@ -253,34 +243,11 @@ locals {
         value = var.environment == "production" ? "production" : "staging"
       }
     ]
-    OPS_SERVICE = [
-      {
-        name  = "DB_HOST"
-        value = aws_rds_cluster.core.endpoint
-      },
-      {
-        name  = "DB_NAME"
-        value = aws_rds_cluster.core.database_name
-      },
-      {
-        name  = "RAILS_ENV"
-        value = var.environment == "production" ? "production" : "staging"
-      },
-      {
-        name  = "SIDEKIQ_REDIS_URL"
-        value = local.redis_sidekiq_url
-      },
-      {
-        name  = "REDIS_CACHE_URL"
-        value = local.redis_cache_url
-      },
-    ]
   }
 
   task_secrets = {
-    CORE        = concat(local.secret_values["CORE"], local.parameter_values["CORE"])
-    REPORTING   = concat(local.secret_values["REPORTING"], local.parameter_values["REPORTING"])
-    OPS_SERVICE = concat(local.secret_values["OPS_SERVICE"], local.parameter_values["OPS_SERVICE"])
+    CORE      = concat(local.secret_values["CORE"], local.parameter_values["CORE"])
+    REPORTING = concat(local.secret_values["REPORTING"], local.parameter_values["REPORTING"])
   }
   container_ports = {
     web       = 4000

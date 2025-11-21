@@ -169,9 +169,6 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
     return if params[:year_group].present?
     return if params[:programme].blank?
 
-    programme = Programme.find_by(type: params[:programme])
-    return unless programme
-
     patient_table = ReportingAPI::PatientProgrammeStatus.arel_table
     lpyg_table = Location::ProgrammeYearGroup.arel_table
     lyg_table = Location::YearGroup.arel_table
@@ -184,7 +181,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
         .where(lyg_table[:location_id].eq(patient_table[:session_location_id]))
         .where(lyg_table[:value].eq(patient_table[:patient_year_group]))
         .where(lyg_table[:academic_year].eq(patient_table[:academic_year]))
-        .where(lpyg_table[:programme_id].eq(programme.id))
+        .where(lpyg_table[:programme_type].eq(params[:programme]))
 
     @base_scope = @base_scope.where(Arel::Nodes::Exists.new(subquery))
   end
@@ -194,7 +191,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
       .joins(:patient)
       .where(
         patient_id: @scope.select(:patient_id),
-        programme_id: @scope.select(:programme_id).distinct,
+        programme_type: @scope.select(:programme_type).distinct,
         academic_year: @scope.select(:academic_year).distinct,
         response: :refused
       )
@@ -209,7 +206,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
       .joins(:patient)
       .where(
         patient_id: @scope.select(:patient_id),
-        programme_id: @scope.select(:programme_id).distinct,
+        programme_type: @scope.select(:programme_type).distinct,
         academic_year: @scope.select(:academic_year).distinct
       )
       .not_invalidated

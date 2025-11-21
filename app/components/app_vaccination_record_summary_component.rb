@@ -265,9 +265,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
       end
 
       sync_feature_flag_enabled =
-        Programme.can_sync_to_immunisations_api.any? do
-          Flipper.enabled?(:imms_api_sync_job, it)
-        end
+        Programme.any? { Flipper.enabled?(:imms_api_sync_job, it) }
       if @vaccination_record.respond_to?(:sync_status) &&
            sync_feature_flag_enabled && Flipper.enabled?(:imms_api_integration)
         summary_list.with_row do |row|

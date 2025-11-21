@@ -107,15 +107,9 @@ class ClassImportsController < ApplicationController
     @class_import.reviewed_at << Time.zone.now
     @class_import.committing!
 
-    @class_import
-      .changesets
-      .from_file
-      .ready_for_review
-      .in_batches(of: 100) do |batch|
-        CommitPatientChangesetsJob.perform_async(batch.ids)
-      end
-
-    @class_import.changesets.from_file.ready_for_review.each(&:committing!)
+    @class_import.commit_changesets(
+      @class_import.changesets.from_file.ready_for_review
+    )
 
     redirect_to imports_path, flash: { info: "Import started" }
   end

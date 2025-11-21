@@ -107,15 +107,12 @@ describe "Offline vaccination" do
 
     @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
     school = create(:school, team: @team)
-    previous_date = 1.month.ago
+    previous_date = 1.month.ago.to_date
 
     if clinic
-      [previous_date, Date.current].each do |date|
-        @team
-          .generic_clinic_session(academic_year: AcademicYear.current)
-          .session_dates
-          .create!(value: date)
-      end
+      @team.generic_clinic_session(academic_year: AcademicYear.current).update!(
+        dates: [previous_date, Date.current]
+      )
 
       @physical_clinic_location =
         create(
@@ -131,9 +128,14 @@ describe "Offline vaccination" do
     create(:gp_practice, ods_code: "Y12345")
 
     @session =
-      create(:session, :today, team: @team, programmes:, location: school)
-
-    @session.session_dates.create!(value: previous_date)
+      create(
+        :session,
+        :today,
+        team: @team,
+        programmes:,
+        location: school,
+        dates: [previous_date, Date.current]
+      )
 
     @vaccinated_patient, @unvaccinated_patient =
       create_list(
@@ -197,15 +199,20 @@ describe "Offline vaccination" do
 
     @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
     school = create(:school, team: @team)
-    previous_date = 1.month.ago
+    previous_date = 1.month.ago.to_date
 
     vaccine = programmes.first.vaccines.active.first
     @batch = create(:batch, :not_expired, team: @team, vaccine:)
 
     @session =
-      create(:session, :today, team: @team, programmes:, location: school)
-
-    @session.session_dates.create!(value: previous_date)
+      create(
+        :session,
+        :today,
+        team: @team,
+        programmes:,
+        location: school,
+        dates: [previous_date, Date.current]
+      )
 
     @previously_vaccinated_patient =
       create(:patient, :vaccinated, session: @session, school:, year_group: 8)
@@ -221,15 +228,19 @@ describe "Offline vaccination" do
 
     @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
     school = create(:school, team: @team)
-    previous_date = 1.month.ago
 
     vaccine = programmes.first.vaccines.active.first
     @batch = create(:batch, :not_expired, team: @team, vaccine:)
 
     @session =
-      create(:session, :today, team: @team, programmes:, location: school)
-
-    @session.session_dates.create!(value: previous_date)
+      create(
+        :session,
+        :today,
+        team: @team,
+        programmes:,
+        location: school,
+        dates: [1.month.ago.to_date, Date.current]
+      )
 
     @previously_vaccinated_patient =
       create(:patient, session: @session, school:, year_group: 8)
@@ -237,7 +248,7 @@ describe "Offline vaccination" do
 
   def and_the_patients_record_is_sourced_from_nhs_api
     fhir_record =
-      FHIR.from_contents(file_fixture("fhir/fhir_record_full.json").read)
+      FHIR.from_contents(file_fixture("fhir/flu/fhir_record_full.json").read)
     @nhs_api_vaccination_record =
       FHIRMapper::VaccinationRecord.from_fhir_record(
         fhir_record,

@@ -27,7 +27,6 @@
 #  index_gillick_assessments_on_performed_by_user_id  (performed_by_user_id)
 #  index_gillick_assessments_on_programme_id          (programme_id)
 #  index_gillick_assessments_on_programme_type        (programme_type)
-#  index_gillick_assessments_on_session_date_id       (session_date_id)
 #
 # Foreign Keys
 #
@@ -35,18 +34,14 @@
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
 #  fk_rails_...  (programme_id => programmes.id)
-#  fk_rails_...  (session_date_id => session_dates.id)
 #
 FactoryBot.define do
   factory :gillick_assessment do
-    transient do
-      session { association(:session) }
-      session_date { session.session_dates.first }
-    end
+    transient { session { association(:session) } }
 
     patient
     location { session.location }
-    date { session_date.value }
+    date { session.dates.first }
     programme { session.programmes.first }
     performed_by
 

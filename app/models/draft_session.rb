@@ -144,7 +144,7 @@ class DraftSession
     end
   end
 
-  def dates = session_dates.map(&:value).compact
+  def dates = session_dates.map(&:value).compact.sort.uniq
 
   def set_notification_dates
     if earliest_date
@@ -173,11 +173,11 @@ class DraftSession
 
   def read_from!(session)
     self.session_dates =
-      session.session_dates.map do |session_date|
-        DraftSessionDate.new(id: session_date.id, value: session_date.value)
+      session.dates.each_with_index.map do |value, index|
+        DraftSessionDate.new(index:, value:)
       end
 
-    session_dates << SessionDate.new if session_dates.empty?
+    session_dates << DraftSessionDate.new if session_dates.empty?
 
     super(session)
   end
@@ -185,26 +185,10 @@ class DraftSession
   def write_to!(session)
     super(session)
 
-    session.dates = dates
+    session.dates = dates.sort.uniq
 
     new_programme_ids.each do |programme_id|
       session.session_programmes.build(programme_id:)
-    end
-
-    session.session_dates.each do |session_date|
-      unless session_dates.any? { it.id == session_date.id }
-        session_date.mark_for_destruction
-      end
-    end
-
-    session_dates.each do |session_date|
-      value = session_date.value
-
-      if session_date.persisted?
-        session.session_dates.find { it.id == session_date.id }.value = value
-      elsif value.present?
-        session.session_dates.build(value:)
-      end
     end
   end
 
@@ -232,7 +216,7 @@ class DraftSession
   end
 
   def writable_attribute_names
-    super - %w[dates location_id session_dates programme_ids]
+    super - %w[location_id programme_ids session_dates]
   end
 
   def include_notification_steps?

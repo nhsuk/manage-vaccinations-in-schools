@@ -11,6 +11,11 @@ describe AppVaccinationRecordAPISyncStatusComponent do
   let(:component) { described_class.new(vaccination_record) }
   let(:rendered) { render_inline(component) }
 
+  before do
+    Flipper.disable(:imms_api_sync_job)
+    Flipper.enable(:imms_api_sync_job, programme)
+  end
+
   describe "#call" do
     subject(:formatted_status) { rendered.to_html }
 
@@ -68,9 +73,10 @@ describe AppVaccinationRecordAPISyncStatusComponent do
           allow(vaccination_record).to receive(:sync_status).and_return(
             :not_synced
           )
-        end
 
-        let(:programme) { CachedProgramme.menacwy }
+          Flipper.disable(:imms_api_sync_job)
+          Flipper.enable(:imms_api_sync_job, CachedProgramme.menacwy)
+        end
 
         it do
           expect(formatted_status).to include(
@@ -101,9 +107,10 @@ describe AppVaccinationRecordAPISyncStatusComponent do
             sync_status: :not_synced,
             notify_parents: false
           )
-        end
 
-        let(:programme) { CachedProgramme.menacwy }
+          Flipper.disable(:imms_api_sync_job)
+          Flipper.enable(:imms_api_sync_job, CachedProgramme.menacwy)
+        end
 
         it do
           expect(formatted_status).to include(

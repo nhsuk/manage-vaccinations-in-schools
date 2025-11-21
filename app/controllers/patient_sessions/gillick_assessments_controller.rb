@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class PatientSessions::GillickAssessmentsController < PatientSessions::BaseController
-  before_action :set_session_date
   before_action :set_gillick_assessment
 
   def edit
@@ -20,10 +19,6 @@ class PatientSessions::GillickAssessmentsController < PatientSessions::BaseContr
   end
 
   private
-
-  def set_session_date
-    @session_date = @session.session_dates.find_by!(value: Date.current)
-  end
 
   def set_gillick_assessment
     @gillick_assessment =

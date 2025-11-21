@@ -4,7 +4,7 @@
   "link": [
     {
       "relation": "self",
-      "url": "https://int.api.service.nhs.uk/immunisation-fhir-api/Immunization?immunization.target=FLU\u0026patient.identifier=https%3A%2F%2Ffhir.nhs.uk%2FId%2Fnhs-number%7C9449308357"
+      "url": "https://int.api.service.nhs.uk/immunisation-fhir-api/Immunization?immunization.target=FLU,HPV,MENACWY,3IN1,MMR\u0026patient.identifier=https%3A%2F%2Ffhir.nhs.uk%2FId%2Fnhs-number%7C9449308357"
     }
   ],
   "entry": [
@@ -136,7 +136,7 @@
       "fullUrl": "https://api.service.nhs.uk/immunisation-fhir-api/Immunization/4e7f3c91-1234-4139-bbcf-859e998d2028",
       "resource": {
         "resourceType": "Immunization",
-        "id": "4e7f3c91-a14d-4139-bbcf-859e998d2028",
+        "id": "abcdefgh-a14d-4139-bbcf-859e998d2028",
         "extension": [
           {
             "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
@@ -177,7 +177,7 @@
           }
         },
         "occurrenceDateTime": "2025-08-22T14:16:03+01:00",
-        "recorded": "2025-08-22T14:16:05.246000+01:00",
+        "recorded": "2025-08-22T00:00:00.000000+01:00",
         "primarySource": false,
         "location": {
           "identifier": {

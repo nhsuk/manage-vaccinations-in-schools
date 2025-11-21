@@ -116,6 +116,8 @@ class PatientChangeset < ApplicationRecord
           ).where.not(status: :processed)
         end
 
+  scope :still_processing, -> { where(status: %i[pending calculating_review]) }
+
   def self.from_import_row(row:, import:, row_number:)
     create!(
       import:,
@@ -165,6 +167,8 @@ class PatientChangeset < ApplicationRecord
   def search_results = data["search_results"]
 
   def academic_year = data["upload"]["academic_year"]
+
+  def birth_academic_year = child_attributes["birth_academic_year"]
 
   def home_educated = data["upload"]["home_educated"]
 

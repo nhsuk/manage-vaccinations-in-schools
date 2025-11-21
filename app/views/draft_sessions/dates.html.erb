@@ -12,7 +12,7 @@
       <% @draft_session.session_dates.each_with_index do |session_date, index| %>
         <%= f.fields_for "session_date_#{index}", session_date do |ff| %>
           <li class="app-add-another__list-item">
-            <% if session_date.has_been_attended? %>
+            <% if @draft_session.session.has_been_attended?(date: session_date.value) %>
               <h2 class="nhsuk-heading-m">
                 <%= session_date.value.to_fs(:long) %>
               </h2>

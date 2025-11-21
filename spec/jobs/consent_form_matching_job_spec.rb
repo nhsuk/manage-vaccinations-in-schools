@@ -3,7 +3,8 @@
 describe ConsentFormMatchingJob do
   subject(:perform) { described_class.new.perform(consent_form) }
 
-  let(:session) { create(:session) }
+  let(:team) { create(:team) }
+  let(:session) { create(:session, team:) }
   let(:consent_form) do
     create(
       :consent_form,
@@ -30,6 +31,8 @@ describe ConsentFormMatchingJob do
 
   context "with no matching patients" do
     let(:response_file) { "pds/search-patients-no-results-response.json" }
+
+    it_behaves_like "a method that updates team cached counts"
 
     it "doesn't create a consent" do
       expect { perform }.not_to change(Consent, :count)
@@ -60,7 +63,6 @@ describe ConsentFormMatchingJob do
 
   context "with one matching patient" do
     let(:response_file) { "pds/search-patients-no-results-response.json" }
-
     let!(:patient) do
       create(
         :patient,
@@ -71,6 +73,8 @@ describe ConsentFormMatchingJob do
         parents: []
       )
     end
+
+    it_behaves_like "a method that updates team cached counts"
 
     it "creates a consent" do
       expect { perform }.to change(Consent, :count).by(1)

@@ -11,7 +11,7 @@ jobs:
     name: Check if Rails tests need to run
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Determine if rails tests are needed
@@ -63,7 +63,7 @@ jobs:
       DATABASE_USER: postgres
       DATABASE_PASSWORD: postgres
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version-file: .tool-versions
@@ -84,7 +84,7 @@ jobs:
     name: Jest
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version-file: .tool-versions
@@ -99,7 +99,7 @@ jobs:
       run:
         working-directory: terraform
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.13.3

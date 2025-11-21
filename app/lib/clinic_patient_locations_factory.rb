@@ -21,7 +21,7 @@ class ClinicPatientLocationsFactory
            patient:,
            session: generic_clinic_session,
            programmes:,
-           session_date:
+           date: next_date
          )
         PatientLocation.new(
           patient:,
@@ -40,8 +40,8 @@ class ClinicPatientLocationsFactory
     @programmes ||= school_session.programmes.to_a
   end
 
-  def session_date
-    @session_date ||= generic_clinic_session.next_date(include_today: true)
+  def next_date
+    @next_date ||= generic_clinic_session.next_date(include_today: true)
   end
 
   def patients_in_school = school_session.patients.includes_statuses

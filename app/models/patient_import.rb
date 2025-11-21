@@ -77,6 +77,15 @@ class PatientImport < ApplicationRecord
     end
   end
 
+  def commit_changesets(changesets)
+    changesets_ids = changesets.ids
+
+    changesets.update_all(status: :committing)
+    changesets_ids.each_slice(100) do |batch_ids|
+      CommitPatientChangesetsJob.perform_async(batch_ids)
+    end
+  end
+
   private
 
   def check_rows_are_unique

@@ -52,6 +52,9 @@ describe API::Testing::TeamsController do
 
       TeamSessionsFactory.call(team, academic_year: AcademicYear.current)
 
+      session = Session.first
+      session.update!(dates: [Date.current])
+
       cohort_import.process!
       CommitImportJob.drain
       immunisation_import.process!
@@ -59,7 +62,7 @@ describe API::Testing::TeamsController do
       Patient.find_each do |patient|
         create(:notify_log_entry, :email, patient:, consent_form: nil)
 
-        consent_form = create(:consent_form, session: Session.first)
+        consent_form = create(:consent_form, session:)
         parent =
           patient.parents.first || create(:parent_relationship, patient:).parent
         create(
@@ -73,25 +76,29 @@ describe API::Testing::TeamsController do
       end
 
       create(:school_move, :to_school, patient: Patient.first)
-      create(:session_date, session: Session.first)
-      create(:pre_screening, patient: Patient.first, session: Session.first)
+      create(:pre_screening, patient: Patient.first, session:)
     end
 
-    it "deletes associated data" do
-      expect { delete :destroy, params: { workgroup: "r1l" } }.to(
-        change(Team, :count)
-          .by(-1)
-          .and(change(Subteam, :count).by(-1))
-          .and(change(Session, :count).by(-3))
-          .and(change(CohortImport, :count).by(-1))
-          .and(change(ImmunisationImport, :count).by(-1))
-          .and(change(NotifyLogEntry, :count).by(-3))
-          .and(change(Parent, :count).by(-4))
-          .and(change(Patient, :count).by(-3))
-          .and(change(PatientLocation, :count).by(-3))
-          .and(change(VaccinationRecord, :count).by(-9))
-          .and(change(SessionDate, :count).by(-1))
-      )
+    context "when not keeping itself" do
+      subject(:call) { delete :destroy, params: { workgroup: "r1l" } }
+
+      it "deletes associated data" do
+        expect { call }.to(
+          change(Team, :count)
+            .by(-1)
+            .and(change(Subteam, :count).by(-1))
+            .and(change(Session, :count).by(-3))
+            .and(change(CohortImport, :count).by(-1))
+            .and(change(ImmunisationImport, :count).by(-1))
+            .and(change(NotifyLogEntry, :count).by(-3))
+            .and(change(Parent, :count).by(-4))
+            .and(change(Patient, :count).by(-3))
+            .and(change(PatientLocation, :count).by(-3))
+            .and(change(VaccinationRecord, :count).by(-9))
+        )
+      end
+
+      it_behaves_like "a method that updates team cached counts"
     end
 
     context "when keeping itself" do
@@ -111,9 +118,10 @@ describe API::Testing::TeamsController do
             .and(change(Patient, :count).by(-3))
             .and(change(PatientLocation, :count).by(-3))
             .and(change(VaccinationRecord, :count).by(-9))
-            .and(change(SessionDate, :count).by(-1))
         )
       end
+
+      it_behaves_like "a method that updates team cached counts"
     end
   end
 end

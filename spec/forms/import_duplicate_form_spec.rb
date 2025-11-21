@@ -3,6 +3,21 @@
 describe ImportDuplicateForm do
   let(:programme) { CachedProgramme.sample }
 
+  describe "#save" do
+    subject do
+      described_class.new(
+        apply_changes: "apply",
+        object: vaccination_record,
+        current_team: team
+      ).save
+    end
+
+    let(:team) { create(:team, programmes: [programme]) }
+    let(:vaccination_record) { create(:vaccination_record, programme:, team:) }
+
+    it_behaves_like "a method that updates team cached counts"
+  end
+
   describe "#can_apply?" do
     subject { form.can_apply? }
 

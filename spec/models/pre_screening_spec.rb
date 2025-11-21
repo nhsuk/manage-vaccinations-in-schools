@@ -22,7 +22,6 @@
 #  index_pre_screenings_on_performed_by_user_id  (performed_by_user_id)
 #  index_pre_screenings_on_programme_id          (programme_id)
 #  index_pre_screenings_on_programme_type        (programme_type)
-#  index_pre_screenings_on_session_date_id       (session_date_id)
 #
 # Foreign Keys
 #
@@ -30,7 +29,6 @@
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
 #  fk_rails_...  (programme_id => programmes.id)
-#  fk_rails_...  (session_date_id => session_dates.id)
 #
 describe PreScreening do
   subject(:pre_screening) { build(:pre_screening) }
@@ -53,8 +51,7 @@ describe PreScreening do
       context "with an instance for yesterday" do
         around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
 
-        let(:session_date) { create(:session_date, value: Date.yesterday) }
-        let(:pre_screening) { create(:pre_screening, session_date:) }
+        let(:pre_screening) { create(:pre_screening, date: Date.yesterday) }
 
         it { should_not include(pre_screening) }
       end

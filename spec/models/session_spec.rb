@@ -6,7 +6,7 @@
 #
 #  id                            :bigint           not null, primary key
 #  academic_year                 :integer          not null
-#  dates                         :date             is an Array
+#  dates                         :date             not null, is an Array
 #  days_before_consent_reminders :integer
 #  national_protocol_enabled     :boolean          default(FALSE), not null
 #  programme_types               :enum             not null, is an Array
@@ -213,12 +213,12 @@ describe Session do
   describe "#unscheduled?" do
     subject { session.reload.unscheduled? }
 
-    let(:session) { create(:session, date: nil) }
+    let(:session) { create(:session, dates: []) }
 
     it { should be(true) }
 
     context "with a date" do
-      before { create(:session_date, session:) }
+      let(:session) { create(:session, dates: [Date.current]) }
 
       it { should be(false) }
     end
@@ -232,7 +232,7 @@ describe Session do
     it { should be(false) }
 
     context "with a date" do
-      before { create(:session_date, session:) }
+      let(:session) { create(:session, dates: [Date.current]) }
 
       it { should be(true) }
     end
@@ -458,6 +458,33 @@ describe Session do
     end
   end
 
+  describe "#has_been_attended?" do
+    subject { session.has_been_attended?(date:) }
+
+    let(:session) { create(:session) }
+    let(:date) { session.dates.first }
+
+    it { should be(false) }
+
+    context "with a Gillick assessment" do
+      before { create(:gillick_assessment, :competent, session:) }
+
+      it { should be(true) }
+    end
+
+    context "with a pre-screening" do
+      before { create(:pre_screening, session:) }
+
+      it { should be(true) }
+    end
+
+    context "with a session attendance" do
+      before { create(:attendance_record, :present, session:) }
+
+      it { should be(true) }
+    end
+  end
+
   describe "#close_consent_at" do
     subject(:close_consent_at) { session.close_consent_at }
 
@@ -475,8 +502,7 @@ describe Session do
 
     context "with two dates" do
       let(:date) { Date.new(2020, 1, 2) }
-
-      before { session.session_dates.create!(value: date + 1.day) }
+      let(:session) { create(:session, dates: [date, date + 1.day]) }
 
       it { should eq(Date.new(2020, 1, 2)) }
     end
@@ -507,6 +533,42 @@ describe Session do
       let(:session) { create(:session, date: Date.current) }
 
       it { should be(false) }
+    end
+  end
+
+  describe "#sync_location_programme_year_groups!" do
+    subject(:sync_location_programme_year_groups!) do
+      session.sync_location_programme_year_groups!
+    end
+
+    # The factory creates these by default.
+    before { session.session_programme_year_groups.delete_all }
+
+    let(:programmes) { [CachedProgramme.hpv, CachedProgramme.flu] }
+    let(:location) { create(:school, programmes:) }
+
+    context "when session has both programmes" do
+      let(:session) { create(:session, location:, programmes:) }
+
+      it "creates session programme year groups" do
+        expect { sync_location_programme_year_groups! }.to change(
+          SessionProgrammeYearGroup,
+          :count
+        ).by(16)
+      end
+    end
+
+    context "when session has only one of the programmes" do
+      let(:session) do
+        create(:session, location:, programmes: [CachedProgramme.hpv])
+      end
+
+      it "creates session programme year groups" do
+        expect { sync_location_programme_year_groups! }.to change(
+          SessionProgrammeYearGroup,
+          :count
+        ).by(4)
+      end
     end
   end
 end

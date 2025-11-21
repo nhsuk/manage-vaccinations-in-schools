@@ -304,8 +304,9 @@ module FHIRMapper
 
     def fhir_protocol_applied
       FHIR::Immunization::ProtocolApplied.new(
-        targetDisease: [programme.fhir_target_disease_coding],
-        doseNumberPositiveInt: dose_sequence
+        targetDisease: programme.fhir_target_disease_coding,
+        doseNumberPositiveInt: dose_sequence,
+        doseNumberString: dose_sequence.nil? ? "Unknown" : nil
       )
     end
 
@@ -318,7 +319,7 @@ module FHIRMapper
 
     private_class_method def self.programme_from_fhir(fhir_record)
       target_diseases = fhir_record.protocolApplied.sole.targetDisease
-      target_diseases_codes =
+      target_disease_codes =
         target_diseases.map do |disease|
           disease
             .coding
@@ -326,11 +327,11 @@ module FHIRMapper
             .code
         end
 
-      # TODO: This may need to change when we start consuming programmes which have multiple target diseases, eg MMR
-      target_disease_code = target_diseases_codes.sole
-
       ::Programme.find_by(
-        type: ::Programme::SNOMED_TARGET_DISEASE_CODES.key(target_disease_code)
+        type:
+          ::Programme::SNOMED_TARGET_DISEASE_CODES.key(
+            target_disease_codes.to_set
+          )
       )
     end
 

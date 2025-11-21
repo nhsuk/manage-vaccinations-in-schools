@@ -162,7 +162,9 @@ class ConsentFormsController < ApplicationController
   end
 
   def reset_count!
-    TeamCachedCounts.new(current_team).reset_unmatched_consent_responses!
+    cached_counts = TeamCachedCounts.new(current_team)
+    cached_counts.reset_unmatched_consent_responses!
+    cached_counts.reset_school_moves!
   end
 
   def set_search_params_present
