@@ -6,7 +6,7 @@ class ConsentFormPolicy < ApplicationPolicy
       team = user.selected_team
       return scope.none if team.nil?
 
-      scope.where(team:)
+      scope.for_team(team)
     end
   end
 end

@@ -34,10 +34,26 @@ module MavisCLI
           raise "Some patient sessions at #{old_loc.urn} are not safe to destroy. Cannot complete transfer."
         end
 
-        if !new_loc.subteam_id.nil? && new_loc.subteam_id != old_loc.subteam_id
-          raise "#{new_loc.urn} belongs to #{new_loc.subteam.name}. Could not complete transfer."
+        team_id =
+          old_loc.team_locations.ordered.find_by!(academic_year:).team_id
+
+        old_team_location =
+          old_loc
+            .team_locations
+            .includes(:team)
+            .find_by!(academic_year:, team_id:)
+        new_team_location =
+          new_loc
+            .team_locations
+            .includes(:team)
+            .find_or_initialize_by(academic_year:)
+
+        if !new_team_location.team_id.nil? &&
+             new_team_location.team_id != old_team_location.team_id
+          raise "#{new_loc.urn} belongs to #{new_team_location.name}. Could not complete transfer."
         end
-        new_loc.update!(subteam: old_loc.subteam)
+
+        new_team_location.update!(team_id:)
 
         new_loc.import_year_groups!(
           old_loc.year_groups,
@@ -60,15 +76,17 @@ module MavisCLI
         end
 
         Session.where(
-          location_id: old_loc.id
-        ).update_all_and_sync_patient_teams(location_id: new_loc.id)
+          team_location_id: old_team_location.id
+        ).update_all_and_sync_patient_teams(
+          team_location_id: new_team_location.id
+        )
         Patient.where(school_id: old_loc.id).update_all(school_id: new_loc.id)
         PatientLocation.where(
           academic_year:,
           location_id: old_loc.id
         ).update_all_and_sync_patient_teams(location_id: new_loc.id)
-        ConsentForm.where(location_id: old_loc.id).update_all(
-          location_id: new_loc.id
+        ConsentForm.where(team_location_id: old_team_location.id).update_all(
+          team_location_id: new_team_location.id
         )
         ConsentForm.where(school_id: old_loc.id).update_all(
           school_id: new_loc.id
@@ -81,6 +99,8 @@ module MavisCLI
           .find_each do |patient|
             SchoolMoveLogEntry.create!(patient:, school: new_loc)
           end
+
+        old_team_location.destroy!
       end
     end
   end

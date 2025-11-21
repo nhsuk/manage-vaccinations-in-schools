@@ -38,6 +38,7 @@ class Team < ApplicationRecord
   include ContributesToPatientTeams
   include DaysBeforeToWeeksBefore
   include HasManyProgrammes
+  include HasManyTeamLocations
 
   class ActiveRecord_Relation < ActiveRecord::Relation
     include ContributesToPatientTeams::Relation
@@ -53,19 +54,15 @@ class Team < ApplicationRecord
   has_many :archive_reasons
   has_many :batches
   has_many :cohort_imports
-  has_many :consent_forms
   has_many :consents
-  has_many :locations
   has_many :patient_specific_directions
   has_many :patient_teams
-  has_many :sessions
   has_many :subteams
-  has_many :team_locations
+
+  has_many :consent_forms, through: :team_locations
+  has_many :sessions, through: :team_locations
 
   has_many :patients, through: :patient_teams
-  has_many :community_clinics, through: :subteams
-  has_many :locations, through: :subteams
-  has_many :schools, through: :subteams
   has_many :vaccination_records, through: :sessions
 
   has_many :location_year_groups, through: :locations
@@ -99,18 +96,16 @@ class Team < ApplicationRecord
       .pluck_year_groups
   end
 
-  def generic_clinic = locations.includes(:subteam).generic_clinic.first
-
   def generic_clinic_session(academic_year:)
     location = generic_clinic
 
     team_location =
       TeamLocation.find_or_create_by!(team: self, location:, academic_year:)
 
-    sessions
+    Session
       .includes(:location, :session_programme_year_groups)
       .create_with(dates: [], team_location:)
-      .find_or_create_by!(academic_year:, location: generic_clinic)
+      .find_or_create_by!(team_location:)
       .tap { it.sync_location_programme_year_groups!(programmes:) }
   end
 

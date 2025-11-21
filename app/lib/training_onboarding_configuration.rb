@@ -18,6 +18,8 @@ class TrainingOnboardingConfiguration
 
   attr_reader :ods_code, :workgroup
 
+  def academic_year = AcademicYear.pending
+
   def identifier = "#{ods_code} (#{workgroup})"
 
   def name = "#{identifier} training"
@@ -66,7 +68,12 @@ class TrainingOnboardingConfiguration
 
   def schools
     scope =
-      Location.school.open.where(subteam_id: nil).order("RANDOM()").limit(10)
+      Location
+        .school
+        .open
+        .without_team(academic_year:)
+        .order("RANDOM()")
+        .limit(10)
 
     # Make sure we get a good mix of primary and secondary schools.
     primary_schools = scope.has_gias_year_groups([1, 2, 3, 4, 5, 6]).pluck(:urn)

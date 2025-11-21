@@ -454,12 +454,7 @@ class Reports::OfflineSessionExporter
   end
 
   def clinic_name_values
-    @clinic_name_values ||=
-      Location
-        .community_clinic
-        .joins(:subteam)
-        .where(subteam: { team: })
-        .pluck(:name)
+    @clinic_name_values ||= team.community_clinics.pluck(:name)
   end
 
   class CachedStyles

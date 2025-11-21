@@ -41,6 +41,8 @@ describe API::Testing::TeamsController do
     end
 
     before do
+      create(:subteam, team:)
+
       programmes.each do |programme|
         programme.vaccines.each do |vaccine|
           create_list(:batch, 4, team:, vaccine:)

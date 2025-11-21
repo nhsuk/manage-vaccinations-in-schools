@@ -23,22 +23,11 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class Subteam < ApplicationRecord
-  include ContributesToPatientTeams
-
-  class ActiveRecord_Relation < ActiveRecord::Relation
-    include ContributesToPatientTeams::Relation
-  end
+  include HasManyTeamLocations
 
   audited associated_with: :team
-  has_associated_audits
 
   belongs_to :team
-
-  has_many :locations
-  has_many :team_locations
-
-  has_many :community_clinics, -> { community_clinic }, class_name: "Location"
-  has_many :schools, -> { school }, class_name: "Location"
 
   normalizes :email, with: EmailAddressNormaliser.new
   normalizes :phone, with: PhoneNumberNormaliser.new

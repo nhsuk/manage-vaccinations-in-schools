@@ -40,6 +40,7 @@ describe "Access log" do
     @user = team.users.first
 
     @session = create(:session, team:, programmes:)
+
     @patient =
       create(
         :patient,

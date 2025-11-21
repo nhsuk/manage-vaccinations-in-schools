@@ -231,7 +231,16 @@ describe CommitPatientChangesetsJob do
 
     context "with an existing patient in a session for a previous academic year but not the current" do
       let(:previous_academic_year) { session.academic_year - 1 }
-
+      let(:previous_session) do
+        create(
+          :session,
+          team:,
+          programmes:,
+          location:,
+          academic_year: previous_academic_year,
+          date: previous_academic_year.to_academic_year_date_range.begin
+        )
+      end
       let(:patient) do
         create(
           :patient,
@@ -247,19 +256,22 @@ describe CommitPatientChangesetsJob do
           year_group: 9,
           preferred_given_name: "Jenny",
           school: location,
-          session:
-            create(
-              :session,
-              team:,
-              programmes:,
-              location:,
-              academic_year: previous_academic_year,
-              date: previous_academic_year.to_academic_year_date_range.begin
-            )
+          session: previous_session
+        )
+      end
+
+      before do
+        location.import_year_groups_from_gias!(
+          academic_year: previous_academic_year
+        )
+        location.import_default_programme_year_groups!(
+          programmes,
+          academic_year: previous_academic_year
         )
       end
 
       it "adds the patient to the upcoming session" do
+        expect(patient.sessions).to include(previous_session)
         expect(patient.sessions).not_to include(session)
 
         PatientChangeset.all.map(&:calculate_review_data!)

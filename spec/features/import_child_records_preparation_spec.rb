@@ -252,12 +252,8 @@ describe "Import child records" do
     @user = @team.users.first
 
     [AcademicYear.current, AcademicYear.pending].each do |academic_year|
-      @school.attach_to_team!(@team, academic_year:, subteam: @school.subteam)
-      @generic_clinic.attach_to_team!(
-        @team,
-        academic_year:,
-        subteam: @generic_clinic.subteam
-      )
+      @school.attach_to_team!(@team, academic_year:)
+      @generic_clinic.attach_to_team!(@team, academic_year:)
       @school.import_year_groups_from_gias!(academic_year:)
       @school.import_default_programme_year_groups!(programmes, academic_year:)
       @generic_clinic.import_year_groups!(

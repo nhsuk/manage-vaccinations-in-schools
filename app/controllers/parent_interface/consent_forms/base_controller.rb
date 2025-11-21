@@ -5,7 +5,7 @@ module ParentInterface
     skip_before_action :authenticate_user!
     skip_after_action :verify_policy_scoped
 
-    prepend_before_action :set_subteam
+    prepend_before_action :set_team_location
     prepend_before_action :set_programmes
     prepend_before_action :set_team
     prepend_before_action :set_session
@@ -54,12 +54,12 @@ module ParentInterface
         end
     end
 
-    def set_subteam
-      @subteam =
+    def set_team_location
+      @team_location =
         if @consent_form.present?
-          @consent_form.subteam
+          @consent_form.team_location
         elsif @session.present?
-          @session.subteam
+          @session.team_location
         end
     end
 
