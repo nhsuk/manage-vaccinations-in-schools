@@ -347,23 +347,23 @@ describe Patient do
 
       let(:patient_a) do
         # exact match comes first
-        create(:patient, given_name: "Harry", family_name: "Potter")
+        create(:patient, given_name: "Neil", family_name: "Armstrong")
       end
       let(:patient_b) do
         # similar match comes next
-        create(:patient, given_name: "Hari", family_name: "Potte")
+        create(:patient, given_name: "Nei", family_name: "Armstro")
       end
       let(:patient_c) do
         # least similar match comes last
-        create(:patient, given_name: "Arry", family_name: "Pott")
+        create(:patient, given_name: "Ne", family_name: "Arms")
       end
       let(:patient_d) do
         # no match isn't returned
-        create(:patient, given_name: "Ron", family_name: "Weasley")
+        create(:patient, given_name: "Buzz", family_name: "Aldrin")
       end
 
       context "with full name, in `given_name family_name` format" do
-        let(:query) { "Harry Potter" }
+        let(:query) { "Neil Armstrong" }
 
         it "returns the patients in the correct order" do
           expect(scope).to eq([patient_a, patient_b, patient_c])
@@ -371,7 +371,7 @@ describe Patient do
       end
 
       context "with exact name, in `FAMILY_NAME, given_name` format" do
-        let(:query) { "POTTER, Harry" }
+        let(:query) { "ARMSTRONG, Neil" }
 
         it "returns the patients in the correct order" do
           expect(scope).to eq([patient_a, patient_b, patient_c])
@@ -379,7 +379,7 @@ describe Patient do
       end
 
       context "with exact name, in `family_name given_name` format" do
-        let(:query) { "Potter Harry" }
+        let(:query) { "Armstrong Neil" }
 
         it "returns the patients in the correct order" do
           expect(scope).to eq([patient_a, patient_b, patient_c])
@@ -387,7 +387,7 @@ describe Patient do
       end
 
       context "with last name only" do
-        let(:query) { "Potter" }
+        let(:query) { "Armstrong" }
 
         it "returns the patients in the correct order" do
           expect(scope).to eq([patient_a, patient_b, patient_c])
@@ -395,10 +395,26 @@ describe Patient do
       end
 
       context "with first name only" do
-        let(:query) { "Harry" }
+        let(:query) { "Neil" }
 
         it "returns the patients in the correct order" do
           expect(scope).to eq([patient_a])
+        end
+      end
+
+      context "with only a small part of the surname" do
+        let(:query) { "Arm" }
+
+        it "still finds all three patients" do
+          expect(scope).to contain_exactly(patient_c, patient_b, patient_a)
+        end
+      end
+
+      context "with first name and a small part of the surname" do
+        let(:query) { "Neil Arm" }
+
+        it "returns the patients in the correct order" do
+          expect(scope).to eq([patient_a, patient_b, patient_c])
         end
       end
     end
