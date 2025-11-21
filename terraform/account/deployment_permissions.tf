@@ -156,9 +156,8 @@ resource "aws_iam_role" "github_assurance" {
 }
 
 resource "aws_iam_policy" "run_ecs_task" {
-  count       = var.environment == "development" ? 1 : 0
   name        = "RunEcsTask"
-  description = "Permissions for running an ECS task"
+  description = "Permissions for running a standalone ECS task"
   policy      = file("resources/iam_policy_RunECSTask.json")
   lifecycle {
     ignore_changes = [description]
@@ -168,7 +167,7 @@ resource "aws_iam_policy" "run_ecs_task" {
 resource "aws_iam_role_policy_attachment" "run_ecs_task_custom" {
   count      = var.environment == "development" ? 1 : 0
   role       = aws_iam_role.github_assurance[0].name
-  policy_arn = aws_iam_policy.run_ecs_task[0].arn
+  policy_arn = aws_iam_policy.run_ecs_task.arn
 }
 
 resource "aws_iam_role_policy_attachment" "run_ecs_task_readonly" {
