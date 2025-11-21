@@ -68,7 +68,8 @@ class Sessions::RecordController < Sessions::BaseController
   private
 
   def set_programme
-    @programme = policy_scope(Programme).find_by!(type: params[:programme_type])
+    @programme =
+      current_user.programmes.find { it.type == params[:programme_type] }
   end
 
   def set_vaccine_method
@@ -77,7 +78,10 @@ class Sessions::RecordController < Sessions::BaseController
 
   def set_batches
     vaccines =
-      @session.vaccines.where(programme: @programme, method: @vaccine_method)
+      @session
+        .vaccines
+        .where_programme(@programme)
+        .where(method: @vaccine_method)
 
     @batches =
       policy_scope(Batch)

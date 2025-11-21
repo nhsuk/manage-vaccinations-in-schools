@@ -43,10 +43,10 @@ class NotificationParentSelector
 
   attr_reader :vaccination_record, :consents
 
-  delegate :patient, :programme_id, :academic_year, to: :vaccination_record
+  delegate :patient, :programme_type, :academic_year, to: :vaccination_record
 
   def latest_consents
     @latest_consents ||=
-      ConsentGrouper.call(consents, programme_id:, academic_year:)
+      ConsentGrouper.call(consents, programme_type:, academic_year:)
   end
 end

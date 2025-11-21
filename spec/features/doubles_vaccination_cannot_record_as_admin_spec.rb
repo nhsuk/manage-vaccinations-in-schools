@@ -10,7 +10,7 @@ describe "MenACWY and Td/IPV vaccination" do
   end
 
   def given_i_am_signed_in_as_an_admin
-    programmes = [CachedProgramme.menacwy, CachedProgramme.td_ipv]
+    programmes = [Programme.menacwy, Programme.td_ipv]
     team = create(:team, :with_one_admin, programmes:)
 
     location = create(:school, team:)

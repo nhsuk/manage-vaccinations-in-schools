@@ -11,7 +11,7 @@ describe AppVaccineCriteriaLabelComponent do
     VaccineCriteria.new(vaccine_methods:, without_gelatine:)
   end
 
-  let(:programme) { CachedProgramme.mmr }
+  let(:programme) { Programme.mmr }
 
   context "with heading context" do
     let(:context) { :heading }

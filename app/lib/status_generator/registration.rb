@@ -29,7 +29,7 @@ class StatusGenerator::Registration
       .programmes_for(patient:)
       .all? do |programme|
         vaccination_records.any? do
-          it.programme_id == programme.id && it.session_id == session.id
+          it.programme_type == programme.type && it.session_id == session.id
         end
       end
   end

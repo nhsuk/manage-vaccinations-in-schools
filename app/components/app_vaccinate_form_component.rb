@@ -38,7 +38,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
               session.psd_enabled? &&
                 patient.has_patient_specific_direction?(
                   academic_year:,
-                  programme:,
+                  programme_type: programme.type,
                   team:,
                   vaccine_method:
                 )
@@ -65,7 +65,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
     session.psd_enabled? &&
       patient.has_patient_specific_direction?(
         academic_year:,
-        programme:,
+        programme_type: programme.type,
         team:,
         vaccine_method:
       )

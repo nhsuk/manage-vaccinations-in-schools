@@ -69,7 +69,7 @@ en:
               blank: Choose which year groups you want to import class list records for
         draft_session:
           attributes:
-            programme_ids:
+            programme_types:
               blank: Choose which programmes this session is part of
               inclusion: You cannot remove a programme from the session once it has been added
             send_consent_requests_at:
@@ -260,13 +260,6 @@ en:
           no_matches: "No matches found"
           one_match: "Found %{nhs_number}"
           too_many_matches: "Too many matches found"
-      programme:
-        types:
-          flu: Flu
-          hpv: HPV
-          menacwy: MenACWY
-          mmr: MMR
-          td_ipv: Td/IPV
       school_move:
         sources:
           class_list_import: Class list
@@ -669,6 +662,12 @@ en:
     sessions:
       index:
         title: Sessions
+  programme_types:
+    flu: Flu
+    hpv: HPV
+    menacwy: MenACWY
+    mmr: MMR
+    td_ipv: Td/IPV
   school_moves:
     index:
       title: School moves

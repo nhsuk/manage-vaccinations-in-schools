@@ -17,7 +17,7 @@ describe "Parental consent closed" do
   end
 
   def given_an_hpv_programme_is_underway_with_a_backfilled_session
-    @programme = CachedProgramme.hpv
+    @programme = Programme.hpv
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @subteam = create(:subteam, team: @team)
     location = create(:school, name: "Pilot School", subteam: @subteam)
@@ -32,7 +32,7 @@ describe "Parental consent closed" do
   end
 
   def given_an_hpv_programme_is_starting_soon
-    @programme = CachedProgramme.hpv
+    @programme = Programme.hpv
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @subteam = create(:subteam, team: @team)
     location = create(:school, name: "Pilot School", subteam: @subteam)

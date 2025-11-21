@@ -3,8 +3,8 @@
 describe AppSessionOverviewComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:hpv_programme) { CachedProgramme.hpv }
-  let(:flu_programme) { CachedProgramme.flu }
+  let(:hpv_programme) { Programme.hpv }
+  let(:flu_programme) { Programme.flu }
   let(:session) { create(:session, programmes: [hpv_programme, flu_programme]) }
   let(:latest_location) { session.location }
 
@@ -292,7 +292,7 @@ describe AppSessionOverviewComponent do
     subject(:rendered) { travel_to(today) { render_inline(component) } }
 
     let(:today) { Date.new(2025, 1, 15) }
-    let(:programmes) { [CachedProgramme.hpv] }
+    let(:programmes) { [Programme.hpv] }
     let(:session) { create(:session, programmes:, dates:) }
     let(:dates) { [Date.new(2025, 1, 15)] }
 

@@ -50,7 +50,7 @@ describe "Inspect timeline PII access logging", :cis2 do
   end
 
   def prepare_hpv_programme_with_one_patient
-    @programme = CachedProgramme.hpv
+    @programme = Programme.hpv
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @session =
       create(

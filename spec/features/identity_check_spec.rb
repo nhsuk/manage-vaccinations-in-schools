@@ -54,7 +54,7 @@ describe "HPV vaccination identity check" do
   private
 
   def given_i_am_signed_in
-    programmes = [CachedProgramme.hpv]
+    programmes = [Programme.hpv]
     @team = create(:team, :with_one_nurse, programmes:)
 
     location = create(:school, team: @team)

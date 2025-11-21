@@ -20,7 +20,7 @@ describe AppPatientSessionSearchResultCardComponent do
     )
   end
 
-  let(:programme) { CachedProgramme.hpv }
+  let(:programme) { Programme.hpv }
   let(:session) { create(:session, programmes: [programme]) }
   let(:context) { :consent }
 
@@ -70,7 +70,7 @@ describe AppPatientSessionSearchResultCardComponent do
     let(:context) { :consent }
 
     context "and the programme is flu" do
-      let(:programme) { CachedProgramme.flu }
+      let(:programme) { Programme.flu }
 
       it { should_not have_text("Vaccine type") }
       it { should have_text("Consent given for nasal spray") }
@@ -94,7 +94,7 @@ describe AppPatientSessionSearchResultCardComponent do
     let(:context) { :triage }
 
     context "and the programme is flu" do
-      let(:programme) { CachedProgramme.flu }
+      let(:programme) { Programme.flu }
 
       it { should_not have_text("Vaccine type") }
     end
@@ -102,7 +102,7 @@ describe AppPatientSessionSearchResultCardComponent do
 
   context "when context is patient specific direction" do
     let(:context) { :patient_specific_direction }
-    let(:programme) { CachedProgramme.flu }
+    let(:programme) { Programme.flu }
 
     it { should have_text("PSD statusPSD not added") }
 
@@ -134,7 +134,7 @@ describe AppPatientSessionSearchResultCardComponent do
       it { should have_button("Absent") }
 
       context "and the programme is flu" do
-        let(:programme) { CachedProgramme.flu }
+        let(:programme) { Programme.flu }
 
         it { should have_text("Vaccine type") }
         it { should have_text("Nasal") }
@@ -151,7 +151,7 @@ describe AppPatientSessionSearchResultCardComponent do
       it { should_not have_button("Absent") }
 
       context "and the programme is flu" do
-        let(:programme) { CachedProgramme.flu }
+        let(:programme) { Programme.flu }
 
         it { should have_text("Vaccine type") }
         it { should have_text("Nasal") }
@@ -165,7 +165,7 @@ describe AppPatientSessionSearchResultCardComponent do
     it { should have_text("Action requiredRecord vaccination for HPV") }
 
     context "and the programme is flu" do
-      let(:programme) { CachedProgramme.flu }
+      let(:programme) { Programme.flu }
       let(:academic_year) { AcademicYear.current }
 
       it { should have_text("Vaccine type") }
@@ -188,7 +188,7 @@ describe AppPatientSessionSearchResultCardComponent do
     it { should have_text("Programme status") }
 
     context "and the programme is flu" do
-      let(:programme) { CachedProgramme.flu }
+      let(:programme) { Programme.flu }
 
       it { should_not have_text("Vaccine type") }
     end

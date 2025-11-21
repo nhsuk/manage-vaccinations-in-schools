@@ -28,7 +28,7 @@ class StatusGenerator::Vaccination
 
     @vaccination_records =
       vaccination_records.select do
-        it.patient_id == patient.id && it.programme_id == programme_id &&
+        it.patient_id == patient.id && it.programme_type == programme.type &&
           if programme.seasonal?
             it.academic_year == academic_year
           else
@@ -135,8 +135,6 @@ class StatusGenerator::Vaccination
   def latest_session_status_should_be_already_had?
     vaccinated_vaccination_record&.already_had?
   end
-
-  def programme_id = programme.id
 
   def year_group = patient.year_group(academic_year:)
 

@@ -101,7 +101,7 @@ describe "Flu vaccination" do
   end
 
   def given_i_am_signed_in_with_flu_programme
-    @programme = CachedProgramme.flu
+    @programme = Programme.flu
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @location = create(:school, team: @team)
     @session =
@@ -155,7 +155,7 @@ describe "Flu vaccination" do
   end
 
   def and_imms_api_sync_job_feature_is_enabled
-    Flipper.enable(:imms_api_sync_job, CachedProgramme.flu)
+    Flipper.enable(:imms_api_sync_job, Programme.flu)
     Flipper.enable(:imms_api_integration)
 
     @stubbed_post_request = stub_immunisations_api_post

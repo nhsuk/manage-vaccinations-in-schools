@@ -25,7 +25,6 @@
 #  consent_form_id                                 :bigint
 #  parent_id                                       :bigint
 #  patient_id                                      :bigint           not null
-#  programme_id                                    :bigint           not null
 #  recorded_by_user_id                             :bigint
 #  team_id                                         :bigint           not null
 #
@@ -35,7 +34,6 @@
 #  index_consents_on_consent_form_id      (consent_form_id)
 #  index_consents_on_parent_id            (parent_id)
 #  index_consents_on_patient_id           (patient_id)
-#  index_consents_on_programme_id         (programme_id)
 #  index_consents_on_programme_type       (programme_type)
 #  index_consents_on_recorded_by_user_id  (recorded_by_user_id)
 #  index_consents_on_team_id              (team_id)
@@ -62,9 +60,10 @@ FactoryBot.define do
       end
     end
 
-    programme { CachedProgramme.sample }
+    programme { Programme.sample }
     team do
-      programme.teams.first || association(:team, programmes: [programme])
+      Team.has_all_programmes_of([programme]).first ||
+        association(:team, programmes: [programme])
     end
 
     patient

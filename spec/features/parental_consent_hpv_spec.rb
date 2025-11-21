@@ -32,7 +32,7 @@ describe "Parental consent" do
   end
 
   def given_an_hpv_programme_is_underway
-    @programme = CachedProgramme.hpv
+    @programme = Programme.hpv
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     location = create(:school, name: "Pilot School", team: @team)
     @session =

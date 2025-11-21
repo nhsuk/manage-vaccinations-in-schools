@@ -65,7 +65,8 @@ class Onboarding
     @team =
       Team.new(
         **config.fetch(:team, {}).slice(*TEAM_ATTRIBUTES),
-        organisation: @organisation
+        organisation: @organisation,
+        programme_types: []
       )
 
     @programmes =
@@ -193,11 +194,11 @@ class Onboarding
     validates :programme, presence: true
 
     def programme
-      @programme ||= Programme.find_by(type:)
+      @programme ||= Programme.find(type)
     end
 
     def save!
-      TeamProgramme.create!(team:, programme:)
+      team.update!(programme_types: (team.programme_types + [type]).sort.uniq)
     end
   end
 

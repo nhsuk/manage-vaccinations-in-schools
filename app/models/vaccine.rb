@@ -18,13 +18,11 @@
 #  snomed_product_term :string           not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  programme_id        :bigint           not null
 #
 # Indexes
 #
 #  index_vaccines_on_manufacturer_and_brand  (manufacturer,brand) UNIQUE
 #  index_vaccines_on_nivs_name               (nivs_name) UNIQUE
-#  index_vaccines_on_programme_id            (programme_id)
 #  index_vaccines_on_programme_type          (programme_type)
 #  index_vaccines_on_snomed_product_code     (snomed_product_code) UNIQUE
 #  index_vaccines_on_snomed_product_term     (snomed_product_term) UNIQUE
@@ -37,7 +35,7 @@ class Vaccine < ApplicationRecord
   include BelongsToProgramme
   include HasSideEffects
 
-  audited associated_with: :programme
+  audited
   has_associated_audits
 
   has_many :health_questions, dependent: :destroy

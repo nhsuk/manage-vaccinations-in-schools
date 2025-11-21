@@ -33,8 +33,6 @@ class Batch < ApplicationRecord
 
   has_and_belongs_to_many :immunisation_imports
 
-  has_one :programme, through: :vaccine
-
   scope :order_by_name_and_expiration, -> { order(expiry: :asc, name: :asc) }
 
   scope :expired,
@@ -49,4 +47,6 @@ class Batch < ApplicationRecord
               scope: %i[team_id name vaccine_id],
               allow_nil: true
             }
+
+  delegate :programme_type, to: :vaccine
 end

@@ -3,7 +3,7 @@
 describe PatientNHSNumberLookupJob do
   subject(:perform_now) { described_class.perform_now(patient) }
 
-  let(:programme) { CachedProgramme.sample }
+  let(:programme) { Programme.sample }
 
   before { create(:gp_practice, ods_code: "H81109") }
 

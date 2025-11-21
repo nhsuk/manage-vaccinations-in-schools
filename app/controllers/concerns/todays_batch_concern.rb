@@ -19,8 +19,8 @@ module TodaysBatchConcern
 
   def todays_batch=(batch)
     session[:todays_batch] ||= {}
-    session[:todays_batch][batch.programme.type] ||= {}
-    session[:todays_batch][batch.programme.type][batch.vaccine.method] = {
+    session[:todays_batch][batch.programme_type] ||= {}
+    session[:todays_batch][batch.programme_type][batch.vaccine.method] = {
       id: batch.id,
       date: Date.current.iso8601
     }

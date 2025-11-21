@@ -45,7 +45,7 @@ class Generate::Consents
               .sessions
               .eager_load(:location)
               .merge(Location.school)
-              .has_programmes([programme])
+              .has_all_programmes_of([programme])
           end
 
         sessions.flat_map do |session|
@@ -74,7 +74,7 @@ class Generate::Consents
         .sessions
         .eager_load(:location)
         .merge(Location.school)
-        .has_programmes([programme])
+        .has_all_programmes_of([programme])
         .sample
   end
 

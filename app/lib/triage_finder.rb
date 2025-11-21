@@ -1,22 +1,22 @@
 # frozen_string_literal: true
 
 class TriageFinder
-  def initialize(triages, programme_id:, academic_year:)
+  def initialize(triages, programme_type:, academic_year:)
     @triages = triages
-    @programme_id = programme_id
+    @programme_type = programme_type
     @academic_year = academic_year
   end
 
   def call
     if triages.is_a?(Array) || triages.loaded?
       triages
-        .select { it.programme_id == programme_id }
+        .select { it.programme_type == programme_type }
         .select { it.academic_year == academic_year }
         .reject(&:invalidated?)
         .max_by(&:created_at)
     else
       triages
-        .where(programme_id:, academic_year:)
+        .where(programme_type:, academic_year:)
         .not_invalidated
         .order(created_at: :desc)
         .first
@@ -29,5 +29,5 @@ class TriageFinder
 
   private
 
-  attr_reader :triages, :programme_id, :academic_year
+  attr_reader :triages, :programme_type, :academic_year
 end

@@ -1,53 +1,33 @@
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: programmes
-#
-#  id         :bigint           not null, primary key
-#  type       :string           not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#
-# Indexes
-#
-#  index_programmes_on_type  (type) UNIQUE
-#
-class Programme < ApplicationRecord
+class Programme
   include GelatineVaccinesConcern
 
-  self.inheritance_column = nil
+  TYPES = %w[flu hpv menacwy mmr td_ipv].freeze
+  TYPES_SUPPORTING_DELEGATION = %w[flu].freeze
 
-  audited
-  has_associated_audits
+  attr_accessor :type
 
-  has_many :consent_forms
-  has_many :consent_notification_programmes
-  has_many :consents
-  has_many :gillick_assessments
-  has_many :immunisation_imports
-  has_many :team_programmes
-  has_many :pre_screenings
-  has_many :session_programmes
-  has_many :triages
-  has_many :vaccination_records, -> { kept }
-  has_many :vaccines
+  def initialize(type:)
+    @type = type
+  end
 
-  has_many :teams, through: :team_programmes
+  def self.method_missing(type, *_args) = find(type.to_s)
 
-  scope :supports_delegation, -> { flu }
+  def self.respond_to_missing?(type, *_args) = exists?(type.to_s)
 
-  enum :type,
-       {
-         flu: "flu",
-         hpv: "hpv",
-         menacwy: "menacwy",
-         mmr: "mmr",
-         td_ipv: "td_ipv"
-       },
-       validate: true
+  def self.all = TYPES.map { find(it) }
 
-  delegate :fhir_target_disease_coding, to: :fhir_mapper
+  def self.find(type)
+    @programmes ||= {}
+    @programmes[type] ||= (Programme.new(type:) if exists?(type))
+  end
+
+  def self.find_all(types) = types.map { find(it) }
+
+  def self.exists?(type) = type.in?(TYPES)
+
+  def self.sample = find(TYPES.sample)
 
   def flipper_id
     "Programme:#{type}"
@@ -55,22 +35,24 @@ class Programme < ApplicationRecord
 
   def to_param = type
 
-  def name = human_enum_name(:type)
+  def id = type
 
-  def name_in_sentence = flu? ? name.downcase : name
+  def ==(other) = type == other.type
 
-  def group
-    if flu?
-      :flu
-    elsif hpv?
-      :hpv
-    elsif doubles?
-      :doubles
-    elsif mmr?
-      :mmr
-    else
-      raise UnsupportedProgramme, self
-    end
+  def eql?(other) = other.is_a?(Programme) && type.eql?(other.type)
+
+  def <=>(other) = type <=> other.type
+
+  delegate :hash, to: :type
+
+  TYPES.each { |type| define_method("#{type}?") { self.type == type } }
+
+  def name
+    @name ||= I18n.t(type, scope: :programme_types)
+  end
+
+  def name_in_sentence
+    @name_in_sentence ||= flu? ? name.downcase : name
   end
 
   def doubles? = menacwy? || td_ipv?
@@ -79,7 +61,7 @@ class Programme < ApplicationRecord
 
   def catch_up_only? = mmr?
 
-  def supports_delegation? = flu?
+  def supports_delegation? = TYPES_SUPPORTING_DELEGATION.include?(type)
 
   def can_save_to_todays_batch? = !mmr?
 
@@ -97,24 +79,26 @@ class Programme < ApplicationRecord
     DEFAULT_YEAR_GROUPS_BY_TYPE.fetch(type)
   end
 
-  def vaccine_methods = vaccines.map(&:method).uniq
+  def vaccines
+    @vaccines ||= Vaccine.where_programme(self)
+  end
+
+  def vaccine_methods
+    @vaccine_methods ||= vaccines.map(&:method).uniq
+  end
 
   def has_multiple_vaccine_methods?
-    # TODO: Ideally this would work as below, however that doesn't work well
-    #  in a list as it results in N+1 issues, without deeply pre-fetching
-    #  the vaccines which is a lot of data.
-
-    # vaccine_methods.length > 1
-
-    flu?
+    @has_multiple_vaccine_methods ||= vaccine_methods.length > 1
   end
 
   def available_delivery_methods
-    vaccines.flat_map(&:available_delivery_methods).uniq
+    @available_delivery_methods ||=
+      vaccines.flat_map(&:available_delivery_methods).uniq
   end
 
   def available_delivery_sites
-    vaccines.flat_map(&:available_delivery_sites).uniq
+    @available_delivery_sites ||=
+      vaccines.flat_map(&:available_delivery_sites).uniq
   end
 
   def default_dose_sequence = hpv? || flu? ? 1 : nil
@@ -183,7 +167,11 @@ class Programme < ApplicationRecord
     SNOMED_TARGET_DISEASE_NAMES.fetch(type)
   end
 
+  delegate :fhir_target_disease_coding, to: :fhir_mapper
+
   private
 
-  def fhir_mapper = @fhir_mapper ||= FHIRMapper::Programme.new(self)
+  def fhir_mapper
+    @fhir_mapper ||= FHIRMapper::Programme.new(self)
+  end
 end

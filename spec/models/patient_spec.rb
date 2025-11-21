@@ -56,7 +56,7 @@ describe Patient do
       subject(:vaccination_records) { patient.vaccination_records }
 
       let(:patient) { create(:patient) }
-      let(:programme) { CachedProgramme.sample }
+      let(:programme) { Programme.sample }
       let(:kept_vaccination_record) do
         create(:vaccination_record, patient:, programme:)
       end
@@ -161,7 +161,7 @@ describe Patient do
         described_class.appear_in_programmes(programmes, academic_year:)
       end
 
-      let(:programmes) { [CachedProgramme.td_ipv] }
+      let(:programmes) { [Programme.td_ipv] }
       let(:academic_year) { AcademicYear.current }
 
       it { should be_empty }
@@ -208,8 +208,8 @@ describe Patient do
       end
 
       context "in multiple sessions with the right year group for one programme" do
-        let(:flu_programme) { CachedProgramme.flu }
-        let(:hpv_programme) { CachedProgramme.hpv }
+        let(:flu_programme) { Programme.flu }
+        let(:hpv_programme) { Programme.hpv }
 
         let(:location) do
           create(:school, programmes: [flu_programme, hpv_programme])
@@ -254,7 +254,7 @@ describe Patient do
         described_class.not_appear_in_programmes(programmes, academic_year:)
       end
 
-      let(:programmes) { [CachedProgramme.td_ipv] }
+      let(:programmes) { [Programme.td_ipv] }
       let(:academic_year) { AcademicYear.current }
 
       it { should be_empty }
@@ -301,8 +301,8 @@ describe Patient do
       end
 
       context "in multiple sessions with the right year group for one programme" do
-        let(:flu_programme) { CachedProgramme.flu }
-        let(:hpv_programme) { CachedProgramme.hpv }
+        let(:flu_programme) { Programme.flu }
+        let(:hpv_programme) { Programme.hpv }
 
         let(:location) do
           create(:school, programmes: [flu_programme, hpv_programme])
@@ -427,7 +427,7 @@ describe Patient do
         )
       end
 
-      let(:programmes) { [CachedProgramme.flu, CachedProgramme.hpv] }
+      let(:programmes) { [Programme.flu, Programme.hpv] }
       let(:session) { create(:session, programmes:) }
       let(:academic_year) { AcademicYear.current }
       let(:vaccine_method) { nil }
@@ -543,10 +543,10 @@ describe Patient do
 
       context "and the patient belongs to multiple sessions under the same team" do
         let(:menacwy_session) do
-          create(:session, team:, programmes: [CachedProgramme.menacwy])
+          create(:session, team:, programmes: [Programme.menacwy])
         end
         let(:td_ipv_session) do
-          create(:session, team:, programmes: [CachedProgramme.td_ipv])
+          create(:session, team:, programmes: [Programme.td_ipv])
         end
         let(:patient) { create(:patient, session: menacwy_session) }
 
@@ -735,7 +735,7 @@ describe Patient do
   describe "#show_year_group?" do
     subject { patient.show_year_group?(team:) }
 
-    let(:programmes) { [CachedProgramme.flu, CachedProgramme.hpv] }
+    let(:programmes) { [Programme.flu, Programme.hpv] }
     let(:team) { create(:team, programmes:) }
     let(:school) { create(:school, team:) }
 
@@ -829,7 +829,7 @@ describe Patient do
     subject { patient.next_activity(programme:, academic_year:) }
 
     let(:patient) { create(:patient) }
-    let(:programme) { CachedProgramme.sample }
+    let(:programme) { Programme.sample }
     let(:academic_year) { AcademicYear.current }
 
     context "with no consent" do
@@ -900,7 +900,7 @@ describe Patient do
     end
 
     let(:patient) { create(:patient) }
-    let(:programme) { CachedProgramme.sample }
+    let(:programme) { Programme.sample }
     let(:academic_year) { AcademicYear.current }
 
     describe "#vaccine_methods" do
@@ -1106,7 +1106,7 @@ describe Patient do
         create(:patient, :invalidated, school:, nhs_number: "0123456789")
       end
 
-      let(:programme) { CachedProgramme.sample }
+      let(:programme) { Programme.sample }
       let(:team) { create(:team, programmes: [programme]) }
       let(:school) { create(:school, team:) }
       let(:session) { create(:session, location: school, team:, programme:) }
@@ -1145,7 +1145,7 @@ describe Patient do
     end
 
     let(:patient) { create(:patient, nhs_number: "9449310475") }
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
     let(:session) { create(:session, programmes: [programme]) }
     let(:vaccination_record) do
       create(:vaccination_record, patient:, programme:, session:)

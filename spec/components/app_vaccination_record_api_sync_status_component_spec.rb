@@ -5,7 +5,7 @@ describe AppVaccinationRecordAPISyncStatusComponent do
     build(:vaccination_record, outcome:, programme:, session:)
   end
   let(:outcome) { "administered" }
-  let(:programme) { CachedProgramme.flu }
+  let(:programme) { Programme.flu }
   let(:session) { create(:session, programmes: [programme]) }
 
   let(:component) { described_class.new(vaccination_record) }
@@ -74,8 +74,7 @@ describe AppVaccinationRecordAPISyncStatusComponent do
             :not_synced
           )
 
-          Flipper.disable(:imms_api_sync_job)
-          Flipper.enable(:imms_api_sync_job, CachedProgramme.menacwy)
+          Flipper.disable(:imms_api_sync_job, programme)
         end
 
         it do
@@ -108,8 +107,7 @@ describe AppVaccinationRecordAPISyncStatusComponent do
             notify_parents: false
           )
 
-          Flipper.disable(:imms_api_sync_job)
-          Flipper.enable(:imms_api_sync_job, CachedProgramme.menacwy)
+          Flipper.disable(:imms_api_sync_job, programme)
         end
 
         it do

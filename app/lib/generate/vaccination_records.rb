@@ -3,7 +3,7 @@
 class Generate::VaccinationRecords
   def initialize(team:, programme: nil, session: nil, administered: nil)
     @team = team
-    @programme = programme || team.programmes.includes(:teams).sample
+    @programme = programme || team.programmes.sample
     @session = session
     @administered = administered
   end

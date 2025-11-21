@@ -10,7 +10,7 @@ describe DraftConsent do
   let(:request_session) { {} }
   let(:current_user) { team.users.first }
 
-  let(:programme) { CachedProgramme.hpv }
+  let(:programme) { Programme.hpv }
   let(:session) { create(:session, team:, programmes: [programme]) }
   let(:patient) { create(:patient, session:) }
 
@@ -21,7 +21,7 @@ describe DraftConsent do
       parent_email: "test@example.com",
       patient_id: patient.id,
       session_id: session.id,
-      programme_id: programme.id
+      programme_type: programme.type
     }
   end
 
@@ -43,7 +43,7 @@ describe DraftConsent do
       parent_email: "test@example.com",
       patient_id: patient.id,
       session_id: session.id,
-      programme_id: programme.id
+      programme_type: programme.type
     }
   end
 

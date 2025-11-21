@@ -42,7 +42,7 @@ describe "Flu vaccination" do
   end
 
   def given_a_session_exists
-    @programme = CachedProgramme.flu
+    @programme = Programme.flu
     programmes = [@programme]
 
     @team = create(:team, programmes:)

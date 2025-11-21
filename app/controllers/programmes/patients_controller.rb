@@ -5,6 +5,8 @@ class Programmes::PatientsController < Programmes::BaseController
 
   before_action :set_patient_search_form
 
+  skip_after_action :verify_policy_scoped
+
   def index
     @year_groups =
       current_team.programme_year_groups(academic_year: @academic_year)[

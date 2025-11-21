@@ -66,7 +66,7 @@ describe "mavis schools add-to-team" do
   end
 
   def given_the_team_exists
-    @programmes = [CachedProgramme.flu, CachedProgramme.hpv]
+    @programmes = [Programme.flu, Programme.hpv]
     @team = create(:team, workgroup: "abc", programmes: @programmes)
   end
 

@@ -19,7 +19,8 @@ class AppGillickAssessmentComponent < ViewComponent::Base
         .gillick_assessments
         .order(created_at: :desc)
         .for_session(session)
-        .find_by(programme:)
+        .where_programme(programme)
+        .first
   end
 
   def can_assess?

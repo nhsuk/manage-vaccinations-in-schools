@@ -16,7 +16,7 @@ describe AppPatientProgrammesTableComponent do
 
   context "for seasonal programmes" do
     let(:patient) { create(:patient, session:) }
-    let(:programmes) { [CachedProgramme.flu] }
+    let(:programmes) { [Programme.flu] }
 
     it { should have_content("Vaccination programmes") }
     it { should have_content("Flu (winter 2025)") }
@@ -128,9 +128,7 @@ describe AppPatientProgrammesTableComponent do
 
   context "for non-seasonal programmes" do
     let(:patient) { create(:patient, session:, year_group: 8) }
-    let(:programmes) do
-      [CachedProgramme.hpv, CachedProgramme.menacwy, CachedProgramme.td_ipv]
-    end
+    let(:programmes) { [Programme.hpv, Programme.menacwy, Programme.td_ipv] }
 
     it { should have_content("Vaccination programmes") }
     it { should have_content("HPV") }

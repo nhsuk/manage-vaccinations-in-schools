@@ -28,7 +28,7 @@ describe "Manage batches" do
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
-    @programmes = [CachedProgramme.hpv]
+    @programmes = [Programme.hpv]
     @team = create(:team, :with_one_nurse, programmes: @programmes)
   end
 

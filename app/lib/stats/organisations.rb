@@ -72,8 +72,8 @@ class Stats::Organisations
     total_consents =
       Consent
         .joins(:team)
-        .where(team: teams)
-        .where(programme:, academic_year:)
+        .where_programme(programme)
+        .where(team: teams, academic_year:)
         .distinct
         .count
 
@@ -122,7 +122,7 @@ class Stats::Organisations
         .where(sessions: { team: teams })
         .where(patient_id: eligible_patients.map(&:id))
         .where(sessions: { academic_year: })
-        .has_programme(programme)
+        .has_all_programmes_of([programme])
 
     initial_requests = comms.request
     reminders = comms.reminder
@@ -157,8 +157,8 @@ class Stats::Organisations
       VaccinationRecord
         .recorded_in_service
         .for_academic_year(academic_year)
+        .where_programme(programme)
         .where(patient_id: eligible_patients.map(&:id))
-        .where(programme_id: programme.id)
         .where(outcome: "administered")
         .distinct
         .count

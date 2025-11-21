@@ -193,14 +193,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
   create_table "consent_form_programmes", force: :cascade do |t|
     t.bigint "consent_form_id", null: false
     t.text "notes", default: "", null: false
-    t.bigint "programme_id", null: false
+    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "reason_for_refusal"
     t.integer "response"
     t.integer "vaccine_methods", default: [], null: false, array: true
     t.boolean "without_gelatine"
     t.index ["consent_form_id"], name: "index_consent_form_programmes_on_consent_form_id"
-    t.index ["programme_id", "consent_form_id"], name: "idx_on_programme_id_consent_form_id_2113cb7f37", unique: true
     t.index ["programme_type", "consent_form_id"], name: "idx_on_programme_type_consent_form_id_805eb5d685", unique: true
   end
 
@@ -275,7 +274,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
     t.bigint "parent_id"
     t.datetime "patient_already_vaccinated_notification_sent_at"
     t.bigint "patient_id", null: false
-    t.bigint "programme_id", null: false
+    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "reason_for_refusal"
     t.bigint "recorded_by_user_id"
@@ -291,7 +290,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
     t.index ["consent_form_id"], name: "index_consents_on_consent_form_id"
     t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"
-    t.index ["programme_id"], name: "index_consents_on_programme_id"
     t.index ["programme_type"], name: "index_consents_on_programme_type"
     t.index ["recorded_by_user_id"], name: "index_consents_on_recorded_by_user_id"
     t.index ["team_id"], name: "index_consents_on_team_id"
@@ -325,13 +323,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
-    t.bigint "programme_id", null: false
+    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_gillick_assessments_on_location_id"
     t.index ["patient_id"], name: "index_gillick_assessments_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_gillick_assessments_on_performed_by_user_id"
-    t.index ["programme_id"], name: "index_gillick_assessments_on_programme_id"
     t.index ["programme_type"], name: "index_gillick_assessments_on_programme_type"
   end
 
@@ -435,12 +432,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
 
   create_table "location_programme_year_groups", force: :cascade do |t|
     t.bigint "location_year_group_id", null: false
-    t.bigint "programme_id", null: false
+    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
-    t.index ["location_year_group_id", "programme_id"], name: "idx_on_location_year_group_id_programme_id_405f51181e", unique: true
     t.index ["location_year_group_id", "programme_type"], name: "idx_on_location_year_group_id_programme_type_904fa3b284", unique: true
     t.index ["location_year_group_id"], name: "index_location_programme_year_groups_on_location_year_group_id"
-    t.index ["programme_id"], name: "index_location_programme_year_groups_on_programme_id"
     t.index ["programme_type"], name: "index_location_programme_year_groups_on_programme_type"
   end
 
@@ -500,7 +495,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
     t.integer "delivery_status", default: 0, null: false
     t.bigint "parent_id"
     t.bigint "patient_id"
-    t.integer "programme_ids", default: [], null: false, array: true
+    t.integer "programme_ids", array: true
     t.enum "programme_types", default: [], null: false, array: true, enum_type: "programme_type"
     t.string "recipient", null: false
     t.bigint "sent_by_user_id"
@@ -567,13 +562,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
   create_table "patient_consent_statuses", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.bigint "patient_id", null: false
-    t.bigint "programme_id", null: false
+    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "status", default: 0, null: false
     t.integer "vaccine_methods", default: [], null: false, array: true
     t.boolean "without_gelatine"
     t.index ["academic_year", "patient_id"], name: "index_patient_consent_statuses_on_academic_year_and_patient_id"
-    t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_1d3170e398", unique: true
     t.index ["patient_id", "programme_type", "academic_year"], name: "idx_on_patient_id_programme_type_academic_year_89a70c9513", unique: true
     t.index ["status"], name: "index_patient_consent_statuses_on_status"
   end
@@ -607,7 +601,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
     t.integer "delivery_site", null: false
     t.datetime "invalidated_at"
     t.bigint "patient_id", null: false
-    t.bigint "programme_id", null: false
+    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.bigint "team_id", null: false
     t.datetime "updated_at", null: false
@@ -616,7 +610,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
     t.index ["academic_year"], name: "index_patient_specific_directions_on_academic_year"
     t.index ["created_by_user_id"], name: "index_patient_specific_directions_on_created_by_user_id"
     t.index ["patient_id"], name: "index_patient_specific_directions_on_patient_id"
-    t.index ["programme_id"], name: "index_patient_specific_directions_on_programme_id"
     t.index ["programme_type"], name: "index_patient_specific_directions_on_programme_type"
     t.index ["team_id"], name: "index_patient_specific_directions_on_team_id"
     t.index ["vaccine_id"], name: "index_patient_specific_directions_on_vaccine_id"
@@ -635,13 +628,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
   create_table "patient_triage_statuses", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.bigint "patient_id", null: false
-    t.bigint "programme_id", null: false
+    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "status", default: 0, null: false
     t.integer "vaccine_method"
     t.boolean "without_gelatine"
     t.index ["academic_year", "patient_id"], name: "index_patient_triage_statuses_on_academic_year_and_patient_id"
-    t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_6cf32349df", unique: true
     t.index ["patient_id", "programme_type", "academic_year"], name: "idx_on_patient_id_programme_type_academic_year_b66791407e", unique: true
     t.index ["status"], name: "index_patient_triage_statuses_on_status"
   end
@@ -653,12 +645,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
     t.bigint "latest_location_id"
     t.integer "latest_session_status"
     t.bigint "patient_id", null: false
-    t.bigint "programme_id", null: false
+    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "status", default: 0, null: false
     t.index ["academic_year", "patient_id"], name: "idx_on_academic_year_patient_id_9c400fc863"
     t.index ["latest_location_id"], name: "index_patient_vaccination_statuses_on_latest_location_id"
-    t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_fc0b47b743", unique: true
     t.index ["patient_id", "programme_type", "academic_year"], name: "idx_on_patient_id_programme_type_academic_year_962639d2ac", unique: true
     t.index ["status"], name: "index_patient_vaccination_statuses_on_status"
   end
@@ -719,13 +710,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
-    t.bigint "programme_id", null: false
+    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_pre_screenings_on_location_id"
     t.index ["patient_id"], name: "index_pre_screenings_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_pre_screenings_on_performed_by_user_id"
-    t.index ["programme_id"], name: "index_pre_screenings_on_programme_id"
     t.index ["programme_type"], name: "index_pre_screenings_on_programme_type"
   end
 
@@ -886,7 +876,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
-    t.bigint "programme_id", null: false
+    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "status", null: false
     t.bigint "team_id", null: false
@@ -896,7 +886,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
     t.index ["academic_year"], name: "index_triages_on_academic_year"
     t.index ["patient_id"], name: "index_triages_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_triages_on_performed_by_user_id"
-    t.index ["programme_id"], name: "index_triages_on_programme_id"
     t.index ["programme_type"], name: "index_triages_on_programme_type"
     t.index ["team_id"], name: "index_triages_on_team_id"
   end
@@ -954,7 +943,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
     t.string "performed_by_given_name"
     t.bigint "performed_by_user_id"
     t.string "performed_ods_code"
-    t.bigint "programme_id", null: false
+    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "protocol"
     t.bigint "session_id"
@@ -969,13 +958,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
     t.index ["location_id"], name: "index_vaccination_records_on_location_id"
     t.index ["next_dose_delay_triage_id"], name: "index_vaccination_records_on_next_dose_delay_triage_id"
     t.index ["nhs_immunisations_api_id"], name: "index_vaccination_records_on_nhs_immunisations_api_id", unique: true
-    t.index ["patient_id", "programme_id", "outcome"], name: "idx_vr_fast_lookup", where: "(discarded_at IS NULL)"
     t.index ["patient_id", "programme_type", "outcome"], name: "idx_on_patient_id_programme_type_outcome_453b557b54", where: "(discarded_at IS NULL)"
     t.index ["patient_id", "session_id"], name: "index_vaccination_records_on_patient_id_and_session_id"
     t.index ["patient_id"], name: "index_vaccination_records_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
     t.index ["performed_ods_code", "patient_id"], name: "index_vaccination_records_on_performed_ods_code_and_patient_id", where: "(session_id IS NULL)"
-    t.index ["programme_id"], name: "index_vaccination_records_on_programme_id"
     t.index ["programme_type"], name: "index_vaccination_records_on_programme_type"
     t.index ["session_id"], name: "index_vaccination_records_on_session_id"
     t.index ["supplied_by_user_id"], name: "index_vaccination_records_on_supplied_by_user_id"
@@ -993,7 +980,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
     t.text "manufacturer", null: false
     t.integer "method", null: false
     t.text "nivs_name", null: false
-    t.bigint "programme_id", null: false
+    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "side_effects", default: [], null: false, array: true
     t.string "snomed_product_code", null: false
@@ -1001,7 +988,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
     t.datetime "updated_at", null: false
     t.index ["manufacturer", "brand"], name: "index_vaccines_on_manufacturer_and_brand", unique: true
     t.index ["nivs_name"], name: "index_vaccines_on_nivs_name", unique: true
-    t.index ["programme_id"], name: "index_vaccines_on_programme_id"
     t.index ["programme_type"], name: "index_vaccines_on_programme_type"
     t.index ["snomed_product_code"], name: "index_vaccines_on_snomed_product_code", unique: true
     t.index ["snomed_product_term"], name: "index_vaccines_on_snomed_product_term", unique: true

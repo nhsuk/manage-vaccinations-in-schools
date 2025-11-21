@@ -19,7 +19,7 @@ describe StatusGenerator::Vaccination do
   end
 
   let(:patient) { create(:patient) }
-  let(:programme) { CachedProgramme.sample }
+  let(:programme) { Programme.sample }
   let(:session) { create(:session, programmes: [programme]) }
 
   describe "#status" do
@@ -30,7 +30,7 @@ describe StatusGenerator::Vaccination do
     end
 
     context "with a flu programme" do
-      let(:programme) { CachedProgramme.flu }
+      let(:programme) { Programme.flu }
 
       context "when eligible" do
         let(:session) { create(:session, programmes: [programme]) }
@@ -118,7 +118,7 @@ describe StatusGenerator::Vaccination do
     end
 
     context "with an HPV programme" do
-      let(:programme) { CachedProgramme.hpv }
+      let(:programme) { Programme.hpv }
 
       context "when eligible" do
         let(:session) { create(:session, programmes: [programme]) }
@@ -177,7 +177,7 @@ describe StatusGenerator::Vaccination do
     end
 
     context "with a MenACWY programme" do
-      let(:programme) { CachedProgramme.menacwy }
+      let(:programme) { Programme.menacwy }
 
       context "when eligible" do
         let(:session) { create(:session, programmes: [programme]) }
@@ -272,7 +272,7 @@ describe StatusGenerator::Vaccination do
     end
 
     context "with an MMR programme" do
-      let(:programme) { CachedProgramme.mmr }
+      let(:programme) { Programme.mmr }
 
       context "when eligible" do
         let(:session) { create(:session, programmes: [programme]) }
@@ -331,7 +331,7 @@ describe StatusGenerator::Vaccination do
     end
 
     context "with an Td/IPV programme" do
-      let(:programme) { CachedProgramme.td_ipv }
+      let(:programme) { Programme.td_ipv }
 
       context "when eligible" do
         let(:session) { create(:session, programmes: [programme]) }
@@ -495,7 +495,7 @@ describe StatusGenerator::Vaccination do
     it { should be_nil }
 
     context "for MMR programme" do
-      let(:programme) { CachedProgramme.mmr }
+      let(:programme) { Programme.mmr }
       let(:session) { create(:session, programmes: [programme]) }
       let(:patient) do
         create(:patient, :consent_given_triage_not_needed, session:)
@@ -516,7 +516,7 @@ describe StatusGenerator::Vaccination do
   describe "#latest_date" do
     subject(:date) { generator.latest_date }
 
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
     let(:performed_at) { 1.day.ago.to_date }
 
     context "with a vaccination administered" do
@@ -678,7 +678,7 @@ describe StatusGenerator::Vaccination do
     subject { generator.latest_location_id }
 
     context "with a flu programme" do
-      let(:programme) { CachedProgramme.flu }
+      let(:programme) { Programme.flu }
 
       it { should be_nil }
 
@@ -754,7 +754,7 @@ describe StatusGenerator::Vaccination do
     end
 
     context "with an HPV programme" do
-      let(:programme) { CachedProgramme.hpv }
+      let(:programme) { Programme.hpv }
 
       it { should be_nil }
 
@@ -801,7 +801,7 @@ describe StatusGenerator::Vaccination do
     end
 
     context "with a MenACWY programme" do
-      let(:programme) { CachedProgramme.menacwy }
+      let(:programme) { Programme.menacwy }
       let(:patient) { create(:patient, programmes: [programme]) }
 
       it { should be_nil }
@@ -880,7 +880,7 @@ describe StatusGenerator::Vaccination do
     end
 
     context "with an Td/IPV programme" do
-      let(:programme) { CachedProgramme.td_ipv }
+      let(:programme) { Programme.td_ipv }
       let(:patient) { create(:patient, date_of_birth: 15.years.ago.to_date) }
 
       it { should be_nil }
@@ -1008,7 +1008,7 @@ describe StatusGenerator::Vaccination do
   describe "#latest_session_status" do
     subject(:latest_session_status) { generator.latest_session_status }
 
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
     let(:patient) { create(:patient, session:) }
 
     context "with no vaccination record" do

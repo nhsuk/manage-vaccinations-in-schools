@@ -57,10 +57,6 @@ class AppPatientSessionTableComponent < ViewComponent::Base
   delegate :govuk_table, to: :helpers
 
   def sessions
-    @sessions ||=
-      patient
-        .sessions
-        .where(team: current_team)
-        .includes(:location, :programmes)
+    @sessions ||= patient.sessions.where(team: current_team).includes(:location)
   end
 end

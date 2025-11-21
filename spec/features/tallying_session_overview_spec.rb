@@ -19,7 +19,7 @@ describe "Tallying on session overview page" do
   end
 
   def given_a_session_for_flu_is_running_today
-    @flu_programme = CachedProgramme.flu
+    @flu_programme = Programme.flu
     programmes = [@flu_programme]
     team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
 

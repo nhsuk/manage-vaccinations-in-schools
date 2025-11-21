@@ -4,7 +4,7 @@ describe TeamSessionsFactory do
   describe "#call" do
     subject(:call) { described_class.call(team, academic_year:) }
 
-    let(:programmes) { [CachedProgramme.hpv] }
+    let(:programmes) { [Programme.hpv] }
     let(:team) { create(:team, programmes:) }
     let(:academic_year) { AcademicYear.current }
 
@@ -14,7 +14,7 @@ describe TeamSessionsFactory do
       it "creates missing unscheduled sessions" do
         expect { call }.to change(team.sessions, :count).by(1)
 
-        session = team.sessions.includes(:location, :programmes).first
+        session = team.sessions.includes(:location).first
         expect(session.location).to eq(location)
         expect(session.programmes).to eq(programmes)
       end
@@ -26,7 +26,7 @@ describe TeamSessionsFactory do
       it "creates missing unscheduled sessions" do
         expect { call }.to change(team.sessions, :count).by(1)
 
-        session = team.sessions.includes(:location, :programmes).first
+        session = team.sessions.includes(:location).first
         expect(session.location).to eq(location)
         expect(session.programmes).to eq(programmes)
       end
@@ -38,14 +38,16 @@ describe TeamSessionsFactory do
             :unscheduled,
             location:,
             team:,
-            programmes: [CachedProgramme.flu]
+            programmes: [Programme.flu]
           )
         end
 
         it "adds the programmes to the existing session" do
           expect { call }.not_to change(team.sessions, :count)
 
-          expect(session.reload.programmes).to include(*programmes)
+          expect(session.reload.programme_types).to include(
+            *programmes.map(&:type)
+          )
         end
       end
     end
@@ -95,11 +97,9 @@ describe TeamSessionsFactory do
     end
 
     context "with all programmes" do
-      let(:doubles_programmes) do
-        [CachedProgramme.menacwy, CachedProgramme.td_ipv]
-      end
-      let(:flu_programmes) { [CachedProgramme.flu] }
-      let(:hpv_programmes) { [CachedProgramme.hpv] }
+      let(:doubles_programmes) { [Programme.menacwy, Programme.td_ipv] }
+      let(:flu_programmes) { [Programme.flu] }
+      let(:hpv_programmes) { [Programme.hpv] }
 
       let(:programmes) { flu_programmes + hpv_programmes + doubles_programmes }
 
@@ -109,8 +109,7 @@ describe TeamSessionsFactory do
         it "creates missing unscheduled sessions for each programme group" do
           expect { call }.to change(team.sessions, :count).by(1)
 
-          session =
-            team.sessions.includes(:location, :programmes).find_by(location:)
+          session = team.sessions.includes(:location).find_by(location:)
           expect(session.programmes).to match_array(programmes)
         end
       end
@@ -121,12 +120,7 @@ describe TeamSessionsFactory do
         it "creates missing unscheduled sessions for each programme group" do
           expect { call }.to change(team.sessions, :count).by(3)
 
-          session =
-            team
-              .sessions
-              .order(:created_at)
-              .where(location:)
-              .includes(:programmes)
+          session = team.sessions.order(:created_at).where(location:)
           expect(session.first.programmes).to eq(flu_programmes)
           expect(session.second.programmes).to eq(hpv_programmes)
           expect(session.third.programmes).to eq(doubles_programmes)

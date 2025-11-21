@@ -41,7 +41,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
 
   private
 
-  delegate :patient, :session, :programme, to: :record
+  delegate :patient, :session, :programme, :programme_type, to: :record
   delegate :academic_year, :team, to: :session
 
   def can_create_with_psd?(vaccine_criteria)
@@ -49,7 +49,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
       vaccine_criteria.vaccine_methods.any? do |vaccine_method|
         patient.has_patient_specific_direction?(
           academic_year:,
-          programme:,
+          programme_type:,
           team:,
           vaccine_method:
         )

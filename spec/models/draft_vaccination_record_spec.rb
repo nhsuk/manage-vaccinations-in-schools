@@ -10,7 +10,7 @@ describe DraftVaccinationRecord do
   let(:request_session) { {} }
   let(:current_user) { team.users.first }
 
-  let(:programme) { CachedProgramme.hpv }
+  let(:programme) { Programme.hpv }
   let(:session) { create(:session, team:, programmes: [programme]) }
   let(:patient) { create(:patient, session:) }
   let(:vaccine) { programme.vaccines.first }
@@ -28,7 +28,7 @@ describe DraftVaccinationRecord do
       notes: "Some notes.",
       outcome: "administered",
       patient_id: patient.id,
-      programme_id: programme.id,
+      programme_type: programme.type,
       session_id: session.id
     }
   end
@@ -37,7 +37,7 @@ describe DraftVaccinationRecord do
     {
       notes: "Some notes.",
       patient_id: patient.id,
-      programme_id: programme.id,
+      programme_type: programme.type,
       session_id: session.id,
       outcome: "unwell"
     }
@@ -353,7 +353,7 @@ describe DraftVaccinationRecord do
       draft_vaccination_record.vaccine_method_matches_consent_and_triage?
     end
 
-    let(:programme) { CachedProgramme.flu }
+    let(:programme) { Programme.flu }
 
     context "when vaccination is not administered" do
       let(:attributes) { valid_not_administered_attributes }

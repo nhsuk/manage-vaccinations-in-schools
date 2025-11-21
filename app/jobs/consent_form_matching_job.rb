@@ -8,7 +8,7 @@ class ConsentFormMatchingJob < ApplicationJob
 
   def perform(consent_form)
     @consent_form =
-      ConsentForm.includes(:programmes, :vaccines).find(consent_form.id)
+      ConsentForm.includes(:consent_form_programmes).find(consent_form.id)
 
     return if already_matched?
 

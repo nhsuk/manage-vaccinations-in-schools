@@ -7,7 +7,7 @@ describe SyncVaccinationRecordToNHSJob, type: :job do
 
   after { Flipper.disable(:imms_api_sync_job) }
 
-  let(:programme) { CachedProgramme.flu }
+  let(:programme) { Programme.flu }
   let(:vaccination_record) { create(:vaccination_record, programme:) }
 
   context "with the feature flag fully on" do
@@ -49,7 +49,7 @@ describe SyncVaccinationRecordToNHSJob, type: :job do
       Flipper.enable(:imms_api_sync_job, other_programme)
     end
 
-    let(:other_programme) { CachedProgramme.hpv }
+    let(:other_programme) { Programme.hpv }
 
     it "doesn't sync the vaccination" do
       perform
