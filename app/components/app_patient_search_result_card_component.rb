@@ -68,10 +68,10 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
           end
         end
         if academic_year
-          if vaccination_status_tag
+          if programme_status_tag
             summary_list.with_row do |row|
               row.with_key { "Programme status" }
-              row.with_value { vaccination_status_tag }
+              row.with_value { programme_status_tag }
             end
           end
           if show_consent_status && consent_status_tag
@@ -114,7 +114,13 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
            :patient_year_group,
            to: :helpers
 
-  def vaccination_status_tag = status_tag(:vaccination)
+  def programme_status_tag
+    if Flipper.enabled?(:programme_status)
+      status_tag(:programme)
+    else
+      status_tag(:vaccination)
+    end
+  end
 
   def consent_status_tag = status_tag(:consent)
 

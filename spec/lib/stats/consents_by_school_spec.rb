@@ -13,11 +13,11 @@ describe Stats::ConsentsBySchool do
     let(:organisation) { create(:organisation, ods_code: "TEST003") }
     let(:programme_flu) { Programme.flu }
     let(:programme_hpv) { Programme.hpv }
-    let(:team) { create(:team, organisation: organisation, name: "Test Team") }
-    let(:academic_year) { AcademicYear.current }
-    let(:school) { create(:school, name: "Test School", team:) }
+    let(:programmes) { [programme_flu, programme_hpv] }
 
-    before { team.programmes << [programme_flu, programme_hpv] }
+    let(:team) { create(:team, organisation:, name: "Test Team", programmes:) }
+    let(:academic_year) { AcademicYear.current }
+    let(:school) { create(:school, name: "Test School", team:, programmes:) }
 
     context "when there are consent responses" do
       before do
@@ -137,8 +137,6 @@ describe Stats::ConsentsBySchool do
       end
 
       let(:current_year) { AcademicYear.current }
-      let(:previous_year) { current_year - 1 }
-
       let!(:current_year_session) do
         create(
           :session,
@@ -148,8 +146,13 @@ describe Stats::ConsentsBySchool do
           academic_year: current_year
         )
       end
-
       let!(:previous_year_session) do
+        school.import_year_groups_from_gias!(academic_year: previous_year)
+        school.import_default_programme_year_groups!(
+          programmes,
+          academic_year: previous_year
+        )
+
         create(
           :session,
           date: Date.new(AcademicYear.previous, 12, 15),
@@ -159,6 +162,7 @@ describe Stats::ConsentsBySchool do
           academic_year: previous_year
         )
       end
+      let(:previous_year) { current_year - 1 }
 
       it "only includes sessions for the specified academic year" do
         result = previous_year_service.call

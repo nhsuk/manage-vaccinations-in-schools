@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-class LocationSessionsFactory
-  def initialize(location, academic_year:, sync_patient_teams_now: false)
-    @location = location
-    @academic_year = academic_year
+class TeamLocationSessionsFactory
+  def initialize(team_location, sync_patient_teams_now: false)
+    @team_location = team_location
     @sync_patient_teams_now = sync_patient_teams_now
   end
 
@@ -43,9 +42,9 @@ class LocationSessionsFactory
 
   private
 
-  attr_reader :location, :academic_year, :sync_patient_teams_now
+  attr_reader :team_location, :sync_patient_teams_now
 
-  delegate :team, to: :location
+  delegate :academic_year, :location, :team, to: :team_location
 
   def catch_up_only?(programmes:)
     programmes.all?(&:catch_up_only?)
@@ -61,24 +60,20 @@ class LocationSessionsFactory
   def create_session!(programmes:)
     team
       .sessions
-      .create!(academic_year:, location:, programmes:, dates: [])
-      .tap(&:sync_location_programme_year_groups!)
+      .create!(academic_year:, location:, team_location:, dates: [])
+      .tap { it.sync_location_programme_year_groups!(programmes:) }
   end
 
   def find_or_create_session!(programmes:)
-    programme_types = programmes.map(&:type)
-
     team
       .sessions
-      .includes(:location, :location_programme_year_groups)
-      .create_with(programme_types:, dates: [])
+      .includes(:location, :session_programme_year_groups)
+      .create_with(dates: [], team_location:)
       .find_or_create_by!(academic_year:, location:)
       .tap do |session|
-        session.update!(
-          programme_types: (session.programme_types + programme_types).sort.uniq
+        session.sync_location_programme_year_groups!(
+          programmes: (session.programmes + programmes).sort.uniq
         )
-
-        session.sync_location_programme_year_groups!
       end
   end
 

@@ -72,8 +72,11 @@ class Patient < ApplicationRecord
   has_many :notify_log_entries
   has_many :parent_relationships, -> { order(:created_at) }
   has_many :patient_locations
+  has_many :patient_specific_directions
+  has_many :patient_teams
   has_many :pds_search_results
   has_many :pre_screenings
+  has_many :programme_statuses
   has_many :registration_statuses
   has_many :school_move_log_entries
   has_many :school_moves
@@ -82,8 +85,6 @@ class Patient < ApplicationRecord
   has_many :triages
   has_many :vaccination_records, -> { kept }
   has_many :vaccination_statuses
-  has_many :patient_specific_directions
-  has_many :patient_teams
 
   has_many :locations, through: :patient_locations
   has_many :parents, through: :parent_relationships
@@ -102,12 +103,10 @@ class Patient < ApplicationRecord
     AND sessions.academic_year = patient_locations.academic_year
   SQL
 
-  scope :in_eligible_year_group_for_session_programme, -> { joins(<<-SQL) }
-    INNER JOIN location_year_groups ON location_year_groups.location_id = patient_locations.location_id
-    AND location_year_groups.academic_year = patient_locations.academic_year
-    INNER JOIN location_programme_year_groups ON location_programme_year_groups.location_year_group_id = location_year_groups.id
-    AND location_programme_year_groups.programme_type = ANY (sessions.programme_types)
-    AND patients.birth_academic_year = location_year_groups.academic_year - location_year_groups.value - #{Integer::AGE_CHILDREN_START_SCHOOL}
+  scope :joins_session_programme_year_groups, -> { joins(<<-SQL) }
+    INNER JOIN session_programme_year_groups
+    ON session_programme_year_groups.session_id = sessions.id
+    AND patients.birth_academic_year = sessions.academic_year - session_programme_year_groups.year_group - #{Integer::AGE_CHILDREN_START_SCHOOL}
   SQL
 
   scope :archived,
@@ -148,6 +147,7 @@ class Patient < ApplicationRecord
         -> do
           includes(
             :consent_statuses,
+            :programme_statuses,
             :triage_statuses,
             vaccination_statuses: :latest_location
           )
@@ -169,9 +169,10 @@ class Patient < ApplicationRecord
         ->(programmes, academic_year: nil, session: nil) do
           if session
             birth_academic_years =
-              programmes.flat_map do |programme|
-                session.programme_year_groups.birth_academic_years(programme)
-              end
+              session
+                .session_programme_year_groups
+                .where(programme_type: programmes.map(&:type))
+                .pluck_birth_academic_years
 
             where(birth_academic_year: birth_academic_years)
           elsif academic_year
@@ -241,6 +242,34 @@ class Patient < ApplicationRecord
         ->(day) { where("extract(day from date_of_birth) = ?", day) }
 
   scope :search_by_nhs_number, ->(nhs_number) { where(nhs_number:) }
+
+  scope :has_programme_status,
+        ->(
+          status,
+          programme:,
+          academic_year:,
+          vaccine_method: nil,
+          without_gelatine: nil
+        ) do
+          programme_status_scope =
+            Patient::ProgrammeStatus
+              .select("1")
+              .where("patient_id = patients.id")
+              .where_programme(programme)
+              .where(status:, academic_year:)
+
+          unless vaccine_method.nil?
+            programme_status_scope =
+              programme_status_scope.has_vaccine_method(vaccine_method)
+          end
+
+          unless without_gelatine.nil?
+            programme_status_scope =
+              programme_status_scope.where(without_gelatine:)
+          end
+
+          where(programme_status_scope.arel.exists)
+        end
 
   scope :has_vaccination_status,
         ->(status, programme:, academic_year:) do
@@ -543,7 +572,7 @@ class Patient < ApplicationRecord
     Session
       .joins_patient_locations
       .joins_patients
-      .joins_location_programme_year_groups
+      .joins_session_programme_year_groups
       .where(patients: { id: })
       .distinct
   end
@@ -565,17 +594,25 @@ class Patient < ApplicationRecord
   def show_year_group?(team:)
     academic_year = AcademicYear.pending
     year_group = self.year_group(academic_year:)
-    programme_year_groups =
-      school&.programme_year_groups(academic_year:) ||
-        team.programme_year_groups(academic_year:)
+
+    location_programme_year_groups =
+      school&.location_programme_year_groups ||
+        team.location_programme_year_groups
 
     team.programmes.any? do |programme|
-      programme_year_groups[programme].include?(year_group)
+      location_programme_year_groups.any? do
+        it.programme_type == programme.type &&
+          it.academic_year == academic_year && it.year_group == year_group
+      end
     end
   end
 
   def consent_status(programme:, academic_year:)
     patient_status(consent_statuses, programme:, academic_year:)
+  end
+
+  def programme_status(programme, academic_year:)
+    patient_status(programme_statuses, programme:, academic_year:)
   end
 
   def registration_status(session:)

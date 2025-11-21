@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_20_151321) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -232,6 +232,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.boolean "school_confirmed"
     t.bigint "school_id"
     t.bigint "team_id", null: false
+    t.bigint "team_location_id"
     t.datetime "updated_at", null: false
     t.boolean "use_preferred_name"
     t.index ["academic_year"], name: "index_consent_forms_on_academic_year"
@@ -239,6 +240,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.index ["nhs_number"], name: "index_consent_forms_on_nhs_number"
     t.index ["school_id"], name: "index_consent_forms_on_school_id"
     t.index ["team_id"], name: "index_consent_forms_on_team_id"
+    t.index ["team_location_id"], name: "index_consent_forms_on_team_location_id"
   end
 
   create_table "consent_notifications", force: :cascade do |t|
@@ -571,6 +573,21 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.index ["patient_id", "location_id", "academic_year"], name: "idx_on_patient_id_location_id_academic_year_08a1dc4afe", unique: true
   end
 
+  create_table "patient_programme_statuses", force: :cascade do |t|
+    t.integer "academic_year", null: false
+    t.date "date"
+    t.integer "dose_sequence"
+    t.bigint "patient_id", null: false
+    t.enum "programme_type", null: false, enum_type: "programme_type"
+    t.integer "status", default: 0, null: false
+    t.integer "vaccine_methods", array: true
+    t.boolean "without_gelatine"
+    t.index ["academic_year", "patient_id"], name: "idx_on_academic_year_patient_id_3d5bf8d2c8"
+    t.index ["patient_id", "academic_year", "programme_type"], name: "idx_on_patient_id_academic_year_programme_type_75e0e0c471", unique: true
+    t.index ["patient_id"], name: "index_patient_programme_statuses_on_patient_id"
+    t.index ["status"], name: "index_patient_programme_statuses_on_status"
+  end
+
   create_table "patient_registration_statuses", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.bigint "session_id", null: false
@@ -764,13 +781,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.integer "days_before_consent_reminders"
     t.bigint "location_id", null: false
     t.boolean "national_protocol_enabled", default: false, null: false
-    t.enum "programme_types", null: false, array: true, enum_type: "programme_type"
+    t.enum "programme_types", array: true, enum_type: "programme_type"
     t.boolean "psd_enabled", default: false, null: false
     t.boolean "requires_registration", default: true, null: false
     t.date "send_consent_requests_at"
     t.date "send_invitations_at"
     t.string "slug", null: false
     t.bigint "team_id", null: false
+    t.bigint "team_location_id"
     t.datetime "updated_at", null: false
     t.index ["academic_year", "location_id", "team_id"], name: "index_sessions_on_academic_year_and_location_id_and_team_id"
     t.index ["dates"], name: "index_sessions_on_dates", using: :gin
@@ -779,6 +797,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.index ["programme_types"], name: "index_sessions_on_programme_types", using: :gin
     t.index ["team_id", "academic_year"], name: "index_sessions_on_team_id_and_academic_year"
     t.index ["team_id", "location_id"], name: "index_sessions_on_team_id_and_location_id"
+    t.index ["team_location_id"], name: "index_sessions_on_team_location_id"
   end
 
   create_table "subteams", force: :cascade do |t|
@@ -990,6 +1009,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
   add_foreign_key "consent_form_programmes", "consent_forms", on_delete: :cascade
   add_foreign_key "consent_forms", "locations"
   add_foreign_key "consent_forms", "locations", column: "school_id"
+  add_foreign_key "consent_forms", "team_locations"
   add_foreign_key "consent_forms", "teams"
   add_foreign_key "consent_notifications", "patients"
   add_foreign_key "consent_notifications", "sessions"
@@ -1033,6 +1053,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
   add_foreign_key "patient_consent_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_locations", "locations"
   add_foreign_key "patient_locations", "patients"
+  add_foreign_key "patient_programme_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_registration_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_registration_statuses", "sessions", on_delete: :cascade
   add_foreign_key "patient_specific_directions", "patients"
@@ -1061,6 +1082,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
   add_foreign_key "session_notifications", "sessions"
   add_foreign_key "session_notifications", "users", column: "sent_by_user_id"
   add_foreign_key "session_programme_year_groups", "sessions", on_delete: :cascade
+  add_foreign_key "sessions", "team_locations"
   add_foreign_key "sessions", "teams"
   add_foreign_key "subteams", "teams"
   add_foreign_key "team_locations", "locations"
@@ -1163,16 +1185,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
               vaccination_summary.has_injection AS vaccinated_injection_current_year,
               (pl.patient_id IS NULL) AS outside_cohort
              FROM ((((((((((((((((((((((patients p
-               JOIN ( SELECT pl_1.patient_id,
+               JOIN ( SELECT DISTINCT pl_1.patient_id,
                       pl_1.location_id,
                       s_1.id AS session_id,
                       s_1.academic_year,
-                      s_programme_type.s_programme_type,
+                      spyg.programme_type AS s_programme_type,
                       t_1.id AS team_id
                      FROM (((patient_locations pl_1
                        JOIN sessions s_1 ON (((s_1.location_id = pl_1.location_id) AND (s_1.academic_year = pl_1.academic_year))))
                        JOIN teams t_1 ON ((t_1.id = s_1.team_id)))
-                       CROSS JOIN LATERAL unnest(s_1.programme_types) s_programme_type(s_programme_type))
+                       JOIN session_programme_year_groups spyg ON ((spyg.session_id = s_1.id)))
                   UNION ALL
                    SELECT DISTINCT vr.patient_id,
                       s_1.location_id,

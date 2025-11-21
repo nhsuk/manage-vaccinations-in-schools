@@ -4,22 +4,42 @@ describe DataMigration::SetTeamLocation do
   subject(:call) { described_class.call }
 
   let(:team) { create(:team) }
-  let(:school_subteam) { create(:subteam, team:) }
-  let(:clinic_subteam) { create(:subteam, team:) }
-  let!(:school_location) { create(:school, subteam: school_subteam) }
-  let!(:clinic_location) { create(:generic_clinic, subteam: clinic_subteam) }
+  let(:location) { create(:school) }
+  let(:academic_year) { AcademicYear.current }
 
-  it "creates team location instances" do
-    expect { call }.to change(TeamLocation, :count).by(2)
+  context "with a consent form" do
+    let(:consent_form) do
+      create(
+        :consent_form,
+        team:,
+        location:,
+        academic_year:,
+        team_location: nil
+      )
+    end
 
-    school_team_location =
-      TeamLocation.find_by!(team:, location: school_location)
-    expect(school_team_location.academic_year).to eq(AcademicYear.current)
-    expect(school_team_location.subteam).to eq(school_subteam)
+    it "sets the team location" do
+      expect { call }.to change { consent_form.reload.team_location }.from(nil)
 
-    clinic_team_location =
-      TeamLocation.find_by!(team:, location: clinic_location)
-    expect(clinic_team_location.academic_year).to eq(AcademicYear.current)
-    expect(clinic_team_location.subteam).to be_nil
+      team_location = consent_form.team_location
+      expect(team_location.team).to eq(team)
+      expect(team_location.location).to eq(location)
+      expect(team_location.academic_year).to eq(academic_year)
+    end
+  end
+
+  context "with a session" do
+    let(:session) do
+      create(:session, team:, location:, academic_year:, team_location: nil)
+    end
+
+    it "sets the team location" do
+      expect { call }.to change { session.reload.team_location }.from(nil)
+
+      team_location = session.team_location
+      expect(team_location.team).to eq(team)
+      expect(team_location.location).to eq(location)
+      expect(team_location.academic_year).to eq(academic_year)
+    end
   end
 end

@@ -13,8 +13,6 @@ class API::Testing::TeamsController < API::Testing::BaseController
 
     @start_time = Time.zone.now
 
-    log_destroy(TeamLocation.where(team:))
-
     log_destroy(CohortImport.where(team:))
     log_destroy(ImmunisationImport.where(team:))
     log_destroy(ClassImport.where(team:))
@@ -96,6 +94,8 @@ class API::Testing::TeamsController < API::Testing::BaseController
 
     unless keep_itself
       log_destroy(Session.where(team:))
+
+      log_destroy(TeamLocation.where(team:))
 
       log_destroy(
         Location.generic_clinic.joins(:subteam).where(subteams: { team: })

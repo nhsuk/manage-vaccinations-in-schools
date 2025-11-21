@@ -69,8 +69,13 @@ FactoryBot.define do
       name { "Community clinic" }
 
       after(:create) do |location, evaluator|
-        year_groups = Location::YearGroup::CLINIC_VALUE_RANGE.to_a
         academic_year = evaluator.academic_year
+
+        if (team = evaluator.team)
+          team.team_locations.create!(location:, academic_year:)
+        end
+
+        year_groups = Location::YearGroup::CLINIC_VALUE_RANGE.to_a
 
         location.import_year_groups!(
           year_groups,
@@ -112,7 +117,13 @@ FactoryBot.define do
 
       after(:create) do |location, evaluator|
         academic_year = evaluator.academic_year
+
+        if (team = evaluator.team)
+          team.team_locations.create!(location:, academic_year:)
+        end
+
         location.import_year_groups_from_gias!(academic_year:)
+
         location.import_default_programme_year_groups!(
           evaluator.programmes,
           academic_year:

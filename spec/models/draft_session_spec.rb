@@ -44,19 +44,6 @@ describe DraftSession do
     end
   end
 
-  describe "#write_to!" do
-    subject(:write_to!) { draft_session.write_to!(session) }
-
-    it "adds the sessions to the programme" do
-      expect { write_to! }.to change { session.programme_types.size }.by(1)
-
-      expect(session.programmes).to contain_exactly(
-        *existing_programmes,
-        new_programme
-      )
-    end
-  end
-
   describe "#create_location_programme_year_groups!" do
     subject(:create_location_programme_year_groups!) do
       draft_session.create_location_programme_year_groups!
@@ -74,9 +61,13 @@ describe DraftSession do
         location.location_programme_year_groups.count
       }.by(new_programme.default_year_groups.count)
 
-      expect(session.reload.programme_year_groups[new_programme]).to eq(
-        new_programme.default_year_groups
-      )
+      year_groups =
+        location
+          .location_programme_year_groups
+          .where_programme(new_programme)
+          .pluck_year_groups
+
+      expect(year_groups).to eq(new_programme.default_year_groups)
     end
   end
 
