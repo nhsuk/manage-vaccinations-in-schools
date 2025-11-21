@@ -4,8 +4,6 @@ module BelongsToProgramme
   extend ActiveSupport::Concern
 
   included do
-    self.ignored_columns = %w[programme_id]
-
     scope :where_programme,
           ->(value) do
             if value.is_a?(Array)

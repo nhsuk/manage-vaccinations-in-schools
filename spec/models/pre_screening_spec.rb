@@ -26,7 +26,6 @@
 #  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
-#  fk_rails_...  (programme_id => programmes.id)
 #
 describe PreScreening do
   subject(:pre_screening) { build(:pre_screening) }
