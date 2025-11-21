@@ -107,6 +107,10 @@ class ClassImportsController < ApplicationController
     @class_import.reviewed_at << Time.zone.now
     @class_import.committing!
 
+    @class_import.changesets.not_from_file.ready_for_review.update_all(
+      status: :committing
+    )
+
     @class_import.commit_changesets(
       @class_import.changesets.from_file.ready_for_review
     )

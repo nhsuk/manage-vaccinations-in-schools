@@ -52,27 +52,33 @@ class ClassImport < PatientImport
 
   def postprocess_rows!
     # Remove patients already in the sessions but not in the class list.
-    birth_academic_years =
-      year_groups.map { it.to_birth_academic_year(academic_year:) }
+    if Flipper.enabled?(:import_review_screen)
+      unknown_patient_changesets = changesets.not_from_file.committing
+      unknown_patients_ids = unknown_patient_changesets.pluck(:patient_id)
+      unknown_patients = Patient.where(id: unknown_patients_ids)
+    else
+      birth_academic_years =
+        year_groups.map { it.to_birth_academic_year(academic_year:) }
 
-    existing_patients =
-      Patient.where(
-        birth_academic_year: birth_academic_years,
-        school_id: location.id
-      ).where(
-        PatientLocation
-          .joins(:location)
-          .where("patient_id = patients.id")
-          .where(academic_year:, location:)
-          .arel
-          .exists
-      )
+      existing_patients =
+        Patient.where(
+          birth_academic_year: birth_academic_years,
+          school_id: location.id
+        ).where(
+          PatientLocation
+            .joins(:location)
+            .where("patient_id = patients.id")
+            .where(academic_year:, location:)
+            .arel
+            .exists
+        )
 
-    patients_in_import =
-      changesets.from_file - changesets.cancelled - changesets.processed
+      patients_in_import =
+        changesets.from_file - changesets.cancelled - changesets.processed
 
-    unknown_patients =
-      existing_patients - patients - patients_in_import.map(&:patient)
+      unknown_patients =
+        existing_patients - patients - patients_in_import.map(&:patient)
+    end
 
     school_moves =
       unknown_patients.map do |patient|
@@ -88,6 +94,10 @@ class ClassImport < PatientImport
     @imported_school_move_ids ||= []
     @imported_school_move_ids |=
       SchoolMove.import!(school_moves, on_duplicate_key_ignore: true).ids
+
+    if unknown_patient_changesets
+      unknown_patient_changesets.update_all(status: :processed)
+    end
 
     PatientsAgedOutOfSchoolJob.perform_async(location_id)
   end
