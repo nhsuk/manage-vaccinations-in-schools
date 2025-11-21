@@ -448,7 +448,7 @@ class ImmunisationImportRow
         false
       end
     elsif vaccine_name.present? ||
-          combined_vaccination_and_dose_sequence.present?
+          combined_vaccination_and_dose_sequence.present? || bulk_hpv?
       true
     end
   end
@@ -529,7 +529,7 @@ class ImmunisationImportRow
     else
       errors.add(
         vaccinated.header,
-        "You need to record whether the child was vaccinated or not. Enter ‘Y’ or ‘N’ in the ‘vaccinated’ column."
+        "You need to record whether the child was vaccinated or not. Enter ‘Y’ or ‘N’ in the ‘VACCINATED’ column."
       )
     end
   end
