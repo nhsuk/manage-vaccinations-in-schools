@@ -39,6 +39,8 @@ class PatientTeam < ApplicationRecord
                school_move_school: 5
              }
 
+  after_create_commit :generate_important_notices
+
   def add_source!(source)
     update!(sources: Array(sources) | [source.to_s])
   end
@@ -46,5 +48,11 @@ class PatientTeam < ApplicationRecord
   def remove_source!(source)
     self.sources = sources.reject { it == source.to_s }
     sources.empty? ? delete : save!
+  end
+
+  private
+
+  def generate_important_notices
+    ImportantNoticeGeneratorJob.perform_later([patient_id])
   end
 end
