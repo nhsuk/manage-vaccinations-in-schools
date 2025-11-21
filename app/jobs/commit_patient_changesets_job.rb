@@ -88,7 +88,7 @@ class CommitPatientChangesetsJob
   end
 
   def finished_committing_changesets?(import)
-    import.changesets.committing.none?
+    import.changesets.from_file.committing.none?
   end
 
   # Tasks that get run after all the other batches have run

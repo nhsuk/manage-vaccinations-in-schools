@@ -45,6 +45,7 @@ describe "Import class lists" do
     and_i_approve_the_import
     then_i_see_the_import_needs_re_review
     and_a_school_move_for_john_is_created
+    and_no_school_move_for_rachel_is_created
 
     when_i_ignore_changes
     then_the_re_review_patients_are_not_imported
@@ -302,6 +303,22 @@ describe "Import class lists" do
     expect(PatientChangeset.all.pluck(:status).uniq).to eq(["ready_for_review"])
   end
 
+  def then_i_should_see_the_second_import_review_screen
+    click_on_most_recent_import(ClassImport)
+    expect(page).to have_content("Needs review")
+
+    find(".nhsuk-details__summary", text: "4 new records").click
+    expect(page).to have_content("KORS, Michael")
+    expect(page).to have_content("LAUREN, Ralph")
+    expect(page).to have_content("KLEIN, Calvin")
+    expect(page).to have_content("CHANEL, Coco")
+
+    find(".nhsuk-details__summary", text: "1 school move").click
+    expect(page).to have_content("SMITH, John")
+
+    expect(PatientChangeset.all.pluck(:status).uniq).to eq(["ready_for_review"])
+  end
+
   def and_no_changes_are_committed_yet
     expect(Patient.count).to eq(4)
     coco = Patient.find_by(given_name: "Coco", family_name: "Chanel")
@@ -321,12 +338,16 @@ describe "Import class lists" do
     expect(Patient.count).to eq(2)
   end
 
+  alias_method :and_no_patients_from_the_second_import_are_committed,
+               :and_no_patients_from_the_first_import_are_committed
+
   def then_the_patients_from_the_second_import_are_committed
-    expect(Patient.count).to eq(5)
+    expect(Patient.count).to eq(6)
     expect(Patient.pluck(:given_name)).to include(
       "Michael",
       "Ralphie",
-      "Calvin"
+      "Calvin",
+      "Rachel"
     )
   end
 
@@ -353,11 +374,14 @@ describe "Import class lists" do
     wait_for_import_to_complete_until_review(ClassImport)
     visit class_import_path(ClassImport.order(:created_at).first)
     expect(page).to have_content("Needs re-review")
-    expect(ClassImport.first.changesets.processed.count).to eq(1)
+    expect(ClassImport.first.changesets.processed.count).to eq(2)
     expect(ClassImport.first.changesets.ready_for_review.count).to eq(4)
     expect(ClassImport.first.changesets.from_file.ready_for_review.count).to eq(
       3
     )
+    expect(
+      ClassImport.first.changesets.not_from_file.ready_for_review.count
+    ).to eq(1)
   end
 
   def and_a_school_move_for_john_is_created
@@ -367,12 +391,17 @@ describe "Import class lists" do
     expect(school_move.school_id).to be_nil
   end
 
+  def and_no_school_move_for_rachel_is_created
+    rachel = Patient.find_by(given_name: "Rachel", family_name: "Adams")
+    expect(rachel.school_moves.count).to eq(0)
+  end
+
   def when_i_ignore_changes
     click_on "Ignore changes"
   end
 
   def then_the_re_review_patients_are_not_imported
-    expect(Patient.count).to eq(6)
+    expect(Patient.count).to eq(7)
     expect(Patient.with_pending_changes.count).to eq(0)
   end
 
