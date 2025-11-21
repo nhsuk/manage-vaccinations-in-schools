@@ -267,7 +267,9 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
       sync_feature_flag_enabled =
         Programme.all.any? { Flipper.enabled?(:imms_api_sync_job, it) }
       if @vaccination_record.respond_to?(:sync_status) &&
-           sync_feature_flag_enabled && Flipper.enabled?(:imms_api_integration)
+           sync_feature_flag_enabled &&
+           Flipper.enabled?(:imms_api_integration) &&
+           @vaccination_record&.sourced_from_service?
         summary_list.with_row do |row|
           row.with_key { "Synced with NHS England?" }
           row.with_value do
