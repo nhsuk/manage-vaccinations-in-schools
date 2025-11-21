@@ -571,7 +571,7 @@ class ImmunisationImportRow
         else
           errors.add(batch_expiry.header, "Enter a date in the correct format")
         end
-      elsif offline_recording?
+      elsif offline_recording? || bulk?
         if batch_expiry.nil?
           errors.add(:base, "<code>BATCH_EXPIRY_DATE</code> is required")
         else
@@ -593,7 +593,7 @@ class ImmunisationImportRow
         elsif batch_name.to_s !~ BatchForm::NAME_FORMAT
           errors.add(batch_name.header, "must be only letters and numbers")
         end
-      elsif offline_recording?
+      elsif offline_recording? || bulk?
         if batch_name.nil?
           errors.add(
             :base,
