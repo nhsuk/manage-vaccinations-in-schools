@@ -659,5 +659,24 @@ describe SearchVaccinationRecordsInNHSJob do
         include_examples "calls StatusUpdater"
       end
     end
+
+    context "with a mismatching `Bundle.link`" do
+      let(:body) do
+        file_fixture("fhir/search_response_mismatching_bundle_link.json").read
+      end
+
+      it "raises a warning, and sends to Sentry" do
+        expect(Rails.logger).to receive(:warn)
+        expect(Sentry).to receive(:capture_exception).with(
+          NHS::ImmunisationsAPI::BundleLinkParamsMismatch
+        )
+
+        perform
+      end
+
+      it "adds 2 vaccination records anyway" do
+        expect { perform }.to change { patient.vaccination_records.count }.by(2)
+      end
+    end
   end
 end
