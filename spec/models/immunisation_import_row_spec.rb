@@ -930,6 +930,12 @@ describe ImmunisationImportRow do
         end
       end
 
+      shared_examples "with an (almost) empty row where `VACCINATED` is `Y`" do
+        it "requires the mandatory fields" do
+          expect(immunisation_import_row).to be_invalid
+        end
+      end
+
       context "of type flu" do
         let(:import_type) { "bulk_flu" }
 
@@ -937,6 +943,34 @@ describe ImmunisationImportRow do
           let(:data) { {} }
 
           include_examples "with an empty row (both bulk upload types)"
+
+          it "requires the mandatory fields specific to flu" do
+            expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors[:base]).to include(
+              "<code>VACCINATED</code> is required"
+            )
+          end
+        end
+
+        context "when `VACCINATED` is `Y`" do
+          let(:data) { { "VACCINATED" => "Y" } }
+
+          include_examples "with an (almost) empty row where `VACCINATED` is `Y`"
+
+          it "requires the mandatory fields specific to flu when vaccinated" do
+            expect(immunisation_import_row).to be_invalid
+          end
+        end
+
+        context "when `VACCINATED` is `N`" do
+          let(:data) { { "VACCINATED" => "N" } }
+
+          it "requires the mandatory fields specific to flu when not vaccinated" do
+            expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors[:base]).to include(
+              "<code>REASON_NOT_VACCINATED</code> is required"
+            )
+          end
         end
       end
 
@@ -947,6 +981,16 @@ describe ImmunisationImportRow do
           let(:data) { {} }
 
           include_examples "with an empty row (both bulk upload types)"
+        end
+
+        context "when `VACCINATED` is `Y` (ie in all cases for HPV bulk upload)" do
+          let(:data) { {} }
+
+          include_examples "with an (almost) empty row where `VACCINATED` is `Y`"
+
+          it "requires the mandatory fields specific to HPV" do
+            expect(immunisation_import_row).to be_invalid
+          end
         end
       end
     end
