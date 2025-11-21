@@ -48,8 +48,7 @@ jobs:
           bundler-cache: true
       - name: Populate database for testing
         run: |
-          bin/rails db:migrate
-          bin/rails db:seed
+          bin/rails db:reset
           bin/mavis gias import
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
