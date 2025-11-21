@@ -3,6 +3,8 @@
 module CSVImportable
   extend ActiveSupport::Concern
 
+  MAX_CSV_ROWS = 20_000
+
   included do
     attr_accessor :csv_is_malformed, :data, :rows
 
@@ -47,6 +49,7 @@ module CSVImportable
 
     validate :csv_is_valid
     validate :csv_has_records
+    validate :csv_is_not_too_large
     validate :rows_are_valid
 
     before_save :ensure_processed_with_count_statistics
@@ -254,6 +257,14 @@ module CSVImportable
     return unless csv_is_malformed
 
     errors.add(:csv, :invalid)
+  end
+
+  def csv_is_not_too_large
+    return unless data && Flipper.enabled?(:import_row_count_limit)
+
+    if rows_count > MAX_CSV_ROWS
+      errors.add(:csv, :too_many_rows, count: MAX_CSV_ROWS)
+    end
   end
 
   def csv_has_records

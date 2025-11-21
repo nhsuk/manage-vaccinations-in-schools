@@ -350,12 +350,14 @@ en:
               blank: Choose a file
               empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
+              too_many_rows: The row limit for CSV uploads is %{count}. Split your CSV file into smaller files of less than %{count} rows
         cohort_import:
           attributes:
             csv:
               blank: Choose a file
               empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
+              too_many_rows: The row limit for CSV uploads is %{count}. Split your CSV file into smaller files of less than %{count} rows
         consent:
           attributes:
             notes:
@@ -464,6 +466,7 @@ en:
               blank: Choose a file
               empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
+              too_many_rows: The row limit for CSV uploads is %{count}. Split your CSV file into smaller files of less than %{count} rows
         note:
           attributes:
             body:
