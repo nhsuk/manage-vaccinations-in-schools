@@ -378,12 +378,11 @@ module ContributesToPatientTeams
       .transform_values do |subquery|
         subquery
           .fetch(:contribution_scope)
-          .select(
-            "#{subquery.fetch(:patient_id_source)} as patient_id",
-            "#{subquery.fetch(:team_id_source)} as team_id"
-          )
           .distinct
-          .map { [it.patient_id, it.team_id] }
+          .pluck(
+            subquery.fetch(:patient_id_source),
+            subquery.fetch(:team_id_source)
+          )
       end
   end
 end
