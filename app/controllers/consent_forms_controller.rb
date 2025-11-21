@@ -50,13 +50,7 @@ class ConsentFormsController < ApplicationController
 
     reset_count!
 
-    session =
-      @patient
-        .sessions
-        .includes(:location_programme_year_groups, :programmes)
-        .has_programmes(@consent_form.programmes)
-        .find_by(academic_year: AcademicYear.pending) || @consent_form.session
-
+    session = @consent_form.session
     programme = session.programmes_for(patient: @patient).first
 
     heading_link_href =
