@@ -762,12 +762,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
     t.index ["team_id"], name: "index_school_moves_on_team_id"
   end
 
-  create_table "session_dates", force: :cascade do |t|
-    t.bigint "session_id", null: false
-    t.date "value", null: false
-    t.index ["session_id", "value"], name: "index_session_dates_on_session_id_and_value", unique: true
-  end
-
   create_table "session_notifications", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
@@ -1102,7 +1096,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_162617) do
   add_foreign_key "school_moves", "locations", column: "school_id"
   add_foreign_key "school_moves", "patients"
   add_foreign_key "school_moves", "teams"
-  add_foreign_key "session_dates", "sessions"
   add_foreign_key "session_notifications", "patients"
   add_foreign_key "session_notifications", "sessions"
   add_foreign_key "session_notifications", "users", column: "sent_by_user_id"
