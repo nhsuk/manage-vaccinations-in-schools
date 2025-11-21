@@ -1,5 +1,5 @@
 name: Create Dockerized Database
-run-name: Creating dockerized image from ${{ github.ref_name }}
+run-name: Building seeded postgres image from ${{ github.ref_name }}
 
 on:
   push:
@@ -7,66 +7,138 @@ on:
       - containerized_regression_tests_for_PRs_test
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  setup-development-database:
-    name: Setup Development Database
+  build-seeded-postgres-image:
+    name: Build Seeded Postgres Image
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16.11
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: manage_vaccinations_development
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
     env:
       RAILS_ENV: development
       DATABASE_HOST: localhost
       DATABASE_USER: postgres
       DATABASE_PASSWORD: postgres
-      BUNDLE_WITHOUT: test
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: manage_vaccinations_development
       RAILS_MASTER_KEY: intentionally-insecure-dev-key00
+      BUNDLE_WITHOUT: test
       SKIP_TEST_DATABASE: true
+
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v6
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
         with:
           node-version-file: .tool-versions
           cache: yarn
-      - uses: ruby/setup-ruby@v1
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Populate database for testing
+
+      - name: Start ephemeral Postgres (for seeding) with health check
         run: |
-          bin/rails db:reset
-          bin/mavis gias import
+          docker run -d --name seedpg \
+            --health-cmd "pg_isready -U postgres -d ${POSTGRES_DB}" \
+            --health-interval 10s \
+            --health-timeout 5s \
+            --health-retries 10 \
+            -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
+            -e POSTGRES_DB=${POSTGRES_DB} \
+            -p 5432:5432 \
+            postgres:16.11
+
+          echo "Waiting for Postgres to become healthy..."
+          for i in {1..40}; do
+            STATUS=$(docker inspect --format='{{.State.Health.Status}}' seedpg 2>/dev/null || echo "starting")
+            if [ "$STATUS" = "healthy" ]; then
+              echo "Postgres is healthy."
+              break
+            fi
+            if [ "$STATUS" = "unhealthy" ]; then
+              echo "Postgres reported unhealthy status."
+              docker logs seedpg
+              exit 1
+            fi
+            sleep 2
+          done
+
+          FINAL_STATUS=$(docker inspect --format='{{.State.Health.Status}}' seedpg)
+            if [ "$FINAL_STATUS" != "healthy" ]; then
+              echo "Postgres failed to become healthy in time (final status: $FINAL_STATUS)."
+              docker logs seedpg
+              exit 1
+            fi
+
+      - name: Migrate (schema needed for locations)
+        run: bin/rails db:migrate
+        env:
+          RAILS_ENV: ${{ env.RAILS_ENV }}
+          DATABASE_HOST: ${{ env.DATABASE_HOST }}
+          DATABASE_USER: ${{ env.DATABASE_USER }}
+          DATABASE_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+
+      - name: Optional seeds (run if you still need standard seeds)
+        run: bin/rails db:seed
+        env:
+          RAILS_ENV: ${{ env.RAILS_ENV }}
+          DATABASE_HOST: ${{ env.DATABASE_HOST }}
+          DATABASE_USER: ${{ env.DATABASE_USER }}
+          DATABASE_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+        # If not needed, you can remove this step.
+
+      - name: Run locations import (your single command)
+        run: bin/mavis gias import
+        env:
+          RAILS_ENV: ${{ env.RAILS_ENV }}
+          DATABASE_HOST: ${{ env.DATABASE_HOST }}
+          DATABASE_USER: ${{ env.DATABASE_USER }}
+          DATABASE_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+
+      - name: Dump schema + data
+        run: |
+          # This includes everything.
+          docker exec seedpg pg_dump -U postgres -d ${POSTGRES_DB} > full_dump.sql
+
+      - name: Build derived Postgres image embedding seed
+        run: |
+          cat > Dockerfile <<'EOF'
+          FROM postgres:16.11
+          # Contains full schema + data for the entire database.
+          COPY full_dump.sql /docker-entrypoint-initdb.d/10-full_dump.sql
+          # If later you need full schema, replace dump generation earlier and keep same COPY line.
+          EOF
+          docker build -t postgres_db_working:latest .
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
+
       - name: Login to ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-      - name: Get postgres container ID
-        id: get-container-id
+
+      - name: Tag and Push seeded image (same name as before)
         run: |
-          CONTAINER_ID=$(docker ps -q --filter "ancestor=postgres:16.11")
-          echo "container-id=$CONTAINER_ID" >> $GITHUB_OUTPUT
-      - name: Commit postgres container with database
+          REGISTRY=${{ steps.login-ecr.outputs.registry }}
+          IMAGE="$REGISTRY/mavis/dev/postgres_db"
+          # Tag image with same repository/name + latest + branch/ref tag
+          docker tag postgres_db_working:latest $IMAGE:latest
+          docker tag postgres_db_working:latest $IMAGE:${{ github.ref_name }}
+          docker push $IMAGE:latest
+          docker push $IMAGE:${{ github.ref_name }}
+
+      - name: Cleanup
+        if: always()
         run: |
-          docker commit ${{ steps.get-container-id.outputs.container-id }} ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db:latest
-      - name: Push image
-        run: |
-          docker tag ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db:latest ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db:${{ github.ref_name }}
-          docker push ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db --all-tags
+            docker rm -f seedpg || true
+            docker image prune -f || true
