@@ -23,7 +23,7 @@ describe "Import class lists" do
   scenario "Two imports in parallel with re-review and partially complete flow" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
-    and_one_patient_exists_in_the_school
+    and_two_patients_exists_in_the_session
     and_import_review_is_enabled
 
     when_i_visit_a_session_page_for_the_hpv_programme
@@ -230,7 +230,7 @@ describe "Import class lists" do
       )
   end
 
-  def and_one_patient_exists_in_the_school
+  def and_two_patients_exists_in_the_session
     @john_smith =
       create(
         :patient,
@@ -247,6 +247,18 @@ describe "Import class lists" do
         registration: nil,
         session: @session
       )
+
+    # Patient in the session but not in the school, no school move staged
+    @stella_mccartney =
+      create(
+        :patient,
+        given_name: "Stella",
+        family_name: "Mccartney",
+        school: @other_school,
+        session: @session
+      )
+
+    expect(PatientLocation.where(location: @school).count).to eq(2)
   end
 
   def then_i_should_see_the_import_review_screen
@@ -306,11 +318,11 @@ describe "Import class lists" do
                :and_no_changes_are_committed_yet
 
   def and_no_patients_from_the_first_import_are_committed
-    expect(Patient.count).to eq(1)
+    expect(Patient.count).to eq(2)
   end
 
   def then_the_patients_from_the_second_import_are_committed
-    expect(Patient.count).to eq(4)
+    expect(Patient.count).to eq(5)
     expect(Patient.pluck(:given_name)).to include(
       "Michael",
       "Ralphie",
@@ -360,7 +372,7 @@ describe "Import class lists" do
   end
 
   def then_the_re_review_patients_are_not_imported
-    expect(Patient.count).to eq(5)
+    expect(Patient.count).to eq(6)
     expect(Patient.with_pending_changes.count).to eq(0)
   end
 

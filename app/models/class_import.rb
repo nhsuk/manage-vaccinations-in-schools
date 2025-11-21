@@ -56,7 +56,10 @@ class ClassImport < PatientImport
       year_groups.map { it.to_birth_academic_year(academic_year:) }
 
     existing_patients =
-      Patient.where(birth_academic_year: birth_academic_years).where(
+      Patient.where(
+        birth_academic_year: birth_academic_years,
+        school_id: location.id
+      ).where(
         PatientLocation
           .joins(:location)
           .where("patient_id = patients.id")

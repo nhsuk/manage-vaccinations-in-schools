@@ -26,7 +26,10 @@ class ReviewClassImportSchoolMoveJob < ApplicationJob
     patients_in_future_review = import.changesets.needs_re_review.map(&:patient)
 
     existing_patients =
-      Patient.where(birth_academic_year: birth_academic_years).where(
+      Patient.where(
+        birth_academic_year: birth_academic_years,
+        school_id: location.id
+      ).where(
         PatientLocation
           .joins(:location)
           .where("patient_id = patients.id")
