@@ -48,6 +48,22 @@ describe TriageMailerConcern do
       it "doesn't send a text message" do
         expect { send_triage_confirmation }.not_to have_delivered_sms
       end
+
+      context "when programme is MMR and patient has had the 1st dose" do
+        let(:programme) { CachedProgramme.mmr }
+
+        before do
+          create(:vaccination_record, patient:, programme:, session:)
+
+          StatusUpdater.call(patient:)
+        end
+
+        it "sends a different email tailored to MMR second dose" do
+          expect { send_triage_confirmation }.to have_delivered_email(
+            :triage_vaccination_will_happen_mmr_second_dose
+          ).with(consent:, session:, sent_by: current_user)
+        end
+      end
     end
 
     context "when the parents agree, triage is required but it isn't safe to vaccinate" do

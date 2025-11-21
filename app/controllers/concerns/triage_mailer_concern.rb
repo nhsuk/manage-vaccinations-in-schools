@@ -9,9 +9,10 @@ module TriageMailerConcern
     return unless send_notification?(patient, session, consent)
 
     params = { consent:, session:, sent_by: current_user }
+    triage_context = { triage:, patient:, programme:, session: }
 
     if triage
-      send_triage_email(triage, session.organisation, params)
+      send_triage_email(triage_context, params)
     elsif consent.requires_triage?
       send_consent_email(:triage, params)
     elsif consent.response_refused?
@@ -34,20 +35,29 @@ module TriageMailerConcern
       !consent.via_self_consent?
   end
 
-  def send_triage_email(triage, organisation, params)
-    template = triage_email_template(triage, organisation)
+  def send_triage_email(triage_context, params)
+    template = triage_email_template(triage_context)
     EmailDeliveryJob.perform_later(template, **params)
   end
 
-  def triage_email_template(triage, organisation)
+  def triage_email_template(triage_context)
+    triage, programme, session =
+      triage_context.values_at(:triage, :programme, :session)
     if triage.safe_to_vaccinate?
-      :triage_vaccination_will_happen
+      if programme.mmr? && patient_eligible_for_additional_dose?(triage_context)
+        :triage_vaccination_will_happen_mmr_second_dose
+      else
+        :triage_vaccination_will_happen
+      end
     elsif triage.do_not_vaccinate?
       :triage_vaccination_wont_happen
     elsif triage.delay_vaccination?
       :triage_delay_vaccination
     elsif triage.invite_to_clinic?
-      resolve_email_template(:triage_vaccination_at_clinic, organisation)
+      resolve_email_template(
+        :triage_vaccination_at_clinic,
+        session.organisation
+      )
     elsif triage.keep_in_triage?
       :consent_confirmation_triage
     end
@@ -76,5 +86,18 @@ module TriageMailerConcern
       template_name
     ]
     template_names.find { GOVUK_NOTIFY_EMAIL_TEMPLATES.key?(it) }
+  end
+
+  def patient_eligible_for_additional_dose?(triage_context)
+    patient, programme, session =
+      triage_context.values_at(:patient, :programme, :session)
+
+    next_dose =
+      patient
+        .reload
+        .vaccination_status(programme:, academic_year: session.academic_year)
+        .dose_sequence
+
+    next_dose == programme.maximum_dose_sequence
   end
 end

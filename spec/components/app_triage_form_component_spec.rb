@@ -137,7 +137,7 @@ describe AppTriageFormComponent do
         StatusUpdater.call(patient:)
       end
 
-      it "doesn't show the specific hint text about the 2nd dose" do
+      it "shows the specific hint text about the 2nd dose" do
         expect(rendered).to have_text("2nd dose is not due until")
       end
     end
