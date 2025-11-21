@@ -411,7 +411,7 @@ describe AppVaccinationRecordSummaryComponent do
     context "when the imms_api_sync_job feature flag is enabled for any programme" do
       before do
         Flipper.disable(:imms_api_sync_job)
-        Flipper.enable(:imms_api_sync_job, CachedProgramme.flu)
+        Flipper.enable(:imms_api_sync_job, Programme.flu)
       end
 
       it_behaves_like "should have a `Synced with NHS England?` row"
