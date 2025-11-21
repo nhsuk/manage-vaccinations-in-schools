@@ -47,6 +47,8 @@ class Programme
 
   def <=>(other) = type <=> other.type
 
+  def translation_key = type
+
   delegate :hash, to: :type
 
   TYPES.each { |type| define_method("#{type}?") { self.type == type } }
