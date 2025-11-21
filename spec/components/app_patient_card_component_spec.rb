@@ -12,6 +12,7 @@ describe AppPatientCardComponent do
 
   let(:programmes) { [CachedProgramme.hpv] }
   let(:team) { create(:team, programmes:) }
+  let(:session) { create(:session, team:, programmes:) }
   let(:school) { create(:school, team:) }
 
   let(:patient) { create(:patient, school:, year_group: 8) }
@@ -24,19 +25,19 @@ describe AppPatientCardComponent do
   it { should have_content("Address") }
 
   context "with a deceased patient" do
-    let(:patient) { create(:patient, :deceased) }
+    let(:patient) { create(:patient, :deceased, session:) }
 
     it { should have_content("Record updated with child’s date of death") }
   end
 
   context "with an invalidated patient" do
-    let(:patient) { create(:patient, :invalidated) }
+    let(:patient) { create(:patient, :invalidated, session:) }
 
     it { should have_content("Record flagged as invalid") }
   end
 
   context "with a restricted patient" do
-    let(:patient) { create(:patient, :restricted) }
+    let(:patient) { create(:patient, :restricted, session:) }
 
     it { should have_content("Record flagged as sensitive") }
 
