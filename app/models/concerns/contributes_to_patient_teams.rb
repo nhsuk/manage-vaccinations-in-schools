@@ -227,6 +227,13 @@ module ContributesToPatientTeams
           patient_id_source =
             connection.quote_string(subquery[:patient_id_source])
           sterile_key = connection.quote(PatientTeam.sources.fetch(key.to_s))
+
+          affected_patient_ids =
+            select("#{subquery[:patient_id_source]} as patient_id")
+              .where("#{table_name}.id = ANY(ARRAY[?]::bigint[])", pk_ids)
+              .distinct
+              .pluck(:patient_id)
+
           patient_relationships_to_remove =
             select("#{patient_id_source} as patient_id")
               .where("#{table_name}.id = ANY(ARRAY[?]::bigint[])", pk_ids)
@@ -238,6 +245,7 @@ module ContributesToPatientTeams
           FROM (#{patient_relationships_to_remove}) as alias
             WHERE pt.patient_id = alias.patient_id;
           SQL
+          ImportantNoticeGeneratorJob.perform_later(affected_patient_ids)
         end
 
         where(
