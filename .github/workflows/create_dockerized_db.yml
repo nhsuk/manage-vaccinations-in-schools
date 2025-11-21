@@ -4,7 +4,7 @@ run-name: Creating dockerized image from ${{ github.ref_name }}
 on:
   push:
     branches:
-      - containerized_regression_tests_for_PRs
+      - containerized_regression_tests_for_PRs_test
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
 
@@ -46,6 +46,11 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+      - name: Populate database for testing
+        run: |
+          bin/rails db:migrate
+          bin/rails db:seed
+          bin/mavis gias import
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
