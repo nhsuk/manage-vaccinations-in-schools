@@ -931,7 +931,9 @@ describe ImmunisationImportRow do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors[:base]).to include(
             "<code>VACCINE_GIVEN</code> is required",
-            "<code>ANATOMICAL_SITE</code> is required"
+            "<code>ANATOMICAL_SITE</code> is required",
+            "<code>BATCH_NUMBER</code> or <code>Vaccination batch number</code> is required",
+            "<code>BATCH_EXPIRY_DATE</code> is required"
           )
         end
       end
