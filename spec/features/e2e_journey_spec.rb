@@ -131,7 +131,7 @@ describe "End-to-end journey" do
     click_on "Programmes", match: :first
     click_on "HPV"
     click_on "Import"
-    click_on "Import records"
+    click_on "Upload records"
     choose "Child records"
     click_on "Continue"
     attach_file "cohort_import[csv]", csv_file.path
@@ -140,7 +140,7 @@ describe "End-to-end journey" do
   end
 
   def then_i_see_that_the_cohort_has_been_uploaded
-    expect(page).to have_content("1 child")
+    expect(page).to have_content("1 imported record")
   end
 
   def when_i_start_creating_a_new_session_by_choosing_school_and_time

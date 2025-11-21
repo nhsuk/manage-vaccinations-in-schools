@@ -34,8 +34,8 @@ describe "Upload-only team homepage and navigation" do
     cards = page.all(".nhsuk-card-group__item")
     card = cards[0]
 
-    expect(card).to have_css("h2", text: "Import records")
-    expect(card).to have_link("Import records", href: imports_path)
+    expect(card).to have_css("h2", text: "Imports")
+    expect(card).to have_link("Imports", href: imports_path)
 
     # Card should not be disabled
     expect(card).not_to have_css(".app-card--disabled")

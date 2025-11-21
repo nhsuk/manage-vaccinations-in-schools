@@ -50,6 +50,7 @@ describe "Import class lists" do
     when_i_ignore_changes
     then_the_re_review_patients_are_not_imported
     and_i_see_the_import_is_partially_completed
+    and_reviewer_details_are_displayed
     and_a_school_move_for_rachel_is_created
   end
 
@@ -266,7 +267,7 @@ describe "Import class lists" do
   def then_i_should_see_the_import_review_screen
     page.refresh
     click_on_most_recent_import(ClassImport)
-    expect(page).to have_content("Needs review")
+    expect(page).to have_content("Review and approve")
 
     find(".nhsuk-details__summary", text: "1 new record").click
     expect(page).to have_content("KORS, Michael")
@@ -290,7 +291,7 @@ describe "Import class lists" do
 
   def then_i_should_see_the_first_import_review_screen
     click_on_most_recent_import(ClassImport)
-    expect(page).to have_content("Needs review")
+    expect(page).to have_content("Review and approve")
 
     find(".nhsuk-details__summary", text: "4 new records").click
     expect(page).to have_content("KORS, Michael")
@@ -374,7 +375,7 @@ describe "Import class lists" do
   def then_i_see_the_import_needs_re_review
     wait_for_import_to_complete_until_review(ClassImport)
     visit class_import_path(ClassImport.order(:created_at).first)
-    expect(page).to have_content("Needs re-review")
+    expect(page).to have_content("Further review and approve")
     expect(ClassImport.first.changesets.processed.count).to eq(2)
     expect(ClassImport.first.changesets.ready_for_review.count).to eq(4)
     expect(ClassImport.first.changesets.from_file.ready_for_review.count).to eq(
@@ -383,6 +384,11 @@ describe "Import class lists" do
     expect(
       ClassImport.first.changesets.not_from_file.ready_for_review.count
     ).to eq(1)
+  end
+
+  def and_reviewer_details_are_displayed
+    expect(page).to have_content("Approved byUSER, Test")
+    expect(page).to have_content("Stopped byUSER, Test")
   end
 
   def and_a_school_move_for_john_is_created
