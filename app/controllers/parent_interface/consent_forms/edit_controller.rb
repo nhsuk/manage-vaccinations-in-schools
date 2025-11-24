@@ -150,7 +150,7 @@ module ParentInterface
       if @consent_form.response_given? && @consent_form.response_refused?
         @consent_form.response = "given_one"
         @consent_form.chosen_programme =
-          @consent_form.given_programmes.first.type
+          @consent_form.given_consent_form_programmes.first.programme_type
       elsif @consent_form.response_given?
         @consent_form.response = "given"
       elsif @consent_form.response_refused?

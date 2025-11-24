@@ -46,16 +46,23 @@ describe "mavis stats consents-by-school", type: :integration do
 
   def given_organisation_has_consent_data
     @organisation = create(:organisation, ods_code: "TEST003")
-    programme_flu = CachedProgramme.flu
-    programme_hpv = CachedProgramme.hpv
+    programme_flu = Programme.flu
+    programme_hpv = Programme.hpv
 
     @team_a =
-      create(:team, organisation: @organisation, workgroup: "ImmunisationNorth")
+      create(
+        :team,
+        organisation: @organisation,
+        workgroup: "ImmunisationNorth",
+        programmes: [programme_flu, programme_hpv]
+      )
     @team_b =
-      create(:team, organisation: @organisation, workgroup: "ImmunisationSouth")
-
-    @team_a.programmes << [programme_flu, programme_hpv]
-    @team_b.programmes << [programme_flu, programme_hpv]
+      create(
+        :team,
+        organisation: @organisation,
+        workgroup: "ImmunisationSouth",
+        programmes: [programme_flu, programme_hpv]
+      )
 
     school1 = create(:school, name: "Primary School", team: @team_a)
     school2 = create(:school, name: "Secondary School", team: @team_b)

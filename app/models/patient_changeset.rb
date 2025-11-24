@@ -99,6 +99,8 @@ class PatientChangeset < ApplicationRecord
 
   scope :from_file, -> { where.not(row_number: nil) }
 
+  scope :not_from_file, -> { where(row_number: nil) }
+
   scope :with_postcode,
         -> do
           where("data -> 'upload' -> 'child' -> 'address_postcode' IS NOT NULL")

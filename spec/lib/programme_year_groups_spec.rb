@@ -4,7 +4,7 @@ describe ProgrammeYearGroups do
   shared_examples "all examples" do
     subject(:year_groups) { programme_year_groups[programme] }
 
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
 
     context "for a programme not administered" do
       let(:team) { create(:team) }
@@ -43,7 +43,7 @@ describe ProgrammeYearGroups do
     end
 
     context "for a different programme" do
-      let(:team) { create(:team, programmes: [CachedProgramme.flu]) }
+      let(:team) { create(:team, programmes: [Programme.flu]) }
 
       before { create(:school, :primary, team:) }
 

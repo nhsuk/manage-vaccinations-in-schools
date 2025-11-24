@@ -36,20 +36,11 @@ class ConsentNotification < ApplicationRecord
 
   has_one :team, through: :session
 
-  has_many :consent_notification_programmes,
-           -> { joins(:programme).order(:"programmes.type") },
-           dependent: :destroy
-
-  has_many :programmes, through: :consent_notification_programmes
-
   delegate :academic_year, to: :session
 
   enum :type,
        { request: 0, initial_reminder: 1, subsequent_reminder: 2 },
        validate: true
-
-  scope :has_programme,
-        ->(programme) { joins(:programmes).where(programmes: programme) }
 
   scope :reminder, -> { initial_reminder.or(subsequent_reminder) }
 
@@ -106,12 +97,14 @@ class ConsentNotification < ApplicationRecord
         :consent_school_reminder
       end
 
+    programme_types = programmes.map(&:type)
+
     parents.each do |parent|
       EmailDeliveryJob.perform_later(
         mail_template,
         parent:,
         patient:,
-        programmes:,
+        programme_types:,
         session:,
         sent_by: current_user
       )
@@ -120,7 +113,7 @@ class ConsentNotification < ApplicationRecord
         text_template,
         parent:,
         patient:,
-        programmes:,
+        programme_types:,
         session:,
         sent_by: current_user
       )

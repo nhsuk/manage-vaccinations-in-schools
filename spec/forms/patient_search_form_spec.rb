@@ -18,7 +18,7 @@ describe PatientSearchForm do
   let(:request_path) { "/patients" }
   let(:session) { nil }
 
-  let(:programme) { CachedProgramme.flu }
+  let(:programme) { Programme.flu }
   let(:programmes) { [programme] }
   let(:team) { create(:team, programmes:) }
 
@@ -70,7 +70,7 @@ describe PatientSearchForm do
     end
 
     context "filtering on aged out of programmes" do
-      let(:programmes) { [CachedProgramme.flu] }
+      let(:programmes) { [Programme.flu] }
       let(:location) do
         create(:school, programmes:, gias_year_groups: [11, 12])
       end
@@ -274,7 +274,7 @@ describe PatientSearchForm do
     context "filtering on programmes" do
       let(:programme_types) { programmes.map(&:type) }
 
-      let(:programme) { CachedProgramme.menacwy }
+      let(:programme) { Programme.menacwy }
       let(:programmes) { [programme] }
 
       context "with a patient eligible for the programme" do
@@ -431,7 +431,7 @@ describe PatientSearchForm do
           create(
             :patient,
             :consent_given_triage_not_needed,
-            programmes: [CachedProgramme.hpv]
+            programmes: [Programme.hpv]
           )
 
         _injection_only_patient =
@@ -711,7 +711,7 @@ describe PatientSearchForm do
     let(:programme_types) { programmes.map(&:type) }
 
     let(:team) { create(:team) }
-    let(:programme) { CachedProgramme.flu }
+    let(:programme) { Programme.flu }
     let(:subteam) { create(:subteam, team:) }
     let(:user) { create(:user, team:) }
     let(:patient) { create(:patient) }
@@ -738,7 +738,7 @@ describe PatientSearchForm do
           :vaccination_record,
           patient:,
           performed_ods_code: team.organisation.ods_code,
-          programme: CachedProgramme.hpv
+          programme: Programme.hpv
         )
       end
 

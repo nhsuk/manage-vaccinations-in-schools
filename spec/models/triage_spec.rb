@@ -17,7 +17,6 @@
 #  updated_at              :datetime         not null
 #  patient_id              :bigint           not null
 #  performed_by_user_id    :bigint           not null
-#  programme_id            :bigint           not null
 #  team_id                 :bigint           not null
 #
 # Indexes
@@ -25,7 +24,6 @@
 #  index_triages_on_academic_year         (academic_year)
 #  index_triages_on_patient_id            (patient_id)
 #  index_triages_on_performed_by_user_id  (performed_by_user_id)
-#  index_triages_on_programme_id          (programme_id)
 #  index_triages_on_programme_type        (programme_type)
 #  index_triages_on_team_id               (team_id)
 #
@@ -42,7 +40,6 @@ describe Triage do
 
   describe "associations" do
     it { should belong_to(:patient) }
-    it { should belong_to(:programme) }
     it { should belong_to(:team) }
     it { should belong_to(:performed_by) }
   end

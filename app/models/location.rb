@@ -68,16 +68,13 @@ class Location < ApplicationRecord
   has_many :patient_locations
   has_many :pre_screenings
   has_many :sessions
+  has_many :team_locations
 
   has_one :team, through: :subteam
 
   has_many :location_programme_year_groups,
            -> { includes(:location_year_group) },
            through: :location_year_groups
-
-  has_many :programmes,
-           -> { distinct.order(:type) },
-           through: :location_programme_year_groups
 
   # This is based on the school statuses from the DfE GIAS data.
   enum :status,
@@ -159,6 +156,10 @@ class Location < ApplicationRecord
     @year_groups ||= location_year_groups.pluck_values
   end
 
+  def programmes
+    location_programme_year_groups.map(&:programme).sort.uniq
+  end
+
   def clinic? = generic_clinic? || community_clinic?
 
   def dfe_number
@@ -172,6 +173,13 @@ class Location < ApplicationRecord
       "systm_one_code",
       "updated_at"
     ).merge("is_attached_to_team" => !subteam_id.nil?)
+  end
+
+  def attach_to_team!(team, academic_year:, subteam:)
+    ActiveRecord::Base.transaction do
+      team_locations.find_or_create_by!(team:, academic_year:).update!(subteam:)
+      update!(subteam:)
+    end
   end
 
   def import_year_groups!(values, academic_year:, source:)
@@ -194,13 +202,13 @@ class Location < ApplicationRecord
       programmes.flat_map do |programme|
         programme.default_year_groups.filter_map do |year_group|
           if (year_group_id = year_group_ids[year_group])
-            [year_group_id, programme.id, programme.type]
+            [year_group_id, programme.type]
           end
         end
       end
 
     Location::ProgrammeYearGroup.import!(
-      %i[location_year_group_id programme_id programme_type],
+      %i[location_year_group_id programme_type],
       rows,
       on_duplicate_key_ignore: true
     )

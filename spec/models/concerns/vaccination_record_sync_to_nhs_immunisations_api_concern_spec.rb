@@ -5,7 +5,7 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
     build(:vaccination_record, outcome:, programme:, session:)
   end
   let(:outcome) { "administered" }
-  let(:programme) { CachedProgramme.flu }
+  let(:programme) { Programme.flu }
   let(:session) { create(:session, programmes: [programme]) }
 
   describe "#sync_to_nhs_immunisations_api!" do
@@ -125,11 +125,11 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
       end
     end
 
-    Programme.defined_enums["type"].each_key do |programme_type|
-      next if programme_type.in? %w[flu hpv]
+    Programme::TYPES.each do |programme_type|
+      next if programme_type.in?(%i[flu hpv])
 
       context "when the programme type is #{programme_type}" do
-        let(:programme) { CachedProgramme.send(programme_type) }
+        let(:programme) { Programme.find(programme_type) }
 
         it { should be true }
       end

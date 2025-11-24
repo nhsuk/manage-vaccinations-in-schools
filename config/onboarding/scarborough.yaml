@@ -12,7 +12,7 @@ team:
   reply_to_id: 2124b0bb-8c53-402e-9df7-01f0cbf38815
   type: poc_only
 
-programmes: [menacwy, td_ipv]
+programmes: [menacwy, mmr, td_ipv]
 
 subteams:
   scarborough:

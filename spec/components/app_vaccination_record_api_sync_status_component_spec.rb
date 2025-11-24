@@ -5,7 +5,7 @@ describe AppVaccinationRecordAPISyncStatusComponent do
     build(:vaccination_record, outcome:, programme:, session:)
   end
   let(:outcome) { "administered" }
-  let(:programme) { CachedProgramme.flu }
+  let(:programme) { Programme.flu }
   let(:session) { create(:session, programmes: [programme]) }
 
   let(:component) { described_class.new(vaccination_record) }
@@ -20,23 +20,6 @@ describe AppVaccinationRecordAPISyncStatusComponent do
     subject(:formatted_status) { rendered.to_html }
 
     context "when sync_status is :not_synced" do
-      context "when vaccination has notify_parents nil (and is a historic record)" do
-        before do
-          allow(vaccination_record).to receive_messages(
-            sync_status: :not_synced,
-            notify_parents: nil
-          )
-        end
-
-        let(:session) { nil }
-
-        it do
-          expect(formatted_status).to include(
-            "Records are not synced if the vaccination was not recorded in Mavis"
-          )
-        end
-      end
-
       context "when vaccination was not administered" do
         before do
           allow(vaccination_record).to receive_messages(
@@ -52,30 +35,13 @@ describe AppVaccinationRecordAPISyncStatusComponent do
         end
       end
 
-      context "when vaccination was not recorded in service" do
-        before do
-          allow(vaccination_record).to receive(:sync_status).and_return(
-            :not_synced
-          )
-        end
-
-        let(:session) { nil }
-
-        it do
-          expect(formatted_status).to include(
-            "Records are not synced if the vaccination was not recorded in Mavis"
-          )
-        end
-      end
-
       context "when vaccination programme is not currently sent to the API" do
         before do
           allow(vaccination_record).to receive(:sync_status).and_return(
             :not_synced
           )
 
-          Flipper.disable(:imms_api_sync_job)
-          Flipper.enable(:imms_api_sync_job, CachedProgramme.menacwy)
+          Flipper.disable(:imms_api_sync_job, programme)
         end
 
         it do
@@ -108,8 +74,7 @@ describe AppVaccinationRecordAPISyncStatusComponent do
             notify_parents: false
           )
 
-          Flipper.disable(:imms_api_sync_job)
-          Flipper.enable(:imms_api_sync_job, CachedProgramme.menacwy)
+          Flipper.disable(:imms_api_sync_job, programme)
         end
 
         it do

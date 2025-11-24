@@ -6,7 +6,7 @@
 describe FHIRMapper::VaccinationRecord do
   let(:organisation) { create(:organisation) }
   let(:team) { create(:team, organisation:, programmes: [programme]) }
-  let(:programme) { CachedProgramme.hpv }
+  let(:programme) { Programme.hpv }
   let(:school) { create(:school, urn: "100006") }
   let(:session) do
     create(:session, location: school, programmes: [programme], team:)
@@ -306,6 +306,8 @@ describe FHIRMapper::VaccinationRecord do
       FHIR.from_contents(file_fixture(fixture_file_name).read)
     end
 
+    let(:programme) { Programme.flu }
+
     shared_examples "a mapped vaccination record (common fields)" do
       its(:persisted?) { should be false }
 
@@ -330,7 +332,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "for flu" do
-      let(:programme) { CachedProgramme.flu }
+      let(:programme) { Programme.flu }
 
       describe "the parsed full_dose value" do
         subject { record.full_dose }
@@ -773,7 +775,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "for hpv" do
-      let(:programme) { CachedProgramme.hpv }
+      let(:programme) { Programme.hpv }
 
       context "with a fhir record from Mavis" do
         let(:fixture_file_name) { "fhir/hpv/fhir_record_from_mavis.json" }
@@ -811,7 +813,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "for menacwy" do
-      let(:programme) { CachedProgramme.menacwy }
+      let(:programme) { Programme.menacwy }
 
       context "with a fhir record from Mavis" do
         let(:fixture_file_name) { "fhir/menacwy/fhir_record_from_mavis.json" }
@@ -849,7 +851,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "for td_ipv" do
-      let(:programme) { CachedProgramme.td_ipv }
+      let(:programme) { Programme.td_ipv }
 
       context "with a fhir record from Mavis" do
         let(:fixture_file_name) { "fhir/td_ipv/fhir_record_from_mavis.json" }
@@ -887,7 +889,7 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "for mmr" do
-      let(:programme) { CachedProgramme.mmr }
+      let(:programme) { Programme.mmr }
 
       context "with a fhir record from Mavis" do
         let(:fixture_file_name) { "fhir/mmr/fhir_record_from_mavis.json" }

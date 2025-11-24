@@ -46,7 +46,7 @@ describe "Triage" do
   end
 
   def given_an_mmr_programme_is_underway
-    programmes = [CachedProgramme.mmr]
+    programmes = [Programme.mmr]
 
     team = create(:team, programmes:)
     @user = create(:nurse, team:)

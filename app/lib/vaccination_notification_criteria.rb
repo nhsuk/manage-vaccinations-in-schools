@@ -12,7 +12,8 @@ class VaccinationNotificationCriteria
       patient
         .consents
         .via_self_consent
-        .where(programme:, academic_year:)
+        .where_programme(programme)
+        .where(academic_year:)
         .not_invalidated
 
     if self_consents.any?

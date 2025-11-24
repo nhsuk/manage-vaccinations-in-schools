@@ -81,7 +81,7 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
 
   Vaccine
     .active
-    .where(programme: programmes)
+    .where_programme(programmes)
     .find_each { |vaccine| FactoryBot.create(:batch, team:, vaccine:) }
 
   location = FactoryBot.create(:school, team:, gias_year_groups: year_groups)
@@ -212,7 +212,7 @@ def create_imports(user, team)
       :class_import,
       status,
       team:,
-      session: team.sessions.includes(:location, :programmes).first,
+      session: team.sessions.includes(:location).first,
       uploaded_by: user
     )
   end
@@ -250,10 +250,10 @@ def create_school_moves(team)
 end
 
 def create_team_sessions(user, team)
-  flu = Programme.find_by!(type: "flu")
-  hpv = Programme.find_by!(type: "hpv")
-  menacwy = Programme.find_by!(type: "menacwy")
-  td_ipv = Programme.find_by!(type: "td_ipv")
+  flu = Programme.flu
+  hpv = Programme.hpv
+  menacwy = Programme.menacwy
+  td_ipv = Programme.td_ipv
 
   # Flu-only sessions
   create_session(user, team, programmes: [flu], completed: false)

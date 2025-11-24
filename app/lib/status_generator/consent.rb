@@ -120,6 +120,10 @@ class StatusGenerator::Consent
 
   def latest_consents
     @latest_consents ||=
-      ConsentGrouper.call(consents, programme_id: programme.id, academic_year:)
+      ConsentGrouper.call(
+        consents,
+        programme_type: programme.type,
+        academic_year:
+      )
   end
 end

@@ -265,9 +265,11 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
       end
 
       sync_feature_flag_enabled =
-        Programme.any? { Flipper.enabled?(:imms_api_sync_job, it) }
+        Programme.all.any? { Flipper.enabled?(:imms_api_sync_job, it) }
       if @vaccination_record.respond_to?(:sync_status) &&
-           sync_feature_flag_enabled && Flipper.enabled?(:imms_api_integration)
+           sync_feature_flag_enabled &&
+           Flipper.enabled?(:imms_api_integration) &&
+           @vaccination_record&.sourced_from_service?
         summary_list.with_row do |row|
           row.with_key { "Synced with NHS England?" }
           row.with_value do
@@ -302,7 +304,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def programme_value
-    highlight_if(@programme.name, @vaccination_record.programme_id_changed?)
+    highlight_if(@programme.name, @vaccination_record.programme_type_changed?)
   end
 
   def vaccine_value

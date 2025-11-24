@@ -42,7 +42,7 @@ describe ImmunisationImport do
     create(:school, urn: "144012")
   end
 
-  let(:programmes) { [CachedProgramme.flu] }
+  let(:programmes) { [Programme.flu] }
   let(:team) do
     create(:team, :with_generic_clinic, ods_code: "R1L", programmes:)
   end
@@ -73,6 +73,31 @@ describe ImmunisationImport do
         expect(immunisation_import.errors[:csv]).to include(/one record/)
       end
     end
+
+    context "with too many rows" do
+      let(:file) { "valid_flu.csv" }
+
+      before { stub_const("CSVImportable::MAX_CSV_ROWS", 2) }
+
+      context "when import_row_count_limit flag is enabled" do
+        before { Flipper.enable(:import_row_count_limit) }
+
+        it "is invalid" do
+          expect(immunisation_import).to be_invalid
+          expect(immunisation_import.errors[:csv]).to include(
+            /less than 2 rows/
+          )
+        end
+      end
+
+      context "when import_row_count_limit flag is disabled" do
+        before { Flipper.disable(:import_row_count_limit) }
+
+        it "is valid" do
+          expect(immunisation_import).to be_valid
+        end
+      end
+    end
   end
 
   describe "#parse_rows!" do
@@ -81,7 +106,7 @@ describe ImmunisationImport do
     around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
 
     context "with valid flu rows" do
-      let(:programmes) { [CachedProgramme.flu] }
+      let(:programmes) { [Programme.flu] }
       let(:file) { "valid_flu.csv" }
 
       it "populates the rows" do
@@ -91,7 +116,7 @@ describe ImmunisationImport do
     end
 
     context "with valid HPV rows" do
-      let(:programmes) { [CachedProgramme.hpv] }
+      let(:programmes) { [Programme.hpv] }
       let(:file) { "valid_hpv.csv" }
 
       it "populates the rows" do
@@ -101,7 +126,7 @@ describe ImmunisationImport do
     end
 
     context "with valid MMR rows" do
-      let(:programmes) { [CachedProgramme.mmr] }
+      let(:programmes) { [Programme.mmr] }
       let(:file) { "valid_mmr.csv" }
 
       it "populates the rows" do
@@ -111,7 +136,7 @@ describe ImmunisationImport do
     end
 
     context "with valid hpv rows, and an instruction row" do
-      let(:programmes) { [CachedProgramme.hpv] }
+      let(:programmes) { [Programme.hpv] }
       let(:file) { "valid_hpv_with_instruction_row.csv" }
 
       it "populates the rows" do
@@ -121,9 +146,7 @@ describe ImmunisationImport do
     end
 
     context "with a SystmOne file" do
-      let(:programmes) do
-        [CachedProgramme.hpv, CachedProgramme.menacwy, CachedProgramme.flu]
-      end
+      let(:programmes) { [Programme.hpv, Programme.menacwy, Programme.flu] }
       let(:file) { "systm_one.csv" }
 
       it "populates the rows" do
@@ -150,7 +173,7 @@ describe ImmunisationImport do
     around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
 
     context "with valid flu rows" do
-      let(:programmes) { [CachedProgramme.flu] }
+      let(:programmes) { [Programme.flu] }
       let(:file) { "valid_flu.csv" }
 
       it "creates locations, patients, and vaccination records" do
@@ -204,7 +227,7 @@ describe ImmunisationImport do
     end
 
     context "with valid HPV rows" do
-      let(:programmes) { [CachedProgramme.hpv] }
+      let(:programmes) { [Programme.hpv] }
       let(:file) { "valid_hpv.csv" }
 
       it "creates locations, patients, and vaccination records" do
@@ -258,7 +281,7 @@ describe ImmunisationImport do
     end
 
     context "with valid MMR rows" do
-      let(:programmes) { [CachedProgramme.mmr] }
+      let(:programmes) { [Programme.mmr] }
       let(:file) { "valid_mmr.csv" }
 
       it "creates locations, patients, and vaccination records" do
@@ -312,9 +335,7 @@ describe ImmunisationImport do
     end
 
     context "with a SystmOne file format" do
-      let(:programmes) do
-        [CachedProgramme.hpv, CachedProgramme.menacwy, CachedProgramme.flu]
-      end
+      let(:programmes) { [Programme.hpv, Programme.menacwy, Programme.flu] }
       let(:file) { "systm_one.csv" }
 
       it "creates locations, patients, and vaccination records" do
@@ -340,7 +361,7 @@ describe ImmunisationImport do
     end
 
     context "with an existing patient matching the name" do
-      let(:programmes) { [CachedProgramme.flu] }
+      let(:programmes) { [Programme.flu] }
       let(:file) { "valid_flu.csv" }
 
       let!(:patient) do
@@ -363,7 +384,7 @@ describe ImmunisationImport do
     end
 
     context "with an existing patient matching the name but with a different case" do
-      let(:programmes) { [CachedProgramme.flu] }
+      let(:programmes) { [Programme.flu] }
       let(:file) { "valid_flu.csv" }
 
       before do
@@ -382,7 +403,7 @@ describe ImmunisationImport do
     end
 
     context "with a patient record that has different attributes" do
-      let(:programmes) { [CachedProgramme.hpv] }
+      let(:programmes) { [Programme.hpv] }
       let(:file) { "valid_hpv_with_changes.csv" }
       let!(:existing_patient) do
         create(
@@ -403,7 +424,7 @@ describe ImmunisationImport do
     end
 
     context "when vaccination discovered notifications shouldn't be sent" do
-      let(:programmes) { [CachedProgramme.flu] }
+      let(:programmes) { [Programme.flu] }
       let(:file) { "valid_flu.csv" }
 
       let!(:patient) do

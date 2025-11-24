@@ -43,7 +43,7 @@ describe "Parental consent" do
   end
 
   def given_an_mmr_programme_is_underway
-    @programme = CachedProgramme.mmr
+    @programme = Programme.mmr
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     location = create(:school, name: "Pilot School", programmes: [@programme])
     @session = create(:session, :scheduled, programmes: [@programme], location:)

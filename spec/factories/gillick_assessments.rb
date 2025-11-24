@@ -18,14 +18,12 @@
 #  location_id          :bigint           not null
 #  patient_id           :bigint           not null
 #  performed_by_user_id :bigint           not null
-#  programme_id         :bigint           not null
 #
 # Indexes
 #
 #  index_gillick_assessments_on_location_id           (location_id)
 #  index_gillick_assessments_on_patient_id            (patient_id)
 #  index_gillick_assessments_on_performed_by_user_id  (performed_by_user_id)
-#  index_gillick_assessments_on_programme_id          (programme_id)
 #  index_gillick_assessments_on_programme_type        (programme_type)
 #
 # Foreign Keys

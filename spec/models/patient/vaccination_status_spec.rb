@@ -13,12 +13,10 @@
 #  status                :integer          default("not_eligible"), not null
 #  latest_location_id    :bigint
 #  patient_id            :bigint           not null
-#  programme_id          :bigint           not null
 #
 # Indexes
 #
 #  idx_on_academic_year_patient_id_9c400fc863                 (academic_year,patient_id)
-#  idx_on_patient_id_programme_id_academic_year_fc0b47b743    (patient_id,programme_id,academic_year) UNIQUE
 #  idx_on_patient_id_programme_type_academic_year_962639d2ac  (patient_id,programme_type,academic_year) UNIQUE
 #  index_patient_vaccination_statuses_on_latest_location_id   (latest_location_id)
 #  index_patient_vaccination_statuses_on_status               (status)
@@ -35,10 +33,9 @@ describe Patient::VaccinationStatus do
   end
 
   let(:patient) { create(:patient, programmes: [programme]) }
-  let(:programme) { CachedProgramme.sample }
+  let(:programme) { Programme.sample }
 
   it { should belong_to(:patient) }
-  it { should belong_to(:programme) }
 
   it do
     expect(patient_vaccination_status).to define_enum_for(:status).with_values(

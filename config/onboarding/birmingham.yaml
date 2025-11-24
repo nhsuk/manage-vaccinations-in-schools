@@ -12,7 +12,7 @@ team:
   reply_to_id: 57c9f60f-d430-4a47-9ef5-a7caf9ca7885
   type: poc_only
 
-programmes: [hpv, menacwy, td_ipv, flu]
+programmes: [flu, hpv, menacwy, mmr, td_ipv]
 
 subteams:
   springfield:

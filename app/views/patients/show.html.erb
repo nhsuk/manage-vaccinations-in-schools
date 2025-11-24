@@ -22,7 +22,7 @@
 <% end %>
 
 <%= render AppCardComponent.new(section: true) do |card| %>
-  <%= render AppPatientProgrammesTableComponent.new(@patient, programmes: policy_scope(Programme)) %>
+  <%= render AppPatientProgrammesTableComponent.new(@patient, programmes: current_user.programmes) %>
 <% end %>
 
 <%= render AppCardComponent.new(section: true) do |card| %>

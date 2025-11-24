@@ -46,12 +46,8 @@ module MavisCLI
           puts "Filtering by all teams: #{teams.map(&:workgroup).sort.join(", ")}"
         end
 
-        programmes =
-          if programme
-            [Programme.find_by(type: programme)]
-          else
-            teams.includes(:programmes).flat_map(&:programmes).uniq(&:type)
-          end
+        programme_types =
+          programme ? [programme] : teams.flat_map(&:programme_types)
 
         academic_year_value =
           academic_year ? academic_year.to_i : AcademicYear.current
@@ -59,7 +55,7 @@ module MavisCLI
         service =
           ::Stats::ConsentsBySchool.new(
             teams: teams,
-            programmes: programmes,
+            programme_types:,
             academic_year: academic_year_value
           )
 

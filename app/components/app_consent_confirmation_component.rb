@@ -62,20 +62,18 @@ class AppConsentConfirmationComponent < ViewComponent::Base
 
   def vaccinations_text(consent_form_programmes)
     programme_names =
-      consent_form_programmes
-        .includes(:programme)
-        .map do |consent_form_programme|
-          programme = consent_form_programme.programme
+      consent_form_programmes.map do |consent_form_programme|
+        programme = consent_form_programme.programme
 
-          if programme.has_multiple_vaccine_methods?
-            vaccine_method = consent_form_programme.vaccine_methods.first
-            method_prefix =
-              Vaccine.human_enum_name(:method_prefix, vaccine_method)
-            "#{method_prefix} #{programme.name_in_sentence}".lstrip
-          else
-            programme.name_in_sentence
-          end
+        if programme.has_multiple_vaccine_methods?
+          vaccine_method = consent_form_programme.vaccine_methods.first
+          method_prefix =
+            Vaccine.human_enum_name(:method_prefix, vaccine_method)
+          "#{method_prefix} #{programme.name_in_sentence}".lstrip
+        else
+          programme.name_in_sentence
         end
+      end
 
     "#{programme_names.to_sentence} vaccination".pluralize(
       programme_names.count

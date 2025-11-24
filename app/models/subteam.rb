@@ -35,6 +35,7 @@ class Subteam < ApplicationRecord
   belongs_to :team
 
   has_many :locations
+  has_many :team_locations
 
   has_many :community_clinics, -> { community_clinic }, class_name: "Location"
   has_many :schools, -> { school }, class_name: "Location"

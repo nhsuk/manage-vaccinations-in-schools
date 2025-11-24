@@ -25,7 +25,6 @@
 #  consent_form_id                                 :bigint
 #  parent_id                                       :bigint
 #  patient_id                                      :bigint           not null
-#  programme_id                                    :bigint           not null
 #  recorded_by_user_id                             :bigint
 #  team_id                                         :bigint           not null
 #
@@ -35,7 +34,6 @@
 #  index_consents_on_consent_form_id      (consent_form_id)
 #  index_consents_on_parent_id            (parent_id)
 #  index_consents_on_patient_id           (patient_id)
-#  index_consents_on_programme_id         (programme_id)
 #  index_consents_on_programme_type       (programme_type)
 #  index_consents_on_recorded_by_user_id  (recorded_by_user_id)
 #  index_consents_on_team_id              (team_id)
@@ -138,7 +136,8 @@ describe Consent do
       it "copies over attributes from consent form" do
         expect(consent).to(
           have_attributes(
-            programme: consent_form.programmes.first,
+            programme_type:
+              consent_form.consent_form_programmes.first.programme_type,
             patient:,
             consent_form:,
             reason_for_refusal: consent_form.reason_for_refusal,
@@ -207,7 +206,7 @@ describe Consent do
         )
       end
 
-      let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
+      let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
       let(:patient) { create(:patient) }
       let(:current_user) { create(:user) }
       let(:team) { create(:team, programmes:) }
@@ -283,7 +282,7 @@ describe Consent do
     let(:next_academic_year) { current_academic_year + 1 }
 
     let(:patient) { create(:patient) }
-    let(:programme) { CachedProgramme.sample }
+    let(:programme) { Programme.sample }
     let(:parent) { create(:parent) }
 
     let!(:consent_current_year_start) do
@@ -354,7 +353,7 @@ describe Consent do
 
   describe "#update_vaccination_records_no_notify" do
     let(:patient) { create(:patient) }
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
     let(:consent) { create(:consent, patient:, programme:) }
 
     context "when vaccination records exist for the patient and programme" do
@@ -376,7 +375,7 @@ describe Consent do
         create(
           :vaccination_record,
           patient:,
-          programme: CachedProgramme.flu,
+          programme: Programme.flu,
           notify_parents: false
         )
       end

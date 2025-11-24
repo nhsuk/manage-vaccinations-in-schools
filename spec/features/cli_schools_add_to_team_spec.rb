@@ -10,15 +10,6 @@ describe "mavis schools add-to-team" do
     end
   end
 
-  context "when the subteam doesn't exist" do
-    it "displays an error message" do
-      given_the_team_exists
-
-      when_i_run_the_command_expecting_an_error
-      then_a_subteam_not_found_error_message_is_displayed
-    end
-  end
-
   context "when the school doesn't exist" do
     it "displays an error message" do
       given_the_team_exists
@@ -66,7 +57,7 @@ describe "mavis schools add-to-team" do
   end
 
   def given_the_team_exists
-    @programmes = [CachedProgramme.flu, CachedProgramme.hpv]
+    @programmes = [Programme.flu, Programme.hpv]
     @team = create(:team, workgroup: "abc", programmes: @programmes)
   end
 
@@ -92,10 +83,6 @@ describe "mavis schools add-to-team" do
 
   def then_an_team_not_found_error_message_is_displayed
     expect(@output).to include("Could not find team.")
-  end
-
-  def then_a_subteam_not_found_error_message_is_displayed
-    expect(@output).to include("Could not find subteam.")
   end
 
   def then_a_school_not_found_error_message_is_displayed

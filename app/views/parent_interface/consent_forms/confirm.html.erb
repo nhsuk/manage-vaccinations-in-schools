@@ -14,7 +14,7 @@
 <%= h1 "Check and confirm" %>
 
 <% ProgrammeGrouper
-     .call(@consent_form.given_consent_form_programmes.includes(:programme))
+     .call(@consent_form.given_consent_form_programmes)
      .each do |group, consent_form_programmes| %>
   <% consent_form_programmes.each do |consent_form_programme| %>
     <% programme = consent_form_programme.programme %>
@@ -46,7 +46,7 @@
 <% end %>
 
 <% ProgrammeGrouper
-     .call(@consent_form.refused_consent_form_programmes.includes(:programme))
+     .call(@consent_form.refused_consent_form_programmes)
      .each do |group, consent_form_programmes| %>
   <% consent_form_programmes.each do |consent_form_programme| %>
     <% programme = consent_form_programme.programme %>

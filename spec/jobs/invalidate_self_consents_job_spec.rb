@@ -161,8 +161,8 @@ describe InvalidateSelfConsentsJob do
   end
 
   context "with two programmes, parental consent for one and self-consent for the other" do
-    let(:parent_programme) { CachedProgramme.flu }
-    let(:self_programme) { CachedProgramme.hpv }
+    let(:parent_programme) { Programme.flu }
+    let(:self_programme) { Programme.hpv }
 
     let(:team) { create(:team, programmes: [parent_programme, self_programme]) }
 

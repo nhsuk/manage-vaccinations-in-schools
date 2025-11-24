@@ -25,7 +25,7 @@ describe "Verbal consent" do
   end
 
   def given_a_patient_is_in_an_hpv_programme
-    programmes = [CachedProgramme.hpv]
+    programmes = [Programme.hpv]
     team = create(:team, programmes:)
 
     @nurse = create(:nurse, team:)

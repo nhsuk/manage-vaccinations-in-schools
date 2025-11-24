@@ -24,7 +24,7 @@ describe VaccinationMailerConcern do
       sample.send_vaccination_confirmation(vaccination_record)
     end
 
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
     let(:session) { create(:session, programmes: [programme]) }
     let(:parent) { create(:parent) }
     let(:patient) { create(:patient, parents: [parent], session:) }

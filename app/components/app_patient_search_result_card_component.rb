@@ -138,7 +138,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
 
   def status_resolver_for(programme)
     @status_resolver_for ||= {}
-    @status_resolver_for[programme.id] ||= PatientStatusResolver.new(
+    @status_resolver_for[programme.type] ||= PatientStatusResolver.new(
       patient,
       programme:,
       academic_year:

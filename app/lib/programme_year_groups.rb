@@ -10,11 +10,11 @@ class ProgrammeYearGroups
   end
 
   def [](programme)
-    @year_groups[programme.id] ||= year_groups_for_programme(programme)
+    @year_groups[programme.type] ||= year_groups_for_programme(programme)
   end
 
   def birth_academic_years(programme)
-    @birth_academic_years[programme.id] ||= self[programme].map do
+    @birth_academic_years[programme.type] ||= self[programme].map do
       it.to_birth_academic_year(academic_year:)
     end
   end
@@ -34,15 +34,16 @@ class ProgrammeYearGroups
     if location_programme_year_groups.is_a?(Array) ||
          location_programme_year_groups.loaded?
       location_programme_year_groups
-        .select { it.programme_id == programme.id }
-        .select { it.location_year_group.academic_year == academic_year }
-        .map { it.location_year_group.value }
+        .select { it.programme_type == programme.type }
+        .select { it.academic_year == academic_year }
+        .map(&:year_group)
         .sort
         .uniq
     else
       location_programme_year_groups
         .joins(:location_year_group)
-        .where(location_year_group: { academic_year: }, programme:)
+        .where_programme(programme)
+        .where(location_year_group: { academic_year: })
         .pluck_year_groups
     end
   end

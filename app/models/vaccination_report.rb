@@ -9,7 +9,7 @@ class VaccinationReport
   attribute :date_from, :date
   attribute :date_to, :date
   attribute :file_format, :string
-  attribute :programme_id, :integer
+  attribute :programme_type, :string
   attribute :academic_year, :integer
 
   def initialize(current_user:, **attributes)
@@ -26,14 +26,11 @@ class VaccinationReport
   end
 
   def programme
-    ProgrammePolicy::Scope
-      .new(@current_user, Programme)
-      .resolve
-      .find_by(id: programme_id)
+    Programme.find(programme_type) if programme_type
   end
 
   def programme=(value)
-    self.programme_id = value.id
+    self.programme_type = value.type
   end
 
   def csv_data

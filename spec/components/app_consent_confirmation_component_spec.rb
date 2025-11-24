@@ -17,7 +17,7 @@ describe AppConsentConfirmationComponent do
   end
 
   context "with Flu programme" do
-    let(:programme) { CachedProgramme.flu }
+    let(:programme) { Programme.flu }
     let(:session) { create(:session, programmes: [programme]) }
     let(:consent_form) { create(:consent_form, :given, session:) }
 
@@ -60,7 +60,7 @@ describe AppConsentConfirmationComponent do
       create(
         :session,
         dates: [Date.yesterday, Date.tomorrow],
-        programmes: [CachedProgramme.menacwy, CachedProgramme.td_ipv]
+        programmes: [Programme.menacwy, Programme.td_ipv]
       )
     end
     let(:consent_form) { create(:consent_form, :given, session:) }
@@ -86,7 +86,7 @@ describe AppConsentConfirmationComponent do
       create(
         :session,
         dates: [Date.yesterday, Date.tomorrow],
-        programmes: [CachedProgramme.menacwy, CachedProgramme.td_ipv]
+        programmes: [Programme.menacwy, Programme.td_ipv]
       )
     end
     let(:consent_form) { create(:consent_form, response: "given", session:) }
@@ -103,7 +103,7 @@ describe AppConsentConfirmationComponent do
   end
 
   context "consent refused for HPV" do
-    let(:session) { create(:session, programmes: [CachedProgramme.hpv]) }
+    let(:session) { create(:session, programmes: [Programme.hpv]) }
     let(:consent_form) { create(:consent_form, response: "refused", session:) }
 
     it { should have_text("Consent refused") }
@@ -118,10 +118,7 @@ describe AppConsentConfirmationComponent do
 
   context "consent refused for MenACWY and Td/IPV" do
     let(:session) do
-      create(
-        :session,
-        programmes: [CachedProgramme.menacwy, CachedProgramme.td_ipv]
-      )
+      create(:session, programmes: [Programme.menacwy, Programme.td_ipv])
     end
     let(:consent_form) { create(:consent_form, response: "refused", session:) }
 
@@ -140,7 +137,7 @@ describe AppConsentConfirmationComponent do
     let(:session) do
       create(
         :session,
-        programmes: [CachedProgramme.hpv],
+        programmes: [Programme.hpv],
         dates: [10.days.from_now, 11.days.from_now, 13.days.from_now].map(
           &:to_date
         )

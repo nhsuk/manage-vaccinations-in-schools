@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe ConsentFormMailerConcern do
+  include ActiveJob::TestHelper
+
   subject(:sample) { Class.new { include ConsentFormMailerConcern }.new }
 
   let(:consent_form) { create(:consent_form) }
@@ -13,13 +15,13 @@ describe ConsentFormMailerConcern do
     it "sends a confirmation email" do
       expect { send_consent_form_confirmation }.to have_delivered_email(
         :consent_confirmation_given
-      ).with(consent_form:, programmes: consent_form.programmes)
+      ).with(consent_form:, programme_types: consent_form.programme_types)
     end
 
     it "sends a consent given text" do
       expect { send_consent_form_confirmation }.to have_delivered_sms(
         :consent_confirmation_given
-      ).with(consent_form:, programmes: consent_form.programmes)
+      ).with(consent_form:, programme_types: consent_form.programme_types)
     end
 
     context "when user refuses consent" do
@@ -39,8 +41,8 @@ describe ConsentFormMailerConcern do
     end
 
     context "when user only consents to one programme" do
-      let(:menacwy_programme) { CachedProgramme.menacwy }
-      let(:td_ipv_programme) { CachedProgramme.td_ipv }
+      let(:menacwy_programme) { Programme.menacwy }
+      let(:td_ipv_programme) { Programme.td_ipv }
       let(:programmes) { [menacwy_programme, td_ipv_programme] }
       let(:session) { create(:session, programmes:) }
 
@@ -49,6 +51,7 @@ describe ConsentFormMailerConcern do
       before do
         consent_form.consent_form_programmes.first.update!(response: "given")
         consent_form.consent_form_programmes.second.update!(response: "refused")
+        consent_form.reload
       end
 
       it "sends a confirmation given and a confirmation refused email" do
@@ -56,10 +59,10 @@ describe ConsentFormMailerConcern do
           :consent_confirmation_given
         ).with(
           consent_form:,
-          programmes: [menacwy_programme]
+          programme_types: [menacwy_programme.type]
         ).and have_delivered_email(:consent_confirmation_refused).with(
                 consent_form:,
-                programmes: [td_ipv_programme]
+                programme_types: [td_ipv_programme.type]
               )
       end
 
@@ -68,10 +71,10 @@ describe ConsentFormMailerConcern do
           :consent_confirmation_given
         ).with(
           consent_form:,
-          programmes: [menacwy_programme]
+          programme_types: [menacwy_programme.type]
         ).and have_delivered_sms(:consent_confirmation_refused).with(
                 consent_form:,
-                programmes: [td_ipv_programme]
+                programme_types: [td_ipv_programme.type]
               )
       end
     end
@@ -82,7 +85,7 @@ describe ConsentFormMailerConcern do
       it "sends an confirmation needs triage email" do
         expect { send_consent_form_confirmation }.to have_delivered_email(
           :consent_confirmation_triage
-        ).with(consent_form:, programmes: consent_form.programmes)
+        ).with(consent_form:, programme_types: consent_form.programme_types)
       end
 
       it "doesn't send a text" do
@@ -91,7 +94,7 @@ describe ConsentFormMailerConcern do
     end
 
     context "when there are no upcoming sessions" do
-      let(:programmes) { [CachedProgramme.sample] }
+      let(:programmes) { [Programme.sample] }
       let(:team) { create(:team, :with_generic_clinic, programmes:) }
       let(:consent_form) do
         create(
@@ -106,7 +109,7 @@ describe ConsentFormMailerConcern do
       it "sends an confirmation needs triage email" do
         expect { send_consent_form_confirmation }.to have_delivered_email(
           :consent_confirmation_clinic
-        ).with(consent_form:, programmes: consent_form.programmes)
+        ).with(consent_form:, programme_types: consent_form.programme_types)
       end
 
       it "doesn't send a text" do

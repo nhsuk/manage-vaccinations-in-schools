@@ -83,9 +83,9 @@ module MavisCLI
 
       def resolve_programmes(teams, programme)
         if programme
-          [Programme.find_by(type: programme)]
+          [Programme.find(programme)]
         else
-          teams.includes(:programmes).flat_map(&:programmes).uniq(&:type)
+          teams.flat_map(&:programmes).uniq
         end
       end
 

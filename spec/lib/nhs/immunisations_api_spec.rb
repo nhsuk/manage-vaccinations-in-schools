@@ -17,7 +17,7 @@ describe NHS::ImmunisationsAPI do
     )
   end
   let(:nhs_number) { "9449310475" }
-  let(:programme) { CachedProgramme.hpv }
+  let(:programme) { Programme.hpv }
   let(:location) { create(:community_clinic, team:, ods_code: nil) }
   let(:vaccine) { programme.vaccines.find_by!(brand: "Gardasil") }
   let(:batch) do
@@ -844,11 +844,11 @@ describe NHS::ImmunisationsAPI do
     let(:nhs_number) { "9449308357" }
     let(:programmes) do
       [
-        CachedProgramme.hpv,
-        CachedProgramme.flu,
-        CachedProgramme.menacwy,
-        CachedProgramme.td_ipv,
-        CachedProgramme.mmr
+        Programme.hpv,
+        Programme.flu,
+        Programme.menacwy,
+        Programme.td_ipv,
+        Programme.mmr
       ]
     end
     let(:date_from) { Time.new(2025, 8, 1, 12, 30, 37, "+01:00") }
@@ -905,22 +905,93 @@ describe NHS::ImmunisationsAPI do
         }
       end
 
-      it "raises an error" do
-        expect { perform_request }.to raise_error(
+      it "raises a warning, and sends to Sentry" do
+        expect(Rails.logger).to receive(:warn)
+        expect(Sentry).to receive(:capture_exception).with(
           NHS::ImmunisationsAPI::BundleLinkParamsMismatch
         )
+
+        perform_request
+      end
+
+      it "continues the job and consumes the records anyway" do
+        expect(perform_request).to be_a FHIR::Bundle
+        expect(perform_request.total).to be 2
+        expect(perform_request.entry.size).to be 3
+        expect(perform_request.entry[0].resource).to be_a FHIR::Immunization
+        expect(perform_request.entry[1].resource).to be_a FHIR::Immunization
       end
     end
 
     context "with an operation outcome in bundle" do
-      let(:body) do
-        file_fixture("fhir/search_response_operation_outcome_entry.json").read
+      shared_examples "continues the job and consumes the records" do
+        it "continues the job and consumes the records anyway" do
+          expect(perform_request).to be_a FHIR::Bundle
+          expect(perform_request.total).to be 1
+          expect(perform_request.entry.size).to be 3
+          expect(perform_request.entry[0].resource).to be_a FHIR::Immunization
+        end
       end
 
-      it "raises an error" do
-        expect { perform_request }.to raise_error(
-          NHS::ImmunisationsAPI::OperationOutcomeInBundle
-        )
+      context "when the severity is `error`" do
+        let(:body) do
+          file_fixture("fhir/search_response_operation_outcome_error.json").read
+        end
+
+        it "raises an error" do
+          expect { perform_request }.to raise_error(
+            NHS::ImmunisationsAPI::OperationOutcomeInBundle
+          )
+        end
+      end
+
+      context "when the severity is `fatal`" do
+        let(:body) do
+          file_fixture("fhir/search_response_operation_outcome_fatal.json").read
+        end
+
+        it "raises an error" do
+          expect { perform_request }.to raise_error(
+            NHS::ImmunisationsAPI::OperationOutcomeInBundle
+          )
+        end
+      end
+
+      context "when the severity is `warning`" do
+        let(:body) do
+          file_fixture(
+            "fhir/search_response_operation_outcome_warning.json"
+          ).read
+        end
+
+        it "doesn't raise an error" do
+          expect { perform_request }.not_to raise_error
+        end
+
+        it "raises a warning, and sends to Sentry" do
+          expect(Rails.logger).to receive(:warn)
+          expect(Sentry).to receive(:capture_exception).with(
+            NHS::ImmunisationsAPI::OperationOutcomeInBundle
+          )
+
+          perform_request
+        end
+
+        include_examples "continues the job and consumes the records"
+      end
+
+      context "when the severity is `success`" do
+        let(:body) do
+          file_fixture(
+            "fhir/search_response_operation_outcome_success.json"
+          ).read
+        end
+
+        it "doesn't raise an error" do
+          expect { perform_request }.not_to raise_error
+        end
+
+        include_examples "continues the job and consumes the records"
       end
     end
 

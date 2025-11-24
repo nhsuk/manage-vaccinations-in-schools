@@ -8,9 +8,9 @@ class Dev::RandomConsentFormController < ApplicationController
 
     session =
       if params[:slug].present?
-        Session.includes(programmes: :vaccines).find_by(slug: params[:slug])
+        Session.find_by(slug: params[:slug])
       else
-        Session.includes(programmes: :vaccines).find(params[:session_id])
+        Session.find(params[:session_id])
       end
 
     attributes =
@@ -23,14 +23,11 @@ class Dev::RandomConsentFormController < ApplicationController
     consent_form =
       FactoryBot.create(:consent_form, :draft, session:, **attributes)
 
-    consent_form
-      .consent_form_programmes
-      .includes(:programme)
-      .find_each do |consent_form_programme|
-        if consent_form_programme.programme.flu?
-          consent_form_programme.update!(vaccine_methods: %w[nasal injection])
-        end
+    consent_form.consent_form_programmes.find_each do |consent_form_programme|
+      if consent_form_programme.flu?
+        consent_form_programme.update!(vaccine_methods: %w[nasal injection])
       end
+    end
 
     consent_form.seed_health_questions
     consent_form.each_health_answer do |health_answer|

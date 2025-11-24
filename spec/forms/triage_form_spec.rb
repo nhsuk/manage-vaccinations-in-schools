@@ -3,7 +3,7 @@
 describe TriageForm do
   subject(:form) { described_class.new(patient:, session:, programme:) }
 
-  let(:programme) { CachedProgramme.sample }
+  let(:programme) { Programme.sample }
   let(:session) { create(:session, programmes: [programme]) }
   let(:patient) { create(:patient, session:) }
 
@@ -33,7 +33,7 @@ describe TriageForm do
       )
     end
 
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
     let(:patient) { create(:patient, :consent_given_triage_needed, session:) }
     let(:delay_vaccination_until) { nil }
 
@@ -66,7 +66,7 @@ describe TriageForm do
       )
     end
 
-    let(:programme) { CachedProgramme.flu }
+    let(:programme) { Programme.flu }
     let(:patient) do
       create(:patient, :consent_given_nasal_only_triage_needed, session:)
     end
@@ -92,7 +92,7 @@ describe TriageForm do
       )
     end
 
-    let(:programme) { CachedProgramme.mmr }
+    let(:programme) { Programme.mmr }
     let(:patient) { create(:patient, :consent_given_triage_needed, session:) }
     let(:vaccination_record) do
       create(:vaccination_record, patient:, programme:)
@@ -108,7 +108,7 @@ describe TriageForm do
   end
 
   context "programme is MMR" do
-    let(:programme) { CachedProgramme.mmr }
+    let(:programme) { Programme.mmr }
 
     describe "validation for delay_vaccination_until" do
       subject(:validation_errors) do

@@ -7,14 +7,15 @@ describe GovukNotifyPersonalisation do
       session:,
       consent:,
       consent_form:,
-      programmes:,
+      programme_types:,
       vaccination_record:
     ).to_h
   end
 
-  let(:hpv_programme) { CachedProgramme.hpv }
-  let(:flu_programme) { CachedProgramme.flu }
+  let(:hpv_programme) { Programme.hpv }
+  let(:flu_programme) { Programme.flu }
   let(:programmes) { [hpv_programme] }
+  let(:programme_types) { programmes.map(&:type) }
 
   let(:team) do
     create(
@@ -140,7 +141,7 @@ describe GovukNotifyPersonalisation do
   end
 
   context "with multiple programmes" do
-    let(:programmes) { [CachedProgramme.menacwy, CachedProgramme.td_ipv] }
+    let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
 
     it { should include(vaccination: "MenACWY and Td/IPV vaccinations") }
   end
@@ -291,7 +292,7 @@ describe GovukNotifyPersonalisation do
     end
 
     context "for the flu programme" do
-      let(:programmes) { [CachedProgramme.flu] }
+      let(:programmes) { [Programme.flu] }
 
       it do
         expect(to_h).to include(
@@ -325,7 +326,7 @@ describe GovukNotifyPersonalisation do
     end
 
     context "for the MMR programme" do
-      let(:programmes) { [CachedProgramme.mmr] }
+      let(:programmes) { [Programme.mmr] }
 
       it { expect(to_h).to include(consented_vaccine_methods_message: "") }
 
@@ -383,7 +384,7 @@ describe GovukNotifyPersonalisation do
     end
 
     context "for the flu programme" do
-      let(:programmes) { [CachedProgramme.flu] }
+      let(:programmes) { [Programme.flu] }
 
       it do
         expect(to_h).to include(
@@ -425,7 +426,7 @@ describe GovukNotifyPersonalisation do
     end
 
     context "for the MMR programme" do
-      let(:programmes) { [CachedProgramme.mmr] }
+      let(:programmes) { [Programme.mmr] }
 
       it { expect(to_h).to include(consented_vaccine_methods_message: "") }
 
@@ -475,7 +476,7 @@ describe GovukNotifyPersonalisation do
     end
 
     context "for the MMR programme" do
-      let(:programmes) { [CachedProgramme.mmr] }
+      let(:programmes) { [Programme.mmr] }
 
       let(:patient) do
         create(:patient, date_of_birth: Date.new(2018, 2, 1), session:)
@@ -552,7 +553,7 @@ describe GovukNotifyPersonalisation do
     end
 
     context "and a nasal spray programme" do
-      let(:programmes) { [CachedProgramme.flu] }
+      let(:programmes) { [Programme.flu] }
 
       before do
         create(
@@ -602,7 +603,8 @@ describe GovukNotifyPersonalisation do
     before do
       Vaccine
         .active
-        .find_by(programme: hpv_programme)
+        .where_programme(hpv_programme)
+        .first
         .update!(side_effects: %w[swelling unwell])
     end
 
@@ -632,7 +634,7 @@ describe GovukNotifyPersonalisation do
   end
 
   context "with the flu programme" do
-    let(:programmes) { [CachedProgramme.flu] }
+    let(:programmes) { [Programme.flu] }
 
     it do
       expect(to_h).to include(

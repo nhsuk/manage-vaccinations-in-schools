@@ -92,7 +92,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
       ).where(@filters.to_where_clause)
 
     apply_workgroup_filter if params[:workgroup].present?
-    apply_default_year_group_filter
+    apply_year_group_filter
 
     @scope = @base_scope.not_archived
   end
@@ -165,8 +165,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
     @base_scope = @base_scope.where(team_id: team.id) if team
   end
 
-  def apply_default_year_group_filter
-    return if params[:year_group].present?
+  def apply_year_group_filter
     return if params[:programme].blank?
 
     patient_table = ReportingAPI::PatientProgrammeStatus.arel_table

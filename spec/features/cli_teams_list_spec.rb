@@ -23,7 +23,7 @@ describe "mavis teams list" do
   end
 
   def and_there_are_teams_in_the_organisations
-    @programme = CachedProgramme.sample
+    @programme = Programme.sample
     @team1 =
       create(:team, organisation: @organisation1, programmes: [@programme])
     @team2 =

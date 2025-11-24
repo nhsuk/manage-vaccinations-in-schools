@@ -30,7 +30,7 @@ module MavisCLI
         MavisCLI.load_rails
 
         team = Team.find_by!(workgroup:)
-        programme = Programme.find_by!(type: programme_type)
+        programme = Programme.find(programme_type)
 
         attributes = {
           requires_registration:,
@@ -42,7 +42,7 @@ module MavisCLI
           .sessions
           .includes(:location)
           .where(academic_year: AcademicYear.pending)
-          .has_programmes([programme])
+          .has_all_programmes_of([programme])
           .find_each do |session|
             session.assign_attributes(attributes)
 

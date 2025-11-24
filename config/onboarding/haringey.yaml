@@ -12,7 +12,7 @@ team:
   reply_to_id: 74533cb7-d0d4-46b9-aac7-4eb311ebfa63
   type: poc_only
 
-programmes: [menacwy, td_ipv]
+programmes: [menacwy, mmr, td_ipv]
 
 subteams:
   haringey:

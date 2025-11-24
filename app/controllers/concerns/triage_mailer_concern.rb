@@ -24,7 +24,7 @@ module TriageMailerConcern
   private
 
   def validate_consent_programme!(consent, programme)
-    if consent.programme_id != programme.id
+    if consent.programme_type != programme.type
       raise "Consent is for a different programme."
     end
   end

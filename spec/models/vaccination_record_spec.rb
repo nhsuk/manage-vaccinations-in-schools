@@ -38,7 +38,6 @@
 #  nhs_immunisations_api_id                :string
 #  patient_id                              :bigint           not null
 #  performed_by_user_id                    :bigint
-#  programme_id                            :bigint           not null
 #  session_id                              :bigint
 #  supplied_by_user_id                     :bigint
 #  vaccine_id                              :bigint
@@ -46,7 +45,6 @@
 # Indexes
 #
 #  idx_on_patient_id_programme_type_outcome_453b557b54             (patient_id,programme_type,outcome) WHERE (discarded_at IS NULL)
-#  idx_vr_fast_lookup                                              (patient_id,programme_id,outcome) WHERE (discarded_at IS NULL)
 #  index_vaccination_records_on_batch_id                           (batch_id)
 #  index_vaccination_records_on_discarded_at                       (discarded_at)
 #  index_vaccination_records_on_location_id                        (location_id)
@@ -57,7 +55,6 @@
 #  index_vaccination_records_on_pending_changes_not_empty          (id) WHERE (pending_changes <> '{}'::jsonb)
 #  index_vaccination_records_on_performed_by_user_id               (performed_by_user_id)
 #  index_vaccination_records_on_performed_ods_code_and_patient_id  (performed_ods_code,patient_id) WHERE (session_id IS NULL)
-#  index_vaccination_records_on_programme_id                       (programme_id)
 #  index_vaccination_records_on_programme_type                     (programme_type)
 #  index_vaccination_records_on_session_id                         (session_id)
 #  index_vaccination_records_on_supplied_by_user_id                (supplied_by_user_id)
@@ -112,7 +109,7 @@ describe VaccinationRecord do
         build(:vaccination_record, programme:, session:)
       end
 
-      let(:programme) { CachedProgramme.sample }
+      let(:programme) { Programme.sample }
       let(:session) { create(:session, programmes: [programme]) }
 
       it { should validate_absence_of(:location_name) }
@@ -123,7 +120,7 @@ describe VaccinationRecord do
         build(:vaccination_record, programme:, session:)
       end
 
-      let(:programme) { CachedProgramme.sample }
+      let(:programme) { Programme.sample }
       let(:team) do
         create(:team, :with_generic_clinic, programmes: [programme])
       end
@@ -159,7 +156,7 @@ describe VaccinationRecord do
   describe "#dose_volume_ml" do
     subject { vaccination_record.dose_volume_ml }
 
-    let(:programme) { CachedProgramme.sample }
+    let(:programme) { Programme.sample }
 
     let(:vaccine) { build(:vaccine, programme:, dose_volume_ml: 10) }
 
@@ -234,7 +231,7 @@ describe VaccinationRecord do
     subject { vaccination_record.show_in_academic_year?(academic_year) }
 
     context "with a seasonal record performed in the 2023/24 academic year" do
-      let(:programme) { CachedProgramme.flu }
+      let(:programme) { Programme.flu }
       let(:vaccination_record) do
         build(
           :vaccination_record,
@@ -257,7 +254,7 @@ describe VaccinationRecord do
     end
 
     context "with a non-seasonal record performed in the 2023/24 academic year" do
-      let(:programme) { CachedProgramme.hpv }
+      let(:programme) { Programme.hpv }
       let(:vaccination_record) do
         build(
           :vaccination_record,

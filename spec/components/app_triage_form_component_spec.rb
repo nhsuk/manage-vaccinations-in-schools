@@ -6,7 +6,7 @@ describe AppTriageFormComponent do
   let(:component) { described_class.new(triage_form, url:) }
   let(:url) { "/triage" }
 
-  let(:programme) { CachedProgramme.sample }
+  let(:programme) { Programme.sample }
   let(:session) { create(:session, programmes: [programme]) }
   let(:patient) { create(:patient, session:) }
 
@@ -22,7 +22,7 @@ describe AppTriageFormComponent do
   end
 
   describe "hint text and triage options for consented delivery method(s)" do
-    let(:programme) { CachedProgramme.flu }
+    let(:programme) { Programme.flu }
 
     context "when only injection is consented to" do
       before do
@@ -97,7 +97,7 @@ describe AppTriageFormComponent do
   end
 
   context "when programme does not have multiple delivery methods" do
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
 
     before do
       create(
@@ -121,7 +121,7 @@ describe AppTriageFormComponent do
 
   context "hint text for delayed triage when programme is MMR" do
     context "when the patient has not received any dose" do
-      let(:programme) { CachedProgramme.mmr }
+      let(:programme) { Programme.mmr }
 
       it "doesn't show the specific hint text about the 2nd dose" do
         expect(rendered).not_to have_text("2nd dose is not due until")
@@ -129,7 +129,7 @@ describe AppTriageFormComponent do
     end
 
     context "when the patient has received the 1st dose" do
-      let(:programme) { CachedProgramme.mmr }
+      let(:programme) { Programme.mmr }
 
       before do
         create(:vaccination_record, patient:, programme:, session:)

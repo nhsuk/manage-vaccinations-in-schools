@@ -4,7 +4,7 @@ describe "Pre-screening" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
   scenario "must be confirmed before vaccinating HPV" do
-    given_a_session_exists(:hpv)
+    given_a_session_exists(Programme.hpv)
 
     when_i_go_to_a_patient_that_is_safe_to_vaccinate
     then_i_see_the_pre_screening_questions
@@ -15,7 +15,7 @@ describe "Pre-screening" do
   end
 
   scenario "must be confirmed before vaccinating MenACWY" do
-    given_a_session_exists(:menacwy)
+    given_a_session_exists(Programme.menacwy)
 
     when_i_go_to_a_patient_that_is_safe_to_vaccinate
     then_i_see_the_pre_screening_questions
@@ -27,7 +27,7 @@ describe "Pre-screening" do
   end
 
   scenario "must be confirmed before vaccinating Td/IPV" do
-    given_a_session_exists(:td_ipv)
+    given_a_session_exists(Programme.td_ipv)
 
     when_i_go_to_a_patient_that_is_safe_to_vaccinate
     then_i_see_the_pre_screening_questions
@@ -39,7 +39,7 @@ describe "Pre-screening" do
   end
 
   scenario "must be confirmed before vaccinating flu injection" do
-    given_a_session_exists(:flu)
+    given_a_session_exists(Programme.flu)
 
     when_i_go_to_a_patient_that_is_safe_to_vaccinate
     then_i_see_the_pre_screening_questions
@@ -51,7 +51,7 @@ describe "Pre-screening" do
   end
 
   scenario "must be confirmed before vaccinating flu nasal" do
-    given_a_session_exists(:flu, vaccine_method: "nasal")
+    given_a_session_exists(Programme.flu, vaccine_method: "nasal")
 
     when_i_go_to_a_patient_that_is_safe_to_vaccinate
     then_i_see_the_pre_screening_questions
@@ -62,8 +62,7 @@ describe "Pre-screening" do
     then_i_see_an_error_message
   end
 
-  def given_a_session_exists(programme_type, vaccine_method: "injection")
-    programme = CachedProgramme.send(programme_type)
+  def given_a_session_exists(programme, vaccine_method: "injection")
     team = create(:team, programmes: [programme])
 
     @nurse = create(:nurse, teams: [team])

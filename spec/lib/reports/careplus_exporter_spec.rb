@@ -247,7 +247,7 @@ describe Reports::CareplusExporter do
       patient = create(:patient, session:)
 
       other_programme =
-        CachedProgramme.send((Programme.types.values - [programme.type]).sample)
+        Programme.find((Programme::TYPES - [programme.type]).sample)
 
       create(
         :vaccination_record,
@@ -313,7 +313,7 @@ describe Reports::CareplusExporter do
   end
 
   context "Flu programme" do
-    let(:programme) { CachedProgramme.flu }
+    let(:programme) { Programme.flu }
     let(:delivery_method) { :intramuscular }
     let(:expected_vaccine_code) { "FLU" }
 
@@ -321,7 +321,7 @@ describe Reports::CareplusExporter do
   end
 
   context "Flu programme using nasal spray" do
-    let(:programme) { CachedProgramme.flu }
+    let(:programme) { Programme.flu }
     let(:delivery_method) { :nasal_spray }
     let(:expected_vaccine_code) { "FLUENZ" }
 
@@ -329,7 +329,7 @@ describe Reports::CareplusExporter do
   end
 
   context "HPV programme" do
-    let(:programme) { CachedProgramme.hpv }
+    let(:programme) { Programme.hpv }
     let(:delivery_method) { :intramuscular }
     let(:expected_vaccine_code) { "HPV" }
 
@@ -337,7 +337,7 @@ describe Reports::CareplusExporter do
   end
 
   context "MenACWY programme" do
-    let(:programme) { CachedProgramme.menacwy }
+    let(:programme) { Programme.menacwy }
     let(:delivery_method) { :intramuscular }
     let(:expected_vaccine_code) { "ACWYX14" }
 
@@ -345,7 +345,7 @@ describe Reports::CareplusExporter do
   end
 
   context "MMR programme" do
-    let(:programme) { CachedProgramme.mmr }
+    let(:programme) { Programme.mmr }
     let(:delivery_method) { :intramuscular }
     let(:expected_vaccine_code) { "MMR" }
 
@@ -353,7 +353,7 @@ describe Reports::CareplusExporter do
   end
 
   context "Td/IPV programme" do
-    let(:programme) { CachedProgramme.td_ipv }
+    let(:programme) { Programme.td_ipv }
     let(:delivery_method) { :intramuscular }
     let(:expected_vaccine_code) { "3IN1" }
 

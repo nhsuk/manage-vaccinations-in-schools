@@ -25,7 +25,6 @@
 #  consent_form_id                                 :bigint
 #  parent_id                                       :bigint
 #  patient_id                                      :bigint           not null
-#  programme_id                                    :bigint           not null
 #  recorded_by_user_id                             :bigint
 #  team_id                                         :bigint           not null
 #
@@ -35,7 +34,6 @@
 #  index_consents_on_consent_form_id      (consent_form_id)
 #  index_consents_on_parent_id            (parent_id)
 #  index_consents_on_patient_id           (patient_id)
-#  index_consents_on_programme_id         (programme_id)
 #  index_consents_on_programme_type       (programme_type)
 #  index_consents_on_recorded_by_user_id  (recorded_by_user_id)
 #  index_consents_on_team_id              (team_id)
@@ -71,8 +69,6 @@ class Consent < ApplicationRecord
              optional: true,
              foreign_key: :recorded_by_user_id
 
-  has_many :vaccines, through: :programme
-
   scope :withdrawn, -> { where.not(withdrawn_at: nil) }
   scope :not_withdrawn, -> { where(withdrawn_at: nil) }
 
@@ -102,6 +98,8 @@ class Consent < ApplicationRecord
   def name
     via_self_consent? ? patient.full_name : parent.label
   end
+
+  delegate :vaccines, to: :programme
 
   def response_provided? = !response_not_provided?
 
@@ -148,12 +146,12 @@ class Consent < ApplicationRecord
     if should_invalidate_existing_patient_specific_directions?
       patient
         .patient_specific_directions
-        .where(academic_year:, programme:)
+        .where(academic_year:, programme_type:)
         .invalidate_all
     end
 
     if should_invalidate_existing_triages?
-      patient.triages.where(academic_year:, programme:).invalidate_all
+      patient.triages.where(academic_year:, programme_type:).invalidate_all
     end
   end
 
@@ -173,27 +171,24 @@ class Consent < ApplicationRecord
         consent_form.find_or_create_parent_with_relationship_to!(patient:)
 
       consents =
-        consent_form
-          .consent_form_programmes
-          .includes(:programme)
-          .map do |consent_form_programme|
-            patient.consents.create!(
-              academic_year: consent_form.academic_year,
-              consent_form:,
-              health_answers: consent_form.health_answers,
-              notes: consent_form_programme.notes,
-              parent:,
-              programme: consent_form_programme.programme,
-              reason_for_refusal: consent_form_programme.reason_for_refusal,
-              recorded_by: current_user,
-              response: consent_form_programme.response,
-              route: "website",
-              submitted_at: consent_form.recorded_at,
-              team: consent_form.team,
-              vaccine_methods: consent_form_programme.vaccine_methods,
-              without_gelatine: consent_form_programme.without_gelatine
-            )
-          end
+        consent_form.consent_form_programmes.map do |consent_form_programme|
+          patient.consents.create!(
+            academic_year: consent_form.academic_year,
+            consent_form:,
+            health_answers: consent_form.health_answers,
+            notes: consent_form_programme.notes,
+            parent:,
+            programme_type: consent_form_programme.programme_type,
+            reason_for_refusal: consent_form_programme.reason_for_refusal,
+            recorded_by: current_user,
+            response: consent_form_programme.response,
+            route: "website",
+            submitted_at: consent_form.recorded_at,
+            team: consent_form.team,
+            vaccine_methods: consent_form_programme.vaccine_methods,
+            without_gelatine: consent_form_programme.without_gelatine
+          )
+        end
 
       StatusUpdater.call(patient:)
 
@@ -202,7 +197,8 @@ class Consent < ApplicationRecord
   end
 
   def update_vaccination_records_no_notify!
-    vaccination_records = VaccinationRecord.where(patient:, programme:)
+    vaccination_records =
+      VaccinationRecord.where_programme(programme).where(patient:)
 
     vaccination_records.find_each do |vaccination_record|
       vaccination_record.update!(

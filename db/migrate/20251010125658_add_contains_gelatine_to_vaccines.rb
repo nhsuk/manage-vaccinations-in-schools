@@ -6,12 +6,10 @@ class AddContainsGelatineToVaccines < ActiveRecord::Migration[8.0]
 
     reversible do |direction|
       direction.up do
-        Vaccine
-          .includes(:programme)
-          .find_each do |vaccine|
-            contains_gelatine = vaccine.programme.flu? && vaccine.nasal?
-            vaccine.update_columns(contains_gelatine:)
-          end
+        Vaccine.find_each do |vaccine|
+          contains_gelatine = vaccine.programme.flu? && vaccine.nasal?
+          vaccine.update_columns(contains_gelatine:)
+        end
       end
     end
 

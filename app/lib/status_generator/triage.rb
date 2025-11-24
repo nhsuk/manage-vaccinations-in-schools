@@ -49,7 +49,7 @@ class StatusGenerator::Triage
     return false unless programme.triage_on_vaccination_history?
 
     existing_records =
-      vaccination_records.select { it.programme_id == programme_id }
+      vaccination_records.select { it.programme_type == programme_type }
 
     if programme.seasonal?
       existing_records.select! { it.academic_year == academic_year }
@@ -67,7 +67,7 @@ class StatusGenerator::Triage
               :triages,
               :vaccination_records
 
-  def programme_id = programme.id
+  def programme_type = programme.type
 
   def vaccinated?
     # We only care about whether the patient is vaccinated so although we're
@@ -130,10 +130,11 @@ class StatusGenerator::Triage
 
   def latest_consents
     @latest_consents ||=
-      ConsentGrouper.call(consents, programme_id:, academic_year:)
+      ConsentGrouper.call(consents, programme_type:, academic_year:)
   end
 
   def latest_triage
-    @latest_triage ||= TriageFinder.call(triages, programme_id:, academic_year:)
+    @latest_triage ||=
+      TriageFinder.call(triages, programme_type:, academic_year:)
   end
 end

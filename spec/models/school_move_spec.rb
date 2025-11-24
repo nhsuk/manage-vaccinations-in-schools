@@ -53,7 +53,7 @@ describe SchoolMove do
 
     let(:today) { nil }
     let(:user) { create(:user) }
-    let(:programmes) { [CachedProgramme.sample] }
+    let(:programmes) { [Programme.sample] }
     let(:team) { create(:team, :with_generic_clinic, programmes:) }
     let(:generic_clinic_session) { team.generic_clinic_session(academic_year:) }
 

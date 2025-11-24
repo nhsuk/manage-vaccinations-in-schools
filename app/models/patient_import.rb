@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class PatientImport < ApplicationRecord
+  include Importable
+
   PDS_MATCH_THRESHOLD = 0.7
   CHANGESET_THRESHOLD = 10
 
@@ -17,6 +19,46 @@ class PatientImport < ApplicationRecord
       :changed_record_count
     else
       :exact_duplicate_record_count
+    end
+  end
+
+  def show_approved_reviewers?
+    (processed? || partially_processed?) && reviewed_by_user_ids.present?
+  end
+
+  def show_cancelled_reviewer?
+    (cancelled? || partially_processed?) && reviewed_by_user_ids.present?
+  end
+
+  def records_count
+    changesets.from_file.count
+  end
+
+  def process_import!
+    changesets =
+      rows.each_with_index.map do |row, row_number|
+        PatientChangeset.from_import_row(row:, import: self, row_number:)
+      end
+
+    if Flipper.enabled?(:import_search_pds)
+      process_no_postcode_changesets(self.changesets.without_postcode)
+      if self.changesets.with_postcode.any?
+        enqueue_pds_cascading_searches(self.changesets.with_postcode)
+        return
+      end
+    end
+
+    changesets.each(&:assign_patient_id)
+
+    validate_changeset_uniqueness!
+    return if changesets_are_invalid?
+
+    if Flipper.enabled?(:import_review_screen)
+      enqueue_review_jobs(self.changesets)
+    else
+      changesets.each(&:committing!)
+
+      CommitImportJob.perform_async(to_global_id.to_s)
     end
   end
 
@@ -87,6 +129,47 @@ class PatientImport < ApplicationRecord
   end
 
   private
+
+  def process_no_postcode_changesets(changesets)
+    changesets.find_each do |cs|
+      cs.search_results << {
+        step: :no_fuzzy_with_history,
+        result: :no_postcode,
+        nhs_number: nil,
+        created_at: Time.current
+      }
+      if Flipper.enabled?(:import_review_screen)
+        cs.calculating_review!
+        ReviewPatientChangesetJob.perform_later(cs.id)
+      else
+        cs.assign_patient_id
+        cs.committing!
+      end
+    end
+  end
+
+  def enqueue_review_jobs(changesets)
+    review_changesets =
+      if Flipper.enabled?(:import_search_pds)
+        changesets.with_postcode
+      else
+        changesets
+      end
+
+    review_changesets.each do |cs|
+      cs.calculating_review!
+      ReviewPatientChangesetJob.perform_later(cs.id)
+    end
+  end
+
+  def enqueue_pds_cascading_searches(changesets)
+    changesets.find_each do |cs|
+      PDSCascadingSearchJob.set(queue: :imports).perform_later(
+        cs,
+        queue: :imports
+      )
+    end
+  end
 
   def check_rows_are_unique
     rows

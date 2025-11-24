@@ -29,7 +29,7 @@ module MavisCLI
         MavisCLI.load_rails
 
         team = Team.find_by!(workgroup: team_workgroup)
-        programmes = Programme.where(type: programme_types)
+        programmes = Programme.find_all(programme_types)
         patient_count = patient_count.to_i
 
         progress_bar = MavisCLI.progress_bar(patient_count)

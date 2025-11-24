@@ -32,11 +32,28 @@
 #
 class ImmunisationImport < ApplicationRecord
   include CSVImportable
+  include Importable
 
   has_and_belongs_to_many :batches
   has_and_belongs_to_many :patient_locations
   has_and_belongs_to_many :sessions
   has_and_belongs_to_many :vaccination_records
+
+  def type_label
+    "Vaccination records"
+  end
+
+  def show_approved_reviewers?
+    false
+  end
+
+  def show_cancelled_reviewer?
+    false
+  end
+
+  def records_count
+    vaccination_records.count
+  end
 
   private
 
@@ -73,6 +90,27 @@ class ImmunisationImport < ApplicationRecord
     end
 
     count_column_to_increment
+  end
+
+  def process_import!
+    counts = COUNT_COLUMNS.index_with(0)
+
+    ActiveRecord::Base.transaction do
+      rows.each do |row|
+        count_column_to_increment = process_row(row)
+        counts[count_column_to_increment] += 1
+        bulk_import(rows: 100)
+      end
+
+      bulk_import(rows: :all)
+
+      postprocess_rows!
+
+      update_columns(processed_at: Time.zone.now, status: :processed, **counts)
+    end
+
+    post_commit!
+    UpdatePatientsFromPDS.call(patients, queue: :imports)
   end
 
   def bulk_import(rows: 100)

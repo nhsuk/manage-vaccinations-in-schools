@@ -36,7 +36,7 @@
 describe CohortImport do
   subject(:cohort_import) { create(:cohort_import, csv:, team:) }
 
-  let(:programmes) { [CachedProgramme.hpv] }
+  let(:programmes) { [Programme.hpv] }
   let(:team) { create(:team, :with_generic_clinic, programmes:) }
 
   let(:file) { "valid.csv" }
@@ -61,6 +61,29 @@ describe CohortImport do
       it "is invalid" do
         expect(cohort_import).to be_invalid
         expect(cohort_import.errors[:csv]).to include(/correct format/)
+      end
+    end
+
+    describe "with too many rows" do
+      let(:file) { "valid.csv" }
+
+      before { stub_const("CSVImportable::MAX_CSV_ROWS", 2) }
+
+      context "when import_row_count_limit flag is enabled" do
+        before { Flipper.enable(:import_row_count_limit) }
+
+        it "is invalid" do
+          expect(cohort_import).to be_invalid
+          expect(cohort_import.errors[:csv]).to include(/less than 2 rows/)
+        end
+      end
+
+      context "when import_row_count_limit flag is disabled" do
+        before { Flipper.disable(:import_row_count_limit) }
+
+        it "is valid" do
+          expect(cohort_import).to be_valid
+        end
       end
     end
   end

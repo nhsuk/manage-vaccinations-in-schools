@@ -12,7 +12,7 @@ team:
   reply_to_id: 311c37a9-eaa0-47c3-bb22-83632d2bb749
   type: poc_only
 
-programmes: [menacwy, td_ipv]
+programmes: [menacwy, mmr, td_ipv]
 
 subteams:
   worcestershire:

@@ -60,7 +60,7 @@ describe "Parental consent create patient" do
   end
 
   def given_the_app_is_setup
-    @programme = CachedProgramme.hpv
+    @programme = Programme.hpv
     @team =
       create(
         :team,

@@ -430,18 +430,33 @@ module NHS::ImmunisationsAPI
 
       unless tweaked_bundle_params == request_params ||
                bundle_params == request_params
-        raise NHS::ImmunisationsAPI::BundleLinkParamsMismatch,
-              "Bundle link parameters do not match request parameters: #{tweaked_bundle_params} != #{request_params}"
+        message =
+          "Bundle link parameters do not match request parameters: #{tweaked_bundle_params} != #{request_params}"
+        Rails.logger.warn(message)
+        Sentry.capture_exception(BundleLinkParamsMismatch.new(message))
       end
     end
 
     def check_operation_outcome_entry(bundle)
-      operation_outcome_entry =
-        bundle.entry&.find { it.resource.resourceType == "OperationOutcome" }
+      operation_outcome_entries =
+        bundle.entry&.select { it.resource.resourceType == "OperationOutcome" }
 
-      if operation_outcome_entry.present?
-        raise NHS::ImmunisationsAPI::OperationOutcomeInBundle,
-              "OperationOutcome entry found in bundle: #{operation_outcome_entry.resource}"
+      operation_outcome_entries.each do |operation_outcome|
+        operation_outcome.resource.issue.each do |issue|
+          message =
+            "OperationOutcome entry found in bundle with severity #{issue.severity}: #{issue}"
+
+          case issue.severity.downcase
+          when "error", "fatal"
+            raise OperationOutcomeInBundle, message
+          when "information", "success"
+            # Ignore these outcomes
+          else
+            # Includes `warning`, and any unexpected response
+            Rails.logger.warn(message)
+            Sentry.capture_exception(OperationOutcomeInBundle.new(message))
+          end
+        end
       end
     end
 

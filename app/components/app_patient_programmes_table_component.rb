@@ -76,8 +76,8 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
 
   def vaccination_status_hash(programme:, academic_year:)
     @vaccination_status_hash ||= {}
-    @vaccination_status_hash[programme.id] ||= {}
-    @vaccination_status_hash[programme.id][
+    @vaccination_status_hash[programme.type] ||= {}
+    @vaccination_status_hash[programme.type][
       academic_year
     ] ||= PatientStatusResolver.new(
       patient,
