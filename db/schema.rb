@@ -571,6 +571,17 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.index ["patient_id", "location_id", "academic_year"], name: "idx_on_patient_id_location_id_academic_year_08a1dc4afe", unique: true
   end
 
+  create_table "patient_programme_vaccinations_searches", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "last_searched_at", null: false
+    t.bigint "patient_id", null: false
+    t.enum "programme_type", null: false, enum_type: "programme_type"
+    t.datetime "updated_at", null: false
+    t.index ["last_searched_at"], name: "idx_on_last_searched_at_96aaa59442"
+    t.index ["patient_id"], name: "index_patient_programme_vaccinations_searches_on_patient_id"
+    t.index ["programme_type"], name: "idx_on_programme_type_0d0cfaeb86"
+  end
+
   create_table "patient_registration_statuses", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.bigint "session_id", null: false
@@ -1033,6 +1044,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
   add_foreign_key "patient_consent_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_locations", "locations"
   add_foreign_key "patient_locations", "patients"
+  add_foreign_key "patient_programme_vaccinations_searches", "patients"
   add_foreign_key "patient_registration_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_registration_statuses", "sessions", on_delete: :cascade
   add_foreign_key "patient_specific_directions", "patients"
