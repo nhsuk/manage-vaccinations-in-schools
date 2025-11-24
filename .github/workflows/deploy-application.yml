@@ -71,12 +71,13 @@ concurrency:
 
 jobs:
   notify-deployment-start:
+    if: ${{ inputs.environment == 'production' }}
     runs-on: ubuntu-latest
     steps:
       - name: Notify deployment start
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
-          webhook: ${{ secrets.SLACK_TEST_WEBHOOK_URL }}
+          webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload: |
             text: "Deployment started :rocket:"
@@ -84,7 +85,7 @@ jobs:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: "Deployment of *git_ref_to_deploy* started"
+                  text: "Deployment of *${{ env.app_version }}* started"
               - type: "section"
                 fields:
                   - type: "mrkdwn"
@@ -167,13 +168,14 @@ jobs:
 
   notify-approval-required:
     name: Notify approval required
+    if: ${{ inputs.environment == 'production' }}
     runs-on: ubuntu-latest
     needs: prepare-deployment
     steps:
       - name: Notify approval required
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
-          webhook: ${{ secrets.SLACK_TEST_WEBHOOK_URL }}
+          webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload: |
             text: ":hourglass: Approval required :hourglass:"
@@ -203,6 +205,8 @@ jobs:
     permissions:
       id-token: write
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
@@ -213,85 +217,88 @@ jobs:
         with:
           path: ${{ runner.temp }}
           name: ${{ inputs.environment }}-ops-task-definition
-      - name: Change family of task definition
+      - name: Register migration task definition
+        id: register-migration-task-definition
         run: |
-          file_path="${{ runner.temp }}/ops-task-definition.json"
-          family_name="mavis-ops-task-definition-$environment"
-          echo "$(jq --arg f "$family_name" '.family = $f' "$file_path")" > "$file_path"
-      - name: Get network config
-        id: get-network-config
+          family_name="mavis-migration-task-definition-$environment"
+          file_path="${{ runner.temp }}/migration-task-definition.json"
+          echo "$(jq --arg f "$family_name" '.family = $f' "${{ runner.temp }}/ops-task-definition.json")" > "$file_path"
+          task_definition_arn=$(aws ecs register-task-definition \
+                                  --cli-input-json file://$file_path \
+                                  --query 'taskDefinition.taskDefinitionArn' \
+                                  --output text
+                                )
+          echo "task_definition_arn=$task_definition_arn" >> $GITHUB_OUTPUT
+      - name: Run schema migrations
+        id: run-schema-migrations
         run: |
-          subnet_id=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=private-subnet-$environment-a --query 'Subnets[0].SubnetId' --output text)
-          security_group_id=$(aws ec2 describe-security-groups --filters Name=group-name,Values=ops-service-$environment --query 'SecurityGroups[0].GroupId' --output text)
+          TASK_DEFINITION_ARN=${{ steps.register-migration-task-definition.outputs.task_definition_arn }}
+          SUBNET_ID=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=private-subnet-$environment-a --query 'Subnets[0].SubnetId' --output text)
+          SECURITY_GROUP_ID=$(aws ec2 describe-security-groups --filters Name=group-name,Values=ops-service-$environment --query 'SecurityGroups[0].GroupId' --output text)
           
-          echo "subnet_id=$subnet_id" >> $GITHUB_OUTPUT
-          echo "security_group_id=$security_group_id" >> $GITHUB_OUTPUT
-      - name: Run migrations
-        id: run-migration
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        with:
-          task-definition: ${{ runner.temp }}/ops-task-definition.json
-          cluster: ${{ env.cluster_name }}
-          run-task: true
-          run-task-subnets: ${{ steps.get-network-config.outputs.subnet_id }}
-          run-task-security-groups: ${{ steps.get-network-config.outputs.security_group_id }}
-          run-task-launch-type: FARGATE
-          run-task-container-overrides: '[{
-                "name": "application",
-                "command": ["bin/rails","db:migrate"]
-              }]'
-      - name: Notify migrations running
+          MAX_ATTEMPTS=3
+          ATTEMPT=1
+
+          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+            TASK_ARN=$(aws ecs run-task \
+              --cluster $cluster_name \
+              --task-definition $TASK_DEFINITION_ARN \
+              --launch-type FARGATE \
+              --network-configuration "awsvpcConfiguration={subnets=[$SUBNET_ID],securityGroups=[$SECURITY_GROUP_ID]}" \
+              --overrides '{
+                "containerOverrides": [{
+                  "name": "application",
+                  "command": ["bin/rails","db:migrate"]
+                }]
+              }' \
+              --query 'tasks[0].taskArn' \
+              --output text)
+            
+            echo "Waiting for task to complete: $TASK_ARN"
+            TASK_ID=$(sed 's:^.*/::' <<< $TASK_ARN)
+            AWS_CONSOLE_URL="https://eu-west-2.console.aws.amazon.com/ecs/v2/clusters/$cluster_name/tasks/$TASK_ID/logs"
+            
+            echo "View logs in AWS Console: $AWS_CONSOLE_URL"
+            if [ $environment = 'production' ]; do
+              ./.github/send_slack_notification.sh "${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}" "$AWS_CONSOLE_URL" "Running schema migrations attempt $ATTEMPT/$MAX_ATTEMPTS"
+            fi
+
+            aws ecs wait tasks-stopped \
+              --cluster $cluster_name \
+              --tasks $TASK_ID
+            
+            EXIT_CODE=$(aws ecs describe-tasks \
+              --cluster $cluster_name \
+              --tasks $TASK_ARN \
+              --query 'tasks[0].containers[0].exitCode' \
+              --output text)
+          
+            echo "Container exit code: $EXIT_CODE"
+          
+            if [ "$EXIT_CODE" = "0" ]; then
+              echo "Migrations completed"
+              break
+            else
+              echo "ECS task failed with exit code: $EXIT_CODE"
+              if [ "$ATTEMPT" = "$MAX_ATTEMPTS" ]; then
+                exit 1
+              fi
+              ATTEMPT=$((ATTEMPT+1))   
+            fi
+          done
+      - name: Notify migrations completed
+        if: ${{ env.environment == 'production' }}
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
-          webhook: ${{ secrets.SLACK_TEST_WEBHOOK_URL }}
+          webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload: |
-            text: ":database: Running schema migrations :database:"
+            text: "Schema migrations finished successfully :white_check_mark:"
             blocks:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: "Running schema migrations :database:"
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View live logs in AWS Console>"
-
-      - name: Wait for task to complete
-        run: |
-          TASK_ARN=${{ fromJSON(steps.run-migration.outputs.run-task-arn)[0] }}
-          echo "Waiting for task to complete: $TASK_ARN"
-          TASK_ID=$(sed 's:^.*/::' <<< $TASK_ARN)
-          
-          echo "View logs in AWS Console: https://eu-west-2.console.aws.amazon.com/ecs/v2/clusters/$cluster_name/tasks/$TASK_ID/logs"
-          
-          while true; do
-            TASK_STATUS=$(aws ecs describe-tasks \
-              --cluster $cluster_name \
-              --tasks $TASK_ARN \
-              --query 'tasks[0].lastStatus' \
-              --output text)
-            
-            if [ "$TASK_STATUS" == "STOPPED" ]; then
-              echo "Task has stopped"
-              break
-            fi
-            sleep 30 # Poll every 30 seconds
-          done
-
-          EXIT_CODE=$(aws ecs describe-tasks \
-            --cluster mavis-$environment \
-            --tasks $TASK_ARN \
-            --query 'tasks[0].containers[0].exitCode' \
-            --output text)
-          
-          echo "Container exit code: $EXIT_CODE"
-          
-          if [ "$EXIT_CODE" != "0" ]; then
-            echo "ECS task failed with exit code: $EXIT_CODE"
-            exit 1
-          fi
-
+                  text: "Schema migrations finished successfully :white_check_mark:"        
   deploy-service:
     name: Deploy service
     runs-on: ubuntu-latest
@@ -344,34 +351,34 @@ jobs:
     if: ${{ !cancelled() }}
     steps:
       - name: Notify deployment success
-        if: ${{ needs.deploy-service.result == 'success' }}
+        if: ${{ env.environment == 'production' &&  needs.deploy-service.result == 'success' }}
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
-          webhook: ${{ secrets.SLACK_TEST_WEBHOOK_URL }}
+          webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload: |
-            text: "*$git_ref_to_deploy* is deployed :ship:"
+            text: "*${{ env.app_version }}* is deployed :ship:"
             blocks:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: "*$git_ref_to_deploy* is deployed :ship:"
+                  text: "*${{ env.app_version }}* is deployed :ship:"
       - name: Notify deployment failure
-        if: ${{ needs.deploy-service.result == 'failure' || needs.run-migrations.result == 'failure' }}
+        if: ${{ env.environment == 'production' && (needs.deploy-service.result == 'failure' || needs.run-migrations.result == 'failure') }}
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
-          webhook: ${{ secrets.SLACK_TEST_WEBHOOK_URL }}
+          webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload: |
-            text: ":x: Deployment failed :x:"
+            text: "Deployment of *${{ env.app_version }}* failed :x:"
             blocks:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: "Deployment of *$app_version* failed"
+                  text: "Deployment of *${{ env.app_version }}* failed :x:"
               - type: "section"
                 fields:
-                  - tpye: "mrkdwn"
+                  - type: "mrkdwn"
                     text: "*Failed job:*\n${{ needs.deploy-service.result == 'failure' && 'deploy-service' || 'run-migrations' }}"
                   - type: "mrkdwn"
                     text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow run>"
