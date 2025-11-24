@@ -15,6 +15,7 @@
 #
 class Organisation < ApplicationRecord
   include ContributesToPatientTeams
+  include FlipperActor
   include ODSCodeConcern
 
   class ActiveRecord_Relation < ActiveRecord::Relation

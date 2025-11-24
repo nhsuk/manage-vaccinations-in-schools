@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Programme
+  include FlipperActor
   include GelatineVaccinesConcern
 
   TYPES = %w[flu hpv menacwy mmr td_ipv].freeze
@@ -28,10 +29,6 @@ class Programme
   def self.exists?(type) = type.in?(TYPES)
 
   def self.sample = find(TYPES.sample)
-
-  def flipper_id
-    "Programme:#{type}"
-  end
 
   def to_param = type
 

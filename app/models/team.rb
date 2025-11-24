@@ -37,6 +37,7 @@
 class Team < ApplicationRecord
   include ContributesToPatientTeams
   include DaysBeforeToWeeksBefore
+  include FlipperActor
   include HasLocationProgrammeYearGroups
   include HasManyProgrammes
 

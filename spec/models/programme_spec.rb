@@ -17,6 +17,8 @@
 describe Programme do
   subject(:programme) { described_class.sample }
 
+  it_behaves_like "a Flipper actor"
+
   describe "#name" do
     subject { programme.name }
 
