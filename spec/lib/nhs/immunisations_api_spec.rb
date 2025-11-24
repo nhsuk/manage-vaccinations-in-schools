@@ -905,10 +905,21 @@ describe NHS::ImmunisationsAPI do
         }
       end
 
-      it "raises an error" do
-        expect { perform_request }.to raise_error(
+      it "raises a warning, and sends to Sentry" do
+        expect(Rails.logger).to receive(:warn)
+        expect(Sentry).to receive(:capture_exception).with(
           NHS::ImmunisationsAPI::BundleLinkParamsMismatch
         )
+
+        perform_request
+      end
+
+      it "continues the job and consumes the records anyway" do
+        expect(perform_request).to be_a FHIR::Bundle
+        expect(perform_request.total).to be 2
+        expect(perform_request.entry.size).to be 3
+        expect(perform_request.entry[0].resource).to be_a FHIR::Immunization
+        expect(perform_request.entry[1].resource).to be_a FHIR::Immunization
       end
     end
 
