@@ -10,7 +10,7 @@ team:
   privacy_notice_url: https://www.example.com/privacy-notice
   privacy_policy_url: https://www.example.com/privacy-policy
 
-programmes: [flu, hpv, menacwy, td_ipv]
+programmes: [flu, hpv, menacwy, mmr, td_ipv]
 
 subteams:
   generic:

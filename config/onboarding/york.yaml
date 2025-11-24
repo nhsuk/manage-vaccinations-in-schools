@@ -12,7 +12,7 @@ team:
   reply_to_id: dcb54933-46b7-4d11-a44e-21a12b2d7de7
   type: poc_only
 
-programmes: [menacwy, td_ipv]
+programmes: [menacwy, mmr, td_ipv]
 
 subteams:
   york:
