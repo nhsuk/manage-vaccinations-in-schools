@@ -477,14 +477,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
     t.string "ods_code"
     t.string "site"
     t.integer "status", default: 0, null: false
-    t.bigint "subteam_id"
     t.string "systm_one_code"
     t.integer "type", null: false
     t.datetime "updated_at", null: false
     t.text "url"
     t.string "urn"
     t.index ["ods_code"], name: "index_locations_on_ods_code", unique: true
-    t.index ["subteam_id"], name: "index_locations_on_subteam_id"
     t.index ["systm_one_code"], name: "index_locations_on_systm_one_code", unique: true
     t.index ["urn", "site"], name: "index_locations_on_urn_and_site", unique: true
     t.index ["urn"], name: "index_locations_on_urn", unique: true, where: "(site IS NULL)"
@@ -1065,7 +1063,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
   add_foreign_key "important_notices", "vaccination_records"
   add_foreign_key "location_programme_year_groups", "location_year_groups", on_delete: :cascade
   add_foreign_key "location_year_groups", "locations", on_delete: :cascade
-  add_foreign_key "locations", "subteams"
   add_foreign_key "notes", "patients"
   add_foreign_key "notes", "sessions"
   add_foreign_key "notes", "users", column: "created_by_user_id"
