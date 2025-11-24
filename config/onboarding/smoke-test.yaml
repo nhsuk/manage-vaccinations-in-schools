@@ -8,7 +8,7 @@ team:
   careplus_venue_code: SMOKE
   privacy_policy_url: https://example.com/privacy
 
-programmes: [hpv]
+programmes: [flu, hpv, menacwy, mmr, td_ipv]
 
 subteams:
   subteam1:
