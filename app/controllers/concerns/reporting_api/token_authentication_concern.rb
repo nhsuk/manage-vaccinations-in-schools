@@ -46,6 +46,7 @@ module ReportingAPI::TokenAuthenticationConcern
           session["user"] = data["user"]
           session["cis2_info"] = data["cis2_info"]
           authenticate_user!
+          touch_sessions(@current_user)
         else
           session.clear
           client_id_error!(jwt)
@@ -66,6 +67,20 @@ module ReportingAPI::TokenAuthenticationConcern
         true,
         { algorithm: ReportingAPI::OneTimeToken::JWT_SIGNING_ALGORITHM }
       )
+    end
+  end
+
+  def touch_sessions(user)
+    sessions =
+      ActiveRecord::SessionStore::Session.where(
+        "(data #>> '{}'::text[])::jsonb -> 'value' -> 'warden.user.user.key' -> 0 @> ?::jsonb",
+        [user.id].to_json
+      )
+
+    now = Time.zone.now.utc.to_i
+    sessions.each do
+      it.data["warden.user.user.session"]["last_request_at"] = now
+      it.save!
     end
   end
 end
