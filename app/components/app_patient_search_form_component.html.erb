@@ -30,7 +30,7 @@
       <% end %>
     <% end %>
 
-    <% if !Flipper.enabled?(:programme_status) && (show_still_to_vaccinate || show_eligible_children) %>
+    <% if !Flipper.enabled?(:programme_status, current_team) && (show_still_to_vaccinate || show_eligible_children) %>
       <%= f.govuk_check_boxes_fieldset :show_only,
                                        multiple: true,
                                        legend: { text: "Show only", size: "s" },
@@ -69,7 +69,7 @@
       <% end %>
     <% end %>
 
-    <% if Flipper.enabled?(:programme_status) %>
+    <% if Flipper.enabled?(:programme_status, current_team) %>
       <% if programme_statuses.count > 1 %>
         <%= f.govuk_radio_buttons_fieldset :programme_status_group,
                                            legend: { text: "Programme status", size: "s" },

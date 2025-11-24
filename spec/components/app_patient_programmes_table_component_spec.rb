@@ -3,7 +3,9 @@
 describe AppPatientProgrammesTableComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(patient, programmes:) }
+  let(:component) do
+    described_class.new(patient, current_team: team, programmes:)
+  end
   let(:team) { create(:team, programmes:) }
   let(:session) { create(:session, team:, programmes:) }
   let(:nurse) do

@@ -21,6 +21,7 @@
     <%= render AppPatientSearchFormComponent.new(
           @form,
           url: programme_patients_path(@programme),
+          current_team:,
           consent_statuses: %w[no_response given refused conflicts],
           triage_statuses: %w[required invite_to_clinic delay_vaccination do_not_vaccinate safe_to_vaccinate],
           vaccination_statuses: Patient::VaccinationStatus.statuses.keys,
@@ -34,6 +35,7 @@
         <%= render AppPatientSearchResultCardComponent.new(
               patient,
               link_to: patient_path(patient),
+              current_team:,
               programmes: [@programme],
               academic_year: @academic_year,
               show_consent_status: @form.consent_statuses.present?,

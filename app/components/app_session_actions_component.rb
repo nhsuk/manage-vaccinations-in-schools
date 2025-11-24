@@ -22,7 +22,7 @@ class AppSessionActionsComponent < ViewComponent::Base
   attr_reader :session, :show_heading
 
   delegate :govuk_summary_list, to: :helpers
-  delegate :academic_year, :programmes, to: :session
+  delegate :academic_year, :programmes, :team, to: :session
 
   def patients = session.patients
 
@@ -56,7 +56,7 @@ class AppSessionActionsComponent < ViewComponent::Base
     count = session.patients_with_no_consent_response_count
 
     href =
-      if Flipper.enabled?(:programme_status)
+      if Flipper.enabled?(:programme_status, team)
         session_patients_path(
           session,
           programme_status_group: "needs_consent",
@@ -84,7 +84,7 @@ class AppSessionActionsComponent < ViewComponent::Base
       ).count
 
     href =
-      if Flipper.enabled?(:programme_status)
+      if Flipper.enabled?(:programme_status, team)
         session_patients_path(
           session,
           programme_status_group: "has_refusal",
@@ -106,7 +106,7 @@ class AppSessionActionsComponent < ViewComponent::Base
       ).count
 
     href =
-      if Flipper.enabled?(:programme_status)
+      if Flipper.enabled?(:programme_status, team)
         session_patients_path(
           session,
           programme_status_group: "needs_triage",

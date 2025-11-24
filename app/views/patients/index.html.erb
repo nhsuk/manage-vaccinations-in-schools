@@ -5,6 +5,7 @@
     <%= render AppPatientSearchFormComponent.new(
           @form,
           url: patients_path,
+          current_team:,
           heading_level: 2,
           programmes: current_team.programmes,
           consent_statuses: %w[no_response given refused conflicts],
@@ -23,6 +24,7 @@
           <%= render AppPatientSearchResultCardComponent.new(
                 patient,
                 link_to: patient_path(patient),
+                current_team:,
                 programmes: @form.programmes,
                 show_consent_status: @form.consent_statuses.present?,
                 show_nhs_number: true,

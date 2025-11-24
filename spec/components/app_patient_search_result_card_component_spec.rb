@@ -16,6 +16,7 @@ describe AppPatientSearchResultCardComponent do
   end
 
   let(:link_to) { "/patient" }
+  let(:current_team) { create(:team) }
   let(:programmes) { [] }
   let(:academic_year) { nil }
   let(:show_consent_status) { false }
@@ -28,6 +29,7 @@ describe AppPatientSearchResultCardComponent do
     described_class.new(
       patient,
       link_to:,
+      current_team:,
       programmes:,
       academic_year:,
       show_consent_status:,
@@ -72,7 +74,7 @@ describe AppPatientSearchResultCardComponent do
     it { should_not have_text("Consent status") }
 
     context "when programme status is enabled" do
-      before { Flipper.enable(:programme_status) }
+      before { Flipper.enable(:programme_status, current_team) }
 
       it { should have_text("Programme statusFluNot eligible") }
     end
