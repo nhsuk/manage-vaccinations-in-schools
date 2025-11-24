@@ -59,11 +59,11 @@ describe "Immunisation imports" do
   end
 
   def then_i_should_see_the_upload_link
-    expect(page).to have_button("Import records")
+    expect(page).to have_button("Upload records")
   end
 
   def when_i_click_on_the_upload_link
-    click_on "Import records"
+    click_on "Upload records"
     choose "Vaccination records"
     click_on "Continue"
   end
@@ -73,7 +73,7 @@ describe "Immunisation imports" do
   end
 
   def and_i_choose_to_import_child_records
-    click_on "Import records"
+    click_on "Upload records"
     choose "Vaccination records"
     click_on "Continue"
   end
@@ -113,7 +113,7 @@ describe "Immunisation imports" do
 
   def when_i_go_back_to_the_upload_page
     click_on "Back"
-    click_on "Import records"
+    click_on "Upload records"
     choose "Vaccination records"
     click_on "Continue"
   end
@@ -150,8 +150,7 @@ describe "Immunisation imports" do
   end
 
   def then_i_should_see_the_upload
-    expect(page).to have_content("Imported on")
-    expect(page).to have_content("Imported byUSER, Test")
+    expect(page).to have_content("Uploaded byUSER, Test")
   end
 
   def when_i_click_on_a_vaccination_record
