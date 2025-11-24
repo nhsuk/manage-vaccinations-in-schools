@@ -51,8 +51,7 @@ class AppImportReviewComponent < ViewComponent::Base
         ) do
           render(
             AppImportReviewIssuesSummaryComponent.new(
-              import: @import,
-              records: @import_issues
+              changesets: @import_issues
             )
           )
         end,
@@ -105,16 +104,9 @@ class AppImportReviewComponent < ViewComponent::Base
 
   def school_moves_message
     count = @school_moves.count
-    if @import.is_a?(ClassImport)
-      "This upload will change the school of the #{count > 1 ? "children" : "child"} listed below. " \
-        "Children present in the class list will be moved into the school, and those who are not in the " \
-        "class list will be moved out of the school. If you approve the upload, these will be flagged as " \
-        "school moves needing review."
-    else
-      "This upload includes #{count} #{count > 1 ? "children" : "child"} with a different school to " \
-        "the one on their Mavis record. If you approve the upload, these will be flagged as " \
-        "school moves needing review."
-    end
+    "This upload includes #{count > 1 ? "children" : "child"} with a different school to " \
+      "the one on their Mavis record. If you approve the upload, these will be flagged as " \
+      "school moves needing review."
   end
 
   def cancel_button_text

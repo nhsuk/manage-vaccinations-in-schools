@@ -442,13 +442,15 @@ describe "Import child records" do
   end
 
   def when_i_click_on_alberts_pds_history
-    find(".nhsuk-details__summary", text: "10 imported records").click
     click_on "TWEEDLE, Albert"
     click_link "PDS history"
   end
 
   def when_i_click_review_for(name)
-    within(:xpath, "//div[h3[contains(text(), 'Close matches')]]") do
+    within(
+      :xpath,
+      "//div[h3[contains(text(), 'records with import issues')]]"
+    ) do
       within(:xpath, ".//tr[contains(., '#{name}')]") { click_link "Review" }
     end
   end
@@ -456,7 +458,7 @@ describe "Import child records" do
   def and_i_upload_import_file(filename)
     travel 1.minute
 
-    click_button "Upload records"
+    click_button "Import records"
     choose "Child records"
     click_button "Continue"
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/#{filename}")
@@ -524,7 +526,7 @@ describe "Import child records" do
   end
 
   def when_i_go_back_to_the_import_page
-    visit "/imports/records"
+    visit "/imports"
 
     click_on_most_recent_import(CohortImport)
   end
@@ -532,7 +534,7 @@ describe "Import child records" do
   def when_i_click_review_for(name)
     within(
       :xpath,
-      "//h3[contains(text(), 'Close matches')]/following-sibling::details[1]"
+      "//div[h3[contains(text(), 'records with import issues')]]"
     ) do
       within(:xpath, ".//tr[contains(., '#{name}')]") { click_link "Review" }
     end
@@ -586,22 +588,19 @@ describe "Import child records" do
   end
 
   def then_i_do_not_see_an_import_review_for_the_first_patient_uploaded_without_nhs_number
-    find(".nhsuk-details__summary", text: "2 upload issues").click
-    expect(page).not_to have_content("ActionsReview SAMSON, Betty")
+    expect(page).not_to have_content("Actions Review SAMSON, Betty")
   end
 
   def when_i_click_on_the_patient_without_review
-    find(".nhsuk-details__summary", text: "10 imported records").click
     click_link "SAMSON, Betty"
   end
 
   def then_i_see_an_import_review_for_the_second_patient_uploaded_without_nhs_number
-    find(".nhsuk-details__summary", text: "2 upload issues").click
+    expect(page).to have_content("Actions Review WILLIAMS, Catherine")
     expect(page).to have_content("Matched on NHS number.")
   end
 
   def when_i_click_on_new_patient_uploaded_without_an_nhs_number
-    find(".nhsuk-details__summary", text: "10 imported records").click
     click_link "BROWN, Charlie"
   end
 
@@ -611,7 +610,8 @@ describe "Import child records" do
   end
 
   def then_i_should_see_the_import_page
-    expect(page).to have_content("Uploaded byUSER, Test")
+    expect(page).to have_content("Imported on")
+    expect(page).to have_content("Imported byUSER, Test")
   end
 
   def and_i_should_see_one_new_patient_created
@@ -718,7 +718,6 @@ describe "Import child records" do
   end
 
   def when_i_click_on_home_educated_patient
-    find(".nhsuk-details__summary", text: "10 imported records").click
     click_link "HOMESCHOOL, Emma"
   end
 
@@ -792,7 +791,6 @@ describe "Import child records" do
   end
 
   def when_i_click_on_patient_with_unknown_relationship
-    find(".nhsuk-details__summary", text: "10 imported records").click
     click_link "GREEN, Oliver"
   end
 
@@ -815,7 +813,7 @@ describe "Import child records" do
   end
 
   def and_i_should_see_no_duplicate_reviews
-    expect(page).not_to have_content("upload issues")
+    expect(page).not_to have_content("Actions Review")
   end
 
   def and_the_registration_on_albert_should_be_set
@@ -831,11 +829,13 @@ describe "Import child records" do
   end
 
   def then_i_see_one_record_is_an_exact_match
-    expect(CohortImport.processed.sole.exact_duplicate_record_count).to eq(2)
+    expect(page).to have_content(
+      "2 records were not imported because they already exist in Mavis"
+    )
   end
 
   def then_i_see_an_nhs_discrepancy
-    expect(page).to have_content("1 NHS number updated")
+    expect(page).to have_content("1 NHS number was updated")
   end
 
   def and_lucy_has_the_pds_nhs_number
@@ -844,8 +844,7 @@ describe "Import child records" do
   end
 
   def and_there_is_an_import_review_for_maia
-    find(".nhsuk-details__summary", text: "1 upload issue").click
-    expect(page).to have_content("ActionsReview SMITH, Maia")
+    expect(page).to have_content("Actions Review SMITH, Maia")
     expect(page).to have_content("Possible match found. Review and confirm.")
   end
 

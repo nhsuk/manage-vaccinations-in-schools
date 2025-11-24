@@ -55,7 +55,7 @@ describe "Triage" do
 
   def and_i_upload_historical_vaccination_records
     click_on "Import", match: :first
-    click_on "Upload records"
+    click_on "Import records"
     choose "Vaccination records"
     click_on "Continue"
 

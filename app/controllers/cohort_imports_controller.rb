@@ -123,7 +123,6 @@ class CohortImportsController < ApplicationController
         processed_at: Time.zone.now,
         status: :partially_processed
       )
-      @cohort_import.save!
       @cohort_import.changesets.ready_for_review.find_each(&:cancelled!)
 
       @cohort_import.postprocess_rows!

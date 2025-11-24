@@ -136,7 +136,6 @@ class ClassImportsController < ApplicationController
         processed_at: Time.zone.now,
         status: :partially_processed
       )
-      @class_import.save!
       @class_import.changesets.from_file.ready_for_review.update_all(
         status: :cancelled
       )

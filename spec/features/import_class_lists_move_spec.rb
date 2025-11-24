@@ -168,7 +168,8 @@ describe "Import class lists - Moving patients" do
 
   def then_i_should_see_the_import_complete_page
     expect(page).to have_content("Completed")
-    expect(page).to have_content("Uploaded by")
+    expect(page).to have_content("Imported on")
+    expect(page).to have_content("Imported by")
   end
 
   def when_i_visit_the_school_moves

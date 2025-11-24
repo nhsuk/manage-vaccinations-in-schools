@@ -273,7 +273,7 @@ describe "Child record imports duplicates" do
   end
 
   def and_i_start_adding_children_to_the_cohort
-    click_button "Upload records"
+    click_button "Import records"
     choose "Child records"
     click_button "Continue"
   end
@@ -289,6 +289,9 @@ describe "Child record imports duplicates" do
 
   def then_i_should_see_the_import_page_with_duplicate_records
     expect(page).to have_content("Imports (3)")
+    expect(page).to have_content(
+      "3 records have import issues to resolve before they can be imported into Mavis"
+    )
   end
 
   def given_i_archive_the_patient_record
@@ -342,7 +345,6 @@ describe "Child record imports duplicates" do
   end
 
   def when_i_review_the_first_duplicate_record
-    find(".nhsuk-details__summary", text: "3 upload issues").click
     click_on "Review CLARKE, Jennifer"
   end
 
@@ -428,13 +430,13 @@ describe "Child record imports duplicates" do
 
   def then_i_should_see_import_issues_with_the_count
     expect(page).to have_content("Imports (1)")
-    expect(page).to have_link("Upload issues")
+    expect(page).to have_link("Import issues")
     expect(page).to have_selector(".app-count", text: "(1)")
   end
 
   def then_i_should_see_no_import_issues_with_the_count
     expect(page).to have_content("Imports (0)")
-    expect(page).to have_link("Upload issues")
+    expect(page).to have_link("Import issues")
     expect(page).to have_selector(".app-count", text: "(0)")
   end
 

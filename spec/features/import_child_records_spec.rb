@@ -181,7 +181,7 @@ describe "Import child records" do
   end
 
   def and_i_choose_to_import_child_records
-    click_on "Upload records"
+    click_on "Import records"
     choose "Child records"
     click_on "Continue"
   end
@@ -207,7 +207,6 @@ describe "Import child records" do
   end
 
   def when_i_click_on_a_patient
-    find(".nhsuk-details__summary", text: "3 imported records").click
     click_on "DOE, Mark"
   end
 
@@ -217,7 +216,8 @@ describe "Import child records" do
   end
 
   def then_i_should_see_the_upload
-    expect(page).to have_content("Uploaded byUSER, Test")
+    expect(page).to have_content("Imported on")
+    expect(page).to have_content("Imported byUSER, Test")
   end
 
   def when_i_visit_the_hpv_programme_page
@@ -315,7 +315,7 @@ describe "Import child records" do
 
   def and_i_go_back_to_the_upload_page
     click_on "Back"
-    click_on "Upload records"
+    click_on "Import records"
     choose "Child records"
     click_on "Continue"
   end
@@ -364,7 +364,7 @@ describe "Import child records" do
   end
 
   def then_i_should_see_import_issues_with_the_count
-    expect(page).to have_link("Upload issues")
+    expect(page).to have_link("Import issues")
     expect(page).to have_selector(".app-count", text: "(1)").twice
   end
 end

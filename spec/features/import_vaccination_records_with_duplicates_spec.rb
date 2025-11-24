@@ -138,7 +138,7 @@ describe "Immunisation imports duplicates" do
   end
 
   def and_i_click_on_the_upload_link
-    click_on "Upload records"
+    click_on "Import records"
     choose "Vaccination records"
     click_on "Continue"
   end
@@ -153,7 +153,9 @@ describe "Immunisation imports duplicates" do
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
-    expect(page).to have_content("2 upload issues")
+    expect(page).to have_content(
+      "2 records have import issues to resolve before they can be imported into Mavis"
+    )
   end
 
   def when_i_choose_to_keep_the_duplicate_record
@@ -175,7 +177,6 @@ describe "Immunisation imports duplicates" do
   end
 
   def when_i_review_the_first_duplicate_record
-    find(".nhsuk-details__summary", text: "2 upload issues").click
     click_on "Review ATTWATER, Caden"
   end
 
@@ -249,12 +250,12 @@ describe "Immunisation imports duplicates" do
   end
 
   def then_i_should_see_import_issues_with_the_count
-    expect(page).to have_link("Upload issues")
+    expect(page).to have_link("Import issues")
     expect(page).to have_selector(".app-count", text: "(1)").twice
   end
 
   def then_i_should_see_no_import_issues_with_the_count
-    expect(page).to have_link("Upload issues")
+    expect(page).to have_link("Import issues")
     expect(page).to have_selector(".app-count", text: "(0")
   end
 end
