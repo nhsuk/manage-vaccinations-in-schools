@@ -49,23 +49,33 @@ describe "mavis stats consents-by-school", type: :integration do
     programme_flu = Programme.flu
     programme_hpv = Programme.hpv
 
+    programmes = [programme_flu, programme_hpv]
+
     @team_a =
       create(
         :team,
         organisation: @organisation,
         workgroup: "ImmunisationNorth",
-        programmes: [programme_flu, programme_hpv]
+        programmes:
       )
     @team_b =
       create(
         :team,
         organisation: @organisation,
         workgroup: "ImmunisationSouth",
-        programmes: [programme_flu, programme_hpv]
+        programmes:
       )
 
-    school1 = create(:school, name: "Primary School", team: @team_a)
-    school2 = create(:school, name: "Secondary School", team: @team_b)
+    school1 =
+      create(:school, name: "Primary School", team: @team_a, programmes:)
+    school2 =
+      create(:school, name: "Secondary School", team: @team_b, programmes:)
+
+    school1.import_year_groups_from_gias!(academic_year: AcademicYear.previous)
+    school1.import_default_programme_year_groups!(
+      programmes,
+      academic_year: AcademicYear.previous
+    )
 
     session1 =
       create(

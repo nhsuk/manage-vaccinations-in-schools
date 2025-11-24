@@ -61,24 +61,20 @@ class LocationSessionsFactory
   def create_session!(programmes:)
     team
       .sessions
-      .create!(academic_year:, location:, programmes:, dates: [])
-      .tap(&:sync_location_programme_year_groups!)
+      .create!(academic_year:, location:, dates: [])
+      .tap { it.sync_location_programme_year_groups!(programmes:) }
   end
 
   def find_or_create_session!(programmes:)
-    programme_types = programmes.map(&:type)
-
     team
       .sessions
-      .includes(:location, :location_programme_year_groups)
-      .create_with(programme_types:, dates: [])
+      .includes(:location, :session_programme_year_groups)
+      .create_with(dates: [])
       .find_or_create_by!(academic_year:, location:)
       .tap do |session|
-        session.update!(
-          programme_types: (session.programme_types + programme_types).sort.uniq
+        session.sync_location_programme_year_groups!(
+          programmes: (session.programmes + programmes).sort.uniq
         )
-
-        session.sync_location_programme_year_groups!
       end
   end
 

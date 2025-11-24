@@ -394,11 +394,28 @@ class ConsentForm < ApplicationRecord
         session_location = school || location
 
         sessions_to_search =
-          Session.has_all_programme_types_of(programme_types).where(
-            academic_year:,
-            location: session_location,
-            team:
-          )
+          Session.where(academic_year:, location: session_location, team:)
+
+        sessions_to_search =
+          # TODO: This doesn't work if a child goes to a different year group
+          #  for their date of birth.
+          if (
+               year_group =
+                 date_of_birth&.academic_year&.to_year_group(academic_year:)
+             )
+            sessions_to_search.where(
+              "(?) >= ?",
+              Session::ProgrammeYearGroup
+                .select(
+                  "COUNT(DISTINCT session_programme_year_groups.programme_type)"
+                )
+                .where("sessions.id = session_programme_year_groups.session_id")
+                .where(programme_type: programme_types, year_group:),
+              programme_types.count
+            )
+          else
+            sessions_to_search.has_all_programme_types_of(programme_types)
+          end
 
         sessions_to_search.find(&:scheduled?) ||
           sessions_to_search.find(&:unscheduled?) || sessions_to_search.first ||

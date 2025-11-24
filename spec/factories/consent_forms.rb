@@ -63,12 +63,23 @@ FactoryBot.define do
       reason_for_refusal { nil }
       reason_for_refusal_notes { "" }
       without_gelatine { false }
+      year_group { programmes.flat_map(&:default_year_groups).sort.uniq.first }
     end
 
     given_name { Faker::Name.first_name }
     family_name { Faker::Name.last_name }
     use_preferred_name { false }
-    date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
+    date_of_birth do
+      if year_group
+        date_range =
+          year_group.to_birth_academic_year(
+            academic_year:
+          ).to_academic_year_date_range
+        Faker::Date.between(from: date_range.begin, to: date_range.end)
+      else
+        Faker::Date.birthday(min_age: 7, max_age: 16)
+      end
+    end
     address_line_1 { Faker::Address.street_address }
     address_town { Faker::Address.city }
     address_postcode { Faker::Address.uk_postcode }

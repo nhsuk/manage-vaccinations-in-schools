@@ -85,10 +85,8 @@ class AppSessionDatesTableComponent < ViewComponent::Base
 
   def patients_for_programme(programme)
     @patients_for_programme ||= {}
-    @patients_for_programme[programme.type] ||= begin
-      birth_academic_years =
-        session.programme_year_groups.birth_academic_years(programme)
-      session.patients.where(birth_academic_year: birth_academic_years)
-    end
+    @patients_for_programme[
+      programme.type
+    ] ||= session.patients.appear_in_programmes([programme], session:)
   end
 end
