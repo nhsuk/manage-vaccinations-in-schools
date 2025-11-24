@@ -152,7 +152,7 @@
       "fullUrl": "urn:uuid:4e7f3c91-a14d-4139-bbcf-859e998d2028",
       "resource": {
         "resourceType": "OperationOutcome",
-        "id": "a5abca2a-4eda-41da-b2cc-95d48c6b791d",
+        "id": "f1753822-5667-4562-a288-1544a0b66d00",
         "meta": {
           "profile": [
             "https://simplifier.net/guide/UKCoreDevelopment2/ProfileUKCore-OperationOutcome"
@@ -161,16 +161,16 @@
         "issue": [
           {
             "severity": "error",
-            "code": "forbidden",
+            "code": "invalid",
             "details": {
               "coding": [
                 {
                   "system": "https://fhir.nhs.uk/Codesystem/http-error-codes",
-                  "code": "SEND_UNAUTHORIZED"
+                  "code": "INVALID"
                 }
               ]
             },
-            "diagnostics": "The sender does not have permissions to access this resource. Please check your credentials and permissions."
+            "diagnostics": "immunization-target must be one or more of the following: COVID19,FLU,HPV,MMR,3IN1,MENACWY,RSV"
           }
         ]
       },
