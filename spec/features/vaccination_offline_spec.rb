@@ -273,7 +273,7 @@ describe "Offline vaccination" do
   def and_i_upload_a_file_with_duplicate_nhs_api_records
     visit "/"
     click_on "Import", match: :first
-    click_on "Upload records"
+    click_on "Import records"
     choose "Vaccination records"
     click_on "Continue"
 
@@ -326,7 +326,7 @@ describe "Offline vaccination" do
   end
 
   def then_i_should_see_no_import_issues_with_the_count
-    expect(page).to have_content("Upload issues (0)")
+    expect(page).to have_content("Import issues (0)")
   end
 
   def when_i_choose_to_record_offline_from_a_school_session_page
@@ -405,7 +405,6 @@ describe "Offline vaccination" do
   end
 
   def when_i_review_the_duplicate_record
-    find(".nhsuk-details__summary", text: "1 upload issue").click
     click_on "Review"
   end
   alias_method :and_i_review_the_duplicate_record,
@@ -517,7 +516,7 @@ describe "Offline vaccination" do
     visit "/"
 
     click_on "Import", match: :first
-    click_on "Upload records"
+    click_on "Import records"
     choose "Vaccination records"
     click_on "Continue"
 
@@ -625,14 +624,19 @@ describe "Offline vaccination" do
     expect(page).not_to have_content("Invalid")
 
     expect(page).to have_content("4 vaccination records")
+    expect(page).to have_content(
+      "2 records were not imported because they already exist in Mavis"
+    )
   end
 
   def then_i_see_a_duplicate_record_needs_review
-    expect(page).to have_content("1 upload issue")
+    expect(page).to have_content(
+      "1 record has import issues to resolve before it can be imported into Mavis"
+    )
   end
 
   def then_i_see_that_no_records_need_review
-    expect(page).not_to have_content("upload issue")
+    expect(page).not_to have_content("has import issues")
   end
 
   def then_i_should_see_a_success_message
