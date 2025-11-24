@@ -111,9 +111,17 @@ class ClassImportsController < ApplicationController
       status: :committing
     )
 
-    @class_import.commit_changesets(
-      @class_import.changesets.from_file.ready_for_review
-    )
+    if @class_import.changesets.from_file.ready_for_review.any?
+      @class_import.commit_changesets(
+        @class_import.changesets.from_file.ready_for_review
+      )
+    else
+      @class_import.update_columns(
+        status: :processed,
+        processed_at: Time.zone.now
+      )
+      @class_import.postprocess_rows!
+    end
 
     redirect_to imports_path, flash: { info: "Import started" }
   end

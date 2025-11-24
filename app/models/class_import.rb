@@ -52,24 +52,12 @@ class ClassImport < PatientImport
 
   def postprocess_rows!
     # Remove patients already in the sessions but not in the class list.
-    birth_academic_years =
-      year_groups.map { it.to_birth_academic_year(academic_year:) }
-
-    existing_patients =
-      Patient.where(birth_academic_year: birth_academic_years).where(
-        PatientLocation
-          .joins(:location)
-          .where("patient_id = patients.id")
-          .where(academic_year:, location:)
-          .arel
-          .exists
+    patients_in_import =
+      (changesets.from_file - changesets.cancelled - changesets.processed).map(
+        &:patient
       )
 
-    patients_in_import =
-      changesets.from_file - changesets.cancelled - changesets.processed
-
-    unknown_patients =
-      existing_patients - patients - patients_in_import.map(&:patient)
+    unknown_patients = patients_to_create_moves_for(patients_in_import)
 
     if Flipper.enabled?(:import_review_screen)
       valid_changesets =
@@ -77,8 +65,17 @@ class ClassImport < PatientImport
           patient_id: unknown_patients.pluck(:id)
         )
       valid_ids = valid_changesets.pluck(:id)
+      valid_patients = Patient.where(id: valid_changesets.pluck(:patient_id))
+
       changesets.not_from_file.committing.where.not(id: valid_ids).destroy_all
-      unknown_patients = Patient.where(id: valid_changesets.pluck(:patient_id))
+
+      missed_patients = unknown_patients - valid_patients
+      if missed_patients.any? && (processed? || partially_processed?)
+        update_columns(status: :calculating_re_review, processed_at: nil)
+        ReviewClassImportSchoolMoveJob.perform_later(id)
+      end
+
+      unknown_patients = valid_patients
     end
 
     school_moves =
@@ -103,6 +100,35 @@ class ClassImport < PatientImport
 
   def post_commit!
     SyncPatientTeamJob.perform_later(SchoolMove, @imported_school_move_ids)
+  end
+
+  def patients_to_create_moves_for(patients_in_import)
+    birth_academic_years =
+      year_groups.map { it.to_birth_academic_year(academic_year:) }
+
+    existing_patients =
+      Patient.where(
+        birth_academic_year: birth_academic_years,
+        school_id: location.id
+      ).where(
+        PatientLocation
+          .joins(:location)
+          .where("patient_id = patients.id")
+          .where(academic_year:, location:)
+          .arel
+          .exists
+      )
+
+    patients_not_in_import = existing_patients - patients_in_import - patients
+
+    # We do not update existing school moves
+    patients_with_school_moves =
+      Patient
+        .joins(:school_moves)
+        .where(id: patients_not_in_import.pluck(:id))
+        .where(school_moves: { academic_year: })
+
+    patients_not_in_import - patients_with_school_moves
   end
 
   private

@@ -49,8 +49,56 @@ describe "Import class lists" do
 
     when_i_ignore_changes
     then_the_re_review_patients_are_not_imported
-    and_i_see_the_import_is_partially_completed
+    and_the_import_is_in_re_review_again
     and_a_school_move_for_rachel_is_created
+
+    when_i_ignore_changes
+    and_i_see_the_import_is_partially_completed
+    and_school_moves_for_all_ignored_records_are_created
+  end
+
+  scenario "Import with re-review for school moves out of school only - ignoring changes" do
+    given_i_am_signed_in
+    and_an_hpv_programme_is_underway
+    and_import_review_is_enabled
+
+    when_i_visit_a_session_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_session
+    and_i_select_the_year_groups
+
+    when_i_upload_a_file_with_one_new_patient
+    then_i_should_see_the_import_review_screen_with_new_patients_only
+
+    when_a_patient_is_moved_into_the_school
+
+    and_i_approve_the_import
+    then_i_see_the_re_review_screen_for_school_moves_out_only
+    and_the_new_patient_is_added_to_the_school
+
+    when_i_ignore_changes
+    then_the_school_move_out_is_created
+  end
+
+  scenario "Import with re-review for school moves out of school only - approving import" do
+    given_i_am_signed_in
+    and_an_hpv_programme_is_underway
+    and_import_review_is_enabled
+
+    when_i_visit_a_session_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_session
+    and_i_select_the_year_groups
+
+    when_i_upload_a_file_with_one_new_patient
+    then_i_should_see_the_import_review_screen_with_new_patients_only
+
+    when_a_patient_is_moved_into_the_school
+
+    and_i_approve_the_import
+    then_i_see_the_re_review_screen_for_school_moves_out_only
+    and_the_new_patient_is_added_to_the_school
+
+    when_i_approve_the_import
+    then_the_school_move_out_is_created
   end
 
   def given_i_am_signed_in
@@ -149,6 +197,15 @@ describe "Import class lists" do
       click_on "Continue"
       wait_for_import_to_complete_until_review(ClassImport)
     end
+  end
+
+  def when_i_upload_a_file_with_one_new_patient
+    attach_file(
+      "class_import[csv]",
+      "spec/fixtures/class_import/review_one_new_patient.csv"
+    )
+    click_on "Continue"
+    wait_for_import_to_complete_until_review(ClassImport)
   end
 
   def and_i_start_adding_children_to_the_session
@@ -263,6 +320,25 @@ describe "Import class lists" do
     expect(PatientLocation.where(location: @school).count).to eq(2)
   end
 
+  def when_a_patient_is_moved_into_the_school
+    @john_smith =
+      create(
+        :patient,
+        given_name: "John",
+        family_name: "Smith",
+        nhs_number: "9435783309",
+        date_of_birth: Date.new(2009, 10, 29),
+        gender_code: :male,
+        address_line_1: "39A Battersea Rise",
+        address_line_2: nil,
+        address_town: "London",
+        address_postcode: "SW1 1AA",
+        school: @school,
+        registration: nil,
+        session: @session
+      )
+  end
+
   def then_i_should_see_the_import_review_screen
     page.refresh
     click_on_most_recent_import(ClassImport)
@@ -320,6 +396,40 @@ describe "Import class lists" do
     expect(PatientChangeset.all.pluck(:status).uniq).to eq(["ready_for_review"])
   end
 
+  def then_i_should_see_the_import_review_screen_with_new_patients_only
+    visit class_import_path(ClassImport.order(:created_at).last)
+    expect(page).to have_content("Needs review")
+
+    find(".nhsuk-details__summary", text: "1 new record").click
+    expect(page).to have_content("KLEIN, Calvin")
+
+    expect(page).not_to have_content("will need review after import")
+
+    expect(PatientChangeset.all.pluck(:status).uniq).to eq(["ready_for_review"])
+  end
+
+  def then_i_see_the_re_review_screen_for_school_moves_out_only
+    visit class_import_path(ClassImport.order(:created_at).last)
+    expect(page).to have_content("Needs re-review")
+
+    find(".nhsuk-details__summary", text: "1 school move").click
+    expect(page).to have_content("SMITH, John")
+
+    expect(page).not_to have_content("new record")
+    expect(page).not_to have_content("close match")
+  end
+
+  def and_the_import_is_in_re_review_again
+    wait_for_import_to_complete_until_review(ClassImport)
+    visit class_import_path(ClassImport.order(:created_at).first)
+    expect(page).to have_content("Needs re-review")
+
+    find(".nhsuk-details__summary", text: "3 school moves").click
+    expect(page).to have_content("KLEIN, Calvin")
+    expect(page).to have_content("LAUREN, Ralphie")
+    expect(page).to have_content("KORS, Michael")
+  end
+
   def and_no_changes_are_committed_yet
     expect(Patient.count).to eq(4)
     coco = Patient.find_by(given_name: "Coco", family_name: "Chanel")
@@ -352,6 +462,11 @@ describe "Import class lists" do
     )
   end
 
+  def and_the_new_patient_is_added_to_the_school
+    calvin = Patient.find_by(given_name: "Calvin", family_name: "Klein")
+    expect(calvin.school).to eq(@school)
+  end
+
   def and_i_can_see_the_import_is_cancelled
     expect(page).to have_content("Cancelled")
     expect(PatientChangeset.all.pluck(:status).uniq).to eq(["cancelled"])
@@ -360,12 +475,20 @@ describe "Import class lists" do
   def when_i_cancel_the_import
     click_on "Cancel and delete upload"
     click_on_most_recent_import(ClassImport)
+    perform_enqueued_jobs_while_exists(only: ReviewClassImportSchoolMoveJob)
   end
 
   def and_i_approve_the_import
-    click_on "Approve and import records"
+    if page.has_button?("Approve and import records")
+      click_on("Approve and import records")
+    else
+      click_on("Approve and import changed records")
+    end
     wait_for_import_to_commit(ClassImport)
+    perform_enqueued_jobs_while_exists(only: ReviewClassImportSchoolMoveJob)
   end
+
+  alias_method :when_i_approve_the_import, :and_i_approve_the_import
 
   def when_i_go_back_to_the_first_import
     visit class_import_path(ClassImport.order(:created_at).first)
@@ -404,8 +527,27 @@ describe "Import class lists" do
     expect(school_move.school_id).to be_nil
   end
 
+  def and_school_moves_for_all_ignored_records_are_created
+    calvin = Patient.find_by(given_name: "Calvin", family_name: "Klein")
+    michael = Patient.find_by(given_name: "Michael", family_name: "Kors")
+    ralphie = Patient.find_by(given_name: "Ralphie", family_name: "Lauren")
+
+    [calvin, michael, ralphie].each do |patient|
+      expect(patient.school_moves.count).to eq(1)
+      expect(patient.school_moves.first.school_id).to be_nil
+    end
+  end
+
+  def then_the_school_move_out_is_created
+    john = Patient.find_by(given_name: "John", family_name: "Smith")
+    expect(john.school_moves.count).to eq(1)
+    school_move = john.school_moves.first
+    expect(school_move.school_id).to be_nil
+  end
+
   def when_i_ignore_changes
     click_on "Ignore changes"
+    perform_enqueued_jobs_while_exists(only: ReviewClassImportSchoolMoveJob)
   end
 
   def then_the_re_review_patients_are_not_imported
