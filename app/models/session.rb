@@ -55,7 +55,9 @@ class Session < ApplicationRecord
   has_many :consent_notifications
   has_many :notes
   has_many :session_notifications
-  has_many :session_programme_year_groups, dependent: :destroy
+  has_many :session_programme_year_groups,
+           class_name: "Session::ProgrammeYearGroup",
+           dependent: :destroy
   has_many :vaccination_records, -> { kept }
 
   has_and_belongs_to_many :immunisation_imports
@@ -96,7 +98,7 @@ class Session < ApplicationRecord
         ->(values) do
           where(
             "(?) >= ?",
-            SessionProgrammeYearGroup
+            Session::ProgrammeYearGroup
               .select(
                 "COUNT(DISTINCT session_programme_year_groups.programme_type)"
               )
@@ -110,7 +112,7 @@ class Session < ApplicationRecord
         ->(values) do
           where(
             "(?) >= 1",
-            SessionProgrammeYearGroup
+            Session::ProgrammeYearGroup
               .select(
                 "COUNT(DISTINCT session_programme_year_groups.programme_type)"
               )
@@ -307,8 +309,8 @@ class Session < ApplicationRecord
       end
 
     ActiveRecord::Base.transaction do
-      SessionProgrammeYearGroup.where(session_id: id).delete_all
-      SessionProgrammeYearGroup.import!(
+      Session::ProgrammeYearGroup.where(session_id: id).delete_all
+      Session::ProgrammeYearGroup.import!(
         %i[session_id programme_type year_group],
         rows
       )

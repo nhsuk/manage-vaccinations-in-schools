@@ -110,7 +110,7 @@ class DraftSession
       session.session_programme_year_groups.to_a +
         new_programmes.flat_map do |programme|
           programme.default_year_groups.map do |year_group|
-            SessionProgrammeYearGroup.new(session:, programme:, year_group:)
+            Session::ProgrammeYearGroup.new(session:, programme:, year_group:)
           end
         end
   end

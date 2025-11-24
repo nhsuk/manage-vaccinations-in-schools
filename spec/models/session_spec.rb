@@ -527,7 +527,7 @@ describe Session do
 
       it "creates session programme year groups" do
         expect { sync_location_programme_year_groups! }.to change(
-          SessionProgrammeYearGroup,
+          Session::ProgrammeYearGroup,
           :count
         ).by(16)
       end
@@ -539,7 +539,7 @@ describe Session do
 
       it "creates session programme year groups" do
         expect { sync_location_programme_year_groups! }.to change(
-          SessionProgrammeYearGroup,
+          Session::ProgrammeYearGroup,
           :count
         ).by(4)
       end

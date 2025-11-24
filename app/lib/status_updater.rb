@@ -190,7 +190,7 @@ class StatusUpdater
 
   def programme_types_per_session_id_and_year_group
     @programme_types_per_session_id_and_year_group ||=
-      SessionProgrammeYearGroup
+      Session::ProgrammeYearGroup
         .joins(:session)
         .where(session: { academic_year: academic_years })
         .pluck(:session_id, :programme_type, :year_group)

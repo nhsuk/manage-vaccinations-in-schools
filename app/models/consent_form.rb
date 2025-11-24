@@ -405,7 +405,7 @@ class ConsentForm < ApplicationRecord
              )
             sessions_to_search.where(
               "(?) >= ?",
-              SessionProgrammeYearGroup
+              Session::ProgrammeYearGroup
                 .select(
                   "COUNT(DISTINCT session_programme_year_groups.programme_type)"
                 )

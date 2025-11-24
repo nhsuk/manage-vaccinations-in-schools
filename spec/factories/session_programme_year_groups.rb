@@ -17,7 +17,7 @@
 #  fk_rails_...  (session_id => sessions.id) ON DELETE => cascade
 #
 FactoryBot.define do
-  factory :session_programme_year_group do
+  factory :session_programme_year_group, class: "Session::ProgrammeYearGroup" do
     transient { programme { Programme.sample } }
 
     session

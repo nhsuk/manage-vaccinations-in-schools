@@ -16,7 +16,7 @@
 #
 #  fk_rails_...  (session_id => sessions.id) ON DELETE => cascade
 #
-class SessionProgrammeYearGroup < ApplicationRecord
+class Session::ProgrammeYearGroup < ApplicationRecord
   self.primary_key = %i[session_id programme_type year_group]
 
   belongs_to :session
