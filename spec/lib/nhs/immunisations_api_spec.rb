@@ -965,9 +965,7 @@ describe NHS::ImmunisationsAPI do
         end
 
         it "doesn't raise an error" do
-          expect { perform_request }.not_to raise_error(
-            NHS::ImmunisationsAPI::OperationOutcomeInBundle
-          )
+          expect { perform_request }.not_to raise_error
         end
 
         it "raises a warning, and sends to Sentry" do
@@ -990,9 +988,7 @@ describe NHS::ImmunisationsAPI do
         end
 
         it "doesn't raise an error" do
-          expect { perform_request }.not_to raise_error(
-            NHS::ImmunisationsAPI::OperationOutcomeInBundle
-          )
+          expect { perform_request }.not_to raise_error
         end
 
         include_examples "continues the job and consumes the records"
