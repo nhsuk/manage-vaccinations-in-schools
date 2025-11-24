@@ -43,7 +43,6 @@
 #  fk_rails_...  (consent_form_id => consent_forms.id)
 #  fk_rails_...  (parent_id => parents.id)
 #  fk_rails_...  (patient_id => patients.id)
-#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (recorded_by_user_id => users.id)
 #  fk_rails_...  (team_id => teams.id)
 #

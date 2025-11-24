@@ -193,7 +193,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
   create_table "consent_form_programmes", force: :cascade do |t|
     t.bigint "consent_form_id", null: false
     t.text "notes", default: "", null: false
-    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "reason_for_refusal"
     t.integer "response"
@@ -242,13 +241,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.index ["team_id"], name: "index_consent_forms_on_team_id"
   end
 
-  create_table "consent_notification_programmes", force: :cascade do |t|
-    t.bigint "consent_notification_id", null: false
-    t.bigint "programme_id", null: false
-    t.index ["consent_notification_id"], name: "idx_on_consent_notification_id_bde310472f"
-    t.index ["programme_id", "consent_notification_id"], name: "idx_on_programme_id_consent_notification_id_e185bde5f5", unique: true
-  end
-
   create_table "consent_notifications", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.enum "programme_types", null: false, array: true, enum_type: "programme_type"
@@ -274,7 +266,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.bigint "parent_id"
     t.datetime "patient_already_vaccinated_notification_sent_at"
     t.bigint "patient_id", null: false
-    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "reason_for_refusal"
     t.bigint "recorded_by_user_id"
@@ -323,7 +314,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
-    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_gillick_assessments_on_location_id"
@@ -432,7 +422,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
 
   create_table "location_programme_year_groups", force: :cascade do |t|
     t.bigint "location_year_group_id", null: false
-    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.index ["location_year_group_id", "programme_type"], name: "idx_on_location_year_group_id_programme_type_904fa3b284", unique: true
     t.index ["location_year_group_id"], name: "index_location_programme_year_groups_on_location_year_group_id"
@@ -495,7 +484,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.integer "delivery_status", default: 0, null: false
     t.bigint "parent_id"
     t.bigint "patient_id"
-    t.integer "programme_ids", array: true
     t.enum "programme_types", default: [], null: false, array: true, enum_type: "programme_type"
     t.string "recipient", null: false
     t.bigint "sent_by_user_id"
@@ -562,7 +550,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
   create_table "patient_consent_statuses", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.bigint "patient_id", null: false
-    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "status", default: 0, null: false
     t.integer "vaccine_methods", default: [], null: false, array: true
@@ -601,7 +588,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.integer "delivery_site", null: false
     t.datetime "invalidated_at"
     t.bigint "patient_id", null: false
-    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.bigint "team_id", null: false
     t.datetime "updated_at", null: false
@@ -628,7 +614,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
   create_table "patient_triage_statuses", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.bigint "patient_id", null: false
-    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "status", default: 0, null: false
     t.integer "vaccine_method"
@@ -645,7 +630,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.bigint "latest_location_id"
     t.integer "latest_session_status"
     t.bigint "patient_id", null: false
-    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "status", default: 0, null: false
     t.index ["academic_year", "patient_id"], name: "idx_on_academic_year_patient_id_9c400fc863"
@@ -710,20 +694,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
-    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_pre_screenings_on_location_id"
     t.index ["patient_id"], name: "index_pre_screenings_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_pre_screenings_on_performed_by_user_id"
     t.index ["programme_type"], name: "index_pre_screenings_on_programme_type"
-  end
-
-  create_table "programmes", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "type", null: false
-    t.datetime "updated_at", null: false
-    t.index ["type"], name: "index_programmes_on_type", unique: true
   end
 
   create_table "reporting_api_one_time_tokens", primary_key: "token", id: :string, force: :cascade do |t|
@@ -781,13 +757,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.index ["session_id"], name: "index_session_programme_year_groups_on_session_id"
   end
 
-  create_table "session_programmes", force: :cascade do |t|
-    t.bigint "programme_id", null: false
-    t.bigint "session_id", null: false
-    t.index ["programme_id"], name: "index_session_programmes_on_programme_id"
-    t.index ["session_id", "programme_id"], name: "index_session_programmes_on_session_id_and_programme_id", unique: true
-  end
-
   create_table "sessions", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.datetime "created_at", null: false
@@ -837,13 +806,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.index ["team_id"], name: "index_team_locations_on_team_id"
   end
 
-  create_table "team_programmes", force: :cascade do |t|
-    t.bigint "programme_id", null: false
-    t.bigint "team_id", null: false
-    t.index ["programme_id"], name: "index_team_programmes_on_programme_id"
-    t.index ["team_id", "programme_id"], name: "index_team_programmes_on_team_id_and_programme_id", unique: true
-  end
-
   create_table "teams", force: :cascade do |t|
     t.string "careplus_venue_code", null: false
     t.datetime "created_at", null: false
@@ -883,7 +845,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
     t.bigint "performed_by_user_id", null: false
-    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "status", null: false
     t.bigint "team_id", null: false
@@ -950,7 +911,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.string "performed_by_given_name"
     t.bigint "performed_by_user_id"
     t.string "performed_ods_code"
-    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "protocol"
     t.bigint "session_id"
@@ -987,7 +947,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
     t.text "manufacturer", null: false
     t.integer "method", null: false
     t.text "nivs_name", null: false
-    t.bigint "programme_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "side_effects", default: [], null: false, array: true
     t.string "snomed_product_code", null: false
@@ -1029,24 +988,19 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
   add_foreign_key "cohort_imports_patients", "cohort_imports", on_delete: :cascade
   add_foreign_key "cohort_imports_patients", "patients", on_delete: :cascade
   add_foreign_key "consent_form_programmes", "consent_forms", on_delete: :cascade
-  add_foreign_key "consent_form_programmes", "programmes", on_delete: :cascade
   add_foreign_key "consent_forms", "locations"
   add_foreign_key "consent_forms", "locations", column: "school_id"
   add_foreign_key "consent_forms", "teams"
-  add_foreign_key "consent_notification_programmes", "consent_notifications", on_delete: :cascade
-  add_foreign_key "consent_notification_programmes", "programmes", on_delete: :cascade
   add_foreign_key "consent_notifications", "patients"
   add_foreign_key "consent_notifications", "sessions"
   add_foreign_key "consent_notifications", "users", column: "sent_by_user_id"
   add_foreign_key "consents", "consent_forms"
   add_foreign_key "consents", "parents"
   add_foreign_key "consents", "patients"
-  add_foreign_key "consents", "programmes"
   add_foreign_key "consents", "teams"
   add_foreign_key "consents", "users", column: "recorded_by_user_id"
   add_foreign_key "gillick_assessments", "locations"
   add_foreign_key "gillick_assessments", "patients"
-  add_foreign_key "gillick_assessments", "programmes"
   add_foreign_key "gillick_assessments", "users", column: "performed_by_user_id"
   add_foreign_key "health_questions", "health_questions", column: "follow_up_question_id"
   add_foreign_key "health_questions", "health_questions", column: "next_question_id"
@@ -1063,7 +1017,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
   add_foreign_key "immunisation_imports_vaccination_records", "immunisation_imports", on_delete: :cascade
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records", on_delete: :cascade
   add_foreign_key "location_programme_year_groups", "location_year_groups", on_delete: :cascade
-  add_foreign_key "location_programme_year_groups", "programmes", on_delete: :cascade
   add_foreign_key "location_year_groups", "locations", on_delete: :cascade
   add_foreign_key "locations", "subteams"
   add_foreign_key "notes", "patients"
@@ -1078,29 +1031,24 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
   add_foreign_key "patient_changesets", "locations", column: "school_id"
   add_foreign_key "patient_changesets", "patients"
   add_foreign_key "patient_consent_statuses", "patients", on_delete: :cascade
-  add_foreign_key "patient_consent_statuses", "programmes"
   add_foreign_key "patient_locations", "locations"
   add_foreign_key "patient_locations", "patients"
   add_foreign_key "patient_registration_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_registration_statuses", "sessions", on_delete: :cascade
   add_foreign_key "patient_specific_directions", "patients"
-  add_foreign_key "patient_specific_directions", "programmes"
   add_foreign_key "patient_specific_directions", "teams"
   add_foreign_key "patient_specific_directions", "users", column: "created_by_user_id"
   add_foreign_key "patient_specific_directions", "vaccines"
   add_foreign_key "patient_teams", "patients", on_delete: :cascade
   add_foreign_key "patient_teams", "teams", on_delete: :cascade
   add_foreign_key "patient_triage_statuses", "patients", on_delete: :cascade
-  add_foreign_key "patient_triage_statuses", "programmes"
   add_foreign_key "patient_vaccination_statuses", "locations", column: "latest_location_id"
   add_foreign_key "patient_vaccination_statuses", "patients", on_delete: :cascade
-  add_foreign_key "patient_vaccination_statuses", "programmes"
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "pds_search_results", "patients"
   add_foreign_key "pre_screenings", "locations"
   add_foreign_key "pre_screenings", "patients"
-  add_foreign_key "pre_screenings", "programmes"
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
   add_foreign_key "reporting_api_one_time_tokens", "users"
   add_foreign_key "school_move_log_entries", "locations", column: "school_id"
@@ -1113,29 +1061,22 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_065009) do
   add_foreign_key "session_notifications", "sessions"
   add_foreign_key "session_notifications", "users", column: "sent_by_user_id"
   add_foreign_key "session_programme_year_groups", "sessions", on_delete: :cascade
-  add_foreign_key "session_programmes", "programmes", on_delete: :cascade
-  add_foreign_key "session_programmes", "sessions", on_delete: :cascade
   add_foreign_key "sessions", "teams"
   add_foreign_key "subteams", "teams"
   add_foreign_key "team_locations", "locations"
   add_foreign_key "team_locations", "subteams"
   add_foreign_key "team_locations", "teams"
-  add_foreign_key "team_programmes", "programmes", on_delete: :cascade
-  add_foreign_key "team_programmes", "teams", on_delete: :cascade
   add_foreign_key "teams", "organisations"
   add_foreign_key "triages", "patients"
-  add_foreign_key "triages", "programmes"
   add_foreign_key "triages", "teams"
   add_foreign_key "triages", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "batches"
   add_foreign_key "vaccination_records", "patients"
-  add_foreign_key "vaccination_records", "programmes"
   add_foreign_key "vaccination_records", "sessions"
   add_foreign_key "vaccination_records", "triages", column: "next_dose_delay_triage_id"
   add_foreign_key "vaccination_records", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "users", column: "supplied_by_user_id"
   add_foreign_key "vaccination_records", "vaccines"
-  add_foreign_key "vaccines", "programmes"
 
   create_view "reporting_api_patient_programme_statuses", materialized: true, sql_definition: <<-SQL
       WITH vaccination_summary AS (
