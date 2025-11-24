@@ -30,6 +30,8 @@ class Organisation < ApplicationRecord
 
   delegate :fhir_reference, to: :fhir_mapper
 
+  def to_param = ods_code
+
   class << self
     delegate :fhir_reference, to: FHIRMapper::Organisation
   end

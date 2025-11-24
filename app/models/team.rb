@@ -92,6 +92,8 @@ class Team < ApplicationRecord
   validates :privacy_policy_url, presence: true
   validates :workgroup, presence: true, uniqueness: true
 
+  def to_param = workgroup
+
   def year_groups(academic_year: nil)
     academic_year ||= AcademicYear.pending
     location_programme_year_groups
