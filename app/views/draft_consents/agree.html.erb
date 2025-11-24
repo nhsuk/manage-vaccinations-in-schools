@@ -2,7 +2,7 @@
   <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
-<% title = t(@draft_consent.programme.type, scope: "draft_consents.agree.title") %>
+<% title = t(@draft_consent.programme.translation_key, scope: "draft_consents.agree.title") %>
 <% content_for :page_title, title %>
 
 <%= form_with model: @draft_consent, url: wizard_path, method: :put do |f| %>
@@ -15,37 +15,40 @@
                                                text: title }) do %>
     <% if @draft_consent.programme.flu? %>
       <%= f.govuk_radio_button :response, "given_nasal",
-                               label: { text: "Yes, for the nasal spray" }, link_errors: true do %>
+                               label: { text: t("draft_consents.agree.response.given_nasal") }, link_errors: true do %>
         <%= f.govuk_radio_buttons_fieldset :injection_alternative,
-                                           legend: { text: "Do they also agree to the injected vaccine if the nasal spray is not suitable?", size: "s" },
-                                           hint: { text: "For example, if the child is heavily congested on the day of the vaccination", size: "s" } do %>
-          <%= f.govuk_radio_button :injection_alternative, "true", label: { text: "Yes" } %>
-          <%= f.govuk_radio_button :injection_alternative, "false", label: { text: "No" } %>
+                                           legend: { text: t("draft_consents.agree.injection_alternative.legend"), size: "s" },
+                                           hint: { text: t("draft_consents.agree.injection_alternative.hint"), size: "s" } do %>
+          <%= f.govuk_radio_button :injection_alternative, "true", label: { text: t("draft_consents.agree.injection_alternative.yes") } %>
+          <%= f.govuk_radio_button :injection_alternative, "false", label: { text: t("draft_consents.agree.injection_alternative.no") } %>
         <% end %>
       <% end %>
       <%= f.govuk_radio_button :response, "given_injection",
-                               label: { text: "Yes, for the injected vaccine only" } %>
+                               label: { text: t("draft_consents.agree.response.given_injection") } %>
     <% elsif @draft_consent.programme.mmr? %>
-      <%= f.govuk_radio_button :response, "given", label: { text: "Yes, they agree" }, link_errors: true do %>
+      <%= f.govuk_radio_button :response, "given", label: { text: t("draft_consents.agree.response.given") }, link_errors: true do %>
         <%= f.govuk_radio_buttons_fieldset :without_gelatine,
-                                           legend: { text: "Do they want their child to have a vaccine without gelatine?", size: "s" },
-                                           hint: { text: "One type of MMR vaccine contains gelatine from pigs. An alternative MMR vaccine is available that does not contain gelatine.", size: "s" } do %>
-          <%= f.govuk_radio_button :without_gelatine, "true", label: { text: "Yes, they want their child to have a vaccine that does not contain gelatine" } %>
-          <%= f.govuk_radio_button :without_gelatine, "false", label: { text: "Their child can have either type of vaccine" } %>
+                                           legend: { text: t("draft_consents.agree.without_gelatine.legend"), size: "s" },
+                                           hint: {
+                                             text: t("draft_consents.agree.without_gelatine.hint",
+                                                     programme_name: @draft_consent.programme.name), size: "s",
+                                           } do %>
+          <%= f.govuk_radio_button :without_gelatine, "true", label: { text: t("draft_consents.agree.without_gelatine.yes") } %>
+          <%= f.govuk_radio_button :without_gelatine, "false", label: { text: t("draft_consents.agree.without_gelatine.no") } %>
         <% end %>
       <% end %>
     <% else %>
       <%= f.govuk_radio_button :response, "given",
-                               label: { text: "Yes, they agree" }, link_errors: true %>
+                               label: { text: t("draft_consents.agree.response.given") }, link_errors: true %>
     <% end %>
 
     <%= f.govuk_radio_button :response, "refused",
-                             label: { text: "No, they do not agree" } %>
+                             label: { text: t("draft_consents.agree.response.refused") } %>
 
     <% unless @draft_consent.via_self_consent? %>
       <%= f.govuk_radio_divider %>
       <%= f.govuk_radio_button :response, "not_provided",
-                               label: { text: "No response" } %>
+                               label: { text: t("draft_consents.agree.response.not_provided") } %>
     <% end %>
   <% end %>
 
