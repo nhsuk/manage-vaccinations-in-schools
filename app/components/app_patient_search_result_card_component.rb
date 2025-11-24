@@ -4,6 +4,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   def initialize(
     patient,
     link_to:,
+    current_team:,
     programmes: [],
     academic_year: nil,
     show_consent_status: false,
@@ -16,6 +17,8 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   )
     @patient = patient
     @link_to = link_to
+    @current_team = current_team
+
     @programmes = programmes
     @academic_year = academic_year || AcademicYear.pending
 
@@ -95,6 +98,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
 
   attr_reader :patient,
               :link_to,
+              :current_team,
               :programmes,
               :academic_year,
               :triage_status,
@@ -115,7 +119,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
            to: :helpers
 
   def programme_status_tag
-    if Flipper.enabled?(:programme_status)
+    if Flipper.enabled?(:programme_status, current_team)
       status_tag(:programme)
     else
       status_tag(:vaccination)

@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class AppPatientProgrammesTableComponent < ViewComponent::Base
-  def initialize(patient, programmes:)
+  def initialize(patient, programmes:, current_team:)
     @patient = patient
     @programmes = programmes
+    @current_team = current_team
   end
 
   def call
@@ -17,7 +18,7 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
 
   private
 
-  attr_reader :patient, :programmes
+  attr_reader :patient, :programmes, :current_team
 
   delegate :govuk_table, to: :helpers
 
@@ -79,7 +80,13 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
     @programme_status_hash[programme.type][
       academic_year
     ] ||= PatientStatusResolver.new(patient, programme:, academic_year:).send(
-      Flipper.enabled?(:programme_status) ? :programme : :vaccination
+      (
+        if Flipper.enabled?(:programme_status, current_team)
+          :programme
+        else
+          :vaccination
+        end
+      )
     )
   end
 end

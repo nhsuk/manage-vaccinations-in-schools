@@ -4,11 +4,10 @@ class Stats::Session
   def initialize(session, programme:)
     @session = session
     @programme = programme
-    @academic_year = session.academic_year
   end
 
   def call
-    if Flipper.enabled?(:programme_status)
+    if Flipper.enabled?(:programme_status, team)
       from_programme_statuses
     else
       from_consent_and_vaccination_statuses
@@ -21,7 +20,7 @@ class Stats::Session
 
   attr_reader :session, :programme
 
-  delegate :academic_year, :location, to: :session
+  delegate :academic_year, :location, :team, to: :session
 
   def from_programme_statuses
     stats = {

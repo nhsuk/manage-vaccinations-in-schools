@@ -212,7 +212,7 @@ describe AppPatientSessionSearchResultCardComponent do
     end
 
     context "when programme status is enabled" do
-      before { Flipper.enable(:programme_status) }
+      before { Flipper.enable(:programme_status, session.team) }
 
       it { should have_text("Programme status") }
     end

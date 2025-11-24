@@ -4,6 +4,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
   def initialize(
     form,
     url:,
+    current_team:,
     programmes: [],
     consent_statuses: [],
     programme_statuses: [],
@@ -20,6 +21,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
   )
     @form = form
     @url = url
+    @current_team = current_team
 
     @programmes = programmes
     @consent_statuses = consent_statuses
@@ -40,6 +42,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
 
   attr_reader :form,
               :url,
+              :current_team,
               :programmes,
               :consent_statuses,
               :patient_specific_direction_statuses,

@@ -9,7 +9,7 @@ class AppSessionOverviewComponent < ViewComponent::Base
 
   attr_reader :session
 
-  delegate :academic_year, :dates, :location, :programmes, to: :session
+  delegate :academic_year, :dates, :location, :programmes, :team, to: :session
 
   delegate :grid_column_class,
            :govuk_table,
@@ -56,7 +56,7 @@ class AppSessionOverviewComponent < ViewComponent::Base
   end
 
   def card_heading_for(key, programme:)
-    if Flipper.enabled?(:programme_status)
+    if Flipper.enabled?(:programme_status, team)
       I18n.t(key, scope: %i[status programme label])
     elsif key.starts_with?("consent_")
       I18n.t(key[8..], scope: %i[status consent label])
@@ -72,7 +72,7 @@ class AppSessionOverviewComponent < ViewComponent::Base
   end
 
   def card_colour_for(key)
-    if Flipper.enabled?(:programme_status)
+    if Flipper.enabled?(:programme_status, team)
       I18n.t(key, scope: %i[status programme colour])
     elsif key.starts_with?("consent_")
       I18n.t(key[8..], scope: %i[status consent colour])
@@ -84,7 +84,7 @@ class AppSessionOverviewComponent < ViewComponent::Base
   def card_link_to_for(key, programme:)
     programme_types = [programme.type]
 
-    if Flipper.enabled?(:programme_status)
+    if Flipper.enabled?(:programme_status, team)
       if key.starts_with?("due_")
         session_patients_path(
           session,

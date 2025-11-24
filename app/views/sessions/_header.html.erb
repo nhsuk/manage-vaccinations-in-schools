@@ -18,7 +18,7 @@
         selected: request.path == session_patients_path(@session),
       )
     
-      unless Flipper.enabled?(:programme_status)
+      unless Flipper.enabled?(:programme_status, current_team)
         nav.with_item(
           href: session_consent_path(@session),
           text: t("sessions.tabs.consent"),

@@ -95,7 +95,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
            :patient_year_group,
            :policy,
            to: :helpers
-  delegate :academic_year, to: :session
+  delegate :academic_year, :team, to: :session
 
   def can_register_attendance?
     attendance_record =
@@ -120,7 +120,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def action_required
-    return if Flipper.enabled?(:programme_status)
+    return if Flipper.enabled?(:programme_status, team)
     return unless %i[register record].include?(context)
 
     next_activities =
@@ -191,7 +191,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def programme_status_tag
-    if Flipper.enabled?(:programme_status)
+    if Flipper.enabled?(:programme_status, team)
       {
         key: :programme,
         value: render(AppAttachedTagsComponent.new(attached_tags(:programme)))
