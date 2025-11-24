@@ -6,6 +6,7 @@ class Programme
 
   TYPES = %w[flu hpv menacwy mmr td_ipv].freeze
   TYPES_SUPPORTING_DELEGATION = %w[flu].freeze
+  MIN_MMRV_ELIGIBILITY_DATE = Date.new(2020, 1, 1).freeze
 
   attr_accessor :type
 
@@ -22,20 +23,32 @@ class Programme
 
   def self.all = TYPES.map { find(it) }
 
-  def self.find(type)
+  def self.find(type, patient: nil)
     @programmes ||= {}
     @programmes[type] ||= if exists?(type)
-      Programme.new(type:)
+      programme = Programme.new(type:)
+      variant_for(programme, patient) || programme
     else
       raise InvalidType, type
     end
   end
 
-  def self.find_all(types) = types.map { find(it) }
+  def self.find_all(types, patient: nil) = types.map { find(it, patient:) }
 
   def self.exists?(type) = type.in?(TYPES)
 
   def self.sample = find(TYPES.sample)
+
+  def self.variant_for(programme, patient)
+    return unless Flipper.enabled?(:mmrv)
+    return unless programme && patient
+
+    if programme.mmr? && patient.date_of_birth >= MIN_MMRV_ELIGIBILITY_DATE
+      ProgrammeVariant.new(programme, variant_type: "mmrv")
+    end
+  end
+
+  private_class_method :variant_for
 
   def to_param = type
 
@@ -59,6 +72,10 @@ class Programme
 
   def name_in_sentence
     @name_in_sentence ||= flu? ? name.downcase : name
+  end
+
+  def filter_name
+    Flipper.enabled?(:mmrv) && mmr? ? "MMR(V)" : name
   end
 
   def doubles? = menacwy? || td_ipv?

@@ -286,4 +286,28 @@ describe Programme do
       it { should eq(5) }
     end
   end
+
+  describe ".find" do
+    context "when programme is MMR and MMRV support iss enabled" do
+      subject(:programme) { described_class.mmr }
+
+      before { Flipper.enable(:mmrv) }
+
+      it "returns a Programme" do
+        expect(described_class.find("mmr")).to be_a(described_class)
+      end
+
+      context "when patient was born after 1 January 2020" do
+        let(:date_of_birth) { Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month }
+        let(:patient) { create(:patient, date_of_birth:) }
+
+        it "returns a ProgrammeVariant with mmrv variant type" do
+          result = described_class.find("mmr", patient:)
+
+          expect(result).to be_a(ProgrammeVariant)
+          expect(result.send(:variant_type)).to eq("mmrv")
+        end
+      end
+    end
+  end
 end
