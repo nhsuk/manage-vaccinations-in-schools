@@ -27,14 +27,9 @@
 # Indexes
 #
 #  index_locations_on_ods_code        (ods_code) UNIQUE
-#  index_locations_on_subteam_id      (subteam_id)
 #  index_locations_on_systm_one_code  (systm_one_code) UNIQUE
 #  index_locations_on_urn             (urn) UNIQUE WHERE (site IS NULL)
 #  index_locations_on_urn_and_site    (urn,site) UNIQUE
-#
-# Foreign Keys
-#
-#  fk_rails_...  (subteam_id => subteams.id)
 #
 
 describe Location do
