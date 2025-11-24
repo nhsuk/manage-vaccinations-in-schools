@@ -16,19 +16,6 @@ jobs:
   setup-development-database:
     name: Setup Development Database
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16.11
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: manage_vaccinations_development
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
     env:
       RAILS_ENV: development
       DATABASE_HOST: localhost
@@ -43,9 +30,32 @@ jobs:
         with:
           node-version-file: .tool-versions
           cache: yarn
+      - name: Build custom postgres image
+        run: |
+          echo -e "FROM postgres:16.11\n\nENV PGDATA=\"/var/lib/postgresql/mydata\"" > db.Dockerfile
+          docker build -t custom-postgres:latest -f db.Dockerfile .
+      - name: Start db container
+        run: |
+          docker run -d \
+            --name database \
+            -e "POSTGRES_HOST_AUTH_METHOD=trust" \
+            -p 5432:5432 \
+            custom-postgres:latest
+      - name: Wait for db to be ready
+        run: |
+          docker exec database bash -c '
+            until pg_isready -U postgres; do
+              echo "Waiting for postgres..."
+              sleep 2
+            done
+                '
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+      - name: Populate database for testing
+        run: |
+          bin/rails db:setup
+          bin/mavis gias import
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
@@ -54,14 +64,9 @@ jobs:
       - name: Login to ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-      - name: Get postgres container ID
-        id: get-container-id
-        run: |
-          CONTAINER_ID=$(docker ps -q --filter "ancestor=postgres:16.11")
-          echo "container-id=$CONTAINER_ID" >> $GITHUB_OUTPUT
       - name: Commit postgres container with database
         run: |
-          docker commit ${{ steps.get-container-id.outputs.container-id }} ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db:latest
+          docker commit database ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db:latest
       - name: Push image
         run: |
           docker tag ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db:latest ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db:${{ github.ref_name }}
