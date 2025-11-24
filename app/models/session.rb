@@ -19,17 +19,11 @@
 #
 # Indexes
 #
-#  index_sessions_on_academic_year_and_location_id_and_team_id  (academic_year,location_id,team_id)
-#  index_sessions_on_dates                                      (dates) USING gin
-#  index_sessions_on_location_id                                (location_id)
-#  index_sessions_on_location_id_and_academic_year_and_team_id  (location_id,academic_year,team_id)
-#  index_sessions_on_team_id_and_academic_year                  (team_id,academic_year)
-#  index_sessions_on_team_id_and_location_id                    (team_id,location_id)
-#  index_sessions_on_team_location_id                           (team_location_id)
+#  index_sessions_on_dates             (dates) USING gin
+#  index_sessions_on_team_location_id  (team_location_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (team_location_id => team_locations.id)
 #
 class Session < ApplicationRecord
