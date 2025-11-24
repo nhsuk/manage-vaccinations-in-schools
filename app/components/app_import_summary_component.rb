@@ -7,37 +7,8 @@ class AppImportSummaryComponent < ViewComponent::Base
     @import = import
   end
 
-  def import_type_label
-    {
-      "ClassImport" => "Class list records",
-      "CohortImport" => "Child records",
-      "ImmunisationImport" => "Vaccination records"
-    }[
-      import.class.name
-    ]
-  end
-
-  def show_approved_reviewers?
-    return false unless import.is_a?(PatientImport)
-    (import.processed? || import.partially_processed?) &&
-      import.reviewed_by_user_ids.present?
-  end
-
-  def show_cancelled_reviewer?
-    (import.cancelled? || import.partially_processed?) &&
-      import.reviewed_by_user_ids.present?
-  end
-
   def approved_reviewers_text
     import.partially_processed? ? approvers_text : all_reviewers_text
-  end
-
-  def records_count
-    if import.is_a?(PatientImport)
-      import.changesets.from_file.count
-    else
-      import.vaccination_records.count
-    end
   end
 
   private

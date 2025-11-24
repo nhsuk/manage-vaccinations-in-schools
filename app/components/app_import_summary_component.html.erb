@@ -7,14 +7,14 @@
       <%= row.with_value { import.uploaded_by.full_name } %>
     <% end %>
 
-    <% if show_approved_reviewers? %>
+    <% if import.show_approved_reviewers? %>
       <%= summary_list.with_row do |row| %>
         <%= row.with_key { "Approved by" } %>
         <%= row.with_value { approved_reviewers_text } %>
       <% end %>
     <% end %>
 
-    <% if show_cancelled_reviewer? %>
+    <% if import.show_cancelled_reviewer? %>
       <%= summary_list.with_row do |row| %>
         <%= row.with_key { cancelled_reviewer_label } %>
         <%= row.with_value { cancelled_reviewer_text } %>
@@ -28,7 +28,7 @@
 
     <%= summary_list.with_row do |row| %>
       <%= row.with_key { "Type" } %>
-      <%= row.with_value { import_type_label } %>
+      <%= row.with_value { import.type_label } %>
     <% end %>
 
     <%= summary_list.with_row do |row| %>
@@ -48,10 +48,10 @@
       <% end %>
     <% end %>
 
-    <% if !records_count.zero? %>
+    <% if import.records_count && import.records_count.positive? %>
         <%= summary_list.with_row do |row| %>
             <%= row.with_key { "Records" } %>
-            <%= row.with_value { records_count.to_s } %>
+            <%= row.with_value { import.records_count.to_s } %>
         <% end %>
     <% end %>
   <% end %>

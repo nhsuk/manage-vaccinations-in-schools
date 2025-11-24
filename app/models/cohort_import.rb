@@ -44,6 +44,10 @@ class CohortImport < PatientImport
            dependent: :destroy
   has_many :pds_search_results
 
+  def type_label
+    "Child records"
+  end
+
   def postprocess_rows!
     ids = changesets.pluck(:school_id).uniq.compact
     PatientsAgedOutOfSchoolJob.perform_bulk(ids.zip)
