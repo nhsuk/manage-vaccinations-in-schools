@@ -39,6 +39,34 @@ class PatientImport < ApplicationRecord
     end
   end
 
+  def process_import!
+    changesets =
+      rows.each_with_index.map do |row, row_number|
+        PatientChangeset.from_import_row(row:, import: self, row_number:)
+      end
+
+    if Flipper.enabled?(:import_search_pds)
+      process_no_postcode_changesets(self.changesets.without_postcode)
+      if self.changesets.with_postcode.any?
+        enqueue_pds_cascading_searches(self.changesets.with_postcode)
+        return
+      end
+    end
+
+    changesets.each(&:assign_patient_id)
+
+    validate_changeset_uniqueness!
+    return if changesets_are_invalid?
+
+    if Flipper.enabled?(:import_review_screen)
+      enqueue_review_jobs(self.changesets)
+    else
+      changesets.each(&:committing!)
+
+      CommitImportJob.perform_async(to_global_id.to_s)
+    end
+  end
+
   def validate_pds_match_rate!
     return if valid_pds_match_rate? || changesets.count < CHANGESET_THRESHOLD
 
@@ -106,6 +134,47 @@ class PatientImport < ApplicationRecord
   end
 
   private
+
+  def process_no_postcode_changesets(changesets)
+    changesets.find_each do |cs|
+      cs.search_results << {
+        step: :no_fuzzy_with_history,
+        result: :no_postcode,
+        nhs_number: nil,
+        created_at: Time.current
+      }
+      if Flipper.enabled?(:import_review_screen)
+        cs.calculating_review!
+        ReviewPatientChangesetJob.perform_later(cs.id)
+      else
+        cs.assign_patient_id
+        cs.committing!
+      end
+    end
+  end
+
+  def enqueue_review_jobs(changesets)
+    review_changesets =
+      if Flipper.enabled?(:import_search_pds)
+        changesets.with_postcode
+      else
+        changesets
+      end
+
+    review_changesets.each do |cs|
+      cs.calculating_review!
+      ReviewPatientChangesetJob.perform_later(cs.id)
+    end
+  end
+
+  def enqueue_pds_cascading_searches(changesets)
+    changesets.find_each do |cs|
+      PDSCascadingSearchJob.set(queue: :imports).perform_later(
+        cs,
+        queue: :imports
+      )
+    end
+  end
 
   def check_rows_are_unique
     rows

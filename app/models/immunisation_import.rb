@@ -94,6 +94,27 @@ class ImmunisationImport < ApplicationRecord
     count_column_to_increment
   end
 
+  def process_import!
+    counts = COUNT_COLUMNS.index_with(0)
+
+    ActiveRecord::Base.transaction do
+      rows.each do |row|
+        count_column_to_increment = process_row(row)
+        counts[count_column_to_increment] += 1
+        bulk_import(rows: 100)
+      end
+
+      bulk_import(rows: :all)
+
+      postprocess_rows!
+
+      update_columns(processed_at: Time.zone.now, status: :processed, **counts)
+    end
+
+    post_commit!
+    UpdatePatientsFromPDS.call(patients, queue: :imports)
+  end
+
   def bulk_import(rows: 100)
     return if rows != :all && @vaccination_records_batch.size < rows
 
