@@ -98,6 +98,10 @@ resource "aws_ecs_task_definition" "regression" {
         retries     = 3
         startPeriod = 90
       }
+      dependsOn = [{
+        containerName = "mavis-regression-db"
+        condition     = "HEALTHY"
+      }]
     },
     {
       name      = "mavis-regression-db"
