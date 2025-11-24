@@ -16,6 +16,8 @@
 describe Organisation do
   subject(:organisation) { build(:organisation) }
 
+  it_behaves_like "a Flipper actor"
+
   describe "associations" do
     it { should have_many(:teams) }
   end

@@ -15,6 +15,7 @@
 #
 class Organisation < ApplicationRecord
   include ContributesToPatientTeams
+  include FlipperActor
   include ODSCodeConcern
 
   class ActiveRecord_Relation < ActiveRecord::Relation
@@ -29,6 +30,8 @@ class Organisation < ApplicationRecord
   validates :ods_code, presence: true
 
   delegate :fhir_reference, to: :fhir_mapper
+
+  def to_param = ods_code
 
   class << self
     delegate :fhir_reference, to: FHIRMapper::Organisation

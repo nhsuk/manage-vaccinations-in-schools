@@ -38,6 +38,8 @@
 describe Team do
   subject(:team) { build(:team) }
 
+  it_behaves_like "a Flipper actor"
+
   describe "associations" do
     it { should belong_to(:organisation) }
     it { should have_many(:archive_reasons) }
