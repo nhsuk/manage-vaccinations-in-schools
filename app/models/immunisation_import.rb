@@ -32,30 +32,28 @@
 #
 class ImmunisationImport < ApplicationRecord
   include CSVImportable
+  include Importable
 
   has_and_belongs_to_many :batches
   has_and_belongs_to_many :patient_locations
   has_and_belongs_to_many :sessions
   has_and_belongs_to_many :vaccination_records
 
-  scope :status_for_uploaded_files,
-        -> do
-          where(
-            status: %i[
-              pending_import
-              rows_are_invalid
-              low_pds_match_rate
-              changesets_are_invalid
-              in_review
-              calculating_re_review
-              in_re_review
-              committing
-              cancelled
-            ]
-          )
-        end
-  scope :status_for_imported_records,
-        -> { where(status: %i[processed partially_processed]) }
+  def type_label
+    "Vaccination records"
+  end
+
+  def show_approved_reviewers?
+    false
+  end
+
+  def show_cancelled_reviewer?
+    false
+  end
+
+  def records_count
+    vaccination_records.count
+  end
 
   private
 

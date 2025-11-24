@@ -50,6 +50,10 @@ class ClassImport < PatientImport
            dependent: :destroy
   has_many :pds_search_results
 
+  def type_label
+    "Class list records"
+  end
+
   def postprocess_rows!
     # Remove patients already in the sessions but not in the class list.
     patients_in_import =

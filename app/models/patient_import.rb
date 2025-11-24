@@ -1,31 +1,14 @@
 # frozen_string_literal: true
 
 class PatientImport < ApplicationRecord
+  include Importable
+
   PDS_MATCH_THRESHOLD = 0.7
   CHANGESET_THRESHOLD = 10
 
   self.abstract_class = true
 
   has_many :patient_changesets
-
-  scope :status_for_uploaded_files,
-        -> do
-          where(
-            status: %i[
-              pending_import
-              rows_are_invalid
-              low_pds_match_rate
-              changesets_are_invalid
-              in_review
-              calculating_re_review
-              in_re_review
-              committing
-              cancelled
-            ]
-          )
-        end
-  scope :status_for_imported_records,
-        -> { where(status: %i[processed partially_processed]) }
 
   def count_column(patient, parents, parent_relationships)
     if patient.new_record? || parents.any?(&:new_record?) ||
@@ -37,6 +20,18 @@ class PatientImport < ApplicationRecord
     else
       :exact_duplicate_record_count
     end
+  end
+
+  def show_approved_reviewers?
+    (processed? || partially_processed?) && reviewed_by_user_ids.present?
+  end
+
+  def show_cancelled_reviewer?
+    (cancelled? || partially_processed?) && reviewed_by_user_ids.present?
+  end
+
+  def records_count
+    changesets.from_file.count
   end
 
   def process_import!
