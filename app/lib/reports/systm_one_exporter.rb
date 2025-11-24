@@ -15,6 +15,9 @@ class Reports::SystmOneExporter
     "Cell-based Trivalent Influenza Vaccine Seqirus" => {
       1 => "YcjYj"
     },
+    "Fluenz" => {
+      1 => "YcjAC"
+    },
     "Gardasil 9" => {
       1 => "Y19a4",
       2 => "Y19a5",
@@ -26,14 +29,8 @@ class Reports::SystmOneExporter
     "Menveo" => {
       nil => "Y0da5"
     },
-    "Fluenz" => {
-      1 => "YcjAC"
-    },
-    "Vaxigrip" => {
-      1 => "YcjYf"
-    },
-    "Viatris" => {
-      1 => "YcjYh"
+    "Nimenrix" => {
+      nil => "YOfcf"
     },
     "Revaxis" => {
       1 => "Y3417",
@@ -43,8 +40,11 @@ class Reports::SystmOneExporter
       5 => "Y06d4",
       nil => "x05ub"
     },
-    "Nimenrix" => {
-      nil => "YOfcf"
+    "Vaxigrip" => {
+      1 => "YcjYf"
+    },
+    "Viatris" => {
+      1 => "YcjYh"
     }
   }.freeze
 
