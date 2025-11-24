@@ -123,8 +123,7 @@ describe FHIRMapper::VaccinationRecord do
         { outcome: :refused, status: "not-done" },
         { outcome: :unwell, status: "not-done" },
         { outcome: :contraindicated, status: "not-done" },
-        { outcome: :already_had, status: "not-done" },
-        { outcome: :absent, status: "not-done" }
+        { outcome: :already_had, status: "not-done" }
       ].each do |test|
         context "when the vaccination record outcome is #{test[:outcome]}" do
           let(:vaccination_outcome) { test[:outcome] }

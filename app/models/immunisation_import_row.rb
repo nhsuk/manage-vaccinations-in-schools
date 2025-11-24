@@ -77,8 +77,7 @@ class ImmunisationImportRow
     "refused" => :refused,
     "unwell" => :unwell,
     "vaccination contraindicated" => :contraindicated,
-    "already had elsewhere" => :already_had,
-    "did not attend" => :absent
+    "already had elsewhere" => :already_had
   }.freeze
 
   SCHOOL_URN_HOME_EDUCATED = "999999"

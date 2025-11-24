@@ -133,7 +133,7 @@ describe "mavis stats vaccinations" do
       :vaccination_record,
       patient: target_patient2,
       programme: @programme_menacwy,
-      outcome: "absent",
+      outcome: "unwell",
       session: target_session2
     )
     create(
@@ -191,7 +191,7 @@ describe "mavis stats vaccinations" do
     expect(@output).to include("menacwy:")
     expect(@output).to match(/administered.*\|\s*3/)
     expect(@output).to match(/refused.*\|\s*1/)
-    expect(@output).to match(/absent.*\|\s*1/)
+    expect(@output).to match(/unwell.*\|\s*1/)
     expect(@output).to match(/contraindicated.*\|\s*1/)
     expect(@output).to match(/Grand Total: 7/)
   end
@@ -205,7 +205,7 @@ describe "mavis stats vaccinations" do
     expect(@output).to include("menacwy:")
     expect(@output).to match(/administered.*\|\s*2/)
     expect(@output).to match(/refused.*\|\s*1/)
-    expect(@output).to match(/absent.*\|\s*1/)
+    expect(@output).to match(/unwell.*\|\s*1/)
     expect(@output).not_to match(/contraindicated/)
     expect(@output).to match(/Grand Total: 5/)
   end
@@ -217,7 +217,7 @@ describe "mavis stats vaccinations" do
     expect(@output).not_to include("menacwy:")
     expect(@output).to match(/administered.*\|\s*1/)
     expect(@output).to match(/refused.*\|\s*1/)
-    expect(@output).not_to match(/absent/)
+    expect(@output).not_to match(/unwell/)
     expect(@output).to match(/Grand Total: 3/)
   end
 
@@ -228,7 +228,7 @@ describe "mavis stats vaccinations" do
     expect(@output).to match(/administered.*\|\s*3/)
     expect(@output).to match(/refused.*\|\s*1/)
     expect(@output).to match(/contraindicated.*\|\s*1/)
-    expect(@output).not_to match(/absent/)
+    expect(@output).not_to match(/unwell/)
     expect(@output).to match(/Grand Total: 5/)
   end
 

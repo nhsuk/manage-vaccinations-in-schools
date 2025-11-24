@@ -498,7 +498,7 @@ describe "Offline vaccination" do
     row_for_unvaccinated_patient["TIME_OF_VACCINATION"] = "10:01"
     row_for_unvaccinated_patient["VACCINATED"] = "N"
     row_for_unvaccinated_patient["VACCINE_GIVEN"] = "Gardasil9"
-    row_for_unvaccinated_patient["REASON_NOT_VACCINATED"] = "did not attend"
+    row_for_unvaccinated_patient["REASON_NOT_VACCINATED"] = "unwell"
     row_for_unvaccinated_patient["NOTES"] = "Some notes."
     row_for_unvaccinated_patient["PERFORMING_PROFESSIONAL_EMAIL"] = @team
       .users
@@ -572,7 +572,7 @@ describe "Offline vaccination" do
     click_on @unvaccinated_patient.full_name
     expect(page).to have_content(@unvaccinated_patient.full_name)
     expect(page).to have_content("Due vaccination")
-    expect(page).to have_content("Absent from session")
+    expect(page).to have_content("Unwell")
 
     visit patient_url
     within(".nhsuk-breadcrumb__list") { click_on "Children" }
