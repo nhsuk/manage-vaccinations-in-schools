@@ -353,15 +353,12 @@ class PatientSearchForm < SearchForm
 
   PROGRAMME_DUE_PREDICATES = {
     "due_injection" => {
-      vaccine_method: "injection",
-      without_gelatine: false
+      vaccine_method: "injection"
     },
     "due_nasal" => {
-      vaccine_method: "nasal",
-      without_gelatine: false
+      vaccine_method: "nasal"
     },
-    "due_injection_without_gelatine" => {
-      vaccine_method: "injection",
+    "due_without_gelatine" => {
       without_gelatine: true
     }
   }.freeze

@@ -19,7 +19,7 @@ describe Stats::Session do
             needs_triage: 0,
             has_refusal: 0,
             cannot_vaccinate: 0,
-            due_injection: 0,
+            due: 0,
             vaccinated: 0
           )
         end
@@ -109,7 +109,7 @@ describe Stats::Session do
             needs_triage: 0,
             has_refusal: 2,
             cannot_vaccinate: 0,
-            due_injection: 1,
+            due: 1,
             vaccinated: 1
           )
         end
@@ -154,7 +154,7 @@ describe Stats::Session do
             needs_triage: 0,
             has_refusal: 0,
             cannot_vaccinate: 0,
-            due_injection: 0,
+            due: 0,
             vaccinated: 0
           )
         end
@@ -227,7 +227,7 @@ describe Stats::Session do
           expect(stats).to include(
             eligible_children: 3,
             due_nasal: 1,
-            due_injection_without_gelatine: 2
+            due_injection: 2
           )
         end
       end
