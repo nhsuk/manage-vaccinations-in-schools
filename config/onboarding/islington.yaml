@@ -97,11 +97,6 @@ schools:
 
 clinics:
   islington:
-    - name: The Village Practice
-      address_line_1: 115 Isledon Rd
-      address_town: London
-      address_postcode: N7 7JJ
-      ods_code: F83664
     - name: Lift Community Centre
       address_line_1: 45 White Lion St
       address_town: London

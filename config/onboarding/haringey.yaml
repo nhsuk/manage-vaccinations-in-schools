@@ -129,11 +129,6 @@ clinics:
       address_town: London
       address_postcode: N22 6XD
       ods_code:
-    - name: The Christchurch Hall Surgery
-      address_line_1: 20 Edison Rd
-      address_town: London
-      address_postcode: N8 8AE
-      ods_code: F85061
     - name: Somerset Gardens Family Health Centre
       address_line_1: 4 Creighton Rd
       address_town: London
