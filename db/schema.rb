@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_20_151321) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_25_110901) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -886,6 +886,26 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_151321) do
     t.index ["reporting_api_session_token"], name: "index_users_on_reporting_api_session_token", unique: true
   end
 
+  create_table "vaccination_record_changesets", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date_of_vaccination", null: false
+    t.bigint "immunisation_import_id", null: false
+    t.bigint "patient_changeset_id"
+    t.bigint "patient_id"
+    t.jsonb "payload", default: {}, null: false
+    t.enum "programme_type", null: false, enum_type: "programme_type"
+    t.integer "row_number", null: false
+    t.jsonb "serialized_errors", default: {}, null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.string "uuid"
+    t.index ["immunisation_import_id"], name: "index_vaccination_record_changesets_on_immunisation_import_id"
+    t.index ["patient_changeset_id"], name: "index_vaccination_record_changesets_on_patient_changeset_id"
+    t.index ["patient_id"], name: "index_vaccination_record_changesets_on_patient_id"
+    t.index ["status"], name: "index_vaccination_record_changesets_on_status"
+    t.index ["uuid"], name: "index_vaccination_record_changesets_on_uuid"
+  end
+
   create_table "vaccination_records", force: :cascade do |t|
     t.bigint "batch_id"
     t.datetime "confirmation_sent_at"
@@ -1076,6 +1096,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_151321) do
   add_foreign_key "triages", "patients"
   add_foreign_key "triages", "teams"
   add_foreign_key "triages", "users", column: "performed_by_user_id"
+  add_foreign_key "vaccination_record_changesets", "immunisation_imports"
+  add_foreign_key "vaccination_record_changesets", "patient_changesets"
+  add_foreign_key "vaccination_record_changesets", "patients"
   add_foreign_key "vaccination_records", "batches"
   add_foreign_key "vaccination_records", "patients"
   add_foreign_key "vaccination_records", "sessions"
