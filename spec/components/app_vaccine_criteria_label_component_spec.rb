@@ -8,7 +8,7 @@ describe AppVaccineCriteriaLabelComponent do
   end
 
   let(:vaccine_criteria) do
-    VaccineCriteria.new(vaccine_methods:, without_gelatine:)
+    VaccineCriteria.new(programme:, vaccine_methods:, without_gelatine:)
   end
 
   let(:programme) { Programme.mmr }
