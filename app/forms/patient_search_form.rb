@@ -12,6 +12,8 @@ class PatientSearchForm < SearchForm
   attribute :eligible_children, :boolean
   attribute :missing_nhs_number, :boolean
   attribute :patient_specific_direction_status, :string
+  attribute :programme_status_group, :string
+  attribute :programme_statuses, array: true
   attribute :programme_types, array: true
   attribute :q, :string
   attribute :registration_status, :string
@@ -28,6 +30,10 @@ class PatientSearchForm < SearchForm
   end
 
   def programme_types=(values)
+    super(values&.compact_blank || [])
+  end
+
+  def programme_statuses=(values)
     super(values&.compact_blank || [])
   end
 
@@ -86,6 +92,7 @@ class PatientSearchForm < SearchForm
     scope = filter_vaccination_statuses(scope)
     scope = filter_registration_status(scope)
     scope = filter_triage_status(scope)
+    scope = filter_programme_statuses(scope)
     scope = filter_vaccine_criteria(scope)
     scope = filter_patient_specific_direction_status(scope)
     scope = filter_for_eligible_children_only(scope)
@@ -103,10 +110,22 @@ class PatientSearchForm < SearchForm
 
   attr_reader :current_user, :session
 
-  def academic_year =
+  def academic_year
     session&.academic_year || @academic_year || AcademicYear.pending
+  end
 
   def team = session&.team || current_user.selected_team
+
+  def only_not_eligible_patients?
+    programme_statuses&.any? do
+      it.in?(Patient::ProgrammeStatus::NOT_ELIGIBLE_STATUSES.keys)
+    end
+  end
+
+  def include_not_eligible_patients?
+    session.present? || archived.present? || only_not_eligible_patients? ||
+      false
+  end
 
   def filter_name(scope)
     q.present? ? scope.search_by_name(q) : scope
@@ -123,7 +142,7 @@ class PatientSearchForm < SearchForm
   def filter_aged_out_of_programmes(scope)
     if aged_out_of_programmes
       scope.not_appear_in_programmes(team.programmes, academic_year:)
-    elsif session || archived
+    elsif include_not_eligible_patients?
       # Archived patients won't appear in programmes, so we need to
       # skip this check if we're trying to view archived patients.
       scope
@@ -166,6 +185,8 @@ class PatientSearchForm < SearchForm
     if programme_types.present?
       if session
         scope.appear_in_programmes(programmes, session:)
+      elsif only_not_eligible_patients?
+        scope.not_appear_in_programmes(programmes, academic_year:)
       else
         scope.appear_in_programmes(programmes, academic_year:)
       end
@@ -290,6 +311,60 @@ class PatientSearchForm < SearchForm
       scope
     end
   end
+
+  def filter_programme_statuses(scope)
+    return scope if programme_status_group.blank?
+
+    statuses =
+      programme_statuses&.select { it.starts_with?(programme_status_group) }
+
+    if statuses.blank?
+      statuses =
+        Patient::ProgrammeStatus.statuses.keys.select do
+          it.starts_with?(programme_status_group)
+        end
+    end
+
+    return scope if statuses.empty?
+
+    or_scope = programme_status_scope_for(statuses.first, scope)
+
+    statuses
+      .drop(1)
+      .each do |value|
+        or_scope = or_scope.or(programme_status_scope_for(value, scope))
+      end
+
+    or_scope
+  end
+
+  def programme_status_scope_for(value, scope)
+    if (predicate = PROGRAMME_DUE_PREDICATES[value])
+      scope.has_programme_status(
+        "due",
+        programme: programmes,
+        academic_year:,
+        **predicate
+      )
+    else
+      scope.has_programme_status(value, programme: programmes, academic_year:)
+    end
+  end
+
+  PROGRAMME_DUE_PREDICATES = {
+    "due_injection" => {
+      vaccine_method: "injection",
+      without_gelatine: false
+    },
+    "due_nasal" => {
+      vaccine_method: "nasal",
+      without_gelatine: false
+    },
+    "due_injection_without_gelatine" => {
+      vaccine_method: "injection",
+      without_gelatine: true
+    }
+  }.freeze
 
   def filter_vaccine_criteria(scope)
     return scope if vaccine_criteria.blank?

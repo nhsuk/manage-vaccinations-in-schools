@@ -13,7 +13,9 @@
     <%= render AppPatientSearchFormComponent.new(
           @form,
           url: session_patients_path(@session),
+          current_team:,
           programmes: @session.programmes,
+          programme_statuses: @programme_statuses,
           vaccination_statuses: @statuses,
           year_groups: @session.year_groups,
           show_still_to_vaccinate: true,

@@ -22,6 +22,16 @@
     }
   }
 
+  &--dark-orange {
+    background-color: nhsuk-tint(app.$dark-orange-colour, 80%);
+    border-color: nhsuk-tint(app.$dark-orange-colour, 50%);
+    color: nhsuk-shade(app.$dark-orange-colour, 50%);
+
+    &.nhsuk-card--clickable:active {
+      border-color: nhsuk-shade(app.$dark-orange-colour, 30%);
+    }
+  }
+
   &--green {
     background-color: nhsuk-tint(nhsuk-colour("green"), 80%);
     border-color: nhsuk-tint(nhsuk-colour("green"), 40%);
@@ -52,11 +62,27 @@
     }
   }
 
+  &--yellow {
+    background-color: nhsuk-tint(nhsuk-colour("warm-yellow"), 80%);
+    border-color: nhsuk-colour("warm-yellow");
+
+    .nhsuk-card__heading--feature {
+      background-color: nhsuk-colour("warm-yellow");
+      color: $nhsuk-text-colour;
+    }
+
+    blockquote {
+      border-color: nhsuk-colour("warm-yellow");
+    }
+  }
+
   &--aqua-green,
   &--blue,
+  &--dark-orange,
   &--green,
   &--grey,
-  &--red {
+  &--red,
+  &--yellow {
     .nhsuk-card__link,
     .nhsuk-card__link:hover {
       color: inherit;
@@ -105,6 +131,10 @@
 .app-card__data {
   @include nhsuk-font-size(48);
   @include nhsuk-typography-weight-bold;
+}
+
+.app-card__heading--xxs {
+  @include nhsuk-font(16, $weight: bold);
 }
 
 .app-card__heading {

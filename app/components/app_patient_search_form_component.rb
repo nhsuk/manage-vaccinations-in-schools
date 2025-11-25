@@ -4,12 +4,14 @@ class AppPatientSearchFormComponent < ViewComponent::Base
   def initialize(
     form,
     url:,
+    current_team:,
     programmes: [],
     consent_statuses: [],
+    programme_statuses: [],
+    patient_specific_direction_statuses: [],
     registration_statuses: [],
     triage_statuses: [],
     vaccination_statuses: [],
-    patient_specific_direction_statuses: [],
     vaccine_criterias: [],
     year_groups: [],
     heading_level: 3,
@@ -19,13 +21,15 @@ class AppPatientSearchFormComponent < ViewComponent::Base
   )
     @form = form
     @url = url
+    @current_team = current_team
 
     @programmes = programmes
     @consent_statuses = consent_statuses
+    @patient_specific_direction_statuses = patient_specific_direction_statuses
+    @programme_statuses = programme_statuses
     @registration_statuses = registration_statuses
     @triage_statuses = triage_statuses
     @vaccination_statuses = vaccination_statuses
-    @patient_specific_direction_statuses = patient_specific_direction_statuses
     @vaccine_criterias = vaccine_criterias
     @year_groups = year_groups
     @heading_level = heading_level
@@ -38,12 +42,14 @@ class AppPatientSearchFormComponent < ViewComponent::Base
 
   attr_reader :form,
               :url,
+              :current_team,
               :programmes,
               :consent_statuses,
+              :patient_specific_direction_statuses,
+              :programme_statuses,
               :registration_statuses,
               :triage_statuses,
               :vaccination_statuses,
-              :patient_specific_direction_statuses,
               :vaccine_criterias,
               :year_groups,
               :heading_level,

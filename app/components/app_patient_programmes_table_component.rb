@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class AppPatientProgrammesTableComponent < ViewComponent::Base
-  def initialize(patient, programmes:)
+  def initialize(patient, programmes:, current_team:)
     @patient = patient
     @programmes = programmes
+    @current_team = current_team
   end
 
   def call
@@ -17,7 +18,7 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
 
   private
 
-  attr_reader :patient, :programmes
+  attr_reader :patient, :programmes, :current_team
 
   delegate :govuk_table, to: :helpers
 
@@ -64,25 +65,28 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   end
 
   def status_for_programme(programme:, academic_year:)
-    hash = vaccination_status_hash(programme:, academic_year:)
+    hash = programme_status_hash(programme:, academic_year:)
     tag.strong(hash[:text], class: "nhsuk-tag nhsuk-tag--#{hash[:colour]}")
   end
 
   def notes_for_programme(programme:, academic_year:)
-    vaccination_status_hash(programme:, academic_year:)[
-      :details_text
-    ].presence || ""
+    programme_status_hash(programme:, academic_year:)[:details_text].presence ||
+      ""
   end
 
-  def vaccination_status_hash(programme:, academic_year:)
-    @vaccination_status_hash ||= {}
-    @vaccination_status_hash[programme.type] ||= {}
-    @vaccination_status_hash[programme.type][
+  def programme_status_hash(programme:, academic_year:)
+    @programme_status_hash ||= {}
+    @programme_status_hash[programme.type] ||= {}
+    @programme_status_hash[programme.type][
       academic_year
-    ] ||= PatientStatusResolver.new(
-      patient,
-      programme:,
-      academic_year:
-    ).vaccination
+    ] ||= PatientStatusResolver.new(patient, programme:, academic_year:).send(
+      (
+        if Flipper.enabled?(:programme_status, current_team)
+          :programme
+        else
+          :vaccination
+        end
+      )
+    )
   end
 end

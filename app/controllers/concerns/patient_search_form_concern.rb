@@ -29,6 +29,7 @@ module PatientSearchFormConcern
       :eligible_children,
       :missing_nhs_number,
       :patient_specific_direction_status,
+      :programme_status_group,
       :q,
       :registration_status,
       :still_to_vaccinate,
@@ -36,6 +37,7 @@ module PatientSearchFormConcern
       :vaccination_status,
       :vaccine_criteria,
       consent_statuses: [],
+      programme_statuses: [],
       programme_types: [],
       year_groups: []
     )
