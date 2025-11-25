@@ -40,3 +40,7 @@ testing_api: Basic API useful for automated testing.
 reporting_api: Enables the Commissioner reporting component to authenticate to Mavis via OAUTH 2.0
   Authorization Code Flow (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), and retrieve
   statistics from /api/reporting/
+
+immunisation_import_use_changesets: |
+  Enable the new changeset-driven immunisation import pipeline (PatientChangeset + VaccinationRecordChangeset).
+  When disabled, the legacy immunisation import path is used.
