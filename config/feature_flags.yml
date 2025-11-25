@@ -8,6 +8,10 @@ imms_api_integration: Umbrella flag to switch off ALL API integration (including
 imms_api_search_job: Flag to switch off any automated receipt of vaccination records (Search),
   as part of the search job.
 
+imms_api_sentry_warnings: |
+  Enable sending non-fatal Immunisations API warnings to Sentry (e.g. OperationOutcome and
+  Bundle link param mismatches). When disabled, these warnings are logged but not sent to Sentry.
+
 imms_api_sync_job: Flag to switch off any automated sending of vaccination records
   (Create, Update, Delete), triggered by the creation/edit/delete of any vaccination records.
   This can be controlled on a per-programme basis.

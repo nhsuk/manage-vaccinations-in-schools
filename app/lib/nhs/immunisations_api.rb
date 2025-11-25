@@ -433,7 +433,9 @@ module NHS::ImmunisationsAPI
         message =
           "Bundle link parameters do not match request parameters: #{tweaked_bundle_params} != #{request_params}"
         Rails.logger.warn(message)
-        Sentry.capture_exception(BundleLinkParamsMismatch.new(message))
+        if Flipper.enabled?(:imms_api_sentry_warnings)
+          Sentry.capture_exception(BundleLinkParamsMismatch.new(message))
+        end
       end
     end
 
@@ -454,7 +456,9 @@ module NHS::ImmunisationsAPI
           else
             # Includes `warning`, and any unexpected response
             Rails.logger.warn(message)
-            Sentry.capture_exception(OperationOutcomeInBundle.new(message))
+            if Flipper.enabled?(:imms_api_sentry_warnings)
+              Sentry.capture_exception(OperationOutcomeInBundle.new(message))
+            end
           end
         end
       end
