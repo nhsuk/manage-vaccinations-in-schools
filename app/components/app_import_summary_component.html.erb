@@ -1,0 +1,58 @@
+<%= render AppCardComponent.new do |card| %>
+  <% card.with_heading(level: 2) { "Details" } %>
+
+  <%= helpers.govuk_summary_list do |summary_list| %>
+    <%= summary_list.with_row do |row| %>
+      <%= row.with_key { "Uploaded by" } %>
+      <%= row.with_value { import.uploaded_by.full_name } %>
+    <% end %>
+
+    <% if import.show_approved_reviewers? %>
+      <%= summary_list.with_row do |row| %>
+        <%= row.with_key { "Approved by" } %>
+        <%= row.with_value { approved_reviewers_text } %>
+      <% end %>
+    <% end %>
+
+    <% if import.show_cancelled_reviewer? %>
+      <%= summary_list.with_row do |row| %>
+        <%= row.with_key { cancelled_reviewer_label } %>
+        <%= row.with_value { cancelled_reviewer_text } %>
+      <% end %>
+    <% end %>
+
+    <%= summary_list.with_row do |row| %>
+      <%= row.with_key { "File" } %>
+      <%= row.with_value { import.csv_filename } %>
+    <% end %>
+
+    <%= summary_list.with_row do |row| %>
+      <%= row.with_key { "Type" } %>
+      <%= row.with_value { import.type_label } %>
+    <% end %>
+
+    <%= summary_list.with_row do |row| %>
+      <%= row.with_key { "Status" } %>
+      <%= row.with_value { render AppImportStatusComponent.new(import:) } %>
+    <% end %>
+
+    <% if import.is_a?(ClassImport) %>
+      <%= summary_list.with_row do |row| %>
+        <%= row.with_key { "School" } %>
+        <%= row.with_value { import.location.name } %>
+      <% end %>
+
+      <%= summary_list.with_row do |row| %>
+        <%= row.with_key { "Year groups" } %>
+        <%= row.with_value { import.year_groups.map { helpers.format_year_group(it) }.to_sentence } %>
+      <% end %>
+    <% end %>
+
+    <% if import.records_count && import.records_count.positive? %>
+        <%= summary_list.with_row do |row| %>
+            <%= row.with_key { "Records" } %>
+            <%= row.with_value { import.records_count.to_s } %>
+        <% end %>
+    <% end %>
+  <% end %>
+<% end %>

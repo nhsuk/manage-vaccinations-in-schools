@@ -92,7 +92,7 @@ describe "Child record imports twins" do
   end
 
   def and_i_start_adding_children_to_the_cohort
-    click_button "Import records"
+    click_button "Upload records"
     choose "Child records"
     click_button "Continue"
   end
@@ -104,8 +104,7 @@ describe "Child record imports twins" do
   end
 
   def then_i_should_see_the_import_page_with_successful_import
-    expect(page).not_to have_content("already exist in Mavis")
-    expect(page).to have_content("Duplicates not imported None")
+    expect(page).to have_content("3 imported records")
     expect(Patient.count).to eq(4)
   end
 

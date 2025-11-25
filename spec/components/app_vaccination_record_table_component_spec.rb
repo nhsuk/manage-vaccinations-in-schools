@@ -32,36 +32,63 @@ describe AppVaccinationRecordTableComponent do
 
   let(:current_user) { create(:nurse) }
 
-  it "renders a heading tab" do
+  it "renders a summary with record count" do
     expect(rendered).to have_css(
-      ".nhsuk-table__heading-tab",
-      text: "10 vaccination records"
+      ".nhsuk-details__summary-text",
+      text: "10 imported records"
     )
   end
 
   it "renders the headers" do
-    expect(rendered).to have_css(".nhsuk-table__header", text: "Full name")
-    expect(rendered).to have_css(".nhsuk-table__header", text: "NHS number")
-    expect(rendered).to have_css(".nhsuk-table__header", text: "Date of birth")
     expect(rendered).to have_css(
       ".nhsuk-table__header",
-      text: "Vaccination date"
+      text: "Full name",
+      visible: :hidden
+    )
+    expect(rendered).to have_css(
+      ".nhsuk-table__header",
+      text: "NHS number",
+      visible: :hidden
+    )
+    expect(rendered).to have_css(
+      ".nhsuk-table__header",
+      text: "Date of birth",
+      visible: :hidden
+    )
+    expect(rendered).to have_css(
+      ".nhsuk-table__header",
+      text: "Vaccination date",
+      visible: :hidden
     )
   end
 
   it "renders the rows" do
     expect(rendered).to have_css(
       ".nhsuk-table__body .nhsuk-table__row",
-      count: 10
+      count: 10,
+      visible: :hidden
     )
-    expect(rendered).to have_css(".nhsuk-table__cell", text: "SMITH, John")
-    expect(rendered).to have_link("SMITH, John")
+    expect(rendered).to have_css(
+      ".nhsuk-table__cell",
+      text: "SMITH, John",
+      visible: :hidden
+    )
+    expect(rendered).to have_link("SMITH, John", visible: :hidden)
     expect(rendered).to have_css(
       ".nhsuk-table__cell .nhsuk-u-nowrap",
-      text: "999 999 9999"
+      text: "999 999 9999",
+      visible: :hidden
     )
-    expect(rendered).to have_css(".nhsuk-table__cell", text: "28 May 2000")
-    expect(rendered).to have_css(".nhsuk-table__cell", text: "1 September 2020")
+    expect(rendered).to have_css(
+      ".nhsuk-table__cell",
+      text: "28 May 2000",
+      visible: :hidden
+    )
+    expect(rendered).to have_css(
+      ".nhsuk-table__cell",
+      text: "1 September 2020",
+      visible: :hidden
+    )
   end
 
   context "with a vaccination record not performed by the team" do

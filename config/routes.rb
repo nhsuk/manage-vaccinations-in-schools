@@ -164,7 +164,9 @@ Rails.application.routes.draw do
             path: "immunisation-imports",
             except: %i[index destroy]
 
-  resources :imports, only: %i[index create]
+  resources :imports, only: %i[index create] do
+    collection { get :records }
+  end
 
   namespace :imports do
     resources :issues, path: "issues", only: %i[index] do

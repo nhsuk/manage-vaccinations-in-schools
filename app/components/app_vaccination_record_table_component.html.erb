@@ -1,45 +1,52 @@
-<div class="nhsuk-table__panel-with-heading-tab">
-  <h3 class="nhsuk-table__heading-tab"><%= pluralize(count, "vaccination record") %></h3>
 
-  <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
-    <% table.with_head do |head| %>
-      <% head.with_row do |row| %>
-        <% row.with_cell(text: "Full name") %>
-        <% row.with_cell(text: "NHS number") %>
-        <% row.with_cell(text: "Date of birth") %>
-        <% row.with_cell(text: "Vaccination date") %>
+<details class="nhsuk-details nhsuk-expander">
+  <summary class="nhsuk-details__summary" data-module="app-sticky">
+    <span class="nhsuk-details__summary-text">
+      <%= pluralize(@vaccination_records.count,
+                    "imported record") %>
+    </span>
+  </summary>
+  <div class="nhsuk-details__text">
+    <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
+      <% table.with_head do |head| %>
+        <% head.with_row do |row| %>
+          <% row.with_cell(text: "Full name") %>
+          <% row.with_cell(text: "NHS number") %>
+          <% row.with_cell(text: "Date of birth") %>
+          <% row.with_cell(text: "Vaccination date") %>
+        <% end %>
       <% end %>
-    <% end %>
 
-    <% table.with_body do |body| %>
-      <% vaccination_records.each do |vaccination_record| %>
-        <% body.with_row do |row| %>
-          <% row.with_cell do %>
-            <span class="nhsuk-table-responsive__heading">Full name</span>
+      <% table.with_body do |body| %>
+        <% vaccination_records.each do |vaccination_record| %>
+          <% body.with_row do |row| %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Full name</span>
 
-            <% if can_link_to?(vaccination_record) %>
-              <%= link_to vaccination_record.patient.full_name, vaccination_record_path(vaccination_record) %>
-            <% else %>
-              <%= vaccination_record.patient.full_name %>
+              <% if can_link_to?(vaccination_record) %>
+                <%= link_to vaccination_record.patient.full_name, vaccination_record_path(vaccination_record) %>
+              <% else %>
+                <%= vaccination_record.patient.full_name %>
+              <% end %>
             <% end %>
-          <% end %>
 
-          <% row.with_cell do %>
-            <span class="nhsuk-table-responsive__heading">NHS number</span>
-            <%= helpers.patient_nhs_number(vaccination_record.patient) %>
-          <% end %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">NHS number</span>
+              <%= helpers.patient_nhs_number(vaccination_record.patient) %>
+            <% end %>
 
-          <% row.with_cell do %>
-            <span class="nhsuk-table-responsive__heading">Date of birth</span>
-            <%= vaccination_record.patient.date_of_birth.to_fs(:long) %>
-          <% end %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Date of birth</span>
+              <%= vaccination_record.patient.date_of_birth.to_fs(:long) %>
+            <% end %>
 
-          <% row.with_cell do %>
-            <span class="nhsuk-table-responsive__heading">Vaccination date</span>
-            <%= vaccination_record.performed_at.to_date.to_fs(:long) %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Vaccination date</span>
+              <%= vaccination_record.performed_at.to_date.to_fs(:long) %>
+            <% end %>
           <% end %>
         <% end %>
       <% end %>
     <% end %>
-  <% end %>
-</div>
+  </div>
+</details>

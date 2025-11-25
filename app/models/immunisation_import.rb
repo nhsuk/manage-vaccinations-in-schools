@@ -52,7 +52,7 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def records_count
-    vaccination_records.count
+    rows_count
   end
 
   private

@@ -215,12 +215,11 @@ describe "Class list imports duplicates" do
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
-    expect(page).to have_content(
-      "3 records have import issues to resolve before they can be imported into Mavis"
-    )
+    expect(page).to have_content("3 upload issues")
   end
 
   def when_i_review_the_first_duplicate_record
+    find(".nhsuk-details__summary", text: "3 upload issues").click
     click_on "Review SMITH, Jimmy"
   end
 
