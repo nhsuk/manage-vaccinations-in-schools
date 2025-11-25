@@ -56,7 +56,7 @@ describe Stats::Session do
           create(:patient_consent_status, :given, patient:, programme:)
           create(
             :patient_programme_status,
-            :due_injection_only,
+            :due_injection,
             patient:,
             programme:
           )
@@ -186,12 +186,7 @@ describe Stats::Session do
             patient:,
             programme:
           )
-          create(
-            :patient_programme_status,
-            :due_nasal_only,
-            patient:,
-            programme:
-          )
+          create(:patient_programme_status, :due_nasal, patient:, programme:)
         end
 
         create(:patient, session:, year_group: 9).tap do |patient|
