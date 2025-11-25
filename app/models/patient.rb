@@ -245,29 +245,13 @@ class Patient < ApplicationRecord
   scope :search_by_nhs_number, ->(nhs_number) { where(nhs_number:) }
 
   scope :has_programme_status,
-        ->(
-          status,
-          programme:,
-          academic_year:,
-          vaccine_method: nil,
-          without_gelatine: nil
-        ) do
+        ->(status, programme:, academic_year:) do
           programme_status_scope =
             Patient::ProgrammeStatus
               .select("1")
               .where("patient_id = patients.id")
               .where_programme(programme)
               .where(status:, academic_year:)
-
-          unless vaccine_method.nil?
-            programme_status_scope =
-              programme_status_scope.has_vaccine_method(vaccine_method)
-          end
-
-          unless without_gelatine.nil?
-            programme_status_scope =
-              programme_status_scope.where(without_gelatine:)
-          end
 
           where(programme_status_scope.arel.exists)
         end
@@ -382,10 +366,15 @@ class Patient < ApplicationRecord
                       Patient::ConsentStatus.vaccine_methods.fetch(it)
                     end
                 )
+
               triage_status_matching =
-                triage_status_matching.where(
-                  vaccine_method: vaccine_methods.first
-                )
+                if vaccine_methods.count == 1
+                  triage_status_matching.where(
+                    vaccine_method: vaccine_methods.first
+                  )
+                else
+                  triage_status_matching.none
+                end
             else
               consent_or_scope =
                 consent_status_matching.where(
@@ -394,10 +383,15 @@ class Patient < ApplicationRecord
                       Patient::ConsentStatus.vaccine_methods.fetch(it)
                     end
                 )
+
               triage_or_scope =
-                triage_status_matching.where(
-                  vaccine_method: vaccine_methods.first.first
-                )
+                if vaccine_methods.first.count == 1
+                  triage_status_matching.where(
+                    vaccine_method: vaccine_methods.first.first
+                  )
+                else
+                  triage_status_matching.none
+                end
 
               vaccine_methods
                 .drop(1)
@@ -411,10 +405,17 @@ class Patient < ApplicationRecord
                           end
                       )
                     )
+
                   triage_or_scope =
-                    triage_or_scope.or(
-                      triage_status_matching.where(vaccine_method: value.first)
-                    )
+                    if values.first.count == 1
+                      triage_or_scope.or(
+                        triage_status_matching.where(
+                          vaccine_method: value.first
+                        )
+                      )
+                    else
+                      triage_or_scope.or(triage_status_matching.none)
+                    end
                 end
 
               consent_status_matching = consent_or_scope

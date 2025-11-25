@@ -139,6 +139,8 @@ class Patient::ProgrammeStatus < ApplicationRecord
     self.without_gelatine = generator.without_gelatine
   end
 
+  def vaccine_criteria = VaccineCriteria.from_programme_status(self)
+
   private
 
   def generator

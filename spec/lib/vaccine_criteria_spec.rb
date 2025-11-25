@@ -20,9 +20,11 @@ describe VaccineCriteria do
       let(:param) { "flu_nasal_injection" }
 
       its(:programme) { should be_flu }
+
       its(:vaccine_methods) do
         should eq([Vaccine::METHOD_NASAL, Vaccine::METHOD_INJECTION])
       end
+
       its(:without_gelatine) { should be(false) }
     end
 

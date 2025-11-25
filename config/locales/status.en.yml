@@ -93,11 +93,6 @@ en:
         cannot_vaccinate_do_not_vaccinate: Contraindications
         cannot_vaccinate_refused: Child refused
         cannot_vaccinate_unwell: Child unwell
-        due: Vaccination
-        due_injection: Injection
-        due_injection_without_gelatine: Gelatine-free injection
-        due_nasal: Nasal spray
-        due_without_gelatine: Gelatine-free injection
         has_refusal_consent_conflicts: Conflicting consent
         has_refusal_consent_refused: Parent refused
         needs_consent_follow_up_requested: Follow-up requested

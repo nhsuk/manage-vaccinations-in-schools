@@ -11,8 +11,6 @@ class Sessions::RecordController < Sessions::BaseController
   before_action :set_batches, except: :show
 
   def show
-    @vaccine_criterias = vaccine_criterias_for_programmes(@session.programmes)
-
     scope = @session.patients.includes_statuses.includes(notes: :created_by)
 
     if @session.requires_registration?
@@ -29,8 +27,8 @@ class Sessions::RecordController < Sessions::BaseController
       ).consent_given_and_safe_to_vaccinate(
         programmes: @form.programmes,
         academic_year: @session.academic_year,
-        vaccine_methods: @form.vaccine_methods,
-        without_gelatine: @form.without_gelatine
+        vaccine_methods: nil,
+        without_gelatine: nil
       )
 
     @pagy, @patients = pagy_array(patients)
@@ -89,21 +87,6 @@ class Sessions::RecordController < Sessions::BaseController
         .not_archived
         .not_expired
         .order_by_name_and_expiration
-  end
-
-  def vaccine_criterias_for_programmes(programmes)
-    # TODO: Make this more generic, rather than specific to programme
-    #  combinations.
-
-    if programmes.any?(&:flu?) && programmes.count > 1
-      %w[injection injection_without_gelatine nasal]
-    elsif programmes.any?(&:flu?)
-      %w[injection_without_gelatine nasal]
-    elsif programmes.any?(&:mmr?)
-      %w[injection injection_without_gelatine]
-    else
-      []
-    end
   end
 
   def filter_on_vaccine_method_or_patient_specific_direction(scope)
