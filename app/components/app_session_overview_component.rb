@@ -128,7 +128,7 @@ class AppSessionOverviewComponent < ViewComponent::Base
       .consent_given_and_safe_to_vaccinate(
         programmes:,
         academic_year:,
-        vaccine_method: nil,
+        vaccine_methods: nil,
         without_gelatine: nil
       )
       .count

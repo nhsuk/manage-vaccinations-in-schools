@@ -422,7 +422,7 @@ describe Patient do
         described_class.consent_given_and_safe_to_vaccinate(
           programmes:,
           academic_year:,
-          vaccine_method:,
+          vaccine_methods:,
           without_gelatine:
         )
       end
@@ -430,7 +430,7 @@ describe Patient do
       let(:programmes) { [Programme.flu, Programme.hpv] }
       let(:session) { create(:session, programmes:) }
       let(:academic_year) { AcademicYear.current }
-      let(:vaccine_method) { nil }
+      let(:vaccine_methods) { nil }
       let(:without_gelatine) { nil }
 
       it { should be_empty }
@@ -444,7 +444,7 @@ describe Patient do
       end
 
       context "when filtering on nasal spray" do
-        let(:vaccine_method) { "nasal" }
+        let(:vaccine_methods) { [%w[nasal], %w[nasal injection]] }
 
         context "with a patient eligible for vaccination" do
           let(:patient) do
