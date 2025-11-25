@@ -120,6 +120,11 @@ resource "aws_ecs_task_definition" "regression" {
         retries     = 5
         startPeriod = 60
       }
+    },
+    {
+      name      = "mavis-regression-redis"
+      image     = "redis:8.4.0-alpine"
+      essential = false
     }
   ])
   tags = {
