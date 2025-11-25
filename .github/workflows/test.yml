@@ -40,8 +40,8 @@ jobs:
     outputs:
       run-rails-tests: ${{ steps.check-rails-relevant-changes-failure.outputs.RUN_RAILS_TESTS }}
 
-  rails:
-    name: Rails
+  rspec:
+    name: RSpec
     runs-on: ubuntu-latest
     needs: pre-rails-tests
     if: needs.pre-rails-tests.outputs.run-rails-tests == 'true'
@@ -71,14 +71,46 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Setup Database
+      - name: Precompile assets
+        run: bin/rails assets:precompile
+      - name: Setup parallel database
         run: |
           bin/rails parallel:create
           bin/rails parallel:load_schema
-      - name: Precompile assets
-        run: bin/rails assets:precompile
-      - name: Run rspec
+      - name: Run tests
         run: bin/rails parallel:spec
+
+  seeds:
+    name: Seeds
+    runs-on: ubuntu-latest
+    needs: pre-rails-tests
+    if: needs.pre-rails-tests.outputs.run-rails-tests == 'true'
+    services:
+      postgres:
+        image: postgres:17.2
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    env:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/manage_vaccinations_development
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .tool-versions
+          cache: yarn
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Check seeds run
+        run: bin/rails db:prepare
 
   jest:
     name: Jest
@@ -93,7 +125,7 @@ jobs:
       - run: yarn test
 
   terraform:
-    name: Terraform Validate
+    name: Terraform
     runs-on: ubuntu-latest
     defaults:
       run:
