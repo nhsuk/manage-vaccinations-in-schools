@@ -20,10 +20,18 @@ provider "aws" {
   region = "eu-west-2"
 }
 
+data "aws_caller_identity" "current" {}
+
 resource "aws_ecr_repository" "performance" {
   name                 = "performancetest"
   image_tag_mutability = "IMMUTABLE"
 }
+
+resource "aws_ecr_repository" "regression" {
+  name                 = "mavis/regression"
+  image_tag_mutability = "IMMUTABLE"
+}
+
 
 resource "aws_ecr_lifecycle_policy" "performance" {
   repository = aws_ecr_repository.performance.name
@@ -36,6 +44,26 @@ resource "aws_ecr_lifecycle_policy" "performance" {
           tagStatus   = "any",
           countType   = "sinceImagePushed",
           countUnit   = "days",
+          countNumber = 30
+        },
+        action = {
+          type = "expire"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_ecr_lifecycle_policy" "regression" {
+  repository = aws_ecr_repository.regression.name
+  policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1,
+        description  = "Keep only 30 images",
+        selection = {
+          tagStatus   = "any",
+          countType   = "imageCountMoreThan",
           countNumber = 30
         },
         action = {
