@@ -17,6 +17,10 @@ en:
               invalid: Enter a batch with only letters and numbers
               too_short: Enter a batch that is more than %{count} characters long
               too_long: Enter a batch that is less than %{count} characters long
+        bulk_remove_parents_form:
+          attributes:
+            remove_option:
+              inclusion: Choose which parent details to remove
         draft_consent:
           attributes:
             injection_alternative:
@@ -613,6 +617,30 @@ en:
     notices:
       index:
         no_results: There are currently no important notices.
+    bulk_remove_parents:
+      show:
+        title: Are you sure you want to remove all parent-child relationships included in this import?
+        caption: Import
+        consents_warning: |
+          One or more parents in this import have given consent responses for children in this import.
+
+          Removing those parent-child relationships will invalidate those consent responses.
+
+          You can choose to only remove relationships where no consent response has been given by the parent for that child.
+
+          If you remove all parent-child relationships, the consent responses shown below will be invalidated.
+        options:
+          unconsented_only:
+            description: Only remove parent–child relationships where no consent response has been submitted
+            hint_text: The relationships and consent responses shown above will stay in Mavis
+            success_flash: Parent–child relationships without a submitted consent response have been removed.
+          all:
+            description: Remove all parent–child relationships included in this import
+            hint_text: This will invalidate the consent responses listed above
+            success_flash: All parent-child relationships included in this import have been removed.
+        buttons:
+          continue: Continue
+          cancel: Cancel
   mailers:
     consent_form_mailer:
       reasons_for_refusal:
