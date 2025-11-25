@@ -33,6 +33,7 @@
 class ImmunisationImport < ApplicationRecord
   include CSVImportable
   include Importable
+  include PatientImportConcern
 
   has_and_belongs_to_many :batches
   has_and_belongs_to_many :patient_locations
@@ -124,9 +125,47 @@ class ImmunisationImport < ApplicationRecord
 
   # --- New changeset-driven path (feature-flagged) ---
   def process_import_with_changesets!
-    # Placeholder for the new pipeline using PatientChangeset + VaccinationRecordChangeset.
-    # For now, defer to the legacy implementation to preserve behaviour until fully implemented.
-    process_import_legacy!
+    # Build changesets for each row
+    patient_changesets = []
+    vr_changesets = []
+
+    ActiveRecord::Base.transaction do
+      rows.each_with_index do |row, row_number|
+        # PatientChangeset via the same pathway used by PatientImport
+        pcs = PatientChangeset.from_import_row(row:, import: self, row_number:)
+        patient_changesets << pcs
+
+        # VaccinationRecordChangeset referencing the patient changeset
+        vrc =
+          VaccinationRecordChangeset.from_import_row(
+            row:,
+            import: self,
+            row_number:,
+            patient_changeset: pcs
+          )
+        vr_changesets << vrc
+      end
+
+      # If PDS cascading search is enabled, we would normally enqueue searches
+      # and defer commit for postcode rows. For the first iteration, resolve
+      # patients synchronously to keep behaviour simple and behind the flag.
+
+      import_patients_and_parents(patient_changesets, self)
+
+      # Assign patient IDs to VR changesets and mark ready_to_commit when valid
+      vr_changesets.each do |vrc|
+        next unless (pid = vrc.patient_changeset&.patient_id).present?
+        vrc.assign_patient_id!(pid)
+      end
+    end
+
+    # Enqueue commit job for any ready changesets
+    if VaccinationRecordChangeset
+         .where(immunisation_import: self, status: :ready_to_commit)
+         .exists?
+      CommitImmunisationImportJob.perform_async(id)
+      update!(status: :committing)
+    end
   end
 
   def bulk_import(rows: 100)
