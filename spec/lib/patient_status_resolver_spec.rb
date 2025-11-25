@@ -103,7 +103,15 @@ describe PatientStatusResolver do
         create(:patient, :consent_given_triage_not_needed, session:)
       end
 
-      it { expect(hash).to eq({ text: "Due vaccination", colour: "green" }) }
+      it do
+        expect(hash).to eq(
+          {
+            text: "Due vaccination",
+            colour: "green",
+            details_text: "Vaccination"
+          }
+        )
+      end
     end
 
     context "for MMR programme" do

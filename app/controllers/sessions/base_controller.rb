@@ -28,13 +28,20 @@ class Sessions::BaseController < ApplicationController
 
     due_index = @programme_statuses.find_index("due")
 
-    due_statuses = [
-      ("due_injection" unless programmes.all?(&:has_multiple_vaccine_methods?)),
-      ("due_nasal" if programmes.any?(&:has_multiple_vaccine_methods?)),
-      if programmes.any?(&:vaccine_may_contain_gelatine?)
-        "due_injection_without_gelatine"
+    # TODO: Make this more generic.
+
+    due_statuses =
+      if programmes.any?(&:flu?) && programmes.any?(&:mmr?)
+        %w[due_injection due_nasal due_without_gelatine]
+      elsif programmes.any?(&:flu?)
+        %w[due_injection due_nasal]
+      elsif programmes.any?(&:mmr?)
+        %w[due_without_gelatine]
+      else
+        []
       end
-    ].compact
+
+    due_statuses.insert(0, "due") unless programmes.all?(&:flu?)
 
     @programme_statuses[due_index, 1] = due_statuses
   end
