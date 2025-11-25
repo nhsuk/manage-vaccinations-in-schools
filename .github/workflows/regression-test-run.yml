@@ -37,7 +37,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
@@ -191,17 +191,35 @@ jobs:
           echo "task_arn=$TASK_ARN" >> $GITHUB_OUTPUT
           echo "Started task: $TASK_ARN"
           echo "Logs for server: ${CLOUDWATCH_URL}"
+  find-correct-test-branch:
+    needs: [wait-for-task-stability]
+    if: ${{ !cancelled() && needs.wait-for-task-stability.result == 'success'}}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      test_branch: ${{ steps.check-branch.outputs.test_branch }}
+    steps:
+      - name: Check if branch exists
+        id: check-branch
+        run: |
+          if git ls-remote --exit-code --heads https://github.com/NHSDigital/manage-vaccinations-in-schools-testing.git ${{ github.ref_name }} > /dev/null 2>&1; then
+            echo "test_branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "test_branch=main" >> $GITHUB_OUTPUT
+          fi
   call-functional-tests:
-    needs: [launch-dockerized-devimage, wait-for-task-stability]
+    needs: [launch-dockerized-devimage, wait-for-task-stability, find-correct-test-branch]
     if: ${{ !cancelled() && needs.launch-dockerized-devimage.result == 'success' && needs.wait-for-task-stability.result == 'success'}}
     uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/functional_selected_device.yaml@make-workflow-callable #TODO: Change once this is in main
     permissions:
       contents: write
     with:
       tests: ''
+      github_ref: ${{ needs.find-correct-test-branch.outputs.test_branch }}
       device: 'Desktop Chrome'
       programmes: 'FLU,HPV,MENACWY,MMR,TD_IPV'
-      endpoint: "http://${{ needs.wait-for-task-stability.outputs.container_ip }}:4000"
+      endpoint: 'http://${{ needs.wait-for-task-stability.outputs.container_ip }}:4000'
       screenshot_all_steps: 'false'
       enable_reruns: 'true'
       test_workers: '4'
