@@ -3,6 +3,7 @@ en:
     label:
       consent: Consent status
       patient_specific_direction: PSD status
+      programme: Programme status
       registration: Registration status
       triage: Triage status
       vaccination: Programme status
@@ -32,6 +33,78 @@ en:
       colour:
         added: green
         not_added: grey
+    programme:
+      label:
+        cannot_vaccinate: Unable to vaccinate
+        cannot_vaccinate_absent: Unable to vaccinate
+        cannot_vaccinate_contraindicated: Unable to vaccinate
+        cannot_vaccinate_delay_vaccination: Unable to vaccinate
+        cannot_vaccinate_do_not_vaccinate: Unable to vaccinate
+        cannot_vaccinate_refused: Unable to vaccinate
+        cannot_vaccinate_unwell: Unable to vaccinate
+        due: Due vaccination
+        due_injection: Due injection
+        due_injection_without_gelatine: Due gelatine-free injection
+        due_nasal: Due nasal spray
+        has_refusal: Has a refusal
+        has_refusal_consent_conflicts: Has a refusal
+        has_refusal_consent_refused: Has a refusal
+        needs_consent: Needs consent
+        needs_consent_follow_up_requested: Needs consent
+        needs_consent_no_response: Needs consent
+        needs_consent_request_failed: Needs consent
+        needs_consent_request_not_scheduled: Needs consent
+        needs_consent_request_scheduled: Needs consent
+        needs_triage: Needs triage
+        not_eligible: Not eligible
+        vaccinated: Vaccinated
+        vaccinated_already: Vaccinated
+        vaccinated_fully: Vaccinated
+      colour:
+        cannot_vaccinate: red
+        cannot_vaccinate_absent: red
+        cannot_vaccinate_contraindicated: red
+        cannot_vaccinate_delay_vaccination: red
+        cannot_vaccinate_do_not_vaccinate: red
+        cannot_vaccinate_refused: red
+        cannot_vaccinate_unwell: red
+        due: green
+        due_injection: green
+        due_injection_without_gelatine: green
+        due_nasal: green
+        has_refusal: dark-orange
+        has_refusal_consent_conflicts: dark-orange
+        has_refusal_consent_refused: dark-orange
+        needs_consent: blue
+        needs_consent_follow_up_requested: blue
+        needs_consent_no_response: blue
+        needs_consent_request_failed: blue
+        needs_consent_request_not_scheduled: blue
+        needs_consent_request_scheduled: blue
+        needs_triage: blue
+        not_eligible: grey
+        vaccinated: white
+        vaccinated_already: white
+        vaccinated_fully: white
+      details:
+        cannot_vaccinate_absent: Child absent
+        cannot_vaccinate_contraindicated: Child contraindicated
+        cannot_vaccinate_delay_vaccination: Delay vaccination
+        cannot_vaccinate_do_not_vaccinate: Contraindications
+        cannot_vaccinate_refused: Child refused
+        cannot_vaccinate_unwell: Child unwell
+        due_injection: Injection
+        due_injection_without_gelatine: Gelatine-free injection
+        due_nasal: Nasal spray
+        has_refusal_consent_conflicts: Conflicting consent
+        has_refusal_consent_refused: Parent refused
+        needs_consent_follow_up_requested: Follow-up requested
+        needs_consent_no_response: No response
+        needs_consent_request_failed: Request failed
+        needs_consent_request_not_scheduled: Request not scheduled
+        needs_consent_request_scheduled: Request scheduled
+        vaccinated_already: Already had the vaccine
+        vaccinated_fully: Vaccinated
     registration:
       label:
         attending: Attending session

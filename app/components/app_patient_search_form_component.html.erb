@@ -30,7 +30,7 @@
       <% end %>
     <% end %>
 
-    <% if show_still_to_vaccinate || show_eligible_children %>
+    <% if !Flipper.enabled?(:programme_status, current_team) && (show_still_to_vaccinate || show_eligible_children) %>
       <%= f.govuk_check_boxes_fieldset :show_only,
                                        multiple: true,
                                        legend: { text: "Show only", size: "s" },
@@ -55,33 +55,6 @@
       <% end %>
     <% end %>
 
-    <% if consent_statuses.any? %>
-      <%= f.govuk_check_boxes_fieldset :consent_statuses,
-                                       legend: { text: "Consent status", size: "s" },
-                                       small: true do %>
-        <% consent_statuses.each do |status| %>
-          <%= f.govuk_check_box :consent_statuses,
-                                status,
-                                checked: form.consent_statuses&.include?(status),
-                                label: { text: t(status, scope: %i[status consent label]) } %>
-        <% end %>
-      <% end %>
-    <% end %>
-
-    <% if triage_statuses.any? %>
-      <%= f.govuk_radio_buttons_fieldset :triage_status,
-                                         legend: { text: "Triage status", size: "s" },
-                                         small: true do %>
-        <%= f.govuk_radio_button :triage_status, "", checked: form.triage_status.blank?, label: { text: "Any" } %>
-        <% triage_statuses.each do |status| %>
-          <%= f.govuk_radio_button :triage_status,
-                                   status,
-                                   checked: form.triage_status == status,
-                                   label: { text: t(status, scope: %i[status triage label]) } %>
-        <% end %>
-      <% end %>
-    <% end %>
-
     <% if registration_statuses.any? %>
       <%= f.govuk_radio_buttons_fieldset :registration_status,
                                          legend: { text: "Registration status", size: "s" },
@@ -96,17 +69,79 @@
       <% end %>
     <% end %>
 
-    <% if vaccination_statuses.any? %>
-      <%= f.govuk_radio_buttons_fieldset :vaccination_status,
-                                         legend: { text: "Programme status", size: "s" },
-                                         small: true do %>
-        <%= f.govuk_radio_button :vaccination_status, "", checked: form.vaccination_status.blank?, label: { text: "Any" } %>
+    <% if Flipper.enabled?(:programme_status, current_team) %>
+      <% if programme_statuses.count > 1 %>
+        <%= f.govuk_radio_buttons_fieldset :programme_status_group,
+                                           legend: { text: "Programme status", size: "s" },
+                                           small: true do %>
+          <%= f.govuk_radio_button :programme_status_group, "", checked: form.programme_status_group.blank?, label: { text: "Any" } %>
 
-        <% vaccination_statuses.each do |status| %>
-          <%= f.govuk_radio_button :vaccination_status,
-                                   status,
-                                   checked: form.vaccination_status == status,
-                                   label: { text: t(status, scope: %i[status vaccination label]) } %>
+          <% Patient::ProgrammeStatus::GROUPS.each do |status_group| %>
+            <% statuses = programme_statuses.select { it.starts_with?(status_group) }.sort %>
+
+            <% if statuses.count > 1 %>
+              <%= f.govuk_radio_button :programme_status_group,
+                                       status_group,
+                                       checked: form.programme_status_group == status_group,
+                                       label: { text: t(status_group, scope: %i[status programme label]) } do %>
+                <%= f.govuk_check_boxes_fieldset :programme_statuses, legend: nil, small: true do %>
+                  <% statuses.each do |status| %>
+                    <%= f.govuk_check_box :programme_statuses,
+                                          status,
+                                          checked: form.programme_statuses&.include?(status),
+                                          label: { text: t(status, scope: %i[status programme details]) } %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            <% elsif statuses.count > 0 %>
+              <%= f.govuk_radio_button :programme_status_group,
+                                       status_group,
+                                       checked: form.programme_status_group == status_group,
+                                       label: { text: t(status_group, scope: %i[status programme label]) } %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <% if vaccination_statuses.any? %>
+        <%= f.govuk_radio_buttons_fieldset :vaccination_status,
+                                           legend: { text: "Programme status", size: "s" },
+                                           small: true do %>
+          <%= f.govuk_radio_button :vaccination_status, "", checked: form.vaccination_status.blank?, label: { text: "Any" } %>
+
+          <% vaccination_statuses.each do |status| %>
+            <%= f.govuk_radio_button :vaccination_status,
+                                     status,
+                                     checked: form.vaccination_status == status,
+                                     label: { text: t(status, scope: %i[status vaccination label]) } %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <% if consent_statuses.any? %>
+        <%= f.govuk_check_boxes_fieldset :consent_statuses,
+                                         legend: { text: "Consent status", size: "s" },
+                                         small: true do %>
+          <% consent_statuses.each do |status| %>
+            <%= f.govuk_check_box :consent_statuses,
+                                  status,
+                                  checked: form.consent_statuses&.include?(status),
+                                  label: { text: t(status, scope: %i[status consent label]) } %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <% if triage_statuses.any? %>
+        <%= f.govuk_radio_buttons_fieldset :triage_status,
+                                           legend: { text: "Triage status", size: "s" },
+                                           small: true do %>
+          <%= f.govuk_radio_button :triage_status, "", checked: form.triage_status.blank?, label: { text: "Any" } %>
+          <% triage_statuses.each do |status| %>
+            <%= f.govuk_radio_button :triage_status,
+                                     status,
+                                     checked: form.triage_status == status,
+                                     label: { text: t(status, scope: %i[status triage label]) } %>
+          <% end %>
         <% end %>
       <% end %>
     <% end %>
@@ -199,7 +234,7 @@
                               link_errors: true,
                               label: { text: "Children missing an NHS number" } %>
 
-        <% if show_aged_out_of_programmes %>
+        <% if !Flipper.enabled?(:programme_status, current_team) && show_aged_out_of_programmes %>
           <%= f.govuk_check_box :aged_out_of_programmes,
                                 1, 0,
                                 checked: form.aged_out_of_programmes,

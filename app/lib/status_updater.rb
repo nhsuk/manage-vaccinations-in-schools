@@ -8,6 +8,7 @@ class StatusUpdater
 
   def call
     update_consent_statuses!
+    update_programme_statuses!
     update_registration_statuses!
     update_triage_statuses!
     update_vaccination_statuses!
@@ -40,6 +41,43 @@ class StatusUpdater
           on_duplicate_key_update: {
             conflict_target: [:id],
             columns: %i[status vaccine_methods without_gelatine]
+          }
+        )
+      end
+  end
+
+  def update_programme_statuses!
+    Patient::ProgrammeStatus.import!(
+      %i[patient_id programme_type academic_year],
+      programme_statuses_to_import,
+      on_duplicate_key_ignore: true
+    )
+
+    Patient::ProgrammeStatus
+      .then { patient ? it.where(patient:) : it }
+      .where(academic_year: academic_years)
+      .includes(
+        :attendance_record,
+        :consents,
+        :patient,
+        :patient_locations,
+        :triages,
+        :vaccination_records
+      )
+      .find_in_batches(batch_size: 10_000) do |batch|
+        batch.each(&:assign)
+
+        Patient::ProgrammeStatus.import!(
+          batch.select(&:changed?),
+          on_duplicate_key_update: {
+            conflict_target: [:id],
+            columns: %i[
+              date
+              dose_sequence
+              status
+              vaccine_methods
+              without_gelatine
+            ]
           }
         )
       end
@@ -145,6 +183,20 @@ class StatusUpdater
               .map do |programme_type|
                 [patient_id, programme_type, academic_year]
               end
+          end
+        end
+  end
+
+  def programme_statuses_to_import
+    @programme_statuses_to_import ||=
+      Patient
+        .then { patient ? it.where(id: patient) : it }
+        .pluck(:id)
+        .flat_map do |patient_id|
+          academic_years.flat_map do |academic_year|
+            Programme::TYPES.map do |programme_type|
+              [patient_id, programme_type, academic_year]
+            end
           end
         end
   end
