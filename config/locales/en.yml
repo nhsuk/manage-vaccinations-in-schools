@@ -17,6 +17,10 @@ en:
               invalid: Enter a batch with only letters and numbers
               too_short: Enter a batch that is more than %{count} characters long
               too_long: Enter a batch that is less than %{count} characters long
+        bulk_remove_parents_form:
+          attributes:
+            remove_option:
+              inclusion: Choose which parent details to remove
         draft_consent:
           attributes:
             injection_alternative:
@@ -621,6 +625,25 @@ en:
     notices:
       index:
         no_results: There are currently no important notices.
+    bulk_remove_parents:
+      new:
+        title: Are you sure you want to remove all parent-child relationships included in this import?
+        caption: Import
+        consents_warning: |
+          One or more parents in this import have given consent responses for children in this import.
+
+          Removing those parent-child relationships will invalidate those consent responses.
+
+          You can choose to only remove relationships where no consent response has been given by the parent for that child.
+
+          If you remove all parent-child relationships, the consent responses shown below will be invalidated.
+        buttons:
+          continue: Continue
+          cancel: Cancel
+      create:
+        success_flash:
+          unconsented_only: Parent–child relationships without a submitted consent response have been removed.
+          all: All parent-child relationships included in this import have been removed.
   mailers:
     consent_form_mailer:
       reasons_for_refusal:
