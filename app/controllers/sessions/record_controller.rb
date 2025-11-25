@@ -29,7 +29,7 @@ class Sessions::RecordController < Sessions::BaseController
       ).consent_given_and_safe_to_vaccinate(
         programmes: @form.programmes,
         academic_year: @session.academic_year,
-        vaccine_method: @form.vaccine_method,
+        vaccine_methods: @form.vaccine_methods,
         without_gelatine: @form.without_gelatine
       )
 
@@ -123,14 +123,19 @@ class Sessions::RecordController < Sessions::BaseController
         team:
       ).or(
         original_scope.has_vaccine_criteria(
-          vaccine_method: "injection",
+          vaccine_methods: %w[injection],
           programme:,
           academic_year:
         )
       )
     elsif @session.pgd_supply_enabled? && @session.national_protocol_enabled?
       original_scope.has_vaccine_criteria(
-        vaccine_method: %w[nasal injection],
+        vaccine_methods: [
+          %w[nasal],
+          %w[nasal injection],
+          %w[injection nasal],
+          %w[injection]
+        ],
         programme:,
         academic_year:
       )
@@ -142,7 +147,7 @@ class Sessions::RecordController < Sessions::BaseController
       )
     elsif @session.pgd_supply_enabled?
       original_scope.has_vaccine_criteria(
-        vaccine_method: "nasal",
+        vaccine_methods: [%w[nasal], %w[nasal injection]],
         programme:,
         academic_year:
       )

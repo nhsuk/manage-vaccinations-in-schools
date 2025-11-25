@@ -54,14 +54,14 @@ class PatientSearchForm < SearchForm
       end
   end
 
-  def vaccine_method
+  def vaccine_methods
     return nil if vaccine_criteria.blank?
 
     case vaccine_criteria
     when "injection", "injection_without_gelatine"
-      "injection"
+      [%w[injection]]
     when "nasal"
-      "nasal"
+      [%w[nasal], %w[nasal injection]]
     else
       raise "Unknown vaccine criteria value: #{value}"
     end
@@ -367,7 +367,7 @@ class PatientSearchForm < SearchForm
     return scope if vaccine_criteria.blank?
 
     scope.has_vaccine_criteria(
-      vaccine_method:,
+      vaccine_methods:,
       without_gelatine:,
       programme: programmes,
       academic_year:
@@ -380,7 +380,7 @@ class PatientSearchForm < SearchForm
     scope.consent_given_and_safe_to_vaccinate(
       programmes:,
       academic_year:,
-      vaccine_method:,
+      vaccine_methods:,
       without_gelatine:
     )
   end
