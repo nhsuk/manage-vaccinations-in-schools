@@ -9,9 +9,7 @@ class DashboardController < ApplicationController
 
   def index
     @notices_count =
-      if policy(:notices).index?
-        ImportantNotices.call(patient_scope: policy_scope(Patient)).length
-      end
+      (policy_scope(ImportantNotice).count if policy(ImportantNotice).index?)
   end
 
   def team_has_upload_access_only?

@@ -121,6 +121,10 @@ FactoryBot.define do
 
     notify_parents { true }
 
+    after(:create) do |vaccination_record|
+      ImportantNoticeGeneratorJob.perform_now([vaccination_record.patient_id])
+    end
+
     trait :sourced_from_nhs_immunisations_api do
       source { "nhs_immunisations_api" }
       nhs_immunisations_api_id { SecureRandom.uuid }

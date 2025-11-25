@@ -222,11 +222,19 @@ module ContributesToPatientTeams
     end
 
     def sync_patient_teams_table_on_patient_ids(pk_ids)
+      affected_patient_ids = []
       transaction do
         contributing_subqueries.each do |key, subquery|
           patient_id_source =
             connection.quote_string(subquery[:patient_id_source])
           sterile_key = connection.quote(PatientTeam.sources.fetch(key.to_s))
+
+          affected_patient_ids |=
+            select("#{subquery[:patient_id_source]} as patient_id")
+              .where("#{table_name}.id = ANY(ARRAY[?]::bigint[])", pk_ids)
+              .distinct
+              .pluck(:patient_id)
+
           patient_relationships_to_remove =
             select("#{patient_id_source} as patient_id")
               .where("#{table_name}.id = ANY(ARRAY[?]::bigint[])", pk_ids)
@@ -246,6 +254,10 @@ module ContributesToPatientTeams
         ).distinct.add_patient_team_relationships
 
         PatientTeam.missing_sources.delete_all
+      end
+
+      if affected_patient_ids.any?
+        ImportantNoticeGeneratorJob.perform_later(affected_patient_ids)
       end
     end
 
