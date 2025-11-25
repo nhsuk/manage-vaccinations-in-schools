@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
-describe LocationSessionsFactory do
+describe TeamLocationSessionsFactory do
   describe "#call" do
-    subject(:call) { described_class.call(location, academic_year:) }
+    subject(:call) { described_class.call(team_location) }
 
     let(:programmes) { [Programme.hpv] }
     let(:team) { create(:team, programmes:) }
     let(:academic_year) { AcademicYear.current }
+
+    let(:team_location) do
+      TeamLocation.find_by!(team:, location:, academic_year:)
+    end
 
     context "with a school that's eligible for the programme" do
       let!(:location) { create(:school, :secondary, team:) }
@@ -158,14 +162,6 @@ describe LocationSessionsFactory do
           expect(session.patients).to include(patient_at_location)
           expect(session.patients).not_to include(patient_at_school_location)
         end
-      end
-    end
-
-    context "with a community clinic" do
-      let(:location) { create(:community_clinic, team:) }
-
-      it "doesn't create any sessions" do
-        expect { call }.not_to change(team.sessions, :count)
       end
     end
 
