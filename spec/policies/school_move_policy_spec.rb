@@ -29,6 +29,16 @@ describe SchoolMovePolicy do
 
         it { should contain_exactly(school_move) }
       end
+
+      context "school move with school in different team" do
+        let(:patient) { create(:patient) }
+        let(:school) { create(:school, team: other_team) }
+        let(:school_move) do
+          create(:school_move, :to_school, patient:, school:)
+        end
+
+        it { should be_empty }
+      end
     end
   end
 end
