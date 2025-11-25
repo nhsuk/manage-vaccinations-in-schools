@@ -93,6 +93,15 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def process_import!
+    if Flipper.enabled?(:immunisation_import_use_changesets)
+      process_import_with_changesets!
+    else
+      process_import_legacy!
+    end
+  end
+
+  # --- Legacy path (current behaviour) ---
+  def process_import_legacy!
     counts = COUNT_COLUMNS.index_with(0)
 
     ActiveRecord::Base.transaction do
@@ -111,6 +120,13 @@ class ImmunisationImport < ApplicationRecord
 
     post_commit!
     UpdatePatientsFromPDS.call(patients, queue: :imports)
+  end
+
+  # --- New changeset-driven path (feature-flagged) ---
+  def process_import_with_changesets!
+    # Placeholder for the new pipeline using PatientChangeset + VaccinationRecordChangeset.
+    # For now, defer to the legacy implementation to preserve behaviour until fully implemented.
+    process_import_legacy!
   end
 
   def bulk_import(rows: 100)
