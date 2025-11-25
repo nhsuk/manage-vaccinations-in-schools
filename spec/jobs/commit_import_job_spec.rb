@@ -229,7 +229,6 @@ describe CommitImportJob do
 
       context "with an existing patient in a session for a previous academic year but not the current" do
         let(:previous_academic_year) { session.academic_year - 1 }
-
         let(:patient) do
           create(
             :patient,
@@ -244,6 +243,16 @@ describe CommitImportJob do
                 academic_year: previous_academic_year,
                 date: previous_academic_year.to_academic_year_date_range.begin
               )
+          )
+        end
+
+        before do
+          location.import_year_groups_from_gias!(
+            academic_year: previous_academic_year
+          )
+          location.import_default_programme_year_groups!(
+            programmes,
+            academic_year: previous_academic_year
           )
         end
 

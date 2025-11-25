@@ -16,7 +16,7 @@
 #
 #  fk_rails_...  (session_id => sessions.id) ON DELETE => cascade
 #
-describe SessionProgrammeYearGroup do
+describe Session::ProgrammeYearGroup do
   subject { build(:session_programme_year_group) }
 
   it { should be_valid }

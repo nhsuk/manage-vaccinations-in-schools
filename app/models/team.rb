@@ -37,7 +37,7 @@
 class Team < ApplicationRecord
   include ContributesToPatientTeams
   include DaysBeforeToWeeksBefore
-  include HasLocationProgrammeYearGroups
+  include FlipperActor
   include HasManyProgrammes
 
   class ActiveRecord_Relation < ActiveRecord::Relation
@@ -56,6 +56,7 @@ class Team < ApplicationRecord
   has_many :cohort_imports
   has_many :consent_forms
   has_many :consents
+  has_many :important_notices
   has_many :locations
   has_many :patient_specific_directions
   has_many :patient_teams
@@ -92,6 +93,8 @@ class Team < ApplicationRecord
   validates :privacy_policy_url, presence: true
   validates :workgroup, presence: true, uniqueness: true
 
+  def to_param = workgroup
+
   def year_groups(academic_year: nil)
     academic_year ||= AcademicYear.pending
     location_programme_year_groups
@@ -100,14 +103,19 @@ class Team < ApplicationRecord
       .pluck_year_groups
   end
 
-  def generic_clinic = locations.generic_clinic.first
+  def generic_clinic = locations.includes(:subteam).generic_clinic.first
 
   def generic_clinic_session(academic_year:)
+    location = generic_clinic
+
+    team_location =
+      TeamLocation.find_or_create_by!(team: self, location:, academic_year:)
+
     sessions
-      .includes(:location, :location_programme_year_groups)
-      .create_with(programme_types:, dates: [])
+      .includes(:location, :session_programme_year_groups)
+      .create_with(dates: [], team_location:)
       .find_or_create_by!(academic_year:, location: generic_clinic)
-      .tap(&:sync_location_programme_year_groups!)
+      .tap { it.sync_location_programme_year_groups!(programmes:) }
   end
 
   def has_upload_access_only?

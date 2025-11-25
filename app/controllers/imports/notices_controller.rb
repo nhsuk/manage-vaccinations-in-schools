@@ -4,8 +4,8 @@ class Imports::NoticesController < ApplicationController
   layout "full"
 
   def index
-    authorize :notices
+    authorize ImportantNotice
 
-    @notices = ImportantNotices.call(patient_scope: policy_scope(Patient))
+    @notices = policy_scope(ImportantNotice).order(recorded_at: :desc)
   end
 end

@@ -36,20 +36,23 @@
 #  location_id                         :bigint           not null
 #  school_id                           :bigint
 #  team_id                             :bigint           not null
+#  team_location_id                    :bigint
 #
 # Indexes
 #
-#  index_consent_forms_on_academic_year  (academic_year)
-#  index_consent_forms_on_location_id    (location_id)
-#  index_consent_forms_on_nhs_number     (nhs_number)
-#  index_consent_forms_on_school_id      (school_id)
-#  index_consent_forms_on_team_id        (team_id)
+#  index_consent_forms_on_academic_year     (academic_year)
+#  index_consent_forms_on_location_id       (location_id)
+#  index_consent_forms_on_nhs_number        (nhs_number)
+#  index_consent_forms_on_school_id         (school_id)
+#  index_consent_forms_on_team_id           (team_id)
+#  index_consent_forms_on_team_location_id  (team_location_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (school_id => locations.id)
 #  fk_rails_...  (team_id => teams.id)
+#  fk_rails_...  (team_location_id => team_locations.id)
 #
 
 require_relative "../../lib/faker/address"
@@ -63,12 +66,23 @@ FactoryBot.define do
       reason_for_refusal { nil }
       reason_for_refusal_notes { "" }
       without_gelatine { false }
+      year_group { programmes.flat_map(&:default_year_groups).sort.uniq.first }
     end
 
     given_name { Faker::Name.first_name }
     family_name { Faker::Name.last_name }
     use_preferred_name { false }
-    date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
+    date_of_birth do
+      if year_group
+        date_range =
+          year_group.to_birth_academic_year(
+            academic_year:
+          ).to_academic_year_date_range
+        Faker::Date.between(from: date_range.begin, to: date_range.end)
+      else
+        Faker::Date.birthday(min_age: 7, max_age: 16)
+      end
+    end
     address_line_1 { Faker::Address.street_address }
     address_town { Faker::Address.city }
     address_postcode { Faker::Address.uk_postcode }
@@ -93,8 +107,10 @@ FactoryBot.define do
 
     parental_responsibility { "yes" }
 
-    team { session.team }
     location { session.location }
+    team { session.team }
+    team_location { session.team_location }
+
     school { location.school? ? location : association(:school, team:) }
     school_confirmed { true }
 

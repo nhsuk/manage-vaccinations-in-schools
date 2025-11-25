@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class AppImportsTableComponent < ViewComponent::Base
-  def initialize(team:)
+  def initialize(team:, uploaded_files: true)
     @team = team
+    @uploaded_files = uploaded_files
   end
 
   def render? = imports.present?
@@ -15,10 +16,19 @@ class AppImportsTableComponent < ViewComponent::Base
 
   def imports
     @imports ||=
-      (
-        class_import_records + cohort_import_records +
-          immunisation_import_records
-      ).sort_by(&:created_at).reverse
+      if @uploaded_files
+        (
+          class_import_records.status_for_uploaded_files +
+            cohort_import_records.status_for_uploaded_files +
+            immunisation_import_records.status_for_uploaded_files
+        ).sort_by(&:created_at).reverse
+      else
+        (
+          class_import_records.status_for_imported_records +
+            cohort_import_records.status_for_imported_records +
+            immunisation_import_records.status_for_imported_records
+        ).sort_by(&:created_at).reverse
+      end
   end
 
   def class_import_records

@@ -608,7 +608,7 @@ en:
   hosting_environment: This is a %{name} environment. Do not use it to make clinical decisions.
   imports:
     index:
-      title: Import records
+      title: Imports
       title_short: Imports
     notices:
       index:

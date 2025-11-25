@@ -141,16 +141,6 @@ describe "Import class lists" do
   end
 
   def and_i_select_the_year_groups
-    expect(page).not_to have_content("Nursery")
-    expect(page).not_to have_content("Reception")
-    # Not testing for "Year 1" because it's included in "Year 10" and "Year 11".
-    expect(page).not_to have_content("Year 2")
-    expect(page).not_to have_content("Year 3")
-    expect(page).not_to have_content("Year 4")
-    expect(page).not_to have_content("Year 5")
-    expect(page).not_to have_content("Year 6")
-    expect(page).not_to have_content("Year 7")
-
     check "Year 8"
     check "Year 9"
     check "Year 10"
@@ -188,8 +178,7 @@ describe "Import class lists" do
   end
 
   def then_i_should_see_the_upload
-    expect(page).to have_content("Imported on")
-    expect(page).to have_content("Imported byUSER, Test")
+    expect(page).to have_content("Uploaded byUSER, Test")
     expect(page).to have_content(
       "Year groupsYear 8, Year 9, Year 10, and Year 11"
     )
@@ -251,7 +240,7 @@ describe "Import class lists" do
   def when_i_go_back_to_the_upload_page
     click_on "Back"
 
-    click_on "Import records"
+    click_on "Upload records"
     choose "Class list records"
     click_on "Continue"
 

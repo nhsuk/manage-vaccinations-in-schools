@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
-describe LocationSessionsFactory do
+describe TeamLocationSessionsFactory do
   describe "#call" do
-    subject(:call) { described_class.call(location, academic_year:) }
+    subject(:call) { described_class.call(team_location) }
 
     let(:programmes) { [Programme.hpv] }
     let(:team) { create(:team, programmes:) }
     let(:academic_year) { AcademicYear.current }
+
+    let(:team_location) do
+      TeamLocation.find_by!(team:, location:, academic_year:)
+    end
 
     context "with a school that's eligible for the programme" do
       let!(:location) { create(:school, :secondary, team:) }
@@ -14,7 +18,11 @@ describe LocationSessionsFactory do
       it "creates missing sessions" do
         expect { call }.to change(team.sessions, :count).by(1)
 
-        session = team.sessions.includes(:location).first
+        session =
+          team
+            .sessions
+            .includes(:location, :session_programme_year_groups)
+            .first
         expect(session.location).to eq(location)
         expect(session.academic_year).to eq(academic_year)
         expect(session.programmes).to eq(programmes)
@@ -29,6 +37,16 @@ describe LocationSessionsFactory do
       end
 
       context "with patients from a previous academic year" do
+        before do
+          location.import_year_groups_from_gias!(
+            academic_year: academic_year - 1
+          )
+          location.import_default_programme_year_groups!(
+            programmes,
+            academic_year: academic_year - 1
+          )
+        end
+
         let(:previous_session_at_location) do
           create(
             :session,
@@ -78,13 +96,29 @@ describe LocationSessionsFactory do
       it "creates missing sessions" do
         expect { call }.to change(team.sessions, :count).by(1)
 
-        session = team.sessions.includes(:location).first
+        session =
+          team
+            .sessions
+            .includes(:location, :session_programme_year_groups)
+            .first
         expect(session.location).to eq(location)
         expect(session.academic_year).to eq(academic_year)
         expect(session.programmes).to eq(programmes)
       end
 
       context "with patients from a previous academic year" do
+        before do
+          location.import_year_groups!(
+            location.year_groups,
+            academic_year: academic_year - 1,
+            source: "generic_clinic_factory"
+          )
+          location.import_default_programme_year_groups!(
+            programmes,
+            academic_year: academic_year - 1
+          )
+        end
+
         let(:previous_session_at_location) do
           create(
             :session,
@@ -128,14 +162,6 @@ describe LocationSessionsFactory do
           expect(session.patients).to include(patient_at_location)
           expect(session.patients).not_to include(patient_at_school_location)
         end
-      end
-    end
-
-    context "with a community clinic" do
-      let(:location) { create(:community_clinic, team:) }
-
-      it "doesn't create any sessions" do
-        expect { call }.not_to change(team.sessions, :count)
       end
     end
 
@@ -188,7 +214,11 @@ describe LocationSessionsFactory do
         it "creates missing sessions for each programme group" do
           expect { call }.to change(team.sessions, :count).by(1)
 
-          session = team.sessions.includes(:location).find_by(location:)
+          session =
+            team
+              .sessions
+              .includes(:location, :session_programme_year_groups)
+              .find_by(location:)
           expect(session.programmes).to match_array(programmes)
         end
       end
@@ -199,7 +229,12 @@ describe LocationSessionsFactory do
         it "creates missing sessions for each programme group" do
           expect { call }.to change(team.sessions, :count).by(3)
 
-          session = team.sessions.order(:created_at).where(location:)
+          session =
+            team
+              .sessions
+              .includes(:session_programme_year_groups)
+              .order(:created_at)
+              .where(location:)
           expect(session.first.programmes).to eq(flu_programmes)
           expect(session.second.programmes).to eq(hpv_programmes)
           expect(session.third.programmes).to eq(doubles_programmes)

@@ -48,10 +48,13 @@ module MavisCLI
             )
           end
 
-          location
-            .sessions
-            .includes(:location_programme_year_groups)
-            .find_each(&:sync_location_programme_year_groups!)
+          location.sessions.find_each do |session|
+            if session.programmes.include?(programme)
+              session.sync_location_programme_year_groups!(
+                programmes: session.programme
+              )
+            end
+          end
         end
       end
     end

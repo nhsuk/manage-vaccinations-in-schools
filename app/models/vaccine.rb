@@ -27,10 +27,6 @@
 #  index_vaccines_on_snomed_product_code     (snomed_product_code) UNIQUE
 #  index_vaccines_on_snomed_product_term     (snomed_product_term) UNIQUE
 #
-# Foreign Keys
-#
-#  fk_rails_...  (programme_id => programmes.id)
-#
 class Vaccine < ApplicationRecord
   include BelongsToProgramme
   include HasSideEffects

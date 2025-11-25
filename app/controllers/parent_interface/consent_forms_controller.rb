@@ -21,7 +21,8 @@ module ParentInterface
             ConsentForm.create!(
               academic_year: @session.academic_year,
               location: @session.location,
-              team: @session.team
+              team: @session.team,
+              team_location: @session.team_location
             )
 
           @programmes.each do |programme|

@@ -174,6 +174,17 @@ describe "Manage children" do
     then_i_see_the_notice_of_sensitive
   end
 
+  scenario "Important notices for patient added to new team" do
+    given_another_team_exists
+    and_a_patient_with_all_notices_exists
+
+    when_the_patient_is_added_to_the_new_team
+    when_i_go_to_the_imports_page_as_a_superuser_in_the_new_team
+    and_i_click_on_notices
+    then_i_see_all_patient_notices
+    and_i_do_not_see_gillick_no_notify_notices
+  end
+
   def given_my_team_exists
     @hpv = Programme.hpv
     @flu = Programme.flu
@@ -186,6 +197,18 @@ describe "Manage children" do
       )
 
     TeamSessionsFactory.call(@team, academic_year: AcademicYear.current)
+  end
+
+  def given_another_team_exists
+    @new_team =
+      create(
+        :team,
+        :with_generic_clinic,
+        :with_one_nurse,
+        programmes: [@hpv, @flu]
+      )
+
+    TeamSessionsFactory.call(@new_team, academic_year: AcademicYear.current)
   end
 
   def given_patients_exist
@@ -286,6 +309,20 @@ describe "Manage children" do
     session = create(:session, team: @team, programmes: [@hpv])
 
     @restricted_patient = create(:patient, :restricted, session:)
+  end
+
+  def and_a_patient_with_all_notices_exists
+    session = create(:session, team: @team, programmes: [@hpv])
+    @patient_all_notices =
+      create(:patient, :deceased, :invalidated, :restricted, session:)
+    create(
+      :vaccination_record,
+      notify_parents: false,
+      patient: @patient_all_notices,
+      programme: @hpv,
+      session:
+    )
+    expect(@patient_all_notices.important_notices.count).to eq(4)
   end
 
   def when_i_click_on_children
@@ -462,6 +499,12 @@ describe "Manage children" do
     visit "/imports"
   end
 
+  def when_i_go_to_the_imports_page_as_a_superuser_in_the_new_team
+    sign_in @new_team.users.first, superuser: true
+
+    visit "/imports"
+  end
+
   def when_i_wait_for_the_sync_to_complete
     Sidekiq::Job.drain_all
   end
@@ -484,6 +527,21 @@ describe "Manage children" do
 
   alias_method :and_i_click_on_notices, :when_i_click_on_notices
 
+  def when_the_patient_is_added_to_the_new_team
+    SchoolMove.new(
+      academic_year: AcademicYear.current,
+      home_educated: false,
+      patient: @patient_all_notices,
+      team: @new_team
+    ).confirm!
+
+    expect(@patient_all_notices.teams).to include(@new_team)
+    expect(@patient_all_notices.teams).to include(@team)
+
+    perform_enqueued_jobs_while_exists(only: SyncPatientTeamJob)
+    perform_enqueued_jobs_while_exists(only: ImportantNoticeGeneratorJob)
+  end
+
   def then_i_see_no_notices
     expect(page).to have_content("There are currently no important notices.")
   end
@@ -504,6 +562,22 @@ describe "Manage children" do
     expect(page).to have_content("Important notices (1)")
     expect(page).to have_content(@restricted_patient.full_name)
     expect(page).to have_content("Record flagged as sensitive")
+  end
+
+  def then_i_see_all_patient_notices
+    expect(page).to have_content("Important notices (3)")
+    expect(page).to have_content(@patient_all_notices.full_name).exactly(
+      3
+    ).times
+    expect(page).to have_content("Record updated with child’s date of death")
+    expect(page).to have_content("Record flagged as invalid")
+    expect(page).to have_content("Record flagged as sensitive")
+  end
+
+  def and_i_do_not_see_gillick_no_notify_notices
+    expect(page).not_to have_content(
+      "does not want their parents to be notified"
+    )
   end
 
   def then_the_vaccination_record_is_created_with_the_nhs

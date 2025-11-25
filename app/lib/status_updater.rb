@@ -158,15 +158,14 @@ class StatusUpdater
       .pluck(
         "patients.id",
         "sessions.id",
-        "sessions.location_id",
         "sessions.academic_year",
         "patients.birth_academic_year"
       )
-      .filter_map do |patient_id, session_id, location_id, academic_year, birth_academic_year|
+      .filter_map do |patient_id, session_id, academic_year, birth_academic_year|
         year_group = birth_academic_year.to_year_group(academic_year:)
 
-        if programme_types_per_location_id_and_year_group
-             .fetch(location_id, {})
+        if programme_types_per_session_id_and_year_group
+             .fetch(session_id, {})
              .fetch(year_group, [])
              .empty?
           next
@@ -189,22 +188,18 @@ class StatusUpdater
         end
   end
 
-  def programme_types_per_location_id_and_year_group
-    @programme_types_per_location_id_and_year_group ||=
-      Location::ProgrammeYearGroup
-        .joins(:location_year_group)
-        .where(location_year_group: { academic_year: academic_years })
-        .pluck(
-          :"location_year_group.location_id",
-          :programme_type,
-          :"location_year_group.value"
-        )
+  def programme_types_per_session_id_and_year_group
+    @programme_types_per_session_id_and_year_group ||=
+      Session::ProgrammeYearGroup
+        .joins(:session)
+        .where(session: { academic_year: academic_years })
+        .pluck(:session_id, :programme_type, :year_group)
         .each_with_object(
           {}
-        ) do |(location_id, programme_type, year_group), hash|
-          hash[location_id] ||= {}
-          hash[location_id][year_group] ||= []
-          hash[location_id][year_group] << programme_type
+        ) do |(session_id, programme_type, year_group), hash|
+          hash[session_id] ||= {}
+          hash[session_id][year_group] ||= []
+          hash[session_id][year_group] << programme_type
         end
   end
 end

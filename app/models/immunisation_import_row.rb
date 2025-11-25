@@ -324,7 +324,7 @@ class ImmunisationImportRow
         team
           .sessions
           .where(academic_year: AcademicYear.current)
-          .includes(:location)
+          .includes(:location, :session_programme_year_groups)
           .find_by(id:)
       end
   end

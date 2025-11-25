@@ -39,7 +39,6 @@
 class Location < ApplicationRecord
   include AddressConcern
   include ContributesToPatientTeams
-  include HasLocationProgrammeYearGroups
   include ODSCodeConcern
 
   class ActiveRecord_Relation < ActiveRecord::Relation
@@ -177,8 +176,10 @@ class Location < ApplicationRecord
 
   def attach_to_team!(team, academic_year:, subteam:)
     ActiveRecord::Base.transaction do
-      team_locations.find_or_create_by!(team:, academic_year:).update!(subteam:)
       update!(subteam:)
+      team_locations
+        .find_or_create_by!(team:, academic_year:)
+        .tap { it.update!(subteam:) }
     end
   end
 

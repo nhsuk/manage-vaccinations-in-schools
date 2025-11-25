@@ -68,6 +68,7 @@ class Patient < ApplicationRecord
   has_many :consent_statuses
   has_many :consents
   has_many :gillick_assessments
+  has_many :important_notices, dependent: :destroy
   has_many :notes
   has_many :notify_log_entries
   has_many :parent_relationships, -> { order(:created_at) }
@@ -102,12 +103,10 @@ class Patient < ApplicationRecord
     AND sessions.academic_year = patient_locations.academic_year
   SQL
 
-  scope :in_eligible_year_group_for_session_programme, -> { joins(<<-SQL) }
-    INNER JOIN location_year_groups ON location_year_groups.location_id = patient_locations.location_id
-    AND location_year_groups.academic_year = patient_locations.academic_year
-    INNER JOIN location_programme_year_groups ON location_programme_year_groups.location_year_group_id = location_year_groups.id
-    AND location_programme_year_groups.programme_type = ANY (sessions.programme_types)
-    AND patients.birth_academic_year = location_year_groups.academic_year - location_year_groups.value - #{Integer::AGE_CHILDREN_START_SCHOOL}
+  scope :joins_session_programme_year_groups, -> { joins(<<-SQL) }
+    INNER JOIN session_programme_year_groups
+    ON session_programme_year_groups.session_id = sessions.id
+    AND patients.birth_academic_year = sessions.academic_year - session_programme_year_groups.year_group - #{Integer::AGE_CHILDREN_START_SCHOOL}
   SQL
 
   scope :archived,
@@ -169,9 +168,10 @@ class Patient < ApplicationRecord
         ->(programmes, academic_year: nil, session: nil) do
           if session
             birth_academic_years =
-              programmes.flat_map do |programme|
-                session.programme_year_groups.birth_academic_years(programme)
-              end
+              session
+                .session_programme_year_groups
+                .where(programme_type: programmes.map(&:type))
+                .pluck_birth_academic_years
 
             where(birth_academic_year: birth_academic_years)
           elsif academic_year
@@ -465,6 +465,7 @@ class Patient < ApplicationRecord
              end
 
   after_update :sync_vaccinations_to_nhs_immunisations_api
+  after_update :generate_important_notice_if_needed
   after_commit :search_vaccinations_from_nhs_immunisations_api, on: :update
   before_destroy :destroy_childless_parents
 
@@ -543,7 +544,7 @@ class Patient < ApplicationRecord
     Session
       .joins_patient_locations
       .joins_patients
-      .joins_location_programme_year_groups
+      .joins_session_programme_year_groups
       .where(patients: { id: })
       .distinct
   end
@@ -565,12 +566,16 @@ class Patient < ApplicationRecord
   def show_year_group?(team:)
     academic_year = AcademicYear.pending
     year_group = self.year_group(academic_year:)
-    programme_year_groups =
-      school&.programme_year_groups(academic_year:) ||
-        team.programme_year_groups(academic_year:)
+
+    location_programme_year_groups =
+      school&.location_programme_year_groups ||
+        team.location_programme_year_groups
 
     team.programmes.any? do |programme|
-      programme_year_groups[programme].include?(year_group)
+      location_programme_year_groups.any? do
+        it.programme_type == programme.type &&
+          it.academic_year == academic_year && it.year_group == year_group
+      end
     end
   end
 
@@ -853,6 +858,18 @@ class Patient < ApplicationRecord
   def search_vaccinations_from_nhs_immunisations_api
     if should_search_vaccinations_from_nhs_immunisations_api?
       SearchVaccinationRecordsInNHSJob.perform_async(id)
+    end
+  end
+
+  def should_generate_important_notice?
+    nhs_number_previously_changed? || invalidated_at_previously_changed? ||
+      restricted_at_previously_changed? ||
+      date_of_death_recorded_at_previously_changed?
+  end
+
+  def generate_important_notice_if_needed
+    if should_generate_important_notice?
+      ImportantNoticeGeneratorJob.perform_later([id])
     end
   end
 end

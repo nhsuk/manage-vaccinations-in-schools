@@ -14,7 +14,11 @@ describe TeamSessionsFactory do
       it "creates missing unscheduled sessions" do
         expect { call }.to change(team.sessions, :count).by(1)
 
-        session = team.sessions.includes(:location).first
+        session =
+          team
+            .sessions
+            .includes(:location, :session_programme_year_groups)
+            .first
         expect(session.location).to eq(location)
         expect(session.programmes).to eq(programmes)
       end
@@ -26,7 +30,11 @@ describe TeamSessionsFactory do
       it "creates missing unscheduled sessions" do
         expect { call }.to change(team.sessions, :count).by(1)
 
-        session = team.sessions.includes(:location).first
+        session =
+          team
+            .sessions
+            .includes(:location, :session_programme_year_groups)
+            .first
         expect(session.location).to eq(location)
         expect(session.programmes).to eq(programmes)
       end
@@ -109,7 +117,11 @@ describe TeamSessionsFactory do
         it "creates missing unscheduled sessions for each programme group" do
           expect { call }.to change(team.sessions, :count).by(1)
 
-          session = team.sessions.includes(:location).find_by(location:)
+          session =
+            team
+              .sessions
+              .includes(:location, :session_programme_year_groups)
+              .find_by(location:)
           expect(session.programmes).to match_array(programmes)
         end
       end
@@ -120,7 +132,12 @@ describe TeamSessionsFactory do
         it "creates missing unscheduled sessions for each programme group" do
           expect { call }.to change(team.sessions, :count).by(3)
 
-          session = team.sessions.order(:created_at).where(location:)
+          session =
+            team
+              .sessions
+              .includes(:session_programme_year_groups)
+              .order(:created_at)
+              .where(location:)
           expect(session.first.programmes).to eq(flu_programmes)
           expect(session.second.programmes).to eq(hpv_programmes)
           expect(session.third.programmes).to eq(doubles_programmes)

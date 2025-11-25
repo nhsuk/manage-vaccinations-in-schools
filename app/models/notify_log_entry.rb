@@ -6,7 +6,6 @@
 #
 #  id              :bigint           not null, primary key
 #  delivery_status :integer          default("sending"), not null
-#  programme_ids   :integer          is an Array
 #  programme_types :enum             default([]), not null, is an Array
 #  recipient       :string           not null
 #  type            :integer          not null
@@ -35,6 +34,7 @@
 #  fk_rails_...  (sent_by_user_id => users.id)
 #
 class NotifyLogEntry < ApplicationRecord
+  include HasManyProgrammes
   include Sendable
 
   self.inheritance_column = nil
@@ -56,6 +56,9 @@ class NotifyLogEntry < ApplicationRecord
 
   validates :recipient, presence: true
   validates :template_id, presence: true
+
+  scope :for_session,
+        ->(session) { has_all_programme_types_of(session.programme_types) }
 
   encrypts :recipient, deterministic: true
 

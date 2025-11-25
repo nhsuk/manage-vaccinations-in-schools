@@ -248,21 +248,28 @@ describe "Import child records" do
 
     @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
     @school = create(:school, urn: "123456", team: @team)
+    @generic_clinic = @team.generic_clinic
     @user = @team.users.first
 
     [AcademicYear.current, AcademicYear.pending].each do |academic_year|
+      @school.attach_to_team!(@team, academic_year:, subteam: @school.subteam)
+      @generic_clinic.attach_to_team!(
+        @team,
+        academic_year:,
+        subteam: @generic_clinic.subteam
+      )
       @school.import_year_groups_from_gias!(academic_year:)
       @school.import_default_programme_year_groups!(programmes, academic_year:)
-      @team.generic_clinic.import_year_groups!(
+      @generic_clinic.import_year_groups!(
         Location::YearGroup::CLINIC_VALUE_RANGE,
         academic_year:,
         source: "generic_clinic_factory"
       )
-      @team.generic_clinic.import_default_programme_year_groups!(
+      @generic_clinic.import_default_programme_year_groups!(
         programmes,
         academic_year:
       )
-      TeamSessionsFactory.call(@team, academic_year:)
+      TeamSessionsFactory.call(@team.reload, academic_year:)
     end
   end
 
@@ -277,7 +284,7 @@ describe "Import child records" do
   end
 
   def and_i_choose_to_import_child_records(choose_academic_year: false)
-    click_on "Import records"
+    click_on "Upload records"
 
     # Type of records
     choose "Child records"
@@ -317,8 +324,7 @@ describe "Import child records" do
   end
 
   def then_i_should_see_the_upload
-    expect(page).to have_content("Imported on")
-    expect(page).to have_content("Imported byUSER, Test")
+    expect(page).to have_content("Uploaded byUSER, Test")
   end
 
   def then_i_should_see_the_import

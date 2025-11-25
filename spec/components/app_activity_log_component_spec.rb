@@ -10,7 +10,7 @@ describe AppActivityLogComponent do
   let(:programmes) { [Programme.hpv, Programme.flu] }
   let(:team) { create(:team, programmes:) }
   let(:user) { create(:user, team:, family_name: "Joy", given_name: "Nurse") }
-  let(:location) { create(:school, name: "Hogwarts", programmes:) }
+  let(:location) { create(:school, :secondary, name: "Hogwarts", programmes:) }
   let(:session) { create(:session, programmes:, location:) }
   let(:session_last_year) do
     create(:session, programmes:, location:, date: 1.year.ago.to_date)
@@ -510,6 +510,9 @@ describe AppActivityLogComponent do
   end
 
   describe "pre-screenings" do
+    let(:programmes) { [Programme.hpv] }
+    let(:session) { create(:session, programmes:) }
+
     before do
       create(
         :pre_screening,

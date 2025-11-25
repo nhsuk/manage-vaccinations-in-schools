@@ -36,20 +36,23 @@
 #  location_id                         :bigint           not null
 #  school_id                           :bigint
 #  team_id                             :bigint           not null
+#  team_location_id                    :bigint
 #
 # Indexes
 #
-#  index_consent_forms_on_academic_year  (academic_year)
-#  index_consent_forms_on_location_id    (location_id)
-#  index_consent_forms_on_nhs_number     (nhs_number)
-#  index_consent_forms_on_school_id      (school_id)
-#  index_consent_forms_on_team_id        (team_id)
+#  index_consent_forms_on_academic_year     (academic_year)
+#  index_consent_forms_on_location_id       (location_id)
+#  index_consent_forms_on_nhs_number        (nhs_number)
+#  index_consent_forms_on_school_id         (school_id)
+#  index_consent_forms_on_team_id           (team_id)
+#  index_consent_forms_on_team_location_id  (team_location_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (school_id => locations.id)
 #  fk_rails_...  (team_id => teams.id)
+#  fk_rails_...  (team_location_id => team_locations.id)
 #
 
 class ConsentForm < ApplicationRecord
@@ -104,6 +107,7 @@ class ConsentForm < ApplicationRecord
   belongs_to :location
   belongs_to :school, class_name: "Location", optional: true
   belongs_to :team
+  belongs_to :team_location, optional: true
 
   has_many :consents
   has_many :notify_log_entries
@@ -394,11 +398,28 @@ class ConsentForm < ApplicationRecord
         session_location = school || location
 
         sessions_to_search =
-          Session.has_all_programme_types_of(programme_types).where(
-            academic_year:,
-            location: session_location,
-            team:
-          )
+          Session.where(academic_year:, location: session_location, team:)
+
+        sessions_to_search =
+          # TODO: This doesn't work if a child goes to a different year group
+          #  for their date of birth.
+          if (
+               year_group =
+                 date_of_birth&.academic_year&.to_year_group(academic_year:)
+             )
+            sessions_to_search.where(
+              "(?) >= ?",
+              Session::ProgrammeYearGroup
+                .select(
+                  "COUNT(DISTINCT session_programme_year_groups.programme_type)"
+                )
+                .where("sessions.id = session_programme_year_groups.session_id")
+                .where(programme_type: programme_types, year_group:),
+              programme_types.count
+            )
+          else
+            sessions_to_search.has_all_programme_types_of(programme_types)
+          end
 
         sessions_to_search.find(&:scheduled?) ||
           sessions_to_search.find(&:unscheduled?) || sessions_to_search.first ||

@@ -19,15 +19,15 @@
         <% body.with_row do |row| %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Date</span>
-            <%= notice[:date_time].to_date.to_fs(:long) %>
+            <%= notice.recorded_at.to_date.to_fs(:long) %>
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Child</span>
-            <%= link_to notice[:patient].full_name, patient_path(notice[:patient]) %>
+            <%= link_to notice.patient.full_name, patient_path(notice.patient) %>
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Notice</span>
-            <%= notice[:message] %>
+            <%= notice.message %>
           <% end %>
         <% end %>
       <% end %>

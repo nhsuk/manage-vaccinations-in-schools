@@ -2,7 +2,7 @@
   <%= govuk_back_link(href: imports_path) %>
 <% end %>
 
-<% legend = "What type of records are you importing?" %>
+<% legend = "What type of records are you uploading?" %>
 <% content_for :page_title, legend %>
 
 <%= form_with model: @draft_import, url: wizard_path, method: :put do |f| %>

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Programme
+  include FlipperActor
   include GelatineVaccinesConcern
 
   TYPES = %w[flu hpv menacwy mmr td_ipv].freeze
@@ -28,10 +29,6 @@ class Programme
   def self.exists?(type) = type.in?(TYPES)
 
   def self.sample = find(TYPES.sample)
-
-  def flipper_id
-    "Programme:#{type}"
-  end
 
   def to_param = type
 
@@ -77,6 +74,16 @@ class Programme
 
   def default_year_groups
     DEFAULT_YEAR_GROUPS_BY_TYPE.fetch(type)
+  end
+
+  def is_catch_up?(year_group:)
+    return nil if seasonal?
+    return true if catch_up_only?
+
+    # NOTE: This logic only works if no teams administer programmes to year
+    #  groups earlier than the first default year group for that programme.
+    #  We only know of teams administering beyond the default year groups.
+    default_year_groups.first != year_group
   end
 
   def vaccines

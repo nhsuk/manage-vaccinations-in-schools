@@ -466,9 +466,7 @@ class GovukNotifyPersonalisation
     return false if patient.nil? || programmes.empty?
 
     @is_catch_up ||=
-      programmes.any? do |programme|
-        programme_year_groups.is_catch_up?(patient_year_group, programme:)
-      end
+      programmes.any? { it.is_catch_up?(year_group: patient_year_group) }
   end
 
   def patient_year_group
@@ -505,15 +503,6 @@ class GovukNotifyPersonalisation
         else
           programme.name_in_sentence
         end
-      end
-  end
-
-  def programme_year_groups
-    @programme_year_groups ||=
-      if session
-        session.programme_year_groups
-      else
-        team.programme_year_groups(academic_year:)
       end
   end
 end

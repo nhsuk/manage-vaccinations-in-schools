@@ -16,7 +16,7 @@ class PatientSessions::BaseController < ApplicationController
     @session =
       policy_scope(Session).includes(
         :location,
-        :location_programme_year_groups
+        :session_programme_year_groups
       ).find_by!(slug: params.fetch(:session_slug, params[:slug]))
   end
 
