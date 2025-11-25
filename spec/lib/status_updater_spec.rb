@@ -17,8 +17,9 @@ describe StatusUpdater do
       expect { call }.not_to change(Patient::ConsentStatus, :count)
     end
 
-    it "doesn't create any programme statuses" do
-      expect { call }.not_to change(Patient::ProgrammeStatus, :count)
+    it "creates a programme status for all programmes" do
+      expect { call }.to change(patient.programme_statuses, :count).by(5)
+      expect(patient.programme_statuses).to all(be_not_eligible)
     end
 
     it "doesn't create any registration statuses" do
@@ -52,9 +53,8 @@ describe StatusUpdater do
       end
     end
 
-    it "creates a programme status" do
-      expect { call }.to change(patient.programme_statuses, :count).by(1)
-      expect(patient.programme_statuses.first).to be_needs_consent_no_response
+    it "creates a programme status for all programmes" do
+      expect { call }.to change(patient.programme_statuses, :count).by(5)
     end
 
     it "creates a registration status" do
@@ -82,9 +82,8 @@ describe StatusUpdater do
       expect(patient.consent_statuses.first).to be_no_response
     end
 
-    it "creates a programme status" do
-      expect { call }.to change(patient.programme_statuses, :count).by(1)
-      expect(patient.programme_statuses.first).to be_needs_consent_no_response
+    it "creates a programme status for all programmes" do
+      expect { call }.to change(patient.programme_statuses, :count).by(5)
     end
 
     it "creates a registration status" do
@@ -111,8 +110,8 @@ describe StatusUpdater do
       expect { call }.not_to change(Patient::ConsentStatus, :count)
     end
 
-    it "doesn't create any programme statuses" do
-      expect { call }.not_to change(Patient::ProgrammeStatus, :count)
+    it "creates a programme status for all programmes" do
+      expect { call }.to change(patient.programme_statuses, :count).by(5)
     end
 
     it "doesn't create any registration statuses" do
@@ -138,10 +137,8 @@ describe StatusUpdater do
       expect(patient.consent_statuses.second).to be_no_response
     end
 
-    it "creates a programme status for both programmes" do
-      expect { call }.to change(patient.programme_statuses, :count).by(2)
-      expect(patient.programme_statuses.first).to be_needs_consent_no_response
-      expect(patient.programme_statuses.second).to be_needs_consent_no_response
+    it "creates a programme status for all programmes" do
+      expect { call }.to change(patient.programme_statuses, :count).by(5)
     end
 
     it "creates a registration status" do

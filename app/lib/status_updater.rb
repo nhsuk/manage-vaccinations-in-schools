@@ -49,7 +49,7 @@ class StatusUpdater
   def update_programme_statuses!
     Patient::ProgrammeStatus.import!(
       %i[patient_id programme_type academic_year],
-      patient_statuses_to_import,
+      programme_statuses_to_import,
       on_duplicate_key_ignore: true
     )
 
@@ -183,6 +183,20 @@ class StatusUpdater
               .map do |programme_type|
                 [patient_id, programme_type, academic_year]
               end
+          end
+        end
+  end
+
+  def programme_statuses_to_import
+    @programme_statuses_to_import ||=
+      Patient
+        .then { patient ? it.where(id: patient) : it }
+        .pluck(:id)
+        .flat_map do |patient_id|
+          academic_years.flat_map do |academic_year|
+            Programme::TYPES.map do |programme_type|
+              [patient_id, programme_type, academic_year]
+            end
           end
         end
   end
