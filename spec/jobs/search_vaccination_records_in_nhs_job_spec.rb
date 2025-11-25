@@ -661,6 +661,8 @@ describe SearchVaccinationRecordsInNHSJob do
     end
 
     context "with a mismatching `Bundle.link`" do
+      before { Flipper.enable(:imms_api_sentry_warnings) }
+
       let(:body) do
         file_fixture("fhir/search_response_mismatching_bundle_link.json").read
       end

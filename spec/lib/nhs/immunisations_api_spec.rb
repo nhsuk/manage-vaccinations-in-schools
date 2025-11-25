@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 describe NHS::ImmunisationsAPI do
-  before { Flipper.enable(:imms_api_integration) }
+  before do
+    Flipper.enable(:imms_api_integration)
+    Flipper.enable(:imms_api_sentry_warnings)
+  end
 
   let(:team) { create(:team, ods_code: "A9A5A") }
   let(:patient) do
@@ -914,6 +917,18 @@ describe NHS::ImmunisationsAPI do
         perform_request
       end
 
+      context "when imms_api_sentry_warnings feature flag is disabled" do
+        before { Flipper.disable(:imms_api_sentry_warnings) }
+        after { Flipper.enable(:imms_api_sentry_warnings) }
+
+        it "does not send the warning to Sentry, but still logs" do
+          expect(Rails.logger).to receive(:warn)
+          expect(Sentry).not_to receive(:capture_exception)
+
+          perform_request
+        end
+      end
+
       it "continues the job and consumes the records anyway" do
         expect(perform_request).to be_a FHIR::Bundle
         expect(perform_request.total).to be 2
@@ -978,6 +993,18 @@ describe NHS::ImmunisationsAPI do
         end
 
         include_examples "continues the job and consumes the records"
+
+        context "when imms_api_sentry_warnings feature flag is disabled" do
+          before { Flipper.disable(:imms_api_sentry_warnings) }
+          after { Flipper.enable(:imms_api_sentry_warnings) }
+
+          it "does not send the warning to Sentry, but still logs" do
+            expect(Rails.logger).to receive(:warn)
+            expect(Sentry).not_to receive(:capture_exception)
+
+            perform_request
+          end
+        end
       end
 
       context "when the severity is `success`" do
