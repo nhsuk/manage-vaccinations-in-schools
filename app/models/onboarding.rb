@@ -191,7 +191,7 @@ class Onboarding
 
   def create_sessions!(academic_year:)
     GenericClinicFactory.call(team:, academic_year:)
-    TeamSessionsFactory.call(team, academic_year:)
+    TeamSessionsFactory.call(team, academic_year:, sync_patient_teams_now: true)
   end
 
   class ExistingProgramme
