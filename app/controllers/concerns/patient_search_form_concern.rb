@@ -39,6 +39,7 @@ module PatientSearchFormConcern
       consent_statuses: [],
       programme_statuses: [],
       programme_types: [],
+      vaccine_criteria: [],
       year_groups: []
     )
   end

@@ -55,6 +55,26 @@
       <% end %>
     <% end %>
 
+    <% if show_vaccine_criteria && has_vaccine_criteria? %>
+      <% programmes.each do |programme| %>
+        <% if (programme_vaccine_criteria = vaccine_criteria_for(programme:)).present? %>
+          <%= f.govuk_check_boxes_fieldset :vaccine_criteria,
+                                           legend: {
+                                             text: show_vaccine_criteria_headings? ? "#{programme.name} vaccine type" : "Vaccine type",
+                                             size: "s",
+                                           },
+                                           small: true do %>
+            <% programme_vaccine_criteria.each do |vaccine_criteria| %>
+              <%= f.govuk_check_box :vaccine_criteria,
+                                    vaccine_criteria,
+                                    checked: form.vaccine_criteria&.include?(vaccine_criteria),
+                                    label: { text: t(vaccine_criteria, scope: "vaccine_criteria") } %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+
     <% if registration_statuses.any? %>
       <%= f.govuk_radio_buttons_fieldset :registration_status,
                                          legend: { text: "Registration status", size: "s" },
@@ -77,27 +97,60 @@
           <%= f.govuk_radio_button :programme_status_group, "", checked: form.programme_status_group.blank?, label: { text: "Any" } %>
 
           <% Patient::ProgrammeStatus::GROUPS.each do |status_group| %>
-            <% statuses = programme_statuses.select { it.starts_with?(status_group) }.sort %>
-
-            <% if statuses.count > 1 %>
-              <%= f.govuk_radio_button :programme_status_group,
-                                       status_group,
-                                       checked: form.programme_status_group == status_group,
-                                       label: { text: t(status_group, scope: %i[status programme label]) } do %>
-                <%= f.govuk_check_boxes_fieldset :programme_statuses, legend: nil, small: true do %>
-                  <% statuses.each do |status| %>
-                    <%= f.govuk_check_box :programme_statuses,
-                                          status,
-                                          checked: form.programme_statuses&.include?(status),
-                                          label: { text: t(status, scope: %i[status programme details]) } %>
+            <% if status_group == "due" %>
+              <% if !show_vaccine_criteria && has_vaccine_criteria? %>
+                <%= f.govuk_radio_button :programme_status_group,
+                                         status_group,
+                                         checked: form.programme_status_group == status_group,
+                                         label: { text: t(status_group, scope: %i[status programme label]) } do %>
+                  <% programmes.each do |programme| %>
+                    <% if (programme_vaccine_criteria = vaccine_criteria_for(programme:)).present? %>
+                      <%= f.govuk_check_boxes_fieldset :vaccine_criteria,
+                                                       legend: {
+                                                         text: show_vaccine_criteria_headings? ? "#{programme.name} vaccine type" : nil,
+                                                         size: "s",
+                                                         class: "nhsuk-u-margin-bottom-0",
+                                                       },
+                                                       small: true do %>
+                        <% programme_vaccine_criteria.each do |vaccine_criteria| %>
+                          <%= f.govuk_check_box :vaccine_criteria,
+                                                vaccine_criteria,
+                                                checked: form.vaccine_criteria&.include?(vaccine_criteria),
+                                                label: { text: t(vaccine_criteria, scope: "vaccine_criteria") } %>
+                        <% end %>
+                      <% end %>
+                    <% end %>
                   <% end %>
                 <% end %>
+              <% else %>
+                <%= f.govuk_radio_button :programme_status_group,
+                                         status_group,
+                                         checked: form.programme_status_group == status_group,
+                                         label: { text: t(status_group, scope: %i[status programme label]) } %>
               <% end %>
-            <% elsif statuses.count > 0 %>
-              <%= f.govuk_radio_button :programme_status_group,
-                                       status_group,
-                                       checked: form.programme_status_group == status_group,
-                                       label: { text: t(status_group, scope: %i[status programme label]) } %>
+            <% else %>
+              <% statuses = programme_statuses.select { it.starts_with?(status_group) }.sort %>
+
+              <% if statuses.count > 1 %>
+                <%= f.govuk_radio_button :programme_status_group,
+                                         status_group,
+                                         checked: form.programme_status_group == status_group,
+                                         label: { text: t(status_group, scope: %i[status programme label]) } do %>
+                  <%= f.govuk_check_boxes_fieldset :programme_statuses, legend: nil, small: true do %>
+                    <% statuses.each do |status| %>
+                      <%= f.govuk_check_box :programme_statuses,
+                                            status,
+                                            checked: form.programme_statuses&.include?(status),
+                                            label: { text: t(status, scope: %i[status programme details]) } %>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              <% elsif statuses.count > 0 %>
+                <%= f.govuk_radio_button :programme_status_group,
+                                         status_group,
+                                         checked: form.programme_status_group == status_group,
+                                         label: { text: t(status_group, scope: %i[status programme label]) } %>
+              <% end %>
             <% end %>
           <% end %>
         <% end %>
@@ -157,21 +210,6 @@
                                    status,
                                    checked: form.patient_specific_direction_status == status,
                                    label: { text: t(status, scope: %i[status patient_specific_direction label]) } %>
-        <% end %>
-      <% end %>
-    <% end %>
-
-    <% if vaccine_criterias.any? %>
-      <%= f.govuk_radio_buttons_fieldset :vaccine_criteria,
-                                         legend: { text: "Vaccine type", size: "s" },
-                                         small: true do %>
-        <%= f.govuk_radio_button :vaccine_criteria, "", checked: form.vaccine_criteria.blank?, label: { text: "Any" } %>
-
-        <% vaccine_criterias.each do |vaccine_criteria| %>
-          <%= f.govuk_radio_button :vaccine_criteria,
-                                   vaccine_criteria,
-                                   checked: form.vaccine_criteria == vaccine_criteria,
-                                   label: { text: t(vaccine_criteria, scope: "vaccine_criteria") } %>
         <% end %>
       <% end %>
     <% end %>

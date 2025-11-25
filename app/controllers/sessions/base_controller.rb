@@ -14,8 +14,6 @@ class Sessions::BaseController < ApplicationController
   end
 
   def set_programme_statuses
-    programmes = @session.programmes
-
     @programme_statuses =
       Patient::ProgrammeStatus.statuses.keys -
         %w[
@@ -25,24 +23,5 @@ class Sessions::BaseController < ApplicationController
           needs_consent_request_failed
           needs_consent_follow_up_requested
         ]
-
-    due_index = @programme_statuses.find_index("due")
-
-    # TODO: Make this more generic.
-
-    due_statuses =
-      if programmes.any?(&:flu?) && programmes.any?(&:mmr?)
-        %w[due_injection due_nasal due_without_gelatine]
-      elsif programmes.any?(&:flu?)
-        %w[due_injection due_nasal]
-      elsif programmes.any?(&:mmr?)
-        %w[due_without_gelatine]
-      else
-        []
-      end
-
-    due_statuses.insert(0, "due") unless programmes.all?(&:flu?)
-
-    @programme_statuses[due_index, 1] = due_statuses
   end
 end

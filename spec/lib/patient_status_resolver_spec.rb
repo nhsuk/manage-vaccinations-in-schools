@@ -103,15 +103,7 @@ describe PatientStatusResolver do
         create(:patient, :consent_given_triage_not_needed, session:)
       end
 
-      it do
-        expect(hash).to eq(
-          {
-            text: "Due vaccination",
-            colour: "green",
-            details_text: "Vaccination"
-          }
-        )
-      end
+      it { expect(hash).to eq({ text: "Due vaccination", colour: "green" }) }
     end
 
     context "for MMR programme" do
@@ -146,9 +138,30 @@ describe PatientStatusResolver do
           patient.reload
         end
 
+        it { expect(hash).to eq({ text: "Due 1st dose", colour: "green" }) }
+      end
+
+      context "and due 1st dose gelatine-free" do
+        let(:patient) do
+          create(
+            :patient,
+            :consent_given_without_gelatine_triage_not_needed,
+            session:
+          )
+        end
+
+        before do
+          StatusUpdater.call(patient:)
+          patient.reload
+        end
+
         it do
           expect(hash).to eq(
-            { text: "Due 1st dose", colour: "green", details_text: "Injection" }
+            {
+              text: "Due 1st dose",
+              colour: "green",
+              details_text: "Gelatine-free injection only"
+            }
           )
         end
       end

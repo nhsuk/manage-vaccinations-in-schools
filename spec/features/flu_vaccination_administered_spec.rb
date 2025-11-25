@@ -166,7 +166,7 @@ describe "Flu vaccination" do
 
     visit session_record_path(@session)
 
-    choose "Nasal"
+    check "Nasal spray only"
     click_on "Update results"
 
     click_link @patient.full_name
@@ -177,7 +177,7 @@ describe "Flu vaccination" do
 
     visit session_record_path(@session)
 
-    choose "Any"
+    uncheck "Nasal spray only"
     click_on "Update results"
 
     click_link @patient.full_name
@@ -188,7 +188,7 @@ describe "Flu vaccination" do
 
     visit session_record_path(@session)
 
-    choose "Gelatine-free injection"
+    check "Injection only"
     click_on "Update results"
 
     click_link @patient.full_name
