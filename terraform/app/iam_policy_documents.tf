@@ -18,7 +18,7 @@ data "aws_iam_policy_document" "ecs_secrets_access" {
     content {
       sid       = "ssmParameterStoreAccessSid"
       actions   = ["ssm:GetParameters"]
-      resources = [for kv_pair in local.parameter_values[each.key] : kv_pair["valueFrom"]]
+      resources = concat([for kv_pair in local.parameter_values[each.key] : kv_pair["valueFrom"]], [aws_ssm_parameter.prometheus_config.arn, aws_ssm_parameter.cloudwatch_agent_config.arn])
       effect    = "Allow"
     }
   }
@@ -27,7 +27,7 @@ data "aws_iam_policy_document" "ecs_secrets_access" {
     content {
       sid       = "dbSecretSid"
       actions   = ["secretsmanager:GetSecretValue"]
-      resources = [for kv_pair in local.secret_values[each.key] : kv_pair["valueFrom"]]
+      resources = concat([for kv_pair in local.secret_values[each.key] : kv_pair["valueFrom"]], [aws_ssm_parameter.prometheus_config.arn, aws_ssm_parameter.cloudwatch_agent_config.arn])
       effect    = "Allow"
     }
   }

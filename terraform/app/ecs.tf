@@ -74,6 +74,16 @@ module "web_service" {
     region               = var.region
     health_check_command = ["CMD-SHELL", "./bin/internal_healthcheck http://localhost:${local.container_ports.web}/health/database"]
   }
+  cloudwatch_agent_secrets = [
+    {
+      "name" : "PROMETHEUS_CONFIG_CONTENT",
+      "valueFrom" : aws_ssm_parameter.prometheus_config.arn
+    },
+    {
+      "name" : "CW_CONFIG_CONTENT",
+      "valueFrom" : aws_ssm_parameter.cloudwatch_agent_config.arn
+    }
+  ]
   network_params = {
     subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
     vpc_id  = aws_vpc.application_vpc.id

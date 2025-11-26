@@ -68,6 +68,16 @@ variable "task_config" {
   nullable    = false
 }
 
+variable "cloudwatch_agent_secrets" {
+  type = list(object({
+    name      = string
+    valueFrom = string
+  }))
+  default     = null
+  description = "List of secrets for CloudWatch Agent container"
+  nullable    = true
+}
+
 variable "cluster_id" {
   type        = string
   description = "The ID of the ECS cluster."
