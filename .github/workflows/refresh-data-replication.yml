@@ -127,13 +127,6 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.13.3
-      - name: Get db secret arn
-        id: get-db-secret-arn
-        working-directory: terraform/app
-        run: |
-          terraform init -backend-config="env/$environment-backend.hcl" -upgrade
-          DB_SECRET_ARN=$(terraform output --raw db_secret_arn)
-          echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_OUTPUT
       - name: Terraform Plan
         id: plan
         run: |
@@ -142,7 +135,6 @@ jobs:
 
           PLAN_ARGS=(
             "plan"
-            "-var=db_secret_arn=${{ steps.get-db-secret-arn.outputs.DB_SECRET_ARN }}"
             "-var=imported_snapshot=$SNAPSHOT_ARN"
             "-var-file=env/$environment.tfvars"
             "-var=allowed_egress_cidr_blocks=$egress_cidr"

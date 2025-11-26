@@ -11,7 +11,7 @@ data "aws_iam_policy_document" "ecs_permissions" {
     sid     = "dbSecretSid"
     actions = ["secretsmanager:GetSecretValue"]
     resources = [
-      var.db_secret_arn
+      aws_rds_cluster.cluster.master_user_secret[0].secret_arn
     ]
     effect = "Allow"
   }

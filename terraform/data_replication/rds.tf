@@ -17,18 +17,19 @@ resource "aws_security_group_rule" "rds_inbound" {
 }
 
 resource "aws_rds_cluster" "cluster" {
-  cluster_identifier     = "${local.name_prefix}-rds-${formatdate("hh-mm-ss", timestamp())}"
-  engine                 = "aurora-postgresql"
-  engine_mode            = "provisioned"
-  database_name          = "manage_vaccinations"
-  master_username        = "postgres"
-  snapshot_identifier    = var.imported_snapshot
-  db_subnet_group_name   = aws_db_subnet_group.dbsg.name
-  vpc_security_group_ids = [aws_security_group.rds.id]
-  storage_encrypted      = true
-  skip_final_snapshot    = true
-  deletion_protection    = false
-  engine_version         = var.db_engine_version
+  cluster_identifier          = "${local.name_prefix}-rds-${formatdate("hh-mm-ss", timestamp())}"
+  engine                      = "aurora-postgresql"
+  engine_mode                 = "provisioned"
+  database_name               = "manage_vaccinations"
+  master_username             = "postgres"
+  snapshot_identifier         = var.imported_snapshot
+  db_subnet_group_name        = aws_db_subnet_group.dbsg.name
+  vpc_security_group_ids      = [aws_security_group.rds.id]
+  storage_encrypted           = true
+  skip_final_snapshot         = true
+  deletion_protection         = false
+  manage_master_user_password = true
+  engine_version              = var.db_engine_version
 
   serverlessv2_scaling_configuration {
     max_capacity = var.max_aurora_capacity_units
