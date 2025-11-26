@@ -129,8 +129,3 @@ clinics:
       address_town: London
       address_postcode: N22 6XD
       ods_code:
-    - name: Somerset Gardens Family Health Centre
-      address_line_1: 4 Creighton Rd
-      address_town: London
-      address_postcode: N17 8NW
-      ods_code: F85030
