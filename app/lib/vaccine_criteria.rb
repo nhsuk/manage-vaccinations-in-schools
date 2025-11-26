@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
 class VaccineCriteria
-  def initialize(vaccine_methods:, without_gelatine:)
+  def initialize(programme:, vaccine_methods:, without_gelatine:)
+    @programme = programme
     @vaccine_methods = vaccine_methods
     @without_gelatine = without_gelatine
   end
 
   def self.from_consentable(consentable)
     new(
+      programme: consentable.programme,
       vaccine_methods: consentable.vaccine_methods,
       without_gelatine: consentable.without_gelatine
     )
@@ -15,21 +17,44 @@ class VaccineCriteria
 
   def self.from_consent_status(consent_status)
     new(
+      programme: consent_status.programme,
       vaccine_methods: consent_status.vaccine_methods,
       without_gelatine: consent_status.without_gelatine
     )
   end
 
+  def self.from_param(param)
+    parts = param.split("_")
+
+    programme_type = parts.shift
+    without_gelatine = parts.last(2) == WITHOUT_GELATINE_SUFFIX
+    vaccine_methods = without_gelatine ? parts[0..-3] : parts
+
+    programme = Programme.find(programme_type)
+    new(programme:, vaccine_methods:, without_gelatine:)
+  end
+
+  def self.from_programme_status(programme_status)
+    new(
+      programme: programme_status.programme,
+      vaccine_methods: programme_status.vaccine_methods,
+      without_gelatine: programme_status.without_gelatine
+    )
+  end
+
   def self.from_triage_status(triage_status)
     new(
+      programme: triage_status.programme,
       vaccine_methods: [triage_status.vaccine_method].compact,
       without_gelatine: triage_status.without_gelatine
     )
   end
 
-  attr_reader :vaccine_methods, :without_gelatine
+  attr_reader :programme, :vaccine_methods, :without_gelatine
 
   def apply(scope)
+    scope = scope.where(programme_type: programme.type)
+
     if vaccine_methods.present?
       scope = scope.where(method: vaccine_methods).order(method_order_node)
     end
@@ -39,7 +64,19 @@ class VaccineCriteria
     scope
   end
 
+  def to_param
+    parts = []
+
+    parts << programme.type
+    parts += vaccine_methods
+    parts << WITHOUT_GELATINE_SUFFIX.join("_") if without_gelatine
+
+    parts.join("_")
+  end
+
   private
+
+  WITHOUT_GELATINE_SUFFIX = %w[without gelatine].freeze
 
   def method_order_node
     vaccine_methods

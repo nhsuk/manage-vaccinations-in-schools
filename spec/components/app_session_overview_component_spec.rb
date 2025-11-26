@@ -52,17 +52,14 @@ describe AppSessionOverviewComponent do
       include_examples "displays correct count", "Flu", "Has a refusal", 0
       include_examples "displays correct count", "Flu", "Unable to vaccinate", 0
       include_examples "displays correct count", "Flu", "Due nasal spray", 0
-      include_examples "displays correct count",
-                       "Flu",
-                       "Due gelatine-free injection",
-                       0
+      include_examples "displays correct count", "Flu", "Due injection", 0
       include_examples "displays correct count", "Flu", "Vaccinated", 0
 
       include_examples "displays correct count", "HPV", "Needs consent", 0
       include_examples "displays correct count", "HPV", "Needs triage", 0
       include_examples "displays correct count", "HPV", "Has a refusal", 0
       include_examples "displays correct count", "HPV", "Unable to vaccinate", 0
-      include_examples "displays correct count", "HPV", "Due injection", 0
+      include_examples "displays correct count", "HPV", "Due vaccination", 0
       include_examples "displays correct count", "HPV", "Vaccinated", 0
     end
 

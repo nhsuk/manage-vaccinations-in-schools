@@ -732,9 +732,16 @@ en:
     index:
       title: Vaccines
   vaccine_criteria:
-    injection: Injection
-    injection_without_gelatine: Gelatine-free injection
-    nasal: Nasal spray
+    flu_injection: Injection only
+    flu_injection_nasal: Injection preferred
+    flu_injection_without_gelatine: Injection only
+    flu_nasal: Nasal spray only
+    flu_nasal_injection: Nasal spray preferred
+    hpv_injection: ""
+    menacwy_injection: ""
+    mmr_injection: ""
+    mmr_injection_without_gelatine: Gelatine-free injection only
+    td_ipv_injection: ""
   attendance_flash:
     absent: "%{name} is absent from today’s session."
     not_registered: "%{name} is not registered yet."

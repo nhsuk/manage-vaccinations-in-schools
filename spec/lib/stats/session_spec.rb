@@ -19,7 +19,7 @@ describe Stats::Session do
             needs_triage: 0,
             has_refusal: 0,
             cannot_vaccinate: 0,
-            due_injection: 0,
+            due: 0,
             vaccinated: 0
           )
         end
@@ -56,7 +56,7 @@ describe Stats::Session do
           create(:patient_consent_status, :given, patient:, programme:)
           create(
             :patient_programme_status,
-            :due_injection_only,
+            :due_injection,
             patient:,
             programme:
           )
@@ -109,7 +109,7 @@ describe Stats::Session do
             needs_triage: 0,
             has_refusal: 2,
             cannot_vaccinate: 0,
-            due_injection: 1,
+            due: 1,
             vaccinated: 1
           )
         end
@@ -154,7 +154,7 @@ describe Stats::Session do
             needs_triage: 0,
             has_refusal: 0,
             cannot_vaccinate: 0,
-            due_injection: 0,
+            due: 0,
             vaccinated: 0
           )
         end
@@ -186,12 +186,7 @@ describe Stats::Session do
             patient:,
             programme:
           )
-          create(
-            :patient_programme_status,
-            :due_nasal_only,
-            patient:,
-            programme:
-          )
+          create(:patient_programme_status, :due_nasal, patient:, programme:)
         end
 
         create(:patient, session:, year_group: 9).tap do |patient|
@@ -232,7 +227,7 @@ describe Stats::Session do
           expect(stats).to include(
             eligible_children: 3,
             due_nasal: 1,
-            due_injection_without_gelatine: 2
+            due_injection: 2
           )
         end
       end

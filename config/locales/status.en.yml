@@ -44,8 +44,8 @@ en:
         cannot_vaccinate_unwell: Unable to vaccinate
         due: Due vaccination
         due_injection: Due injection
-        due_injection_without_gelatine: Due gelatine-free injection
         due_nasal: Due nasal spray
+        due_without_gelatine: Due gelatine-free injection only
         has_refusal: Has a refusal
         has_refusal_consent_conflicts: Has a refusal
         has_refusal_consent_refused: Has a refusal
@@ -70,8 +70,8 @@ en:
         cannot_vaccinate_unwell: red
         due: green
         due_injection: green
-        due_injection_without_gelatine: green
         due_nasal: green
+        due_without_gelatine: green
         has_refusal: dark-orange
         has_refusal_consent_conflicts: dark-orange
         has_refusal_consent_refused: dark-orange
@@ -93,9 +93,6 @@ en:
         cannot_vaccinate_do_not_vaccinate: Contraindications
         cannot_vaccinate_refused: Child refused
         cannot_vaccinate_unwell: Child unwell
-        due_injection: Injection
-        due_injection_without_gelatine: Gelatine-free injection
-        due_nasal: Nasal spray
         has_refusal_consent_conflicts: Conflicting consent
         has_refusal_consent_refused: Parent refused
         needs_consent_follow_up_requested: Follow-up requested

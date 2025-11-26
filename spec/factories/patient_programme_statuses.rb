@@ -38,22 +38,28 @@ FactoryBot.define do
       date { Date.tomorrow }
     end
 
-    trait :due_injection_only do
-      due
+    trait :due_injection do
+      status { "due" }
       vaccine_methods { %w[injection] }
-      without_gelatine { false }
-    end
-
-    trait :due_nasal_only do
-      due
-      vaccine_methods { %w[nasal] }
       without_gelatine { false }
     end
 
     trait :due_injection_without_gelatine do
-      due
+      status { "due" }
       vaccine_methods { %w[injection] }
       without_gelatine { true }
+    end
+
+    trait :due_nasal_injection do
+      status { "due" }
+      vaccine_methods { %w[nasal injection] }
+      without_gelatine { false }
+    end
+
+    trait :due_nasal do
+      status { "due" }
+      vaccine_methods { %w[nasal] }
+      without_gelatine { false }
     end
   end
 end

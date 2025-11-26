@@ -428,8 +428,10 @@ describe PatientSearchForm do
     end
 
     context "filtering on vaccine criteria" do
+      let(:programmes) { [Programme.flu] }
       let(:programme_types) { programmes.map(&:type) }
-      let(:vaccine_criteria) { "nasal" }
+
+      let(:vaccine_criteria) { %w[flu_nasal_injection] }
 
       let(:session) { session_for_patients }
 
