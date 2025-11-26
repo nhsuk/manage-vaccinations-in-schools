@@ -121,6 +121,7 @@ class DraftConsentsController < ApplicationController
     @draft_consent.assign_attributes(
       triage_add_patient_specific_direction:
         @triage_form.add_patient_specific_direction,
+      triage_delay_vaccination_until: @triage_form.delay_vaccination_until,
       triage_form_valid: @triage_form.valid?,
       triage_notes: @triage_form.notes,
       triage_status_option: @triage_form.status_option,
@@ -165,7 +166,12 @@ class DraftConsentsController < ApplicationController
 
   def triage_form_params
     params.expect(
-      triage_form: %i[status_option notes add_patient_specific_direction]
+      triage_form: %i[
+        add_patient_specific_direction
+        delay_vaccination_until
+        notes
+        status_option
+      ]
     )
   end
 
