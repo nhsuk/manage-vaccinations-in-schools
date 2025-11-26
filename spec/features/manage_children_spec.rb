@@ -225,6 +225,7 @@ describe "Manage children" do
         family_name: "Smith",
         school:
       )
+    create(:vaccination_record, patient: @patient)
     create_list(:patient, 9, session: @session)
 
     another_session = create(:session, team: @team, programmes: [@hpv])
@@ -236,6 +237,7 @@ describe "Manage children" do
         given_name: "Jane",
         family_name: "Doe"
       )
+    create(:vaccination_record, patient: @existing_patient)
 
     StatusUpdater.call
   end
