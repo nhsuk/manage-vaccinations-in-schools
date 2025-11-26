@@ -192,6 +192,21 @@ describe Stats::Session do
         create(:patient, session:, year_group: 9).tap do |patient|
           create(
             :patient_consent_status,
+            :given_nasal_or_injection,
+            patient:,
+            programme:
+          )
+          create(
+            :patient_programme_status,
+            :due_nasal_injection,
+            patient:,
+            programme:
+          )
+        end
+
+        create(:patient, session:, year_group: 9).tap do |patient|
+          create(
+            :patient_consent_status,
             :given_without_gelatine,
             patient:,
             programme:
@@ -225,8 +240,8 @@ describe Stats::Session do
 
         it "returns counts broken down by vaccine method" do
           expect(stats).to include(
-            eligible_children: 3,
-            due_nasal: 1,
+            eligible_children: 4,
+            due_nasal: 2,
             due_injection: 2
           )
         end
@@ -237,8 +252,8 @@ describe Stats::Session do
 
         it "returns counts broken down by vaccine method" do
           expect(stats).to include(
-            eligible_children: 3,
-            consent_given_nasal: 1,
+            eligible_children: 4,
+            consent_given_nasal: 2,
             consent_given_injection_without_gelatine: 2
           )
         end
