@@ -23,6 +23,8 @@
 class PatientTeam < ApplicationRecord
   extend ArrayEnum
 
+  cattr_accessor :skip_generate_important_notices
+
   self.primary_key = %i[team_id patient_id]
 
   belongs_to :patient
@@ -39,7 +41,8 @@ class PatientTeam < ApplicationRecord
                school_move_school: 5
              }
 
-  after_create_commit :generate_important_notices
+  after_create_commit :generate_important_notices,
+                      unless: :skip_generate_important_notices
 
   def add_source!(source)
     update!(sources: Array(sources) | [source.to_s])
