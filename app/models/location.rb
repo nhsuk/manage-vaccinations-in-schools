@@ -105,26 +105,22 @@ class Location < ApplicationRecord
 
   scope :search_by_name,
         ->(query) do
-          # Trigram matching requires at least 3 characters
-          if query.length < 3
-            where(
-              "locations.name ILIKE :like_query OR " \
-                "locations.alternative_name ILIKE :like_query",
-              like_query: "#{query}%"
-            )
-          else
-            where(
-              "SIMILARITY(locations.name, :query) > 0.3 OR " \
-                "SIMILARITY(locations.alternative_name, :query) > 0.3",
+          sanitized_name = "TRANSLATE(locations.name, '.''', '')"
+          sanitized_alternative_name =
+            "TRANSLATE(locations.alternative_name, '.''', '')"
+          sanitized_query = "TRANSLATE(:query, '.''', '')"
+
+          where(
+            "#{sanitized_query} <% #{sanitized_name} OR " \
+              "#{sanitized_query} <% #{sanitized_alternative_name}",
+            query:
+          ).order(
+            Arel.sql(
+              "GREATEST(SIMILARITY(#{sanitized_name}, #{sanitized_query}), " \
+                "SIMILARITY(#{sanitized_alternative_name}, #{sanitized_query})) DESC",
               query:
-            ).order(
-              Arel.sql(
-                "GREATEST(SIMILARITY(locations.name, :query), " \
-                  "SIMILARITY(locations.alternative_name, :query)) DESC",
-                query:
-              )
             )
-          end
+          )
         end
 
   scope :where_phase,
