@@ -129,7 +129,11 @@ class DraftConsentsController < ApplicationController
   end
 
   def finish_wizard_path
-    session_consent_path(@session)
+    if Flipper.enabled?(:programme_status, current_team)
+      session_patients_path(@session)
+    else
+      session_consent_path(@session)
+    end
   end
 
   def update_params
