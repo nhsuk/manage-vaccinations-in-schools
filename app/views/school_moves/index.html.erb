@@ -49,6 +49,12 @@
                 <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">to</span>
                 <%= patient_school(school_move) %>
               </span>
+
+              <% if school_move.from_another_team? %>
+                <div class="nhsuk-u-margin-top-1">
+                  <%= render AppStatusComponent.new(text: "This child is moving in from another SAIS team's area", small: true, classes: "nhsuk-u-margin-top-1 nhsuk-u-margin-bottom-0") %>
+                </div>
+              <% end %>
             <% end %>
 
             <% row.with_cell do %>

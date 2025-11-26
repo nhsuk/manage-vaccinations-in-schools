@@ -39,9 +39,17 @@ class ImportantNotice < ApplicationRecord
   belongs_to :patient
 
   belongs_to :vaccination_record, optional: true
+  belongs_to :school_move_log_entry, optional: true
+  belongs_to :team
 
   enum :type,
-       { deceased: 0, invalidated: 1, restricted: 2, gillick_no_notify: 3 }
+       {
+         deceased: 0,
+         invalidated: 1,
+         restricted: 2,
+         gillick_no_notify: 3,
+         team_changed: 4
+       }
 
   scope :active, ->(team:) { where(dismissed_at: nil, team_id: team.id) }
   scope :dismissed,
@@ -68,12 +76,14 @@ class ImportantNotice < ApplicationRecord
         "does not want their parents to be notified. " \
         "These records will not be automatically synced with GP records. " \
         "Your team must let the child's GP know they were vaccinated."
+    when "team_changed"
+      "Child has moved to #{school_move_log_entry.school.teams.first.name} area"
     else
       "Important notice"
     end
   end
 
   def can_dismiss?
-    type.in?(%w[deceased restricted gillick_no_notify])
+    type.in?(%w[deceased restricted gillick_no_notify team_changed])
   end
 end

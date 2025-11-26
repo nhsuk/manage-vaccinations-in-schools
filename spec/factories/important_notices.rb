@@ -44,6 +44,9 @@ FactoryBot.define do
     after(:build) do |notice|
       if notice.type == "gillick_no_notify" && notice.vaccination_record.nil?
         notice.vaccination_record = build(:vaccination_record)
+      elsif notice.type == "team_changed" && notice.school_move_log_entry.nil?
+        school = create(:school, team: Team.find(notice.team_id))
+        notice.school_move_log_entry = build(:school_move_log_entry, school:)
       end
     end
 
