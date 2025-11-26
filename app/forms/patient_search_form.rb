@@ -20,7 +20,7 @@ class PatientSearchForm < SearchForm
   attribute :still_to_vaccinate, :boolean
   attribute :triage_status, :string
   attribute :vaccination_status, :string
-  attribute :vaccine_criteria, :string
+  attribute :vaccine_criteria, array: true
   attribute :year_groups, array: true
 
   def initialize(current_user:, session: nil, **attributes)
@@ -41,6 +41,10 @@ class PatientSearchForm < SearchForm
     super(values&.compact_blank || [])
   end
 
+  def vaccine_criteria=(values)
+    super(values&.compact_blank || [])
+  end
+
   def year_groups=(values)
     super(values&.compact_blank&.map(&:to_i)&.compact || [])
   end
@@ -52,32 +56,6 @@ class PatientSearchForm < SearchForm
       else
         session&.programmes || team&.programmes || []
       end
-  end
-
-  def vaccine_method
-    return nil if vaccine_criteria.blank?
-
-    case vaccine_criteria
-    when "injection", "injection_without_gelatine"
-      "injection"
-    when "nasal"
-      "nasal"
-    else
-      raise "Unknown vaccine criteria value: #{value}"
-    end
-  end
-
-  def without_gelatine
-    return nil if vaccine_criteria.blank?
-
-    case vaccine_criteria
-    when "injection", "nasal"
-      false
-    when "injection_without_gelatine"
-      true
-    else
-      raise "Unknown vaccine criteria value: #{value}"
-    end
   end
 
   def apply(scope)
@@ -327,54 +305,58 @@ class PatientSearchForm < SearchForm
 
     return scope if statuses.empty?
 
-    or_scope = programme_status_scope_for(statuses.first, scope)
+    or_scope =
+      scope.has_programme_status(
+        statuses.first,
+        programme: programmes,
+        academic_year:
+      )
 
     statuses
       .drop(1)
       .each do |value|
-        or_scope = or_scope.or(programme_status_scope_for(value, scope))
+        or_scope =
+          or_scope.or(
+            scope.has_programme_status(
+              value,
+              programme: programmes,
+              academic_year:
+            )
+          )
       end
 
     or_scope
   end
 
-  def programme_status_scope_for(value, scope)
-    if (predicate = PROGRAMME_DUE_PREDICATES[value])
-      scope.has_programme_status(
-        "due",
-        programme: programmes,
-        academic_year:,
-        **predicate
-      )
-    else
-      scope.has_programme_status(value, programme: programmes, academic_year:)
-    end
-  end
-
-  PROGRAMME_DUE_PREDICATES = {
-    "due_injection" => {
-      vaccine_method: "injection",
-      without_gelatine: false
-    },
-    "due_nasal" => {
-      vaccine_method: "nasal",
-      without_gelatine: false
-    },
-    "due_injection_without_gelatine" => {
-      vaccine_method: "injection",
-      without_gelatine: true
-    }
-  }.freeze
-
   def filter_vaccine_criteria(scope)
     return scope if vaccine_criteria.blank?
 
-    scope.has_vaccine_criteria(
-      vaccine_method:,
-      without_gelatine:,
-      programme: programmes,
-      academic_year:
-    )
+    vaccine_criteria_instances =
+      vaccine_criteria.map { |param| VaccineCriteria.from_param(param) }
+
+    or_scope =
+      scope.has_vaccine_criteria(
+        programme: vaccine_criteria_instances.first.programme,
+        academic_year:,
+        vaccine_methods: vaccine_criteria_instances.first.vaccine_methods,
+        without_gelatine: vaccine_criteria_instances.first.without_gelatine
+      )
+
+    vaccine_criteria_instances
+      .drop(1)
+      .each do |value|
+        or_scope =
+          or_scope.or(
+            scope.has_vaccine_criteria(
+              programme: value.programme,
+              academic_year:,
+              vaccine_methods: value.vaccine_methods,
+              without_gelatine: value.without_gelatine
+            )
+          )
+      end
+
+    or_scope
   end
 
   def filter_still_to_vaccinate(scope)
@@ -383,8 +365,8 @@ class PatientSearchForm < SearchForm
     scope.consent_given_and_safe_to_vaccinate(
       programmes:,
       academic_year:,
-      vaccine_method:,
-      without_gelatine:
+      vaccine_methods: nil,
+      without_gelatine: nil
     )
   end
 

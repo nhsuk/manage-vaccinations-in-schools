@@ -237,7 +237,7 @@ FactoryBot.define do
         programmes.map do |programme|
           association(
             :patient_programme_status,
-            :due,
+            :due_injection,
             patient: instance,
             programme:
           )

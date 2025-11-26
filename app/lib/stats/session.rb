@@ -36,8 +36,7 @@ class Stats::Session
     }
 
     due_statuses.each do |due_status|
-      options = PatientSearchForm::PROGRAMME_DUE_PREDICATES.fetch(due_status)
-
+      options = DUE_PREDICATES.fetch(due_status)
       stats[due_status.to_sym] = programme_count_for(["due"], **options)
     end
 
@@ -88,14 +87,28 @@ class Stats::Session
   end
 
   def due_statuses
-    if programme.has_multiple_vaccine_methods?
-      %w[due_nasal due_injection_without_gelatine]
-    elsif programme.vaccine_may_contain_gelatine?
-      %w[due_injection due_injection_without_gelatine]
+    if programme.flu?
+      %w[due_nasal due_injection]
+    elsif programme.mmr?
+      %w[due due_without_gelatine]
     else
-      %w[due_injection]
+      %w[due]
     end
   end
+
+  DUE_PREDICATES = {
+    "due" => {
+    },
+    "due_injection" => {
+      vaccine_method: "injection"
+    },
+    "due_nasal" => {
+      vaccine_method: "nasal"
+    },
+    "due_without_gelatine" => {
+      without_gelatine: true
+    }
+  }.freeze
 
   def programme_count_for(statuses, vaccine_method: nil, without_gelatine: nil)
     vaccine_method_value =

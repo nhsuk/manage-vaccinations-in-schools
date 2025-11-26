@@ -8,7 +8,7 @@ describe AppVaccineCriteriaLabelComponent do
   end
 
   let(:vaccine_criteria) do
-    VaccineCriteria.new(vaccine_methods:, without_gelatine:)
+    VaccineCriteria.new(programme:, vaccine_methods:, without_gelatine:)
   end
 
   let(:programme) { Programme.mmr }
@@ -43,7 +43,7 @@ describe AppVaccineCriteriaLabelComponent do
     context "with gelatine-free injection" do
       let(:without_gelatine) { true }
 
-      it { should have_content("Gelatine-free injection for MMR") }
+      it { should have_content("Gelatine-free injection only for MMR") }
     end
   end
 end

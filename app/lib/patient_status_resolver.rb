@@ -44,14 +44,12 @@ class PatientStatusResolver
         hash[:text] = "Due #{count.ordinalize} dose"
       end
 
-      if @programme.has_multiple_vaccine_methods? ||
-           @programme.vaccine_may_contain_gelatine?
-        vaccine_criteria = [
-          programme_status.vaccine_methods.first,
-          programme_status.without_gelatine ? "without_gelatine" : nil
-        ].compact_blank.join("_")
+      translation_key = programme_status.vaccine_criteria.to_param
 
-        hash[:details_text] = I18n.t(vaccine_criteria, scope: :vaccine_criteria)
+      if (
+           details_text = I18n.t(translation_key, scope: :vaccine_criteria)
+         ).present?
+        hash[:details_text] = details_text
       end
     elsif programme_status.cannot_vaccinate_delay_vaccination?
       if (date = programme_status.date)

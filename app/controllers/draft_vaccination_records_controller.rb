@@ -267,6 +267,7 @@ class DraftVaccinationRecordsController < ApplicationController
       ).without_gelatine
 
     VaccineCriteria.new(
+      programme: @programme,
       vaccine_methods: [vaccine_method].compact,
       without_gelatine:
     )

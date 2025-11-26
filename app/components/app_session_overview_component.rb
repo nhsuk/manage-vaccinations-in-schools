@@ -85,21 +85,38 @@ class AppSessionOverviewComponent < ViewComponent::Base
     programme_types = [programme.type]
 
     if Flipper.enabled?(:programme_status, team)
-      if key.starts_with?("due_")
+      case key
+      when "due_nasal"
         session_patients_path(
           session,
           programme_types: [programme.type],
           programme_status_group: "due",
-          programme_statuses: [key],
-          eligible_children: 1
+          eligible_children: 1,
+          vaccine_criteria: %w[flu_nasal flu_nasal_injection]
+        )
+      when "due_injection"
+        session_patients_path(
+          session,
+          programme_types: [programme.type],
+          programme_status_group: "due",
+          eligible_children: 1,
+          vaccine_criteria: %w[flu_injection_without_gelatine]
+        )
+      when "due_without_gelatine"
+        session_patients_path(
+          session,
+          programme_types: [programme.type],
+          programme_status_group: "due",
+          eligible_children: 1,
+          vaccine_criteria: %w[mmr_injection_without_gelatine]
         )
       else
         session_patients_path(
           session,
           programme_types: [programme.type],
           programme_status_group: key,
-          programme_statuses: [],
-          eligible_children: 1
+          eligible_children: 1,
+          vaccine_criteria: []
         )
       end
     elsif key.starts_with?("consent_")
@@ -128,7 +145,7 @@ class AppSessionOverviewComponent < ViewComponent::Base
       .consent_given_and_safe_to_vaccinate(
         programmes:,
         academic_year:,
-        vaccine_method: nil,
+        vaccine_methods: nil,
         without_gelatine: nil
       )
       .count
