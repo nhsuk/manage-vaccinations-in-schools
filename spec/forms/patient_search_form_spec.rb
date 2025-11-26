@@ -295,16 +295,6 @@ describe PatientSearchForm do
         it "is not included" do
           expect(form.apply(scope)).not_to include(patient)
         end
-
-        context "and filtering on not eligible patients" do
-          let(:programme_statuses) { %w[not_eligible] }
-
-          before { StatusUpdater.call(patient:) }
-
-          it "is included" do
-            expect(form.apply(scope)).to include(patient)
-          end
-        end
       end
     end
 
