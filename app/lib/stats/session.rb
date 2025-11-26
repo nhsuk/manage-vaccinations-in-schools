@@ -120,7 +120,7 @@ class Stats::Session
       next 0 unless counted_status.in?(statuses)
 
       unless vaccine_method_value.nil? ||
-               counted_vaccine_methods.include?(vaccine_method_value)
+               counted_vaccine_methods.first == vaccine_method_value
         next 0
       end
 
