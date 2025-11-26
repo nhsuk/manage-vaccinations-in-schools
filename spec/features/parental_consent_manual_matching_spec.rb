@@ -85,6 +85,7 @@ describe "Parental consent manual matching" do
         parent_email: "john.smith@example.com"
       )
     @patient = create(:patient, session: @session)
+    create(:vaccination_record, patient: @patient)
     @parent = create(:parent, email: "eliza.smith@example.com")
     create(:parent_relationship, :mother, parent: @parent, patient: @patient)
   end
