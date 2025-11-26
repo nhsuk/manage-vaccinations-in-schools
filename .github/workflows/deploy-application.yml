@@ -231,6 +231,8 @@ jobs:
           echo "task_definition_arn=$task_definition_arn" >> $GITHUB_OUTPUT
       - name: Run schema migrations
         id: run-schema-migrations
+        env:
+          SLACK_MAVIS_RELEASES_WEBHOOK_URL: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
         run: |
           TASK_DEFINITION_ARN=${{ steps.register-migration-task-definition.outputs.task_definition_arn }}
           SUBNET_ID=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=private-subnet-$environment-a --query 'Subnets[0].SubnetId' --output text)
@@ -259,7 +261,7 @@ jobs:
             AWS_CONSOLE_URL="https://eu-west-2.console.aws.amazon.com/ecs/v2/clusters/$cluster_name/tasks/$TASK_ID/logs"
             
             echo "View logs in AWS Console: $AWS_CONSOLE_URL"
-            if [ $environment = 'production' ]; do
+            if [ $environment = 'production' ]; then
               ./.github/send_slack_notification.sh "${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}" "$AWS_CONSOLE_URL" "Running schema migrations attempt $ATTEMPT/$MAX_ATTEMPTS"
             fi
 
