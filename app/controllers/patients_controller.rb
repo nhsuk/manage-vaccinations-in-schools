@@ -86,6 +86,7 @@ class PatientsController < ApplicationController
     @programme_statuses =
       Patient::ProgrammeStatus.statuses.keys -
         %w[
+          not_eligible
           needs_consent_request_not_scheduled
           needs_consent_request_scheduled
           needs_consent_request_failed
