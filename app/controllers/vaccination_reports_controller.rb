@@ -1,13 +1,37 @@
 # frozen_string_literal: true
 
 class VaccinationReportsController < ApplicationController
-  before_action :set_vaccination_report
-  before_action :set_programme
-  before_action :set_academic_year
+  before_action :set_vaccination_report, except: %i[new create]
+  before_action :set_programme, except: %i[new create]
+  before_action :set_academic_year, except: %i[new create]
 
   include WizardControllerConcern
 
   skip_after_action :verify_policy_scoped
+
+  def new
+    @vaccination_report =
+      VaccinationReport.new(
+        current_user:,
+        request_session: {
+        },
+        academic_year: AcademicYear.current
+      )
+  end
+
+  def create
+    @vaccination_report =
+      VaccinationReport.new(current_user:, request_session: {}, **create_params)
+
+    if @vaccination_report.valid?(:single_page)
+      send_data(
+        @vaccination_report.csv_data,
+        filename: @vaccination_report.csv_filename
+      )
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
 
   def show
     render_wizard
@@ -58,6 +82,18 @@ class VaccinationReportsController < ApplicationController
   def update_params
     params.expect(vaccination_report: %i[date_from date_to file_format]).merge(
       wizard_step: current_step
+    )
+  end
+
+  def create_params
+    params.expect(
+      vaccination_report: %i[
+        academic_year
+        programme_type
+        date_from
+        date_to
+        file_format
+      ]
     )
   end
 end

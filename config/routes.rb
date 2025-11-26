@@ -308,6 +308,13 @@ Rails.application.routes.draw do
     get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
   end
 
+  get "vaccination-report/new",
+      to: "vaccination_reports#new",
+      as: :new_vaccination_report
+  post "vaccination-report",
+       to: "vaccination_reports#create",
+       as: :vaccination_report_create
+
   resource :vaccination_report,
            only: %i[show update],
            path: "vaccination-report/:id" do
