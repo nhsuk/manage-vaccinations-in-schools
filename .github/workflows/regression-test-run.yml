@@ -211,11 +211,12 @@ jobs:
   call-functional-tests:
     needs: [launch-dockerized-devimage, wait-for-task-stability, find-correct-test-branch]
     if: ${{ !cancelled() && needs.launch-dockerized-devimage.result == 'success' && needs.wait-for-task-stability.result == 'success'}}
-    uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/functional_selected_device.yaml@make-workflow-callable #TODO: Change once this is in main
+    uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/functional_selected_device.yaml@containerized_regression_tests_for_PRs #TODO: Change once this is in main
     permissions:
       contents: write
     with:
       tests: ''
+      cross_service_tests: 'false'
       github_ref: ${{ needs.find-correct-test-branch.outputs.test_branch }}
       device: 'Desktop Chrome'
       programmes: 'FLU,HPV,MENACWY,MMR,TD_IPV'
