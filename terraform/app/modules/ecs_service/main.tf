@@ -118,8 +118,18 @@ resource "aws_ecs_task_definition" "this" {
           protocol      = "tcp"
         }
       ]
-      environment = concat(var.task_config.environment, [{ name = "SERVER_TYPE", value = var.server_type }])
-      secrets     = var.task_config.secrets
+      environment = concat(
+        var.task_config.environment, [
+          {
+            name  = "SERVER_TYPE",
+            value = var.server_type
+          },
+          {
+            name  = "SERVICE_NAME"
+            value = "mavis-${var.environment}-${local.server_type_name}"
+          }
+      ])
+      secrets = var.task_config.secrets
       logConfiguration = {
         logDriver = "awslogs"
         options = {
@@ -134,6 +144,20 @@ resource "aws_ecs_task_definition" "this" {
         timeout     = 5
         retries     = 3
         startPeriod = 10
+      }
+    },
+    {
+      name      = "cloudwatch-agent", #TODO: Find an elegant way to ensure either this container does not run or does not publish metrics in certain environments
+      image     = "public.ecr.aws/cloudwatch-agent/cloudwatch-agent:1.300062.0b1304",
+      secrets   = var.cloudwatch_agent_secrets == null ? [] : var.cloudwatch_agent_secrets
+      essential = false
+      logConfiguration = {
+        logDriver = "awslogs",
+        options = {
+          awslogs-group         = var.task_config.log_group_name
+          awslogs-region        = var.task_config.region
+          awslogs-stream-prefix = "${var.environment}-${local.server_type_name}-cwagent-logs"
+        }
       }
     }
   ])

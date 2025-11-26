@@ -8,6 +8,12 @@ resource "aws_iam_role_policy_attachment" "ecs_task_fargate" {
   policy_arn = aws_iam_policy.session_manager_access.arn
 }
 
+resource "aws_iam_role_policy_attachment" "ecs_task_cloudwatch_agent" {
+  role       = aws_iam_role.ecs_task_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
+
+
 resource "aws_iam_role_policy_attachment" "get_s3_object" {
   role       = aws_iam_role.ecs_task_role.name
   policy_arn = aws_iam_policy.get_s3_object.arn

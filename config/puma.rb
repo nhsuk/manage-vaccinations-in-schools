@@ -60,3 +60,14 @@ workers Settings.web_concurrency
 
 # Re-open appenders after forking the process; needed for Semantic Logger
 before_worker_boot { SemanticLogger.reopen }
+
+# Export puma metrics
+if Rails.env.production? || Rails.env.staging?
+  after_worker_boot do
+    require "prometheus_exporter/instrumentation"
+    # optional check, avoids spinning up and down threads per worker
+    unless PrometheusExporter::Instrumentation::Puma.started?
+      PrometheusExporter::Instrumentation::Puma.start
+    end
+  end
+end
