@@ -272,7 +272,7 @@
                               link_errors: true,
                               label: { text: "Children missing an NHS number" } %>
 
-        <% if !Flipper.enabled?(:programme_status, current_team) && show_aged_out_of_programmes %>
+        <% if show_aged_out_of_programmes %>
           <%= f.govuk_check_box :aged_out_of_programmes,
                                 1, 0,
                                 checked: form.aged_out_of_programmes,

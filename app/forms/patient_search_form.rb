@@ -94,17 +94,6 @@ class PatientSearchForm < SearchForm
 
   def team = session&.team || current_user.selected_team
 
-  def only_not_eligible_patients?
-    programme_statuses&.any? do
-      it.in?(Patient::ProgrammeStatus::NOT_ELIGIBLE_STATUSES.keys)
-    end
-  end
-
-  def include_not_eligible_patients?
-    session.present? || archived.present? || only_not_eligible_patients? ||
-      false
-  end
-
   def filter_name(scope)
     q.present? ? scope.search_by_name(q) : scope
   end
@@ -120,7 +109,7 @@ class PatientSearchForm < SearchForm
   def filter_aged_out_of_programmes(scope)
     if aged_out_of_programmes
       scope.not_appear_in_programmes(team.programmes, academic_year:)
-    elsif include_not_eligible_patients?
+    elsif session || archived
       # Archived patients won't appear in programmes, so we need to
       # skip this check if we're trying to view archived patients.
       scope
@@ -163,8 +152,6 @@ class PatientSearchForm < SearchForm
     if programme_types.present?
       if session
         scope.appear_in_programmes(programmes, session:)
-      elsif only_not_eligible_patients?
-        scope.not_appear_in_programmes(programmes, academic_year:)
       else
         scope.appear_in_programmes(programmes, academic_year:)
       end
