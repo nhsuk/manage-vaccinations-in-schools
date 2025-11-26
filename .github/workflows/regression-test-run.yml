@@ -223,7 +223,7 @@ jobs:
       endpoint: 'http://${{ needs.wait-for-task-stability.outputs.container_ip }}:4000'
       screenshot_all_steps: 'false'
       enable_reruns: 'false'
-      test_workers: '4'
+      test_workers: '1'
       set_feature_flags: 'false'
       additional_feature_flags: ''
     secrets:
