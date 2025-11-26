@@ -142,8 +142,8 @@ class ConsentFormsController < ApplicationController
   def set_patient
     @patient =
       policy_scope(Patient).includes(
-        parent_relationships: :parent,
-        vaccination_records: :programme
+        :vaccination_records,
+        parent_relationships: :parent
       ).find(params[:patient_id])
   end
 
