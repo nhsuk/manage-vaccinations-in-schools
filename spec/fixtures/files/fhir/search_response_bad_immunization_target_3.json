@@ -1,0 +1,301 @@
+{
+  "resourceType": "Bundle",
+  "type": "searchset",
+  "link": [
+    {
+      "relation": "self",
+      "url": "https://int.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization?immunization+target=3IN1,MMR,FLU,HPV,MENACWY&_include=Immunization:patient&patient.identifier=https://fhir.nhs.uk/Id/nhs-number|9793826983"
+    }
+  ],
+  "entry": [
+    {
+      "fullUrl": "https://int.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization/c3738fc2-9989-4a76-804f-587acee65e39",
+      "resource": {
+        "resourceType": "Immunization",
+        "id": "c3738fc2-9989-4a76-804f-587acee65e39",
+        "meta": {
+          "versionId": "1"
+        },
+        "extension": [
+          {
+            "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+            "valueCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "866186002",
+                  "display": "Administration of vaccine product containing only Clostridium tetani and Corynebacterium diphtheriae and Human poliovirus antigens (procedure)"
+                }
+              ]
+            }
+          }
+        ],
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://www.ieds.england.nhs.uk/",
+            "value": "7fa9ba01-abcf-4ef9-a36c-30c9f423e42d"
+          }
+        ],
+        "status": "completed",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "7374511000001107",
+              "display": "Revaxis vaccine suspension for injection 0.5ml pre-filled syringes (Sanofi) 1 pre-filled disposable injection (product)"
+            }
+          ]
+        },
+        "patient": {
+          "reference": "urn:uuid:7cf0ab61-dd9f-49fc-af7f-7273bd342614",
+          "type": "Patient",
+          "identifier": {
+            "system": "https://fhir.nhs.uk/Id/nhs-number",
+            "value": "9793826983"
+          }
+        },
+        "occurrenceDateTime": "2025-11-24T08:00:00.162000+00:00",
+        "recorded": "2025-11-24T08:00:00.162000+00:00",
+        "primarySource": true,
+        "location": {
+          "identifier": {
+            "system": "https://fhir.hl7.org.uk/Id/urn-school-number",
+            "value": "128604"
+          }
+        },
+        "manufacturer": {
+          "display": "Sanofi"
+        },
+        "lotNumber": "bb1234",
+        "expirationDate": "2030-01-01",
+        "site": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "368209003",
+              "display": "Right upper arm structure"
+            }
+          ]
+        },
+        "route": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "78421000",
+              "display": "Intramuscular"
+            }
+          ]
+        },
+        "doseQuantity": {
+          "value": 0.5,
+          "unit": "ml",
+          "system": "http://snomed.info/sct",
+          "code": "258773002"
+        },
+        "performer": [
+          {
+            "actor": {
+              "type": "Organization",
+              "identifier": {
+                "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                "value": "PERF2"
+              }
+            }
+          }
+        ],
+        "reasonCode": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "723620004"
+              }
+            ]
+          }
+        ],
+        "protocolApplied": [
+          {
+            "targetDisease": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "76902006",
+                    "display": "Tetanus"
+                  }
+                ]
+              },
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "397430003",
+                    "display": "Diphtheria caused by Corynebacterium diphtheriae"
+                  }
+                ]
+              },
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "398102009",
+                    "display": "Acute poliomyelitis"
+                  }
+                ]
+              }
+            ],
+            "doseNumberString": "Unknown"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "https://int.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization/2ca8703c-118c-4e92-bb28-2bc91652dd80",
+      "resource": {
+        "resourceType": "Immunization",
+        "id": "2ca8703c-118c-4e92-bb28-2bc91652dd80",
+        "meta": {
+          "versionId": "1"
+        },
+        "extension": [
+          {
+            "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+            "valueCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "884861000000100",
+                  "display": "Seasonal influenza vaccination (procedure)"
+                }
+              ]
+            }
+          }
+        ],
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://www.ieds.england.nhs.uk/",
+            "value": "7fa9ba01-abcd-4ef9-a46c-30c9f423e42d"
+          }
+        ],
+        "status": "completed",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "43208811000001106",
+              "display": "Fluenz (trivalent) vaccine nasal suspension 0.2ml unit dose (AstraZeneca UK Ltd) (product)"
+            }
+          ]
+        },
+        "patient": {
+          "reference": "urn:uuid:7cf0ab61-dd9f-49fc-af7f-7273bd342614",
+          "type": "Patient",
+          "identifier": {
+            "system": "https://fhir.nhs.uk/Id/nhs-number",
+            "value": "9793826983"
+          }
+        },
+        "occurrenceDateTime": "2025-11-24T07:57:32+01:00",
+        "recorded": "2025-11-24T07:58:02.836000+01:00",
+        "primarySource": true,
+        "location": {
+          "identifier": {
+            "system": "https://fhir.hl7.org.uk/Id/urn-school-number",
+            "value": "100006"
+          }
+        },
+        "manufacturer": {
+          "display": "AstraZeneca"
+        },
+        "lotNumber": "bb2222",
+        "expirationDate": "2030-01-01",
+        "site": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "279549004",
+              "display": "Nasal cavity structure"
+            }
+          ]
+        },
+        "route": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "46713006",
+              "display": "Nasal"
+            }
+          ]
+        },
+        "doseQuantity": {
+          "value": 0.2,
+          "unit": "ml",
+          "system": "http://snomed.info/sct",
+          "code": "258773002"
+        },
+        "performer": [
+          {
+            "actor": {
+              "type": "Organization",
+              "identifier": {
+                "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                "value": "A9A5A"
+              }
+            }
+          }
+        ],
+        "reasonCode": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "723620004"
+              }
+            ]
+          }
+        ],
+        "protocolApplied": [
+          {
+            "targetDisease": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "6142004",
+                    "display": "Influenza"
+                  }
+                ]
+              }
+            ],
+            "doseNumberPositiveInt": 1
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:7cf0ab61-dd9f-49fc-af7f-7273bd342614",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "9793826983",
+        "identifier": [
+          {
+            "system": "https://fhir.nhs.uk/Id/nhs-number",
+            "value": "9793826983"
+          }
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    }
+  ],
+  "total": 2
+}
