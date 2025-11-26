@@ -25,6 +25,11 @@ class AppPatientSessionVaccinationComponent < AppPatientSessionSectionComponent
   private
 
   def resolved_status
-    @resolved_status ||= patient_status_resolver.vaccination
+    @resolved_status ||=
+      if Flipper.enabled?(:programme_status, team)
+        patient_status_resolver.programme
+      else
+        patient_status_resolver.vaccination
+      end
   end
 end
