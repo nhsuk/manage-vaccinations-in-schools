@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+TASK_DETAILS=$(curl ${ECS_CONTAINER_METADATA_URI_V4})
+TASK_ID=$(echo "$TASK_DETAILS" | jq '.Labels["com.amazonaws.ecs.task-arn"] | split("/") | last')
+
+bundle exec prometheus_exporter \
+  --port 9394 \
+  --bind 0.0.0.0 \
+  --label "{\"TaskId\": ${TASK_ID}, \"ServiceName\": \"${SERVICE_NAME}\"}"
