@@ -71,19 +71,26 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
-      - name: Render task definition
-        id: render-task-definition
+      - name: Render task definition 1
+        id: render-task-definition-1
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition-family: "assurance-testing-regression-task-definition-template"
-          container-name: "mavis-regression"
+          container-name: "mavis-regression-web"
+          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/regression:${{ github.sha }}"
+      - name: Render task definition 2
+        id: render-task-definition-2
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-task-definition-1.outputs.task-definition }}
+          container-name: "mavis-regression-sidekiq"
           image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/regression:${{ github.sha }}"
       - name: Prepare deployment
         id: prepare-deployment
         run: |
           file_path="assurance-testing-regression-task-definition.json"
           family_name="assurance-testing-regression-task-definition"
-          echo "$(jq --arg f "$family_name" '.family = $f' "${{ steps.render-task-definition.outputs.task-definition }}")" > "$file_path"
+          echo "$(jq --arg f "$family_name" '.family = $f' "${{ steps.render-task-definition-2.outputs.task-definition }}")" > "$file_path"
           cat "$file_path" #TODO: Debugging, remove later
           
           subnet_id=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=assurance-testing-subnet --query 'Subnets[0].SubnetId' --output text)
@@ -176,9 +183,12 @@ jobs:
         run: |
           TASK_ARN=$(echo '${{ needs.launch-dockerized-devimage.outputs.run_task_arn }}' | jq -r '.[0]')
           TASK_ID=$(sed 's:^.*/::' <<< $TASK_ARN)
-          CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-regression\$252F${TASK_ID}\$3Fstart\$3D$(date +%s)000\$26end\$3D$(date -d '+30 minutes' +%s)000"
+          WEB_CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-regression-web\$252F${TASK_ID}\$3Fstart\$3D$(date +%s)000\$26end\$3D$(date -d '+30 minutes' +%s)000"
+          SIDEKIQ_CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-regression-sidekiq\$252F${TASK_ID}\$3Fstart\$3D$(date +%s)000\$26end\$3D$(date -d '+30 minutes' +%s)000"
           echo "**Task ID:** $TASK_ID" >> $GITHUB_STEP_SUMMARY
-          echo "**Container Logs:** $CLOUDWATCH_URL" >> $GITHUB_STEP_SUMMARY
+          echo "**Container Logs:** " >> $GITHUB_STEP_SUMMARY
+          echo "  * WEB logs: $WEB_CLOUDWATCH_URL" >> $GITHUB_STEP_SUMMARY
+          echo "  * SIDEKIQ logs: $SIDEKIQ_CLOUDWATCH_URL" >> $GITHUB_STEP_SUMMARY
           NETWORK_INTERFACE=$(aws ecs describe-tasks \
             --cluster assurance-testing \
             --tasks "$TASK_ARN" \
@@ -190,7 +200,7 @@ jobs:
           echo "container_ip=$CONTAINER_IP" >> $GITHUB_OUTPUT
           echo "task_arn=$TASK_ARN" >> $GITHUB_OUTPUT
           echo "Started task: $TASK_ARN"
-          echo "Logs for server: ${CLOUDWATCH_URL}"
+          echo "Logs for server: [web](${WEB_CLOUDWATCH_URL}) and [sidekiq](${SIDEKIQ_CLOUDWATCH_URL})"
   find-correct-test-branch:
     needs: [wait-for-task-stability]
     if: ${{ !cancelled() && needs.wait-for-task-stability.result == 'success'}}

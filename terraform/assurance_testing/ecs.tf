@@ -51,7 +51,7 @@ resource "aws_ecs_task_definition" "regression" {
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   container_definitions = jsonencode([
     {
-      name      = "mavis-regression"
+      name      = "mavis-regression-web"
       image     = "CHANGE_ME"
       essential = true
       environment = [
@@ -74,6 +74,10 @@ resource "aws_ecs_task_definition" "regression" {
         {
           name  = "SKIP_TEST_DATABASE"
           value = "true"
+        },
+        {
+          name  = "SERVER_TYPE"
+          value = "web"
         }
       ]
       portMappings = [
@@ -88,11 +92,65 @@ resource "aws_ecs_task_definition" "regression" {
         options = {
           awslogs-group         = aws_cloudwatch_log_group.this.name
           awslogs-region        = "eu-west-2"
-          awslogs-stream-prefix = "${var.identifier}-logs"
+          awslogs-stream-prefix = "${var.identifier}-web-logs"
         }
       }
       healthCheck = {
         command     = ["CMD-SHELL", "curl -f http://localhost:4000/health/database || exit 1"]
+        interval    = 30
+        timeout     = 5
+        retries     = 3
+        startPeriod = 90
+      }
+      dependsOn = [{
+        containerName = "mavis-regression-db"
+        condition     = "HEALTHY"
+      }]
+    },
+    {
+      name      = "mavis-regression-sidekiq"
+      image     = "CHANGE_ME"
+      essential = false
+      environment = [
+        {
+          name  = "DATABASE_HOST"
+          value = "localhost"
+        },
+        {
+          name  = "DATABASE_USER"
+          value = "postgres"
+        },
+        {
+          name  = "DATABASE_PASSWORD"
+          value = "postgres"
+        },
+        {
+          name  = "RAILS_MASTER_KEY"
+          value = "intentionally-insecure-dev-key00"
+        },
+        {
+          name  = "SKIP_TEST_DATABASE"
+          value = "true"
+        },
+        {
+          name  = "SERVER_TYPE"
+          value = "sidekiq"
+        },
+        {
+          name  = "HTTP_PORT"
+          value = "5000"
+        }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.this.name
+          awslogs-region        = "eu-west-2"
+          awslogs-stream-prefix = "${var.identifier}-logs"
+        }
+      }
+      healthCheck = {
+        command     = ["CMD-SHELL", "grep -q '[s]idekiq' /proc/*/cmdline 2>/dev/null || exit 1"]
         interval    = 30
         timeout     = 5
         retries     = 3
