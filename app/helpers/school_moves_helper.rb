@@ -13,4 +13,9 @@ module SchoolMovesHelper
 
     "#{source} updated"
   end
+
+  def school_move_warning_text(school_move)
+    "Confirming this school move will bring #{school_move.patient.given_name} " \
+      "into your area from #{school_move.patient.school.team.name}"
+  end
 end

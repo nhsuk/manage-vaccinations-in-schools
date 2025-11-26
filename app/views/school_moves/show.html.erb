@@ -17,6 +17,11 @@
   <div class="nhsuk-grid-column-one-half">
     <%= render AppCardComponent.new(feature: true) do |card| %>
       <% card.with_heading(level: 2) { "#{@school_move.human_enum_name(:source)} record" } %>
+      <% if @school_move.from_another_team? %>
+        <div class="nhsuk-u-margin-top-1">
+          <%= render AppStatusComponent.new(text: school_move_warning_text(@school_move)) %>
+        </div>
+      <% end %>
       <%= render AppChildSummaryComponent.new(@patient_with_changes) %>
     <% end %>
   </div>

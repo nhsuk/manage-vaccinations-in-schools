@@ -55,7 +55,8 @@ describe ImportantNotice do
         deceased: 0,
         invalidated: 1,
         restricted: 2,
-        gillick_no_notify: 3
+        gillick_no_notify: 3,
+        team_changed: 4
       )
     end
   end
