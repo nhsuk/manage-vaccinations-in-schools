@@ -45,6 +45,7 @@ en:
         due: Due vaccination
         due_injection: Due injection
         due_nasal: Due nasal spray
+        due_no_preference: Due vaccination (no preference)
         due_without_gelatine: Due gelatine-free injection only
         has_refusal: Has a refusal
         has_refusal_consent_conflicts: Has a refusal
@@ -71,6 +72,7 @@ en:
         due: green
         due_injection: green
         due_nasal: green
+        due_no_preference: green
         due_without_gelatine: green
         has_refusal: dark-orange
         has_refusal_consent_conflicts: dark-orange

@@ -89,7 +89,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     if programme.flu?
       %w[flu_injection_without_gelatine flu_nasal flu_nasal_injection]
     elsif programme.mmr?
-      %w[mmr_injection_without_gelatine]
+      %w[mmr_injection mmr_injection_without_gelatine]
     else
       []
     end

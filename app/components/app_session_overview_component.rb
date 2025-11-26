@@ -85,31 +85,44 @@ class AppSessionOverviewComponent < ViewComponent::Base
     programme_types = [programme.type]
 
     if Flipper.enabled?(:programme_status, team)
-      case key
-      when "due_nasal"
-        session_patients_path(
-          session,
-          programme_types: [programme.type],
-          programme_status_group: "due",
-          eligible_children: 1,
-          vaccine_criteria: %w[flu_nasal flu_nasal_injection]
-        )
-      when "due_injection"
-        session_patients_path(
-          session,
-          programme_types: [programme.type],
-          programme_status_group: "due",
-          eligible_children: 1,
-          vaccine_criteria: %w[flu_injection_without_gelatine]
-        )
-      when "due_without_gelatine"
-        session_patients_path(
-          session,
-          programme_types: [programme.type],
-          programme_status_group: "due",
-          eligible_children: 1,
-          vaccine_criteria: %w[mmr_injection_without_gelatine]
-        )
+      if programme.flu? && key.starts_with?("due_")
+        case key
+        when "due_nasal"
+          session_patients_path(
+            session,
+            programme_types: [programme.type],
+            programme_status_group: "due",
+            eligible_children: 1,
+            vaccine_criteria: %w[flu_nasal flu_nasal_injection]
+          )
+        when "due_injection"
+          session_patients_path(
+            session,
+            programme_types: [programme.type],
+            programme_status_group: "due",
+            eligible_children: 1,
+            vaccine_criteria: %w[flu_injection_without_gelatine]
+          )
+        end
+      elsif programme.mmr? && key.starts_with?("due_")
+        case key
+        when "due_no_preference"
+          session_patients_path(
+            session,
+            programme_types: [programme.type],
+            programme_status_group: "due",
+            eligible_children: 1,
+            vaccine_criteria: %w[mmr_injection]
+          )
+        when "due_without_gelatine"
+          session_patients_path(
+            session,
+            programme_types: [programme.type],
+            programme_status_group: "due",
+            eligible_children: 1,
+            vaccine_criteria: %w[mmr_injection_without_gelatine]
+          )
+        end
       else
         session_patients_path(
           session,

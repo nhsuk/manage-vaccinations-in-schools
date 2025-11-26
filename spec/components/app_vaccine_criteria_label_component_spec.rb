@@ -38,7 +38,7 @@ describe AppVaccineCriteriaLabelComponent do
     let(:vaccine_methods) { %w[injection] }
     let(:without_gelatine) { false }
 
-    it { should have_content("Either for MMR") }
+    it { should have_content("No preference for MMR") }
 
     context "with gelatine-free injection" do
       let(:without_gelatine) { true }
