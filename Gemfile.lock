@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/citizensadvice/capybara_accessible_selectors.git
-  revision: d6f66fd2519368553942769aa7b5a91ce698e91f
+  revision: 568699fc71b6648e7186a4ac77bba072447c131e
   specs:
     capybara_accessible_selectors (0.15.0)
       capybara (~> 3.36)
@@ -99,8 +99,8 @@ GEM
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
       uri (>= 0.13.1)
-    addressable (2.8.7)
-      public_suffix (>= 2.0.2, < 7.0)
+    addressable (2.8.8)
+      public_suffix (>= 2.0.2, < 8.0)
     aes_key_wrap (1.1.0)
     amazing_print (2.0.0)
     annotaterb (4.20.0)
@@ -460,7 +460,7 @@ GEM
     psych (5.2.6)
       date
       stringio
-    public_suffix (6.0.2)
+    public_suffix (7.0.0)
     puma (7.1.0)
       nio4r (~> 2.0)
     pundit (2.5.2)
