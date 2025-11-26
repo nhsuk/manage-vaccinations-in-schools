@@ -137,6 +137,8 @@ class ImmunisationImport < ApplicationRecord
         on_duplicate_key_ignore: :all
       ).ids
 
+    patient_locations.each(&:search_vaccinations_from_nhs_immunisations_api)
+
     [
       [:vaccination_records, vaccination_records],
       [:batches, @batches_batch],

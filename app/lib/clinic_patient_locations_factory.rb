@@ -13,6 +13,11 @@ class ClinicPatientLocationsFactory
         on_duplicate_key_ignore: true
       ).ids
     SyncPatientTeamJob.perform_later(PatientLocation, imported_ids)
+
+    if generic_clinic_session.scheduled_for_search_in_nhs_immunisations_api?
+      patient_ids = PatientLocation.where(id: imported_ids).pluck(:patient_id)
+      SearchVaccinationRecordsInNHSJob.perform_async(patient_ids.zip)
+    end
   end
 
   def patient_locations_to_create

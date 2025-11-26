@@ -63,10 +63,17 @@ module MavisCLI
           location_id: old_loc.id
         ).update_all_and_sync_patient_teams(location_id: new_loc.id)
         Patient.where(school_id: old_loc.id).update_all(school_id: new_loc.id)
-        PatientLocation.where(
-          academic_year:,
-          location_id: old_loc.id
-        ).update_all_and_sync_patient_teams(location_id: new_loc.id)
+        patient_locations =
+          PatientLocation.where(academic_year:, location_id: old_loc.id)
+        patient_locations.update_all_and_sync_patient_teams(
+          location_id: new_loc.id
+        )
+
+        if new_loc.scheduled_for_search_in_nhs_immunisations_api?
+          patient_ids = patient_locations.pluck(:patient_id)
+          SearchVaccinationRecordsInNHSJob.perform_bulk(patient_ids.zip)
+        end
+
         ConsentForm.where(location_id: old_loc.id).update_all(
           location_id: new_loc.id
         )
