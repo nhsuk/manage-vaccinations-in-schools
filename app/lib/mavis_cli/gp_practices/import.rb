@@ -7,18 +7,15 @@ module MavisCLI
 
       option :input_file,
              aliases: ["-f"],
-             default: "db/data/nhs-gp-practices.zip",
+             default: "db/data/nhs-gp-practices.csv",
              desc: "NHS GP Practice database file to use"
 
       def call(input_file:, **)
         MavisCLI.load_rails
 
-        Zip::File.open(input_file) do |zip|
-          csv_entry = zip.glob("*.csv").first
-          csv_content = csv_entry.get_input_stream.read
-
+        File.open(input_file) do |file|
           rows =
-            CSV.parse(csv_content, headers: false, encoding: "ISO-8859-1:UTF-8")
+            CSV.parse(file.read, headers: false, encoding: "ISO-8859-1:UTF-8")
 
           batch_size = 1000
           locations = []
