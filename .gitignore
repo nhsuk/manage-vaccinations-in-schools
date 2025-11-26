@@ -89,4 +89,4 @@ dump.rdb
 
 # Data that gets downloaded by CLI tools
 db/data/dfe-schools.zip
-db/data/nhs-gp-practices.zip
+db/data/nhs-gp-practices.csv
