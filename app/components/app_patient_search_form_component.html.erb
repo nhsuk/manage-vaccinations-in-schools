@@ -106,11 +106,13 @@
                   <% programmes.each do |programme| %>
                     <% if (programme_vaccine_criteria = vaccine_criteria_for(programme:)).present? %>
                       <%= f.govuk_check_boxes_fieldset :vaccine_criteria,
-                                                       legend: {
-                                                         text: show_vaccine_criteria_headings? ? "#{programme.name} vaccine type" : nil,
-                                                         size: "s",
-                                                         class: "nhsuk-u-margin-bottom-0",
-                                                       },
+                                                       legend: if show_vaccine_criteria_headings?
+                                                         {
+                                                           text: "#{programme.name} vaccine type",
+                                                           size: "s",
+                                                           class: "nhsuk-u-margin-bottom-0",
+                                                         }
+                                                       end,
                                                        small: true do %>
                         <% programme_vaccine_criteria.each do |vaccine_criteria| %>
                           <%= f.govuk_check_box :vaccine_criteria,

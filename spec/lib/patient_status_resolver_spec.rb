@@ -138,7 +138,15 @@ describe PatientStatusResolver do
           patient.reload
         end
 
-        it { expect(hash).to eq({ text: "Due 1st dose", colour: "green" }) }
+        it do
+          expect(hash).to eq(
+            {
+              text: "Due 1st dose",
+              colour: "green",
+              details_text: "No preference"
+            }
+          )
+        end
       end
 
       context "and due 1st dose gelatine-free" do

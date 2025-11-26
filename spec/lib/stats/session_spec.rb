@@ -260,6 +260,66 @@ describe Stats::Session do
       end
     end
 
+    context "with MMR programme (with or without gelatine)" do
+      let(:programme) { Programme.mmr }
+
+      before do
+        create(:patient, session:, year_group: 9).tap do |patient|
+          create(
+            :patient_consent_status,
+            :given_injection_only,
+            patient:,
+            programme:
+          )
+          create(
+            :patient_programme_status,
+            :due_injection,
+            patient:,
+            programme:
+          )
+        end
+
+        create(:patient, session:, year_group: 9).tap do |patient|
+          create(
+            :patient_consent_status,
+            :given_without_gelatine,
+            patient:,
+            programme:
+          )
+          create(
+            :patient_programme_status,
+            :due_injection_without_gelatine,
+            patient:,
+            programme:
+          )
+        end
+      end
+
+      context "with programme status enabled" do
+        before { Flipper.enable(:programme_status) }
+
+        it "returns counts broken down by vaccine method" do
+          expect(stats).to include(
+            eligible_children: 2,
+            due_no_preference: 1,
+            due_without_gelatine: 1
+          )
+        end
+      end
+
+      context "with programme status disabled" do
+        before { Flipper.disable(:programme_status) }
+
+        it "returns counts broken down by vaccine method" do
+          expect(stats).to include(
+            eligible_children: 2,
+            consent_given_injection: 1,
+            consent_given_injection_without_gelatine: 1
+          )
+        end
+      end
+    end
+
     context "when patient is deceased" do
       let(:patient) { create(:patient, :deceased, session:, year_group: 9) }
 

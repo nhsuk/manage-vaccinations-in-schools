@@ -90,7 +90,7 @@ class Stats::Session
     if programme.flu?
       %w[due_nasal due_injection]
     elsif programme.mmr?
-      %w[due due_without_gelatine]
+      %w[due_no_preference due_without_gelatine]
     else
       %w[due]
     end
@@ -104,6 +104,9 @@ class Stats::Session
     },
     "due_nasal" => {
       vaccine_method: "nasal"
+    },
+    "due_no_preference" => {
+      without_gelatine: false
     },
     "due_without_gelatine" => {
       without_gelatine: true
