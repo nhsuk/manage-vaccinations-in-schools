@@ -419,17 +419,24 @@ module NHS::ImmunisationsAPI
         bundle_params.transform_keys do |key|
           key == "immunization.target" ? "-immunization.target" : key
         end
+      # TODO: They recently introduced another bug (presumably in the process of fixing their old bug), where they
+      #       now use `immunization-target`. This has only been seen in their staging environment, and we have notified
+      #       them, so hopefully this never reaches production. In the meantime we need to be able to test and demo
+      #       against their INT environment, and need to be robust against this bug in case it makes its way into prod.
+      tweaked_bundle_params =
+        tweaked_bundle_params.transform_keys do |key|
+          key == "immunization-target" ? "-immunization.target" : key
+        end
 
       # We don't care about the order of the target values
       tweaked_bundle_params["-immunization.target"] = tweaked_bundle_params[
         "-immunization.target"
-      ].split(",").sort
+      ]&.split(",")&.sort
       request_params["-immunization.target"] = request_params[
         "-immunization.target"
       ].split(",").sort
 
-      unless tweaked_bundle_params == request_params ||
-               bundle_params == request_params
+      unless tweaked_bundle_params == request_params
         message =
           "Bundle link parameters do not match request parameters: #{tweaked_bundle_params} != #{request_params}"
         Rails.logger.warn(message)
