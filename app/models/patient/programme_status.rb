@@ -91,8 +91,8 @@ class Patient::ProgrammeStatus < ApplicationRecord
     "cannot_vaccinate_delay_vaccination" => 51,
     "cannot_vaccinate_absent" => 52,
     "cannot_vaccinate_contraindicated" => 53,
-    "cannot_vaccinate_refused" => 53,
-    "cannot_vaccinate_unwell" => 54
+    "cannot_vaccinate_refused" => 54,
+    "cannot_vaccinate_unwell" => 55
   }.freeze
 
   VACCINATED_STATUSES = {
