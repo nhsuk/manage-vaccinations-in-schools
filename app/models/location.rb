@@ -171,6 +171,11 @@ class Location < ApplicationRecord
     where_urn_and_site(urn_and_site).take!
   end
 
+  def to_param
+    # ODS code and URN+site are uniquely indexed.
+    ods_code || urn_and_site || id
+  end
+
   def urn_and_site
     return nil if urn.nil? && site.nil?
     site.nil? ? urn : urn + site

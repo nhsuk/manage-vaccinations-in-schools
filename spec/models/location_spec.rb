@@ -149,6 +149,40 @@ describe Location do
   it { should normalize(:ods_code).from(" r1a ").to("R1A") }
   it { should normalize(:urn).from(" 123 ").to("123") }
 
+  describe "#to_param" do
+    subject { location.to_param }
+
+    context "with a community clinic with an ODS code" do
+      let(:location) { create(:community_clinic, ods_code: "ABC") }
+
+      it { should eq(location.ods_code) }
+    end
+
+    context "with a community clinic without an ODS code" do
+      let(:location) { create(:community_clinic, ods_code: nil) }
+
+      it { should eq(location.id) }
+    end
+
+    context "with a generic clinic" do
+      let(:location) { create(:generic_clinic, team: create(:team)) }
+
+      it { should eq(location.id) }
+    end
+
+    context "with a GP practice" do
+      let(:location) { create(:gp_practice) }
+
+      it { should eq(location.ods_code) }
+    end
+
+    context "with a school" do
+      let(:location) { create(:school) }
+
+      it { should be(location.urn_and_site) }
+    end
+  end
+
   describe "#clinic?" do
     subject(:clinic?) { location.clinic? }
 
