@@ -13,6 +13,8 @@ class ImmunisationImportRow
            :validate_delivery_site,
            :validate_dose_sequence,
            :validate_existing_patients,
+           :validate_local_patient_id,
+           :validate_local_patient_id_uri,
            :validate_patient_date_of_birth,
            :validate_patient_first_name,
            :validate_patient_gender_code,
@@ -148,6 +150,13 @@ class ImmunisationImportRow
       )
     end
 
+    if bulk?
+      attributes.merge!(
+        local_patient_id: local_patient_id&.to_s,
+        local_patient_id_uri: local_patient_id_uri&.to_s
+      )
+    end
+
     attributes_to_stage_if_already_exists = {
       batch_id: batch&.id,
       delivery_method: delivery_method_value,
@@ -255,6 +264,10 @@ class ImmunisationImportRow
   def vaccinated = @data[:vaccinated]
 
   def vaccine_name = @data[:vaccine_given]
+
+  def local_patient_id = @data[:local_patient_id]
+
+  def local_patient_id_uri = @data[:local_patient_id_uri]
 
   private
 
@@ -756,6 +769,22 @@ class ImmunisationImportRow
         :base,
         "Two or more possible patients match the patient first name, last name, date of birth or postcode."
       )
+    end
+  end
+
+  def validate_local_patient_id
+    return unless bulk?
+
+    if local_patient_id.blank?
+      errors.add(:base, "<code>LOCAL_PATIENT_ID</code> is required")
+    end
+  end
+
+  def validate_local_patient_id_uri
+    return unless bulk?
+
+    if local_patient_id_uri.blank?
+      errors.add(:base, "<code>LOCAL_PATIENT_ID_URI</code> is required")
     end
   end
 
