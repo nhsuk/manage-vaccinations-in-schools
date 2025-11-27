@@ -115,7 +115,11 @@ class Team < ApplicationRecord
       .includes(:location, :session_programme_year_groups)
       .create_with(dates: [], team_location:)
       .find_or_create_by!(academic_year:, location: generic_clinic)
-      .tap { it.sync_location_programme_year_groups!(programmes:) }
+      .tap do |session|
+        if session.session_programme_year_groups.empty?
+          session.sync_location_programme_year_groups!(programmes:)
+        end
+      end
   end
 
   def has_upload_access_only?
