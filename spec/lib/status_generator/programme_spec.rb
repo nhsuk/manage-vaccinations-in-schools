@@ -202,6 +202,19 @@ describe StatusGenerator::Programme do
     its(:without_gelatine) { should be(false) }
   end
 
+  context "when triaged as invite to clinic" do
+    before do
+      create(:consent, :given, patient:, programme:)
+      create(:triage, :invite_to_clinic, patient:, programme:)
+    end
+
+    its(:status) { should be(:needs_triage) }
+    its(:date) { should be_nil }
+    its(:dose_sequence) { should be_nil }
+    its(:vaccine_methods) { should be_nil }
+    its(:without_gelatine) { should be_nil }
+  end
+
   context "when triaged as do not vaccinated" do
     before do
       create(:consent, :given, patient:, programme:)
