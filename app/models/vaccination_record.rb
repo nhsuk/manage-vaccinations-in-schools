@@ -73,6 +73,7 @@
 #
 class VaccinationRecord < ApplicationRecord
   include BelongsToProgramme
+  include Confirmable
   include ContributesToPatientTeams
   include Discard::Model
   include HasDoseVolume
@@ -242,10 +243,6 @@ class VaccinationRecord < ApplicationRecord
   def academic_year = performed_at.to_date.academic_year
 
   def not_administered? = !administered?
-
-  def confirmation_sent?
-    confirmation_sent_at != nil
-  end
 
   def recorded_in_service?
     session_id != nil
