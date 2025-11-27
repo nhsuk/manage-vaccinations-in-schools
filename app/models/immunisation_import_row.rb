@@ -988,6 +988,8 @@ class ImmunisationImportRow
   end
 
   def validate_school_name
+    return if bulk?
+
     school_name_required = school_urn&.to_s == SCHOOL_URN_UNKNOWN
 
     if school_name.present?
