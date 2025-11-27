@@ -915,12 +915,12 @@ describe ImmunisationImportRow do
         it "requires the mandatory fields" do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors[:base]).to include(
-            "<code>DATE_OF_VACCINATION</code> or <code>Event date</code> is required",
-            "<code>PERSON_DOB</code> or <code>Date of birth</code> is required",
-            "<code>PERSON_FORENAME</code> or <code>First name</code> is required",
-            "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required",
-            "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
-            "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required",
+            "<code>DATE_OF_VACCINATION</code> is required",
+            "<code>PERSON_DOB</code> is required",
+            "<code>PERSON_FORENAME</code> is required",
+            "<code>PERSON_GENDER_CODE</code> or <code>PERSON_GENDER</code> is required",
+            "<code>PERSON_SURNAME</code> is required",
+            "<code>PERSON_POSTCODE</code> is required",
             "<code>LOCAL_PATIENT_ID</code> is required",
             "<code>LOCAL_PATIENT_ID_URI</code> is required",
             "<code>ORGANISATION_CODE</code> is required",
@@ -935,7 +935,7 @@ describe ImmunisationImportRow do
           expect(immunisation_import_row.errors[:base]).to include(
             "<code>VACCINE_GIVEN</code> is required",
             "<code>ANATOMICAL_SITE</code> is required",
-            "<code>BATCH_NUMBER</code> or <code>Vaccination batch number</code> is required",
+            "<code>BATCH_NUMBER</code> is required",
             "<code>BATCH_EXPIRY_DATE</code> is required"
           )
         end
@@ -1048,7 +1048,7 @@ describe ImmunisationImportRow do
           it "requires the mandatory fields specific to HPV" do
             expect(immunisation_import_row).to be_invalid
             expect(immunisation_import_row.errors[:base]).to include(
-              "<code>DOSE_SEQUENCE</code> or <code>Vaccination type</code> is required"
+              "<code>DOSE_SEQUENCE</code> is required"
             )
           end
         end

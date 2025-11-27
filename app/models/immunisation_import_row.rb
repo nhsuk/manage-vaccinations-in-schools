@@ -607,7 +607,11 @@ class ImmunisationImportRow
         if batch_name.nil?
           errors.add(
             :base,
-            "<code>BATCH_NUMBER</code> or <code>Vaccination batch number</code> is required"
+            if bulk?
+              "<code>BATCH_NUMBER</code> is required"
+            else
+              "<code>BATCH_NUMBER</code> or <code>Vaccination batch number</code> is required"
+            end
           )
         elsif batch_name.blank?
           errors.add(batch_name.header, "Enter a batch number.")
@@ -658,7 +662,11 @@ class ImmunisationImportRow
     if date_of_vaccination.nil?
       errors.add(
         :base,
-        "<code>DATE_OF_VACCINATION</code> or <code>Event date</code> is required"
+        if bulk?
+          "<code>DATE_OF_VACCINATION</code> is required"
+        else
+          "<code>DATE_OF_VACCINATION</code> or <code>Event date</code> is required"
+        end
       )
     elsif date_of_vaccination.blank?
       errors.add(date_of_vaccination.header, "Enter a date")
@@ -756,7 +764,11 @@ class ImmunisationImportRow
       if field.nil?
         errors.add(
           :base,
-          "<code>DOSE_SEQUENCE</code> or <code>Vaccination type</code> is required"
+          if bulk?
+            "<code>DOSE_SEQUENCE</code> is required"
+          else
+            "<code>DOSE_SEQUENCE</code> or <code>Vaccination type</code> is required"
+          end
         )
       else
         errors.add(
@@ -796,7 +808,11 @@ class ImmunisationImportRow
     if patient_date_of_birth.nil?
       errors.add(
         :base,
-        "<code>PERSON_DOB</code> or <code>Date of birth</code> is required"
+        if bulk?
+          "<code>PERSON_DOB</code> is required"
+        else
+          "<code>PERSON_DOB</code> or <code>Date of birth</code> is required"
+        end
       )
     elsif patient_date_of_birth.blank?
       errors.add(patient_date_of_birth.header, "Enter a date of birth.")
@@ -817,7 +833,11 @@ class ImmunisationImportRow
     if patient_first_name.nil?
       errors.add(
         :base,
-        "<code>PERSON_FORENAME</code> or <code>First name</code> is required"
+        if bulk?
+          "<code>PERSON_FORENAME</code> is required"
+        else
+          "<code>PERSON_FORENAME</code> or <code>First name</code> is required"
+        end
       )
     elsif patient_first_name.blank?
       errors.add(patient_first_name.header, "Enter a first name.")
@@ -833,7 +853,11 @@ class ImmunisationImportRow
     if patient_gender_code.nil?
       errors.add(
         :base,
-        "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required"
+        if bulk?
+          "<code>PERSON_GENDER_CODE</code> or <code>PERSON_GENDER</code> is required"
+        else
+          "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required"
+        end
       )
     elsif patient_gender_code.blank?
       errors.add(patient_gender_code.header, "Enter a gender or gender code.")
@@ -849,7 +873,11 @@ class ImmunisationImportRow
     if patient_last_name.nil?
       errors.add(
         :base,
-        "<code>PERSON_SURNAME</code> or <code>Surname</code> is required"
+        if bulk?
+          "<code>PERSON_SURNAME</code> is required"
+        else
+          "<code>PERSON_SURNAME</code> or <code>Surname</code> is required"
+        end
       )
     elsif patient_last_name.blank?
       errors.add(patient_last_name.header, "Enter a last name.")
@@ -883,7 +911,11 @@ class ImmunisationImportRow
       if patient_postcode.nil?
         errors.add(
           :base,
-          "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required"
+          if bulk?
+            "<code>PERSON_POSTCODE</code> is required"
+          else
+            "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required"
+          end
         )
       else
         errors.add(
