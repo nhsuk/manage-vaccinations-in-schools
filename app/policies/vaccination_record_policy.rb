@@ -68,25 +68,18 @@ class VaccinationRecordPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      organisation = user.selected_organisation
       team = user.selected_team
       return scope.none if team.nil?
 
-      patient_in_team =
-        team
-          .patients
-          .select("1")
-          .where("patients.id = vaccination_records.patient_id")
-          .arel
-          .exists
       scope
         .kept
-        .where(patient_in_team)
-        .or(scope.kept.where(session: team.sessions))
-        .or(
-          scope.kept.where(
-            performed_ods_code: organisation.ods_code,
-            session_id: nil
+        .joins(
+          "INNER JOIN patient_teams on patient_teams.patient_id = vaccination_records.patient_id"
+        )
+        .where(patient_teams: { team_id: team.id })
+        .merge(
+          PatientTeam.where_any_sources(
+            %w[vaccination_record_session vaccination_record_organisation]
           )
         )
     end
