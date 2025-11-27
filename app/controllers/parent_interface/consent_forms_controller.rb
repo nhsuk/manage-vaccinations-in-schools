@@ -63,7 +63,7 @@ module ParentInterface
 
       send_consent_form_confirmation(@consent_form)
 
-      ConsentFormMatchingJob.perform_later(@consent_form)
+      ProcessConsentFormJob.perform_later(@consent_form)
     end
 
     private
