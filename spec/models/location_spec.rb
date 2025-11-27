@@ -11,6 +11,7 @@
 #  address_town              :text
 #  gias_establishment_number :integer
 #  gias_local_authority_code :integer
+#  gias_phase                :integer
 #  gias_year_groups          :integer          default([]), not null, is an Array
 #  name                      :text             not null
 #  ods_code                  :string
@@ -89,6 +90,7 @@ describe Location do
 
       it { should_not validate_presence_of(:gias_establishment_number) }
       it { should_not validate_presence_of(:gias_local_authority_code) }
+      it { should_not validate_presence_of(:gias_phase) }
 
       it { should_not validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
@@ -111,6 +113,7 @@ describe Location do
 
       it { should_not validate_presence_of(:gias_establishment_number) }
       it { should_not validate_presence_of(:gias_local_authority_code) }
+      it { should_not validate_presence_of(:gias_phase) }
 
       it { should validate_absence_of(:ods_code) }
 
@@ -123,6 +126,7 @@ describe Location do
 
       it { should_not validate_presence_of(:gias_establishment_number) }
       it { should_not validate_presence_of(:gias_local_authority_code) }
+      it { should_not validate_presence_of(:gias_phase) }
 
       it { should validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
@@ -136,6 +140,7 @@ describe Location do
 
       it { should validate_presence_of(:gias_establishment_number) }
       it { should validate_presence_of(:gias_local_authority_code) }
+      it { should validate_presence_of(:gias_phase) }
 
       it { should_not validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
@@ -213,6 +218,7 @@ describe Location do
           "address_town" => location.address_town,
           "gias_establishment_number" => nil,
           "gias_local_authority_code" => nil,
+          "gias_phase" => nil,
           "gias_year_groups" => [],
           "id" => location.id,
           "is_attached_to_team" => false,

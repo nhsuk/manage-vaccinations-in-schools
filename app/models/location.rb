@@ -11,6 +11,7 @@
 #  address_town              :text
 #  gias_establishment_number :integer
 #  gias_local_authority_code :integer
+#  gias_phase                :integer
 #  gias_year_groups          :integer          default([]), not null, is an Array
 #  name                      :text             not null
 #  ods_code                  :string
@@ -68,6 +69,20 @@ class Location < ApplicationRecord
   has_many :location_programme_year_groups,
            -> { includes(:location_year_group) },
            through: :location_year_groups
+
+  # These integer values intentionally match the GIAS phases.
+  enum :gias_phase,
+       {
+         not_applicable: 0,
+         nursery: 1,
+         primary: 2,
+         middle_deemed_primary: 3,
+         secondary: 4,
+         middle_deemed_secondary: 5,
+         sixteen_plus: 6,
+         all_through: 7
+       },
+       prefix: true
 
   # This is based on the school statuses from the DfE GIAS data.
   enum :status,
@@ -134,6 +149,7 @@ class Location < ApplicationRecord
   with_options if: :school? do
     validates :gias_establishment_number, presence: true
     validates :gias_local_authority_code, presence: true
+    validates :gias_phase, presence: true
     validates :urn, presence: true
   end
 

@@ -14,7 +14,7 @@ describe "mavis schools create" do
 
   def command
     Dry::CLI.new(MavisCLI).call(
-      arguments: %w[schools create 123456 MySchool 123 456 --site A]
+      arguments: %w[schools create 123456 MySchool 123 456 primary --site A]
     )
   end
 
@@ -29,5 +29,6 @@ describe "mavis schools create" do
     expect(location.name).to eq("MySchool")
     expect(location.gias_establishment_number).to eq(123)
     expect(location.gias_local_authority_code).to eq(456)
+    expect(location.gias_phase).to eq("primary")
   end
 end
