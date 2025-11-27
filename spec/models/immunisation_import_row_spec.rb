@@ -921,7 +921,9 @@ describe ImmunisationImportRow do
             "<code>PERSON_FORENAME</code> or <code>First name</code> is required",
             "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required",
             "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
-            "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required"
+            "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required",
+            "<code>LOCAL_PATIENT_ID</code> is required",
+            "<code>LOCAL_PATIENT_ID_URI</code> is required"
           )
         end
       end
@@ -2097,6 +2099,12 @@ describe ImmunisationImportRow do
 
         its(:source) { should eq("bulk_upload") }
 
+        its(:local_patient_id) { should eq "CIN-OXFORD-pat123456" }
+
+        its(:local_patient_id_uri) do
+          should eq "https://cinnamon.nhs.uk/0de/system1"
+        end
+
         its(:location) { should eq location }
 
         context "when not administered" do
@@ -2166,6 +2174,12 @@ describe ImmunisationImportRow do
         its(:programme) { should eq(Programme.hpv) }
 
         its(:source) { should eq("bulk_upload") }
+
+        its(:local_patient_id) { should eq "CIN-OXFORD-pat123456" }
+
+        its(:local_patient_id_uri) do
+          should eq "https://cinnamon.nhs.uk/0de/system1"
+        end
 
         its(:location) { should eq location }
 
