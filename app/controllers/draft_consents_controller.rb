@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class DraftConsentsController < ApplicationController
-  include TriageMailerConcern
-
   skip_after_action :verify_policy_scoped
 
   before_action :set_draft_consent
@@ -85,12 +83,10 @@ class DraftConsentsController < ApplicationController
     end
 
     if @draft_consent.send_confirmation?
-      send_triage_confirmation(
-        @patient,
-        @session,
-        @programme,
-        @consent,
-        @triage
+      @consent.notifier.send_confirmation(
+        session: @session,
+        triage: @triage,
+        sent_by: current_user
       )
     end
 

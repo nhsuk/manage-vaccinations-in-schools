@@ -1,33 +1,16 @@
 # frozen_string_literal: true
 
-describe TriageMailerConcern do
-  before do
-    stub_const("SampleClass", Class.new).class_eval do
-      include TriageMailerConcern # rubocop:disable RSpec/DescribedClass
+describe Notifier::Consent do
+  subject(:notifier) { described_class.new(consent) }
 
-      attr_reader :current_user
-
-      def initialize(current_user:)
-        @current_user = current_user
-      end
-    end
-  end
-
-  let(:sample) { SampleClass.new(current_user:) }
-  let(:current_user) { create(:user) }
+  let(:sent_by) { create(:user) }
 
   let(:programme) { Programme.sample }
   let(:programmes) { [programme] }
 
-  describe "#send_triage_confirmation" do
-    subject(:send_triage_confirmation) do
-      sample.send_triage_confirmation(
-        patient,
-        session,
-        programme,
-        consent,
-        triage
-      )
+  describe "#send_confirmation" do
+    subject(:send_confirmation) do
+      notifier.send_confirmation(session:, triage:, sent_by:)
     end
 
     let(:session) { create(:session, programmes:) }
@@ -40,13 +23,13 @@ describe TriageMailerConcern do
       end
 
       it "sends an email saying triage was needed and vaccination will happen" do
-        expect { send_triage_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to have_delivered_email(
           :triage_vaccination_will_happen
-        ).with(consent:, session:, sent_by: current_user)
+        ).with(consent:, session:, sent_by:)
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -61,13 +44,13 @@ describe TriageMailerConcern do
       end
 
       it "sends an email saying triage was needed but vaccination won't happen" do
-        expect { send_triage_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to have_delivered_email(
           :triage_vaccination_wont_happen
-        ).with(consent:, session:, sent_by: current_user)
+        ).with(consent:, session:, sent_by:)
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -77,13 +60,13 @@ describe TriageMailerConcern do
       end
 
       it "sends an email saying triage was needed but vaccination won't happen" do
-        expect { send_triage_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to have_delivered_email(
           :triage_vaccination_at_clinic
-        ).with(consent:, session:, sent_by: current_user)
+        ).with(consent:, session:, sent_by:)
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to have_delivered_sms
       end
 
       context "when the team is Coventry & Warwickshire Partnership NHS Trust (CWPT)" do
@@ -91,9 +74,9 @@ describe TriageMailerConcern do
         let(:team) { create(:team, ods_code: "RYG") }
 
         it "enqueues an email using the CWPT-specific template" do
-          expect { send_triage_confirmation }.to have_delivered_email(
+          expect { send_confirmation }.to have_delivered_email(
             :triage_vaccination_at_clinic_ryg
-          ).with(consent:, session:, sent_by: current_user)
+          ).with(consent:, session:, sent_by:)
         end
       end
 
@@ -102,9 +85,9 @@ describe TriageMailerConcern do
         let(:team) { create(:team, ods_code: "RT5") }
 
         it "enqueues an email using the LPT-specific template" do
-          expect { send_triage_confirmation }.to have_delivered_email(
+          expect { send_confirmation }.to have_delivered_email(
             :triage_vaccination_at_clinic_rt5
-          ).with(consent:, session:, sent_by: current_user)
+          ).with(consent:, session:, sent_by:)
         end
       end
     end
@@ -115,15 +98,15 @@ describe TriageMailerConcern do
       end
 
       it "sends an email saying vaccination will happen" do
-        expect { send_triage_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to have_delivered_email(
           :consent_confirmation_given
-        ).with(consent:, session:, sent_by: current_user)
+        ).with(consent:, session:, sent_by:)
       end
 
       it "sends a text message" do
-        expect { send_triage_confirmation }.to have_delivered_sms(
+        expect { send_confirmation }.to have_delivered_sms(
           :consent_confirmation_given
-        ).with(consent:, session:, sent_by: current_user)
+        ).with(consent:, session:, sent_by:)
       end
     end
 
@@ -131,13 +114,13 @@ describe TriageMailerConcern do
       let(:patient) { create(:patient, :consent_given_triage_needed, session:) }
 
       it "sends an email saying triage is required" do
-        expect { send_triage_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to have_delivered_email(
           :consent_confirmation_triage
-        ).with(consent:, session:, sent_by: current_user)
+        ).with(consent:, session:, sent_by:)
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -145,11 +128,11 @@ describe TriageMailerConcern do
       let(:patient) { create(:patient, :consent_not_provided, session:) }
 
       it "doesn't send an email" do
-        expect { send_triage_confirmation }.not_to have_delivered_email
+        expect { send_confirmation }.not_to have_delivered_email
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -160,11 +143,11 @@ describe TriageMailerConcern do
       end
 
       it "doesn't send an email" do
-        expect { send_triage_confirmation }.not_to have_delivered_email
+        expect { send_confirmation }.not_to have_delivered_email
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -172,15 +155,15 @@ describe TriageMailerConcern do
       let(:patient) { create(:patient, :consent_refused, session:) }
 
       it "sends an email confirming they've refused consent" do
-        expect { send_triage_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to have_delivered_email(
           :consent_confirmation_refused
-        ).with(consent:, session:, sent_by: current_user)
+        ).with(consent:, session:, sent_by:)
       end
 
       it "sends a text message" do
-        expect { send_triage_confirmation }.to have_delivered_sms(
+        expect { send_confirmation }.to have_delivered_sms(
           :consent_confirmation_refused
-        ).with(consent:, session:, sent_by: current_user)
+        ).with(consent:, session:, sent_by:)
       end
     end
 
@@ -195,11 +178,11 @@ describe TriageMailerConcern do
       end
 
       it "doesn't send an email" do
-        expect { send_triage_confirmation }.not_to have_delivered_email
+        expect { send_confirmation }.not_to have_delivered_email
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -214,11 +197,11 @@ describe TriageMailerConcern do
       end
 
       it "doesn't send an email" do
-        expect { send_triage_confirmation }.not_to have_delivered_email
+        expect { send_confirmation }.not_to have_delivered_email
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -233,11 +216,11 @@ describe TriageMailerConcern do
       end
 
       it "doesn't send an email" do
-        expect { send_triage_confirmation }.not_to have_delivered_email
+        expect { send_confirmation }.not_to have_delivered_email
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -252,15 +235,15 @@ describe TriageMailerConcern do
       end
 
       it "sends an email" do
-        expect { send_triage_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to have_delivered_email(
           :consent_confirmation_given
-        ).with(consent:, session:, sent_by: current_user)
+        ).with(consent:, session:, sent_by:)
       end
 
       it "sends a text message" do
-        expect { send_triage_confirmation }.to have_delivered_sms(
+        expect { send_confirmation }.to have_delivered_sms(
           :consent_confirmation_given
-        ).with(consent:, session:, sent_by: current_user)
+        ).with(consent:, session:, sent_by:)
       end
     end
   end
