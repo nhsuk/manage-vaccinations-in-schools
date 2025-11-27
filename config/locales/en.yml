@@ -740,7 +740,7 @@ en:
     hpv_injection: ""
     menacwy_injection: ""
     mmr_injection: No preference
-    mmr_injection_without_gelatine: Gelatine-free injection only
+    mmr_injection_without_gelatine: Gelatine-free vaccine only
     td_ipv_injection: ""
   attendance_flash:
     absent: "%{name} is absent from today’s session."

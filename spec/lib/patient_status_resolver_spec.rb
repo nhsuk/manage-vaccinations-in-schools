@@ -168,7 +168,7 @@ describe PatientStatusResolver do
             {
               text: "Due 1st dose",
               colour: "green",
-              details_text: "Gelatine-free injection only"
+              details_text: "Gelatine-free vaccine only"
             }
           )
         end
