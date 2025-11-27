@@ -2,7 +2,6 @@
 
 class PatientSessions::VaccinationsController < PatientSessions::BaseController
   include TodaysBatchConcern
-  include VaccinationMailerConcern
 
   before_action :set_todays_batch
 

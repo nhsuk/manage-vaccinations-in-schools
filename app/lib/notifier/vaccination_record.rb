@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-module VaccinationMailerConcern
-  extend ActiveSupport::Concern
+class Notifier::VaccinationRecord
+  def initialize(vaccination_record)
+    @vaccination_record = vaccination_record
+  end
 
-  def send_vaccination_confirmation(vaccination_record)
-    parents = NotificationParentSelector.new(vaccination_record:).parents
+  def send_confirmation(sent_by:)
     return if parents.empty?
 
     template_name =
@@ -16,13 +17,13 @@ module VaccinationMailerConcern
 
     email_template_name =
       if vaccination_record.administered?
-        :"#{template_name}_#{vaccination_record.programme.type}"
+        :"#{template_name}_#{vaccination_record.programme_type}"
       else
         template_name
       end
 
     parents.each do |parent|
-      params = { parent:, vaccination_record:, sent_by: try(:current_user) }
+      params = { parent:, vaccination_record:, sent_by: }
 
       EmailDeliveryJob.perform_later(email_template_name, **params)
 
@@ -32,11 +33,8 @@ module VaccinationMailerConcern
     end
   end
 
-  def send_vaccination_deletion(vaccination_record)
-    parents = NotificationParentSelector.new(vaccination_record:).parents
+  def send_deletion(sent_by:)
     return if parents.empty?
-
-    sent_by = try(:current_user)
 
     parents.each do |parent|
       EmailDeliveryJob.perform_later(
@@ -46,5 +44,13 @@ module VaccinationMailerConcern
         sent_by:
       )
     end
+  end
+
+  private
+
+  attr_reader :vaccination_record
+
+  def parents
+    @parents ||= NotificationParentSelector.new(vaccination_record:).parents
   end
 end

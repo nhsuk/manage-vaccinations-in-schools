@@ -276,6 +276,8 @@ class VaccinationRecord < ApplicationRecord
 
   delegate :snomed_procedure_term, to: :vaccine, allow_nil: true
 
+  def notifier = Notifier::VaccinationRecord.new(self)
+
   private
 
   def requires_location_name? = location.nil?
