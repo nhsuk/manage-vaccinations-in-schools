@@ -1,15 +1,23 @@
 # frozen_string_literal: true
 
+# To visualise how GOV.UK Notify templates look with actual data populated
+# read the instructions in spec/fixtures/notify_template.txt
+
 describe GovukNotifyPersonalisation do
   subject(:to_h) do
-    described_class.new(
-      patient:,
-      session:,
-      consent:,
-      consent_form:,
-      programme_types:,
-      vaccination_record:
-    ).to_h
+    personalisation =
+      described_class.new(
+        patient:,
+        session:,
+        consent:,
+        consent_form:,
+        programme_types:,
+        vaccination_record:
+      ).to_h
+
+    populate_notify_template(personalisation)
+
+    personalisation
   end
 
   let(:hpv_programme) { Programme.hpv }
