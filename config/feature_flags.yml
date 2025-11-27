@@ -19,9 +19,11 @@ imms_api_sync_job: Flag to switch off any automated sending of vaccination recor
 import_choose_academic_year: Add an option to choose the academic year when
   importing patients during the preparation period.
 
-import_low_pds_match_rate: Prevent processing uploads with a low pds match rate.
+import_concurrency_per_server: |
+  Controls whether to limit the concurrency of the import jobs to be global or
+  to be per-server.
 
-import_search_pds: Perform PDS lookups as part of the patient import processing.
+import_low_pds_match_rate: Prevent processing uploads with a low pds match rate.
 
 import_review_screen: Enable the import review screen to allow users to review changesets
   before they are committed.
@@ -29,9 +31,7 @@ import_review_screen: Enable the import review screen to allow users to review c
 import_row_count_limit: |
   Controls whether to limit the number of rows that can be imported in a single CSV file.
 
-import_concurrency_per_server: |
-  Controls whether to limit the concurrency of the import jobs to be global or
-  to be per-server.
+import_search_pds: Perform PDS lookups as part of the patient import processing.
 
 ops_tools: Enable the operational support tools; timeline and graph.
 
@@ -41,10 +41,13 @@ programme_status: |
   Whether to use the new consolidated programme status instead of the old
   consent, triage and vaccination statuses.
 
-statuses_changed_banner: Whether to show the banner outlining the changes to statuses.
-
-testing_api: Basic API useful for automated testing.
-
 reporting_api: Enables the Commissioner reporting component to authenticate to Mavis via OAUTH 2.0
   Authorization Code Flow (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), and retrieve
   statistics from /api/reporting/
+
+schools_and_sessions: |
+  Whether to use the new UI where sessions are separate to schools.
+
+statuses_changed_banner: Whether to show the banner outlining the changes to statuses.
+
+testing_api: Basic API useful for automated testing.
