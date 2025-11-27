@@ -3,8 +3,9 @@
 class ImmunisationImportRow
   include ActiveModel::Model
 
-  validate :validate_administered,
-           :validate_batch_expiry,
+  validate :validate_administered
+
+  validate :validate_batch_expiry,
            :validate_batch_name,
            :validate_care_setting,
            :validate_clinic_name,
@@ -28,7 +29,8 @@ class ImmunisationImportRow
            :validate_session_id,
            :validate_time_of_vaccination,
            :validate_uuid,
-           :validate_vaccine
+           :validate_vaccine,
+           unless: :bulk_not_administered?
 
   CARE_SETTING_SCHOOL = 1
   CARE_SETTING_COMMUNITY = 2
@@ -100,8 +102,12 @@ class ImmunisationImportRow
 
   def bulk? = bulk_flu? || bulk_hpv?
 
+  def bulk_not_administered?
+    bulk? && !administered
+  end
+
   def to_vaccination_record
-    return unless valid?
+    return if invalid? || bulk_not_administered?
 
     outcome = (administered ? "administered" : reason_not_administered_value)
     source =
