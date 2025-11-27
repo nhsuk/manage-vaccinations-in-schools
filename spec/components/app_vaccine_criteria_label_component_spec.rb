@@ -43,7 +43,7 @@ describe AppVaccineCriteriaLabelComponent do
     context "with gelatine-free injection" do
       let(:without_gelatine) { true }
 
-      it { should have_content("Gelatine-free injection only for MMR") }
+      it { should have_content("Gelatine-free vaccine only for MMR") }
     end
   end
 end

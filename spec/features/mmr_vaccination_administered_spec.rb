@@ -145,7 +145,7 @@ describe "MMR vaccination" do
 
     visit session_record_path(@session)
 
-    check "Gelatine-free injection only"
+    check "Gelatine-free vaccine only"
     click_on "Update results"
 
     expect(page).to have_content(@without_gelatine_only_patient.full_name)

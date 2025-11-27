@@ -46,7 +46,7 @@ en:
         due_injection: Due injection
         due_nasal: Due nasal spray
         due_no_preference: Due vaccination (no preference)
-        due_without_gelatine: Due gelatine-free injection only
+        due_without_gelatine: Due gelatine-free vaccine only
         has_refusal: Has a refusal
         has_refusal_consent_conflicts: Has a refusal
         has_refusal_consent_refused: Has a refusal
