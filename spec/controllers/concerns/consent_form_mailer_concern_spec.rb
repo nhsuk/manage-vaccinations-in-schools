@@ -118,9 +118,9 @@ describe ConsentFormMailerConcern do
     end
   end
 
-  describe "#send_parental_contact_warning_if_needed" do
-    subject(:send_warning) do
-      sample.send_parental_contact_warning_if_needed(patient, consent_form)
+  describe "#send_unknown_contact_details_warning" do
+    subject(:send_unknown_contact_details_warning) do
+      sample.send_unknown_contact_details_warning(consent_form, patient:)
     end
 
     let(:parent) do
@@ -140,136 +140,66 @@ describe ConsentFormMailerConcern do
       )
     end
 
-    it "can be called directly" do
-      expect { send_warning }.not_to raise_error
+    it "sends warning email and SMS to existing parent" do
+      expect { send_unknown_contact_details_warning }.to have_delivered_email(
+        :consent_unknown_contact_details_warning
+      ).with(parent:, patient:, consent_form:).and have_delivered_sms(
+              :consent_unknown_contact_details_warning
+            ).with(parent:, patient:, consent_form:)
     end
 
-    context "when patient has no parents" do
-      let(:patient) { create(:patient, parents: []) }
-
-      it "does not send any warning email" do
-        expect { send_warning }.not_to have_delivered_email
-      end
-
-      it "does not send any warning SMS" do
-        expect { send_warning }.not_to have_delivered_sms
-      end
-    end
-
-    context "when submitted email and phone both match existing parent" do
-      let(:consent_form) do
+    context "when parent has phone_receive_updates disabled" do
+      let(:parent) do
         create(
-          :consent_form,
-          parent_email: "existing@example.com",
-          parent_phone: "07987654321"
+          :parent,
+          email: "existing@example.com",
+          phone: "07987654321",
+          phone_receive_updates: false
         )
       end
 
-      it "does not send any warning email" do
-        expect { send_warning }.not_to have_delivered_email
-      end
-
-      it "does not send any warning SMS" do
-        expect { send_warning }.not_to have_delivered_sms
-      end
-    end
-
-    context "when only submitted email matches existing parent" do
-      let(:consent_form) do
-        create(
-          :consent_form,
-          parent_email: "existing@example.com",
-          parent_phone: "07111111111"
-        )
-      end
-
-      it "does not send any warning email" do
-        expect { send_warning }.not_to have_delivered_email
-      end
-
-      it "does not send any warning SMS" do
-        expect { send_warning }.not_to have_delivered_sms
-      end
-    end
-
-    context "when only submitted phone matches existing parent" do
-      let(:consent_form) do
-        create(
-          :consent_form,
-          parent_email: "different@example.com",
-          parent_phone: "07987654321"
-        )
-      end
-
-      it "does not send any warning email" do
-        expect { send_warning }.not_to have_delivered_email
-      end
-
-      it "does not send any warning SMS" do
-        expect { send_warning }.not_to have_delivered_sms
-      end
-    end
-
-    context "when neither email nor phone match existing parent" do
-      it "sends warning email and SMS to existing parent" do
-        expect { send_warning }.to have_delivered_email(
+      it "sends warning email" do
+        expect { send_unknown_contact_details_warning }.to have_delivered_email(
           :consent_unknown_contact_details_warning
-        ).with(parent:, patient:, consent_form:).and have_delivered_sms(
+        ).with(parent:, patient:, consent_form:)
+      end
+
+      it "does not send warning SMS" do
+        expect {
+          send_unknown_contact_details_warning
+        }.not_to have_delivered_sms
+      end
+    end
+
+    context "when multiple parents exist" do
+      let(:parent2) do
+        create(
+          :parent,
+          email: "parent2@example.com",
+          phone: "07111111111",
+          phone_receive_updates: true
+        )
+      end
+      let(:patient) { create(:patient, parents: [parent, parent2]) }
+
+      it "sends warnings to all existing parents" do
+        expect { send_unknown_contact_details_warning }.to have_delivered_email(
+          :consent_unknown_contact_details_warning
+        ).with(parent:, patient:, consent_form:).and have_delivered_email(
                 :consent_unknown_contact_details_warning
-              ).with(parent:, patient:, consent_form:)
-      end
-
-      context "when parent has phone_receive_updates disabled" do
-        let(:parent) do
-          create(
-            :parent,
-            email: "existing@example.com",
-            phone: "07987654321",
-            phone_receive_updates: false
-          )
-        end
-
-        it "sends warning email" do
-          expect { send_warning }.to have_delivered_email(
-            :consent_unknown_contact_details_warning
-          ).with(parent:, patient:, consent_form:)
-        end
-
-        it "does not send warning SMS" do
-          expect { send_warning }.not_to have_delivered_sms
-        end
-      end
-
-      context "when multiple parents exist" do
-        let(:parent2) do
-          create(
-            :parent,
-            email: "parent2@example.com",
-            phone: "07111111111",
-            phone_receive_updates: true
-          )
-        end
-        let(:patient) { create(:patient, parents: [parent, parent2]) }
-
-        it "sends warnings to all existing parents" do
-          expect { send_warning }.to have_delivered_email(
-            :consent_unknown_contact_details_warning
-          ).with(parent:, patient:, consent_form:).and have_delivered_email(
-                  :consent_unknown_contact_details_warning
-                ).with(
-                  parent: parent2,
-                  patient:,
-                  consent_form:
-                ).and have_delivered_sms(
-                        :consent_unknown_contact_details_warning
-                      ).with(
-                        parent:,
-                        patient:,
-                        consent_form:
-                      ).and have_delivered_sms(
-                              :consent_unknown_contact_details_warning
-                            ).with(parent: parent2, patient:, consent_form:)
-        end
+              ).with(
+                parent: parent2,
+                patient:,
+                consent_form:
+              ).and have_delivered_sms(
+                      :consent_unknown_contact_details_warning
+                    ).with(
+                      parent:,
+                      patient:,
+                      consent_form:
+                    ).and have_delivered_sms(
+                            :consent_unknown_contact_details_warning
+                          ).with(parent: parent2, patient:, consent_form:)
       end
     end
   end

@@ -18,7 +18,7 @@ class ProcessConsentFormJob < ApplicationJob
     # Look for patients in the original location with no NHS number
     if location_patients.count == 1
       # If we found exactly one, match the consent form to this patient
-      match_patient(location_patients.first)
+      match_to_only_patient(location_patients.first)
     end
 
     # Look for patients in any session with matching details
@@ -64,9 +64,9 @@ class ProcessConsentFormJob < ApplicationJob
     return false unless patient
 
     patient.update_from_pds!(pds_patient)
-    send_parental_contact_warning_if_needed(patient, @consent_form)
-    @consent_form.match_with_patient!(patient, current_user: nil)
-    reset_counts
+
+    match_patient_to_consent_form(patient)
+
     true
   end
 
@@ -96,7 +96,7 @@ class ProcessConsentFormJob < ApplicationJob
     @consent_form.update!(nhs_number: pds_patient.nhs_number)
   end
 
-  def match_patient(patient)
+  def match_to_only_patient(patient)
     if pds_patient
       if patient.nhs_number.nil?
         # TODO: Can we take this opportunity to set the NHS number on the patient?
@@ -107,12 +107,20 @@ class ProcessConsentFormJob < ApplicationJob
       end
     end
 
-    send_parental_contact_warning_if_needed(patient, @consent_form)
-    @consent_form.match_with_patient!(patient, current_user: nil)
-    reset_counts
+    match_patient_to_consent_form(patient)
   end
 
-  def reset_counts
+  def match_patient_to_consent_form(patient)
+    unless @consent_form.matches_contact_details_for?(patient:)
+      send_unknown_contact_details_warning(@consent_form, patient:)
+    end
+
+    @consent_form.match_with_patient!(patient, current_user: nil)
+
+    reset_counts!
+  end
+
+  def reset_counts!
     cached_counts = TeamCachedCounts.new(@consent_form.team)
     cached_counts.reset_unmatched_consent_responses!
     cached_counts.reset_school_moves!
