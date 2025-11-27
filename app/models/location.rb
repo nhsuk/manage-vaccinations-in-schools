@@ -86,6 +86,8 @@ class Location < ApplicationRecord
   enum :type,
        { school: 0, generic_clinic: 1, community_clinic: 2, gp_practice: 3 }
 
+  scope :clinic, -> { generic_clinic.or(community_clinic) }
+
   scope :where_urn_and_site,
         ->(urn_and_site) do
           where(
@@ -134,7 +136,7 @@ class Location < ApplicationRecord
           )
         end
 
-  scope :clinic, -> { generic_clinic.or(community_clinic) }
+  scope :order_by_name, -> { order(:name) }
 
   validates :name, presence: true
   validates :url, url: true, allow_nil: true
