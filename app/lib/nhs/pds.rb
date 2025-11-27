@@ -29,6 +29,9 @@ module NHS::PDS
   class TooManyMatches < StandardError
   end
 
+  class InvalidSearchData < StandardError
+  end
+
   class << self
     def get_patient(nhs_number)
       NHS::API.connection.get(
@@ -70,7 +73,11 @@ module NHS::PDS
       end
     rescue Faraday::BadRequestError => e
       add_sentry_breadcrumb(e)
-      raise
+      if is_error?(e, "INVALID_SEARCH_DATA")
+        raise InvalidSearchData
+      else
+        raise
+      end
     end
 
     private

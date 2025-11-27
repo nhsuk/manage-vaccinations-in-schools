@@ -115,6 +115,31 @@ describe NHS::PDS do
       end
     end
 
+    context "with an invalid search data response" do
+      before do
+        stub_request(
+          :get,
+          "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
+        ).with(
+          query: {
+            birthdate: "eq1939-01-09",
+            family: "Lawman",
+            gender: "female"
+          }
+        ).to_return(
+          body: file_fixture("pds/invalid-search-data.json"),
+          status: 400,
+          headers: {
+            "Content-Type" => "application/fhir+json"
+          }
+        )
+      end
+
+      it "raises an error" do
+        expect { search_patients }.to raise_error(NHS::PDS::InvalidSearchData)
+      end
+    end
+
     context "with a too many matches response" do
       before do
         stub_request(
