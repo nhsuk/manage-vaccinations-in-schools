@@ -143,6 +143,13 @@ class ImmunisationImportRow
       )
     end
 
+    if bulk?
+      attributes.merge!(
+        local_patient_id: local_patient_id&.to_s,
+        local_patient_id_uri: local_patient_id_uri&.to_s
+      )
+    end
+
     attributes_to_stage_if_already_exists = {
       batch_id: batch&.id,
       delivery_method: delivery_method_value,
@@ -251,6 +258,10 @@ class ImmunisationImportRow
   def vaccinated = @data[:vaccinated]
 
   def vaccine_name = @data[:vaccine_given]
+
+  def local_patient_id = @data[:local_patient_id]
+
+  def local_patient_id_uri = @data[:local_patient_id_uri]
 
   private
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_20_151321) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_27_092933) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -928,6 +928,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_151321) do
     t.datetime "discarded_at"
     t.integer "dose_sequence"
     t.boolean "full_dose"
+    t.string "local_patient_id"
+    t.string "local_patient_id_uri"
     t.bigint "location_id"
     t.string "location_name"
     t.bigint "next_dose_delay_triage_id"

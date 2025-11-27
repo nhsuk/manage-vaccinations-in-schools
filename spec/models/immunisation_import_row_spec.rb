@@ -2061,6 +2061,12 @@ describe ImmunisationImportRow do
 
         its(:source) { should eq("bulk_upload") }
 
+        its(:local_patient_id) { should eq "CIN-OXFORD-pat123456" }
+
+        its(:local_patient_id_uri) do
+          should eq "https://cinnamon.nhs.uk/0de/system1"
+        end
+
         include_examples "accepts a VACCINE_GIVEN code",
                          "AstraZeneca Fluenz LAIV",
                          "43208811000001106"
@@ -2094,6 +2100,12 @@ describe ImmunisationImportRow do
         its(:programme) { should eq(Programme.hpv) }
 
         its(:source) { should eq("bulk_upload") }
+
+        its(:local_patient_id) { should eq "CIN-OXFORD-pat123456" }
+
+        its(:local_patient_id_uri) do
+          should eq "https://cinnamon.nhs.uk/0de/system1"
+        end
 
         include_examples "accepts a VACCINE_GIVEN code",
                          "Gardasil",
