@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_20_151321) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_27_092933) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -363,6 +363,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_151321) do
     t.jsonb "serialized_errors"
     t.integer "status", default: 0, null: false
     t.bigint "team_id", null: false
+    t.integer "type", default: 0, null: false
     t.datetime "updated_at", null: false
     t.bigint "uploaded_by_user_id", null: false
     t.index ["team_id"], name: "index_immunisation_imports_on_team_id"
@@ -927,6 +928,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_151321) do
     t.datetime "discarded_at"
     t.integer "dose_sequence"
     t.boolean "full_dose"
+    t.string "local_patient_id"
+    t.string "local_patient_id_uri"
     t.bigint "location_id"
     t.string "location_name"
     t.bigint "next_dose_delay_triage_id"
@@ -982,17 +985,18 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_151321) do
     t.decimal "dose_volume_ml", null: false
     t.text "manufacturer", null: false
     t.integer "method", null: false
-    t.text "nivs_name", null: false
+    t.string "nivs_name"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "side_effects", default: [], null: false, array: true
     t.string "snomed_product_code", null: false
     t.string "snomed_product_term", null: false
     t.datetime "updated_at", null: false
+    t.text "upload_name", null: false
     t.index ["manufacturer", "brand"], name: "index_vaccines_on_manufacturer_and_brand", unique: true
-    t.index ["nivs_name"], name: "index_vaccines_on_nivs_name", unique: true
     t.index ["programme_type"], name: "index_vaccines_on_programme_type"
     t.index ["snomed_product_code"], name: "index_vaccines_on_snomed_product_code", unique: true
     t.index ["snomed_product_term"], name: "index_vaccines_on_snomed_product_term", unique: true
+    t.index ["upload_name"], name: "index_vaccines_on_upload_name", unique: true
   end
 
   add_foreign_key "access_log_entries", "patients"

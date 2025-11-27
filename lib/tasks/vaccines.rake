@@ -23,6 +23,7 @@ namespace :vaccines do
       vaccine.dose_volume_ml = data["dose_volume_ml"]
       vaccine.manufacturer = data["manufacturer"]
       vaccine.method = data["method"]
+      vaccine.upload_name = data["upload_name"]
       vaccine.nivs_name = data["nivs_name"]
       vaccine.snomed_product_term = data["snomed_product_term"]
       vaccine.programme = programme
