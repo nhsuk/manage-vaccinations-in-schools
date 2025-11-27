@@ -6,7 +6,7 @@ module HumanEnumNameConcern
   included do
     def human_enum_name(attribute)
       enum_name = attribute.to_s.pluralize
-      enum_value = self[attribute]
+      enum_value = self[attribute].presence || public_send(attribute)
       self.class.human_enum_name(enum_name, enum_value)
     end
   end
