@@ -351,7 +351,7 @@ class Patient < ApplicationRecord
               .where_programme(programme)
               .where(academic_year:)
 
-          if vaccine_methods
+          unless vaccine_methods.nil?
             # For triage, nurses select a single vaccine method, so we need
             # to filter out when asking for two or more vaccine methods.
             # This code is needed to handle both where an array of arrays is
@@ -423,7 +423,7 @@ class Patient < ApplicationRecord
             end
           end
 
-          if without_gelatine
+          unless without_gelatine.nil?
             triage_status_matching =
               triage_status_matching.where(without_gelatine:)
             consent_status_matching =
