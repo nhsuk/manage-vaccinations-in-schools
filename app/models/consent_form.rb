@@ -637,6 +637,8 @@ class ConsentForm < ApplicationRecord
         end
   end
 
+  def notifier = Notifier::ConsentForm.new(self)
+
   private
 
   def via_self_consent?

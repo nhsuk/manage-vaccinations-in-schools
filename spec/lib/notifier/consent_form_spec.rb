@@ -1,25 +1,21 @@
 # frozen_string_literal: true
 
-describe ConsentFormMailerConcern do
-  include ActiveJob::TestHelper
-
-  subject(:sample) { Class.new { include ConsentFormMailerConcern }.new }
+describe Notifier::ConsentForm do
+  subject(:notifier) { described_class.new(consent_form) }
 
   let(:consent_form) { create(:consent_form) }
 
-  describe "#send_consent_form_confirmation" do
-    subject(:send_consent_form_confirmation) do
-      sample.send_consent_form_confirmation(consent_form)
-    end
+  describe "#send_confirmation" do
+    subject(:send_confirmation) { notifier.send_confirmation }
 
     it "sends a confirmation email" do
-      expect { send_consent_form_confirmation }.to have_delivered_email(
+      expect { send_confirmation }.to have_delivered_email(
         :consent_confirmation_given
       ).with(consent_form:, programme_types: consent_form.programme_types)
     end
 
     it "sends a consent given text" do
-      expect { send_consent_form_confirmation }.to have_delivered_sms(
+      expect { send_confirmation }.to have_delivered_sms(
         :consent_confirmation_given
       ).with(consent_form:, programme_types: consent_form.programme_types)
     end
@@ -28,13 +24,13 @@ describe ConsentFormMailerConcern do
       before { consent_form.update!(response: "refused") }
 
       it "sends an confirmation refused email" do
-        expect { send_consent_form_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to have_delivered_email(
           :consent_confirmation_refused
         ).with(consent_form:)
       end
 
       it "sends a consent refused text" do
-        expect { send_consent_form_confirmation }.to have_delivered_sms(
+        expect { send_confirmation }.to have_delivered_sms(
           :consent_confirmation_refused
         ).with(consent_form:)
       end
@@ -55,7 +51,7 @@ describe ConsentFormMailerConcern do
       end
 
       it "sends a confirmation given and a confirmation refused email" do
-        expect { send_consent_form_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to have_delivered_email(
           :consent_confirmation_given
         ).with(
           consent_form:,
@@ -67,7 +63,7 @@ describe ConsentFormMailerConcern do
       end
 
       it "sends a confirmation given and a confirmation refused text" do
-        expect { send_consent_form_confirmation }.to have_delivered_sms(
+        expect { send_confirmation }.to have_delivered_sms(
           :consent_confirmation_given
         ).with(
           consent_form:,
@@ -83,13 +79,13 @@ describe ConsentFormMailerConcern do
       before { consent_form.health_answers.last.response = "yes" }
 
       it "sends an confirmation needs triage email" do
-        expect { send_consent_form_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to have_delivered_email(
           :consent_confirmation_triage
         ).with(consent_form:, programme_types: consent_form.programme_types)
       end
 
       it "doesn't send a text" do
-        expect { send_consent_form_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -107,20 +103,20 @@ describe ConsentFormMailerConcern do
       end
 
       it "sends an confirmation needs triage email" do
-        expect { send_consent_form_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to have_delivered_email(
           :consent_confirmation_clinic
         ).with(consent_form:, programme_types: consent_form.programme_types)
       end
 
       it "doesn't send a text" do
-        expect { send_consent_form_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to have_delivered_sms
       end
     end
   end
 
   describe "#send_unknown_contact_details_warning" do
     subject(:send_unknown_contact_details_warning) do
-      sample.send_unknown_contact_details_warning(consent_form, patient:)
+      notifier.send_unknown_contact_details_warning(patient:)
     end
 
     let(:parent) do

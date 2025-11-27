@@ -2,7 +2,6 @@
 
 class ProcessConsentFormJob < ApplicationJob
   include PDSAPIThrottlingConcern
-  include ConsentFormMailerConcern
 
   queue_as :consents
 
@@ -112,7 +111,7 @@ class ProcessConsentFormJob < ApplicationJob
 
   def match_patient_to_consent_form(patient)
     unless @consent_form.matches_contact_details_for?(patient:)
-      send_unknown_contact_details_warning(@consent_form, patient:)
+      @consent_form.notifier.send_unknown_contact_details_warning(patient:)
     end
 
     @consent_form.match_with_patient!(patient, current_user: nil)
