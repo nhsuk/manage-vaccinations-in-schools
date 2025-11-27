@@ -953,6 +953,19 @@ describe ImmunisationImportRow do
         end
       end
 
+      shared_examples "it doesn't make `SCHOOL_NAME` compulsory" do
+        context "when `SCHOOL_URN` is 888888" do
+          let(:data) { { "SCHOOL_URN" => "888888" } }
+
+          it "doesn't require SCHOOL_NAME" do
+            expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors[:base]).not_to include(
+              "<code>SCHOOL_NAME</code> or <code>School</code> is required"
+            )
+          end
+        end
+      end
+
       context "of type flu" do
         let(:import_type) { "bulk_flu" }
 
@@ -965,6 +978,8 @@ describe ImmunisationImportRow do
               "<code>VACCINATED</code> is required"
             )
           end
+
+          include_examples "it doesn't make `SCHOOL_NAME` compulsory"
         end
 
         context "when `VACCINATED` is `Y`" do
@@ -981,6 +996,8 @@ describe ImmunisationImportRow do
               "<code>PERFORMING_PROFESSIONAL_SURNAME</code> is required"
             )
           end
+
+          include_examples "it doesn't make `SCHOOL_NAME` compulsory"
         end
 
         include_examples "when `VACCINATED` is `N`"
@@ -993,6 +1010,8 @@ describe ImmunisationImportRow do
           let(:data) { {} }
 
           include_examples "with an empty row (both bulk upload types)"
+
+          include_examples "it doesn't make `SCHOOL_NAME` compulsory"
         end
 
         context "when `VACCINATED` is `Y` (ie in all cases for HPV bulk upload)" do
@@ -2109,6 +2128,17 @@ describe ImmunisationImportRow do
 
         its(:location) { should eq location }
 
+        context "with an unknown school and no name" do
+          let(:data) do
+            valid_bulk_flu_data.merge(
+              "SCHOOL_URN" => "888888",
+              "SCHOOL_NAME" => nil
+            )
+          end
+
+          it { should be_valid }
+        end
+
         context "when not administered" do
           let(:data) { { "VACCINATED" => "N" } }
 
@@ -2194,6 +2224,17 @@ describe ImmunisationImportRow do
         include_examples "accepts a VACCINE_GIVEN code",
                          "Cervarix",
                          "12238911000001100"
+
+        context "with an unknown school and no name" do
+          let(:data) do
+            valid_bulk_hpv_data.merge(
+              "SCHOOL_URN" => "888888",
+              "SCHOOL_NAME" => nil
+            )
+          end
+
+          it { should be_valid }
+        end
 
         context "when not administered" do
           let(:data) { { "VACCINATED" => "N" } }
