@@ -44,17 +44,20 @@ FactoryBot.define do
       academic_year { AcademicYear.pending }
     end
 
-    address_line_1 { Faker::Address.street_address }
-    address_town { Faker::Address.city }
-    address_postcode { Faker::Address.uk_postcode }
-
     url { Faker::Internet.url }
 
     traits_for_enum :status
 
+    trait :with_address do
+      address_line_1 { Faker::Address.street_address }
+      address_town { Faker::Address.city }
+      address_postcode { Faker::Address.uk_postcode }
+    end
+
     factory :community_clinic do
       type { :community_clinic }
       name { "#{Faker::University.name} Clinic" }
+      with_address
 
       sequence(:ods_code, 100) { "CL#{it}" }
 
@@ -97,6 +100,7 @@ FactoryBot.define do
     factory :gp_practice do
       type { :gp_practice }
       name { "#{Faker::University.name} Practice" }
+      with_address
 
       sequence(:ods_code, 100) { "GP#{it}" }
 
@@ -113,6 +117,7 @@ FactoryBot.define do
     factory :school do
       type { :school }
       name { Faker::Educator.primary_school }
+      with_address
 
       sequence(:gias_establishment_number, 1)
       sequence(:gias_local_authority_code, 1)
