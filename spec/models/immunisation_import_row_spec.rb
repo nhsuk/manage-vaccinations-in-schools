@@ -923,7 +923,8 @@ describe ImmunisationImportRow do
             "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required",
             "<code>LOCAL_PATIENT_ID</code> is required",
             "<code>LOCAL_PATIENT_ID_URI</code> is required",
-            "<code>ORGANISATION_CODE</code> is required"
+            "<code>ORGANISATION_CODE</code> is required",
+            "<code>SCHOOL_URN</code> is required"
           )
         end
       end
@@ -2101,6 +2102,8 @@ describe ImmunisationImportRow do
           should eq "https://cinnamon.nhs.uk/0de/system1"
         end
 
+        its(:location) { should eq location }
+
         include_examples "accepts a VACCINE_GIVEN code",
                          "AstraZeneca Fluenz LAIV",
                          "43208811000001106"
@@ -2146,6 +2149,8 @@ describe ImmunisationImportRow do
         its(:local_patient_id_uri) do
           should eq "https://cinnamon.nhs.uk/0de/system1"
         end
+
+        its(:location) { should eq location }
 
         include_examples "accepts a VACCINE_GIVEN code",
                          "Gardasil",

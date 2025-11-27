@@ -274,7 +274,11 @@ class ImmunisationImportRow
   delegate :organisation, to: :team
 
   def location
-    session&.location unless session&.generic_clinic?
+    if bulk?
+      school
+    elsif !session&.generic_clinic?
+      session&.location
+    end
   end
 
   def location_name
@@ -1006,12 +1010,18 @@ class ImmunisationImportRow
   end
 
   def validate_school_urn
-    return if school_urn.blank?
+    return if school_urn.blank? && poc?
 
-    unless school_urn.to_s.in?(
-             [SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN]
-           ) || Location.school.where_urn_and_site(school_urn.to_s).exists? ||
-             Location.school.exists?(systm_one_code: school_urn.to_s)
+    school_urn_acceptable =
+      school_urn.to_s.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN]) ||
+        Location.school.where_urn_and_site(school_urn.to_s).exists? ||
+        Location.school.exists?(systm_one_code: school_urn.to_s)
+
+    if school_urn.nil? && bulk?
+      errors.add(:base, "<code>SCHOOL_URN</code> is required")
+    elsif school_urn.blank? && bulk?
+      errors.add(school_urn.header, "is required")
+    elsif !school_urn_acceptable
       errors.add(
         school_urn.header,
         "The school URN is not recognised. If you’ve checked the URN, " \
