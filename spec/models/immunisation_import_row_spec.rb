@@ -2068,6 +2068,8 @@ describe ImmunisationImportRow do
 
         its(:source) { should eq("bulk_upload") }
 
+        its(:location) { should eq location }
+
         context "when not administered" do
           let(:data) { { "VACCINATED" => "N" } }
 
@@ -2085,6 +2087,8 @@ describe ImmunisationImportRow do
         its(:programme) { should eq(Programme.hpv) }
 
         its(:source) { should eq("bulk_upload") }
+
+        its(:location) { should eq location }
 
         context "when not administered" do
           let(:data) { { "VACCINATED" => "N" } }
