@@ -2,6 +2,15 @@ name: Regression test run
 
 on:
   workflow_call:
+    inputs:
+      github_ref:
+        description: The git reference for deploying containerized mavis application
+        type: string
+        required: false
+    secrets:
+      HTTP_AUTH_TOKEN_FOR_TESTS:
+        description: HTTP Basic Auth token for the environment under test
+        required: true
 
 permissions: { }
 
@@ -38,6 +47,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.github_ref || github.ref }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:

@@ -87,6 +87,8 @@ jobs:
       id-token: write
       contents: write
     uses: ./.github/workflows/regression-test-run.yml
+    secrets:
+      HTTP_AUTH_TOKEN_FOR_TESTS: ${{ secrets.HTTP_AUTH_TOKEN_FOR_TESTS }}
 
   seeds:
     name: Seeds
