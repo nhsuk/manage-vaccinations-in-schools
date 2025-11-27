@@ -77,8 +77,9 @@ class StatusGenerator::Programme
 
   def without_gelatine
     if vaccination_generator.status == :not_eligible ||
-         triage_generator.status.in?(%i[required do_not_vaccinate]) ||
-         consent_generator.status.in?(%i[no_response conflicts refused])
+         triage_generator.status.in?(
+           %i[required invite_to_clinic do_not_vaccinate]
+         ) || consent_generator.status.in?(%i[no_response conflicts refused])
       return nil
     end
 
@@ -87,8 +88,9 @@ class StatusGenerator::Programme
 
   def vaccine_methods
     if vaccination_generator.status == :not_eligible ||
-         triage_generator.status.in?(%i[required do_not_vaccinate]) ||
-         consent_generator.status.in?(%i[no_response conflicts refused])
+         triage_generator.status.in?(
+           %i[required invite_to_clinic do_not_vaccinate]
+         ) || consent_generator.status.in?(%i[no_response conflicts refused])
       return nil
     end
 
@@ -163,7 +165,7 @@ class StatusGenerator::Programme
   end
 
   def should_be_needs_triage?
-    triage_generator.status == :required
+    triage_generator.status.in?(%i[required invite_to_clinic])
   end
 
   def should_be_has_refusal_consent_conflicts?
