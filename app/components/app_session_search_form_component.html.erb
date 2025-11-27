@@ -1,0 +1,68 @@
+<%= form_with url:, method: :get, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+  <%= render AppCardComponent.new(filters: true) do |card| %>
+    <% card.with_heading(level: 2) { "Find session" } %>
+
+    <%= render AppSearchInputComponent.new(name: :q, value: form.q, label: { hidden: true }) %>
+
+    <% if programmes.present? %>
+      <%= f.govuk_check_boxes_fieldset :programmes,
+                                       legend: { text: "Programme", size: "s" },
+                                       small: true do %>
+        <% programmes.each do |programme| %>
+          <%= f.govuk_check_box :programmes,
+                                programme.type,
+                                checked: form.programmes&.include?(programme.type),
+                                label: { text: programme.name } %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <% if academic_years && AcademicYear.pending != AcademicYear.current %>
+      <%= f.govuk_radio_buttons_fieldset :academic_year,
+                                         legend: { text: "Academic year", size: "s" },
+                                         small: true do %>
+        <% [AcademicYear.pending, AcademicYear.current].each do |academic_year| %>
+          <%= f.govuk_radio_button :academic_year,
+                                   academic_year,
+                                   checked: form.academic_year == academic_year,
+                                   label: { text: helpers.format_academic_year(academic_year) } %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= f.govuk_radio_buttons_fieldset :status,
+                                       legend: { text: "Status", size: "s" },
+                                       small: true do %>
+      <%= f.govuk_radio_button :status, "",
+                               checked: form.status.blank?,
+                               label: { text: "Any" } %>
+
+      <% STATUSES.each do |value| %>
+        <%= f.govuk_radio_button :status,
+                                 value,
+                                 checked: form.status == value,
+                                 label: { text: value.humanize } %>
+      <% end %>
+    <% end %>
+
+    <%= f.govuk_radio_buttons_fieldset :type,
+                                       legend: { text: "Type", size: "s" },
+                                       small: true do %>
+      <%= f.govuk_radio_button :type, "",
+                               checked: form.type.blank?,
+                               label: { text: "Any" } %>
+
+      <% TYPES.each do |value, label| %>
+        <%= f.govuk_radio_button :type,
+                                 value,
+                                 checked: form.type == value,
+                                 label: { text: label } %>
+      <% end %>
+    <% end %>
+
+    <div class="nhsuk-button-group">
+      <%= f.govuk_submit "Update results", secondary: true, class: "nhsuk-button--small" %>
+      <%= govuk_button_link_to "Clear filters", clear_filters_path, secondary: true, class: "nhsuk-button--small" %>
+    </div>
+  <% end %>
+<% end %>
