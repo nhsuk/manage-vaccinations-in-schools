@@ -2084,13 +2084,15 @@ describe ImmunisationImportRow do
 
         its(:source) { should eq("bulk_upload") }
 
-        include_examples "with pseudo-postcodes"
+        its(:location) { should eq location }
 
         context "when not administered" do
           let(:data) { { "VACCINATED" => "N" } }
 
           it { should be_nil }
         end
+
+        include_examples "with pseudo-postcodes"
       end
 
       context "of type hpv" do
@@ -2104,13 +2106,15 @@ describe ImmunisationImportRow do
 
         its(:source) { should eq("bulk_upload") }
 
-        include_examples "with pseudo-postcodes"
+        its(:location) { should eq location }
 
         context "when not administered" do
           let(:data) { { "VACCINATED" => "N" } }
 
           it { should be_nil }
         end
+
+        include_examples "with pseudo-postcodes"
       end
     end
   end

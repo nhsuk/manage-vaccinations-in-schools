@@ -259,7 +259,11 @@ class ImmunisationImportRow
   delegate :organisation, to: :team
 
   def location
-    session&.location unless session&.generic_clinic?
+    if bulk?
+      school
+    elsif !session&.generic_clinic?
+      session&.location
+    end
   end
 
   def location_name
