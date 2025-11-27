@@ -233,6 +233,12 @@ en:
           other: Other
           text: I can only receive text messages
           voice: I can only receive voice calls
+      location:
+        phases:
+          nursery: Nursery
+          other: Other
+          primary: Primary
+          secondary: Secondary
       notify_log_entry:
         types:
           email: Email

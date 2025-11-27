@@ -109,6 +109,9 @@ class Location < ApplicationRecord
           end
         end
 
+  scope :where_phase,
+        ->(phase) { where(gias_phase: GIAS_PHASE_MAPPINGS.fetch(phase)) }
+
   scope :with_team,
         ->(academic_year:) do
           where(
@@ -195,6 +198,14 @@ class Location < ApplicationRecord
     "#{gias_local_authority_code}#{gias_establishment_number}" if school?
   end
 
+  def phase
+    if gias_phase
+      GIAS_PHASE_MAPPINGS
+        .find { |_, values| values.include?(gias_phase) }
+        &.first
+    end
+  end
+
   def as_json
     super.except("created_at", "systm_one_code", "updated_at").merge(
       "is_attached_to_team" =>
@@ -243,6 +254,13 @@ class Location < ApplicationRecord
   private
 
   def organisation_ods_codes = Organisation.pluck(:ods_code)
+
+  GIAS_PHASE_MAPPINGS = {
+    "nursery" => %w[nursery],
+    "primary" => %w[primary middle_deemed_primary],
+    "secondary" => %w[secondary middle_deemed_secondary],
+    "other" => %w[sixteen_plus all_through not_applicable]
+  }.freeze
 
   def fhir_mapper
     @fhir_mapper ||= FHIRMapper::Location.new(self)
