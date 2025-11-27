@@ -144,6 +144,14 @@ describe "MMR vaccination" do
     @patient = @without_gelatine_only_patient
 
     visit session_record_path(@session)
+
+    check "Gelatine-free injection only"
+    click_on "Update results"
+
+    expect(page).to have_content(@without_gelatine_only_patient.full_name)
+    expect(page).not_to have_content(@without_gelatine_patient.full_name)
+    expect(page).not_to have_content(@with_gelatine_patient.full_name)
+
     click_link @patient.full_name
   end
 
@@ -159,6 +167,14 @@ describe "MMR vaccination" do
     @patient = @without_gelatine_patient
 
     visit session_record_path(@session)
+
+    check "No preference"
+    click_on "Update results"
+
+    expect(page).not_to have_content(@without_gelatine_only_patient.full_name)
+    expect(page).to have_content(@without_gelatine_patient.full_name)
+    expect(page).to have_content(@with_gelatine_patient.full_name)
+
     click_link @patient.full_name
   end
 
@@ -174,6 +190,14 @@ describe "MMR vaccination" do
     @patient = @with_gelatine_patient
 
     visit session_record_path(@session)
+
+    check "No preference"
+    click_on "Update results"
+
+    expect(page).not_to have_content(@without_gelatine_only_patient.full_name)
+    expect(page).to have_content(@without_gelatine_patient.full_name)
+    expect(page).to have_content(@with_gelatine_patient.full_name)
+
     click_link @patient.full_name
   end
 
