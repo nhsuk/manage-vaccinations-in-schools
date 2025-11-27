@@ -923,7 +923,8 @@ describe ImmunisationImportRow do
             "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
             "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required",
             "<code>LOCAL_PATIENT_ID</code> is required",
-            "<code>LOCAL_PATIENT_ID_URI</code> is required"
+            "<code>LOCAL_PATIENT_ID_URI</code> is required",
+            "<code>ORGANISATION_CODE</code> is required"
           )
         end
       end
