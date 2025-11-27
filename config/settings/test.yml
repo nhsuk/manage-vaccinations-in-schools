@@ -17,6 +17,7 @@ nhs_api:
 
 pds:
   rate_limit_per_second: 5
+  skip_patient_search: true
 
 splunk:
   enabled: false
