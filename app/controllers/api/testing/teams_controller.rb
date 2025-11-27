@@ -20,6 +20,10 @@ class API::Testing::TeamsController < API::Testing::BaseController
     log_destroy(SchoolMove.where(team:), sync_patient_teams: true)
     log_destroy(Consent.where(team:))
     log_destroy(ArchiveReason.where(team:), sync_patient_teams: true)
+    log_destroy(
+      VaccinationRecord.joins(:next_dose_delay_triage).where(triages: { team: }),
+      sync_patient_teams: true
+    )
     log_destroy(Triage.where(team:))
 
     log_destroy(
