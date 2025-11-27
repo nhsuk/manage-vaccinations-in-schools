@@ -933,12 +933,12 @@ class ImmunisationImportRow
   end
 
   def validate_performed_ods_code
-    if offline_recording?
+    if offline_recording? || bulk?
       if performed_ods_code.nil?
         errors.add(:base, "<code>ORGANISATION_CODE</code> is required")
       elsif performed_ods_code.blank?
         errors.add(performed_ods_code.header, "Enter an organisation code.")
-      elsif performed_ods_code.to_s != organisation.ods_code
+      elsif performed_ods_code.to_s != organisation.ods_code && poc?
         errors.add(
           performed_ods_code.header,
           "Enter an organisation code that matches the current team."
