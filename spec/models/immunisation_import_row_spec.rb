@@ -912,7 +912,8 @@ describe ImmunisationImportRow do
               "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required",
               "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
               "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required",
-              "<code>ORGANISATION_CODE</code> is required"
+              "<code>ORGANISATION_CODE</code> is required",
+              "<code>SCHOOL_URN</code> is required"
             )
           end
         end
