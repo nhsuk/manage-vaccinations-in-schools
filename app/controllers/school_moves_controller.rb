@@ -2,6 +2,7 @@
 
 class SchoolMovesController < ApplicationController
   include Pagy::Backend
+  include SchoolMovesHelper
 
   before_action :set_school_move, except: :index
   before_action :set_patient, except: :index

@@ -3,12 +3,16 @@
 class AppImportReviewComponent < ViewComponent::Base
   def initialize(
     import:,
+    inter_team:,
     new_records:,
     auto_matched_records:,
     import_issues:,
     school_moves:
   )
     @import = import
+    @inter_team = inter_team.sort_by(&:row_number)
+    @inter_team_import_issues =
+      @inter_team.select { it.record_type == "import_issue" }
     @new_records = new_records.sort_by(&:row_number)
     @auto_matched_records = auto_matched_records.sort_by(&:row_number)
     @import_issues = import_issues.sort_by(&:row_number)
@@ -40,6 +44,33 @@ class AppImportReviewComponent < ViewComponent::Base
               changesets: @auto_matched_records
             )
           )
+        end,
+        render_section(
+          title:
+            "Children moving from another SAIS team's area - will need review after import",
+          description: inter_team_message,
+          summary:
+            "#{pluralize(@inter_team.count, "school move")} across teams",
+          changesets: @inter_team
+        ) do
+          render(
+            AppImportReviewSchoolMovesSummaryComponent.new(
+              changesets: @inter_team
+            )
+          )
+        end,
+        if @inter_team_import_issues.any?
+          render_expander(
+            summary:
+              "#{pluralize(@inter_team_import_issues.count, "close match")} to existing records"
+          ) do
+            render(
+              AppImportReviewIssuesSummaryComponent.new(
+                import: @import,
+                records: @inter_team_import_issues
+              )
+            )
+          end
         end,
         render_section(
           title:
@@ -103,6 +134,13 @@ class AppImportReviewComponent < ViewComponent::Base
       "import issues needing review."
   end
 
+  def inter_team_message
+    count = @inter_team.count
+    "This upload includes #{count > 1 ? "children" : "child"} who " \
+      "#{count > 1 ? "are" : "is"} currently registered with another team. " \
+      "If you approve the upload, the records below will be flagged as school moves needing review."
+  end
+
   def school_moves_message
     count = @school_moves.count
     if @import.is_a?(ClassImport)
@@ -136,21 +174,25 @@ class AppImportReviewComponent < ViewComponent::Base
       [
         tag.h2(title, class: "nhsuk-heading-m"),
         tag.p(description, class: "nhsuk-u-reading-width"),
-        tag.details(class: "nhsuk-details nhsuk-expander") do
-          helpers.safe_join(
-            [
-              tag.summary(
-                class: "nhsuk-details__summary",
-                data: {
-                  module: "app-sticky"
-                }
-              ) { tag.span(summary, class: "nhsuk-details__summary-text") },
-              tag.div(class: "nhsuk-details__text", &block)
-            ]
-          )
-        end
+        render_expander(summary:, &block)
       ]
     )
+  end
+
+  def render_expander(summary:, &block)
+    tag.details(class: "nhsuk-details nhsuk-expander") do
+      helpers.safe_join(
+        [
+          tag.summary(
+            class: "nhsuk-details__summary",
+            data: {
+              module: "app-sticky"
+            }
+          ) { tag.span(summary, class: "nhsuk-details__summary-text") },
+          tag.div(class: "nhsuk-details__text", &block)
+        ]
+      )
+    end
   end
 
   def render_button_group
