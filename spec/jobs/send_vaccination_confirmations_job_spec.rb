@@ -43,7 +43,9 @@ describe SendVaccinationConfirmationsJob do
       )
     end
 
-    before { allow(job).to receive(:send_vaccination_confirmation) }
+    before do
+      allow(job).to receive(:send_vaccination_confirmation).and_call_original
+    end
 
     it "sends vaccination confirmations for the appropriate records" do
       expect(job).not_to receive(:send_vaccination_confirmation).with(

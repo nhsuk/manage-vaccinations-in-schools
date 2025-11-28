@@ -2,8 +2,6 @@
 
 module ParentInterface
   class ConsentFormsController < ConsentForms::BaseController
-    include ConsentFormMailerConcern
-
     skip_before_action :set_consent_form, only: %i[start create deadline_passed]
     skip_before_action :authenticate_consent_form_user!,
                        only: %i[start create deadline_passed]
@@ -61,7 +59,7 @@ module ParentInterface
 
       TeamCachedCounts.new(@team).reset_unmatched_consent_responses!
 
-      send_consent_form_confirmation(@consent_form)
+      @consent_form.notifier.send_confirmation
 
       ProcessConsentFormJob.perform_later(@consent_form)
     end

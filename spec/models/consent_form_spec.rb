@@ -1035,6 +1035,73 @@ describe ConsentForm do
     end
   end
 
+  describe "#matches_contact_details_for" do
+    subject(:matches_contact_details_for) do
+      consent_form.matches_contact_details_for?(patient:)
+    end
+
+    let(:parent) do
+      create(
+        :parent,
+        email: "existing@example.com",
+        phone: "07987654321",
+        phone_receive_updates: true
+      )
+    end
+    let(:patient) { create(:patient, parents: [parent]) }
+    let(:consent_form) do
+      create(
+        :consent_form,
+        parent_email: "submitted@example.com",
+        parent_phone: "07123456789"
+      )
+    end
+
+    it { should be(false) }
+
+    context "when patient has no parents" do
+      let(:patient) { create(:patient, parents: []) }
+
+      it { should be(true) }
+    end
+
+    context "when submitted email and phone both match existing parent" do
+      let(:consent_form) do
+        create(
+          :consent_form,
+          parent_email: "existing@example.com",
+          parent_phone: "07987654321"
+        )
+      end
+
+      it { should be(true) }
+    end
+
+    context "when only submitted email matches existing parent" do
+      let(:consent_form) do
+        create(
+          :consent_form,
+          parent_email: "existing@example.com",
+          parent_phone: "07111111111"
+        )
+      end
+
+      it { should be(true) }
+    end
+
+    context "when only submitted phone matches existing parent" do
+      let(:consent_form) do
+        create(
+          :consent_form,
+          parent_email: "different@example.com",
+          parent_phone: "07987654321"
+        )
+      end
+
+      it { should be(true) }
+    end
+  end
+
   it "resets unused fields" do
     programmes = [Programme.sample]
 

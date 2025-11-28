@@ -2,7 +2,6 @@
 
 class DraftVaccinationRecordsController < ApplicationController
   include TodaysBatchConcern
-  include VaccinationMailerConcern
 
   skip_after_action :verify_policy_scoped
 
@@ -135,7 +134,9 @@ class DraftVaccinationRecordsController < ApplicationController
 
     StatusUpdater.call(patient: @patient)
 
-    send_vaccination_confirmation(@vaccination_record) if should_notify_parents
+    if should_notify_parents
+      @vaccination_record.notifier.send_confirmation(sent_by: current_user)
+    end
 
     # In case the user navigates back to try and edit the newly created
     # vaccination record.

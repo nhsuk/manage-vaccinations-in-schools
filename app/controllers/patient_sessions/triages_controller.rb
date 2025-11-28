@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class PatientSessions::TriagesController < PatientSessions::BaseController
-  include TriageMailerConcern
-
   after_action :verify_authorized
 
   def new
@@ -43,12 +41,16 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
 
       ConsentGrouper
         .call(
-          @patient.reload.consents,
+          @patient.reload.consents.includes(:team),
           programme_type: @programme.type,
           academic_year: @academic_year
         )
-        .each do
-          send_triage_confirmation(@patient, @session, @programme, it, triage)
+        .each do |consent|
+          consent.notifier.send_confirmation(
+            session: @session,
+            triage:,
+            sent_by: current_user
+          )
         end
 
       redirect_to redirect_path, flash: { success: "Triage outcome updated" }

@@ -504,6 +504,17 @@ class ConsentForm < ApplicationRecord
     end
   end
 
+  def matches_contact_details_for?(patient:)
+    # We assume `true` if the patient has no parents, otherwise we would send
+    # warnings to these parents about their contact details not matching.
+    return true if patient.parents.empty?
+
+    patient.parents.any? do |parent|
+      (parent.email.present? && parent_email == parent.email) ||
+        (parent.phone.present? && parent_phone == parent.phone)
+    end
+  end
+
   def home_educated
     return nil if education_setting_school?
 
@@ -625,6 +636,8 @@ class ConsentForm < ApplicationRecord
           health_answer
         end
   end
+
+  def notifier = Notifier::ConsentForm.new(self)
 
   private
 

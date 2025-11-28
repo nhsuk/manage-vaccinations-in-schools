@@ -39,7 +39,7 @@ FactoryBot.define do
     patient
     programme { Programme.sample }
     team
-    vaccine { programme.vaccines.sample || association(:vaccine) }
+    vaccine { programme.vaccines.sample }
 
     delivery_site { "nose" }
     vaccine_method { "nasal" }

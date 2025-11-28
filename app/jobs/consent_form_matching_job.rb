@@ -2,7 +2,6 @@
 
 class ConsentFormMatchingJob < ApplicationJob
   include PDSAPIThrottlingConcern
-  include ConsentFormMailerConcern
 
   queue_as :consents
 
