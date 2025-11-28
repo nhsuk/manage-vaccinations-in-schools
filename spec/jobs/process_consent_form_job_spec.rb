@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe ConsentFormMatchingJob do
+describe ProcessConsentFormJob do
   subject(:perform) { described_class.new.perform(consent_form) }
 
   let(:team) { create(:team) }
