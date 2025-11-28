@@ -163,8 +163,7 @@ class VaccinationRecord < ApplicationRecord
          refused: 1,
          unwell: 2,
          contraindicated: 3,
-         already_had: 4,
-         absent: 6
+         already_had: 4
        },
        validate: true
 

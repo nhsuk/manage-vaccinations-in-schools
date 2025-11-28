@@ -157,11 +157,6 @@ FactoryBot.define do
       outcome { "refused" }
     end
 
-    trait :absent do
-      not_administered
-      outcome { "absent" }
-    end
-
     trait :performed_by_not_user do
       performed_by { nil }
       performed_by_given_name { Faker::Name.first_name }

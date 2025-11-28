@@ -1514,8 +1514,7 @@ describe ImmunisationImportRow do
         "refused" => "refused",
         "unwell" => "unwell",
         "vaccination contraindicated" => "contraindicated",
-        "already had elsewhere" => "already_had",
-        "did not attend" => "absent"
+        "already had elsewhere" => "already_had"
       }.each do |input_reason, expected_enum|
         context "with reason '#{input_reason}'" do
           let(:data) do

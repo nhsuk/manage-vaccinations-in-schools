@@ -139,28 +139,6 @@ describe StatusGenerator::Programme do
     end
   end
 
-  context "when the child was absent" do
-    before { create(:consent, :given, patient:, programme:) }
-
-    let!(:vaccination_record) do
-      create(:vaccination_record, :absent, patient:, programme:)
-    end
-
-    its(:status) { should be(:cannot_vaccinate_absent) }
-    its(:date) { should eq(vaccination_record.performed_at.to_date) }
-    its(:vaccine_methods) { should contain_exactly("injection") }
-    its(:without_gelatine) { should be(false) }
-
-    context "on a different day" do
-      let!(:vaccination_record) do
-        create(:vaccination_record, :unwell, :yesterday, patient:, programme:)
-      end
-
-      its(:status) { should be(:due) }
-      its(:date) { should eq(vaccination_record.performed_at.to_date) }
-    end
-  end
-
   context "when the child was marked as absent" do
     before { create(:consent, :given, patient:, programme:) }
 
