@@ -175,6 +175,13 @@ Rails.application.routes.draw do
     end
 
     resources :notices, only: :index
+
+    get "bulk_remove_parents/:import_type/:import_id",
+        to: "bulk_remove_parents#show",
+        as: :bulk_remove_parents
+
+    post "bulk_remove_parents/:import_type/:import_id",
+         to: "bulk_remove_parents#create"
   end
 
   resources :notifications, only: :create
