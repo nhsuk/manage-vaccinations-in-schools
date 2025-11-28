@@ -251,6 +251,28 @@ describe API::Reporting::TotalsController do
       expect(monthly["count"]).to eq(1)
     end
 
+    it "counts vaccination in correct month when performed during BST" do
+      patient = create(:patient, session: hpv_session)
+      create(
+        :vaccination_record,
+        patient:,
+        programme: hpv_programme,
+        session: hpv_session,
+        outcome: "administered",
+        performed_at: Time.zone.local(2024, 9, 1, 0, 30) # 00:30 BST = 23:30 UTC (Aug 31)
+      )
+
+      refresh_and_get_totals
+
+      monthly =
+        monthly_vaccinations_given.find do
+          it["year"] == 2024 && it["month"] == "September"
+        end
+      expect(monthly).to be_present,
+      "Expected vaccination to be counted in September, not August"
+      expect(monthly["count"]).to eq(1)
+    end
+
     it "child archived after being vaccinated by SAIS" do
       patient = create(:patient, session: hpv_session)
       create(
