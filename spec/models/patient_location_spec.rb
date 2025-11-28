@@ -81,6 +81,37 @@ describe PatientLocation do
         ).delete_all_and_sync_patient_teams
       }.to change(PatientTeam, :count).by(-1)
     end
+
+    context "when a patient has two patient locations that contribute" do
+      let(:patient) { create(:patient) }
+      let(:team) { create(:team) }
+      let(:session_a) { create(:session, team:) }
+      let(:session_b) { create(:session, team:) }
+      let!(:patient_location_a) do
+        create(:patient_location, patient:, session: session_a)
+      end
+      let!(:patient_location_b) do
+        create(:patient_location, patient:, session: session_b)
+      end
+
+      it "keeps the patient team relationship when one is destroyed" do
+        expect(patient.reload.teams).to contain_exactly(team)
+
+        patient_location_a.destroy!
+        expect(patient_location_b).not_to be_nil
+
+        expect(patient.reload.teams).to contain_exactly(team)
+      end
+
+      it "keeps the patient team relationship when one is updated" do
+        expect(patient.reload.teams).to contain_exactly(team)
+
+        patient_location_a.update!(location: create(:school))
+        expect(patient_location_b).not_to be_nil
+
+        expect(patient.reload.teams).to contain_exactly(team)
+      end
+    end
   end
 
   describe "scopes" do
@@ -128,6 +159,32 @@ describe PatientLocation do
         end
 
         it { should_not include(patient_location) }
+      end
+    end
+  end
+
+  describe "#update_all_and_sync_patient_teams" do
+    context "when a patient has two patient locations that contribute" do
+      let(:patient) { create(:patient) }
+      let(:team) { create(:team) }
+      let(:session_a) { create(:session, team:) }
+      let(:session_b) { create(:session, team:) }
+      let!(:patient_location_a) do
+        create(:patient_location, patient:, session: session_a)
+      end
+      let!(:patient_location_b) do
+        create(:patient_location, patient:, session: session_b)
+      end
+
+      it "keeps the patient team relationship when one is updated" do
+        expect(patient.reload.teams).to contain_exactly(team)
+
+        described_class.where(
+          id: patient_location_a
+        ).update_all_and_sync_patient_teams(location_id: create(:school).id)
+        expect(patient_location_b).not_to be_nil
+
+        expect(patient.reload.teams).to contain_exactly(team)
       end
     end
   end
