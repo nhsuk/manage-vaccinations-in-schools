@@ -1172,7 +1172,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_194744) do
               tl.academic_year,
               t.id AS team_id,
               t.name AS team_name,
-              (ar.patient_id IS NOT NULL) AS is_archived,
+              ((ar.patient_id IS NOT NULL) OR (p.date_of_death IS NOT NULL)) AS is_archived,
               COALESCE(school_la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
               COALESCE(school_la.mhclg_code, ''::character varying) AS patient_local_authority_code,
               school.id AS patient_school_id,

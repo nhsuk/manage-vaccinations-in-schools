@@ -307,6 +307,43 @@ describe API::Reporting::TotalsController do
       )
     end
 
+    it "child deceased after being vaccinated by SAIS" do
+      patient = create(:patient, session: hpv_session)
+      create(
+        :vaccination_record,
+        patient:,
+        programme: hpv_programme,
+        session: hpv_session,
+        outcome: "administered",
+        performed_at: Time.current
+      )
+
+      refresh_and_get_totals
+      initial_response = JSON.parse(response.body)
+
+      patient.update!(date_of_death: Date.current)
+
+      refresh_and_get_totals
+      final_response = JSON.parse(response.body)
+
+      expect(final_response["cohort"]).to eq(initial_response["cohort"] - 1)
+      expect(final_response["vaccinated"]).to eq(
+        initial_response["vaccinated"] - 1
+      )
+      expect(final_response["not_vaccinated"]).to eq(
+        initial_response["not_vaccinated"]
+      )
+      expect(final_response["vaccinated_by_sais"]).to eq(
+        initial_response["vaccinated_by_sais"] - 1
+      )
+      expect(final_response["vaccinations_given"]).to eq(
+        initial_response["vaccinations_given"]
+      )
+      expect(final_response["monthly_vaccinations_given"]).to eq(
+        initial_response["monthly_vaccinations_given"]
+      )
+    end
+
     it "historic hpv record uploaded" do
       patient = create(:patient, session: hpv_session)
       create(
