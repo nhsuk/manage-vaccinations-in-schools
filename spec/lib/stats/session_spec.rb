@@ -9,14 +9,34 @@ describe Stats::Session do
     let(:latest_location) { session.location }
 
     context "with no patients" do
-      it "returns zero counts for all stats" do
-        expect(stats).to eq(
-          eligible_children: 0,
-          consent_no_response: 0,
-          consent_given_injection: 0,
-          consent_refused: 0,
-          vaccinated: 0
-        )
+      context "with programme status enabled" do
+        before { Flipper.enable(:programme_status) }
+
+        it "returns zero counts for all stats" do
+          expect(stats).to eq(
+            eligible_children: 0,
+            needs_consent: 0,
+            needs_triage: 0,
+            has_refusal: 0,
+            cannot_vaccinate: 0,
+            due: 0,
+            vaccinated: 0
+          )
+        end
+      end
+
+      context "with programme status disabled" do
+        before { Flipper.disable(:programme_status) }
+
+        it "returns zero counts for all stats" do
+          expect(stats).to eq(
+            eligible_children: 0,
+            consent_no_response: 0,
+            consent_given_injection: 0,
+            consent_refused: 0,
+            vaccinated: 0
+          )
+        end
       end
     end
 
@@ -24,10 +44,22 @@ describe Stats::Session do
       before do
         create(:patient, session:, year_group: 9).tap do |patient|
           create(:patient_consent_status, :no_response, patient:, programme:)
+          create(
+            :patient_programme_status,
+            :needs_consent_no_response,
+            patient:,
+            programme:
+          )
         end
 
         create(:patient, session:, year_group: 9).tap do |patient|
           create(:patient_consent_status, :given, patient:, programme:)
+          create(
+            :patient_programme_status,
+            :due_injection,
+            patient:,
+            programme:
+          )
         end
 
         create(:patient, session:, year_group: 9).tap do |patient|
@@ -38,25 +70,63 @@ describe Stats::Session do
             programme:,
             latest_location:
           )
+          create(
+            :patient_programme_status,
+            :vaccinated_fully,
+            patient:,
+            programme:
+          )
         end
 
         create(:patient, session:, year_group: 9).tap do |patient|
           create(:patient_consent_status, :refused, patient:, programme:)
+          create(
+            :patient_programme_status,
+            :has_refusal_consent_refused,
+            patient:,
+            programme:
+          )
         end
 
         create(:patient, session:, year_group: 9).tap do |patient|
           create(:patient_consent_status, :conflicts, patient:, programme:)
+          create(
+            :patient_programme_status,
+            :has_refusal_consent_conflicts,
+            patient:,
+            programme:
+          )
         end
       end
 
-      it "returns correct counts for each category" do
-        expect(stats).to eq(
-          eligible_children: 5,
-          consent_no_response: 1,
-          consent_given_injection: 1,
-          consent_refused: 2,
-          vaccinated: 1
-        )
+      context "with programme status enabled" do
+        before { Flipper.enable(:programme_status) }
+
+        it "returns correct counts for each category" do
+          expect(stats).to eq(
+            eligible_children: 5,
+            needs_consent: 1,
+            needs_triage: 0,
+            has_refusal: 2,
+            cannot_vaccinate: 0,
+            due: 1,
+            vaccinated: 1
+          )
+        end
+      end
+
+      context "with programme status disabled" do
+        before { Flipper.disable(:programme_status) }
+
+        it "returns correct counts for each category" do
+          expect(stats).to eq(
+            eligible_children: 5,
+            consent_no_response: 1,
+            consent_given_injection: 1,
+            consent_refused: 2,
+            vaccinated: 1
+          )
+        end
       end
     end
 
@@ -74,14 +144,34 @@ describe Stats::Session do
         end
       end
 
-      it "returns correct counts for each category" do
-        expect(stats).to eq(
-          eligible_children: 0,
-          consent_no_response: 0,
-          consent_given_injection: 0,
-          consent_refused: 0,
-          vaccinated: 0
-        )
+      context "with programme status enabled" do
+        before { Flipper.enable(:programme_status) }
+
+        it "returns correct counts for each category" do
+          expect(stats).to eq(
+            eligible_children: 0,
+            needs_consent: 0,
+            needs_triage: 0,
+            has_refusal: 0,
+            cannot_vaccinate: 0,
+            due: 0,
+            vaccinated: 0
+          )
+        end
+      end
+
+      context "with programme status disabled" do
+        before { Flipper.disable(:programme_status) }
+
+        it "returns correct counts for each category" do
+          expect(stats).to eq(
+            eligible_children: 0,
+            consent_no_response: 0,
+            consent_given_injection: 0,
+            consent_refused: 0,
+            vaccinated: 0
+          )
+        end
       end
     end
 
@@ -96,12 +186,19 @@ describe Stats::Session do
             patient:,
             programme:
           )
+          create(:patient_programme_status, :due_nasal, patient:, programme:)
         end
 
         create(:patient, session:, year_group: 9).tap do |patient|
           create(
             :patient_consent_status,
-            :given_without_gelatine,
+            :given_nasal_or_injection,
+            patient:,
+            programme:
+          )
+          create(
+            :patient_programme_status,
+            :due_nasal_injection,
             patient:,
             programme:
           )
@@ -111,18 +208,115 @@ describe Stats::Session do
           create(
             :patient_consent_status,
             :given_without_gelatine,
+            patient:,
+            programme:
+          )
+          create(
+            :patient_programme_status,
+            :due_injection_without_gelatine,
+            patient:,
+            programme:
+          )
+        end
+
+        create(:patient, session:, year_group: 9).tap do |patient|
+          create(
+            :patient_consent_status,
+            :given_without_gelatine,
+            patient:,
+            programme:
+          )
+          create(
+            :patient_programme_status,
+            :due_injection_without_gelatine,
             patient:,
             programme:
           )
         end
       end
 
-      it "returns counts broken down by vaccine method" do
-        expect(stats).to include(
-          eligible_children: 3,
-          consent_given_nasal: 1,
-          consent_given_injection_without_gelatine: 2
-        )
+      context "with programme status enabled" do
+        before { Flipper.enable(:programme_status) }
+
+        it "returns counts broken down by vaccine method" do
+          expect(stats).to include(
+            eligible_children: 4,
+            due_nasal: 2,
+            due_injection: 2
+          )
+        end
+      end
+
+      context "with programme status disabled" do
+        before { Flipper.disable(:programme_status) }
+
+        it "returns counts broken down by vaccine method" do
+          expect(stats).to include(
+            eligible_children: 4,
+            consent_given_nasal: 2,
+            consent_given_injection_without_gelatine: 2
+          )
+        end
+      end
+    end
+
+    context "with MMR programme (with or without gelatine)" do
+      let(:programme) { Programme.mmr }
+
+      before do
+        create(:patient, session:, year_group: 9).tap do |patient|
+          create(
+            :patient_consent_status,
+            :given_injection_only,
+            patient:,
+            programme:
+          )
+          create(
+            :patient_programme_status,
+            :due_injection,
+            patient:,
+            programme:
+          )
+        end
+
+        create(:patient, session:, year_group: 9).tap do |patient|
+          create(
+            :patient_consent_status,
+            :given_without_gelatine,
+            patient:,
+            programme:
+          )
+          create(
+            :patient_programme_status,
+            :due_injection_without_gelatine,
+            patient:,
+            programme:
+          )
+        end
+      end
+
+      context "with programme status enabled" do
+        before { Flipper.enable(:programme_status) }
+
+        it "returns counts broken down by vaccine method" do
+          expect(stats).to include(
+            eligible_children: 2,
+            due_no_preference: 1,
+            due_without_gelatine: 1
+          )
+        end
+      end
+
+      context "with programme status disabled" do
+        before { Flipper.disable(:programme_status) }
+
+        it "returns counts broken down by vaccine method" do
+          expect(stats).to include(
+            eligible_children: 2,
+            consent_given_injection: 1,
+            consent_given_injection_without_gelatine: 1
+          )
+        end
       end
     end
 

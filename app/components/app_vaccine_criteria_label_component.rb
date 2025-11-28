@@ -52,14 +52,8 @@ class AppVaccineCriteriaLabelComponent < ViewComponent::Base
 
   def vaccine_type_text
     label =
-      if vaccine_criteria.without_gelatine
-        "Gelatine-free injection"
-      elsif programme.has_multiple_vaccine_methods?
-        vaccine_method = vaccine_criteria.vaccine_methods.first
-        Vaccine.human_enum_name(:method, vaccine_method)
-      elsif programme.vaccine_may_contain_gelatine?
+      I18n.t(vaccine_criteria.to_param, scope: :vaccine_criteria).presence ||
         "Either"
-      end
 
     "#{label} for #{programme.name}"
   end

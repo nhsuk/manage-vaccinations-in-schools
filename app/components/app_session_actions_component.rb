@@ -22,7 +22,7 @@ class AppSessionActionsComponent < ViewComponent::Base
   attr_reader :session, :show_heading
 
   delegate :govuk_summary_list, to: :helpers
-  delegate :academic_year, :programmes, to: :session
+  delegate :academic_year, :programmes, :team, to: :session
 
   def patients = session.patients
 
@@ -53,9 +53,19 @@ class AppSessionActionsComponent < ViewComponent::Base
   end
 
   def no_consent_response_row
-    status = "no_response"
     count = session.patients_with_no_consent_response_count
-    href = session_consent_path(session, consent_statuses: [status])
+
+    href =
+      if Flipper.enabled?(:programme_status, team)
+        session_patients_path(
+          session,
+          programme_status_group: "needs_consent",
+          programme_statuses: %w[needs_consent_no_response]
+        )
+      else
+        session_consent_path(session, consent_statuses: %w[no_response])
+      end
+
     actions = [
       {
         text: "Send reminders",
@@ -66,27 +76,45 @@ class AppSessionActionsComponent < ViewComponent::Base
   end
 
   def conflicting_consent_row
-    status = "conflicts"
     count =
       patients.has_consent_status(
-        status,
+        "conflicts",
         programme: programmes,
         academic_year:
       ).count
-    href = session_consent_path(session, consent_statuses: [status])
+
+    href =
+      if Flipper.enabled?(:programme_status, team)
+        session_patients_path(
+          session,
+          programme_status_group: "has_refusal",
+          programme_statuses: %w[has_refusal_consent_conflicts]
+        )
+      else
+        session_consent_path(session, consent_statuses: %w[conflicts])
+      end
 
     generate_row(:children_with_conflicting_consent_response, count:, href:)
   end
 
   def triage_required_row
-    status = "required"
     count =
       patients.has_triage_status(
-        status,
+        "required",
         programme: programmes,
         academic_year:
       ).count
-    href = session_triage_path(session, triage_status: status)
+
+    href =
+      if Flipper.enabled?(:programme_status, team)
+        session_patients_path(
+          session,
+          programme_status_group: "needs_triage",
+          programme_statuses: []
+        )
+      else
+        session_triage_path(session, triage_status: "required")
+      end
 
     generate_row(:children_requiring_triage, count:, href:)
   end

@@ -8,14 +8,16 @@ describe "Filtering" do
     and_patients_are_in_the_flu_hpv_session
 
     when_i_visit_the_record_vaccinations_tab
-    then_the_any_vaccine_criteria_filter_is_selected
     and_i_see_all_the_patients_in_flu_hpv_session
 
-    when_i_filter_on_nasal
-    then_i_see_only_the_patients_eligible_for_nasal
+    when_i_filter_on_nasal_spray_only
+    then_i_see_only_the_patients_eligible_for_nasal_spray_only
 
-    when_i_filter_on_injection
-    then_i_see_only_the_patients_eligible_for_injection
+    when_i_filter_on_nasal_spray_preferred
+    then_i_see_only_the_patients_eligible_for_nasal_spray_preferred
+
+    when_i_filter_on_injection_only
+    then_i_see_only_the_patients_eligible_for_injection_only
   end
 
   scenario "With no flu programme in session" do
@@ -151,21 +153,36 @@ describe "Filtering" do
   end
 
   def and_i_dont_see_vaccine_criteria_filter_radios
-    expect(page).not_to have_field("Nasal", type: "radio")
-    expect(page).not_to have_field("Gelatine-free injection", type: "radio")
+    expect(page).not_to have_field("Injection only", type: "radio")
+    expect(page).not_to have_field("Nasal spray only", type: "radio")
+    expect(page).not_to have_field("Nasal spray preferred", type: "radio")
   end
 
-  def when_i_filter_on_nasal
-    choose "Nasal"
+  def when_i_filter_on_nasal_spray_only
+    uncheck "Nasal spray only"
+    uncheck "Nasal spray preferred"
+    uncheck "Injection only"
+    check "Nasal spray only"
     click_on "Update results"
   end
 
-  def when_i_filter_on_injection
-    choose "Gelatine-free injection"
+  def when_i_filter_on_nasal_spray_preferred
+    uncheck "Nasal spray only"
+    uncheck "Nasal spray preferred"
+    uncheck "Injection only"
+    check "Nasal spray preferred"
     click_on "Update results"
   end
 
-  def then_i_see_only_the_patients_eligible_for_nasal
+  def when_i_filter_on_injection_only
+    uncheck "Nasal spray only"
+    uncheck "Nasal spray preferred"
+    uncheck "Injection only"
+    check "Injection only"
+    click_on "Update results"
+  end
+
+  def then_i_see_only_the_patients_eligible_for_nasal_spray_only
     expect(page).not_to have_content(
       @patient_consented_for_hpv_and_flu_injection.full_name
     )
@@ -173,13 +190,27 @@ describe "Filtering" do
       @patient_consented_for_flu_injection.full_name
     )
     expect(page).to have_content(@patient_consented_for_flu_nasal.full_name)
-    expect(page).to have_content(@patient_consented_for_flu_both.full_name)
+    expect(page).not_to have_content(@patient_consented_for_flu_both.full_name)
     expect(page).to have_content(
       @patient_consented_for_flu_both_triaged_nasal.full_name
     )
   end
 
-  def then_i_see_only_the_patients_eligible_for_injection
+  def then_i_see_only_the_patients_eligible_for_nasal_spray_preferred
+    expect(page).not_to have_content(
+      @patient_consented_for_hpv_and_flu_injection.full_name
+    )
+    expect(page).not_to have_content(
+      @patient_consented_for_flu_injection.full_name
+    )
+    expect(page).not_to have_content(@patient_consented_for_flu_nasal.full_name)
+    expect(page).to have_content(@patient_consented_for_flu_both.full_name)
+    expect(page).not_to have_content(
+      @patient_consented_for_flu_both_triaged_nasal.full_name
+    )
+  end
+
+  def then_i_see_only_the_patients_eligible_for_injection_only
     expect(page).to have_content(
       @patient_consented_for_hpv_and_flu_injection.full_name
     )
@@ -191,35 +222,43 @@ describe "Filtering" do
     )
   end
 
-  def then_the_any_vaccine_criteria_filter_is_selected
-    expect(page).to have_checked_field("Any")
-  end
-
   def and_i_filter_on_flu_and_nasal
     check "Flu"
     uncheck "HPV"
-    choose "Nasal"
+    uncheck "Nasal spray only"
+    uncheck "Nasal spray preferred"
+    uncheck "Injection only"
+    check "Nasal spray only"
     click_on "Update results"
   end
 
   def when_i_filter_on_hpv_and_injection
     uncheck "Flu"
     check "HPV"
-    choose "Injection"
+    uncheck "Nasal spray only"
+    uncheck "Nasal spray preferred"
+    uncheck "Injection only"
+    check "Injection only"
     click_on "Update results"
   end
 
   def when_i_filter_on_flu_and_injection
     check "Flu"
     uncheck "HPV"
-    choose "Gelatine-free injection"
+    uncheck "Nasal spray only"
+    uncheck "Nasal spray preferred"
+    uncheck "Injection only"
+    check "Injection only"
     click_on "Update results"
   end
 
   def when_i_filter_on_hpv_and_nasal
     check "HPV"
     uncheck "Flu"
-    choose "Nasal"
+    uncheck "Nasal spray only"
+    uncheck "Nasal spray preferred"
+    uncheck "Injection only"
+    check "Nasal spray only"
     click_on "Update results"
   end
 

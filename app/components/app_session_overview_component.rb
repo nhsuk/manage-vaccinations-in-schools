@@ -9,9 +9,10 @@ class AppSessionOverviewComponent < ViewComponent::Base
 
   attr_reader :session
 
-  delegate :academic_year, :dates, :location, :programmes, to: :session
+  delegate :academic_year, :dates, :location, :programmes, :team, to: :session
 
-  delegate :govuk_table,
+  delegate :grid_column_class,
+           :govuk_table,
            :govuk_button_link_to,
            :govuk_inset_text,
            :govuk_summary_list,
@@ -39,21 +40,25 @@ class AppSessionOverviewComponent < ViewComponent::Base
   end
 
   def cards_for_programme(programme)
-    stats_for_programme(programme)
-      .except(:eligible_children)
-      .map do |key, value|
-        string_key = key.to_s
-        {
-          heading: card_heading_for(string_key, programme:),
-          colour: card_colour_for(string_key),
-          count: value.to_s,
-          link_to: card_link_to_for(string_key, programme:)
-        }
-      end
+    stats =
+      stats_for_programme(programme).except(:eligible_children).stringify_keys
+
+    stats.map { |key, value| card_for(key, value, programme:) }
+  end
+
+  def card_for(key, value, programme:)
+    {
+      heading: card_heading_for(key, programme:),
+      colour: card_colour_for(key),
+      count: value.to_s,
+      link_to: card_link_to_for(key, programme:)
+    }
   end
 
   def card_heading_for(key, programme:)
-    if key.starts_with?("consent_")
+    if Flipper.enabled?(:programme_status, team)
+      I18n.t(key, scope: %i[status programme label])
+    elsif key.starts_with?("consent_")
       I18n.t(key[8..], scope: %i[status consent label])
     elsif key == "vaccinated"
       if programme.mmr?
@@ -67,7 +72,9 @@ class AppSessionOverviewComponent < ViewComponent::Base
   end
 
   def card_colour_for(key)
-    if key.starts_with?("consent_")
+    if Flipper.enabled?(:programme_status, team)
+      I18n.t(key, scope: %i[status programme colour])
+    elsif key.starts_with?("consent_")
       I18n.t(key[8..], scope: %i[status consent colour])
     elsif key == "vaccinated"
       I18n.t("status.vaccination.colour.vaccinated")
@@ -77,7 +84,55 @@ class AppSessionOverviewComponent < ViewComponent::Base
   def card_link_to_for(key, programme:)
     programme_types = [programme.type]
 
-    if key.starts_with?("consent_")
+    if Flipper.enabled?(:programme_status, team)
+      if programme.flu? && key.starts_with?("due_")
+        case key
+        when "due_nasal"
+          session_patients_path(
+            session,
+            programme_types: [programme.type],
+            programme_status_group: "due",
+            eligible_children: 1,
+            vaccine_criteria: %w[flu_nasal flu_nasal_injection]
+          )
+        when "due_injection"
+          session_patients_path(
+            session,
+            programme_types: [programme.type],
+            programme_status_group: "due",
+            eligible_children: 1,
+            vaccine_criteria: %w[flu_injection_without_gelatine]
+          )
+        end
+      elsif programme.mmr? && key.starts_with?("due_")
+        case key
+        when "due_no_preference"
+          session_patients_path(
+            session,
+            programme_types: [programme.type],
+            programme_status_group: "due",
+            eligible_children: 1,
+            vaccine_criteria: %w[mmr_injection]
+          )
+        when "due_without_gelatine"
+          session_patients_path(
+            session,
+            programme_types: [programme.type],
+            programme_status_group: "due",
+            eligible_children: 1,
+            vaccine_criteria: %w[mmr_injection_without_gelatine]
+          )
+        end
+      else
+        session_patients_path(
+          session,
+          programme_types: [programme.type],
+          programme_status_group: key,
+          eligible_children: 1,
+          vaccine_criteria: []
+        )
+      end
+    elsif key.starts_with?("consent_")
       consent_statuses = [key[8..]]
       consent_statuses << "conflicts" if key == "consent_refused"
 
@@ -103,7 +158,7 @@ class AppSessionOverviewComponent < ViewComponent::Base
       .consent_given_and_safe_to_vaccinate(
         programmes:,
         academic_year:,
-        vaccine_method: nil,
+        vaccine_methods: nil,
         without_gelatine: nil
       )
       .count

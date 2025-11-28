@@ -73,8 +73,11 @@ class Patient < ApplicationRecord
   has_many :notify_log_entries
   has_many :parent_relationships, -> { order(:created_at) }
   has_many :patient_locations
+  has_many :patient_specific_directions
+  has_many :patient_teams
   has_many :pds_search_results
   has_many :pre_screenings
+  has_many :programme_statuses
   has_many :registration_statuses
   has_many :school_move_log_entries
   has_many :school_moves
@@ -83,8 +86,6 @@ class Patient < ApplicationRecord
   has_many :triages
   has_many :vaccination_records, -> { kept }
   has_many :vaccination_statuses
-  has_many :patient_specific_directions
-  has_many :patient_teams
 
   has_many :locations, through: :patient_locations
   has_many :parents, through: :parent_relationships
@@ -147,6 +148,7 @@ class Patient < ApplicationRecord
         -> do
           includes(
             :consent_statuses,
+            :programme_statuses,
             :triage_statuses,
             vaccination_statuses: :latest_location
           )
@@ -242,6 +244,18 @@ class Patient < ApplicationRecord
 
   scope :search_by_nhs_number, ->(nhs_number) { where(nhs_number:) }
 
+  scope :has_programme_status,
+        ->(status, programme:, academic_year:) do
+          programme_status_scope =
+            Patient::ProgrammeStatus
+              .select("1")
+              .where("patient_id = patients.id")
+              .where_programme(programme)
+              .where(status:, academic_year:)
+
+          where(programme_status_scope.arel.exists)
+        end
+
   scope :has_vaccination_status,
         ->(status, programme:, academic_year:) do
           where(
@@ -312,7 +326,7 @@ class Patient < ApplicationRecord
         ->(
           programme:,
           academic_year:,
-          vaccine_method: nil,
+          vaccine_methods: nil,
           without_gelatine: nil
         ) do
           triage_status_matching =
@@ -321,8 +335,6 @@ class Patient < ApplicationRecord
               .where("patient_id = patients.id")
               .where_programme(programme)
               .where(academic_year:)
-              .then { vaccine_method ? it.where(vaccine_method:) : it }
-              .then { without_gelatine ? it.where(without_gelatine:) : it }
 
           triage_status_not_required =
             Patient::TriageStatus
@@ -338,10 +350,85 @@ class Patient < ApplicationRecord
               .where("patient_id = patients.id")
               .where_programme(programme)
               .where(academic_year:)
-              .then { without_gelatine ? it.where(without_gelatine:) : it }
-              .then do
-                vaccine_method ? it.has_vaccine_method(vaccine_method) : it
-              end
+
+          unless vaccine_methods.nil?
+            # For triage, nurses select a single vaccine method, so we need
+            # to filter out when asking for two or more vaccine methods.
+            # This code is needed to handle both where an array of arrays is
+            # passed in or a single array of strings.
+
+            if vaccine_methods.empty? ||
+                 vaccine_methods.all? { it.is_a?(String) }
+              consent_status_matching =
+                consent_status_matching.where(
+                  vaccine_methods:
+                    vaccine_methods.map do
+                      Patient::ConsentStatus.vaccine_methods.fetch(it)
+                    end
+                )
+
+              triage_status_matching =
+                if vaccine_methods.count == 1
+                  triage_status_matching.where(
+                    vaccine_method: vaccine_methods.first
+                  )
+                else
+                  triage_status_matching.none
+                end
+            else
+              consent_or_scope =
+                consent_status_matching.where(
+                  vaccine_methods:
+                    vaccine_methods.first.map do
+                      Patient::ConsentStatus.vaccine_methods.fetch(it)
+                    end
+                )
+
+              triage_or_scope =
+                if vaccine_methods.first.count == 1
+                  triage_status_matching.where(
+                    vaccine_method: vaccine_methods.first.first
+                  )
+                else
+                  triage_status_matching.none
+                end
+
+              vaccine_methods
+                .drop(1)
+                .each do |value|
+                  consent_or_scope =
+                    consent_or_scope.or(
+                      consent_status_matching.where(
+                        vaccine_methods:
+                          value.map do
+                            Patient::ConsentStatus.vaccine_methods.fetch(it)
+                          end
+                      )
+                    )
+
+                  triage_or_scope =
+                    if values.first.count == 1
+                      triage_or_scope.or(
+                        triage_status_matching.where(
+                          vaccine_method: value.first
+                        )
+                      )
+                    else
+                      triage_or_scope.or(triage_status_matching.none)
+                    end
+                end
+
+              consent_status_matching = consent_or_scope
+              triage_status_matching = triage_or_scope
+            end
+          end
+
+          unless without_gelatine.nil?
+            triage_status_matching =
+              triage_status_matching.where(without_gelatine:)
+            consent_status_matching =
+              consent_status_matching.where(without_gelatine:)
+          end
 
           where(triage_status_matching.arel.exists).or(
             where(triage_status_not_required.arel.exists).where(
@@ -391,13 +478,13 @@ class Patient < ApplicationRecord
         end
 
   scope :consent_given_and_safe_to_vaccinate,
-        ->(programmes:, academic_year:, vaccine_method:, without_gelatine:) do
+        ->(programmes:, academic_year:, vaccine_methods:, without_gelatine:) do
           select do |patient|
             programmes.any? do |programme|
               patient.consent_given_and_safe_to_vaccinate?(
                 programme:,
                 academic_year:,
-                vaccine_method:,
+                vaccine_methods:,
                 without_gelatine:
               )
             end
@@ -583,6 +670,10 @@ class Patient < ApplicationRecord
     patient_status(consent_statuses, programme:, academic_year:)
   end
 
+  def programme_status(programme, academic_year:)
+    patient_status(programme_statuses, programme:, academic_year:)
+  end
+
   def registration_status(session:)
     registration_statuses.find { it.session_id == session.id } ||
       registration_statuses.build(session:)
@@ -603,7 +694,7 @@ class Patient < ApplicationRecord
   def consent_given_and_safe_to_vaccinate?(
     programme:,
     academic_year:,
-    vaccine_method: nil,
+    vaccine_methods: nil,
     without_gelatine: nil
   )
     return false if vaccination_status(programme:, academic_year:).vaccinated?
@@ -615,12 +706,12 @@ class Patient < ApplicationRecord
       return false
     end
 
-    return true if vaccine_method.nil? && without_gelatine.nil?
+    return true if vaccine_methods.nil? && without_gelatine.nil?
 
     vaccine_criteria = self.vaccine_criteria(programme:, academic_year:)
 
-    if vaccine_method &&
-         vaccine_criteria.vaccine_methods.first != vaccine_method
+    if vaccine_methods &&
+         vaccine_methods.none? { it == vaccine_criteria.vaccine_methods }
       return false
     end
 

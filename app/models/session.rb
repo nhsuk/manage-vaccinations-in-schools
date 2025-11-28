@@ -316,7 +316,8 @@ class Session < ApplicationRecord
       Session::ProgrammeYearGroup.where(session_id: id).delete_all
       Session::ProgrammeYearGroup.import!(
         %i[session_id programme_type year_group],
-        rows
+        rows,
+        on_duplicate_key_ignore: true
       )
     end
   end

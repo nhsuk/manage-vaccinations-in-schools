@@ -11,7 +11,7 @@ class AppPatientSessionSectionComponent < ViewComponent::Base
 
   attr_reader :patient, :session, :programme
 
-  delegate :academic_year, to: :session
+  delegate :academic_year, :team, to: :session
 
   def colour = resolved_status.fetch(:colour)
 

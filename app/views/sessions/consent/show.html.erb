@@ -13,6 +13,7 @@
     <%= render AppPatientSearchFormComponent.new(
           @form,
           url: session_consent_path(@session),
+          current_team:,
           programmes: @session.programmes,
           consent_statuses: @statuses,
           year_groups: @session.year_groups,

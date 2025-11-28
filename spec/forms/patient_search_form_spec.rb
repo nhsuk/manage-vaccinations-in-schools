@@ -29,14 +29,15 @@ describe PatientSearchForm do
   let(:date_of_birth_month) { nil }
   let(:date_of_birth_year) { nil }
   let(:missing_nhs_number) { nil }
-  let(:vaccination_status) { nil }
+  let(:patient_specific_direction_status) { nil }
+  let(:programme_statuses) { nil }
   let(:programme_types) { nil }
   let(:q) { nil }
   let(:registration_status) { nil }
-  let(:triage_status) { nil }
-  let(:vaccine_criteria) { nil }
   let(:still_to_vaccinate) { nil }
-  let(:patient_specific_direction_status) { nil }
+  let(:triage_status) { nil }
+  let(:vaccination_status) { nil }
+  let(:vaccine_criteria) { nil }
   let(:year_groups) { nil }
 
   let(:params) do
@@ -49,6 +50,7 @@ describe PatientSearchForm do
       date_of_birth_year:,
       missing_nhs_number:,
       patient_specific_direction_status:,
+      programme_statuses:,
       programme_types:,
       q:,
       registration_status:,
@@ -286,7 +288,9 @@ describe PatientSearchForm do
       end
 
       context "with a patient not eligible for the programme" do
-        let(:patient) { create(:patient, year_group: 8) }
+        let(:patient) do
+          create(:patient, session: session_for_patients, year_group: 8)
+        end
 
         it "is not included" do
           expect(form.apply(scope)).not_to include(patient)
@@ -414,8 +418,10 @@ describe PatientSearchForm do
     end
 
     context "filtering on vaccine criteria" do
+      let(:programmes) { [Programme.flu] }
       let(:programme_types) { programmes.map(&:type) }
-      let(:vaccine_criteria) { "nasal" }
+
+      let(:vaccine_criteria) { %w[flu_nasal_injection] }
 
       let(:session) { session_for_patients }
 

@@ -10,6 +10,15 @@
     background-color: nhsuk-colour("grey-1");
   }
 
+  .nhsuk-radios__conditional {
+    margin-bottom: nhsuk-spacing(2);
+  }
+
+  .nhsuk-radios__label,
+  .nhsuk-checkboxes__label {
+    padding-right: 0;
+  }
+
   // Adjust design and spacing of details component
   .nhsuk-details {
     margin-left: nhsuk-spacing(-4);

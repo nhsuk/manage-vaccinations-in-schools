@@ -28,11 +28,11 @@
 
 // Search filters and results
 .app-grid-column-filters {
-  @include nhsuk-grid-column(filters, $at: large-desktop);
+  @include nhsuk-grid-column(one-third, $at: large-desktop);
 }
 
 .app-grid-column-results {
-  @include nhsuk-grid-column(results, $at: large-desktop);
+  @include nhsuk-grid-column(two-thirds, $at: large-desktop);
 }
 
 .app-grid-column-filters .nhsuk-card--feature.app-filters,

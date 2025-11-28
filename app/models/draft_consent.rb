@@ -34,6 +34,7 @@ class DraftConsent
   attribute :route, :string
   attribute :session_id, :integer
   attribute :triage_add_patient_specific_direction, :boolean
+  attribute :triage_delay_vaccination_until, :string
   attribute :triage_notes, :string
   attribute :triage_status_option, :string
   attribute :vaccine_methods, array: true, default: []
@@ -314,8 +315,9 @@ class DraftConsent
     if triage_allowed? && requires_triage?
       triage_form.add_patient_specific_direction =
         triage_add_patient_specific_direction
-      triage_form.notes = triage_notes || ""
       triage_form.current_user = recorded_by
+      triage_form.delay_vaccination_until = triage_delay_vaccination_until
+      triage_form.notes = triage_notes || ""
       triage_form.status_option = triage_status_option
     end
   end
