@@ -29,7 +29,7 @@ class AppSessionSearchFormComponent < ViewComponent::Base
               <%= f.govuk_check_box :programmes,
                                     programme.type,
                                     checked: form.programmes&.include?(programme.type),
-                                    label: { text: programme.name } %>
+                                    label: { text: programme.filter_name } %>
             <% end %>
           <% end %>
         <% end %>
