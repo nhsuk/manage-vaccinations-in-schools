@@ -186,37 +186,6 @@ module ContributesToPatientTeams
       end
     end
 
-    def delete_all_and_sync_patient_teams
-      transaction do
-        contributing_subqueries.each do |key, subquery|
-          patient_id_source =
-            connection.quote_string(subquery[:patient_id_source])
-          team_id_source = connection.quote_string(subquery[:team_id_source])
-          sterile_key = connection.quote(PatientTeam.sources.fetch(key.to_s))
-          delete_from =
-            subquery[:contribution_scope]
-              .select(
-                "#{patient_id_source} as patient_id",
-                "#{team_id_source} as team_id"
-              )
-              .reorder("patient_id")
-              .distinct
-              .to_sql
-
-          connection.execute <<-SQL
-          UPDATE patient_teams pt
-            SET sources = array_remove(pt.sources, #{sterile_key})
-          FROM (#{delete_from}) AS del
-            WHERE pt.patient_id = del.patient_id AND pt.team_id = del.team_id;
-          SQL
-
-          PatientTeam.missing_sources.delete_all
-        end
-
-        delete_all
-      end
-    end
-
     def insert_patient_teams_relationships
       transaction { add_patient_team_relationships }
     end

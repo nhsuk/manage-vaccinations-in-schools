@@ -72,16 +72,6 @@ describe PatientLocation do
       expect(patient_team.sources).to eq(%w[patient_location])
     end
 
-    it "deletes patient teams in bulk" do
-      patient_location
-
-      expect {
-        described_class.where(
-          id: patient_location.id
-        ).delete_all_and_sync_patient_teams
-      }.to change(PatientTeam, :count).by(-1)
-    end
-
     context "when a patient has two patient locations that contribute" do
       let(:patient) { create(:patient) }
       let(:team) { create(:team) }
