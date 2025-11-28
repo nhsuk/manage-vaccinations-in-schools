@@ -19,6 +19,24 @@ describe Programme do
 
   it_behaves_like "a Flipper actor"
 
+  describe "#find" do
+    subject(:find) { described_class.find(type) }
+
+    context "with a known type" do
+      let(:type) { Programme::TYPES.sample }
+
+      it { should_not be_nil }
+    end
+
+    context "with an unknown type" do
+      let(:type) { "unknown" }
+
+      it "raises an error" do
+        expect { find }.to raise_error(Programme::InvalidType)
+      end
+    end
+  end
+
   describe "#name" do
     subject { programme.name }
 
