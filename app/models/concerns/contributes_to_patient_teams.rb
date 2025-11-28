@@ -116,20 +116,48 @@ module ContributesToPatientTeams
 
     def update_all_and_sync_patient_teams(updates)
       transaction do
-        contributing_subqueries.each do |key, subquery|
-          affected_row_ids = connection.quote_table_name("temp_table_#{key}")
-          sterile_key = connection.quote(PatientTeam.sources.fetch(key.to_s))
+        contributing_subqueries.each do |source, subquery|
+          affected_row_ids = connection.quote_table_name("temp_table_#{source}")
+          source_key = connection.quote(PatientTeam.sources.fetch(source.to_s))
           patient_id_source =
             connection.quote_string(subquery[:patient_id_source])
           team_id_source = connection.quote_string(subquery[:team_id_source])
 
-          source_table_affected_rows =
-            all.select("#{table_name}.id as id").to_sql
           connection.execute <<-SQL
-          CREATE TEMPORARY TABLE #{affected_row_ids} (
-            id bigint
-          ) ON COMMIT DROP;
-          INSERT INTO #{affected_row_ids} (id) #{source_table_affected_rows};
+            CREATE TEMPORARY TABLE #{affected_row_ids} (
+              id bigint,
+              patient_id bigint,
+              team_id bigint
+            ) ON COMMIT DROP;
+          SQL
+
+          source_table_affected_rows_all =
+            all.select(
+              "#{table_name}.id as id",
+              "NULL as patient_id",
+              "NULL as team_id"
+            ).to_sql
+
+          connection.execute <<-SQL
+            INSERT INTO #{affected_row_ids} (#{source_table_affected_rows_all});
+          SQL
+
+          # We need to do this because sometimes the `contribution_scope` results in
+          # no results, if for example the patient or team ID comes from a join.
+          source_table_affected_rows_with_patient_team =
+            all
+              .contributing_subqueries
+              .fetch(source)
+              .fetch(:contribution_scope)
+              .select(
+                "#{table_name}.id as id",
+                "#{patient_id_source} as patient_id",
+                "#{team_id_source} as team_id"
+              )
+              .to_sql
+
+          connection.execute <<-SQL
+            INSERT INTO #{affected_row_ids} (#{source_table_affected_rows_with_patient_team});
           SQL
 
           patient_team_relationships_to_remove =
@@ -141,19 +169,20 @@ module ContributesToPatientTeams
               .reorder("patient_id")
               .distinct
               .to_sql
+
           connection.execute <<-SQL
-          UPDATE patient_teams pt
-            SET sources = array_remove(sources, #{sterile_key})
-          FROM (#{patient_team_relationships_to_remove}) as pre_changed
-            WHERE pt.patient_id = pre_changed.patient_id AND pt.team_id = pre_changed.team_id;
+            UPDATE patient_teams pt
+              SET sources = array_remove(sources, #{source_key})
+            FROM (#{patient_team_relationships_to_remove}) as pre_changed
+              WHERE pt.patient_id = pre_changed.patient_id AND pt.team_id = pre_changed.team_id;
           SQL
         end
 
         update_all(updates)
 
-        klass.all.contributing_subqueries.each do |key, subquery|
-          modified_row_ids = connection.quote_table_name("temp_table_#{key}")
-          sterile_key = connection.quote(PatientTeam.sources.fetch(key.to_s))
+        klass.all.contributing_subqueries.each do |source, subquery|
+          affected_row_ids = connection.quote_table_name("temp_table_#{source}")
+          source_key = connection.quote(PatientTeam.sources.fetch(source.to_s))
           patient_id_source =
             connection.quote_string(subquery[:patient_id_source])
           team_id_source = connection.quote_string(subquery[:team_id_source])
@@ -165,21 +194,23 @@ module ContributesToPatientTeams
                 "#{team_id_source} as team_id"
               )
               .joins(
-                "INNER JOIN #{modified_row_ids} ON #{modified_row_ids}.id = #{table_name}.id"
+                "INNER JOIN #{affected_row_ids} ON #{affected_row_ids}.id = #{table_name}.id " \
+                  "OR (#{affected_row_ids}.patient_id = #{patient_id_source} " \
+                  "AND #{affected_row_ids}.team_id = #{team_id_source})"
               )
               .reorder("patient_id")
               .distinct
               .to_sql
 
           connection.execute <<-SQL
-          INSERT INTO patient_teams (patient_id, team_id, sources)
-            SELECT post_changed.patient_id, post_changed.team_id, ARRAY[#{sterile_key}]
-          FROM (#{patient_team_relationships_to_insert}) as post_changed
-            ON CONFLICT (team_id, patient_id) DO UPDATE
-            SET sources = array_append(array_remove(patient_teams.sources,#{sterile_key}),#{sterile_key})
+            INSERT INTO patient_teams (patient_id, team_id, sources)
+              SELECT post_changed.patient_id, post_changed.team_id, ARRAY[#{source_key}]
+            FROM (#{patient_team_relationships_to_insert}) as post_changed
+              ON CONFLICT (team_id, patient_id) DO UPDATE
+              SET sources = array_append(array_remove(patient_teams.sources,#{source_key}),#{source_key})
           SQL
 
-          connection.execute("DROP TABLE IF EXISTS #{modified_row_ids}")
+          connection.execute("DROP TABLE IF EXISTS #{affected_row_ids}")
 
           PatientTeam.missing_sources.delete_all
         end
@@ -291,8 +322,8 @@ module ContributesToPatientTeams
 
   included do
     after_create :after_create_add_source_to_patient_teams
-    around_update :after_update_sync_source_of_patient_teams
-    before_destroy :before_destroy_remove_source_from_patient_teams
+    around_update :around_update_sync_source_of_patient_teams
+    around_destroy :around_destroy_remove_source_from_patient_teams
   end
 
   private
@@ -307,25 +338,24 @@ module ContributesToPatientTeams
     end
   end
 
-  def after_update_sync_source_of_patient_teams
-    subquery_identifiers = self.class.all.contributing_subqueries.keys
-
+  def around_update_sync_source_of_patient_teams
     old_patient_team_ids = fetch_source_and_patient_team_ids
+
     yield
+
     new_patient_team_ids = fetch_source_and_patient_team_ids
 
-    unmodified_patient_team_ids =
-      subquery_identifiers.index_with do |key|
-        old_patient_team_ids[key] & new_patient_team_ids[key]
-      end
+    kept_patient_team_ids =
+      fetch_source_and_still_existing_patient_team_ids(old_patient_team_ids)
 
     removed_patient_team_ids =
       old_patient_team_ids
-        .map { |key, value| [key, (value - unmodified_patient_team_ids[key])] }
+        .map { |key, value| [key, (value - kept_patient_team_ids[key])] }
         .to_h
+
     inserted_patient_team_ids =
       new_patient_team_ids
-        .map { |key, value| [key, (value - unmodified_patient_team_ids[key])] }
+        .map { |key, value| [key, (value - kept_patient_team_ids[key])] }
         .to_h
 
     removed_patient_team_ids.each do |source, patient_team_ids|
@@ -343,8 +373,22 @@ module ContributesToPatientTeams
     end
   end
 
-  def before_destroy_remove_source_from_patient_teams
-    fetch_source_and_patient_team_ids.each do |source, patient_team_ids|
+  def around_destroy_remove_source_from_patient_teams
+    affected_patient_team_ids = fetch_source_and_patient_team_ids
+
+    yield
+
+    kept_patient_team_ids =
+      fetch_source_and_still_existing_patient_team_ids(
+        affected_patient_team_ids
+      )
+
+    removed_patient_team_ids =
+      affected_patient_team_ids
+        .map { |key, value| [key, (value - kept_patient_team_ids[key])] }
+        .to_h
+
+    removed_patient_team_ids.each do |source, patient_team_ids|
       patient_team_ids.each do |patient_id, team_id|
         PatientTeam.find_by(patient_id:, team_id:)&.remove_source!(source)
       end
@@ -364,6 +408,43 @@ module ContributesToPatientTeams
             subquery.fetch(:patient_id_source),
             subquery.fetch(:team_id_source)
           )
+      end
+  end
+
+  def fetch_source_and_still_existing_patient_team_ids(
+    patient_team_ids_by_source
+  )
+    # This method find patient teams that still need to exist even if another
+    # contributing row has been updated or deleted. This works by searching
+    # for all the rows and then filtering on patient IDs and team IDs.
+
+    self
+      .class
+      .all
+      .contributing_subqueries
+      .each_with_object({}) do |(source, subquery), hash|
+        patient_team_ids = patient_team_ids_by_source.fetch(source)
+
+        hash[source] = if patient_team_ids.present?
+          patient_id_source = subquery.fetch(:patient_id_source)
+          team_id_source = subquery.fetch(:team_id_source)
+
+          in_query_string = patient_team_ids.map { "(#{_1},#{_2})" }.join(",")
+
+          where_clause =
+            ActiveRecord::Base.connection.quote_string(
+              "(#{patient_id_source}, #{team_id_source}) " \
+                " IN (#{in_query_string})"
+            )
+
+          subquery
+            .fetch(:contribution_scope)
+            .where(where_clause)
+            .distinct
+            .pluck(patient_id_source, team_id_source)
+        else
+          []
+        end
       end
   end
 end
