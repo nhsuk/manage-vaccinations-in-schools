@@ -8,6 +8,7 @@ cell_based_trivalent:
   contains_gelatine: false
   nivs_name: Sequirus Cell-based Trivalent
   dose_volume_ml: 0.5
+  disease_types: [influenza]
   snomed_product_code: 43207411000001105
   snomed_product_term: Cell-based trivalent influenza vaccine (surface
     antigen, inactivated) suspension for injection 0.5ml pre-filled syringes
@@ -21,6 +22,7 @@ fluenz:
   contains_gelatine: true
   nivs_name: AstraZeneca Fluenz
   dose_volume_ml: 0.2
+  disease_types: [influenza]
   snomed_product_code: 43208811000001106
   snomed_product_term: Fluenz (trivalent) vaccine nasal suspension 0.2ml unit
     dose (AstraZeneca UK Ltd) (product)
@@ -33,6 +35,7 @@ vaxigrip:
   contains_gelatine: false
   nivs_name: Sanofi Vaxigrip
   dose_volume_ml: 0.5
+  disease_types: [influenza]
   snomed_product_code: 45175511000001104
   snomed_product_term: Vaxigrip Trivalent influenza vaccine (split virion,
     inactivated) suspension for injection 0.5ml pre-filled syringes (Sanofi)
@@ -45,6 +48,7 @@ viatris:
   contains_gelatine: false
   nivs_name: Viatris
   dose_volume_ml: 0.5
+  disease_types: [influenza]
   snomed_product_code: 45354911000001100
   snomed_product_term: Influenza TIV MYL vaccine suspension for injection
     0.5ml pre-filled syringes (Viatris UK Healthcare Ltd)
@@ -60,6 +64,7 @@ cervarix:
   contains_gelatine: false
   nivs_name: Cervarix
   dose_volume_ml: 0.5
+  disease_types: [human_papillomavirus]
   snomed_product_code: 12238911000001100
   snomed_product_term:
     Cervarix vaccine suspension for injection 0.5ml pre-filled
@@ -74,6 +79,7 @@ gardasil:
   contains_gelatine: false
   nivs_name: Gardasil
   dose_volume_ml: 0.5
+  disease_types: [human_papillomavirus]
   snomed_product_code: 10880211000001104
   snomed_product_term:
     Gardasil vaccine suspension for injection 0.5ml pre-filled
@@ -87,6 +93,7 @@ gardasil_9:
   contains_gelatine: false
   nivs_name: Gardasil9
   dose_volume_ml: 0.5
+  disease_types: [human_papillomavirus]
   snomed_product_code: 33493111000001108
   snomed_product_term:
     Gardasil 9 vaccine suspension for injection 0.5ml pre-filled
@@ -102,6 +109,7 @@ menquadfi:
   contains_gelatine: false
   nivs_name: MenQuadfi
   dose_volume_ml: 0.5
+  disease_types: [meningitis_a, meningitis_c, meningitis_w, meningitis_y]
   snomed_product_code: 39779611000001104
   snomed_product_term:
     MenQuadfi vaccine solution for injection 0.5ml vials (Sanofi) (product)
@@ -114,6 +122,7 @@ menveo:
   contains_gelatine: false
   nivs_name: Menveo
   dose_volume_ml: 0.5
+  disease_types: [meningitis_a, meningitis_c, meningitis_w, meningitis_y]
   snomed_product_code: 17188711000001105
   snomed_product_term:
     Menveo vaccine powder and solvent for solution for injection
@@ -127,6 +136,7 @@ nimenrix:
   contains_gelatine: false
   nivs_name: Nimenrix
   dose_volume_ml: 0.5
+  disease_types: [meningitis_a, meningitis_c, meningitis_w, meningitis_y]
   snomed_product_code: 20517811000001104
   snomed_product_term:
     Nimenrix vaccine powder and solvent for solution for injection
@@ -142,6 +152,7 @@ priorix:
   contains_gelatine: false
   nivs_name: Priorix
   dose_volume_ml: 0.5
+  disease_types: [measles, mumps, rubella]
   snomed_product_code: 34925111000001104
   snomed_product_term:
     Priorix vaccine powder and solvent for solution for injection
@@ -155,6 +166,7 @@ vaxpro:
   contains_gelatine: true
   nivs_name: VaxPro
   dose_volume_ml: 0.5
+  disease_types: [measles, mumps, rubella]
   snomed_product_code: 13968211000001108
   snomed_product_term:
     M-M-RVAXPRO vaccine powder and solvent for suspension for injection
@@ -170,6 +182,7 @@ revaxis:
   contains_gelatine: false
   nivs_name: Revaxis
   dose_volume_ml: 0.5
+  disease_types: [tetanus, diphtheria, polio]
   snomed_product_code: 7374511000001107
   snomed_product_term:
     Revaxis vaccine suspension for injection 0.5ml pre-filled syringes

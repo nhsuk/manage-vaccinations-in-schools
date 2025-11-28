@@ -5,11 +5,19 @@ module BelongsToProgramme
 
   included do
     scope :where_programme,
-          ->(value) do
-            if value.is_a?(Array)
-              where(programme_type: value.map(&:type))
+          ->(programme, disease_types = nil) do
+            query =
+              if programme.is_a?(Array)
+                where(programme_type: programme.map(&:type))
+              else
+                where(programme_type: programme.type)
+              end
+
+            if disease_types.present?
+              enum_values = disease_types.map { |dt| Vaccine.disease_types[dt] }
+              query.where("disease_types && ARRAY[?]::integer[]", enum_values)
             else
-              where(programme_type: value.type)
+              query
             end
           end
   end

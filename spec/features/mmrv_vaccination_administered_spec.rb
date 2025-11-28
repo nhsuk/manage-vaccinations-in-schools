@@ -13,7 +13,10 @@ describe "MMRV vaccination" do
     when_i_go_to_the_patient
     then_i_see_the_vaccination_form
 
-    when_i_record_that_the_patient_has_been_vaccinated
+    when_i_begin_recording_the_mmrv_vaccination
+    then_i_should_only_see_the_mmrv_batch_options
+
+    when_i_choose_an_mmrv_batch_for_the_vaccine
     then_i_see_the_check_and_confirm_page
     and_i_get_confirmation_after_recording
 
@@ -30,8 +33,15 @@ describe "MMRV vaccination" do
   def and_i_am_signed_in_as_a_nurse
     @programme = Programme.mmr
     @team = create(:team, :with_one_nurse, programmes: [@programme])
-    vaccine = @programme.vaccines.injection.first
-    @batch = create(:batch, :not_expired, team: @team, vaccine:)
+
+    @mmrv_vaccine = create(:vaccine, :mmrv, programme: @programme)
+    @mmrv_batch =
+      create(:batch, :not_expired, team: @team, vaccine: @mmrv_vaccine)
+
+    @mmr_vaccine = create(:vaccine, :mmr, programme: @programme)
+    @mmr_batch =
+      create(:batch, :not_expired, team: @team, vaccine: @mmr_vaccine)
+
     sign_in @team.users.first
   end
 
@@ -49,6 +59,7 @@ describe "MMRV vaccination" do
       )
     @community_clinic = create(:community_clinic, team: @team)
   end
+
   def when_i_go_to_the_consent_tab
     visit session_consent_path(@session)
   end
@@ -99,7 +110,7 @@ describe "MMRV vaccination" do
     )
   end
 
-  def when_i_record_that_the_patient_has_been_vaccinated
+  def when_i_begin_recording_the_mmrv_vaccination
     within all("section")[0] do
       check "I have checked that the above statements are true"
     end
@@ -109,8 +120,14 @@ describe "MMRV vaccination" do
       choose "Left arm (upper position)"
       click_button "Continue"
     end
+  end
 
-    choose @batch.name
+  def then_i_should_only_see_the_mmrv_batch_options
+    expect(page).not_to have_content(@mmr_batch.name)
+  end
+
+  def when_i_choose_an_mmrv_batch_for_the_vaccine
+    choose @mmrv_batch.name
     click_button "Continue"
 
     expect(page).to have_content("Where was the MMRV vaccination offered?")
