@@ -4,7 +4,7 @@ describe ProgrammeVariant do
   subject(:programme_variant) { described_class.new(programme, variant_type:) }
 
   let(:programme) { Programme.mmr }
-  let(:variant_type) { :mmrv }
+  let(:variant_type) { "mmrv" }
 
   describe "#initialize" do
     it "wraps the base programme" do
@@ -28,6 +28,17 @@ describe ProgrammeVariant do
   describe "#name_in_sentence" do
     it "returns the variant name" do
       expect(programme_variant.name_in_sentence).to eq("MMRV")
+    end
+  end
+
+  describe "#vaccines" do
+    it "queries vaccines with the programme variant and distinguishing diseases" do
+      expect(Vaccine).to receive(:where_programme).with(
+        programme_variant,
+        ["varicella"]
+      )
+
+      programme_variant.vaccines
     end
   end
 end

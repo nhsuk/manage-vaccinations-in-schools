@@ -23,14 +23,15 @@ class Programme
 
   def self.all = TYPES.map { find(it) }
 
-  def self.find(type, patient: nil)
+  def self.find(type, patient: nil, vaccine: nil)
     @programmes ||= {}
-    @programmes[type] ||= if exists?(type)
-      programme = Programme.new(type:)
-      variant_for(programme, patient) || programme
-    else
-      raise InvalidType, type
-    end
+
+    raise InvalidType, type unless exists?(type)
+
+    programme = @programmes[type] ||= Programme.new(type:)
+
+    # Variants are computed on-demand based on the actual patient/vaccine context.
+    variant_for(programme, patient, vaccine) || programme
   end
 
   def self.find_all(types, patient: nil) = types.map { find(it, patient:) }
@@ -39,16 +40,20 @@ class Programme
 
   def self.sample = find(TYPES.sample)
 
-  def self.variant_for(programme, patient)
-    return unless Flipper.enabled?(:mmrv)
-    return unless programme && patient
-
-    if programme.mmr? && patient.date_of_birth >= MIN_MMRV_ELIGIBILITY_DATE
-      ProgrammeVariant.new(programme, variant_type: "mmrv")
-    end
+  def self.variant_for(programme, patient, vaccine)
+    variant_type = "mmrv" if mmrv_variant?(programme, patient, vaccine)
+    ProgrammeVariant.new(programme, variant_type:) if variant_type
   end
 
-  private_class_method :variant_for
+  def self.mmrv_variant?(programme, patient, vaccine)
+    return unless Flipper.enabled?(:mmrv)
+    return false unless programme.mmr?
+
+    patient&.date_of_birth&.>=(MIN_MMRV_ELIGIBILITY_DATE) ||
+      vaccine&.disease_types&.include?("varicella")
+  end
+
+  private_class_method :variant_for, :mmrv_variant?
 
   def to_param = type
 
@@ -198,6 +203,28 @@ class Programme
 
   def snomed_target_disease_name
     SNOMED_TARGET_DISEASE_NAMES.fetch(type)
+  end
+
+  SNOMED_PROCEDURE_TERMS = {
+    "flu" => "Seasonal influenza vaccination (procedure)",
+    "hpv" =>
+      "Administration of vaccine product containing only Human " \
+        "papillomavirus antigen (procedure)",
+    "menacwy" =>
+      "Administration of vaccine product containing only Neisseria " \
+        "meningitidis serogroup A, C, W135 and Y antigens (procedure)",
+    "mmr" =>
+      "Administration of vaccine product containing only Measles " \
+        "morbillivirus and Mumps orthorubulavirus and Rubella virus " \
+        "antigens (procedure)",
+    "td_ipv" =>
+      "Administration of vaccine product containing only Clostridium " \
+        "tetani and Corynebacterium diphtheriae and Human poliovirus " \
+        "antigens (procedure)"
+  }.freeze
+
+  def snomed_procedure_term
+    SNOMED_PROCEDURE_TERMS.fetch(type)
   end
 
   delegate :fhir_target_disease_coding, to: :fhir_mapper

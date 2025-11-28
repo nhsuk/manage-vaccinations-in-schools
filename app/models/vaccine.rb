@@ -8,6 +8,7 @@
 #  brand               :text             not null
 #  contains_gelatine   :boolean          not null
 #  discontinued        :boolean          default(FALSE), not null
+#  disease_types       :integer          default([]), not null, is an Array
 #  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
 #  method              :integer          not null
@@ -30,6 +31,7 @@
 class Vaccine < ApplicationRecord
   include BelongsToProgramme
   include HasSideEffects
+  include HasDiseaseTypes
 
   audited
   has_associated_audits
@@ -52,10 +54,13 @@ class Vaccine < ApplicationRecord
   scope :discontinued, -> { where(discontinued: true) }
 
   delegate :first_health_question, to: :health_questions
+
   delegate :fhir_codeable_concept,
            :fhir_manufacturer_reference,
            :fhir_procedure_coding,
            to: :fhir_mapper
+
+  delegate :snomed_procedure_term, to: :programme, allow_nil: true
 
   def active? = !discontinued
 
@@ -119,26 +124,10 @@ class Vaccine < ApplicationRecord
     codes.is_a?(Array) ? codes[dose_sequence - 1] : codes
   end
 
-  SNOMED_PROCEDURE_TERMS = {
-    "flu" => "Seasonal influenza vaccination (procedure)",
-    "hpv" =>
-      "Administration of vaccine product containing only Human " \
-        "papillomavirus antigen (procedure)",
-    "menacwy" =>
-      "Administration of vaccine product containing only Neisseria " \
-        "meningitidis serogroup A, C, W135 and Y antigens (procedure)",
-    "mmr" =>
-      "Administration of vaccine product containing only Measles " \
-        "morbillivirus and Mumps orthorubulavirus and Rubella virus " \
-        "antigens (procedure)",
-    "td_ipv" =>
-      "Administration of vaccine product containing only Clostridium " \
-        "tetani and Corynebacterium diphtheriae and Human poliovirus " \
-        "antigens (procedure)"
-  }.freeze
-
-  def snomed_procedure_term
-    SNOMED_PROCEDURE_TERMS.fetch(programme.type)
+  def programme
+    if (type = programme_type)
+      Programme.find(type, vaccine: self)
+    end
   end
 
   private
