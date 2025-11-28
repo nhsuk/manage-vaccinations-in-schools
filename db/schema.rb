@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_20_151321) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_20_154540) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -798,7 +798,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_151321) do
     t.integer "days_before_consent_reminders"
     t.bigint "location_id", null: false
     t.boolean "national_protocol_enabled", default: false, null: false
-    t.enum "programme_types", array: true, enum_type: "programme_type"
     t.boolean "psd_enabled", default: false, null: false
     t.boolean "requires_registration", default: true, null: false
     t.date "send_consent_requests_at"
@@ -811,7 +810,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_151321) do
     t.index ["dates"], name: "index_sessions_on_dates", using: :gin
     t.index ["location_id", "academic_year", "team_id"], name: "index_sessions_on_location_id_and_academic_year_and_team_id"
     t.index ["location_id"], name: "index_sessions_on_location_id"
-    t.index ["programme_types"], name: "index_sessions_on_programme_types", using: :gin
     t.index ["team_id", "academic_year"], name: "index_sessions_on_team_id_and_academic_year"
     t.index ["team_id", "location_id"], name: "index_sessions_on_team_id_and_location_id"
     t.index ["team_location_id"], name: "index_sessions_on_team_location_id"
