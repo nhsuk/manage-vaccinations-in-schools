@@ -34,9 +34,9 @@ all_vaccinations_by_year AS (
     vr.patient_id,
     vr.programme_type,
     CASE
-      WHEN EXTRACT(MONTH FROM vr.performed_at) >= 9
-      THEN EXTRACT(YEAR FROM vr.performed_at)::integer
-      ELSE EXTRACT(YEAR FROM vr.performed_at)::integer - 1
+      WHEN EXTRACT(MONTH FROM (vr.performed_at AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/London')) >= 9
+      THEN EXTRACT(YEAR FROM (vr.performed_at AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/London'))::integer
+      ELSE EXTRACT(YEAR FROM (vr.performed_at AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/London'))::integer - 1
     END AS academic_year,
     NULL AS team_id,
     vr.outcome,
@@ -95,8 +95,8 @@ base_data AS (
   (vr_previous.patient_id IS NOT NULL) AS vaccinated_in_previous_years,
   -- Vaccination counts
   COALESCE(vaccination_summary.sais_vaccinations_count, 0) AS sais_vaccinations_count,
-  EXTRACT(MONTH FROM vaccination_summary.most_recent_vaccination) AS most_recent_vaccination_month,
-  EXTRACT(YEAR FROM vaccination_summary.most_recent_vaccination) AS most_recent_vaccination_year,
+  EXTRACT(MONTH FROM (vaccination_summary.most_recent_vaccination AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/London')) AS most_recent_vaccination_month,
+  EXTRACT(YEAR FROM (vaccination_summary.most_recent_vaccination AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/London')) AS most_recent_vaccination_year,
   -- Consent information
   COALESCE(pcs.status, 0) AS consent_status,
   pcs.vaccine_methods AS consent_vaccine_methods,
@@ -188,7 +188,7 @@ LEFT JOIN (
 
 -- Left join to check if patient declared they were already vaccinated elsewhere
 LEFT JOIN (
-  SELECT DISTINCT vr.patient_id, vr.programme_type, COALESCE(vr_tl.academic_year, EXTRACT(YEAR FROM vr.performed_at)) AS academic_year
+  SELECT DISTINCT vr.patient_id, vr.programme_type, COALESCE(vr_tl.academic_year, EXTRACT(YEAR FROM (vr.performed_at AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/London'))) AS academic_year
   FROM vaccination_records vr
   LEFT JOIN sessions vr_s ON vr_s.id = vr.session_id
   LEFT JOIN team_locations vr_tl ON vr_tl.id = vr_s.team_location_id
@@ -231,7 +231,7 @@ LEFT JOIN (
   SELECT DISTINCT
     vr.patient_id,
     vr.programme_type,
-    COALESCE(vr_tl.academic_year, EXTRACT(YEAR FROM vr.performed_at)) AS academic_year
+    COALESCE(vr_tl.academic_year, EXTRACT(YEAR FROM (vr.performed_at AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/London'))) AS academic_year
   FROM vaccination_records vr
   LEFT JOIN sessions vr_s ON vr_s.id = vr.session_id
   LEFT JOIN team_locations vr_tl ON vr_tl.id = vr_s.team_location_id
