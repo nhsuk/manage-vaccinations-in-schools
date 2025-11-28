@@ -10,6 +10,7 @@
 #  address_postcode                    :string
 #  address_town                        :string
 #  archived_at                         :datetime
+#  confirmation_sent_at                :datetime
 #  date_of_birth                       :date
 #  education_setting                   :integer
 #  family_name                         :text
@@ -57,6 +58,7 @@ class ConsentForm < ApplicationRecord
   include AgeConcern
   include Archivable
   include BelongsToTeamLocation
+  include Confirmable
   include FullNameConcern
   include GelatineVaccinesConcern
   include HasHealthAnswers

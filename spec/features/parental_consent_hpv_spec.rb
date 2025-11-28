@@ -22,6 +22,7 @@ describe "Parental consent" do
     when_i_submit_the_consent_form
     then_i_get_a_confirmation_email_and_scheduled_survey_email
     and_i_get_a_confirmation_text
+    and_the_consent_form_is_marked_as_confirmation_sent
 
     when_the_nurse_checks_the_consent_responses
     then_they_see_that_the_child_has_consent
@@ -145,6 +146,10 @@ describe "Parental consent" do
 
   def and_i_get_a_confirmation_text
     expect_sms_to("07123 456789", :consent_confirmation_given)
+  end
+
+  def and_the_consent_form_is_marked_as_confirmation_sent
+    expect(ConsentForm.last).to be_confirmation_sent
   end
 
   def when_the_nurse_checks_the_consent_responses

@@ -6,17 +6,15 @@ class SendVaccinationConfirmationsJob < ApplicationJob
   def perform
     # Find the oldest record that has had a confirmation sent, and send confirmations for all subsequent records
     since =
-      VaccinationRecord
-        .kept
-        .where.not(confirmation_sent_at: nil)
-        .maximum(:created_at) || 24.hours.ago
+      VaccinationRecord.kept.confirmation_sent.maximum(:created_at) ||
+        24.hours.ago
     academic_year = AcademicYear.current
 
     VaccinationRecord
       .includes(patient: { consents: :parent })
       .kept
+      .confirmation_not_sent
       .where("created_at >= ?", since)
-      .where(confirmation_sent_at: nil)
       .recorded_in_service
       .select { it.academic_year == academic_year }
       .each { send_vaccination_confirmation(it) }

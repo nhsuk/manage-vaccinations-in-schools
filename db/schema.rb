@@ -209,6 +209,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_27_151931) do
     t.string "address_postcode"
     t.string "address_town"
     t.datetime "archived_at"
+    t.datetime "confirmation_sent_at"
     t.datetime "created_at", null: false
     t.date "date_of_birth"
     t.integer "education_setting"
