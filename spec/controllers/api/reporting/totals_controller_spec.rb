@@ -532,6 +532,64 @@ describe API::Reporting::TotalsController do
       expect(monthly_vaccinations_given).to be_empty
     end
 
+    it "parent refuses consent claiming already vaccinated (consent only)" do
+      patient = create(:patient, session: flu_session)
+      create(
+        :consent,
+        :refused,
+        patient:,
+        programme: flu_programme,
+        team:,
+        reason_for_refusal: "already_vaccinated"
+      )
+
+      StatusUpdater.call(patient:)
+      refresh_and_get_totals(programme_type: "flu")
+
+      expect(cohort).to eq(1)
+      expect(vaccinated).to eq(1)
+      expect(not_vaccinated).to eq(0)
+      expect(vaccinated_elsewhere_declared).to eq(1)
+      expect(vaccinated_elsewhere_recorded).to eq(0)
+      expect(vaccinations_given).to eq(0)
+      expect(monthly_vaccinations_given).to be_empty
+    end
+
+    it "parent refuses consent claiming already vaccinated and FHIR API import" do
+      patient = create(:patient, session: flu_session)
+
+      create(
+        :consent,
+        :refused,
+        patient:,
+        programme: flu_programme,
+        team:,
+        reason_for_refusal: "already_vaccinated"
+      )
+      create(
+        :vaccination_record,
+        patient:,
+        programme: flu_programme,
+        session: nil,
+        source: "nhs_immunisations_api",
+        nhs_immunisations_api_identifier_system: "ABC",
+        nhs_immunisations_api_identifier_value: "123",
+        outcome: "administered",
+        performed_at: Time.current
+      )
+
+      StatusUpdater.call(patient:)
+      refresh_and_get_totals(programme_type: "flu")
+
+      expect(cohort).to eq(1)
+      expect(vaccinated).to eq(1)
+      expect(not_vaccinated).to eq(0)
+      expect(vaccinated_elsewhere_declared).to eq(0)
+      expect(vaccinated_elsewhere_recorded).to eq(1)
+      expect(vaccinations_given).to eq(0)
+      expect(monthly_vaccinations_given).to be_empty
+    end
+
     it "child moves in with eligible vaccination record" do
       other_team = create(:team, programmes: [flu_programme])
       other_session =
