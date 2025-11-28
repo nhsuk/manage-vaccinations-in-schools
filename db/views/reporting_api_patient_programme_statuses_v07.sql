@@ -88,9 +88,9 @@ base_data AS (
     ELSE NULL
   END AS patient_year_group,
   -- Vaccination status booleans
-  (vr_any.patient_id IS NOT NULL OR vr_previous.patient_id IS NOT NULL) AS has_any_vaccination,
+  (vr_any.patient_id IS NOT NULL OR vr_previous.patient_id IS NOT NULL OR consent_already_vaccinated.patient_id IS NOT NULL) AS has_any_vaccination,
   (vaccination_summary.has_sais_vaccination) AS vaccinated_by_sais_current_year,
-  (vr_elsewhere_declared.patient_id IS NOT NULL AND vr_elsewhere_recorded.patient_id IS NULL) AS vaccinated_elsewhere_declared_current_year,
+  ((vr_elsewhere_declared.patient_id IS NOT NULL OR consent_already_vaccinated.patient_id IS NOT NULL) AND vr_elsewhere_recorded.patient_id IS NULL) AS vaccinated_elsewhere_declared_current_year,
   (vr_elsewhere_recorded.patient_id IS NOT NULL) AS vaccinated_elsewhere_recorded_current_year,
   (vr_previous.patient_id IS NOT NULL) AS vaccinated_in_previous_years,
   -- Vaccination counts
@@ -197,6 +197,21 @@ LEFT JOIN (
 ) vr_elsewhere_declared ON vr_elsewhere_declared.patient_id = p.id
   AND vr_elsewhere_declared.programme_type = s_programme_type
   AND vr_elsewhere_declared.academic_year = tl.academic_year
+
+-- Left join to check if parent refused consent claiming child was already vaccinated
+LEFT JOIN (
+  SELECT DISTINCT
+    c.patient_id,
+    c.programme_type,
+    c.academic_year
+  FROM consents c
+  WHERE c.invalidated_at IS NULL
+    AND c.withdrawn_at IS NULL
+    AND c.response = 1  -- refused
+    AND c.reason_for_refusal = 1  -- already_vaccinated
+) consent_already_vaccinated ON consent_already_vaccinated.patient_id = p.id
+  AND consent_already_vaccinated.programme_type = s_programme_type
+  AND consent_already_vaccinated.academic_year = tl.academic_year
 
 LEFT JOIN (
   SELECT DISTINCT patient_id, programme_type, team_id, academic_year
