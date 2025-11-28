@@ -65,8 +65,8 @@ base_data AS (
   -- Team info
   t.id AS team_id,
   t.name AS team_name,
-  -- Archive status - check if there's an archive reason for this patient-team pair
-  (ar.patient_id IS NOT NULL) AS is_archived,
+  -- Archive/deceased status - check if there's an archive reason for this patient-team pair or patient is deceased
+  (ar.patient_id IS NOT NULL OR p.date_of_death IS NOT NULL) AS is_archived,
   -- Patient location info (minimal for filtering)
   COALESCE(school_la.mhclg_code, '') AS patient_school_local_authority_code,
   COALESCE(school_la.mhclg_code, '') AS patient_local_authority_code,
