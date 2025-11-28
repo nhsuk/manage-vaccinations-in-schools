@@ -54,13 +54,25 @@ module MavisCLI
             )
             .each { |name, value| puts "#{Rainbow(name).bright}: #{value}" }
 
-          if location.subteam.nil?
-            puts "#{Rainbow("team:").bright}: No team assigned"
+          team_locations =
+            location
+              .team_locations
+              .includes(:team, :subteam)
+              .where(academic_year:)
+
+          if team_locations.present?
+            team_locations.each do |team_location|
+              team = team_location.team
+              puts "#{Rainbow("team id").bright}: #{team.id}"
+              puts "#{Rainbow("team name").bright}: #{team.name}"
+
+              if (subteam = team_location.subteam)
+                puts "#{Rainbow("subteam id").bright}: #{subteam.id}"
+                puts "#{Rainbow("subteam name").bright}: #{subteam.name}"
+              end
+            end
           else
-            puts "#{Rainbow("team id").bright}: #{location.team.id}"
-            puts "#{Rainbow("team name").bright}: #{location.team.name}"
-            puts "#{Rainbow("subteam id").bright}: #{location.subteam.id}"
-            puts "#{Rainbow("subteam name").bright}: #{location.subteam.name}"
+            puts "#{Rainbow("team:").bright}: No team assigned"
           end
 
           puts Rainbow("programmes:").bright

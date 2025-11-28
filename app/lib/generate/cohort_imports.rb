@@ -124,7 +124,7 @@ class Generate::CohortImports
               Location.new(urn:, year_groups: school_year_groups[urn])
             end
           else
-            team.locations.where(urn: urns).includes(:team, :sessions)
+            team.locations.where(urn: urns).includes(:sessions)
           end
 
         locations.select { (it.gias_year_groups & all_year_groups).any? }

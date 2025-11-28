@@ -26,10 +26,10 @@ class Session::ProgrammeYearGroup < ApplicationRecord
 
   scope :pluck_birth_academic_years,
         -> do
-          joins(:session)
+          joins(session: :team_location)
             .distinct
-            .order(:"sessions.academic_year", :year_group)
-            .pluck(:"sessions.academic_year", :year_group)
+            .order(:"team_locations.academic_year", :year_group)
+            .pluck(:"team_locations.academic_year", :year_group)
             .map { _2.to_birth_academic_year(academic_year: _1) }
         end
 

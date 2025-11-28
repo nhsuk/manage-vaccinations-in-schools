@@ -5,7 +5,6 @@
 # Table name: consent_forms
 #
 #  id                                  :bigint           not null, primary key
-#  academic_year                       :integer          not null
 #  address_line_1                      :string
 #  address_line_2                      :string
 #  address_postcode                    :string
@@ -33,10 +32,8 @@
 #  use_preferred_name                  :boolean
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
-#  location_id                         :bigint           not null
 #  school_id                           :bigint
-#  team_id                             :bigint           not null
-#  team_location_id                    :bigint
+#  team_location_id                    :bigint           not null
 #
 # Indexes
 #
@@ -60,8 +57,13 @@ require_relative "../../lib/faker/address"
 FactoryBot.define do
   factory :consent_form do
     transient do
-      session { association :session }
+      session { association(:session) }
+
+      academic_year { session.academic_year }
+      location { session.location }
       programmes { session.programmes }
+      team { session.team }
+
       response { "given" }
       reason_for_refusal { nil }
       reason_for_refusal_notes { "" }
@@ -86,7 +88,6 @@ FactoryBot.define do
     address_line_1 { Faker::Address.street_address }
     address_town { Faker::Address.city }
     address_postcode { Faker::Address.uk_postcode }
-    academic_year { session.academic_year }
 
     parent_email { Faker::Internet.email }
     parent_full_name { "#{Faker::Name.first_name} #{family_name}" }
@@ -107,9 +108,9 @@ FactoryBot.define do
 
     parental_responsibility { "yes" }
 
-    location { session.location }
-    team { session.team }
-    team_location { session.team_location }
+    team_location do
+      session&.team_location || location.attach_to_team!(team, academic_year:)
+    end
 
     school { location.school? ? location : association(:school, team:) }
     school_confirmed { true }

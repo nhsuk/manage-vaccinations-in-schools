@@ -229,24 +229,8 @@ describe CommitImportJob do
 
       context "with an existing patient in a session for a previous academic year but not the current" do
         let(:previous_academic_year) { session.academic_year - 1 }
-        let(:patient) do
-          create(
-            :patient,
-            nhs_number: "9990000018",
-            school: location,
-            session:
-              create(
-                :session,
-                team:,
-                programmes:,
-                location:,
-                academic_year: previous_academic_year,
-                date: previous_academic_year.to_academic_year_date_range.begin
-              )
-          )
-        end
 
-        before do
+        let(:previous_session) do
           location.import_year_groups_from_gias!(
             academic_year: previous_academic_year
           )
@@ -254,9 +238,29 @@ describe CommitImportJob do
             programmes,
             academic_year: previous_academic_year
           )
+
+          create(
+            :session,
+            team:,
+            programmes:,
+            location:,
+            academic_year: previous_academic_year,
+            date: previous_academic_year.to_academic_year_date_range.begin
+          )
+        end
+
+        let(:patient) do
+          create(
+            :patient,
+            nhs_number: "9990000018",
+            school: location,
+            session: previous_session,
+            year_group: 9
+          )
         end
 
         it "adds the patient to the upcoming session" do
+          expect(patient.sessions).to include(previous_session)
           expect(patient.sessions).not_to include(session)
 
           expect { perform_job }.to change { patient.reload.sessions.count }.by(

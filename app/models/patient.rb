@@ -99,15 +99,17 @@ class Patient < ApplicationRecord
   enum :gender_code, { not_known: 0, male: 1, female: 2, not_specified: 9 }
 
   scope :joins_sessions, -> { joins(:patient_locations).joins(<<-SQL) }
+    INNER JOIN team_locations
+    ON team_locations.location_id = patient_locations.location_id
+    AND team_locations.academic_year = patient_locations.academic_year
     INNER JOIN sessions
-    ON sessions.location_id = patient_locations.location_id
-    AND sessions.academic_year = patient_locations.academic_year
+    ON sessions.team_location_id = team_locations.id
   SQL
 
   scope :joins_session_programme_year_groups, -> { joins(<<-SQL) }
     INNER JOIN session_programme_year_groups
     ON session_programme_year_groups.session_id = sessions.id
-    AND patients.birth_academic_year = sessions.academic_year - session_programme_year_groups.year_group - #{Integer::AGE_CHILDREN_START_SCHOOL}
+    AND patients.birth_academic_year = team_locations.academic_year - session_programme_year_groups.year_group - #{Integer::AGE_CHILDREN_START_SCHOOL}
   SQL
 
   scope :archived,
@@ -818,8 +820,9 @@ class Patient < ApplicationRecord
 
   def not_in_team?(team:, academic_year:)
     patient_locations
-      .joins(location: :subteam)
-      .where(academic_year:, subteams: { team_id: team.id })
+      .where(academic_year:)
+      .joins(location: :team_locations)
+      .where(team_locations: { academic_year:, team: })
       .empty?
   end
 
@@ -849,7 +852,7 @@ class Patient < ApplicationRecord
     scope = patient_locations.pending
 
     unless team.nil?
-      scope = scope.joins_sessions.where("sessions.team_id = ?", team.id)
+      scope = scope.joins_sessions.where("team_locations.team_id = ?", team.id)
     end
 
     scope.destroy_all_if_safe

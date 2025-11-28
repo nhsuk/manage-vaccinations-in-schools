@@ -5,7 +5,6 @@
 # Table name: consent_forms
 #
 #  id                                  :bigint           not null, primary key
-#  academic_year                       :integer          not null
 #  address_line_1                      :string
 #  address_line_2                      :string
 #  address_postcode                    :string
@@ -33,10 +32,8 @@
 #  use_preferred_name                  :boolean
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
-#  location_id                         :bigint           not null
 #  school_id                           :bigint
-#  team_id                             :bigint           not null
-#  team_location_id                    :bigint
+#  team_location_id                    :bigint           not null
 #
 # Indexes
 #
@@ -59,6 +56,7 @@ class ConsentForm < ApplicationRecord
   include AddressConcern
   include AgeConcern
   include Archivable
+  include BelongsToTeamLocation
   include FullNameConcern
   include GelatineVaccinesConcern
   include HasHealthAnswers
@@ -88,9 +86,7 @@ class ConsentForm < ApplicationRecord
   scope :for_session,
         ->(session) do
           where(
-            academic_year: session.academic_year,
-            location: session.location,
-            team: session.team
+            team_location_id: session.team_location_id
           ).has_any_programme_types_of(session.programme_types)
         end
 
@@ -101,13 +97,7 @@ class ConsentForm < ApplicationRecord
                 :injection_alternative,
                 :without_gelatine
 
-  audited associated_with: :team
-  has_associated_audits
-
-  belongs_to :location
   belongs_to :school, class_name: "Location", optional: true
-  belongs_to :team
-  belongs_to :team_location, optional: true
 
   has_many :consents
   has_many :notify_log_entries
@@ -122,8 +112,6 @@ class ConsentForm < ApplicationRecord
   has_many :refused_consent_form_programmes,
            -> { ordered.response_refused },
            class_name: "ConsentFormProgramme"
-
-  has_one :subteam, through: :location
 
   has_many :eligible_schools, through: :team, source: :schools
 
@@ -398,7 +386,13 @@ class ConsentForm < ApplicationRecord
         session_location = school || location
 
         sessions_to_search =
-          Session.where(academic_year:, location: session_location, team:)
+          Session.joins(:team_location).where(
+            team_location: {
+              academic_year:,
+              location: session_location,
+              team:
+            }
+          )
 
         sessions_to_search =
           # TODO: This doesn't work if a child goes to a different year group

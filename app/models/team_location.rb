@@ -27,13 +27,38 @@
 #
 
 class TeamLocation < ApplicationRecord
+  include ContributesToPatientTeams
+
+  class ActiveRecord_Relation < ActiveRecord::Relation
+    include ContributesToPatientTeams::Relation
+  end
+
   audited associated_with: :team
+  has_associated_audits
 
   belongs_to :team
   belongs_to :location
   belongs_to :subteam, optional: true
 
+  has_many :consent_forms
+  has_many :sessions
+
+  has_many :patient_locations,
+           -> { where(academic_year: it.academic_year) },
+           through: :location
+
   validate :subteam_belongs_to_team
+
+  scope :ordered, -> { order(created_at: :desc) }
+
+  def email = subteam&.email || team&.email
+
+  def name = subteam&.name || team&.name
+
+  def phone = subteam&.phone || team&.phone
+
+  def phone_instructions =
+    subteam&.phone_instructions || team&.phone_instructions
 
   private
 

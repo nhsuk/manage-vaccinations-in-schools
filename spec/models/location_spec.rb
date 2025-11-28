@@ -22,7 +22,6 @@
 #  urn                       :string
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
-#  subteam_id                :bigint
 #
 # Indexes
 #

@@ -51,25 +51,20 @@ class TeamLocationSessionsFactory
   end
 
   def already_exists?(programmes:)
-    team
-      .sessions
-      .has_all_programmes_of(programmes)
-      .exists?(academic_year:, location:)
+    Session.has_all_programmes_of(programmes).exists?(team_location:)
   end
 
   def create_session!(programmes:)
-    team
-      .sessions
-      .create!(academic_year:, location:, team_location:, dates: [])
+    Session
+      .create!(team_location:, dates: [])
       .tap { it.sync_location_programme_year_groups!(programmes:) }
   end
 
   def find_or_create_session!(programmes:)
-    team
-      .sessions
+    Session
       .includes(:location, :session_programme_year_groups)
-      .create_with(dates: [], team_location:)
-      .find_or_create_by!(academic_year:, location:)
+      .create_with(dates: [])
+      .find_or_create_by!(team_location:)
       .tap do |session|
         session.sync_location_programme_year_groups!(
           programmes: (session.programmes + programmes).sort.uniq
@@ -95,6 +90,6 @@ class TeamLocationSessionsFactory
   end
 
   def patients_in_sessions
-    Patient.joins_sessions.where(sessions: { team_id: team.id })
+    Patient.joins_sessions.where(team_locations: { team_id: team.id })
   end
 end

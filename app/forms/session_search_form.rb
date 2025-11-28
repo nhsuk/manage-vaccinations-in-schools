@@ -7,9 +7,7 @@ class SessionSearchForm < SearchForm
   attribute :status, :string
   attribute :type, :string
 
-  def academic_year
-    super || AcademicYear.pending
-  end
+  def academic_year = super || AcademicYear.pending
 
   def programmes=(values)
     super(values&.compact_blank || [])
@@ -28,7 +26,7 @@ class SessionSearchForm < SearchForm
   private
 
   def filter_academic_year(scope)
-    scope.where(academic_year:)
+    scope.for_academic_year(academic_year)
   end
 
   def filter_programmes(scope)
