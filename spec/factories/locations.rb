@@ -11,6 +11,7 @@
 #  address_town              :text
 #  gias_establishment_number :integer
 #  gias_local_authority_code :integer
+#  gias_phase                :integer
 #  gias_year_groups          :integer          default([]), not null, is an Array
 #  name                      :text             not null
 #  ods_code                  :string
@@ -122,14 +123,17 @@ FactoryBot.define do
       sequence(:gias_local_authority_code, 1)
       sequence(:urn, 100_000, &:to_s)
 
+      gias_phase { "all_through" }
       gias_year_groups { (0..11).to_a }
 
       trait :primary do
+        gias_phase { "primary" }
         gias_year_groups { (0..6).to_a }
       end
 
       trait :secondary do
         name { Faker::Educator.secondary_school }
+        gias_phase { "secondary" }
         gias_year_groups { (7..11).to_a }
       end
 

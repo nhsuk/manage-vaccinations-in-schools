@@ -13,6 +13,9 @@ module MavisCLI
       argument :gias_local_authority_code,
                required: true,
                desc: "GIAS local authority code"
+      argument :gias_phase,
+               required: true,
+               desc: "GIAS phase (e.g. primary or secondary)"
 
       option :site, desc: "Additional site "
       option :status, desc: "Status of the school", default: "open"
@@ -33,6 +36,7 @@ module MavisCLI
         name:,
         gias_establishment_number:,
         gias_local_authority_code:,
+        gias_phase:,
         site: nil,
         status: "open",
         systm_one_code: nil,
@@ -53,6 +57,7 @@ module MavisCLI
             address_town:,
             gias_establishment_number:,
             gias_local_authority_code:,
+            gias_phase:,
             gias_year_groups:,
             name:,
             site:,
