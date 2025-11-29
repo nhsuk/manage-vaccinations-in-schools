@@ -54,7 +54,7 @@ class AppSessionCardComponent < ViewComponent::Base
         text: "Status"
       },
       value: {
-        text: helpers.session_status_tag(session)
+        text: helpers.session_status(session)
       }
     }
   end
