@@ -19,29 +19,4 @@ describe AppSessionCardComponent do
   it { should have_text("StatusSessions scheduled") }
   it { should have_text("Session dates1 September 2025") }
   it { should have_text("Consent periodOpens 11 August") }
-
-  context "with no dates" do
-    let(:session) do
-      create(:session, academic_year: 2025, date: nil, programmes: [programme])
-    end
-
-    it { should have_text("Session datesNo sessions scheduled") }
-  end
-
-  context "with multiple dates" do
-    let(:session) do
-      create(
-        :session,
-        academic_year: 2025,
-        dates: [date, date + 1.week, date + 2.weeks],
-        programmes: [programme]
-      )
-    end
-
-    it do
-      expect(rendered).to have_text(
-        "Session dates1 September 2025 – 15 September 2025 (3 sessions)"
-      )
-    end
-  end
 end

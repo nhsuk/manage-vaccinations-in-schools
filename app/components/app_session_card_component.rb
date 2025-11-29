@@ -60,19 +60,14 @@ class AppSessionCardComponent < ViewComponent::Base
   end
 
   def dates_row
-    dates = session.dates
-
-    text =
-      if dates.empty?
-        "No sessions scheduled"
-      elsif dates.length == 1
-        dates.min.to_fs(:long)
-      else
-        "#{dates.min.to_fs(:long)} – #{dates.max.to_fs(:long)} " \
-          "(#{dates.length} sessions)"
-      end
-
-    { key: { text: "Session dates" }, value: { text: } }
+    {
+      key: {
+        text: "Session dates"
+      },
+      value: {
+        text: helpers.session_dates(session)
+      }
+    }
   end
 
   def consent_period_row
