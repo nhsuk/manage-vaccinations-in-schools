@@ -1,35 +1,66 @@
 # frozen_string_literal: true
 
 class AppSessionCardComponent < ViewComponent::Base
-  def initialize(session, patient_count:)
+  def initialize(
+    session,
+    patient_count:,
+    heading_as_dates: false,
+    full_width: false,
+    show_buttons: false,
+    show_status: false
+  )
     @session = session
     @patient_count = patient_count
+    @heading_as_dates = heading_as_dates
+    @full_width = full_width
+    @show_buttons = show_buttons
+    @show_status = show_status
   end
 
   def call
-    render AppCardComponent.new(**card_options) do |card|
-      card.with_heading(level: 4) { session.location.name }
-      govuk_summary_list(rows:)
+    render AppCardComponent.new(link_to:, compact: true) do |card|
+      card.with_heading(level: 4) { heading }
+      safe_join([govuk_summary_list(rows:, classes:), button_group].compact)
     end
   end
 
   private
 
-  attr_reader :session, :patient_count
+  attr_reader :session,
+              :patient_count,
+              :heading_as_dates,
+              :full_width,
+              :show_buttons,
+              :show_status
 
-  delegate :govuk_summary_list, to: :helpers
-  delegate :programmes, to: :session
+  delegate :govuk_button_link_to, :govuk_summary_list, to: :helpers
+  delegate :programmes, :year_groups, to: :session
 
-  def card_options = { link_to: session_path(session), compact: true }
+  def link_to = session_path(session)
 
-  def rows
-    [cohort_row, programmes_row, status_row, dates_row, consent_period_row]
+  def heading
+    heading_as_dates ? helpers.session_dates(session) : session.location.name
   end
 
-  def cohort_row
+  def classes
+    full_width ? %w[app-summary-list--full-width] : []
+  end
+
+  def rows
+    [
+      patient_count_row,
+      programmes_row,
+      year_groups_row,
+      status_row,
+      dates_row,
+      consent_period_row
+    ].compact
+  end
+
+  def patient_count_row
     {
       key: {
-        text: "Cohort"
+        text: "Children"
       },
       value: {
         text: I18n.t("children", count: patient_count)
@@ -48,7 +79,20 @@ class AppSessionCardComponent < ViewComponent::Base
     }
   end
 
+  def year_groups_row
+    {
+      key: {
+        text: "Year groups"
+      },
+      value: {
+        text: helpers.format_year_groups(year_groups)
+      }
+    }
+  end
+
   def status_row
+    return unless show_status
+
     {
       key: {
         text: "Status"
@@ -60,9 +104,11 @@ class AppSessionCardComponent < ViewComponent::Base
   end
 
   def dates_row
+    return if heading_as_dates
+
     {
       key: {
-        text: "Session dates"
+        text: "Date".pluralize(session.dates.length)
       },
       value: {
         text: helpers.session_dates(session)
@@ -79,5 +125,16 @@ class AppSessionCardComponent < ViewComponent::Base
         text: helpers.session_consent_period(session)
       }
     }
+  end
+
+  def button_group
+    return unless show_buttons
+
+    tag.div(class: "nhsuk-button-group") do
+      govuk_button_link_to "Edit session",
+                           edit_session_path(session),
+                           secondary: true,
+                           class: "app-button--small"
+    end
   end
 end
