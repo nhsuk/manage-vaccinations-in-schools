@@ -33,21 +33,24 @@
 #  use_preferred_name                  :boolean
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
+#  original_session_id                 :bigint
 #  school_id                           :bigint
 #  team_location_id                    :bigint           not null
 #
 # Indexes
 #
-#  index_consent_forms_on_academic_year     (academic_year)
-#  index_consent_forms_on_location_id       (location_id)
-#  index_consent_forms_on_nhs_number        (nhs_number)
-#  index_consent_forms_on_school_id         (school_id)
-#  index_consent_forms_on_team_id           (team_id)
-#  index_consent_forms_on_team_location_id  (team_location_id)
+#  index_consent_forms_on_academic_year        (academic_year)
+#  index_consent_forms_on_location_id          (location_id)
+#  index_consent_forms_on_nhs_number           (nhs_number)
+#  index_consent_forms_on_original_session_id  (original_session_id)
+#  index_consent_forms_on_school_id            (school_id)
+#  index_consent_forms_on_team_id              (team_id)
+#  index_consent_forms_on_team_location_id     (team_location_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (location_id => locations.id)
+#  fk_rails_...  (original_session_id => sessions.id)
 #  fk_rails_...  (school_id => locations.id)
 #  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (team_location_id => team_locations.id)
@@ -99,6 +102,7 @@ class ConsentForm < ApplicationRecord
                 :injection_alternative,
                 :without_gelatine
 
+  belongs_to :original_session, class_name: "Session", optional: true
   belongs_to :school, class_name: "Location", optional: true
 
   has_many :consents

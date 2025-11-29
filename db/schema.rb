@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_27_151931) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -219,6 +219,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_27_151931) do
     t.bigint "location_id"
     t.string "nhs_number"
     t.text "notes", default: "", null: false
+    t.bigint "original_session_id"
     t.string "parent_contact_method_other_details"
     t.string "parent_contact_method_type"
     t.string "parent_email"
@@ -239,6 +240,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_27_151931) do
     t.index ["academic_year"], name: "index_consent_forms_on_academic_year"
     t.index ["location_id"], name: "index_consent_forms_on_location_id"
     t.index ["nhs_number"], name: "index_consent_forms_on_nhs_number"
+    t.index ["original_session_id"], name: "index_consent_forms_on_original_session_id"
     t.index ["school_id"], name: "index_consent_forms_on_school_id"
     t.index ["team_id"], name: "index_consent_forms_on_team_id"
     t.index ["team_location_id"], name: "index_consent_forms_on_team_location_id"
@@ -1026,6 +1028,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_27_151931) do
   add_foreign_key "consent_form_programmes", "consent_forms", on_delete: :cascade
   add_foreign_key "consent_forms", "locations"
   add_foreign_key "consent_forms", "locations", column: "school_id"
+  add_foreign_key "consent_forms", "sessions", column: "original_session_id"
   add_foreign_key "consent_forms", "team_locations"
   add_foreign_key "consent_forms", "teams"
   add_foreign_key "consent_notifications", "patients"
