@@ -27,7 +27,8 @@ describe AppPatientTableComponent do
     ] + create_list(:patient, 8)
   end
 
-  let(:current_user) { create(:nurse) }
+  let(:team) { create(:team) }
+  let(:current_user) { create(:nurse, team:) }
 
   let(:count) { 10 }
 
@@ -96,12 +97,37 @@ describe AppPatientTableComponent do
   context "with a patient not in the cohort" do
     it "doesn't render a link" do
       expect(rendered).not_to have_link("SMITH, John")
-      expect(rendered).to have_content("Child has moved out of the area")
+      expect(rendered).to have_content("Child is not in any sessions")
+    end
+  end
+
+  context "with a patient is deceased" do
+    before do
+      patients.first.update_columns(
+        date_of_death_recorded_at: Time.current,
+        date_of_death: Time.current
+      )
+    end
+
+    it "doesn't render a link" do
+      expect(rendered).not_to have_link("SMITH, John")
+      expect(rendered).to have_content("Child is deceased")
+    end
+  end
+
+  context "when patient is in a different team" do
+    let(:other_team) { create(:team) }
+    let(:session) { create(:session, team: other_team) }
+
+    before { create(:patient_location, patient: patients.first, session:) }
+
+    it "doesn't render a link" do
+      expect(rendered).not_to have_link("SMITH, John")
+      expect(rendered).to have_content("Child is in a different SAIS team")
     end
   end
 
   context "with a patient in the cohort" do
-    let(:team) { current_user.selected_team }
     let(:session) { create(:session, team:) }
 
     before { create(:patient_location, patient: patients.first, session:) }
