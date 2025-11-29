@@ -20,7 +20,7 @@ class AppSchoolCardComponent < ViewComponent::Base
 
   delegate :govuk_summary_list, to: :helpers
 
-  def link_to = nil
+  def link_to = school_patients_path(school)
 
   def rows
     [

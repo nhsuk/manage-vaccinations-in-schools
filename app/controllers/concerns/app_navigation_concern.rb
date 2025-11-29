@@ -20,54 +20,47 @@ module AppNavigationConcern
       return
     end
 
-    @app_navigation_items =
-      (
-        if current_team.has_poc_access?
-          [
-            {
-              title: t("programmes.index.title"),
-              path: programmes_path,
-              count: nil
-            },
-            {
-              title: t("sessions.index.title"),
-              path: sessions_path,
-              count: nil
-            },
-            {
-              title: t("patients.index.title"),
-              path: patients_path,
-              count: nil
-            },
-            {
-              title: t("consent_forms.index.title_short"),
-              path: consent_forms_path,
-              count: @cached_counts.unmatched_consent_responses
-            },
-            {
-              title: t("school_moves.index.title"),
-              path: school_moves_path,
-              count: @cached_counts.school_moves
-            },
-            {
-              title: t("vaccines.index.title"),
-              path: vaccines_path,
-              count: nil
-            }
-          ]
-        else
-          []
-        end
-      )
-
-    @app_navigation_items += [
+    @app_navigation_items = [
+      if current_team.has_poc_access? && Flipper.enabled?(:schools_section)
+        { title: t("schools.index.title"), path: schools_path, count: nil }
+      end,
+      if current_team.has_poc_access?
+        { title: t("patients.index.title"), path: patients_path, count: nil }
+      end,
+      if current_team.has_poc_access?
+        { title: t("sessions.index.title"), path: sessions_path, count: nil }
+      end,
+      if current_team.has_poc_access?
+        { title: t("vaccines.index.title"), path: vaccines_path, count: nil }
+      end,
+      if current_team.has_poc_access?
+        {
+          title: t("consent_forms.index.title_short"),
+          path: consent_forms_path,
+          count: @cached_counts.unmatched_consent_responses
+        }
+      end,
+      if current_team.has_poc_access?
+        {
+          title: t("school_moves.index.title"),
+          path: school_moves_path,
+          count: @cached_counts.school_moves
+        }
+      end,
       {
         title: t("imports.index.title_short"),
         path: imports_path,
         count: @cached_counts.import_issues
       },
+      if current_team.has_poc_access?
+        {
+          title: t("programmes.index.title"),
+          path: programmes_path,
+          count: nil
+        }
+      end,
       { title: t("teams.show.title"), path: team_path, count: nil }
-    ]
+    ].compact
   end
 
   # Used by Reporting to display counts in their header
