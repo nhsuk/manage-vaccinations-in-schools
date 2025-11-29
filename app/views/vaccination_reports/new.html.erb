@@ -1,0 +1,49 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: dashboard_path) %>
+<% end %>
+
+<% title = "Download vaccination report" %>
+<% content_for :page_title, title %>
+
+<%= form_with model: @vaccination_report, url: vaccination_report_create_path, method: :post do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= h1 title %>
+
+  <div class="nhsuk-u-margin-bottom-8">
+    <%= f.govuk_collection_radio_buttons :academic_year,
+                                         AcademicYear.all,
+                                         :itself,
+                                         ->(year) { format_academic_year(year) },
+                                         legend: { text: "Academic year", size: "m" } %>
+  </div>
+
+  <div class="nhsuk-u-margin-bottom-8">
+    <%= f.govuk_collection_radio_buttons :programme_type,
+                                         Programme::TYPES,
+                                         :itself,
+                                         ->(type) { I18n.t(type, scope: :programme_types) },
+                                         legend: { text: "Programme", size: "m" } %>
+  </div>
+
+  <div class="nhsuk-u-margin-bottom-8">
+    <%= f.govuk_date_field :date_from,
+                           legend: { text: "Get vaccination data from (optional)", size: "m" },
+                           hint: { text: "For example, 27 3 2017" } %>
+  </div>
+
+  <div class="nhsuk-u-margin-bottom-8">
+    <%= f.govuk_date_field :date_to,
+                           legend: { text: "Get vaccination data until (optional)", size: "m" },
+                           hint: { text: "For example, 27 3 2017" } %>
+  </div>
+
+  <div class="nhsuk-u-margin-bottom-8">
+    <%= f.govuk_collection_radio_buttons :file_format,
+                                         VaccinationReport::FILE_FORMATS,
+                                         :itself,
+                                         legend: { text: "Select file format", size: "m" } %>
+  </div>
+
+  <%= f.govuk_submit "Download vaccination data" %>
+<% end %>
