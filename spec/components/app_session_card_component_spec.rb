@@ -16,7 +16,7 @@ describe AppSessionCardComponent do
 
   it { should have_text("Cohort100 children") }
   it { should have_text("ProgrammesFlu") }
-  it { should have_text("StatusSessions scheduled") }
+  it { should have_text("StatusScheduled") }
   it { should have_text("Session dates1 September 2025") }
   it { should have_text("Consent periodOpens 11 August") }
 end

@@ -85,37 +85,25 @@ describe SessionsHelper do
     end
   end
 
-  describe "#session_status_tag" do
-    subject(:session_status_tag) { helper.session_status_tag(session) }
+  describe "#session_status" do
+    subject { helper.session_status(session) }
 
     context "when unscheduled" do
       let(:session) { create(:session, :unscheduled) }
 
-      it do
-        expect(session_status_tag).to eq(
-          "<strong class=\"nhsuk-tag nhsuk-tag--purple\">No sessions scheduled</strong>"
-        )
-      end
+      it { should eq("Unscheduled") }
     end
 
     context "when scheduled" do
       let(:session) { create(:session, :scheduled) }
 
-      it do
-        expect(session_status_tag).to eq(
-          "<strong class=\"nhsuk-tag nhsuk-tag--blue\">Sessions scheduled</strong>"
-        )
-      end
+      it { should eq("Scheduled") }
     end
 
     context "when completed" do
       let(:session) { create(:session, :completed) }
 
-      it do
-        expect(session_status_tag).to eq(
-          "<strong class=\"nhsuk-tag nhsuk-tag--green\">All sessions completed</strong>"
-        )
-      end
+      it { should eq("Completed") }
     end
   end
 end
