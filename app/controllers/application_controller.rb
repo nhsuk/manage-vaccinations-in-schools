@@ -15,12 +15,11 @@ class ApplicationController < ActionController::Base
   before_action :set_service_name
   before_action :set_service_url
   before_action :set_service_guide_url
-  before_action :set_show_navigation
   before_action :set_privacy_policy_url
   before_action :set_sentry_user
   before_action :authenticate_basic
 
-  include AppNavigationConcern
+  include NavigationConcern
 
   after_action :verify_policy_scoped, if: -> { Rails.env.local? }
 
@@ -67,10 +66,6 @@ class ApplicationController < ActionController::Base
 
   def set_service_url
     @service_url = "https://www.manage-vaccinations-in-schools.nhs.uk"
-  end
-
-  def set_show_navigation
-    @show_navigation = current_user.present?
   end
 
   def set_disable_cache_headers

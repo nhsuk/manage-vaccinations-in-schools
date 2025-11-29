@@ -16,8 +16,8 @@ module ParentInterface
 
     private
 
-    def set_show_navigation
-      @show_navigation = false
+    def set_navigation_items
+      @navigation_items = []
     end
 
     def set_consent_form
