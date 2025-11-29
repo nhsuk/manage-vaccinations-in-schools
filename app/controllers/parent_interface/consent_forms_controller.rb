@@ -62,9 +62,6 @@ module ParentInterface
 
       TeamCachedCounts.new(@team).reset_unmatched_consent_responses!
 
-      @consent_form.notifier.send_confirmation
-      @consent_form.confirmation_sent!
-
       ProcessConsentFormJob.perform_later(@consent_form)
     end
 
