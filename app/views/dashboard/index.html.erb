@@ -19,16 +19,16 @@
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <% unless team_has_upload_access_only? %>
     <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      <%= render AppCardComponent.new(link_to: consent_forms_path, secondary: true) do |card| %>
-        <% card.with_heading(level: 2, size: "s") { t("consent_forms.index.title") } %>
-        <% card.with_description { "Review incoming consent responses that can’t be automatically matched" } %>
+      <%= render AppCardComponent.new(link_to: school_moves_path, secondary: true) do |card| %>
+        <% card.with_heading(level: 2, size: "s") { t("school_moves.index.title") } %>
+        <% card.with_description { "Review children who have moved schools" } %>
       <% end %>
     </li>
 
     <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      <%= render AppCardComponent.new(link_to: school_moves_path, secondary: true) do |card| %>
-        <% card.with_heading(level: 2, size: "s") { t("school_moves.index.title") } %>
-        <% card.with_description { "Review children who have moved schools" } %>
+      <%= render AppCardComponent.new(link_to: consent_forms_path, secondary: true) do |card| %>
+        <% card.with_heading(level: 2, size: "s") { t("consent_forms.index.title") } %>
+        <% card.with_description { "Review incoming consent responses that can’t be automatically matched" } %>
       <% end %>
     </li>
 

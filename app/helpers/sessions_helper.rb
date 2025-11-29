@@ -16,13 +16,43 @@ module SessionsHelper
     end
   end
 
-  def session_status_tag(session)
-    if session.unscheduled?
-      govuk_tag(text: "No sessions scheduled", colour: "purple")
-    elsif session.completed?
-      govuk_tag(text: "All sessions completed", colour: "green")
+  def session_dates(session)
+    dates = session.dates
+
+    if dates.empty?
+      "No dates scheduled"
+    elsif dates.length == 1
+      dates.min.to_fs(:long)
     else
-      govuk_tag(text: "Sessions scheduled", colour: "blue")
+      min_date = dates.min
+      max_date = dates.max
+
+      max_date_str = max_date.to_fs(:long)
+
+      min_date_str =
+        if min_date.month == max_date.month && min_date.year == max_date.year
+          min_date.day.to_s
+        elsif min_date.year == max_date.year
+          min_date.strftime("%-d %B")
+        else
+          min_date.to_fs(:long)
+        end
+
+      if dates.length == 2
+        "#{min_date_str} – #{max_date_str}"
+      else
+        "#{min_date_str} – #{max_date_str} (#{dates.length} dates)"
+      end
+    end
+  end
+
+  def session_status(session)
+    if session.unscheduled?
+      "Unscheduled"
+    elsif session.completed?
+      "Completed"
+    else
+      "Scheduled"
     end
   end
 end
