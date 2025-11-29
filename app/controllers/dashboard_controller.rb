@@ -34,11 +34,19 @@ class DashboardController < ApplicationController
         ]
       else
         [
-          {
-            title: I18n.t("programmes.index.title"),
-            path: programmes_path,
-            description: I18n.t("programmes.index.description")
-          },
+          if Flipper.enabled?(:schools_and_sessions)
+            {
+              title: I18n.t("schools.index.title"),
+              path: schools_path,
+              description: I18n.t("schools.index.description")
+            }
+          else
+            {
+              title: I18n.t("programmes.index.title"),
+              path: programmes_path,
+              description: I18n.t("programmes.index.description")
+            }
+          end,
           {
             title: I18n.t("sessions.index.title"),
             path: sessions_path,
@@ -48,6 +56,11 @@ class DashboardController < ApplicationController
             title: I18n.t("patients.index.title"),
             path: patients_path,
             description: I18n.t("patients.index.description")
+          },
+          {
+            title: I18n.t("vaccines.index.title"),
+            path: vaccines_path,
+            description: I18n.t("vaccines.index.description")
           }
         ]
       end
@@ -58,15 +71,15 @@ class DashboardController < ApplicationController
 
     unless current_team.has_upload_access_only?
       @secondary_items << {
-        title: I18n.t("consent_forms.index.title"),
-        path: consent_forms_path,
-        description: I18n.t("consent_forms.index.description")
-      }
-
-      @secondary_items << {
         title: I18n.t("school_moves.index.title"),
         path: school_moves_path,
         description: I18n.t("school_moves.index.description")
+      }
+
+      @secondary_items << {
+        title: I18n.t("consent_forms.index.title"),
+        path: consent_forms_path,
+        description: I18n.t("consent_forms.index.description")
       }
 
       @secondary_items << {
@@ -75,11 +88,13 @@ class DashboardController < ApplicationController
         description: I18n.t("imports.index.description")
       }
 
-      @secondary_items << {
-        title: I18n.t("vaccines.index.title"),
-        path: vaccines_path,
-        description: I18n.t("vaccines.index.description")
-      }
+      if Flipper.enabled?(:schools_and_sessions)
+        @secondary_items << {
+          title: I18n.t("programmes.index.title"),
+          path: programmes_path,
+          description: I18n.t("programmes.index.description")
+        }
+      end
     end
 
     @secondary_items << {

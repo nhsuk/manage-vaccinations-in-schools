@@ -17,9 +17,9 @@
 
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <% @primary_items.each do |item| %>
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      <%= render AppCardComponent.new(link_to: item[:path], disabled: item[:path].nil?) do |card| %>
-        <% card.with_heading(level: 2) { item.fetch(:title) } %>
+    <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
+      <%= render AppCardComponent.new(link_to: item[:path], disabled: item[:path].nil?, compact: true) do |card| %>
+        <% card.with_heading(level: 2, size: "s") { item.fetch(:title) } %>
         <% card.with_description { item.fetch(:description) } %>
       <% end %>
     </li>

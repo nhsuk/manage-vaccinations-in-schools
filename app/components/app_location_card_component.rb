@@ -20,15 +20,13 @@ class AppLocationCardComponent < ViewComponent::Base
 
   delegate :govuk_summary_list, to: :helpers
 
-  def link_to = nil
-
-  def heading
-    if location.generic_clinic?
-      "No known school (including home-schooled children)"
-    else
-      location.name
-    end
+  def link_to
+    school_patients_path(
+      location.generic_clinic? ? Location::URN_UNKNOWN : location
+    )
   end
+
+  def heading = location.school_name
 
   def rows
     [

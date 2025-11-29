@@ -86,6 +86,7 @@ describe "End-to-end journey" do
     expect(cards[0].first("h2")).to have_content("Programmes")
     expect(cards[1].first("h2")).to have_content("Sessions")
     expect(cards[2].first("h2")).to have_content("Children")
+    expect(cards[3].first("h2")).to have_content("Vaccines")
   end
 
   def and_the_default_navigation_items

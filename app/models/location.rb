@@ -37,6 +37,9 @@ class Location < ApplicationRecord
 
   self.inheritance_column = nil
 
+  URN_HOME_EDUCATED = "999999"
+  URN_UNKNOWN = "888888"
+
   audited
   has_associated_audits
 
@@ -205,6 +208,16 @@ class Location < ApplicationRecord
       GIAS_PHASE_MAPPINGS
         .find { |_, values| values.include?(gias_phase) }
         &.first
+    end
+  end
+
+  def school_id = school? ? id : nil
+
+  def school_name
+    if generic_clinic?
+      "No known school (including home-schooled children)"
+    else
+      name
     end
   end
 

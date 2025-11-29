@@ -686,6 +686,14 @@ en:
     index:
       title: School moves
       description: Review children who have moved schools
+  schools:
+    index:
+      title: Schools
+      description: Browse schools and view their pupils and vaccination sessions
+    patients:
+      title: Children
+    sessions:
+      title: Sessions
   service:
     email: england.mavis@nhs.net
     guide:
@@ -745,6 +753,7 @@ en:
   teams:
     show:
       title: Your team
+      title_short: Team
       description: Manage your team’s settings
   vaccination_records:
     index:
