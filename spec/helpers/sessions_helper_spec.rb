@@ -30,6 +30,61 @@ describe SessionsHelper do
     end
   end
 
+  describe "#session_dates" do
+    subject { helper.session_dates(session) }
+
+    context "without dates" do
+      let(:session) { create(:session, dates: []) }
+
+      it { should eq("No dates scheduled") }
+    end
+
+    context "with a single date" do
+      let(:session) { create(:session, dates: [Date.new(2025, 1, 1)]) }
+
+      it { should eq("1 January 2025") }
+    end
+
+    context "with two dates" do
+      let(:session) do
+        create(:session, dates: [Date.new(2025, 1, 1), Date.new(2025, 1, 2)])
+      end
+
+      it { should eq("1 – 2 January 2025") }
+    end
+
+    context "with three dates" do
+      let(:session) do
+        create(
+          :session,
+          dates: [
+            Date.new(2025, 1, 1),
+            Date.new(2025, 1, 2),
+            Date.new(2025, 1, 3)
+          ]
+        )
+      end
+
+      it { should eq("1 – 3 January 2025 (3 dates)") }
+    end
+
+    context "with dates across multiple months" do
+      let(:session) do
+        create(:session, dates: [Date.new(2025, 1, 31), Date.new(2025, 2, 1)])
+      end
+
+      it { should eq("31 January – 1 February 2025") }
+    end
+
+    context "with dates across multiple years" do
+      let(:session) do
+        create(:session, dates: [Date.new(2025, 12, 31), Date.new(2026, 1, 1)])
+      end
+
+      it { should eq("31 December 2025 – 1 January 2026") }
+    end
+  end
+
   describe "#session_status_tag" do
     subject(:session_status_tag) { helper.session_status_tag(session) }
 
