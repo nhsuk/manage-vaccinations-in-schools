@@ -103,6 +103,11 @@ class ConsentForm < ApplicationRecord
   has_many :consents
   has_many :notify_log_entries
 
+  has_many :matched_patients,
+           -> { distinct },
+           through: :consents,
+           source: :patient
+
   has_many :consent_form_programmes,
            -> { ordered },
            dependent: :destroy,
@@ -376,6 +381,10 @@ class ConsentForm < ApplicationRecord
     consent_form_programmes.any?(&:reason_for_refusal_requires_notes?)
   end
 
+  def matched_patient
+    @matched_patient ||= (matched_patients.sole if matched?)
+  end
+
   def session
     # This tries to find the most appropriate session for this consent form.
     # It's used when generating links to patients in a session, or when
@@ -403,13 +412,12 @@ class ConsentForm < ApplicationRecord
             }
           )
 
+        year_group =
+          matched_patient&.year_group(academic_year:) ||
+            date_of_birth&.academic_year&.to_year_group(academic_year:)
+
         sessions_to_search =
-          # TODO: This doesn't work if a child goes to a different year group
-          #  for their date of birth.
-          if (
-               year_group =
-                 date_of_birth&.academic_year&.to_year_group(academic_year:)
-             )
+          if year_group
             sessions_to_search.where(
               "(?) >= ?",
               Session::ProgrammeYearGroup
