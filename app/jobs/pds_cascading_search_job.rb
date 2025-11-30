@@ -98,7 +98,9 @@ class PDSCascadingSearchJob < ApplicationJob
     [:too_many_matches, nil]
   rescue Faraday::TooManyRequestsError
     raise
-  rescue Faraday::ClientError, Faraday::ServerError => e
+  rescue NHS::PDS::InvalidSearchData,
+         Faraday::ClientError,
+         Faraday::ServerError => e
     Rails.logger.error("Error doing PDS search: #{e.message}")
     Sentry.capture_exception(e)
     [:error, nil]

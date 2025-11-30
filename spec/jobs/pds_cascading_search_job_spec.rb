@@ -214,6 +214,31 @@ describe PDSCascadingSearchJob do
       end
     end
 
+    context "when PDS API returns an invalid search data error" do
+      before do
+        allow(PDS::Patient).to receive(:search).and_raise(
+          NHS::PDS::InvalidSearchData.new
+        )
+      end
+
+      it "records error result and enqueues ProcessPatientChangesetJob" do
+        expect(Sentry).to receive(:capture_exception)
+
+        expect {
+          described_class.perform_now(patient_changeset)
+        }.to have_enqueued_job(ProcessPatientChangesetJob).with(
+          patient_changeset.id
+        )
+
+        patient_changeset.reload
+
+        expect(patient_changeset.search_results.first).to include(
+          "step" => "no_fuzzy_with_history",
+          "result" => "error"
+        )
+      end
+    end
+
     context "when too many matches found on first step" do
       before do
         allow(PDS::Patient).to receive(:search).and_raise(
