@@ -13,6 +13,7 @@ import {
 import { Autocomplete } from "./components/autocomplete.js";
 import { UpgradedRadios as Radios } from "./components/radios.js";
 import { Sticky } from "./components/sticky.js";
+import { TimeoutWarning } from "./components/timeoutWarning.js";
 
 // Configure Turbo
 Turbo.session.drive = false;
@@ -72,6 +73,10 @@ function initialiseComponents() {
 
   if (!isInitialised("nhsuk-skip-link")) {
     createAll(SkipLink);
+  }
+
+  if (!isInitialised("app-timeout-warning")) {
+    createAll(TimeoutWarning);
   }
 }
 

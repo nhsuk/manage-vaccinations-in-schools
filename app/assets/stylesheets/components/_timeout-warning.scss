@@ -1,0 +1,19 @@
+@use "../vendor/nhsuk-frontend" as *;
+
+html:has(.app-timeout-warning[open]) {
+  overflow: hidden;
+}
+
+.app-timeout-warning {
+  border: $nhsuk-border-width solid $nhsuk-border-colour;
+
+  @include nhsuk-responsive-padding(6);
+
+  &:focus {
+    outline: $nhsuk-focus-width solid $nhsuk-focus-colour;
+  }
+
+  &::backdrop {
+    background-color: rgba(nhsuk-colour("black"), 0.4);
+  }
+}
