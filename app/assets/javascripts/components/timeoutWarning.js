@@ -28,12 +28,6 @@ export class TimeoutWarning extends Component {
   constructor($root) {
     super($root);
 
-    if ((!$root) instanceof HTMLDialogElement) {
-      throw new Error(
-        "TimeoutWarning component must be used on a dialog element",
-      );
-    }
-
     this.fetchTimeRemaining = this.fetchTimeRemaining.bind(this);
     this.toggleModalVisibility = this.toggleModalVisibility.bind(this);
     this.updateTimerElements = this.updateTimerElements.bind(this);
