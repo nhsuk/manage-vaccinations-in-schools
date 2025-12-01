@@ -90,6 +90,7 @@ describe GovukNotifyPersonalisation do
         team_privacy_notice_url: "https://example.com/privacy-notice",
         team_privacy_policy_url: "https://example.com/privacy-policy",
         vaccination: "HPV vaccination",
+        vaccination_and_dates: "HPV vaccination on Thursday 1 January",
         vaccination_and_method: "HPV vaccination",
         vaccine: "HPV vaccine",
         vaccine_and_dose: "HPV",

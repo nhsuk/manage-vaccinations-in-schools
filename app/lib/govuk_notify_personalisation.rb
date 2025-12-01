@@ -73,6 +73,7 @@ class GovukNotifyPersonalisation
       team_privacy_policy_url:,
       today_or_date_of_vaccination:,
       vaccination:,
+      vaccination_and_dates:,
       vaccination_and_method:,
       vaccine:,
       vaccine_and_dose:,
@@ -370,6 +371,10 @@ class GovukNotifyPersonalisation
     "#{programme_names.to_sentence} vaccination".pluralize(
       programme_names.length
     )
+  end
+
+  def vaccination_and_dates
+    "#{vaccination} on #{next_or_today_session_dates_or}"
   end
 
   def vaccination_and_method
