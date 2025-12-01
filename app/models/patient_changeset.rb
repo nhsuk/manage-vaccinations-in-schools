@@ -466,4 +466,8 @@ class PatientChangeset < ApplicationRecord
     data["review"] = { patient: {}, school_move: {} }
     save!
   end
+
+  def csv_row_number
+    row_number + 2
+  end
 end

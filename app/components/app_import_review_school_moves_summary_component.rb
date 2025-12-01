@@ -13,6 +13,7 @@ class AppImportReviewSchoolMovesSummaryComponent < ViewComponent::Base
     ) do |table|
       table.with_head do |head|
         head.with_row do |row|
+          row.with_cell(text: "CSV file row")
           row.with_cell(text: "Name and NHS number")
           row.with_cell(text: "School move")
         end
@@ -23,6 +24,10 @@ class AppImportReviewSchoolMovesSummaryComponent < ViewComponent::Base
           patient = Patient.find(changeset.patient_id)
 
           body.with_row do |row|
+            row.with_cell do
+              changeset.row_number ? changeset.csv_row_number.to_s : ""
+            end
+
             row.with_cell do
               helpers.safe_join(
                 [
