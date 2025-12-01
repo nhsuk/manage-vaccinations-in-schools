@@ -547,6 +547,7 @@ en:
     index:
       title: Unmatched consent responses
       title_short: Unmatched responses
+      description: Review incoming consent responses that can’t be automatically matched
     confirm:
       consent_card_title:
         doubles: Consent for the MenACWY and Td/IPV vaccinations
@@ -616,6 +617,7 @@ en:
     index:
       title: Imports
       title_short: Imports
+      description: Import child, cohort and vaccination records and see important notices
     notices:
       index:
         no_results: There are currently no important notices.
@@ -656,9 +658,11 @@ en:
   patients:
     index:
       title: Children
+      description: Find children and view their vaccination history
   programmes:
     index:
       title: Programmes
+      description: Import child records, organise vaccination sessions and report vaccinations
     overview:
       show:
         title: Overview
@@ -674,16 +678,23 @@ en:
     menacwy: MenACWY
     mmr: MMR
     td_ipv: Td/IPV
+  reports:
+    index:
+      title: Reports
+      description: View the progress of vaccination programmes and download vaccination data
   school_moves:
     index:
       title: School moves
+      description: Review children who have moved schools
   service:
     email: england.mavis@nhs.net
     guide:
       title: Service guidance
+      description: How to use this service
   sessions:
     index:
       title: Sessions
+      description: Review consent responses, triage health questions and record vaccinations
     tabs:
       consent: Consent
       overview: Overview
@@ -699,9 +710,9 @@ en:
         description: >
           Mavis automatically sends email and text reminders to parents who have not
           responded to the initial consent request.
-  
+
           Automatic reminders are sent a set time before each session.
-  
+
           You can also send reminders manually. Mavis will then skip the next automatic
           reminder if it's due to be sent within 3 days.
         your_schedule: For this session, reminders are sent %{days} (%{weeks}) before each session.
@@ -726,7 +737,7 @@ en:
             There is 1 child with consent for the nasal flu vaccine who
             does not require triage and does not yet have a PSD in place.
           other: >-
-            There are %{count} children with consent for the nasal flu vaccine 
+            There are %{count} children with consent for the nasal flu vaccine
             who do not require triage and do not yet have a PSD in place.
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
@@ -734,9 +745,15 @@ en:
   teams:
     show:
       title: Your team
+      description: Manage your team’s settings
+  vaccination_records:
+    index:
+      title: Vaccination records
+      description: Find and edit vaccination records
   vaccines:
     index:
       title: Vaccines
+      description: Add and edit vaccine batches
   vaccine_criteria:
     flu_injection: Injection only
     flu_injection_nasal: Injection preferred
