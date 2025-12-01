@@ -11,7 +11,7 @@
         <% row.with_cell(text: "Imported on") %>
         <% row.with_cell(text: "Type") %>
         <% row.with_cell(text: "Status") %>
-        <% row.with_cell(text: "Records", numeric: true) %>
+        <% row.with_cell(text: "Records", numeric: true) unless @uploaded_files %>
       <% end %>
     <% end %>
 
@@ -41,12 +41,10 @@
             <%= render AppImportStatusComponent.new(import: import,
                                                     break_tag: true) %>
           <% end %>
-          <% row.with_cell(numeric: true) do %>
-            <span class="nhsuk-table-responsive__heading">Records</span>
-            <% if import.pending_import? %>
-              …
-            <% else %>
-              <%= import.record_count %>
+          <% unless @uploaded_files %>
+            <% row.with_cell(numeric: true) do %>
+              <span class="nhsuk-table-responsive__heading">Records</span>
+                <%= import.patients.count %>
             <% end %>
           <% end %>
         <% end %>
