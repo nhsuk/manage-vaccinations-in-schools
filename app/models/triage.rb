@@ -69,6 +69,6 @@ class Triage < ApplicationRecord
 
   def expired?
     delay_vaccination? && delay_vaccination_until.present? &&
-      delay_vaccination_until < Date.current
+      delay_vaccination_until <= Date.current
   end
 end

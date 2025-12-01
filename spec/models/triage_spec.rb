@@ -97,9 +97,17 @@ describe Triage do
     end
 
     context "when delay vaccination" do
-      let(:triage) { build(:triage, :delay_vaccination) }
+      context "and the delay until date is in the future" do
+        let(:triage) do
+          build(
+            :triage,
+            :delay_vaccination,
+            delay_vaccination_until: Date.tomorrow
+          )
+        end
 
-      it { should be(false) }
+        it { should be(false) }
+      end
 
       context "and the delay until date is in the past" do
         let(:triage) do
@@ -107,6 +115,18 @@ describe Triage do
             :triage,
             :delay_vaccination,
             delay_vaccination_until: Date.yesterday
+          )
+        end
+
+        it { should be(true) }
+      end
+
+      context "and the delay until date is today" do
+        let(:triage) do
+          build(
+            :triage,
+            :delay_vaccination,
+            delay_vaccination_until: Date.current
           )
         end
 
