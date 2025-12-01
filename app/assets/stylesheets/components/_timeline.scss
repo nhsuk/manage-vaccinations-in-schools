@@ -84,11 +84,11 @@ $_timeline-border-width: 2px;
 
       width: $_timeline-border-width;
 
-      border-left: $_timeline-border-width solid $color_nhsuk-grey-3;
+      border-left: $_timeline-border-width solid nhsuk-colour("grey-3");
     }
 
     &--past::before {
-      border-color: $color_nhsuk-blue;
+      border-color: nhsuk-colour("blue");
     }
   }
 
@@ -122,7 +122,7 @@ $_timeline-border-width: 2px;
 
   &__description {
     padding-top: 0;
-    color: $nhsuk-secondary-text-color;
+    color: $nhsuk-secondary-text-colour;
 
     @include nhsuk-responsive-margin(2, "bottom");
     @include nhsuk-font-size(16);

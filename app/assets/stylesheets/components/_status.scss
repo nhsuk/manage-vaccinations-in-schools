@@ -9,10 +9,8 @@
 
   .nhsuk-icon {
     flex-shrink: 0;
-    width: 1.5em;
-    height: 1.5em;
-    margin-top: nhsuk-spacing(-1);
-    margin-left: nhsuk-spacing(-1);
+    margin-top: nhsuk-px-to-rem(-2px);
+    margin-left: nhsuk-px-to-rem(-4px);
   }
 
   &--aqua-green {
