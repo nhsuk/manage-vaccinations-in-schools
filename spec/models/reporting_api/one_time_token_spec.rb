@@ -218,7 +218,7 @@ describe ReportingAPI::OneTimeToken do
     end
 
     it "has the jwt_payload" do
-      expect(decoded_payload).to eq(token.jwt_payload)
+      freeze_time { expect(decoded_payload).to eq(token.jwt_payload) }
     end
   end
 end
