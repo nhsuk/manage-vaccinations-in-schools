@@ -28,35 +28,14 @@ $_secondary-warning-button-hover-colour: color.change(
 }
 
 .app-button--secondary-warning {
-  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
-  @extend .nhsuk-button--secondary;
-
-  &,
-  &:link,
-  &:visited,
-  &:active,
-  &:hover {
-    color: $nhsuk-warning-button-colour;
-  }
-
-  &:hover,
-  &:hover:visited {
-    color: $nhsuk-warning-button-colour;
-    background-color: $_secondary-warning-button-hover-colour;
-  }
-
-  &:active {
-    border-color: $nhsuk-warning-button-colour;
-    background-color: $_secondary-warning-button-hover-colour;
-  }
-
-  &:not(:focus):not(:active)::before {
-    border-color: $nhsuk-warning-button-colour;
-  }
-
-  &:not(:focus):not(:active)::after {
-    box-shadow: 0 $_button-shadow-size 0 $nhsuk-warning-button-colour;
-  }
+  @include nhsuk-button-style(
+    $button-colour: $nhsuk-secondary-button-colour,
+    $button-border-colour: $nhsuk-warning-button-colour,
+    $button-hover-colour: $_secondary-warning-button-hover-colour,
+    $button-active-colour: $_secondary-warning-button-hover-colour,
+    $button-text-colour: $nhsuk-warning-button-colour,
+    $button-shadow-colour: $nhsuk-warning-button-colour
+  );
 }
 
 .app-button--icon {
