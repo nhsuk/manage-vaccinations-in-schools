@@ -30,6 +30,38 @@ describe "Import class lists - Moving patients" do
     then_i_should_see_a_notice_flash
   end
 
+  scenario "User uploads a file and moves patients to a new session from a different team" do
+    given_an_hpv_programme_is_underway
+
+    when_i_visit_a_session_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_session
+    and_i_select_the_year_groups
+    then_i_should_see_the_import_page
+
+    when_i_upload_a_valid_file
+    then_i_should_see_the_import_complete_page
+
+    when_i_visit_a_different_session_page_from_the_second_team_for_the_hpv_programme
+    and_i_start_adding_children_to_the_session
+    and_i_select_the_year_groups
+    and_i_upload_a_valid_file
+    then_i_should_see_the_import_complete_page
+
+    when_i_visit_the_school_moves_for_the_second_team
+    then_i_should_see_the_school_moves
+
+    when_i_see_the_school_moves_from_the_first_team
+    then_i_should_not_see_the_school_moves
+
+    when_i_visit_the_school_moves_for_the_second_team
+    and_i_confirm_a_move
+    then_i_should_see_a_success_flash
+    and_the_patient_should_be_in_the_right_teams
+
+    when_i_ignore_a_move
+    then_i_should_see_a_notice_flash
+  end
+
   context "when PDS lookup during import and import_review_screen is enabled" do
     scenario "User uploads a file and moves patients to a new session" do
       given_an_hpv_programme_is_underway
@@ -59,6 +91,38 @@ describe "Import class lists - Moving patients" do
       when_i_ignore_a_move
       then_i_should_see_a_notice_flash
     end
+
+    scenario "User uploads a file and moves patients to a new session from a different team" do
+      given_an_hpv_programme_is_underway
+
+      when_i_visit_a_session_page_for_the_hpv_programme
+      and_i_start_adding_children_to_the_session
+      and_i_select_the_year_groups
+      then_i_should_see_the_import_page
+
+      when_i_upload_a_valid_file
+      then_i_should_see_the_import_complete_page
+
+      when_i_visit_a_different_session_page_from_the_second_team_for_the_hpv_programme
+      and_i_start_adding_children_to_the_session
+      and_i_select_the_year_groups
+      and_i_upload_a_valid_file
+      then_i_should_see_the_import_complete_page
+
+      when_i_visit_the_school_moves_for_the_second_team
+      then_i_should_see_the_school_moves
+
+      when_i_see_the_school_moves_from_the_first_team
+      then_i_should_not_see_the_school_moves
+
+      when_i_visit_the_school_moves_for_the_second_team
+      and_i_confirm_a_move
+      then_i_should_see_a_success_flash
+      and_the_patient_should_be_in_the_right_teams
+
+      when_i_ignore_a_move
+      then_i_should_see_a_notice_flash
+    end
   end
 
   def given_an_hpv_programme_is_underway
@@ -67,9 +131,28 @@ describe "Import class lists - Moving patients" do
     @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
     @user = @team.users.first
 
+    @second_team =
+      create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
+    @second_user = @second_team.users.first
+
     location = create(:school, :secondary, name: "Waterloo Road", team: @team)
     other_location =
       create(:school, :secondary, name: "Different Road", team: @team)
+
+    second_team_location =
+      create(
+        :school,
+        :secondary,
+        name: "Second Team School",
+        team: @second_team
+      )
+    create(
+      :session,
+      :unscheduled,
+      team: @second_team,
+      location: second_team_location,
+      programmes:
+    )
 
     create(:session, :unscheduled, team: @team, location:, programmes:)
     create(
@@ -138,6 +221,17 @@ describe "Import class lists - Moving patients" do
     click_on "Different Road"
   end
 
+  def when_i_visit_a_different_session_page_from_the_second_team_for_the_hpv_programme
+    sign_out @user
+    sign_in @second_user
+    visit "/team"
+    visit "/dashboard"
+    click_on "Sessions", match: :first
+    choose "Unscheduled"
+    click_on "Update results"
+    click_on "Second Team School"
+  end
+
   def and_i_start_adding_children_to_the_session
     click_on "Import class lists"
   end
@@ -175,9 +269,24 @@ describe "Import class lists - Moving patients" do
     click_on "School moves"
   end
 
+  def when_i_visit_the_school_moves_for_the_second_team
+    sign_in @second_user
+    click_on "School moves"
+  end
+
+  def when_i_see_the_school_moves_from_the_first_team
+    sign_in @user
+    click_on "School moves"
+  end
+
   def then_i_should_see_the_school_moves
     expect(page).to have_content("School moves (4)")
     expect(page).to have_content("4 school moves")
+  end
+
+  def then_i_should_not_see_the_school_moves
+    expect(page).to have_content("School moves (0)")
+    expect(page).to have_content("There are currently no school moves.")
   end
 
   def when_i_confirm_a_move
@@ -185,6 +294,8 @@ describe "Import class lists - Moving patients" do
     choose "Update record with new school"
     click_on "Update child record"
   end
+
+  alias_method :and_i_confirm_a_move, :when_i_confirm_a_move
 
   def then_i_should_see_a_success_flash
     expect(page).to have_alert("Success")
@@ -198,5 +309,13 @@ describe "Import class lists - Moving patients" do
 
   def then_i_should_see_a_notice_flash
     expect(page).to have_region("Information")
+  end
+
+  def and_the_patient_should_be_in_the_right_teams
+    patient = Patient.select { it.archive_reasons.count > 0 }.sole
+    expect(patient.teams.count).to eq(1)
+    expect(patient.teams.pluck(:id)).to include(@second_team.id)
+    expect(patient.archive_reasons.sole.team_id).to eq(@team.id)
+    expect(patient.archive_reasons.sole.type).to eq("moved_out_of_area")
   end
 end
