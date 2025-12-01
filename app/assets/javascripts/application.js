@@ -3,7 +3,6 @@ import {
   createAll,
   isSupported,
   Button,
-  Checkboxes,
   ErrorSummary,
   Header,
   NotificationBanner,
@@ -11,6 +10,7 @@ import {
 } from "nhsuk-frontend";
 
 import { Autocomplete } from "./components/autocomplete.js";
+import { UpgradedCheckboxes as Checkboxes } from "./components/checkboxes.js";
 import { UpgradedRadios as Radios } from "./components/radios.js";
 import { Sticky } from "./components/sticky.js";
 import { TimeoutWarning } from "./components/timeoutWarning.js";
