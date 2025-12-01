@@ -11,6 +11,8 @@ class API::Reporting::OneTimeTokensController < API::Reporting::BaseController
     @token.delete # <- Tokens are one-time use
 
     user = @token.user
+    user.cis2_info =
+      CIS2Info.new(request_session: { "cis2_info" => @token.cis2_info })
     display_name = user.full_name
     display_name +=
       " (#{user.role_description})" if user.role_description.present?
