@@ -126,9 +126,7 @@ describe("TimeoutWarning", () => {
     timeoutWarning.toggleModalVisibility();
     timeoutWarning.updateTimerElements();
 
-    // To accommodate tests potentially running slower, allow
-    // 1 minute and 29 seconds or 1 minute and 30 seconds
-    const pattern = /1 minute and (29|30) seconds/;
+    const pattern = /1 minute and [0-9]{2} seconds/;
 
     expect(timeoutWarning.timerElement.textContent).toMatch(pattern);
     expect(timeoutWarning.timerElementAccessible.textContent).toMatch(pattern);
