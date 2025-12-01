@@ -585,7 +585,7 @@ en:
         personal_choice: Why are they refusing to give consent?
         will_be_vaccinated_elsewhere: Where will their child get their vaccination?
   draft_sessions:
-    dates_check:
+    catch_up_warning:
       title: Have you imported historical vaccination records for %{programmes}?
   import_duplicate_form:
     options:

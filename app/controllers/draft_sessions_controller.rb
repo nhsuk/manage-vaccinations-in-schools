@@ -6,7 +6,10 @@ class DraftSessionsController < ApplicationController
 
   include WizardControllerConcern
 
-  with_options only: :show, if: -> { current_step == :dates_check } do
+  with_options only: :show,
+               if: -> do
+                 %i[dates_check programmes_check].include?(current_step)
+               end do
     before_action :set_catch_up_year_groups
     before_action :set_catch_up_patients_vaccinated_percentage
     before_action :set_catch_up_patients_receiving_consent_requests_count
@@ -28,9 +31,12 @@ class DraftSessionsController < ApplicationController
 
     jump_to("confirm") if @draft_session.editing? && current_step != :confirm
 
-    if current_step == :dates
+    case current_step
+    when :dates
       handle_dates
-    elsif current_step == :confirm
+    when :programmes
+      handle_programmes
+    when :confirm
       handle_confirm
     else
       @draft_session.assign_attributes(update_params)
@@ -186,6 +192,23 @@ class DraftSessionsController < ApplicationController
     @draft_session.wizard_step = current_step
   end
 
+  def handle_programmes
+    @draft_session.assign_attributes(update_params)
+
+    if @draft_session.school?
+      any_new_programme_has_high_unvaccinated_count =
+        @draft_session.new_programmes.any? do |programme|
+          programme_has_high_unvaccinated_count?(programme)
+        end
+
+      if any_new_programme_has_high_unvaccinated_count
+        jump_to("programmes-check")
+      end
+    end
+
+    @draft_session.wizard_step = current_step
+  end
+
   def handle_confirm
     return unless @draft_session.save
 
@@ -209,6 +232,7 @@ class DraftSessionsController < ApplicationController
       consent_requests: %i[send_consent_requests_at],
       dates: dates_params,
       dates_check: [],
+      programmes_check: [],
       delegation: %i[psd_enabled national_protocol_enabled],
       invitations: %i[send_invitations_at],
       programmes: {
