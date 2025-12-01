@@ -33,6 +33,7 @@
 #
 class PatientChangeset < ApplicationRecord
   include PatientImportConcern
+  include SchoolMovesHelper
 
   attribute :data,
             :jsonb,
@@ -368,6 +369,12 @@ class PatientChangeset < ApplicationRecord
         Time.iso8601(attributes[key])
       end
     end
+  end
+
+  def inter_team_move?
+    return false unless patient.persisted? && school_move.present?
+
+    school_move.from_another_team?
   end
 
   def handle_address_updates(existing_patient)

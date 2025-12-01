@@ -40,19 +40,24 @@ class AppImportReviewSchoolMovesSummaryComponent < ViewComponent::Base
               )
             end
 
-            destination_school =
+            destination_school_id =
               changeset.review_data.dig("school_move", "school_id")
             home_educated =
               changeset.review_data.dig("school_move", "home_educated")
 
             destination_school_name =
-              if destination_school.present?
-                Location.find_by(id: destination_school)&.name
+              if destination_school_id.present?
+                destination_school = Location.find(destination_school_id)
+                destination_school&.name
               elsif home_educated
                 "Home educated"
               else
                 "Unknown school"
               end
+
+            school_move_across_teams =
+              destination_school && patient.school &&
+                (destination_school.teams & patient.school.teams).empty?
 
             row.with_cell do
               helpers.safe_join(
@@ -68,11 +73,26 @@ class AppImportReviewSchoolMovesSummaryComponent < ViewComponent::Base
                           class:
                             "nhsuk-u-secondary-text-colour nhsuk-u-font-size-16"
                         ),
-                        tag.br,
+                        " ",
                         destination_school_name
                       ]
                     )
-                  end
+                  end,
+                  (
+                    if school_move_across_teams
+                      tag.div(class: "nhsuk-u-margin-top-1") do
+                        render(
+                          AppStatusComponent.new(
+                            text:
+                              "This child is moving in from #{patient.school.teams.first.name}'s area",
+                            small: true,
+                            classes:
+                              "nhsuk-u-margin-top-1 nhsuk-u-margin-bottom-0"
+                          )
+                        )
+                      end
+                    end
+                  )
                 ]
               )
             end

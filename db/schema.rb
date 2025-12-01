@@ -402,6 +402,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
     t.bigint "dismissed_by_user_id"
     t.bigint "patient_id", null: false
     t.datetime "recorded_at", null: false
+    t.bigint "school_move_log_entry_id"
     t.bigint "team_id", null: false
     t.integer "type", null: false
     t.datetime "updated_at", null: false
@@ -409,6 +410,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
     t.index ["dismissed_by_user_id"], name: "index_important_notices_on_dismissed_by_user_id"
     t.index ["patient_id", "type", "recorded_at", "team_id"], name: "index_notices_on_patient_and_type_and_recorded_at_and_team", unique: true
     t.index ["patient_id"], name: "index_important_notices_on_patient_id"
+    t.index ["school_move_log_entry_id"], name: "index_important_notices_on_school_move_log_entry_id"
     t.index ["team_id"], name: "index_important_notices_on_team_id"
     t.index ["vaccination_record_id"], name: "index_important_notices_on_vaccination_record_id"
   end
@@ -1057,6 +1059,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
   add_foreign_key "immunisation_imports_vaccination_records", "immunisation_imports", on_delete: :cascade
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records", on_delete: :cascade
   add_foreign_key "important_notices", "patients"
+  add_foreign_key "important_notices", "school_move_log_entries"
   add_foreign_key "important_notices", "teams"
   add_foreign_key "important_notices", "users", column: "dismissed_by_user_id"
   add_foreign_key "important_notices", "vaccination_records"

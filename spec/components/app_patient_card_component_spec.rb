@@ -51,6 +51,21 @@ describe AppPatientCardComponent do
     end
   end
 
+  context "with a patient that has moved teams" do
+    let(:other_team) { create(:team, programmes:) }
+    let(:other_school) { create(:school, team: other_team) }
+    let(:school_move) do
+      create(:school_move, :to_school, patient:, school: other_school)
+    end
+
+    before do
+      create(:patient_team, team:, patient:)
+      school_move.confirm!
+    end
+
+    it { should have_content("Child has moved to #{other_team.name} area") }
+  end
+
   context "with parents" do
     let(:parent) { create(:parent, full_name: "Jenny Smith") }
 

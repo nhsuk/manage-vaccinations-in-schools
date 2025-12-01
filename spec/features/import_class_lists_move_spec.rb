@@ -57,8 +57,10 @@ describe "Import class lists - Moving patients" do
     and_i_confirm_a_move
     then_i_should_see_a_success_flash
     and_the_patient_should_be_in_the_right_teams
+    and_i_should_see_an_important_notice_for_patient_moved_out_of_the_first_team
 
-    when_i_ignore_a_move
+    when_i_visit_the_school_moves_for_the_second_team
+    and_i_ignore_a_move
     then_i_should_see_a_notice_flash
   end
 
@@ -94,6 +96,8 @@ describe "Import class lists - Moving patients" do
 
     scenario "User uploads a file and moves patients to a new session from a different team" do
       given_an_hpv_programme_is_underway
+      and_pds_lookup_during_import_is_enabled
+      and_import_review_screen_is_enabled
 
       when_i_visit_a_session_page_for_the_hpv_programme
       and_i_start_adding_children_to_the_session
@@ -106,7 +110,10 @@ describe "Import class lists - Moving patients" do
       when_i_visit_a_different_session_page_from_the_second_team_for_the_hpv_programme
       and_i_start_adding_children_to_the_session
       and_i_select_the_year_groups
-      and_i_upload_a_valid_file
+      and_i_upload_a_valid_file(review: true)
+      then_i_should_see_the_import_review_page_with_school_moves
+
+      when_i_approve_the_import_review
       then_i_should_see_the_import_complete_page
 
       when_i_visit_the_school_moves_for_the_second_team
@@ -119,8 +126,10 @@ describe "Import class lists - Moving patients" do
       and_i_confirm_a_move
       then_i_should_see_a_success_flash
       and_the_patient_should_be_in_the_right_teams
+      and_i_should_see_an_important_notice_for_patient_moved_out_of_the_first_team
 
-      when_i_ignore_a_move
+      when_i_visit_the_school_moves_for_the_second_team
+      and_i_ignore_a_move
       then_i_should_see_a_notice_flash
     end
   end
@@ -198,6 +207,14 @@ describe "Import class lists - Moving patients" do
       "birthdate" => "eq2010-01-03",
       "address-postalcode" => "SW1A 1AA"
     )
+
+    stub_pds_search_to_return_a_patient(
+      "9435764479",
+      "family" => "Doe",
+      "given" => "Michel",
+      "birthdate" => "eq2010-01-03",
+      "address-postalcode" => "SW1A 1AA"
+    )
   end
 
   def and_import_review_screen_is_enabled
@@ -222,7 +239,6 @@ describe "Import class lists - Moving patients" do
   end
 
   def when_i_visit_a_different_session_page_from_the_second_team_for_the_hpv_programme
-    sign_out @user
     sign_in @second_user
     visit "/team"
     visit "/dashboard"
@@ -248,16 +264,35 @@ describe "Import class lists - Moving patients" do
     expect(page).to have_content("Import class list")
   end
 
-  def when_i_upload_a_valid_file
+  def when_i_upload_a_valid_file(review: false)
     attach_file("class_import[csv]", "spec/fixtures/class_import/valid.csv")
     click_on "Continue"
-    wait_for_import_to_complete(ClassImport)
+    if review
+      wait_for_import_to_complete_until_review(ClassImport)
+    else
+      wait_for_import_to_complete(ClassImport)
+    end
   end
 
   alias_method :and_i_upload_a_valid_file, :when_i_upload_a_valid_file
 
   def when_i_go_to_the_upload_page
     click_on "Import class lists"
+  end
+
+  def then_i_should_see_the_import_review_page_with_school_moves
+    page.refresh
+    expect(page).to have_content("Review and approve")
+    find(
+      ".nhsuk-details__summary-text",
+      text: "4 school moves across teams"
+    ).click
+    expect(page).to have_content("This child is moving in from")
+  end
+
+  def when_i_approve_the_import_review
+    click_on "Approve and import records"
+    wait_for_import_to_commit(ClassImport)
   end
 
   def then_i_should_see_the_import_complete_page
@@ -271,12 +306,12 @@ describe "Import class lists - Moving patients" do
 
   def when_i_visit_the_school_moves_for_the_second_team
     sign_in @second_user
-    click_on "School moves"
+    visit "/school-moves"
   end
 
   def when_i_see_the_school_moves_from_the_first_team
     sign_in @user
-    click_on "School moves"
+    visit "/school-moves"
   end
 
   def then_i_should_see_the_school_moves
@@ -307,6 +342,8 @@ describe "Import class lists - Moving patients" do
     click_on "Update child record"
   end
 
+  alias_method :and_i_ignore_a_move, :when_i_ignore_a_move
+
   def then_i_should_see_a_notice_flash
     expect(page).to have_region("Information")
   end
@@ -317,5 +354,11 @@ describe "Import class lists - Moving patients" do
     expect(patient.teams.pluck(:id)).to include(@second_team.id)
     expect(patient.archive_reasons.sole.team_id).to eq(@team.id)
     expect(patient.archive_reasons.sole.type).to eq("moved_out_of_area")
+  end
+
+  def and_i_should_see_an_important_notice_for_patient_moved_out_of_the_first_team
+    sign_in @user, superuser: true
+    visit "/imports/notices"
+    expect(page).to have_content("Child has moved to #{@second_team.name} area")
   end
 end

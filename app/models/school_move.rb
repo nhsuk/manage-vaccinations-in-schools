@@ -30,6 +30,7 @@
 class SchoolMove < ApplicationRecord
   include ContributesToPatientTeams
   include Schoolable
+  include SchoolMovesHelper
 
   class ActiveRecord_Relation < ActiveRecord::Relation
     include ContributesToPatientTeams::Relation
@@ -82,13 +83,16 @@ class SchoolMove < ApplicationRecord
   end
 
   def confirm!(user: nil)
+    old_teams = patient.school.teams if from_another_team?
+
     imported_archive_reason_ids = []
 
     ActiveRecord::Base.transaction do
       update_patient!
       imported_archive_reason_ids = update_archive_reasons!(user:)
       update_sessions!
-      create_log_entry!(user:)
+      log_entry = create_log_entry!(user:)
+      create_important_notice!(old_teams, log_entry) if old_teams
       destroy! if persisted?
     end
 
@@ -97,6 +101,12 @@ class SchoolMove < ApplicationRecord
 
   def ignore!
     destroy! if persisted?
+  end
+
+  def from_another_team?
+    return false unless patient.school && school
+
+    (school.teams & patient.school.teams).empty?
   end
 
   private
@@ -140,5 +150,17 @@ class SchoolMove < ApplicationRecord
 
   def create_log_entry!(user:)
     SchoolMoveLogEntry.create!(home_educated:, patient:, school:, user:)
+  end
+
+  def create_important_notice!(old_teams, school_move_log_entry)
+    old_teams.each do |old_team|
+      ImportantNotice.create!(
+        patient:,
+        team_id: old_team.id,
+        type: :team_changed,
+        recorded_at: Time.current,
+        school_move_log_entry:
+      )
+    end
   end
 end
