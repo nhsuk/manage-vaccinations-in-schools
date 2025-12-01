@@ -38,10 +38,57 @@ $_secondary-warning-button-hover-colour: color.change(
   );
 }
 
+/// @link https://github.com/nhsuk/nhsuk-frontend/pull/1712
 .app-button--icon {
+  display: flex;
+
+  // Align icon in center of button
+  align-items: center;
+  justify-content: center;
+
+  // Reduce padding to better fit icon
+  padding-top: 0;
+  padding-bottom: 0;
+
   .nhsuk-icon {
-    display: block;
-    width: 28px;
-    height: 28px;
+    width: nhsuk-px-to-rem($nhsuk-icon-size);
+    height: nhsuk-px-to-rem($nhsuk-icon-size);
+    margin: 0 nhsuk-spacing(1);
+
+    @include nhsuk-media-query($from: mobile) {
+      width: nhsuk-px-to-rem($nhsuk-icon-size-large);
+      height: nhsuk-px-to-rem($nhsuk-icon-size-large);
+    }
+  }
+
+  .nhsuk-icon:first-child {
+    margin-left: 0;
+  }
+
+  .nhsuk-icon:last-child {
+    margin-right: 0;
+  }
+
+  &:has(.nhsuk-icon:first-child) {
+    padding-left: nhsuk-spacing(3) - $nhsuk-border-width-form-element;
+  }
+
+  &:has(.nhsuk-icon:last-child) {
+    padding-right: nhsuk-spacing(3) - $nhsuk-border-width-form-element;
+  }
+
+  &.nhsuk-button--small {
+    .nhsuk-icon {
+      width: nhsuk-px-to-rem($nhsuk-icon-size);
+      height: nhsuk-px-to-rem($nhsuk-icon-size);
+    }
+
+    &:has(.nhsuk-icon:first-child) {
+      padding-left: nhsuk-spacing(2) - $nhsuk-border-width-form-element;
+    }
+
+    &:has(.nhsuk-icon:last-child) {
+      padding-right: nhsuk-spacing(2) - $nhsuk-border-width-form-element;
+    }
   }
 }

@@ -86,12 +86,7 @@ describe AppCardHeadingComponent do
   context "with all parameters" do
     subject(:rendered) do
       render_inline(
-        described_class.new(
-          level: 2,
-          size: "l",
-          colour: "green",
-          link_to: "#"
-        )
+        described_class.new(level: 2, size: "l", colour: "green", link_to: "#")
       ) { content }
     end
 
