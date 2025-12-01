@@ -38,7 +38,7 @@
               <% unless can_link_to?(patient) %>
                 <br />
                 <span class="nhsuk-u-secondary-text-colour">
-                  Child has moved out of the area
+                  <%= unlinkable_patient_hint_text(patient) %>
                 </span>
               <% end %>
             </span>
