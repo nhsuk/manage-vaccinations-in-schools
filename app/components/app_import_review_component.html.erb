@@ -79,7 +79,9 @@
 <div class="nhsuk-button-group">
     <%= helpers.govuk_button_to approve_button_text, polymorphic_path([:approve, @import]),
                                 method: :post %>
-    <%= helpers.govuk_button_to cancel_button_text, polymorphic_path([:cancel, @import]),
-                                method: :post,
-                                secondary: true %>
+    <% if show_cancel_button? %>
+        <%= helpers.govuk_button_to cancel_button_text, polymorphic_path([:cancel, @import]),
+                                    method: :post,
+                                    secondary: true %>
+    <% end %>
 </div>
