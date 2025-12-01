@@ -5,6 +5,7 @@ module ParentInterface
     skip_before_action :authenticate_user!
     skip_after_action :verify_policy_scoped
 
+    skip_before_action :set_navigation_items
     prepend_before_action :set_team_location
     prepend_before_action :set_programmes
     prepend_before_action :set_team
@@ -15,10 +16,6 @@ module ParentInterface
     before_action :set_privacy_policy_url
 
     private
-
-    def set_show_navigation
-      @show_navigation = false
-    end
 
     def set_consent_form
       @consent_form =
