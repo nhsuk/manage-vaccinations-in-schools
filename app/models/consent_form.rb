@@ -386,55 +386,11 @@ class ConsentForm < ApplicationRecord
   end
 
   def session
-    # This tries to find the most appropriate session for this consent form.
-    # It's used when generating links to patients in a session, or when
-    # deciding which dates to show in an email. Under the hood, patients
-    # belong to locations, not sessions.
-    #
-    # Although unlikely to happen in production, there can be a scenario
-    # where multiple sessions at the same location offer the same programmes.
-    # In this case, we have to make a guess about which is the most relevant
-    # session.
-
     @session ||=
-      if location_is_clinic? || education_setting_home? ||
-           education_setting_none?
-        team.generic_clinic_session(academic_year:)
+      if original_session_is_accurate?
+        original_session
       else
-        session_location = school || location
-
-        sessions_to_search =
-          Session.joins(:team_location).where(
-            team_location: {
-              academic_year:,
-              location: session_location,
-              team:
-            }
-          )
-
-        year_group =
-          matched_patient&.year_group(academic_year:) ||
-            date_of_birth&.academic_year&.to_year_group(academic_year:)
-
-        sessions_to_search =
-          if year_group
-            sessions_to_search.where(
-              "(?) >= ?",
-              Session::ProgrammeYearGroup
-                .select(
-                  "COUNT(DISTINCT session_programme_year_groups.programme_type)"
-                )
-                .where("sessions.id = session_programme_year_groups.session_id")
-                .where(programme_type: programme_types, year_group:),
-              programme_types.count
-            )
-          else
-            sessions_to_search.has_all_programme_types_of(programme_types)
-          end
-
-        sessions_to_search.find(&:scheduled?) ||
-          sessions_to_search.find(&:unscheduled?) || sessions_to_search.first ||
-          team.generic_clinic_session(academic_year:)
+        find_approriate_session
       end
   end
 
@@ -657,6 +613,68 @@ class ConsentForm < ApplicationRecord
   def notifier = Notifier::ConsentForm.new(self)
 
   private
+
+  def original_session_is_accurate?
+    # Some older consent forms don't have an original session.
+    return false if original_session_id.nil?
+
+    # Parent hasn't answered the question yet.
+    return true if school_confirmed.nil?
+
+    # Parent confirms the school is correct.
+    school_confirmed || school_id == location_id
+  end
+
+  def find_approriate_session
+    # This tries to find the most appropriate session for this consent form.
+    # It's used when generating links to patients in a session, or when
+    # deciding which dates to show in an email. Under the hood, patients
+    # belong to locations, not sessions.
+    #
+    # Although unlikely to happen in production, there can be a scenario
+    # where multiple sessions at the same location offer the same programmes.
+    # In this case, we have to make a guess about which is the most relevant
+    # session.
+
+    if location_is_clinic? || education_setting_home? || education_setting_none?
+      team.generic_clinic_session(academic_year:)
+    else
+      session_location = school || location
+
+      sessions_to_search =
+        Session.joins(:team_location).where(
+          team_location: {
+            academic_year:,
+            location: session_location,
+            team:
+          }
+        )
+
+      year_group =
+        matched_patient&.year_group(academic_year:) ||
+          date_of_birth&.academic_year&.to_year_group(academic_year:)
+
+      sessions_to_search =
+        if year_group
+          sessions_to_search.where(
+            "(?) >= ?",
+            Session::ProgrammeYearGroup
+              .select(
+                "COUNT(DISTINCT session_programme_year_groups.programme_type)"
+              )
+              .where("sessions.id = session_programme_year_groups.session_id")
+              .where(programme_type: programme_types, year_group:),
+            programme_types.count
+          )
+        else
+          sessions_to_search.has_all_programme_types_of(programme_types)
+        end
+
+      sessions_to_search.find(&:scheduled?) ||
+        sessions_to_search.find(&:unscheduled?) || sessions_to_search.first ||
+        team.generic_clinic_session(academic_year:)
+    end
+  end
 
   def via_self_consent?
     false
