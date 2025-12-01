@@ -17,7 +17,8 @@
 
       <%= f.govuk_text_field :nhs_number,
                              label: { text: "Enter the NHS number for the duplicate record" },
-                             hint: { text: "This will merge the duplicate records into a single record" } %>
+                             hint: { text: "This will merge the duplicate records into a single record" },
+                             class: "nhsuk-input--code" %>
     <% end %>
 
     <%= f.govuk_radio_button :type, :imported_in_error, label: { text: "It was imported in error" } %>
