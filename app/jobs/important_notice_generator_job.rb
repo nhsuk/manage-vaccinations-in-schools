@@ -108,7 +108,7 @@ class ImportantNoticeGeneratorJob < ApplicationJob
       team_changed_notices = patient.important_notices.team_changed.any?
       if team_changed_notices
         notice_ids_to_dismiss << team_changed_notices.where(
-          team: patient.school.teams
+          team: patient.school.current_academic_year_teams
         ).ids
       end
 

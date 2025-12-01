@@ -57,7 +57,10 @@ class AppImportReviewSchoolMovesSummaryComponent < ViewComponent::Base
 
             school_move_across_teams =
               destination_school && patient.school &&
-                (destination_school.teams & patient.school.teams).empty?
+                (
+                  destination_school.current_academic_year_teams &
+                    patient.school.current_academic_year_teams
+                ).empty?
 
             row.with_cell do
               helpers.safe_join(
@@ -84,7 +87,8 @@ class AppImportReviewSchoolMovesSummaryComponent < ViewComponent::Base
                         render(
                           AppStatusComponent.new(
                             text:
-                              "This child is moving in from #{patient.school.teams.first.name}'s area",
+                              "This child is moving in from " \
+                                "#{patient.school.current_academic_year_teams.first.name}'s area",
                             small: true,
                             classes:
                               "nhsuk-u-margin-top-1 nhsuk-u-margin-bottom-0"
