@@ -118,13 +118,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
            :patient_year_group,
            to: :helpers
 
-  def programme_status_tag
-    if Flipper.enabled?(:programme_status, current_team)
-      status_tag(:programme)
-    else
-      status_tag(:vaccination)
-    end
-  end
+  def programme_status_tag = status_tag(:programme)
 
   def consent_status_tag = status_tag(:consent)
 

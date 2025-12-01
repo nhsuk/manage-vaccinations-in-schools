@@ -21,13 +21,6 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               row.with_value { patient_year_group(patient, academic_year:) }
             end
 
-            if action_required
-              summary_list.with_row do |row|
-                row.with_key { "Action required" }
-                row.with_value { action_required }
-              end
-            end
-
             if vaccine_type
               summary_list.with_row do |row|
                 row.with_key { "Vaccine type" }
@@ -119,23 +112,6 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     )
   end
 
-  def action_required
-    return if Flipper.enabled?(:programme_status, team)
-    return unless %i[register record].include?(context)
-
-    next_activities =
-      session
-        .programmes_for(patient:)
-        .filter_map do |programme|
-          status = patient.next_activity(programme:, academic_year:)
-          next if status.nil?
-
-          "#{I18n.t(status, scope: :activity)} for #{programme.name_in_sentence}"
-        end
-
-    render_bullet_list_or_single(next_activities)
-  end
-
   def vaccine_type
     return unless %i[register record].include?(context)
 
@@ -191,17 +167,10 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def programme_status_tag
-    if Flipper.enabled?(:programme_status, team)
-      {
-        key: :programme,
-        value: render(AppAttachedTagsComponent.new(attached_tags(:programme)))
-      }
-    else
-      {
-        key: :vaccination,
-        value: render(AppAttachedTagsComponent.new(attached_tags(:vaccination)))
-      }
-    end
+    {
+      key: :programme,
+      value: render(AppAttachedTagsComponent.new(attached_tags(:programme)))
+    }
   end
 
   def registration_status_tag
