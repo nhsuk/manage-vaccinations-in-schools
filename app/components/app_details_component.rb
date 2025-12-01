@@ -3,7 +3,7 @@
 class AppDetailsComponent < ViewComponent::Base
   erb_template <<-ERB
     <details class="nhsuk-details<%= expander_class %>"<%= open_attr %>>
-      <summary class="nhsuk-details__summary">
+      <summary class="nhsuk-details__summary" <%= sticky_class %>>
         <span class="nhsuk-details__summary-text">
           <%= summary %>
         </span>
@@ -17,10 +17,11 @@ class AppDetailsComponent < ViewComponent::Base
 
   renders_one :summary
 
-  def initialize(summary: nil, open: false, expander: false)
+  def initialize(summary: nil, open: false, expander: false, sticky: false)
     with_summary { summary } if summary
     @open = open
     @expander = expander
+    @sticky = sticky
   end
 
   def open_attr
@@ -33,5 +34,11 @@ class AppDetailsComponent < ViewComponent::Base
     return unless @expander
 
     " nhsuk-expander"
+  end
+
+  def sticky_class
+    return unless @sticky
+
+    " data-module=app-sticky"
   end
 end

@@ -184,18 +184,9 @@ class AppImportReviewComponent < ViewComponent::Base
   end
 
   def render_expander(summary:, &block)
-    tag.details(class: "nhsuk-details nhsuk-expander") do
-      helpers.safe_join(
-        [
-          tag.summary(
-            class: "nhsuk-details__summary",
-            data: {
-              module: "app-sticky"
-            }
-          ) { tag.span(summary, class: "nhsuk-details__summary-text") },
-          tag.div(class: "nhsuk-details__text", &block)
-        ]
-      )
+    render(AppDetailsComponent.new(expander: true, sticky: true)) do |c|
+      c.with_summary { summary }
+      block.call
     end
   end
 
