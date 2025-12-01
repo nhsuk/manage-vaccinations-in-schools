@@ -28,12 +28,6 @@ export class TimeoutWarning extends Component {
   constructor($root) {
     super($root);
 
-    if ((!$root) instanceof HTMLDialogElement) {
-      throw new Error(
-        "TimeoutWarning component must be used on a dialog element",
-      );
-    }
-
     this.fetchTimeRemaining = this.fetchTimeRemaining.bind(this);
     this.toggleModalVisibility = this.toggleModalVisibility.bind(this);
     this.updateTimerElements = this.updateTimerElements.bind(this);
@@ -92,8 +86,9 @@ export class TimeoutWarning extends Component {
     });
   }
 
-  startTimeoutMonitoring() {
-    this.fetchTimeRemaining();
+  async startTimeoutMonitoring() {
+    await this.fetchTimeRemaining();
+    this.updateTimerElements();
     // Offset the interval from 60 seconds to avoid the check to sync
     // clocks with the server lining up exactly with the warning being shown
     setInterval(this.fetchTimeRemaining, 53000);
@@ -183,7 +178,15 @@ export class TimeoutWarning extends Component {
     }
     this.timerElement.textContent =
       TimeoutWarning.formatTimeRemaining(timeRemainingSeconds);
-    if (timeRemainingSeconds % 15 === 0) {
+
+    // Populate the accessible timer element with the time remaining if it is empty
+    // or if the time remaining is a multiple of 15 seconds
+    const timerElementAccessibleCurrentText =
+      this.timerElementAccessible.textContent;
+    if (
+      timeRemainingSeconds % 15 === 0 ||
+      timerElementAccessibleCurrentText === ""
+    ) {
       this.timerElementAccessible.textContent =
         TimeoutWarning.formatTimeRemaining(timeRemainingSeconds);
     }
