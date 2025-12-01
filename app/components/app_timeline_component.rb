@@ -8,8 +8,8 @@ class AppTimelineComponent < ViewComponent::Base
 
         <% if item[:type] == :section_header %>
           <li>
-            <h3 class="nhsuk-u-margin-top-2">
-              <%= content_tag(:strong, item[:date]) %>
+            <h3 class="nhsuk-heading-s">
+              <%= item[:date] %>
             </h3>
           </li>
         <% else %>
