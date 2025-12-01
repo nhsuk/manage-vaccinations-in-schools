@@ -2,8 +2,8 @@
 @use "../vendor/nhsuk-frontend" as *;
 
 .app-sticky-navigation {
-  background: nhsuk-colour("grey-5");
   border-bottom: 1px solid $nhsuk-border-colour;
+  background: nhsuk-colour("grey-5");
 
   @include nhsuk-responsive-margin(5, "bottom");
 
@@ -20,14 +20,15 @@
   }
 
   &[data-app-sticky-init] {
-    left: 0;
-    margin-left: -50vw;
-    margin-right: -50vw;
     position: sticky;
-    right: 0;
-    top: 0;
-    width: 100vw;
     z-index: 999;
+    top: 0;
+    right: 0;
+    left: 0;
+
+    width: 100vw;
+    margin-right: -50vw;
+    margin-left: -50vw;
   }
 
   &[data-stuck="true"] {

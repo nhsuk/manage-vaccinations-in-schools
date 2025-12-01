@@ -12,11 +12,11 @@
     nhsuk-colour("pale-yellow") 75%,
     nhsuk-colour("pale-yellow") 100%
   );
-  background-size: nhsuk-spacing(2) nhsuk-spacing(2);
   background-repeat: repeat-x;
+  background-size: nhsuk-spacing(2) nhsuk-spacing(2);
 
-  @include nhsuk-clearfix();
-  @include nhsuk-print-hide();
+  @include nhsuk-clearfix;
+  @include nhsuk-print-hide;
   @include nhsuk-responsive-padding(5, bottom);
   @include nhsuk-responsive-padding(5, top);
 }

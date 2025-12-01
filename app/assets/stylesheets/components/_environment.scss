@@ -10,9 +10,9 @@
   }
 
   .nhsuk-width-container {
-    align-items: baseline;
     display: flex;
     flex-wrap: wrap;
+    align-items: baseline;
     gap: nhsuk-spacing(1) nhsuk-spacing(2);
   }
 }

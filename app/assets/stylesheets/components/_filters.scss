@@ -21,12 +21,12 @@
 
   // Adjust design and spacing of details component
   .nhsuk-details {
-    margin-left: nhsuk-spacing(-4);
     margin-right: nhsuk-spacing(-4);
+    margin-left: nhsuk-spacing(-4);
 
     @include nhsuk-media-query($from: tablet) {
-      margin-left: nhsuk-spacing(-5);
       margin-right: nhsuk-spacing(-5);
+      margin-left: nhsuk-spacing(-5);
     }
 
     &[open] {
@@ -40,10 +40,9 @@
   }
 
   .nhsuk-details__text {
-    border-left: 0;
-
     // Remove once https://github.com/nhsuk/nhsuk-frontend/pull/1633 released
     box-sizing: border-box;
+    border-left: 0;
 
     @include nhsuk-responsive-padding(5, "left");
     @include nhsuk-responsive-padding(5, "right");

@@ -1,8 +1,8 @@
 @use "../vendor/nhsuk-frontend" as *;
 
 .app-highlight {
-  background-color: nhsuk-tint(nhsuk-colour("warm-yellow"), 80%);
   border-bottom: 3px solid nhsuk-colour("warm-yellow");
+  background-color: nhsuk-tint(nhsuk-colour("warm-yellow"), 80%);
 
   a & {
     color: $nhsuk-link-colour;
@@ -21,22 +21,26 @@
   }
 
   a:focus & {
-    background-color: transparent;
     border-color: transparent;
     color: $nhsuk-focus-text-colour;
+    background-color: transparent;
   }
 
   // Ensure highlight is announced by screen readers
   // @link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/mark#accessibility
   &::before,
   &::after {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    overflow: hidden;
+
     clip: rect(1px, 1px, 1px, 1px);
     clip-path: inset(100%);
-    height: 1px;
-    overflow: hidden;
-    position: absolute;
+
     white-space: nowrap;
-    width: 1px;
   }
 
   &::before {
