@@ -119,7 +119,15 @@ class ConsentForm < ApplicationRecord
            -> { ordered.response_refused },
            class_name: "ConsentFormProgramme"
 
-  has_many :eligible_schools, through: :team, source: :schools
+  has_many :eligible_team_locations,
+           -> { where(academic_year: it.team_location.academic_year) },
+           through: :team,
+           source: :team_locations
+
+  has_many :eligible_schools,
+           -> { school },
+           through: :eligible_team_locations,
+           source: :location
 
   enum :parent_contact_method_type,
        Parent.contact_method_types,
