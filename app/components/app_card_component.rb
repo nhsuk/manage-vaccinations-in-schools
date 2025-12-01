@@ -29,7 +29,6 @@ class AppCardComponent < ViewComponent::Base
                   level: level,
                   size: size,
                   colour: colour,
-                  feature: @feature,
                   link_to: @link_to
                 )
               end

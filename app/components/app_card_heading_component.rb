@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 class AppCardHeadingComponent < ViewComponent::Base
-  def initialize(level: 3, size: nil, colour: nil, feature: false, link_to: nil)
+  def initialize(level: 3, size: nil, colour: nil, link_to: nil)
     @level = level
     @size = size
     @colour = colour
-    @feature = colour.present? || feature
     @link_to = link_to
   end
 
@@ -35,7 +34,6 @@ class AppCardHeadingComponent < ViewComponent::Base
     [
       "nhsuk-card__heading",
       "nhsuk-heading-#{heading_modifier}",
-      ("nhsuk-card__heading--feature" if @feature),
       ("app-card__heading--#{@colour}" if @colour)
     ].compact.join(" ")
   end
