@@ -121,7 +121,6 @@ describe "Inspect tools", :cis2 do
 
   def then_i_see_the_timeline_with_pii_checkbox_disabled
     expect(page).to have_content("Customise timeline")
-
     expect(page).not_to have_field("Show PII")
   end
 
@@ -129,10 +128,7 @@ describe "Inspect tools", :cis2 do
     expect(page).to have_content("Graph options")
 
     find("summary", text: "Graph options").click
-    expect(page).to have_field(
-      "Show PII (not allowed for this user)",
-      disabled: true
-    )
+    expect(page).not_to have_field("Show PII")
   end
 
   def then_i_see_the_inspect_dashboard
