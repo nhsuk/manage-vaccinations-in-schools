@@ -437,6 +437,8 @@ class ImmunisationImportRow
       )
   end
 
+  def must_be_current_academic_year? = programme&.flu? || bulk?
+
   def dose_sequence_required? =
     administered &&
       ((offline_recording? && default_dose_sequence.present?) || bulk_hpv?)
@@ -685,7 +687,7 @@ class ImmunisationImportRow
         end
       end
 
-      if programme&.flu? && academic_year != AcademicYear.current
+      if must_be_current_academic_year? && academic_year != AcademicYear.current
         errors.add(
           date_of_vaccination.header,
           "must be in the current academic year"
