@@ -226,10 +226,14 @@ class GovukNotifyPersonalisation
   end
 
   def next_or_today_session_date
+    return "" unless session_dates_are_accurate?
+
     session&.next_date(include_today: true)&.to_fs(:short_day_of_week)
   end
 
   def next_or_today_session_dates
+    return "" unless session_dates_are_accurate?
+
     session
       &.today_or_future_dates
       &.map { it.to_fs(:short_day_of_week) }
@@ -237,6 +241,8 @@ class GovukNotifyPersonalisation
   end
 
   def next_or_today_session_dates_or
+    return "" unless session_dates_are_accurate?
+
     session
       &.today_or_future_dates
       &.map { it.to_fs(:short_day_of_week) }
@@ -244,14 +250,20 @@ class GovukNotifyPersonalisation
   end
 
   def next_session_date
+    return "" unless session_dates_are_accurate?
+
     session&.next_date(include_today: false)&.to_fs(:short_day_of_week)
   end
 
   def next_session_dates
+    return "" unless session_dates_are_accurate?
+
     session&.future_dates&.map { it.to_fs(:short_day_of_week) }&.to_sentence
   end
 
   def next_session_dates_or
+    return "" unless session_dates_are_accurate?
+
     session
       &.future_dates
       &.map { it.to_fs(:short_day_of_week) }
@@ -374,7 +386,11 @@ class GovukNotifyPersonalisation
   end
 
   def vaccination_and_dates
-    "#{vaccination} on #{next_or_today_session_dates_or}"
+    if next_or_today_session_dates_or.present?
+      "#{vaccination} on #{next_or_today_session_dates_or}"
+    else
+      vaccination
+    end
   end
 
   def vaccination_and_method
@@ -472,6 +488,10 @@ class GovukNotifyPersonalisation
 
     @is_catch_up ||=
       programmes.any? { it.is_catch_up?(year_group: patient_year_group) }
+  end
+
+  def session_dates_are_accurate?
+    consent_form ? consent_form.session_dates_are_accurate? : true
   end
 
   def patient_year_group

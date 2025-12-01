@@ -394,6 +394,18 @@ class ConsentForm < ApplicationRecord
       end
   end
 
+  def session_dates_are_accurate?
+    # There are some cases where the dates for the session are not considered
+    # accurate enough to show to users.
+    #
+    # Specifically, if the parent indicated that their child goes to a
+    # different school to the one we sent the consent form for, and we've been
+    # unable to match the consent form to a child, we consider the session
+    # and therefore the dates to not be accurate enough to display.
+
+    original_session_is_accurate? || matched?
+  end
+
   def programme_types = consent_form_programmes.map(&:programme_type)
 
   def vaccines
