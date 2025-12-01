@@ -482,4 +482,8 @@ class PatientChangeset < ApplicationRecord
   def reset_patient_id!
     update_column(:patient_id, nil)
   end
+
+  def csv_row_number
+    row_number + 2
+  end
 end
