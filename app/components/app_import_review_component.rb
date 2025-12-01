@@ -55,9 +55,7 @@ class AppImportReviewComponent < ViewComponent::Base
           changesets: @inter_team
         ) do
           render(
-            AppImportReviewSchoolMovesSummaryComponent.new(
-              changesets: @inter_team
-            )
+            AppImportReviewSchoolMovesSummaryComponent.new(records: @inter_team)
           )
         end,
         if @inter_team_import_issues.any?
@@ -96,7 +94,7 @@ class AppImportReviewComponent < ViewComponent::Base
         ) do
           render(
             AppImportReviewSchoolMovesSummaryComponent.new(
-              changesets: @school_moves
+              records: @school_moves
             )
           )
         end,

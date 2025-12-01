@@ -3,338 +3,403 @@
 describe AppImportReviewSchoolMovesSummaryComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(changesets:) }
+  let(:component) { described_class.new(records:, review_screen:) }
   let(:academic_year) { AcademicYear.current }
   let(:team) { create(:team) }
-  let(:import) { create(:cohort_import, team:) }
-  let(:changesets) { [] }
 
-  describe "table structure" do
-    let(:school) { create(:school, team:, name: "Test School") }
-    let(:patient) { create(:patient, school:) }
-    let(:changesets) do
-      [create(:patient_changeset, import:, patient:, row_number: 1)]
+  describe "with changesets (review_screen: true)" do
+    let(:review_screen) { true }
+    let(:import) { create(:cohort_import, team:) }
+
+    describe "table structure" do
+      let(:school) { create(:school, team:, name: "Test School") }
+      let(:patient) { create(:patient, school:) }
+      let(:records) do
+        [create(:patient_changeset, import:, patient:, row_number: 1)]
+      end
+
+      it "renders a table with correct headers" do
+        expect(rendered).to have_css("table.nhsuk-table-responsive")
+        expect(rendered).to have_css("th", text: "CSV file row")
+        expect(rendered).to have_css("th", text: "Name and NHS number")
+        expect(rendered).to have_css("th", text: "School move")
+        expect(rendered).not_to have_css("th", text: "Actions")
+      end
     end
 
-    it "renders a table" do
-      expect(rendered).to have_css("table.nhsuk-table-responsive")
-    end
-
-    it "renders table headers" do
-      expect(rendered).to have_css("th", text: "CSV file row")
-      expect(rendered).to have_css("th", text: "Name and NHS number")
-      expect(rendered).to have_css("th", text: "School move")
-    end
-  end
-
-  describe "with school move to different school (same team)" do
-    let(:current_school) { create(:school, team:, name: "Current School") }
-    let(:destination_school) { create(:school, team:, name: "New School") }
-    let(:patient) do
-      create(
-        :patient,
-        given_name: "John",
-        family_name: "Dover",
-        nhs_number: "9435797881",
-        school: current_school
-      )
-    end
-    let(:changesets) do
-      [
+    describe "school move to different school (same team)" do
+      let(:current_school) { create(:school, team:, name: "Current School") }
+      let(:destination_school) { create(:school, team:, name: "New School") }
+      let(:patient) do
         create(
-          :patient_changeset,
-          :with_school_move,
-          import:,
-          patient:,
-          row_number: 5,
-          school: destination_school
+          :patient,
+          given_name: "John",
+          family_name: "Dover",
+          nhs_number: "9435797881",
+          school: current_school
         )
-      ]
-    end
+      end
+      let(:records) do
+        [
+          create(
+            :patient_changeset,
+            :with_school_move,
+            import:,
+            patient:,
+            row_number: 5,
+            school: destination_school
+          )
+        ]
+      end
 
-    it "displays CSV file row number" do
-      expect(rendered).to have_css("td", text: "7")
-    end
+      it "displays CSV file row number" do
+        expect(rendered).to have_css("td", text: "7")
+      end
 
-    it "displays patient name" do
-      expect(rendered).to have_css("td", text: /DOVER, John/i)
-    end
+      it "displays patient details" do
+        expect(rendered).to have_css("td", text: /DOVER, John/i)
+        expect(rendered).to have_css(
+          "td .nhsuk-u-secondary-text-colour",
+          text: "943 579 7881"
+        )
+      end
 
-    it "displays NHS number" do
-      expect(rendered).to have_css(
-        "td .nhsuk-u-secondary-text-colour",
-        text: "943 579 7881"
-      )
-    end
+      it "displays school move with 'to' separator" do
+        expect(rendered).to have_css("td", text: "Current School")
+        expect(rendered).to have_css("td", text: "New School")
+        expect(rendered).to have_css(
+          "td .nhsuk-u-secondary-text-colour",
+          text: "to"
+        )
+      end
 
-    it "displays current school name" do
-      expect(rendered).to have_css("td", text: "Current School")
-    end
-
-    it "displays destination school name" do
-      expect(rendered).to have_css("td", text: "New School")
-    end
-
-    it "displays 'to' between schools" do
-      expect(rendered).to have_css(
-        "td .nhsuk-u-secondary-text-colour",
-        text: "to"
-      )
-    end
-
-    it "does not show inter-team move message" do
-      expect(rendered).not_to have_css(".app-status", text: /moving in from/)
-    end
-  end
-
-  describe "with inter-team school move" do
-    let(:other_team) { create(:team, name: "Other Team") }
-    let(:current_school) do
-      create(:school, name: "Current School").tap do |s|
-        s.attach_to_team!(other_team, academic_year:)
+      it "does not show inter-team move message" do
+        expect(rendered).not_to have_css(".app-status", text: /moving in from/)
       end
     end
-    let(:destination_school) do
-      create(:school, name: "Destination School").tap do |s|
-        s.attach_to_team!(team, academic_year:)
+
+    describe "inter-team move" do
+      let(:other_team) { create(:team, name: "Other Team") }
+      let(:current_school) do
+        create(:school, name: "Current School").tap do |s|
+          s.attach_to_team!(other_team, academic_year:)
+        end
+      end
+      let(:destination_school) do
+        create(:school, name: "Destination School").tap do |s|
+          s.attach_to_team!(team, academic_year:)
+        end
+      end
+      let(:patient) { create(:patient, school: current_school) }
+      let(:records) do
+        [
+          create(
+            :patient_changeset,
+            :with_school_move,
+            import:,
+            patient:,
+            row_number: 3,
+            school: destination_school
+          )
+        ]
+      end
+
+      it "displays inter-team move status message" do
+        expect(rendered).to have_css(
+          ".app-status",
+          text: /This child is moving in from Other Team's area/i
+        )
+        expect(rendered).to have_css("td", text: "Current School")
+        expect(rendered).to have_css("td", text: "Destination School")
       end
     end
-    let(:patient) { create(:patient, school: current_school) }
-    let(:changesets) do
-      [
+
+    describe "move to home educated" do
+      let(:current_school) { create(:school, team:, name: "Current School") }
+      let(:patient) { create(:patient, school: current_school) }
+      let(:records) do
+        [create(:patient_changeset, import:, patient:, row_number: 2)]
+      end
+
+      before do
+        records.first.data["review"]["school_move"] = {
+          "school_id" => nil,
+          "home_educated" => true
+        }
+        records.first.save!
+      end
+
+      it "displays home educated as destination" do
+        expect(rendered).to have_css("td", text: "Home educated")
+        expect(rendered).to have_css("td", text: "Current School")
+      end
+    end
+
+    describe "unknown destination school" do
+      let(:current_school) { create(:school, team:, name: "Current School") }
+      let(:patient) { create(:patient, school: current_school) }
+      let(:records) do
+        [create(:patient_changeset, import:, patient:, row_number: 1)]
+      end
+
+      before do
+        records.first.data["review"]["school_move"] = {
+          "school_id" => nil,
+          "home_educated" => false
+        }
+        records.first.save!
+      end
+
+      it "displays unknown school as destination" do
+        expect(rendered).to have_css("td", text: "Unknown school")
+      end
+    end
+
+    describe "changeset not from file" do
+      let(:school) { create(:school, team:) }
+      let(:patient) { create(:patient, school:) }
+      let(:records) do
+        [create(:patient_changeset, import:, patient:, row_number: nil)]
+      end
+
+      before do
+        records.first.data["review"]["school_move"] = {
+          "school_id" => school.id,
+          "home_educated" => false
+        }
+        records.first.save!
+      end
+
+      it "displays empty string for row number" do
+        first_cell = rendered.css("tbody tr td").first
+        expect(first_cell.text.strip).to be_empty
+        expect(rendered).to have_css("td", text: patient.full_name)
+      end
+    end
+
+    describe "patient without NHS number" do
+      let(:school) { create(:school, team:) }
+      let(:patient) { create(:patient, school:, nhs_number: nil) }
+      let(:records) do
+        [create(:patient_changeset, import:, patient:, row_number: 1)]
+      end
+
+      before do
+        records.first.data["review"]["school_move"] = {
+          "school_id" => school.id,
+          "home_educated" => false
+        }
+        records.first.save!
+      end
+
+      it "displays not provided for NHS number" do
+        expect(rendered).to have_css("td", text: "Not provided")
+      end
+    end
+
+    describe "patient without school" do
+      let(:destination_school) { create(:school, team:, name: "New School") }
+      let(:patient) { create(:patient, school: nil) }
+      let(:records) do
+        [create(:patient_changeset, import:, patient:, row_number: 1)]
+      end
+
+      before do
+        records.first.data["review"]["school_move"] = {
+          "school_id" => destination_school.id,
+          "home_educated" => false
+        }
+        records.first.save!
+      end
+
+      it "displays unknown school for current school" do
+        expect(rendered).to have_css("td", text: "Unknown school")
+        expect(rendered).to have_css("td", text: "New School")
+      end
+    end
+
+    describe "multiple changesets" do
+      let(:school_a) { create(:school, team:, name: "School A") }
+      let(:school_b) { create(:school, team:, name: "School B") }
+      let(:patient_a) do
         create(
-          :patient_changeset,
-          :with_school_move,
-          import:,
-          patient:,
-          row_number: 3,
-          school: destination_school
+          :patient,
+          school: school_a,
+          given_name: "Alice",
+          family_name: "Smith"
         )
-      ]
+      end
+      let(:patient_b) do
+        create(
+          :patient,
+          school: school_a,
+          given_name: "Bob",
+          family_name: "Jones"
+        )
+      end
+      let(:records) do
+        [
+          create(
+            :patient_changeset,
+            import:,
+            patient: patient_a,
+            row_number: 1
+          ),
+          create(:patient_changeset, import:, patient: patient_b, row_number: 2)
+        ]
+      end
+
+      before do
+        records.each do |record|
+          record.data["review"]["school_move"] = {
+            "school_id" => school_b.id,
+            "home_educated" => false
+          }
+          record.save!
+        end
+      end
+
+      it "renders all changesets with correct information" do
+        expect(rendered.css("tbody .nhsuk-table__row").size).to eq(2)
+        expect(rendered).to have_css("td", text: /SMITH, Alice/i)
+        expect(rendered).to have_css("td", text: /JONES, Bob/i)
+
+        rendered
+          .css("tbody .nhsuk-table__row")
+          .each do |row|
+            expect(row.text).to include("School A")
+            expect(row.text).to include("to")
+            expect(row.text).to include("School B")
+          end
+      end
     end
 
-    it "displays inter-team move status message" do
-      expect(rendered).to have_css(
-        ".app-status",
-        text: /This child is moving in from Other Team's area/i
-      )
-    end
+    describe "empty records" do
+      let(:records) { [] }
 
-    it "displays both school names" do
-      expect(rendered).to have_css("td", text: "Current School")
-      expect(rendered).to have_css("td", text: "Destination School")
-    end
-  end
-
-  describe "with move to home educated" do
-    let(:current_school) { create(:school, team:, name: "Current School") }
-    let(:patient) { create(:patient, school: current_school) }
-    let(:changesets) do
-      [create(:patient_changeset, import:, patient:, row_number: 2)]
-    end
-
-    before do
-      changesets.first.data["review"]["school_move"] = {
-        "school_id" => nil,
-        "home_educated" => true
-      }
-      changesets.first.save!
-    end
-
-    it "displays 'Home educated' as destination" do
-      expect(rendered).to have_css("td", text: "Home educated")
-    end
-
-    it "displays current school" do
-      expect(rendered).to have_css("td", text: "Current School")
-    end
-  end
-
-  describe "with unknown destination school" do
-    let(:current_school) { create(:school, team:, name: "Current School") }
-    let(:patient) { create(:patient, school: current_school) }
-    let(:changesets) do
-      [create(:patient_changeset, import:, patient:, row_number: 1)]
-    end
-
-    before do
-      changesets.first.data["review"]["school_move"] = {
-        "school_id" => nil,
-        "home_educated" => false
-      }
-      changesets.first.save!
-    end
-
-    it "displays 'Unknown school' as destination" do
-      expect(rendered).to have_css("td", text: "Unknown school")
-    end
-  end
-
-  describe "with changeset not from file (no row_number)" do
-    let(:school) { create(:school, team:) }
-    let(:patient) { create(:patient, school:) }
-    let(:changesets) do
-      [create(:patient_changeset, import:, patient:, row_number: nil)]
-    end
-
-    before do
-      changesets.first.data["review"]["school_move"] = {
-        "school_id" => school.id,
-        "home_educated" => false
-      }
-      changesets.first.save!
-    end
-
-    it "displays empty string for row number" do
-      first_cell = rendered.css("tbody tr td").first
-      expect(first_cell.text.strip).to be_empty
-    end
-
-    it "still displays patient and school information" do
-      expect(rendered).to have_css("td", text: patient.full_name)
-    end
-  end
-
-  describe "with patient without NHS number" do
-    let(:school) { create(:school, team:) }
-    let(:patient) { create(:patient, school:, nhs_number: nil) }
-    let(:changesets) do
-      [create(:patient_changeset, import:, patient:, row_number: 1)]
-    end
-
-    before do
-      changesets.first.data["review"]["school_move"] = {
-        "school_id" => school.id,
-        "home_educated" => false
-      }
-      changesets.first.save!
-    end
-
-    it "displays 'Not provided' for NHS number" do
-      expect(rendered).to have_css("td", text: "Not provided")
-    end
-  end
-
-  describe "with patient without school" do
-    let(:destination_school) { create(:school, team:, name: "New School") }
-    let(:patient) { create(:patient, school: nil) }
-    let(:changesets) do
-      [create(:patient_changeset, import:, patient:, row_number: 1)]
-    end
-
-    before do
-      changesets.first.data["review"]["school_move"] = {
-        "school_id" => destination_school.id,
-        "home_educated" => false
-      }
-      changesets.first.save!
-    end
-
-    it "displays 'Unknown school' for current school" do
-      expect(rendered).to have_css("td", text: "Unknown school")
-    end
-
-    it "displays destination school" do
-      expect(rendered).to have_css("td", text: "New School")
-    end
-  end
-
-  describe "with multiple changesets" do
-    let(:school_a) { create(:school, team:, name: "School A") }
-    let(:school_b) { create(:school, team:, name: "School B") }
-    let(:patient_a) do
-      create(
-        :patient,
-        school: school_a,
-        given_name: "Alice",
-        family_name: "Smith"
-      )
-    end
-    let(:patient_b) do
-      create(
-        :patient,
-        school: school_a,
-        given_name: "Bob",
-        family_name: "Jones"
-      )
-    end
-    let(:changesets) do
-      [
-        create(:patient_changeset, import:, patient: patient_a, row_number: 1),
-        create(:patient_changeset, import:, patient: patient_b, row_number: 2)
-      ]
-    end
-
-    before do
-      changesets[0].data["review"]["school_move"] = {
-        "school_id" => school_b.id,
-        "home_educated" => false
-      }
-      changesets[1].data["review"]["school_move"] = {
-        "school_id" => school_b.id,
-        "home_educated" => false
-      }
-      changesets.each(&:save!)
-    end
-
-    it "renders all changesets" do
-      rows = rendered.css("tbody .nhsuk-table__row")
-      expect(rows.size).to eq(2)
-    end
-
-    it "displays correct names for each patient" do
-      expect(rendered).to have_css("td", text: /SMITH, Alice/i)
-      expect(rendered).to have_css("td", text: /JONES, Bob/i)
-    end
-
-    it "displays school moves for both patients" do
-      rows = rendered.css("tbody .nhsuk-table__row")
-
-      rows.each do |row|
-        expect(row.text).to include("School A")
-        expect(row.text).to include("to")
-        expect(row.text).to include("School B")
+      it "renders empty table body" do
+        expect(rendered).to have_css("tbody")
+        expect(rendered).not_to have_css("tbody tr")
       end
     end
   end
 
-  describe "with empty changesets" do
-    let(:changesets) { [] }
+  describe "with patients (review_screen: false)" do
+    let(:review_screen) { false }
 
-    it "renders empty table body" do
-      expect(rendered).to have_css("tbody")
-      expect(rendered).not_to have_css("tbody tr")
-    end
-  end
+    describe "table structure" do
+      let(:current_school) { create(:school, team:, name: "Current School") }
+      let(:destination_school) { create(:school, team:, name: "New School") }
+      let(:patient) { create(:patient, school: current_school) }
+      let(:school_move) do
+        create(:school_move, patient:, school: destination_school)
+      end
+      let(:records) do
+        Patient.where(id: patient.id).includes(:school, :school_moves)
+      end
 
-  describe "school with multiple teams" do
-    let(:team2) { create(:team, name: "Team 2") }
-    let(:current_school) do
-      create(:school, name: "Multi-Team School").tap do |s|
-        s.attach_to_team!(team, academic_year:)
+      before { school_move }
+
+      it "renders table with Actions column" do
+        expect(rendered).not_to have_css("th", text: "CSV file row")
+        expect(rendered).to have_css("th", text: "Name and NHS number")
+        expect(rendered).to have_css("th", text: "School move")
+        expect(rendered).to have_css("th", text: "Actions")
+      end
+
+      it "displays patient and school move information with review link" do
+        expect(rendered).to have_css("td", text: patient.full_name)
+        expect(rendered).to have_css("td", text: "Current School")
+        expect(rendered).to have_css("td", text: "New School")
+        expect(rendered).to have_link(
+          "Review",
+          href:
+            Rails.application.routes.url_helpers.school_move_path(school_move)
+        )
       end
     end
-    let(:destination_school) do
-      create(:school, name: "Destination School").tap do |s|
-        s.attach_to_team!(team2, academic_year:)
+
+    describe "multiple patients" do
+      let(:school_a) { create(:school, team:, name: "School A") }
+      let(:school_b) { create(:school, team:, name: "School B") }
+      let(:patient_a) do
+        create(
+          :patient,
+          school: school_a,
+          given_name: "Alice",
+          family_name: "Smith"
+        )
+      end
+      let(:patient_b) do
+        create(
+          :patient,
+          school: school_a,
+          given_name: "Bob",
+          family_name: "Jones"
+        )
+      end
+      let(:school_move_a) do
+        create(:school_move, patient: patient_a, school: school_b)
+      end
+      let(:school_move_b) do
+        create(:school_move, patient: patient_b, school: school_b)
+      end
+      let(:records) do
+        Patient.where(id: [patient_a.id, patient_b.id]).includes(
+          :school,
+          :school_moves
+        )
+      end
+
+      before do
+        school_move_a
+        school_move_b
+      end
+
+      it "displays review links for all patients" do
+        expect(rendered).to have_link(
+          "Review",
+          href:
+            Rails.application.routes.url_helpers.school_move_path(school_move_a)
+        )
+        expect(rendered).to have_link(
+          "Review",
+          href:
+            Rails.application.routes.url_helpers.school_move_path(school_move_b)
+        )
       end
     end
-    let(:patient) { create(:patient, school: current_school) }
-    let(:changesets) do
-      [create(:patient_changeset, import:, patient:, row_number: 1)]
-    end
 
-    before do
-      current_school.attach_to_team!(team2, academic_year:)
-      changesets.first.data["review"]["school_move"] = {
-        "school_id" => destination_school.id,
-        "home_educated" => false
-      }
-      changesets.first.save!
-    end
+    describe "inter-team move" do
+      let(:other_team) { create(:team, name: "Other Team") }
+      let(:current_school) do
+        create(:school, name: "Current School").tap do |s|
+          s.attach_to_team!(other_team, academic_year:)
+        end
+      end
+      let(:destination_school) do
+        create(:school, name: "Destination School").tap do |s|
+          s.attach_to_team!(team, academic_year:)
+        end
+      end
+      let(:patient) { create(:patient, school: current_school) }
+      let(:school_move) do
+        create(:school_move, patient:, school: destination_school)
+      end
+      let(:records) do
+        Patient.where(id: patient.id).includes(:school, :school_moves)
+      end
 
-    it "does not show inter-team message when schools share a team" do
-      expect(rendered).not_to have_css(".app-status", text: /moving in from/)
+      before { school_move }
+
+      it "displays inter-team move status message" do
+        expect(rendered).to have_css(
+          ".app-status",
+          text: /This child is moving in from Other Team's area/i
+        )
+        expect(rendered).to have_css("td", text: "Current School")
+        expect(rendered).to have_css("td", text: "Destination School")
+      end
     end
   end
 end

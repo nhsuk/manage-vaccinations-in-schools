@@ -119,6 +119,22 @@
     </details>
   <% end %>
 
+  <% if @school_moves.present? %>
+    <h3 class="nhsuk-u-reading-width">
+      School moves - needs review
+    </h3>
+    <details class="nhsuk-details nhsuk-expander">
+      <summary class="nhsuk-details__summary" data-module="app-sticky">
+        <span class="nhsuk-details__summary-text">
+          <%= pluralize(@school_moves.count, "school move") %>
+        </span>
+      </summary>
+      <div class="nhsuk-details__text">
+        <%= render AppImportReviewSchoolMovesSummaryComponent.new(records: @school_moves, review_screen: false) %>
+      </div>
+    </details>
+  <% end %>
+
   <% if @patients.present? %>
     <h3 class="nhsuk-u-reading-width">
       Imported records

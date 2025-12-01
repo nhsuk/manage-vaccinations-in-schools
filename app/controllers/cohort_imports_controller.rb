@@ -47,7 +47,8 @@ class CohortImportsController < ApplicationController
     end
 
     if @cohort_import.processed? || @cohort_import.partially_processed?
-      @pagy, @patients = pagy(@cohort_import.patients.includes(:school))
+      @pagy, @patients =
+        pagy(@cohort_import.patients.includes(:school, :school_moves))
 
       @duplicates =
         @patients.with_pending_changes_for_team(team: current_team).distinct
@@ -68,6 +69,8 @@ class CohortImportsController < ApplicationController
         end
 
       @nhs_discrepancies = @cohort_import.changesets.nhs_number_discrepancies
+
+      @school_moves = @patients.joins(:school_moves)
 
       @cancelled = @cohort_import.changesets.from_file.cancelled
     end
