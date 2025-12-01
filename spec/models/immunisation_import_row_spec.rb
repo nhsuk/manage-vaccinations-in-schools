@@ -855,6 +855,18 @@ describe ImmunisationImportRow do
 
       it { should be_valid }
     end
+
+    context "with case insensitive programme" do
+      let(:data) { { "PROGRAMME" => "hpv" } }
+
+      it "accepts the programme" do
+        expect(immunisation_import_row).to be_invalid
+
+        expect(immunisation_import_row.errors[:base]).not_to include(
+          "<code>PROGRAMME</code> or <code>Vaccination type</code> is required"
+        )
+      end
+    end
   end
 
   describe "#to_vaccination_record" do
@@ -1813,6 +1825,26 @@ describe ImmunisationImportRow do
         let(:data) { valid_data.merge("ORGANISATION_CODE" => "ABC") }
 
         it { should eq("ABC") }
+      end
+    end
+
+    describe "#programme" do
+      subject { vaccination_record.programme }
+
+      context "with a value with exact capitalisation" do
+        let(:data) do
+          valid_data.merge("PROGRAMME" => "HPV", "VACCINE_GIVEN" => nil)
+        end
+
+        it { should eq Programme.hpv }
+      end
+
+      context "with a value with mismatching capitalisation" do
+        let(:data) do
+          valid_data.merge("PROGRAMME" => "hpv", "VACCINE_GIVEN" => nil)
+        end
+
+        it { should eq Programme.hpv }
       end
     end
 

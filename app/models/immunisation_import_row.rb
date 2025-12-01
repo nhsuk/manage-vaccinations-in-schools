@@ -313,7 +313,7 @@ class ImmunisationImportRow
           parsed_vaccination_description_string&.dig(:programme_name) ||
             programme_name&.to_s
 
-        programmes_by_name[name] || vaccine&.programme
+        programmes_by_name[name&.downcase] || vaccine&.programme
       end
   end
 
@@ -375,7 +375,7 @@ class ImmunisationImportRow
       (session || team)
         .programmes
         .each_with_object({}) do |programme, hash|
-          programme.import_names.each { |name| hash[name] = programme }
+          programme.import_names.each { |name| hash[name.downcase] = programme }
         end
   end
 
