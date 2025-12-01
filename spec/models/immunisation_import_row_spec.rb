@@ -965,6 +965,31 @@ describe ImmunisationImportRow do
         end
       end
 
+      shared_examples "when `VACCINATED` is `N`" do
+        context "when `VACCINATED` is `N`" do
+          let(:data) { { "VACCINATED" => "N" } }
+
+          it "doesn't validate anything" do
+            expect(immunisation_import_row).to be_valid
+            expect(immunisation_import_row.errors[:base]).to eq []
+          end
+        end
+      end
+
+      shared_examples "when vaccinated date is in a previous academic year" do
+        context "when vaccinated date is in a previous academic year"
+        let(:data) do
+          { "DATE_OF_VACCINATION" => "20220101", "VACCINATED" => "Y" }
+        end
+
+        it "is invalid" do
+          expect(immunisation_import_row).to be_invalid
+          expect(
+            immunisation_import_row.errors[:DATE_OF_VACCINATION]
+          ).to include("must be in the current academic year")
+        end
+      end
+
       context "of type flu" do
         let(:import_type) { "bulk_flu" }
 
@@ -1000,6 +1025,8 @@ describe ImmunisationImportRow do
         end
 
         include_examples "when `VACCINATED` is `N`"
+
+        include_examples "when vaccinated date is in a previous academic year"
       end
 
       context "of type hpv" do
@@ -1027,6 +1054,8 @@ describe ImmunisationImportRow do
         end
 
         include_examples "when `VACCINATED` is `N`"
+
+        include_examples "when vaccinated date is in a previous academic year"
       end
     end
   end

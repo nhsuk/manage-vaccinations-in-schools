@@ -682,7 +682,7 @@ class ImmunisationImportRow
         end
       end
 
-      if programme&.flu? && academic_year != AcademicYear.current
+      if (programme&.flu? || bulk?) && academic_year != AcademicYear.current
         errors.add(
           date_of_vaccination.header,
           "must be in the current academic year"
