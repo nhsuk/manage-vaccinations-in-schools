@@ -52,7 +52,8 @@ FactoryBot.define do
             family_name: "Dover",
             date_of_birth: "2010-01-01",
             address_postcode: "SW1A 1AA",
-            nhs_number: nil
+            nhs_number: nil,
+            birth_academic_year: 2010
           },
           parent_1: {
           },
@@ -60,8 +61,8 @@ FactoryBot.define do
           },
           pds: {
           },
-          academic_year: nil,
-          home_educated: nil,
+          academic_year: AcademicYear.pending,
+          home_educated: true,
           school_move_source: nil
         },
         search_results: [
@@ -81,8 +82,33 @@ FactoryBot.define do
       }
     end
 
-    after(:build) do |changeset|
+    after(:build) do |changeset, evaluator|
       changeset.import_type = changeset.import.class.name
+
+      if evaluator.patient.present?
+        changeset.patient_id = evaluator.patient.id
+
+        changeset.school ||= evaluator.school if evaluator.school.present?
+
+        address_postcode =
+          case changeset.record_type
+          when "auto_match"
+            evaluator.patient.address_postcode
+          when changeset.record_type == "import_issue"
+            "SW12 4AX"
+          else
+            changeset.address_postcode
+          end
+
+        changeset.data["upload"]["child"] = {
+          given_name: evaluator.patient.given_name,
+          family_name: evaluator.patient.family_name,
+          date_of_birth: evaluator.patient.date_of_birth.to_s,
+          address_postcode:,
+          nhs_number: evaluator.patient.nhs_number,
+          birth_academic_year: evaluator.patient.birth_academic_year
+        }
+      end
     end
 
     trait :with_nhs_number do
@@ -119,8 +145,31 @@ FactoryBot.define do
       end
     end
 
+    trait :with_school_move do
+      after(:build) do |changeset, evaluator|
+        changeset.data["review"]["school_move"] = if evaluator.school.present?
+          { school_id: evaluator.school.id, home_educated: false }
+        else
+          { school_id: nil, home_educated: true }
+        end
+      end
+    end
+
     trait :processed do
       status { :processed }
+      processed_at { Time.current }
+    end
+
+    trait :new_patient do
+      record_type { :new_patient }
+    end
+
+    trait :auto_match do
+      record_type { :auto_match }
+    end
+
+    trait :import_issue do
+      record_type { :import_issue }
     end
   end
 end
