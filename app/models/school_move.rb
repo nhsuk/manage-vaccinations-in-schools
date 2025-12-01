@@ -154,11 +154,11 @@ class SchoolMove < ApplicationRecord
 
   def create_important_notice!(old_teams, school_move_log_entry)
     old_teams.each do |old_team|
-      ImportantNotice.create!(
+      ImportantNotice.team_changed.find_or_create_by!(
         patient:,
-        team_id: old_team.id,
+        team: old_team,
         type: :team_changed,
-        recorded_at: Time.current,
+        recorded_at: school_move_log_entry.created_at,
         school_move_log_entry:
       )
     end
