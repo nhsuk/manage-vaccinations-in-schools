@@ -9,8 +9,8 @@
   @include nhsuk-responsive-margin(7, "bottom");
 
   @include nhsuk-media-query($from: tablet) {
-    align-items: center;
     flex-direction: row;
+    align-items: center;
   }
 
   > *,

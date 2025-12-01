@@ -3,8 +3,8 @@
 .app-summary-list--full-width {
   .nhsuk-summary-list__row {
     display: block;
-    padding-bottom: nhsuk-spacing(2);
     padding-top: nhsuk-spacing(2);
+    padding-bottom: nhsuk-spacing(2);
   }
 
   &.nhsuk-summary-list--no-border .nhsuk-summary-list__row {
@@ -15,8 +15,8 @@
   .nhsuk-summary-list__value,
   .nhsuk-summary-list__actions {
     display: block;
-    text-align: left;
     width: 100%;
+    text-align: left;
   }
 
   .nhsuk-summary-list__key {

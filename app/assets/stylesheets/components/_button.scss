@@ -41,13 +41,13 @@ $_secondary-warning-button-hover-colour: color.change(
 
   &:hover,
   &:hover:visited {
-    background-color: $_secondary-warning-button-hover-colour;
     color: $nhsuk-warning-button-colour;
+    background-color: $_secondary-warning-button-hover-colour;
   }
 
   &:active {
-    background-color: $_secondary-warning-button-hover-colour;
     border-color: $nhsuk-warning-button-colour;
+    background-color: $_secondary-warning-button-hover-colour;
   }
 
   &:not(:focus):not(:active)::before {
@@ -68,7 +68,7 @@ $_secondary-warning-button-hover-colour: color.change(
 .app-button--icon {
   .nhsuk-icon {
     display: block;
-    height: 28px;
     width: 28px;
+    height: 28px;
   }
 }

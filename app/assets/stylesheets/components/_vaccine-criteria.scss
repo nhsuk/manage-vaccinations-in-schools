@@ -2,14 +2,14 @@
 @use "../core" as app;
 
 .app-vaccine-criteria {
+  display: inline-flex;
   align-items: center;
   column-gap: nhsuk-spacing(2);
-  display: inline-flex;
 
   &::before {
     content: "";
-    height: 1em;
     width: 1em;
+    height: 1em;
   }
 
   &[data-value="without-gelatine"]::before {
@@ -20,9 +20,9 @@
   }
 
   &[data-value="nasal"]::before {
+    width: 1em;
+    height: 1em;
     border: 0.25em solid currentcolor;
     border-radius: 100%;
-    height: 1em;
-    width: 1em;
   }
 }

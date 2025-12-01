@@ -3,15 +3,15 @@
 
 .nhsuk-tag {
   &--dark-orange {
-    background-color: nhsuk-tint(app.$dark-orange-colour, 80%);
     border-color: nhsuk-shade(app.$dark-orange-colour, 50%);
     color: nhsuk-shade(app.$dark-orange-colour, 50%);
+    background-color: nhsuk-tint(app.$dark-orange-colour, 80%);
   }
 
   &--transparent {
-    background-color: transparent;
     border-color: currentcolor;
     color: currentcolor;
+    background-color: transparent;
   }
 }
 
