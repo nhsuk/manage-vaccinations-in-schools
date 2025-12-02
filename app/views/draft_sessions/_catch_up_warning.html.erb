@@ -8,7 +8,7 @@
   <p>
     <%= @catch_up_patients_vaccinated_percentage == 0 ? "" : "Only " %>
     <%= @catch_up_patients_vaccinated_percentage %>% of children in
-    <%= @catch_up_year_groups.map { format_year_group(it) }.to_sentence %> in
+    <%= format_year_groups(@catch_up_year_groups) %> in
     this session have vaccination records. This is unusually low coverage for
     catch-up year groups.
   </p>
@@ -22,8 +22,7 @@
     <p>
       Scheduling this session now will send consent requests to
       <%= pluralize(@catch_up_patients_receiving_consent_requests_count, "parent") %>
-      of children in
-      <%= @catch_up_year_groups.map { format_year_group(it) }.to_sentence %> on
+      of children in <%= format_year_groups(@catch_up_year_groups) %> on
       <%= @draft_session.send_consent_requests_at.to_fs(:long) %>. Many of them
       may be parents of already vaccinated children.
     </p>
