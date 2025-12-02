@@ -13,6 +13,7 @@ en:
         given: Consent given
         given_injection: Consent given
         given_injection_without_gelatine: Consent given for gelatine-free injection
+        given_injection_without_gelatine_flu: Consent given for injection
         given_nasal: Consent given for nasal spray
         no_response: No response
         not_required: No consent needed
@@ -22,6 +23,7 @@ en:
         given: aqua-green
         given_injection: aqua-green
         given_injection_without_gelatine: aqua-green
+        given_injection_without_gelatine_flu: aqua-green
         given_nasal: aqua-green
         no_response: grey
         not_required: grey
