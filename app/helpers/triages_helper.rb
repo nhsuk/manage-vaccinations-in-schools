@@ -4,15 +4,19 @@ module TriagesHelper
   def triage_status_text(triage)
     return if triage.nil?
 
-    status_method =
-      if triage.programme.has_multiple_vaccine_methods? &&
-           triage.vaccine_method.present?
-        triage.status + "_#{triage.vaccine_method}"
-      else
-        triage.status
-      end
+    if triage.delay_vaccination? && triage.delay_vaccination_until.present?
+      "Delay vaccination until #{triage.delay_vaccination_until.to_fs(:long)}"
+    else
+      status_method =
+        if triage.programme.has_multiple_vaccine_methods? &&
+             triage.vaccine_method.present?
+          triage.status + "_#{triage.vaccine_method}"
+        else
+          triage.status
+        end
 
-    Triage.human_enum_name(:status, status_method)
+      Triage.human_enum_name(:status, status_method)
+    end
   end
 
   def triage_status_tag(triage)
