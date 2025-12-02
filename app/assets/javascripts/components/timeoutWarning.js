@@ -1,5 +1,5 @@
 import { Component } from "nhsuk-frontend";
-import { get, post } from "../helpers/fetch";
+import { get, post, timeoutUrl } from "../helpers/fetch";
 
 const TIME_REMAINING_ENDPOINT = "/users/sessions/time-remaining";
 const REFRESH_SESSION_ENDPOINT = "/users/sessions/refresh";
@@ -31,6 +31,8 @@ export class TimeoutWarning extends Component {
     this.fetchTimeRemaining = this.fetchTimeRemaining.bind(this);
     this.toggleModalVisibility = this.toggleModalVisibility.bind(this);
     this.updateTimerElements = this.updateTimerElements.bind(this);
+
+    this.logoutTriggered = false;
 
     this.instanceId = crypto.randomUUID();
 
@@ -102,6 +104,7 @@ export class TimeoutWarning extends Component {
   async fetchTimeRemaining() {
     const data = await get(TIME_REMAINING_ENDPOINT);
     this.updateLogoutAtWithSeconds(data.time_remaining_seconds);
+    this.logoutTriggered = false;
   }
 
   async refreshSession() {
@@ -132,7 +135,14 @@ export class TimeoutWarning extends Component {
     if (this.logoutAt === null) return;
     if (Date.now() >= this.logoutAt) {
       // Add a small delay to ensure the session has ended in the server
-      setTimeout(() => {
+      setTimeout(async () => {
+        // If the logout has already been triggered, redirect to the timeout page
+        // to prevent tabs getting stuck with pending requests when basic auth is used
+        if (this.logoutTriggered) {
+          window.location.href = timeoutUrl();
+          return;
+        }
+        this.logoutTriggered = true;
         this.fetchTimeRemaining();
       }, 1000);
     }
