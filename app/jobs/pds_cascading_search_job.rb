@@ -102,7 +102,7 @@ class PDSCascadingSearchJob < ApplicationJob
          Faraday::ClientError,
          Faraday::ServerError => e
     Rails.logger.error("Error doing PDS search: #{e.message}")
-    Sentry.capture_exception(e)
+    Sentry.capture_exception(e, level: "warning")
     [:error, nil]
   end
 

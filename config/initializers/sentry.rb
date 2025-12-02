@@ -2,6 +2,15 @@
 
 return if ENV["SENTRY_DISABLE"].present?
 
+# Here we configure Sentry integration.
+#
+# We use the configured filter parameters to filter out PII and avoid it
+#  reaching Sentry.
+#
+# We have also configured Sentry itself using advanced data scrubbing with the
+#  following masking key:
+#  [Mask] [^.*GET https://.*\?([^\s]*).*$] from [** || $error.value || $stacktrace]
+
 require "active_support/parameter_filter"
 
 Sentry.init do |config|

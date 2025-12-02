@@ -158,8 +158,8 @@ class ConsentForm < ApplicationRecord
            :preferred_family_name,
            :preferred_given_name
 
-  normalizes :given_name, with: -> { _1.strip }
-  normalizes :family_name, with: -> { _1.strip }
+  normalizes :given_name, with: -> { it.strip }
+  normalizes :family_name, with: -> { it.strip }
 
   normalizes :parent_email, with: EmailAddressNormaliser.new
   normalizes :parent_phone, with: PhoneNumberNormaliser.new
