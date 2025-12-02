@@ -12,6 +12,21 @@
     ]
   },
   {
+    "Sid" : "DenyLogReadAccess",
+    "Effect" : "Deny",
+    "Action" : [
+      "logs:GetLogEvents",
+      "logs:FilterLogEvents",
+      "logs:StartQuery",
+      "logs:StartLiveTail",
+      "logs:GetQueryResults",
+      "logs:GetLogRecord"
+    ],
+    "Resource" : [
+      "*"
+    ]
+  },
+  {
     "Sid" : "DenySelfPolicyModification",
     "Action" : [
       "iam:DeletePolicy",
