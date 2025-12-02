@@ -1,11 +1,10 @@
-<div style="<%= @primary_type == :patient ? "margin-bottom: 10px;" : "margin-bottom: 24px;" %>">
-  <%= h1 page_title: "Inspect #{@primary_type.to_s.classify} #{@primary_id}" do %>
-    <%= "Inspect #{@primary_type.to_s.classify} #{@primary_id}" %>
-  <% end %>
-  <code>
-    <%= "#{@primary_type.to_s.classify}.find(#{@primary_id})" %>
-  </code>
-</div>
+<%= h1 page_title: "Inspect #{@primary_type.to_s.classify} #{@primary_id}" do %>
+  <%= "Inspect #{@primary_type.to_s.classify} #{@primary_id}" %>
+<% end %>
+
+<p>
+  <code><%= "#{@primary_type.to_s.classify}.find(#{@primary_id})" %></code>
+</p>
 
 <% if @primary_type == :patient %>
   <%= link_to "View timeline", inspect_timeline_patient_path(@primary_id), class: "nhsuk-button nhsuk-button--secondary" %>
@@ -14,15 +13,17 @@
 <pre class="mermaid" style="overflow-x: auto; width: 100vw; margin-left: calc(50% - 50vw); display: grid; place-items: center;">
   <%= @mermaid.html_safe %>
 </pre>
+
 <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({
-        startOnLoad: true,
-        flowchart: {
-          securityLevel: 'loose',
-          useMaxWidth: false
-        }
-    });
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+  mermaid.initialize({
+    startOnLoad: true,
+    flowchart: {
+      securityLevel: 'loose',
+      useMaxWidth: false
+    }
+  });
 </script>
 
 <%= render AppDetailsComponent.new(summary: "Graph options", expander: true, open: false) do %>
@@ -33,11 +34,6 @@
                                  label: { text: "Show PII" },
                                  checked: @show_pii,
                                  "onchange": "this.form.submit();" %>
-      <% else %>
-        <%= form.govuk_check_box :show_pii, true,
-                                 label: { text: "Show PII (not allowed for this user)" },
-                                 checked: false,
-                                 "disabled": "true" %>
       <% end %>
     </div>
 
@@ -69,5 +65,5 @@
 <% end %>
 
 <%= render AppDetailsComponent.new(summary: "Raw mermaid", expander: true, open: false) do %>
-  <pre class="nhsuk-u-font-family-monospace nhsuk-u-margin-0" style="font-size: small;"><%= @mermaid %></pre>
+  <pre class="app-u-code nhsuk-u-font-size-14" style="overflow: scroll"><%= @mermaid %></pre>
 <% end %>

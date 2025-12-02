@@ -1,5 +1,5 @@
 <%= render AppCardComponent.new(filters: true) do |card| %>
-    <% card.with_heading { "Customise timeline" } %>
+  <% card.with_heading { "Customise timeline" } %>
     <%= form_with url: url,
                   method: :get,
                   data: { module: "autosubmit",
@@ -7,184 +7,175 @@
                           turbo_action: "replace" },
                   builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
 
-    <div class="nhsuk-u-margin-bottom-4">
       <% if pii_access_allowed %>
-        <%= f.govuk_check_box :show_pii, true,
-                              label: { text: "Show PII" },
-                              checked: show_pii,
-                              "data-autosubmit-target": "field",
-                              "data-action": "autosubmit#submit",
-                              "data-turbo-permanent": "true" %>
-      <% else %>
-        <%= f.govuk_check_box :show_pii, true,
-                              label: { text: "Show PII (not allowed for this user)" },
-                              checked: false,
-                              "disabled": "true" %>
+        <%= f.govuk_check_boxes_fieldset :show_pii, legend: { text: "PII", size: "s" }, small: true do %>
+          <%= f.govuk_check_box :show_pii, true,
+                                label: { text: "Show PII" },
+                                checked: show_pii,
+                                "data-autosubmit-target": "field",
+                                "data-action": "autosubmit#submit",
+                                "data-turbo-permanent": "true" %>
+        <% end %>
       <% end %>
-    </div>
 
+      <%= f.govuk_check_boxes_fieldset :event_names, legend: { text: "Events to display", size: "s" }, small: true do %>
+        <% event_options.keys.each do |value| %>
+          <%= f.govuk_check_box :event_names,
+                                value,
+                                label: { text: value.to_s.humanize },
+                                checked: value.to_s.in?(@event_names || event_options.keys.map(&:to_s)),
+                                "data-autosubmit-target": "field",
+                                "data-action": "autosubmit#submit",
+                                "data-turbo-permanent": "true" do %>
 
-    <%= f.govuk_fieldset legend: { text: "Events to display:", size: "s" } do %>
-            <% event_options.keys.each do |value| %>
-                <%= f.govuk_check_boxes_fieldset :event_names, legend: { hidden: true } do %>
-                    <%= f.govuk_check_box :event_names,
-                                          value,
-                                          label: { text: value.to_s.humanize },
-                                          checked: value.to_s.in?(@event_names || event_options.keys.map(&:to_s)),
-                                          "data-autosubmit-target": "field",
-                                          "data-action": "autosubmit#submit",
-                                          "data-turbo-permanent": "true" %>
-                    
-                    <% available_fields = timeline_fields[value.to_sym] || [] %>
-                    <% if available_fields.any? && value.to_s.in?(@event_names) %>
-                        <div class="nhsuk-checkboxes__conditional nhsuk-u-margin-bottom-2">
-                            <% available_fields.each do |field| %>
-                                <%= f.govuk_check_box "detail_config[#{value}]",
-                                                      field,
-                                                      small: true,
-                                                      label: { text: field },
-                                                      checked: field.to_s.in?(params.dig("detail_config", value) || []),
-                                                      "data-autosubmit-target": "field",
-                                                      "data-action": "autosubmit#submit",
-                                                      "data-turbo-permanent": "true" %>
-                            <% end %>
-                        </div>
-                    <% end %>
-                <% end %>
-            <% end %>
-
-            <%= f.govuk_check_boxes_fieldset :audit_config, legend: { hidden: true } do %>
-                <%= f.govuk_check_box :event_names, "audits",
-                                      label: { text: "Audits" },
-                                      checked: "audits".in?(@event_names),
+            <% available_fields = timeline_fields[value.to_sym] || [] %>
+            <% if available_fields.any? && value.to_s.in?(@event_names) %>
+              <% available_fields.each do |field| %>
+                <%= f.govuk_check_box "detail_config[#{value}]",
+                                      field,
+                                      label: { text: field.to_s.gsub("_", "_<wbr>").html_safe, class: "nhsuk-u-font-size-14 app-u-code" },
+                                      checked: field.to_s.in?(params.dig("detail_config", value) || []),
                                       "data-autosubmit-target": "field",
                                       "data-action": "autosubmit#submit",
                                       "data-turbo-permanent": "true" %>
-                <% if "audits".in?(@event_names) %>
-                    <div class="nhsuk-checkboxes__conditional nhsuk-u-margin-bottom-2">
-                        <%= f.govuk_check_box "audit_config[include_associated_audits]", true, false,
-                                              multiple: false,
-                                              label: { text: "include associated audits" },
-                                              checked: params.dig(:audit_config, :include_associated_audits) == "true",
-                                              "data-autosubmit-target": "field",
-                                              "data-action": "autosubmit#submit",
-                                              "data-turbo-permanent": "true" %>
-
-                        <%= f.govuk_check_box "audit_config[include_filtered_audit_changes]", true, false,
-                                              multiple: false,
-                                              label: { text: "include filtered audit changes" },
-                                              checked: params.dig(:audit_config, :include_filtered_audit_changes) == "true",
-                                              "data-autosubmit-target": "field",
-                                              "data-action": "autosubmit#submit",
-                                              "data-turbo-permanent": "true" %>
-                    </div>
-                <% end %>
+              <% end %>
             <% end %>
+          <% end %>
+        <% end %>
 
-            <%= f.govuk_check_box :event_names, "org_cohort_imports",
-                                  label: { text: "Cohort Imports for Team #{teams.join(",")} excluding patient" },
-                                  checked: "org_cohort_imports".in?(@event_names),
-                                  "data-autosubmit-target": "field",
-                                  "data-action": "autosubmit#submit",
-                                  "data-turbo-permanent": "true" %>
+        <%= f.govuk_check_boxes_fieldset :audit_config, legend: { hidden: true }, small: true do %>
+          <%= f.govuk_check_box :event_names, "audits",
+                                label: { text: "Audits" },
+                                checked: "audits".in?(@event_names),
+                                "data-autosubmit-target": "field",
+                                "data-action": "autosubmit#submit",
+                                "data-turbo-permanent": "true" do %>
+            <% if "audits".in?(@event_names) %>
+              <%= f.govuk_check_box "audit_config[include_associated_audits]", true, false,
+                                    multiple: false,
+                                    label: { text: "Include associated audits" },
+                                    checked: params.dig(:audit_config, :include_associated_audits) == "true",
+                                    "data-autosubmit-target": "field",
+                                    "data-action": "autosubmit#submit",
+                                    "data-turbo-permanent": "true" %>
 
-            <% (additional_class_imports).each do |location_id, import_ids| %>
-                <%= f.govuk_check_box :event_names, "add_class_imports_#{location_id}",
-                                      label: { text: "Class Imports for Location-#{location_id} excluding Patient" },
-                                      checked: "add_class_imports_#{location_id}".in?(@event_names),
-                                      "data-autosubmit-target": "field",
-                                      "data-action": "autosubmit#submit",
-                                      "data-turbo-permanent": "true" %>
+              <%= f.govuk_check_box "audit_config[include_filtered_audit_changes]", true, false,
+                                    multiple: false,
+                                    label: { text: "Include filtered audit changes" },
+                                    checked: params.dig(:audit_config, :include_filtered_audit_changes) == "true",
+                                    "data-autosubmit-target": "field",
+                                    "data-action": "autosubmit#submit",
+                                    "data-turbo-permanent": "true" %>
             <% end %>
+          <% end %>
 
-            
-            <%= f.govuk_radio_buttons_fieldset :compare_option, legend: { text: "Compare with another patient:", size: "s" } do %>
-            <%= f.govuk_radio_button :compare_option,
-                                     nil,
-                                     label: { text: "Do not compare" },
-                                     checked: params[:compare_option].blank?,
+          <%= f.govuk_check_box :event_names, "org_cohort_imports",
+                                label: { text: "Cohort Imports for Team #{teams.join(",")} excluding patient" },
+                                checked: "org_cohort_imports".in?(@event_names),
+                                "data-autosubmit-target": "field",
+                                "data-action": "autosubmit#submit",
+                                "data-turbo-permanent": "true" %>
+        <% end %>
+
+        <% (additional_class_imports).each do |location_id, import_ids| %>
+          <%= f.govuk_check_box :event_names, "add_class_imports_#{location_id}",
+                                label: { text: "Class Imports for Location-#{location_id} excluding Patient" },
+                                checked: "add_class_imports_#{location_id}".in?(@event_names),
+                                "data-autosubmit-target": "field",
+                                "data-action": "autosubmit#submit",
+                                "data-turbo-permanent": "true" %>
+        <% end %>
+      <% end %>
+
+      <%= f.govuk_radio_buttons_fieldset :compare_option, legend: { text: "Compare with another patient", size: "s" }, small: true do %>
+        <%= f.govuk_radio_button :compare_option,
+                                 nil,
+                                 label: { text: "Do not compare" },
+                                 checked: params[:compare_option].blank?,
+                                 "data-autosubmit-target": "field",
+                                 "data-action": "autosubmit#submit",
+                                 "data-turbo-permanent": "true" %>
+
+        <% if class_imports.present? %>
+          <%= f.govuk_radio_button :compare_option,
+                                   "class_import",
+                                   label: { text: "From a Class Import" },
+                                   checked: params[:compare_option] == "class_import",
+                                   "data-autosubmit-target": "field",
+                                   "data-action": "autosubmit#submit",
+                                   "data-turbo-permanent": "true" do %>
+          <% class_imports.each do |import| %>
+            <%= f.govuk_radio_button :compare_option_class_import,
+                                     import,
+                                     label: { text: "ClassImport-#{import}" },
+                                     checked: params[:compare_option_class_import].to_s == import.to_s,
                                      "data-autosubmit-target": "field",
                                      "data-action": "autosubmit#submit",
                                      "data-turbo-permanent": "true" %>
-            
-            <% if class_imports.present? %>
-                <%= f.govuk_radio_button :compare_option,
-                                         "class_import",
-                                         label: { text: "From a Class Import" },
-                                         checked: params[:compare_option] == "class_import",
-                                         "data-autosubmit-target": "field",
-                                         "data-action": "autosubmit#submit",
-                                         "data-turbo-permanent": "true" do %>
-                <% class_imports.each do |import| %>
-                    <%= f.govuk_radio_button :compare_option_class_import,
-                                             import,
-                                             label: { text: "ClassImport-#{import}" },
-                                             checked: params[:compare_option_class_import].to_s == import.to_s,
-                                             "data-autosubmit-target": "field",
-                                             "data-action": "autosubmit#submit",
-                                             "data-turbo-permanent": "true" %>
-                <% end %>
-                <% end %>
-            <% end %>
-            
-            <% if cohort_imports.present? %>
-                <%= f.govuk_radio_button :compare_option,
-                                         "cohort_import",
-                                         label: { text: "From a Cohort Import" },
-                                         checked: params[:compare_option] == "cohort_import",
-                                         "data-autosubmit-target": "field",
-                                         "data-action": "autosubmit#submit",
-                                         "data-turbo-permanent": "true" do %>
-                <% cohort_imports.each do |import| %>
-                    <%= f.govuk_radio_button :compare_option_cohort_import,
-                                             import,
-                                             label: { text: "CohortImport-#{import}" },
-                                             checked: params[:compare_option_cohort_import].to_s == import.to_s,
-                                             "data-autosubmit-target": "field",
-                                             "data-action": "autosubmit#submit",
-                                             "data-turbo-permanent": "true" %>
-                <% end %>
-                <% end %>
-            <% end %>
-            
-            <% if sessions.present? %>
-                <%= f.govuk_radio_button :compare_option,
-                                         "session",
-                                         label: { text: "In a Session" },
-                                         checked: params[:compare_option] == "session" do %>
-                <% sessions.each do |session| %>
-                    <%= f.govuk_radio_button :compare_option_session,
-                                             session,
-                                             label: { text: "Session-#{session}" },
-                                             checked: params[:compare_option_session].to_s == session.to_s && params[:compare_option] == "session",
-                                             "data-autosubmit-target": "field",
-                                             "data-action": "autosubmit#submit",
-                                             "data-turbo-permanent": "true" %>
-                <% end %>
-                <% end %>
-            <% end %>
-            
-            <%= f.govuk_radio_button :compare_option,
-                                     "manual_entry",
-                                     label: { text: "With a specific Patient ID" },
-                                     checked: params[:compare_option] == "manual_entry" do %>
-                <%= f.govuk_number_field :manual_patient_id,
-                                         label: { hidden: true },
-                                         width: 10,
-                                         "data-autosubmit-target": "field",
-                                         "data-action": "autosubmit#submit",
-                                         "data-turbo-permanent": "true" %>
-            <% end %>
-            <% end %>
-
-            <%= helpers.govuk_button_link_to "Reset filters",
-                                             reset_url,
-                                             class: "govuk-button govuk-button--secondary nhsuk-u-display-block nhsuk-button--small",
-                                             secondary: true,
-                                             "data-autosubmit-target": "reset",
-                                             "data-action": "autosubmit#submit",
-                                             "data-turbo-permanent": "true" %>
-            <%= f.govuk_submit "Filter" %>
+          <% end %>
         <% end %>
+      <% end %>
+
+      <% if cohort_imports.present? %>
+        <%= f.govuk_radio_button :compare_option,
+                                 "cohort_import",
+                                 label: { text: "From a Cohort Import" },
+                                 checked: params[:compare_option] == "cohort_import",
+                                 "data-autosubmit-target": "field",
+                                 "data-action": "autosubmit#submit",
+                                 "data-turbo-permanent": "true" do %>
+          <% cohort_imports.each do |import| %>
+            <%= f.govuk_radio_button :compare_option_cohort_import,
+                                     import,
+                                     label: { text: "CohortImport-#{import}" },
+                                     checked: params[:compare_option_cohort_import].to_s == import.to_s,
+                                     "data-autosubmit-target": "field",
+                                     "data-action": "autosubmit#submit",
+                                     "data-turbo-permanent": "true" %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <% if sessions.present? %>
+        <%= f.govuk_radio_button :compare_option,
+                                 "session",
+                                 label: { text: "In a Session" },
+                                 checked: params[:compare_option] == "session" do %>
+        <% sessions.each do |session| %>
+          <%= f.govuk_radio_button :compare_option_session,
+                                   session,
+                                   label: { text: "Session-#{session}" },
+                                   checked: params[:compare_option_session].to_s == session.to_s && params[:compare_option] == "session",
+                                   "data-autosubmit-target": "field",
+                                   "data-action": "autosubmit#submit",
+                                   "data-turbo-permanent": "true" %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <%= f.govuk_radio_button :compare_option,
+                               "manual_entry",
+                               label: { text: "With a specific Patient ID" },
+                               checked: params[:compare_option] == "manual_entry" do %>
+        <%= f.govuk_number_field :manual_patient_id,
+                                 label: { hidden: true },
+                                 width: 10,
+                                 "data-autosubmit-target": "field",
+                                 "data-action": "autosubmit#submit",
+                                 "data-turbo-permanent": "true" %>
+      <% end %>
     <% end %>
+
+    <div class="nhsuk-button-group">
+      <%= f.govuk_submit "Update timeline",
+                         class: "nhsuk-button--small" %>
+      <%= helpers.govuk_button_link_to "Clear filters",
+                                       reset_url,
+                                       secondary: true,
+                                       class: "nhsuk-button--small",
+                                       "data-autosubmit-target": "reset",
+                                       "data-action": "autosubmit#submit",
+                                       "data-turbo-permanent": "true" %>
+    </div>
+  <% end %>
 <% end %>
