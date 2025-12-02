@@ -23,6 +23,7 @@ describe "Triage" do
 
     when_i_view_the_child_record
     then_they_should_have_the_status_banner_delay_vaccination
+    and_the_outcome_should_include_the_date
   end
 
   def given_a_programme_with_a_running_session
@@ -122,6 +123,10 @@ describe "Triage" do
 
   def then_they_should_have_the_status_banner_delay_vaccination
     expect(page).to have_content("Delay vaccination")
+  end
+
+  def and_the_outcome_should_include_the_date
+    expect(page).to have_content("Delay vaccination until 8 July 2025")
   end
 
   def then_they_should_have_the_status_banner_invited_to_clinic
