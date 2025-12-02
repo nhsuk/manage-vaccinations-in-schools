@@ -102,7 +102,7 @@ describe AuthenticationConcern do
   end
 
   describe "reporting_app_redirect_uri_with_auth_code_for" do
-    let(:session_cis2_info) { { "some_key" => "some value" } }
+    let(:session_cis2_info) { { "team_workgroup" => "r1l" } }
     let(:token) do
       build(:reporting_api_one_time_token, user: user, token: "mytoken")
     end
@@ -130,6 +130,11 @@ describe AuthenticationConcern do
             "http://reporting.mavis:5555/path?code=mytoken&some_param=some%20value"
           )
         end
+
+        it "deletes the redirect_uri from the session" do
+          result
+          expect(sample_class.session["redirect_uri"]).to be_nil
+        end
       end
 
       context "and the reporting_api feature flag is disabled" do
@@ -146,6 +151,29 @@ describe AuthenticationConcern do
 
       it "returns nil" do
         expect(result).to be_nil
+      end
+    end
+
+    context "when the user has not selected a team" do
+      let(:session_cis2_info) { {} }
+
+      before do
+        Flipper.enable(:reporting_api)
+        sample_class.session = {
+          "redirect_uri" => "http://reporting.mavis:5555/path",
+          "cis2_info" => session_cis2_info
+        }
+      end
+
+      it "returns nil" do
+        expect(result).to be_nil
+      end
+
+      it "preserves the redirect_uri in the session for later use" do
+        result
+        expect(sample_class.session["redirect_uri"]).to eq(
+          "http://reporting.mavis:5555/path"
+        )
       end
     end
   end
