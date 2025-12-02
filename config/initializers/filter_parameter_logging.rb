@@ -40,7 +40,6 @@ Rails.application.config.filter_parameters +=
 FILTER_EXACTLY_MATCHING = %w[
   address-postalcode
   birthdate
-  body
   diagnostics
   family
   given
