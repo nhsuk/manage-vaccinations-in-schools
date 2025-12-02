@@ -64,6 +64,13 @@ class Location < ApplicationRecord
   has_many :consent_forms, through: :team_locations
   has_many :sessions, through: :team_locations
   has_many :teams, through: :team_locations
+  has_many :current_academic_year_teams,
+           -> do
+             where(team_locations: { academic_year: AcademicYear.current })
+           end,
+           through: :team_locations,
+           source: :team
+
   has_many :organisations, through: :teams
 
   has_many :location_programme_year_groups,

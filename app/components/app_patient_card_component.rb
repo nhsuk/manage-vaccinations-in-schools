@@ -93,7 +93,7 @@ class AppPatientCardComponent < ViewComponent::Base
         .team_changed
         .includes(:school_move_log_entry)
         .where(team: current_team)
-        .where.not(team: patient.school.teams)
+        .where.not(team: patient.school.current_academic_year_teams)
 
     valid_notices.map(&:message)
   end

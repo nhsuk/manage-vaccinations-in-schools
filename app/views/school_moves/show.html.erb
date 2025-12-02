@@ -20,7 +20,7 @@
       <% if @school_move.from_another_team? %>
         <div class="nhsuk-u-margin-top-1">
           <%= render AppStatusComponent.new(text: "Confirming this school move will bring #{@school_move.patient.given_name} " \
-                                            "into your area from #{@school_move.patient.school.teams.first.name}") %>
+                                            "into your area from #{@school_move.patient.school.current_academic_year_teams.first.name}") %>
         </div>
       <% end %>
       <%= render AppChildSummaryComponent.new(@patient_with_changes) %>

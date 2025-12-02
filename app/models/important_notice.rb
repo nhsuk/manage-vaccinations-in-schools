@@ -77,7 +77,7 @@ class ImportantNotice < ApplicationRecord
         "These records will not be automatically synced with GP records. " \
         "Your team must let the child's GP know they were vaccinated."
     when "team_changed"
-      "Child has moved to #{school_move_log_entry.school.teams.first.name} area"
+      "Child has moved to #{school_move_log_entry.school.current_academic_year_teams.first.name} area"
     else
       "Important notice"
     end

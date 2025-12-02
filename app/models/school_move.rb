@@ -83,7 +83,7 @@ class SchoolMove < ApplicationRecord
   end
 
   def confirm!(user: nil)
-    old_teams = patient.school.teams if from_another_team?
+    old_teams = patient.school.current_academic_year_teams if from_another_team?
 
     imported_archive_reason_ids = []
 
@@ -106,7 +106,10 @@ class SchoolMove < ApplicationRecord
   def from_another_team?
     return false unless patient.school && school
 
-    (school.teams & patient.school.teams).empty?
+    (
+      school.current_academic_year_teams &
+        patient.school.current_academic_year_teams
+    ).empty?
   end
 
   private
