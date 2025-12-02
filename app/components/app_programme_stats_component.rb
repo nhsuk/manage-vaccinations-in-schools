@@ -22,8 +22,8 @@ class AppProgrammeStatsComponent < ViewComponent::Base
     helpers
       .policy_scope(ConsentNotification)
       .has_all_programmes_of([programme])
-      .joins(:session)
-      .where(session: { academic_year: })
+      .joins(session: :team_location)
+      .where(team_location: { academic_year: })
       .where(patient_id: patient_ids)
       .count
   end

@@ -77,8 +77,7 @@ class ImmunisationImportRow
     "refused" => :refused,
     "unwell" => :unwell,
     "vaccination contraindicated" => :contraindicated,
-    "already had elsewhere" => :already_had,
-    "did not attend" => :absent
+    "already had elsewhere" => :already_had
   }.freeze
 
   SCHOOL_URN_HOME_EDUCATED = "999999"
@@ -314,16 +313,16 @@ class ImmunisationImportRow
           parsed_vaccination_description_string&.dig(:programme_name) ||
             programme_name&.to_s
 
-        programmes_by_name[name] || vaccine&.programme
+        programmes_by_name[name&.downcase] || vaccine&.programme
       end
   end
 
   def session
     @session ||=
       if (id = session_id&.to_i)
-        team
-          .sessions
-          .where(academic_year: AcademicYear.current)
+        Session
+          .joins(:team_location)
+          .where(team_location: { team:, academic_year: AcademicYear.current })
           .includes(:location, :session_programme_year_groups)
           .find_by(id:)
       end
@@ -376,7 +375,7 @@ class ImmunisationImportRow
       (session || team)
         .programmes
         .each_with_object({}) do |programme, hash|
-          programme.import_names.each { |name| hash[name] = programme }
+          programme.import_names.each { |name| hash[name.downcase] = programme }
         end
   end
 
@@ -989,10 +988,13 @@ class ImmunisationImportRow
   def validate_uuid
     return if uuid.blank?
 
-    scope = VaccinationRecord.left_outer_joins(:session).where(uuid: uuid.to_s)
+    scope =
+      VaccinationRecord.left_outer_joins(session: :team_location).where(
+        uuid: uuid.to_s
+      )
 
     scope =
-      scope.where(sessions: { team: }).or(
+      scope.where(team_locations: { team: }).or(
         scope.sourced_from_nhs_immunisations_api
       )
 

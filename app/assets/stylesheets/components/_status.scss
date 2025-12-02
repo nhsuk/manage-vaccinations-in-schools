@@ -2,17 +2,15 @@
 @use "../core" as app;
 
 .app-status {
-  align-items: start;
   display: flex;
+  align-items: start;
   font-weight: bold;
   gap: nhsuk-spacing(1);
 
   .nhsuk-icon {
     flex-shrink: 0;
-    height: 1.5em;
-    margin-left: nhsuk-spacing(-1);
-    margin-top: nhsuk-spacing(-1);
-    width: 1.5em;
+    margin-top: nhsuk-px-to-rem(-2px);
+    margin-left: nhsuk-px-to-rem(-4px);
   }
 
   &--aqua-green {
@@ -40,9 +38,9 @@
   @include nhsuk-font(16, $weight: bold);
 
   .nhsuk-icon {
-    height: 1.25em;
-    margin-left: -2px;
-    margin-top: 1px;
     width: 1.25em;
+    height: 1.25em;
+    margin-top: 1px;
+    margin-left: -2px;
   }
 }

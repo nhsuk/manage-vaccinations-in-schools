@@ -155,12 +155,19 @@ class CohortImportsController < ApplicationController
 
   def set_review_records
     @pagy, @patients = pagy(@cohort_import.patients.includes(:school))
+    @inter_team =
+      @cohort_import
+        .changesets
+        .includes(:school, patient: :school)
+        .from_file
+        .ready_for_review
+        .select(&:inter_team_move?)
     @new_records = @cohort_import.changesets.ready_for_review.new_patient
     @auto_matched_records =
-      @cohort_import.changesets.ready_for_review.auto_match
-    @import_issues = @cohort_import.changesets.ready_for_review.import_issue
-    @school_moves = @cohort_import.changesets.ready_for_review.with_school_moves
-    @re_review =
-      @new_records + @auto_matched_records + @import_issues + @school_moves
+      @cohort_import.changesets.ready_for_review.auto_match - @inter_team
+    @import_issues =
+      @cohort_import.changesets.ready_for_review.import_issue - @inter_team
+    @school_moves =
+      @cohort_import.changesets.ready_for_review.with_school_moves - @inter_team
   end
 end

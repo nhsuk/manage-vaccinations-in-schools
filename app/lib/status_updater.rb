@@ -91,9 +91,9 @@ class StatusUpdater
     )
 
     Patient::RegistrationStatus
-      .joins(:session)
+      .joins(session: :team_location)
       .then { patient ? it.where(patient:) : it }
-      .where(session: { academic_year: academic_years })
+      .where(team_location: { academic_year: academic_years })
       .includes(:attendance_records, :patient, :session, :vaccination_records)
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)
@@ -206,11 +206,11 @@ class StatusUpdater
       .joins(:patient)
       .joins_sessions
       .then { patient ? it.where(patient:) : it }
-      .where(sessions: { academic_year: academic_years })
+      .where(team_locations: { academic_year: academic_years })
       .pluck(
         "patients.id",
         "sessions.id",
-        "sessions.academic_year",
+        "team_locations.academic_year",
         "patients.birth_academic_year"
       )
       .filter_map do |patient_id, session_id, academic_year, birth_academic_year|
@@ -243,8 +243,8 @@ class StatusUpdater
   def programme_types_per_session_id_and_year_group
     @programme_types_per_session_id_and_year_group ||=
       Session::ProgrammeYearGroup
-        .joins(:session)
-        .where(session: { academic_year: academic_years })
+        .joins(session: :team_location)
+        .where(team_location: { academic_year: academic_years })
         .pluck(:session_id, :programme_type, :year_group)
         .each_with_object(
           {}

@@ -24,9 +24,9 @@ module MavisCLI
           return
         end
 
-        programme = Programme.find(programme_type)
-
-        if programme.nil?
+        begin
+          programme = Programme.find(programme_type)
+        rescue Programme::InvalidType
           warn "Could not find programme."
           return
         end
@@ -51,7 +51,7 @@ module MavisCLI
           location.sessions.find_each do |session|
             if session.programmes.include?(programme)
               session.sync_location_programme_year_groups!(
-                programmes: session.programme
+                programmes: session.programmes
               )
             end
           end

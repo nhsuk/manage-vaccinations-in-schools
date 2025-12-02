@@ -2,6 +2,7 @@
 
 class SchoolMovesController < ApplicationController
   include Pagy::Backend
+  include SchoolMovesHelper
 
   before_action :set_school_move, except: :index
   before_action :set_patient, except: :index
@@ -12,7 +13,8 @@ class SchoolMovesController < ApplicationController
     school_moves =
       policy_scope(SchoolMove).includes(
         :team,
-        school: :team,
+        :school,
+        :school_teams,
         patient: :school
       ).order(:updated_at)
 

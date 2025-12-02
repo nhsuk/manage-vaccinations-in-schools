@@ -37,14 +37,11 @@ class PatientLocation < ApplicationRecord
   belongs_to :patient
   belongs_to :location
 
-  has_many :sessions,
+  has_many :team_locations,
            -> { where(academic_year: it.academic_year) },
-           through: :location,
-           class_name: "Session"
+           through: :location
 
-  has_one :organisation, through: :location
-  has_one :subteam, through: :location
-  has_one :team, through: :location
+  has_many :sessions, through: :team_locations
 
   has_many :attendance_records,
            -> do
@@ -79,10 +76,15 @@ class PatientLocation < ApplicationRecord
   scope :current, -> { where(academic_year: AcademicYear.current) }
   scope :pending, -> { where(academic_year: AcademicYear.pending) }
 
-  scope :joins_sessions, -> { joins(<<-SQL) }
+  scope :joins_team_locations, -> { references(:teams_locations).joins(<<-SQL) }
+    INNER JOIN team_locations
+    ON team_locations.location_id = patient_locations.location_id
+    AND team_locations.academic_year = patient_locations.academic_year
+  SQL
+
+  scope :joins_sessions, -> { joins_team_locations.joins(<<-SQL) }
     INNER JOIN sessions
-    ON sessions.location_id = patient_locations.location_id
-    AND sessions.academic_year = patient_locations.academic_year
+    ON sessions.team_location_id = team_locations.id
   SQL
 
   scope :appear_in_programmes,
@@ -109,7 +111,7 @@ class PatientLocation < ApplicationRecord
 
   scope :destroy_all_if_safe,
         -> do
-          includes(
+          preload(
             :attendance_records,
             :gillick_assessments,
             :pre_screenings,

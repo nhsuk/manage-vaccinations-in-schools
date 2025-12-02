@@ -92,11 +92,7 @@ FactoryBot.define do
     delivery_site { "left_arm_upper_position" }
     delivery_method { "intramuscular" }
 
-    vaccine do
-      if session
-        programme.vaccines.active.sample || association(:vaccine, programme:)
-      end
-    end
+    vaccine { programme.vaccines.active.sample if session }
 
     batch do
       if vaccine
@@ -155,11 +151,6 @@ FactoryBot.define do
     trait :refused do
       not_administered
       outcome { "refused" }
-    end
-
-    trait :absent do
-      not_administered
-      outcome { "absent" }
     end
 
     trait :performed_by_not_user do

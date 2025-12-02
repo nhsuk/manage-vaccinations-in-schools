@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class VaccinationRecordsController < ApplicationController
-  include VaccinationMailerConcern
-
   before_action :set_vaccination_record
   before_action :set_breadcrumb_items, only: :show
   before_action :set_return_to, only: %i[confirm_destroy destroy]
@@ -32,7 +30,7 @@ class VaccinationRecordsController < ApplicationController
     StatusUpdater.call(patient: @vaccination_record.patient)
 
     if @vaccination_record.confirmation_sent?
-      send_vaccination_deletion(@vaccination_record)
+      @vaccination_record.notifier.send_deletion(sent_by: current_user)
     end
 
     StatusUpdater.call(patient: @vaccination_record.patient)

@@ -1,5 +1,5 @@
-amends "package://github.com/jdx/hk/releases/download/v1.1.2/hk@1.1.2#/Config.pkl"
-import "package://github.com/jdx/hk/releases/download/v1.1.2/hk@1.1.2#/Builtins.pkl"
+amends "package://github.com/jdx/hk/releases/download/v1.25.0/hk@1.25.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.25.0/hk@1.25.0#/Builtins.pkl"
 
 local linters = new Mapping<String, Group> {
     ["all"] = new Group {
@@ -27,6 +27,13 @@ local linters = new Mapping<String, Group> {
                 exclude = List("**/layouts/*")
                 check = "bin/rufo --check {{ files }}"
                 fix = "bin/rufo --simple-exit {{ files }}"
+            }
+
+            ["stylelint"] = new Step {
+                batch = true
+                glob = "**/*.scss"
+                check = "bin/stylelint {{ files }}"
+                fix = "bin/stylelint --fix {{ files }}"
             }
 
             ["terraform"] = Builtins.terraform

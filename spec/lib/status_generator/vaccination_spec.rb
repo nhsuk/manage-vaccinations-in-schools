@@ -578,22 +578,7 @@ describe StatusGenerator::Vaccination do
       it { should eq(performed_at.to_date) }
     end
 
-    context "with absent from vaccination record" do
-      before do
-        create(
-          :vaccination_record,
-          :absent,
-          patient:,
-          session:,
-          programme:,
-          performed_at:
-        )
-      end
-
-      it { should eq(performed_at.to_date) }
-    end
-
-    context "with absent from session attendance" do
+    context "with an absent attendance record" do
       before do
         create(
           :attendance_record,
@@ -605,57 +590,6 @@ describe StatusGenerator::Vaccination do
       end
 
       it { should eq(performed_at.to_date) }
-    end
-
-    context "with absent from both vaccination record and session attendance" do
-      let(:earlier_date) { 3.days.ago.to_date }
-      let(:later_date) { 1.day.ago.to_date }
-
-      context "when vaccination record date is earlier" do
-        before do
-          create(
-            :vaccination_record,
-            :absent,
-            patient:,
-            session:,
-            programme:,
-            performed_at: earlier_date
-          )
-
-          create(
-            :attendance_record,
-            :absent,
-            patient:,
-            session:,
-            date: later_date
-          )
-        end
-
-        it { should eq(later_date) }
-      end
-
-      context "when session attendance date is earlier" do
-        before do
-          create(
-            :vaccination_record,
-            :absent,
-            patient:,
-            session:,
-            programme:,
-            performed_at: later_date
-          )
-
-          create(
-            :attendance_record,
-            :absent,
-            patient:,
-            session:,
-            date: earlier_date
-          )
-        end
-
-        it { should eq(later_date) }
-      end
     end
 
     context "with unwell" do

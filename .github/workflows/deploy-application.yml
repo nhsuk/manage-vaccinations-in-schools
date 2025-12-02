@@ -265,9 +265,30 @@ jobs:
               ./.github/send_slack_notification.sh "${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}" "$AWS_CONSOLE_URL" "Running schema migrations attempt $ATTEMPT/$MAX_ATTEMPTS"
             fi
 
-            aws ecs wait tasks-stopped \
-              --cluster $cluster_name \
-              --tasks $TASK_ID
+            MAX_WAIT_TIME=3600
+            POLL_INTERVAL=10 # Poll every 10 seconds
+            ELAPSED=0
+
+            while [ $ELAPSED -lt $MAX_WAIT_TIME ]; do
+              TASK_STATUS=$(aws ecs describe-tasks \
+                --cluster $cluster_name \
+                --tasks $TASK_ID \
+                --query 'tasks[0].lastStatus' \
+                --output text)
+              
+              if [ "$TASK_STATUS" = "STOPPED" ]; then
+                echo "Task has stopped"
+                break
+              fi
+              
+              sleep $POLL_INTERVAL
+              ELAPSED=$((ELAPSED + POLL_INTERVAL))
+            done
+
+            if [ $ELAPSED -ge $MAX_WAIT_TIME ]; then
+              echo "ERROR: Migration task did not complete within $MAX_WAIT_TIME seconds."
+              exit 1
+            fi
             
             EXIT_CODE=$(aws ecs describe-tasks \
               --cluster $cluster_name \

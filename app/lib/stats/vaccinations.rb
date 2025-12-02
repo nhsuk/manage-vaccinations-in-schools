@@ -16,8 +16,7 @@ class Stats::Vaccinations
   end
 
   def call
-    vaccinations = build_base_query
-    results = vaccinations.group(:programme_type, :outcome).count
+    results = build_base_query.group(:programme_type, :outcome).count
     transform_results(results)
   end
 
@@ -31,7 +30,7 @@ class Stats::Vaccinations
     vaccinations = VaccinationRecord.recorded_in_service
 
     vaccinations =
-      vaccinations.joins(:session).where(sessions: { team: teams }) if teams
+      vaccinations.joins(:session).merge(Session.for_team(teams)) if teams
 
     vaccinations =
       vaccinations.where(

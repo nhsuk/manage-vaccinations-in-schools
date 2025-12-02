@@ -207,6 +207,8 @@ class Consent < ApplicationRecord
     end
   end
 
+  def notifier = Notifier::Consent.new(self)
+
   class ConsentFormNotRecorded < StandardError
   end
 end

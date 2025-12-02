@@ -251,6 +251,28 @@ describe API::Reporting::TotalsController do
       expect(monthly["count"]).to eq(1)
     end
 
+    it "counts vaccination in correct month when performed during BST" do
+      patient = create(:patient, session: hpv_session)
+      create(
+        :vaccination_record,
+        patient:,
+        programme: hpv_programme,
+        session: hpv_session,
+        outcome: "administered",
+        performed_at: Time.zone.local(2024, 9, 1, 0, 30) # 00:30 BST = 23:30 UTC (Aug 31)
+      )
+
+      refresh_and_get_totals
+
+      monthly =
+        monthly_vaccinations_given.find do
+          it["year"] == 2024 && it["month"] == "September"
+        end
+      expect(monthly).to be_present,
+      "Expected vaccination to be counted in September, not August"
+      expect(monthly["count"]).to eq(1)
+    end
+
     it "child archived after being vaccinated by SAIS" do
       patient = create(:patient, session: hpv_session)
       create(
@@ -276,6 +298,43 @@ describe API::Reporting::TotalsController do
       )
       expect(final_response["not_vaccinated"]).to eq(
         initial_response["not_vaccinated"]
+      )
+      expect(final_response["vaccinations_given"]).to eq(
+        initial_response["vaccinations_given"]
+      )
+      expect(final_response["monthly_vaccinations_given"]).to eq(
+        initial_response["monthly_vaccinations_given"]
+      )
+    end
+
+    it "child deceased after being vaccinated by SAIS" do
+      patient = create(:patient, session: hpv_session)
+      create(
+        :vaccination_record,
+        patient:,
+        programme: hpv_programme,
+        session: hpv_session,
+        outcome: "administered",
+        performed_at: Time.current
+      )
+
+      refresh_and_get_totals
+      initial_response = JSON.parse(response.body)
+
+      patient.update!(date_of_death: Date.current)
+
+      refresh_and_get_totals
+      final_response = JSON.parse(response.body)
+
+      expect(final_response["cohort"]).to eq(initial_response["cohort"] - 1)
+      expect(final_response["vaccinated"]).to eq(
+        initial_response["vaccinated"] - 1
+      )
+      expect(final_response["not_vaccinated"]).to eq(
+        initial_response["not_vaccinated"]
+      )
+      expect(final_response["vaccinated_by_sais"]).to eq(
+        initial_response["vaccinated_by_sais"] - 1
       )
       expect(final_response["vaccinations_given"]).to eq(
         initial_response["vaccinations_given"]
@@ -506,6 +565,64 @@ describe API::Reporting::TotalsController do
       expect(vaccinated).to eq(0)
       expect(not_vaccinated).to eq(1)
       expect(vaccinated_by_sais).to eq(0)
+      expect(vaccinations_given).to eq(0)
+      expect(monthly_vaccinations_given).to be_empty
+    end
+
+    it "parent refuses consent claiming already vaccinated (consent only)" do
+      patient = create(:patient, session: flu_session)
+      create(
+        :consent,
+        :refused,
+        patient:,
+        programme: flu_programme,
+        team:,
+        reason_for_refusal: "already_vaccinated"
+      )
+
+      StatusUpdater.call(patient:)
+      refresh_and_get_totals(programme_type: "flu")
+
+      expect(cohort).to eq(1)
+      expect(vaccinated).to eq(1)
+      expect(not_vaccinated).to eq(0)
+      expect(vaccinated_elsewhere_declared).to eq(1)
+      expect(vaccinated_elsewhere_recorded).to eq(0)
+      expect(vaccinations_given).to eq(0)
+      expect(monthly_vaccinations_given).to be_empty
+    end
+
+    it "parent refuses consent claiming already vaccinated and FHIR API import" do
+      patient = create(:patient, session: flu_session)
+
+      create(
+        :consent,
+        :refused,
+        patient:,
+        programme: flu_programme,
+        team:,
+        reason_for_refusal: "already_vaccinated"
+      )
+      create(
+        :vaccination_record,
+        patient:,
+        programme: flu_programme,
+        session: nil,
+        source: "nhs_immunisations_api",
+        nhs_immunisations_api_identifier_system: "ABC",
+        nhs_immunisations_api_identifier_value: "123",
+        outcome: "administered",
+        performed_at: Time.current
+      )
+
+      StatusUpdater.call(patient:)
+      refresh_and_get_totals(programme_type: "flu")
+
+      expect(cohort).to eq(1)
+      expect(vaccinated).to eq(1)
+      expect(not_vaccinated).to eq(0)
+      expect(vaccinated_elsewhere_declared).to eq(0)
+      expect(vaccinated_elsewhere_recorded).to eq(1)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end

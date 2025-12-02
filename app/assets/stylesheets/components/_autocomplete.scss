@@ -21,37 +21,43 @@
 }
 
 .app-autocomplete__input--show-all-values {
-  cursor: pointer;
   padding: nhsuk-spacing(1) nhsuk-spacing(5) nhsuk-spacing(1) nhsuk-spacing(1);
+  cursor: pointer;
 }
 
 .app-autocomplete__hint {
-  color: $nhsuk-secondary-text-colour;
   position: absolute;
+  color: $nhsuk-secondary-text-colour;
 }
 
 .app-autocomplete__dropdown-arrow-down {
   display: inline-block;
-  height: nhsuk-spacing(4);
+
   position: absolute;
-  right: nhsuk-spacing(2);
-  top: 12px;
-  width: nhsuk-spacing(4);
   z-index: 1;
+  top: 12px;
+  right: nhsuk-spacing(2);
+
+  width: nhsuk-spacing(4);
+  height: nhsuk-spacing(4);
 }
 
 .app-autocomplete__menu {
-  background-color: $nhsuk-input-background-colour;
-  border: $nhsuk-border-width-form-element solid $nhsuk-input-border-colour;
-  border-top: 0;
-  color: $nhsuk-text-colour;
-  margin: 0;
-  max-height: 342px;
-  overflow-x: hidden;
-  padding: 0;
   position: relative;
+
   width: 100%;
   width: calc(100% - #{$nhsuk-border-width-form-element * 2});
+  max-height: 342px;
+  margin: 0;
+  padding: 0;
+
+  overflow-x: hidden;
+
+  border: $nhsuk-border-width-form-element solid $nhsuk-input-border-colour;
+  border-top: 0;
+
+  color: $nhsuk-text-colour;
+  background-color: $nhsuk-input-background-colour;
 }
 
 .app-autocomplete__menu--visible {
@@ -63,11 +69,11 @@
 }
 
 .app-autocomplete__menu--overlay {
-  box-shadow: rgba(0, 0, 0, 0.25) 0 2px 6px;
-  left: 0;
   position: absolute;
-  top: 100%;
   z-index: 100;
+  top: 100%;
+  left: 0;
+  box-shadow: rgba(0, 0, 0, 0.25) 0 2px 6px;
 }
 
 .app-autocomplete__menu--inline {
@@ -75,13 +81,17 @@
 }
 
 .app-autocomplete__option {
-  border-bottom: solid $nhsuk-border-colour;
-  border-width: 1px 0;
-  cursor: pointer;
   display: block;
+
+  position: relative;
+
   margin: 0;
   padding: nhsuk-spacing(1);
-  position: relative;
+
+  border-bottom: solid $nhsuk-border-colour;
+  border-width: 1px 0;
+
+  cursor: pointer;
 
   @include nhsuk-font(19);
 
@@ -91,8 +101,8 @@
 }
 
 .app-autocomplete__option--no-results {
-  background-color: $nhsuk-input-background-colour;
   color: $nhsuk-secondary-text-colour;
+  background-color: $nhsuk-input-background-colour;
   cursor: not-allowed;
 }
 
@@ -114,10 +124,10 @@
 
 .app-autocomplete__option--focused,
 .app-autocomplete__option:hover {
-  background-color: $nhsuk-link-colour;
   border-color: $nhsuk-link-colour;
-  color: nhsuk-colour("white");
   outline: none;
+  color: nhsuk-colour("white");
+  background-color: $nhsuk-link-colour;
 
   .app-autocomplete__option-hint {
     color: nhsuk-colour("grey-5");
@@ -130,21 +140,23 @@
   }
 
   .app-autocomplete__option {
-    background-color: Field;
     color: FieldText;
+    background-color: Field;
   }
 
   .app-autocomplete__option--focused,
   .app-autocomplete__option:hover {
+    border-color: Highlight;
+    border-color: SelectedItem;
+    outline-color: SelectedItemText;
+
+    color: HighlightText;
+    color: SelectedItemText;
     background-color: Highlight;
 
     // Prefer SelectedItem / SelectedItemText in browsers that support it
     background-color: SelectedItem;
-    border-color: Highlight;
-    border-color: SelectedItem;
-    color: HighlightText;
-    color: SelectedItemText;
+
     forced-color-adjust: none;
-    outline-color: SelectedItemText;
   }
 }

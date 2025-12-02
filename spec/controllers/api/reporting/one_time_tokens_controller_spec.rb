@@ -215,4 +215,37 @@ RSpec.describe API::Reporting::OneTimeTokensController do
       end
     end
   end
+
+  describe "#authorize reconstructs cis2_info from token" do
+    let(:organisation) { create(:organisation) }
+    let(:team) { create(:team, organisation:) }
+    let(:user) { create(:user) }
+    let(:cis2_info_hash) do
+      {
+        "organisation_code" => organisation.ods_code,
+        "workgroups" => [team.workgroup],
+        "role_code" => CIS2Info::NURSE_ROLE,
+        "activity_codes" => []
+      }
+    end
+    let(:token) do
+      ReportingAPI::OneTimeToken.find_or_generate_for!(
+        user:,
+        cis2_info: cis2_info_hash
+      )
+    end
+
+    before { Flipper.enable(:reporting_api) }
+
+    it "returns 200" do
+      post :authorize,
+           params: {
+             code: token.token,
+             grant_type: "authorization_code",
+             client_id: Settings.reporting_api.client_app.client_id
+           },
+           format: :json
+      expect(response.status).to eq(200)
+    end
+  end
 end

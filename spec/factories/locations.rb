@@ -11,6 +11,7 @@
 #  address_town              :text
 #  gias_establishment_number :integer
 #  gias_local_authority_code :integer
+#  gias_phase                :integer
 #  gias_year_groups          :integer          default([]), not null, is an Array
 #  name                      :text             not null
 #  ods_code                  :string
@@ -22,7 +23,6 @@
 #  urn                       :string
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
-#  subteam_id                :bigint
 #
 # Indexes
 #
@@ -42,8 +42,10 @@ require_relative "../../lib/faker/address"
 FactoryBot.define do
   factory :location do
     transient do
-      team { nil }
-      programmes { subteam&.team&.programmes || [] }
+      subteam { nil }
+
+      team { subteam&.team }
+      programmes { team&.programmes || [] }
       academic_year { AcademicYear.pending }
     end
 
@@ -53,15 +55,22 @@ FactoryBot.define do
 
     url { Faker::Internet.url }
 
-    subteam { team.subteams.first || association(:subteam, team:) if team }
-
     traits_for_enum :status
 
     factory :community_clinic do
       type { :community_clinic }
       name { "#{Faker::University.name} Clinic" }
 
-      sequence(:ods_code, 100) { "CL#{_1}" }
+      sequence(:ods_code, 100) { "CL#{it}" }
+
+      after(:create) do |location, evaluator|
+        if (team = evaluator.team)
+          academic_year = evaluator.academic_year
+          subteam = evaluator.subteam
+
+          team.team_locations.create!(location:, academic_year:, subteam:)
+        end
+      end
     end
 
     factory :generic_clinic do
@@ -70,9 +79,10 @@ FactoryBot.define do
 
       after(:create) do |location, evaluator|
         academic_year = evaluator.academic_year
+        subteam = evaluator.subteam
 
         if (team = evaluator.team)
-          team.team_locations.create!(location:, academic_year:)
+          team.team_locations.create!(location:, academic_year:, subteam:)
         end
 
         year_groups = Location::YearGroup::CLINIC_VALUE_RANGE.to_a
@@ -93,7 +103,16 @@ FactoryBot.define do
       type { :gp_practice }
       name { "#{Faker::University.name} Practice" }
 
-      sequence(:ods_code, 100) { "GP#{_1}" }
+      sequence(:ods_code, 100) { "GP#{it}" }
+
+      after(:create) do |location, evaluator|
+        if (team = evaluator.team)
+          academic_year = evaluator.academic_year
+          subteam = evaluator.subteam
+
+          team.team_locations.create!(location:, academic_year:, subteam:)
+        end
+      end
     end
 
     factory :school do
@@ -104,22 +123,26 @@ FactoryBot.define do
       sequence(:gias_local_authority_code, 1)
       sequence(:urn, 100_000, &:to_s)
 
+      gias_phase { "all_through" }
       gias_year_groups { (0..11).to_a }
 
       trait :primary do
+        gias_phase { "primary" }
         gias_year_groups { (0..6).to_a }
       end
 
       trait :secondary do
         name { Faker::Educator.secondary_school }
+        gias_phase { "secondary" }
         gias_year_groups { (7..11).to_a }
       end
 
       after(:create) do |location, evaluator|
         academic_year = evaluator.academic_year
+        subteam = evaluator.subteam
 
         if (team = evaluator.team)
-          team.team_locations.create!(location:, academic_year:)
+          team.team_locations.create!(location:, academic_year:, subteam:)
         end
 
         location.import_year_groups_from_gias!(academic_year:)

@@ -19,7 +19,7 @@
                                      legend: { size: "l", tag: "h1", text: page_title } do %>
     <% @batches.each_with_index do |batch, index| %>
       <% label = proc do %>
-        <span class="app-u-monospace"><%= batch.name %></span>
+        <span class="app-u-code"><%= batch.name %></span>
         (<%= batch.vaccine.brand %>)
       <% end %>
 

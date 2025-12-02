@@ -36,6 +36,7 @@ module MavisCLI
               urn: row["URN"],
               gias_local_authority_code: row["LA (code)"],
               gias_establishment_number:,
+              gias_phase: Integer(row["PhaseOfEducation (code)"]),
               gias_year_groups: process_year_groups(row),
               name: row["EstablishmentName"],
               address_line_1: row["Street"],

@@ -24,9 +24,9 @@ module MavisCLI
           return
         end
 
-        programme = Programme.find(programme_type)
-
-        if programme.nil?
+        begin
+          programme = Programme.find(programme_type)
+        rescue Programme::InvalidType
           warn "Could not find programme."
           return
         end

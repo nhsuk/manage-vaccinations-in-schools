@@ -62,10 +62,7 @@ class StatusGenerator::Vaccination
     if status_should_be_vaccinated?
       vaccinated_vaccination_record.performed_at.to_date
     elsif latest_session_status_should_be_absent?
-      [
-        vaccination_records.map(&:performed_at).max&.to_date,
-        attendance_record&.date
-      ].compact.max
+      attendance_record.date
     else
       vaccination_records.map(&:performed_at).max&.to_date
     end
@@ -125,7 +122,7 @@ class StatusGenerator::Vaccination
   end
 
   def latest_session_status_should_be_absent?
-    vaccination_records.first&.absent? || attendance_record&.attending == false
+    attendance_record&.attending == false
   end
 
   def latest_session_status_should_be_unwell?

@@ -3,7 +3,6 @@ import {
   createAll,
   isSupported,
   Button,
-  Checkboxes,
   ErrorSummary,
   Header,
   NotificationBanner,
@@ -11,8 +10,10 @@ import {
 } from "nhsuk-frontend";
 
 import { Autocomplete } from "./components/autocomplete.js";
+import { UpgradedCheckboxes as Checkboxes } from "./components/checkboxes.js";
 import { UpgradedRadios as Radios } from "./components/radios.js";
 import { Sticky } from "./components/sticky.js";
+import { TimeoutWarning } from "./components/timeoutWarning.js";
 
 // Configure Turbo
 Turbo.session.drive = false;
@@ -72,6 +73,10 @@ function initialiseComponents() {
 
   if (!isInitialised("nhsuk-skip-link")) {
     createAll(SkipLink);
+  }
+
+  if (!isInitialised("app-timeout-warning")) {
+    createAll(TimeoutWarning);
   }
 }
 

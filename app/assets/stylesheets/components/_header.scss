@@ -2,10 +2,10 @@
 
 .app-header__navigation-item--with-count {
   .app-count {
-    margin-left: nhsuk-spacing(1);
     min-width: nhsuk-spacing(4);
-    padding-bottom: 3px;
+    margin-left: nhsuk-spacing(1);
     padding-top: 5px;
+    padding-bottom: 3px;
 
     @include nhsuk-font(14, $line-height: 1);
   }

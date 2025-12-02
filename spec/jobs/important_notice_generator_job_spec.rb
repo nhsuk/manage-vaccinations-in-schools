@@ -133,6 +133,46 @@ describe ImportantNoticeGeneratorJob do
           expect(team_a.important_notices.first.can_dismiss?).to be true
         end
       end
+
+      context "team_changed" do
+        let(:new_school) { create(:school, team: team_b) }
+        let(:team_changed_patient) { create(:patient, school: new_school) }
+        let(:school_move_log_entry) do
+          create(
+            :school_move_log_entry,
+            patient: team_changed_patient,
+            school: new_school
+          )
+        end
+
+        before do
+          create(
+            :patient_location,
+            patient: team_changed_patient,
+            session: session_b
+          )
+        end
+
+        it "dismisses team_changed notice when patient's school is now in the team with the notice" do
+          create(
+            :important_notice,
+            :team_changed,
+            patient: team_changed_patient,
+            team: team_b,
+            school_move_log_entry:
+          )
+
+          expect {
+            described_class.perform_now([team_changed_patient.id])
+          }.to change {
+            ImportantNotice
+              .active(team: team_b)
+              .team_changed
+              .where(patient: team_changed_patient)
+              .count
+          }.from(1).to(0)
+        end
+      end
     end
   end
 end

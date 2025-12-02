@@ -61,7 +61,8 @@ class AppPatientCardComponent < ViewComponent::Base
         end
       ),
       *notices.deceased.first&.message,
-      *gillick_no_notify_notices
+      *gillick_no_notify_notices,
+      *team_changed_notices
     ].compact
   end
 
@@ -81,5 +82,19 @@ class AppPatientCardComponent < ViewComponent::Base
         "These records will not be automatically synced with GP records. " \
         "Your team must let the child's GP know they were vaccinated."
     end
+  end
+
+  def team_changed_notices
+    return unless patient.school
+
+    valid_notices =
+      patient
+        .important_notices
+        .team_changed
+        .includes(:school_move_log_entry)
+        .where(team: current_team)
+        .where.not(team: patient.school.teams)
+
+    valid_notices.map(&:message)
   end
 end

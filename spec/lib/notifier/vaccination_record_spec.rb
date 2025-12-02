@@ -1,28 +1,17 @@
 # frozen_string_literal: true
 
-describe VaccinationMailerConcern do
+describe Notifier::VaccinationRecord do
+  subject(:notifier) { described_class.new(vaccination_record) }
+
   before do
-    stub_const("SampleClass", Class.new).class_eval do
-      include VaccinationMailerConcern # rubocop:disable RSpec/DescribedClass
-
-      attr_reader :current_user
-
-      def initialize(current_user:)
-        @current_user = current_user
-      end
-    end
-
     vaccination_record.strict_loading!(false)
     vaccination_record.patient.strict_loading!(false)
   end
 
-  let(:sample) { SampleClass.new(current_user:) }
-  let(:current_user) { create(:user) }
+  let(:sent_by) { create(:user) }
 
-  describe "#send_vaccination_confirmation" do
-    subject(:send_vaccination_confirmation) do
-      sample.send_vaccination_confirmation(vaccination_record)
-    end
+  describe "#send_confirmation" do
+    subject(:send_confirmation) { notifier.send_confirmation(sent_by:) }
 
     let(:programme) { Programme.hpv }
     let(:session) { create(:session, programmes: [programme]) }
@@ -36,15 +25,15 @@ describe VaccinationMailerConcern do
       before { create(:consent, :given, patient:, programme:) }
 
       it "sends an email" do
-        expect { send_vaccination_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to have_delivered_email(
           :vaccination_administered_hpv
-        ).with(parent:, vaccination_record:, sent_by: current_user)
+        ).with(parent:, vaccination_record:, sent_by:)
       end
 
       it "sends a text message" do
-        expect { send_vaccination_confirmation }.to have_delivered_sms(
+        expect { send_confirmation }.to have_delivered_sms(
           :vaccination_administered
-        ).with(parent:, vaccination_record:, sent_by: current_user)
+        ).with(parent:, vaccination_record:, sent_by:)
       end
     end
 
@@ -62,15 +51,15 @@ describe VaccinationMailerConcern do
       end
 
       it "sends an email" do
-        expect { send_vaccination_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to have_delivered_email(
           :vaccination_not_administered
-        ).with(parent:, vaccination_record:, sent_by: current_user)
+        ).with(parent:, vaccination_record:, sent_by:)
       end
 
       it "sends a text message" do
-        expect { send_vaccination_confirmation }.to have_delivered_sms(
+        expect { send_confirmation }.to have_delivered_sms(
           :vaccination_not_administered
-        ).with(parent:, vaccination_record:, sent_by: current_user)
+        ).with(parent:, vaccination_record:, sent_by:)
       end
     end
 
@@ -100,15 +89,15 @@ describe VaccinationMailerConcern do
         end
 
         it "sends an email" do
-          expect { send_vaccination_confirmation }.to have_delivered_email(
+          expect { send_confirmation }.to have_delivered_email(
             :vaccination_administered_hpv
-          ).with(parent:, vaccination_record:, sent_by: current_user)
+          ).with(parent:, vaccination_record:, sent_by:)
         end
 
         it "sends a text message" do
-          expect { send_vaccination_confirmation }.to have_delivered_sms(
+          expect { send_confirmation }.to have_delivered_sms(
             :vaccination_administered
-          ).with(parent:, vaccination_record:, sent_by: current_user)
+          ).with(parent:, vaccination_record:, sent_by:)
         end
       end
 
@@ -118,11 +107,11 @@ describe VaccinationMailerConcern do
         let(:notify_parents) { false }
 
         it "doesn't send an email" do
-          expect { send_vaccination_confirmation }.not_to have_delivered_email
+          expect { send_confirmation }.not_to have_delivered_email
         end
 
         it "doesn't send a text message" do
-          expect { send_vaccination_confirmation }.not_to have_delivered_sms
+          expect { send_confirmation }.not_to have_delivered_sms
         end
       end
     end
@@ -133,11 +122,11 @@ describe VaccinationMailerConcern do
       before { create(:consent, :given, patient:, programme:) }
 
       it "doesn't send an email" do
-        expect { send_vaccination_confirmation }.not_to have_delivered_email
+        expect { send_confirmation }.not_to have_delivered_email
       end
 
       it "doesn't send a text message" do
-        expect { send_vaccination_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -147,11 +136,11 @@ describe VaccinationMailerConcern do
       before { create(:consent, :given, patient:, programme:) }
 
       it "doesn't send an email" do
-        expect { send_vaccination_confirmation }.not_to have_delivered_email
+        expect { send_confirmation }.not_to have_delivered_email
       end
 
       it "doesn't send a text message" do
-        expect { send_vaccination_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -161,11 +150,11 @@ describe VaccinationMailerConcern do
       before { create(:consent, :given, patient:, programme:) }
 
       it "doesn't send an email" do
-        expect { send_vaccination_confirmation }.not_to have_delivered_email
+        expect { send_confirmation }.not_to have_delivered_email
       end
 
       it "doesn't send a text message" do
-        expect { send_vaccination_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -175,11 +164,11 @@ describe VaccinationMailerConcern do
       before { create(:consent, :given, patient:, programme:) }
 
       it "sends an email" do
-        expect { send_vaccination_confirmation }.to have_delivered_email
+        expect { send_confirmation }.to have_delivered_email
       end
 
       it "sends a text message" do
-        expect { send_vaccination_confirmation }.to have_delivered_sms
+        expect { send_confirmation }.to have_delivered_sms
       end
     end
   end

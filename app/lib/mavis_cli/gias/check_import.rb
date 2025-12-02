@@ -35,7 +35,13 @@ module MavisCLI
         }
 
         existing_schools = Set.new(Location.school.pluck(:urn))
-        team_schools = Set.new(Location.school.joins(:subteam).pluck(:urn))
+        team_schools =
+          Set.new(
+            TeamLocation
+              .joins(:location)
+              .merge(Location.school)
+              .pluck(:"locations.urn")
+          )
 
         new_schools = Set.new
 

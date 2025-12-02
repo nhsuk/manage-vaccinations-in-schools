@@ -74,6 +74,8 @@
 describe VaccinationRecord do
   subject(:vaccination_record) { build(:vaccination_record) }
 
+  it_behaves_like "a Confirmable model"
+
   describe "associations" do
     it { should have_one(:identity_check).autosave(true).dependent(:destroy) }
     it { should belong_to(:supplied_by).optional }

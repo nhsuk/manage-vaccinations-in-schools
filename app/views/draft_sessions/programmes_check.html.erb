@@ -1,0 +1,5 @@
+<%= render "catch_up_warning",
+          programmes: @draft_session.new_programmes.map(&:name).to_sentence,
+          submit_button_text: "Continue",
+          cancel_link_text: "Cancel",
+          cancel_link_path: draft_session_path("programmes") %>

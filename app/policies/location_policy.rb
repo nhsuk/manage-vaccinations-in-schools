@@ -3,7 +3,12 @@
 class LocationPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.joins(:subteam).where(subteam: { team: user.selected_team })
+      scope.joins(:team_locations).where(
+        team_locations: {
+          academic_year: AcademicYear.pending,
+          team: user.selected_team
+        }
+      )
     end
   end
 end

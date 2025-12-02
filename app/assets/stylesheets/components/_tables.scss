@@ -14,15 +14,15 @@
   }
 
   i {
+    padding: 2px;
     color: nhsuk-shade(nhsuk-colour("red"), 50%);
     font-family: ui-monospace, monospace;
     font-style: normal;
     font-weight: 500;
-    padding: 2px;
   }
 }
 
 .app-table__cell--muted {
-  background-color: nhsuk-colour("grey-5");
   color: $nhsuk-secondary-text-colour;
+  background-color: nhsuk-colour("grey-5");
 }

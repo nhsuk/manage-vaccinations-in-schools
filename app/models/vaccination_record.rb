@@ -73,6 +73,7 @@
 #
 class VaccinationRecord < ApplicationRecord
   include BelongsToProgramme
+  include Confirmable
   include ContributesToPatientTeams
   include Discard::Model
   include HasDoseVolume
@@ -163,8 +164,7 @@ class VaccinationRecord < ApplicationRecord
          refused: 1,
          unwell: 2,
          contraindicated: 3,
-         already_had: 4,
-         absent: 6
+         already_had: 4
        },
        validate: true
 
@@ -244,10 +244,6 @@ class VaccinationRecord < ApplicationRecord
 
   def not_administered? = !administered?
 
-  def confirmation_sent?
-    confirmation_sent_at != nil
-  end
-
   def recorded_in_service?
     session_id != nil
   end
@@ -275,6 +271,8 @@ class VaccinationRecord < ApplicationRecord
   def snomed_procedure_code = vaccine&.snomed_procedure_code(dose_sequence:)
 
   delegate :snomed_procedure_term, to: :vaccine, allow_nil: true
+
+  def notifier = Notifier::VaccinationRecord.new(self)
 
   private
 

@@ -13,6 +13,9 @@ class Programme
     @type = type
   end
 
+  class InvalidType < StandardError
+  end
+
   def self.method_missing(type, *_args) = find(type.to_s)
 
   def self.respond_to_missing?(type, *_args) = exists?(type.to_s)
@@ -21,7 +24,11 @@ class Programme
 
   def self.find(type)
     @programmes ||= {}
-    @programmes[type] ||= (Programme.new(type:) if exists?(type))
+    @programmes[type] ||= if exists?(type)
+      Programme.new(type:)
+    else
+      raise InvalidType, type
+    end
   end
 
   def self.find_all(types) = types.map { find(it) }

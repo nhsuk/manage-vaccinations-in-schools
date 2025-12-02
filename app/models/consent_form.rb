@@ -5,12 +5,12 @@
 # Table name: consent_forms
 #
 #  id                                  :bigint           not null, primary key
-#  academic_year                       :integer          not null
 #  address_line_1                      :string
 #  address_line_2                      :string
 #  address_postcode                    :string
 #  address_town                        :string
 #  archived_at                         :datetime
+#  confirmation_sent_at                :datetime
 #  date_of_birth                       :date
 #  education_setting                   :integer
 #  family_name                         :text
@@ -33,23 +33,24 @@
 #  use_preferred_name                  :boolean
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
-#  location_id                         :bigint           not null
+#  original_session_id                 :bigint
 #  school_id                           :bigint
-#  team_id                             :bigint           not null
-#  team_location_id                    :bigint
+#  team_location_id                    :bigint           not null
 #
 # Indexes
 #
-#  index_consent_forms_on_academic_year     (academic_year)
-#  index_consent_forms_on_location_id       (location_id)
-#  index_consent_forms_on_nhs_number        (nhs_number)
-#  index_consent_forms_on_school_id         (school_id)
-#  index_consent_forms_on_team_id           (team_id)
-#  index_consent_forms_on_team_location_id  (team_location_id)
+#  index_consent_forms_on_academic_year        (academic_year)
+#  index_consent_forms_on_location_id          (location_id)
+#  index_consent_forms_on_nhs_number           (nhs_number)
+#  index_consent_forms_on_original_session_id  (original_session_id)
+#  index_consent_forms_on_school_id            (school_id)
+#  index_consent_forms_on_team_id              (team_id)
+#  index_consent_forms_on_team_location_id     (team_location_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (location_id => locations.id)
+#  fk_rails_...  (original_session_id => sessions.id)
 #  fk_rails_...  (school_id => locations.id)
 #  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (team_location_id => team_locations.id)
@@ -59,6 +60,8 @@ class ConsentForm < ApplicationRecord
   include AddressConcern
   include AgeConcern
   include Archivable
+  include BelongsToTeamLocation
+  include Confirmable
   include FullNameConcern
   include GelatineVaccinesConcern
   include HasHealthAnswers
@@ -88,9 +91,7 @@ class ConsentForm < ApplicationRecord
   scope :for_session,
         ->(session) do
           where(
-            academic_year: session.academic_year,
-            location: session.location,
-            team: session.team
+            team_location_id: session.team_location_id
           ).has_any_programme_types_of(session.programme_types)
         end
 
@@ -101,13 +102,8 @@ class ConsentForm < ApplicationRecord
                 :injection_alternative,
                 :without_gelatine
 
-  audited associated_with: :team
-  has_associated_audits
-
-  belongs_to :location
+  belongs_to :original_session, class_name: "Session", optional: true
   belongs_to :school, class_name: "Location", optional: true
-  belongs_to :team
-  belongs_to :team_location, optional: true
 
   has_many :consents
   has_many :notify_log_entries
@@ -123,9 +119,15 @@ class ConsentForm < ApplicationRecord
            -> { ordered.response_refused },
            class_name: "ConsentFormProgramme"
 
-  has_one :subteam, through: :location
+  has_many :eligible_team_locations,
+           -> { where(academic_year: it.team_location.academic_year) },
+           through: :team,
+           source: :team_locations
 
-  has_many :eligible_schools, through: :team, source: :schools
+  has_many :eligible_schools,
+           -> { school },
+           through: :eligible_team_locations,
+           source: :location
 
   enum :parent_contact_method_type,
        Parent.contact_method_types,
@@ -156,8 +158,8 @@ class ConsentForm < ApplicationRecord
            :preferred_family_name,
            :preferred_given_name
 
-  normalizes :given_name, with: -> { _1.strip }
-  normalizes :family_name, with: -> { _1.strip }
+  normalizes :given_name, with: -> { it.strip }
+  normalizes :family_name, with: -> { it.strip }
 
   normalizes :parent_email, with: EmailAddressNormaliser.new
   normalizes :parent_phone, with: PhoneNumberNormaliser.new
@@ -398,7 +400,13 @@ class ConsentForm < ApplicationRecord
         session_location = school || location
 
         sessions_to_search =
-          Session.where(academic_year:, location: session_location, team:)
+          Session.joins(:team_location).where(
+            team_location: {
+              academic_year:,
+              location: session_location,
+              team:
+            }
+          )
 
         sessions_to_search =
           # TODO: This doesn't work if a child goes to a different year group
@@ -507,6 +515,17 @@ class ConsentForm < ApplicationRecord
       Consent.from_consent_form!(self, patient:, current_user:).each(
         &:invalidate_existing_triage_and_patient_specific_directions!
       )
+    end
+  end
+
+  def matches_contact_details_for?(patient:)
+    # We assume `true` if the patient has no parents, otherwise we would send
+    # warnings to these parents about their contact details not matching.
+    return true if patient.parents.empty?
+
+    patient.parents.any? do |parent|
+      (parent.email.present? && parent_email == parent.email) ||
+        (parent.phone.present? && parent_phone == parent.phone)
     end
   end
 
@@ -631,6 +650,8 @@ class ConsentForm < ApplicationRecord
           health_answer
         end
   end
+
+  def notifier = Notifier::ConsentForm.new(self)
 
   private
 

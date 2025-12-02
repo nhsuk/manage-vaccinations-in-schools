@@ -131,7 +131,7 @@ describe CohortImportRow do
     context "with a school for a different team" do
       let(:data) { valid_data }
 
-      before { school.update!(subteam: nil) }
+      before { school.team_locations.includes(:team).destroy_all }
 
       it "is invalid" do
         expect(cohort_import_row).to be_invalid

@@ -7,57 +7,37 @@
 <% end %>
 
 <% if Flipper.enabled?(:statuses_changed_banner) %>
-  <%= render AppWarningCalloutComponent.new(heading: "Programme statuses have changed") do %>
-    <p>We’ve updated the words Mavis uses to show each child’s programme status.</p>
-    <p><%= link_to "Read about the new statuses in the user guide",
+  <%= render AppWarningCalloutComponent.new(heading: "New updates for programme statuses – 28 November 2025") do %>
+    <p>We’ve made further updates to the programme statuses shown in Mavis, to make them clearer.</p>
+    <p>We’ve also <b>removed</b> the <b>Consent</b> and <b>Triage</b> tabs from sessions because the information they held is now shown on the <b>Children</b> tab.</p>
+    <p><%= link_to "Read about the latest changes in the user guide ",
                    "https://guide.manage-vaccinations-in-schools.nhs.uk/changes-to-programme-statuses/" %></p>
   <% end %>
 <% end %>
 
-<%= render dashboard_cards_partial %>
-
 <ul class="nhsuk-grid-row nhsuk-card-group">
-  <% unless team_has_upload_access_only? %>
+  <% @primary_items.each do |item| %>
     <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      <%= render AppCardComponent.new(link_to: consent_forms_path, secondary: true) do |card| %>
-        <% card.with_heading(level: 2, size: "s") { t("consent_forms.index.title") } %>
-        <% card.with_description { "Review incoming consent responses that can’t be automatically matched" } %>
-      <% end %>
-    </li>
-
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      <%= render AppCardComponent.new(link_to: school_moves_path, secondary: true) do |card| %>
-        <% card.with_heading(level: 2, size: "s") { t("school_moves.index.title") } %>
-        <% card.with_description { "Review children who have moved schools" } %>
-      <% end %>
-    </li>
-
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      <%= render AppCardComponent.new(link_to: imports_path, secondary: true) do |card| %>
-        <% card.with_heading(level: 2, size: "s") { t("imports.index.title") } %>
-        <% card.with_description { "Import child, cohort and vaccination records and see important notices" } %>
-      <% end %>
-    </li>
-
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      <%= render AppCardComponent.new(link_to: vaccines_path, secondary: true) do |card| %>
-        <% card.with_heading(level: 2, size: "s") { t("vaccines.index.title") } %>
-        <% card.with_description { "Add and edit vaccine batches" } %>
+      <%= render AppCardComponent.new(link_to: item[:path], disabled: item[:path].nil?) do |card| %>
+        <% card.with_heading(level: 2) { item.fetch(:title) } %>
+        <p class="nhsuk-body">Use this area to:</p>
+        <ul class="nhsuk-list nhsuk-list--bullet">
+          <% item.fetch(:description).each do |description| %>
+            <li><%= description %></li>
+          <% end %>
+        </ul>
       <% end %>
     </li>
   <% end %>
+</ul>
 
-  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: team_path, secondary: true) do |card| %>
-      <% card.with_heading(level: 2, size: "s") { t("teams.show.title") } %>
-      <% card.with_description { "Manage your team’s settings" } %>
-    <% end %>
-  </li>
-
-  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: @service_guide_url, secondary: true) do |card| %>
-      <% card.with_heading(level: 2, size: "s") { t("service.guide.title") } %>
-      <% card.with_description { "How to use this service" } %>
-    <% end %>
-  </li>
+<ul class="nhsuk-grid-row nhsuk-card-group">
+  <% @secondary_items.each do |item| %>
+    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+      <%= render AppCardComponent.new(link_to: item.fetch(:path), secondary: true) do |card| %>
+        <% card.with_heading(level: 2, size: "s") { item.fetch(:title) } %>
+        <% card.with_description { item.fetch(:description) } %>
+      <% end %>
+    </li>
+  <% end %>
 </ul>

@@ -18,11 +18,20 @@ module AuthenticationConcern
     def authenticate_user!
       if !user_signed_in?
         if request.path != start_path && request.path != new_users_teams_path
-          store_location_for(:user, request.fullpath)
+          location = Addressable::URI.parse(request.fullpath)
+          location.query_values =
+            (location.query_values || {}).delete("timeout")
+          store_location_for(:user, location.to_s)
         end
 
         if cis2_enabled? || request.path != new_user_session_path
-          flash[:info] = "You must be logged in to access this page."
+          flash[:info] = (
+            if session_timed_out?
+              "You've been logged out for your security. Please log in again."
+            else
+              "You must be logged in to access this page."
+            end
+          )
           redirect_to start_path
         end
       elsif cis2_enabled?
@@ -105,10 +114,13 @@ module AuthenticationConcern
     end
 
     def reporting_app_redirect_uri_with_auth_code_for(user)
-      if Flipper.enabled?(:reporting_api)
-        url = session["redirect_uri"]
-        url.present? ? add_auth_code_to(url, user) : nil
-      end
+      return unless Flipper.enabled?(:reporting_api)
+      return if cis2_info.team_workgroup.blank?
+
+      url = session.delete("redirect_uri")
+      return if url.blank?
+
+      add_auth_code_to(url, user)
     end
 
     def authenticate_basic
@@ -148,7 +160,6 @@ module AuthenticationConcern
 
     def redirect_after_choosing_org
       url = after_sign_in_path_for(current_user)
-      session.delete(:redirect_uri)
       redirect_to url, allow_other_host: is_valid_redirect?(url)
     end
 
@@ -177,5 +188,7 @@ module AuthenticationConcern
           it["org_code"] == selected_cis2_nrbac_role["org_code"]
         end
     end
+
+    def session_timed_out? = params.key?(:timeout)
   end
 end

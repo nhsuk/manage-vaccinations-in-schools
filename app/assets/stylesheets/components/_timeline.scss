@@ -23,44 +23,44 @@ $_timeline-border-width: 2px;
 @mixin _badge($size) {
   $mt: 4px;
   $mt-small: 6px;
+  width: _dot-size($size);
 
   height: _dot-size($size);
-  margin-left: _dot-ml(_dot-size($size));
+  margin-top: if($size == "default", $mt, $mt-small);
   margin-right: if(
     $size == "default",
     nhsuk-spacing(4),
     nhsuk-spacing(4) + 2px
   );
-  margin-top: if($size == "default", $mt, $mt-small);
-  width: _dot-size($size);
+  margin-left: _dot-ml(_dot-size($size));
 
   @include nhsuk-media-query($from: tablet) {
     $tablet: _dot-size($size) + 4px;
+    width: $tablet;
 
     height: $tablet;
-    margin-left: _dot-ml($tablet);
     margin-top: if(
       $size == "default",
       _dot-mt-tablet($mt),
       _dot-mt-tablet($mt-small)
     );
-    width: $tablet;
+    margin-left: _dot-ml($tablet);
   }
 }
 
 .app-timeline {
-  list-style: none;
   padding: 0;
+  list-style: none;
 
   @include nhsuk-responsive-margin(5, "bottom");
   @include nhsuk-responsive-padding(2, "top");
 
   &__item {
     display: flex;
+    position: relative;
+    margin-top: -6px;
     margin-bottom: 0;
     margin-left: 12px;
-    margin-top: -6px;
-    position: relative;
 
     @include nhsuk-responsive-padding(5, "bottom");
 
@@ -73,24 +73,28 @@ $_timeline-border-width: 2px;
     }
 
     &::before {
-      border-left: $_timeline-border-width solid $color_nhsuk-grey-3;
-      bottom: 0;
       content: "";
+
       display: block;
-      left: -$_timeline-border-width;
+
       position: absolute;
       top: nhsuk-spacing(2);
+      bottom: 0;
+      left: -$_timeline-border-width;
+
       width: $_timeline-border-width;
+
+      border-left: $_timeline-border-width solid nhsuk-colour("grey-3");
     }
 
     &--past::before {
-      border-color: $color_nhsuk-blue;
+      border-color: nhsuk-colour("blue");
     }
   }
 
   &__badge {
-    flex-shrink: 0;
     z-index: 1;
+    flex-shrink: 0;
 
     @include _badge("default");
 
@@ -100,12 +104,12 @@ $_timeline-border-width: 2px;
   }
 
   &__header {
-    font-weight: normal;
     margin-bottom: 0;
+    font-weight: normal;
 
     @include nhsuk-font-size(19);
 
-    &.nhsuk-u-font-weight-bold .app-u-monospace {
+    &.nhsuk-u-font-weight-bold .app-u-code {
       font-weight: inherit;
     }
   }
@@ -117,8 +121,8 @@ $_timeline-border-width: 2px;
   }
 
   &__description {
-    color: $nhsuk-secondary-text-color;
     padding-top: 0;
+    color: $nhsuk-secondary-text-colour;
 
     @include nhsuk-responsive-margin(2, "bottom");
     @include nhsuk-font-size(16);

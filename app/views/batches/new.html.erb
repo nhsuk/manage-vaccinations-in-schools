@@ -14,7 +14,7 @@
 <%= form_with model: @form, url: vaccine_batches_path(@vaccine), method: :post do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_text_field :name, label: { text: "Batch" }, width: 10 %>
+  <%= f.govuk_text_field :name, label: { text: "Batch" }, width: 10, class: "nhsuk-input--code" %>
 
   <%= f.govuk_date_field :expiry,
                          legend: { text: "Expiry date", size: "s" },

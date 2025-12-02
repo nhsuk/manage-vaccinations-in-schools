@@ -17,8 +17,8 @@
 }
 
 .app-action-list__item {
-  align-self: center;
   display: inline-flex;
+  align-self: center;
   margin: 0;
   margin-right: nhsuk-spacing(3);
   padding-right: nhsuk-spacing(3);
@@ -29,7 +29,7 @@
 }
 
 .app-action-list__item:last-child {
-  border: 0;
   margin-right: 0;
   padding-right: 0;
+  border: 0;
 }

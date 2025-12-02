@@ -29,10 +29,10 @@ class DraftSession
 
   def wizard_steps
     steps = %i[dates]
-
     steps << :dates_check if school?
 
     steps << :programmes
+    steps << :programmes_check if school?
 
     if include_notification_steps?
       steps += %i[consent_requests consent_reminders] if school?
@@ -197,6 +197,10 @@ class DraftSession
     )
   end
 
+  def new_programmes
+    @new_programmes ||= Programme.find_all(new_programme_types)
+  end
+
   private
 
   delegate :academic_year, :patient_locations, :team, to: :session
@@ -219,10 +223,6 @@ class DraftSession
 
   def new_programme_types
     @new_programme_types ||= programme_types - session.programme_types
-  end
-
-  def new_programmes
-    @new_programmes ||= Programme.find_all(new_programme_types)
   end
 
   def valid_session_dates

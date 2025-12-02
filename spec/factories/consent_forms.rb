@@ -5,12 +5,12 @@
 # Table name: consent_forms
 #
 #  id                                  :bigint           not null, primary key
-#  academic_year                       :integer          not null
 #  address_line_1                      :string
 #  address_line_2                      :string
 #  address_postcode                    :string
 #  address_town                        :string
 #  archived_at                         :datetime
+#  confirmation_sent_at                :datetime
 #  date_of_birth                       :date
 #  education_setting                   :integer
 #  family_name                         :text
@@ -33,23 +33,24 @@
 #  use_preferred_name                  :boolean
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
-#  location_id                         :bigint           not null
+#  original_session_id                 :bigint
 #  school_id                           :bigint
-#  team_id                             :bigint           not null
-#  team_location_id                    :bigint
+#  team_location_id                    :bigint           not null
 #
 # Indexes
 #
-#  index_consent_forms_on_academic_year     (academic_year)
-#  index_consent_forms_on_location_id       (location_id)
-#  index_consent_forms_on_nhs_number        (nhs_number)
-#  index_consent_forms_on_school_id         (school_id)
-#  index_consent_forms_on_team_id           (team_id)
-#  index_consent_forms_on_team_location_id  (team_location_id)
+#  index_consent_forms_on_academic_year        (academic_year)
+#  index_consent_forms_on_location_id          (location_id)
+#  index_consent_forms_on_nhs_number           (nhs_number)
+#  index_consent_forms_on_original_session_id  (original_session_id)
+#  index_consent_forms_on_school_id            (school_id)
+#  index_consent_forms_on_team_id              (team_id)
+#  index_consent_forms_on_team_location_id     (team_location_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (location_id => locations.id)
+#  fk_rails_...  (original_session_id => sessions.id)
 #  fk_rails_...  (school_id => locations.id)
 #  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (team_location_id => team_locations.id)
@@ -60,8 +61,13 @@ require_relative "../../lib/faker/address"
 FactoryBot.define do
   factory :consent_form do
     transient do
-      session { association :session }
+      session { association(:session) }
+
+      academic_year { session.academic_year }
+      location { session.location }
       programmes { session.programmes }
+      team { session.team }
+
       response { "given" }
       reason_for_refusal { nil }
       reason_for_refusal_notes { "" }
@@ -86,7 +92,6 @@ FactoryBot.define do
     address_line_1 { Faker::Address.street_address }
     address_town { Faker::Address.city }
     address_postcode { Faker::Address.uk_postcode }
-    academic_year { session.academic_year }
 
     parent_email { Faker::Internet.email }
     parent_full_name { "#{Faker::Name.first_name} #{family_name}" }
@@ -107,9 +112,10 @@ FactoryBot.define do
 
     parental_responsibility { "yes" }
 
-    location { session.location }
-    team { session.team }
-    team_location { session.team_location }
+    original_session { session }
+    team_location do
+      session&.team_location || location.attach_to_team!(team, academic_year:)
+    end
 
     school { location.school? ? location : association(:school, team:) }
     school_confirmed { true }
