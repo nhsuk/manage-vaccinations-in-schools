@@ -89,40 +89,13 @@
     }
   }
 
+  &--offset {
+    background-color: rgba(nhsuk-colour("grey-5"), 0.5);
+  }
+
   &--disabled {
     pointer-events: none;
     opacity: 0.5;
-  }
-}
-
-.app-card--offset {
-  background-color: rgba(nhsuk-colour("grey-5"), 0.5);
-
-  // Fix nested offset cards inheriting feature card styles
-  /// @link https://github.com/nhsuk/nhsuk-frontend/issues/1724
-  .nhsuk-card__heading {
-    display: block;
-
-    position: initial;
-    top: initial;
-
-    margin: initial;
-    margin-top: 0;
-    padding: initial;
-
-    outline: initial;
-    outline-offset: initial;
-
-    color: initial;
-    background-color: initial;
-
-    @include nhsuk-font(22, $weight: bold);
-    @include nhsuk-responsive-margin(2, "bottom");
-  }
-
-  .nhsuk-card__content {
-    @include nhsuk-top-and-bottom;
-    @include nhsuk-responsive-padding(5);
   }
 }
 
@@ -160,8 +133,8 @@
   @include nhsuk-typography-weight-bold;
 }
 
-.nhsuk-card--feature {
-  .app-card__heading {
+.nhsuk-card--feature > .nhsuk-card__content {
+  & > .app-card__heading {
     &--dark-orange {
       background-color: app.$dark-orange-colour;
     }
