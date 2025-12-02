@@ -114,10 +114,13 @@ module AuthenticationConcern
     end
 
     def reporting_app_redirect_uri_with_auth_code_for(user)
-      if Flipper.enabled?(:reporting_api)
-        url = session["redirect_uri"]
-        url.present? ? add_auth_code_to(url, user) : nil
-      end
+      return unless Flipper.enabled?(:reporting_api)
+      return if cis2_info.team_workgroup.blank?
+
+      url = session.delete("redirect_uri")
+      return if url.blank?
+
+      add_auth_code_to(url, user)
     end
 
     def authenticate_basic
@@ -157,7 +160,6 @@ module AuthenticationConcern
 
     def redirect_after_choosing_org
       url = after_sign_in_path_for(current_user)
-      session.delete(:redirect_uri)
       redirect_to url, allow_other_host: is_valid_redirect?(url)
     end
 
