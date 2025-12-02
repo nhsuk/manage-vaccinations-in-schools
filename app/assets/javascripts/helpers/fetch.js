@@ -1,8 +1,12 @@
+export function timeoutUrl() {
+  return `${window.location.origin}${window.location.pathname}?timeout`;
+}
+
 function checkResponseStatus(response) {
   // Reload the page if the user is not authenticated
   // to trigger a server side redirect to the start page
   if (response.status === 401 || response.status === 403) {
-    window.location.href = `${window.location.origin}${window.location.pathname}?timeout`;
+    window.location.href = timeoutUrl();
   }
   if (!response.ok) {
     throw new Error(`${response.status} ${response.statusText}`);
