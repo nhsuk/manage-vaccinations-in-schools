@@ -137,6 +137,21 @@ FactoryBot.define do
         gias_year_groups { (7..11).to_a }
       end
 
+      after(:build) do |school|
+        next if school.gias_local_authority_code.blank?
+
+        LocalAuthority.find_or_create_by!(
+          gias_code: school.gias_local_authority_code
+        ) do |la|
+          la.mhclg_code =
+            "E0600#{school.gias_local_authority_code.to_s.rjust(4, "0")}"
+          la.official_name =
+            "Test Authority #{school.gias_local_authority_code}"
+          la.short_name = "Test LA #{school.gias_local_authority_code}"
+          la.nation = "England"
+        end
+      end
+
       after(:create) do |location, evaluator|
         academic_year = evaluator.academic_year
         subteam = evaluator.subteam
