@@ -381,7 +381,13 @@ describe GovukNotifyPersonalisation do
 
       before { create(:session, location: school, programmes:, team:) }
 
-      it { should include(location_name: "Waterloo Road") }
+      it do
+        expect(to_h).to include(
+          location_name: "Waterloo Road",
+          vaccination: "HPV vaccination",
+          vaccination_and_dates: "HPV vaccination"
+        )
+      end
     end
 
     context "for the flu programme" do
