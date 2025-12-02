@@ -69,7 +69,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
           row.with_key { "Batch ID" }
 
           if @batch
-            row.with_value(classes: ["app-u-monospace"]) { batch_id_value }
+            row.with_value(classes: ["app-u-code"]) { batch_id_value }
 
             if (href = @change_links[:batch])
               row.with_action(

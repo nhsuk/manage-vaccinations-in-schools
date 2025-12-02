@@ -6,20 +6,11 @@ class AppSessionSearchFormComponent < ViewComponent::Base
       <%= render AppCardComponent.new(filters: true) do |card| %>
         <% card.with_heading(level: 2) { "Find session" } %>
 
-        <div class="app-search-input" role="search">
-          <%= f.govuk_text_field :q,
-                                 value: form.q,
-                                 label: { text: "Search", class: "nhsuk-u-visually-hidden" },
-                                 autocomplete: "off",
-                                 class: "app-search-input__input" %>
-
-          <button class="nhsuk-button app-button--icon app-search-input__submit" data-module="nhsuk-button" type="submit">
-            <svg class="nhsuk-icon nhsuk-icon--search" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false" role="img" aria-label="Search">
-              <title>Search</title>
-              <path d="m20.7 19.3-4.1-4.1a7 7 0 1 0-1.4 1.4l4 4.1a1 1 0 0 0 1.5 0c.4-.4.4-1 0-1.4ZM6 11a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z"/>
-            </svg>
-          </button>
-        </div>
+        <%= render AppSearchInputComponent.new(
+          name: :q,
+          value: form.q,
+          label: { hidden: true }
+        ) %>
 
         <% if programmes.present? %>
           <%= f.govuk_check_boxes_fieldset :programmes,
@@ -78,8 +69,8 @@ class AppSessionSearchFormComponent < ViewComponent::Base
         <% end %>
 
         <div class="nhsuk-button-group">
-          <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
-          <%= govuk_button_link_to "Clear filters", clear_filters_path, secondary: true, class: "app-button--small" %>
+          <%= f.govuk_submit "Update results", secondary: true, class: "nhsuk-button--small" %>
+          <%= govuk_button_link_to "Clear filters", clear_filters_path, secondary: true, class: "nhsuk-button--small" %>
         </div>
       <% end %>
     <% end %>

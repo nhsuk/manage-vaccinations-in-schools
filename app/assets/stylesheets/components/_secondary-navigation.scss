@@ -4,7 +4,6 @@
   margin-right: #{$nhsuk-gutter-half * -1};
   margin-left: #{$nhsuk-gutter-half * -1};
 
-  @include nhsuk-font(19);
   @include nhsuk-responsive-margin(5, "bottom");
 
   @include nhsuk-media-query($from: tablet) {
@@ -55,7 +54,7 @@
 .app-secondary-navigation__current {
   display: flex;
   align-items: center;
-  gap: nhsuk-spacing(1);
+  gap: 6px;
 
   .nhsuk-icon {
     width: 1.5rem;
@@ -77,9 +76,11 @@
   // bottom, so that the current item appears on top of the grey line.
   box-shadow: inset 0 -1px 0 $nhsuk-border-colour;
 
+  @include nhsuk-font(19);
+
   @include nhsuk-media-query($from: tablet) {
     flex-flow: row wrap;
-    gap: nhsuk-spacing(2) nhsuk-spacing(4);
+    gap: nhsuk-spacing(2) nhsuk-spacing(5);
   }
 }
 

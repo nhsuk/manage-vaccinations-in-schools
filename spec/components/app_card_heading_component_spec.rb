@@ -58,28 +58,10 @@ describe AppCardHeadingComponent do
     it { should have_css("h3.nhsuk-heading-l") }
   end
 
-  context "when feature" do
-    subject { render_inline(described_class.new(feature: true)) { content } }
-
-    it { should have_css(".nhsuk-card__heading--feature") }
-  end
-
   context "with a colour" do
     subject { render_inline(described_class.new(colour: "blue")) { content } }
 
-    it { should have_css(".nhsuk-card__heading--feature") }
     it { should have_css(".app-card__heading--blue") }
-  end
-
-  context "with colour overriding feature" do
-    subject do
-      render_inline(described_class.new(colour: "red", feature: false)) do
-        content
-      end
-    end
-
-    it { should have_css(".nhsuk-card__heading--feature") }
-    it { should have_css(".app-card__heading--red") }
   end
 
   context "with a link" do
@@ -104,19 +86,13 @@ describe AppCardHeadingComponent do
   context "with all parameters" do
     subject(:rendered) do
       render_inline(
-        described_class.new(
-          level: 2,
-          size: "l",
-          colour: "green",
-          feature: false,
-          link_to: "#"
-        )
+        described_class.new(level: 2, size: "l", colour: "green", link_to: "#")
       ) { content }
     end
 
     it do
       expect(rendered).to have_css(
-        "h2.nhsuk-card__heading.nhsuk-heading-l.nhsuk-card__heading--feature.app-card__heading--green"
+        "h2.nhsuk-card__heading.nhsuk-heading-l.app-card__heading--green"
       )
     end
 

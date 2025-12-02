@@ -1,4 +1,6 @@
-.app-u-monospace {
-  font-family: ui-monospace, monospace;
-  font-weight: 450;
+@use "../../vendor/nhsuk-frontend" as *;
+
+.app-u-code {
+  font-family: $nhsuk-code-font;
+  letter-spacing: 0.1em;
 }
