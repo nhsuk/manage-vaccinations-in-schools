@@ -16,12 +16,11 @@ describe Notifier::Consent do
     let(:session) { create(:session, programmes:) }
     let(:consent) { patient.consents.first }
     let(:triage) { patient.triages.first }
+    let(:patient) do
+      create(:patient, :consent_given_triage_safe_to_vaccinate, session:)
+    end
 
     context "when the parents agree, triage is required and it is safe to vaccinate" do
-      let(:patient) do
-        create(:patient, :consent_given_triage_safe_to_vaccinate, session:)
-      end
-
       it "sends an email saying triage was needed and vaccination will happen" do
         expect { send_confirmation }.to have_delivered_email(
           :triage_vaccination_will_happen
@@ -30,6 +29,22 @@ describe Notifier::Consent do
 
       it "doesn't send a text message" do
         expect { send_confirmation }.not_to have_delivered_sms
+      end
+    end
+
+    context "when programme is MMR and patient has had the 1st dose" do
+      let(:programme) { Programme.mmr }
+
+      before do
+        create(:vaccination_record, patient:, programme:, session:)
+
+        StatusUpdater.call(patient:)
+      end
+
+      it "sends a different email tailored to MMR second dose" do
+        expect { send_confirmation }.to have_delivered_email(
+          :triage_vaccination_will_happen_mmr_second_dose
+        ).with(consent:, session:, sent_by:)
       end
     end
 
