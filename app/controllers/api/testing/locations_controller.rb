@@ -2,7 +2,7 @@
 
 class API::Testing::LocationsController < API::Testing::BaseController
   def index
-    @locations = Location.order(:name)
+    @locations = Location.includes(:team_locations).order(:name)
 
     if (type = params[:type]).present?
       @locations = @locations.where(type:)
