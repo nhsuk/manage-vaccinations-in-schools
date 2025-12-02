@@ -203,7 +203,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
   end
 
   create_table "consent_forms", force: :cascade do |t|
-    t.integer "academic_year"
     t.string "address_line_1"
     t.string "address_line_2"
     t.string "address_postcode"
@@ -216,7 +215,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
     t.text "family_name"
     t.text "given_name"
     t.jsonb "health_answers", default: [], null: false
-    t.bigint "location_id"
     t.string "nhs_number"
     t.text "notes", default: "", null: false
     t.bigint "original_session_id"
@@ -233,16 +231,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
     t.datetime "recorded_at"
     t.boolean "school_confirmed"
     t.bigint "school_id"
-    t.bigint "team_id"
     t.bigint "team_location_id", null: false
     t.datetime "updated_at", null: false
     t.boolean "use_preferred_name"
-    t.index ["academic_year"], name: "index_consent_forms_on_academic_year"
-    t.index ["location_id"], name: "index_consent_forms_on_location_id"
     t.index ["nhs_number"], name: "index_consent_forms_on_nhs_number"
     t.index ["original_session_id"], name: "index_consent_forms_on_original_session_id"
     t.index ["school_id"], name: "index_consent_forms_on_school_id"
-    t.index ["team_id"], name: "index_consent_forms_on_team_id"
     t.index ["team_location_id"], name: "index_consent_forms_on_team_location_id"
   end
 
@@ -477,14 +471,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
     t.string "ods_code"
     t.string "site"
     t.integer "status", default: 0, null: false
-    t.bigint "subteam_id"
     t.string "systm_one_code"
     t.integer "type", null: false
     t.datetime "updated_at", null: false
     t.text "url"
     t.string "urn"
     t.index ["ods_code"], name: "index_locations_on_ods_code", unique: true
-    t.index ["subteam_id"], name: "index_locations_on_subteam_id"
     t.index ["systm_one_code"], name: "index_locations_on_systm_one_code", unique: true
     t.index ["urn", "site"], name: "index_locations_on_urn_and_site", unique: true
     t.index ["urn"], name: "index_locations_on_urn", unique: true, where: "(site IS NULL)"
@@ -798,26 +790,18 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
   end
 
   create_table "sessions", force: :cascade do |t|
-    t.integer "academic_year"
     t.datetime "created_at", null: false
     t.date "dates", null: false, array: true
     t.integer "days_before_consent_reminders"
-    t.bigint "location_id"
     t.boolean "national_protocol_enabled", default: false, null: false
     t.boolean "psd_enabled", default: false, null: false
     t.boolean "requires_registration", default: true, null: false
     t.date "send_consent_requests_at"
     t.date "send_invitations_at"
     t.string "slug", null: false
-    t.bigint "team_id"
     t.bigint "team_location_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["academic_year", "location_id", "team_id"], name: "index_sessions_on_academic_year_and_location_id_and_team_id"
     t.index ["dates"], name: "index_sessions_on_dates", using: :gin
-    t.index ["location_id", "academic_year", "team_id"], name: "index_sessions_on_location_id_and_academic_year_and_team_id"
-    t.index ["location_id"], name: "index_sessions_on_location_id"
-    t.index ["team_id", "academic_year"], name: "index_sessions_on_team_id_and_academic_year"
-    t.index ["team_id", "location_id"], name: "index_sessions_on_team_id_and_location_id"
     t.index ["team_location_id"], name: "index_sessions_on_team_location_id"
   end
 
@@ -1028,11 +1012,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
   add_foreign_key "cohort_imports_patients", "cohort_imports", on_delete: :cascade
   add_foreign_key "cohort_imports_patients", "patients", on_delete: :cascade
   add_foreign_key "consent_form_programmes", "consent_forms", on_delete: :cascade
-  add_foreign_key "consent_forms", "locations"
   add_foreign_key "consent_forms", "locations", column: "school_id"
   add_foreign_key "consent_forms", "sessions", column: "original_session_id"
   add_foreign_key "consent_forms", "team_locations"
-  add_foreign_key "consent_forms", "teams"
   add_foreign_key "consent_notifications", "patients"
   add_foreign_key "consent_notifications", "sessions"
   add_foreign_key "consent_notifications", "users", column: "sent_by_user_id"
@@ -1065,7 +1047,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
   add_foreign_key "important_notices", "vaccination_records"
   add_foreign_key "location_programme_year_groups", "location_year_groups", on_delete: :cascade
   add_foreign_key "location_year_groups", "locations", on_delete: :cascade
-  add_foreign_key "locations", "subteams"
   add_foreign_key "notes", "patients"
   add_foreign_key "notes", "sessions"
   add_foreign_key "notes", "users", column: "created_by_user_id"
@@ -1110,7 +1091,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
   add_foreign_key "session_notifications", "users", column: "sent_by_user_id"
   add_foreign_key "session_programme_year_groups", "sessions", on_delete: :cascade
   add_foreign_key "sessions", "team_locations"
-  add_foreign_key "sessions", "teams"
   add_foreign_key "subteams", "teams"
   add_foreign_key "team_locations", "locations"
   add_foreign_key "team_locations", "subteams"
