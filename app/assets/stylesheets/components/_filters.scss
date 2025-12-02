@@ -4,14 +4,10 @@
 .app-filters {
   &.nhsuk-card {
     background-color: color.scale(nhsuk-colour("grey-4"), $alpha: -50%);
-  }
 
-  .nhsuk-card__heading {
-    background-color: nhsuk-colour("grey-1");
-  }
-
-  .nhsuk-radios__conditional {
-    margin-bottom: nhsuk-spacing(2);
+    .nhsuk-card__heading {
+      background-color: nhsuk-colour("grey-1");
+    }
   }
 
   .nhsuk-radios__label,
@@ -40,8 +36,6 @@
   }
 
   .nhsuk-details__text {
-    // Remove once https://github.com/nhsuk/nhsuk-frontend/pull/1633 released
-    box-sizing: border-box;
     border-left: 0;
 
     @include nhsuk-responsive-padding(5, "left");
