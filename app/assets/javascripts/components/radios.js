@@ -7,7 +7,7 @@ export class UpgradedRadios extends Radios {
     const $inputs = $root.querySelectorAll('input[type="radio"]');
 
     $inputs.forEach(($input) => {
-      const targetId = $input.getAttribute("data-aria-controls");
+      const targetId = $input.dataset.ariaControls;
 
       // Skip radios without data-aria-controls attributes, or where the
       // target element does not exist.
@@ -18,7 +18,8 @@ export class UpgradedRadios extends Radios {
       // Promote the data-aria-controls attribute to a aria-controls attribute
       // so that the relationship is exposed in the AOM
       $input.setAttribute("aria-controls", targetId);
-      $input.removeAttribute("data-aria-controls");
+
+      delete $input.dataset.ariaControls;
     });
 
     super($root);
