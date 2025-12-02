@@ -115,6 +115,12 @@ class ClassImportsController < ApplicationController
       @class_import.commit_changesets(
         @class_import.changesets.from_file.ready_for_review
       )
+    elsif @class_import.changesets.cancelled.any?
+      @class_import.update_columns(
+        status: :partially_processed,
+        processed_at: Time.zone.now
+      )
+      @class_import.postprocess_rows!
     else
       @class_import.update_columns(
         status: :processed,

@@ -50,9 +50,10 @@ describe "Import class lists" do
     when_i_ignore_changes
     then_the_re_review_patients_are_not_imported
     and_the_import_is_in_re_review_again
+    and_there_is_no_option_to_ignore_changes
     and_a_school_move_for_rachel_is_created
 
-    when_i_ignore_changes
+    when_i_approve_the_import
     and_i_see_the_import_is_partially_completed
     and_reviewer_details_are_displayed
     and_school_moves_for_all_ignored_records_are_created
@@ -76,7 +77,7 @@ describe "Import class lists" do
     then_i_see_the_re_review_screen_for_school_moves_out_only
     and_the_new_patient_is_added_to_the_school
 
-    when_i_ignore_changes
+    and_i_approve_the_import
     then_the_school_move_out_is_created
   end
 
@@ -429,6 +430,10 @@ describe "Import class lists" do
     expect(page).to have_content("KLEIN, Calvin")
     expect(page).to have_content("LAUREN, Ralphie")
     expect(page).to have_content("KORS, Michael")
+  end
+
+  def and_there_is_no_option_to_ignore_changes
+    expect(page).not_to have_button("Ignore changes")
   end
 
   def and_no_changes_are_committed_yet
