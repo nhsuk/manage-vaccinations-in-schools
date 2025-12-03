@@ -35,6 +35,6 @@ en:
           safe_to_vaccinate_without_gelatine: Yes, it’s safe to vaccinate with the gelatine-free injection
       vaccination_report:
         file_format_options:
-          careplus: CarePlus
           mavis: CSV
-          systm_one: SystmOne
+          careplus: CSV for CarePlus (System C)
+          systm_one: CSV for SystmOne (TPP)
