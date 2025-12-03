@@ -1,96 +1,110 @@
 # frozen_string_literal: true
 
 class AppSessionSummaryComponent < ViewComponent::Base
-  erb_template <<-ERB
-    <h3 class="nhsuk-heading-s nhsuk-u-margin-top-5">
-      <%= session.location.name %>
-    </h3>
-
-    <% if session.school? %>
-      <%= govuk_button_link_to "Import class lists", import_session_path(session), secondary: true %>
-    <% end %>
-
-    <%= govuk_summary_list(rows:, classes:) %>
-  ERB
-
-  def initialize(session)
+  def initialize(
+    session,
+    patient_count: nil,
+    full_width: false,
+    show_dates: false,
+    show_status: false
+  )
     @session = session
+    @patient_count = patient_count
+    @full_width = full_width
+    @show_dates = show_dates
+    @show_status = show_status
   end
+
+  def call = helpers.govuk_summary_list(rows:, classes:)
 
   private
 
-  attr_reader :session
-
-  delegate :govuk_button_link_to,
-           :govuk_link_to,
-           :govuk_summary_list,
-           to: :helpers
-  delegate :location, to: :session
-
-  def classes
-    %w[nhsuk-summary-list--no-border app-summary-list--full-width]
-  end
+  attr_reader :session, :patient_count, :full_width, :show_dates, :show_status
 
   def rows
-    [school_urn_row, address_row, consent_forms_row].compact
+    [
+      patient_count_row,
+      programmes_row,
+      year_groups_row,
+      status_row,
+      dates_row,
+      consent_period_row
+    ].compact
   end
 
-  def school_urn_row
-    if (text = location.urn_and_site).present?
-      { key: { text: "School URN" }, value: { text: } }
-    end
-  end
-
-  def address_row
-    if location.has_address?
-      {
-        key: {
-          text: "Address"
-        },
-        value: {
-          text: helpers.format_address_multi_line(location)
-        }
-      }
-    end
-  end
-
-  def consent_forms_row
-    online_consent_links =
-      if session.open_for_consent?
-        ProgrammeGrouper
-          .call(session.programmes)
-          .map do |_group, programmes|
-            govuk_link_to(
-              "View the #{programmes.map(&:name).to_sentence} online consent form",
-              start_parent_interface_consent_forms_path(
-                session,
-                programmes.map(&:to_param).join("-")
-              ),
-              new_tab: true
-            )
-          end
-      else
-        []
-      end
-
-    download_consent_links =
-      session.programmes.map do
-        link_to(
-          "Download the #{it.name} consent form (PDF)",
-          consent_form_programme_path(it)
-        )
-      end
-
-    links = online_consent_links + download_consent_links
+  def patient_count_row
+    return if patient_count.nil?
 
     {
       key: {
-        text: "Consent forms"
+        text: "Children"
       },
       value: {
-        text:
-          tag.ul(class: "nhsuk-list") { safe_join(links.map { tag.li(it) }) }
+        text: I18n.t("children", count: patient_count)
       }
     }
+  end
+
+  def programmes_row
+    {
+      key: {
+        text: "Programmes"
+      },
+      value: {
+        text: render(AppProgrammeTagsComponent.new(session.programmes))
+      }
+    }
+  end
+
+  def year_groups_row
+    {
+      key: {
+        text: "Year groups"
+      },
+      value: {
+        text: helpers.format_year_groups(session.year_groups)
+      }
+    }
+  end
+
+  def status_row
+    return unless show_status
+
+    {
+      key: {
+        text: "Status"
+      },
+      value: {
+        text: helpers.session_status(session)
+      }
+    }
+  end
+
+  def dates_row
+    return unless show_dates
+
+    {
+      key: {
+        text: "Date".pluralize(session.dates.length)
+      },
+      value: {
+        text: helpers.session_dates(session)
+      }
+    }
+  end
+
+  def consent_period_row
+    {
+      key: {
+        text: "Consent period"
+      },
+      value: {
+        text: helpers.session_consent_period(session)
+      }
+    }
+  end
+
+  def classes
+    full_width ? %w[app-summary-list--full-width] : []
   end
 end

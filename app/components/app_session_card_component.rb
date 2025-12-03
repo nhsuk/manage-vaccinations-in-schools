@@ -20,7 +20,7 @@ class AppSessionCardComponent < ViewComponent::Base
   def call
     render AppCardComponent.new(link_to:, compact: true) do |card|
       card.with_heading(level: 4) { heading }
-      safe_join([govuk_summary_list(rows:, classes:), button_group].compact)
+      safe_join([summary_list, button_group].compact)
     end
   end
 
@@ -42,89 +42,14 @@ class AppSessionCardComponent < ViewComponent::Base
     heading_as_dates ? helpers.session_dates(session) : session.location.name
   end
 
-  def classes
-    full_width ? %w[app-summary-list--full-width] : []
-  end
-
-  def rows
-    [
-      patient_count_row,
-      programmes_row,
-      year_groups_row,
-      status_row,
-      dates_row,
-      consent_period_row
-    ].compact
-  end
-
-  def patient_count_row
-    {
-      key: {
-        text: "Children"
-      },
-      value: {
-        text: I18n.t("children", count: patient_count)
-      }
-    }
-  end
-
-  def programmes_row
-    {
-      key: {
-        text: "Programmes"
-      },
-      value: {
-        text: render(AppProgrammeTagsComponent.new(programmes))
-      }
-    }
-  end
-
-  def year_groups_row
-    {
-      key: {
-        text: "Year groups"
-      },
-      value: {
-        text: helpers.format_year_groups(year_groups)
-      }
-    }
-  end
-
-  def status_row
-    return unless show_status
-
-    {
-      key: {
-        text: "Status"
-      },
-      value: {
-        text: helpers.session_status(session)
-      }
-    }
-  end
-
-  def dates_row
-    return if heading_as_dates
-
-    {
-      key: {
-        text: "Date".pluralize(session.dates.length)
-      },
-      value: {
-        text: helpers.session_dates(session)
-      }
-    }
-  end
-
-  def consent_period_row
-    {
-      key: {
-        text: "Consent period"
-      },
-      value: {
-        text: helpers.session_consent_period(session)
-      }
-    }
+  def summary_list
+    render AppSessionSummaryComponent.new(
+             session,
+             patient_count:,
+             full_width:,
+             show_dates: !heading_as_dates,
+             show_status:
+           )
   end
 
   def button_group
