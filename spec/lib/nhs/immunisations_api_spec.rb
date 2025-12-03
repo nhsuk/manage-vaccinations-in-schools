@@ -4,6 +4,7 @@ describe NHS::ImmunisationsAPI do
   before do
     Flipper.enable(:imms_api_integration)
     Flipper.enable(:imms_api_sentry_warnings)
+    Flipper.enable(:imms_api_sync_job, Programme.hpv)
   end
 
   let(:team) { create(:team, ods_code: "A9A5A") }
@@ -744,6 +745,18 @@ describe NHS::ImmunisationsAPI do
 
       it { should be false }
     end
+
+    context "when the programme type is not enabled in the feature flag" do
+      let(:programme) { Programme.menacwy }
+      let(:vaccine) { programme.vaccines.first }
+
+      before do
+        Flipper.disable(:imms_api_sync_job)
+        Flipper.enable(:imms_api_sync_job, Programme.hpv)
+      end
+
+      it { should be false }
+    end
   end
 
   describe "next_sync_action" do
@@ -767,7 +780,11 @@ describe NHS::ImmunisationsAPI do
     end
 
     context "the sync pending is nil" do
-      let(:nhs_immunisations_api_sync_pending_at) { nil }
+      before do
+        # This is necessary because of the `before_save :touch_nhs_immunisations_api_sync_pending_at` hook on
+        # VaccinationRecord
+        vaccination_record.update(nhs_immunisations_api_sync_pending_at: nil)
+      end
 
       it "raises an error" do
         expect { next_sync_action }.to raise_error(
