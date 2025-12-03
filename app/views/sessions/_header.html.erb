@@ -1,56 +1,120 @@
-<%= h1 @session.location.name, class: "nhsuk-u-margin-bottom-2" %>
+<% content_for :before_container do %>
+  <% if Flipper.enabled?(:schools_and_sessions) %>
+    <div class="app-session-banner">
+      <div class="nhsuk-width-container">
+        <div class="nhsuk-main-wrapper nhsuk-main-wrapper--s">
+          <%= h1 session_title(@session), class: "nhsuk-u-margin-bottom-2" %>
 
-<p class="nhsuk-caption-l nhsuk-u-margin-bottom-4">
-  <%= @session.programmes(patient: @patient).map(&:name).to_sentence %>
-  (<%= format_academic_year(@session.academic_year) %>)
-</p>
+          <p class="nhsuk-caption-l nhsuk-u-margin-bottom-0">
+            <%= format_year_groups(@session.year_groups) %>
+          </p>
+        </div>
 
-<%= render AppSecondaryNavigationComponent.new do |nav|
-      nav.with_item(
-        href: session_path(@session),
-        text: t("sessions.tabs.overview"),
-        selected: request.path == session_path(@session),
-      )
-    
-      nav.with_item(
-        href: session_patients_path(@session),
-        text: t("sessions.tabs.patients"),
-        selected: request.path == session_patients_path(@session),
-      )
-    
-      unless Flipper.enabled?(:programme_status, current_team)
+        <%= render AppSecondaryNavigationComponent.new(reverse: true) do |nav|
+              nav.with_item(
+                href: session_path(@session),
+                text: t("sessions.tabs.overview"),
+                selected: request.path == session_path(@session),
+              )
+            
+              nav.with_item(
+                href: session_patients_path(@session),
+                text: t("sessions.tabs.patients"),
+                selected: request.path == session_patients_path(@session),
+              )
+            
+              if @session.psd_enabled?
+                nav.with_item(
+                  href: session_patient_specific_directions_path(@session),
+                  text: t("sessions.tabs.patient_specific_directions"),
+                  selected: request.path == session_patient_specific_directions_path(@session),
+                )
+              end
+            
+              if @session.requires_registration?
+                nav.with_item(
+                  href: session_register_path(@session),
+                  text: t("sessions.tabs.register"),
+                  selected: request.path == session_register_path(@session),
+                )
+              end
+            
+              nav.with_item(
+                href: session_record_path(@session),
+                text: t("sessions.tabs.record"),
+                selected: request.path == session_record_path(@session),
+              )
+            end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<% content_for :before_main do %>
+  <% unless Flipper.enabled?(:schools_and_sessions) %>
+    <%= render AppBreadcrumbComponent.new(items: [
+                                            { text: t("dashboard.index.title"), href: dashboard_path },
+                                            { text: t("sessions.index.title"), href: sessions_path },
+                                            { text: @session.location.name, href: session_path(@session) },
+                                          ]) %>
+  <% end %>
+<% end %>
+
+<% unless Flipper.enabled?(:schools_and_sessions) %>
+  <%= h1 @session.location.name, class: "nhsuk-u-margin-bottom-2" %>
+
+  <p class="nhsuk-caption-l nhsuk-u-margin-bottom-4">
+    <%= @session.programmes(patient: @patient).map(&:name).to_sentence %>
+    (<%= format_academic_year(@session.academic_year) %>)
+  </p>
+
+  <%= render AppSecondaryNavigationComponent.new do |nav|
         nav.with_item(
-          href: session_consent_path(@session),
-          text: t("sessions.tabs.consent"),
-          selected: request.path == session_consent_path(@session),
+          href: session_path(@session),
+          text: t("sessions.tabs.overview"),
+          selected: request.path == session_path(@session),
         )
-    
+      
         nav.with_item(
-          href: session_triage_path(@session),
-          text: t("sessions.tabs.triage"),
-          selected: request.path == session_triage_path(@session),
+          href: session_patients_path(@session),
+          text: t("sessions.tabs.patients"),
+          selected: request.path == session_patients_path(@session),
         )
-      end
-    
-      if @session.psd_enabled?
+      
+        unless Flipper.enabled?(:programme_status, current_team)
+          nav.with_item(
+            href: session_consent_path(@session),
+            text: t("sessions.tabs.consent"),
+            selected: request.path == session_consent_path(@session),
+          )
+      
+          nav.with_item(
+            href: session_triage_path(@session),
+            text: t("sessions.tabs.triage"),
+            selected: request.path == session_triage_path(@session),
+          )
+        end
+      
+        if @session.psd_enabled?
+          nav.with_item(
+            href: session_patient_specific_directions_path(@session),
+            text: t("sessions.tabs.patient_specific_directions"),
+            selected: request.path == session_patient_specific_directions_path(@session),
+          )
+        end
+      
+        if @session.requires_registration?
+          nav.with_item(
+            href: session_register_path(@session),
+            text: t("sessions.tabs.register"),
+            selected: request.path == session_register_path(@session),
+          )
+        end
+      
         nav.with_item(
-          href: session_patient_specific_directions_path(@session),
-          text: t("sessions.tabs.patient_specific_directions"),
-          selected: request.path == session_patient_specific_directions_path(@session),
+          href: session_record_path(@session),
+          text: t("sessions.tabs.record"),
+          selected: request.path == session_record_path(@session),
         )
-      end
-    
-      if @session.requires_registration?
-        nav.with_item(
-          href: session_register_path(@session),
-          text: t("sessions.tabs.register"),
-          selected: request.path == session_register_path(@session),
-        )
-      end
-    
-      nav.with_item(
-        href: session_record_path(@session),
-        text: t("sessions.tabs.record"),
-        selected: request.path == session_record_path(@session),
-      )
-    end %>
+      end %>
+<% end %>
