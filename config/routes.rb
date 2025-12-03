@@ -177,6 +177,13 @@ Rails.application.routes.draw do
     resources :notices, only: %i[index destroy] do
       member { get :dismiss }
     end
+
+    get "bulk_remove_parents/:import_type/:import_id",
+        to: "bulk_remove_parents#new",
+        as: :bulk_remove_parents
+
+    post "bulk_remove_parents/:import_type/:import_id",
+         to: "bulk_remove_parents#create"
   end
 
   resources :notifications, only: :create

@@ -1,0 +1,67 @@
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t("imports.index.title"), href: imports_path },
+                                        ]) %>
+<% end %>
+
+<%= h1 t(".title") %>
+
+<%= form_with model: @form,
+              url: imports_bulk_remove_parents_path(import_type: @import.class.name.underscore, import_id: @import.id),
+              builder: GOVUKDesignSystemFormBuilder::FormBuilder,
+              local: true do |f| %>
+  <% if @consents.any? %>
+
+    <%= simple_format(t(".consents_warning")) %>
+
+    <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
+      <%= table.with_head do |head|
+            head.with_row do |row|
+              row.with_cell(text: "Response")
+              row.with_cell(text: "Response date")
+              row.with_cell(text: "Programme")
+            end
+          end %>
+
+      <%= table.with_body do |body| %>
+        <% @consents.each do |consent| %>
+          <%= body.with_row do |row| %>
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Response</span>
+              <span>
+                <%= consent.parent_relationship.label_with_parent %>
+                <br>
+                <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">
+                  for <%= consent.patient.full_name %>
+                </span>
+              </span>
+            <% end %>
+
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Response date</span>
+              <%= consent.created_at.to_date.to_fs(:long) %>
+            <% end %>
+
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Programme</span>
+              <%= tag.strong(
+                    consent.programme.name,
+                    class: "nhsuk-tag app-tag--attached nhsuk-tag--white",
+                  ) %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= render AppPaginationComponent.new(pagy: @pagy) %>
+
+    <%= f.govuk_collection_radio_buttons :remove_option, %w[unconsented_only all], :itself %>
+  <% end %>
+
+  <div class="nhsuk-button-group">
+    <%= f.govuk_submit t(".buttons.continue"), warning: true, class: "govuk-button govuk-button--warning" %>
+    <%= link_to t(".buttons.cancel"), polymorphic_path(@import), secondary: true %>
+  </div>
+<% end %>

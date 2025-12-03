@@ -1,6 +1,10 @@
 en:
   helpers:
     hint:
+      bulk_remove_parents_form:
+        remove_option_options:
+          unconsented_only: The relationships and consent responses shown above will stay in Mavis
+          all: This will invalidate the consent responses listed above
       consent_form:
         response_options:
           refused: If you do not agree to the vaccination, you’ll get a chance to tell us why
@@ -8,6 +12,10 @@ en:
       import_duplicate_form:
         apply_changes: Which record do you want to keep?
     label:
+      bulk_remove_parents_form:
+        remove_option_options:
+          unconsented_only: Only remove parent–child relationships where no consent response has been submitted
+          all: Remove all parent–child relationships included in this import
       consent_form:
         response_options:
           refused: "No"
