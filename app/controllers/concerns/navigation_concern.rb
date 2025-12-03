@@ -24,13 +24,13 @@ module NavigationConcern
       end
 
       @navigation_items << {
-        title: t("sessions.index.title"),
-        path: sessions_path
+        title: t("patients.index.title"),
+        path: patients_path
       }
 
       @navigation_items << {
-        title: t("patients.index.title"),
-        path: patients_path
+        title: t("sessions.index.title"),
+        path: sessions_path
       }
 
       @navigation_items << {
