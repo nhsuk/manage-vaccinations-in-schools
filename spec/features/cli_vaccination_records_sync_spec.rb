@@ -3,9 +3,15 @@
 require_relative "../../app/lib/mavis_cli"
 
 describe "mavis vaccination-records sync" do
-  before { Flipper.enable :imms_api_integration }
+  before do
+    Flipper.enable(:imms_api_integration)
+    Flipper.enable(:imms_api_sync_job, Programme.hpv)
+  end
 
-  after { Flipper.disable :imms_api_integration }
+  after do
+    Flipper.disable(:imms_api_integration)
+    Flipper.disable(:imms_api_sync_job)
+  end
 
   context "when the vaccination record exists and has not been synced" do
     it "syncs the vaccination record to the NHS API" do
