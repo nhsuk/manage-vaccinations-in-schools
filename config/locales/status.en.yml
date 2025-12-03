@@ -128,6 +128,7 @@ en:
         safe_to_vaccinate_injection: Safe to vaccinate
         safe_to_vaccinate_nasal: Safe to vaccinate with nasal spray
         safe_to_vaccinate_injection_without_gelatine: Safe to vaccinate with gelatine-free injection
+        safe_to_vaccinate_injection_without_gelatine_flu: Safe to vaccinate withinjection
       colour:
         delay_vaccination: dark-orange
         invite_to_clinic: yellow
@@ -138,6 +139,7 @@ en:
         safe_to_vaccinate_injection: aqua-green
         safe_to_vaccinate_nasal: aqua-green
         safe_to_vaccinate_injection_without_gelatine: aqua-green
+        safe_to_vaccinate_injection_without_gelatine_flu: aqua-green
     vaccination:
       label:
         due: Due vaccination
