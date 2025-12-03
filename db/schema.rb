@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_01_152312) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_03_141545) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -977,6 +977,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_01_152312) do
     t.string "snomed_product_code", null: false
     t.string "snomed_product_term", null: false
     t.datetime "updated_at", null: false
+    t.text "upload_name"
     t.index ["manufacturer", "brand"], name: "index_vaccines_on_manufacturer_and_brand", unique: true
     t.index ["nivs_name"], name: "index_vaccines_on_nivs_name", unique: true
     t.index ["programme_type"], name: "index_vaccines_on_programme_type"
@@ -1281,38 +1282,38 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_01_152312) do
                     WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 1) AND ((vr.source IS NULL) OR (vr.source <> 3)))) child_refused ON (((child_refused.patient_id = p.id) AND (child_refused.programme_type = patient_team_prog.s_programme_type) AND (child_refused.academic_year = tl.academic_year))))
             WHERE ((p.invalidated_at IS NULL) AND (p.restricted_at IS NULL))
           )
-   SELECT DISTINCT ON (base_data.patient_id, base_data.programme_type, base_data.team_id, base_data.academic_year) base_data.id,
-      base_data.patient_id,
-      base_data.patient_gender,
-      base_data.programme_type,
-      base_data.academic_year,
-      base_data.team_id,
-      base_data.team_name,
-      base_data.is_archived,
-      base_data.patient_school_local_authority_code,
-      base_data.patient_local_authority_code,
-      base_data.patient_school_id,
-      base_data.patient_school_urn,
-      base_data.patient_school_name,
-      base_data.session_location_id,
-      base_data.patient_year_group,
-      base_data.has_any_vaccination,
-      base_data.vaccinated_by_sais_current_year,
-      base_data.vaccinated_elsewhere_declared_current_year,
-      base_data.vaccinated_elsewhere_recorded_current_year,
-      base_data.vaccinated_in_previous_years,
-      base_data.sais_vaccinations_count,
-      base_data.most_recent_vaccination_month,
-      base_data.most_recent_vaccination_year,
-      base_data.consent_status,
-      base_data.consent_vaccine_methods,
-      base_data.parent_refused_consent_current_year,
-      base_data.child_refused_vaccination_current_year,
-      base_data.vaccinated_nasal_current_year,
-      base_data.vaccinated_injection_current_year,
-      base_data.outside_cohort
+   SELECT DISTINCT ON (patient_id, programme_type, team_id, academic_year) id,
+      patient_id,
+      patient_gender,
+      programme_type,
+      academic_year,
+      team_id,
+      team_name,
+      is_archived,
+      patient_school_local_authority_code,
+      patient_local_authority_code,
+      patient_school_id,
+      patient_school_urn,
+      patient_school_name,
+      session_location_id,
+      patient_year_group,
+      has_any_vaccination,
+      vaccinated_by_sais_current_year,
+      vaccinated_elsewhere_declared_current_year,
+      vaccinated_elsewhere_recorded_current_year,
+      vaccinated_in_previous_years,
+      sais_vaccinations_count,
+      most_recent_vaccination_month,
+      most_recent_vaccination_year,
+      consent_status,
+      consent_vaccine_methods,
+      parent_refused_consent_current_year,
+      child_refused_vaccination_current_year,
+      vaccinated_nasal_current_year,
+      vaccinated_injection_current_year,
+      outside_cohort
      FROM base_data
-    ORDER BY base_data.patient_id, base_data.programme_type, base_data.team_id, base_data.academic_year, (base_data.sais_vaccinations_count > 0) DESC, (base_data.outside_cohort = false) DESC, base_data.patient_school_id;
+    ORDER BY patient_id, programme_type, team_id, academic_year, (sais_vaccinations_count > 0) DESC, (outside_cohort = false) DESC, patient_school_id;
   SQL
   add_index "reporting_api_patient_programme_statuses", ["academic_year", "programme_type"], name: "ix_rapi_pps_year_prog_type"
   add_index "reporting_api_patient_programme_statuses", ["id"], name: "ix_rapi_pps_id", unique: true
