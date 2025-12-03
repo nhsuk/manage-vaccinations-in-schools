@@ -20,21 +20,6 @@ class AppSessionOverviewComponent < ViewComponent::Base
            :policy,
            to: :helpers
 
-  def heading
-    if session.completed?
-      "All session dates completed"
-    elsif session.today?
-      "Session in progress"
-    else
-      "Scheduled session dates"
-    end
-  end
-
-  def no_sessions_message
-    location_context = session.clinic? ? "clinic" : "school"
-    "There are currently no sessions scheduled at this #{location_context}."
-  end
-
   def cards_for_programme(programme)
     stats =
       stats_for_programme(programme).except(:eligible_children).stringify_keys
@@ -145,19 +130,6 @@ class AppSessionOverviewComponent < ViewComponent::Base
 
   def eligible_children_count(programme)
     stats_for_programme(programme)[:eligible_children]
-  end
-
-  def still_to_vaccinate_count
-    session
-      .patients
-      .includes_statuses
-      .consent_given_and_safe_to_vaccinate(
-        programmes:,
-        academic_year:,
-        vaccine_methods: nil,
-        without_gelatine: nil
-      )
-      .count
   end
 
   def stats_for_programme(programme)
