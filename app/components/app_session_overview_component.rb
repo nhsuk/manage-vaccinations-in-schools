@@ -35,10 +35,6 @@ class AppSessionOverviewComponent < ViewComponent::Base
     "There are currently no sessions scheduled at this #{location_context}."
   end
 
-  def edit_button_text
-    dates.empty? ? "Schedule sessions" : "Edit session"
-  end
-
   def cards_for_programme(programme)
     stats =
       stats_for_programme(programme).except(:eligible_children).stringify_keys
