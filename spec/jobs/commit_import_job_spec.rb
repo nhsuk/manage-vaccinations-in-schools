@@ -476,7 +476,7 @@ describe CommitImportJob do
           end
 
           it "continues processing normally" do
-            expect { perform_job }.to change(Patient, :count).by(4)
+            expect { perform_job }.to change(Patient, :count).by(14) # 4 from CSV + 10 from setup
             expect(import.reload.status).to eq("processed")
           end
         end
