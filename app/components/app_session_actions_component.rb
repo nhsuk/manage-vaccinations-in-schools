@@ -2,24 +2,23 @@
 
 class AppSessionActionsComponent < ViewComponent::Base
   erb_template <<-ERB
-    <% if show_heading %>
-      <h4 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Action required</h4>
-    <% end %>
-    <% if rows.any? %>
-      <%= govuk_summary_list(rows:) %>
-    <% else %>
-      <p class="nhsuk-body">No action required</p>
+    <%= render AppCardComponent.new do |card| %>
+      <% card.with_heading(level: 3) { "Action required" } %>
+      <% if rows.any? %>
+        <%= govuk_summary_list(rows:) %>
+      <% else %>
+        <p class="nhsuk-body">No action required</p>
+      <% end %>
     <% end %>
   ERB
 
-  def initialize(session, show_heading: true)
+  def initialize(session)
     @session = session
-    @show_heading = show_heading
   end
 
   private
 
-  attr_reader :session, :show_heading
+  attr_reader :session
 
   delegate :govuk_summary_list, to: :helpers
   delegate :academic_year, :programmes, :team, to: :session

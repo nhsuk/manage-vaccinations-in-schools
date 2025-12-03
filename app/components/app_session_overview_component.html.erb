@@ -69,10 +69,7 @@
   </section>
 
   <section>
-    <%= render AppCardComponent.new do |card| %>
-      <% card.with_heading(level: 3) { "Action required" } %>
-      <%= render AppSessionActionsComponent.new(session, show_heading: false) %>
-    <% end %>
+    <%= render AppSessionActionsComponent.new(session) %>
   </section>
 
   <section>
