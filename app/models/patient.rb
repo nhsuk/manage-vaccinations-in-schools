@@ -118,10 +118,7 @@ class Patient < ApplicationRecord
             patient_teams: {
               team_id: team.id
             }
-          ).where(
-            "patient_teams.sources @> ARRAY[?]::integer[]",
-            PatientTeam.sources.fetch("archive_reason")
-          )
+          ).merge(PatientTeam.where_all_sources(%w[archive_reason]))
         end
 
   scope :not_archived,
@@ -130,10 +127,7 @@ class Patient < ApplicationRecord
             patient_teams: {
               team_id: team.id
             }
-          ).where(
-            "NOT patient_teams.sources @> ARRAY[?]::integer[]",
-            PatientTeam.sources.fetch("archive_reason")
-          )
+          ).merge(PatientTeam.where_no_sources(%w[archive_reason]))
         end
 
   scope :with_pending_changes_for_team,
