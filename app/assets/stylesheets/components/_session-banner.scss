@@ -1,0 +1,37 @@
+@use "../vendor/nhsuk-frontend" as *;
+
+.app-session-banner {
+  box-sizing: border-box;
+  color: $nhsuk-reverse-text-colour;
+  background-color: nhsuk-shade($nhsuk-brand-colour, 20%);
+
+  @include nhsuk-print-colour;
+
+  .nhsuk-caption-l {
+    color: nhsuk-colour("grey-5");
+  }
+
+  .nhsuk-notification-banner {
+    border-color: nhsuk-colour("white");
+  }
+
+  .nhsuk-notification-banner__header {
+    background-color: nhsuk-colour("white");
+  }
+
+  .nhsuk-notification-banner__title {
+    color: $nhsuk-brand-colour;
+  }
+
+  .nhsuk-notification-banner__link {
+    @include nhsuk-link-style-white;
+  }
+
+  .nhsuk-notification-banner__heading {
+    color: $nhsuk-reverse-text-colour;
+  }
+
+  .app-secondary-navigation__list {
+    box-shadow: 0 -1px 0 0 $nhsuk-secondary-border-colour;
+  }
+}
