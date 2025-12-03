@@ -1,8 +1,10 @@
 <% content_for :before_main do %>
-  <%= render AppBreadcrumbComponent.new(items: [
-                                          { text: t("dashboard.index.title"), href: dashboard_path },
-                                          { text: t("sessions.index.title"), href: sessions_path },
-                                        ]) %>
+  <% unless Flipper.enabled?(:schools_and_sessions) %>
+    <%= render AppBreadcrumbComponent.new(items: [
+                                            { text: t("dashboard.index.title"), href: dashboard_path },
+                                            { text: t("sessions.index.title"), href: sessions_path },
+                                          ]) %>
+  <% end %>
 <% end %>
 
 <%= render "header" %>
