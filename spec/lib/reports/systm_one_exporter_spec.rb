@@ -283,13 +283,13 @@ describe Reports::SystmOneExporter do
       context "Priorix" do
         let(:vaccine) { Vaccine.find_by!(brand: "Priorix") }
 
-        it { should eq("Priorix") }
+        it { should eq("Yav8l") }
       end
 
       context "MMR VaxPro" do
         let(:vaccine) { Vaccine.find_by!(brand: "MMR VaxPro") }
 
-        it { should eq("MMR VaxPro") }
+        it { should eq("Yb9ZN") }
       end
     end
 

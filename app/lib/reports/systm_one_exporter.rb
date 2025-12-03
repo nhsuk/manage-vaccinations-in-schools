@@ -29,8 +29,14 @@ class Reports::SystmOneExporter
     "Menveo" => {
       nil => "Y0da5"
     },
+    "MMR VaxPro" => {
+      nil => "Yb9ZN"
+    },
     "Nimenrix" => {
       nil => "YOfcf"
+    },
+    "Priorix" => {
+      nil => "Yav8l"
     },
     "Revaxis" => {
       1 => "Y3417",
