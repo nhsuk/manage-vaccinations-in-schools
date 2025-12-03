@@ -68,7 +68,8 @@ class ClassImportsController < ApplicationController
           end
         end
 
-      @nhs_discrepancies = @class_import.changesets.nhs_number_discrepancies
+      @nhs_discrepancies =
+        @class_import.changesets.includes(:patient).nhs_number_discrepancies
 
       @cancelled = @class_import.changesets.from_file.cancelled
     end

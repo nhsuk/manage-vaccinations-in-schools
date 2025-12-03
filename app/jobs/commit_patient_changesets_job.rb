@@ -19,7 +19,8 @@ class CommitPatientChangesetsJob
   queue_as :imports
 
   def perform(patient_changeset_ids)
-    changesets = PatientChangeset.where(id: patient_changeset_ids)
+    changesets =
+      PatientChangeset.includes(:patient).where(id: patient_changeset_ids)
     import = changesets.first.import
     imported_school_move_ids = []
 
@@ -30,6 +31,9 @@ class CommitPatientChangesetsJob
         .index_with { |col| import.public_send(col) || 0 }
 
     ActiveRecord::Base.transaction do
+      # Reset patient_ids to avoid stale associations
+      changesets.update_all(patient_id: nil)
+
       to_process = changesets.select { review_consistent?(it) }
 
       if to_process.any?

@@ -13,8 +13,10 @@ class ReviewClassImportSchoolMoveJob < ApplicationJob
       return
     end
 
+    patients_in_import_changesets = import.changesets.from_file.ready_for_review
+
     patients_in_import =
-      import.changesets.from_file.ready_for_review.map(&:patient) +
+      Patient.joins(:changesets).merge(patients_in_import_changesets) +
         import.patients
 
     patients_in_future_review = import.changesets.needs_re_review.map(&:patient)
