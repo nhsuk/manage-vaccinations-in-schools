@@ -6,7 +6,6 @@ cell_based_trivalent:
   method: injection
   manufacturer: Sequirus
   contains_gelatine: false
-  nivs_name: Sequirus Cell-based Trivalent
   upload_name: Sequirus Cell-based Trivalent
   dose_volume_ml: 0.5
   disease_types: [influenza]
@@ -21,7 +20,6 @@ fluenz:
   method: nasal
   manufacturer: AstraZeneca
   contains_gelatine: true
-  nivs_name: AstraZeneca Fluenz
   upload_name: AstraZeneca Fluenz
   dose_volume_ml: 0.2
   disease_types: [influenza]
@@ -35,7 +33,6 @@ vaxigrip:
   method: injection
   manufacturer: Sanofi
   contains_gelatine: false
-  nivs_name: Sanofi Vaxigrip
   upload_name: Sanofi Vaxigrip
   dose_volume_ml: 0.5
   disease_types: [influenza]
@@ -49,7 +46,6 @@ viatris:
   method: injection
   manufacturer: Viatris
   contains_gelatine: false
-  nivs_name: Viatris
   upload_name: Viatris
   dose_volume_ml: 0.5
   disease_types: [influenza]
@@ -66,7 +62,6 @@ cervarix:
   method: injection
   manufacturer: GlaxoSmithKline
   contains_gelatine: false
-  nivs_name: Cervarix
   upload_name: Cervarix
   dose_volume_ml: 0.5
   disease_types: [human_papillomavirus]
@@ -82,7 +77,6 @@ gardasil:
   method: injection
   manufacturer: Merck Sharp & Dohme
   contains_gelatine: false
-  nivs_name: Gardasil
   upload_name: Gardasil
   dose_volume_ml: 0.5
   disease_types: [human_papillomavirus]
@@ -97,7 +91,6 @@ gardasil_9:
   method: injection
   manufacturer: Merck Sharp & Dohme
   contains_gelatine: false
-  nivs_name: Gardasil9
   upload_name: Gardasil9
   dose_volume_ml: 0.5
   disease_types: [human_papillomavirus]
@@ -114,7 +107,6 @@ menquadfi:
   method: injection
   manufacturer: Sanofi
   contains_gelatine: false
-  nivs_name: MenQuadfi
   upload_name: MenQuadfi
   dose_volume_ml: 0.5
   disease_types: [meningitis_a, meningitis_c, meningitis_w, meningitis_y]
@@ -128,7 +120,6 @@ menveo:
   method: injection
   manufacturer: GlaxoSmithKline
   contains_gelatine: false
-  nivs_name: Menveo
   upload_name: Menveo
   dose_volume_ml: 0.5
   disease_types: [meningitis_a, meningitis_c, meningitis_w, meningitis_y]
@@ -143,7 +134,6 @@ nimenrix:
   method: injection
   manufacturer: Pfizer
   contains_gelatine: false
-  nivs_name: Nimenrix
   upload_name: Nimenrix
   dose_volume_ml: 0.5
   disease_types: [meningitis_a, meningitis_c, meningitis_w, meningitis_y]
@@ -160,7 +150,6 @@ priorix:
   method: injection
   manufacturer: GlaxoSmithKline
   contains_gelatine: false
-  nivs_name: Priorix
   upload_name: Priorix
   dose_volume_ml: 0.5
   disease_types: [measles, mumps, rubella]
@@ -175,7 +164,6 @@ vaxpro:
   method: injection
   manufacturer: Merck Sharp & Dohme
   contains_gelatine: true
-  nivs_name: VaxPro
   upload_name: VaxPro
   dose_volume_ml: 0.5
   disease_types: [measles, mumps, rubella]
@@ -192,7 +180,6 @@ pro_quad :
   method: injection
   manufacturer: Merck Sharp & Dohme
   contains_gelatine: true
-  nivs_name: ProQuad
   upload_name: ProQuad
   dose_volume_ml: 0.5
   disease_types: [measles, mumps, rubella, varicella]
@@ -207,7 +194,6 @@ priorix_tetra:
   method: injection
   manufacturer: GlaxoSmithKline
   contains_gelatine: false
-  nivs_name: Priorix-Tetra
   upload_name: Priorix-Tetra
   dose_volume_ml: 0.5
   disease_types: [measles, mumps, rubella, varicella]
@@ -224,7 +210,6 @@ revaxis:
   method: injection
   manufacturer: Sanofi
   contains_gelatine: false
-  nivs_name: Revaxis
   upload_name: Revaxis
   dose_volume_ml: 0.5
   disease_types: [tetanus, diphtheria, polio]

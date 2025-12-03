@@ -62,8 +62,6 @@ class Vaccine < ApplicationRecord
 
   delegate :snomed_procedure_term, to: :programme, allow_nil: true
 
-  self.ignored_columns += %w[nivs_name]
-
   def active? = !discontinued
 
   AVAILABLE_DELIVERY_SITES = {
