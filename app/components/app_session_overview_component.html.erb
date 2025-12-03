@@ -52,19 +52,9 @@
         <% end %>
       <% end %>
 
-      <div class="nhsuk-button-group">
-        <% if policy(session).edit? %>
-          <%= govuk_button_link_to edit_button_text, edit_session_path(session), secondary: true %>
-
-          <%= link_to "Record offline", session_path(@session, format: :xlsx) %>
-
-          <% if @session.clinic? && @session.can_send_clinic_invitations? %>
-            <%= link_to "Send booking reminders", edit_session_invite_to_clinic_path(@session) %>
-          <% elsif @session.school? && @session.can_send_clinic_invitations? %>
-            <%= link_to "Send clinic invitations", edit_session_invite_to_clinic_path(@session) %>
-          <% end %>
-        <% end %>
-      </div>
+      <% unless Flipper.enabled?(:schools_and_sessions) %>
+        <%= render AppSessionButtonsComponent.new(session) %>
+      <% end %>
     <% end %>
   </section>
 
@@ -74,5 +64,11 @@
 
   <section>
     <%= render AppSessionDetailsComponent.new(session) %>
+  </section>
+
+  <section>
+    <% if Flipper.enabled?(:schools_and_sessions) %>
+      <%= render AppSessionButtonsComponent.new(session) %>
+    <% end %>
   </section>
 </div>
