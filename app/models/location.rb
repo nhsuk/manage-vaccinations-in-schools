@@ -104,14 +104,9 @@ class Location < ApplicationRecord
 
   scope :search_by_name,
         ->(query) do
-          # Trigram matching requires at least 3 characters
-          if query.length < 3
-            where("locations.name ILIKE :like_query", like_query: "#{query}%")
-          else
-            where("SIMILARITY(locations.name, ?) > 0.3", query).order(
-              Arel.sql("SIMILARITY(locations.name, ?) DESC", query)
-            )
-          end
+          where("WORD_SIMILARITY(:query, locations.name) > 0.3", query:).order(
+            Arel.sql("SIMILARITY(locations.name, :query) DESC", query:)
+          )
         end
 
   scope :where_phase,
