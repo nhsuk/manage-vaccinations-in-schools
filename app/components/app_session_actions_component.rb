@@ -123,7 +123,13 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     status = "unknown"
     count = patients.has_registration_status(status, session:).count
-    href = session_register_path(session, registration_status: status)
+
+    href =
+      if Flipper.enabled?(:schools_and_sessions)
+        session_patients_path(session, registration_status: status)
+      else
+        session_register_path(session, registration_status: status)
+      end
 
     generate_row(:children_to_register, count:, href:)
   end
