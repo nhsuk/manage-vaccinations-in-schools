@@ -48,14 +48,14 @@ class DashboardController < ApplicationController
             }
           end,
           {
-            title: I18n.t("sessions.index.title"),
-            path: sessions_path,
-            description: I18n.t("sessions.index.description")
-          },
-          {
             title: I18n.t("patients.index.title"),
             path: patients_path,
             description: I18n.t("patients.index.description")
+          },
+          {
+            title: I18n.t("sessions.index.title"),
+            path: sessions_path,
+            description: I18n.t("sessions.index.description")
           },
           {
             title: I18n.t("vaccines.index.title"),
