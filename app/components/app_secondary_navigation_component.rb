@@ -3,10 +3,14 @@
 class AppSecondaryNavigationComponent < ViewComponent::Base
   renders_many :items, "Item"
 
-  def initialize(classes: nil, attributes: {})
-    classes = classes.join(" ") if classes.is_a? Array
-    @classes =
-      "app-secondary-navigation nhsuk-u-margin-bottom-4#{classes.present? ? " #{classes}" : ""}"
+  def initialize(reverse: false, classes: nil, attributes: {})
+    @classes = [
+      "app-secondary-navigation",
+      reverse ? "app-secondary-navigation--reverse" : nil,
+      "nhsuk-u-margin-bottom-4",
+      *Array(classes)
+    ].compact.join(" ")
+
     @attributes =
       attributes.merge(class: @classes, "aria-label": "Secondary menu")
   end
