@@ -51,3 +51,5 @@ schools_and_sessions: |
 statuses_changed_banner: Whether to show the banner outlining the changes to statuses.
 
 testing_api: Basic API useful for automated testing.
+
+mmrv: Adds support for MMRV vaccinations

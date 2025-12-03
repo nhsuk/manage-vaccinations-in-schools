@@ -586,7 +586,24 @@ en:
         hpv: Do they agree to them having the HPV vaccination?
         menacwy: Do they agree to them having the MenACWY vaccination?
         mmr: Do they agree to them having the MMR vaccination?
+        mmrv: Do they agree to them having the MMRV vaccination?
         td_ipv: Do they agree to them having the Td/IPV vaccination?
+      response:
+        given_nasal: Yes, for the nasal spray
+        given_injection: Yes, for the injected vaccine only
+        given: Yes, they agree
+        refused: No, they do not agree
+        not_provided: No response
+      injection_alternative:
+        legend: Do they also agree to the injected vaccine if the nasal spray is not suitable?
+        hint: For example, if the child is heavily congested on the day of the vaccination
+        "yes": "Yes"
+        "no": "No"
+      without_gelatine:
+        legend: Do they want their child to have a vaccine without gelatine?
+        hint: One type of %{programme_name} vaccine contains gelatine from pigs. An alternative %{programme_name} vaccine is available that does not contain gelatine.
+        "yes": Yes, they want their child to have a vaccine that does not contain gelatine
+        "no": Their child can have either type of vaccine
     notes:
       title:
         already_vaccinated: Where did their child get their vaccination?
@@ -700,6 +717,7 @@ en:
     hpv: HPV
     menacwy: MenACWY
     mmr: MMR
+    mmrv: MMRV
     td_ipv: Td/IPV
   reports:
     index:

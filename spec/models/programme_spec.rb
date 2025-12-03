@@ -17,9 +17,7 @@
 describe Programme do
   subject(:programme) { described_class.sample }
 
-  it_behaves_like "a Flipper actor"
-
-  describe "#find" do
+  describe ".find" do
     subject(:find) { described_class.find(type) }
 
     context "with a known type" do
@@ -33,6 +31,28 @@ describe Programme do
 
       it "raises an error" do
         expect { find }.to raise_error(Programme::InvalidType)
+      end
+    end
+
+    context "when programme is MMR and MMRV support is enabled" do
+      let(:type) { "mmr" }
+
+      before { Flipper.enable(:mmrv) }
+
+      it "returns a Programme" do
+        expect(find).to be_a(described_class)
+      end
+
+      context "when patient was born after 1 January 2020" do
+        subject(:find) { described_class.find(type, patient:) }
+
+        let(:date_of_birth) { Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month }
+        let(:patient) { create(:patient, date_of_birth:) }
+
+        it "returns a ProgrammeVariant with mmrv variant type" do
+          expect(find).to be_a(ProgrammeVariant)
+          expect(find.variant_type).to eq("mmrv")
+        end
       end
     end
   end
