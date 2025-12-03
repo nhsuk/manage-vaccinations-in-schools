@@ -146,6 +146,55 @@ describe API::Reporting::TotalsController do
       expect(response).to have_http_status(:ok)
       expect(parsed_response["cohort"]).to eq(2)
     end
+
+    it "filters by team_workgroup from session when no workgroup param" do
+      programme = Programme.sample
+      team = Team.last
+      team.programmes << programme
+      other_team = create(:team, organisation: team.organisation)
+      other_team.programmes << programme
+
+      user = team.users.first
+      user.teams << other_team
+
+      create(
+        :patient,
+        session: create(:session, team:, programmes: [programme])
+      )
+      create(
+        :patient,
+        session: create(:session, team:, programmes: [programme])
+      )
+      create(
+        :patient,
+        session: create(:session, team: other_team, programmes: [programme])
+      )
+
+      ReportingAPI::PatientProgrammeStatus.refresh!
+
+      jwt =
+        JWT.encode(
+          {
+            data: {
+              user: user.as_json,
+              cis2_info: {
+                organisation_code: team.organisation.ods_code,
+                workgroups: [team.workgroup, other_team.workgroup],
+                team_workgroup: team.workgroup,
+                role_code: CIS2Info::NURSE_ROLE
+              }
+            }
+          },
+          Settings.reporting_api.client_app.secret,
+          "HS512"
+        )
+      request.headers["Authorization"] = "Bearer #{jwt}"
+
+      get :index
+
+      expect(response).to have_http_status(:ok)
+      expect(parsed_response["cohort"]).to eq(2)
+    end
   end
 
   describe "#index.csv" do
