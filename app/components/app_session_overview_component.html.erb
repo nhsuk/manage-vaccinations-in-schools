@@ -76,9 +76,6 @@
   </section>
 
   <section>
-    <%= render AppCardComponent.new do |card| %>
-      <% card.with_heading(level: 3) { session.clinic? ? "About this clinic" : "About this school" } %>
-      <%= render AppSessionLocationSummaryComponent.new(session) %>
-    <% end %>
+    <%= render AppSessionDetailsComponent.new(session) %>
   </section>
 </div>

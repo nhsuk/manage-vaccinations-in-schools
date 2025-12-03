@@ -57,7 +57,7 @@ class AppLocationCardComponent < ViewComponent::Base
         text: "URN"
       },
       value: {
-        text: tag.span(location.urn_and_site, class: "app-u-monospace")
+        text: tag.span(location.urn_and_site, class: "app-u-code")
       }
     }
   end
