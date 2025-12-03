@@ -17,6 +17,7 @@
 #  side_effects        :integer          default([]), not null, is an Array
 #  snomed_product_code :string           not null
 #  snomed_product_term :string           not null
+#  upload_name         :text
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #
