@@ -1,46 +1,19 @@
-<div class="nhsuk-grid-column-full">
-  <% programmes.each do |programme| %>
-    <section>
-      <h3 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">
-        <%= programme.name %>
-      </h3>
+<%= render AppSessionStatsComponent.new(session) %>
 
-      <p class="nhsuk-caption-m nhsuk-u-margin-bottom-4">
-        <%= t(".eligibility_message", count: eligible_children_count(programme)) %>
-      </p>
+<section>
+  <%= render AppSessionDatesComponent.new(session) %>
+</section>
 
-      <% cards = cards_for_programme(programme) %>
+<section>
+  <%= render AppSessionActionsComponent.new(session) %>
+</section>
 
-      <ul class="nhsuk-grid-row nhsuk-card-group">
-        <% cards.each do |card_data| %>
-          <li class="nhsuk-grid-column-<%= grid_column_class(cards.length) %> nhsuk-card-group__item">
-            <%= render AppCardComponent.new(compact: true,
-                                            colour: card_data[:colour],
-                                            link_to: card_data[:link_to]) do |card| %>
-              <% card.with_heading(size: "xs") { card_data[:heading] } %>
-              <% card.with_data { card_data[:count].to_s } %>
-            <% end %>
-          </li>
-        <% end %>
-      </ul>
-    </section>
+<section>
+  <%= render AppSessionDetailsComponent.new(session) %>
+</section>
+
+<section>
+  <% if Flipper.enabled?(:schools_and_sessions) %>
+    <%= render AppSessionButtonsComponent.new(session) %>
   <% end %>
-
-  <section>
-    <%= render AppSessionDatesComponent.new(session) %>
-  </section>
-
-  <section>
-    <%= render AppSessionActionsComponent.new(session) %>
-  </section>
-
-  <section>
-    <%= render AppSessionDetailsComponent.new(session) %>
-  </section>
-
-  <section>
-    <% if Flipper.enabled?(:schools_and_sessions) %>
-      <%= render AppSessionButtonsComponent.new(session) %>
-    <% end %>
-  </section>
-</div>
+</section>

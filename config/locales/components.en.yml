@@ -5,7 +5,7 @@ en:
         1 child with consent has not been vaccinated yet
       other: >-
         %{count} children with consent have not been vaccinated yet
-  app_session_overview_component:
+  app_session_stats_component:
     eligibility_message:
       one: >-
         1 child is eligible for vaccination this academic year and has not been vaccinated elsewhere
