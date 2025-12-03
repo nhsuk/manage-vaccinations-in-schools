@@ -172,6 +172,36 @@ vaxpro:
     M-M-RVAXPRO vaccine powder and solvent for suspension for injection
     0.5ml pre-filled syringes (Merck Sharp & Dohme (UK) Ltd) (product)
 
+# MMRV
+
+pro_quad :
+  type: mmr
+  brand: ProQuad
+  method: injection
+  manufacturer: Merck Sharp & Dohme
+  contains_gelatine: true
+  nivs_name: ProQuad
+  dose_volume_ml: 0.5
+  disease_types: [measles, mumps, rubella, varicella]
+  snomed_product_code: 45480711000001107
+  snomed_product_term:
+    ProQuad vaccine powder and solvent for suspension for injection
+    0.5ml pre-filled syringes (Merck Sharp & Dohme (UK) Ltd) (product)
+
+priorix_tetra:
+  type: mmr
+  brand: Priorix-Tetra
+  method: injection
+  manufacturer: GlaxoSmithKline
+  contains_gelatine: false
+  nivs_name: Priorix-Tetra
+  dose_volume_ml: 0.5
+  disease_types: [measles, mumps, rubella, varicella]
+  snomed_product_code: 45525711000001102
+  snomed_product_term:
+    Priorix Tetra vaccine powder and solvent for solution for injection
+    0.5ml pre-filled syringes (GlaxoSmithKline UK Ltd) (product)
+
 # Td/IPV
 
 revaxis:
