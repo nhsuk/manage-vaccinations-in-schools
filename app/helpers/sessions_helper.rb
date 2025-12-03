@@ -55,4 +55,14 @@ module SessionsHelper
       "Scheduled"
     end
   end
+
+  def session_title(session)
+    [
+      session.programmes.map(&:name).to_sentence,
+      "session at",
+      session.location.name,
+      ("on" if session.dates.present?),
+      (session_dates(session) if session.dates.present?)
+    ].compact.join(" ")
+  end
 end
