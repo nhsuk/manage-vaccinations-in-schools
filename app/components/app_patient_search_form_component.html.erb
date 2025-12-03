@@ -21,28 +21,17 @@
       <% end %>
     <% end %>
 
-    <% if !Flipper.enabled?(:programme_status, current_team) && (show_still_to_vaccinate || show_eligible_children) %>
+    <% if show_eligible_children %>
       <%= f.govuk_check_boxes_fieldset :show_only,
                                        multiple: true,
                                        legend: { text: "Show only", size: "s" },
                                        small: true do %>
-        <% if show_still_to_vaccinate %>
-          <%= f.govuk_check_box :still_to_vaccinate,
-                                1, 0,
-                                checked: form.still_to_vaccinate,
-                                multiple: false,
-                                link_errors: true,
-                                label: { text: "Still to vaccinate" },
-                                hint: { text: "With consent, not refused vaccine, not vaccinated yet" } %>
-        <% end %>
-        <% if show_eligible_children %>
-          <%= f.govuk_check_box :eligible_children,
-                                1, 0,
-                                checked: form.eligible_children,
-                                multiple: false,
-                                link_errors: true,
-                                label: { text: "Eligible this academic year and not vaccinated elsewhere" } %>
-        <% end %>
+        <%= f.govuk_check_box :eligible_children,
+                              1, 0,
+                              checked: form.eligible_children,
+                              multiple: false,
+                              link_errors: true,
+                              label: { text: "Eligible this academic year and not vaccinated elsewhere" } %>
       <% end %>
     <% end %>
 
