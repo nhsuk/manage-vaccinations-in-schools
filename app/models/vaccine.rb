@@ -114,6 +114,9 @@ class Vaccine < ApplicationRecord
     "mmr" => {
       "injection" => "38598009"
     },
+    "mmrv" => {
+      "injection" => %w[432636005 433733003]
+    },
     "td_ipv" => {
       "injection" => "866186002"
     }
