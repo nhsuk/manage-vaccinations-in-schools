@@ -31,14 +31,6 @@
                 )
               end
             
-              if @session.requires_registration?
-                nav.with_item(
-                  href: session_register_path(@session),
-                  text: t("sessions.tabs.register"),
-                  selected: request.path == session_register_path(@session),
-                )
-              end
-            
               nav.with_item(
                 href: session_record_path(@session),
                 text: t("sessions.tabs.record"),
