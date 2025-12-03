@@ -1,6 +1,28 @@
 # frozen_string_literal: true
 
 class AppSessionOverviewComponent < ViewComponent::Base
+  erb_template <<-ERB
+    <%= render AppSessionStatsComponent.new(session) %>
+
+    <section>
+      <%= render AppSessionDatesComponent.new(session) %>
+    </section>
+
+    <section>
+      <%= render AppSessionActionsComponent.new(session) %>
+    </section>
+
+    <section>
+      <%= render AppSessionDetailsComponent.new(session) %>
+    </section>
+
+    <section>
+      <% if Flipper.enabled?(:schools_and_sessions) %>
+        <%= render AppSessionButtonsComponent.new(session) %>
+      <% end %>
+    </section>
+  ERB
+
   def initialize(session)
     @session = session
   end
