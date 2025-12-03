@@ -14,7 +14,6 @@ class Sessions::PatientsController < Sessions::BaseController
 
     patients = @form.apply(scope)
 
-    @pagy, @patients =
-      patients.is_a?(Array) ? pagy_array(patients) : pagy(patients)
+    @pagy, @patients = pagy(patients)
   end
 end

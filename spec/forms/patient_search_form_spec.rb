@@ -34,7 +34,6 @@ describe PatientSearchForm do
   let(:programme_types) { nil }
   let(:q) { nil }
   let(:registration_status) { nil }
-  let(:still_to_vaccinate) { nil }
   let(:triage_status) { nil }
   let(:vaccination_status) { nil }
   let(:vaccine_criteria) { nil }
@@ -54,7 +53,6 @@ describe PatientSearchForm do
       programme_types:,
       q:,
       registration_status:,
-      still_to_vaccinate:,
       triage_status:,
       vaccination_status:,
       vaccine_criteria:,
@@ -512,47 +510,6 @@ describe PatientSearchForm do
         it "sorts by similarity" do
           expect(form.apply(scope)).to eq([patient_a, patient_b, patient_c])
         end
-      end
-    end
-
-    context "when still_to_vaccinate is true" do
-      let(:still_to_vaccinate) { "1" }
-
-      let(:session) { session_for_patients }
-
-      let(:patient_a) do
-        create(
-          :patient,
-          given_name: "Harry",
-          family_name: "Potter",
-          session: session_for_patients
-        )
-      end
-
-      let(:patient_b) do
-        create(
-          :patient,
-          given_name: "Hari",
-          family_name: "Potter",
-          session: session_for_patients
-        )
-      end
-
-      before do
-        create(
-          :patient_consent_status,
-          :given_injection_only,
-          programme:,
-          patient: patient_a
-        )
-      end
-
-      it "returns patient A" do
-        expect(form.apply(scope)).to eq([patient_a])
-      end
-
-      it "does not return patient B" do
-        expect(form.apply(scope)).not_to include(patient_b)
       end
     end
   end

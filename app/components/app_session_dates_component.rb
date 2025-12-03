@@ -3,13 +3,6 @@
 class AppSessionDatesComponent < ViewComponent::Base
   erb_template <<-ERB
     <%= render AppCardComponent.new do |card| %>
-      <% if session.today? %>
-        <%= govuk_inset_text classes: "nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-4" do %>
-          <%= link_to t(".still_to_vaccinate_message", count: still_to_vaccinate_count),
-                      session_patients_path(session, still_to_vaccinate: 1) %>
-        <% end %>
-      <% end %>
-
       <% card.with_heading(level: 3) { heading } %>
 
       <% if session.started? %>
@@ -55,19 +48,6 @@ class AppSessionDatesComponent < ViewComponent::Base
     else
       "Scheduled session dates"
     end
-  end
-
-  def still_to_vaccinate_count
-    session
-      .patients
-      .includes_statuses
-      .consent_given_and_safe_to_vaccinate(
-        programmes:,
-        academic_year:,
-        vaccine_methods: nil,
-        without_gelatine: nil
-      )
-      .count
   end
 
   def no_sessions_message

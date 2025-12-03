@@ -17,7 +17,6 @@ class PatientSearchForm < SearchForm
   attribute :programme_types, array: true
   attribute :q, :string
   attribute :registration_status, :string
-  attribute :still_to_vaccinate, :boolean
   attribute :triage_status, :string
   attribute :vaccination_status, :string
   attribute :vaccine_criteria, array: true
@@ -75,9 +74,7 @@ class PatientSearchForm < SearchForm
     scope = filter_patient_specific_direction_status(scope)
     scope = filter_for_eligible_children_only(scope)
 
-    scope = scope.order_by_name
-
-    filter_still_to_vaccinate(scope)
+    scope.order_by_name
   end
 
   def any_filters_applied?
@@ -344,17 +341,6 @@ class PatientSearchForm < SearchForm
       end
 
     or_scope
-  end
-
-  def filter_still_to_vaccinate(scope)
-    return scope if still_to_vaccinate.blank?
-
-    scope.consent_given_and_safe_to_vaccinate(
-      programmes:,
-      academic_year:,
-      vaccine_methods: nil,
-      without_gelatine: nil
-    )
   end
 
   def filter_for_eligible_children_only(scope)
