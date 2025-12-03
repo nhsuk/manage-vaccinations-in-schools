@@ -241,6 +241,10 @@ locals {
       {
         name  = "MISE_ENV"
         value = var.environment == "production" ? "production" : "staging"
+      },
+      {
+        name  = "SENTRY_ENVIRONMENT"
+        value = var.environment
       }
     ]
   }
