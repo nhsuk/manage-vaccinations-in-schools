@@ -184,10 +184,7 @@ describe "Manage school sessions" do
   def then_i_see_the_school_session
     expect(page).to have_content(@location.name)
     expect(page).to have_content(@location.urn)
-    expect(page).to have_content(
-      "There are currently no sessions scheduled at this school."
-    )
-    expect(page).to have_content("Schedule sessions")
+    expect(page).to have_content("No dates scheduled")
   end
 
   def and_i_see_a_child_in_the_cohort
@@ -195,7 +192,7 @@ describe "Manage school sessions" do
   end
 
   def when_i_click_on_schedule_sessions
-    click_on "Schedule sessions"
+    click_on "Edit session"
     click_on "Add session dates"
   end
 
@@ -319,8 +316,7 @@ describe "Manage school sessions" do
 
   def then_i_should_see_the_session_details
     expect(page).to have_content(@location.name.to_s)
-    expect(page).to have_content("10 March 2024")
-    expect(page).to have_content("11 March 2024")
+    expect(page).to have_content("10 – 11 March 2024")
   end
 
   def when_the_parent_visits_the_consent_form

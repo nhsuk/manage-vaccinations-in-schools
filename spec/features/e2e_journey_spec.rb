@@ -149,7 +149,7 @@ describe "End-to-end journey" do
     choose "Unscheduled"
     click_on "Update results"
     click_on "Pilot School"
-    click_on "Schedule sessions"
+    click_on "Edit session"
 
     click_on "Add session dates"
     expect(page).to have_content("When will sessions be held?")

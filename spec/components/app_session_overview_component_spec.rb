@@ -363,19 +363,5 @@ describe AppSessionOverviewComponent do
         end
       end
     end
-
-    context "when session has not started" do
-      let(:dates) { [Date.new(2025, 1, 20)] }
-
-      it "renders the scheduled dates list instead of the table" do
-        expect(rendered).to have_content("Monday, 20 January 2025")
-        expect(rendered).not_to have_content("Vaccinations given")
-        expect(rendered).not_to have_content("Session date")
-      end
-
-      it "displays the consent period information" do
-        expect(rendered).to have_content("Consent period")
-      end
-    end
   end
 end
