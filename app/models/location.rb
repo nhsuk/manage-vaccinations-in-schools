@@ -109,6 +109,17 @@ class Location < ApplicationRecord
           end
         end
 
+  scope :with_team,
+        ->(academic_year:) do
+          where(
+            TeamLocation
+              .where("team_locations.location_id = locations.id")
+              .where(academic_year:)
+              .arel
+              .exists
+          )
+        end
+
   scope :without_team,
         ->(academic_year:) do
           where.not(
