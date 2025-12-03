@@ -87,3 +87,31 @@
 .app-secondary-navigation__list-item {
   margin-bottom: 0;
 }
+
+.app-secondary-navigation--reverse {
+  color: $nhsuk-reverse-text-colour;
+
+  .app-secondary-navigation__link {
+    @include nhsuk-link-style-white;
+
+    &[aria-current] {
+      box-shadow: inset $nhsuk-border-width 0 $nhsuk-reverse-text-colour;
+
+      // stylelint-disable-next-line max-nesting-depth
+      @include nhsuk-media-query($from: tablet) {
+        box-shadow: inset 0 ($nhsuk-border-width * -1)
+          $nhsuk-reverse-text-colour;
+      }
+    }
+
+    &:link,
+    &:visited,
+    &:hover,
+    &:visited:hover,
+    &:active {
+      .nhsuk-icon--alert {
+        fill: nhsuk-colour("yellow");
+      }
+    }
+  }
+}

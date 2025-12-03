@@ -3,16 +3,22 @@
 describe AppSecondaryNavigationComponent do
   subject(:rendered) { render_inline(component) }
 
+  let(:reverse) { false }
+
   let(:component) do
-    described_class.new.tap do |nav|
-      nav.with_item(selected: true, href: "https://example.com") { "Example 1" }
-      nav.with_item(
-        selected: false,
-        text: "Example 2",
-        href: "https://example.com",
-        ticked: true
-      )
-    end
+    described_class
+      .new(reverse:)
+      .tap do |nav|
+        nav.with_item(selected: true, href: "https://example.com") do
+          "Example 1"
+        end
+        nav.with_item(
+          selected: false,
+          text: "Example 2",
+          href: "https://example.com",
+          ticked: true
+        )
+      end
   end
 
   it { should have_css("nav.app-secondary-navigation") }
@@ -25,4 +31,14 @@ describe AppSecondaryNavigationComponent do
 
   it { should have_link("Example 1", href: "https://example.com") }
   it { should have_link("Example 2", href: "https://example.com") }
+
+  context "with reverse styles" do
+    let(:reverse) { true }
+
+    it do
+      expect(rendered).to have_css(
+        "nav.app-secondary-navigation.app-secondary-navigation--reverse"
+      )
+    end
+  end
 end
