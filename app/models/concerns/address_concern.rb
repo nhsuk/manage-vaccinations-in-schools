@@ -29,9 +29,7 @@ module AddressConcern
     ].compact_blank
   end
 
-  def has_address?
-    address_parts.present?
-  end
+  def has_address? = address_parts.present?
 
   def address_changed?
     address_line_1_changed? || address_line_2_changed? ||

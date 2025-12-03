@@ -236,6 +236,12 @@ Rails.application.routes.draw do
     get "download", on: :member
   end
 
+  resources :schools, only: :index, param: :urn_and_site do
+    get "import"
+    get "patients"
+    get "sessions"
+  end
+
   resources :sessions, only: %i[index show edit], param: :slug do
     resource :patients, only: :show, controller: "sessions/patients"
     resource :consent, only: :show, controller: "sessions/consent"
