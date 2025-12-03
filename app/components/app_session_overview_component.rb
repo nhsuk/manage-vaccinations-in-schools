@@ -5,7 +5,7 @@ class AppSessionOverviewComponent < ViewComponent::Base
     <%= render AppSessionStatsComponent.new(session) %>
 
     <section>
-      <%= render AppSessionDatesComponent.new(session) %>
+      <%= render AppSessionVaccinationsComponent.new(session) %>
     </section>
 
     <section>
@@ -17,9 +17,7 @@ class AppSessionOverviewComponent < ViewComponent::Base
     </section>
 
     <section>
-      <% if Flipper.enabled?(:schools_and_sessions) %>
-        <%= render AppSessionButtonsComponent.new(session) %>
-      <% end %>
+      <%= render AppSessionButtonsComponent.new(session) %>
     </section>
   ERB
 

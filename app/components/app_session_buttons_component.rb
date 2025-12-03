@@ -4,7 +4,7 @@ class AppSessionButtonsComponent < ViewComponent::Base
   erb_template <<-ERB
     <div class="nhsuk-button-group">
       <% if policy(session).edit? %>
-        <%= govuk_button_link_to edit_button_text, edit_session_path(session), secondary: true %>
+        <%= govuk_button_link_to "Edit session", edit_session_path(session), secondary: true %>
 
         <%= link_to "Record offline", session_path(session, format: :xlsx) %>
 
@@ -26,8 +26,4 @@ class AppSessionButtonsComponent < ViewComponent::Base
   attr_reader :session
 
   delegate :policy, :govuk_button_link_to, to: :helpers
-
-  def edit_button_text
-    session.dates.empty? ? "Schedule sessions" : "Edit session"
-  end
 end
