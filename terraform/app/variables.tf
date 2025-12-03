@@ -219,6 +219,10 @@ locals {
         value = var.environment == "production" ? "production" : "staging"
       },
       {
+        name  = "RAILS_MAX_THREADS"
+        value = 5
+      },
+      {
         name  = "SENTRY_ENVIRONMENT"
         value = var.environment
       },
