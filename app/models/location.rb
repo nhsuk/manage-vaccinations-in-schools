@@ -104,7 +104,7 @@ class Location < ApplicationRecord
 
   scope :search_by_name,
         ->(query) do
-          where("WORD_SIMILARITY(:query, locations.name) > 0.3", query:).order(
+          where("locations.name %> :query", query:).order(
             Arel.sql("SIMILARITY(locations.name, :query) DESC", query:)
           )
         end
