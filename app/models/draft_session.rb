@@ -21,6 +21,7 @@ class DraftSession
   attribute :send_consent_requests_at, :date
   attribute :send_invitations_at, :date
   attribute :session_dates, array: true, default: []
+  attribute :year_groups, array: true, default: []
 
   serialize :session_dates, coder: DraftSessionDate::ArraySerializer
 
@@ -107,22 +108,24 @@ class DraftSession
 
   def programmes = Programme.find_all(programme_types)
 
+  def new_programmes = Programme.find_all(new_programme_types)
+
   def programme_types=(values)
     super(values&.compact_blank || [])
+  end
+
+  def year_groups=(values)
+    super(values&.filter_map(&:to_i) || [])
   end
 
   def session_programme_year_groups
     @session_programme_year_groups ||=
       session.session_programme_year_groups.to_a +
         new_programmes.flat_map do |programme|
-          programme.default_year_groups.map do |year_group|
+          (programme.default_year_groups & year_groups).map do |year_group|
             Session::ProgrammeYearGroup.new(session:, programme:, year_group:)
           end
         end
-  end
-
-  def year_groups
-    session_programme_year_groups.map(&:year_group).sort.uniq
   end
 
   def programmes_for(year_group: nil, patient: nil)
@@ -203,10 +206,6 @@ class DraftSession
     )
   end
 
-  def new_programmes
-    @new_programmes ||= Programme.find_all(new_programme_types)
-  end
-
   private
 
   delegate :academic_year, :patient_locations, :team, to: :session
@@ -226,6 +225,7 @@ class DraftSession
         programme_types
         return_to
         session_dates
+        year_groups
       ]
   end
 
