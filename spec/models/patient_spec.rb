@@ -723,6 +723,17 @@ describe Patient do
 
       it { should be(false) }
     end
+
+    context "archive_reasons pre-loaded" do
+      let(:patient) do
+        create(
+          :patient,
+          archive_reasons: [create(:archive_reason, :moved_out_of_area, team:)]
+        )
+      end
+
+      it { should be(true) }
+    end
   end
 
   describe "#not_archived?" do

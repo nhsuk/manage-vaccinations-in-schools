@@ -646,7 +646,11 @@ class Patient < ApplicationRecord
   end
 
   def archived?(team:)
-    archive_reasons.exists?(team:)
+    if archive_reasons.loaded?
+      archive_reasons.any? { it.team_id == team.id }
+    else
+      archive_reasons.exists?(team:)
+    end
   end
 
   def not_archived?(team:)
@@ -826,11 +830,20 @@ class Patient < ApplicationRecord
   end
 
   def not_in_team?(team:, academic_year:)
-    patient_locations
-      .where(academic_year:)
-      .joins(location: :team_locations)
-      .where(team_locations: { academic_year:, team: })
-      .empty?
+    if patient_locations.loaded?
+      patient_locations.none? do |patloc|
+        patloc.academic_year == academic_year &&
+          patloc.location.team_locations.any? do |loc|
+            loc.academic_year == academic_year && loc.team_id == team.id
+          end
+      end
+    else
+      patient_locations
+        .where(academic_year:)
+        .joins(location: :team_locations)
+        .where(team_locations: { academic_year:, team: })
+        .empty?
+    end
   end
 
   def dup_for_pending_changes

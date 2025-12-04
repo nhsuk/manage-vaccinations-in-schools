@@ -269,7 +269,7 @@ class PatientChangeset < ApplicationRecord
              patient.home_educated != home_educated ||
              patient.not_in_team?(team:, academic_year:) ||
              patient.archived?(team:) || patient.school_moves.any?
-          school_move = SchoolMove.find_or_initialize_by(patient:)
+          school_move = patient.school_moves.first || SchoolMove.new(patient:)
           school_move.assign_from(school:, home_educated:, team:)
           school_move.assign_attributes(
             academic_year:,
