@@ -17,6 +17,7 @@ class AppImportReviewComponent < ViewComponent::Base
     @auto_matched_records = auto_matched_records.sort_by(&:row_number)
     @import_issues = import_issues.sort_by(&:row_number)
     @school_moves = school_moves
+    @school_moves_from_file = @school_moves.reject { it.row_number.nil? }
   end
 
   def call
@@ -155,6 +156,11 @@ class AppImportReviewComponent < ViewComponent::Base
     end
   end
 
+  def show_cancel_button?
+    @new_records.any? || @auto_matched_records.any? || @import_issues.any? ||
+      @school_moves_from_file.any?
+  end
+
   def cancel_button_text
     @import.in_re_review? ? "Ignore changes" : "Cancel and delete upload"
   end
@@ -204,12 +210,14 @@ class AppImportReviewComponent < ViewComponent::Base
             polymorphic_path([:approve, @import]),
             method: :post
           ),
-          helpers.govuk_button_to(
-            cancel_button_text,
-            polymorphic_path([:cancel, @import]),
-            secondary: true,
-            method: :post
-          )
+          if show_cancel_button?
+            helpers.govuk_button_to(
+              cancel_button_text,
+              polymorphic_path([:cancel, @import]),
+              secondary: true,
+              method: :post
+            )
+          end
         ]
       )
     end
