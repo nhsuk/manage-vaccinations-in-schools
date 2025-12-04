@@ -32,7 +32,11 @@ class DraftSession
   end
 
   def wizard_steps
-    steps = %i[dates]
+    steps = []
+
+    steps << :location_type unless editing?
+
+    steps << :dates
     steps << :dates_check if school?
 
     steps << :programmes
