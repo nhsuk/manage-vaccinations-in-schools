@@ -123,6 +123,11 @@ class DraftSession
 
   def new_programmes = Programme.find_all(new_programme_types)
 
+  def patient_locations
+    @patient_locations ||=
+      PatientLocation.where(location_id:, academic_year:).includes(:patient)
+  end
+
   def programme_types=(values)
     super(values&.compact_blank || [])
   end
@@ -220,8 +225,6 @@ class DraftSession
   end
 
   private
-
-  delegate :patient_locations, to: :session
 
   def request_session_key = "session"
 
