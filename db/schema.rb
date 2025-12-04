@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_03_141545) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_03_143325) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1124,7 +1124,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_141545) do
              FROM ((vaccination_records vr
                JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
                JOIN team_locations vr_tl ON ((vr_tl.id = vr_s.team_location_id)))
-            WHERE (vr.discarded_at IS NULL)
+            WHERE ((vr.discarded_at IS NULL) AND ((vr.programme_type <> 'td_ipv'::programme_type) OR (vr.dose_sequence = 5) OR (vr.dose_sequence IS NULL)))
             GROUP BY vr.patient_id, vr.programme_type, vr_tl.team_id, vr_tl.academic_year
           ), all_vaccinations_by_year AS (
            SELECT vr.patient_id,
@@ -1136,7 +1136,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_141545) do
              FROM ((vaccination_records vr
                JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
                JOIN team_locations vr_tl ON ((vr_tl.id = vr_s.team_location_id)))
-            WHERE (vr.discarded_at IS NULL)
+            WHERE ((vr.discarded_at IS NULL) AND ((vr.programme_type <> 'td_ipv'::programme_type) OR (vr.dose_sequence = 5) OR (vr.dose_sequence IS NULL)))
           UNION ALL
            SELECT vr.patient_id,
               vr.programme_type,
@@ -1148,7 +1148,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_141545) do
               vr.outcome,
               vr.source
              FROM vaccination_records vr
-            WHERE ((vr.discarded_at IS NULL) AND (vr.source = ANY (ARRAY[1, 2])) AND (vr.session_id IS NULL))
+            WHERE ((vr.discarded_at IS NULL) AND (vr.source = ANY (ARRAY[1, 2])) AND (vr.session_id IS NULL) AND ((vr.programme_type <> 'td_ipv'::programme_type) OR (vr.dose_sequence = 5)))
           ), base_data AS (
            SELECT concat(p.id, '-', (patient_team_prog.s_programme_type)::text, '-', t.id, '-', tl.academic_year) AS id,
               p.id AS patient_id,
@@ -1185,7 +1185,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_141545) do
               vaccination_summary.has_sais_vaccination AS vaccinated_by_sais_current_year,
               (((vr_elsewhere_declared.patient_id IS NOT NULL) OR (consent_already_vaccinated.patient_id IS NOT NULL)) AND (vr_elsewhere_recorded.patient_id IS NULL)) AS vaccinated_elsewhere_declared_current_year,
               (vr_elsewhere_recorded.patient_id IS NOT NULL) AS vaccinated_elsewhere_recorded_current_year,
-              (vr_previous.patient_id IS NOT NULL) AS vaccinated_in_previous_years,
+              ((vr_previous.patient_id IS NOT NULL) AND (vaccination_summary.has_sais_vaccination IS NOT TRUE) AND (vr_elsewhere_declared.patient_id IS NULL) AND (consent_already_vaccinated.patient_id IS NULL) AND (vr_elsewhere_recorded.patient_id IS NULL)) AS vaccinated_in_previous_years,
               COALESCE(vaccination_summary.sais_vaccinations_count, (0)::bigint) AS sais_vaccinations_count,
               EXTRACT(month FROM ((vaccination_summary.most_recent_vaccination AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text)) AS most_recent_vaccination_month,
               EXTRACT(year FROM ((vaccination_summary.most_recent_vaccination AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text)) AS most_recent_vaccination_year,
@@ -1245,7 +1245,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_141545) do
                      FROM ((vaccination_records vr
                        LEFT JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
                        LEFT JOIN team_locations vr_tl ON ((vr_tl.id = vr_s.team_location_id)))
-                    WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 4))) vr_elsewhere_declared ON (((vr_elsewhere_declared.patient_id = p.id) AND (vr_elsewhere_declared.programme_type = patient_team_prog.s_programme_type) AND (vr_elsewhere_declared.academic_year = (tl.academic_year)::numeric))))
+                    WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 4) AND ((vr.programme_type <> 'td_ipv'::programme_type) OR (vr.dose_sequence = 5) OR ((vr.dose_sequence IS NULL) AND (vr.session_id IS NOT NULL))))) vr_elsewhere_declared ON (((vr_elsewhere_declared.patient_id = p.id) AND (vr_elsewhere_declared.programme_type = patient_team_prog.s_programme_type) AND (vr_elsewhere_declared.academic_year = (tl.academic_year)::numeric))))
                LEFT JOIN ( SELECT DISTINCT c.patient_id,
                       c.programme_type,
                       c.academic_year
@@ -1261,7 +1261,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_141545) do
                       all_vaccinations_by_year.programme_type,
                       all_vaccinations_by_year.academic_year
                      FROM all_vaccinations_by_year
-                    WHERE ((all_vaccinations_by_year.outcome = ANY (ARRAY[0, 4])) AND ((all_vaccinations_by_year.team_id IS NOT NULL) OR (all_vaccinations_by_year.programme_type <> 'flu'::programme_type)))) vr_previous ON (((vr_previous.patient_id = p.id) AND (vr_previous.programme_type = patient_team_prog.s_programme_type) AND (vr_previous.academic_year < tl.academic_year))))
+                    WHERE ((all_vaccinations_by_year.outcome = ANY (ARRAY[0, 4])) AND (all_vaccinations_by_year.programme_type <> 'flu'::programme_type))) vr_previous ON (((vr_previous.patient_id = p.id) AND (vr_previous.programme_type = patient_team_prog.s_programme_type) AND (vr_previous.academic_year < tl.academic_year))))
                LEFT JOIN LATERAL ( SELECT pcs_1.status,
                       pcs_1.vaccine_methods
                      FROM patient_consent_statuses pcs_1

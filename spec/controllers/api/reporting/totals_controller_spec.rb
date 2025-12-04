@@ -799,6 +799,25 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(3)
     end
 
+    it "only counts Td/IPV dose 5 as vaccinated previously" do
+      patient = create(:patient, session: td_ipv_session, year_group: 9)
+      create(
+        :vaccination_record,
+        patient:,
+        programme: td_ipv_programme,
+        session: nil,
+        source: "nhs_immunisations_api",
+        nhs_immunisations_api_identifier_system: "test",
+        nhs_immunisations_api_identifier_value: "123",
+        dose_sequence: 4,
+        performed_at: 1.year.ago
+      )
+
+      refresh_and_get_totals(programme_type: "td_ipv")
+
+      expect(vaccinated_previously).to eq(0)
+    end
+
     it "counts year 12 students when session location has year 12 enabled" do
       send_location =
         create(
@@ -1126,6 +1145,57 @@ describe API::Reporting::TotalsController do
       expect(parsed_response["consent_given_nasal_only"]).to eq(1)
       expect(parsed_response["consent_given_injection_only"]).to eq(1)
       expect(parsed_response["consent_given_both_methods"]).to eq(1)
+    end
+
+    it "counts patient in current year category only when vaccinated both years" do
+      patient = create(:patient, session: hpv_session)
+      create(
+        :vaccination_record,
+        patient:,
+        programme: hpv_programme,
+        session: nil,
+        source: "historical_upload",
+        outcome: "administered",
+        performed_at: 1.year.ago
+      )
+      create(
+        :vaccination_record,
+        patient:,
+        programme: hpv_programme,
+        session: hpv_session,
+        outcome: "administered",
+        performed_at: Time.current
+      )
+
+      refresh_and_get_totals
+
+      expect(vaccinated).to eq(1)
+      expect(vaccinated_by_sais).to eq(1)
+      expect(vaccinated_previously).to eq(0)
+    end
+
+    it "does not count previous flu vaccination from team session" do
+      previous_flu_session =
+        create(
+          :session,
+          team:,
+          programmes: [flu_programme],
+          date: 1.year.ago.to_date
+        )
+      patient = create(:patient, session: flu_session)
+      create(
+        :vaccination_record,
+        patient:,
+        programme: flu_programme,
+        session: previous_flu_session,
+        outcome: "administered",
+        performed_at: 1.year.ago
+      )
+
+      refresh_and_get_totals(programme_type: "flu")
+
+      expect(vaccinated).to eq(0)
+      expect(vaccinated_previously).to eq(0)
     end
   end
 end
