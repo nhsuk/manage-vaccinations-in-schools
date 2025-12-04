@@ -10,6 +10,7 @@ class DraftSession
   include DaysBeforeToWeeksBefore
   include Delegatable
 
+  attribute :academic_year, :integer
   attribute :days_before_consent_reminders, :integer
   attribute :location_id, :integer
   attribute :location_type, :string
@@ -208,7 +209,7 @@ class DraftSession
 
   private
 
-  delegate :academic_year, :patient_locations, :team, to: :session
+  delegate :patient_locations, :team, to: :session
 
   def request_session_key = "session"
 
@@ -219,6 +220,7 @@ class DraftSession
   def writable_attribute_names
     super -
       %w[
+        academic_year
         dates
         location_id
         location_type
@@ -293,11 +295,15 @@ class DraftSession
     (earliest_date - send_consent_requests_at).to_i / 7
   end
 
+  def academic_year_date_range
+    academic_year.to_academic_year_date_range
+  end
+
   def earliest_possible_session_date_value
-    Date.new(@session.academic_year, 9, 1)
+    academic_year_date_range.begin
   end
 
   def latest_possible_session_date_value
-    Date.new(@session.academic_year + 1, 8, 31)
+    academic_year_date_range.end
   end
 end
