@@ -13,6 +13,12 @@ WITH vaccination_summary AS (
   INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
   INNER JOIN team_locations vr_tl ON vr_tl.id = vr_s.team_location_id
   WHERE vr.discarded_at IS NULL
+    -- For Td/IPV, only count dose 5 or unknown dose (recorded in service)
+    AND (
+      vr.programme_type != 'td_ipv'
+      OR vr.dose_sequence = 5
+      OR vr.dose_sequence IS NULL
+    )
   GROUP BY vr.patient_id, vr.programme_type, vr_tl.team_id, vr_tl.academic_year
 ),
 all_vaccinations_by_year AS (
@@ -27,6 +33,12 @@ all_vaccinations_by_year AS (
   INNER JOIN sessions vr_s ON vr_s.id = vr.session_id
   INNER JOIN team_locations vr_tl ON vr_tl.id = vr_s.team_location_id
   WHERE vr.discarded_at IS NULL
+    -- For Td/IPV, only count dose 5 or unknown dose (recorded in service)
+    AND (
+      vr.programme_type != 'td_ipv'
+      OR vr.dose_sequence = 5
+      OR vr.dose_sequence IS NULL
+    )
 
   UNION ALL
 
@@ -45,6 +57,11 @@ all_vaccinations_by_year AS (
   WHERE vr.discarded_at IS NULL
     AND vr.source IN (1, 2)
     AND vr.session_id IS NULL
+    -- For Td/IPV without session, only dose 5 counts (not recorded in service)
+    AND (
+      vr.programme_type != 'td_ipv'
+      OR vr.dose_sequence = 5
+    )
 ),
 base_data AS (
   SELECT
@@ -194,6 +211,12 @@ LEFT JOIN (
   LEFT JOIN team_locations vr_tl ON vr_tl.id = vr_s.team_location_id
   WHERE vr.discarded_at IS NULL
     AND vr.outcome = 4 -- already_had (declared elsewhere)
+    -- For Td/IPV, only count if dose 5 or unknown dose with session
+    AND (
+      vr.programme_type != 'td_ipv'
+      OR vr.dose_sequence = 5
+      OR (vr.dose_sequence IS NULL AND vr.session_id IS NOT NULL)
+    )
 ) vr_elsewhere_declared ON vr_elsewhere_declared.patient_id = p.id
   AND vr_elsewhere_declared.programme_type = s_programme_type
   AND vr_elsewhere_declared.academic_year = tl.academic_year

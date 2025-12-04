@@ -799,6 +799,25 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(3)
     end
 
+    it "only counts Td/IPV dose 5 as vaccinated previously" do
+      patient = create(:patient, session: td_ipv_session, year_group: 9)
+      create(
+        :vaccination_record,
+        patient:,
+        programme: td_ipv_programme,
+        session: nil,
+        source: "nhs_immunisations_api",
+        nhs_immunisations_api_identifier_system: "test",
+        nhs_immunisations_api_identifier_value: "123",
+        dose_sequence: 4,
+        performed_at: 1.year.ago
+      )
+
+      refresh_and_get_totals(programme_type: "td_ipv")
+
+      expect(vaccinated_previously).to eq(0)
+    end
+
     it "counts year 12 students when session location has year 12 enabled" do
       send_location =
         create(
