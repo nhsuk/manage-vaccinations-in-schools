@@ -110,6 +110,12 @@ class DraftSession
     @team ||= TeamPolicy::Scope.new(@current_user, Team).resolve.find(team_id)
   end
 
+  def team_location
+    @team_location ||= TeamLocation.find_by!(team:, location:, academic_year:)
+  end
+
+  delegate :id, to: :team_location, prefix: true
+
   def generic_clinic? = location_type == "generic_clinic"
 
   def school? = location_type == "school"
@@ -236,7 +242,7 @@ class DraftSession
         session_dates
         team_id
         year_groups
-      ]
+      ] + %w[team_location_id]
   end
 
   def include_notification_steps?
