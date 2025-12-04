@@ -27,8 +27,8 @@ resource "aws_ecr_repository" "performance" {
   image_tag_mutability = "IMMUTABLE"
 }
 
-resource "aws_ecr_repository" "regression" {
-  name                 = "mavis/regression"
+resource "aws_ecr_repository" "mavis_dev" {
+  name                 = "mavis/dev"
   image_tag_mutability = "IMMUTABLE"
 }
 
