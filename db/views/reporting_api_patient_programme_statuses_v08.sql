@@ -109,7 +109,12 @@ base_data AS (
   (vaccination_summary.has_sais_vaccination) AS vaccinated_by_sais_current_year,
   ((vr_elsewhere_declared.patient_id IS NOT NULL OR consent_already_vaccinated.patient_id IS NOT NULL) AND vr_elsewhere_recorded.patient_id IS NULL) AS vaccinated_elsewhere_declared_current_year,
   (vr_elsewhere_recorded.patient_id IS NOT NULL) AS vaccinated_elsewhere_recorded_current_year,
-  (vr_previous.patient_id IS NOT NULL) AS vaccinated_in_previous_years,
+  (vr_previous.patient_id IS NOT NULL
+    AND vaccination_summary.has_sais_vaccination IS NOT TRUE
+    AND vr_elsewhere_declared.patient_id IS NULL
+    AND consent_already_vaccinated.patient_id IS NULL
+    AND vr_elsewhere_recorded.patient_id IS NULL
+  ) AS vaccinated_in_previous_years,
   -- Vaccination counts
   COALESCE(vaccination_summary.sais_vaccinations_count, 0) AS sais_vaccinations_count,
   EXTRACT(MONTH FROM (vaccination_summary.most_recent_vaccination AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/London')) AS most_recent_vaccination_month,
@@ -249,7 +254,7 @@ LEFT JOIN (
   SELECT DISTINCT patient_id, programme_type, academic_year
   FROM all_vaccinations_by_year
   WHERE outcome IN (0, 4)
-    AND (team_id IS NOT NULL OR programme_type != 'flu')
+    AND programme_type != 'flu'
 ) vr_previous ON vr_previous.patient_id = p.id
   AND vr_previous.programme_type = s_programme_type
   AND vr_previous.academic_year < tl.academic_year

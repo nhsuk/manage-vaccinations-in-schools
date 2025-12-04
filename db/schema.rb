@@ -1185,7 +1185,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_143325) do
               vaccination_summary.has_sais_vaccination AS vaccinated_by_sais_current_year,
               (((vr_elsewhere_declared.patient_id IS NOT NULL) OR (consent_already_vaccinated.patient_id IS NOT NULL)) AND (vr_elsewhere_recorded.patient_id IS NULL)) AS vaccinated_elsewhere_declared_current_year,
               (vr_elsewhere_recorded.patient_id IS NOT NULL) AS vaccinated_elsewhere_recorded_current_year,
-              (vr_previous.patient_id IS NOT NULL) AS vaccinated_in_previous_years,
+              ((vr_previous.patient_id IS NOT NULL) AND (vaccination_summary.has_sais_vaccination IS NOT TRUE) AND (vr_elsewhere_declared.patient_id IS NULL) AND (consent_already_vaccinated.patient_id IS NULL) AND (vr_elsewhere_recorded.patient_id IS NULL)) AS vaccinated_in_previous_years,
               COALESCE(vaccination_summary.sais_vaccinations_count, (0)::bigint) AS sais_vaccinations_count,
               EXTRACT(month FROM ((vaccination_summary.most_recent_vaccination AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text)) AS most_recent_vaccination_month,
               EXTRACT(year FROM ((vaccination_summary.most_recent_vaccination AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text)) AS most_recent_vaccination_year,
@@ -1261,7 +1261,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_143325) do
                       all_vaccinations_by_year.programme_type,
                       all_vaccinations_by_year.academic_year
                      FROM all_vaccinations_by_year
-                    WHERE ((all_vaccinations_by_year.outcome = ANY (ARRAY[0, 4])) AND ((all_vaccinations_by_year.team_id IS NOT NULL) OR (all_vaccinations_by_year.programme_type <> 'flu'::programme_type)))) vr_previous ON (((vr_previous.patient_id = p.id) AND (vr_previous.programme_type = patient_team_prog.s_programme_type) AND (vr_previous.academic_year < tl.academic_year))))
+                    WHERE ((all_vaccinations_by_year.outcome = ANY (ARRAY[0, 4])) AND (all_vaccinations_by_year.programme_type <> 'flu'::programme_type))) vr_previous ON (((vr_previous.patient_id = p.id) AND (vr_previous.programme_type = patient_team_prog.s_programme_type) AND (vr_previous.academic_year < tl.academic_year))))
                LEFT JOIN LATERAL ( SELECT pcs_1.status,
                       pcs_1.vaccine_methods
                      FROM patient_consent_statuses pcs_1
