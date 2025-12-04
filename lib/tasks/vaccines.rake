@@ -349,6 +349,8 @@ def create_menacwy_health_questions(vaccine)
 end
 
 def create_mmr_health_questions(vaccine)
+  Flipper.enable(:mmrv)
+
   bleeding =
     vaccine.health_questions.create!(
       title: "Does your child have a bleeding disorder?"

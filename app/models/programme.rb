@@ -8,14 +8,6 @@ class Programme
   TYPES_SUPPORTING_DELEGATION = %w[flu].freeze
   MIN_MMRV_ELIGIBILITY_DATE = Date.new(2020, 1, 1).freeze
 
-  DISEASE_TYPES = {
-    "flu" => %w[influenza],
-    "hpv" => %w[human_papillomavirus],
-    "mmr" => %w[measles mumps rubella],
-    "td_ipv" => %w[tetanus diphtheria polio],
-    "menacwy" => %w[meningitis_a meningitis_c meningitis_w meningitis_y]
-  }.freeze
-
   attr_accessor :type
 
   def initialize(type:)
@@ -126,7 +118,7 @@ class Programme
   end
 
   def vaccines
-    @vaccines ||= Vaccine.where_programme(self, DISEASE_TYPES[type])
+    @vaccines ||= Vaccine.where_programme(self)
   end
 
   def vaccine_methods
