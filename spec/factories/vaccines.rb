@@ -34,7 +34,7 @@ FactoryBot.define do
     transient { programme { nil } }
 
     programme_type { programme&.type || Programme::TYPES.sample }
-
+    disease_types { Programme::DISEASE_TYPES[programme_type] }
     brand { Faker::Commerce.product_name }
     manufacturer { Faker::Company.name }
     sequence(:nivs_name) { |n| "#{brand.parameterize}-#{n}" }
