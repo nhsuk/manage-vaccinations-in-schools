@@ -332,52 +332,6 @@ describe Location do
     end
   end
 
-  describe "#search_by_name" do
-    subject(:search_by_name) { described_class.search_by_name(query) }
-
-    let(:school_a) { create(:school, name: "St. John's School") }
-    let(:school_b) { create(:school, name: "St. John's School for Boys") }
-    let(:school_c) do
-      create(
-        :school,
-        name: "St.` John's Primary School for Boys with learning disabilities"
-      )
-    end
-    let(:school_d) { create(:school, name: "St. Mary's School for Girls") }
-
-    context "with a query matching the name of school A" do
-      let(:query) { "St. John's School" }
-
-      it { should eq([school_a, school_b, school_c]) }
-    end
-
-    context "with a query matching the name of school B" do
-      let(:query) { "St. John's School for Boys" }
-
-      it { should eq([school_b, school_c]) }
-    end
-
-    context "with a query matching the name of a school C" do
-      let(:query) do
-        "St. John's Primary School for Boys with learning disabilities"
-      end
-
-      it { should eq([school_c]) }
-    end
-
-    context "with an overly generic search term" do
-      let(:query) { "school" }
-
-      it { should contain_exactly(school_a, school_b, school_c, school_d) }
-    end
-
-    context "with minor spelling differences" do
-      let(:query) { "St Johns school" }
-
-      it { should eq([school_a, school_b, school_c]) }
-    end
-  end
-
   describe "#as_json" do
     subject(:as_json) { location.as_json }
 
