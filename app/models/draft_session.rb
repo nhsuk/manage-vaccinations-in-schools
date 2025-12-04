@@ -12,6 +12,7 @@ class DraftSession
 
   attribute :days_before_consent_reminders, :integer
   attribute :location_id, :integer
+  attribute :location_type, :string
   attribute :national_protocol_enabled, :boolean
   attribute :programme_types, array: true, default: []
   attribute :psd_enabled, :boolean
@@ -37,7 +38,7 @@ class DraftSession
 
     if include_notification_steps?
       steps += %i[consent_requests consent_reminders] if school?
-      steps << :invitations if clinic?
+      steps << :invitations if generic_clinic?
     end
 
     steps << :register_attendance
@@ -100,6 +101,10 @@ class DraftSession
         .find(location_id)
   end
 
+  def generic_clinic? = location_type == "generic_clinic"
+
+  def school? = location_type == "school"
+
   def programmes = Programme.find_all(programme_types)
 
   def programme_types=(values)
@@ -139,7 +144,7 @@ class DraftSession
 
   def set_notification_dates
     if earliest_date
-      if clinic?
+      if generic_clinic?
         self.days_before_consent_reminders = nil
         self.send_consent_requests_at = nil
         self.send_invitations_at =
@@ -205,7 +210,6 @@ class DraftSession
   private
 
   delegate :academic_year, :patient_locations, :team, to: :session
-  delegate :clinic?, :school?, to: :location
 
   def request_session_key = "session"
 
@@ -214,7 +218,15 @@ class DraftSession
   end
 
   def writable_attribute_names
-    super - %w[dates location_id programme_types return_to session_dates]
+    super -
+      %w[
+        dates
+        location_id
+        location_type
+        programme_types
+        return_to
+        session_dates
+      ]
   end
 
   def include_notification_steps?
