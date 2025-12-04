@@ -186,7 +186,7 @@ vaxpro:
 
 # MMRV
 
-pro_quad :
+pro_quad:
   type: mmr
   brand: ProQuad
   method: injection
