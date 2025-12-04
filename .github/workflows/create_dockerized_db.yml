@@ -53,6 +53,7 @@ jobs:
       - name: Populate database for testing
         run: |
           bin/rails db:setup
+          bin/rails feature_flags:activate_dev_toggles
           bin/mavis gias import
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
