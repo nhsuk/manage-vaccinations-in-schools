@@ -67,7 +67,8 @@ class CohortImportsController < ApplicationController
           end
         end
 
-      @nhs_discrepancies = @cohort_import.changesets.nhs_number_discrepancies
+      @nhs_discrepancies =
+        @cohort_import.changesets.includes(:patient).nhs_number_discrepancies
 
       @cancelled = @cohort_import.changesets.from_file.cancelled
     end

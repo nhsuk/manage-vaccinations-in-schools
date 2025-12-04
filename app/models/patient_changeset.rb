@@ -188,6 +188,7 @@ class PatientChangeset < ApplicationRecord
   end
 
   def patient
+    return super if patient_id.present?
     @patient ||=
       if (existing_patient = existing_patients.first)
         prepare_patient_changes(existing_patient)
@@ -443,6 +444,7 @@ class PatientChangeset < ApplicationRecord
 
   def calculate_review_data!
     clear_review_data!
+    reset_patient_id! if patient_id.present?
 
     update_column(:record_type, changeset_type)
     return if new_patient?
@@ -465,5 +467,9 @@ class PatientChangeset < ApplicationRecord
   def clear_review_data!
     data["review"] = { patient: {}, school_move: {} }
     save!
+  end
+
+  def reset_patient_id!
+    update_column(:patient_id, nil)
   end
 end
