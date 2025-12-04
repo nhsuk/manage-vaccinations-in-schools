@@ -159,7 +159,16 @@ class CohortImportsController < ApplicationController
     @inter_team =
       @cohort_import
         .changesets
-        .includes(:school, patient: :school)
+        .includes(
+          :school,
+          patient: [
+            :school,
+            :school_moves,
+            :patient_locations,
+            :archive_reasons,
+            { school: { team_locations: :team } }
+          ]
+        )
         .from_file
         .ready_for_review
         .select(&:inter_team_move?)
@@ -169,6 +178,10 @@ class CohortImportsController < ApplicationController
     @import_issues =
       @cohort_import.changesets.ready_for_review.import_issue - @inter_team
     @school_moves =
-      @cohort_import.changesets.ready_for_review.with_school_moves - @inter_team
+      @cohort_import
+        .changesets
+        .includes(:school, patient: :school)
+        .ready_for_review
+        .with_school_moves - @inter_team
   end
 end
