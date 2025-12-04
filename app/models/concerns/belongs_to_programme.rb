@@ -15,7 +15,10 @@ module BelongsToProgramme
 
             if disease_types.present?
               enum_values = disease_types.map { |dt| Vaccine.disease_types[dt] }
-              query.where("disease_types && ARRAY[?]::integer[]", enum_values)
+              query.where(
+                "ARRAY(SELECT unnest(disease_types) ORDER BY 1) = ARRAY[?]::integer[]",
+                enum_values.sort
+              )
             else
               query
             end
