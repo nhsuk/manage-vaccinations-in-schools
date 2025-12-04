@@ -27,8 +27,8 @@ resource "aws_ecr_repository" "performance" {
   image_tag_mutability = "IMMUTABLE"
 }
 
-resource "aws_ecr_repository" "regression" {
-  name                 = "mavis/regression"
+resource "aws_ecr_repository" "mavis_development" {
+  name                 = "mavis/development"
   image_tag_mutability = "IMMUTABLE"
 }
 
@@ -54,8 +54,8 @@ resource "aws_ecr_lifecycle_policy" "performance" {
   })
 }
 
-resource "aws_ecr_lifecycle_policy" "regression" {
-  repository = aws_ecr_repository.regression.name
+resource "aws_ecr_lifecycle_policy" "mavis_development" {
+  repository = aws_ecr_repository.mavis_development.name
   policy = jsonencode({
     rules = [
       {

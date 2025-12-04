@@ -41,8 +41,8 @@ resource "aws_ecs_task_definition" "performance" {
   }
 }
 
-resource "aws_ecs_task_definition" "regression" {
-  family                   = "${var.identifier}-regression-task-definition-template"
+resource "aws_ecs_task_definition" "containerized_development" {
+  family                   = "${var.identifier}-mavis-development-task-definition-template"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 2048
@@ -51,7 +51,7 @@ resource "aws_ecs_task_definition" "regression" {
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   container_definitions = jsonencode([
     {
-      name      = "mavis-regression"
+      name      = "mavis-development-web"
       image     = "CHANGE_ME"
       essential = true
       environment = [
@@ -74,6 +74,10 @@ resource "aws_ecs_task_definition" "regression" {
         {
           name  = "SKIP_TEST_DATABASE"
           value = "true"
+        },
+        {
+          name  = "SERVER_TYPE"
+          value = "web"
         }
       ]
       portMappings = [
@@ -88,7 +92,7 @@ resource "aws_ecs_task_definition" "regression" {
         options = {
           awslogs-group         = aws_cloudwatch_log_group.this.name
           awslogs-region        = "eu-west-2"
-          awslogs-stream-prefix = "${var.identifier}-logs"
+          awslogs-stream-prefix = "${var.identifier}-development-logs"
         }
       }
       healthCheck = {
@@ -99,13 +103,67 @@ resource "aws_ecs_task_definition" "regression" {
         startPeriod = 90
       }
       dependsOn = [{
-        containerName = "mavis-regression-db"
+        containerName = "mavis-development-db"
         condition     = "HEALTHY"
       }]
     },
     {
-      name      = "mavis-regression-db"
-      image     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com/mavis/dev/postgres_db:latest"
+      name      = "mavis-development-sidekiq"
+      image     = "CHANGE_ME"
+      essential = false
+      environment = [
+        {
+          name  = "DATABASE_HOST"
+          value = "localhost"
+        },
+        {
+          name  = "DATABASE_USER"
+          value = "postgres"
+        },
+        {
+          name  = "DATABASE_PASSWORD"
+          value = "postgres"
+        },
+        {
+          name  = "RAILS_MASTER_KEY"
+          value = "intentionally-insecure-dev-key00"
+        },
+        {
+          name  = "SKIP_TEST_DATABASE"
+          value = "true"
+        },
+        {
+          name  = "SERVER_TYPE"
+          value = "sidekiq"
+        },
+        {
+          name  = "HTTP_PORT"
+          value = "5000"
+        }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.this.name
+          awslogs-region        = "eu-west-2"
+          awslogs-stream-prefix = "${var.identifier}-development-logs"
+        }
+      }
+      healthCheck = {
+        command     = ["CMD-SHELL", "grep -q '[s]idekiq' /proc/*/cmdline 2>/dev/null || exit 1"]
+        interval    = 30
+        timeout     = 5
+        retries     = 3
+        startPeriod = 90
+      }
+      dependsOn = [{
+        containerName = "mavis-development-db"
+        condition     = "HEALTHY"
+      }]
+    },
+    {
+      name      = "mavis-development-db"
+      image     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com/mavis/development/postgres_db:latest"
       essential = false
       environment = [
         {
@@ -122,13 +180,13 @@ resource "aws_ecs_task_definition" "regression" {
       }
     },
     {
-      name      = "mavis-regression-redis"
+      name      = "mavis-development-redis"
       image     = "redis:8.4.0-alpine"
       essential = false
     }
   ])
   tags = {
-    Name = "${var.identifier}-regression"
+    Name = "${var.identifier}-mavis-development"
   }
 }
 
@@ -154,8 +212,8 @@ resource "aws_security_group_rule" "performance_egress" {
   }
 }
 
-resource "aws_security_group" "regression" {
-  name        = "${var.identifier}-regression-sg"
+resource "aws_security_group" "mavis_development" {
+  name        = "${var.identifier}-mavis-development-sg"
   description = "Security group for ${var.identifier} ecs task"
   vpc_id      = aws_vpc.vpc.id
   lifecycle {
@@ -163,27 +221,27 @@ resource "aws_security_group" "regression" {
   }
 }
 
-resource "aws_security_group_rule" "regression_ingress" {
+resource "aws_security_group_rule" "mavis_development_ingress" {
   type              = "ingress"
   description       = "Allow all ingress"
   from_port         = 0
   to_port           = 0
   protocol          = -1
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.regression.id
+  security_group_id = aws_security_group.mavis_development.id
   lifecycle {
     create_before_destroy = true
   }
 }
 
-resource "aws_security_group_rule" "regression_egress" {
+resource "aws_security_group_rule" "mavis_development_egress" {
   type              = "egress"
   description       = "Allow all ingress"
   from_port         = 0
   to_port           = 0
   protocol          = -1
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.regression.id
+  security_group_id = aws_security_group.mavis_development.id
   lifecycle {
     create_before_destroy = true
   }

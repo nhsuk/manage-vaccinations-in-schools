@@ -65,8 +65,8 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
       - name: Commit postgres container with database
         run: |
-          docker commit database ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db:latest
+          docker commit database ${{ steps.login-ecr.outputs.registry }}/mavis/development/postgres_db:latest
       - name: Push image
         run: |
-          docker tag ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db:latest ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db:${{ github.ref_name }}
-          docker push ${{ steps.login-ecr.outputs.registry }}/mavis/dev/postgres_db --all-tags
+          docker tag ${{ steps.login-ecr.outputs.registry }}/mavis/development/postgres_db:latest ${{ steps.login-ecr.outputs.registry }}/mavis/development/postgres_db:${{ github.ref_name }}
+          docker push ${{ steps.login-ecr.outputs.registry }}/mavis/development/postgres_db --all-tags

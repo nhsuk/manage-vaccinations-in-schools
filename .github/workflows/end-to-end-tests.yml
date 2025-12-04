@@ -1,7 +1,19 @@
-name: Regression test run
+name: End To End test run
 
 on:
   workflow_call:
+    inputs:
+      github_ref:
+        description: The git reference for deploying containerized mavis application
+        type: string
+        required: false
+    secrets:
+      HTTP_AUTH_TOKEN_FOR_TESTS:
+        description: HTTP Basic Auth token for the environment under test
+        required: true
+      MAVIS_TESTING_REPO_ACCESS_TOKEN:
+        description: Access token for the manage-vaccinations-in-schools-testing repository
+        required: true
 
 permissions: { }
 
@@ -23,13 +35,13 @@ jobs:
       - name: Check if image exists
         id: check-image
         run: |
-          if aws ecr describe-images --repository-name mavis/regression --image-ids imageTag=${{ github.sha }} > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name mavis/development --image-ids imageTag=${{ github.sha }} > /dev/null 2>&1; then
             echo "Docker image with given tag already exists"
           else
             echo "Docker image does not exist. Build needed"
             echo "build-needed=true" >> $GITHUB_OUTPUT
           fi
-  build-and-push-regression-image:
+  build-and-push-development-image:
     needs: [check-image-presence]
     if: needs.check-image-presence.outputs.build-needed == 'true'
     runs-on: ubuntu-latest
@@ -37,7 +49,10 @@ jobs:
       id-token: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.github_ref || github.ref }}
+          repository: nhsuk/manage-vaccinations-in-schools
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
@@ -46,19 +61,19 @@ jobs:
       - name: Login to ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-      - name: Build and push mavis/regression docker image
+      - name: Build and push mavis/development docker image
         run: |
           docker build \
             --build-arg BUNDLE_WITHOUT=test \
             --build-arg RAILS_ENV=development \
-            -t "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/regression:${{ github.sha }}" \
+            -t "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}" \
             .
-          docker push "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/regression:${{ github.sha }}"
+          docker push "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}"
   launch-dockerized-devimage:
-    needs: [ check-image-presence, build-and-push-regression-image ]
+    needs: [ check-image-presence, build-and-push-development-image ]
     if: ${{ !cancelled() &&
-      (needs.build-and-push-regression-image.result == 'success' ||
-      (needs.check-image-presence.result == 'success' && needs.build-and-push-regression-image.result == 'skipped')
+      (needs.build-and-push-development-image.result == 'success' ||
+      (needs.check-image-presence.result == 'success' && needs.build-and-push-development-image.result == 'skipped')
       ) }}
     runs-on: ubuntu-latest
     permissions:
@@ -71,31 +86,38 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
-      - name: Render task definition
-        id: render-task-definition
+      - name: Render task definition 1
+        id: render-task-definition-1
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition-family: "assurance-testing-regression-task-definition-template"
-          container-name: "mavis-regression"
-          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/regression:${{ github.sha }}"
+          task-definition-family: "assurance-testing-mavis-development-task-definition-template"
+          container-name: "mavis-development-web"
+          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}"
+      - name: Render task definition 2
+        id: render-task-definition-2
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-task-definition-1.outputs.task-definition }}
+          container-name: "mavis-development-sidekiq"
+          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}"
       - name: Prepare deployment
         id: prepare-deployment
         run: |
-          file_path="assurance-testing-regression-task-definition.json"
-          family_name="assurance-testing-regression-task-definition"
-          echo "$(jq --arg f "$family_name" '.family = $f' "${{ steps.render-task-definition.outputs.task-definition }}")" > "$file_path"
+          file_path="assurance-testing-mavis-development-task-definition.json"
+          family_name="assurance-testing-mavis-development-task-definition"
+          echo "$(jq --arg f "$family_name" '.family = $f' "${{ steps.render-task-definition-2.outputs.task-definition }}")" > "$file_path"
           cat "$file_path" #TODO: Debugging, remove later
-          
+
           subnet_id=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=assurance-testing-subnet --query 'Subnets[0].SubnetId' --output text)
-          security_group_id=$(aws ec2 describe-security-groups --filters Name=group-name,Values=assurance-testing-regression-sg --query 'SecurityGroups[0].GroupId' --output text)
-          
+          security_group_id=$(aws ec2 describe-security-groups --filters Name=group-name,Values=assurance-testing-mavis-development-sg --query 'SecurityGroups[0].GroupId' --output text)
+
           echo "run-task-subnets=$subnet_id" >> $GITHUB_OUTPUT
           echo "run-task-security-groups=$security_group_id" >> $GITHUB_OUTPUT
       - name: Deploy task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         id: run-task
         with:
-          task-definition: 'assurance-testing-regression-task-definition.json'
+          task-definition: 'assurance-testing-mavis-development-task-definition.json'
           cluster: assurance-testing
           run-task: true
           run-task-subnets: ${{ steps.prepare-deployment.outputs.run-task-subnets }}
@@ -176,9 +198,12 @@ jobs:
         run: |
           TASK_ARN=$(echo '${{ needs.launch-dockerized-devimage.outputs.run_task_arn }}' | jq -r '.[0]')
           TASK_ID=$(sed 's:^.*/::' <<< $TASK_ARN)
-          CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-regression\$252F${TASK_ID}\$3Fstart\$3D$(date +%s)000\$26end\$3D$(date -d '+30 minutes' +%s)000"
+          WEB_CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-development-web\$252F${TASK_ID}\$3Fstart\$3D$(date +%s)000\$26end\$3D$(date -d '+30 minutes' +%s)000"
+          SIDEKIQ_CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-development-sidekiq\$252F${TASK_ID}\$3Fstart\$3D$(date +%s)000\$26end\$3D$(date -d '+30 minutes' +%s)000"
           echo "**Task ID:** $TASK_ID" >> $GITHUB_STEP_SUMMARY
-          echo "**Container Logs:** $CLOUDWATCH_URL" >> $GITHUB_STEP_SUMMARY
+          echo "**Container Logs:** " >> $GITHUB_STEP_SUMMARY
+          echo "  * WEB logs: $WEB_CLOUDWATCH_URL" >> $GITHUB_STEP_SUMMARY
+          echo "  * SIDEKIQ logs: $SIDEKIQ_CLOUDWATCH_URL" >> $GITHUB_STEP_SUMMARY
           NETWORK_INTERFACE=$(aws ecs describe-tasks \
             --cluster assurance-testing \
             --tasks "$TASK_ARN" \
@@ -190,30 +215,39 @@ jobs:
           echo "container_ip=$CONTAINER_IP" >> $GITHUB_OUTPUT
           echo "task_arn=$TASK_ARN" >> $GITHUB_OUTPUT
           echo "Started task: $TASK_ARN"
-          echo "Logs for server: ${CLOUDWATCH_URL}"
+          echo "Logs for server: [web](${WEB_CLOUDWATCH_URL}) and [sidekiq](${SIDEKIQ_CLOUDWATCH_URL})"
+  find-correct-test-branch:
+    needs: [wait-for-task-stability]
+    if: ${{ !cancelled() && needs.wait-for-task-stability.result == 'success'}}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      test_branch: ${{ steps.check-branch.outputs.test_branch }}
+    steps:
+      - name: Check if branch exists
+        id: check-branch
+        run: |
+          if git ls-remote --exit-code --heads https://github.com/NHSDigital/manage-vaccinations-in-schools-testing.git "$BRANCH_TO_CHECK" > /dev/null 2>&1; then
+            echo "test_branch=$BRANCH_TO_CHECK" >> $GITHUB_OUTPUT
+          else
+            echo "test_branch=main" >> $GITHUB_OUTPUT
+          fi
+        env:
+          BRANCH_TO_CHECK: ${{ github.head_ref }}
   call-functional-tests:
-    needs: [launch-dockerized-devimage, wait-for-task-stability]
+    needs: [launch-dockerized-devimage, wait-for-task-stability, find-correct-test-branch]
     if: ${{ !cancelled() && needs.launch-dockerized-devimage.result == 'success' && needs.wait-for-task-stability.result == 'success'}}
-    uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/functional_selected_device.yaml@make-workflow-callable #TODO: Change once this is in main
+    uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/functional_selected_device.yaml@main
     permissions:
       contents: write
     with:
-      tests: ''
-      device: 'Desktop Chrome'
-      programmes: 'FLU,HPV,MENACWY,MMR,TD_IPV'
-      endpoint: "http://${{ needs.wait-for-task-stability.outputs.container_ip }}:4000"
-      screenshot_all_steps: 'false'
-      enable_reruns: 'true'
-      test_workers: '4'
-      set_feature_flags: 'false'
-      additional_feature_flags: ''
+      cross_service_tests: false
+      github_ref: ${{ needs.find-correct-test-branch.outputs.test_branch }}
+      endpoint: 'http://${{ needs.wait-for-task-stability.outputs.container_ip }}:4000'
     secrets:
       HTTP_AUTH_TOKEN_FOR_TESTS: ${{ secrets.HTTP_AUTH_TOKEN_FOR_TESTS }}
-    #   IMMS_API_KEY: ${{ secrets.IMMS_API_KEY }}
-    #   IMMS_API_KID: ${{ secrets.IMMS_API_KID }}
-    #   IMMS_API_PEM: ${{ secrets.IMMS_API_PEM }}
-    #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #
+      MAVIS_TESTING_REPO_ACCESS_TOKEN: ${{ secrets.MAVIS_TESTING_REPO_ACCESS_TOKEN }}
   stop-docker-environment:
     needs: [call-functional-tests, launch-dockerized-devimage, wait-for-task-stability]
     if: ${{ always() && needs.launch-dockerized-devimage.result != 'skipped'}}

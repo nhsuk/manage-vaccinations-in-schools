@@ -83,14 +83,17 @@ jobs:
         run: bundle exec rspec -t local_users
         env:
           MAVIS__CIS2__ENABLED: false
-  regression:
-    name: Regression Tests
+  end-to-end:
+    name: End to End
     needs: run-test-suites-check
     if: needs.run-test-suites-check.outputs.run-test-suites == 'true'
     permissions:
       id-token: write
       contents: write
-    uses: ./.github/workflows/regression-test-run.yml
+    uses: ./.github/workflows/end-to-end-tests.yml
+    secrets:
+      HTTP_AUTH_TOKEN_FOR_TESTS: ${{ secrets.HTTP_AUTH_TOKEN_FOR_TESTS }}
+      MAVIS_TESTING_REPO_ACCESS_TOKEN: ${{ secrets.MAVIS_TESTING_REPO_ACCESS_TOKEN }}
 
   seeds:
     name: Seeds
