@@ -1,12 +1,8 @@
 
-<details class="nhsuk-details nhsuk-expander">
-  <summary class="nhsuk-details__summary" data-module="app-sticky">
-    <span class="nhsuk-details__summary-text">
-      <%= pluralize(@vaccination_records.count,
-                    "imported record") %>
-    </span>
-  </summary>
-  <div class="nhsuk-details__text">
+<%= render AppDetailsComponent.new(expander: true, sticky: true) do |c| %>
+  <% c.with_summary do %>
+    <%= pluralize(@vaccination_records.count, "imported record") %>
+  <% end %>
     <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
       <% table.with_head do |head| %>
         <% head.with_row do |row| %>
@@ -48,5 +44,4 @@
         <% end %>
       <% end %>
     <% end %>
-  </div>
-</details>
+<% end %>

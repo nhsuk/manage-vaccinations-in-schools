@@ -48,7 +48,8 @@ class ClassImportsController < ApplicationController
     end
 
     if @class_import.processed? || @class_import.partially_processed?
-      @pagy, @patients = pagy(@class_import.patients.includes(:school))
+      @pagy, @patients =
+        pagy(@class_import.patients.includes(:school, :school_moves))
 
       @duplicates =
         @patients.with_pending_changes_for_team(team: current_team).distinct
@@ -69,6 +70,8 @@ class ClassImportsController < ApplicationController
         end
 
       @nhs_discrepancies = @class_import.changesets.nhs_number_discrepancies
+
+      @school_moves = @patients.joins(:school_moves)
 
       @cancelled = @class_import.changesets.from_file.cancelled
     end

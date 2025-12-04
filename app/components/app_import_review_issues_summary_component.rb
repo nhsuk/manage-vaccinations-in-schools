@@ -70,11 +70,9 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
 
   def format_name(record)
     case record
-    when PatientChangeset
-      FullNameFormatter.call(record, context: :internal)
     when Patient
       record.full_name
-    when VaccinationRecord
+    when VaccinationRecord, PatientChangeset
       record.patient&.full_name || "Unknown"
     else
       raise "Unknown record type: #{record.class.name}"
@@ -83,11 +81,9 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
 
   def format_nhs_number(record)
     case record
-    when PatientChangeset
-      helpers.format_nhs_number(record.nhs_number)
     when Patient
       helpers.format_nhs_number(record.nhs_number)
-    when VaccinationRecord
+    when VaccinationRecord, PatientChangeset
       helpers.format_nhs_number(record.patient&.nhs_number)
     else
       raise "Unknown record type: #{record.class.name}"

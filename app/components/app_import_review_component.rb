@@ -55,9 +55,7 @@ class AppImportReviewComponent < ViewComponent::Base
           changesets: @inter_team
         ) do
           render(
-            AppImportReviewSchoolMovesSummaryComponent.new(
-              changesets: @inter_team
-            )
+            AppImportReviewSchoolMovesSummaryComponent.new(records: @inter_team)
           )
         end,
         if @inter_team_import_issues.any?
@@ -96,7 +94,7 @@ class AppImportReviewComponent < ViewComponent::Base
         ) do
           render(
             AppImportReviewSchoolMovesSummaryComponent.new(
-              changesets: @school_moves
+              records: @school_moves
             )
           )
         end,
@@ -186,18 +184,9 @@ class AppImportReviewComponent < ViewComponent::Base
   end
 
   def render_expander(summary:, &block)
-    tag.details(class: "nhsuk-details nhsuk-expander") do
-      helpers.safe_join(
-        [
-          tag.summary(
-            class: "nhsuk-details__summary",
-            data: {
-              module: "app-sticky"
-            }
-          ) { tag.span(summary, class: "nhsuk-details__summary-text") },
-          tag.div(class: "nhsuk-details__text", &block)
-        ]
-      )
+    render(AppDetailsComponent.new(expander: true, sticky: true)) do |c|
+      c.with_summary { summary }
+      block.call
     end
   end
 
