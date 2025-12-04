@@ -372,7 +372,7 @@ class PatientChangeset < ApplicationRecord
   end
 
   def inter_team_move?
-    return false unless patient.persisted? && school_move.present?
+    return false unless patient_id.present? && school_move.present?
 
     school_move.from_another_team?
   end
