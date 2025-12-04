@@ -73,6 +73,8 @@ en:
               blank: Choose which year groups you want to import class list records for
         draft_session:
           attributes:
+            location_type:
+              inclusion: Choose which type of session this is
             programme_types:
               blank: Choose which programmes this session is part of
               inclusion: You cannot remove a programme from the session once it has been added

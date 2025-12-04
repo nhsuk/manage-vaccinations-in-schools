@@ -214,6 +214,7 @@ class DraftSessionsController < ApplicationController
       consent_requests: %i[send_consent_requests_at],
       dates: dates_params,
       dates_check: [],
+      location_type: %i[location_type],
       programmes_check: [],
       delegation: %i[psd_enabled national_protocol_enabled],
       invitations: %i[send_invitations_at],
