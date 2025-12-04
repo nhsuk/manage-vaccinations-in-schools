@@ -21,6 +21,7 @@ class DraftSession
   attribute :send_consent_requests_at, :date
   attribute :send_invitations_at, :date
   attribute :session_dates, array: true, default: []
+  attribute :team_id, :integer
   attribute :year_groups, array: true, default: []
 
   serialize :session_dates, coder: DraftSessionDate::ArraySerializer
@@ -100,6 +101,12 @@ class DraftSession
         .new(@current_user, Location)
         .resolve
         .find(location_id)
+  end
+
+  def team
+    return nil if team_id.nil?
+
+    @team ||= TeamPolicy::Scope.new(@current_user, Team).resolve.find(team_id)
   end
 
   def generic_clinic? = location_type == "generic_clinic"
@@ -208,7 +215,7 @@ class DraftSession
 
   private
 
-  delegate :patient_locations, :team, to: :session
+  delegate :patient_locations, to: :session
 
   def request_session_key = "session"
 
@@ -221,10 +228,11 @@ class DraftSession
       %w[
         academic_year
         dates
-        session_dates
         location_id
         location_type
         programme_types
+        session_dates
+        team_id
         year_groups
       ]
   end
