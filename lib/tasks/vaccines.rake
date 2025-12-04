@@ -43,9 +43,7 @@ namespace :vaccines do
         elsif programme.menacwy?
           create_menacwy_health_questions(vaccine)
         elsif programme.mmr?
-          Flipper.enable(:mmrv) # Remove after MMRV goes live
           create_mmr_health_questions(vaccine)
-          Flipper.disable(:mmrv) # Remove after MMRV goes live
         elsif programme.td_ipv?
           create_td_ipv_health_questions(vaccine)
         else
@@ -349,8 +347,6 @@ def create_menacwy_health_questions(vaccine)
 end
 
 def create_mmr_health_questions(vaccine)
-  Flipper.enable(:mmrv)
-
   bleeding =
     vaccine.health_questions.create!(
       title: "Does your child have a bleeding disorder?"
