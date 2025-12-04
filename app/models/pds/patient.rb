@@ -24,6 +24,8 @@ class PDS::Patient
       history: true,
       fuzzy: false
     )
+      return if Settings.pds.skip_patient_search
+
       query = {
         "family" => family_name,
         "given" => given_name,
