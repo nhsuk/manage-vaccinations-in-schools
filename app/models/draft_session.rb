@@ -36,11 +36,11 @@ class DraftSession
 
     steps << :location_type unless editing?
 
-    steps << :dates
-    steps << :dates_check if school?
-
     steps << :programmes
     steps << :programmes_check if school?
+
+    steps << :dates
+    steps << :dates_check if school?
 
     if include_notification_steps?
       steps += %i[consent_requests consent_reminders] if school?
@@ -251,12 +251,12 @@ class DraftSession
   end
 
   def include_notification_steps?
-    dates.present? && session.consent_notifications.empty? &&
-      session.session_notifications.empty?
+    dates.present? && session&.consent_notifications&.empty? &&
+      session&.session_notifications&.empty?
   end
 
   def new_programme_types
-    @new_programme_types ||= programme_types - session.programme_types
+    @new_programme_types ||= programme_types - (session&.programme_types || [])
   end
 
   def valid_session_dates
@@ -294,7 +294,7 @@ class DraftSession
   end
 
   def cannot_remove_programmes
-    if (session.programme_types - programme_types).present?
+    if editing? && (session.programme_types - programme_types).present?
       errors.add(:programme_types, :inclusion)
     end
   end
