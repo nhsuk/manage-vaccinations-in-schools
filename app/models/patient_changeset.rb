@@ -291,7 +291,10 @@ class PatientChangeset < ApplicationRecord
     end
 
     matches =
-      Patient.includes(:patient_locations).match_existing(
+      Patient.includes(
+        :patient_locations,
+        school_moves: :school_teams
+      ).match_existing(
         nhs_number: child_attributes["nhs_number"],
         given_name: child_attributes["given_name"],
         family_name: child_attributes["family_name"],
