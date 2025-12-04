@@ -35,6 +35,8 @@ class DraftSession
   def wizard_steps
     steps = []
 
+    steps << :location_type unless editing?
+
     steps << :programmes
     steps << :programmes_check if school?
 
@@ -51,6 +53,10 @@ class DraftSession
     steps << :delegation if supports_delegation?
 
     steps + %i[confirm]
+  end
+
+  on_wizard_step :location_type, exact: true do
+    validates :location_type, inclusion: %w[generic_clinic school]
   end
 
   on_wizard_step :dates, exact: true do
