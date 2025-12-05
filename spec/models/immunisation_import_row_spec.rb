@@ -957,6 +957,20 @@ describe ImmunisationImportRow do
       immunisation_import_row.to_vaccination_record
     end
 
+    shared_examples "with pseudo-postcodes" do
+      ["ZZ99 3VZ", "ZZ99 3WZ", "ZZ99 3CZ"].each do |pseudo_postcode|
+        context "when the postcode is #{pseudo_postcode}" do
+          let(:address_postcode) { pseudo_postcode }
+
+          it "assigns the postcode to the patient" do
+            expect(vaccination_record.patient.address_postcode).to eq(
+              pseudo_postcode
+            )
+          end
+        end
+      end
+    end
+
     context "for a poc upload" do
       let(:import_type) { "poc" }
       let(:data) { valid_data }
@@ -1986,6 +2000,8 @@ describe ImmunisationImportRow do
 
         it { should_not be_nil }
       end
+
+      include_examples "with pseudo-postcodes"
     end
 
     context "for a bulk upload" do
@@ -1997,6 +2013,8 @@ describe ImmunisationImportRow do
         let(:data) { valid_bulk_flu_data }
 
         it { should be_administered }
+
+        include_examples "with pseudo-postcodes"
       end
 
       context "of type hpv" do
@@ -2005,6 +2023,8 @@ describe ImmunisationImportRow do
         let(:data) { valid_bulk_hpv_data }
 
         it { should be_administered }
+
+        include_examples "with pseudo-postcodes"
       end
     end
   end

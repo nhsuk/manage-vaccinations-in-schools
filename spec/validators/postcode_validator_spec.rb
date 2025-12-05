@@ -62,4 +62,24 @@ describe PostcodeValidator do
 
     it { should be_valid }
   end
+
+  context "with a pseudo postcode" do
+    context "of `ZZ99 3VZ`" do
+      let(:postcode) { "ZZ99 3VZ" }
+
+      it { should be_valid }
+    end
+
+    context "of `ZZ99 3WZ`" do
+      let(:postcode) { "ZZ99 3WZ" }
+
+      it { should be_valid }
+    end
+
+    context "of `ZZ99 3CZ`" do
+      let(:postcode) { "ZZ99 3CZ" }
+
+      it { should be_valid }
+    end
+  end
 end
