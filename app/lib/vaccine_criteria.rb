@@ -53,7 +53,7 @@ class VaccineCriteria
   attr_reader :programme, :vaccine_methods, :without_gelatine
 
   def apply(scope)
-    scope = scope.where(programme_type: programme.type)
+    scope = scope.with_disease_types(programme.disease_types)
 
     if vaccine_methods.present?
       scope = scope.where(method: vaccine_methods).order(method_order_node)

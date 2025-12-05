@@ -35,7 +35,7 @@ describe ProgrammeVariant do
     it "queries vaccines with the programme variant and distinguishing diseases" do
       expect(Vaccine).to receive(:where_programme).with(
         programme_variant,
-        ["varicella"]
+        %w[measles mumps rubella varicella]
       )
 
       programme_variant.vaccines

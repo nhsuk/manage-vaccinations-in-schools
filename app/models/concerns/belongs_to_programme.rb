@@ -13,9 +13,8 @@ module BelongsToProgramme
                 where(programme_type: programme.type)
               end
 
-            if disease_types.present?
-              enum_values = disease_types.map { |dt| Vaccine.disease_types[dt] }
-              query.where("disease_types && ARRAY[?]::integer[]", enum_values)
+            if disease_types.present? && query.respond_to?(:with_disease_types)
+              query.with_disease_types(disease_types)
             else
               query
             end

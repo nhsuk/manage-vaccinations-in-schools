@@ -23,7 +23,7 @@
 #  fk_rails_...  (consent_form_id => consent_forms.id) ON DELETE => cascade
 #
 FactoryBot.define do
-  factory :consent_form_programmes do
+  factory :consent_form_programme do
     consent_form
     programme { Programme.sample }
 
