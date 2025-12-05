@@ -991,6 +991,23 @@ describe ImmunisationImportRow do
         end
       end
 
+      shared_examples "when an NHS number is provided" do
+        context "when an NHS number is provided" do
+          let(:data) { { "NHS_NUMBER" => "1234567890", "VACCINATED" => "Y" } }
+
+          it "still requires all the demographic information" do
+            expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors[:base]).to include(
+              "<code>PERSON_DOB</code> or <code>Date of birth</code> is required",
+              "<code>PERSON_FORENAME</code> or <code>First name</code> is required",
+              "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required",
+              "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
+              "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required"
+            )
+          end
+        end
+      end
+
       context "of type flu" do
         let(:import_type) { "bulk_flu" }
 
@@ -1027,6 +1044,8 @@ describe ImmunisationImportRow do
 
         include_examples "when `VACCINATED` is `N`"
 
+        include_examples "when an NHS number is provided"
+
         include_examples "when vaccinated date is in a previous academic year"
       end
 
@@ -1055,6 +1074,8 @@ describe ImmunisationImportRow do
         end
 
         include_examples "when `VACCINATED` is `N`"
+
+        include_examples "when an NHS number is provided"
 
         include_examples "when vaccinated date is in a previous academic year"
       end
