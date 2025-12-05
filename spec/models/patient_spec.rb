@@ -703,36 +703,42 @@ describe Patient do
   end
 
   describe "#archived?" do
-    subject(:archived?) { patient.archived?(team:) }
-
     let(:patient) { create(:patient) }
     let(:team) { create(:team) }
 
-    context "without an archive reason" do
-      it { should be(false) }
-    end
-
-    context "with an archive reason for the team" do
-      before { create(:archive_reason, :moved_out_of_area, team:, patient:) }
-
-      it { should be(true) }
-    end
-
-    context "with an archive reason for a different team" do
-      before { create(:archive_reason, :imported_in_error, patient:) }
-
-      it { should be(false) }
-    end
-
-    context "archive_reasons pre-loaded" do
-      let(:patient) do
-        create(
-          :patient,
-          archive_reasons: [create(:archive_reason, :moved_out_of_area, team:)]
-        )
+    shared_examples "archived? behavior" do
+      context "without an archive reason" do
+        it { should be(false) }
       end
 
-      it { should be(true) }
+      context "with an archive reason for the team" do
+        before { create(:archive_reason, :moved_out_of_area, team:, patient:) }
+
+        it { should be(true) }
+      end
+
+      context "with an archive reason for a different team" do
+        before { create(:archive_reason, :imported_in_error, patient:) }
+
+        it { should be(false) }
+      end
+    end
+
+    context "without preloading" do
+      subject(:archived?) { patient.archived?(team:) }
+
+      include_examples "archived? behavior"
+    end
+
+    context "with preloading" do
+      subject(:archived?) do
+        described_class
+          .includes(:archive_reasons)
+          .find(patient.id)
+          .archived?(team:)
+      end
+
+      include_examples "archived? behavior"
     end
   end
 
@@ -756,6 +762,65 @@ describe Patient do
       before { create(:archive_reason, :imported_in_error, patient:) }
 
       it { should be(true) }
+    end
+  end
+
+  describe "#not_in_team?" do
+    let(:patient) { create(:patient) }
+    let(:team) { create(:team) }
+    let(:academic_year) { 2025 }
+    let(:school) { create(:school, team:) }
+
+    shared_examples "not_in_team? behavior" do
+      context "when the patient is in the team" do
+        before { SchoolMove.new(patient:, school:, academic_year:).confirm! }
+
+        it { should be(false) }
+      end
+
+      context "when the patient is not in the team" do
+        it { should be(true) }
+      end
+
+      context "when the patient is in the team for a different academic year" do
+        before do
+          SchoolMove.new(patient:, school:, academic_year: 2024).confirm!
+        end
+
+        it { should be(true) }
+      end
+
+      context "when the patient is in a different team" do
+        let(:other_team) { create(:team) }
+        let(:other_school) { create(:school, team: other_team) }
+
+        before do
+          SchoolMove.new(
+            patient:,
+            school: other_school,
+            academic_year:
+          ).confirm!
+        end
+
+        it { should be(true) }
+      end
+    end
+
+    context "without preloading" do
+      subject(:not_in_team?) { patient.not_in_team?(team:, academic_year:) }
+
+      include_examples "not_in_team? behavior"
+    end
+
+    context "with preloading" do
+      subject(:not_in_team?) do
+        described_class
+          .includes(patient_locations: { location: :team_locations })
+          .find(patient.id)
+          .not_in_team?(team:, academic_year:)
+      end
+
+      include_examples "not_in_team? behavior"
     end
   end
 
