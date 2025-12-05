@@ -15,7 +15,7 @@
 #  rows_count                   :integer
 #  serialized_errors            :jsonb
 #  status                       :integer          default("pending_import"), not null
-#  type                         :integer          default("poc"), not null
+#  type                         :integer          not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  team_id                      :bigint           not null
@@ -39,6 +39,8 @@ FactoryBot.define do
     csv_data { "my,csv\n" }
     csv_filename { Faker::File.file_name(ext: "csv") }
     rows_count { rand(100..1000) }
+
+    type { "poc" }
 
     trait :csv_removed do
       csv_data { nil }

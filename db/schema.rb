@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_03_143325) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_04_102032) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -360,7 +360,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_143325) do
     t.jsonb "serialized_errors"
     t.integer "status", default: 0, null: false
     t.bigint "team_id", null: false
-    t.integer "type", default: 0, null: false
+    t.integer "type", null: false
     t.datetime "updated_at", null: false
     t.bigint "uploaded_by_user_id", null: false
     t.index ["team_id"], name: "index_immunisation_imports_on_team_id"
