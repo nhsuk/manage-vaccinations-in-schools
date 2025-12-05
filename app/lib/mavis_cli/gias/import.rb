@@ -75,6 +75,7 @@ module MavisCLI
               address_town
               gias_establishment_number
               gias_local_authority_code
+              gias_phase
               gias_year_groups
               name
               status
