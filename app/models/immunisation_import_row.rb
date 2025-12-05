@@ -883,7 +883,7 @@ class ImmunisationImportRow
           "Enter a valid postcode, such as SW1A 1AA."
         )
       end
-    elsif patient_nhs_number_value.blank?
+    elsif patient_nhs_number_value.blank? || bulk?
       if patient_postcode.nil?
         errors.add(
           :base,
