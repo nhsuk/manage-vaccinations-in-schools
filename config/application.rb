@@ -81,8 +81,5 @@ module ManageVaccinations
     config.view_component.previews.paths << Rails.root.join(
       "spec/components/previews"
     )
-
-    # TODO: Remove this once `Note#body` is fully encrypted.
-    config.active_record.encryption.support_unencrypted_data = true
   end
 end
