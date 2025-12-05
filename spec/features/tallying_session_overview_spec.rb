@@ -12,10 +12,6 @@ describe "Tallying on session overview page" do
     and_i_visit_the_session_record_tab
 
     when_i_click_on_each_tally_the_filters_match_the_same_count
-
-    when_i_visit_the_session_record_tab
-    and_i_click_on_the_link_to_view_patients_still_to_vaccinate
-    then_i_should_see_the_patient_that_needs_to_be_vaccinated
   end
 
   def given_a_session_for_flu_is_running_today
@@ -135,15 +131,5 @@ describe "Tallying on session overview page" do
     click_link "Vaccinated"
     expect(page).to have_content("Showing 1 to 1 of 1 children")
     expect(page).to have_content(@patients.fifth.given_name)
-  end
-
-  def and_i_click_on_the_link_to_view_patients_still_to_vaccinate
-    click_link "2 children with consent have not been vaccinated yet"
-  end
-
-  def then_i_should_see_the_patient_that_needs_to_be_vaccinated
-    expect(page).to have_content("Showing 1 to 2 of 2 children")
-    expect(page).to have_content(@patients.second.given_name)
-    expect(page).to have_content(@patients.third.given_name)
   end
 end

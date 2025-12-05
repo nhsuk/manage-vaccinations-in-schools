@@ -32,7 +32,6 @@ module PatientSearchFormConcern
       :programme_status_group,
       :q,
       :registration_status,
-      :still_to_vaccinate,
       :triage_status,
       :vaccination_status,
       consent_statuses: [],

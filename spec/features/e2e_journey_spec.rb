@@ -84,8 +84,8 @@ describe "End-to-end journey" do
   def then_i_should_see_the_default_dashboard_cards
     cards = page.all(".nhsuk-card-group__item")
     expect(cards[0].first("h2")).to have_content("Programmes")
-    expect(cards[1].first("h2")).to have_content("Sessions")
-    expect(cards[2].first("h2")).to have_content("Children")
+    expect(cards[1].first("h2")).to have_content("Children")
+    expect(cards[2].first("h2")).to have_content("Sessions")
     expect(cards[3].first("h2")).to have_content("Vaccines")
   end
 
@@ -149,7 +149,7 @@ describe "End-to-end journey" do
     choose "Unscheduled"
     click_on "Update results"
     click_on "Pilot School"
-    click_on "Schedule sessions"
+    click_on "Edit session"
 
     click_on "Add session dates"
     expect(page).to have_content("When will sessions be held?")

@@ -53,7 +53,7 @@ describe "Edit session dates" do
   end
 
   def and_i_click_on_schedule_sessions
-    click_on "Schedule sessions"
+    click_on "Edit session"
   end
 
   def and_i_click_on_add_session_dates
