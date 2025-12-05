@@ -39,3 +39,13 @@ resource "aws_ecr_lifecycle_policy" "mavis_ops" {
   repository = aws_ecr_repository.mavis_ops.name
   policy     = file("resources/ecr_lifecycle_policy.json")
 }
+
+resource "aws_ecr_repository" "dev_postgres_db" {
+  name                 = "mavis/dev/postgres_db"
+  image_tag_mutability = "MUTABLE"
+}
+
+resource "aws_ecr_lifecycle_policy" "dev_postgres_db" {
+  repository = aws_ecr_repository.dev_postgres_db.name
+  policy     = file("resources/ecr_lifecycle_policy_keep_10.json")
+}
