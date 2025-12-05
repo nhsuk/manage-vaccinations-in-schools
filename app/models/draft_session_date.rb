@@ -30,6 +30,7 @@ class DraftSessionDate
     end
 
     def self.dump(values)
+      return if values.nil?
       values.map { |value| value.is_a?(Hash) ? value : value.attributes }
     end
   end

@@ -9,7 +9,7 @@
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_date_field :send_invitations_at,
-                         caption: { text: @session.location.name, size: "l" },
+                         caption: { text: @draft_session.location.name, size: "l" },
                          legend: {
                            tag: "h1",
                            text: legend,

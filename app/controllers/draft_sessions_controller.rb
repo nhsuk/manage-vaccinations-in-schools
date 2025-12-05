@@ -21,13 +21,13 @@ class DraftSessionsController < ApplicationController
   skip_after_action :verify_policy_scoped
 
   def show
-    authorize @session, :edit?
+    authorize @session, @session.new_record? ? :new? : :edit?
 
     render_wizard
   end
 
   def update
-    authorize @session, :update?
+    authorize @session, @session.new_record? ? :create? : :update?
 
     jump_to("confirm") if @draft_session.editing? && current_step != :confirm
 
@@ -52,7 +52,7 @@ class DraftSessionsController < ApplicationController
   end
 
   def set_session
-    @session = @draft_session.session
+    @session = @draft_session.session || Session.new
   end
 
   def set_steps
@@ -195,7 +195,7 @@ class DraftSessionsController < ApplicationController
   def handle_programmes
     @draft_session.assign_attributes(update_params)
 
-    if @draft_session.school?
+    if @draft_session.school? && @draft_session.year_groups.present?
       any_new_programme_has_high_unvaccinated_count =
         @draft_session.new_programmes.any? do |programme|
           programme_has_high_unvaccinated_count?(programme)
@@ -204,6 +204,8 @@ class DraftSessionsController < ApplicationController
       if any_new_programme_has_high_unvaccinated_count
         jump_to("programmes-check")
       end
+    else
+      skip_step
     end
 
     @draft_session.wizard_step = current_step
@@ -232,6 +234,7 @@ class DraftSessionsController < ApplicationController
       consent_requests: %i[send_consent_requests_at],
       dates: dates_params,
       dates_check: [],
+      location_type: %i[location_type],
       programmes_check: [],
       delegation: %i[psd_enabled national_protocol_enabled],
       invitations: %i[send_invitations_at],

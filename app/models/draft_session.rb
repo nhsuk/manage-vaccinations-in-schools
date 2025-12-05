@@ -10,8 +10,10 @@ class DraftSession
   include DaysBeforeToWeeksBefore
   include Delegatable
 
+  attribute :academic_year, :integer
   attribute :days_before_consent_reminders, :integer
   attribute :location_id, :integer
+  attribute :location_type, :string
   attribute :national_protocol_enabled, :boolean
   attribute :programme_types, array: true, default: []
   attribute :psd_enabled, :boolean
@@ -19,6 +21,8 @@ class DraftSession
   attribute :send_consent_requests_at, :date
   attribute :send_invitations_at, :date
   attribute :session_dates, array: true, default: []
+  attribute :team_id, :integer
+  attribute :year_groups, array: true, default: []
 
   serialize :session_dates, coder: DraftSessionDate::ArraySerializer
 
@@ -28,15 +32,19 @@ class DraftSession
   end
 
   def wizard_steps
-    steps = %i[dates]
-    steps << :dates_check if school?
+    steps = []
+
+    steps << :location_type unless editing?
 
     steps << :programmes
     steps << :programmes_check if school?
 
+    steps << :dates
+    steps << :dates_check if school?
+
     if include_notification_steps?
       steps += %i[consent_requests consent_reminders] if school?
-      steps << :invitations if clinic?
+      steps << :invitations if generic_clinic?
     end
 
     steps << :register_attendance
@@ -99,24 +107,47 @@ class DraftSession
         .find(location_id)
   end
 
+  def team
+    return nil if team_id.nil?
+
+    @team ||= TeamPolicy::Scope.new(@current_user, Team).resolve.find(team_id)
+  end
+
+  def team_location
+    @team_location ||= TeamLocation.find_by!(team:, location:, academic_year:)
+  end
+
+  delegate :id, to: :team_location, prefix: true
+
+  def generic_clinic? = location_type == "generic_clinic"
+
+  def school? = location_type == "school"
+
   def programmes = Programme.find_all(programme_types)
+
+  def new_programmes = Programme.find_all(new_programme_types)
+
+  def patient_locations
+    @patient_locations ||=
+      PatientLocation.where(location_id:, academic_year:).includes(:patient)
+  end
 
   def programme_types=(values)
     super(values&.compact_blank || [])
+  end
+
+  def year_groups=(values)
+    super(values&.filter_map(&:to_i) || [])
   end
 
   def session_programme_year_groups
     @session_programme_year_groups ||=
       session.session_programme_year_groups.to_a +
         new_programmes.flat_map do |programme|
-          programme.default_year_groups.map do |year_group|
+          (programme.default_year_groups & year_groups).map do |year_group|
             Session::ProgrammeYearGroup.new(session:, programme:, year_group:)
           end
         end
-  end
-
-  def year_groups
-    session_programme_year_groups.map(&:year_group).sort.uniq
   end
 
   def programmes_for(year_group: nil, patient: nil)
@@ -138,7 +169,7 @@ class DraftSession
 
   def set_notification_dates
     if earliest_date
-      if clinic?
+      if generic_clinic?
         self.days_before_consent_reminders = nil
         self.send_consent_requests_at = nil
         self.send_invitations_at =
@@ -197,14 +228,7 @@ class DraftSession
     )
   end
 
-  def new_programmes
-    @new_programmes ||= Programme.find_all(new_programme_types)
-  end
-
   private
-
-  delegate :academic_year, :patient_locations, :team, to: :session
-  delegate :clinic?, :school?, to: :location
 
   def request_session_key = "session"
 
@@ -213,16 +237,26 @@ class DraftSession
   end
 
   def writable_attribute_names
-    super - %w[dates session_dates location_id programme_types]
+    super -
+      %w[
+        academic_year
+        dates
+        location_id
+        location_type
+        programme_types
+        session_dates
+        team_id
+        year_groups
+      ] + %w[team_location_id]
   end
 
   def include_notification_steps?
-    dates.present? && session.consent_notifications.empty? &&
-      session.session_notifications.empty?
+    dates.present? && session&.consent_notifications&.empty? &&
+      session&.session_notifications&.empty?
   end
 
   def new_programme_types
-    @new_programme_types ||= programme_types - session.programme_types
+    @new_programme_types ||= programme_types - (session&.programme_types || [])
   end
 
   def valid_session_dates
@@ -260,7 +294,7 @@ class DraftSession
   end
 
   def cannot_remove_programmes
-    if (session.programme_types - programme_types).present?
+    if editing? && (session.programme_types - programme_types).present?
       errors.add(:programme_types, :inclusion)
     end
   end
@@ -280,11 +314,15 @@ class DraftSession
     (earliest_date - send_consent_requests_at).to_i / 7
   end
 
+  def academic_year_date_range
+    academic_year.to_academic_year_date_range
+  end
+
   def earliest_possible_session_date_value
-    Date.new(@session.academic_year, 9, 1)
+    academic_year_date_range.begin
   end
 
   def latest_possible_session_date_value
-    Date.new(@session.academic_year + 1, 8, 31)
+    academic_year_date_range.end
   end
 end

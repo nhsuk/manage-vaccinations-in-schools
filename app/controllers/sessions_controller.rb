@@ -4,7 +4,9 @@ class SessionsController < ApplicationController
   include SessionSearchFormConcern
 
   before_action :set_session_search_form, only: :index
-  before_action :set_session, except: :index
+  before_action :set_session, except: %i[index new]
+
+  skip_after_action :verify_policy_scoped, only: :new
 
   def index
     @programmes = current_user.selected_team.programmes
@@ -18,6 +20,17 @@ class SessionsController < ApplicationController
     @patient_count_by_session_id = patient_counts_for_sessions(@sessions)
 
     render layout: "full"
+  end
+
+  def new
+    @draft_session = DraftSession.new(request_session: session, current_user:)
+
+    @draft_session.clear_attributes
+    @draft_session.assign_attributes(create_params)
+
+    @draft_session.save!
+
+    redirect_to draft_session_path(Wicked::FIRST_STEP)
   end
 
   def show
@@ -92,5 +105,13 @@ class SessionsController < ApplicationController
       .where("sessions.id = ANY(ARRAY[?]::bigint[])", sessions.map(&:id))
       .group("sessions.id")
       .count("DISTINCT patients.id")
+  end
+
+  def create_params
+    {
+      academic_year: AcademicYear.pending,
+      session_dates: [DraftSessionDate.new],
+      team_id: current_team.id
+    }
   end
 end
