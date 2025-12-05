@@ -139,6 +139,8 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
   describe "#sync_status" do
     subject(:sync_status) { vaccination_record.sync_status }
 
+    before { Flipper.enable(:imms_api_sync_job, programme) }
+
     context "when patient has no NHS number" do
       let(:patient) do
         create(:patient, nhs_number: nil, school: session.location)
@@ -357,6 +359,17 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
       end
 
       it "returns :not_synced" do
+        expect(sync_status).to eq(:not_synced)
+      end
+    end
+
+    context "when the sync job feature flag has a different programme enabled" do
+      before do
+        Flipper.disable(:imms_api_sync_job)
+        Flipper.enable(:imms_api_sync_job, Programme.mmr)
+      end
+
+      it "returns `not_synced`" do
         expect(sync_status).to eq(:not_synced)
       end
     end

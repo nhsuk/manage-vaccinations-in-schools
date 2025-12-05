@@ -18,6 +18,8 @@ describe "Parental consent" do
 
     when_i_confirm_my_answers
     then_i_see_the_confirmation_page
+
+    when_i_wait_for_the_background_jobs_to_complete
     and_i_receive_an_email_confirming_that_my_child_wont_be_vaccinated
     and_i_receive_a_text_confirming_that_my_child_wont_be_vaccinated
 
@@ -114,6 +116,10 @@ describe "Parental consent" do
     expect(page).to have_content(
       "You’ve told us that you do not want #{@child.full_name(context: :parents)} to get the HPV vaccination at school"
     )
+  end
+
+  def when_i_wait_for_the_background_jobs_to_complete
+    perform_enqueued_jobs(only: ProcessConsentFormJob)
   end
 
   def and_i_receive_an_email_confirming_that_my_child_wont_be_vaccinated

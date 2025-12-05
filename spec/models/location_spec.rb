@@ -27,14 +27,9 @@
 # Indexes
 #
 #  index_locations_on_ods_code        (ods_code) UNIQUE
-#  index_locations_on_subteam_id      (subteam_id)
 #  index_locations_on_systm_one_code  (systm_one_code) UNIQUE
 #  index_locations_on_urn             (urn) UNIQUE WHERE (site IS NULL)
 #  index_locations_on_urn_and_site    (urn,site) UNIQUE
-#
-# Foreign Keys
-#
-#  fk_rails_...  (subteam_id => subteams.id)
 #
 
 describe Location do
@@ -76,6 +71,47 @@ describe Location do
         let(:urn_and_site) { "123456A" }
 
         it { should eq(location_with_site) }
+      end
+    end
+
+    describe "#where_phase" do
+      subject { described_class.where_phase(phase) }
+
+      let!(:nursery) { create(:school, gias_phase: "nursery") }
+      let!(:primary) { create(:school, gias_phase: "primary") }
+      let!(:middle_deemed_primary) do
+        create(:school, gias_phase: "middle_deemed_primary")
+      end
+      let!(:secondary) { create(:school, gias_phase: "secondary") }
+      let!(:middle_deemed_secondary) do
+        create(:school, gias_phase: "middle_deemed_secondary")
+      end
+      let!(:sixteen_plus) { create(:school, gias_phase: "sixteen_plus") }
+      let!(:all_through) { create(:school, gias_phase: "all_through") }
+      let!(:not_applicable) { create(:school, gias_phase: "not_applicable") }
+
+      context "with nursery" do
+        let(:phase) { "nursery" }
+
+        it { should contain_exactly(nursery) }
+      end
+
+      context "with primary" do
+        let(:phase) { "primary" }
+
+        it { should contain_exactly(primary, middle_deemed_primary) }
+      end
+
+      context "with secondary" do
+        let(:phase) { "secondary" }
+
+        it { should contain_exactly(secondary, middle_deemed_secondary) }
+      end
+
+      context "with other" do
+        let(:phase) { "other" }
+
+        it { should contain_exactly(sixteen_plus, all_through, not_applicable) }
       end
     end
   end
@@ -154,6 +190,40 @@ describe Location do
   it { should normalize(:ods_code).from(" r1a ").to("R1A") }
   it { should normalize(:urn).from(" 123 ").to("123") }
 
+  describe "#to_param" do
+    subject { location.to_param }
+
+    context "with a community clinic with an ODS code" do
+      let(:location) { create(:community_clinic, ods_code: "ABC") }
+
+      it { should eq(location.ods_code) }
+    end
+
+    context "with a community clinic without an ODS code" do
+      let(:location) { create(:community_clinic, ods_code: nil) }
+
+      it { should eq(location.id) }
+    end
+
+    context "with a generic clinic" do
+      let(:location) { create(:generic_clinic, team: create(:team)) }
+
+      it { should eq(location.id) }
+    end
+
+    context "with a GP practice" do
+      let(:location) { create(:gp_practice) }
+
+      it { should eq(location.ods_code) }
+    end
+
+    context "with a school" do
+      let(:location) { create(:school) }
+
+      it { should be(location.urn_and_site) }
+    end
+  end
+
   describe "#clinic?" do
     subject(:clinic?) { location.clinic? }
 
@@ -201,6 +271,64 @@ describe Location do
       end
 
       it { should eq("123456") }
+    end
+  end
+
+  describe "#phase" do
+    subject { location.phase }
+
+    context "with a nursery GIAS phase" do
+      let(:location) { build(:school, gias_phase: "nursery") }
+
+      it { should eq("nursery") }
+    end
+
+    context "with a primary GIAS phase" do
+      let(:location) { build(:school, gias_phase: "primary") }
+
+      it { should eq("primary") }
+    end
+
+    context "with a middle deemed primary GIAS phase" do
+      let(:location) { build(:school, gias_phase: "middle_deemed_primary") }
+
+      it { should eq("primary") }
+    end
+
+    context "with a secondary GIAS phase" do
+      let(:location) { build(:school, gias_phase: "secondary") }
+
+      it { should eq("secondary") }
+    end
+
+    context "with a middle deemed secondary GIAS phase" do
+      let(:location) { build(:school, gias_phase: "middle_deemed_secondary") }
+
+      it { should eq("secondary") }
+    end
+
+    context "with a 16-plus phase" do
+      let(:location) { build(:school, gias_phase: "sixteen_plus") }
+
+      it { should eq("other") }
+    end
+
+    context "with an all-through phase" do
+      let(:location) { build(:school, gias_phase: "all_through") }
+
+      it { should eq("other") }
+    end
+
+    context "with a not applicable phase" do
+      let(:location) { build(:school, gias_phase: "not_applicable") }
+
+      it { should eq("other") }
+    end
+
+    context "with something other than a school" do
+      let(:location) { build(:community_clinic) }
+
+      it { should be_nil }
     end
   end
 

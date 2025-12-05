@@ -8,6 +8,7 @@
 #  brand               :text             not null
 #  contains_gelatine   :boolean          not null
 #  discontinued        :boolean          default(FALSE), not null
+#  disease_types       :integer          default([]), not null, is an Array
 #  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
 #  method              :integer          not null
@@ -16,6 +17,7 @@
 #  side_effects        :integer          default([]), not null, is an Array
 #  snomed_product_code :string           not null
 #  snomed_product_term :string           not null
+#  upload_name         :text
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #

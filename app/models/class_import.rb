@@ -56,10 +56,11 @@ class ClassImport < PatientImport
 
   def postprocess_rows!
     # Remove patients already in the sessions but not in the class list.
+    patients_in_import_changesets =
+      changesets.from_file.where.not(status: %i[cancelled processed])
+
     patients_in_import =
-      (changesets.from_file - changesets.cancelled - changesets.processed).map(
-        &:patient
-      )
+      Patient.joins(:changesets).merge(patients_in_import_changesets)
 
     unknown_patients = patients_to_create_moves_for(patients_in_import)
 
@@ -68,10 +69,13 @@ class ClassImport < PatientImport
         changesets.not_from_file.committing.where(
           patient_id: unknown_patients.pluck(:id)
         )
-      valid_ids = valid_changesets.pluck(:id)
-      valid_patients = Patient.where(id: valid_changesets.pluck(:patient_id))
+      valid_patients = Patient.joins(:changesets).merge(valid_changesets)
 
-      changesets.not_from_file.committing.where.not(id: valid_ids).destroy_all
+      changesets
+        .not_from_file
+        .committing
+        .where.not(id: valid_changesets.ids)
+        .destroy_all
 
       missed_patients = unknown_patients - valid_patients
       if missed_patients.any? && (processed? || partially_processed?)

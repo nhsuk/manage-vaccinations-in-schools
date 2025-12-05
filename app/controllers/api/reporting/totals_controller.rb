@@ -91,7 +91,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
         team_id: current_user.team_ids
       ).where(@filters.to_where_clause)
 
-    apply_workgroup_filter if params[:workgroup].present?
+    apply_workgroup_filter
     apply_year_group_filter
 
     @scope = @base_scope.not_archived
@@ -161,7 +161,10 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   end
 
   def apply_workgroup_filter
-    team = current_user.teams.find_by(workgroup: params[:workgroup])
+    workgroup = params[:workgroup].presence || cis2_info.team_workgroup
+    return unless workgroup
+
+    team = current_user.teams.find_by(workgroup:)
     @base_scope = @base_scope.where(team_id: team.id) if team
   end
 

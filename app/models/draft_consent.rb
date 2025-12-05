@@ -282,7 +282,7 @@ class DraftConsent
   end
 
   def programme
-    Programme.find(programme_type) if programme_type
+    Programme.find(programme_type, patient:) if programme_type
   end
 
   def programme=(value)

@@ -15,13 +15,7 @@ class PatientsController < ApplicationController
 
   def index
     if @search_params_present
-      scope =
-        policy_scope(Patient).includes(
-          :consent_statuses,
-          :school,
-          :triage_statuses,
-          :vaccination_statuses
-        )
+      scope = policy_scope(Patient).includes_statuses.includes(:school)
 
       patients = @form.apply(scope)
     else

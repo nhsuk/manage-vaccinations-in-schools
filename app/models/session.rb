@@ -19,17 +19,11 @@
 #
 # Indexes
 #
-#  index_sessions_on_academic_year_and_location_id_and_team_id  (academic_year,location_id,team_id)
-#  index_sessions_on_dates                                      (dates) USING gin
-#  index_sessions_on_location_id                                (location_id)
-#  index_sessions_on_location_id_and_academic_year_and_team_id  (location_id,academic_year,team_id)
-#  index_sessions_on_team_id_and_academic_year                  (team_id,academic_year)
-#  index_sessions_on_team_id_and_location_id                    (team_id,location_id)
-#  index_sessions_on_team_location_id                           (team_location_id)
+#  index_sessions_on_dates             (dates) USING gin
+#  index_sessions_on_team_location_id  (team_location_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (team_location_id => team_locations.id)
 #
 class Session < ApplicationRecord
@@ -180,7 +174,7 @@ class Session < ApplicationRecord
       session_programme_year_groups.map(&:programme_type).sort.uniq
   end
 
-  def programmes = Programme.find_all(programme_types)
+  def programmes(patient: nil) = Programme.find_all(programme_types, patient:)
 
   def vaccines
     @vaccines ||= Vaccine.where(programme_type: programme_types)
@@ -238,7 +232,7 @@ class Session < ApplicationRecord
   def programmes_for(year_group: nil, patient: nil)
     year_group ||= patient.year_group(academic_year:)
 
-    programmes.select do |programme|
+    programmes(patient:).select do |programme|
       session_programme_year_groups.any? do
         it.programme_type == programme.type && it.year_group == year_group
       end

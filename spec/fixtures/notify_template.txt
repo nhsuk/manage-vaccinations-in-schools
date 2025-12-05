@@ -1,0 +1,52 @@
+GOV.UK Notify Template Placeholder
+
+Why this placeholder template exists:
+
+The logic behind personalisation for GOV.UK Notify templates has become increasingly complex,
+making it difficult to:
+- Cross-check the final output with content designers
+- Debug issues where templates don't render as expected
+- Validate that all required variables are present for a given template
+
+This placeholder allows developers to:
+- Paste in actual GOV.UK Notify templates from the service
+- Run specific test scenarios with the :notify_template flag
+- See the exact output that would be sent to recipients
+- Share populated examples with content designers for review
+- Quickly identify missing or incorrect personalisation values
+
+Instructions for using the :notify_template flag:
+
+1. Copy the email template from GOV.UK Notify and paste it into this file temporarily
+
+2. The template should contain GOV.UK Notify placeholders in the format:
+   - ((variable)) for simple replacements
+   - ((variable??text)) for conditional text (shows 'text' only if variable has a value)
+
+3. In your spec file, add the :notify_template flag to any test:
+
+   it "shows the consent request email", :notify_template do
+     expect(to_h).to include(location_name: "Hogwarts")
+   end
+
+4. Run the specific test to see the populated template in the console:
+
+   bundle exec rspec spec/lib/govuk_notify_personalisation_spec.rb:123
+
+5. The output will show:
+   - All ((variable)) placeholders replaced with actual values from the personalisation hash
+   - All ((variable??text)) conditionals evaluated (text shown if variable exists, hidden if not)
+
+Example template format:
+
+Subject
+((short_patient_name)) has still not had their ((vaccination))
+
+Our records show that ((full_and_preferred_patient_name)) has not had their ((vaccination)) yet. ((mmr_second_dose_required??They need this to be fully vaccinated.))
+
+((invitation_to_clinic_generic_message))
+
+((subteam_name))
+((subteam_email))
+((subteam_phone))
+

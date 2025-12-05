@@ -85,7 +85,7 @@ describe AppPatientSessionSearchResultCardComponent do
         end
 
         it { should_not have_text("Vaccine type") }
-        it { should have_text("Consent given for gelatine-free injection") }
+        it { should have_text("Consent given for injection") }
       end
     end
   end

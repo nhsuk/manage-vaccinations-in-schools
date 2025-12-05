@@ -83,12 +83,22 @@ class ImmunisationImportRow
   SCHOOL_URN_HOME_EDUCATED = "999999"
   SCHOOL_URN_UNKNOWN = "888888"
 
-  attr_reader :team
+  attr_reader :team, :type
 
-  def initialize(data:, team:)
+  def initialize(data:, team:, type:)
     @data = data
     @team = team
+    @type = type&.to_sym
   end
+
+  # Convenience predicate helpers mirroring the enum on ImmunisationImport
+  def poc? = type == :poc
+
+  def bulk_flu? = type == :bulk_flu
+
+  def bulk_hpv? = type == :bulk_hpv
+
+  def bulk? = bulk_flu? || bulk_hpv?
 
   def to_vaccination_record
     return unless valid?

@@ -118,10 +118,7 @@ class Patient < ApplicationRecord
             patient_teams: {
               team_id: team.id
             }
-          ).where(
-            "patient_teams.sources @> ARRAY[?]::integer[]",
-            PatientTeam.sources.fetch("archive_reason")
-          )
+          ).merge(PatientTeam.where_all_sources(%w[archive_reason]))
         end
 
   scope :not_archived,
@@ -130,10 +127,7 @@ class Patient < ApplicationRecord
             patient_teams: {
               team_id: team.id
             }
-          ).where(
-            "NOT patient_teams.sources @> ARRAY[?]::integer[]",
-            PatientTeam.sources.fetch("archive_reason")
-          )
+          ).merge(PatientTeam.where_no_sources(%w[archive_reason]))
         end
 
   scope :with_pending_changes_for_team,
@@ -206,25 +200,38 @@ class Patient < ApplicationRecord
 
   scope :search_by_name,
         ->(query) do
-          # Trigram matching requires at least 3 characters
-          if query.length < 3
-            where(
-              "given_name ILIKE :like_query OR family_name ILIKE :like_query",
-              like_query: "#{query}%"
-            )
-          else
-            where(
-              "SIMILARITY(CONCAT(given_name, ' ', family_name), :query) > 0.3 OR " \
-                "SIMILARITY(CONCAT(family_name, ' ', given_name), :query) > 0.3",
+          query = query.tr(",", " ")
+          terms = query.split
+
+          similarity_scope =
+            terms.reduce(self) do |scope, term|
+              scope.and where(
+                          "family_name % :term OR given_name % :term",
+                          term:
+                        )
+            end
+
+          ilike_scope =
+            terms.reduce(self) do |scope, term|
+              if term.length < 3
+                scope.and where(
+                            "family_name ILIKE :term || '%' OR given_name ILIKE :term || '%'",
+                            term:
+                          )
+              else
+                scope.and where(
+                            "family_name ILIKE '%' || :term || '%' OR given_name ILIKE '%' || :term || '%'",
+                            term:
+                          )
+              end
+            end
+
+          similarity_scope.or(ilike_scope).order(
+            Arel.sql(
+              "(STRICT_WORD_SIMILARITY(given_name, :query) + STRICT_WORD_SIMILARITY(family_name, :query)) DESC",
               query:
-            ).order(
-              Arel.sql(
-                "GREATEST(SIMILARITY(CONCAT(given_name, ' ', family_name), :query), " \
-                  "SIMILARITY(CONCAT(family_name, ' ', given_name), :query)) DESC",
-                query:
-              )
             )
-          end
+          )
         end
 
   scope :search_by_year_groups,
@@ -639,7 +646,11 @@ class Patient < ApplicationRecord
   end
 
   def archived?(team:)
-    archive_reasons.exists?(team:)
+    if archive_reasons.loaded?
+      archive_reasons.any? { it.team_id == team.id }
+    else
+      archive_reasons.exists?(team:)
+    end
   end
 
   def not_archived?(team:)
@@ -819,11 +830,20 @@ class Patient < ApplicationRecord
   end
 
   def not_in_team?(team:, academic_year:)
-    patient_locations
-      .where(academic_year:)
-      .joins(location: :team_locations)
-      .where(team_locations: { academic_year:, team: })
-      .empty?
+    if patient_locations.loaded?
+      patient_locations.none? do |patloc|
+        patloc.academic_year == academic_year &&
+          patloc.location.team_locations.any? do |loc|
+            loc.academic_year == academic_year && loc.team_id == team.id
+          end
+      end
+    else
+      patient_locations
+        .where(academic_year:)
+        .joins(location: :team_locations)
+        .where(team_locations: { academic_year:, team: })
+        .empty?
+    end
   end
 
   def dup_for_pending_changes

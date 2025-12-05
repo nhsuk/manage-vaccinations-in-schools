@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe SearchVaccinationRecordsInNHSJob do
-  subject(:perform) { described_class.new.perform(patient.id) }
-
   let(:team) { create(:team) }
   let(:school) { create(:school, team:) }
   let(:patient) { create(:patient, team:, school:, nhs_number:) }
@@ -366,6 +364,8 @@ describe SearchVaccinationRecordsInNHSJob do
   end
 
   describe "#perform" do
+    subject(:perform) { described_class.new.perform(patient_id) }
+
     shared_examples "calls StatusUpdater" do
       it "calls StatusUpdater with the patient" do
         expect(StatusUpdater).to receive(:call).with(patient:)
@@ -381,6 +381,7 @@ describe SearchVaccinationRecordsInNHSJob do
       end
     end
 
+    let(:patient_id) { patient.id }
     let(:expected_query) do
       {
         "patient.identifier" =>
@@ -420,6 +421,14 @@ describe SearchVaccinationRecordsInNHSJob do
         :get,
         "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
       ).with(query: expected_query).to_return(status:, body:, headers:)
+    end
+
+    context "with a patient ID that doesn't exist" do
+      let(:patient_id) { -1 }
+
+      it "doesn't raise an error" do
+        expect { perform }.not_to raise_error
+      end
     end
 
     context "with 2 new incoming records" do

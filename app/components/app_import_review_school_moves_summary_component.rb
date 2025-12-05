@@ -20,7 +20,7 @@ class AppImportReviewSchoolMovesSummaryComponent < ViewComponent::Base
 
       table.with_body do |body|
         @changesets.each do |changeset|
-          patient = Patient.find(changeset.patient_id)
+          patient = changeset.patient
 
           body.with_row do |row|
             row.with_cell do

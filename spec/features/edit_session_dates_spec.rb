@@ -77,11 +77,11 @@ describe "Edit session dates" do
       "Have you imported historical vaccination records for HPV?"
     )
     expect(page).to have_content(
-      "Only 10% of children in Year 9, Year 10, and Year 11 in this session have vaccination records."
+      "Only 10% of children in Years 9, 10, and 11 in this session have vaccination records."
     )
     expect(page).to have_content(
       "Scheduling this session now will send consent requests to 9 parents " \
-        "of children in Year 9, Year 10, and Year 11 on 10 April 2024. Many " \
+        "of children in Years 9, 10, and 11 on 10 April 2024. Many " \
         "of them may be parents of already vaccinated children."
     )
   end

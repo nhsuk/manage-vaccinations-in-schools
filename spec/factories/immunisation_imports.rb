@@ -15,6 +15,7 @@
 #  rows_count                   :integer
 #  serialized_errors            :jsonb
 #  status                       :integer          default("pending_import"), not null
+#  type                         :integer          default("poc"), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  team_id                      :bigint           not null

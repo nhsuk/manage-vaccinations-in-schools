@@ -1,0 +1,27 @@
+<%= form_with url:, method: :get, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+  <%= render AppCardComponent.new(filters: true) do |card| %>
+    <% card.with_heading(level: 2) { "Find school" } %>
+
+    <%= render AppSearchInputComponent.new(name: :q, value: form.q, label: { hidden: true }) %>
+
+    <%= f.govuk_radio_buttons_fieldset :phase,
+                                       legend: { text: "Phase", size: "s" },
+                                       small: true do %>
+      <%= f.govuk_radio_button :phase, "",
+                               checked: form.phase.blank?,
+                               label: { text: "Any" } %>
+
+      <% PHASES.each do |value| %>
+        <%= f.govuk_radio_button :phase,
+                                 value,
+                                 checked: form.phase == value,
+                                 label: { text: value.humanize } %>
+      <% end %>
+    <% end %>
+
+    <div class="nhsuk-button-group">
+      <%= f.govuk_submit "Update results", secondary: true, class: "nhsuk-button--small" %>
+      <%= govuk_button_link_to "Clear filters", clear_filters_path, secondary: true, class: "nhsuk-button--small" %>
+    </div>
+  <% end %>
+<% end %>

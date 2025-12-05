@@ -67,7 +67,8 @@ class CohortImportsController < ApplicationController
           end
         end
 
-      @nhs_discrepancies = @cohort_import.changesets.nhs_number_discrepancies
+      @nhs_discrepancies =
+        @cohort_import.changesets.includes(:patient).nhs_number_discrepancies
 
       @cancelled = @cohort_import.changesets.from_file.cancelled
     end
@@ -158,7 +159,15 @@ class CohortImportsController < ApplicationController
     @inter_team =
       @cohort_import
         .changesets
-        .includes(:school, patient: :school)
+        .includes(
+          :school,
+          patient: [
+            :school,
+            :patient_locations,
+            :archive_reasons,
+            { patient_locations: :location, school: { team_locations: :team } }
+          ]
+        )
         .from_file
         .ready_for_review
         .select(&:inter_team_move?)
@@ -168,6 +177,10 @@ class CohortImportsController < ApplicationController
     @import_issues =
       @cohort_import.changesets.ready_for_review.import_issue - @inter_team
     @school_moves =
-      @cohort_import.changesets.ready_for_review.with_school_moves - @inter_team
+      @cohort_import
+        .changesets
+        .includes(:school, patient: :school)
+        .ready_for_review
+        .with_school_moves - @inter_team
   end
 end

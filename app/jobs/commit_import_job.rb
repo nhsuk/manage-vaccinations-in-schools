@@ -31,8 +31,13 @@ class CommitImportJob
     imported_school_move_ids = []
 
     ActiveRecord::Base.transaction do
-      import
-        .changesets
+      changesets =
+        PatientChangeset.includes(:patient).where(id: import.changesets.ids)
+
+      # Reset patient_ids to avoid stale associations
+      changesets.update_all(patient_id: nil)
+
+      changesets
         .from_file
         .includes(:school)
         .find_in_batches(batch_size: 100) do |changesets|

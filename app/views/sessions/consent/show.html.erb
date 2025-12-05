@@ -29,7 +29,7 @@
               patient:,
               session: @session,
               context: :consent,
-              programmes: @form.programmes,
+              programmes: @form.programmes(patient:),
             ) %>
       <% end %>
     <% end %>

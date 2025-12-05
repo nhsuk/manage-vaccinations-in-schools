@@ -4,7 +4,13 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
   sidekiq_options queue: :immunisations_api_search
 
   def perform(patient_id)
-    patient = Patient.includes(teams: :organisation).find(patient_id)
+    begin
+      patient = Patient.includes(teams: :organisation).find(patient_id)
+    rescue ActiveRecord::RecordNotFound
+      # This patient has since been merged with another so we don't need to
+      # perform a search.
+      return
+    end
 
     tx_id = SecureRandom.urlsafe_base64(16)
 

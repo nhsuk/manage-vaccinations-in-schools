@@ -27,8 +27,8 @@ module HasManyProgrammes
           ->(programmes) { has_any_programme_types_of(programmes.map(&:type)) }
   end
 
-  def programmes
-    programme_types.map { Programme.find(it) }
+  def programmes(patient: nil)
+    programme_types.map { Programme.find(it, patient:) }
   end
 
   def programmes=(value)

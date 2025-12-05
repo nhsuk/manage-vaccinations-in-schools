@@ -1,0 +1,24 @@
+<% content_for :page_title, t(".title") %>
+
+<%= h1 t(".title"), size: "xl" %>
+
+<div class="nhsuk-grid-row">
+  <div class="app-grid-column-filters">
+    <%= render AppLocationSearchFormComponent.new(
+          @form,
+          url: schools_path,
+        ) %>
+  </div>
+
+  <div class="app-grid-column-results">
+    <%= render AppSearchResultsComponent.new(@pagy, label: "schools") do %>
+      <% @locations.each do |location| %>
+        <%= render AppLocationCardComponent.new(
+              location,
+              patient_count: @patient_count_by_school_id.fetch(location.school_id, 0),
+              next_session_date: @next_session_date_by_location_id[location.id],
+            ) %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

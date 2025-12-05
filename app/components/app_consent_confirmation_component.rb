@@ -25,22 +25,23 @@ class AppConsentConfirmationComponent < ViewComponent::Base
 
   private
 
+  attr_reader :consent_form
+
   delegate :given_consent_form_programmes,
            :refused_consent_form_programmes,
            :response_given?,
            :parent_email,
-           to: :@consent_form
+           to: :consent_form
+
   delegate :govuk_panel, to: :helpers
 
-  def full_name
-    @consent_form.full_name(context: :parents)
-  end
+  def full_name = consent_form.full_name(context: :parents)
 
   def panel_text
-    location = (@consent_form.education_setting_school? ? " at school" : "")
+    location = (consent_form.education_setting_school? ? " at school" : "")
 
     if response_given?
-      if @consent_form.health_answers_require_triage?
+      if consent_form.health_answers_require_triage?
         <<-END_OF_TEXT
           As you answered ‘yes’ to some of the health questions, we need to check
           the #{given_vaccinations_are} suitable for #{full_name}. We’ll review
@@ -85,10 +86,12 @@ class AppConsentConfirmationComponent < ViewComponent::Base
   end
 
   def dates
-    @consent_form
-      .session
-      .today_or_future_dates
-      .map { it.to_fs(:short_day_of_week) }
-      .to_sentence(two_words_connector: " or ", last_word_connector: " or ")
+    if consent_form.session_dates_are_accurate?
+      consent_form
+        .session
+        .today_or_future_dates
+        .map { it.to_fs(:short_day_of_week) }
+        .to_sentence(two_words_connector: " or ", last_word_connector: " or ")
+    end
   end
 end

@@ -32,6 +32,30 @@ class PatientTeam < ApplicationRecord
 
   scope :missing_sources, -> { where(sources: []) }
 
+  scope :where_all_sources,
+        ->(sources) do
+          where(
+            "patient_teams.sources @> ARRAY[?]::integer[]",
+            sources.map { PatientTeam.sources.fetch(it) }
+          )
+        end
+
+  scope :where_no_sources,
+        ->(sources) do
+          where(
+            "NOT patient_teams.sources @> ARRAY[?]::integer[]",
+            sources.map { PatientTeam.sources.fetch(it) }
+          )
+        end
+
+  scope :where_any_sources,
+        ->(sources) do
+          where(
+            "patient_teams.sources && ARRAY[?]::integer[]",
+            sources.map { PatientTeam.sources.fetch(it) }
+          )
+        end
+
   array_enum sources: {
                patient_location: 0,
                archive_reason: 1,

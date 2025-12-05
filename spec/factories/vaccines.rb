@@ -8,6 +8,7 @@
 #  brand               :text             not null
 #  contains_gelatine   :boolean          not null
 #  discontinued        :boolean          default(FALSE), not null
+#  disease_types       :integer          default([]), not null, is an Array
 #  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
 #  method              :integer          not null
@@ -16,6 +17,7 @@
 #  side_effects        :integer          default([]), not null, is an Array
 #  snomed_product_code :string           not null
 #  snomed_product_term :string           not null
+#  upload_name         :text
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #
@@ -144,6 +146,22 @@ FactoryBot.define do
       end
     end
 
+    trait :mmrv do
+      programme_type { "mmr" }
+      injection
+      disease_types { %w[measles mumps rubella varicella] }
+
+      after(:create) do |vaccine|
+        bleeding_disorder =
+          create(:health_question, :bleeding_disorder, vaccine:)
+        mmrv_vaccination = create(:health_question, :mmrv_vaccination, vaccine:)
+        extra_support = create(:health_question, :extra_support, vaccine:)
+
+        bleeding_disorder.update!(next_question: mmrv_vaccination)
+        mmrv_vaccination.update!(next_question: extra_support)
+      end
+    end
+
     trait :td_ipv do
       programme_type { "td_ipv" }
 
@@ -172,6 +190,7 @@ FactoryBot.define do
         contains_gelatine { data["contains_gelatine"] }
         discontinued { data.fetch("discontinued", false) }
         dose_volume_ml { data["dose_volume_ml"] }
+        disease_types { data["disease_types"] }
         manufacturer { data["manufacturer"] }
         add_attribute(:method) { data["method"] }
         nivs_name { data["nivs_name"] }

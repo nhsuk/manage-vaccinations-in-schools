@@ -174,7 +174,16 @@ Rails.application.routes.draw do
       patch ":type", action: :update, on: :member
     end
 
-    resources :notices, only: :index
+    resources :notices, only: %i[index destroy] do
+      member { get :dismiss }
+    end
+
+    get "bulk_remove_parents/:import_type/:import_id",
+        to: "bulk_remove_parents#new",
+        as: :bulk_remove_parents
+
+    post "bulk_remove_parents/:import_type/:import_id",
+         to: "bulk_remove_parents#create"
   end
 
   resources :notifications, only: :create
@@ -232,6 +241,12 @@ Rails.application.routes.draw do
             controller: "school_moves/exports",
             only: %i[create show update] do
     get "download", on: :member
+  end
+
+  resources :schools, only: :index, param: :urn_and_site do
+    get "import"
+    get "patients"
+    get "sessions"
   end
 
   resources :sessions, only: %i[index show edit], param: :slug do

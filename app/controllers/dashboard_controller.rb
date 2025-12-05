@@ -21,49 +21,46 @@ class DashboardController < ApplicationController
           {
             title: I18n.t("imports.index.title"),
             path: imports_path,
-            description: [
-              "upload vaccination records",
-              "check the status of your uploads",
-              "view previous uploads"
-            ]
+            description: I18n.t("imports.index.description")
           },
           {
-            title: "Vaccination records",
-            description: [
-              "find vaccination records",
-              "edit vaccination records"
-            ]
+            title: I18n.t("vaccination_records.index.title"),
+            description: I18n.t("vaccination_records.index.description")
           },
           {
-            title: "Reports",
-            description: ["view reports on vaccination records"]
+            title: I18n.t("reports.index.title"),
+            description: I18n.t("reports.index.description")
           }
         ]
       else
         [
-          {
-            title: I18n.t("programmes.index.title"),
-            path: programmes_path,
-            description: [
-              "import child records",
-              "organise vaccination sessions",
-              "report vaccinations"
-            ]
-          },
+          if Flipper.enabled?(:schools_and_sessions)
+            {
+              title: I18n.t("schools.index.title"),
+              path: schools_path,
+              description: I18n.t("schools.index.description")
+            }
+          else
+            {
+              title: I18n.t("programmes.index.title"),
+              path: programmes_path,
+              description: I18n.t("programmes.index.description")
+            }
+          end,
           {
             title: I18n.t("sessions.index.title"),
             path: sessions_path,
-            description: [
-              "review consent responses",
-              "triage health records",
-              "record vaccinations",
-              "review session outcomes"
-            ]
+            description: I18n.t("sessions.index.description")
           },
           {
             title: I18n.t("patients.index.title"),
             path: patients_path,
-            description: ["find child records", "view child vaccinations"]
+            description: I18n.t("patients.index.description")
+          },
+          {
+            title: I18n.t("vaccines.index.title"),
+            path: vaccines_path,
+            description: I18n.t("vaccines.index.description")
           }
         ]
       end
@@ -74,42 +71,42 @@ class DashboardController < ApplicationController
 
     unless current_team.has_upload_access_only?
       @secondary_items << {
-        title: I18n.t("consent_forms.index.title"),
-        path: consent_forms_path,
-        description:
-          "Review incoming consent responses that can’t be automatically matched"
+        title: I18n.t("school_moves.index.title"),
+        path: school_moves_path,
+        description: I18n.t("school_moves.index.description")
       }
 
       @secondary_items << {
-        title: I18n.t("school_moves.index.title"),
-        path: school_moves_path,
-        description: "Review children who have moved schools"
+        title: I18n.t("consent_forms.index.title"),
+        path: consent_forms_path,
+        description: I18n.t("consent_forms.index.description")
       }
 
       @secondary_items << {
         title: I18n.t("imports.index.title"),
         path: imports_path,
-        description:
-          "Import child, cohort and vaccination records and see important notices"
+        description: I18n.t("imports.index.description")
       }
 
-      @secondary_items << {
-        title: I18n.t("vaccines.index.title"),
-        path: vaccines_path,
-        description: "Add and edit vaccine batches"
-      }
+      if Flipper.enabled?(:schools_and_sessions)
+        @secondary_items << {
+          title: I18n.t("programmes.index.title"),
+          path: programmes_path,
+          description: I18n.t("programmes.index.description")
+        }
+      end
     end
 
     @secondary_items << {
       title: I18n.t("teams.show.title"),
       path: team_path,
-      description: "Manage your team’s settings"
+      description: I18n.t("teams.show.description")
     }
 
     @secondary_items << {
       title: I18n.t("service.guide.title"),
       path: @service_guide_url,
-      description: "How to use this service"
+      description: I18n.t("service.guide.description")
     }
   end
 end

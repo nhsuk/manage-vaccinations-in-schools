@@ -21,7 +21,7 @@ end
 Sidekiq::Throttled::Registry.add(
   :immunisations_api,
   threshold: {
-    limit: 5,
+    limit: Settings.immunisations_api.rate_limit_per_second.to_i,
     period: 1.second
   }
 )

@@ -27,14 +27,9 @@
 # Indexes
 #
 #  index_locations_on_ods_code        (ods_code) UNIQUE
-#  index_locations_on_subteam_id      (subteam_id)
 #  index_locations_on_systm_one_code  (systm_one_code) UNIQUE
 #  index_locations_on_urn             (urn) UNIQUE WHERE (site IS NULL)
 #  index_locations_on_urn_and_site    (urn,site) UNIQUE
-#
-# Foreign Keys
-#
-#  fk_rails_...  (subteam_id => subteams.id)
 #
 
 require_relative "../../lib/faker/address"
@@ -49,17 +44,20 @@ FactoryBot.define do
       academic_year { AcademicYear.pending }
     end
 
-    address_line_1 { Faker::Address.street_address }
-    address_town { Faker::Address.city }
-    address_postcode { Faker::Address.uk_postcode }
-
     url { Faker::Internet.url }
 
     traits_for_enum :status
 
+    trait :with_address do
+      address_line_1 { Faker::Address.street_address }
+      address_town { Faker::Address.city }
+      address_postcode { Faker::Address.uk_postcode }
+    end
+
     factory :community_clinic do
       type { :community_clinic }
       name { "#{Faker::University.name} Clinic" }
+      with_address
 
       sequence(:ods_code, 100) { "CL#{it}" }
 
@@ -102,6 +100,7 @@ FactoryBot.define do
     factory :gp_practice do
       type { :gp_practice }
       name { "#{Faker::University.name} Practice" }
+      with_address
 
       sequence(:ods_code, 100) { "GP#{it}" }
 
@@ -118,6 +117,7 @@ FactoryBot.define do
     factory :school do
       type { :school }
       name { Faker::Educator.primary_school }
+      with_address
 
       sequence(:gias_establishment_number, 1)
       sequence(:gias_local_authority_code, 1)
@@ -135,6 +135,21 @@ FactoryBot.define do
         name { Faker::Educator.secondary_school }
         gias_phase { "secondary" }
         gias_year_groups { (7..11).to_a }
+      end
+
+      after(:build) do |school|
+        next if school.gias_local_authority_code.blank?
+
+        LocalAuthority.find_or_create_by!(
+          gias_code: school.gias_local_authority_code
+        ) do |la|
+          la.mhclg_code =
+            "E0600#{school.gias_local_authority_code.to_s.rjust(4, "0")}"
+          la.official_name =
+            "Test Authority #{school.gias_local_authority_code}"
+          la.short_name = "Test LA #{school.gias_local_authority_code}"
+          la.nation = "England"
+        end
       end
 
       after(:create) do |location, evaluator|

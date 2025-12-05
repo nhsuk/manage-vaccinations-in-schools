@@ -31,6 +31,8 @@ class Note < ApplicationRecord
 
   has_one :team, through: :session
 
+  encrypts :body
+
   validates :body, presence: true, length: { maximum: 1000 }
 
   def programmes = session.programmes_for(year_group:)

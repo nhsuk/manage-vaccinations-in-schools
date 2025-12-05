@@ -27,7 +27,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
                 row.with_value { action_required }
               end
             end
-            
+
             if vaccine_type
               summary_list.with_row do |row|
                 row.with_key { "Vaccine type" }

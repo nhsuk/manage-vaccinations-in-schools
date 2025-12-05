@@ -20,6 +20,9 @@ describe "Parental consent" do
     then_i_can_check_my_answers
 
     when_i_submit_the_consent_form
+    then_i_see_the_confirmation_page
+
+    when_i_wait_for_the_background_jobs_to_complete
     then_i_get_a_confirmation_email_and_scheduled_survey_email
     and_i_get_a_confirmation_text
     and_the_consent_form_is_attached_to_the_session
@@ -139,9 +142,15 @@ describe "Parental consent" do
     click_on "Confirm"
   end
 
-  def then_i_get_a_confirmation_email_and_scheduled_survey_email
+  def then_i_see_the_confirmation_page
     expect(page).to have_content("Consent confirmed")
+  end
 
+  def when_i_wait_for_the_background_jobs_to_complete
+    perform_enqueued_jobs(only: ProcessConsentFormJob)
+  end
+
+  def then_i_get_a_confirmation_email_and_scheduled_survey_email
     expect_email_to("jane@example.com", :consent_confirmation_given)
   end
 

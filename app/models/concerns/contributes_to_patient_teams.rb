@@ -11,7 +11,7 @@ module ContributesToPatientTeams
           patient_location: {
             patient_id_source: "patient_locations.patient_id",
             team_id_source: "team_locations.team_id",
-            contribution_scope: joins_sessions
+            contribution_scope: joins_team_locations
           }
         }
       when "archive_reasons"
@@ -54,11 +54,6 @@ module ContributesToPatientTeams
         }
       when "sessions"
         {
-          patient_location: {
-            patient_id_source: "patient_locations.patient_id",
-            team_id_source: "team_locations.team_id",
-            contribution_scope: joins_patient_locations
-          },
           vaccination_record_session: {
             patient_id_source: "vaccination_records.patient_id",
             team_id_source: "team_locations.team_id",

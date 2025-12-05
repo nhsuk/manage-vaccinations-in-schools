@@ -49,9 +49,7 @@ describe AppConsentCardComponent do
       let(:consent) { create(:consent, :given_without_gelatine, programme:) }
 
       it do
-        expect(rendered).to have_content(
-          "Chosen vaccineGelatine-free injected vaccine only"
-        )
+        expect(rendered).to have_content("Chosen vaccineInjected vaccine only")
       end
     end
 

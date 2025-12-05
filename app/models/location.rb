@@ -27,21 +27,18 @@
 # Indexes
 #
 #  index_locations_on_ods_code        (ods_code) UNIQUE
-#  index_locations_on_subteam_id      (subteam_id)
 #  index_locations_on_systm_one_code  (systm_one_code) UNIQUE
 #  index_locations_on_urn             (urn) UNIQUE WHERE (site IS NULL)
 #  index_locations_on_urn_and_site    (urn,site) UNIQUE
-#
-# Foreign Keys
-#
-#  fk_rails_...  (subteam_id => subteams.id)
 #
 class Location < ApplicationRecord
   include AddressConcern
   include ODSCodeConcern
 
   self.inheritance_column = nil
-  self.ignored_columns = %w[subteam_id]
+
+  URN_HOME_EDUCATED = "999999"
+  URN_UNKNOWN = "888888"
 
   audited
   has_associated_audits
@@ -92,6 +89,8 @@ class Location < ApplicationRecord
   enum :type,
        { school: 0, generic_clinic: 1, community_clinic: 2, gp_practice: 3 }
 
+  scope :clinic, -> { generic_clinic.or(community_clinic) }
+
   scope :where_urn_and_site,
         ->(urn_and_site) do
           where(
@@ -115,6 +114,20 @@ class Location < ApplicationRecord
           end
         end
 
+  scope :where_phase,
+        ->(phase) { where(gias_phase: GIAS_PHASE_MAPPINGS.fetch(phase)) }
+
+  scope :with_team,
+        ->(academic_year:) do
+          where(
+            TeamLocation
+              .where("team_locations.location_id = locations.id")
+              .where(academic_year:)
+              .arel
+              .exists
+          )
+        end
+
   scope :without_team,
         ->(academic_year:) do
           where.not(
@@ -126,7 +139,7 @@ class Location < ApplicationRecord
           )
         end
 
-  scope :clinic, -> { generic_clinic.or(community_clinic) }
+  scope :order_by_name, -> { order(:name) }
 
   validates :name, presence: true
   validates :url, url: true, allow_nil: true
@@ -166,6 +179,11 @@ class Location < ApplicationRecord
     where_urn_and_site(urn_and_site).take!
   end
 
+  def to_param
+    # ODS code and URN+site are uniquely indexed.
+    ods_code || urn_and_site || id
+  end
+
   def urn_and_site
     return nil if urn.nil? && site.nil?
     site.nil? ? urn : urn + site
@@ -183,6 +201,24 @@ class Location < ApplicationRecord
 
   def dfe_number
     "#{gias_local_authority_code}#{gias_establishment_number}" if school?
+  end
+
+  def phase
+    if gias_phase
+      GIAS_PHASE_MAPPINGS
+        .find { |_, values| values.include?(gias_phase) }
+        &.first
+    end
+  end
+
+  def school_id = school? ? id : nil
+
+  def school_name
+    if generic_clinic?
+      "No known school (including home-schooled children)"
+    else
+      name
+    end
   end
 
   def as_json
@@ -233,6 +269,13 @@ class Location < ApplicationRecord
   private
 
   def organisation_ods_codes = Organisation.pluck(:ods_code)
+
+  GIAS_PHASE_MAPPINGS = {
+    "nursery" => %w[nursery],
+    "primary" => %w[primary middle_deemed_primary],
+    "secondary" => %w[secondary middle_deemed_secondary],
+    "other" => %w[sixteen_plus all_through not_applicable]
+  }.freeze
 
   def fhir_mapper
     @fhir_mapper ||= FHIRMapper::Location.new(self)

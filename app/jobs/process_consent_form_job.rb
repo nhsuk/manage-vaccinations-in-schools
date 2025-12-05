@@ -11,29 +11,28 @@ class ProcessConsentFormJob < ApplicationJob
 
     return if already_matched?
 
-    # Match if we find a patient with the PDS NHS number
-    return if match_with_exact_nhs_number
+    begin
+      if match_with_exact_nhs_number
+        # Match if we find a patient with the PDS NHS number
+      elsif location_patients.count == 1
+        # If we found exactly one, match the consent form to this patient
+        match_to_only_patient(location_patients.first)
+      elsif pds_patient && matching_patients.empty?
+        # If no patients are found, store the PDS NHS number in the consent form.
+        # A nurse may then create a patient record and we can try this job again
+        update_consent_form_nhs_number
+      end
 
-    # Look for patients in the original location with no NHS number
-    if location_patients.count == 1
-      # If we found exactly one, match the consent form to this patient
-      match_to_only_patient(location_patients.first)
+      # If we found:
+      # - No patients with the NHS number from the PDS record
+      # - 2 or more patients in the original session, matching with no NHS number
+      # - 1 or more patients in any session, matching with no NHS number
+      # Then do nothing; the nurse needs to match manually or create a new patient
+    rescue NHS::PDS::InvalidSearchData, NHS::PDS::TooManyMatches => e
+      Sentry.capture_exception(e, level: "warning")
+    ensure
+      send_confirmation_notification
     end
-
-    # Look for patients in any session with matching details
-    if pds_patient && matching_patients.empty?
-      # If no patients are found, store the PDS NHS number in the consent form.
-      # A nurse may then create a patient record and we can try this job again
-      update_consent_form_nhs_number
-    end
-
-    # If we found:
-    # - No patients with the NHS number from the PDS record
-    # - 2 or more patients in the original session, matching with no NHS number
-    # - 1 or more patients in any session, matching with no NHS number
-    # Then do nothing; the nurse needs to match manually or create a new patient
-  rescue NHS::PDS::InvalidSearchData, NHS::PDS::TooManyMatches => e
-    Sentry.capture_exception(e, level: "warning")
   end
 
   private
@@ -116,12 +115,19 @@ class ProcessConsentFormJob < ApplicationJob
 
     @consent_form.match_with_patient!(patient, current_user: nil)
 
-    reset_counts!
+    reset_counts
   end
 
-  def reset_counts!
+  def reset_counts
     cached_counts = TeamCachedCounts.new(@consent_form.team)
     cached_counts.reset_unmatched_consent_responses!
     cached_counts.reset_school_moves!
+  end
+
+  def send_confirmation_notification
+    unless @consent_form.confirmation_sent?
+      @consent_form.notifier.send_confirmation
+      @consent_form.confirmation_sent!
+    end
   end
 end

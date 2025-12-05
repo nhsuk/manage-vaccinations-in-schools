@@ -37,6 +37,9 @@ nhs_api:
   jwt_private_key: |
 <%= Rails.application.credentials.nhs_api&.jwt_private_key&.gsub(/^/, "    ") %>
 
+immunisations_api:
+  rate_limit_per_second: 20
+
 pds:
   enqueue_bulk_updates: true
   raise_unknown_gp_practice: true

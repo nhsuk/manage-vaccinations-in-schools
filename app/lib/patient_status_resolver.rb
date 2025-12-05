@@ -25,7 +25,8 @@ class PatientStatusResolver
         parts = [
           "given",
           vaccine_method,
-          without_gelatine ? "without_gelatine" : nil
+          without_gelatine ? "without_gelatine" : nil,
+          without_gelatine && @programme.flu? ? "flu" : nil
         ]
 
         parts.compact_blank.join("_")
@@ -74,7 +75,8 @@ class PatientStatusResolver
         parts = [
           "safe_to_vaccinate",
           vaccine_method,
-          without_gelatine ? "without_gelatine" : nil
+          without_gelatine ? "without_gelatine" : nil,
+          without_gelatine && @programme.flu? ? "flu" : nil
         ]
 
         parts.compact_blank.join("_")

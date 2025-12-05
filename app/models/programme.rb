@@ -6,6 +6,7 @@ class Programme
 
   TYPES = %w[flu hpv menacwy mmr td_ipv].freeze
   TYPES_SUPPORTING_DELEGATION = %w[flu].freeze
+  MIN_MMRV_ELIGIBILITY_DATE = Date.new(2020, 1, 1).freeze
 
   attr_accessor :type
 
@@ -22,20 +23,37 @@ class Programme
 
   def self.all = TYPES.map { find(it) }
 
-  def self.find(type)
+  def self.find(type, patient: nil, vaccine: nil)
     @programmes ||= {}
-    @programmes[type] ||= if exists?(type)
-      Programme.new(type:)
-    else
-      raise InvalidType, type
-    end
+
+    raise InvalidType, type unless exists?(type)
+
+    programme = @programmes[type] ||= Programme.new(type:)
+
+    # Variants are computed on-demand based on the actual patient/vaccine context.
+    variant_for(programme, patient, vaccine) || programme
   end
 
-  def self.find_all(types) = types.map { find(it) }
+  def self.find_all(types, patient: nil) = types.map { find(it, patient:) }
 
   def self.exists?(type) = type.in?(TYPES)
 
   def self.sample = find(TYPES.sample)
+
+  def self.variant_for(programme, patient, vaccine)
+    variant_type = "mmrv" if mmrv_variant?(programme, patient, vaccine)
+    ProgrammeVariant.new(programme, variant_type:) if variant_type
+  end
+
+  def self.mmrv_variant?(programme, patient, vaccine)
+    return unless Flipper.enabled?(:mmrv)
+    return false unless programme.mmr?
+
+    patient&.date_of_birth&.>=(MIN_MMRV_ELIGIBILITY_DATE) ||
+      vaccine&.disease_types&.include?("varicella")
+  end
+
+  private_class_method :variant_for, :mmrv_variant?
 
   def to_param = type
 
@@ -47,6 +65,8 @@ class Programme
 
   def <=>(other) = type <=> other.type
 
+  def translation_key = type
+
   delegate :hash, to: :type
 
   TYPES.each { |type| define_method("#{type}?") { self.type == type } }
@@ -57,6 +77,10 @@ class Programme
 
   def name_in_sentence
     @name_in_sentence ||= flu? ? name.downcase : name
+  end
+
+  def filter_name
+    Flipper.enabled?(:mmrv) && mmr? ? "MMR(V)" : name
   end
 
   def doubles? = menacwy? || td_ipv?
@@ -179,6 +203,28 @@ class Programme
 
   def snomed_target_disease_name
     SNOMED_TARGET_DISEASE_NAMES.fetch(type)
+  end
+
+  SNOMED_PROCEDURE_TERMS = {
+    "flu" => "Seasonal influenza vaccination (procedure)",
+    "hpv" =>
+      "Administration of vaccine product containing only Human " \
+        "papillomavirus antigen (procedure)",
+    "menacwy" =>
+      "Administration of vaccine product containing only Neisseria " \
+        "meningitidis serogroup A, C, W135 and Y antigens (procedure)",
+    "mmr" =>
+      "Administration of vaccine product containing only Measles " \
+        "morbillivirus and Mumps orthorubulavirus and Rubella virus " \
+        "antigens (procedure)",
+    "td_ipv" =>
+      "Administration of vaccine product containing only Clostridium " \
+        "tetani and Corynebacterium diphtheriae and Human poliovirus " \
+        "antigens (procedure)"
+  }.freeze
+
+  def snomed_procedure_term
+    SNOMED_PROCEDURE_TERMS.fetch(type)
   end
 
   delegate :fhir_target_disease_coding, to: :fhir_mapper

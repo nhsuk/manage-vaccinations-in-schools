@@ -13,6 +13,7 @@ en:
         given: Consent given
         given_injection: Consent given
         given_injection_without_gelatine: Consent given for gelatine-free injection
+        given_injection_without_gelatine_flu: Consent given for injection
         given_nasal: Consent given for nasal spray
         no_response: No response
         not_required: No consent needed
@@ -22,6 +23,7 @@ en:
         given: aqua-green
         given_injection: aqua-green
         given_injection_without_gelatine: aqua-green
+        given_injection_without_gelatine_flu: aqua-green
         given_nasal: aqua-green
         no_response: grey
         not_required: grey
@@ -126,6 +128,7 @@ en:
         safe_to_vaccinate_injection: Safe to vaccinate
         safe_to_vaccinate_nasal: Safe to vaccinate with nasal spray
         safe_to_vaccinate_injection_without_gelatine: Safe to vaccinate with gelatine-free injection
+        safe_to_vaccinate_injection_without_gelatine_flu: Safe to vaccinate withinjection
       colour:
         delay_vaccination: dark-orange
         invite_to_clinic: yellow
@@ -136,6 +139,7 @@ en:
         safe_to_vaccinate_injection: aqua-green
         safe_to_vaccinate_nasal: aqua-green
         safe_to_vaccinate_injection_without_gelatine: aqua-green
+        safe_to_vaccinate_injection_without_gelatine_flu: aqua-green
     vaccination:
       label:
         due: Due vaccination

@@ -347,23 +347,23 @@ describe Patient do
 
       let(:patient_a) do
         # exact match comes first
-        create(:patient, given_name: "Harry", family_name: "Potter")
+        create(:patient, given_name: "Neil", family_name: "Armstrong")
       end
       let(:patient_b) do
         # similar match comes next
-        create(:patient, given_name: "Hari", family_name: "Potte")
+        create(:patient, given_name: "Nei", family_name: "Armstro")
       end
       let(:patient_c) do
         # least similar match comes last
-        create(:patient, given_name: "Arry", family_name: "Pott")
+        create(:patient, given_name: "Ne", family_name: "Arms")
       end
       let(:patient_d) do
         # no match isn't returned
-        create(:patient, given_name: "Ron", family_name: "Weasley")
+        create(:patient, given_name: "Buzz", family_name: "Aldrin")
       end
 
       context "with full name, in `given_name family_name` format" do
-        let(:query) { "Harry Potter" }
+        let(:query) { "Neil Armstrong" }
 
         it "returns the patients in the correct order" do
           expect(scope).to eq([patient_a, patient_b, patient_c])
@@ -371,7 +371,7 @@ describe Patient do
       end
 
       context "with exact name, in `FAMILY_NAME, given_name` format" do
-        let(:query) { "POTTER, Harry" }
+        let(:query) { "ARMSTRONG, Neil" }
 
         it "returns the patients in the correct order" do
           expect(scope).to eq([patient_a, patient_b, patient_c])
@@ -379,7 +379,7 @@ describe Patient do
       end
 
       context "with exact name, in `family_name given_name` format" do
-        let(:query) { "Potter Harry" }
+        let(:query) { "Armstrong Neil" }
 
         it "returns the patients in the correct order" do
           expect(scope).to eq([patient_a, patient_b, patient_c])
@@ -387,7 +387,7 @@ describe Patient do
       end
 
       context "with last name only" do
-        let(:query) { "Potter" }
+        let(:query) { "Armstrong" }
 
         it "returns the patients in the correct order" do
           expect(scope).to eq([patient_a, patient_b, patient_c])
@@ -395,10 +395,26 @@ describe Patient do
       end
 
       context "with first name only" do
-        let(:query) { "Harry" }
+        let(:query) { "Neil" }
 
         it "returns the patients in the correct order" do
           expect(scope).to eq([patient_a])
+        end
+      end
+
+      context "with only a small part of the surname" do
+        let(:query) { "Arm" }
+
+        it "still finds all three patients" do
+          expect(scope).to contain_exactly(patient_c, patient_b, patient_a)
+        end
+      end
+
+      context "with first name and a small part of the surname" do
+        let(:query) { "Neil Arm" }
+
+        it "returns the patients in the correct order" do
+          expect(scope).to eq([patient_a, patient_b, patient_c])
         end
       end
     end
@@ -687,25 +703,42 @@ describe Patient do
   end
 
   describe "#archived?" do
-    subject(:archived?) { patient.archived?(team:) }
-
     let(:patient) { create(:patient) }
     let(:team) { create(:team) }
 
-    context "without an archive reason" do
-      it { should be(false) }
+    shared_examples "archived? behavior" do
+      context "without an archive reason" do
+        it { should be(false) }
+      end
+
+      context "with an archive reason for the team" do
+        before { create(:archive_reason, :moved_out_of_area, team:, patient:) }
+
+        it { should be(true) }
+      end
+
+      context "with an archive reason for a different team" do
+        before { create(:archive_reason, :imported_in_error, patient:) }
+
+        it { should be(false) }
+      end
     end
 
-    context "with an archive reason for the team" do
-      before { create(:archive_reason, :moved_out_of_area, team:, patient:) }
+    context "without preloading" do
+      subject(:archived?) { patient.archived?(team:) }
 
-      it { should be(true) }
+      include_examples "archived? behavior"
     end
 
-    context "with an archive reason for a different team" do
-      before { create(:archive_reason, :imported_in_error, patient:) }
+    context "with preloading" do
+      subject(:archived?) do
+        described_class
+          .includes(:archive_reasons)
+          .find(patient.id)
+          .archived?(team:)
+      end
 
-      it { should be(false) }
+      include_examples "archived? behavior"
     end
   end
 
@@ -729,6 +762,65 @@ describe Patient do
       before { create(:archive_reason, :imported_in_error, patient:) }
 
       it { should be(true) }
+    end
+  end
+
+  describe "#not_in_team?" do
+    let(:patient) { create(:patient) }
+    let(:team) { create(:team) }
+    let(:academic_year) { 2025 }
+    let(:school) { create(:school, team:) }
+
+    shared_examples "not_in_team? behavior" do
+      context "when the patient is in the team" do
+        before { SchoolMove.new(patient:, school:, academic_year:).confirm! }
+
+        it { should be(false) }
+      end
+
+      context "when the patient is not in the team" do
+        it { should be(true) }
+      end
+
+      context "when the patient is in the team for a different academic year" do
+        before do
+          SchoolMove.new(patient:, school:, academic_year: 2024).confirm!
+        end
+
+        it { should be(true) }
+      end
+
+      context "when the patient is in a different team" do
+        let(:other_team) { create(:team) }
+        let(:other_school) { create(:school, team: other_team) }
+
+        before do
+          SchoolMove.new(
+            patient:,
+            school: other_school,
+            academic_year:
+          ).confirm!
+        end
+
+        it { should be(true) }
+      end
+    end
+
+    context "without preloading" do
+      subject(:not_in_team?) { patient.not_in_team?(team:, academic_year:) }
+
+      include_examples "not_in_team? behavior"
+    end
+
+    context "with preloading" do
+      subject(:not_in_team?) do
+        described_class
+          .includes(patient_locations: { location: :team_locations })
+          .find(patient.id)
+          .not_in_team?(team:, academic_year:)
+      end
+
+      include_examples "not_in_team? behavior"
     end
   end
 

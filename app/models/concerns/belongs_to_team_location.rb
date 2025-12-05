@@ -4,8 +4,6 @@ module BelongsToTeamLocation
   extend ActiveSupport::Concern
 
   included do
-    self.ignored_columns = %w[team_id location_id academic_year]
-
     audited associated_with: :team_location
     has_associated_audits
 
