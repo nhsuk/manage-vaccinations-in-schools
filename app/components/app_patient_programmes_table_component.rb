@@ -80,13 +80,7 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
     @programme_status_hash[programme.type][
       academic_year
     ] ||= PatientStatusResolver.new(patient, programme:, academic_year:).send(
-      (
-        if Flipper.enabled?(:programme_status, current_team)
-          :programme
-        else
-          :vaccination
-        end
-      )
+      :programme
     )
   end
 end

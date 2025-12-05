@@ -37,10 +37,6 @@ ops_tools: Enable the operational support tools; timeline and graph.
 
 pds_cascading_search: Enable cascading PDS searches for patients without an NHS number.
 
-programme_status: |
-  Whether to use the new consolidated programme status instead of the old
-  consent, triage and vaccination statuses.
-
 reporting_api: Enables the Commissioner reporting component to authenticate to Mavis via OAUTH 2.0
   Authorization Code Flow (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), and retrieve
   statistics from /api/reporting/
