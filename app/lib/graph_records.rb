@@ -180,7 +180,7 @@ class GraphRecords
       uuid
     ],
     programme: %i[type],
-    vaccine: %i[nivs_name],
+    vaccine: %i[upload_name],
     organisation: %i[ods_code],
     team: %i[name workgroup],
     subteam: %i[name],

@@ -12,22 +12,21 @@
 #  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
 #  method              :integer          not null
-#  nivs_name           :text             not null
 #  programme_type      :enum             not null
 #  side_effects        :integer          default([]), not null, is an Array
 #  snomed_product_code :string           not null
 #  snomed_product_term :string           not null
-#  upload_name         :text
+#  upload_name         :text             not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #
 # Indexes
 #
 #  index_vaccines_on_manufacturer_and_brand  (manufacturer,brand) UNIQUE
-#  index_vaccines_on_nivs_name               (nivs_name) UNIQUE
 #  index_vaccines_on_programme_type          (programme_type)
 #  index_vaccines_on_snomed_product_code     (snomed_product_code) UNIQUE
 #  index_vaccines_on_snomed_product_term     (snomed_product_term) UNIQUE
+#  index_vaccines_on_upload_name             (upload_name) UNIQUE
 #
 FactoryBot.define do
   factory :vaccine do
@@ -37,7 +36,7 @@ FactoryBot.define do
 
     brand { Faker::Commerce.product_name }
     manufacturer { Faker::Company.name }
-    sequence(:nivs_name) { |n| "#{brand.parameterize}-#{n}" }
+    sequence(:upload_name) { |n| "#{brand.parameterize}-#{n}" }
     dose_volume_ml { Faker::Number.decimal(l_digits: 0) }
     snomed_product_code { Faker::Number.decimal_part(digits: 17) }
     snomed_product_term { Faker::Lorem.sentence }
@@ -193,7 +192,7 @@ FactoryBot.define do
         disease_types { data["disease_types"] }
         manufacturer { data["manufacturer"] }
         add_attribute(:method) { data["method"] }
-        nivs_name { data["nivs_name"] }
+        upload_name { data["upload_name"] }
         snomed_product_code { data["snomed_product_code"] }
         snomed_product_term { data["snomed_product_term"] }
       end
