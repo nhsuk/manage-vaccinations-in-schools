@@ -98,6 +98,16 @@ describe ClassImportRow do
       end
     end
 
+    ["ZZ99 3VZ", "ZZ99 3WZ", "ZZ99 3CZ"].each do |pseudo_postcode|
+      context "with a pseudo-postcode" do
+        let(:data) { valid_data.merge("CHILD_POSTCODE" => pseudo_postcode) }
+
+        it "is invalid" do
+          expect(class_import_row).to be_valid
+        end
+      end
+    end
+
     context "with an invalid year group" do
       let(:data) { valid_data.merge("CHILD_YEAR_GROUP" => "abc") }
 
