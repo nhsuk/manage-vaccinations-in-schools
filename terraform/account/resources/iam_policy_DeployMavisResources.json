@@ -92,6 +92,10 @@
         "iam:DetachRolePolicy",
         "kms:CreateGrant",
         "kms:Decrypt",
+        "lambda:AddPermission",
+        "lambda:RemovePermission",
+        "lambda:UpdateFunctionCode",
+        "lambda:UpdateFunctionConfiguration",
         "logs:PutResourcePolicy",
         "logs:DescribeResourcePolicies",
         "logs:DescribeLogGroups",
@@ -166,7 +170,9 @@
         "servicediscovery:GetNamespace",
         "servicediscovery:UpdatePrivateDnsNamespace",
         "servicediscovery:UpdateService",
-        "servicediscovery:UpdateServiceAttributes"
+        "servicediscovery:UpdateServiceAttributes",
+        "SNS:Subscribe",
+        "SNS:Unsubscribe"
       ],
       "Resource": ["*"]
     }

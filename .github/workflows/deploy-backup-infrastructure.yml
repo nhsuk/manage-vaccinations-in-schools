@@ -49,11 +49,12 @@ jobs:
         id: plan
         env:
           PERSONAL_ACCESS_TOKEN: ${{ secrets.BACKUP_MODULES_ACCESS_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ inputs.environment == 'production' && secrets.SLACK_AWS_BACKUP_PRODUCTION_WEBHOOK || secrets.SLACK_AWS_BACKUP_TEST_WEBHOOK }}
         run: |
           set -e
           git config --global url."https://foo:${PERSONAL_ACCESS_TOKEN}@github.com/NHSDigital".insteadOf "https://github.com/NHSDigital"
           terraform init -backend-config="env/$environment-backend.hcl" -upgrade
-          terraform plan -var-file="env/$environment.tfvars" \
+          terraform plan -var-file="env/$environment.tfvars" -var="slack_webhook_url=${SLACK_WEBHOOK_URL}" \
           -out ${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
       - name: Validate the changes
         run: |
@@ -64,6 +65,11 @@ jobs:
         with:
           name: tfplan_infrastructure-${{ inputs.environment }}
           path: ${{ runner.temp }}/tfplan
+      - name: Upload Lambda
+        uses: actions/upload-artifact@v5
+        with:
+          name: backup_alert_lambda_${{ inputs.environment }}
+          path: terraform/backup/source/lambda/backup_alert_function.zip
 
   apply:
     name: Terraform apply
@@ -85,6 +91,11 @@ jobs:
         with:
           name: tfplan_infrastructure-${{ inputs.environment }}
           path: ${{ runner.temp }}
+      - name: Download Lambda zip
+        uses: actions/download-artifact@v6
+        with:
+          name: backup_alert_lambda_${{ inputs.environment }}
+          path: terraform/backup/source/lambda
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:

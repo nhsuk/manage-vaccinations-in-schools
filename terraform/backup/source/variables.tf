@@ -21,3 +21,16 @@ variable "backup_retention_period" {
   type        = number
   nullable    = false
 }
+
+variable "source_account_id" {
+  description = "AWS Account ID of the source account"
+  type        = string
+  nullable    = false
+}
+
+variable "slack_webhook_url" {
+  description = "Notification about failed backup jobs are sent to this Slack webhook URL"
+  type        = string
+  nullable    = false
+  sensitive   = true
+}
