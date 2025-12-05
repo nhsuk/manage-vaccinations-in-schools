@@ -96,6 +96,44 @@ describe InvalidateSelfConsentsJob do
       end
     end
 
+    context "with an expired delay vaccination triage" do
+      let(:triage) do
+        create(
+          :triage,
+          :delay_vaccination,
+          academic_year:,
+          created_at: 1.day.ago,
+          delay_vaccination_until: 1.day.ago,
+          team:,
+          programme:,
+          patient:
+        )
+      end
+
+      it "doesn't invalidate the triage" do
+        expect { perform_now }.not_to(change { triage.reload.invalidated? })
+      end
+    end
+
+    context "with a delay vaccination triage that's not expired" do
+      let(:triage) do
+        create(
+          :triage,
+          :delay_vaccination,
+          academic_year:,
+          created_at: 1.day.ago,
+          delay_vaccination_until: 28.days.from_now,
+          team:,
+          programme:,
+          patient:
+        )
+      end
+
+      it "doesn't invalidate the triage" do
+        expect { perform_now }.not_to(change { triage.reload.invalidated? })
+      end
+    end
+
     context "if the patient was vaccinated" do
       before do
         create(

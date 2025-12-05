@@ -36,7 +36,7 @@ class InvalidateSelfConsentsJob < ApplicationJob
 
         ActiveRecord::Base.transaction do
           consents.invalidate_all
-          triages.invalidate_all
+          triages.safe_to_invalidate_automatically.invalidate_all
         end
       end
     end
