@@ -14,6 +14,8 @@ class ProgrammeVariant < SimpleDelegator
 
   def translation_key = variant_type
 
+  def disease_types = DISEASE_TYPES.fetch(variant_type)
+
   def name
     @name ||= I18n.t(variant_type, scope: :programme_types)
   end
@@ -23,7 +25,7 @@ class ProgrammeVariant < SimpleDelegator
   end
 
   def vaccines
-    @vaccines ||= Vaccine.where_programme(self, DISEASE_TYPES[variant_type])
+    @vaccines ||= Vaccine.where_programme(self, disease_types)
   end
 
   def snomed_procedure_term
