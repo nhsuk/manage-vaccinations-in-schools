@@ -91,6 +91,8 @@ class Programme
     Flipper.enabled?(:mmrv) && mmr? ? "MMR(V)" : name
   end
 
+  def disease_types = DISEASE_TYPES.fetch(type)
+
   def doubles? = menacwy? || td_ipv?
 
   def seasonal? = flu?
@@ -126,7 +128,7 @@ class Programme
   end
 
   def vaccines
-    @vaccines ||= Vaccine.where_programme(self, DISEASE_TYPES[type])
+    @vaccines ||= Vaccine.where_programme(self, disease_types)
   end
 
   def vaccine_methods
