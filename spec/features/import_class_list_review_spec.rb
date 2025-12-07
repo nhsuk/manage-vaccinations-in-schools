@@ -381,7 +381,7 @@ describe "Import class lists" do
     find(".nhsuk-details__summary", text: "1 new record").click
     expect(page).to have_content("KLEIN, Calvin")
 
-    expect(page).not_to have_content("will need review after import")
+    expect(page).not_to have_content("resolve after import")
 
     expect(PatientChangeset.all.pluck(:status).uniq).to eq(["ready_for_review"])
   end

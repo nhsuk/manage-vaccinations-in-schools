@@ -126,7 +126,7 @@ describe AppImportReviewComponent do
 
     include_examples "section with details",
                      title:
-                       "Children moving from another SAIS team's area - will need review after import",
+                       "Children moving from another SAIS team's area - resolve after import",
                      summary: "1 school move across teams",
                      count: 1
 
@@ -135,7 +135,7 @@ describe AppImportReviewComponent do
         "This upload includes child who is currently registered with another team"
       )
       expect(rendered).to have_content(
-        "If you approve the upload, the records below will be flagged as school moves needing review"
+        "If you approve the upload, you will need to resolve this record in the School moves area of Mavis."
       )
     end
   end
@@ -178,7 +178,7 @@ describe AppImportReviewComponent do
 
     include_examples "section with details",
                      title:
-                       "Close matches to existing records - will need review after import",
+                       "Close matches to existing records - resolve after import",
                      summary: "2 close matches to existing records",
                      count: 2
 
@@ -187,7 +187,7 @@ describe AppImportReviewComponent do
         "This upload includes 2 records that are close matches to existing records in Mavis"
       )
       expect(rendered).to have_content(
-        "If you approve the upload, any differences will be flagged as import issues needing review"
+        "If you approve the upload, you will need to resolve these records in the Issues tab."
       )
     end
   end
@@ -213,7 +213,7 @@ describe AppImportReviewComponent do
     end
 
     include_examples "section with details",
-                     title: "School moves - will need review after import",
+                     title: "School moves - resolve after import",
                      summary: "2 school moves",
                      count: 2
 
