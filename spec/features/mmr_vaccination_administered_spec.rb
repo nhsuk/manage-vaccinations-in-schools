@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 describe "MMR vaccination" do
-  around { |example| travel_to(Time.zone.local(2024, 10, 1)) { example.run } }
+  around do |example|
+    travel_to(Time.zone.local(2024, 10, 1, 9)) { example.run }
+  end
 
   scenario "administered without gelatine only" do
     given_i_am_signed_in_with_mmr_programme
@@ -48,6 +50,15 @@ describe "MMR vaccination" do
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_to_the_parent_confirming_the_vaccination
     and_a_text_is_sent_to_the_parent_confirming_the_vaccination
+
+    when_i_visit_the_patient_mmr_tab
+    then_i_should_see_a_triage_for_the_next_vaccination_dose
+
+    when_i_wait_28_days
+    and_i_am_signed_in
+
+    when_i_visit_the_patient_mmr_tab
+    then_i_see_the_patient_needs_triage
   end
 
   scenario "administered with gelatine" do
@@ -88,6 +99,10 @@ describe "MMR vaccination" do
         programmes: [@programme],
         location: @location
       )
+    sign_in @team.users.first
+  end
+
+  def and_i_am_signed_in
     sign_in @team.users.first
   end
 
@@ -332,5 +347,14 @@ describe "MMR vaccination" do
 
   def then_the_delayed_triage_is_updated_to_the_new_date
     expect(page).to have_content("Next dose 27 October 2024")
+  end
+
+  def when_i_wait_28_days
+    travel 28.days
+    StatusUpdater.call
+  end
+
+  def then_i_see_the_patient_needs_triage
+    expect(page).to have_content("MMR: Needs triage")
   end
 end

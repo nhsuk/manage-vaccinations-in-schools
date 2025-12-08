@@ -1,0 +1,63 @@
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t("schools.index.title"), href: schools_path },
+                                          { text: @location.name, href: school_patients_path(@location) },
+                                        ]) %>
+<% end %>
+
+<%= render "header" %>
+
+<% if @unscheduled_sessions.present? %>
+  <h3 class="nhsuk-heading-m">Unscheduled sessions</h3>
+
+  <div class="nhsuk-grid-row nhsuk-card-group">
+    <% @unscheduled_sessions.each do |session| %>
+      <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+        <%= render AppSessionCardComponent.new(
+              session,
+              patient_count: @patient_count_by_session_id.fetch(session.id, 0),
+              heading_as_dates: true,
+              full_width: true,
+              show_buttons: true,
+            ) %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @scheduled_sessions.present? %>
+  <h3 class="nhsuk-heading-m">Scheduled sessions</h3>
+
+  <div class="nhsuk-grid-row nhsuk-card-group">
+    <% @scheduled_sessions.each do |session| %>
+      <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+        <%= render AppSessionCardComponent.new(
+              session,
+              patient_count: @patient_count_by_session_id.fetch(session.id, 0),
+              heading_as_dates: true,
+              full_width: true,
+              show_buttons: true,
+            ) %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @completed_sessions.present? %>
+  <h3 class="nhsuk-heading-m">Completed sessions</h3>
+
+  <div class="nhsuk-grid-row nhsuk-card-group">
+    <% @completed_sessions.each do |session| %>
+      <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+        <%= render AppSessionCardComponent.new(
+              session,
+              patient_count: @patient_count_by_session_id.fetch(session.id, 0),
+              heading_as_dates: true,
+              full_width: true,
+              show_buttons: true,
+            ) %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

@@ -128,6 +128,57 @@ class PatientImport < ApplicationRecord
     end
   end
 
+  def destroy_parent_relationships_and_invalidate_consents!(
+    current_user,
+    consents
+  )
+    ActiveRecord::Base.transaction do
+      parent_relationships =
+        self.parent_relationships.includes(:parent, :patient)
+
+      parents_to_check = parent_relationships.map(&:parent)
+
+      parent_relationships.destroy_all
+
+      parents_to_check.each do |parent|
+        if parent.parent_relationships.empty? && parent.consents.empty?
+          parent.destroy!
+        end
+      end
+
+      timestamp = Time.current.to_fs(:long)
+      user_name = current_user&.full_name || "system"
+      invalidation_note =
+        "Consent invalidated on #{timestamp} " \
+          "because #{user_name} removed all parent-child relationships from an import."
+
+      Consent.where(id: consents.map(&:id)).update_all(
+        notes: invalidation_note,
+        invalidated_at: Time.current
+      )
+
+      StatusUpdaterJob.perform_bulk(consents.map(&:patient_id).uniq.zip)
+    end
+  end
+
+  def destroy_parent_relationships_without_consent!(consents)
+    ActiveRecord::Base.transaction do
+      parent_relationships_without_consents =
+        parent_relationships.includes(:parent, :patient) -
+          consents.map(&:parent_relationship).uniq
+
+      parents_to_check = parent_relationships_without_consents.map(&:parent)
+
+      parent_relationships_without_consents.each(&:destroy!)
+
+      parents_to_check.each do |parent|
+        if parent.parent_relationships.empty? && parent.consents.empty?
+          parent.destroy!
+        end
+      end
+    end
+  end
+
   private
 
   def process_no_postcode_changesets(changesets)

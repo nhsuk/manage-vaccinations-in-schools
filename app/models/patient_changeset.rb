@@ -188,6 +188,7 @@ class PatientChangeset < ApplicationRecord
   end
 
   def patient
+    return super if patient_id.present?
     @patient ||=
       if (existing_patient = existing_patients.first)
         prepare_patient_changes(existing_patient)
@@ -268,7 +269,7 @@ class PatientChangeset < ApplicationRecord
              patient.home_educated != home_educated ||
              patient.not_in_team?(team:, academic_year:) ||
              patient.archived?(team:) || patient.school_moves.any?
-          school_move = SchoolMove.find_or_initialize_by(patient:)
+          school_move = patient.school_moves.first || SchoolMove.new(patient:)
           school_move.assign_from(school:, home_educated:, team:)
           school_move.assign_attributes(
             academic_year:,
@@ -290,7 +291,10 @@ class PatientChangeset < ApplicationRecord
     end
 
     matches =
-      Patient.includes(:patient_locations).match_existing(
+      Patient.includes(
+        :patient_locations,
+        school_moves: :school_teams
+      ).match_existing(
         nhs_number: child_attributes["nhs_number"],
         given_name: child_attributes["given_name"],
         family_name: child_attributes["family_name"],
@@ -372,7 +376,7 @@ class PatientChangeset < ApplicationRecord
   end
 
   def inter_team_move?
-    return false unless patient.persisted? && school_move.present?
+    return false unless patient_id.present? && school_move.present?
 
     school_move.from_another_team?
   end
@@ -443,6 +447,7 @@ class PatientChangeset < ApplicationRecord
 
   def calculate_review_data!
     clear_review_data!
+    reset_patient_id! if patient_id.present?
 
     update_column(:record_type, changeset_type)
     return if new_patient?
@@ -465,5 +470,9 @@ class PatientChangeset < ApplicationRecord
   def clear_review_data!
     data["review"] = { patient: {}, school_move: {} }
     save!
+  end
+
+  def reset_patient_id!
+    update_column(:patient_id, nil)
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_03_143325) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -203,7 +203,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
   end
 
   create_table "consent_forms", force: :cascade do |t|
-    t.integer "academic_year"
     t.string "address_line_1"
     t.string "address_line_2"
     t.string "address_postcode"
@@ -216,7 +215,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
     t.text "family_name"
     t.text "given_name"
     t.jsonb "health_answers", default: [], null: false
-    t.bigint "location_id"
     t.string "nhs_number"
     t.text "notes", default: "", null: false
     t.bigint "original_session_id"
@@ -233,16 +231,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
     t.datetime "recorded_at"
     t.boolean "school_confirmed"
     t.bigint "school_id"
-    t.bigint "team_id"
     t.bigint "team_location_id", null: false
     t.datetime "updated_at", null: false
     t.boolean "use_preferred_name"
-    t.index ["academic_year"], name: "index_consent_forms_on_academic_year"
-    t.index ["location_id"], name: "index_consent_forms_on_location_id"
     t.index ["nhs_number"], name: "index_consent_forms_on_nhs_number"
     t.index ["original_session_id"], name: "index_consent_forms_on_original_session_id"
     t.index ["school_id"], name: "index_consent_forms_on_school_id"
-    t.index ["team_id"], name: "index_consent_forms_on_team_id"
     t.index ["team_location_id"], name: "index_consent_forms_on_team_location_id"
   end
 
@@ -366,6 +360,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
     t.jsonb "serialized_errors"
     t.integer "status", default: 0, null: false
     t.bigint "team_id", null: false
+    t.integer "type", default: 0, null: false
     t.datetime "updated_at", null: false
     t.bigint "uploaded_by_user_id", null: false
     t.index ["team_id"], name: "index_immunisation_imports_on_team_id"
@@ -477,14 +472,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
     t.string "ods_code"
     t.string "site"
     t.integer "status", default: 0, null: false
-    t.bigint "subteam_id"
     t.string "systm_one_code"
     t.integer "type", null: false
     t.datetime "updated_at", null: false
     t.text "url"
     t.string "urn"
     t.index ["ods_code"], name: "index_locations_on_ods_code", unique: true
-    t.index ["subteam_id"], name: "index_locations_on_subteam_id"
     t.index ["systm_one_code"], name: "index_locations_on_systm_one_code", unique: true
     t.index ["urn", "site"], name: "index_locations_on_urn_and_site", unique: true
     t.index ["urn"], name: "index_locations_on_urn", unique: true, where: "(site IS NULL)"
@@ -798,26 +791,18 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
   end
 
   create_table "sessions", force: :cascade do |t|
-    t.integer "academic_year"
     t.datetime "created_at", null: false
     t.date "dates", null: false, array: true
     t.integer "days_before_consent_reminders"
-    t.bigint "location_id"
     t.boolean "national_protocol_enabled", default: false, null: false
     t.boolean "psd_enabled", default: false, null: false
     t.boolean "requires_registration", default: true, null: false
     t.date "send_consent_requests_at"
     t.date "send_invitations_at"
     t.string "slug", null: false
-    t.bigint "team_id"
     t.bigint "team_location_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["academic_year", "location_id", "team_id"], name: "index_sessions_on_academic_year_and_location_id_and_team_id"
     t.index ["dates"], name: "index_sessions_on_dates", using: :gin
-    t.index ["location_id", "academic_year", "team_id"], name: "index_sessions_on_location_id_and_academic_year_and_team_id"
-    t.index ["location_id"], name: "index_sessions_on_location_id"
-    t.index ["team_id", "academic_year"], name: "index_sessions_on_team_id_and_academic_year"
-    t.index ["team_id", "location_id"], name: "index_sessions_on_team_id_and_location_id"
     t.index ["team_location_id"], name: "index_sessions_on_team_location_id"
   end
 
@@ -983,6 +968,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
     t.boolean "contains_gelatine", null: false
     t.datetime "created_at", null: false
     t.boolean "discontinued", default: false, null: false
+    t.integer "disease_types", default: [], null: false, array: true
     t.decimal "dose_volume_ml", null: false
     t.text "manufacturer", null: false
     t.integer "method", null: false
@@ -992,6 +978,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
     t.string "snomed_product_code", null: false
     t.string "snomed_product_term", null: false
     t.datetime "updated_at", null: false
+    t.text "upload_name"
     t.index ["manufacturer", "brand"], name: "index_vaccines_on_manufacturer_and_brand", unique: true
     t.index ["nivs_name"], name: "index_vaccines_on_nivs_name", unique: true
     t.index ["programme_type"], name: "index_vaccines_on_programme_type"
@@ -1028,11 +1015,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
   add_foreign_key "cohort_imports_patients", "cohort_imports", on_delete: :cascade
   add_foreign_key "cohort_imports_patients", "patients", on_delete: :cascade
   add_foreign_key "consent_form_programmes", "consent_forms", on_delete: :cascade
-  add_foreign_key "consent_forms", "locations"
   add_foreign_key "consent_forms", "locations", column: "school_id"
   add_foreign_key "consent_forms", "sessions", column: "original_session_id"
   add_foreign_key "consent_forms", "team_locations"
-  add_foreign_key "consent_forms", "teams"
   add_foreign_key "consent_notifications", "patients"
   add_foreign_key "consent_notifications", "sessions"
   add_foreign_key "consent_notifications", "users", column: "sent_by_user_id"
@@ -1065,7 +1050,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
   add_foreign_key "important_notices", "vaccination_records"
   add_foreign_key "location_programme_year_groups", "location_year_groups", on_delete: :cascade
   add_foreign_key "location_year_groups", "locations", on_delete: :cascade
-  add_foreign_key "locations", "subteams"
   add_foreign_key "notes", "patients"
   add_foreign_key "notes", "sessions"
   add_foreign_key "notes", "users", column: "created_by_user_id"
@@ -1110,7 +1094,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
   add_foreign_key "session_notifications", "users", column: "sent_by_user_id"
   add_foreign_key "session_programme_year_groups", "sessions", on_delete: :cascade
   add_foreign_key "sessions", "team_locations"
-  add_foreign_key "sessions", "teams"
   add_foreign_key "subteams", "teams"
   add_foreign_key "team_locations", "locations"
   add_foreign_key "team_locations", "subteams"
@@ -1141,7 +1124,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
              FROM ((vaccination_records vr
                JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
                JOIN team_locations vr_tl ON ((vr_tl.id = vr_s.team_location_id)))
-            WHERE (vr.discarded_at IS NULL)
+            WHERE ((vr.discarded_at IS NULL) AND ((vr.programme_type <> 'td_ipv'::programme_type) OR (vr.dose_sequence = 5) OR (vr.dose_sequence IS NULL)))
             GROUP BY vr.patient_id, vr.programme_type, vr_tl.team_id, vr_tl.academic_year
           ), all_vaccinations_by_year AS (
            SELECT vr.patient_id,
@@ -1153,7 +1136,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
              FROM ((vaccination_records vr
                JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
                JOIN team_locations vr_tl ON ((vr_tl.id = vr_s.team_location_id)))
-            WHERE (vr.discarded_at IS NULL)
+            WHERE ((vr.discarded_at IS NULL) AND ((vr.programme_type <> 'td_ipv'::programme_type) OR (vr.dose_sequence = 5) OR (vr.dose_sequence IS NULL)))
           UNION ALL
            SELECT vr.patient_id,
               vr.programme_type,
@@ -1165,7 +1148,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
               vr.outcome,
               vr.source
              FROM vaccination_records vr
-            WHERE ((vr.discarded_at IS NULL) AND (vr.source = ANY (ARRAY[1, 2])) AND (vr.session_id IS NULL))
+            WHERE ((vr.discarded_at IS NULL) AND (vr.source = ANY (ARRAY[1, 2])) AND (vr.session_id IS NULL) AND ((vr.programme_type <> 'td_ipv'::programme_type) OR (vr.dose_sequence = 5)))
           ), base_data AS (
            SELECT concat(p.id, '-', (patient_team_prog.s_programme_type)::text, '-', t.id, '-', tl.academic_year) AS id,
               p.id AS patient_id,
@@ -1202,7 +1185,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
               vaccination_summary.has_sais_vaccination AS vaccinated_by_sais_current_year,
               (((vr_elsewhere_declared.patient_id IS NOT NULL) OR (consent_already_vaccinated.patient_id IS NOT NULL)) AND (vr_elsewhere_recorded.patient_id IS NULL)) AS vaccinated_elsewhere_declared_current_year,
               (vr_elsewhere_recorded.patient_id IS NOT NULL) AS vaccinated_elsewhere_recorded_current_year,
-              (vr_previous.patient_id IS NOT NULL) AS vaccinated_in_previous_years,
+              ((vr_previous.patient_id IS NOT NULL) AND (vaccination_summary.has_sais_vaccination IS NOT TRUE) AND (vr_elsewhere_declared.patient_id IS NULL) AND (consent_already_vaccinated.patient_id IS NULL) AND (vr_elsewhere_recorded.patient_id IS NULL)) AS vaccinated_in_previous_years,
               COALESCE(vaccination_summary.sais_vaccinations_count, (0)::bigint) AS sais_vaccinations_count,
               EXTRACT(month FROM ((vaccination_summary.most_recent_vaccination AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text)) AS most_recent_vaccination_month,
               EXTRACT(year FROM ((vaccination_summary.most_recent_vaccination AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text)) AS most_recent_vaccination_year,
@@ -1262,7 +1245,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
                      FROM ((vaccination_records vr
                        LEFT JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
                        LEFT JOIN team_locations vr_tl ON ((vr_tl.id = vr_s.team_location_id)))
-                    WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 4))) vr_elsewhere_declared ON (((vr_elsewhere_declared.patient_id = p.id) AND (vr_elsewhere_declared.programme_type = patient_team_prog.s_programme_type) AND (vr_elsewhere_declared.academic_year = (tl.academic_year)::numeric))))
+                    WHERE ((vr.discarded_at IS NULL) AND (vr.outcome = 4) AND ((vr.programme_type <> 'td_ipv'::programme_type) OR (vr.dose_sequence = 5) OR ((vr.dose_sequence IS NULL) AND (vr.session_id IS NOT NULL))))) vr_elsewhere_declared ON (((vr_elsewhere_declared.patient_id = p.id) AND (vr_elsewhere_declared.programme_type = patient_team_prog.s_programme_type) AND (vr_elsewhere_declared.academic_year = (tl.academic_year)::numeric))))
                LEFT JOIN ( SELECT DISTINCT c.patient_id,
                       c.programme_type,
                       c.academic_year
@@ -1278,7 +1261,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_29_110524) do
                       all_vaccinations_by_year.programme_type,
                       all_vaccinations_by_year.academic_year
                      FROM all_vaccinations_by_year
-                    WHERE ((all_vaccinations_by_year.outcome = ANY (ARRAY[0, 4])) AND ((all_vaccinations_by_year.team_id IS NOT NULL) OR (all_vaccinations_by_year.programme_type <> 'flu'::programme_type)))) vr_previous ON (((vr_previous.patient_id = p.id) AND (vr_previous.programme_type = patient_team_prog.s_programme_type) AND (vr_previous.academic_year < tl.academic_year))))
+                    WHERE ((all_vaccinations_by_year.outcome = ANY (ARRAY[0, 4])) AND (all_vaccinations_by_year.programme_type <> 'flu'::programme_type))) vr_previous ON (((vr_previous.patient_id = p.id) AND (vr_previous.programme_type = patient_team_prog.s_programme_type) AND (vr_previous.academic_year < tl.academic_year))))
                LEFT JOIN LATERAL ( SELECT pcs_1.status,
                       pcs_1.vaccine_methods
                      FROM patient_consent_statuses pcs_1

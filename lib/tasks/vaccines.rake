@@ -24,7 +24,9 @@ namespace :vaccines do
       vaccine.manufacturer = data["manufacturer"]
       vaccine.method = data["method"]
       vaccine.nivs_name = data["nivs_name"]
+      vaccine.upload_name = data["upload_name"]
       vaccine.snomed_product_term = data["snomed_product_term"]
+      vaccine.disease_types = data["disease_types"]
       vaccine.programme = programme
 
       vaccine.side_effects = side_effects_for(programme, data["method"])
@@ -371,7 +373,7 @@ def create_mmr_health_questions(vaccine)
     vaccine.health_questions.create!(
       title:
         "Has your child had a severe allergic reaction (anaphylaxis) to " \
-          "a previous dose of MMR or any other vaccine?"
+          "a previous dose of #{vaccine.programme.name} or any other vaccine?"
     )
 
   blood_or_plasma_transfusion.update!(next_question: severe_reaction_mmr)
@@ -406,7 +408,7 @@ def create_mmr_health_questions(vaccine)
       title:
         "Does your child have a disease or treatment that severely affects their immune system?",
       hint:
-        "The MMR vaccine is a live vaccine. It is not suitable for people " \
+        "The #{vaccine.programme.name} vaccine is a live vaccine. It is not suitable for people " \
           "who have serious problems with their immune systems."
     )
 

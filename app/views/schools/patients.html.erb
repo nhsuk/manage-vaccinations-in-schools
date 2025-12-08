@@ -1,0 +1,38 @@
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t("schools.index.title"), href: schools_path },
+                                        ]) %>
+<% end %>
+
+<%= render "header" %>
+
+<% if @location.school? %>
+  <%= govuk_button_link_to "Import class lists", school_import_path(@location), secondary: true %>
+<% end %>
+
+<div class="nhsuk-grid-row">
+  <div class="app-grid-column-filters">
+    <%= render AppPatientSearchFormComponent.new(
+          @form,
+          url: school_patients_path(@location.generic_clinic? ? Location::URN_UNKNOWN : @location),
+          current_team:,
+          programmes: current_team.programmes,
+          programme_statuses: @programme_statuses,
+          year_groups: @location.year_groups,
+        ) %>
+  </div>
+
+  <div class="app-grid-column-results">
+    <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
+      <% @patients.each do |patient| %>
+        <%= render AppPatientSearchResultCardComponent.new(
+              patient,
+              link_to: patient_path(patient),
+              current_team:,
+              programmes: @form.programmes,
+            ) %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

@@ -49,12 +49,12 @@ class PatientSearchForm < SearchForm
     super(values&.compact_blank&.map(&:to_i)&.compact || [])
   end
 
-  def programmes
+  def programmes(patient: nil)
     @programmes ||=
       if programme_types.present?
         Programme.find_all(programme_types)
       else
-        session&.programmes || team&.programmes || []
+        session&.programmes(patient:) || team&.programmes(patient:) || []
       end
   end
 

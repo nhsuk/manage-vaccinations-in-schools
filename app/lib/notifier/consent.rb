@@ -35,13 +35,17 @@ class Notifier::Consent
   end
 
   def send_triage_email(triage, params)
-    template = triage_email_template(triage)
+    template = triage_email_template(triage, params[:session])
     EmailDeliveryJob.perform_later(template, **params)
   end
 
-  def triage_email_template(triage)
+  def triage_email_template(triage, session)
     if triage.safe_to_vaccinate?
-      :triage_vaccination_will_happen
+      if programme.mmr? && patient_eligible_for_additional_dose?(session)
+        :triage_vaccination_will_happen_mmr_second_dose
+      else
+        :triage_vaccination_will_happen
+      end
     elsif triage.do_not_vaccinate?
       :triage_vaccination_wont_happen
     elsif triage.delay_vaccination?
@@ -74,5 +78,15 @@ class Notifier::Consent
     ods_code = team.organisation.ods_code.downcase
     template_names = [:"#{template_name}_#{ods_code}", template_name]
     template_names.find { GOVUK_NOTIFY_EMAIL_TEMPLATES.key?(it) }
+  end
+
+  def patient_eligible_for_additional_dose?(session)
+    next_dose =
+      patient
+        .reload
+        .vaccination_status(programme:, academic_year: session.academic_year)
+        .dose_sequence
+
+    next_dose == programme.maximum_dose_sequence
   end
 end

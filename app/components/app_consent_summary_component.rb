@@ -139,12 +139,20 @@ class AppConsentSummaryComponent < ViewComponent::Base
       if consent.vaccine_method_nasal_only?
         "Nasal spray only"
       elsif consent.without_gelatine
-        "Gelatine-free injected vaccine only"
+        gelatine_free_vaccine_text
       else
         "No preference"
       end
 
     { key: { text: "Chosen vaccine" }, value: { text: value } }
+  end
+
+  def gelatine_free_vaccine_text
+    if programme.flu?
+      "Injected vaccine only"
+    else
+      "Gelatine-free injected vaccine only"
+    end
   end
 
   def reason_for_refusal_row
