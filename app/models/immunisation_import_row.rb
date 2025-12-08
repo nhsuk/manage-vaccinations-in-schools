@@ -268,9 +268,9 @@ class ImmunisationImportRow
 
   def vaccine_name = @data[:vaccine_given]
 
-  def local_patient_id = @data[:local_patient_id]
+  def local_patient_id = bulk? ? @data[:local_patient_id] : nil
 
-  def local_patient_id_uri = @data[:local_patient_id_uri]
+  def local_patient_id_uri = bulk? ? @data[:local_patient_id_uri] : nil
 
   private
 
