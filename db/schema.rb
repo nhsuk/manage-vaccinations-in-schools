@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_04_102032) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_05_100512) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1205,10 +1205,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_04_102032) do
                       tl_1.academic_year,
                       spyg.programme_type AS s_programme_type,
                       tl_1.team_id
-                     FROM (((patient_locations pl_1
+                     FROM ((((patient_locations pl_1
+                       JOIN patients p_sub ON ((p_sub.id = pl_1.patient_id)))
                        JOIN team_locations tl_1 ON (((tl_1.location_id = pl_1.location_id) AND (tl_1.academic_year = pl_1.academic_year))))
                        JOIN sessions s_1 ON ((s_1.team_location_id = tl_1.id)))
-                       JOIN session_programme_year_groups spyg ON ((spyg.session_id = s_1.id)))
+                       JOIN session_programme_year_groups spyg ON (((spyg.session_id = s_1.id) AND (spyg.year_group = ((tl_1.academic_year - p_sub.birth_academic_year) - 5)))))
                   UNION ALL
                    SELECT DISTINCT vr.patient_id,
                       tl_1.location_id,
@@ -1264,11 +1265,49 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_04_102032) do
                       all_vaccinations_by_year.academic_year
                      FROM all_vaccinations_by_year
                     WHERE ((all_vaccinations_by_year.outcome = ANY (ARRAY[0, 4])) AND (all_vaccinations_by_year.programme_type <> 'flu'::programme_type))) vr_previous ON (((vr_previous.patient_id = p.id) AND (vr_previous.programme_type = patient_team_prog.s_programme_type) AND (vr_previous.academic_year < tl.academic_year))))
-               LEFT JOIN LATERAL ( SELECT pcs_1.status,
-                      pcs_1.vaccine_methods
-                     FROM patient_consent_statuses pcs_1
-                    WHERE ((pcs_1.patient_id = p.id) AND (pcs_1.programme_type = patient_team_prog.s_programme_type) AND (pcs_1.academic_year = tl.academic_year))
-                   LIMIT 1) pcs ON (true))
+               LEFT JOIN LATERAL ( WITH self_consent AS (
+                           SELECT consents.response,
+                              consents.vaccine_methods
+                             FROM consents
+                            WHERE ((consents.patient_id = p.id) AND (consents.programme_type = patient_team_prog.s_programme_type) AND (consents.academic_year = tl.academic_year) AND (consents.invalidated_at IS NULL) AND (consents.withdrawn_at IS NULL) AND (consents.route = 4) AND (consents.response = ANY (ARRAY[0, 1])))
+                            ORDER BY consents.submitted_at DESC
+                           LIMIT 1
+                          ), parental AS (
+                           SELECT DISTINCT ON (consents.parent_id) consents.response,
+                              consents.vaccine_methods
+                             FROM consents
+                            WHERE ((consents.patient_id = p.id) AND (consents.programme_type = patient_team_prog.s_programme_type) AND (consents.academic_year = tl.academic_year) AND (consents.invalidated_at IS NULL) AND (consents.withdrawn_at IS NULL) AND (consents.route <> 4) AND (consents.response = ANY (ARRAY[0, 1])))
+                            ORDER BY consents.parent_id, consents.submitted_at DESC
+                          )
+                   SELECT
+                          CASE
+                              WHEN (sc.response = 0) THEN 1
+                              WHEN (sc.response = 1) THEN 2
+                              WHEN (p_1.all_given AND (p_1.common_methods IS NOT NULL)) THEN 1
+                              WHEN p_1.all_refused THEN 2
+                              WHEN p_1."any" THEN 3
+                              ELSE 0
+                          END AS status,
+                          CASE
+                              WHEN (sc.response = 0) THEN sc.vaccine_methods
+                              WHEN (p_1.all_given AND (p_1.common_methods IS NOT NULL)) THEN p_1.common_methods
+                              ELSE ARRAY[]::integer[]
+                          END AS vaccine_methods
+                     FROM ((( SELECT 1 AS "?column?") _
+                       LEFT JOIN self_consent sc ON (true))
+                       LEFT JOIN LATERAL ( SELECT bool_and((parental.response = 0)) AS all_given,
+                              bool_and((parental.response = 1)) AS all_refused,
+                              (count(*) > 0) AS "any",
+                              ( SELECT array_agg(i.vm ORDER BY i.vm) AS array_agg
+                                     FROM ( SELECT vm.vm
+     FROM parental parental_1,
+      LATERAL unnest(parental_1.vaccine_methods) vm(vm)
+    WHERE (parental_1.response = 0)
+    GROUP BY vm.vm
+   HAVING (count(*) = ( SELECT count(*) AS count
+       FROM parental parental_2
+      WHERE (parental_2.response = 0)))) i) AS common_methods
+                             FROM parental) p_1 ON ((sc.response IS NULL)))) pcs ON (true))
                LEFT JOIN ( SELECT DISTINCT vr.patient_id,
                       vr.programme_type,
                       COALESCE((vr_tl.academic_year)::numeric, EXTRACT(year FROM ((vr.performed_at AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text))) AS academic_year
@@ -1322,5 +1361,35 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_04_102032) do
   add_index "reporting_api_patient_programme_statuses", ["id"], name: "ix_rapi_pps_id", unique: true
   add_index "reporting_api_patient_programme_statuses", ["patient_school_local_authority_code", "programme_type"], name: "ix_rapi_pps_school_la_prog"
   add_index "reporting_api_patient_programme_statuses", ["team_id", "academic_year"], name: "ix_rapi_pps_team_year"
+
+  create_view "reporting_api_totals", materialized: true, sql_definition: <<-SQL
+      SELECT ((((((pps.patient_id || '-'::text) || pps.programme_type) || '-'::text) || tl.team_id) || '-'::text) || pps.academic_year) AS id,
+      pps.patient_id,
+      pps.academic_year,
+      pps.programme_type,
+      pps.status,
+      tl.team_id,
+      pl.location_id AS session_location_id,
+      pat.gender_code AS patient_gender,
+      ((pps.academic_year - pat.birth_academic_year) - 5) AS patient_year_group,
+      COALESCE(la.mhclg_code, ''::character varying) AS patient_local_authority_code,
+      COALESCE(la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
+      (ar.patient_id IS NOT NULL) AS is_archived,
+      (EXISTS ( SELECT 1
+             FROM consents con
+            WHERE ((con.patient_id = pps.patient_id) AND (con.programme_type = pps.programme_type) AND (con.academic_year = pps.academic_year) AND (con.invalidated_at IS NULL) AND (con.withdrawn_at IS NULL) AND (con.response = 1) AND (con.reason_for_refusal = 1)))) AS has_already_vaccinated_consent
+     FROM ((((((patient_programme_statuses pps
+       JOIN patients pat ON ((pat.id = pps.patient_id)))
+       JOIN patient_locations pl ON (((pl.patient_id = pps.patient_id) AND (pl.academic_year = pps.academic_year))))
+       JOIN team_locations tl ON (((tl.location_id = pl.location_id) AND (tl.academic_year = pps.academic_year))))
+       LEFT JOIN archive_reasons ar ON (((ar.patient_id = pps.patient_id) AND (ar.team_id = tl.team_id))))
+       LEFT JOIN locations school ON ((school.id = pat.school_id)))
+       LEFT JOIN local_authorities la ON ((la.gias_code = school.gias_local_authority_code)))
+    WHERE ((pat.invalidated_at IS NULL) AND (pat.restricted_at IS NULL) AND (pat.date_of_death IS NULL));
+  SQL
+  add_index "reporting_api_totals", ["id"], name: "ix_rapi_totals_id", unique: true
+  add_index "reporting_api_totals", ["patient_year_group"], name: "ix_rapi_totals_year_group"
+  add_index "reporting_api_totals", ["session_location_id"], name: "ix_rapi_totals_session_loc"
+  add_index "reporting_api_totals", ["team_id", "academic_year", "programme_type", "status"], name: "ix_rapi_totals_team_year_prog_status"
 
 end
