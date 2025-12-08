@@ -1363,7 +1363,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_100512) do
   add_index "reporting_api_patient_programme_statuses", ["team_id", "academic_year"], name: "ix_rapi_pps_team_year"
 
   create_view "reporting_api_totals", materialized: true, sql_definition: <<-SQL
-      SELECT ((((((pps.patient_id || '-'::text) || pps.programme_type) || '-'::text) || tl.team_id) || '-'::text) || pps.academic_year) AS id,
+      SELECT ((((((((pps.patient_id || '-'::text) || pps.programme_type) || '-'::text) || tl.team_id) || '-'::text) || pl.location_id) || '-'::text) || pps.academic_year) AS id,
       pps.patient_id,
       pps.academic_year,
       pps.programme_type,
