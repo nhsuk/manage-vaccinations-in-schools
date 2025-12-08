@@ -11,6 +11,7 @@
 #  discarded_at                            :datetime
 #  dose_sequence                           :integer
 #  full_dose                               :boolean
+#  local_patient_id_uri                    :string
 #  location_name                           :string
 #  nhs_immunisations_api_etag              :string
 #  nhs_immunisations_api_identifier_system :string
@@ -33,6 +34,7 @@
 #  created_at                              :datetime         not null
 #  updated_at                              :datetime         not null
 #  batch_id                                :bigint
+#  local_patient_id                        :string
 #  location_id                             :bigint
 #  next_dose_delay_triage_id               :bigint
 #  nhs_immunisations_api_id                :string

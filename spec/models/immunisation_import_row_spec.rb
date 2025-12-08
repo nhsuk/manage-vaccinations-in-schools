@@ -68,7 +68,7 @@ describe ImmunisationImportRow do
 
   let(:valid_bulk_common_data) do
     valid_patient_data.deep_dup.merge(
-      "ANATOMICAL_SITE" => "left upper arm",
+      "ANATOMICAL_SITE" => "Left Deltoid",
       "BATCH_EXPIRY_DATE" => Date.tomorrow.strftime("%Y%m%d"),
       "DATE_OF_VACCINATION" => Date.current.strftime("%Y%m%d"),
       "BATCH_NUMBER" => "123",
@@ -921,7 +921,11 @@ describe ImmunisationImportRow do
             "<code>PERSON_FORENAME</code> or <code>First name</code> is required",
             "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required",
             "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
-            "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required"
+            "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required",
+            "<code>LOCAL_PATIENT_ID</code> is required",
+            "<code>LOCAL_PATIENT_ID_URI</code> is required",
+            "<code>ORGANISATION_CODE</code> is required",
+            "<code>SCHOOL_URN</code> is required"
           )
         end
       end
@@ -929,6 +933,12 @@ describe ImmunisationImportRow do
       shared_examples "with an (almost) empty row where `VACCINATED` is `Y`" do
         it "requires the mandatory fields" do
           expect(immunisation_import_row).to be_invalid
+          expect(immunisation_import_row.errors[:base]).to include(
+            "<code>VACCINE_GIVEN</code> is required",
+            "<code>ANATOMICAL_SITE</code> is required",
+            "<code>BATCH_NUMBER</code> or <code>Vaccination batch number</code> is required",
+            "<code>BATCH_EXPIRY_DATE</code> is required"
+          )
         end
       end
 
@@ -939,6 +949,61 @@ describe ImmunisationImportRow do
           it "doesn't validate anything" do
             expect(immunisation_import_row).to be_valid
             expect(immunisation_import_row.errors[:base]).to eq []
+          end
+        end
+      end
+
+      shared_examples "it doesn't make `SCHOOL_NAME` compulsory" do
+        context "when `SCHOOL_URN` is 888888" do
+          let(:data) { { "SCHOOL_URN" => "888888" } }
+
+          it "doesn't require SCHOOL_NAME" do
+            expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors[:base]).not_to include(
+              "<code>SCHOOL_NAME</code> or <code>School</code> is required"
+            )
+          end
+        end
+      end
+
+      shared_examples "when `VACCINATED` is `N`" do
+        context "when `VACCINATED` is `N`" do
+          let(:data) { { "VACCINATED" => "N" } }
+
+          it "doesn't validate anything" do
+            expect(immunisation_import_row).to be_valid
+            expect(immunisation_import_row.errors[:base]).to eq []
+          end
+        end
+      end
+
+      shared_examples "when vaccinated date is in a previous academic year" do
+        context "when vaccinated date is in a previous academic year"
+        let(:data) do
+          { "DATE_OF_VACCINATION" => "20220101", "VACCINATED" => "Y" }
+        end
+
+        it "is invalid" do
+          expect(immunisation_import_row).to be_invalid
+          expect(
+            immunisation_import_row.errors[:DATE_OF_VACCINATION]
+          ).to include("must be in the current academic year")
+        end
+      end
+
+      shared_examples "when an NHS number is provided" do
+        context "when an NHS number is provided" do
+          let(:data) { { "NHS_NUMBER" => "1234567890", "VACCINATED" => "Y" } }
+
+          it "still requires all the demographic information" do
+            expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors[:base]).to include(
+              "<code>PERSON_DOB</code> or <code>Date of birth</code> is required",
+              "<code>PERSON_FORENAME</code> or <code>First name</code> is required",
+              "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required",
+              "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
+              "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required"
+            )
           end
         end
       end
@@ -955,6 +1020,8 @@ describe ImmunisationImportRow do
               "<code>VACCINATED</code> is required"
             )
           end
+
+          include_examples "it doesn't make `SCHOOL_NAME` compulsory"
         end
 
         context "when `VACCINATED` is `Y`" do
@@ -966,10 +1033,20 @@ describe ImmunisationImportRow do
 
           it "requires the mandatory fields specific to flu when vaccinated" do
             expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors[:base]).to include(
+              "<code>PERFORMING_PROFESSIONAL_FORENAME</code> is required",
+              "<code>PERFORMING_PROFESSIONAL_SURNAME</code> is required"
+            )
           end
+
+          include_examples "it doesn't make `SCHOOL_NAME` compulsory"
         end
 
         include_examples "when `VACCINATED` is `N`"
+
+        include_examples "when an NHS number is provided"
+
+        include_examples "when vaccinated date is in a previous academic year"
       end
 
       context "of type hpv" do
@@ -979,6 +1056,8 @@ describe ImmunisationImportRow do
           let(:data) { {} }
 
           include_examples "with an empty row (both bulk upload types)"
+
+          include_examples "it doesn't make `SCHOOL_NAME` compulsory"
         end
 
         context "when `VACCINATED` is `Y` (ie in all cases for HPV bulk upload)" do
@@ -988,10 +1067,17 @@ describe ImmunisationImportRow do
 
           it "requires the mandatory fields specific to HPV" do
             expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors[:base]).to include(
+              "<code>DOSE_SEQUENCE</code> or <code>Vaccination type</code> is required"
+            )
           end
         end
 
         include_examples "when `VACCINATED` is `N`"
+
+        include_examples "when an NHS number is provided"
+
+        include_examples "when vaccinated date is in a previous academic year"
       end
     end
   end
@@ -2084,7 +2170,24 @@ describe ImmunisationImportRow do
 
         its(:source) { should eq("bulk_upload") }
 
+        its(:local_patient_id) { should eq "CIN-OXFORD-pat123456" }
+
+        its(:local_patient_id_uri) do
+          should eq "https://cinnamon.nhs.uk/0de/system1"
+        end
+
         its(:location) { should eq location }
+
+        context "with an unknown school and no name" do
+          let(:data) do
+            valid_bulk_flu_data.merge(
+              "SCHOOL_URN" => "888888",
+              "SCHOOL_NAME" => nil
+            )
+          end
+
+          it { should be_valid }
+        end
 
         context "when not administered" do
           let(:data) { { "VACCINATED" => "N" } }
@@ -2132,6 +2235,18 @@ describe ImmunisationImportRow do
       end
 
       context "of type hpv" do
+        shared_examples "accepts a VACCINE_GIVEN code" do |vaccine_given, snomed_product_code|
+          context "with code: #{vaccine_given}" do
+            let(:data) do
+              valid_bulk_hpv_data.merge("VACCINE_GIVEN" => vaccine_given)
+            end
+
+            it { should be_valid }
+
+            its(:vaccine) { should have_attributes(snomed_product_code:) }
+          end
+        end
+
         let(:import_type) { "bulk_hpv" }
 
         let(:data) { valid_bulk_hpv_data }
@@ -2142,7 +2257,34 @@ describe ImmunisationImportRow do
 
         its(:source) { should eq("bulk_upload") }
 
+        its(:local_patient_id) { should eq "CIN-OXFORD-pat123456" }
+
+        its(:local_patient_id_uri) do
+          should eq "https://cinnamon.nhs.uk/0de/system1"
+        end
+
         its(:location) { should eq location }
+
+        include_examples "accepts a VACCINE_GIVEN code",
+                         "Gardasil",
+                         "10880211000001104"
+        include_examples "accepts a VACCINE_GIVEN code",
+                         "Gardasil9",
+                         "33493111000001108"
+        include_examples "accepts a VACCINE_GIVEN code",
+                         "Cervarix",
+                         "12238911000001100"
+
+        context "with an unknown school and no name" do
+          let(:data) do
+            valid_bulk_hpv_data.merge(
+              "SCHOOL_URN" => "888888",
+              "SCHOOL_NAME" => nil
+            )
+          end
+
+          it { should be_valid }
+        end
 
         context "when not administered" do
           let(:data) { { "VACCINATED" => "N" } }

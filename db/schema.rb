@@ -916,6 +916,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_04_102032) do
     t.datetime "discarded_at"
     t.integer "dose_sequence"
     t.boolean "full_dose"
+    t.string "local_patient_id"
+    t.string "local_patient_id_uri"
     t.bigint "location_id"
     t.string "location_name"
     t.bigint "next_dose_delay_triage_id"

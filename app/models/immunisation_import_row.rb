@@ -13,6 +13,8 @@ class ImmunisationImportRow
            :validate_delivery_site,
            :validate_dose_sequence,
            :validate_existing_patients,
+           :validate_local_patient_id,
+           :validate_local_patient_id_uri,
            :validate_patient_date_of_birth,
            :validate_patient_first_name,
            :validate_patient_gender_code,
@@ -41,9 +43,11 @@ class ImmunisationImportRow
     "left thigh" => "left_thigh",
     "right thigh" => "right_thigh",
     "left upper arm" => "left_arm_upper_position",
+    "left deltoid" => "left_arm_upper_position",
     "left arm (upper position)" => "left_arm_upper_position",
     "left arm (lower position)" => "left_arm_lower_position",
     "right upper arm" => "right_arm_upper_position",
+    "right deltoid" => "right_arm_upper_position",
     "right arm (upper position)" => "right_arm_upper_position",
     "right arm (lower position)" => "right_arm_lower_position",
     "left buttock" => "left_buttock",
@@ -143,6 +147,13 @@ class ImmunisationImportRow
       attributes.merge!(
         performed_by_family_name: performed_by_family_name&.to_s,
         performed_by_given_name: performed_by_given_name&.to_s
+      )
+    end
+
+    if bulk?
+      attributes.merge!(
+        local_patient_id: local_patient_id&.to_s,
+        local_patient_id_uri: local_patient_id_uri&.to_s
       )
     end
 
@@ -256,6 +267,10 @@ class ImmunisationImportRow
   def vaccinated = @data[:vaccinated]
 
   def vaccine_name = @data[:vaccine_given]
+
+  def local_patient_id = @data[:local_patient_id]
+
+  def local_patient_id_uri = @data[:local_patient_id_uri]
 
   private
 
@@ -422,6 +437,12 @@ class ImmunisationImportRow
       )
   end
 
+  def must_be_current_academic_year? = programme&.flu? || bulk?
+
+  def dose_sequence_required? =
+    administered &&
+      ((offline_recording? && default_dose_sequence.present?) || bulk_hpv?)
+
   def academic_year = date_of_vaccination.to_date.academic_year
 
   def existing_patients
@@ -565,7 +586,7 @@ class ImmunisationImportRow
         else
           errors.add(batch_expiry.header, "Enter a date in the correct format")
         end
-      elsif offline_recording?
+      elsif offline_recording? || bulk?
         if batch_expiry.nil?
           errors.add(:base, "<code>BATCH_EXPIRY_DATE</code> is required")
         else
@@ -587,7 +608,7 @@ class ImmunisationImportRow
         elsif batch_name.to_s !~ BatchForm::NAME_FORMAT
           errors.add(batch_name.header, "must be only letters and numbers")
         end
-      elsif offline_recording?
+      elsif offline_recording? || bulk?
         if batch_name.nil?
           errors.add(
             :base,
@@ -615,7 +636,7 @@ class ImmunisationImportRow
   end
 
   def validate_clinic_name
-    clinic_name_required = offline_recording? && is_community_setting?
+    clinic_name_required = offline_recording? && is_community_setting? && poc?
 
     if clinic_name.present?
       if clinic_name.to_s.length > MAX_FIELD_LENGTH
@@ -666,7 +687,7 @@ class ImmunisationImportRow
         end
       end
 
-      if programme&.flu? && academic_year != AcademicYear.current
+      if must_be_current_academic_year? && academic_year != AcademicYear.current
         errors.add(
           date_of_vaccination.header,
           "must be in the current academic year"
@@ -696,7 +717,7 @@ class ImmunisationImportRow
             )
           end
         end
-      elsif offline_recording?
+      elsif offline_recording? || bulk?
         if delivery_site.nil?
           errors.add(:base, "<code>ANATOMICAL_SITE</code> is required")
         else
@@ -735,7 +756,7 @@ class ImmunisationImportRow
           )
         end
       end
-    elsif administered && offline_recording? && default_dose_sequence.present?
+    elsif dose_sequence_required?
       if field.nil?
         errors.add(
           :base,
@@ -756,6 +777,22 @@ class ImmunisationImportRow
         :base,
         "Two or more possible patients match the patient first name, last name, date of birth or postcode."
       )
+    end
+  end
+
+  def validate_local_patient_id
+    return unless bulk?
+
+    if local_patient_id.blank?
+      errors.add(:base, "<code>LOCAL_PATIENT_ID</code> is required")
+    end
+  end
+
+  def validate_local_patient_id_uri
+    return unless bulk?
+
+    if local_patient_id_uri.blank?
+      errors.add(:base, "<code>LOCAL_PATIENT_ID_URI</code> is required")
     end
   end
 
@@ -846,7 +883,7 @@ class ImmunisationImportRow
           "Enter a valid postcode, such as SW1A 1AA."
         )
       end
-    elsif patient_nhs_number_value.blank?
+    elsif patient_nhs_number_value.blank? || bulk?
       if patient_postcode.nil?
         errors.add(
           :base,
@@ -862,31 +899,54 @@ class ImmunisationImportRow
   end
 
   def validate_performed_by
-    if offline_recording?
-      if performed_by_user.nil?
-        if performed_by_email.nil?
-          errors.add(
-            :base,
-            "<code>PERFORMING_PROFESSIONAL_EMAIL</code> is required"
-          )
-        else
-          errors.add(performed_by_email.header, "Enter a valid email address.")
+    if poc?
+      if offline_recording?
+        if performed_by_user.nil?
+          if performed_by_email.nil?
+            errors.add(
+              :base,
+              "<code>PERFORMING_PROFESSIONAL_EMAIL</code> is required"
+            )
+          else
+            errors.add(
+              performed_by_email.header,
+              "Enter a valid email address."
+            )
+          end
+        end
+      elsif performed_by_email.present?
+        if performed_by_user.nil?
+          errors.add(performed_by_email.header, "Enter a valid email address")
         end
       end
-    elsif performed_by_email.present?
-      if performed_by_user.nil?
-        errors.add(performed_by_email.header, "Enter a valid email address")
+    elsif bulk_flu? && administered
+      if performed_by_given_name.nil?
+        errors.add(
+          :base,
+          "<code>PERFORMING_PROFESSIONAL_FORENAME</code> is required"
+        )
+      elsif performed_by_given_name.blank?
+        errors.add(performed_by_given_name.header, "Enter a forename")
+      end
+
+      if performed_by_family_name.nil?
+        errors.add(
+          :base,
+          "<code>PERFORMING_PROFESSIONAL_SURNAME</code> is required"
+        )
+      elsif performed_by_family_name.blank?
+        errors.add(performed_by_family_name.header, "Enter a surname")
       end
     end
   end
 
   def validate_performed_ods_code
-    if offline_recording?
+    if offline_recording? || bulk?
       if performed_ods_code.nil?
         errors.add(:base, "<code>ORGANISATION_CODE</code> is required")
       elsif performed_ods_code.blank?
         errors.add(performed_ods_code.header, "Enter an organisation code.")
-      elsif performed_ods_code.to_s != organisation.ods_code
+      elsif performed_ods_code.to_s != organisation.ods_code && poc?
         errors.add(
           performed_ods_code.header,
           "Enter an organisation code that matches the current team."
@@ -932,6 +992,8 @@ class ImmunisationImportRow
   end
 
   def validate_school_name
+    return if bulk?
+
     school_name_required = school_urn&.to_s == SCHOOL_URN_UNKNOWN
 
     if school_name.present?
@@ -954,12 +1016,24 @@ class ImmunisationImportRow
   end
 
   def validate_school_urn
-    return if school_urn.blank?
+    return if school_urn.blank? && poc?
 
-    unless school_urn.to_s.in?(
-             [SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN]
-           ) || Location.school.where_urn_and_site(school_urn.to_s).exists? ||
-             Location.school.exists?(systm_one_code: school_urn.to_s)
+    if bulk?
+      if school_urn.nil?
+        errors.add(:base, "<code>SCHOOL_URN</code> is required")
+        return
+      elsif school_urn.blank?
+        errors.add(school_urn.header, "is required")
+        return
+      end
+    end
+
+    school_urn_acceptable =
+      school_urn.to_s.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN]) ||
+        Location.school.where_urn_and_site(school_urn.to_s).exists? ||
+        Location.school.exists?(systm_one_code: school_urn.to_s)
+
+    unless school_urn_acceptable
       errors.add(
         school_urn.header,
         "The school URN is not recognised. If you’ve checked the URN, " \
@@ -1047,7 +1121,7 @@ class ImmunisationImportRow
       end
     elsif vaccine_upload_name.present?
       errors.add(field.header, "This vaccine is not available in this session.")
-    elsif offline_recording? && administered
+    elsif (offline_recording? || bulk?) && administered
       if vaccine_name.nil?
         errors.add(:base, "<code>VACCINE_GIVEN</code> is required")
       elsif vaccine_name.blank?
