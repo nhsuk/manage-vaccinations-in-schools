@@ -40,7 +40,8 @@ class TrainingOnboardingConfiguration
       phone:,
       careplus_venue_code: ods_code,
       privacy_notice_url: "https://example.com/privacy-notice-#{workgroup}",
-      privacy_policy_url: "https://example.com/privacy-policy-#{workgroup}"
+      privacy_policy_url: "https://example.com/privacy-policy-#{workgroup}",
+      type: "poc_only"
     }
   end
 

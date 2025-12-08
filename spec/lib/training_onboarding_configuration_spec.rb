@@ -24,7 +24,8 @@ describe TrainingOnboardingConfiguration do
           phone: "07700 900815",
           privacy_notice_url: "https://example.com/privacy-notice-abc",
           privacy_policy_url: "https://example.com/privacy-policy-abc",
-          workgroup: "abc"
+          workgroup: "abc",
+          type: "poc_only"
         },
         programmes: %w[flu hpv menacwy td_ipv],
         subteams: {
