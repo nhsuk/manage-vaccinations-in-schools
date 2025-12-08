@@ -42,7 +42,9 @@ namespace :vaccines do
         elsif programme.menacwy?
           create_menacwy_health_questions(vaccine)
         elsif programme.mmr?
+          Flipper.enable(:mmrv) # Remove after MMRV goes live
           create_mmr_health_questions(vaccine)
+          Flipper.disable(:mmrv) # Remove after MMRV goes live
         elsif programme.td_ipv?
           create_td_ipv_health_questions(vaccine)
         else

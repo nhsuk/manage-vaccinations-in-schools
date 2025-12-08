@@ -78,6 +78,18 @@ class Vaccine < ApplicationRecord
     "nasal" => %w[nose]
   }.freeze
 
+  scope :with_disease_types,
+        ->(disease_types) do
+          return all if disease_types.blank?
+
+          enum_values =
+            disease_types.map { |dt| Vaccine.disease_types.fetch(dt) }
+          where(
+            "ARRAY(SELECT unnest(disease_types) ORDER BY 1) = ARRAY[?]::integer[]",
+            enum_values.sort
+          )
+        end
+
   def available_delivery_sites
     AVAILABLE_DELIVERY_SITES.fetch(method)
   end
