@@ -75,6 +75,8 @@ class Programme
 
   def translation_key = type
 
+  def fallback_programme = nil
+
   delegate :hash, to: :type
 
   TYPES.each { |type| define_method("#{type}?") { self.type == type } }

@@ -1,10 +1,16 @@
 # frozen_string_literal: true
 
 class VaccineCriteria
-  def initialize(programme:, vaccine_methods:, without_gelatine:)
+  def initialize(
+    programme:,
+    vaccine_methods:,
+    without_gelatine:,
+    fallback_programme: nil
+  )
     @programme = programme
     @vaccine_methods = vaccine_methods
     @without_gelatine = without_gelatine
+    @fallback_programme = fallback_programme
   end
 
   def self.from_consentable(consentable)
@@ -50,10 +56,24 @@ class VaccineCriteria
     )
   end
 
-  attr_reader :programme, :vaccine_methods, :without_gelatine
+  attr_reader :programme,
+              :vaccine_methods,
+              :without_gelatine,
+              :fallback_programme
 
   def apply(scope)
-    scope = scope.with_disease_types(programme.disease_types)
+    scope = apply_filters(scope, programme)
+
+    if fallback_programme.present?
+      fallback_scope = apply_filters(scope.klass.all, fallback_programme)
+      scope = scope.or(fallback_scope)
+    end
+
+    scope
+  end
+
+  def apply_filters(scope, target_programme)
+    scope = scope.with_disease_types(target_programme.disease_types)
 
     if vaccine_methods.present?
       scope = scope.where(method: vaccine_methods).order(method_order_node)

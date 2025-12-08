@@ -5,6 +5,8 @@ describe "MMRV vaccination" do
 
   scenario "administered at community clinic" do
     given_mmrv_vaccinations_are_enabled
+    and_an_mmrv_programme_with_vaccine_batches_for_mmr
+    and_an_mmr_batch_is_also_available
     and_i_am_signed_in_as_a_nurse
     and_a_patient_is_ready_for_mmrv_vaccination_in_a_community_clinic
 
@@ -14,7 +16,8 @@ describe "MMRV vaccination" do
     then_i_see_the_vaccination_form
 
     when_i_begin_recording_the_mmrv_vaccination
-    then_i_should_only_see_the_mmrv_batch_options
+    then_i_should_see_the_mmrv_batch_options_list_first
+    and_i_should_see_the_mmr_batch_option_last_as_a_fallback
 
     when_i_choose_an_mmrv_batch_for_the_vaccine
     then_i_see_the_check_and_confirm_page
@@ -30,18 +33,22 @@ describe "MMRV vaccination" do
     Flipper.enable(:mmrv)
   end
 
-  def and_i_am_signed_in_as_a_nurse
+  def and_an_mmrv_programme_with_vaccine_batches_for_mmr
     @programme = Programme.mmr
     @team = create(:team, :with_one_nurse, programmes: [@programme])
 
     @mmrv_vaccine = create(:vaccine, :mmrv, programme: @programme)
     @mmrv_batch =
       create(:batch, :not_expired, team: @team, vaccine: @mmrv_vaccine)
+  end
 
+  def and_an_mmr_batch_is_also_available
     @mmr_vaccine = create(:vaccine, :mmr, programme: @programme)
     @mmr_batch =
       create(:batch, :not_expired, team: @team, vaccine: @mmr_vaccine)
+  end
 
+  def and_i_am_signed_in_as_a_nurse
     sign_in @team.users.first
   end
 
@@ -122,8 +129,14 @@ describe "MMRV vaccination" do
     end
   end
 
-  def then_i_should_only_see_the_mmrv_batch_options
-    expect(page).not_to have_content(@mmr_batch.name)
+  def then_i_should_see_the_mmrv_batch_options_list_first
+    radio_buttons = page.all(".nhsuk-radios__item")
+    expect(radio_buttons.first).to have_content(@mmrv_batch.name)
+  end
+
+  def and_i_should_see_the_mmr_batch_option_last_as_a_fallback
+    radio_buttons = page.all(".nhsuk-radios__item")
+    expect(radio_buttons.last).to have_content(@mmr_batch.name)
   end
 
   def when_i_choose_an_mmrv_batch_for_the_vaccine

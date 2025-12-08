@@ -7,6 +7,8 @@ class ProgrammeVariant < SimpleDelegator
 
   SNOMED_PROCEDURE_TERMS = { "mmrv" => "TBC" }.freeze
 
+  FALLBACK_PROGRAMMES = { "mmrv" => Programme.mmr }.freeze
+
   def initialize(programme, variant_type:)
     super(programme)
     @variant_type = variant_type
@@ -26,6 +28,10 @@ class ProgrammeVariant < SimpleDelegator
 
   def vaccines
     @vaccines ||= Vaccine.where_programme(self, disease_types)
+  end
+
+  def fallback_programme
+    FALLBACK_PROGRAMMES.fetch(variant_type)
   end
 
   def snomed_procedure_term
