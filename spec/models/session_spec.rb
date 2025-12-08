@@ -350,16 +350,47 @@ describe Session do
   end
 
   describe "#year_groups" do
-    subject { session.year_groups }
-
-    let(:flu_programme) { Programme.flu }
-    let(:hpv_programme) { Programme.hpv }
-
     let(:session) do
-      create(:session, programmes: [flu_programme, hpv_programme])
+      create(:session, programmes: [Programme.flu, Programme.hpv])
     end
 
-    it { should contain_exactly(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) }
+    context "when not already loaded" do
+      context "for all programmes" do
+        subject { session.year_groups }
+
+        it { should contain_exactly(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) }
+      end
+
+      context "for a specific programmes" do
+        subject { session.year_groups(programme: Programme.hpv) }
+
+        it { should contain_exactly(8, 9, 10, 11) }
+      end
+    end
+
+    context "when already loaded" do
+      context "for all programmes" do
+        subject do
+          described_class
+            .includes(:session_programme_year_groups)
+            .find(session.id)
+            .year_groups
+        end
+
+        it { should contain_exactly(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) }
+      end
+
+      context "for a specific programmes" do
+        subject do
+          described_class
+            .includes(:session_programme_year_groups)
+            .find(session.id)
+            .year_groups(programme: Programme.hpv)
+        end
+
+        it { should contain_exactly(8, 9, 10, 11) }
+      end
+    end
   end
 
   describe "#vaccine_methods" do

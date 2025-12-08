@@ -181,7 +181,17 @@ class Session < ApplicationRecord
   end
 
   def year_groups(programme: nil)
-    if programme
+    if session_programme_year_groups.loaded?
+      if programme
+        session_programme_year_groups
+          .select { it.programme_type == programme.type }
+          .map(&:year_group)
+          .sort
+          .uniq
+      else
+        session_programme_year_groups.map(&:year_group).sort.uniq
+      end
+    elsif programme
       session_programme_year_groups.where(
         programme_type: programme.type
       ).pluck_year_groups
