@@ -121,14 +121,11 @@ describe "Manage clinic sessions" do
 
   def then_i_see_the_clinic_session
     expect(page).to have_content("Community clinic")
-    expect(page).to have_content(
-      "There are currently no sessions scheduled at this clinic."
-    )
-    expect(page).to have_content("Schedule sessions")
+    expect(page).to have_content("No dates scheduled")
   end
 
   def when_i_click_on_schedule_sessions
-    click_on "Schedule sessions"
+    click_on "Edit session"
     click_on "Add session dates"
   end
 
@@ -193,8 +190,7 @@ describe "Manage clinic sessions" do
   end
 
   def then_i_should_see_the_session_details
-    expect(page).to have_content("10 March 2024")
-    expect(page).to have_content("11 March 2024")
+    expect(page).to have_content("10 – 11 March 2024")
   end
 
   def then_i_see_the_community_clinic

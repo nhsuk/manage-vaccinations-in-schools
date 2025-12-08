@@ -81,7 +81,7 @@ describe "Scheduled consent requests" do
     choose "Unscheduled"
     click_button "Update results"
     click_link @location.name
-    click_link "Schedule sessions"
+    click_link "Edit session"
     click_link "Add session dates"
 
     session_date = 4.weeks.from_now

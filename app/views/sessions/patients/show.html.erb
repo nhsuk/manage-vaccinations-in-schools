@@ -1,11 +1,3 @@
-<% content_for :before_main do %>
-  <%= render AppBreadcrumbComponent.new(items: [
-                                          { text: t("dashboard.index.title"), href: dashboard_path },
-                                          { text: t("sessions.index.title"), href: sessions_path },
-                                          { text: @session.location.name, href: session_path(@session) },
-                                        ]) %>
-<% end %>
-
 <%= render "sessions/header" %>
 
 <div class="nhsuk-grid-row">
@@ -17,8 +9,8 @@
           programmes: @session.programmes,
           programme_statuses: @programme_statuses,
           vaccination_statuses: @statuses,
+          registration_statuses: @registration_statuses,
           year_groups: @session.year_groups,
-          show_still_to_vaccinate: true,
           show_eligible_children: true,
         ) %>
   </div>
@@ -31,7 +23,7 @@
         <%= render AppPatientSessionSearchResultCardComponent.new(
               patient:,
               session: @session,
-              context: :patients,
+              context: @registration_statuses.present? ? :register : :patients,
               programmes: @form.programmes,
             ) %>
       <% end %>

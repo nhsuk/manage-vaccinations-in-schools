@@ -1,33 +1,61 @@
 # frozen_string_literal: true
 
-class AppSessionDatesTableComponent < ViewComponent::Base
+class AppSessionVaccinationsComponent < ViewComponent::Base
+  erb_template <<-ERB
+    <%= render AppCardComponent.new do |card| %>
+      <% card.with_heading(level: 3) { "Vaccinations given in this session" } %>
+
+      <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
+        <% table.with_head do |head| %>
+          <% head.with_row do |row| %>
+            <% row.with_cell(text: "Session date") %>
+            <% session_column_names.each do |column| %>
+              <% row.with_cell(text: column, numeric: true) %>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <% table.with_body do |body| %>
+          <% rows.each_with_index do |row_data| %>
+            <% body.with_row do |row| %>
+              <% row.with_cell(text: row_data[:label]) %>
+              <% row_data[:tallies].each do |tally| %>
+                <% row.with_cell(text: tally.to_s, numeric: true) %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  ERB
+
   def initialize(session)
     @session = session
   end
 
-  def session_column_names
-    @session_column_names ||= build_column_names
-  end
-
-  def rows = session_dates_rows + [total_row]
+  def render? = session.started?
 
   private
 
   attr_reader :session
 
-  delegate :govuk_table, to: :helpers
   delegate :programmes, to: :session
 
-  def build_column_names
-    programmes.flat_map do |programme|
-      if programme.has_multiple_vaccine_methods?
-        base_name = programme.name_in_sentence.titlecase
-        ["#{base_name} (nasal spray)", "#{base_name} (injection)"]
-      else
-        programme.name_in_sentence
+  delegate :govuk_table, to: :helpers
+
+  def session_column_names
+    @session_column_names ||=
+      programmes.flat_map do |programme|
+        if programme.has_multiple_vaccine_methods?
+          base_name = programme.name_in_sentence.titlecase
+          ["#{base_name} (nasal spray)", "#{base_name} (injection)"]
+        else
+          programme.name_in_sentence
+        end
       end
-    end
   end
+
+  def rows = session_dates_rows + [total_row]
 
   def session_dates_rows
     @session_dates_rows ||=

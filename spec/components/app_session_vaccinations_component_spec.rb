@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppSessionDatesTableComponent do
+describe AppSessionVaccinationsComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:hpv_programme) { Programme.hpv }

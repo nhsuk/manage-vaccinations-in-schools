@@ -1,11 +1,3 @@
-<% content_for :before_main do %>
-  <%= render AppBreadcrumbComponent.new(items: [
-                                          { text: t("dashboard.index.title"), href: dashboard_path },
-                                          { text: t("sessions.index.title"), href: sessions_path },
-                                          { text: @session.location.name, href: session_path(@session) },
-                                        ]) %>
-<% end %>
-
 <%= render "sessions/header" %>
 
 <% if @session.today? %>
