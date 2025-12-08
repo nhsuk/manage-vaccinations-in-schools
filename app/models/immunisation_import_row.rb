@@ -3,8 +3,9 @@
 class ImmunisationImportRow
   include ActiveModel::Model
 
-  validate :validate_administered,
-           :validate_batch_expiry,
+  validate :validate_administered
+
+  validate :validate_batch_expiry,
            :validate_batch_name,
            :validate_care_setting,
            :validate_clinic_name,
@@ -28,7 +29,8 @@ class ImmunisationImportRow
            :validate_session_id,
            :validate_time_of_vaccination,
            :validate_uuid,
-           :validate_vaccine
+           :validate_vaccine,
+           unless: :bulk_not_administered?
 
   CARE_SETTING_SCHOOL = 1
   CARE_SETTING_COMMUNITY = 2
@@ -100,15 +102,23 @@ class ImmunisationImportRow
 
   def bulk? = bulk_flu? || bulk_hpv?
 
+  def bulk_not_administered?
+    bulk? && !administered
+  end
+
   def to_vaccination_record
-    return unless valid?
+    return if invalid? || bulk_not_administered?
 
     outcome = (administered ? "administered" : reason_not_administered_value)
     source =
       if imms_api_record?
         "nhs_immunisations_api"
+      elsif offline_recording?
+        "service"
+      elsif poc?
+        "historical_upload"
       else
-        offline_recording? ? "service" : "historical_upload"
+        "bulk_upload"
       end
 
     attributes = {
@@ -249,7 +259,11 @@ class ImmunisationImportRow
   delegate :organisation, to: :team
 
   def location
-    session&.location unless session&.generic_clinic?
+    if bulk?
+      school
+    elsif !session&.generic_clinic?
+      session&.location
+    end
   end
 
   def location_name
@@ -318,7 +332,12 @@ class ImmunisationImportRow
 
   def programme
     @programme ||=
-      begin
+      case @type
+      when :bulk_flu
+        Programme.flu
+      when :bulk_hpv
+        Programme.hpv
+      else
         name =
           parsed_vaccination_description_string&.dig(:programme_name) ||
             programme_name&.to_s
@@ -439,7 +458,7 @@ class ImmunisationImportRow
         false
       end
     elsif vaccine_name.present? ||
-          combined_vaccination_and_dose_sequence.present?
+          combined_vaccination_and_dose_sequence.present? || bulk_hpv?
       true
     end
   end
@@ -520,7 +539,7 @@ class ImmunisationImportRow
     else
       errors.add(
         vaccinated.header,
-        "You need to record whether the child was vaccinated or not. Enter ‘Y’ or ‘N’ in the ‘vaccinated’ column."
+        "You need to record whether the child was vaccinated or not. Enter ‘Y’ or ‘N’ in the ‘VACCINATED’ column."
       )
     end
   end

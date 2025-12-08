@@ -913,19 +913,32 @@ describe ImmunisationImportRow do
       let(:programmes) { [Programme.hpv, Programme.flu] }
 
       shared_examples "with an empty row (both bulk upload types)" do
-        context "with an empty row" do
-          let(:data) { {} }
+        it "requires the mandatory fields" do
+          expect(immunisation_import_row).to be_invalid
+          expect(immunisation_import_row.errors[:base]).to include(
+            "<code>DATE_OF_VACCINATION</code> or <code>Event date</code> is required",
+            "<code>PERSON_DOB</code> or <code>Date of birth</code> is required",
+            "<code>PERSON_FORENAME</code> or <code>First name</code> is required",
+            "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required",
+            "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
+            "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required"
+          )
+        end
+      end
 
-          it "requires the mandatory fields" do
-            expect(immunisation_import_row).to be_invalid
-            expect(immunisation_import_row.errors[:base]).to include(
-              "<code>DATE_OF_VACCINATION</code> or <code>Event date</code> is required",
-              "<code>PERSON_DOB</code> or <code>Date of birth</code> is required",
-              "<code>PERSON_FORENAME</code> or <code>First name</code> is required",
-              "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required",
-              "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
-              "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required"
-            )
+      shared_examples "with an (almost) empty row where `VACCINATED` is `Y`" do
+        it "requires the mandatory fields" do
+          expect(immunisation_import_row).to be_invalid
+        end
+      end
+
+      shared_examples "when `VACCINATED` is `N`" do
+        context "when `VACCINATED` is `N`" do
+          let(:data) { { "VACCINATED" => "N" } }
+
+          it "doesn't validate anything" do
+            expect(immunisation_import_row).to be_valid
+            expect(immunisation_import_row.errors[:base]).to eq []
           end
         end
       end
@@ -936,8 +949,27 @@ describe ImmunisationImportRow do
         context "with an empty row" do
           let(:data) { {} }
 
-          include_examples "with an empty row (both bulk upload types)"
+          it "requires the `VACCINATED` field" do
+            expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors[:base]).to include(
+              "<code>VACCINATED</code> is required"
+            )
+          end
         end
+
+        context "when `VACCINATED` is `Y`" do
+          let(:data) { { "VACCINATED" => "Y" } }
+
+          include_examples "with an empty row (both bulk upload types)"
+
+          include_examples "with an (almost) empty row where `VACCINATED` is `Y`"
+
+          it "requires the mandatory fields specific to flu when vaccinated" do
+            expect(immunisation_import_row).to be_invalid
+          end
+        end
+
+        include_examples "when `VACCINATED` is `N`"
       end
 
       context "of type hpv" do
@@ -948,6 +980,18 @@ describe ImmunisationImportRow do
 
           include_examples "with an empty row (both bulk upload types)"
         end
+
+        context "when `VACCINATED` is `Y` (ie in all cases for HPV bulk upload)" do
+          let(:data) { {} }
+
+          include_examples "with an (almost) empty row where `VACCINATED` is `Y`"
+
+          it "requires the mandatory fields specific to HPV" do
+            expect(immunisation_import_row).to be_invalid
+          end
+        end
+
+        include_examples "when `VACCINATED` is `N`"
       end
     end
   end
@@ -1995,6 +2039,28 @@ describe ImmunisationImportRow do
         end
       end
 
+      describe "#source" do
+        context "with a historical record" do
+          its(:source) { should eq "historical_upload" }
+        end
+
+        context "with an offline spreadsheet" do
+          let(:data) do
+            valid_data.merge(
+              "DATE_OF_VACCINATION" => session.dates.first.strftime("%Y%m%d"),
+              "SESSION_ID" => session.id.to_s,
+              "ORGANISATION_CODE" => team.organisation.ods_code,
+              "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,
+              "DOSE_SEQUENCE" => "1"
+            )
+          end
+
+          let(:session) { create(:session, team:, programmes:) }
+
+          its(:source) { should eq "service" }
+        end
+      end
+
       context "without an expiry date" do
         let(:data) { valid_data.merge("BATCH_EXPIRY_DATE" => "") }
 
@@ -2014,6 +2080,18 @@ describe ImmunisationImportRow do
 
         it { should be_administered }
 
+        its(:programme) { should eq(Programme.flu) }
+
+        its(:source) { should eq("bulk_upload") }
+
+        its(:location) { should eq location }
+
+        context "when not administered" do
+          let(:data) { { "VACCINATED" => "N" } }
+
+          it { should be_nil }
+        end
+
         include_examples "with pseudo-postcodes"
       end
 
@@ -2023,6 +2101,18 @@ describe ImmunisationImportRow do
         let(:data) { valid_bulk_hpv_data }
 
         it { should be_administered }
+
+        its(:programme) { should eq(Programme.hpv) }
+
+        its(:source) { should eq("bulk_upload") }
+
+        its(:location) { should eq location }
+
+        context "when not administered" do
+          let(:data) { { "VACCINATED" => "N" } }
+
+          it { should be_nil }
+        end
 
         include_examples "with pseudo-postcodes"
       end
