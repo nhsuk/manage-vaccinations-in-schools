@@ -52,7 +52,7 @@ describe API::Reporting::TotalsController do
 
     it "calculates statistics correctly" do
       team = Team.last # The most recently created team from valid_jwt
-      programme = Programme.sample
+      programme = Programme.hpv
       team.programmes << programme
       session = create(:session, team:, programmes: [programme])
 
@@ -79,7 +79,7 @@ describe API::Reporting::TotalsController do
       # Patient 3: Not vaccinated (should be counted as not_vaccinated)
       create(:patient, session:)
 
-      ReportingAPI::PatientProgrammeStatus.refresh!
+      refresh_reporting_views!
 
       get :index
 
@@ -104,7 +104,7 @@ describe API::Reporting::TotalsController do
 
     it "filters by multiple year groups" do
       team = Team.last
-      programme = Programme.sample
+      programme = Programme.flu
       team.programmes << programme
       session = create(:session, team:, programmes: [programme])
 
@@ -114,7 +114,7 @@ describe API::Reporting::TotalsController do
       create(:patient, session:, year_group: 10)
       create(:patient, session:, year_group: 10)
 
-      ReportingAPI::PatientProgrammeStatus.refresh!
+      refresh_reporting_views!
 
       get :index, params: { year_group: [8, 9] }
 
@@ -123,7 +123,7 @@ describe API::Reporting::TotalsController do
     end
 
     it "filters by workgroup" do
-      programme = Programme.sample
+      programme = Programme.flu
 
       team = Team.last
       team.programmes << programme
@@ -139,7 +139,7 @@ describe API::Reporting::TotalsController do
       create(:patient, session:)
       create(:patient, session: other_session)
 
-      ReportingAPI::PatientProgrammeStatus.refresh!
+      refresh_reporting_views!
 
       get :index, params: { workgroup: team.workgroup }
 
@@ -148,7 +148,7 @@ describe API::Reporting::TotalsController do
     end
 
     it "filters by team_workgroup from session when no workgroup param" do
-      programme = Programme.sample
+      programme = Programme.flu
       team = Team.last
       team.programmes << programme
       other_team = create(:team, organisation: team.organisation)
@@ -170,7 +170,7 @@ describe API::Reporting::TotalsController do
         session: create(:session, team: other_team, programmes: [programme])
       )
 
-      ReportingAPI::PatientProgrammeStatus.refresh!
+      refresh_reporting_views!
 
       jwt =
         JWT.encode(
@@ -207,7 +207,7 @@ describe API::Reporting::TotalsController do
       create(:patient, session:, year_group: 8)
       create(:patient, session:, year_group: 9)
 
-      ReportingAPI::PatientProgrammeStatus.refresh!
+      refresh_reporting_views!
 
       request.headers["Accept"] = "text/csv"
       get :index, params: { group: "year_group" }, format: :csv
@@ -267,7 +267,7 @@ describe API::Reporting::TotalsController do
     end
 
     def refresh_and_get_totals(programme_type: "hpv")
-      ReportingAPI::PatientProgrammeStatus.refresh!(concurrently: false)
+      refresh_reporting_views!
       get :index, params: { programme: programme_type }
       expect(response).to have_http_status(:ok)
     end
