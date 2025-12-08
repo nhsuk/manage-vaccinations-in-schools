@@ -2154,6 +2154,24 @@ describe ImmunisationImportRow do
       end
 
       include_examples "with pseudo-postcodes"
+
+      context "when bulk upload columns are present, which the Mavis upload should ignore" do
+        let(:data) do
+          valid_data.merge(
+            {
+              "LOCAL_PATIENT_ID" => "CIN-OXFORD-pat123456",
+              "LOCAL_PATIENT_ID_URI" => "https://cinnamon.nhs.uk/0de/system1"
+            }
+          )
+        end
+
+        it "creates a valid vaccination record" do
+          expect(vaccination_record).to be_valid
+        end
+
+        its(:local_patient_id) { should be_nil }
+        its(:local_patient_id_uri) { should be_nil }
+      end
     end
 
     context "for a bulk upload" do
