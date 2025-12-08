@@ -3,6 +3,7 @@ SELECT
   pps.patient_id || '-' ||
   pps.programme_type || '-' ||
   tl.team_id || '-' ||
+  pl.location_id || '-' ||
   pps.academic_year                     AS id,
 
   -- Identifiers (for counting and grouping)
