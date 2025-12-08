@@ -33,6 +33,7 @@ en:
     outcome: outcome
     parent: parent
     parent_details: parent-details
+    programme: programme
     programmes: programmes
     questions: questions
     reason_for_refusal: reason-for-refusal

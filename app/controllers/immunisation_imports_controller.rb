@@ -3,6 +3,7 @@
 class ImmunisationImportsController < ApplicationController
   include Pagy::Backend
 
+  before_action :set_draft_import, only: %i[new create]
   before_action :set_immunisation_import, only: %i[show update]
 
   skip_after_action :verify_policy_scoped, only: %i[new create]
@@ -63,7 +64,12 @@ class ImmunisationImportsController < ApplicationController
   private
 
   def type
-    current_team.type_upload_only? ? "bulk_#{params[:programme]}" : "poc"
+    current_team.type_upload_only? ? "bulk_#{@programme}" : "poc"
+  end
+
+  def set_draft_import
+    @draft_import = DraftImport.new(request_session: session, current_user:)
+    @programme = @draft_import.programme
   end
 
   def set_immunisation_import

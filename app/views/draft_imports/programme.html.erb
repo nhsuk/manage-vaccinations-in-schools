@@ -1,0 +1,23 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: imports_path) %>
+<% end %>
+
+<% legend = "Which programme are you uploading data for?" %>
+<% content_for :page_title, legend %>
+
+<%= form_with model: @draft_import, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_radio_buttons_fieldset :programme, legend: { text: legend, tag: "h1", size: "l" } do %>
+    <%= f.govuk_radio_button :programme, :flu,
+                             label: { text: "Flu" },
+                             hint: { text: "Vaccination records for the seasonal flu programme" },
+                             link_errors: true %>
+
+    <%= f.govuk_radio_button :programme, :hpv,
+                             label: { text: "HPV" },
+                             hint: { text: "Vaccination records for the HPV programme" } %>
+  <% end %>
+
+  <%= f.govuk_submit %>
+<% end %>

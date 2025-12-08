@@ -8,6 +8,7 @@ class DraftImport
   attribute :location_id, :integer
   attribute :type, :string
   attribute :year_groups, array: true, default: []
+  attribute :programme, :string
 
   def initialize(current_user:, **attributes)
     @current_user = current_user
@@ -15,11 +16,13 @@ class DraftImport
   end
 
   def wizard_steps
-    steps = %i[type]
+    steps = []
 
+    steps << :type unless is_bulk?
     steps << :location if is_class_import?
     steps << :academic_year if ask_academic_year?
     steps << :year_groups if is_class_import?
+    steps << :programme if is_bulk?
 
     steps
   end
@@ -34,6 +37,10 @@ class DraftImport
 
   on_wizard_step :location, exact: true do
     validates :location_id, presence: true
+  end
+
+  on_wizard_step :programme, exact: true do
+    validates :programme, inclusion: %w[flu hpv]
   end
 
   on_wizard_step :type, exact: true do
@@ -57,6 +64,8 @@ class DraftImport
   def is_class_import? = type == "class"
 
   def is_cohort_import? = type == "cohort"
+
+  def is_bulk? = "upload_only".in?(@current_user.teams.pluck(:type))
 
   private
 

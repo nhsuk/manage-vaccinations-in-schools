@@ -67,6 +67,8 @@ en:
               inclusion: Choose which academic year
             location_id:
               blank: Choose which school this class list for
+            programme:
+              inclusion: Choose which programme you are uploading data for
             type:
               inclusion: Choose which type of records you are importing
             year_groups:
