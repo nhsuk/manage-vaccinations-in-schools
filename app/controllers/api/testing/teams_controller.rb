@@ -89,6 +89,8 @@ class API::Testing::TeamsController < API::Testing::BaseController
       VaccinationRecord.where(performed_ods_code: team.organisation.ods_code)
     )
 
+    log_destroy(Triage.where(team:))
+
     # These should have been deleted anyway due to the foreign key cascade, but
     # just to be safe.
     log_destroy(PatientTeam.where(team:))
@@ -97,8 +99,8 @@ class API::Testing::TeamsController < API::Testing::BaseController
 
     unless keep_itself
       log_destroy(Session.for_team(team))
-      log_destroy(Subteam.where(team:))
       log_destroy(TeamLocation.where(team:))
+      log_destroy(Subteam.where(team:))
       log_destroy(Team.where(id: team.id))
     end
 
