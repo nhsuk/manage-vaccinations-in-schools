@@ -24,8 +24,7 @@ class Sessions::PatientsController < Sessions::BaseController
 
   def set_registration_statuses
     @registration_statuses =
-      if Flipper.enabled?(:schools_and_sessions) && @session.today? &&
-           @session.requires_registration?
+      if @session.today? && @session.requires_registration?
         Patient::RegistrationStatus.statuses.keys
       else
         []

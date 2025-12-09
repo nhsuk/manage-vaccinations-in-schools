@@ -11,7 +11,7 @@ describe "Triage" do
     and_i_upload_historical_vaccination_records
     then_i_see_the_completed_upload
 
-    when_i_go_the_session
+    when_i_go_the_school
     and_i_upload_the_class_list
     then_i_see_the_completed_upload
 
@@ -71,10 +71,8 @@ describe "Triage" do
     expect(page).to have_content("Completed")
   end
 
-  def when_i_go_the_session
-    click_on "Sessions", match: :first
-    choose "Scheduled"
-    click_on "Update results"
+  def when_i_go_the_school
+    click_on "Schools", match: :first
     click_on @session.location.name
   end
 
@@ -88,6 +86,13 @@ describe "Triage" do
     click_on "Continue"
 
     wait_for_import_to_complete(ClassImport)
+  end
+
+  def when_i_go_the_session
+    click_on "Sessions", match: :first
+    choose "Scheduled"
+    click_on "Update results"
+    click_on @session.location.name
   end
 
   def then_i_see_one_patient_needing_consent

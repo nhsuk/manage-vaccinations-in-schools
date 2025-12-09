@@ -249,8 +249,7 @@ class DraftSessionsController < ApplicationController
   end
 
   def finish_wizard_path
-    if Flipper.enabled?(:schools_and_sessions) &&
-         @draft_session.return_to == "school"
+    if @draft_session.return_to == "school"
       location = @draft_session.location
       school_sessions_path(
         location.generic_clinic? ? Location::URN_UNKNOWN : location

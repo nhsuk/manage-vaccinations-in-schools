@@ -9,9 +9,7 @@ describe "Manage attendance" do
     and_the_session_has_patients
 
     when_i_go_to_the_session
-    and_i_click_on_the_register_tab
-    then_i_see_the_register_tab
-    and_i_see_the_actions_required
+    and_i_click_on_the_children_tab
 
     when_i_register_a_patient_as_attending
     then_i_see_the_attending_flash
@@ -47,7 +45,8 @@ describe "Manage attendance" do
     and_the_session_has_patients
 
     when_i_go_to_the_session
-    then_i_do_not_see_the_register_tab
+    and_i_click_on_the_children_tab
+    then_i_do_not_see_the_registration_buttons
 
     when_i_go_to_the_session_patients
     and_i_go_to_a_patient
@@ -60,15 +59,16 @@ describe "Manage attendance" do
     and_the_session_has_patients
 
     when_i_go_to_the_session
-    and_i_click_on_the_register_tab
-    then_i_see_the_register_tab
+    and_i_click_on_the_children_tab
+    then_i_see_the_registration_buttons
 
     when_i_go_to_the_session
     and_i_edit_the_session
     and_i_turn_off_register_attendance
 
     when_i_go_to_the_session
-    then_i_do_not_see_the_register_tab
+    and_i_click_on_the_children_tab
+    then_i_do_not_see_the_registration_buttons
   end
 
   scenario "Viewing a patient from yesterday with attendance turned off" do
@@ -153,16 +153,8 @@ describe "Manage attendance" do
     within(".app-secondary-navigation") { click_on "Children" }
   end
 
-  def and_i_click_on_the_register_tab
-    click_link "Register"
-  end
-
   def and_i_click_on_the_record_tab
     click_link "Record vaccinations"
-  end
-
-  def then_i_do_not_see_the_register_tab
-    expect(page).not_to have_content("Register")
   end
 
   def then_i_cant_see_the_patients
@@ -175,17 +167,18 @@ describe "Manage attendance" do
     expect(page).not_to have_content("Update attendance")
   end
 
-  def then_i_see_the_register_tab
-    expect(page).to have_content("Registration status")
-  end
-
   def then_i_see_the_patient
     expect(page).to have_content("Showing 1 to 1 of 1 children")
   end
 
-  def and_i_see_the_actions_required
-    # This should be shown once per patient (there are 3 patients).
-    expect(page).to have_content("HPVDue vaccination").exactly(3).times
+  def then_i_see_the_registration_buttons
+    expect(page).to have_button("Attending")
+    expect(page).to have_button("Absent")
+  end
+
+  def then_i_do_not_see_the_registration_buttons
+    expect(page).not_to have_button("Attending")
+    expect(page).not_to have_button("Absent")
   end
 
   def when_i_register_a_patient_as_attending

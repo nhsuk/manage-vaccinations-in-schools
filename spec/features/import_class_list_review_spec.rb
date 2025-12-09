@@ -7,8 +7,8 @@ describe "Import class lists" do
     and_patients_exist
     and_import_review_is_enabled
 
-    when_i_visit_a_session_page_for_the_hpv_programme
-    and_i_start_adding_children_to_the_session
+    when_i_visit_a_school_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_school
     and_i_select_the_year_groups
 
     when_i_upload_a_valid_file
@@ -26,16 +26,16 @@ describe "Import class lists" do
     and_two_patients_exists_in_the_session
     and_import_review_is_enabled
 
-    when_i_visit_a_session_page_for_the_hpv_programme
-    and_i_start_adding_children_to_the_session
+    when_i_visit_a_school_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_school
     and_i_select_the_year_groups
 
     when_i_upload_a_valid_file
     then_i_should_see_the_first_import_review_screen
     and_no_patients_from_the_first_import_are_committed
 
-    when_i_visit_a_session_page_for_the_hpv_programme
-    and_i_start_adding_children_to_the_session
+    when_i_visit_a_school_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_school
     and_i_select_the_year_groups
     when_i_upload_another_valid_file
     and_i_approve_the_import
@@ -63,8 +63,8 @@ describe "Import class lists" do
     and_an_hpv_programme_is_underway
     and_import_review_is_enabled
 
-    when_i_visit_a_session_page_for_the_hpv_programme
-    and_i_start_adding_children_to_the_session
+    when_i_visit_a_school_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_school
     and_i_select_the_year_groups
 
     when_i_upload_a_file_with_one_new_patient
@@ -85,8 +85,8 @@ describe "Import class lists" do
     and_an_hpv_programme_is_underway
     and_import_review_is_enabled
 
-    when_i_visit_a_session_page_for_the_hpv_programme
-    and_i_start_adding_children_to_the_session
+    when_i_visit_a_school_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_school
     and_i_select_the_year_groups
 
     when_i_upload_a_file_with_one_new_patient
@@ -150,22 +150,10 @@ describe "Import class lists" do
     click_link "Import", match: :first
   end
 
-  def when_i_visit_a_session_page_for_the_hpv_programme
+  def when_i_visit_a_school_page_for_the_hpv_programme
     visit "/dashboard"
-    click_on "Sessions", match: :first
+    click_on "Schools", match: :first
     click_on "Waterloo Road"
-  end
-
-  def and_i_start_adding_children_to_the_session
-    click_on "Import class lists"
-  end
-
-  def and_i_select_the_year_groups
-    check "Year 8"
-    check "Year 9"
-    check "Year 10"
-    check "Year 11"
-    click_on "Continue"
   end
 
   def when_i_upload_a_valid_file
@@ -197,7 +185,7 @@ describe "Import class lists" do
     wait_for_import_to_complete_until_review(ClassImport)
   end
 
-  def and_i_start_adding_children_to_the_session
+  def and_i_start_adding_children_to_the_school
     click_on "Import class lists"
   end
 

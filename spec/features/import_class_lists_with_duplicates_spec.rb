@@ -8,8 +8,8 @@ describe "Class list imports duplicates" do
     and_an_hpv_programme_is_underway
     and_existing_patient_records_exist
 
-    when_i_visit_a_session_page_for_the_hpv_programme
-    and_i_start_adding_children_to_the_session
+    when_i_visit_a_school_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_school
     and_i_select_the_year_groups
     and_i_upload_a_file_with_duplicate_records
     then_i_should_see_the_import_page_with_duplicate_records
@@ -52,8 +52,8 @@ describe "Class list imports duplicates" do
       and_an_hpv_programme_is_underway
       and_existing_patient_records_exist
 
-      when_i_visit_a_session_page_for_the_hpv_programme
-      and_i_start_adding_children_to_the_session
+      when_i_visit_a_school_page_for_the_hpv_programme
+      and_i_start_adding_children_to_the_school
       and_i_select_the_year_groups
       and_i_upload_a_file_with_duplicate_records
       then_i_should_see_the_import_page_with_duplicate_records
@@ -185,15 +185,13 @@ describe "Class list imports duplicates" do
       )
   end
 
-  def when_i_visit_a_session_page_for_the_hpv_programme
+  def when_i_visit_a_school_page_for_the_hpv_programme
     visit "/dashboard"
-    click_on "Sessions", match: :first
-    choose "Unscheduled"
-    click_on "Update results"
+    click_on "Schools", match: :first
     click_on "Waterloo Road"
   end
 
-  def and_i_start_adding_children_to_the_session
+  def and_i_start_adding_children_to_the_school
     click_on "Import class lists"
   end
 
