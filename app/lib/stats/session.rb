@@ -191,7 +191,6 @@ class Stats::Session
     @patient_ids ||=
       session
         .patients
-        .not_deceased
         .appear_in_programmes([programme], session:)
         .eligible_for_programme(programme, session:)
         .pluck(:id)

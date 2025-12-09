@@ -110,11 +110,12 @@ describe "Offline vaccination" do
     previous_date = 1.month.ago.to_date
 
     if clinic
-      @team.generic_clinic_session(academic_year: AcademicYear.current).update!(
-        dates: [previous_date, Date.current]
-      )
+      @generic_clinic_session =
+        @team.generic_clinic_session(academic_year: AcademicYear.current)
 
-      @physical_clinic_location =
+      @generic_clinic_session.update!(dates: [previous_date, Date.current])
+
+      @community_clinic =
         create(
           :community_clinic,
           name: "Westfield Shopping Centre",
@@ -142,33 +143,20 @@ describe "Offline vaccination" do
         :patient,
         2,
         :consent_given_triage_not_needed,
-        session:
-          (
-            if clinic
-              @team.generic_clinic_session(academic_year: AcademicYear.current)
-            else
-              @session
-            end
-          ),
         school:,
+        session: clinic ? @generic_clinic_session : @session,
         year_group: 8
       )
     @previously_vaccinated_patient =
       create(
         :patient,
         :vaccinated,
-        session:
-          (
-            if clinic
-              @team.generic_clinic_session(academic_year: AcademicYear.current)
-            else
-              @session
-            end
-          ),
         school:,
-        location_name: clinic ? @physical_clinic_location.name : nil,
+        session: clinic ? @generic_clinic_session : @session,
+        location_name: clinic ? @community_clinic.name : nil,
         year_group: 8
       )
+
     VaccinationRecord.last.update!(
       performed_at: previous_date,
       performed_by: @team.users.first,
@@ -180,18 +168,13 @@ describe "Offline vaccination" do
         :patient,
         :vaccinated,
         :restricted,
-        session:
-          (
-            if clinic
-              @team.generic_clinic_session(academic_year: AcademicYear.current)
-            else
-              @session
-            end
-          ),
         school:,
-        location_name: clinic ? @physical_clinic_location.name : nil,
+        session: clinic ? @generic_clinic_session : @session,
+        location_name: clinic ? @community_clinic.name : nil,
         year_group: 8
       )
+
+    StatusUpdater.call
   end
 
   def given_an_hpv_programme_is_underway_with_a_single_patient
@@ -216,11 +199,14 @@ describe "Offline vaccination" do
 
     @previously_vaccinated_patient =
       create(:patient, :vaccinated, session: @session, school:, year_group: 8)
+
     VaccinationRecord.last.update!(
       performed_at: previous_date,
       performed_by: @team.users.first,
       notify_parents: true
     )
+
+    StatusUpdater.call
   end
 
   def given_a_flu_programme_is_underway_with_a_single_patient
@@ -492,7 +478,7 @@ describe "Offline vaccination" do
       .email
     row_for_vaccinated_patient[
       "CLINIC_NAME"
-    ] = @physical_clinic_location.name if @physical_clinic_location
+    ] = @community_clinic.name if @community_clinic
 
     row_for_unvaccinated_patient =
       csv_table.find do |row|
@@ -513,7 +499,7 @@ describe "Offline vaccination" do
       .email
     row_for_unvaccinated_patient[
       "CLINIC_NAME"
-    ] = @physical_clinic_location.name if @physical_clinic_location
+    ] = @community_clinic.name if @community_clinic
 
     File.write("tmp/modified.csv", csv_table.to_csv)
   end

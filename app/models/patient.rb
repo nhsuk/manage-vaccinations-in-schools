@@ -507,7 +507,14 @@ class Patient < ApplicationRecord
           # or the location is not known.
 
           academic_year = session.team_location.academic_year
-          location_id = session.team_location.location_id
+          location = session.team_location.location
+
+          # In the generic clinic sessions we have to show all patients even
+          # if they were vaccinated elsewhere because the location of the
+          # vaccination will be a specific community clinic location, not
+          # the generic clinic.
+
+          return self if location.generic_clinic? && programme.seasonal?
 
           vaccinated_statuses =
             Patient::VaccinationStatus
@@ -517,17 +524,24 @@ class Patient < ApplicationRecord
               .vaccinated
 
           not_eligible_criteria =
-            vaccinated_statuses.where(academic_year:).where(
-              "latest_location_id IS NULL OR latest_location_id != ?",
-              location_id
-            )
+            if location.generic_clinic?
+              vaccinated_statuses.where(academic_year: academic_year - 1)
+            else
+              scope =
+                vaccinated_statuses.where(academic_year:).where(
+                  "latest_location_id IS NULL OR latest_location_id != ?",
+                  location.id
+                )
 
-          unless programme.seasonal?
-            not_eligible_criteria =
-              not_eligible_criteria.or(
-                vaccinated_statuses.where(academic_year: academic_year - 1)
-              )
-          end
+              unless programme.seasonal?
+                scope =
+                  scope.or(
+                    vaccinated_statuses.where(academic_year: academic_year - 1)
+                  )
+              end
+
+              scope
+            end
 
           where.not(not_eligible_criteria.arel.exists)
         end
