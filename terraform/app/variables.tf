@@ -229,13 +229,6 @@ locals {
       ], local.sandbox_envs,
     )
 
-    SIDEKIQ = [
-      {
-        name  = "RAILS_MAX_THREADS"
-        value = 10
-      },
-    ]
-
     REPORTING = [
       {
         name  = "VALKEY_ADDRESS"
@@ -338,7 +331,7 @@ variable "minimum_sidekiq_replicas" {
 
 variable "maximum_sidekiq_replicas" {
   type        = number
-  default     = 4
+  default     = 6
   description = "Amount of replicas for the sidekiq service"
 }
 

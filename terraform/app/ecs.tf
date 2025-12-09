@@ -122,10 +122,10 @@ module "web_service" {
 module "sidekiq_service" {
   source = "./modules/ecs_service"
   task_config = {
-    environment          = concat(local.task_envs["CORE"], local.task_envs["SIDEKIQ"])
+    environment          = local.task_envs["CORE"]
     secrets              = local.task_secrets["CORE"]
-    cpu                  = 2048
-    memory               = 8192
+    cpu                  = 1024
+    memory               = 6144
     execution_role_arn   = aws_iam_role.ecs_task_execution_role["CORE"].arn
     task_role_arn        = data.aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
