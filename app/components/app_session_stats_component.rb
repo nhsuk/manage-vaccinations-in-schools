@@ -9,7 +9,7 @@ class AppSessionStatsComponent < ViewComponent::Base
         </h3>
 
         <p class="nhsuk-caption-m nhsuk-u-margin-bottom-4">
-          <%= t(".eligibility_message", count: total_count(programme)) %>
+          <%= t(".caption", count: total_count(programme)) %>
         </p>
 
         <% cards = cards_for_programme(programme) %>

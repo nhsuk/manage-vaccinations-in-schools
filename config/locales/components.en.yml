@@ -1,7 +1,5 @@
 en:
   app_session_stats_component:
-    eligibility_message:
-      one: >-
-        1 child is eligible for vaccination this academic year and has not been vaccinated elsewhere
-      other: >-
-        %{count} children are eligible for vaccination this academic year and have not been vaccinated elsewhere
+    caption:
+      one: 1 child is eligible for vaccination in this session
+      other: "%{count} children are eligible for vaccination in this session"
