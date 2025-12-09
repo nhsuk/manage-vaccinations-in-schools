@@ -9,6 +9,7 @@
 #  address_line_2            :text
 #  address_postcode          :text
 #  address_town              :text
+#  alternative_name          :text
 #  gias_establishment_number :integer
 #  gias_local_authority_code :integer
 #  gias_phase                :integer

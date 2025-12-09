@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_05_100512) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_09_133534) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -463,6 +463,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_100512) do
     t.text "address_line_2"
     t.text "address_postcode"
     t.text "address_town"
+    t.text "alternative_name"
     t.datetime "created_at", null: false
     t.integer "gias_establishment_number"
     t.integer "gias_local_authority_code"

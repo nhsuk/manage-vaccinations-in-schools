@@ -9,6 +9,7 @@
 #  address_line_2            :text
 #  address_postcode          :text
 #  address_town              :text
+#  alternative_name          :text
 #  gias_establishment_number :integer
 #  gias_local_authority_code :integer
 #  gias_phase                :integer
@@ -214,15 +215,16 @@ class Location < ApplicationRecord
   def school_id = school? ? id : nil
 
   def school_name
-    if generic_clinic?
-      "No known school (including home-schooled children)"
-    else
-      name
-    end
+    generic_clinic? ? alternative_name : name
   end
 
   def as_json
-    super.except("created_at", "systm_one_code", "updated_at").merge(
+    super.except(
+      "alternative_name",
+      "created_at",
+      "systm_one_code",
+      "updated_at"
+    ).merge(
       "is_attached_to_team" =>
         team_locations.any? { it.academic_year == AcademicYear.pending }
     )

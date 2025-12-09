@@ -9,6 +9,7 @@
 #  address_line_2            :text
 #  address_postcode          :text
 #  address_town              :text
+#  alternative_name          :text
 #  gias_establishment_number :integer
 #  gias_local_authority_code :integer
 #  gias_phase                :integer
@@ -74,6 +75,7 @@ FactoryBot.define do
     factory :generic_clinic do
       type { :generic_clinic }
       name { "Community clinic" }
+      alternative_name { "No known school (including home-schooled children)" }
 
       after(:create) do |location, evaluator|
         academic_year = evaluator.academic_year
