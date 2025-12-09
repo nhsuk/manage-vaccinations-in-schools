@@ -54,14 +54,12 @@ describe "Edit session programmes" do
       "Have you imported historical vaccination records for MMR?"
     )
     expect(page).to have_content(
-      "0% of children in Years 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, and 11 in " \
-        "this session have vaccination records."
+      "0% of children in Years 1 to 11 in this session have vaccination records."
     )
     expect(page).to have_content(
       "Scheduling this session now will send consent requests to 2 parents " \
-        "of children in Years 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, and 11 on 18 " \
-        "January 2024. Many of them may be parents of already vaccinated " \
-        "children."
+        "of children in Years 1 to 11 on 18 January 2024. Many of them may " \
+        "be parents of already vaccinated children."
     )
   end
 

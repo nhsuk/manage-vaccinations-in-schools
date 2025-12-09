@@ -16,13 +16,7 @@ describe AppSessionCardComponent do
 
   it { should have_text("Children100 children") }
   it { should have_text("ProgrammesFlu") }
-
-  it do
-    expect(rendered).to have_text(
-      "Year groupsReception, Years 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, and 11"
-    )
-  end
-
+  it { should have_text("Year groupsReception and years 1 to 11") }
   it { should have_text("Date1 September 2025") }
   it { should have_text("Consent periodOpens 11 August") }
 

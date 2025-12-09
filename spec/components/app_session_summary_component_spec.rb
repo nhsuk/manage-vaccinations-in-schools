@@ -20,7 +20,7 @@ describe AppSessionSummaryComponent do
   let(:session) { create(:session, location:, programmes:, team:) }
 
   it { should have_content("ProgrammesHPV") }
-  it { should have_content("Year groupsYears 8, 9, 10, and 11") }
+  it { should have_content("Year groupsYears 8 to 11") }
 
   context "when showing the location" do
     let(:component) { described_class.new(session, show_location: true) }
