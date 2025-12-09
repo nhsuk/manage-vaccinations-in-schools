@@ -966,17 +966,6 @@ describe ImmunisationImportRow do
         end
       end
 
-      shared_examples "when `VACCINATED` is `N`" do
-        context "when `VACCINATED` is `N`" do
-          let(:data) { { "VACCINATED" => "N" } }
-
-          it "doesn't validate anything" do
-            expect(immunisation_import_row).to be_valid
-            expect(immunisation_import_row.errors[:base]).to eq []
-          end
-        end
-      end
-
       shared_examples "when vaccinated date is in a previous academic year" do
         context "when vaccinated date is in a previous academic year"
         let(:data) do
@@ -1043,9 +1032,7 @@ describe ImmunisationImportRow do
         end
 
         include_examples "when `VACCINATED` is `N`"
-
         include_examples "when an NHS number is provided"
-
         include_examples "when vaccinated date is in a previous academic year"
       end
 
@@ -1056,7 +1043,6 @@ describe ImmunisationImportRow do
           let(:data) { {} }
 
           include_examples "with an empty row (both bulk upload types)"
-
           include_examples "it doesn't make `SCHOOL_NAME` compulsory"
         end
 
@@ -1074,9 +1060,7 @@ describe ImmunisationImportRow do
         end
 
         include_examples "when `VACCINATED` is `N`"
-
         include_examples "when an NHS number is provided"
-
         include_examples "when vaccinated date is in a previous academic year"
       end
     end
