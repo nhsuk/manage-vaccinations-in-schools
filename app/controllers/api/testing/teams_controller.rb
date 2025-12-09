@@ -28,6 +28,7 @@ class API::Testing::TeamsController < API::Testing::BaseController
     )
     log_destroy(ConsentForm.for_team(team))
 
+    log_destroy(ClinicNotification.where(team_id:))
     log_destroy(
       ConsentNotification.joins(session: :team_location).where(
         team_location: {
