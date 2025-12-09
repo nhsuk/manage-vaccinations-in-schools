@@ -19,7 +19,6 @@ class FeatureFlagFactory
     import_review_screen
     programme_status
     reporting_api
-    schools_and_sessions
     testing_api
   ].freeze
 

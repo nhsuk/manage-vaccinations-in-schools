@@ -45,11 +45,7 @@ class Sessions::RegisterController < Sessions::BaseController
       t("attendance_flash.absent", name:)
     end
 
-    if Flipper.enabled?(:schools_and_sessions)
-      redirect_to session_patients_path(@session)
-    else
-      redirect_to session_register_path(@session)
-    end
+    redirect_to session_patients_path(@session)
   end
 
   private

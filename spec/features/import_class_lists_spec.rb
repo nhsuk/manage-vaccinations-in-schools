@@ -6,8 +6,8 @@ describe "Import class lists" do
   scenario "User uploads a file" do
     given_an_hpv_programme_is_underway
 
-    when_i_visit_a_session_page_for_the_hpv_programme
-    and_i_start_adding_children_to_the_session
+    when_i_visit_a_school_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_school
     and_i_select_the_year_groups
     then_i_should_see_the_import_page
 
@@ -43,8 +43,8 @@ describe "Import class lists" do
       and_pds_lookup_during_import_is_enabled
       and_import_review_screen_is_enabled
 
-      when_i_visit_a_session_page_for_the_hpv_programme
-      and_i_start_adding_children_to_the_session
+      when_i_visit_a_school_page_for_the_hpv_programme
+      and_i_start_adding_children_to_the_school
       and_i_select_the_year_groups
       then_i_should_see_the_import_page
 
@@ -127,16 +127,14 @@ describe "Import class lists" do
     Flipper.enable(:import_review_screen)
   end
 
-  def when_i_visit_a_session_page_for_the_hpv_programme
+  def when_i_visit_a_school_page_for_the_hpv_programme
     sign_in @user
     visit "/dashboard"
-    click_on "Sessions", match: :first
-    choose "Unscheduled"
-    click_on "Update results"
+    click_on "Schools", match: :first
     click_on "Waterloo Road"
   end
 
-  def and_i_start_adding_children_to_the_session
+  def and_i_start_adding_children_to_the_school
     click_on "Import class lists"
   end
 
