@@ -14,7 +14,7 @@ describe Stats::Session do
 
         it "returns zero counts for all stats" do
           expect(stats).to eq(
-            eligible_children: 0,
+            total: 0,
             needs_consent: 0,
             needs_triage: 0,
             has_refusal: 0,
@@ -30,7 +30,7 @@ describe Stats::Session do
 
         it "returns zero counts for all stats" do
           expect(stats).to eq(
-            eligible_children: 0,
+            total: 0,
             consent_no_response: 0,
             consent_given_injection: 0,
             consent_refused: 0,
@@ -104,7 +104,7 @@ describe Stats::Session do
 
         it "returns correct counts for each category" do
           expect(stats).to eq(
-            eligible_children: 5,
+            total: 5,
             needs_consent: 1,
             needs_triage: 0,
             has_refusal: 2,
@@ -120,7 +120,7 @@ describe Stats::Session do
 
         it "returns correct counts for each category" do
           expect(stats).to eq(
-            eligible_children: 5,
+            total: 5,
             consent_no_response: 1,
             consent_given_injection: 1,
             consent_refused: 2,
@@ -149,7 +149,7 @@ describe Stats::Session do
 
         it "returns correct counts for each category" do
           expect(stats).to eq(
-            eligible_children: 0,
+            total: 0,
             needs_consent: 0,
             needs_triage: 0,
             has_refusal: 0,
@@ -165,7 +165,7 @@ describe Stats::Session do
 
         it "returns correct counts for each category" do
           expect(stats).to eq(
-            eligible_children: 0,
+            total: 0,
             consent_no_response: 0,
             consent_given_injection: 0,
             consent_refused: 0,
@@ -239,11 +239,7 @@ describe Stats::Session do
         before { Flipper.enable(:programme_status) }
 
         it "returns counts broken down by vaccine method" do
-          expect(stats).to include(
-            eligible_children: 4,
-            due_nasal: 2,
-            due_injection: 2
-          )
+          expect(stats).to include(total: 4, due_nasal: 2, due_injection: 2)
         end
       end
 
@@ -252,7 +248,7 @@ describe Stats::Session do
 
         it "returns counts broken down by vaccine method" do
           expect(stats).to include(
-            eligible_children: 4,
+            total: 4,
             consent_given_nasal: 2,
             consent_given_injection_without_gelatine: 2
           )
@@ -300,7 +296,7 @@ describe Stats::Session do
 
         it "returns counts broken down by vaccine method" do
           expect(stats).to include(
-            eligible_children: 2,
+            total: 2,
             due_no_preference: 1,
             due_without_gelatine: 1
           )
@@ -312,7 +308,7 @@ describe Stats::Session do
 
         it "returns counts broken down by vaccine method" do
           expect(stats).to include(
-            eligible_children: 2,
+            total: 2,
             consent_given_injection: 1,
             consent_given_injection_without_gelatine: 1
           )
@@ -332,8 +328,8 @@ describe Stats::Session do
         )
       end
 
-      it "doesn't include them in eligible children" do
-        expect(stats).to include(eligible_children: 0)
+      it "doesn't include them in the total" do
+        expect(stats).to include(total: 0)
       end
     end
 

@@ -9,7 +9,7 @@ class AppSessionStatsComponent < ViewComponent::Base
         </h3>
 
         <p class="nhsuk-caption-m nhsuk-u-margin-bottom-4">
-          <%= t(".eligibility_message", count: eligible_children_count(programme)) %>
+          <%= t(".eligibility_message", count: total_count(programme)) %>
         </p>
 
         <% cards = cards_for_programme(programme) %>
@@ -50,8 +50,7 @@ class AppSessionStatsComponent < ViewComponent::Base
            to: :helpers
 
   def cards_for_programme(programme)
-    stats =
-      stats_for_programme(programme).except(:eligible_children).stringify_keys
+    stats = stats_for_programme(programme).except(:total).stringify_keys
 
     stats.map { |key, value| card_for(key, value, programme:) }
   end
@@ -157,8 +156,8 @@ class AppSessionStatsComponent < ViewComponent::Base
     end
   end
 
-  def eligible_children_count(programme)
-    stats_for_programme(programme)[:eligible_children]
+  def total_count(programme)
+    stats_for_programme(programme).fetch(:total)
   end
 
   def stats_for_programme(programme)
