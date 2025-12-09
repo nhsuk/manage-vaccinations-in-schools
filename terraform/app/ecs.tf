@@ -122,7 +122,7 @@ module "web_service" {
 module "sidekiq_service" {
   source = "./modules/ecs_service"
   task_config = {
-    environment          = concat(local.task_envs["CORE"], local.task_envs["SIDEKIQ"])
+    environment          = local.task_envs["CORE"]
     secrets              = local.task_secrets["CORE"]
     cpu                  = 1024
     memory               = 6144

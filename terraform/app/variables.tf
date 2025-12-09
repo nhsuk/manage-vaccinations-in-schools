@@ -229,13 +229,6 @@ locals {
       ], local.sandbox_envs,
     )
 
-    SIDEKIQ = [
-      {
-        name  = "RAILS_MAX_THREADS"
-        value = 10
-      },
-    ]
-
     REPORTING = [
       {
         name  = "VALKEY_ADDRESS"
