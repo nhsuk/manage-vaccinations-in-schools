@@ -135,7 +135,7 @@ class Vaccine < ApplicationRecord
   }.freeze
 
   def snomed_procedure_code(dose_sequence:)
-    codes = SNOMED_PROCEDURE_CODES.fetch(programme.type).fetch(method)
+    codes = SNOMED_PROCEDURE_CODES.fetch(programme_type).fetch(method)
     codes.is_a?(Array) ? codes[dose_sequence - 1] : codes
   end
 
