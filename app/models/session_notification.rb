@@ -32,13 +32,7 @@ class SessionNotification < ApplicationRecord
   belongs_to :patient
   belongs_to :session
 
-  enum :type,
-       {
-         school_reminder: 0,
-         clinic_initial_invitation: 1,
-         clinic_subsequent_invitation: 2
-       },
-       validate: true
+  enum :type, { school_reminder: 0 }, validate: true
 
   def self.create_and_send!(
     patient:,
