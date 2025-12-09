@@ -193,7 +193,7 @@ class Stats::Session
         .patients
         .not_deceased
         .appear_in_programmes([programme], session:)
-        .eligible_for_programmes([programme], location:, academic_year:)
+        .eligible_for_programme(programme, session:)
         .pluck(:id)
   end
 end

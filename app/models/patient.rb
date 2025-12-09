@@ -500,39 +500,49 @@ class Patient < ApplicationRecord
           end
         end
 
-  scope :eligible_for_programmes,
-        ->(programmes, location:, academic_year:) do
+  scope :eligible_for_programme,
+        ->(programme, session:) do
           # We exclude patients who were vaccinated in a previous
           # academic year, or vaccinated at a different location,
           # or the location is not known.
 
+          academic_year = session.team_location.academic_year
+          location_id = session.team_location.location_id
+
+          vaccinated_statuses =
+            Patient::VaccinationStatus
+              .select("1")
+              .where("patient_id = patients.id")
+              .where_programme(programme)
+              .vaccinated
+
           not_eligible_criteria =
-            programmes.map do |programme|
-              vaccinated_statuses =
-                Patient::VaccinationStatus
-                  .select("1")
-                  .where("patient_id = patients.id")
-                  .where_programme(programme)
-                  .vaccinated
+            vaccinated_statuses.where(academic_year:).where(
+              "latest_location_id IS NULL OR latest_location_id != ?",
+              location_id
+            )
 
-              scope =
-                vaccinated_statuses.where(academic_year:).where(
-                  "latest_location_id IS NULL OR latest_location_id != ?",
-                  location.id
-                )
+          unless programme.seasonal?
+            not_eligible_criteria =
+              not_eligible_criteria.or(
+                vaccinated_statuses.where(academic_year: academic_year - 1)
+              )
+          end
 
-              unless programme.seasonal?
-                scope =
-                  scope.or(
-                    vaccinated_statuses.where(academic_year: academic_year - 1)
-                  )
-              end
+          where.not(not_eligible_criteria.arel.exists)
+        end
 
-              scope
+  scope :eligible_for_any_programmes_of,
+        ->(programmes, session:) do
+          scope = eligible_for_programme(programmes.first, session:)
+
+          programmes
+            .drop(1)
+            .each do |programme|
+              scope = scope.or(eligible_for_programme(programme, session:))
             end
 
-          # TODO: Handle multiple programmes.
-          where.not(not_eligible_criteria.first.arel.exists)
+          scope
         end
 
   validates :given_name, :family_name, :date_of_birth, presence: true
