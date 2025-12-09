@@ -218,7 +218,7 @@ module ContributesToPatientTeams
         contributing_subqueries.each do |key, subquery|
           patient_id_source =
             connection.quote_string(subquery[:patient_id_source])
-          sterile_key = connection.quote(PatientTeam.sources.fetch(key.to_s))
+          source_key = connection.quote(PatientTeam.sources.fetch(key.to_s))
 
           affected_patient_ids |=
             select("#{subquery[:patient_id_source]} as patient_id")
@@ -233,16 +233,13 @@ module ContributesToPatientTeams
               .to_sql
           connection.execute <<-SQL
           UPDATE patient_teams pt
-            SET sources = array_remove(sources, #{sterile_key})
+            SET sources = array_remove(sources, #{source_key})
           FROM (#{patient_relationships_to_remove}) as alias
             WHERE pt.patient_id = alias.patient_id;
           SQL
         end
 
-        where(
-          "#{table_name}.id = ANY(ARRAY[?]::bigint[])",
-          pk_ids
-        ).distinct.add_patient_team_relationships
+        all.add_patient_team_relationships(patient_ids: affected_patient_ids)
 
         PatientTeam.missing_sources.delete_all
       end
@@ -252,14 +249,23 @@ module ContributesToPatientTeams
       end
     end
 
-    def add_patient_team_relationships
+    def add_patient_team_relationships(patient_ids: nil)
       contributing_subqueries.each do |key, subquery|
-        sterile_key = connection.quote(PatientTeam.sources.fetch(key.to_s))
+        source_key = connection.quote(PatientTeam.sources.fetch(key.to_s))
         patient_id_source =
           connection.quote_string(subquery[:patient_id_source])
         team_id_source = connection.quote_string(subquery[:team_id_source])
+        contribution_scope = subquery[:contribution_scope]
+        if patient_ids.present?
+          contribution_scope =
+            contribution_scope.where(
+              "#{patient_id_source} = ANY(ARRAY[?]::bigint[])",
+              patient_ids
+            )
+        end
+
         insert_from =
-          subquery[:contribution_scope]
+          contribution_scope
             .select(
               "#{patient_id_source} as patient_id",
               "#{team_id_source} as team_id"
@@ -268,10 +274,10 @@ module ContributesToPatientTeams
             .to_sql
         connection.execute <<-SQL
           INSERT INTO patient_teams (patient_id, team_id, sources)
-          SELECT alias.patient_id, alias.team_id, ARRAY[#{sterile_key}]
+          SELECT alias.patient_id, alias.team_id, ARRAY[#{source_key}]
             FROM (#{insert_from}) as alias
           ON CONFLICT (team_id, patient_id) DO UPDATE
-            SET sources = array_append(array_remove(patient_teams.sources,#{sterile_key}),#{sterile_key})
+            SET sources = array_append(array_remove(patient_teams.sources,#{source_key}),#{source_key})
         SQL
       end
     end
