@@ -7,7 +7,6 @@ class AppSecondaryNavigationComponent < ViewComponent::Base
     @classes = [
       "app-secondary-navigation",
       reverse ? "app-secondary-navigation--reverse" : nil,
-      "nhsuk-u-margin-bottom-4",
       *Array(classes)
     ].compact.join(" ")
 
