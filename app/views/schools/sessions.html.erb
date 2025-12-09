@@ -8,11 +8,11 @@
 
 <%= render "header" %>
 
-<% if @unscheduled_sessions.present? %>
-  <h3 class="nhsuk-heading-m">Unscheduled sessions</h3>
+<% if @scheduled_sessions.present? %>
+  <h3 class="nhsuk-heading-m">Scheduled sessions</h3>
 
   <div class="nhsuk-grid-row nhsuk-card-group">
-    <% @unscheduled_sessions.each do |session| %>
+    <% @scheduled_sessions.each do |session| %>
       <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
         <%= render AppSessionCardComponent.new(
               session,
@@ -26,11 +26,11 @@
   </div>
 <% end %>
 
-<% if @scheduled_sessions.present? %>
-  <h3 class="nhsuk-heading-m">Scheduled sessions</h3>
+<% if @unscheduled_sessions.present? %>
+  <h3 class="nhsuk-heading-m">Unscheduled sessions</h3>
 
   <div class="nhsuk-grid-row nhsuk-card-group">
-    <% @scheduled_sessions.each do |session| %>
+    <% @unscheduled_sessions.each do |session| %>
       <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
         <%= render AppSessionCardComponent.new(
               session,
