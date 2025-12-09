@@ -40,10 +40,6 @@ class SessionNotification < ApplicationRecord
        },
        validate: true
 
-  def clinic_invitation?
-    clinic_initial_invitation? || clinic_subsequent_invitation?
-  end
-
   def self.create_and_send!(
     patient:,
     session:,
@@ -54,22 +50,18 @@ class SessionNotification < ApplicationRecord
     academic_year = session.academic_year
 
     parents =
-      if type == :school_reminder
-        session
-          .programmes_for(patient:)
-          .flat_map do |programme|
-            ConsentGrouper
-              .call(
-                patient.consents,
-                programme_type: programme.type,
-                academic_year:
-              )
-              .select(&:response_given?)
-              .filter_map(&:parent)
-          end
-      else
-        patient.parents.select(&:contactable?)
-      end
+      session
+        .programmes_for(patient:)
+        .flat_map do |programme|
+          ConsentGrouper
+            .call(
+              patient.consents,
+              programme_type: programme.type,
+              academic_year:
+            )
+            .select(&:response_given?)
+            .filter_map(&:parent)
+        end
 
     parents.select!(&:contactable?)
     parents.uniq!
@@ -92,22 +84,14 @@ class SessionNotification < ApplicationRecord
     academic_year = session_date.academic_year
 
     programmes =
-      if type == :school_reminder
-        session
-          .programmes_for(patient:)
-          .select do |programme|
-            patient.consent_given_and_safe_to_vaccinate?(
-              programme:,
-              academic_year:
-            )
-          end
-      else
-        session
-          .programmes_for(patient:)
-          .reject do |programme|
-            patient.vaccination_status(programme:, academic_year:).vaccinated?
-          end
-      end
+      session
+        .programmes_for(patient:)
+        .select do |programme|
+          patient.consent_given_and_safe_to_vaccinate?(
+            programme:,
+            academic_year:
+          )
+        end
 
     parents.each do |parent|
       params = {
@@ -118,22 +102,13 @@ class SessionNotification < ApplicationRecord
         sent_by: current_user
       }
 
-      template_name = compute_template_name(type, session.organisation)
+      template_name = :"session_#{type}"
 
       EmailDeliveryJob.perform_later(template_name, **params)
 
-      next if type == :school_reminder && !parent.phone_receive_updates
+      next unless parent.phone_receive_updates
 
       SMSDeliveryJob.perform_later(template_name, **params)
     end
-  end
-
-  def self.compute_template_name(type, organisation)
-    template_names = [
-      :"session_#{type}_#{organisation.ods_code.downcase}",
-      :"session_#{type}"
-    ]
-
-    template_names.find { GOVUK_NOTIFY_EMAIL_TEMPLATES.key?(it) }
   end
 end

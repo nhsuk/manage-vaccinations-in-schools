@@ -200,11 +200,10 @@ describe "Manage clinic sessions" do
 
   def when_the_patient_has_been_invited
     create(
-      :session_notification,
-      :clinic_initial_invitation,
+      :clinic_notification,
+      :initial_invitation,
       patient: @patient,
-      session: @session,
-      session_date: Date.current
+      session: @session
     )
   end
 
@@ -231,7 +230,7 @@ describe "Manage clinic sessions" do
 
   def and_the_parent_receives_a_reminder
     perform_enqueued_jobs
-    expect_email_to @parent.email, :session_clinic_subsequent_invitation
+    expect_email_to @parent.email, :clinic_subsequent_invitation
   end
 
   def when_the_parent_visits_the_consent_form

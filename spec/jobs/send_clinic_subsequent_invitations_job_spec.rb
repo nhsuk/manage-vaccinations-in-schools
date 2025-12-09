@@ -10,6 +10,7 @@ describe SendClinicSubsequentInvitationsJob do
   let(:parents) { create_list(:parent, 2) }
   let(:patient) { create(:patient, parents:, year_group: 8, session:) }
   let(:location) { create(:generic_clinic, team:, academic_year: 2024) }
+  let(:academic_year) { session.academic_year }
 
   let(:session) do
     create(
@@ -22,26 +23,22 @@ describe SendClinicSubsequentInvitationsJob do
   end
 
   it "doesn't send any notifications" do
-    expect(SessionNotification).not_to receive(:create_and_send!)
+    expect(ClinicNotification).not_to receive(:create_and_send!)
     perform_now
   end
 
   context "when already sent for that date" do
     before do
-      create(
-        :session_notification,
-        :clinic_initial_invitation,
-        session:,
-        patient:
-      )
+      create(:clinic_notification, :initial_invitation, session:, patient:)
     end
 
     it "sends a notification" do
-      expect(SessionNotification).to receive(:create_and_send!).once.with(
+      expect(ClinicNotification).to receive(:create_and_send!).once.with(
         patient:,
-        session:,
-        session_date: session.dates.second,
-        type: :clinic_subsequent_invitation
+        team:,
+        academic_year:,
+        programmes:,
+        type: :subsequent_invitation
       )
       perform_now
     end
@@ -64,7 +61,7 @@ describe SendClinicSubsequentInvitationsJob do
       end
 
       it "doesn't send any notifications" do
-        expect(SessionNotification).not_to receive(:create_and_send!)
+        expect(ClinicNotification).not_to receive(:create_and_send!)
         perform_now
       end
     end
@@ -75,7 +72,7 @@ describe SendClinicSubsequentInvitationsJob do
       end
 
       it "doesn't send any notifications" do
-        expect(SessionNotification).not_to receive(:create_and_send!)
+        expect(ClinicNotification).not_to receive(:create_and_send!)
         perform_now
       end
     end
@@ -84,7 +81,7 @@ describe SendClinicSubsequentInvitationsJob do
       let(:patient) { create(:patient, :deceased, parents:) }
 
       it "doesn't send any notifications" do
-        expect(SessionNotification).not_to receive(:create_and_send!)
+        expect(ClinicNotification).not_to receive(:create_and_send!)
         perform_now
       end
     end
@@ -93,7 +90,7 @@ describe SendClinicSubsequentInvitationsJob do
       let(:patient) { create(:patient, :invalidated, parents:) }
 
       it "doesn't send any notifications" do
-        expect(SessionNotification).not_to receive(:create_and_send!)
+        expect(ClinicNotification).not_to receive(:create_and_send!)
         perform_now
       end
     end
@@ -102,7 +99,7 @@ describe SendClinicSubsequentInvitationsJob do
       let(:patient) { create(:patient, :restricted, parents:) }
 
       it "doesn't send any notifications" do
-        expect(SessionNotification).not_to receive(:create_and_send!)
+        expect(ClinicNotification).not_to receive(:create_and_send!)
         perform_now
       end
     end
@@ -111,7 +108,7 @@ describe SendClinicSubsequentInvitationsJob do
       let(:patient) { create(:patient, :archived, parents:, team:) }
 
       it "doesn't send any notifications" do
-        expect(SessionNotification).not_to receive(:create_and_send!)
+        expect(ClinicNotification).not_to receive(:create_and_send!)
         perform_now
       end
     end

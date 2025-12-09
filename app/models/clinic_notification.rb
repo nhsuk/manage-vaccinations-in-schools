@@ -39,4 +39,61 @@ class ClinicNotification < ApplicationRecord
   enum :type,
        { initial_invitation: 0, subsequent_invitation: 1 },
        validate: true
+
+  def self.create_and_send!(
+    patient:,
+    programmes:,
+    team:,
+    academic_year:,
+    type:,
+    current_user: nil
+  )
+    parents = patient.parents.select(&:contactable?).uniq
+    return if parents.empty?
+
+    programmes.reject! do |programme|
+      patient.programme_status(programme, academic_year:).vaccinated_fully?
+    end
+
+    return if programmes.empty?
+
+    # We create a record in the database first to avoid sending duplicate emails/texts.
+    # If a problem occurs while the emails/texts are sent, they will be in the job
+    # queue and restarted at a later date.
+
+    ClinicNotification.create!(
+      patient:,
+      programmes:,
+      team:,
+      academic_year:,
+      type:,
+      sent_at: Time.current,
+      sent_by: current_user
+    )
+
+    programme_types = programmes.map(&:type)
+    organisation = team.organisation
+
+    parents.each do |parent|
+      params = {
+        academic_year:,
+        parent:,
+        patient:,
+        programme_types:,
+        sent_by: current_user,
+        team:
+      }
+
+      template_names = [
+        :"clinic_#{type}_#{organisation.ods_code.downcase}",
+        :"clinic_#{type}"
+      ]
+
+      template_name =
+        template_names.find { GOVUK_NOTIFY_EMAIL_TEMPLATES.key?(it) }
+
+      EmailDeliveryJob.perform_later(template_name, **params)
+      SMSDeliveryJob.perform_later(template_name, **params)
+    end
+  end
 end
