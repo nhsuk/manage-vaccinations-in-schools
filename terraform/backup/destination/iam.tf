@@ -1,10 +1,10 @@
-resource "aws_iam_policy" "restore" {
-  name        = "RestoreBackup-${var.source_account_environment}"
+resource "aws_iam_policy" "backup_manager" {
+  name        = "BackupManager-${var.source_account_environment}"
   description = "Allows listing and copying of AWS Backup recovery points"
-  policy      = data.aws_iam_policy_document.restore.json
+  policy      = data.aws_iam_policy_document.backup_manager.json
 }
 
-data "aws_iam_policy_document" "restore" {
+data "aws_iam_policy_document" "backup_manager" {
   statement {
     sid    = "RecoveryPoints"
     effect = "Allow"
@@ -50,5 +50,30 @@ data "aws_iam_policy_document" "restore" {
 
     actions   = ["iam:PassRole"]
     resources = ["arn:aws:iam::904214613099:role/service-role/AWSBackupDefaultServiceRole"]
+  }
+}
+
+resource "aws_iam_policy" "backup_admin" {
+  count       = var.source_account_environment == "production" ? 1 : 0
+  name        = "BackupAdmin"
+  description = "Allows updating backup plans"
+  policy      = data.aws_iam_policy_document.backup_admin.json
+}
+
+
+data "aws_iam_policy_document" "backup_admin" {
+  statement {
+    sid    = "AllowBackupAdministration"
+    effect = "Allow"
+
+    actions = [
+      "backup:CreateBackupPlan",
+      "backup:CreateBackupVault",
+      "backup:StartBackupJob",
+      "backup:ListBackupPlans",
+      "backup:ListBackupVaults",
+      "backup:ListRecoveryPointsByBackupVault"
+    ]
+    resources = ["*"]
   }
 }
