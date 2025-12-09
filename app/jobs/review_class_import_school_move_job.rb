@@ -44,6 +44,8 @@ class ReviewClassImportSchoolMoveJob < ApplicationJob
       )
     end
 
+    import.changesets.ready_for_review.update_all(status: :in_review)
+
     import.calculating_re_review? ? import.in_re_review! : import.in_review!
   end
 end

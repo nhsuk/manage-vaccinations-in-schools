@@ -339,7 +339,7 @@ describe "Import class lists" do
     expect(page).to have_content("KLEIN, Calvin")
     expect(page).to have_content("CHANEL, Coco")
 
-    expect(PatientChangeset.all.pluck(:status).uniq).to eq(["ready_for_review"])
+    expect(PatientChangeset.all.pluck(:status).uniq).to eq(["in_review"])
   end
 
   def then_i_should_see_the_first_import_review_screen
@@ -355,7 +355,7 @@ describe "Import class lists" do
     find(".nhsuk-details__summary", text: "1 school move").click
     expect(page).to have_content("SMITH, John")
 
-    expect(PatientChangeset.all.pluck(:status).uniq).to eq(["ready_for_review"])
+    expect(PatientChangeset.all.pluck(:status).uniq).to eq(["in_review"])
   end
 
   def then_i_should_see_the_second_import_review_screen
@@ -371,7 +371,7 @@ describe "Import class lists" do
     find(".nhsuk-details__summary", text: "1 school move").click
     expect(page).to have_content("SMITH, John")
 
-    expect(PatientChangeset.all.pluck(:status).uniq).to eq(["ready_for_review"])
+    expect(PatientChangeset.all.pluck(:status).uniq).to eq(["in_review"])
   end
 
   def then_i_should_see_the_import_review_screen_with_new_patients_only
@@ -383,7 +383,7 @@ describe "Import class lists" do
 
     expect(page).not_to have_content("resolve after import")
 
-    expect(PatientChangeset.all.pluck(:status).uniq).to eq(["ready_for_review"])
+    expect(PatientChangeset.all.pluck(:status).uniq).to eq(["in_review"])
   end
 
   def then_i_see_the_re_review_screen_for_school_moves_out_only
@@ -481,13 +481,9 @@ describe "Import class lists" do
     visit class_import_path(ClassImport.order(:created_at).first)
     expect(page).to have_content("Further review and approve")
     expect(ClassImport.first.changesets.processed.count).to eq(2)
-    expect(ClassImport.first.changesets.ready_for_review.count).to eq(4)
-    expect(ClassImport.first.changesets.from_file.ready_for_review.count).to eq(
-      3
-    )
-    expect(
-      ClassImport.first.changesets.not_from_file.ready_for_review.count
-    ).to eq(1)
+    expect(ClassImport.first.changesets.in_review.count).to eq(4)
+    expect(ClassImport.first.changesets.from_file.in_review.count).to eq(3)
+    expect(ClassImport.first.changesets.not_from_file.in_review.count).to eq(1)
   end
 
   def and_reviewer_details_are_displayed

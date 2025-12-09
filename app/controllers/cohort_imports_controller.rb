@@ -108,7 +108,7 @@ class CohortImportsController < ApplicationController
     @cohort_import.committing!
 
     @cohort_import.commit_changesets(
-      @cohort_import.changesets.from_file.ready_for_review
+      @cohort_import.changesets.from_file.in_review
     )
 
     redirect_to imports_path, flash: { info: "Import started" }
@@ -125,7 +125,7 @@ class CohortImportsController < ApplicationController
         status: :partially_processed
       )
       @cohort_import.save!
-      @cohort_import.changesets.ready_for_review.find_each(&:cancelled!)
+      @cohort_import.changesets.in_review.find_each(&:cancelled!)
 
       @cohort_import.postprocess_rows!
 
@@ -169,22 +169,19 @@ class CohortImportsController < ApplicationController
           ]
         )
         .from_file
-        .ready_for_review
+        .in_review
         .select(&:inter_team_move?)
-    @new_records = @cohort_import.changesets.ready_for_review.new_patient
+    @new_records = @cohort_import.changesets.in_review.new_patient
     @auto_matched_records =
-      @cohort_import.changesets.ready_for_review.auto_match - @inter_team
+      @cohort_import.changesets.in_review.auto_match - @inter_team
     @import_issues =
-      @cohort_import
-        .changesets
-        .includes(:patient)
-        .ready_for_review
-        .import_issue - @inter_team
+      @cohort_import.changesets.includes(:patient).in_review.import_issue -
+        @inter_team
     @school_moves =
       @cohort_import
         .changesets
         .includes(:school, patient: :school)
-        .ready_for_review
+        .in_review
         .with_school_moves - @inter_team
   end
 end

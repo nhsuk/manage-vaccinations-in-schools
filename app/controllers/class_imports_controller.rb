@@ -108,13 +108,13 @@ class ClassImportsController < ApplicationController
     @class_import.reviewed_at << Time.zone.now
     @class_import.committing!
 
-    @class_import.changesets.not_from_file.ready_for_review.update_all(
+    @class_import.changesets.not_from_file.in_review.update_all(
       status: :committing
     )
 
-    if @class_import.changesets.from_file.ready_for_review.any?
+    if @class_import.changesets.from_file.in_review.any?
       @class_import.commit_changesets(
-        @class_import.changesets.from_file.ready_for_review
+        @class_import.changesets.from_file.in_review
       )
     elsif @class_import.changesets.cancelled.any?
       @class_import.update_columns(
@@ -144,10 +144,10 @@ class ClassImportsController < ApplicationController
         status: :partially_processed
       )
       @class_import.save!
-      @class_import.changesets.from_file.ready_for_review.update_all(
+      @class_import.changesets.from_file.in_review.update_all(
         status: :cancelled
       )
-      @class_import.changesets.not_from_file.ready_for_review.update_all(
+      @class_import.changesets.not_from_file.in_review.update_all(
         status: :committing
       )
 
@@ -196,22 +196,22 @@ class ClassImportsController < ApplicationController
           ]
         )
         .from_file
-        .ready_for_review
+        .in_review
         .select(&:inter_team_move?)
-    @new_records = @class_import.changesets.ready_for_review.new_patient
+    @new_records = @class_import.changesets.in_review.new_patient
     @auto_matched_records =
-      @class_import.changesets.ready_for_review.auto_match - @inter_team
+      @class_import.changesets.in_review.auto_match - @inter_team
     @import_issues =
       @class_import
         .changesets
-        .includes(:patient)
-        .ready_for_review
+        .includes(:school, patient: :school)
+        .in_review
         .import_issue - @inter_team
     @school_moves =
       @class_import
         .changesets
         .includes(:school, patient: :school)
-        .ready_for_review
+        .in_review
         .with_school_moves - @inter_team
   end
 end
