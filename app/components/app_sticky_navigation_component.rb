@@ -8,7 +8,4 @@ class AppStickyNavigationComponent < ViewComponent::Base
       </div>
     </div>
   ERB
-
-  def initialize
-  end
 end
