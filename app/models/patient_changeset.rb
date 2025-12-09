@@ -71,7 +71,8 @@ class PatientChangeset < ApplicationRecord
          ready_for_review: 4,
          committing: 5,
          needs_re_review: 6,
-         cancelled: 7
+         cancelled: 7,
+         in_review: 8
        },
        validate: true
 
