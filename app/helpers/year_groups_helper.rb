@@ -2,8 +2,14 @@
 
 module YearGroupsHelper
   def format_year_group(year_group)
-    if year_group.negative?
-      "Nursery"
+    if year_group == -4
+      "Early (1st year)"
+    elsif year_group == -3
+      "Early (2nd year)"
+    elsif year_group == -2
+      "Nursery (1st year)"
+    elsif year_group == -1
+      "Nursery (2nd year)"
     elsif year_group.zero?
       "Reception"
     else
@@ -17,18 +23,13 @@ module YearGroupsHelper
     elsif year_groups.length == 1
       format_year_group(year_groups.first)
     else
-      word_items =
-        if year_groups.any?(&:negative?) && year_groups.any?(&:zero?)
-          %w[Nursery reception]
-        elsif year_groups.any?(&:negative?)
-          ["Nursery"]
-        elsif year_groups.any?(&:zero?)
-          ["Reception"]
-        else
-          []
-        end
+      positive_values, negative_values = year_groups.sort.partition(&:positive?)
 
-      positive_values = year_groups.select(&:positive?).sort
+      word_items =
+        negative_values.each_with_index.map do |value, index|
+          string = format_year_group(value)
+          index.zero? ? string : string.downcase_first
+        end
 
       numeric_items =
         if positive_values.length == 1
