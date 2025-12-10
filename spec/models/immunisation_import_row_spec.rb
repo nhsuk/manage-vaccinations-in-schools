@@ -165,7 +165,7 @@ describe ImmunisationImportRow do
         it "has errors" do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors["VACCINE_GIVEN"]).to eq(
-            ["This vaccine is not available in this session."]
+            ["This vaccine is not valid."]
           )
         end
       end
