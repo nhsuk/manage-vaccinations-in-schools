@@ -1,63 +1,36 @@
 # frozen_string_literal: true
 
 describe ConsentFormsController do
-  let(:programme) { Programme.hpv }
-  let(:team) { create(:team, :with_generic_clinic, programmes: [programme]) }
-  let(:user) { create(:user, :nurse, team:) }
-  let(:location) { create(:school, team:, programmes: [programme]) }
-  let(:session) { create(:session, team:, location:, programmes: [programme]) }
+  let(:programme) { Programme.sample }
+  let(:team) { create(:team) }
+  let(:user) { create(:user, team:) }
+  let(:session) { create(:session, team:) }
+  let(:consent_form) { create(:consent_form, :recorded, session:) }
+  let(:patient) { create(:patient, session:) }
 
-  before { sign_in user }
-
-  describe "PATCH #update_match" do
+  describe "GET #edit_match" do
     subject do
-      patch :update_match,
-            params: {
-              id: consent_form.id,
-              patient_id: patient.id
-            }
+      get :edit_match, params: { id: consent_form.id, patient_id: patient.id }
     end
 
-    let(:consent_form) do
-      create(
-        :consent_form,
-        :recorded,
-        session:,
-        given_name: "John",
-        family_name: "Smith",
-        date_of_birth: Date.new(2010, 1, 1)
-      )
-    end
+    it_behaves_like "a controller that logs the patient ID"
+  end
 
-    let(:patient) do
-      create(
-        :patient,
-        given_name: "John",
-        family_name: "Smith",
-        date_of_birth: Date.new(2010, 1, 1),
-        session:
-      )
+  describe "POST #update_match" do
+    subject do
+      post :update_match,
+           params: {
+             id: consent_form.id,
+             patient_id: patient.id
+           }
     end
 
     it_behaves_like "a method that updates team cached counts"
+    it_behaves_like "a controller that logs the patient ID"
   end
 
   describe "POST #create_patient" do
     subject { post :create_patient, params: { id: consent_form.id } }
-
-    let(:consent_form) do
-      create(
-        :consent_form,
-        :recorded,
-        session:,
-        given_name: "Jane",
-        family_name: "Doe",
-        date_of_birth: Date.new(2010, 5, 15),
-        address_line_1: "123 Test St",
-        address_town: "Testville",
-        address_postcode: "TE1 1ST"
-      )
-    end
 
     it_behaves_like "a method that updates team cached counts"
   end
