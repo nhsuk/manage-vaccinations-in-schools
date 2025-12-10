@@ -55,7 +55,16 @@ describe SchoolMove do
     let(:user) { create(:user) }
     let(:programmes) { [Programme.sample] }
     let(:team) { create(:team, :with_generic_clinic, programmes:) }
-    let(:generic_clinic_session) { team.generic_clinic_session(academic_year:) }
+    let(:generic_clinic_session) do
+      create(
+        :session,
+        :unscheduled,
+        academic_year:,
+        team:,
+        location: team.generic_clinic,
+        programmes:
+      )
+    end
 
     around { |example| travel_to(today) { example.run } }
 
@@ -394,7 +403,14 @@ describe SchoolMove do
 
             let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
             let(:generic_clinic_session) do
-              new_team.generic_clinic_session(academic_year:)
+              create(
+                :session,
+                :unscheduled,
+                academic_year:,
+                team: new_team,
+                location: new_team.generic_clinic,
+                programmes:
+              )
             end
 
             include_examples "creates a log entry"
@@ -504,8 +520,13 @@ describe SchoolMove do
 
             let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
             let(:generic_clinic_session) do
-              new_team.generic_clinic_session(
-                academic_year: AcademicYear.current
+              create(
+                :session,
+                :unscheduled,
+                academic_year: AcademicYear.current,
+                team: new_team,
+                location: new_team.generic_clinic,
+                programmes:
               )
             end
 
@@ -619,12 +640,27 @@ describe SchoolMove do
               create(
                 :patient,
                 :home_educated,
-                session: team.generic_clinic_session(academic_year:)
+                session:
+                  create(
+                    :session,
+                    :unscheduled,
+                    academic_year:,
+                    team:,
+                    location: team.generic_clinic,
+                    programmes:
+                  )
               )
             end
             let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
             let(:generic_clinic_session) do
-              new_team.generic_clinic_session(academic_year:)
+              create(
+                :session,
+                :unscheduled,
+                academic_year:,
+                team: new_team,
+                location: new_team.generic_clinic,
+                programmes:
+              )
             end
 
             it "keeps the patient as home-schooled" do
@@ -745,7 +781,15 @@ describe SchoolMove do
               create(
                 :patient,
                 :home_educated,
-                session: team.generic_clinic_session(academic_year:)
+                session:
+                  create(
+                    :session,
+                    :unscheduled,
+                    academic_year:,
+                    team:,
+                    location: team.generic_clinic,
+                    programmes:
+                  )
               )
             end
             let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
@@ -860,12 +904,27 @@ describe SchoolMove do
               create(
                 :patient,
                 school: nil,
-                session: team.generic_clinic_session(academic_year:)
+                session:
+                  create(
+                    :session,
+                    :unscheduled,
+                    academic_year:,
+                    team:,
+                    location: team.generic_clinic,
+                    programmes:
+                  )
               )
             end
             let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
             let(:generic_clinic_session) do
-              new_team.generic_clinic_session(academic_year:)
+              create(
+                :session,
+                :unscheduled,
+                academic_year:,
+                team: new_team,
+                location: new_team.generic_clinic,
+                programmes:
+              )
             end
 
             include_examples "creates a log entry"
@@ -977,7 +1036,15 @@ describe SchoolMove do
               create(
                 :patient,
                 school: nil,
-                session: team.generic_clinic_session(academic_year:)
+                session:
+                  create(
+                    :session,
+                    :unscheduled,
+                    academic_year:,
+                    team:,
+                    location: team.generic_clinic,
+                    programmes:
+                  )
               )
             end
             let(:new_team) { create(:team, :with_generic_clinic, programmes:) }

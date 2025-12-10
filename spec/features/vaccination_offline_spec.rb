@@ -111,9 +111,13 @@ describe "Offline vaccination" do
 
     if clinic
       @generic_clinic_session =
-        @team.generic_clinic_session(academic_year: AcademicYear.current)
-
-      @generic_clinic_session.update!(dates: [previous_date, Date.current])
+        create(
+          :session,
+          team: @team,
+          programmes:,
+          location: @team.generic_clinic,
+          dates: [previous_date, Date.current]
+        )
 
       @community_clinic =
         create(
