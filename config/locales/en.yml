@@ -703,6 +703,7 @@ en:
   patients:
     index:
       title: Children
+      upload_only_title: Search
       description: Find children and view their vaccination history
   programmes:
     index:
