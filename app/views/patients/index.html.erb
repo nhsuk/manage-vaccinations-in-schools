@@ -26,6 +26,7 @@
                 link_to: patient_path(patient),
                 current_team:,
                 programmes: @form.programmes,
+                show_programme_status: !current_team.has_upload_access_only?,
                 show_consent_status: @form.consent_statuses.present?,
                 show_nhs_number: true,
                 show_school: true,
