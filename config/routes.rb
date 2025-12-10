@@ -111,10 +111,11 @@ Rails.application.routes.draw do
         post "/onboard", to: "onboard#create"
         get "refresh-reporting", to: "reporting_refresh#create"
       end
-      namespace :reporting do
-        post "authorize", to: "one_time_tokens#authorize"
-        get "totals", controller: :totals, action: :index
-      end
+    end
+
+    namespace :reporting do
+      post "authorize", to: "one_time_tokens#authorize"
+      get "totals", controller: :totals, action: :index
     end
   end
 
