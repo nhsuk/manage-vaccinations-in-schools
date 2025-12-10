@@ -16,10 +16,11 @@ module HasHealthAnswers
   end
 
   def who_responded
-    if via_self_consent?
-      "Child (Gillick competent)"
-    else
-      (parent_relationship || parent).label
-    end
+    @who_responded ||=
+      if via_self_consent?
+        "Child (Gillick competent)"
+      else
+        (parent_relationship || parent).label
+      end
   end
 end
