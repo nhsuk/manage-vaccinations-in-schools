@@ -704,6 +704,7 @@ en:
     index:
       title: Children
       upload_only_title: Search
+      upload_only_long_title: Search for children vaccinated
       description: Find children and view their vaccination history
   programmes:
     index:

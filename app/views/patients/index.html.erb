@@ -1,4 +1,8 @@
-<%= h1 t(".title"), size: "xl" %>
+<% if current_team.has_poc_access? %>
+  <%= h1 t(".title"), size: "xl" %>
+<% else %>
+  <%= h1 t(".upload_only_long_title"), size: "xl" %>
+<% end %>
 
 <div class="nhsuk-grid-row">
   <div class="app-grid-column-filters">
