@@ -44,9 +44,10 @@ class SessionsController < ApplicationController
   end
 
   def edit
-    DraftSession.new(request_session: session, current_user:).read_from!(
-      @session
-    )
+    @draft_session = DraftSession.new(request_session: session, current_user:)
+
+    @draft_session.return_to = params[:return_to]
+    @draft_session.read_from!(@session)
 
     redirect_to draft_session_path("confirm")
   end

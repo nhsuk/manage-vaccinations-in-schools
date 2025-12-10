@@ -24,6 +24,10 @@ describe "Schools" do
 
     when_i_click_on_sessions
     then_i_see_the_secondary_sessions
+
+    when_i_click_on_edit_session
+    and_i_click_on_back
+    then_i_see_the_secondary_sessions
   end
 
   def given_the_feature_flag_is_enabled
@@ -110,6 +114,15 @@ describe "Schools" do
   end
 
   def then_i_see_the_secondary_sessions
+    expect(page).to have_content("Scheduled sessions")
     expect(page).to have_content(Date.tomorrow.to_fs(:long))
+  end
+
+  def when_i_click_on_edit_session
+    click_on "Edit session"
+  end
+
+  def and_i_click_on_back
+    click_on "Back"
   end
 end

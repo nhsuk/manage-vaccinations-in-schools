@@ -7,7 +7,8 @@ class AppSessionCardComponent < ViewComponent::Base
     heading_as_dates: false,
     full_width: false,
     show_buttons: false,
-    show_status: false
+    show_status: false,
+    return_to: nil
   )
     @session = session
     @patient_count = patient_count
@@ -15,6 +16,7 @@ class AppSessionCardComponent < ViewComponent::Base
     @full_width = full_width
     @show_buttons = show_buttons
     @show_status = show_status
+    @return_to = return_to
   end
 
   def call
@@ -31,7 +33,8 @@ class AppSessionCardComponent < ViewComponent::Base
               :heading_as_dates,
               :full_width,
               :show_buttons,
-              :show_status
+              :show_status,
+              :return_to
 
   delegate :govuk_button_link_to, :govuk_summary_list, to: :helpers
   delegate :programmes, :year_groups, to: :session
@@ -57,7 +60,7 @@ class AppSessionCardComponent < ViewComponent::Base
 
     tag.div(class: "nhsuk-button-group") do
       govuk_button_link_to "Edit session",
-                           edit_session_path(session),
+                           edit_session_path(session, return_to:),
                            secondary: true,
                            class: "app-button--small"
     end
