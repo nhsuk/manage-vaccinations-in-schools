@@ -9,6 +9,7 @@
 #  address_line_2            :text
 #  address_postcode          :text
 #  address_town              :text
+#  alternative_name          :text
 #  gias_establishment_number :integer
 #  gias_local_authority_code :integer
 #  gias_phase                :integer
@@ -106,10 +107,22 @@ class Location < ApplicationRecord
         ->(query) do
           # Trigram matching requires at least 3 characters
           if query.length < 3
-            where("locations.name ILIKE :like_query", like_query: "#{query}%")
+            where(
+              "locations.name ILIKE :like_query OR " \
+                "locations.alternative_name ILIKE :like_query",
+              like_query: "#{query}%"
+            )
           else
-            where("SIMILARITY(locations.name, ?) > 0.3", query).order(
-              Arel.sql("SIMILARITY(locations.name, ?) DESC", query)
+            where(
+              "SIMILARITY(locations.name, :query) > 0.3 OR " \
+                "SIMILARITY(locations.alternative_name, :query) > 0.3",
+              query:
+            ).order(
+              Arel.sql(
+                "GREATEST(SIMILARITY(locations.name, :query), " \
+                  "SIMILARITY(locations.alternative_name, :query)) DESC",
+                query:
+              )
             )
           end
         end
@@ -214,15 +227,16 @@ class Location < ApplicationRecord
   def school_id = school? ? id : nil
 
   def school_name
-    if generic_clinic?
-      "No known school (including home-schooled children)"
-    else
-      name
-    end
+    generic_clinic? ? alternative_name : name
   end
 
   def as_json
-    super.except("created_at", "systm_one_code", "updated_at").merge(
+    super.except(
+      "alternative_name",
+      "created_at",
+      "systm_one_code",
+      "updated_at"
+    ).merge(
       "is_attached_to_team" =>
         team_locations.any? { it.academic_year == AcademicYear.pending }
     )

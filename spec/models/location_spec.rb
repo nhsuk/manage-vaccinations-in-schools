@@ -9,6 +9,7 @@
 #  address_line_2            :text
 #  address_postcode          :text
 #  address_town              :text
+#  alternative_name          :text
 #  gias_establishment_number :integer
 #  gias_local_authority_code :integer
 #  gias_phase                :integer
@@ -71,6 +72,30 @@ describe Location do
         let(:urn_and_site) { "123456A" }
 
         it { should eq(location_with_site) }
+      end
+    end
+
+    describe "#search_by_name" do
+      subject(:scope) { described_class.search_by_name(query) }
+
+      let(:location) { create(:generic_clinic) }
+
+      context "with an exact match on the name" do
+        let(:query) { "Community clinic" }
+
+        it { should contain_exactly(location) }
+      end
+
+      context "with a partial match on the alternative name" do
+        let(:query) { "No known school" }
+
+        it { should contain_exactly(location) }
+      end
+
+      context "without a match" do
+        let(:query) { "Some other location" }
+
+        it { should_not contain_exactly(location) }
       end
     end
 
