@@ -21,6 +21,20 @@ on:
           Use code from: ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
           (Git ref to deploy, for example, a tag, branch name or commit SHA. Will use workflow ref if not provided.)
         type: string
+  workflow_call:
+    inputs:
+      environment:
+        description: Deployment environment
+        required: true
+        type: string
+      git_ref_to_deploy:
+        description: Git ref to deploy, for example, a tag, branch name or commit SHA
+        type: string
+        required: true  
+      skip_approval:
+        description: Skip environment approval (auto-approve)
+        type: boolean
+        default: false
 
 permissions: {}
 
@@ -134,7 +148,7 @@ jobs:
     name: Notify on approval required
     runs-on: ubuntu-latest
     needs: prepare-deployment
-    if: ${{ inputs.environment == 'production' }}
+    if: ${{ inputs.environment == 'production' && inputs.skip_approval == 'false' }}
     steps:
       - name: Notify pending approval
         if: inputs.environment == 'production'
@@ -160,7 +174,7 @@ jobs:
     name: Wait for approval if required
     runs-on: ubuntu-latest
     needs: prepare-deployment
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.skip_approval && null || inputs.environment }}
     steps:
       - run: echo "Proceeding with deployment to $environment environment"
 

@@ -28,6 +28,29 @@ on:
         description: Take a new DB snapshot before creating the environment
         type: boolean
         default: false
+  workflow_call:
+    inputs:
+      environment:
+        description: Deployment environment
+        required: true
+        type: string
+      db_snapshot_arn:
+        description: ARN of the DB snapshot to use (optional)
+        required: false
+        type: string
+      egress_cidr:
+        description: CIDR blocks to allow egress traffic.
+        type: string
+        required: true
+        default: "[]"
+      take_db_snapshot:
+        description: Take a new DB snapshot before creating the environment
+        type: boolean
+        default: false
+      skip_approval:
+        description: Skip environment approval (auto-approve)
+        type: boolean
+        default: false
 
 permissions: {}
 
@@ -161,7 +184,7 @@ jobs:
     name: Notify on approval required
     runs-on: ubuntu-latest
     needs: plan
-    if: ${{ inputs.environment == 'production' }}
+    if: ${{ inputs.environment == 'production' && inputs.skip_approval == 'false' }}
     steps:
       - name: Notify pending approval
         if: inputs.environment == 'production'
@@ -187,7 +210,7 @@ jobs:
     name: Terraform apply
     runs-on: ubuntu-latest
     needs: plan
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.skip_approval && null || inputs.environment }}
     permissions:
       id-token: write
     steps:
