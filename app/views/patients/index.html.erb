@@ -8,12 +8,12 @@
           current_team:,
           heading_level: 2,
           programmes: current_team.programmes,
-          consent_statuses: %w[no_response given refused conflicts],
-          programme_statuses: @programme_statuses,
-          triage_statuses: %w[required delay_vaccination do_not_vaccinate safe_to_vaccinate],
-          vaccination_statuses: Patient::VaccinationStatus.statuses.keys,
+          consent_statuses: current_team.has_upload_access_only? ? [] : %w[no_response given refused conflicts],
+          programme_statuses: current_team.has_upload_access_only? ? [] : @programme_statuses,
+          triage_statuses: current_team.has_upload_access_only? ? [] : %w[required delay_vaccination do_not_vaccinate safe_to_vaccinate],
+          vaccination_statuses: current_team.has_upload_access_only? ? [] : Patient::VaccinationStatus.statuses.keys,
           year_groups: current_team.year_groups,
-          show_aged_out_of_programmes: true,
+          show_aged_out_of_programmes: current_team.has_upload_access_only? ? false : true,
         ) %>
   </div>
 
