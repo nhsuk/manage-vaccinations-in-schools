@@ -105,15 +105,13 @@ describe "Manage school sessions" do
       create(:patient, year_group: 8, session: @session, parents: [@parent])
 
     clinic_session =
-      @team.generic_clinic_session(academic_year: AcademicYear.current)
-
-    clinic_session.dates << 1.month.from_now.to_date
-    clinic_session.days_before_consent_reminders = nil
-    clinic_session.send_consent_requests_at = nil
-    clinic_session.send_invitations_at =
-      clinic_session.dates.min - @team.days_before_invitations.days
-
-    clinic_session.save!
+      create(
+        :session,
+        date: 1.month.from_now.to_date,
+        team: @team,
+        location: @team.generic_clinic,
+        programmes: [@programme, @other_programme]
+      )
 
     patient_already_in_clinic_without_invitiation =
       create(:patient, year_group: 8, session: @session)

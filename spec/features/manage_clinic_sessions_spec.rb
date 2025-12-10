@@ -73,7 +73,14 @@ describe "Manage clinic sessions" do
         programmes: [@programme]
       )
 
-    @session = @team.generic_clinic_session(academic_year: AcademicYear.current)
+    @session =
+      create(
+        :session,
+        :unscheduled,
+        team: @team,
+        programmes: [@programme],
+        location: @team.generic_clinic
+      )
 
     @parent = create(:parent)
 
