@@ -1008,6 +1008,30 @@ describe ImmunisationImportRow do
         end
 
         include_examples "when `VACCINATED` is `N`"
+
+        context "when `VACCINE_GIVEN` matches to an incorrect programme" do
+          let(:programmes) { Programme.all }
+
+          shared_examples "rejects a VACCINE_GIVEN" do |vaccine_given|
+            context "with code: #{vaccine_given}" do
+              let(:data) { { "VACCINE_GIVEN" => vaccine_given } }
+
+              it "throws a validation error" do
+                expect(immunisation_import_row).to be_invalid
+                expect(
+                  immunisation_import_row.errors[:VACCINE_GIVEN]
+                ).to include(
+                  "This vaccine programme is not accepted in this upload."
+                )
+              end
+            end
+          end
+
+          include_examples "rejects a VACCINE_GIVEN", "MenQuadfi"
+          include_examples "rejects a VACCINE_GIVEN", "Priorix"
+          include_examples "rejects a VACCINE_GIVEN", "ProQuad"
+          include_examples "rejects a VACCINE_GIVEN", "Revaxis"
+        end
       end
 
       context "of type flu" do
