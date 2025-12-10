@@ -4,6 +4,14 @@ describe NHS::PDS do
   describe "#get_patient" do
     subject(:get_patient) { described_class.get_patient("9000000009") }
 
+    context "with pds.enabled is false" do
+      before { Settings.pds.enabled = false }
+
+      after { Settings.reload! }
+
+      it { should be_nil }
+    end
+
     context "with a successful response" do
       before do
         stub_request(
@@ -88,6 +96,14 @@ describe NHS::PDS do
         gender: "female",
         birthdate: "eq1939-01-09"
       )
+    end
+
+    context "with pds.enabled is false" do
+      before { Settings.pds.enabled = false }
+
+      after { Settings.reload! }
+
+      it { should be_nil }
     end
 
     context "with a successful response" do
