@@ -101,26 +101,7 @@ class Team < ApplicationRecord
       .pluck_year_groups
   end
 
-  def generic_clinic_session(academic_year:)
-    location = generic_clinic
-
-    team_location =
-      TeamLocation.find_or_create_by!(team: self, location:, academic_year:)
-
-    Session
-      .includes(:location, :session_programme_year_groups, :team)
-      .create_with(dates: [])
-      .find_or_create_by!(team_location:)
-      .tap do |session|
-        if session.session_programme_year_groups.empty?
-          session.sync_location_programme_year_groups!(programmes:)
-        end
-      end
-  end
-
-  def has_upload_access_only?
-    type_upload_only?
-  end
+  def has_upload_access_only? = type_upload_only?
 
   def has_poc_access?
     type_poc_only? || type_poc_with_legacy_upload?
