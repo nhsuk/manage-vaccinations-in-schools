@@ -30,10 +30,10 @@
 #
 
 describe HealthQuestion do
-  let(:vaccine) { create(:vaccine, brand: "Tester", method: "injection") }
-  let!(:hqs) { create_list :health_question, 3, vaccine: }
+  let(:vaccine) { create(:vaccine) }
+  let!(:hqs) { create_list(:health_question, 3, vaccine:) }
 
-  describe ".first_health_question" do
+  describe "#first_health_question" do
     it "returns the first health question" do
       hqs.first.update! next_question: hqs.second
       hqs.second.update! next_question: hqs.third
@@ -71,7 +71,7 @@ describe HealthQuestion do
     end
   end
 
-  describe ".last_health_question" do
+  describe "#last_health_question" do
     it "returns the last health question" do
       hqs.first.update! next_question: hqs.second
       hqs.second.update! next_question: hqs.third

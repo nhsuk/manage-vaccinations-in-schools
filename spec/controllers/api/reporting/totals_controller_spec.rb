@@ -1102,9 +1102,6 @@ describe API::Reporting::TotalsController do
     end
 
     it "counts consent by vaccine method for flu" do
-      create(:vaccine, programme: flu_programme, method: "nasal")
-      create(:vaccine, programme: flu_programme, method: "injection")
-
       patient1 = create(:patient, session: flu_session)
       create(
         :consent,

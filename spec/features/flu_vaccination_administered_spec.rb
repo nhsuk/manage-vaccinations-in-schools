@@ -139,17 +139,11 @@ describe "Flu vaccination" do
   end
 
   def and_there_are_nasal_and_injection_batches
-    @nasal_vaccine =
-      create(
-        :vaccine,
-        programme: @programme,
-        method: :nasal,
-        dose_volume_ml: 0.2
-      )
+    @nasal_vaccine = @programme.vaccines.find_by!(method: "nasal")
     @nasal_batch =
       create(:batch, :not_expired, team: @team, vaccine: @nasal_vaccine)
-    @injection_vaccine =
-      create(:vaccine, programme: @programme, method: :injection)
+
+    @injection_vaccine = @programme.vaccines.find_by!(method: "injection")
     @injection_batch =
       create(:batch, :not_expired, team: @team, vaccine: @injection_vaccine)
   end
