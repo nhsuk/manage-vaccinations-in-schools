@@ -4,7 +4,7 @@ describe AppPatientSessionSearchResultCardComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:component) do
-    described_class.new(patient:, session:, context:, programmes: [programme])
+    described_class.new(patient:, session:, programmes:, return_to:)
   end
 
   let(:patient) do
@@ -21,53 +21,67 @@ describe AppPatientSessionSearchResultCardComponent do
   end
 
   let(:programme) { Programme.hpv }
-  let(:session) { create(:session, programmes: [programme]) }
-  let(:context) { :consent }
+  let(:programmes) { [programme] }
+  let(:session) { create(:session, programmes:) }
+  let(:return_to) { :patients }
 
   let(:href) do
-    "/sessions/#{session.slug}/patients/#{patient.id}/hpv?return_to=consent"
+    "/sessions/#{session.slug}/patients/#{patient.id}/hpv?return_to=patients"
   end
 
   before { patient.strict_loading!(false) }
 
   it { should have_link("SELDON, Hari", href:) }
   it { should have_text("Year 8") }
-  it { should have_text("Consent status") }
+  it { should_not have_text("Consent status") }
   it { should_not have_text("Vaccine type") }
 
-  context "when patient session has notes" do
-    let(:note) { create(:note, patient:, session:) }
-
-    it { should have_text(note.body) }
-    it { should_not have_link("Continue reading") }
-  end
-
-  context "when patient session has a long note" do
-    before { create(:note, patient:, session:, body: "a long note " * 50) }
-
-    it do
-      expect(rendered).to have_text(
-        "a long note a long note a long note a long note a long note a long note " \
-          "a long note a long note a long note a long note a long note a long note " \
-          "a long note a long note a long note a long note a long note a long note " \
-          "a long note a long note a long note a long note a long note a long note " \
-          "a long note a long note a long…"
-      )
+  context "when showing notes" do
+    let(:component) do
+      described_class.new(patient:, session:, programmes:, show_notes: true)
     end
 
-    it { should have_link("Continue reading") }
+    context "and there's a note" do
+      let(:note) { create(:note, patient:, session:) }
+
+      it { should have_text(note.body) }
+      it { should_not have_link("Continue reading") }
+    end
+
+    context "and there's a long note" do
+      before { create(:note, patient:, session:, body: "a long note " * 50) }
+
+      it do
+        expect(rendered).to have_text(
+          "a long note a long note a long note a long note a long note a long note " \
+            "a long note a long note a long note a long note a long note a long note " \
+            "a long note a long note a long note a long note a long note a long note " \
+            "a long note a long note a long note a long note a long note a long note " \
+            "a long note a long note a long…"
+        )
+      end
+
+      it { should have_link("Continue reading") }
+    end
+
+    context "and there is a note from a different session" do
+      let(:other_session) { create(:session, programmes: [programme]) }
+      let(:note) { create(:note, patient:, session: other_session) }
+
+      it { should_not have_text(note.body) }
+      it { should_not have_link("Continue reading") }
+    end
   end
 
-  context "when patient has notes from a different session" do
-    let(:other_session) { create(:session, programmes: [programme]) }
-    let(:note) { create(:note, patient:, session: other_session) }
-
-    it { should_not have_text(note.body) }
-    it { should_not have_link("Continue reading") }
-  end
-
-  context "when context is consent" do
-    let(:context) { :consent }
+  context "when showing the consent status" do
+    let(:component) do
+      described_class.new(
+        patient:,
+        session:,
+        programmes:,
+        show_consent_status: true
+      )
+    end
 
     context "and the programme is flu" do
       let(:programme) { Programme.flu }
@@ -90,8 +104,15 @@ describe AppPatientSessionSearchResultCardComponent do
     end
   end
 
-  context "when context is triage" do
-    let(:context) { :triage }
+  context "when showing the triage status" do
+    let(:component) do
+      described_class.new(
+        patient:,
+        session:,
+        programmes:,
+        show_triage_status: true
+      )
+    end
 
     context "and the programme is flu" do
       let(:programme) { Programme.flu }
@@ -100,8 +121,16 @@ describe AppPatientSessionSearchResultCardComponent do
     end
   end
 
-  context "when context is patient specific direction" do
-    let(:context) { :patient_specific_direction }
+  context "when showing the patient specific direction status" do
+    let(:component) do
+      described_class.new(
+        patient:,
+        session:,
+        programmes:,
+        show_patient_specific_direction_status: true
+      )
+    end
+
     let(:programme) { Programme.flu }
 
     it { should have_text("PSD statusPSD not added") }
@@ -121,58 +150,42 @@ describe AppPatientSessionSearchResultCardComponent do
     end
   end
 
-  context "when context is register" do
-    let(:context) { :register }
+  context "when showing the registration status" do
+    let(:component) do
+      described_class.new(
+        patient:,
+        session:,
+        programmes:,
+        show_registration_status: true
+      )
+    end
 
     context "when allowed to record attendance" do
       before { stub_authorization(allowed: true) }
 
-      it { should have_text("Programme status") }
-
-      it { should have_text("Action requiredRecord vaccination for HPV") }
+      it { should have_text("Registration status") }
       it { should have_button("Attending") }
       it { should have_button("Absent") }
-
-      context "and the programme is flu" do
-        let(:programme) { Programme.flu }
-
-        it { should have_text("Vaccine type") }
-        it { should have_text("Nasal") }
-      end
-
-      context "when programme status is enabled" do
-        before { Flipper.enable(:programme_status) }
-
-        it { should_not have_text("Action required") }
-      end
     end
 
     context "when not allowed to record attendance" do
       before { stub_authorization(allowed: false) }
 
-      it { should have_text("Programme status") }
-
-      it { should have_text("Action requiredRecord vaccination for HPV") }
+      it { should have_text("Registration status") }
       it { should_not have_button("Attending") }
       it { should_not have_button("Absent") }
-
-      context "and the programme is flu" do
-        let(:programme) { Programme.flu }
-
-        it { should have_text("Vaccine type") }
-        it { should have_text("Nasal") }
-      end
-
-      context "when programme status is enabled" do
-        before { Flipper.enable(:programme_status) }
-
-        it { should_not have_text("Action required") }
-      end
     end
   end
 
-  context "when context is record" do
-    let(:context) { :record }
+  context "when showing action required" do
+    let(:component) do
+      described_class.new(
+        patient:,
+        session:,
+        programmes:,
+        show_action_required: true
+      )
+    end
 
     it { should have_text("Action requiredRecord vaccination for HPV") }
 
@@ -181,6 +194,44 @@ describe AppPatientSessionSearchResultCardComponent do
 
       it { should_not have_text("Action required") }
     end
+  end
+
+  context "when showing the programme status" do
+    let(:component) do
+      described_class.new(
+        patient:,
+        session:,
+        programmes:,
+        show_programme_status: true
+      )
+    end
+
+    it { should have_text("Programme status") }
+
+    context "and the programme is flu" do
+      let(:programme) { Programme.flu }
+
+      it { should_not have_text("Vaccine type") }
+    end
+
+    context "when programme status is enabled" do
+      before { Flipper.enable(:programme_status, session.team) }
+
+      it { should have_text("Programme status") }
+    end
+  end
+
+  context "when showing the vaccine type" do
+    let(:component) do
+      described_class.new(
+        patient:,
+        session:,
+        programmes:,
+        show_vaccine_type: true
+      )
+    end
+
+    it { should_not have_text("Vaccine type") }
 
     context "and the programme is flu" do
       let(:programme) { Programme.flu }
@@ -197,24 +248,6 @@ describe AppPatientSessionSearchResultCardComponent do
 
         it { should_not have_text("Vaccine type") }
       end
-    end
-  end
-
-  context "when context is patients" do
-    let(:context) { :patients }
-
-    it { should have_text("Programme status") }
-
-    context "and the programme is flu" do
-      let(:programme) { Programme.flu }
-
-      it { should_not have_text("Vaccine type") }
-    end
-
-    context "when programme status is enabled" do
-      before { Flipper.enable(:programme_status, session.team) }
-
-      it { should have_text("Programme status") }
     end
   end
 end

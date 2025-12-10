@@ -20,8 +20,10 @@
         <%= render AppPatientSessionSearchResultCardComponent.new(
               patient:,
               session: @session,
-              context: :triage,
               programmes: @form.programmes,
+              return_to: :triage,
+              show_triage_status: true,
+              show_notes: true,
             ) %>
       <% end %>
     <% end %>
