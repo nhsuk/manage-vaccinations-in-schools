@@ -145,22 +145,6 @@ FactoryBot.define do
       end
     end
 
-    trait :mmrv do
-      programme_type { "mmr" }
-      injection
-      disease_types { %w[measles mumps rubella varicella] }
-
-      after(:create) do |vaccine|
-        bleeding_disorder =
-          create(:health_question, :bleeding_disorder, vaccine:)
-        mmrv_vaccination = create(:health_question, :mmrv_vaccination, vaccine:)
-        extra_support = create(:health_question, :extra_support, vaccine:)
-
-        bleeding_disorder.update!(next_question: mmrv_vaccination)
-        mmrv_vaccination.update!(next_question: extra_support)
-      end
-    end
-
     trait :td_ipv do
       programme_type { "td_ipv" }
 

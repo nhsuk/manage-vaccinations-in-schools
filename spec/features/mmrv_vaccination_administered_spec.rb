@@ -34,11 +34,11 @@ describe "MMRV vaccination" do
     @programme = Programme.mmr
     @team = create(:team, :with_one_nurse, programmes: [@programme])
 
-    @mmrv_vaccine = create(:vaccine, :mmrv, programme: @programme)
+    @mmrv_vaccine = Vaccine.find_by!(brand: "ProQuad")
     @mmrv_batch =
       create(:batch, :not_expired, team: @team, vaccine: @mmrv_vaccine)
 
-    @mmr_vaccine = create(:vaccine, :mmr, programme: @programme)
+    @mmr_vaccine = Vaccine.find_by!(brand: "Priorix")
     @mmr_batch =
       create(:batch, :not_expired, team: @team, vaccine: @mmr_vaccine)
 

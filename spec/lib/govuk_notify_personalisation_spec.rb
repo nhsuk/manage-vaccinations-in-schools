@@ -597,9 +597,7 @@ describe GovukNotifyPersonalisation do
   end
 
   context "with an administered vaccination record" do
-    let(:vaccine) do
-      create(:vaccine, brand: "Vaccine", programme: programmes.first)
-    end
+    let(:vaccine) { Vaccine.find_by!(brand: "Gardasil 9") }
 
     let(:vaccination_record) do
       create(
@@ -621,7 +619,7 @@ describe GovukNotifyPersonalisation do
           outcome_administered: "yes",
           outcome_not_administered: "no",
           vaccine_and_dose: "HPV 1st dose",
-          vaccine_brand: "Vaccine"
+          vaccine_brand: "Gardasil 9"
         )
       )
     end
