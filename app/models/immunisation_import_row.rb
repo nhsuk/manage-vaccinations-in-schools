@@ -1152,7 +1152,14 @@ class ImmunisationImportRow
         )
       end
     elsif vaccine_upload_name.present?
-      errors.add(field.header, "This vaccine is not available in this session.")
+      errors.add(
+        field.header,
+        if offline_recording?
+          "This vaccine is not available in this session."
+        else
+          "This vaccine is not valid."
+        end
+      )
     elsif (offline_recording? || bulk?) && administered
       if vaccine_name.nil?
         errors.add(:base, "<code>VACCINE_GIVEN</code> is required")
