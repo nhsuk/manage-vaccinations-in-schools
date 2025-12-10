@@ -390,7 +390,7 @@ class ConsentForm < ApplicationRecord
       if original_session_is_accurate?
         original_session
       else
-        find_approriate_session
+        find_approriate_session || original_session
       end
   end
 
@@ -405,6 +405,8 @@ class ConsentForm < ApplicationRecord
 
     original_session_is_accurate? || matched?
   end
+
+  def programmes = consent_form_programmes.map(&:programme)
 
   def programme_types = consent_form_programmes.map(&:programme_type)
 
@@ -649,7 +651,7 @@ class ConsentForm < ApplicationRecord
     # session.
 
     if location_is_clinic? || education_setting_home? || education_setting_none?
-      team.generic_clinic_session(academic_year:)
+      GenericClinicSessionFinder.call(team:, academic_year:, programmes:)
     else
       session_location = school || location
 
@@ -684,7 +686,7 @@ class ConsentForm < ApplicationRecord
 
       sessions_to_search.find(&:scheduled?) ||
         sessions_to_search.find(&:unscheduled?) || sessions_to_search.first ||
-        team.generic_clinic_session(academic_year:)
+        GenericClinicSessionFinder.call(team:, academic_year:, programmes:)
     end
   end
 
