@@ -1206,11 +1206,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_09_133534) do
                       tl_1.academic_year,
                       spyg.programme_type AS s_programme_type,
                       tl_1.team_id
-                     FROM ((((patient_locations pl_1
-                       JOIN patients p_sub ON ((p_sub.id = pl_1.patient_id)))
+                     FROM (((patient_locations pl_1
                        JOIN team_locations tl_1 ON (((tl_1.location_id = pl_1.location_id) AND (tl_1.academic_year = pl_1.academic_year))))
                        JOIN sessions s_1 ON ((s_1.team_location_id = tl_1.id)))
-                       JOIN session_programme_year_groups spyg ON (((spyg.session_id = s_1.id) AND (spyg.year_group = ((tl_1.academic_year - p_sub.birth_academic_year) - 5)))))
+                       JOIN session_programme_year_groups spyg ON ((spyg.session_id = s_1.id)))
                   UNION ALL
                    SELECT DISTINCT vr.patient_id,
                       tl_1.location_id,
@@ -1266,49 +1265,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_09_133534) do
                       all_vaccinations_by_year.academic_year
                      FROM all_vaccinations_by_year
                     WHERE ((all_vaccinations_by_year.outcome = ANY (ARRAY[0, 4])) AND (all_vaccinations_by_year.programme_type <> 'flu'::programme_type))) vr_previous ON (((vr_previous.patient_id = p.id) AND (vr_previous.programme_type = patient_team_prog.s_programme_type) AND (vr_previous.academic_year < tl.academic_year))))
-               LEFT JOIN LATERAL ( WITH self_consent AS (
-                           SELECT consents.response,
-                              consents.vaccine_methods
-                             FROM consents
-                            WHERE ((consents.patient_id = p.id) AND (consents.programme_type = patient_team_prog.s_programme_type) AND (consents.academic_year = tl.academic_year) AND (consents.invalidated_at IS NULL) AND (consents.withdrawn_at IS NULL) AND (consents.route = 4) AND (consents.response = ANY (ARRAY[0, 1])))
-                            ORDER BY consents.submitted_at DESC
-                           LIMIT 1
-                          ), parental AS (
-                           SELECT DISTINCT ON (consents.parent_id) consents.response,
-                              consents.vaccine_methods
-                             FROM consents
-                            WHERE ((consents.patient_id = p.id) AND (consents.programme_type = patient_team_prog.s_programme_type) AND (consents.academic_year = tl.academic_year) AND (consents.invalidated_at IS NULL) AND (consents.withdrawn_at IS NULL) AND (consents.route <> 4) AND (consents.response = ANY (ARRAY[0, 1])))
-                            ORDER BY consents.parent_id, consents.submitted_at DESC
-                          )
-                   SELECT
-                          CASE
-                              WHEN (sc.response = 0) THEN 1
-                              WHEN (sc.response = 1) THEN 2
-                              WHEN (p_1.all_given AND (p_1.common_methods IS NOT NULL)) THEN 1
-                              WHEN p_1.all_refused THEN 2
-                              WHEN p_1."any" THEN 3
-                              ELSE 0
-                          END AS status,
-                          CASE
-                              WHEN (sc.response = 0) THEN sc.vaccine_methods
-                              WHEN (p_1.all_given AND (p_1.common_methods IS NOT NULL)) THEN p_1.common_methods
-                              ELSE ARRAY[]::integer[]
-                          END AS vaccine_methods
-                     FROM ((( SELECT 1 AS "?column?") _
-                       LEFT JOIN self_consent sc ON (true))
-                       LEFT JOIN LATERAL ( SELECT bool_and((parental.response = 0)) AS all_given,
-                              bool_and((parental.response = 1)) AS all_refused,
-                              (count(*) > 0) AS "any",
-                              ( SELECT array_agg(i.vm ORDER BY i.vm) AS array_agg
-                                     FROM ( SELECT vm.vm
-     FROM parental parental_1,
-      LATERAL unnest(parental_1.vaccine_methods) vm(vm)
-    WHERE (parental_1.response = 0)
-    GROUP BY vm.vm
-   HAVING (count(*) = ( SELECT count(*) AS count
-       FROM parental parental_2
-      WHERE (parental_2.response = 0)))) i) AS common_methods
-                             FROM parental) p_1 ON ((sc.response IS NULL)))) pcs ON (true))
+               LEFT JOIN LATERAL ( SELECT pcs_1.status,
+                      pcs_1.vaccine_methods
+                     FROM patient_consent_statuses pcs_1
+                    WHERE ((pcs_1.patient_id = p.id) AND (pcs_1.programme_type = patient_team_prog.s_programme_type) AND (pcs_1.academic_year = tl.academic_year))
+                   LIMIT 1) pcs ON (true))
                LEFT JOIN ( SELECT DISTINCT vr.patient_id,
                       vr.programme_type,
                       COALESCE((vr_tl.academic_year)::numeric, EXTRACT(year FROM ((vr.performed_at AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text))) AS academic_year
