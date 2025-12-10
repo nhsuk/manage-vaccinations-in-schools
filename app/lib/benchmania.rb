@@ -1,5 +1,54 @@
 # frozen_string_literal: true
 
+# There's two ways to implement benchmarking, one is as a method decorator:
+#
+# class Example
+#   include Benchmania
+#
+#   benchmania_sample
+#   def some_method
+#     # do some work
+#     ...
+#   end
+# end
+#
+# Or as a block to sample something within another method:
+#
+#   # No include required
+#   Benchmania.sample("some label") do
+#     # do some work
+#     ...
+#   end
+#
+# `Benchmania.sample` will return the value returned to it from the block,
+# making it convenient to insert inline, e.g.:
+#
+# {
+#   ...
+#   key: Benchmania.sample { get_value },
+#   ...
+# }
+#
+# Once you've decorated methods or used `Benchmania.sample`, you can get a report of
+# the results by wrapping your code in `Benchmania.report`:
+#
+#   Benchmania.call { perform_export }
+#
+# Benchmania keeps track of the results of it's runs for you, so you can print
+# out the timings for the last run:
+#
+#   Benchmania.results_table
+#   # prints out a table of the total time spent in each of the samples
+#
+#   Benchmania.nested_results_table
+#   # prints out a table of the nested times for each sample
+#
+# You also view previous runs:
+#
+#   Benchmania.results_table(Benchmania.runs[-2])
+#   Benchmania.nested_results_table(Benchmania.runs[-2])
+#
+#
 module Benchmania
   def self.included(base)
     base.extend ClassMethods
