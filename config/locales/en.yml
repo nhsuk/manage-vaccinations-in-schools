@@ -704,8 +704,9 @@ en:
     index:
       title: Children
       upload_only_title: Search
-      upload_only_long_title: Search for children vaccinated
+      upload_only_long_title: Search for children
       description: Find children and view their vaccination history
+      upload_only_description: Find children, view their vaccination history and edit their details.
   programmes:
     index:
       title: Programmes
@@ -803,10 +804,6 @@ en:
       title: Your team
       title_short: Team
       description: Manage your team’s settings
-  vaccination_records:
-    index:
-      title: Vaccination records
-      description: Find and edit vaccination records
   vaccines:
     index:
       title: Vaccines

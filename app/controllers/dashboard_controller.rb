@@ -21,15 +21,19 @@ class DashboardController < ApplicationController
           {
             title: I18n.t("imports.index.title"),
             path: imports_path,
-            description: I18n.t("imports.index.description")
+            description: I18n.t("imports.index.description"),
+            width: "one-third"
           },
           {
-            title: I18n.t("vaccination_records.index.title"),
-            description: I18n.t("vaccination_records.index.description")
+            title: I18n.t("patients.index.upload_only_title"),
+            path: patients_path,
+            description: I18n.t("patients.index.upload_only_description"),
+            width: "one-third"
           },
           {
             title: I18n.t("reports.index.title"),
-            description: I18n.t("reports.index.description")
+            description: I18n.t("reports.index.description"),
+            width: "one-third"
           }
         ]
       else
@@ -38,29 +42,34 @@ class DashboardController < ApplicationController
             {
               title: I18n.t("schools.index.title"),
               path: schools_path,
-              description: I18n.t("schools.index.description")
+              description: I18n.t("schools.index.description"),
+              width: "one-quarter"
             }
           else
             {
               title: I18n.t("programmes.index.title"),
               path: programmes_path,
-              description: I18n.t("programmes.index.description")
+              description: I18n.t("programmes.index.description"),
+              width: "one-quarter"
             }
           end,
           {
             title: I18n.t("patients.index.title"),
             path: patients_path,
-            description: I18n.t("patients.index.description")
+            description: I18n.t("patients.index.description"),
+            width: "one-quarter"
           },
           {
             title: I18n.t("sessions.index.title"),
             path: sessions_path,
-            description: I18n.t("sessions.index.description")
+            description: I18n.t("sessions.index.description"),
+            width: "one-quarter"
           },
           {
             title: I18n.t("vaccines.index.title"),
             path: vaccines_path,
-            description: I18n.t("vaccines.index.description")
+            description: I18n.t("vaccines.index.description"),
+            width: "one-quarter"
           }
         ]
       end
