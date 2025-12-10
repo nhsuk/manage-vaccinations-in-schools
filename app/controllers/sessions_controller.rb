@@ -5,6 +5,7 @@ class SessionsController < ApplicationController
 
   before_action :set_session_search_form, only: :index
   before_action :set_session, except: :index
+  before_action :set_breadcrumb_items, except: :index
 
   def index
     @programmes = current_user.selected_team.programmes
@@ -85,6 +86,13 @@ class SessionsController < ApplicationController
 
   def set_session
     @session = authorize policy_scope(Session).find_by!(slug: params[:slug])
+  end
+
+  def set_breadcrumb_items
+    @breadcrumb_items = [
+      { text: t("dashboard.index.title"), href: dashboard_path },
+      { text: t("sessions.index.title"), href: sessions_path }
+    ]
   end
 
   def patient_counts_for_sessions(sessions)

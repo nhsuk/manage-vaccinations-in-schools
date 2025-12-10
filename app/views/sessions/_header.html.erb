@@ -44,11 +44,7 @@
 
 <% content_for :before_main do %>
   <% unless Flipper.enabled?(:schools_and_sessions) %>
-    <%= render AppBreadcrumbComponent.new(items: [
-                                            { text: t("dashboard.index.title"), href: dashboard_path },
-                                            { text: t("sessions.index.title"), href: sessions_path },
-                                            { text: @session.location.name, href: session_path(@session) },
-                                          ]) %>
+    <%= render AppBreadcrumbComponent.new(items: @breadcrumb_items) %>
   <% end %>
 <% end %>
 

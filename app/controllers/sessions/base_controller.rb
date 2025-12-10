@@ -3,6 +3,7 @@
 class Sessions::BaseController < ApplicationController
   before_action :set_session
   before_action :set_programme_statuses
+  before_action :set_breadcrumb_items
 
   private
 
@@ -23,5 +24,13 @@ class Sessions::BaseController < ApplicationController
           needs_consent_request_failed
           needs_consent_follow_up_requested
         ]
+  end
+
+  def set_breadcrumb_items
+    @breadcrumb_items = [
+      { text: t("dashboard.index.title"), href: dashboard_path },
+      { text: t("sessions.index.title"), href: sessions_path },
+      { text: @session.location.name, href: session_path(@session) }
+    ]
   end
 end
