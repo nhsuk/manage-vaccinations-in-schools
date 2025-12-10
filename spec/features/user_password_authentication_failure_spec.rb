@@ -46,6 +46,6 @@ describe "User password authentication failure", :local_users do
   end
 
   def then_i_see_an_error_message
-    expect(page).to have_content("Invalid Email or password")
+    expect(page).to have_content("Invalid email or password")
   end
 end

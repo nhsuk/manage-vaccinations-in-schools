@@ -79,6 +79,10 @@ jobs:
           bin/rails parallel:load_schema
       - name: Run tests
         run: bin/rails parallel:spec
+      - name: Run tests tagged for local_users
+        run: bundle exec rspec -t local_users
+        env:
+          MAVIS__CIS2__ENABLED: false
 
   seeds:
     name: Seeds
