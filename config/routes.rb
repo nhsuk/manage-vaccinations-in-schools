@@ -250,7 +250,7 @@ Rails.application.routes.draw do
     get "sessions"
   end
 
-  resources :sessions, only: %i[index show edit], param: :slug do
+  resources :sessions, only: %i[index new show edit], param: :slug do
     resource :patients, only: :show, controller: "sessions/patients"
     resource :patient_specific_directions,
              path: "patient-specific-directions",

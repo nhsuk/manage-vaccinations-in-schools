@@ -21,7 +21,7 @@ class DraftSessionsController < ApplicationController
   skip_after_action :verify_policy_scoped
 
   def show
-    authorize @session, :edit?
+    authorize @session, @session.new_record? ? :new? : :edit?
 
     if (current_step == :dates_check && should_skip_dates_check?) ||
          (current_step == :programmes_check && should_skip_programmes_check?)
@@ -32,7 +32,7 @@ class DraftSessionsController < ApplicationController
   end
 
   def update
-    authorize @session, :update?
+    authorize @session, @session.new_record? ? :create? : :update?
 
     case current_step
     when :dates
@@ -55,7 +55,7 @@ class DraftSessionsController < ApplicationController
   end
 
   def set_session
-    @session = @draft_session.session
+    @session = @draft_session.session || Session.new
   end
 
   def set_steps
