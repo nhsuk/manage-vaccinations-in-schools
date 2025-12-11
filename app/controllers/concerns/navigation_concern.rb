@@ -68,7 +68,7 @@ module NavigationConcern
 
     if current_team&.has_upload_access_only?
       @navigation_items << {
-        title: t("patients.index.upload_only_title"),
+        title: t("patients.index.title"),
         path: patients_path,
       }
     end
