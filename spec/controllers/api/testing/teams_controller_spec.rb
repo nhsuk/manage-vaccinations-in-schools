@@ -52,10 +52,8 @@ describe API::Testing::TeamsController do
       create(:school, urn: "123456", team:, programmes:) # to match cohort_import/valid.csv
       create(:school, urn: "110158", team:, programmes:) # to match valid_hpv.csv
 
-      TeamSessionsFactory.call(team, academic_year: AcademicYear.current)
-
-      session = Session.first
-      session.update!(dates: [Date.current])
+      session =
+        create(:session, team:, location: team.schools.first, programmes:)
 
       cohort_import.process!
       CommitImportJob.drain
@@ -89,7 +87,7 @@ describe API::Testing::TeamsController do
           change(Team, :count)
             .by(-1)
             .and(change(Subteam, :count).by(-1))
-            .and(change(Session, :count).by(-3))
+            .and(change(Session, :count).by(-1))
             .and(change(CohortImport, :count).by(-1))
             .and(change(ImmunisationImport, :count).by(-1))
             .and(change(NotifyLogEntry, :count).by(-3))
