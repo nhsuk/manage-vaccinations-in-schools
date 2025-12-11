@@ -98,6 +98,8 @@ en:
               blank: Enter weeks before a session takes place
               greater_than_or_equal_to: Enter %{count} or more weeks before a session
               less_than_or_equal_to: Enter %{count} or fewer weeks before a session
+            year_groups:
+              blank: Choose which year groups you want to invite to this session
         draft_session_date:
           attributes:
             value:

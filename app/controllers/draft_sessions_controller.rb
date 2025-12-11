@@ -8,6 +8,7 @@ class DraftSessionsController < ApplicationController
 
   before_action :set_schools, if: -> { current_step == :school }
   before_action :set_programmes, if: -> { current_step == :programmes }
+  before_action :set_year_group_options, if: -> { current_step == :year_groups }
 
   with_options only: :show,
                if: -> do
@@ -82,6 +83,35 @@ class DraftSessionsController < ApplicationController
 
   def set_programmes
     @programmes = @draft_session.location.programmes & current_team.programmes
+  end
+
+  def set_year_group_options
+    programmes_in_session = @draft_session.programmes
+
+    @year_group_options =
+      @draft_session
+        .location
+        .location_year_groups
+        .includes(:location_programme_year_groups)
+        .where(academic_year: @draft_session.academic_year)
+        .order(:value)
+        .map do |location_year_group|
+          value = location_year_group.value
+          text = helpers.format_year_group(value)
+
+          missing_programmes =
+            programmes_in_session - location_year_group.programmes
+          only_programmes = programmes_in_session - missing_programmes
+
+          hint =
+            if only_programmes == programmes_in_session
+              nil
+            else
+              "#{only_programmes.map(&:name).to_sentence} only"
+            end
+
+          OpenStruct.new(value:, text:, hint:)
+        end
   end
 
   def set_catch_up_year_groups
@@ -243,7 +273,10 @@ class DraftSessionsController < ApplicationController
       },
       programmes_check: [],
       register_attendance: %i[requires_registration],
-      school: %i[location_id]
+      school: %i[location_id],
+      year_groups: {
+        year_groups: []
+      }
     }.fetch(current_step)
 
     params
