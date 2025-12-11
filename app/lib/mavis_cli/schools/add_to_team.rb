@@ -51,16 +51,12 @@ module MavisCLI
               end
             end
 
-            team_location =
-              location.attach_to_team!(team, academic_year:, subteam:)
-
+            location.attach_to_team!(team, academic_year:, subteam:)
             location.import_year_groups_from_gias!(academic_year:)
             location.import_default_programme_year_groups!(
               programmes,
               academic_year:
             )
-
-            TeamLocationSessionsFactory.call(team_location)
           end
         end
       end

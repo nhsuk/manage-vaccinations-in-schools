@@ -46,8 +46,6 @@ describe CohortImport do
   # Ensure location URN matches the URN in our fixture files
   let!(:location) { create(:school, urn: "123456", team:) } # rubocop:disable RSpec/LetSetup
 
-  before { TeamSessionsFactory.call(team, academic_year:) }
-
   it_behaves_like "a CSVImportable model"
 
   describe "#load_data!" do
