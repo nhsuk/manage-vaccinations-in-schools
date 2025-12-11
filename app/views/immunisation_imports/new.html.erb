@@ -2,7 +2,7 @@
   <%= govuk_back_link(href: draft_import_path("type")) %>
 <% end %>
 
-<% title = "Import vaccination records" %>
+<% title = "Upload vaccination records" %>
 
 <% content_for :page_title, title %>
 
@@ -11,12 +11,16 @@
 
   <h1 class="nhsuk-heading-l"><%= title %></h1>
 
-  <p>You can import vaccination records by uploading:</p>
+  <% if current_team.type_upload_only? %>
+    <p>You can upload vaccination records for flu or HPV. Mavis will detect which vaccination type you are uploading.</p>
+  <% else %>
+    <p>You can import vaccination records by uploading:</p>
 
-  <ul class="nhsuk-list nhsuk-list--bullet">
-    <li>a Mavis CSV file</li>
-    <li>a SystmOne file</li>
-  </ul>
+    <ul class="nhsuk-list nhsuk-list--bullet">
+      <li>a Mavis CSV file</li>
+      <li>a SystmOne file</li>
+    </ul>
+  <% end %>
 
   <%= render AppImportFormatDetailsComponent.new(import: @immunisation_import) %>
 
