@@ -12,6 +12,7 @@
 #  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
 #  method              :integer          not null
+#  nivs_name           :string
 #  programme_type      :enum             not null
 #  side_effects        :integer          default([]), not null, is an Array
 #  snomed_product_code :string           not null
@@ -177,6 +178,7 @@ FactoryBot.define do
         manufacturer { data["manufacturer"] }
         add_attribute(:method) { data["method"] }
         upload_name { data["upload_name"] }
+        nivs_name { data["nivs_name"] }
         snomed_product_code { data["snomed_product_code"] }
         snomed_product_term { data["snomed_product_term"] }
       end
