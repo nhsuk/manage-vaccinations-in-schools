@@ -70,13 +70,21 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
         <% end %>
       <% end %>
     <% end %>
+    <%= render AppPaginationComponent.new(pagy: @pagy) if @pagy.present? %>
   ERB
 
-  def initialize(import: nil, records: nil, show_actions: false, form: nil)
+  def initialize(
+    import: nil,
+    records: nil,
+    show_actions: false,
+    form: nil,
+    pagy: nil
+  )
     @import = import
     @records = Array(records).sort_by { it.try(:row_number) || 0 }
     @show_actions = show_actions
     @form = form
+    @pagy = pagy
   end
 
   private
