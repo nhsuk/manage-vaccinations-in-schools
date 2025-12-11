@@ -137,7 +137,7 @@ describe "Manage clinic sessions" do
   end
 
   def then_i_see_the_dates_page
-    expect(page).to have_content("When will sessions be held?")
+    expect(page).to have_content("When will this session be held?")
   end
 
   def when_i_choose_the_dates

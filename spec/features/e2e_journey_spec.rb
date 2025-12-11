@@ -152,7 +152,7 @@ describe "End-to-end journey" do
     click_on "Edit session"
 
     click_on "Add session dates"
-    expect(page).to have_content("When will sessions be held?")
+    expect(page).to have_content("When will this session be held?")
 
     fill_in "Day", with: "1"
     fill_in "Month", with: "3"
