@@ -111,7 +111,7 @@ class DraftVaccinationRecordsController < ApplicationController
 
     @draft_vaccination_record.write_to!(@vaccination_record)
 
-    @vaccination_record.source = "service"
+    @vaccination_record.source ||= "service"
 
     should_notify_parents =
       @vaccination_record.confirmation_sent? &&
@@ -148,7 +148,7 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def finish_wizard_path
-    if @session.today?
+    if @session && @session.today?
       session_patient_programme_path(
         @session,
         @patient,
@@ -216,9 +216,15 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def set_batches
-    vaccines = vaccine_criteria.apply(@programme.vaccines)
+    vaccines =
+      if current_team.type_upload_only?
+        @programme.vaccines
+      else
+        vaccine_criteria.apply(@programme.vaccines)
+      end
 
     scope = policy_scope(Batch).includes(:vaccine)
+
 
     @batches =
       scope
