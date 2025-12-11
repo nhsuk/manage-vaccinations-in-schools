@@ -8,9 +8,15 @@ class Reports::SystmOneExporter
     not_known: "U"
   }.with_indifferent_access.freeze
 
+  # We think these are CVT3 Read codes still used within SystmOne
+  # They have been looked up from the SystmOne Code Browser
+  # They are also available online here: https://biobank.ndph.ox.ac.uk/ukb/coding.cgi?id=8708&nl=1
   VACCINE_DOSE_MAPPINGS = {
     "Cell-based Trivalent Influenza Vaccine Seqirus" => {
       1 => "YcjYj"
+    },
+    "Fluenz" => {
+      1 => "YcjAC"
     },
     "Gardasil 9" => {
       1 => "Y19a4",
@@ -23,14 +29,14 @@ class Reports::SystmOneExporter
     "Menveo" => {
       nil => "Y0da5"
     },
-    "Fluenz" => {
-      1 => "YcjAC"
+    "MMR VaxPro" => {
+      nil => "Yb9ZN"
     },
-    "Vaxigrip" => {
-      1 => "YcjYf"
+    "Nimenrix" => {
+      nil => "YOfcf"
     },
-    "Viatris" => {
-      1 => "YcjYh"
+    "Priorix" => {
+      nil => "Yav8l"
     },
     "Revaxis" => {
       1 => "Y3417",
@@ -40,8 +46,11 @@ class Reports::SystmOneExporter
       5 => "Y06d4",
       nil => "x05ub"
     },
-    "Nimenrix" => {
-      nil => "YOfcf"
+    "Vaxigrip" => {
+      1 => "YcjYf"
+    },
+    "Viatris" => {
+      1 => "YcjYh"
     }
   }.freeze
 

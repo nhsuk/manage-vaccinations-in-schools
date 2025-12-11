@@ -311,7 +311,7 @@ describe Reports::OfflineSessionExporter do
                 "TRIAGE_NOTES" => nil,
                 "TRIAGE_STATUS" => nil,
                 "VACCINATED" => "Y",
-                "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
+                "VACCINE_GIVEN" => vaccination_record.vaccine.upload_name,
                 "UUID" => vaccination_record.uuid,
                 "YEAR_GROUP" => patient.year_group(academic_year:),
                 "REGISTRATION" => patient.registration
@@ -507,7 +507,7 @@ describe Reports::OfflineSessionExporter do
                 "TRIAGE_NOTES" => nil,
                 "TRIAGE_STATUS" => nil,
                 "VACCINATED" => "Y",
-                "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
+                "VACCINE_GIVEN" => vaccination_record.vaccine.upload_name,
                 "UUID" => vaccination_record.uuid,
                 "YEAR_GROUP" => patient.year_group(academic_year:),
                 "REGISTRATION" => patient.registration
@@ -527,13 +527,14 @@ describe Reports::OfflineSessionExporter do
           before do
             create(:patient_location, patient:, session:)
 
-            other_programme = (Programme::TYPES - [programme.type]).sample
+            other_programme_type = (Programme::TYPES - [programme.type]).sample
+
             create(
               :vaccination_record,
               performed_at:,
               batch:,
               patient:,
-              programme: Programme.find(other_programme),
+              programme: Programme.find(other_programme_type),
               performed_by: user,
               notes: "Some notes.",
               location_name: "Waterloo Road"
@@ -744,12 +745,13 @@ describe Reports::OfflineSessionExporter do
         before do
           create(:patient, session:)
 
-          other_programme = (Programme::TYPES - [programme.type]).sample
+          other_programme_type = (Programme::TYPES - [programme.type]).sample
+
           create(
             :batch,
             :not_expired,
             name: "OTHERBATCH",
-            vaccine: create(:vaccine, other_programme)
+            vaccine: Programme.find(other_programme_type).vaccines.first
           )
         end
 
@@ -955,7 +957,7 @@ describe Reports::OfflineSessionExporter do
                 "TRIAGE_NOTES" => nil,
                 "TRIAGE_STATUS" => nil,
                 "VACCINATED" => "Y",
-                "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
+                "VACCINE_GIVEN" => vaccination_record.vaccine.upload_name,
                 "UUID" => vaccination_record.uuid,
                 "YEAR_GROUP" => patient.year_group(academic_year:),
                 "REGISTRATION" => patient.registration
@@ -1055,12 +1057,13 @@ describe Reports::OfflineSessionExporter do
         before do
           create(:patient, session:)
 
-          other_programme = (Programme::TYPES - [programme.type]).sample
+          other_programme_type = (Programme::TYPES - [programme.type]).sample
+
           create(
             :batch,
             :not_expired,
             name: "OTHERBATCH",
-            vaccine: create(:vaccine, other_programme)
+            vaccine: Programme.find(other_programme_type).vaccines.first
           )
         end
 

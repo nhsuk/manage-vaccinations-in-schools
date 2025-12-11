@@ -129,7 +129,7 @@ class DraftSessionsController < ApplicationController
   def set_back_link_path
     @back_link_path =
       if current_step == :confirm
-        session_path(@session)
+        finish_wizard_path
       else
         wizard_path("confirm")
       end
@@ -224,7 +224,17 @@ class DraftSessionsController < ApplicationController
     StatusUpdaterJob.perform_bulk(patient_ids.zip)
   end
 
-  def finish_wizard_path = session_path(@session)
+  def finish_wizard_path
+    if Flipper.enabled?(:schools_and_sessions) &&
+         @draft_session.return_to == "school"
+      location = @draft_session.location
+      school_sessions_path(
+        location.generic_clinic? ? Location::URN_UNKNOWN : location
+      )
+    else
+      session_path(@session)
+    end
+  end
 
   def update_params
     permitted_attributes = {

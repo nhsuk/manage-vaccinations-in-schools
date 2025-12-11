@@ -35,4 +35,10 @@ module ReportingAPIHelper
       "HS512"
     )
   end
+
+  def refresh_reporting_views!
+    StatusUpdater.call
+    ReportingAPI::PatientProgrammeStatus.refresh!(concurrently: false)
+    ReportingAPI::Total.refresh!(concurrently: false)
+  end
 end

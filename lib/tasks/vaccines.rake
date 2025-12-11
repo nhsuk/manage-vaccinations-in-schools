@@ -23,7 +23,6 @@ namespace :vaccines do
       vaccine.dose_volume_ml = data["dose_volume_ml"]
       vaccine.manufacturer = data["manufacturer"]
       vaccine.method = data["method"]
-      vaccine.nivs_name = data["nivs_name"]
       vaccine.upload_name = data["upload_name"]
       vaccine.snomed_product_term = data["snomed_product_term"]
       vaccine.disease_types = data["disease_types"]
@@ -43,7 +42,9 @@ namespace :vaccines do
         elsif programme.menacwy?
           create_menacwy_health_questions(vaccine)
         elsif programme.mmr?
+          Flipper.enable(:mmrv) # Remove after MMRV goes live
           create_mmr_health_questions(vaccine)
+          Flipper.disable(:mmrv) # Remove after MMRV goes live
         elsif programme.td_ipv?
           create_td_ipv_health_questions(vaccine)
         else

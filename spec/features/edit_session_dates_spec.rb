@@ -53,7 +53,7 @@ describe "Edit session dates" do
   end
 
   def and_i_click_on_schedule_sessions
-    click_on "Schedule sessions"
+    click_on "Edit session"
   end
 
   def and_i_click_on_add_session_dates
@@ -77,12 +77,12 @@ describe "Edit session dates" do
       "Have you imported historical vaccination records for HPV?"
     )
     expect(page).to have_content(
-      "Only 10% of children in Years 9, 10, and 11 in this session have vaccination records."
+      "Only 10% of children in Years 9 to 11 in this session have vaccination records."
     )
     expect(page).to have_content(
       "Scheduling this session now will send consent requests to 9 parents " \
-        "of children in Years 9, 10, and 11 on 10 April 2024. Many " \
-        "of them may be parents of already vaccinated children."
+        "of children in Years 9 to 11 on 10 April 2024. Many of them may " \
+        "be parents of already vaccinated children."
     )
   end
 

@@ -3,7 +3,7 @@
 module MavisCLI
   module Teams
     class Onboard < Dry::CLI::Command
-      desc "Onboard a new team"
+      desc "Onboard a new team, supports CIS2 and non-CIS2 envs"
 
       argument :path, desc: "The path to the onboarding configuration file"
 

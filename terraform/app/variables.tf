@@ -129,7 +129,6 @@ locals {
       MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = "CHANGE_ME"
       MAVIS__PDS__ENQUEUE_BULK_UPDATES                = "CHANGE_ME"
       MAVIS__PDS__RATE_LIMIT_PER_SECOND               = "CHANGE_ME"
-      SIDEKIQ_CONCURRENCY                             = "CHANGE_ME"
     })
     REPORTING = local.is_production ? {} : tomap({
     })
@@ -220,11 +219,16 @@ locals {
         value = var.environment == "production" ? "production" : "staging"
       },
       {
+        name  = "RAILS_MAX_THREADS"
+        value = 5
+      },
+      {
         name  = "SENTRY_ENVIRONMENT"
         value = var.environment
       },
       ], local.sandbox_envs,
     )
+
     REPORTING = [
       {
         name  = "VALKEY_ADDRESS"
@@ -327,7 +331,7 @@ variable "minimum_sidekiq_replicas" {
 
 variable "maximum_sidekiq_replicas" {
   type        = number
-  default     = 4
+  default     = 6
   description = "Amount of replicas for the sidekiq service"
 }
 

@@ -91,10 +91,16 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
         team_id: current_user.team_ids
       ).where(@filters.to_where_clause)
 
+    @totals_base_scope =
+      ReportingAPI::Total.where(team_id: current_user.team_ids).where(
+        @filters.to_where_clause
+      )
+
     apply_workgroup_filter
     apply_year_group_filter
 
     @scope = @base_scope.not_archived
+    @totals_scope = @totals_base_scope.not_archived
   end
 
   def csv_headers(groups)
@@ -128,10 +134,13 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   end
 
   def render_format_json
+    cohort = @totals_scope.cohort_count
+    vaccinated = @totals_scope.vaccinated_count
+
     response_data = {
-      cohort: @scope.cohort_count,
-      vaccinated: @scope.vaccinated_count,
-      not_vaccinated: @scope.not_vaccinated_count,
+      cohort:,
+      vaccinated:,
+      not_vaccinated: cohort - vaccinated,
       vaccinated_by_sais: @scope.vaccinated_by_sais_count,
       vaccinated_elsewhere_declared: @scope.vaccinated_elsewhere_declared_count,
       vaccinated_elsewhere_recorded: @scope.vaccinated_elsewhere_recorded_count,
@@ -165,16 +174,19 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
     return unless workgroup
 
     team = current_user.teams.find_by(workgroup:)
-    @base_scope = @base_scope.where(team_id: team.id) if team
+    return unless team
+
+    @base_scope = @base_scope.where(team_id: team.id)
+    @totals_base_scope = @totals_base_scope.where(team_id: team.id)
   end
 
   def apply_year_group_filter
     return if params[:programme].blank?
 
-    patient_table = ReportingAPI::PatientProgrammeStatus.arel_table
     lpyg_table = Location::ProgrammeYearGroup.arel_table
     lyg_table = Location::YearGroup.arel_table
 
+    patient_table = ReportingAPI::PatientProgrammeStatus.arel_table
     subquery =
       lpyg_table
         .project(Arel.star)
@@ -184,8 +196,20 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
         .where(lyg_table[:value].eq(patient_table[:patient_year_group]))
         .where(lyg_table[:academic_year].eq(patient_table[:academic_year]))
         .where(lpyg_table[:programme_type].eq(params[:programme]))
-
     @base_scope = @base_scope.where(Arel::Nodes::Exists.new(subquery))
+
+    totals_table = ReportingAPI::Total.arel_table
+    totals_subquery =
+      lpyg_table
+        .project(Arel.star)
+        .join(lyg_table)
+        .on(lpyg_table[:location_year_group_id].eq(lyg_table[:id]))
+        .where(lyg_table[:location_id].eq(totals_table[:session_location_id]))
+        .where(lyg_table[:value].eq(totals_table[:patient_year_group]))
+        .where(lyg_table[:academic_year].eq(totals_table[:academic_year]))
+        .where(lpyg_table[:programme_type].eq(params[:programme]))
+    @totals_base_scope =
+      @totals_base_scope.where(Arel::Nodes::Exists.new(totals_subquery))
   end
 
   def consent_refusal_reasons

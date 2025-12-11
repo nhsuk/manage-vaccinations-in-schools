@@ -5,4 +5,9 @@ namespace :feature_flags do
   task seed: :environment do
     FeatureFlagFactory.call
   end
+
+  desc "Enable feature flags most useful for development."
+  task enable_for_development: :seed do
+    FeatureFlagFactory.enable_for_development!
+  end
 end

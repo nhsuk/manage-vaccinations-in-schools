@@ -68,7 +68,7 @@ describe ImmunisationImportRow do
 
   let(:valid_bulk_common_data) do
     valid_patient_data.deep_dup.merge(
-      "ANATOMICAL_SITE" => "left upper arm",
+      "ANATOMICAL_SITE" => "Left Deltoid",
       "BATCH_EXPIRY_DATE" => Date.tomorrow.strftime("%Y%m%d"),
       "DATE_OF_VACCINATION" => Date.current.strftime("%Y%m%d"),
       "BATCH_NUMBER" => "123",
@@ -165,7 +165,7 @@ describe ImmunisationImportRow do
         it "has errors" do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors["VACCINE_GIVEN"]).to eq(
-            ["This vaccine is not available in this session."]
+            ["This vaccine is not valid."]
           )
         end
       end
@@ -913,18 +913,85 @@ describe ImmunisationImportRow do
       let(:programmes) { [Programme.hpv, Programme.flu] }
 
       shared_examples "with an empty row (both bulk upload types)" do
-        context "with an empty row" do
-          let(:data) { {} }
+        it "requires the mandatory fields" do
+          expect(immunisation_import_row).to be_invalid
+          expect(immunisation_import_row.errors[:base]).to include(
+            "<code>DATE_OF_VACCINATION</code> is required",
+            "<code>PERSON_DOB</code> is required",
+            "<code>PERSON_FORENAME</code> is required",
+            "<code>PERSON_GENDER_CODE</code> or <code>PERSON_GENDER</code> is required",
+            "<code>PERSON_SURNAME</code> is required",
+            "<code>PERSON_POSTCODE</code> is required",
+            "<code>LOCAL_PATIENT_ID</code> is required",
+            "<code>LOCAL_PATIENT_ID_URI</code> is required",
+            "<code>ORGANISATION_CODE</code> is required",
+            "<code>SCHOOL_URN</code> is required"
+          )
+        end
+      end
 
-          it "requires the mandatory fields" do
+      shared_examples "with an (almost) empty row where `VACCINATED` is `Y`" do
+        it "requires the mandatory fields" do
+          expect(immunisation_import_row).to be_invalid
+          expect(immunisation_import_row.errors[:base]).to include(
+            "<code>VACCINE_GIVEN</code> is required",
+            "<code>ANATOMICAL_SITE</code> is required",
+            "<code>BATCH_NUMBER</code> is required",
+            "<code>BATCH_EXPIRY_DATE</code> is required"
+          )
+        end
+      end
+
+      shared_examples "when `VACCINATED` is `N`" do
+        context "when `VACCINATED` is `N`" do
+          let(:data) { { "VACCINATED" => "N" } }
+
+          it "doesn't validate anything" do
+            expect(immunisation_import_row).to be_valid
+            expect(immunisation_import_row.errors[:base]).to eq []
+          end
+        end
+      end
+
+      shared_examples "it doesn't make `SCHOOL_NAME` compulsory" do
+        context "when `SCHOOL_URN` is 888888" do
+          let(:data) { { "SCHOOL_URN" => "888888" } }
+
+          it "doesn't require SCHOOL_NAME" do
+            expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors[:base]).not_to include(
+              "<code>SCHOOL_NAME</code> or <code>School</code> is required"
+            )
+          end
+        end
+      end
+
+      shared_examples "when vaccinated date is in a previous academic year" do
+        context "when vaccinated date is in a previous academic year"
+        let(:data) do
+          { "DATE_OF_VACCINATION" => "20220101", "VACCINATED" => "Y" }
+        end
+
+        it "is invalid" do
+          expect(immunisation_import_row).to be_invalid
+          expect(
+            immunisation_import_row.errors[:DATE_OF_VACCINATION]
+          ).to include("must be in the current academic year")
+        end
+      end
+
+      shared_examples "when an NHS number is provided" do
+        context "when an NHS number is provided" do
+          let(:data) { { "NHS_NUMBER" => "1234567890", "VACCINATED" => "Y" } }
+
+          it "still requires all the demographic information" do
             expect(immunisation_import_row).to be_invalid
             expect(immunisation_import_row.errors[:base]).to include(
-              "<code>DATE_OF_VACCINATION</code> or <code>Event date</code> is required",
-              "<code>PERSON_DOB</code> or <code>Date of birth</code> is required",
-              "<code>PERSON_FORENAME</code> or <code>First name</code> is required",
-              "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required",
-              "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
-              "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required"
+              "<code>PERSON_DOB</code> is required",
+              "<code>PERSON_FORENAME</code> is required",
+              "<code>PERSON_GENDER_CODE</code> or <code>PERSON_GENDER</code> is required",
+              "<code>PERSON_SURNAME</code> is required",
+              "<code>PERSON_POSTCODE</code> is required"
             )
           end
         end
@@ -936,8 +1003,37 @@ describe ImmunisationImportRow do
         context "with an empty row" do
           let(:data) { {} }
 
-          include_examples "with an empty row (both bulk upload types)"
+          it "requires the `VACCINATED` field" do
+            expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors[:base]).to include(
+              "<code>VACCINATED</code> is required"
+            )
+          end
+
+          include_examples "it doesn't make `SCHOOL_NAME` compulsory"
         end
+
+        context "when `VACCINATED` is `Y`" do
+          let(:data) { { "VACCINATED" => "Y" } }
+
+          include_examples "with an empty row (both bulk upload types)"
+
+          include_examples "with an (almost) empty row where `VACCINATED` is `Y`"
+
+          it "requires the mandatory fields specific to flu when vaccinated" do
+            expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors[:base]).to include(
+              "<code>PERFORMING_PROFESSIONAL_FORENAME</code> is required",
+              "<code>PERFORMING_PROFESSIONAL_SURNAME</code> is required"
+            )
+          end
+
+          include_examples "it doesn't make `SCHOOL_NAME` compulsory"
+        end
+
+        include_examples "when `VACCINATED` is `N`"
+        include_examples "when an NHS number is provided"
+        include_examples "when vaccinated date is in a previous academic year"
       end
 
       context "of type hpv" do
@@ -947,7 +1043,25 @@ describe ImmunisationImportRow do
           let(:data) { {} }
 
           include_examples "with an empty row (both bulk upload types)"
+          include_examples "it doesn't make `SCHOOL_NAME` compulsory"
         end
+
+        context "when `VACCINATED` is `Y` (ie in all cases for HPV bulk upload)" do
+          let(:data) { {} }
+
+          include_examples "with an (almost) empty row where `VACCINATED` is `Y`"
+
+          it "requires the mandatory fields specific to HPV" do
+            expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors[:base]).to include(
+              "<code>DOSE_SEQUENCE</code> is required"
+            )
+          end
+        end
+
+        include_examples "when `VACCINATED` is `N`"
+        include_examples "when an NHS number is provided"
+        include_examples "when vaccinated date is in a previous academic year"
       end
     end
   end
@@ -955,6 +1069,20 @@ describe ImmunisationImportRow do
   describe "#to_vaccination_record" do
     subject(:vaccination_record) do
       immunisation_import_row.to_vaccination_record
+    end
+
+    shared_examples "with pseudo-postcodes" do
+      ["ZZ99 3VZ", "ZZ99 3WZ", "ZZ99 3CZ"].each do |pseudo_postcode|
+        context "when the postcode is #{pseudo_postcode}" do
+          let(:address_postcode) { pseudo_postcode }
+
+          it "assigns the postcode to the patient" do
+            expect(vaccination_record.patient.address_postcode).to eq(
+              pseudo_postcode
+            )
+          end
+        end
+      end
     end
 
     context "for a poc upload" do
@@ -1981,10 +2109,52 @@ describe ImmunisationImportRow do
         end
       end
 
+      describe "#source" do
+        context "with a historical record" do
+          its(:source) { should eq "historical_upload" }
+        end
+
+        context "with an offline spreadsheet" do
+          let(:data) do
+            valid_data.merge(
+              "DATE_OF_VACCINATION" => session.dates.first.strftime("%Y%m%d"),
+              "SESSION_ID" => session.id.to_s,
+              "ORGANISATION_CODE" => team.organisation.ods_code,
+              "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,
+              "DOSE_SEQUENCE" => "1"
+            )
+          end
+
+          let(:session) { create(:session, team:, programmes:) }
+
+          its(:source) { should eq "service" }
+        end
+      end
+
       context "without an expiry date" do
         let(:data) { valid_data.merge("BATCH_EXPIRY_DATE" => "") }
 
         it { should_not be_nil }
+      end
+
+      include_examples "with pseudo-postcodes"
+
+      context "when bulk upload columns are present, which the Mavis upload should ignore" do
+        let(:data) do
+          valid_data.merge(
+            {
+              "LOCAL_PATIENT_ID" => "CIN-OXFORD-pat123456",
+              "LOCAL_PATIENT_ID_URI" => "https://cinnamon.nhs.uk/0de/system1"
+            }
+          )
+        end
+
+        it "creates a valid vaccination record" do
+          expect(vaccination_record).to be_valid
+        end
+
+        its(:local_patient_id) { should be_nil }
+        its(:local_patient_id_uri) { should be_nil }
       end
     end
 
@@ -1997,14 +2167,166 @@ describe ImmunisationImportRow do
         let(:data) { valid_bulk_flu_data }
 
         it { should be_administered }
+
+        its(:programme) { should eq(Programme.flu) }
+
+        its(:source) { should eq("bulk_upload") }
+
+        its(:local_patient_id) { should eq "CIN-OXFORD-pat123456" }
+
+        its(:local_patient_id_uri) do
+          should eq "https://cinnamon.nhs.uk/0de/system1"
+        end
+
+        its(:location) { should eq location }
+
+        context "with an unknown school and no name" do
+          let(:data) do
+            valid_bulk_flu_data.merge(
+              "SCHOOL_URN" => "888888",
+              "SCHOOL_NAME" => nil
+            )
+          end
+
+          it { should be_valid }
+        end
+
+        context "when not administered" do
+          let(:data) { { "VACCINATED" => "N" } }
+
+          it { should be_nil }
+        end
+
+        context "when Mavis columns are present, which the bulk upload should ignore" do
+          let(:data) do
+            valid_bulk_flu_data.merge(
+              {
+                "PROGRAMME" => "HPV",
+                "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,
+                "NOTES" => "Here are some notes",
+                "CARE_SETTING" => 2,
+                "CLINIC_NAME" => "The Hog's Head",
+                "SESSION_ID" => session.id,
+                "UUID" => "ABCD1234-26cc-44e4-b886-c3cc90ba01b6"
+              }
+            )
+          end
+
+          let(:session) { create(:session, team:, programmes:) }
+
+          it "creates a valid vaccination record" do
+            expect(vaccination_record).to be_valid
+          end
+
+          its(:programme) { should be Programme.flu }
+
+          its(:performed_by_user) { should be_nil }
+          its(:performed_by_given_name) { should eq vaccinator.given_name }
+          its(:performed_by_family_name) { should eq vaccinator.family_name }
+
+          its(:notes) { should be_nil }
+
+          its(:location) { should eq location }
+
+          its(:session) { should be_nil }
+
+          its(:uuid) { should_not eq "ABCD1234-26cc-44e4-b886-c3cc90ba01b6" }
+        end
+
+        include_examples "with pseudo-postcodes"
       end
 
       context "of type hpv" do
+        shared_examples "accepts a VACCINE_GIVEN code" do |vaccine_given, snomed_product_code|
+          context "with code: #{vaccine_given}" do
+            let(:data) do
+              valid_bulk_hpv_data.merge("VACCINE_GIVEN" => vaccine_given)
+            end
+
+            it { should be_valid }
+
+            its(:vaccine) { should have_attributes(snomed_product_code:) }
+          end
+        end
+
         let(:import_type) { "bulk_hpv" }
 
         let(:data) { valid_bulk_hpv_data }
 
         it { should be_administered }
+
+        its(:programme) { should eq(Programme.hpv) }
+
+        its(:source) { should eq("bulk_upload") }
+
+        its(:local_patient_id) { should eq "CIN-OXFORD-pat123456" }
+
+        its(:local_patient_id_uri) do
+          should eq "https://cinnamon.nhs.uk/0de/system1"
+        end
+
+        its(:location) { should eq location }
+
+        include_examples "accepts a VACCINE_GIVEN code",
+                         "Gardasil",
+                         "10880211000001104"
+        include_examples "accepts a VACCINE_GIVEN code",
+                         "Gardasil9",
+                         "33493111000001108"
+        include_examples "accepts a VACCINE_GIVEN code",
+                         "Cervarix",
+                         "12238911000001100"
+
+        context "with an unknown school and no name" do
+          let(:data) do
+            valid_bulk_hpv_data.merge(
+              "SCHOOL_URN" => "888888",
+              "SCHOOL_NAME" => nil
+            )
+          end
+
+          it { should be_valid }
+        end
+
+        context "when not administered" do
+          let(:data) { { "VACCINATED" => "N" } }
+
+          it { should be_nil }
+        end
+
+        context "when Mavis columns are present, which the bulk upload should ignore" do
+          let(:data) do
+            valid_bulk_hpv_data.merge(
+              {
+                "PROGRAMME" => "Flu",
+                "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,
+                "NOTES" => "Here are some notes",
+                "CARE_SETTING" => 2,
+                "CLINIC_NAME" => "The Hog's Head",
+                "SESSION_ID" => session.id,
+                "UUID" => "ABCD1234-26cc-44e4-b886-c3cc90ba01b6"
+              }
+            )
+          end
+
+          let(:session) { create(:session, team:, programmes:) }
+
+          it "creates a valid vaccination record" do
+            expect(vaccination_record).to be_valid
+          end
+
+          its(:programme) { should be Programme.hpv }
+
+          its(:performed_by_user) { should be_nil }
+
+          its(:notes) { should be_nil }
+
+          its(:session) { should be_nil }
+
+          its(:uuid) { should_not eq "ABCD1234-26cc-44e4-b886-c3cc90ba01b6" }
+        end
+
+        include_examples "with pseudo-postcodes"
       end
     end
   end

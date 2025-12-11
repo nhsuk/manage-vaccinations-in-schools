@@ -16,7 +16,7 @@ describe "mavis gias import" do
   end
 
   def and_a_location_already_exists
-    create(:school, urn: "100000", site: nil)
+    create(:school, :secondary, urn: "100000", site: nil)
   end
 
   def when_i_run_the_import_command
@@ -32,6 +32,8 @@ describe "mavis gias import" do
     expect(Location.find_by_urn_and_site("100000").name).to eq(
       "The Aldgate School"
     )
+    expect(Location.find_by_urn_and_site!("100000").gias_phase).to eq("primary")
+
     expect(Location.find_by_urn_and_site("100000")).to be_closed
     expect(Location.find_by_urn_and_site("100001")).to be_closed
     expect(Location.find_by_urn_and_site("100002")).to be_closing

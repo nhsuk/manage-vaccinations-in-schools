@@ -4,7 +4,7 @@ class VaccinationReport
   include RequestSessionPersistable
   include WizardStepConcern
 
-  FILE_FORMATS = %w[careplus mavis systm_one].freeze
+  FILE_FORMATS = %w[mavis careplus systm_one].freeze
 
   attribute :date_from, :date
   attribute :date_to, :date
@@ -24,6 +24,13 @@ class VaccinationReport
   on_wizard_step :file_format, exact: true do
     validates :file_format, inclusion: FILE_FORMATS
   end
+
+  validates :programme_type,
+            :academic_year,
+            :file_format,
+            presence: true,
+            on: :single_page
+  validates :file_format, inclusion: { in: FILE_FORMATS }, on: :single_page
 
   def programme
     Programme.find(programme_type) if programme_type

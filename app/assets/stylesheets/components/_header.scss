@@ -1,5 +1,9 @@
 @use "../vendor/nhsuk-frontend" as *;
 
+.nhsuk-header__navigation-item {
+  padding-right: nhsuk-spacing(2);
+}
+
 .app-header__navigation-item--with-count {
   .app-count {
     min-width: nhsuk-spacing(4);

@@ -52,7 +52,7 @@ class CSVParser
       def to_postcode
         if present?
           postcode = UKPostcode.parse(value)
-          postcode.to_s if postcode.full_valid?
+          postcode.to_s if PostcodeValidator.postcode_valid?(postcode)
         end
       end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_03_143325) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_09_133534) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -360,7 +360,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_143325) do
     t.jsonb "serialized_errors"
     t.integer "status", default: 0, null: false
     t.bigint "team_id", null: false
-    t.integer "type", default: 0, null: false
+    t.integer "type", null: false
     t.datetime "updated_at", null: false
     t.bigint "uploaded_by_user_id", null: false
     t.index ["team_id"], name: "index_immunisation_imports_on_team_id"
@@ -463,6 +463,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_143325) do
     t.text "address_line_2"
     t.text "address_postcode"
     t.text "address_town"
+    t.text "alternative_name"
     t.datetime "created_at", null: false
     t.integer "gias_establishment_number"
     t.integer "gias_local_authority_code"
@@ -916,6 +917,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_143325) do
     t.datetime "discarded_at"
     t.integer "dose_sequence"
     t.boolean "full_dose"
+    t.string "local_patient_id"
+    t.string "local_patient_id_uri"
     t.bigint "location_id"
     t.string "location_name"
     t.bigint "next_dose_delay_triage_id"
@@ -972,18 +975,18 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_143325) do
     t.decimal "dose_volume_ml", null: false
     t.text "manufacturer", null: false
     t.integer "method", null: false
-    t.text "nivs_name", null: false
+    t.text "nivs_name"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "side_effects", default: [], null: false, array: true
     t.string "snomed_product_code", null: false
     t.string "snomed_product_term", null: false
     t.datetime "updated_at", null: false
-    t.text "upload_name"
+    t.text "upload_name", null: false
     t.index ["manufacturer", "brand"], name: "index_vaccines_on_manufacturer_and_brand", unique: true
-    t.index ["nivs_name"], name: "index_vaccines_on_nivs_name", unique: true
     t.index ["programme_type"], name: "index_vaccines_on_programme_type"
     t.index ["snomed_product_code"], name: "index_vaccines_on_snomed_product_code", unique: true
     t.index ["snomed_product_term"], name: "index_vaccines_on_snomed_product_term", unique: true
+    t.index ["upload_name"], name: "index_vaccines_on_upload_name", unique: true
   end
 
   add_foreign_key "access_log_entries", "patients"
@@ -1320,5 +1323,35 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_143325) do
   add_index "reporting_api_patient_programme_statuses", ["id"], name: "ix_rapi_pps_id", unique: true
   add_index "reporting_api_patient_programme_statuses", ["patient_school_local_authority_code", "programme_type"], name: "ix_rapi_pps_school_la_prog"
   add_index "reporting_api_patient_programme_statuses", ["team_id", "academic_year"], name: "ix_rapi_pps_team_year"
+
+  create_view "reporting_api_totals", materialized: true, sql_definition: <<-SQL
+      SELECT ((((((((pps.patient_id || '-'::text) || pps.programme_type) || '-'::text) || tl.team_id) || '-'::text) || pl.location_id) || '-'::text) || pps.academic_year) AS id,
+      pps.patient_id,
+      pps.academic_year,
+      pps.programme_type,
+      pps.status,
+      tl.team_id,
+      pl.location_id AS session_location_id,
+      pat.gender_code AS patient_gender,
+      ((pps.academic_year - pat.birth_academic_year) - 5) AS patient_year_group,
+      COALESCE(la.mhclg_code, ''::character varying) AS patient_local_authority_code,
+      COALESCE(la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
+      (ar.patient_id IS NOT NULL) AS is_archived,
+      (EXISTS ( SELECT 1
+             FROM consents con
+            WHERE ((con.patient_id = pps.patient_id) AND (con.programme_type = pps.programme_type) AND (con.academic_year = pps.academic_year) AND (con.invalidated_at IS NULL) AND (con.withdrawn_at IS NULL) AND (con.response = 1) AND (con.reason_for_refusal = 1)))) AS has_already_vaccinated_consent
+     FROM ((((((patient_programme_statuses pps
+       JOIN patients pat ON ((pat.id = pps.patient_id)))
+       JOIN patient_locations pl ON (((pl.patient_id = pps.patient_id) AND (pl.academic_year = pps.academic_year))))
+       JOIN team_locations tl ON (((tl.location_id = pl.location_id) AND (tl.academic_year = pps.academic_year))))
+       LEFT JOIN archive_reasons ar ON (((ar.patient_id = pps.patient_id) AND (ar.team_id = tl.team_id))))
+       LEFT JOIN locations school ON ((school.id = pat.school_id)))
+       LEFT JOIN local_authorities la ON ((la.gias_code = school.gias_local_authority_code)))
+    WHERE ((pat.invalidated_at IS NULL) AND (pat.restricted_at IS NULL) AND (pat.date_of_death IS NULL));
+  SQL
+  add_index "reporting_api_totals", ["id"], name: "ix_rapi_totals_id", unique: true
+  add_index "reporting_api_totals", ["patient_year_group"], name: "ix_rapi_totals_year_group"
+  add_index "reporting_api_totals", ["session_location_id"], name: "ix_rapi_totals_session_loc"
+  add_index "reporting_api_totals", ["team_id", "academic_year", "programme_type", "status"], name: "ix_rapi_totals_team_year_prog_status"
 
 end

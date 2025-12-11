@@ -68,12 +68,16 @@ module MavisCLI
 
         response = NHS::PDS.search_patients(query)
 
-        puts response.status unless response.status == 200
-        puts response.env.url
-        puts ""
-        puts(response.headers.map { "#{_1}: #{_2}" })
-        puts ""
-        puts JSON.pretty_generate(response.body)
+        if response.nil?
+          puts "Response from NHS::PDS is `nil`"
+        else
+          puts response.status unless response.status == 200
+          puts response.env.url
+          puts ""
+          puts(response.headers.map { "#{_1}: #{_2}" })
+          puts ""
+          puts JSON.pretty_generate(response.body)
+        end
       end
     end
   end

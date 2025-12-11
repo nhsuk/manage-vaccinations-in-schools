@@ -7,7 +7,7 @@ describe YearGroupsHelper do
     context "when the year group is negative" do
       let(:year_group) { -1 }
 
-      it { should eq("Nursery") }
+      it { should eq("Nursery (2nd year)") }
     end
 
     context "when the year group is zero" do
@@ -32,16 +32,28 @@ describe YearGroupsHelper do
       it { should eq("Year 1") }
     end
 
-    context "with multiple year groups" do
+    context "with multiple continuous year groups" do
       let(:year_groups) { [1, 2, 3, 4] }
 
-      it { should eq("Years 1, 2, 3, and 4") }
+      it { should eq("Years 1 to 4") }
+    end
+
+    context "with multiple non-continuous year groups" do
+      let(:year_groups) { [1, 2, 4] }
+
+      it { should eq("Years 1, 2, and 4") }
+    end
+
+    context "with reception and other year groups" do
+      let(:year_groups) { [0, 1, 2] }
+
+      it { should eq("Reception and years 1 and 2") }
     end
 
     context "with nursery and reception" do
       let(:year_groups) { [-1, 0, 1, 2] }
 
-      it { should eq("Nursery, Reception, Years 1, and 2") }
+      it { should eq("Nursery (2nd year), reception and years 1 and 2") }
     end
   end
 end

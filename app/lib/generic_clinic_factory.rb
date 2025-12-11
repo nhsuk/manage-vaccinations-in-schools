@@ -32,7 +32,12 @@ class GenericClinicFactory
   def location
     @location ||=
       team.generic_clinic ||
-        Location.create!(name: "Community clinic", type: :generic_clinic)
+        Location.create!(
+          name: "Community clinic",
+          alternative_name:
+            "No known school (including home-schooled children)",
+          type: :generic_clinic
+        )
   end
 
   def year_groups = Location::YearGroup::CLINIC_VALUE_RANGE.to_a

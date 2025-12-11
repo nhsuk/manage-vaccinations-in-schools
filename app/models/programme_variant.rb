@@ -3,9 +3,7 @@
 class ProgrammeVariant < SimpleDelegator
   attr_reader :variant_type
 
-  DISTINGUISHING_DISEASE_TYPES = {
-    "mmrv" => ["varicella"] # MMR + Varicella = MMRV
-  }.freeze
+  DISEASE_TYPES = { "mmrv" => %w[measles mumps rubella varicella] }.freeze
 
   SNOMED_PROCEDURE_TERMS = { "mmrv" => "TBC" }.freeze
 
@@ -16,6 +14,8 @@ class ProgrammeVariant < SimpleDelegator
 
   def translation_key = variant_type
 
+  def disease_types = DISEASE_TYPES.fetch(variant_type)
+
   def name
     @name ||= I18n.t(variant_type, scope: :programme_types)
   end
@@ -25,8 +25,7 @@ class ProgrammeVariant < SimpleDelegator
   end
 
   def vaccines
-    @vaccines ||=
-      Vaccine.where_programme(self, DISTINGUISHING_DISEASE_TYPES[variant_type])
+    @vaccines ||= Vaccine.where_programme(self, disease_types)
   end
 
   def snomed_procedure_term

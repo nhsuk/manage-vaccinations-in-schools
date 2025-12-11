@@ -18,6 +18,9 @@ class ProgrammeHelper
     FactoryBot.create(:vaccine, :priorix, programme: Programme.mmr)
     FactoryBot.create(:vaccine, :vaxpro, programme: Programme.mmr)
 
+    FactoryBot.create(:vaccine, :pro_quad, programme: Programme.mmr)
+    FactoryBot.create(:vaccine, :priorix_tetra, programme: Programme.mmr)
+
     FactoryBot.create(:vaccine, :revaxis, programme: Programme.td_ipv)
   end
 end

@@ -115,7 +115,7 @@ GEM
     ast (2.4.3)
     attr_required (1.0.2)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1190.0)
+    aws-partitions (1.1191.0)
     aws-sdk-accessanalyzer (1.82.0)
       aws-sdk-core (~> 3, >= 3.239.1)
       aws-sigv4 (~> 1.5)
@@ -127,19 +127,19 @@ GEM
       bigdecimal
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-ec2 (1.583.0)
+    aws-sdk-ec2 (1.584.0)
       aws-sdk-core (~> 3, >= 3.239.1)
       aws-sigv4 (~> 1.5)
     aws-sdk-ecr (1.115.0)
       aws-sdk-core (~> 3, >= 3.239.1)
       aws-sigv4 (~> 1.5)
-    aws-sdk-iam (1.136.0)
+    aws-sdk-iam (1.137.0)
       aws-sdk-core (~> 3, >= 3.239.1)
       aws-sigv4 (~> 1.5)
     aws-sdk-kms (1.118.0)
       aws-sdk-core (~> 3, >= 3.239.1)
       aws-sigv4 (~> 1.5)
-    aws-sdk-rds (1.301.0)
+    aws-sdk-rds (1.302.0)
       aws-sdk-core (~> 3, >= 3.239.1)
       aws-sigv4 (~> 1.5)
     aws-sdk-s3 (1.206.0)
@@ -319,7 +319,7 @@ GEM
     jmespath (1.6.2)
     jsbundling-rails (1.3.1)
       railties (>= 6.0.0)
-    json (2.16.0)
+    json (2.17.1)
     json-jwt (1.17.0)
       activesupport (>= 4.2)
       aes_key_wrap
@@ -410,7 +410,7 @@ GEM
       logger
       rack (>= 2.2.3)
       rack-protection
-    omniauth-rails_csrf_protection (2.0.0)
+    omniauth-rails_csrf_protection (2.0.1)
       actionpack (>= 4.2)
       omniauth (~> 2.0)
     omniauth_openid_connect (0.8.0)
@@ -487,7 +487,7 @@ GEM
     rack_session_access (0.2.0)
       builder (>= 2.0.0)
       rack (>= 1.0.0)
-    rackup (2.2.1)
+    rackup (2.3.1)
       rack (>= 3)
     rails (8.1.1)
       actioncable (= 8.1.1)
@@ -510,7 +510,7 @@ GEM
     rails-html-sanitizer (1.6.2)
       loofah (~> 2.21)
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
-    rails_semantic_logger (4.18.0)
+    rails_semantic_logger (4.19.0)
       rack
       railties (>= 5.1)
       semantic_logger (~> 4.16)
@@ -530,7 +530,7 @@ GEM
       ffi (~> 1.0)
     rbs (3.9.5)
       logger
-    rdoc (6.16.0)
+    rdoc (6.17.0)
       erb
       psych (>= 4.0.0)
       tsort
@@ -692,7 +692,7 @@ GEM
       solargraph (>= 0.48.0, <= 0.57)
     splunk-sdk-ruby (1.0.5)
     stackprof (0.2.27)
-    stringio (3.1.8)
+    stringio (3.1.9)
     swd (2.0.3)
       activesupport (>= 3)
       attr_required (>= 0.0.5)

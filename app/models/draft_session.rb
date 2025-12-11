@@ -16,6 +16,7 @@ class DraftSession
   attribute :programme_types, array: true, default: []
   attribute :psd_enabled, :boolean
   attribute :requires_registration, :boolean
+  attribute :return_to, :string
   attribute :send_consent_requests_at, :date
   attribute :send_invitations_at, :date
   attribute :session_dates, array: true, default: []
@@ -209,11 +210,11 @@ class DraftSession
   def request_session_key = "session"
 
   def readable_attribute_names
-    super - %w[dates session_dates]
+    super - %w[dates return_to session_dates]
   end
 
   def writable_attribute_names
-    super - %w[dates session_dates location_id programme_types]
+    super - %w[dates location_id programme_types return_to session_dates]
   end
 
   def include_notification_steps?

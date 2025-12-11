@@ -13,6 +13,8 @@ class PDS::Patient
   class << self
     def find(nhs_number)
       response = NHS::PDS.get_patient(nhs_number)
+      return unless response
+
       from_pds_fhir_response(response.body)
     end
 
@@ -33,8 +35,10 @@ class PDS::Patient
         "_fuzzy-match" => fuzzy
       }.compact_blank
 
-      results = NHS::PDS.search_patients(query).body
+      response = NHS::PDS.search_patients(query)
+      return unless response
 
+      results = response.body
       return if results["total"].zero?
 
       from_pds_fhir_response(results["entry"].first["resource"])

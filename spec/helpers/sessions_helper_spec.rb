@@ -106,4 +106,27 @@ describe SessionsHelper do
       it { should eq("Completed") }
     end
   end
+
+  describe "#session_title" do
+    subject(:session_title) { helper.session_title(session) }
+
+    let(:programmes) { [Programme.hpv, Programme.flu] }
+    let(:location) { create(:school, name: "Waterloo Road", programmes:) }
+
+    context "when unscheduled" do
+      let(:session) { create(:session, :unscheduled, programmes:, location:) }
+
+      it { should eq("Flu and HPV session at Waterloo Road") }
+    end
+
+    context "when scheduled" do
+      let(:session) { create(:session, :today, programmes:, location:) }
+
+      it do
+        expect(session_title).to eq(
+          "Flu and HPV session at Waterloo Road on #{Date.current.to_fs(:long)}"
+        )
+      end
+    end
+  end
 end
