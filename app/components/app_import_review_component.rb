@@ -7,7 +7,8 @@ class AppImportReviewComponent < ViewComponent::Base
     new_records:,
     auto_matched_records:,
     import_issues:,
-    school_moves:
+    school_moves:,
+    form:
   )
     @import = import
     @inter_team = inter_team.sort_by(&:row_number)
@@ -18,6 +19,7 @@ class AppImportReviewComponent < ViewComponent::Base
     @import_issues = import_issues.sort_by(&:row_number)
     @school_moves = school_moves
     @school_moves_from_file = @school_moves.reject { it.row_number.nil? }
+    @form = form
   end
 
   private

@@ -4,7 +4,7 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
   erb_template <<-ERB
     <%= helpers.govuk_table(
       html_attributes: {
-        class: "nhsuk-table-responsive"
+        class: "nhsuk-table-responsive app-table--review"
       }
     ) do |table| %>
       <% table.with_head do |head| %>
@@ -12,7 +12,11 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
           <% row.with_cell(text: "CSV file row") if review_screen %>
           <% row.with_cell(text: "Name and NHS number") %>
           <% row.with_cell(text: "Issue to review") %>
-          <% row.with_cell(text: "Actions") unless review_screen %>
+          <% if !@review_screen %>
+            <% row.with_cell(text: "Actions") %>
+          <% elsif Flipper.enabled?(:import_handle_issues_in_review) %>
+            <% row.with_cell(text: "Decision") %>
+          <% end %>
         <% end %>
       <% end %>
       <% table.with_body do |body| %>
@@ -39,10 +43,19 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
               <span><%= determine_issue_text(record) %></span>
             <% end %>
 
-            <% unless review_screen %>
+            <% if !review_screen %>
               <% row.with_cell do %>
                 <span class="nhsuk-table-responsive__heading">Actions</span>
                 <%= generate_action_link(record) %>
+              <% end %>
+            <% elsif @form && Flipper.enabled?(:import_handle_issues_in_review) %>
+              <% row.with_cell do %>
+                <span class="nhsuk-table-responsive__heading">Decision</span>
+                <div class="nhsuk-u-margin-bottom-2">
+                  <%= @form.fields_for :changesets, record do |changeset_fields| %>
+                    <%= changeset_fields.govuk_collection_radio_buttons :decision, available_decision_options(changeset_fields.object), :option, :label, small: true, legend: { hidden: true }, required: true %>
+                  <% end %>
+                </div>
               <% end %>
             <% end %>
           <% end %>
@@ -51,10 +64,11 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(import: nil, records: nil, review_screen: true)
+  def initialize(import: nil, records: nil, review_screen: true, form: nil)
     @import = import
     @records = Array(records).sort_by { it.try(:row_number) || 0 }
     @review_screen = review_screen
+    @form = form
   end
 
   private
@@ -136,6 +150,43 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
       helpers.safe_join(
         ["Review ", tag.span(full_name, class: "nhsuk-u-visually-hidden")]
       )
+    end
+  end
+
+  def available_decision_options(changeset)
+    duplicate_option = Struct.new(:changeset_id, :label, :option)
+
+    if changeset.matched_on_nhs_number?
+      [
+        duplicate_option.new(
+          changeset_id: changeset.id,
+          label: "Use uploaded",
+          option: "apply"
+        ),
+        duplicate_option.new(
+          changeset_id: changeset.id,
+          label: "Keep existing",
+          option: "discard"
+        )
+      ]
+    else
+      [
+        duplicate_option.new(
+          changeset_id: changeset.id,
+          label: "Use uploaded",
+          option: "apply"
+        ),
+        duplicate_option.new(
+          changeset_id: changeset.id,
+          label: "Keep existing",
+          option: "discard"
+        ),
+        duplicate_option.new(
+          changeset_id: changeset.id,
+          label: "Keep both",
+          option: "keep_both"
+        )
+      ]
     end
   end
 end

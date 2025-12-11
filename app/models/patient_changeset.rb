@@ -35,6 +35,8 @@ class PatientChangeset < ApplicationRecord
   include PatientImportConcern
   include SchoolMovesHelper
 
+  attr_accessor :decision
+
   attribute :data,
             :jsonb,
             default: {
@@ -387,6 +389,11 @@ class PatientChangeset < ApplicationRecord
     return false unless patient_id.present? && school_move.present?
 
     school_move.from_another_team?
+  end
+
+  def requires_decision?
+    Flipper.enabled?(:import_handle_issues_in_review) &&
+      record_type == "import_issue" && status == "in_review"
   end
 
   def handle_address_updates(existing_patient)

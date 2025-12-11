@@ -1,38 +1,54 @@
+<% if defined?(@validation_failed) && @validation_failed %>
+  <script>
+    if (history.replaceState) {
+      history.replaceState(null, '', '<%= polymorphic_path(import) %>');
+    }
+  </script>
+<% end %>
+
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
                                           { text: t("dashboard.index.title"), href: dashboard_path },
                                           { text: t("imports.index.title"), href: imports_path },
                                         ]) %>
 <% end %>
+<%= form_with model: import,
+              url: polymorphic_path([:approve, import]),
+              builder: GOVUKDesignSystemFormBuilder::FormBuilder,
+              method: :post do |f| %>
 
-<%= h1 "Further review and approve upload (#{import.created_at.to_fs(:long)})" %>
+  <%= f.govuk_error_summary %>
 
-<%= render AppImportSummaryComponent.new(import:) %>
+  <%= h1 "Further review and approve upload (#{import.created_at.to_fs(:long)})" %>
 
-<% if @patients.present? %>
-  <%= render AppSecondaryNavigationComponent.new do |nav| %>
-    <%= nav.with_item(
-          href: polymorphic_path([:re_review, import]),
-          text: "Needs further review",
-          selected: request.path.ends_with?("/re_review"),
-        ) %>
+  <%= render AppImportSummaryComponent.new(import:) %>
+
+  <% if @patients.present? %>
+    <%= render AppSecondaryNavigationComponent.new do |nav| %>
       <%= nav.with_item(
-            href: polymorphic_path([:imported_records, import]),
-            text: "Imported",
-            selected: request.path.ends_with?("/imported_records"),
+            href: polymorphic_path([:re_review, import]),
+            text: "Needs further review",
+            selected: request.path.ends_with?("/re_review"),
           ) %>
+        <%= nav.with_item(
+              href: polymorphic_path([:imported_records, import]),
+              text: "Imported",
+              selected: request.path.ends_with?("/imported_records"),
+            ) %>
+    <% end %>
   <% end %>
-<% end %>
 
-<%= render AppWarningCalloutComponent.new(heading: "Changes since you uploaded this file") do %>
-    <p>The records listed below have changed since you uploaded this file. This may be because another import was approved that includes some or all of the records in your file, or a child's school or NHS number may have changed in Mavis. You need to review these records again and confirm you still want to import the remaining changes from your file.</p>
-<% end %>
+  <%= render AppWarningCalloutComponent.new(heading: "Changes since you uploaded this file") do %>
+      <p>The records listed below have changed since you uploaded this file. This may be because another import was approved that includes some or all of the records in your file, or a child's school or NHS number may have changed in Mavis. You need to review these records again and confirm you still want to import the remaining changes from your file.</p>
+  <% end %>
 
-<%= render AppImportReviewComponent.new(
-      import:,
-      inter_team: @inter_team,
-      new_records: @new_records,
-      auto_matched_records: @auto_matched_records,
-      import_issues: @import_issues,
-      school_moves: @school_moves,
-    ) %>
+  <%= render AppImportReviewComponent.new(
+        import:,
+        inter_team: @inter_team,
+        new_records: @new_records,
+        auto_matched_records: @auto_matched_records,
+        import_issues: @import_issues,
+        school_moves: @school_moves,
+        form: f,
+      ) %>
+<% end %>

@@ -22,7 +22,7 @@ class ClassImportsController < ApplicationController
         team: current_team,
         uploaded_by: current_user,
         year_groups: @draft_import.year_groups,
-        **class_import_params
+        **create_params
       )
 
     @class_import.load_data!
@@ -104,9 +104,31 @@ class ClassImportsController < ApplicationController
   end
 
   def approve
+    if Flipper.enabled?(:import_handle_issues_in_review)
+      @class_import.assign_attributes(approve_params)
+
+      unless @class_import.valid?(:review)
+        @validation_failed = true
+        set_review_records
+        render template: "imports/show",
+               layout: "full",
+               locals: {
+                 import: @class_import
+               }
+        return
+      end
+    end
+
     @class_import.reviewed_by_user_ids << current_user.id
     @class_import.reviewed_at << Time.zone.now
     @class_import.committing!
+
+    @class_import.changesets.each do |changeset|
+      changeset.data["review"] ||= {}
+      changeset.data["review"]["patient"] ||= {}
+      changeset.data["review"]["patient"]["decision"] = changeset.decision
+      changeset.save!
+    end
 
     @class_import.changesets.not_from_file.in_review.update_all(
       status: :committing
@@ -177,8 +199,14 @@ class ClassImportsController < ApplicationController
     @academic_year = @class_import.academic_year
   end
 
-  def class_import_params
+  def create_params
     params.fetch(:class_import, {}).permit(:csv)
+  end
+
+  def approve_params
+    params.fetch(:class_import, {}).permit(
+      changesets_attributes: %i[id decision]
+    )
   end
 
   def set_review_records

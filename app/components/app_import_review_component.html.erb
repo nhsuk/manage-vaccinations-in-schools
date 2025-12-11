@@ -39,25 +39,43 @@
     <% end %>
 
     <% if @inter_team_import_issues.any? %>
-        <%= render AppDetailsComponent.new(expander: true, sticky: true) do |c| %>
+        <% if Flipper.enabled?(:import_handle_issues_in_review) %>
+            <%= render AppCardComponent.new do |c| %>
+            <% c.with_heading(level: 4) do %>
+                <%= pluralize(@inter_team_import_issues.count, "close match") %> to existing records
+            <% end %>
+            <%= render AppImportReviewIssuesSummaryComponent.new(import: @import, records: @inter_team_import_issues, form: @form) %>
+            <% end %>
+        <% else %>
+            <%= render AppDetailsComponent.new(expander: true, sticky: true) do |c| %>
             <% c.with_summary do %>
                 <%= pluralize(@inter_team_import_issues.count, "close match") %> to existing records
             <% end %>
-            <%= render AppImportReviewIssuesSummaryComponent.new(import: @import, records: @inter_team_import_issues) %>
+            <%= render AppImportReviewIssuesSummaryComponent.new(import: @import, records: @inter_team_import_issues, form: @form) %>
+            <% end %>
         <% end %>
-    <% end %> 
-<% end %>  
+    <% end %>
+<% end %>
 
 <% if @import_issues.any? %>
     <h2 class="nhsuk-heading-m">Close matches to existing records - resolve after import</h2>
     <p class="nhsuk-u-reading-width">
         <%= import_issues_message %>
     </p>
-    <%= render AppDetailsComponent.new(expander: true, sticky: true) do |c| %>
-        <% c.with_summary do %>
-            <%= pluralize(@import_issues.count, "close match") %> to existing records
+    <% if Flipper.enabled?(:import_handle_issues_in_review) %>
+        <%= render AppCardComponent.new do |c| %>
+            <% c.with_heading(level: 4) do %>
+                <%= pluralize(@import_issues.count, "close match") %> to existing records
+            <% end %>
+            <%= render AppImportReviewIssuesSummaryComponent.new(import: @import, records: @import_issues, form: @form) %>
         <% end %>
-        <%= render AppImportReviewIssuesSummaryComponent.new(import: @import, records: @import_issues) %>
+    <% else %>
+        <%= render AppDetailsComponent.new(expander: true, sticky: true) do |c| %>
+            <% c.with_summary do %>
+                <%= pluralize(@import_issues.count, "close match") %> to existing records
+            <% end %>
+            <%= render AppImportReviewIssuesSummaryComponent.new(import: @import, records: @import_issues, form: @form) %>
+        <% end %>
     <% end %>
 <% end %>
 
@@ -77,11 +95,11 @@
 <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
 <div class="nhsuk-button-group">
-    <%= helpers.govuk_button_to approve_button_text, polymorphic_path([:approve, @import]),
-                                method: :post %>
+    <%= @form.govuk_submit(approve_button_text) %>
     <% if show_cancel_button? %>
-        <%= helpers.govuk_button_to cancel_button_text, polymorphic_path([:cancel, @import]),
-                                    method: :post,
-                                    secondary: true %>
+        <%= link_to cancel_button_text, polymorphic_path([:cancel, @import]),
+                    method: :post,
+                    class: "nhsuk-button nhsuk-button--secondary",
+                    data: { turbo_method: :post } %>
     <% end %>
 </div>

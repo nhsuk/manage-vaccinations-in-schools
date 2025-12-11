@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe AppImportReviewComponent do
+  include ActionView::Helpers::FormHelper
+
   subject(:rendered) { render_inline(component) }
 
   let(:component) do
@@ -10,7 +12,8 @@ describe AppImportReviewComponent do
       new_records:,
       auto_matched_records:,
       import_issues:,
-      school_moves:
+      school_moves:,
+      form:
     )
   end
 
@@ -37,6 +40,14 @@ describe AppImportReviewComponent do
   let(:import_issues) { [] }
   let(:inter_team) { [] }
   let(:school_moves) { [] }
+
+  let(:form) do
+    form_with model: import,
+              url: "/",
+              builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f|
+      return f
+    end
+  end
 
   shared_examples "section with details" do |title:, summary:, count:|
     it "renders section '#{title}'" do
@@ -155,11 +166,35 @@ describe AppImportReviewComponent do
       ]
     end
 
-    it "renders separate expander for close matches" do
-      expect(rendered).to have_css(
-        ".nhsuk-details__summary-text",
-        text: "1 close match to existing records"
-      )
+    context "when import_handle_issues_in_review is disabled" do
+      it "renders separate expander for close matches" do
+        expect(rendered).to have_css(
+          ".nhsuk-details__summary-text",
+          text: "1 close match to existing records"
+        )
+      end
+    end
+
+    context "when import_handle_issues_in_review is enabled" do
+      before { Flipper.enable(:import_handle_issues_in_review) }
+
+      it "renders card for close matches" do
+        expect(rendered).to have_css(".nhsuk-card")
+        expect(rendered).to have_css(
+          "h4",
+          text: "1 close match to existing records"
+        )
+        expect(rendered).not_to have_css(
+          ".nhsuk-details__summary-text",
+          text: "1 close match to existing records"
+        )
+      end
+
+      it "renders decision radio buttons" do
+        expect(rendered).to have_css('input[type="radio"]')
+        expect(rendered).to have_content("Use uploaded")
+        expect(rendered).to have_content("Keep existing")
+      end
     end
   end
 
@@ -176,19 +211,43 @@ describe AppImportReviewComponent do
       ]
     end
 
-    include_examples "section with details",
-                     title:
-                       "Close matches to existing records - resolve after import",
-                     summary: "2 close matches to existing records",
-                     count: 2
+    context "when import_handle_issues_in_review is disabled" do
+      include_examples "section with details",
+                       title:
+                         "Close matches to existing records - resolve after import",
+                       summary: "2 close matches to existing records",
+                       count: 2
 
-    it "shows the section description" do
-      expect(rendered).to have_content(
-        "This upload includes 2 records that are close matches to existing records in Mavis"
-      )
-      expect(rendered).to have_content(
-        "If you approve the upload, you will need to resolve these records in the Issues tab."
-      )
+      it "shows the section description" do
+        expect(rendered).to have_content(
+          "This upload includes 2 records that are close matches to existing records in Mavis"
+        )
+        expect(rendered).to have_content(
+          "If you approve the upload, you will need to resolve these records in the Issues tab."
+        )
+      end
+    end
+
+    context "when import_handle_issues_in_review is enabled" do
+      before { Flipper.enable(:import_handle_issues_in_review) }
+
+      it "renders card for close matches" do
+        expect(rendered).to have_css(".nhsuk-card")
+        expect(rendered).to have_css(
+          "h4",
+          text: "2 close matches to existing records"
+        )
+        expect(rendered).not_to have_css(
+          ".nhsuk-details__summary-text",
+          text: "2 close matches to existing records"
+        )
+      end
+
+      it "renders decision radio buttons" do
+        expect(rendered).to have_css('input[type="radio"]')
+        expect(rendered).to have_content("Use uploaded")
+        expect(rendered).to have_content("Keep existing")
+      end
     end
   end
 
@@ -257,7 +316,7 @@ describe AppImportReviewComponent do
       end
 
       it "shows cancel button" do
-        expect(rendered).to have_button("Cancel and delete upload")
+        expect(rendered).to have_link("Cancel and delete upload")
       end
     end
 
@@ -296,7 +355,7 @@ describe AppImportReviewComponent do
 
       it "shows re-review button text" do
         expect(rendered).to have_button("Approve and import changed records")
-        expect(rendered).to have_button("Ignore changes")
+        expect(rendered).to have_link("Ignore changes")
       end
     end
   end
