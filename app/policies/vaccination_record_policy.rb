@@ -79,7 +79,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
         .where(patient_teams: { team_id: team.id })
         .merge(
           PatientTeam.where_any_sources(
-            %w[vaccination_record_session vaccination_record_organisation]
+            %w[vaccination_record_session vaccination_record_organisation vaccination_record_import]
           )
         )
     end
