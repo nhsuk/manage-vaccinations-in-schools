@@ -237,6 +237,12 @@ def create_imports(user, team)
   )
 end
 
+def create_bulk_upload_imports(user, team)
+  %i[pending invalid processed].each do |status|
+    FactoryBot.create(:immunisation_import, status, type: "bulk", team:, uploaded_by: user)
+  end
+end
+
 def create_school_moves(team)
   patients = team.patients.sample(10)
 
@@ -320,8 +326,7 @@ def create_upload_only_team
   user = create_user(:medical_secretary, team:, email: "admin.sarah@example.com")
   create_user(:superuser, team:, email: "superuser.rob@example.com")
 
-  Audited.audit_class.as_user(user) { create_team_sessions(user, team) }
-  create_patients(team)
+  create_bulk_upload_imports(user, team)
 end
 
 # TODO: Once `PatientTeam` has been refactored to avoid callbacks we can
