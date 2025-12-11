@@ -43,7 +43,11 @@ class Generate::Consents
           else
             team
               .sessions
-              .eager_load(:location)
+              .eager_load(
+                :location,
+                :session_programme_year_groups,
+                :team_location
+              )
               .merge(Location.school)
               .has_all_programmes_of([programme])
           end
@@ -72,7 +76,9 @@ class Generate::Consents
     @session ||
       patient
         .sessions
-        .eager_load(:location)
+        .joins(
+          "INNER JOIN locations ON locations.id = team_locations.location_id"
+        )
         .merge(Location.school)
         .has_all_programmes_of([programme])
         .sample
@@ -116,7 +122,9 @@ class Generate::Consents
       if session.programmes.exclude?(programme)
         raise "Session does not support programme #{programme.type}"
       end
-    elsif programme.sessions.none? { it.location.school? }
+    elsif Session
+          .has_any_programmes_of([programme])
+          .none? { it.location.school? }
       raise "Programme #{programme.type} does not have a school session"
     end
   end
