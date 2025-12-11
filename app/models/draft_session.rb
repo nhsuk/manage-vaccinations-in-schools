@@ -37,6 +37,8 @@ class DraftSession
 
     steps << :location_type unless editing?
 
+    steps << :school if school? && !editing?
+
     steps << :programmes
     steps << :programmes_check if school?
 
@@ -57,6 +59,10 @@ class DraftSession
 
   on_wizard_step :location_type, exact: true do
     validates :location_type, inclusion: %w[generic_clinic school]
+  end
+
+  on_wizard_step :school, exact: true do
+    validates :location_id, inclusion: { in: :valid_school_ids }
   end
 
   on_wizard_step :dates, exact: true do
@@ -303,6 +309,16 @@ class DraftSession
     if (session.programme_types - programme_types).present?
       errors.add(:programme_types, :inclusion)
     end
+  end
+
+  def valid_school_ids
+    LocationPolicy::Scope
+      .new(@current_user, Location)
+      .resolve
+      .school
+      .joins(:team_locations)
+      .where(team_locations: { team:, academic_year: })
+      .pluck(:"locations.id")
   end
 
   def earliest_date = dates.min
