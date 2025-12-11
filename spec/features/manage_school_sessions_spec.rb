@@ -264,7 +264,9 @@ describe "Manage school sessions" do
   end
 
   def then_i_see_the_change_programmes_page
-    expect(page).to have_content("Which programmes is this session part of?")
+    expect(page).to have_content(
+      "Which programmes will you run in this session?"
+    )
   end
 
   def and_i_change_the_programmes

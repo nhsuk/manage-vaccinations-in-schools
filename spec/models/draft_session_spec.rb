@@ -44,33 +44,6 @@ describe DraftSession do
     end
   end
 
-  describe "#create_location_programme_year_groups!" do
-    subject(:create_location_programme_year_groups!) do
-      draft_session.create_location_programme_year_groups!
-    end
-
-    before do
-      draft_session.write_to!(session)
-      session.save!
-    end
-
-    it "creates appropriate programme year groups" do
-      location = session.location
-
-      expect { create_location_programme_year_groups! }.to change {
-        location.location_programme_year_groups.count
-      }.by(new_programme.default_year_groups.count)
-
-      year_groups =
-        location
-          .location_programme_year_groups
-          .where_programme(new_programme)
-          .pluck_year_groups
-
-      expect(year_groups).to eq(new_programme.default_year_groups)
-    end
-  end
-
   describe "#year_groups" do
     subject(:year_groups) { draft_session.year_groups }
 

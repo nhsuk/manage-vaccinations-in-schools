@@ -78,7 +78,7 @@ en:
             location_type:
               inclusion: Choose which type of session this is
             programme_types:
-              blank: Choose which programmes this session is part of
+              blank: Choose which programmes you will run in this session
               inclusion: You cannot remove a programme from the session once it has been added
             send_consent_requests_at:
               blank: Enter a date

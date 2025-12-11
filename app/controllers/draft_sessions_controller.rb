@@ -7,6 +7,7 @@ class DraftSessionsController < ApplicationController
   include WizardControllerConcern
 
   before_action :set_schools, if: -> { current_step == :school }
+  before_action :set_programmes, if: -> { current_step == :programmes }
 
   with_options only: :show,
                if: -> do
@@ -47,6 +48,8 @@ class DraftSessionsController < ApplicationController
 
     jump_to("confirm") if go_to_confirm_after_submission?
 
+    reload_steps
+
     render_wizard @draft_session
   end
 
@@ -75,6 +78,10 @@ class DraftSessionsController < ApplicationController
             academic_year: @draft_session.academic_year
           }
         )
+  end
+
+  def set_programmes
+    @programmes = @draft_session.location.programmes & current_team.programmes
   end
 
   def set_catch_up_year_groups
@@ -203,8 +210,7 @@ class DraftSessionsController < ApplicationController
 
     ActiveRecord::Base.transaction do
       @session.save!
-      @draft_session.create_location_programme_year_groups!
-      @draft_session.sync_location_programme_year_groups!(@session)
+      @draft_session.create_session_programme_year_groups!
     end
 
     patient_ids = @session.patients.pluck(:id)
