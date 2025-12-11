@@ -73,8 +73,7 @@ class AppImportReviewComponent < ViewComponent::Base
           end
         end,
         render_section(
-          title:
-            "Close matches to existing records - will need review after import",
+          title: "Close matches to existing records - resolve after import",
           description: import_issues_message,
           summary:
             "#{pluralize(@import_issues.count, "close match")} to existing records",
@@ -88,7 +87,7 @@ class AppImportReviewComponent < ViewComponent::Base
           )
         end,
         render_section(
-          title: "School moves - will need review after import",
+          title: "School moves - resolve after import",
           description: school_moves_message,
           summary: pluralize(@school_moves.count, "school move"),
           changesets: @school_moves
@@ -122,6 +121,7 @@ class AppImportReviewComponent < ViewComponent::Base
     count = @auto_matched_records.count
     "This upload includes #{pluralize(count, "record")} that already " \
       "#{count > 1 ? "exist" : "exists"} in Mavis. " \
+      "You do not need to remove these from your CSV file. " \
       "If you approve the upload, any additional information will be added to " \
       "the existing #{count > 1 ? "records" : "record"}."
   end
@@ -138,7 +138,8 @@ class AppImportReviewComponent < ViewComponent::Base
     count = @inter_team.count
     "This upload includes #{count > 1 ? "children" : "child"} who " \
       "#{count > 1 ? "are" : "is"} currently registered with another team. " \
-      "If you approve the upload, the records below will be flagged as school moves needing review."
+      "If you approve the upload, you will need to resolve #{count > 1 ? "these records" : "this record"} " \
+      "in the Issues tab."
   end
 
   def school_moves_message
@@ -146,12 +147,12 @@ class AppImportReviewComponent < ViewComponent::Base
     if @import.is_a?(ClassImport)
       "This upload will change the school of the #{count > 1 ? "children" : "child"} listed below. " \
         "Children present in the class list will be moved into the school, and those who are not in the " \
-        "class list will be moved out of the school. If you approve the upload, these will be flagged as " \
-        "school moves needing review."
+        "class list will be moved out of the school. If you approve the upload, you will need to resolve " \
+        "#{count > 1 ? "these records" : "this record"} in the School moves area of Mavis."
     else
       "This upload includes #{count} #{count > 1 ? "children" : "child"} with a different school to " \
-        "the one on their Mavis record. If you approve the upload, these will be flagged as " \
-        "school moves needing review."
+        "the one on their Mavis record. If you approve the upload, you will need to resolve " \
+        "#{count > 1 ? "these records" : "this record"} in the School moves area of Mavis."
     end
   end
 
