@@ -2,6 +2,7 @@
 
 describe AppImportReviewComponent do
   include ActionView::Helpers::FormHelper
+  include Pagy::Backend
 
   subject(:rendered) { render_inline(component) }
 
@@ -13,6 +14,8 @@ describe AppImportReviewComponent do
       auto_matched_records:,
       import_issues:,
       school_moves:,
+      import_issues_pagy:,
+      import_issues_all:,
       form:
     )
   end
@@ -37,7 +40,12 @@ describe AppImportReviewComponent do
 
   let(:new_records) { [] }
   let(:auto_matched_records) { [] }
-  let(:import_issues) { [] }
+
+  let(:import_issues_all) { [] }
+  let(:pagination_result) { pagy_array(import_issues_all, limit: 10, page: 1) }
+  let(:import_issues_pagy) { pagination_result[0] }
+  let(:import_issues) { pagination_result[1] }
+
   let(:inter_team) { [] }
   let(:school_moves) { [] }
 
@@ -199,7 +207,7 @@ describe AppImportReviewComponent do
   end
 
   describe "with import issues" do
-    let(:import_issues) do
+    let(:import_issues_all) do
       [
         create(
           :patient_changeset,
@@ -247,6 +255,60 @@ describe AppImportReviewComponent do
         expect(rendered).to have_css('input[type="radio"]')
         expect(rendered).to have_content("Use uploaded")
         expect(rendered).to have_content("Keep existing")
+      end
+    end
+  end
+
+  describe "with paginated import issues" do
+    let(:import_issues_all) do
+      create_list(:patient_changeset, 15, :import_issue, import:)
+    end
+
+    context "when import_handle_issues_in_review is enabled" do
+      before { Flipper.enable(:import_handle_issues_in_review) }
+
+      it "shows only first page of results" do
+        expect(rendered).to have_css(
+          ".nhsuk-table__body .nhsuk-table__row",
+          count: 10
+        )
+      end
+
+      it "shows correct count in heading" do
+        expect(rendered).to have_css(
+          "h4",
+          text: "15 close matches to existing records"
+        )
+      end
+
+      it "renders hidden fields for all pages" do
+        # 15 hidden decision fields (5 visible + 10 hidden for the other page)
+        expect(rendered).to have_css(
+          'input[type="hidden"][name*="[decision]"]',
+          count: 15,
+          visible: :all
+        )
+      end
+
+      it "renders visible form fields only for current page" do
+        expect(rendered).to have_css(
+          'input[type="radio"]',
+          count: 30, # 10 records × 3 options each
+          visible: :all
+        )
+      end
+
+      context "when on page 2" do
+        let(:pagination_result) do
+          pagy_array(import_issues_all, limit: 10, page: 2)
+        end
+
+        it "shows remaining results" do
+          expect(rendered).to have_css(
+            ".nhsuk-table__body .nhsuk-table__row",
+            count: 5
+          )
+        end
       end
     end
   end

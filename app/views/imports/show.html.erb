@@ -18,12 +18,12 @@
                 builder: GOVUKDesignSystemFormBuilder::FormBuilder,
                 method: :post,
                 html: {
-                        data: {
-                          module: "app-import-decisions",
-                          import_type: import.class.name.underscore,
-                          import_id: import.id,
-                        },
-                      } do |f| %>
+                  data: {
+                    module: "app-import-decisions",
+                    import_type: import.class.name.underscore,
+                    import_id: import.id,
+                  },
+                } do |f| %>
 
     <%= f.govuk_error_summary %>
     <%= h1 "Review and approve upload (#{import.created_at.to_fs(:long)})" %>
@@ -34,6 +34,8 @@
           new_records: @new_records,
           auto_matched_records: @auto_matched_records,
           import_issues: @import_issues,
+          import_issues_pagy: @import_issues_pagy,
+          import_issues_all: @import_issues_all,
           school_moves: @school_moves,
           form: f,
         ) %>

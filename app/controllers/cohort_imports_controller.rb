@@ -207,9 +207,15 @@ class CohortImportsController < ApplicationController
     @new_records = @cohort_import.changesets.in_review.new_patient
     @auto_matched_records =
       @cohort_import.changesets.in_review.auto_match - @inter_team
-    @import_issues =
-      @cohort_import.changesets.includes(:patient).in_review.import_issue -
-        @inter_team
+    @import_issues_all =
+      @cohort_import
+        .changesets
+        .includes(:patient)
+        .in_review
+        .import_issue
+        .where.not(id: @inter_team.pluck(:id))
+        .order(:row_number)
+    @import_issues_pagy, @import_issues = pagy(@import_issues_all)
     @school_moves =
       @cohort_import
         .changesets

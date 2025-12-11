@@ -234,12 +234,15 @@ class ClassImportsController < ApplicationController
     @new_records = @class_import.changesets.in_review.new_patient
     @auto_matched_records =
       @class_import.changesets.in_review.auto_match - @inter_team
-    @import_issues =
+    @import_issues_all =
       @class_import
         .changesets
         .includes(:school, patient: :school)
         .in_review
-        .import_issue - @inter_team
+        .import_issue
+        .where.not(id: @inter_team.pluck(:id))
+        .order(:row_number)
+    @import_issues_pagy, @import_issues = pagy(@import_issues_all)
     @school_moves =
       @class_import
         .changesets

@@ -69,16 +69,27 @@
     <% if Flipper.enabled?(:import_handle_issues_in_review) %>
         <%= render AppCardComponent.new do |c| %>
             <% c.with_heading(level: 4) do %>
-                <%= pluralize(@import_issues.count, "close match") %> to existing records
+                <%= pluralize(import_issues_count, "close match") %> to existing records
             <% end %>
-            <%= render AppImportReviewIssuesSummaryComponent.new(import: @import, records: @import_issues, form: @form) %>
+            <%= render AppImportReviewIssuesSummaryComponent.new(import: @import, records: @import_issues, form: @form, pagy: @import_issues_pagy) %>
+        <% end %>
+        <!-- Hidden fields to capture decisions on other pages of paginated import issues -->
+        <% if @import_issues_pagy.pages > 1 %>
+            <div style="display: none;">
+                <% (@import_issues_all - @import_issues).each do |record| %>
+                <%= @form.fields_for :changesets, record do |changeset_fields| %>
+                    <%= changeset_fields.hidden_field :id %>
+                    <%= changeset_fields.hidden_field :decision, value: "" %>
+                <% end %>
+                <% end %>
+            </div>
         <% end %>
     <% else %>
         <%= render AppDetailsComponent.new(expander: true, sticky: true) do |c| %>
             <% c.with_summary do %>
                 <%= pluralize(@import_issues.count, "close match") %> to existing records
             <% end %>
-            <%= render AppImportReviewIssuesSummaryComponent.new(import: @import, records: @import_issues, form: @form) %>
+            <%= render AppImportReviewIssuesSummaryComponent.new(import: @import, records: @import_issues, form: @form, pagy: @import_issues_pagy) %>
         <% end %>
     <% end %>
 <% end %>
