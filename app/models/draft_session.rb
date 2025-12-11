@@ -65,13 +65,13 @@ class DraftSession
     validates :location_id, inclusion: { in: :valid_school_ids }
   end
 
-  on_wizard_step :dates, exact: true do
-    validate :valid_session_dates
-  end
-
   on_wizard_step :programmes, exact: true do
     validates :programme_types, presence: true
     validate :cannot_remove_programmes
+  end
+
+  on_wizard_step :dates, exact: true do
+    validate :valid_session_dates
   end
 
   on_wizard_step :consent_requests, exact: true do
@@ -219,24 +219,8 @@ class DraftSession
     session.dates = dates.sort.uniq
   end
 
-  def create_location_programme_year_groups!
-    programmes_to_create =
-      new_programmes.reject do |programme|
-        location.location_programme_year_groups.exists?(
-          programme_type: programme.type
-        )
-      end
-
-    location.import_default_programme_year_groups!(
-      programmes_to_create,
-      academic_year:
-    )
-  end
-
-  def sync_location_programme_year_groups!(session)
-    session.sync_location_programme_year_groups!(
-      programmes: (session.programmes + new_programmes).sort.uniq
-    )
+  def create_session_programme_year_groups!
+    session_programme_year_groups.select(&:new_record?).each(&:save!)
   end
 
   private
@@ -268,7 +252,7 @@ class DraftSession
   end
 
   def new_programme_types
-    @new_programme_types ||= programme_types - session.programme_types
+    @new_programme_types ||= programme_types - (session&.programme_types || [])
   end
 
   def valid_session_dates
@@ -306,7 +290,7 @@ class DraftSession
   end
 
   def cannot_remove_programmes
-    if (session.programme_types - programme_types).present?
+    if editing? && (session.programme_types - programme_types).present?
       errors.add(:programme_types, :inclusion)
     end
   end

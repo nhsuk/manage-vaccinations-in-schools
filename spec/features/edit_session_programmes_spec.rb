@@ -20,8 +20,16 @@ describe "Edit session programmes" do
   def given_a_session_exists
     @team =
       create(:team, :with_one_nurse, programmes: [Programme.hpv, Programme.mmr])
+
+    location = create(:school, programmes: [Programme.hpv, Programme.mmr])
     @session =
-      create(:session, :scheduled, programmes: [Programme.hpv], team: @team)
+      create(
+        :session,
+        :scheduled,
+        programmes: [Programme.hpv],
+        team: @team,
+        location:
+      )
   end
 
   def and_the_session_has_unvaccinated_catch_up_patients
