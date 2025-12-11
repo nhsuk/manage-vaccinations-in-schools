@@ -60,7 +60,7 @@ class PatientSearchForm < SearchForm
   def apply(scope)
     scope = filter_name(scope)
     scope = filter_year_groups(scope)
-    scope = filter_aged_out_of_programmes(scope)
+    scope = filter_aged_out_of_programmes(scope) unless team.type_upload_only?
     scope = filter_archived(scope)
     scope = filter_date_of_birth_year(scope)
     scope = filter_nhs_number(scope)
