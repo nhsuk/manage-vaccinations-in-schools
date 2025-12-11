@@ -73,6 +73,10 @@ gem "uk_postcode"
 gem "wicked"
 gem "with_advisory_lock"
 
+group :development, :staging, :test do
+  gem "ruby-prof", require: false
+end
+
 group :development, :test do
   gem "brakeman", require: false
   gem "debug", platforms: %i[mri windows]
@@ -96,7 +100,6 @@ group :development do
   gem "prettier_print", require: false
   gem "rladr"
   gem "rubocop-govuk", require: false
-  gem "ruby-prof", require: false
   gem "rufo", require: false
   gem "solargraph", require: false
   gem "solargraph-rails", require: false
