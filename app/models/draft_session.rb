@@ -114,6 +114,10 @@ class DraftSession
       SessionPolicy::Scope.new(@current_user, Session).resolve.find(editing_id)
   end
 
+  def session=(value)
+    self.editing_id = value.id
+  end
+
   def location
     return nil if location_id.nil?
 
@@ -234,8 +238,17 @@ class DraftSession
     session.dates = dates.sort.uniq
   end
 
-  def create_session_programme_year_groups!
-    session_programme_year_groups.select(&:new_record?).each(&:save!)
+  def create_session_programme_year_groups!(session)
+    session_programme_year_groups
+      .select(&:new_record?)
+      .each do
+        it.session = session
+        it.save!
+      end
+  end
+
+  def human_enum_name(attribute)
+    Session.human_enum_name(attribute, send(attribute))
   end
 
   private

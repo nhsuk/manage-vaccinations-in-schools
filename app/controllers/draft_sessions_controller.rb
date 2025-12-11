@@ -183,10 +183,14 @@ class DraftSessionsController < ApplicationController
 
   def set_back_link_path
     @back_link_path =
-      if current_step == :confirm
+      if @draft_session.editing? && current_step == :confirm
         finish_wizard_path
-      else
+      elsif @draft_session.editing?
         wizard_path("confirm")
+      elsif current_step == @draft_session.wizard_steps.first
+        schools_path
+      else
+        previous_wizard_path
       end
   end
 
@@ -240,8 +244,11 @@ class DraftSessionsController < ApplicationController
 
     ActiveRecord::Base.transaction do
       @session.save!
-      @draft_session.create_session_programme_year_groups!
+      @draft_session.create_session_programme_year_groups!(@session)
     end
+
+    @draft_session.session = @session
+    @draft_session.save!
 
     patient_ids = @session.patients.pluck(:id)
     StatusUpdaterJob.perform_bulk(patient_ids.zip)
@@ -330,7 +337,22 @@ class DraftSessionsController < ApplicationController
       return false
     end
 
-    @draft_session.editing? && current_step != :confirm
+    # If we're creating a new session, then we skip a few of the later steps
+    # in the journey, but users can go to them via the check and confirm page.
+
+    has_finished_initial_steps =
+      @draft_session.dates.present? && @draft_session.programmes.present? &&
+        @draft_session.year_groups.present?
+
+    if @draft_session.editing? || has_finished_initial_steps
+      return current_step != :confirm
+    end
+
+    current_step == :dates_check ||
+      (
+        current_step == :dates && steps.include?("dates-check") &&
+          should_skip_dates_check?
+      ) || (current_step == :dates && !steps.include?("dates-check"))
   end
 
   def should_skip_dates_check?

@@ -2,19 +2,41 @@
   <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
-<%= h1 "Edit session" do %>
-  <span class="nhsuk-caption-l"><%= @draft_session.location.name %></span>
-  Edit session
-<% end %>
+<span class="nhsuk-caption-l"><%= @draft_session.location.name %></span>
+<%= h1 @draft_session.editing? ? "Edit session" : "Check and confirm" %>
 
 <%= render AppCardComponent.new do |card| %>
   <% card.with_heading(level: 2) { "Session details" } %>
 
   <%= govuk_summary_list do |summary_list|
         summary_list.with_row do |row|
+          row.with_key { "Type" }
+          row.with_value { @draft_session.human_enum_name(:location_type) }
+        end
+      
+        if @draft_session.school?
+          summary_list.with_row do |row|
+            row.with_key { "School" }
+            row.with_value { @draft_session.location.name }
+          end
+        end
+      
+        summary_list.with_row do |row|
           row.with_key { "Programmes" }
           row.with_value { render AppProgrammeTagsComponent.new(@draft_session.programmes) }
-          row.with_action(text: "Change", href: draft_session_path("programmes"), visually_hidden_text: "programmes")
+      
+          unless @draft_session.editing?
+            row.with_action(text: "Change", href: draft_session_path("programmes"), visually_hidden_text: "programmes")
+          end
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Year groups" }
+          row.with_value { format_year_groups(@draft_session.year_groups) }
+      
+          unless @draft_session.editing?
+            row.with_action(text: "Change", href: draft_session_path("year-groups"), visually_hidden_text: "year groups")
+          end
         end
       
         summary_list.with_row do |row|
@@ -96,5 +118,5 @@
 <%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_submit "Save changes" %>
+  <%= f.govuk_submit @draft_session.editing? ? "Save changes" : "Continue" %>
 <% end %>
