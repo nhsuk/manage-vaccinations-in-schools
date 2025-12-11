@@ -103,6 +103,29 @@ describe "Import class lists" do
     then_the_school_move_out_is_created
   end
 
+  scenario "Import with duplicate resolution in review screen" do
+    given_i_am_signed_in
+    and_an_hpv_programme_is_underway
+    and_five_patients_exists_in_the_session
+    and_import_review_is_enabled
+    and_pds_lookup_during_import_is_enabled
+
+    when_i_visit_a_school_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_school
+    and_i_select_the_year_groups
+
+    when_i_upload_a_valid_file_with_duplicates
+    then_i_should_see_the_import_review_screen_with_issues
+
+    when_i_approve_the_import
+    then_i_see_an_error
+
+    when_i_resolve_the_duplicates
+    and_i_approve_the_import
+    then_i_should_see_the_import_is_successful
+    and_patients_are_created_correctly
+  end
+
   def given_i_am_signed_in
     @programme = Programme.hpv
     @team = create(:team, :with_one_nurse, programmes: [@programme])
@@ -144,6 +167,57 @@ describe "Import class lists" do
 
   def and_import_review_is_enabled
     Flipper.enable(:import_review_screen)
+    Flipper.enable(:import_handle_issues_in_review)
+  end
+
+  def and_pds_lookup_during_import_is_enabled
+    Flipper.enable(:import_search_pds)
+
+    stub_pds_search_to_return_no_patients(
+      "family" => "Klein",
+      "given" => "Callie",
+      "birthdate" => "eq2014-11-19",
+      "address-postalcode" => "KT2 9HF"
+    )
+    stub_pds_search_to_return_no_patients(
+      "family" => "Klein",
+      "given" => "Callie",
+      "birthdate" => "eq2014-11-19",
+      "address-postalcode" => "KT*"
+    )
+    stub_pds_search_to_return_no_patients(
+      "family" => "Kle*",
+      "given" => "Callie",
+      "birthdate" => "eq2014-11-19",
+      "address-postalcode" => "KT2 9HF"
+    )
+    stub_pds_search_to_return_no_patients(
+      "family" => "Klein",
+      "given" => "Cal*",
+      "birthdate" => "eq2014-11-19",
+      "address-postalcode" => "KT2 9HF"
+    )
+    stub_pds_search_to_return_a_patient(
+      "9435769047",
+      "family" => "Lauren",
+      "given" => "Ralph",
+      "birthdate" => "eq2015-10-14",
+      "address-postalcode" => "RH3 1HG"
+    )
+    stub_pds_search_to_return_a_patient(
+      "9435797237",
+      "family" => "Kors",
+      "given" => "Michael",
+      "birthdate" => "eq2015-08-09",
+      "address-postalcode" => "OX4 1DY"
+    )
+    stub_pds_search_to_return_a_patient(
+      "9435777066",
+      "family" => "Chanel",
+      "given" => "Coco",
+      "birthdate" => "eq2010-09-10",
+      "address-postalcode" => "SW7 5LE"
+    )
   end
 
   def when_i_visit_the_import_page
@@ -181,6 +255,24 @@ describe "Import class lists" do
     attach_file(
       "class_import[csv]",
       "spec/fixtures/class_import/review_one_new_patient.csv"
+    )
+    click_on "Continue"
+    wait_for_import_to_complete_until_review(ClassImport)
+  end
+
+  def when_i_upload_a_valid_file_with_duplicates
+    attach_file(
+      "class_import[csv]",
+      "spec/fixtures/class_import/review_with_duplicates.csv"
+    )
+    click_on "Continue"
+    wait_for_import_to_complete_until_review(ClassImport)
+  end
+
+  def when_i_upload_a_valid_file_with_duplicates
+    attach_file(
+      "class_import[csv]",
+      "spec/fixtures/class_import/review_with_duplicates.csv"
     )
     click_on "Continue"
     wait_for_import_to_complete_until_review(ClassImport)
@@ -244,7 +336,7 @@ describe "Import class lists" do
         address_line_2: "",
         address_town: "",
         address_postcode: "KT2 9HF",
-        school: @school,
+        school: @other_school,
         registration: nil,
         session: @session
       )
@@ -317,6 +409,27 @@ describe "Import class lists" do
       )
   end
 
+  def and_five_patients_exists_in_the_session
+    and_patients_exist
+
+    create(
+      :patient,
+      given_name: "Michael",
+      family_name: "Kors",
+      nhs_number: "9435797237",
+      date_of_birth: Date.new(2012, 5, 15),
+      gender_code: :male,
+      address_line_1: "123 Test way",
+      address_line_2: "Example lane",
+      address_town: "London",
+      address_postcode: "SW1 1AA",
+      school: @school,
+      registration: nil,
+      session: @session,
+      birth_academic_year: 12.to_birth_academic_year
+    )
+  end
+
   def then_i_should_see_the_import_review_screen
     page.refresh
     click_on_most_recent_import(ClassImport)
@@ -325,15 +438,14 @@ describe "Import class lists" do
     find(".nhsuk-details__summary", text: "1 new record").click
     expect(page).to have_content("KORS, Michael")
 
-    find(".nhsuk-details__summary", text: "2 school moves").click
+    find(".nhsuk-details__summary", text: "3 school moves").click
     expect(page).to have_content("CHANEL, Coco")
     expect(page).to have_content("SMITH, John")
+    expect(page).to have_content("KLEIN, Calvin")
 
-    find(
-      ".nhsuk-details__summary",
-      text: "1 close match to existing records"
-    ).click
+    expect(page).to have_content("1 close match to existing records")
     expect(page).to have_content("LAUREN, Ralph")
+    expect(page).to have_content("Preferred first nameNot provided Ralphie")
 
     find(".nhsuk-details__summary", text: "2 records already in Mavis").click
     expect(page).to have_content("KLEIN, Calvin")
@@ -395,6 +507,36 @@ describe "Import class lists" do
 
     expect(page).not_to have_content("new record")
     expect(page).not_to have_content("close match")
+  end
+
+  def then_i_should_see_the_import_review_screen_with_issues
+    visit class_import_path(ClassImport.order(:created_at).last)
+    expect(page).to have_content("Review and approve")
+
+    expect(page).to have_content("3 close matches to existing records")
+
+    within("tr", text: "KLEIN, Calvin") do
+      expect(page).to have_content("First nameCalvin Callie")
+      expect(page).to have_content("Use uploaded")
+      expect(page).to have_content("Keep existing")
+      expect(page).to have_content("Keep both")
+    end
+
+    within("tr", text: "LAUREN, Ralph") do
+      expect(page).to have_content("RegistrationNot provided Kangaroos")
+      expect(page).to have_content("Use uploaded")
+      expect(page).to have_content("Keep existing")
+      expect(page).not_to have_content("Keep both")
+    end
+
+    within("tr", text: "KORS, Michael") do
+      expect(page).to have_content("RegistrationNot provided Lion")
+      expect(page).to have_content("Use uploaded")
+      expect(page).to have_content("Keep existing")
+      expect(page).not_to have_content("Keep both")
+    end
+
+    expect(PatientChangeset.all.pluck(:status).uniq).to eq(["in_review"])
   end
 
   def and_the_import_is_in_re_review_again
@@ -542,5 +684,55 @@ describe "Import class lists" do
     visit class_import_path(ClassImport.order(:created_at).first)
     expect(page).to have_content("Partially completed")
     expect(page).to have_content("3 records not imported")
+  end
+
+  def then_i_see_an_error
+    expect(page).to have_content(
+      "All records requiring review must have a decision"
+    )
+  end
+
+  def when_i_resolve_the_duplicates
+    visit class_import_path(ClassImport.order(:created_at).first)
+    within("tr", text: "KLEIN, Calvin") { choose("Keep both") }
+
+    within("tr", text: "LAUREN, Ralph") { choose("Use uploaded") }
+
+    within("tr", text: "KORS, Michael") { choose("Keep existing") }
+  end
+
+  def then_i_should_see_the_import_is_successful
+    visit class_import_path(ClassImport.order(:created_at).last)
+    expect(page).to have_content("Completed")
+    expect(page).not_to have_content("upload issues")
+  end
+
+  def and_patients_are_created_correctly
+    expect(Patient.count).to eq(6)
+
+    keep_both_old =
+      Patient.where(given_name: "Calvin", family_name: "Klein").sole
+    keep_both_new =
+      Patient.where(given_name: "Callie", family_name: "Klein").sole
+    expect(keep_both_old.registration).to be_nil
+    expect(keep_both_new.registration).to eq("Kangaroos")
+    expect(keep_both_old.school).to eq(@other_school)
+    expect(keep_both_new.school).to eq(@other_school)
+    expect(keep_both_old.school_moves.count).to eq(0)
+    expect(keep_both_new.school_moves.count).to eq(1)
+    expect(keep_both_new.school_moves.sole.school_id).to eq(@school.id)
+    expect(keep_both_old.parents.count).to eq(0)
+    expect(keep_both_new.parents.count).to eq(1)
+    expect(keep_both_old.changesets.count).to eq(0)
+    expect(keep_both_new.changesets.count).to eq(1)
+    expect(keep_both_new.changesets.sole.record_type).to eq("import_issue")
+    expect(keep_both_old.pds_search_results.count).to eq(0)
+    expect(keep_both_new.pds_search_results.count).to eq(4)
+
+    keep_existing = Patient.find_by(given_name: "Michael", family_name: "Kors")
+    expect(keep_existing.registration).to be_nil
+
+    use_uploaded = Patient.find_by(given_name: "Ralph", family_name: "Lauren")
+    expect(use_uploaded.registration).to eq("Kangaroos")
   end
 end

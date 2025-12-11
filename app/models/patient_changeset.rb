@@ -34,6 +34,7 @@
 class PatientChangeset < ApplicationRecord
   include PatientImportConcern
   include SchoolMovesHelper
+  include PendingChangesConcern
 
   attr_accessor :decision
 
@@ -482,6 +483,28 @@ class PatientChangeset < ApplicationRecord
     save!
   end
 
+  def dup_for_pending_changes
+    patient.dup.tap do |new_patient|
+      new_patient.nhs_number = pds_nhs_number || nhs_number
+
+      patient.patient_locations.pending.find_each do |patient_location|
+        new_patient.patient_locations.build(
+          **patient_location.slice(:academic_year, :location_id)
+        )
+      end
+
+      patient.school_moves.each do |school_move|
+        new_patient.school_moves.build(
+          academic_year: school_move.academic_year,
+          home_educated: school_move.home_educated,
+          school_id: school_move.school_id,
+          source: school_move.source,
+          team_id: school_move.team_id
+        )
+      end
+    end
+  end
+
   def clear_review_data!
     data["review"] = { patient: {}, school_move: {} }
     save!
@@ -489,6 +512,14 @@ class PatientChangeset < ApplicationRecord
 
   def reset_patient_id!
     update_column(:patient_id, nil)
+  end
+
+  def reload
+    @patient = nil
+    @parents = nil
+    @parent_relationships = nil
+    @school_move = nil
+    super
   end
 
   def csv_row_number
