@@ -7,6 +7,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
 
   def perform(
     template_name,
+    academic_year: nil,
     consent: nil,
     consent_form: nil,
     parent: nil,
@@ -14,6 +15,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
     programme_types: [],
     sent_by: nil,
     session: nil,
+    team: nil,
     vaccination_record: nil
   )
     template_id = GOVUK_NOTIFY_SMS_TEMPLATES[template_name.to_sym]
@@ -21,12 +23,14 @@ class SMSDeliveryJob < NotifyDeliveryJob
 
     personalisation =
       GovukNotifyPersonalisation.new(
-        session:,
+        academic_year:,
         consent:,
         consent_form:,
         parent:,
         patient:,
         programme_types:,
+        session:,
+        team:,
         vaccination_record:
       )
 

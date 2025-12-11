@@ -150,6 +150,21 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_10_170916) do
     t.index ["class_import_id", "patient_id"], name: "index_class_imports_patients_on_class_import_id_and_patient_id", unique: true
   end
 
+  create_table "clinic_notifications", force: :cascade do |t|
+    t.integer "academic_year", null: false
+    t.datetime "created_at", null: false
+    t.bigint "patient_id", null: false
+    t.enum "programme_types", null: false, array: true, enum_type: "programme_type"
+    t.datetime "sent_at", null: false
+    t.bigint "sent_by_user_id"
+    t.bigint "team_id", null: false
+    t.integer "type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["patient_id"], name: "index_clinic_notifications_on_patient_id"
+    t.index ["sent_by_user_id"], name: "index_clinic_notifications_on_sent_by_user_id"
+    t.index ["team_id"], name: "index_clinic_notifications_on_team_id"
+  end
+
   create_table "cohort_imports", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.integer "changed_record_count"
@@ -1010,6 +1025,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_10_170916) do
   add_foreign_key "class_imports_parents", "parents", on_delete: :cascade
   add_foreign_key "class_imports_patients", "class_imports", on_delete: :cascade
   add_foreign_key "class_imports_patients", "patients", on_delete: :cascade
+  add_foreign_key "clinic_notifications", "patients"
+  add_foreign_key "clinic_notifications", "teams"
+  add_foreign_key "clinic_notifications", "users", column: "sent_by_user_id"
   add_foreign_key "cohort_imports", "teams"
   add_foreign_key "cohort_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "cohort_imports_parent_relationships", "cohort_imports", on_delete: :cascade

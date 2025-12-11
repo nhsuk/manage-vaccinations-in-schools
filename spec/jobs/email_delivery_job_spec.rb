@@ -29,20 +29,29 @@ describe EmailDeliveryJob do
     subject(:perform_now) do
       described_class.perform_now(
         template_name,
-        session:,
+        academic_year:,
         consent:,
         consent_form:,
         parent:,
         patient:,
         programme_types:,
         sent_by:,
+        session:,
+        team:,
         vaccination_record:
       )
     end
 
     let(:template_name) { GOVUK_NOTIFY_EMAIL_TEMPLATES.keys.first }
-    let(:programmes) { [Programme.sample] }
+    let(:academic_year) { session.academic_year }
+    let(:consent) { nil }
+    let(:consent_form) { nil }
+    let(:parent) { create(:parent, email: "test@example.com") }
+    let(:patient) { create(:patient) }
     let(:programme_types) { programmes.map(&:type) }
+    let(:programmes) { [Programme.sample] }
+    let(:sent_by) { create(:user) }
+    let(:session) { create(:session, programmes:, team:) }
     let(:team) do
       create(
         :team,
@@ -50,22 +59,18 @@ describe EmailDeliveryJob do
         programmes:
       )
     end
-    let(:session) { create(:session, programmes:, team:) }
-    let(:parent) { create(:parent, email: "test@example.com") }
-    let(:consent) { nil }
-    let(:consent_form) { nil }
-    let(:patient) { create(:patient) }
-    let(:sent_by) { create(:user) }
     let(:vaccination_record) { nil }
 
     it "generates personalisation" do
       expect(GovukNotifyPersonalisation).to receive(:new).with(
-        session:,
+        academic_year:,
         consent:,
         consent_form:,
         parent:,
         patient:,
         programme_types:,
+        session:,
+        team:,
         vaccination_record:
       ).and_call_original
       perform_now

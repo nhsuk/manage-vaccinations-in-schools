@@ -54,6 +54,7 @@ class Team < ApplicationRecord
 
   has_many :archive_reasons
   has_many :batches
+  has_many :clinic_notifications
   has_many :cohort_imports
   has_many :consents
   has_many :important_notices

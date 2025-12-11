@@ -64,6 +64,7 @@ class Patient < ApplicationRecord
   has_many :archive_reasons
   has_many :attendance_records
   has_many :changesets, class_name: "PatientChangeset"
+  has_many :clinic_notifications
   has_many :consent_notifications
   has_many :consent_statuses
   has_many :consents

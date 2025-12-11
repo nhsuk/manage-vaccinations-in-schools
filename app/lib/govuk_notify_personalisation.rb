@@ -7,16 +7,18 @@ class GovukNotifyPersonalisation
   include VaccinationRecordsHelper
 
   def initialize(
+    academic_year: nil,
     consent: nil,
     consent_form: nil,
     parent: nil,
     patient: nil,
     programme_types: nil,
     session: nil,
+    team: nil,
     vaccination_record: nil
   )
     @academic_year =
-      consent&.academic_year || consent_form&.academic_year ||
+      academic_year || consent&.academic_year || consent_form&.academic_year ||
         session&.academic_year || vaccination_record&.academic_year ||
         AcademicYear.pending
     @consent = consent
@@ -28,7 +30,7 @@ class GovukNotifyPersonalisation
         [consent&.programme_type || vaccination_record&.programme_type].compact
     @session = session || consent_form&.session || vaccination_record&.session
     @team =
-      session&.team || consent_form&.team || consent&.team ||
+      team || session&.team || consent_form&.team || consent&.team ||
         vaccination_record&.team
     @subteam =
       session&.subteam || consent_form&.subteam || vaccination_record&.subteam

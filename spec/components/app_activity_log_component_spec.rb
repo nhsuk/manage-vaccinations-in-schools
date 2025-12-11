@@ -177,14 +177,6 @@ describe AppActivityLogComponent do
         created_at: Date.new(2025, 5, 10),
         sent_by: user
       )
-
-      create(
-        :session_notification,
-        :clinic_initial_invitation,
-        session:,
-        patient:,
-        sent_at: Date.new(2025, 5, 30)
-      )
     end
 
     it "renders headings in correct order" do
