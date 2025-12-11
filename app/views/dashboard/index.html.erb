@@ -6,15 +6,6 @@
   <% end %>
 <% end %>
 
-<% if Flipper.enabled?(:statuses_changed_banner) %>
-  <%= render AppWarningCalloutComponent.new(heading: "New updates for programme statuses – 28 November 2025") do %>
-    <p>We’ve made further updates to the programme statuses shown in Mavis, to make them clearer.</p>
-    <p>We’ve also <b>removed</b> the <b>Consent</b> and <b>Triage</b> tabs from sessions because the information they held is now shown on the <b>Children</b> tab.</p>
-    <p><%= link_to "Read about the latest changes in the user guide ",
-                   "https://guide.manage-vaccinations-in-schools.nhs.uk/changes-to-programme-statuses/" %></p>
-  <% end %>
-<% end %>
-
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <% @primary_items.each do |item| %>
     <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
