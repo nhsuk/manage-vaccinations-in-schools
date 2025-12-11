@@ -157,7 +157,7 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def count_columns
-    super + %w[ignored_record_count]
+    super + %i[ignored_record_count]
   end
 
   def count_column(vaccination_record)
