@@ -48,8 +48,6 @@ reporting_api: Enables the Commissioner reporting component to authenticate to M
 schools_and_sessions: |
   Whether to use the new UI where sessions are separate to schools.
 
-statuses_changed_banner: Whether to show the banner outlining the changes to statuses.
-
 testing_api: Basic API useful for automated testing.
 
 mmrv: Adds support for MMRV vaccinations
