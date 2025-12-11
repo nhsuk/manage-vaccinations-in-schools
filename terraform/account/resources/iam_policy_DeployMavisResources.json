@@ -13,6 +13,8 @@
         "application-autoscaling:RegisterScalableTarget",
         "application-autoscaling:TagResource",
         "application-autoscaling:UntagResource",
+        "backup:PutBackupVaultNotifications",
+        "backup:DeleteBackupVaultNotifications",
         "codedeploy:CreateApplication",
         "codedeploy:CreateDeployment",
         "codedeploy:CreateDeploymentGroup",
@@ -92,6 +94,12 @@
         "iam:DetachRolePolicy",
         "kms:CreateGrant",
         "kms:Decrypt",
+        "lambda:AddPermission",
+        "lambda:CreateFunction",
+        "lambda:DeleteFunction",
+        "lambda:RemovePermission",
+        "lambda:UpdateFunctionCode",
+        "lambda:UpdateFunctionConfiguration",
         "logs:PutResourcePolicy",
         "logs:DescribeResourcePolicies",
         "logs:DescribeLogGroups",
@@ -166,7 +174,12 @@
         "servicediscovery:GetNamespace",
         "servicediscovery:UpdatePrivateDnsNamespace",
         "servicediscovery:UpdateService",
-        "servicediscovery:UpdateServiceAttributes"
+        "servicediscovery:UpdateServiceAttributes",
+        "SNS:CreateTopic",
+        "SNS:DeleteTopic",
+        "SNS:SetTopicAttributes",
+        "SNS:Subscribe",
+        "SNS:Unsubscribe"
       ],
       "Resource": ["*"]
     }

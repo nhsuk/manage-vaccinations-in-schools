@@ -5,6 +5,11 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.2"
     }
+
+    archive = {
+      source  = "hashicorp/archive"
+      version = "~> 2.7.0"
+    }
   }
 
   backend "s3" {
@@ -85,6 +90,14 @@ resource "aws_kms_key" "backup_notifications" {
         Action   = ["kms:GenerateDataKey*", "kms:Decrypt"]
         Resource = "*"
       },
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "backup.amazonaws.com"
+        }
+        Action   = ["kms:GenerateDataKey*", "kms:Decrypt"]
+        Resource = "*"
+      },
     ]
   })
 }
@@ -97,14 +110,14 @@ module "source" {
   # source = "git@github.com:NHSDigital/terraform-aws-backup.git//modules/aws-backup-source?ref=v1.1.0"
 
 
-  backup_copy_vault_account_id = local.destination_account_id
-  backup_copy_vault_arn        = var.destination_vault_arn
-  environment_name             = var.environment
-  bootstrap_kms_key_arn        = aws_kms_key.backup_notifications.arn
-  project_name                 = local.project_name
-  reports_bucket               = module.s3_reports_bucket.bucket_id
-  terraform_role_arn           = var.vault_owner_role_arn
-
+  backup_copy_vault_account_id       = local.destination_account_id
+  backup_copy_vault_arn              = var.destination_vault_arn
+  environment_name                   = var.environment
+  bootstrap_kms_key_arn              = aws_kms_key.backup_notifications.arn
+  project_name                       = local.project_name
+  reports_bucket                     = module.s3_reports_bucket.bucket_id
+  terraform_role_arn                 = var.vault_owner_role_arn
+  notifications_target_email_address = "brage.gording1@nhs.net"
   backup_plan_config = {
     "compliance_resource_types" : [
       "Aurora"
