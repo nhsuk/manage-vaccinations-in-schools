@@ -1,6 +1,22 @@
 # frozen_string_literal: true
 
 class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
+  DISPLAYABLE_ATTRIBUTES = {
+    "nhs_number" => "NHS number",
+    "given_name" => "First name",
+    "family_name" => "Last name",
+    "preferred_given_name" => "Preferred first name",
+    "preferred_family_name" => "Preferred last name",
+    "date_of_birth" => "Date of birth",
+    "gender_code" => "Gender",
+    "address_line_1" => "Address line 1",
+    "address_line_2" => "Address line 2",
+    "address_town" => "Town",
+    "address_postcode" => "Postcode",
+    "registration" => "Registration",
+    "birth_academic_year" => "Year group"
+  }.freeze
+
   erb_template <<-ERB
     <%= helpers.govuk_table(
       html_attributes: {
@@ -94,12 +110,75 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
 
   def determine_issue_text(record)
     case record
-    when PatientChangeset, Patient
+    when PatientChangeset
+      if Flipper.enabled?(:import_handle_issues_in_review)
+        changeset_import_issue_text(record)
+      else
+        patient_import_issue_text(record)
+      end
+    when Patient
       patient_import_issue_text(record)
     when VaccinationRecord
       "Imported record closely matches an existing record. Review and confirm."
     else
       raise "Unknown record type: #{record.class.name}"
+    end
+  end
+
+  def changeset_import_issue_text(changeset)
+    pending_changes = changeset.pending_changes || {}
+    sorted_changes =
+      DISPLAYABLE_ATTRIBUTES.keys.filter_map do |attr|
+        [attr, pending_changes[attr]] if pending_changes.key?(attr)
+      end
+    if sorted_changes.empty?
+      raise "No displayable pending changes found for changeset ##{changeset.id}"
+    end
+
+    patient = changeset.patient
+
+    helpers.govuk_summary_list(
+      actions: false,
+      html_attributes: {
+        style: "table-layout: auto;"
+      }
+    ) do |summary_list|
+      sorted_changes.each do |attribute, new_value|
+        summary_list.with_row do |row|
+          row.with_key { DISPLAYABLE_ATTRIBUTES[attribute] }
+          row.with_value { format_change(patient, attribute, new_value) }
+        end
+      end
+    end
+  end
+
+  def format_change(patient, attribute, new_value)
+    old_value = format_value(patient.public_send(attribute), attribute)
+    new_value_formatted = format_value(new_value, attribute)
+
+    helpers.safe_join(
+      [old_value, " → ", tag.mark(new_value_formatted, class: "app-highlight")]
+    )
+  end
+
+  def format_value(value, attribute)
+    return "Not provided" if value.blank?
+
+    case attribute
+    when "date_of_birth", "date_of_death"
+      value&.to_date&.to_fs(:long)
+    when "nhs_number"
+      helpers.format_nhs_number(value)
+    when "address_postcode"
+      value.upcase
+    when "gender_code"
+      value&.humanize
+    when "registration"
+      value.to_s.humanize
+    when "birth_academic_year"
+      value.to_year_group.to_s
+    else
+      value.to_s
     end
   end
 
