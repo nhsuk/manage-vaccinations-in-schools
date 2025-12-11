@@ -14,6 +14,7 @@ import { UpgradedCheckboxes as Checkboxes } from "./components/checkboxes.js";
 import { UpgradedRadios as Radios } from "./components/radios.js";
 import { Sticky } from "./components/sticky.js";
 import { TimeoutWarning } from "./components/timeoutWarning.js";
+import { ImportDecisions } from "./components/importDecisions.js";
 
 // Configure Turbo
 Turbo.session.drive = false;
@@ -77,6 +78,10 @@ function initialiseComponents() {
 
   if (!isInitialised("app-timeout-warning")) {
     createAll(TimeoutWarning);
+  }
+
+  if (!isInitialised("app-import-decisions")) {
+    createAll(ImportDecisions);
   }
 }
 

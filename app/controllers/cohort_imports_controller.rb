@@ -129,6 +129,11 @@ class CohortImportsController < ApplicationController
       changeset.save!
     end
 
+    session[:clear_import_decisions] = {
+      type: @cohort_import.class.name.underscore,
+      id: @cohort_import.id
+    }
+
     @cohort_import.commit_changesets(
       @cohort_import.changesets.from_file.in_review
     )

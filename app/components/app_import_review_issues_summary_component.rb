@@ -67,9 +67,15 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
             <% elsif @form && Flipper.enabled?(:import_handle_issues_in_review) %>
               <% row.with_cell do %>
                 <span class="nhsuk-table-responsive__heading">Decision</span>
-                <div class="nhsuk-u-margin-bottom-2">
+                <div class="nhsuk-u-margin-bottom-2" data-changeset-id="<%= record.id %>">
                   <%= @form.fields_for :changesets, record do |changeset_fields| %>
-                    <%= changeset_fields.govuk_collection_radio_buttons :decision, available_decision_options(changeset_fields.object), :option, :label, small: true, legend: { hidden: true }, required: true %>
+                    <%= changeset_fields.govuk_collection_radio_buttons :decision, 
+                        available_decision_options(changeset_fields.object), 
+                        :option, 
+                        :label, 
+                        small: true, 
+                        legend: { hidden: true }, 
+                        required: true %>
                   <% end %>
                 </div>
               <% end %>
