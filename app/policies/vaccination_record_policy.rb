@@ -77,11 +77,6 @@ class VaccinationRecordPolicy < ApplicationPolicy
           "INNER JOIN patient_teams on patient_teams.patient_id = vaccination_records.patient_id"
         )
         .where(patient_teams: { team_id: team.id })
-        .merge(
-          PatientTeam.where_any_sources(
-            %w[vaccination_record_session vaccination_record_organisation]
-          )
-        )
     end
   end
 end
