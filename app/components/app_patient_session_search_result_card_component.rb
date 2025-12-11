@@ -2,7 +2,6 @@
 
 class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   erb_template <<-ERB
-    <% card_link = @context != :register ? patient_path : nil %>
     <%= render AppCardComponent.new(link_to: card_link, compact: true) do |card| %>
       <% if card_link.nil? %>
         <% card.with_heading(level: 4) { link_to(patient.full_name_with_known_as, patient_path) } %>
@@ -42,7 +41,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               end
             end
 
-            if context != :patient_specific_direction && latest_note
+            if show_notes && latest_note
               summary_list.with_row do |row|
                 row.with_key { "Notes" }
                 row.with_value { render note_to_log_event(latest_note) }
@@ -50,7 +49,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
             end
           end %>
 
-      <% if context == :register && can_register_attendance? %>
+      <% if show_registration_status && can_register_attendance? %>
         <div class="nhsuk-button-group">
           <%= govuk_button_to "Attending", create_session_register_path(session, patient, "present"), secondary: true, class: "nhsuk-button--small" %>
           <%= govuk_button_to "Absent", create_session_register_path(session, patient, "absent"), class: "app-button--secondary-warning nhsuk-button--small" %>
@@ -59,23 +58,22 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(patient:, session:, context:, programmes: [])
-    unless context.in?(
-             %i[
-               patients
-               consent
-               triage
-               register
-               record
-               patient_specific_direction
-             ]
-           )
-      raise "Unknown context: #{context}"
-    end
-
+  def initialize(
+    patient:,
+    session:,
+    programmes: [],
+    return_to: nil,
+    show_action_required: false,
+    show_consent_status: false,
+    show_notes: false,
+    show_patient_specific_direction_status: false,
+    show_programme_status: false,
+    show_registration_status: false,
+    show_triage_status: false,
+    show_vaccine_type: false
+  )
     @patient = patient
     @session = session
-    @context = context
 
     @programmes =
       if programmes.present?
@@ -83,11 +81,34 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       else
         session.programmes_for(patient:)
       end
+
+    @return_to = return_to
+
+    @show_action_required = show_action_required
+    @show_consent_status = show_consent_status
+    @show_notes = show_notes
+    @show_patient_specific_direction_status =
+      show_patient_specific_direction_status
+    @show_programme_status = show_programme_status
+    @show_registration_status = show_registration_status
+    @show_triage_status = show_triage_status
+    @show_vaccine_type = show_vaccine_type
   end
 
   private
 
-  attr_reader :patient, :session, :context, :programmes
+  attr_reader :patient,
+              :session,
+              :programmes,
+              :return_to,
+              :show_action_required,
+              :show_consent_status,
+              :show_notes,
+              :show_patient_specific_direction_status,
+              :show_programme_status,
+              :show_registration_status,
+              :show_triage_status,
+              :show_vaccine_type
 
   delegate :govuk_button_to,
            :govuk_summary_list,
@@ -95,6 +116,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
            :patient_year_group,
            :policy,
            to: :helpers
+
   delegate :academic_year, :team, to: :session
 
   def can_register_attendance?
@@ -115,13 +137,15 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       session,
       patient,
       programmes.first,
-      return_to: context
+      return_to:
     )
   end
 
+  def card_link = show_registration_status ? nil : patient_path
+
   def action_required
+    return unless show_action_required
     return if Flipper.enabled?(:programme_status, team)
-    return unless %i[register record].include?(context)
 
     next_activities =
       session
@@ -137,7 +161,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def vaccine_type
-    return unless %i[register record].include?(context)
+    return unless show_vaccine_type
 
     programmes_to_check =
       programmes.select do
@@ -167,23 +191,18 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def status_tags
-    case context
-    when :record
-      []
-    when :register
-      [registration_status_tag, programme_status_tag]
-    when :consent
-      [consent_status_tag]
-    when :triage
-      [triage_status_tag]
-    when :patient_specific_direction
-      [patient_specific_direction_status_tag]
-    else
-      [programme_status_tag]
-    end
+    [
+      registration_status_tag,
+      programme_status_tag,
+      consent_status_tag,
+      triage_status_tag,
+      patient_specific_direction_status_tag
+    ].compact
   end
 
   def consent_status_tag
+    return unless show_consent_status
+
     {
       key: :consent,
       value: render(AppAttachedTagsComponent.new(attached_tags(:consent)))
@@ -191,6 +210,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def programme_status_tag
+    return unless show_programme_status
+
     if Flipper.enabled?(:programme_status, team)
       {
         key: :programme,
@@ -205,6 +226,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def registration_status_tag
+    return unless show_registration_status
+
     {
       key: :registration,
       value:
@@ -218,6 +241,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def triage_status_tag
+    return unless show_triage_status
+
     {
       key: :triage,
       value: render(AppAttachedTagsComponent.new(attached_tags(:triage)))
@@ -225,6 +250,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def patient_specific_direction_status_tag
+    return unless show_patient_specific_direction_status
+
     {
       key: :patient_specific_direction,
       value:
