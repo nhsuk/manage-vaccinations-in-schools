@@ -6,9 +6,6 @@ describe "Filtering" do
     and_patients_are_in_the_session_included_a_deceased_patient
 
     when_i_visit_the_session_patients
-    then_i_see_all_the_patients
-
-    when_i_filter_eligible_children
     then_i_see_only_the_eligible_patients
   end
 
@@ -42,20 +39,9 @@ describe "Filtering" do
     visit session_patients_path(@session, tallying: true)
   end
 
-  def then_i_see_all_the_patients
-    expect(page).to have_content(@patient_eligible.full_name)
-    expect(page).to have_content(@patient_ineligible.full_name)
-    expect(page).to have_content(@deceased_patient.full_name)
-  end
-
   def then_i_see_only_the_eligible_patients
     expect(page).to have_content(@patient_eligible.full_name)
     expect(page).not_to have_content(@patient_ineligible.full_name)
     expect(page).not_to have_content(@deceased_patient.full_name)
-  end
-
-  def when_i_filter_eligible_children
-    check "Eligible this academic year and not vaccinated elsewhere"
-    click_on "Update results"
   end
 end

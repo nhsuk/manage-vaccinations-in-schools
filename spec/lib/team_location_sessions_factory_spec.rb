@@ -86,6 +86,7 @@ describe TeamLocationSessionsFactory do
           session =
             team
               .sessions
+              .includes(:session_programme_year_groups, :team_location)
               .for_location(location)
               .for_academic_year(academic_year)
               .first
@@ -104,7 +105,7 @@ describe TeamLocationSessionsFactory do
         session =
           team
             .sessions
-            .includes(:location, :session_programme_year_groups)
+            .includes(:location, :session_programme_year_groups, :team_location)
             .first
         expect(session.location).to eq(location)
         expect(session.academic_year).to eq(academic_year)
@@ -166,6 +167,7 @@ describe TeamLocationSessionsFactory do
           session =
             team
               .sessions
+              .includes(:session_programme_year_groups, :team_location)
               .for_location(location)
               .for_academic_year(academic_year)
               .first
