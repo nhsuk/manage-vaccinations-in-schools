@@ -53,6 +53,7 @@ class Consent < ApplicationRecord
   include GelatineVaccinesConcern
   include HasHealthAnswers
   include HasVaccineMethods
+  include HasDiseaseTypes
   include Invalidatable
   include Notable
   include Refusable
@@ -97,6 +98,12 @@ class Consent < ApplicationRecord
 
   def name
     via_self_consent? ? patient.full_name : parent.label
+  end
+
+  def programme
+    if (type = programme_type)
+      Programme.find(type, disease_types:)
+    end
   end
 
   delegate :vaccines, to: :programme

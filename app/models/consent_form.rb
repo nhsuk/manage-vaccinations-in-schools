@@ -95,7 +95,8 @@ class ConsentForm < ApplicationRecord
                 :response,
                 :chosen_programme,
                 :injection_alternative,
-                :without_gelatine
+                :without_gelatine,
+                :vaccine_stock_is_available
 
   belongs_to :original_session, class_name: "Session", optional: true
   belongs_to :school, class_name: "Location", optional: true
