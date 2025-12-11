@@ -26,6 +26,7 @@ describe "Immunisation imports" do
     and_i_upload_a_valid_file
     then_i_should_see_the_upload
     and_i_should_see_the_vaccination_records
+    and_the_patients_should_now_be_associated_with_the_team
 
     when_i_click_on_a_vaccination_record
     then_i_should_see_the_vaccination_record
@@ -139,6 +140,10 @@ describe "Immunisation imports" do
     expect(page).to have_content(/NHS number.*742.*018.*0008/)
     expect(page).to have_content("Date of birth 12 September 2010")
     expect(page).to have_content("Vaccination date 14 May 2024")
+  end
+
+  def and_the_patients_should_now_be_associated_with_the_team
+    Patient.all.find_each { |patient| expect(patient.teams).to include(@team) }
   end
 
   def when_i_go_back

@@ -25,6 +25,7 @@ describe("Immunisation imports") do
     and_i_upload_a_valid_mixed_file
     then_i_should_see_the_upload
     and_i_should_see_the_vaccination_records
+    and_the_patients_should_now_be_associated_with_the_team
 
     # TODO: make sure this is added after patients are visible in the "Children" page
     # when_i_click_on_a_vaccination_record
@@ -137,6 +138,10 @@ describe("Immunisation imports") do
 
   def then_i_should_see_the_upload
     expect(page).to have_content("Uploaded byUSER, Test")
+  end
+
+  def and_the_patients_should_now_be_associated_with_the_team
+    Patient.all.find_each { |patient| expect(patient.teams).to include(@team) }
   end
 
   def when_i_click_on_a_vaccination_record
