@@ -111,11 +111,6 @@ class Session < ApplicationRecord
   scope :has_any_programmes_of,
         ->(programmes) { has_any_programme_types_of(programmes.map(&:type)) }
 
-  scope :supports_delegation,
-        -> do
-          has_any_programme_types_of(Programme::TYPES_SUPPORTING_DELEGATION)
-        end
-
   scope :in_progress, -> { has_date(Date.current) }
   scope :unscheduled, -> { where(dates: []) }
   scope :scheduled,

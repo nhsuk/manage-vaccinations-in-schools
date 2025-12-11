@@ -7,11 +7,7 @@ class SessionPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope
-        .for_team(user.selected_team)
-        .then do |scope|
-          user.is_healthcare_assistant? ? scope.supports_delegation : scope
-        end
+      scope.for_team(user.selected_team)
     end
   end
 end

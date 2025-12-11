@@ -87,13 +87,12 @@ describe SessionPolicy do
 
       let(:user) { create(:user, team:) }
 
-      let!(:flu_programme) { Programme.flu }
-      let!(:hpv_programme) { Programme.hpv }
+      let(:programme) { Programme.hpv }
 
       let(:users_teams_session) { create(:session, team:, programmes:) }
       let(:another_teams_session) { create(:session, programmes:) }
 
-      let(:programmes) { [hpv_programme] }
+      let(:programmes) { [programme] }
       let(:team) { create(:team, programmes:) }
 
       context "with a session part of the user's teams" do
@@ -114,13 +113,7 @@ describe SessionPolicy do
         context "and a healthcare assistant user" do
           let(:user) { create(:healthcare_assistant, team:) }
 
-          it { should_not include(session) }
-
-          context "and a flu session" do
-            let(:programmes) { [flu_programme] }
-
-            it { should include(session) }
-          end
+          it { should include(session) }
         end
       end
 

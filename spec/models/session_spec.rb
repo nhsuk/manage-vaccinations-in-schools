@@ -74,26 +74,6 @@ describe Session do
       end
     end
 
-    describe "#supports_delegation" do
-      subject(:scope) { described_class.supports_delegation }
-
-      let!(:hpv_programme) { Programme.hpv }
-      let!(:flu_programme) { Programme.flu }
-      let(:session) { create(:session, programmes:) }
-
-      context "with a session for flu" do
-        let(:programmes) { [flu_programme] }
-
-        it { should include(session) }
-      end
-
-      context "with a session for HPV" do
-        let(:programmes) { [hpv_programme] }
-
-        it { should_not include(session) }
-      end
-    end
-
     describe "#in_progress" do
       subject(:scope) { described_class.in_progress }
 
