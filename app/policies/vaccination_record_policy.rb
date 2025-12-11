@@ -25,11 +25,19 @@ class VaccinationRecordPolicy < ApplicationPolicy
   end
 
   def edit?
-    (
+    can_edit_poc = (
       record.performed_by_user_id == user.id || user.is_nurse? ||
         user.is_prescriber?
     ) && record.recorded_in_service? &&
       record.performed_ods_code == user.selected_organisation.ods_code
+
+    can_edit_bulk = sourced_from_bulk_upload?
+
+    if user.selected_team.type_upload_only?
+      can_edit_bulk
+    else
+      can_edit_poc
+    end
   end
 
   def update? = edit?
@@ -41,7 +49,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
 
   private
 
-  delegate :patient, :session, :programme, :programme_type, to: :record
+  delegate :patient, :session, :sourced_from_bulk_upload?, :programme, :programme_type, to: :record
   delegate :academic_year, :team, to: :session
 
   def can_create_with_psd?(vaccine_criteria)
