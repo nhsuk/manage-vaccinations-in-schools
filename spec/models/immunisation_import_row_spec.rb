@@ -81,8 +81,7 @@ describe ImmunisationImportRow do
       "VACCINATED" => "Y",
       "PERFORMING_PROFESSIONAL_FORENAME" => vaccinator.given_name,
       "PERFORMING_PROFESSIONAL_SURNAME" => vaccinator.family_name,
-      # This is not on the NIVS spec, but needs to be temporarily compatible with the Mavis spec for the tests to run:
-      "VACCINE_GIVEN" => "AstraZeneca Fluenz"
+      "VACCINE_GIVEN" => "AstraZeneca Fluenz LAIV"
     )
   end
   let(:valid_bulk_hpv_data) do
@@ -2162,6 +2161,18 @@ describe ImmunisationImportRow do
       let(:programmes) { [Programme.hpv, Programme.flu] }
 
       context "of type flu" do
+        shared_examples "accepts a VACCINE_GIVEN code" do |vaccine_given, snomed_product_code|
+          context "with code: #{vaccine_given}" do
+            let(:data) do
+              valid_bulk_flu_data.merge("VACCINE_GIVEN" => vaccine_given)
+            end
+
+            it { should be_valid }
+
+            its(:vaccine) { should have_attributes(snomed_product_code:) }
+          end
+        end
+
         let(:import_type) { "bulk_flu" }
 
         let(:data) { valid_bulk_flu_data }
@@ -2232,6 +2243,16 @@ describe ImmunisationImportRow do
 
           its(:uuid) { should_not eq "ABCD1234-26cc-44e4-b886-c3cc90ba01b6" }
         end
+
+        include_examples "accepts a VACCINE_GIVEN code",
+                         "AstraZeneca Fluenz LAIV",
+                         "43208811000001106"
+        include_examples "accepts a VACCINE_GIVEN code",
+                         "Viatris Quadrivalent Influvac sub - unit Tetra - QIVe",
+                         "45354911000001100"
+        include_examples "accepts a VACCINE_GIVEN code",
+                         "Seqirus Cell-Based Trivalent IIVc",
+                         "43207411000001105"
 
         include_examples "with pseudo-postcodes"
       end
