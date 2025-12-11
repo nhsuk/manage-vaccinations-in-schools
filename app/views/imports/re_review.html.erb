@@ -15,7 +15,14 @@
 <%= form_with model: import,
               url: polymorphic_path([:approve, import]),
               builder: GOVUKDesignSystemFormBuilder::FormBuilder,
-              method: :post do |f| %>
+              method: :post,
+              html: {
+                data: {
+                  module: "app-import-decisions",
+                  import_type: import.class.name.underscore,
+                  import_id: import.id,
+                },
+              } do |f| %>
 
   <%= f.govuk_error_summary %>
 

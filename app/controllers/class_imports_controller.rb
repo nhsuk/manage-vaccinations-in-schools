@@ -130,6 +130,11 @@ class ClassImportsController < ApplicationController
       changeset.save!
     end
 
+    session[:clear_import_decisions] = {
+      type: @class_import.class.name.underscore,
+      id: @class_import.id
+    }
+
     @class_import.changesets.not_from_file.in_review.update_all(
       status: :committing
     )
