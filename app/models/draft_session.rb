@@ -159,10 +159,19 @@ class DraftSession
 
   def session_programme_year_groups
     @session_programme_year_groups ||=
-      session.session_programme_year_groups.to_a +
-        new_programmes.flat_map do |programme|
-          (programme.default_year_groups & year_groups).map do |year_group|
-            Session::ProgrammeYearGroup.new(session:, programme:, year_group:)
+      location
+        .location_programme_year_groups
+        .includes(:location_year_group)
+        .filter_map do |location_programme_year_group|
+          year_group = location_programme_year_group.year_group
+          programme_type = location_programme_year_group.programme_type
+
+          if programme_type.in?(programme_types) && year_group.in?(year_groups)
+            Session::ProgrammeYearGroup.find_or_initialize_by(
+              session:,
+              programme_type:,
+              year_group:
+            )
           end
         end
   end
@@ -260,8 +269,14 @@ class DraftSession
   end
 
   def include_notification_steps?
-    dates.present? && session.consent_notifications.empty? &&
-      session.session_notifications.empty?
+    dates.present? &&
+      (
+        session.nil? ||
+          (
+            session.consent_notifications.empty? &&
+              session.session_notifications.empty?
+          )
+      )
   end
 
   def new_programme_types
