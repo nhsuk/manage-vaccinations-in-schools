@@ -117,7 +117,7 @@ module "source" {
   project_name                       = local.project_name
   reports_bucket                     = module.s3_reports_bucket.bucket_id
   terraform_role_arn                 = var.vault_owner_role_arn
-  notifications_target_email_address = "brage.gording1@nhs.net"
+  notifications_target_email_address = "thomas.leese1@nhs.net"
   backup_plan_config = {
     "compliance_resource_types" : [
       "Aurora"
