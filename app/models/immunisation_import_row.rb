@@ -100,11 +100,11 @@ class ImmunisationImportRow
   # Convenience predicate helpers mirroring the enum on ImmunisationImport
   def poc? = type == :poc
 
-  def bulk_flu? = type == :bulk_flu
+  def bulk_flu? = bulk? && programme&.flu?
 
-  def bulk_hpv? = type == :bulk_hpv
+  def bulk_hpv? = bulk? && programme&.hpv?
 
-  def bulk? = bulk_flu? || bulk_hpv?
+  def bulk? = type == :bulk
 
   def bulk_not_administered?
     bulk? && !administered
@@ -350,12 +350,7 @@ class ImmunisationImportRow
 
   def programme
     @programme ||=
-      case @type
-      when :bulk_flu
-        Programme.flu
-      when :bulk_hpv
-        Programme.hpv
-      else
+      begin
         name =
           parsed_vaccination_description_string&.dig(:programme_name) ||
             programme_name&.to_s
@@ -486,7 +481,7 @@ class ImmunisationImportRow
         false
       end
     elsif vaccine_name.present? ||
-          combined_vaccination_and_dose_sequence.present? || bulk_hpv?
+          combined_vaccination_and_dose_sequence.present? || bulk?
       true
     end
   end
@@ -992,9 +987,19 @@ class ImmunisationImportRow
   end
 
   def validate_programme
-    return if programme
-
     field = programme_name.presence || combined_vaccination_and_dose_sequence
+
+    if programme
+      is_a_bulk_programme = bulk_hpv? || bulk_flu?
+      if bulk? && !is_a_bulk_programme
+        errors.add(
+          vaccine_name.header,
+          "This vaccine programme is not accepted in this upload."
+        )
+      end
+
+      return
+    end
 
     if field.nil?
       errors.add(
