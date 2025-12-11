@@ -96,4 +96,10 @@ Rails.application.configure do
   # Enable strict loading to catch N+1 problems.
   config.active_record.strict_loading_by_default = true
   config.active_record.strict_loading_mode = :n_plus_one_only
+
+  # Allow connection from ngrok tunnel to allow access for UR sessions
+  config.hosts = [
+    /.*\.ngrok-free\.app/,
+    "localhost:4000"
+  ]
 end
