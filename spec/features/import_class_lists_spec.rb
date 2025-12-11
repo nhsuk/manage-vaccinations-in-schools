@@ -149,7 +149,7 @@ describe "Import class lists" do
   end
 
   def then_i_should_see_the_import_page
-    expect(page).to have_content("Import class list")
+    expect(page).to have_content("Upload class list")
   end
 
   def and_i_upload_a_valid_file

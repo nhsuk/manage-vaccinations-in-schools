@@ -19,6 +19,7 @@ class PatientUpdateFromPDSJob < ApplicationJob
     return unless unique_nhs_number
 
     pds_patient = PDS::Patient.find(unique_nhs_number)
+    return unless pds_patient
 
     if pds_patient.nhs_number != patient.nhs_number
       if (

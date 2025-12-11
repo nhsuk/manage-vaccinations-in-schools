@@ -294,7 +294,7 @@ describe "Import child records" do
   end
 
   def then_i_should_see_the_import_page
-    expect(page).to have_content("Import child records")
+    expect(page).to have_content("Upload child records")
   end
 
   def when_i_upload_a_valid_file

@@ -10,6 +10,7 @@
 #  csv_filename                 :text             not null
 #  csv_removed_at               :datetime
 #  exact_duplicate_record_count :integer
+#  ignored_record_count         :integer
 #  new_record_count             :integer
 #  processed_at                 :datetime
 #  rows_count                   :integer
@@ -60,6 +61,7 @@ FactoryBot.define do
       processed_at { Time.current }
       status { :processed }
 
+      ignored_record_count { 0 }
       changed_record_count { 0 }
       exact_duplicate_record_count { 0 }
       new_record_count { 0 }

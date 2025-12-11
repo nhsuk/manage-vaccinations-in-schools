@@ -146,12 +146,6 @@ module CSVImportable
     data&.first&.[](0)&.to_s&.match?(/\A(Required|Optional)([,.:]|$)/)
   end
 
-  COUNT_COLUMNS = %i[
-    new_record_count
-    changed_record_count
-    exact_duplicate_record_count
-  ].freeze
-
   def processed?
     processed_at != nil
   end
@@ -228,8 +222,16 @@ module CSVImportable
     end
   end
 
+  def count_columns
+    %i[
+      new_record_count
+      changed_record_count
+      exact_duplicate_record_count
+    ].freeze
+  end
+
   def ensure_processed_with_count_statistics
-    if processed? && COUNT_COLUMNS.any? { |column| send(column).nil? }
+    if processed? && count_columns.any? { |column| send(column).nil? }
       raise "Count statistics must be set for a processed import."
     end
   end

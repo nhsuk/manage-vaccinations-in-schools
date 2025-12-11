@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
-describe "Immunisation imports" do
-  around { |example| travel_to(Date.new(2025, 5, 20)) { example.run } }
+describe("Immunisation imports") do
+  around { |example| travel_to(Date.new(2025, 12, 20)) { example.run } }
 
-  scenario "User uploads a file, views cohort and vaccination records" do
-    given_an_hpv_programme_is_underway
-    and_i_am_signed_in
-    and_school_locations_exist
+  scenario "User uploads a mixed flu and HPV file, views cohort and vaccination records" do
+    given_mavis_logins_are_configured
+    given_i_am_signed_in_as_a_bulk_upload_user
 
     when_i_go_to_the_import_page
     then_i_should_see_the_upload_link
@@ -23,26 +22,29 @@ describe "Immunisation imports" do
     travel_to 1.minute.from_now # to ensure the created_at is different for the import jobs
 
     when_i_go_back_to_the_upload_page
-    and_i_upload_a_valid_file
+    and_i_upload_a_valid_mixed_file
     then_i_should_see_the_upload
     and_i_should_see_the_vaccination_records
 
-    when_i_click_on_a_vaccination_record
-    then_i_should_see_the_vaccination_record
-
-    when_i_click_on_cohorts
-    then_i_should_see_no_children_in_the_cohorts
+    # TODO: make sure this is added after MAV-2558
+    # when_i_click_on_a_vaccination_record
+    # then_i_should_see_the_vaccination_record
   end
 
-  def given_an_hpv_programme_is_underway
-    programme = Programme.hpv
+  def given_mavis_logins_are_configured
+    programmes = [Programme.flu, Programme.hpv]
     @team =
-      create(:team, :with_one_nurse, ods_code: "R1L", programmes: [programme])
-    location = create(:school, team: @team)
-    @session = create(:session, programmes: [programme], location:, team: @team)
+      create(
+        :team,
+        :with_one_nurse,
+        ods_code: "R1L",
+        programmes: programmes,
+        type: "upload_only"
+      )
+    create(:school, team: @team, urn: 100_000)
   end
 
-  def and_i_am_signed_in
+  def given_i_am_signed_in_as_a_bulk_upload_user
     sign_in @team.users.first
   end
 
@@ -64,8 +66,6 @@ describe "Immunisation imports" do
 
   def when_i_click_on_the_upload_link
     click_on "Upload records"
-    choose "Vaccination records"
-    click_on "Continue"
   end
 
   def when_i_click_on_the_imports_tab
@@ -93,7 +93,7 @@ describe "Immunisation imports" do
   def when_i_upload_an_invalid_file
     attach_file(
       "immunisation_import[csv]",
-      "spec/fixtures/immunisation_import/invalid_rows.csv"
+      "spec/fixtures/immunisation_import_bulk/invalid_rows.csv"
     )
     click_on "Continue"
     wait_for_import_to_complete(ImmunisationImport)
@@ -101,27 +101,25 @@ describe "Immunisation imports" do
 
   def then_i_should_see_the_errors_page
     expect(page).to have_content(
-      "How to format your Mavis CSV file for vaccination records"
+      "How to format your CSV file for vaccination records"
     )
-    expect(page).to have_content("Row 3")
-    expect(page).to have_content("VACCINATED:")
+    expect(page).to have_content("Row 2")
+    expect(page).to have_content("ANATOMICAL_SITE:")
+    expect(page).to have_content("SCHOOL_URN:")
 
     expect(page).to have_content("Row 3")
     expect(page).to have_content("BATCH_EXPIRY_DATE:")
-    expect(page).to have_content("VACCINE_GIVEN:")
   end
 
   def when_i_go_back_to_the_upload_page
     click_on "Back"
     click_on "Upload records"
-    choose "Vaccination records"
-    click_on "Continue"
   end
 
-  def and_i_upload_a_valid_file
+  def and_i_upload_a_valid_mixed_file
     attach_file(
       "immunisation_import[csv]",
-      "spec/fixtures/immunisation_import/valid_hpv.csv"
+      "spec/fixtures/immunisation_import_bulk/valid_mixed_flu_hpv.csv"
     )
     click_on "Continue"
     wait_for_import_to_complete(ImmunisationImport)
@@ -135,10 +133,10 @@ describe "Immunisation imports" do
     expect(page).to have_content(
       "Full nameNHS numberDate of birthVaccination date"
     )
-    expect(page).to have_content("Full name PICKLE, Chyna")
-    expect(page).to have_content(/NHS number.*742.*018.*0008/)
-    expect(page).to have_content("Date of birth 12 September 2010")
-    expect(page).to have_content("Vaccination date 14 May 2024")
+    expect(page).to have_content("Full name POTTER, Harry")
+    expect(page).to have_content(/NHS number.*944.*930.*8357/)
+    expect(page).to have_content("Date of birth 1 January 2001")
+    expect(page).to have_content("Vaccination date 9 November 2025")
   end
 
   def when_i_go_back
@@ -155,7 +153,7 @@ describe "Immunisation imports" do
 
   def when_i_click_on_a_vaccination_record
     find(".nhsuk-details__summary", text: "1 imported record").click
-    click_on "PICKLE, Chyna"
+    click_on "POTTER, Harry"
   end
 
   def when_i_click_on_cohorts
@@ -177,6 +175,4 @@ describe "Immunisation imports" do
     expect(page).to have_content("Vaccination details")
     expect(page).to have_content("OutcomeVaccinated")
   end
-
-  alias_method :and_i_click_on_the_upload_link, :when_i_click_on_the_upload_link
 end

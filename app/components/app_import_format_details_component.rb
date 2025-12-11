@@ -17,7 +17,11 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     when CohortImport
       "How to format your Mavis CSV file for child records"
     when ImmunisationImport
-      "How to format your Mavis CSV file for vaccination records"
+      if team.type_upload_only?
+        "How to format your CSV file for vaccination records"
+      else
+        "How to format your Mavis CSV file for vaccination records"
+      end
     else
       raise ArgumentError, "Unsupported import type: #{@import.class}"
     end

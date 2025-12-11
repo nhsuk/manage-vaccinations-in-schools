@@ -10,6 +10,7 @@
 #  csv_filename                 :text             not null
 #  csv_removed_at               :datetime
 #  exact_duplicate_record_count :integer
+#  ignored_record_count         :integer
 #  new_record_count             :integer
 #  processed_at                 :datetime
 #  rows_count                   :integer
