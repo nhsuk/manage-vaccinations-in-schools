@@ -25,10 +25,7 @@ class CommitPatientChangesetsJob
     imported_school_move_ids = []
 
     counts =
-      import
-        .class
-        .const_get(:COUNT_COLUMNS)
-        .index_with { |col| import.public_send(col) || 0 }
+      import.count_columns.index_with { |col| import.public_send(col) || 0 }
 
     ActiveRecord::Base.transaction do
       # Reset patient_ids to avoid stale associations
