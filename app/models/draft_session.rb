@@ -42,6 +42,8 @@ class DraftSession
     steps << :programmes
     steps << :programmes_check if school?
 
+    steps << :year_groups if school? && !editing?
+
     steps << :dates
     steps << :dates_check if school?
 
@@ -68,6 +70,10 @@ class DraftSession
   on_wizard_step :programmes, exact: true do
     validates :programme_types, presence: true
     validate :cannot_remove_programmes
+  end
+
+  on_wizard_step :year_groups, exact: true do
+    validates :year_groups, presence: true
   end
 
   on_wizard_step :dates, exact: true do
@@ -148,7 +154,7 @@ class DraftSession
   end
 
   def year_groups=(values)
-    super(values&.filter_map(&:to_i) || [])
+    super(values&.compact_blank&.filter_map(&:to_i) || [])
   end
 
   def session_programme_year_groups
@@ -226,6 +232,13 @@ class DraftSession
   private
 
   def request_session_key = "session"
+
+  def reset_unused_attributes
+    if location_type == "generic_clinic"
+      self.location_id = team.generic_clinic.id
+      self.year_groups = Location::YearGroup::CLINIC_VALUE_RANGE.to_a
+    end
+  end
 
   def readable_attribute_names
     super - %w[dates return_to session_dates]
