@@ -33,11 +33,13 @@ class DraftSession
   end
 
   def wizard_steps
-    steps = %i[dates]
-    steps << :dates_check if school?
+    steps = []
 
     steps << :programmes
     steps << :programmes_check if school?
+
+    steps << :dates
+    steps << :dates_check if school?
 
     if include_notification_steps?
       steps += %i[consent_requests consent_reminders] if school?

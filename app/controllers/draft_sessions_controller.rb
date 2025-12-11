@@ -23,24 +23,27 @@ class DraftSessionsController < ApplicationController
   def show
     authorize @session, :edit?
 
+    if (current_step == :dates_check && should_skip_dates_check?) ||
+         (current_step == :programmes_check && should_skip_programmes_check?)
+      skip_step
+    end
+
     render_wizard
   end
 
   def update
     authorize @session, :update?
 
-    jump_to("confirm") if @draft_session.editing? && current_step != :confirm
-
     case current_step
     when :dates
       handle_dates
-    when :programmes
-      handle_programmes
     when :confirm
       handle_confirm
     else
       @draft_session.assign_attributes(update_params)
     end
+
+    jump_to("confirm") if go_to_confirm_after_submission?
 
     render_wizard @draft_session
   end
@@ -138,8 +141,6 @@ class DraftSessionsController < ApplicationController
   def handle_dates
     session_dates_attrs = update_params.except(:wizard_step)
 
-    check_dates = true
-
     @draft_session
       .session_dates
       .to_enum
@@ -150,7 +151,6 @@ class DraftSessionsController < ApplicationController
         if attributes["_destroy"].present?
           @draft_session.session_dates.delete_at(index)
           jump_to("dates")
-          check_dates = false
         else
           # We need to do this here to get around the multi-parameter
           # assignment error being raised if we don't validate before
@@ -166,7 +166,6 @@ class DraftSessionsController < ApplicationController
             session_date.assign_attributes(value:)
           rescue StandardError
             session_date.errors.add(:value, :blank)
-            check_dates = false
           end
         end
       end
@@ -175,36 +174,9 @@ class DraftSessionsController < ApplicationController
     if session_dates_attrs["_add_another"].present?
       @draft_session.session_dates << DraftSessionDate.new
       jump_to("dates")
-      check_dates = false
     end
 
     @draft_session.set_notification_dates
-
-    if @draft_session.school? && check_dates
-      any_programme_has_high_unvaccinated_count =
-        @draft_session.programmes.any? do |programme|
-          programme_has_high_unvaccinated_count?(programme)
-        end
-
-      jump_to("dates-check") if any_programme_has_high_unvaccinated_count
-    end
-
-    @draft_session.wizard_step = current_step
-  end
-
-  def handle_programmes
-    @draft_session.assign_attributes(update_params)
-
-    if @draft_session.school?
-      any_new_programme_has_high_unvaccinated_count =
-        @draft_session.new_programmes.any? do |programme|
-          programme_has_high_unvaccinated_count?(programme)
-        end
-
-      if any_new_programme_has_high_unvaccinated_count
-        jump_to("programmes-check")
-      end
-    end
 
     @draft_session.wizard_step = current_step
   end
@@ -283,6 +255,51 @@ class DraftSessionsController < ApplicationController
         object: @draft_session,
         params: update_params
       )
+  end
+
+  def go_to_confirm_after_submission?
+    # Something earlier has jumped to a specific step.
+    return false if @skip_to.present?
+
+    # After the `dates` and `programmes` steps, we have a check page which
+    # means we can't always skip straight to the confirmation page.
+
+    if current_step == :dates && steps.include?("dates-check") &&
+         !should_skip_dates_check?
+      return false
+    end
+
+    if current_step == :programmes && steps.include?("programmes-check") &&
+         !should_skip_programmes_check?
+      return false
+    end
+
+    @draft_session.editing? && current_step != :confirm
+  end
+
+  def should_skip_dates_check?
+    if @draft_session.editing? &&
+         @draft_session.session.dates == @draft_session.dates
+      return true
+    end
+
+    any_programme_has_high_unvaccinated_count =
+      @draft_session.programmes.any? do |programme|
+        programme_has_high_unvaccinated_count?(programme)
+      end
+
+    !any_programme_has_high_unvaccinated_count
+  end
+
+  def should_skip_programmes_check?
+    return true if @draft_session.new_programmes.empty?
+
+    any_new_programme_has_high_unvaccinated_count =
+      @draft_session.new_programmes.any? do |programme|
+        programme_has_high_unvaccinated_count?(programme)
+      end
+
+    !any_new_programme_has_high_unvaccinated_count
   end
 
   def programme_has_high_unvaccinated_count?(programme)
