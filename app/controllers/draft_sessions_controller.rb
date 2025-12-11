@@ -6,6 +6,8 @@ class DraftSessionsController < ApplicationController
 
   include WizardControllerConcern
 
+  before_action :set_schools, if: -> { current_step == :school }
+
   with_options only: :show,
                if: -> do
                  %i[dates_check programmes_check].include?(current_step)
@@ -60,6 +62,19 @@ class DraftSessionsController < ApplicationController
 
   def set_steps
     self.steps = @draft_session.wizard_steps
+  end
+
+  def set_schools
+    @schools =
+      policy_scope(Location)
+        .school
+        .joins(:team_locations)
+        .where(
+          team_locations: {
+            team: @draft_session.team,
+            academic_year: @draft_session.academic_year
+          }
+        )
   end
 
   def set_catch_up_year_groups
@@ -214,14 +229,15 @@ class DraftSessionsController < ApplicationController
       consent_requests: %i[send_consent_requests_at],
       dates: dates_params,
       dates_check: [],
-      location_type: %i[location_type],
-      programmes_check: [],
       delegation: %i[psd_enabled national_protocol_enabled],
       invitations: %i[send_invitations_at],
+      location_type: %i[location_type],
       programmes: {
         programme_types: []
       },
-      register_attendance: %i[requires_registration]
+      programmes_check: [],
+      register_attendance: %i[requires_registration],
+      school: %i[location_id]
     }.fetch(current_step)
 
     params
