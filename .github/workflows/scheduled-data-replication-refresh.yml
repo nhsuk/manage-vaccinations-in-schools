@@ -23,7 +23,6 @@ jobs:
           "52.178.45.139/32" # GIAS
         ]
       take_db_snapshot: false
-      skip_approval: true
   deploy-image:
     name: Deploy image
     needs: refresh-data-replication
@@ -33,4 +32,3 @@ jobs:
     with:
       environment: production
       git_ref_to_deploy: main
-      skip_approval: true
