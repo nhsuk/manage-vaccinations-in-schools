@@ -52,7 +52,7 @@ class ParentRelationship < ApplicationRecord
   accepts_nested_attributes_for :parent, update_only: true
 
   def label
-    (other? ? other_name : human_enum_name(:type)).capitalize
+    (other? ? other_name : human_enum_name(:type, plural_name: "types")).capitalize
   end
 
   def label_with_parent
