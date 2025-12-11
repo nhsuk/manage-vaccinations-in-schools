@@ -196,7 +196,11 @@ class ClassImportsController < ApplicationController
     @auto_matched_records =
       @class_import.changesets.ready_for_review.auto_match - @inter_team
     @import_issues =
-      @class_import.changesets.ready_for_review.import_issue - @inter_team
+      @class_import
+        .changesets
+        .includes(:patient)
+        .ready_for_review
+        .import_issue - @inter_team
     @school_moves =
       @class_import
         .changesets

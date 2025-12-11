@@ -845,7 +845,7 @@ describe "Import child records" do
 
   def and_there_is_an_import_review_for_maia
     find(".nhsuk-details__summary", text: "1 upload issue").click
-    expect(page).to have_content("ActionsReview SMITH, Maia")
+    expect(page).to have_content("Actions Review SMITH, Maia")
     expect(page).to have_content("Possible match found. Review and confirm.")
   end
 

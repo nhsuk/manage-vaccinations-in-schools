@@ -1,0 +1,85 @@
+
+
+<% if @new_records.any? %>
+    <h2 class="nhsuk-heading-m">New records</h2>
+    <p class="nhsuk-u-reading-width">
+        <%= new_records_message %>
+    </p>
+    <%= render AppDetailsComponent.new(expander: true, sticky: true) do |c| %>
+        <% c.with_summary do %>
+            <%= pluralize(@new_records.count, "new record") %>
+        <% end %>
+        <%= render AppImportReviewRecordsSummaryComponent.new(changesets: @new_records) %>
+    <% end %>
+<% end %>
+
+<% if @auto_matched_records.any? %>
+    <h2 class="nhsuk-heading-m">Records already in Mavis</h2>
+    <p class="nhsuk-u-reading-width">
+        <%= auto_matched_message %>
+    </p>
+    <%= render AppDetailsComponent.new(expander: true, sticky: true) do |c| %>
+        <% c.with_summary do %>
+            <%= pluralize(@auto_matched_records.count, "record") %> already in Mavis
+        <% end %>
+        <%= render AppImportReviewRecordsSummaryComponent.new(changesets: @auto_matched_records) %>
+    <% end %>
+<% end %>
+
+<% if @inter_team.any? %>
+    <h2 class="nhsuk-heading-m">Children moving from another SAIS team's area - will need review after import</h2>
+    <p class="nhsuk-u-reading-width">
+        <%= inter_team_message %>
+    </p>
+    <%= render AppDetailsComponent.new(expander: true, sticky: true) do |c| %>
+        <% c.with_summary do %>
+            <%= pluralize(@inter_team.count, "school move") %> across teams
+        <% end %>
+        <%= render AppImportReviewSchoolMovesSummaryComponent.new(changesets: @inter_team) %>
+    <% end %>
+
+    <% if @inter_team_import_issues.any? %>
+        <%= render AppDetailsComponent.new(expander: true, sticky: true) do |c| %>
+            <% c.with_summary do %>
+                <%= pluralize(@inter_team_import_issues.count, "close match") %> to existing records
+            <% end %>
+            <%= render AppImportReviewIssuesSummaryComponent.new(import: @import, records: @inter_team_import_issues) %>
+        <% end %>
+    <% end %> 
+<% end %>  
+
+<% if @import_issues.any? %>
+    <h2 class="nhsuk-heading-m">Close matches to existing records - will need review after import</h2>
+    <p class="nhsuk-u-reading-width">
+        <%= import_issues_message %>
+    </p>
+    <%= render AppDetailsComponent.new(expander: true, sticky: true) do |c| %>
+        <% c.with_summary do %>
+            <%= pluralize(@import_issues.count, "close match") %> to existing records
+        <% end %>
+        <%= render AppImportReviewIssuesSummaryComponent.new(import: @import, records: @import_issues) %>
+    <% end %>
+<% end %>
+
+<% if @school_moves.any? %>
+    <h2 class="nhsuk-heading-m">School moves - will need review after import</h2>
+    <p class="nhsuk-u-reading-width">
+        <%= school_moves_message %>
+    </p>
+    <%= render AppDetailsComponent.new(expander: true, sticky: true) do |c| %>
+        <% c.with_summary do %>
+            <%= pluralize(@school_moves.count, "school move") %>
+        <% end %>
+        <%= render AppImportReviewSchoolMovesSummaryComponent.new(changesets: @school_moves) %>
+    <% end %>
+<% end %>
+
+<hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
+
+<div class="nhsuk-button-group">
+    <%= helpers.govuk_button_to approve_button_text, polymorphic_path([:approve, @import]),
+                                method: :post %>
+    <%= helpers.govuk_button_to cancel_button_text, polymorphic_path([:cancel, @import]),
+                                method: :post,
+                                secondary: true %>
+</div>
