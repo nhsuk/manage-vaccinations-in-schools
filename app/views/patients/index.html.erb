@@ -35,6 +35,7 @@
                 show_nhs_number: true,
                 show_school: true,
                 show_triage_status: @form.triage_status.present?,
+                show_postcode: current_team.has_upload_access_only?,
               ) %>
         <% end %>
       <% end %>
