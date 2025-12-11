@@ -1,78 +1,76 @@
 # frozen_string_literal: true
 
 class AppImportReviewRecordsSummaryComponent < ViewComponent::Base
+  erb_template <<-ERB
+    <%= helpers.govuk_table(
+      html_attributes: {
+        class: "nhsuk-table-responsive"
+      }
+    ) do |table| %>
+      <% table.with_head do |head| %>
+        <% head.with_row do |row| %>
+          <% row.with_cell(text: "Name and NHS number") %>
+          <% row.with_cell(text: "Date of birth") %>
+          <% row.with_cell(text: "Postcode") %>
+          <% row.with_cell(text: "Year group") %>
+        <% end %>
+      <% end %>
+
+      <% table.with_body do |body| %>
+        <% changesets.each do |changeset| %>
+          <% body.with_row do |row| %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Name and NHS number</span>
+              <span><%= format_name(changeset) %></span>
+              <br>
+              <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">
+                <%= format_nhs_number(changeset) %>
+              </span>
+            <% end %>
+
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Date of birth</span>
+              <span><%= format_date_of_birth(changeset) %></span>
+            <% end %>
+
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Postcode</span>
+              <span><%= changeset.address_postcode %></span>
+            <% end %>
+
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Year group</span>
+              <span><%= format_year_group_for_changeset(changeset) %></span>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  ERB
+
   def initialize(changesets:)
     @changesets = changesets.sort_by(&:row_number) || []
   end
 
-  def call
-    helpers.govuk_table(
-      html_attributes: {
-        class: "nhsuk-table-responsive"
-      }
-    ) do |table|
-      table.with_head do |head|
-        head.with_row do |row|
-          row.with_cell(text: "Name and NHS number")
-          row.with_cell(text: "Date of birth")
-          row.with_cell(text: "Postcode")
-          row.with_cell(text: "Year group")
-        end
-      end
+  private
 
-      table.with_body do |body|
-        @changesets.each do |changeset|
-          body.with_row do |row|
-            row.with_cell do
-              heading =
-                tag.span(
-                  "Name and NHS number",
-                  class: "nhsuk-table-responsive__heading"
-                )
+  attr_reader :changesets
 
-              helpers.safe_join(
-                [
-                  heading,
-                  tag.span(
-                    FullNameFormatter.call(changeset, context: :internal)
-                  ),
-                  tag.br,
-                  tag.span(
-                    helpers.format_nhs_number(changeset.nhs_number),
-                    class: "nhsuk-u-secondary-text-colour nhsuk-u-font-size-16"
-                  )
-                ]
-              )
-            end
+  def format_name(changeset)
+    FullNameFormatter.call(changeset, context: :internal)
+  end
 
-            row.with_cell do
-              heading =
-                tag.span(
-                  "Date of birth",
-                  class: "nhsuk-table-responsive__heading"
-                )
-              dob = changeset.date_of_birth.to_date&.to_fs(:long)
-              helpers.safe_join([heading, tag.span(dob)])
-            end
+  def format_nhs_number(changeset)
+    helpers.format_nhs_number(changeset.nhs_number)
+  end
 
-            row.with_cell do
-              heading =
-                tag.span("Postcode", class: "nhsuk-table-responsive__heading")
-              postcode = changeset.address_postcode
-              helpers.safe_join([heading, tag.span(postcode)])
-            end
+  def format_date_of_birth(changeset)
+    changeset.date_of_birth.to_date&.to_fs(:long)
+  end
 
-            row.with_cell do
-              heading =
-                tag.span("Year group", class: "nhsuk-table-responsive__heading")
-              year_group =
-                changeset.birth_academic_year.to_year_group(academic_year: 2025)
-              formatted_year = helpers.format_year_group(year_group)
-              helpers.safe_join([heading, tag.span(formatted_year)])
-            end
-          end
-        end
-      end
-    end
+  def format_year_group_for_changeset(changeset)
+    year_group =
+      changeset.birth_academic_year.to_year_group(academic_year: 2025)
+    helpers.format_year_group(year_group)
   end
 end

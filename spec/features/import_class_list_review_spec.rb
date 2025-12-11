@@ -480,7 +480,7 @@ describe "Import class lists" do
   end
 
   def and_i_approve_the_import
-    if page.has_button?("Approve and import records")
+    if page.has_link?("Approve and import records")
       click_on("Approve and import records")
     else
       click_on("Approve and import changed records")

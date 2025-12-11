@@ -29,4 +29,12 @@ describe AppDetailsComponent do
       )
     end
   end
+
+  context "sticky flag is true" do
+    let(:component) { described_class.new(summary:, sticky: true) }
+
+    it "adds the sticky class" do
+      expect(rendered).to have_css('summary[data-module="app-sticky"]')
+    end
+  end
 end

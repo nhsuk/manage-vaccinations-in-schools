@@ -175,7 +175,11 @@ class CohortImportsController < ApplicationController
     @auto_matched_records =
       @cohort_import.changesets.ready_for_review.auto_match - @inter_team
     @import_issues =
-      @cohort_import.changesets.ready_for_review.import_issue - @inter_team
+      @cohort_import
+        .changesets
+        .includes(:patient)
+        .ready_for_review
+        .import_issue - @inter_team
     @school_moves =
       @cohort_import
         .changesets
