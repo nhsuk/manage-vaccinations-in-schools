@@ -12,84 +12,120 @@ class Generate::VaccinationRecords
 
   def self.call(...) = new(...).call
 
+  class NotEnoughAvailablePatients < StandardError
+  end
+
+  class SessionHasNoDates < StandardError
+  end
+
+  class NoSessionsWithDates < StandardError
+  end
+
+  class NoSessionsWithPatients < StandardError
+  end
+
   private
 
   attr_reader :config, :team, :programme, :session, :administered
 
   def create_vaccinations
-    attendance_records = []
-    vaccination_records = []
+    attendances = []
+    vaccinations = []
 
-    sessions.each do |session|
-      location = session.location
+    check_sessions_have_enough_patients
 
-      random_patients_for(session:).each do |patient|
-        unless AttendanceRecord.exists?(patient:, location:)
-          attendance_records << FactoryBot.build(
-            :attendance_record,
-            :present,
-            patient:,
-            session:
-          )
-        end
+    each_random_patient_ready_for_vaccination(
+      administered
+    ) do |session, patient|
+      attendance, vaccination =
+        create_administered_vaccination(session, patient)
 
-        location_name = location.name if session.clinic?
-
-        vaccination_records << FactoryBot.build(
-          :vaccination_record,
-          :administered,
-          patient:,
-          programme:,
-          team:,
-          performed_by:,
-          session:,
-          vaccine:,
-          batch:,
-          location_name:
-        )
-      end
+      attendances << attendance if attendance.present?
+      vaccinations << vaccination
     end
 
-    AttendanceRecord.import!(attendance_records)
-    imported_ids = VaccinationRecord.import!(vaccination_records).ids
+    AttendanceRecord.import!(attendances)
+    imported_ids = VaccinationRecord.import!(vaccinations).ids
     SyncPatientTeamJob.perform_later(VaccinationRecord, imported_ids)
 
-    StatusUpdater.call(patient: vaccination_records.map(&:patient))
+    StatusUpdater.call(patient: vaccinations.map(&:patient))
   end
 
-  def random_patients_for(session:)
-    if administered&.positive?
-      patients_for(session:)
-        .sample(administered)
-        .tap do |selected|
-          if selected.size < administered
-            info =
-              "#{selected.size} (patient_locations) < #{administered} (administered)"
-            raise "Not enough patients to generate vaccinations: #{info}"
-          end
-        end
-    else
-      patients_for(session:)
+  def check_sessions_have_enough_patients
+    available_patients = sessions.sum { patients_for(session: it).count }
+    if available_patients < administered
+      info =
+        "#{available_patients} (available patients) < #{administered} (administered)"
+      raise NotEnoughAvailablePatients, info
     end
+  end
+
+  def each_random_patient_ready_for_vaccination(count)
+    count.times do
+      session = sessions.sample
+      patients = patients_for(session:)
+
+      patient = patients.sample
+
+      yield session, patient
+
+      patients.delete(patient)
+      sessions.delete(session) if patients.empty?
+    end
+  end
+
+  def create_administered_vaccination(session, patient)
+    location = session.location
+
+    attendance = nil
+
+    unless AttendanceRecord.exists?(patient:, location:)
+      attendance =
+        FactoryBot.build(:attendance_record, :present, patient:, session:)
+    end
+
+    location_name = location.name if session.clinic?
+
+    vaccination =
+      FactoryBot.build(
+        :vaccination_record,
+        :administered,
+        patient:,
+        programme:,
+        team:,
+        performed_by:,
+        session:,
+        vaccine:,
+        batch:,
+        location_name:
+      )
+
+    [attendance, vaccination]
   end
 
   def sessions
     @sessions ||=
       if session
+        raise SessionHasNoDates, session.id if session.dates.empty?
         [session]
       else
-        team.sessions.includes(
-          :location,
-          :session_programme_year_groups,
-          :team_location
-        )
+        team
+          .sessions
+          .where.not(dates: [])
+          .tap { raise NoSessionsWithDates if it.empty? }
+          .includes(:location, :session_programme_year_groups, :team_location)
+          .select { patients_for(session: it).any? }
+          .tap { raise NoSessionsWithPatients if it.empty? }
       end
   end
 
   def patients_for(session:)
+    @patients_for ||= {}
+    return @patients_for[session.id] if @patients_for.key?(session.id)
+
     academic_year = session.academic_year
 
-    session
+    @patients_for[session.id] = session
       .patients
       .includes_statuses
       .appear_in_programmes([programme], academic_year:)
