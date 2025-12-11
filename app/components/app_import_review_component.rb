@@ -43,10 +43,17 @@ class AppImportReviewComponent < ViewComponent::Base
 
   def import_issues_message
     count = @import_issues.count
-    "This upload includes #{pluralize(count, "record")} that " \
-      "#{count > 1 ? "are close matches to existing records" : "is a close match to an existing record"} " \
-      "in Mavis. If you approve the upload, you will need to resolve " \
-      "#{count > 1 ? "these records" : "this record"} in the Issues tab."
+    if Flipper.enabled?(:import_handle_issues_in_review)
+      "This upload includes #{pluralize(count, "record")} that " \
+        "#{count > 1 ? "are close matches to existing records" : "is a close match to an existing record"} " \
+        "in Mavis. Review the records below and select whether to keep " \
+        "the existing record, replace it with the uploaded record or keep both."
+    else
+      "This upload includes #{pluralize(count, "record")} that " \
+        "#{count > 1 ? "are close matches to existing records" : "is a close match to an existing record"} " \
+        "in Mavis. If you approve the upload, you will need to resolve " \
+        "#{count > 1 ? "these records" : "this record"} in the Issues tab."
+    end
   end
 
   def inter_team_message

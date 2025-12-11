@@ -28,6 +28,13 @@
 }
 
 .app-table--review {
+  .nhsuk-icon {
+    position: relative;
+    top: 3px;
+    width: nhsuk-px-to-rem(19);
+    height: nhsuk-px-to-rem(19);
+  }
+
   .nhsuk-table__row:has(:checked) {
     background-color: nhsuk-tint(nhsuk-colour("green"), 90%);
 

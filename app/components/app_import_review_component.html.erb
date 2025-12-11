@@ -58,7 +58,11 @@
 <% end %>
 
 <% if @import_issues.any? %>
-    <h2 class="nhsuk-heading-m">Close matches to existing records - resolve after import</h2>
+    <% if Flipper.enabled?(:import_handle_issues_in_review) %>
+        <h2 class="nhsuk-heading-m">Close matches to existing records</h2>
+    <% else %>
+        <h2 class="nhsuk-heading-m">Close matches to existing records - resolve after import</h2>
+    <% end %>
     <p class="nhsuk-u-reading-width">
         <%= import_issues_message %>
     </p>
