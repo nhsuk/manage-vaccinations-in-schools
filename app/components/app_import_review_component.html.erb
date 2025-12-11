@@ -39,11 +39,11 @@
     <% end %>
 
     <% if @inter_team_import_issues.any? %>
-        <%= render AppDetailsComponent.new(expander: true, sticky: true) do |c| %>
-            <% c.with_summary do %>
+        <%= render AppCardComponent.new do |c| %>
+            <% c.with_heading(level: 4) do %>
                 <%= pluralize(@inter_team_import_issues.count, "close match") %> to existing records
             <% end %>
-            <%= render AppImportReviewIssuesSummaryComponent.new(import: @import, records: @inter_team_import_issues) %>
+            <%= render AppImportReviewIssuesSummaryComponent.new(import: @import, records: @inter_team_import_issues, form: @form) %>
         <% end %>
     <% end %> 
 <% end %>  
@@ -53,11 +53,11 @@
     <p class="nhsuk-u-reading-width">
         <%= import_issues_message %>
     </p>
-    <%= render AppDetailsComponent.new(expander: true, sticky: true) do |c| %>
-        <% c.with_summary do %>
+    <%= render AppCardComponent.new do |c| %>
+        <% c.with_heading(level: 4) do %>
             <%= pluralize(@import_issues.count, "close match") %> to existing records
         <% end %>
-        <%= render AppImportReviewIssuesSummaryComponent.new(import: @import, records: @import_issues) %>
+        <%= render AppImportReviewIssuesSummaryComponent.new(import: @import, records: @import_issues, form: @form) %>
     <% end %>
 <% end %>
 
@@ -77,10 +77,7 @@
 <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
 <div class="nhsuk-button-group">
-    <%= link_to approve_button_text, polymorphic_path([:approve, @import]),
-                method: :post,
-                class: "nhsuk-button",
-                data: { turbo_method: :post } %>
+    <%= @form.govuk_submit(approve_button_text) %>
     <%= link_to cancel_button_text, polymorphic_path([:cancel, @import]),
                 method: :post,
                 class: "nhsuk-button nhsuk-button--secondary",

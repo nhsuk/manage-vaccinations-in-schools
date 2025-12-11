@@ -103,9 +103,31 @@ class CohortImportsController < ApplicationController
   end
 
   def approve
+    if Flipper.enabled?(:import_handle_issues_in_review)
+      @cohort_import.assign_attributes(cohort_import_params)
+
+      unless @cohort_import.valid?(:review)
+        @validation_failed = true
+        set_review_records
+        render template: "imports/show",
+               layout: "full",
+               locals: {
+                 import: @cohort_import
+               }
+        return
+      end
+    end
+
     @cohort_import.reviewed_by_user_ids << current_user.id
     @cohort_import.reviewed_at << Time.zone.now
     @cohort_import.committing!
+
+    @cohort_import.changesets.each do |changeset|
+      changeset.data["review"] ||= {}
+      changeset.data["review"]["patient"] ||= {}
+      changeset.data["review"]["patient"]["decision"] = changeset.decision
+      changeset.save!
+    end
 
     @cohort_import.commit_changesets(
       @cohort_import.changesets.from_file.in_review
@@ -151,7 +173,10 @@ class CohortImportsController < ApplicationController
   end
 
   def cohort_import_params
-    params.fetch(:cohort_import, {}).permit(:csv)
+    params.fetch(:cohort_import, {}).permit(
+      :csv,
+      changesets_attributes: %i[id decision]
+    )
   end
 
   def set_review_records

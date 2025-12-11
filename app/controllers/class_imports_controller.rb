@@ -104,9 +104,31 @@ class ClassImportsController < ApplicationController
   end
 
   def approve
+    if Flipper.enabled?(:import_handle_issues_in_review)
+      @class_import.assign_attributes(class_import_params)
+
+      unless @class_import.valid?(:review)
+        @validation_failed = true
+        set_review_records
+        render template: "imports/show",
+               layout: "full",
+               locals: {
+                 import: @class_import
+               }
+        return
+      end
+    end
+
     @class_import.reviewed_by_user_ids << current_user.id
     @class_import.reviewed_at << Time.zone.now
     @class_import.committing!
+
+    @class_import.changesets.each do |changeset|
+      changeset.data["review"] ||= {}
+      changeset.data["review"]["patient"] ||= {}
+      changeset.data["review"]["patient"]["decision"] = changeset.decision
+      changeset.save!
+    end
 
     @class_import.changesets.not_from_file.in_review.update_all(
       status: :committing
@@ -172,7 +194,10 @@ class ClassImportsController < ApplicationController
   end
 
   def class_import_params
-    params.fetch(:class_import, {}).permit(:csv)
+    params.fetch(:class_import, {}).permit(
+      :csv,
+      changesets_attributes: %i[id decision]
+    )
   end
 
   def set_review_records

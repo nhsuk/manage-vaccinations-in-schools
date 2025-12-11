@@ -26,3 +26,13 @@
   color: $nhsuk-secondary-text-colour;
   background-color: nhsuk-colour("grey-5");
 }
+
+.app-table--review {
+  .nhsuk-table__row:has(:checked) {
+    background-color: nhsuk-tint(nhsuk-colour("green"), 90%);
+
+    .nhsuk-table__cell {
+      border-bottom-color: nhsuk-tint(nhsuk-colour("green"), 40%);
+    }
+  }
+}

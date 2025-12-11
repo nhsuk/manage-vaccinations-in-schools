@@ -6,14 +6,38 @@
 <% end %>
 
 <% if import.in_review? %>
-  <%= h1 "Review and approve upload (#{import.created_at.to_fs(:long)})" %>
+  <% if defined?(@validation_failed) && @validation_failed %>
+    <script>
+      if (history.replaceState) {
+        history.replaceState(null, '', '<%= polymorphic_path(import) %>');
+      }
+    </script>
+  <% end %>
+  <%= form_with model: import,
+                url: polymorphic_path([:approve, import]),
+                builder: GOVUKDesignSystemFormBuilder::FormBuilder,
+                method: :post do |f| %>
+
+    <%= f.govuk_error_summary %>
+    <%= h1 "Review and approve upload (#{import.created_at.to_fs(:long)})" %>
+    <%= render AppImportSummaryComponent.new(import: import) %>
+    <%= render AppImportReviewComponent.new(
+          import:,
+          inter_team: @inter_team,
+          new_records: @new_records,
+          auto_matched_records: @auto_matched_records,
+          import_issues: @import_issues,
+          school_moves: @school_moves,
+          form: f,
+        ) %>
+  <% end %>
 <% elsif import.in_re_review? %>
   <%= h1 "Further review and approve upload (#{import.created_at.to_fs(:long)})" %>
 <% else %>
   <%= h1 "Upload (#{import.created_at.to_fs(:long)})" %>
 <% end %>
 
-<%= render AppImportSummaryComponent.new(import: import) %>
+<%= render AppImportSummaryComponent.new(import: import) unless import.in_review? %>
 
 <% if import.rows_are_invalid? || import.changesets_are_invalid? %>
   <%= render AppImportErrorsComponent.new(errors: import.errors) do %>
@@ -55,17 +79,6 @@
       <%= render AppImportPDSUnmatchedSummaryComponent.new(changesets: import.changesets.without_pds_match) %>
     </div>
   </details>
-<% end %>
-
-<% if import.in_review? %>
-  <%= render AppImportReviewComponent.new(
-        import:,
-        inter_team: @inter_team,
-        new_records: @new_records,
-        auto_matched_records: @auto_matched_records,
-        import_issues: @import_issues,
-        school_moves: @school_moves,
-      ) %>
 <% end %>
 
 <% if import.processed? || import.partially_processed? %>

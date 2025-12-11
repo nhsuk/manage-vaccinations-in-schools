@@ -8,7 +8,13 @@ class PatientImport < ApplicationRecord
 
   self.abstract_class = true
 
-  has_many :patient_changesets
+  has_many :changesets,
+           class_name: "PatientChangeset",
+           as: :import,
+           dependent: :destroy
+
+  accepts_nested_attributes_for :changesets
+  validate :all_changesets_must_have_decisions, on: :review
 
   def count_column(patient, parents, parent_relationships)
     if patient.new_record? || parents.any?(&:new_record?) ||
@@ -255,6 +261,17 @@ class PatientImport < ApplicationRecord
       "row #{other_row_numbers.first}"
     else
       "rows #{other_row_numbers[0..-2].join(", ")} and #{other_row_numbers[-1]}"
+    end
+  end
+
+  def all_changesets_must_have_decisions
+    changesets.each do |changeset|
+      next unless changeset.requires_decision?
+
+      if changeset.decision.blank?
+        errors.add(:base, "All records requiring review must have a decision")
+        break
+      end
     end
   end
 end
