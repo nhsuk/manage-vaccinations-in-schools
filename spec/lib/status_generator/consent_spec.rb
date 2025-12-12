@@ -475,4 +475,137 @@ describe StatusGenerator::Consent do
       it { should be(true) }
     end
   end
+
+  describe "#disease_types" do
+    subject { generator.disease_types }
+
+    context "with no consent" do
+      it { should be_empty }
+    end
+
+    context "with an invalidated consent" do
+      before { create(:consent, :invalidated, patient:, programme:) }
+
+      it { should be_empty }
+    end
+
+    context "with a not provided consent" do
+      before { create(:consent, :not_provided, patient:, programme:) }
+
+      it { should be_empty }
+    end
+
+    context "with both an invalidated and not provided consent" do
+      before do
+        create(:consent, :invalidated, patient:, programme:)
+        create(:consent, :not_provided, patient:, programme:)
+      end
+
+      it { should be_empty }
+    end
+
+    context "with a refused consent" do
+      before { create(:consent, :refused, patient:, programme:) }
+
+      it { should be_empty }
+    end
+
+    context "with MMR disease types" do
+      let(:disease_types) { Programme::DISEASE_TYPES["mmr"] }
+
+      before { create(:consent, :given, patient:, programme:, disease_types:) }
+
+      it { should eq(disease_types) }
+    end
+
+    context "with conflicting consent" do
+      before do
+        create(:consent, :given, patient:, programme:)
+        create(
+          :consent,
+          :refused,
+          patient:,
+          programme:,
+          parent: create(:parent)
+        )
+      end
+
+      it { should be_empty }
+    end
+
+    context "with an invalidated refused and given consent" do
+      let(:refused_disease_types) { ProgrammeVariant::DISEASE_TYPES["mmrv"] }
+      let(:given_disease_types) { Programme::DISEASE_TYPES["mmr"] }
+
+      before do
+        create(
+          :consent,
+          :refused,
+          :invalidated,
+          patient:,
+          programme:,
+          disease_types: refused_disease_types
+        )
+        create(
+          :consent,
+          :given,
+          patient:,
+          programme:,
+          disease_types: given_disease_types
+        )
+      end
+
+      it { should eq(given_disease_types) }
+    end
+
+    context "with self-consent" do
+      let(:disease_types) { Programme::DISEASE_TYPES["mmr"] }
+
+      before do
+        create(
+          :consent,
+          :self_consent,
+          :given,
+          patient:,
+          programme:,
+          disease_types:
+        )
+      end
+
+      it { should eq(disease_types) }
+
+      context "and refused parental consent" do
+        before do
+          create(:consent, :refused, patient:, programme:, disease_types:)
+        end
+
+        it { should eq(disease_types) }
+      end
+
+      context "and conflicting parental consent" do
+        let(:refused_disease_types) { ProgrammeVariant::DISEASE_TYPES["mmrv"] }
+        let(:given_disease_types) { Programme::DISEASE_TYPES["mmr"] }
+
+        before do
+          create(
+            :consent,
+            :refused,
+            patient:,
+            programme:,
+            disease_types: refused_disease_types
+          )
+          create(
+            :consent,
+            :given,
+            patient:,
+            programme:,
+            parent: create(:parent),
+            disease_types: given_disease_types
+          )
+        end
+
+        it { should eq(given_disease_types) }
+      end
+    end
+  end
 end

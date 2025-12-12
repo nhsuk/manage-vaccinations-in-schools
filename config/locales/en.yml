@@ -61,6 +61,7 @@ en:
               inclusion: Choose how the response was given
             without_gelatine:
               inclusion: Select yes or no
+
         draft_import:
           attributes:
             academic_year:
