@@ -40,8 +40,6 @@ class DraftSession
     steps << :school if school? && !editing?
 
     steps << :programmes
-    steps << :programmes_check if school?
-
     steps << :year_groups if school? && !editing?
 
     steps << :dates

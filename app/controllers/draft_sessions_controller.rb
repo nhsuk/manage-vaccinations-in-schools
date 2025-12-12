@@ -10,10 +10,7 @@ class DraftSessionsController < ApplicationController
   before_action :set_programmes, if: -> { current_step == :programmes }
   before_action :set_year_group_options, if: -> { current_step == :year_groups }
 
-  with_options only: :show,
-               if: -> do
-                 %i[dates_check programmes_check].include?(current_step)
-               end do
+  with_options only: :show, if: -> { current_step == :dates_check } do
     before_action :set_catch_up_year_groups
     before_action :set_catch_up_patients_vaccinated_percentage
     before_action :set_catch_up_patients_receiving_consent_requests_count
@@ -27,10 +24,7 @@ class DraftSessionsController < ApplicationController
   def show
     authorize @session, @session.new_record? ? :new? : :edit?
 
-    if (current_step == :dates_check && should_skip_dates_check?) ||
-         (current_step == :programmes_check && should_skip_programmes_check?)
-      skip_step
-    end
+    skip_step if current_step == :dates_check && should_skip_dates_check?
 
     render_wizard
   end
@@ -278,7 +272,6 @@ class DraftSessionsController < ApplicationController
       programmes: {
         programme_types: []
       },
-      programmes_check: [],
       register_attendance: %i[requires_registration],
       school: %i[location_id],
       year_groups: {
@@ -332,11 +325,6 @@ class DraftSessionsController < ApplicationController
       return false
     end
 
-    if current_step == :programmes && steps.include?("programmes-check") &&
-         !should_skip_programmes_check?
-      return false
-    end
-
     # If we're creating a new session, then we skip a few of the later steps
     # in the journey, but users can go to them via the check and confirm page.
 
@@ -367,17 +355,6 @@ class DraftSessionsController < ApplicationController
       end
 
     !any_programme_has_high_unvaccinated_count
-  end
-
-  def should_skip_programmes_check?
-    return true if @draft_session.new_programmes.empty?
-
-    any_new_programme_has_high_unvaccinated_count =
-      @draft_session.new_programmes.any? do |programme|
-        programme_has_high_unvaccinated_count?(programme)
-      end
-
-    !any_new_programme_has_high_unvaccinated_count
   end
 
   def programme_has_high_unvaccinated_count?(programme)
