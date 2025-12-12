@@ -6,16 +6,16 @@ describe "Import class lists - Moving patients" do
   scenario "User uploads a file and moves patients to a new session" do
     given_an_hpv_programme_is_underway
 
-    when_i_visit_a_session_page_for_the_hpv_programme
-    and_i_start_adding_children_to_the_session
+    when_i_visit_a_school_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_school
     and_i_select_the_year_groups
     then_i_should_see_the_import_page
 
     when_i_upload_a_valid_file
     then_i_should_see_the_import_complete_page
 
-    when_i_visit_a_different_session_page_for_the_hpv_programme
-    and_i_start_adding_children_to_the_session
+    when_i_visit_a_different_school_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_school
     and_i_select_the_year_groups
     and_i_upload_a_valid_file
     then_i_should_see_the_import_complete_page
@@ -33,16 +33,16 @@ describe "Import class lists - Moving patients" do
   scenario "User uploads a file and moves patients to a new session from a different team" do
     given_an_hpv_programme_is_underway
 
-    when_i_visit_a_session_page_for_the_hpv_programme
-    and_i_start_adding_children_to_the_session
+    when_i_visit_a_school_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_school
     and_i_select_the_year_groups
     then_i_should_see_the_import_page
 
     when_i_upload_a_valid_file
     then_i_should_see_the_import_complete_page
 
-    when_i_visit_a_different_session_page_from_the_second_team_for_the_hpv_programme
-    and_i_start_adding_children_to_the_session
+    when_i_visit_a_different_school_page_from_the_second_team_for_the_hpv_programme
+    and_i_start_adding_children_to_the_school
     and_i_select_the_year_groups
     and_i_upload_a_valid_file
     then_i_should_see_the_import_complete_page
@@ -70,16 +70,16 @@ describe "Import class lists - Moving patients" do
       and_pds_lookup_during_import_is_enabled
       and_import_review_screen_is_enabled
 
-      when_i_visit_a_session_page_for_the_hpv_programme
-      and_i_start_adding_children_to_the_session
+      when_i_visit_a_school_page_for_the_hpv_programme
+      and_i_start_adding_children_to_the_school
       and_i_select_the_year_groups
       then_i_should_see_the_import_page
 
       when_i_upload_a_valid_file
       then_i_should_see_the_import_complete_page
 
-      when_i_visit_a_different_session_page_for_the_hpv_programme
-      and_i_start_adding_children_to_the_session
+      when_i_visit_a_different_school_page_for_the_hpv_programme
+      and_i_start_adding_children_to_the_school
       and_i_select_the_year_groups
       and_i_upload_a_valid_file
       then_i_should_see_the_import_complete_page
@@ -99,16 +99,16 @@ describe "Import class lists - Moving patients" do
       and_pds_lookup_during_import_is_enabled
       and_import_review_screen_is_enabled
 
-      when_i_visit_a_session_page_for_the_hpv_programme
-      and_i_start_adding_children_to_the_session
+      when_i_visit_a_school_page_for_the_hpv_programme
+      and_i_start_adding_children_to_the_school
       and_i_select_the_year_groups
       then_i_should_see_the_import_page
 
       when_i_upload_a_valid_file
       then_i_should_see_the_import_complete_page
 
-      when_i_visit_a_different_session_page_from_the_second_team_for_the_hpv_programme
-      and_i_start_adding_children_to_the_session
+      when_i_visit_a_different_school_page_from_the_second_team_for_the_hpv_programme
+      and_i_start_adding_children_to_the_school
       and_i_select_the_year_groups
       and_i_upload_a_valid_file(review: true)
       then_i_should_see_the_import_review_page_with_school_moves
@@ -221,34 +221,28 @@ describe "Import class lists - Moving patients" do
     Flipper.enable(:import_review_screen)
   end
 
-  def when_i_visit_a_session_page_for_the_hpv_programme
+  def when_i_visit_a_school_page_for_the_hpv_programme
     sign_in @user
     visit "/dashboard"
-    click_on "Sessions", match: :first
-    choose "Unscheduled"
-    click_on "Update results"
+    click_on "Schools", match: :first
     click_on "Waterloo Road"
   end
 
-  def when_i_visit_a_different_session_page_for_the_hpv_programme
+  def when_i_visit_a_different_school_page_for_the_hpv_programme
     visit "/dashboard"
-    click_on "Sessions", match: :first
-    choose "Unscheduled"
-    click_on "Update results"
+    click_on "Schools", match: :first
     click_on "Different Road"
   end
 
-  def when_i_visit_a_different_session_page_from_the_second_team_for_the_hpv_programme
+  def when_i_visit_a_different_school_page_from_the_second_team_for_the_hpv_programme
     sign_in @second_user
     visit "/team"
     visit "/dashboard"
-    click_on "Sessions", match: :first
-    choose "Unscheduled"
-    click_on "Update results"
+    click_on "Schools", match: :first
     click_on "Second Team School"
   end
 
-  def and_i_start_adding_children_to_the_session
+  def and_i_start_adding_children_to_the_school
     click_on "Import class lists"
   end
 
@@ -275,10 +269,6 @@ describe "Import class lists - Moving patients" do
   end
 
   alias_method :and_i_upload_a_valid_file, :when_i_upload_a_valid_file
-
-  def when_i_go_to_the_upload_page
-    click_on "Import class lists"
-  end
 
   def then_i_should_see_the_import_review_page_with_school_moves
     page.refresh
