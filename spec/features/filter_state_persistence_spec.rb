@@ -120,7 +120,7 @@ describe "Filter states" do
   end
 
   def then_the_no_consent_response_filter_is_applied
-    expect(page).to have_checked_field("No response")
+    expect(page).to have_checked_field("Needs consent")
   end
 
   def then_the_consent_filters_are_applied

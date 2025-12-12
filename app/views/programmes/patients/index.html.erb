@@ -24,7 +24,6 @@
           current_team:,
           consent_statuses: %w[no_response given refused conflicts],
           triage_statuses: %w[required invite_to_clinic delay_vaccination do_not_vaccinate safe_to_vaccinate],
-          vaccination_statuses: Patient::VaccinationStatus.statuses.keys,
           year_groups: @year_groups,
         ) %>
   </div>

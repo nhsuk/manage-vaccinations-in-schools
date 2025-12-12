@@ -9,8 +9,6 @@ class Sessions::PatientsController < Sessions::BaseController
   layout "full"
 
   def show
-    @statuses = Patient::VaccinationStatus.statuses.keys - %w[not_eligible]
-
     scope =
       @session.patients.includes_statuses.includes(
         :registration_statuses,

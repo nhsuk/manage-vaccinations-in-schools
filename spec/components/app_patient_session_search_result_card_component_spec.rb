@@ -194,12 +194,6 @@ describe AppPatientSessionSearchResultCardComponent do
 
       it { should_not have_text("Vaccine type") }
     end
-
-    context "when programme status is enabled" do
-      before { Flipper.enable(:programme_status, session.team) }
-
-      it { should have_text("Programme status") }
-    end
   end
 
   context "when showing the vaccine type" do
