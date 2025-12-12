@@ -30,9 +30,18 @@ class SessionsController < ApplicationController
     @draft_session.clear_attributes
     @draft_session.assign_attributes(create_params)
 
+    if params[:school_id].present?
+      @draft_session.location_type = "school"
+      @draft_session.location_id = params[:school_id]
+      @draft_session.return_to = "school"
+    else
+      @draft_session.return_to = "sessions"
+    end
+
     @draft_session.save!
 
-    redirect_to draft_session_path(Wicked::FIRST_STEP)
+    first_step = params[:school_id].present? ? "programmes" : Wicked::FIRST_STEP
+    redirect_to draft_session_path(first_step)
   end
 
   def show

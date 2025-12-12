@@ -188,7 +188,7 @@ class DraftSessionsController < ApplicationController
       elsif @draft_session.editing?
         wizard_path("confirm")
       elsif current_step == @draft_session.wizard_steps.first
-        schools_path
+        @draft_session.return_to == "school" ? schools_path : sessions_path
       else
         previous_wizard_path
       end

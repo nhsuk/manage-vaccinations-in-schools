@@ -8,6 +8,8 @@
 
 <%= render "header" %>
 
+<%= govuk_button_link_to "Add a new session", new_session_path(school_id: @location.id), secondary: true %>
+
 <% if @scheduled_sessions.present? %>
   <h3 class="nhsuk-heading-m">Scheduled sessions</h3>
 
