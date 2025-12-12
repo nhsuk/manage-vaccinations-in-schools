@@ -86,7 +86,7 @@ jobs:
   end-to-end:
     name: End to End
     needs: run-test-suites-check
-    if: needs.run-test-suites-check.outputs.run-test-suites == 'true'
+    if: ${{ needs.run-test-suites-check.outputs.run-test-suites == 'true' && github.event_name != 'push' }}
     permissions:
       id-token: write
       contents: write
