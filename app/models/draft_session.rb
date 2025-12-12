@@ -10,8 +10,10 @@ class DraftSession
   include DaysBeforeToWeeksBefore
   include Delegatable
 
+  attribute :academic_year, :integer
   attribute :days_before_consent_reminders, :integer
   attribute :location_id, :integer
+  attribute :location_type, :string
   attribute :national_protocol_enabled, :boolean
   attribute :programme_types, array: true, default: []
   attribute :psd_enabled, :boolean
@@ -20,6 +22,8 @@ class DraftSession
   attribute :send_consent_requests_at, :date
   attribute :send_invitations_at, :date
   attribute :session_dates, array: true, default: []
+  attribute :team_id, :integer
+  attribute :year_groups, array: true, default: []
 
   serialize :session_dates, coder: DraftSessionDate::ArraySerializer
 
@@ -29,15 +33,21 @@ class DraftSession
   end
 
   def wizard_steps
-    steps = %i[dates]
-    steps << :dates_check if school?
+    steps = []
+
+    steps << :location_type unless editing?
+
+    steps << :school if school? && !editing?
 
     steps << :programmes
-    steps << :programmes_check if school?
+    steps << :year_groups if school? && !editing?
+
+    steps << :dates
+    steps << :dates_check if school?
 
     if include_notification_steps?
       steps += %i[consent_requests consent_reminders] if school?
-      steps << :invitations if clinic?
+      steps << :invitations if generic_clinic?
     end
 
     steps << :register_attendance
@@ -47,13 +57,25 @@ class DraftSession
     steps + %i[confirm]
   end
 
-  on_wizard_step :dates, exact: true do
-    validate :valid_session_dates
+  on_wizard_step :location_type, exact: true do
+    validates :location_type, inclusion: %w[generic_clinic school]
+  end
+
+  on_wizard_step :school, exact: true do
+    validates :location_id, inclusion: { in: :valid_school_ids }
   end
 
   on_wizard_step :programmes, exact: true do
     validates :programme_types, presence: true
     validate :cannot_remove_programmes
+  end
+
+  on_wizard_step :year_groups, exact: true do
+    validates :year_groups, presence: true
+  end
+
+  on_wizard_step :dates, exact: true do
+    validate :valid_session_dates
   end
 
   on_wizard_step :consent_requests, exact: true do
@@ -90,6 +112,10 @@ class DraftSession
       SessionPolicy::Scope.new(@current_user, Session).resolve.find(editing_id)
   end
 
+  def session=(value)
+    self.editing_id = value.id
+  end
+
   def location
     return nil if location_id.nil?
 
@@ -100,24 +126,56 @@ class DraftSession
         .find(location_id)
   end
 
+  def team
+    return nil if team_id.nil?
+
+    @team ||= TeamPolicy::Scope.new(@current_user, Team).resolve.find(team_id)
+  end
+
+  def team_location
+    @team_location ||= TeamLocation.find_by!(team:, location:, academic_year:)
+  end
+
+  delegate :id, to: :team_location, prefix: true
+
+  def generic_clinic? = location_type == "generic_clinic"
+
+  def school? = location_type == "school"
+
   def programmes = Programme.find_all(programme_types)
+
+  def new_programmes = Programme.find_all(new_programme_types)
+
+  def patient_locations
+    @patient_locations ||=
+      PatientLocation.where(location_id:, academic_year:).includes(:patient)
+  end
 
   def programme_types=(values)
     super(values&.compact_blank || [])
   end
 
-  def session_programme_year_groups
-    @session_programme_year_groups ||=
-      session.session_programme_year_groups.to_a +
-        new_programmes.flat_map do |programme|
-          programme.default_year_groups.map do |year_group|
-            Session::ProgrammeYearGroup.new(session:, programme:, year_group:)
-          end
-        end
+  def year_groups=(values)
+    super(values&.compact_blank&.filter_map(&:to_i) || [])
   end
 
-  def year_groups
-    session_programme_year_groups.map(&:year_group).sort.uniq
+  def session_programme_year_groups
+    @session_programme_year_groups ||=
+      location
+        .location_programme_year_groups
+        .includes(:location_year_group)
+        .filter_map do |location_programme_year_group|
+          year_group = location_programme_year_group.year_group
+          programme_type = location_programme_year_group.programme_type
+
+          if programme_type.in?(programme_types) && year_group.in?(year_groups)
+            Session::ProgrammeYearGroup.find_or_initialize_by(
+              session:,
+              programme_type:,
+              year_group:
+            )
+          end
+        end
   end
 
   def programmes_for(year_group: nil, patient: nil)
@@ -139,7 +197,7 @@ class DraftSession
 
   def set_notification_dates
     if earliest_date
-      if clinic?
+      if generic_clinic?
         self.days_before_consent_reminders = nil
         self.send_consent_requests_at = nil
         self.send_invitations_at =
@@ -178,52 +236,62 @@ class DraftSession
     session.dates = dates.sort.uniq
   end
 
-  def create_location_programme_year_groups!
-    programmes_to_create =
-      new_programmes.reject do |programme|
-        location.location_programme_year_groups.exists?(
-          programme_type: programme.type
-        )
+  def create_session_programme_year_groups!(session)
+    session_programme_year_groups
+      .select(&:new_record?)
+      .each do
+        it.session = session
+        it.save!
       end
-
-    location.import_default_programme_year_groups!(
-      programmes_to_create,
-      academic_year:
-    )
   end
 
-  def sync_location_programme_year_groups!(session)
-    session.sync_location_programme_year_groups!(
-      programmes: (session.programmes + new_programmes).sort.uniq
-    )
-  end
-
-  def new_programmes
-    @new_programmes ||= Programme.find_all(new_programme_types)
+  def human_enum_name(attribute)
+    Session.human_enum_name(attribute, send(attribute))
   end
 
   private
 
-  delegate :academic_year, :patient_locations, :team, to: :session
-  delegate :clinic?, :school?, to: :location
-
   def request_session_key = "session"
+
+  def reset_unused_attributes
+    if location_type == "generic_clinic"
+      self.location_id = team.generic_clinic.id
+      self.year_groups = Location::YearGroup::CLINIC_VALUE_RANGE.to_a
+    end
+  end
 
   def readable_attribute_names
     super - %w[dates return_to session_dates]
   end
 
   def writable_attribute_names
-    super - %w[dates location_id programme_types return_to session_dates]
+    super -
+      %w[
+        academic_year
+        dates
+        location_id
+        location_type
+        programme_types
+        return_to
+        session_dates
+        team_id
+        year_groups
+      ] + %w[team_location_id]
   end
 
   def include_notification_steps?
-    dates.present? && session.consent_notifications.empty? &&
-      session.session_notifications.empty?
+    dates.present? &&
+      (
+        session.nil? ||
+          (
+            session.consent_notifications.empty? &&
+              session.session_notifications.empty?
+          )
+      )
   end
 
   def new_programme_types
-    @new_programme_types ||= programme_types - session.programme_types
+    @new_programme_types ||= programme_types - (session&.programme_types || [])
   end
 
   def valid_session_dates
@@ -261,9 +329,19 @@ class DraftSession
   end
 
   def cannot_remove_programmes
-    if (session.programme_types - programme_types).present?
+    if editing? && (session.programme_types - programme_types).present?
       errors.add(:programme_types, :inclusion)
     end
+  end
+
+  def valid_school_ids
+    LocationPolicy::Scope
+      .new(@current_user, Location)
+      .resolve
+      .school
+      .joins(:team_locations)
+      .where(team_locations: { team:, academic_year: })
+      .pluck(:"locations.id")
   end
 
   def earliest_date = dates.min
@@ -281,11 +359,15 @@ class DraftSession
     (earliest_date - send_consent_requests_at).to_i / 7
   end
 
+  def academic_year_date_range
+    academic_year.to_academic_year_date_range
+  end
+
   def earliest_possible_session_date_value
-    Date.new(@session.academic_year, 9, 1)
+    academic_year_date_range.begin
   end
 
   def latest_possible_session_date_value
-    Date.new(@session.academic_year + 1, 8, 31)
+    academic_year_date_range.end
   end
 end

@@ -44,4 +44,8 @@ class Location::YearGroup < ApplicationRecord
   scope :pluck_values, -> { distinct.order(:value).pluck(:value) }
 
   def birth_academic_year = value.to_birth_academic_year(academic_year:)
+
+  def programmes
+    location_programme_year_groups.map(&:programme).sort.uniq
+  end
 end

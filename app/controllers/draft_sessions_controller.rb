@@ -6,10 +6,11 @@ class DraftSessionsController < ApplicationController
 
   include WizardControllerConcern
 
-  with_options only: :show,
-               if: -> do
-                 %i[dates_check programmes_check].include?(current_step)
-               end do
+  before_action :set_schools, if: -> { current_step == :school }
+  before_action :set_programmes, if: -> { current_step == :programmes }
+  before_action :set_year_group_options, if: -> { current_step == :year_groups }
+
+  with_options only: :show, if: -> { current_step == :dates_check } do
     before_action :set_catch_up_year_groups
     before_action :set_catch_up_patients_vaccinated_percentage
     before_action :set_catch_up_patients_receiving_consent_requests_count
@@ -21,26 +22,28 @@ class DraftSessionsController < ApplicationController
   skip_after_action :verify_policy_scoped
 
   def show
-    authorize @session, :edit?
+    authorize @session, @session.new_record? ? :new? : :edit?
+
+    skip_step if current_step == :dates_check && should_skip_dates_check?
 
     render_wizard
   end
 
   def update
-    authorize @session, :update?
-
-    jump_to("confirm") if @draft_session.editing? && current_step != :confirm
+    authorize @session, @session.new_record? ? :create? : :update?
 
     case current_step
     when :dates
       handle_dates
-    when :programmes
-      handle_programmes
     when :confirm
       handle_confirm
     else
       @draft_session.assign_attributes(update_params)
     end
+
+    jump_to("confirm") if go_to_confirm_after_submission?
+
+    reload_steps
 
     render_wizard @draft_session
   end
@@ -52,11 +55,57 @@ class DraftSessionsController < ApplicationController
   end
 
   def set_session
-    @session = @draft_session.session
+    @session = @draft_session.session || Session.new
   end
 
   def set_steps
     self.steps = @draft_session.wizard_steps
+  end
+
+  def set_schools
+    @schools =
+      policy_scope(Location)
+        .school
+        .joins(:team_locations)
+        .where(
+          team_locations: {
+            team: @draft_session.team,
+            academic_year: @draft_session.academic_year
+          }
+        )
+  end
+
+  def set_programmes
+    @programmes = @draft_session.location.programmes & current_team.programmes
+  end
+
+  def set_year_group_options
+    programmes_in_session = @draft_session.programmes
+
+    @year_group_options =
+      @draft_session
+        .location
+        .location_year_groups
+        .includes(:location_programme_year_groups)
+        .where(academic_year: @draft_session.academic_year)
+        .order(:value)
+        .map do |location_year_group|
+          value = location_year_group.value
+          text = helpers.format_year_group(value)
+
+          missing_programmes =
+            programmes_in_session - location_year_group.programmes
+          only_programmes = programmes_in_session - missing_programmes
+
+          hint =
+            if only_programmes == programmes_in_session
+              nil
+            else
+              "#{only_programmes.map(&:name).to_sentence} only"
+            end
+
+          OpenStruct.new(value:, text:, hint:)
+        end
   end
 
   def set_catch_up_year_groups
@@ -128,17 +177,19 @@ class DraftSessionsController < ApplicationController
 
   def set_back_link_path
     @back_link_path =
-      if current_step == :confirm
+      if @draft_session.editing? && current_step == :confirm
         finish_wizard_path
-      else
+      elsif @draft_session.editing?
         wizard_path("confirm")
+      elsif current_step == @draft_session.wizard_steps.first
+        @draft_session.return_to == "school" ? schools_path : sessions_path
+      else
+        previous_wizard_path
       end
   end
 
   def handle_dates
     session_dates_attrs = update_params.except(:wizard_step)
-
-    check_dates = true
 
     @draft_session
       .session_dates
@@ -150,7 +201,6 @@ class DraftSessionsController < ApplicationController
         if attributes["_destroy"].present?
           @draft_session.session_dates.delete_at(index)
           jump_to("dates")
-          check_dates = false
         else
           # We need to do this here to get around the multi-parameter
           # assignment error being raised if we don't validate before
@@ -166,7 +216,6 @@ class DraftSessionsController < ApplicationController
             session_date.assign_attributes(value:)
           rescue StandardError
             session_date.errors.add(:value, :blank)
-            check_dates = false
           end
         end
       end
@@ -175,36 +224,9 @@ class DraftSessionsController < ApplicationController
     if session_dates_attrs["_add_another"].present?
       @draft_session.session_dates << DraftSessionDate.new
       jump_to("dates")
-      check_dates = false
     end
 
     @draft_session.set_notification_dates
-
-    if @draft_session.school? && check_dates
-      any_programme_has_high_unvaccinated_count =
-        @draft_session.programmes.any? do |programme|
-          programme_has_high_unvaccinated_count?(programme)
-        end
-
-      jump_to("dates-check") if any_programme_has_high_unvaccinated_count
-    end
-
-    @draft_session.wizard_step = current_step
-  end
-
-  def handle_programmes
-    @draft_session.assign_attributes(update_params)
-
-    if @draft_session.school?
-      any_new_programme_has_high_unvaccinated_count =
-        @draft_session.new_programmes.any? do |programme|
-          programme_has_high_unvaccinated_count?(programme)
-        end
-
-      if any_new_programme_has_high_unvaccinated_count
-        jump_to("programmes-check")
-      end
-    end
 
     @draft_session.wizard_step = current_step
   end
@@ -216,9 +238,11 @@ class DraftSessionsController < ApplicationController
 
     ActiveRecord::Base.transaction do
       @session.save!
-      @draft_session.create_location_programme_year_groups!
-      @draft_session.sync_location_programme_year_groups!(@session)
+      @draft_session.create_session_programme_year_groups!(@session)
     end
+
+    @draft_session.session = @session
+    @draft_session.save!
 
     patient_ids = @session.patients.pluck(:id)
     StatusUpdaterJob.perform_bulk(patient_ids.zip)
@@ -242,13 +266,17 @@ class DraftSessionsController < ApplicationController
       consent_requests: %i[send_consent_requests_at],
       dates: dates_params,
       dates_check: [],
-      programmes_check: [],
       delegation: %i[psd_enabled national_protocol_enabled],
       invitations: %i[send_invitations_at],
+      location_type: %i[location_type],
       programmes: {
         programme_types: []
       },
-      register_attendance: %i[requires_registration]
+      register_attendance: %i[requires_registration],
+      school: %i[location_id],
+      year_groups: {
+        year_groups: []
+      }
     }.fetch(current_step)
 
     params
@@ -283,6 +311,50 @@ class DraftSessionsController < ApplicationController
         object: @draft_session,
         params: update_params
       )
+  end
+
+  def go_to_confirm_after_submission?
+    # Something earlier has jumped to a specific step.
+    return false if @skip_to.present?
+
+    # After the `dates` and `programmes` steps, we have a check page which
+    # means we can't always skip straight to the confirmation page.
+
+    if current_step == :dates && steps.include?("dates-check") &&
+         !should_skip_dates_check?
+      return false
+    end
+
+    # If we're creating a new session, then we skip a few of the later steps
+    # in the journey, but users can go to them via the check and confirm page.
+
+    has_finished_initial_steps =
+      @draft_session.dates.present? && @draft_session.programmes.present? &&
+        @draft_session.year_groups.present?
+
+    if @draft_session.editing? || has_finished_initial_steps
+      return current_step != :confirm
+    end
+
+    current_step == :dates_check ||
+      (
+        current_step == :dates && steps.include?("dates-check") &&
+          should_skip_dates_check?
+      ) || (current_step == :dates && !steps.include?("dates-check"))
+  end
+
+  def should_skip_dates_check?
+    if @draft_session.editing? &&
+         @draft_session.session.dates == @draft_session.dates
+      return true
+    end
+
+    any_programme_has_high_unvaccinated_count =
+      @draft_session.programmes.any? do |programme|
+        programme_has_high_unvaccinated_count?(programme)
+      end
+
+    !any_programme_has_high_unvaccinated_count
   end
 
   def programme_has_high_unvaccinated_count?(programme)

@@ -1,0 +1,23 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: @back_link_path) %>
+<% end %>
+
+<%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= h1 "Where is this school session taking place?" %>
+
+  <%= f.govuk_select :location_id,
+                     label: { text: "Select a school" },
+                     data: { module: "app-autocomplete" } do %>
+    <%= tag.option "", value: "" %>
+    <% @schools.each do |school| %>
+      <%= tag.option school.name,
+                     value: school.id,
+                     selected: school.id == @draft_session.location_id,
+                     data: { hint: format_address_single_line(school) } %>
+    <% end %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

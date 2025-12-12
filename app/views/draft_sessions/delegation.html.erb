@@ -5,7 +5,7 @@
 <%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <span class="nhsuk-caption-l"><%= @session.location.name %></span>
+  <span class="nhsuk-caption-l"><%= @draft_session.location.name %></span>
   <%= h1 "Delegation" %>
 
   <%= f.govuk_radio_buttons_fieldset :psd_enabled,

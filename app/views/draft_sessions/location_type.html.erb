@@ -1,0 +1,16 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: @back_link_path) %>
+<% end %>
+
+<% content_for :page_title, t("helpers.legend.draft_session.location_type") %>
+
+<%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= f.govuk_collection_radio_buttons :location_type,
+                                       %w[school generic_clinic],
+                                       :itself,
+                                       legend: { size: "l", tag: "h1" } %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

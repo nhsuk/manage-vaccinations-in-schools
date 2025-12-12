@@ -130,8 +130,6 @@ describe "Import child records" do
 
     create(:school, urn: "123456", team: @team)
     @user = @team.users.first
-
-    TeamSessionsFactory.call(@team, academic_year: AcademicYear.current)
   end
 
   def and_pds_lookup_during_import_is_enabled

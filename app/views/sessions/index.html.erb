@@ -2,6 +2,10 @@
 
 <%= h1 t(".title"), size: "xl" %>
 
+<% if Flipper.enabled?(:schools_and_sessions) %>
+  <%= govuk_button_link_to "Add a new session", new_session_path, secondary: true %>
+<% end %>
+
 <div class="nhsuk-grid-row">
   <div class="app-grid-column-filters">
     <%= render AppSessionSearchFormComponent.new(
