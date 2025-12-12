@@ -99,17 +99,15 @@ class AppSessionStatsComponent < ViewComponent::Base
         when "due_nasal"
           session_patients_path(
             session,
-            programme_types: [programme.type],
+            programme_types:,
             programme_status_group: "due",
-            eligible_children: 1,
             vaccine_criteria: %w[flu_nasal flu_nasal_injection]
           )
         when "due_injection"
           session_patients_path(
             session,
-            programme_types: [programme.type],
+            programme_types:,
             programme_status_group: "due",
-            eligible_children: 1,
             vaccine_criteria: %w[flu_injection_without_gelatine]
           )
         end
@@ -118,26 +116,23 @@ class AppSessionStatsComponent < ViewComponent::Base
         when "due_no_preference"
           session_patients_path(
             session,
-            programme_types: [programme.type],
+            programme_types:,
             programme_status_group: "due",
-            eligible_children: 1,
             vaccine_criteria: %w[mmr_injection]
           )
         when "due_without_gelatine"
           session_patients_path(
             session,
-            programme_types: [programme.type],
+            programme_types:,
             programme_status_group: "due",
-            eligible_children: 1,
             vaccine_criteria: %w[mmr_injection_without_gelatine]
           )
         end
       else
         session_patients_path(
           session,
-          programme_types: [programme.type],
+          programme_types:,
           programme_status_group: key,
-          eligible_children: 1,
           vaccine_criteria: []
         )
       end
@@ -149,9 +144,8 @@ class AppSessionStatsComponent < ViewComponent::Base
     elsif key == "vaccinated"
       session_patients_path(
         session,
-        programme_types: [programme.type],
-        vaccination_status: "vaccinated",
-        eligible_children: 1
+        programme_types:,
+        vaccination_status: "vaccinated"
       )
     end
   end

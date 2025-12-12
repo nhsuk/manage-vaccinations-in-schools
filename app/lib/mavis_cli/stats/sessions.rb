@@ -28,10 +28,7 @@ module MavisCLI
       private
 
       def build_headers(programme)
-        headers = {
-          eligible_children: "Eligible children",
-          no_response: "No response"
-        }
+        headers = { total: "Eligible children", no_response: "No response" }
 
         if programme.has_multiple_vaccine_methods?
           headers[:consent_nasal] = "Consent given for nasal spray"

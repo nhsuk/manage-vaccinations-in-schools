@@ -15,7 +15,6 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     year_groups: [],
     heading_level: 3,
     show_aged_out_of_programmes: false,
-    show_eligible_children: false,
     show_vaccine_criteria: false
   )
     @form = form
@@ -32,7 +31,6 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     @year_groups = year_groups
     @heading_level = heading_level
     @show_aged_out_of_programmes = show_aged_out_of_programmes
-    @show_eligible_children = show_eligible_children
     @show_vaccine_criteria = show_vaccine_criteria
   end
 
@@ -52,7 +50,6 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               :year_groups,
               :heading_level,
               :show_aged_out_of_programmes,
-              :show_eligible_children,
               :show_vaccine_criteria
 
   delegate :format_year_group,

@@ -26,7 +26,6 @@ module PatientSearchFormConcern
       :date_of_birth_day,
       :date_of_birth_month,
       :date_of_birth_year,
-      :eligible_children,
       :missing_nhs_number,
       :patient_specific_direction_status,
       :programme_status_group,
