@@ -9,7 +9,6 @@ class PatientSearchForm < SearchForm
   attribute :date_of_birth_day, :integer
   attribute :date_of_birth_month, :integer
   attribute :date_of_birth_year, :integer
-  attribute :eligible_children, :boolean
   attribute :missing_nhs_number, :boolean
   attribute :patient_specific_direction_status, :string
   attribute :programme_status_group, :string
@@ -72,7 +71,6 @@ class PatientSearchForm < SearchForm
     scope = filter_programme_statuses(scope)
     scope = filter_vaccine_criteria(scope)
     scope = filter_patient_specific_direction_status(scope)
-    scope = filter_for_eligible_children_only(scope)
 
     scope.order_by_name
   end
@@ -341,11 +339,5 @@ class PatientSearchForm < SearchForm
       end
 
     or_scope
-  end
-
-  def filter_for_eligible_children_only(scope)
-    return scope if eligible_children.blank?
-
-    scope.eligible_for_any_programmes_of(programmes, session:)
   end
 end
