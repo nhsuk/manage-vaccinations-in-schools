@@ -52,6 +52,18 @@ describe "Schools" do
     @secondary_patient =
       create(:patient, year_group: 7, session: @secondary_session)
 
+    @patient_in_both_schools = create(:patient, school: @secondary_school)
+    create(
+      :patient_location,
+      patient: @patient_in_both_schools,
+      session: @primary_session
+    )
+    create(
+      :patient_location,
+      patient: @patient_in_both_schools,
+      session: @secondary_session
+    )
+
     @nurse = create(:nurse, team: @team)
   end
 
@@ -71,7 +83,9 @@ describe "Schools" do
 
   def then_i_see_both_schools
     expect(page).to have_content(@primary_school.name)
+    expect(page).to have_content("Children1 child")
     expect(page).to have_content(@secondary_school.name)
+    expect(page).to have_content("Children2 children")
   end
 
   def and_i_can_see_the_unknown_school
