@@ -9,34 +9,16 @@ describe Stats::Session do
     let(:latest_location) { session.location }
 
     context "with no patients" do
-      context "with programme status enabled" do
-        before { Flipper.enable(:programme_status) }
-
-        it "returns zero counts for all stats" do
-          expect(stats).to eq(
-            total: 0,
-            needs_consent: 0,
-            needs_triage: 0,
-            has_refusal: 0,
-            cannot_vaccinate: 0,
-            due: 0,
-            vaccinated: 0
-          )
-        end
-      end
-
-      context "with programme status disabled" do
-        before { Flipper.disable(:programme_status) }
-
-        it "returns zero counts for all stats" do
-          expect(stats).to eq(
-            total: 0,
-            consent_no_response: 0,
-            consent_given_injection: 0,
-            consent_refused: 0,
-            vaccinated: 0
-          )
-        end
+      it "returns zero counts for all stats" do
+        expect(stats).to eq(
+          total: 0,
+          needs_consent: 0,
+          needs_triage: 0,
+          has_refusal: 0,
+          cannot_vaccinate: 0,
+          due: 0,
+          vaccinated: 0
+        )
       end
     end
 
@@ -99,34 +81,16 @@ describe Stats::Session do
         end
       end
 
-      context "with programme status enabled" do
-        before { Flipper.enable(:programme_status) }
-
-        it "returns correct counts for each category" do
-          expect(stats).to eq(
-            total: 5,
-            needs_consent: 1,
-            needs_triage: 0,
-            has_refusal: 2,
-            cannot_vaccinate: 0,
-            due: 1,
-            vaccinated: 1
-          )
-        end
-      end
-
-      context "with programme status disabled" do
-        before { Flipper.disable(:programme_status) }
-
-        it "returns correct counts for each category" do
-          expect(stats).to eq(
-            total: 5,
-            consent_no_response: 1,
-            consent_given_injection: 1,
-            consent_refused: 2,
-            vaccinated: 1
-          )
-        end
+      it "returns correct counts for each category" do
+        expect(stats).to eq(
+          total: 5,
+          needs_consent: 1,
+          needs_triage: 0,
+          has_refusal: 2,
+          cannot_vaccinate: 0,
+          due: 1,
+          vaccinated: 1
+        )
       end
     end
 
@@ -144,34 +108,16 @@ describe Stats::Session do
         end
       end
 
-      context "with programme status enabled" do
-        before { Flipper.enable(:programme_status) }
-
-        it "returns correct counts for each category" do
-          expect(stats).to eq(
-            total: 0,
-            needs_consent: 0,
-            needs_triage: 0,
-            has_refusal: 0,
-            cannot_vaccinate: 0,
-            due: 0,
-            vaccinated: 0
-          )
-        end
-      end
-
-      context "with programme status disabled" do
-        before { Flipper.disable(:programme_status) }
-
-        it "returns correct counts for each category" do
-          expect(stats).to eq(
-            total: 0,
-            consent_no_response: 0,
-            consent_given_injection: 0,
-            consent_refused: 0,
-            vaccinated: 0
-          )
-        end
+      it "returns correct counts for each category" do
+        expect(stats).to eq(
+          total: 0,
+          needs_consent: 0,
+          needs_triage: 0,
+          has_refusal: 0,
+          cannot_vaccinate: 0,
+          due: 0,
+          vaccinated: 0
+        )
       end
     end
 
@@ -235,24 +181,8 @@ describe Stats::Session do
         end
       end
 
-      context "with programme status enabled" do
-        before { Flipper.enable(:programme_status) }
-
-        it "returns counts broken down by vaccine method" do
-          expect(stats).to include(total: 4, due_nasal: 2, due_injection: 2)
-        end
-      end
-
-      context "with programme status disabled" do
-        before { Flipper.disable(:programme_status) }
-
-        it "returns counts broken down by vaccine method" do
-          expect(stats).to include(
-            total: 4,
-            consent_given_nasal: 2,
-            consent_given_injection_without_gelatine: 2
-          )
-        end
+      it "returns counts broken down by vaccine method" do
+        expect(stats).to include(total: 4, due_nasal: 2, due_injection: 2)
       end
     end
 
@@ -291,28 +221,12 @@ describe Stats::Session do
         end
       end
 
-      context "with programme status enabled" do
-        before { Flipper.enable(:programme_status) }
-
-        it "returns counts broken down by vaccine method" do
-          expect(stats).to include(
-            total: 2,
-            due_no_preference: 1,
-            due_without_gelatine: 1
-          )
-        end
-      end
-
-      context "with programme status disabled" do
-        before { Flipper.disable(:programme_status) }
-
-        it "returns counts broken down by vaccine method" do
-          expect(stats).to include(
-            total: 2,
-            consent_given_injection: 1,
-            consent_given_injection_without_gelatine: 1
-          )
-        end
+      it "returns counts broken down by vaccine method" do
+        expect(stats).to include(
+          total: 2,
+          due_no_preference: 1,
+          due_without_gelatine: 1
+        )
       end
     end
 

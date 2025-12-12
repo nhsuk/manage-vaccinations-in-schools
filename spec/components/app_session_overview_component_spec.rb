@@ -6,7 +6,6 @@ describe AppSessionOverviewComponent do
   let(:hpv_programme) { Programme.hpv }
   let(:flu_programme) { Programme.flu }
   let(:session) { create(:session, programmes: [hpv_programme, flu_programme]) }
-  let(:latest_location) { session.location }
 
   let(:component) { described_class.new(session) }
 
@@ -44,45 +43,20 @@ describe AppSessionOverviewComponent do
     include_examples "displays correct children due vaccination", "Flu", 0
     include_examples "displays correct children due vaccination", "HPV", 0
 
-    context "with programme status enabled" do
-      before { Flipper.enable(:programme_status) }
+    include_examples "displays correct count", "Flu", "Needs consent", 0
+    include_examples "displays correct count", "Flu", "Needs triage", 0
+    include_examples "displays correct count", "Flu", "Has a refusal", 0
+    include_examples "displays correct count", "Flu", "Unable to vaccinate", 0
+    include_examples "displays correct count", "Flu", "Due nasal spray", 0
+    include_examples "displays correct count", "Flu", "Due injection", 0
+    include_examples "displays correct count", "Flu", "Vaccinated", 0
 
-      include_examples "displays correct count", "Flu", "Needs consent", 0
-      include_examples "displays correct count", "Flu", "Needs triage", 0
-      include_examples "displays correct count", "Flu", "Has a refusal", 0
-      include_examples "displays correct count", "Flu", "Unable to vaccinate", 0
-      include_examples "displays correct count", "Flu", "Due nasal spray", 0
-      include_examples "displays correct count", "Flu", "Due injection", 0
-      include_examples "displays correct count", "Flu", "Vaccinated", 0
-
-      include_examples "displays correct count", "HPV", "Needs consent", 0
-      include_examples "displays correct count", "HPV", "Needs triage", 0
-      include_examples "displays correct count", "HPV", "Has a refusal", 0
-      include_examples "displays correct count", "HPV", "Unable to vaccinate", 0
-      include_examples "displays correct count", "HPV", "Due vaccination", 0
-      include_examples "displays correct count", "HPV", "Vaccinated", 0
-    end
-
-    context "with programme status disabled" do
-      before { Flipper.disable(:programme_status) }
-
-      include_examples "displays correct count", "Flu", "No response", 0
-      include_examples "displays correct count",
-                       "Flu",
-                       "Consent given for nasal",
-                       0
-      include_examples "displays correct count",
-                       "Flu",
-                       "Consent given for gelatine-free injection",
-                       0
-      include_examples "displays correct count", "Flu", "Consent refused", 0
-      include_examples "displays correct count", "Flu", "Vaccinated", 0
-
-      include_examples "displays correct count", "HPV", "No response", 0
-      include_examples "displays correct count", "HPV", "Consent given", 0
-      include_examples "displays correct count", "HPV", "Consent refused", 0
-      include_examples "displays correct count", "HPV", "Vaccinated", 0
-    end
+    include_examples "displays correct count", "HPV", "Needs consent", 0
+    include_examples "displays correct count", "HPV", "Needs triage", 0
+    include_examples "displays correct count", "HPV", "Has a refusal", 0
+    include_examples "displays correct count", "HPV", "Unable to vaccinate", 0
+    include_examples "displays correct count", "HPV", "Due vaccination", 0
+    include_examples "displays correct count", "HPV", "Vaccinated", 0
   end
 
   context "when a patient exists in year 9" do
@@ -91,25 +65,20 @@ describe AppSessionOverviewComponent do
     context "they have been vaccinated during the session" do
       before do
         create(
-          :patient_vaccination_status,
-          :vaccinated,
+          :patient_programme_status,
+          :vaccinated_fully,
           patient:,
-          programme: flu_programme,
-          latest_location:
+          programme: flu_programme
         )
       end
 
       include_examples "displays correct children due vaccination", "Flu", 1
-      include_examples "displays correct count", "Flu", "No response", 0
-      include_examples "displays correct count",
-                       "Flu",
-                       "Consent given for nasal",
-                       0
-      include_examples "displays correct count",
-                       "Flu",
-                       "Consent given for gelatine-free injection",
-                       0
-      include_examples "displays correct count", "Flu", "Consent refused", 0
+      include_examples "displays correct count", "Flu", "Needs consent", 0
+      include_examples "displays correct count", "Flu", "Needs triage", 0
+      include_examples "displays correct count", "Flu", "Has a refusal", 0
+      include_examples "displays correct count", "Flu", "Unable to vaccinate", 0
+      include_examples "displays correct count", "Flu", "Due nasal spray", 0
+      include_examples "displays correct count", "Flu", "Due injection", 0
       include_examples "displays correct count", "Flu", "Vaccinated", 1
     end
 
@@ -118,60 +87,59 @@ describe AppSessionOverviewComponent do
 
       before do
         create(
-          :patient_consent_status,
-          :given_without_gelatine,
+          :patient_programme_status,
+          :due_nasal,
           patient: patients.first,
           programme: flu_programme
         )
 
         create(
-          :patient_consent_status,
-          :given_nasal_only,
+          :patient_programme_status,
+          :due_injection_without_gelatine,
           patient: patients.second,
           programme: flu_programme
         )
       end
 
       include_examples "displays correct children due vaccination", "Flu", 2
-      include_examples "displays correct count", "Flu", "No response", 0
-      include_examples "displays correct count",
-                       "Flu",
-                       "Consent given for nasal",
-                       1
-      include_examples "displays correct count",
-                       "Flu",
-                       "Consent given for gelatine-free injection",
-                       1
-      include_examples "displays correct count", "Flu", "Consent refused", 0
+      include_examples "displays correct count", "Flu", "Needs consent", 0
+      include_examples "displays correct count", "Flu", "Needs triage", 0
+      include_examples "displays correct count", "Flu", "Has a refusal", 0
+      include_examples "displays correct count", "Flu", "Unable to vaccinate", 0
+      include_examples "displays correct count", "Flu", "Due nasal spray", 1
+      include_examples "displays correct count", "Flu", "Due injection", 1
       include_examples "displays correct count", "Flu", "Vaccinated", 0
     end
 
     context "there's a patient that did not consent" do
       before do
         create(
-          :patient_consent_status,
-          :refused,
+          :patient_programme_status,
+          :has_refusal_consent_refused,
           patient:,
           programme: flu_programme
         )
       end
 
       include_examples "displays correct children due vaccination", "Flu", 1
-      include_examples "displays correct count", "Flu", "No response", 0
-      include_examples "displays correct count",
-                       "Flu",
-                       "Consent given for nasal",
-                       0
-      include_examples "displays correct count",
-                       "Flu",
-                       "Consent given for gelatine-free injection",
-                       0
-      include_examples "displays correct count", "Flu", "Consent refused", 1
+      include_examples "displays correct count", "Flu", "Needs consent", 0
+      include_examples "displays correct count", "Flu", "Needs triage", 0
+      include_examples "displays correct count", "Flu", "Has a refusal", 1
+      include_examples "displays correct count", "Flu", "Unable to vaccinate", 0
+      include_examples "displays correct count", "Flu", "Due nasal spray", 0
+      include_examples "displays correct count", "Flu", "Due injection", 0
       include_examples "displays correct count", "Flu", "Vaccinated", 0
     end
 
     context "patient was vaccinated in previous years" do
       before do
+        create(
+          :patient_programme_status,
+          :vaccinated_fully,
+          patient:,
+          programme: hpv_programme,
+          academic_year: AcademicYear.current - 1
+        )
         create(
           :patient_vaccination_status,
           :vaccinated,
@@ -182,17 +150,13 @@ describe AppSessionOverviewComponent do
       end
 
       include_examples "displays correct children due vaccination", "HPV", 0
-      include_examples "displays correct count", "HPV", "No response", 0
-      include_examples "displays correct count", "HPV", "Consent given", 0
-      include_examples "displays correct count", "HPV", "Consent refused", 0
-      include_examples "displays correct count", "HPV", "Vaccinated", 0
     end
 
     context "patient had seasonal vaccination in previous years" do
       before do
         create(
-          :patient_vaccination_status,
-          :vaccinated,
+          :patient_programme_status,
+          :vaccinated_fully,
           patient:,
           programme: flu_programme,
           academic_year: AcademicYear.current - 1
@@ -200,17 +164,6 @@ describe AppSessionOverviewComponent do
       end
 
       include_examples "displays correct children due vaccination", "Flu", 1
-      include_examples "displays correct count", "Flu", "No response", 0
-      include_examples "displays correct count",
-                       "Flu",
-                       "Consent given for nasal",
-                       0
-      include_examples "displays correct count",
-                       "Flu",
-                       "Consent given for gelatine-free injection",
-                       0
-      include_examples "displays correct count", "Flu", "Consent refused", 0
-      include_examples "displays correct count", "Flu", "Vaccinated", 0
     end
 
     context "patient was vaccinated for HPV but elsewhere" do
@@ -226,10 +179,6 @@ describe AppSessionOverviewComponent do
       end
 
       include_examples "displays correct children due vaccination", "HPV", 0
-      include_examples "displays correct count", "HPV", "No response", 0
-      include_examples "displays correct count", "HPV", "Consent given", 0
-      include_examples "displays correct count", "HPV", "Consent refused", 0
-      include_examples "displays correct count", "HPV", "Vaccinated", 0
     end
 
     context "patient refused HPV vaccine elsewhere" do
@@ -244,10 +193,6 @@ describe AppSessionOverviewComponent do
       end
 
       include_examples "displays correct children due vaccination", "HPV", 1
-      include_examples "displays correct count", "HPV", "No response", 0
-      include_examples "displays correct count", "HPV", "Consent given", 0
-      include_examples "displays correct count", "HPV", "Consent refused", 0
-      include_examples "displays correct count", "HPV", "Vaccinated", 0
     end
 
     context "with multiple patients and one was vaccinated for HPV elsewhere" do
@@ -273,10 +218,6 @@ describe AppSessionOverviewComponent do
       end
 
       include_examples "displays correct children due vaccination", "HPV", 1
-      include_examples "displays correct count", "HPV", "No response", 0
-      include_examples "displays correct count", "HPV", "Consent given", 0
-      include_examples "displays correct count", "HPV", "Consent refused", 0
-      include_examples "displays correct count", "HPV", "Vaccinated", 0
     end
   end
 
@@ -285,30 +226,31 @@ describe AppSessionOverviewComponent do
 
     before do
       create(
-        :patient_consent_status,
-        :given_injection_only,
+        :patient_programme_status,
+        :has_refusal_consent_refused,
         patient: patients.first,
         programme: hpv_programme
       )
       create(
-        :patient_vaccination_status,
-        :vaccinated,
+        :patient_programme_status,
+        :cannot_vaccinate_unwell,
         programme: hpv_programme,
-        patient: patients.second,
-        latest_location:
+        patient: patients.second
       )
       create(
-        :patient_consent_status,
-        :refused,
+        :patient_programme_status,
+        :vaccinated_fully,
         programme: hpv_programme,
         patient: patients.third
       )
     end
 
     include_examples "displays correct children due vaccination", "HPV", 3
-    include_examples "displays correct count", "HPV", "No response", 0
-    include_examples "displays correct count", "HPV", "Consent given", 1
-    include_examples "displays correct count", "HPV", "Consent refused", 1
+    include_examples "displays correct count", "HPV", "Needs consent", 0
+    include_examples "displays correct count", "HPV", "Needs triage", 0
+    include_examples "displays correct count", "HPV", "Has a refusal", 1
+    include_examples "displays correct count", "HPV", "Unable to vaccinate", 1
+    include_examples "displays correct count", "HPV", "Due vaccination", 0
     include_examples "displays correct count", "HPV", "Vaccinated", 1
   end
 

@@ -57,95 +57,64 @@ class AppSessionStatsComponent < ViewComponent::Base
 
   def card_for(key, value, programme:)
     {
-      heading: card_heading_for(key, programme:),
+      heading: card_heading_for(key),
       colour: card_colour_for(key),
       count: value.to_s,
       link_to: card_link_to_for(key, programme:)
     }
   end
 
-  def card_heading_for(key, programme:)
-    if Flipper.enabled?(:programme_status, team)
-      I18n.t(key, scope: %i[status programme label])
-    elsif key.starts_with?("consent_")
-      I18n.t(key[8..], scope: %i[status consent label])
-    elsif key == "vaccinated"
-      if programme.mmr?
-        # TODO: Apply this to all multi-dose programmes (Td/IPV) once we
-        #  have confidence in the change.
-        "Fully vaccinated"
-      else
-        I18n.t("status.vaccination.label.vaccinated")
-      end
-    end
+  def card_heading_for(key)
+    I18n.t(key, scope: %i[status programme label])
   end
 
   def card_colour_for(key)
-    if Flipper.enabled?(:programme_status, team)
-      I18n.t(key, scope: %i[status programme colour])
-    elsif key.starts_with?("consent_")
-      I18n.t(key[8..], scope: %i[status consent colour])
-    elsif key == "vaccinated"
-      I18n.t("status.vaccination.colour.vaccinated")
-    end
+    I18n.t(key, scope: %i[status programme colour])
   end
 
   def card_link_to_for(key, programme:)
     programme_types = [programme.type]
 
-    if Flipper.enabled?(:programme_status, team)
-      if programme.flu? && key.starts_with?("due_")
-        case key
-        when "due_nasal"
-          session_patients_path(
-            session,
-            programme_types:,
-            programme_status_group: "due",
-            vaccine_criteria: %w[flu_nasal flu_nasal_injection]
-          )
-        when "due_injection"
-          session_patients_path(
-            session,
-            programme_types:,
-            programme_status_group: "due",
-            vaccine_criteria: %w[flu_injection_without_gelatine]
-          )
-        end
-      elsif programme.mmr? && key.starts_with?("due_")
-        case key
-        when "due_no_preference"
-          session_patients_path(
-            session,
-            programme_types:,
-            programme_status_group: "due",
-            vaccine_criteria: %w[mmr_injection]
-          )
-        when "due_without_gelatine"
-          session_patients_path(
-            session,
-            programme_types:,
-            programme_status_group: "due",
-            vaccine_criteria: %w[mmr_injection_without_gelatine]
-          )
-        end
-      else
+    if programme.flu? && key.starts_with?("due_")
+      case key
+      when "due_nasal"
         session_patients_path(
           session,
           programme_types:,
-          programme_status_group: key,
-          vaccine_criteria: []
+          programme_status_group: "due",
+          vaccine_criteria: %w[flu_nasal flu_nasal_injection]
+        )
+      when "due_injection"
+        session_patients_path(
+          session,
+          programme_types:,
+          programme_status_group: "due",
+          vaccine_criteria: %w[flu_injection_without_gelatine]
         )
       end
-    elsif key.starts_with?("consent_")
-      consent_statuses = [key[8..]]
-      consent_statuses << "conflicts" if key == "consent_refused"
-
-      session_consent_path(session, consent_statuses:, programme_types:)
-    elsif key == "vaccinated"
+    elsif programme.mmr? && key.starts_with?("due_")
+      case key
+      when "due_no_preference"
+        session_patients_path(
+          session,
+          programme_types:,
+          programme_status_group: "due",
+          vaccine_criteria: %w[mmr_injection]
+        )
+      when "due_without_gelatine"
+        session_patients_path(
+          session,
+          programme_types:,
+          programme_status_group: "due",
+          vaccine_criteria: %w[mmr_injection_without_gelatine]
+        )
+      end
+    else
       session_patients_path(
         session,
         programme_types:,
-        vaccination_status: "vaccinated"
+        programme_status_group: key,
+        vaccine_criteria: []
       )
     end
   end
