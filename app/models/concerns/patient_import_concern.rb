@@ -4,6 +4,12 @@ module PatientImportConcern
   extend ActiveSupport::Concern
 
   def import_patients_and_parents(changesets, import)
+    if Flipper.enabled?(:import_handle_issues_in_review)
+      changesets
+        .select { it.record_type == "import_issue" }
+        .each { |changeset| apply_changeset_decision(changeset) }
+    end
+
     patients = changesets.map(&:patient)
     parents = changesets.flat_map(&:parents).uniq
     relationships =
@@ -37,6 +43,31 @@ module PatientImportConcern
       }
     )
     link_records_to_import(import, ParentRelationship, relationships)
+  end
+
+  def apply_changeset_decision(changeset)
+    review_data = changeset.review_data
+    decision = review_data.dig("patient", "decision")
+
+    return if decision.blank?
+
+    patient = changeset.patient
+
+    case decision
+    when "apply"
+      patient.apply_pending_changes
+    when "discard"
+      patient.discard_pending_changes
+    when "keep_both"
+      new_patient = patient.apply_pending_changes_to_new_record
+      new_patient.discard_pending_changes
+
+      new_patient.save!
+      changeset.patient_id = new_patient.id
+      changeset.save!
+
+      changeset.reload # to reset parent relationships
+    end
   end
 
   def deduplicate_patients!(patients, relationships)

@@ -34,6 +34,9 @@
 class PatientChangeset < ApplicationRecord
   include PatientImportConcern
   include SchoolMovesHelper
+  include PendingChangesConcern
+
+  attr_accessor :decision
 
   attribute :data,
             :jsonb,
@@ -71,7 +74,8 @@ class PatientChangeset < ApplicationRecord
          ready_for_review: 4,
          committing: 5,
          needs_re_review: 6,
-         cancelled: 7
+         cancelled: 7,
+         in_review: 8
        },
        validate: true
 
@@ -388,6 +392,11 @@ class PatientChangeset < ApplicationRecord
     school_move.from_another_team?
   end
 
+  def requires_decision?
+    Flipper.enabled?(:import_handle_issues_in_review) &&
+      record_type == "import_issue" && status == "in_review"
+  end
+
   def handle_address_updates(existing_patient)
     if child_attributes["address_postcode"].present? &&
          child_attributes["address_postcode"] !=
@@ -474,6 +483,28 @@ class PatientChangeset < ApplicationRecord
     save!
   end
 
+  def dup_for_pending_changes
+    patient.dup.tap do |new_patient|
+      new_patient.nhs_number = pds_nhs_number || nhs_number
+
+      patient.patient_locations.pending.find_each do |patient_location|
+        new_patient.patient_locations.build(
+          **patient_location.slice(:academic_year, :location_id)
+        )
+      end
+
+      patient.school_moves.each do |school_move|
+        new_patient.school_moves.build(
+          academic_year: school_move.academic_year,
+          home_educated: school_move.home_educated,
+          school_id: school_move.school_id,
+          source: school_move.source,
+          team_id: school_move.team_id
+        )
+      end
+    end
+  end
+
   def clear_review_data!
     data["review"] = { patient: {}, school_move: {} }
     save!
@@ -481,5 +512,13 @@ class PatientChangeset < ApplicationRecord
 
   def reset_patient_id!
     update_column(:patient_id, nil)
+  end
+
+  def reload
+    @patient = nil
+    @parents = nil
+    @parent_relationships = nil
+    @school_move = nil
+    super
   end
 end

@@ -1,3 +1,11 @@
+<% if session[:clear_import_decisions] %>
+  <script>
+    const importData = <%= session.delete(:clear_import_decisions).to_json.html_safe %>;
+    const storageKey = `${importData.type}_${importData.id}_decisions`;
+    localStorage.removeItem(storageKey);
+  </script>
+<% end %>
+
 <%= h1 t(".title"), size: "xl" %>
 
 <%= govuk_button_to "Upload records", imports_path, secondary: true, class: "nhsuk-u-margin-bottom-4" %>

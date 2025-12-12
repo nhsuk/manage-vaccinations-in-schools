@@ -104,17 +104,44 @@ class ClassImportsController < ApplicationController
   end
 
   def approve
+    if Flipper.enabled?(:import_handle_issues_in_review)
+      @class_import.assign_attributes(class_import_params)
+
+      unless @class_import.valid?(:review)
+        @validation_failed = true
+        set_review_records
+        render template: "imports/show",
+               layout: "full",
+               locals: {
+                 import: @class_import
+               }
+        return
+      end
+    end
+
     @class_import.reviewed_by_user_ids << current_user.id
     @class_import.reviewed_at << Time.zone.now
     @class_import.committing!
 
-    @class_import.changesets.not_from_file.ready_for_review.update_all(
+    @class_import.changesets.each do |changeset|
+      changeset.data["review"] ||= {}
+      changeset.data["review"]["patient"] ||= {}
+      changeset.data["review"]["patient"]["decision"] = changeset.decision
+      changeset.save!
+    end
+
+    session[:clear_import_decisions] = {
+      type: @class_import.class.name.underscore,
+      id: @class_import.id
+    }
+
+    @class_import.changesets.not_from_file.in_review.update_all(
       status: :committing
     )
 
-    if @class_import.changesets.from_file.ready_for_review.any?
+    if @class_import.changesets.from_file.in_review.any?
       @class_import.commit_changesets(
-        @class_import.changesets.from_file.ready_for_review
+        @class_import.changesets.from_file.in_review
       )
     else
       @class_import.update_columns(
@@ -138,10 +165,10 @@ class ClassImportsController < ApplicationController
         status: :partially_processed
       )
       @class_import.save!
-      @class_import.changesets.from_file.ready_for_review.update_all(
+      @class_import.changesets.from_file.in_review.update_all(
         status: :cancelled
       )
-      @class_import.changesets.not_from_file.ready_for_review.update_all(
+      @class_import.changesets.not_from_file.in_review.update_all(
         status: :committing
       )
 
@@ -172,7 +199,10 @@ class ClassImportsController < ApplicationController
   end
 
   def class_import_params
-    params.fetch(:class_import, {}).permit(:csv)
+    params.fetch(:class_import, {}).permit(
+      :csv,
+      changesets_attributes: %i[id decision]
+    )
   end
 
   def set_review_records
@@ -190,22 +220,24 @@ class ClassImportsController < ApplicationController
           ]
         )
         .from_file
-        .ready_for_review
+        .in_review
         .select(&:inter_team_move?)
-    @new_records = @class_import.changesets.ready_for_review.new_patient
+    @new_records = @class_import.changesets.in_review.new_patient
     @auto_matched_records =
-      @class_import.changesets.ready_for_review.auto_match - @inter_team
-    @import_issues =
+      @class_import.changesets.in_review.auto_match - @inter_team
+    @import_issues_all =
       @class_import
         .changesets
-        .includes(:patient)
-        .ready_for_review
-        .import_issue - @inter_team
+        .includes(:school, patient: :school)
+        .in_review
+        .import_issue
+        .where.not(id: @inter_team.pluck(:id))
+    @import_issues_pagy, @import_issues = pagy(@import_issues_all)
     @school_moves =
       @class_import
         .changesets
         .includes(:school, patient: :school)
-        .ready_for_review
+        .in_review
         .with_school_moves - @inter_team
   end
 end

@@ -7,7 +7,10 @@ class AppImportReviewComponent < ViewComponent::Base
     new_records:,
     auto_matched_records:,
     import_issues:,
-    school_moves:
+    import_issues_pagy:,
+    import_issues_all:,
+    school_moves:,
+    form: nil
   )
     @import = import
     @inter_team = inter_team.sort_by(&:row_number)
@@ -16,7 +19,10 @@ class AppImportReviewComponent < ViewComponent::Base
     @new_records = new_records.sort_by(&:row_number)
     @auto_matched_records = auto_matched_records.sort_by(&:row_number)
     @import_issues = import_issues.sort_by(&:row_number)
+    @import_issues_pagy = import_issues_pagy
+    @import_issues_all = import_issues_all
     @school_moves = school_moves
+    @form = form
   end
 
   private
@@ -37,8 +43,13 @@ class AppImportReviewComponent < ViewComponent::Base
       "the existing #{count > 1 ? "records" : "record"}."
   end
 
+  def import_issues_count
+    @import_issues_count ||=
+      @import_issues_pagy ? @import_issues_pagy.count : @import_issues.count
+  end
+
   def import_issues_message
-    count = @import_issues.count
+    count = import_issues_count
     "This upload includes #{pluralize(count, "record")} that " \
       "#{count > 1 ? "are close matches to existing records" : "is a close match to an existing record"} " \
       "in Mavis. If you approve the upload, any differences will be flagged as " \
