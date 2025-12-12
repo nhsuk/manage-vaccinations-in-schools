@@ -213,7 +213,7 @@ jobs:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
       - name: Download ops task definition artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           path: ${{ runner.temp }}
           name: ${{ inputs.environment }}-ops-task-definition
@@ -339,7 +339,7 @@ jobs:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
       - name: Download ${{ matrix.service }} task definition artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           path: ${{ runner.temp }}
           name: ${{ inputs.environment }}-${{ matrix.service }}-task-definition
