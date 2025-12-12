@@ -8,10 +8,7 @@
           current_team:,
           heading_level: 2,
           programmes: current_team.programmes,
-          consent_statuses: %w[no_response given refused conflicts],
           programme_statuses: @programme_statuses,
-          triage_statuses: %w[required delay_vaccination do_not_vaccinate safe_to_vaccinate],
-          vaccination_statuses: Patient::VaccinationStatus.statuses.keys,
           year_groups: current_team.year_groups,
           show_aged_out_of_programmes: true,
         ) %>
@@ -26,10 +23,8 @@
                 link_to: patient_path(patient),
                 current_team:,
                 programmes: @form.programmes,
-                show_consent_status: @form.consent_statuses.present?,
                 show_nhs_number: true,
                 show_school: true,
-                show_triage_status: @form.triage_status.present?,
               ) %>
         <% end %>
       <% end %>

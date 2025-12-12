@@ -27,8 +27,7 @@ describe AppPatientProgrammesTableComponent do
     context "when vaccinated" do
       let(:patient) { create(:patient, :vaccinated, session:) }
 
-      it { should have_css(".nhsuk-tag--green", text: "Vaccinated") }
-      it { should have_content("Vaccinated on #{today.to_fs(:long)}") }
+      it { should have_content("Vaccinated") }
     end
 
     context "when vaccinated last year" do
@@ -44,7 +43,8 @@ describe AppPatientProgrammesTableComponent do
         StatusUpdater.call(patient:)
       end
 
-      it { should_not have_content("Vaccinated") }
+      it { should have_content("Flu (winter 2025)Needs consent") }
+      it { should have_content("Flu (winter 2024)Vaccinated") }
     end
 
     context "when consent refused" do
@@ -52,8 +52,8 @@ describe AppPatientProgrammesTableComponent do
 
       before { StatusUpdater.call(patient:) }
 
-      it { should have_css(".nhsuk-tag--white", text: "Eligible") }
-      it { should have_content("Consent refused") }
+      it { should have_content("Has a refusal") }
+      it { should have_content("Parent refused") }
     end
 
     context "when triage outcome was 'Do not vaccinate'" do
@@ -66,8 +66,7 @@ describe AppPatientProgrammesTableComponent do
         )
       end
 
-      it { should have_css(".nhsuk-tag--white", text: "Eligible") }
-      it { should have_content("Contraindicated") }
+      it { should have_content("Needs triage") }
     end
 
     context "when no outcome yet but had contraindications" do
@@ -85,8 +84,11 @@ describe AppPatientProgrammesTableComponent do
         StatusUpdater.call(patient:)
       end
 
-      it { should have_css(".nhsuk-tag--white", text: "Eligible") }
-      it { should have_content("Contraindicated on #{today.to_fs(:long)}") }
+      it do
+        expect(rendered).to have_content(
+          "Child contraindicated on #{today.to_fs(:long)}"
+        )
+      end
     end
 
     context "when no outcome yet but was unwell" do
@@ -104,8 +106,8 @@ describe AppPatientProgrammesTableComponent do
         StatusUpdater.call(patient:)
       end
 
-      it { should have_css(".nhsuk-tag--white", text: "Eligible") }
-      it { should have_content("Unwell on #{today.to_fs(:long)}") }
+      it { should have_content("Unable to vaccinate") }
+      it { should have_content("Child unwell on #{today.to_fs(:long)}") }
     end
 
     context "when no outcome yet but refused vaccine" do
@@ -123,7 +125,7 @@ describe AppPatientProgrammesTableComponent do
         StatusUpdater.call(patient:)
       end
 
-      it { should have_css(".nhsuk-tag--white", text: "Eligible") }
+      it { should have_content("Unable to vaccinate") }
       it { should have_content("Child refused on #{today.to_fs(:long)}") }
     end
   end

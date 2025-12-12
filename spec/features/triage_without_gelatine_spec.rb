@@ -9,7 +9,7 @@ describe "Triage" do
   scenario "safe to vaccinate with gelatine" do
     given_a_patient_exists_needing_triage
 
-    when_i_go_to_the_session_triage_tab
+    when_i_go_to_the_patients_tab
     then_i_see_the_patient
 
     when_i_click_on_the_patient
@@ -22,7 +22,7 @@ describe "Triage" do
   scenario "safe to vaccinate without gelatine" do
     given_a_patient_exists_needing_triage
 
-    when_i_go_to_the_session_triage_tab
+    when_i_go_to_the_patients_tab
     then_i_see_the_patient
 
     when_i_click_on_the_patient
@@ -35,7 +35,7 @@ describe "Triage" do
   scenario "safe to vaccinate without gelatine only" do
     given_a_patient_exists_needing_triage_without_gelatine
 
-    when_i_go_to_the_session_triage_tab
+    when_i_go_to_the_patients_tab
     then_i_see_the_patient
 
     when_i_click_on_the_patient
@@ -67,9 +67,9 @@ describe "Triage" do
       )
   end
 
-  def when_i_go_to_the_session_triage_tab
+  def when_i_go_to_the_patients_tab
     sign_in @user
-    visit session_triage_path(@session)
+    visit session_patients_path(@session)
   end
 
   def then_i_see_the_patient

@@ -97,10 +97,7 @@ describe "MenACWY and Td/IPV vaccination" do
     )
 
     click_on "Record vaccinations"
-    expect(page).not_to have_content("for MenACWY")
-    expect(page).to have_content("Record vaccination for Td/IPV")
-
-    click_link @patient.full_name
+    click_on @patient.full_name
     expect(page).to have_content("Vaccinated")
   end
 

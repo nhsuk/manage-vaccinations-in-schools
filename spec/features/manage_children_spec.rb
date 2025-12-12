@@ -355,7 +355,7 @@ describe "Manage children" do
   end
 
   def when_i_filter_for_children
-    check "No response"
+    choose "Needs consent"
     click_on "Update results"
   end
 
@@ -385,7 +385,7 @@ describe "Manage children" do
 
   def when_i_click_on_view_aged_out_children
     find(".nhsuk-details__summary").click
-    uncheck "No response"
+    choose "Any"
     check "Children aged out of programmes"
     click_on "Update results"
   end

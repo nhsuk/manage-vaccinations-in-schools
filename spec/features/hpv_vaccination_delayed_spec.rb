@@ -86,7 +86,7 @@ describe "HPV vaccination" do
   end
 
   def then_i_see_that_the_status_is_delayed
-    expect(page).to have_content("HPV: Due vaccination")
+    expect(page).to have_content("HPV: Unable to vaccinate")
     expect(page).not_to have_content("You still need to record an outcome")
   end
 
@@ -100,7 +100,9 @@ describe "HPV vaccination" do
   end
 
   def then_i_see_the_patient_has_no_outcome_yet
-    expect(page).to have_content("Programme status\nHPVDue vaccinationUnwell")
+    expect(page).to have_content(
+      "Programme status\nHPVUnable to vaccinateChild unwell"
+    )
   end
 
   def when_vaccination_confirmations_are_sent

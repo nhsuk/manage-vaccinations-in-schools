@@ -26,7 +26,7 @@ describe "Verbal consent" do
   end
 
   def when_i_record_that_consent_was_given_with_some_health_notes_that_dont_contraindicate
-    visit session_consent_path(@session)
+    visit session_patients_path(@session)
     click_link @patient.full_name
     click_button "Record a new consent response"
 

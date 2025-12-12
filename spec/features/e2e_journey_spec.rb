@@ -181,8 +181,8 @@ describe "End-to-end journey" do
   end
 
   def when_i_look_at_children_that_need_consent_responses
-    click_link "Consent"
-    check "No response"
+    within(".app-secondary-navigation") { click_on "Children" }
+    choose "Needs consent"
     click_on "Update results"
   end
 

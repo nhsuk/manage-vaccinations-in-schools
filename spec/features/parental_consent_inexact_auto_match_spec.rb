@@ -105,13 +105,13 @@ describe "Parental consent given with an inexact automatic match" do
       click_on "Sessions"
     end
     click_on "Pilot School"
-    click_on "Consent"
+    within ".app-secondary-navigation" do
+      click_on "Children"
+    end
   end
 
   def then_they_see_that_the_child_has_consent
-    expect(page).to have_content("Consent given")
-
-    check "Consent given"
+    choose "Due vaccination"
     click_on "Update results"
 
     expect(page).to have_content(@child.full_name)

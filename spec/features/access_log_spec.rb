@@ -70,7 +70,7 @@ describe "Access log" do
     within(".app-secondary-navigation") { click_on "Sessions" }
 
     click_on @session.location.name
-    click_on "Consent"
+    within(".app-secondary-navigation") { click_on "Children" }
   end
 
   def and_i_go_to_a_patient

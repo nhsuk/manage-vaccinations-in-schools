@@ -19,11 +19,9 @@ describe AppPatientSearchResultCardComponent do
   let(:current_team) { create(:team) }
   let(:programmes) { [] }
   let(:academic_year) { nil }
-  let(:show_consent_status) { false }
   let(:show_nhs_number) { false }
   let(:show_postcode) { false }
   let(:show_school) { false }
-  let(:show_triage_status) { false }
 
   let(:component) do
     described_class.new(
@@ -32,11 +30,9 @@ describe AppPatientSearchResultCardComponent do
       current_team:,
       programmes:,
       academic_year:,
-      show_consent_status:,
       show_nhs_number:,
       show_postcode:,
-      show_school:,
-      show_triage_status:
+      show_school:
     )
   end
 
@@ -70,40 +66,18 @@ describe AppPatientSearchResultCardComponent do
     let(:academic_year) { AcademicYear.current }
 
     it { should have_text("Programme statusFluNot eligible") }
-    it { should_not have_text("Triage status") }
-    it { should_not have_text("Consent status") }
-
-    context "when programme status is enabled" do
-      before { Flipper.enable(:programme_status, current_team) }
-
-      it { should have_text("Programme statusFluNot eligible") }
-    end
-
-    context "when showing the consent status" do
-      let(:show_consent_status) { true }
-
-      it { should have_text("Consent statusFluNo response") }
-    end
-
-    context "when showing the triage status" do
-      let(:show_triage_status) { true }
-
-      it { should have_text("Triage statusFluNo triage needed") }
-    end
 
     context "with a session status of unwell" do
       before do
         create(
-          :patient_vaccination_status,
-          :eligible,
+          :patient_programme_status,
+          :cannot_vaccinate_unwell,
           patient:,
-          programme:,
-          latest_date: Date.new(2025, 1, 1),
-          latest_session_status: "unwell"
+          programme:
         )
       end
 
-      it { should have_text("Programme statusFluEligibleUnwell") }
+      it { should have_text("FluUnable to vaccinateChild unwell") }
     end
   end
 end

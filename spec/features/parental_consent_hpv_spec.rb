@@ -64,13 +64,11 @@ describe "Parental consent" do
       click_on "Sessions"
     end
     click_on "Pilot School"
-    click_on "Consent"
+    within(".app-secondary-navigation") { click_on "Children" }
   end
 
   def then_there_should_be_no_consent_for_my_child
-    expect(page).to have_content("No response")
-
-    check "No response"
+    choose "Needs consent"
     click_on "Update results"
 
     expect(page).to have_content(@child.full_name)
@@ -175,12 +173,11 @@ describe "Parental consent" do
       click_on "Sessions"
     end
     click_on "Pilot School"
-    click_on "Consent"
+    within(".app-secondary-navigation") { click_on "Children" }
   end
 
   def then_they_see_that_the_child_has_consent
-    expect(page).to have_content("Consent given")
-    check "Consent given"
+    choose "Due vaccination"
     click_on "Update results"
     expect(page).to have_content(@child.full_name)
   end

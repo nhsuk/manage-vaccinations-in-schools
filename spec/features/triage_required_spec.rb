@@ -212,7 +212,9 @@ describe "Triage" do
   end
 
   def when_i_go_to_the_session_triage_tab
-    visit session_triage_path(@session)
+    visit session_patients_path(@session)
+    choose "Needs triage"
+    click_on "Update results"
   end
 
   def when_i_visit_the_register_tab
@@ -414,7 +416,7 @@ describe "Triage" do
   end
 
   def when_i_go_to_the_second_patient
-    click_link "Triage"
+    within(".nhsuk-breadcrumb") { click_on "Children" }
     click_link @patient_nasal_only.full_name, match: :first
   end
 

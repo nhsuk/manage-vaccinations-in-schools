@@ -6,7 +6,7 @@ describe "Triage" do
   scenario "delay vaccination" do
     given_a_programme_with_a_running_session
     and_i_am_signed_in
-    when_i_go_to_the_triage_page
+    when_i_go_to_the_patients_tab
 
     when_i_click_on_a_patient
     and_i_choose_to_delay_vaccination
@@ -46,11 +46,11 @@ describe "Triage" do
     sign_in @team.users.first
   end
 
-  def when_i_go_to_the_triage_page
+  def when_i_go_to_the_patients_tab
     visit "/dashboard"
     click_link "Sessions", match: :first
     click_link @school.name
-    click_link "Triage"
+    within(".app-secondary-navigation") { click_on "Children" }
   end
 
   def when_i_click_on_a_patient
@@ -94,15 +94,10 @@ describe "Triage" do
                     :triage_vaccination_at_clinic
   end
 
-  def when_i_filter_by_invited_to_clinic
-    click_on "Triage"
-    choose "Invited to clinic"
-    click_on "Update results"
-  end
-
   def when_i_filter_by_delay_vaccination
-    click_on "Triage"
-    choose "Delay vaccination"
+    within(".nhsuk-breadcrumb") { click_on "Children" }
+    choose "Unable to vaccinate"
+    check "Delay vaccination"
     click_on "Update results"
   end
 

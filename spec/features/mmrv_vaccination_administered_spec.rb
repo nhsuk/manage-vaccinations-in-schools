@@ -8,7 +8,7 @@ describe "MMRV vaccination" do
     and_i_am_signed_in_as_a_nurse
     and_a_patient_is_ready_for_mmrv_vaccination_in_a_community_clinic
 
-    when_i_go_to_the_consent_tab
+    when_i_go_to_the_patients_tab
     then_i_should_consent_for_mmrv
     when_i_go_to_the_patient
     then_i_see_the_vaccination_form
@@ -60,12 +60,12 @@ describe "MMRV vaccination" do
     @community_clinic = create(:community_clinic, team: @team)
   end
 
-  def when_i_go_to_the_consent_tab
-    visit session_consent_path(@session)
+  def when_i_go_to_the_patients_tab
+    visit session_patients_path(@session)
   end
 
   def then_i_should_consent_for_mmrv
-    expect(page).to have_content("MMRVConsent given")
+    expect(page).to have_content("MMRVDue vaccination")
   end
 
   def when_i_go_to_the_patient

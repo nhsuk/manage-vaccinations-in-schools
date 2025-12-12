@@ -7,12 +7,10 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     current_team:,
     programmes: [],
     academic_year: nil,
-    show_consent_status: false,
     show_nhs_number: false,
     show_parents: false,
     show_postcode: false,
     show_school: false,
-    show_triage_status: false,
     show_year_group: false
   )
     @patient = patient
@@ -22,12 +20,10 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     @programmes = programmes
     @academic_year = academic_year || AcademicYear.pending
 
-    @show_consent_status = show_consent_status
     @show_nhs_number = show_nhs_number
     @show_parents = show_parents
     @show_postcode = show_postcode
     @show_school = show_school
-    @show_triage_status = show_triage_status
     @show_year_group = show_year_group
   end
 
@@ -70,24 +66,10 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
             row.with_value { patient_parents(patient) }
           end
         end
-        if academic_year
-          if programme_status_tag
-            summary_list.with_row do |row|
-              row.with_key { "Programme status" }
-              row.with_value { programme_status_tag }
-            end
-          end
-          if show_consent_status && consent_status_tag
-            summary_list.with_row do |row|
-              row.with_key { "Consent status" }
-              row.with_value { consent_status_tag }
-            end
-          end
-          if show_triage_status && triage_status_tag
-            summary_list.with_row do |row|
-              row.with_key { "Triage status" }
-              row.with_value { triage_status_tag }
-            end
+        if academic_year && programme_status_tag
+          summary_list.with_row do |row|
+            row.with_key { "Programme status" }
+            row.with_value { programme_status_tag }
           end
         end
       end
@@ -102,12 +84,10 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
               :programmes,
               :academic_year,
               :triage_status,
-              :show_consent_status,
               :show_nhs_number,
               :show_parents,
               :show_postcode,
               :show_school,
-              :show_triage_status,
               :show_year_group
 
   delegate :govuk_summary_list,
@@ -118,17 +98,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
            :patient_year_group,
            to: :helpers
 
-  def programme_status_tag
-    if Flipper.enabled?(:programme_status, current_team)
-      status_tag(:programme)
-    else
-      status_tag(:vaccination)
-    end
-  end
-
-  def consent_status_tag = status_tag(:consent)
-
-  def triage_status_tag = status_tag(:triage)
+  def programme_status_tag = status_tag(:programme)
 
   def status_tag(type)
     @status_tag ||= {}

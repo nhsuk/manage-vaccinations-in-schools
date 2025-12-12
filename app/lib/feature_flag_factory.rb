@@ -17,7 +17,6 @@ class FeatureFlagFactory
   FEATURES_FOR_DEVELOPMENT = %i[
     dev_tools
     import_review_screen
-    programme_status
     reporting_api
     schools_and_sessions
     testing_api

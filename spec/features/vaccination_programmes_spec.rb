@@ -111,14 +111,22 @@ describe "Vaccination programmes table" do
       "table.nhsuk-table tbody tr",
       text: "Flu (winter 2025)"
     ) do |row|
-      expect(row).to have_selector("td.nhsuk-table__cell", text: "Eligible")
+      expect(row).to have_selector(
+        "td.nhsuk-table__cell",
+        text: "Needs consent"
+      )
+      expect(row).to have_selector("td.nhsuk-table__cell", text: "No response")
     end
 
     expect(page).to have_selector(
       "table.nhsuk-table tbody tr",
       text: "MenACWY"
     ) do |row|
-      expect(row).to have_selector("td.nhsuk-table__cell", text: "Eligible")
+      expect(row).to have_selector(
+        "td.nhsuk-table__cell",
+        text: "Needs consent"
+      )
+      expect(row).to have_selector("td.nhsuk-table__cell", text: "No response")
     end
   end
 
@@ -139,10 +147,13 @@ describe "Vaccination programmes table" do
       "table.nhsuk-table tbody tr",
       text: "HPV"
     ) do |row|
-      expect(row).to have_selector("td.nhsuk-table__cell", text: "Eligible")
       expect(row).to have_selector(
         "td.nhsuk-table__cell",
-        text: "Contraindicated"
+        text: "Unable to vaccinate"
+      )
+      expect(row).to have_selector(
+        "td.nhsuk-table__cell",
+        text: "Contraindications"
       )
     end
   end
