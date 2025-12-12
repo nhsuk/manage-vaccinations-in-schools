@@ -253,7 +253,6 @@ class GovukNotifyPersonalisation
 
   def next_mmr_dose_date
     return if patient.nil?
-
     return if mmr_programme.nil?
 
     vaccination_status =
@@ -269,24 +268,19 @@ class GovukNotifyPersonalisation
 
   def patient_eligible_for_additional_dose?
     return unless patient
+    return if mmr_programme.nil?
 
-    @patient_eligible_for_additional_dose =
-      begin
-        next_dose =
-          patient
-            .reload
-            .vaccination_status(
-              programme: mmr_programme,
-              academic_year: session.academic_year
-            )
-            .dose_sequence
+    next_dose =
+      patient
+        .reload
+        .vaccination_status(programme: mmr_programme, academic_year:)
+        .dose_sequence
 
-        next_dose == mmr_programme.maximum_dose_sequence
-      end
+    next_dose == mmr_programme.maximum_dose_sequence
   end
 
   def mmr_programme
-    @mmr_programme = programmes.find(&:mmr?)
+    @mmr_programme ||= programmes.find(&:mmr?)
   end
 
   def delay_vaccination_review_context
