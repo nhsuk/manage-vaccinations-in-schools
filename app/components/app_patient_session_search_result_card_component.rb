@@ -20,13 +20,6 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               row.with_value { patient_year_group(patient, academic_year:) }
             end
 
-            if action_required
-              summary_list.with_row do |row|
-                row.with_key { "Action required" }
-                row.with_value { action_required }
-              end
-            end
-
             if vaccine_type
               summary_list.with_row do |row|
                 row.with_key { "Vaccine type" }
@@ -63,7 +56,6 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     session:,
     programmes: [],
     return_to: nil,
-    show_action_required: false,
     show_consent_status: false,
     show_notes: false,
     show_patient_specific_direction_status: false,
@@ -84,7 +76,6 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
     @return_to = return_to
 
-    @show_action_required = show_action_required
     @show_consent_status = show_consent_status
     @show_notes = show_notes
     @show_patient_specific_direction_status =
@@ -101,7 +92,6 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               :session,
               :programmes,
               :return_to,
-              :show_action_required,
               :show_consent_status,
               :show_notes,
               :show_patient_specific_direction_status,
@@ -142,23 +132,6 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def card_link = show_registration_status ? nil : patient_path
-
-  def action_required
-    return unless show_action_required
-    return if Flipper.enabled?(:programme_status, team)
-
-    next_activities =
-      session
-        .programmes_for(patient:)
-        .filter_map do |programme|
-          status = patient.next_activity(programme:, academic_year:)
-          next if status.nil?
-
-          "#{I18n.t(status, scope: :activity)} for #{programme.name_in_sentence}"
-        end
-
-    render_bullet_list_or_single(next_activities)
-  end
 
   def vaccine_type
     return unless show_vaccine_type

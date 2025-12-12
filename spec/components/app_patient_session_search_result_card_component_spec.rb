@@ -177,25 +177,6 @@ describe AppPatientSessionSearchResultCardComponent do
     end
   end
 
-  context "when showing action required" do
-    let(:component) do
-      described_class.new(
-        patient:,
-        session:,
-        programmes:,
-        show_action_required: true
-      )
-    end
-
-    it { should have_text("Action requiredRecord vaccination for HPV") }
-
-    context "when programme status is enabled" do
-      before { Flipper.enable(:programme_status) }
-
-      it { should_not have_text("Action required") }
-    end
-  end
-
   context "when showing the programme status" do
     let(:component) do
       described_class.new(
