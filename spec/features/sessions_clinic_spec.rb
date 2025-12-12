@@ -1,32 +1,28 @@
 # frozen_string_literal: true
 
-describe "Manage clinic sessions" do
+describe "Clinic sessions" do
   around { |example| travel_to(Time.zone.local(2024, 2, 18)) { example.run } }
 
-  scenario "Adding dates to the session, sending reminders and closing consent" do
+  before { Flipper.enable(:schools_and_sessions) }
+
+  scenario "adding a new session, sending reminders and closing consent" do
     given_my_team_is_running_an_hpv_vaccination_programme
     and_i_am_signed_in
 
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_no_sessions
 
-    when_i_go_to_unscheduled_sessions
-    then_i_see_the_community_clinic
-
-    when_i_click_on_the_community_clinic
-    then_i_see_the_clinic_session
-
-    when_i_click_on_schedule_sessions
-    then_i_see_the_dates_page
-
-    when_i_choose_the_dates
+    when_i_click_on_add_a_new_session
+    and_i_choose_community_clinic
+    and_i_choose_the_programmes
+    and_i_choose_the_dates
     then_i_see_the_confirmation_page
 
     when_i_click_on_change_invitations
     then_i_see_the_change_invitations_page
     and_i_change_invitations_date
 
-    when_i_save_changes
+    when_i_save_the_session
     then_i_should_see_the_session_details
 
     when_i_go_to_todays_sessions_as_a_nurse
@@ -73,19 +69,15 @@ describe "Manage clinic sessions" do
         programmes: [@programme]
       )
 
-    @session =
-      create(
-        :session,
-        :unscheduled,
-        team: @team,
-        programmes: [@programme],
-        location: @team.generic_clinic
-      )
-
     @parent = create(:parent)
 
     @patient =
-      create(:patient, year_group: 8, session: @session, parents: [@parent])
+      create(
+        :patient,
+        year_group: 8,
+        location: @team.generic_clinic,
+        parents: [@parent]
+      )
   end
 
   def and_i_am_signed_in
@@ -131,16 +123,29 @@ describe "Manage clinic sessions" do
     expect(page).to have_content("No dates scheduled")
   end
 
-  def when_i_click_on_schedule_sessions
-    click_on "Edit session"
-    click_on "Add session dates"
+  def when_i_click_on_add_a_new_session
+    click_on "Add a new session"
   end
 
-  def then_i_see_the_dates_page
+  def and_i_choose_community_clinic
+    expect(page).to have_content("What type of session is this?")
+
+    choose "Community clinic"
+    click_on "Continue"
+  end
+
+  def and_i_choose_the_programmes
+    expect(page).to have_content(
+      "Which programmes will you run in this session?"
+    )
+
+    check "HPV"
+    click_on "Continue"
+  end
+
+  def and_i_choose_the_dates
     expect(page).to have_content("When will this session be held?")
-  end
 
-  def when_i_choose_the_dates
     fill_in "Day", with: "10"
     fill_in "Month", with: "03"
     fill_in "Year", with: "2024"
@@ -173,7 +178,7 @@ describe "Manage clinic sessions" do
   end
 
   def then_i_see_the_confirmation_page
-    expect(page).to have_content("Edit session")
+    expect(page).to have_content("Check and confirm")
     expect(page).to have_content("InvitationsSend on Sunday, 18 February 2024")
   end
 
@@ -192,8 +197,8 @@ describe "Manage clinic sessions" do
     click_on "Continue"
   end
 
-  def when_i_save_changes
-    click_on "Save changes"
+  def when_i_save_the_session
+    click_on "Continue"
   end
 
   def then_i_should_see_the_session_details
@@ -210,7 +215,7 @@ describe "Manage clinic sessions" do
       :clinic_notification,
       :initial_invitation,
       patient: @patient,
-      session: @session
+      session: Session.last
     )
   end
 

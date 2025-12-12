@@ -55,16 +55,16 @@ FactoryBot.define do
 
   factory :patient do
     transient do
-      academic_year { AcademicYear.current }
+      academic_year { session&.academic_year || AcademicYear.current }
+      location { session&.location }
+      location_name { nil }
       parents { [] }
       performed_by { association(:user) }
       programmes { session&.programmes || [] }
-      session { nil }
-      year_group { programmes.flat_map(&:default_year_groups).sort.uniq.first }
-      location_name { nil }
       random_nhs_number { false }
-
+      session { nil }
       team { session&.team || school&.team || create(:team, programmes:) }
+      year_group { programmes.flat_map(&:default_year_groups).sort.uniq.first }
     end
 
     nhs_number do
@@ -124,14 +124,9 @@ FactoryBot.define do
     end
 
     after(:create) do |patient, evaluator|
-      if (session = evaluator.session)
-        location_id = session.location_id
-        academic_year = session.academic_year
-        PatientLocation.find_or_create_by!(
-          patient:,
-          location_id:,
-          academic_year:
-        )
+      if (location = evaluator.location) &&
+           (academic_year = evaluator.academic_year)
+        PatientLocation.find_or_create_by!(patient:, location:, academic_year:)
       end
     end
 
