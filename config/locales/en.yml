@@ -644,6 +644,7 @@ en:
       title: Imports
       title_short: Imports
       description: Import child, cohort and vaccination records and see important notices
+      upload_only_description: Upload vaccination records for HPV and flu vaccination programmes
     notices:
       index:
         no_results: There are currently no important notices.
@@ -706,7 +707,7 @@ en:
       upload_only_title: Search for children
       upload_only_long_title: Search for children
       description: Find children and view their vaccination history
-      upload_only_description: Find children, view their vaccination history and edit their details.
+      upload_only_description: Find children, view their vaccination history and edit their details
   programmes:
     index:
       title: Programmes
@@ -731,6 +732,7 @@ en:
     index:
       title: Reports
       description: View the progress of vaccination programmes and download vaccination data
+      upload_only_description: View statistics on vaccinations given by vaccine, gender and year group
   school_moves:
     index:
       title: School moves
