@@ -20,7 +20,7 @@ def create_gp_practices
   FactoryBot.create_list(:gp_practice, 30)
 end
 
-def create_team(ods_code:, workgroup: nil, type: :poc_only)
+def create_team(ods_code:, workgroup: nil, type: :poc_only, programmes: Programme.all)
   workgroup ||= ods_code.downcase
 
   Team.find_by(workgroup:) ||
@@ -28,7 +28,7 @@ def create_team(ods_code:, workgroup: nil, type: :poc_only)
       :team,
       :with_generic_clinic,
       ods_code:,
-      programmes: Programme.all,
+      programmes:,
       workgroup:,
       type:
     )
@@ -316,11 +316,12 @@ def create_nurse_joy_team
 end
 
 def create_upload_only_team
-  team = create_team(ods_code: "XX99", type: :upload_only)
-  create_user(:medical_secretary, team:, email: "admin.sarah@example.com")
+  team = create_team(ods_code: "XX99", type: :upload_only, programmes: [Programme.flu, Programme.hpv])
+  user = create_user(:medical_secretary, team:, email: "admin.sarah@example.com")
   create_user(:superuser, team:, email: "superuser.rob@example.com")
 
-  attach_sample_of_schools_to(team)
+  Audited.audit_class.as_user(user) { create_team_sessions(user, team) }
+  create_patients(team)
 end
 
 # TODO: Once `PatientTeam` has been refactored to avoid callbacks we can

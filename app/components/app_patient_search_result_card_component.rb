@@ -13,7 +13,8 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     show_postcode: false,
     show_school: false,
     show_triage_status: false,
-    show_year_group: false
+    show_year_group: false,
+    show_programme_status: true
   )
     @patient = patient
     @link_to = link_to
@@ -29,6 +30,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     @show_school = show_school
     @show_triage_status = show_triage_status
     @show_year_group = show_year_group
+    @show_programme_status = show_programme_status
   end
 
   def call
@@ -71,7 +73,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
           end
         end
         if academic_year
-          if programme_status_tag
+          if show_programme_status && programme_status_tag
             summary_list.with_row do |row|
               row.with_key { "Programme status" }
               row.with_value { programme_status_tag }
@@ -106,6 +108,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
               :show_nhs_number,
               :show_parents,
               :show_postcode,
+              :show_programme_status,
               :show_school,
               :show_triage_status,
               :show_year_group
