@@ -48,6 +48,7 @@ class Patient::ConsentStatus < ApplicationRecord
     self.status = generator.status
     self.vaccine_methods = generator.vaccine_methods
     self.without_gelatine = generator.without_gelatine
+    self.disease_types = generator.disease_types
   end
 
   def vaccine_method_nasal? = vaccine_methods.include?("nasal")
