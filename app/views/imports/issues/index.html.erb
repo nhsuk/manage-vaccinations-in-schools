@@ -10,7 +10,7 @@
       <%= pluralize(@import_issues.count, "uploaded record") %>
       <%= @import_issues.count == 1 ? "needs" : "need" %> review
     </h3>
-    <%= render AppImportReviewIssuesSummaryComponent.new(records: @import_issues, show_actions: true) %>
+    <%= render AppImportReviewIssuesSummaryComponent.new(records: @import_issues, review_screen: false) %>
   </div>
 <% else %>
   <p>No issues to review.</p>

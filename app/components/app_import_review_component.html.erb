@@ -81,8 +81,10 @@
                 method: :post,
                 class: "nhsuk-button",
                 data: { turbo_method: :post } %>
-    <%= link_to cancel_button_text, polymorphic_path([:cancel, @import]),
-                method: :post,
-                class: "nhsuk-button nhsuk-button--secondary",
-                data: { turbo_method: :post } %>
+    <% if show_cancel_button? %>
+        <%= link_to cancel_button_text, polymorphic_path([:cancel, @import]),
+                    method: :post,
+                    class: "nhsuk-button nhsuk-button--secondary",
+                    data: { turbo_method: :post } %>
+    <% end %>
 </div>
