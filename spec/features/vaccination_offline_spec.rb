@@ -559,12 +559,12 @@ describe "Offline vaccination" do
 
     visit patient_url
     within(".nhsuk-breadcrumb__list") { click_on "Children" }
-    choose "Due vaccination"
+    choose "Unable to vaccinate"
     click_on "Update results"
 
     click_on @unvaccinated_patient.full_name
     expect(page).to have_content(@unvaccinated_patient.full_name)
-    expect(page).to have_content("Due vaccination")
+    expect(page).to have_content("Unable to vaccinate")
     expect(page).to have_content("Unwell")
 
     visit patient_url

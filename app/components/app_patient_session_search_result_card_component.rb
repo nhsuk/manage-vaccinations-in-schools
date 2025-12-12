@@ -185,17 +185,10 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def programme_status_tag
     return unless show_programme_status
 
-    if Flipper.enabled?(:programme_status, team)
-      {
-        key: :programme,
-        value: render(AppAttachedTagsComponent.new(attached_tags(:programme)))
-      }
-    else
-      {
-        key: :vaccination,
-        value: render(AppAttachedTagsComponent.new(attached_tags(:vaccination)))
-      }
-    end
+    {
+      key: :programme,
+      value: render(AppAttachedTagsComponent.new(attached_tags(:programme)))
+    }
   end
 
   def registration_status_tag

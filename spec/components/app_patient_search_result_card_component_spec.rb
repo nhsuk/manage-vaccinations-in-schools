@@ -73,12 +73,6 @@ describe AppPatientSearchResultCardComponent do
     it { should_not have_text("Triage status") }
     it { should_not have_text("Consent status") }
 
-    context "when programme status is enabled" do
-      before { Flipper.enable(:programme_status, current_team) }
-
-      it { should have_text("Programme statusFluNot eligible") }
-    end
-
     context "when showing the consent status" do
       let(:show_consent_status) { true }
 
@@ -94,16 +88,14 @@ describe AppPatientSearchResultCardComponent do
     context "with a session status of unwell" do
       before do
         create(
-          :patient_vaccination_status,
-          :eligible,
+          :patient_programme_status,
+          :cannot_vaccinate_unwell,
           patient:,
-          programme:,
-          latest_date: Date.new(2025, 1, 1),
-          latest_session_status: "unwell"
+          programme:
         )
       end
 
-      it { should have_text("Programme statusFluEligibleUnwell") }
+      it { should have_text("FluUnable to vaccinateChild unwell") }
     end
   end
 end

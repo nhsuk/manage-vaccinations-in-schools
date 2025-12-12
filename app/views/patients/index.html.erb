@@ -11,7 +11,6 @@
           consent_statuses: %w[no_response given refused conflicts],
           programme_statuses: @programme_statuses,
           triage_statuses: %w[required delay_vaccination do_not_vaccinate safe_to_vaccinate],
-          vaccination_statuses: Patient::VaccinationStatus.statuses.keys,
           year_groups: current_team.year_groups,
           show_aged_out_of_programmes: true,
         ) %>

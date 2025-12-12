@@ -3,7 +3,7 @@
 class AppPatientSessionVaccinationComponent < AppPatientSessionSectionComponent
   erb_template <<-ERB
     <h3 class="nhsuk-heading-m">Programme status</h3>
-    
+
     <%= render AppCardComponent.new(feature: true) do |card| %>
       <% card.with_heading(level: 4, colour:) { heading } %>
       <%= render AppPatientVaccinationTableComponent.new(
@@ -25,11 +25,6 @@ class AppPatientSessionVaccinationComponent < AppPatientSessionSectionComponent
   private
 
   def resolved_status
-    @resolved_status ||=
-      if Flipper.enabled?(:programme_status, team)
-        patient_status_resolver.programme
-      else
-        patient_status_resolver.vaccination
-      end
+    @resolved_status ||= patient_status_resolver.programme
   end
 end
