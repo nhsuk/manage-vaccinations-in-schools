@@ -215,10 +215,6 @@ describe "Triage" do
     visit session_triage_path(@session)
   end
 
-  def when_i_visit_the_register_tab
-    visit session_register_path(@session)
-  end
-
   def then_i_see_the_patient_who_needs_triage
     expect(page).to have_content(@patient_triage_needed.full_name)
   end

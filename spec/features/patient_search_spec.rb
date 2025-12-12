@@ -48,10 +48,6 @@ describe "Patient search" do
     and_i_search_for_a_name_that_doesnt_exist
     then_i_see_no_results
 
-    when_i_visit_the_session_register_tab
-    and_i_search_for_a_name_that_doesnt_exist
-    then_i_see_no_results
-
     when_i_visit_the_session_record_tab
     and_i_search_for_a_name_that_doesnt_exist
     then_i_see_no_results
@@ -223,10 +219,6 @@ describe "Patient search" do
 
   def when_i_visit_the_session_triage_tab
     visit session_triage_path(@session)
-  end
-
-  def when_i_visit_the_session_register_tab
-    visit session_register_path(@session)
   end
 
   def when_i_visit_the_session_record_tab

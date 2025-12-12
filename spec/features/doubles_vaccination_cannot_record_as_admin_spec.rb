@@ -34,7 +34,7 @@ describe "MenACWY and Td/IPV vaccination" do
   end
 
   def when_i_go_to_a_patient_that_is_safe_to_vaccinate
-    visit session_register_path(@session)
+    visit session_patients_path(@session)
     choose "Not registered yet"
     click_on "Update results"
     click_link @patient.full_name
