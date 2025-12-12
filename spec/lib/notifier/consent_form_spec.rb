@@ -92,13 +92,15 @@ describe Notifier::ConsentForm do
     context "when there are no upcoming sessions" do
       let(:programmes) { [Programme.sample] }
       let(:team) { create(:team, :with_generic_clinic, programmes:) }
+      let(:session) { create(:session, :completed, team:, programmes:) }
+
       let(:consent_form) do
         create(
           :consent_form,
           team:,
           school_confirmed: false,
           school: create(:school, team:),
-          session: create(:session, team:, programmes:)
+          session: session
         )
       end
 

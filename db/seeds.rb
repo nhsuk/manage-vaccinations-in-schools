@@ -172,14 +172,20 @@ end
 
 def setup_clinic(team)
   academic_year = AcademicYear.current
-  clinic_session = team.generic_clinic_session(academic_year:)
 
   dates =
     [Date.current, Date.yesterday, Date.tomorrow].select do |value|
       value.in?(academic_year.to_academic_year_date_range)
     end
 
-  clinic_session.update!(dates:, send_invitations_at: Date.current - 3.weeks)
+  clinic_session =
+    FactoryBot.create(
+      :session,
+      team:,
+      location: team.generic_clinic,
+      programmes: team.programmes,
+      dates:
+    )
 
   # All unknown school or home-schooled patients belong to the community clinic.
   # This is normally handled by school moves, but here we need to do it manually.
