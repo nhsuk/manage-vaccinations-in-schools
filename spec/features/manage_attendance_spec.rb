@@ -185,7 +185,7 @@ describe "Manage attendance" do
 
   def and_i_see_the_actions_required
     # This should be shown once per patient (there are 3 patients).
-    expect(page).to have_content("Record vaccination for HPV").exactly(3).times
+    expect(page).to have_content("HPVDue vaccination").exactly(3).times
   end
 
   def when_i_register_a_patient_as_attending
