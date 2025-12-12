@@ -6,11 +6,9 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     url:,
     current_team:,
     programmes: [],
-    consent_statuses: [],
     programme_statuses: [],
     patient_specific_direction_statuses: [],
     registration_statuses: [],
-    triage_statuses: [],
     year_groups: [],
     heading_level: 3,
     show_aged_out_of_programmes: false,
@@ -21,11 +19,9 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     @current_team = current_team
 
     @programmes = programmes
-    @consent_statuses = consent_statuses
     @patient_specific_direction_statuses = patient_specific_direction_statuses
     @programme_statuses = programme_statuses
     @registration_statuses = registration_statuses
-    @triage_statuses = triage_statuses
     @year_groups = year_groups
     @heading_level = heading_level
     @show_aged_out_of_programmes = show_aged_out_of_programmes
@@ -38,11 +34,9 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               :url,
               :current_team,
               :programmes,
-              :consent_statuses,
               :patient_specific_direction_statuses,
               :programme_statuses,
               :registration_statuses,
-              :triage_statuses,
               :vaccine_criterias,
               :year_groups,
               :heading_level,
@@ -61,10 +55,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
   end
 
   def show_buttons_in_details?
-    !(
-      consent_statuses.any? || programme_statuses.any? ||
-        registration_statuses.any? || triage_statuses.any? || year_groups.any?
-    )
+    !(programme_statuses.any? || registration_statuses.any? || year_groups.any?)
   end
 
   def has_vaccine_criteria?

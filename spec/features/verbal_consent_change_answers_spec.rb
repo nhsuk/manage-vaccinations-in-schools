@@ -43,7 +43,7 @@ describe "Verbal consent" do
 
   def when_i_get_consent_for_the_patient
     sign_in @nurse
-    visit session_consent_path(@session)
+    visit session_patients_path(@session)
     click_link @patient.full_name
     click_button "Record a new consent response"
   end

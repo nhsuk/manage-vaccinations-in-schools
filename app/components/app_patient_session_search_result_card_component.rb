@@ -56,12 +56,10 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     session:,
     programmes: [],
     return_to: nil,
-    show_consent_status: false,
     show_notes: false,
     show_patient_specific_direction_status: false,
     show_programme_status: false,
     show_registration_status: false,
-    show_triage_status: false,
     show_vaccine_type: false
   )
     @patient = patient
@@ -76,13 +74,11 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
     @return_to = return_to
 
-    @show_consent_status = show_consent_status
     @show_notes = show_notes
     @show_patient_specific_direction_status =
       show_patient_specific_direction_status
     @show_programme_status = show_programme_status
     @show_registration_status = show_registration_status
-    @show_triage_status = show_triage_status
     @show_vaccine_type = show_vaccine_type
   end
 
@@ -92,12 +88,10 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               :session,
               :programmes,
               :return_to,
-              :show_consent_status,
               :show_notes,
               :show_patient_specific_direction_status,
               :show_programme_status,
               :show_registration_status,
-              :show_triage_status,
               :show_vaccine_type
 
   delegate :govuk_button_to,
@@ -167,19 +161,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     [
       registration_status_tag,
       programme_status_tag,
-      consent_status_tag,
-      triage_status_tag,
       patient_specific_direction_status_tag
     ].compact
-  end
-
-  def consent_status_tag
-    return unless show_consent_status
-
-    {
-      key: :consent,
-      value: render(AppAttachedTagsComponent.new(attached_tags(:consent)))
-    }
   end
 
   def programme_status_tag
@@ -203,15 +186,6 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
             context: :registration
           )
         )
-    }
-  end
-
-  def triage_status_tag
-    return unless show_triage_status
-
-    {
-      key: :triage,
-      value: render(AppAttachedTagsComponent.new(attached_tags(:triage)))
     }
   end
 

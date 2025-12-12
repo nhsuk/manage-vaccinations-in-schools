@@ -73,54 +73,6 @@ describe AppPatientSessionSearchResultCardComponent do
     end
   end
 
-  context "when showing the consent status" do
-    let(:component) do
-      described_class.new(
-        patient:,
-        session:,
-        programmes:,
-        show_consent_status: true
-      )
-    end
-
-    context "and the programme is flu" do
-      let(:programme) { Programme.flu }
-
-      it { should_not have_text("Vaccine type") }
-      it { should have_text("Consent given for nasal spray") }
-
-      context "and the vaccine method is overridden by triage" do
-        let(:patient) do
-          create(
-            :patient,
-            :consent_given_injection_and_nasal_triage_safe_to_vaccinate_injection,
-            session:
-          )
-        end
-
-        it { should_not have_text("Vaccine type") }
-        it { should have_text("Consent given for injection") }
-      end
-    end
-  end
-
-  context "when showing the triage status" do
-    let(:component) do
-      described_class.new(
-        patient:,
-        session:,
-        programmes:,
-        show_triage_status: true
-      )
-    end
-
-    context "and the programme is flu" do
-      let(:programme) { Programme.flu }
-
-      it { should_not have_text("Vaccine type") }
-    end
-  end
-
   context "when showing the patient specific direction status" do
     let(:component) do
       described_class.new(

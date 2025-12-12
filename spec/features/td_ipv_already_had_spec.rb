@@ -20,7 +20,6 @@ describe "Td/IPV" do
     when_i_click_record_as_already_vaccinated
     and_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
-    and_the_patient_no_longer_appears_in_consent
     and_the_consent_requests_are_sent
     then_the_parent_doesnt_receive_a_consent_request
   end
@@ -38,7 +37,6 @@ describe "Td/IPV" do
     when_i_click_record_as_already_vaccinated
     and_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
-    and_the_patient_no_longer_appears_in_consent
     and_the_consent_requests_are_sent
     then_the_parent_doesnt_receive_a_consent_request
   end
@@ -56,9 +54,6 @@ describe "Td/IPV" do
     when_i_click_record_as_already_vaccinated
     and_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
-    and_the_patient_no_longer_appears_in_consent
-    and_i_click_on_triage
-    then_i_see_the_patient_doesnt_need_triage
   end
 
   scenario "can't record as already vaccinated as a medical secretary" do
@@ -81,13 +76,11 @@ describe "Td/IPV" do
     @nurse = create(:nurse, teams: [team])
 
     location =
-      (
-        if clinic
-          create(:generic_clinic, team:)
-        else
-          create(:school, :secondary, urn: 123_456, team:)
-        end
-      )
+      if clinic
+        create(:generic_clinic, team:)
+      else
+        create(:school, :secondary, urn: 123_456, team:)
+      end
 
     create(:community_clinic, name: "Waterloo Hospital", team:)
 
@@ -106,13 +99,7 @@ describe "Td/IPV" do
   end
 
   def and_the_patient_doesnt_need_triage
-    create(:patient_consent_status, patient: @patient, programme: @programme)
-    create(
-      :patient_triage_status,
-      :not_required,
-      patient: @patient,
-      programme: @programme
-    )
+    StatusUpdater.call(patient: @patient.reload)
   end
 
   def and_the_patient_needs_triage
@@ -123,18 +110,7 @@ describe "Td/IPV" do
       patient: @patient,
       programme: @programme
     )
-    create(
-      :patient_consent_status,
-      :given,
-      patient: @patient,
-      programme: @programme
-    )
-    create(
-      :patient_triage_status,
-      :required,
-      patient: @patient,
-      programme: @programme
-    )
+    StatusUpdater.call(patient: @patient.reload)
   end
 
   def when_i_go_the_session
@@ -156,16 +132,16 @@ describe "Td/IPV" do
   end
 
   def then_i_see_one_patient_needing_consent
-    click_on "Consent"
+    within(".app-secondary-navigation") { click_on "Children" }
 
-    check "No response"
+    choose "Needs consent"
     click_on "Update results"
 
     expect(page).to have_content("Showing 1 to 1 of 1 children")
   end
 
   def then_i_see_one_patient_needing_triage
-    click_on "Triage"
+    within(".app-secondary-navigation") { click_on "Children" }
 
     choose "Needs triage"
     click_on "Update results"
@@ -206,12 +182,6 @@ describe "Td/IPV" do
     expect(page).to have_content("LocationUnknown")
   end
 
-  def and_the_patient_no_longer_appears_in_consent
-    within(".nhsuk-breadcrumb__list") { click_on "Children" }
-    within(".app-secondary-navigation") { click_on "Consent" }
-    expect(page).not_to have_content(@patient.full_name)
-  end
-
   def and_i_cannot_record_the_patient_as_already_vaccinated
     expect(page).not_to have_content("Record as already vaccinated")
   end
@@ -223,20 +193,5 @@ describe "Td/IPV" do
 
   def then_the_parent_doesnt_receive_a_consent_request
     expect(EmailDeliveryJob.deliveries).to be_empty
-  end
-
-  def and_i_click_on_triage
-    click_on "Sessions", match: :first
-    choose "Scheduled"
-    click_on "Update results"
-    click_on @session.location.name
-    click_on "Triage"
-  end
-
-  def then_i_see_the_patient_doesnt_need_triage
-    choose "Any"
-    click_on "Update results"
-
-    expect(page).not_to have_content(@patient.full_name)
   end
 end

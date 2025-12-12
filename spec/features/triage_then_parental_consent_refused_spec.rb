@@ -34,7 +34,7 @@ describe "Triage" do
   def when_i_go_to_the_patient_that_needs_triage
     sign_in @team.users.first
 
-    visit session_triage_path(@session)
+    visit session_patients_path(@session)
     choose "Needs triage"
     click_on "Update results"
 
@@ -116,7 +116,8 @@ describe "Triage" do
   end
 
   def and_i_go_to_the_patient_with_conflicting_consent
-    visit session_consent_path(@session)
+    visit session_patients_path(@session)
+    choose "Has a refusal"
     check "Conflicting consent"
     click_on "Update results"
 

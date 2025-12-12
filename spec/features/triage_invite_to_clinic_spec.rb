@@ -8,7 +8,7 @@ describe "Triage" do
     and_i_am_signed_in
     and_a_patient_who_doesnt_need_triage_exists
 
-    when_i_go_to_the_consent_page
+    when_i_go_to_the_patients_tab
 
     when_i_click_on_a_patient
     and_i_click_on_update_triage_outcome
@@ -33,7 +33,7 @@ describe "Triage" do
     and_i_am_signed_in
     and_a_patient_who_needs_triage_exists
 
-    when_i_go_to_the_triage_page
+    when_i_go_to_the_patients_tab
 
     when_i_click_on_a_patient
     and_i_enter_a_note_and_invite_to_clinic
@@ -84,12 +84,8 @@ describe "Triage" do
     sign_in @team.users.first
   end
 
-  def when_i_go_to_the_consent_page
-    visit session_consent_path(@session)
-  end
-
-  def when_i_go_to_the_triage_page
-    visit session_triage_path(@session)
+  def when_i_go_to_the_patients_tab
+    visit session_patients_path(@session)
   end
 
   def when_i_click_on_a_patient
@@ -138,14 +134,8 @@ describe "Triage" do
   end
 
   def when_i_filter_by_invited_to_clinic
-    click_on "Triage"
-    choose "Invited to clinic"
-    click_on "Update results"
-  end
-
-  def when_i_filter_by_delay_vaccination
-    click_on "Triage"
-    choose "Delay vaccination"
+    within(".nhsuk-breadcrumb") { click_on "Children" }
+    choose "Needs triage"
     click_on "Update results"
   end
 
