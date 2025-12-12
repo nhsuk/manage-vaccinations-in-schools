@@ -147,11 +147,10 @@ class Programme
 
     def consented_for_mmr?(patient)
       patient
-        .consents
-        .where(programme_type: "mmr")
-        .last
-        &.disease_types
-        &.exclude?("varicella")
+        .consent_statuses
+        .given
+        .where_programme(cached_programme("mmr"), DISEASE_TYPES["mmr"])
+        .exists?
     end
 
     def vaccine_covers_varicella?(vaccine)
