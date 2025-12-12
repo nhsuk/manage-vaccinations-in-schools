@@ -4,7 +4,7 @@ module ImportsHelper
   def wait_for_import_to_complete(import_class)
     wait_for_import_to_complete_until_review(import_class)
 
-    if page.has_button?("Approve and import records")
+    if page.has_link?("Approve and import records")
       click_on "Approve and import records"
     end
 
