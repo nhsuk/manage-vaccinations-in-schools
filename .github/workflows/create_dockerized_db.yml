@@ -24,7 +24,7 @@ jobs:
       RAILS_MASTER_KEY: intentionally-insecure-dev-key00
       SKIP_TEST_DATABASE: true
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version-file: .tool-versions
