@@ -192,6 +192,34 @@ describe ReportingAPI::OneTimeToken do
       it "has the cis2_info as json" do
         expect(data["cis2_info"]).to eq(token.cis2_info.as_json)
       end
+
+      it "has programme_types defaulting to all programmes" do
+        expect(data["programme_types"]).to eq(Programme::TYPES)
+      end
+
+      context "when team exists for the cis2_info" do
+        let(:organisation) { create(:organisation) }
+        let(:team) do
+          create(:team, organisation:, programme_types: %w[flu hpv])
+        end
+        let(:token_with_team) do
+          described_class.new(
+            user_id: user.id,
+            token: SecureRandom.hex(32),
+            cis2_info: {
+              "team_workgroup" => team.workgroup,
+              "organisation_code" => organisation.ods_code,
+              "workgroups" => [team.workgroup]
+            }
+          )
+        end
+
+        it "includes the team's programme_types" do
+          expect(token_with_team.jwt_payload["data"]["programme_types"]).to eq(
+            %w[flu hpv]
+          )
+        end
+      end
     end
   end
 

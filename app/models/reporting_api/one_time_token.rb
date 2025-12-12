@@ -50,11 +50,14 @@ class ReportingAPI::OneTimeToken < ApplicationRecord
   end
 
   def jwt_payload
+    team = CIS2Info.new(request_session: { "cis2_info" => cis2_info }).team
+
     {
       "iat" => Time.current.utc.to_i,
       "data" => {
         "user" => user.as_json,
-        "cis2_info" => cis2_info
+        "cis2_info" => cis2_info,
+        "programme_types" => team&.programme_types || Programme::TYPES
       }
     }
   end
