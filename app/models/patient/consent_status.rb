@@ -6,6 +6,7 @@
 #
 #  id               :bigint           not null, primary key
 #  academic_year    :integer          not null
+#  disease_types    :integer          default([]), is an Array
 #  programme_type   :enum             not null
 #  status           :integer          default("no_response"), not null
 #  vaccine_methods  :integer          default([]), not null, is an Array
@@ -25,6 +26,7 @@
 class Patient::ConsentStatus < ApplicationRecord
   include BelongsToProgramme
   include HasVaccineMethods
+  include HasDiseaseTypes
 
   belongs_to :patient
 
