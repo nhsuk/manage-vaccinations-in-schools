@@ -6,7 +6,7 @@ module NavigationConcern
   included do
     before_action :set_cached_counts
     before_action :set_navigation_items
-    after_action :set_navigation_counts_cookie
+    after_action :set_navigation_items_cookie
   end
 
   def set_cached_counts
@@ -79,18 +79,9 @@ module NavigationConcern
     end
   end
 
-  def set_navigation_counts_cookie
+  def set_navigation_items_cookie
     return unless current_user
 
-    unmatched_consent_responses =
-      @cached_counts.unmatched_consent_responses || 0
-    school_moves = @cached_counts.school_moves || 0
-    imports = @cached_counts.import_issues || 0
-
-    cookies[:mavis_navigation_counts] = {
-      unmatched_consent_responses:,
-      school_moves:,
-      imports:
-    }.to_json
+    cookies[:mavis_navigation_items] = @navigation_items.to_json
   end
 end
