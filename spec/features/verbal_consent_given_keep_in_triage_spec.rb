@@ -24,7 +24,7 @@ describe "Verbal consent" do
   end
 
   def when_i_record_that_consent_was_given_but_keep_in_triage
-    visit session_consent_path(@session)
+    visit session_patients_path(@session)
     click_link @patient.full_name
     click_button "Record a new consent response"
 

@@ -79,7 +79,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
       @session,
       @patient,
       @programme,
-      return_to: "triage"
+      return_to: "patients"
     )
   end
 end

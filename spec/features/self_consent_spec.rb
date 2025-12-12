@@ -71,9 +71,11 @@ describe "Self-consent" do
       click_on "Sessions"
     end
     click_on @school.name
-    click_on "Consent"
+    within ".app-secondary-navigation" do
+      click_on "Children"
+    end
 
-    check "No response"
+    choose "Needs consent"
     click_on "Update results"
 
     expect(page).to have_content("Showing 1 to 1 of 1 children")

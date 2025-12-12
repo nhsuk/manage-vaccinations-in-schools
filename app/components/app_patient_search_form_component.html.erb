@@ -121,33 +121,6 @@
           <% end %>
         <% end %>
       <% end %>
-    <% else %>
-      <% if consent_statuses.any? %>
-        <%= f.govuk_check_boxes_fieldset :consent_statuses,
-                                         legend: { text: "Consent status", size: "s" },
-                                         small: true do %>
-          <% consent_statuses.each do |status| %>
-            <%= f.govuk_check_box :consent_statuses,
-                                  status,
-                                  checked: form.consent_statuses&.include?(status),
-                                  label: { text: t(status, scope: %i[status consent label]) } %>
-          <% end %>
-        <% end %>
-      <% end %>
-
-      <% if triage_statuses.any? %>
-        <%= f.govuk_radio_buttons_fieldset :triage_status,
-                                           legend: { text: "Triage status", size: "s" },
-                                           small: true do %>
-          <%= f.govuk_radio_button :triage_status, "", checked: form.triage_status.blank?, label: { text: "Any" } %>
-          <% triage_statuses.each do |status| %>
-            <%= f.govuk_radio_button :triage_status,
-                                     status,
-                                     checked: form.triage_status == status,
-                                     label: { text: t(status, scope: %i[status triage label]) } %>
-          <% end %>
-        <% end %>
-      <% end %>
     <% end %>
 
     <% if patient_specific_direction_statuses.any? %>

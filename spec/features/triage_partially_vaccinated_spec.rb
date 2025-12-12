@@ -21,7 +21,6 @@ describe "Triage" do
 
     when_i_go_the_session
     and_the_parent_gives_consent
-    and_i_click_on_triage
     then_i_see_one_patient_needing_triage
     and_i_click_on_the_patient
     then_i_see_the_patient_needs_triage
@@ -92,16 +91,16 @@ describe "Triage" do
   end
 
   def then_i_see_one_patient_needing_consent
-    click_on "Consent"
+    within(".app-secondary-navigation") { click_on "Children" }
 
-    check "No response"
+    choose "Needs consent"
     click_on "Update results"
 
     expect(page).to have_content("Showing 1 to 1 of 1 children")
   end
 
   def and_i_see_no_patients_needing_triage
-    click_on "Triage"
+    within(".app-secondary-navigation") { click_on "Children" }
 
     choose "Needs triage"
     click_on "Update results"
@@ -116,11 +115,9 @@ describe "Triage" do
     page.refresh
   end
 
-  def and_i_click_on_triage
-    click_on "Triage"
-  end
-
   def then_i_see_one_patient_needing_triage
+    within(".app-secondary-navigation") { click_on "Children" }
+
     choose "Needs triage"
     click_on "Update results"
 

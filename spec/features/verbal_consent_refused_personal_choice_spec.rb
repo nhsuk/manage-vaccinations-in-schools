@@ -33,7 +33,7 @@ describe "Verbal consent" do
   end
 
   def when_i_record_the_consent_refusal_and_reason(notify_parent:)
-    visit session_consent_path(@session)
+    visit session_patients_path(@session)
     click_link @patient.full_name
     click_button "Record a new consent response"
 
