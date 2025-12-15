@@ -7,16 +7,16 @@ module MavisCLI
       option :team_workgroup,
              aliases: ["-w"],
              default: "A9A5A",
-             desc: "Workgroup of team to generate consents for"
+             desc: "Workgroup of team to generate vaccinations for"
       option :programme_type,
              aliases: ["-p"],
              default: "hpv",
              desc:
-               "Programme type to generate consents for (hpv, menacwy, td_ipv, etc)"
+               "Programme type to generate vaccinations for (hpv, menacwy, td_ipv, etc)"
       option :session_id,
              aliases: ["-s"],
              desc:
-               "Generate consents for patients in a session, instead of" \
+               "Generate vaccinations for patients in a session, instead of" \
                  " across the entire team"
       option :administered,
              default: 0,
