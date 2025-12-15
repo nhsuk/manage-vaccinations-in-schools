@@ -342,12 +342,17 @@ describe Patient do
       end
     end
 
-    describe "#search_by_name" do
-      subject(:scope) { described_class.search_by_name(query) }
+    describe "#search_by_name_or_nhs_number" do
+      subject(:scope) { described_class.search_by_name_or_nhs_number(query) }
 
       let(:patient_a) do
         # exact match comes first
-        create(:patient, given_name: "Neil", family_name: "Armstrong")
+        create(
+          :patient,
+          given_name: "Neil",
+          family_name: "Armstrong",
+          nhs_number: "0123456789"
+        )
       end
       let(:patient_b) do
         # similar match comes next
@@ -360,6 +365,22 @@ describe Patient do
       let(:patient_d) do
         # no match isn't returned
         create(:patient, given_name: "Buzz", family_name: "Aldrin")
+      end
+
+      context "with an NHS number" do
+        let(:query) { "0123456789" }
+
+        it "returns the patient with the NHS number" do
+          expect(scope).to eq([patient_a])
+        end
+      end
+
+      context "with an NHS number with whitespace" do
+        let(:query) { "012 345 6789 " }
+
+        it "returns the patient with the NHS number" do
+          expect(scope).to eq([patient_a])
+        end
       end
 
       context "with full name, in `given_name family_name` format" do
