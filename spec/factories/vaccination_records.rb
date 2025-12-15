@@ -96,6 +96,7 @@ FactoryBot.define do
     delivery_method { "intramuscular" }
 
     vaccine { programme.vaccines.active.sample if session }
+    disease_types { vaccine&.disease_types || programme.disease_types }
 
     batch do
       if vaccine

@@ -10,6 +10,7 @@ class DraftVaccinationRecord
   attribute :batch_id, :integer
   attribute :delivery_method, :string
   attribute :delivery_site, :string
+  attribute :disease_types, array: true
   attribute :dose_sequence, :integer
   attribute :first_active_wizard_step, :string
   attribute :full_dose, :boolean
@@ -25,9 +26,9 @@ class DraftVaccinationRecord
   attribute :performed_by_family_name, :string
   attribute :performed_by_given_name, :string
   attribute :performed_by_user_id, :integer
-  attribute :protocol, :string
   attribute :performed_ods_code, :string
   attribute :programme_type, :string
+  attribute :protocol, :string
   attribute :session_id, :integer
   attribute :supplied_by_user_id, :integer
 
@@ -299,6 +300,7 @@ class DraftVaccinationRecord
       batch_id
       delivery_method
       delivery_site
+      disease_types
       dose_sequence
       full_dose
       identity_check
@@ -336,6 +338,8 @@ class DraftVaccinationRecord
       self.identity_check_confirmed_by_other_name = ""
       self.identity_check_confirmed_by_other_relationship = ""
     end
+
+    self.disease_types = vaccine&.disease_types || programme.disease_types
   end
 
   def academic_year = session&.academic_year

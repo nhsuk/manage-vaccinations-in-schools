@@ -126,6 +126,7 @@ class ImmunisationImportRow
       end
 
     attributes = {
+      disease_types:,
       dose_sequence: dose_sequence_value,
       full_dose: true,
       outcome:,
@@ -138,8 +139,8 @@ class ImmunisationImportRow
       session:,
       supplied_by:
     }
-    attributes.merge!(location:, location_name:) unless imms_api_record?
 
+    attributes.merge!(location:, location_name:) unless imms_api_record?
     attributes.merge!(notify_parents: true) if session
 
     if performed_by_user.nil? &&
@@ -497,6 +498,8 @@ class ImmunisationImportRow
       "intramuscular"
     end
   end
+
+  def disease_types = vaccine&.disease_types || programme.disease_types
 
   def dose_sequence_value
     value =
