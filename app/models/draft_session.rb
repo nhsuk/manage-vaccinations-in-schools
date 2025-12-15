@@ -161,21 +161,14 @@ class DraftSession
 
   def session_programme_year_groups
     @session_programme_year_groups ||=
-      location
-        .location_programme_year_groups
-        .includes(:location_year_group)
-        .filter_map do |location_programme_year_group|
-          year_group = location_programme_year_group.year_group
-          programme_type = location_programme_year_group.programme_type
+      location_programme_year_groups.filter_map do |location_programme_year_group|
+        year_group = location_programme_year_group.year_group
+        programme_type = location_programme_year_group.programme_type
 
-          if programme_type.in?(programme_types) && year_group.in?(year_groups)
-            Session::ProgrammeYearGroup.find_or_initialize_by(
-              session:,
-              programme_type:,
-              year_group:
-            )
-          end
+        if programme_type.in?(programme_types) && year_group.in?(year_groups)
+          Session::ProgrammeYearGroup.new(programme_type:, year_group:)
         end
+      end
   end
 
   def programmes_for(year_group: nil, patient: nil)
@@ -236,13 +229,20 @@ class DraftSession
     session.dates = dates.sort.uniq
   end
 
-  def create_session_programme_year_groups!(session)
-    session_programme_year_groups
-      .select(&:new_record?)
-      .each do
-        it.session = session
-        it.save!
+  def import_session_programme_year_groups!(session)
+    rows =
+      session_programme_year_groups.map do
+        [session.id, it.programme_type, it.year_group]
       end
+
+    ActiveRecord::Base.transaction do
+      Session::ProgrammeYearGroup.where(session_id: session.id).delete_all
+      Session::ProgrammeYearGroup.import!(
+        %i[session_id programme_type year_group],
+        rows,
+        on_duplicate_key_ignore: true
+      )
+    end
   end
 
   def human_enum_name(attribute)
@@ -292,6 +292,11 @@ class DraftSession
 
   def new_programme_types
     @new_programme_types ||= programme_types - (session&.programme_types || [])
+  end
+
+  def location_programme_year_groups
+    @location_programme_year_groups ||=
+      location.location_programme_year_groups.includes(:location_year_group)
   end
 
   def valid_session_dates
