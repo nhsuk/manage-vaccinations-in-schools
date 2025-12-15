@@ -250,6 +250,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_16_102852) do
     t.bigint "team_location_id", null: false
     t.datetime "updated_at", null: false
     t.boolean "use_preferred_name"
+    t.index ["id"], name: "index_consent_forms_on_recorded", where: "(recorded_at IS NOT NULL)"
+    t.index ["id"], name: "index_consent_forms_on_unmatched_and_not_archived", where: "((recorded_at IS NOT NULL) AND (archived_at IS NULL))"
     t.index ["nhs_number"], name: "index_consent_forms_on_nhs_number"
     t.index ["original_session_id"], name: "index_consent_forms_on_original_session_id"
     t.index ["school_id"], name: "index_consent_forms_on_school_id"
