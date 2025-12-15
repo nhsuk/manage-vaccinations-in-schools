@@ -19,6 +19,7 @@ describe "HPV vaccination" do
 
     when_i_confirm_the_details
     then_i_see_a_success_message
+    and_the_disease_types_are_set_on_the_record
     and_i_no_longer_see_the_patient_in_the_record_tab
 
     when_i_go_to_the_patient
@@ -92,6 +93,12 @@ describe "HPV vaccination" do
 
   def then_i_see_a_success_message
     expect(page).to have_content("Vaccination outcome recorded for HPV")
+  end
+
+  def and_the_disease_types_are_set_on_the_record
+    expect(VaccinationRecord.last.disease_types).to contain_exactly(
+      "human_papillomavirus"
+    )
   end
 
   def and_i_no_longer_see_the_patient_in_the_record_tab

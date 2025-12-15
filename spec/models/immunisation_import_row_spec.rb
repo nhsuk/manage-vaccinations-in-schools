@@ -1204,6 +1204,12 @@ describe ImmunisationImportRow do
         end
       end
 
+      it "sets the disease types of the vaccine" do
+        expect(vaccination_record.disease_types).to eq(
+          Vaccine.find_by!(brand: "Gardasil 9").disease_types
+        )
+      end
+
       context "without a vaccine" do
         let(:data) { valid_data.except("VACCINE_GIVEN") }
 
@@ -1213,6 +1219,12 @@ describe ImmunisationImportRow do
 
         it "does set a programme" do
           expect(vaccination_record.programme).not_to be_nil
+        end
+
+        it "sets the disease types of the programme" do
+          expect(vaccination_record.disease_types).to eq(
+            programmes.first.disease_types
+          )
         end
       end
 
