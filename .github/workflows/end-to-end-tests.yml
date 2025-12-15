@@ -139,6 +139,17 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
+      - name: Get container logs
+        run: |
+          TASK_ARN=$(echo '${{ needs.launch-dockerized-devimage.outputs.run_task_arn }}' | jq -r '.[0]')
+          TASK_ID=$(sed 's:^.*/::' <<< $TASK_ARN)
+          WEB_CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-development-web\$252F${TASK_ID}\$3Fstart\$3D$(date +%s)000\$26end\$3D$(date -d '+30 minutes' +%s)000"
+          SIDEKIQ_CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-development-sidekiq\$252F${TASK_ID}\$3Fstart\$3D$(date +%s)000\$26end\$3D$(date -d '+30 minutes' +%s)000"
+          echo "**Task ID:** $TASK_ID" >> $GITHUB_STEP_SUMMARY
+          echo "**Container Logs:** " >> $GITHUB_STEP_SUMMARY
+          echo "  * WEB logs: $WEB_CLOUDWATCH_URL" >> $GITHUB_STEP_SUMMARY
+          echo "  * SIDEKIQ logs: $SIDEKIQ_CLOUDWATCH_URL" >> $GITHUB_STEP_SUMMARY
+          echo "Logs for server: [web](${WEB_CLOUDWATCH_URL}) and [sidekiq](${SIDEKIQ_CLOUDWATCH_URL})"
       - name: Wait for task to stabilise
         run: |
           set -euo pipefail
@@ -197,13 +208,6 @@ jobs:
         id: compile-outputs
         run: |
           TASK_ARN=$(echo '${{ needs.launch-dockerized-devimage.outputs.run_task_arn }}' | jq -r '.[0]')
-          TASK_ID=$(sed 's:^.*/::' <<< $TASK_ARN)
-          WEB_CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-development-web\$252F${TASK_ID}\$3Fstart\$3D$(date +%s)000\$26end\$3D$(date -d '+30 minutes' +%s)000"
-          SIDEKIQ_CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-development-sidekiq\$252F${TASK_ID}\$3Fstart\$3D$(date +%s)000\$26end\$3D$(date -d '+30 minutes' +%s)000"
-          echo "**Task ID:** $TASK_ID" >> $GITHUB_STEP_SUMMARY
-          echo "**Container Logs:** " >> $GITHUB_STEP_SUMMARY
-          echo "  * WEB logs: $WEB_CLOUDWATCH_URL" >> $GITHUB_STEP_SUMMARY
-          echo "  * SIDEKIQ logs: $SIDEKIQ_CLOUDWATCH_URL" >> $GITHUB_STEP_SUMMARY
           NETWORK_INTERFACE=$(aws ecs describe-tasks \
             --cluster assurance-testing \
             --tasks "$TASK_ARN" \
@@ -215,7 +219,6 @@ jobs:
           echo "container_ip=$CONTAINER_IP" >> $GITHUB_OUTPUT
           echo "task_arn=$TASK_ARN" >> $GITHUB_OUTPUT
           echo "Started task: $TASK_ARN"
-          echo "Logs for server: [web](${WEB_CLOUDWATCH_URL}) and [sidekiq](${SIDEKIQ_CLOUDWATCH_URL})"
   find-correct-test-branch:
     needs: [wait-for-task-stability]
     if: ${{ !cancelled() && needs.wait-for-task-stability.result == 'success'}}
