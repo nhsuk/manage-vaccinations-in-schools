@@ -4,12 +4,20 @@ run-name: Creating dockerized image from ${{ github.ref_name }}
 on:
   workflow_dispatch:
   push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+    branches:
+      - next
+  workflow_call:
+    inputs:
+      github_ref:
+        description: The git commit sha to build the image from.
+        type: string
 
 permissions:
   id-token: write
   contents: read
+
+env:
+  github_ref: ${{ inputs.github_ref || github.ref_name == 'next' && 'next' || github.ref_name }}
 
 jobs:
   setup-development-database:
@@ -25,6 +33,9 @@ jobs:
       SKIP_TEST_DATABASE: true
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ env.github_ref }}
+          repository: nhsuk/manage-vaccinations-in-schools
       - uses: actions/setup-node@v6
         with:
           node-version-file: .tool-versions
@@ -66,8 +77,6 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
       - name: Commit postgres container with database
         run: |
-          docker commit database ${{ steps.login-ecr.outputs.registry }}/mavis/development/postgres_db:latest
+          docker commit database "${{ steps.login-ecr.outputs.registry }}/mavis/development/postgres_db:$github_ref"
       - name: Push image
-        run: |
-          docker tag ${{ steps.login-ecr.outputs.registry }}/mavis/development/postgres_db:latest ${{ steps.login-ecr.outputs.registry }}/mavis/development/postgres_db:${{ github.ref_name }}
-          docker push ${{ steps.login-ecr.outputs.registry }}/mavis/development/postgres_db --all-tags
+        run: docker push "${{ steps.login-ecr.outputs.registry }}/mavis/development/postgres_db:$github_ref"

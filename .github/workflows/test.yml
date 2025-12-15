@@ -91,6 +91,8 @@ jobs:
       id-token: write
       contents: write
     uses: ./.github/workflows/end-to-end-tests.yml
+    with:
+      git_reference_for_database_image: ${{ github.event.pull_request.base.ref }}
     secrets:
       HTTP_AUTH_TOKEN_FOR_TESTS: ${{ secrets.HTTP_AUTH_TOKEN_FOR_TESTS }}
       MAVIS_TESTING_REPO_ACCESS_TOKEN: ${{ secrets.MAVIS_TESTING_REPO_ACCESS_TOKEN }}

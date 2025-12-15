@@ -163,7 +163,7 @@ resource "aws_ecs_task_definition" "containerized_development" {
     },
     {
       name      = "mavis-development-db"
-      image     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com/mavis/development/postgres_db:latest"
+      image     = "CHANGE_ME"
       essential = false
       environment = [
         {

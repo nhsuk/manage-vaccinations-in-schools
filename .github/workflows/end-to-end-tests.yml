@@ -3,10 +3,15 @@ name: End To End test run
 on:
   workflow_call:
     inputs:
-      github_ref:
+      git_reference_for_application_image:
         description: The git reference for deploying containerized mavis application
         type: string
         required: false
+      git_reference_for_database_image:
+        description: The environment to build the base image against
+        type: string
+        required: false
+        default: "next"
     secrets:
       HTTP_AUTH_TOKEN_FOR_TESTS:
         description: HTTP Basic Auth token for the environment under test
@@ -18,14 +23,13 @@ on:
 permissions: { }
 
 jobs:
-  check-image-presence:
+  check-development-image-presence:
     name: Check if docker image already exists
     runs-on: ubuntu-latest
     permissions:
       id-token: write
     outputs:
       build-needed: ${{ steps.check-image.outputs.build-needed }}
-      next-git-sha: ${{ steps.get-next-git-sha.outputs.git-sha }}
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
@@ -37,13 +41,14 @@ jobs:
         run: |
           if aws ecr describe-images --repository-name mavis/development --image-ids imageTag=${{ github.sha }} > /dev/null 2>&1; then
             echo "Docker image with given tag already exists"
+            echo "build-needed=false" >> $GITHUB_OUTPUT
           else
             echo "Docker image does not exist. Build needed"
             echo "build-needed=true" >> $GITHUB_OUTPUT
           fi
   build-and-push-development-image:
-    needs: [check-image-presence]
-    if: needs.check-image-presence.outputs.build-needed == 'true'
+    needs: [ check-development-image-presence ]
+    if: needs.check-development-image-presence.outputs.build-needed == 'true'
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -51,7 +56,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.github_ref || github.ref }}
+          ref: ${{ inputs.git_reference_for_application_image || github.ref }}
           repository: nhsuk/manage-vaccinations-in-schools
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
@@ -69,12 +74,49 @@ jobs:
             -t "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}" \
             .
           docker push "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}"
+  check-database-image-presence:
+    name: Check if docker image already exists
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    outputs:
+      build-needed: ${{ steps.check-image.outputs.build-needed }}
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
+          aws-region: eu-west-2
+      - name: Check if image exists
+        id: check-image
+        run: |
+          if aws ecr describe-images --repository-name mavis/development --image-ids imageTag=${{ github.event.pull_request.base.ref }} > /dev/null 2>&1; then
+            echo "Docker image with given tag already exists"
+            echo "build-needed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Docker image does not exist. Build needed"
+            echo "build-needed=true" >> $GITHUB_OUTPUT
+          fi
+  build-and-push-database-image:
+    needs: [ check-database-image-presence ]
+    if: needs.check-database-image-presence.outputs.build-needed == 'true'
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/create_dockerized_db.yml
+    with:
+      github_ref: ${{ inputs.git_reference_for_database_image }}
   launch-dockerized-devimage:
-    needs: [ check-image-presence, build-and-push-development-image ]
+    needs: [ check-development-image-presence,
+             build-and-push-development-image,
+             check-database-image-presence,
+             build-and-push-database-image ]
     if: ${{ !cancelled() &&
       (needs.build-and-push-development-image.result == 'success' ||
-      (needs.check-image-presence.result == 'success' && needs.build-and-push-development-image.result == 'skipped')
-      ) }}
+      (needs.check-development-image-presence.result == 'success' && needs.build-and-push-development-image.result == 'skipped')) &&
+      (needs.build-and-push-database-image.result == 'success' ||
+      (needs.check-database-image-presence.result == 'success' && needs.build-and-push-database-image.result == 'skipped'))
+      }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -86,18 +128,25 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
-      - name: Render task definition 1
-        id: render-task-definition-1
+      - name: Render task definition web
+        id: render-task-definition-web
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition-family: "assurance-testing-mavis-development-task-definition-template"
           container-name: "mavis-development-web"
           image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}"
-      - name: Render task definition 2
-        id: render-task-definition-2
+      - name: Render task definition database
+        id: render-task-definition-database
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ steps.render-task-definition-1.outputs.task-definition }}
+          task-definition: ${{ steps.render-task-definition-web.outputs.task-definition }}
+          container-name: "mavis-development-db"
+          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development/postgres_db:${{ github.event.pull_request.base.ref }}"
+      - name: Render task definition sidekiq
+        id: render-task-definition-sidekiq
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-task-definition-database.outputs.task-definition }}
           container-name: "mavis-development-sidekiq"
           image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}"
       - name: Prepare deployment
@@ -105,7 +154,7 @@ jobs:
         run: |
           file_path="assurance-testing-mavis-development-task-definition.json"
           family_name="assurance-testing-mavis-development-task-definition"
-          echo "$(jq --arg f "$family_name" '.family = $f' "${{ steps.render-task-definition-2.outputs.task-definition }}")" > "$file_path"
+          echo "$(jq --arg f "$family_name" '.family = $f' "${{ steps.render-task-definition-sidekiq.outputs.task-definition }}")" > "$file_path"
           cat "$file_path" #TODO: Debugging, remove later
 
           subnet_id=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=assurance-testing-subnet --query 'Subnets[0].SubnetId' --output text)
@@ -220,7 +269,7 @@ jobs:
           echo "task_arn=$TASK_ARN" >> $GITHUB_OUTPUT
           echo "Started task: $TASK_ARN"
   find-correct-test-branch:
-    needs: [wait-for-task-stability]
+    needs: [ wait-for-task-stability ]
     if: ${{ !cancelled() && needs.wait-for-task-stability.result == 'success'}}
     runs-on: ubuntu-latest
     permissions:
@@ -239,7 +288,7 @@ jobs:
         env:
           BRANCH_TO_CHECK: ${{ github.head_ref }}
   call-functional-tests:
-    needs: [launch-dockerized-devimage, wait-for-task-stability, find-correct-test-branch]
+    needs: [ launch-dockerized-devimage, wait-for-task-stability, find-correct-test-branch ]
     if: ${{ !cancelled() && needs.launch-dockerized-devimage.result == 'success' && needs.wait-for-task-stability.result == 'success'}}
     uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/functional_selected_device.yaml@main
     permissions:
@@ -252,7 +301,7 @@ jobs:
       HTTP_AUTH_TOKEN_FOR_TESTS: ${{ secrets.HTTP_AUTH_TOKEN_FOR_TESTS }}
       MAVIS_TESTING_REPO_ACCESS_TOKEN: ${{ secrets.MAVIS_TESTING_REPO_ACCESS_TOKEN }}
   stop-docker-environment:
-    needs: [call-functional-tests, launch-dockerized-devimage, wait-for-task-stability]
+    needs: [ call-functional-tests, launch-dockerized-devimage, wait-for-task-stability ]
     if: ${{ always() && needs.launch-dockerized-devimage.result != 'skipped'}}
     runs-on: ubuntu-latest
     permissions:
