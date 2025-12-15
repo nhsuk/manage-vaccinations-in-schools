@@ -89,13 +89,15 @@ class DraftSessionsController < ApplicationController
         .includes(:location_programme_year_groups)
         .where(academic_year: @draft_session.academic_year)
         .order(:value)
-        .map do |location_year_group|
+        .filter_map do |location_year_group|
           value = location_year_group.value
           text = helpers.format_year_group(value)
 
-          missing_programmes =
-            programmes_in_session - location_year_group.programmes
-          only_programmes = programmes_in_session - missing_programmes
+          programmes_for_year_group = location_year_group.programmes
+          next if programmes_for_year_group.empty?
+
+          only_programmes = programmes_in_session & programmes_for_year_group
+          next if only_programmes.blank?
 
           hint =
             if only_programmes == programmes_in_session

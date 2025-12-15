@@ -83,7 +83,13 @@ describe "School sessions" do
         :with_generic_clinic,
         programmes: [@programme, @other_programme]
       )
-    @location = create(:school, :secondary, team: @team)
+    @location =
+      create(
+        :school,
+        :secondary,
+        team: @team,
+        programmes: [@programme, @other_programme]
+      )
 
     @parent = create(:parent)
 
@@ -209,6 +215,17 @@ describe "School sessions" do
     expect(page).to have_content(
       "Which year groups do you want to invite to this session?"
     )
+
+    expect(page).not_to have_content("Reception")
+    # "Year 1" exists in "Year 11"
+    expect(page).not_to have_content("Year 2")
+    expect(page).not_to have_content("Year 3")
+    expect(page).not_to have_content("Year 4")
+    expect(page).not_to have_content("Year 5")
+    expect(page).not_to have_content("Year 6")
+    expect(page).not_to have_content("Year 7")
+    expect(page).not_to have_content("Year 12")
+    expect(page).not_to have_content("Year 13")
 
     check "Year 8"
     check "Year 9"
