@@ -92,7 +92,7 @@ resource "aws_ecs_task_definition" "containerized_development" {
         options = {
           awslogs-group         = aws_cloudwatch_log_group.this.name
           awslogs-region        = "eu-west-2"
-          awslogs-stream-prefix = "${var.identifier}-development-logs"
+          awslogs-stream-prefix = "${var.identifier}-logs"
         }
       }
       healthCheck = {
