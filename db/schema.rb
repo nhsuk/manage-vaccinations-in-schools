@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_15_114448) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_15_120449) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1354,7 +1354,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_15_114448) do
       pps.status,
       tl.team_id,
       pl.location_id AS session_location_id,
-      pat.gender_code AS patient_gender,
+          CASE pat.gender_code
+              WHEN 0 THEN 'not known'::text
+              WHEN 1 THEN 'male'::text
+              WHEN 2 THEN 'female'::text
+              WHEN 9 THEN 'not specified'::text
+              ELSE NULL::text
+          END AS patient_gender,
       ((pps.academic_year - pat.birth_academic_year) - 5) AS patient_year_group,
       COALESCE(la.mhclg_code, ''::character varying) AS patient_local_authority_code,
       COALESCE(la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
