@@ -993,7 +993,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_16_102852) do
     t.datetime "created_at", null: false
     t.boolean "discontinued", default: false, null: false
     t.enum "disease_types", default: [], null: false, array: true, enum_type: "disease_type"
-    t.enum "disease_types_enum", array: true, enum_type: "disease_type"
     t.decimal "dose_volume_ml", null: false
     t.text "manufacturer", null: false
     t.integer "method", null: false
