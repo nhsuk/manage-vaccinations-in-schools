@@ -27,25 +27,21 @@ describe AppPatientSessionVaccinationComponent do
     end
   end
 
-  context "when programme status is enabled" do
-    before { Flipper.enable(:programme_status) }
-
-    context "with a vaccination record for the programme" do
-      before do
-        create(:vaccination_record, patient:, programme:)
-        StatusUpdater.call(patient:)
-      end
-
-      it { should have_text("HPV: Vaccinated") }
+  context "with a vaccination record for the programme" do
+    before do
+      create(:vaccination_record, patient:, programme:)
+      StatusUpdater.call(patient:)
     end
 
-    context "with an unwell vaccination record for the programme" do
-      before do
-        create(:vaccination_record, :unwell, patient:, programme:)
-        StatusUpdater.call(patient:)
-      end
+    it { should have_text("HPV: Vaccinated") }
+  end
 
-      it { should have_text("HPV: Unable to vaccinate") }
+  context "with an unwell vaccination record for the programme" do
+    before do
+      create(:vaccination_record, :unwell, patient:, programme:)
+      StatusUpdater.call(patient:)
     end
+
+    it { should have_text("HPV: Unable to vaccinate") }
   end
 end

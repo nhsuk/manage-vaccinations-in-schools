@@ -54,7 +54,7 @@ describe "Verbal consent" do
   end
 
   def when_i_record_that_verbal_nasal_consent_was_given(add_psd:)
-    visit session_consent_path(@session)
+    visit session_patients_path(@session)
 
     click_link @patient.full_name
     click_button "Record a new consent response"

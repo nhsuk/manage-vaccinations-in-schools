@@ -65,12 +65,7 @@ describe "Withdraw consent" do
   def and_consent_has_been_given
     @consent =
       create(:consent, :given, patient: @patient, programme: @programme)
-    create(
-      :patient_consent_status,
-      :given,
-      patient: @patient,
-      programme: @programme
-    )
+    StatusUpdater.call(patient: @patient.reload)
     @parent = @consent.parent
   end
 
@@ -81,12 +76,7 @@ describe "Withdraw consent" do
       patient: @patient,
       programme: @programme
     )
-    create(
-      :patient_triage_status,
-      :safe_to_vaccinate,
-      patient: @patient,
-      programme: @programme
-    )
+    StatusUpdater.call(patient: @patient.reload)
   end
 
   def and_the_patient_is_ready_for_the_nurse
@@ -98,8 +88,8 @@ describe "Withdraw consent" do
   end
 
   def when_i_go_to_the_patient
-    visit session_consent_path(@session)
-    check "Consent given"
+    visit session_patients_path(@session)
+    choose "Due vaccination"
     click_on "Update results"
     click_link @patient.full_name
   end

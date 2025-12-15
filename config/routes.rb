@@ -252,8 +252,6 @@ Rails.application.routes.draw do
 
   resources :sessions, only: %i[index show edit], param: :slug do
     resource :patients, only: :show, controller: "sessions/patients"
-    resource :consent, only: :show, controller: "sessions/consent"
-    resource :triage, only: :show, controller: "sessions/triage"
     resource :patient_specific_directions,
              path: "patient-specific-directions",
              only: %i[show new create],

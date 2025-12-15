@@ -266,6 +266,16 @@ FactoryBot.define do
           )
         end
       end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :needs_consent_no_response,
+            patient: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :triage_not_required do
@@ -315,6 +325,16 @@ FactoryBot.define do
           association(
             :patient_consent_status,
             :given,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :due_injection,
             patient: instance,
             programme:
           )
@@ -434,6 +454,16 @@ FactoryBot.define do
           )
         end
       end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :needs_triage,
+            patient: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :consent_given_injection_only_triage_needed do
@@ -463,12 +493,21 @@ FactoryBot.define do
           )
         end
       end
-
       triage_statuses do
         programmes.map do |programme|
           association(
             :patient_triage_status,
             :required,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :needs_triage,
             patient: instance,
             programme:
           )
@@ -503,12 +542,21 @@ FactoryBot.define do
           )
         end
       end
-
       triage_statuses do
         programmes.map do |programme|
           association(
             :patient_triage_status,
             :required,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :needs_triage,
             patient: instance,
             programme:
           )
@@ -542,6 +590,16 @@ FactoryBot.define do
           )
         end
       end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :needs_triage,
+            patient: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :consent_given_without_gelatine_triage_not_needed do
@@ -564,6 +622,16 @@ FactoryBot.define do
           association(
             :patient_consent_status,
             :given_without_gelatine,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :due_injection_without_gelatine,
             patient: instance,
             programme:
           )
@@ -776,6 +844,16 @@ FactoryBot.define do
           association(
             :patient_consent_status,
             :refused,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :has_refusal_consent_refused,
             patient: instance,
             programme:
           )
@@ -1022,6 +1100,16 @@ FactoryBot.define do
               programme:
             )
           end
+        end
+      end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :vaccinated_fully,
+            patient: instance,
+            programme:
+          )
         end
       end
       vaccination_statuses do

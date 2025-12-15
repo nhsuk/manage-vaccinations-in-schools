@@ -48,8 +48,10 @@ feature "Verbal consent" do
       click_on "Sessions"
     end
     click_on "Pilot School"
-    click_on "Consent"
-    check "Consent refused"
+    within ".app-secondary-navigation" do
+      click_on "Children"
+    end
+    choose "Has a refusal"
     click_on "Update results"
     click_on @child.full_name
     click_on "Record a new consent response"
@@ -93,7 +95,7 @@ feature "Verbal consent" do
   end
 
   def and_the_child_is_shown_as_having_consent_given
-    check "Consent given"
+    choose "Due vaccination"
     click_on "Update results"
 
     expect(page).to have_content(@child.full_name)
