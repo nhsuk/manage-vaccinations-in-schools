@@ -1,0 +1,36 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukbarkinganddagenhamsais
+  name: Vaccination UK - Barking and Dagenham
+  email: hounslow@v-uk.co.uk
+  phone: "0203 343 2400"
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/privacy-policy
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id:
+  type: point_of_care
+
+programmes: [menacwy, mmr, td_ipv, hpv]
+
+subteams:
+  subteam1:
+    name: Vaccination UK - Barking and Dagenham
+    email: barkinganddagenham@v-uk.co.uk
+    phone: "0203 343 2400"
+    reply_to_id:
+
+schools:
+  subteam1:
+
+clinics:
+  subteam1:
+    - name:
+      address_line_1:
+      address_town:
+      address_postcode:
+    - name:
+      address_line_1:
+      address_town:
+      address_postcode:

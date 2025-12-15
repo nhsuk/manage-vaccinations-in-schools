@@ -1,0 +1,155 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukhackneysais
+  name: Vaccination UK - Hackney
+  email: hackney@v-uk.co.uk
+  phone: 0207 101 2026
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/privacy-policy
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id: 0b643a02-26c7-45d4-986e-dab1a8729cd8
+  type: point_of_care
+
+programmes:
+  - menacwy
+  - mmr
+  - td_ipv
+  - hpv
+
+subteams:
+  hackney:
+    name: Vaccination UK - Hackney
+    email: hackney@v-uk.co.uk
+    phone: 0207 101 2026
+    reply_to_id: 0b643a02-26c7-45d4-986e-dab1a8729cd8
+
+schools:
+  hackney:
+    - 133449
+    - 100254
+    - 131170
+    - 102171
+    - 100295
+    - 147296
+    - 100293
+    - 137505
+    - 131342
+    - 136817
+    - 100260
+    - 100218
+    - 131706
+    - 137318
+    - 100291
+    - 136015
+    - 100298
+    - 150604
+    - 143756
+    - 137442
+    - 100239
+    - 100223
+    - 100225
+    - 130303
+    - 100252
+    - 100258
+    - 142112
+    - 149901
+    - 141750
+    - 100256
+    - 100257
+    - 100263
+    - 131141
+    - 100312
+    - 100253
+    - 100250
+    - 100229
+    - 137808
+    - 100230
+    - 145730
+    - 145610
+    - 145609
+    - 100261
+    - 100231
+    - 100232
+    - 134693
+    - 142255
+    - 140426
+    - 140210
+    - 134635
+    - 100254
+    - 141576
+    - 147312
+    - 100256
+    - 100234
+    - 100264
+    - 100282
+    - 100259
+    - 100239
+    - 100235
+    - 132791
+    - 130302
+    - 100240
+    - 100241
+    - 100245
+    - 133439
+    - 100275
+    - 100257
+    - 136137
+    - 100242
+    - 121792
+    - 132137
+    - 100270
+    - 100266
+    - 100267
+    - 150550
+    - 100274
+    - 100269
+    - 100279
+    - 100307
+    - 100299
+    - 100296
+    - 142572
+    - 100294
+    - 100289
+    - 132736
+    - 100300
+    - 143103
+    - 131609
+    - 135835
+    - 100311
+    - 131343
+    - 139814
+    - 131062
+    - 100284
+    - 100243
+    - 138101
+    - 138516
+    - 147653
+    - 130932
+    - 137809
+    - 100248
+    - 146748
+    - 100287
+    - 133599
+    - 100463
+    - 100003
+    - 100001
+    - 100002
+    - 100000
+
+clinics:
+  camden:
+    - name: Ann Taylor Children and Family Hub
+      address_line_1: 1 - 13 Triangle Road
+      address_town: Hackney
+      address_postcode: E8 3RP
+    - name: Hackney Campus - New City College
+      address_line_1: Falkirk Street, Hoxton
+      address_line_2: Hoxton
+      address_town: Hackney
+      address_postcode: N1 6HH
+    - name: Hackney Central Library
+      address_line_1: 1 Reading Lane
+      address_town: Hackney
+      address_postcode: E8 1GQ

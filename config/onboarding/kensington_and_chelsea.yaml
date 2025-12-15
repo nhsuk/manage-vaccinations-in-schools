@@ -1,0 +1,137 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukkensingtonandchelseasais
+  name: Vaccination UK - Kensington and Chelsea
+  email: kensington.chelsea@v-uk.co.uk
+  phone: 0203 343 2400
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/privacy-policy
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id:
+  type: point_of_care
+
+programmes:
+  - menacwy
+  - mmr
+  - td_ipv
+  - hpv
+
+subteams:
+  kensingtonandchelsea:
+    name: Vaccination UK - Kensington and Chelsea
+    email: kensington.chelsea@v-uk.co.uk
+    phone: 0203 343 2400
+    reply_to_id:
+
+schools:
+  kensingtonandchelsea:
+    - urn: 134911
+      site: B
+      name: "Abingdon House Prep School (SEN)"
+      address_postcode: SW7 5NL
+    - 100503
+    - 139645
+    - 100537
+    - 100477
+    - 100487
+    - 100478
+    - 100513
+    - 100479
+    - 100480
+    - 100538
+    - 136740
+    - 100549
+    - 135531
+    - 136057
+    - 100489
+    - 100539
+    - 100481
+    - urn: 100520
+      site: A
+      name: Falkner House Boys School
+      address_postcode: SW5 9SU
+    - urn: 100520
+      site: B
+      name: Falkner House Girls School
+      address_line_1: ""
+      address_postcode: SW7 4QB
+    - 100482
+    - 101163
+    - 100522
+    - 100508
+    - 100518
+    - 149632
+    - urn: 100490
+      site: A
+      name: Holy Trinity CofE Primary School - Cadogan Gardens
+      address_postcode: SW3 2RN
+    - urn: 100490
+      site: B
+      name: Holy Trinity CofE Primary School - Sedding street
+      address_line_1: ""
+      address_postcode: SW1X 9DE
+    - 100532
+    - 140212
+    - 140213
+    - 148562
+    - 100533
+    - 100545
+    #    - urn: 100547
+    #      site: A
+    #      name: "Marie d'Orliac -Lycee Francais Charles de Gaulle de Londres"
+    #     TODO Site B is ina different team
+    - 100540
+    - 100483
+    - 100521
+    - 100510
+    - 134664
+    - 100491
+    - 140807
+    - 151731
+    - 100485
+    - 100486
+    - 100531
+    - 100511
+    - 100494
+    - 100499
+    - 100500
+    - 136747
+    - 135616
+    - 100542
+    - 100493
+    - 100505
+    - 100495
+    - 148438
+    - 100497
+    - 100516
+    - 100492
+    - 151008
+    - 100514
+    - 141931
+    - 132788
+    - 138599
+    - 100488
+    - 100534
+    - 144516
+    - urn: 100519
+      site: A
+      name: Wetherby School (Reception)
+      address_postcode: W11 3EP
+    - urn: 100519
+      site: B
+      name: Wetherby School Notting Hill  (Year 1 - Year 3) (Pembridge Square)
+      address_line_1: ""
+      address_postcode: W2 4ED
+
+clinics:
+  barkinganddagenham:
+    - name: Homefield House Family Hub
+      address_line_1: 4-6 Golborne Rd
+      address_town: London
+      address_postcode: W10 5PE
+    - name: Kensington Central Library
+      address_line_1: 12 Phillimore Walk
+      address_town: London
+      address_postcode: W8 7RX

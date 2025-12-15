@@ -1,0 +1,171 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukbrentsais
+  name: Vaccination UK - Brent
+  email: brent@v-uk.co.uk
+  phone: "0208 432 7075"
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/policies
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id: 7e955e44-3890-410c-a4b4-2516bb698c78
+  type: point_of_care
+
+programmes:
+  - hpv
+  - menacwy
+  - mmr
+  - td_ipv
+
+subteams:
+  brent:
+    name: Vaccination UK - Brent
+    email: brent@v-uk.co.uk
+    phone: "0208 432 7075"
+    reply_to_id: 7e955e44-3890-410c-a4b4-2516bb698c78
+
+schools:
+  brent:
+    - urn: 138610
+      site: "A"
+      name: "Alperton Community School - Lower Site"
+    - urn: 138610
+      site: "B"
+      name: "Alperton Community School - Upper Site"
+    - 101576
+    - 147025
+    - 101495
+    - urn: 135600
+      site: "A"
+      name: "Ark Academy (Primary Site)"
+    - urn: 135600
+      site: "B"
+      name: "Ark Academy (Secondary Site)"
+    - 141019
+    - 139830
+    - 134846
+    - 131916
+    - 101515
+    - 136231
+    - 145718
+    - 133660
+    - 101496
+    - 131059
+    - 101498
+    - 101526
+    - 101533
+    - 136656
+    - 101544
+    - 101520
+    - 144794
+    - 101519
+    - 101531
+    - 142703
+    - 140833
+    - 101499
+    - 134226
+    - 151162
+    - 101574
+    - 101575
+    - 133724
+    - 101534
+    - 141751
+    - 101503
+    - urn: 137685
+      site: "A"
+      name: "Kingsbury High School (upper school)"
+    - urn: 137685
+      site: "B"
+      name: "Kingsbury High School (lower school)"
+    - 101504
+    - 142329
+    - 101506
+    - 101507
+    - 101554
+    - urn: 144053
+      site: "A"
+      name: "Manor Special School"
+    - urn: 144053
+      site: "B"
+      name: "Manor Special School (Early Years)"
+    - 151476
+    - 135298
+    - 140862
+    - 101524
+    - 101530
+    - 101501
+    - 101500
+    - 101522
+    - 101564
+    - 143718
+    - 141154
+    - 101508
+    - 142718
+    - 101528
+    - 146721
+    - 146116
+    - 101545
+    - 101509
+    - 101581
+    - urn: 139319
+      site: "A"
+      name: "Preston Manor Lower School"
+    - urn: 139319
+      site: "B"
+      name: "Preston Manor Upper School"
+    - 101510
+    - 101535
+    - 138609
+    - 101512
+    - 101511
+    - 101527
+    - 101549
+    - 141672
+    - 101571
+    - 137994
+    - 142560
+    - 101546
+    - 101539
+    - 101555
+    - 146179
+    - 101542
+    - 101537
+    - 151110
+    - 101543
+    - 101521
+    - 138608
+    - 143731
+    - 135973
+    - 101556
+    - 133385
+    - urn: 146212
+      site: "A"
+      name: "Village School Main Site"
+    - urn: 146212
+      site: "B"
+      name: "Village School Hope Site"
+    - urn: 146212
+      site: "C"
+      name: "Village School KVS Site"
+    - 101502
+    - 138457
+    - 150848
+    - 130095
+    - 140796
+    - 101518
+
+clinics:
+  brent:
+    - name: Park Royal Medical Centre
+      address_line_1: Central Middlesex Hospital, Ground Floor, Acton Lane
+      address_town: London
+      address_postcode: NW10 7NS
+    - name: Church Lane Family Wellbeing Centre
+      address_line_1: Fryent Primary School Church Lane
+      address_town: London
+      address_postcode: NW9 8JD
+    - name: Alperton Family Wellbeing Centre
+      address_line_1: Alperton Community School Annexe Ealing Rd
+      address_town: Wembley
+      address_postcode: HA0 4PW

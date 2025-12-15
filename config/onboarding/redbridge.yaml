@@ -1,0 +1,140 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukredbridgesais
+  name: Vaccination UK - Redbridge
+  email: redbridge@v-uk.co.uk
+  phone: 0203 343 2400
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/privacy-policy
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id: a78c4e81-9a7d-4e90-b7ad-8a43360aaca0
+  type: point_of_care
+
+programmes:
+  - menacwy
+  - mmr
+  - td_ipv
+  - hpv
+
+subteams:
+  redbridge:
+    name: Vaccination UK - Redbridge
+    email: redbridge@v-uk.co.uk
+    phone: 0203 343 2400
+    reply_to_id: a78c4e81-9a7d-4e90-b7ad-8a43360aaca0
+
+schools:
+  redbridge:
+    - 136934
+    - 102823
+    - 142455
+    - 126620
+    - 138518
+    - 142896
+    - 142489
+    - 102872
+    - 132134
+    - 102875
+    - 102840
+    - 141006
+    - 140575
+    - 102867
+    - 102849
+    - 136267
+    - 102836
+    - 131847
+    - 133936
+    - 133935
+    - 102798
+    - 131682
+    - 102837
+    - 131625
+    - 149520
+    - 102869
+    - 148071
+    - 102802
+    - 145044
+    - 137692
+    - 102833
+    - 133934
+    - 102805
+    - 102806
+    - 102807
+    - 102808
+    - 102835
+    - 148240
+    - 102881
+    - 131013
+    - 102850
+    - 102838
+    - 102861
+    - 102878
+    - 140475
+    - 102795
+    - 131304
+    - 102858
+    - 102811
+    - 102879
+    - 144875
+    - 102812
+    - 102839
+    - 143406
+    - 133932
+    - 133931
+    - 133405
+    - 147337
+    - 133938
+    - 133939
+    - 145045
+    - 139826
+    - 134366
+    - 127046
+    - 102830
+    - 102856
+    - 102871
+    - 102832
+    - 131930
+    - 147340
+    - 140295
+    - 102844
+    - 102864
+    - 102842
+    - 102845
+    - 136244
+    - 102794
+    - 137088
+    - 137418
+    - 102860
+    - 102819
+    - 102857
+    - 102841
+    - 102851
+    - 102831
+    - 102820
+    - 143617
+    - 102847
+    - 102854
+    - 102852
+    - 102866
+    - 102834
+
+clinics:
+  newham:
+    - name: Redbridge Library
+      address_line_1: Clements Rd
+      address_town: Ilford
+      address_postcode: IG1 1EA
+    - name: Fullwell Cross Library
+      address_line_1: 140 High Street
+      address_town: Ilford
+      address_postcode: IG6 2EA
+    - name: Loxford Children's Centre
+      address_line_1: 136-138 Ilford Ln
+      address_town: Ilford
+      address_postcode: IG1 2LG
+    - name: Albert Road Children's Centre'
+      address_line_1: 53 Albert Rd
+      address_town: Ilford
+      address_postcode: IG1 1HL

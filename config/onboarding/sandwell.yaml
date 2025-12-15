@@ -1,0 +1,215 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsuksandwellsais
+  name: Vaccination UK - Sandwell
+  email: sandwell@v-uk.co.uk
+  phone: 0121 5921 110
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/privacy-policy
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id:
+  type: point_of_care
+
+programmes:
+  - hpv
+  - menacwy
+  - mmr
+  - td_ipv
+
+subteams:
+  sandwell:
+    name: Vaccination UK - Sandwell
+    email: sandwell@v-uk.co.uk
+    phone: 0121 5921 110
+    reply_to_id:
+
+schools:
+  sandwell:
+    - 103930
+    - 103929
+    - 141001
+    - 103906
+    - 103887
+    - 103990
+    - 103932
+    - 103933
+    - 103981
+    - 103934
+    - 103976
+    - 103936
+    - 139043
+    - 103914
+    - 103937
+    - 103983
+    - 148064
+    - 139742
+    - 103941
+    - 141293
+    - 141292
+    - 147736
+    - 103923
+    - 149156
+    - 103982
+    - 135288
+    - 139565
+    - 135234
+    - 103925
+    - 135599
+    - 103945
+    - 103915
+    - 103972
+    - 103977
+    - 103895
+    - 103895
+    - 131178
+    - 103905
+    - 131591
+    - 148340
+    - 141813
+    - 148400
+    - 103946
+    - 104018
+    - 152004
+    - 103986
+    - 144630
+    - 103970
+    - 140136
+    - 131223
+    - 103978
+    - 148333
+    - 103969
+    - 103968
+    - 137972
+    - 149847
+    - 149407
+    - 103908
+    - 146434
+    - 103950
+    - 140140
+    - 103919
+    - 103952
+    - 103909
+    - 137701
+    - 149751
+    - 137673
+    - 135979
+    - 141926
+    - 103910
+    - 135215
+    - 148267
+    - 103953
+    - 135449
+    - 141698
+    - 146383
+    - 103954
+    - 103984
+    - 144635
+    - 150632
+    - 103979
+    - 135029
+    - 134993
+    - urn: 135254
+      site: A
+      name: Sandwell Community School (Main Site)
+    - urn: 135254
+      site: B
+      name: Sandwell Community School (Tividale Campus)
+      address_line_1: Darbys's Hill Road
+      address_line_2: ""
+      address_town: Oldbury
+      address_postcode: B69 1SG
+    - urn: 135254
+      site: C
+      name: Sandwell Community School (Smethwick Campus)
+      address_line_1: Ruskin House
+      address_line_2: Holly Lane
+      address_town: Smethwick
+      address_postcode: B67 7JB
+    - urn: 135254
+      site: D
+      name: Sandwell Community School (Wednesbury Campus)
+      address_line_1: c/o Wodensborough Academy
+      address_line_2: Hydes Road
+      address_town: Wednesbury
+      address_postcode: WS10 0DR
+    - 143038
+    - urn: 147347
+      site: A
+      name: Shenstone Lodge School (Main Site)
+    - urn: 147347
+      site: B
+      name: Shenstone Lodge School (Additional Site)
+      address_line_1: The Brades, Lower City Road
+      address_line_2: ""
+      address_town: Oldbury
+      address_postcode: B69 2HF
+    - 149827
+    - 135170
+    - 139875
+    - 147191
+    - 140792
+    - 132140
+    - 141922
+    - 141924
+    - 131673
+    - 148535
+    - 140856
+    - 103995
+    - 103987
+    - 103989
+    - 147795
+    - 104000
+    - 104019
+    - 140921
+    - 141929
+    - 147881
+    - 143322
+    - 146358
+    - 103957
+    - 135792
+    - urn: 132231
+      site: A
+      name: The Meadows School (Main Site)
+      address_line_1: Dudley Road East
+      address_line_2: ""
+      address_town: Oldbury
+      address_postcode: B69 3BU
+    - urn: 132231
+      site: B
+      name: The Meadows School (Additional Site)
+      address_line_1: Connor Road
+      address_line_2: ""
+      address_town: West Bromwich
+      address_postcode: B71 3DJ
+    - 132232
+    - 136091
+    - 135253
+    - 131212
+    - 132233
+    - 139768
+    - 150776
+    - 149508
+    - 133261
+    - 103960
+    - 131184
+    - 138033
+    - 140793
+    - 147182
+    - 103922
+    - 139918
+    - 136616
+    - 103913
+    - 103974
+
+clinics:
+  sandwell:
+    - name: Woodlane Community Centre
+      address_line_1: 157 Wood Lane
+      address_town: Westbromwich
+      address_postcode: B70 9PT
+    - name: Dorothy Parkes Centre
+      address_line_1: Church Road
+      address_town: Smethwick
+      address_postcode: B67 6EH

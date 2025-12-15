@@ -1,0 +1,156 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukhammersmithandfulhamsais
+  name: Vaccination UK - Hammersmith and Fulham
+  email: hammersmith.fulham@v-uk.co.uk
+  phone: "0203 640 7501"
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/privacy-policy
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id:
+  type: point_of_care
+
+programmes: [menacwy, mmr, td_ipv, hpv]
+
+subteams:
+  hammersmith_and_fulham:
+    name: Vaccination UK - Hammersmith and Fulham
+    email: hammersmith.fulham@v-uk.co.uk
+    phone: "0203 640 7501"
+    reply_to_id:
+
+schools:
+  hammersmith_and_fulham:
+    - 100321
+    - 100344
+    - 138680
+    - 131752
+    - 137331
+    - 139820
+    - 100322
+    - 143048
+    - 100324
+    # 131675a	Burlington House School (SEN) (secondary)	SW6 6EG
+    # 131675b	Burlington House School SEN (primary)	SW6 3JJ
+    - urn: 131675
+      site: A
+      name: "Burlington House School SEN (secondary)"
+    - urn: 131675
+      site: B
+      name: "Burlington House School SEN (primary)"
+      address_line_1: ""
+      address_postcode: SW6 3JJ
+    - 100368
+    - 100382
+    - 140811
+    - 100371
+    - 100372
+    - 149762
+    - 100328
+    - 139364
+    - 139365
+    - 143213
+    - 100354
+    - 141902
+    - 136172
+    # 100345a	Holy Cross RC School (Basuto Road)	SW6 4BL
+    # 100345b	The Fulham Billingual -Holy Cross	SW6 3AA
+    - urn: 100345
+      site: A
+      name: "Holy Cross RC School (Basuto Road)"
+      address_postcode: SW6 4BL
+    - urn: 100345
+      site: B
+      name: "The Fulham Billingual -Holy Cross"
+    - 100381
+    - 100346
+    - 100331
+    - 100509
+    - 144965
+    - 138607
+    - 141685
+    - 134009
+    - 100370
+    - 100375
+    - 135729
+    - urn: 100547
+      site: B
+      name: "Marie d'Orliac -Lycee Francais Charles de Gaulle de Londres"
+      address_postcode: "SW6 3AA"
+    - 100334
+    - 100326
+    - 134273
+    - 100335
+    - 147793
+    - 139509
+    - 135175
+    - 134010
+    - 143129
+    - 147463
+    - 143212
+    - 100373
+    - 137935
+    - 100338
+    - 150082
+    - 131268
+    - 100527
+    - 149641
+    - 100349
+    - 100350
+    - 100351
+    - 100366
+    - 100352
+    - 100353
+    - 100357
+    - 143214
+    - 141135
+    # 131165a	The Fulham Pre Prep School (R, Y1, Y2)	SW6 3JJ	All-through
+    # 131165b	The Fulham Prep School (Y3 to Y8)	W14 9SD	All-through
+    - urn: 131165
+      site: A
+      name: "The Fulham Pre Prep School (R, Y1, Y2)"
+      address_postcode: SW6 3JJ
+    - urn: 131165
+      site: B
+      name: "The Fulham Prep School (Y3 to Y8)"
+      address_line_1: ""
+      address_postcode: W14 9SD
+    - 100369
+    - 141617
+    - 137157
+    - 142256
+    - 130239
+    - 100340
+    - 136750
+    - 139546
+    - 140201
+    - 100379
+    - 100341
+    - 151698
+    - 100318
+    - 100317
+
+# Holy Trinity Church	41 Brook Green, London	W6 7BL
+# Family Hub Tudor Rose Community Centre	Shottendane Road, London 	SW6 5PG
+# Youthzone Family Hub/Community Centre	2 Edcity Walk, London	W12 7TF
+# Shepards bush library 	6 Wood Ln, London	W12 7BF
+clinics:
+  hammersmith_and_fulham:
+    - name: Holy Trinity Church
+      address_line_1: 41 Brook Green
+      address_town: London
+      address_postcode: W6 7BL
+    - name: Family Hub Tudor Rose Community Centre
+      address_line_1: Shottendane Road
+      address_town: London
+      address_postcode: SW6 5PG
+    - name: Youthzone Family Hub/Community Centre
+      address_line_1: 2 Edcity Walk
+      address_town: London
+      address_postcode: W12 7TF
+    - name: Shepards bush library
+      address_line_1: 6 Wood Ln
+      address_town: London
+      address_postcode: W12 7BF

@@ -1,0 +1,149 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukwolverhamptonsais
+  name: Vaccination UK - Wolverhampton
+  email: wolverhampton@v-uk.co.uk
+  phone: 01902 200077
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/privacy-policy
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id:
+  type: point_of_care
+
+programmes:
+  - hpv
+  - menacwy
+  - mmr
+  - td_ipv
+
+subteams:
+  wolverhampton:
+    name: Vaccination UK - Wolverhampton
+    email: wolverhampton@v-uk.co.uk
+    phone: 01902 200077
+    reply_to_id:
+
+schools:
+  wolverhampton:
+    - 139138
+    - 151993
+    - 104395
+    - 140658
+    - 145114
+    - 137730
+    - 142317
+    - 150287
+    - 144278
+    - 138098
+    - 130305
+    - 145134
+    - 145008
+    - 141802
+    - 149635
+    - 104415
+    - 139891
+    - 142603
+    - 143506
+    - 104412
+    - 104290
+    - 142823
+    - 104387
+    - 149228
+    - 104311
+    - 104362
+    - 104366
+    - 104310
+    - 141769
+    - 142086
+    - 145395
+    - 151992
+    - 142679
+    - 143152
+    - 104342
+    - 143813
+    - 142349
+    - 143150
+    - 152045
+    - 141775
+    - 144252
+    - 104302
+    - 138852
+    - 142680
+    - 147113
+    - 143151
+    - 141789
+    - 149227
+    - 142080
+    - 104378
+    - 104327
+    - 104320
+    - 104315
+    - 141858
+    - 151991
+    - 104408
+    - 139274
+    - 141648
+    - 149553
+    - 142684
+    - 144253
+    - 139870
+    - 143101
+    - 148643
+    - 104304
+    - 150943
+    - 140160
+    - 150083
+    - 139894
+    - 139800
+    - 145747
+    - 150887
+    - 147367
+    - 143393
+    - 140355
+    - 104372
+    - 141825
+    - 141827
+    - 139892
+    - 151479
+    - 147630
+    - 104382
+    - 144251
+    - 150198
+    - 139893
+    - 149579
+    - 145396
+    - 104323
+    - 104317
+    - 104407
+    - 145288
+    - 104332
+    - 145715
+    - 150084
+    - 150745
+    - 131153
+    - 152240
+    - 104297
+    - 104325
+    - 142383
+    - 141245
+    - 139199
+    - 104345
+    - 104411
+    - 142123
+    - 104322
+    - 145059
+    - 140798
+    - 147528
+    - 146194
+    - 148252
+    - 150194
+
+clinics:
+  wolverhampton:
+    - name: Whitmore Reans Family Hub
+      address_line_1: Whitemore Reans Family Hub
+      address_line_2: Lansdowne Road
+      address_town: Wolverhampton
+      address_postcode: WV1 4AL

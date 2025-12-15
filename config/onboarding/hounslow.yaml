@@ -1,0 +1,172 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukhounslowsais
+  name: Vaccination UK - Hounslow
+  email: hounslow@v-uk.co.uk
+  phone: 0208 432 7070
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/privacy-policy
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id:
+  type: point_of_care
+
+programmes:
+  - menacwy
+  - mmr
+  - td_ipv
+  - hpv
+
+subteams:
+  hounslow:
+    name: Vaccination UK - Hounslow
+    email: hounslow@v-uk.co.uk
+    phone: 0208 432 7070
+    reply_to_id:
+
+schools:
+  hounslow:
+    - 140974
+    - 102551
+    - 102520
+    - 135831
+    - 102470
+    - 144097
+    - 145866
+    - 139095
+    - 102471
+    - 102472
+    - 135880
+    - 137907
+    - 132263
+    - 136522
+    - 136809
+    - 148600
+    - 142889
+    - 102514
+    - 132264
+    - 102484
+    - 132266
+    - 102485
+    - 102519
+    - 137928
+    - 102545
+    - 134668
+    - 138924
+    - 136191
+    - 150224
+    - 102491
+    - 102550
+    - 137940
+    - 102492
+    - 102512
+    - 140066
+    - 139276
+    - 136341
+    - 102556
+    - 102493
+    - 142781
+    - 102554
+    - 102494
+    - urn: 102555
+      site: A
+      name: New Oaks Primary (Part of Oaklands School) SEN Primary
+      address_postcode: TW7 6JZ
+    - urn: 102555
+      site: B
+      name: Oaklands School SEN Secondary
+      address_line_1: ""
+      address_postcode: TW3 4BX
+    - 139720
+    - 102496
+    - 139869
+    - 140718
+    - 140158
+    - 102526
+    - 138266
+    - 143730
+    - 137009
+    - 145475
+    - 142126
+    - urn: 148150
+      site: A
+      name: Sparrow Farm Primary (Infant)
+      address_postcode: TW14 0DB
+    - urn: 148150
+      site: B
+      name: Sparrow Farm Primary (Junior)
+      address_line_1: ""
+      address_postcode: TW14 0DG
+    - 102500
+    - 146822
+    - 137618
+    - 102527
+    - 137995
+    - 102528
+    - 102529
+    - 102531
+    - 102524
+    - 146474
+    - 102503
+    - 102504
+    - 134243
+#    - urn: 151478
+#      site: D
+#      name: Syon Grange (Part of Upton Grange Datchet Slough imms)
+#      address_line_1: ""
+#      address_postcode: TW7 5AJ
+# TODO Sites B, C are in Hillingdon, site A is not yet in Mavis
+    - 137273
+    - 150312
+    - 102523
+    - urn: 131201
+      site: A
+      name: The Bridge (Part of Woodbridge Park)
+      address_postcode: TW14 9NP
+    - urn: 131201
+      site: B
+      name: Aspire Centre (Woodbridge Park Education Service) – ISLEWORTH
+      address_line_1: ""
+      address_postcode: TW7 5ED
+    - urn: 131201
+      site: C
+      name: Inspire Centre (Woodbridge Park Education Service)
+      address_line_1: ""
+      address_postcode: TW13 5DR
+    - urn: 131201
+      site: D
+      name: Cate Centre (Woodbridge Park)
+      address_line_1: ""
+      address_postcode: TW8 0RS
+    - 102558
+    - 144515
+    - 139989
+    - 102539
+    - 135562
+    - 140360
+    - 135261
+    - 102515
+    - 138771
+    - 138771
+    - 133486
+    - 148190
+    - 102471
+    - urn: 102505
+      site: A
+      name: Wellington Primary (Infant Site)
+      address_postcode: TW3 4LB
+    - urn: 102505
+      site: B
+      name: Wellington Primary (Junior Site)
+      address_line_1: ""
+      address_postcode: TW3 3BB
+    - 139889
+    - 102506
+
+clinics:
+  hounslow:
+    - name: Brabazon Community Centre
+      address_line_1: 106 Brabazon Road
+      address_town: Hounslow
+      address_postcode: TW5 9LT

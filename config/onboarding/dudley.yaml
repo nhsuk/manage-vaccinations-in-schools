@@ -1,0 +1,163 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukdudleysais
+  name: Vaccination UK - Dudley
+  email: dudley@v-uk.co.uk
+  phone: "0138 443 1712"
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/privacy-policy
+  privacy_notice_url: https://www.schoolvaccination.uk/privacy-policy
+  reply_to_id: 40e0f4a7-b48b-43ed-ab2a-784bb3b8b118
+  type: point_of_care
+
+programmes: [flu, hpv, td_ipv]
+
+subteams:
+  dudley:
+    name: Vaccination UK - Dudley
+    email: dudley@v-uk.co.uk
+    phone: 01384 431712
+    reply_to_id: 40e0f4a7-b48b-43ed-ab2a-784bb3b8b118
+
+schools:
+  dudley:
+    - 103869
+    - 103806
+    - 103818
+    - 137705
+    - 142047
+    - 103828
+    - 140126
+    - 103792
+    - 147708
+    - 139437
+    - 103776
+    - 103777
+    - 103819
+    - 103778
+    - 103801
+    - 147479
+    - 148865
+    - 148864
+    - 142964
+    - 150053
+    - 103810
+    - 103846
+    - 103790
+    - 103781
+    - 103829
+    - 144078
+    - 141570
+    - 103876
+    - 149822
+    - 148182
+    - 150457
+    - 103832
+    - 152129
+    - 103881
+    - 103847
+    - 143822
+    - 150729
+    - 143196
+    - 103814
+    - 151157
+    - 103807
+    - 143537
+    - 141560
+    - 150955
+    - 144080
+    - 137773
+    - 143782
+    - urn: 143582
+      site: A
+      name: Leasowes High School (Main Site)
+    - urn: 143582
+      site: B
+      name: Leasowes High School (Green Hill Alternative Learning Campus)
+      address_line_1: 22A Long Lane
+      address_line_2: ""
+      address_town: Halesowen
+      address_postcode: B62 9JT
+    - 143783
+    - 103779
+    - 142355
+    - 103834
+    - 103780
+    - 144079
+    - 144418
+    - 150555
+    - 147155
+    - 103870
+    - 103839
+    - 144301
+    - 103850
+    - 148938
+    - 137390
+    - 103883
+    - 103791
+    - 148642
+    - 145305
+    - 103830
+    - 149544
+    - 103784
+    - 139872
+    - 141712
+    - 103821
+    - 103882
+    - 148685
+    - 103813
+    - 149221
+    - 140144
+    - 144657
+    - 103851
+    - 140147
+    - 141477
+    - 103840
+    - 103836
+    - 148937
+    - 141489
+    - 103827
+    - 103854
+    - 103877
+    - 134768
+    - 143195
+    - urn: 151763
+      site: A
+      name: The Brier School (Main Site)
+    - urn: 151763
+      site: B
+      name: The Brier School (Unicorn Satellite)
+      address_line_1: Brettel Lane
+      address_line_2: ""
+      address_town: Stourbridge
+      address_postcode: DY8 4BP
+    - 141979
+    - 141325
+    - 103855
+    - 137812
+    - 144952
+    - 103880
+    - 145593
+    - 103805
+    - 144374
+    - 145563
+    - 151792
+    - 143818
+    - 150322
+    - 147721
+    - 136618
+    - 150456
+    - 103800
+    - 151764
+    - 143821
+    - 103823
+    - 150921
+
+clinics:
+  dudley:
+    - name: Oakfield Community Centre
+      address_line_1: 245 Brettal Lane
+      address_town: Brierley Hill
+      address_postcode: DY5 3LT

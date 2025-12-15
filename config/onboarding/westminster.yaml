@@ -1,0 +1,157 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukwestminstersais
+  name: Vaccination UK - Westminster
+  email: westminster@v-uk.co.uk
+  phone: 0203 640 7501
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/privacy-policy
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id:
+  type: point_of_care
+
+programmes:
+  - menacwy
+  - mmr
+  - td_ipv
+  - hpv
+
+subteams:
+  westminster:
+    name: Vaccination UK - Westminster
+    email: westminster@v-uk.co.uk
+    phone: 0203 640 7501
+    reply_to_id:
+
+schools:
+  westminster:
+    #    - urn: 134911
+    #      site: A
+    #      name: "Abingdon House Senior School (SEN)"
+    #      address_line_1: ""
+    #     TODO Site B is ina different team
+    - 101121
+    - 137323
+    - urn: 135242
+      site: A
+      name: Ark King Solomon Academy (Senior site)
+    - urn: 135242
+      site: B
+      name: Ark King Solomon Academy (Younger Years Site)
+      address_line_1: ""
+      address_postcode: W2 1ND
+    - urn: 101156
+      site: A
+      name: Arnold House School Prep (2Y - 8Y)
+      address_postcode: NW8 0LH
+    - urn: 101156
+      site: B
+      name: Arnold House School Pre-Prep (Nursery - 1Y)
+      address_line_1: ""
+      address_postcode: NW8 0PE
+    - 101181
+    - 101107
+    - 100543
+    - 101122
+    - 150305
+    - 101147
+    - 101182
+    - 101164
+    - 101160
+    - 101178
+    - 101110
+    - 139239
+    - 101111
+    - 101173
+    - 101161
+    - 101158
+    - 140050
+    - 101107
+    - 139415
+    - 101116
+    - 101123
+    - 145126
+    - 101171
+    - 100536
+    - 134192
+    - 144795
+    - 147957
+    - 140884
+    - 151310
+    - 101176
+    - 140806
+    - 101137
+    - 130912
+    - 135676
+    - 139898
+    - 101184
+    - urn: 101157
+      site: A
+      name: Queen's College, London (Primary Site)
+      address_postcode: W1B 1QP
+    - urn: 101157
+      site: B
+      name: Queen's College, London (Secondary Site)
+      address_line_1: ""
+      address_postcode: W1G 8BT
+    - 101120
+    - 101107
+    - 101169
+    - 101131
+    - 143530
+    - 101154
+    - 101125
+    - 101126
+    - 101127
+    - 101128
+    - 101129
+    - 139369
+    - 101130
+    - 101132
+    - 149488
+    - 101134
+    - 101135
+    - 101136
+    - 101138
+    - 101139
+    - 101140
+    - 101141
+    - 101144
+    - 101143
+    - 101137
+    - 101172
+    - 101168
+    - 138313
+    - 139600
+    - 137353
+    - 101159
+    - 131262
+    - 101166
+    - 138312
+    - 101162
+    - 101165
+    - 134822
+    - 142336
+    - 139824
+    - 102947
+
+clinics:
+  westminster:
+    - name: The Portman Early Childhood Centre
+      address_line_1: 12-18 Salisbury Street
+      address_town: London
+      address_postcode: NW8 8DE
+    - name: Family Hub Old Oak Community Centre
+      address_line_1: 76 Braybrook St
+      address_town: London
+      address_postcode: W12 0AP
+    - name: The Bessborough Family Hub
+      address_line_1: 1 Bessborough Street
+      address_town: London
+      address_postcode: SW1V 2JD
+    - name: Pimlico Library
+      address_line_1: Lupus St, Pimlico
+      address_town: London
+      address_postcode: SW1V 3AT

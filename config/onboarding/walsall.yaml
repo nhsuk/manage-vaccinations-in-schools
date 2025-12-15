@@ -1,0 +1,178 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukwalsallsais
+  name: Vaccination UK - Walsall
+  email: walsall@v-uk.co.uk
+  phone: 01922 902035
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/privacy-policy
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id: null
+  type: point_of_care
+
+programmes:
+  - hpv
+  - menacwy
+  - mmr
+  - td_ipv
+
+subteams:
+  walsall:
+    name: Vaccination UK - Walsall
+    email: walsall@v-uk.co.uk
+    phone: 01922 902035
+    reply_to_id: null
+
+schools:
+  walsall:
+    - 152026
+    - 137830
+    - 135483
+    - urn: 132750
+      name: Abu Bakr Girls School
+      site: A
+    - urn: 132750
+      name: Abu Bakr Primary
+      site: B
+    - 138374
+    - 141410
+    - 151297
+    - 104143
+    - 104142
+    - 135956
+    - 151997
+    - 151995
+    - 150291
+    - 146164
+    - 139435
+    - 148364
+    - 151999
+    - 104231
+    - 137707
+    - 104230
+    - 142594
+    - 148906
+    - 146785
+    - 104147
+    - 143904
+    - 152001
+    - 143750
+    - 140273
+    - 151154
+    - 132076
+    - 104259
+    - 132073
+    - 104189
+    - 137274
+    - 138420
+    - 151659
+    - 151661
+    - 136620
+    - 139610
+    - 135769
+    - 104153
+    - 130323
+    - 143417
+    - 136885
+    - 138591
+    - 149678
+    - 149608
+    - 137974
+    - 151662
+    - 104223
+    - 104266
+    - 138540
+    - 104175
+    - 104179
+    - 147796
+    - 104157
+    - 150913
+    - 149910
+    - 131433
+    - 152002
+    - 152257
+    - 142765
+    - 104169
+    - 104269
+    - 104210
+    - 104265
+    - 152003
+    - 104203
+    - 151998
+    - 104187
+    - 151019
+    - 144499
+    - urn: 151525
+      site: A
+      name: Oakwood School, Walsall Wood Campus
+    - urn: 151525
+      site: B
+      name: Oakwood School, Pelsall Lane Campus
+      address_line_1: Pelsall Lane Campus
+      address_line_2: Pelsall Lane
+      address_town: Walsall
+      address_postcode: WS4 1NG
+    - 133697
+    - 152027
+    - 104274
+    - 151660
+    - 104160
+    - 136303
+    - 137797
+    - 136773
+    - 104214
+    - 139789
+    - 147480
+    - 143382
+    - 104255
+    - 104176
+    - 104191
+    - 131619
+    - 104207
+    - 138452
+    - 140196
+    - 104225
+    - 151524
+    - 136619
+    - 104178
+    - 104188
+    - 104241
+    - 136777
+    - 147163
+    - 104239
+    - 104226
+    - 151996
+    - 104228
+    - 104235
+    - 104240
+    - 104232
+    - 104227
+    - 104233
+    - 104234
+    - 104236
+    - 104271
+    - 152000
+    - 150384
+    - 104202
+    - 151657
+    - 146563
+    - 104198
+    - 104162
+    - 151258
+    - 138343
+    - 139305
+    - 138606
+    - 137706
+
+clinics:
+  walsall:
+    - name: South & Central Family Hub
+      address_line_1: Birchills St
+      address_town: Walsall
+      address_postcode: WS2 8NF
+    - name: Anchor Meadow Health Centre
+      address_line_1: Aldridge
+      address_town: Walsall
+      address_postcode: WS9 8AJ
