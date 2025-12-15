@@ -17,6 +17,7 @@ class AppImportReviewComponent < ViewComponent::Base
     @auto_matched_records = auto_matched_records.sort_by(&:row_number)
     @import_issues = import_issues.sort_by(&:row_number)
     @school_moves = school_moves
+    @school_moves_from_file = @school_moves.reject { it.row_number.nil? }
   end
 
   private
@@ -64,6 +65,11 @@ class AppImportReviewComponent < ViewComponent::Base
         "the one on their Mavis record. If you approve the upload, these will be flagged as " \
         "school moves needing review."
     end
+  end
+
+  def show_cancel_button?
+    @new_records.any? || @auto_matched_records.any? || @import_issues.any? ||
+      @school_moves_from_file.any?
   end
 
   def cancel_button_text
