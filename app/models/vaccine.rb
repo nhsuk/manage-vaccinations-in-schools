@@ -139,12 +139,6 @@ class Vaccine < ApplicationRecord
     codes.is_a?(Array) ? codes[dose_sequence - 1] : codes
   end
 
-  def programme
-    if (type = programme_type)
-      Programme.find(type, vaccine: self)
-    end
-  end
-
   private
 
   def fhir_mapper
