@@ -1,0 +1,103 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukbarkinganddagenhamsais
+  name: Vaccination UK - Barking and Dagenham
+  email: barkinganddagenham@v-uk.co.uk
+  phone: 0203 343 2400
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/privacy-policy
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id: a8e40434-7267-406d-a1f8-b2824f15c170
+  type: point_of_care
+
+programmes:
+  - menacwy
+  - mmr
+  - td_ipv
+  - hpv
+
+subteams:
+  barkinganddagenham:
+    name: Vaccination UK - Barking and Dagenham
+    email: barkinganddagenham@v-uk.co.uk
+    phone: 0203 343 2400
+    reply_to_id: a8e40434-7267-406d-a1f8-b2824f15c170
+
+schools:
+  barkinganddagenham:
+    - 136746
+    - 101247
+    - 101241
+    - 101202
+    - 101231
+    - 148932
+    - 136028
+    - 101188
+    - 140687
+    - 101243
+    - 101244
+    - 142699
+    - 101228
+    - 101203
+    - 131775
+    - 136431
+    - 130919
+    - 140962
+    - 101206
+    - 142908
+    - 101229
+    - 134388
+    - 131844
+    - 133561
+    - 101232
+    - 101193
+    - 101192
+    - 101211
+    - 132816
+    - 130340
+    - 101196
+    - 142334
+    - 101227
+    - 147189
+    - 130357
+    - 101198
+    - 142134
+    - 142133
+    - 139791
+    - 101245
+    - 101230
+    - 101224
+    - 101212
+    - 131845
+    - 147328
+    - 147329
+    - 144035
+    - 101237
+    - 148289
+    - 138684
+    - 141651
+    - 144280
+    - 101216
+    - 147330
+    - 141683
+    - 141178
+    - 101220
+    - 131102
+    - 101222
+    - 101223
+    - 101219
+    - 101226
+    - 101234
+
+clinics:
+  barkinganddagenham:
+    - name: Barking Library
+      address_line_1: 2 Towns Square
+      address_town: Barking
+      address_postcode: IG11 7NB
+    - name: Harmony House
+      address_line_1: Baden Powell Close
+      address_town: Dagenham
+      address_postcode: RM9 6XN
