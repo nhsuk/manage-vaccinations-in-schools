@@ -74,6 +74,7 @@ describe "MMRV vaccination" do
     @patient.consents.last.update!(
       disease_types: ProgrammeVariant::DISEASE_TYPES["mmrv"]
     )
+    StatusUpdater.call(patient: @patient)
     @community_clinic = create(:community_clinic, team: @team)
   end
 
@@ -98,7 +99,7 @@ describe "MMRV vaccination" do
   end
 
   def then_i_should_consent_for_mmrv
-    expect(page).to have_content("MMRVDue vaccination")
+    expect(page).to have_content("MMRVDue 1st dose")
   end
 
   def when_i_go_to_the_patient
