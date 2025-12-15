@@ -27,7 +27,7 @@ class CommitImportJob
       return if import.low_pds_match_rate?
     end
 
-    counts = import.class.const_get(:COUNT_COLUMNS).index_with(0)
+    counts = import.count_columns.index_with(0)
     imported_school_move_ids = []
 
     ActiveRecord::Base.transaction do

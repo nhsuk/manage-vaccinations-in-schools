@@ -29,36 +29,42 @@ describe SMSDeliveryJob do
     subject(:perform_now) do
       described_class.perform_now(
         template_name,
-        session:,
+        academic_year:,
         consent:,
         consent_form:,
         parent:,
         patient:,
         programme_types:,
         sent_by:,
+        session:,
+        team:,
         vaccination_record:
       )
     end
 
     let(:template_name) { GOVUK_NOTIFY_SMS_TEMPLATES.keys.first }
-    let(:programmes) { [Programme.sample] }
-    let(:programme_types) { programmes.map(&:type) }
-    let(:session) { create(:session, programmes:) }
-    let(:parent) { create(:parent, phone: "01234 567890") }
+    let(:academic_year) { session.academic_year }
     let(:consent) { nil }
     let(:consent_form) { nil }
+    let(:parent) { create(:parent, phone: "01234 567890") }
     let(:patient) { create(:patient) }
+    let(:programme_types) { programmes.map(&:type) }
+    let(:programmes) { [Programme.sample] }
     let(:sent_by) { create(:user) }
+    let(:session) { create(:session, programmes:) }
+    let(:team) { session.team }
     let(:vaccination_record) { nil }
 
     it "generates personalisation" do
       expect(GovukNotifyPersonalisation).to receive(:new).with(
-        session:,
+        academic_year:,
         consent:,
         consent_form:,
         parent:,
         patient:,
         programme_types:,
+        session:,
+        team:,
         vaccination_record:
       ).and_call_original
       perform_now

@@ -28,6 +28,25 @@ on:
         description: Take a new DB snapshot before creating the environment
         type: boolean
         default: false
+  workflow_call:
+    inputs:
+      environment:
+        description: Deployment environment
+        required: true
+        type: string
+      db_snapshot_arn:
+        description: ARN of the DB snapshot to use (optional)
+        required: false
+        type: string
+      egress_cidr:
+        description: CIDR blocks to allow egress traffic.
+        type: string
+        required: true
+        default: "[]"
+      take_db_snapshot:
+        description: Take a new DB snapshot before creating the environment
+        type: boolean
+        default: false
 
 permissions: {}
 
@@ -152,7 +171,7 @@ jobs:
 
           terraform "${PLAN_ARGS[@]}" | tee ${{ runner.temp }}/tf_stdout
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: tfplan_infrastructure-${{ inputs.environment }}
           path: ${{ runner.temp }}/tfplan
@@ -161,7 +180,7 @@ jobs:
     name: Notify on approval required
     runs-on: ubuntu-latest
     needs: plan
-    if: ${{ inputs.environment == 'production' }}
+    if: ${{ inputs.environment == 'production' && github.event_name == 'workflow_dispatch' }}
     steps:
       - name: Notify pending approval
         if: inputs.environment == 'production'
@@ -187,7 +206,7 @@ jobs:
     name: Terraform apply
     runs-on: ubuntu-latest
     needs: plan
-    environment: ${{ inputs.environment }}
+    environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || null }}
     permissions:
       id-token: write
     steps:
@@ -199,7 +218,7 @@ jobs:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
       - name: Download artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: tfplan_infrastructure-${{ inputs.environment }}
           path: ${{ runner.temp }}

@@ -9,6 +9,7 @@
 #  delivery_method                         :integer
 #  delivery_site                           :integer
 #  discarded_at                            :datetime
+#  disease_types                           :enum             is an Array
 #  dose_sequence                           :integer
 #  full_dose                               :boolean
 #  local_patient_id_uri                    :string
@@ -462,6 +463,35 @@ describe VaccinationRecord do
         before { vaccination_record[attribute] = date }
 
         it { expect(vaccination_record.academic_year).to eq(academic_year) }
+      end
+    end
+  end
+
+  describe "#sync_patient_teams_table_on_patient_ids" do
+    context "when a patient has two vaccination records that contribute" do
+      let(:patient) { create(:patient) }
+      let(:team) { create(:team) }
+      let(:session) { create(:session, team:) }
+      let(:other_team) { create(:team) }
+      let(:other_session) { create(:session, team: other_team) }
+      let!(:vaccination_record_a) do
+        create(:vaccination_record, patient:, session:)
+      end
+      let!(:vaccination_record_b) do
+        create(:vaccination_record, patient:, session:)
+      end
+
+      it "keeps the patient team relationship when one is updated" do
+        expect(patient.reload.teams).to contain_exactly(team)
+
+        vaccination_record_a.update_columns(session_id: other_session.id)
+        described_class.all.sync_patient_teams_table_on_patient_ids(
+          [patient.id]
+        )
+        expect(vaccination_record_a.team).to eq(other_team)
+        expect(vaccination_record_b.team).to eq(team)
+
+        expect(patient.reload.teams).to contain_exactly(team, other_team)
       end
     end
   end

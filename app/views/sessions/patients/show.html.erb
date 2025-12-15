@@ -11,7 +11,6 @@
           vaccination_statuses: @statuses,
           registration_statuses: @registration_statuses,
           year_groups: @session.year_groups,
-          show_eligible_children: true,
         ) %>
   </div>
 
@@ -23,8 +22,11 @@
         <%= render AppPatientSessionSearchResultCardComponent.new(
               patient:,
               session: @session,
-              context: @registration_statuses.present? ? :register : :patients,
               programmes: @form.programmes,
+              return_to: :patients,
+              show_notes: true,
+              show_programme_status: true,
+              show_registration_status: @registration_statuses.present?,
             ) %>
       <% end %>
     <% end %>

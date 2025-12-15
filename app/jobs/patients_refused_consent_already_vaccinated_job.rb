@@ -56,6 +56,8 @@ class PatientsRefusedConsentAlreadyVaccinatedJob < ApplicationJob
     performed_at = consents.map(&:submitted_at).min
 
     VaccinationRecord.create!(
+      # TODO: Change this to `consent.disease_types` when available.
+      disease_types: programme.disease_types,
       location_name: "Unknown",
       notes:,
       outcome: "already_had",

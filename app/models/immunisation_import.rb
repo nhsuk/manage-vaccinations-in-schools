@@ -10,6 +10,7 @@
 #  csv_filename                 :text             not null
 #  csv_removed_at               :datetime
 #  exact_duplicate_record_count :integer
+#  ignored_record_count         :integer
 #  new_record_count             :integer
 #  processed_at                 :datetime
 #  rows_count                   :integer
@@ -37,7 +38,7 @@ class ImmunisationImport < ApplicationRecord
 
   self.inheritance_column = nil
 
-  enum :type, { poc: 0, bulk_flu: 1, bulk_hpv: 2 }, validate: true
+  enum :type, { poc: 0, bulk: 1 }, validate: true
 
   has_and_belongs_to_many :batches
   has_and_belongs_to_many :patient_locations
@@ -98,7 +99,7 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def process_import!
-    counts = COUNT_COLUMNS.index_with(0)
+    counts = count_columns.index_with(0)
 
     ActiveRecord::Base.transaction do
       rows.each do |row|
@@ -155,8 +156,14 @@ class ImmunisationImport < ApplicationRecord
     @vaccination_records_batch.clear
   end
 
+  def count_columns
+    super + %i[ignored_record_count]
+  end
+
   def count_column(vaccination_record)
-    if vaccination_record.new_record?
+    if vaccination_record.nil?
+      :ignored_record_count
+    elsif vaccination_record.new_record?
       :new_record_count
     elsif vaccination_record.pending_changes.any? ||
           vaccination_record.patient.pending_changes.any?

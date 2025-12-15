@@ -64,6 +64,7 @@ class Patient < ApplicationRecord
   has_many :archive_reasons
   has_many :attendance_records
   has_many :changesets, class_name: "PatientChangeset"
+  has_many :clinic_notifications
   has_many :consent_notifications
   has_many :consent_statuses
   has_many :consents
@@ -500,21 +501,33 @@ class Patient < ApplicationRecord
           end
         end
 
-  scope :eligible_for_programmes,
-        ->(programmes, location:, academic_year:) do
+  scope :eligible_for_programme,
+        ->(programme, session:) do
           # We exclude patients who were vaccinated in a previous
           # academic year, or vaccinated at a different location,
           # or the location is not known.
 
-          not_eligible_criteria =
-            programmes.map do |programme|
-              vaccinated_statuses =
-                Patient::VaccinationStatus
-                  .select("1")
-                  .where("patient_id = patients.id")
-                  .where_programme(programme)
-                  .vaccinated
+          academic_year = session.team_location.academic_year
+          location = session.team_location.location
 
+          # In the generic clinic sessions we have to show all patients even
+          # if they were vaccinated elsewhere because the location of the
+          # vaccination will be a specific community clinic location, not
+          # the generic clinic.
+
+          return self if location.generic_clinic? && programme.seasonal?
+
+          vaccinated_statuses =
+            Patient::VaccinationStatus
+              .select("1")
+              .where("patient_id = patients.id")
+              .where_programme(programme)
+              .vaccinated
+
+          not_eligible_criteria =
+            if location.generic_clinic?
+              vaccinated_statuses.where(academic_year: academic_year - 1)
+            else
               scope =
                 vaccinated_statuses.where(academic_year:).where(
                   "latest_location_id IS NULL OR latest_location_id != ?",
@@ -531,8 +544,20 @@ class Patient < ApplicationRecord
               scope
             end
 
-          # TODO: Handle multiple programmes.
-          where.not(not_eligible_criteria.first.arel.exists)
+          where.not(not_eligible_criteria.arel.exists)
+        end
+
+  scope :eligible_for_any_programmes_of,
+        ->(programmes, session:) do
+          scope = eligible_for_programme(programmes.first, session:)
+
+          programmes
+            .drop(1)
+            .each do |programme|
+              scope = scope.or(eligible_for_programme(programme, session:))
+            end
+
+          scope
         end
 
   validates :given_name, :family_name, :date_of_birth, presence: true

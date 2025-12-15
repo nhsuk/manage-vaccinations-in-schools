@@ -135,6 +135,7 @@ describe VaccinationRecordPolicy do
     let(:user) { create(:user, team:) }
 
     let(:session) { create(:session, team:, programmes: [programme]) }
+    let(:patient) { create(:patient, session:) }
     let(:other_session) do
       create(:session, team: other_team, programmes: [programme])
     end
@@ -149,6 +150,16 @@ describe VaccinationRecordPolicy do
     let(:vaccination_record_same_organisation_different_team) do
       create(:vaccination_record, session: other_session, programme:)
     end
+    let(
+      :vaccination_record_from_different_organisation_but_patient_in_same_team
+    ) do
+      create(
+        :vaccination_record,
+        :sourced_from_nhs_immunisations_api,
+        performed_ods_code: "DIFFERENT_ORGANISATION",
+        patient:
+      )
+    end
 
     it { should include(kept_vaccination_record) }
     it { should_not include(discarded_vaccination_record) }
@@ -157,6 +168,12 @@ describe VaccinationRecordPolicy do
     it do
       expect(scope).not_to include(
         vaccination_record_same_organisation_different_team
+      )
+    end
+
+    it do
+      expect(scope).to include(
+        vaccination_record_from_different_organisation_but_patient_in_same_team
       )
     end
   end

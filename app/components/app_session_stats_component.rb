@@ -9,7 +9,7 @@ class AppSessionStatsComponent < ViewComponent::Base
         </h3>
 
         <p class="nhsuk-caption-m nhsuk-u-margin-bottom-4">
-          <%= t(".eligibility_message", count: eligible_children_count(programme)) %>
+          <%= t(".caption", count: total_count(programme)) %>
         </p>
 
         <% cards = cards_for_programme(programme) %>
@@ -50,8 +50,7 @@ class AppSessionStatsComponent < ViewComponent::Base
            to: :helpers
 
   def cards_for_programme(programme)
-    stats =
-      stats_for_programme(programme).except(:eligible_children).stringify_keys
+    stats = stats_for_programme(programme).except(:total).stringify_keys
 
     stats.map { |key, value| card_for(key, value, programme:) }
   end
@@ -100,17 +99,15 @@ class AppSessionStatsComponent < ViewComponent::Base
         when "due_nasal"
           session_patients_path(
             session,
-            programme_types: [programme.type],
+            programme_types:,
             programme_status_group: "due",
-            eligible_children: 1,
             vaccine_criteria: %w[flu_nasal flu_nasal_injection]
           )
         when "due_injection"
           session_patients_path(
             session,
-            programme_types: [programme.type],
+            programme_types:,
             programme_status_group: "due",
-            eligible_children: 1,
             vaccine_criteria: %w[flu_injection_without_gelatine]
           )
         end
@@ -119,26 +116,23 @@ class AppSessionStatsComponent < ViewComponent::Base
         when "due_no_preference"
           session_patients_path(
             session,
-            programme_types: [programme.type],
+            programme_types:,
             programme_status_group: "due",
-            eligible_children: 1,
             vaccine_criteria: %w[mmr_injection]
           )
         when "due_without_gelatine"
           session_patients_path(
             session,
-            programme_types: [programme.type],
+            programme_types:,
             programme_status_group: "due",
-            eligible_children: 1,
             vaccine_criteria: %w[mmr_injection_without_gelatine]
           )
         end
       else
         session_patients_path(
           session,
-          programme_types: [programme.type],
+          programme_types:,
           programme_status_group: key,
-          eligible_children: 1,
           vaccine_criteria: []
         )
       end
@@ -150,15 +144,14 @@ class AppSessionStatsComponent < ViewComponent::Base
     elsif key == "vaccinated"
       session_patients_path(
         session,
-        programme_types: [programme.type],
-        vaccination_status: "vaccinated",
-        eligible_children: 1
+        programme_types:,
+        vaccination_status: "vaccinated"
       )
     end
   end
 
-  def eligible_children_count(programme)
-    stats_for_programme(programme)[:eligible_children]
+  def total_count(programme)
+    stats_for_programme(programme).fetch(:total)
   end
 
   def stats_for_programme(programme)

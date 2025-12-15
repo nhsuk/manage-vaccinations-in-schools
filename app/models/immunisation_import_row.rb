@@ -100,11 +100,11 @@ class ImmunisationImportRow
   # Convenience predicate helpers mirroring the enum on ImmunisationImport
   def poc? = type == :poc
 
-  def bulk_flu? = type == :bulk_flu
+  def bulk_flu? = bulk? && programme&.flu?
 
-  def bulk_hpv? = type == :bulk_hpv
+  def bulk_hpv? = bulk? && programme&.hpv?
 
-  def bulk? = bulk_flu? || bulk_hpv?
+  def bulk? = type == :bulk
 
   def bulk_not_administered?
     bulk? && !administered
@@ -126,6 +126,7 @@ class ImmunisationImportRow
       end
 
     attributes = {
+      disease_types:,
       dose_sequence: dose_sequence_value,
       full_dose: true,
       outcome:,
@@ -138,8 +139,8 @@ class ImmunisationImportRow
       session:,
       supplied_by:
     }
-    attributes.merge!(location:, location_name:) unless imms_api_record?
 
+    attributes.merge!(location:, location_name:) unless imms_api_record?
     attributes.merge!(notify_parents: true) if session
 
     if performed_by_user.nil? &&
@@ -350,12 +351,7 @@ class ImmunisationImportRow
 
   def programme
     @programme ||=
-      case @type
-      when :bulk_flu
-        Programme.flu
-      when :bulk_hpv
-        Programme.hpv
-      else
+      begin
         name =
           parsed_vaccination_description_string&.dig(:programme_name) ||
             programme_name&.to_s
@@ -400,7 +396,11 @@ class ImmunisationImportRow
   end
 
   def vaccine
-    @vaccine ||= team.vaccines.find_by(upload_name: vaccine_upload_name)
+    return if vaccine_upload_name.nil?
+
+    @vaccine ||=
+      team.vaccines.find_by(upload_name: vaccine_upload_name) ||
+        team.vaccines.find_by(nivs_name: vaccine_upload_name)
   end
 
   def batch
@@ -482,7 +482,7 @@ class ImmunisationImportRow
         false
       end
     elsif vaccine_name.present? ||
-          combined_vaccination_and_dose_sequence.present? || bulk_hpv?
+          combined_vaccination_and_dose_sequence.present? || bulk?
       true
     end
   end
@@ -498,6 +498,8 @@ class ImmunisationImportRow
       "intramuscular"
     end
   end
+
+  def disease_types = vaccine&.disease_types || programme.disease_types
 
   def dose_sequence_value
     value =
@@ -988,9 +990,19 @@ class ImmunisationImportRow
   end
 
   def validate_programme
-    return if programme
-
     field = programme_name.presence || combined_vaccination_and_dose_sequence
+
+    if programme
+      is_a_bulk_programme = bulk_hpv? || bulk_flu?
+      if bulk? && !is_a_bulk_programme
+        errors.add(
+          vaccine_name.header,
+          "This vaccine programme is not accepted in this upload."
+        )
+      end
+
+      return
+    end
 
     if field.nil?
       errors.add(

@@ -1,0 +1,267 @@
+name: End To End test run
+
+on:
+  workflow_call:
+    inputs:
+      github_ref:
+        description: The git reference for deploying containerized mavis application
+        type: string
+        required: false
+    secrets:
+      HTTP_AUTH_TOKEN_FOR_TESTS:
+        description: HTTP Basic Auth token for the environment under test
+        required: true
+      MAVIS_TESTING_REPO_ACCESS_TOKEN:
+        description: Access token for the manage-vaccinations-in-schools-testing repository
+        required: true
+
+permissions: { }
+
+jobs:
+  check-image-presence:
+    name: Check if docker image already exists
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    outputs:
+      build-needed: ${{ steps.check-image.outputs.build-needed }}
+      next-git-sha: ${{ steps.get-next-git-sha.outputs.git-sha }}
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
+          aws-region: eu-west-2
+      - name: Check if image exists
+        id: check-image
+        run: |
+          if aws ecr describe-images --repository-name mavis/development --image-ids imageTag=${{ github.sha }} > /dev/null 2>&1; then
+            echo "Docker image with given tag already exists"
+          else
+            echo "Docker image does not exist. Build needed"
+            echo "build-needed=true" >> $GITHUB_OUTPUT
+          fi
+  build-and-push-development-image:
+    needs: [check-image-presence]
+    if: needs.check-image-presence.outputs.build-needed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.github_ref || github.ref }}
+          repository: nhsuk/manage-vaccinations-in-schools
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
+          aws-region: eu-west-2
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build and push mavis/development docker image
+        run: |
+          docker build \
+            --build-arg BUNDLE_WITHOUT=test \
+            --build-arg RAILS_ENV=development \
+            -t "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}" \
+            .
+          docker push "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}"
+  launch-dockerized-devimage:
+    needs: [ check-image-presence, build-and-push-development-image ]
+    if: ${{ !cancelled() &&
+      (needs.build-and-push-development-image.result == 'success' ||
+      (needs.check-image-presence.result == 'success' && needs.build-and-push-development-image.result == 'skipped')
+      ) }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    outputs:
+      run_task_arn: ${{ steps.run-task.outputs.run-task-arn }}
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
+          aws-region: eu-west-2
+      - name: Render task definition 1
+        id: render-task-definition-1
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition-family: "assurance-testing-mavis-development-task-definition-template"
+          container-name: "mavis-development-web"
+          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}"
+      - name: Render task definition 2
+        id: render-task-definition-2
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-task-definition-1.outputs.task-definition }}
+          container-name: "mavis-development-sidekiq"
+          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}"
+      - name: Prepare deployment
+        id: prepare-deployment
+        run: |
+          file_path="assurance-testing-mavis-development-task-definition.json"
+          family_name="assurance-testing-mavis-development-task-definition"
+          echo "$(jq --arg f "$family_name" '.family = $f' "${{ steps.render-task-definition-2.outputs.task-definition }}")" > "$file_path"
+          cat "$file_path" #TODO: Debugging, remove later
+
+          subnet_id=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=assurance-testing-subnet --query 'Subnets[0].SubnetId' --output text)
+          security_group_id=$(aws ec2 describe-security-groups --filters Name=group-name,Values=assurance-testing-mavis-development-sg --query 'SecurityGroups[0].GroupId' --output text)
+
+          echo "run-task-subnets=$subnet_id" >> $GITHUB_OUTPUT
+          echo "run-task-security-groups=$security_group_id" >> $GITHUB_OUTPUT
+      - name: Deploy task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        id: run-task
+        with:
+          task-definition: 'assurance-testing-mavis-development-task-definition.json'
+          cluster: assurance-testing
+          run-task: true
+          run-task-subnets: ${{ steps.prepare-deployment.outputs.run-task-subnets }}
+          run-task-launch-type: 'FARGATE'
+          run-task-security-groups: ${{ steps.prepare-deployment.outputs.run-task-security-groups }}
+          run-task-assign-public-IP: ENABLED
+  wait-for-task-stability:
+    needs: launch-dockerized-devimage
+    if: ${{ !cancelled() && needs.launch-dockerized-devimage.result == 'success'}}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    outputs:
+      task_arn: ${{ steps.compile-outputs.outputs.task_arn }}
+      container_ip: ${{ steps.compile-outputs.outputs.container_ip }}
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
+          aws-region: eu-west-2
+      - name: Get container logs
+        run: |
+          TASK_ARN=$(echo '${{ needs.launch-dockerized-devimage.outputs.run_task_arn }}' | jq -r '.[0]')
+          TASK_ID=$(sed 's:^.*/::' <<< $TASK_ARN)
+          WEB_CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-development-web\$252F${TASK_ID}\$3Fstart\$3D$(date +%s)000\$26end\$3D$(date -d '+30 minutes' +%s)000"
+          SIDEKIQ_CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-development-sidekiq\$252F${TASK_ID}\$3Fstart\$3D$(date +%s)000\$26end\$3D$(date -d '+30 minutes' +%s)000"
+          echo "**Task ID:** $TASK_ID" >> $GITHUB_STEP_SUMMARY
+          echo "**Container Logs:** " >> $GITHUB_STEP_SUMMARY
+          echo "  * WEB logs: $WEB_CLOUDWATCH_URL" >> $GITHUB_STEP_SUMMARY
+          echo "  * SIDEKIQ logs: $SIDEKIQ_CLOUDWATCH_URL" >> $GITHUB_STEP_SUMMARY
+          echo "Logs for server: [web](${WEB_CLOUDWATCH_URL}) and [sidekiq](${SIDEKIQ_CLOUDWATCH_URL})"
+      - name: Wait for task to stabilise
+        run: |
+          set -euo pipefail
+
+          ELAPSED=0
+          POLL_INTERVAL=10
+          TASK_ARN=$(echo '${{ needs.launch-dockerized-devimage.outputs.run_task_arn }}' | jq -r '.[0]')
+          echo "Waiting for ECS task $TASK_ARN to become HEALTHY"
+
+          while (( ELAPSED < 300 )); do
+            HEALTH_STATUS=$(aws ecs describe-tasks \
+              --cluster "assurance-testing" \
+              --tasks "$TASK_ARN" \
+              --query 'tasks[0].healthStatus' \
+              --output text 2>/dev/null || echo "UNKNOWN")
+
+            LAST_EVENT=$(aws ecs describe-tasks \
+              --cluster "assurance-testing" \
+              --tasks "$TASK_ARN" \
+              --query 'tasks[0].lastStatus' \
+              --output text 2>/dev/null || echo "UNKNOWN")
+
+            case "$HEALTH_STATUS" in
+              "HEALTHY")
+                echo "Task is HEALTHY"
+                exit 0
+                ;;
+              "UNHEALTHY")
+                echo "Task reported UNHEALTHY"
+                aws ecs describe-tasks --cluster "assurance-testing" --tasks "$TASK_ARN" --query 'tasks[0].containers[].{Name:name,Health:health,Reason:lastStatusReason}' --output table
+                exit 1
+                ;;
+              "UNKNOWN"|"")
+                # Task might not exist or API error
+                if [[ "$LAST_EVENT" == "STOPPED" || "$LAST_EVENT" == "DEACTIVATED" ]]; then
+                  echo "Task is no longer running (lastStatus: $LAST_EVENT)"
+                  exit 1
+                fi
+                echo "Task not found or not reporting health yet (healthStatus: UNKNOWN, lastStatus: $LAST_EVENT). Retrying..."
+                ;;
+              *)
+                # HEALTHY/UNHEALTHY not reported yet (common in early lifecycle)
+                echo "Task health check in progress... (healthStatus: $HEALTH_STATUS, lastStatus: $LAST_EVENT)"
+                ;;
+            esac
+
+            sleep "$POLL_INTERVAL"
+            ELAPSED=$((ELAPSED + POLL_INTERVAL))
+          done
+
+          echo "Timeout reached (300 seconds) while waiting for task to become HEALTHY"
+          echo "Final status:"
+          aws ecs describe-tasks --cluster "assurance-testing" --tasks "$TASK_ARN" --query 'tasks[0]' --output json || true
+          exit 1
+      - name: Compile outputs
+        id: compile-outputs
+        run: |
+          TASK_ARN=$(echo '${{ needs.launch-dockerized-devimage.outputs.run_task_arn }}' | jq -r '.[0]')
+          NETWORK_INTERFACE=$(aws ecs describe-tasks \
+            --cluster assurance-testing \
+            --tasks "$TASK_ARN" \
+            | jq -r '.tasks[0].attachments[0].details[] | select(.name == "networkInterfaceId") | .value')
+          CONTAINER_IP=$(aws ec2 describe-network-interfaces \
+            --network-interface-ids $NETWORK_INTERFACE \
+            --query 'NetworkInterfaces[0].Association.PublicIp' \
+            --output text)
+          echo "container_ip=$CONTAINER_IP" >> $GITHUB_OUTPUT
+          echo "task_arn=$TASK_ARN" >> $GITHUB_OUTPUT
+          echo "Started task: $TASK_ARN"
+  find-correct-test-branch:
+    needs: [wait-for-task-stability]
+    if: ${{ !cancelled() && needs.wait-for-task-stability.result == 'success'}}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      test_branch: ${{ steps.check-branch.outputs.test_branch }}
+    steps:
+      - name: Check if branch exists
+        id: check-branch
+        run: |
+          if git ls-remote --exit-code --heads https://github.com/NHSDigital/manage-vaccinations-in-schools-testing.git "$BRANCH_TO_CHECK" > /dev/null 2>&1; then
+            echo "test_branch=$BRANCH_TO_CHECK" >> $GITHUB_OUTPUT
+          else
+            echo "test_branch=main" >> $GITHUB_OUTPUT
+          fi
+        env:
+          BRANCH_TO_CHECK: ${{ github.head_ref }}
+  call-functional-tests:
+    needs: [launch-dockerized-devimage, wait-for-task-stability, find-correct-test-branch]
+    if: ${{ !cancelled() && needs.launch-dockerized-devimage.result == 'success' && needs.wait-for-task-stability.result == 'success'}}
+    uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/functional_selected_device.yaml@main
+    permissions:
+      contents: write
+    with:
+      cross_service_tests: false
+      github_ref: ${{ needs.find-correct-test-branch.outputs.test_branch }}
+      endpoint: 'http://${{ needs.wait-for-task-stability.outputs.container_ip }}:4000'
+    secrets:
+      HTTP_AUTH_TOKEN_FOR_TESTS: ${{ secrets.HTTP_AUTH_TOKEN_FOR_TESTS }}
+      MAVIS_TESTING_REPO_ACCESS_TOKEN: ${{ secrets.MAVIS_TESTING_REPO_ACCESS_TOKEN }}
+  stop-docker-environment:
+    needs: [call-functional-tests, launch-dockerized-devimage, wait-for-task-stability]
+    if: ${{ always() && needs.launch-dockerized-devimage.result != 'skipped'}}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
+          aws-region: eu-west-2
+      - name: Stop dockerized dev image
+        run: aws ecs stop-task --cluster assurance-testing --task ${{ needs.wait-for-task-stability.outputs.task_arn }}

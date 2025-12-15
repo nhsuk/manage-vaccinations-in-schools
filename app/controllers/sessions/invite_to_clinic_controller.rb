@@ -51,8 +51,7 @@ class Sessions::InviteToClinicController < Sessions::BaseController
       if @session.school?
         factory.patient_locations_to_create.map(&:patient)
       else
-        date = @generic_clinic_session.next_date(include_today: true)
-        SendClinicSubsequentInvitationsJob.new.patients(@session, date:)
+        SendClinicSubsequentInvitationsJob.new.patients(@session)
       end
   end
 
@@ -63,10 +62,7 @@ class Sessions::InviteToClinicController < Sessions::BaseController
   def factory
     @factory ||=
       if @session.school?
-        ClinicPatientLocationsFactory.new(
-          school_session: @session,
-          generic_clinic_session: @generic_clinic_session
-        )
+        ClinicPatientLocationsFactory.new(school_session: @session)
       end
   end
 end

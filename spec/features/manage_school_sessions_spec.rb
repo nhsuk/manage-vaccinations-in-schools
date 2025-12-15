@@ -131,8 +131,8 @@ describe "Manage school sessions" do
       session: clinic_session
     )
     create(
-      :session_notification,
-      :clinic_initial_invitation,
+      :clinic_notification,
+      :initial_invitation,
       session: clinic_session,
       patient: patient_already_in_clinic_with_invitiation
     )
@@ -371,6 +371,6 @@ describe "Manage school sessions" do
     EnqueueClinicSessionInvitationsJob.perform_now
     perform_enqueued_jobs
 
-    expect_email_to @parent.email, :session_clinic_initial_invitation
+    expect_email_to @parent.email, :clinic_initial_invitation
   end
 end

@@ -24,7 +24,7 @@ class Stats::Session
 
   def from_programme_statuses
     stats = {
-      eligible_children: patient_ids.size,
+      total: patient_ids.size,
       needs_consent:
         programme_count_for(
           Patient::ProgrammeStatus::NEEDS_CONSENT_STATUSES.keys
@@ -56,7 +56,7 @@ class Stats::Session
 
   def from_consent_and_vaccination_statuses
     stats = {
-      eligible_children: patient_ids.size,
+      total: patient_ids.size,
       consent_no_response: consent_count_for("no_response")
     }
 
@@ -191,9 +191,8 @@ class Stats::Session
     @patient_ids ||=
       session
         .patients
-        .not_deceased
         .appear_in_programmes([programme], session:)
-        .eligible_for_programmes([programme], location:, academic_year:)
+        .eligible_for_programme(programme, session:)
         .pluck(:id)
   end
 end

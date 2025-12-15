@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_09_133534) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_15_114448) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "disease_type", ["diphtheria", "human_papillomavirus", "influenza", "measles", "meningitis_a", "meningitis_c", "meningitis_w", "meningitis_y", "mumps", "polio", "rubella", "tetanus", "varicella"]
   create_enum "programme_type", ["flu", "hpv", "menacwy", "mmr", "td_ipv"]
 
   create_table "access_log_entries", force: :cascade do |t|
@@ -148,6 +149,21 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_09_133534) do
     t.bigint "class_import_id", null: false
     t.bigint "patient_id", null: false
     t.index ["class_import_id", "patient_id"], name: "index_class_imports_patients_on_class_import_id_and_patient_id", unique: true
+  end
+
+  create_table "clinic_notifications", force: :cascade do |t|
+    t.integer "academic_year", null: false
+    t.datetime "created_at", null: false
+    t.bigint "patient_id", null: false
+    t.enum "programme_types", null: false, array: true, enum_type: "programme_type"
+    t.datetime "sent_at", null: false
+    t.bigint "sent_by_user_id"
+    t.bigint "team_id", null: false
+    t.integer "type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["patient_id"], name: "index_clinic_notifications_on_patient_id"
+    t.index ["sent_by_user_id"], name: "index_clinic_notifications_on_sent_by_user_id"
+    t.index ["team_id"], name: "index_clinic_notifications_on_team_id"
   end
 
   create_table "cohort_imports", force: :cascade do |t|
@@ -354,6 +370,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_09_133534) do
     t.text "csv_filename", null: false
     t.datetime "csv_removed_at"
     t.integer "exact_duplicate_record_count"
+    t.integer "ignored_record_count"
     t.integer "new_record_count"
     t.datetime "processed_at"
     t.integer "rows_count"
@@ -915,6 +932,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_09_133534) do
     t.integer "delivery_method"
     t.integer "delivery_site"
     t.datetime "discarded_at"
+    t.enum "disease_types", array: true, enum_type: "disease_type"
     t.integer "dose_sequence"
     t.boolean "full_dose"
     t.string "local_patient_id"
@@ -972,10 +990,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_09_133534) do
     t.datetime "created_at", null: false
     t.boolean "discontinued", default: false, null: false
     t.integer "disease_types", default: [], null: false, array: true
+    t.enum "disease_types_enum", null: false, array: true, enum_type: "disease_type"
     t.decimal "dose_volume_ml", null: false
     t.text "manufacturer", null: false
     t.integer "method", null: false
-    t.text "nivs_name"
+    t.string "nivs_name"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "side_effects", default: [], null: false, array: true
     t.string "snomed_product_code", null: false
@@ -1009,6 +1028,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_09_133534) do
   add_foreign_key "class_imports_parents", "parents", on_delete: :cascade
   add_foreign_key "class_imports_patients", "class_imports", on_delete: :cascade
   add_foreign_key "class_imports_patients", "patients", on_delete: :cascade
+  add_foreign_key "clinic_notifications", "patients"
+  add_foreign_key "clinic_notifications", "teams"
+  add_foreign_key "clinic_notifications", "users", column: "sent_by_user_id"
   add_foreign_key "cohort_imports", "teams"
   add_foreign_key "cohort_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "cohort_imports_parent_relationships", "cohort_imports", on_delete: :cascade

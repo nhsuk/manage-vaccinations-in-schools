@@ -9,9 +9,11 @@
 #  contains_gelatine   :boolean          not null
 #  discontinued        :boolean          default(FALSE), not null
 #  disease_types       :integer          default([]), not null, is an Array
+#  disease_types_enum  :enum             not null, is an Array
 #  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
 #  method              :integer          not null
+#  nivs_name           :string
 #  programme_type      :enum             not null
 #  side_effects        :integer          default([]), not null, is an Array
 #  snomed_product_code :string           not null

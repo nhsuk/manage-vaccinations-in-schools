@@ -161,7 +161,7 @@ jobs:
       - name: Rename task definition file
         run: mv ${{ steps.create-task-definition.outputs.task-definition }} ${{ runner.temp }}/${{ matrix.service }}-task-definition.json
       - name: Upload artifact for ${{ matrix.service }} task definition
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ inputs.environment }}-${{ matrix.service }}-task-definition
           path: ${{ runner.temp }}/${{ matrix.service }}-task-definition.json
@@ -213,7 +213,7 @@ jobs:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
       - name: Download ops task definition artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           path: ${{ runner.temp }}
           name: ${{ inputs.environment }}-ops-task-definition
@@ -339,7 +339,7 @@ jobs:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
       - name: Download ${{ matrix.service }} task definition artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           path: ${{ runner.temp }}
           name: ${{ inputs.environment }}-${{ matrix.service }}-task-definition

@@ -9,9 +9,11 @@
 #  contains_gelatine   :boolean          not null
 #  discontinued        :boolean          default(FALSE), not null
 #  disease_types       :integer          default([]), not null, is an Array
+#  disease_types_enum  :enum             not null, is an Array
 #  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
 #  method              :integer          not null
+#  nivs_name           :string
 #  programme_type      :enum             not null
 #  side_effects        :integer          default([]), not null, is an Array
 #  snomed_product_code :string           not null
@@ -174,9 +176,11 @@ FactoryBot.define do
         discontinued { data.fetch("discontinued", false) }
         dose_volume_ml { data["dose_volume_ml"] }
         disease_types { data["disease_types"] }
+        disease_types_enum { data["disease_types"] }
         manufacturer { data["manufacturer"] }
         add_attribute(:method) { data["method"] }
         upload_name { data["upload_name"] }
+        nivs_name { data["nivs_name"] }
         snomed_product_code { data["snomed_product_code"] }
         snomed_product_term { data["snomed_product_term"] }
       end

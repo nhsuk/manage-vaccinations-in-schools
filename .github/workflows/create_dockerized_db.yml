@@ -1,0 +1,73 @@
+name: Create Dockerized Database
+run-name: Creating dockerized image from ${{ github.ref_name }}
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  setup-development-database:
+    name: Setup Development Database
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: development
+      DATABASE_HOST: localhost
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      BUNDLE_WITHOUT: test
+      RAILS_MASTER_KEY: intentionally-insecure-dev-key00
+      SKIP_TEST_DATABASE: true
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .tool-versions
+          cache: yarn
+      - name: Build custom postgres image
+        run: |
+          echo -e "FROM postgres:16.11\n\nENV PGDATA=\"/var/lib/postgresql/mydata\"" > db.Dockerfile
+          docker build -t custom-postgres:latest -f db.Dockerfile .
+      - name: Start db container
+        run: |
+          docker run -d \
+            --name database \
+            -e "POSTGRES_HOST_AUTH_METHOD=trust" \
+            -p 5432:5432 \
+            custom-postgres:latest
+      - name: Wait for db to be ready
+        run: |
+          docker exec database bash -c '
+            until pg_isready -U postgres; do
+              echo "Waiting for postgres..."
+              sleep 2
+            done
+                '
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Populate database for testing
+        run: |
+          bin/rails db:setup
+          bin/rails feature_flags:enable_for_development
+          bin/mavis gias import
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
+          aws-region: eu-west-2
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Commit postgres container with database
+        run: |
+          docker commit database ${{ steps.login-ecr.outputs.registry }}/mavis/development/postgres_db:latest
+      - name: Push image
+        run: |
+          docker tag ${{ steps.login-ecr.outputs.registry }}/mavis/development/postgres_db:latest ${{ steps.login-ecr.outputs.registry }}/mavis/development/postgres_db:${{ github.ref_name }}
+          docker push ${{ steps.login-ecr.outputs.registry }}/mavis/development/postgres_db --all-tags

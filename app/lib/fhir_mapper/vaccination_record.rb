@@ -105,12 +105,14 @@ module FHIRMapper
       attrs[:vaccine] = Vaccine.from_fhir_record(fhir_record)
 
       if attrs[:vaccine]
+        attrs[:disease_types] = attrs[:vaccine].disease_types
         attrs[:batch] = batch_from_fhir(fhir_record, vaccine: attrs[:vaccine])
         attrs[:full_dose] = full_dose_from_fhir(
           fhir_record,
           vaccine: attrs[:vaccine]
         )
       else
+        attrs[:disease_types] = attrs[:programme].disease_types
         attrs[:notes] = vaccine_batch_notes_from_fhir(fhir_record)
         attrs[:full_dose] = true
       end

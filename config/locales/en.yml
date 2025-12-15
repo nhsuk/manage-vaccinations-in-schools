@@ -245,7 +245,7 @@ en:
       location:
         phases:
           nursery: Nursery
-          other: Other
+          other: Other / Unknown
           primary: Primary
           secondary: Secondary
       notify_log_entry:

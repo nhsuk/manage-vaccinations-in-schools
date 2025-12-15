@@ -81,8 +81,7 @@ describe ImmunisationImportRow do
       "VACCINATED" => "Y",
       "PERFORMING_PROFESSIONAL_FORENAME" => vaccinator.given_name,
       "PERFORMING_PROFESSIONAL_SURNAME" => vaccinator.family_name,
-      # This is not on the NIVS spec, but needs to be temporarily compatible with the Mavis spec for the tests to run:
-      "VACCINE_GIVEN" => "AstraZeneca Fluenz"
+      "VACCINE_GIVEN" => "AstraZeneca Fluenz LAIV"
     )
   end
   let(:valid_bulk_hpv_data) do
@@ -912,7 +911,9 @@ describe ImmunisationImportRow do
     context "for a bulk upload" do
       let(:programmes) { [Programme.hpv, Programme.flu] }
 
-      shared_examples "with an empty row (both bulk upload types)" do
+      let(:import_type) { "bulk" }
+
+      shared_examples "with an empty row where vaccine was administered (both bulk upload types)" do
         it "requires the mandatory fields" do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors[:base]).to include(
@@ -925,16 +926,7 @@ describe ImmunisationImportRow do
             "<code>LOCAL_PATIENT_ID</code> is required",
             "<code>LOCAL_PATIENT_ID_URI</code> is required",
             "<code>ORGANISATION_CODE</code> is required",
-            "<code>SCHOOL_URN</code> is required"
-          )
-        end
-      end
-
-      shared_examples "with an (almost) empty row where `VACCINATED` is `Y`" do
-        it "requires the mandatory fields" do
-          expect(immunisation_import_row).to be_invalid
-          expect(immunisation_import_row.errors[:base]).to include(
-            "<code>VACCINE_GIVEN</code> is required",
+            "<code>SCHOOL_URN</code> is required",
             "<code>ANATOMICAL_SITE</code> is required",
             "<code>BATCH_NUMBER</code> is required",
             "<code>BATCH_EXPIRY_DATE</code> is required"
@@ -997,28 +989,58 @@ describe ImmunisationImportRow do
         end
       end
 
-      context "of type flu" do
-        let(:import_type) { "bulk_flu" }
-
+      context "of unknown type (no VACCINE_GIVEN)" do
         context "with an empty row" do
           let(:data) { {} }
 
-          it "requires the `VACCINATED` field" do
+          it "requires VACCINE_GIVEN" do
             expect(immunisation_import_row).to be_invalid
             expect(immunisation_import_row.errors[:base]).to include(
-              "<code>VACCINATED</code> is required"
+              "<code>VACCINE_GIVEN</code> is required"
             )
           end
+
+          include_examples "when an NHS number is provided"
+
+          include_examples "when vaccinated date is in a previous academic year"
 
           include_examples "it doesn't make `SCHOOL_NAME` compulsory"
         end
 
-        context "when `VACCINATED` is `Y`" do
-          let(:data) { { "VACCINATED" => "Y" } }
+        include_examples "when `VACCINATED` is `N`"
 
-          include_examples "with an empty row (both bulk upload types)"
+        context "when `VACCINE_GIVEN` matches to an incorrect programme" do
+          let(:programmes) { Programme.all }
 
-          include_examples "with an (almost) empty row where `VACCINATED` is `Y`"
+          shared_examples "rejects a VACCINE_GIVEN" do |vaccine_given|
+            context "with code: #{vaccine_given}" do
+              let(:data) { { "VACCINE_GIVEN" => vaccine_given } }
+
+              it "throws a validation error" do
+                expect(immunisation_import_row).to be_invalid
+                expect(
+                  immunisation_import_row.errors[:VACCINE_GIVEN]
+                ).to include(
+                  "This vaccine programme is not accepted in this upload."
+                )
+              end
+            end
+          end
+
+          include_examples "rejects a VACCINE_GIVEN", "MenQuadfi"
+          include_examples "rejects a VACCINE_GIVEN", "Priorix"
+          include_examples "rejects a VACCINE_GIVEN", "ProQuad"
+          include_examples "rejects a VACCINE_GIVEN", "Revaxis"
+        end
+      end
+
+      context "of type flu" do
+        let(:basic_flu_data) do
+          { "VACCINE_GIVEN" => "AstraZeneca Fluenz LAIV" }
+        end
+
+        shared_examples "it is equivalent to `VACCINATED` being `Y`" do
+          include_examples "with an empty row where vaccine was administered (both bulk upload types)"
 
           it "requires the mandatory fields specific to flu when vaccinated" do
             expect(immunisation_import_row).to be_invalid
@@ -1031,25 +1053,26 @@ describe ImmunisationImportRow do
           include_examples "it doesn't make `SCHOOL_NAME` compulsory"
         end
 
+        context "with an empty row" do
+          let(:data) { basic_flu_data }
+
+          include_examples "it is equivalent to `VACCINATED` being `Y`"
+        end
+
+        context "when `VACCINATED` is `Y`" do
+          let(:data) { basic_flu_data.merge({ "VACCINATED" => "Y" }) }
+
+          include_examples "it is equivalent to `VACCINATED` being `Y`"
+        end
+
         include_examples "when `VACCINATED` is `N`"
-        include_examples "when an NHS number is provided"
-        include_examples "when vaccinated date is in a previous academic year"
       end
 
       context "of type hpv" do
-        let(:import_type) { "bulk_hpv" }
+        let(:basic_hpv_data) { { "VACCINE_GIVEN" => "Gardasil" } }
 
-        context "with an empty row" do
-          let(:data) { {} }
-
-          include_examples "with an empty row (both bulk upload types)"
-          include_examples "it doesn't make `SCHOOL_NAME` compulsory"
-        end
-
-        context "when `VACCINATED` is `Y` (ie in all cases for HPV bulk upload)" do
-          let(:data) { {} }
-
-          include_examples "with an (almost) empty row where `VACCINATED` is `Y`"
+        shared_examples "it is equivalent to `VACCINATED` being `Y`" do
+          include_examples "with an empty row where vaccine was administered (both bulk upload types)"
 
           it "requires the mandatory fields specific to HPV" do
             expect(immunisation_import_row).to be_invalid
@@ -1057,11 +1080,23 @@ describe ImmunisationImportRow do
               "<code>DOSE_SEQUENCE</code> is required"
             )
           end
+
+          include_examples "it doesn't make `SCHOOL_NAME` compulsory"
+        end
+
+        context "with an empty row" do
+          let(:data) { basic_hpv_data }
+
+          include_examples "it is equivalent to `VACCINATED` being `Y`"
+        end
+
+        context "when `VACCINATED` is `Y` (ie in all cases for HPV bulk upload)" do
+          let(:data) { basic_hpv_data.merge({ "VACCINATED" => "Y" }) }
+
+          include_examples "it is equivalent to `VACCINATED` being `Y`"
         end
 
         include_examples "when `VACCINATED` is `N`"
-        include_examples "when an NHS number is provided"
-        include_examples "when vaccinated date is in a previous academic year"
       end
     end
   end
@@ -1169,6 +1204,12 @@ describe ImmunisationImportRow do
         end
       end
 
+      it "sets the disease types of the vaccine" do
+        expect(vaccination_record.disease_types).to eq(
+          Vaccine.find_by!(brand: "Gardasil 9").disease_types
+        )
+      end
+
       context "without a vaccine" do
         let(:data) { valid_data.except("VACCINE_GIVEN") }
 
@@ -1178,6 +1219,12 @@ describe ImmunisationImportRow do
 
         it "does set a programme" do
           expect(vaccination_record.programme).not_to be_nil
+        end
+
+        it "sets the disease types of the programme" do
+          expect(vaccination_record.disease_types).to eq(
+            programmes.first.disease_types
+          )
         end
       end
 
@@ -2161,8 +2208,20 @@ describe ImmunisationImportRow do
     context "for a bulk upload" do
       let(:programmes) { [Programme.hpv, Programme.flu] }
 
+      let(:import_type) { "bulk" }
+
       context "of type flu" do
-        let(:import_type) { "bulk_flu" }
+        shared_examples "accepts a VACCINE_GIVEN code" do |vaccine_given, snomed_product_code|
+          context "with code: #{vaccine_given}" do
+            let(:data) do
+              valid_bulk_flu_data.merge("VACCINE_GIVEN" => vaccine_given)
+            end
+
+            it { should be_valid }
+
+            its(:vaccine) { should have_attributes(snomed_product_code:) }
+          end
+        end
 
         let(:data) { valid_bulk_flu_data }
 
@@ -2233,6 +2292,16 @@ describe ImmunisationImportRow do
           its(:uuid) { should_not eq "ABCD1234-26cc-44e4-b886-c3cc90ba01b6" }
         end
 
+        include_examples "accepts a VACCINE_GIVEN code",
+                         "AstraZeneca Fluenz LAIV",
+                         "43208811000001106"
+        include_examples "accepts a VACCINE_GIVEN code",
+                         "Viatris Quadrivalent Influvac sub - unit Tetra - QIVe",
+                         "45354911000001100"
+        include_examples "accepts a VACCINE_GIVEN code",
+                         "Seqirus Cell-Based Trivalent IIVc",
+                         "43207411000001105"
+
         include_examples "with pseudo-postcodes"
       end
 
@@ -2248,8 +2317,6 @@ describe ImmunisationImportRow do
             its(:vaccine) { should have_attributes(snomed_product_code:) }
           end
         end
-
-        let(:import_type) { "bulk_hpv" }
 
         let(:data) { valid_bulk_hpv_data }
 

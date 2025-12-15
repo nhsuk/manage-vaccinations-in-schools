@@ -111,21 +111,44 @@ describe SessionsHelper do
     subject(:session_title) { helper.session_title(session) }
 
     let(:programmes) { [Programme.hpv, Programme.flu] }
-    let(:location) { create(:school, name: "Waterloo Road", programmes:) }
 
-    context "when unscheduled" do
-      let(:session) { create(:session, :unscheduled, programmes:, location:) }
+    context "with a generic clinic location" do
+      let(:location) { create(:generic_clinic, programmes:) }
 
-      it { should eq("Flu and HPV session at Waterloo Road") }
+      context "when unscheduled" do
+        let(:session) { create(:session, :unscheduled, programmes:, location:) }
+
+        it { should eq("Flu and HPV community clinic") }
+      end
+
+      context "when scheduled" do
+        let(:session) { create(:session, :today, programmes:, location:) }
+
+        it do
+          expect(session_title).to eq(
+            "Flu and HPV community clinic on #{Date.current.to_fs(:long)}"
+          )
+        end
+      end
     end
 
-    context "when scheduled" do
-      let(:session) { create(:session, :today, programmes:, location:) }
+    context "with a school location" do
+      let(:location) { create(:school, name: "Waterloo Road", programmes:) }
 
-      it do
-        expect(session_title).to eq(
-          "Flu and HPV session at Waterloo Road on #{Date.current.to_fs(:long)}"
-        )
+      context "when unscheduled" do
+        let(:session) { create(:session, :unscheduled, programmes:, location:) }
+
+        it { should eq("Flu and HPV session at Waterloo Road") }
+      end
+
+      context "when scheduled" do
+        let(:session) { create(:session, :today, programmes:, location:) }
+
+        it do
+          expect(session_title).to eq(
+            "Flu and HPV session at Waterloo Road on #{Date.current.to_fs(:long)}"
+          )
+        end
       end
     end
   end

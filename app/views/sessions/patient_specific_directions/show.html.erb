@@ -36,7 +36,9 @@
         <%= render AppPatientSessionSearchResultCardComponent.new(
               patient:,
               session: @session,
-              context: :patient_specific_direction,
+              programmes: [],
+              return_to: :patient_specific_direction,
+              show_patient_specific_direction_status: true,
             ) %>
       <% end %>
     <% end %>

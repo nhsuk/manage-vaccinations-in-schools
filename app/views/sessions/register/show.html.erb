@@ -23,8 +23,13 @@
           <%= render AppPatientSessionSearchResultCardComponent.new(
                 patient:,
                 session: @session,
-                context: :register,
                 programmes: @form.programmes,
+                return_to: :register,
+                show_action_required: true,
+                show_notes: true,
+                show_registration_status: true,
+                show_programme_status: true,
+                show_vaccine_type: true,
               ) %>
         <% end %>
       <% end %>

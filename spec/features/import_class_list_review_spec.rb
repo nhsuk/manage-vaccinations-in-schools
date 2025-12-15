@@ -168,18 +168,6 @@ describe "Import class lists" do
     click_on "Continue"
   end
 
-  def when_i_upload_an_invalid_file
-    attach_file(
-      "class_import[csv]",
-      "spec/fixtures/class_import/review_invalid.csv"
-    )
-    click_on "Continue"
-    perform_enqueued_jobs_while_exists(only: ProcessImportJob)
-    perform_enqueued_jobs_while_exists(only: ProcessPatientChangesetJob)
-    perform_enqueued_jobs_while_exists(only: ReviewPatientChangesetJob)
-    perform_enqueued_jobs_while_exists(only: ReviewClassImportSchoolMoveJob)
-  end
-
   def when_i_upload_a_valid_file
     attach_file(
       "class_import[csv]",

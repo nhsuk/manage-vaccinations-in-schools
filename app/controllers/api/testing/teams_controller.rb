@@ -21,13 +21,13 @@ class API::Testing::TeamsController < API::Testing::BaseController
     log_destroy(SchoolMove.where(team:))
     log_destroy(Consent.where(team:))
     log_destroy(ArchiveReason.where(team:))
-    log_destroy(Triage.where(team:))
 
     log_destroy(
       NotifyLogEntry.joins(:team_location).where(team_location: { team_id: })
     )
     log_destroy(ConsentForm.for_team(team))
 
+    log_destroy(ClinicNotification.where(team_id:))
     log_destroy(
       ConsentNotification.joins(session: :team_location).where(
         team_location: {

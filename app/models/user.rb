@@ -119,13 +119,7 @@ class User < ApplicationRecord
 
   def selected_team = cis2_info.team
 
-  def programmes
-    if is_healthcare_assistant?
-      selected_team&.programmes&.select(&:supports_delegation?)
-    else
-      selected_team&.programmes
-    end
-  end
+  def programmes = selected_team&.programmes
 
   def role_name
     cis2_info.role_name if cis2_enabled?

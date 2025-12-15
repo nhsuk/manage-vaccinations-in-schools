@@ -111,11 +111,6 @@ class Session < ApplicationRecord
   scope :has_any_programmes_of,
         ->(programmes) { has_any_programme_types_of(programmes.map(&:type)) }
 
-  scope :supports_delegation,
-        -> do
-          has_any_programme_types_of(Programme::TYPES_SUPPORTING_DELEGATION)
-        end
-
   scope :in_progress, -> { has_date(Date.current) }
   scope :unscheduled, -> { where(dates: []) }
   scope :scheduled,
@@ -215,6 +210,8 @@ class Session < ApplicationRecord
       .joins_sessions
       .where(sessions: { id: })
       .where(birth_academic_year: birth_academic_years)
+      .not_deceased
+      .eligible_for_any_programmes_of(programmes, session: self)
   end
 
   def today? = dates.any?(&:today?)

@@ -21,20 +21,6 @@
       <% end %>
     <% end %>
 
-    <% if show_eligible_children %>
-      <%= f.govuk_check_boxes_fieldset :show_only,
-                                       multiple: true,
-                                       legend: { text: "Show only", size: "s" },
-                                       small: true do %>
-        <%= f.govuk_check_box :eligible_children,
-                              1, 0,
-                              checked: form.eligible_children,
-                              multiple: false,
-                              link_errors: true,
-                              label: { text: "Eligible this academic year and not vaccinated elsewhere" } %>
-      <% end %>
-    <% end %>
-
     <% if show_vaccine_criteria && has_vaccine_criteria? %>
       <% programmes.each do |programme| %>
         <% if (programme_vaccine_criteria = vaccine_criteria_for(programme:)).present? %>

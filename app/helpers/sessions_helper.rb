@@ -57,12 +57,16 @@ module SessionsHelper
   end
 
   def session_title(session)
-    [
-      session.programmes.map(&:name).to_sentence,
-      "session at",
-      session.location.name,
-      ("on" if session.dates.present?),
-      (session_dates(session) if session.dates.present?)
-    ].compact.join(" ")
+    programmes = session.programmes.map(&:name).to_sentence
+    dates = ("on #{session_dates(session)}" if session.dates.present?)
+
+    items =
+      if session.generic_clinic?
+        [programmes, "community clinic", dates].compact
+      else
+        [programmes, "session at", session.location.name, dates].compact
+      end
+
+    items.join(" ")
   end
 end
