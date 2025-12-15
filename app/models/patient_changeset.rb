@@ -179,6 +179,13 @@ class PatientChangeset < ApplicationRecord
 
   def nhs_number = child_attributes["nhs_number"]
 
+  def pending_changes
+    unless review_data["patient"] && review_data["patient"]["pending_changes"]
+      return
+    end
+    review_data["patient"]["pending_changes"] || {}
+  end
+
   def invalidate!
     data["upload"]["child"]["invalidated_at"] = Time.current
   end
