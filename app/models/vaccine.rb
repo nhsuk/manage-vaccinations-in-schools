@@ -9,6 +9,7 @@
 #  contains_gelatine   :boolean          not null
 #  discontinued        :boolean          default(FALSE), not null
 #  disease_types       :integer          default([]), not null, is an Array
+#  disease_types_enum  :enum             not null, is an Array
 #  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
 #  method              :integer          not null
@@ -32,7 +33,6 @@
 class Vaccine < ApplicationRecord
   include BelongsToProgramme
   include HasSideEffects
-  include HasDiseaseTypes
 
   audited
   has_associated_audits
@@ -54,6 +54,16 @@ class Vaccine < ApplicationRecord
   scope :active, -> { where(discontinued: false) }
   scope :discontinued, -> { where(discontinued: true) }
 
+  scope :with_disease_types,
+        ->(disease_types) do
+          return all if disease_types.blank?
+
+          where(
+            "ARRAY(SELECT unnest(disease_types_enum) ORDER BY 1) = ARRAY[?]::disease_type[]",
+            disease_types.sort
+          )
+        end
+
   delegate :first_health_question, to: :health_questions
 
   delegate :fhir_codeable_concept,
@@ -62,6 +72,13 @@ class Vaccine < ApplicationRecord
            to: :fhir_mapper
 
   delegate :snomed_procedure_term, to: :programme, allow_nil: true
+
+  def disease_types = disease_types_enum
+
+  def disease_types=(value)
+    super(value)
+    self.disease_types_enum = value
+  end
 
   def active? = !discontinued
 
@@ -76,18 +93,6 @@ class Vaccine < ApplicationRecord
     ],
     "nasal" => %w[nose]
   }.freeze
-
-  scope :with_disease_types,
-        ->(disease_types) do
-          return all if disease_types.blank?
-
-          enum_values =
-            disease_types.map { |dt| Vaccine.disease_types.fetch(dt) }
-          where(
-            "ARRAY(SELECT unnest(disease_types) ORDER BY 1) = ARRAY[?]::integer[]",
-            enum_values.sort
-          )
-        end
 
   def available_delivery_sites
     AVAILABLE_DELIVERY_SITES.fetch(method)
