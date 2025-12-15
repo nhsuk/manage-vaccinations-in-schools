@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_15_072047) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_15_103351) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -989,6 +989,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_15_072047) do
     t.datetime "created_at", null: false
     t.boolean "discontinued", default: false, null: false
     t.integer "disease_types", default: [], null: false, array: true
+    t.enum "disease_types_enum", null: false, array: true, enum_type: "disease_type"
     t.decimal "dose_volume_ml", null: false
     t.text "manufacturer", null: false
     t.integer "method", null: false
