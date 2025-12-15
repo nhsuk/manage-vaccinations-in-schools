@@ -1,0 +1,119 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukhackneysais
+  name: Vaccination UK - Waltham Forest
+  email: walthamforest@v-uk.co.uk
+  phone: "0208 017 4291"
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/policies
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id: 0079c885-539f-41f3-b32b-f6e9bca8c32e
+  type: poc_only
+
+programmes: [menacwy, mmr, td_ipv, hpv]
+
+subteams:
+    walthamforest:
+    name: Vaccination UK - Waltham Forest
+    email: walthamforest@v-uk.co.uk
+    phone: "0208 017 4291"
+    reply_to_id: 0079c885-539f-41f3-b32b-f6e9bca8c32e
+
+schools:
+  walthamforest:
+    - 131697
+    - 140197
+    - 138454
+    - 103112
+    - 140795
+    - 130343
+    - 138690
+    - 131057
+    - 137328
+    - 103052
+    - 139259
+    - 103032
+    - 103084
+    - 103078
+    - 143384
+    - /1
+    - 103073
+    - 103044
+    - 103053
+    - 138258
+    - 103110
+    - 103075
+    - 103054
+    - 103074
+    - 103059
+    - 137677
+    - 135558
+    - 103070
+    - 136413
+    - 141734
+    - 147179
+    - 142713
+    - 103077
+    - 103048
+    - 133517
+    - 103069
+    - 135193
+    - 103081
+    - 139723
+    - 136362
+    - 147180
+    - 143383
+    - 103072
+    - 103090
+    - 103086
+    - 103085
+    - 144238
+    - 103088
+    - 144239
+    - 103079
+    - 139724
+    - 103082
+    - 103061
+    - 139016
+    - 140405
+    - 103060
+    - 134579
+    - 141748
+    - 103036
+    - 139317
+    - 138364
+    - 146681
+    - 136364
+    - 141030
+    - 141411
+    - 103080
+    - 138691
+    - 139293
+    - 140957
+    - 103094
+    - 145106
+    - 103097
+    - 137558
+    - 103106
+    - 103105
+    - 145708
+    - 132848
+    - 103101
+    - 143385
+    - 138859
+    - 132727
+    - 103103
+    - 103100
+
+clinics:
+  walthamforest:
+    - name: Higham's Park Clinic
+      address_line_1: 490 Larkshall Road
+      address_town: Waltham Forest
+      address_postcode: E4 9HH
+    - name: Leystone United Free Church
+      address_line_1: Leytonstone United Free Church
+      address_line_2: 55 Wallwood Road
+      address_town: Leytonstone

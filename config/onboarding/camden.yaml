@@ -1,0 +1,124 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukcamdensais
+  name: Vaccination UK - Camden
+  email: camden@v-uk.co.uk
+  phone: "0204 603 3495"
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/policies
+  privacy_notice_url: https://www.schoolvaccination.uk/policies
+  reply_to_id: 989fff11-4855-4b7c-b60a-0202f5b6ddf6
+  type: poc_only
+
+programmes: [menacwy, mmr, td_ipv, hpv]
+
+subteams:
+  camden:
+    name: Vaccination UK - Camden
+    email: camden@v-uk.co.uk
+    phone: "0204 603 3495"
+    reply_to_id: 989fff11-4855-4b7c-b60a-0202f5b6ddf6
+
+schools:
+  camden:
+    - 139837
+    - 100053
+    - 100008
+    - 100010
+    - 100011
+    - 100007
+    - 100060
+    - 100028
+    - 100029
+    - 130342
+    - 149158
+    - 100082
+    - 100080
+    - 100013
+    - 100027
+    - 100030
+    - 100084
+    - 100026
+    - 100014
+    - 100091
+    - 135167
+    - 100025
+    - 137333
+    - 100073
+    - 100031
+    - 100052
+    - 100092
+    - 100049
+    - 100015
+    - 100006
+    - 100078
+    - 100069
+    - 100033
+    - 100032
+    - 142408
+    - 100034
+    - 140686
+    - 132245
+    - 138777
+    - 100059
+    - 146553
+    - 100055
+    - 131978
+    - 100018
+    - 100019
+    - 144813
+    - 100068
+    - 135140
+    - 100074
+    - 149566
+    - 100048
+    - 100050
+    - 100020
+    - 100051
+    - 100021
+    - 100022
+    - 100035
+    - 100094
+    - 100063
+    - 100076
+    - 100090
+    - 100036
+    - 100070
+    - 100061
+    - 100047
+    - 100040
+    - 100041
+    - 136807
+    - 100062
+    - 100043
+    - 100042
+    - 100067
+    - 100045
+    - 100046
+    - 100096
+    - 131291
+    - 141164
+    - 100054
+    - 100066
+    - 100064
+    - 100087
+    - 137181
+    - 100077
+    - 100023
+    - 100075
+    - 100065
+    - 100009
+    - 150298
+    - 100056
+    - 102694
+    - 137539
+
+clinics:
+  camden:
+    - name: Harmood Children's Centre and Family Hub
+      address_line_1: 1 Forge Pl.
+      address_line_2: Ferdinand St.
+      address_town: London
+      address_postcode: NW1 8DQ
