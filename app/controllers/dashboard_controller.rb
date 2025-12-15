@@ -34,19 +34,11 @@ class DashboardController < ApplicationController
         ]
       else
         [
-          if Flipper.enabled?(:schools_and_sessions)
-            {
-              title: I18n.t("schools.index.title"),
-              path: schools_path,
-              description: I18n.t("schools.index.description")
-            }
-          else
-            {
-              title: I18n.t("programmes.index.title"),
-              path: programmes_path,
-              description: I18n.t("programmes.index.description")
-            }
-          end,
+          {
+            title: I18n.t("schools.index.title"),
+            path: schools_path,
+            description: I18n.t("schools.index.description")
+          },
           {
             title: I18n.t("patients.index.title"),
             path: patients_path,
@@ -88,13 +80,11 @@ class DashboardController < ApplicationController
         description: I18n.t("imports.index.description")
       }
 
-      if Flipper.enabled?(:schools_and_sessions)
-        @secondary_items << {
-          title: I18n.t("programmes.index.title"),
-          path: programmes_path,
-          description: I18n.t("programmes.index.description")
-        }
-      end
+      @secondary_items << {
+        title: I18n.t("programmes.index.title"),
+        path: programmes_path,
+        description: I18n.t("programmes.index.description")
+      }
     end
 
     @secondary_items << {

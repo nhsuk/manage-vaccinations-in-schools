@@ -67,6 +67,6 @@ describe "Upload-only team homepage and navigation" do
     navigation_items = page.all(".nhsuk-header__navigation-item")
     expect(navigation_items.count).to eq(2)
     expect(navigation_items[0]).to have_link("Imports", href: imports_path)
-    expect(navigation_items[1]).to have_link("Your team", href: team_path)
+    expect(navigation_items[1]).to have_link("Team", href: team_path)
   end
 end

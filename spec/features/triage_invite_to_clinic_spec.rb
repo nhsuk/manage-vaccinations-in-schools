@@ -144,7 +144,6 @@ describe "Triage" do
   end
 
   def when_i_access_the_vaccinate_later_page
-    click_on @school.name, match: :first
     within(".app-secondary-navigation") { click_on "Children" }
     choose "Needs triage", match: :first
     click_on "Update results"

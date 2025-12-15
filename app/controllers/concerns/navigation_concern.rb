@@ -17,11 +17,10 @@ module NavigationConcern
     @navigation_items = []
 
     if current_team&.has_poc_access?
-      @navigation_items << if Flipper.enabled?(:schools_and_sessions)
-        { title: t("schools.index.title"), path: schools_path }
-      else
-        { title: t("programmes.index.title"), path: programmes_path }
-      end
+      @navigation_items << {
+        title: t("schools.index.title"),
+        path: schools_path
+      }
 
       @navigation_items << {
         title: t("patients.index.title"),
@@ -59,7 +58,7 @@ module NavigationConcern
       }
     end
 
-    if current_team&.has_poc_access? && Flipper.enabled?(:schools_and_sessions)
+    if current_team&.has_poc_access?
       @navigation_items << {
         title: t("programmes.index.title"),
         path: programmes_path
@@ -68,12 +67,7 @@ module NavigationConcern
 
     if current_team
       @navigation_items << {
-        title:
-          if Flipper.enabled?(:schools_and_sessions)
-            I18n.t("teams.show.title_short")
-          else
-            I18n.t("teams.show.title")
-          end,
+        title: I18n.t("teams.show.title_short"),
         path: team_path
       }
     end

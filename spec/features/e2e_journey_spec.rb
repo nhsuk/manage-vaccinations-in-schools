@@ -83,7 +83,7 @@ describe "End-to-end journey" do
 
   def then_i_should_see_the_default_dashboard_cards
     cards = page.all(".nhsuk-card-group__item")
-    expect(cards[0].first("h2")).to have_content("Programmes")
+    expect(cards[0].first("h2")).to have_content("Schools")
     expect(cards[1].first("h2")).to have_content("Children")
     expect(cards[2].first("h2")).to have_content("Sessions")
     expect(cards[3].first("h2")).to have_content("Vaccines")
@@ -91,12 +91,9 @@ describe "End-to-end journey" do
 
   def and_the_default_navigation_items
     navigation_items = page.all(".nhsuk-header__navigation-item")
-    expect(navigation_items.count).to eq(8)
-    expect(navigation_items[0]).to have_link(
-      "Programmes",
-      href: programmes_path
-    )
-    expect(navigation_items[7]).to have_link("Your team", href: team_path)
+    expect(navigation_items.count).to eq(9)
+    expect(navigation_items[0]).to have_link("Schools", href: schools_path)
+    expect(navigation_items[8]).to have_link("Team", href: team_path)
   end
 
   def when_i_upload_the_cohort_import_containing_one_child
@@ -207,7 +204,7 @@ describe "End-to-end journey" do
   def when_i_register_verbal_consent
     click_link "Sessions", match: :first
     click_link "Pilot School"
-    click_link "Register"
+    within(".app-secondary-navigation") { click_link "Children" }
     click_link "TABLES, Bobby"
 
     click_button "Record a new consent response"
@@ -241,7 +238,7 @@ describe "End-to-end journey" do
 
   def when_i_click_on_the_register_attendance_section
     click_link "Pilot School"
-    click_link "Register"
+    within(".app-secondary-navigation") { click_link "Children" }
   end
 
   def and_i_record_the_patient_in_attendance
@@ -249,7 +246,6 @@ describe "End-to-end journey" do
   end
 
   def when_i_click_on_the_vaccination_section
-    click_link "Back"
     click_link "Record vaccinations"
     click_on "Update results"
   end

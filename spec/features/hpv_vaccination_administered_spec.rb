@@ -57,7 +57,7 @@ describe "HPV vaccination" do
     then_i_see_that_the_status_is_vaccinated
     and_i_see_the_vaccination_details
 
-    when_i_go_to_the_register_tab
+    when_i_go_to_the_children_tab
     and_i_filter_by_completed_session
     then_i_see_the_patient
 
@@ -274,10 +274,10 @@ describe "HPV vaccination" do
     expect(page).to have_content("Dose number1st")
   end
 
-  def when_i_go_to_the_register_tab
+  def when_i_go_to_the_children_tab
     click_on "Sessions", match: :first
     click_on @session.location.name
-    click_on "Register"
+    within(".app-secondary-navigation") { click_on "Children" }
   end
 
   def and_i_filter_by_completed_session

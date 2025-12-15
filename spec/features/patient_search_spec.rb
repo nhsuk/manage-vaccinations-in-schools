@@ -40,10 +40,6 @@ describe "Patient search" do
   scenario "Search result returns no patients" do
     given_that_i_am_signed_in
 
-    when_i_visit_the_session_register_tab
-    and_i_search_for_a_name_that_doesnt_exist
-    then_i_see_no_results
-
     when_i_visit_the_session_record_tab
     and_i_search_for_a_name_that_doesnt_exist
     then_i_see_no_results
@@ -207,10 +203,6 @@ describe "Patient search" do
     expect(page).not_to have_content("WILSON, Cassidy")
     expect(page).not_to have_content("HARDIN, Salvor")
     expect(page).to have_content("SELDON, Hari")
-  end
-
-  def when_i_visit_the_session_register_tab
-    visit session_register_path(@session)
   end
 
   def when_i_visit_the_session_record_tab

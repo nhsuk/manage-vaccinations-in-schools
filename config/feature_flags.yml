@@ -41,9 +41,6 @@ reporting_api: Enables the Commissioner reporting component to authenticate to M
   Authorization Code Flow (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), and retrieve
   statistics from /api/reporting/
 
-schools_and_sessions: |
-  Whether to use the new UI where sessions are separate to schools.
-
 testing_api: Basic API useful for automated testing.
 
 mmrv: Adds support for MMRV vaccinations

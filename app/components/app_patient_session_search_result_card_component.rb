@@ -44,8 +44,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
       <% if show_registration_status && can_register_attendance? %>
         <div class="nhsuk-button-group">
-          <%= govuk_button_to "Attending", create_session_register_path(session, patient, "present"), secondary: true, class: "nhsuk-button--small" %>
-          <%= govuk_button_to "Absent", create_session_register_path(session, patient, "absent"), class: "app-button--secondary-warning nhsuk-button--small" %>
+          <%= govuk_button_to "Attending", register_session_patients_path(session, patient, "present"), secondary: true, class: "nhsuk-button--small" %>
+          <%= govuk_button_to "Absent", register_session_patients_path(session, patient, "absent"), class: "app-button--secondary-warning nhsuk-button--small" %>
         </div>
       <% end %>
     <% end %>

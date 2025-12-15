@@ -12,10 +12,6 @@ class AppSessionDetailsComponent < ViewComponent::Base
           show_location: true,
           show_status: true,
         ) %>
-
-      <% unless Flipper.enabled?(:schools_and_sessions) %>
-        <%= govuk_button_link_to "Import class lists", import_session_path(session), secondary: true %>
-      <% end %>
     <% end %>
   ERB
 

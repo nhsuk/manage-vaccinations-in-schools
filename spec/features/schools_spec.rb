@@ -2,8 +2,7 @@
 
 describe "Schools" do
   scenario "Filtering on schools and viewing sessions" do
-    given_the_feature_flag_is_enabled
-    and_a_team_exists_with_a_few_schools
+    given_a_team_exists_with_a_few_schools
     and_i_am_signed_in
 
     when_i_visit_the_dashboard
@@ -30,11 +29,7 @@ describe "Schools" do
     then_i_see_the_secondary_sessions
   end
 
-  def given_the_feature_flag_is_enabled
-    Flipper.enable(:schools_and_sessions)
-  end
-
-  def and_a_team_exists_with_a_few_schools
+  def given_a_team_exists_with_a_few_schools
     programmes = [Programme.flu, Programme.hpv]
 
     @team = create(:team, :with_generic_clinic, programmes:)

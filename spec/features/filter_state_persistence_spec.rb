@@ -144,7 +144,7 @@ describe "Filter states" do
   end
 
   def then_i_should_see_no_applied_filters
-    # The "Any" filter for programme status
-    expect(page).to have_checked_field.once
+    # The "Any" filter for programme and registration status
+    expect(page).to have_checked_field.twice
   end
 end
