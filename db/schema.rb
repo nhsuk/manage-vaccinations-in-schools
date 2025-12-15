@@ -989,8 +989,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_15_114448) do
     t.boolean "contains_gelatine", null: false
     t.datetime "created_at", null: false
     t.boolean "discontinued", default: false, null: false
-    t.integer "disease_types", default: [], null: false, array: true
-    t.enum "disease_types_enum", null: false, array: true, enum_type: "disease_type"
+    t.enum "disease_types", default: [], null: false, array: true, enum_type: "disease_type"
+    t.enum "disease_types_enum", array: true, enum_type: "disease_type"
     t.decimal "dose_volume_ml", null: false
     t.text "manufacturer", null: false
     t.integer "method", null: false

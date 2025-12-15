@@ -8,8 +8,7 @@
 #  brand               :text             not null
 #  contains_gelatine   :boolean          not null
 #  discontinued        :boolean          default(FALSE), not null
-#  disease_types       :integer          default([]), not null, is an Array
-#  disease_types_enum  :enum             not null, is an Array
+#  disease_types       :enum             default([]), not null, is an Array
 #  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
 #  method              :integer          not null
@@ -31,6 +30,8 @@
 #  index_vaccines_on_upload_name             (upload_name) UNIQUE
 #
 class Vaccine < ApplicationRecord
+  self.ignored_columns = %w[disease_types_enum]
+
   include BelongsToProgramme
   include HasSideEffects
 
@@ -59,7 +60,7 @@ class Vaccine < ApplicationRecord
           return all if disease_types.blank?
 
           where(
-            "ARRAY(SELECT unnest(disease_types_enum) ORDER BY 1) = ARRAY[?]::disease_type[]",
+            "ARRAY(SELECT unnest(disease_types) ORDER BY 1) = ARRAY[?]::disease_type[]",
             disease_types.sort
           )
         end
@@ -72,13 +73,6 @@ class Vaccine < ApplicationRecord
            to: :fhir_mapper
 
   delegate :snomed_procedure_term, to: :programme, allow_nil: true
-
-  def disease_types = disease_types_enum
-
-  def disease_types=(value)
-    super(value)
-    self.disease_types_enum = value
-  end
 
   def active? = !discontinued
 
