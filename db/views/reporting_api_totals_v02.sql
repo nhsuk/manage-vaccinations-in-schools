@@ -15,7 +15,14 @@ SELECT
   pl.location_id                        AS session_location_id,  -- Year group eligibility subquery
 
   -- Patient demographics (used for filtering and CSV grouping)
-  pat.gender_code                       AS patient_gender,       -- Filter: ?gender=female
+  CASE pat.gender_code
+    WHEN 0 THEN 'not known'
+    WHEN 1 THEN 'male'
+    WHEN 2 THEN 'female'
+    WHEN 9 THEN 'not specified'
+    ELSE NULL
+  END                                   AS patient_gender,       -- Filter: ?gender=female
+
   pps.academic_year
     - pat.birth_academic_year - 5       AS patient_year_group,   -- Filter: ?year_group=8,9
   COALESCE(la.mhclg_code, '')           AS patient_local_authority_code,        -- Filter: ?local_authority=E09000001
