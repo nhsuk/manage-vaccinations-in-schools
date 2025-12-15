@@ -1,0 +1,35 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: edit_patient_path(@patient)) %>
+<% end %>
+
+<% legend = "What school does the child go to?" %>
+<% content_for :page_title, legend %>
+
+<%= form_with model: @patient, url: edit_school_patient_path(@patient), method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= f.govuk_select :school_id,
+                     caption: { text: @patient.full_name, size: "l" },
+                     label: {
+                       tag: "h1",
+                       text: legend,
+                       size: "l",
+                     },
+                     hint: { text: "If the school is not in #{current_team.name}, archive the child record." },
+                     data: { module: "app-autocomplete" } do %>
+    
+    <%= tag.option "", value: "" %>
+    <% duplicate_school_names = @eligible_schools.group_by(&:name).select { |_name, schools| schools.size > 1 }.keys %>
+    <% @eligible_schools.each do |school| %>
+      <% is_duplicate = duplicate_school_names.include?(school.name) %>
+      <%= tag.option location_display_name(school, show_postcode: is_duplicate),
+                     value: school.id,
+                     selected: school.id == @patient.school_id,
+                     data: { hint: format_address_single_line(school) } %>
+    <% end %>
+    <%= tag.option "Home-schooled", value: "home_schooled" %>
+    <%= tag.option "Unknown school", value: "unknown" %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

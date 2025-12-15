@@ -9,9 +9,13 @@ class PatientPolicy < ApplicationPolicy
 
   def edit_nhs_number? = edit?
 
+  def edit_school? = edit?
+
   def update_nhs_number? = update?
 
   def update_nhs_number_merge? = update?
+
+  def update_school? = update?
 
   class Scope < ApplicationPolicy::Scope
     def resolve

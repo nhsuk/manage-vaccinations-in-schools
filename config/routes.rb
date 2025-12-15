@@ -217,6 +217,9 @@ Rails.application.routes.draw do
       put "edit/nhs-number-merge",
           controller: "patients/edit",
           action: "update_nhs_number_merge"
+
+      get "edit/school", controller: "patients/edit", action: "edit_school"
+      put "edit/school", controller: "patients/edit", action: "update_school"
     end
   end
 
