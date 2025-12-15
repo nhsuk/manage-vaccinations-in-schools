@@ -22,11 +22,13 @@ module BelongsToProgramme
   end
 
   def programme
-    find_options = {}
-    find_options[:disease_types] = disease_types if respond_to?(:disease_types)
-    find_options[:patient] = patient if respond_to?(:patient)
+    if (type = programme_type)
+      options = {}
+      options[:disease_types] = disease_types if respond_to?(:disease_types)
+      options[:patient] = patient if respond_to?(:patient)
 
-    Programme.find(programme_type, **find_options)
+      Programme.find(type, **options)
+    end
   end
 
   def programme=(value)
