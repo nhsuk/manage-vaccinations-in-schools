@@ -1,0 +1,34 @@
+name: Scheduled Data Replication Refresh
+run-name: Nightly refresh of data replication environment
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+
+permissions: {}
+
+jobs:
+  refresh-data-replication:
+    name: Refresh data replication
+    uses: ./.github/workflows/refresh-data-replication.yml
+    permissions:
+      id-token: write
+    with:
+      environment: production
+      egress_cidr: >-
+        [
+          "13.107.246.64/32", # GIAS
+          "13.107.213.64/32", # GIAS
+          "35.234.138.138/32", # PDS
+          "52.178.45.139/32" # GIAS
+        ]
+      take_db_snapshot: false
+  deploy-image:
+    name: Deploy image
+    needs: refresh-data-replication
+    uses: ./.github/workflows/data-replication-pipeline.yml
+    permissions:
+      id-token: write
+    with:
+      environment: production
+      git_ref_to_deploy: main
