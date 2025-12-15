@@ -267,9 +267,11 @@ class Session < ApplicationRecord
       next_date(include_today: true) && !completed?
     else
       completed? &&
-        team.generic_clinic_session(academic_year:).next_date(
-          include_today: true
-        )
+        GenericClinicSessionFinder.call(
+          team:,
+          academic_year:,
+          programmes:
+        )&.next_date(include_today: true)
     end
   end
 

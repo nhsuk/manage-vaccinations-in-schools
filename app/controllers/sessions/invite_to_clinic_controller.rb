@@ -40,8 +40,10 @@ class Sessions::InviteToClinicController < Sessions::BaseController
       if @session.clinic?
         @session
       else
-        @session.team.generic_clinic_session(
-          academic_year: @session.academic_year
+        GenericClinicSessionFinder.call(
+          team: @session.team,
+          academic_year: @session.academic_year,
+          programmes: @session.programmes
         )
       end
   end

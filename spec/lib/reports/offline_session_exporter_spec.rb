@@ -444,7 +444,14 @@ describe Reports::OfflineSessionExporter do
         end
 
         context "with a vaccinated patient outside the school session, but in a clinic" do
-          let(:clinic_session) { team.generic_clinic_session(academic_year:) }
+          let(:clinic_session) do
+            create(
+              :session,
+              team:,
+              location: team.generic_clinic,
+              programmes: [programme]
+            )
+          end
 
           let!(:vaccination_record) do
             create(
