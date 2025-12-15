@@ -4,8 +4,10 @@ class SessionsController < ApplicationController
   include SessionSearchFormConcern
 
   before_action :set_session_search_form, only: :index
-  before_action :set_session, except: :index
+  before_action :set_session, except: %i[index new]
   before_action :set_breadcrumb_items, except: :index
+
+  skip_after_action :verify_policy_scoped, only: :new
 
   def index
     @programmes = current_user.selected_team.programmes
@@ -20,6 +22,26 @@ class SessionsController < ApplicationController
     @patient_count_by_session_id = patient_counts_for_sessions(@sessions)
 
     render layout: "full"
+  end
+
+  def new
+    @draft_session = DraftSession.new(request_session: session, current_user:)
+
+    @draft_session.clear_attributes
+    @draft_session.assign_attributes(create_params)
+
+    if params[:school_id].present?
+      @draft_session.location_type = "school"
+      @draft_session.location_id = params[:school_id]
+      @draft_session.return_to = "school"
+    else
+      @draft_session.return_to = "sessions"
+    end
+
+    @draft_session.save!
+
+    first_step = params[:school_id].present? ? "programmes" : Wicked::FIRST_STEP
+    redirect_to draft_session_path(first_step)
   end
 
   def show
@@ -102,5 +124,16 @@ class SessionsController < ApplicationController
       .where("sessions.id = ANY(ARRAY[?]::bigint[])", sessions.map(&:id))
       .group("sessions.id")
       .count("DISTINCT patients.id")
+  end
+
+  def create_params
+    {
+      academic_year: AcademicYear.pending,
+      session_dates: [DraftSessionDate.new],
+      team_id: current_team.id,
+      national_protocol_enabled: false,
+      psd_enabled: false,
+      requires_registration: false
+    }
   end
 end

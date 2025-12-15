@@ -360,13 +360,5 @@ create_patients(team)
 create_imports(user, team)
 create_school_moves(team)
 
-Team.find_each do |team|
-  TeamSessionsFactory.call(
-    team,
-    academic_year: AcademicYear.current,
-    sync_patient_teams_now: true
-  )
-end
-
 Rake::Task["status:update:all"].execute
 Rake::Task["smoke:seed"].execute

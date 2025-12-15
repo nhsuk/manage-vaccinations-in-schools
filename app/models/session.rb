@@ -164,6 +164,8 @@ class Session < ApplicationRecord
 
   def to_param = slug
 
+  delegate :type, to: :location, prefix: true
+
   def programme_types
     @programme_types ||=
       session_programme_year_groups.map(&:programme_type).sort.uniq

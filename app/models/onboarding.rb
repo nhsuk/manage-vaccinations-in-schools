@@ -135,12 +135,10 @@ class Onboarding
     end
   end
 
-  def save!(create_sessions_for_previous_academic_year: false)
+  def save!(include_previous_academic_year: false)
     academic_years = [AcademicYear.pending]
 
-    if create_sessions_for_previous_academic_year
-      academic_years << AcademicYear.pending - 1
-    end
+    academic_years << AcademicYear.pending - 1 if include_previous_academic_year
 
     ActiveRecord::Base.transaction do
       models.each(&:save!)
@@ -158,7 +156,9 @@ class Onboarding
 
       @users.each { |user| user.teams << team }
 
-      academic_years.each { |academic_year| create_sessions!(academic_year:) }
+      academic_years.each do |academic_year|
+        GenericClinicFactory.call(team:, academic_year:)
+      end
     end
   end
 
@@ -190,11 +190,6 @@ class Onboarding
         errors.import(error, attribute: "#{prefix}.#{error.attribute}")
       end
     end
-  end
-
-  def create_sessions!(academic_year:)
-    GenericClinicFactory.call(team:, academic_year:)
-    TeamSessionsFactory.call(team, academic_year:, sync_patient_teams_now: true)
   end
 
   class ExistingProgramme

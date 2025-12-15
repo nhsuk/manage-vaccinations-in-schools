@@ -265,7 +265,6 @@ describe "Import child records" do
         programmes,
         academic_year:
       )
-      TeamSessionsFactory.call(@team.reload, academic_year:)
     end
   end
 

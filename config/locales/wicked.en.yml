@@ -14,7 +14,6 @@ en:
     date_of_birth: date-of-birth
     dates: dates
     dates_check: dates-check
-    programmes_check: programmes-check
     delegation: delegation
     delivery: delivery
     dose: dose
@@ -26,6 +25,7 @@ en:
     injection_alternative: injection-alternative
     invitations: invitations
     location: location
+    location_type: location-type
     name: name
     notes: notes
     notify_parent_on_refusal: notify-parent-on-refusal

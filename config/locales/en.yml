@@ -73,8 +73,12 @@ en:
               blank: Choose which year groups you want to import class list records for
         draft_session:
           attributes:
+            location_id:
+              inclusion: Choose the school where this session is taking place
+            location_type:
+              inclusion: Choose which type of session this is
             programme_types:
-              blank: Choose which programmes this session is part of
+              blank: Choose which programmes you will run in this session
               inclusion: You cannot remove a programme from the session once it has been added
             send_consent_requests_at:
               blank: Enter a date
@@ -94,6 +98,8 @@ en:
               blank: Enter weeks before a session takes place
               greater_than_or_equal_to: Enter %{count} or more weeks before a session
               less_than_or_equal_to: Enter %{count} or fewer weeks before a session
+            year_groups:
+              blank: Choose which year groups you want to invite to this session
         draft_session_date:
           attributes:
             value:
@@ -618,7 +624,7 @@ en:
         personal_choice: Why are they refusing to give consent?
         will_be_vaccinated_elsewhere: Where will their child get their vaccination?
   draft_sessions:
-    catch_up_warning:
+    dates_check:
       title: Have you imported historical vaccination records for %{programmes}?
   import_duplicate_form:
     options:

@@ -64,8 +64,6 @@ describe Onboarding do
       clinic2 = subteam2.community_clinics.find_by!(ods_code: "SW1A11")
       expect(clinic2.name).to eq("11 Downing Street")
       expect(clinic2.address_postcode).to eq("SW1A 1AA")
-
-      expect(team.sessions.count).to eq(5)
     end
   end
 
