@@ -906,6 +906,26 @@ describe ImmunisationImportRow do
           )
         end
       end
+
+      context "with MMRV programme name" do
+        before { Flipper.enable(:mmrv) }
+        after { Flipper.disable(:mmrv) }
+
+        let(:programmes) { [Programme.mmr] }
+        let(:session) { create(:session, team:, programmes:) }
+        let(:data) do
+          valid_common_data.merge(
+            "PROGRAMME" => "MMRV",
+            "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901"
+          )
+        end
+
+        it "recognizes MMRV as MMR programme" do
+          expect(
+            immunisation_import_row.to_vaccination_record&.programme
+          ).to eq(Programme.mmr)
+        end
+      end
     end
 
     context "for a bulk upload" do

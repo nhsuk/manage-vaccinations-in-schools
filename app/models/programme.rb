@@ -171,8 +171,14 @@ class Programme
     "td_ipv" => %w[3-in-1 Td/IPV]
   }.freeze
 
+  # TODO: add MMRV to IMPORT_NAMES once the MMRV flag is removed
   def import_names
-    IMPORT_NAMES.fetch(type)
+    names = IMPORT_NAMES.fetch(type)
+    if Flipper.enabled?(:mmrv) && type == "mmr"
+      names + %w[MMRV]
+    else
+      names
+    end
   end
 
   SNOMED_TARGET_DISEASE_CODES = {
