@@ -935,7 +935,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_16_102852) do
     t.integer "delivery_method"
     t.integer "delivery_site"
     t.datetime "discarded_at"
-    t.enum "disease_types", array: true, enum_type: "disease_type"
+    t.enum "disease_types", null: false, array: true, enum_type: "disease_type"
     t.integer "dose_sequence"
     t.boolean "full_dose"
     t.string "local_patient_id"
