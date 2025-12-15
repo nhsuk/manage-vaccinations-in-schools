@@ -9,6 +9,7 @@
 #  delivery_method                         :integer
 #  delivery_site                           :integer
 #  discarded_at                            :datetime
+#  disease_types                           :enum             is an Array
 #  dose_sequence                           :integer
 #  full_dose                               :boolean
 #  local_patient_id_uri                    :string
