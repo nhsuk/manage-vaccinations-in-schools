@@ -10,6 +10,7 @@ namespace :data_migration do
   task set_disease_types: :environment do
     VaccinationRecord
       .includes(:vaccine)
+      .where(disease_types: nil)
       .find_each do |vaccination_record|
         disease_types =
           vaccination_record.vaccine&.disease_types ||
