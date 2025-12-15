@@ -77,6 +77,7 @@ class StatusUpdater
               status
               vaccine_methods
               without_gelatine
+              disease_types
             ]
           }
         )

@@ -47,7 +47,8 @@ describe Patient::ProgrammeStatus do
         dose_sequence: 1,
         status: "vaccinated",
         vaccine_methods: %w[injection],
-        without_gelatine: true
+        without_gelatine: true,
+        disease_types: nil
       )
     end
 
