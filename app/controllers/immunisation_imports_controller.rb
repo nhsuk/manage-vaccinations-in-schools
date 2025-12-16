@@ -63,7 +63,7 @@ class ImmunisationImportsController < ApplicationController
   private
 
   def type
-    current_team.type_upload_only? ? "bulk" : "poc"
+    current_team.has_upload_access_only? ? "bulk" : "poc"
   end
 
   def set_immunisation_import
