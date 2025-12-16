@@ -45,9 +45,7 @@ class TrainingOnboardingConfiguration
     }
   end
 
-  def programmes
-    %w[flu hpv menacwy td_ipv]
-  end
+  def programmes = Programme.all.map(&:type)
 
   def subteams
     { generic: { name:, email:, phone: } }
