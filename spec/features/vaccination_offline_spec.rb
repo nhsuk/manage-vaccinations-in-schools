@@ -323,7 +323,7 @@ describe "Offline vaccination" do
   end
 
   def then_i_should_see_no_import_issues_with_the_count
-    expect(page).to have_content("Upload issues (0)")
+    expect(page).to have_content("Issues (0)")
   end
 
   def when_i_choose_to_record_offline_from_a_school_session_page
