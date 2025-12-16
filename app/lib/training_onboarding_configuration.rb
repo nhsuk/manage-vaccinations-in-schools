@@ -54,6 +54,8 @@ class TrainingOnboardingConfiguration
   end
 
   def users
+    return [] if Settings.cis2.enabled
+
     User.fallback_roles.keys.map do |role|
       email_and_password = "#{role.dasherize}.#{workgroup}@example.com"
 

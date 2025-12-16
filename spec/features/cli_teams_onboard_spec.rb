@@ -28,6 +28,15 @@ describe "mavis teams onboard" do
     end
   end
 
+  context "with a training configuration and CIS2 is enabled" do
+    it "runs successfully" do
+      given_programmes_and_schools_exist
+      when_i_run_the_command_for_training
+      then_i_see_no_output
+      and_a_new_team_is_created
+    end
+  end
+
   def command_with_valid_configuration
     Dry::CLI.new(MavisCLI).call(
       arguments: %w[teams onboard spec/fixtures/files/onboarding/valid.yaml]
