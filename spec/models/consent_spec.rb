@@ -6,6 +6,7 @@
 #
 #  id                                              :bigint           not null, primary key
 #  academic_year                                   :integer          not null
+#  disease_types                                   :enum             is an Array
 #  health_answers                                  :jsonb            not null
 #  invalidated_at                                  :datetime
 #  notes                                           :text             default(""), not null
