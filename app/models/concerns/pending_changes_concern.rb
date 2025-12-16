@@ -34,19 +34,33 @@ module PendingChangesConcern
     end
   end
 
-  def apply_pending_changes!
+  def apply_pending_changes
     pending_changes.each { |attr, value| public_send("#{attr}=", value) }
-    discard_pending_changes!
+    discard_pending_changes
+  end
+
+  def apply_pending_changes!
+    apply_pending_changes
+    save!
+  end
+
+  def discard_pending_changes
+    self.pending_changes = {}
   end
 
   def discard_pending_changes!
-    self.pending_changes = {}
+    discard_pending_changes
     save!
+  end
+
+  def apply_pending_changes_to_new_record
+    dup_for_pending_changes.tap(&:apply_pending_changes)
   end
 
   def apply_pending_changes_to_new_record!
     ActiveRecord::Base.transaction do
-      new_record = dup_for_pending_changes.tap(&:apply_pending_changes!)
+      new_record = apply_pending_changes_to_new_record
+      new_record.save!
       discard_pending_changes!
       new_record
     end

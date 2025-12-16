@@ -170,6 +170,11 @@ FactoryBot.define do
 
     trait :import_issue do
       record_type { :import_issue }
+      after(:build) do |changeset|
+        changeset.review_data["patient"]["pending_changes"] = {
+          given_name: "#{changeset.given_name}X"
+        }
+      end
     end
   end
 end

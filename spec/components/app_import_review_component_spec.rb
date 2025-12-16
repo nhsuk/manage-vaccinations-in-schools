@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe AppImportReviewComponent do
+  include ActionView::Helpers::FormHelper
+  include Pagy::Backend
+
   subject(:rendered) { render_inline(component) }
 
   let(:component) do
@@ -10,7 +13,10 @@ describe AppImportReviewComponent do
       new_records:,
       auto_matched_records:,
       import_issues:,
-      school_moves:
+      school_moves:,
+      import_issues_pagy:,
+      import_issues_all:,
+      form:
     )
   end
 
@@ -34,9 +40,22 @@ describe AppImportReviewComponent do
 
   let(:new_records) { [] }
   let(:auto_matched_records) { [] }
-  let(:import_issues) { [] }
+
+  let(:import_issues_all) { [] }
+  let(:pagination_result) { pagy_array(import_issues_all, limit: 10, page: 1) }
+  let(:import_issues_pagy) { pagination_result[0] }
+  let(:import_issues) { pagination_result[1] }
+
   let(:inter_team) { [] }
   let(:school_moves) { [] }
+
+  let(:form) do
+    form_with model: import,
+              url: "/",
+              builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f|
+      return f
+    end
+  end
 
   shared_examples "section with details" do |title:, summary:, count:|
     it "renders section '#{title}'" do
@@ -155,16 +174,40 @@ describe AppImportReviewComponent do
       ]
     end
 
-    it "renders separate expander for close matches" do
-      expect(rendered).to have_css(
-        ".nhsuk-details__summary-text",
-        text: "1 close match to existing records"
-      )
+    context "when import_handle_issues_in_review is disabled" do
+      it "renders separate expander for close matches" do
+        expect(rendered).to have_css(
+          ".nhsuk-details__summary-text",
+          text: "1 close match to existing records"
+        )
+      end
+    end
+
+    context "when import_handle_issues_in_review is enabled" do
+      before { Flipper.enable(:import_handle_issues_in_review) }
+
+      it "renders card for close matches" do
+        expect(rendered).to have_css(".nhsuk-card")
+        expect(rendered).to have_css(
+          "h4",
+          text: "1 close match to existing records"
+        )
+        expect(rendered).not_to have_css(
+          ".nhsuk-details__summary-text",
+          text: "1 close match to existing records"
+        )
+      end
+
+      it "renders decision radio buttons" do
+        expect(rendered).to have_css('input[type="radio"]')
+        expect(rendered).to have_content("Use uploaded")
+        expect(rendered).to have_content("Keep existing")
+      end
     end
   end
 
   describe "with import issues" do
-    let(:import_issues) do
+    let(:import_issues_all) do
       [
         create(
           :patient_changeset,
@@ -176,19 +219,97 @@ describe AppImportReviewComponent do
       ]
     end
 
-    include_examples "section with details",
-                     title:
-                       "Close matches to existing records - resolve after import",
-                     summary: "2 close matches to existing records",
-                     count: 2
+    context "when import_handle_issues_in_review is disabled" do
+      include_examples "section with details",
+                       title:
+                         "Close matches to existing records - resolve after import",
+                       summary: "2 close matches to existing records",
+                       count: 2
 
-    it "shows the section description" do
-      expect(rendered).to have_content(
-        "This upload includes 2 records that are close matches to existing records in Mavis"
-      )
-      expect(rendered).to have_content(
-        "If you approve the upload, you will need to resolve these records in the Issues tab."
-      )
+      it "shows the section description" do
+        expect(rendered).to have_content(
+          "This upload includes 2 records that are close matches to existing records in Mavis"
+        )
+        expect(rendered).to have_content(
+          "If you approve the upload, you will need to resolve these records in the Issues tab."
+        )
+      end
+    end
+
+    context "when import_handle_issues_in_review is enabled" do
+      before { Flipper.enable(:import_handle_issues_in_review) }
+
+      it "renders card for close matches" do
+        expect(rendered).to have_css(".nhsuk-card")
+        expect(rendered).to have_css(
+          "h4",
+          text: "2 close matches to existing records"
+        )
+        expect(rendered).not_to have_css(
+          ".nhsuk-details__summary-text",
+          text: "2 close matches to existing records"
+        )
+      end
+
+      it "renders decision radio buttons" do
+        expect(rendered).to have_css('input[type="radio"]')
+        expect(rendered).to have_content("Use uploaded")
+        expect(rendered).to have_content("Keep existing")
+      end
+    end
+  end
+
+  describe "with paginated import issues" do
+    let(:import_issues_all) do
+      create_list(:patient_changeset, 15, :import_issue, import:)
+    end
+
+    context "when import_handle_issues_in_review is enabled" do
+      before { Flipper.enable(:import_handle_issues_in_review) }
+
+      it "shows only first page of results" do
+        expect(rendered).to have_css(
+          ".nhsuk-table__body .nhsuk-table__row",
+          count: 10
+        )
+      end
+
+      it "shows correct count in heading" do
+        expect(rendered).to have_css(
+          "h4",
+          text: "15 close matches to existing records"
+        )
+      end
+
+      it "renders hidden fields for all pages" do
+        # 15 hidden decision fields (5 visible + 10 hidden for the other page)
+        expect(rendered).to have_css(
+          'input[type="hidden"][name*="[decision]"]',
+          count: 15,
+          visible: :all
+        )
+      end
+
+      it "renders visible form fields only for current page" do
+        expect(rendered).to have_css(
+          'input[type="radio"]',
+          count: 30, # 10 records × 3 options each
+          visible: :all
+        )
+      end
+
+      context "when on page 2" do
+        let(:pagination_result) do
+          pagy_array(import_issues_all, limit: 10, page: 2)
+        end
+
+        it "shows remaining results" do
+          expect(rendered).to have_css(
+            ".nhsuk-table__body .nhsuk-table__row",
+            count: 5
+          )
+        end
+      end
     end
   end
 
@@ -257,7 +378,7 @@ describe AppImportReviewComponent do
       end
 
       it "shows cancel button" do
-        expect(rendered).to have_button("Cancel and delete upload")
+        expect(rendered).to have_link("Cancel and delete upload")
       end
     end
 
@@ -296,7 +417,7 @@ describe AppImportReviewComponent do
 
       it "shows re-review button text" do
         expect(rendered).to have_button("Approve and import changed records")
-        expect(rendered).to have_button("Ignore changes")
+        expect(rendered).to have_link("Ignore changes")
       end
     end
   end

@@ -20,7 +20,7 @@ class CohortImportsController < ApplicationController
         academic_year: @academic_year,
         team: current_team,
         uploaded_by: current_user,
-        **cohort_import_params
+        **create_params
       )
 
     @cohort_import.load_data!
@@ -103,12 +103,39 @@ class CohortImportsController < ApplicationController
   end
 
   def approve
+    if Flipper.enabled?(:import_handle_issues_in_review)
+      @cohort_import.assign_attributes(approve_params)
+
+      unless @cohort_import.valid?(:review)
+        @validation_failed = true
+        set_review_records
+        render template: "imports/show",
+               layout: "full",
+               locals: {
+                 import: @cohort_import
+               }
+        return
+      end
+    end
+
     @cohort_import.reviewed_by_user_ids << current_user.id
     @cohort_import.reviewed_at << Time.zone.now
     @cohort_import.committing!
 
+    @cohort_import.changesets.each do |changeset|
+      changeset.data["review"] ||= {}
+      changeset.data["review"]["patient"] ||= {}
+      changeset.data["review"]["patient"]["decision"] = changeset.decision
+      changeset.save!
+    end
+
+    session[:clear_import_decisions] = {
+      type: @cohort_import.class.name.underscore,
+      id: @cohort_import.id
+    }
+
     @cohort_import.commit_changesets(
-      @cohort_import.changesets.from_file.ready_for_review
+      @cohort_import.changesets.from_file.in_review
     )
 
     redirect_to imports_path, flash: { info: "Import started" }
@@ -125,7 +152,7 @@ class CohortImportsController < ApplicationController
         status: :partially_processed
       )
       @cohort_import.save!
-      @cohort_import.changesets.ready_for_review.find_each(&:cancelled!)
+      @cohort_import.changesets.in_review.find_each(&:cancelled!)
 
       @cohort_import.postprocess_rows!
 
@@ -150,8 +177,14 @@ class CohortImportsController < ApplicationController
     @academic_year = @cohort_import.academic_year
   end
 
-  def cohort_import_params
+  def create_params
     params.fetch(:cohort_import, {}).permit(:csv)
+  end
+
+  def approve_params
+    params.fetch(:cohort_import, {}).permit(
+      changesets_attributes: %i[id decision]
+    )
   end
 
   def set_review_records
@@ -169,22 +202,25 @@ class CohortImportsController < ApplicationController
           ]
         )
         .from_file
-        .ready_for_review
+        .in_review
         .select(&:inter_team_move?)
-    @new_records = @cohort_import.changesets.ready_for_review.new_patient
+    @new_records = @cohort_import.changesets.in_review.new_patient
     @auto_matched_records =
-      @cohort_import.changesets.ready_for_review.auto_match - @inter_team
-    @import_issues =
+      @cohort_import.changesets.in_review.auto_match - @inter_team
+    @import_issues_all =
       @cohort_import
         .changesets
         .includes(:patient)
-        .ready_for_review
-        .import_issue - @inter_team
+        .in_review
+        .import_issue
+        .where.not(id: @inter_team.pluck(:id))
+        .order(:row_number)
+    @import_issues_pagy, @import_issues = pagy(@import_issues_all)
     @school_moves =
       @cohort_import
         .changesets
         .includes(:school, patient: :school)
-        .ready_for_review
+        .in_review
         .with_school_moves - @inter_team
   end
 end

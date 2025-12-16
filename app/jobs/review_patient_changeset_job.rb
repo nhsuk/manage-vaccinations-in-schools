@@ -21,8 +21,16 @@ class ReviewPatientChangesetJob < ApplicationJob
       if import.is_a?(ClassImport)
         ReviewClassImportSchoolMoveJob.perform_later(import.id)
       elsif import.calculating_re_review?
+        import
+          .changesets
+          .where(status: :ready_for_review)
+          .update_all(status: :in_review)
         import.in_re_review!
       else
+        import
+          .changesets
+          .where(status: :ready_for_review)
+          .update_all(status: :in_review)
         import.in_review!
       end
     end
