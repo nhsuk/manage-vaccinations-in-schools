@@ -9,6 +9,7 @@ class AppImportReviewRecordsSummaryComponent < ViewComponent::Base
     ) do |table| %>
       <% table.with_head do |head| %>
         <% head.with_row do |row| %>
+          <% row.with_cell(text: "CSV file row") %>
           <% row.with_cell(text: "Name and NHS number") %>
           <% row.with_cell(text: "Date of birth") %>
           <% row.with_cell(text: "Postcode") %>
@@ -19,6 +20,9 @@ class AppImportReviewRecordsSummaryComponent < ViewComponent::Base
       <% table.with_body do |body| %>
         <% changesets.each do |changeset| %>
           <% body.with_row do |row| %>
+            <% row.with_cell do %>
+              <%= changeset.row_number ? changeset.csv_row_number.to_s : "" %>
+            <% end %>
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Name and NHS number</span>
               <span><%= format_name(changeset) %></span>

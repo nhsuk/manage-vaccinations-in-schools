@@ -9,14 +9,22 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
     ) do |table| %>
       <% table.with_head do |head| %>
         <% head.with_row do |row| %>
+          <% row.with_cell(text: "CSV file row") if review_screen %>
           <% row.with_cell(text: "Name and NHS number") %>
           <% row.with_cell(text: "Issue to review") %>
-          <% row.with_cell(text: "Actions") if show_actions %>
+          <% row.with_cell(text: "Actions") unless review_screen %>
         <% end %>
       <% end %>
       <% table.with_body do |body| %>
         <% records.each do |record| %>
           <% body.with_row do |row| %>
+            <% if review_screen %>
+              <% row.with_cell do %>
+                <span class="nhsuk-table-responsive__heading">CSV file row</span>
+                <span><%= record.csv_row_number.to_s %></span>
+              <% end %>
+            <% end %>
+
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Name and NHS number</span>
               <span><%= format_name(record) %></span>
@@ -31,7 +39,7 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
               <span><%= determine_issue_text(record) %></span>
             <% end %>
 
-            <% if show_actions %>
+            <% unless review_screen %>
               <% row.with_cell do %>
                 <span class="nhsuk-table-responsive__heading">Actions</span>
                 <%= generate_action_link(record) %>
@@ -43,15 +51,15 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(import: nil, records: nil, show_actions: false)
+  def initialize(import: nil, records: nil, review_screen: true)
     @import = import
     @records = Array(records).sort_by { it.try(:row_number) || 0 }
-    @show_actions = show_actions
+    @review_screen = review_screen
   end
 
   private
 
-  attr_reader :import, :records, :show_actions
+  attr_reader :import, :records, :review_screen
 
   def format_name(record)
     case record
