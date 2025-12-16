@@ -54,7 +54,7 @@ describe Team do
 
     it do
       expect(team).to validate_inclusion_of(:type).in_array(
-        %w[poc_only upload_only poc_with_legacy_upload]
+        %w[poc_only upload_only]
       )
     end
 
@@ -79,12 +79,6 @@ describe Team do
 
       it { should be false }
     end
-
-    context "when type is poc_with_legacy_upload" do
-      before { team.type = :poc_with_legacy_upload }
-
-      it { should be false }
-    end
   end
 
   describe "#has_poc_access?" do
@@ -92,12 +86,6 @@ describe Team do
 
     context "when type is poc_only" do
       before { team.type = :poc_only }
-
-      it { should be true }
-    end
-
-    context "when type is poc_with_legacy_upload" do
-      before { team.type = :poc_with_legacy_upload }
 
       it { should be true }
     end

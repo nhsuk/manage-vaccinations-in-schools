@@ -78,10 +78,7 @@ class Team < ApplicationRecord
   normalizes :email, with: EmailAddressNormaliser.new
   normalizes :phone, with: PhoneNumberNormaliser.new
 
-  enum :type,
-       { poc_only: 0, upload_only: 1, poc_with_legacy_upload: 2 },
-       validate: true,
-       prefix: true
+  enum :type, { poc_only: 0, upload_only: 1 }, validate: true, prefix: true
 
   validates :careplus_venue_code, presence: true
   validates :email, notify_safe_email: true
@@ -104,6 +101,6 @@ class Team < ApplicationRecord
   def has_upload_access_only? = type_upload_only?
 
   def has_poc_access?
-    type_poc_only? || type_poc_with_legacy_upload?
+    type_poc_only?
   end
 end
