@@ -3,8 +3,6 @@
 describe "Edit session programmes" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
-  before { Flipper.enable(:schools_and_sessions) }
-
   scenario "choosing programmes with a high number of unvaccinated catch up patients" do
     given_a_school_exists
     and_the_school_has_unvaccinated_catch_up_patients

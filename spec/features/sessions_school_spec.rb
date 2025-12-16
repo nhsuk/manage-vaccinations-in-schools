@@ -3,8 +3,6 @@
 describe "School sessions" do
   around { |example| travel_to(Time.zone.local(2024, 2, 18)) { example.run } }
 
-  before { Flipper.enable(:schools_and_sessions) }
-
   scenario "adding a new session, closing consent, and closing the session" do
     given_my_team_is_running_an_hpv_vaccination_programme
     and_i_am_signed_in
