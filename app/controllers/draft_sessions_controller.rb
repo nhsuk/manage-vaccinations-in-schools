@@ -115,7 +115,10 @@ class DraftSessionsController < ApplicationController
   end
 
   def set_catch_up_year_groups
-    @catch_up_year_groups = @draft_session.year_groups.drop(1)
+    @catch_up_year_groups =
+      @draft_session.year_groups.select do |year_group|
+        @draft_session.programmes.any? { it.is_catch_up?(year_group:) }
+      end
   end
 
   def set_catch_up_patients_vaccinated_percentage
