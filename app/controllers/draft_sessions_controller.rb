@@ -240,7 +240,7 @@ class DraftSessionsController < ApplicationController
 
     ActiveRecord::Base.transaction do
       @session.save!
-      @draft_session.create_session_programme_year_groups!(@session)
+      @draft_session.import_session_programme_year_groups!(@session)
     end
 
     @draft_session.session = @session
