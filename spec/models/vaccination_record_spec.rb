@@ -162,6 +162,34 @@ describe VaccinationRecord do
     end
   end
 
+  describe "#programme" do
+    subject { vaccination_record.programme }
+
+    before { Flipper.enable(:mmrv) }
+
+    context "for an MMRV vaccine" do
+      let(:programme) { Programme.mmr }
+      let(:vaccine) { Vaccine.find_by!(brand: "ProQuad") }
+
+      let(:vaccination_record) do
+        create(:vaccination_record, programme:, vaccine:)
+      end
+
+      its(:name) { should eq("MMRV") }
+    end
+
+    context "for an MMRV vaccination record without a vaccine" do
+      let(:programme) { Programme.mmr }
+      let(:disease_types) { %w[measles mumps rubella varicella] }
+
+      let(:vaccination_record) do
+        create(:vaccination_record, programme:, disease_types:, vaccine: nil)
+      end
+
+      its(:name) { should eq("MMRV") }
+    end
+  end
+
   describe "#dose_volume_ml" do
     subject { vaccination_record.dose_volume_ml }
 
