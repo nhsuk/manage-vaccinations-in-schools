@@ -260,7 +260,15 @@ class Programme
 
   def maximum_dose_sequence = MAXIMUM_DOSE_SEQUENCES.fetch(type)
 
-  def import_names = IMPORT_NAMES.fetch(type)
+  # TODO: add MMRV to IMPORT_NAMES once the MMRV flag is removed
+  def import_names
+    names = IMPORT_NAMES.fetch(type)
+    if Flipper.enabled?(:mmrv) && type == "mmr"
+      names + %w[MMRV]
+    else
+      names
+    end
+  end
 
   def snomed_target_disease_codes = SNOMED_TARGET_DISEASE_CODES.fetch(type)
 
