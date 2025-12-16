@@ -72,9 +72,14 @@ class StatusGenerator::Consent
 
   def status_should_be_given?
     return false if vaccinated?
+    return false if conflicting_disease_types?
 
     consents_for_status.any? && consents_for_status.all?(&:response_given?) &&
       agreed_vaccine_methods.present?
+  end
+
+  def conflicting_disease_types?
+    consents_for_status.filter_map(&:disease_types).map(&:sort).uniq.size > 1
   end
 
   def status_should_be_refused?
@@ -95,7 +100,7 @@ class StatusGenerator::Consent
     end
 
     consents_for_status.any? && consents_for_status.all?(&:response_given?) &&
-      agreed_vaccine_methods.blank?
+      (agreed_vaccine_methods.blank? || conflicting_disease_types?)
   end
 
   def status_should_be_no_response? = !vaccinated?
