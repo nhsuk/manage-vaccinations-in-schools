@@ -11,6 +11,7 @@ class DraftVaccinationRecordsController < ApplicationController
   before_action :set_programme
   before_action :set_vaccination_record
 
+  include PatientLoggingConcern
   include WizardControllerConcern
 
   before_action :validate_params, only: :update
@@ -298,5 +299,9 @@ class DraftVaccinationRecordsController < ApplicationController
       )
 
     @vaccination_record.update!(next_dose_delay_triage:)
+  end
+
+  def patient_id_for_logging
+    @patient.id
   end
 end
