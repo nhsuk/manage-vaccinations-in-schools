@@ -100,12 +100,13 @@ class Programme
 
     def all = TYPES.map { |type| find(type) }
 
-    def find(type, patient: nil, vaccine: nil)
+    def find(type, patient: nil, vaccine: nil, disease_types: nil)
       validate_type!(type)
       programme = cached_programme(type)
 
       # Variants are computed on-demand based on the actual patient/vaccine context.
-      variant_for(programme, patient, vaccine) || programme
+      find_by_disease_types(disease_types) ||
+        variant_for(programme, patient, vaccine) || programme
     end
 
     def find_all(types, patient: nil) =
@@ -114,6 +115,10 @@ class Programme
     def exists?(type) = type.in?(TYPES)
 
     def sample = find(TYPES.sample)
+
+    def eligible_for_mmrv?(patient)
+      patient&.date_of_birth&.>=(MIN_MMRV_ELIGIBILITY_DATE)
+    end
 
     private
 
@@ -135,16 +140,34 @@ class Programme
     def mmrv_variant?(programme, patient, vaccine)
       return false unless Flipper.enabled?(:mmrv)
       return false unless programme.mmr?
+      return false if patient && consented_for_mmr?(patient)
 
       eligible_for_mmrv?(patient) || vaccine_covers_varicella?(vaccine)
     end
 
-    def eligible_for_mmrv?(patient)
-      patient&.date_of_birth&.>=(MIN_MMRV_ELIGIBILITY_DATE)
+    def consented_for_mmr?(patient)
+      patient
+        .consents
+        .where(programme_type: "mmr")
+        .last
+        &.disease_types
+        &.exclude?("varicella")
     end
 
     def vaccine_covers_varicella?(vaccine)
       vaccine&.disease_types&.include?("varicella")
+    end
+
+    def find_by_disease_types(disease_types)
+      return nil if disease_types.blank?
+
+      type =
+        DISEASE_TYPES
+          .find { |_type, diseases| (disease_types - diseases).empty? }
+          &.first
+      return nil unless type
+
+      cached_programme(type)
     end
   end
 
