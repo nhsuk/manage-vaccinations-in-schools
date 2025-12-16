@@ -8,7 +8,12 @@ describe DraftVaccinationRecordsController do
 
   before do
     allow(controller).to receive(:session).and_return(
-      { "vaccination_record" => { "patient_id" => patient.id } }
+      {
+        "vaccination_record" => {
+          "patient_id" => patient.id,
+          "programme_type" => Programme.sample.type
+        }
+      }
     )
   end
 
