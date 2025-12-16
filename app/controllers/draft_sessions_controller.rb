@@ -10,7 +10,7 @@ class DraftSessionsController < ApplicationController
   before_action :set_programmes, if: -> { current_step == :programmes }
   before_action :set_year_group_options, if: -> { current_step == :year_groups }
 
-  with_options only: :show, if: -> { current_step == :dates_check } do
+  with_options only: :show, if: :is_check_step? do
     before_action :set_catch_up_year_groups
     before_action :set_catch_up_patients_vaccinated_percentage
     before_action :set_catch_up_patients_receiving_consent_requests_count
@@ -24,7 +24,7 @@ class DraftSessionsController < ApplicationController
   def show
     authorize @session, @session.new_record? ? :new? : :edit?
 
-    skip_step if current_step == :dates_check && should_skip_dates_check?
+    skip_step if is_check_step? && should_skip_check?
 
     render_wizard
   end
@@ -49,6 +49,8 @@ class DraftSessionsController < ApplicationController
   end
 
   private
+
+  def is_check_step? = step.end_with?("-check")
 
   def is_confirm_step? = step == "confirm"
 
@@ -191,11 +193,11 @@ class DraftSessionsController < ApplicationController
         wizard_path("dates")
       elsif current_step == @draft_session.wizard_steps.first
         @draft_session.return_to == "school" ? schools_path : sessions_path
-      elsif previous_step == "dates-check"
-        # The `dates-check` page is special in that it skips forward if it
-        # doesn't need to be shown, however this leads to users getting stuck
-        # in a loop.
-        wizard_path("dates")
+      elsif is_check_step?
+        # The checks page are special in that they skip forward if they don't
+        # need to be shown, however this leads to users getting stuck in a
+        # loop.
+        wizard_path(previous_step.split("-").first)
       else
         previous_wizard_path
       end
@@ -284,6 +286,7 @@ class DraftSessionsController < ApplicationController
       programmes: {
         programme_types: []
       },
+      programmes_check: [],
       register_attendance: %i[requires_registration],
       school: %i[location_id],
       year_groups: {
@@ -333,7 +336,12 @@ class DraftSessionsController < ApplicationController
     # means we can't always skip straight to the confirmation page.
 
     if current_step == :dates && steps.include?("dates-check") &&
-         !should_skip_dates_check?
+         !should_skip_check?
+      return false
+    end
+
+    if current_step == :programmes && steps.include?("programmes-check") &&
+         !should_skip_check?
       return false
     end
 
@@ -348,16 +356,26 @@ class DraftSessionsController < ApplicationController
       return !is_confirm_step?
     end
 
+    # When first creating a session we go straight to the confirmation page
+    # after setting the dates.
+
     current_step == :dates_check ||
       (
         current_step == :dates && steps.include?("dates-check") &&
-          should_skip_dates_check?
+          should_skip_check?
       ) || (current_step == :dates && !steps.include?("dates-check"))
   end
 
-  def should_skip_dates_check?
+  def should_skip_check?
     if @draft_session.editing? &&
+         @draft_session.session.programme_types ==
+           @draft_session.programme_types &&
          @draft_session.session.dates == @draft_session.dates
+      return true
+    end
+
+    if @draft_session.programme_types.empty? ||
+         @draft_session.year_groups.empty? || @draft_session.dates.empty?
       return true
     end
 

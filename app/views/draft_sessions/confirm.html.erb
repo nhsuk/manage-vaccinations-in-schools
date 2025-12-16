@@ -24,10 +24,7 @@
         summary_list.with_row do |row|
           row.with_key { "Programmes" }
           row.with_value { render AppProgrammeTagsComponent.new(@draft_session.programmes) }
-      
-          unless @draft_session.editing?
-            row.with_action(text: "Change", href: draft_session_path("programmes"), visually_hidden_text: "programmes")
-          end
+          row.with_action(text: "Change", href: draft_session_path("programmes"), visually_hidden_text: "programmes")
         end
       
         summary_list.with_row do |row|

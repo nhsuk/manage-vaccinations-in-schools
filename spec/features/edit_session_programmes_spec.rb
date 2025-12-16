@@ -3,6 +3,21 @@
 describe "Edit session programmes" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
+  scenario "add new programme to existing session" do
+    given_a_school_exists
+    and_the_school_has_unvaccinated_catch_up_patients
+    and_an_hpv_session_already_exists
+
+    when_i_visit_the_session_page
+    and_i_click_on_edit_session
+    and_i_add_the_mmr_programme
+    then_i_see_the_warning_panel_about_unvaccinated_patients
+
+    when_i_click_continue
+    then_i_should_see_the_mmr_programme
+    screenshot_and_save_page
+  end
+
   scenario "choosing programmes with a high number of unvaccinated catch up patients" do
     given_a_school_exists
     and_the_school_has_unvaccinated_catch_up_patients
@@ -14,16 +29,27 @@ describe "Edit session programmes" do
     and_i_choose_the_date
     then_i_see_the_warning_panel_about_unvaccinated_patients
 
-    when_i_click_continue
+    when_i_click_keep_session_dates
     then_i_should_see_the_mmr_programme
   end
 
   def given_a_school_exists
-    @team =
-      create(:team, :with_one_nurse, programmes: [Programme.hpv, Programme.mmr])
+    @programmes = [Programme.hpv, Programme.mmr]
 
-    @location =
-      create(:school, team: @team, programmes: [Programme.hpv, Programme.mmr])
+    @team = create(:team, :with_one_nurse, programmes: @programmes)
+
+    @location = create(:school, team: @team, programmes: @programmes)
+  end
+
+  def and_an_hpv_session_already_exists
+    @session =
+      create(
+        :session,
+        :scheduled,
+        team: @team,
+        location: @location,
+        programmes: [Programme.hpv]
+      )
   end
 
   def and_the_school_has_unvaccinated_catch_up_patients
@@ -33,13 +59,28 @@ describe "Edit session programmes" do
       :eligible_for_vaccination,
       location: @location,
       year_group: 9,
-      programmes: [Programme.hpv, Programme.mmr]
+      programmes: @programmes
     )
+  end
+
+  def when_i_visit_the_session_page
+    sign_in @team.users.first
+    visit session_path(@session)
   end
 
   def when_i_visit_the_school_page
     sign_in @team.users.first
     visit school_sessions_path(@location)
+  end
+
+  def and_i_click_on_edit_session
+    click_on "Edit session"
+  end
+
+  def and_i_add_the_mmr_programme
+    click_on "Change programmes"
+    check "MMR"
+    click_on "Continue"
   end
 
   def and_i_create_a_new_session
@@ -83,6 +124,10 @@ describe "Edit session programmes" do
   end
 
   def when_i_click_continue
+    click_on "Continue"
+  end
+
+  def when_i_click_keep_session_dates
     click_on "Keep session dates"
   end
 
