@@ -28,7 +28,7 @@ describe TrainingOnboardingConfiguration do
             workgroup: "abc",
             type: "poc_only"
           },
-          programmes: %w[flu hpv menacwy td_ipv],
+          programmes: %w[flu hpv menacwy mmr td_ipv],
           subteams: {
             generic: {
               email: "abc@example.com",
