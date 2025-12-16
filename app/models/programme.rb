@@ -100,29 +100,15 @@ class Programme
 
     def all = TYPES.map { |type| find(type) }
 
-    def find_all(types, patient: nil, disease_types: nil, academic_year: nil)
-      types.map { |type| find(type, patient:, disease_types:, academic_year:) }
+    def find_all(types, disease_types: nil, patient: nil)
+      types.map { |type| find(type, patient:, disease_types:) }
     end
 
-    def find(type, disease_types: nil, patient: nil, academic_year: nil)
+    def find(type, disease_types: nil, patient: nil)
       validate_type!(type)
 
       @programmes ||= {}
       programme = (@programmes[type] ||= new(type:))
-
-      if disease_types.nil? && patient && academic_year && programme.mmr? &&
-           Flipper.enabled?(:mmrv)
-        # TODO: Find a way of removing this logic, instead we should pass the
-        #  disease types in directly.
-
-        # It's possible that an MMRV eligible patient ended up getting just the
-        # MMR vaccine because there was no MMRV stock available. Therefore, we
-        # need to check the programme status first to see if it has MMR disease
-        # types.
-
-        programme_status = patient.programme_status(programme, academic_year:)
-        disease_types ||= programme_status.disease_types
-      end
 
       programme.variant_for(patient:, disease_types:)
     end
