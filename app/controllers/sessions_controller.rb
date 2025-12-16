@@ -125,7 +125,7 @@ class SessionsController < ApplicationController
       team_id: current_team.id,
       national_protocol_enabled: false,
       psd_enabled: false,
-      requires_registration: false
+      requires_registration: true
     }
   end
 end

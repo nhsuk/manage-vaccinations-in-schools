@@ -295,6 +295,7 @@ describe "School sessions" do
 
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Check and confirm")
+    expect(page).to have_content("Register attendanceYes")
   end
 
   def when_i_press_back_enough_time_to_see_the_dates
