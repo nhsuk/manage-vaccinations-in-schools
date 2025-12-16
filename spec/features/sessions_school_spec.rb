@@ -22,7 +22,7 @@ describe "School sessions" do
     when_i_choose_the_dates
     then_i_see_the_confirmation_page
 
-    when_i_press_back_enough_time_to_see_the_dates
+    when_i_press_back_enough_time_to_see_the_programmes
     then_i_click_continue_back_to_the_confirmation_page
 
     when_i_click_on_change_programmes
@@ -300,9 +300,11 @@ describe "School sessions" do
     expect(page).to have_content("Register attendanceYes")
   end
 
-  def when_i_press_back_enough_time_to_see_the_dates
-    click_on "Back"
-    expect(page).to have_content("When will this session be held")
+  def when_i_press_back_enough_time_to_see_the_programmes
+    3.times { click_on "Back" }
+    expect(page).to have_content(
+      "Which programmes will you run in this session?"
+    )
   end
 
   def then_i_click_continue_back_to_the_confirmation_page
