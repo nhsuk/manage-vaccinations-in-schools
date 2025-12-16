@@ -17,13 +17,27 @@ describe "MMRV vaccination" do
     then_i_should_only_see_the_mmrv_batch_options
 
     when_i_choose_an_mmrv_batch_for_the_vaccine
-    then_i_see_the_check_and_confirm_page
+    then_i_see_the_check_and_confirm_page_with_mmrv
     and_i_get_confirmation_after_recording
 
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_to_the_parent_confirming_the_vaccination
     and_a_text_is_sent_to_the_parent_confirming_the_vaccination
     and_i_should_see_a_triage_for_the_next_vaccination_dose
+  end
+
+  scenario "there is no more MMRV stock available" do
+    given_mmrv_vaccinations_are_enabled
+    and_i_am_signed_in_as_a_nurse
+    and_a_patient_exists
+
+    when_i_visit_the_patient_mmrv_tab
+    and_i_start_a_new_consent_response
+    and_i_get_consent_for_mmr
+    then_i_see_the_check_and_confirm_page_with_mmr
+
+    when_i_confirm_the_consent_response
+    then_i_see_a_message_that_the_consent_is_successful
   end
 
   def given_mmrv_vaccinations_are_enabled
@@ -57,6 +71,26 @@ describe "MMRV vaccination" do
         session: @session,
         date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month
       )
+    @patient.consents.last.update!(
+      disease_types: ProgrammeVariant::DISEASE_TYPES["mmrv"]
+    )
+    StatusUpdater.call(patient: @patient)
+    @community_clinic = create(:community_clinic, team: @team)
+  end
+
+  def and_a_patient_exists
+    location = create(:generic_clinic, team: @team)
+    @session =
+      create(:session, team: @team, programmes: [@programme], location:)
+    @parent = create(:parent)
+    @patient =
+      create(
+        :patient,
+        session: @session,
+        parents: [@parent],
+        date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month
+      )
+
     @community_clinic = create(:community_clinic, team: @team)
   end
 
@@ -65,12 +99,16 @@ describe "MMRV vaccination" do
   end
 
   def then_i_should_consent_for_mmrv
-    expect(page).to have_content("MMRVDue vaccination")
+    expect(page).to have_content("MMRVDue 1st dose")
   end
 
   def when_i_go_to_the_patient
     visit session_record_path(@session)
     click_link @patient.full_name
+  end
+
+  def when_i_visit_the_patient_mmrv_tab
+    visit session_patient_programme_path(@session, @patient, @programme)
   end
 
   def when_i_go_to_the_without_gelatine_patient
@@ -174,5 +212,54 @@ describe "MMRV vaccination" do
 
   def then_i_should_see_a_triage_with_the_new_date_for_vaccination
     expect(page).to have_content("Next dose 05 November 2024")
+  end
+
+  def and_i_start_a_new_consent_response
+    click_button "Record a new consent response"
+  end
+
+  def and_i_get_consent_for_mmr
+    choose @parent.full_name
+    click_button "Continue"
+
+    # Details for parent or guardian: leave prepopulated details
+    click_button "Continue"
+
+    # How was the response given?
+    choose "By phone"
+    click_button "Continue"
+
+    # Can you vaccinate patient with an MMRV vaccine?
+    choose "No"
+    click_button "Continue"
+
+    # Do they agree to have MMR?
+    choose "Yes, they agree"
+    choose "Yes, they want their child to have a vaccine that does not contain gelatine"
+    click_button "Continue"
+
+    # No to all health questions
+    3.times { |index| find_all(".nhsuk-fieldset")[index].choose "No" }
+
+    click_button "Continue"
+  end
+
+  def then_i_see_the_check_and_confirm_page_with_mmrv
+    expect(page).to have_content("Check and confirm")
+    expect(page).to have_content("ProgrammeMMRV")
+  end
+
+  def then_i_see_the_check_and_confirm_page_with_mmr
+    expect(page).to have_content("Check and confirm")
+    expect(page).to have_content("ProgrammeMMR")
+  end
+
+  def when_i_confirm_the_consent_response
+    click_button "Confirm"
+  end
+
+  def then_i_see_a_message_that_the_consent_is_successful
+    expect(page).to have_content("Consent recorded for #{@patient.full_name}")
+    expect(page).to have_content("Programme status\nMMRDue 1st dose")
   end
 end

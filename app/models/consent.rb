@@ -6,6 +6,7 @@
 #
 #  id                                              :bigint           not null, primary key
 #  academic_year                                   :integer          not null
+#  disease_types                                   :enum             is an Array
 #  health_answers                                  :jsonb            not null
 #  invalidated_at                                  :datetime
 #  notes                                           :text             default(""), not null
@@ -96,6 +97,12 @@ class Consent < ApplicationRecord
 
   def name
     via_self_consent? ? patient.full_name : parent.label
+  end
+
+  def programme
+    if (type = programme_type)
+      Programme.find(type, disease_types:)
+    end
   end
 
   delegate :vaccines, to: :programme

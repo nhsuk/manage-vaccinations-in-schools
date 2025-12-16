@@ -7,6 +7,7 @@
 #  id               :bigint           not null, primary key
 #  academic_year    :integer          not null
 #  date             :date
+#  disease_types    :enum             is an Array
 #  dose_sequence    :integer
 #  programme_type   :enum             not null
 #  status           :integer          default("not_eligible"), not null
@@ -46,7 +47,8 @@ describe Patient::ProgrammeStatus do
         dose_sequence: 1,
         status: "vaccinated",
         vaccine_methods: %w[injection],
-        without_gelatine: true
+        without_gelatine: true,
+        disease_types: nil
       )
     end
 

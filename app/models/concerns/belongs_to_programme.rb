@@ -22,12 +22,16 @@ module BelongsToProgramme
   end
 
   def programme
-    if (type = programme_type)
-      Programme.find(type)
-    end
+    find_options = {}
+    find_options[:disease_types] = disease_types if respond_to?(:disease_types)
+    find_options[:patient] = patient if respond_to?(:patient)
+
+    Programme.find(programme_type, **find_options)
   end
 
   def programme=(value)
     self.programme_type = value&.type
   end
+
+  delegate :translation_key, to: :programme, prefix: true
 end

@@ -6,6 +6,7 @@
 #
 #  id               :bigint           not null, primary key
 #  academic_year    :integer          not null
+#  disease_types    :enum             is an Array
 #  programme_type   :enum             not null
 #  status           :integer          default("no_response"), not null
 #  vaccine_methods  :integer          default([]), not null, is an Array
@@ -47,6 +48,7 @@ class Patient::ConsentStatus < ApplicationRecord
     self.status = generator.status
     self.vaccine_methods = generator.vaccine_methods
     self.without_gelatine = generator.without_gelatine
+    self.disease_types = generator.disease_types
   end
 
   def vaccine_method_nasal? = vaccine_methods.include?("nasal")

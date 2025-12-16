@@ -101,6 +101,12 @@ class StatusGenerator::Programme
     end
   end
 
+  def disease_types
+    return if consent_generator.status.in?(%i[no_response conflicts refused])
+
+    consent_generator.disease_types
+  end
+
   def date
     triage_generator.delay_vaccination_until_date ||
       vaccination_generator.latest_date
