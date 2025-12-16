@@ -1,12 +1,4 @@
-<%= h1 t(".title"), size: "xl" %>
-
-<div class="nhsuk-u-reading-width">
-    Use this page to upload and import child, class list and vaccination records.
-    After import, files move to the Completed imports tab. 
-    Any close matches to resolve will appear in the Issues tab.
-    Upload times can vary. Refresh the page to see the latest status.
-    <%= govuk_button_to "Upload records", imports_path, secondary: true, class: "nhsuk-u-margin-bottom-4" %>
-</div>
+<%= render "imports/header" %>
 
 <%= render AppImportsNavigationComponent.new(active: @active, team: current_team) %>
 
