@@ -193,7 +193,7 @@ class DraftSessionsController < ApplicationController
         wizard_path("dates")
       elsif current_step == @draft_session.wizard_steps.first
         @draft_session.return_to == "school" ? schools_path : sessions_path
-      elsif is_check_step?
+      elsif previous_step.end_with?("-check")
         # The checks page are special in that they skip forward if they don't
         # need to be shown, however this leads to users getting stuck in a
         # loop.
