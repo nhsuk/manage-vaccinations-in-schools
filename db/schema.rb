@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_16_102724) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_16_102852) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -612,6 +612,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_16_102724) do
   create_table "patient_programme_statuses", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.date "date"
+    t.enum "disease_types", array: true, enum_type: "disease_type"
     t.integer "dose_sequence"
     t.bigint "patient_id", null: false
     t.enum "programme_type", null: false, enum_type: "programme_type"
