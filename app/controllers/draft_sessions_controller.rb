@@ -50,6 +50,8 @@ class DraftSessionsController < ApplicationController
 
   private
 
+  def is_confirm_step? = step == "confirm"
+
   def set_draft_session
     @draft_session = DraftSession.new(request_session: session, current_user:)
   end
@@ -179,12 +181,21 @@ class DraftSessionsController < ApplicationController
 
   def set_back_link_path
     @back_link_path =
-      if @draft_session.editing? && current_step == :confirm
+      if @draft_session.editing? && is_confirm_step?
         finish_wizard_path
       elsif @draft_session.editing?
         wizard_path("confirm")
+      elsif is_confirm_step?
+        # When creating a new session users are taken directly to the
+        # `confirm` step after choosing the dates.
+        wizard_path("dates")
       elsif current_step == @draft_session.wizard_steps.first
         @draft_session.return_to == "school" ? schools_path : sessions_path
+      elsif previous_step == "dates-check"
+        # The `dates-check` page is special in that it skips forward if it
+        # doesn't need to be shown, however this leads to users getting stuck
+        # in a loop.
+        wizard_path("dates")
       else
         previous_wizard_path
       end
@@ -334,7 +345,7 @@ class DraftSessionsController < ApplicationController
         @draft_session.year_groups.present?
 
     if @draft_session.editing? || has_finished_initial_steps
-      return current_step != :confirm
+      return !is_confirm_step?
     end
 
     current_step == :dates_check ||
