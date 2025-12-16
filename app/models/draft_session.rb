@@ -189,6 +189,8 @@ class DraftSession
 
   def dates = session_dates.map(&:value).compact.sort.uniq
 
+  def can_change_year_groups? = school? && !editing?
+
   def set_notification_dates
     if earliest_date
       if generic_clinic?

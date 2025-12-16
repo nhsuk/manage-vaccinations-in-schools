@@ -295,6 +295,8 @@ describe "School sessions" do
 
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Check and confirm")
+    expect(page).to have_content("Year groupsYears 8 to 11")
+    expect(page).to have_link("Change year groups")
     expect(page).to have_content("Register attendanceYes")
   end
 

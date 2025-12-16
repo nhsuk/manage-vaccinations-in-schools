@@ -177,6 +177,7 @@ describe "Clinic sessions" do
 
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Check and confirm")
+    expect(page).not_to have_content("Year groups")
     expect(page).to have_content("InvitationsSend on Sunday, 18 February 2024")
   end
 
