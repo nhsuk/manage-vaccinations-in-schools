@@ -3,7 +3,12 @@
 class Programme::Variant < SimpleDelegator
   attr_reader :variant_type
 
-  DISEASE_TYPES = { "mmrv" => %w[measles mumps rubella varicella] }.freeze
+  DISEASE_TYPES = {
+    "mmr" => %w[measles mumps rubella],
+    "mmrv" => %w[measles mumps rubella varicella]
+  }.freeze
+
+  IMPORT_NAMES = { "mmr" => %w[MMR], "mmrv" => %w[MMRV] }.freeze
 
   SNOMED_PROCEDURE_TERMS = { "mmrv" => "TBC" }.freeze
 
@@ -14,17 +19,15 @@ class Programme::Variant < SimpleDelegator
 
   def translation_key = variant_type
 
+  def name
+    @name ||= I18n.t(translation_key, scope: :programme_types)
+  end
+
+  def name_in_sentence = name
+
   def disease_types = DISEASE_TYPES.fetch(variant_type)
 
-  def name
-    @name ||= I18n.t(variant_type, scope: :programme_types)
-  end
-
-  def name_in_sentence
-    @name_in_sentence ||= flu? ? name.downcase : name
-  end
-
-  def import_names = %w[MMRV]
+  def import_names = IMPORT_NAMES.fetch(variant_type)
 
   def vaccines
     @vaccines ||= Vaccine.for_programme(self)

@@ -21,9 +21,16 @@ describe Programme::Variant do
   describe "#name" do
     subject(:name) { programme_variant.name }
 
-    it "use variant type for the translation" do
-      expect(I18n).to receive(:t).with(variant_type, scope: :programme_types)
-      name
+    context "with MMR variant type" do
+      let(:variant_type) { "mmr" }
+
+      it { should eq("MMR") }
+    end
+
+    context "with MMRV variant type" do
+      let(:variant_type) { "mmrv" }
+
+      it { should eq("MMRV") }
     end
   end
 
