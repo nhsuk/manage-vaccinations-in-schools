@@ -3,7 +3,6 @@
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
   include AuthenticationConcern
-  include UserSessionLoggingConcern
 
   before_action :store_user_location!
   before_action :authenticate_user!
