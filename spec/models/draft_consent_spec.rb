@@ -114,16 +114,6 @@ describe DraftConsent do
         end
       end
     end
-
-    context "when disease_types is not present" do
-      it "falls back to the disease types from the programme" do
-        freeze_time do
-          expect { write_to }.to change(consent, :disease_types).from(nil).to(
-            Programme::DISEASE_TYPES[programme.type]
-          )
-        end
-      end
-    end
   end
 
   describe "#reset_unused_attributes" do
@@ -225,6 +215,16 @@ describe DraftConsent do
 
       it "clears the notes" do
         expect { save! }.to change(draft_consent, :notes).to("")
+      end
+    end
+
+    context "when disease_types is not present" do
+      let(:attributes) { valid_given_attributes }
+
+      it "falls back to the disease types from the programme" do
+        expect { save! }.to change(draft_consent, :disease_types).to(
+          Programme::DISEASE_TYPES[programme.type]
+        )
       end
     end
   end
