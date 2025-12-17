@@ -377,7 +377,7 @@ class ImmunisationImportRow
     elsif supplied_by && supplied_by != performed_by_user
       if patient
            .patient_specific_directions
-           .where_programme(programme)
+           .for_programme(programme)
            .exists?(academic_year:, delivery_site: delivery_site_value)
         "psd"
       elsif delivery_method_value == "nasal_spray"

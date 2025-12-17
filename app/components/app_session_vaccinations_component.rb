@@ -106,7 +106,7 @@ class AppSessionVaccinationsComponent < ViewComponent::Base
     @vaccination_records_by_date[programme.type] ||= VaccinationRecord
       .administered
       .kept
-      .where_programme(programme)
+      .for_programme(programme)
       .where(session:, patient_id: patients_for_programme(programme))
       .group_by { |record| record.performed_at.to_date }
   end

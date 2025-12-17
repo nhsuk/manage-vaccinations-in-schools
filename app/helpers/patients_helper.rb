@@ -34,7 +34,7 @@ module PatientsHelper
     end
 
     any_programme_exists =
-      patient.vaccination_records.where_programme(programmes).exists?(session:)
+      patient.vaccination_records.for_programmes(programmes).exists?(session:)
 
     # If this patient hasn't been seen yet by a nurse for any of the programmes,
     # we don't want to show the banner.
@@ -43,10 +43,7 @@ module PatientsHelper
     academic_year = session.academic_year
 
     programmes.select do |programme|
-      !patient
-        .vaccination_records
-        .where_programme(programme)
-        .exists?(session:) &&
+      !patient.vaccination_records.for_programme(programme).exists?(session:) &&
         patient.consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
     end
   end

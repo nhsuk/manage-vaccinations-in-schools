@@ -25,7 +25,7 @@ class ProgrammeVariant < SimpleDelegator
   end
 
   def vaccines
-    @vaccines ||= Vaccine.where_programme(self, disease_types)
+    @vaccines ||= Vaccine.for_programme(self)
   end
 
   def snomed_procedure_term

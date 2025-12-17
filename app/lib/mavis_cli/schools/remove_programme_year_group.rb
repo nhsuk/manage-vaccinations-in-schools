@@ -33,7 +33,7 @@ module MavisCLI
 
         location
           .location_programme_year_groups
-          .where_programme(programme)
+          .for_programme(programme)
           .where(location_year_group: { value: year_groups })
           .destroy_all
       end

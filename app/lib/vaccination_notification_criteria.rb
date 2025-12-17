@@ -12,7 +12,7 @@ class VaccinationNotificationCriteria
       patient
         .consents
         .via_self_consent
-        .where_programme(programme)
+        .for_programme(programme)
         .where(academic_year:)
         .not_invalidated
 

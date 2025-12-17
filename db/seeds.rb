@@ -86,7 +86,7 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
 
   Vaccine
     .active
-    .where_programme(programmes)
+    .for_programmes(programmes)
     .find_each { |vaccine| FactoryBot.create(:batch, team:, vaccine:) }
 
   location = FactoryBot.create(:school, team:, gias_year_groups: year_groups)

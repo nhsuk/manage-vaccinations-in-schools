@@ -260,7 +260,7 @@ class Patient < ApplicationRecord
             Patient::ProgrammeStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(status:, academic_year:)
 
           where(programme_status_scope.arel.exists)
@@ -272,7 +272,7 @@ class Patient < ApplicationRecord
             Patient::VaccinationStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(status:, academic_year:)
               .arel
               .exists
@@ -291,7 +291,7 @@ class Patient < ApplicationRecord
             Patient::ConsentStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(status:, academic_year:)
 
           unless vaccine_method.nil?
@@ -318,7 +318,7 @@ class Patient < ApplicationRecord
             Patient::TriageStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(status:, academic_year:)
 
           unless vaccine_method.nil?
@@ -343,14 +343,14 @@ class Patient < ApplicationRecord
             Patient::TriageStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(academic_year:)
 
           triage_status_not_required =
             Patient::TriageStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(academic_year:)
               .where(status: "not_required")
 
@@ -358,7 +358,7 @@ class Patient < ApplicationRecord
             Patient::ConsentStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(academic_year:)
 
           unless vaccine_methods.nil?
@@ -465,7 +465,7 @@ class Patient < ApplicationRecord
             PatientSpecificDirection
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(academic_year:, team:)
               .not_invalidated
               .arel
@@ -479,7 +479,7 @@ class Patient < ApplicationRecord
             PatientSpecificDirection
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(academic_year:, team:)
               .not_invalidated
               .arel
@@ -521,7 +521,7 @@ class Patient < ApplicationRecord
             Patient::VaccinationStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programme(programme)
               .vaccinated
 
           not_eligible_criteria =

@@ -245,7 +245,7 @@ describe Reports::OfflineSessionExporter do
             expect(rows.first["TRIAGED_BY"]).to be_present
 
             triage =
-              patient.triages.where_programme(programme).find_by(academic_year:)
+              patient.triages.for_programme(programme).find_by(academic_year:)
             expect(Time.zone.parse(rows.first["TRIAGE_DATE"]).to_i).to eq(
               triage.created_at.to_i
             )

@@ -237,7 +237,7 @@ class Programme
   end
 
   def vaccines
-    @vaccines ||= Vaccine.where_programme(self, disease_types)
+    @vaccines ||= Vaccine.for_programme(self)
   end
 
   def vaccine_methods

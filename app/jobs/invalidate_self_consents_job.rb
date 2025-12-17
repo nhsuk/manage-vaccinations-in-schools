@@ -19,14 +19,14 @@ class InvalidateSelfConsentsJob < ApplicationJob
         consents =
           Consent
             .via_self_consent
-            .where_programme(programme)
+            .for_programme(programme)
             .where(academic_year:, team:, patient: patients)
             .where("created_at < ?", Date.current.beginning_of_day)
             .not_withdrawn
 
         triages =
           Triage
-            .where_programme(programme)
+            .for_programme(programme)
             .where(
               academic_year:,
               team:,

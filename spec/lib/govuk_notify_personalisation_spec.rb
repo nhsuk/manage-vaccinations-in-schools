@@ -752,7 +752,7 @@ describe GovukNotifyPersonalisation do
     before do
       Vaccine
         .active
-        .where_programme(hpv_programme)
+        .for_programme(hpv_programme)
         .first
         .update!(side_effects: %w[swelling unwell])
     end
