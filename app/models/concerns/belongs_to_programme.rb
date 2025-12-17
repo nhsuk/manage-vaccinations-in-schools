@@ -31,11 +31,16 @@ module BelongsToProgramme
 
   def programme
     if (type = programme_type)
-      options = {}
-      options[:disease_types] = disease_types if respond_to?(:disease_types)
-      options[:patient] = patient if respond_to?(:patient)
-
-      Programme.find(type, **options)
+      # We don't pass both `patient` and `disease_types`, in case the patient
+      # is eligible for a particular programme variant, but the
+      # specified `disease_types` indicate a different variant.
+      if respond_to?(:disease_types)
+        Programme.find(type, disease_types:)
+      elsif respond_to?(:patient)
+        Programme.find(type, patient:)
+      else
+        Programme.find(type)
+      end
     end
   end
 

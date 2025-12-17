@@ -773,13 +773,13 @@ class Patient < ApplicationRecord
     end
   end
 
-  def deceased?
-    date_of_death != nil
+  def eligible_for_mmrv?
+    date_of_birth >= Programme::MIN_MMRV_ELIGIBILITY_DATE
   end
 
-  def restricted?
-    restricted_at != nil
-  end
+  def deceased? = date_of_death != nil
+
+  def restricted? = restricted_at != nil
 
   def send_notifications?(team:, send_to_archived: false)
     !deceased? && !restricted? && !invalidated? &&

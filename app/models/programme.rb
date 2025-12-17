@@ -104,79 +104,37 @@ class Programme
       types.map { |type| find(type, patient:, disease_types:, academic_year:) }
     end
 
-    def find(type, patient: nil, disease_types: nil, academic_year: nil)
+    def find(type, disease_types: nil, patient: nil, academic_year: nil)
       validate_type!(type)
-      programme = cached_programme(type)
 
-      disease_types ||= resolve_disease_types(programme, patient, academic_year)
+      @programmes ||= {}
+      programme = (@programmes[type] ||= new(type:))
 
-      find_by_disease_types(disease_types) ||
-        variant_for(programme, patient, disease_types) || programme
+      if disease_types.nil? && patient && academic_year && programme.mmr? &&
+           Flipper.enabled?(:mmrv)
+        # TODO: Find a way of removing this logic, instead we should pass the
+        #  disease types in directly.
+
+        # It's possible that an MMRV eligible patient ended up getting just the
+        # MMR vaccine because there was no MMRV stock available. Therefore, we
+        # need to check the programme status first to see if it has MMR disease
+        # types.
+
+        programme_status = patient.programme_status(programme, academic_year:)
+        disease_types ||= programme_status.disease_types
+      end
+
+      programme.variant_for(patient:, disease_types:)
     end
 
     def exists?(type) = type.in?(TYPES)
 
     def sample = find(TYPES.sample)
 
-    def eligible_for_mmrv?(patient)
-      patient&.date_of_birth&.>= MIN_MMRV_ELIGIBILITY_DATE
-    end
-
-    def eligible_disease_types_for(programme, patient, academic_year:)
-      unless mmrv_enabled?(programme, patient)
-        return DISEASE_TYPES[programme.type]
-      end
-
-      # It's possible that an MMRV eligible patient ended up getting just the
-      # MMR vaccine because there was no MMRV stock available. Therefore, we
-      # need to check the programme status first to see if it has MMR disease
-      # types.
-      programme_status = patient.programme_status(programme, academic_year:)
-      programme_status.disease_types || ProgrammeVariant::DISEASE_TYPES["mmrv"]
-    end
-
     private
-
-    def cached_programme(type)
-      @programmes ||= {}
-      @programmes[type] ||= new(type:)
-    end
 
     def validate_type!(type)
       raise InvalidType, type unless exists?(type)
-    end
-
-    def resolve_disease_types(programme, patient, academic_year)
-      return nil unless patient && academic_year
-
-      eligible_disease_types_for(programme, patient, academic_year:)
-    end
-
-    def mmrv_enabled?(programme, patient)
-      Flipper.enabled?(:mmrv) && programme.mmr? && eligible_for_mmrv?(patient)
-    end
-
-    def variant_for(programme, patient, disease_types)
-      return nil unless use_mmrv_variant?(programme, patient, disease_types)
-
-      ProgrammeVariant.new(programme, variant_type: "mmrv")
-    end
-
-    def use_mmrv_variant?(programme, patient, disease_types)
-      return false unless Flipper.enabled?(:mmrv) && programme.mmr?
-
-      eligible_for_mmrv?(patient) || disease_types&.include?("varicella")
-    end
-
-    def find_by_disease_types(disease_types)
-      return nil if disease_types.blank?
-
-      type =
-        DISEASE_TYPES
-          .find { |_type, diseases| (disease_types - diseases).empty? }
-          &.first
-
-      cached_programme(type) if type
     end
   end
 
@@ -209,6 +167,20 @@ class Programme
   end
 
   def filter_name = Flipper.enabled?(:mmrv) && mmr? ? "MMR(V)" : name
+
+  def variant_for(disease_types: nil, patient: nil)
+    return self unless mmr?
+
+    unless disease_types&.include?("varicella") || patient&.eligible_for_mmrv?
+      return self
+    end
+
+    if Flipper.enabled?(:mmrv)
+      ProgrammeVariant.new(self, variant_type: "mmrv")
+    else
+      self
+    end
+  end
 
   def disease_types = DISEASE_TYPES.fetch(type)
 

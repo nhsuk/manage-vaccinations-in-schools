@@ -430,7 +430,7 @@ class DraftConsent
   private
 
   def eligible_for_mmrv?
-    programme&.mmr? && Programme.eligible_for_mmrv?(patient)
+    programme&.mmr? && patient&.eligible_for_mmrv?
   end
 
   def readable_attribute_names
