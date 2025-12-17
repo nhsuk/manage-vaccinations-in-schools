@@ -22,7 +22,10 @@ describe DraftSession do
   let(:existing_programmes) { [Programme.menacwy, Programme.td_ipv] }
   let(:new_programme) { Programme.hpv }
 
-  let(:session) { create(:session, team:, programmes: existing_programmes) }
+  let(:location) { create(:school, team:, programmes: existing_programmes) }
+  let(:session) do
+    create(:session, team:, location:, programmes: existing_programmes)
+  end
   let(:programme_types) do
     existing_programmes.map(&:type) + [new_programme.type]
   end
@@ -48,5 +51,55 @@ describe DraftSession do
     subject(:year_groups) { draft_session.year_groups }
 
     it { should all(be_a(Integer)) }
+  end
+
+  describe "#can_change_year_groups?" do
+    subject { draft_session.can_change_year_groups? }
+
+    context "when creating a clinic session" do
+      let(:location) do
+        create(:generic_clinic, team:, programmes: existing_programmes)
+      end
+
+      let(:attributes) { { editing_id: nil } }
+
+      it { should be(false) }
+    end
+
+    context "when creating a school session" do
+      let(:attributes) { { editing_id: nil } }
+
+      it { should be(true) }
+    end
+
+    context "when editing a school session" do
+      context "and the consent window is open" do
+        let(:session) do
+          create(
+            :session,
+            date: Date.tomorrow,
+            team:,
+            location:,
+            programmes: existing_programmes
+          )
+        end
+
+        it { should be(false) }
+      end
+
+      context "and the consent window isn't open yet" do
+        let(:session) do
+          create(
+            :session,
+            date: 3.months.from_now.to_date,
+            team:,
+            location:,
+            programmes: existing_programmes
+          )
+        end
+
+        it { should be(true) }
+      end
+    end
   end
 end
