@@ -70,8 +70,6 @@ class Vaccine < ApplicationRecord
            :fhir_procedure_coding,
            to: :fhir_mapper
 
-  delegate :snomed_procedure_term, to: :programme, allow_nil: true
-
   def active? = !discontinued
 
   AVAILABLE_DELIVERY_SITES = {
@@ -125,7 +123,7 @@ class Vaccine < ApplicationRecord
       "injection" => "38598009"
     },
     "mmrv" => {
-      "injection" => %w[432636005 433733003]
+      "injection" => "432636005"
     },
     "td_ipv" => {
       "injection" => "866186002"
@@ -133,8 +131,37 @@ class Vaccine < ApplicationRecord
   }.freeze
 
   def snomed_procedure_code(dose_sequence:)
-    codes = SNOMED_PROCEDURE_CODES.fetch(programme.type).fetch(method)
+    codes =
+      SNOMED_PROCEDURE_CODES.fetch(
+        programme.variant_type || programme.type
+      ).fetch(method)
     codes.is_a?(Array) ? codes[dose_sequence - 1] : codes
+  end
+
+  SNOMED_PROCEDURE_TERMS = {
+    "flu" => "Seasonal influenza vaccination (procedure)",
+    "hpv" =>
+      "Administration of vaccine product containing only Human " \
+        "papillomavirus antigen (procedure)",
+    "menacwy" =>
+      "Administration of vaccine product containing only Neisseria " \
+        "meningitidis serogroup A, C, W135 and Y antigens (procedure)",
+    "mmr" =>
+      "Administration of vaccine product containing only Measles " \
+        "morbillivirus and Mumps orthorubulavirus and Rubella virus " \
+        "antigens (procedure)",
+    "mmrv" =>
+      "Administration of vaccine product containing only Human " \
+        "alphaherpesvirus 3 and Measles morbillivirus and Mumps " \
+        "orthorubulavirus and Rubella virus antigens (procedure)",
+    "td_ipv" =>
+      "Administration of vaccine product containing only Clostridium " \
+        "tetani and Corynebacterium diphtheriae and Human poliovirus " \
+        "antigens (procedure)"
+  }.freeze
+
+  def snomed_procedure_term
+    SNOMED_PROCEDURE_TERMS.fetch(programme.variant_type || programme.type)
   end
 
   private

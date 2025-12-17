@@ -10,8 +10,6 @@ class Programme::Variant < SimpleDelegator
 
   IMPORT_NAMES = { "mmr" => %w[MMR], "mmrv" => %w[MMRV] }.freeze
 
-  SNOMED_PROCEDURE_TERMS = { "mmrv" => "TBC" }.freeze
-
   def initialize(programme, variant_type:)
     super(programme)
     @variant_type = variant_type
@@ -31,9 +29,5 @@ class Programme::Variant < SimpleDelegator
 
   def vaccines
     @vaccines ||= Vaccine.for_programme(self)
-  end
-
-  def snomed_procedure_term
-    SNOMED_PROCEDURE_TERMS.fetch(variant_type)
   end
 end
