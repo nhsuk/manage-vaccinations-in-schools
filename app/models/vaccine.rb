@@ -30,8 +30,6 @@
 #  index_vaccines_on_upload_name             (upload_name) UNIQUE
 #
 class Vaccine < ApplicationRecord
-  self.ignored_columns = %w[disease_types_enum]
-
   include BelongsToProgramme
   include HasSideEffects
 
