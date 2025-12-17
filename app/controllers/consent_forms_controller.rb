@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class ConsentFormsController < ApplicationController
-  include PatientLoggingConcern
   include PatientSearchFormConcern
 
   before_action :set_patient_search_form, only: :search
@@ -160,9 +159,5 @@ class ConsentFormsController < ApplicationController
 
   def set_search_params_present
     @search_params_present = @form.any_filters_applied?
-  end
-
-  def patient_id_for_logging
-    params[:patient_id]
   end
 end
