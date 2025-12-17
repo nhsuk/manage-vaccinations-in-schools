@@ -17,7 +17,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     when CohortImport
       "How to format your Mavis CSV file for child records"
     when ImmunisationImport
-      if team.type_upload_only?
+      if team.has_upload_only_access?
         "How to format your CSV file for vaccination records"
       else
         "How to format your Mavis CSV file for vaccination records"
