@@ -70,24 +70,6 @@ class Programme
     "td_ipv" => "3IN1"
   }.freeze
 
-  SNOMED_PROCEDURE_TERMS = {
-    "flu" => "Seasonal influenza vaccination (procedure)",
-    "hpv" =>
-      "Administration of vaccine product containing only Human " \
-        "papillomavirus antigen (procedure)",
-    "menacwy" =>
-      "Administration of vaccine product containing only Neisseria " \
-        "meningitidis serogroup A, C, W135 and Y antigens (procedure)",
-    "mmr" =>
-      "Administration of vaccine product containing only Measles " \
-        "morbillivirus and Mumps orthorubulavirus and Rubella virus " \
-        "antigens (procedure)",
-    "td_ipv" =>
-      "Administration of vaccine product containing only Clostridium " \
-        "tetani and Corynebacterium diphtheriae and Human poliovirus " \
-        "antigens (procedure)"
-  }.freeze
-
   attr_reader :type
 
   delegate :hash, to: :type
@@ -136,6 +118,8 @@ class Programme
   def eql?(other) = other.is_a?(Programme) && type.eql?(other.type)
 
   def <=>(other) = type <=> other.type
+
+  def variant_type = nil
 
   def translation_key = type
 
@@ -234,8 +218,6 @@ class Programme
   def snomed_target_disease_terms = SNOMED_TARGET_DISEASE_TERMS.fetch(type)
 
   def snomed_target_disease_name = SNOMED_TARGET_DISEASE_NAMES.fetch(type)
-
-  def snomed_procedure_term = SNOMED_PROCEDURE_TERMS.fetch(type)
 
   delegate :fhir_target_disease_coding, to: :fhir_mapper
 
