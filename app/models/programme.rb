@@ -118,10 +118,6 @@ class Programme
 
     def sample = find(TYPES.sample)
 
-    def eligible_for_mmrv?(patient)
-      patient&.date_of_birth&.>= MIN_MMRV_ELIGIBILITY_DATE
-    end
-
     def eligible_disease_types_for(programme, patient, academic_year:)
       unless mmrv_enabled?(programme, patient)
         return DISEASE_TYPES[programme.type]
@@ -153,7 +149,7 @@ class Programme
     end
 
     def mmrv_enabled?(programme, patient)
-      Flipper.enabled?(:mmrv) && programme.mmr? && eligible_for_mmrv?(patient)
+      Flipper.enabled?(:mmrv) && programme.mmr? && patient&.eligible_for_mmrv?
     end
 
     def variant_for(programme, patient, disease_types)
@@ -165,7 +161,7 @@ class Programme
     def use_mmrv_variant?(programme, patient, disease_types)
       return false unless Flipper.enabled?(:mmrv) && programme.mmr?
 
-      eligible_for_mmrv?(patient) || disease_types&.include?("varicella")
+      patient&.eligible_for_mmrv? || disease_types&.include?("varicella")
     end
 
     def find_by_disease_types(disease_types)
