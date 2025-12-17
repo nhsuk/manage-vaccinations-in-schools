@@ -49,8 +49,8 @@ describe Programme do
         let(:date_of_birth) { Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month }
         let(:patient) { create(:patient, date_of_birth:) }
 
-        it "returns a ProgrammeVariant with mmrv variant type" do
-          expect(find).to be_a(ProgrammeVariant)
+        it "returns a Programme::Variant with mmrv variant type" do
+          expect(find).to be_a(Programme::Variant)
           expect(find.variant_type).to eq("mmrv")
         end
       end
