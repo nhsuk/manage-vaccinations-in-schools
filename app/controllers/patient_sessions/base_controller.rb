@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class PatientSessions::BaseController < ApplicationController
-  include PatientLoggingConcern
   before_action :set_session
   before_action :set_academic_year
   before_action :set_patient
@@ -75,9 +74,5 @@ class PatientSessions::BaseController < ApplicationController
       controller: "patient_sessions",
       action: access_log_entry_action
     )
-  end
-
-  def patient_id_for_logging
-    params.fetch(:patient_id, params[:id])
   end
 end

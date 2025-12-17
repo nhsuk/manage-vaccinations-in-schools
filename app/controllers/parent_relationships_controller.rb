@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class ParentRelationshipsController < ApplicationController
-  include PatientLoggingConcern
   before_action :set_patient
   before_action :set_parent_relationship
   before_action :set_parent
@@ -65,9 +64,5 @@ class ParentRelationshipsController < ApplicationController
         }
       ]
     )
-  end
-
-  def patient_id_for_logging
-    params[:patient_id]
   end
 end

@@ -2,9 +2,6 @@
 
 class VaccinationRecordsController < ApplicationController
   before_action :set_vaccination_record
-
-  include PatientLoggingConcern
-
   before_action :set_breadcrumb_items, only: :show
   before_action :set_return_to, only: %i[confirm_destroy destroy]
 
@@ -107,9 +104,5 @@ class VaccinationRecordsController < ApplicationController
 
   def set_return_to
     @return_to = params[:return_to] || patient_path(@patient)
-  end
-
-  def patient_id_for_logging
-    @patient.id
   end
 end

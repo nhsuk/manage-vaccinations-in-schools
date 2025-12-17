@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Imports::IssuesController < ApplicationController
-  include PatientLoggingConcern
   before_action :set_import_issues
   before_action :set_record, only: %i[show update]
   before_action :set_vaccination_record, only: %i[show update]
@@ -90,9 +89,5 @@ class Imports::IssuesController < ApplicationController
           "existing"
         end
       )
-  end
-
-  def patient_id_for_logging
-    params[:type] == "patient" ? params[:id] : nil
   end
 end
