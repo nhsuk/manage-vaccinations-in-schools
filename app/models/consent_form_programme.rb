@@ -35,7 +35,14 @@ class ConsentFormProgramme < ApplicationRecord
 
   delegate :flu?, :hpv?, :menacwy?, :mmr?, :td_ipv?, to: :programme
 
-  def programme = Programme.new(type: programme_type)
+  def disease_types
+    # TODO: Update this when we allow parents to submit consent for MMRV.
+    if programme_type == "mmr"
+      Programme::Variant::DISEASE_TYPES["mmr"]
+    else
+      Programme::DISEASE_TYPES.fetch(programme_type)
+    end
+  end
 
   def vaccines
     VaccineCriteria.from_consentable(self).apply(
