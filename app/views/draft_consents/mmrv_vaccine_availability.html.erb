@@ -2,10 +2,10 @@
   <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
-<% title = "Can you vaccinate #{@patient.given_name} with an #{@programme.name} vaccine?" %>
+<% title = "Can you vaccinate #{@patient.given_name} with an MMRV vaccine?" %>
 <% content_for :page_title, title %>
 
-<% hint = "#{@patient.given_name} is eligible for the new #{@programme.name} vaccine. You should only give an MMR vaccine if the #{@programme.name} vaccine is out of stock." %>
+<% hint = "#{@patient.given_name} is eligible for the new MMRV vaccine. You should only give an MMR vaccine if the MMRV vaccine is out of stock." %>
 
 <%= form_with model: @draft_consent, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
