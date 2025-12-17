@@ -2,7 +2,7 @@
 
 class AppImportReviewSchoolMovesSummaryComponent < ViewComponent::Base
   def initialize(changesets:)
-    @changesets = changesets
+    @changesets = changesets.sort_by { it.row_number || Float::INFINITY }
     @destination_schools = {}
   end
 
