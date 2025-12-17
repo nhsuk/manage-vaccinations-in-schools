@@ -122,7 +122,6 @@ class ImmunisationImport < ApplicationRecord
     end
 
     post_commit!
-    UpdatePatientsFromPDS.call(patients, queue: :imports)
   end
 
   def bulk_import(rows: 100)
@@ -139,10 +138,6 @@ class ImmunisationImport < ApplicationRecord
         vaccination_records,
         on_duplicate_key_update: :all
       ).ids
-
-    vaccination_records.each do |vaccination_record|
-      AlreadyHadNotificationSender.call(vaccination_record:)
-    end
 
     @imported_patient_location_ids |=
       PatientLocation.import(
@@ -188,6 +183,8 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def post_commit!
+    UpdatePatientsFromPDS.call(patients, queue: :imports)
+
     SyncPatientTeamJob.perform_later(
       VaccinationRecord,
       @imported_vaccination_record_ids
@@ -200,6 +197,11 @@ class ImmunisationImport < ApplicationRecord
       ArchiveReason,
       @imported_archive_reason_ids
     )
+
     vaccination_records.sync_all_to_nhs_immunisations_api
+
+    vaccination_records.each do |vaccination_record|
+      AlreadyHadNotificationSender.call(vaccination_record:)
+    end
   end
 end
