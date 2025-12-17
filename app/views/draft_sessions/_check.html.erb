@@ -19,7 +19,7 @@
     children in this school before you continue.
   </p>
 
-  <% if @draft_session.open_for_consent? && @catch_up_patients_receiving_consent_requests_count > 0 %>
+  <% if @draft_session.can_receive_consent? && @catch_up_patients_receiving_consent_requests_count > 0 %>
     <p>
       Scheduling this session now will send consent requests to
       <%= pluralize(@catch_up_patients_receiving_consent_requests_count, "parent") %>
