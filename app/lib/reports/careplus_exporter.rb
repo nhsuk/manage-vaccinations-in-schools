@@ -69,7 +69,7 @@ class Reports::CareplusExporter
     scope =
       VaccinationRecord
         .kept
-        .where_programme(programme)
+        .for_programme(programme)
         .where(team_location: { team_id: team.id })
         .for_academic_year(academic_year)
         .administered
@@ -114,7 +114,7 @@ class Reports::CareplusExporter
     @consents ||=
       Consent
         .select("DISTINCT ON (patient_id) consents.*")
-        .where_programme(programme)
+        .for_programme(programme)
         .where(patient: vaccination_records.select(:patient_id), academic_year:)
         .not_invalidated
         .response_given

@@ -3,7 +3,7 @@
 describe HealthAnswersDeduplicator do
   subject(:health_answers) { described_class.call(vaccines:) }
 
-  let(:vaccines) { Vaccine.where_programme(programmes) }
+  let(:vaccines) { Vaccine.for_programmes(programmes) }
 
   context "with doubles programmes" do
     let(:programmes) { [Programme.menacwy, Programme.td_ipv] }

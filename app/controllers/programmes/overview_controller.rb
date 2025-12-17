@@ -12,7 +12,7 @@ class Programmes::OverviewController < Programmes::BaseController
 
   def set_consents
     @consents =
-      policy_scope(Consent).where_programme(@programme).where(
+      policy_scope(Consent).for_programme(@programme).where(
         patient_id: patient_ids,
         academic_year: @academic_year
       )

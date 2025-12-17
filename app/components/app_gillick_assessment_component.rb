@@ -19,7 +19,7 @@ class AppGillickAssessmentComponent < ViewComponent::Base
         .gillick_assessments
         .order(created_at: :desc)
         .for_session(session)
-        .where_programme(programme)
+        .for_programme(programme)
         .first
   end
 

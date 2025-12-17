@@ -25,7 +25,7 @@ class AppPatientSessionConsentComponent < AppPatientSessionSectionComponent
     @consents ||=
       patient
         .consents
-        .where_programme(programme)
+        .for_programme(programme)
         .where(academic_year:)
         .includes(:consent_form, :parent)
         .order(created_at: :desc)

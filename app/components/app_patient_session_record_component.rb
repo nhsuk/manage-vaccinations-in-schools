@@ -45,7 +45,7 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
 
   def default_vaccinate_form
     pre_screening_confirmed =
-      patient.pre_screenings.today.where_programme(programme).exists?
+      patient.pre_screenings.today.for_programme(programme).exists?
 
     VaccinateForm.new(
       current_user:,

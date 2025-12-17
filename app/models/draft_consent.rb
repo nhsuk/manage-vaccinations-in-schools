@@ -185,7 +185,7 @@ class DraftConsent
       self.parent =
         patient.parents.find_by(id: value) ||
           Parent.where(
-            consents: patient.consents.where_programme(programme)
+            consents: patient.consents.for_programme(programme)
           ).find_by(id: value)
     end
   end

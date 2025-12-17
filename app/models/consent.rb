@@ -204,7 +204,7 @@ class Consent < ApplicationRecord
 
   def update_vaccination_records_no_notify!
     vaccination_records =
-      VaccinationRecord.where_programme(programme).where(patient:)
+      VaccinationRecord.for_programme(programme).where(patient:)
 
     vaccination_records.find_each do |vaccination_record|
       vaccination_record.update!(

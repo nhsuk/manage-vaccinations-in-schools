@@ -411,7 +411,7 @@ class Reports::OfflineSessionExporter
   def vaccine_values_for_programme(programme)
     @vaccines[programme] ||= Vaccine
       .active
-      .where_programme(programme)
+      .for_programme(programme)
       .pluck(:upload_name)
   end
 
