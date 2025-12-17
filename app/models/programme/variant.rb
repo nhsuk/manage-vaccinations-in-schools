@@ -10,6 +10,18 @@ class Programme::Variant < SimpleDelegator
 
   IMPORT_NAMES = { "mmr" => %w[MMR], "mmrv" => %w[MMRV] }.freeze
 
+  SNOMED_TARGET_DISEASE_CODES = {
+    "mmr" => %w[14189004 36989005 36653000].to_set,
+    "mmrv" => %w[14189004 36989005 36653000 38907003].to_set
+  }.freeze
+
+  SNOMED_TARGET_DISEASE_TERMS = {
+    "mmr" => %w[Measles Mumps Rubella],
+    "mmrv" => %w[Measles Mumps Rubella Varicella]
+  }.freeze
+
+  SNOMED_TARGET_DISEASE_NAMES = { "mmr" => "MMR", "mmrv" => "MMRV" }.freeze
+
   def initialize(programme, variant_type:)
     super(programme)
     @variant_type = variant_type
@@ -30,4 +42,10 @@ class Programme::Variant < SimpleDelegator
   def vaccines
     @vaccines ||= Vaccine.for_programme(self)
   end
+
+  def snomed_target_disease_codes = SNOMED_TARGET_DISEASE_CODES.fetch(type)
+
+  def snomed_target_disease_terms = SNOMED_TARGET_DISEASE_TERMS.fetch(type)
+
+  def snomed_target_disease_name = SNOMED_TARGET_DISEASE_NAMES.fetch(type)
 end
