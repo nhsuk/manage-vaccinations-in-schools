@@ -90,7 +90,7 @@ class PatientSearchForm < SearchForm
   def team = session&.team || current_user.selected_team
 
   def filter_name(scope)
-    q.present? ? scope.search_by_name(q) : scope
+    q.present? ? scope.search_by_name_or_nhs_number(q) : scope
   end
 
   def filter_year_groups(scope)
