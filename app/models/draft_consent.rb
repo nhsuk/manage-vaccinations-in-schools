@@ -327,7 +327,7 @@ class DraftConsent
     consent.parent = parent
     consent.submitted_at ||= Time.current
     consent.academic_year = academic_year if academic_year.present?
-    consent.disease_types = disease_types.presence || programme.disease_types
+    consent.disease_types = disease_types
 
     if triage_allowed? && requires_triage?
       triage_form.add_patient_specific_direction =
