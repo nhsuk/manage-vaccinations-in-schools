@@ -124,21 +124,17 @@ class Programme
 
   def variant_type = nil
 
-  def translation_key = type
+  def translation_key
+    mmr? && Flipper.enabled?(:mmrv) ? "mmr_and_mmrv" : type
+  end
 
   TYPES.each do |programme_type|
     define_method("#{programme_type}?") { type == programme_type }
   end
 
-  def name
-    @name ||= I18n.t(translation_key, scope: :programme_types)
-  end
+  def name = I18n.t(translation_key, scope: :programme_types)
 
-  def name_in_sentence
-    @name_in_sentence ||= flu? ? name.downcase : name
-  end
-
-  def filter_name = Flipper.enabled?(:mmrv) && mmr? ? "MMR(V)" : name
+  def name_in_sentence = flu? ? name.downcase : name
 
   def variant_for(disease_types: nil, patient: nil)
     return self if (disease_types.blank? && patient.blank?) || !mmr?
