@@ -44,7 +44,13 @@ class ArchiveReason < ApplicationRecord
              optional: true
 
   enum :type,
-       { imported_in_error: 0, moved_out_of_area: 1, deceased: 2, other: 3 },
+       {
+         imported_in_error: 0,
+         moved_out_of_area: 1,
+         deceased: 2,
+         other: 3,
+         immunisation_import: 4
+       },
        validate: true
 
   validates :other_details,
