@@ -165,8 +165,6 @@ describe VaccinationRecord do
   describe "#programme" do
     subject { vaccination_record.programme }
 
-    before { Flipper.enable(:mmrv) }
-
     context "for an MMRV vaccine" do
       let(:programme) { Programme.mmr }
       let(:vaccine) { Vaccine.find_by!(brand: "ProQuad") }

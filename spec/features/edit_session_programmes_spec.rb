@@ -165,7 +165,7 @@ describe "Edit session programmes" do
 
   def then_i_see_the_warning_panel_about_unvaccinated_patients_for_mmr
     expect(page).to have_content(
-      "Have you imported historical vaccination records for MMR?"
+      "Have you imported historical vaccination records for MMR(V)?"
     )
     expect(page).to have_content(
       "0% of children in Years 8 to 11 in this session have vaccination " \
@@ -180,7 +180,7 @@ describe "Edit session programmes" do
 
   def then_i_see_the_warning_panel_about_unvaccinated_patients_for_hpv_and_mmr
     expect(page).to have_content(
-      "Have you imported historical vaccination records for HPV and MMR?"
+      "Have you imported historical vaccination records for HPV and MMR(V)?"
     )
     expect(page).to have_content(
       "0% of children in Years 8 to 11 in this session have vaccination " \

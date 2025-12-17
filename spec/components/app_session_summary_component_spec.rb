@@ -39,8 +39,6 @@ describe AppSessionSummaryComponent do
     it { should have_link("Download the HPV consent form (PDF)") }
 
     context "for MMR(V) programme" do
-      before { Flipper.enable(:mmrv) }
-
       let(:programmes) { [Programme.mmr] }
 
       it { should have_link("Download the MMR consent form (PDF)") }
@@ -58,8 +56,6 @@ describe AppSessionSummaryComponent do
       end
 
       context "for MMR(V) programme" do
-        before { Flipper.enable(:mmrv) }
-
         let(:programmes) { [Programme.mmr] }
 
         it { should have_link("View the MMR online consent form") }
