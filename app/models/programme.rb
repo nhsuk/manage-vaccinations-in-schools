@@ -8,7 +8,6 @@ class Programme
   end
 
   TYPES = %w[flu hpv menacwy mmr td_ipv].freeze
-  TYPES_SUPPORTING_DELEGATION = %w[flu].freeze
   MIN_MMRV_ELIGIBILITY_DATE = Date.new(2020, 1, 1).freeze
 
   DISEASE_TYPES = {
@@ -180,7 +179,7 @@ class Programme
 
   def catch_up_only? = mmr?
 
-  def supports_delegation? = TYPES_SUPPORTING_DELEGATION.include?(type)
+  def supports_delegation? = flu?
 
   def can_save_to_todays_batch? = !mmr?
 
