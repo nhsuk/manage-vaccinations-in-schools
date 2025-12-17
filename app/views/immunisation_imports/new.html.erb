@@ -11,7 +11,7 @@
 
   <h1 class="nhsuk-heading-l"><%= title %></h1>
 
-  <% if current_team.has_upload_access_only? %>
+  <% if current_team.has_upload_only_access? %>
     <p>You can upload vaccination records for flu or HPV. Mavis will detect which vaccination type you are uploading.</p>
   <% else %>
     <p>You can import vaccination records by uploading:</p>

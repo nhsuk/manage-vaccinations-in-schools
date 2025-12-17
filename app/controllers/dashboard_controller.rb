@@ -16,7 +16,7 @@ class DashboardController < ApplicationController
 
   def set_primary_items
     @primary_items =
-      if current_team.has_upload_access_only?
+      if current_team.has_upload_only_access?
         [
           {
             title: I18n.t("imports.index.title"),
@@ -61,7 +61,7 @@ class DashboardController < ApplicationController
   def set_secondary_items
     @secondary_items = []
 
-    unless current_team.has_upload_access_only?
+    unless current_team.has_upload_only_access?
       @secondary_items << {
         title: I18n.t("school_moves.index.title"),
         path: school_moves_path,

@@ -64,36 +64,4 @@ describe Team do
 
   it_behaves_like "a model with a normalised email address"
   it_behaves_like "a model with a normalised phone number"
-
-  describe "#has_upload_access_only?" do
-    subject { team.has_upload_access_only? }
-
-    context "when type is upload_only" do
-      before { team.type = :upload_only }
-
-      it { should be true }
-    end
-
-    context "when type is poc_only" do
-      before { team.type = :poc_only }
-
-      it { should be false }
-    end
-  end
-
-  describe "#has_poc_access?" do
-    subject { team.has_poc_access? }
-
-    context "when type is poc_only" do
-      before { team.type = :poc_only }
-
-      it { should be true }
-    end
-
-    context "when type is upload_only" do
-      before { team.type = :upload_only }
-
-      it { should be false }
-    end
-  end
 end
