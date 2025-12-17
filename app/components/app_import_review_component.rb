@@ -34,7 +34,7 @@ class AppImportReviewComponent < ViewComponent::Base
     count = @auto_matched_records.count
     "This upload includes #{pluralize(count, "record")} that already " \
       "#{count > 1 ? "exist" : "exists"} in Mavis. " \
-      "You do not need to remove these from your CSV file. " \
+      "You do not need to remove #{count > 1 ? "these" : "this"} from your CSV file. " \
       "If you approve the upload, any additional information will be added to " \
       "the existing #{count > 1 ? "records" : "record"}."
   end
