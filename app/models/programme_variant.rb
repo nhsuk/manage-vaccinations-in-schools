@@ -24,6 +24,8 @@ class ProgrammeVariant < SimpleDelegator
     @name_in_sentence ||= flu? ? name.downcase : name
   end
 
+  def import_names = %w[MMRV]
+
   def vaccines
     @vaccines ||= Vaccine.for_programme(self)
   end
