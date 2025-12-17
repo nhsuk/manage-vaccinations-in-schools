@@ -56,5 +56,3 @@ sync_national_reporting_to_imms_api: |
   Immunisations API.
 
 testing_api: Basic API useful for automated testing.
-
-mmrv: Adds support for MMRV vaccinations

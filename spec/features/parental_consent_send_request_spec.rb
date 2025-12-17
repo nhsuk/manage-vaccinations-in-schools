@@ -42,7 +42,6 @@ describe "Parental consent" do
 
   def given_a_programme_exists(programme_type)
     @programmes = [Programme.public_send(programme_type)]
-    Flipper.enable(:mmrv)
   end
 
   def and_a_patient_without_consent_exists

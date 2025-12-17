@@ -892,7 +892,7 @@ describe NHS::ImmunisationsAPI do
       {
         "patient.identifier" =>
           "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}",
-        "-immunization.target" => "3IN1,FLU,HPV,MENACWY,MMR",
+        "-immunization.target" => "3IN1,FLU,HPV,MENACWY,MMR,MMRV",
         "-date.from" => "2025-08-01",
         "-date.to" => "2025-10-01"
       }
@@ -927,7 +927,7 @@ describe NHS::ImmunisationsAPI do
         {
           "patient.identifier" =>
             "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}",
-          "-immunization.target" => "3IN1,FLU,HPV,MENACWY,MMR",
+          "-immunization.target" => "3IN1,FLU,HPV,MENACWY,MMR,MMRV",
           "-date.from" => "2025-08-01"
         }
       end
@@ -1117,9 +1117,7 @@ describe NHS::ImmunisationsAPI do
 
     include_examples "an imms_api_integration feature flag check"
 
-    context "with the mmrv feature flag enabled" do
-      before { Flipper.enable(:mmrv) }
-
+    context "for MMRV" do
       let(:date_from) { nil }
       let(:date_to) { nil }
 

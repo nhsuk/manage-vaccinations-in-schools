@@ -33,8 +33,8 @@
 FactoryBot.define do
   factory :patient_programme_status, class: "Patient::ProgrammeStatus" do
     patient
-    academic_year { AcademicYear.current }
     programme { Programme.sample }
+    academic_year { AcademicYear.current }
 
     traits_for_enum :status
 

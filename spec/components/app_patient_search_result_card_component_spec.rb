@@ -84,8 +84,6 @@ describe AppPatientSearchResultCardComponent do
     let(:programme) { Programme.mmr }
     let(:programmes) { [programme] }
 
-    before { Flipper.enable(:mmrv) }
-
     context "with a patient not eligible for MMRV" do
       let(:patient) { create(:patient, date_of_birth: Date.new(2019, 1, 1)) }
 

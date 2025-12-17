@@ -134,8 +134,6 @@ describe GovukNotifyPersonalisation do
       let(:programmes) { [Programme.mmr] }
       let(:date_of_birth) { Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month }
 
-      before { Flipper.enable(:mmrv) }
-
       it { should include(vaccination_sms: "MMR vaccination") }
       it { should include(vaccination_and_dates_sms: "MMR vaccination") }
     end
