@@ -422,7 +422,15 @@ class ImmunisationImportRow
       (session || team)
         .programmes
         .each_with_object({}) do |programme, hash|
-          programme.import_names.each { |name| hash[name.downcase] = programme }
+          programme.import_names.each do |name|
+            # TODO: Handle this in a more generic way to support future
+            #  programme variants.
+            hash[name.downcase] = if name == "MMRV"
+              ProgrammeVariant.new(programme, variant_type: "mmrv")
+            else
+              programme
+            end
+          end
         end
   end
 

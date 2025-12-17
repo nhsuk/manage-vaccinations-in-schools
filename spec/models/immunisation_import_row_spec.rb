@@ -209,6 +209,17 @@ describe ImmunisationImportRow do
         end
       end
 
+      context "without a vaccine with MMRV programme variant" do
+        before { Flipper.enable(:mmrv) }
+
+        let(:programmes) { [Programme.mmr] }
+        let(:data) do
+          valid_data.except("VACCINE_GIVEN").merge("PROGRAMME" => "MMRV")
+        end
+
+        it { should be_valid }
+      end
+
       context "with an invalid reason not vaccinated" do
         let(:data) do
           { "VACCINATED" => "N", "REASON_NOT_VACCINATED" => "unknown" }
@@ -906,6 +917,25 @@ describe ImmunisationImportRow do
           )
         end
       end
+
+      context "with MMRV programme name" do
+        before { Flipper.enable(:mmrv) }
+
+        let(:programmes) { [Programme.mmr] }
+        let(:session) { create(:session, team:, programmes:) }
+        let(:data) do
+          valid_common_data.merge(
+            "PROGRAMME" => "MMRV",
+            "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901"
+          )
+        end
+
+        it "recognizes MMRV as MMR programme" do
+          expect(
+            immunisation_import_row.to_vaccination_record&.programme
+          ).to eq(Programme.mmr)
+        end
+      end
     end
 
     context "for a bulk upload" do
@@ -1200,6 +1230,21 @@ describe ImmunisationImportRow do
           expect(vaccination_record.performed_by).to have_attributes(
             given_name: "John",
             family_name: "Smith"
+          )
+        end
+      end
+
+      context "without a vaccine with MMRV programme variant" do
+        before { Flipper.enable(:mmrv) }
+
+        let(:programmes) { [Programme.mmr] }
+        let(:data) do
+          valid_data.except("VACCINE_GIVEN").merge("PROGRAMME" => "MMRV")
+        end
+
+        it "has the MMRV disease types" do
+          expect(vaccination_record.disease_types).to eq(
+            %w[measles mumps rubella varicella]
           )
         end
       end
