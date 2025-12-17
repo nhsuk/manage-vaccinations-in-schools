@@ -74,7 +74,7 @@ describe "Triage" do
 
   def then_i_see_the_patient
     expect(page).to have_content(@patient.full_name)
-    expect(page).to have_content("MMRNeeds triage")
+    expect(page).to have_content("MMRVNeeds triage")
   end
 
   def when_i_click_on_the_patient
@@ -105,12 +105,12 @@ describe "Triage" do
   end
 
   def then_i_see_the_triage_status_with_gelatine
-    expect(page).to have_content("MMR: Safe to vaccinate")
+    expect(page).to have_content("MMRV: Safe to vaccinate")
   end
 
   def then_i_see_the_triage_status_without_gelatine
     expect(page).to have_content(
-      "MMR: Safe to vaccinate with gelatine-free injection"
+      "MMRV: Safe to vaccinate with gelatine-free injection"
     )
   end
 end

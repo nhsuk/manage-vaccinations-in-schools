@@ -116,8 +116,10 @@ describe PatientStatusResolver do
     context "for MMR programme" do
       let(:programme) { Programme.mmr }
 
+      let(:date_of_birth) { Date.new(2019, 12, 31) }
+
       context "and eligible for 1st dose" do
-        let(:patient) { create(:patient, session:) }
+        let(:patient) { create(:patient, date_of_birth:, session:) }
 
         before do
           StatusUpdater.call(patient:)
@@ -138,7 +140,12 @@ describe PatientStatusResolver do
 
       context "and due 1st dose" do
         let(:patient) do
-          create(:patient, :consent_given_triage_not_needed, session:)
+          create(
+            :patient,
+            :consent_given_triage_not_needed,
+            date_of_birth:,
+            session:
+          )
         end
 
         before do
@@ -163,6 +170,7 @@ describe PatientStatusResolver do
           create(
             :patient,
             :consent_given_without_gelatine_triage_not_needed,
+            date_of_birth:,
             session:
           )
         end

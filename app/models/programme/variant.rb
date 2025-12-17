@@ -33,7 +33,9 @@ class Programme::Variant < SimpleDelegator
 
   def translation_key = variant_type
 
-  def name = I18n.t(translation_key, scope: :programme_types)
+  def name
+    @name ||= I18n.t(translation_key, scope: :programme_types)
+  end
 
   def name_in_sentence = name
 
