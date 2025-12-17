@@ -12,9 +12,7 @@ class PatientStatusResolver
     @context_location_id = context_location_id
   end
 
-  def programme_name
-    programme_status.programme.name
-  end
+  def programme_name = programme_status.programme.name
 
   def consent
     status =

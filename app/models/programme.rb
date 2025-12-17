@@ -139,8 +139,18 @@ class Programme
   def variant_for(disease_types: nil, patient: nil)
     return self if (disease_types.blank? && patient.blank?) || !mmr?
 
+    # We don't use both `patient` and `disease_types` because the patient
+    # might be eligible for a particular programme variant, but the
+    # `disease_types` indicate a different variant was used.
+
     eligible_for_mmrv =
-      disease_types&.include?("varicella") || patient&.eligible_for_mmrv?
+      if disease_types.present?
+        disease_types.include?("varicella")
+      elsif patient
+        patient.eligible_for_mmrv?
+      else
+        false
+      end
 
     variant_type =
       if eligible_for_mmrv && Flipper.enabled?(:mmrv)
