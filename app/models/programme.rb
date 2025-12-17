@@ -13,9 +13,9 @@ class Programme
   DISEASE_TYPES = {
     "flu" => %w[influenza],
     "hpv" => %w[human_papillomavirus],
-    "mmr" => %w[measles mumps rubella],
-    "td_ipv" => %w[tetanus diphtheria polio],
-    "menacwy" => %w[meningitis_a meningitis_c meningitis_w meningitis_y]
+    "menacwy" => %w[meningitis_a meningitis_c meningitis_w meningitis_y],
+    "mmr" => [], # This is blank because MMR has two variants with different disease types.
+    "td_ipv" => %w[tetanus diphtheria polio]
   }.freeze
 
   DEFAULT_YEAR_GROUPS_BY_TYPE = {
@@ -144,7 +144,7 @@ class Programme
   end
 
   def name
-    @name ||= I18n.t(type, scope: :programme_types)
+    @name ||= I18n.t(translation_key, scope: :programme_types)
   end
 
   def name_in_sentence
@@ -154,21 +154,19 @@ class Programme
   def filter_name = Flipper.enabled?(:mmrv) && mmr? ? "MMR(V)" : name
 
   def variant_for(disease_types: nil, patient: nil)
-    return self unless mmr?
+    return self if (disease_types.blank? && patient.blank?) || !mmr?
 
-    # If disease_types is present, it takes precedent
-    # over patient eligibility for MMRV.
-    if disease_types.present?
-      return self unless disease_types.include?("varicella")
-    else
-      return self unless patient&.eligible_for_mmrv?
-    end
+    eligible_for_mmrv =
+      disease_types&.include?("varicella") || patient&.eligible_for_mmrv?
 
-    if Flipper.enabled?(:mmrv)
-      Programme::Variant.new(self, variant_type: "mmrv")
-    else
-      self
-    end
+    variant_type =
+      if eligible_for_mmrv && Flipper.enabled?(:mmrv)
+        "mmrv"
+      else
+        "mmr"
+      end
+
+    Programme::Variant.new(self, variant_type:)
   end
 
   def disease_types = DISEASE_TYPES.fetch(type)

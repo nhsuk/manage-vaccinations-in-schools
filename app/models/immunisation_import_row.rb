@@ -427,6 +427,8 @@ class ImmunisationImportRow
             #  programme variants.
             hash[name.downcase] = if name == "MMRV"
               Programme::Variant.new(programme, variant_type: "mmrv")
+            elsif name == "MMR"
+              Programme::Variant.new(programme, variant_type: "mmr")
             else
               programme
             end

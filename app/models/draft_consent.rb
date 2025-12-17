@@ -202,11 +202,14 @@ class DraftConsent
   end
 
   def update_disease_types
+    # TODO: Handle this in a more generic way.
     self.disease_types =
       if eligible_for_mmrv? && vaccine_stock_is_available
         Programme::Variant::DISEASE_TYPES["mmrv"]
+      elsif is_mmr?
+        Programme::Variant::DISEASE_TYPES["mmr"]
       else
-        Programme::DISEASE_TYPES[programme.type]
+        Programme::DISEASE_TYPES[programme_type]
       end
   end
 
@@ -297,8 +300,18 @@ class DraftConsent
     self.recorded_by_user_id = value.id
   end
 
+  # TODO: Extract this from the `BelongsToProgramme` concern so we can use the
+  #  version from that concern in all places.
   def programme
-    Programme.find(programme_type, patient:, disease_types:) if programme_type
+    if programme_type
+      if disease_types.present?
+        Programme.find(programme_type, disease_types:)
+      elsif patient
+        Programme.find(programme_type, patient:)
+      else
+        Programme.find(programme_type)
+      end
+    end
   end
 
   def programme=(value)
@@ -429,9 +442,9 @@ class DraftConsent
 
   private
 
-  def eligible_for_mmrv?
-    programme&.mmr? && patient&.eligible_for_mmrv?
-  end
+  def is_mmr? = programme_type == "mmr"
+
+  def eligible_for_mmrv? = is_mmr? && patient&.eligible_for_mmrv?
 
   def readable_attribute_names
     writable_attribute_names + %w[parent]
