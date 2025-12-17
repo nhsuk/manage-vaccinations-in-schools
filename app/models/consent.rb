@@ -99,12 +99,6 @@ class Consent < ApplicationRecord
     via_self_consent? ? patient.full_name : parent.label
   end
 
-  def programme
-    if (type = programme_type)
-      Programme.find(type, disease_types:)
-    end
-  end
-
   delegate :vaccines, to: :programme
 
   def response_provided? = !response_not_provided?

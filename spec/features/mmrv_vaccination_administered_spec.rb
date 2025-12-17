@@ -252,6 +252,7 @@ describe "MMRV vaccination" do
   def then_i_see_the_check_and_confirm_page_with_mmr
     expect(page).to have_content("Check and confirm")
     expect(page).to have_content("ProgrammeMMR")
+    expect(page).not_to have_content("ProgrammeMMRV")
   end
 
   def when_i_confirm_the_consent_response
