@@ -250,17 +250,14 @@ Rails.application.routes.draw do
     get "sessions"
   end
 
-  resources :sessions, only: %i[index show edit], param: :slug do
-    resource :patients, only: :show, controller: "sessions/patients"
-    resource :consent, only: :show, controller: "sessions/consent"
-    resource :triage, only: :show, controller: "sessions/triage"
+  resources :sessions, only: %i[index new show edit], param: :slug do
+    resource :patients, only: :show, controller: "sessions/patients" do
+      post ":patient_id/register/:status", as: :register, action: :register
+    end
     resource :patient_specific_directions,
              path: "patient-specific-directions",
              only: %i[show new create],
              controller: "sessions/patient_specific_directions"
-    resource :register, only: :show, controller: "sessions/register" do
-      post ":patient_id/:status", as: :create, action: :create
-    end
     resource :record, only: :show, controller: "sessions/record" do
       get "batch/:programme_type/:vaccine_method",
           action: :edit_batch,

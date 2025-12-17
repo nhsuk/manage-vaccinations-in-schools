@@ -1,0 +1,24 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: @back_link_path) %>
+<% end %>
+
+<% title = "Can you vaccinate #{@patient.given_name} with an MMRV vaccine?" %>
+<% content_for :page_title, title %>
+
+<% hint = "#{@patient.given_name} is eligible for the new MMRV vaccine. You should only give an MMR vaccine if the MMRV vaccine is out of stock." %>
+
+<%= form_with model: @draft_consent, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_radio_buttons_fieldset :vaccine_stock_is_available,
+                                     caption: { size: "l", text: @patient.full_name },
+                                     legend: { size: "l", tag: "h1", text: title },
+                                     hint: { size: "s", text: hint } do %>
+    <%= f.govuk_radio_button :vaccine_stock_is_available, "true",
+                             label: { text: "Yes" }, link_errors: true %>
+    <%= f.govuk_radio_button :vaccine_stock_is_available, "false",
+                             label: { text: "No" } %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

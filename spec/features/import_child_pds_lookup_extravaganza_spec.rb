@@ -95,8 +95,8 @@ describe "Import child records" do
     and_an_existing_patient_records_exist_in_school
     and_pds_lookup_during_import_is_enabled
 
-    when_i_visit_a_session_page_for_the_hpv_programme
-    and_i_start_adding_children_to_the_session
+    when_i_visit_a_school_for_the_hpv_programme
+    and_i_start_adding_children_to_the_school
     and_i_select_the_year_groups
 
     when_i_upload_a_valid_file
@@ -465,9 +465,9 @@ describe "Import child records" do
     wait_for_import_to_complete(CohortImport)
   end
 
-  def when_i_visit_a_session_page_for_the_hpv_programme
+  def when_i_visit_a_school_for_the_hpv_programme
     visit "/dashboard"
-    click_on "Sessions", match: :first
+    click_on "Schools", match: :first
     click_on "Waterloo Road"
   end
 
@@ -487,22 +487,6 @@ describe "Import child records" do
     expect(page).to have_content(
       "The record on this row appears to be a duplicate of row 5."
     )
-  end
-
-  def and_i_start_adding_children_to_the_session
-    click_on "Import class lists"
-  end
-
-  def and_i_select_the_year_groups
-    check "Year 8"
-    check "Year 9"
-    check "Year 10"
-    check "Year 11"
-    click_on "Continue"
-  end
-
-  def then_i_should_see_the_import_page
-    expect(page).to have_content("Import class list")
   end
 
   def then_i_see_the_pds_lookup_history
@@ -538,7 +522,7 @@ describe "Import child records" do
     end
   end
 
-  def and_i_start_adding_children_to_the_session
+  def and_i_start_adding_children_to_the_school
     click_on "Import class lists"
   end
 
@@ -845,7 +829,7 @@ describe "Import child records" do
 
   def and_there_is_an_import_review_for_maia
     find(".nhsuk-details__summary", text: "1 upload issue").click
-    expect(page).to have_content("ActionsReview SMITH, Maia")
+    expect(page).to have_content("Actions Review SMITH, Maia")
     expect(page).to have_content("Possible match found. Review and confirm.")
   end
 

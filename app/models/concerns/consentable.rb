@@ -10,8 +10,13 @@ module Consentable
     dates.max - 1.day
   end
 
+  def can_receive_consent?
+    !close_consent_at.nil? && Date.current <= close_consent_at
+  end
+
   def open_for_consent?
-    close_consent_at&.today? || close_consent_at&.future? || false
+    can_receive_consent? && !open_consent_at.nil? &&
+      Date.current >= open_consent_at
   end
 
   def next_reminder_dates

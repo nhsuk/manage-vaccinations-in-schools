@@ -49,7 +49,6 @@ describe "HPV vaccination" do
     and_the_disease_types_are_set_on_the_record
     and_i_can_no_longer_vaccinate_the_patient
     and_i_no_longer_see_the_patient_in_the_record_tab
-    and_i_no_longer_see_the_patient_in_the_consent_tab
     and_the_vaccination_record_is_synced_to_nhs
     and_the_parent_doesnt_receive_a_vaccination_already_had_email
 
@@ -58,7 +57,7 @@ describe "HPV vaccination" do
     then_i_see_that_the_status_is_vaccinated
     and_i_see_the_vaccination_details
 
-    when_i_go_to_the_register_tab
+    when_i_go_to_the_children_tab
     and_i_filter_by_completed_session
     then_i_see_the_patient
 
@@ -255,11 +254,6 @@ describe "HPV vaccination" do
     expect(page).to have_content("No children matching search criteria found")
   end
 
-  def and_i_no_longer_see_the_patient_in_the_consent_tab
-    within(".app-secondary-navigation") { click_on "Consent" }
-    expect(page).not_to have_content(@patient.full_name)
-  end
-
   def when_i_go_back
     visit draft_vaccination_record_path("confirm")
   end
@@ -280,10 +274,10 @@ describe "HPV vaccination" do
     expect(page).to have_content("Dose number1st")
   end
 
-  def when_i_go_to_the_register_tab
+  def when_i_go_to_the_children_tab
     click_on "Sessions", match: :first
     click_on @session.location.name
-    click_on "Register"
+    within(".app-secondary-navigation") { click_on "Children" }
   end
 
   def and_i_filter_by_completed_session

@@ -55,16 +55,16 @@ FactoryBot.define do
 
   factory :patient do
     transient do
-      academic_year { AcademicYear.current }
+      academic_year { session&.academic_year || AcademicYear.current }
+      location { session&.location }
+      location_name { nil }
       parents { [] }
       performed_by { association(:user) }
       programmes { session&.programmes || [] }
-      session { nil }
-      year_group { programmes.flat_map(&:default_year_groups).sort.uniq.first }
-      location_name { nil }
       random_nhs_number { false }
-
+      session { nil }
       team { session&.team || school&.team || create(:team, programmes:) }
+      year_group { programmes.flat_map(&:default_year_groups).sort.uniq.first }
     end
 
     nhs_number do
@@ -124,14 +124,9 @@ FactoryBot.define do
     end
 
     after(:create) do |patient, evaluator|
-      if (session = evaluator.session)
-        location_id = session.location_id
-        academic_year = session.academic_year
-        PatientLocation.find_or_create_by!(
-          patient:,
-          location_id:,
-          academic_year:
-        )
+      if (location = evaluator.location) &&
+           (academic_year = evaluator.academic_year)
+        PatientLocation.find_or_create_by!(patient:, location:, academic_year:)
       end
     end
 
@@ -266,6 +261,16 @@ FactoryBot.define do
           )
         end
       end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :needs_consent_no_response,
+            patient: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :triage_not_required do
@@ -315,6 +320,16 @@ FactoryBot.define do
           association(
             :patient_consent_status,
             :given,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :due_injection,
             patient: instance,
             programme:
           )
@@ -434,6 +449,16 @@ FactoryBot.define do
           )
         end
       end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :needs_triage,
+            patient: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :consent_given_injection_only_triage_needed do
@@ -463,12 +488,21 @@ FactoryBot.define do
           )
         end
       end
-
       triage_statuses do
         programmes.map do |programme|
           association(
             :patient_triage_status,
             :required,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :needs_triage,
             patient: instance,
             programme:
           )
@@ -503,12 +537,21 @@ FactoryBot.define do
           )
         end
       end
-
       triage_statuses do
         programmes.map do |programme|
           association(
             :patient_triage_status,
             :required,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :needs_triage,
             patient: instance,
             programme:
           )
@@ -542,6 +585,16 @@ FactoryBot.define do
           )
         end
       end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :needs_triage,
+            patient: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :consent_given_without_gelatine_triage_not_needed do
@@ -564,6 +617,16 @@ FactoryBot.define do
           association(
             :patient_consent_status,
             :given_without_gelatine,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :due_injection_without_gelatine,
             patient: instance,
             programme:
           )
@@ -776,6 +839,16 @@ FactoryBot.define do
           association(
             :patient_consent_status,
             :refused,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :has_refusal_consent_refused,
             patient: instance,
             programme:
           )
@@ -1022,6 +1095,16 @@ FactoryBot.define do
               programme:
             )
           end
+        end
+      end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :vaccinated_fully,
+            patient: instance,
+            programme:
+          )
         end
       end
       vaccination_statuses do

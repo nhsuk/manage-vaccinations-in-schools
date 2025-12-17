@@ -2,17 +2,24 @@
   <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
-<%= h1 "When will sessions be held?" %>
+<% legend = "When will this session be held?" %>
+<% content_for :page_title, legend %>
+
+<% multiple_dates = @draft_session.session_dates.length > 1 %>
 
 <%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <% if multiple_dates %>
+    <%= h1 "When will this session be held?" %>
+  <% end %>
 
   <div class="app-add-another">
     <ol class="nhsuk-list app-add-another__list">
       <% @draft_session.session_dates.each_with_index do |session_date, index| %>
         <%= f.fields_for "session_date_#{index}", session_date do |ff| %>
-          <li class="app-add-another__list-item">
-            <% if @draft_session.session.has_been_attended?(date: session_date.value) %>
+          <li class="app-add-another__list-item<% if multiple_dates %> app-add-another__list-counter<% end %>">
+            <% if @draft_session.session&.has_been_attended?(date: session_date.value) %>
               <h2 class="nhsuk-heading-m">
                 <%= session_date.value.to_fs(:long) %>
               </h2>
@@ -21,7 +28,11 @@
               </p>
             <% else %>
               <%= ff.govuk_date_field :value,
-                                      legend: { size: "m", text: "Session date" },
+                                      legend: {
+                                        tag: multiple_dates ? "legend" : "h1",
+                                        size: multiple_dates ? "m" : "l",
+                                        text: multiple_dates ? "Session date" : legend,
+                                      },
                                       hint: { text: "For example, 27 3 2024" } %>
 
               <% if @draft_session.session_dates.length > 1 %>
@@ -36,15 +47,18 @@
       <% end %>
     </ol>
 
+    <p>If you add more than one date to a session, parents will get consent requests showing all dates.</p>
+
     <%= f.govuk_submit "Add another date",
                        name: "draft_session[_add_another]",
                        value: "true",
                        secondary: true,
-                       class: "app-add-another__add" %>
+                       class: "nhsuk-button--small nhsuk-u-margin-bottom-0" %>
   </div>
+
+  <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
   <div class="nhsuk-button-group">
     <%= f.govuk_submit "Continue" %>
-    <%= link_to "Back", @back_link_path %>
   </div>
 <% end %>

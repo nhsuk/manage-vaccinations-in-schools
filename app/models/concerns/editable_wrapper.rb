@@ -5,9 +5,9 @@ module EditableWrapper
 
   included { attribute :editing_id, :integer }
 
-  def editing?
-    editing_id != nil
-  end
+  def editing? = editing_id != nil
+
+  def new_record? = editing_id.nil?
 
   def readable_attribute_names
     attribute_names
@@ -30,7 +30,7 @@ module EditableWrapper
   end
 
   def write_to!(instance)
-    if !editing? && instance.persisted?
+    if new_record? && instance.persisted?
       raise CannotWritePersistedRecord
     elsif editing? && editing_id != instance.id
       raise CannotWriteDifferentRecord

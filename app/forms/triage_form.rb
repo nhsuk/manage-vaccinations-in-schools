@@ -223,7 +223,7 @@ class TriageForm
   def invalidate_patient_specific_directions!
     patient
       .patient_specific_directions
-      .where_programme(programme)
+      .for_programme(programme)
       .where(academic_year:, team:)
       .invalidate_all
   end
@@ -260,7 +260,7 @@ class TriageForm
     vaccination_record =
       patient
         .vaccination_records
-        .where_programme(programme)
+        .for_programme(programme)
         .order(:performed_at)
         .last
 

@@ -111,9 +111,13 @@ describe "Offline vaccination" do
 
     if clinic
       @generic_clinic_session =
-        @team.generic_clinic_session(academic_year: AcademicYear.current)
-
-      @generic_clinic_session.update!(dates: [previous_date, Date.current])
+        create(
+          :session,
+          team: @team,
+          programmes:,
+          location: @team.generic_clinic,
+          dates: [previous_date, Date.current]
+        )
 
       @community_clinic =
         create(
@@ -319,7 +323,7 @@ describe "Offline vaccination" do
   end
 
   def then_i_should_see_no_import_issues_with_the_count
-    expect(page).to have_content("Upload issues (0)")
+    expect(page).to have_content("Issues (0)")
   end
 
   def when_i_choose_to_record_offline_from_a_school_session_page
@@ -558,17 +562,17 @@ describe "Offline vaccination" do
     expect(page).to have_content("SiteLeft arm (upper position)")
 
     visit patient_url
-    within(".nhsuk-breadcrumb__list") { click_on "Children" }
-    choose "Due vaccination"
+    within(".nhsuk-breadcrumb") { click_on "Children" }
+    choose "Unable to vaccinate"
     click_on "Update results"
 
     click_on @unvaccinated_patient.full_name
     expect(page).to have_content(@unvaccinated_patient.full_name)
-    expect(page).to have_content("Due vaccination")
+    expect(page).to have_content("Unable to vaccinate")
     expect(page).to have_content("Unwell")
 
     visit patient_url
-    within(".nhsuk-breadcrumb__list") { click_on "Children" }
+    within(".nhsuk-breadcrumb") { click_on "Children" }
     choose "Vaccinated", match: :first
     click_on "Update results"
 

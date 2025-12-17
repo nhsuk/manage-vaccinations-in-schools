@@ -48,13 +48,16 @@ describe "Programme" do
     create(:patient, session:, year_group: 10)
 
     # To make it realistic we'll also add patients to clinics.
-    Patient.find_each do |patient|
+    generic_clinic_session =
       create(
-        :patient_location,
-        patient:,
-        session:
-          @team.generic_clinic_session(academic_year: AcademicYear.current)
+        :session,
+        team: @team,
+        location: @team.generic_clinic,
+        programmes: [@programme]
       )
+
+    Patient.find_each do |patient|
+      create(:patient_location, patient:, session: generic_clinic_session)
     end
   end
 

@@ -10,6 +10,7 @@ describe "Tallying on session overview page" do
     and_one_could_not_be_vaccinated
     and_one_vaccinated
     and_i_visit_the_session_record_tab
+    then_i_see_the_correct_tallies_corresponding_to_the_current_state
 
     when_i_click_on_each_tally_the_filters_match_the_same_count
   end
@@ -38,7 +39,8 @@ describe "Tallying on session overview page" do
 
   def and_one_has_no_response
     create(
-      :patient_consent_status,
+      :patient_programme_status,
+      :needs_consent_no_response,
       patient: @patients.first,
       programme: @flu_programme
     )
@@ -51,6 +53,18 @@ describe "Tallying on session overview page" do
       patient: @patients.second,
       programme: @flu_programme
     )
+    create(
+      :patient_triage_status,
+      :not_required,
+      patient: @patients.second,
+      programme: @flu_programme
+    )
+    create(
+      :patient_programme_status,
+      :due_nasal,
+      patient: @patients.second,
+      programme: @flu_programme
+    )
   end
 
   def and_one_has_given_consent_for_injection
@@ -60,12 +74,24 @@ describe "Tallying on session overview page" do
       patient: @patients.third,
       programme: @flu_programme
     )
+    create(
+      :patient_triage_status,
+      :not_required,
+      patient: @patients.third,
+      programme: @flu_programme
+    )
+    create(
+      :patient_programme_status,
+      :due_injection_without_gelatine,
+      patient: @patients.third,
+      programme: @flu_programme
+    )
   end
 
   def and_one_could_not_be_vaccinated
     create(
-      :patient_consent_status,
-      :refused,
+      :patient_programme_status,
+      :has_refusal_consent_refused,
       patient: @patients.fourth,
       programme: @flu_programme
     )
@@ -73,28 +99,27 @@ describe "Tallying on session overview page" do
 
   def and_one_vaccinated
     create(
-      :patient_vaccination_status,
-      :vaccinated,
+      :patient_programme_status,
+      :vaccinated_fully,
       patient: @patients.fifth,
-      programme: @flu_programme,
-      latest_location: @session.location
+      programme: @flu_programme
     )
   end
 
   def then_i_see_the_correct_tallies_corresponding_to_the_current_state
-    within(".nhsuk-card", text: "No response") do
+    within(".nhsuk-card", text: "Needs consent") do
       expect(page).to have_content(1)
     end
 
-    within(".nhsuk-card", text: "Consent given for nasal spray") do
+    within(".nhsuk-card", text: "Due nasal spray") do
       expect(page).to have_content(1)
     end
 
-    within(".nhsuk-card", text: "Consent given for injection") do
+    within(".nhsuk-card", text: "Due injection") do
       expect(page).to have_content(1)
     end
 
-    within(".nhsuk-card", text: "Consent refused") do
+    within(".nhsuk-card", text: "Has a refusal") do
       expect(page).to have_content(1)
     end
 
@@ -104,25 +129,25 @@ describe "Tallying on session overview page" do
   end
 
   def when_i_click_on_each_tally_the_filters_match_the_same_count
-    click_link "No response"
+    click_link "Needs consent"
     expect(page).to have_content("Showing 1 to 1 of 1 children")
     expect(page).to have_content(@patients.first.given_name)
 
     and_i_visit_the_session_record_tab
 
-    click_link "Consent given for nasal spray"
+    click_link "Due nasal spray"
     expect(page).to have_content("Showing 1 to 1 of 1 children")
     expect(page).to have_content(@patients.second.given_name)
 
     and_i_visit_the_session_record_tab
 
-    click_link "Consent given for gelatine-free injection"
+    click_link "Due injection"
     expect(page).to have_content("Showing 1 to 1 of 1 children")
     expect(page).to have_content(@patients.third.given_name)
 
     and_i_visit_the_session_record_tab
 
-    click_link "Consent refused"
+    click_link "Has a refusal"
     expect(page).to have_content("Showing 1 to 1 of 1 children")
     expect(page).to have_content(@patients.fourth.given_name)
 

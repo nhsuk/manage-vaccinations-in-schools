@@ -103,7 +103,7 @@ class PatientLocation < ApplicationRecord
                   "patient_locations.academic_year - patients.birth_academic_year - ?",
                 Integer::AGE_CHILDREN_START_SCHOOL
               )
-              .where_programme(programmes)
+              .for_programmes(programmes)
               .arel
               .exists
           )

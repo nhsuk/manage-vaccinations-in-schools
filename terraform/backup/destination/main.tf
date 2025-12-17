@@ -75,10 +75,13 @@ resource "aws_kms_key" "destination_backup_key" {
 }
 
 module "destination" {
-  source                  = "git@github.com:NHSDigital/terraform-aws-backup.git//modules/aws-backup-destination?ref=v1.1.0"
-  source_account_name     = "mavis-${var.source_account_environment}"
-  account_id              = local.destination_account_id
-  source_account_id       = var.source_account_id
-  kms_key                 = aws_kms_key.destination_backup_key.arn
-  enable_vault_protection = false
+  source                        = "git@github.com:NHSDigital/terraform-aws-backup.git//modules/aws-backup-destination?ref=v1.1.0"
+  source_account_name           = "mavis-${var.source_account_environment}"
+  account_id                    = local.destination_account_id
+  source_account_id             = var.source_account_id
+  kms_key                       = aws_kms_key.destination_backup_key.arn
+  enable_vault_protection       = true
+  vault_lock_type               = "governance"
+  changeable_for_days           = 14
+  vault_lock_min_retention_days = 7
 }

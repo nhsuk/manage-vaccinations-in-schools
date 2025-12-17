@@ -101,6 +101,7 @@ describe "Manage children" do
 
   scenario "Inviting to community clinic" do
     given_patients_exist
+    and_a_clinic_session_exists
 
     when_i_click_on_children
     and_i_filter_for_children
@@ -209,8 +210,6 @@ describe "Manage children" do
         :with_one_nurse,
         programmes: [@hpv, @flu]
       )
-
-    TeamSessionsFactory.call(@team, academic_year: AcademicYear.current)
   end
 
   def given_another_team_exists
@@ -221,8 +220,6 @@ describe "Manage children" do
         :with_one_nurse,
         programmes: [@hpv, @flu]
       )
-
-    TeamSessionsFactory.call(@new_team, academic_year: AcademicYear.current)
   end
 
   def given_patients_exist
@@ -254,6 +251,15 @@ describe "Manage children" do
     create(:vaccination_record, patient: @existing_patient)
 
     StatusUpdater.call
+  end
+
+  def and_a_clinic_session_exists
+    create(
+      :session,
+      location: @team.generic_clinic,
+      team: @team,
+      programmes: @team.programmes
+    )
   end
 
   def given_many_patients_exist
@@ -355,7 +361,7 @@ describe "Manage children" do
   end
 
   def when_i_filter_for_children
-    check "No response"
+    choose "Needs consent"
     click_on "Update results"
   end
 
@@ -385,7 +391,7 @@ describe "Manage children" do
 
   def when_i_click_on_view_aged_out_children
     find(".nhsuk-details__summary").click
-    uncheck "No response"
+    choose "Any"
     check "Children aged out of programmes"
     click_on "Update results"
   end

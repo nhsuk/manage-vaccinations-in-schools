@@ -6,6 +6,7 @@
 #
 #  id                                              :bigint           not null, primary key
 #  academic_year                                   :integer          not null
+#  disease_types                                   :enum             is an Array
 #  health_answers                                  :jsonb            not null
 #  invalidated_at                                  :datetime
 #  notes                                           :text             default(""), not null
@@ -133,16 +134,17 @@ describe Consent do
       end
 
       it "copies over attributes from consent form" do
+        consent_form_programme = consent_form.consent_form_programmes.first
         expect(consent).to(
           have_attributes(
-            programme_type:
-              consent_form.consent_form_programmes.first.programme_type,
+            programme_type: consent_form_programme.programme_type,
             patient:,
             consent_form:,
             reason_for_refusal: consent_form.reason_for_refusal,
             notes: "",
             response: "given",
-            route: "website"
+            route: "website",
+            disease_types: consent_form_programme.programme.disease_types
           )
         )
       end

@@ -14,7 +14,6 @@ en:
     date_of_birth: date-of-birth
     dates: dates
     dates_check: dates-check
-    programmes_check: programmes-check
     delegation: delegation
     delivery: delivery
     dose: dose
@@ -26,6 +25,7 @@ en:
     injection_alternative: injection-alternative
     invitations: invitations
     location: location
+    location_type: location-type
     name: name
     notes: notes
     notify_parent_on_refusal: notify-parent-on-refusal
@@ -34,6 +34,7 @@ en:
     parent: parent
     parent_details: parent-details
     programmes: programmes
+    programmes_check: programmes-check
     questions: questions
     reason_for_refusal: reason-for-refusal
     reason_for_refusal_notes: reason-for-refusal-notes
@@ -54,3 +55,4 @@ en:
     who: who
     without_gelatine: without-gelatine
     year_groups: year-groups
+    mmrv_vaccine_availability: mmrv-vaccine-availability

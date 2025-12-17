@@ -8,7 +8,7 @@
 #  academic_year                       :integer
 #  has_already_vaccinated_consent      :boolean
 #  is_archived                         :boolean
-#  patient_gender                      :integer
+#  patient_gender                      :text
 #  patient_local_authority_code        :string
 #  patient_school_local_authority_code :string
 #  patient_year_group                  :integer

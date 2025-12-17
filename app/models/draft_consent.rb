@@ -13,6 +13,7 @@ class DraftConsent
   attr_accessor :triage_form_valid
 
   attribute :academic_year, :integer
+  attribute :disease_types, array: true, default: []
   attribute :health_answers, array: true, default: []
   attribute :injection_alternative, :boolean
   attribute :notes, :string
@@ -38,6 +39,7 @@ class DraftConsent
   attribute :triage_notes, :string
   attribute :triage_status_option, :string
   attribute :vaccine_methods, array: true, default: []
+  attribute :vaccine_stock_is_available, :boolean
   attribute :without_gelatine, :boolean
 
   def initialize(current_user:, **attributes)
@@ -52,6 +54,7 @@ class DraftConsent
       :who,
       (:parent_details unless via_self_consent?),
       (:route unless via_self_consent?),
+      (:mmrv_vaccine_availability if eligible_for_mmrv?),
       :agree,
       (:notify_parents_on_vaccination if response_given? && via_self_consent?),
       (:questions if response_given?),
@@ -116,6 +119,10 @@ class DraftConsent
     validates :route, inclusion: { in: Consent.routes.keys }
   end
 
+  on_wizard_step :vaccine_availability, exact: true do
+    validates :vaccine_stock_is_available, inclusion: { in: [true, false] }
+  end
+
   on_wizard_step :agree, exact: true do
     validates :response,
               inclusion: {
@@ -178,7 +185,7 @@ class DraftConsent
       self.parent =
         patient.parents.find_by(id: value) ||
           Parent.where(
-            consents: patient.consents.where_programme(programme)
+            consents: patient.consents.for_programme(programme)
           ).find_by(id: value)
     end
   end
@@ -192,6 +199,15 @@ class DraftConsent
 
   def consent=(value)
     self.editing_id = value.id
+  end
+
+  def update_disease_types
+    self.disease_types =
+      if eligible_for_mmrv? && vaccine_stock_is_available
+        ProgrammeVariant::DISEASE_TYPES["mmrv"]
+      else
+        Programme::DISEASE_TYPES[programme.type]
+      end
   end
 
   def update_vaccine_methods_and_without_gelatine
@@ -282,7 +298,7 @@ class DraftConsent
   end
 
   def programme
-    Programme.find(programme_type, patient:) if programme_type
+    Programme.find(programme_type, patient:, disease_types:) if programme_type
   end
 
   def programme=(value)
@@ -311,6 +327,7 @@ class DraftConsent
     consent.parent = parent
     consent.submitted_at ||= Time.current
     consent.academic_year = academic_year if academic_year.present?
+    consent.disease_types = disease_types
 
     if triage_allowed? && requires_triage?
       triage_form.add_patient_specific_direction =
@@ -411,6 +428,10 @@ class DraftConsent
   end
 
   private
+
+  def eligible_for_mmrv?
+    programme&.mmr? && patient&.eligible_for_mmrv?
+  end
 
   def readable_attribute_names
     writable_attribute_names + %w[parent]

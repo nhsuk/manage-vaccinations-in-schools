@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_15_114448) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_16_102852) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -273,6 +273,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_15_114448) do
     t.integer "academic_year", null: false
     t.bigint "consent_form_id"
     t.datetime "created_at", null: false
+    t.enum "disease_types", array: true, enum_type: "disease_type"
     t.jsonb "health_answers", default: [], null: false
     t.datetime "invalidated_at"
     t.text "notes", default: "", null: false
@@ -585,6 +586,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_15_114448) do
 
   create_table "patient_consent_statuses", force: :cascade do |t|
     t.integer "academic_year", null: false
+    t.enum "disease_types", array: true, enum_type: "disease_type"
     t.bigint "patient_id", null: false
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "status", default: 0, null: false
@@ -610,6 +612,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_15_114448) do
   create_table "patient_programme_statuses", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.date "date"
+    t.enum "disease_types", array: true, enum_type: "disease_type"
     t.integer "dose_sequence"
     t.bigint "patient_id", null: false
     t.enum "programme_type", null: false, enum_type: "programme_type"
@@ -932,7 +935,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_15_114448) do
     t.integer "delivery_method"
     t.integer "delivery_site"
     t.datetime "discarded_at"
-    t.enum "disease_types", array: true, enum_type: "disease_type"
+    t.enum "disease_types", null: false, array: true, enum_type: "disease_type"
     t.integer "dose_sequence"
     t.boolean "full_dose"
     t.string "local_patient_id"
@@ -989,8 +992,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_15_114448) do
     t.boolean "contains_gelatine", null: false
     t.datetime "created_at", null: false
     t.boolean "discontinued", default: false, null: false
-    t.integer "disease_types", default: [], null: false, array: true
-    t.enum "disease_types_enum", null: false, array: true, enum_type: "disease_type"
+    t.enum "disease_types", default: [], null: false, array: true, enum_type: "disease_type"
+    t.enum "disease_types_enum", array: true, enum_type: "disease_type"
     t.decimal "dose_volume_ml", null: false
     t.text "manufacturer", null: false
     t.integer "method", null: false
@@ -1354,7 +1357,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_15_114448) do
       pps.status,
       tl.team_id,
       pl.location_id AS session_location_id,
-      pat.gender_code AS patient_gender,
+          CASE pat.gender_code
+              WHEN 0 THEN 'not known'::text
+              WHEN 1 THEN 'male'::text
+              WHEN 2 THEN 'female'::text
+              WHEN 9 THEN 'not specified'::text
+              ELSE NULL::text
+          END AS patient_gender,
       ((pps.academic_year - pat.birth_academic_year) - 5) AS patient_year_group,
       COALESCE(la.mhclg_code, ''::character varying) AS patient_local_authority_code,
       COALESCE(la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,

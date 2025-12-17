@@ -89,8 +89,8 @@ class PatientImport < ApplicationRecord
     nhs_duplicates.each do |nhs_number, changesets|
       changesets.each do |cs|
         other_rows_text = generate_other_rows_text(cs, changesets)
-        row_errors["Row #{cs.row_number + 2}"] ||= [[]]
-        row_errors["Row #{cs.row_number + 2}"][
+        row_errors["Row #{cs.csv_row_number}"] ||= [[]]
+        row_errors["Row #{cs.csv_row_number}"][
           0
         ] << "The details on this row match #{other_rows_text}. " \
           "Mavis has found the NHS number #{nhs_number}."
@@ -105,8 +105,8 @@ class PatientImport < ApplicationRecord
     patient_duplicates.each_value do |changesets|
       changesets.each do |cs|
         other_rows_text = generate_other_rows_text(cs, changesets)
-        row_errors["Row #{cs.row_number + 2}"] ||= [[]]
-        row_errors["Row #{cs.row_number + 2}"][
+        row_errors["Row #{cs.csv_row_number}"] ||= [[]]
+        row_errors["Row #{cs.csv_row_number}"][
           0
         ] << "The record on this row appears to be a duplicate of #{other_rows_text}."
       end
@@ -249,7 +249,7 @@ class PatientImport < ApplicationRecord
       duplicate_rows.index { it.row_number == current_row.row_number }
     start_row = [current_row_index - count, 0].max
     other_rows = duplicate_rows[start_row, count + 1] - [current_row]
-    other_row_numbers = other_rows.map { it.row_number + 2 }
+    other_row_numbers = other_rows.map(&:csv_row_number)
 
     if other_row_numbers.size == 1
       "row #{other_row_numbers.first}"

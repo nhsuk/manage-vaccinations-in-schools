@@ -179,6 +179,13 @@ class PatientChangeset < ApplicationRecord
 
   def nhs_number = child_attributes["nhs_number"]
 
+  def pending_changes
+    unless review_data["patient"] && review_data["patient"]["pending_changes"]
+      return
+    end
+    review_data["patient"]["pending_changes"] || {}
+  end
+
   def invalidate!
     data["upload"]["child"]["invalidated_at"] = Time.current
   end
@@ -474,5 +481,9 @@ class PatientChangeset < ApplicationRecord
 
   def reset_patient_id!
     update_column(:patient_id, nil)
+  end
+
+  def csv_row_number
+    row_number + 2
   end
 end

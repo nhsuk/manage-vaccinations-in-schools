@@ -1,26 +1,19 @@
 # frozen_string_literal: true
 
-describe "Manage school sessions" do
+describe "School sessions" do
   around { |example| travel_to(Time.zone.local(2024, 2, 18)) { example.run } }
 
-  scenario "Adding a new session, closing consent, and closing the session" do
+  scenario "adding a new session, closing consent, and closing the session" do
     given_my_team_is_running_an_hpv_vaccination_programme
     and_i_am_signed_in
 
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_no_sessions
 
-    when_i_go_to_unscheduled_sessions
-    then_i_see_the_school
-
-    when_i_seach_for_the_school
-    then_i_see_the_school
-
-    when_i_click_on_the_school
-    then_i_see_the_school_session
-    and_i_see_a_child_in_the_cohort
-
-    when_i_click_on_schedule_sessions
+    when_i_click_on_add_a_new_session
+    and_i_choose_the_school
+    and_i_choose_the_programmes
+    and_i_choose_the_year_groups
     then_i_see_the_dates_page
 
     when_i_add_an_invalid_date
@@ -28,6 +21,9 @@ describe "Manage school sessions" do
 
     when_i_choose_the_dates
     then_i_see_the_confirmation_page
+
+    when_i_press_back_enough_time_to_see_the_programmes
+    then_i_click_continue_back_to_the_confirmation_page
 
     when_i_click_on_change_programmes
     then_i_see_the_change_programmes_page
@@ -42,7 +38,7 @@ describe "Manage school sessions" do
     then_i_see_the_change_consent_reminders_page
     and_i_change_consent_reminders_weeks
 
-    when_i_save_changes
+    when_i_save_the_session
     then_i_should_see_the_session_details
 
     when_i_go_to_todays_sessions_as_a_nurse
@@ -50,6 +46,7 @@ describe "Manage school sessions" do
 
     when_i_go_to_scheduled_sessions
     then_i_see_the_school
+    and_i_see_a_child_in_the_cohort
 
     when_i_go_to_completed_sessions
     then_i_see_no_sessions
@@ -89,34 +86,30 @@ describe "Manage school sessions" do
         :with_generic_clinic,
         programmes: [@programme, @other_programme]
       )
-    @location = create(:school, :secondary, team: @team)
-    @session =
+    @location =
       create(
-        :session,
-        :unscheduled,
-        location: @location,
+        :school,
+        :secondary,
         team: @team,
-        programmes: [@programme]
+        programmes: [@programme, @other_programme]
       )
 
     @parent = create(:parent)
 
     @patient =
-      create(:patient, year_group: 8, session: @session, parents: [@parent])
+      create(:patient, year_group: 8, location: @location, parents: [@parent])
 
     clinic_session =
-      @team.generic_clinic_session(academic_year: AcademicYear.current)
-
-    clinic_session.dates << 1.month.from_now.to_date
-    clinic_session.days_before_consent_reminders = nil
-    clinic_session.send_consent_requests_at = nil
-    clinic_session.send_invitations_at =
-      clinic_session.dates.min - @team.days_before_invitations.days
-
-    clinic_session.save!
+      create(
+        :session,
+        date: 1.month.from_now.to_date,
+        team: @team,
+        location: @team.generic_clinic,
+        programmes: [@programme, @other_programme]
+      )
 
     patient_already_in_clinic_without_invitiation =
-      create(:patient, year_group: 8, session: @session)
+      create(:patient, year_group: 8, location: @location)
     create(
       :patient_location,
       patient: patient_already_in_clinic_without_invitiation,
@@ -124,7 +117,7 @@ describe "Manage school sessions" do
     )
 
     patient_already_in_clinic_with_invitiation =
-      create(:patient, year_group: 8, session: @session)
+      create(:patient, year_group: 8, location: @location)
     create(
       :patient_location,
       patient: patient_already_in_clinic_with_invitiation,
@@ -156,7 +149,7 @@ describe "Manage school sessions" do
     click_on "Update results"
   end
 
-  def when_i_seach_for_the_school
+  def when_i_search_for_the_school
     fill_in "Search", with: @location.name
     click_on "Update results"
   end
@@ -191,14 +184,57 @@ describe "Manage school sessions" do
     expect(page).to have_content("3 children")
   end
 
-  def when_i_click_on_schedule_sessions
-    click_on "Edit session"
-    click_on "Add session dates"
-  end
-
   def and_i_click_on_edit_dates
     click_on "Edit session"
     click_on "Change session dates"
+  end
+
+  def when_i_click_on_add_a_new_session
+    click_on "Add a new session"
+  end
+
+  def and_i_choose_the_school
+    expect(page).to have_content("What type of session is this?")
+
+    choose "School"
+    click_on "Continue"
+
+    expect(page).to have_content("Where is this school session taking place?")
+
+    select @location.name
+    click_on "Continue"
+  end
+
+  def and_i_choose_the_programmes
+    expect(page).to have_content(
+      "Which programmes will you run in this session?"
+    )
+
+    check "HPV"
+    click_on "Continue"
+  end
+
+  def and_i_choose_the_year_groups
+    expect(page).to have_content(
+      "Which year groups do you want to invite to this session?"
+    )
+
+    expect(page).not_to have_content("Reception")
+    # "Year 1" exists in "Year 11"
+    expect(page).not_to have_content("Year 2")
+    expect(page).not_to have_content("Year 3")
+    expect(page).not_to have_content("Year 4")
+    expect(page).not_to have_content("Year 5")
+    expect(page).not_to have_content("Year 6")
+    expect(page).not_to have_content("Year 7")
+    expect(page).not_to have_content("Year 12")
+    expect(page).not_to have_content("Year 13")
+
+    check "Year 8"
+    check "Year 9"
+    check "Year 10"
+    check "Year 11"
+    click_on "Continue"
   end
 
   def then_i_see_the_dates_page_but_cannot_change
@@ -211,7 +247,7 @@ describe "Manage school sessions" do
   end
 
   def then_i_see_the_dates_page
-    expect(page).to have_content("When will sessions be held?")
+    expect(page).to have_content("When will this session be held?")
   end
 
   def when_i_add_an_invalid_date
@@ -258,7 +294,22 @@ describe "Manage school sessions" do
   end
 
   def then_i_see_the_confirmation_page
-    expect(page).to have_content("Edit session")
+    expect(page).to have_content("Check and confirm")
+    expect(page).to have_content("Year groupsYears 8 to 11")
+    expect(page).to have_link("Change year groups")
+    expect(page).to have_content("Register attendanceYes")
+  end
+
+  def when_i_press_back_enough_time_to_see_the_programmes
+    3.times { click_on "Back" }
+    expect(page).to have_content(
+      "Which programmes will you run in this session?"
+    )
+  end
+
+  def then_i_click_continue_back_to_the_confirmation_page
+    click_on "Continue"
+    expect(page).to have_content("Check and confirm")
   end
 
   def when_i_click_on_change_programmes
@@ -266,7 +317,9 @@ describe "Manage school sessions" do
   end
 
   def then_i_see_the_change_programmes_page
-    expect(page).to have_content("Which programmes is this session part of?")
+    expect(page).to have_content(
+      "Which programmes will you run in this session?"
+    )
   end
 
   def and_i_change_the_programmes
@@ -310,8 +363,8 @@ describe "Manage school sessions" do
     click_on "Continue"
   end
 
-  def when_i_save_changes
-    click_on "Save changes"
+  def when_i_save_the_session
+    click_on "Continue"
   end
 
   def then_i_should_see_the_session_details
@@ -320,7 +373,7 @@ describe "Manage school sessions" do
   end
 
   def when_the_parent_visits_the_consent_form
-    visit start_parent_interface_consent_forms_path(@session, @programme)
+    visit start_parent_interface_consent_forms_path(Session.last, @programme)
   end
 
   def then_they_can_give_consent
@@ -336,12 +389,12 @@ describe "Manage school sessions" do
       :attendance_record,
       :present,
       patient: @patient,
-      session: @session.reload
+      session: Session.last
     )
   end
 
   def then_they_can_no_longer_give_consent
-    visit start_parent_interface_consent_forms_path(@session, @programme)
+    visit start_parent_interface_consent_forms_path(Session.last, @programme)
     expect(page).to have_content("The deadline for responding has passed")
   end
 

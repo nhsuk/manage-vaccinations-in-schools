@@ -55,15 +55,11 @@ class AppSessionActionsComponent < ViewComponent::Base
     count = session.patients_with_no_consent_response_count
 
     href =
-      if Flipper.enabled?(:programme_status, team)
-        session_patients_path(
-          session,
-          programme_status_group: "needs_consent",
-          programme_statuses: %w[needs_consent_no_response]
-        )
-      else
-        session_consent_path(session, consent_statuses: %w[no_response])
-      end
+      session_patients_path(
+        session,
+        programme_status_group: "needs_consent",
+        programme_statuses: %w[needs_consent_no_response]
+      )
 
     actions = [
       {
@@ -83,15 +79,11 @@ class AppSessionActionsComponent < ViewComponent::Base
       ).count
 
     href =
-      if Flipper.enabled?(:programme_status, team)
-        session_patients_path(
-          session,
-          programme_status_group: "has_refusal",
-          programme_statuses: %w[has_refusal_consent_conflicts]
-        )
-      else
-        session_consent_path(session, consent_statuses: %w[conflicts])
-      end
+      session_patients_path(
+        session,
+        programme_status_group: "has_refusal",
+        programme_statuses: %w[has_refusal_consent_conflicts]
+      )
 
     generate_row(:children_with_conflicting_consent_response, count:, href:)
   end
@@ -105,15 +97,11 @@ class AppSessionActionsComponent < ViewComponent::Base
       ).count
 
     href =
-      if Flipper.enabled?(:programme_status, team)
-        session_patients_path(
-          session,
-          programme_status_group: "needs_triage",
-          programme_statuses: []
-        )
-      else
-        session_triage_path(session, triage_status: "required")
-      end
+      session_patients_path(
+        session,
+        programme_status_group: "needs_triage",
+        programme_statuses: []
+      )
 
     generate_row(:children_requiring_triage, count:, href:)
   end
@@ -124,12 +112,7 @@ class AppSessionActionsComponent < ViewComponent::Base
     status = "unknown"
     count = patients.has_registration_status(status, session:).count
 
-    href =
-      if Flipper.enabled?(:schools_and_sessions)
-        session_patients_path(session, registration_status: status)
-      else
-        session_register_path(session, registration_status: status)
-      end
+    href = session_patients_path(session, registration_status: status)
 
     generate_row(:children_to_register, count:, href:)
   end

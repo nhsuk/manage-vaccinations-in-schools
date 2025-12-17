@@ -16,7 +16,7 @@ class DashboardController < ApplicationController
 
   def set_primary_items
     @primary_items =
-      if current_team.has_upload_access_only?
+      if current_team.has_upload_only_access?
         [
           {
             title: I18n.t("imports.index.title"),
@@ -34,19 +34,11 @@ class DashboardController < ApplicationController
         ]
       else
         [
-          if Flipper.enabled?(:schools_and_sessions)
-            {
-              title: I18n.t("schools.index.title"),
-              path: schools_path,
-              description: I18n.t("schools.index.description")
-            }
-          else
-            {
-              title: I18n.t("programmes.index.title"),
-              path: programmes_path,
-              description: I18n.t("programmes.index.description")
-            }
-          end,
+          {
+            title: I18n.t("schools.index.title"),
+            path: schools_path,
+            description: I18n.t("schools.index.description")
+          },
           {
             title: I18n.t("patients.index.title"),
             path: patients_path,
@@ -69,7 +61,7 @@ class DashboardController < ApplicationController
   def set_secondary_items
     @secondary_items = []
 
-    unless current_team.has_upload_access_only?
+    unless current_team.has_upload_only_access?
       @secondary_items << {
         title: I18n.t("school_moves.index.title"),
         path: school_moves_path,
@@ -88,13 +80,11 @@ class DashboardController < ApplicationController
         description: I18n.t("imports.index.description")
       }
 
-      if Flipper.enabled?(:schools_and_sessions)
-        @secondary_items << {
-          title: I18n.t("programmes.index.title"),
-          path: programmes_path,
-          description: I18n.t("programmes.index.description")
-        }
-      end
+      @secondary_items << {
+        title: I18n.t("programmes.index.title"),
+        path: programmes_path,
+        description: I18n.t("programmes.index.description")
+      }
     end
 
     @secondary_items << {

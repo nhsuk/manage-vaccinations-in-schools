@@ -156,7 +156,7 @@ class AppSessionSummaryComponent < ViewComponent::Base
   end
 
   def online_consent_links
-    return [] unless session.open_for_consent?
+    return [] unless session.can_receive_consent?
 
     ProgrammeGrouper
       .call(session.programmes)

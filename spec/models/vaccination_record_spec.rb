@@ -9,7 +9,7 @@
 #  delivery_method                         :integer
 #  delivery_site                           :integer
 #  discarded_at                            :datetime
-#  disease_types                           :enum             is an Array
+#  disease_types                           :enum             not null, is an Array
 #  dose_sequence                           :integer
 #  full_dose                               :boolean
 #  local_patient_id_uri                    :string
@@ -129,7 +129,12 @@ describe VaccinationRecord do
         create(:team, :with_generic_clinic, programmes: [programme])
       end
       let(:session) do
-        team.generic_clinic_session(academic_year: AcademicYear.current)
+        create(
+          :session,
+          team:,
+          location: team.generic_clinic,
+          programmes: [programme]
+        )
       end
 
       it { should validate_presence_of(:location_name) }
@@ -154,6 +159,34 @@ describe VaccinationRecord do
           "Enter a time in the past"
         )
       end
+    end
+  end
+
+  describe "#programme" do
+    subject { vaccination_record.programme }
+
+    before { Flipper.enable(:mmrv) }
+
+    context "for an MMRV vaccine" do
+      let(:programme) { Programme.mmr }
+      let(:vaccine) { Vaccine.find_by!(brand: "ProQuad") }
+
+      let(:vaccination_record) do
+        create(:vaccination_record, programme:, vaccine:)
+      end
+
+      its(:name) { should eq("MMRV") }
+    end
+
+    context "for an MMRV vaccination record without a vaccine" do
+      let(:programme) { Programme.mmr }
+      let(:disease_types) { %w[measles mumps rubella varicella] }
+
+      let(:vaccination_record) do
+        create(:vaccination_record, programme:, disease_types:, vaccine: nil)
+      end
+
+      its(:name) { should eq("MMRV") }
     end
   end
 

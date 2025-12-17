@@ -6,6 +6,7 @@
 #
 #  id                                              :bigint           not null, primary key
 #  academic_year                                   :integer          not null
+#  disease_types                                   :enum             is an Array
 #  health_answers                                  :jsonb            not null
 #  invalidated_at                                  :datetime
 #  notes                                           :text             default(""), not null
@@ -185,7 +186,9 @@ class Consent < ApplicationRecord
             submitted_at: consent_form.recorded_at,
             team: consent_form.team,
             vaccine_methods: consent_form_programme.vaccine_methods,
-            without_gelatine: consent_form_programme.without_gelatine
+            without_gelatine: consent_form_programme.without_gelatine,
+            # TODO: add disease_types to ConsentFormProgramme
+            disease_types: consent_form_programme.programme.disease_types
           )
         end
 
@@ -197,7 +200,7 @@ class Consent < ApplicationRecord
 
   def update_vaccination_records_no_notify!
     vaccination_records =
-      VaccinationRecord.where_programme(programme).where(patient:)
+      VaccinationRecord.for_programme(programme).where(patient:)
 
     vaccination_records.find_each do |vaccination_record|
       vaccination_record.update!(

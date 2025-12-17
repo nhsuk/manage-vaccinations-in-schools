@@ -116,6 +116,12 @@ class ClassImportsController < ApplicationController
       @class_import.commit_changesets(
         @class_import.changesets.from_file.ready_for_review
       )
+    elsif @class_import.changesets.cancelled.any?
+      @class_import.update_columns(
+        status: :partially_processed,
+        processed_at: Time.zone.now
+      )
+      @class_import.postprocess_rows!
     else
       @class_import.update_columns(
         status: :processed,
@@ -196,7 +202,11 @@ class ClassImportsController < ApplicationController
     @auto_matched_records =
       @class_import.changesets.ready_for_review.auto_match - @inter_team
     @import_issues =
-      @class_import.changesets.ready_for_review.import_issue - @inter_team
+      @class_import
+        .changesets
+        .includes(:patient)
+        .ready_for_review
+        .import_issue - @inter_team
     @school_moves =
       @class_import
         .changesets

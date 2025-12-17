@@ -30,8 +30,6 @@ describe "Child record imports twins" do
         programmes: [@programme]
       )
 
-    TeamSessionsFactory.call(@team, academic_year: AcademicYear.current)
-
     sign_in @team.users.first
   end
 

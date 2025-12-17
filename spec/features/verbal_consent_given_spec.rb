@@ -113,7 +113,13 @@ describe "Verbal consent" do
     @session = create(:session, team: @team, programmes:)
 
     @parent = create(:parent)
-    @patient = create(:patient, session: @session, parents: [@parent])
+    @patient =
+      create(
+        :patient,
+        session: @session,
+        parents: [@parent],
+        date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE - 1.year
+      )
 
     StatusUpdater.call
   end
@@ -182,7 +188,7 @@ describe "Verbal consent" do
     injective_alternative: nil,
     without_gelatine: nil
   )
-    visit session_consent_path(@session)
+    visit session_patients_path(@session)
     click_link @patient.full_name
     click_button "Record a new consent response"
 
@@ -205,6 +211,8 @@ describe "Verbal consent" do
     # How was the response given?
     choose "By phone"
     click_button "Continue"
+
+    screenshot_and_save_page
 
     # Do they agree?
     choose consent_option

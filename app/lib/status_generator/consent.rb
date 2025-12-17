@@ -41,6 +41,10 @@ class StatusGenerator::Consent
     status_should_be_given? ? agreed_without_gelatine : nil
   end
 
+  def disease_types
+    status_should_be_given? ? agreed_disease_types : []
+  end
+
   private
 
   attr_reader :programme,
@@ -99,6 +103,11 @@ class StatusGenerator::Consent
   def agreed_vaccine_methods
     @agreed_vaccine_methods ||=
       consents_for_status.map(&:vaccine_methods).inject(&:intersection)
+  end
+
+  def agreed_disease_types
+    @agreed_disease_types ||=
+      consents_for_status.filter_map(&:disease_types).inject(&:intersection)
   end
 
   def agreed_without_gelatine

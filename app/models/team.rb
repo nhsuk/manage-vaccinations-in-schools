@@ -79,9 +79,10 @@ class Team < ApplicationRecord
   normalizes :phone, with: PhoneNumberNormaliser.new
 
   enum :type,
-       { poc_only: 0, upload_only: 1, poc_with_legacy_upload: 2 },
+       { poc_only: 0, upload_only: 1 },
        validate: true,
-       prefix: true
+       prefix: "has",
+       suffix: "access"
 
   validates :careplus_venue_code, presence: true
   validates :email, notify_safe_email: true
@@ -99,30 +100,5 @@ class Team < ApplicationRecord
       .joins(:location_year_group)
       .where(location_year_group: { academic_year: })
       .pluck_year_groups
-  end
-
-  def generic_clinic_session(academic_year:)
-    location = generic_clinic
-
-    team_location =
-      TeamLocation.find_or_create_by!(team: self, location:, academic_year:)
-
-    Session
-      .includes(:location, :session_programme_year_groups, :team)
-      .create_with(dates: [])
-      .find_or_create_by!(team_location:)
-      .tap do |session|
-        if session.session_programme_year_groups.empty?
-          session.sync_location_programme_year_groups!(programmes:)
-        end
-      end
-  end
-
-  def has_upload_access_only?
-    type_upload_only?
-  end
-
-  def has_poc_access?
-    type_poc_only? || type_poc_with_legacy_upload?
   end
 end

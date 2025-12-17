@@ -245,7 +245,7 @@ describe Reports::OfflineSessionExporter do
             expect(rows.first["TRIAGED_BY"]).to be_present
 
             triage =
-              patient.triages.where_programme(programme).find_by(academic_year:)
+              patient.triages.for_programme(programme).find_by(academic_year:)
             expect(Time.zone.parse(rows.first["TRIAGE_DATE"]).to_i).to eq(
               triage.created_at.to_i
             )
@@ -263,7 +263,7 @@ describe Reports::OfflineSessionExporter do
               batch:,
               patient:,
               session:,
-              programme:,
+              programme: programme.variant_for(patient:),
               performed_by: user,
               notes: "Some notes."
             )
@@ -378,7 +378,7 @@ describe Reports::OfflineSessionExporter do
               performed_at:,
               batch:,
               patient:,
-              programme:,
+              programme: programme.variant_for(patient:),
               performed_by: user,
               notes: "Some notes.",
               location_name: "Waterloo Road"
@@ -444,7 +444,14 @@ describe Reports::OfflineSessionExporter do
         end
 
         context "with a vaccinated patient outside the school session, but in a clinic" do
-          let(:clinic_session) { team.generic_clinic_session(academic_year:) }
+          let(:clinic_session) do
+            create(
+              :session,
+              team:,
+              location: team.generic_clinic,
+              programmes: [programme]
+            )
+          end
 
           let!(:vaccination_record) do
             create(
@@ -453,7 +460,7 @@ describe Reports::OfflineSessionExporter do
               batch:,
               patient:,
               session: clinic_session,
-              programme:,
+              programme: programme.variant_for(patient:),
               performed_by: user,
               notes: "Some notes.",
               location_name: "Waterloo Hospital"
@@ -600,7 +607,7 @@ describe Reports::OfflineSessionExporter do
               :not_administered,
               patient:,
               session:,
-              programme:,
+              programme: programme.variant_for(patient:),
               performed_at:,
               performed_by: user,
               notes: "Some notes."
@@ -906,7 +913,7 @@ describe Reports::OfflineSessionExporter do
               batch:,
               patient:,
               session:,
-              programme:,
+              programme: programme.variant_for(patient:),
               location_name: "A Clinic",
               performed_by: user,
               notes: "Some notes."
@@ -1133,6 +1140,24 @@ describe Reports::OfflineSessionExporter do
   context "MMR programme" do
     let(:programme) { Programme.mmr }
     let(:expected_programme) { "MMR" }
+    let(:expected_dose_sequence) { nil }
+    let(:expected_consent_status) { "Consent given" }
+
+    include_examples "generates a report"
+  end
+
+  context "MMRV programme" do
+    # We move forward in to the future where we can assume that MMRV is given
+    # to more children, this also ensures that the patients have a date of
+    # birth that makes them eligible.
+
+    before do
+      Flipper.enable(:mmrv)
+      travel 10.years
+    end
+
+    let(:programme) { Programme.mmr }
+    let(:expected_programme) { "MMRV" }
     let(:expected_dose_sequence) { nil }
     let(:expected_consent_status) { "Consent given" }
 

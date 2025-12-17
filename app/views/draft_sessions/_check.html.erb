@@ -2,9 +2,10 @@
   <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
-<% content_for :page_title, t(".title", programmes:) %>
+<% title = "Have you imported historical vaccination records for #{@draft_session.programmes.map(&:name).to_sentence}?" %>
+<% content_for :page_title, title %>
 
-<%= govuk_panel(title_text: t(".title", programmes:), classes: %w[app-panel--interruption]) do %>
+<%= govuk_panel(title_text: title, classes: %w[app-panel--interruption]) do %>
   <p>
     <%= @catch_up_patients_vaccinated_percentage == 0 ? "" : "Only " %>
     <%= @catch_up_patients_vaccinated_percentage %>% of children in
@@ -18,7 +19,7 @@
     children in this school before you continue.
   </p>
 
-  <% if @draft_session.open_for_consent? && @catch_up_patients_receiving_consent_requests_count > 0 %>
+  <% if @draft_session.can_receive_consent? && @catch_up_patients_receiving_consent_requests_count > 0 %>
     <p>
       Scheduling this session now will send consent requests to
       <%= pluralize(@catch_up_patients_receiving_consent_requests_count, "parent") %>
@@ -30,8 +31,8 @@
 
   <%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
     <div class="nhsuk-button-group">
-      <%= f.govuk_submit submit_button_text, class: "nhsuk-button--reverse" %>
-      <%= link_to cancel_link_text, cancel_link_path %>
+      <%= f.govuk_submit submit_text, class: "nhsuk-button--reverse" %>
+      <%= link_to cancel_text, cancel_href %>
     </div>
   <% end %>
 <% end %>

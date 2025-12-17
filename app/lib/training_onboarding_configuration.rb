@@ -45,15 +45,15 @@ class TrainingOnboardingConfiguration
     }
   end
 
-  def programmes
-    %w[flu hpv menacwy td_ipv]
-  end
+  def programmes = Programme.all.map(&:type)
 
   def subteams
     { generic: { name:, email:, phone: } }
   end
 
   def users
+    return [] if Settings.cis2.enabled
+
     User.fallback_roles.keys.map do |role|
       email_and_password = "#{role.dasherize}.#{workgroup}@example.com"
 

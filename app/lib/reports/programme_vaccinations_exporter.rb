@@ -91,7 +91,7 @@ class Reports::ProgrammeVaccinationsExporter
     scope =
       team
         .vaccination_records
-        .where_programme(programme)
+        .for_programme(programme)
         .for_academic_year(academic_year)
         .includes(
           :batch,
@@ -135,7 +135,7 @@ class Reports::ProgrammeVaccinationsExporter
   def consents
     @consents ||=
       Consent
-        .where_programme(programme)
+        .for_programme(programme)
         .where(patient_id: vaccination_records.select(:patient_id))
         .not_invalidated
         .includes(:parent, :patient)
@@ -155,7 +155,7 @@ class Reports::ProgrammeVaccinationsExporter
         .select(
           "DISTINCT ON (patient_id, location_id, date) gillick_assessments.*"
         )
-        .where_programme(programme)
+        .for_programme(programme)
         .where(
           patient_id: vaccination_records.select(:patient_id),
           location_id: vaccination_records.select(:location_id)
@@ -174,7 +174,7 @@ class Reports::ProgrammeVaccinationsExporter
     @triages ||=
       Triage
         .select("DISTINCT ON (patient_id) triages.*")
-        .where_programme(programme)
+        .for_programme(programme)
         .where(
           academic_year:,
           patient_id: vaccination_records.select(:patient_id)

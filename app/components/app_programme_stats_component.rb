@@ -13,7 +13,7 @@ class AppProgrammeStatsComponent < ViewComponent::Base
     helpers
       .policy_scope(VaccinationRecord)
       .administered
-      .where_programme(programme)
+      .for_programme(programme)
       .where(patient_id: patient_ids)
       .count
   end

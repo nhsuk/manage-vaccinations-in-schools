@@ -45,10 +45,6 @@ module MavisCLI
               academic_year:
             )
           end
-
-          team.generic_clinic_session(
-            academic_year:
-          ).sync_location_programme_year_groups!(programmes: team.programmes)
         end
       end
     end

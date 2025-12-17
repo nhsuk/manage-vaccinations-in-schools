@@ -60,14 +60,20 @@ Sentry.init do |config|
 
   config.before_send =
     lambda do |event, hint|
-      team_only_api_key_error =
-        !Rails.env.production? &&
+      unless Rails.env.production?
+        team_only_api_key_error =
           hint[:exception].is_a?(Notifications::Client::BadRequestError) &&
-          hint[:exception].message.include?(
-            NotifyDeliveryJob::TEAM_ONLY_API_KEY_MESSAGE
-          )
+            hint[:exception].message.include?(
+              NotifyDeliveryJob::TEAM_ONLY_API_KEY_MESSAGE
+            )
 
-      next if team_only_api_key_error
+        next if team_only_api_key_error
+
+        too_many_requests_error =
+          hint[:exception].is_a?(Faraday::TooManyRequestsError)
+
+        next if too_many_requests_error
+      end
 
       event.extra = combined_filter.filter(event.extra) if event.extra
       event.user = combined_filter.filter(event.user) if event.user

@@ -7,6 +7,7 @@
 #  id               :bigint           not null, primary key
 #  academic_year    :integer          not null
 #  date             :date
+#  disease_types    :enum             is an Array
 #  dose_sequence    :integer
 #  programme_type   :enum             not null
 #  status           :integer          default("not_eligible"), not null
@@ -137,6 +138,7 @@ class Patient::ProgrammeStatus < ApplicationRecord
     self.status = generator.status
     self.vaccine_methods = generator.vaccine_methods
     self.without_gelatine = generator.without_gelatine
+    self.disease_types = generator.disease_types
   end
 
   def vaccine_criteria = VaccineCriteria.from_programme_status(self)

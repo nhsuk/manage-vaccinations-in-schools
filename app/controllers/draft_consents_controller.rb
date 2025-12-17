@@ -36,6 +36,8 @@ class DraftConsentsController < ApplicationController
       handle_questions
     when :triage
       handle_triage
+    when :mmrv_vaccine_availability
+      handle_mmrv_vaccine_availability
     else
       @draft_consent.assign_attributes(update_params)
     end
@@ -125,17 +127,19 @@ class DraftConsentsController < ApplicationController
     )
   end
 
+  def handle_mmrv_vaccine_availability
+    @draft_consent.assign_attributes(update_params)
+    @draft_consent.update_disease_types
+  end
+
   def finish_wizard_path
-    if Flipper.enabled?(:programme_status, current_team)
-      session_patients_path(@session)
-    else
-      session_consent_path(@session)
-    end
+    session_patients_path(@session)
   end
 
   def update_params
     permitted_attributes = {
       agree: %i[response injection_alternative without_gelatine],
+      mmrv_vaccine_availability: %i[vaccine_stock_is_available],
       notes: %i[notes],
       notify_parent_on_refusal: %i[notify_parent_on_refusal],
       notify_parents_on_vaccination: %i[notify_parents_on_vaccination],

@@ -1,13 +1,3 @@
-<% content_for :before_main do %>
-  <% unless Flipper.enabled?(:schools_and_sessions) %>
-    <%= render AppBreadcrumbComponent.new(items: [
-                                            { text: t("dashboard.index.title"), href: dashboard_path },
-                                            { text: t("sessions.index.title"), href: sessions_path },
-                                            { text: @session.location.name, href: session_path(@session) },
-                                          ]) %>
-  <% end %>
-<% end %>
-
 <%= h1 t(".title") %>
 
 <% t(".description").split("\n").each do |paragraph| %>
@@ -60,7 +50,7 @@
 
 <p><%= t(".pre_confirm") %></p>
 
-<% if @session.open_for_consent? %>
+<% if @session.can_receive_consent? %>
   <%= govuk_button_to t(".confirm"),
                       session_manage_consent_reminders_path(@session) %>
 <% end %>

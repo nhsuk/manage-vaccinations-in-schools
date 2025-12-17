@@ -130,8 +130,6 @@ describe "Import child records" do
 
     create(:school, urn: "123456", team: @team)
     @user = @team.users.first
-
-    TeamSessionsFactory.call(@team, academic_year: AcademicYear.current)
   end
 
   def and_pds_lookup_during_import_is_enabled
@@ -364,7 +362,7 @@ describe "Import child records" do
   end
 
   def then_i_should_see_import_issues_with_the_count
-    expect(page).to have_link("Upload issues")
+    expect(page).to have_link("Issues")
     expect(page).to have_selector(".app-count", text: "(1)").twice
   end
 end

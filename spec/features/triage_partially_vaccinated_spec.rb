@@ -11,7 +11,7 @@ describe "Triage" do
     and_i_upload_historical_vaccination_records
     then_i_see_the_completed_upload
 
-    when_i_go_the_session
+    when_i_go_the_school
     and_i_upload_the_class_list
     then_i_see_the_completed_upload
 
@@ -21,7 +21,6 @@ describe "Triage" do
 
     when_i_go_the_session
     and_the_parent_gives_consent
-    and_i_click_on_triage
     then_i_see_one_patient_needing_triage
     and_i_click_on_the_patient
     then_i_see_the_patient_needs_triage
@@ -72,10 +71,8 @@ describe "Triage" do
     expect(page).to have_content("Completed")
   end
 
-  def when_i_go_the_session
-    click_on "Sessions", match: :first
-    choose "Scheduled"
-    click_on "Update results"
+  def when_i_go_the_school
+    click_on "Schools", match: :first
     click_on @session.location.name
   end
 
@@ -91,17 +88,24 @@ describe "Triage" do
     wait_for_import_to_complete(ClassImport)
   end
 
-  def then_i_see_one_patient_needing_consent
-    click_on "Consent"
+  def when_i_go_the_session
+    click_on "Sessions", match: :first
+    choose "Scheduled"
+    click_on "Update results"
+    click_on @session.location.name
+  end
 
-    check "No response"
+  def then_i_see_one_patient_needing_consent
+    within(".app-secondary-navigation") { click_on "Children" }
+
+    choose "Needs consent"
     click_on "Update results"
 
     expect(page).to have_content("Showing 1 to 1 of 1 children")
   end
 
   def and_i_see_no_patients_needing_triage
-    click_on "Triage"
+    within(".app-secondary-navigation") { click_on "Children" }
 
     choose "Needs triage"
     click_on "Update results"
@@ -116,11 +120,9 @@ describe "Triage" do
     page.refresh
   end
 
-  def and_i_click_on_triage
-    click_on "Triage"
-  end
-
   def then_i_see_one_patient_needing_triage
+    within(".app-secondary-navigation") { click_on "Children" }
+
     choose "Needs triage"
     click_on "Update results"
 

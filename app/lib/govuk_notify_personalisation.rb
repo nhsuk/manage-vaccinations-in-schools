@@ -527,7 +527,7 @@ class GovukNotifyPersonalisation
               .first == method
           end
         else
-          Vaccine.where_programme(programmes).exists?(method:)
+          Vaccine.for_programmes(programmes).exists?(method:)
         end
 
       any_vaccines_with_method ? "yes" : "no"
@@ -550,12 +550,12 @@ class GovukNotifyPersonalisation
                 .vaccine_methods
                 .first
             Vaccine
-              .where_programme(programme)
+              .for_programme(programme)
               .where(method:)
               .flat_map(&:side_effects)
           end
         else
-          Vaccine.where_programme(programmes).flat_map(&:side_effects)
+          Vaccine.for_programmes(programmes).flat_map(&:side_effects)
         end
       end
 

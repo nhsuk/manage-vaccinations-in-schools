@@ -30,15 +30,4 @@ describe ProgrammeVariant do
       expect(programme_variant.name_in_sentence).to eq("MMRV")
     end
   end
-
-  describe "#vaccines" do
-    it "queries vaccines with the programme variant and distinguishing diseases" do
-      expect(Vaccine).to receive(:where_programme).with(
-        programme_variant,
-        %w[measles mumps rubella varicella]
-      )
-
-      programme_variant.vaccines
-    end
-  end
 end

@@ -260,7 +260,7 @@ class Patient < ApplicationRecord
             Patient::ProgrammeStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(status:, academic_year:)
 
           where(programme_status_scope.arel.exists)
@@ -272,7 +272,7 @@ class Patient < ApplicationRecord
             Patient::VaccinationStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(status:, academic_year:)
               .arel
               .exists
@@ -291,7 +291,7 @@ class Patient < ApplicationRecord
             Patient::ConsentStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(status:, academic_year:)
 
           unless vaccine_method.nil?
@@ -318,7 +318,7 @@ class Patient < ApplicationRecord
             Patient::TriageStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(status:, academic_year:)
 
           unless vaccine_method.nil?
@@ -343,14 +343,14 @@ class Patient < ApplicationRecord
             Patient::TriageStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(academic_year:)
 
           triage_status_not_required =
             Patient::TriageStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(academic_year:)
               .where(status: "not_required")
 
@@ -358,7 +358,7 @@ class Patient < ApplicationRecord
             Patient::ConsentStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(academic_year:)
 
           unless vaccine_methods.nil?
@@ -465,7 +465,7 @@ class Patient < ApplicationRecord
             PatientSpecificDirection
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(academic_year:, team:)
               .not_invalidated
               .arel
@@ -479,7 +479,7 @@ class Patient < ApplicationRecord
             PatientSpecificDirection
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programmes(Array(programme))
               .where(academic_year:, team:)
               .not_invalidated
               .arel
@@ -521,7 +521,7 @@ class Patient < ApplicationRecord
             Patient::VaccinationStatus
               .select("1")
               .where("patient_id = patients.id")
-              .where_programme(programme)
+              .for_programme(programme)
               .vaccinated
 
           not_eligible_criteria =
@@ -761,22 +761,6 @@ class Patient < ApplicationRecord
     true
   end
 
-  def next_activity(programme:, academic_year:)
-    return nil if vaccination_status(programme:, academic_year:).vaccinated?
-
-    if consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
-      return :record
-    end
-
-    return :triage if triage_status(programme:, academic_year:).required?
-
-    consent_status = consent_status(programme:, academic_year:)
-
-    return :consent if consent_status.no_response? || consent_status.conflicts?
-
-    :do_not_record
-  end
-
   def vaccine_criteria(programme:, academic_year:)
     triage_status = triage_status(programme:, academic_year:)
 
@@ -789,13 +773,13 @@ class Patient < ApplicationRecord
     end
   end
 
-  def deceased?
-    date_of_death != nil
+  def eligible_for_mmrv?
+    date_of_birth >= Programme::MIN_MMRV_ELIGIBILITY_DATE
   end
 
-  def restricted?
-    restricted_at != nil
-  end
+  def deceased? = date_of_death != nil
+
+  def restricted? = restricted_at != nil
 
   def send_notifications?(team:, send_to_archived: false)
     !deceased? && !restricted? && !invalidated? &&

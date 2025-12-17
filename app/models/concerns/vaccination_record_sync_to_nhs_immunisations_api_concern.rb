@@ -13,7 +13,7 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
               Programme.all.select { Flipper.enabled?(:imms_api_sync_job, it) }
 
             ids =
-              syncable_to_nhs_immunisations_api.where_programme(
+              syncable_to_nhs_immunisations_api.for_programmes(
                 programmes
               ).pluck(:id)
 

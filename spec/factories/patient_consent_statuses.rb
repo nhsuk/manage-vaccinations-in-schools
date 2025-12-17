@@ -6,6 +6,7 @@
 #
 #  id               :bigint           not null, primary key
 #  academic_year    :integer          not null
+#  disease_types    :enum             is an Array
 #  programme_type   :enum             not null
 #  status           :integer          default("no_response"), not null
 #  vaccine_methods  :integer          default([]), not null, is an Array
@@ -27,6 +28,7 @@ FactoryBot.define do
     patient
     programme { Programme.sample }
     academic_year { AcademicYear.current }
+    disease_types { Programme::DISEASE_TYPES[programme.type] }
 
     traits_for_enum :status
 

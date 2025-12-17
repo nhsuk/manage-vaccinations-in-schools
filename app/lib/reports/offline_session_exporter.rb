@@ -334,7 +334,7 @@ class Reports::OfflineSessionExporter
     row[:programme] = programme.import_names.first
     row[:vaccine_given] = Cell.new(
       vaccine&.upload_name,
-      allowed_values: vaccine_values_for_programme(programme)
+      allowed_values: vaccine_values_for_programmes([programme])
     )
     row[:performing_professional_email] = Cell.new(
       vaccination_record.performed_by_user&.email,
@@ -371,6 +371,12 @@ class Reports::OfflineSessionExporter
   end
 
   def add_new_row_cells(row, patient:, programme:)
+    # We're assuming here that the patient is eligible for the default
+    # programme, and optionally a variant. This might not be the case in the
+    # future, but it works for now.
+
+    programmes = [programme.variant_for(patient:), programme]
+
     row[:organisation_code] = organisation.ods_code
 
     row[:vaccinated] = Cell.new(allowed_values: %w[Y N])
@@ -381,9 +387,9 @@ class Reports::OfflineSessionExporter
       type: :integer,
       allowed_values: [1, 2]
     )
-    row[:programme] = programme.import_names.first
+    row[:programme] = programmes.first.import_names.first
     row[:vaccine_given] = Cell.new(
-      allowed_values: vaccine_values_for_programme(programme)
+      allowed_values: vaccine_values_for_programmes(programmes)
     )
     row[:performing_professional_email] = Cell.new(
       allowed_formula: performing_professionals_range
@@ -396,7 +402,7 @@ class Reports::OfflineSessionExporter
     row[:anatomical_site] = Cell.new(
       allowed_values: ImmunisationImportRow::DELIVERY_SITES.keys
     )
-    row[:dose_sequence] = programme.default_dose_sequence
+    row[:dose_sequence] = programmes.first.default_dose_sequence
     row[:reason_not_vaccinated] = Cell.new(
       allowed_values: ImmunisationImportRow::REASONS_NOT_ADMINISTERED.keys
     )
@@ -408,10 +414,10 @@ class Reports::OfflineSessionExporter
     end
   end
 
-  def vaccine_values_for_programme(programme)
-    @vaccines[programme] ||= Vaccine
+  def vaccine_values_for_programmes(programmes)
+    @vaccines[programmes] ||= Vaccine
       .active
-      .where_programme(programme)
+      .for_programmes(programmes)
       .pluck(:upload_name)
   end
 

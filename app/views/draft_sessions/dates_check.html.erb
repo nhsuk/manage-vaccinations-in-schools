@@ -1,5 +1,4 @@
-<%= render "catch_up_warning",
-          programmes: @draft_session.programmes.map(&:name).to_sentence,
-          submit_button_text: "Keep session dates",
-          cancel_link_text: "Remove session dates",
-          cancel_link_path: draft_session_path("dates") %>
+<%= render "check",
+          submit_text: "Keep session dates",
+          cancel_text: "Remove session dates",
+          cancel_href: draft_session_path("dates") %>

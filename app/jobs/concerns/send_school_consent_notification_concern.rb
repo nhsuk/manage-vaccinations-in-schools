@@ -6,7 +6,7 @@ module SendSchoolConsentNotificationConcern
   included { queue_as :notifications }
 
   def patient_programmes_eligible_for_notification(session:)
-    return unless session.school? && session.open_for_consent?
+    return unless session.school? && session.can_receive_consent?
 
     session
       .patient_locations
