@@ -204,7 +204,7 @@ class DraftConsent
   def update_disease_types
     self.disease_types =
       if eligible_for_mmrv? && vaccine_stock_is_available
-        ProgrammeVariant::DISEASE_TYPES["mmrv"]
+        Programme::Variant::DISEASE_TYPES["mmrv"]
       else
         Programme::DISEASE_TYPES[programme.type]
       end

@@ -158,16 +158,18 @@ class Programme
     return self unless mmr?
 
     # If disease_types is present, it takes precedent
-    # over patient eligibility for MMRV
+    # over patient eligibility for MMRV.
     if disease_types.present?
       return self unless disease_types.include?("varicella")
     else
       return self unless patient&.eligible_for_mmrv?
     end
 
-    return self unless Flipper.enabled?(:mmrv)
-
-    ProgrammeVariant.new(self, variant_type: "mmrv")
+    if Flipper.enabled?(:mmrv)
+      Programme::Variant.new(self, variant_type: "mmrv")
+    else
+      self
+    end
   end
 
   def disease_types = DISEASE_TYPES.fetch(type)

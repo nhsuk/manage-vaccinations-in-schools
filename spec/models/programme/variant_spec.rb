@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe ProgrammeVariant do
+describe Programme::Variant do
   subject(:programme_variant) { described_class.new(programme, variant_type:) }
 
   let(:programme) { Programme.mmr }
@@ -13,21 +13,23 @@ describe ProgrammeVariant do
   end
 
   describe "#translation_key" do
-    it "returns the variant type" do
-      expect(programme_variant.translation_key).to eq(variant_type)
-    end
+    subject { programme_variant.translation_key }
+
+    it { should eq(variant_type) }
   end
 
   describe "#name" do
+    subject(:name) { programme_variant.name }
+
     it "use variant type for the translation" do
       expect(I18n).to receive(:t).with(variant_type, scope: :programme_types)
-      programme_variant.name
+      name
     end
   end
 
   describe "#name_in_sentence" do
-    it "returns the variant name" do
-      expect(programme_variant.name_in_sentence).to eq("MMRV")
-    end
+    subject(:name_in_sentence) { programme_variant.name_in_sentence }
+
+    it { should eq("MMRV") }
   end
 end

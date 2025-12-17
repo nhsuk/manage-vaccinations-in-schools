@@ -72,7 +72,7 @@ describe "MMRV vaccination" do
         date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month
       )
     @patient.consents.last.update!(
-      disease_types: ProgrammeVariant::DISEASE_TYPES["mmrv"]
+      disease_types: Programme::Variant::DISEASE_TYPES["mmrv"]
     )
     StatusUpdater.call(patient: @patient)
     @community_clinic = create(:community_clinic, team: @team)

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ProgrammeVariant < SimpleDelegator
+class Programme::Variant < SimpleDelegator
   attr_reader :variant_type
 
   DISEASE_TYPES = { "mmrv" => %w[measles mumps rubella varicella] }.freeze
