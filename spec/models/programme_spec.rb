@@ -83,6 +83,18 @@ describe Programme do
 
       it { should eq("HPV") }
     end
+
+    context "with an MMR programme" do
+      let(:programme) { described_class.mmr }
+
+      it { should eq("MMR") }
+
+      context "when MMRV is enabled" do
+        before { Flipper.enable(:mmrv) }
+
+        it { should eq("MMR(V)") }
+      end
+    end
   end
 
   describe "#name_in_sentence" do
