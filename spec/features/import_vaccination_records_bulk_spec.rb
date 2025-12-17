@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
-describe("Immunisation imports") do
+describe("National reporting immunisation imports") do
   around { |example| travel_to(Date.new(2025, 12, 20)) { example.run } }
 
   scenario "User uploads a mixed flu and HPV file, views cohort and vaccination records" do
     given_mavis_logins_are_configured
     given_i_am_signed_in_as_a_bulk_upload_user
+    given_a_patient_already_exists
 
     when_i_go_to_the_import_page
     then_i_should_see_the_upload_link
@@ -26,6 +27,8 @@ describe("Immunisation imports") do
     then_i_should_see_the_upload
     and_i_should_see_the_vaccination_records
     and_the_patients_should_now_be_associated_with_the_team
+    and_the_newly_created_patients_should_be_archived
+    and_the_existing_patients_should_not_be_archived
 
     # TODO: make sure this is added after patients are visible in the "Children" page
     # when_i_click_on_a_vaccination_record
@@ -46,7 +49,23 @@ describe("Immunisation imports") do
   end
 
   def given_i_am_signed_in_as_a_bulk_upload_user
-    sign_in @team.users.first
+    @user = @team.users.first
+    sign_in @user
+  end
+
+  def given_a_patient_already_exists
+    @existing_patient =
+      create(
+        :patient,
+        given_name: "Harry",
+        family_name: "Potter",
+        date_of_birth: Date.new(2001, 1, 1),
+        nhs_number: "9449308357",
+        team: @team
+      )
+
+    # Create a vaccination record to link this patient with the team
+    create(:vaccination_record, patient: @existing_patient, team: @team)
   end
 
   def and_school_locations_exist
@@ -142,6 +161,16 @@ describe("Immunisation imports") do
 
   def and_the_patients_should_now_be_associated_with_the_team
     Patient.all.find_each { |patient| expect(patient.teams).to include(@team) }
+  end
+
+  def and_the_newly_created_patients_should_be_archived
+    new_patient = Patient.find_by(nhs_number: "9999075320")
+    expect(new_patient.archived?(team: @team)).to be true
+    expect(new_patient.archive_reasons.first.type).to eq "immunisation_import"
+  end
+
+  def and_the_existing_patients_should_not_be_archived
+    expect(@existing_patient.archived?(team: @team)).to be false
   end
 
   def when_i_click_on_a_vaccination_record
