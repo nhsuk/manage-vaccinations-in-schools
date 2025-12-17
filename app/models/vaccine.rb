@@ -58,9 +58,9 @@ class Vaccine < ApplicationRecord
           return all if disease_types.blank?
 
           where(
-            "ARRAY(SELECT unnest(disease_types) ORDER BY 1) = ARRAY[?]::disease_type[]",
-            disease_types.sort
-          )
+            "disease_types <@ ARRAY[?]::disease_type[]",
+            disease_types
+          ).where("disease_types @> ARRAY[?]::disease_type[]", disease_types)
         end
 
   delegate :first_health_question, to: :health_questions
