@@ -43,7 +43,7 @@ class AppPatientSessionConsentComponent < AppPatientSessionSectionComponent
   def can_send_consent_request?
     consent_status.no_response? &&
       patient.send_notifications?(team: @session.team) &&
-      session.open_for_consent? && patient.parents.any?
+      session.can_receive_consent? && patient.parents.any?
   end
 
   def grouped_consents

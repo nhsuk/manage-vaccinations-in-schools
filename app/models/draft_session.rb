@@ -37,11 +37,11 @@ class DraftSession
 
     steps << :location_type unless editing?
 
-    steps << :school if school? && !editing?
+    steps << :school if school? && new_record?
 
     steps << :programmes
     steps << :programmes_check
-    steps << :year_groups if school? && !editing?
+    steps << :year_groups if can_change_year_groups?
 
     steps << :dates
     steps << :dates_check if school?
@@ -189,7 +189,9 @@ class DraftSession
 
   def dates = session_dates.map(&:value).compact.sort.uniq
 
-  def can_change_year_groups? = school? && !editing?
+  def can_change_year_groups?
+    school? && (new_record? || !open_for_consent?)
+  end
 
   def set_notification_dates
     if earliest_date

@@ -50,7 +50,7 @@
 
 <p><%= t(".pre_confirm") %></p>
 
-<% if @session.open_for_consent? %>
+<% if @session.can_receive_consent? %>
   <%= govuk_button_to t(".confirm"),
                       session_manage_consent_reminders_path(@session) %>
 <% end %>
