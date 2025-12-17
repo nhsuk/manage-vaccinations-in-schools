@@ -15,8 +15,6 @@ class API::Reporting::BaseController < ActionController::API
   include Pagy::Backend
   include Pagy::JsonApiExtra
 
-  include UserSessionLoggingConcern
-
   before_action :ensure_reporting_api_feature_enabled
   before_action :authenticate_user_by_jwt!
 
