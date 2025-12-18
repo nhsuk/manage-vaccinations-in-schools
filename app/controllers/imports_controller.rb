@@ -15,8 +15,12 @@ class ImportsController < ApplicationController
   end
 
   def create
-    DraftImport.new(request_session: session, current_user:).clear!
-    redirect_to draft_import_path(Wicked::FIRST_STEP)
+    if current_team.has_upload_only_access?
+      redirect_to new_immunisation_import_path
+    else
+      DraftImport.new(request_session: session, current_user:).clear!
+      redirect_to draft_import_path(Wicked::FIRST_STEP)
+    end
   end
 
   private
