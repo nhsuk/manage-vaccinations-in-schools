@@ -805,10 +805,6 @@ en:
       title: Your team
       title_short: Team
       description: Manage your team’s settings
-  vaccination_records:
-    index:
-      title: Vaccination records
-      description: Find and edit vaccination records
   vaccines:
     index:
       title: Vaccines

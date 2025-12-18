@@ -24,8 +24,9 @@ class DashboardController < ApplicationController
             description: I18n.t("imports.index.description")
           },
           {
-            title: I18n.t("vaccination_records.index.title"),
-            description: I18n.t("vaccination_records.index.description")
+            title: I18n.t("patients.index.title"),
+            path: patients_path,
+            description: I18n.t("patients.index.description")
           },
           {
             title: I18n.t("reports.index.title"),
