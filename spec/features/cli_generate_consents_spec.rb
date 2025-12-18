@@ -104,13 +104,8 @@ describe "mavis generate consents" do
     expect(
       @team
         .patients
-        .has_consent_status(
-          :given,
-          programme: @programme,
-          academic_year: AcademicYear.current
-        )
-        .has_triage_status(
-          :not_required,
+        .has_programme_status(
+          "due",
           programme: @programme,
           academic_year: AcademicYear.current
         )
@@ -119,13 +114,8 @@ describe "mavis generate consents" do
     expect(
       @team
         .patients
-        .has_consent_status(
-          :given,
-          programme: @programme,
-          academic_year: AcademicYear.current
-        )
-        .has_triage_status(
-          :required,
+        .has_programme_status(
+          "due",
           programme: @programme,
           academic_year: AcademicYear.current
         )
