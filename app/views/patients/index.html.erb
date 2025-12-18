@@ -25,7 +25,9 @@
                 current_team:,
                 programmes: @form.programmes,
                 show_nhs_number: true,
-                show_school: true,
+                show_school: @show_patient_school,
+                show_programme_status: @show_patient_programme_status,
+                show_postcode: @show_patient_postcode,
               ) %>
         <% end %>
       <% end %>
