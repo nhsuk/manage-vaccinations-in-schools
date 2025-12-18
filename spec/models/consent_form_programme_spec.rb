@@ -31,9 +31,11 @@ describe ConsentFormProgramme do
   describe "#vaccines" do
     context "when there are MMR and MMRV vaccines" do
       it "only returns MMR vaccines" do
-        expect(consent_form_programme.vaccines).to match_array(
-          programme.vaccines
-        )
+        # Ensure that the MMRV vaccines do actually exist!
+        expect(Vaccine.where(brand: %w[ProQuad Priorix-Tetra]).count).to eq(2)
+
+        mmr_vaccines = Vaccine.where(brand: ["Priorix", "MMR VaxPro"])
+        expect(consent_form_programme.vaccines).to match_array(mmr_vaccines)
       end
     end
   end

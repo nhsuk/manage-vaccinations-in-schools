@@ -534,7 +534,7 @@ describe StatusGenerator::Consent do
     end
 
     context "with an invalidated refused and given consent" do
-      let(:refused_disease_types) { ProgrammeVariant::DISEASE_TYPES["mmrv"] }
+      let(:refused_disease_types) { Programme::Variant::DISEASE_TYPES["mmrv"] }
       let(:given_disease_types) { Programme::DISEASE_TYPES["mmr"] }
 
       before do
@@ -583,7 +583,9 @@ describe StatusGenerator::Consent do
       end
 
       context "and conflicting parental consent" do
-        let(:refused_disease_types) { ProgrammeVariant::DISEASE_TYPES["mmrv"] }
+        let(:refused_disease_types) do
+          Programme::Variant::DISEASE_TYPES["mmrv"]
+        end
         let(:given_disease_types) { Programme::DISEASE_TYPES["mmr"] }
 
         before do

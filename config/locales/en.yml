@@ -725,6 +725,7 @@ en:
     hpv: HPV
     menacwy: MenACWY
     mmr: MMR
+    mmr_and_mmrv: MMR(V)
     mmrv: MMRV
     td_ipv: Td/IPV
   reports:

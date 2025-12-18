@@ -201,15 +201,6 @@ class DraftConsent
     self.editing_id = value.id
   end
 
-  def update_disease_types
-    self.disease_types =
-      if eligible_for_mmrv? && vaccine_stock_is_available
-        ProgrammeVariant::DISEASE_TYPES["mmrv"]
-      else
-        Programme::DISEASE_TYPES[programme.type]
-      end
-  end
-
   def update_vaccine_methods_and_without_gelatine
     if flu_response?
       if response == "given_nasal"
@@ -230,6 +221,19 @@ class DraftConsent
       self.without_gelatine = nil
       self.injection_alternative = nil
     end
+  end
+
+  def update_disease_types
+    return if programme_type.nil?
+
+    self.disease_types =
+      if eligible_for_mmrv? && vaccine_stock_is_available
+        Programme::Variant::DISEASE_TYPES["mmrv"]
+      elsif is_mmr?
+        Programme::Variant::DISEASE_TYPES["mmr"]
+      else
+        Programme::DISEASE_TYPES[programme_type]
+      end
   end
 
   def parent
@@ -297,8 +301,18 @@ class DraftConsent
     self.recorded_by_user_id = value.id
   end
 
+  # TODO: Extract this from the `BelongsToProgramme` concern so we can use the
+  #  version from that concern in all places.
   def programme
-    Programme.find(programme_type, patient:, disease_types:) if programme_type
+    if programme_type
+      if disease_types.present?
+        Programme.find(programme_type, disease_types:)
+      elsif patient
+        Programme.find(programme_type, patient:)
+      else
+        Programme.find(programme_type)
+      end
+    end
   end
 
   def programme=(value)
@@ -327,7 +341,6 @@ class DraftConsent
     consent.parent = parent
     consent.submitted_at ||= Time.current
     consent.academic_year = academic_year if academic_year.present?
-    consent.disease_types = disease_types.presence || programme.disease_types
 
     if triage_allowed? && requires_triage?
       triage_form.add_patient_specific_direction =
@@ -351,25 +364,15 @@ class DraftConsent
     response == "given" || FLU_RESPONSES.include?(response)
   end
 
-  def response_refused?
-    response == "refused"
-  end
+  def response_refused? = response == "refused"
 
-  def responded_at
-    Time.current
-  end
+  def responded_at = Time.current
 
-  def invalidated?
-    false
-  end
+  def invalidated? = false
 
-  def withdrawn?
-    false
-  end
+  def withdrawn? = false
 
-  def consent_form
-    nil
-  end
+  def consent_form = nil
 
   def parent_relationship
     parent
@@ -429,9 +432,9 @@ class DraftConsent
 
   private
 
-  def eligible_for_mmrv?
-    programme&.mmr? && patient&.eligible_for_mmrv?
-  end
+  def is_mmr? = programme_type == "mmr"
+
+  def eligible_for_mmrv? = is_mmr? && patient&.eligible_for_mmrv?
 
   def readable_attribute_names
     writable_attribute_names + %w[parent]
@@ -439,6 +442,7 @@ class DraftConsent
 
   def writable_attribute_names
     %w[
+      disease_types
       health_answers
       notes
       notify_parent_on_refusal
@@ -497,6 +501,7 @@ class DraftConsent
 
   def reset_unused_attributes
     update_vaccine_methods_and_without_gelatine
+    update_disease_types
 
     self.notes = "" unless requires_notes?
     self.notify_parent_on_refusal = nil unless ask_notify_parent_on_refusal?
