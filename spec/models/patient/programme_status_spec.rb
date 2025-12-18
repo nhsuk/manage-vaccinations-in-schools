@@ -44,11 +44,11 @@ describe Patient::ProgrammeStatus do
       )
       allow(programme_generator).to receive_messages(
         date: Date.new(2020, 1, 1),
+        disease_types: %w[influenza],
         dose_sequence: 1,
         status: "vaccinated",
         vaccine_methods: %w[injection],
-        without_gelatine: true,
-        disease_types: nil
+        without_gelatine: true
       )
     end
 
@@ -56,6 +56,7 @@ describe Patient::ProgrammeStatus do
       assign
 
       expect(patient_programme_status.date).to eq(Date.new(2020, 1, 1))
+      expect(patient_programme_status.disease_types).to eq(%w[influenza])
       expect(patient_programme_status.dose_sequence).to eq(1)
       expect(patient_programme_status.status).to eq("vaccinated")
       expect(patient_programme_status.vaccine_methods).to eq(%w[injection])
