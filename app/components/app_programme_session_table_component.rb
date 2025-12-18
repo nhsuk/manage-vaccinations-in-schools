@@ -38,8 +38,8 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
 
   def triage_needed_count(session:)
     format_number(
-      patients(session:).has_triage_status(
-        :required,
+      patients(session:).has_programme_status(
+        "needs_triage",
         programme:,
         academic_year:
       ).count

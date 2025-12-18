@@ -72,10 +72,15 @@ class Sessions::PatientSpecificDirectionsController < Sessions::BaseController
           academic_year: @session.academic_year,
           vaccine_method: "nasal"
         )
-        .has_triage_status(
-          "not_required",
+        .has_programme_status(
+          "due",
           programme: @programme,
           academic_year: @session.academic_year
+        )
+        .has_vaccine_criteria(
+          programme: @programme,
+          academic_year: @session.academic_year,
+          vaccine_methods: %w[nasal]
         )
         .without_patient_specific_direction(
           programme: @programme,
