@@ -25,9 +25,6 @@ class GovukNotifyPersonalisation
     @consent_form = consent_form
     @parent = parent || consent&.parent
     @patient = patient || consent&.patient || vaccination_record&.patient
-    @programme_types =
-      programme_types.presence || consent_form&.programme_types.presence ||
-        [consent&.programme_type || vaccination_record&.programme_type].compact
     @session = session || consent_form&.session || vaccination_record&.session
     @team =
       team || session&.team || consent_form&.team || consent&.team ||
@@ -35,6 +32,14 @@ class GovukNotifyPersonalisation
     @subteam =
       session&.subteam || consent_form&.subteam || vaccination_record&.subteam
     @vaccination_record = vaccination_record
+
+    @programmes =
+      if programme_types.present?
+        Programme.find_all(programme_types, patient: @patient)
+      else
+        consent_form&.programmes ||
+          [consent&.programme || vaccination_record&.programme].compact
+      end
   end
 
   def to_h
@@ -95,7 +100,7 @@ class GovukNotifyPersonalisation
               :consent_form,
               :parent,
               :patient,
-              :programme_types,
+              :programmes,
               :session,
               :subteam,
               :team,
@@ -582,10 +587,6 @@ class GovukNotifyPersonalisation
 
   def patient_year_group
     @patient_year_group ||= patient.year_group(academic_year:)
-  end
-
-  def programmes
-    @programmes ||= programme_types.map { Programme.new(type: it) }
   end
 
   def programme_names

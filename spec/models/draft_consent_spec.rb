@@ -217,5 +217,15 @@ describe DraftConsent do
         expect { save! }.to change(draft_consent, :notes).to("")
       end
     end
+
+    context "when disease_types is not present" do
+      let(:attributes) { valid_given_attributes }
+
+      it "falls back to the disease types from the programme" do
+        expect { save! }.to change(draft_consent, :disease_types).to(
+          Programme::DISEASE_TYPES[programme.type]
+        )
+      end
+    end
   end
 end

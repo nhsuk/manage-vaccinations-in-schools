@@ -175,6 +175,7 @@ class Consent < ApplicationRecord
           patient.consents.create!(
             academic_year: consent_form.academic_year,
             consent_form:,
+            disease_types: consent_form_programme.disease_types,
             health_answers: consent_form.health_answers,
             notes: consent_form_programme.notes,
             parent:,
@@ -186,9 +187,7 @@ class Consent < ApplicationRecord
             submitted_at: consent_form.recorded_at,
             team: consent_form.team,
             vaccine_methods: consent_form_programme.vaccine_methods,
-            without_gelatine: consent_form_programme.without_gelatine,
-            # TODO: add disease_types to ConsentFormProgramme
-            disease_types: consent_form_programme.programme.disease_types
+            without_gelatine: consent_form_programme.without_gelatine
           )
         end
 
