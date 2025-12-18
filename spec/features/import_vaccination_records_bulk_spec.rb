@@ -30,9 +30,15 @@ describe("National reporting immunisation imports") do
     and_the_newly_created_patients_should_be_archived
     and_the_existing_patients_should_not_be_archived
 
-    # TODO: make sure this is added after patients are visible in the "Children" page
-    # when_i_click_on_a_vaccination_record
-    # then_i_should_see_the_vaccination_record
+    when_i_click_on_a_vaccination_record
+    then_i_should_see_the_vaccination_record
+    and_the_patient_should_be_archived
+
+    when_i_go_to_the_children_page
+    and_i_search_for_existing_patient
+    then_i_should_see_the_existing_patient
+    when_i_search_for_new_patient
+    then_i_should_see_the_new_patient
   end
 
   def given_mavis_logins_are_configured
@@ -175,14 +181,41 @@ describe("National reporting immunisation imports") do
 
   def when_i_click_on_a_vaccination_record
     find(".nhsuk-details__summary", text: "2 imported records").click
-    click_on "POTTER, Harry"
+    click_on "WEASLEY, Ron"
   end
 
   def then_i_should_see_the_vaccination_record
-    expect(page).to have_content("POTTER, Harry")
+    expect(page).to have_content("WEASLEY, Ron")
     expect(page).to have_content("Child")
-    expect(page).to have_content("Full namePOTTER, Harry")
+    expect(page).to have_content("Full nameWEASLEY, Ron")
     expect(page).to have_content("Vaccination details")
     expect(page).to have_content("OutcomeVaccinated")
+  end
+
+  def and_the_patient_should_be_archived
+    expect(page).to have_content("Archive reasonImmunisation import")
+  end
+
+  def when_i_go_to_the_children_page
+    click_on "Children", match: :first
+  end
+
+  def and_i_search_for_existing_patient
+    fill_in "Search", with: @existing_patient.full_name
+    click_button "Search"
+  end
+
+  def then_i_should_see_the_existing_patient
+    expect(page).to have_content(@existing_patient.full_name)
+  end
+
+  def when_i_search_for_new_patient
+    @new_patient = Patient.find_by(nhs_number: "9999075320")
+    fill_in "Search", with: @new_patient.full_name
+    click_button "Search"
+  end
+
+  def then_i_should_see_the_new_patient
+    expect(page).to have_content(@new_patient.full_name)
   end
 end
