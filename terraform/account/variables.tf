@@ -14,6 +14,12 @@ variable "environment" {
   }
 }
 
+variable "access_logs_bucket" {
+  type        = string
+  description = "Bucket name that stores access logs"
+  nullable    = false
+}
+
 locals {
   base_policies = {
     read    = "arn:aws:iam::aws:policy/ReadOnlyAccess"
