@@ -66,12 +66,6 @@ class Sessions::PatientSpecificDirectionsController < Sessions::BaseController
     @patients_allowed_psd ||=
       @session
         .patients
-        .has_consent_status(
-          "given",
-          programme: @programme,
-          academic_year: @session.academic_year,
-          vaccine_method: "nasal"
-        )
         .has_programme_status(
           "due",
           programme: @programme,

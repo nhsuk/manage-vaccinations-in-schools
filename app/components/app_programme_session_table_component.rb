@@ -18,8 +18,8 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   end
 
   def no_response_scope(session:)
-    patients(session:).has_consent_status(
-      :no_response,
+    patients(session:).has_programme_status(
+      "needs_consent_no_response",
       programme:,
       academic_year:
     )

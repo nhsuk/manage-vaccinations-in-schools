@@ -124,8 +124,8 @@ describe "mavis generate consents" do
     expect(
       @team
         .patients
-        .has_consent_status(
-          :refused,
+        .has_programme_status(
+          "has_refusal_consent_refused",
           programme: @programme,
           academic_year: AcademicYear.current
         )

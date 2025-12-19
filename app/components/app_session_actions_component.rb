@@ -72,8 +72,8 @@ class AppSessionActionsComponent < ViewComponent::Base
 
   def conflicting_consent_row
     count =
-      patients.has_consent_status(
-        "conflicts",
+      patients.has_programme_status(
+        "has_refusal_consent_conflicts",
         programme: programmes,
         academic_year:
       ).count
