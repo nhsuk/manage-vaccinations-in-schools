@@ -138,7 +138,7 @@ class Reports::ProgrammeVaccinationsExporter
         .for_programme(programme)
         .where(patient_id: vaccination_records.select(:patient_id))
         .not_invalidated
-        .includes(:parent, :patient)
+        .includes(:parent, patient: :parent_relationships)
         .group_by(&:patient_id)
         .transform_values do |consents_for_patient|
           ConsentGrouper.call(
