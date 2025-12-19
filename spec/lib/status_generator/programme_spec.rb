@@ -31,6 +31,7 @@ describe StatusGenerator::Programme do
 
     its(:status) { should be(:vaccinated_already) }
     its(:date) { should eq(vaccination_record.performed_at.to_date) }
+    its(:disease_types) { should eq(%w[human_papillomavirus]) }
     its(:dose_sequence) { should be_nil }
     its(:vaccine_methods) { should be_empty }
     its(:without_gelatine) { should be_nil }
@@ -45,6 +46,7 @@ describe StatusGenerator::Programme do
 
     its(:status) { should be(:vaccinated_fully) }
     its(:date) { should eq(vaccination_record.performed_at.to_date) }
+    its(:disease_types) { should eq(%w[human_papillomavirus]) }
     its(:dose_sequence) { should be_nil }
     its(:vaccine_methods) { should be_empty }
     its(:without_gelatine) { should be_nil }
@@ -59,6 +61,7 @@ describe StatusGenerator::Programme do
 
     its(:status) { should be(:needs_consent_no_response) }
     its(:date) { should eq(vaccination_record.performed_at.to_date) }
+    its(:disease_types) { should be_empty }
     its(:dose_sequence) { should be_nil }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
@@ -68,6 +71,7 @@ describe StatusGenerator::Programme do
 
       its(:status) { should be(:due) }
       its(:date) { should eq(vaccination_record.performed_at.to_date) }
+      its(:disease_types) { should be_empty }
       its(:vaccine_methods) { should contain_exactly("injection") }
       its(:without_gelatine) { should be(false) }
     end
@@ -82,6 +86,7 @@ describe StatusGenerator::Programme do
 
     its(:status) { should be(:cannot_vaccinate_unwell) }
     its(:date) { should eq(vaccination_record.performed_at.to_date) }
+    its(:disease_types) { should eq(programme.disease_types) }
     its(:vaccine_methods) { should contain_exactly("injection") }
     its(:without_gelatine) { should be(false) }
 
@@ -104,6 +109,7 @@ describe StatusGenerator::Programme do
 
     its(:status) { should be(:cannot_vaccinate_refused) }
     its(:date) { should eq(vaccination_record.performed_at.to_date) }
+    its(:disease_types) { should eq(programme.disease_types) }
     its(:vaccine_methods) { should contain_exactly("injection") }
     its(:without_gelatine) { should be(false) }
 
@@ -126,6 +132,7 @@ describe StatusGenerator::Programme do
 
     its(:status) { should be(:cannot_vaccinate_contraindicated) }
     its(:date) { should eq(vaccination_record.performed_at.to_date) }
+    its(:disease_types) { should eq(programme.disease_types) }
     its(:vaccine_methods) { should contain_exactly("injection") }
     its(:without_gelatine) { should be(false) }
 
@@ -148,6 +155,7 @@ describe StatusGenerator::Programme do
 
     its(:status) { should be(:cannot_vaccinate_absent) }
     its(:date) { should eq(attendance_record.date) }
+    its(:disease_types) { should eq(programme.disease_types) }
     its(:vaccine_methods) { should contain_exactly("injection") }
     its(:without_gelatine) { should be(false) }
 
@@ -175,6 +183,7 @@ describe StatusGenerator::Programme do
 
     its(:status) { should be(:cannot_vaccinate_delay_vaccination) }
     its(:date) { should eq(Date.tomorrow) }
+    its(:disease_types) { should eq(programme.disease_types) }
     its(:dose_sequence) { should be_nil }
     its(:vaccine_methods) { should contain_exactly("injection") }
     its(:without_gelatine) { should be(false) }
@@ -188,6 +197,7 @@ describe StatusGenerator::Programme do
 
     its(:status) { should be(:needs_triage) }
     its(:date) { should be_nil }
+    its(:disease_types) { should eq(programme.disease_types) }
     its(:dose_sequence) { should be_nil }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
@@ -201,6 +211,7 @@ describe StatusGenerator::Programme do
 
     its(:status) { should be(:cannot_vaccinate_do_not_vaccinate) }
     its(:date) { should be_nil }
+    its(:disease_types) { should eq(programme.disease_types) }
     its(:dose_sequence) { should be_nil }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
@@ -211,6 +222,7 @@ describe StatusGenerator::Programme do
 
     its(:status) { should be(:needs_triage) }
     its(:date) { should be_nil }
+    its(:disease_types) { should eq(programme.disease_types) }
     its(:dose_sequence) { should be_nil }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
@@ -221,6 +233,7 @@ describe StatusGenerator::Programme do
 
     its(:status) { should be(:has_refusal_consent_refused) }
     its(:date) { should be_nil }
+    its(:disease_types) { should be_empty }
     its(:dose_sequence) { should be_nil }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
@@ -234,6 +247,7 @@ describe StatusGenerator::Programme do
 
     its(:status) { should be(:has_refusal_consent_conflicts) }
     its(:date) { should be_nil }
+    its(:disease_types) { should be_empty }
     its(:dose_sequence) { should be_nil }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
@@ -242,6 +256,7 @@ describe StatusGenerator::Programme do
   context "when consent is needed" do
     its(:status) { should be(:needs_consent_no_response) }
     its(:date) { should be_nil }
+    its(:disease_types) { should be_empty }
     its(:dose_sequence) { should be_nil }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
@@ -252,6 +267,7 @@ describe StatusGenerator::Programme do
 
     its(:status) { should be(:not_eligible) }
     its(:date) { should be_nil }
+    its(:disease_types) { should be_nil }
     its(:dose_sequence) { should be_nil }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }

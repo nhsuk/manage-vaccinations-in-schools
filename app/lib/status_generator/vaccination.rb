@@ -49,6 +49,10 @@ class StatusGenerator::Vaccination
     end
   end
 
+  def disease_types
+    vaccinated_vaccination_record.disease_types if status_should_be_vaccinated?
+  end
+
   def dose_sequence
     # TODO: Implement this for multi-dose HPV and Td/IPV in a more generic way.
     return unless programme.mmr?
