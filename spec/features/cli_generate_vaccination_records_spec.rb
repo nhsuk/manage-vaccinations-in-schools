@@ -107,8 +107,8 @@ describe "mavis generate vaccination-records" do
   end
 
   def vaccination_records_for(team_or_session)
-    team_or_session.reload.patients.has_vaccination_status(
-      :vaccinated,
+    team_or_session.reload.patients.has_programme_status(
+      Patient::ProgrammeStatus::VACCINATED_STATUSES.keys,
       programme: @programme,
       academic_year: AcademicYear.current
     )

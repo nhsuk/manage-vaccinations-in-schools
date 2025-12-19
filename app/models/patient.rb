@@ -283,19 +283,6 @@ class Patient < ApplicationRecord
           where(programme_status_scope.arel.exists)
         end
 
-  scope :has_vaccination_status,
-        ->(status, programme:, academic_year:) do
-          where(
-            Patient::VaccinationStatus
-              .select("1")
-              .where("patient_id = patients.id")
-              .for_programmes(Array(programme))
-              .where(status:, academic_year:)
-              .arel
-              .exists
-          )
-        end
-
   scope :has_consent_status,
         ->(
           status,

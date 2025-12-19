@@ -11,7 +11,7 @@ describe InvalidateSelfConsentsJob do
   context "with parental consent from yesterday" do
     let(:consent) { create(:consent, academic_year:, created_at: 1.day.ago) }
 
-    before { create(:patient_vaccination_status, patient:, programme:) }
+    before { create(:patient_programme_status, patient:, programme:) }
 
     it "does not invalidate the consent" do
       expect { perform_now }.not_to(change { consent.reload.invalidated? })
@@ -39,7 +39,7 @@ describe InvalidateSelfConsentsJob do
   context "with parental consent from today" do
     let(:consent) { create(:consent, academic_year:) }
 
-    before { create(:patient_vaccination_status, patient:, programme:) }
+    before { create(:patient_programme_status, patient:, programme:) }
 
     it "does not invalidate the consent" do
       expect { perform_now }.not_to(change { consent.reload.invalidated? })
@@ -68,7 +68,7 @@ describe InvalidateSelfConsentsJob do
       create(:consent, :self_consent, academic_year:, created_at: 1.day.ago)
     end
 
-    before { create(:patient_vaccination_status, patient:, programme:) }
+    before { create(:patient_programme_status, :due, patient:, programme:) }
 
     it "invalidates the consent" do
       expect { perform_now }.to change { consent.reload.invalidated? }.from(
@@ -144,7 +144,7 @@ describe InvalidateSelfConsentsJob do
           created_at: 1.day.ago
         )
 
-        patient.vaccination_statuses.update_all(status: :vaccinated)
+        StatusUpdater.call(patient:)
       end
 
       it "does not invalidate the consent" do
@@ -174,7 +174,7 @@ describe InvalidateSelfConsentsJob do
   context "with self-consent from today" do
     let(:consent) { create(:consent, :self_consent, academic_year:) }
 
-    before { create(:patient_vaccination_status, patient:, programme:) }
+    before { create(:patient_programme_status, patient:, programme:) }
 
     it "does not invalidate the consent" do
       expect { perform_now }.not_to(change { consent.reload.invalidated? })
@@ -229,8 +229,18 @@ describe InvalidateSelfConsentsJob do
     end
 
     before do
-      create(:patient_vaccination_status, patient:, programme: self_programme)
-      create(:patient_vaccination_status, patient:, programme: parent_programme)
+      create(
+        :patient_programme_status,
+        :due,
+        patient:,
+        programme: self_programme
+      )
+      create(
+        :patient_programme_status,
+        :due,
+        patient:,
+        programme: parent_programme
+      )
     end
 
     it "does not invalidate the parent consent" do

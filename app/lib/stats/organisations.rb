@@ -147,8 +147,8 @@ class Stats::Organisations
     eligible_patients = get_eligible_patients(programme)
 
     vaccinated_patients =
-      eligible_patients.has_vaccination_status(
-        :vaccinated,
+      eligible_patients.has_programme_status(
+        Patient::ProgrammeStatus::VACCINATED_STATUSES.keys,
         programme:,
         academic_year:
       )
