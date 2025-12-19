@@ -206,14 +206,15 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
   def attached_tags(context)
     programmes.each_with_object({}) do |programme, hash|
-      resolver =
+      resolved_status =
         PatientStatusResolver.new(
           patient,
           programme:,
           academic_year:,
           context_location_id: session.location_id
-        )
-      hash[resolver.programme_name] = resolver.send(context)
+        ).send(context)
+
+      hash[resolved_status.fetch(:prefix)] = resolved_status
     end
   end
 
