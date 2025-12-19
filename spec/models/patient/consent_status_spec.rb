@@ -6,7 +6,7 @@
 #
 #  id               :bigint           not null, primary key
 #  academic_year    :integer          not null
-#  disease_types    :enum             is an Array
+#  disease_types    :enum             default([]), not null, is an Array
 #  programme_type   :enum             not null
 #  status           :integer          default("no_response"), not null
 #  vaccine_methods  :integer          default([]), not null, is an Array
