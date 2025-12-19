@@ -61,6 +61,10 @@ class ImmunisationImportRow
       "2P" => 2,
       "3P" => 3
     },
+    "mmr" => {
+      "1P" => 1,
+      "1B" => 2
+    },
     "menacwy" => {
       "1P" => 1,
       "1B" => 2,
