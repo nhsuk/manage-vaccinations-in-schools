@@ -74,6 +74,10 @@ def attach_sample_of_schools_to(team)
     end
 end
 
+def create_community_clinics_for(team)
+  FactoryBot.create_list(:community_clinic, 5, team:)
+end
+
 def attach_specific_school_to_team_if_present(team:, urn:)
   Location.find_by(urn:)&.attach_to_team!(
     team,
@@ -319,6 +323,7 @@ def create_nurse_joy_team
   create_user(:prescriber, team:, email: "prescriber@example.com")
 
   attach_sample_of_schools_to(team)
+  create_community_clinics_for(team)
 
   # Bohunt School Wokingham - used by automated tests
   attach_specific_school_to_team_if_present(team:, urn: "142181")
@@ -366,6 +371,7 @@ support_team =
 create_user(:support, team: support_team, email: "support@example.com")
 
 attach_sample_of_schools_to(team)
+create_community_clinics_for(team)
 
 Audited.audit_class.as_user(user) { create_team_sessions(user, team) }
 setup_clinic(team)
