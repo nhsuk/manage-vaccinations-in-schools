@@ -230,7 +230,7 @@ class Reports::CareplusExporter
     elsif programme.menacwy?
       "ACWYX14"
     elsif programme.mmr?
-      "MMR"
+      programme.mmrv_variant? ? "MMRV" : "MMR"
     elsif programme.td_ipv?
       "3IN1"
     else

@@ -81,6 +81,7 @@ describe Reports::CareplusExporter do
         create(
           :vaccination_record,
           programme:,
+          vaccine:,
           delivery_method:,
           patient:,
           session:,
@@ -314,22 +315,27 @@ describe Reports::CareplusExporter do
 
   context "Flu programme" do
     let(:programme) { Programme.flu }
-    let(:delivery_method) { :intramuscular }
-    let(:expected_vaccine_code) { "FLU" }
 
-    include_examples "generates a report"
-  end
+    context "and an injected vaccine" do
+      let(:vaccine) { programme.vaccines.injection.sample }
+      let(:delivery_method) { :intramuscular }
+      let(:expected_vaccine_code) { "FLU" }
 
-  context "Flu programme using nasal spray" do
-    let(:programme) { Programme.flu }
-    let(:delivery_method) { :nasal_spray }
-    let(:expected_vaccine_code) { "FLUENZ" }
+      include_examples "generates a report"
+    end
 
-    include_examples "generates a report"
+    context "and a nasal spray vaccine" do
+      let(:vaccine) { programme.vaccines.nasal.sample }
+      let(:delivery_method) { :nasal_spray }
+      let(:expected_vaccine_code) { "FLUENZ" }
+
+      include_examples "generates a report"
+    end
   end
 
   context "HPV programme" do
     let(:programme) { Programme.hpv }
+    let(:vaccine) { programme.vaccines.sample }
     let(:delivery_method) { :intramuscular }
     let(:expected_vaccine_code) { "HPV" }
 
@@ -338,22 +344,37 @@ describe Reports::CareplusExporter do
 
   context "MenACWY programme" do
     let(:programme) { Programme.menacwy }
+    let(:vaccine) { programme.vaccines.sample }
     let(:delivery_method) { :intramuscular }
     let(:expected_vaccine_code) { "ACWYX14" }
 
     include_examples "generates a report"
   end
 
-  context "MMR programme" do
+  context "MMR(V) programme" do
     let(:programme) { Programme.mmr }
     let(:delivery_method) { :intramuscular }
-    let(:expected_vaccine_code) { "MMR" }
 
-    include_examples "generates a report"
+    context "and an MMR vaccine" do
+      let(:vaccine) { Vaccine.find_by!(brand: "Priorix") }
+      let(:expected_vaccine_code) { "MMR" }
+
+      include_examples "generates a report"
+    end
+
+    context "and an MMRV vaccine" do
+      before { Flipper.enable(:mmrv) }
+
+      let(:vaccine) { Vaccine.find_by!(brand: "ProQuad") }
+      let(:expected_vaccine_code) { "MMRV" }
+
+      include_examples "generates a report"
+    end
   end
 
   context "Td/IPV programme" do
     let(:programme) { Programme.td_ipv }
+    let(:vaccine) { programme.vaccines.sample }
     let(:delivery_method) { :intramuscular }
     let(:expected_vaccine_code) { "3IN1" }
 

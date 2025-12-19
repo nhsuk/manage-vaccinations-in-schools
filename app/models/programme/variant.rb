@@ -27,6 +27,10 @@ class Programme::Variant < SimpleDelegator
     @variant_type = variant_type
   end
 
+  def mmr_variant? = variant_type == "mmr"
+
+  def mmrv_variant? = variant_type == "mmrv"
+
   def translation_key = variant_type
 
   def name = I18n.t(translation_key, scope: :programme_types)
