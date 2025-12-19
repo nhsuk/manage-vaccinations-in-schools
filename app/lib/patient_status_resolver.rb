@@ -12,8 +12,6 @@ class PatientStatusResolver
     @context_location_id = context_location_id
   end
 
-  def programme_name = programme_status.programme.name
-
   def consent
     status =
       if consent_status.given?
@@ -36,7 +34,9 @@ class PatientStatusResolver
         consent_status.status
       end
 
-    tag_hash(status, context: :consent)
+    tag_hash(status, context: :consent).merge(
+      prefix: consent_status.programme.name
+    )
   end
 
   def programme
@@ -65,7 +65,7 @@ class PatientStatusResolver
       end
     end
 
-    hash
+    hash.merge(prefix: programme_status.programme.name)
   end
 
   def triage
@@ -86,7 +86,9 @@ class PatientStatusResolver
         triage_status.status
       end
 
-    tag_hash(status, context: :triage)
+    tag_hash(status, context: :triage).merge(
+      prefix: consent_status.programme.name
+    )
   end
 
   private

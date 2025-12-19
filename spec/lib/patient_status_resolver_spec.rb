@@ -19,7 +19,7 @@ describe PatientStatusResolver do
 
     let(:programme) { Programme.hpv }
 
-    it { should eq({ text: "No response", colour: "grey" }) }
+    it { should eq({ prefix: "HPV", text: "No response", colour: "grey" }) }
   end
 
   describe "#programme" do
@@ -28,7 +28,7 @@ describe PatientStatusResolver do
     let(:programme) { Programme.hpv }
     let(:session) { create(:session, programmes: [programme]) }
 
-    it { should eq({ text: "Not eligible", colour: "grey" }) }
+    it { should eq({ prefix: "HPV", text: "Not eligible", colour: "grey" }) }
 
     context "when triaged to delay vaccination" do
       around { |example| freeze_time(Date.new(2025, 10, 29)) { example.run } }
@@ -40,6 +40,7 @@ describe PatientStatusResolver do
       it do
         expect(hash).to eq(
           {
+            prefix: "HPV",
             text: "Unable to vaccinate",
             colour: "red",
             details_text: "Delay vaccination until 30 October 2025"
@@ -68,6 +69,7 @@ describe PatientStatusResolver do
       it do
         expect(hash).to eq(
           {
+            prefix: "HPV",
             text: "Vaccinated",
             colour: "white",
             details_text: "Vaccinated on 30 October 2025"
@@ -90,6 +92,7 @@ describe PatientStatusResolver do
       it do
         expect(hash).to eq(
           {
+            prefix: "HPV",
             text: "Vaccinated",
             colour: "white",
             details_text: "Already had the vaccine"
@@ -103,7 +106,11 @@ describe PatientStatusResolver do
         create(:patient, :consent_given_triage_not_needed, session:)
       end
 
-      it { expect(hash).to eq({ text: "Due vaccination", colour: "green" }) }
+      it do
+        expect(hash).to eq(
+          { prefix: "HPV", text: "Due vaccination", colour: "green" }
+        )
+      end
     end
 
     context "for MMR programme" do
@@ -120,6 +127,7 @@ describe PatientStatusResolver do
         it do
           expect(hash).to eq(
             {
+              prefix: "MMR",
               text: "Needs consent",
               colour: "blue",
               details_text: "No response"
@@ -141,6 +149,7 @@ describe PatientStatusResolver do
         it do
           expect(hash).to eq(
             {
+              prefix: "MMR",
               text: "Due 1st dose",
               colour: "green",
               details_text: "No preference"
@@ -166,6 +175,7 @@ describe PatientStatusResolver do
         it do
           expect(hash).to eq(
             {
+              prefix: "MMR",
               text: "Due 1st dose",
               colour: "green",
               details_text: "Gelatine-free vaccine only"
@@ -177,10 +187,14 @@ describe PatientStatusResolver do
   end
 
   describe "#triage" do
-    subject { patient_status_resolver.triage }
+    subject(:hash) { patient_status_resolver.triage }
 
     let(:programme) { Programme.hpv }
 
-    it { should eq({ text: "No triage needed", colour: "grey" }) }
+    it do
+      expect(hash).to eq(
+        { prefix: "HPV", text: "No triage needed", colour: "grey" }
+      )
+    end
   end
 end
