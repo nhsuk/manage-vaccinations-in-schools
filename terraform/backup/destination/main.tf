@@ -81,7 +81,7 @@ module "destination" {
   source_account_id             = var.source_account_id
   kms_key                       = aws_kms_key.destination_backup_key.arn
   enable_vault_protection       = true
-  vault_lock_type               = "governance"
+  vault_lock_type               = "compliance"
   changeable_for_days           = 14
   vault_lock_min_retention_days = 7
 }
