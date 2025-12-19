@@ -78,21 +78,31 @@ class Stats::Organisations
         .count
 
     patients_with_no_response =
-      eligible_patients.has_consent_status(
-        :no_response,
+      eligible_patients.has_programme_status(
+        "needs_consent_no_response",
         programme:,
         academic_year:
       )
 
+    # TODO: This is not an exact match for "Consent given", replace with a
+    #  better solution.
     patients_with_response_given =
-      eligible_patients.has_consent_status(:given, programme:, academic_year:)
+      eligible_patients.has_programme_status(
+        %w[due needs_triage vaccinated_fully],
+        programme:,
+        academic_year:
+      )
 
     patients_with_response_refused =
-      eligible_patients.has_consent_status(:refused, programme:, academic_year:)
+      eligible_patients.has_programme_status(
+        "has_refusal_consent_refused",
+        programme:,
+        academic_year:
+      )
 
     patients_with_response_conflicting =
-      eligible_patients.has_consent_status(
-        :conflicts,
+      eligible_patients.has_programme_status(
+        "has_refusal_consent_conflicts",
         programme:,
         academic_year:
       )
