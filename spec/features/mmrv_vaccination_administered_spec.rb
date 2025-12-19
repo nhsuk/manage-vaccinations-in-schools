@@ -6,7 +6,7 @@ describe "MMRV vaccination" do
   scenario "administered at community clinic" do
     given_mmrv_vaccinations_are_enabled
     and_i_am_signed_in_as_a_nurse
-    and_a_patient_is_ready_for_mmrv_vaccination_in_a_community_clinic
+    and_a_patient_has_consented_for_mmrv
 
     when_i_go_to_the_patients_tab
     then_i_should_consent_for_mmrv
@@ -40,6 +40,20 @@ describe "MMRV vaccination" do
     then_i_see_a_message_that_the_consent_is_successful
   end
 
+  scenario "patient has MMRV consent, then consents for MMR" do
+    given_mmrv_vaccinations_are_enabled
+    and_i_am_signed_in_as_a_nurse
+    and_a_patient_has_consented_for_mmrv
+
+    when_i_visit_the_patient_mmrv_tab
+    and_i_start_a_new_consent_response
+    and_i_get_consent_for_mmr
+    then_i_see_the_check_and_confirm_page_with_mmr
+
+    when_i_confirm_the_consent_response
+    then_i_see_a_message_that_the_consent_is_conflicting
+  end
+
   def given_mmrv_vaccinations_are_enabled
     Flipper.enable(:mmrv)
   end
@@ -59,16 +73,18 @@ describe "MMRV vaccination" do
     sign_in @team.users.first
   end
 
-  def and_a_patient_is_ready_for_mmrv_vaccination_in_a_community_clinic
+  def and_a_patient_has_consented_for_mmrv
     location = create(:generic_clinic, team: @team)
     @session =
       create(:session, team: @team, programmes: [@programme], location:)
+    @parent = create(:parent)
     @patient =
       create(
         :patient,
         :consent_given_triage_not_needed,
         :in_attendance,
         session: @session,
+        parents: [@parent],
         date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month
       )
     @patient.consents.last.update!(
@@ -262,5 +278,9 @@ describe "MMRV vaccination" do
   def then_i_see_a_message_that_the_consent_is_successful
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
     expect(page).to have_content("Programme status\nMMRDue 1st dose")
+  end
+
+  def then_i_see_a_message_that_the_consent_is_conflicting
+    expect(page).to have_content("Conflicting consent")
   end
 end
