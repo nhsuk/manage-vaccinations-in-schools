@@ -21,18 +21,18 @@ class DashboardController < ApplicationController
           {
             title: I18n.t("imports.index.title"),
             path: imports_path,
-            description: I18n.t("imports.index.description"),
+            description: I18n.t("imports.index.description_upload_only"),
             width: "one-third"
           },
           {
             title: I18n.t("patients.index.title"),
             path: patients_path,
-            description: I18n.t("patients.index.description"),
+            description: I18n.t("patients.index.description_upload_only"),
             width: "one-third"
           },
           {
             title: I18n.t("reports.index.title"),
-            description: I18n.t("reports.index.description"),
+            description: I18n.t("reports.index.description_upload_only"),
             width: "one-third"
           }
         ]
