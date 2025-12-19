@@ -13,7 +13,7 @@ describe "MMRV vaccination" do
     when_i_go_to_the_patient
     then_i_see_the_vaccination_form
 
-    when_i_begin_recording_the_vaccination
+    when_i_begin_recording_the_vaccination_for_mmrv
     then_i_should_only_see_the_mmrv_batch_options
 
     when_i_choose_an_mmrv_batch_for_the_vaccine
@@ -40,7 +40,7 @@ describe "MMRV vaccination" do
     then_i_see_a_message_that_the_consent_is_successful
 
     when_i_click_on_the_patient
-    when_i_begin_recording_the_vaccination
+    and_i_begin_recording_the_vaccination_for_mmr
     then_i_should_only_see_the_mmr_batch_options
   end
 
@@ -169,7 +169,23 @@ describe "MMRV vaccination" do
     )
   end
 
-  def when_i_begin_recording_the_vaccination
+  def when_i_begin_recording_the_vaccination_for_mmrv
+    expect(page).to have_content("Record MMRV vaccination")
+
+    within all("section")[0] do
+      check "I have checked that the above statements are true"
+    end
+
+    within all("section")[1] do
+      choose "Yes"
+      choose "Left arm (upper position)"
+      click_button "Continue"
+    end
+  end
+
+  def and_i_begin_recording_the_vaccination_for_mmr
+    expect(page).to have_content("Record MMR vaccination")
+
     within all("section")[0] do
       check "I have checked that the above statements are true"
     end
@@ -182,10 +198,16 @@ describe "MMRV vaccination" do
   end
 
   def then_i_should_only_see_the_mmrv_batch_options
+    expect(page).to have_content(@mmrv_vaccine.brand)
+    expect(page).not_to have_content(@mmr_vaccine.brand)
+    expect(page).to have_content(@mmrv_batch.name)
     expect(page).not_to have_content(@mmr_batch.name)
   end
 
   def then_i_should_only_see_the_mmr_batch_options
+    expect(page).to have_content(@mmr_vaccine.brand)
+    expect(page).not_to have_content(@mmrv_vaccine.brand)
+    expect(page).to have_content(@mmr_batch.name)
     expect(page).not_to have_content(@mmrv_batch.name)
   end
 
