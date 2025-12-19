@@ -64,7 +64,7 @@ data "aws_iam_role" "ecs_task_role" {
 module "web_service" {
   source = "./modules/ecs_service"
   task_config = {
-    environment          = local.task_envs["CORE"]
+    environment          = local.web_envs
     secrets              = local.task_secrets["CORE"]
     cpu                  = 2048
     memory               = 4096
@@ -74,6 +74,7 @@ module "web_service" {
     region               = var.region
     health_check_command = ["CMD-SHELL", "./bin/internal_healthcheck http://localhost:${local.container_ports.web}/health/database"]
   }
+  export_prometheus_metrics = local.export_prometheus_metrics
   cloudwatch_agent_secrets = [
     {
       "name" : "PROMETHEUS_CONFIG_CONTENT",
@@ -132,7 +133,7 @@ module "web_service" {
 module "sidekiq_service" {
   source = "./modules/ecs_service"
   task_config = {
-    environment          = local.task_envs["CORE"]
+    environment          = local.sidekiq_envs
     secrets              = local.task_secrets["CORE"]
     cpu                  = 1024
     memory               = 6144
@@ -142,6 +143,17 @@ module "sidekiq_service" {
     region               = var.region
     health_check_command = ["CMD-SHELL", "./bin/internal_healthcheck && grep -q '[s]idekiq' /proc/*/cmdline 2>/dev/null || exit 1"]
   }
+  export_prometheus_metrics = local.export_prometheus_metrics
+  cloudwatch_agent_secrets = [
+    {
+      "name" : "PROMETHEUS_CONFIG_CONTENT",
+      "valueFrom" : aws_ssm_parameter.prometheus_config.arn
+    },
+    {
+      "name" : "CW_CONFIG_CONTENT",
+      "valueFrom" : aws_ssm_parameter.cloudwatch_agent_config.arn
+    }
+  ]
   network_params = {
     subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
     vpc_id  = aws_vpc.application_vpc.id
