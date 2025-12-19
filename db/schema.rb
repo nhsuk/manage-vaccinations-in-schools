@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_16_102852) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_19_094051) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -275,7 +275,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_16_102852) do
     t.integer "academic_year", null: false
     t.bigint "consent_form_id"
     t.datetime "created_at", null: false
-    t.enum "disease_types", array: true, enum_type: "disease_type"
+    t.enum "disease_types", null: false, array: true, enum_type: "disease_type"
     t.jsonb "health_answers", default: [], null: false
     t.datetime "invalidated_at"
     t.text "notes", default: "", null: false
