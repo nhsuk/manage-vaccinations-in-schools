@@ -73,6 +73,7 @@ class API::Testing::TeamsController < API::Testing::BaseController
     log_destroy(SchoolMove.where(patient_id: patient_ids))
     log_destroy(SchoolMoveLogEntry.where(patient_id: patient_ids))
     log_destroy(VaccinationRecord.where(patient_id: patient_ids))
+    log_destroy(Triage.where(patient_id: patient_ids))
 
     log_destroy(ParentRelationship.where(patient_id: patient_ids))
     log_destroy(Patient.where(id: patient_ids))
