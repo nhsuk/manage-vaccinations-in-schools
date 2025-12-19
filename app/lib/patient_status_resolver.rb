@@ -89,68 +89,6 @@ class PatientStatusResolver
     tag_hash(status, context: :triage)
   end
 
-  def vaccination
-    if vaccination_status.vaccinated?
-      details_text =
-        if vaccination_status.latest_session_status_already_had?
-          "Already had the vaccine"
-        elsif context_location_id.nil? ||
-              vaccination_status.latest_location_id.nil? ||
-              vaccination_status.latest_location_id == context_location_id
-          "Vaccinated on #{vaccination_status.latest_date.to_fs(:long)}"
-        else
-          "Vaccinated at #{vaccination_status.latest_location.name}"
-        end
-
-      tag_hash("vaccinated", context: :vaccination).merge(details_text:)
-    elsif vaccination_status.not_eligible?
-      tag_hash("not_eligible", context: :vaccination)
-    else
-      details_text =
-        if triage_status.do_not_vaccinate?
-          "Contraindicated"
-        elsif triage_status.delay_vaccination?
-          "Delay vaccination"
-        elsif consent_status.refused?
-          "Consent refused"
-        elsif consent_status.conflicts?
-          "Conflicting consent"
-        elsif !vaccination_status.latest_session_status.nil?
-          status_string =
-            if vaccination_status.latest_session_status_refused?
-              "Child refused"
-            elsif vaccination_status.latest_session_status_absent?
-              "Absent"
-            elsif vaccination_status.latest_session_status_unwell?
-              "Unwell"
-            elsif vaccination_status.latest_session_status_contraindicated?
-              "Contraindicated"
-            end
-          "#{status_string} on #{vaccination_status.latest_date.to_fs(:long)}"
-        elsif triage_status.safe_to_vaccinate?
-          triage.fetch(:text)
-        else
-          consent.fetch(:text)
-        end
-
-      status = vaccination_status.status
-      text = I18n.t(status, scope: %i[status vaccination label])
-
-      if (count = vaccination_status.dose_sequence)
-        text =
-          if vaccination_status.eligible?
-            "Eligible for #{count.ordinalize} dose"
-          elsif vaccination_status.due?
-            "Due #{count.ordinalize} dose"
-          end
-      end
-
-      colour = I18n.t(status, scope: %i[status vaccination colour])
-
-      { text:, colour:, details_text: }
-    end
-  end
-
   private
 
   attr_reader :patient, :academic_year, :context_location_id
@@ -175,10 +113,5 @@ class PatientStatusResolver
   def triage_status
     @triage_status ||=
       patient.triage_status(programme: @programme, academic_year:)
-  end
-
-  def vaccination_status
-    @vaccination_status ||=
-      patient.vaccination_status(programme: @programme, academic_year:)
   end
 end
