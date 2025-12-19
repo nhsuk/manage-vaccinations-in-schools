@@ -62,7 +62,7 @@ workers Settings.web_concurrency
 before_worker_boot { SemanticLogger.reopen }
 
 # Export puma metrics
-if Rails.env.production? || Rails.env.staging?
+if ENV["EXPORT_PUMA_METRICS"] == "true"
   after_worker_boot do
     require "prometheus_exporter/instrumentation"
     # optional check, avoids spinning up and down threads per worker

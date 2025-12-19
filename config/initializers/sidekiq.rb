@@ -11,8 +11,7 @@ end
 
 Sidekiq.configure_server do |config|
   config.redis = redis_config
-  #TODO: Fix We are getting these metrics for both sidekiq and web services which is not needed
-  if Rails.env.production? || Rails.env.staging?
+  if ENV["EXPORT_SIDEKIQ_METRICS"] == "true"
     require "prometheus_exporter/instrumentation"
     config.server_middleware do |chain|
       chain.add PrometheusExporter::Instrumentation::Sidekiq
