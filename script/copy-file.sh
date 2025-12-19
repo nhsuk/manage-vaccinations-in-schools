@@ -99,8 +99,11 @@ elif [[ $task_id == "" ]]; then
     exit 1;
 fi
 
-echo "Uploading to S3 bucket: s3://$bucket_name/temp"
-aws s3 cp "$local_file" "s3://$bucket_name/temp"
+# Generate unique identifier for the S3 object to avoid conflicts
+unique_id="temp-$RANDOM"
+
+echo "Uploading to S3 bucket: s3://$bucket_name/$unique_id"
+aws s3 cp "$local_file" "s3://$bucket_name/$unique_id"
 if [[ $? -ne 0 ]]; then
     echo "Error: Failed to upload file to S3"
     exit 1
@@ -111,13 +114,13 @@ aws ecs execute-command \
     --region "$region" \
     --cluster "$cluster_name" \
     --task "$task_id" \
-    --command "aws s3 cp s3://$bucket_name/temp $remote_path" \
+    --command "aws s3 cp s3://$bucket_name/$unique_id $remote_path" \
     --interactive
 
 copy_exit_code=$?
 
 echo "Cleaning up S3 object"
-aws s3 rm "s3://$bucket_name/temp" --region "$region" &>/dev/null
+aws s3 rm "s3://$bucket_name/$unique_id" --region "$region" &>/dev/null
 
 if [[ $copy_exit_code -eq 0 ]]; then
     echo ""
