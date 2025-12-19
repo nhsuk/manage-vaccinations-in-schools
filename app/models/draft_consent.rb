@@ -305,13 +305,10 @@ class DraftConsent
   #  version from that concern in all places.
   def programme
     if programme_type
-      if disease_types.present?
-        Programme.find(programme_type, disease_types:)
-      elsif patient
-        Programme.find(programme_type, patient:)
-      else
-        Programme.find(programme_type)
-      end
+      options = {}
+      options[:disease_types] = disease_types if respond_to?(:disease_types)
+      options[:patient] = patient if respond_to?(:patient)
+      Programme.find(programme_type, **options)
     end
   end
 

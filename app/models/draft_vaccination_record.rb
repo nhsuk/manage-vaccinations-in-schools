@@ -167,12 +167,20 @@ class DraftVaccinationRecord
     self.performed_by_user_id = value.id
   end
 
+  # TODO: Extract this from the `BelongsToProgramme` concern so we can use the
+  #  version from that concern in all places.
   def programme
-    Programme.find(programme_type, patient:) if programme_type
+    if programme_type
+      options = {}
+      options[:disease_types] = disease_types if respond_to?(:disease_types)
+      options[:patient] = patient if respond_to?(:patient)
+      Programme.find(programme_type, **options)
+    end
   end
 
   def programme=(value)
     self.programme_type = value.type
+    self.disease_types = value.disease_types
   end
 
   def session
@@ -338,8 +346,6 @@ class DraftVaccinationRecord
       self.identity_check_confirmed_by_other_name = ""
       self.identity_check_confirmed_by_other_relationship = ""
     end
-
-    self.disease_types = vaccine&.disease_types || programme.disease_types
   end
 
   def academic_year = session&.academic_year
