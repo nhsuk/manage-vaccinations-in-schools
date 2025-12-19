@@ -27,9 +27,7 @@ module HasManyProgrammes
           ->(programmes) { has_any_programme_types_of(programmes.map(&:type)) }
   end
 
-  def programmes(patient: nil)
-    programme_types.map { Programme.find(it, patient:) }
-  end
+  def programmes = Programme.find_all(programme_types)
 
   def programmes=(value)
     self.programme_types = value.map(&:type).sort.uniq
