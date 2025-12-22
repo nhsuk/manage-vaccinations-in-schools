@@ -197,6 +197,13 @@ class ImmunisationImportRow
     end
   end
 
+  def to_archive_reason
+    # If the patient is new to this team, we need to add an archive reason for this team
+    unless patient&.teams&.include?(team)
+      ArchiveReason.new(patient:, team:, type: :immunisation_import)
+    end
+  end
+
   def batch_expiry = @data[:batch_expiry_date]
 
   def batch_name =
