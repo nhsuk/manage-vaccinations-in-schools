@@ -47,6 +47,9 @@ module MavisCLI
               :urn,
               :site,
               :status,
+              :gias_phase,
+              :gias_establishment_number,
+              :gias_local_authority_code,
               :address_line_1,
               :address_line_2,
               :address_postcode,
@@ -80,7 +83,12 @@ module MavisCLI
             year_groups =
               location
                 .location_programme_year_groups
-                .where(programme:, academic_year:)
+                .where(
+                  programme_type: programme.type,
+                  location_year_group: {
+                    academic_year:
+                  }
+                )
                 .pluck_year_groups
 
             puts "  #{Rainbow(programme.type).bright}:"
