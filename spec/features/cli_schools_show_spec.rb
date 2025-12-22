@@ -8,6 +8,7 @@ describe "mavis schools show" do
       given_a_school_exists
       when_i_run_the_command
       then_the_school_details_are_displayed
+      and_the_programme_year_groups_are_displayed
     end
   end
 
@@ -71,5 +72,12 @@ describe "mavis schools show" do
     expect(@output).to match(/name.*Test School/)
     expect(@output).to match(/urn.*123456/)
     expect(@output).to match(/site.*B/)
+  end
+
+  def and_the_programme_year_groups_are_displayed
+    expect(@output).to match(
+      /flu:\s*year groups: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11/
+    )
+    expect(@output).to match(/hpv:\s*year groups: 8, 9, 10, 11/)
   end
 end
