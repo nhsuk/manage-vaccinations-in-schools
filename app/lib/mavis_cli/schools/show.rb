@@ -38,6 +38,8 @@ module MavisCLI
         academic_year = AcademicYear.current
 
         locations.each do |location|
+          puts(Rainbow("-" * 64).bright) if locations.count > 1
+
           location
             .attributes
             .symbolize_keys
@@ -78,7 +80,7 @@ module MavisCLI
             puts "#{Rainbow("team:").bright}: No team assigned"
           end
 
-          puts Rainbow("programmes:").bright
+          puts "", Rainbow("programmes:").bright
           location.programmes.each do |programme|
             year_groups =
               location
