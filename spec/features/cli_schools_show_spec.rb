@@ -33,9 +33,111 @@ describe "mavis schools show" do
     end
   end
 
+  context "with a team that has patients in a variety of states" do
+    it "displays the school details" do
+      given_a_school_exists
+      and_the_school_has_patients_across_academic_years
+      when_i_run_the_command_with_the_show_patients_option
+      then_the_correct_patient_counts_are_displayed
+    end
+  end
+
   def given_a_school_exists
     team = create(:team, programme_types: %w[flu hpv])
-    @school = create(:school, name: "Test School", urn: "123456", team:)
+    @school =
+      create(
+        :school,
+        name: "Test School",
+        urn: "123456",
+        team:
+      ).tap do |location|
+        location.import_year_groups_from_gias!(
+          academic_year: AcademicYear.previous
+        )
+
+        location.import_default_programme_year_groups!(
+          [Programme.flu],
+          academic_year: AcademicYear.previous
+        )
+      end
+  end
+
+  def and_the_school_has_patients_across_academic_years
+    location = school = @school
+    session =
+      create(
+        :session,
+        location:,
+        team: @school.teams.first,
+        programmes: [Programme.flu]
+      )
+    session_last_year =
+      create(
+        :session,
+        location:,
+        team: @school.teams.first,
+        date: Date.new(AcademicYear.previous, 11, 1),
+        programmes: [Programme.flu]
+      )
+
+    # patient in current academic years
+    create(:patient, school: @school, location: @school)
+
+    # patient in previous academic years
+    create(:patient, academic_year: AcademicYear.previous, school:, location:)
+
+    # patient in current and previous academic years
+    create(
+      :patient,
+      :in_attendance,
+      school:,
+      location:,
+      session:
+    ).tap do |patient|
+      create(
+        :patient_location,
+        patient:,
+        location:,
+        academic_year: AcademicYear.previous
+      )
+    end
+
+    # patient with attendance record in previous academic year
+    create(
+      :patient,
+      academic_year: AcademicYear.previous,
+      school:,
+      location:,
+      session: session_last_year
+    ).tap do |patient|
+      create(
+        :attendance_record,
+        :present,
+        patient:,
+        session: session_last_year,
+        date: session_last_year.dates.first
+      )
+    end
+
+    # patient with gillick assessment in current academic year
+    create(:patient, school:, location:, session:).tap do |patient|
+      create(:gillick_assessment, :competent, patient:, session:)
+    end
+
+    # patient with gillick assessment record in previous academic year
+    create(
+      :patient,
+      school:,
+      location:,
+      session: session_last_year
+    ).tap do |patient|
+      create(
+        :gillick_assessment,
+        :competent,
+        patient:,
+        session: session_last_year
+      )
+    end
   end
 
   def given_a_school_with_sites_exists
@@ -68,6 +170,15 @@ describe "mavis schools show" do
       end
   end
 
+  def when_i_run_the_command_with_the_show_patients_option
+    @output =
+      capture_output do
+        Dry::CLI.new(MavisCLI).call(
+          arguments: %w[schools show --show-patients] + [@school.urn]
+        )
+      end
+  end
+
   def then_the_school_details_are_displayed
     expect(@output).to match(/name.*Test School/)
     expect(@output).to match(/urn.*123456/)
@@ -84,5 +195,13 @@ describe "mavis schools show" do
       /flu:\s*year groups: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11/
     )
     expect(@output).to match(/hpv:\s*year groups: 8, 9, 10, 11/)
+  end
+
+  def then_the_correct_patient_counts_are_displayed
+    expect(@output).to match(/^total patients: 7/)
+    expect(@output).to match(/^  in current academic year: 3/)
+    expect(@output).to match(/^    with attendance records: 1/)
+    expect(@output).to match(/^    with gillick assessments: 1/)
+    expect(@output).to match(/^  safe to destroy: 1/)
   end
 end
