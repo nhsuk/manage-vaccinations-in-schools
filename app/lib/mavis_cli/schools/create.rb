@@ -3,7 +3,7 @@
 module MavisCLI
   module Schools
     class Create < Dry::CLI::Command
-      desc "Create a new school"
+      desc "Create a new school or site"
 
       argument :urn, required: true, desc: "School URN"
       argument :name, required: true, desc: "Name of the school"
@@ -17,7 +17,7 @@ module MavisCLI
                required: true,
                desc: "GIAS phase (e.g. primary or secondary)"
 
-      option :site, desc: "Additional site "
+      option :site, desc: "Additional site"
       option :status, desc: "Status of the school", default: "open"
       option :systm_one_code, desc: "SystmOne code of the school"
       option :url, desc: "URL of the school"
@@ -29,7 +29,7 @@ module MavisCLI
 
       option :gias_year_groups,
              type: :array,
-             desc: "Year groups taught at the school"
+             desc: "Year groups taught at the school (e.g. \"0,1,2,3,4,5,6\")"
 
       def call(
         urn:,

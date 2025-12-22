@@ -28,7 +28,8 @@ describe "mavis schools show" do
   end
 
   def given_a_school_exists
-    @school = create(:school, name: "Test School", urn: "123456")
+    team = create(:team, programme_types: %w[flu hpv])
+    @school = create(:school, name: "Test School", urn: "123456", team:)
   end
 
   def given_a_school_with_sites_exists
