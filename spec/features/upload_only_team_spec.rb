@@ -23,16 +23,25 @@ describe "Upload-only team homepage and navigation" do
     then_i_should_see_limited_filters
   end
 
+  scenario "Child record page shows vaccination records first" do
+    given_i_am_signed_in_as_an_upload_only_team
+    and_i_upload_a_valid_file
+    when_i_visit_the_children_page
+    and_i_find_a_child
+    then_i_should_see_vaccinations_then_child_details
+  end
+
   def given_i_am_signed_in_as_an_upload_only_team
     @team =
       create(
         :team,
         :with_one_admin,
         :with_generic_clinic,
-        programmes: [Programme.flu],
+        programmes: [Programme.flu, Programme.hpv],
         ods_code: "XX99",
         type: :upload_only
       )
+    create(:school, team: @team, urn: 100_000)
     sign_in @team.users.first
   end
 
@@ -113,5 +122,30 @@ describe "Upload-only team homepage and navigation" do
     expect(service_name.text).to eq(
       "Manage vaccinations in schools – National reporting"
     )
+  end
+
+  def and_i_upload_a_valid_file
+    visit imports_path
+    click_on "Upload records"
+    attach_file(
+      "immunisation_import[csv]",
+      "spec/fixtures/immunisation_import_bulk/valid_mixed_flu_hpv.csv"
+    )
+    click_on "Continue"
+    wait_for_import_to_complete(ImmunisationImport)
+    expect(page).to have_content("2 imported records")
+  end
+
+  def and_i_find_a_child
+    fill_in "Search", with: "harry"
+    click_on "Search"
+    click_on "POTTER, Harry"
+  end
+
+  def then_i_should_see_vaccinations_then_child_details
+    app_cards = page.all(".app-card")
+    expect(app_cards.count).to eq(2)
+    expect(app_cards[0]).to have_content("Vaccinations")
+    expect(app_cards[1]).to have_content("Child’s details")
   end
 end
