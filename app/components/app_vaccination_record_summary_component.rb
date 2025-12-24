@@ -220,7 +220,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
-      if @vaccination_record.protocol.present?
+      if @vaccination_record.protocol.present? && !sourced_from_bulk_upload?
         summary_list.with_row do |row|
           row.with_key { "Protocol" }
           row.with_value { protocol_value }
@@ -423,5 +423,11 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
   def highlight_if(value, condition)
     condition ? tag.span(value, class: "app-highlight") : value
+  end
+
+  def sourced_from_bulk_upload?
+    return false unless @vaccination_record.respond_to?(:source)
+
+    @vaccination_record.sourced_from_bulk_upload?
   end
 end
