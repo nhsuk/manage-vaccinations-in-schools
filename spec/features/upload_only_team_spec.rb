@@ -23,12 +23,14 @@ describe "Upload-only team homepage and navigation" do
     then_i_should_see_limited_filters
   end
 
-  scenario "Child record page shows vaccination records first" do
+  scenario "Child record page shows vaccination records first and cannot be archived" do
     given_i_am_signed_in_as_an_upload_only_team
     and_i_upload_a_valid_file
     when_i_visit_the_children_page
     and_i_find_a_child
     then_i_should_see_vaccinations_then_child_details
+    and_child_cannot_be_archived
+    and_child_does_not_look_archived
   end
 
   def given_i_am_signed_in_as_an_upload_only_team
@@ -147,5 +149,15 @@ describe "Upload-only team homepage and navigation" do
     expect(app_cards.count).to eq(2)
     expect(app_cards[0]).to have_content("Vaccinations")
     expect(app_cards[1]).to have_content("Child’s details")
+  end
+
+  def and_child_cannot_be_archived
+    app_card_buttons = page.all(".app-card .nhsuk-button")
+    expect(app_card_buttons.count).to eq(1)
+    expect(page).not_to have_content("Archive child record")
+  end
+
+  def and_child_does_not_look_archived
+    expect(page).not_to have_content("Archived")
   end
 end

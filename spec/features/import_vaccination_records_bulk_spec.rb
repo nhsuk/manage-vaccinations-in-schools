@@ -32,7 +32,6 @@ describe("National reporting immunisation imports") do
 
     when_i_click_on_a_vaccination_record
     then_i_should_see_the_vaccination_record
-    and_the_patient_should_be_archived
 
     when_i_go_to_the_children_page
     and_i_search_for_existing_patient
@@ -190,10 +189,6 @@ describe("National reporting immunisation imports") do
     expect(page).to have_content("Full nameWEASLEY, Ron")
     expect(page).to have_content("Vaccination details")
     expect(page).to have_content("OutcomeVaccinated")
-  end
-
-  def and_the_patient_should_be_archived
-    expect(page).to have_content("Archive reasonImmunisation import")
   end
 
   def when_i_go_to_the_children_page
