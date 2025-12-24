@@ -31,6 +31,10 @@
       <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), secondary: true %>
       <%= govuk_button_link_to "Archive child record", new_patient_archive_path(@patient), class: "app-button--secondary-warning" %>
     </div>
+  <% elsif @patient.created_by_bulk_upload?(team: current_team) %>
+    <div class="nhsuk-button-group">
+      <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), secondary: true %>
+    </div>
   <% end %>
 <% end %>
 

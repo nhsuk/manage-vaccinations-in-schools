@@ -37,7 +37,7 @@ class AppChildSummaryComponent < ViewComponent::Base
         end
       end
 
-      if archive_reason
+      if archive_reason && !@child.created_by_bulk_upload?(team: @current_team)
         summary_list.with_row do |row|
           row.with_key { "Archive reason" }
           row.with_value { format_archive_reason }
