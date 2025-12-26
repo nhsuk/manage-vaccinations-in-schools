@@ -291,7 +291,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
   def source_value
     highlight_if(
-      @vaccination_record.human_enum_name(:source),
+      @vaccination_record.source_value,
       @vaccination_record.source_changed?
     )
   end

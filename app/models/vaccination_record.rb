@@ -281,6 +281,14 @@ class VaccinationRecord < ApplicationRecord
 
   def notifier = Notifier::VaccinationRecord.new(self)
 
+  def source_value
+    if sourced_from_bulk_upload?
+      "Mavis national reporting upload"
+    else
+      human_enum_name(:source)
+    end
+  end
+
   private
 
   def requires_location_name? = location.nil?

@@ -528,4 +528,26 @@ describe VaccinationRecord do
       end
     end
   end
+
+  describe "#source_value" do
+    context "when the vaccination record was sourced from a Mavis national reporting upload" do
+      let(:vaccination_record) do
+        build(:vaccination_record, source: "bulk_upload")
+      end
+
+      it "returns the correct source value" do
+        expect(vaccination_record.source_value).to eq(
+          "Mavis national reporting upload"
+        )
+      end
+    end
+
+    context "when the vaccination record was sourced from the Mavis service" do
+      let(:vaccination_record) { build(:vaccination_record, source: "service") }
+
+      it "returns the correct source value" do
+        expect(vaccination_record.source_value).to eq("Recorded in Mavis")
+      end
+    end
+  end
 end
