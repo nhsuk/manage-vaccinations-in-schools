@@ -141,7 +141,8 @@ class PatientImport < ApplicationRecord
       parent_relationships.destroy_all
 
       parents_to_check.each do |parent|
-        if parent.parent_relationships.empty? && parent.consents.empty?
+        if !parent.destroyed? && parent.parent_relationships.empty? &&
+             parent.consents.empty?
           parent.destroy!
         end
       end
@@ -172,7 +173,8 @@ class PatientImport < ApplicationRecord
       parent_relationships_without_consents.each(&:destroy!)
 
       parents_to_check.each do |parent|
-        if parent.parent_relationships.empty? && parent.consents.empty?
+        if !parent.destroyed? && parent.parent_relationships.empty? &&
+             parent.consents.empty?
           parent.destroy!
         end
       end

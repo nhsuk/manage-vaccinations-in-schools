@@ -68,6 +68,18 @@ describe "Bulk remove parents" do
       patient.reload
     end
 
+    # Create a sibling to create a parent with multiple relationships
+    sibling = create(:patient, school: @class_import.location)
+    parent_sibling_relationship =
+      create(
+        :parent_relationship,
+        parent: @patients.last.parents.first,
+        patient: sibling
+      )
+    @class_import.parent_relationships << parent_sibling_relationship
+    @class_import.patients << sibling
+    @patients << sibling
+
     sign_in @user
   end
 
