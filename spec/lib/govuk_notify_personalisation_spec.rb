@@ -64,58 +64,62 @@ describe GovukNotifyPersonalisation do
   let(:consent_form) { nil }
   let(:vaccination_record) { nil }
 
-  it do
-    expect(to_h).to match(
-      {
-        talk_to_your_child_message:
-          "## Talk to your child about what they want\n\nWe suggest you talk to " \
-            "your child about the vaccination before you respond to us. Young " \
-            "people have the right to refuse vaccinations.\n\nThey also have " \
-            "[the right to consent to their own vaccinations]" \
-            "(https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
-            "if they show they fully understand what’s involved. Our team might " \
-            "give young people this opportunity if they assess them as suitably " \
-            "competent.",
-        catch_up: "no",
-        consent_deadline: "Wednesday 31 December",
-        consent_link:
-          "http://localhost:4000/consents/#{session.slug}/hpv/start",
-        full_and_preferred_patient_name: "John Smith",
-        has_multiple_dates: "no",
-        location_name: "Hogwarts",
-        invitation_to_clinic_custom_mmr_message: "",
-        mmr_second_dose_required: false,
-        invitation_to_clinic_generic_message:
-          "They can have this vaccination at a community clinic. If you’d like " \
-            "to book a clinic appointment, please contact us using the details " \
-            "below.",
-        next_or_today_session_date: "Thursday 1 January",
-        next_or_today_session_dates: "Thursday 1 January",
-        next_or_today_session_dates_or: "Thursday 1 January",
-        next_session_date: "Thursday 1 January",
-        next_session_dates: "Thursday 1 January",
-        next_session_dates_or: "Thursday 1 January",
-        not_catch_up: "yes",
-        patient_date_of_birth: "1 February 2013",
-        short_patient_name: "John",
-        short_patient_name_apos: "John’s",
-        subsequent_session_dates_offered_message: "",
-        subteam_email: "team@example.com",
-        subteam_name: "Team",
-        subteam_phone: "01234 567890 (option 1)",
-        team_privacy_notice_url: "https://example.com/privacy-notice",
-        team_privacy_policy_url: "https://example.com/privacy-policy",
-        vaccination: "HPV vaccination",
-        vaccination_and_dates: "HPV vaccination on Thursday 1 January",
-        vaccination_and_method: "HPV vaccination",
-        vaccine: "HPV vaccine",
-        vaccine_and_dose: "HPV",
-        vaccine_and_method: "HPV vaccine",
-        vaccine_is_injection: "no",
-        vaccine_is_nasal: "no",
-        vaccine_side_effects: ""
-      }
-    )
+  context "when session is in the future" do
+    around { |example| travel_to(Date.new(2025, 9, 1)) { example.run } }
+
+    it do
+      expect(to_h).to match(
+        {
+          talk_to_your_child_message:
+            "## Talk to your child about what they want\n\nWe suggest you talk to " \
+              "your child about the vaccination before you respond to us. Young " \
+              "people have the right to refuse vaccinations.\n\nThey also have " \
+              "[the right to consent to their own vaccinations]" \
+              "(https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
+              "if they show they fully understand what’s involved. Our team might " \
+              "give young people this opportunity if they assess them as suitably " \
+              "competent.",
+          catch_up: "no",
+          consent_deadline: "Wednesday 31 December",
+          consent_link:
+            "http://localhost:4000/consents/#{session.slug}/hpv/start",
+          full_and_preferred_patient_name: "John Smith",
+          has_multiple_dates: "no",
+          location_name: "Hogwarts",
+          invitation_to_clinic_custom_mmr_message: "",
+          mmr_second_dose_required: false,
+          invitation_to_clinic_generic_message:
+            "They can have this vaccination at a community clinic. If you’d like " \
+              "to book a clinic appointment, please contact us using the details " \
+              "below.",
+          next_or_today_session_date: "Thursday 1 January",
+          next_or_today_session_dates: "Thursday 1 January",
+          next_or_today_session_dates_or: "Thursday 1 January",
+          next_session_date: "Thursday 1 January",
+          next_session_dates: "Thursday 1 January",
+          next_session_dates_or: "Thursday 1 January",
+          not_catch_up: "yes",
+          patient_date_of_birth: "1 February 2013",
+          short_patient_name: "John",
+          short_patient_name_apos: "John’s",
+          subsequent_session_dates_offered_message: "",
+          subteam_email: "team@example.com",
+          subteam_name: "Team",
+          subteam_phone: "01234 567890 (option 1)",
+          team_privacy_notice_url: "https://example.com/privacy-notice",
+          team_privacy_policy_url: "https://example.com/privacy-policy",
+          vaccination: "HPV vaccination",
+          vaccination_and_dates: "HPV vaccination on Thursday 1 January",
+          vaccination_and_method: "HPV vaccination",
+          vaccine: "HPV vaccine",
+          vaccine_and_dose: "HPV",
+          vaccine_and_method: "HPV vaccine",
+          vaccine_is_injection: "no",
+          vaccine_is_nasal: "no",
+          vaccine_side_effects: ""
+        }
+      )
+    end
   end
 
   context "with a patient in primary school" do
@@ -174,23 +178,27 @@ describe GovukNotifyPersonalisation do
       )
     end
 
-    it do
-      expect(to_h).to match(
-        hash_including(
-          consent_deadline: "Wednesday 31 December",
-          has_multiple_dates: "yes",
-          next_or_today_session_date: "Thursday 1 January",
-          next_or_today_session_dates:
-            "Thursday 1 January and Friday 2 January",
-          next_or_today_session_dates_or:
-            "Thursday 1 January or Friday 2 January",
-          next_session_date: "Thursday 1 January",
-          next_session_dates: "Thursday 1 January and Friday 2 January",
-          next_session_dates_or: "Thursday 1 January or Friday 2 January",
-          subsequent_session_dates_offered_message:
-            "If they’re not seen, they’ll be offered the vaccination on Friday 2 January."
+    context "when today is before the session starts" do
+      around { |example| travel_to(Date.new(2025, 9, 1)) { example.run } }
+
+      it do
+        expect(to_h).to match(
+          hash_including(
+            consent_deadline: "Wednesday 31 December",
+            has_multiple_dates: "yes",
+            next_or_today_session_date: "Thursday 1 January",
+            next_or_today_session_dates:
+              "Thursday 1 January and Friday 2 January",
+            next_or_today_session_dates_or:
+              "Thursday 1 January or Friday 2 January",
+            next_session_date: "Thursday 1 January",
+            next_session_dates: "Thursday 1 January and Friday 2 January",
+            next_session_dates_or: "Thursday 1 January or Friday 2 January",
+            subsequent_session_dates_offered_message:
+              "If they’re not seen, they’ll be offered the vaccination on Friday 2 January."
+          )
         )
-      )
+      end
     end
 
     context "when today is the first date" do
