@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/VerifiedDoubles
 describe AuthenticationConcern do
   let(:user) { @user = build(:user) }
   let(:mock_request) { instance_double(request.class, headers: {}) }
@@ -178,4 +177,3 @@ describe AuthenticationConcern do
     end
   end
 end
-# rubocop:enable RSpec/VerifiedDoubles
