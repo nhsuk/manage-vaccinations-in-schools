@@ -525,6 +525,30 @@ describe AppActivityLogComponent do
   end
 
   describe "vaccination records" do
+    context "for the MMRV variant" do
+      let(:programme) do
+        Flipper.enable(:mmrv)
+        Programme.mmr.variant_for(
+          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
+        )
+      end
+      let(:programmes) { [programme] }
+
+      before do
+        create(
+          :vaccination_record,
+          patient:,
+          programme:,
+          performed_at: Time.zone.local(2025, 5, 31, 13)
+        )
+      end
+
+      include_examples "card",
+                       title: "Vaccinated",
+                       date: "31 May 2025 at 1:00pm",
+                       programme: "MMRV"
+    end
+
     context "without a vaccine" do
       before do
         create(

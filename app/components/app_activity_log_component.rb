@@ -153,7 +153,7 @@ class AppActivityLogComponent < ViewComponent::Base
           title: "Consent #{original_response}",
           at: consent_form.recorded_at,
           by: consent_form.parent_relationship.label_with_parent,
-          programmes: programmes_for(consent)
+          programmes: [consent.programme]
         }
       else
         {
@@ -161,7 +161,7 @@ class AppActivityLogComponent < ViewComponent::Base
             "Consent #{original_response} by #{consent.name} (#{consent.who_responded})",
           at: consent.submitted_at,
           by: consent.recorded_by,
-          programmes: programmes_for(consent)
+          programmes: [consent.programme]
         }
       end
 
@@ -170,7 +170,7 @@ class AppActivityLogComponent < ViewComponent::Base
           title: "Consent response manually matched with child record",
           at: consent.created_at,
           by: consent.recorded_by,
-          programmes: programmes_for(consent)
+          programmes: [consent.programme]
         }
       end
 
@@ -178,7 +178,7 @@ class AppActivityLogComponent < ViewComponent::Base
         events << {
           title: "Consent from #{consent.name} invalidated",
           at: consent.invalidated_at,
-          programmes: programmes_for(consent)
+          programmes: [consent.programme]
         }
       end
 
@@ -186,7 +186,7 @@ class AppActivityLogComponent < ViewComponent::Base
         events << {
           title: "Consent from #{consent.name} withdrawn",
           at: consent.withdrawn_at,
-          programmes: programmes_for(consent)
+          programmes: [consent.programme]
         }
       end
 
@@ -216,7 +216,7 @@ class AppActivityLogComponent < ViewComponent::Base
           vaccinated_but_seasonal: vaccinated_but_seasonal_programmes,
           not_vaccinated: not_vaccinated_programmes
         }.transform_values do |programmes|
-          get_expired_items(academic_year:, programmes:)
+          expired_items_for(academic_year:, programmes:)
         end
 
       expired_items.map do |category, expired_items_in_category|
@@ -279,7 +279,7 @@ class AppActivityLogComponent < ViewComponent::Base
         body: gillick_assessment.notes,
         at: gillick_assessment.created_at,
         by: gillick_assessment.performed_by,
-        programmes: programmes_for(gillick_assessment)
+        programmes: [gillick_assessment.programme]
       }
     end
   end
@@ -291,7 +291,7 @@ class AppActivityLogComponent < ViewComponent::Base
         body: note.body,
         at: note.created_at,
         by: note.created_by,
-        programmes: programmes_for(note)
+        programmes: note.programmes
       }
     end
   end
@@ -303,7 +303,7 @@ class AppActivityLogComponent < ViewComponent::Base
         body: patient.restricted? ? "" : notify_log_entry.recipient,
         at: notify_log_entry.created_at,
         by: notify_log_entry.sent_by,
-        programmes: programmes_for(notify_log_entry)
+        programmes: notify_log_entry.programmes
       }
     end
   end
@@ -316,14 +316,14 @@ class AppActivityLogComponent < ViewComponent::Base
         title: "PSD added",
         at: patient_specific_direction.created_at,
         by: patient_specific_direction.created_by,
-        programmes: programmes_for(patient_specific_direction)
+        programmes: [patient_specific_direction.programme]
       }
 
       if patient_specific_direction.invalidated?
         events << {
           title: "PSD invalidated",
           at: patient_specific_direction.invalidated_at,
-          programmes: programmes_for(patient_specific_direction)
+          programmes: [patient_specific_direction.programme]
         }
       end
 
@@ -338,7 +338,7 @@ class AppActivityLogComponent < ViewComponent::Base
         body: pre_screening.notes,
         at: pre_screening.created_at,
         by: pre_screening.performed_by,
-        programmes: programmes_for(pre_screening)
+        programmes: [pre_screening.programme]
       }
     end
   end
@@ -356,11 +356,10 @@ class AppActivityLogComponent < ViewComponent::Base
 
   def triage_events
     triages.map do |triage|
-      programmes = programmes_for(triage)
       title = "Triaged decision: #{triage.human_enum_name(:status)}"
 
       if triage.vaccine_method.present? &&
-           programmes.first.has_multiple_vaccine_methods?
+           triage.programme.has_multiple_vaccine_methods?
         title += " with #{triage.human_enum_name(:vaccine_method)}"
       end
 
@@ -369,7 +368,7 @@ class AppActivityLogComponent < ViewComponent::Base
         body: triage.notes,
         at: triage.created_at,
         by: triage.performed_by,
-        programmes:
+        programmes: [triage.programme]
       }
     end
   end
@@ -392,7 +391,7 @@ class AppActivityLogComponent < ViewComponent::Base
         body: vaccination_record.notes,
         at: vaccination_record.performed_at,
         by: vaccination_record.performed_by,
-        programmes: programmes_for(vaccination_record)
+        programmes: [vaccination_record.programme]
       }
 
       discarded =
@@ -400,7 +399,7 @@ class AppActivityLogComponent < ViewComponent::Base
           {
             title: "Vaccination record archived",
             at: vaccination_record.discarded_at,
-            programmes: programmes_for(vaccination_record)
+            programmes: [vaccination_record.programme]
           }
         end
 
@@ -425,36 +424,18 @@ class AppActivityLogComponent < ViewComponent::Base
     end
   end
 
-  def programmes_for(object)
-    if object.respond_to?(:programme_types)
-      object.programme_types.map { programmes_by_type.fetch(it) }
-    elsif object.respond_to?(:programme_type)
-      [programmes_by_type.fetch(object.programme_type)]
-    else
-      object.programmes
-    end
-  end
-
-  def programmes_by_type
-    @programmes_by_type ||= Programme.all.index_by(&:type)
-  end
-
   private
 
-  def filter_expired(items, academic_year:, programmes:)
-    items
-      .select { it.academic_year == academic_year }
-      .flat_map { programmes_for(it) }
-      .select { programmes.include?(it) }
-  end
-
-  def get_expired_items(academic_year:, programmes:)
+  def expired_items_for(academic_year:, programmes:)
     {
       consents:,
       triages:,
       patient_specific_directions:
     }.transform_values do |items|
-      filter_expired(items, academic_year:, programmes:)
+      items
+        .select { it.academic_year == academic_year }
+        .map(&:programme)
+        .select { programmes.include?(it) }
     end
   end
 end
