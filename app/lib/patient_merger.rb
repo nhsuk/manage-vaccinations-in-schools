@@ -78,6 +78,10 @@ class PatientMerger
         patient_id: patient_to_keep.id
       )
 
+      patient_to_destroy.clinic_notifications.update_all(
+        patient_id: patient_to_keep.id
+      )
+
       patient_to_destroy.triages.update_all(patient_id: patient_to_keep.id)
 
       vaccination_record_ids =

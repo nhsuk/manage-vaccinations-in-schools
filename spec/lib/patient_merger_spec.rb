@@ -82,6 +82,14 @@ describe PatientMerger do
         patient: patient_to_destroy
       )
     end
+    let(:clinic_notification) do
+      create(
+        :clinic_notification,
+        :initial_invitation,
+        patient: patient_to_destroy,
+        session:
+      )
+    end
     let(:triage) do
       create(
         :triage,
@@ -205,6 +213,12 @@ describe PatientMerger do
 
     it "moves session notifications" do
       expect { call }.to change { session_notification.reload.patient }.to(
+        patient_to_keep
+      )
+    end
+
+    it "moves clinic notifications" do
+      expect { call }.to change { clinic_notification.reload.patient }.to(
         patient_to_keep
       )
     end
