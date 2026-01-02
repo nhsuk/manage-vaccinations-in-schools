@@ -8,12 +8,7 @@ class InvalidateSelfConsentsJob < ApplicationJob
     academic_year = AcademicYear.current
 
     programmes.each do |programme|
-      patients =
-        Patient.has_vaccination_status(
-          %i[not_eligible eligible due],
-          programme:,
-          academic_year:
-        )
+      patients = Patient.has_programme_status("due", programme:, academic_year:)
 
       Team.find_each do |team|
         consents =
