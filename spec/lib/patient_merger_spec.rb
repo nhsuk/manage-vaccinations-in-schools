@@ -36,6 +36,14 @@ describe PatientMerger do
     let(:attendance_record) do
       create(:attendance_record, :present, patient: patient_to_destroy)
     end
+    let(:clinic_notification) do
+      create(
+        :clinic_notification,
+        :initial_invitation,
+        patient: patient_to_destroy,
+        session:
+      )
+    end
     let(:consent) { create(:consent, patient: patient_to_destroy, programme:) }
     let(:consent_notification) do
       create(
@@ -123,6 +131,12 @@ describe PatientMerger do
 
     it "moves attendance records" do
       expect { call }.to change { attendance_record.reload.patient }.to(
+        patient_to_keep
+      )
+    end
+
+    it "moves clinic notifications" do
+      expect { call }.to change { clinic_notification.reload.patient }.to(
         patient_to_keep
       )
     end
