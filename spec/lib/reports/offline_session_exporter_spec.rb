@@ -121,14 +121,12 @@ describe Reports::OfflineSessionExporter do
           create(:batch, :not_expired, vaccine: programme.vaccines.active.first)
         end
         let(:patient_location) { create(:patient_location, patient:, session:) }
-        let(:patient) do
-          create(:patient, year_group: programme.default_year_groups.first)
-        end
+        let(:patient) { create(:patient, year_group:) }
 
         it { should be_empty }
 
         context "with a patient without an outcome" do
-          let!(:patient) { create(:patient, session:) }
+          let!(:patient) { create(:patient, session:, year_group:) }
 
           it "adds a row to fill in" do
             expect(rows.count).to eq(1)
@@ -228,7 +226,12 @@ describe Reports::OfflineSessionExporter do
 
         context "with a triage assessment" do
           let!(:patient) do
-            create(:patient, :consent_given_triage_safe_to_vaccinate, session:)
+            create(
+              :patient,
+              :consent_given_triage_safe_to_vaccinate,
+              session:,
+              year_group:
+            )
           end
 
           it "adds a row with the triage details" do
@@ -838,7 +841,7 @@ describe Reports::OfflineSessionExporter do
         it { should be_empty }
 
         context "with a patient without an outcome" do
-          let!(:patient) { create(:patient, session:) }
+          let!(:patient) { create(:patient, session:, year_group:) }
 
           it "adds a row to fill in" do
             expect(rows.count).to eq(1)
@@ -894,7 +897,7 @@ describe Reports::OfflineSessionExporter do
           let(:patient) do
             create(
               :patient,
-              year_group: programme.default_year_groups.first,
+              year_group:,
               school: create(:school, urn: "123456", name: "Waterloo Road")
             )
           end
@@ -1087,6 +1090,8 @@ describe Reports::OfflineSessionExporter do
 
   context "Flu programme" do
     let(:programme) { Programme.flu }
+    let(:year_group) { 6 }
+
     let(:expected_programme) { "Flu" }
     let(:expected_dose_sequence) { 1 }
     let(:expected_consent_status) do
@@ -1103,7 +1108,8 @@ describe Reports::OfflineSessionExporter do
         create(
           :patient,
           :consent_given_nasal_triage_safe_to_vaccinate_nasal,
-          session:
+          session:,
+          year_group:
         )
       end
       let(:workbook) { RubyXL::Parser.parse_buffer(call) }
@@ -1121,6 +1127,8 @@ describe Reports::OfflineSessionExporter do
 
   context "HPV programme" do
     let(:programme) { Programme.hpv }
+    let(:year_group) { 8 }
+
     let(:expected_programme) { "HPV" }
     let(:expected_dose_sequence) { 1 }
     let(:expected_consent_status) { "Consent given" }
@@ -1130,6 +1138,8 @@ describe Reports::OfflineSessionExporter do
 
   context "MenACWY programme" do
     let(:programme) { Programme.menacwy }
+    let(:year_group) { 9 }
+
     let(:expected_programme) { "ACWYX4" }
     let(:expected_dose_sequence) { nil }
     let(:expected_consent_status) { "Consent given" }
@@ -1139,6 +1149,8 @@ describe Reports::OfflineSessionExporter do
 
   context "MMR programme" do
     let(:programme) { Programme.mmr }
+    let(:year_group) { 11 }
+
     let(:expected_programme) { "MMR" }
     let(:expected_dose_sequence) { nil }
     let(:expected_consent_status) { "Consent given" }
@@ -1147,16 +1159,9 @@ describe Reports::OfflineSessionExporter do
   end
 
   context "MMRV programme" do
-    # We move forward in to the future where we can assume that MMRV is given
-    # to more children, this also ensures that the patients have a date of
-    # birth that makes them eligible.
-
-    before do
-      Flipper.enable(:mmrv)
-      travel 10.years
-    end
-
     let(:programme) { Programme.mmr }
+    let(:year_group) { 0 }
+
     let(:expected_programme) { "MMRV" }
     let(:expected_dose_sequence) { nil }
     let(:expected_consent_status) { "Consent given" }
@@ -1166,6 +1171,8 @@ describe Reports::OfflineSessionExporter do
 
   context "Td/IPV programme" do
     let(:programme) { Programme.td_ipv }
+    let(:year_group) { 9 }
+
     let(:expected_programme) { "3-in-1" }
     let(:expected_dose_sequence) { nil }
     let(:expected_consent_status) { "Consent given" }

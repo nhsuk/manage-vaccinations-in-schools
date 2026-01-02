@@ -37,8 +37,6 @@ describe Programme do
     context "when programme is MMR and MMRV support is enabled" do
       let(:type) { "mmr" }
 
-      before { Flipper.enable(:mmrv) }
-
       context "without any additional criteria" do
         it "doesn't return a variant" do
           expect(find).to be_a(described_class)
@@ -87,13 +85,7 @@ describe Programme do
     context "with an MMR programme" do
       let(:programme) { described_class.mmr }
 
-      it { should eq("MMR") }
-
-      context "when MMRV is enabled" do
-        before { Flipper.enable(:mmrv) }
-
-        it { should eq("MMR(V)") }
-      end
+      it { should eq("MMR(V)") }
     end
   end
 
