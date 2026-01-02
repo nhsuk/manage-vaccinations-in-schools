@@ -270,6 +270,10 @@ class ConsentForm < ApplicationRecord
     validates :response, inclusion: %w[given refused]
   end
 
+  on_wizard_step :response_mmr, exact: true do
+    validates :response, inclusion: %w[given refused]
+  end
+
   on_wizard_step :injection_alternative, exact: true do
     validates :injection_alternative, inclusion: %w[true false]
   end

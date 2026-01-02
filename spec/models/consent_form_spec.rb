@@ -240,6 +240,23 @@ describe ConsentForm do
       end
     end
 
+    context "when wizard_step is :response_mmr" do
+      let(:wizard_step) { :response_mmr }
+
+      let(:programmes) { [Programme.mmr] }
+
+      context "runs validations from previous steps" do
+        it { should validate_presence_of(:given_name).on(:update) }
+        it { should validate_presence_of(:date_of_birth).on(:update) }
+      end
+
+      it do
+        expect(consent_form).to validate_inclusion_of(:response).on(
+          :update
+        ).in_array(%w[given refused])
+      end
+    end
+
     context "when wizard_step is :reason_for_refusal" do
       let(:response) { "refused" }
       let(:wizard_step) { :reason_for_refusal }
