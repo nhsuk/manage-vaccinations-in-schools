@@ -67,62 +67,58 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def immunisation_import_columns
-    [
-      {
-        name: "ORGANISATION_CODE",
-        notes:
-          "Optional, must be a valid #{link_to("ODS code", "https://odsportal.digital.nhs.uk/")}."
-      },
-      {
-        name: "SCHOOL_URN",
-        notes:
-          "Optional, must be 6 digits and numeric. " \
-            "Use #{tag.i("888888")} for school unknown and #{tag.i("999999")} " \
-            "for homeschooled."
-      },
-      {
-        name: "SCHOOL_NAME",
-        notes: "Required if #{tag.code("SCHOOL_URN")} is #{tag.i("888888")}."
-      },
-      { name: "NHS_NUMBER", notes: "Optional, must be 10 digits and numeric." },
-      { name: "PERSON_FORENAME", notes: tag.strong("Required") },
-      { name: "PERSON_SURNAME", notes: tag.strong("Required") },
-      {
-        name: "PERSON_DOB",
-        notes:
-          "#{tag.strong("Required")}, must use either #{tag.i("YYYYMMDD")} or " \
-            "#{tag.i("DD/MM/YYYY")} format."
-      },
-      {
-        name: "PERSON_GENDER_CODE",
-        notes:
-          "#{tag.strong("Required")}, must be #{tag.i("Not known")}, " \
-            "#{tag.i("Male")}, #{tag.i("Female")}, #{tag.i("Not specified")}."
-      },
-      {
-        name: "PERSON_POSTCODE",
-        notes:
-          "#{tag.strong("Required")}, must be formatted as a valid postcode."
-      },
-      {
-        name: "DATE_OF_VACCINATION",
-        notes:
-          "#{tag.strong("Required")}, must use either #{tag.i("YYYYMMDD")} or " \
-            "#{tag.i("DD/MM/YYYY")} format."
-      },
-      {
-        name: "TIME_OF_VACCINATION",
-        notes: "Optional, must use #{tag.i("HH:MM:SS")} format."
-      },
-      {
-        name: "VACCINATED",
-        notes:
-          "Required, must be #{tag.i("Y")} or #{tag.i("N")}. " \
-            "Can be omitted if #{tag.code("VACCINE_GIVEN")} is provided."
-      }
-    ] + vaccine_and_batch + programme + anatomical_site +
+    if team.has_upload_only_access?
+      bulk_immunisation_import_columns
+    else
+      poc_immunisation_import_columns
+    end
+  end
+
+  def poc_immunisation_import_columns
+    organisation_code(optionality: "Optional") +
+      school_urn(optionality: "Optional") +
+      [
+        {
+          name: "SCHOOL_NAME",
+          notes: "Required if #{tag.code("SCHOOL_URN")} is #{tag.i("888888")}."
+        }
+      ] + nhs_number(optionality: "Optional") +
+      patient_demographics(optionality: "Required") +
+      date_and_time_of_vaccination(date_optionality: "Required") +
+      [
+        {
+          name: "VACCINATED",
+          notes:
+            "Required, must be #{tag.i("Y")} or #{tag.i("N")}. " \
+              "Can be omitted if #{tag.code("VACCINE_GIVEN")} is provided."
+        }
+      ] + vaccine_and_batch + programme + anatomical_site +
       reason_not_vaccinated_and_notes + dose_sequence + care_setting +
       performing_professional
+  end
+
+  def bulk_immunisation_import_columns
+    organisation_code(optionality: "Mandatory") +
+      school_urn(optionality: "Mandatory") +
+      nhs_number(optionality: "Required") +
+      patient_demographics(
+        optionality: "Mandatory",
+        gender_field_name: "PERSON_GENDER"
+      ) +
+      [
+        {
+          name: "VACCINATED",
+          notes:
+            "Optional, must be #{tag.i("Y")} or #{tag.i("N")}." \
+              "Rows with the value #{tag.i("N")} will not be validated and will not be imported."
+        }
+      ] + date_and_time_of_vaccination(date_optionality: "Mandatory") +
+      bulk_vaccine_and_batch + bulk_anatomical_site + bulk_dose_sequence +
+      bulk_performing_professional_names +
+      [
+        { name: "LOCAL_PATIENT_ID", notes: tag.strong("Mandatory") },
+        { name: "LOCAL_PATIENT_ID_URI", notes: tag.strong("Mandatory") }
+      ]
   end
 
   def child_columns
@@ -188,6 +184,79 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     ]
   end
 
+  def organisation_code(optionality:)
+    [
+      {
+        name: "ORGANISATION_CODE",
+        notes:
+          "#{tag.strong(optionality)}, must be a valid #{link_to("ODS code", "https://odsportal.digital.nhs.uk/")}."
+      }
+    ]
+  end
+
+  def nhs_number(optionality:)
+    [
+      {
+        name: "NHS_NUMBER",
+        notes:
+          "#{tag.strong(optionality)}, must be a valid #{link_to("NHS number", "https://www.datadictionary.nhs.uk/attributes/nhs_number.html")}."
+      }
+    ]
+  end
+
+  def school_urn(optionality:)
+    [
+      {
+        name: "SCHOOL_URN",
+        notes:
+          "#{tag.strong(optionality)}, must be 6 digits and numeric. " \
+            "Use #{tag.i("888888")} for school unknown and #{tag.i("999999")} " \
+            "for homeschooled."
+      }
+    ]
+  end
+
+  def patient_demographics(
+    optionality:,
+    gender_field_name: "PERSON_GENDER_CODE"
+  )
+    [
+      { name: "PERSON_FORENAME", notes: tag.strong(optionality) },
+      { name: "PERSON_SURNAME", notes: tag.strong(optionality) },
+      {
+        name: "PERSON_DOB",
+        notes:
+          "#{tag.strong(optionality)}, must use either #{tag.i("YYYYMMDD")} or " \
+            "#{tag.i("DD/MM/YYYY")} format."
+      },
+      {
+        name: gender_field_name,
+        notes:
+          "#{tag.strong(optionality)}, must be #{tag.i("Not known")}, " \
+            "#{tag.i("Male")}, #{tag.i("Female")}, #{tag.i("Not specified")}."
+      },
+      {
+        name: "PERSON_POSTCODE",
+        notes:
+          "#{tag.strong(optionality)}, must be formatted as a valid postcode."
+      }
+    ]
+  end
+
+  def date_and_time_of_vaccination(date_optionality:)
+    [
+      {
+        name: "DATE_OF_VACCINATION",
+        notes:
+          "#{tag.strong(date_optionality)}, must use either #{tag.i("YYYYMMDD")} or #{tag.i("DD/MM/YYYY")} format."
+      },
+      {
+        name: "TIME_OF_VACCINATION",
+        notes: "Optional, must use #{tag.i("HH:MM:SS")} format."
+      }
+    ]
+  end
+
   def parent_columns
     %w[PARENT_1 PARENT_2].flat_map do |prefix|
       [
@@ -233,19 +302,21 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     ]
   end
 
+  def make_vaccines_sentence(vaccines:)
+    vaccines.to_sentence(
+      last_word_connector: ", or ",
+      two_words_connector: " or "
+    )
+  end
+
   def vaccine_and_batch
     vaccines = team.vaccines.pluck(:upload_name).map { tag.i(it) }
-
-    vaccines_sentence =
-      vaccines.to_sentence(
-        last_word_connector: ", or ",
-        two_words_connector: " or "
-      )
+    vaccines_sentence = make_vaccines_sentence(vaccines:)
 
     [
       {
         name: "VACCINE_GIVEN",
-        notes: "Optional, must be #{vaccines_sentence}."
+        notes: "Optional, must be one of: #{vaccines_sentence}."
       },
       {
         name: "BATCH_NUMBER",
@@ -256,6 +327,34 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         notes:
           "Required if #{tag.code("BATCH_NUMBER")} is provided, must use " \
             "either #{tag.i("YYYYMMDD")} or #{tag.i("DD/MM/YYYY")} format."
+      }
+    ]
+  end
+
+  def bulk_vaccine_and_batch
+    hpv_vaccines =
+      Programme.hpv.vaccines.pluck(:nivs_name).compact.map { tag.i(it) }
+    flu_vaccines =
+      Programme.flu.vaccines.pluck(:nivs_name).compact.map { tag.i(it) }
+
+    hpv_vaccines_sentence = make_vaccines_sentence(vaccines: hpv_vaccines)
+    flu_vaccines_sentence = make_vaccines_sentence(vaccines: flu_vaccines)
+
+    [
+      {
+        name: "VACCINE_GIVEN",
+        notes:
+          "#{tag.strong("Mandatory")}." \
+            "#{tag.br}#{tag.br}" \
+            "For HPV records, must be one of: #{hpv_vaccines_sentence}." \
+            "#{tag.br}#{tag.br}" \
+            "For flu records, must be one of: #{flu_vaccines_sentence}."
+      },
+      { name: "BATCH_NUMBER", notes: tag.strong("Mandatory") },
+      {
+        name: "BATCH_EXPIRY_DATE",
+        notes:
+          "#{tag.strong("Mandatory")}, must use #{tag.i("YYYYMMDD")} format."
       }
     ]
   end
@@ -350,11 +449,56 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     ]
   end
 
+  def bulk_performing_professional_names
+    [
+      {
+        name: "PERFORMING_PROFESSIONAL_FORENAME",
+        notes: "Mandatory for flu records, optional for HPV records."
+      },
+      {
+        name: "PERFORMING_PROFESSIONAL_SURNAME",
+        notes: "Mandatory for flu records, optional for HPV records."
+      }
+    ]
+  end
+
   def supplier
     [
       {
         name: "SUPPLIER_EMAIL",
         notes: "Required if uploading delegated vaccination records."
+      }
+    ]
+  end
+
+  def bulk_anatomical_site
+    sites = ImmunisationImportRow::DELIVERY_SITES.keys.sort.map { tag.i(_1) }
+
+    site_sentence =
+      sites.to_sentence(
+        last_word_connector: " or ",
+        two_words_connector: " or "
+      )
+
+    [
+      {
+        name: "ANATOMICAL_SITE",
+        notes: "#{tag.strong("Mandatory")}, must be one of: #{site_sentence}."
+      }
+    ]
+  end
+
+  def bulk_dose_sequence
+    hpv_max = Programme.hpv.maximum_dose_sequence
+    flu_max = Programme.flu.maximum_dose_sequence
+
+    [
+      {
+        name: "DOSE_SEQUENCE",
+        notes:
+          "Mandatory for HPV records, optional for flu records." \
+            "#{tag.br} #{tag.br}" \
+            "Must be a number between 1 and #{hpv_max} for HPV records and between 1 and #{flu_max} for flu records."
       }
     ]
   end
