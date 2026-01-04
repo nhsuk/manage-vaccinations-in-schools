@@ -220,7 +220,8 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
-      if @vaccination_record.protocol.present?
+      if @vaccination_record.protocol.present? &&
+           !@vaccination_record.sourced_from_bulk_upload?
         summary_list.with_row do |row|
           row.with_key { "Protocol" }
           row.with_value { protocol_value }
@@ -291,7 +292,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
   def source_value
     highlight_if(
-      @vaccination_record.human_enum_name(:source),
+      @vaccination_record.source_value,
       @vaccination_record.source_changed?
     )
   end

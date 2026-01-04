@@ -687,6 +687,16 @@ class Patient < ApplicationRecord
     !archive_reasons.exists?(team:)
   end
 
+  def created_by_bulk_upload?(team:)
+    return false unless team.has_upload_only_access?
+
+    if archive_reasons.loaded?
+      archive_reasons.any? { it.team_id == team.id && it.immunisation_import? }
+    else
+      archive_reasons.exists?(team:, type: :immunisation_import)
+    end
+  end
+
   def year_group(academic_year:)
     birth_academic_year.to_year_group(academic_year:)
   end
