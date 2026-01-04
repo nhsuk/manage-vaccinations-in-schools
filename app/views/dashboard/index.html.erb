@@ -1,4 +1,4 @@
-<%= h1 "#{@service_name} (Mavis)", size: "xl" %>
+<%= h1 "#{@service_name_with_abbreviation ? "#{@service_name_with_abbreviation}" : @service_name}", size: "xl" %>
 
 <% if (count = @notices_count) %>
   <%= render AppWarningCalloutComponent.new(heading: "Important notices") do %>
