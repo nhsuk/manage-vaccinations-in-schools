@@ -61,7 +61,7 @@ describe "Edit parent" do
   end
 
   def when_i_click_on_change_parent
-    click_on "Change first parent or guardian"
+    click_on "Edit first parent or guardian"
   end
 
   alias_method :and_i_click_on_change_parent, :when_i_click_on_change_parent
