@@ -136,6 +136,21 @@ class PatientImport < ApplicationRecord
       parent_relationships =
         self.parent_relationships.includes(:parent, :patient)
 
+      timestamp = Time.current.to_fs(:long)
+      user_name = current_user&.full_name || "system"
+      invalidation_note =
+        "Consent invalidated on #{timestamp} " \
+          "because #{user_name} removed all parent-child relationships from an import."
+
+      # Invalidate consents first before destroying parent relationships, which
+      # will make consents return an empty set.
+      consents.update_all(
+        notes: invalidation_note,
+        invalidated_at: Time.current
+      )
+
+      patient_ids_to_update = consents.map(&:patient_id).uniq
+
       parents_to_check = parent_relationships.map(&:parent)
 
       parent_relationships.destroy_all
@@ -147,18 +162,7 @@ class PatientImport < ApplicationRecord
         end
       end
 
-      timestamp = Time.current.to_fs(:long)
-      user_name = current_user&.full_name || "system"
-      invalidation_note =
-        "Consent invalidated on #{timestamp} " \
-          "because #{user_name} removed all parent-child relationships from an import."
-
-      Consent.where(id: consents.map(&:id)).update_all(
-        notes: invalidation_note,
-        invalidated_at: Time.current
-      )
-
-      StatusUpdaterJob.perform_bulk(consents.map(&:patient_id).uniq.zip)
+      StatusUpdaterJob.perform_bulk(patient_ids_to_update.zip)
     end
   end
 
