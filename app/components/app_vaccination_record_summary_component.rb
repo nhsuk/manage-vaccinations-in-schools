@@ -134,7 +134,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
       end
 
       if @vaccination_record.administered?
-        if @vaccination_record.vaccine.present?
+        if @vaccination_record.vaccine.present? && !sourced_from_bulk_upload?
           summary_list.with_row do |row|
             row.with_key { "Dose volume" }
             row.with_value { dose_volume_value }
