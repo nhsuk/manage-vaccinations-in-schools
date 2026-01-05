@@ -17,7 +17,7 @@ describe ImmunisationImportRow do
   let(:programmes) { [Programme.hpv] }
   let(:team) { create(:team, ods_code: "abc", programmes:) }
 
-  let(:nhs_number) { "9990000018" }
+  let(:nhs_number) { "9449306168" }
   let(:given_name) { "Harry" }
   let(:family_name) { "Potter" }
   let(:date_of_birth) { "20120101" }
@@ -1905,109 +1905,220 @@ describe ImmunisationImportRow do
           it { should_not be_nil }
         end
 
-        context "with an existing patient matching NHS number" do
-          let(:data) { valid_data }
+        context "matching logic" do
+          context "with a brand new patient" do
+            its(:given_name) { should eq given_name }
+            its(:family_name) { should eq family_name }
+            its(:date_of_birth) { should eq Date.parse(date_of_birth) }
+            its(:address_postcode) { should eq address_postcode }
 
-          let(:other_patient) { create(:patient, nhs_number:) }
-
-          it { should eq(other_patient) }
-        end
-
-        context "without an NHS number and an existing patient matching first name, last name and date of birth" do
-          let(:data) { valid_data.except("NHS_NUMBER") }
-
-          let(:other_patient) do
-            create(
-              :patient,
-              given_name:,
-              family_name:,
-              nhs_number:,
-              date_of_birth: Date.parse(date_of_birth)
-            )
+            it "adds a patient to the database" do
+              expect { patient }.to change(Patient, :count).by(1)
+            end
           end
 
-          it { should eq(other_patient) }
-        end
+          context "with an existing patient matching NHS number" do
+            let(:data) { valid_data }
 
-        context "without an NHS number and an existing patient matching first name, last name and postcode" do
-          let(:data) { valid_data.except("NHS_NUMBER") }
+            let!(:other_patient) { create(:patient, nhs_number:) }
 
-          let(:other_patient) do
-            create(
-              :patient,
-              given_name:,
-              family_name:,
-              address_postcode:,
-              nhs_number:
-            )
+            it { should eq(other_patient) }
+
+            it "doesn't add a patient to the database" do
+              expect { patient }.not_to change(Patient, :count)
+            end
           end
 
-          it { should eq(other_patient) }
-        end
+          context "with an existing matching patient without NHS number" do
+            let(:data) { valid_data.except("NHS_NUMBER") }
 
-        context "without an NHS number and an existing patient matching first name, date of birth and postcode" do
-          let(:data) { valid_data.except("NHS_NUMBER") }
+            let!(:other_patient) do
+              create(
+                :patient,
+                nhs_number:,
+                given_name:,
+                family_name:,
+                address_postcode:,
+                date_of_birth: Date.parse(date_of_birth)
+              )
+            end
 
-          let(:other_patient) do
-            create(
-              :patient,
-              given_name:,
-              date_of_birth: Date.parse(date_of_birth),
-              address_postcode:,
-              nhs_number:
-            )
+            it { should eq(other_patient) }
+
+            it "doesn't add a patient to the database" do
+              expect { patient }.not_to change(Patient, :count)
+            end
           end
 
-          it { should eq(other_patient) }
-        end
+          context "without an NHS number and a 3 out of 4 match" do
+            let(:data) { valid_data.except("NHS_NUMBER") }
 
-        context "without an NHS number and an existing patient matching last name, date of birth and postcode" do
-          let(:data) { valid_data.except("NHS_NUMBER") }
+            context "with an existing patient matching first name, last name and date of birth" do
+              let(:other_patient) do
+                create(
+                  :patient,
+                  given_name:,
+                  family_name:,
+                  nhs_number:,
+                  date_of_birth: Date.parse(date_of_birth)
+                )
+              end
 
-          let(:other_patient) do
-            create(
-              :patient,
-              family_name:,
-              date_of_birth: Date.parse(date_of_birth),
-              address_postcode:,
-              nhs_number:
-            )
+              it { should_not eq(other_patient) }
+
+              it "creates a new patient" do
+                expect { patient }.to change(Patient, :count).by(1)
+              end
+            end
+
+            context "with an existing patient matching first name, last name and postcode" do
+              let(:data) { valid_data.except("NHS_NUMBER") }
+
+              let(:other_patient) do
+                create(
+                  :patient,
+                  given_name:,
+                  family_name:,
+                  address_postcode:,
+                  nhs_number:
+                )
+              end
+
+              it { should_not eq(other_patient) }
+
+              it "creates a new patient" do
+                expect { patient }.to change(Patient, :count).by(1)
+              end
+            end
+
+            context "with an existing patient matching first name, date of birth and postcode" do
+              let(:data) { valid_data.except("NHS_NUMBER") }
+
+              let(:other_patient) do
+                create(
+                  :patient,
+                  given_name:,
+                  date_of_birth: Date.parse(date_of_birth),
+                  address_postcode:,
+                  nhs_number:
+                )
+              end
+
+              it { should_not eq(other_patient) }
+
+              it "creates a new patient" do
+                expect { patient }.to change(Patient, :count).by(1)
+              end
+            end
+
+            context "with an existing patient matching last name, date of birth and postcode (a twin)" do
+              # This is a twin
+              let(:data) { valid_data.except("NHS_NUMBER") }
+
+              let!(:other_patient) do
+                create(
+                  :patient,
+                  given_name: "James",
+                  family_name:,
+                  date_of_birth: Date.parse(date_of_birth),
+                  address_postcode:,
+                  nhs_number:
+                )
+              end
+
+              it { should_not eq(other_patient) }
+
+              it "creates a new patient" do
+                expect { patient }.to change(Patient, :count).by(1)
+              end
+            end
+
+            context "with both twin patients existing" do
+              let!(:other_patient) do
+                create(
+                  :patient,
+                  given_name: "James",
+                  family_name:,
+                  address_postcode:,
+                  date_of_birth: Date.parse(date_of_birth)
+                )
+              end
+
+              let!(:matching_patient) do
+                create(
+                  :patient,
+                  given_name:,
+                  family_name:,
+                  address_postcode:,
+                  date_of_birth: Date.parse(date_of_birth)
+                )
+              end
+
+              its(:given_name) { should eq given_name }
+              it { should_not eq other_patient }
+              it { should eq matching_patient }
+            end
+
+            context "with both twin patients existing, where none have NHS numbers" do
+              before do
+                create(
+                  :patient,
+                  nhs_number: nil,
+                  given_name: "James",
+                  family_name:,
+                  address_postcode:,
+                  date_of_birth: Date.parse(date_of_birth)
+                )
+              end
+
+              let!(:existing_patient) do
+                create(
+                  :patient,
+                  nhs_number: nil,
+                  given_name:,
+                  family_name:,
+                  address_postcode:,
+                  date_of_birth: Date.parse(date_of_birth)
+                )
+              end
+
+              its(:given_name) { should eq given_name }
+              it { should eq existing_patient }
+            end
           end
 
-          it { should eq(other_patient) }
-        end
+          context "with an existing matching patient but different patient data" do
+            let(:data) { valid_data }
 
-        context "with an existing matching patient but different patient data" do
-          let(:data) { valid_data }
-
-          it "does not stage any changes as vaccs history data is potentially out of date" do
-            create(:patient, nhs_number:, address_postcode: "CB1 1AA")
-            expect(patient.pending_changes).to be_empty
-          end
-        end
-
-        context "with an existing matching patient but mismatching capitalisation, without NHS number" do
-          let(:data) do
-            valid_data.except("NHS_NUMBER").merge(
-              "PERSON_FORENAME" => "RON",
-              "PERSON_SURNAME" => "WEASLEY",
-              "PERSON_POSTCODE" => "sw1a 1aa"
-            )
+            it "does not stage any changes as vaccs history data is potentially out of date" do
+              create(:patient, nhs_number:, address_postcode: "CB1 1AA")
+              expect(patient.pending_changes).to be_empty
+            end
           end
 
-          let!(:existing_patient) do
-            create(
-              :patient,
-              given_name: "Ron",
-              family_name: "Weasley",
-              date_of_birth: Date.parse(date_of_birth),
-              address_postcode:,
-              nhs_number: "9990000018"
-            )
-          end
+          context "with an existing matching patient but mismatching capitalisation, without NHS number" do
+            let(:data) do
+              valid_data.except("NHS_NUMBER").merge(
+                "PERSON_FORENAME" => "RON",
+                "PERSON_SURNAME" => "WEASLEY",
+                "PERSON_POSTCODE" => "sw1a 1aa"
+              )
+            end
 
-          it "still matches to a patient" do
-            expect(patient).to eq(existing_patient)
+            let!(:existing_patient) do
+              create(
+                :patient,
+                given_name: "Ron",
+                family_name: "Weasley",
+                date_of_birth: Date.parse(date_of_birth),
+                address_postcode:,
+                nhs_number: "9990000018"
+              )
+            end
+
+            it "still matches to a patient" do
+              expect(patient).to eq(existing_patient)
+            end
           end
         end
 

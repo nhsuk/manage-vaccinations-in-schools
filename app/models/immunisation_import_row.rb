@@ -478,7 +478,8 @@ class ImmunisationImportRow
       given_name: patient_first_name.to_s,
       family_name: patient_last_name.to_s,
       date_of_birth: patient_date_of_birth.to_date,
-      address_postcode: patient_postcode&.to_postcode
+      address_postcode: patient_postcode&.to_postcode,
+      include_3_out_of_4_matches: false
     )
   end
 
