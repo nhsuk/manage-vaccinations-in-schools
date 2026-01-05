@@ -43,7 +43,8 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       [
         {
           name: "CHILD_POSTCODE",
-          notes: "Optional, must be formatted as a valid postcode."
+          notes:
+            "Optional, must be formatted as a valid postcode, for example #{tag.i("SW1A 1AA")}."
         }
       ] + parent_columns
   end
@@ -54,7 +55,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         {
           name: "CHILD_POSTCODE",
           notes:
-            "#{tag.strong("Required")}, must be formatted as a valid postcode."
+            "#{tag.strong("Required")}, must be formatted as a valid postcode, for example #{tag.i("SW1A 1AA")}."
         },
         {
           name: "CHILD_SCHOOL_URN",
@@ -160,8 +161,8 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "CHILD_GENDER",
         notes:
-          "Optional, must be one of: #{tag.i("Male")}, #{tag.i("Female")}, " \
-            "#{tag.i("Not known")} or #{tag.i("Not specified")}."
+          "Optional, must be one of: #{tag.i("female")}, #{tag.i("male")}, " \
+            "#{tag.i("not known")} or #{tag.i("not specified")}."
       },
       { name: "CHILD_ADDRESS_LINE_1", notes: "Optional" },
       { name: "CHILD_ADDRESS_LINE_2", notes: "Optional" },
@@ -226,13 +227,13 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: gender_field_name,
         notes:
-          "#{tag.strong(optionality)}, must be #{tag.i("Not known")}, " \
-            "#{tag.i("Male")}, #{tag.i("Female")}, #{tag.i("Not specified")}."
+          "#{tag.strong(optionality)}, must be one of: #{tag.i("female")}, " \
+            "#{tag.i("male")}, #{tag.i("not known")} or #{tag.i("not specified")}."
       },
       {
         name: "PERSON_POSTCODE",
         notes:
-          "#{tag.strong(optionality)}, must be formatted as a valid postcode."
+          "#{tag.strong(optionality)}, must be formatted as a valid postcode, for example #{tag.i("SW1A 1AA")}."
       }
     ]
   end
@@ -301,7 +302,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
 
     programmes_sentence =
       programmes.to_sentence(
-        last_word_connector: ", or ",
+        last_word_connector: " or ",
         two_words_connector: " or "
       )
 
@@ -315,7 +316,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
 
   def make_vaccines_sentence(vaccines:)
     vaccines.to_sentence(
-      last_word_connector: ", or ",
+      last_word_connector: " or ",
       two_words_connector: " or "
     )
   end
