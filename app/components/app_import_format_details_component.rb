@@ -76,23 +76,15 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
 
   def poc_immunisation_import_columns
     organisation_code(optionality: "Optional") +
-      school_urn(optionality: "Optional") +
-      [
-        {
-          name: "SCHOOL_NAME",
-          notes: "Required if #{tag.code("SCHOOL_URN")} is #{tag.i("888888")}."
-        }
-      ] + nhs_number(optionality: "Optional") +
+      school_urn(optionality: "Optional") + school_name +
+      nhs_number(optionality: "Optional") +
       patient_demographics(optionality: "Required") +
       date_and_time_of_vaccination(date_optionality: "Required") +
-      [
-        {
-          name: "VACCINATED",
-          notes:
-            "Required, must be #{tag.i("Y")} or #{tag.i("N")}. " \
-              "Can be omitted if #{tag.code("VACCINE_GIVEN")} is provided."
-        }
-      ] + vaccine_and_batch + programme + anatomical_site +
+      vaccinated(
+        optionality: "Required",
+        extra_notes:
+          "Can be omitted if #{tag.code("VACCINE_GIVEN")} is provided."
+      ) + vaccine_and_batch + programme + anatomical_site +
       reason_not_vaccinated_and_notes + dose_sequence + care_setting +
       performing_professional
   end
@@ -105,20 +97,13 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         optionality: "Mandatory",
         gender_field_name: "PERSON_GENDER"
       ) +
-      [
-        {
-          name: "VACCINATED",
-          notes:
-            "Optional, must be #{tag.i("Y")} or #{tag.i("N")}." \
-              "Rows with the value #{tag.i("N")} will not be validated and will not be imported."
-        }
-      ] + date_and_time_of_vaccination(date_optionality: "Mandatory") +
+      vaccinated(
+        optionality: "Optional",
+        extra_notes:
+          "Rows with the value #{tag.i("N")} will not be validated and will not be imported."
+      ) + date_and_time_of_vaccination(date_optionality: "Mandatory") +
       bulk_vaccine_and_batch + bulk_anatomical_site + bulk_dose_sequence +
-      bulk_performing_professional_names +
-      [
-        { name: "LOCAL_PATIENT_ID", notes: tag.strong("Mandatory") },
-        { name: "LOCAL_PATIENT_ID_URI", notes: tag.strong("Mandatory") }
-      ]
+      bulk_performing_professional_names + local_patient_id
   end
 
   def child_columns
@@ -216,6 +201,15 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     ]
   end
 
+  def school_name
+    [
+      {
+        name: "SCHOOL_NAME",
+        notes: "Required if #{tag.code("SCHOOL_URN")} is #{tag.i("888888")}."
+      }
+    ]
+  end
+
   def patient_demographics(
     optionality:,
     gender_field_name: "PERSON_GENDER_CODE"
@@ -239,6 +233,23 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         name: "PERSON_POSTCODE",
         notes:
           "#{tag.strong(optionality)}, must be formatted as a valid postcode."
+      }
+    ]
+  end
+
+  def vaccinated(optionality:, extra_notes: "")
+    optionality_html =
+      if %w[Mandatory Required].include?(optionality)
+        tag.strong(optionality)
+      else
+        optionality
+      end
+
+    [
+      {
+        name: "VACCINATED",
+        notes:
+          "#{optionality_html}, must be #{tag.i("Y")} or #{tag.i("N")}. #{extra_notes}"
       }
     ]
   end
@@ -344,7 +355,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "VACCINE_GIVEN",
         notes:
-          "#{tag.strong("Mandatory")}." \
+          "#{tag.strong("Mandatory")}" \
             "#{tag.br}#{tag.br}" \
             "For HPV records, must be one of: #{hpv_vaccines_sentence}." \
             "#{tag.br}#{tag.br}" \
@@ -500,6 +511,13 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
             "#{tag.br} #{tag.br}" \
             "Must be a number between 1 and #{hpv_max} for HPV records and between 1 and #{flu_max} for flu records."
       }
+    ]
+  end
+
+  def local_patient_id
+    [
+      { name: "LOCAL_PATIENT_ID", notes: tag.strong("Mandatory") },
+      { name: "LOCAL_PATIENT_ID_URI", notes: tag.strong("Mandatory") }
     ]
   end
 end
