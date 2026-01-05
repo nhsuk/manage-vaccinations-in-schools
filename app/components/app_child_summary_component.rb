@@ -117,7 +117,7 @@ class AppChildSummaryComponent < ViewComponent::Base
                          )
                      )
                     row.with_action(
-                      text: "Change",
+                      text: "Edit",
                       href:,
                       visually_hidden_text: parent_relationship.ordinal_label
                     )
