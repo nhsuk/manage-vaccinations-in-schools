@@ -174,7 +174,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "ORGANISATION_CODE",
         notes:
-          "#{tag.strong(optionality)}, must be a valid #{link_to("ODS code", "https://odsportal.digital.nhs.uk/")}."
+          "#{tag.strong(optionality)}, must be a valid #{link_to("ODS code", "https://www.odsdatasearchandexport.nhs.uk/")}."
       }
     ]
   end
