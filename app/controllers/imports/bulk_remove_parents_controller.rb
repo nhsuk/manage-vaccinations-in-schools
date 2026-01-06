@@ -25,6 +25,10 @@ module Imports
     end
 
     def create
+      unless Flipper.enabled?(:import_bulk_remove_parents)
+        raise "Bulk removal of parents feature is disabled"
+      end
+
       @form =
         BulkRemoveParentsForm.new(
           import: @import,

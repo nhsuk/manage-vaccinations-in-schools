@@ -2,7 +2,10 @@
 
 describe "Bulk remove parents" do
   context "When there are no associated consents" do
-    before { given_i_am_signed_in }
+    before do
+      given_i_am_signed_in
+      and_the_feature_is_enabled
+    end
 
     scenario "All parent relationships are removed" do
       when_i_go_to_the_page_for_the_class_import
@@ -19,6 +22,7 @@ describe "Bulk remove parents" do
   context "When there are associated consents" do
     before do
       given_i_am_signed_in
+      and_the_feature_is_enabled
       and_a_consent_exists_in_the_import
     end
 
@@ -81,6 +85,10 @@ describe "Bulk remove parents" do
     @patients << sibling
 
     sign_in @user
+  end
+
+  def and_the_feature_is_enabled
+    Flipper.enable(:import_bulk_remove_parents)
   end
 
   def and_a_consent_exists_in_the_import
