@@ -133,6 +133,24 @@ FactoryBot.define do
       nhs_immunisations_api_primary_source { true }
     end
 
+    trait :sourced_from_bulk_upload do
+      transient { uploaded_by { nil } }
+
+      source { "bulk_upload" }
+
+      after(:create) do |vaccination_record, evaluator|
+        next unless evaluator.uploaded_by
+
+        create(
+          :immunisation_import,
+          type: "bulk",
+          vaccination_records: [vaccination_record],
+          team: evaluator.uploaded_by.selected_team,
+          uploaded_by: evaluator.uploaded_by
+        )
+      end
+    end
+
     trait :not_administered do
       delivery_site { nil }
       delivery_method { nil }
