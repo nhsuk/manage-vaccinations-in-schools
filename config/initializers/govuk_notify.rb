@@ -58,7 +58,7 @@ GOVUK_NOTIFY_SMS_TEMPLATES = {
   consent_clinic_request: "03a0d572-ca5b-417e-87c3-838872a9eabc",
   consent_confirmation_given: "3179b434-4f44-4d47-a8ba-651b58c235fd",
   consent_confirmation_refused: "eb34f3ab-0c58-4e56-b6b1-2c179270dfc3",
-  consent_school_reminder: "ee3d36b1-4682-4eb0-a74a-7e0f6c9d0598",
+  consent_school_reminder: "b9c0c3fb-24f1-4647-a2a1-87389cec9942",
   consent_school_request: "c7bd8150-d09e-4607-817d-db75c9a6a966",
   consent_unknown_contact_details_warning:
     "1fd4620d-1c96-4af1-b047-ed13a90b0f44",

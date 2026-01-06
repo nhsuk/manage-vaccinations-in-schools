@@ -109,6 +109,7 @@ describe GovukNotifyPersonalisation do
           team_privacy_notice_url: "https://example.com/privacy-notice",
           team_privacy_policy_url: "https://example.com/privacy-policy",
           vaccination: "HPV vaccination",
+          vaccination_sms: "HPV vaccination",
           vaccination_and_dates: "HPV vaccination on Thursday 1 January",
           vaccination_and_method: "HPV vaccination",
           vaccine: "HPV vaccine",
@@ -123,9 +124,19 @@ describe GovukNotifyPersonalisation do
   end
 
   context "with a patient in primary school" do
-    let(:patient) { create(:patient, date_of_birth: Date.new(2015, 2, 1)) }
+    let(:date_of_birth) { Date.new(2015, 2, 1) }
+    let(:patient) { create(:patient, date_of_birth:) }
 
     it { should include(talk_to_your_child_message: "") }
+
+    context "when it's an MMR programme and patient is eligible for MMRV" do
+      let(:programmes) { [Programme.mmr] }
+      let(:date_of_birth) { Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month }
+
+      before { Flipper.enable(:mmrv) }
+
+      it { should include(vaccination_sms: "MMR vaccination") }
+    end
   end
 
   context "when the session is today" do
