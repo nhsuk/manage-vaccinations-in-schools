@@ -254,7 +254,7 @@ locals {
   }
 
   export_prometheus_metrics = contains([
-    "performance", "production"
+    "performance", "production", "sandbox-alpha"
   ], var.environment)
 
   sidekiq_envs = concat(
