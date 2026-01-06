@@ -373,7 +373,27 @@ describe GovukNotifyPersonalisation do
         )
       end
 
-      it { expect(to_h).to include(consented_vaccine_methods_message: "") }
+      it do
+        expect(to_h).to include(
+          consented_vaccine_methods_message: "",
+          vaccination: "MMR vaccination"
+        )
+      end
+
+      context "when receiving their first dose" do
+        let(:vaccination_record) do
+          create(
+            :vaccination_record,
+            :administered,
+            programme: programmes.first,
+            patient:,
+            session:,
+            performed_at: Date.new(2020, 1, 1)
+          )
+        end
+
+        it { should include(vaccination: "MMR vaccination") }
+      end
 
       context "when consented to vaccine without gelatine" do
         before { consent.update!(without_gelatine: true) }
