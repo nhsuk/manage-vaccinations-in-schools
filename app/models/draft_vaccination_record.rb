@@ -342,6 +342,7 @@ class DraftVaccinationRecord
       programme_type
       protocol
       session_id
+      source
       supplied_by_user_id
       vaccine_id
     ]
