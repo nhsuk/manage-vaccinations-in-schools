@@ -137,8 +137,16 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
     return if programmes_to_check.empty?
 
+    programmes_with_variants =
+      programmes_to_check.map do |programme|
+        disease_types =
+          patient.programme_status(programme, academic_year:).disease_types
+
+        programme.variant_for(disease_types:)
+      end
+
     labels =
-      programmes_to_check.filter_map do |programme|
+      programmes_with_variants.filter_map do |programme|
         if patient.consent_given_and_safe_to_vaccinate?(
              programme:,
              academic_year:
