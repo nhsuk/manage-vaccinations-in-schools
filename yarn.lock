@@ -4010,10 +4010,10 @@ sane@^4.0.3:
     minimist "^1.1.1"
     walker "~1.0.5"
 
-sass@^1.97.0:
-  version "1.97.0"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.97.0.tgz#8ed65df5e2f73012d5ef0e98837ff63550657ab2"
-  integrity sha512-KR0igP1z4avUJetEuIeOdDlwaUDvkH8wSx7FdSjyYBS3dpyX3TzHfAMO0G1Q4/3cdjcmi3r7idh+KCmKqS+KeQ==
+sass@^1.97.2:
+  version "1.97.2"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.97.2.tgz#e515a319092fd2c3b015228e3094b40198bff0da"
+  integrity sha512-y5LWb0IlbO4e97Zr7c3mlpabcbBtS+ieiZ9iwDooShpFKWXf62zz5pEPdwrLYm+Bxn1fnbwFGzHuCLSA9tBmrw==
   dependencies:
     chokidar "^4.0.0"
     immutable "^5.0.2"
