@@ -10,6 +10,10 @@ describe "MMRV vaccination" do
 
     when_i_go_to_the_patients_tab
     then_i_should_consent_for_mmrv
+
+    when_i_go_to_the_record_tab
+    then_i_should_see_mmrv_vaccine_type
+
     when_i_go_to_the_patient
     then_i_see_the_vaccination_form
 
@@ -123,8 +127,15 @@ describe "MMRV vaccination" do
     expect(page).to have_content("MMRVDue 1st dose")
   end
 
-  def when_i_go_to_the_patient
+  def when_i_go_to_the_record_tab
     visit session_record_path(@session)
+  end
+
+  def then_i_should_see_mmrv_vaccine_type
+    expect(page).to have_content("No preference for MMRV")
+  end
+
+  def when_i_go_to_the_patient
     click_link @patient.full_name
   end
 
