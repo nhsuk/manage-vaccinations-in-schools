@@ -176,9 +176,22 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def programme_status_tag
     return unless show_programme_status
 
+    status_by_programme =
+      programmes.each_with_object({}) do |programme, hash|
+        resolved_status =
+          PatientStatusResolver.new(
+            patient,
+            programme:,
+            academic_year:,
+            context_location_id: session.location_id
+          ).programme
+
+        hash[resolved_status.fetch(:prefix)] = resolved_status
+      end
+
     {
       key: :programme,
-      value: render(AppAttachedTagsComponent.new(attached_tags(:programme)))
+      value: render(AppAttachedTagsComponent.new(status_by_programme))
     }
   end
 
@@ -210,20 +223,6 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           )
         )
     }
-  end
-
-  def attached_tags(context)
-    programmes.each_with_object({}) do |programme, hash|
-      resolved_status =
-        PatientStatusResolver.new(
-          patient,
-          programme:,
-          academic_year:,
-          context_location_id: session.location_id
-        ).send(context)
-
-      hash[resolved_status.fetch(:prefix)] = resolved_status
-    end
   end
 
   def latest_note
