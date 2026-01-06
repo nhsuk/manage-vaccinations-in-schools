@@ -246,7 +246,7 @@ class ImmunisationImportRow
 
   def programme_name = poc? ? @data[:programme] : nil
 
-  def reason_not_administered = @data[:reason_not_vaccinated]
+  def reason_not_administered = poc? ? @data[:reason_not_vaccinated] : nil
 
   def school_name =
     if poc?
