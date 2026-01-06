@@ -98,22 +98,17 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
            :patient_year_group,
            to: :helpers
 
-  def programme_status_tag = status_tag(:programme)
+  def programme_status_tag
+    return if programmes.empty?
 
-  def status_tag(type)
-    @status_tag ||= {}
-    @status_tag[type] ||= begin
-      status_by_programme =
-        programmes.each_with_object({}) do |programme, hash|
-          if (status_hash = status_resolver_for(programme).send(type))
-            hash[programme.name] = status_hash
-          end
-        end
+    status_by_programme =
+      programmes.each_with_object({}) do |programme, hash|
+        resolved_status = status_resolver_for(programme).programme
 
-      if status_by_programme.present?
-        render AppAttachedTagsComponent.new(status_by_programme)
+        hash[resolved_status.fetch(:prefix)] = resolved_status
       end
-    end
+
+    render AppAttachedTagsComponent.new(status_by_programme)
   end
 
   def status_resolver_for(programme)

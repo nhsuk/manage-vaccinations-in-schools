@@ -60,10 +60,9 @@ describe AppPatientSearchResultCardComponent do
     it { should have_text("Streeling University") }
   end
 
-  context "when given programmes" do
+  context "with the flu programme" do
     let(:programme) { Programme.flu }
     let(:programmes) { [programme] }
-    let(:academic_year) { AcademicYear.current }
 
     it { should have_text("Programme statusFluNot eligible") }
 
@@ -78,6 +77,26 @@ describe AppPatientSearchResultCardComponent do
       end
 
       it { should have_text("FluUnable to vaccinateChild unwell") }
+    end
+  end
+
+  context "with the MMR(V) programme" do
+    let(:programme) { Programme.mmr }
+    let(:programmes) { [programme] }
+
+    before { Flipper.enable(:mmrv) }
+
+    context "with a patient not eligible for MMRV" do
+      let(:patient) { create(:patient, date_of_birth: Date.new(2019, 1, 1)) }
+
+      it { should have_text("Programme statusMMR") }
+      it { should_not have_text("MMRV") }
+    end
+
+    context "with a patient eligible for MMRV" do
+      let(:patient) { create(:patient, date_of_birth: Date.new(2020, 1, 1)) }
+
+      it { should have_text("Programme statusMMRV") }
     end
   end
 end
