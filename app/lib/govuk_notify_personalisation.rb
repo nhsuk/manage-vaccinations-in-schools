@@ -467,13 +467,21 @@ class GovukNotifyPersonalisation
   end
 
   def vaccination
-    names = programme_names
+    if vaccination_record.present?
+      # We're sending communication about a specific vaccination that took place.
+      "#{programme_names.to_sentence} vaccination".pluralize(
+        programme_names.length
+      )
+    else
+      # We're sending about a vaccination that will take place.
+      names = programme_names
 
-    if mmr_second_dose_required
-      names = names.map { it == "MMR" ? "2nd dose of the MMR" : it }
+      if mmr_second_dose_required
+        names = names.map { it == "MMR" ? "2nd dose of the MMR" : it }
+      end
+
+      "#{names.to_sentence} vaccination".pluralize(names.length)
     end
-
-    "#{names.to_sentence} vaccination".pluralize(names.length)
   end
 
   def vaccination_and_dates
