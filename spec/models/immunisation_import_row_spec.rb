@@ -69,8 +69,8 @@ describe ImmunisationImportRow do
   let(:valid_bulk_common_data) do
     valid_patient_data.deep_dup.merge(
       "ANATOMICAL_SITE" => "Left Deltoid",
-      "BATCH_EXPIRY_DATE" => Date.tomorrow.strftime("%Y%m%d"),
-      "DATE_OF_VACCINATION" => Date.current.strftime("%Y%m%d"),
+      "BATCH_EXPIRY_DATE" => "20260106",
+      "DATE_OF_VACCINATION" => "20260105",
       "BATCH_NUMBER" => "123",
       "LOCAL_PATIENT_ID" => "CIN-OXFORD-pat123456",
       "LOCAL_PATIENT_ID_URI" => "https://cinnamon.nhs.uk/0de/system1"
@@ -2417,6 +2417,40 @@ describe ImmunisationImportRow do
 
       let(:import_type) { "bulk" }
 
+      shared_examples "with existing vaccination records" do |programme|
+        let(:patient) { create(:patient, nhs_number:) }
+
+        let(:other_vaccination_record) do
+          create(:vaccination_record, patient:, programme:, performed_at:)
+        end
+
+        context "with an existing vaccination record in a different academic year" do
+          let(:performed_at) { Time.zone.local(2023, 1, 1, 13, 10, 4) }
+
+          before { other_vaccination_record }
+
+          it { should_not eq other_vaccination_record }
+        end
+
+        context "with an existing vaccination record on a different date in the same academic year" do
+          let(:performed_at) { Time.zone.local(2026, 1, 1, 12, 10, 2) }
+
+          before { other_vaccination_record }
+
+          it { should_not eq other_vaccination_record }
+        end
+
+        context "with an existing vaccination record on the same date" do
+          let(:performed_at) { Time.zone.local(2026, 1, 5, 9, 30, 50) }
+
+          before { other_vaccination_record }
+
+          it { should_not be_nil }
+          it { should_not eq other_vaccination_record }
+          its(:pending_changes) { should be_empty }
+        end
+      end
+
       context "of type flu" do
         shared_examples "accepts a VACCINE_GIVEN code" do |vaccine_given, snomed_product_code|
           context "with code: #{vaccine_given}" do
@@ -2517,6 +2551,8 @@ describe ImmunisationImportRow do
                          "43207411000001105"
 
         include_examples "with pseudo-postcodes"
+
+        include_examples "with existing vaccination records", Programme.flu
       end
 
       context "of type hpv" do
@@ -2612,6 +2648,8 @@ describe ImmunisationImportRow do
         end
 
         include_examples "with pseudo-postcodes"
+
+        include_examples "with existing vaccination records", Programme.hpv
       end
     end
   end

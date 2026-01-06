@@ -38,6 +38,13 @@ describe("National reporting immunisation imports") do
     then_i_should_see_the_existing_patient
     when_i_search_for_new_patient
     then_i_should_see_the_new_patient
+
+    travel_to 1.minute.from_now
+
+    when_i_navigate_to_the_upload_page
+    and_i_upload_a_valid_mixed_file # The exact same file again
+    then_i_should_see_the_upload
+    and_no_new_vaccination_records_were_created
   end
 
   def given_mavis_logins_are_configured
@@ -141,6 +148,10 @@ describe("National reporting immunisation imports") do
     click_on "Upload records"
   end
 
+  def when_i_navigate_to_the_upload_page
+    visit "/immunisation-imports/new"
+  end
+
   def and_i_upload_a_valid_mixed_file
     attach_file(
       "immunisation_import[csv]",
@@ -212,5 +223,9 @@ describe("National reporting immunisation imports") do
 
   def then_i_should_see_the_new_patient
     expect(page).to have_content(@new_patient.full_name)
+  end
+
+  def and_no_new_vaccination_records_were_created
+    expect(VaccinationRecord.count).to eq(3)
   end
 end
