@@ -58,13 +58,6 @@ module NavigationConcern
       }
     end
 
-    if current_team&.has_poc_only_access?
-      @navigation_items << {
-        title: t("programmes.index.title"),
-        path: programmes_path
-      }
-    end
-
     if current_team&.has_upload_only_access?
       @navigation_items << {
         title: t("patients.index.title"),
