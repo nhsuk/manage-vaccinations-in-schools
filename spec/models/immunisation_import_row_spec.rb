@@ -1030,7 +1030,10 @@ describe ImmunisationImportRow do
               "CLINIC_NAME" => "The Hog's Head",
               "SESSION_ID" => 1,
               "UUID" => "ABCD1234-26cc-44e4-b886-c3cc90ba01b6",
-              "REASON_NOT_VACCINATED" => "Unwell"
+              "REASON_NOT_VACCINATED" => "Unwell",
+              "Vaccination type" => "HPV 1",
+              "EVENT_LOCATION_TYPE" => "school",
+              "SUPPLIER_EMAIL" => "abc@example.com"
             }
           )
         end
@@ -2337,7 +2340,10 @@ describe ImmunisationImportRow do
                 "CLINIC_NAME" => "The Hog's Head",
                 "SESSION_ID" => session.id,
                 "UUID" => "ABCD1234-26cc-44e4-b886-c3cc90ba01b6",
-                "REASON_NOT_VACCINATED" => "Unwell"
+                "REASON_NOT_VACCINATED" => "Unwell",
+                "Vaccination type" => "HPV 1",
+                "EVENT_LOCATION_TYPE" => "school",
+                "SUPPLIER_EMAIL" => "abc@example.com"
               }
             )
           end
@@ -2357,10 +2363,13 @@ describe ImmunisationImportRow do
           its(:notes) { should be_nil }
 
           its(:location) { should eq location }
+          its(:location_name) { should be_nil }
 
           its(:session) { should be_nil }
 
           its(:uuid) { should_not eq "ABCD1234-26cc-44e4-b886-c3cc90ba01b6" }
+
+          its(:supplied_by) { should be_nil }
         end
 
         include_examples "accepts a VACCINE_GIVEN code",
@@ -2442,7 +2451,11 @@ describe ImmunisationImportRow do
                 "CARE_SETTING" => 2,
                 "CLINIC_NAME" => "The Hog's Head",
                 "SESSION_ID" => session.id,
-                "UUID" => "ABCD1234-26cc-44e4-b886-c3cc90ba01b6"
+                "UUID" => "ABCD1234-26cc-44e4-b886-c3cc90ba01b6",
+                "REASON_NOT_VACCINATED" => "Unwell",
+                "Vaccination type" => "flu 1",
+                "EVENT_LOCATION_TYPE" => "school",
+                "SUPPLIER_EMAIL" => "abc@example.com"
               }
             )
           end
