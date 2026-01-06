@@ -49,6 +49,8 @@ module ParentInterface
           types = params[:programme_types].split("-")
           @session.programmes.select { it.type.in?(types) }
         end
+
+      raise ActiveRecord::RecordNotFound if @programmes.empty?
     end
 
     def set_team_location
