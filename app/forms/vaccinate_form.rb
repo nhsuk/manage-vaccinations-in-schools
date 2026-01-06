@@ -151,6 +151,7 @@ class VaccinateForm
     draft_vaccination_record.source = "service"
     draft_vaccination_record.supplied_by_user_id =
       supplied_by_user_id || psd_created_by_user_id
+    draft_vaccination_record.source = "service"
 
     draft_vaccination_record.save # rubocop:disable Rails/SaveBang
   end
