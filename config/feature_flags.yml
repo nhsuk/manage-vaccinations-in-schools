@@ -16,6 +16,8 @@ imms_api_sync_job: Flag to switch off any automated sending of vaccination recor
   (Create, Update, Delete), triggered by the creation/edit/delete of any vaccination records.
   This can be controlled on a per-programme basis.
 
+import_bulk_remove_parents: Allow user to bulk remove parent relationships from imports.
+
 import_choose_academic_year: Add an option to choose the academic year when
   importing patients during the preparation period.
 
