@@ -7,6 +7,7 @@ describe "Immunisation imports" do
     given_an_hpv_programme_is_underway
     and_i_am_signed_in
     and_school_locations_exist
+    given_a_patient_exists
 
     when_i_go_to_the_import_page
     then_i_should_see_the_upload_link
@@ -26,12 +27,24 @@ describe "Immunisation imports" do
     and_i_upload_a_valid_file
     then_i_should_see_the_upload
     and_i_should_see_the_vaccination_records
+    and_the_patients_should_now_be_associated_with_the_team
+    and_the_newly_created_patients_should_be_archived
+    and_the_existing_patients_should_not_be_archived
 
     when_i_click_on_a_vaccination_record
     then_i_should_see_the_vaccination_record
+    and_the_patient_should_be_archived
 
     when_i_click_on_cohorts
     then_i_should_see_no_children_in_the_cohorts
+
+    when_i_go_to_the_children_page
+    and_i_search_for_existing_patient
+    then_i_should_see_the_existing_patient
+    when_i_search_for_new_patient
+    then_i_should_not_see_the_new_patient
+    when_i_include_archived_patients
+    then_i_should_see_the_new_patient
   end
 
   def given_an_hpv_programme_is_underway
@@ -50,6 +63,19 @@ describe "Immunisation imports" do
     create(:school, urn: "110158")
     create(:school, urn: "120026")
     create(:school, urn: "144012")
+  end
+
+  def given_a_patient_exists
+    @existing_patient =
+      create(
+        :patient,
+        given_name: "Oliver",
+        family_name: "Bowers",
+        date_of_birth: Date.new(2010, 9, 17),
+        nhs_number: "8160442742",
+        session: @session,
+        team: @team
+      )
   end
 
   def when_i_go_to_the_import_page
@@ -141,6 +167,20 @@ describe "Immunisation imports" do
     expect(page).to have_content("Vaccination date 14 May 2024")
   end
 
+  def and_the_patients_should_now_be_associated_with_the_team
+    Patient.all.find_each { |patient| expect(patient.teams).to include(@team) }
+  end
+
+  def and_the_newly_created_patients_should_be_archived
+    new_patient = Patient.find_by(nhs_number: "7420180008")
+    expect(new_patient.archived?(team: @team)).to be true
+    expect(new_patient.archive_reasons.first.type).to eq "immunisation_import"
+  end
+
+  def and_the_existing_patients_should_not_be_archived
+    expect(@existing_patient.archived?(team: @team)).to be false
+  end
+
   def when_i_go_back
     click_on "Back to check and confirm upload"
   end
@@ -164,7 +204,7 @@ describe "Immunisation imports" do
   end
 
   def then_i_should_see_no_children_in_the_cohorts
-    expect(page).to have_content("Year 8\nNo children")
+    expect(page).to have_content("Year 8\n1 child")
     expect(page).to have_content("Year 9\nNo children")
     expect(page).to have_content("Year 10\nNo children")
     expect(page).to have_content("Year 11\nNo children")
@@ -176,6 +216,43 @@ describe "Immunisation imports" do
     expect(page).to have_content("Full namePICKLE, Chyna")
     expect(page).to have_content("Vaccination details")
     expect(page).to have_content("OutcomeVaccinated")
+  end
+
+  def and_the_patient_should_be_archived
+    expect(page).to have_content("Archive reasonImmunisation import")
+  end
+
+  def when_i_go_to_the_children_page
+    click_on "Children", match: :first
+  end
+
+  def and_i_search_for_existing_patient
+    fill_in "Search", with: @existing_patient.full_name
+    click_button "Search"
+  end
+
+  def then_i_should_see_the_existing_patient
+    expect(page).to have_content(@existing_patient.full_name)
+  end
+
+  def when_i_search_for_new_patient
+    @new_patient = Patient.find_by(nhs_number: "7420180008")
+    fill_in "Search", with: @new_patient.full_name
+    click_button "Search"
+  end
+
+  def then_i_should_not_see_the_new_patient
+    expect(page).not_to have_content(@new_patient.full_name)
+  end
+
+  def when_i_include_archived_patients
+    find(".nhsuk-details__summary").click
+    check "Archived records"
+    click_button "Search"
+  end
+
+  def then_i_should_see_the_new_patient
+    expect(page).to have_content(@new_patient.full_name)
   end
 
   alias_method :and_i_click_on_the_upload_link, :when_i_click_on_the_upload_link
