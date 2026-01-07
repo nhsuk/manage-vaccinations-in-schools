@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_19_094217) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_07_194410) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -746,6 +746,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_19_094217) do
   create_table "pre_screenings", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date", null: false
+    t.enum "disease_types", array: true, enum_type: "disease_type"
     t.bigint "location_id", null: false
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
