@@ -38,6 +38,14 @@ describe AppSessionSummaryComponent do
     it { should have_content("Consent forms") }
     it { should have_link("Download the HPV consent form (PDF)") }
 
+    context "for MMR(V) programme" do
+      before { Flipper.enable(:mmrv) }
+
+      let(:programmes) { [Programme.mmr] }
+
+      it { should have_link("Download the MMR consent form (PDF)") }
+    end
+
     context "when consent is open" do
       let(:session) do
         create(:session, location:, date: 1.week.from_now.to_date, programmes:)
@@ -48,14 +56,14 @@ describe AppSessionSummaryComponent do
           "View the HPV online consent form (opens in new tab)"
         )
       end
-    end
 
-    context "for MMR(V) programme" do
-      before { Flipper.enable(:mmrv) }
+      context "for MMR(V) programme" do
+        before { Flipper.enable(:mmrv) }
 
-      let(:programmes) { [Programme.mmr] }
+        let(:programmes) { [Programme.mmr] }
 
-      it { should have_link("Download the MMR consent form (PDF)") }
+        it { should have_link("View the MMR online consent form") }
+      end
     end
   end
 end
