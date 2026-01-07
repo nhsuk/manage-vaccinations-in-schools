@@ -49,5 +49,13 @@ describe AppSessionSummaryComponent do
         )
       end
     end
+
+    context "for MMR(V) programme" do
+      before { Flipper.enable(:mmrv) }
+
+      let(:programmes) { [Programme.mmr] }
+
+      it { should have_link("Download the MMR consent form (PDF)") }
+    end
   end
 end

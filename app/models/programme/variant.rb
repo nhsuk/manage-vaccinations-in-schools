@@ -45,9 +45,15 @@ class Programme::Variant < SimpleDelegator
     @vaccines ||= Vaccine.for_programme(self)
   end
 
-  def snomed_target_disease_codes = SNOMED_TARGET_DISEASE_CODES.fetch(type)
+  def snomed_target_disease_codes
+    SNOMED_TARGET_DISEASE_CODES.fetch(variant_type)
+  end
 
-  def snomed_target_disease_terms = SNOMED_TARGET_DISEASE_TERMS.fetch(type)
+  def snomed_target_disease_terms
+    SNOMED_TARGET_DISEASE_TERMS.fetch(variant_type)
+  end
 
-  def snomed_target_disease_name = SNOMED_TARGET_DISEASE_NAMES.fetch(type)
+  def snomed_target_disease_name
+    SNOMED_TARGET_DISEASE_NAMES.fetch(variant_type)
+  end
 end

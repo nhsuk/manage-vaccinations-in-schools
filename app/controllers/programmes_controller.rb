@@ -9,14 +9,17 @@ class ProgrammesController < ApplicationController
     @programmes = current_user.programmes
   end
 
-  def consent_form
-    programme =
-      authorize(current_user.programmes.find { it.type == params[:type] })
+  CONSENT_FORM_TYPES = %w[flu hpv menacwy mmr td_ipv].freeze
 
-    send_file(
-      "public/consent_forms/#{programme.type}.pdf",
-      filename: "#{programme.name} Consent Form.pdf",
-      disposition: "attachment"
-    )
+  def consent_form
+    type = params[:type]
+
+    raise ActiveRecord::RecordNotFound unless CONSENT_FORM_TYPES.include?(type)
+
+    path = "public/consent_forms/#{type}.pdf"
+    name = I18n.t(type, scope: :programme_types)
+    filename = "#{name} Consent Form.pdf"
+
+    send_file(path, filename:, disposition: "attachment")
   end
 end
