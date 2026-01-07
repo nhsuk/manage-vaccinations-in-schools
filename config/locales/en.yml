@@ -142,6 +142,10 @@ en:
               missing_month: Enter a month
               missing_year: Enter a year
               invalid: Enter a valid date and time
+            performed_by_given_name:
+              blank: First name can't be blank
+            performed_by_family_name:
+              blank: Last name can't be blank
         health_answer:
           attributes:
             notes:
@@ -558,6 +562,10 @@ en:
           attributes:
             performed_at:
               less_than_or_equal_to: Enter a time in the past
+            performed_by_given_name:
+              blank: First name can't be blank
+            performed_by_family_name:
+              blank: Last name can't be blank
   consent_forms:
     index:
       title: Unmatched consent responses

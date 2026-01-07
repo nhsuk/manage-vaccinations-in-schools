@@ -1,0 +1,19 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: @back_link_path) %>
+<% end %>
+
+<% content_for :page_title, "Vaccinator" %>
+
+<%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <span class="nhsuk-caption-l"><%= @patient.full_name %></span>
+  <%= h1 "Vaccinator" %>
+
+  <%= f.govuk_text_field :performed_by_given_name, label: { text: "First name" },
+                                                   hint: { text: "Or given name" } %>
+  <%= f.govuk_text_field :performed_by_family_name, label: { text: "Last name" },
+                                                    hint: { text: "Or family name" } %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>
