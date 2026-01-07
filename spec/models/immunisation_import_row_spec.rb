@@ -1595,6 +1595,22 @@ describe ImmunisationImportRow do
           end
         end
 
+        %w[1P 1B].each_with_index do |value, index|
+          context "with an MMR special value of #{value}" do
+            let(:programmes) { [Programme.mmr] }
+
+            let(:data) do
+              valid_data.merge(
+                "PROGRAMME" => "MMR",
+                "VACCINE_GIVEN" => "Priorix",
+                "DOSE_SEQUENCE" => value
+              )
+            end
+
+            it { should eq(index + 1) }
+          end
+        end
+
         %w[1P 2P 3P 1B 2B].each_with_index do |value, index|
           context "with a Td/IPV special value of #{value}" do
             let(:programmes) { [Programme.td_ipv] }
