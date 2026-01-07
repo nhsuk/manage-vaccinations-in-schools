@@ -29,7 +29,10 @@ class NextDoseTriageFactory
   delegate :academic_year, :patient, :programme, to: :vaccination_record
 
   def should_create?
-    return false unless vaccination_record.administered? && programme.mmr?
+    unless vaccination_record.recorded_in_service? &&
+             vaccination_record.administered? && programme.mmr?
+      return false
+    end
 
     dose_sequence =
       patient.vaccination_status(programme:, academic_year:).dose_sequence
