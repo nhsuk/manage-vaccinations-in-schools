@@ -20,8 +20,6 @@ provider "aws" {
   region = "eu-west-2"
 }
 
-data "aws_caller_identity" "current" {}
-
 resource "aws_ecr_repository" "performance" {
   name                 = "performancetest"
   image_tag_mutability = "IMMUTABLE"

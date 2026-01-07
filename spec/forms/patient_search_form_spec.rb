@@ -24,7 +24,6 @@ describe PatientSearchForm do
 
   let(:aged_out_of_programmes) { nil }
   let(:archived) { nil }
-  let(:consent_statuses) { nil }
   let(:date_of_birth_day) { nil }
   let(:date_of_birth_month) { nil }
   let(:date_of_birth_year) { nil }
@@ -34,8 +33,6 @@ describe PatientSearchForm do
   let(:programme_types) { nil }
   let(:q) { nil }
   let(:registration_status) { nil }
-  let(:triage_status) { nil }
-  let(:vaccination_status) { nil }
   let(:vaccine_criteria) { nil }
   let(:year_groups) { nil }
 
@@ -43,7 +40,6 @@ describe PatientSearchForm do
     {
       aged_out_of_programmes:,
       archived:,
-      consent_statuses:,
       date_of_birth_day:,
       date_of_birth_month:,
       date_of_birth_year:,
@@ -53,8 +49,6 @@ describe PatientSearchForm do
       programme_types:,
       q:,
       registration_status:,
-      triage_status:,
-      vaccination_status:,
       vaccine_criteria:,
       year_groups:
     }
@@ -183,94 +177,6 @@ describe PatientSearchForm do
       end
     end
 
-    context "filtering on consent status" do
-      let(:consent_statuses) { %w[given refused] }
-      let(:programme_types) { programmes.map(&:type) }
-
-      let(:session) { session_for_patients }
-
-      it "filters on consent status" do
-        patient_given =
-          create(:patient, :consent_given_triage_not_needed, session:)
-
-        patient_refused = create(:patient, :consent_refused, session:)
-
-        expect(form.apply(scope)).to contain_exactly(
-          patient_given,
-          patient_refused
-        )
-      end
-
-      context "with nasal" do
-        let(:consent_statuses) { %w[given_nasal] }
-
-        it "filters on consent status" do
-          patient_given_nasal =
-            create(
-              :patient,
-              :consent_given_nasal_only_triage_not_needed,
-              session:
-            )
-
-          create(
-            :patient,
-            :consent_given_injection_only_triage_not_needed,
-            session:
-          )
-
-          expect(form.apply(scope)).to contain_exactly(patient_given_nasal)
-        end
-      end
-
-      context "with injection without gelatine" do
-        let(:consent_statuses) { %w[given_injection_without_gelatine] }
-
-        it "filters on consent status" do
-          patient_given_without_gelatine =
-            create(
-              :patient,
-              :consent_given_without_gelatine_triage_not_needed,
-              session:
-            )
-
-          create(:patient, :consent_given_triage_not_needed, session:)
-
-          expect(form.apply(scope)).to contain_exactly(
-            patient_given_without_gelatine
-          )
-        end
-      end
-
-      context "with nasal and injection without gelatine" do
-        let(:consent_statuses) do
-          %w[given_nasal given_injection_without_gelatine]
-        end
-
-        it "filters on consent status" do
-          patient_given_nasal =
-            create(
-              :patient,
-              :consent_given_nasal_only_triage_not_needed,
-              session:
-            )
-
-          patient_given_without_gelatine =
-            create(
-              :patient,
-              :consent_given_without_gelatine_triage_not_needed,
-              session:
-            )
-
-          create(:patient, :consent_given_triage_not_needed, session:)
-
-          expect(form.apply(scope)).to contain_exactly(
-            patient_given_nasal,
-            patient_given_without_gelatine
-          )
-        end
-      end
-    end
-
     context "filtering on programmes" do
       let(:programme_types) { programmes.map(&:type) }
 
@@ -296,23 +202,6 @@ describe PatientSearchForm do
       end
     end
 
-    context "filtering on programme status" do
-      let(:vaccination_status) { "vaccinated" }
-      let(:programme_types) { programmes.map(&:type) }
-
-      it "filters on programme status" do
-        patient =
-          create(
-            :patient,
-            :vaccinated,
-            programmes:,
-            session: session_for_patients
-          )
-
-        expect(form.apply(scope)).to include(patient)
-      end
-    end
-
     context "filtering on register status" do
       let(:registration_status) { "attending" }
 
@@ -321,65 +210,6 @@ describe PatientSearchForm do
       it "filters on register status" do
         patient = create(:patient, :in_attendance, session:)
         expect(form.apply(scope)).to include(patient)
-      end
-    end
-
-    context "filtering on triage status" do
-      let(:programme_types) { programmes.map(&:type) }
-      let(:triage_status) { "required" }
-
-      let(:session) { session_for_patients }
-
-      it "filters on triage status" do
-        patient = create(:patient, :consent_given_triage_needed, session:)
-
-        expect(form.apply(scope)).to include(patient)
-      end
-
-      context "with nasal" do
-        let(:triage_status) { "safe_to_vaccinate_nasal" }
-
-        it "filters on triage status" do
-          patient_safe_to_vaccinate_nasal =
-            create(
-              :patient,
-              :consent_given_nasal_triage_safe_to_vaccinate_nasal,
-              session:
-            )
-
-          create(
-            :patient,
-            :consent_given_injection_and_nasal_triage_safe_to_vaccinate_injection,
-            session:
-          )
-
-          expect(form.apply(scope)).to contain_exactly(
-            patient_safe_to_vaccinate_nasal
-          )
-        end
-      end
-
-      context "with injection without gelatine" do
-        let(:triage_status) { "safe_to_vaccinate_injection_without_gelatine" }
-
-        it "filters on consent status" do
-          patient_safe_to_vaccinate_injection_without_gelatine =
-            create(
-              :patient,
-              :consent_given_injection_and_nasal_triage_safe_to_vaccinate_injection,
-              session:
-            )
-
-          create(
-            :patient,
-            :consent_given_nasal_triage_safe_to_vaccinate_nasal,
-            session:
-          )
-
-          expect(form.apply(scope)).to contain_exactly(
-            patient_safe_to_vaccinate_injection_without_gelatine
-          )
-        end
       end
     end
 
@@ -593,27 +423,27 @@ describe PatientSearchForm do
       it "overrides session filters when 'Any' option is selected (empty string)" do
         described_class.new(
           current_user:,
-          consent_statuses: %w[given],
+          programme_statuses: %w[needs_triage],
           request_session:,
           request_path:
         )
 
         form1 =
           described_class.new(current_user:, request_session:, request_path:)
-        expect(form1.consent_statuses).to eq(%w[given])
+        expect(form1.programme_statuses).to eq(%w[needs_triage])
 
         form2 =
           described_class.new(
             current_user:,
-            consent_statuses: nil,
+            programme_statuses: nil,
             request_session:,
             request_path:
           )
-        expect(form2.consent_statuses).to eq([])
+        expect(form2.programme_statuses).to eq([])
 
         form3 =
           described_class.new(current_user:, request_session:, request_path:)
-        expect(form3.consent_statuses).to eq([])
+        expect(form3.programme_statuses).to eq([])
       end
     end
 
@@ -623,7 +453,7 @@ describe PatientSearchForm do
           current_user:,
           q: "John",
           year_groups: %w[8 11],
-          consent_statuses: %w[given],
+          programme_statuses: %w[needs_triage],
           request_session:,
           request_path:
         )
@@ -635,7 +465,7 @@ describe PatientSearchForm do
 
         expect(form.q).to eq("John")
         expect(form.year_groups).to eq([8, 11])
-        expect(form.consent_statuses).to eq(%w[given])
+        expect(form.programme_statuses).to eq(%w[needs_triage])
       end
     end
 

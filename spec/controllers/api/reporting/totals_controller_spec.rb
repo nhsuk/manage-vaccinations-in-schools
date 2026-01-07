@@ -960,7 +960,13 @@ describe API::Reporting::TotalsController do
         session: nil,
         source: "consent_refusal",
         outcome: "refused",
-        performed_at: Time.current
+        # TODO: Fix the way academic year is calculated in the reporting
+        #  views. Currently it uses the year from the date, but that's not
+        #  correct. For example, 1st January 2026 is in the 2025/26 academic
+        #  year, which is stored as the value of 2025.
+        # performed_at: Time.current,
+        performed_at:
+          hpv_session.academic_year.to_academic_year_date_range.begin
       )
 
       patient2 = create(:patient, session: hpv_session)

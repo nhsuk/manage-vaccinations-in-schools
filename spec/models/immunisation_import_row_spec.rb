@@ -1019,6 +1019,30 @@ describe ImmunisationImportRow do
         end
       end
 
+      shared_examples "when Mavis columns are present, which the bulk upload should ignore" do
+        let(:data) do
+          valid_bulk_flu_data.merge(
+            {
+              "PROGRAMME" => "HPV",
+              "PERFORMING_PROFESSIONAL_EMAIL" => "abc123@example.com",
+              "NOTES" => "Here are some notes",
+              "CARE_SETTING" => 2,
+              "CLINIC_NAME" => "The Hog's Head",
+              "SESSION_ID" => 1,
+              "UUID" => "ABCD1234-26cc-44e4-b886-c3cc90ba01b6",
+              "REASON_NOT_VACCINATED" => "Unwell",
+              "Vaccination type" => "HPV 1",
+              "EVENT_LOCATION_TYPE" => "school",
+              "SUPPLIER_EMAIL" => "abc@example.com"
+            }
+          )
+        end
+
+        it "ignores the Mavis columns" do
+          expect(immunisation_import_row).to be_valid
+        end
+      end
+
       context "of unknown type (no VACCINE_GIVEN)" do
         context "with an empty row" do
           let(:data) { {} }
@@ -1096,6 +1120,8 @@ describe ImmunisationImportRow do
         end
 
         include_examples "when `VACCINATED` is `N`"
+
+        include_examples "when Mavis columns are present, which the bulk upload should ignore"
       end
 
       context "of type hpv" do
@@ -1127,6 +1153,8 @@ describe ImmunisationImportRow do
         end
 
         include_examples "when `VACCINATED` is `N`"
+
+        include_examples "when Mavis columns are present, which the bulk upload should ignore"
       end
     end
   end
@@ -2311,7 +2339,11 @@ describe ImmunisationImportRow do
                 "CARE_SETTING" => 2,
                 "CLINIC_NAME" => "The Hog's Head",
                 "SESSION_ID" => session.id,
-                "UUID" => "ABCD1234-26cc-44e4-b886-c3cc90ba01b6"
+                "UUID" => "ABCD1234-26cc-44e4-b886-c3cc90ba01b6",
+                "REASON_NOT_VACCINATED" => "Unwell",
+                "Vaccination type" => "HPV 1",
+                "EVENT_LOCATION_TYPE" => "school",
+                "SUPPLIER_EMAIL" => "abc@example.com"
               }
             )
           end
@@ -2331,10 +2363,13 @@ describe ImmunisationImportRow do
           its(:notes) { should be_nil }
 
           its(:location) { should eq location }
+          its(:location_name) { should be_nil }
 
           its(:session) { should be_nil }
 
           its(:uuid) { should_not eq "ABCD1234-26cc-44e4-b886-c3cc90ba01b6" }
+
+          its(:supplied_by) { should be_nil }
         end
 
         include_examples "accepts a VACCINE_GIVEN code",
@@ -2416,7 +2451,11 @@ describe ImmunisationImportRow do
                 "CARE_SETTING" => 2,
                 "CLINIC_NAME" => "The Hog's Head",
                 "SESSION_ID" => session.id,
-                "UUID" => "ABCD1234-26cc-44e4-b886-c3cc90ba01b6"
+                "UUID" => "ABCD1234-26cc-44e4-b886-c3cc90ba01b6",
+                "REASON_NOT_VACCINATED" => "Unwell",
+                "Vaccination type" => "flu 1",
+                "EVENT_LOCATION_TYPE" => "school",
+                "SUPPLIER_EMAIL" => "abc@example.com"
               }
             )
           end

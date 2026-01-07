@@ -15,7 +15,8 @@ class AppPatientSessionSectionComponent < ViewComponent::Base
 
   def colour = resolved_status.fetch(:colour)
 
-  def heading = "#{programme.name}: #{resolved_status.fetch(:text)}"
+  def heading =
+    "#{resolved_status.fetch(:prefix)}: #{resolved_status.fetch(:text)}"
 
   def patient_status_resolver
     PatientStatusResolver.new(

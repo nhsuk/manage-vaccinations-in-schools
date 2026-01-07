@@ -138,7 +138,7 @@ class Reports::ProgrammeVaccinationsExporter
         .for_programme(programme)
         .where(patient_id: vaccination_records.select(:patient_id))
         .not_invalidated
-        .includes(:parent, :patient)
+        .includes(:parent, patient: :parent_relationships)
         .group_by(&:patient_id)
         .transform_values do |consents_for_patient|
           ConsentGrouper.call(
@@ -231,7 +231,7 @@ class Reports::ProgrammeVaccinationsExporter
       vaccinated(vaccination_record:),
       vaccination_record.performed_at.to_date.iso8601,
       vaccination_record.performed_at.strftime("%H:%M:%S"),
-      programme.name,
+      vaccination_record.programme.name,
       vaccine&.upload_name || "",
       vaccination_record.protocol || "",
       vaccination_record.performed_by_user&.email || "",

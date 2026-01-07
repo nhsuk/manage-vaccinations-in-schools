@@ -5,7 +5,6 @@ class PatientSearchForm < SearchForm
 
   attribute :aged_out_of_programmes, :boolean
   attribute :archived, :boolean
-  attribute :consent_statuses, array: true
   attribute :date_of_birth_day, :integer
   attribute :date_of_birth_month, :integer
   attribute :date_of_birth_year, :integer
@@ -16,8 +15,6 @@ class PatientSearchForm < SearchForm
   attribute :programme_types, array: true
   attribute :q, :string
   attribute :registration_status, :string
-  attribute :triage_status, :string
-  attribute :vaccination_status, :string
   attribute :vaccine_criteria, array: true
   attribute :year_groups, array: true
 
@@ -47,12 +44,12 @@ class PatientSearchForm < SearchForm
     super(values&.compact_blank&.map(&:to_i)&.compact || [])
   end
 
-  def programmes(patient: nil)
+  def programmes
     @programmes ||=
       if programme_types.present?
         Programme.find_all(programme_types)
       else
-        session&.programmes(patient:) || team&.programmes(patient:) || []
+        session&.programmes || team&.programmes || []
       end
   end
 
@@ -64,10 +61,7 @@ class PatientSearchForm < SearchForm
     scope = filter_date_of_birth_year(scope)
     scope = filter_nhs_number(scope)
     scope = filter_programmes(scope)
-    scope = filter_consent_statuses(scope)
-    scope = filter_vaccination_statuses(scope)
     scope = filter_registration_status(scope)
-    scope = filter_triage_status(scope)
     scope = filter_programme_statuses(scope)
     scope = filter_vaccine_criteria(scope)
     scope = filter_patient_specific_direction_status(scope)
@@ -90,7 +84,7 @@ class PatientSearchForm < SearchForm
   def team = session&.team || current_user.selected_team
 
   def filter_name(scope)
-    q.present? ? scope.search_by_name(q) : scope
+    q.present? ? scope.search_by_name_or_nhs_number(q) : scope
   end
 
   def filter_year_groups(scope)
@@ -155,48 +149,6 @@ class PatientSearchForm < SearchForm
     end
   end
 
-  def filter_consent_statuses(scope)
-    return scope if consent_statuses.blank?
-
-    or_scope = consent_status_scope_for(consent_statuses.first, scope)
-
-    consent_statuses
-      .drop(1)
-      .each do |value|
-        or_scope = or_scope.or(consent_status_scope_for(value, scope))
-      end
-
-    or_scope
-  end
-
-  def consent_status_scope_for(value, scope)
-    if (predicate = CONSENT_GIVEN_PREDICATES[value])
-      scope.has_consent_status(
-        "given",
-        programme: programmes,
-        academic_year:,
-        **predicate
-      )
-    else
-      scope.has_consent_status(value, programme: programmes, academic_year:)
-    end
-  end
-
-  CONSENT_GIVEN_PREDICATES = {
-    "given_injection" => {
-      vaccine_method: "injection",
-      without_gelatine: false
-    },
-    "given_nasal" => {
-      vaccine_method: "nasal",
-      without_gelatine: false
-    },
-    "given_injection_without_gelatine" => {
-      vaccine_method: "injection",
-      without_gelatine: true
-    }
-  }.freeze
-
   def filter_patient_specific_direction_status(scope)
     return scope if (status = patient_specific_direction_status&.to_sym).blank?
 
@@ -212,60 +164,6 @@ class PatientSearchForm < SearchForm
         programme: programmes,
         academic_year:,
         team:
-      )
-    else
-      scope
-    end
-  end
-
-  def filter_registration_status(scope)
-    if (status = registration_status&.to_sym).present?
-      scope.has_registration_status(status, session:)
-    else
-      scope
-    end
-  end
-
-  def filter_triage_status(scope)
-    return scope if triage_status.blank?
-
-    if (predicate = TRIAGE_SAFE_TO_VACCINATE_PREDICATES[triage_status])
-      scope.has_triage_status(
-        "safe_to_vaccinate",
-        programme: programmes,
-        academic_year:,
-        **predicate
-      )
-    else
-      scope.has_triage_status(
-        triage_status,
-        programme: programmes,
-        academic_year:
-      )
-    end
-  end
-
-  TRIAGE_SAFE_TO_VACCINATE_PREDICATES = {
-    "safe_to_vaccinate_injection" => {
-      vaccine_method: "injection",
-      without_gelatine: false
-    },
-    "safe_to_vaccinate_nasal" => {
-      vaccine_method: "nasal",
-      without_gelatine: false
-    },
-    "safe_to_vaccinate_injection_without_gelatine" => {
-      vaccine_method: "injection",
-      without_gelatine: true
-    }
-  }.freeze
-
-  def filter_vaccination_statuses(scope)
-    if (status = vaccination_status&.to_sym).present?
-      scope.has_vaccination_status(
-        status,
-        programme: programmes,
-        academic_year:
       )
     else
       scope
@@ -308,6 +206,14 @@ class PatientSearchForm < SearchForm
       end
 
     or_scope
+  end
+
+  def filter_registration_status(scope)
+    if (status = registration_status&.to_sym).present?
+      scope.has_registration_status(status, session:)
+    else
+      scope
+    end
   end
 
   def filter_vaccine_criteria(scope)

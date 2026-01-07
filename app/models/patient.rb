@@ -199,8 +199,13 @@ class Patient < ApplicationRecord
           where.not(patient_locations.arel.exists)
         end
 
-  scope :search_by_name,
+  scope :search_by_name_or_nhs_number,
         ->(query) do
+          query_without_whitespace = query.gsub(/\s/, "")
+          if query_without_whitespace.match?(/\A\d{10}\z/)
+            return search_by_nhs_number(query_without_whitespace)
+          end
+
           query = query.tr(",", " ")
           terms = query.split
 

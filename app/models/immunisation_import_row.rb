@@ -207,7 +207,8 @@ class ImmunisationImportRow
   def clinic_name =
     poc? ? @data[:clinic_name].presence || @data[:event_done_at] : nil
 
-  def combined_vaccination_and_dose_sequence = @data[:vaccination_type]
+  def combined_vaccination_and_dose_sequence =
+    poc? ? @data[:vaccination_type] : nil
 
   def date_of_vaccination =
     @data[:date_of_vaccination].presence || @data[:event_date]
@@ -216,7 +217,7 @@ class ImmunisationImportRow
 
   def dose_sequence = @data[:dose_sequence]
 
-  def location_type = @data[:event_location_type]
+  def location_type = poc? ? @data[:event_location_type] : nil
 
   def notes = poc? ? @data[:notes] : nil
 
@@ -246,7 +247,7 @@ class ImmunisationImportRow
 
   def programme_name = poc? ? @data[:programme] : nil
 
-  def reason_not_administered = @data[:reason_not_vaccinated]
+  def reason_not_administered = poc? ? @data[:reason_not_vaccinated] : nil
 
   def school_name =
     if poc?
@@ -258,7 +259,7 @@ class ImmunisationImportRow
 
   def session_id = poc? ? @data[:session_id] : nil
 
-  def supplied_by_email = @data[:supplier_email]
+  def supplied_by_email = poc? ? @data[:supplier_email] : nil
 
   def time_of_vaccination =
     @data[:time_of_vaccination].presence || @data[:event_time]
@@ -426,7 +427,9 @@ class ImmunisationImportRow
             # TODO: Handle this in a more generic way to support future
             #  programme variants.
             hash[name.downcase] = if name == "MMRV"
-              ProgrammeVariant.new(programme, variant_type: "mmrv")
+              Programme::Variant.new(programme, variant_type: "mmrv")
+            elsif name == "MMR"
+              Programme::Variant.new(programme, variant_type: "mmr")
             else
               programme
             end

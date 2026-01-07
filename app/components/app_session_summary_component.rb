@@ -161,8 +161,17 @@ class AppSessionSummaryComponent < ViewComponent::Base
     ProgrammeGrouper
       .call(session.programmes)
       .map do |_group, programmes|
+        names =
+          programmes.map do |programme|
+            # TODO: This enables us to show "MMR" for the "MMR(V)" programme
+            #  but will probably need fixing once we collect consent for MMRV.
+            I18n.t(programme.type, scope: :programme_types)
+          end
+
+        label = "View the #{names.to_sentence} online consent form"
+
         helpers.govuk_link_to(
-          "View the #{programmes.map(&:name).to_sentence} online consent form",
+          label,
           start_parent_interface_consent_forms_path(
             session,
             programmes.map(&:to_param).join("-")
@@ -174,10 +183,9 @@ class AppSessionSummaryComponent < ViewComponent::Base
 
   def download_consent_links
     session.programmes.map do |programme|
-      link_to(
-        "Download the #{programme.name} consent form (PDF)",
-        consent_form_programme_path(programme)
-      )
+      name = I18n.t(programme.type, scope: :programme_types)
+      label = "Download the #{name} consent form (PDF)"
+      link_to(label, consent_form_programme_path(programme))
     end
   end
 

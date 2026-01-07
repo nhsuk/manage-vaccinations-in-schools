@@ -74,6 +74,10 @@ def attach_sample_of_schools_to(team)
     end
 end
 
+def create_community_clinics_for(team)
+  FactoryBot.create_list(:community_clinic, 5, team:)
+end
+
 def attach_specific_school_to_team_if_present(team:, urn:)
   Location.find_by(urn:)&.attach_to_team!(
     team,
@@ -243,6 +247,18 @@ def create_imports(user, team)
   )
 end
 
+def create_bulk_upload_imports(user, team)
+  %i[pending invalid processed].each do |status|
+    FactoryBot.create(
+      :immunisation_import,
+      status,
+      type: "bulk",
+      team:,
+      uploaded_by: user
+    )
+  end
+end
+
 def create_school_moves(team)
   patients = team.patients.sample(10)
 
@@ -307,6 +323,7 @@ def create_nurse_joy_team
   create_user(:prescriber, team:, email: "prescriber@example.com")
 
   attach_sample_of_schools_to(team)
+  create_community_clinics_for(team)
 
   # Bohunt School Wokingham - used by automated tests
   attach_specific_school_to_team_if_present(team:, urn: "142181")
@@ -323,10 +340,11 @@ end
 
 def create_upload_only_team
   team = create_team(ods_code: "XX99", type: :upload_only)
-  create_user(:medical_secretary, team:, email: "admin.sarah@example.com")
+  user =
+    create_user(:medical_secretary, team:, email: "admin.sarah@example.com")
   create_user(:superuser, team:, email: "superuser.rob@example.com")
 
-  attach_sample_of_schools_to(team)
+  create_bulk_upload_imports(user, team)
 end
 
 # TODO: Once `PatientTeam` has been refactored to avoid callbacks we can
@@ -353,6 +371,7 @@ support_team =
 create_user(:support, team: support_team, email: "support@example.com")
 
 attach_sample_of_schools_to(team)
+create_community_clinics_for(team)
 
 Audited.audit_class.as_user(user) { create_team_sessions(user, team) }
 setup_clinic(team)

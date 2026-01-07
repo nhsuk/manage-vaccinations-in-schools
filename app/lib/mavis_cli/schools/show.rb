@@ -3,6 +3,8 @@
 module MavisCLI
   module Schools
     class Show < Dry::CLI::Command
+      include ::MavisCLIHelpers
+
       desc "Show school information"
 
       argument :urn_or_ids,
@@ -18,8 +20,19 @@ module MavisCLI
              type: :boolean,
              default: false,
              desc: "Find any site when searching with URN"
+      option :show_patients,
+             aliases: %w[-p],
+             type: :boolean,
+             default: false,
+             desc: "Show patient info"
 
-      def call(urn_or_ids:, id: false, any_site: false, **)
+      def call(
+        urn_or_ids:,
+        id: false,
+        any_site: false,
+        show_patients: false,
+        **
+      )
         MavisCLI.load_rails
 
         if id && any_site
@@ -38,6 +51,8 @@ module MavisCLI
         academic_year = AcademicYear.current
 
         locations.each do |location|
+          puts(Rainbow("-" * 64).bright) if locations.count > 1
+
           location
             .attributes
             .symbolize_keys
@@ -47,6 +62,9 @@ module MavisCLI
               :urn,
               :site,
               :status,
+              :gias_phase,
+              :gias_establishment_number,
+              :gias_local_authority_code,
               :address_line_1,
               :address_line_2,
               :address_postcode,
@@ -72,15 +90,50 @@ module MavisCLI
               end
             end
           else
-            puts "#{Rainbow("team:").bright}: No team assigned"
+            puts "#{Rainbow("team").bright}: No team assigned"
           end
 
-          puts Rainbow("programmes:").bright
+          puts ""
+          print_attributes total_patients: location.patient_locations.count
+          if show_patients
+            patient_locations =
+              location
+                .patient_locations
+                .preload(
+                  :attendance_records,
+                  :gillick_assessments,
+                  :pre_screenings,
+                  :vaccination_records
+                )
+                .current
+
+            attendance_records =
+              location.attendance_records.for_academic_year(academic_year)
+            gillick_assessments =
+              location.gillick_assessments.for_academic_year(academic_year)
+
+            print_attributes(
+              _indent: 1,
+              in_current_academic_year: {
+                _value: patient_locations.count,
+                with_attendance_records: attendance_records.count,
+                with_gillick_assessments: gillick_assessments.count
+              },
+              safe_to_destroy: patient_locations.count(&:safe_to_destroy?)
+            )
+          end
+
+          puts "", Rainbow("programmes:").bright
           location.programmes.each do |programme|
             year_groups =
               location
                 .location_programme_year_groups
-                .where(programme:, academic_year:)
+                .where(
+                  programme_type: programme.type,
+                  location_year_group: {
+                    academic_year:
+                  }
+                )
                 .pluck_year_groups
 
             puts "  #{Rainbow(programme.type).bright}:"

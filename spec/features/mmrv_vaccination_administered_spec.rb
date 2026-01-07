@@ -6,14 +6,18 @@ describe "MMRV vaccination" do
   scenario "administered at community clinic" do
     given_mmrv_vaccinations_are_enabled
     and_i_am_signed_in_as_a_nurse
-    and_a_patient_is_ready_for_mmrv_vaccination_in_a_community_clinic
+    and_a_patient_has_consented_for_mmrv
 
     when_i_go_to_the_patients_tab
     then_i_should_consent_for_mmrv
+
+    when_i_go_to_the_record_tab
+    then_i_should_see_mmrv_vaccine_type
+
     when_i_go_to_the_patient
     then_i_see_the_vaccination_form
 
-    when_i_begin_recording_the_mmrv_vaccination
+    when_i_begin_recording_the_vaccination_for_mmrv
     then_i_should_only_see_the_mmrv_batch_options
 
     when_i_choose_an_mmrv_batch_for_the_vaccine
@@ -38,6 +42,24 @@ describe "MMRV vaccination" do
 
     when_i_confirm_the_consent_response
     then_i_see_a_message_that_the_consent_is_successful
+
+    when_i_click_on_the_patient
+    and_i_begin_recording_the_vaccination_for_mmr
+    then_i_should_only_see_the_mmr_batch_options
+  end
+
+  scenario "patient has MMRV consent, then consents for MMR" do
+    given_mmrv_vaccinations_are_enabled
+    and_i_am_signed_in_as_a_nurse
+    and_a_patient_has_consented_for_mmrv
+
+    when_i_visit_the_patient_mmrv_tab
+    and_i_start_a_new_consent_response
+    and_i_get_consent_for_mmr
+    then_i_see_the_check_and_confirm_page_with_mmr
+
+    when_i_confirm_the_consent_response
+    then_i_see_a_message_that_the_consent_is_conflicting
   end
 
   def given_mmrv_vaccinations_are_enabled
@@ -59,20 +81,22 @@ describe "MMRV vaccination" do
     sign_in @team.users.first
   end
 
-  def and_a_patient_is_ready_for_mmrv_vaccination_in_a_community_clinic
+  def and_a_patient_has_consented_for_mmrv
     location = create(:generic_clinic, team: @team)
     @session =
       create(:session, team: @team, programmes: [@programme], location:)
+    @parent = create(:parent)
     @patient =
       create(
         :patient,
         :consent_given_triage_not_needed,
         :in_attendance,
         session: @session,
+        parents: [@parent],
         date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month
       )
     @patient.consents.last.update!(
-      disease_types: ProgrammeVariant::DISEASE_TYPES["mmrv"]
+      disease_types: Programme::Variant::DISEASE_TYPES["mmrv"]
     )
     StatusUpdater.call(patient: @patient)
     @community_clinic = create(:community_clinic, team: @team)
@@ -86,6 +110,7 @@ describe "MMRV vaccination" do
     @patient =
       create(
         :patient,
+        :in_attendance,
         session: @session,
         parents: [@parent],
         date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month
@@ -102,8 +127,15 @@ describe "MMRV vaccination" do
     expect(page).to have_content("MMRVDue 1st dose")
   end
 
-  def when_i_go_to_the_patient
+  def when_i_go_to_the_record_tab
     visit session_record_path(@session)
+  end
+
+  def then_i_should_see_mmrv_vaccine_type
+    expect(page).to have_content("No preference for MMRV")
+  end
+
+  def when_i_go_to_the_patient
     click_link @patient.full_name
   end
 
@@ -148,7 +180,23 @@ describe "MMRV vaccination" do
     )
   end
 
-  def when_i_begin_recording_the_mmrv_vaccination
+  def when_i_begin_recording_the_vaccination_for_mmrv
+    expect(page).to have_content("Record MMRV vaccination")
+
+    within all("section")[0] do
+      check "I have checked that the above statements are true"
+    end
+
+    within all("section")[1] do
+      choose "Yes"
+      choose "Left arm (upper position)"
+      click_button "Continue"
+    end
+  end
+
+  def and_i_begin_recording_the_vaccination_for_mmr
+    expect(page).to have_content("Record MMR vaccination")
+
     within all("section")[0] do
       check "I have checked that the above statements are true"
     end
@@ -161,7 +209,17 @@ describe "MMRV vaccination" do
   end
 
   def then_i_should_only_see_the_mmrv_batch_options
+    expect(page).to have_content(@mmrv_vaccine.brand)
+    expect(page).not_to have_content(@mmr_vaccine.brand)
+    expect(page).to have_content(@mmrv_batch.name)
     expect(page).not_to have_content(@mmr_batch.name)
+  end
+
+  def then_i_should_only_see_the_mmr_batch_options
+    expect(page).to have_content(@mmr_vaccine.brand)
+    expect(page).not_to have_content(@mmrv_vaccine.brand)
+    expect(page).to have_content(@mmr_batch.name)
+    expect(page).not_to have_content(@mmrv_batch.name)
   end
 
   def when_i_choose_an_mmrv_batch_for_the_vaccine
@@ -262,5 +320,13 @@ describe "MMRV vaccination" do
   def then_i_see_a_message_that_the_consent_is_successful
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
     expect(page).to have_content("Programme status\nMMRDue 1st dose")
+  end
+
+  def then_i_see_a_message_that_the_consent_is_conflicting
+    expect(page).to have_content("Conflicting consent")
+  end
+
+  def when_i_click_on_the_patient
+    click_on @patient.full_name, match: :first
   end
 end

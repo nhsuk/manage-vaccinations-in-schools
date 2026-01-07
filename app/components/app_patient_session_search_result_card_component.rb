@@ -137,8 +137,16 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
     return if programmes_to_check.empty?
 
+    programmes_with_variants =
+      programmes_to_check.map do |programme|
+        disease_types =
+          patient.programme_status(programme, academic_year:).disease_types
+
+        programme.variant_for(disease_types:)
+      end
+
     labels =
-      programmes_to_check.filter_map do |programme|
+      programmes_with_variants.filter_map do |programme|
         if patient.consent_given_and_safe_to_vaccinate?(
              programme:,
              academic_year:
@@ -168,9 +176,22 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def programme_status_tag
     return unless show_programme_status
 
+    status_by_programme =
+      programmes.each_with_object({}) do |programme, hash|
+        resolved_status =
+          PatientStatusResolver.new(
+            patient,
+            programme:,
+            academic_year:,
+            context_location_id: session.location_id
+          ).programme
+
+        hash[resolved_status.fetch(:prefix)] = resolved_status
+      end
+
     {
       key: :programme,
-      value: render(AppAttachedTagsComponent.new(attached_tags(:programme)))
+      value: render(AppAttachedTagsComponent.new(status_by_programme))
     }
   end
 
@@ -202,19 +223,6 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           )
         )
     }
-  end
-
-  def attached_tags(context)
-    programmes.each_with_object({}) do |programme, hash|
-      resolver =
-        PatientStatusResolver.new(
-          patient,
-          programme:,
-          academic_year:,
-          context_location_id: session.location_id
-        )
-      hash[resolver.programme_name] = resolver.send(context)
-    end
   end
 
   def latest_note

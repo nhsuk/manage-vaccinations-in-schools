@@ -17,6 +17,7 @@ class FeatureFlagFactory
   FEATURES_FOR_DEVELOPMENT = %i[
     dev_tools
     import_review_screen
+    mmrv
     reporting_api
     testing_api
   ].freeze

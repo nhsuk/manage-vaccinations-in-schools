@@ -133,6 +133,7 @@ FactoryBot.define do
 
     trait :mmr do
       programme_type { "mmr" }
+      disease_types { Programme::Variant::DISEASE_TYPES["mmr"] }
       injection
 
       after(:create) do |vaccine|
@@ -144,6 +145,11 @@ FactoryBot.define do
         bleeding_disorder.update!(next_question: mmr_vaccination)
         mmr_vaccination.update!(next_question: extra_support)
       end
+    end
+
+    trait :mmrv do
+      mmr
+      disease_types { Programme::Variant::DISEASE_TYPES["mmrv"] }
     end
 
     trait :td_ipv do

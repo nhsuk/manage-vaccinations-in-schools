@@ -8,6 +8,11 @@ resource "aws_iam_role_policy_attachment" "ecs_task_fargate" {
   policy_arn = aws_iam_policy.session_manager_access.arn
 }
 
+resource "aws_iam_role_policy_attachment" "get_s3_object" {
+  role       = aws_iam_role.ecs_task_role.name
+  policy_arn = aws_iam_policy.get_s3_object.arn
+}
+
 resource "aws_iam_policy" "session_manager_access" {
   name        = "SessionManagerAccess"
   description = "Allows ECS tasks to be accessed via AWS Systems Manager Session Manager"
@@ -79,6 +84,28 @@ resource "aws_iam_policy" "data_replication_access" {
           "arn:aws:ecs:eu-west-2:${var.account_id}:cluster/mavis-*-data-replication*",
           "arn:aws:ecs:eu-west-2:${var.account_id}:task/mavis-*-data-replication*/*",
           "arn:aws:ecs:eu-west-2:${var.account_id}:container-instance/mavis-*-data-replication*/*"
+        ]
+      }
+    ]
+  })
+  lifecycle {
+    ignore_changes = [description]
+  }
+}
+
+resource "aws_iam_policy" "get_s3_object" {
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          module.filetransfer_bucket.arn,
+          "${module.filetransfer_bucket.arn}/*",
         ]
       }
     ]

@@ -93,5 +93,55 @@ describe Vaccine do
 
       it { should eq("38598009") }
     end
+
+    context "with an MMRV vaccine" do
+      before { Flipper.enable(:mmrv) }
+
+      let(:vaccine) { build(:vaccine, :mmrv) }
+
+      it { should eq("432636005") }
+    end
+  end
+
+  describe "#snomed_procedure_term" do
+    subject(:snomed_procedure_term) { vaccine.snomed_procedure_term }
+
+    context "with an injection flu vaccine" do
+      let(:vaccine) { build(:vaccine, :flu, :injection) }
+
+      it { should eq("Seasonal influenza vaccination (procedure)") }
+    end
+
+    context "with a nasal flu vaccine" do
+      let(:vaccine) { build(:vaccine, :flu, :nasal) }
+
+      it { should eq("Seasonal influenza vaccination (procedure)") }
+    end
+
+    context "with an MMR vaccine" do
+      let(:vaccine) { build(:vaccine, :mmr) }
+
+      it do
+        expect(snomed_procedure_term).to eq(
+          "Administration of vaccine product containing only Measles " \
+            "morbillivirus and Mumps orthorubulavirus and Rubella virus " \
+            "antigens (procedure)"
+        )
+      end
+    end
+
+    context "with an MMRV vaccine" do
+      before { Flipper.enable(:mmrv) }
+
+      let(:vaccine) { build(:vaccine, :mmrv) }
+
+      it do
+        expect(snomed_procedure_term).to eq(
+          "Administration of vaccine product containing only Human " \
+            "alphaherpesvirus 3 and Measles morbillivirus and Mumps " \
+            "orthorubulavirus and Rubella virus antigens (procedure)"
+        )
+      end
+    end
   end
 end

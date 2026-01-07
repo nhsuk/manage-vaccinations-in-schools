@@ -14,6 +14,8 @@ module Imports
     }.freeze
 
     def new
+      @pagy, @consents = pagy_array(@consents)
+
       @form =
         BulkRemoveParentsForm.new(
           import: @import,
@@ -23,6 +25,10 @@ module Imports
     end
 
     def create
+      unless Flipper.enabled?(:import_bulk_remove_parents)
+        raise "Bulk removal of parents feature is disabled"
+      end
+
       @form =
         BulkRemoveParentsForm.new(
           import: @import,
@@ -47,16 +53,14 @@ module Imports
     end
 
     def set_consents
-      parent_relationships = @import.parent_relationships
-      consents =
-        @import
-          .patients
-          .includes(:consents, :parent_relationships)
-          .flat_map(&:consents)
-          .filter { parent_relationships.include?(it.parent_relationship) }
-          .reject(&:invalidated?)
-
-      @pagy, @consents = pagy_array(consents)
+      @consents =
+        Consent
+          .includes(patient: { parent_relationships: :parent })
+          .joins(patient: :parent_relationships)
+          .merge(@import.patients)
+          .merge(@import.parent_relationships)
+          .where("consents.parent_id = parent_relationships.parent_id")
+          .not_invalidated
     end
 
     def success_flash_text

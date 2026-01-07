@@ -39,10 +39,12 @@
 #
 # Indexes
 #
-#  index_consent_forms_on_nhs_number           (nhs_number)
-#  index_consent_forms_on_original_session_id  (original_session_id)
-#  index_consent_forms_on_school_id            (school_id)
-#  index_consent_forms_on_team_location_id     (team_location_id)
+#  index_consent_forms_on_nhs_number                  (nhs_number)
+#  index_consent_forms_on_original_session_id         (original_session_id)
+#  index_consent_forms_on_recorded                    (id) WHERE (recorded_at IS NOT NULL)
+#  index_consent_forms_on_school_id                   (school_id)
+#  index_consent_forms_on_team_location_id            (team_location_id)
+#  index_consent_forms_on_unmatched_and_not_archived  (id) WHERE ((recorded_at IS NOT NULL) AND (archived_at IS NULL))
 #
 # Foreign Keys
 #
@@ -225,6 +227,23 @@ describe ConsentForm do
 
     context "when wizard_step is :response_hpv" do
       let(:wizard_step) { :response_hpv }
+
+      context "runs validations from previous steps" do
+        it { should validate_presence_of(:given_name).on(:update) }
+        it { should validate_presence_of(:date_of_birth).on(:update) }
+      end
+
+      it do
+        expect(consent_form).to validate_inclusion_of(:response).on(
+          :update
+        ).in_array(%w[given refused])
+      end
+    end
+
+    context "when wizard_step is :response_mmr" do
+      let(:wizard_step) { :response_mmr }
+
+      let(:programmes) { [Programme.mmr] }
 
       context "runs validations from previous steps" do
         it { should validate_presence_of(:given_name).on(:update) }

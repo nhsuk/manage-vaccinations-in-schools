@@ -44,7 +44,7 @@ class PatientSessions::BaseController < ApplicationController
   def set_programme
     return unless params.key?(:programme_type) || params.key?(:type)
 
-    @programme =
+    programme =
       @session
         .programmes_for(patient: @patient)
         .find do |programme|
@@ -52,7 +52,15 @@ class PatientSessions::BaseController < ApplicationController
             programme.type == params[:type]
         end
 
-    raise ActiveRecord::RecordNotFound if @programme.nil?
+    raise ActiveRecord::RecordNotFound if programme.nil?
+
+    disease_types =
+      @patient.programme_status(
+        programme,
+        academic_year: @session.academic_year
+      ).disease_types
+
+    @programme = programme.variant_for(disease_types:)
   end
 
   def set_breadcrumb_item

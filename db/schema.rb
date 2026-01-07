@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_16_102852) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_19_094217) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -250,6 +250,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_16_102852) do
     t.bigint "team_location_id", null: false
     t.datetime "updated_at", null: false
     t.boolean "use_preferred_name"
+    t.index ["id"], name: "index_consent_forms_on_recorded", where: "(recorded_at IS NOT NULL)"
+    t.index ["id"], name: "index_consent_forms_on_unmatched_and_not_archived", where: "((recorded_at IS NOT NULL) AND (archived_at IS NULL))"
     t.index ["nhs_number"], name: "index_consent_forms_on_nhs_number"
     t.index ["original_session_id"], name: "index_consent_forms_on_original_session_id"
     t.index ["school_id"], name: "index_consent_forms_on_school_id"
@@ -273,7 +275,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_16_102852) do
     t.integer "academic_year", null: false
     t.bigint "consent_form_id"
     t.datetime "created_at", null: false
-    t.enum "disease_types", array: true, enum_type: "disease_type"
+    t.enum "disease_types", null: false, array: true, enum_type: "disease_type"
     t.jsonb "health_answers", default: [], null: false
     t.datetime "invalidated_at"
     t.text "notes", default: "", null: false
@@ -586,7 +588,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_16_102852) do
 
   create_table "patient_consent_statuses", force: :cascade do |t|
     t.integer "academic_year", null: false
-    t.enum "disease_types", array: true, enum_type: "disease_type"
+    t.enum "disease_types", default: [], null: false, array: true, enum_type: "disease_type"
     t.bigint "patient_id", null: false
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "status", default: 0, null: false
@@ -993,7 +995,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_16_102852) do
     t.datetime "created_at", null: false
     t.boolean "discontinued", default: false, null: false
     t.enum "disease_types", default: [], null: false, array: true, enum_type: "disease_type"
-    t.enum "disease_types_enum", array: true, enum_type: "disease_type"
     t.decimal "dose_volume_ml", null: false
     t.text "manufacturer", null: false
     t.integer "method", null: false

@@ -171,9 +171,7 @@ class Session < ApplicationRecord
       session_programme_year_groups.map(&:programme_type).sort.uniq
   end
 
-  def programmes(patient: nil, academic_year: nil)
-    Programme.find_all(programme_types, patient:, academic_year:)
-  end
+  def programmes = Programme.find_all(programme_types)
 
   def vaccines
     @vaccines ||= Vaccine.where(programme_type: programme_types)
@@ -243,7 +241,7 @@ class Session < ApplicationRecord
   def programmes_for(year_group: nil, patient: nil)
     year_group ||= patient.year_group(academic_year:)
 
-    programmes(patient:, academic_year:).select do |programme|
+    programmes.select do |programme|
       session_programme_year_groups.any? do
         it.programme_type == programme.type && it.year_group == year_group
       end

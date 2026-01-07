@@ -17,7 +17,7 @@
 describe Programme do
   subject(:programme) { described_class.sample }
 
-  describe ".find" do
+  describe "#find" do
     subject(:find) { described_class.find(type) }
 
     context "with a known type" do
@@ -39,8 +39,21 @@ describe Programme do
 
       before { Flipper.enable(:mmrv) }
 
-      it "returns a Programme" do
-        expect(find).to be_a(described_class)
+      context "without any additional criteria" do
+        it "doesn't return a variant" do
+          expect(find).to be_a(described_class)
+        end
+      end
+
+      context "when patient was born before 1 January 2020" do
+        subject(:find) { described_class.find(type, patient:) }
+
+        let(:date_of_birth) { Programme::MIN_MMRV_ELIGIBILITY_DATE - 1.month }
+        let(:patient) { create(:patient, date_of_birth:) }
+
+        it "returns an MMR variant" do
+          expect(find.variant_type).to eq("mmr")
+        end
       end
 
       context "when patient was born after 1 January 2020" do
@@ -49,8 +62,7 @@ describe Programme do
         let(:date_of_birth) { Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month }
         let(:patient) { create(:patient, date_of_birth:) }
 
-        it "returns a ProgrammeVariant with mmrv variant type" do
-          expect(find).to be_a(ProgrammeVariant)
+        it "returns an MMRV variant" do
           expect(find.variant_type).to eq("mmrv")
         end
       end
@@ -70,6 +82,18 @@ describe Programme do
       let(:programme) { described_class.hpv }
 
       it { should eq("HPV") }
+    end
+
+    context "with an MMR programme" do
+      let(:programme) { described_class.mmr }
+
+      it { should eq("MMR") }
+
+      context "when MMRV is enabled" do
+        before { Flipper.enable(:mmrv) }
+
+        it { should eq("MMR(V)") }
+      end
     end
   end
 
