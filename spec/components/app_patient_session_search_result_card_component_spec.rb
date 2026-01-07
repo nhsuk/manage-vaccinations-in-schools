@@ -10,7 +10,6 @@ describe AppPatientSessionSearchResultCardComponent do
   let(:patient) do
     create(
       :patient,
-      :consent_given_injection_and_nasal_triage_safe_to_vaccinate_nasal,
       given_name: "Hari",
       family_name: "Seldon",
       address_postcode: "SW11 1AA",
@@ -164,13 +163,22 @@ describe AppPatientSessionSearchResultCardComponent do
       let(:programme) { Programme.flu }
       let(:academic_year) { AcademicYear.current }
 
+      let(:patient) do
+        create(
+          :patient,
+          :consent_given_injection_and_nasal_triage_safe_to_vaccinate_nasal,
+          session:
+        )
+      end
+
       it { should have_text("Vaccine type") }
       it { should have_text("Nasal") }
 
       context "and once vaccinated" do
         before do
           create(:vaccination_record, patient:, programme:, session:)
-          patient.vaccination_status(programme:, academic_year:).assign_status
+          StatusUpdater.call(patient:)
+          patient.reload
         end
 
         it { should_not have_text("Vaccine type") }

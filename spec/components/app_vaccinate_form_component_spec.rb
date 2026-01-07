@@ -34,7 +34,7 @@ describe AppVaccinateFormComponent do
     let(:academic_year) { AcademicYear.current }
 
     before do
-      patient.consent_status(programme:, academic_year:).update!(
+      patient.programme_status(programme, academic_year:).update!(
         vaccine_methods: %w[nasal]
       )
     end

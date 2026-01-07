@@ -58,7 +58,7 @@ describe SessionNotification do
 
       before do
         create(:consent, :given, patient:, parent:, programme:)
-        create(:patient_consent_status, :given, patient:, programme:)
+        create(:patient_programme_status, :due_injection, patient:, programme:)
       end
 
       it "creates a record" do
