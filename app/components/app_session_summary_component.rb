@@ -185,7 +185,7 @@ class AppSessionSummaryComponent < ViewComponent::Base
     session.programmes.map do |programme|
       name = I18n.t(programme.type, scope: :programme_types)
       label = "Download the #{name} consent form (PDF)"
-      link_to(label, consent_form_programme_path(programme))
+      link_to(label, consent_form_download_path(programme))
     end
   end
 
