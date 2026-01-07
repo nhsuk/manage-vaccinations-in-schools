@@ -28,7 +28,8 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
       performed_by_user_id: current_user.id,
       performed_ods_code: current_team.organisation.ods_code,
       programme: @programme,
-      session: @session
+      session: @session,
+      source: "service"
     )
 
     redirect_to draft_vaccination_record_path("confirm")
