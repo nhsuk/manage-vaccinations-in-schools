@@ -111,6 +111,7 @@ describe GovukNotifyPersonalisation do
           vaccination: "HPV vaccination",
           vaccination_sms: "HPV vaccination",
           vaccination_and_dates: "HPV vaccination on Thursday 1 January",
+          vaccination_and_dates_sms: "HPV vaccination on Thursday 1 January",
           vaccination_and_method: "HPV vaccination",
           vaccine: "HPV vaccine",
           vaccine_and_dose: "HPV",
@@ -136,6 +137,7 @@ describe GovukNotifyPersonalisation do
       before { Flipper.enable(:mmrv) }
 
       it { should include(vaccination_sms: "MMR vaccination") }
+      it { should include(vaccination_and_dates_sms: "MMR vaccination") }
     end
   end
 
