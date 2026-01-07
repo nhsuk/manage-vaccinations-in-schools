@@ -746,7 +746,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_08_150039) do
   create_table "pre_screenings", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date", null: false
-    t.enum "disease_types", array: true, enum_type: "disease_type"
+    t.enum "disease_types", null: false, array: true, enum_type: "disease_type"
     t.bigint "location_id", null: false
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
