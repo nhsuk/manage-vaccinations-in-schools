@@ -300,6 +300,10 @@ class DraftVaccinationRecord
     approved_vaccine_methods.include?(vaccine_method)
   end
 
+  def human_enum_name(attribute)
+    VaccinationRecord.human_enum_name(attribute, send(attribute))
+  end
+
   def sourced_from_service? = source == "service"
 
   def sourced_from_historical_upload? = source == "historical_upload"

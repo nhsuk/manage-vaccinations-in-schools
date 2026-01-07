@@ -289,11 +289,12 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   delegate :govuk_summary_list,
            :identity_check_label,
            :vaccination_record_location,
+           :vaccination_record_source,
            to: :helpers
 
   def source_value
     highlight_if(
-      @vaccination_record.source_value,
+      vaccination_record_source(@vaccination_record),
       @vaccination_record.source_changed?
     )
   end

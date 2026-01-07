@@ -387,6 +387,19 @@ describe AppVaccinationRecordSummaryComponent do
         text: "SourceRecorded in Mavis"
       )
     end
+
+    context "when the vaccination record was sourced from a bulk upload" do
+      let(:vaccination_record) do
+        create(:vaccination_record, source: "bulk_upload")
+      end
+
+      it do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "SourceMavis national reporting upload"
+        )
+      end
+    end
   end
 
   describe "synced with NHS England row" do
