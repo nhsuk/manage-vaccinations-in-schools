@@ -199,7 +199,7 @@ Rails.application.routes.draw do
 
     resources :parent_relationships,
               path: "parents",
-              only: %i[edit update destroy] do
+              only: %i[new create edit update destroy] do
       get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
     end
 
