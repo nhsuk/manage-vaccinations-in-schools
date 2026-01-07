@@ -26,9 +26,7 @@ class Sessions::RecordController < Sessions::BaseController
         @form.apply(scope)
       ).consent_given_and_safe_to_vaccinate(
         programmes: @form.programmes,
-        academic_year: @session.academic_year,
-        vaccine_methods: nil,
-        without_gelatine: nil
+        academic_year: @session.academic_year
       )
 
     @pagy, @patients = pagy_array(patients)

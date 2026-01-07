@@ -458,17 +458,13 @@ describe Patient do
       subject(:scope) do
         described_class.consent_given_and_safe_to_vaccinate(
           programmes:,
-          academic_year:,
-          vaccine_methods:,
-          without_gelatine:
+          academic_year:
         )
       end
 
       let(:programmes) { [Programme.flu, Programme.hpv] }
       let(:session) { create(:session, programmes:) }
       let(:academic_year) { AcademicYear.current }
-      let(:vaccine_methods) { nil }
-      let(:without_gelatine) { nil }
 
       it { should be_empty }
 
@@ -478,38 +474,6 @@ describe Patient do
         end
 
         it { should include(patient) }
-      end
-
-      context "when filtering on nasal spray" do
-        let(:vaccine_methods) { [%w[nasal], %w[nasal injection]] }
-
-        context "with a patient eligible for vaccination" do
-          let(:patient) do
-            create(:patient, :consent_given_triage_not_needed, session:)
-          end
-
-          before do
-            patient.programme_status(programmes.first, academic_year:).update!(
-              vaccine_methods: %w[nasal injection]
-            )
-          end
-
-          it { should include(patient) }
-
-          context "when the patient has been vaccinated for flu" do
-            before do
-              create(
-                :vaccination_record,
-                programme: programmes.first,
-                session:,
-                patient:
-              )
-              StatusUpdater.call(patient:)
-            end
-
-            it { should_not include(patient) }
-          end
-        end
       end
     end
   end

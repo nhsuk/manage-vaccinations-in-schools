@@ -178,6 +178,7 @@ describe AppPatientSessionSearchResultCardComponent do
         before do
           create(:vaccination_record, patient:, programme:, session:)
           StatusUpdater.call(patient:)
+          patient.reload
         end
 
         it { should_not have_text("Vaccine type") }
