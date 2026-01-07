@@ -1022,18 +1022,20 @@ class ImmunisationImportRow
       return
     end
 
-    if field.nil?
-      errors.add(
-        :base,
-        "<code>PROGRAMME</code> or <code>Vaccination type</code> is required"
-      )
-    elsif field.blank?
-      errors.add(field.header, "Enter a programme.")
-    else
-      errors.add(
-        field.header,
-        "This programme is not available in this session."
-      )
+    if poc?
+      if field.nil?
+        errors.add(
+          :base,
+          "<code>PROGRAMME</code> or <code>Vaccination type</code> is required"
+        )
+      elsif field.blank?
+        errors.add(field.header, "Enter a programme.")
+      else
+        errors.add(
+          field.header,
+          "This programme is not available in this session."
+        )
+      end
     end
   end
 

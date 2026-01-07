@@ -1054,6 +1054,13 @@ describe ImmunisationImportRow do
             )
           end
 
+          it "ensures that the similar Mavis error is not visible" do
+            expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors[:base]).not_to include(
+              "<code>PROGRAMME</code> or <code>Vaccination type</code> is required"
+            )
+          end
+
           include_examples "when an NHS number is provided"
 
           include_examples "when vaccinated date is in a previous academic year"
