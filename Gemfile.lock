@@ -624,7 +624,7 @@ GEM
     rubyntlm (0.6.5)
       base64
     rubyzip (3.2.2)
-    rufo (0.18.1)
+    rufo (0.18.2)
     rufus-scheduler (3.9.2)
       fugit (~> 1.1, >= 1.11.1)
     sanitize (7.0.0)
