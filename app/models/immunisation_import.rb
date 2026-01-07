@@ -184,6 +184,15 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def postprocess_rows!
+    vaccination_records
+      .includes(:patient)
+      .find_each do |vaccination_record|
+        NextDoseTriageFactory.call(
+          vaccination_record:,
+          current_user: uploaded_by
+        )
+      end
+
     StatusUpdater.call(patient: patients)
   end
 

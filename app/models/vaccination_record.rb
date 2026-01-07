@@ -253,9 +253,7 @@ class VaccinationRecord < ApplicationRecord
 
   def not_administered? = !administered?
 
-  def recorded_in_service?
-    session_id != nil
-  end
+  def recorded_in_service? = session_id != nil
 
   def show_in_academic_year?(current_academic_year)
     if programme.seasonal?

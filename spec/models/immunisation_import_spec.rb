@@ -515,8 +515,34 @@ describe ImmunisationImport do
     end
   end
 
-  describe "#postprocess_row!" do
-    subject(:immunisation_import) do
+  describe "#post_commit!" do
+    subject(:post_commit!) { immunisation_import.send(:post_commit!) }
+
+    let(:immunisation_import) do
+      create(
+        :immunisation_import,
+        team:,
+        vaccination_records: [vaccination_record]
+      )
+    end
+    let(:session) { create(:session, programmes:) }
+    let(:vaccination_record) do
+      create(:vaccination_record, programme: programmes.first, session:)
+    end
+
+    before { Flipper.enable(:imms_api_sync_job) }
+
+    it "syncs the flu vaccination record to the NHS Immunisations API" do
+      expect { post_commit! }.to enqueue_sidekiq_job(
+        SyncVaccinationRecordToNHSJob
+      ).with(vaccination_record.id).once.on("immunisations_api_sync")
+    end
+  end
+
+  describe "#postprocess_rows!" do
+    subject(:postprocess_rows!) { immunisation_import.send(:postprocess_rows!) }
+
+    let(:immunisation_import) do
       create(
         :immunisation_import,
         team:,
@@ -524,17 +550,25 @@ describe ImmunisationImport do
       )
     end
 
-    before { Flipper.enable :imms_api_sync_job }
-
     let(:session) { create(:session, programmes:) }
     let(:vaccination_record) do
       create(:vaccination_record, programme: programmes.first, session:)
     end
 
-    it "syncs the flu vaccination record to the NHS Immunisations API" do
-      expect { immunisation_import.send(:post_commit!) }.to enqueue_sidekiq_job(
-        SyncVaccinationRecordToNHSJob
-      ).with(vaccination_record.id).once.on("immunisations_api_sync")
+    context "for the HPV programme" do
+      let(:programmes) { [Programme.hpv] }
+
+      it "doesn't create a next dose triage" do
+        expect { postprocess_rows! }.not_to change(Triage, :count)
+      end
+    end
+
+    context "for the MMR programme" do
+      let(:programmes) { [Programme.mmr] }
+
+      it "creates a next dose triage" do
+        expect { postprocess_rows! }.to change(Triage, :count).by(1)
+      end
     end
   end
 end
