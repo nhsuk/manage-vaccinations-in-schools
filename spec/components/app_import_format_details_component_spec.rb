@@ -74,5 +74,57 @@ describe AppImportFormatDetailsComponent do
     expect(page).to have_content("VACCINE_GIVEN")
     expect(page).to have_content("CARE_SETTING")
     expect(page).to have_content("CLINIC_NAME")
+
+    # Excluded POC columns
+    expect(page).not_to have_content("LOCAL_PATIENT_ID")
+    expect(page).not_to have_content("LOCAL_PATIENT_ID_URI")
+  end
+
+  context "with an upload-only team" do
+    let(:team) { create(:team, :upload_only, programmes: [programme]) }
+
+    it "renders the correct summary text for ImmunisationImport" do
+      import = ImmunisationImport.new(team:)
+      render_inline(described_class.new(import:))
+      expect(page).to have_content(
+        "How to format your CSV file for vaccination records"
+      )
+    end
+
+    it "renders the correct columns for ImmunisationImport" do
+      import = ImmunisationImport.new(team:)
+      render_inline(described_class.new(import:))
+
+      # Required bulk columns
+      expect(page).to have_content("ORGANISATION_CODE")
+      expect(page).to have_content("SCHOOL_URN")
+      expect(page).to have_content("NHS_NUMBER")
+      expect(page).to have_content("PERSON_FORENAME")
+      expect(page).to have_content("PERSON_SURNAME")
+      expect(page).to have_content("PERSON_DOB")
+      expect(page).to have_content("PERSON_GENDER")
+      expect(page).to have_content("PERSON_POSTCODE")
+      expect(page).to have_content("VACCINATED")
+      expect(page).to have_content("DATE_OF_VACCINATION")
+      expect(page).to have_content("TIME_OF_VACCINATION")
+      expect(page).to have_content("VACCINE_GIVEN")
+      expect(page).to have_content("BATCH_NUMBER")
+      expect(page).to have_content("BATCH_EXPIRY_DATE")
+      expect(page).to have_content("ANATOMICAL_SITE")
+      expect(page).to have_content("DOSE_SEQUENCE")
+      expect(page).to have_content("PERFORMING_PROFESSIONAL_FORENAME")
+      expect(page).to have_content("PERFORMING_PROFESSIONAL_SURNAME")
+      expect(page).to have_content("LOCAL_PATIENT_ID")
+      expect(page).to have_content("LOCAL_PATIENT_ID_URI")
+
+      # Excluded POC columns
+      expect(page).not_to have_content("CARE_SETTING")
+      expect(page).not_to have_content("CLINIC_NAME")
+      expect(page).not_to have_content("SCHOOL_NAME")
+      expect(page).not_to have_content("PROGRAMME")
+      expect(page).not_to have_content("REASON_NOT_VACCINATED")
+      expect(page).not_to have_content("NOTES")
+      expect(page).not_to have_content("PERFORMING_PROFESSIONAL_EMAIL")
+    end
   end
 end
