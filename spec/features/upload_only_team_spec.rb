@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 describe "Upload-only team homepage and navigation" do
-  scenario "Homepage shows upload-only cards" do
+  scenario "Homepage shows upload-only title and cards" do
     given_i_am_signed_in_as_an_upload_only_team
     when_i_visit_the_dashboard
     then_i_should_see_the_upload_only_cards
     and_i_should_see_the_import_records_card
     and_i_should_see_the_vaccination_records_card
     and_i_should_see_the_reports_card
+    and_i_should_see_the_national_reporting_service_name
   end
 
   scenario "Navigation shows only import and your team" do
@@ -68,5 +69,16 @@ describe "Upload-only team homepage and navigation" do
     expect(navigation_items.count).to eq(2)
     expect(navigation_items[0]).to have_link("Imports", href: imports_path)
     expect(navigation_items[1]).to have_link("Team", href: team_path)
+  end
+
+  def and_i_should_see_the_national_reporting_service_name
+    page_title = page.first("h1")
+    service_name = page.first(".nhsuk-header__service-name")
+    expect(page_title.text).to eq(
+      "Manage vaccinations in schools (Mavis) National reporting"
+    )
+    expect(service_name.text).to eq(
+      "Manage vaccinations in schools – National reporting"
+    )
   end
 end
