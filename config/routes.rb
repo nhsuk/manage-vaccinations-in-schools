@@ -54,7 +54,7 @@ Rails.application.routes.draw do
   end
   mount Sidekiq::Web => "/sidekiq"
 
-  get "/start", to: "pages#start"
+  get "/start", to: "start#index"
   get "/dashboard", to: "dashboard#index"
   get "/accessibility-statement", to: "content#accessibility_statement"
 
