@@ -297,6 +297,11 @@ describe "Edit vaccination record" do
       then_i_see_the_edit_vaccination_record_page
       and_i_should_see_the_updated_vaccinator_details
 
+      when_i_click_on_change_dose_number
+      and_i_choose_the_second_dose
+      then_i_see_the_edit_vaccination_record_page
+      and_i_should_see_the_updated_dose_number
+
       when_i_click_on_save_changes
       then_i_should_see_the_vaccination_record
     end
@@ -543,6 +548,19 @@ describe "Edit vaccination record" do
 
   def and_i_should_see_the_updated_vaccinator_details
     expect(page).to have_content("VaccinatorNAME, New")
+  end
+
+  def when_i_click_on_change_dose_number
+    click_on "Change dose number"
+  end
+
+  def and_i_choose_the_second_dose
+    choose "2nd"
+    click_on "Continue"
+  end
+
+  def and_i_should_see_the_updated_dose_number
+    expect(page).to have_content("Dose number2nd")
   end
 
   def when_i_click_on_change_date
