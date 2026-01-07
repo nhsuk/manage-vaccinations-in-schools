@@ -489,10 +489,9 @@ describe Patient do
           end
 
           before do
-            patient.consent_status(
-              programme: programmes.first,
-              academic_year:
-            ).update!(vaccine_methods: %w[nasal injection])
+            patient.programme_status(programmes.first, academic_year:).update!(
+              vaccine_methods: %w[nasal injection]
+            )
           end
 
           it { should include(patient) }
@@ -955,8 +954,8 @@ describe Patient do
       context "when consent given and triage not required" do
         before do
           create(
-            :patient_consent_status,
-            :given,
+            :patient_programme_status,
+            :due,
             patient:,
             programme:,
             vaccine_methods: %w[nasal injection]
@@ -964,32 +963,6 @@ describe Patient do
         end
 
         it { should eq(%w[nasal injection]) }
-      end
-
-      context "when consent given and triage required" do
-        before do
-          create(
-            :patient_consent_status,
-            :given,
-            patient:,
-            programme:,
-            vaccine_methods: %w[nasal injection]
-          )
-          create(:patient_triage_status, :required, patient:, programme:)
-        end
-
-        it { should be_empty }
-
-        context "and when triaged" do
-          before do
-            patient.triage_status(programme:, academic_year:).update!(
-              status: "safe_to_vaccinate",
-              vaccine_method: "nasal"
-            )
-          end
-
-          it { should eq(%w[nasal]) }
-        end
       end
     end
   end

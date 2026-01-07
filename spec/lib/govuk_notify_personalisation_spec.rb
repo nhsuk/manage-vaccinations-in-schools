@@ -729,8 +729,8 @@ describe GovukNotifyPersonalisation do
     context "and an injection-only programme" do
       before do
         create(
-          :patient_consent_status,
-          :given,
+          :patient_programme_status,
+          :due_injection,
           patient:,
           academic_year: session.academic_year,
           programme: programmes.first
@@ -745,12 +745,11 @@ describe GovukNotifyPersonalisation do
 
       before do
         create(
-          :patient_consent_status,
-          :given,
+          :patient_programme_status,
+          :due_nasal_injection,
           patient:,
           programme: programmes.first,
-          academic_year: session.academic_year,
-          vaccine_methods: %w[nasal injection]
+          academic_year: session.academic_year
         )
       end
 
@@ -762,18 +761,17 @@ describe GovukNotifyPersonalisation do
 
       before do
         create(
-          :patient_consent_status,
-          :given,
-          patient:,
-          programme: hpv_programme,
-          academic_year: session.academic_year,
-          vaccine_methods: %w[nasal injection]
-        )
-        create(
-          :patient_consent_status,
-          :given,
+          :patient_programme_status,
+          :due_nasal_injection,
           patient:,
           programme: flu_programme,
+          academic_year: session.academic_year
+        )
+        create(
+          :patient_programme_status,
+          :due_injection,
+          patient:,
+          programme: hpv_programme,
           academic_year: session.academic_year
         )
       end
@@ -801,9 +799,8 @@ describe GovukNotifyPersonalisation do
     context "with injection as an approved vaccine method" do
       before do
         create(
-          :patient_triage_status,
-          :safe_to_vaccinate,
-          :injection,
+          :patient_programme_status,
+          :due_injection,
           patient:,
           programme: hpv_programme,
           academic_year: session.academic_year

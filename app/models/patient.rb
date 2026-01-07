@@ -767,15 +767,7 @@ class Patient < ApplicationRecord
   end
 
   def vaccine_criteria(programme:, academic_year:)
-    triage_status = triage_status(programme:, academic_year:)
-
-    if triage_status.not_required?
-      VaccineCriteria.from_consent_status(
-        consent_status(programme:, academic_year:)
-      )
-    else
-      VaccineCriteria.from_triage_status(triage_status)
-    end
+    programme_status(programme, academic_year:).vaccine_criteria
   end
 
   def eligible_for_mmrv?
