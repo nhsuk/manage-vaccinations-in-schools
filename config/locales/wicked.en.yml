@@ -51,6 +51,7 @@ en:
     triage: triage
     type: type
     vaccine: vaccine
+    vaccinator: vaccinator
     when: when
     who: who
     without_gelatine: without-gelatine
