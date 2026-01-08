@@ -21,6 +21,7 @@ class API::Testing::TeamsController < API::Testing::BaseController
     log_destroy(SchoolMove.where(team:))
     log_destroy(Consent.where(team:))
     log_destroy(ArchiveReason.where(team:))
+    log_destroy(ImportantNotice.where(team:))
 
     log_destroy(
       NotifyLogEntry.joins(:team_location).where(team_location: { team_id: })
@@ -74,6 +75,7 @@ class API::Testing::TeamsController < API::Testing::BaseController
     log_destroy(SchoolMoveLogEntry.where(patient_id: patient_ids))
     log_destroy(VaccinationRecord.where(patient_id: patient_ids))
     log_destroy(Triage.where(patient_id: patient_ids))
+    log_destroy(ImportantNotice.where(patient_id: patient_ids))
 
     log_destroy(ParentRelationship.where(patient_id: patient_ids))
     log_destroy(Patient.where(id: patient_ids))
