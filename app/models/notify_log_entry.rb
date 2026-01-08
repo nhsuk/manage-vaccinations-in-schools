@@ -45,6 +45,11 @@ class NotifyLogEntry < ApplicationRecord
 
   has_one :team_location, through: :consent_form
 
+  has_many :notify_log_entry_programmes,
+           class_name: "NotifyLogEntry::Programme",
+           inverse_of: :notify_log_entry,
+           dependent: :destroy
+
   enum :type, { email: 0, sms: 1 }, validate: true
   enum :delivery_status,
        {
@@ -63,6 +68,8 @@ class NotifyLogEntry < ApplicationRecord
         ->(session) { has_all_programme_types_of(session.programme_types) }
 
   encrypts :recipient, deterministic: true
+
+  accepts_nested_attributes_for :notify_log_entry_programmes
 
   def title
     template_name&.to_s&.humanize.presence ||
