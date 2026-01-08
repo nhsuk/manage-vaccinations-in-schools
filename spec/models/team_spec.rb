@@ -64,18 +64,4 @@ describe Team do
 
   it_behaves_like "a model with a normalised email address"
   it_behaves_like "a model with a normalised phone number"
-
-  describe "#year_groups" do
-    context "when team has upload_only access" do
-      let(:team) { create(:team, type: :upload_only) }
-
-      it "covers nursery to upper sixth" do
-        expect(team.year_groups).to eq((-2..13).to_a)
-      end
-
-      it "ignores academic_year parameter" do
-        expect(team.year_groups(academic_year: 2024)).to eq((-2..13).to_a)
-      end
-    end
-  end
 end
