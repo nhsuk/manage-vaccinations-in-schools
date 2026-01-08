@@ -45,8 +45,6 @@ class Team < ApplicationRecord
     include ContributesToPatientTeams::Relation
   end
 
-  UPLOAD_ONLY_YEAR_GROUPS = (-2..13).to_a.freeze
-
   audited associated_with: :organisation
   has_associated_audits
 
@@ -97,8 +95,6 @@ class Team < ApplicationRecord
   def to_param = workgroup
 
   def year_groups(academic_year: nil)
-    return UPLOAD_ONLY_YEAR_GROUPS if has_upload_only_access?
-
     academic_year ||= AcademicYear.pending
     location_programme_year_groups
       .joins(:location_year_group)
