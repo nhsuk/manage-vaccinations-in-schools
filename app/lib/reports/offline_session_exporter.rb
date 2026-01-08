@@ -375,7 +375,8 @@ class Reports::OfflineSessionExporter
     # programme, and optionally a variant. This might not be the case in the
     # future, but it works for now.
 
-    programmes = [programme.variant_for(patient:), programme]
+    programme_variant = programme.variant_for(patient:)
+    programmes = [programme_variant, programme]
 
     row[:organisation_code] = organisation.ods_code
 
@@ -387,9 +388,9 @@ class Reports::OfflineSessionExporter
       type: :integer,
       allowed_values: [1, 2]
     )
-    row[:programme] = programmes.first.import_names.first
+    row[:programme] = programme_variant.import_names.first
     row[:vaccine_given] = Cell.new(
-      allowed_values: vaccine_values_for_programmes(programmes)
+      allowed_values: vaccine_values_for_programmes([programme_variant])
     )
     row[:performing_professional_email] = Cell.new(
       allowed_formula: performing_professionals_range
