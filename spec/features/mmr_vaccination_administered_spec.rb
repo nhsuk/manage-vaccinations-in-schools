@@ -19,6 +19,9 @@ describe "MMR vaccination" do
     then_i_see_the_check_and_confirm_page(without_gelatine: true)
     and_i_get_confirmation_after_recording
 
+    when_i_go_to_the_activity_log
+    then_i_see_the_right_programme_on_the_entries
+
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_to_the_parent_confirming_the_vaccination
     and_a_text_is_sent_to_the_parent_confirming_the_vaccination
@@ -268,6 +271,16 @@ describe "MMR vaccination" do
   def and_i_get_confirmation_after_recording
     click_button "Confirm"
     expect(page).to have_content("Vaccination outcome recorded for MMR")
+  end
+
+  def when_i_go_to_the_activity_log
+    click_on "Session activity and notes"
+  end
+
+  def then_i_see_the_right_programme_on_the_entries
+    expect(page).to have_content("Completed pre-screening checks\nMMR")
+    expect(page).to have_content("Vaccinated with Priorix\nMMR")
+    expect(page).not_to have_content("MMRV")
   end
 
   def when_vaccination_confirmations_are_sent
