@@ -6,7 +6,7 @@ class VaccinationNotificationCriteria
   end
 
   def call
-    return nil unless recorded_in_service?
+    return nil unless sourced_from_service?
 
     self_consents =
       patient
@@ -33,7 +33,7 @@ class VaccinationNotificationCriteria
 
   delegate :patient,
            :programme,
-           :recorded_in_service?,
+           :sourced_from_service?,
            :academic_year,
            to: :vaccination_record
 end

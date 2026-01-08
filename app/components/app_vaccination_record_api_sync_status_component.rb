@@ -23,7 +23,7 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
   delegate :govuk_tag, to: :helpers
   delegate :nhs_immunisations_api_synced_at,
            :sync_status,
-           :recorded_in_service?,
+           :sourced_from_service?,
            :notify_parents,
            to: :vaccination_record
 
@@ -59,7 +59,7 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
         elsif notify_parents == false
           "The child gave consent under Gillick competence and does not want their parents to be notified. " \
             "You must let the child’s GP know they were vaccinated."
-        elsif recorded_in_service?
+        elsif sourced_from_service?
           "Records are not synced if the vaccination was not given"
         end
       when :cannot_sync

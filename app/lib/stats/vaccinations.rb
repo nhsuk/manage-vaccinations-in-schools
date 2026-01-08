@@ -27,7 +27,7 @@ class Stats::Vaccinations
   attr_reader :since_date, :until_date, :programme_type, :outcome, :teams
 
   def build_base_query
-    vaccinations = VaccinationRecord.recorded_in_service
+    vaccinations = VaccinationRecord.sourced_from_service
 
     vaccinations =
       vaccinations.joins(:session).merge(Session.for_team(teams)) if teams
