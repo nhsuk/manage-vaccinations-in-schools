@@ -339,7 +339,14 @@ def create_nurse_joy_team
 end
 
 def create_upload_only_team
-  team = create_team(ods_code: "XX99", type: :upload_only)
+  team =
+    FactoryBot.create(
+      :team,
+      ods_code: "XX99",
+      programmes: [Programme.flu, Programme.hpv],
+      workgroup: "XX99",
+      type: :upload_only
+    )
   user =
     create_user(:medical_secretary, team:, email: "admin.sarah@example.com")
   create_user(:superuser, team:, email: "superuser.rob@example.com")
