@@ -709,19 +709,6 @@ en:
       title: Children
       description: Find children and view their vaccination history
       description_upload_only: Find children, view their vaccination history and edit their details
-  programmes:
-    index:
-      title: Programmes
-      description: Import child records, organise vaccination sessions and report vaccinations
-    overview:
-      show:
-        title: Overview
-    patients:
-      index:
-        title: Children
-    sessions:
-      index:
-        title: Sessions
   programme_types:
     flu: Flu
     hpv: HPV
