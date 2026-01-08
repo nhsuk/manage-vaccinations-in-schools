@@ -9,6 +9,8 @@ class SessionsController < ApplicationController
   skip_after_action :verify_policy_scoped, only: :new
 
   def index
+    authorize Session
+
     @programmes = current_user.selected_team.programmes
 
     scope =
@@ -24,6 +26,8 @@ class SessionsController < ApplicationController
   end
 
   def new
+    authorize Session
+
     @draft_session = DraftSession.new(request_session: session, current_user:)
 
     @draft_session.clear_attributes

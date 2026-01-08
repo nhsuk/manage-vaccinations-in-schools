@@ -6,6 +6,8 @@ class VaccinesController < ApplicationController
   layout "full"
 
   def index
+    authorize Vaccine
+
     @vaccines = policy_scope(Vaccine).active.order(:brand)
 
     @batches_by_vaccine_id =
@@ -24,7 +26,7 @@ class VaccinesController < ApplicationController
   end
 
   def show
-    @vaccine = policy_scope(Vaccine).active.find(params[:id])
+    @vaccine = authorize policy_scope(Vaccine).active.find(params[:id])
     @batches = policy_scope(Batch).not_archived.where(vaccine: @vaccine)
   end
 end

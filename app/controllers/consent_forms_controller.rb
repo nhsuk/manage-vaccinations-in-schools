@@ -7,7 +7,9 @@ class ConsentFormsController < ApplicationController
   before_action :set_consent_form, except: :index
   before_action :set_patient, only: %i[edit_match update_match]
   before_action :set_search_params_present, only: :search
-  skip_after_action :verify_policy_scoped, only: %i[search]
+
+  skip_after_action :verify_authorized, only: :index
+  skip_after_action :verify_policy_scoped, only: :search
 
   def index
     consent_forms = policy_scope(ConsentForm).unmatched.order(:recorded_at)
@@ -136,7 +138,8 @@ class ConsentFormsController < ApplicationController
   private
 
   def set_consent_form
-    @consent_form = policy_scope(ConsentForm).unmatched.find(params[:id])
+    @consent_form =
+      authorize policy_scope(ConsentForm).unmatched.find(params[:id])
   end
 
   def set_patient

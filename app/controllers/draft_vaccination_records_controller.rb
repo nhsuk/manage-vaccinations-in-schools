@@ -19,8 +19,6 @@ class DraftVaccinationRecordsController < ApplicationController
   before_action :set_supplied_by_users, if: -> { current_step == :supplier }
   before_action :set_back_link_path
 
-  after_action :verify_authorized
-
   def show
     authorize @vaccination_record,
               @vaccination_record.new_record? ? :new? : :edit?

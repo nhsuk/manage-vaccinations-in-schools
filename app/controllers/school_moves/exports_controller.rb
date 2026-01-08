@@ -35,7 +35,7 @@ class SchoolMoves::ExportsController < ApplicationController
 
   def set_school_move_export
     @school_move_export =
-      SchoolMoveExport.new(request_session: session, current_user:)
+      authorize SchoolMoveExport.new(request_session: session, current_user:)
   end
 
   def set_steps

@@ -4,6 +4,7 @@ class ComponentPreviewsController < ApplicationController
   include ViewComponent::PreviewActions
 
   skip_before_action :authenticate_user!
+  skip_after_action :verify_authorized
   skip_after_action :verify_policy_scoped
 
   around_action :wrap_in_rollbackable_transaction

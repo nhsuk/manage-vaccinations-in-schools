@@ -11,19 +11,19 @@ class ClassImportsController < ApplicationController
   skip_after_action :verify_policy_scoped, only: %i[new create]
 
   def new
-    @class_import = ClassImport.new(team: current_team)
+    @class_import = authorize ClassImport.new(team: current_team)
   end
 
   def create
     @class_import =
-      ClassImport.new(
-        academic_year: @academic_year,
-        location: @location,
-        team: current_team,
-        uploaded_by: current_user,
-        year_groups: @draft_import.year_groups,
-        **class_import_params
-      )
+      authorize ClassImport.new(
+                  academic_year: @academic_year,
+                  location: @location,
+                  team: current_team,
+                  uploaded_by: current_user,
+                  year_groups: @draft_import.year_groups,
+                  **class_import_params
+                )
 
     @class_import.load_data!
     if @class_import.invalid?
@@ -172,7 +172,7 @@ class ClassImportsController < ApplicationController
 
   def set_class_import
     @class_import =
-      policy_scope(ClassImport).includes(:location).find(params[:id])
+      authorize policy_scope(ClassImport).includes(:location).find(params[:id])
     @location = @class_import.location
     @academic_year = @class_import.academic_year
   end

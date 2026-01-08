@@ -6,6 +6,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   skip_before_action :authenticate_user!
   skip_before_action :ensure_team_is_selected
+  skip_after_action :verify_authorized
   skip_after_action :verify_policy_scoped
   skip_before_action :verify_authenticity_token, only: [:cis2_logout]
   skip_before_action :authenticate_basic, only: [:cis2_logout]

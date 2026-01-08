@@ -7,16 +7,17 @@ class BatchesController < ApplicationController
   before_action :set_batch, except: %i[new create]
 
   def new
+    authorize Batch
     @form = BatchForm.new
   end
 
   def create
     batch =
-      Batch.archived.find_or_initialize_by(
-        team: current_team,
-        vaccine: @vaccine,
-        **batch_form_params
-      )
+      authorize Batch.archived.find_or_initialize_by(
+                  team: current_team,
+                  vaccine: @vaccine,
+                  **batch_form_params
+                )
 
     batch.archived_at = nil if batch.archived?
 
@@ -78,7 +79,8 @@ class BatchesController < ApplicationController
   end
 
   def set_batch
-    @batch = policy_scope(Batch).where(vaccine: @vaccine).find(params[:id])
+    @batch =
+      authorize policy_scope(Batch).where(vaccine: @vaccine).find(params[:id])
   end
 
   def batch_form_params

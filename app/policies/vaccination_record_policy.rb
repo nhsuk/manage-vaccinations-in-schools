@@ -39,6 +39,8 @@ class VaccinationRecordPolicy < ApplicationPolicy
       !record.sourced_from_nhs_immunisations_api?
   end
 
+  def confirm_destroy? = destroy?
+
   private
 
   delegate :patient, :session, :programme, :programme_type, to: :record

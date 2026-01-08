@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Patients::ArchiveController < Patients::BaseController
+  before_action :authorize_patient
+
   def new
     @form = PatientArchiveForm.new
   end
@@ -24,6 +26,10 @@ class Patients::ArchiveController < Patients::BaseController
   end
 
   private
+
+  def authorize_patient
+    authorize @patient, policy_class: Patient::ArchivePolicy
+  end
 
   def patient_archive_form_params
     params.expect(patient_archive_form: %i[nhs_number type other_details])

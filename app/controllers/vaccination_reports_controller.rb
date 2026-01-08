@@ -11,17 +11,22 @@ class VaccinationReportsController < ApplicationController
 
   def new
     @vaccination_report =
-      VaccinationReport.new(
-        current_user:,
-        request_session: {
-        },
-        academic_year: AcademicYear.current
-      )
+      authorize VaccinationReport.new(
+                  current_user:,
+                  request_session: {
+                  },
+                  academic_year: AcademicYear.current
+                )
   end
 
   def create
     @vaccination_report =
-      VaccinationReport.new(current_user:, request_session: {}, **create_params)
+      authorize VaccinationReport.new(
+                  current_user:,
+                  request_session: {
+                  },
+                  **create_params
+                )
 
     if @vaccination_report.valid?(:single_page)
       send_data(
@@ -58,7 +63,7 @@ class VaccinationReportsController < ApplicationController
 
   def set_vaccination_report
     @vaccination_report =
-      VaccinationReport.new(request_session: session, current_user:)
+      authorize VaccinationReport.new(request_session: session, current_user:)
   end
 
   def set_programme

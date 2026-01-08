@@ -6,6 +6,7 @@ module Imports
 
     before_action :set_import
     before_action :set_consents
+
     skip_after_action :verify_policy_scoped
 
     IMPORT_CLASSES = {
@@ -25,10 +26,6 @@ module Imports
     end
 
     def create
-      unless Flipper.enabled?(:import_bulk_remove_parents)
-        raise "Bulk removal of parents feature is disabled"
-      end
-
       @form =
         BulkRemoveParentsForm.new(
           import: @import,
@@ -50,6 +47,7 @@ module Imports
       import_class = IMPORT_CLASSES[params[:import_type]]
       @import = import_class&.find(params[:import_id])
       raise ActiveRecord::RecordNotFound unless @import
+      authorize @import, policy_class: Import::BulkRemoveParentPolicy
     end
 
     def set_consents

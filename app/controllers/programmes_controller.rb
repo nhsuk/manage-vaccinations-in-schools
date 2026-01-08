@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ProgrammesController < ApplicationController
+  skip_after_action :verify_authorized
   skip_after_action :verify_policy_scoped
 
   layout "full"

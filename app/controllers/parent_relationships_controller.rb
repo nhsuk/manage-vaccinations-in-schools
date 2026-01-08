@@ -36,10 +36,10 @@ class ParentRelationshipsController < ApplicationController
 
   def set_parent_relationship
     @parent_relationship =
-      @patient
-        .parent_relationships
-        .includes(:parent)
-        .find_by!(parent_id: params[:id])
+      authorize @patient
+                  .parent_relationships
+                  .includes(:parent)
+                  .find_by!(parent_id: params[:id])
   end
 
   def set_parent

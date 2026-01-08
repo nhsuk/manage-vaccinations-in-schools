@@ -10,7 +10,10 @@ class Programmes::BaseController < ApplicationController
 
   def set_programme
     @programme =
-      current_user.programmes.find { it.type == params[:programme_type] }
+      authorize current_user.programmes.find {
+                  it.type == params[:programme_type]
+                },
+                :show?
   end
 
   def set_academic_year

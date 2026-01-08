@@ -8,17 +8,17 @@ class ImmunisationImportsController < ApplicationController
   skip_after_action :verify_policy_scoped, only: %i[new create]
 
   def new
-    @immunisation_import = ImmunisationImport.new(team: current_team)
+    @immunisation_import = authorize ImmunisationImport.new(team: current_team)
   end
 
   def create
     @immunisation_import =
-      ImmunisationImport.new(
-        team: current_team,
-        uploaded_by: current_user,
-        type:,
-        **immunisation_import_params
-      )
+      authorize ImmunisationImport.new(
+                  team: current_team,
+                  uploaded_by: current_user,
+                  type:,
+                  **immunisation_import_params
+                )
 
     @immunisation_import.load_data!
     if @immunisation_import.invalid?
@@ -67,7 +67,8 @@ class ImmunisationImportsController < ApplicationController
   end
 
   def set_immunisation_import
-    @immunisation_import = policy_scope(ImmunisationImport).find(params[:id])
+    @immunisation_import =
+      authorize policy_scope(ImmunisationImport).find(params[:id])
   end
 
   def immunisation_import_params

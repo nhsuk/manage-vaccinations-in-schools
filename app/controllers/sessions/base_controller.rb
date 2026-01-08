@@ -8,9 +8,10 @@ class Sessions::BaseController < ApplicationController
 
   def set_session
     @session =
-      policy_scope(Session).includes(:session_programme_year_groups).find_by!(
-        slug: params[:session_slug]
-      )
+      authorize policy_scope(Session).includes(
+                  :session_programme_year_groups
+                ).find_by!(slug: params[:session_slug]),
+                :show?
   end
 
   def set_programme_statuses

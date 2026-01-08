@@ -6,6 +6,7 @@ module DevConcern
   included do
     skip_before_action :authenticate_user!
     skip_before_action :store_user_location!
+    skip_after_action :verify_authorized
     skip_after_action :verify_policy_scoped
 
     before_action :ensure_dev_env_or_dev_tools_enabled
