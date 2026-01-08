@@ -58,6 +58,7 @@ class SchoolsController < ApplicationController
         .joins(:patient_locations)
         .where(patient_locations: { location: @location, academic_year: })
         .where(school_id: @location.school_id)
+        .includes_statuses
 
     patients = @form.apply(scope)
 
