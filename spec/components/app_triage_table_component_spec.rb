@@ -25,21 +25,27 @@ describe AppTriageTableComponent do
     subject { render_inline(component) }
 
     context "triaged as safe to vaccinate" do
-      let!(:triage) do
-        create(:triage, :safe_to_vaccinate, patient:, programme:)
-      end
+      before { create(:triage, :safe_to_vaccinate, patient:, programme:) }
 
       it { should have_css("caption", text: "Triage notes") }
       it { should have_content("Safe to vaccinate") }
-      it { should have_content(triage.performed_by.full_name) }
     end
 
     context "triaged as unsafe to vaccinate" do
-      let!(:triage) { create(:triage, :do_not_vaccinate, patient:, programme:) }
+      before { create(:triage, :do_not_vaccinate, patient:, programme:) }
 
       it { should have_css("caption", text: "Triage notes") }
       it { should have_content("Do not vaccinate") }
-      it { should have_content(triage.performed_by.full_name) }
+    end
+
+    context "with a performed by user" do
+      before do
+        create(:triage, :safe_to_vaccinate, patient:, programme:, performed_by:)
+      end
+
+      let(:performed_by) { create(:nurse) }
+
+      it { should have_content(performed_by.full_name) }
     end
   end
 end

@@ -19,7 +19,7 @@ class AppPatientSessionTriageComponent < AppPatientSessionSectionComponent
 
   attr_reader :current_user, :triage_form
 
-  delegate :govuk_button_link_to, to: :helpers
+  delegate :govuk_button_link_to, :triage_summary, to: :helpers
 
   def programme_type = programme.type
 
@@ -37,10 +37,6 @@ class AppPatientSessionTriageComponent < AppPatientSessionSectionComponent
 
   def consent_status
     patient.consent_status(programme:, academic_year:)
-  end
-
-  def vaccination_method
-    Vaccine.human_enum_name(:method_prefix, triage_status.vaccine_method)
   end
 
   def latest_triage

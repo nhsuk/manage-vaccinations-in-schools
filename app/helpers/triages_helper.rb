@@ -48,4 +48,31 @@ module TriagesHelper
       govuk_tag(text:, classes: "nhsuk-tag--#{colour}")
     end
   end
+
+  def triage_summary(triage)
+    prefix =
+      if (performed_by = triage.performed_by)
+        "#{performed_by.full_name} decided that "
+      else
+        ""
+      end
+
+    suffix =
+      if triage.safe_to_vaccinate?
+        if triage.vaccine_method.present? &&
+             triage.programme.has_multiple_vaccine_methods?
+          vaccination_method =
+            Vaccine.human_enum_name(:method_prefix, triage.vaccine_method)
+          "is safe to vaccinate using the #{vaccination_method} vaccine only."
+        else
+          "is safe to vaccinate."
+        end
+      elsif triage.do_not_vaccinate?
+        "should not be vaccinated."
+      elsif triage.delay_vaccination?
+        "’s vaccination should be delayed."
+      end
+
+    "#{prefix}#{triage.patient.full_name} #{suffix}" if suffix
+  end
 end
