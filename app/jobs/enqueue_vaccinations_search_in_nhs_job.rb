@@ -10,7 +10,8 @@
 class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
   queue_as :immunisations_api_search
 
-  def perform(programme_types: default_programme_types)
+  def perform(programme_types: nil)
+    programme_types ||= Programme.all.map(&:type)
     patient_ids = []
 
     if Flipper.enabled?(:imms_api_enqueue_session_searches)
@@ -28,7 +29,6 @@ class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
 
   private
 
-  def default_programme_types = ["flu"].freeze
   def rolling_search_period_in_days = 28
 
   def patient_ids_session_searches(programme_types:)
