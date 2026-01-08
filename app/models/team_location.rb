@@ -62,6 +62,11 @@ class TeamLocation < ApplicationRecord
     patient_locations.where(academic_year:)
   end
 
+  def safe_to_destroy?
+    !sessions.exists? && !consent_forms.exists? &&
+      !patient_locations_for_academic_year(academic_year).exists?
+  end
+
   private
 
   def subteam_belongs_to_team
