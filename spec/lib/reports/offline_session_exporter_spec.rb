@@ -703,6 +703,23 @@ describe Reports::OfflineSessionExporter do
 
           it { should eq "='#{programme.type} Batch Numbers'!$A2:$A2" }
         end
+
+        describe "vaccine given" do
+          let(:patient) { create(:patient, session:) }
+
+          it "only has the vaccine names for the programme or programme variant" do
+            vaccines =
+              Vaccine
+                .active
+                .for_programmes([programme.variant_for(patient:)])
+                .pluck(:upload_name)
+                .join(", ")
+
+            formula =
+              validation_formula(worksheet:, column_name: "vaccine_given")
+            expect(formula).to eq("\"#{vaccines}\"")
+          end
+        end
       end
 
       describe "performing professionals sheet" do
