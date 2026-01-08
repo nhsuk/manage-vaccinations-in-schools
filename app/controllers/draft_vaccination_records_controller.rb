@@ -128,10 +128,7 @@ class DraftVaccinationRecordsController < ApplicationController
 
     @vaccination_record.save!
 
-    NextDoseTriageFactory.call(
-      vaccination_record: @vaccination_record,
-      current_user:
-    )
+    NextDoseTriageFactory.call(vaccination_record: @vaccination_record)
 
     StatusUpdater.call(patient: @patient)
 
