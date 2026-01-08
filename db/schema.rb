@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_08_143705) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_08_150039) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -896,7 +896,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_08_143705) do
     t.bigint "performed_by_user_id"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "status", null: false
-    t.bigint "team_id", null: false
+    t.bigint "team_id"
     t.datetime "updated_at", null: false
     t.integer "vaccine_method"
     t.boolean "without_gelatine"

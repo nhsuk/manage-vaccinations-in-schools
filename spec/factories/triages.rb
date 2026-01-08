@@ -17,7 +17,7 @@
 #  updated_at              :datetime         not null
 #  patient_id              :bigint           not null
 #  performed_by_user_id    :bigint
-#  team_id                 :bigint           not null
+#  team_id                 :bigint
 #
 # Indexes
 #
@@ -37,8 +37,6 @@ FactoryBot.define do
   factory :triage do
     patient
     programme { Programme.sample }
-
-    team
 
     notes { "" }
 

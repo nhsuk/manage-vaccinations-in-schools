@@ -17,7 +17,7 @@
 #  updated_at              :datetime         not null
 #  patient_id              :bigint           not null
 #  performed_by_user_id    :bigint
-#  team_id                 :bigint           not null
+#  team_id                 :bigint
 #
 # Indexes
 #
@@ -41,7 +41,7 @@ class Triage < ApplicationRecord
   audited associated_with: :patient
 
   belongs_to :patient
-  belongs_to :team
+  belongs_to :team, optional: true
   belongs_to :performed_by,
              class_name: "User",
              foreign_key: :performed_by_user_id,

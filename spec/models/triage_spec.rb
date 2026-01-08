@@ -17,7 +17,7 @@
 #  updated_at              :datetime         not null
 #  patient_id              :bigint           not null
 #  performed_by_user_id    :bigint
-#  team_id                 :bigint           not null
+#  team_id                 :bigint
 #
 # Indexes
 #
@@ -39,7 +39,7 @@ describe Triage do
 
   describe "associations" do
     it { should belong_to(:patient) }
-    it { should belong_to(:team) }
+    it { should belong_to(:team).optional(true) }
     it { should belong_to(:performed_by).optional(true) }
   end
 
