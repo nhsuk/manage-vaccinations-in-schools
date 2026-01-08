@@ -3,9 +3,7 @@
 describe NextDoseTriageFactory do
   subject(:call) { described_class.call(vaccination_record:) }
 
-  let(:vaccination_record) { create(:vaccination_record, session:, programme:) }
-
-  let(:session) { create(:session, programmes: [programme]) }
+  let(:vaccination_record) { create(:vaccination_record, programme:) }
 
   context "with a single dose programme" do
     let(:programme) { Programme.hpv }
@@ -24,31 +22,17 @@ describe NextDoseTriageFactory do
       triage = vaccination_record.reload.next_dose_delay_triage
       expect(triage).to be_delay_vaccination
       expect(triage.delay_vaccination_until).to eq(28.days.from_now.to_date)
-      expect(triage.performed_by).to eq(vaccination_record.performed_by_user)
+      expect(triage.performed_by).to be_nil
+      expect(triage.team).to be_nil
     end
 
-    context "when not recorded in the service" do
-      let(:session) { nil }
+    context "when performed over 28 days ago" do
+      let(:vaccination_record) do
+        create(:vaccination_record, programme:, performed_at: 29.days.ago)
+      end
 
       it "does not create a triage" do
         expect { call }.not_to(change(Triage, :count))
-      end
-    end
-
-    context "when the vaccination record is missing a performed by user" do
-      let(:vaccination_record) do
-        create(
-          :vaccination_record,
-          session:,
-          programme:,
-          performed_by_user: nil
-        )
-      end
-
-      it "raises an error" do
-        expect { call }.to raise_error(
-          NextDoseTriageFactory::UnknownPerformedBy
-        )
       end
     end
   end
