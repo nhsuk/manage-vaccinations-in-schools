@@ -33,7 +33,7 @@ class AppImportReviewSchoolMovesSummaryComponent < ViewComponent::Base
     patient = changeset.patient
     dest_school = destination_school(changeset)
 
-    dest_school && patient.school &&
+    dest_school && patient.school && patient.school.teams.any? &&
       (dest_school.teams & patient.school.teams).empty?
   end
 end
