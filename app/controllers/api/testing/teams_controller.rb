@@ -100,8 +100,9 @@ class API::Testing::TeamsController < API::Testing::BaseController
 
     TeamCachedCounts.new(team).reset_all!
 
+    log_destroy(Session.for_team(team))
+
     unless keep_itself
-      log_destroy(Session.for_team(team))
       log_destroy(TeamLocation.where(team:))
       log_destroy(Subteam.where(team:))
       log_destroy(Team.where(id: team.id))

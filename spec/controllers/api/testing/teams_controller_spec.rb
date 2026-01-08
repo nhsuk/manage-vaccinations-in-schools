@@ -110,7 +110,7 @@ describe API::Testing::TeamsController do
         expect { call }.to(
           not_change(Team, :count)
             .and(not_change(Subteam, :count))
-            .and(not_change(Session, :count))
+            .and(change(Session, :count).by(-1))
             .and(change(CohortImport, :count).by(-1))
             .and(change(ImmunisationImport, :count).by(-1))
             .and(change(NotifyLogEntry, :count).by(-3))
