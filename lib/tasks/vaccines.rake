@@ -10,7 +10,7 @@ namespace :vaccines do
     all_data.each_value do |data|
       next if type.present? && data["type"] != type
 
-      programme = Programme.find(data["type"])
+      programme_type = data.fetch("type")
 
       vaccine =
         Vaccine.find_or_initialize_by(
@@ -20,34 +20,35 @@ namespace :vaccines do
       vaccine.brand = data["brand"]
       vaccine.contains_gelatine = data["contains_gelatine"]
       vaccine.discontinued = data.fetch("discontinued", false)
+      vaccine.disease_types = data["disease_types"]
       vaccine.dose_volume_ml = data["dose_volume_ml"]
       vaccine.manufacturer = data["manufacturer"]
       vaccine.method = data["method"]
-      vaccine.upload_name = data["upload_name"]
       vaccine.nivs_name = data["nivs_name"]
+      vaccine.programme_type = programme_type
       vaccine.snomed_product_term = data["snomed_product_term"]
-      vaccine.disease_types = data["disease_types"]
-      vaccine.programme = programme
+      vaccine.upload_name = data["upload_name"]
 
-      vaccine.side_effects = side_effects_for(programme, data["method"])
+      vaccine.side_effects = side_effects_for(programme_type, data["method"])
 
       vaccine.save!
 
       next if vaccine.health_questions.exists?
 
       ActiveRecord::Base.transaction do
-        if programme.flu?
+        case programme_type
+        when "flu"
           create_flu_health_questions(vaccine)
-        elsif programme.hpv?
+        when "hpv"
           create_hpv_health_questions(vaccine)
-        elsif programme.menacwy?
+        when "menacwy"
           create_menacwy_health_questions(vaccine)
-        elsif programme.mmr?
+        when "mmr"
           create_mmr_health_questions(vaccine)
-        elsif programme.td_ipv?
+        when "td_ipv"
           create_td_ipv_health_questions(vaccine)
         else
-          raise UnsupportedProgramme, programme
+          raise UnsupportedProgramme, Programme.find(programme_type)
         end
       end
     end
@@ -84,8 +85,9 @@ namespace :vaccines do
   end
 end
 
-def side_effects_for(programme, method)
-  if programme.flu?
+def side_effects_for(programme_type, method)
+  case programme_type
+  when "flu"
     if method == "nasal"
       %w[runny_blocked_nose headache tiredness loss_of_appetite]
     else
@@ -100,7 +102,7 @@ def side_effects_for(programme, method)
         unwell
       ]
     end
-  elsif programme.hpv?
+  when "hpv"
     %w[
       swelling
       headache
@@ -111,7 +113,7 @@ def side_effects_for(programme, method)
       loss_of_appetite
       unwell
     ]
-  elsif programme.menacwy?
+  when "menacwy"
     %w[
       drowsy
       feeling_sick
@@ -123,9 +125,9 @@ def side_effects_for(programme, method)
       swelling
       unwell
     ]
-  elsif programme.mmr?
+  when "mmr"
     %w[swollen_glands raised_blotchy_rash]
-  elsif programme.td_ipv?
+  when "td_ipv"
     %w[
       drowsy
       feeling_sick
@@ -137,7 +139,7 @@ def side_effects_for(programme, method)
       unwell
     ]
   else
-    raise UnsupportedProgramme, programme
+    raise UnsupportedProgramme, Programme.find(programme_type)
   end
 end
 
