@@ -62,6 +62,10 @@ class TeamLocation < ApplicationRecord
   def phone_instructions =
     subteam&.phone_instructions || team&.phone_instructions
 
+  def safe_to_destroy?
+    !sessions.exists? && !consent_forms.exists? && !patient_locations.exists?
+  end
+
   private
 
   def subteam_belongs_to_team
