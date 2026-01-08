@@ -1122,4 +1122,140 @@ describe SchoolMove do
       it_behaves_like "an ignored school move"
     end
   end
+
+  describe "#from_another_team?" do
+    subject(:from_another_team?) { school_move.from_another_team? }
+
+    let(:team_a) { create(:team) }
+    let(:team_b) { create(:team) }
+    let(:academic_year) { AcademicYear.pending }
+
+    context "when patient has no current school" do
+      let(:patient) { create(:patient, school: nil) }
+      let(:new_school) { create(:school, team: team_a) }
+      let(:school_move) do
+        create(:school_move, patient:, school: new_school, academic_year:)
+      end
+
+      it { should be false }
+    end
+
+    context "when patient's current school has no teams" do
+      let(:current_school) { create(:school) }
+      let(:patient) { create(:patient, school: current_school) }
+      let(:new_school) { create(:school, team: team_a) }
+      let(:school_move) do
+        create(:school_move, patient:, school: new_school, academic_year:)
+      end
+
+      it { should be false }
+    end
+
+    context "when moving to home educated" do
+      let(:current_school) { create(:school, team: team_a) }
+      let(:patient) { create(:patient, school: current_school) }
+      let(:school_move) do
+        create(
+          :school_move,
+          :to_home_educated,
+          patient:,
+          team: team_a,
+          academic_year:
+        )
+      end
+
+      it { should be false }
+    end
+
+    context "when moving to unknown school" do
+      let(:current_school) { create(:school, team: team_a) }
+      let(:patient) { create(:patient, school: current_school) }
+      let(:school_move) do
+        create(
+          :school_move,
+          :to_unknown_school,
+          patient:,
+          team: team_a,
+          academic_year:
+        )
+      end
+
+      it { should be false }
+    end
+
+    context "when moving within the same team" do
+      let(:current_school) { create(:school, team: team_a) }
+      let(:new_school) { create(:school, team: team_a) }
+      let(:patient) { create(:patient, school: current_school) }
+      let(:school_move) do
+        create(:school_move, patient:, school: new_school, academic_year:)
+      end
+
+      it { should be false }
+    end
+
+    context "when current school is in multiple teams and moving to one of them" do
+      let(:current_school) { create(:school) }
+      let(:new_school) { create(:school, team: team_b) }
+      let(:patient) { create(:patient, school: current_school) }
+      let(:school_move) do
+        create(:school_move, patient:, school: new_school, academic_year:)
+      end
+
+      before do
+        create(
+          :team_location,
+          team: team_a,
+          location: current_school,
+          academic_year:
+        )
+        create(
+          :team_location,
+          team: team_b,
+          location: current_school,
+          academic_year:
+        )
+      end
+
+      it { should be false }
+    end
+
+    context "when moving to a different team" do
+      let(:current_school) { create(:school, team: team_a) }
+      let(:new_school) { create(:school, team: team_b) }
+      let(:patient) { create(:patient, school: current_school) }
+      let(:school_move) do
+        create(:school_move, patient:, school: new_school, academic_year:)
+      end
+
+      it { should be true }
+    end
+
+    context "when moving to a school with multiple teams, none matching current" do
+      let(:team_c) { create(:team) }
+      let(:current_school) { create(:school, team: team_a) }
+      let(:new_school) { create(:school) }
+      let(:patient) { create(:patient, school: current_school) }
+      let(:school_move) do
+        create(:school_move, patient:, school: new_school, academic_year:)
+      end
+
+      before do
+        create(
+          :team_location,
+          team: team_b,
+          location: new_school,
+          academic_year:
+        )
+        create(
+          :team_location,
+          team: team_c,
+          location: new_school,
+          academic_year:
+        )
+      end
+
+      it { should be true }
+    end
+  end
 end
