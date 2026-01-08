@@ -5,7 +5,9 @@ class PatientsController < ApplicationController
 
   before_action :set_patient_search_form, only: :index
   before_action :set_search_params_present, only: :index
+  before_action :set_programmes, only: :index
   before_action :set_programme_statuses, only: :index
+  before_action :set_visibility_flags, only: :index
   before_action :set_patient, except: :index
   before_action :set_in_generic_clinic, only: :show
   before_action :record_access_log_entry, only: %i[show log]
@@ -76,16 +78,35 @@ class PatientsController < ApplicationController
     @search_params_present = @form.any_filters_applied?
   end
 
+  def set_programmes
+    @programmes =
+      (current_team.has_upload_only_access? ? [] : current_team.programmes)
+  end
+
   def set_programme_statuses
     @programme_statuses =
-      Patient::ProgrammeStatus.statuses.keys -
-        %w[
-          not_eligible
-          needs_consent_request_not_scheduled
-          needs_consent_request_scheduled
-          needs_consent_request_failed
-          needs_consent_follow_up_requested
-        ]
+      if current_team.has_upload_only_access?
+        []
+      else
+        Patient::ProgrammeStatus.statuses.keys -
+          %w[
+            not_eligible
+            needs_consent_request_not_scheduled
+            needs_consent_request_scheduled
+            needs_consent_request_failed
+            needs_consent_follow_up_requested
+          ]
+      end
+  end
+
+  def set_visibility_flags
+    upload_only_access = current_team.has_upload_only_access?
+
+    @show_aged_out_of_programmes = !upload_only_access
+    @show_archived_records = !upload_only_access
+    @show_patient_programme_status = !upload_only_access
+    @show_patient_school = !upload_only_access
+    @show_patient_postcode = upload_only_access
   end
 
   def set_patient

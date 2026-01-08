@@ -147,6 +147,19 @@ describe AppPatientSessionSearchResultCardComponent do
     end
   end
 
+  context "when not showing the programme status" do
+    let(:component) do
+      described_class.new(
+        patient:,
+        session:,
+        programmes:,
+        show_programme_status: false
+      )
+    end
+
+    it { should_not have_text("Programme status") }
+  end
+
   context "when showing the vaccine type" do
     let(:component) do
       described_class.new(

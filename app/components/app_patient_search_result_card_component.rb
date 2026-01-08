@@ -10,6 +10,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     show_nhs_number: false,
     show_parents: false,
     show_postcode: false,
+    show_programme_status: true,
     show_school: false,
     show_year_group: false
   )
@@ -23,6 +24,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     @show_nhs_number = show_nhs_number
     @show_parents = show_parents
     @show_postcode = show_postcode
+    @show_programme_status = show_programme_status
     @show_school = show_school
     @show_year_group = show_year_group
   end
@@ -66,7 +68,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
             row.with_value { patient_parents(patient) }
           end
         end
-        if academic_year && programme_status_tag
+        if show_programme_status && academic_year && programme_status_tag
           summary_list.with_row do |row|
             row.with_key { "Programme status" }
             row.with_value { programme_status_tag }
@@ -88,7 +90,8 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
               :show_parents,
               :show_postcode,
               :show_school,
-              :show_year_group
+              :show_year_group,
+              :show_programme_status
 
   delegate :govuk_summary_list,
            :patient_date_of_birth,
