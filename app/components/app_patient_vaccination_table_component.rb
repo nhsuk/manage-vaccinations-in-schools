@@ -10,7 +10,7 @@ class AppPatientVaccinationTableComponent < ViewComponent::Base
 
   private
 
-  delegate :govuk_table, to: :helpers
+  delegate :govuk_table, :vaccination_record_source, to: :helpers
 
   attr_reader :patient, :academic_year, :programme, :show_caption
 

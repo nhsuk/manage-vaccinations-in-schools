@@ -30,6 +30,7 @@ class DraftVaccinationRecord
   attribute :programme_type, :string
   attribute :protocol, :string
   attribute :session_id, :integer
+  attribute :source, :string
   attribute :supplied_by_user_id, :integer
 
   def initialize(current_user:, **attributes)
@@ -42,6 +43,8 @@ class DraftVaccinationRecord
             absence: {
               if: :performed_by_user
             }
+
+  validates :source, inclusion: { in: VaccinationRecord.sources.keys }
 
   def wizard_steps
     [
@@ -297,10 +300,24 @@ class DraftVaccinationRecord
     approved_vaccine_methods.include?(vaccine_method)
   end
 
+  def human_enum_name(attribute)
+    VaccinationRecord.human_enum_name(attribute, send(attribute))
+  end
+
+  def sourced_from_service? = source == "service"
+
+  def sourced_from_historical_upload? = source == "historical_upload"
+
+  def sourced_from_nhs_immunisations_api? = source == "nhs_immunisations_api"
+
+  def sourced_from_consent_refusal? = source == "consent_refusal"
+
+  def sourced_from_bulk_upload? = source == "bulk_upload"
+
   private
 
   def readable_attribute_names
-    writable_attribute_names - %w[vaccine_id]
+    writable_attribute_names - %w[vaccine_id] + %w[source]
   end
 
   def writable_attribute_names

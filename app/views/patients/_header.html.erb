@@ -4,7 +4,7 @@
 
 <ul class="app-action-list">
   <li class="app-action-list__item">
-    <% if @patient.archived?(team: current_team) %>
+    <% if @patient.archived?(team: current_team) && !current_team.has_upload_only_access? %>
       <%= govuk_tag(text: "Archived", colour: "grey") %>
     <% end %>
   </li>

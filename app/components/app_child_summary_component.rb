@@ -37,7 +37,7 @@ class AppChildSummaryComponent < ViewComponent::Base
         end
       end
 
-      if archive_reason
+      if archive_reason && !@current_team.has_upload_only_access?
         summary_list.with_row do |row|
           row.with_key { "Archive reason" }
           row.with_value { format_archive_reason }

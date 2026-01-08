@@ -125,6 +125,26 @@ describe AppChildSummaryComponent do
     it { should have_text("Other: Some details.") }
   end
 
+  context "when archived by immunisation import" do
+    let(:component) { described_class.new(patient, current_team: team) }
+
+    let(:team) { create(:team) }
+
+    before { create(:archive_reason, :immunisation_import, patient:, team:) }
+
+    it { should have_text("Archive reason") }
+  end
+
+  context "when created by bulk upload" do
+    let(:component) { described_class.new(patient, current_team: team) }
+
+    let(:team) { create(:team, type: :upload_only) }
+
+    before { create(:archive_reason, :immunisation_import, patient:, team:) }
+
+    it { should_not have_text("Archive reason") }
+  end
+
   context "with a PDS lookup match" do
     let(:patient) { create(:patient) }
 
