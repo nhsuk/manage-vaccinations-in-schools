@@ -134,20 +134,27 @@ FactoryBot.define do
     end
 
     trait :sourced_from_bulk_upload do
-      transient { uploaded_by { nil } }
+      transient do
+        uploaded_by { nil }
+        immunisation_import { nil }
+      end
 
       source { "bulk_upload" }
 
       after(:create) do |vaccination_record, evaluator|
-        next unless evaluator.uploaded_by
+        next unless evaluator.uploaded_by || evaluator.immunisation_import
 
-        create(
-          :immunisation_import,
-          type: "bulk",
-          vaccination_records: [vaccination_record],
-          team: evaluator.uploaded_by.selected_team,
-          uploaded_by: evaluator.uploaded_by
-        )
+        if evaluator.immunisation_import
+          evaluator.immunisation_import.vaccination_records << vaccination_record
+        else
+          create(
+            :immunisation_import,
+            type: "bulk",
+            vaccination_records: [vaccination_record],
+            team: evaluator.uploaded_by.selected_team,
+            uploaded_by: evaluator.uploaded_by
+          )
+        end
       end
     end
 
