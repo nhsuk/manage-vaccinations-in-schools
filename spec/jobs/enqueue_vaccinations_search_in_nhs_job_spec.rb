@@ -213,32 +213,12 @@ describe EnqueueVaccinationsSearchInNHSJob do
         include_examples "behaviour before, during or after consent/invitation period"
       end
 
-      context "with sessions for non-searchable programmes" do
-        before do
-          # The session searches only trigger for patients in flu sessions, so
-          # these should not show up.
-          hpv = Programme.hpv
-          hpv_location = create(:school, team:, programmes: [hpv])
-          hpv_location.import_default_programme_year_groups!(
-            [hpv],
-            academic_year: AcademicYear.pending
-          )
-          hpv_session =
-            create(
-              :session,
-              programmes: [hpv],
-              academic_year: AcademicYear.pending,
-              dates: [20.days.from_now],
-              send_consent_requests_at: 1.day.ago,
-              team:,
-              location: hpv_location
-            )
-          create(:patient, team:, school:, session: hpv_session)
+      (Programme.all - [Programme.flu]).each do |other_programme|
+        context "in a #{other_programme.type} programmes" do
+          let(:programmes) { [other_programme] }
+
+          include_examples "behaviour before, during or after consent/invitation period"
         end
-
-        let(:location) { school }
-
-        include_examples "behaviour before, during or after consent/invitation period"
       end
     end
 
@@ -266,7 +246,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
             patient:
           )
         end
-        let(:last_searched_at) { 30.days.ago } # default for specs don't that care
+        let(:last_searched_at) { 30.days.ago } # default for specs that don't care
         let!(:patient) { create(:patient, team:, school:, session:) }
 
         context "with the feature flag disabled" do
@@ -314,6 +294,20 @@ describe EnqueueVaccinationsSearchInNHSJob do
             expect(SearchVaccinationRecordsInNHSJob).not_to have_received(
               :perform_bulk
             )
+          end
+        end
+
+        (Programme.all - [Programme.flu]).each do |other_programme|
+          context "in a #{other_programme.type} programmes" do
+            let(:programmes) { [other_programme] }
+
+            it "performs a search on the patient" do
+              described_class.perform_now
+
+              expect(SearchVaccinationRecordsInNHSJob).to have_received(
+                :perform_bulk
+              ).once.with([[patient.id]])
+            end
           end
         end
       end
