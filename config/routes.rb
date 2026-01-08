@@ -56,7 +56,7 @@ Rails.application.routes.draw do
 
   get "/start", to: "start#index"
   get "/dashboard", to: "dashboard#index"
-  get "/accessibility-statement", to: "content#accessibility_statement"
+  get "/accessibility-statement", to: "accessibility_statement#index"
 
   get "/manifest/:name-:digest.json", to: "manifest#show", as: :manifest
   get "/manifest/:name.json", to: "manifest#show"
