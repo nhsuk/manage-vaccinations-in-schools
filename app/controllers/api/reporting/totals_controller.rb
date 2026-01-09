@@ -13,15 +13,12 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
 
   GROUPS = {
     local_authority: :patient_local_authority_code,
-    school: %i[patient_school_name patient_school_urn],
     year_group: :patient_year_group,
     gender: :patient_gender
   }.freeze
 
   GROUP_HEADERS = {
     patient_local_authority_code: "Local Authority",
-    patient_school_name: "School",
-    patient_school_urn: "School URN",
     patient_year_group: "Year Group",
     patient_gender: "Gender"
   }.freeze
@@ -29,25 +26,10 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   METRIC_HEADERS = {
     cohort: "Cohort",
     vaccinated: "Vaccinated",
-    not_vaccinated: "Not Vaccinated",
-    vaccinated_by_sais: "Vaccinated by SAIS",
-    vaccinated_elsewhere_declared: "Vaccinated Elsewhere (Declared)",
-    vaccinated_elsewhere_recorded: "Vaccinated Elsewhere (Recorded)",
-    vaccinated_previously: "Vaccinated Previously",
-    consent_given: "Consent Given",
-    consent_no_response: "No Consent Response",
-    consent_conflicts: "Conflicting Consent",
-    parent_refused_consent: "Parent Refused Consent",
-    child_refused_vaccination: "Child Refused Vaccination"
+    not_vaccinated: "Not Vaccinated"
   }.freeze
 
-  FLU_SPECIFIC_METRIC_HEADERS = {
-    vaccinated_nasal: "Vaccinated (Nasal)",
-    vaccinated_injection: "Vaccinated (Injection)",
-    consent_given_nasal_only: "Consent Given (Nasal Only)",
-    consent_given_injection_only: "Consent Given (Injection Only)",
-    consent_given_both_methods: "Consent Given (Both Methods)"
-  }.freeze
+  FLU_SPECIFIC_METRIC_HEADERS = {}.freeze
 
   before_action :set_default_filters, :set_filters, :set_scope
 
@@ -127,8 +109,9 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
         .flatten
         .uniq
 
-    @scope = @scope.group(groups).select(groups) if groups.any?
-    records = @scope.with_aggregate_metrics
+    scope = @totals_scope
+    scope = scope.group(groups).select(groups) if groups.any?
+    records = scope.with_aggregate_metrics
 
     render_csv records:, header_mappings: csv_headers(groups), prefix: "totals"
   end

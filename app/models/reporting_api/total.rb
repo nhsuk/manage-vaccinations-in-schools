@@ -58,4 +58,14 @@ class ReportingAPI::Total < ApplicationRecord
   def self.vaccinated_count
     vaccinated.distinct.count(:patient_id)
   end
+
+  def self.with_aggregate_metrics
+    vaccinated_condition =
+      "status IN (#{VACCINATED_STATUSES.join(",")}) OR has_already_vaccinated_consent = true"
+    select(
+      "COUNT(DISTINCT patient_id) AS cohort",
+      "COUNT(DISTINCT patient_id) FILTER (WHERE #{vaccinated_condition}) AS vaccinated",
+      "COUNT(DISTINCT patient_id) FILTER (WHERE NOT (#{vaccinated_condition})) AS not_vaccinated"
+    )
+  end
 end

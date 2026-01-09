@@ -219,14 +219,6 @@ describe API::Reporting::TotalsController do
       expect(csv.headers).to include("Year Group", "Cohort", "Vaccinated")
       expect(csv.length).to eq(2)
     end
-
-    it "includes URN when grouping by school" do
-      request.headers["Accept"] = "text/csv"
-      get :index, params: { group: "school" }, format: :csv
-
-      csv = CSV.parse(response.body, headers: true)
-      expect(csv.headers).to include("School", "School URN")
-    end
   end
 
   describe "Dashboard acceptance criteria" do
