@@ -3,42 +3,30 @@
 class ApplicationPolicy
   def initialize(user, record)
     @user = user
+    @team = user.selected_team
     @record = record
   end
 
-  attr_reader :user, :record
+  attr_reader :user, :team, :record
 
-  def index?
-    true
-  end
+  def index? = true
 
-  def new?
-    create?
-  end
+  def new? = create?
 
-  def create?
-    true
-  end
+  def create? = true
 
-  def show?
-    true
-  end
+  def show? = true
 
-  def edit?
-    update?
-  end
+  def edit? = update?
 
-  def update?
-    true
-  end
+  def update? = true
 
-  def destroy?
-    true
-  end
+  def destroy? = true
 
   class Scope
     def initialize(user, scope)
       @user = user
+      @team = user.selected_team
       @scope = scope
     end
 
@@ -46,6 +34,6 @@ class ApplicationPolicy
       raise NotImplementedError, "You must define #resolve in #{self.class}"
     end
 
-    attr_reader :user, :scope
+    attr_reader :user, :team, :scope
   end
 end

@@ -1,4 +1,6 @@
 inherit_gem:
+  pundit:
+    - config/rubocop-rspec.yml
   rubocop-govuk:
     - config/default.yml
     - config/rails.yml
