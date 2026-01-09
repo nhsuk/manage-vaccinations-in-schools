@@ -80,6 +80,8 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
         AlreadyHadNotificationSender.call(vaccination_record:)
       end
 
+      update_vaccination_search_timestamps(patient, programmes)
+
       StatusUpdater.call(patient:)
     end
   end
@@ -128,5 +130,13 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     deduplicated_vaccination_records.select(
       &:sourced_from_nhs_immunisations_api?
     )
+  end
+
+  def update_vaccination_search_timestamps(patient, programmes)
+    programmes.each do |programme|
+      PatientProgrammeVaccinationsSearch
+        .find_or_initialize_by(patient:, programme_type: programme.type)
+        .tap { it.update!(last_searched_at: Time.current) }
+    end
   end
 end

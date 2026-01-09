@@ -44,7 +44,9 @@ class TeamLocation < ApplicationRecord
   has_many :sessions
 
   has_many :patient_locations,
-           -> { where(academic_year: it.academic_year) },
+           ->(team_location) do
+             where(academic_year: team_location.academic_year)
+           end,
            through: :location
 
   validate :subteam_belongs_to_team
