@@ -8,10 +8,6 @@ class NextDoseTriageFactory
   def call
     return unless should_create?
 
-    # This factory should only be called for vaccination records performed in
-    #  the service, meaning there should always be a `performed_by` set.
-    raise UnknownPerformedBy if performed_by_user_id.nil?
-
     ActiveRecord::Base.transaction do
       Triage
         .create!(attributes:)
@@ -29,13 +25,12 @@ class NextDoseTriageFactory
 
   attr_reader :vaccination_record
 
-  delegate :academic_year, :patient, :programme, :team, to: :vaccination_record
+  delegate :academic_year, :patient, :programme, to: :vaccination_record
 
   def should_create?
-    unless vaccination_record.sourced_from_service? &&
-             vaccination_record.administered? && programme.mmr?
-      return false
-    end
+    return false unless vaccination_record.administered? && programme.mmr?
+
+    return false if next_date.past?
 
     dose_sequence =
       patient.vaccination_status(programme:, academic_year:).dose_sequence
@@ -45,21 +40,14 @@ class NextDoseTriageFactory
 
   def next_date = vaccination_record.performed_at + 28.days
 
-  def performed_by_user_id = vaccination_record.performed_by_user_id
-
   def attributes
     {
       patient:,
-      team:,
       programme:,
-      performed_by_user_id:,
       status: "delay_vaccination",
       academic_year:,
       notes: "Next dose #{next_date.to_fs(:long)}",
       delay_vaccination_until: next_date
     }
-  end
-
-  class UnknownPerformedBy < StandardError
   end
 end
