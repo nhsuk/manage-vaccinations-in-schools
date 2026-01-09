@@ -870,6 +870,13 @@ describe Patient do
         it { should be(false) }
       end
     end
+
+    context "when the team has upload only access" do
+      let(:patient) { create(:patient, school:, year_group: 1) }
+      let(:team) { create(:team, type: :upload_only) }
+
+      it { should be(false) }
+    end
   end
 
   describe "#initials" do

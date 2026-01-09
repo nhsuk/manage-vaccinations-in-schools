@@ -701,6 +701,8 @@ class Patient < ApplicationRecord
   def year_group_changed? = birth_academic_year_changed?
 
   def show_year_group?(team:)
+    return false if team.has_upload_only_access?
+
     academic_year = AcademicYear.pending
     year_group = self.year_group(academic_year:)
 
