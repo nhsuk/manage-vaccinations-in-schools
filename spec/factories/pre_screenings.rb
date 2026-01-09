@@ -6,7 +6,7 @@
 #
 #  id                   :bigint           not null, primary key
 #  date                 :date             not null
-#  disease_types        :enum             is an Array
+#  disease_types        :enum             not null, is an Array
 #  notes                :text             default(""), not null
 #  programme_type       :enum             not null
 #  created_at           :datetime         not null
