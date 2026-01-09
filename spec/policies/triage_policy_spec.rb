@@ -60,11 +60,15 @@ describe TriagePolicy do
       let(:team) { create(:team) }
       let(:user) { create(:user, team:) }
 
-      let(:team_batch) { create(:triage, :safe_to_vaccinate, team:) }
-      let(:non_team_batch) { create(:triage, :safe_to_vaccinate) }
+      let(:triage_for_team) { create(:triage, :safe_to_vaccinate, team:) }
+      let(:triage_for_different_team) do
+        create(:triage, :safe_to_vaccinate, team: create(:team))
+      end
+      let(:triage_for_all_teams) { create(:triage, :safe_to_vaccinate) }
 
-      it { should include(team_batch) }
-      it { should_not include(non_team_batch) }
+      it { should include(triage_for_team) }
+      it { should_not include(triage_for_different_team) }
+      it { should include(triage_for_all_teams) }
     end
   end
 end

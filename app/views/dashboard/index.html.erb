@@ -1,4 +1,11 @@
-<%= h1 "#{@service_name} (Mavis)", size: "xl" %>
+<% if @sub_service_name.present? %>
+  <%= h1 "#{@service_name} — #{@sub_service_name}", size: "xl" do %>
+    <span class="nhsuk-caption-l"><%= @service_name_with_abbreviation %></span>
+    <%= @sub_service_name %>
+  <% end %>
+<% else %>
+  <%= h1 @service_name_with_abbreviation, size: "xl" %>
+<% end %>
 
 <% if (count = @notices_count) %>
   <%= render AppWarningCalloutComponent.new(heading: "Important notices") do %>
@@ -8,7 +15,7 @@
 
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <% @primary_items.each do |item| %>
-    <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
+    <li class="nhsuk-grid-column-<%= item.fetch(:width) %> nhsuk-card-group__item">
       <%= render AppCardComponent.new(link_to: item[:path], disabled: item[:path].nil?, compact: true) do |card| %>
         <% card.with_heading(level: 2, size: "s") { item.fetch(:title) } %>
         <% card.with_description { item.fetch(:description) } %>

@@ -99,6 +99,18 @@ class Patient < ApplicationRecord
   # https://www.datadictionary.nhs.uk/attributes/person_gender_code.html
   enum :gender_code, { not_known: 0, male: 1, female: 2, not_specified: 9 }
 
+  # These are the statuses that a patient has to be in to be considered ready
+  #  to vaccinate. The "cannot vaccinate" statuses occur if a patient is
+  #  attempted to be vaccinated and then cannot be on the day for whatever
+  #  reason, but we should be trying again to vaccinate these children.
+  CONSENT_GIVEN_AND_SAFE_TO_VACCINATE_STATUSES = %w[
+    due
+    cannot_vaccinate_absent
+    cannot_vaccinate_contraindicated
+    cannot_vaccinate_refused
+    cannot_vaccinate_unwell
+  ].freeze
+
   scope :joins_sessions, -> { joins(:patient_locations).joins(<<-SQL) }
     INNER JOIN team_locations
     ON team_locations.location_id = patient_locations.location_id
@@ -493,17 +505,12 @@ class Patient < ApplicationRecord
         end
 
   scope :consent_given_and_safe_to_vaccinate,
-        ->(programmes:, academic_year:, vaccine_methods:, without_gelatine:) do
-          select do |patient|
-            programmes.any? do |programme|
-              patient.consent_given_and_safe_to_vaccinate?(
-                programme:,
-                academic_year:,
-                vaccine_methods:,
-                without_gelatine:
-              )
-            end
-          end
+        ->(programmes:, academic_year:) do
+          has_programme_status(
+            CONSENT_GIVEN_AND_SAFE_TO_VACCINATE_STATUSES,
+            programme: programmes,
+            academic_year:
+          )
         end
 
   scope :eligible_for_programme,
@@ -694,6 +701,8 @@ class Patient < ApplicationRecord
   def year_group_changed? = birth_academic_year_changed?
 
   def show_year_group?(team:)
+    return false if team.has_upload_only_access?
+
     academic_year = AcademicYear.pending
     year_group = self.year_group(academic_year:)
 
@@ -734,48 +743,14 @@ class Patient < ApplicationRecord
     patient_specific_directions.not_invalidated.where(team:, **kwargs).exists?
   end
 
-  def consent_given_and_safe_to_vaccinate?(
-    programme:,
-    academic_year:,
-    vaccine_methods: nil,
-    without_gelatine: nil
-  )
-    return false if vaccination_status(programme:, academic_year:).vaccinated?
-
-    return false unless consent_status(programme:, academic_year:).given?
-
-    unless triage_status(programme:, academic_year:).safe_to_vaccinate? ||
-             triage_status(programme:, academic_year:).not_required?
-      return false
-    end
-
-    return true if vaccine_methods.nil? && without_gelatine.nil?
-
-    vaccine_criteria = self.vaccine_criteria(programme:, academic_year:)
-
-    if vaccine_methods &&
-         vaccine_methods.none? { it == vaccine_criteria.vaccine_methods }
-      return false
-    end
-
-    if !without_gelatine.nil? &&
-         vaccine_criteria.without_gelatine != without_gelatine
-      return false
-    end
-
-    true
+  def consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
+    CONSENT_GIVEN_AND_SAFE_TO_VACCINATE_STATUSES.include?(
+      programme_status(programme, academic_year:).status
+    )
   end
 
   def vaccine_criteria(programme:, academic_year:)
-    triage_status = triage_status(programme:, academic_year:)
-
-    if triage_status.not_required?
-      VaccineCriteria.from_consent_status(
-        consent_status(programme:, academic_year:)
-      )
-    else
-      VaccineCriteria.from_triage_status(triage_status)
-    end
+    programme_status(programme, academic_year:).vaccine_criteria
   end
 
   def eligible_for_mmrv?

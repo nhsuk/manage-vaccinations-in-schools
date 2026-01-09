@@ -18,4 +18,12 @@ module VaccinationRecordsHelper
 
     govuk_tag(text:, colour:)
   end
+
+  def vaccination_record_source(vaccination_record)
+    if vaccination_record.sourced_from_bulk_upload?
+      "Mavis national reporting upload"
+    else
+      vaccination_record.human_enum_name(:source)
+    end
+  end
 end

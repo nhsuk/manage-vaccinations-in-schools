@@ -334,6 +334,10 @@ Rails.application.routes.draw do
     get "download", on: :member
   end
 
+  get "consent-form/:type",
+      to: "consent_form_downloads#show",
+      as: :consent_form_download
+
   resources :vaccines, only: %i[index show] do
     resources :batches, only: %i[create edit new update] do
       member do

@@ -128,9 +128,7 @@ class DraftVaccinationRecordsController < ApplicationController
 
     @vaccination_record.save!
 
-    if @vaccination_record.administered? && @programme.mmr?
-      create_triage_record_for_next_mmr_vaccination
-    end
+    NextDoseTriageFactory.call(vaccination_record: @vaccination_record)
 
     StatusUpdater.call(patient: @patient)
 
@@ -272,31 +270,5 @@ class DraftVaccinationRecordsController < ApplicationController
       vaccine_methods: [vaccine_method].compact,
       without_gelatine:
     )
-  end
-
-  def create_triage_record_for_next_mmr_vaccination
-    dose_sequence =
-      @patient.vaccination_status(
-        programme: @programme,
-        academic_year: @vaccination_record.academic_year
-      ).dose_sequence
-
-    return if dose_sequence == @programme.maximum_dose_sequence
-
-    delay_date = @vaccination_record.performed_at + 28.days
-
-    next_dose_delay_triage =
-      Triage.create!(
-        patient: @patient,
-        team: @session.team,
-        programme: @programme,
-        performed_by: current_user,
-        status: "delay_vaccination",
-        academic_year: @session.academic_year,
-        notes: "Next dose #{delay_date.strftime("%d %B %Y")}",
-        delay_vaccination_until: delay_date
-      )
-
-    @vaccination_record.update!(next_dose_delay_triage:)
   end
 end

@@ -53,8 +53,16 @@ Deploy to your restored environment as described in [Terraform: Local deployment
 
 - Verify that the AWS Backup vault still exists in the production account.
   - If it doesn't, you will need to restore the vault first by running [deploy-backup-infrastructure.yml](../.github/workflows/deploy-backup-infrastructure.yml) workflow.
-- Go to the AWS Backup console in the backup account and select a recovery point to be restored.
-- Click on Actions > Copy > Copy back to source account.
+- Go to the AWS Backup console in the backup account and select a the production vault
+  ![select backup vault](diagrams/images/select_backup_vault.png)
+- Select the relevant recovery point and use Actions > Copy
+  ![select recovery point](diagrams/images/select_recovery_point.png)
+- Fill in the copy-details as show in diagram
+  ![configure copy job](diagrams/images/configure_copy_job.png)
+  - Region (eu-west-2)
+  - Toggle to copy to another account
+  - External vault ARN: `arn:aws:backup:eu-west-2:<account_id>:backup-vault:eu-west-2-<account_id>-backup-vault`
+  - Leave rest as default and click on the `Copy` button
 - Once it's copied back to the source account, follow [Restoring a production database from a vault in the same account](#restoring-a-production-database-from-a-vault-backup-in-the-same-account) to restore the database from the copied snapshot.
 
 ## Recreate infrastructure from scratch in a new AWS account

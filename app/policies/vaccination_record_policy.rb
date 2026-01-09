@@ -28,7 +28,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
     (
       record.performed_by_user_id == user.id || user.is_nurse? ||
         user.is_prescriber?
-    ) && record.recorded_in_service? &&
+    ) && record.sourced_from_service? &&
       record.performed_ods_code == user.selected_organisation.ods_code
   end
 

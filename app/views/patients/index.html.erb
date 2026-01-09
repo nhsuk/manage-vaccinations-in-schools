@@ -7,10 +7,11 @@
           url: patients_path,
           current_team:,
           heading_level: 2,
-          programmes: current_team.programmes,
+          programmes: @programmes,
           programme_statuses: @programme_statuses,
           year_groups: current_team.year_groups,
-          show_aged_out_of_programmes: true,
+          show_aged_out_of_programmes: @show_aged_out_of_programmes,
+          show_archived_records: @show_archived_records,
         ) %>
   </div>
 
@@ -24,7 +25,9 @@
                 current_team:,
                 programmes: @form.programmes,
                 show_nhs_number: true,
-                show_school: true,
+                show_school: @show_patient_school,
+                show_programme_status: @show_patient_programme_status,
+                show_postcode: @show_patient_postcode,
               ) %>
         <% end %>
       <% end %>

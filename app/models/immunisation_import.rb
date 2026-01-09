@@ -81,9 +81,11 @@ class ImmunisationImport < ApplicationRecord
     @batches_batch ||= Set.new
     @patients_batch ||= Set.new
     @patient_locations_batch ||= Set.new
+    @archive_reasons_batch ||= Set.new
 
     @imported_vaccination_record_ids ||= []
     @imported_patient_location_ids ||= []
+    @imported_archive_reason_ids ||= []
 
     @vaccination_records_batch.add(vaccination_record)
     if (batch = vaccination_record.batch)
@@ -93,6 +95,10 @@ class ImmunisationImport < ApplicationRecord
 
     if (patient_location = row.to_patient_location)
       @patient_locations_batch.add(patient_location)
+    end
+
+    if (archive_reason = row.to_archive_reason)
+      @archive_reasons_batch.add(archive_reason)
     end
 
     count_column_to_increment
@@ -126,6 +132,7 @@ class ImmunisationImport < ApplicationRecord
     # objects to add IDs to any new records.
     vaccination_records = @vaccination_records_batch.to_a
     patient_locations = @patient_locations_batch.to_a
+    archive_reasons = @archive_reasons_batch.to_a
 
     @imported_vaccination_record_ids |=
       VaccinationRecord.import(
@@ -142,6 +149,9 @@ class ImmunisationImport < ApplicationRecord
         patient_locations,
         on_duplicate_key_ignore: :all
       ).ids
+
+    @imported_archive_reason_ids |=
+      ArchiveReason.import(archive_reasons, on_duplicate_key_ignore: :all).ids
 
     [
       [:vaccination_records, vaccination_records],
@@ -174,6 +184,12 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def postprocess_rows!
+    vaccination_records
+      .includes(:patient, :team)
+      .find_each do |vaccination_record|
+        NextDoseTriageFactory.call(vaccination_record:)
+      end
+
     StatusUpdater.call(patient: patients)
   end
 
@@ -185,6 +201,10 @@ class ImmunisationImport < ApplicationRecord
     SyncPatientTeamJob.perform_later(
       PatientLocation,
       @imported_patient_location_ids
+    )
+    SyncPatientTeamJob.perform_later(
+      ArchiveReason,
+      @imported_archive_reason_ids
     )
     vaccination_records.sync_all_to_nhs_immunisations_api
   end

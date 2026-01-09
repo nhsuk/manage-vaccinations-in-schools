@@ -5,7 +5,7 @@
 <% title = "Can you vaccinate #{@patient.given_name} with an MMRV vaccine?" %>
 <% content_for :page_title, title %>
 
-<% hint = "#{@patient.given_name} is eligible for the new MMRV vaccine. You should only give an MMR vaccine if the MMRV vaccine is out of stock." %>
+<% hint = "#{@patient.given_name} is eligible for the new MMRV vaccine. If MMRV is out of stock, select ‘No’ and complete the consent response for MMR." %>
 
 <%= form_with model: @draft_consent, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>

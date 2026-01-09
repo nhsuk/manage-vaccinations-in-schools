@@ -104,7 +104,7 @@ class SchoolMove < ApplicationRecord
   end
 
   def from_another_team?
-    return false unless patient.school && school
+    return false unless patient.school && school && patient.school.teams.any?
 
     (school.teams & patient.school.teams).empty?
   end

@@ -15,7 +15,7 @@ class SendVaccinationConfirmationsJob < ApplicationJob
       .kept
       .confirmation_not_sent
       .where("created_at >= ?", since)
-      .recorded_in_service
+      .sourced_from_service
       .select { it.academic_year == academic_year }
       .each { send_vaccination_confirmation(it) }
   end

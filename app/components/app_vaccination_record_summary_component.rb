@@ -134,7 +134,8 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
       end
 
       if @vaccination_record.administered?
-        if @vaccination_record.vaccine.present?
+        if @vaccination_record.vaccine.present? &&
+             !@vaccination_record.sourced_from_bulk_upload?
           summary_list.with_row do |row|
             row.with_key { "Dose volume" }
             row.with_value { dose_volume_value }
@@ -220,7 +221,8 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
-      if @vaccination_record.protocol.present?
+      if @vaccination_record.protocol.present? &&
+           !@vaccination_record.sourced_from_bulk_upload?
         summary_list.with_row do |row|
           row.with_key { "Protocol" }
           row.with_value { protocol_value }
@@ -287,11 +289,12 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   delegate :govuk_summary_list,
            :identity_check_label,
            :vaccination_record_location,
+           :vaccination_record_source,
            to: :helpers
 
   def source_value
     highlight_if(
-      @vaccination_record.human_enum_name(:source),
+      vaccination_record_source(@vaccination_record),
       @vaccination_record.source_changed?
     )
   end

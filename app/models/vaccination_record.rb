@@ -139,8 +139,6 @@ class VaccinationRecord < ApplicationRecord
           where(performed_at: academic_year.to_academic_year_date_range)
         end
 
-  scope :recorded_in_service, -> { where.not(session_id: nil) }
-
   enum :protocol, { pgd: 0, psd: 1, national: 2 }, validate: { allow_nil: true }
 
   enum :delivery_method,
@@ -188,7 +186,7 @@ class VaccinationRecord < ApplicationRecord
 
   validates :protocol,
             presence: true,
-            if: -> { administered? && recorded_in_service? }
+            if: -> { administered? && sourced_from_service? }
 
   validates :location_name,
             absence: {
@@ -252,10 +250,6 @@ class VaccinationRecord < ApplicationRecord
   def academic_year = performed_at.to_date.academic_year
 
   def not_administered? = !administered?
-
-  def recorded_in_service?
-    session_id != nil
-  end
 
   def show_in_academic_year?(current_academic_year)
     if programme.seasonal?

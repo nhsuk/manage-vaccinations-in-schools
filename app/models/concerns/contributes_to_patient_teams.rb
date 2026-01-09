@@ -36,6 +36,11 @@ module ContributesToPatientTeams
               joins(join_teams_to_vaccinations_via_organisation).where(
                 session_id: nil
               )
+          },
+          vaccination_record_import: {
+            patient_id_source: "vaccination_records.patient_id",
+            team_id_source: "immunisation_imports.team_id",
+            contribution_scope: joins(:immunisation_imports)
           }
         }
       when "school_moves"

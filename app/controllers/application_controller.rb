@@ -62,6 +62,9 @@ class ApplicationController < ActionController::Base
 
   def set_service_name
     @service_name = "Manage vaccinations in schools"
+    @service_name_with_abbreviation = "Manage vaccinations in schools (Mavis)"
+    @sub_service_name =
+      ("National reporting" if current_team&.has_upload_only_access?)
   end
 
   def set_service_url

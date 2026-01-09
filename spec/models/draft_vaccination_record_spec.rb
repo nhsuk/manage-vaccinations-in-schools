@@ -29,7 +29,8 @@ describe DraftVaccinationRecord do
       outcome: "administered",
       patient_id: patient.id,
       programme_type: programme.type,
-      session_id: session.id
+      session_id: session.id,
+      source: "service"
     }
   end
 
@@ -223,6 +224,88 @@ describe DraftVaccinationRecord do
           expect(draft_vaccination_record.errors[:delivery_site]).to be_empty
         end
       end
+    end
+
+    context "when source is 'service'" do
+      let(:attributes) { valid_administered_attributes }
+
+      it "is valid" do
+        expect(draft_vaccination_record.save(context: :update)).to be(true)
+        expect(draft_vaccination_record.errors[:source]).to be_empty
+      end
+    end
+
+    context "when source is invalid" do
+      let(:attributes) do
+        valid_administered_attributes.merge(source: "invalid_source")
+      end
+
+      it "has an error" do
+        expect(draft_vaccination_record.save(context: :update)).to be(false)
+        expect(draft_vaccination_record.errors[:source]).to include(
+          "is not included in the list"
+        )
+      end
+    end
+
+    context "when source is nil" do
+      let(:attributes) { valid_administered_attributes.except(:source) }
+
+      it "is invalid" do
+        expect(draft_vaccination_record.save(context: :update)).to be(false)
+        expect(draft_vaccination_record.errors[:source]).to include(
+          "is not included in the list"
+        )
+      end
+    end
+  end
+
+  describe "source predicate methods" do
+    it "returns true for the matching source value" do
+      expect(
+        draft_vaccination_record_with_source("service").sourced_from_service?
+      ).to be(true)
+
+      expect(
+        draft_vaccination_record_with_source(
+          "historical_upload"
+        ).sourced_from_historical_upload?
+      ).to be(true)
+
+      expect(
+        draft_vaccination_record_with_source(
+          "nhs_immunisations_api"
+        ).sourced_from_nhs_immunisations_api?
+      ).to be(true)
+
+      expect(
+        draft_vaccination_record_with_source(
+          "consent_refusal"
+        ).sourced_from_consent_refusal?
+      ).to be(true)
+
+      expect(
+        draft_vaccination_record_with_source(
+          "bulk_upload"
+        ).sourced_from_bulk_upload?
+      ).to be(true)
+    end
+
+    it "returns false for non-matching source values" do
+      record = draft_vaccination_record_with_source("service")
+
+      expect(record.sourced_from_historical_upload?).to be(false)
+      expect(record.sourced_from_nhs_immunisations_api?).to be(false)
+      expect(record.sourced_from_consent_refusal?).to be(false)
+      expect(record.sourced_from_bulk_upload?).to be(false)
+    end
+
+    def draft_vaccination_record_with_source(source_value)
+      described_class.new(
+        request_session:,
+        current_user:,
+        **valid_administered_attributes.merge(source: source_value)
+      )
     end
   end
 

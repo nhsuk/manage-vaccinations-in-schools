@@ -334,7 +334,7 @@ class Reports::OfflineSessionExporter
     row[:programme] = programme.import_names.first
     row[:vaccine_given] = Cell.new(
       vaccine&.upload_name,
-      allowed_values: vaccine_values_for_programmes([programme])
+      allowed_values: vaccine_values_for_programme(programme)
     )
     row[:performing_professional_email] = Cell.new(
       vaccination_record.performed_by_user&.email,
@@ -375,7 +375,8 @@ class Reports::OfflineSessionExporter
     # programme, and optionally a variant. This might not be the case in the
     # future, but it works for now.
 
-    programmes = [programme.variant_for(patient:), programme]
+    programme_variant = programme.variant_for(patient:)
+    programmes = [programme_variant, programme]
 
     row[:organisation_code] = organisation.ods_code
 
@@ -387,9 +388,9 @@ class Reports::OfflineSessionExporter
       type: :integer,
       allowed_values: [1, 2]
     )
-    row[:programme] = programmes.first.import_names.first
+    row[:programme] = programme_variant.import_names.first
     row[:vaccine_given] = Cell.new(
-      allowed_values: vaccine_values_for_programmes(programmes)
+      allowed_values: vaccine_values_for_programme(programme_variant)
     )
     row[:performing_professional_email] = Cell.new(
       allowed_formula: performing_professionals_range
@@ -414,10 +415,15 @@ class Reports::OfflineSessionExporter
     end
   end
 
-  def vaccine_values_for_programmes(programmes)
-    @vaccines[programmes] ||= Vaccine
+  def vaccine_values_for_programme(programme)
+    # We use the variant_type or type strings as the cache key because
+    # Programme::Variant delegates identity methods (hash, ==) to the base
+    # Programme. Without this, MMR vaccines would be returned for an MMRV
+    # variant.
+    cache_key = programme.try(:variant_type) || programme.type
+    @vaccines[cache_key] ||= Vaccine
       .active
-      .for_programmes(programmes)
+      .for_programmes([programme])
       .pluck(:upload_name)
   end
 

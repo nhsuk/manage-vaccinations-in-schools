@@ -61,6 +61,10 @@ class ImmunisationImportRow
       "2P" => 2,
       "3P" => 3
     },
+    "mmr" => {
+      "1P" => 1,
+      "1B" => 2
+    },
     "menacwy" => {
       "1P" => 1,
       "1B" => 2,
@@ -194,6 +198,13 @@ class ImmunisationImportRow
   def to_patient_location
     if patient && session
       PatientLocation.new(patient:, location: session.location, academic_year:)
+    end
+  end
+
+  def to_archive_reason
+    # If the patient is new to this team, we need to add an archive reason for this team
+    unless patient&.teams&.include?(team)
+      ArchiveReason.new(patient:, team:, type: :immunisation_import)
     end
   end
 
@@ -1015,18 +1026,20 @@ class ImmunisationImportRow
       return
     end
 
-    if field.nil?
-      errors.add(
-        :base,
-        "<code>PROGRAMME</code> or <code>Vaccination type</code> is required"
-      )
-    elsif field.blank?
-      errors.add(field.header, "Enter a programme.")
-    else
-      errors.add(
-        field.header,
-        "This programme is not available in this session."
-      )
+    if poc?
+      if field.nil?
+        errors.add(
+          :base,
+          "<code>PROGRAMME</code> or <code>Vaccination type</code> is required"
+        )
+      elsif field.blank?
+        errors.add(field.header, "Enter a programme.")
+      else
+        errors.add(
+          field.header,
+          "This programme is not available in this session."
+        )
+      end
     end
   end
 

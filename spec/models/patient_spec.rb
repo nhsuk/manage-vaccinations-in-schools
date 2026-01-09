@@ -458,17 +458,13 @@ describe Patient do
       subject(:scope) do
         described_class.consent_given_and_safe_to_vaccinate(
           programmes:,
-          academic_year:,
-          vaccine_methods:,
-          without_gelatine:
+          academic_year:
         )
       end
 
       let(:programmes) { [Programme.flu, Programme.hpv] }
       let(:session) { create(:session, programmes:) }
       let(:academic_year) { AcademicYear.current }
-      let(:vaccine_methods) { nil }
-      let(:without_gelatine) { nil }
 
       it { should be_empty }
 
@@ -478,39 +474,6 @@ describe Patient do
         end
 
         it { should include(patient) }
-      end
-
-      context "when filtering on nasal spray" do
-        let(:vaccine_methods) { [%w[nasal], %w[nasal injection]] }
-
-        context "with a patient eligible for vaccination" do
-          let(:patient) do
-            create(:patient, :consent_given_triage_not_needed, session:)
-          end
-
-          before do
-            patient.consent_status(
-              programme: programmes.first,
-              academic_year:
-            ).update!(vaccine_methods: %w[nasal injection])
-          end
-
-          it { should include(patient) }
-
-          context "when the patient has been vaccinated for flu" do
-            before do
-              create(
-                :vaccination_record,
-                programme: programmes.first,
-                session:,
-                patient:
-              )
-              StatusUpdater.call(patient:)
-            end
-
-            it { should_not include(patient) }
-          end
-        end
       end
     end
   end
@@ -907,6 +870,13 @@ describe Patient do
         it { should be(false) }
       end
     end
+
+    context "when the team has upload only access" do
+      let(:patient) { create(:patient, school:, year_group: 1) }
+      let(:team) { create(:team, type: :upload_only) }
+
+      it { should be(false) }
+    end
   end
 
   describe "#initials" do
@@ -955,8 +925,8 @@ describe Patient do
       context "when consent given and triage not required" do
         before do
           create(
-            :patient_consent_status,
-            :given,
+            :patient_programme_status,
+            :due,
             patient:,
             programme:,
             vaccine_methods: %w[nasal injection]
@@ -964,32 +934,6 @@ describe Patient do
         end
 
         it { should eq(%w[nasal injection]) }
-      end
-
-      context "when consent given and triage required" do
-        before do
-          create(
-            :patient_consent_status,
-            :given,
-            patient:,
-            programme:,
-            vaccine_methods: %w[nasal injection]
-          )
-          create(:patient_triage_status, :required, patient:, programme:)
-        end
-
-        it { should be_empty }
-
-        context "and when triaged" do
-          before do
-            patient.triage_status(programme:, academic_year:).update!(
-              status: "safe_to_vaccinate",
-              vaccine_method: "nasal"
-            )
-          end
-
-          it { should eq(%w[nasal]) }
-        end
       end
     end
   end

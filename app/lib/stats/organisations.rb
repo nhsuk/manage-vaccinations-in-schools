@@ -157,7 +157,7 @@ class Stats::Organisations
 
     vaccinated_in_mavis_count =
       VaccinationRecord
-        .recorded_in_service
+        .sourced_from_service
         .for_academic_year(academic_year)
         .for_programme(programme)
         .where(patient_id: eligible_patients.map(&:id))

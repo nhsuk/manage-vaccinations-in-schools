@@ -85,6 +85,7 @@ class GovukNotifyPersonalisation
       vaccination:,
       vaccination_sms:,
       vaccination_and_dates:,
+      vaccination_and_dates_sms:,
       vaccination_and_method:,
       vaccine:,
       vaccine_and_dose:,
@@ -503,6 +504,15 @@ class GovukNotifyPersonalisation
       "#{vaccination} on #{next_or_today_session_dates_or}"
     else
       vaccination
+    end
+  end
+
+  # TODO: Remove this method when schools start offering MMRV.
+  def vaccination_and_dates_sms
+    if next_or_today_session_dates_or.present?
+      "#{vaccination_sms} on #{next_or_today_session_dates_or}"
+    else
+      vaccination_sms
     end
   end
 

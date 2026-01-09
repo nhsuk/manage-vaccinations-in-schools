@@ -15,14 +15,6 @@ class VaccineCriteria
     )
   end
 
-  def self.from_consent_status(consent_status)
-    new(
-      programme: consent_status.programme,
-      vaccine_methods: consent_status.vaccine_methods,
-      without_gelatine: consent_status.without_gelatine
-    )
-  end
-
   def self.from_param(param)
     parts = param.split("_")
 
@@ -39,14 +31,6 @@ class VaccineCriteria
       programme: programme_status.programme,
       vaccine_methods: programme_status.vaccine_methods,
       without_gelatine: programme_status.without_gelatine
-    )
-  end
-
-  def self.from_triage_status(triage_status)
-    new(
-      programme: triage_status.programme,
-      vaccine_methods: [triage_status.vaccine_method].compact,
-      without_gelatine: triage_status.without_gelatine
     )
   end
 

@@ -703,6 +703,23 @@ describe Reports::OfflineSessionExporter do
 
           it { should eq "='#{programme.type} Batch Numbers'!$A2:$A2" }
         end
+
+        describe "vaccine given" do
+          let(:patient) { create(:patient, session:) }
+
+          it "only has the vaccine names for the programme or programme variant" do
+            vaccines =
+              Vaccine
+                .active
+                .for_programmes([programme.variant_for(patient:)])
+                .pluck(:upload_name)
+                .join(", ")
+
+            formula =
+              validation_formula(worksheet:, column_name: "vaccine_given")
+            expect(formula).to eq("\"#{vaccines}\"")
+          end
+        end
       end
 
       describe "performing professionals sheet" do
@@ -1171,5 +1188,28 @@ describe Reports::OfflineSessionExporter do
     let(:expected_consent_status) { "Consent given" }
 
     include_examples "generates a report"
+  end
+
+  describe "#vaccine_values_for_programmes" do
+    let(:programme) { Programme.mmr }
+    let(:mmr_programme_variant) do
+      Programme::Variant.new(programme, variant_type: "mmr")
+    end
+    let(:mmrv_programme_variant) do
+      Programme::Variant.new(programme, variant_type: "mmrv")
+    end
+    let(:session) { create(:session, programmes: [programme]) }
+
+    it "returns the correct vaccines for the given programme variants" do
+      exporter = described_class.send(:new, session)
+
+      expect(
+        exporter.send(:vaccine_values_for_programme, mmr_programme_variant)
+      ).to eq(%w[Priorix VaxPro])
+
+      expect(
+        exporter.send(:vaccine_values_for_programme, mmrv_programme_variant)
+      ).to eq(%w[ProQuad Priorix-Tetra])
+    end
   end
 end

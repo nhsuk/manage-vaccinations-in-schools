@@ -23,11 +23,14 @@ describe "MMRV vaccination" do
     when_i_choose_an_mmrv_batch_for_the_vaccine
     then_i_see_the_check_and_confirm_page_with_mmrv
     and_i_get_confirmation_after_recording
+    and_i_should_see_a_triage_for_the_next_vaccination_dose
+
+    when_i_go_to_the_activity_log
+    then_i_see_the_right_programme_on_the_entries
 
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_to_the_parent_confirming_the_vaccination
     and_a_text_is_sent_to_the_parent_confirming_the_vaccination
-    and_i_should_see_a_triage_for_the_next_vaccination_dose
   end
 
   scenario "there is no more MMRV stock available" do
@@ -239,6 +242,15 @@ describe "MMRV vaccination" do
   def and_i_get_confirmation_after_recording
     click_button "Confirm"
     expect(page).to have_content("Vaccination outcome recorded for MMR")
+  end
+
+  def when_i_go_to_the_activity_log
+    click_on "Session activity and notes"
+  end
+
+  def then_i_see_the_right_programme_on_the_entries
+    expect(page).to have_content("Completed pre-screening checks\nMMRV")
+    expect(page).to have_content("Vaccinated with ProQuad\nMMRV")
   end
 
   def when_vaccination_confirmations_are_sent

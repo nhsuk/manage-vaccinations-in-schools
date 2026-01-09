@@ -148,6 +148,19 @@ describe AppVaccinationRecordSummaryComponent do
         )
       end
     end
+
+    context "when the vaccination record was sourced from a bulk upload" do
+      let(:vaccination_record) do
+        create(:vaccination_record, source: "bulk_upload")
+      end
+
+      it do
+        expect(rendered).not_to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Dose volume"
+        )
+      end
+    end
   end
 
   describe "dose number row" do
@@ -332,6 +345,19 @@ describe AppVaccinationRecordSummaryComponent do
         text: "ProtocolPatient Group Direction (PGD)"
       )
     end
+
+    context "when the vaccination record was sourced from a bulk upload" do
+      let(:vaccination_record) do
+        create(:vaccination_record, source: "bulk_upload")
+      end
+
+      it do
+        expect(rendered).not_to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Protocol"
+        )
+      end
+    end
   end
 
   describe "notes row" do
@@ -342,15 +368,6 @@ describe AppVaccinationRecordSummaryComponent do
       )
     end
 
-    describe "source row" do
-      it do
-        expect(rendered).to have_css(
-          ".nhsuk-summary-list__row",
-          text: "SourceRecorded in Mavis"
-        )
-      end
-    end
-
     context "when the notes are not present" do
       let(:notes) { nil }
 
@@ -358,6 +375,28 @@ describe AppVaccinationRecordSummaryComponent do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
           text: "NotesNot provided"
+        )
+      end
+    end
+  end
+
+  describe "source row" do
+    it do
+      expect(rendered).to have_css(
+        ".nhsuk-summary-list__row",
+        text: "SourceRecorded in Mavis"
+      )
+    end
+
+    context "when the vaccination record was sourced from a bulk upload" do
+      let(:vaccination_record) do
+        create(:vaccination_record, source: "bulk_upload")
+      end
+
+      it do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "SourceMavis national reporting upload"
         )
       end
     end
