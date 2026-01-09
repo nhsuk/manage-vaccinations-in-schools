@@ -14,10 +14,11 @@ class PatientSessions::BaseController < ApplicationController
 
   def set_session
     @session =
-      policy_scope(Session).includes(
-        :location,
-        :session_programme_year_groups
-      ).find_by!(slug: params.fetch(:session_slug, params[:slug]))
+      authorize policy_scope(Session).includes(
+                  :location,
+                  :session_programme_year_groups
+                ).find_by!(slug: params.fetch(:session_slug, params[:slug])),
+                :show?
   end
 
   def set_academic_year
@@ -26,10 +27,11 @@ class PatientSessions::BaseController < ApplicationController
 
   def set_patient
     @patient =
-      policy_scope(Patient)
-        .includes_statuses
-        .includes(parent_relationships: :parent)
-        .find(params.fetch(:patient_id, params[:id]))
+      authorize policy_scope(Patient)
+                  .includes_statuses
+                  .includes(parent_relationships: :parent)
+                  .find(params.fetch(:patient_id, params[:id])),
+                :show?
   end
 
   def set_patient_location

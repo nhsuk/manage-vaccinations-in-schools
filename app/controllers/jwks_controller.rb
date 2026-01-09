@@ -2,9 +2,10 @@
 
 class JWKSController < ApplicationController
   skip_before_action :authenticate_user!
-  skip_after_action :verify_policy_scoped, only: :jwks
-  skip_before_action :store_user_location!, only: :jwks
-  skip_before_action :authenticate_basic, only: :jwks
+  skip_after_action :verify_authorized
+  skip_after_action :verify_policy_scoped
+  skip_before_action :store_user_location!
+  skip_before_action :authenticate_basic
 
   ## Include extra JWK here. Use:
   # EXTRA_JWK = [{ alg: "RS256", key: <<~EOF }].freeze

@@ -3,6 +3,7 @@
 class Users::TeamsController < ApplicationController
   skip_before_action :store_user_location!
   skip_before_action :ensure_team_is_selected
+  skip_after_action :verify_authorized
   skip_after_action :verify_policy_scoped
 
   layout "two_thirds"

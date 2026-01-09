@@ -5,8 +5,6 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
 
   before_action :set_todays_batch
 
-  after_action :verify_authorized
-
   def create
     authorize VaccinationRecord.new(
                 patient: @patient,

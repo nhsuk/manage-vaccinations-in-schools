@@ -1,18 +1,14 @@
 # frozen_string_literal: true
 
 class PatientSessions::TriagesController < PatientSessions::BaseController
-  after_action :verify_authorized
-
   def new
-    authorize Triage
-
     previous_triage =
-      @patient
-        .triages
-        .where(academic_year: @session.academic_year)
-        .not_invalidated
-        .order(created_at: :desc)
-        .find_or_initialize_by(programme_type: @programme.type)
+      authorize @patient
+                  .triages
+                  .where(academic_year: @session.academic_year)
+                  .not_invalidated
+                  .order(created_at: :desc)
+                  .find_or_initialize_by(programme_type: @programme.type)
 
     @triage_form =
       TriageForm.new(

@@ -11,17 +11,17 @@ class CohortImportsController < ApplicationController
   skip_after_action :verify_policy_scoped, only: %i[new create]
 
   def new
-    @cohort_import = CohortImport.new(team: current_team)
+    @cohort_import = authorize CohortImport.new(team: current_team)
   end
 
   def create
     @cohort_import =
-      CohortImport.new(
-        academic_year: @academic_year,
-        team: current_team,
-        uploaded_by: current_user,
-        **cohort_import_params
-      )
+      authorize CohortImport.new(
+                  academic_year: @academic_year,
+                  team: current_team,
+                  uploaded_by: current_user,
+                  **cohort_import_params
+                )
 
     @cohort_import.load_data!
     if @cohort_import.invalid?
@@ -146,7 +146,7 @@ class CohortImportsController < ApplicationController
   end
 
   def set_cohort_import
-    @cohort_import = policy_scope(CohortImport).find(params[:id])
+    @cohort_import = authorize policy_scope(CohortImport).find(params[:id])
     @academic_year = @cohort_import.academic_year
   end
 

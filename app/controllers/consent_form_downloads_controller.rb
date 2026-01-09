@@ -6,6 +6,8 @@ class ConsentFormDownloadsController < ApplicationController
   CONSENT_FORM_TYPES = %w[flu hpv menacwy mmr td_ipv].freeze
 
   def show
+    authorize ConsentForm, :download?
+
     type = params[:type]
 
     raise ActiveRecord::RecordNotFound unless CONSENT_FORM_TYPES.include?(type)

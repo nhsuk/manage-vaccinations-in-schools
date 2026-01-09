@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Patients::EditController < Patients::BaseController
+  before_action :authorize_patient
   before_action :set_patient_merge_form, except: :edit_nhs_number
   before_action :set_existing_patient, except: :edit_nhs_number
 
@@ -35,6 +36,10 @@ class Patients::EditController < Patients::BaseController
   end
 
   private
+
+  def authorize_patient
+    authorize @patient
+  end
 
   def set_patient_merge_form
     @form = PatientMergeForm.new(current_user:, patient: @patient, nhs_number:)

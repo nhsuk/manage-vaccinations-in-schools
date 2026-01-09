@@ -13,6 +13,8 @@ class SchoolsController < ApplicationController
   layout "full"
 
   def index
+    authorize Location, policy_class: SchoolPolicy
+
     locations =
       @form.apply(
         policy_scope(Location).school.or(policy_scope(Location).generic_clinic)
@@ -99,6 +101,8 @@ class SchoolsController < ApplicationController
           params[:school_urn_and_site]
         )
       end
+
+    authorize @location, policy_class: SchoolPolicy
   end
 
   def set_programme_statuses

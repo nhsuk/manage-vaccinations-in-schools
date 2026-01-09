@@ -21,6 +21,7 @@ class ApplicationController < ActionController::Base
 
   include NavigationConcern
 
+  after_action :verify_authorized, if: -> { Rails.env.local? }
   after_action :verify_policy_scoped, if: -> { Rails.env.local? }
 
   class UnprocessableEntity < StandardError

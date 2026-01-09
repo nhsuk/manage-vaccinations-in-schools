@@ -12,10 +12,14 @@ class DraftImportsController < ApplicationController
   skip_after_action :verify_policy_scoped
 
   def show
+    authorize :import, :new?
+
     render_wizard
   end
 
   def update
+    authorize :import, :create?
+
     @draft_import.assign_attributes(update_params)
 
     reload_steps
