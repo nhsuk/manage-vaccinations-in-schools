@@ -331,7 +331,7 @@ variable "minimum_sidekiq_replicas" {
 
 variable "maximum_sidekiq_replicas" {
   type        = number
-  default     = 6
+  default     = 12
   description = "Amount of replicas for the sidekiq service"
 }
 
