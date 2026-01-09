@@ -31,12 +31,6 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
         fhir_bundle =
           NHS::ImmunisationsAPI.search_immunisations(patient, programmes:)
 
-        programmes.each do |programme|
-          PatientProgrammeVaccinationsSearch
-            .find_or_initialize_by(patient:, programme_type: programme.type)
-            .tap { it.update!(last_searched_at: Time.current) }
-        end
-
         incoming_vaccination_records =
           extract_vaccination_records(fhir_bundle).map do |fhir_record|
             FHIRMapper::VaccinationRecord.from_fhir_record(
@@ -84,6 +78,10 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
       incoming_vaccination_records.each do |vaccination_record|
         vaccination_record.save!
         AlreadyHadNotificationSender.call(vaccination_record:)
+      end
+
+      if patient.nhs_number.present?
+        update_vaccination_search_timestamps(patient, programmes)
       end
 
       StatusUpdater.call(patient:)
@@ -134,5 +132,13 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     deduplicated_vaccination_records.select(
       &:sourced_from_nhs_immunisations_api?
     )
+  end
+
+  def update_vaccination_search_timestamps(patient, programmes)
+    programmes.each do |programme|
+      PatientProgrammeVaccinationsSearch
+        .find_or_initialize_by(patient:, programme_type: programme.type)
+        .tap { it.update!(last_searched_at: Time.current) }
+    end
   end
 end
