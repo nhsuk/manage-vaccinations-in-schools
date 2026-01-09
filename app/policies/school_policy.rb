@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class SchoolPolicy < LocationPolicy
-  def import? = true
+  def import? = team.has_poc_only_access?
 
-  def patients? = true
+  def patients? = team.has_poc_only_access?
 
-  def sessions? = true
+  def sessions? = team.has_poc_only_access?
 end

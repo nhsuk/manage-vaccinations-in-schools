@@ -1,17 +1,19 @@
 # frozen_string_literal: true
 
 class TriagePolicy < ApplicationPolicy
+  def index? = team.has_poc_only_access?
+
   def create?
-    user.is_nurse? || user.is_prescriber?
+    team.has_poc_only_access? && (user.is_nurse? || user.is_prescriber?)
   end
 
+  def show? = team.has_poc_only_access?
+
   def update?
-    user.is_nurse? || user.is_prescriber?
+    team.has_poc_only_access? && (user.is_nurse? || user.is_prescriber?)
   end
 
   class Scope < ApplicationPolicy::Scope
-    def resolve
-      scope.where(team: [nil, user.selected_team])
-    end
+    def resolve = scope.where(team: [nil, team])
   end
 end

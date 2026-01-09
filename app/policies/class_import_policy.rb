@@ -1,15 +1,21 @@
 # frozen_string_literal: true
 
 class ClassImportPolicy < ApplicationPolicy
-  def approve? = edit?
+  def index? = team.has_poc_only_access?
 
-  def re_review? = edit?
+  def create? = team.has_poc_only_access?
 
-  def cancel? = edit?
+  def show? = team.has_poc_only_access?
+
+  def update? = team.has_poc_only_access?
+
+  def approve? = update?
+
+  def re_review? = update?
+
+  def cancel? = update?
 
   class Scope < ApplicationPolicy::Scope
-    def resolve
-      scope.where(team: user.selected_team)
-    end
+    def resolve = scope.where(team:)
   end
 end

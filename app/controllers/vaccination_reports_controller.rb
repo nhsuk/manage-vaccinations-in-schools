@@ -39,16 +39,22 @@ class VaccinationReportsController < ApplicationController
   end
 
   def show
+    authorize @vaccination_report, :edit?
+
     render_wizard
   end
 
   def update
+    authorize @vaccination_report
+
     @vaccination_report.assign_attributes(update_params)
 
     render_wizard @vaccination_report
   end
 
   def download
+    authorize @vaccination_report
+
     if @vaccination_report.valid?
       send_data(
         @vaccination_report.csv_data,
@@ -63,7 +69,7 @@ class VaccinationReportsController < ApplicationController
 
   def set_vaccination_report
     @vaccination_report =
-      authorize VaccinationReport.new(request_session: session, current_user:)
+      VaccinationReport.new(request_session: session, current_user:)
   end
 
   def set_programme
