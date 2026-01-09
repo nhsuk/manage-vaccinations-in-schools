@@ -94,13 +94,13 @@ class DashboardController < ApplicationController
         path: programmes_path,
         description: I18n.t("programmes.index.description")
       }
-    end
 
-    @secondary_items << {
-      title: I18n.t("teams.show.title"),
-      path: team_path,
-      description: I18n.t("teams.show.description")
-    }
+      @secondary_items << {
+        title: I18n.t("teams.show.title"),
+        path: team_path,
+        description: I18n.t("teams.show.description")
+      }
+    end
 
     @secondary_items << {
       title: I18n.t("service.guide.title"),

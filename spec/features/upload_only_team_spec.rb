@@ -53,7 +53,7 @@ describe "Upload-only team homepage and navigation" do
 
   def then_i_should_see_the_upload_only_cards
     cards = page.all(".nhsuk-card-group__item")
-    expect(cards.count).to eq(5)
+    expect(cards.count).to eq(4)
   end
 
   def and_i_should_see_the_import_records_card
@@ -88,10 +88,9 @@ describe "Upload-only team homepage and navigation" do
 
   def then_i_should_see_only_import_children_and_team_navigation_items
     navigation_items = page.all(".nhsuk-header__navigation-item")
-    expect(navigation_items.count).to eq(3)
+    expect(navigation_items.count).to eq(2)
     expect(navigation_items[0]).to have_link("Imports", href: imports_path)
     expect(navigation_items[1]).to have_link("Children", href: patients_path)
-    expect(navigation_items[2]).to have_link("Team", href: team_path)
   end
 
   def when_i_visit_the_children_page
