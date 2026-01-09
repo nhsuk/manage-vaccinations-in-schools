@@ -1,13 +1,19 @@
 # frozen_string_literal: true
 
 class SessionPolicy < ApplicationPolicy
+  def index? = team.has_poc_only_access?
+
+  def create? = team.has_poc_only_access?
+
+  def show? = team.has_poc_only_access?
+
+  def update? = team.has_poc_only_access?
+
   def import? = show?
 
-  def make_in_progress? = edit?
+  def make_in_progress? = update?
 
   class Scope < ApplicationPolicy::Scope
-    def resolve
-      scope.for_team(user.selected_team)
-    end
+    def resolve = scope.for_team(team)
   end
 end

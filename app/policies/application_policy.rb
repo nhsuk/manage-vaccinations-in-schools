@@ -9,19 +9,19 @@ class ApplicationPolicy
 
   attr_reader :user, :team, :record
 
-  def index? = true
+  def index? = false
 
   def new? = create?
 
-  def create? = true
+  def create? = false
 
-  def show? = true
+  def show? = false
 
   def edit? = update?
 
-  def update? = true
+  def update? = false
 
-  def destroy? = true
+  def destroy? = false
 
   class Scope
     def initialize(user, scope)
