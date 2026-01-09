@@ -328,6 +328,54 @@ describe StatusGenerator::Vaccination do
           end
         end
       end
+
+      context "with two doses with 28 days between each one" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
+        end
+
+        before do
+          create(
+            :vaccination_record,
+            patient:,
+            programme:,
+            performed_at: patient.date_of_birth + 2.years
+          )
+          create(
+            :vaccination_record,
+            patient:,
+            programme:,
+            performed_at: patient.date_of_birth + 2.years + 28.days
+          )
+        end
+
+        it { should be(:vaccinated) }
+      end
+
+      context "with two doses with 27 days between each one" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
+        end
+
+        before do
+          create(
+            :vaccination_record,
+            patient:,
+            programme:,
+            performed_at: patient.date_of_birth + 2.years
+          )
+          create(
+            :vaccination_record,
+            patient:,
+            programme:,
+            performed_at: patient.date_of_birth + 2.years + 27.days
+          )
+        end
+
+        it { should be(:due) }
+      end
     end
 
     context "with an Td/IPV programme" do
