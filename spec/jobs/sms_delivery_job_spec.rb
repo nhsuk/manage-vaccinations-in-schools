@@ -194,6 +194,21 @@ describe SMSDeliveryJob do
         expect(notify_log_entry.programme_types).to eq(programme_types)
       end
 
+      it "creates a log entry programme record" do
+        expect { perform_now }.to change(NotifyLogEntry::Programme, :count).by(
+          1
+        )
+
+        notify_log_entry_programme = NotifyLogEntry::Programme.last
+
+        expect(notify_log_entry_programme.programme_type).to eq(
+          programmes.first.type
+        )
+        expect(notify_log_entry_programme.disease_types).to eq(
+          programmes.first.disease_types
+        )
+      end
+
       context "when the parent doesn't have a phone number" do
         let(:consent_form) do
           create(:consent_form, session:, parent_phone: nil)
