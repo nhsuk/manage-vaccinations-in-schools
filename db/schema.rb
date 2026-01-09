@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_08_150039) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_09_172230) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -534,6 +534,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_08_150039) do
     t.index ["patient_id"], name: "index_notify_log_entries_on_patient_id"
     t.index ["programme_types"], name: "index_notify_log_entries_on_programme_types", using: :gin
     t.index ["sent_by_user_id"], name: "index_notify_log_entries_on_sent_by_user_id"
+  end
+
+  create_table "notify_log_entry_programmes", primary_key: ["notify_log_entry_id", "programme_type"], force: :cascade do |t|
+    t.enum "disease_types", null: false, array: true, enum_type: "disease_type"
+    t.bigint "notify_log_entry_id", null: false
+    t.enum "programme_type", null: false, enum_type: "programme_type"
+    t.index ["notify_log_entry_id"], name: "index_notify_log_entry_programmes_on_notify_log_entry_id"
   end
 
   create_table "organisations", force: :cascade do |t|
@@ -1087,6 +1094,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_08_150039) do
   add_foreign_key "notify_log_entries", "parents", on_delete: :nullify
   add_foreign_key "notify_log_entries", "patients"
   add_foreign_key "notify_log_entries", "users", column: "sent_by_user_id"
+  add_foreign_key "notify_log_entry_programmes", "notify_log_entries"
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
   add_foreign_key "patient_changesets", "locations", column: "school_id"
@@ -1344,7 +1352,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_08_150039) do
       vaccinated_injection_current_year,
       outside_cohort
      FROM base_data
-    ORDER BY patient_id, programme_type, team_id, academic_year, (sais_vaccinations_count > 0) DESC, (outside_cohort = false) DESC, patient_school_id;
+    ORDER BY base_data.patient_id, base_data.programme_type, base_data.team_id, base_data.academic_year, (base_data.sais_vaccinations_count > 0) DESC, (base_data.outside_cohort = false) DESC, base_data.patient_school_id;
   SQL
   add_index "reporting_api_patient_programme_statuses", ["academic_year", "programme_type"], name: "ix_rapi_pps_year_prog_type"
   add_index "reporting_api_patient_programme_statuses", ["id"], name: "ix_rapi_pps_id", unique: true
