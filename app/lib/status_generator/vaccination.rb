@@ -181,7 +181,7 @@ class StatusGenerator::Vaccination
 
     second_dose =
       sorted_vaccination_records.find do
-        it.performed_at > first_dose.performed_at + 28.days &&
+        it.performed_at >= first_dose.performed_at + 28.days &&
           patient.age_months(now: it.performed_at) >= 15
       end
 
