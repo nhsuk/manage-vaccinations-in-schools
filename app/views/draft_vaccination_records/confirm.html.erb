@@ -18,6 +18,7 @@
      batch: wizard_path("batch"),
      delivery_method: wizard_path("delivery"),
      delivery_site: wizard_path("delivery"),
+     dose_sequence: wizard_path("dose-sequence"),
      dose_volume: @draft_vaccination_record.wizard_steps.include?(:dose) ? wizard_path("dose") : nil,
      identity: wizard_path("identity"),
      supplier: wizard_path("supplier"),

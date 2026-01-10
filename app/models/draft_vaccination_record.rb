@@ -60,6 +60,12 @@ class DraftVaccinationRecord
       (
         if @current_user.selected_team.has_upload_only_access? &&
              sourced_from_bulk_upload?
+          :dose_sequence
+        end
+      ),
+      (
+        if @current_user.selected_team.has_upload_only_access? &&
+             sourced_from_bulk_upload?
           :vaccinator
         end
       ),
@@ -117,6 +123,14 @@ class DraftVaccinationRecord
   on_wizard_step :vaccinator, exact: true do
     validates :performed_by_given_name, presence: true
     validates :performed_by_family_name, presence: true
+  end
+
+  on_wizard_step :dose_sequence, exact: true do
+    validates :dose_sequence,
+              presence: true,
+              inclusion: {
+                in: ->(record) { 1..record.programme.maximum_dose_sequence }
+              }
   end
 
   with_options on: :update,
