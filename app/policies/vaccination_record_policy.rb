@@ -25,11 +25,16 @@ class VaccinationRecordPolicy < ApplicationPolicy
   end
 
   def edit?
-    (
-      record.performed_by_user_id == user.id || user.is_nurse? ||
-        user.is_prescriber?
-    ) && record.sourced_from_service? &&
-      record.performed_ods_code == user.selected_organisation.ods_code
+    if user.selected_team.has_poc_only_access?
+      (
+        record.performed_by_user_id == user.id || user.is_nurse? ||
+          user.is_prescriber?
+      ) && record.sourced_from_service? &&
+        record.performed_ods_code == user.selected_organisation.ods_code
+    elsif user.selected_team.has_upload_only_access?
+      record.sourced_from_bulk_upload? &&
+        record.immunisation_imports.any? { it.team_id == user.selected_team.id }
+    end
   end
 
   def update? = edit?

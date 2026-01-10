@@ -1163,5 +1163,16 @@ FactoryBot.define do
         end
       end
     end
+
+    trait :bulk_uploaded do
+      after(:create) do |patient, evaluator|
+        create(
+          :archive_reason,
+          :immunisation_import,
+          team: evaluator.team,
+          patient:
+        )
+      end
+    end
   end
 end
