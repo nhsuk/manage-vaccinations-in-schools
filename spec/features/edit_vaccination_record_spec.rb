@@ -273,6 +273,11 @@ describe "Edit vaccination record" do
       and_i_click_on_edit_vaccination_record
       then_i_see_the_edit_vaccination_record_page
 
+      when_i_edit_the_vaccinator
+      and_i_enter_a_new_first_name_and_last_name
+      then_i_see_the_edit_vaccination_record_page
+      and_i_should_see_the_updated_vaccinator_details
+
       when_i_click_on_save_changes
       then_i_should_see_the_vaccination_record
     end
@@ -376,7 +381,10 @@ describe "Edit vaccination record" do
         uploaded_by: @team.users.first,
         batch: @batch,
         patient: @patient,
-        programme: @programme
+        programme: @programme,
+        performed_by_user: nil,
+        performed_by_given_name: "Albus",
+        performed_by_family_name: "Dumbledore"
       )
   end
 
@@ -482,6 +490,20 @@ describe "Edit vaccination record" do
 
   def when_i_click_back
     click_on "Back"
+  end
+
+  def when_i_edit_the_vaccinator
+    click_on "Change vaccinator"
+  end
+
+  def and_i_enter_a_new_first_name_and_last_name
+    fill_in "First name", with: "New"
+    fill_in "Last name", with: "Name"
+    click_on "Continue"
+  end
+
+  def and_i_should_see_the_updated_vaccinator_details
+    expect(page).to have_content("VaccinatorNAME, New")
   end
 
   def when_i_click_on_change_date
