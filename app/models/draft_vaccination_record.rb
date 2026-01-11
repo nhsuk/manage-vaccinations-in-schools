@@ -3,9 +3,11 @@
 class DraftVaccinationRecord
   include RequestSessionPersistable
   include EditableWrapper
-  include HasDoseVolume
-  include VaccinationRecordPerformedByConcern
   include WizardStepConcern
+
+  include HasDoseVolume
+  include Programmable
+  include VaccinationRecordPerformedByConcern
 
   attribute :batch_id, :integer
   attribute :delivery_method, :string
@@ -168,22 +170,6 @@ class DraftVaccinationRecord
 
   def performed_by_user=(value)
     self.performed_by_user_id = value.id
-  end
-
-  # TODO: Extract this from the `BelongsToProgramme` concern so we can use the
-  #  version from that concern in all places.
-  def programme
-    if programme_type
-      options = {}
-      options[:disease_types] = disease_types if respond_to?(:disease_types)
-      options[:patient] = patient if respond_to?(:patient)
-      Programme.find(programme_type, **options)
-    end
-  end
-
-  def programme=(value)
-    self.programme_type = value.type
-    self.disease_types = value.disease_types
   end
 
   def session
