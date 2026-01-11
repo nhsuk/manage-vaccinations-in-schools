@@ -210,8 +210,6 @@ describe ImmunisationImportRow do
       end
 
       context "without a vaccine with MMRV programme variant" do
-        before { Flipper.enable(:mmrv) }
-
         let(:programmes) { [Programme.mmr] }
         let(:data) do
           valid_data.except("VACCINE_GIVEN").merge("PROGRAMME" => "MMRV")
@@ -919,8 +917,6 @@ describe ImmunisationImportRow do
       end
 
       context "with MMRV programme name" do
-        before { Flipper.enable(:mmrv) }
-
         let(:programmes) { [Programme.mmr] }
         let(:session) { create(:session, team:, programmes:) }
         let(:data) do
@@ -1270,8 +1266,6 @@ describe ImmunisationImportRow do
       end
 
       context "without a vaccine with MMRV programme variant" do
-        before { Flipper.enable(:mmrv) }
-
         let(:programmes) { [Programme.mmr] }
         let(:data) do
           valid_data.except("VACCINE_GIVEN").merge("PROGRAMME" => "MMRV")

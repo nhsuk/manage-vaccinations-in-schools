@@ -44,5 +44,3 @@ reporting_api: Enables the Commissioner reporting component to authenticate to M
   statistics from /api/reporting/
 
 testing_api: Basic API useful for automated testing.
-
-mmrv: Adds support for MMRV vaccinations

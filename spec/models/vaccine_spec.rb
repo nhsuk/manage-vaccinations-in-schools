@@ -95,8 +95,6 @@ describe Vaccine do
     end
 
     context "with an MMRV vaccine" do
-      before { Flipper.enable(:mmrv) }
-
       let(:vaccine) { build(:vaccine, :mmrv) }
 
       it { should eq("432636005") }
@@ -131,8 +129,6 @@ describe Vaccine do
     end
 
     context "with an MMRV vaccine" do
-      before { Flipper.enable(:mmrv) }
-
       let(:vaccine) { build(:vaccine, :mmrv) }
 
       it do
