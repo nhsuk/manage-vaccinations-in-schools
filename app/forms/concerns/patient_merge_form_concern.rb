@@ -10,7 +10,7 @@ module PatientMergeFormConcern
     attribute :nhs_number, :string
 
     def nhs_number=(value)
-      super(value.blank? ? nil : value.gsub(/\s/, ""))
+      super(value.presence&.gsub(/\s/, ""))
     end
   end
 

@@ -179,8 +179,8 @@ class Location < ApplicationRecord
     validates :urn, presence: true
   end
 
-  normalizes :site, with: -> { it.blank? ? nil : it.strip }
-  normalizes :urn, with: -> { it.blank? ? nil : it.strip }
+  normalizes :site, with: -> { it.presence&.strip }
+  normalizes :urn, with: -> { it.presence&.strip }
 
   delegate :fhir_reference, to: :fhir_mapper
 
