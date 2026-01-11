@@ -42,6 +42,4 @@ module BelongsToProgramme
     self.programme_type = value&.type
     self.disease_types = value&.disease_types if respond_to?(:disease_types=)
   end
-
-  delegate :translation_key, to: :programme, prefix: true
 end
