@@ -110,26 +110,34 @@ describe "MMR vaccination" do
   end
 
   def and_there_is_a_session_today_with_patients_safe_to_vaccinate
+    mmr_variant =
+      @programme.variant_for(
+        disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
+      )
+
     @without_gelatine_only_patient =
       create(
         :patient,
         :consent_given_without_gelatine_triage_not_needed,
         :in_attendance,
-        session: @session
+        session: @session,
+        programmes: [mmr_variant]
       )
     @without_gelatine_patient =
       create(
         :patient,
         :consent_given_triage_not_needed,
         :in_attendance,
-        session: @session
+        session: @session,
+        programmes: [mmr_variant]
       )
     @with_gelatine_patient =
       create(
         :patient,
         :consent_given_triage_not_needed,
         :in_attendance,
-        session: @session
+        session: @session,
+        programmes: [mmr_variant]
       )
   end
 

@@ -137,20 +137,20 @@ class Programme
   def name_in_sentence = flu? ? name.downcase : name
 
   def variant_for(disease_types: nil, patient: nil)
-    return self if (disease_types.blank? && patient.blank?) || !mmr?
+    return self unless mmr?
 
     # We don't use both `patient` and `disease_types` because the patient
-    # might be eligible for a particular programme variant, but the
-    # `disease_types` indicate a different variant was used.
+    #  might be eligible for a particular programme variant, but the disease
+    #  types indicate a different variant was used.
 
     eligible_for_mmrv =
       if disease_types.present?
         disease_types.include?("varicella")
-      elsif patient
+      elsif disease_types.nil? && patient
         patient.eligible_for_mmrv?
-      else
-        false
       end
+
+    return self if eligible_for_mmrv.nil?
 
     variant_type =
       if eligible_for_mmrv && Flipper.enabled?(:mmrv)

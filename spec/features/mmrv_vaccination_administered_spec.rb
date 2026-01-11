@@ -96,11 +96,13 @@ describe "MMRV vaccination" do
         :in_attendance,
         session: @session,
         parents: [@parent],
-        date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month
+        date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month,
+        programmes: [
+          @programme.variant_for(
+            disease_types: Programme::Variant::DISEASE_TYPES["mmrv"]
+          )
+        ]
       )
-    @patient.consents.last.update!(
-      disease_types: Programme::Variant::DISEASE_TYPES["mmrv"]
-    )
     StatusUpdater.call(patient: @patient)
     @community_clinic = create(:community_clinic, team: @team)
   end
