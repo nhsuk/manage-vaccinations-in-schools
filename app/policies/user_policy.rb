@@ -2,8 +2,6 @@
 
 class UserPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
-    def resolve
-      scope.where(id: user.id)
-    end
+    def resolve = scope.where(id: user.id)
   end
 end

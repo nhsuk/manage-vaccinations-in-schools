@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 class PatientPolicy < ApplicationPolicy
+  def index? = true
+
+  def show? = true
+
+  def update? = true
+
   def log? = show?
 
   def pds_search_history? = show?
@@ -15,11 +21,11 @@ class PatientPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      team = user.selected_team
-
-      return scope.none if team.nil?
-
-      scope.joins(:patient_teams).where(patient_teams: { team_id: team.id })
+      if team
+        scope.joins(:patient_teams).where(patient_teams: { team_id: team.id })
+      else
+        scope.none
+      end
     end
   end
 end

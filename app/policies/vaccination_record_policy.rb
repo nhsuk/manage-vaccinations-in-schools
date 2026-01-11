@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class VaccinationRecordPolicy < ApplicationPolicy
+  def index? = true
+
   def create?
     return true if user.is_nurse? || user.is_prescriber?
     return false unless user.is_healthcare_assistant?
@@ -13,7 +15,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
       can_create_with_pgd_supply?(vaccine_criteria)
   end
 
-  def new? = create?
+  def show? = true
 
   def record_already_vaccinated?
     return unless user.is_nurse? || user.is_prescriber?
@@ -24,7 +26,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
     vaccination_status.not_eligible? || vaccination_status.eligible?
   end
 
-  def edit?
+  def update?
     (
       record.performed_by_user_id == user.id || user.is_nurse? ||
         user.is_prescriber?
@@ -32,14 +34,12 @@ class VaccinationRecordPolicy < ApplicationPolicy
       record.performed_ods_code == user.selected_organisation.ods_code
   end
 
-  def update? = edit?
+  def confirm_destroy? = destroy?
 
   def destroy?
     user.can_perform_local_system_administration? &&
       !record.sourced_from_nhs_immunisations_api?
   end
-
-  def confirm_destroy? = destroy?
 
   private
 
@@ -70,7 +70,6 @@ class VaccinationRecordPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      team = user.selected_team
       return scope.none if team.nil?
 
       scope
