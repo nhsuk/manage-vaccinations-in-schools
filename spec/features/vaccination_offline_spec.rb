@@ -361,7 +361,6 @@ describe "Offline vaccination" do
 
     # Change details for the patient
     row_for_vaccinated_patient["NHS_NUMBER"] = ""
-    row_for_vaccinated_patient["PERSON_FORENAME"] = "New name"
 
     # Change details for the vaccination record
     row_for_vaccinated_patient["DOSE_SEQUENCE"] = "2"
