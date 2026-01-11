@@ -91,7 +91,7 @@ class DashboardController < ApplicationController
 
       @secondary_items << {
         title: I18n.t("reports.index.title"),
-        path: "/reports",
+        path: reports_path,
         description: I18n.t("reports.index.description")
       }
 
