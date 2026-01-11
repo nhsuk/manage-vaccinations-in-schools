@@ -48,6 +48,8 @@ module NavigationConcern
         path: school_moves_path,
         count: @cached_counts.school_moves
       }
+
+      @navigation_items << { title: t("reports.index.title"), path: "/reports" }
     end
 
     if current_team
