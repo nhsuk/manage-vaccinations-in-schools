@@ -257,7 +257,7 @@ describe PatientSearchForm do
         nasal_patient =
           create(:patient, :consent_given_triage_not_needed, session:)
 
-        nasal_patient.consent_statuses.first.update!(
+        nasal_patient.programme_statuses.first.update!(
           vaccine_methods: %w[nasal injection]
         )
 
@@ -274,7 +274,7 @@ describe PatientSearchForm do
         injection_primary_patient =
           create(:patient, :consent_given_triage_not_needed, session:)
 
-        injection_primary_patient.consent_statuses.first.update!(
+        injection_primary_patient.programme_statuses.first.update!(
           vaccine_methods: %w[injection nasal]
         )
 
