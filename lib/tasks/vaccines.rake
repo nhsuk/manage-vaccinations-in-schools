@@ -287,27 +287,44 @@ def create_hpv_health_questions(vaccine)
       title: "Does your child have any severe allergies?"
     )
 
+  bleeding_disorder =
+    vaccine.health_questions.create!(
+      title: "Does your child have a bleeding disorder?"
+    )
+
+  blood_thinning =
+    vaccine.health_questions.create!(
+      title: "Does your child take blood-thinning medicine (anticoagulants)?",
+      hint:
+        "For example, warfarin, or other medicine used to prevent blood clots"
+    )
+
+  immune_system =
+    vaccine.health_questions.create!(
+      title:
+        "Does your child have a disease or treatment that severely affects their immune system?",
+      hint:
+        "Children with a severely weakened immune system will need 3 doses of the vaccine, over a 12-month period"
+    )
+
   medical_conditions =
     vaccine.health_questions.create!(
       title:
-        "Does your child have any medical conditions for which they receive treatment?"
-    )
-
-  severe_reaction =
-    vaccine.health_questions.create!(
-      title:
-        "Has your child ever had a severe reaction to any medicines, including vaccines?"
+        "Does your child have any other medical conditions we should know about?"
     )
 
   extra_support =
     vaccine.health_questions.create!(
       title: "Does your child need extra support during vaccination sessions?",
-      hint: "For example, they’re autistic, or extremely anxious"
+      hint: "For example, they’re autistic, or extremely anxious",
+      would_require_triage: false
     )
 
-  severe_allergies.update!(next_question: medical_conditions)
-  medical_conditions.update!(next_question: severe_reaction)
-  severe_reaction.update!(next_question: extra_support)
+  severe_allergies.update!(next_question: bleeding_disorder)
+  bleeding_disorder.update!(next_question: blood_thinning)
+  blood_thinning.update!(next_question: immune_system)
+  immune_system.update!(next_question: medical_conditions)
+  medical_conditions.update!(next_question: extra_support)
 end
 
 def create_menacwy_health_questions(vaccine)
