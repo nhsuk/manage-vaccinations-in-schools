@@ -183,9 +183,7 @@ describe "Import class lists" do
   end
 
   def when_i_click_on_the_imports_tab
-    click_on "Programmes"
-    click_on "HPV"
-    click_on "Imports"
+    visit imports_path
   end
 
   def then_i_should_see_the_import

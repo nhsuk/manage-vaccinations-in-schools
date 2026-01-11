@@ -93,17 +93,10 @@ describe "Parental consent given with an inexact automatic match" do
   end
 
   def and_the_nurse_checks_the_consent_responses
-    # first process the confirmation email, then process the contact warning email
     2.times { perform_enqueued_jobs }
 
     sign_in @team.users.first
-    visit "/dashboard"
-
-    click_on "Programmes", match: :first
-    click_on "HPV", match: :first
-    within ".app-secondary-navigation" do
-      click_on "Sessions"
-    end
+    visit sessions_path
     click_on "Pilot School"
     within ".app-secondary-navigation" do
       click_on "Children"

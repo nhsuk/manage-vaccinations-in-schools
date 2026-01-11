@@ -327,35 +327,19 @@ describe "Import child records" do
   end
 
   def when_i_visit_the_hpv_programme_page_for_upcoming_year
-    click_on "Programmes", match: :first
-
-    within all(".nhsuk-table__panel-with-heading-tab")[0] do
-      click_on "HPV"
-    end
+    visit programme_overview_path(Programme.hpv, AcademicYear.current.next)
   end
 
   def when_i_visit_the_doubles_programme_page_for_upcoming_year
-    click_on "Programmes", match: :first
-
-    within all(".nhsuk-table__panel-with-heading-tab")[0] do
-      click_on "MenACWY"
-    end
+    visit programme_overview_path(Programme.menacwy, AcademicYear.current.next)
   end
 
   def when_i_visit_the_hpv_programme_page_for_current_year
-    click_on "Programmes", match: :first
-
-    within all(".nhsuk-table__panel-with-heading-tab")[1] do
-      click_on "HPV"
-    end
+    visit programme_overview_path(Programme.hpv, AcademicYear.current)
   end
 
   def when_i_visit_the_doubles_programme_page_for_current_year
-    click_on "Programmes", match: :first
-
-    within all(".nhsuk-table__panel-with-heading-tab")[1] do
-      click_on "MenACWY"
-    end
+    visit programme_overview_path(Programme.menacwy, AcademicYear.current)
   end
 
   def then_i_should_see_the_cohorts_for_hpv

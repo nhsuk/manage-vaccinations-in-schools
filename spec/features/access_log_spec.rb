@@ -63,12 +63,7 @@ describe "Access log" do
   end
 
   def when_i_go_to_the_session
-    visit dashboard_path
-    click_on "Programmes", match: :first
-    click_on "HPV", match: :first
-
-    within(".app-secondary-navigation") { click_on "Sessions" }
-
+    visit sessions_path
     click_on @session.location.name
     within(".app-secondary-navigation") { click_on "Children" }
   end

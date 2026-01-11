@@ -62,14 +62,7 @@ describe "Self-consent" do
 
   def and_there_is_a_child_without_parental_consent
     sign_in @team.users.first
-
-    visit "/dashboard"
-
-    click_on "Programmes", match: :first
-    click_on "HPV", match: :first
-    within ".app-secondary-navigation" do
-      click_on "Sessions"
-    end
+    visit sessions_path
     click_on @school.name
     within ".app-secondary-navigation" do
       click_on "Children"

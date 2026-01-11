@@ -41,12 +41,7 @@ feature "Verbal consent" do
 
     @refusing_parent = @child.consents.first.parent
 
-    visit "/dashboard"
-    click_on "Programmes", match: :first
-    click_on "HPV", match: :first
-    within ".app-secondary-navigation" do
-      click_on "Sessions"
-    end
+    visit sessions_path
     click_on "Pilot School"
     within ".app-secondary-navigation" do
       click_on "Children"

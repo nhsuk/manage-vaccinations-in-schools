@@ -55,10 +55,7 @@ describe "User authorisation" do
   end
 
   def and_i_go_to_the_consent_page
-    visit "/dashboard"
-    click_on "Programmes", match: :first
-    click_on "HPV", match: :first
-    within(".app-secondary-navigation") { click_on "Sessions" }
+    visit sessions_path
     click_on "Pilot School"
     within(".app-secondary-navigation") { click_on "Children" }
   end
