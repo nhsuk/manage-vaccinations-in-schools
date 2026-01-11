@@ -199,8 +199,7 @@ describe "Immunisation imports" do
   end
 
   def when_i_click_on_cohorts
-    click_on "Programmes"
-    click_on "HPV"
+    visit programme_overview_path(Programme.hpv, AcademicYear.current)
   end
 
   def then_i_should_see_no_children_in_the_cohorts

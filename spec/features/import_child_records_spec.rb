@@ -219,13 +219,11 @@ describe "Import child records" do
   end
 
   def when_i_visit_the_hpv_programme_page
-    click_on "Programmes", match: :first
-    click_on "HPV"
+    visit programme_overview_path(Programme.hpv, AcademicYear.current)
   end
 
   def when_i_visit_the_doubles_programme_page
-    click_on "Programmes", match: :first
-    click_on "MenACWY"
+    visit programme_overview_path(Programme.menacwy, AcademicYear.current)
   end
 
   def then_i_should_see_the_cohorts_for_hpv

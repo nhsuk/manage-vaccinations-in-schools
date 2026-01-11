@@ -56,13 +56,7 @@ describe "Parental consent" do
   end
 
   def when_a_nurse_checks_consent_responses
-    visit "/dashboard"
-
-    click_on "Programmes", match: :first
-    click_on "HPV", match: :first
-    within ".app-secondary-navigation" do
-      click_on "Sessions"
-    end
+    visit sessions_path
     click_on "Pilot School"
     within(".app-secondary-navigation") { click_on "Children" }
   end
@@ -165,13 +159,7 @@ describe "Parental consent" do
   end
 
   def when_the_nurse_checks_the_consent_responses
-    visit "/dashboard"
-
-    click_on "Programmes", match: :first
-    click_on "HPV", match: :first
-    within ".app-secondary-navigation" do
-      click_on "Sessions"
-    end
+    visit sessions_path
     click_on "Pilot School"
     within(".app-secondary-navigation") { click_on "Children" }
   end
