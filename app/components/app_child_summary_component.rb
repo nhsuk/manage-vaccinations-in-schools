@@ -80,6 +80,13 @@ class AppChildSummaryComponent < ViewComponent::Base
         summary_list.with_row do |row|
           row.with_key { "School" }
           row.with_value { format_school }
+          if (href = @change_links[:school])
+            row.with_action(
+              text: "Change",
+              href:,
+              visually_hidden_text: "School"
+            )
+          end
         end
         if @child.respond_to?(:year_group)
           summary_list.with_row do |row|
