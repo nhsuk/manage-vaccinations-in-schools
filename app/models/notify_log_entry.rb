@@ -34,8 +34,9 @@
 #  fk_rails_...  (sent_by_user_id => users.id)
 #
 class NotifyLogEntry < ApplicationRecord
-  include HasManyProgrammes
   include Sendable
+
+  self.ignored_columns += ["programme_types"]
 
   self.inheritance_column = nil
 
@@ -65,7 +66,21 @@ class NotifyLogEntry < ApplicationRecord
   validates :template_id, presence: true
 
   scope :for_session,
-        ->(session) { has_all_programme_types_of(session.programme_types) }
+        ->(session) do
+          where(
+            NotifyLogEntry::Programme
+              .select("1")
+              .where("notify_log_entry_id = notify_log_entries.id")
+              .where(programme_type: session.programme_types)
+              .group(:notify_log_entry_id)
+              .having(
+                "COUNT(DISTINCT programme_type) = ?",
+                session.programme_types.count
+              )
+              .arel
+              .exists
+          )
+        end
 
   encrypts :recipient, deterministic: true
 
@@ -75,6 +90,8 @@ class NotifyLogEntry < ApplicationRecord
     template_name&.to_s&.humanize.presence ||
       "Unknown #{human_enum_name(:type)}"
   end
+
+  def programmes = notify_log_entry_programmes.map(&:programme)
 
   private
 

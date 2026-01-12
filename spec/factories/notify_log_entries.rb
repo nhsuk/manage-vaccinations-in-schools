@@ -35,6 +35,8 @@
 #
 FactoryBot.define do
   factory :notify_log_entry do
+    transient { programme_types { [] } }
+
     patient
 
     trait :email do
@@ -51,5 +53,17 @@ FactoryBot.define do
 
     delivery_id { SecureRandom.uuid }
     traits_for_enum :delivery_status
+
+    after(:build) do |notify_log_entry, evaluator|
+      if notify_log_entry.notify_log_entry_programmes.empty?
+        evaluator.programme_types.each do |type|
+          patient = notify_log_entry.patient
+          notify_log_entry.notify_log_entry_programmes.build(
+            programme_type: type,
+            disease_types: Programme.find(type, patient:).disease_types
+          )
+        end
+      end
+    end
   end
 end

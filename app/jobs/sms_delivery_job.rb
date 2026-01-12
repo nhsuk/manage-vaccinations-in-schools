@@ -79,7 +79,6 @@ class SMSDeliveryJob < NotifyDeliveryJob
       delivery_status:,
       parent: personalisation.parent,
       patient: personalisation.patient,
-      programmes: personalisation.programmes,
       recipient: phone_number,
       sent_by:,
       template_id:,

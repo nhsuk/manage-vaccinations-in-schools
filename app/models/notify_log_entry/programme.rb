@@ -17,5 +17,7 @@
 #  fk_rails_...  (notify_log_entry_id => notify_log_entries.id) ON DELETE => cascade
 #
 class NotifyLogEntry::Programme < ApplicationRecord
+  include BelongsToProgramme
+
   belongs_to :notify_log_entry, inverse_of: :notify_log_entry_programmes
 end

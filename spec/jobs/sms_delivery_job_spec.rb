@@ -91,7 +91,7 @@ describe SMSDeliveryJob do
       )
       expect(notify_log_entry.parent).to eq(parent)
       expect(notify_log_entry.patient).to eq(patient)
-      expect(notify_log_entry.programme_types).to eq(programme_types)
+      expect(notify_log_entry.programmes.map(&:type)).to eq(programme_types)
       expect(notify_log_entry.sent_by).to eq(sent_by)
     end
 
@@ -129,7 +129,7 @@ describe SMSDeliveryJob do
         )
         expect(notify_log_entry.parent).to eq(parent)
         expect(notify_log_entry.patient).to eq(patient)
-        expect(notify_log_entry.programme_types).to eq(programme_types)
+        expect(notify_log_entry.programmes.map(&:type)).to eq(programme_types)
         expect(notify_log_entry.sent_by).to eq(sent_by)
       end
     end
@@ -159,7 +159,7 @@ describe SMSDeliveryJob do
         )
         expect(notify_log_entry.parent).to eq(parent)
         expect(notify_log_entry.patient).to eq(patient)
-        expect(notify_log_entry.programme_types).to eq(programme_types)
+        expect(notify_log_entry.programmes.map(&:type)).to eq(programme_types)
         expect(notify_log_entry.sent_by).to eq(sent_by)
       end
     end
@@ -191,7 +191,7 @@ describe SMSDeliveryJob do
           GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
         )
         expect(notify_log_entry.consent_form).to eq(consent_form)
-        expect(notify_log_entry.programme_types).to eq(programme_types)
+        expect(notify_log_entry.programmes.map(&:type)).to eq(programme_types)
       end
 
       it "creates a log entry programme record" do
@@ -244,7 +244,7 @@ describe SMSDeliveryJob do
             GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
           )
           expect(notify_log_entry.consent_form).to eq(consent_form)
-          expect(notify_log_entry.programme_types).to eq(programme_types)
+          expect(notify_log_entry.programmes.map(&:type)).to eq(programme_types)
           expect(notify_log_entry.sent_by).to eq(sent_by)
         end
       end
