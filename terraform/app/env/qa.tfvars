@@ -14,7 +14,8 @@ http_hosts = {
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "qa.mavistesting.com"
 }
 
-enable_backup_to_vault = true
+enable_backup_to_vault    = true
+max_aurora_capacity_units = 16
 
 minimum_reporting_replicas = 2
 maximum_reporting_replicas = 4
