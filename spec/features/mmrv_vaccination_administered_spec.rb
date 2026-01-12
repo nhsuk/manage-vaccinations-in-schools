@@ -253,6 +253,10 @@ describe "MMRV vaccination" do
   def then_i_see_the_right_programme_on_the_entries
     expect(page).to have_content("Completed pre-screening checks\nMMRV")
     expect(page).to have_content("Vaccinated with ProQuad\nMMRV")
+    expect(page).to have_content(
+      "Triaged decision: Delay vaccination to a later date\n" \
+        "Next dose 29 October 2024 at 12:00am\nMMR(V)"
+    )
   end
 
   def when_vaccination_confirmations_are_sent
