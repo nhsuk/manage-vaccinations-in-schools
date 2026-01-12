@@ -303,7 +303,7 @@ class DraftVaccinationRecord
   private
 
   def readable_attribute_names
-    writable_attribute_names - %w[vaccine_id] + %w[source]
+    writable_attribute_names - %w[vaccine_id]
   end
 
   def writable_attribute_names
@@ -328,6 +328,7 @@ class DraftVaccinationRecord
       programme_type
       protocol
       session_id
+      source
       supplied_by_user_id
       vaccine_id
     ]

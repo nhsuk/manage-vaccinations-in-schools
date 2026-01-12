@@ -25,11 +25,16 @@ class VaccinationRecordPolicy < ApplicationPolicy
   end
 
   def edit?
-    (
-      record.performed_by_user_id == user.id || user.is_nurse? ||
-        user.is_prescriber?
-    ) && record.sourced_from_service? &&
-      record.performed_ods_code == user.selected_organisation.ods_code
+    if team.has_poc_only_access?
+      (
+        record.performed_by_user_id == user.id || user.is_nurse? ||
+          user.is_prescriber?
+      ) && record.sourced_from_service? &&
+        record.performed_ods_code == user.selected_organisation.ods_code
+    elsif team.has_upload_only_access?
+      record.sourced_from_bulk_upload? &&
+        record.immunisation_imports.any? { it.team_id == team.id }
+    end
   end
 
   def update? = edit?
@@ -44,7 +49,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
   private
 
   delegate :patient, :session, :programme, :programme_type, to: :record
-  delegate :academic_year, :team, to: :session
+  delegate :academic_year, to: :session
 
   def can_create_with_psd?(vaccine_criteria)
     session.psd_enabled? &&
@@ -52,7 +57,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
         patient.has_patient_specific_direction?(
           academic_year:,
           programme_type:,
-          team:,
+          team: session.team,
           vaccine_method:
         )
       end
@@ -70,7 +75,6 @@ class VaccinationRecordPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      team = user.selected_team
       return scope.none if team.nil?
 
       scope
