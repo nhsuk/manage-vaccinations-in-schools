@@ -123,17 +123,15 @@
     <h3 class="nhsuk-u-reading-width">
       Imported records
     </h3>
-    <%= render AppPatientTableComponent.new(@patients, current_user:, count: @pagy.count) %>
+    <%= render AppPatientTableComponent.new(@patients, current_user:, pagy: @pagy) %>
   <% end %>
 
   <% if @vaccination_records.present? %>
     <h3 class="nhsuk-u-reading-width">
       Imported records
     </h3>
-    <%= render AppVaccinationRecordTableComponent.new(@vaccination_records, current_user:, count: @pagy.count) %>
+    <%= render AppVaccinationRecordTableComponent.new(@vaccination_records, current_user:, pagy: @pagy) %>
   <% end %>
-
-  <%= render AppPaginationComponent.new(pagy: @pagy) %>
 
   <% if Flipper.enabled?(:import_bulk_remove_parents) &&
         import.is_a?(PatientImport) && import.processed? &&

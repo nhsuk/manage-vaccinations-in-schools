@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 describe AppPatientTableComponent do
+  include Pagy::Backend
+
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(patients, current_user:, count:) }
+  let(:component) { described_class.new(patients, current_user:, pagy:) }
 
-  let(:patients) do
+  let(:all_patients) do
     [
       create(
         :patient,
@@ -26,6 +28,10 @@ describe AppPatientTableComponent do
       )
     ] + create_list(:patient, 8)
   end
+
+  let(:pagination_result) { pagy_array(all_patients, page: 1) }
+  let(:patients) { pagination_result[1] }
+  let(:pagy) { pagination_result[0] }
 
   let(:team) { create(:team) }
   let(:current_user) { create(:nurse, team:) }

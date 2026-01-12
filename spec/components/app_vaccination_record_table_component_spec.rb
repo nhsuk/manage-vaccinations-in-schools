@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
 describe AppVaccinationRecordTableComponent do
+  include Pagy::Backend
+
   subject(:rendered) { render_inline(component) }
 
   let(:component) do
-    described_class.new(vaccination_records, current_user:, count: 10)
+    described_class.new(vaccination_records, current_user:, pagy:)
   end
 
   let(:programme) { Programme.sample }
-  let(:vaccination_records) do
+  let(:all_vaccination_records) do
     [
       create(
         :vaccination_record,
@@ -29,6 +31,10 @@ describe AppVaccinationRecordTableComponent do
     ] + create_list(:vaccination_record, 4, programme:) +
       create_list(:vaccination_record, 5, :not_administered, programme:)
   end
+
+  let(:pagination_result) { pagy_array(all_vaccination_records, page: 1) }
+  let(:vaccination_records) { pagination_result[1] }
+  let(:pagy) { pagination_result[0] }
 
   let(:current_user) { create(:nurse) }
 
