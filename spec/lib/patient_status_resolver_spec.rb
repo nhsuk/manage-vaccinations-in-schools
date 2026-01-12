@@ -14,6 +14,8 @@ describe PatientStatusResolver do
   let(:academic_year) { AcademicYear.current }
   let(:context_location_id) { nil }
 
+  before { Flipper.enable(:mmrv) }
+
   describe "#consent" do
     subject { patient_status_resolver.consent }
 
@@ -115,9 +117,16 @@ describe PatientStatusResolver do
 
     context "for MMR programme" do
       let(:programme) { Programme.mmr }
+      let(:programme_variant) do
+        programme.variant_for(
+          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
+        )
+      end
+
+      let(:date_of_birth) { Date.new(2019, 12, 31) }
 
       context "and eligible for 1st dose" do
-        let(:patient) { create(:patient, session:) }
+        let(:patient) { create(:patient, date_of_birth:, session:) }
 
         before do
           StatusUpdater.call(patient:)
@@ -138,7 +147,13 @@ describe PatientStatusResolver do
 
       context "and due 1st dose" do
         let(:patient) do
-          create(:patient, :consent_given_triage_not_needed, session:)
+          create(
+            :patient,
+            :consent_given_triage_not_needed,
+            date_of_birth:,
+            session:,
+            programmes: [programme_variant]
+          )
         end
 
         before do
@@ -163,7 +178,9 @@ describe PatientStatusResolver do
           create(
             :patient,
             :consent_given_without_gelatine_triage_not_needed,
-            session:
+            date_of_birth:,
+            session:,
+            programmes: [programme_variant]
           )
         end
 

@@ -104,8 +104,11 @@ class StatusGenerator::Programme
   def disease_types
     return nil if vaccination_generator.status == :not_eligible
 
-    vaccination_generator.disease_types.presence ||
+    if vaccination_generator.disease_types
+      vaccination_generator.disease_types
+    elsif consent_generator.status.in?(%i[given refused conflicts])
       consent_generator.disease_types
+    end
   end
 
   def date

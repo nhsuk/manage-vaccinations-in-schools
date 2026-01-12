@@ -46,7 +46,13 @@ describe "Triage" do
   end
 
   def given_an_mmr_programme_is_underway
+    Flipper.enable(:mmrv)
+
     programmes = [Programme.mmr]
+    @programme_variant =
+      Programme.mmr.variant_for(
+        disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
+      )
 
     team = create(:team, programmes:)
     @user = create(:nurse, team:)
@@ -55,7 +61,13 @@ describe "Triage" do
   end
 
   def given_a_patient_exists_needing_triage
-    @patient = create(:patient, :consent_given_triage_needed, session: @session)
+    @patient =
+      create(
+        :patient,
+        :consent_given_triage_needed,
+        session: @session,
+        programmes: [@programme_variant]
+      )
   end
 
   def given_a_patient_exists_needing_triage_without_gelatine
@@ -63,7 +75,8 @@ describe "Triage" do
       create(
         :patient,
         :consent_given_without_gelatine_triage_needed,
-        session: @session
+        session: @session,
+        programmes: [@programme_variant]
       )
   end
 
