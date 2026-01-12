@@ -24,9 +24,9 @@ describe_tasks() {
     aws ecs describe-tasks --region "$region" --cluster "$cluster_name" --tasks $task_arns
 }
 
-select_running_container() {
+select_running_container() { 
     local task_data="$1"
-    echo "$task_data" | jq -r '.containers | map(select(.lastStatus == "RUNNING" and .runtimeId != null))[0].name'
+    echo "$task_data" | jq -r '.containers | map(select(.lastStatus == "RUNNING" and .name == "application"))[0].name'
 }
 
 if [ "$1" = "--help" ]; then

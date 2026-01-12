@@ -1,6 +1,27 @@
 #!/usr/bin/env bash
 
 TASK_DETAILS=$(curl ${ECS_CONTAINER_METADATA_URI_V4})
+TASK_ID=$(echo "$TASK_DETAILS" | jq -r '.Labels["com.amazonaws.ecs.task-arn"] | split("/") | last')
+
+task_details() {
+  curl -sSf ${ECS_CONTAINER_METADATA_URI_V4}
+}
+
+MAX_RETRIES=12
+RETRY_DELAY=10
+TASK_DETAILS=""
+
+for ((i=1; i<=MAX_RETRIES; i++)); do
+    if TASK_DETAILS=$(task_details); then
+        break
+    fi
+    if [[ $i -eq $MAX_RETRIES ]]; then
+        echo "Failed to fetch task details after $MAX_RETRIES attempts" >&2
+        exit 1
+    fi
+    sleep $RETRY_DELAY
+done
+
 TASK_ID=$(echo "$TASK_DETAILS" | jq '.Labels["com.amazonaws.ecs.task-arn"] | split("/") | last')
 
 bundle exec prometheus_exporter \
