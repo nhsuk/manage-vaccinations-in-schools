@@ -49,7 +49,8 @@ class ParentRelationship < ApplicationRecord
 
   before_validation -> { self.other_name = nil unless other? }
 
-  accepts_nested_attributes_for :parent, update_only: true
+  accepts_nested_attributes_for :parent
+  validates_associated :parent
 
   def label
     (other? ? other_name : human_enum_name(:type)).capitalize

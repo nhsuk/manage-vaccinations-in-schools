@@ -165,6 +165,29 @@ describe "Manage children" do
     and_i_see_the_child_is_home_schooled
   end
 
+  scenario "Adding a parent" do
+    given_patients_exist
+
+    when_i_click_on_children
+    and_i_filter_for_children
+    and_i_click_on_a_child
+    then_i_see_the_child
+
+    when_i_click_on_edit_child_record
+    then_i_see_the_edit_child_record_page
+
+    when_i_click_on_add_new_parent
+    then_i_see_the_new_parent_page
+
+    when_i_fill_in_parent_details
+    and_i_save_the_parent
+    then_i_should_see_a_validation_error
+
+    when_i_choose_the_parent_relationship
+    and_i_save_the_parent
+    then_i_see_the_new_parent_is_created
+  end
+
   scenario "Viewing important notices" do
     when_i_go_to_the_imports_page
     then_i_cannot_see_notices
@@ -518,6 +541,40 @@ describe "Manage children" do
 
   def and_i_see_the_nhs_number
     expect(page).to have_content("975 862 3168")
+  end
+
+  def when_i_click_on_add_new_parent
+    click_on "Add parent or guardian"
+  end
+
+  def then_i_see_the_new_parent_page
+    expect(page).to have_content("Add parent or guardian")
+  end
+
+  def when_i_fill_in_parent_details
+    fill_in "Name", with: "Lucille Bluth"
+    fill_in "Phone number", with: "01234 567890"
+    fill_in "Email address", with: "lucille@bluth.com"
+    choose "They do not have specific needs"
+  end
+
+  def and_i_save_the_parent
+    click_on "Save"
+  end
+
+  def then_i_should_see_a_validation_error
+    expect(page).to have_content("There is a problem")
+    expect(page).to have_content("Choose a relationship")
+  end
+
+  def when_i_choose_the_parent_relationship
+    choose "Mum"
+  end
+
+  def then_i_see_the_new_parent_is_created
+    expect(page).to have_content("Edit child record")
+    expect(page).to have_content("Lucille Bluth (Mum)")
+    expect(@patient.parents.count).to eq(1)
   end
 
   def and_the_patient_is_no_longer_invalidated
