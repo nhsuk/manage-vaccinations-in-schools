@@ -680,8 +680,12 @@ describe NHS::ImmunisationsAPI do
       it { should be false }
     end
 
-    context "when the vaccination record is not recorded in service" do
-      let(:session) { nil }
+    context "when the vaccination record doesn't have the correct source" do
+      before do
+        allow(vaccination_record).to receive(
+          :syncable_to_nhs_immunisations_api?
+        ).and_return(false)
+      end
 
       it { should be false }
     end

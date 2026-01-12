@@ -83,6 +83,30 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
 
     it { should include(vaccination_record) }
     it { should_not include(vaccination_record_outside_of_session) }
+
+    context "when vaccination record was uploaded through national reporting portal" do
+      let!(:vaccination_record) do
+        create(:vaccination_record, :sourced_from_bulk_upload, programme:)
+      end
+
+      it { should include(vaccination_record) }
+    end
+
+    context "when vaccination record was part of a historical upload" do
+      let!(:vaccination_record) do
+        create(:vaccination_record, source: :historical_upload, programme:)
+      end
+
+      it { should_not include(vaccination_record) }
+    end
+
+    context "a vaccination record created because patient is already vaccinated" do
+      let!(:vaccination_record) do
+        create(:vaccination_record, source: :consent_refusal, programme:)
+      end
+
+      it { should_not include(vaccination_record) }
+    end
   end
 
   describe "#syncable_to_nhs_immunisations_api?" do
@@ -100,6 +124,32 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
 
     context "a vaccination record not recorded in Mavis" do
       let(:session) { nil }
+
+      it { should be false }
+    end
+
+    context "a vaccination record uploaded through national reporting portal" do
+      let(:vaccination_record) do
+        build(
+          :vaccination_record,
+          :sourced_from_bulk_upload,
+          outcome:,
+          programme:
+        )
+      end
+
+      it { should be true }
+    end
+
+    context "a vaccination record created because patient is already vaccinated" do
+      let(:vaccination_record) do
+        build(
+          :vaccination_record,
+          source: :consent_refusal,
+          outcome:,
+          programme:
+        )
+      end
 
       it { should be false }
     end

@@ -5,7 +5,11 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
 
   included do
     scope :syncable_to_nhs_immunisations_api,
-          -> { includes(:patient).sourced_from_service }
+          -> do
+            includes(:patient).then do
+              it.sourced_from_service.or(it.sourced_from_bulk_upload)
+            end
+          end
 
     scope :sync_all_to_nhs_immunisations_api,
           -> do
@@ -29,7 +33,9 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
     after_commit :queue_sync_to_nhs_immunisations_api
   end
 
-  def syncable_to_nhs_immunisations_api? = sourced_from_service?
+  def syncable_to_nhs_immunisations_api?
+    (sourced_from_service? || sourced_from_bulk_upload?)
+  end
 
   def sync_status
     should_be_synced =
