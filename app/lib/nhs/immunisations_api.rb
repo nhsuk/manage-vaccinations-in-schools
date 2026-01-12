@@ -263,7 +263,7 @@ module NHS::ImmunisationsAPI
       ignore_nhs_number: false
     )
       vaccination_record.kept? &&
-        vaccination_record.syncable_to_nhs_immunisations_api? &&
+        vaccination_record.correct_source_for_nhs_immunisations_api? &&
         vaccination_record.administered? &&
         Flipper.enabled?(:imms_api_sync_job, vaccination_record.programme) &&
         (ignore_nhs_number || vaccination_record.patient.nhs_number.present?) &&

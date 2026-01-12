@@ -4,7 +4,7 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
   extend ActiveSupport::Concern
 
   included do
-    scope :syncable_to_nhs_immunisations_api,
+    scope :with_correct_source_for_nhs_immunisations_api,
           -> do
             includes(:patient).then do
               it.sourced_from_service.or(it.sourced_from_bulk_upload)
@@ -17,7 +17,7 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
               Programme.all.select { Flipper.enabled?(:imms_api_sync_job, it) }
 
             ids =
-              syncable_to_nhs_immunisations_api.for_programmes(
+              with_correct_source_for_nhs_immunisations_api.for_programmes(
                 programmes
               ).pluck(:id)
 
@@ -33,7 +33,7 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
     after_commit :queue_sync_to_nhs_immunisations_api
   end
 
-  def syncable_to_nhs_immunisations_api?
+  def correct_source_for_nhs_immunisations_api?
     (sourced_from_service? || sourced_from_bulk_upload?)
   end
 
@@ -67,14 +67,14 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
 
   def touch_nhs_immunisations_api_sync_pending_at
     return unless Flipper.enabled?(:imms_api_sync_job, programme)
-    return unless syncable_to_nhs_immunisations_api?
+    return unless correct_source_for_nhs_immunisations_api?
 
     self.nhs_immunisations_api_sync_pending_at = Time.current
   end
 
   def queue_sync_to_nhs_immunisations_api
     return unless Flipper.enabled?(:imms_api_sync_job, programme)
-    return unless syncable_to_nhs_immunisations_api?
+    return unless correct_source_for_nhs_immunisations_api?
     return if nhs_immunisations_api_sync_pending_at.nil?
 
     if nhs_immunisations_api_synced_at &&

@@ -683,7 +683,7 @@ describe NHS::ImmunisationsAPI do
     context "when the vaccination record doesn't have the correct source" do
       before do
         allow(vaccination_record).to receive(
-          :syncable_to_nhs_immunisations_api?
+          :correct_source_for_nhs_immunisations_api?
         ).and_return(false)
       end
 

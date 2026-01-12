@@ -29,7 +29,7 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
     context "when the vaccination record isn't syncable" do
       before do
         allow(vaccination_record).to receive(
-          :syncable_to_nhs_immunisations_api?
+          :correct_source_for_nhs_immunisations_api?
         ).and_return(false)
       end
 
@@ -71,8 +71,8 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
     end
   end
 
-  describe "syncable_to_nhs_immunisations_api scope" do
-    subject { VaccinationRecord.syncable_to_nhs_immunisations_api }
+  describe "with_correct_source_for_nhs_immunisations_api scope" do
+    subject { VaccinationRecord.with_correct_source_for_nhs_immunisations_api }
 
     let!(:vaccination_record) do
       create(:vaccination_record, programme:, session:)
@@ -109,8 +109,8 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
     end
   end
 
-  describe "#syncable_to_nhs_immunisations_api?" do
-    subject { vaccination_record.syncable_to_nhs_immunisations_api? }
+  describe "#correct_source_to_nhs_immunisations_api?" do
+    subject { vaccination_record.correct_source_for_nhs_immunisations_api? }
 
     context "when the vaccination record is eligible to sync" do
       it { should be true }
