@@ -123,9 +123,15 @@ describe EmailDeliveryJob do
       expect(notify_log_entry_programme.programme_type).to eq(
         programmes.first.type
       )
-      expect(notify_log_entry_programme.disease_types).to eq(
-        programmes.first.disease_types
-      )
+
+      disease_types =
+        if programmes.first.mmr?
+          Programme::Variant::DISEASE_TYPES.fetch("mmr")
+        else
+          programmes.first.disease_types
+        end
+
+      expect(notify_log_entry_programme.disease_types).to eq(disease_types)
     end
 
     context "when the parent doesn't have an email address" do

@@ -28,7 +28,6 @@ FactoryBot.define do
     patient
     programme { Programme.sample }
     academic_year { AcademicYear.current }
-    disease_types { Programme::DISEASE_TYPES[programme.type] }
 
     traits_for_enum :status
 

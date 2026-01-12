@@ -22,7 +22,9 @@ describe NextDoseTriageFactory do
       triage = vaccination_record.reload.next_dose_delay_triage
       expect(triage).to be_delay_vaccination
       expect(triage.delay_vaccination_until).to eq(28.days.from_now.to_date)
+      expect(triage.disease_types).to be_empty
       expect(triage.performed_by).to be_nil
+      expect(triage.programme_type).to eq("mmr")
       expect(triage.team).to be_nil
     end
 

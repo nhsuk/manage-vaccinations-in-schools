@@ -96,11 +96,13 @@ describe "MMRV vaccination" do
         :in_attendance,
         session: @session,
         parents: [@parent],
-        date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month
+        date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month,
+        programmes: [
+          @programme.variant_for(
+            disease_types: Programme::Variant::DISEASE_TYPES["mmrv"]
+          )
+        ]
       )
-    @patient.consents.last.update!(
-      disease_types: Programme::Variant::DISEASE_TYPES["mmrv"]
-    )
     StatusUpdater.call(patient: @patient)
     @community_clinic = create(:community_clinic, team: @team)
   end
@@ -251,6 +253,10 @@ describe "MMRV vaccination" do
   def then_i_see_the_right_programme_on_the_entries
     expect(page).to have_content("Completed pre-screening checks\nMMRV")
     expect(page).to have_content("Vaccinated with ProQuad\nMMRV")
+    expect(page).to have_content(
+      "Triaged decision: Delay vaccination to a later date\n" \
+        "Next dose 29 October 2024 at 12:00am\nMMR(V)"
+    )
   end
 
   def when_vaccination_confirmations_are_sent

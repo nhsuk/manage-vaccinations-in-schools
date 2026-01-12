@@ -42,12 +42,13 @@ class NextDoseTriageFactory
 
   def attributes
     {
-      patient:,
-      programme:,
-      status: "delay_vaccination",
       academic_year:,
+      delay_vaccination_until: next_date,
+      disease_types: [],
       notes: "Next dose #{next_date.to_fs(:long)}",
-      delay_vaccination_until: next_date
+      patient:,
+      programme_type: programme.type,
+      status: "delay_vaccination"
     }
   end
 end

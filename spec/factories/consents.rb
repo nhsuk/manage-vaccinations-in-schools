@@ -61,7 +61,6 @@ FactoryBot.define do
     end
 
     programme { Programme.sample }
-    disease_types { Programme::DISEASE_TYPES[programme.type] }
 
     team do
       Team.has_all_programmes_of([programme]).first ||

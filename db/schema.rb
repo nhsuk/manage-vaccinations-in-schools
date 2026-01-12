@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_09_172230) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_11_210238) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -897,6 +897,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_09_172230) do
     t.integer "academic_year", null: false
     t.datetime "created_at", null: false
     t.date "delay_vaccination_until"
+    t.enum "disease_types", array: true, enum_type: "disease_type"
     t.datetime "invalidated_at"
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
@@ -1352,7 +1353,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_09_172230) do
       vaccinated_injection_current_year,
       outside_cohort
      FROM base_data
-    ORDER BY base_data.patient_id, base_data.programme_type, base_data.team_id, base_data.academic_year, (base_data.sais_vaccinations_count > 0) DESC, (base_data.outside_cohort = false) DESC, base_data.patient_school_id;
+    ORDER BY patient_id, programme_type, team_id, academic_year, (sais_vaccinations_count > 0) DESC, (outside_cohort = false) DESC, patient_school_id;
   SQL
   add_index "reporting_api_patient_programme_statuses", ["academic_year", "programme_type"], name: "ix_rapi_pps_year_prog_type"
   add_index "reporting_api_patient_programme_statuses", ["id"], name: "ix_rapi_pps_id", unique: true
