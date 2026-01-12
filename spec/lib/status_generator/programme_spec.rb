@@ -61,7 +61,7 @@ describe StatusGenerator::Programme do
 
     its(:status) { should be(:needs_consent_no_response) }
     its(:date) { should eq(vaccination_record.performed_at.to_date) }
-    its(:disease_types) { should be_empty }
+    its(:disease_types) { should be_nil }
     its(:dose_sequence) { should be_nil }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
@@ -256,7 +256,7 @@ describe StatusGenerator::Programme do
   context "when consent is needed" do
     its(:status) { should be(:needs_consent_no_response) }
     its(:date) { should be_nil }
-    its(:disease_types) { should be_empty }
+    its(:disease_types) { should be_nil }
     its(:dose_sequence) { should be_nil }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
