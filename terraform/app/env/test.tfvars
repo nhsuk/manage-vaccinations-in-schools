@@ -1,5 +1,5 @@
 environment         = "test"
-dns_certificate_arn = ["arn:aws:acm:eu-west-2:393416225559:certificate/7e80f006-e9d8-488f-b950-d97f3cc41e4f"]
+dns_certificate_arn = ["arn:aws:acm:eu-west-2:393416225559:certificate/265a02d0-9c37-42b6-be7e-e00e580718a8"]
 resource_name = {
   rds_security_group       = "mavis-test-AddonsStack-GB8Z9LQVO8OF-dbDBClusterSecurityGroup-1KSO3O1CL4NI5"
   loadbalancer             = "mavis--Publi-W19xy2QLULZ4"
