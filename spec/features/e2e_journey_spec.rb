@@ -133,10 +133,7 @@ describe "End-to-end journey" do
     csv_file.write(@registered_parents_csv.to_csv)
     csv_file.close
 
-    visit "/dashboard"
-    click_on "Programmes", match: :first
-    click_on "HPV"
-    click_on "Import"
+    visit imports_path
     click_on "Upload records"
     choose "Child records"
     click_on "Continue"

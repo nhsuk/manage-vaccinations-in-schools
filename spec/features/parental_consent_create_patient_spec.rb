@@ -194,15 +194,8 @@ describe "Parental consent create patient" do
   end
 
   def when_they_check_triage
-    visit "/dashboard"
-
-    click_on "Programmes", match: :first
-    click_on "HPV", match: :first
-    within ".app-secondary-navigation" do
-      click_on "Sessions"
-    end
+    visit sessions_path
     click_link "Pilot School"
-
     within(".app-secondary-navigation") { click_on "Children" }
   end
 

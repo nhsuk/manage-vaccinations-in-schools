@@ -239,6 +239,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :reports, only: :index
+
   resources :school_moves, path: "school-moves", only: %i[index show update]
   resources :school_move_exports,
             path: "school-moves/exports",
