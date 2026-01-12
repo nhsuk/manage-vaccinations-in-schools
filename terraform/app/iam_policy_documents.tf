@@ -30,7 +30,7 @@ data "aws_iam_policy_document" "ecs_secrets_access" {
     content {
       sid       = "dbSecretSid"
       actions   = ["secretsmanager:GetSecretValue"]
-      resources = concat([for kv_pair in local.secret_values[each.key] : kv_pair["valueFrom"]], [aws_ssm_parameter.prometheus_config.arn, aws_ssm_parameter.cloudwatch_agent_config.arn])
+      resources = [for kv_pair in local.secret_values[each.key] : kv_pair["valueFrom"]]
       effect    = "Allow"
     }
   }

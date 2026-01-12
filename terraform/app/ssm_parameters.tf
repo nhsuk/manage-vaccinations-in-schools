@@ -36,5 +36,7 @@ resource "aws_ssm_parameter" "cloudwatch_agent_config" {
   type        = "String"
   tier        = "Intelligent-Tiering"
   description = "CWAgent SSM Parameter for ECS Cluster: ${aws_ecs_cluster.cluster.name}"
-  value       = templatefile("templates/cloudwatch_agent_config.json.tpl", { log_group_name = aws_cloudwatch_log_group.ecs_log_group.name })
+  value = templatefile("templates/cloudwatch_agent_config.json.tpl", {
+    log_group_name = aws_cloudwatch_log_group.ecs_log_group.name
+  })
 }
