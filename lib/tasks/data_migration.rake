@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
 namespace :data_migration do
-  desc "Backfill NotifyLogEntry::Programme records"
-  task backfill_notify_log_entry_programmes: :environment do
-    DataMigration::BackfillNotifyLogEntryProgrammes.call
-  end
-
   desc "Update HPV health questions."
   task update_hpv_health_questions: :environment do
     ActiveRecord::Base.transaction do
