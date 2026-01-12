@@ -83,7 +83,11 @@ class SMSDeliveryJob < NotifyDeliveryJob
       recipient: phone_number,
       sent_by:,
       template_id:,
-      type: :sms
+      type: :sms,
+      notify_log_entry_programmes_attributes:
+        personalisation.programmes.map do
+          { programme_type: it.type, disease_types: it.disease_types }
+        end
     )
   end
 end
