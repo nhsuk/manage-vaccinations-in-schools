@@ -2,19 +2,21 @@
 
 class AppWarningCalloutComponent < ViewComponent::Base
   erb_template <<-ERB
-    <div class="nhsuk-warning-callout">
-      <h3 class="nhsuk-warning-callout__label">
-        <span role="text">
-          <span class="nhsuk-u-visually-hidden">Important: </span>
-          <%= @heading %>
-        </span>
-      </h3>
+    <div class="nhsuk-card nhsuk-card--warning">
+      <div class="nhsuk-card__content">
+        <h3 class="nhsuk-card__heading">
+          <span role="text">
+            <span class="nhsuk-u-visually-hidden">Important: </span>
+            <%= @heading %>
+          </span>
+        </h3>
 
-      <% if @description.present? %>
-        <p><%= @description %></p>
-      <% end %>
+        <% if @description.present? %>
+          <p><%= @description %></p>
+        <% end %>
 
-      <%= content %>
+        <%= content %>
+      </div>
     </div>
   ERB
 
