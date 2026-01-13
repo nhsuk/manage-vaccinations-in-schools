@@ -1,0 +1,67 @@
+@use "../vendor/nhsuk-frontend" as *;
+
+$_current-indicator-width: 4px;
+
+.app-sub-navigation {
+  @include nhsuk-font(16);
+}
+
+.app-sub-navigation__section {
+  margin: 0 0 nhsuk-spacing(4);
+  padding: 0;
+  list-style-type: none;
+
+  @include nhsuk-font(16);
+}
+
+.app-sub-navigation__link {
+  padding-top: nhsuk-spacing(1);
+  padding-bottom: nhsuk-spacing(1);
+
+  @include nhsuk-link-style-default;
+  @include nhsuk-link-style-no-visited-state;
+
+  &:link {
+    text-decoration: none;
+  }
+
+  &:not(:focus):hover {
+    color: $nhsuk-link-colour;
+  }
+}
+
+.app-sub-navigation__section-item {
+  margin-bottom: nhsuk-spacing(1);
+  padding-top: nhsuk-spacing(1);
+  padding-bottom: nhsuk-spacing(1);
+}
+
+.app-sub-navigation__section-item--current {
+  margin-left: -(nhsuk-spacing(2) + $_current-indicator-width);
+  padding-left: nhsuk-spacing(2);
+  border-left: $_current-indicator-width solid $nhsuk-link-colour;
+}
+
+.app-sub-navigation__link[aria-current] {
+  font-weight: bold;
+}
+
+.app-sub-navigation__section--nested {
+  margin-top: nhsuk-spacing(2);
+  margin-bottom: 0;
+  padding-left: nhsuk-spacing(4);
+}
+
+.app-sub-navigation__section--nested .app-sub-navigation__section-item::before {
+  content: "—";
+  margin-left: nhsuk-spacing(-4);
+  color: $nhsuk-secondary-text-colour;
+}
+
+.app-sub-navigation__theme {
+  margin: 0;
+  padding: nhsuk-spacing(2) nhsuk-spacing(3) nhsuk-spacing(2) 0;
+  color: $nhsuk-secondary-text-colour;
+
+  @include nhsuk-font(19, $weight: bold);
+}
