@@ -10,3 +10,9 @@
     @include nhsuk-font(14, $line-height: 1);
   }
 }
+
+.app-header__sub-service-name {
+  display: block;
+  margin-top: 3px;
+  font-size: 80%;
+}

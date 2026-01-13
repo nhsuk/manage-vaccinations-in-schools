@@ -121,7 +121,7 @@ describe "Upload-only team homepage and navigation" do
       "Manage vaccinations in schools (Mavis) National reporting"
     )
     expect(service_name.text).to eq(
-      "Manage vaccinations in schools – National reporting"
+      "Manage vaccinations in schoolsNational reporting"
     )
   end
 

@@ -9,7 +9,7 @@
         </svg>
         <span class="nhsuk-header__service-name">
           <% if @sub_service_name.present? %>
-            <%= @service_name %> – <%= @sub_service_name %>
+            <%= @service_name %><span class="app-header__sub-service-name"><%= @sub_service_name %></span>
           <% else %>
             <%= @service_name %>
           <% end %>
