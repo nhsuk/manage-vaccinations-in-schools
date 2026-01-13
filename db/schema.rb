@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_11_210238) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_13_123500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1095,7 +1095,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_11_210238) do
   add_foreign_key "notify_log_entries", "parents", on_delete: :nullify
   add_foreign_key "notify_log_entries", "patients"
   add_foreign_key "notify_log_entries", "users", column: "sent_by_user_id"
-  add_foreign_key "notify_log_entry_programmes", "notify_log_entries"
+  add_foreign_key "notify_log_entry_programmes", "notify_log_entries", on_delete: :cascade, validate: false
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
   add_foreign_key "patient_changesets", "locations", column: "school_id"
