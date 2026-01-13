@@ -376,6 +376,39 @@ describe StatusGenerator::Vaccination do
 
         it { should be(:due) }
       end
+
+      context "with three doses where the second is too early and the third is 28 days after the first" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
+        end
+
+        before do
+          create(
+            :vaccination_record,
+            patient:,
+            programme:,
+            performed_at: patient.date_of_birth + 2.years
+          )
+          # Invalid dose (too early)
+          create(
+            :vaccination_record,
+            patient:,
+            programme:,
+            performed_at: patient.date_of_birth + 2.years + 20.days
+          )
+          create(
+            :vaccination_record,
+            patient:,
+            programme:,
+            performed_at: patient.date_of_birth + 2.years + 28.days
+          )
+        end
+
+        it "is not vaccinated because the interval between dose 2 and 3 is too short" do
+          expect(generator.status).to eq(:due)
+        end
+      end
     end
 
     context "with an Td/IPV programme" do
