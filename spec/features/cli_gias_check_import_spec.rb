@@ -96,7 +96,8 @@ describe "mavis gias check_import" do
       "URNs of schools that will be closing, with future sessions:\n  100002"
     )
     expect(@output).to include(
-      "URNs of schools with year group changes, with future sessions:\n  100002"
+      "URNs of schools with year group changes, with future sessions:\n  100002:" \
+        "\n    Current:  [0, 1, 2, 3, 4, 5, 6]\n    New:      [0, 1, 2, 3, 4, 5, 6, 7, 8]"
     )
   end
 end
