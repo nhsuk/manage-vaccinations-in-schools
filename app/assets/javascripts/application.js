@@ -4,6 +4,7 @@ import {
   isSupported,
   Button,
   ErrorSummary,
+  FileUpload,
   Header,
   NotificationBanner,
   SkipLink,
@@ -57,6 +58,10 @@ function initialiseComponents() {
 
   if (!isInitialised("nhsuk-error-summary")) {
     createAll(ErrorSummary);
+  }
+
+  if (!isInitialised("nhsuk-file-upload")) {
+    createAll(FileUpload);
   }
 
   if (!isInitialised("nhsuk-header")) {
