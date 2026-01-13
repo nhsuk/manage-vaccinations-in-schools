@@ -94,7 +94,10 @@ describe "End-to-end journey" do
     navigation_items = page.all(".nhsuk-header__navigation-item")
     expect(navigation_items.count).to eq(9)
     expect(navigation_items[0]).to have_link("Schools", href: schools_path)
-    expect(navigation_items[8]).to have_link("Team", href: team_path)
+    expect(navigation_items[8]).to have_link(
+      "Team",
+      href: contact_details_team_path
+    )
   end
 
   def and_the_default_service_name
