@@ -1095,7 +1095,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_13_123500) do
   add_foreign_key "notify_log_entries", "parents", on_delete: :nullify
   add_foreign_key "notify_log_entries", "patients"
   add_foreign_key "notify_log_entries", "users", column: "sent_by_user_id"
-  add_foreign_key "notify_log_entry_programmes", "notify_log_entries", on_delete: :cascade, validate: false
+  add_foreign_key "notify_log_entry_programmes", "notify_log_entries", on_delete: :cascade
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
   add_foreign_key "patient_changesets", "locations", column: "school_id"
