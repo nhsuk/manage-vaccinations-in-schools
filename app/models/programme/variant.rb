@@ -56,4 +56,8 @@ class Programme::Variant < SimpleDelegator
   def snomed_target_disease_name
     SNOMED_TARGET_DISEASE_NAMES.fetch(variant_type)
   end
+
+  def flipper_id
+    "ProgrammeVariant:#{variant_type}"
+  end
 end
