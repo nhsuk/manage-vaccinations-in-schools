@@ -74,6 +74,8 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
   describe "with_correct_source_for_nhs_immunisations_api scope" do
     subject { VaccinationRecord.with_correct_source_for_nhs_immunisations_api }
 
+    before { Flipper.enable(:sync_national_reporting_to_imms_api) }
+
     let!(:vaccination_record) do
       create(:vaccination_record, programme:, session:)
     end
@@ -90,6 +92,16 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
       end
 
       it { should include(vaccination_record) }
+
+      context "with the sync_national_reporting_to_imms_api feature flag disabled" do
+        before { Flipper.disable(:sync_national_reporting_to_imms_api) }
+
+        let!(:vaccination_record) do
+          create(:vaccination_record, :sourced_from_bulk_upload, programme:)
+        end
+
+        it { should_not include(vaccination_record) }
+      end
     end
 
     context "when vaccination record was part of a historical upload" do
@@ -111,6 +123,8 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
 
   describe "#correct_source_to_nhs_immunisations_api?" do
     subject { vaccination_record.correct_source_for_nhs_immunisations_api? }
+
+    before { Flipper.enable(:sync_national_reporting_to_imms_api) }
 
     context "when the vaccination record is eligible to sync" do
       it { should be true }
@@ -139,6 +153,12 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
       end
 
       it { should be true }
+
+      context "with the sync_national_reporting_to_imms_api feature flag disabled" do
+        before { Flipper.disable(:sync_national_reporting_to_imms_api) }
+
+        it { should be false }
+      end
     end
 
     context "a vaccination record created because patient is already vaccinated" do

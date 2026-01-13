@@ -7,7 +7,11 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
     scope :with_correct_source_for_nhs_immunisations_api,
           -> do
             includes(:patient).then do
-              it.sourced_from_service.or(it.sourced_from_bulk_upload)
+              if Flipper.enabled?(:sync_national_reporting_to_imms_api)
+                it.sourced_from_service.or(it.sourced_from_bulk_upload)
+              else
+                it.sourced_from_service
+              end
             end
           end
 
@@ -34,7 +38,11 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
   end
 
   def correct_source_for_nhs_immunisations_api?
-    (sourced_from_service? || sourced_from_bulk_upload?)
+    sourced_from_service? ||
+      (
+        Flipper.enabled?(:sync_national_reporting_to_imms_api) &&
+          sourced_from_bulk_upload?
+      )
   end
 
   def sync_status

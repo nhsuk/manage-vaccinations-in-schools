@@ -43,6 +43,10 @@ reporting_api: Enables the Commissioner reporting component to authenticate to M
   Authorization Code Flow (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), and retrieve
   statistics from /api/reporting/
 
+sync_national_reporting_to_imms_api: |
+  Sync immunisations records uploaded as part of national reporting to the NHS
+  Immunisations API.
+
 testing_api: Basic API useful for automated testing.
 
 mmrv: Adds support for MMRV vaccinations

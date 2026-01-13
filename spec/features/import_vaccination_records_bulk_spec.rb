@@ -86,6 +86,7 @@ describe("National reporting immunisation imports") do
     Flipper.enable(:imms_api_integration)
     Flipper.enable(:imms_api_sync_job, Programme.flu)
     Flipper.enable(:imms_api_sync_job, Programme.hpv)
+    Flipper.enable(:sync_national_reporting_to_imms_api)
 
     @stubbed_post_request =
       stub_immunisations_api_post(Random.uuid, Random.uuid)
