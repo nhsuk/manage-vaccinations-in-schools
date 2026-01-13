@@ -60,20 +60,18 @@
   <% if @draft_vaccination_record.editing? %>
     <%= f.govuk_submit "Save changes" %>
   <% else %>
-    <div class="nhsuk-card">
-      <div class="nhsuk-card__content">
-        <%= f.govuk_text_area :notes,
-                              label: {
-                                text: "Notes (optional)",
-                                size: "m",
-                                class: "nhsuk-u-margin-bottom-3",
-                              },
-                              hint: {
-                                text: "For example, if the child had a reaction to the vaccine",
-                              },
-                              rows: 5 %>
-      </div>
-    </div>
+    <%= render AppCardComponent.new() do |card| %>
+      <%= f.govuk_text_area :notes,
+                            class: "nhsuk-u-margin-bottom-0",
+                            label: {
+                              text: "Notes (optional)",
+                              size: "m",
+                            },
+                            hint: {
+                              text: "For example, if the child had a reaction to the vaccine",
+                            },
+                            rows: 5 %>
+    <% end %>
 
     <%= f.govuk_submit "Confirm" %>
   <% end %>

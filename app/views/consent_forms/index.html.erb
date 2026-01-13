@@ -11,10 +11,10 @@
 <%= h1 t(".title"), size: "xl" %>
 
 <% if @consent_forms.any? %>
-  <div class="nhsuk-table__panel-with-heading-tab">
-    <h2 class="nhsuk-table__heading-tab">
+  <%= render AppCardComponent.new(feature: true) do |card| %>
+    <% card.with_heading(level: 2) do %>
       <%= pluralize(@pagy.count, "unmatched consent response") %>
-    </h2>
+    <% end %>
 
     <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
       <%= table.with_head do |head|
@@ -66,7 +66,7 @@
         <% end %>
       <% end %>
     <% end %>
-  </div>
+  <% end %>
 
   <%= render AppPaginationComponent.new(pagy: @pagy) %>
 <% else %>

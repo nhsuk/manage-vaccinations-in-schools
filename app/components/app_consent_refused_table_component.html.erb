@@ -1,5 +1,5 @@
-<div class="nhsuk-table__panel-with-heading-tab">
-  <h3 class="nhsuk-table__heading-tab">Reasons for refusal</h3>
+<%= render AppCardComponent.new(feature: true) do |card| %>
+  <% card.with_heading(level: 3) { "Reasons for refusal" } %>
 
   <%= govuk_table do |table| %>
     <% table.with_head do |head| %>
@@ -23,4 +23,4 @@
       <% end %>
     <% end %>
   <% end %>
-</div>
+<% end %>

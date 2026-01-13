@@ -7,7 +7,7 @@
    ) do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <div class="nhsuk-card__content">
+  <%= render AppCardComponent.new() do |card| %>
     <section>
       <h4 class="nhsuk-card__heading nhsuk-heading-s">
         Pre-screening checks
@@ -134,5 +134,5 @@
 
       <%= f.govuk_submit "Continue", class: "nhsuk-u-margin-bottom-0" %>
     </section>
-  </div>
+  <% end %>
 <% end %>
