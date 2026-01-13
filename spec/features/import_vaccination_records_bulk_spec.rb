@@ -82,12 +82,6 @@ describe("National reporting immunisation imports") do
     create(:vaccination_record, patient: @existing_patient, team: @team)
   end
 
-  def and_school_locations_exist
-    create(:school, urn: "110158")
-    create(:school, urn: "120026")
-    create(:school, urn: "144012")
-  end
-
   def and_sending_to_nhs_immunisations_api_is_enabled
     Flipper.enable(:imms_api_integration)
     Flipper.enable(:imms_api_sync_job, Programme.flu)
@@ -109,16 +103,6 @@ describe("National reporting immunisation imports") do
 
   def when_i_click_on_the_upload_link
     click_on "Upload records"
-  end
-
-  def when_i_click_on_the_imports_tab
-    click_on "Imports"
-  end
-
-  def and_i_choose_to_import_child_records
-    click_on "Upload records"
-    choose "Vaccination records"
-    click_on "Continue"
   end
 
   def then_i_should_see_the_upload_page
