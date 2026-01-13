@@ -73,6 +73,20 @@ describe AppPatientCardComponent do
 
     it { should have_content("Jenny Smith") }
     it { should have_content("Mum") }
+
+    context "with show_parents: false" do
+      let(:component) do
+        described_class.new(
+          Patient.find(patient.id),
+          current_team: team,
+          show_parents: false
+        )
+      end
+
+      it { should have_content("Child") }
+      it { should_not have_content("Jenny Smith") }
+      it { should_not have_content("Mum") }
+    end
   end
 
   context "when patient is too old for any programmes" do
