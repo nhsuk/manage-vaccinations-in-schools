@@ -26,12 +26,14 @@ module MavisCLI
             ),
           closed: Set.new,
           closing: Set.new,
-          year_group_changes: Set.new
+          year_group_changes: {
+          }
         }
         schools_without_future_sessions = {
           closed: Set.new,
           closing: Set.new,
-          year_group_changes: Set.new
+          year_group_changes: {
+          }
         }
 
         existing_schools = Set.new(Location.school.pluck(:urn))
@@ -125,11 +127,16 @@ URNs of schools that will be closing, with future sessions:
   #{schools_with_future_sessions[:closing].to_a.sort.join("\n  ")}
           OUTPUT
 
-        puts <<~OUTPUT if schools_with_future_sessions[:year_group_changes].any?
-
-URNs of schools with year group changes, with future sessions:
-  #{schools_with_future_sessions[:year_group_changes].to_a.sort.join("\n  ")}
-          OUTPUT
+        if schools_with_future_sessions[:year_group_changes].any?
+          puts "\nURNs of schools with year group changes, with future sessions:"
+          schools_with_future_sessions[
+            :year_group_changes
+          ].each do |urn, change|
+            puts "  #{urn}:"
+            puts "    Current:  #{change[:current]}"
+            puts "    New:      #{change[:new]}"
+          end
+        end
       end
 
       private
@@ -159,10 +166,15 @@ URNs of schools with year group changes, with future sessions:
 
         low_year_group = row["StatutoryLowAge"].to_i - 4
         high_year_group = row["StatutoryHighAge"].to_i - 5
+        new_year_groups = (low_year_group..high_year_group).to_a
 
-        if (low_year_group..high_year_group).to_a !=
-             Location.school.find_by(urn:).gias_year_groups
-          school_set[:year_group_changes] << urn
+        current_year_groups = Location.school.find_by(urn:).gias_year_groups
+
+        if new_year_groups != current_year_groups
+          school_set[:year_group_changes][urn] = {
+            current: current_year_groups,
+            new: new_year_groups
+          }
         end
       end
     end
