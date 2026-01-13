@@ -5,7 +5,7 @@
 <% title = "Have you imported historical vaccination records for #{@draft_session.programmes.map(&:name).to_sentence}?" %>
 <% content_for :page_title, title %>
 
-<%= govuk_panel(title_text: title, classes: %w[app-panel--interruption]) do %>
+<%= govuk_panel(title_text: title, classes: %w[nhsuk-panel--interruption]) do %>
   <p>
     <%= @catch_up_patients_vaccinated_percentage == 0 ? "" : "Only " %>
     <%= @catch_up_patients_vaccinated_percentage %>% of children in
