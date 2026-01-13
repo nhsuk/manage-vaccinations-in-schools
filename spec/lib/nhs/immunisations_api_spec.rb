@@ -740,6 +740,12 @@ describe NHS::ImmunisationsAPI do
       it { should be false }
     end
 
+    context "when notify_parents is not set" do
+      let(:notify_parents) { nil }
+
+      it { should be true }
+    end
+
     context "when the patient is invalidated" do
       before { patient.update(invalidated_at: Time.current) }
 

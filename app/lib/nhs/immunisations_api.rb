@@ -266,7 +266,7 @@ module NHS::ImmunisationsAPI
         vaccination_record.administered? &&
         Flipper.enabled?(:imms_api_sync_job, vaccination_record.programme) &&
         (ignore_nhs_number || vaccination_record.patient.nhs_number.present?) &&
-        vaccination_record.notify_parents &&
+        vaccination_record.notify_parents != false &&
         vaccination_record.patient.not_invalidated?
     end
 
