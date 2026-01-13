@@ -24,6 +24,11 @@ class API::Testing::TeamsController < API::Testing::BaseController
     log_destroy(ImportantNotice.where(team:))
 
     log_destroy(
+      NotifyLogEntry::Programme.where(
+        notify_log_entry_id: NotifyLogEntry.joins(:team_location).where(team_location: { team_id: })
+      )
+    )
+    log_destroy(
       NotifyLogEntry.joins(:team_location).where(team_location: { team_id: })
     )
     log_destroy(ConsentForm.for_team(team))
@@ -63,9 +68,6 @@ class API::Testing::TeamsController < API::Testing::BaseController
     log_destroy(ConsentNotification.where(patient_id: patient_ids))
     log_destroy(GillickAssessment.where(patient_id: patient_ids))
     log_destroy(Note.where(patient_id: patient_ids))
-    # In local dev we can end up with NotifyLogEntries without a patient
-    log_destroy(NotifyLogEntry.where(patient_id: nil))
-    log_destroy(NotifyLogEntry.where(patient_id: patient_ids))
     log_destroy(PatientChangeset.where(patient_id: patient_ids))
     log_destroy(PatientLocation.where(patient_id: patient_ids))
     log_destroy(PatientSpecificDirection.where(patient_id: patient_ids))
@@ -76,6 +78,21 @@ class API::Testing::TeamsController < API::Testing::BaseController
     log_destroy(VaccinationRecord.where(patient_id: patient_ids))
     log_destroy(Triage.where(patient_id: patient_ids))
     log_destroy(ImportantNotice.where(patient_id: patient_ids))
+
+      # In local dev we can end up with NotifyLogEntries without a patient
+    log_destroy(
+      NotifyLogEntry::Programme.where(
+        notify_log_entry_id: NotifyLogEntry.where(patient_id: nil)
+      )
+    )
+    log_destroy(NotifyLogEntry.where(patient_id: nil))
+
+    log_destroy(
+      NotifyLogEntry::Programme.where(
+        notify_log_entry_id: NotifyLogEntry.where(patient_id: patient_ids)
+      )
+    )
+    log_destroy(NotifyLogEntry.where(patient_id: patient_ids))
 
     log_destroy(ParentRelationship.where(patient_id: patient_ids))
     log_destroy(Patient.where(id: patient_ids))
