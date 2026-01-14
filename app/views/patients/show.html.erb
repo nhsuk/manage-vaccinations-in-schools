@@ -29,7 +29,6 @@
       @patient,
       current_team:,
       show_parents: !current_team.has_upload_only_access?,
-      show_add_parent: !current_team.has_upload_only_access?,
     ) do %>
   <% if @patient.not_archived?(team: current_team) %>
     <div class="nhsuk-button-group">
