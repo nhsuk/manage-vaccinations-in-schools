@@ -31,11 +31,9 @@ module ContributesToPatientTeams
           },
           vaccination_record_organisation: {
             patient_id_source: "vaccination_records.patient_id",
-            team_id_source: "tms.id",
+            team_id_source: "teams.id",
             contribution_scope:
-              joins(join_teams_to_vaccinations_via_organisation).where(
-                session_id: nil
-              )
+              joins_teams_on_performed_ods_code.where(session_id: nil)
           },
           vaccination_record_import: {
             patient_id_source: "vaccination_records.patient_id",
@@ -293,15 +291,6 @@ module ContributesToPatientTeams
       <<-SQL
       INNER JOIN vaccination_records vacs
         ON vacs.performed_ods_code = organisations.ods_code
-      SQL
-    end
-
-    def join_teams_to_vaccinations_via_organisation
-      <<-SQL
-      INNER JOIN organisations org
-          ON vaccination_records.performed_ods_code = org.ods_code
-      INNER JOIN teams tms
-          ON org.id = tms.organisation_id
       SQL
     end
 

@@ -134,6 +134,16 @@ class VaccinationRecord < ApplicationRecord
   after_update :recalculate_next_dose_delay_triage_date,
                if: :saved_change_to_performed_at?
 
+  scope :joins_organisation_on_performed_ods_code, -> { joins(<<-SQL) }
+    INNER JOIN organisations organisation
+    ON vaccination_records.performed_ods_code = organisation.ods_code
+  SQL
+
+  scope :joins_teams_on_performed_ods_code,
+        -> { joins_organisation_on_performed_ods_code.joins(<<-SQL) }
+    INNER JOIN teams ON organisation.id = teams.organisation_id
+  SQL
+
   scope :for_academic_year,
         ->(academic_year) do
           where(performed_at: academic_year.to_academic_year_date_range)
