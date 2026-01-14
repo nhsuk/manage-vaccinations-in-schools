@@ -253,6 +253,16 @@ describe "Edit vaccination record" do
       and_i_click_on_save_changes
       then_the_delayed_triage_is_updated_accordingly
     end
+
+    scenario "Parent details are visible when viewing vaccination records" do
+      given_i_am_signed_in
+      and_an_administered_vaccination_record_exists
+      and_the_patient_has_parents
+
+      when_i_go_to_the_vaccination_record_for_the_patient
+      then_i_should_see_the_vaccination_record
+      and_i_should_see_parent_details
+    end
   end
 
   context "in bulk upload Mavis" do
@@ -275,6 +285,16 @@ describe "Edit vaccination record" do
 
       when_i_click_on_save_changes
       then_i_should_see_the_vaccination_record
+    end
+
+    scenario "Parent details are not visible when viewing vaccination records" do
+      given_i_am_signed_in
+      and_a_bulk_uploaded_vaccination_record_exists
+      and_the_patient_has_parents
+
+      when_i_go_to_the_vaccination_record_for_the_patient
+      then_i_should_see_the_vaccination_record
+      and_i_should_not_see_parent_details
     end
   end
 
@@ -672,5 +692,21 @@ describe "Edit vaccination record" do
     expect(@delayed_triage.notes).to eq(
       "Next dose #{expected_delay_date.strftime("%d %B %Y")}"
     )
+  end
+
+  def and_the_patient_has_parents
+    @parent =
+      create(:parent, email: "parent@example.com", full_name: "Jane Smith")
+    create(:parent_relationship, patient: @patient, parent: @parent)
+  end
+
+  def and_i_should_see_parent_details
+    expect(page).to have_content("First parent or guardian")
+    expect(page).to have_content("Jane Smith")
+  end
+
+  def and_i_should_not_see_parent_details
+    expect(page).not_to have_content("First parent or guardian")
+    expect(page).not_to have_content("Second parent or guardian")
   end
 end

@@ -4,7 +4,7 @@
 
 <%= h1 @patient.full_name %>
 
-<%= render AppPatientCardComponent.new(@patient, current_team:) %>
+<%= render AppPatientCardComponent.new(@patient, current_team:, show_parents: !current_team.has_upload_only_access?) %>
 
 <%= render AppCardComponent.new do |c| %>
   <% c.with_heading { "Vaccination details" } %>
