@@ -8,37 +8,15 @@ permissions: {}
 
 jobs:
   run-test-suites-check:
-    name: Check if Rails tests need to run
+    name: Check if E2E test is required
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Determine if rails tests are needed
-        id: check-rails-relevant-changes
-        continue-on-error: true
-        run: |
-          if [ ${{ github.event_name }} == "pull_request" ]; then
-            git fetch origin
-            RELEVANT_DIRS=$(git diff origin/${{ github.event.pull_request.base.ref }}...HEAD --name-only)
-            if [ -z "$(echo "$RELEVANT_DIRS" | egrep -v "^(.github|adr|aws|docs|storage|terraform)/")" ]; then
-              echo "No relevant changes detected, skipping rails tests"
-              echo "RUN_TEST_SUITES=false" >> $GITHUB_ENV
-              exit 0
-            fi
-          fi
-          echo "Not a pull request or detected relevant changes: Running rails tests"
-          echo "RUN_TEST_SUITES=true" >> $GITHUB_ENV
-      - name: Run rails tests if diff check fails
-        id: check-rails-relevant-changes-failure
-        run: |
-          if [[ ${{ steps.check-rails-relevant-changes.outcome }} == failure ]]; then
-            echo "RUN_TEST_SUITES=true" >> $GITHUB_OUTPUT
-          else
-            echo "RUN_TEST_SUITES=$RUN_TEST_SUITES" >> $GITHUB_OUTPUT
-          fi
+      - name: Check if Rails tests need to run
+        id: check
+        uses: ./.github/actions/run-test-suites-check
     outputs:
-      run-test-suites: ${{ steps.check-rails-relevant-changes-failure.outputs.RUN_TEST_SUITES }}
+      run-test-suites: ${{ steps.check.outputs.run-test-suites }}
 
   rspec:
     name: RSpec
@@ -83,19 +61,6 @@ jobs:
         run: bundle exec rspec -t local_users
         env:
           MAVIS__CIS2__ENABLED: false
-  end-to-end:
-    name: End to End
-    needs: run-test-suites-check
-    if: ${{ needs.run-test-suites-check.outputs.run-test-suites == 'true' && github.event_name != 'push' }}
-    permissions:
-      id-token: write
-      contents: write
-    uses: ./.github/workflows/end-to-end-tests.yml
-    with:
-      git_reference_for_database_image: ${{ github.event.pull_request.base.ref }}
-    secrets:
-      HTTP_AUTH_TOKEN_FOR_TESTS: ${{ secrets.HTTP_AUTH_TOKEN_FOR_TESTS }}
-      MAVIS_TESTING_REPO_ACCESS_TOKEN: ${{ secrets.MAVIS_TESTING_REPO_ACCESS_TOKEN }}
 
   seeds:
     name: Seeds
