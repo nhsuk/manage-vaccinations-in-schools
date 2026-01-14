@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 class ConsentFormPolicy < ApplicationPolicy
+  def index? = team.has_poc_only_access?
+
+  def create? = team.has_poc_only_access?
+
+  def show? = team.has_poc_only_access?
+
+  def update? = team.has_poc_only_access?
+
   def search? = show?
 
   def download? = show?
@@ -19,10 +27,7 @@ class ConsentFormPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      team = user.selected_team
-      return scope.none if team.nil?
-
-      scope.for_team(team)
+      team ? scope.for_team(team) : scope.none
     end
   end
 end

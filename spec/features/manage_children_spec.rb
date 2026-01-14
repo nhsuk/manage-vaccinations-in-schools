@@ -684,7 +684,9 @@ describe "Manage children" do
   end
 
   def then_i_see_permission_denied
-    expect(page.status_code).to eq(403)
+    expect(page).to have_content(
+      "You are not authorized to perform this action."
+    )
   end
 
   def when_i_click_on_notices
