@@ -42,20 +42,20 @@ class VaccinationRecordsController < ApplicationController
 
   def set_vaccination_record
     @vaccination_record =
-      policy_scope(VaccinationRecord).includes(
-        :batch,
-        :immunisation_imports,
-        :location,
-        :performed_by_user,
-        :session,
-        :vaccine,
-        patient: [
-          :gp_practice,
-          :school,
-          :vaccination_records,
-          { parent_relationships: :parent }
-        ]
-      ).find(params[:id])
+      authorize policy_scope(VaccinationRecord).includes(
+                  :batch,
+                  :immunisation_imports,
+                  :location,
+                  :performed_by_user,
+                  :session,
+                  :vaccine,
+                  patient: [
+                    :gp_practice,
+                    :school,
+                    :vaccination_records,
+                    { parent_relationships: :parent }
+                  ]
+                ).find(params[:id])
 
     @patient = @vaccination_record.patient
     @programme = @vaccination_record.programme

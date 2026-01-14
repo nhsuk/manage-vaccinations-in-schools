@@ -372,6 +372,7 @@ describe ImmunisationImport do
           given_name: "Chyna",
           family_name: "Pickle",
           date_of_birth: Date.new(2012, 9, 12),
+          address_postcode: "LE3 2DA",
           nhs_number: nil
         )
       end
@@ -395,6 +396,7 @@ describe ImmunisationImport do
           given_name: "chyna",
           family_name: "PICKLE",
           date_of_birth: Date.new(2012, 9, 12),
+          address_postcode: "LE3 2DA",
           nhs_number: nil
         )
       end

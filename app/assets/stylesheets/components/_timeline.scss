@@ -26,25 +26,28 @@ $_timeline-border-width: 2px;
   width: _dot-size($size);
 
   height: _dot-size($size);
-  margin-top: if($size == "default", $mt, $mt-small);
-  margin-right: if(
-    $size == "default",
-    nhsuk-spacing(4),
-    nhsuk-spacing(4) + 2px
-  );
   margin-left: _dot-ml(_dot-size($size));
+
+  @if $size == "default" {
+    margin-top: $mt;
+    margin-right: nhsuk-spacing(4);
+  } @else {
+    margin-top: $mt-small;
+    margin-right: nhsuk-spacing(4) + 2px;
+  }
 
   @include nhsuk-media-query($from: tablet) {
     $tablet: _dot-size($size) + 4px;
     width: $tablet;
 
     height: $tablet;
-    margin-top: if(
-      $size == "default",
-      _dot-mt-tablet($mt),
-      _dot-mt-tablet($mt-small)
-    );
     margin-left: _dot-ml($tablet);
+
+    @if $size == "default" {
+      margin-top: dot-mt-tablet($mt);
+    } @else {
+      margin-top: dot-mt-tablet($mt-small);
+    }
   }
 }
 

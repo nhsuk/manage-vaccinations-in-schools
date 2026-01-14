@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_08_150039) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_13_123500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -536,6 +536,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_08_150039) do
     t.index ["sent_by_user_id"], name: "index_notify_log_entries_on_sent_by_user_id"
   end
 
+  create_table "notify_log_entry_programmes", primary_key: ["notify_log_entry_id", "programme_type"], force: :cascade do |t|
+    t.enum "disease_types", null: false, array: true, enum_type: "disease_type"
+    t.bigint "notify_log_entry_id", null: false
+    t.enum "programme_type", null: false, enum_type: "programme_type"
+    t.index ["notify_log_entry_id"], name: "index_notify_log_entry_programmes_on_notify_log_entry_id"
+  end
+
   create_table "organisations", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ods_code", null: false
@@ -746,7 +753,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_08_150039) do
   create_table "pre_screenings", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date", null: false
-    t.enum "disease_types", array: true, enum_type: "disease_type"
+    t.enum "disease_types", null: false, array: true, enum_type: "disease_type"
     t.bigint "location_id", null: false
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
@@ -890,6 +897,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_08_150039) do
     t.integer "academic_year", null: false
     t.datetime "created_at", null: false
     t.date "delay_vaccination_until"
+    t.enum "disease_types", array: true, enum_type: "disease_type"
     t.datetime "invalidated_at"
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false
@@ -1087,6 +1095,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_08_150039) do
   add_foreign_key "notify_log_entries", "parents", on_delete: :nullify
   add_foreign_key "notify_log_entries", "patients"
   add_foreign_key "notify_log_entries", "users", column: "sent_by_user_id"
+  add_foreign_key "notify_log_entry_programmes", "notify_log_entries", on_delete: :cascade
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
   add_foreign_key "patient_changesets", "locations", column: "school_id"

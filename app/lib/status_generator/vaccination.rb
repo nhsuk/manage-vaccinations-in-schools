@@ -179,10 +179,18 @@ class StatusGenerator::Vaccination
 
     return [] if first_dose.nil?
 
+    # The second dose must be at least 28 days after the most recent dose
     second_dose =
-      sorted_vaccination_records.find do
-        it.performed_at > first_dose.performed_at + 28.days &&
-          patient.age_months(now: it.performed_at) >= 15
+      sorted_vaccination_records.find do |record|
+        next if record.performed_at <= first_dose.performed_at
+
+        previous_dose =
+          sorted_vaccination_records
+            .select { it.performed_at < record.performed_at }
+            .last
+
+        record.performed_at >= previous_dose.performed_at + 28.days &&
+          patient.age_months(now: record.performed_at) >= 15
       end
 
     [second_dose, first_dose].compact

@@ -48,6 +48,11 @@ module NavigationConcern
         path: school_moves_path,
         count: @cached_counts.school_moves
       }
+
+      @navigation_items << {
+        title: t("reports.index.title"),
+        path: reports_path
+      }
     end
 
     if current_team
@@ -60,8 +65,8 @@ module NavigationConcern
 
     if current_team&.has_poc_only_access?
       @navigation_items << {
-        title: t("programmes.index.title"),
-        path: programmes_path
+        title: I18n.t("teams.show.title_short"),
+        path: team_path
       }
     end
 
@@ -69,13 +74,6 @@ module NavigationConcern
       @navigation_items << {
         title: t("patients.index.title"),
         path: patients_path
-      }
-    end
-
-    if current_team
-      @navigation_items << {
-        title: I18n.t("teams.show.title_short"),
-        path: team_path
       }
     end
   end

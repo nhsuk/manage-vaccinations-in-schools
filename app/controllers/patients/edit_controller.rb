@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 class Patients::EditController < Patients::BaseController
-  before_action :set_patient_merge_form, except: :edit_nhs_number
-  before_action :set_existing_patient, except: :edit_nhs_number
+  before_action :authorize_patient
+  before_action :set_patient_merge_form,
+                only: %i[update_nhs_number update_nhs_number_merge]
+  before_action :set_existing_patient,
+                only: %i[update_nhs_number update_nhs_number_merge]
+  before_action :set_eligible_schools, only: :edit_school
 
   def edit_nhs_number
     render :nhs_number
@@ -34,7 +38,44 @@ class Patients::EditController < Patients::BaseController
     end
   end
 
+  def edit_school
+    render :school
+  end
+
+  def update_school
+    if school_id == "home_schooled"
+      @patient.home_educated = true
+      @patient.school_id = nil
+    elsif school_id == "unknown"
+      @patient.home_educated = false
+      @patient.school_id = nil
+    else
+      @patient.home_educated = nil
+      @patient.school_id = school_id.presence
+    end
+
+    redirect_to edit_patient_path(@patient) and return unless @patient.changed?
+
+    if @patient.valid?
+      SchoolMove.new(
+        academic_year: AcademicYear.current,
+        patient: @patient,
+        school: @patient.school,
+        home_educated: @patient.home_educated,
+        team: current_team
+      ).confirm!(user: current_user)
+
+      redirect_to edit_patient_path(@patient)
+    else
+      render :school, status: :unprocessable_content
+    end
+  end
+
   private
+
+  def authorize_patient
+    authorize @patient
+  end
 
   def set_patient_merge_form
     @form = PatientMergeForm.new(current_user:, patient: @patient, nhs_number:)
@@ -47,5 +88,19 @@ class Patients::EditController < Patients::BaseController
   def nhs_number
     params.dig(:patient, :nhs_number) ||
       params.dig(:patient_merge_form, :nhs_number)
+  end
+
+  def school_id
+    params.dig(:patient, :school_id)
+  end
+
+  def set_eligible_schools
+    year_group = @patient.birth_academic_year.to_year_group
+    @eligible_schools =
+      current_team
+        .schools
+        .joins(:location_year_groups)
+        .where(location_year_groups: { value: year_group })
+        .distinct
   end
 end

@@ -4,6 +4,7 @@ class AppChildSummaryComponent < ViewComponent::Base
   def initialize(
     child,
     current_team: nil,
+    show_add_parent: false,
     show_parents: false,
     show_school_and_year_group: true,
     change_links: {},
@@ -12,120 +13,143 @@ class AppChildSummaryComponent < ViewComponent::Base
     @child = child
     @current_team = current_team
     @show_parents = show_parents
+    @show_add_parent = show_add_parent
     @show_school_and_year_group = show_school_and_year_group
     @change_links = change_links
     @remove_links = remove_links
   end
 
   def call
-    govuk_summary_list(
-      actions:
-        @change_links.present? || @remove_links.present? ||
-          pds_search_history_link.present?
-    ) do |summary_list|
-      summary_list.with_row do |row|
-        row.with_key { "NHS number" }
-        row.with_value { format_nhs_number }
-        if (href = @change_links[:nhs_number])
-          row.with_action(
-            text: "Change",
-            href:,
-            visually_hidden_text: "NHS number"
-          )
-        elsif (href = pds_search_history_link)
-          row.with_action(text: "PDS history", href:)
-        end
-      end
-
-      if archive_reason && !@current_team.has_upload_only_access?
-        summary_list.with_row do |row|
-          row.with_key { "Archive reason" }
-          row.with_value { format_archive_reason }
-        end
-      end
-
-      summary_list.with_row do |row|
-        row.with_key { "Full name" }
-        row.with_value { format_full_name }
-      end
-      if @child.has_preferred_name? || @child.preferred_full_name_changed?
-        summary_list.with_row do |row|
-          row.with_key { "Known as" }
-          row.with_value { format_preferred_full_name }
-        end
-      end
-      summary_list.with_row do |row|
-        row.with_key { "Date of birth" }
-        row.with_value { format_date_of_birth }
-      end
-      if @child.try(:deceased?)
-        summary_list.with_row do |row|
-          row.with_key { "Date of death" }
-          row.with_value { format_date_of_death }
-        end
-      end
-      if @child.respond_to?(:gender_code)
-        summary_list.with_row do |row|
-          row.with_key { "Gender" }
-          row.with_value { format_gender_code }
-        end
-      end
-      unless @child.try(:restricted?)
-        summary_list.with_row do |row|
-          row.with_key { "Address" }
-          row.with_value { format_address }
-        end
-      end
-      if @show_school_and_year_group
-        summary_list.with_row do |row|
-          row.with_key { "School" }
-          row.with_value { format_school }
-        end
-        if @child.respond_to?(:year_group)
-          summary_list.with_row do |row|
-            row.with_key { "Year group" }
-            row.with_value { format_year_group }
-          end
-        end
-      end
-      if (gp_practice = @child.try(:gp_practice))
-        summary_list.with_row do |row|
-          row.with_key { "GP surgery" }
-          row.with_value { gp_practice.name }
-        end
-      end
-      if @show_parents && !@child.restricted?
-        @child.parent_relationships.each do |parent_relationship|
-          summary_list.with_row do |row|
-            row.with_key { parent_relationship.ordinal_label.upcase_first }
-            row.with_value do
-              format_parent_with_relationship(parent_relationship)
+    tag.div do
+      safe_join(
+        [
+          govuk_summary_list(
+            actions:
+              @change_links.present? || @remove_links.present? ||
+                pds_search_history_link.present?
+          ) do |summary_list|
+            summary_list.with_row do |row|
+              row.with_key { "NHS number" }
+              row.with_value { format_nhs_number }
+              if (href = @change_links[:nhs_number])
+                row.with_action(
+                  text: "Change",
+                  href:,
+                  visually_hidden_text: "NHS number"
+                )
+              elsif (href = pds_search_history_link)
+                row.with_action(text: "PDS history", href:)
+              end
             end
 
-            if (
-                 href =
-                   @change_links.dig(:parent, parent_relationship.parent_id)
-               )
-              row.with_action(
-                text: "Change",
-                href:,
-                visually_hidden_text: parent_relationship.ordinal_label
-              )
+            if archive_reason && !@current_team.has_upload_only_access?
+              summary_list.with_row do |row|
+                row.with_key { "Archive reason" }
+                row.with_value { format_archive_reason }
+              end
             end
 
-            if (
-                 href =
-                   @remove_links.dig(:parent, parent_relationship.parent_id)
-               )
-              row.with_action(
-                text: "Remove",
-                href:,
-                visually_hidden_text: parent_relationship.ordinal_label
-              )
+            summary_list.with_row do |row|
+              row.with_key { "Full name" }
+              row.with_value { format_full_name }
             end
-          end
-        end
-      end
+            if @child.has_preferred_name? || @child.preferred_full_name_changed?
+              summary_list.with_row do |row|
+                row.with_key { "Known as" }
+                row.with_value { format_preferred_full_name }
+              end
+            end
+            summary_list.with_row do |row|
+              row.with_key { "Date of birth" }
+              row.with_value { format_date_of_birth }
+            end
+            if @child.try(:deceased?)
+              summary_list.with_row do |row|
+                row.with_key { "Date of death" }
+                row.with_value { format_date_of_death }
+              end
+            end
+            if @child.respond_to?(:gender_code)
+              summary_list.with_row do |row|
+                row.with_key { "Gender" }
+                row.with_value { format_gender_code }
+              end
+            end
+            unless @child.try(:restricted?)
+              summary_list.with_row do |row|
+                row.with_key { "Address" }
+                row.with_value { format_address }
+              end
+            end
+            if @show_school_and_year_group
+              summary_list.with_row do |row|
+                row.with_key { "School" }
+                row.with_value { format_school }
+                if (href = @change_links[:school])
+                  row.with_action(
+                    text: "Change",
+                    href:,
+                    visually_hidden_text: "School"
+                  )
+                end
+              end
+              if @child.respond_to?(:year_group)
+                summary_list.with_row do |row|
+                  row.with_key { "Year group" }
+                  row.with_value { format_year_group }
+                end
+              end
+            end
+            if (gp_practice = @child.try(:gp_practice))
+              summary_list.with_row do |row|
+                row.with_key { "GP surgery" }
+                row.with_value { gp_practice.name }
+              end
+            end
+            if @show_parents && !@child.restricted?
+              @child.parent_relationships.each do |parent_relationship|
+                summary_list.with_row do |row|
+                  row.with_key do
+                    parent_relationship.ordinal_label.upcase_first
+                  end
+                  row.with_value do
+                    format_parent_with_relationship(parent_relationship)
+                  end
+
+                  if (
+                       href =
+                         @change_links.dig(
+                           :parent,
+                           parent_relationship.parent_id
+                         )
+                     )
+                    row.with_action(
+                      text: "Edit",
+                      href:,
+                      visually_hidden_text: parent_relationship.ordinal_label
+                    )
+                  end
+
+                  if (
+                       href =
+                         @remove_links.dig(
+                           :parent,
+                           parent_relationship.parent_id
+                         )
+                     )
+                    row.with_action(
+                      text: "Remove",
+                      href:,
+                      visually_hidden_text: parent_relationship.ordinal_label
+                    )
+                  end
+                end
+              end
+            end
+          end,
+          @show_add_parent ? add_parent_button : nil
+        ].compact
+      )
     end
   end
 
@@ -133,12 +157,21 @@ class AppChildSummaryComponent < ViewComponent::Base
 
   delegate :format_address_multi_line,
            :format_parent_with_relationship,
+           :govuk_button_to,
            :govuk_summary_list,
            :patient_date_of_birth,
            :patient_nhs_number,
            :patient_school,
            :patient_year_group,
            to: :helpers
+
+  def add_parent_button
+    helpers.link_to(
+      "Add parent or guardian",
+      new_patient_parent_relationship_path(@child),
+      class: "nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-4"
+    )
+  end
 
   def academic_year = AcademicYear.pending
 

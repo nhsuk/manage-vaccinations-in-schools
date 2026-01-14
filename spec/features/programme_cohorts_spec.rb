@@ -104,9 +104,7 @@ describe "Programme" do
   end
 
   def when_i_visit_the_overview_page
-    visit "/dashboard"
-    click_on "Programmes", match: :first
-    click_on "HPV"
+    visit programme_overview_path(@programme, @academic_year)
   end
 
   def when_i_visit_the_sessions_page

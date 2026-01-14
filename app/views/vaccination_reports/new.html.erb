@@ -20,9 +20,9 @@
 
   <div class="nhsuk-u-margin-bottom-8">
     <%= f.govuk_collection_radio_buttons :programme_type,
-                                         Programme::TYPES,
-                                         :itself,
-                                         ->(type) { I18n.t(type, scope: :programme_types) },
+                                         Programme.all,
+                                         :type,
+                                         :name,
                                          legend: { text: "Programme", size: "m" } %>
   </div>
 

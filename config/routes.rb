@@ -54,9 +54,9 @@ Rails.application.routes.draw do
   end
   mount Sidekiq::Web => "/sidekiq"
 
-  get "/start", to: "pages#start"
+  get "/start", to: "start#index"
   get "/dashboard", to: "dashboard#index"
-  get "/accessibility-statement", to: "content#accessibility_statement"
+  get "/accessibility-statement", to: "accessibility_statement#index"
 
   get "/manifest/:name-:digest.json", to: "manifest#show", as: :manifest
   get "/manifest/:name.json", to: "manifest#show"
@@ -199,7 +199,7 @@ Rails.application.routes.draw do
 
     resources :parent_relationships,
               path: "parents",
-              only: %i[edit update destroy] do
+              only: %i[new create edit update destroy] do
       get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
     end
 
@@ -217,6 +217,9 @@ Rails.application.routes.draw do
       put "edit/nhs-number-merge",
           controller: "patients/edit",
           action: "update_nhs_number_merge"
+
+      get "edit/school", controller: "patients/edit", action: "edit_school"
+      put "edit/school", controller: "patients/edit", action: "update_school"
     end
   end
 
@@ -235,6 +238,8 @@ Rails.application.routes.draw do
       resources :sessions, path: ":academic_year/sessions", only: :index
     end
   end
+
+  resources :reports, only: :index
 
   resources :school_moves, path: "school-moves", only: %i[index show update]
   resources :school_move_exports,

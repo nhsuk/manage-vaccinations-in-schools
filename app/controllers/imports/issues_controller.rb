@@ -11,6 +11,7 @@ class Imports::IssuesController < ApplicationController
   layout "full"
 
   def index
+    authorize %i[import issue]
   end
 
   def show
@@ -55,6 +56,8 @@ class Imports::IssuesController < ApplicationController
       else
         @patients.find(params[:id])
       end
+
+    authorize @record, policy_class: Import::IssuePolicy
   end
 
   def set_vaccination_record

@@ -5,7 +5,7 @@ class Programmes::ReportsController < Programmes::BaseController
 
   def create
     vaccination_report =
-      VaccinationReport.new(request_session: session, current_user:)
+      authorize VaccinationReport.new(request_session: session, current_user:)
 
     vaccination_report.clear_attributes
     vaccination_report.update!(

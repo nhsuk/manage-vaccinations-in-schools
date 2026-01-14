@@ -3,254 +3,279 @@
 describe "Edit vaccination record" do
   around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
 
-  before { given_an_hpv_programme_is_underway }
+  context "in full-fat Mavis" do
+    before { given_an_hpv_programme_is_underway }
 
-  scenario "User edits a new vaccination record" do
-    given_i_am_signed_in
-    and_an_administered_vaccination_record_exists
-    and_imms_api_sync_job_feature_is_enabled
+    scenario "User edits a new vaccination record" do
+      given_i_am_signed_in
+      and_an_administered_vaccination_record_exists
+      and_imms_api_sync_job_feature_is_enabled
 
-    when_i_go_to_the_vaccination_record_for_the_patient
-    then_i_should_see_the_vaccination_record
+      when_i_go_to_the_vaccination_record_for_the_patient
+      then_i_should_see_the_vaccination_record
 
-    when_i_click_on_edit_vaccination_record
-    then_i_see_the_edit_vaccination_record_page
+      when_i_click_on_edit_vaccination_record
+      then_i_see_the_edit_vaccination_record_page
 
-    when_i_click_back
-    then_i_should_see_the_vaccination_record
-    and_i_click_on_edit_vaccination_record
-    then_i_see_the_edit_vaccination_record_page
+      when_i_click_back
+      then_i_should_see_the_vaccination_record
+      and_i_click_on_edit_vaccination_record
+      then_i_see_the_edit_vaccination_record_page
 
-    when_i_click_on_change_date
-    then_i_should_see_the_date_time_form
+      when_i_click_on_change_date
+      then_i_should_see_the_date_time_form
 
-    when_i_fill_in_an_invalid_date
-    then_i_see_the_date_time_form_with_errors
+      when_i_fill_in_an_invalid_date
+      then_i_see_the_date_time_form_with_errors
 
-    when_i_fill_in_an_invalid_time
-    then_i_see_the_date_time_form_with_errors
+      when_i_fill_in_an_invalid_time
+      then_i_see_the_date_time_form_with_errors
 
-    when_i_fill_in_a_valid_date_and_time
-    then_i_see_the_edit_vaccination_record_page
-    and_i_should_see_the_updated_date_time
+      when_i_fill_in_a_valid_date_and_time
+      then_i_see_the_edit_vaccination_record_page
+      and_i_should_see_the_updated_date_time
 
-    when_i_click_on_change_batch
-    and_i_choose_a_batch
-    then_i_see_the_edit_vaccination_record_page
-    and_i_should_see_the_updated_batch
+      when_i_click_on_change_batch
+      and_i_choose_a_batch
+      then_i_see_the_edit_vaccination_record_page
+      and_i_should_see_the_updated_batch
 
-    when_i_click_change_notes
-    and_i_enter_some_notes
-    then_i_see_the_edit_vaccination_record_page
+      when_i_click_change_notes
+      and_i_enter_some_notes
+      then_i_see_the_edit_vaccination_record_page
 
-    when_i_click_on_save_changes
-    then_the_parent_doesnt_receive_an_email
-    and_the_vaccination_record_is_synced_to_nhs
+      when_i_click_on_save_changes
+      then_the_parent_doesnt_receive_an_email
+      and_the_vaccination_record_is_synced_to_nhs
+    end
+
+    scenario "User edits a vaccination record that already received confirmation" do
+      given_i_am_signed_in
+      and_an_administered_vaccination_record_exists
+      and_the_vaccination_confirmation_was_already_sent
+
+      when_i_go_to_the_vaccination_record_for_the_patient
+      then_i_should_see_the_vaccination_record
+
+      when_i_click_on_edit_vaccination_record
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_change_date
+      then_i_should_see_the_date_time_form
+
+      when_i_fill_in_a_valid_date_and_time
+      then_i_see_the_edit_vaccination_record_page
+      and_i_should_see_the_updated_date_time
+
+      when_i_click_on_change_batch
+      and_i_choose_a_batch
+      then_i_see_the_edit_vaccination_record_page
+      and_i_should_see_the_updated_batch
+
+      when_i_click_on_save_changes
+      then_the_parent_receives_an_administered_email
+    end
+
+    scenario "User edits a vaccination record, not enough to trigger an email" do
+      given_i_am_signed_in
+      and_an_administered_vaccination_record_exists
+      and_the_vaccination_confirmation_was_already_sent
+
+      when_i_go_to_the_vaccination_record_for_the_patient
+      then_i_should_see_the_vaccination_record
+
+      when_i_click_on_edit_vaccination_record
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_change_delivery_method
+      and_i_choose_a_delivery_method_and_site
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_save_changes
+      then_the_parent_doesnt_receive_an_email
+    end
+
+    scenario "Edit outcome to vaccinated" do
+      given_i_am_signed_in
+      and_imms_api_sync_job_feature_is_enabled
+      and_a_not_administered_vaccination_record_exists
+      and_the_vaccination_confirmation_was_already_sent
+
+      when_i_go_to_the_vaccination_record_for_the_patient
+      then_i_should_see_the_vaccination_record
+
+      when_i_click_on_edit_vaccination_record
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_change_outcome
+      then_i_should_see_the_change_outcome_form
+      and_i_choose_vaccinated
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_add_batch
+      and_i_choose_a_batch
+      then_i_see_the_edit_vaccination_record_page
+      and_i_should_see_the_updated_batch
+
+      when_i_click_on_add_delivery_method
+      and_i_choose_a_delivery_method_and_site
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_save_changes
+      then_i_should_see_the_vaccination_record
+      and_the_parent_receives_an_administered_email
+      and_the_vaccination_record_is_synced_to_nhs
+    end
+
+    scenario "Edit outcome to not vaccinated" do
+      given_i_am_signed_in
+      and_imms_api_sync_job_feature_is_enabled
+      and_an_administered_vaccination_record_exists
+      and_the_vaccination_confirmation_was_already_sent
+
+      when_i_go_to_the_vaccination_record_for_the_patient
+      then_i_should_see_the_vaccination_record
+
+      when_i_click_on_edit_vaccination_record
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_change_outcome
+      then_i_should_see_the_change_outcome_form
+      and_i_choose_unwell
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_save_changes
+      then_i_should_see_the_vaccination_record
+      and_the_parent_receives_a_not_administered_email
+      and_the_vaccination_record_is_deleted_from_nhs
+    end
+
+    scenario "With an archived batch" do
+      given_i_am_signed_in
+      and_an_administered_vaccination_record_exists
+      and_the_original_batch_has_been_archived
+
+      when_i_go_to_the_vaccination_record_for_the_patient
+      and_i_click_on_edit_vaccination_record
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_change_batch
+      and_i_choose_the_original_batch
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_save_changes
+      then_i_should_see_the_vaccination_record
+    end
+
+    scenario "With an expired batch" do
+      given_i_am_signed_in
+      and_an_administered_vaccination_record_exists
+      and_the_original_batch_has_expired
+
+      when_i_go_to_the_vaccination_record_for_the_patient
+      and_i_click_on_edit_vaccination_record
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_change_batch
+      and_i_choose_the_original_batch
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_save_changes
+      then_i_should_see_the_vaccination_record
+    end
+
+    scenario "Cannot as a medical secretary" do
+      given_i_am_signed_in_as_an_admin
+      and_an_administered_vaccination_record_exists
+
+      when_i_go_to_the_vaccination_record_for_the_patient
+      then_i_should_not_be_able_to_edit_the_vaccination_record
+    end
+
+    scenario "Navigating back" do
+      given_i_am_signed_in
+      and_an_administered_vaccination_record_exists
+
+      when_i_go_to_the_vaccination_record_for_the_patient
+      and_i_click_on_edit_vaccination_record
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_save_changes
+      then_i_should_see_the_vaccination_record
+
+      when_i_go_back_to_the_confirm_page
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_save_changes
+      then_i_should_see_the_vaccination_record
+    end
+
+    scenario "User edits a service-created vaccination record and no discovered email is sent" do
+      given_i_am_signed_in
+      and_a_not_administered_vaccination_record_exists
+      and_the_patient_has_consent_but_no_prior_discovered_notification
+
+      when_i_go_to_the_vaccination_record_for_the_patient
+      and_i_click_on_edit_vaccination_record
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_change_outcome
+      then_i_should_see_the_change_outcome_form
+      and_i_choose_vaccinated
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_add_batch
+      and_i_choose_a_batch
+      then_i_see_the_edit_vaccination_record_page
+      and_i_should_see_the_updated_batch
+
+      when_i_click_on_add_delivery_method
+      and_i_choose_a_delivery_method_and_site
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_save_changes
+      then_i_should_see_the_vaccination_record
+      and_the_parent_doesnt_receive_a_vaccination_already_had_email
+    end
+
+    scenario "Patient has an existing delayed triage and user edit's vaccination record date" do
+      given_i_am_signed_in
+      and_an_administered_vaccination_record_exists
+      and_a_delayed_triage_exists
+
+      when_i_go_to_the_vaccination_record_for_the_patient
+      and_i_click_on_edit_vaccination_record
+
+      when_i_click_on_change_date
+      then_i_should_see_the_date_time_form
+
+      when_i_fill_in_a_valid_date_and_time
+      and_i_click_on_save_changes
+      then_the_delayed_triage_is_updated_accordingly
+    end
   end
 
-  scenario "User edits a vaccination record that already received confirmation" do
-    given_i_am_signed_in
-    and_an_administered_vaccination_record_exists
-    and_the_vaccination_confirmation_was_already_sent
+  context "in bulk upload Mavis" do
+    before { given_a_bulk_upload_team_exists }
 
-    when_i_go_to_the_vaccination_record_for_the_patient
-    then_i_should_see_the_vaccination_record
+    scenario "Bulk upload user edits a national reporting uploaded vaccination record" do
+      given_i_am_signed_in
+      and_a_bulk_uploaded_vaccination_record_exists
 
-    when_i_click_on_edit_vaccination_record
-    then_i_see_the_edit_vaccination_record_page
+      when_i_go_to_the_vaccination_record_for_the_patient
+      then_i_should_see_the_vaccination_record
 
-    when_i_click_on_change_date
-    then_i_should_see_the_date_time_form
+      when_i_click_on_edit_vaccination_record
+      then_i_see_the_edit_vaccination_record_page
 
-    when_i_fill_in_a_valid_date_and_time
-    then_i_see_the_edit_vaccination_record_page
-    and_i_should_see_the_updated_date_time
+      when_i_click_back
+      then_i_should_see_the_vaccination_record
+      and_i_click_on_edit_vaccination_record
+      then_i_see_the_edit_vaccination_record_page
 
-    when_i_click_on_change_batch
-    and_i_choose_a_batch
-    then_i_see_the_edit_vaccination_record_page
-    and_i_should_see_the_updated_batch
-
-    when_i_click_on_save_changes
-    then_the_parent_receives_an_administered_email
-  end
-
-  scenario "User edits a vaccination record, not enough to trigger an email" do
-    given_i_am_signed_in
-    and_an_administered_vaccination_record_exists
-    and_the_vaccination_confirmation_was_already_sent
-
-    when_i_go_to_the_vaccination_record_for_the_patient
-    then_i_should_see_the_vaccination_record
-
-    when_i_click_on_edit_vaccination_record
-    then_i_see_the_edit_vaccination_record_page
-
-    when_i_click_on_change_delivery_method
-    and_i_choose_a_delivery_method_and_site
-    then_i_see_the_edit_vaccination_record_page
-
-    when_i_click_on_save_changes
-    then_the_parent_doesnt_receive_an_email
-  end
-
-  scenario "Edit outcome to vaccinated" do
-    given_i_am_signed_in
-    and_imms_api_sync_job_feature_is_enabled
-    and_a_not_administered_vaccination_record_exists
-    and_the_vaccination_confirmation_was_already_sent
-
-    when_i_go_to_the_vaccination_record_for_the_patient
-    then_i_should_see_the_vaccination_record
-
-    when_i_click_on_edit_vaccination_record
-    then_i_see_the_edit_vaccination_record_page
-
-    when_i_click_on_change_outcome
-    then_i_should_see_the_change_outcome_form
-    and_i_choose_vaccinated
-    then_i_see_the_edit_vaccination_record_page
-
-    when_i_click_on_add_batch
-    and_i_choose_a_batch
-    then_i_see_the_edit_vaccination_record_page
-    and_i_should_see_the_updated_batch
-
-    when_i_click_on_add_delivery_method
-    and_i_choose_a_delivery_method_and_site
-    then_i_see_the_edit_vaccination_record_page
-
-    when_i_click_on_save_changes
-    then_i_should_see_the_vaccination_record
-    and_the_parent_receives_an_administered_email
-    and_the_vaccination_record_is_synced_to_nhs
-  end
-
-  scenario "Edit outcome to not vaccinated" do
-    given_i_am_signed_in
-    and_imms_api_sync_job_feature_is_enabled
-    and_an_administered_vaccination_record_exists
-    and_the_vaccination_confirmation_was_already_sent
-
-    when_i_go_to_the_vaccination_record_for_the_patient
-    then_i_should_see_the_vaccination_record
-
-    when_i_click_on_edit_vaccination_record
-    then_i_see_the_edit_vaccination_record_page
-
-    when_i_click_on_change_outcome
-    then_i_should_see_the_change_outcome_form
-    and_i_choose_unwell
-    then_i_see_the_edit_vaccination_record_page
-
-    when_i_click_on_save_changes
-    then_i_should_see_the_vaccination_record
-    and_the_parent_receives_a_not_administered_email
-    and_the_vaccination_record_is_deleted_from_nhs
-  end
-
-  scenario "With an archived batch" do
-    given_i_am_signed_in
-    and_an_administered_vaccination_record_exists
-    and_the_original_batch_has_been_archived
-
-    when_i_go_to_the_vaccination_record_for_the_patient
-    and_i_click_on_edit_vaccination_record
-    then_i_see_the_edit_vaccination_record_page
-
-    when_i_click_on_change_batch
-    and_i_choose_the_original_batch
-    then_i_see_the_edit_vaccination_record_page
-
-    when_i_click_on_save_changes
-    then_i_should_see_the_vaccination_record
-  end
-
-  scenario "With an expired batch" do
-    given_i_am_signed_in
-    and_an_administered_vaccination_record_exists
-    and_the_original_batch_has_expired
-
-    when_i_go_to_the_vaccination_record_for_the_patient
-    and_i_click_on_edit_vaccination_record
-    then_i_see_the_edit_vaccination_record_page
-
-    when_i_click_on_change_batch
-    and_i_choose_the_original_batch
-    then_i_see_the_edit_vaccination_record_page
-
-    when_i_click_on_save_changes
-    then_i_should_see_the_vaccination_record
-  end
-
-  scenario "Cannot as a medical secretary" do
-    given_i_am_signed_in_as_an_admin
-    and_an_administered_vaccination_record_exists
-
-    when_i_go_to_the_vaccination_record_for_the_patient
-    then_i_should_not_be_able_to_edit_the_vaccination_record
-  end
-
-  scenario "Navigating back" do
-    given_i_am_signed_in
-    and_an_administered_vaccination_record_exists
-
-    when_i_go_to_the_vaccination_record_for_the_patient
-    and_i_click_on_edit_vaccination_record
-    then_i_see_the_edit_vaccination_record_page
-
-    when_i_click_on_save_changes
-    then_i_should_see_the_vaccination_record
-
-    when_i_go_back_to_the_confirm_page
-    then_i_see_the_edit_vaccination_record_page
-
-    when_i_click_on_save_changes
-    then_i_should_see_the_vaccination_record
-  end
-
-  scenario "User edits a service-created vaccination record and no discovered email is sent" do
-    given_i_am_signed_in
-    and_a_not_administered_vaccination_record_exists
-    and_the_patient_has_consent_but_no_prior_discovered_notification
-
-    when_i_go_to_the_vaccination_record_for_the_patient
-    and_i_click_on_edit_vaccination_record
-    then_i_see_the_edit_vaccination_record_page
-
-    when_i_click_on_change_outcome
-    then_i_should_see_the_change_outcome_form
-    and_i_choose_vaccinated
-    then_i_see_the_edit_vaccination_record_page
-
-    when_i_click_on_add_batch
-    and_i_choose_a_batch
-    then_i_see_the_edit_vaccination_record_page
-    and_i_should_see_the_updated_batch
-
-    when_i_click_on_add_delivery_method
-    and_i_choose_a_delivery_method_and_site
-    then_i_see_the_edit_vaccination_record_page
-
-    when_i_click_on_save_changes
-    then_i_should_see_the_vaccination_record
-    and_the_parent_doesnt_receive_a_vaccination_already_had_email
-  end
-
-  scenario "Patient has an existing delayed triage and user edit's vaccination record date" do
-    given_i_am_signed_in
-    and_an_administered_vaccination_record_exists
-    and_a_delayed_triage_exists
-
-    when_i_go_to_the_vaccination_record_for_the_patient
-    and_i_click_on_edit_vaccination_record
-
-    when_i_click_on_change_date
-    then_i_should_see_the_date_time_form
-
-    when_i_fill_in_a_valid_date_and_time
-    and_i_click_on_save_changes
-    then_the_delayed_triage_is_updated_accordingly
+      when_i_click_on_save_changes
+      then_i_should_see_the_vaccination_record
+    end
   end
 
   def given_an_hpv_programme_is_underway
@@ -294,6 +319,34 @@ describe "Edit vaccination record" do
       )
   end
 
+  def given_a_bulk_upload_team_exists
+    @programme = Programme.hpv
+
+    @team =
+      create(
+        :team,
+        :with_one_admin,
+        type: :upload_only,
+        ods_code: "R1L",
+        programmes: [Programme.hpv, Programme.flu]
+      )
+
+    @patient =
+      create(
+        :patient,
+        :bulk_uploaded,
+        given_name: "John",
+        family_name: "Smith",
+        team: @team,
+        session: @session,
+        year_group: 8
+      )
+
+    @vaccine = @programme.vaccines.first
+
+    @batch = create(:batch, team: @team, vaccine: @vaccine)
+  end
+
   def given_i_am_signed_in
     sign_in @team.users.first
   end
@@ -313,6 +366,18 @@ describe "Edit vaccination record" do
       )
 
     Sidekiq::Job.drain_all if Flipper.enabled?(:imms_api_integration)
+  end
+
+  def and_a_bulk_uploaded_vaccination_record_exists
+    @vaccination_record =
+      create(
+        :vaccination_record,
+        :sourced_from_bulk_upload,
+        uploaded_by: @team.users.first,
+        batch: @batch,
+        patient: @patient,
+        programme: @programme
+      )
   end
 
   def and_a_delayed_triage_exists
@@ -390,8 +455,8 @@ describe "Edit vaccination record" do
     visit "/dashboard"
 
     click_on "Children", match: :first
-    check "Year 8"
-    click_button "Update results"
+    fill_in "Search", with: @patient.full_name
+    find("button.app-search-input__button").click
 
     click_on @patient.full_name
     click_on Date.current.to_fs(:long)
@@ -550,6 +615,7 @@ describe "Edit vaccination record" do
     travel 1.minute
     click_on "Save changes"
   end
+
   alias_method :and_i_click_on_save_changes, :when_i_click_on_save_changes
 
   def then_the_parent_doesnt_receive_an_email

@@ -33,6 +33,8 @@ class Programmes::PatientsController < Programmes::BaseController
   end
 
   def import
+    authorize :import, :create?
+
     draft_import = DraftImport.new(request_session: session, current_user:)
 
     draft_import.clear_attributes

@@ -11,18 +11,20 @@ class PatientsController < ApplicationController
   before_action :set_patient, except: :index
   before_action :set_in_generic_clinic, only: :show
   before_action :record_access_log_entry, only: %i[show log]
-  skip_after_action :verify_policy_scoped, only: :index
 
   layout "full"
 
   def index
-    if @search_params_present
-      scope = policy_scope(Patient).includes_statuses.includes(:school)
+    authorize Patient
 
-      patients = @form.apply(scope)
-    else
-      patients = Patient.none
-    end
+    patients =
+      if @search_params_present
+        scope = policy_scope(Patient).includes_statuses.includes(:school)
+        @form.apply(scope)
+      else
+        skip_policy_scope
+        Patient.none
+      end
 
     @pagy, @patients = pagy(patients)
   end
@@ -111,13 +113,13 @@ class PatientsController < ApplicationController
 
   def set_patient
     @patient =
-      policy_scope(Patient).includes(
-        :gp_practice,
-        :school,
-        :vaccination_records,
-        consents: %i[parent patient],
-        parent_relationships: :parent
-      ).find(params[:id])
+      authorize policy_scope(Patient).includes(
+                  :gp_practice,
+                  :school,
+                  :vaccination_records,
+                  consents: %i[parent patient],
+                  parent_relationships: :parent
+                ).find(params[:id])
   end
 
   def set_in_generic_clinic

@@ -2,8 +2,24 @@
 
 class ParentRelationshipsController < ApplicationController
   before_action :set_patient
-  before_action :set_parent_relationship
-  before_action :set_parent
+  before_action :set_parent_relationship, except: %i[new create]
+  before_action :set_parent, except: %i[new create]
+
+  def new
+    @parent_relationship = authorize ParentRelationship.new(patient: @patient)
+    @parent_relationship.build_parent
+  end
+
+  def create
+    authorize @parent_relationship =
+                @patient.parent_relationships.build(parent_relationship_params)
+
+    if @parent_relationship.save
+      redirect_to edit_patient_path(@patient)
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
 
   def edit
     @parent.contact_method_type = "any" if @parent.contact_method_type.nil?
@@ -36,10 +52,10 @@ class ParentRelationshipsController < ApplicationController
 
   def set_parent_relationship
     @parent_relationship =
-      @patient
-        .parent_relationships
-        .includes(:parent)
-        .find_by!(parent_id: params[:id])
+      authorize @patient
+                  .parent_relationships
+                  .includes(:parent)
+                  .find_by!(parent_id: params[:id])
   end
 
   def set_parent

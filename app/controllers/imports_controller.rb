@@ -1,17 +1,20 @@
 # frozen_string_literal: true
 
 class ImportsController < ApplicationController
+  before_action :authorize_import
   skip_after_action :verify_policy_scoped
+
   helper_method :uploaded_files_view?
+
+  layout "full"
 
   def index
     @active = :uploaded
-    render layout: "full"
   end
 
   def records
     @active = :imported
-    render :index, layout: "full"
+    render :index
   end
 
   def create
@@ -24,6 +27,10 @@ class ImportsController < ApplicationController
   end
 
   private
+
+  def authorize_import
+    authorize :import
+  end
 
   def uploaded_files_view?
     @active == :uploaded

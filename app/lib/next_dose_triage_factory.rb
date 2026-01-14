@@ -32,22 +32,22 @@ class NextDoseTriageFactory
 
     return false if next_date.past?
 
-    dose_sequence =
-      patient.vaccination_status(programme:, academic_year:).dose_sequence
+    status = patient.vaccination_status(programme:, academic_year:)
 
-    dose_sequence != programme.maximum_dose_sequence
+    !status.vaccinated?
   end
 
   def next_date = vaccination_record.performed_at + 28.days
 
   def attributes
     {
-      patient:,
-      programme:,
-      status: "delay_vaccination",
       academic_year:,
+      delay_vaccination_until: next_date,
+      disease_types: [],
       notes: "Next dose #{next_date.to_fs(:long)}",
-      delay_vaccination_until: next_date
+      patient:,
+      programme_type: programme.type,
+      status: "delay_vaccination"
     }
   end
 end

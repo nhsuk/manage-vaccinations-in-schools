@@ -609,7 +609,8 @@ class Patient < ApplicationRecord
     given_name:,
     family_name:,
     date_of_birth:,
-    address_postcode:
+    address_postcode:,
+    include_3_out_of_4_matches: true
   )
     if nhs_number.present? && (patient = Patient.find_by(nhs_number:)).present?
       return [patient]
@@ -624,26 +625,30 @@ class Patient < ApplicationRecord
 
     if address_postcode.present?
       scope =
-        scope
-          .or(
-            Patient.where(
-              "given_name ILIKE ? AND family_name ILIKE ?",
-              given_name,
-              family_name
-            ).where(address_postcode:)
-          )
-          .or(
-            Patient.where("given_name ILIKE ?", given_name).where(
-              date_of_birth:,
-              address_postcode:
+        if include_3_out_of_4_matches
+          scope
+            .or(
+              Patient.where(
+                "given_name ILIKE ? AND family_name ILIKE ?",
+                given_name,
+                family_name
+              ).where(address_postcode:)
             )
-          )
-          .or(
-            Patient.where("family_name ILIKE ?", family_name).where(
-              date_of_birth:,
-              address_postcode:
+            .or(
+              Patient.where("given_name ILIKE ?", given_name).where(
+                date_of_birth:,
+                address_postcode:
+              )
             )
-          )
+            .or(
+              Patient.where("family_name ILIKE ?", family_name).where(
+                date_of_birth:,
+                address_postcode:
+              )
+            )
+        else
+          scope.where(address_postcode:)
+        end
     end
 
     results =

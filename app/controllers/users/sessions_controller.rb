@@ -6,6 +6,7 @@ class Users::SessionsController < Devise::SessionsController
   skip_before_action :authenticate_user!,
                      only: %i[new destroy time_remaining refresh]
 
+  skip_after_action :verify_authorized
   skip_after_action :verify_policy_scoped
 
   before_action :store_redirect_uri!, only: :new

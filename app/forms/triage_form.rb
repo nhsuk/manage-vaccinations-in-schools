@@ -264,9 +264,7 @@ class TriageForm
         .order(:performed_at)
         .last
 
-    if vaccination_record.present?
-      vaccination_record.update!(next_dose_delay_triage:)
-    end
+    vaccination_record.presence&.update!(next_dose_delay_triage:)
   end
 
   def patient_eligible_for_additional_dose?

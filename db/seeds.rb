@@ -352,6 +352,26 @@ def create_upload_only_team
   create_user(:superuser, team:, email: "superuser.rob@example.com")
 
   create_bulk_upload_imports(user, team)
+
+  create_upload_patients_and_vaccination_records(user)
+end
+
+def create_upload_patients_and_vaccination_records(user)
+  patients =
+    FactoryBot.create_list(:patient, 50, :archived, team: user.teams.first)
+
+  immunisation_import =
+    ImmunisationImport.find_by(type: "bulk", status: "processed")
+
+  patients.each do |patient|
+    FactoryBot.create(
+      :vaccination_record,
+      :sourced_from_bulk_upload,
+      immunisation_import:,
+      patient:,
+      performed_by: user
+    )
+  end
 end
 
 # TODO: Once `PatientTeam` has been refactored to avoid callbacks we can

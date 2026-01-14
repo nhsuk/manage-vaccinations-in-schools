@@ -1,5 +1,5 @@
 environment         = "qa"
-dns_certificate_arn = ["arn:aws:acm:eu-west-2:393416225559:certificate/dafb0f10-ee18-45e2-8971-28d4ab434375"]
+dns_certificate_arn = ["arn:aws:acm:eu-west-2:393416225559:certificate/680d07ef-4d21-4a63-ab14-ffe34a143e93"]
 resource_name = {
   rds_security_group       = "mavis-qa-AddonsStack-Z0L4GX5EUV3I-dbDBClusterSecurityGroup-vd2Avaw4JIgr"
   loadbalancer             = "mavis-qa-pub-lb"
@@ -14,7 +14,8 @@ http_hosts = {
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "qa.mavistesting.com"
 }
 
-enable_backup_to_vault = true
+enable_backup_to_vault    = true
+max_aurora_capacity_units = 16
 
 minimum_reporting_replicas = 2
 maximum_reporting_replicas = 4

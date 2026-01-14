@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class DashboardController < ApplicationController
+  skip_after_action :verify_authorized
   skip_after_action :verify_policy_scoped
 
   before_action :set_primary_items, :set_secondary_items
@@ -89,17 +90,17 @@ class DashboardController < ApplicationController
       }
 
       @secondary_items << {
-        title: I18n.t("programmes.index.title"),
-        path: programmes_path,
-        description: I18n.t("programmes.index.description")
+        title: I18n.t("reports.index.title"),
+        path: reports_path,
+        description: I18n.t("reports.index.description")
+      }
+
+      @secondary_items << {
+        title: I18n.t("teams.show.title"),
+        path: team_path,
+        description: I18n.t("teams.show.description")
       }
     end
-
-    @secondary_items << {
-      title: I18n.t("teams.show.title"),
-      path: team_path,
-      description: I18n.t("teams.show.description")
-    }
 
     @secondary_items << {
       title: I18n.t("service.guide.title"),

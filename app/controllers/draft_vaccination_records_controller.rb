@@ -19,8 +19,6 @@ class DraftVaccinationRecordsController < ApplicationController
   before_action :set_supplied_by_users, if: -> { current_step == :supplier }
   before_action :set_back_link_path
 
-  after_action :verify_authorized
-
   def show
     authorize @vaccination_record,
               @vaccination_record.new_record? ? :new? : :edit?
@@ -111,8 +109,6 @@ class DraftVaccinationRecordsController < ApplicationController
 
     @draft_vaccination_record.write_to!(@vaccination_record)
 
-    @vaccination_record.source = "service"
-
     should_notify_parents =
       @vaccination_record.confirmation_sent? &&
         (
@@ -146,7 +142,7 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def finish_wizard_path
-    if @session.today?
+    if @session&.today?
       session_patient_programme_path(
         @session,
         @patient,

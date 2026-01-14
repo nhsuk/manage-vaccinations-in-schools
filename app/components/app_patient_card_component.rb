@@ -12,6 +12,7 @@ class AppPatientCardComponent < ViewComponent::Base
       <%= render AppChildSummaryComponent.new(
         patient,
         current_team:,
+        show_add_parent:,
         show_parents: true,
         show_school_and_year_group:,
         change_links:,
@@ -25,12 +26,14 @@ class AppPatientCardComponent < ViewComponent::Base
   def initialize(
     patient,
     current_team:,
+    show_add_parent: false,
     change_links: {},
     remove_links: {},
     heading_level: 3
   )
     @patient = patient
     @current_team = current_team
+    @show_add_parent = show_add_parent
     @change_links = change_links
     @remove_links = remove_links
     @heading_level = heading_level
@@ -40,6 +43,7 @@ class AppPatientCardComponent < ViewComponent::Base
 
   attr_reader :patient,
               :current_team,
+              :show_add_parent,
               :change_links,
               :remove_links,
               :heading_level

@@ -16,8 +16,6 @@ class DraftConsentsController < ApplicationController
   before_action :set_parent_options, if: -> { current_step == :who }
   before_action :set_back_link_path
 
-  after_action :verify_authorized
-
   def show
     authorize Consent, :edit?
 

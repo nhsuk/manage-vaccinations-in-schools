@@ -66,8 +66,8 @@ module "web_service" {
   task_config = {
     environment          = local.task_envs["CORE"]
     secrets              = local.task_secrets["CORE"]
-    cpu                  = 1024
-    memory               = 3072
+    cpu                  = 2048
+    memory               = 4096
     execution_role_arn   = aws_iam_role.ecs_task_execution_role["CORE"].arn
     task_role_arn        = data.aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name

@@ -115,6 +115,25 @@ describe EmailDeliveryJob do
       expect(notify_log_entry.sent_by).to eq(sent_by)
     end
 
+    it "creates a log entry programme record" do
+      expect { perform_now }.to change(NotifyLogEntry::Programme, :count).by(1)
+
+      notify_log_entry_programme = NotifyLogEntry::Programme.last
+
+      expect(notify_log_entry_programme.programme_type).to eq(
+        programmes.first.type
+      )
+
+      disease_types =
+        if programmes.first.mmr?
+          Programme::Variant::DISEASE_TYPES.fetch("mmr")
+        else
+          programmes.first.disease_types
+        end
+
+      expect(notify_log_entry_programme.disease_types).to eq(disease_types)
+    end
+
     context "when the parent doesn't have an email address" do
       let(:parent) { create(:parent, email: nil) }
 

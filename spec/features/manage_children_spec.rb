@@ -138,6 +138,56 @@ describe "Manage children" do
     and_the_vaccination_record_is_deleted_from_the_nhs
   end
 
+  scenario "Editing school" do
+    given_patients_exist
+
+    when_i_click_on_children
+    and_i_filter_for_children
+    and_i_click_on_a_child
+    then_i_see_the_child
+
+    when_i_click_on_edit_child_record
+    then_i_see_the_edit_child_record_page
+
+    when_i_click_on_change_school
+    then_i_see_the_edit_school_page
+    and_i_should_not_see_ineligible_school
+
+    when_i_choose_a_school
+    then_i_see_the_edit_child_record_page
+    and_i_see_the_school_has_been_updated
+
+    when_i_click_on_change_school
+    then_i_see_the_edit_school_page
+
+    when_i_choose_home_schooled
+    then_i_see_the_edit_child_record_page
+    and_i_see_the_child_is_home_schooled
+  end
+
+  scenario "Adding a parent" do
+    given_patients_exist
+
+    when_i_click_on_children
+    and_i_filter_for_children
+    and_i_click_on_a_child
+    then_i_see_the_child
+
+    when_i_click_on_edit_child_record
+    then_i_see_the_edit_child_record_page
+
+    when_i_click_on_add_new_parent
+    then_i_see_the_new_parent_page
+
+    when_i_fill_in_parent_details
+    and_i_save_the_parent
+    then_i_should_see_a_validation_error
+
+    when_i_choose_the_parent_relationship
+    and_i_save_the_parent
+    then_i_see_the_new_parent_is_created
+  end
+
   scenario "Viewing important notices" do
     when_i_go_to_the_imports_page
     then_i_cannot_see_notices
@@ -225,8 +275,20 @@ describe "Manage children" do
   def given_patients_exist
     school = create(:school, team: @team)
 
+    @ineligible_school =
+      create(
+        :school,
+        name: "Ineligible School",
+        gias_year_groups: [4],
+        team: @team
+      )
+
+    @new_school = create(:school, name: "New School", team: @team)
+
     @session =
       create(:session, location: school, team: @team, programmes: [@hpv])
+
+    create(:session, location: @new_school, team: @team, programmes: [@hpv])
 
     @patient =
       create(
@@ -430,8 +492,17 @@ describe "Manage children" do
   def when_i_click_on_change_nhs_number
     click_on "Change NHS number"
   end
+
+  def when_i_click_on_change_school
+    click_on "Change School"
+  end
+
   def then_i_see_the_edit_nhs_number_page
     expect(page).to have_content("What is the child’s NHS number?")
+  end
+
+  def then_i_see_the_edit_school_page
+    expect(page).to have_content("What school does the child go to?")
   end
 
   def when_i_enter_an_nhs_number
@@ -451,12 +522,79 @@ describe "Manage children" do
     click_on "Continue"
   end
 
+  def and_i_should_not_see_ineligible_school
+    expect(page).not_to have_select(
+      "What school does the child go to?",
+      with_options: ["Ineligible School"]
+    )
+  end
+
+  def when_i_choose_a_school
+    select "New School", from: "What school does the child go to?"
+    click_on "Continue"
+  end
+
+  def when_i_choose_home_schooled
+    select "Home-schooled", from: "What school does the child go to?"
+    click_on "Continue"
+  end
+
   def and_i_see_the_nhs_number
     expect(page).to have_content("975 862 3168")
   end
 
+  def when_i_click_on_add_new_parent
+    click_on "Add parent or guardian"
+  end
+
+  def then_i_see_the_new_parent_page
+    expect(page).to have_content("Add parent or guardian")
+  end
+
+  def when_i_fill_in_parent_details
+    fill_in "Name", with: "Lucille Bluth"
+    fill_in "Phone number", with: "01234 567890"
+    fill_in "Email address", with: "lucille@bluth.com"
+    choose "They do not have specific needs"
+  end
+
+  def and_i_save_the_parent
+    click_on "Save"
+  end
+
+  def then_i_should_see_a_validation_error
+    expect(page).to have_content("There is a problem")
+    expect(page).to have_content("Choose a relationship")
+  end
+
+  def when_i_choose_the_parent_relationship
+    choose "Mum"
+  end
+
+  def then_i_see_the_new_parent_is_created
+    expect(page).to have_content("Edit child record")
+    expect(page).to have_content("Lucille Bluth (Mum)")
+    expect(@patient.parents.count).to eq(1)
+  end
+
   def and_the_patient_is_no_longer_invalidated
     expect(@patient.reload).not_to be_invalidated
+  end
+
+  def and_i_see_the_school_has_been_updated
+    expect(page).to have_content("New School")
+    expect(@patient.reload.school).to eq(@new_school)
+    expect(@patient.sessions.map(&:location).uniq).to eq([@new_school])
+    expect(@patient.school_move_log_entries.pluck(:school_id)).to eq(
+      [@new_school.id]
+    )
+  end
+
+  def and_i_see_the_child_is_home_schooled
+    expect(page).to have_content("Home-schooled")
+    expect(@patient.reload.home_educated).to be true
+    expect(@patient.school).to be_nil
+    expect(@patient.home_educated).to be true
   end
 
   def and_the_important_notice_is_dismissed

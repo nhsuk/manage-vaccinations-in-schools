@@ -197,7 +197,7 @@ class ConsentForm < ApplicationRecord
             presence: true,
             if: :parent_relationship_other?
 
-  normalizes :nhs_number, with: -> { _1.blank? ? nil : _1.gsub(/\s/, "") }
+  normalizes :nhs_number, with: -> { _1.presence&.gsub(/\s/, "") }
 
   on_wizard_step :name do
     validates :given_name, presence: true

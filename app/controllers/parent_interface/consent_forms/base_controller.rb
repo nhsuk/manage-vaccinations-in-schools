@@ -3,6 +3,7 @@
 module ParentInterface
   class ConsentForms::BaseController < ApplicationController
     skip_before_action :authenticate_user!
+    skip_after_action :verify_authorized
     skip_after_action :verify_policy_scoped
 
     skip_before_action :set_navigation_items

@@ -1,12 +1,17 @@
 # frozen_string_literal: true
 
 namespace :data_migration do
-  desc "Set disease types on all pre-screenings."
-  task set_pre_screening_disease_types: :environment do
-    PreScreening
+  desc "Backfill NotifyLogEntry::Programme records"
+  task backfill_notify_log_entry_programmes: :environment do
+    DataMigration::BackfillNotifyLogEntryProgrammes.call
+  end
+
+  desc "Set disease types on all triages."
+  task set_triage_disease_types: :environment do
+    Triage
       .where(disease_types: nil)
-      .find_each do |pre_screening|
-        programme = Programme.find(pre_screening.programme_type)
+      .find_each do |triage|
+        programme = Programme.find(triage.programme_type)
 
         disease_types =
           if programme.mmr?
@@ -15,7 +20,17 @@ namespace :data_migration do
             programme.disease_types
           end
 
-        pre_screening.update_columns(disease_types:)
+        triage.update_columns(disease_types:)
       end
+  end
+
+  desc "Update HPV health questions."
+  task update_hpv_health_questions: :environment do
+    ActiveRecord::Base.transaction do
+      Programme.hpv.vaccines.find_each do |vaccine|
+        vaccine.health_questions.in_order.each(&:destroy!)
+        Rake::Task["vaccines:seed"].execute(type: "hpv")
+      end
+    end
   end
 end

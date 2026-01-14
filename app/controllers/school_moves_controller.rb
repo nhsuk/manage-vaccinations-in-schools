@@ -7,6 +7,8 @@ class SchoolMovesController < ApplicationController
   before_action :set_school_move, except: :index
   before_action :set_patient, except: :index
 
+  skip_after_action :verify_authorized, only: :index
+
   layout "full"
 
   def index
@@ -51,7 +53,7 @@ class SchoolMovesController < ApplicationController
   private
 
   def set_school_move
-    @school_move = policy_scope(SchoolMove).find(params[:id])
+    @school_move = authorize policy_scope(SchoolMove).find(params[:id])
   end
 
   def set_patient
