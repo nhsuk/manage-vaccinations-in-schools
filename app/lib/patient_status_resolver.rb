@@ -39,7 +39,9 @@ class PatientStatusResolver
     )
   end
 
-  def programme
+  def programme(only_if_vaccinated: false)
+    return if only_if_vaccinated && !programme_status.vaccinated?
+
     hash = tag_hash(programme_status.status, context: :programme)
 
     if programme_status.due?
