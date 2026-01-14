@@ -37,5 +37,37 @@ describe NextDoseTriageFactory do
         expect { call }.not_to(change(Triage, :count))
       end
     end
+
+    context "when it is an invalid second MMR dose (too early)" do
+      let(:patient) do
+        create(
+          :patient,
+          :consent_given_triage_safe_to_vaccinate,
+          year_group: 9,
+          session:
+        )
+      end
+      let(:session) { create(:session, programmes: [programme]) }
+
+      it "shows delay vaccination 28 days after last vaccine" do
+        create(
+          :vaccination_record,
+          programme:,
+          patient:,
+          session:,
+          performed_at: 20.days.ago
+        )
+        second_dose =
+          create(:vaccination_record, programme:, session:, patient:)
+
+        StatusUpdater.call(patient:)
+
+        described_class.call(vaccination_record: second_dose.reload)
+
+        triage = second_dose.reload.next_dose_delay_triage
+
+        expect(triage.delay_vaccination_until).to eq(28.days.from_now.to_date)
+      end
+    end
   end
 end
