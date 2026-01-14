@@ -182,7 +182,7 @@ class StatusGenerator::Vaccination
     # The second dose must be at least 28 days after the most recent dose
     second_dose =
       sorted_vaccination_records.find do |record|
-        next if record == first_dose
+        next if record.performed_at <= first_dose.performed_at
 
         previous_dose =
           sorted_vaccination_records
