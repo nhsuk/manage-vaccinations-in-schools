@@ -26,7 +26,8 @@ describe SearchVaccinationRecordsInNHSJob do
     end
 
     it "returns only Immunization resources from the bundle" do
-      records = described_class.new.send(:extract_vaccination_records, bundle)
+      records =
+        described_class.new.send(:extract_fhir_vaccination_records, bundle)
       expect(records).to all(have_attributes(resourceType: "Immunization"))
       expect(records.size).to eq 2
     end
@@ -65,11 +66,10 @@ describe SearchVaccinationRecordsInNHSJob do
 
   describe "#deduplicate_vaccination_records" do
     subject(:deduplicate) do
-      described_class.new.send(
-        :deduplicate_vaccination_records,
-        patient,
-        vaccination_records
-      )
+      described_class
+        .new
+        .tap { it.instance_variable_set(:@patient, patient) }
+        .send(:deduplicate_vaccination_records, vaccination_records)
     end
 
     shared_examples "handles duplicates" do
@@ -441,7 +441,10 @@ describe SearchVaccinationRecordsInNHSJob do
     end
     let!(:existing_records) do
       fhir_records =
-        described_class.new.send(:extract_vaccination_records, existing_bundle)
+        described_class.new.send(
+          :extract_fhir_vaccination_records,
+          existing_bundle
+        )
       mapped_records =
         fhir_records.map do |fhir_record|
           mapped =
