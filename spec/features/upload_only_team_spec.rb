@@ -29,6 +29,7 @@ describe "Upload-only team homepage and navigation" do
     when_i_visit_the_children_page
     and_i_find_a_child(given_name: "Harry", family_name: "Potter")
     then_i_should_see_vaccinations_then_child_details
+    and_the_activity_log_is_hidden
     and_child_cannot_be_archived
     and_child_does_not_look_archived
   end
@@ -199,5 +200,10 @@ describe "Upload-only team homepage and navigation" do
 
   def and_i_should_not_see_add_parent_button
     expect(page).not_to have_content("Add parent or guardian")
+  end
+
+  def and_the_activity_log_is_hidden
+    expect(page).not_to have_content("Activity log")
+    expect(page).not_to have_content("Child record")
   end
 end
