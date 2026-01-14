@@ -8,6 +8,21 @@
 <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
+<% if @draft_vaccination_record.bulk_upload_user_and_record? %>
+  <%= f.govuk_select :location_id,
+                     label: { text: "Location", size: "l", tag: "h1" },
+                     caption: { text: @patient.full_name },
+                     data: { module: "app-autocomplete" } do %>
+
+      <% @schools.each do |school| %>
+        <%= tag.option location_display_name(school, show_urn: true),
+                       value: school.id,
+                       selected: school.id == @draft_vaccination_record.location&.id,
+                       data: { hint: format_address_single_line(school) } %>
+      <% end %>
+      <%= tag.option "Unknown", value: "unknown", selected: @draft_vaccination_record.location_name == "Unknown" %>
+  <% end %>
+<% else %>
   <%= f.govuk_radio_buttons_fieldset :location_id,
                                      caption: { text: @patient.full_name, size: "l" },
                                      legend: { size: "l", tag: "h1",
@@ -19,6 +34,7 @@
                                hint: { text: format_address_single_line(location) } %>
     <% end %>
   <% end %>
+<% end %>
 
   <%= f.govuk_submit "Continue" %>
 <% end %>

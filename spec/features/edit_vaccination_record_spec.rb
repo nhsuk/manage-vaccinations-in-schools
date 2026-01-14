@@ -304,6 +304,22 @@ describe "Edit vaccination record" do
       then_i_see_the_edit_vaccination_record_page
       and_i_should_see_the_updated_dose_number
 
+      when_i_click_on_change_location
+      and_i_choose_location_unknown
+      then_i_see_the_edit_vaccination_record_page
+      and_i_should_see_location_unknown
+
+      when_i_click_on_save_changes
+      then_i_should_see_the_vaccination_record
+
+      when_i_click_on_edit_vaccination_record
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_change_location
+      and_i_choose_a_school
+      then_i_see_the_edit_vaccination_record_page
+      and_i_should_see_the_updated_location
+
       when_i_click_on_save_changes
       then_i_should_see_the_vaccination_record
     end
@@ -392,6 +408,8 @@ describe "Edit vaccination record" do
         session: @session,
         year_group: 8
       )
+
+    @school = create(:school, name: "A New School")
 
     @vaccine = @programme.vaccines.first
 
@@ -694,6 +712,28 @@ describe "Edit vaccination record" do
     choose "Intramuscular"
     choose "Left arm (upper position)"
     click_on "Continue"
+  end
+
+  def when_i_click_on_change_location
+    click_on "Change location"
+  end
+
+  def and_i_choose_location_unknown
+    select "Unknown"
+    click_on "Continue"
+  end
+
+  def and_i_should_see_location_unknown
+    expect(page).to have_content("LocationUnknown")
+  end
+
+  def and_i_choose_a_school
+    select "A New School"
+    click_on "Continue"
+  end
+
+  def and_i_should_see_the_updated_location
+    expect(page).to have_content("LocationA New School")
   end
 
   def when_i_click_on_save_changes

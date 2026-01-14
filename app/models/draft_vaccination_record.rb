@@ -58,7 +58,7 @@ class DraftVaccinationRecord
       (:delivery if administered?),
       (:dose if administered? && can_be_half_dose?),
       (:batch if administered?),
-      (:location if session&.generic_clinic?),
+      (:location if session&.generic_clinic? || bulk_upload_user_and_record?),
       (:dose_sequence if bulk_upload_user_and_record?),
       (:vaccinator if bulk_upload_user_and_record?),
       :confirm
@@ -100,7 +100,10 @@ class DraftVaccinationRecord
   end
 
   on_wizard_step :location, exact: true do
-    validates :location_id, presence: true
+    validate :location_is_school, if: :bulk_upload_user_and_record?
+    validates :location_id,
+              presence: true,
+              unless: :bulk_upload_user_and_record?
   end
 
   on_wizard_step :notes, exact: true do
@@ -237,6 +240,14 @@ class DraftVaccinationRecord
 
   def vaccine_id_changed? = batch_id_changed?
 
+  def location_is_school
+    return if location_id.blank?
+
+    unless location&.school?
+      errors.add(:location_id, "The location must be a school")
+    end
+  end
+
   def identity_check
     return nil if identity_check_confirmed_by_patient.nil?
 
@@ -314,6 +325,11 @@ class DraftVaccinationRecord
   def sourced_from_consent_refusal? = source == "consent_refusal"
 
   def sourced_from_bulk_upload? = source == "bulk_upload"
+
+  def bulk_upload_user_and_record?
+    @current_user.selected_team.has_upload_only_access? &&
+      sourced_from_bulk_upload?
+  end
 
   private
 
@@ -404,11 +420,6 @@ class DraftVaccinationRecord
   def can_change_outcome?
     (outcome != "already_had" || editing? || session.nil? || session.today?) &&
       !bulk_upload_user_and_record?
-  end
-
-  def bulk_upload_user_and_record?
-    @current_user.selected_team.has_upload_only_access? &&
-      sourced_from_bulk_upload?
   end
 
   def requires_supplied_by?
