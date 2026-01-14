@@ -7,7 +7,7 @@ class PatientPolicy < ApplicationPolicy
 
   def update? = true
 
-  def log? = show?
+  def log? = team.has_poc_only_access?
 
   def pds_search_history? = show?
 
