@@ -220,6 +220,18 @@ describe EnqueueVaccinationsSearchInNHSJob do
           include_examples "behaviour before, during or after consent/invitation period"
         end
       end
+
+      context "with patients with no NHS number" do
+        before { create(:patient, team:, school:, session:, nhs_number: nil) }
+
+        it "does not perform searches for those patients" do
+          described_class.perform_now
+
+          expect(SearchVaccinationRecordsInNHSJob).to have_received(
+            :perform_bulk
+          ).with(searchable_patients.map(&:id).zip)
+        end
+      end
     end
 
     describe "doing the rolling searches" do
@@ -308,6 +320,20 @@ describe EnqueueVaccinationsSearchInNHSJob do
                 :perform_bulk
               ).once.with([[patient.id]])
             end
+          end
+        end
+
+        context "that does not have an NHS number" do
+          let(:patient) do
+            create(:patient, team:, school:, session:, nhs_number: nil)
+          end
+
+          it "does not perform a search on the patient" do
+            described_class.perform_now
+
+            expect(SearchVaccinationRecordsInNHSJob).not_to have_received(
+              :perform_bulk
+            )
           end
         end
       end

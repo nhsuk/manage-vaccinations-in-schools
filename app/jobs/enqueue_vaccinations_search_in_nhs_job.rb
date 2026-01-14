@@ -42,7 +42,7 @@ class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
         )
       }
       .find_each
-      .flat_map { |session| session.patients.ids }
+      .flat_map { |session| session.patients.with_nhs_number.ids }
   end
 
   # This implements a rolling search strategy for patients' vaccination records
@@ -64,7 +64,7 @@ class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
         rolling_search_period_in_days.days.ago
       )
 
-    Patient
+    patients_base
       .where.not(id: patients_with_recent_searches.select(:patient_id))
       .eager_load(:patient_programme_vaccinations_searches)
       .order(
