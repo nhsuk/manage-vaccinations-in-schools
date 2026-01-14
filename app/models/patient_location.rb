@@ -82,6 +82,11 @@ class PatientLocation < ApplicationRecord
     AND team_locations.academic_year = patient_locations.academic_year
   SQL
 
+  scope :joins_teams, -> { references(:teams).joins(<<-SQL) }
+    INNER JOIN teams
+    ON teams.id = team_locations.team_id
+  SQL
+
   scope :joins_sessions, -> { joins_team_locations.joins(<<-SQL) }
     INNER JOIN sessions
     ON sessions.team_location_id = team_locations.id

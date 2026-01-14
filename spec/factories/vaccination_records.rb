@@ -85,7 +85,7 @@ FactoryBot.define do
 
     programme { Programme.sample }
 
-    performed_ods_code { team.organisation.ods_code }
+    performed_ods_code { team&.organisation&.ods_code }
 
     patient do
       association :patient,
