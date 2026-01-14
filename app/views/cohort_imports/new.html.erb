@@ -15,7 +15,9 @@
 
   <%= render AppImportFormatDetailsComponent.new(import: @cohort_import) %>
 
-  <%= f.govuk_file_field :csv, label: { text: "Upload file", size: "m" } %>
+  <%= f.govuk_file_field :csv,
+                         label: { text: "Upload file", size: "m" },
+                         javascript: true %>
 
   <%= f.govuk_submit %>
 <% end %>

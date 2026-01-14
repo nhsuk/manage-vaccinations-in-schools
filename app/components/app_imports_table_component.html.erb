@@ -1,7 +1,7 @@
-<div class="nhsuk-table__panel-with-heading-tab">
-  <h3 class="nhsuk-table__heading-tab">
+<%= render AppCardComponent.new(feature: true) do |card| %>
+  <% card.with_heading(level: 3) do %>
     <%= pluralize(imports.count, "import") %>
-  </h3>
+  <% end %>
 
   <%= govuk_table(html_attributes: {
                     class: "nhsuk-table-responsive",
@@ -51,4 +51,4 @@
       <% end %>
     <% end %>
   <% end %>
-</div>
+<% end %>

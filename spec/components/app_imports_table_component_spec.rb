@@ -58,11 +58,8 @@ describe AppImportsTableComponent do
     )
   end
 
-  it "renders a heading tab" do
-    expect(rendered).to have_css(
-      ".nhsuk-table__heading-tab",
-      text: "11 imports"
-    )
+  it "renders a card heading" do
+    expect(rendered).to have_css(".nhsuk-card__heading", text: "11 imports")
   end
 
   it "renders the headers" do

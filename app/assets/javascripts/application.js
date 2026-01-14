@@ -3,15 +3,16 @@ import {
   createAll,
   isSupported,
   Button,
+  Checkboxes,
   ErrorSummary,
+  FileUpload,
   Header,
   NotificationBanner,
+  Radios,
   SkipLink,
 } from "nhsuk-frontend";
 
 import { Autocomplete } from "./components/autocomplete.js";
-import { UpgradedCheckboxes as Checkboxes } from "./components/checkboxes.js";
-import { UpgradedRadios as Radios } from "./components/radios.js";
 import { Sticky } from "./components/sticky.js";
 import { TimeoutWarning } from "./components/timeoutWarning.js";
 
@@ -57,6 +58,10 @@ function initialiseComponents() {
 
   if (!isInitialised("nhsuk-error-summary")) {
     createAll(ErrorSummary);
+  }
+
+  if (!isInitialised("nhsuk-file-upload")) {
+    createAll(FileUpload);
   }
 
   if (!isInitialised("nhsuk-header")) {
