@@ -330,4 +330,62 @@ describe Programme do
       it { should eq(5) }
     end
   end
+
+  describe "#flipper_id" do
+    subject { programme.flipper_id }
+
+    context "for flu" do
+      let(:programme) { described_class.flu }
+
+      it { should eq("Programme:flu") }
+    end
+
+    context "for td_ipv" do
+      let(:programme) { described_class.td_ipv }
+
+      it { should eq("Programme:td_ipv") }
+    end
+
+    context "for menacwy" do
+      let(:programme) { described_class.menacwy }
+
+      it { should eq("Programme:menacwy") }
+    end
+
+    context "for hpv" do
+      let(:programme) { described_class.hpv }
+
+      it { should eq("Programme:hpv") }
+    end
+
+    context "for mmr" do
+      let(:programme) { described_class.mmr }
+
+      it { should eq("Programme:mmr") }
+    end
+
+    context "for mmrv variant" do
+      let(:programme) do
+        Flipper.enable(:mmrv)
+
+        described_class.mmr.variant_for(
+          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
+        )
+      end
+
+      it { should eq("ProgrammeVariant:mmrv") }
+    end
+
+    context "for mmr variant" do
+      let(:programme) do
+        Flipper.enable(:mmrv)
+
+        described_class.mmr.variant_for(
+          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
+        )
+      end
+
+      it { should eq("ProgrammeVariant:mmr") }
+    end
+  end
 end

@@ -40,16 +40,25 @@ describe SearchVaccinationRecordsInNHSJob do
       )
     end
 
-    let(:vaccination_records) { [flu_record, hpv_record] }
+    let(:vaccination_records) { [flu_record, hpv_record, mmrv_record] }
     let(:flu_record) { create(:vaccination_record, programme: Programme.flu) }
     let(:hpv_record) { create(:vaccination_record, programme: Programme.hpv) }
+    let(:mmrv_programme) do
+      Flipper.enable(:mmrv)
+
+      Programme.mmr.variant_for(
+        disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
+      )
+    end
+    let(:mmrv_record) { create(:vaccination_record, programme: mmrv_programme) }
 
     before do
       Flipper.disable(:imms_api_search_job)
       Flipper.enable(:imms_api_search_job, Programme.flu)
+      Flipper.enable(:imms_api_search_job, Programme.mmr)
     end
 
-    it "rejects the hpv record, and keeps the flu record" do
+    it "rejects the hpv and mmrv records, and keeps the flu record" do
       expect(selected_records).to match_array(flu_record)
     end
   end
