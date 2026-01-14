@@ -1,14 +1,15 @@
 <%= h1 "#{@service_name} (Mavis)", size: "xl" %>
 
-<p>Use this service to:</p>
+<p>Mavis is a digital platform for school age immunisation service (SAIS) providers.</p>
 
-<ul class="nhsuk-list nhsuk-list--bullet">
-  <li>upload cohort lists</li>
-  <li>manage vaccination sessions</li>
-  <li>triage answers to health questions</li>
-  <li>record vaccinations</li>
-  <li>view and download performance reports</li>
+<p>There are 2 ways to use Mavis:</p>
+
+<ul class="nhsuk-list nhsuk-list--bullet" >
+  <li>use the full service to manage every stage of your vaccination programmes</li>
+  <li>use the National reporting service to upload vaccination records and share them with NHS England</li>
 </ul>
+
+<p>Once you log in, you’ll be taken to the service your team is set up to use.</p>
 
 <% if Settings.cis2.enabled %>
   <%= govuk_button_to "Log in with my Care Identity",
