@@ -140,6 +140,7 @@ FactoryBot.define do
       end
 
       source { "bulk_upload" }
+      programme { [Programme.flu, Programme.hpv].sample }
 
       after(:create) do |vaccination_record, evaluator|
         next unless evaluator.uploaded_by || evaluator.immunisation_import
