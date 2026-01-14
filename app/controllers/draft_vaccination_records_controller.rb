@@ -37,6 +37,8 @@ class DraftVaccinationRecordsController < ApplicationController
       handle_date_and_time
     when :outcome
       handle_outcome
+    when :location
+      handle_location
     when :batch
       handle_batch
     when :confirm
@@ -95,6 +97,22 @@ class DraftVaccinationRecordsController < ApplicationController
            params[:draft_vaccination_record][:todays_batch]
          )
       self.todays_batch = policy_scope(Batch).find(update_params[:batch_id])
+    end
+  end
+
+  def handle_location
+    if @draft_vaccination_record.bulk_upload_user_and_record?
+      parsed_location_id =
+        (
+          if update_params[:location_id] == "unknown"
+            nil
+          else
+            update_params[:location_id]
+          end
+        )
+      @draft_vaccination_record.location_id = parsed_location_id
+      @draft_vaccination_record.location_name =
+        (@draft_vaccination_record.location_id.present? ? nil : "Unknown")
     end
   end
 
@@ -224,7 +242,12 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def set_locations
-    @locations = policy_scope(Location).community_clinic
+    @locations =
+      if @draft_vaccination_record.bulk_upload_user_and_record?
+        Location.school.order(:name)
+      else
+        policy_scope(Location).community_clinic
+      end
   end
 
   def set_supplied_by_users
