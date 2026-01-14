@@ -290,6 +290,31 @@ describe StatusGenerator::Vaccination do
         it { should be(:due) }
       end
 
+      context "when first dose is not valid" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
+        end
+
+        before do
+          create(
+            :vaccination_record,
+            patient:,
+            programme:,
+            performed_at: patient.date_of_birth + 1.day
+          )
+
+          create(
+            :vaccination_record,
+            patient:,
+            programme:,
+            performed_at: patient.date_of_birth + 1.year
+          )
+        end
+
+        it { should be(:due) }
+      end
+
       context "with a valid first dose" do
         let(:session) { create(:session, programmes: [programme]) }
         let(:patient) do
