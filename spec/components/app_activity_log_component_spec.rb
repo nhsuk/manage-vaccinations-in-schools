@@ -86,14 +86,6 @@ describe AppActivityLogComponent do
                      notes: "Extra details",
                      date: "1 June 2024 at 12:00pm",
                      by: "JOY, Nurse"
-
-    context "when viewing as an upload only team" do
-      let(:team) { create(:team, type: :upload_only, programmes:) }
-
-      it "does not render archive events" do
-        expect(rendered).not_to have_content("Record archived")
-      end
-    end
   end
 
   describe "consent given by parents" do

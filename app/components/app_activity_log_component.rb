@@ -18,11 +18,7 @@ class AppActivityLogComponent < ViewComponent::Base
     @patient = patient
 
     @archive_reasons =
-      if team.has_upload_only_access?
-        []
-      else
-        @patient.archive_reasons.where(team:).includes(:created_by)
-      end
+      @patient.archive_reasons.where(team:).includes(:created_by)
 
     @attendance_records =
       patient
