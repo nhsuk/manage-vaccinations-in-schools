@@ -1,6 +1,7 @@
 name: End To End test run
 
 on:
+  pull_request:
   workflow_call:
     inputs:
       git_reference_for_application_image:
@@ -11,7 +12,7 @@ on:
         description: The environment to build the base image against
         type: string
         required: false
-        default: "next"
+        default: "origin/next"
     secrets:
       HTTP_AUTH_TOKEN_FOR_TESTS:
         description: HTTP Basic Auth token for the environment under test
@@ -19,12 +20,37 @@ on:
       MAVIS_TESTING_REPO_ACCESS_TOKEN:
         description: Access token for the manage-vaccinations-in-schools-testing repository
         required: true
+  workflow_dispatch:
+    inputs:
+      git_reference_for_application_image:
+        description: The git reference for deploying containerized mavis application
+        type: string
+        required: false
+      git_reference_for_database_image:
+        description: The environment to build the base image against
+        type: string
+        required: false
+        default: "origin/next"
 
 permissions: { }
 
 jobs:
+  check-if-run-needed:
+    name: Check if tests are required
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.git_reference_for_application_image || github.event.pull_request.head.sha ||  github.sha }}
+          repository: nhsuk/manage-vaccinations-in-schools
+      - name: Check if end-to-end tests need to run
+        id: check
+        uses: ./.github/actions/run-test-suites-check
+    outputs:
+      run-test-suites: ${{ steps.check.outputs.run-test-suites }}
   check-development-image-presence:
-    name: Check if docker image already exists
+    name: Check if mavis docker image already exists
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -39,7 +65,7 @@ jobs:
       - name: Check if image exists
         id: check-image
         run: |
-          if aws ecr describe-images --repository-name mavis/development --image-ids imageTag=${{ github.sha }} > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name mavis/development --image-ids imageTag=${{ inputs.git_reference_for_application_image || github.event.pull_request.head.sha ||  github.sha }} > /dev/null 2>&1; then
             echo "Docker image with given tag already exists"
             echo "build-needed=false" >> $GITHUB_OUTPUT
           else
@@ -47,8 +73,8 @@ jobs:
             echo "build-needed=true" >> $GITHUB_OUTPUT
           fi
   build-and-push-development-image:
-    needs: [ check-development-image-presence ]
-    if: needs.check-development-image-presence.outputs.build-needed == 'true'
+    needs: [ check-development-image-presence, check-if-run-needed ]
+    if: ${{ !cancelled() && needs.check-development-image-presence.outputs.build-needed == 'true' && (github.event_name != 'pull_request' || needs.check-if-run-needed.outputs.run-test-suites == 'true') }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -56,7 +82,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.git_reference_for_application_image || github.ref }}
+          ref: ${{ inputs.git_reference_for_application_image || github.event.pull_request.head.sha ||  github.sha }}
           repository: nhsuk/manage-vaccinations-in-schools
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
@@ -75,7 +101,7 @@ jobs:
             .
           docker push "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}"
   check-database-image-presence:
-    name: Check if docker image already exists
+    name: Check if database docker image already exists
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -87,10 +113,15 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - name: Check if image exists
         id: check-image
+        env:
+          GIT_REF: ${{ inputs.git_reference_for_database_image || (github.event_name == 'pull_request' && github.event.pull_request.base.sha) || github.sha }}
         run: |
-          if aws ecr describe-images --repository-name mavis/development --image-ids imageTag=${{ github.event.pull_request.base.ref }} > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name mavis/development --image-ids imageTag=$GIT_REF > /dev/null 2>&1; then
             echo "Docker image with given tag already exists"
             echo "build-needed=false" >> $GITHUB_OUTPUT
           else
@@ -98,8 +129,8 @@ jobs:
             echo "build-needed=true" >> $GITHUB_OUTPUT
           fi
   build-and-push-database-image:
-    needs: [ check-database-image-presence ]
-    if: needs.check-database-image-presence.outputs.build-needed == 'true'
+    needs: [ check-database-image-presence, check-if-run-needed ]
+    if: ${{ !cancelled() && needs.check-database-image-presence.outputs.build-needed == 'true' && (github.event_name != 'pull_request' || needs.check-if-run-needed.outputs.run-test-suites == 'true') }}
     permissions:
       id-token: write
       contents: read
@@ -110,13 +141,14 @@ jobs:
     needs: [ check-development-image-presence,
              build-and-push-development-image,
              check-database-image-presence,
-             build-and-push-database-image ]
+             build-and-push-database-image,
+             check-if-run-needed ]
     if: ${{ !cancelled() &&
       (needs.build-and-push-development-image.result == 'success' ||
       (needs.check-development-image-presence.result == 'success' && needs.build-and-push-development-image.result == 'skipped')) &&
       (needs.build-and-push-database-image.result == 'success' ||
       (needs.check-database-image-presence.result == 'success' && needs.build-and-push-database-image.result == 'skipped'))
-      }}
+      && (github.event_name != 'pull_request' || needs.check-if-run-needed.outputs.run-test-suites == 'true') }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
