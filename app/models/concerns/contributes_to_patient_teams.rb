@@ -108,43 +108,6 @@ module ContributesToPatientTeams
       end
     end
 
-    def insert_patient_teams_relationships
-      transaction { add_patient_team_relationships }
-    end
-
-    def add_patient_team_relationships(patient_ids: nil)
-      contributing_subqueries.each do |key, subquery|
-        source_key = connection.quote(PatientTeam.sources.fetch(key.to_s))
-        patient_id_source =
-          connection.quote_string(subquery[:patient_id_source])
-        team_id_source = connection.quote_string(subquery[:team_id_source])
-        contribution_scope = subquery[:contribution_scope]
-        if patient_ids.present?
-          contribution_scope =
-            contribution_scope.where(
-              "#{patient_id_source} = ANY(ARRAY[?]::bigint[])",
-              patient_ids
-            )
-        end
-
-        insert_from =
-          contribution_scope
-            .select(
-              "#{patient_id_source} as patient_id",
-              "#{team_id_source} as team_id"
-            )
-            .distinct
-            .to_sql
-        connection.execute <<-SQL
-          INSERT INTO patient_teams (patient_id, team_id, sources)
-          SELECT alias.patient_id, alias.team_id, ARRAY[#{source_key}]
-            FROM (#{insert_from}) as alias
-          ON CONFLICT (team_id, patient_id) DO UPDATE
-            SET sources = array_append(array_remove(patient_teams.sources,#{source_key}),#{source_key})
-        SQL
-      end
-    end
-
     private
 
     def join_vaccination_records_to_organisation
