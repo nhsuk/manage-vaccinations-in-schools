@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_13_123500) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_15_090835) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -523,7 +523,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_13_123500) do
     t.integer "delivery_status", default: 0, null: false
     t.bigint "parent_id"
     t.bigint "patient_id"
-    t.enum "programme_types", default: [], null: false, array: true, enum_type: "programme_type"
     t.string "recipient", null: false
     t.bigint "sent_by_user_id"
     t.uuid "template_id", null: false
@@ -532,7 +531,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_13_123500) do
     t.index ["delivery_id"], name: "index_notify_log_entries_on_delivery_id"
     t.index ["parent_id"], name: "index_notify_log_entries_on_parent_id"
     t.index ["patient_id"], name: "index_notify_log_entries_on_patient_id"
-    t.index ["programme_types"], name: "index_notify_log_entries_on_programme_types", using: :gin
     t.index ["sent_by_user_id"], name: "index_notify_log_entries_on_sent_by_user_id"
   end
 
