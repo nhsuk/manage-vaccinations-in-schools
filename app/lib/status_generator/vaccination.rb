@@ -253,7 +253,8 @@ class StatusGenerator::Vaccination
   end
 
   def maximum_dose_sequence
-    @maximum_dose_sequence ||= Programme.find(programme_type).maximum_dose_sequence
+    @maximum_dose_sequence ||=
+      Programme.find(programme_type).maximum_dose_sequence
   end
 
   def consent_generator

@@ -45,7 +45,7 @@ class StatusGenerator::Triage
     latest_triage&.without_gelatine if status_should_be_safe_to_vaccinate?
   end
 
-  def disease_types = consent_generator.disease_types
+  delegate :disease_types, to: :consent_generator
 
   def delay_vaccination_until_date
     if status_should_be_delay_vaccination?

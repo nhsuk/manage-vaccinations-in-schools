@@ -12,33 +12,6 @@ class PatientStatusResolver
     @context_location_id = context_location_id
   end
 
-  def consent
-    status =
-      if consent_status.given?
-        vaccine_method =
-          triage_status.vaccine_method.presence ||
-            consent_status.vaccine_methods.first
-
-        without_gelatine =
-          triage_status.without_gelatine || consent_status.without_gelatine
-
-        parts = [
-          "given",
-          vaccine_method,
-          without_gelatine ? "without_gelatine" : nil,
-          without_gelatine && @programme.flu? ? "flu" : nil
-        ]
-
-        parts.compact_blank.join("_")
-      else
-        consent_status.status
-      end
-
-    tag_hash(status, context: :consent).merge(
-      prefix: consent_status.programme.name
-    )
-  end
-
   def programme(only_if_vaccinated: false)
     return if only_if_vaccinated && !programme_status.vaccinated?
 

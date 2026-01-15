@@ -831,9 +831,21 @@ FactoryBot.define do
         programmes.map do |programme|
           association(
             :consent,
-            :given_nasal,
+            :given_nasal_or_injection,
             :from_mum,
             :health_question_notes,
+            patient: instance,
+            team:,
+            programme:
+          )
+        end
+      end
+
+      triages do
+        programmes.map do |programme|
+          association(
+            :triage,
+            :safe_to_vaccinate_without_gelatine,
             patient: instance,
             team:,
             programme:

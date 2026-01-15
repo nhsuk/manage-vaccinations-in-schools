@@ -16,14 +16,6 @@ describe PatientStatusResolver do
 
   before { Flipper.enable(:mmrv) }
 
-  describe "#consent" do
-    subject { patient_status_resolver.consent }
-
-    let(:programme) { Programme.hpv }
-
-    it { should eq({ prefix: "HPV", text: "No response", colour: "grey" }) }
-  end
-
   describe "#programme" do
     subject(:hash) { patient_status_resolver.programme }
 

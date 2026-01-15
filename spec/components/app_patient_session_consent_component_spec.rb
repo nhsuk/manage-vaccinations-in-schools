@@ -27,7 +27,7 @@ describe AppPatientSessionConsentComponent do
 
   context "when vaccinated" do
     before do
-      create(:patient_vaccination_status, :vaccinated, patient:, programme:)
+      create(:patient_programme_status, :vaccinated_fully, patient:, programme:)
     end
 
     it { should_not have_css("p", text: "No requests have been sent.") }
@@ -40,8 +40,6 @@ describe AppPatientSessionConsentComponent do
     let!(:consent) do
       create(:consent, :refused, patient: patient.reload, parent:, programme:)
     end
-
-    before { create(:patient_consent_status, :refused, patient:, programme:) }
 
     it { should have_css(".app-card__heading--red", text: "Consent refused") }
     it { should have_content(consent.parent.full_name) }
