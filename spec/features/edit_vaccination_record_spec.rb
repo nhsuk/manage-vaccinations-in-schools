@@ -290,19 +290,50 @@ describe "Edit vaccination record" do
 
       when_i_click_back
       then_i_should_see_the_vaccination_record
-      and_i_click_on_edit_vaccination_record
+
+      when_i_click_on_edit_vaccination_record
       then_i_see_the_edit_vaccination_record_page
       and_i_should_not_see_a_change_outcome_link
+
+      when_i_click_on_save_changes
+      then_i_should_see_the_vaccination_record
+    end
+
+    scenario "Edits the vaccinator" do
+      given_i_am_signed_in
+      and_a_bulk_uploaded_vaccination_record_exists
+
+      when_i_navigate_to_the_edit_vaccination_record_page
 
       when_i_edit_the_vaccinator
       and_i_enter_a_new_first_name_and_last_name
       then_i_see_the_edit_vaccination_record_page
       and_i_should_see_the_updated_vaccinator_details
 
+      when_i_click_on_save_changes
+      then_i_should_see_the_vaccination_record
+    end
+
+    scenario "Edits dose number" do
+      given_i_am_signed_in
+      and_a_bulk_uploaded_vaccination_record_exists
+
+      when_i_navigate_to_the_edit_vaccination_record_page
+
       when_i_click_on_change_dose_number
       and_i_choose_the_second_dose
       then_i_see_the_edit_vaccination_record_page
       and_i_should_see_the_updated_dose_number
+
+      when_i_click_on_save_changes
+      then_i_should_see_the_vaccination_record
+    end
+
+    scenario "Edits the location" do
+      given_i_am_signed_in
+      and_a_bulk_uploaded_vaccination_record_exists
+
+      when_i_navigate_to_the_edit_vaccination_record_page
 
       when_i_click_on_change_location
       and_i_choose_location_unknown
@@ -550,6 +581,14 @@ describe "Edit vaccination record" do
     expect(page).not_to have_content(
       "The vaccine given does not match that determined by the child's consent or triage outcome"
     )
+  end
+
+  def when_i_navigate_to_the_edit_vaccination_record_page
+    when_i_go_to_the_vaccination_record_for_the_patient
+    then_i_should_see_the_vaccination_record
+
+    when_i_click_on_edit_vaccination_record
+    then_i_see_the_edit_vaccination_record_page
   end
 
   def when_i_click_back
