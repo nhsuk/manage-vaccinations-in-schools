@@ -67,7 +67,7 @@ class VaccinationRecordsController < ApplicationController
       { text: t("dashboard.index.title"), href: dashboard_path }
     ]
 
-    if @session
+    if @session && policy(@session).show?
       @breadcrumb_items << {
         text: t("sessions.index.title"),
         href: sessions_path
