@@ -501,8 +501,19 @@ describe SearchVaccinationRecordsInNHSJob do
       end
 
       before do
-        # Fully enable feature flag
-        Flipper.enable(:imms_api_search_job)
+        # Enable feature flag actors as they will be in prod, until MMRV is enabled
+        Flipper.disable(:imms_api_search_job)
+
+        Flipper.enable(:imms_api_search_job, Programme.flu)
+        Flipper.enable(:imms_api_search_job, Programme.hpv)
+        Flipper.enable(:imms_api_search_job, Programme.menacwy)
+        Flipper.enable(:imms_api_search_job, Programme.td_ipv)
+        Flipper.enable(
+          :imms_api_search_job,
+          Programme.mmr.variant_for(
+            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
+          )
+        )
       end
 
       it "creates new vaccination records for incoming Immunizations" do
