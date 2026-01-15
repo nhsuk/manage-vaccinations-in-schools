@@ -325,7 +325,13 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def vaccine_value
-    highlight_if(@vaccine.brand, @vaccination_record.vaccine_id_changed?)
+    display_name =
+      if @current_user.selected_team.has_upload_only_access?
+        @vaccine.nivs_name.presence || @vaccine.brand
+      else
+        @vaccine.brand
+      end
+    highlight_if(display_name, @vaccination_record.vaccine_id_changed?)
   end
 
   def delivery_method_value
