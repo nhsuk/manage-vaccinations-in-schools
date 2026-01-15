@@ -66,7 +66,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
 
         summary_list.with_row do |row|
-          row.with_key { "Batch ID" }
+          row.with_key { "Batch number" }
 
           if @batch
             row.with_value(classes: ["app-u-code"]) { batch_id_value }

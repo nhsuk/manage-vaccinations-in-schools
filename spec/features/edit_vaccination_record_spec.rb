@@ -578,7 +578,7 @@ describe "Edit vaccination record" do
   end
 
   def and_i_should_see_the_updated_batch
-    expect(page).to have_content("Batch ID#{@replacement_batch.name}")
+    expect(page).to have_content("Batch number#{@replacement_batch.name}")
   end
 
   def when_i_click_change_notes

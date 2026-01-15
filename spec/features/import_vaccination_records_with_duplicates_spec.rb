@@ -180,8 +180,8 @@ describe "Immunisation imports duplicates" do
   end
 
   def then_i_should_see_the_first_duplicate_record
-    expect(page).to have_content("Batch ID123013325")
-    expect(page).to have_content("Batch IDSomethingElse")
+    expect(page).to have_content("Batch number123013325")
+    expect(page).to have_content("Batch numberSomethingElse")
     expect(page).to have_content("MethodIntramuscular")
     expect(page).to have_content("MethodNasal spray")
     expect(page).to have_content("SiteLeft thigh")
@@ -189,8 +189,8 @@ describe "Immunisation imports duplicates" do
   end
 
   def then_i_should_see_the_second_duplicate_record
-    expect(page).to have_content("Batch ID123013325")
-    expect(page).to have_content("Batch IDCervarixBatch")
+    expect(page).to have_content("Batch number123013325")
+    expect(page).to have_content("Batch numberCervarixBatch")
     expect(page).to have_content("MethodNasal spray")
     expect(page).to have_content("SiteLeft arm (upper position)")
     expect(page).to have_content("SiteNose")

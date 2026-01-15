@@ -196,8 +196,8 @@ describe AppVaccinationRecordSummaryComponent do
     end
   end
 
-  describe "batch ID row" do
-    it { should have_css(".nhsuk-summary-list__row", text: "Batch IDABC") }
+  describe "batch number row" do
+    it { should have_css(".nhsuk-summary-list__row", text: "Batch numberABC") }
 
     context "without a vaccine" do
       let(:outcome) { :unwell }
@@ -205,7 +205,12 @@ describe AppVaccinationRecordSummaryComponent do
       let(:batch) { nil }
       let(:other_batch) { nil }
 
-      it { should_not have_css(".nhsuk-summary-list__row", text: "Batch ID") }
+      it do
+        expect(rendered).not_to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Batch number"
+        )
+      end
     end
   end
 
