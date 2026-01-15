@@ -239,6 +239,39 @@ describe PatientMerger do
       }.to(patient_to_keep)
     end
 
+    it "ensures the patient to keep is added to any teams" do
+      team1 = create(:team)
+      team2 = create(:team)
+
+      create(
+        :patient_team,
+        patient: patient_to_destroy,
+        team: team1,
+        sources: %w[patient_location]
+      )
+      create(
+        :patient_team,
+        patient: patient_to_keep,
+        team: team1,
+        sources: %w[archive_reason]
+      )
+      create(
+        :patient_team,
+        patient: patient_to_destroy,
+        team: team2,
+        sources: %w[school_move_school]
+      )
+
+      expect { call }.to change(PatientTeam, :count).by(-1)
+
+      expect(
+        patient_to_keep.patient_teams.find_by(team: team1).sources
+      ).to contain_exactly("archive_reason", "patient_location")
+      expect(
+        patient_to_keep.patient_teams.find_by(team: team2).sources
+      ).to contain_exactly("school_move_school")
+    end
+
     it "enqueues search job for kept patient" do
       expect { call }.to enqueue_sidekiq_job(
         SearchVaccinationRecordsInNHSJob
