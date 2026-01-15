@@ -125,6 +125,8 @@ class Consent < ApplicationRecord
 
   def requires_reason_for_refusal? = super || withdrawn?
 
+  def can_have_reason_for_refusal? = requires_reason_for_refusal?
+
   def requires_notes? = super || invalidated?
 
   def requires_triage?

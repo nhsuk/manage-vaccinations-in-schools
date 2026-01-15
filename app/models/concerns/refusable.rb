@@ -26,6 +26,10 @@ module Refusable
          validate: {
            if: :requires_reason_for_refusal?
          }
+
+    validates :reason_for_refusal,
+              absence: true,
+              unless: :can_have_reason_for_refusal?
   end
 
   def requires_reason_for_refusal?
