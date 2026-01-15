@@ -35,13 +35,14 @@ module MavisCLI
         end
 
         team_id =
-          old_loc.team_locations.ordered.find_by!(academic_year:).team_id
+          old_loc.team_locations.ordered.where(academic_year:).sole.team_id
 
         old_team_location =
           old_loc
             .team_locations
             .includes(:team)
             .find_by!(academic_year:, team_id:)
+
         new_team_location =
           new_loc
             .team_locations
@@ -75,25 +76,23 @@ module MavisCLI
           )
         end
 
-        Session.where(
-          team_location_id: old_team_location.id
-        ).update_all_and_sync_patient_teams(
+        Session.where(team_location_id: old_team_location.id).update_all(
           team_location_id: new_team_location.id
         )
         Patient.where(school_id: old_loc.id).update_all(school_id: new_loc.id)
         PatientLocation.where(
           academic_year:,
           location_id: old_loc.id
-        ).update_all_and_sync_patient_teams(location_id: new_loc.id)
+        ).update_all(location_id: new_loc.id)
         ConsentForm.where(team_location_id: old_team_location.id).update_all(
           team_location_id: new_team_location.id
         )
         ConsentForm.where(school_id: old_loc.id).update_all(
           school_id: new_loc.id
         )
-        SchoolMove.where(
-          school_id: old_loc.id
-        ).update_all_and_sync_patient_teams(school_id: new_loc.id)
+        SchoolMove.where(school_id: old_loc.id).update_all(
+          school_id: new_loc.id
+        )
         Patient
           .where(school_id: new_loc.id)
           .find_each do |patient|
@@ -101,6 +100,8 @@ module MavisCLI
           end
 
         old_team_location.destroy!
+
+        PatientTeamUpdater.call(team_scope: Team.where(id: team_id))
       end
     end
   end
