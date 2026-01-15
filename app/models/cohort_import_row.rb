@@ -61,6 +61,21 @@ class CohortImportRow < PatientImportRow
       errors.add(:base, "<code>CHILD_SCHOOL_URN</code> is missing")
     elsif school_urn.blank?
       errors.add(school_urn.header, "is required but missing")
+    elsif schools.where(urn: school_urn.to_s).where.not(site: nil).exists?
+      errors.add(
+        school_urn.header,
+        "The URN #{school_urn} has been split into sites. " \
+          "Use #{
+            schools
+              .where(urn: school_urn.to_s)
+              .map(&:urn_and_site)
+              .sort
+              .to_sentence(
+                two_words_connector: " or ",
+                last_word_connector: " or "
+              )
+          } instead."
+      )
     elsif !school_urn.to_s.in?(
           [SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN]
         ) && !schools.where_urn_and_site(school_urn.to_s).exists? &&
