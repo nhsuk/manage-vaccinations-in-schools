@@ -159,7 +159,7 @@ class StatusGenerator::Vaccination
         elsif programme.mmr?
           filter_mmr_vaccination_records(administered_records)
         else
-          raise UnsupportedProgramme, programme
+          raise UnsupportedProgrammeType, programme.type
         end
       end
   end
