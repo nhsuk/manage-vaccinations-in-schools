@@ -355,6 +355,22 @@ describe "Edit vaccination record" do
       then_i_should_see_the_vaccination_record
     end
 
+    scenario "Edits notes" do
+      given_i_am_signed_in
+      and_a_bulk_uploaded_vaccination_record_exists
+
+      when_i_navigate_to_the_edit_vaccination_record_page
+
+      when_i_click_on_change_notes
+      then_i_should_see_different_help_text
+      when_i_enter_some_notes
+      then_i_see_the_edit_vaccination_record_page
+      and_i_should_see_the_new_notes
+
+      when_i_click_on_save_changes
+      then_i_should_see_the_vaccination_record
+    end
+
     scenario "Parent details are not visible when viewing vaccination records" do
       given_i_am_signed_in
       and_a_bulk_uploaded_vaccination_record_exists
@@ -773,6 +789,25 @@ describe "Edit vaccination record" do
 
   def and_i_should_see_the_updated_location
     expect(page).to have_content("LocationA New School")
+  end
+
+  def when_i_click_on_change_notes
+    click_on "Add notes"
+  end
+
+  def then_i_should_see_different_help_text
+    expect(page).to have_content(
+      "You can add notes here for your own use. They will not be sent to NHS England."
+    )
+  end
+
+  def when_i_enter_some_notes
+    fill_in "Notes", with: "Some notes."
+    click_on "Continue"
+  end
+
+  def and_i_should_see_the_new_notes
+    expect(page).to have_content("NotesSome notes.")
   end
 
   def when_i_click_on_save_changes
