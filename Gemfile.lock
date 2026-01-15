@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/alphagov/rubocop-govuk.git
-  revision: a6d2aedf0262e633076d23b47069957f843f6e52
+  revision: 58ff3290bf5c267d0228d0910fa0bc92a405ec81
   branch: main
   specs:
     rubocop-govuk (5.1.20)
@@ -452,7 +452,7 @@ GEM
     parallel (1.27.0)
     parallel_tests (5.5.0)
       parallel
-    parser (3.3.10.0)
+    parser (3.3.10.1)
       ast (~> 2.4.1)
       racc
     pg (1.6.3-arm64-darwin)
