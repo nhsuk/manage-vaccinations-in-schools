@@ -5,7 +5,13 @@ module LocationsHelper
     return location.name unless show_postcode || show_urn
 
     identifier =
-      show_postcode ? location.address_postcode : "URN: #{location.urn}"
+      (
+        if show_postcode
+          location.address_postcode
+        else
+          "URN: #{location.urn_and_site}"
+        end
+      )
     "#{location.name} (#{identifier})"
   end
 end
