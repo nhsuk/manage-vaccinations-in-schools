@@ -10,7 +10,11 @@
   <%= f.govuk_text_area :notes,
                         caption: { text: @patient.full_name, size: "l" },
                         label: { text: "Notes", tag: "h1", size: "l" },
-                        hint: { text: "For example, if the child had a reaction to the vaccine" } %>
+                        hint: { text: (if @draft_vaccination_record.bulk_upload_user_and_record?
+                          "You can add notes here for your own use. They will not be sent to NHS England."
+                        else
+                          "For example, if the child had a reaction to the vaccine"
+                        end) } %>
 
   <%= f.govuk_submit "Continue" %>
 <% end %>
