@@ -73,7 +73,9 @@ describe "Parental consent" do
   end
 
   def then_i_see_the_consent_form
-    expect(page).to have_heading("Give or refuse consent for vaccinations")
+    expect(page).to have_heading(
+      "Give or refuse consent for the MenACWY and Td/IPV vaccinations"
+    )
     expect(page).to have_heading("MenACWY")
     expect(page).to have_heading("Td/IPV")
   end

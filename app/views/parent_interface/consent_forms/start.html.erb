@@ -1,4 +1,4 @@
-<%= h1 t("consent_forms.start.title"), size: "xl" %>
+<%= h1 t(@programmes.map(&:type).join("-"), scope: %i[consent_forms start title]), size: "xl" %>
 
 <% @programmes.each do |programme| %>
   <%= render "parent_interface/consent_forms/start/#{programme.type}" %>
