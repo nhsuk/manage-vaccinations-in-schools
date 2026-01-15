@@ -141,6 +141,23 @@ describe CohortImportRow do
       end
     end
 
+    context "with a school that has sites" do
+      let(:data) { valid_data }
+
+      before do
+        school.team_locations.includes(:team).destroy_all
+        create(:school, urn: school_urn, site: "A", team:)
+        create(:school, urn: school_urn, site: "B", team:)
+      end
+
+      it "is invalid" do
+        expect(cohort_import_row).to be_invalid
+        expect(cohort_import_row.errors["CHILD_SCHOOL_URN"].first).to include(
+          "Use 123456A or 123456B instead."
+        )
+      end
+    end
+
     context "with an invalid year group" do
       let(:data) { valid_data.merge("CHILD_YEAR_GROUP" => "abc") }
 
