@@ -69,6 +69,7 @@ gem "sentry-sidekiq"
 gem "sidekiq"
 gem "sidekiq-scheduler"
 gem "sidekiq-throttled"
+gem "sidekiq-unique-jobs"
 gem "splunk-sdk-ruby"
 gem "table_tennis"
 gem "tzinfo-data", platforms: %i[jruby windows]
