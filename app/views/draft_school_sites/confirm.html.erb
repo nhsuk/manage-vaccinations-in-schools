@@ -1,0 +1,33 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: wizard_path(:details)) %>
+<% end %>
+
+<%= h1 "Check and confirm" %>
+
+<%= render AppCardComponent.new do |card| %>
+  <% card.with_heading { "School details" } %>
+  
+  <%= govuk_summary_list(actions: true) do |list| %>
+    <% list.with_row do |row| %>
+      <% row.with_key { "School URN" } %>
+      <% row.with_value(classes: ["app-u-code"]) { "#{@draft_school_site.urn}#{@site_letter}" } %>
+      <% row.with_action(text: "Change", href: wizard_path(:school), visually_hidden_text: "school") %>
+    <% end %>
+
+    <% list.with_row do |row| %>
+      <% row.with_key { "Name" } %>
+      <% row.with_value { @draft_school_site.name } %>
+    <% end %>
+    
+    <% list.with_row do |row| %>
+      <% row.with_key { "Address" } %>
+      <% row.with_value do %>
+        <%= format_address_single_line(@draft_school_site) %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<%= form_with(model: @draft_school_site, url: wizard_path, method: :put) do |form| %>
+  <%= form.govuk_submit "Add school site" %>
+<% end %>
