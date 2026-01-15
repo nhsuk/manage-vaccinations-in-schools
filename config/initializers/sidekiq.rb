@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "sidekiq/throttled"
+require "sidekiq-unique-jobs"
 
 redis_config = { url: ENV["SIDEKIQ_REDIS_URL"] || ENV["REDIS_URL"] }
 
@@ -11,25 +12,46 @@ end
 
 Sidekiq.configure_server do |config|
   config.redis = redis_config
+
+  config.client_middleware do |chain|
+    chain.add SidekiqUniqueJobs::Middleware::Client
+  end
+
+  config.server_middleware do |chain|
+    chain.add SidekiqUniqueJobs::Middleware::Server
+  end
+
+  SidekiqUniqueJobs::Server.configure(config)
+
   if ENV["EXPORT_SIDEKIQ_METRICS"] == "true"
     require "prometheus_exporter/instrumentation"
+
     config.server_middleware do |chain|
       chain.add PrometheusExporter::Instrumentation::Sidekiq
     end
+
     config.death_handlers << PrometheusExporter::Instrumentation::Sidekiq.death_handler
+
     config.on :startup do
       PrometheusExporter::Instrumentation::Process.start type: "sidekiq"
       PrometheusExporter::Instrumentation::SidekiqProcess.start
       PrometheusExporter::Instrumentation::SidekiqQueue.start
       PrometheusExporter::Instrumentation::SidekiqStats.start
     end
+
     at_exit do
       PrometheusExporter::Client.default.stop(wait_timeout_seconds: 10)
     end
   end
 end
 
-Sidekiq.configure_client { |config| config.redis = redis_config }
+Sidekiq.configure_client do |config|
+  config.redis = redis_config
+
+  config.client_middleware do |chain|
+    chain.add SidekiqUniqueJobs::Middleware::Client
+  end
+end
 
 Sidekiq::Throttled.configure do |config|
   config.cooldown_period = 1.0
