@@ -62,7 +62,7 @@ describe "Manage batches" do
   def when_i_try_to_add_a_batch_with_an_invalid_expiry_date
     click_on "Add a new batch", match: :first
 
-    fill_in "Batch", with: "AB1234"
+    fill_in "Batch number", with: "AB1234"
 
     # expiry date
     fill_in "Day", with: "0"
@@ -120,7 +120,7 @@ describe "Manage batches" do
   def when_i_add_the_archived_batch_again
     click_on "Add a new batch", match: :first
 
-    fill_in "Batch", with: "AB1234"
+    fill_in "Batch number", with: "AB1234"
 
     fill_in "Day", with: "31"
     fill_in "Month", with: "3"
