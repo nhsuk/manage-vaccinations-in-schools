@@ -9,7 +9,7 @@ class StatusGenerator::Vaccination
   # to already be sorted in reverse chronological order, meaning the most
   # recent item is at the beginning of the array.
   def initialize(
-    programme:,
+    programme_type:,
     academic_year:,
     patient:,
     patient_locations:,
@@ -18,7 +18,7 @@ class StatusGenerator::Vaccination
     attendance_record:,
     vaccination_records:
   )
-    @programme = programme
+    @programme_type = programme_type
     @academic_year = academic_year
     @patient = patient
     @patient_locations = patient_locations
@@ -28,13 +28,17 @@ class StatusGenerator::Vaccination
 
     @vaccination_records =
       vaccination_records.select do
-        it.patient_id == patient.id && it.programme_type == programme.type &&
-          if programme.seasonal?
+        it.patient_id == patient.id && it.programme_type == programme_type &&
+          if seasonal?
             it.academic_year == academic_year
           else
             it.academic_year <= academic_year
           end
       end
+  end
+
+  def programme
+    Programme.find(programme_type, disease_types:, patient:)
   end
 
   def status
@@ -94,7 +98,7 @@ class StatusGenerator::Vaccination
 
   private
 
-  attr_reader :programme,
+  attr_reader :programme_type,
               :academic_year,
               :patient,
               :patient_locations,
@@ -141,7 +145,7 @@ class StatusGenerator::Vaccination
 
   def valid_vaccination_records
     @valid_vaccination_records ||=
-      if programme.seasonal?
+      if seasonal?
         vaccination_records.select { it.administered? || it.already_had? }
       else
         if (
@@ -152,11 +156,11 @@ class StatusGenerator::Vaccination
 
         administered_records = vaccination_records.select(&:administered?)
 
-        if programme.doubles?
+        if doubles?
           filter_doubles_vaccination_records(administered_records)
-        elsif programme.hpv?
+        elsif hpv?
           filter_hpv_vaccination_records(administered_records)
-        elsif programme.mmr?
+        elsif mmr?
           filter_mmr_vaccination_records(administered_records)
         else
           raise UnsupportedProgrammeType, programme.type
@@ -211,11 +215,11 @@ class StatusGenerator::Vaccination
           return already_had_record
         end
 
-        if programme.mmr?
-          if valid_vaccination_records.count >= programme.maximum_dose_sequence
+        if mmr?
+          if valid_vaccination_records.count >= maximum_dose_sequence
             valid_vaccination_records.first
           end
-        elsif programme.td_ipv?
+        elsif td_ipv?
           valid_vaccination_records.find do
             it.dose_sequence == 5 ||
               (it.dose_sequence.nil? && it.sourced_from_service?)
@@ -232,16 +236,30 @@ class StatusGenerator::Vaccination
         .select { it.academic_year == academic_year }
         .any? do |patient_location|
           patient_location.location.location_programme_year_groups.any? do
-            it.programme_type == programme.type &&
+            it.programme_type == programme_type &&
               it.academic_year == academic_year && it.year_group == year_group
           end
         end
   end
 
+  Programme::TYPES.each do |type|
+    define_method("#{type}?") { programme_type == type }
+  end
+
+  def doubles? = menacwy? || td_ipv?
+
+  def seasonal?
+    @seasonal ||= Programme.find(programme_type).seasonal?
+  end
+
+  def maximum_dose_sequence
+    @maximum_dose_sequence ||= Programme.find(programme_type).maximum_dose_sequence
+  end
+
   def consent_generator
     @consent_generator ||=
       StatusGenerator::Consent.new(
-        programme:,
+        programme_type:,
         academic_year:,
         patient:,
         consents:,
@@ -252,7 +270,7 @@ class StatusGenerator::Vaccination
   def triage_generator
     @triage_generator ||=
       StatusGenerator::Triage.new(
-        programme:,
+        programme_type:,
         academic_year:,
         patient:,
         consents:,

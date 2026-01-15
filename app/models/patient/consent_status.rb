@@ -58,7 +58,7 @@ class Patient::ConsentStatus < ApplicationRecord
   def generator
     @generator ||=
       StatusGenerator::Consent.new(
-        programme:,
+        programme_type:,
         academic_year:,
         patient:,
         consents:,

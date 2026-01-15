@@ -79,7 +79,7 @@ class Patient::VaccinationStatus < ApplicationRecord
   def generator
     @generator ||=
       StatusGenerator::Vaccination.new(
-        programme:,
+        programme_type:,
         academic_year:,
         patient:,
         patient_locations:,

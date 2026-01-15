@@ -73,7 +73,7 @@ class Patient::TriageStatus < ApplicationRecord
   def generator
     @generator ||=
       StatusGenerator::Triage.new(
-        programme:,
+        programme_type:,
         academic_year:,
         patient:,
         consents:,

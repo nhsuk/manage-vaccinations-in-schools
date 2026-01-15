@@ -3,7 +3,7 @@
 describe StatusGenerator::Triage do
   subject(:generator) do
     described_class.new(
-      programme:,
+      programme_type: programme.type,
       academic_year: AcademicYear.current,
       patient:,
       consents: patient.consents,

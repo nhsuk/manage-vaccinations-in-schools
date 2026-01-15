@@ -9,7 +9,7 @@ class StatusGenerator::Programme
   # to already be sorted in reverse chronological order, meaning the most
   # recent item is at the beginning of the array.
   def initialize(
-    programme:,
+    programme_type:,
     academic_year:,
     patient:,
     patient_locations:,
@@ -18,7 +18,7 @@ class StatusGenerator::Programme
     attendance_record:,
     vaccination_records:
   )
-    @programme = programme
+    @programme_type = programme_type
     @academic_year = academic_year
     @patient = patient
     @patient_locations = patient_locations
@@ -26,6 +26,10 @@ class StatusGenerator::Programme
     @triages = triages
     @attendance_record = attendance_record
     @vaccination_records = vaccination_records
+  end
+
+  def programme
+    Programme.find(programme_type, disease_types:, patient:)
   end
 
   def status
@@ -122,7 +126,7 @@ class StatusGenerator::Programme
 
   private
 
-  attr_reader :programme,
+  attr_reader :programme_type,
               :academic_year,
               :patient,
               :patient_locations,
@@ -214,7 +218,7 @@ class StatusGenerator::Programme
   def consent_generator
     @consent_generator ||=
       StatusGenerator::Consent.new(
-        programme:,
+        programme_type:,
         academic_year:,
         patient:,
         consents:,
@@ -225,7 +229,7 @@ class StatusGenerator::Programme
   def triage_generator
     @triage_generator ||=
       StatusGenerator::Triage.new(
-        programme:,
+        programme_type:,
         academic_year:,
         patient:,
         consents:,
@@ -237,7 +241,7 @@ class StatusGenerator::Programme
   def vaccination_generator
     @vaccination_generator ||=
       StatusGenerator::Vaccination.new(
-        programme:,
+        programme_type:,
         academic_year:,
         patient:,
         patient_locations:,
