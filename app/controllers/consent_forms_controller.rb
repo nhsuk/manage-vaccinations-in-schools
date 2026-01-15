@@ -8,10 +8,11 @@ class ConsentFormsController < ApplicationController
   before_action :set_patient, only: %i[edit_match update_match]
   before_action :set_search_params_present, only: :search
 
-  skip_after_action :verify_authorized, only: :index
   skip_after_action :verify_policy_scoped, only: :search
 
   def index
+    authorize ConsentForm
+
     consent_forms = policy_scope(ConsentForm).unmatched.order(:recorded_at)
 
     if (session_slug = params[:session_slug]).present?
