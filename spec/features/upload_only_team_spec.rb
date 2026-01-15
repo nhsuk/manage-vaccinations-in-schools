@@ -7,7 +7,6 @@ describe "Upload-only team homepage and navigation" do
     then_i_should_see_the_upload_only_cards
     and_i_should_see_the_import_records_card
     and_i_should_see_the_children_card
-    and_i_should_see_the_reports_card
     and_i_should_see_the_national_reporting_service_name
   end
 
@@ -83,7 +82,7 @@ describe "Upload-only team homepage and navigation" do
 
   def then_i_should_see_the_upload_only_cards
     cards = page.all(".nhsuk-card-group__item")
-    expect(cards.count).to eq(4)
+    expect(cards.count).to eq(3)
   end
 
   def and_i_should_see_the_import_records_card
@@ -103,17 +102,6 @@ describe "Upload-only team homepage and navigation" do
 
     expect(card).to have_css("h2", text: "Children")
     expect(card).to have_link("Children", href: patients_path)
-  end
-
-  def and_i_should_see_the_reports_card
-    cards = page.all(".nhsuk-card-group__item")
-    card = cards[2]
-
-    expect(card).to have_css("h2", text: "Reports")
-    expect(card).not_to have_link("Reports")
-
-    # Card should be disabled
-    expect(card).to have_css(".app-card--disabled")
   end
 
   def then_i_should_see_only_import_children_and_team_navigation_items
