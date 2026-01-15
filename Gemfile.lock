@@ -171,6 +171,13 @@ GEM
       aws-eventstream (~> 1, >= 1.0.2)
     backport (1.2.0)
     base64 (0.3.0)
+    bashly (0.8.4)
+      colsole (~> 0.7)
+      completely (~> 0.5.0)
+      filewatcher (~> 1.1)
+      gtx (~> 0.1.0)
+      mister_bin (~> 0.7)
+      requires (~> 0.2)
     bcp47 (0.3.3)
       i18n
     bcrypt (3.1.21)
@@ -206,6 +213,10 @@ GEM
       logger (~> 1.5)
     climate_control (1.2.0)
     coderay (1.1.3)
+    colsole (0.8.2)
+    completely (0.5.4)
+      colsole (>= 0.8.1, < 2)
+      mister_bin (~> 0.7)
     concurrent-ruby (1.3.6)
     config (5.6.1)
       deep_merge (~> 1.2, >= 1.2.1)
@@ -241,6 +252,7 @@ GEM
     discard (1.4.0)
       activerecord (>= 4.2, < 9.0)
     docile (1.4.1)
+    docopt_ng (0.7.1)
     domain_name (0.6.20240107)
     drb (2.2.3)
     dry-cli (1.4.1)
@@ -281,6 +293,8 @@ GEM
       date_time_precision (>= 0.8)
       mime-types (>= 3.0)
       nokogiri (>= 1.11.4)
+    filewatcher (1.1.1)
+      optimist (~> 3.0)
     flipper (1.3.6)
       concurrent-ruby (< 2)
     flipper-active_record (1.3.6)
@@ -310,6 +324,8 @@ GEM
     govuk_markdown (2.0.3)
       activesupport
       redcarpet
+    gtx (0.1.2)
+      erb (>= 4.0, < 7)
     haml (7.1.0)
       temple (>= 0.8.2)
       thor
@@ -402,6 +418,9 @@ GEM
     mini_mime (1.1.5)
     minitest (6.0.1)
       prism (~> 1.5)
+    mister_bin (0.8.1)
+      colsole (>= 0.8.1, < 2)
+      docopt_ng (~> 0.7, >= 0.7.1)
     msgpack (1.8.0)
     net-http (0.9.1)
       uri (>= 0.11.1)
@@ -453,6 +472,7 @@ GEM
       tzinfo
       validate_url
       webfinger (~> 2.0)
+    optimist (3.2.1)
     orm_adapter (0.5.0)
     ostruct (0.6.3)
     pagy (9.4.0)
@@ -568,6 +588,7 @@ GEM
     regexp_parser (2.11.3)
     reline (0.6.3)
       io-console (~> 0.5)
+    requires (0.2.0)
     responders (3.2.0)
       actionpack (>= 7.0)
       railties (>= 7.0)
@@ -820,6 +841,7 @@ DEPENDENCIES
   aws-sdk-iam
   aws-sdk-rds
   aws-sdk-s3
+  bashly
   bootsnap
   brakeman
   capybara
