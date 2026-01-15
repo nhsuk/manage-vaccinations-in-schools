@@ -13,10 +13,10 @@ en:
               missing_year: Enter a year
               taken: This batch already exists
             name:
-              blank: Enter a batch
-              invalid: Enter a batch with only letters and numbers
-              too_short: Enter a batch that is more than %{count} characters long
-              too_long: Enter a batch that is less than %{count} characters long
+              blank: Enter a batch number
+              invalid: Enter a batch number with only letters and numbers
+              too_short: Enter a batch number that is more than %{count} characters long
+              too_long: Enter a batch number that is less than %{count} characters long
         bulk_remove_parents_form:
           attributes:
             remove_option:
@@ -114,6 +114,16 @@ en:
           attributes:
             batch_id:
               blank: Choose a batch
+            batch_name:
+              blank: Enter a batch number
+              invalid: Enter a batch number with only letters and numbers
+              too_short: Enter a batch number that is more than %{count} characters long
+              too_long: Enter a batch number that is less than %{count} characters long
+            batch_expiry:
+              blank: Enter an expiry date
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
             delivery_method:
               blank: Choose a method of delivery
               inclusion: Choose a method of delivery

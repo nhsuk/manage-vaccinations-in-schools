@@ -7,6 +7,25 @@
 <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
+<% if @draft_vaccination_record.bulk_upload_user_and_record? %>
+
+    <span class="nhsuk-caption-l"><%= @patient.full_name %></span>
+    <%= h1 "Which vaccine and batch did you use?" %>
+
+  <%= f.govuk_radio_buttons_fieldset :vaccine_id,
+                                     legend: { text: "Vaccine", size: "m" } do %>
+    <% @vaccines.each do |vaccine| %>
+      <%= f.govuk_radio_button :vaccine_id, vaccine.id, label: { text: vaccine.nivs_name } %>
+    <% end %>
+  <% end %>
+
+  <%= f.govuk_text_field :batch_name,
+                         label: { text: "Batch number", size: "m" }, width: 10, class: "nhsuk-input--code" %>
+
+  <%= f.govuk_date_field :batch_expiry,
+                         legend: { text: "Batch expiry", size: "m" },
+                         hint: { text: "For example, 27 10 2025" } %>
+<% else %>
   <%= f.govuk_radio_buttons_fieldset :batch_id,
                                      caption: { text: @patient.full_name, size: "l" },
                                      legend: { size: "l", tag: "h1", text: "Which batch did you use?" } do %>
@@ -31,6 +50,7 @@
       <% end %>
     <% end %>
   <% end %>
+<% end %>
 
   <%= f.govuk_submit "Continue" %>
 <% end %>

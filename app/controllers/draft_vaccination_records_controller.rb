@@ -14,7 +14,16 @@ class DraftVaccinationRecordsController < ApplicationController
   include WizardControllerConcern
 
   before_action :validate_params, only: :update
-  before_action :set_batches, if: -> { current_step == :batch }
+  before_action :set_batches,
+                if: -> do
+                  current_step == :batch &&
+                    !@draft_vaccination_record.bulk_upload_user_and_record?
+                end
+  before_action :set_vaccines,
+                if: -> do
+                  current_step == :batch &&
+                    @draft_vaccination_record.bulk_upload_user_and_record?
+                end
   before_action :set_locations, if: -> { current_step == :location }
   before_action :set_supplied_by_users, if: -> { current_step == :supplier }
   before_action :set_back_link_path
@@ -71,6 +80,20 @@ class DraftVaccinationRecordsController < ApplicationController
 
       unless validator.date_params_valid? && time_valid
         @draft_vaccination_record.errors.add(:performed_at, :invalid)
+        render_wizard nil, status: :unprocessable_content
+      end
+    elsif current_step == :batch &&
+          @draft_vaccination_record.bulk_upload_user_and_record?
+      validator =
+        DateParamsValidator.new(
+          field_name: :batch_expiry,
+          object: @draft_vaccination_record,
+          params: update_params
+        )
+
+      unless validator.date_params_valid?
+        @draft_vaccination_record.errors.add(:batch_expiry, :invalid)
+        set_vaccines
         render_wizard nil, status: :unprocessable_content
       end
     end
@@ -176,7 +199,7 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def update_params
     permitted_attributes = {
-      batch: %i[batch_id],
+      batch: %i[batch_id vaccine_id batch_name batch_expiry],
       confirm: @draft_vaccination_record.editing? ? [] : %i[notes],
       date_and_time: %i[performed_at],
       delivery: %i[delivery_site delivery_method],
@@ -229,6 +252,10 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def set_steps
     self.steps = @draft_vaccination_record.wizard_steps
+  end
+
+  def set_vaccines
+    @vaccines = @programme.vaccines.select(&:nivs_name)
   end
 
   def set_batches
