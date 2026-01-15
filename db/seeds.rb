@@ -205,12 +205,10 @@ def setup_clinic(team)
         )
       end
 
-  imported_ids =
-    PatientLocation.import(
-      new_patient_location_records,
-      on_duplicate_key_ignore: :all
-    ).ids
-  SyncPatientTeamJob.perform_now(PatientLocation, imported_ids)
+  PatientLocation.import(
+    new_patient_location_records,
+    on_duplicate_key_ignore: :all
+  ).ids
 end
 
 def create_patients(team)
@@ -406,5 +404,7 @@ create_patients(team)
 create_imports(user, team)
 create_school_moves(team)
 
-Rake::Task["status:update:all"].execute
+PatientTeamUpdater.call
+StatusUpdater.call
+
 Rake::Task["smoke:seed"].execute

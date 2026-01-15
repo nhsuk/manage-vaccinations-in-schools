@@ -45,10 +45,14 @@ class Generate::VaccinationRecords
     end
 
     AttendanceRecord.import!(attendances)
-    imported_ids = VaccinationRecord.import!(vaccinations).ids
-    SyncPatientTeamJob.perform_later(VaccinationRecord, imported_ids)
+    VaccinationRecord.import!(vaccinations)
 
-    StatusUpdater.call(patient: vaccinations.map(&:patient))
+    patients = vaccinations.map(&:patient)
+
+    PatientTeamUpdater.call(
+      patient_scope: Patient.where(id: patients.map(&:id))
+    )
+    StatusUpdater.call(patient: patients)
   end
 
   def check_sessions_have_enough_patients

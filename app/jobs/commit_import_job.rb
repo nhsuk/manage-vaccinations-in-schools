@@ -28,7 +28,6 @@ class CommitImportJob
     end
 
     counts = import.count_columns.index_with(0)
-    imported_school_move_ids = []
 
     ActiveRecord::Base.transaction do
       changesets =
@@ -44,11 +43,12 @@ class CommitImportJob
           increment_column_counts!(import, counts, changesets)
 
           import_patients_and_parents(changesets, import)
-
-          imported_school_move_ids |= import_school_moves(changesets, import)
-
+          import_school_moves(changesets, import)
           import_pds_search_results(changesets, import)
         end
+
+      PatientTeamUpdater.call(patient_scope: import.patients)
+
       import.postprocess_rows!
 
       reset_counts(import)
@@ -59,7 +59,6 @@ class CommitImportJob
         **counts
       )
     end
-    SyncPatientTeamJob.perform_later(SchoolMove, imported_school_move_ids)
     import.post_commit!
   end
 end

@@ -83,10 +83,6 @@ class ImmunisationImport < ApplicationRecord
     @patient_locations_batch ||= Set.new
     @archive_reasons_batch ||= Set.new
 
-    @imported_vaccination_record_ids ||= []
-    @imported_patient_location_ids ||= []
-    @imported_archive_reason_ids ||= []
-
     @vaccination_records_batch.add(vaccination_record)
     if (batch = vaccination_record.batch)
       @batches_batch.add(batch)
@@ -134,24 +130,15 @@ class ImmunisationImport < ApplicationRecord
     patient_locations = @patient_locations_batch.to_a
     archive_reasons = @archive_reasons_batch.to_a
 
-    @imported_vaccination_record_ids |=
-      VaccinationRecord.import(
-        vaccination_records,
-        on_duplicate_key_update: :all
-      ).ids
+    VaccinationRecord.import(vaccination_records, on_duplicate_key_update: :all)
 
     vaccination_records.each do |vaccination_record|
       AlreadyHadNotificationSender.call(vaccination_record:)
     end
 
-    @imported_patient_location_ids |=
-      PatientLocation.import(
-        patient_locations,
-        on_duplicate_key_ignore: :all
-      ).ids
+    PatientLocation.import(patient_locations, on_duplicate_key_ignore: :all)
 
-    @imported_archive_reason_ids |=
-      ArchiveReason.import(archive_reasons, on_duplicate_key_ignore: :all).ids
+    ArchiveReason.import(archive_reasons, on_duplicate_key_ignore: :all)
 
     [
       [:vaccination_records, vaccination_records],
@@ -190,22 +177,11 @@ class ImmunisationImport < ApplicationRecord
         NextDoseTriageFactory.call(vaccination_record:)
       end
 
+    PatientTeamUpdater.call(patient_scope: patients)
     StatusUpdater.call(patient: patients)
   end
 
   def post_commit!
-    SyncPatientTeamJob.perform_later(
-      VaccinationRecord,
-      @imported_vaccination_record_ids
-    )
-    SyncPatientTeamJob.perform_later(
-      PatientLocation,
-      @imported_patient_location_ids
-    )
-    SyncPatientTeamJob.perform_later(
-      ArchiveReason,
-      @imported_archive_reason_ids
-    )
     vaccination_records.sync_all_to_nhs_immunisations_api
   end
 end

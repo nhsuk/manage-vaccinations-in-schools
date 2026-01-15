@@ -718,7 +718,6 @@ describe "Manage children" do
     expect(@patient_all_notices.teams).to include(@new_team)
     expect(@patient_all_notices.teams).to include(@team)
 
-    perform_enqueued_jobs_while_exists(only: SyncPatientTeamJob)
     perform_enqueued_jobs_while_exists(only: ImportantNoticeGeneratorJob)
   end
 
