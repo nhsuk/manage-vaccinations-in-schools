@@ -7,11 +7,11 @@ class SchoolMovesController < ApplicationController
   before_action :set_school_move, except: :index
   before_action :set_patient, except: :index
 
-  skip_after_action :verify_authorized, only: :index
-
   layout "full"
 
   def index
+    authorize SchoolMove
+
     school_moves =
       policy_scope(SchoolMove).includes(
         :team,
