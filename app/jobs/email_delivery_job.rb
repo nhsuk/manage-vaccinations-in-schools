@@ -82,7 +82,6 @@ class EmailDeliveryJob < NotifyDeliveryJob
       delivery_id:,
       parent: personalisation.parent,
       patient: personalisation.patient,
-      programmes: personalisation.programmes,
       recipient: email_address,
       sent_by:,
       template_id:,

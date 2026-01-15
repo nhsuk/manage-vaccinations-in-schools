@@ -111,7 +111,7 @@ describe EmailDeliveryJob do
       )
       expect(notify_log_entry.parent).to eq(parent)
       expect(notify_log_entry.patient).to eq(patient)
-      expect(notify_log_entry.programme_types).to eq(programme_types)
+      expect(notify_log_entry.programmes.map(&:type)).to eq(programme_types)
       expect(notify_log_entry.sent_by).to eq(sent_by)
     end
 
@@ -184,7 +184,7 @@ describe EmailDeliveryJob do
           GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name]
         )
         expect(notify_log_entry.consent_form).to eq(consent_form)
-        expect(notify_log_entry.programme_types).to eq(programme_types)
+        expect(notify_log_entry.programmes.map(&:type)).to eq(programme_types)
       end
 
       context "when the parent doesn't have a phone number" do

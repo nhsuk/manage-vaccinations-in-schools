@@ -58,6 +58,7 @@ class AppActivityLogComponent < ViewComponent::Base
       @patient
         .notify_log_entries
         .includes(:sent_by)
+        .preload(:notify_log_entry_programmes)
         .then { |scope| session ? scope.for_session(session) : scope }
 
     @patient_locations =
