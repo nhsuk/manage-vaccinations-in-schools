@@ -77,7 +77,7 @@ gem "uk_postcode"
 gem "wicked"
 gem "with_advisory_lock"
 
-group :development, :test do
+group :development, :test, :end_to_end do
   gem "brakeman", require: false
   gem "debug", platforms: %i[mri windows]
   gem "factory_bot_instruments"
@@ -86,7 +86,7 @@ group :development, :test do
   gem "rspec-rails"
 end
 
-group :development do
+group :development, :end_to_end do
   gem "annotaterb", require: false
   gem "asciidoctor"
   gem "asciidoctor-diagram"

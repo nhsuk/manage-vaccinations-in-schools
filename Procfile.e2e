@@ -1,0 +1,3 @@
+web:     RAILS_ENV=end_to_end bin/rails server -p 4100
+sidekiq: RAILS_ENV=end_to_end bin/sidekiq
+redis:   redis-server --port 6380
