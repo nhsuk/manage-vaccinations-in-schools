@@ -23,18 +23,13 @@ class DashboardController < ApplicationController
             title: I18n.t("imports.index.title"),
             path: imports_path,
             description: I18n.t("imports.index.description_upload_only"),
-            width: "one-third"
+            width: "one-half"
           },
           {
             title: I18n.t("patients.index.title"),
             path: patients_path,
             description: I18n.t("patients.index.description_upload_only"),
-            width: "one-third"
-          },
-          {
-            title: I18n.t("reports.index.title"),
-            description: I18n.t("reports.index.description_upload_only"),
-            width: "one-third"
+            width: "one-half"
           }
         ]
       else
@@ -70,7 +65,7 @@ class DashboardController < ApplicationController
   def set_secondary_items
     @secondary_items = []
 
-    unless current_team.has_upload_only_access?
+    if current_team.has_poc_only_access?
       @secondary_items << {
         title: I18n.t("school_moves.index.title"),
         path: school_moves_path,

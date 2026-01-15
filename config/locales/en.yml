@@ -734,7 +734,6 @@ en:
     index:
       title: Reports
       description: View the progress of vaccination programmes and download vaccination data
-      description_upload_only: View statistics on vaccinations given by vaccine, gender and year group
   school_moves:
     index:
       title: School moves
