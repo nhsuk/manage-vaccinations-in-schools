@@ -4,9 +4,13 @@ BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 if [ "$SERVER_TYPE" == "web" ]; then
   echo "Starting web server..."
+  "$BIN_DIR"/prometheus_exporter &
+  sleep 5
   exec "$BIN_DIR"/thrust "$BIN_DIR"/rails server
 elif [ "$SERVER_TYPE" == "sidekiq" ]; then
   echo "Starting sidekiq server..."
+  "$BIN_DIR"/prometheus_exporter &
+  sleep 5
   exec "$BIN_DIR"/sidekiq
 elif [ "$SERVER_TYPE" == "none" ]; then
   echo "No server started"

@@ -253,6 +253,30 @@ locals {
     ]
   }
 
+  export_prometheus_metrics = contains([
+    "performance", "production"
+  ], var.environment)
+
+  sidekiq_envs = concat(
+    local.task_envs["CORE"],
+    [
+      {
+        name  = "EXPORT_SIDEKIQ_METRICS"
+        value = tostring(local.export_prometheus_metrics)
+      }
+    ]
+  )
+
+  web_envs = concat(
+    local.task_envs["CORE"],
+    [
+      {
+        name  = "EXPORT_PUMA_METRICS"
+        value = tostring(local.export_prometheus_metrics)
+      }
+    ]
+  )
+
   task_secrets = {
     CORE      = concat(local.secret_values["CORE"], local.parameter_values["CORE"])
     REPORTING = concat(local.secret_values["REPORTING"], local.parameter_values["REPORTING"])

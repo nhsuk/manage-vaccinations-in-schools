@@ -16,10 +16,13 @@ data "aws_iam_policy_document" "ecs_secrets_access" {
   dynamic "statement" {
     for_each = length(local.parameter_values[each.key]) == 0 ? [] : [1]
     content {
-      sid       = "ssmParameterStoreAccessSid"
-      actions   = ["ssm:GetParameters"]
-      resources = [for kv_pair in local.parameter_values[each.key] : kv_pair["valueFrom"]]
-      effect    = "Allow"
+      sid     = "ssmParameterStoreAccessSid"
+      actions = ["ssm:GetParameters"]
+      resources = concat(
+        [for kv_pair in local.parameter_values[each.key] : kv_pair["valueFrom"]],
+        [aws_ssm_parameter.prometheus_config.arn, aws_ssm_parameter.cloudwatch_agent_config.arn]
+      )
+      effect = "Allow"
     }
   }
   dynamic "statement" {

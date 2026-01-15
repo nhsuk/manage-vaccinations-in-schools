@@ -104,7 +104,7 @@ resource "aws_ecs_task_definition" "this" {
   memory                   = var.task_config.memory
   execution_role_arn       = var.task_config.execution_role_arn
   task_role_arn            = var.task_config.task_role_arn
-  container_definitions = jsonencode([
+  container_definitions = jsonencode(concat([
     {
       name                   = var.container_name
       image                  = "CHANGE_ME"
@@ -118,8 +118,18 @@ resource "aws_ecs_task_definition" "this" {
           protocol      = "tcp"
         }
       ]
-      environment = concat(var.task_config.environment, [{ name = "SERVER_TYPE", value = var.server_type }])
-      secrets     = var.task_config.secrets
+      environment = concat(
+        var.task_config.environment, [
+          {
+            name  = "SERVER_TYPE",
+            value = var.server_type
+          },
+          {
+            name  = "SERVICE_NAME"
+            value = "mavis-${var.environment}-${local.server_type_name}"
+          }
+      ])
+      secrets = var.task_config.secrets
       logConfiguration = {
         logDriver = "awslogs"
         options = {
@@ -136,5 +146,7 @@ resource "aws_ecs_task_definition" "this" {
         startPeriod = 10
       }
     }
-  ])
+    ],
+    local.prometheus_metric_export_containers
+  ))
 }
