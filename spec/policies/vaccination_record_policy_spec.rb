@@ -148,7 +148,12 @@ describe VaccinationRecordPolicy do
     end
     let(:non_team_kept_batch) { create(:vaccination_record, programme:) }
     let(:vaccination_record_same_organisation_different_team) do
-      create(:vaccination_record, session: other_session, programme:)
+      create(
+        :vaccination_record,
+        team: other_team,
+        session: other_session,
+        programme:
+      )
     end
     let(
       :vaccination_record_from_different_organisation_but_patient_in_same_team

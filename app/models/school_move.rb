@@ -28,13 +28,9 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class SchoolMove < ApplicationRecord
-  include ContributesToPatientTeams
   include Schoolable
   include SchoolMovesHelper
-
-  class ActiveRecord_Relation < ActiveRecord::Relation
-    include ContributesToPatientTeams::Relation
-  end
+  include UpdatesPatientTeam
 
   audited associated_with: :patient
 

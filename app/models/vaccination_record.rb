@@ -77,17 +77,13 @@
 class VaccinationRecord < ApplicationRecord
   include BelongsToProgramme
   include Confirmable
-  include ContributesToPatientTeams
   include Discard::Model
   include HasDoseVolume
   include Notable
   include PendingChangesConcern
+  include UpdatesPatientTeam
   include VaccinationRecordPerformedByConcern
   include VaccinationRecordSyncToNHSImmunisationsAPIConcern
-
-  class ActiveRecord_Relation < ActiveRecord::Relation
-    include ContributesToPatientTeams::Relation
-  end
 
   audited associated_with: :patient
 
