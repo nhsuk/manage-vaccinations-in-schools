@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppPatientSessionTriageComponent < AppPatientSessionSectionComponent
+class AppPatientSessionTriageComponent < ViewComponent::Base
   def initialize(
     patient:,
     session:,
@@ -8,44 +8,106 @@ class AppPatientSessionTriageComponent < AppPatientSessionSectionComponent
     current_user:,
     triage_form: nil
   )
-    super(patient:, session:, programme:)
+    @patient = patient
+    @session = session
+    @programme = programme
     @current_user = current_user
     @triage_form = triage_form || default_triage_form
   end
 
-  def render? = consent_status.given? || !triage_status.not_required?
+  def render?
+    consent_status_generator.status == :given ||
+      triage_status_generator.status != :not_required
+  end
 
   private
 
-  attr_reader :current_user, :triage_form
+  attr_reader :patient, :session, :programme, :current_user, :triage_form
+
+  delegate :academic_year, :team, to: :session
 
   delegate :govuk_button_link_to, :triage_summary, to: :helpers
 
   def programme_type = programme.type
 
-  def resolved_status
-    @resolved_status ||= patient_status_resolver.triage
+  def colour
+    I18n.t(triage_status_value, scope: %i[status triage colour])
   end
 
-  def triage_status
-    @triage_status ||=
+  def heading
+    status_text = I18n.t(triage_status_value, scope: %i[status triage label])
+    "#{triage_status_generator.programme.name}: #{status_text}"
+  end
+
+  def triage_status_value
+    @triage_status_value ||=
+      if triage_status_generator.status == :safe_to_vaccinate
+        vaccine_method = triage_status_generator.vaccine_method
+        without_gelatine = triage_status_generator.without_gelatine
+
+        parts = [
+          "safe_to_vaccinate",
+          vaccine_method,
+          without_gelatine ? "without_gelatine" : nil,
+          without_gelatine && programme.flu? ? "flu" : nil
+        ]
+
+        parts.compact_blank.join("_")
+      else
+        triage_status_generator.status
+      end
+  end
+
+  def programme_status
+    @programme_status ||= patient.programme_status(programme, academic_year:)
+  end
+
+  def triage_status_generator
+    @triage_status_generator ||=
+      StatusGenerator::Triage.new(
+        programme_type:,
+        academic_year:,
+        patient:,
+        consents:,
+        triages:,
+        vaccination_records:
+      )
+  end
+
+  def consent_status_generator
+    @consent_status_generator ||=
+      StatusGenerator::Consent.new(
+        programme_type:,
+        academic_year:,
+        patient:,
+        consents:,
+        vaccination_records:
+      )
+  end
+
+  def consents
+    @consents ||=
+      patient.consents.not_invalidated.response_provided.order(
+        created_at: :desc
+      )
+  end
+
+  def triages
+    @triages ||=
+      patient.triages.includes(:performed_by).order(created_at: :desc)
+  end
+
+  def vaccination_records
+    @vaccination_records ||=
       patient
-        .triage_statuses
-        .includes(:consents, :vaccination_records)
-        .find_or_initialize_by(programme_type:, academic_year:)
-  end
-
-  def consent_status
-    patient.consent_status(programme:, academic_year:)
+        .vaccination_records
+        .for_programme(programme)
+        .order(performed_at: :desc)
   end
 
   def latest_triage
     @latest_triage ||=
-      TriageFinder.call(
-        patient.triages.includes(:performed_by),
-        programme_type: programme.type,
-        academic_year:
-      )
+      TriageFinder.call(triages, programme_type:, academic_year:)
   end
 
   def default_triage_form

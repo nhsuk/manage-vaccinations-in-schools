@@ -194,16 +194,4 @@ describe PatientStatusResolver do
       end
     end
   end
-
-  describe "#triage" do
-    subject(:hash) { patient_status_resolver.triage }
-
-    let(:programme) { Programme.hpv }
-
-    it do
-      expect(hash).to eq(
-        { prefix: "HPV", text: "No triage needed", colour: "grey" }
-      )
-    end
-  end
 end

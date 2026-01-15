@@ -43,29 +43,6 @@ class PatientStatusResolver
     hash.merge(prefix: programme_status.programme.name)
   end
 
-  def triage
-    status =
-      if triage_status.safe_to_vaccinate?
-        vaccine_method = triage_status.vaccine_method
-        without_gelatine = triage_status.without_gelatine
-
-        parts = [
-          "safe_to_vaccinate",
-          vaccine_method,
-          without_gelatine ? "without_gelatine" : nil,
-          without_gelatine && @programme.flu? ? "flu" : nil
-        ]
-
-        parts.compact_blank.join("_")
-      else
-        triage_status.status
-      end
-
-    tag_hash(status, context: :triage).merge(
-      prefix: consent_status.programme.name
-    )
-  end
-
   private
 
   attr_reader :patient, :academic_year, :context_location_id
@@ -78,17 +55,7 @@ class PatientStatusResolver
     { text:, colour:, details_text: }.compact
   end
 
-  def consent_status
-    @consent_status ||=
-      patient.consent_status(programme: @programme, academic_year:)
-  end
-
   def programme_status
     @programme_status ||= patient.programme_status(@programme, academic_year:)
-  end
-
-  def triage_status
-    @triage_status ||=
-      patient.triage_status(programme: @programme, academic_year:)
   end
 end

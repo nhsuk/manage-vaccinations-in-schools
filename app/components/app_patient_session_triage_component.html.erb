@@ -3,7 +3,7 @@
 <%= render AppCardComponent.new(feature: true) do |card| %>
   <% card.with_heading(level: 4, colour:) { heading } %>
 
-  <% if triage_status.not_required? %>
+  <% if triage_status_value == :not_required %>
     <p>No triage is needed for <%= patient.full_name %>.</p>
 
     <div class="nhsuk-button-group">
@@ -17,7 +17,7 @@
     <% if helpers.policy(Triage).new? %>
       <p>You need to decide if <%= patient.full_name %> is safe to vaccinate.</p>
 
-      <% if triage_status&.vaccination_history_requires_triage? %>
+      <% if triage_status_generator.vaccination_history_requires_triage? %>
         <p>Incomplete vaccination history for <%= programme.name_in_sentence %>. Check if the child needs another dose.</p>
       <% end %>
 
