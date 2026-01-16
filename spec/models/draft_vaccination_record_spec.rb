@@ -484,6 +484,23 @@ describe DraftVaccinationRecord do
 
         it { should be(false) }
       end
+
+      context "when triage is delay vaccination" do
+        let(:programme) { Programme.mmr }
+
+        before do
+          create(:consent, :given_nasal, patient:, programme:)
+          create(
+            :triage,
+            :delay_vaccination,
+            patient:,
+            programme:,
+            delay_vaccination_until: 1.month.from_now
+          )
+        end
+
+        it { should be(true) }
+      end
     end
 
     context "when delivery method is intramuscular" do
