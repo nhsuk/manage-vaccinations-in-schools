@@ -5,28 +5,35 @@ module MavisCLI
     class AddToTeam < Dry::CLI::Command
       desc "Add an existing school to a team"
 
-      argument :workgroup, required: true, desc: "The ODS code of the team"
-      argument :subteam, required: true, desc: "The subteam of the team"
+      argument :team_workgroup,
+               required: true,
+               desc: "The workgroup of the team"
+      argument :subteam_name, required: true, desc: "The name of the subteam"
       argument :urns,
                type: :array,
                required: true,
-               desc: "The URN of the school"
+               desc: "The URN of the school (including site, if applicable)"
 
       option :programmes,
              type: :array,
              desc: "The programmes administered at the school"
 
-      def call(workgroup:, subteam:, urns:, programmes: [], **)
+      def call(team_workgroup:, subteam_name:, urns:, programmes: [], **)
         MavisCLI.load_rails
 
-        team = Team.find_by(workgroup:)
+        team = Team.find_by(workgroup: team_workgroup)
 
         if team.nil?
-          warn "Could not find team."
+          warn "Could not find team with workgroup #{team_workgroup}."
           return
         end
 
-        subteam = team.subteams.find_by(name: subteam)
+        subteam = team.subteams.find_by(name: subteam_name)
+
+        if subteam.nil?
+          warn "Could not find subteam with name #{subteam_name}."
+          return
+        end
 
         programmes =
           (programmes.empty? ? team.programmes : Programme.find_all(programmes))
@@ -38,16 +45,19 @@ module MavisCLI
             location = Location.school.find_by_urn_and_site(urn)
 
             if location.nil?
-              warn "Could not find location: #{urn}"
+              warn "Could not find school with URN #{urn}."
               next
             end
 
             if (
                  existing_team_locations =
-                   location.team_locations.includes(:team).where(academic_year:)
+                   location
+                     .team_locations
+                     .includes(:team, :subteam)
+                     .where(academic_year:)
                )
               existing_team_locations.each do |existing_team_location|
-                warn "#{ods_code} previously belonged to #{existing_team_location.name}"
+                warn "#{urn} previously belonged to #{existing_team_location.name}."
               end
             end
 
