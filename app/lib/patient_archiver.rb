@@ -19,6 +19,8 @@ class PatientArchiver
       patient.clear_pending_sessions!(team:)
 
       destroy_school_moves!
+
+      update_patient_teams!
     end
   end
 
@@ -42,5 +44,12 @@ class PatientArchiver
       .joins_team_locations_for_school
       .where("team_locations.team_id = ?", team.id)
       .destroy_all
+  end
+
+  def update_patient_teams!
+    PatientTeamUpdater.call(
+      patient_scope: Patient.where(id: patient.id),
+      team_scope: Team.where(id: team.id)
+    )
   end
 end
