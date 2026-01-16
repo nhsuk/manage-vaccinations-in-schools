@@ -1122,38 +1122,45 @@ describe ConsentForm do
     end
   end
 
-  it "resets unused fields" do
-    programmes = [Programme.sample]
+  context "when resetting unused fields" do
+    let(:programmes) { [Programme.sample] }
+    let(:session) { create(:session, programmes:) }
 
-    session = create(:session, programmes:)
+    it "resets preferred_given_name when use_preferred_name is set to false" do
+      consent_form =
+        create(
+          :consent_form,
+          preferred_given_name: "John",
+          use_preferred_name: true,
+          session:
+        )
+      consent_form.update!(use_preferred_name: false)
+      expect(consent_form.preferred_given_name).to be_nil
+    end
 
-    consent_form =
-      create(
-        :consent_form,
-        preferred_given_name: "John",
-        use_preferred_name: true,
-        session:
-      )
-    consent_form.update!(use_preferred_name: false)
-    expect(consent_form.preferred_given_name).to be_nil
+    it "resets reason_for_refusal and notes when response changes from refused to given" do
+      consent_form =
+        create(
+          :consent_form,
+          response: "refused",
+          reason_for_refusal: "contains_gelatine",
+          reason_for_refusal_notes: "I'm vegan",
+          session:
+        )
+      consent_form.update!(response: "given")
+      consent_form.consent_form_programmes.each do |consent_form_programme|
+        expect(consent_form_programme.reason_for_refusal).to be_nil
+        expect(consent_form_programme.notes).to eq("")
+      end
+    end
 
-    consent_form =
-      create(
-        :consent_form,
-        response: "refused",
-        reason_for_refusal: "contains_gelatine",
-        reason_for_refusal_notes: "I'm vegan",
-        session:
-      )
-    consent_form.update!(response: "given")
-    expect(consent_form.reason_for_refusal).to be_nil
-    expect(consent_form.reason_for_refusal_notes).to be_nil
-
-    consent_form = create(:consent_form, session:)
-    consent_form.update!(response: "refused")
-    expect(consent_form.address_line_1).to be_nil
-    expect(consent_form.address_line_2).to be_nil
-    expect(consent_form.address_town).to be_nil
-    expect(consent_form.address_postcode).to be_nil
+    it "resets address fields when response is changed to refused" do
+      consent_form = create(:consent_form, session:)
+      consent_form.update!(response: "refused")
+      expect(consent_form.address_line_1).to be_nil
+      expect(consent_form.address_line_2).to be_nil
+      expect(consent_form.address_town).to be_nil
+      expect(consent_form.address_postcode).to be_nil
+    end
   end
 end
