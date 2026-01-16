@@ -125,6 +125,24 @@ describe Reports::SchoolMovesExporter do
       end
     end
 
+    context "with multiple school moves for the same patient" do
+      before do
+        session = create(:session, team:)
+        patient = create(:patient, school: nil, session:)
+        new_school = create(:school, urn: "123456", team: session.team)
+
+        create(:school_move_log_entry, :unknown_school, patient:)
+        create(:school_move_log_entry, :home_educated, patient:)
+        create(:school_move_log_entry, school: new_school, patient:)
+      end
+
+      it "returns the URNs in the correct order" do
+        expect(rows[0]["NATIONAL_URN_NO"]).to eq("888888")
+        expect(rows[1]["NATIONAL_URN_NO"]).to eq("999999")
+        expect(rows[2]["NATIONAL_URN_NO"]).to eq("123456")
+      end
+    end
+
     context "when a patient moves out of a team" do
       let(:team_a) { create(:team) }
       let(:team_b) { create(:team) }
