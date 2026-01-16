@@ -70,11 +70,13 @@ module PatientImportConcern
       # the duplicates won't be persisted, so we can skip those
       school_move.confirm! if school_move.patient.persisted?
     end
+
     school_move_import_records = importable_school_moves.to_a
+
     SchoolMove.import!(
       school_move_import_records,
       on_duplicate_key_update: :all
-    ).ids
+    )
   end
 
   def import_pds_search_results(changesets, import)

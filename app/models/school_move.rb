@@ -30,7 +30,6 @@
 class SchoolMove < ApplicationRecord
   include Schoolable
   include SchoolMovesHelper
-  include UpdatesPatientTeam
 
   audited associated_with: :patient
 

@@ -36,8 +36,6 @@ describe PatientTeamUpdater do
           patient:,
           school: create(:school, team:)
         )
-
-        # We need to do this because callbacks create them automatically.
         PatientTeam.delete_all
       end
 
@@ -53,8 +51,6 @@ describe PatientTeamUpdater do
     context "with a school move by team" do
       before do
         create(:school_move, :to_home_educated, patient:, team:)
-
-        # We need to do this because callbacks create them automatically.
         PatientTeam.delete_all
       end
 
