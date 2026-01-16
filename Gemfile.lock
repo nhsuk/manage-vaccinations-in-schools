@@ -19,6 +19,14 @@ GIT
       capybara (~> 3.36)
 
 GIT
+  remote: https://github.com/discourse/prometheus_exporter.git
+  revision: ddf5c9b5446bd66b39390a6e07d4660ebca56d41
+  branch: main
+  specs:
+    prometheus_exporter (2.3.1)
+      webrick
+
+GIT
   remote: https://github.com/tvararu/audited.git
   revision: e089773f10f8ef5e5e92a2052a2fea55f83091d2
   branch: encryption
@@ -463,8 +471,6 @@ GEM
     prettier_print (1.2.1)
     prettyprint (0.2.0)
     prism (1.8.0)
-    prometheus_exporter (2.3.1)
-      webrick
     propshaft (1.3.1)
       actionpack (>= 7.0.0)
       activesupport (>= 7.0.0)
@@ -854,7 +860,7 @@ DEPENDENCIES
   pg
   phonelib
   prettier_print
-  prometheus_exporter
+  prometheus_exporter!
   propshaft
   pry-rails
   pstore
