@@ -278,8 +278,8 @@ class Session < ApplicationRecord
   end
 
   def patients_with_no_consent_response_count
-    patients.has_consent_status(
-      "no_response",
+    patients.has_programme_status(
+      "needs_consent_no_response",
       programme: programmes,
       academic_year:
     ).count

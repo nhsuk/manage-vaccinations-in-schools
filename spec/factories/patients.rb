@@ -965,6 +965,16 @@ FactoryBot.define do
           )
         end
       end
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :has_refusal_consent_conflicts,
+            patient: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :consent_not_provided do
