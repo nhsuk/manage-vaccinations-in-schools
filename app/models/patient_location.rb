@@ -25,8 +25,6 @@
 #
 
 class PatientLocation < ApplicationRecord
-  include UpdatesPatientTeam
-
   audited associated_with: :patient
   has_associated_audits
 

@@ -37,23 +37,6 @@ describe PatientLocation do
     it { should have_many(:vaccination_records) }
   end
 
-  describe "callbacks" do
-    it "creates a patient team" do
-      expect { patient_location }.to change(PatientTeam, :count).by(1)
-
-      patient_team = PatientTeam.last
-      expect(patient_team.patient_id).to eq(patient_location.patient_id)
-      expect(patient_team.team_id).to eq(session.team_id)
-      expect(patient_team.sources).to eq(%w[patient_location])
-    end
-
-    it "deletes a patient team" do
-      patient_location
-
-      expect { patient_location.destroy! }.to change(PatientTeam, :count).by(-1)
-    end
-  end
-
   describe "scopes" do
     describe "#appear_in_programmes" do
       subject(:scope) do

@@ -126,7 +126,7 @@ FactoryBot.define do
     after(:create) do |patient, evaluator|
       if (location = evaluator.location) &&
            (academic_year = evaluator.academic_year)
-        PatientLocation.find_or_create_by!(patient:, location:, academic_year:)
+        create(:patient_location, patient:, location:, academic_year:)
       end
     end
 

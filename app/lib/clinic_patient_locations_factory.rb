@@ -10,7 +10,7 @@ class ClinicPatientLocationsFactory
       PatientLocation.import!(
         patient_locations_to_create,
         on_duplicate_key_ignore: true
-      ).ids
+      )
 
       PatientTeamUpdater.call(
         patient_scope: patients_in_school,

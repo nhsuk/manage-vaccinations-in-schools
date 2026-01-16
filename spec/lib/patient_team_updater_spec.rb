@@ -18,8 +18,6 @@ describe PatientTeamUpdater do
     context "with a patient location" do
       before do
         create(:patient_location, patient:, session: create(:session, team:))
-
-        # We need to do this because callbacks create them automatically.
         PatientTeam.delete_all
       end
 
