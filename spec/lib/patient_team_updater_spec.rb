@@ -69,8 +69,6 @@ describe PatientTeamUpdater do
           team: nil,
           immunisation_imports: [create(:immunisation_import, team:)]
         )
-
-        # We need to do this because callbacks create them automatically.
         PatientTeam.delete_all
       end
 
@@ -86,8 +84,6 @@ describe PatientTeamUpdater do
     context "with a vaccination record by organisation" do
       before do
         create(:vaccination_record, patient:, team:)
-
-        # We need to do this because callbacks create them automatically.
         PatientTeam.delete_all
       end
 
@@ -108,8 +104,6 @@ describe PatientTeamUpdater do
           team: nil,
           session: create(:session, team:)
         )
-
-        # We need to do this because callbacks create them automatically.
         PatientTeam.delete_all
       end
 
@@ -126,8 +120,6 @@ describe PatientTeamUpdater do
       before do
         create(:archive_reason, :imported_in_error, patient:, team:)
         create(:patient_location, patient:, session: create(:session, team:))
-
-        # We need to do this because callbacks create them automatically.
         PatientTeam.delete_all
       end
 

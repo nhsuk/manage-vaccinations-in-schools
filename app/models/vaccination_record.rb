@@ -81,7 +81,6 @@ class VaccinationRecord < ApplicationRecord
   include HasDoseVolume
   include Notable
   include PendingChangesConcern
-  include UpdatesPatientTeam
   include VaccinationRecordPerformedByConcern
   include VaccinationRecordSyncToNHSImmunisationsAPIConcern
 

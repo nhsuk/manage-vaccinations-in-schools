@@ -144,6 +144,8 @@ class DraftVaccinationRecordsController < ApplicationController
 
     NextDoseTriageFactory.call(vaccination_record: @vaccination_record)
 
+    PatientTeamUpdater.call(patient_scope: Patient.where(id: @patient.id))
+
     StatusUpdater.call(patient: @patient)
 
     if should_notify_parents
