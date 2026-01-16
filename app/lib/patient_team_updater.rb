@@ -20,68 +20,73 @@ class PatientTeamUpdater
   attr_reader :patient_scope, :team_scope
 
   def upsert_patient_teams!
-    patient_team_rows.in_groups_of(10_000, false) do |rows|
-      PatientTeam.import!(
-        %i[patient_id team_id sources],
-        rows,
-        on_duplicate_key_update: {
-          conflict_target: %i[patient_id team_id],
-          columns: %i[sources]
-        }
-      )
-    end
+    PatientTeam.connection.execute(<<~SQL)
+      INSERT INTO patient_teams (patient_id, team_id, sources)
+      #{grouped_relations_sql}
+      ON CONFLICT (patient_id, team_id)
+      DO UPDATE SET sources = EXCLUDED.sources
+      WHERE patient_teams.sources IS DISTINCT FROM EXCLUDED.sources
+    SQL
   end
 
   def delete_patient_teams_without_sources!
     PatientTeam.missing_sources.delete_all
   end
 
-  def patient_team_rows
-    @patient_team_rows ||=
-      patient_team_sources.map do |(patient_id, team_id), sources|
-        [patient_id, team_id, sources]
-      end
+  def grouped_relations_sql
+    union_all_sql =
+      relations.map(&:to_sql).join(" UNION ALL ").then { Arel.sql(it) }
+
+    PatientTeam
+      .from("(#{union_all_sql})")
+      .group(:patient_id, :team_id)
+      .select(
+        :patient_id,
+        :team_id,
+        "array_remove(array_agg(DISTINCT source ORDER BY source), NULL)"
+      )
+      .to_sql
   end
 
-  def patient_team_sources
-    @patient_team_sources ||=
-      sources.each_with_object(
-        existing_patient_team_pairs
-      ) do |(source, patient_team_pairs), hash|
-        patient_team_pairs.each do |patient_team_pair|
-          hash[patient_team_pair] ||= []
-          hash[patient_team_pair] << PatientTeam.sources.fetch(source)
-        end
-      end
+  # These make up the various tables that contribute towards a patient
+  #  belonging to a particular team.
+
+  def relations
+    @relations ||= [
+      archive_reason_relation,
+      null_relation,
+      patient_location_relation,
+      school_move_school_relation,
+      school_move_team_relation,
+      vaccination_record_import_relation,
+      vaccination_record_organisation_relation,
+      vaccination_record_session_relation
+    ]
   end
 
-  def existing_patient_team_pairs
-    scope = merge_team_scope(merge_patient_scope(PatientTeam))
+  def archive_reason_relation
+    source = PatientTeam.sources.fetch("archive_reason")
 
-    scope.pluck(:patient_id, :team_id).index_with { |_pair| [] }
-  end
-
-  def sources
-    @sources ||= {
-      archive_reason: archive_reasons,
-      patient_location: patient_locations,
-      school_move_school: school_moves_by_school,
-      school_move_team: school_moves_by_team,
-      vaccination_record_import: vaccination_records_by_import,
-      vaccination_record_organisation: vaccination_records_by_organisation,
-      vaccination_record_session: vaccination_records_by_session
-    }
-  end
-
-  def archive_reasons
     scope = merge_team_scope(merge_patient_scope(ArchiveReason))
 
-    scope.pluck(:patient_id, :team_id)
+    scope.select(:patient_id, :team_id, Arel.sql("#{source} AS source"))
   end
 
-  def patient_locations
-    # We define an alias here in case the `patient_scope` already includes a
-    #  join on the `team_locations` table.
+  def null_relation
+    # This relation represents all the existing patient teams that exist for
+    #  this patient scope and team scope. It ensures that if any existing
+    #  patient teams no longer exist in the other relations, the sources array
+    #  will be empty and then can be upserted.
+
+    source = "NULL"
+
+    scope = merge_team_scope(merge_patient_scope(PatientTeam))
+
+    scope.select(:patient_id, :team_id, Arel.sql("#{source} AS source"))
+  end
+
+  def patient_location_relation
+    source = PatientTeam.sources.fetch("patient_location")
 
     scope =
       merge_patient_scope(
@@ -95,12 +100,15 @@ class PatientTeamUpdater
       scope = joins_teams_on_team_locations_alias(scope).merge(team_scope)
     end
 
-    scope.pluck(:patient_id, :"team_locations_alias.team_id")
+    scope.select(
+      :patient_id,
+      Arel.sql("team_locations_alias.team_id AS team_id"),
+      Arel.sql("#{source} AS source")
+    )
   end
 
-  def school_moves_by_school
-    # We define an alias here in case the `patient_scope` already includes a
-    #  join on the `team_locations` table.
+  def school_move_school_relation
+    source = PatientTeam.sources.fetch("school_move_school")
 
     scope =
       merge_patient_scope(
@@ -114,17 +122,25 @@ class PatientTeamUpdater
       scope = joins_teams_on_team_locations_alias(scope).merge(team_scope)
     end
 
-    scope.pluck(:patient_id, :"team_locations_alias.team_id")
+    scope.select(
+      :patient_id,
+      Arel.sql("team_locations_alias.team_id AS team_id"),
+      Arel.sql("#{source} AS source")
+    )
   end
 
-  def school_moves_by_team
+  def school_move_team_relation
+    source = PatientTeam.sources.fetch("school_move_team")
+
     scope =
       merge_team_scope(merge_patient_scope(SchoolMove.where.not(team_id: nil)))
 
-    scope.pluck(:patient_id, :team_id)
+    scope.select(:patient_id, :team_id, Arel.sql("#{source} AS source"))
   end
 
-  def vaccination_records_by_import
+  def vaccination_record_import_relation
+    source = PatientTeam.sources.fetch("vaccination_record_import")
+
     scope = merge_patient_scope(VaccinationRecord.joins(:immunisation_imports))
 
     if is_team_scope_id_only?
@@ -134,10 +150,16 @@ class PatientTeamUpdater
       scope = scope.joins(immunisation_imports: :team).merge(team_scope)
     end
 
-    scope.pluck(:patient_id, :"immunisation_imports.team_id")
+    scope.select(
+      :patient_id,
+      Arel.sql("immunisation_imports.team_id AS team_id"),
+      Arel.sql("#{source} AS source")
+    )
   end
 
-  def vaccination_records_by_organisation
+  def vaccination_record_organisation_relation
+    source = PatientTeam.sources.fetch("vaccination_record_organisation")
+
     scope =
       merge_patient_scope(
         VaccinationRecord.where(
@@ -147,12 +169,15 @@ class PatientTeamUpdater
 
     scope = scope.merge(team_scope) if team_scope
 
-    scope.pluck(:patient_id, :"teams.id")
+    scope.select(
+      :patient_id,
+      Arel.sql("teams.id AS team_id"),
+      Arel.sql("#{source} AS source")
+    )
   end
 
-  def vaccination_records_by_session
-    # We define an alias here in case the `patient_scope` already includes a
-    #  join on the `sessions` table or `team_locations` table.
+  def vaccination_record_session_relation
+    source = PatientTeam.sources.fetch("vaccination_record_session")
 
     scope =
       merge_patient_scope(
@@ -166,7 +191,11 @@ class PatientTeamUpdater
       scope = joins_teams_on_team_locations_alias(scope).merge(team_scope)
     end
 
-    scope.pluck(:patient_id, :"team_locations_alias.team_id")
+    scope.select(
+      :patient_id,
+      Arel.sql("team_locations_alias.team_id AS team_id"),
+      Arel.sql("#{source} AS source")
+    )
   end
 
   # These are aliased joins that we need to perform in case the patient or
