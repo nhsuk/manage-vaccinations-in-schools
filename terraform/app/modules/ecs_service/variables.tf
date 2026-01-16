@@ -68,6 +68,16 @@ variable "task_config" {
   nullable    = false
 }
 
+variable "cloudwatch_agent_secrets" {
+  type = list(object({
+    name      = string
+    valueFrom = string
+  }))
+  default     = null
+  description = "List of secrets for CloudWatch Agent container"
+  nullable    = true
+}
+
 variable "cluster_id" {
   type        = string
   description = "The ID of the ECS cluster."
@@ -146,7 +156,31 @@ variable "readonly_file_system" {
   nullable    = false
 }
 
+variable "export_prometheus_metrics" {
+  type        = bool
+  description = "Whether to export Prometheus metrics from the ECS service."
+  default     = false
+  nullable    = false
+}
+
 locals {
   autoscaling_enabled = var.maximum_replica_count > var.minimum_replica_count
   server_type_name    = var.server_type_name != null ? var.server_type_name : var.server_type
+
+  prometheus_metric_export_containers = var.export_prometheus_metrics ? [
+    {
+      name      = "cloudwatch-agent",
+      image     = "public.ecr.aws/cloudwatch-agent/cloudwatch-agent:1.300062.0b1304",
+      secrets   = var.cloudwatch_agent_secrets == null ? [] : var.cloudwatch_agent_secrets
+      essential = false
+      logConfiguration = {
+        logDriver = "awslogs",
+        options = {
+          awslogs-group         = var.task_config.log_group_name
+          awslogs-region        = var.task_config.region
+          awslogs-stream-prefix = "${var.environment}-${local.server_type_name}-cwagent-logs"
+        }
+      }
+    }
+  ] : []
 }

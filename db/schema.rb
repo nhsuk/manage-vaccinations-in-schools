@@ -897,7 +897,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_13_123500) do
     t.integer "academic_year", null: false
     t.datetime "created_at", null: false
     t.date "delay_vaccination_until"
-    t.enum "disease_types", array: true, enum_type: "disease_type"
+    t.enum "disease_types", null: false, array: true, enum_type: "disease_type"
     t.datetime "invalidated_at"
     t.text "notes", default: "", null: false
     t.bigint "patient_id", null: false

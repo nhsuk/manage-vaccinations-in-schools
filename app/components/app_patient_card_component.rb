@@ -4,7 +4,7 @@ class AppPatientCardComponent < ViewComponent::Base
   erb_template <<-ERB
     <%= render AppCardComponent.new(section: true) do |card| %>
       <% card.with_heading(level: heading_level) { "Child’s details" } %>
-      
+
       <% important_notices.each do |notice| %>
         <%= render AppStatusComponent.new(text: notice) %>
       <% end %>
@@ -13,7 +13,7 @@ class AppPatientCardComponent < ViewComponent::Base
         patient,
         current_team:,
         show_add_parent:,
-        show_parents: true,
+        show_parents:,
         show_school_and_year_group:,
         change_links:,
         remove_links:
@@ -26,6 +26,7 @@ class AppPatientCardComponent < ViewComponent::Base
   def initialize(
     patient,
     current_team:,
+    show_parents: true,
     show_add_parent: false,
     change_links: {},
     remove_links: {},
@@ -33,6 +34,7 @@ class AppPatientCardComponent < ViewComponent::Base
   )
     @patient = patient
     @current_team = current_team
+    @show_parents = show_parents
     @show_add_parent = show_add_parent
     @change_links = change_links
     @remove_links = remove_links
@@ -43,6 +45,7 @@ class AppPatientCardComponent < ViewComponent::Base
 
   attr_reader :patient,
               :current_team,
+              :show_parents,
               :show_add_parent,
               :change_links,
               :remove_links,

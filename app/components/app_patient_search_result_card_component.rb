@@ -11,6 +11,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     show_parents: false,
     show_postcode: false,
     show_programme_status: true,
+    show_vaccinated_programme_status_only: false,
     show_school: false,
     show_year_group: false
   )
@@ -25,6 +26,8 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     @show_parents = show_parents
     @show_postcode = show_postcode
     @show_programme_status = show_programme_status
+    @show_vaccinated_programme_status_only =
+      show_vaccinated_programme_status_only
     @show_school = show_school
     @show_year_group = show_year_group
   end
@@ -106,7 +109,12 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
 
     status_by_programme =
       programmes.each_with_object({}) do |programme, hash|
-        resolved_status = status_resolver_for(programme).programme
+        resolved_status =
+          status_resolver_for(programme).programme(
+            only_if_vaccinated: @show_vaccinated_programme_status_only
+          )
+
+        next unless resolved_status
 
         hash[resolved_status.fetch(:prefix)] = resolved_status
       end

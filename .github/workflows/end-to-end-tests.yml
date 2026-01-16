@@ -12,7 +12,7 @@ on:
         description: The environment to build the base image against
         type: string
         required: false
-        default: "origin/next"
+        default: "next"
     secrets:
       HTTP_AUTH_TOKEN_FOR_TESTS:
         description: HTTP Basic Auth token for the environment under test
@@ -30,7 +30,7 @@ on:
         description: The environment to build the base image against
         type: string
         required: false
-        default: "origin/next"
+        default: "next"
 
 permissions: { }
 
@@ -42,7 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.git_reference_for_application_image || github.event.pull_request.head.sha ||  github.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
           repository: nhsuk/manage-vaccinations-in-schools
       - name: Check if end-to-end tests need to run
         id: check
@@ -56,16 +56,24 @@ jobs:
       id-token: write
     outputs:
       build-needed: ${{ steps.check-image.outputs.build-needed }}
+      application-image-git-ref: ${{ steps.check-image.outputs.GIT_REF_SHA }}
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - name: Check if image exists
         id: check-image
+        env:
+          GIT_REF: ${{ (inputs.git_reference_for_application_image == 'next' && 'origin/next') || github.event.pull_request.head.sha ||  github.sha }}
         run: |
-          if aws ecr describe-images --repository-name mavis/development --image-ids imageTag=${{ inputs.git_reference_for_application_image || github.event.pull_request.head.sha ||  github.sha }} > /dev/null 2>&1; then
+          GIT_REF_SHA=$(git rev-parse $GIT_REF)
+          echo "GIT_REF_SHA=$GIT_REF_SHA" >> $GITHUB_OUTPUT
+          if aws ecr describe-images --repository-name mavis/development --image-ids imageTag=$GIT_REF_SHA > /dev/null 2>&1; then
             echo "Docker image with given tag already exists"
             echo "build-needed=false" >> $GITHUB_OUTPUT
           else
@@ -82,7 +90,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.git_reference_for_application_image || github.event.pull_request.head.sha ||  github.sha }}
+          ref: ${{ needs.check-development-image-presence.outputs.application-image-git-ref }}
           repository: nhsuk/manage-vaccinations-in-schools
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
@@ -97,9 +105,9 @@ jobs:
           docker build \
             --build-arg BUNDLE_WITHOUT=test \
             --build-arg RAILS_ENV=development \
-            -t "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}" \
+            -t "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ needs.check-development-image-presence.outputs.application-image-git-ref }}" \
             .
-          docker push "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}"
+          docker push "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ needs.check-development-image-presence.outputs.application-image-git-ref }}"
   check-database-image-presence:
     name: Check if database docker image already exists
     runs-on: ubuntu-latest
@@ -107,6 +115,7 @@ jobs:
       id-token: write
     outputs:
       build-needed: ${{ steps.check-image.outputs.build-needed }}
+      db_git_ref_sha: ${{ steps.check-image.outputs.GIT_REF_SHA }}
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
@@ -119,9 +128,11 @@ jobs:
       - name: Check if image exists
         id: check-image
         env:
-          GIT_REF: ${{ inputs.git_reference_for_database_image || (github.event_name == 'pull_request' && github.event.pull_request.base.sha) || github.sha }}
+          GIT_REF: ${{ ( inputs.git_reference_for_database_image == 'next' && 'origin/next' ) || github.event.pull_request.base.sha || github.sha }}
         run: |
-          if aws ecr describe-images --repository-name mavis/development --image-ids imageTag=$GIT_REF > /dev/null 2>&1; then
+          GIT_REF_SHA=$(git rev-parse $GIT_REF)
+          echo "GIT_REF_SHA=$GIT_REF_SHA" >> $GITHUB_OUTPUT
+          if aws ecr describe-images --repository-name mavis/development --image-ids imageTag=$GIT_REF_SHA > /dev/null 2>&1; then
             echo "Docker image with given tag already exists"
             echo "build-needed=false" >> $GITHUB_OUTPUT
           else
@@ -136,7 +147,7 @@ jobs:
       contents: read
     uses: ./.github/workflows/create_dockerized_db.yml
     with:
-      github_ref: ${{ inputs.git_reference_for_database_image }}
+      github_ref: ${{ needs.check-database-image-presence.outputs.db_git_ref_sha }}
   launch-dockerized-devimage:
     needs: [ check-development-image-presence,
              build-and-push-development-image,
@@ -166,28 +177,27 @@ jobs:
         with:
           task-definition-family: "assurance-testing-mavis-development-task-definition-template"
           container-name: "mavis-development-web"
-          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}"
+          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ needs.check-development-image-presence.outputs.application-image-git-ref }}"
       - name: Render task definition database
         id: render-task-definition-database
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ steps.render-task-definition-web.outputs.task-definition }}
           container-name: "mavis-development-db"
-          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development/postgres_db:${{ github.event.pull_request.base.ref }}"
+          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development/postgres_db:${{ needs.check-database-image-presence.outputs.db_git_ref_sha }}"
       - name: Render task definition sidekiq
         id: render-task-definition-sidekiq
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ steps.render-task-definition-database.outputs.task-definition }}
           container-name: "mavis-development-sidekiq"
-          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ github.sha }}"
+          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ needs.check-development-image-presence.outputs.application-image-git-ref }}"
       - name: Prepare deployment
         id: prepare-deployment
         run: |
           file_path="assurance-testing-mavis-development-task-definition.json"
           family_name="assurance-testing-mavis-development-task-definition"
           echo "$(jq --arg f "$family_name" '.family = $f' "${{ steps.render-task-definition-sidekiq.outputs.task-definition }}")" > "$file_path"
-          cat "$file_path" #TODO: Debugging, remove later
 
           subnet_id=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=assurance-testing-subnet --query 'Subnets[0].SubnetId' --output text)
           security_group_id=$(aws ec2 describe-security-groups --filters Name=group-name,Values=assurance-testing-mavis-development-sg --query 'SecurityGroups[0].GroupId' --output text)

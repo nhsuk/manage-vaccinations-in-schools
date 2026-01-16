@@ -52,6 +52,9 @@ gem "omniauth_openid_connect"
 gem "omniauth-rails_csrf_protection"
 gem "pagy"
 gem "phonelib"
+gem "prometheus_exporter",
+    github: "discourse/prometheus_exporter",
+    branch: "main" #TODO: replace with version > 2.3.1 when released
 gem "pstore"
 gem "pundit"
 gem "rails_semantic_logger"

@@ -7,7 +7,6 @@ describe "Upload-only team homepage and navigation" do
     then_i_should_see_the_upload_only_cards
     and_i_should_see_the_import_records_card
     and_i_should_see_the_children_card
-    and_i_should_see_the_reports_card
     and_i_should_see_the_national_reporting_service_name
   end
 
@@ -17,20 +16,39 @@ describe "Upload-only team homepage and navigation" do
     then_i_should_see_only_import_children_and_team_navigation_items
   end
 
-  scenario "Children page search shows limited filters" do
+  scenario "Children page search shows limited filters and the patient's card" do
     given_i_am_signed_in_as_an_upload_only_team
+    and_i_upload_a_valid_file
     when_i_visit_the_children_page
     then_i_should_see_limited_filters
+
+    and_i_search_for_a_child(search_term: "Harry")
+    then_i_should_see_the_childs_card
   end
 
   scenario "Child record page shows vaccination records first and cannot be archived" do
     given_i_am_signed_in_as_an_upload_only_team
     and_i_upload_a_valid_file
     when_i_visit_the_children_page
-    and_i_find_a_child
+    and_i_search_for_a_child(search_term: "Harry")
+    and_i_click_on_the_childs_card(given_name: "Harry", family_name: "Potter")
     then_i_should_see_vaccinations_then_child_details
+    and_the_activity_log_is_hidden
     and_child_cannot_be_archived
     and_child_does_not_look_archived
+  end
+
+  scenario "Parent details are not shown for a child with parents" do
+    given_i_am_signed_in_as_an_upload_only_team
+    and_there_is_a_child_with_parents
+    when_i_visit_the_children_page
+    and_i_search_for_a_child(search_term: "Draco")
+    and_i_click_on_the_childs_card(given_name: "Draco", family_name: "Malfoy")
+    then_i_should_not_see_parent_details
+
+    when_i_edit_the_child_record
+    then_i_should_not_see_parent_details
+    and_i_should_not_see_add_parent_button
   end
 
   def given_i_am_signed_in_as_an_upload_only_team
@@ -47,13 +65,30 @@ describe "Upload-only team homepage and navigation" do
     sign_in @team.users.first
   end
 
+  def and_there_is_a_child_with_parents
+    @child_with_parents =
+      create(:patient, given_name: "Draco", family_name: "Malfoy", team: @team)
+    create(
+      :parent_relationship,
+      patient: @child_with_parents,
+      parent: create(:parent)
+    )
+    # Create a vaccination record to link this patient with the team
+    create(
+      :vaccination_record,
+      programme: Programme.flu,
+      patient: @child_with_parents,
+      team: @team
+    )
+  end
+
   def when_i_visit_the_dashboard
     visit dashboard_path
   end
 
   def then_i_should_see_the_upload_only_cards
     cards = page.all(".nhsuk-card-group__item")
-    expect(cards.count).to eq(4)
+    expect(cards.count).to eq(3)
   end
 
   def and_i_should_see_the_import_records_card
@@ -73,17 +108,6 @@ describe "Upload-only team homepage and navigation" do
 
     expect(card).to have_css("h2", text: "Children")
     expect(card).to have_link("Children", href: patients_path)
-  end
-
-  def and_i_should_see_the_reports_card
-    cards = page.all(".nhsuk-card-group__item")
-    card = cards[2]
-
-    expect(card).to have_css("h2", text: "Reports")
-    expect(card).not_to have_link("Reports")
-
-    # Card should be disabled
-    expect(card).to have_css(".app-card--disabled")
   end
 
   def then_i_should_see_only_import_children_and_team_navigation_items
@@ -137,10 +161,23 @@ describe "Upload-only team homepage and navigation" do
     expect(page).to have_content("2 imported records")
   end
 
-  def and_i_find_a_child
-    fill_in "Search", with: "harry"
+  def and_i_search_for_a_child(search_term:)
+    fill_in "Search", with: search_term
     click_on "Search"
-    click_on "POTTER, Harry"
+  end
+  alias_method :when_i_search_for_a_child, :and_i_search_for_a_child
+
+  def and_i_click_on_the_childs_card(given_name:, family_name:)
+    click_on "#{family_name.upcase}, #{given_name}"
+  end
+
+  def then_i_should_see_the_childs_card
+    expect(page).to have_content("POTTER, Harry")
+    expect(page).to have_content("1 January 2001")
+    expect(page).to have_content(
+      "Programme status\nFluVaccinatedVaccinated on 9 November 2025"
+    )
+    expect(page).not_to have_content("HPV")
   end
 
   def then_i_should_see_vaccinations_then_child_details
@@ -158,5 +195,22 @@ describe "Upload-only team homepage and navigation" do
 
   def and_child_does_not_look_archived
     expect(page).not_to have_content("Archived")
+  end
+
+  def when_i_edit_the_child_record
+    click_on "Edit child record"
+  end
+
+  def then_i_should_not_see_parent_details
+    expect(page).not_to have_content("First parent or guardian")
+  end
+
+  def and_i_should_not_see_add_parent_button
+    expect(page).not_to have_content("Add parent or guardian")
+  end
+
+  def and_the_activity_log_is_hidden
+    expect(page).not_to have_content("Activity log")
+    expect(page).not_to have_content("Child record")
   end
 end

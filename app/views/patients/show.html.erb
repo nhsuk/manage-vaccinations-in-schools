@@ -7,10 +7,12 @@
 
 <%= render "patients/header" %>
 
-<%= render AppSecondaryNavigationComponent.new do |nav|
-      nav.with_item(href: patient_path(@patient), text: "Child record", selected: true)
-      nav.with_item(href: log_patient_path(@patient), text: "Activity log")
-    end %>
+<% if policy(@patient).log? %>
+  <%= render AppSecondaryNavigationComponent.new do |nav|
+        nav.with_item(href: patient_path(@patient), text: "Child record", selected: true)
+        nav.with_item(href: log_patient_path(@patient), text: "Activity log")
+      end %>
+<% end %>
 
 <% vaccinations_card = capture do %>
   <%= render AppCardComponent.new(section: true) do |card| %>
@@ -25,7 +27,11 @@
   <%= vaccinations_card %>
 <% end %>
 
-<%= render AppPatientCardComponent.new(@patient, current_team:) do %>
+<%= render AppPatientCardComponent.new(
+      @patient,
+      current_team:,
+      show_parents: !current_team.has_upload_only_access?,
+    ) do %>
   <% if @patient.not_archived?(team: current_team) %>
     <div class="nhsuk-button-group">
       <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), secondary: true %>

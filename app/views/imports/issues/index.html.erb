@@ -3,13 +3,14 @@
 <%= render AppImportsNavigationComponent.new(active: :issues, team: current_team) %>
 
 <% if @import_issues.any? %>
-  <div class="nhsuk-table__panel-with-heading-tab">
-    <h3 class="nhsuk-table__heading-tab">
+  <%= render AppCardComponent.new(feature: true) do |card| %>
+    <% card.with_heading do %>
       <%= pluralize(@import_issues.count, "uploaded record") %>
       <%= @import_issues.count == 1 ? "needs" : "need" %> review
-    </h3>
+    <% end %>
+
     <%= render AppImportReviewIssuesSummaryComponent.new(records: @import_issues, review_screen: false) %>
-  </div>
+  <% end %>
 <% else %>
   <p>No issues to review.</p>
 <% end %>

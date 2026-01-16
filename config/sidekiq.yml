@@ -5,7 +5,6 @@
   - imports
   - consents
   - notifications
-  - statuses #TODO: Remove once queue is empty
   - patients
   - triages
   - pds

@@ -7,7 +7,7 @@
 #  id                      :bigint           not null, primary key
 #  academic_year           :integer          not null
 #  delay_vaccination_until :date
-#  disease_types           :enum             is an Array
+#  disease_types           :enum             not null, is an Array
 #  invalidated_at          :datetime
 #  notes                   :text             default(""), not null
 #  programme_type          :enum             not null

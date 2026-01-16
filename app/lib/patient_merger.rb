@@ -136,6 +136,20 @@ class PatientMerger
       patient_to_destroy.cohort_imports.clear
       patient_to_destroy.immunisation_imports.clear
 
+      patient_to_destroy.patient_teams.find_each do |patient_team_to_destroy|
+        patient_team_to_keep =
+          patient_to_keep.patient_teams.find_or_initialize_by(
+            team_id: patient_team_to_destroy.team_id
+          )
+
+        patient_team_to_keep.sources =
+          (
+            patient_team_to_keep.sources + patient_team_to_destroy.sources
+          ).uniq.sort
+
+        patient_team_to_keep.save!
+      end
+
       patient_to_destroy.reload.destroy!
 
       StatusUpdater.call(patient: patient_to_keep)

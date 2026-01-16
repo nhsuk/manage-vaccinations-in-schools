@@ -253,6 +253,25 @@ describe "Edit vaccination record" do
       and_i_click_on_save_changes
       then_the_delayed_triage_is_updated_accordingly
     end
+
+    scenario "Parent details are visible when viewing vaccination records" do
+      given_i_am_signed_in
+      and_an_administered_vaccination_record_exists
+      and_the_patient_has_parents
+
+      when_i_go_to_the_vaccination_record_for_the_patient
+      then_i_should_see_the_vaccination_record
+      and_i_should_see_parent_details
+    end
+
+    scenario "Breadcrumb shows session-specific path for POC team" do
+      given_i_am_signed_in
+      and_an_administered_vaccination_record_exists
+
+      when_i_visit_the_vaccination_record_directly
+      then_i_should_see_the_vaccination_record
+      and_i_should_see_the_session_specific_breadcrumb
+    end
   end
 
   context "in bulk upload Mavis" do
@@ -275,6 +294,26 @@ describe "Edit vaccination record" do
 
       when_i_click_on_save_changes
       then_i_should_see_the_vaccination_record
+    end
+
+    scenario "Parent details are not visible when viewing vaccination records" do
+      given_i_am_signed_in
+      and_a_bulk_uploaded_vaccination_record_exists
+      and_the_patient_has_parents
+
+      when_i_go_to_the_vaccination_record_for_the_patient
+      then_i_should_see_the_vaccination_record
+      and_i_should_not_see_parent_details
+    end
+
+    scenario "Breadcrumb shows patient-based path when viewing session-based vaccination record" do
+      given_i_am_signed_in
+      and_a_vaccination_record_with_a_session_exists
+      and_the_patient_is_accessible_to_the_upload_only_team
+
+      when_i_visit_the_vaccination_record_directly
+      then_i_should_see_the_vaccination_record
+      and_i_should_see_the_patient_based_breadcrumb
     end
   end
 
@@ -558,7 +597,7 @@ describe "Edit vaccination record" do
   end
 
   def and_i_should_see_the_updated_batch
-    expect(page).to have_content("Batch ID#{@replacement_batch.name}")
+    expect(page).to have_content("Batch number#{@replacement_batch.name}")
   end
 
   def when_i_click_change_notes
@@ -672,5 +711,60 @@ describe "Edit vaccination record" do
     expect(@delayed_triage.notes).to eq(
       "Next dose #{expected_delay_date.strftime("%d %B %Y")}"
     )
+  end
+
+  def and_the_patient_has_parents
+    @parent =
+      create(:parent, email: "parent@example.com", full_name: "Jane Smith")
+    create(:parent_relationship, patient: @patient, parent: @parent)
+  end
+
+  def and_i_should_see_parent_details
+    expect(page).to have_content("First parent or guardian")
+    expect(page).to have_content("Jane Smith")
+  end
+
+  def and_i_should_not_see_parent_details
+    expect(page).not_to have_content("First parent or guardian")
+    expect(page).not_to have_content("Second parent or guardian")
+  end
+
+  def when_i_visit_the_vaccination_record_directly
+    visit vaccination_record_path(@vaccination_record)
+  end
+
+  def and_i_should_see_the_session_specific_breadcrumb
+    breadcrumb = page.find(".nhsuk-breadcrumb")
+    expect(breadcrumb).to have_content("Sessions")
+    expect(breadcrumb).to have_content(@session.location.name)
+  end
+
+  def and_a_vaccination_record_with_a_session_exists
+    location = create(:school, urn: 100_001)
+
+    @session = create(:session, :completed, programmes: [@programme], location:)
+
+    @vaccination_record =
+      create(
+        :vaccination_record,
+        batch: @batch,
+        patient: @patient,
+        session: @session,
+        programme: @programme
+      )
+  end
+
+  def and_the_patient_is_accessible_to_the_upload_only_team
+    # Patient is already part of the upload-only team from the before block
+    # Just ensure patient_team association exists
+    PatientTeam.find_or_create_by!(patient: @patient, team: @team)
+  end
+
+  def and_i_should_see_the_patient_based_breadcrumb
+    # Patient-based breadcrumb should include: Home → Children → Patient name
+    # Should NOT include session-specific links (Sessions, Location name)
+    breadcrumb = page.find(".nhsuk-breadcrumb")
+    expect(breadcrumb).to have_content("Children")
+    expect(breadcrumb).not_to have_content("Sessions")
   end
 end

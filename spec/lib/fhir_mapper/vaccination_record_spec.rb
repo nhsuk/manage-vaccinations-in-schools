@@ -888,12 +888,21 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "for mmr" do
-      let(:programme) { Programme.mmr }
+      before { Flipper.enable(:mmrv) }
+
+      let(:programme) do
+        Programme.mmr.variant_for(
+          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
+        )
+      end
 
       context "with a fhir record from Mavis" do
         let(:fixture_file_name) { "fhir/mmr/fhir_record_from_mavis.json" }
 
         include_examples "a mapped vaccination record (common fields)"
+
+        its(:programme) { should be_a Programme::Variant }
+        it { expect(vaccination_record.programme.variant_type).to eq "mmr" }
 
         its(:nhs_immunisations_api_identifier_system) do
           should eq "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records"

@@ -1,8 +1,13 @@
-import { createAll, Button, ErrorSummary, SkipLink } from "nhsuk-frontend";
+import {
+  createAll,
+  Button,
+  Checkboxes,
+  ErrorSummary,
+  Radios,
+  SkipLink,
+} from "nhsuk-frontend";
 
 import { Autocomplete } from "./components/autocomplete.js";
-import { UpgradedCheckboxes as Checkboxes } from "./components/checkboxes.js";
-import { UpgradedRadios as Radios } from "./components/radios.js";
 
 // Initiate NHS.UK frontend components on page load
 document.addEventListener("DOMContentLoaded", () => {

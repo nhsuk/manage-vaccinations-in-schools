@@ -106,8 +106,8 @@ class PatientsController < ApplicationController
 
     @show_aged_out_of_programmes = !upload_only_access
     @show_archived_records = !upload_only_access
-    @show_patient_programme_status = !upload_only_access
     @show_patient_school = !upload_only_access
+    @show_vaccinated_programme_status_only = upload_only_access
     @show_patient_postcode = upload_only_access
   end
 

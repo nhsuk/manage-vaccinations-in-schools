@@ -84,7 +84,7 @@ class ApplicationController < ActionController::Base
 
   def user_not_authorized
     flash[:alert] = "You are not authorized to perform this action."
-    redirect_back_or_to root_path, status: :forbidden, allow_other_host: false
+    redirect_back_or_to dashboard_path, allow_other_host: false
   end
 
   def set_service_guide_url
