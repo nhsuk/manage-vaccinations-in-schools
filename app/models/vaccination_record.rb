@@ -273,7 +273,7 @@ class VaccinationRecord < ApplicationRecord
 
   def snomed_procedure_code = vaccine&.snomed_procedure_code(dose_sequence:)
 
-  delegate :snomed_procedure_term, to: :vaccine, allow_nil: true
+  def snomed_procedure_term = vaccine&.snomed_procedure_term(dose_sequence:)
 
   def notifier = Notifier::VaccinationRecord.new(self)
 
