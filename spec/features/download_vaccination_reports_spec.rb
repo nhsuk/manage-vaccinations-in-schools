@@ -2,7 +2,7 @@
 
 describe "Download vaccination reports" do
   scenario "Download in CarePlus format" do
-    given_an_hpv_programme_is_underway
+    given_an_hpv_programme_is_underway_and_care_plus_is_enabled
     and_an_administered_vaccination_record_exists
 
     when_i_go_to_the_programme
@@ -97,6 +97,17 @@ describe "Download vaccination reports" do
 
     @patient_location =
       create(:patient_location, patient: @patient, session: @session)
+  end
+
+  def given_an_hpv_programme_is_underway_and_care_plus_is_enabled
+    given_an_hpv_programme_is_underway
+    @team =
+      create(
+        :team,
+        :with_one_nurse,
+        :with_care_plus_enabled,
+        programmes: [@programme]
+      )
   end
 
   def and_an_administered_vaccination_record_exists

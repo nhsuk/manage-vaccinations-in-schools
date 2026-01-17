@@ -863,6 +863,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_19_161311) do
   end
 
   create_table "teams", force: :cascade do |t|
+    t.string "careplus_staff_code"
+    t.string "careplus_staff_type"
     t.string "careplus_venue_code", null: false
     t.datetime "created_at", null: false
     t.integer "days_before_consent_reminders", default: 7, null: false

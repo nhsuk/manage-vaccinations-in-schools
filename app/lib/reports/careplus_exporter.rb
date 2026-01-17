@@ -143,8 +143,8 @@ class Reports::CareplusExporter
               records.first.performed_at.strftime("%H:%M"),
               session.location.school? ? "SC" : "CL", # Venue Type
               session.location.dfe_number || team.careplus_venue_code, # Venue Code
-              "IN", # Staff Type
-              "LW5PM", # Staff Code
+              team.careplus_staff_type,
+              team.careplus_staff_code,
               "Y", # Attended; Did not attends do not get recorded on GP systems
               "", # Reason Not Attended; Always blank
               "", # Suspension End Date; Doesn't need to be used

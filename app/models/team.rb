@@ -5,6 +5,8 @@
 # Table name: teams
 #
 #  id                            :bigint           not null, primary key
+#  careplus_staff_code           :string
+#  careplus_staff_type           :string
 #  careplus_venue_code           :string           not null
 #  days_before_consent_reminders :integer          default(7), not null
 #  days_before_consent_requests  :integer          default(21), not null
@@ -100,4 +102,7 @@ class Team < ApplicationRecord
       .where(location_year_group: { academic_year: })
       .pluck_year_groups
   end
+
+  def care_plus_enabled? =
+    careplus_staff_code.present? && careplus_staff_type.present?
 end

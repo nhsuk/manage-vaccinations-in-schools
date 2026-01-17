@@ -40,7 +40,7 @@
 
   <div class="nhsuk-u-margin-bottom-8">
     <%= f.govuk_collection_radio_buttons :file_format,
-                                         VaccinationReport::FILE_FORMATS,
+                                         @vaccination_report.file_formats,
                                          :itself,
                                          legend: { text: "Select file format", size: "m" } %>
   </div>

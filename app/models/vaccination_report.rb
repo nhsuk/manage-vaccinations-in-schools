@@ -59,6 +59,14 @@ class VaccinationReport
     "#{programme.name} - #{file_format} - #{from_str} - #{to_str}.csv"
   end
 
+  def file_formats
+    if @current_user.selected_team.care_plus_enabled?
+      FILE_FORMATS
+    else
+      FILE_FORMATS - ["careplus"]
+    end
+  end
+
   private
 
   def exporter_class
