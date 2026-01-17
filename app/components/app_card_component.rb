@@ -3,8 +3,14 @@
 class AppCardComponent < ViewComponent::Base
   erb_template <<-ERB
     <<%= top_level_tag %> class="<%= card_classes %>">
-      <div class="<%= content_classes %>">
+      <% unless heading&.show_in_content? %>
         <%= heading %>
+      <% end %>
+
+      <div class="<%= content_classes %>">
+        <% if heading&.show_in_content? %>
+          <%= heading %>
+        <% end %>
 
         <% if description.present? %>
           <p class="nhsuk-card__description"><%= description %></p>
@@ -24,13 +30,8 @@ class AppCardComponent < ViewComponent::Base
   ERB
 
   renders_one :heading,
-              ->(level: 3, size: nil, colour: nil) do
-                Heading.new(
-                  level: level,
-                  size: size,
-                  colour: colour,
-                  link_to: @link_to
-                )
+              ->(level: 3, size: nil, colour: nil, actions: []) do
+                Heading.new(level:, size:, colour:, link_to: @link_to, actions:)
               end
 
   renders_one :description

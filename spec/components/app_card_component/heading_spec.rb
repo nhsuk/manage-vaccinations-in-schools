@@ -12,6 +12,8 @@ describe AppCardComponent::Heading do
         text: content
       )
     end
+
+    it { should_not have_css("div.nhsuk-card__heading-container") }
   end
 
   context "with level 1" do
@@ -83,10 +85,47 @@ describe AppCardComponent::Heading do
     it { should_not have_css("a") }
   end
 
+  context "without actions" do
+    subject { render_inline(described_class.new) { content } }
+
+    it { should_not have_css("ul.nhsuk-card__actions") }
+  end
+
+  context "with actions" do
+    subject do
+      render_inline(
+        described_class.new(
+          actions: [
+            { text: "Edit", href: "/edit" },
+            { text: "Delete", href: "/delete" }
+          ]
+        )
+      ) { content }
+    end
+
+    it { should have_css("div.nhsuk-card__heading-container") }
+    it { should have_css("ul.nhsuk-card__actions") }
+    it { should have_css("li.nhsuk-card__action", count: 2) }
+    it { should have_link("Edit", href: "/edit", class: "nhsuk-link") }
+    it { should have_link("Delete", href: "/delete", class: "nhsuk-link") }
+  end
+
+  context "with empty actions array" do
+    subject { render_inline(described_class.new(actions: [])) { content } }
+
+    it { should_not have_css("ul.nhsuk-card__actions") }
+  end
+
   context "with all parameters" do
     subject(:rendered) do
       render_inline(
-        described_class.new(level: 2, size: "l", colour: "green", link_to: "#")
+        described_class.new(
+          level: 2,
+          size: "l",
+          colour: "green",
+          link_to: "#",
+          actions: [{ text: "Edit", href: "/edit" }]
+        )
       ) { content }
     end
 
@@ -97,5 +136,8 @@ describe AppCardComponent::Heading do
     end
 
     it { should have_link(href: "#") }
+
+    it { should have_css("ul.nhsuk-card__actions") }
+    it { should have_link("Edit", href: "/edit", class: "nhsuk-link") }
   end
 end
