@@ -17,6 +17,8 @@ class Onboarding
   ORGANISATION_ATTRIBUTES = %i[ods_code].freeze
 
   TEAM_ATTRIBUTES = %i[
+    careplus_staff_code
+    careplus_staff_type
     careplus_venue_code
     days_before_consent_reminders
     days_before_consent_requests

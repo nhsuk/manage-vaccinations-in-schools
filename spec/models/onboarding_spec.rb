@@ -31,6 +31,8 @@ describe Onboarding do
       expect(team.phone).to eq("07700 900815")
       expect(team.phone_instructions).to eq("option 1, followed by option 3")
       expect(team.careplus_venue_code).to eq("EXAMPLE")
+      expect(team.careplus_staff_code).to eq("ABCD")
+      expect(team.careplus_staff_type).to eq("PQ")
       expect(team.programmes).to contain_exactly(programme)
 
       expect(team.locations.generic_clinic.count).to eq(1)
