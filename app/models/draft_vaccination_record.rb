@@ -402,7 +402,8 @@ class DraftVaccinationRecord
   def can_be_half_dose? = vaccine_method == "nasal"
 
   def can_change_outcome?
-    outcome != "already_had" || editing? || session.nil? || session.today?
+    (outcome != "already_had" || editing? || session.nil? || session.today?) &&
+      !bulk_upload_user_and_record?
   end
 
   def bulk_upload_user_and_record?

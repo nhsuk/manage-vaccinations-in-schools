@@ -286,11 +286,13 @@ describe "Edit vaccination record" do
 
       when_i_click_on_edit_vaccination_record
       then_i_see_the_edit_vaccination_record_page
+      and_i_should_not_see_a_change_outcome_link
 
       when_i_click_back
       then_i_should_see_the_vaccination_record
       and_i_click_on_edit_vaccination_record
       then_i_see_the_edit_vaccination_record_page
+      and_i_should_not_see_a_change_outcome_link
 
       when_i_edit_the_vaccinator
       and_i_enter_a_new_first_name_and_last_name
@@ -651,6 +653,10 @@ describe "Edit vaccination record" do
 
   def when_i_click_on_change_outcome
     click_on "Change outcome"
+  end
+
+  def and_i_should_not_see_a_change_outcome_link
+    expect(page).not_to have_link("Change outcome")
   end
 
   def then_i_should_see_the_change_outcome_form
