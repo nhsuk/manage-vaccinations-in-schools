@@ -59,6 +59,7 @@ class DraftVaccinationRecord
       (:dose if administered? && can_be_half_dose?),
       (:batch if administered?),
       (:location if session&.generic_clinic?),
+      (:dose_sequence if bulk_upload_user_and_record?),
       (:vaccinator if bulk_upload_user_and_record?),
       :confirm
     ].compact
@@ -114,6 +115,14 @@ class DraftVaccinationRecord
   on_wizard_step :vaccinator, exact: true do
     validates :performed_by_given_name, presence: true
     validates :performed_by_family_name, presence: true
+  end
+
+  on_wizard_step :dose_sequence, exact: true do
+    validates :dose_sequence,
+              presence: true,
+              inclusion: {
+                in: ->(record) { 1..record.programme.maximum_dose_sequence }
+              }
   end
 
   with_options on: :update,
