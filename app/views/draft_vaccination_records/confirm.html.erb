@@ -25,6 +25,7 @@
      notes: wizard_path("notes"),
      outcome: @draft_vaccination_record.wizard_steps.include?(:outcome) ? wizard_path("outcome") : nil,
      performed_at: wizard_path("date-and-time"),
+     vaccinator: wizard_path("vaccinator"),
    } %>
 
 <% show_notes = @draft_vaccination_record.editing? %>

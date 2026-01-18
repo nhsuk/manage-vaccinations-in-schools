@@ -59,6 +59,7 @@ class DraftVaccinationRecord
       (:dose if administered? && can_be_half_dose?),
       (:batch if administered?),
       (:location if session&.generic_clinic?),
+      (:vaccinator if bulk_upload_user_and_record?),
       :confirm
     ].compact
   end
@@ -108,6 +109,11 @@ class DraftVaccinationRecord
   on_wizard_step :confirm, exact: true do
     validates :outcome, presence: true
     validates :notes, length: { maximum: 1000 }
+  end
+
+  on_wizard_step :vaccinator, exact: true do
+    validates :performed_by_given_name, presence: true
+    validates :performed_by_family_name, presence: true
   end
 
   with_options on: :update,
@@ -388,6 +394,11 @@ class DraftVaccinationRecord
 
   def can_change_outcome?
     outcome != "already_had" || editing? || session.nil? || session.today?
+  end
+
+  def bulk_upload_user_and_record?
+    @current_user.selected_team.has_upload_only_access? &&
+      sourced_from_bulk_upload?
   end
 
   def requires_supplied_by?

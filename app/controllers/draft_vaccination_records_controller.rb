@@ -169,7 +169,8 @@ class DraftVaccinationRecordsController < ApplicationController
       location: %i[location_id],
       notes: %i[notes],
       outcome: %i[outcome],
-      supplier: %i[supplied_by_user_id]
+      supplier: %i[supplied_by_user_id],
+      vaccinator: %i[performed_by_given_name performed_by_family_name]
     }.fetch(current_step)
 
     params
