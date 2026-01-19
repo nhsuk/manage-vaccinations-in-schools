@@ -1,18 +1,19 @@
 <%= h1 t("imports.index.title"), size: "xl" %>
 
-<% if current_team.has_upload_only_access? %>
-  <p class="nhsuk-u-reading-width">
-    Use this page to upload and import vaccination records.
-  </p>
-<% else %>
-  <p class="nhsuk-u-reading-width">
+<p class="nhsuk-u-reading-width">
+  <% if policy(ClassImport).new? && policy(CohortImport).new? %>
     Use this page to upload and import child, class list and vaccination records.
-  </p>
-<% end %>
+  <% else %>
+    Use this page to upload and import vaccination records.
+  <% end %>
+</p>
 
 <p class="nhsuk-u-reading-width">
   After import, files move to the <strong>Completed imports</strong> tab.
-  Any close matches to resolve will appear in the <strong>Issues</strong> tab.
+
+  <% if policy(%i[import issue]).index? %>
+    Any close matches to resolve will appear in the <strong>Issues</strong> tab.
+  <% end %>
 </p>
 
 <p class="nhsuk-u-reading-width">

@@ -13,7 +13,8 @@ describe "Upload-only team homepage and navigation" do
   scenario "Navigation shows only import, children and your team" do
     given_i_am_signed_in_as_an_upload_only_team
     when_i_visit_the_dashboard
-    then_i_should_see_only_import_children_and_team_navigation_items
+    then_i_should_see_only_import_and_children_navigation_items
+    and_there_should_be_no_count_next_to_the_import_link
   end
 
   scenario "Children page search shows limited filters and the patient's card" do
@@ -110,11 +111,15 @@ describe "Upload-only team homepage and navigation" do
     expect(card).to have_link("Children", href: patients_path)
   end
 
-  def then_i_should_see_only_import_children_and_team_navigation_items
+  def then_i_should_see_only_import_and_children_navigation_items
     navigation_items = page.all(".nhsuk-header__navigation-item")
     expect(navigation_items.count).to eq(2)
     expect(navigation_items[0]).to have_link("Imports", href: imports_path)
     expect(navigation_items[1]).to have_link("Children", href: patients_path)
+  end
+
+  def and_there_should_be_no_count_next_to_the_import_link
+    expect(page).not_to have_css(".app-count", text: "(0)")
   end
 
   def when_i_visit_the_children_page

@@ -20,11 +20,13 @@ class AppImportsNavigationComponent < ViewComponent::Base
         selected: active == :imported
       )
 
-      nav.with_item(
-        href: imports_issues_path,
-        text: issues_text,
-        selected: active == :issues
-      )
+      if policy(%i[import issue]).index?
+        nav.with_item(
+          href: imports_issues_path,
+          text: issues_text,
+          selected: active == :issues
+        )
+      end
 
       if policy(ImportantNotice).index?
         nav.with_item(

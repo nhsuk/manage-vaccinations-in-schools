@@ -10,6 +10,7 @@ describe("National reporting immunisation imports") do
 
     when_i_go_to_the_import_page
     then_i_should_see_the_upload_link
+    and_i_should_not_see_any_reference_to_import_issues
 
     when_i_click_on_the_upload_link
     then_i_should_see_the_upload_page
@@ -94,6 +95,17 @@ describe("National reporting immunisation imports") do
 
   def then_i_should_see_the_upload_link
     expect(page).to have_button("Upload records")
+  end
+
+  def and_i_should_not_see_any_reference_to_import_issues
+    expect(page).not_to have_content(
+      "Any close matches to resolve will appear in the Issues tab."
+    )
+
+    navigation_items = page.all(".app-secondary-navigation__link")
+    expect(navigation_items.map(&:text)).not_to include(
+      a_string_including("Issues")
+    )
   end
 
   def when_i_click_on_the_upload_link

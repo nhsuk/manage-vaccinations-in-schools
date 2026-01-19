@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class Import::IssuePolicy < ApplicationPolicy
-  def index? = true
+  def index? = !team.has_upload_only_access?
 
-  def create? = true
+  def create? = !team.has_upload_only_access?
 
-  def show? = true
+  def show? = !team.has_upload_only_access?
 
-  def update? = true
+  def update? = !team.has_upload_only_access?
 end
