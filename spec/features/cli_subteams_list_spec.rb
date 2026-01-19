@@ -3,6 +3,8 @@
 require_relative "../../app/lib/mavis_cli"
 
 describe "mavis subteams list" do
+  include ActionView::Helpers::NumberHelper
+
   it "lists all subteams" do
     given_a_couple_teams_exist
     and_there_are_subteams_in_the_teams
@@ -61,18 +63,34 @@ describe "mavis subteams list" do
   end
 
   def then_i_should_see_the_list_of_subteams
-    expect(@output).to include("#{@subteam1.id} │ #{@subteam1.name}")
-    expect(@output).to include("#{@team1.id} │ #{@team1.workgroup}")
-    expect(@output).to include("#{@subteam2.id} │ #{@subteam2.name}")
-    expect(@output).to include("#{@team2.id} │ #{@team2.workgroup}")
+    expect(@output).to include(
+      "#{number_with_delimiter(@subteam1.id)} │ #{@subteam1.name}"
+    )
+    expect(@output).to include(
+      "#{number_with_delimiter(@team1.id)} │ #{@team1.workgroup}"
+    )
+    expect(@output).to include(
+      "#{number_with_delimiter(@subteam2.id)} │ #{@subteam2.name}"
+    )
+    expect(@output).to include(
+      "#{number_with_delimiter(@team2.id)} │ #{@team2.workgroup}"
+    )
     expect(@output).to include(@programme.name).twice
   end
 
   def then_i_should_see_the_subteams_for_just_that_team
-    expect(@output).to include("#{@subteam1.id} │ #{@subteam1.name}")
-    expect(@output).to include("#{@team1.id} │ #{@team1.workgroup}")
-    expect(@output).not_to include("#{@subteam2.id} │ #{@subteam2.name}")
-    expect(@output).not_to include("#{@team2.id} │ #{@team2.workgroup}")
+    expect(@output).to include(
+      "#{number_with_delimiter(@subteam1.id)} │ #{@subteam1.name}"
+    )
+    expect(@output).to include(
+      "#{number_with_delimiter(@team1.id)} │ #{@team1.workgroup}"
+    )
+    expect(@output).not_to include(
+      "#{number_with_delimiter(@subteam2.id)} │ #{@subteam2.name}"
+    )
+    expect(@output).not_to include(
+      "#{number_with_delimiter(@team2.id)} │ #{@team2.workgroup}"
+    )
     expect(@output).to include(@programme.name).once
   end
 
