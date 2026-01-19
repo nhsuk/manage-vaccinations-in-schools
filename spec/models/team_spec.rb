@@ -81,11 +81,11 @@ describe Team do
     end
   end
 
-  describe "#care_plus_enabled?" do
-    subject(:care_plus_enabled?) { team.care_plus_enabled? }
+  describe "#careplus_enabled?" do
+    subject(:careplus_enabled?) { team.careplus_enabled? }
 
     context "when careplus_staff_code and careplus_staff_type are present" do
-      let(:team) { create(:team, :with_care_plus_enabled) }
+      let(:team) { create(:team, :with_careplus_enabled) }
 
       it { should be(true) }
     end

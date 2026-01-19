@@ -74,7 +74,7 @@ FactoryBot.define do
       end
     end
 
-    trait :with_care_plus_enabled do
+    trait :with_careplus_enabled do
       careplus_staff_code { "LW5PM" }
       careplus_staff_type { "IN" }
       careplus_venue_code { identifier.to_s }

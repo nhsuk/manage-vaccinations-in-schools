@@ -105,7 +105,7 @@ describe "Download vaccination reports" do
       create(
         :team,
         :with_one_nurse,
-        :with_care_plus_enabled,
+        :with_careplus_enabled,
         programmes: [@programme]
       )
   end

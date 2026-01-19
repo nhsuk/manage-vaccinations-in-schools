@@ -58,8 +58,8 @@ class VaccinationReport
   end
 
   def file_formats
-    common_file_formats = ["mavis", "systm_one"]
-    if @current_user.selected_team.care_plus_enabled?
+    common_file_formats = %w[mavis systm_one]
+    if @current_user.selected_team.careplus_enabled?
       common_file_formats + ["careplus"]
     else
       common_file_formats

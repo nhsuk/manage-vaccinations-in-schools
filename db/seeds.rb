@@ -27,7 +27,7 @@ def create_team(ods_code:, workgroup: nil, type: :poc_only)
     FactoryBot.create(
       :team,
       :with_generic_clinic,
-      :with_care_plus_enabled,
+      :with_careplus_enabled,
       ods_code:,
       programmes: Programme.all,
       workgroup:,

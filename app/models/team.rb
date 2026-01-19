@@ -102,7 +102,7 @@ class Team < ApplicationRecord
       .pluck_year_groups
   end
 
-  def care_plus_enabled? =
+  def careplus_enabled? =
     careplus_staff_code.present? && careplus_staff_type.present? &&
       careplus_venue_code.present?
 end
