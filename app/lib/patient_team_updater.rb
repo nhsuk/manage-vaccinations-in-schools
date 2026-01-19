@@ -1,5 +1,29 @@
 # frozen_string_literal: true
 
+##
+# This class is used to update the patient-team associations for any
+# particular set of patients or teams. Patient-team associations are a cache
+# of which teams have access to view which patients, and the logic depends on
+# a number of associated tables. For example, a patient is considered part of
+# a team if they have an archive reason, or vaccination record for that team.
+#
+# A `patient_scope` and `team_scope` can be passed in to limit the scope of
+# which patients and teams get updated. Without these arguments the default
+# is to update all the patients and teams.
+#
+# If a patient or team scope is provided which has just a where clause on the
+# ID (for example `Patient.where(id: 10)`), the class will attempt an
+# optimisation which avoids a join and instead filters directly on the ID in
+# the relation.
+#
+# The updater works by executing two queries. The first query is a bulk update
+# using `INSERT ... ON CONFLICT DO UPDATE` to update all the patient-team
+# associations by setting the array of sources for each association. The
+# sources array contains all the possible reasons why a patient might be
+# associated with a team (for example `archive_reason` or
+# `vaccination_record_organisation`). The second query deletes any rows from
+# the table where the sources array is empty (meaning the patient should not
+# belong to the team.).
 class PatientTeamUpdater
   def initialize(patient_scope: nil, team_scope: nil)
     @patient_scope = patient_scope
