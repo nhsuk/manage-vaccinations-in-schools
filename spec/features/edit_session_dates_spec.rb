@@ -41,7 +41,7 @@ describe "Edit session dates" do
     create_list(
       :patient,
       9,
-      :eligible_for_vaccination,
+      :consent_no_response,
       session: @session,
       year_group: 9
     )

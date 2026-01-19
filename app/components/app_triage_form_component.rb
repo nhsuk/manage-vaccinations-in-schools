@@ -53,8 +53,8 @@ class AppTriageFormComponent < ViewComponent::Base
 
   def patient_eligible_for_additional_dose?
     next_dose =
-      patient.vaccination_status(
-        programme: programme,
+      patient.programme_status(
+        programme,
         academic_year: session.academic_year
       ).dose_sequence
 

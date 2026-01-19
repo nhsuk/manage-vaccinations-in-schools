@@ -86,7 +86,6 @@ class Patient < ApplicationRecord
   has_many :triage_statuses
   has_many :triages
   has_many :vaccination_records, -> { kept }
-  has_many :vaccination_statuses
 
   has_many :locations, through: :patient_locations
   has_many :parents, through: :parent_relationships
@@ -155,12 +154,7 @@ class Patient < ApplicationRecord
 
   scope :includes_statuses,
         -> do
-          includes(
-            :consent_statuses,
-            :programme_statuses,
-            :triage_statuses,
-            vaccination_statuses: :latest_location
-          )
+          includes(:consent_statuses, :programme_statuses, :triage_statuses)
         end
 
   scope :has_vaccination_records_dont_notify_parents,
@@ -616,10 +610,6 @@ class Patient < ApplicationRecord
 
   def triage_status(programme:, academic_year:)
     patient_status(triage_statuses, programme:, academic_year:)
-  end
-
-  def vaccination_status(programme:, academic_year:)
-    patient_status(vaccination_statuses, programme:, academic_year:)
   end
 
   def has_patient_specific_direction?(team:, **kwargs)

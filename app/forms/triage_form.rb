@@ -94,14 +94,13 @@ class TriageForm
   end
 
   def next_mmr_dose_date
-    vaccination_status = patient.vaccination_status(programme:, academic_year:)
+    programme_status = patient.programme_status(programme, academic_year:)
 
-    first_dose_date =
-      if vaccination_status.eligible? || vaccination_status.due?
-        vaccination_status.latest_date
-      end
-
-    (first_dose_date || Date.current) + 28.days
+    if programme_status.cannot_vaccinate_delay_vaccination?
+      programme_status.date
+    elsif (first_dose_date = programme_status.date)
+      (first_dose_date + 28.days).to_date
+    end
   end
 
   private
@@ -269,8 +268,8 @@ class TriageForm
 
   def patient_eligible_for_additional_dose?
     next_dose =
-      patient.vaccination_status(
-        programme: programme,
+      patient.programme_status(
+        programme,
         academic_year: session.academic_year
       ).dose_sequence
 

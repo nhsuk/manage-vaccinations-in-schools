@@ -7,15 +7,10 @@ describe SendSchoolConsentRequestsJob do
   let(:programmes) { [Programme.sample] }
   let(:parents) { create_list(:parent, 2) }
   let(:patient_with_request_sent) do
-    create(
-      :patient,
-      :eligible_for_vaccination,
-      :consent_request_sent,
-      programmes:
-    )
+    create(:patient, :consent_no_response, :consent_request_sent, programmes:)
   end
   let(:patient_not_sent_request) do
-    create(:patient, :eligible_for_vaccination, parents:, programmes:)
+    create(:patient, :consent_no_response, parents:, programmes:)
   end
   let(:patient_with_consent) do
     create(:patient, :consent_given_triage_not_needed, programmes:)
@@ -97,14 +92,7 @@ describe SendSchoolConsentRequestsJob do
           create(:patient, year_group: 8, parents:, programmes:)
         end
 
-        before do
-          create(
-            :patient_vaccination_status,
-            :eligible,
-            patient: patient_not_sent_request,
-            programme: hpv_programme
-          )
-        end
+        before { StatusUpdater.call(patient: patient_not_sent_request) }
 
         it "sends only one notification for HPV" do
           expect(ConsentNotification).to receive(:create_and_send!).once.with(
@@ -120,14 +108,10 @@ describe SendSchoolConsentRequestsJob do
 
       context "when the patient is in Year 9" do
         let(:patient_not_sent_request) do
-          create(
-            :patient,
-            :eligible_for_vaccination,
-            year_group: 9,
-            parents:,
-            programmes:
-          )
+          create(:patient, year_group: 9, parents:, programmes:)
         end
+
+        before { StatusUpdater.call(patient: patient_not_sent_request) }
 
         it "sends two notifications for HPV, and MenACWY and Td/IPV" do
           expect(ConsentNotification).to receive(:create_and_send!).with(

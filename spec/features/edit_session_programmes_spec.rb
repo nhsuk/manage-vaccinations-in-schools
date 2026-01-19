@@ -86,7 +86,7 @@ describe "Edit session programmes" do
     create_list(
       :patient,
       2,
-      :eligible_for_vaccination,
+      :consent_no_response,
       location: @location,
       year_group: 9,
       programmes: @programmes
