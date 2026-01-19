@@ -462,6 +462,37 @@ variable "valkey_log_retention_days" {
   }
 }
 
+variable "waf_rule_actions" {
+  type = map(string)
+  default = {
+    core_rule_set      = "COUNT"
+    known_bad_inputs   = "COUNT"
+    ip_reputation_list = "COUNT"
+    rate_limiting      = "COUNT"
+  }
+  description = "Map of WAF rule actions (COUNT/BLOCK)"
+  validation {
+    condition = alltrue([
+      for action in values(var.waf_rule_actions) : contains(["COUNT", "BLOCK"], action)
+    ])
+    error_message = "Valid values: COUNT or BLOCK"
+  }
+}
+
+variable "waf_logging_enabled" {
+  type        = bool
+  default     = true
+  description = "Enable WAF request logging"
+  nullable    = false
+}
+
+variable "waf_rate_limit_threshold" {
+  type        = number
+  default     = 100
+  description = "Rate limit threshold for WAF in requests per 5 minutes"
+  nullable    = false
+}
+
 
 variable "active_target_group" {
   default     = "blue"
