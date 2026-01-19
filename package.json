@@ -6,7 +6,7 @@
     "accessible-autocomplete": "^3.0.1",
     "esbuild": "^0.27.2",
     "idb": "^8.0.3",
-    "nhsuk-frontend": "^10.3.0",
+    "nhsuk-frontend": "^10.3.1",
     "sass": "^1.97.2"
   },
   "scripts": {
