@@ -680,8 +680,12 @@ describe NHS::ImmunisationsAPI do
       it { should be false }
     end
 
-    context "when the vaccination record is not recorded in service" do
-      let(:session) { nil }
+    context "when the vaccination record doesn't have the correct source" do
+      before do
+        allow(vaccination_record).to receive(
+          :correct_source_for_nhs_immunisations_api?
+        ).and_return(false)
+      end
 
       it { should be false }
     end
@@ -738,6 +742,12 @@ describe NHS::ImmunisationsAPI do
       let(:notify_parents) { false }
 
       it { should be false }
+    end
+
+    context "when notify_parents is not set" do
+      let(:notify_parents) { nil }
+
+      it { should be true }
     end
 
     context "when the patient is invalidated" do

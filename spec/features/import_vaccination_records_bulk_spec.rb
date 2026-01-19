@@ -7,6 +7,7 @@ describe("National reporting immunisation imports") do
     given_mavis_logins_are_configured
     given_i_am_signed_in_as_a_bulk_upload_user
     given_a_patient_already_exists
+    and_sending_to_nhs_immunisations_api_is_enabled
 
     when_i_go_to_the_import_page
     then_i_should_see_the_upload_link
@@ -29,6 +30,7 @@ describe("National reporting immunisation imports") do
     and_the_patients_should_now_be_associated_with_the_team
     and_the_newly_created_patients_should_be_archived
     and_the_existing_patients_should_not_be_archived
+    and_the_vaccination_records_are_sent_to_the_imms_api
 
     when_i_click_on_a_vaccination_record
     then_i_should_see_the_vaccination_record
@@ -80,10 +82,14 @@ describe("National reporting immunisation imports") do
     create(:vaccination_record, patient: @existing_patient, team: @team)
   end
 
-  def and_school_locations_exist
-    create(:school, urn: "110158")
-    create(:school, urn: "120026")
-    create(:school, urn: "144012")
+  def and_sending_to_nhs_immunisations_api_is_enabled
+    Flipper.enable(:imms_api_integration)
+    Flipper.enable(:imms_api_sync_job, Programme.flu)
+    Flipper.enable(:imms_api_sync_job, Programme.hpv)
+    Flipper.enable(:sync_national_reporting_to_imms_api)
+
+    @stubbed_post_request =
+      stub_immunisations_api_post(Random.uuid, Random.uuid)
   end
 
   def when_i_go_to_the_import_page
@@ -98,16 +104,6 @@ describe("National reporting immunisation imports") do
 
   def when_i_click_on_the_upload_link
     click_on "Upload records"
-  end
-
-  def when_i_click_on_the_imports_tab
-    click_on "Imports"
-  end
-
-  def and_i_choose_to_import_child_records
-    click_on "Upload records"
-    choose "Vaccination records"
-    click_on "Continue"
   end
 
   def then_i_should_see_the_upload_page
@@ -187,6 +183,12 @@ describe("National reporting immunisation imports") do
 
   def and_the_existing_patients_should_not_be_archived
     expect(@existing_patient.archived?(team: @team)).to be false
+  end
+
+  def and_the_vaccination_records_are_sent_to_the_imms_api
+    SyncVaccinationRecordToNHSJob.drain
+
+    expect(@stubbed_post_request).to have_been_requested.times(2)
   end
 
   def when_i_click_on_a_vaccination_record

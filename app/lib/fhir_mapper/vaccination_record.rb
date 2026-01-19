@@ -6,6 +6,8 @@ module FHIRMapper
 
     MAVIS_SYSTEM_NAME =
       "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records"
+    MAVIS_NATIONAL_REPORTING_SYSTEM_NAME =
+      "http://manage-vaccinations-in-schools.nhs.uk/national-reporting/vaccination-records"
 
     MILLILITER_SUB_STRINGS = %w[ml millilitre milliliter].freeze
 
@@ -123,7 +125,15 @@ module FHIRMapper
     private
 
     def fhir_identifier
-      FHIR::Identifier.new(system: MAVIS_SYSTEM_NAME, value: uuid)
+      case source
+      when "bulk_upload"
+        FHIR::Identifier.new(
+          system: MAVIS_NATIONAL_REPORTING_SYSTEM_NAME,
+          value: uuid
+        )
+      else
+        FHIR::Identifier.new(system: MAVIS_SYSTEM_NAME, value: uuid)
+      end
     end
 
     def fhir_vaccination_procedure_extension
