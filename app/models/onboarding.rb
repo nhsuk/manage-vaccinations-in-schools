@@ -54,6 +54,7 @@ class Onboarding
   validates :schools, presence: true
   validates :clinics, presence: true
   validate :no_duplicate_urns_across_school_types
+  validate :no_schools_with_existing_team_attachments
 
   def initialize(hash)
     config = hash.deep_symbolize_keys
@@ -151,6 +152,30 @@ class Onboarding
         :schools,
         "URN(s) #{overlapping_urns.join(", ")} cannot appear as both a regular school and a site"
       )
+    end
+  end
+
+  def no_schools_with_existing_team_attachments
+    schools.each_with_index do |school, index|
+      urn = school.urn
+      next if urn.blank?
+
+      locations_with_teams = Location.school.where(urn:).joins(:teams).distinct
+
+      next unless locations_with_teams.exists?
+
+      site_codes = locations_with_teams.pluck(:site).compact.sort
+      team_names =
+        locations_with_teams.flat_map { it.teams.pluck(:name) }.uniq.sort
+
+      message =
+        if site_codes.any?
+          "URN #{urn} has sites (#{site_codes.join(", ")}) already attached to teams: #{team_names.join(", ")}"
+        else
+          "URN #{urn} is already attached to teams: #{team_names.join(", ")}"
+        end
+
+      errors.add("school.#{index}.urn", message)
     end
   end
 

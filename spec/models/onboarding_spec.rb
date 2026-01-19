@@ -75,6 +75,38 @@ describe Onboarding do
   context "with an invalid configuration file" do
     let(:filename) { "onboarding/invalid.yaml" }
 
+    let(:team) { create(:team, name: "Existing Team") }
+
+    before do
+      create(:school, :secondary, :open, urn: "111111", team:)
+      create(:school, :secondary, :open, urn: "555555", team:)
+      create(
+        :school,
+        :secondary,
+        :open,
+        urn: "222222",
+        name: "School with no site"
+      )
+      create(
+        :school,
+        :secondary,
+        :open,
+        urn: "222222",
+        site: "A",
+        name: "School with Site A",
+        team:
+      )
+      create(
+        :school,
+        :secondary,
+        :open,
+        urn: "222222",
+        site: "B",
+        name: "School with Site B",
+        team:
+      )
+    end
+
     it { should be_invalid }
 
     it "has errors" do
@@ -82,7 +114,6 @@ describe Onboarding do
 
       expect(onboarding.errors.messages).to eq(
         {
-          "organisation.ods_code": ["can't be blank"],
           "team.careplus_venue_code": ["can't be blank"],
           "team.name": ["can't be blank"],
           "team.phone": ["can't be blank", "is invalid"],
@@ -92,6 +123,15 @@ describe Onboarding do
           "team.workgroup": ["can't be blank"],
           "school.0.subteam": ["can't be blank"],
           "school.1.subteam": ["can't be blank"],
+          "school.5.urn": [
+            "URN 111111 is already attached to teams: Existing Team"
+          ],
+          "school.6.urn": [
+            "URN 222222 has sites (A, B) already attached to teams: Existing Team"
+          ],
+          "school.7.urn": [
+            "URN 555555 is already attached to teams: Existing Team"
+          ],
           schools: [
             "URN(s) 456789 cannot appear as both a regular school and a site"
           ],
