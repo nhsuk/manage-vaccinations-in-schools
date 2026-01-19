@@ -51,7 +51,7 @@ describe FHIRMapper::Vaccine do
 
         its(:display) do
           should eq(
-                   "Administration of vaccine product containing only Human papillomavirus antigen (procedure)"
+                   "Administration of vaccine product containing only Human papillomavirus antigen"
                  )
         end
       end

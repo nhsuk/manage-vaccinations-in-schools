@@ -140,7 +140,7 @@ class Vaccine < ApplicationRecord
         code: "761841000",
         term:
           "Administration of vaccine product containing only Human " \
-            "papillomavirus antigen (procedure)"
+            "papillomavirus antigen"
       }
     },
     "menacwy" => {
@@ -148,7 +148,7 @@ class Vaccine < ApplicationRecord
         code: "871874000",
         term:
           "Administration of vaccine product containing only Neisseria " \
-            "meningitidis serogroup A, C, W135 and Y antigens (procedure)"
+            "meningitidis serogroup A, C, W135 and Y antigens"
       }
     },
     "mmr" => {
@@ -157,7 +157,7 @@ class Vaccine < ApplicationRecord
         term:
           "Administration of vaccine product containing only Measles " \
             "morbillivirus and Mumps orthorubulavirus and Rubella virus " \
-            "antigens (procedure)"
+            "antigens"
       }
     },
     "mmrv" => {
@@ -166,16 +166,16 @@ class Vaccine < ApplicationRecord
         term:
           "Administration of vaccine product containing only Human " \
             "alphaherpesvirus 3 and Measles morbillivirus and Mumps " \
-            "orthorubulavirus and Rubella virus antigens (procedure)"
+            "orthorubulavirus and Rubella virus antigens"
       }
     },
     "td_ipv" => {
       "injection" => {
-        code: "866186002",
+        code: "414619005",
         term:
           "Administration of vaccine product containing only Clostridium " \
-            "tetani and Corynebacterium diphtheriae and Human poliovirus " \
-            "antigens (procedure)"
+            "tetani and low dose Corynebacterium diphtheriae and inactivated " \
+            "Human poliovirus antigens"
       }
     }
   }.freeze

@@ -151,7 +151,7 @@ describe Vaccine do
         expect(vaccine.snomed_procedure_term).to eq(
           "Administration of vaccine product containing only Measles " \
             "morbillivirus and Mumps orthorubulavirus and Rubella virus " \
-            "antigens (procedure)"
+            "antigens"
         )
       end
     end
@@ -165,7 +165,7 @@ describe Vaccine do
         expect(vaccine.snomed_procedure_term).to eq(
           "Administration of vaccine product containing only Human " \
             "alphaherpesvirus 3 and Measles morbillivirus and Mumps " \
-            "orthorubulavirus and Rubella virus antigens (procedure)"
+            "orthorubulavirus and Rubella virus antigens"
         )
       end
     end

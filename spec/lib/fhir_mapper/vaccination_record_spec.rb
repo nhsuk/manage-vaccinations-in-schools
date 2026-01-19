@@ -152,7 +152,7 @@ describe FHIRMapper::VaccinationRecord do
 
         its(:display) do
           should eq "Administration of vaccine product containing only Human " \
-                      "papillomavirus antigen (procedure)"
+                      "papillomavirus antigen"
         end
       end
     end
