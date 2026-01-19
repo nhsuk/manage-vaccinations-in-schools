@@ -290,7 +290,7 @@ class DraftVaccinationRecord
       )
 
     approved_vaccine_methods =
-      if triage_generator.status == :not_required
+      if triage_generator.status.in?(%i[not_required delay_vaccination])
         consent_generator.vaccine_methods
       else
         [triage_generator.vaccine_method].compact
