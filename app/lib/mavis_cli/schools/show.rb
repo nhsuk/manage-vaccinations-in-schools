@@ -63,6 +63,7 @@ module MavisCLI
               :site,
               :status,
               :gias_phase,
+              :gias_year_groups,
               :gias_establishment_number,
               :gias_local_authority_code,
               :address_line_1,
@@ -138,6 +139,19 @@ module MavisCLI
 
             puts "  #{Rainbow(programme.type).bright}:"
             puts "    #{Rainbow("year groups").bright}: #{year_groups.join(", ")}"
+          end
+
+          puts ""
+
+          if Location.where(urn: location.urn).count > 1
+            puts "#{Rainbow("other locations with the same URN").bright}:"
+            Location
+              .where(urn: location.urn)
+              .find_each do |other_location|
+                next if other_location == location
+
+                puts "  #{Rainbow(other_location.urn_and_site).bright}: #{other_location.name}"
+              end
           end
 
           puts "" if locations.count > 1
