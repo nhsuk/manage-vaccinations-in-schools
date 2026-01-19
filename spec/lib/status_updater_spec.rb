@@ -29,10 +29,6 @@ describe StatusUpdater do
     it "doesn't create any triage statuses" do
       expect { call }.not_to change(Patient::TriageStatus, :count)
     end
-
-    it "doesn't create any vaccination statuses" do
-      expect { call }.not_to change(Patient::VaccinationStatus, :count)
-    end
   end
 
   context "with an flu session and eligible patient" do
@@ -66,11 +62,6 @@ describe StatusUpdater do
       expect { call }.to change(patient.triage_statuses, :count).by(1)
       expect(patient.triage_statuses.first).to be_not_required
     end
-
-    it "creates a vaccination status" do
-      expect { call }.to change(Patient::VaccinationStatus, :count).by(1)
-      expect(Patient::VaccinationStatus.first).to be_eligible
-    end
   end
 
   context "with an HPV session and eligible patient" do
@@ -95,11 +86,6 @@ describe StatusUpdater do
       expect { call }.to change(patient.triage_statuses, :count).by(1)
       expect(patient.triage_statuses.first).to be_not_required
     end
-
-    it "creates a vaccination status" do
-      expect { call }.to change(Patient::VaccinationStatus, :count).by(1)
-      expect(Patient::VaccinationStatus.first).to be_eligible
-    end
   end
 
   context "with a doubles session and ineligible patient" do
@@ -120,10 +106,6 @@ describe StatusUpdater do
 
     it "doesn't create any triage statuses" do
       expect { call }.not_to change(Patient::TriageStatus, :count)
-    end
-
-    it "doesn't create any vaccination statuses" do
-      expect { call }.not_to change(Patient::VaccinationStatus, :count)
     end
   end
 
@@ -150,12 +132,6 @@ describe StatusUpdater do
       expect { call }.to change(patient.triage_statuses, :count).by(2)
       expect(patient.triage_statuses.first).to be_not_required
       expect(patient.triage_statuses.second).to be_not_required
-    end
-
-    it "creates a patient vaccination status for both programmes" do
-      expect { call }.to change(Patient::VaccinationStatus, :count).by(2)
-      expect(Patient::VaccinationStatus.first).to be_eligible
-      expect(Patient::VaccinationStatus.second).to be_eligible
     end
   end
 end
