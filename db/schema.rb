@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_15_090835) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_19_161311) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -621,12 +621,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_15_090835) do
     t.date "date"
     t.enum "disease_types", array: true, enum_type: "disease_type"
     t.integer "dose_sequence"
+    t.bigint "location_id"
     t.bigint "patient_id", null: false
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "status", default: 0, null: false
     t.integer "vaccine_methods", array: true
     t.boolean "without_gelatine"
     t.index ["academic_year", "patient_id"], name: "idx_on_academic_year_patient_id_3d5bf8d2c8"
+    t.index ["location_id"], name: "index_patient_programme_statuses_on_location_id"
     t.index ["patient_id", "academic_year", "programme_type"], name: "idx_on_patient_id_academic_year_programme_type_75e0e0c471", unique: true
     t.index ["patient_id"], name: "index_patient_programme_statuses_on_patient_id"
     t.index ["status"], name: "index_patient_programme_statuses_on_status"

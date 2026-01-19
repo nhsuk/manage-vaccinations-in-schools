@@ -13,12 +13,14 @@
 #  status           :integer          default("not_eligible"), not null
 #  vaccine_methods  :integer          is an Array
 #  without_gelatine :boolean
+#  location_id      :bigint
 #  patient_id       :bigint           not null
 #
 # Indexes
 #
 #  idx_on_academic_year_patient_id_3d5bf8d2c8                 (academic_year,patient_id)
 #  idx_on_patient_id_academic_year_programme_type_75e0e0c471  (patient_id,academic_year,programme_type) UNIQUE
+#  index_patient_programme_statuses_on_location_id            (location_id)
 #  index_patient_programme_statuses_on_patient_id             (patient_id)
 #  index_patient_programme_statuses_on_status                 (status)
 #
