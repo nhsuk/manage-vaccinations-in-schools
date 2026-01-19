@@ -15,7 +15,7 @@ describe ImmunisationImportRow do
   end
 
   let(:programmes) { [Programme.hpv] }
-  let(:team) { create(:team, ods_code: "abc", programmes:) }
+  let(:team) { create(:team, ods_code: "ABC", programmes:) }
 
   let(:nhs_number) { "9449306168" }
   let(:given_name) { "Harry" }
@@ -25,7 +25,7 @@ describe ImmunisationImportRow do
   let(:vaccinator) { create(:user, team:) }
   let(:valid_patient_data) do
     {
-      "ORGANISATION_CODE" => "abc",
+      "ORGANISATION_CODE" => "ABC",
       "SCHOOL_NAME" => "Hogwarts",
       "SCHOOL_URN" => "123456",
       "PERSON_FORENAME" => given_name,
@@ -2417,7 +2417,7 @@ describe ImmunisationImportRow do
 
       let(:import_type) { "bulk" }
 
-      shared_examples "with existing vaccination records" do |programme|
+      shared_examples "date deduplication with existing vaccination records" do |programme|
         let(:patient) { create(:patient, nhs_number:) }
 
         let(:other_vaccination_record) do
@@ -2429,7 +2429,9 @@ describe ImmunisationImportRow do
 
           before { other_vaccination_record }
 
+          it { should_not be_nil }
           it { should_not eq other_vaccination_record }
+          its(:pending_changes) { should be_empty }
         end
 
         context "with an existing vaccination record on a different date in the same academic year" do
@@ -2437,7 +2439,9 @@ describe ImmunisationImportRow do
 
           before { other_vaccination_record }
 
+          it { should_not be_nil }
           it { should_not eq other_vaccination_record }
+          its(:pending_changes) { should be_empty }
         end
 
         context "with an existing vaccination record on the same date" do
@@ -2466,9 +2470,11 @@ describe ImmunisationImportRow do
 
         let(:data) { valid_bulk_flu_data }
 
+        let(:programme) { Programme.flu }
+
         it { should be_administered }
 
-        its(:programme) { should eq(Programme.flu) }
+        its(:programme) { should eq programme }
 
         its(:source) { should eq("bulk_upload") }
 
@@ -2552,7 +2558,73 @@ describe ImmunisationImportRow do
 
         include_examples "with pseudo-postcodes"
 
-        include_examples "with existing vaccination records", Programme.flu
+        include_examples "date deduplication with existing vaccination records",
+                         Programme.flu
+
+        context "when a similar vaccination record exists" do
+          let!(:other_vaccination_record) do
+            vaccine = Vaccine.find_by(nivs_name: "AstraZeneca Fluenz LAIV")
+
+            create(
+              :vaccination_record,
+              :sourced_from_bulk_upload,
+              patient:,
+              programme:,
+              performed_at: Time.zone.local(2026, 1, 5, 0, 0, 0),
+              location:,
+              local_patient_id: "CIN-OXFORD-pat123456",
+              local_patient_id_uri: "https://cinnamon.nhs.uk/0de/system1",
+              performed_by_user: nil,
+              performed_by_given_name: vaccinator.given_name,
+              performed_by_family_name: vaccinator.family_name,
+              vaccine:,
+              batch:
+                create(
+                  :batch,
+                  team: nil,
+                  name: "456",
+                  expiry: Date.new(2026, 1, 6),
+                  vaccine:
+                ) # different
+            )
+          end
+
+          it { should_not be_nil }
+          it { should_not eq other_vaccination_record }
+          its(:pending_changes) { should be_empty }
+        end
+
+        context "when an identical vaccination record exists" do
+          let!(:other_vaccination_record) do
+            vaccine = Vaccine.find_by(nivs_name: "AstraZeneca Fluenz LAIV")
+            create(
+              :vaccination_record,
+              :sourced_from_bulk_upload,
+              patient:,
+              programme:,
+              performed_at: Time.zone.local(2026, 1, 5, 0, 0, 0),
+              location:,
+              local_patient_id: "CIN-OXFORD-pat123456",
+              local_patient_id_uri: "https://cinnamon.nhs.uk/0de/system1",
+              performed_by_user: nil,
+              performed_by_given_name: vaccinator.given_name,
+              performed_by_family_name: vaccinator.family_name,
+              vaccine:,
+              batch:
+                create(
+                  :batch,
+                  team: nil,
+                  name: "123",
+                  expiry: Date.new(2026, 1, 6),
+                  vaccine:
+                ) # identical
+            )
+          end
+
+          it { should_not be_nil }
+          it { should eq other_vaccination_record }
+          its(:pending_changes) { should be_empty }
+        end
       end
 
       context "of type hpv" do
@@ -2570,9 +2642,11 @@ describe ImmunisationImportRow do
 
         let(:data) { valid_bulk_hpv_data }
 
+        let(:programme) { Programme.hpv }
+
         it { should be_administered }
 
-        its(:programme) { should eq(Programme.hpv) }
+        its(:programme) { should eq programme }
 
         its(:source) { should eq("bulk_upload") }
 
@@ -2649,7 +2723,8 @@ describe ImmunisationImportRow do
 
         include_examples "with pseudo-postcodes"
 
-        include_examples "with existing vaccination records", Programme.hpv
+        include_examples "date deduplication with existing vaccination records",
+                         Programme.hpv
       end
     end
   end

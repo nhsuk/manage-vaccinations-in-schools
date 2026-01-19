@@ -173,7 +173,11 @@ class ImmunisationImportRow
     }
 
     vaccination_record =
-      if uuid.present?
+      if bulk?
+        VaccinationRecord.find_or_initialize_by(
+          attributes.merge(attributes_to_stage_if_already_exists)
+        )
+      elsif uuid.present?
         VaccinationRecord
           .find_by!(uuid: uuid.to_s)
           .tap { it.stage_changes(attributes) }
