@@ -23,8 +23,8 @@ describe "Filtering" do
     @patient_ineligible = create(:patient, year_group: 9, session: @session)
 
     create(
-      :patient_vaccination_status,
-      :vaccinated,
+      :patient_programme_status,
+      :vaccinated_fully,
       patient: @patient_ineligible,
       programme: @programme,
       academic_year: AcademicYear.current - 1

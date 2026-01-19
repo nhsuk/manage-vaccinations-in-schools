@@ -407,8 +407,8 @@ class Patient < ApplicationRecord
 
           return self if location.generic_clinic? && programme.seasonal?
 
-          vaccinated_statuses =
-            Patient::VaccinationStatus
+          programme_statuses =
+            Patient::ProgrammeStatus
               .select("1")
               .where("patient_id = patients.id")
               .for_programme(programme)
@@ -416,18 +416,18 @@ class Patient < ApplicationRecord
 
           not_eligible_criteria =
             if location.generic_clinic?
-              vaccinated_statuses.where(academic_year: academic_year - 1)
+              programme_statuses.where(academic_year: academic_year - 1)
             else
               scope =
-                vaccinated_statuses.where(academic_year:).where(
-                  "latest_location_id IS NULL OR latest_location_id != ?",
+                programme_statuses.where(academic_year:).where(
+                  "location_id IS NULL OR location_id != ?",
                   location.id
                 )
 
               unless programme.seasonal?
                 scope =
                   scope.or(
-                    vaccinated_statuses.where(academic_year: academic_year - 1)
+                    programme_statuses.where(academic_year: academic_year - 1)
                   )
               end
 
