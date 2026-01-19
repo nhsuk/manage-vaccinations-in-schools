@@ -127,6 +127,8 @@ describe PatientPolicy do
       let(:patient_with_another_vaccination_record) { create(:patient) }
 
       before do
+        team # ensure a team exists
+
         create(
           :vaccination_record,
           patient: patient_with_vaccination_record,

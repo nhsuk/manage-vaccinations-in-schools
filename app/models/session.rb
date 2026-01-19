@@ -29,14 +29,9 @@
 class Session < ApplicationRecord
   include BelongsToTeamLocation
   include Consentable
-  include ContributesToPatientTeams
   include DaysBeforeToWeeksBefore
   include Delegatable
   include GelatineVaccinesConcern
-
-  class ActiveRecord_Relation < ActiveRecord::Relation
-    include ContributesToPatientTeams::Relation
-  end
 
   has_many :consent_notifications
   has_many :notes

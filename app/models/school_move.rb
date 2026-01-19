@@ -28,13 +28,9 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class SchoolMove < ApplicationRecord
-  include ContributesToPatientTeams
   include Schoolable
   include SchoolMovesHelper
-
-  class ActiveRecord_Relation < ActiveRecord::Relation
-    include ContributesToPatientTeams::Relation
-  end
+  include UpdatesPatientTeam
 
   audited associated_with: :patient
 
@@ -85,18 +81,16 @@ class SchoolMove < ApplicationRecord
   def confirm!(user: nil)
     old_teams = patient.school.teams if from_another_team?
 
-    imported_archive_reason_ids = []
-
     ActiveRecord::Base.transaction do
       update_patient!
-      imported_archive_reason_ids = update_archive_reasons!(user:)
+      update_archive_reasons!(user:)
       update_sessions!
+
       log_entry = create_log_entry!(user:)
       create_important_notice!(old_teams, log_entry) if old_teams
+
       destroy! if persisted?
     end
-
-    SyncPatientTeamJob.perform_later(ArchiveReason, imported_archive_reason_ids)
   end
 
   def ignore!
@@ -145,6 +139,7 @@ class SchoolMove < ApplicationRecord
 
     PatientLocation.find_or_create_by!(patient:, location:, academic_year:)
 
+    PatientTeamUpdater.call(patient_scope: Patient.where(id: patient.id))
     StatusUpdater.call(patient:)
   end
 

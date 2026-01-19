@@ -25,11 +25,7 @@
 #
 
 class PatientLocation < ApplicationRecord
-  include ContributesToPatientTeams
-
-  class ActiveRecord_Relation < ActiveRecord::Relation
-    include ContributesToPatientTeams::Relation
-  end
+  include UpdatesPatientTeam
 
   audited associated_with: :patient
   has_associated_audits
@@ -80,6 +76,11 @@ class PatientLocation < ApplicationRecord
     INNER JOIN team_locations
     ON team_locations.location_id = patient_locations.location_id
     AND team_locations.academic_year = patient_locations.academic_year
+  SQL
+
+  scope :joins_teams, -> { references(:teams).joins(<<-SQL) }
+    INNER JOIN teams
+    ON teams.id = team_locations.team_id
   SQL
 
   scope :joins_sessions, -> { joins_team_locations.joins(<<-SQL) }

@@ -90,11 +90,11 @@ describe API::Testing::TeamsController do
             .and(change(Session, :count).by(-1))
             .and(change(CohortImport, :count).by(-1))
             .and(change(ImmunisationImport, :count).by(-1))
-            .and(change(NotifyLogEntry, :count).by(-3))
-            .and(change(Parent, :count).by(-4))
-            .and(change(Patient, :count).by(-3))
+            .and(change(NotifyLogEntry, :count).by(-13))
+            .and(change(Parent, :count).by(-14))
+            .and(change(Patient, :count).by(-13))
             .and(change(PatientLocation, :count).by(-3))
-            .and(change(VaccinationRecord, :count).by(-9))
+            .and(change(VaccinationRecord, :count).by(-11))
         )
       end
 
@@ -113,11 +113,11 @@ describe API::Testing::TeamsController do
             .and(change(Session, :count).by(-1))
             .and(change(CohortImport, :count).by(-1))
             .and(change(ImmunisationImport, :count).by(-1))
-            .and(change(NotifyLogEntry, :count).by(-3))
-            .and(change(Parent, :count).by(-4))
-            .and(change(Patient, :count).by(-3))
+            .and(change(NotifyLogEntry, :count).by(-13))
+            .and(change(Parent, :count).by(-14))
+            .and(change(Patient, :count).by(-13))
             .and(change(PatientLocation, :count).by(-3))
-            .and(change(VaccinationRecord, :count).by(-9))
+            .and(change(VaccinationRecord, :count).by(-11))
         )
       end
 

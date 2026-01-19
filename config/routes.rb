@@ -3,6 +3,7 @@
 require "sidekiq/web"
 require "sidekiq-scheduler/web"
 require "sidekiq/throttled/web"
+require "sidekiq_unique_jobs/web"
 
 Rails.application.routes.draw do
   # Redirect www subdomain to root in production envs

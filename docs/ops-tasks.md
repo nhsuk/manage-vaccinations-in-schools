@@ -16,14 +16,17 @@ session.patients.count # get the number of patients
 session.patient_locations.all?(&:safe_to_destroy?)
 
 # update all the patients to unknown school
-session.patients.update_all_and_sync_patient_teams(
+session.patients.update_all(
   cohort_id: nil,
   home_educated: false,
   school_id: nil
 )
 
-# removes all patients from the session
-session.patient_locations.destroy_all_with_patient_team_sync
+# remove all patients from the session
+session.patient_locations.destroy_all
+
+# update all the patient-team associations
+PatientTeamUpdater.call(team_scope: Team.where(id: team.id))
 ```
 
 ## Add a patient from community clinic to school session

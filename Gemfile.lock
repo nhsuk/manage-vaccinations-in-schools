@@ -678,6 +678,10 @@ GEM
       concurrent-ruby (>= 1.2.0)
       redis-prescription (~> 2.2)
       sidekiq (>= 8.0)
+    sidekiq-unique-jobs (8.0.13)
+      concurrent-ruby (~> 1.0, >= 1.0.5)
+      sidekiq (>= 7.0.0, < 9.0.0)
+      thor (>= 1.0, < 3.0)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -890,6 +894,7 @@ DEPENDENCIES
   sidekiq
   sidekiq-scheduler
   sidekiq-throttled
+  sidekiq-unique-jobs
   simplecov
   solargraph
   solargraph-rails

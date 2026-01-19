@@ -35,15 +35,10 @@
 #  fk_rails_...  (organisation_id => organisations.id)
 #
 class Team < ApplicationRecord
-  include ContributesToPatientTeams
   include DaysBeforeToWeeksBefore
   include FlipperActor
   include HasManyProgrammes
   include HasManyTeamLocations
-
-  class ActiveRecord_Relation < ActiveRecord::Relation
-    include ContributesToPatientTeams::Relation
-  end
 
   UPLOAD_ONLY_YEAR_GROUPS = (-2..13).to_a.freeze
 

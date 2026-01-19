@@ -28,11 +28,7 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class ArchiveReason < ApplicationRecord
-  include ContributesToPatientTeams
-
-  class ActiveRecord_Relation < ActiveRecord::Relation
-    include ContributesToPatientTeams::Relation
-  end
+  include UpdatesPatientTeam
 
   self.inheritance_column = nil
 
