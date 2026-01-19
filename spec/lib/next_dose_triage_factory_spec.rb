@@ -69,5 +69,17 @@ describe NextDoseTriageFactory do
         expect(triage.delay_vaccination_until).to eq(28.days.from_now.to_date)
       end
     end
+
+    context "when a next dose triage record already exists" do
+      let(:vaccination_record) do
+        create(:vaccination_record, :administered, programme:)
+      end
+
+      before { described_class.call(vaccination_record:) }
+
+      it "does not create another triage record" do
+        expect { call }.not_to change(Triage, :count)
+      end
+    end
   end
 end
