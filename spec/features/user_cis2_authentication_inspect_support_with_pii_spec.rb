@@ -56,7 +56,7 @@ describe "Inspect tools with PII access", :cis2 do
   end
 
   def given_a_test_ops_organisation_with_pii_is_setup_in_mavis_and_cis2
-    @organisation_support = create(:organisation, ods_code: "X26")
+    @organisation_support = create(:organisation, ods_code: "Y90128")
     @team_support =
       create(
         :team,

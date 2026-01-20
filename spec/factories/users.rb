@@ -118,7 +118,7 @@ FactoryBot.define do
     end
 
     trait :support do
-      team { create(:team, ods_code: "X26") }
+      team { create(:team, ods_code: "Y90128") }
       role_code { CIS2Info::SUPPORT_ROLE }
       sequence(:email) { |n| "support-#{n}@example.com" }
       role_workgroups { [CIS2Info::SUPPORT_WORKGROUP] }
