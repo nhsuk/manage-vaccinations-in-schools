@@ -28,6 +28,18 @@ SELECT
   COALESCE(la.mhclg_code, '')           AS patient_local_authority_code,        -- Filter: ?local_authority=E09000001
   COALESCE(la.mhclg_code, '')           AS patient_school_local_authority_code, -- Filter: ?school_local_authority=E09000001
 
+  -- School info (for CSV grouping by school)
+  CASE
+    WHEN school.urn IS NOT NULL THEN school.urn
+    WHEN pat.home_educated = true THEN '999999'
+    ELSE '888888'
+  END                                   AS patient_school_urn,
+  CASE
+    WHEN school.name IS NOT NULL THEN school.name
+    WHEN pat.home_educated = true THEN 'Home educated'
+    ELSE 'Unknown'
+  END                                   AS patient_school_name,
+
   -- Status flags
   ar.patient_id IS NOT NULL             AS is_archived,  -- Scope: .not_archived
 
