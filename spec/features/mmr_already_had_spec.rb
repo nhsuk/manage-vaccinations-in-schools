@@ -56,12 +56,6 @@ describe "MMR/MMRV" do
 
   def and_the_patient_doesnt_need_triage
     StatusUpdater.call(patient: @patient.reload)
-
-    @patient.programme_statuses.each do |programme_status|
-      programme_status.status = :needs_consent_no_response
-      programme_status.save!
-    end
-    @patient.reload
   end
 
   def when_i_go_the_session
