@@ -105,8 +105,6 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
            to: :helpers
 
   def programme_status_tag
-    return if programmes.empty?
-
     status_by_programme =
       programmes.each_with_object({}) do |programme, hash|
         resolved_status =
@@ -118,6 +116,8 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
 
         hash[resolved_status.fetch(:prefix)] = resolved_status
       end
+
+    return if status_by_programme.empty?
 
     render AppAttachedTagsComponent.new(status_by_programme)
   end
