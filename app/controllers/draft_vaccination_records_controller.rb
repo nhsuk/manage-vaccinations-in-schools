@@ -244,7 +244,7 @@ class DraftVaccinationRecordsController < ApplicationController
   def set_locations
     @locations =
       if @draft_vaccination_record.bulk_upload_user_and_record?
-        Location.school.order(:name)
+        Location.school.where(status: "open").order(:name)
       else
         policy_scope(Location).community_clinic
       end
