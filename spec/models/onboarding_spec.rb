@@ -49,13 +49,18 @@ describe Onboarding do
       expect(subteam2.phone).to eq("07700 900817")
       expect(subteam2.reply_to_id).to be_nil
 
-      expect(subteam1.schools).to contain_exactly(school1, school2)
-      expect(subteam2.schools).to contain_exactly(school3, school4)
+      school2_sites = Location.where(urn: school2.urn).where.not(site: nil)
+      school4_sites = Location.where(urn: school4.urn).where.not(site: nil)
+
+      expect(subteam1.schools).to contain_exactly(school1, *school2_sites)
+      expect(subteam2.schools).to contain_exactly(school3, *school4_sites)
 
       expect(school1.location_programme_year_groups.count).to eq(4)
-      expect(school2.location_programme_year_groups.count).to eq(4)
+      expect(school2_sites.first.location_programme_year_groups.count).to eq(4)
+      expect(school2_sites.second.location_programme_year_groups.count).to eq(4)
       expect(school3.location_programme_year_groups.count).to eq(4)
-      expect(school4.location_programme_year_groups.count).to eq(4)
+      expect(school4_sites.first.location_programme_year_groups.count).to eq(4)
+      expect(school4_sites.second.location_programme_year_groups.count).to eq(4)
 
       clinic1 = subteam1.community_clinics.find_by!(ods_code: nil)
       expect(clinic1.name).to eq("10 Downing Street")
@@ -70,6 +75,38 @@ describe Onboarding do
   context "with an invalid configuration file" do
     let(:filename) { "onboarding/invalid.yaml" }
 
+    let(:team) { create(:team, name: "Existing Team") }
+
+    before do
+      create(:school, :secondary, :open, urn: "111111", team:)
+      create(:school, :secondary, :open, urn: "555555", team:)
+      create(
+        :school,
+        :secondary,
+        :open,
+        urn: "222222",
+        name: "School with no site"
+      )
+      create(
+        :school,
+        :secondary,
+        :open,
+        urn: "222222",
+        site: "A",
+        name: "School with Site A",
+        team:
+      )
+      create(
+        :school,
+        :secondary,
+        :open,
+        urn: "222222",
+        site: "B",
+        name: "School with Site B",
+        team:
+      )
+    end
+
     it { should be_invalid }
 
     it "has errors" do
@@ -77,7 +114,6 @@ describe Onboarding do
 
       expect(onboarding.errors.messages).to eq(
         {
-          "organisation.ods_code": ["can't be blank"],
           "team.careplus_venue_code": ["can't be blank"],
           "team.name": ["can't be blank"],
           "team.phone": ["can't be blank", "is invalid"],
@@ -87,7 +123,18 @@ describe Onboarding do
           "team.workgroup": ["can't be blank"],
           "school.0.subteam": ["can't be blank"],
           "school.1.subteam": ["can't be blank"],
-          "school.2.status": ["is not included in the list"],
+          "school.5.urn": [
+            "URN 111111 is already attached to teams: Existing Team"
+          ],
+          "school.6.urn": [
+            "URN 222222 has sites (A, B) already attached to teams: Existing Team"
+          ],
+          "school.7.urn": [
+            "URN 555555 is already attached to teams: Existing Team"
+          ],
+          schools: [
+            "URN(s) 456789 cannot appear as both a regular school and a site"
+          ],
           "subteam.email": ["can't be blank"],
           "subteam.name": ["can't be blank"],
           clinics: ["can't be blank"],

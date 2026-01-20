@@ -18,8 +18,8 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   end
 
   def no_response_scope(session:)
-    patients(session:).has_consent_status(
-      :no_response,
+    patients(session:).has_programme_status(
+      "needs_consent_no_response",
       programme:,
       academic_year:
     )
@@ -38,8 +38,8 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
 
   def triage_needed_count(session:)
     format_number(
-      patients(session:).has_triage_status(
-        :required,
+      patients(session:).has_programme_status(
+        "needs_triage",
         programme:,
         academic_year:
       ).count

@@ -17,6 +17,7 @@ en:
     delegation: delegation
     delivery: delivery
     dose: dose
+    dose_sequence: dose-sequence
     education_setting: education-setting
     file_format: file-format
     gp: gp
@@ -51,6 +52,7 @@ en:
     triage: triage
     type: type
     vaccine: vaccine
+    vaccinator: vaccinator
     when: when
     who: who
     without_gelatine: without-gelatine

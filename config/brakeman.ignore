@@ -1,4 +1,212 @@
 {
-  "ignored_warnings": [],
-  "brakeman_version": "7.1.1"
+  "ignored_warnings": [
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "336dbfa5f403b71e5bd33a6ec67873ac00511af1743adf339d98385852b76f07",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/lib/patient_team_updater.rb",
+      "line": 99,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Arel.sql(\"#{PatientTeam.sources.fetch(\"patient_location\")} AS source\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "PatientTeamUpdater",
+        "method": "patient_location_relation"
+      },
+      "user_input": "PatientTeam.sources.fetch(\"patient_location\")",
+      "confidence": "High",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "3628881526fa627af0852fa8ae8a4aaa06ce30767a2a38ab5765024d5374835a",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/lib/patient_team_updater.rb",
+      "line": 131,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Arel.sql(\"#{PatientTeam.sources.fetch(\"school_move_team\")} AS source\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "PatientTeamUpdater",
+        "method": "school_move_team_relation"
+      },
+      "user_input": "PatientTeam.sources.fetch(\"school_move_team\")",
+      "confidence": "High",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "495955f72061c30c1528a0bdc839c51b97fc376f69ca29802f74deb992254f8b",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/lib/patient_team_updater.rb",
+      "line": 149,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Arel.sql(\"#{PatientTeam.sources.fetch(\"vaccination_record_import\")} AS source\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "PatientTeamUpdater",
+        "method": "vaccination_record_import_relation"
+      },
+      "user_input": "PatientTeam.sources.fetch(\"vaccination_record_import\")",
+      "confidence": "High",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "571bba144a3b21c05458504535da1dfa47897cad190d3d199113824853ae398d",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/lib/patient_team_updater.rb",
+      "line": 190,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Arel.sql(\"#{PatientTeam.sources.fetch(\"vaccination_record_session\")} AS source\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "PatientTeamUpdater",
+        "method": "vaccination_record_session_relation"
+      },
+      "user_input": "PatientTeam.sources.fetch(\"vaccination_record_session\")",
+      "confidence": "High",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "a3bb489f128d1bdffd4339aa748434faf2edd03d2b90e33687ecacd5cf3c3feb",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/lib/patient_team_updater.rb",
+      "line": 168,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Arel.sql(\"#{PatientTeam.sources.fetch(\"vaccination_record_organisation\")} AS source\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "PatientTeamUpdater",
+        "method": "vaccination_record_organisation_relation"
+      },
+      "user_input": "PatientTeam.sources.fetch(\"vaccination_record_organisation\")",
+      "confidence": "High",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "a81fbfc74625abc55a5683733921a5c9ed302913f2332b8c56dc42dac4de01ce",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/lib/patient_team_updater.rb",
+      "line": 78,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Arel.sql(\"#{PatientTeam.sources.fetch(\"archive_reason\")} AS source\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "PatientTeamUpdater",
+        "method": "archive_reason_relation"
+      },
+      "user_input": "PatientTeam.sources.fetch(\"archive_reason\")",
+      "confidence": "High",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "e0ae2813e5268e5a8b23aefe319570dedd63202093c2021a98553d1d08b42111",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/lib/patient_team_updater.rb",
+      "line": 25,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "PatientTeam.connection.execute(\"INSERT INTO patient_teams (patient_id, team_id, sources)\\n#{grouped_relations_sql}\\nON CONFLICT (patient_id, team_id)\\nDO UPDATE SET sources = EXCLUDED.sources\\nWHERE patient_teams.sources IS DISTINCT FROM EXCLUDED.sources\\n\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "PatientTeamUpdater",
+        "method": "upsert_patient_teams!"
+      },
+      "user_input": "grouped_relations_sql",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "f1ee1dd7da4b6008fae9adf049ca8b83a156050110d2f2edb8e920e651731916",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/lib/patient_team_updater.rb",
+      "line": 41,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "PatientTeam.from(\"(#{relations.map(&:to_sql).join(\" UNION ALL \").then do\n Arel.sql(it)\n end})\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "PatientTeamUpdater",
+        "method": "grouped_relations_sql"
+      },
+      "user_input": "relations.map(&:to_sql).join(\" UNION ALL \").then do\n Arel.sql(it)\n end",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "f8daca0ab91af7452fabcd0c52414aa5cc4819a1e1e1f02a532390d5b45a6e35",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/lib/patient_team_updater.rb",
+      "line": 121,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Arel.sql(\"#{PatientTeam.sources.fetch(\"school_move_school\")} AS source\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "PatientTeamUpdater",
+        "method": "school_move_school_relation"
+      },
+      "user_input": "PatientTeam.sources.fetch(\"school_move_school\")",
+      "confidence": "High",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    }
+  ],
+  "brakeman_version": "7.1.2"
 }

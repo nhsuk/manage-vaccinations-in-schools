@@ -6,13 +6,17 @@ class ClinicPatientLocationsFactory
   end
 
   def create_patient_locations!
-    imported_ids =
+    ActiveRecord::Base.transaction do
       PatientLocation.import!(
         patient_locations_to_create,
         on_duplicate_key_ignore: true
       ).ids
 
-    SyncPatientTeamJob.perform_later(PatientLocation, imported_ids)
+      PatientTeamUpdater.call(
+        patient_scope: patients_in_school,
+        team_scope: Team.where(id: team.id)
+      )
+    end
   end
 
   def patient_locations_to_create

@@ -4,8 +4,16 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
   extend ActiveSupport::Concern
 
   included do
-    scope :syncable_to_nhs_immunisations_api,
-          -> { includes(:patient).sourced_from_service }
+    scope :with_correct_source_for_nhs_immunisations_api,
+          -> do
+            includes(:patient).then do
+              if Flipper.enabled?(:sync_national_reporting_to_imms_api)
+                it.sourced_from_service.or(it.sourced_from_bulk_upload)
+              else
+                it.sourced_from_service
+              end
+            end
+          end
 
     scope :sync_all_to_nhs_immunisations_api,
           -> do
@@ -13,7 +21,7 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
               Programme.all.select { Flipper.enabled?(:imms_api_sync_job, it) }
 
             ids =
-              syncable_to_nhs_immunisations_api.for_programmes(
+              with_correct_source_for_nhs_immunisations_api.for_programmes(
                 programmes
               ).pluck(:id)
 
@@ -29,7 +37,13 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
     after_commit :queue_sync_to_nhs_immunisations_api
   end
 
-  def syncable_to_nhs_immunisations_api? = sourced_from_service?
+  def correct_source_for_nhs_immunisations_api?
+    sourced_from_service? ||
+      (
+        Flipper.enabled?(:sync_national_reporting_to_imms_api) &&
+          sourced_from_bulk_upload?
+      )
+  end
 
   def sync_status
     should_be_synced =
@@ -61,14 +75,14 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
 
   def touch_nhs_immunisations_api_sync_pending_at
     return unless Flipper.enabled?(:imms_api_sync_job, programme)
-    return unless syncable_to_nhs_immunisations_api?
+    return unless correct_source_for_nhs_immunisations_api?
 
     self.nhs_immunisations_api_sync_pending_at = Time.current
   end
 
   def queue_sync_to_nhs_immunisations_api
     return unless Flipper.enabled?(:imms_api_sync_job, programme)
-    return unless syncable_to_nhs_immunisations_api?
+    return unless correct_source_for_nhs_immunisations_api?
     return if nhs_immunisations_api_sync_pending_at.nil?
 
     if nhs_immunisations_api_synced_at &&

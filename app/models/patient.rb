@@ -283,72 +283,6 @@ class Patient < ApplicationRecord
           where(programme_status_scope.arel.exists)
         end
 
-  scope :has_vaccination_status,
-        ->(status, programme:, academic_year:) do
-          where(
-            Patient::VaccinationStatus
-              .select("1")
-              .where("patient_id = patients.id")
-              .for_programmes(Array(programme))
-              .where(status:, academic_year:)
-              .arel
-              .exists
-          )
-        end
-
-  scope :has_consent_status,
-        ->(
-          status,
-          programme:,
-          academic_year:,
-          vaccine_method: nil,
-          without_gelatine: nil
-        ) do
-          consent_status_scope =
-            Patient::ConsentStatus
-              .select("1")
-              .where("patient_id = patients.id")
-              .for_programmes(Array(programme))
-              .where(status:, academic_year:)
-
-          unless vaccine_method.nil?
-            consent_status_scope =
-              consent_status_scope.has_vaccine_method(vaccine_method)
-          end
-
-          unless without_gelatine.nil?
-            consent_status_scope = consent_status_scope.where(without_gelatine:)
-          end
-
-          where(consent_status_scope.arel.exists)
-        end
-
-  scope :has_triage_status,
-        ->(
-          status,
-          programme:,
-          academic_year:,
-          vaccine_method: nil,
-          without_gelatine: nil
-        ) do
-          triage_status_scope =
-            Patient::TriageStatus
-              .select("1")
-              .where("patient_id = patients.id")
-              .for_programmes(Array(programme))
-              .where(status:, academic_year:)
-
-          unless vaccine_method.nil?
-            triage_status_scope = triage_status_scope.where(vaccine_method:)
-          end
-
-          unless without_gelatine.nil?
-            triage_status_scope = triage_status_scope.where(without_gelatine:)
-          end
-
-          where(triage_status_scope.arel.exists)
-        end
-
   scope :has_vaccine_criteria,
         ->(
           programme:,
@@ -356,112 +290,56 @@ class Patient < ApplicationRecord
           vaccine_methods: nil,
           without_gelatine: nil
         ) do
-          triage_status_matching =
-            Patient::TriageStatus
-              .select("1")
-              .where("patient_id = patients.id")
-              .for_programmes(Array(programme))
-              .where(academic_year:)
-
-          triage_status_not_required =
-            Patient::TriageStatus
-              .select("1")
-              .where("patient_id = patients.id")
-              .for_programmes(Array(programme))
-              .where(academic_year:)
-              .where(status: "not_required")
-
-          consent_status_matching =
-            Patient::ConsentStatus
+          programme_status_scope =
+            Patient::ProgrammeStatus
               .select("1")
               .where("patient_id = patients.id")
               .for_programmes(Array(programme))
               .where(academic_year:)
 
           unless vaccine_methods.nil?
-            # For triage, nurses select a single vaccine method, so we need
-            # to filter out when asking for two or more vaccine methods.
-            # This code is needed to handle both where an array of arrays is
-            # passed in or a single array of strings.
-
             if vaccine_methods.empty? ||
                  vaccine_methods.all? { it.is_a?(String) }
-              consent_status_matching =
-                consent_status_matching.where(
+              programme_status_scope =
+                programme_status_scope.where(
                   vaccine_methods:
                     vaccine_methods.map do
-                      Patient::ConsentStatus.vaccine_methods.fetch(it)
+                      Patient::ProgrammeStatus.vaccine_methods.fetch(it)
                     end
                 )
-
-              triage_status_matching =
-                if vaccine_methods.count == 1
-                  triage_status_matching.where(
-                    vaccine_method: vaccine_methods.first
-                  )
-                else
-                  triage_status_matching.none
-                end
             else
-              consent_or_scope =
-                consent_status_matching.where(
+              or_scope =
+                programme_status_scope.where(
                   vaccine_methods:
                     vaccine_methods.first.map do
-                      Patient::ConsentStatus.vaccine_methods.fetch(it)
+                      Patient::ProgrammeStatus.vaccine_methods.fetch(it)
                     end
                 )
-
-              triage_or_scope =
-                if vaccine_methods.first.count == 1
-                  triage_status_matching.where(
-                    vaccine_method: vaccine_methods.first.first
-                  )
-                else
-                  triage_status_matching.none
-                end
 
               vaccine_methods
                 .drop(1)
                 .each do |value|
-                  consent_or_scope =
-                    consent_or_scope.or(
-                      consent_status_matching.where(
+                  or_scope =
+                    or_scope.or(
+                      programme_status_scope.where(
                         vaccine_methods:
                           value.map do
-                            Patient::ConsentStatus.vaccine_methods.fetch(it)
+                            Patient::ProgrammeStatus.vaccine_methods.fetch(it)
                           end
                       )
                     )
-
-                  triage_or_scope =
-                    if values.first.count == 1
-                      triage_or_scope.or(
-                        triage_status_matching.where(
-                          vaccine_method: value.first
-                        )
-                      )
-                    else
-                      triage_or_scope.or(triage_status_matching.none)
-                    end
                 end
 
-              consent_status_matching = consent_or_scope
-              triage_status_matching = triage_or_scope
+              programme_status_scope = or_scope
             end
           end
 
           unless without_gelatine.nil?
-            triage_status_matching =
-              triage_status_matching.where(without_gelatine:)
-            consent_status_matching =
-              consent_status_matching.where(without_gelatine:)
+            programme_status_scope =
+              programme_status_scope.where(without_gelatine:)
           end
 
-          where(triage_status_matching.arel.exists).or(
-            where(triage_status_not_required.arel.exists).where(
-              consent_status_matching.arel.exists
-            )
-          )
+          where(programme_status_scope.arel.exists)
         end
 
   scope :has_registration_status,
@@ -776,13 +654,12 @@ class Patient < ApplicationRecord
       raise NHSNumberMismatch
     end
 
-    archived_ids = []
     ActiveRecord::Base.transaction do
       self.date_of_death = pds_patient.date_of_death
 
       if date_of_death_changed?
         if date_of_death.present?
-          archived_ids = archive_due_to_deceased!
+          archive_due_to_deceased!
           clear_pending_sessions!
         end
 
@@ -813,8 +690,6 @@ class Patient < ApplicationRecord
 
       save!
     end
-
-    SyncPatientTeamJob.perform_later(ArchiveReason, archived_ids)
   end
 
   def invalidate!
@@ -945,6 +820,11 @@ class Patient < ApplicationRecord
         columns: %i[type]
       }
     ).ids
+
+    PatientTeamUpdater.call(
+      patient_scope: Patient.where(id:),
+      team_scope: Team.where(id: team_ids)
+    )
   end
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::Patient.new(self)

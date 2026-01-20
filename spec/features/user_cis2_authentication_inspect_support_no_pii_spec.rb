@@ -58,7 +58,7 @@ describe "Inspect tools", :cis2 do
   end
 
   def given_a_test_support_organisation_is_setup_in_mavis_and_cis2
-    @ods_code = "X26"
+    @ods_code = "Y90128"
     @team_support =
       create(:team, ods_code: @ods_code, workgroup: CIS2Info::SUPPORT_WORKGROUP)
     @user = create(:user, :support, team: @team_support)

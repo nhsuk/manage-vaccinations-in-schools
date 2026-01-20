@@ -53,6 +53,8 @@ class Onboarding
   validates :subteams, presence: true
   validates :schools, presence: true
   validates :clinics, presence: true
+  validate :no_duplicate_urns_across_school_types
+  validate :no_schools_with_existing_team_attachments
 
   def initialize(hash)
     config = hash.deep_symbolize_keys
@@ -95,10 +97,32 @@ class Onboarding
     @schools =
       config
         .fetch(:schools, {})
-        .flat_map do |team_name, school_urns|
+        .flat_map do |team_name, schools|
           subteam = subteams_by_name[team_name]
-          school_urns.map do |urn|
-            ExistingSchool.new(urn:, subteam:, programmes:)
+          schools.map do |config|
+            if config.is_a?(Hash)
+              urn = config.fetch(:urn)
+              name = config.fetch(:name, nil)
+              site = config.fetch(:site, nil)
+              address_line_1 = config.fetch(:address_line_1, nil)
+              address_line_2 = config.fetch(:address_line_2, nil)
+              address_town = config.fetch(:address_town, nil)
+              address_postcode = config.fetch(:address_postcode, nil)
+              NewSchoolSite.new(
+                urn:,
+                name:,
+                site:,
+                address_line_1:,
+                address_line_2:,
+                address_town:,
+                address_postcode:,
+                subteam:,
+                programmes:
+              )
+            else
+              urn = config
+              ExistingSchool.new(urn:, subteam:, programmes:)
+            end
           end
         end
 
@@ -113,6 +137,46 @@ class Onboarding
               hash[Location.new(**it, type: :community_clinic)] = subteam
             end
         end
+  end
+
+  def no_duplicate_urns_across_school_types
+    existing_school_urns =
+      schools.select { it.is_a?(ExistingSchool) }.map(&:urn)
+
+    site_urns = schools.select { it.is_a?(NewSchoolSite) }.map(&:urn)
+
+    overlapping_urns = existing_school_urns & site_urns
+
+    if overlapping_urns.any?
+      errors.add(
+        :schools,
+        "URN(s) #{overlapping_urns.join(", ")} cannot appear as both a regular school and a site"
+      )
+    end
+  end
+
+  def no_schools_with_existing_team_attachments
+    schools.each_with_index do |school, index|
+      urn = school.urn
+      next if urn.blank?
+
+      locations_with_teams = Location.school.where(urn:).joins(:teams).distinct
+
+      next unless locations_with_teams.exists?
+
+      site_codes = locations_with_teams.pluck(:site).compact.sort
+      team_names =
+        locations_with_teams.flat_map { it.teams.pluck(:name) }.uniq.sort
+
+      message =
+        if site_codes.any?
+          "URN #{urn} has sites (#{site_codes.join(", ")}) already attached to teams: #{team_names.join(", ")}"
+        else
+          "URN #{urn} is already attached to teams: #{team_names.join(", ")}"
+        end
+
+      errors.add("school.#{index}.urn", message)
+    end
   end
 
   def valid?(context = nil)
@@ -227,6 +291,62 @@ class Onboarding
     def save!
       # Does nothing
     end
+
+    def attach_to_team!(academic_year:)
+      location.attach_to_team!(team, academic_year:, subteam:)
+      location.import_year_groups_from_gias!(academic_year:)
+      location.import_default_programme_year_groups!(
+        programmes.map(&:programme),
+        academic_year:
+      )
+    end
+  end
+
+  class NewSchoolSite
+    include ActiveModel::Model
+
+    attr_accessor :urn,
+                  :name,
+                  :site,
+                  :address_line_1,
+                  :address_line_2,
+                  :address_town,
+                  :address_postcode,
+                  :subteam,
+                  :programmes
+
+    validates :location, presence: true
+    validates :subteam, presence: true
+    validates :status, inclusion: %w[open opening]
+    validates :name, presence: true
+    validates :site, presence: true
+
+    def original_location
+      @original_location ||= Location.school.find_by_urn_and_site(urn)
+    end
+
+    def location
+      return nil unless original_location
+
+      @location ||=
+        original_location.dup.tap do |loc|
+          loc.assign_attributes(
+            {
+              name:,
+              site:,
+              address_line_1:,
+              address_line_2:,
+              address_town:,
+              address_postcode:
+            }.compact
+          )
+        end
+    end
+
+    delegate :status, to: :location, allow_nil: true
+    delegate :team, to: :subteam
+
+    delegate :save!, to: :location
 
     def attach_to_team!(academic_year:)
       location.attach_to_team!(team, academic_year:, subteam:)

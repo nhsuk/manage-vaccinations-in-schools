@@ -7,4 +7,19 @@ subteams:
 
 schools:
   unknown_subteam: [123456, 234567]
-  subteam_1: [567890]
+  subteam_1:
+    - 456789
+    - urn: 456789
+      site: "A"
+      name: "Existing School 4 (Site A)"
+    - urn: 456789
+      site: "B"
+      name: "Existing School 4 (Site B)"
+      address_line_1: "456 High St"
+      address_town: "London"
+      address_postcode: "SW1A 1AA"
+    - 111111
+    - 222222
+    - urn: 555555
+      site: "A"
+      name: "Existing School 5 (Site A)"

@@ -108,60 +108,93 @@ class Vaccine < ApplicationRecord
     suitable_delivery_methods.keys.first
   end
 
-  SNOMED_PROCEDURE_CODES = {
+  SNOMED_PROCEDURE = {
     "flu" => {
-      "injection" => %w[985151000000100 985171000000109],
-      "nasal" => %w[884861000000100 884881000000109]
+      "injection" => [
+        {
+          code: "985151000000100",
+          term:
+            "Administration of first inactivated seasonal influenza vaccination"
+        },
+        {
+          code: "985171000000109",
+          term:
+            "Administration of second inactivated seasonal influenza vaccination"
+        }
+      ],
+      "nasal" => [
+        {
+          code: "884861000000100",
+          term:
+            "Administration of first intranasal seasonal influenza vaccination"
+        },
+        {
+          code: "884881000000109",
+          term:
+            "Administration of second intranasal seasonal influenza vaccination"
+        }
+      ]
     },
     "hpv" => {
-      "injection" => "761841000"
+      "injection" => {
+        code: "761841000",
+        term:
+          "Administration of vaccine product containing only Human " \
+            "papillomavirus antigen"
+      }
     },
     "menacwy" => {
-      "injection" => "871874000"
+      "injection" => {
+        code: "871874000",
+        term:
+          "Administration of vaccine product containing only Neisseria " \
+            "meningitidis serogroup A, C, W135 and Y antigens"
+      }
     },
     "mmr" => {
-      "injection" => "38598009"
+      "injection" => {
+        code: "38598009",
+        term:
+          "Administration of vaccine product containing only Measles " \
+            "morbillivirus and Mumps orthorubulavirus and Rubella virus " \
+            "antigens"
+      }
     },
     "mmrv" => {
-      "injection" => "432636005"
+      "injection" => {
+        code: "432636005",
+        term:
+          "Administration of vaccine product containing only Human " \
+            "alphaherpesvirus 3 and Measles morbillivirus and Mumps " \
+            "orthorubulavirus and Rubella virus antigens"
+      }
     },
     "td_ipv" => {
-      "injection" => "866186002"
+      "injection" => {
+        code: "414619005",
+        term:
+          "Administration of vaccine product containing only Clostridium " \
+            "tetani and low dose Corynebacterium diphtheriae and inactivated " \
+            "Human poliovirus antigens"
+      }
     }
   }.freeze
 
-  def snomed_procedure_code(dose_sequence:)
-    codes =
-      SNOMED_PROCEDURE_CODES.fetch(
-        programme.variant_type || programme.type
-      ).fetch(method)
-    codes.is_a?(Array) ? codes[dose_sequence - 1] : codes
+  def snomed_procedure(dose_sequence: nil)
+    procedures =
+      SNOMED_PROCEDURE.fetch(programme.variant_type || programme.type).fetch(
+        method
+      )
+
+    procedures.is_a?(Array) ? procedures[(dose_sequence || 1) - 1] : procedures
   end
 
-  SNOMED_PROCEDURE_TERMS = {
-    "flu" => "Seasonal influenza vaccination (procedure)",
-    "hpv" =>
-      "Administration of vaccine product containing only Human " \
-        "papillomavirus antigen (procedure)",
-    "menacwy" =>
-      "Administration of vaccine product containing only Neisseria " \
-        "meningitidis serogroup A, C, W135 and Y antigens (procedure)",
-    "mmr" =>
-      "Administration of vaccine product containing only Measles " \
-        "morbillivirus and Mumps orthorubulavirus and Rubella virus " \
-        "antigens (procedure)",
-    "mmrv" =>
-      "Administration of vaccine product containing only Human " \
-        "alphaherpesvirus 3 and Measles morbillivirus and Mumps " \
-        "orthorubulavirus and Rubella virus antigens (procedure)",
-    "td_ipv" =>
-      "Administration of vaccine product containing only Clostridium " \
-        "tetani and Corynebacterium diphtheriae and Human poliovirus " \
-        "antigens (procedure)"
-  }.freeze
+  def snomed_procedure_code(dose_sequence:)
+    snomed_procedure(dose_sequence:).fetch(:code)
+  end
 
-  def snomed_procedure_term
-    SNOMED_PROCEDURE_TERMS.fetch(programme.variant_type || programme.type)
+  def snomed_procedure_term(dose_sequence: nil)
+    snomed_procedure(dose_sequence:).fetch(:term)
   end
 
   private

@@ -45,10 +45,14 @@ class Generate::VaccinationRecords
     end
 
     AttendanceRecord.import!(attendances)
-    imported_ids = VaccinationRecord.import!(vaccinations).ids
-    SyncPatientTeamJob.perform_later(VaccinationRecord, imported_ids)
+    VaccinationRecord.import!(vaccinations)
 
-    StatusUpdater.call(patient: vaccinations.map(&:patient))
+    patients = vaccinations.map(&:patient)
+
+    PatientTeamUpdater.call(
+      patient_scope: Patient.where(id: patients.map(&:id))
+    )
+    StatusUpdater.call(patient: patients)
   end
 
   def check_sessions_have_enough_patients
@@ -129,7 +133,7 @@ class Generate::VaccinationRecords
       .patients
       .includes_statuses
       .appear_in_programmes([programme], academic_year:)
-      .has_consent_status("given", programme:, academic_year:)
+      .has_programme_status("due", programme:, academic_year:)
       .select do
         it.consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
       end

@@ -7,7 +7,7 @@ namespace :status do
       StatusUpdater.call
     end
 
-    desc "Update the statuses of a sessions the patient is in."
+    desc "Update the statuses of a specific patient by ID."
     task :patient, [:id] => :environment do |_, args|
       patient = Patient.find(args[:id])
       StatusUpdater.call(patient:)

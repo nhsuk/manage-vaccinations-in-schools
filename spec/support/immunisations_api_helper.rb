@@ -1,18 +1,24 @@
 # frozen_string_literal: true
 
 module ImmunisationsAPIHelper
-  def stub_immunisations_api_post(uuid: Random.uuid)
+  def stub_immunisations_api_post(*uuids, uuid: Random.uuid)
+    uuids << uuid
+    responses =
+      uuids.map do |id|
+        {
+          status: 201,
+          body: nil,
+          headers: {
+            location:
+              "https://localhost:4000/immunisation-fhir-api/Immunization/#{id}"
+          }
+        }
+      end
+
     stub_request(
       :post,
       "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
-    ).to_return(
-      status: 201,
-      body: nil,
-      headers: {
-        location:
-          "https://localhost:4000/immunisation-fhir-api/Immunization/#{uuid}"
-      }
-    )
+    ).to_return(responses)
   end
 
   def stub_immunisations_api_put(uuid: Random.uuid)

@@ -107,7 +107,6 @@ class ClassImport < PatientImport
   end
 
   def post_commit!
-    SyncPatientTeamJob.perform_later(SchoolMove, @imported_school_move_ids)
   end
 
   def patients_to_create_moves_for(patients_in_import)

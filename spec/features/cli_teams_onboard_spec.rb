@@ -9,11 +9,13 @@ describe "mavis teams onboard" do
       when_i_run_the_valid_command
       then_i_see_no_output
       and_a_new_team_is_created
+      and_schools_are_added_to_the_team_appropriately
     end
   end
 
   context "with an invalid configuration" do
     it "displays an error message" do
+      given_programmes_and_schools_exist
       when_i_run_the_invalid_command
       then_i_see_an_error_message
     end
@@ -64,10 +66,38 @@ describe "mavis teams onboard" do
   def given_programmes_and_schools_exist
     Programme.hpv
 
-    create(:school, :secondary, :open, urn: "123456")
-    create(:school, :secondary, :open, urn: "234567")
-    create(:school, :secondary, :open, urn: "345678")
-    create(:school, :secondary, :open, urn: "456789")
+    @school_a =
+      create(
+        :school,
+        :secondary,
+        :open,
+        urn: "123456",
+        name: "Existing School 1"
+      )
+    @school_b =
+      create(
+        :school,
+        :secondary,
+        :open,
+        urn: "234567",
+        name: "Existing School 2"
+      )
+    @school_c =
+      create(
+        :school,
+        :secondary,
+        :open,
+        urn: "345678",
+        name: "Existing School 3"
+      )
+    @school_d =
+      create(
+        :school,
+        :secondary,
+        :open,
+        urn: "456789",
+        name: "Existing School 4"
+      )
   end
 
   def when_i_run_the_valid_command
@@ -90,7 +120,39 @@ describe "mavis teams onboard" do
     expect(Team.count).to eq(1)
   end
 
+  def and_schools_are_added_to_the_team_appropriately
+    expect(Team.last.schools.count).to eq(6)
+    school_b_sites = Location.where(urn: @school_b.urn).where.not(site: nil)
+    school_d_sites = Location.where(urn: @school_d.urn).where.not(site: nil)
+    expect(Team.last.schools).to include(
+      @school_a,
+      @school_c,
+      *school_b_sites,
+      *school_d_sites
+    )
+
+    expect(school_b_sites.count).to eq(2)
+    expect(school_b_sites.map { it.teams.count }).to eq([1, 1])
+    expect(school_b_sites.map(&:name)).to eq(
+      ["Existing School 2 (Site A)", "Existing School 2 (Site B)"]
+    )
+    expect(@school_b.teams).to be_empty
+
+    expect(school_d_sites.count).to eq(2)
+    expect(school_d_sites.map { it.teams.count }).to eq([1, 1])
+    expect(school_d_sites.map(&:name)).to eq(
+      ["Existing School 4 (Site A)", "Existing School 4 (Site B)"]
+    )
+    expect(school_d_sites.find_by(site: "B").address_line_1).to eq(
+      "456 High St"
+    )
+    expect(@school_d.teams).to be_empty
+  end
+
   def then_i_see_an_error_message
     expect(@output).to include("Programmes can't be blank")
+    expect(@output).to include(
+      "Schools URN(s) 456789 cannot appear as both a regular school and a site"
+    )
   end
 end

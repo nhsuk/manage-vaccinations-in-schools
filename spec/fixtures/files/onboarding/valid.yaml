@@ -27,8 +27,25 @@ subteams:
     phone: 07700 900817
 
 schools:
-  subteam_1: [123456, 234567]
-  subteam_2: [345678, 456789]
+  subteam_1:
+    - 123456
+    - urn: 234567
+      site: "A"
+      name: "Existing School 2 (Site A)"
+    - urn: 234567
+      site: "B"
+      name: "Existing School 2 (Site B)"
+  subteam_2:
+    - 345678
+    - urn: 456789
+      site: "A"
+      name: "Existing School 4 (Site A)"
+    - urn: 456789
+      site: "B"
+      name: "Existing School 4 (Site B)"
+      address_line_1: "456 High St"
+      address_town: "London"
+      address_postcode: "SW1A 1AA"
 
 clinics:
   subteam_1:

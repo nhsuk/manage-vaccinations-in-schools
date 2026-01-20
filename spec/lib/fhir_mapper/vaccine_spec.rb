@@ -36,22 +36,52 @@ describe FHIRMapper::Vaccine do
   end
 
   describe "#fhir_procedure_coding" do
-    subject(:fhir_procedure_coding) do
-      fhir_mapper.fhir_procedure_coding(dose_sequence: nil)
+    context "with HPV vaccine" do
+      subject(:fhir_procedure_coding) do
+        fhir_mapper.fhir_procedure_coding(dose_sequence: nil)
+      end
+
+      it { should be_a(FHIR::CodeableConcept) }
+
+      describe "its coding" do
+        subject { fhir_procedure_coding.coding.first }
+
+        its(:system) { should eq("http://snomed.info/sct") }
+        its(:code) { should eq("761841000") }
+
+        its(:display) do
+          should eq(
+                   "Administration of vaccine product containing only Human papillomavirus antigen"
+                 )
+        end
+      end
     end
 
-    it { should be_a(FHIR::CodeableConcept) }
+    context "with flu injection vaccine, dose 1" do
+      let(:vaccine) { create(:vaccine, :flu, :injection) }
 
-    describe "its coding" do
-      subject { fhir_procedure_coding.coding.first }
+      it "pairs the correct code with the correct term" do
+        coding =
+          fhir_mapper.fhir_procedure_coding(dose_sequence: 1).coding.first
 
-      its(:system) { should eq("http://snomed.info/sct") }
-      its(:code) { should eq("761841000") }
+        expect(coding.code).to eq("985151000000100")
+        expect(coding.display).to eq(
+          "Administration of first inactivated seasonal influenza vaccination"
+        )
+      end
+    end
 
-      its(:display) do
-        should eq(
-                 "Administration of vaccine product containing only Human papillomavirus antigen (procedure)"
-               )
+    context "with flu nasal vaccine, dose 2" do
+      let(:vaccine) { create(:vaccine, :flu, :nasal) }
+
+      it "pairs the correct code with the correct term" do
+        coding =
+          fhir_mapper.fhir_procedure_coding(dose_sequence: 2).coding.first
+
+        expect(coding.code).to eq("884881000000109")
+        expect(coding.display).to eq(
+          "Administration of second intranasal seasonal influenza vaccination"
+        )
       end
     end
   end

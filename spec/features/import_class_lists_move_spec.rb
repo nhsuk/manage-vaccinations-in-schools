@@ -340,8 +340,7 @@ describe "Import class lists - Moving patients" do
 
   def and_the_patient_should_be_in_the_right_teams
     patient = Patient.select { it.archive_reasons.count > 0 }.sole
-    expect(patient.teams.count).to eq(1)
-    expect(patient.teams.pluck(:id)).to include(@second_team.id)
+    expect(patient.teams).to contain_exactly(@team, @second_team)
     expect(patient.archive_reasons.sole.team_id).to eq(@team.id)
     expect(patient.archive_reasons.sole.type).to eq("moved_out_of_area")
   end

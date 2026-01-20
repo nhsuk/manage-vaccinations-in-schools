@@ -88,6 +88,28 @@ describe FHIRMapper::VaccinationRecord do
 
       its(:value) { should eq vaccination_record.uuid }
       its(:system) { should eq mavis_system }
+
+      context "when the vaccination record is from national reporting" do
+        let(:national_reporting_test_ods_code) { "NR121" }
+        let(:vaccination_record) do
+          create(
+            :vaccination_record,
+            :sourced_from_bulk_upload,
+            uploaded_by: User.first,
+            performed_ods_code: :national_reporting_test_ods_code,
+            patient:,
+            programme:,
+            vaccine: programme.vaccines.first,
+            outcome: "administered"
+          )
+        end
+
+        let(:national_reporting_system) do
+          "http://manage-vaccinations-in-schools.nhs.uk/national-reporting/vaccination-records"
+        end
+
+        its(:system) { should eq national_reporting_system }
+      end
     end
 
     describe "vaccine code" do
@@ -152,7 +174,7 @@ describe FHIRMapper::VaccinationRecord do
 
         its(:display) do
           should eq "Administration of vaccine product containing only Human " \
-                      "papillomavirus antigen (procedure)"
+                      "papillomavirus antigen"
         end
       end
     end

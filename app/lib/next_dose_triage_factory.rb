@@ -28,6 +28,8 @@ class NextDoseTriageFactory
   delegate :academic_year, :patient, :programme, to: :vaccination_record
 
   def should_create?
+    return false if vaccination_record.next_dose_delay_triage_id.present?
+
     return false unless vaccination_record.administered? && programme.mmr?
 
     return false if next_date.past?

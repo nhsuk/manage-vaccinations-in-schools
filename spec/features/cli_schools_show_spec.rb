@@ -11,9 +11,11 @@ describe "mavis schools show" do
   context "with just a URN" do
     it "displays the school details" do
       given_a_school_exists
+      and_a_site_with_the_same_urn_exists
       when_i_run_the_command
       then_the_school_details_are_displayed
       and_the_programme_year_groups_are_displayed
+      and_other_locations_with_the_same_urn_are_displayed
     end
   end
 
@@ -60,6 +62,11 @@ describe "mavis schools show" do
           academic_year: AcademicYear.previous
         )
       end
+  end
+
+  def and_a_site_with_the_same_urn_exists
+    @site =
+      create(:school, name: "Test School Site B", urn: "123456", site: "B")
   end
 
   def and_the_school_has_patients_across_academic_years
@@ -195,6 +202,11 @@ describe "mavis schools show" do
       /flu:\s*year groups: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11/
     )
     expect(@output).to match(/hpv:\s*year groups: 8, 9, 10, 11/)
+  end
+
+  def and_other_locations_with_the_same_urn_are_displayed
+    expect(@output).to match(/other locations with the same URN:/)
+    expect(@output).to match(%r{  123456B: Test School Site B})
   end
 
   def then_the_correct_patient_counts_are_displayed

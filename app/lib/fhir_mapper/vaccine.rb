@@ -45,7 +45,7 @@ module FHIRMapper
           FHIR::Coding.new(
             system: "http://snomed.info/sct",
             code: snomed_procedure_code(dose_sequence:),
-            display: snomed_procedure_term
+            display: snomed_procedure_term(dose_sequence:)
           )
         ]
       )

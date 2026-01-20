@@ -22,7 +22,6 @@ class CommitPatientChangesetsJob
     changesets =
       PatientChangeset.includes(:patient).where(id: patient_changeset_ids)
     import = changesets.first.import
-    imported_school_move_ids = []
 
     counts =
       import.count_columns.index_with { |col| import.public_send(col) || 0 }
@@ -36,17 +35,18 @@ class CommitPatientChangesetsJob
       if to_process.any?
         increment_column_counts!(import, counts, to_process)
         import_patients_and_parents(to_process, import)
-        imported_school_move_ids = import_school_moves(to_process, import)
+        import_school_moves(to_process, import)
         import_pds_search_results(to_process, import)
         to_process.each(&:processed!)
       end
+
+      PatientTeamUpdater.call(patient_scope: import.patients)
     end
 
     if finished_committing_changesets?(import)
       run_post_commit_tasks(import, counts)
     end
 
-    SyncPatientTeamJob.perform_later(SchoolMove, imported_school_move_ids)
     import.post_commit!
   end
 

@@ -36,12 +36,11 @@ class PatientsRefusedConsentAlreadyVaccinatedJob < ApplicationJob
     Patient
       .includes(parent_relationships: :parent)
       .appear_in_programmes([programme], academic_year:)
-      .has_vaccination_status(
-        %w[not_eligible eligible due],
+      .has_programme_status(
+        "has_refusal_consent_refused",
         programme:,
         academic_year:
       )
-      .has_consent_status("refused", programme:, academic_year:)
   end
 
   def should_record_already_vaccinated?(consents:)

@@ -13,12 +13,14 @@
 #  status           :integer          default("not_eligible"), not null
 #  vaccine_methods  :integer          is an Array
 #  without_gelatine :boolean
+#  location_id      :bigint
 #  patient_id       :bigint           not null
 #
 # Indexes
 #
 #  idx_on_academic_year_patient_id_3d5bf8d2c8                 (academic_year,patient_id)
 #  idx_on_patient_id_academic_year_programme_type_75e0e0c471  (patient_id,academic_year,programme_type) UNIQUE
+#  index_patient_programme_statuses_on_location_id            (location_id)
 #  index_patient_programme_statuses_on_patient_id             (patient_id)
 #  index_patient_programme_statuses_on_status                 (status)
 #
@@ -46,6 +48,7 @@ describe Patient::ProgrammeStatus do
         date: Date.new(2020, 1, 1),
         disease_types: %w[influenza],
         dose_sequence: 1,
+        location_id: 1,
         status: "vaccinated",
         vaccine_methods: %w[injection],
         without_gelatine: true
@@ -58,6 +61,7 @@ describe Patient::ProgrammeStatus do
       expect(patient_programme_status.date).to eq(Date.new(2020, 1, 1))
       expect(patient_programme_status.disease_types).to eq(%w[influenza])
       expect(patient_programme_status.dose_sequence).to eq(1)
+      expect(patient_programme_status.location_id).to eq(1)
       expect(patient_programme_status.status).to eq("vaccinated")
       expect(patient_programme_status.vaccine_methods).to eq(%w[injection])
       expect(patient_programme_status.without_gelatine).to be(true)

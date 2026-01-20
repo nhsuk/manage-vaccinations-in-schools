@@ -154,6 +154,13 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
           summary_list.with_row do |row|
             row.with_key { "Dose number" }
             row.with_value { dose_number_value }
+            if (href = @change_links[:dose_sequence])
+              row.with_action(
+                text: "Change",
+                href:,
+                visually_hidden_text: "dose number"
+              )
+            end
           end
         end
       end
@@ -218,6 +225,13 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         summary_list.with_row do |row|
           row.with_key { "Vaccinator" }
           row.with_value { vaccinator_value }
+          if (href = @change_links[:vaccinator])
+            row.with_action(
+              text: "Change",
+              visually_hidden_text: "vaccinator",
+              href:
+            )
+          end
         end
       end
 

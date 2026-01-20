@@ -329,10 +329,10 @@ jobs:
           fi
         env:
           BRANCH_TO_CHECK: ${{ github.head_ref }}
-  call-functional-tests:
+  call-end-to-end-tests:
     needs: [ launch-dockerized-devimage, wait-for-task-stability, find-correct-test-branch ]
     if: ${{ !cancelled() && needs.launch-dockerized-devimage.result == 'success' && needs.wait-for-task-stability.result == 'success'}}
-    uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/functional_selected_device.yaml@main
+    uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/end-to-end-tests.yaml@main
     permissions:
       contents: write
     with:
@@ -343,7 +343,7 @@ jobs:
       HTTP_AUTH_TOKEN_FOR_TESTS: ${{ secrets.HTTP_AUTH_TOKEN_FOR_TESTS }}
       MAVIS_TESTING_REPO_ACCESS_TOKEN: ${{ secrets.MAVIS_TESTING_REPO_ACCESS_TOKEN }}
   stop-docker-environment:
-    needs: [ call-functional-tests, launch-dockerized-devimage, wait-for-task-stability ]
+    needs: [ call-end-to-end-tests, launch-dockerized-devimage, wait-for-task-stability ]
     if: ${{ always() && needs.launch-dockerized-devimage.result != 'skipped'}}
     runs-on: ubuntu-latest
     permissions:
