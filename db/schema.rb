@@ -1378,6 +1378,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_19_161311) do
       ((pps.academic_year - pat.birth_academic_year) - 5) AS patient_year_group,
       COALESCE(la.mhclg_code, ''::character varying) AS patient_local_authority_code,
       COALESCE(la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
+          CASE
+              WHEN (school.urn IS NOT NULL) THEN school.urn
+              WHEN (pat.home_educated = true) THEN '999999'::character varying
+              ELSE '888888'::character varying
+          END AS patient_school_urn,
+          CASE
+              WHEN (school.name IS NOT NULL) THEN school.name
+              WHEN (pat.home_educated = true) THEN 'Home educated'::text
+              ELSE 'Unknown'::text
+          END AS patient_school_name,
       (ar.patient_id IS NOT NULL) AS is_archived,
       (EXISTS ( SELECT 1
              FROM consents con

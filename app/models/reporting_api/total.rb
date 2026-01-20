@@ -11,6 +11,8 @@
 #  patient_gender                      :text
 #  patient_local_authority_code        :string
 #  patient_school_local_authority_code :string
+#  patient_school_name                 :text
+#  patient_school_urn                  :string
 #  patient_year_group                  :integer
 #  programme_type                      :enum
 #  status                              :integer
