@@ -60,22 +60,22 @@ If any validation errors are detected in the file they will be output and nothin
 
 Once a team has been onboarding, the YAML configuration file can be deleted as it won’t be used again. Instead, a number of command line tools are provided for managing the team.
 
-### Adding new schools to an organisation
+### Adding new schools to a team
 
-The command `schools add-to-organisation` is provided to add new schools to an existing organisation.
+The command `schools add-to-team` is provided to add new schools to an existing team.
 
 ```sh
-$ bin/mavis schools add-to-organisation ODS_CODE SUBTEAM URNS
+$ bin/mavis schools add-to-team TEAM_WORKGROUP SUBTEAM_NAME URNS
 ```
 
-- `ODS_CODE` refers to the ODS code of the organisation
-- `SUBTEAM` refers to the name of the subteam in the organisation
+- `TEAM_WORKGROUP` refers to the workgroup of the team
+- `SUBTEAM_NAME` refers to the name of the subteam in the team
 - `URNS` are the URNs of the schools to add
 
 Optionally, it's also possible to customise which programmes are administered at a particular school:
 
 ```sh
-$ bin/mavis schools add-to-organisation ODS_CODE SUBTEAM URNS --programmes VALUE1,VALUE2,...
+$ bin/mavis schools add-to-team TEAM_WORKGROUP SUBTEAM_NAME URNS --programmes VALUE1,VALUE2,...
 ```
 
 ### Changing administered year groups of a school
@@ -92,3 +92,15 @@ $ bin/mavis schools remove-programme-year-group URN PROGRAMME_TYPE YEAR_GROUPS
 - `URN` refers to the URN of the school to edit
 - `PROGRAMME_TYPE` refers to the programme being edited
 - `YEAR_GROUPS` are the year groups to add or remove
+
+### Removing a school from a team
+
+The command `schools add-to-team` is provided to add new schools to an existing team.
+
+```sh
+$ bin/mavis schools add-to-team TEAM_WORKGROUP SUBTEAM_NAME URNS
+```
+
+- `TEAM_WORKGROUP` refers to the workgroup of the team
+- `SUBTEAM_NAME` refers to the name of the subteam in the team
+- `URNS` are the URNs of the schools to add
