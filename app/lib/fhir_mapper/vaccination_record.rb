@@ -18,10 +18,10 @@ module FHIRMapper
     def fhir_record
       immunisation = FHIR::Immunization.new(id: nhs_immunisations_api_id)
 
-      if performed_by_user.present?
-        immunisation.contained << performed_by_user.fhir_practitioner(
-          reference_id: "Practitioner1"
-        )
+      if performed_by.present?
+        immunisation.contained << FHIRMapper::User.new(
+          performed_by
+        ).fhir_practitioner(reference_id: "Practitioner1")
       end
 
       immunisation.contained << patient.fhir_record(reference_id: "Patient1")
@@ -44,10 +44,12 @@ module FHIRMapper
       immunisation.site = fhir_site
       immunisation.route = fhir_route
       immunisation.doseQuantity = fhir_dose_quantity
-      immunisation.performer = [
-        fhir_user_performer(reference_id: "Practitioner1"),
-        fhir_org_performer
-      ]
+      if performed_by.present?
+        immunisation.performer << fhir_user_performer(
+          reference_id: "Practitioner1"
+        )
+      end
+      immunisation.performer << fhir_org_performer
       immunisation.reasonCode = [fhir_reason_code]
       immunisation.protocolApplied = [fhir_protocol_applied]
 

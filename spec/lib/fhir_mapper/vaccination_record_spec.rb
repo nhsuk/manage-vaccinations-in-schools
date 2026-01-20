@@ -62,9 +62,32 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     describe "contained performing practitioner" do
-      subject { immunisation_fhir.contained.find { it.id == "Practitioner1" } }
+      subject(:contained_practitioner) do
+        immunisation_fhir.contained.find { it.id == "Practitioner1" }
+      end
 
       it { should eq user.fhir_practitioner(reference_id: "Practitioner1") }
+
+      context "when the performing professional is not a local user" do
+        subject(:name) { contained_practitioner.name.first }
+
+        before do
+          vaccination_record.update(
+            performed_by_user: nil,
+            performed_by_given_name: "John",
+            performed_by_family_name: "Howie"
+          )
+        end
+
+        its(:given) { should eq ["John"] }
+        its(:family) { should eq "Howie" }
+      end
+
+      context "when the performing professional is missing" do
+        before { vaccination_record.update(performed_by_user: nil) }
+
+        it { should be_nil }
+      end
     end
 
     describe "performing practitioner" do
