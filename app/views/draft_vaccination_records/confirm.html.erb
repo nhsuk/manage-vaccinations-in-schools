@@ -18,7 +18,7 @@
      batch: wizard_path("batch"),
      delivery_method: wizard_path("delivery"),
      delivery_site: wizard_path("delivery"),
-     dose_sequence: wizard_path("dose-sequence"),
+     dose_sequence: @draft_vaccination_record.wizard_steps.include?(:dose_sequence) ? wizard_path("dose-sequence") : nil,
      dose_volume: @draft_vaccination_record.wizard_steps.include?(:dose) ? wizard_path("dose") : nil,
      identity: wizard_path("identity"),
      supplier: wizard_path("supplier"),
@@ -26,7 +26,7 @@
      notes: wizard_path("notes"),
      outcome: @draft_vaccination_record.wizard_steps.include?(:outcome) ? wizard_path("outcome") : nil,
      performed_at: wizard_path("date-and-time"),
-     vaccinator: wizard_path("vaccinator"),
+     vaccinator: @draft_vaccination_record.wizard_steps.include?(:vaccinator) ? wizard_path("vaccinator") : nil,
    } %>
 
 <% show_notes = @draft_vaccination_record.editing? %>
