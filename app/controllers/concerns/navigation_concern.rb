@@ -66,7 +66,7 @@ module NavigationConcern
     if current_team&.has_poc_only_access?
       @navigation_items << {
         title: I18n.t("teams.show.title_short"),
-        path: team_path
+        path: contact_details_team_path
       }
     end
 

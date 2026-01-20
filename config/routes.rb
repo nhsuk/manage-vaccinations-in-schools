@@ -319,7 +319,14 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :team, only: %i[show]
+  resource :team, only: [] do
+    member do
+      get :contact_details
+      get :schools
+      get :sessions
+      get :clinics
+    end
+  end
 
   resources :vaccination_records,
             path: "vaccination-records",

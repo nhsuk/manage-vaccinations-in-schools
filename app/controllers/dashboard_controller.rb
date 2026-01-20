@@ -92,7 +92,7 @@ class DashboardController < ApplicationController
 
       @secondary_items << {
         title: I18n.t("teams.show.title"),
-        path: team_path,
+        path: contact_details_team_path,
         description: I18n.t("teams.show.description")
       }
     end

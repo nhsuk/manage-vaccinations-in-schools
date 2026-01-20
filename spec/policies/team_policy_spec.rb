@@ -5,6 +5,7 @@ describe TeamPolicy do
 
   let(:poc_only_team) { create(:team, :poc_only) }
   let(:upload_only_team) { create(:team, :upload_only) }
+  let(:other_team) { create(:team) }
   let(:user) { create(:nurse, teams: [poc_only_team, upload_only_team]) }
 
   permissions :index?, :create?, :destroy?, :update? do
@@ -12,9 +13,9 @@ describe TeamPolicy do
     it { should_not permit(user, upload_only_team) }
   end
 
-  permissions :show? do
+  permissions :show?, :clinics?, :contact_details?, :schools?, :sessions? do
     it { should permit(user, poc_only_team) }
     it { should_not permit(user, upload_only_team) }
-    it { should_not permit(user, create(:team)) }
+    it { should_not permit(user, other_team) }
   end
 end
