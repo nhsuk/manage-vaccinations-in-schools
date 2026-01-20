@@ -71,6 +71,12 @@ describe "/api/testing/onboard" do
             "school.3.status" => ["is not included in the list"],
             "school.4.location" => ["can't be blank"],
             "school.4.status" => ["is not included in the list"],
+            "school.5.location" => ["can't be blank"],
+            "school.5.status" => ["is not included in the list"],
+            "school.6.location" => ["can't be blank"],
+            "school.6.status" => ["is not included in the list"],
+            "school.7.location" => ["can't be blank"],
+            "school.7.status" => ["is not included in the list"],
             "schools" => [
               "URN(s) 456789 cannot appear as both a regular school and a site"
             ],

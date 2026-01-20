@@ -18,3 +18,8 @@ schools:
       address_line_1: "456 High St"
       address_town: "London"
       address_postcode: "SW1A 1AA"
+    - 111111
+    - 222222
+    - urn: 555555
+      site: "A"
+      name: "Existing School 5 (Site A)"
