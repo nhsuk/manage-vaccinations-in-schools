@@ -43,15 +43,24 @@ module MavisCLI
             location = Location.school.find_by_urn_and_site(urn)
 
             if location.nil?
-              warn "Could not find location with URN #{urn}"
+              warn "Could not find school with URN #{urn}"
               next
             end
 
-            team_location =
-              TeamLocation
-                .includes(:team)
-                .where(team:, academic_year:, subteam:, location:)
-                .sole
+            team_locations =
+              TeamLocation.includes(:team).where(
+                team:,
+                academic_year:,
+                subteam:,
+                location:
+              )
+
+            if team_locations.empty?
+              warn "Could not find team location for URN #{urn}"
+              next
+            else
+              team_location = team_locations.sole
+            end
 
             unless team_location.safe_to_destroy?
               warn "Location #{location.id} (URN: #{urn}) cannot be removed as it has associated records."
