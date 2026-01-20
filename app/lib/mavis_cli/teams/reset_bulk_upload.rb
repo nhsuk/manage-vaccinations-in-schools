@@ -1,0 +1,98 @@
+# frozen_string_literal: true
+
+module MavisCLI
+  module Teams
+    class ResetBulkUpload < Dry::CLI::Command
+      desc "Reset bulk upload teams by removing all immunisation imports and associated data"
+
+      option :workgroup,
+             desc: "The workgroup of a specific team to reset (optional)"
+
+      def call(workgroup: nil)
+        MavisCLI.load_rails
+
+        teams = find_teams(workgroup)
+
+        if teams.empty?
+          puts "No bulk upload teams found."
+          return
+        end
+
+        puts "Found #{teams.count} bulk upload team(s) to reset:"
+        teams.each { |team| puts "  - #{team.name} (#{team.workgroup})" }
+        puts
+
+        teams.each do |team|
+          puts "Resetting #{team.name} (#{team.workgroup})..."
+          reset_team(team)
+        end
+
+        puts "\nAll teams reset successfully."
+      end
+
+      private
+
+      def find_teams(workgroup)
+        if workgroup.present?
+          team = Team.find_by(workgroup:)
+          raise ArgumentError, "Team not found: #{workgroup}" if team.nil?
+
+          unless team.has_upload_only_access?
+            raise ArgumentError, "Team #{workgroup} is not a bulk upload team"
+          end
+
+          [team]
+        else
+          Team.where(type: :upload_only)
+        end
+      end
+
+      def reset_team(team)
+        ActiveRecord::Base.transaction do
+          immunisation_imports = ImmunisationImport.where(team:)
+          puts "  - Found #{immunisation_imports.count} immunisation import(s)"
+
+          patient_ids =
+            Patient
+              .joins(:patient_teams)
+              .where(patient_teams: { team: })
+              .distinct
+              .ids
+          puts "  - Found #{patient_ids.count} patient(s) in this team"
+
+          vaccination_records =
+            VaccinationRecord.joins(:immunisation_imports).where(
+              immunisation_imports: {
+                team:
+              }
+            )
+          puts "  - Found #{vaccination_records.count} vaccination record(s) in this team's imports"
+
+          puts "Destroying vaccination records..."
+          vaccination_records.destroy_all
+
+          puts "Destroying immunisation imports..."
+          immunisation_imports.destroy_all
+
+          puts "Updating patient-team relationships..."
+          PatientTeamUpdater.call(patient_scope: Patient.where(id: patient_ids))
+
+          patients_to_destroy =
+            Patient
+              .where(id: patient_ids)
+              .left_outer_joins(:patient_teams)
+              .group("patients.id")
+              .having("COUNT(patient_teams.team_id) = 0")
+          puts "  - Found #{patients_to_destroy.count} patient(s) who were in the imports, and no longer have teams"
+
+          puts "Destroying patients..."
+          patients_to_destroy.destroy_all
+        end
+      end
+    end
+  end
+
+  register "teams" do |prefix|
+    prefix.register "reset-bulk-upload", Teams::ResetBulkUpload
+  end
+end
