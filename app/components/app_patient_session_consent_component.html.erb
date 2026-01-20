@@ -3,19 +3,19 @@
 <%= render AppCardComponent.new(feature: true) do |card| %>
   <% card.with_heading(level: 4, colour:) { heading } %>
 
-  <% unless vaccination_status.vaccinated? %>
-    <% if consent_status.no_response? %>
+  <% unless programme_status.vaccinated? %>
+    <% if consent_status_value == :no_response %>
       <% if latest_consent_request %>
         <p>No-one responded to our requests for consent.</p>
         <p>A request was sent on <%= latest_consent_request.sent_at.to_fs(:long) %>.</p>
       <% else %>
         <p>No requests have been sent.</p>
       <% end %>
-    <% elsif consent_status.conflicts? %>
+    <% elsif consent_status_value == :conflicts %>
       <p>You can only vaccinate if all respondents give consent.</p>
-    <% elsif consent_status.refused? %>
+    <% elsif consent_status_value == :refused %>
       <p><%= who_refused %> refused to give consent.</p>
-    <% elsif consent_status.given? %>
+    <% elsif consent_status_generator.status == :given %>
       <p><%= patient.full_name %> is ready for the vaccinator.</p>
     <% end %>
 

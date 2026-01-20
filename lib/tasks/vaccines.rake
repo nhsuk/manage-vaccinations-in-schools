@@ -48,7 +48,7 @@ namespace :vaccines do
         when "td_ipv"
           create_td_ipv_health_questions(vaccine)
         else
-          raise UnsupportedProgramme, Programme.find(programme_type)
+          raise UnsupportedProgrammeType, programme_type
         end
       end
     end
@@ -139,7 +139,7 @@ def side_effects_for(programme_type, method)
       unwell
     ]
   else
-    raise UnsupportedProgramme, Programme.find(programme_type)
+    raise UnsupportedProgrammeType, programme_type
   end
 end
 

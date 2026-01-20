@@ -3,7 +3,7 @@
 describe StatusGenerator::Programme do
   subject(:generator) do
     described_class.new(
-      programme:,
+      programme_type: programme.type,
       academic_year: AcademicYear.current,
       patient:,
       patient_locations:

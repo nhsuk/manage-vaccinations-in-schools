@@ -152,7 +152,7 @@ class Patient::ProgrammeStatus < ApplicationRecord
   def generator
     @generator ||=
       StatusGenerator::Programme.new(
-        programme:,
+        programme_type:,
         academic_year:,
         patient:,
         patient_locations:,

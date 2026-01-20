@@ -11,8 +11,8 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     show_parents: false,
     show_postcode: false,
     show_programme_status: true,
-    show_vaccinated_programme_status_only: false,
     show_school: false,
+    show_vaccinated_programme_status_only: false,
     show_year_group: false
   )
     @patient = patient
@@ -26,9 +26,9 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     @show_parents = show_parents
     @show_postcode = show_postcode
     @show_programme_status = show_programme_status
+    @show_school = show_school
     @show_vaccinated_programme_status_only =
       show_vaccinated_programme_status_only
-    @show_school = show_school
     @show_year_group = show_year_group
   end
 
@@ -71,10 +71,11 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
             row.with_value { patient_parents(patient) }
           end
         end
-        if show_programme_status && academic_year && programme_status_tag
+        if show_programme_status && academic_year &&
+             (value = programme_status_tag)
           summary_list.with_row do |row|
             row.with_key { "Programme status" }
-            row.with_value { programme_status_tag }
+            row.with_value { value }
           end
         end
       end
@@ -92,9 +93,10 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
               :show_nhs_number,
               :show_parents,
               :show_postcode,
+              :show_programme_status,
               :show_school,
-              :show_year_group,
-              :show_programme_status
+              :show_vaccinated_programme_status_only,
+              :show_year_group
 
   delegate :govuk_summary_list,
            :patient_date_of_birth,
@@ -108,8 +110,11 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     status_by_programme =
       programmes.each_with_object({}) do |programme, hash|
         resolved_status =
-          status_resolver_for(programme).programme(
-            only_if_vaccinated: @show_vaccinated_programme_status_only
+          PatientProgrammeStatusResolver.call(
+            patient,
+            programme_type: programme.type,
+            academic_year:,
+            only_if_vaccinated: show_vaccinated_programme_status_only
           )
 
         next unless resolved_status
@@ -120,14 +125,5 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     return if status_by_programme.empty?
 
     render AppAttachedTagsComponent.new(status_by_programme)
-  end
-
-  def status_resolver_for(programme)
-    @status_resolver_for ||= {}
-    @status_resolver_for[programme.type] ||= PatientStatusResolver.new(
-      patient,
-      programme:,
-      academic_year:
-    )
   end
 end

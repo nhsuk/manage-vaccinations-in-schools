@@ -2,17 +2,21 @@
 
 class StatusGenerator::Consent
   def initialize(
-    programme:,
+    programme_type:,
     academic_year:,
     patient:,
     consents:,
     vaccination_records:
   )
-    @programme = programme
+    @programme_type = programme_type
     @academic_year = academic_year
     @patient = patient
     @consents = consents
     @vaccination_records = vaccination_records
+  end
+
+  def programme
+    Programme.find(programme_type, disease_types:, patient:)
   end
 
   def status
@@ -47,7 +51,7 @@ class StatusGenerator::Consent
 
   private
 
-  attr_reader :programme,
+  attr_reader :programme_type,
               :academic_year,
               :patient,
               :consents,
@@ -59,7 +63,7 @@ class StatusGenerator::Consent
     # in the consents and triage as an optimisation.
     @vaccinated ||=
       StatusGenerator::Vaccination.new(
-        programme:,
+        programme_type:,
         academic_year:,
         patient:,
         vaccination_records:,
@@ -134,10 +138,6 @@ class StatusGenerator::Consent
 
   def latest_consents
     @latest_consents ||=
-      ConsentGrouper.call(
-        consents,
-        programme_type: programme.type,
-        academic_year:
-      )
+      ConsentGrouper.call(consents, programme_type:, academic_year:)
   end
 end

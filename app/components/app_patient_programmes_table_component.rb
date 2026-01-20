@@ -49,10 +49,12 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   end
 
   def build_row(programme:, academic_year:)
+    programme_type = programme.type
+
     [
       name_for_programme(programme:, academic_year:),
-      status_for_programme(programme:, academic_year:),
-      notes_for_programme(programme:, academic_year:)
+      status_for_programme(programme_type:, academic_year:),
+      notes_for_programme(programme_type:, academic_year:)
     ]
   end
 
@@ -64,25 +66,26 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
     end
   end
 
-  def status_for_programme(programme:, academic_year:)
-    hash = programme_status_hash(programme:, academic_year:)
+  def status_for_programme(programme_type:, academic_year:)
+    hash = programme_status_hash(programme_type:, academic_year:)
     tag.strong(hash[:text], class: "nhsuk-tag nhsuk-tag--#{hash[:colour]}")
   end
 
-  def notes_for_programme(programme:, academic_year:)
-    programme_status_hash(programme:, academic_year:)[:details_text].presence ||
-      ""
+  def notes_for_programme(programme_type:, academic_year:)
+    programme_status_hash(programme_type:, academic_year:)[
+      :details_text
+    ].presence || ""
   end
 
-  def programme_status_hash(programme:, academic_year:)
+  def programme_status_hash(programme_type:, academic_year:)
     @programme_status_hash ||= {}
-    @programme_status_hash[programme.type] ||= {}
-    @programme_status_hash[programme.type][
+    @programme_status_hash[programme_type] ||= {}
+    @programme_status_hash[programme_type][
       academic_year
-    ] ||= PatientStatusResolver.new(
+    ] ||= PatientProgrammeStatusResolver.call(
       patient,
-      programme:,
+      programme_type:,
       academic_year:
-    ).programme
+    )
   end
 end

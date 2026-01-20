@@ -6,7 +6,6 @@ en:
       programme: Programme status
       registration: Registration status
       triage: Triage status
-      vaccination: Programme status
     consent:
       label:
         conflicts: Conflicting consent
@@ -140,14 +139,3 @@ en:
         safe_to_vaccinate_nasal: aqua-green
         safe_to_vaccinate_injection_without_gelatine: aqua-green
         safe_to_vaccinate_injection_without_gelatine_flu: aqua-green
-    vaccination:
-      label:
-        due: Due vaccination
-        eligible: Eligible
-        not_eligible: Not eligible
-        vaccinated: Vaccinated
-      colour:
-        due: aqua-green
-        eligible: white
-        not_eligible: grey
-        vaccinated: green

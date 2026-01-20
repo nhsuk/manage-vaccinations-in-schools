@@ -2,19 +2,23 @@
 
 class StatusGenerator::Triage
   def initialize(
-    programme:,
+    programme_type:,
     academic_year:,
     patient:,
     consents:,
     triages:,
     vaccination_records:
   )
-    @programme = programme
+    @programme_type = programme_type
     @academic_year = academic_year
     @patient = patient
     @consents = consents
     @triages = triages
     @vaccination_records = vaccination_records
+  end
+
+  def programme
+    Programme.find(programme_type, disease_types:, patient:)
   end
 
   def status
@@ -41,6 +45,8 @@ class StatusGenerator::Triage
     latest_triage&.without_gelatine if status_should_be_safe_to_vaccinate?
   end
 
+  delegate :disease_types, to: :consent_generator
+
   def delay_vaccination_until_date
     if status_should_be_delay_vaccination?
       latest_triage&.delay_vaccination_until
@@ -66,14 +72,12 @@ class StatusGenerator::Triage
 
   private
 
-  attr_reader :programme,
+  attr_reader :programme_type,
               :academic_year,
               :patient,
               :consents,
               :triages,
               :vaccination_records
-
-  def programme_type = programme.type
 
   def vaccinated?
     # We only care about whether the patient is vaccinated so although we're
@@ -81,7 +85,7 @@ class StatusGenerator::Triage
     # in the consents and triage as an optimisation.
     @vaccinated ||=
       StatusGenerator::Vaccination.new(
-        programme:,
+        programme_type:,
         academic_year:,
         patient:,
         vaccination_records:,
@@ -126,7 +130,7 @@ class StatusGenerator::Triage
   def consent_generator
     @consent_generator ||=
       StatusGenerator::Consent.new(
-        programme:,
+        programme_type:,
         academic_year:,
         patient:,
         consents:,

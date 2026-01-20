@@ -283,7 +283,7 @@ class DraftVaccinationRecord
 
     consent_generator =
       StatusGenerator::Consent.new(
-        programme:,
+        programme_type:,
         academic_year:,
         patient:,
         consents: patient.consents,
@@ -292,7 +292,7 @@ class DraftVaccinationRecord
 
     triage_generator =
       StatusGenerator::Triage.new(
-        programme:,
+        programme_type:,
         academic_year:,
         patient:,
         consents: patient.consents,
