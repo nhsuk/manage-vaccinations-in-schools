@@ -223,6 +223,8 @@ class Onboarding
       academic_years.each do |academic_year|
         GenericClinicFactory.call(team:, academic_year:)
       end
+
+      PatientTeamUpdater.call(team_scope: Team.where(id: team.id))
     end
   end
 

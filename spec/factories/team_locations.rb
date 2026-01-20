@@ -31,5 +31,9 @@ FactoryBot.define do
     team
     location
     academic_year { AcademicYear.current }
+
+    after(:create) do |team_location|
+      PatientTeamUpdater.call(team_scope: Team.where(id: team_location.team_id))
+    end
   end
 end

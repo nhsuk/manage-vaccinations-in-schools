@@ -28,8 +28,6 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class ArchiveReason < ApplicationRecord
-  include UpdatesPatientTeam
-
   self.inheritance_column = nil
 
   belongs_to :team

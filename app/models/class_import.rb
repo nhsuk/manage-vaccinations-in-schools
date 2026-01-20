@@ -97,9 +97,7 @@ class ClassImport < PatientImport
         )
       end
 
-    @imported_school_move_ids ||= []
-    @imported_school_move_ids |=
-      SchoolMove.import!(school_moves, on_duplicate_key_ignore: true).ids
+    SchoolMove.import!(school_moves, on_duplicate_key_ignore: true)
 
     valid_changesets.update_all(status: :processed) if valid_changesets
 

@@ -45,6 +45,8 @@ module MavisCLI
 
             location.attach_to_team!(team, academic_year:, subteam:)
           end
+
+          PatientTeamUpdater.call(team_scope: Team.where(id: team.id))
         end
       end
     end

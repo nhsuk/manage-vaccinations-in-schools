@@ -208,7 +208,7 @@ def setup_clinic(team)
   PatientLocation.import(
     new_patient_location_records,
     on_duplicate_key_ignore: :all
-  ).ids
+  )
 end
 
 def create_patients(team)

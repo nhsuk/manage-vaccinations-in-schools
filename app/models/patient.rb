@@ -819,7 +819,7 @@ class Patient < ApplicationRecord
         conflict_target: %i[team_id patient_id],
         columns: %i[type]
       }
-    ).ids
+    )
 
     PatientTeamUpdater.call(
       patient_scope: Patient.where(id:),
