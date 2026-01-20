@@ -26,7 +26,7 @@ describe "Inspect timeline PII access logging", :cis2 do
 
   # Setup methods
   def prepare_support_organisation_with_pii_access
-    @organisation_support = create(:organisation, ods_code: "X26")
+    @organisation_support = create(:organisation, ods_code: "Y90128")
     @team_support =
       create(
         :team,
