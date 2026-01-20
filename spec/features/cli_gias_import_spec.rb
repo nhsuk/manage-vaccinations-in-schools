@@ -6,9 +6,11 @@ describe "mavis gias import" do
   it "imports schools from a GIAS file" do
     given_a_gias_file_exists
     and_a_location_already_exists
+    and_sites_exist
 
     when_i_run_the_import_command
     then_schools_are_imported_correctly
+    and_sites_are_updated_too
   end
 
   def given_a_gias_file_exists
@@ -17,6 +19,21 @@ describe "mavis gias import" do
 
   def and_a_location_already_exists
     create(:school, :secondary, urn: "100000", site: nil)
+  end
+
+  def and_sites_exist
+    create(
+      :school,
+      urn: "100000",
+      site: "A",
+      name: "The Aldgate School - Site 2"
+    )
+    create(
+      :school,
+      urn: "100000",
+      site: "B",
+      name: "The Aldgate School - Site 3"
+    )
   end
 
   def when_i_run_the_import_command
@@ -28,7 +45,7 @@ describe "mavis gias import" do
   end
 
   def then_schools_are_imported_correctly
-    expect(Location.count).to eq(4)
+    expect(Location.count).to eq(6)
     expect(Location.find_by_urn_and_site("100000").name).to eq(
       "The Aldgate School"
     )
@@ -38,5 +55,18 @@ describe "mavis gias import" do
     expect(Location.find_by_urn_and_site("100001")).to be_closed
     expect(Location.find_by_urn_and_site("100002")).to be_closing
     expect(Location.find_by_urn_and_site("100003")).to be_open
+  end
+
+  def and_sites_are_updated_too
+    expect(Location.find_by_urn_and_site("100000A").name).to eq(
+      "The Aldgate School - Site 2"
+    )
+    expect(Location.find_by_urn_and_site("100000B").name).to eq(
+      "The Aldgate School - Site 3"
+    )
+    expect(Location.find_by_urn_and_site("100000A")).to be_closed
+    expect(Location.find_by_urn_and_site("100000B")).to be_closed
+    expect(Location.find_by_urn_and_site("100000A").gias_phase).to eq("primary")
+    expect(Location.find_by_urn_and_site("100000B").gias_phase).to eq("primary")
   end
 end
