@@ -456,7 +456,7 @@ describe "Edit vaccination record" do
         year_group: 8
       )
 
-    @school = create(:school, name: "A New School")
+    @school = create(:school, name: "A New School", status: "open")
 
     @vaccine = @programme.vaccines.first
 
