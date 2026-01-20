@@ -219,6 +219,36 @@ describe API::Reporting::TotalsController do
       expect(csv.headers).to include("Year Group", "Cohort", "Vaccinated")
       expect(csv.length).to eq(2)
     end
+
+    it "returns grouped CSV data by school" do
+      team = Team.last
+      programme = Programme.hpv
+      team.programmes << programme
+      session = create(:session, team:, programmes: [programme])
+
+      school_one = create(:school, name: "School One", urn: "111111")
+      school_two = create(:school, name: "School Two", urn: "222222")
+
+      create(:patient, session:, school: school_one)
+      create(:patient, session:, school: school_two)
+
+      refresh_reporting_views!
+
+      request.headers["Accept"] = "text/csv"
+      get :index, params: { group: "school" }, format: :csv
+
+      expect(response).to have_http_status(:ok)
+      expect(response.content_type).to eq("text/csv")
+
+      csv = CSV.parse(response.body, headers: true)
+      expect(csv.headers).to include(
+        "School URN",
+        "School Name",
+        "Cohort",
+        "Vaccinated"
+      )
+      expect(csv.length).to eq(2)
+    end
   end
 
   describe "Dashboard acceptance criteria" do

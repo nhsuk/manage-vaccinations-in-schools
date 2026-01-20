@@ -14,13 +14,16 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   GROUPS = {
     local_authority: :patient_local_authority_code,
     year_group: :patient_year_group,
-    gender: :patient_gender
+    gender: :patient_gender,
+    school: %i[patient_school_urn patient_school_name]
   }.freeze
 
   GROUP_HEADERS = {
     patient_local_authority_code: "Local Authority",
     patient_year_group: "Year Group",
-    patient_gender: "Gender"
+    patient_gender: "Gender",
+    patient_school_urn: "School URN",
+    patient_school_name: "School Name"
   }.freeze
 
   METRIC_HEADERS = {
