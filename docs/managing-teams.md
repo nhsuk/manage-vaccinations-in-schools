@@ -31,7 +31,18 @@ subteams:
     reply_to_id: # Optional GOV.UK Notify Reply-To UUID
 
 schools:
-  subteam1: [] # URNs managed by a particular team
+  subteam1:
+    - 123456 # Simple URN for a school without sites
+    - urn: 234567 # URN for a school with multiple sites
+      site: "A" # Site code (A, B, C, etc.)
+      name: "School Name (Site A)" # Unique name for this site
+    - urn: 234567
+      site: "B"
+      name: "School Name (Site B)"
+      address_line_1: "123 High St" # Optional: override GIAS address
+      address_line_2: "Floor 2"
+      address_town: "London"
+      address_postcode: "SW1A 1AA"
 
 clinics:
   subteam1:
@@ -45,6 +56,23 @@ clinics:
 [Example configuration files can be found in the repo][config-onboarding].
 
 [config-onboarding]: /config/onboarding
+
+### Schools and sites
+
+Schools can be added in two ways:
+
+- Simple URN: Just the URN number (e.g., 123456) for schools without multiple sites
+- Site object: An object with urn, site, and name for schools that have been split into multiple physical locations
+
+When adding sites:
+
+- urn: The URN of the parent school (must exist in GIAS)
+- site: A unique site code (typically A, B, C, etc.)
+- name: A unique name for this site (cannot match existing school/site names)
+
+Address fields are optional and will inherit from the parent school if not provided
+
+Note: Schools or sites that are already assigned to another team cannot be onboarded in this way. Thy will have to be added manually (see command below). If a school has been split into sites for one team, it must use the same site structure for all teams.
 
 ### Command
 
