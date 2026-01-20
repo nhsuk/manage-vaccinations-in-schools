@@ -686,21 +686,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
     t.index ["status"], name: "index_patient_triage_statuses_on_status"
   end
 
-  create_table "patient_vaccination_statuses", force: :cascade do |t|
-    t.integer "academic_year", null: false
-    t.integer "dose_sequence"
-    t.date "latest_date"
-    t.bigint "latest_location_id"
-    t.integer "latest_session_status"
-    t.bigint "patient_id", null: false
-    t.enum "programme_type", null: false, enum_type: "programme_type"
-    t.integer "status", default: 0, null: false
-    t.index ["academic_year", "patient_id"], name: "idx_on_academic_year_patient_id_9c400fc863"
-    t.index ["latest_location_id"], name: "index_patient_vaccination_statuses_on_latest_location_id"
-    t.index ["patient_id", "programme_type", "academic_year"], name: "idx_on_patient_id_programme_type_academic_year_962639d2ac", unique: true
-    t.index ["status"], name: "index_patient_vaccination_statuses_on_status"
-  end
-
   create_table "patients", force: :cascade do |t|
     t.string "address_line_1"
     t.string "address_line_2"
@@ -1115,8 +1100,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
   add_foreign_key "patient_teams", "patients", on_delete: :cascade
   add_foreign_key "patient_teams", "teams", on_delete: :cascade
   add_foreign_key "patient_triage_statuses", "patients", on_delete: :cascade
-  add_foreign_key "patient_vaccination_statuses", "locations", column: "latest_location_id"
-  add_foreign_key "patient_vaccination_statuses", "patients", on_delete: :cascade
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "pds_search_results", "patients"
