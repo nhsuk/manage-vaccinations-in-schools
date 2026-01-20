@@ -21,18 +21,20 @@ describe StatusGenerator::Programme do
   let(:programme) { Programme.sample }
   let(:session) { create(:session, programmes: [programme]) }
   let(:patient) { create(:patient, session:) }
+  let(:location) { create(:school) }
 
   context "when already vaccinated" do
     let(:programme) { Programme.hpv }
 
     let!(:vaccination_record) do
-      create(:vaccination_record, :already_had, patient:, programme:)
+      create(:vaccination_record, :already_had, patient:, programme:, location:)
     end
 
-    its(:status) { should be(:vaccinated_already) }
     its(:date) { should eq(vaccination_record.performed_at.to_date) }
     its(:disease_types) { should eq(%w[human_papillomavirus]) }
     its(:dose_sequence) { should be_nil }
+    its(:location_id) { should eq(location.id) }
+    its(:status) { should be(:vaccinated_already) }
     its(:vaccine_methods) { should be_empty }
     its(:without_gelatine) { should be_nil }
   end
@@ -41,13 +43,14 @@ describe StatusGenerator::Programme do
     let(:programme) { Programme.hpv }
 
     let!(:vaccination_record) do
-      create(:vaccination_record, patient:, programme:)
+      create(:vaccination_record, patient:, programme:, location:)
     end
 
-    its(:status) { should be(:vaccinated_fully) }
     its(:date) { should eq(vaccination_record.performed_at.to_date) }
     its(:disease_types) { should eq(%w[human_papillomavirus]) }
     its(:dose_sequence) { should be_nil }
+    its(:location_id) { should eq(location.id) }
+    its(:status) { should be(:vaccinated_fully) }
     its(:vaccine_methods) { should be_empty }
     its(:without_gelatine) { should be_nil }
   end
@@ -56,13 +59,14 @@ describe StatusGenerator::Programme do
     let(:programme) { Programme.mmr }
 
     let!(:vaccination_record) do
-      create(:vaccination_record, patient:, programme:)
+      create(:vaccination_record, patient:, programme:, location:)
     end
 
-    its(:status) { should be(:needs_consent_no_response) }
     its(:date) { should eq(vaccination_record.performed_at.to_date) }
     its(:disease_types) { should be_nil }
     its(:dose_sequence) { should be_nil }
+    its(:location_id) { should be_nil }
+    its(:status) { should be(:needs_consent_no_response) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
 
@@ -81,22 +85,31 @@ describe StatusGenerator::Programme do
     before { create(:consent, :given, patient:, programme:) }
 
     let!(:vaccination_record) do
-      create(:vaccination_record, :unwell, patient:, programme:)
+      create(:vaccination_record, :unwell, patient:, programme:, location:)
     end
 
-    its(:status) { should be(:cannot_vaccinate_unwell) }
     its(:date) { should eq(vaccination_record.performed_at.to_date) }
     its(:disease_types) { should eq(programme.disease_types) }
+    its(:location_id) { should be_nil }
+    its(:status) { should be(:cannot_vaccinate_unwell) }
     its(:vaccine_methods) { should contain_exactly("injection") }
     its(:without_gelatine) { should be(false) }
 
     context "on a different day" do
       let!(:vaccination_record) do
-        create(:vaccination_record, :unwell, :yesterday, patient:, programme:)
+        create(
+          :vaccination_record,
+          :unwell,
+          :yesterday,
+          patient:,
+          programme:,
+          location:
+        )
       end
 
-      its(:status) { should be(:due) }
       its(:date) { should eq(vaccination_record.performed_at.to_date) }
+      its(:location_id) { should be_nil }
+      its(:status) { should be(:due) }
     end
   end
 
@@ -104,12 +117,13 @@ describe StatusGenerator::Programme do
     before { create(:consent, :given, patient:, programme:) }
 
     let!(:vaccination_record) do
-      create(:vaccination_record, :refused, patient:, programme:)
+      create(:vaccination_record, :refused, patient:, programme:, location:)
     end
 
-    its(:status) { should be(:cannot_vaccinate_refused) }
     its(:date) { should eq(vaccination_record.performed_at.to_date) }
     its(:disease_types) { should eq(programme.disease_types) }
+    its(:location_id) { should be_nil }
+    its(:status) { should be(:cannot_vaccinate_refused) }
     its(:vaccine_methods) { should contain_exactly("injection") }
     its(:without_gelatine) { should be(false) }
 
@@ -118,8 +132,9 @@ describe StatusGenerator::Programme do
         create(:vaccination_record, :unwell, :yesterday, patient:, programme:)
       end
 
-      its(:status) { should be(:due) }
       its(:date) { should eq(vaccination_record.performed_at.to_date) }
+      its(:location_id) { should be_nil }
+      its(:status) { should be(:due) }
     end
   end
 
@@ -127,12 +142,19 @@ describe StatusGenerator::Programme do
     before { create(:consent, :given, patient:, programme:) }
 
     let!(:vaccination_record) do
-      create(:vaccination_record, :contraindicated, patient:, programme:)
+      create(
+        :vaccination_record,
+        :contraindicated,
+        patient:,
+        programme:,
+        location:
+      )
     end
 
-    its(:status) { should be(:cannot_vaccinate_contraindicated) }
     its(:date) { should eq(vaccination_record.performed_at.to_date) }
     its(:disease_types) { should eq(programme.disease_types) }
+    its(:location_id) { should be_nil }
+    its(:status) { should be(:cannot_vaccinate_contraindicated) }
     its(:vaccine_methods) { should contain_exactly("injection") }
     its(:without_gelatine) { should be(false) }
 
@@ -141,8 +163,9 @@ describe StatusGenerator::Programme do
         create(:vaccination_record, :unwell, :yesterday, patient:, programme:)
       end
 
-      its(:status) { should be(:due) }
       its(:date) { should eq(vaccination_record.performed_at.to_date) }
+      its(:location_id) { should be_nil }
+      its(:status) { should be(:due) }
     end
   end
 
@@ -153,9 +176,10 @@ describe StatusGenerator::Programme do
       create(:attendance_record, :absent, patient:, session:)
     end
 
-    its(:status) { should be(:cannot_vaccinate_absent) }
     its(:date) { should eq(attendance_record.date) }
     its(:disease_types) { should eq(programme.disease_types) }
+    its(:location_id) { should be_nil }
+    its(:status) { should be(:cannot_vaccinate_absent) }
     its(:vaccine_methods) { should contain_exactly("injection") }
     its(:without_gelatine) { should be(false) }
 
@@ -181,10 +205,11 @@ describe StatusGenerator::Programme do
       )
     end
 
-    its(:status) { should be(:cannot_vaccinate_delay_vaccination) }
     its(:date) { should eq(Date.tomorrow) }
     its(:disease_types) { should eq(programme.disease_types) }
     its(:dose_sequence) { should be_nil }
+    its(:location_id) { should be_nil }
+    its(:status) { should be(:cannot_vaccinate_delay_vaccination) }
     its(:vaccine_methods) { should contain_exactly("injection") }
     its(:without_gelatine) { should be(false) }
   end
@@ -195,10 +220,11 @@ describe StatusGenerator::Programme do
       create(:triage, :invite_to_clinic, patient:, programme:)
     end
 
-    its(:status) { should be(:needs_triage) }
     its(:date) { should be_nil }
     its(:disease_types) { should eq(programme.disease_types) }
     its(:dose_sequence) { should be_nil }
+    its(:location_id) { should be_nil }
+    its(:status) { should be(:needs_triage) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
   end
@@ -209,10 +235,11 @@ describe StatusGenerator::Programme do
       create(:triage, :do_not_vaccinate, patient:, programme:)
     end
 
-    its(:status) { should be(:cannot_vaccinate_do_not_vaccinate) }
     its(:date) { should be_nil }
     its(:disease_types) { should eq(programme.disease_types) }
     its(:dose_sequence) { should be_nil }
+    its(:location_id) { should be_nil }
+    its(:status) { should be(:cannot_vaccinate_do_not_vaccinate) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
   end
@@ -220,10 +247,11 @@ describe StatusGenerator::Programme do
   context "when needs triage" do
     before { create(:consent, :given, :needing_triage, patient:, programme:) }
 
-    its(:status) { should be(:needs_triage) }
     its(:date) { should be_nil }
     its(:disease_types) { should eq(programme.disease_types) }
     its(:dose_sequence) { should be_nil }
+    its(:location_id) { should be_nil }
+    its(:status) { should be(:needs_triage) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
   end
@@ -231,10 +259,11 @@ describe StatusGenerator::Programme do
   context "when consent is refused" do
     before { create(:consent, :refused, patient:, programme:) }
 
-    its(:status) { should be(:has_refusal_consent_refused) }
     its(:date) { should be_nil }
     its(:disease_types) { should be_empty }
     its(:dose_sequence) { should be_nil }
+    its(:location_id) { should be_nil }
+    its(:status) { should be(:has_refusal_consent_refused) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
   end
@@ -245,19 +274,21 @@ describe StatusGenerator::Programme do
       create(:consent, :given, patient:, programme:, parent: create(:parent))
     end
 
-    its(:status) { should be(:has_refusal_consent_conflicts) }
     its(:date) { should be_nil }
     its(:disease_types) { should be_empty }
     its(:dose_sequence) { should be_nil }
+    its(:location_id) { should be_nil }
+    its(:status) { should be(:has_refusal_consent_conflicts) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
   end
 
   context "when consent is needed" do
-    its(:status) { should be(:needs_consent_no_response) }
     its(:date) { should be_nil }
     its(:disease_types) { should be_nil }
     its(:dose_sequence) { should be_nil }
+    its(:location_id) { should be_nil }
+    its(:status) { should be(:needs_consent_no_response) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
   end
@@ -265,10 +296,11 @@ describe StatusGenerator::Programme do
   context "when not eligible" do
     let(:patient) { create(:patient, year_group: 20) }
 
-    its(:status) { should be(:not_eligible) }
     its(:date) { should be_nil }
     its(:disease_types) { should be_nil }
     its(:dose_sequence) { should be_nil }
+    its(:location_id) { should be_nil }
+    its(:status) { should be(:not_eligible) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
   end

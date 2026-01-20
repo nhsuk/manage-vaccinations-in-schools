@@ -73,11 +73,12 @@ class StatusUpdater
             conflict_target: [:id],
             columns: %i[
               date
+              disease_types
               dose_sequence
+              location_id
               status
               vaccine_methods
               without_gelatine
-              disease_types
             ]
           }
         )

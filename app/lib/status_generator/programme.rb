@@ -116,6 +116,10 @@ class StatusGenerator::Programme
       vaccination_generator.latest_date
   end
 
+  def location_id
+    vaccination_generator.latest_location_id
+  end
+
   private
 
   attr_reader :programme,
