@@ -43,27 +43,15 @@ export class Autocomplete extends Component {
         suggestion: (value) => this.suggestion(value),
       },
       onConfirm: (value) => {
-        const selectedOption = this.selectedOption(value, this.options);
+        const selectedOption = this.options.filter(
+          (option) => (option.textContent || option.innerText) === value,
+        )[0];
 
         if (selectedOption) {
           selectedOption.selected = true;
         }
       },
     });
-  }
-
-  /**
-   * Selected option
-   *
-   * @param {*} value - Current value
-   * @param {Array} options - Available options
-   * @returns {HTMLOptionElement} Selected option
-   */
-  selectedOption(value, options) {
-    return [].filter.call(
-      options,
-      (option) => (option.textContent || option.innerText) === value,
-    )[0];
   }
 
   /**
