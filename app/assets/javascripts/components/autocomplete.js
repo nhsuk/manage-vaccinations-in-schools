@@ -42,7 +42,7 @@ export class Autocomplete extends Component {
       inputClasses: "nhsuk-input",
       showNoOptionsFound: true,
       templates: {
-        suggestion: (value) => this.suggestion(value, this.enhancedOptions),
+        suggestion: (value) => this.suggestion(value),
       },
       onConfirm: (value) => {
         const selectedOption = this.selectedOption(value, this.options);
@@ -52,19 +52,6 @@ export class Autocomplete extends Component {
         }
       },
     });
-  }
-
-  /**
-   * Get enhanced information about each option
-   *
-   * @returns {object} Enhanced options
-   */
-  get enhancedOptions() {
-    return this.options.map((option) => ({
-      name: option.label,
-      value: option.value,
-      hint: option.getAttribute("data-hint"),
-    }));
   }
 
   /**
@@ -85,14 +72,13 @@ export class Autocomplete extends Component {
    * HTML for suggestion
    *
    * @param {*} value - Current value
-   * @param {Array} options - Available options
    * @returns {string} HTML for suggestion
    */
-  suggestion(value, options) {
-    const option = options.find(({ name }) => name === value);
+  suggestion(value) {
+    const option = this.options.find(({ label }) => label === value);
     if (option) {
-      return option.hint
-        ? `${value}<br><span class="app-autocomplete__option-hint">${option.hint}</span>`
+      return option.dataset.hint
+        ? `${value}<br><span class="app-autocomplete__option-hint">${option.dataset.hint}</span>`
         : value;
     }
     return "No results found";
