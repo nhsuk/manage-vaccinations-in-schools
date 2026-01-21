@@ -32,40 +32,6 @@ class PatientLocation < ApplicationRecord
   belongs_to :patient
   belongs_to :location
 
-  has_many :team_locations,
-           -> { where(academic_year: it.academic_year) },
-           through: :location
-
-  has_many :sessions, through: :team_locations
-
-  has_many :attendance_records,
-           -> do
-             where(patient_id: it.patient_id).for_academic_year(
-               it.academic_year
-             )
-           end,
-           through: :location
-
-  has_many :gillick_assessments,
-           -> do
-             where(patient_id: it.patient_id).for_academic_year(
-               it.academic_year
-             )
-           end,
-           through: :location
-
-  has_many :pre_screenings,
-           -> do
-             where(patient_id: it.patient_id).for_academic_year(
-               it.academic_year
-             )
-           end,
-           through: :location
-
-  has_many :vaccination_records,
-           -> { where(patient_id: it.patient_id) },
-           through: :sessions
-
   has_and_belongs_to_many :immunisation_imports
 
   scope :current, -> { where(academic_year: AcademicYear.current) }
@@ -110,25 +76,6 @@ class PatientLocation < ApplicationRecord
               .exists
           )
         end
-
-  scope :destroy_all_if_safe,
-        -> do
-          preload(
-            :attendance_records,
-            :gillick_assessments,
-            :pre_screenings,
-            :vaccination_records
-          ).find_each(&:destroy_if_safe!)
-        end
-
-  def safe_to_destroy?
-    attendance_records.none?(&:attending?) && gillick_assessments.empty? &&
-      pre_screenings.empty? && vaccination_records.empty?
-  end
-
-  def destroy_if_safe!
-    destroy! if safe_to_destroy?
-  end
 
   def begin_date
     value = date_range&.begin

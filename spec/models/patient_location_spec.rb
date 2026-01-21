@@ -31,13 +31,6 @@ describe PatientLocation do
   let(:programme) { Programme.sample }
   let(:session) { create(:session, programmes: [programme]) }
 
-  describe "associations" do
-    it { should have_many(:attendance_records) }
-    it { should have_many(:gillick_assessments) }
-    it { should have_many(:pre_screenings) }
-    it { should have_many(:vaccination_records) }
-  end
-
   describe "scopes" do
     describe "#appear_in_programmes" do
       subject(:scope) do
@@ -84,63 +77,6 @@ describe PatientLocation do
 
         it { should_not include(patient_location) }
       end
-    end
-  end
-
-  describe "#safe_to_destroy?" do
-    subject { patient_location.safe_to_destroy? }
-
-    let(:patient_location) { create(:patient_location, session:) }
-    let(:patient) { patient_location.patient }
-    let(:location) { patient_location.location }
-
-    it { should be(true) }
-
-    context "with only absent attendance records" do
-      before { create(:attendance_record, :absent, patient:, session:) }
-
-      it { should be(true) }
-    end
-
-    context "with a vaccination record" do
-      before { create(:vaccination_record, programme:, patient:, session:) }
-
-      it { should be(false) }
-    end
-
-    context "with a Gillick assessment" do
-      before { create(:gillick_assessment, :competent, patient:, session:) }
-
-      it { should be(false) }
-    end
-
-    context "with an attendance record" do
-      before { create(:attendance_record, :present, patient:, session:) }
-
-      it { should be(false) }
-    end
-
-    context "with an attendance record from a different academic year" do
-      before do
-        create(
-          :attendance_record,
-          :present,
-          patient:,
-          location:,
-          date: 1.year.ago
-        )
-      end
-
-      it { should be(true) }
-    end
-
-    context "with a mix of conditions" do
-      before do
-        create(:attendance_record, :absent, patient:, session:)
-        create(:vaccination_record, programme:, patient:, session:)
-      end
-
-      it { should be(false) }
     end
   end
 

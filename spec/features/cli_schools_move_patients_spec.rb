@@ -53,31 +53,6 @@ describe "schools move-patients" do
     expect(school_move.school).to eq(target_school)
   end
 
-  context "when some patient sessions are not safe to destroy" do
-    let!(:patient_location) { create(:patient_location, patient:, session:) } # rubocop:disable RSpec/LetSetup
-
-    before do
-      # rubocop:disable RSpec/AnyInstance
-      allow_any_instance_of(PatientLocation).to receive(
-        :safe_to_destroy?
-      ).and_return(false)
-      # rubocop:enable RSpec/AnyInstance
-    end
-
-    it "raises an error and does not transfer records" do
-      expect { command }.to raise_error(
-        RuntimeError,
-        /Some patient sessions at #{source_school.urn} are not safe to destroy/
-      )
-
-      expect(patient.reload.school).to eq(source_school)
-      expect(consent_form.reload.school).to eq(source_school)
-      expect(consent_form.reload.location).to eq(source_school)
-      expect(session.reload.location).to eq(source_school)
-      expect(school_move.reload.school).to eq(source_school)
-    end
-  end
-
   context "when source school ID is invalid" do
     let(:source_urn) { "999999" }
 
