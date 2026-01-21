@@ -28,10 +28,7 @@ describe AppPatientSessionTriageComponent do
   end
 
   context "when triaged as safe to vaccinate" do
-    before do
-      create(:triage, :safe_to_vaccinate, patient:, programme:)
-      create(:patient_triage_status, :safe_to_vaccinate, patient:, programme:)
-    end
+    before { create(:triage, :safe_to_vaccinate, patient:, programme:) }
 
     it do
       expect(rendered).to have_css(
@@ -45,10 +42,7 @@ describe AppPatientSessionTriageComponent do
   end
 
   context "when triaged as unsafe to vaccinate" do
-    before do
-      create(:triage, :do_not_vaccinate, patient:, programme:)
-      create(:patient_triage_status, :do_not_vaccinate, patient:, programme:)
-    end
+    before { create(:triage, :do_not_vaccinate, patient:, programme:) }
 
     it { should have_css(".app-card__heading--red", text: "Do not vaccinate") }
     it { should have_content("should not be vaccinated") }

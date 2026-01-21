@@ -59,8 +59,8 @@ describe StatusUpdater do
     end
 
     it "creates a triage status" do
-      expect { call }.to change(patient.triage_statuses, :count).by(1)
-      expect(patient.triage_statuses.first).to be_not_required
+      expect { call }.to change(Patient::TriageStatus, :count).by(1)
+      expect(Patient::TriageStatus.first).to be_not_required
     end
   end
 
@@ -83,8 +83,8 @@ describe StatusUpdater do
     end
 
     it "creates a triage status" do
-      expect { call }.to change(patient.triage_statuses, :count).by(1)
-      expect(patient.triage_statuses.first).to be_not_required
+      expect { call }.to change(Patient::TriageStatus, :count).by(1)
+      expect(Patient::TriageStatus.first).to be_not_required
     end
   end
 
@@ -129,9 +129,9 @@ describe StatusUpdater do
     end
 
     it "creates a triage status for both programmes" do
-      expect { call }.to change(patient.triage_statuses, :count).by(2)
-      expect(patient.triage_statuses.first).to be_not_required
-      expect(patient.triage_statuses.second).to be_not_required
+      expect { call }.to change(Patient::TriageStatus, :count).by(2)
+      expect(Patient::TriageStatus.first).to be_not_required
+      expect(Patient::TriageStatus.second).to be_not_required
     end
   end
 end
