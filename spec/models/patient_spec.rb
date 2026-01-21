@@ -72,6 +72,58 @@ describe Patient do
   end
 
   describe "scopes" do
+    describe "#joins_sessions" do
+      subject(:scope) { described_class.joins_sessions }
+
+      let(:patient) { create(:patient) }
+
+      it { should be_empty }
+
+      context "when a patient belongs to a session with no dates" do
+        let(:session) { create(:session, :unscheduled) }
+
+        before { create(:patient_location, patient:, session:) }
+
+        it { should include(patient) }
+      end
+
+      context "when the session has a date" do
+        let(:session) { create(:session, :today) }
+
+        context "and the patient location has no date range" do
+          before { create(:patient_location, patient:, session:) }
+
+          it { should include(patient) }
+        end
+
+        context "and the patient location is outside the range" do
+          before do
+            create(
+              :patient_location,
+              patient:,
+              session:,
+              date_range: ..Date.yesterday
+            )
+          end
+
+          it { should_not include(patient) }
+        end
+
+        context "and the patient location is inside the range" do
+          before do
+            create(
+              :patient_location,
+              patient:,
+              session:,
+              date_range: Date.current..
+            )
+          end
+
+          it { should include(patient) }
+        end
+      end
+    end
+
     describe "#archived" do
       subject(:scope) { described_class.archived(team:) }
 
