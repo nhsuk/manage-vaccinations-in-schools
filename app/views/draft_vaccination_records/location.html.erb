@@ -12,7 +12,7 @@
   <%= f.govuk_select :location_id,
                      label: { text: "Location", size: "l", tag: "h1" },
                      caption: { text: @patient.full_name },
-                     data: { module: "app-autocomplete", disablehints: true } do %>
+                     data: { module: "app-autocomplete", disablehints: true, minlength: 3 } do %>
 
       <% @locations.find_each do |location| %>
         <%= tag.option location_display_name(location, show_urn: true),

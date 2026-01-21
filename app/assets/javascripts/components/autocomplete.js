@@ -19,6 +19,9 @@ export class Autocomplete extends Component {
     this.options = Array.from(this.$root.options);
     this.value = this.$root.value;
     this.disableHints = this.$root.dataset.disablehints === "true";
+    this.minLength = this.$root.dataset.minlength
+      ? parseInt(this.$root.dataset.minlength)
+      : 1;
 
     this.enhanceSelectElement(this.$root);
   }
@@ -40,6 +43,7 @@ export class Autocomplete extends Component {
       defaultValue: this.value || "",
       inputClasses: "nhsuk-input",
       showNoOptionsFound: true,
+      minLength: this.minLength,
       templates: {
         suggestion: this.disableHints
           ? undefined
