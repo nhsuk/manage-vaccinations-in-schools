@@ -76,13 +76,6 @@ class ImmunisationImport < ApplicationRecord
     count_column_to_increment = count_column(vaccination_record)
     return count_column_to_increment unless vaccination_record
 
-    # Instead of saving individually, we'll collect the records
-    @vaccination_records_batch ||= Set.new
-    @batches_batch ||= Set.new
-    @patients_batch ||= Set.new
-    @patient_locations_batch ||= Set.new
-    @archive_reasons_batch ||= Set.new
-
     @vaccination_records_batch.add(vaccination_record)
     if (batch = vaccination_record.batch)
       @batches_batch.add(batch)
@@ -102,6 +95,12 @@ class ImmunisationImport < ApplicationRecord
 
   def process_import!
     counts = count_columns.index_with(0)
+
+    @vaccination_records_batch = Set.new
+    @batches_batch = Set.new
+    @patients_batch = Set.new
+    @patient_locations_batch = Set.new
+    @archive_reasons_batch = Set.new
 
     ActiveRecord::Base.transaction do
       rows.each do |row|

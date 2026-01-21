@@ -174,6 +174,21 @@ describe ImmunisationImport do
 
     around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
 
+    context "with an empty CSV file (no data rows)" do
+      let(:programmes) { [Programme.flu] }
+      let(:file) { "valid_flu.csv" }
+
+      it "handles empty imports without raising NoMethodError" do
+        # rubocop:disable RSpec/SubjectStub
+        allow(immunisation_import).to receive(:process_row).and_return(
+          :ignored_record_count
+        )
+        # rubocop:enable RSpec/SubjectStub
+
+        expect { process! }.not_to raise_error
+      end
+    end
+
     context "with valid flu rows" do
       let(:programmes) { [Programme.flu] }
       let(:file) { "valid_flu.csv" }
