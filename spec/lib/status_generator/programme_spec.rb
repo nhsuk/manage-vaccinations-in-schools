@@ -296,6 +296,8 @@ describe StatusGenerator::Programme do
   end
 
   context "when consent is needed" do
+    let(:programme) { Programme.menacwy }
+
     its(:date) { should be_nil }
     its(:disease_types) { should be_nil }
     its(:dose_sequence) { should be_nil }
@@ -303,6 +305,12 @@ describe StatusGenerator::Programme do
     its(:status) { should be(:needs_consent_no_response) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
+
+    context "with a multi-dose programme" do
+      let(:programme) { Programme.mmr }
+
+      its(:dose_sequence) { should eq(1) }
+    end
   end
 
   context "when not eligible" do
