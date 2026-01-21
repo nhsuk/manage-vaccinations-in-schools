@@ -143,4 +143,52 @@ describe PatientLocation do
       it { should be(false) }
     end
   end
+
+  describe "#begin_date" do
+    subject { patient_location.begin_date }
+
+    it { should be_nil }
+
+    context "with a date range" do
+      let(:patient_location) do
+        create(
+          :patient_location,
+          date_range: Date.new(2020, 1, 1)...Date.new(2020, 2, 1)
+        )
+      end
+
+      it { should eq(Date.new(2020, 1, 1)) }
+    end
+  end
+
+  describe "#end_date" do
+    subject { patient_location.end_date }
+
+    it { should be_nil }
+
+    context "with a date range" do
+      let(:patient_location) do
+        create(
+          :patient_location,
+          date_range: Date.new(2020, 1, 1)...Date.new(2020, 2, 1)
+        )
+      end
+
+      it { should eq(Date.new(2020, 1, 31)) }
+    end
+  end
+
+  describe "#begin_date=" do
+    it "sets the beginning of the data range" do
+      patient_location.begin_date = Date.new(2020, 1, 1)
+      expect(patient_location.date_range).to eq(Date.new(2020, 1, 1)..)
+    end
+  end
+
+  describe "#end_date=" do
+    it "sets the end of the data range" do
+      patient_location.end_date = Date.new(2020, 1, 31)
+      expect(patient_location.date_range).to eq(..Date.new(2020, 1, 31))
+    end
+  end
 end

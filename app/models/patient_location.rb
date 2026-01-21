@@ -127,4 +127,24 @@ class PatientLocation < ApplicationRecord
   def destroy_if_safe!
     destroy! if safe_to_destroy?
   end
+
+  def begin_date
+    value = date_range&.begin
+    return nil if value.nil? || value == -Float::INFINITY
+    value
+  end
+
+  def end_date
+    value = date_range&.end
+    return nil if value.nil? || value == Float::INFINITY
+    date_range.exclude_end? ? value - 1.day : value
+  end
+
+  def begin_date=(value)
+    self.date_range = Range.new(value, end_date)
+  end
+
+  def end_date=(value)
+    self.date_range = Range.new(begin_date, value)
+  end
 end
