@@ -55,8 +55,22 @@
   <% end %>
 
   <% if @programme && policy(VaccinationRecord.new(patient: @patient, session: @session, programme: @programme)).record_already_vaccinated? %>
+    <!-- TODO: Refactor to extract logic -->
+    <%
+        label =
+          if @programme.mmr?
+            # TODO: Work out whether this is a first or second dose
+            if true
+              "Record 1st dose as already given"
+            else
+              "Record 2nd dose as already given"
+            end
+          else
+            "Record as already vaccinated"
+          end
+    %>
     <% action_list.with_item(
-         text: "Record as already vaccinated",
+         text: label,
          href: session_patient_programme_record_already_vaccinated_path(@session, @patient, @programme),
        ) %>
   <% end %>
@@ -72,7 +86,7 @@
             ticked: @patient.programme_status(programme, academic_year: @academic_year).vaccinated?,
           )
         end
-      
+
         nav.with_item(
           href: session_patient_activity_path(@session, @patient, return_to: params[:return_to]),
           text: "Session activity and notes",

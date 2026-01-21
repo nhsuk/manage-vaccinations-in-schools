@@ -3,7 +3,7 @@
 describe "MMR/MMRV" do
   around { |example| travel_to(Date.new(2025, 7, 1)) { example.run } }
 
-  scenario "record a patient as already vaccinated outside the school session" do
+  scenario "record a patient as already had their first dose outside the school session" do
     given_an_mmr_programme_with_a_session
     and_a_patient_is_in_the_session
     and_the_patient_doesnt_need_triage
@@ -13,21 +13,31 @@ describe "MMR/MMRV" do
     and_i_click_on_the_patient
     then_i_see_the_patient_needs_consent
 
-    when_i_click_record_as_already_vaccinated
+    when_i_click_record_as_already_had_first_dose
     when_i_click_back
     then_i_see_the_patient_session_page
 
-    when_i_click_record_as_already_vaccinated
+    when_i_click_record_as_already_had_first_dose
     then_i_see_the_did_you_have_mmr_or_mmrv_page
 
     when_i_choose_mmr_and_continue
+    then_i_see_the_date_page
+
+    when_i_fill_in_the_date_and_continue
     then_i_see_the_confirmation_page
 
     when_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
     and_had_been_vaccinated_with_mmr
+    and_the_dose_sequence_is_first_dose
     and_the_consent_requests_are_sent
     then_the_parent_doesnt_receive_a_consent_request
+  end
+
+  scenario "record a patient as already had their second dose outside the school session" do
+  end
+
+  scenario "edit the dose sequence for an MMR vaccination record" do
   end
 
   def given_an_mmr_programme_with_a_session(clinic: false)
@@ -90,8 +100,8 @@ describe "MMR/MMRV" do
     expect(page).to have_content("No response")
   end
 
-  def when_i_click_record_as_already_vaccinated
-    click_on "Record as already vaccinated"
+  def when_i_click_record_as_already_had_first_dose
+    click_on "Record 1st dose as already given"
   end
 
   def when_i_click_back
