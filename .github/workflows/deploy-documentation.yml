@@ -22,8 +22,9 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+
       - name: Generate Documentation
-        run: bundle exec rake rdocs:generate
+        run: bundle exec rake rdoc:generate
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
