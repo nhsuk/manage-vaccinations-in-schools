@@ -203,12 +203,12 @@ class AppActivityLogComponent < ViewComponent::Base
 
       not_vaccinated_programmes =
         all_programmes.reject do |programme|
-          patient.vaccination_status(programme:, academic_year:).vaccinated?
+          patient.programme_status(programme, academic_year:).vaccinated?
         end
 
       vaccinated_but_seasonal_programmes =
         all_programmes.select do |programme|
-          patient.vaccination_status(programme:, academic_year:).vaccinated? &&
+          patient.programme_status(programme, academic_year:).vaccinated? &&
             programme.seasonal?
         end
 

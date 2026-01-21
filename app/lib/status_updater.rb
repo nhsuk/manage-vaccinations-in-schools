@@ -11,7 +11,6 @@ class StatusUpdater
     update_programme_statuses!
     update_registration_statuses!
     update_triage_statuses!
-    update_vaccination_statuses!
   end
 
   def self.call(...) = new(...).call
@@ -129,43 +128,6 @@ class StatusUpdater
           on_duplicate_key_update: {
             conflict_target: [:id],
             columns: %i[status vaccine_method without_gelatine]
-          }
-        )
-      end
-  end
-
-  def update_vaccination_statuses!
-    Patient::VaccinationStatus.import!(
-      %i[patient_id programme_type academic_year],
-      patient_statuses_to_import,
-      on_duplicate_key_ignore: true
-    )
-
-    Patient::VaccinationStatus
-      .then { patient ? it.where(patient:) : it }
-      .where(academic_year: academic_years)
-      .includes(
-        :attendance_record,
-        :consents,
-        :patient,
-        :patient_locations,
-        :triages,
-        :vaccination_records
-      )
-      .find_in_batches(batch_size: 10_000) do |batch|
-        batch.each(&:assign_status)
-
-        Patient::VaccinationStatus.import!(
-          batch.select(&:changed?),
-          on_duplicate_key_update: {
-            conflict_target: [:id],
-            columns: %i[
-              dose_sequence
-              latest_date
-              latest_location_id
-              latest_session_status
-              status
-            ]
           }
         )
       end

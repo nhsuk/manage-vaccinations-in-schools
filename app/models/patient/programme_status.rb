@@ -123,7 +123,7 @@ class Patient::ProgrammeStatus < ApplicationRecord
 
   scope :cannot_vaccinate, -> { where(status: CANNOT_VACCINATE_STATUSES.keys) }
 
-  scope :fully_vaccinated, -> { where(status: VACCINATED_STATUSES.keys) }
+  scope :vaccinated, -> { where(status: VACCINATED_STATUSES.keys) }
 
   def needs_consent? = status.in?(NEEDS_CONSENT_STATUSES.keys)
 

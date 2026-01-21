@@ -14,7 +14,6 @@ class AddAcademicYearToPatientStatuses < ActiveRecord::Migration[8.0]
 
     Patient::ConsentStatus.update_all(academic_year:)
     Patient::TriageStatus.update_all(academic_year:)
-    Patient::VaccinationStatus.update_all(academic_year:)
 
     TABLES.each do |table|
       change_table table, bulk: true do |t|

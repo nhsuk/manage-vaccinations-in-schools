@@ -23,7 +23,7 @@ class AttendanceRecordPolicy < ApplicationPolicy
     session
       .programmes_for(patient:)
       .all? do |programme|
-        patient.vaccination_status(programme:, academic_year:).vaccinated?
+        patient.programme_status(programme, academic_year:).vaccinated?
       end
   end
 

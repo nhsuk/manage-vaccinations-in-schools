@@ -130,7 +130,7 @@ class DraftSessionsController < ApplicationController
       @draft_session
         .patient_locations
         .where(patient: { birth_academic_year: birth_academic_years })
-        .includes(patient: :vaccination_statuses)
+        .includes(patient: :programme_statuses)
         .map(&:patient)
 
     total_count = catch_up_patients.count
@@ -141,7 +141,7 @@ class DraftSessionsController < ApplicationController
           .programmes_for(patient:)
           .all? do |programme|
             if programme.is_catch_up?(year_group:)
-              patient.vaccination_status(programme:, academic_year:).vaccinated?
+              patient.programme_status(programme, academic_year:).vaccinated?
             else
               true
             end
@@ -415,13 +415,13 @@ class DraftSessionsController < ApplicationController
       @draft_session
         .patient_locations
         .where(patient: { birth_academic_year: })
-        .includes(patient: :vaccination_statuses)
+        .includes(patient: :programme_statuses)
         .map(&:patient)
 
     total_count = catch_up_patients.count
     vaccinated_count =
       catch_up_patients.count do |patient|
-        patient.vaccination_status(programme:, academic_year:).vaccinated?
+        patient.programme_status(programme, academic_year:).vaccinated?
       end
 
     vaccinated_count < total_count / 2

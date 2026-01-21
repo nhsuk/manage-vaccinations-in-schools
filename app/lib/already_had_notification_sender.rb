@@ -67,7 +67,7 @@ class AlreadyHadNotificationSender
   end
 
   def would_still_be_vaccinated?
-    # We're not using the existing `Patient::VaccinationStatus` instance here
+    # We're not using the existing `Patient::ProgrammeStatus` instance here
     # because we want to know if the patient would still be vaccinated if we
     # took away the vaccination record in question, to know whether to send
     # the notification.

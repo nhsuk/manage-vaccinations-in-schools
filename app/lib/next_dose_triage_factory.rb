@@ -34,9 +34,7 @@ class NextDoseTriageFactory
 
     return false if next_date.past?
 
-    status = patient.vaccination_status(programme:, academic_year:)
-
-    !status.vaccinated?
+    !patient.programme_status(programme, academic_year:).vaccinated?
   end
 
   def next_date = vaccination_record.performed_at + 28.days

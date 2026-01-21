@@ -46,15 +46,6 @@ class Stats::Session
 
   delegate :academic_year, :location, :team, to: :session
 
-  def vaccinated_count
-    @vaccinated_count ||=
-      Patient::VaccinationStatus
-        .vaccinated
-        .for_programme(programme)
-        .where(patient_id: patient_ids, academic_year:)
-        .count
-  end
-
   def due_statuses
     if programme.flu?
       %w[due_nasal due_injection]

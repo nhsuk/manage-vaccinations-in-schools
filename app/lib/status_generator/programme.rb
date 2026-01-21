@@ -72,12 +72,7 @@ class StatusGenerator::Programme
     end
   end
 
-  def dose_sequence
-    if triage_generator.status.in?(%i[safe_to_vaccinate not_required]) &&
-         consent_generator.status == :given
-      vaccination_generator.dose_sequence
-    end
-  end
+  delegate :dose_sequence, to: :vaccination_generator
 
   def without_gelatine
     if vaccination_generator.status == :not_eligible ||

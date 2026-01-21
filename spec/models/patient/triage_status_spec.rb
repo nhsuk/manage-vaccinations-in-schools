@@ -165,10 +165,7 @@ describe Patient::TriageStatus do
         it { should be(:not_required) }
       end
 
-      before do
-        create(:vaccination_record, patient:, programme:)
-        create(:patient_vaccination_status, :vaccinated, patient:, programme:)
-      end
+      before { create(:vaccination_record, patient:, programme:) }
 
       context "with a safe to vaccinate triage" do
         it_behaves_like "a vaccinated patient with any triage status" do
