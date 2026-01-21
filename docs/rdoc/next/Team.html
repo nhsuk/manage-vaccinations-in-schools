@@ -593,6 +593,8 @@
       </summary>
       <ul class="nav-list" role="directory">
 
+        <li ><a href="#method-i-careplus_enabled-3F">careplus_enabled?</a></li>
+
         <li ><a href="#method-i-to_param">to_param</a></li>
 
         <li ><a href="#method-i-year_groups">year_groups</a></li>
@@ -637,7 +639,9 @@
 <p>Table name: teams</p>
 
 <pre>id                            :bigint           not null, primary key
-careplus_venue_code           :string           not null
+careplus_staff_code           :string
+careplus_staff_type           :string
+careplus_venue_code           :string
 days_before_consent_reminders :integer          default(7), not null
 days_before_consent_requests  :integer          default(21), not null
 days_before_invitations       :integer          default(21), not null
@@ -712,6 +716,49 @@ index_teams_on_workgroup        (workgroup) UNIQUE</pre>
        </header>
 
 
+      <div id="method-i-careplus_enabled-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-careplus_enabled-3F" title="Link to this method">
+                <span class="method-name">careplus_enabled?</span>
+                <span class="method-args">(= careplus_staff_code.present? &amp;&amp; careplus_staff_type.present? &amp;&amp; careplus_venue_code.present?)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="careplus_enabled-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/team.rb, line 105</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">careplus_enabled?</span> =
+    <span class="ruby-identifier">careplus_staff_code</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">careplus_staff_type</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span>
+      <span class="ruby-identifier">careplus_venue_code</span>.<span class="ruby-identifier">present?</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-i-to_param" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -731,19 +778,22 @@ index_teams_on_workgroup        (workgroup) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="to_param-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/team.rb, line 92</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_param</span> = <span class="ruby-identifier">workgroup</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/team.rb, line 93</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_param</span> = <span class="ruby-identifier">workgroup</span>
 
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">year_groups</span>(<span class="ruby-value">academic_year:</span> <span class="ruby-keyword">nil</span>)
-    <span class="ruby-keyword">return</span> <span class="ruby-constant">UPLOAD_ONLY_YEAR_GROUPS</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">has_upload_only_access?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">year_groups</span>(<span class="ruby-value">academic_year:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-constant">UPLOAD_ONLY_YEAR_GROUPS</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">has_upload_only_access?</span>
 
-    <span class="ruby-identifier">academic_year</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">AcademicYear</span>.<span class="ruby-identifier">pending</span>
-    <span class="ruby-identifier">location_programme_year_groups</span>
-      .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:location_year_group</span>)
-      .<span class="ruby-identifier">where</span>(<span class="ruby-value">location_year_group:</span> { <span class="ruby-value">academic_year:</span> })
-      .<span class="ruby-identifier">pluck_year_groups</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
+  <span class="ruby-identifier">academic_year</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">AcademicYear</span>.<span class="ruby-identifier">pending</span>
+  <span class="ruby-identifier">location_programme_year_groups</span>
+    .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:location_year_group</span>)
+    .<span class="ruby-identifier">where</span>(<span class="ruby-value">location_year_group:</span> { <span class="ruby-value">academic_year:</span> })
+    .<span class="ruby-identifier">pluck_year_groups</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">careplus_enabled?</span> =
+  <span class="ruby-identifier">careplus_staff_code</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">careplus_staff_type</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span>
+    <span class="ruby-identifier">careplus_venue_code</span>.<span class="ruby-identifier">present?</span></pre>
           </div>
 
 
@@ -782,7 +832,7 @@ index_teams_on_workgroup        (workgroup) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="year_groups-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/team.rb, line 94</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/team.rb, line 95</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">year_groups</span>(<span class="ruby-value">academic_year:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-constant">UPLOAD_ONLY_YEAR_GROUPS</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">has_upload_only_access?</span>
 

@@ -743,7 +743,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 59</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 61</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">hash</span>)
   <span class="ruby-identifier">config</span> = <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">deep_symbolize_keys</span>
 
@@ -878,7 +878,7 @@
             </details>
           </div>
           <div class="method-source-code" id="errors-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 190</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 192</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">errors</span>
   <span class="ruby-keyword">super</span>.<span class="ruby-identifier">tap</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">errors</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">merge_errors_from</span>([<span class="ruby-identifier">organisation</span>], <span class="ruby-value">errors:</span>, <span class="ruby-value">name:</span> <span class="ruby-string">&quot;organisation&quot;</span>)
@@ -933,7 +933,7 @@
             </details>
           </div>
           <div class="method-source-code" id="invalid-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 186</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 188</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalid?</span>(<span class="ruby-identifier">context</span> = <span class="ruby-keyword">nil</span>)
   ([<span class="ruby-keyword">super</span>] <span class="ruby-operator">+</span> <span class="ruby-identifier">models</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:invalid?</span>)).<span class="ruby-identifier">any?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -980,7 +980,7 @@
             </details>
           </div>
           <div class="method-source-code" id="no_duplicate_urns_across_school_types-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 142</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 144</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">no_duplicate_urns_across_school_types</span>
   <span class="ruby-identifier">existing_school_urns</span> =
     <span class="ruby-identifier">schools</span>.<span class="ruby-identifier">select</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">ExistingSchool</span>) }.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:urn</span>)
@@ -1034,7 +1034,7 @@
             </details>
           </div>
           <div class="method-source-code" id="no_schools_with_existing_team_attachments-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 158</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 160</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">no_schools_with_existing_team_attachments</span>
   <span class="ruby-identifier">schools</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">school</span>, <span class="ruby-identifier">index</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">urn</span> = <span class="ruby-identifier">school</span>.<span class="ruby-identifier">urn</span>
@@ -1096,7 +1096,7 @@
             </details>
           </div>
           <div class="method-source-code" id="save-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 202</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 204</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">save!</span>(<span class="ruby-value">include_previous_academic_year:</span> <span class="ruby-keyword">false</span>)
   <span class="ruby-identifier">academic_years</span> = [<span class="ruby-constant">AcademicYear</span>.<span class="ruby-identifier">pending</span>]
 
@@ -1163,7 +1163,7 @@
             </details>
           </div>
           <div class="method-source-code" id="valid-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 182</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 184</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">valid?</span>(<span class="ruby-identifier">context</span> = <span class="ruby-keyword">nil</span>)
   ([<span class="ruby-keyword">super</span>] <span class="ruby-operator">+</span> <span class="ruby-identifier">models</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:valid?</span>)).<span class="ruby-identifier">all?</span>
 <span class="ruby-keyword">end</span></pre>

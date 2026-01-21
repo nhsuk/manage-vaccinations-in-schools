@@ -823,8 +823,8 @@
               <span class="ruby-identifier">records</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">performed_at</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%H:%M&quot;</span>),
               <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;SC&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;CL&quot;</span>, <span class="ruby-comment"># Venue Type</span>
               <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">dfe_number</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">careplus_venue_code</span>, <span class="ruby-comment"># Venue Code</span>
-              <span class="ruby-string">&quot;IN&quot;</span>, <span class="ruby-comment"># Staff Type</span>
-              <span class="ruby-string">&quot;LW5PM&quot;</span>, <span class="ruby-comment"># Staff Code</span>
+              <span class="ruby-identifier">team</span>.<span class="ruby-identifier">careplus_staff_type</span>,
+              <span class="ruby-identifier">team</span>.<span class="ruby-identifier">careplus_staff_code</span>,
               <span class="ruby-string">&quot;Y&quot;</span>, <span class="ruby-comment"># Attended; Did not attends do not get recorded on GP systems</span>
               <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-comment"># Reason Not Attended; Always blank</span>
               <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-comment"># Suspension End Date; Doesn&#39;t need to be used</span>
@@ -1295,8 +1295,8 @@
             <span class="ruby-identifier">records</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">performed_at</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%H:%M&quot;</span>),
             <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;SC&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;CL&quot;</span>, <span class="ruby-comment"># Venue Type</span>
             <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">dfe_number</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">careplus_venue_code</span>, <span class="ruby-comment"># Venue Code</span>
-            <span class="ruby-string">&quot;IN&quot;</span>, <span class="ruby-comment"># Staff Type</span>
-            <span class="ruby-string">&quot;LW5PM&quot;</span>, <span class="ruby-comment"># Staff Code</span>
+            <span class="ruby-identifier">team</span>.<span class="ruby-identifier">careplus_staff_type</span>,
+            <span class="ruby-identifier">team</span>.<span class="ruby-identifier">careplus_staff_code</span>,
             <span class="ruby-string">&quot;Y&quot;</span>, <span class="ruby-comment"># Attended; Did not attends do not get recorded on GP systems</span>
             <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-comment"># Reason Not Attended; Always blank</span>
             <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-comment"># Suspension End Date; Doesn&#39;t need to be used</span>
