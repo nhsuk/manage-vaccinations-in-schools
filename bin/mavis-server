@@ -26,7 +26,8 @@ mavis_server_usage() {
   echo
   # :command.usage_commands
   printf "%s\n" "Commands:"
-  printf "  %s   Open shell on server\n" "shell"
+  printf "  %s   Open shell on server\n" "shell     "
+  printf "  %s   List running tasks for an env\n" "list-tasks"
   echo
 
   # :command.long_usage
@@ -100,6 +101,36 @@ mavis_server_shell_usage() {
     # :command.usage_examples
     printf "%s\n" "Examples:"
     printf "  mavis-server shell test\n"
+    echo
+
+  fi
+}
+
+# :command.usage
+mavis_server_list_tasks_usage() {
+  printf "mavis-server list-tasks - List running tasks for an env\n\n"
+
+  printf "%s\n" "Usage:"
+  printf "  mavis-server list-tasks ENVIRONMENT\n"
+  printf "  mavis-server list-tasks --help | -h\n"
+  echo
+
+  # :command.long_usage
+  if [[ -n "$long_usage" ]]; then
+    # :command.usage_options
+    printf "%s\n" "Options:"
+
+    # :command.usage_fixed_flags
+    printf "  %s\n" "--help, -h"
+    printf "    Show this help\n"
+    echo
+
+    # :command.usage_args
+    printf "%s\n" "Arguments:"
+
+    # :argument.usage
+    printf "  %s\n" "ENVIRONMENT"
+    printf "    Specify the environment (cluster will be mavis-ENV)\n"
     echo
 
   fi
@@ -329,6 +360,54 @@ mavis_server_shell_command() {
 
 }
 
+# :command.function
+mavis_server_list_tasks_command() {
+
+  # lib/mavis-server/list_tasks_command.sh
+  region="eu-west-2"
+  env=${args[environment]}
+
+  authenticate_user
+
+  cluster_name="mavis-$env"
+
+  tasks=$(aws ecs list-tasks --region "$region" --cluster $cluster_name --query 'taskArns' --output text)
+
+  aws ecs describe-tasks \
+      --cluster $cluster_name \
+      --tasks $tasks \
+      --query 'tasks[].{ARN: taskArn, Group: group, Status: lastStatus}' \
+      --output json \
+    | jq -r '(.[] | [.Group, .Status, .ARN]) | @tsv' \
+    | ruby -e "cluster_name, region = ['$cluster_name', '$region']" \
+           -e '
+        def make_link(text, url) = "\033]8;;#{url}\033\\#{text}\033]8;;\033\\"
+
+        def pad_field(width, text, contents) = "#{" " * (width - text.length)}#{contents}"
+
+        max_widths = {service: 0, status: 0, task: 0}
+        rows = ARGF.each_line.map do |line|
+          group, status, arn = line.strip.split("\t")
+          task_id = arn.split("/").last
+          task_link = make_link(task_id, "https://#{region}.console.aws.amazon.com/ecs/v2/clusters/#{cluster_name}/tasks/#{task_id}")
+          service_name = group.split(":").last
+          service_link = make_link(service_name, "https://#{region}.console.aws.amazon.com/ecs/v2/clusters/#{cluster_name}/services/#{service_name}")
+          max_widths[:task] = [max_widths[:task], task_id.length].max
+          max_widths[:service] = [max_widths[:service], service_name.length].max
+          max_widths[:status] = [max_widths[:status], status.length].max
+          { task: task_link, service: service_link, status:, task_id:, service_name: }
+        end
+
+        puts "#{"Service".ljust(max_widths[:service])} | #{"Status".ljust(max_widths[:task])} | #{"Task".ljust(max_widths[:status])}"
+        puts "-" * (max_widths.values.sum + 6)
+        rows.each do |row|
+          puts [pad_field(max_widths[:service], row[:service_name], row[:service]),
+                pad_field(max_widths[:task], row[:task_id], row[:task]),
+                pad_field(max_widths[:status], row[:status], row[:status])].join(" | ")
+        end'
+
+}
+
 # :command.parse_requirements
 parse_requirements() {
   local key
@@ -365,6 +444,13 @@ parse_requirements() {
       action="shell"
       shift
       mavis_server_shell_parse_requirements "$@"
+      shift $#
+      ;;
+
+    list-tasks)
+      action="list-tasks"
+      shift
+      mavis_server_list_tasks_parse_requirements "$@"
       shift $#
       ;;
 
@@ -517,6 +603,66 @@ mavis_server_shell_parse_requirements() {
 
 }
 
+# :command.parse_requirements
+mavis_server_list_tasks_parse_requirements() {
+  local key
+
+  # :command.fixed_flags_filter
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+      --help | -h)
+        long_usage=yes
+        mavis_server_list_tasks_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  # :command.command_filter
+  action="list-tasks"
+
+  # :command.parse_requirements_while
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+
+      -?*)
+        printf "invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+        # :command.parse_requirements_case
+        # :command.parse_requirements_case_simple
+        # :argument.case
+        if [[ -z ${args['environment']+x} ]]; then
+          args['environment']=$1
+          shift
+        else
+          printf "invalid argument: %s\n" "$key" >&2
+          exit 1
+        fi
+
+        ;;
+
+    esac
+  done
+
+  # :command.required_args_filter
+  if [[ -z ${args['environment']+x} ]]; then
+    printf "missing required argument: ENVIRONMENT\nusage: mavis-server list-tasks ENVIRONMENT\n" >&2
+
+    exit 1
+  fi
+
+}
+
 # :command.initialize
 initialize() {
   declare -g version="0.0.0"
@@ -538,6 +684,7 @@ run() {
 
   case "$action" in
     "shell") mavis_server_shell_command ;;
+    "list-tasks") mavis_server_list_tasks_command ;;
   esac
 }
 

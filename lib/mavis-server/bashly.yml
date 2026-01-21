@@ -12,7 +12,8 @@ commands:
     help: Open shell on server
 
     args:
-      - name: environment
+      - &environment-arg
+        name: environment
         required: true
         help: Specify the environment (cluster will be mavis-ENV)
 
@@ -36,3 +37,8 @@ commands:
 
     examples:
       - mavis-server shell test
+
+  - name: list-tasks
+    help: List running tasks for an env
+    args:
+      - *environment-arg
