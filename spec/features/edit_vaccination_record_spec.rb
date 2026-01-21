@@ -371,6 +371,40 @@ describe "Edit vaccination record" do
       then_i_should_see_the_vaccination_record
     end
 
+    scenario "Edits the batch" do
+      given_i_am_signed_in
+      and_a_bulk_uploaded_vaccination_record_exists
+
+      when_i_navigate_to_the_edit_vaccination_record_page
+
+      when_i_click_on_change_batch
+      then_i_should_see_the_batch_form
+
+      when_i_click_back
+      and_i_click_on_change_vaccine
+      then_i_should_see_the_batch_form
+
+      when_i_click_back
+      and_i_click_on_change_batch_expiry_date
+      then_i_should_see_the_batch_form
+
+      when_i_enter_an_empty_batch_name
+      then_i_should_see_the_batch_form
+      and_i_should_see_an_error_message_for_batch_name
+
+      when_i_enter_an_empty_day
+      then_i_should_see_the_batch_form
+      and_i_should_see_an_error_message_for_day
+
+      when_i_enter_batch_details
+      then_i_see_the_edit_vaccination_record_page
+      and_i_should_see_the_national_reporting_updated_batch
+
+      when_i_click_on_save_changes
+      then_i_should_see_the_vaccination_record
+      and_the_batch_should_be_a_new_batch_object
+    end
+
     scenario "Parent details are not visible when viewing vaccination records" do
       given_i_am_signed_in
       and_a_bulk_uploaded_vaccination_record_exists
@@ -459,8 +493,15 @@ describe "Edit vaccination record" do
     @school = create(:school, name: "A New School", status: "open")
 
     @vaccine = @programme.vaccines.first
+    @new_vaccine = @programme.vaccines.second
 
-    @batch = create(:batch, team: @team, vaccine: @vaccine)
+    @batch =
+      create(
+        :batch,
+        team: @team,
+        vaccine: @vaccine,
+        expiry: Date.new(2026, 1, 1)
+      )
   end
 
   def given_i_am_signed_in
@@ -491,6 +532,7 @@ describe "Edit vaccination record" do
         :sourced_from_bulk_upload,
         uploaded_by: @team.users.first,
         batch: @batch,
+        vaccine: @batch.vaccine,
         patient: @patient,
         programme: @programme,
         performed_by_user: nil,
@@ -808,6 +850,65 @@ describe "Edit vaccination record" do
 
   def and_i_should_see_the_new_notes
     expect(page).to have_content("NotesSome notes.")
+  end
+
+  def when_i_click_on_change_batch
+    click_on "Change batch"
+  end
+
+  def and_i_click_on_change_vaccine
+    click_on "Change vaccine"
+  end
+
+  def and_i_click_on_change_batch_expiry_date
+    click_on "Change batch expiry date"
+  end
+
+  def then_i_should_see_the_batch_form
+    expect(page).to have_content("Which vaccine and batch did you use?")
+    expect(page).to have_content("Vaccine")
+    expect(page).to have_content("Batch number")
+    expect(page).to have_content("Batch expiry date")
+  end
+
+  def when_i_enter_an_empty_batch_name
+    fill_in "Batch number", with: ""
+
+    click_on "Continue"
+  end
+
+  def and_i_should_see_an_error_message_for_batch_name
+    expect(page).to have_content("Enter a batch number")
+  end
+
+  def when_i_enter_an_empty_day
+    fill_in "Day", with: ""
+
+    click_on "Continue"
+  end
+
+  def and_i_should_see_an_error_message_for_day
+    expect(page).to have_content("Enter a day")
+  end
+
+  def when_i_enter_batch_details
+    choose @new_vaccine.nivs_name
+    fill_in "Batch number", with: "NEWBATCH123"
+    fill_in "Day", with: "1"
+    fill_in "Month", with: "12"
+    fill_in "Year", with: "2027"
+
+    click_on "Continue"
+  end
+
+  def and_i_should_see_the_national_reporting_updated_batch
+    expect(page).to have_content("Vaccine#{@new_vaccine.nivs_name}")
+    expect(page).to have_content("Batch numberNEWBATCH123")
+    expect(page).to have_content("Batch expiry date1 December 2027")
+  end
+
+  def and_the_batch_should_be_a_new_batch_object
+    expect(@vaccination_record.reload.batch).not_to eq(@batch)
   end
 
   def when_i_click_on_save_changes

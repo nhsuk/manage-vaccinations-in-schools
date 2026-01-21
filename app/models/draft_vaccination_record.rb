@@ -10,6 +10,8 @@ class DraftVaccinationRecord
   include VaccinationRecordPerformedByConcern
 
   attribute :batch_id, :integer
+  attribute :batch_name, :string
+  attribute :batch_expiry, :date
   attribute :delivery_method, :string
   attribute :delivery_site, :string
   attribute :disease_types, array: true
@@ -34,6 +36,7 @@ class DraftVaccinationRecord
   attribute :session_id, :integer
   attribute :source, :string
   attribute :supplied_by_user_id, :integer
+  attribute :vaccine_id, :integer
 
   def initialize(current_user:, **attributes)
     @current_user = current_user
@@ -83,7 +86,11 @@ class DraftVaccinationRecord
   end
 
   on_wizard_step :batch, exact: true do
-    validates :batch_id, presence: true
+    validates :batch_id, presence: true, unless: :bulk_upload_user_and_record?
+
+    validates :vaccine_id, presence: true, if: :bulk_upload_user_and_record?
+    validates :batch_name, batch_name: true, if: :bulk_upload_user_and_record?
+    validates :batch_expiry, presence: true, if: :bulk_upload_user_and_record?
   end
 
   on_wizard_step :dose, exact: true do
@@ -155,6 +162,17 @@ class DraftVaccinationRecord
   alias_method :administered, :administered?
 
   def batch
+    if batch_expiry && batch_name && vaccine_id && bulk_upload_user_and_record?
+      return(
+        Batch.create_with(archived_at: Time.current).find_or_create_by!(
+          expiry: batch_expiry,
+          name: batch_name,
+          team_id: nil,
+          vaccine_id: vaccine_id
+        )
+      )
+    end
+
     return nil if batch_id.nil?
     Batch.find(batch_id)
   end
@@ -235,8 +253,6 @@ class DraftVaccinationRecord
   end
 
   delegate :vaccine, to: :batch, allow_nil: true
-
-  delegate :id, to: :vaccine, prefix: true, allow_nil: true
 
   def vaccine_id_changed? = batch_id_changed?
 
@@ -329,6 +345,24 @@ class DraftVaccinationRecord
   def bulk_upload_user_and_record?
     @current_user.selected_team.has_upload_only_access? &&
       sourced_from_bulk_upload?
+  end
+
+  def read_from!(vaccination_record)
+    self.batch_name = vaccination_record.batch&.name
+    self.batch_expiry = vaccination_record.batch&.expiry
+    self.vaccine_id = vaccination_record.vaccine&.id
+
+    super(vaccination_record)
+  end
+
+  def write_to!(vaccination_record)
+    super(vaccination_record)
+
+    if batch_expiry && batch_name && vaccine_id && bulk_upload_user_and_record?
+      vaccination_record.batch_id = batch&.id
+    end
+
+    vaccination_record.vaccine_id = batch&.vaccine_id
   end
 
   private
