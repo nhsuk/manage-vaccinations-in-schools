@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>README - Mavis Documentation</title>
+
+
+  <meta name="keywords" content="ruby,documentation,README">
+  <meta
+    name="description"
+    content="README: Manage vaccinations in schools This is a service used within the NHS for managing and recording school-aged vaccinations. github."
+  >
+
+
+
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="README - Mavis Documentation">
+
+
+
+    <meta property="og:description" content="Manage vaccinations in schools This is a service used within the NHS for managing and recording school-aged vaccinations. github.">
+
+
+
+
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="README - Mavis Documentation">
+
+
+
+    <meta name="twitter:description" content="Manage vaccinations in schools This is a service used within the NHS for managing and recording school-aged vaccinations. github.">
+
+
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+  var index_rel_prefix = "./";
+</script>
+
+<script
+  src="./js/theme-toggle.js?v=7.1.0"
+></script>
+
+<script
+  src="./js/search_navigation.js?v=7.1.0"
+  defer
+></script>
+
+<script
+  src="./js/search_data.js?v=7.1.0"
+  defer
+></script>
+
+<script
+  src="./js/search_ranker.js?v=7.1.0"
+  defer
+></script>
+
+<script
+  src="./js/search_controller.js?v=7.1.0"
+  defer
+></script>
+
+<script
+  src="./js/c_highlighter.js?v=7.1.0"
+  defer
+></script>
+
+<script
+  src="./js/aliki.js?v=7.1.0"
+  defer
+></script>
+
+<link
+  href="./css/rdoc.css?v=7.1.0"
+  rel="stylesheet"
+>
+
+
+
+
+<body role="document" class="file has-toc">
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <!-- Chevron (right arrow) - used for expand/collapse -->
+  <symbol
+    id="icon-chevron"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </symbol>
+
+  <!-- File/Document - Pages section -->
+  <symbol
+    id="icon-file"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path
+      d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
+    ></path>
+
+    <polyline points="14 2 14 8 20 8"></polyline>
+  </symbol>
+
+  <!-- Layers/Stack - Classes and Modules section -->
+  <symbol
+    id="icon-layers"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+    <polyline points="2 17 12 22 22 17"></polyline>
+    <polyline points="2 12 12 17 22 12"></polyline>
+  </symbol>
+
+  <!-- Curly braces with C - Class Methods section -->
+  <symbol
+    id="icon-class-methods"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M6 3C3.5 3 2 4.5 2 7v3c0 1.5-1 2-1 2s1 .5 1 2v5c0 2.5 1.5 4 4 4"></path>
+    <path d="M18 3c2.5 0 4 1.5 4 4v3c0 1.5 1 2 1 2s-1 .5-1 2v5c0 2.5-1.5 4-4 4"></path>
+
+    <text
+      x="12"
+      y="17"
+      text-anchor="middle"
+      font-size="13"
+      font-weight="bold"
+      fill="currentColor"
+      stroke="none"
+    >
+      C
+    </text>
+  </symbol>
+
+  <!-- Curly braces with I - Instance Methods section -->
+  <symbol
+    id="icon-instance-methods"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M6 3C3.5 3 2 4.5 2 7v3c0 1.5-1 2-1 2s1 .5 1 2v5c0 2.5 1.5 4 4 4"></path>
+    <path d="M18 3c2.5 0 4 1.5 4 4v3c0 1.5 1 2 1 2s-1 .5-1 2v5c0 2.5-1.5 4-4 4"></path>
+
+    <text
+      x="12"
+      y="17"
+      text-anchor="middle"
+      font-size="13"
+      font-weight="bold"
+      fill="currentColor"
+      stroke="none"
+    >
+      I
+    </text>
+  </symbol>
+
+  <!-- Double chevrons up - Ancestors section -->
+  <symbol
+    id="icon-ancestors"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <polyline points="17 11 12 6 7 11"></polyline>
+    <polyline points="17 18 12 13 7 18"></polyline>
+  </symbol>
+
+  <!-- User with plus - Included Modules section -->
+  <symbol
+    id="icon-includes"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+    <circle cx="8.5" cy="7" r="4"></circle>
+
+    <line
+      x1="20"
+      y1="8"
+      x2="20"
+      y2="14"
+    ></line>
+
+    <line
+      x1="23"
+      y1="11"
+      x2="17"
+      y2="11"
+    ></line>
+  </symbol>
+
+  <!-- User with check - Extended Modules section -->
+  <symbol
+    id="icon-extends"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+    <circle cx="8.5" cy="7" r="4"></circle>
+    <polyline points="17 11 19 13 23 9"></polyline>
+  </symbol>
+
+  <!-- List - Sections section -->
+  <symbol
+    id="icon-list"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <line
+      x1="8"
+      y1="6"
+      x2="21"
+      y2="6"
+    ></line>
+
+    <line
+      x1="8"
+      y1="12"
+      x2="21"
+      y2="12"
+    ></line>
+
+    <line
+      x1="8"
+      y1="18"
+      x2="21"
+      y2="18"
+    ></line>
+
+    <line
+      x1="3"
+      y1="6"
+      x2="3.01"
+      y2="6"
+    ></line>
+
+    <line
+      x1="3"
+      y1="12"
+      x2="3.01"
+      y2="12"
+    ></line>
+
+    <line
+      x1="3"
+      y1="18"
+      x2="3.01"
+      y2="18"
+    ></line>
+  </symbol>
+</svg>
+
+<header class="top-navbar">
+  <a href="./index.html" class="navbar-brand">
+    Mavis Documentation
+  </a>
+
+  <!-- Desktop search bar -->
+  <div class="navbar-search navbar-search-desktop" role="search">
+    <form action="#" method="get" accept-charset="utf-8">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results-desktop"
+             type="text" name="search" placeholder="Search (/) for a class, method..."
+             spellcheck="false" autocomplete="off"
+             title="Type to search, Up and Down to navigate, Enter to load">
+      <ul id="search-results-desktop" aria-label="Search Results"
+          aria-busy="false" aria-expanded="false"
+          aria-atomic="false" class="initially-hidden search-results"></ul>
+    </form>
+  </div>
+
+  <!-- Mobile search icon button -->
+  <button id="search-toggle" class="navbar-search-mobile" aria-label="Open search" type="button">
+    <span aria-hidden="true">🔍</span>
+  </button>
+
+  <!-- Theme toggle button -->
+  <button id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode" type="button">
+    <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
+  </button>
+</header>
+
+<!-- Search Modal (Mobile) -->
+<div id="search-modal" class="search-modal" hidden aria-modal="true" role="dialog" aria-label="Search">
+  <div class="search-modal-backdrop"></div>
+  <div class="search-modal-content">
+    <div class="search-modal-header">
+      <form class="search-modal-form" action="#" method="get" accept-charset="utf-8">
+        <span class="search-modal-icon" aria-hidden="true">🔍</span>
+        <input id="search-field-mobile" role="combobox" aria-label="Search"
+               aria-autocomplete="list" aria-controls="search-results-mobile"
+               type="text" name="search" placeholder="Search documentation"
+               spellcheck="false" autocomplete="off">
+        <button type="button" class="search-modal-close" aria-label="Close search" id="search-modal-close">
+          <span aria-hidden="true">esc</span>
+        </button>
+      </form>
+    </div>
+    <div class="search-modal-body">
+      <ul id="search-results-mobile" aria-label="Search Results"
+          aria-busy="false" aria-expanded="false"
+          aria-atomic="false" class="search-results search-modal-results initially-hidden"></ul>
+      <div class="search-modal-empty">
+        <p>No recent searches</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="navigation-toggle" role="button" tabindex="0" aria-label="Toggle sidebar" aria-expanded="true" aria-controls="navigation">
+  <span aria-hidden="true">&#9776;</span>
+</div>
+
+
+<nav id="navigation" role="navigation" hidden>
+  
+
+
+
+
+
+
+  <div id="fileindex-section" class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg>
+            <use href="#icon-file"></use>
+          </svg>
+        </span>
+
+        <span class="nav-section-title">Pages</span>
+
+        <span class="nav-section-chevron">
+          <svg>
+            <use href="#icon-chevron"></use>
+          </svg>
+        </span>
+      </summary>
+
+      <ul class="nav-list">
+
+
+
+
+
+
+            <li>
+              <a href="./README_md.html">
+                README
+              </a>
+            </li>
+
+
+
+
+
+          <li>
+            <details >
+              <summary>
+                
+                  docs
+                  
+                
+              </summary>
+
+              <ul class="link-list">
+
+                  <li>
+                    <a href="./docs/README_md.html">
+                      README
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./docs/api_md.html">
+                      api
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./docs/backup_md.html">
+                      backup
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./docs/branching_md.html">
+                      branching
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./docs/disaster-recovery_md.html">
+                      disaster-recovery
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./docs/managing-teams_md.html">
+                      managing-teams
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./docs/nhs-api_md.html">
+                      nhs-api
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./docs/ops-tasks_md.html">
+                      ops-tasks
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./docs/patient-import-flow-chart_md.html">
+                      patient-import-flow-chart
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./docs/pds_md.html">
+                      pds
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./docs/rake-tasks_md.html">
+                      rake-tasks
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./docs/releasing_md.html">
+                      releasing
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./docs/reporting_md.html">
+                      reporting
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./docs/secure-offline-storage_md.html">
+                      secure-offline-storage
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./docs/states_md.html">
+                      states
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./docs/terraform_md.html">
+                      terraform
+                    </a>
+                  </li>
+
+              </ul>
+            </details>
+          </li>
+
+      </ul>
+    </details>
+  </div>
+
+
+  <div id="classindex-section" class="nav-section">
+  <details class="nav-section-collapsible" open>
+    <summary class="nav-section-header">
+      <span class="nav-section-icon">
+        <svg><use href="#icon-layers"></use></svg>
+      </span>
+      <span class="nav-section-title">Classes and Modules</span>
+      <span class="nav-section-chevron">
+        <svg><use href="#icon-chevron"></use></svg>
+      </span>
+    </summary>
+
+    <ul class="link-list nav-list"><li><details><summary><code><a href="./API.html">API</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="./API/Reporting.html">Reporting</a></code></summary><ul class="link-list nav-list"><li><code><a href="./API/Reporting/BaseController.html">BaseController</a></code></li><li><code><a href="./API/Reporting/OneTimeTokensController.html">OneTimeTokensController</a></code></li><li><code><a href="./API/Reporting/TotalsController.html">TotalsController</a></code></li></ul></details></li><li><details><summary><code><a href="./API/Testing.html">Testing</a></code></summary><ul class="link-list nav-list"><li><code><a href="./API/Testing/BaseController.html">BaseController</a></code></li><li><code><a href="./API/Testing/LocationsController.html">LocationsController</a></code></li><li><code><a href="./API/Testing/OnboardController.html">OnboardController</a></code></li><li><code><a href="./API/Testing/ReportingRefreshController.html">ReportingRefreshController</a></code></li><li><code><a href="./API/Testing/TeamsController.html">TeamsController</a></code></li></ul></details></li></ul></details></li><li><code><a href="./AcademicYear.html">AcademicYear</a></code></li><li><code><a href="./AcademicYearsHelper.html">AcademicYearsHelper</a></code></li><li><code><a href="./AccessLogEntry.html">AccessLogEntry</a></code></li><li><code><a href="./AccessibilityStatementController.html">AccessibilityStatementController</a></code></li><li><code><a href="./AddressConcern.html">AddressConcern</a></code></li><li><code><a href="./AddressHelper.html">AddressHelper</a></code></li><li><code><a href="./AgeConcern.html">AgeConcern</a></code></li><li><code><a href="./AlreadyHadNotificationSender.html">AlreadyHadNotificationSender</a></code></li><li><code><a href="./ApostropheNormaliser.html">ApostropheNormaliser</a></code></li><li><code><a href="./AppActivityLogComponent.html">AppActivityLogComponent</a></code></li><li><code><a href="./AppAttachedTagsComponent.html">AppAttachedTagsComponent</a></code></li><li><code><a href="./AppBreadcrumbComponent.html">AppBreadcrumbComponent</a></code></li><li><code><a href="./AppCardComponent.html">AppCardComponent</a></code></li><li><code><a href="./AppCardHeadingComponent.html">AppCardHeadingComponent</a></code></li><li><code><a href="./AppChildSummaryComponent.html">AppChildSummaryComponent</a></code></li><li><code><a href="./AppCompareConsentFormAndPatientComponent.html">AppCompareConsentFormAndPatientComponent</a></code></li><li><code><a href="./AppConsentCardComponent.html">AppConsentCardComponent</a></code></li><li><code><a href="./AppConsentConfirmationComponent.html">AppConsentConfirmationComponent</a></code></li><li><code><a href="./AppConsentFormCardComponent.html">AppConsentFormCardComponent</a></code></li><li><code><a href="./AppConsentPatientSummaryComponent.html">AppConsentPatientSummaryComponent</a></code></li><li><code><a href="./AppConsentRefusedTableComponent.html">AppConsentRefusedTableComponent</a></code></li><li><code><a href="./AppConsentSummaryComponent.html">AppConsentSummaryComponent</a></code></li><li><code><a href="./AppCountComponent.html">AppCountComponent</a></code></li><li><code><a href="./AppCreateNoteComponent.html">AppCreateNoteComponent</a></code></li><li><code><a href="./AppDetailsComponent.html">AppDetailsComponent</a></code></li><li><code><a href="./AppDevToolsComponent.html">AppDevToolsComponent</a></code></li><li><code><a href="./AppFlashMessageComponent.html">AppFlashMessageComponent</a></code></li><li><code><a href="./AppGillickAssessmentComponent.html">AppGillickAssessmentComponent</a></code></li><li><code><a href="./AppHeaderNavigationItemComponent.html">AppHeaderNavigationItemComponent</a></code></li><li><code><a href="./AppHealthAnswersCardComponent.html">AppHealthAnswersCardComponent</a></code></li><li><code><a href="./AppHealthAnswersSummaryComponent.html">AppHealthAnswersSummaryComponent</a></code></li><li><code><a href="./AppHostingEnvironmentComponent.html">AppHostingEnvironmentComponent</a></code></li><li><code><a href="./AppImportErrorsComponent.html">AppImportErrorsComponent</a></code></li><li><code><a href="./AppImportFormatDetailsComponent.html">AppImportFormatDetailsComponent</a></code></li><li><code><a href="./AppImportPDSUnmatchedSummaryComponent.html">AppImportPDSUnmatchedSummaryComponent</a></code></li><li><code><a href="./AppImportReviewComponent.html">AppImportReviewComponent</a></code></li><li><code><a href="./AppImportReviewIssuesSummaryComponent.html">AppImportReviewIssuesSummaryComponent</a></code></li><li><code><a href="./AppImportReviewRecordsSummaryComponent.html">AppImportReviewRecordsSummaryComponent</a></code></li><li><code><a href="./AppImportReviewSchoolMovesSummaryComponent.html">AppImportReviewSchoolMovesSummaryComponent</a></code></li><li><code><a href="./AppImportStatusComponent.html">AppImportStatusComponent</a></code></li><li><code><a href="./AppImportSummaryComponent.html">AppImportSummaryComponent</a></code></li><li><code><a href="./AppImportsNavigationComponent.html">AppImportsNavigationComponent</a></code></li><li><code><a href="./AppImportsTableComponent.html">AppImportsTableComponent</a></code></li><li><code><a href="./AppLocationCardComponent.html">AppLocationCardComponent</a></code></li><li><code><a href="./AppLocationSearchFormComponent.html">AppLocationSearchFormComponent</a></code></li><li><code><a href="./AppLogEventComponent.html">AppLogEventComponent</a></code></li><li><code><a href="./AppNoticesTableComponent.html">AppNoticesTableComponent</a></code></li><li><details><summary><code><a href="./AppPaginationComponent.html">AppPaginationComponent</a></code></summary><ul class="link-list nav-list"><li><code><a href="./AppPaginationComponent/NextPage.html">NextPage</a></code></li><li><code><a href="./AppPaginationComponent/PreviousPage.html">PreviousPage</a></code></li></ul></details></li><li><code><a href="./AppParentCardComponent.html">AppParentCardComponent</a></code></li><li><code><a href="./AppParentSummaryComponent.html">AppParentSummaryComponent</a></code></li><li><code><a href="./AppPatientCardComponent.html">AppPatientCardComponent</a></code></li><li><code><a href="./AppPatientPDSDiscrepancyTableComponent.html">AppPatientPDSDiscrepancyTableComponent</a></code></li><li><code><a href="./AppPatientProgrammesTableComponent.html">AppPatientProgrammesTableComponent</a></code></li><li><code><a href="./AppPatientSearchFormComponent.html">AppPatientSearchFormComponent</a></code></li><li><code><a href="./AppPatientSearchResultCardComponent.html">AppPatientSearchResultCardComponent</a></code></li><li><code><a href="./AppPatientSessionConsentComponent.html">AppPatientSessionConsentComponent</a></code></li><li><code><a href="./AppPatientSessionRecordComponent.html">AppPatientSessionRecordComponent</a></code></li><li><code><a href="./AppPatientSessionSearchResultCardComponent.html">AppPatientSessionSearchResultCardComponent</a></code></li><li><code><a href="./AppPatientSessionTableComponent.html">AppPatientSessionTableComponent</a></code></li><li><code><a href="./AppPatientSessionTriageComponent.html">AppPatientSessionTriageComponent</a></code></li><li><code><a href="./AppPatientSessionVaccinationComponent.html">AppPatientSessionVaccinationComponent</a></code></li><li><code><a href="./AppPatientSummaryComponent.html">AppPatientSummaryComponent</a></code></li><li><code><a href="./AppPatientTableComponent.html">AppPatientTableComponent</a></code></li><li><code><a href="./AppPatientVaccinationTableComponent.html">AppPatientVaccinationTableComponent</a></code></li><li><code><a href="./AppProgrammeNavigationComponent.html">AppProgrammeNavigationComponent</a></code></li><li><code><a href="./AppProgrammeSessionTableComponent.html">AppProgrammeSessionTableComponent</a></code></li><li><code><a href="./AppProgrammeStatsComponent.html">AppProgrammeStatsComponent</a></code></li><li><code><a href="./AppProgrammeTagsComponent.html">AppProgrammeTagsComponent</a></code></li><li><code><a href="./AppSearchInputComponent.html">AppSearchInputComponent</a></code></li><li><code><a href="./AppSearchResultsComponent.html">AppSearchResultsComponent</a></code></li><li><details><summary><code><a href="./AppSecondaryNavigationComponent.html">AppSecondaryNavigationComponent</a></code></summary><ul class="link-list nav-list"><li><code><a href="./AppSecondaryNavigationComponent/Item.html">Item</a></code></li></ul></details></li><li><code><a href="./AppSessionActionsComponent.html">AppSessionActionsComponent</a></code></li><li><code><a href="./AppSessionButtonsComponent.html">AppSessionButtonsComponent</a></code></li><li><code><a href="./AppSessionCardComponent.html">AppSessionCardComponent</a></code></li><li><code><a href="./AppSessionDetailsComponent.html">AppSessionDetailsComponent</a></code></li><li><code><a href="./AppSessionNeedsReviewComponent.html">AppSessionNeedsReviewComponent</a></code></li><li><code><a href="./AppSessionOverviewComponent.html">AppSessionOverviewComponent</a></code></li><li><code><a href="./AppSessionSearchFormComponent.html">AppSessionSearchFormComponent</a></code></li><li><code><a href="./AppSessionStatsComponent.html">AppSessionStatsComponent</a></code></li><li><code><a href="./AppSessionSummaryComponent.html">AppSessionSummaryComponent</a></code></li><li><code><a href="./AppSessionVaccinationsComponent.html">AppSessionVaccinationsComponent</a></code></li><li><code><a href="./AppStatusComponent.html">AppStatusComponent</a></code></li><li><code><a href="./AppStatusTagComponent.html">AppStatusTagComponent</a></code></li><li><code><a href="./AppStickyNavigationComponent.html">AppStickyNavigationComponent</a></code></li><li><details><summary><code><a href="./AppSubNavigationComponent.html">AppSubNavigationComponent</a></code></summary><ul class="link-list nav-list"><li><code><a href="./AppSubNavigationComponent/Item.html">Item</a></code></li></ul></details></li><li><code><a href="./AppTeamNavigationComponent.html">AppTeamNavigationComponent</a></code></li><li><code><a href="./AppTimelineComponent.html">AppTimelineComponent</a></code></li><li><code><a href="./AppTimelineFilterComponent.html">AppTimelineFilterComponent</a></code></li><li><code><a href="./AppTimestampedEntryComponent.html">AppTimestampedEntryComponent</a></code></li><li><code><a href="./AppTriageFormComponent.html">AppTriageFormComponent</a></code></li><li><code><a href="./AppTriageTableComponent.html">AppTriageTableComponent</a></code></li><li><code><a href="./AppVaccinateFormComponent.html">AppVaccinateFormComponent</a></code></li><li><code><a href="./AppVaccinationRecordAPISyncStatusComponent.html">AppVaccinationRecordAPISyncStatusComponent</a></code></li><li><code><a href="./AppVaccinationRecordSummaryComponent.html">AppVaccinationRecordSummaryComponent</a></code></li><li><code><a href="./AppVaccinationRecordTableComponent.html">AppVaccinationRecordTableComponent</a></code></li><li><code><a href="./AppVaccinationsSummaryTableComponent.html">AppVaccinationsSummaryTableComponent</a></code></li><li><code><a href="./AppVaccineCriteriaLabelComponent.html">AppVaccineCriteriaLabelComponent</a></code></li><li><code><a href="./AppWarningCalloutComponent.html">AppWarningCalloutComponent</a></code></li><li><details><summary><code><a href="./ApplicationCable.html">ApplicationCable</a></code></summary><ul class="link-list nav-list"><li><code><a href="./ApplicationCable/Channel.html">Channel</a></code></li><li><code><a href="./ApplicationCable/Connection.html">Connection</a></code></li></ul></details></li><li><details><summary><code><a href="./ApplicationController.html">ApplicationController</a></code></summary><ul class="link-list nav-list"><li><code><a href="./ApplicationController/UnprocessableEntity.html">UnprocessableEntity</a></code></li></ul></details></li><li><code><a href="./ApplicationHelper.html">ApplicationHelper</a></code></li><li><code><a href="./ApplicationJob.html">ApplicationJob</a></code></li><li><code><a href="./ApplicationMailer.html">ApplicationMailer</a></code></li><li><details><summary><code><a href="./ApplicationPolicy.html">ApplicationPolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./ApplicationPolicy/Scope.html">Scope</a></code></li></ul></details></li><li><code><a href="./ApplicationRecord.html">ApplicationRecord</a></code></li><li><code><a href="./Archivable.html">Archivable</a></code></li><li><code><a href="./ArchiveReason.html">ArchiveReason</a></code></li><li><code><a href="./AttendanceRecord.html">AttendanceRecord</a></code></li><li><code><a href="./AttendanceRecordPolicy.html">AttendanceRecordPolicy</a></code></li><li><code><a href="./AuthenticationConcern.html">AuthenticationConcern</a></code></li><li><code><a href="./Batch.html">Batch</a></code></li><li><code><a href="./BatchForm.html">BatchForm</a></code></li><li><details><summary><code><a href="./BatchPolicy.html">BatchPolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./BatchPolicy/Scope.html">Scope</a></code></li></ul></details></li><li><code><a href="./BatchesController.html">BatchesController</a></code></li><li><code><a href="./BelongsToLocationAndDate.html">BelongsToLocationAndDate</a></code></li><li><code><a href="./BelongsToProgramme.html">BelongsToProgramme</a></code></li><li><code><a href="./BelongsToTeamLocation.html">BelongsToTeamLocation</a></code></li><li><code><a href="./BulkRemoveParentsForm.html">BulkRemoveParentsForm</a></code></li><li><code><a href="./CIS2Info.html">CIS2Info</a></code></li><li><code><a href="./CIS2LogoutConcern.html">CIS2LogoutConcern</a></code></li><li><code><a href="./CSRFController.html">CSRFController</a></code></li><li><code><a href="./CSVImportable.html">CSVImportable</a></code></li><li><code><a href="./CSVParser.html">CSVParser</a></code></li><li><code><a href="./ClassImport.html">ClassImport</a></code></li><li><details><summary><code><a href="./ClassImportPolicy.html">ClassImportPolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./ClassImportPolicy/Scope.html">Scope</a></code></li></ul></details></li><li><code><a href="./ClassImportRow.html">ClassImportRow</a></code></li><li><code><a href="./ClassImportsController.html">ClassImportsController</a></code></li><li><code><a href="./ClassImportsParent.html">ClassImportsParent</a></code></li><li><code><a href="./ClassImportsParentRelationship.html">ClassImportsParentRelationship</a></code></li><li><code><a href="./ClassImportsPatient.html">ClassImportsPatient</a></code></li><li><code><a href="./ClinicNotification.html">ClinicNotification</a></code></li><li><code><a href="./ClinicPatientLocationsFactory.html">ClinicPatientLocationsFactory</a></code></li><li><code><a href="./CohortImport.html">CohortImport</a></code></li><li><details><summary><code><a href="./CohortImportPolicy.html">CohortImportPolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./CohortImportPolicy/Scope.html">Scope</a></code></li></ul></details></li><li><code><a href="./CohortImportRow.html">CohortImportRow</a></code></li><li><code><a href="./CohortImportsController.html">CohortImportsController</a></code></li><li><code><a href="./CohortImportsParent.html">CohortImportsParent</a></code></li><li><code><a href="./CohortImportsParentRelationship.html">CohortImportsParentRelationship</a></code></li><li><code><a href="./CohortImportsPatient.html">CohortImportsPatient</a></code></li><li><code><a href="./CommitImportJob.html">CommitImportJob</a></code></li><li><code><a href="./CommitPatientChangesetsJob.html">CommitPatientChangesetsJob</a></code></li><li><code><a href="./ComponentPreviewsController.html">ComponentPreviewsController</a></code></li><li><code><a href="./Confirmable.html">Confirmable</a></code></li><li><details><summary><code><a href="./Consent.html">Consent</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Consent/ConsentFormNotRecorded.html">ConsentFormNotRecorded</a></code></li></ul></details></li><li><code><a href="./ConsentForm.html">ConsentForm</a></code></li><li><code><a href="./ConsentFormDownloadsController.html">ConsentFormDownloadsController</a></code></li><li><details><summary><code><a href="./ConsentFormPolicy.html">ConsentFormPolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./ConsentFormPolicy/Scope.html">Scope</a></code></li></ul></details></li><li><code><a href="./ConsentFormProgramme.html">ConsentFormProgramme</a></code></li><li><code><a href="./ConsentFormsController.html">ConsentFormsController</a></code></li><li><code><a href="./ConsentFormsHelper.html">ConsentFormsHelper</a></code></li><li><code><a href="./ConsentGrouper.html">ConsentGrouper</a></code></li><li><code><a href="./ConsentNotification.html">ConsentNotification</a></code></li><li><details><summary><code><a href="./ConsentNotificationPolicy.html">ConsentNotificationPolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./ConsentNotificationPolicy/Scope.html">Scope</a></code></li></ul></details></li><li><details><summary><code><a href="./ConsentPolicy.html">ConsentPolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./ConsentPolicy/Scope.html">Scope</a></code></li></ul></details></li><li><code><a href="./Consentable.html">Consentable</a></code></li><li><code><a href="./ConsentsHelper.html">ConsentsHelper</a></code></li><li><code><a href="./ConsolidatedHealthAnswers.html">ConsolidatedHealthAnswers</a></code></li><li><code><a href="./DashboardController.html">DashboardController</a></code></li><li><code><a href="./Date.html">Date</a></code></li><li><code><a href="./DateParamsValidator.html">DateParamsValidator</a></code></li><li><code><a href="./DaysBeforeToWeeksBefore.html">DaysBeforeToWeeksBefore</a></code></li><li><code><a href="./Delegatable.html">Delegatable</a></code></li><li><details><summary><code><a href="./Dev.html">Dev</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Dev/RandomConsentFormController.html">RandomConsentFormController</a></code></li></ul></details></li><li><code><a href="./DevConcern.html">DevConcern</a></code></li><li><code><a href="./DraftConsent.html">DraftConsent</a></code></li><li><code><a href="./DraftConsentsController.html">DraftConsentsController</a></code></li><li><code><a href="./DraftImport.html">DraftImport</a></code></li><li><code><a href="./DraftImportsController.html">DraftImportsController</a></code></li><li><code><a href="./DraftSession.html">DraftSession</a></code></li><li><details><summary><code><a href="./DraftSessionDate.html">DraftSessionDate</a></code></summary><ul class="link-list nav-list"><li><code><a href="./DraftSessionDate/ArraySerializer.html">ArraySerializer</a></code></li></ul></details></li><li><code><a href="./DraftSessionsController.html">DraftSessionsController</a></code></li><li><code><a href="./DraftVaccinationRecord.html">DraftVaccinationRecord</a></code></li><li><code><a href="./DraftVaccinationRecordsController.html">DraftVaccinationRecordsController</a></code></li><li><details><summary><code><a href="./EditableWrapper.html">EditableWrapper</a></code></summary><ul class="link-list nav-list"><li><code><a href="./EditableWrapper/CannotWriteDifferentRecord.html">CannotWriteDifferentRecord</a></code></li><li><code><a href="./EditableWrapper/CannotWritePersistedRecord.html">CannotWritePersistedRecord</a></code></li></ul></details></li><li><code><a href="./EmailAddressNormaliser.html">EmailAddressNormaliser</a></code></li><li><code><a href="./EmailDeliveryJob.html">EmailDeliveryJob</a></code></li><li><code><a href="./EnqueueClinicSessionInvitationsJob.html">EnqueueClinicSessionInvitationsJob</a></code></li><li><code><a href="./EnqueuePatientsAgedOutOfSchoolsJob.html">EnqueuePatientsAgedOutOfSchoolsJob</a></code></li><li><code><a href="./EnqueueSchoolConsentRemindersJob.html">EnqueueSchoolConsentRemindersJob</a></code></li><li><code><a href="./EnqueueSchoolConsentRequestsJob.html">EnqueueSchoolConsentRequestsJob</a></code></li><li><code><a href="./EnqueueUpdatePatientsFromPDSJob.html">EnqueueUpdatePatientsFromPDSJob</a></code></li><li><code><a href="./EnqueueVaccinationsSearchInNHSJob.html">EnqueueVaccinationsSearchInNHSJob</a></code></li><li><code><a href="./ErrorsController.html">ErrorsController</a></code></li><li><details><summary><code><a href="./FHIRMapper.html">FHIRMapper</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="./FHIRMapper/Location.html">Location</a></code></summary><ul class="link-list nav-list"><li><code><a href="./FHIRMapper/Location/UnknownValueError.html">UnknownValueError</a></code></li></ul></details></li><li><code><a href="./FHIRMapper/Organisation.html">Organisation</a></code></li><li><code><a href="./FHIRMapper/Patient.html">Patient</a></code></li><li><code><a href="./FHIRMapper/Programme.html">Programme</a></code></li><li><code><a href="./FHIRMapper/User.html">User</a></code></li><li><code><a href="./FHIRMapper/VaccinationRecord.html">VaccinationRecord</a></code></li><li><code><a href="./FHIRMapper/Vaccine.html">Vaccine</a></code></li></ul></details></li><li><details><summary><code><a href="./Faker.html">Faker</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Faker/Address.html">Address</a></code></li></ul></details></li><li><code><a href="./FeatureFlagFactory.html">FeatureFlagFactory</a></code></li><li><code><a href="./FlipperActor.html">FlipperActor</a></code></li><li><code><a href="./FullNameConcern.html">FullNameConcern</a></code></li><li><code><a href="./FullNameFormatter.html">FullNameFormatter</a></code></li><li><code><a href="./GelatineVaccinesConcern.html">GelatineVaccinesConcern</a></code></li><li><details><summary><code><a href="./Generate.html">Generate</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Generate/CohortImports.html">CohortImports</a></code></li><li><code><a href="./Generate/Consents.html">Consents</a></code></li><li><code><a href="./Generate/Triages.html">Triages</a></code></li><li><details><summary><code><a href="./Generate/VaccinationRecords.html">VaccinationRecords</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Generate/VaccinationRecords/NoSessionsWithDates.html">NoSessionsWithDates</a></code></li><li><code><a href="./Generate/VaccinationRecords/NoSessionsWithPatients.html">NoSessionsWithPatients</a></code></li><li><code><a href="./Generate/VaccinationRecords/NotEnoughAvailablePatients.html">NotEnoughAvailablePatients</a></code></li><li><code><a href="./Generate/VaccinationRecords/SessionHasNoDates.html">SessionHasNoDates</a></code></li></ul></details></li></ul></details></li><li><code><a href="./GenericClinicFactory.html">GenericClinicFactory</a></code></li><li><code><a href="./GenericClinicSessionFinder.html">GenericClinicSessionFinder</a></code></li><li><code><a href="./GillickAssessment.html">GillickAssessment</a></code></li><li><code><a href="./GillickAssessmentPolicy.html">GillickAssessmentPolicy</a></code></li><li><code><a href="./GovukNotifyPersonalisation.html">GovukNotifyPersonalisation</a></code></li><li><code><a href="./GraphRecords.html">GraphRecords</a></code></li><li><code><a href="./HasDoseVolume.html">HasDoseVolume</a></code></li><li><code><a href="./HasHealthAnswers.html">HasHealthAnswers</a></code></li><li><code><a href="./HasManyProgrammes.html">HasManyProgrammes</a></code></li><li><code><a href="./HasManyTeamLocations.html">HasManyTeamLocations</a></code></li><li><code><a href="./HasSideEffects.html">HasSideEffects</a></code></li><li><code><a href="./HasVaccineMethods.html">HasVaccineMethods</a></code></li><li><details><summary><code><a href="./HealthAnswer.html">HealthAnswer</a></code></summary><ul class="link-list nav-list"><li><code><a href="./HealthAnswer/ArraySerializer.html">ArraySerializer</a></code></li></ul></details></li><li><code><a href="./HealthAnswersDeduplicator.html">HealthAnswersDeduplicator</a></code></li><li><code><a href="./HealthQuestion.html">HealthQuestion</a></code></li><li><code><a href="./HostingEnvironment.html">HostingEnvironment</a></code></li><li><code><a href="./HumanEnumNameConcern.html">HumanEnumNameConcern</a></code></li><li><code><a href="./IdentityCheck.html">IdentityCheck</a></code></li><li><code><a href="./IdentityChecksHelper.html">IdentityChecksHelper</a></code></li><li><code><a href="./ImmunisationImport.html">ImmunisationImport</a></code></li><li><details><summary><code><a href="./ImmunisationImportPolicy.html">ImmunisationImportPolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./ImmunisationImportPolicy/Scope.html">Scope</a></code></li></ul></details></li><li><code><a href="./ImmunisationImportRow.html">ImmunisationImportRow</a></code></li><li><code><a href="./ImmunisationImportsController.html">ImmunisationImportsController</a></code></li><li><code><a href="./ImmunisationsAPIJob.html">ImmunisationsAPIJob</a></code></li><li><details><summary><code><a href="./Import.html">Import</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Import/BulkRemoveParentPolicy.html">BulkRemoveParentPolicy</a></code></li><li><code><a href="./Import/IssuePolicy.html">IssuePolicy</a></code></li></ul></details></li><li><code><a href="./ImportDuplicateForm.html">ImportDuplicateForm</a></code></li><li><code><a href="./ImportPolicy.html">ImportPolicy</a></code></li><li><code><a href="./Importable.html">Importable</a></code></li><li><code><a href="./ImportantNotice.html">ImportantNotice</a></code></li><li><code><a href="./ImportantNoticeGeneratorJob.html">ImportantNoticeGeneratorJob</a></code></li><li><details><summary><code><a href="./ImportantNoticePolicy.html">ImportantNoticePolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./ImportantNoticePolicy/Scope.html">Scope</a></code></li></ul></details></li><li><details><summary><code><a href="./Imports.html">Imports</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Imports/BulkRemoveParentsController.html">BulkRemoveParentsController</a></code></li><li><code><a href="./Imports/IssuesController.html">IssuesController</a></code></li><li><code><a href="./Imports/NoticesController.html">NoticesController</a></code></li></ul></details></li><li><code><a href="./ImportsController.html">ImportsController</a></code></li><li><code><a href="./ImportsHelper.html">ImportsHelper</a></code></li><li><details><summary><code><a href="./Inspect.html">Inspect</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Inspect/DashboardController.html">DashboardController</a></code></li><li><code><a href="./Inspect/GraphsController.html">GraphsController</a></code></li><li><details><summary><code><a href="./Inspect/Timeline.html">Timeline</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Inspect/Timeline/PatientsController.html">PatientsController</a></code></li></ul></details></li></ul></details></li><li><code><a href="./InspectAuthenticationConcern.html">InspectAuthenticationConcern</a></code></li><li><code><a href="./Integer.html">Integer</a></code></li><li><code><a href="./Invalidatable.html">Invalidatable</a></code></li><li><code><a href="./InvalidateSelfConsentsJob.html">InvalidateSelfConsentsJob</a></code></li><li><code><a href="./JWKSController.html">JWKSController</a></code></li><li><details><summary><code><a href="./LocalAuthority.html">LocalAuthority</a></code></summary><ul class="link-list nav-list"><li><code><a href="./LocalAuthority/Postcode.html">Postcode</a></code></li></ul></details></li><li><details><summary><code><a href="./Location.html">Location</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Location/ProgrammeYearGroup.html">ProgrammeYearGroup</a></code></li><li><code><a href="./Location/YearGroup.html">YearGroup</a></code></li></ul></details></li><li><details><summary><code><a href="./LocationPolicy.html">LocationPolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./LocationPolicy/Scope.html">Scope</a></code></li></ul></details></li><li><code><a href="./LocationSearchForm.html">LocationSearchForm</a></code></li><li><code><a href="./LocationSearchFormConcern.html">LocationSearchFormConcern</a></code></li><li><code><a href="./LocationsHelper.html">LocationsHelper</a></code></li><li><code><a href="./ManifestController.html">ManifestController</a></code></li><li><details><summary><code><a href="./MavisCLI.html">MavisCLI</a></code></summary><ul class="link-list nav-list"><li><code><a href="./MavisCLI/AccessLog.html">AccessLog</a></code></li><li><details><summary><code><a href="./MavisCLI/Clinics.html">Clinics</a></code></summary><ul class="link-list nav-list"><li><code><a href="./MavisCLI/Clinics/AddToTeam.html">AddToTeam</a></code></li><li><code><a href="./MavisCLI/Clinics/Create.html">Create</a></code></li></ul></details></li><li><details><summary><code><a href="./MavisCLI/GIAS.html">GIAS</a></code></summary><ul class="link-list nav-list"><li><code><a href="./MavisCLI/GIAS/CheckImport.html">CheckImport</a></code></li><li><code><a href="./MavisCLI/GIAS/Download.html">Download</a></code></li><li><code><a href="./MavisCLI/GIAS/Import.html">Import</a></code></li></ul></details></li><li><details><summary><code><a href="./MavisCLI/GPPractices.html">GPPractices</a></code></summary><ul class="link-list nav-list"><li><code><a href="./MavisCLI/GPPractices/Download.html">Download</a></code></li><li><code><a href="./MavisCLI/GPPractices/Import.html">Import</a></code></li></ul></details></li><li><details><summary><code><a href="./MavisCLI/Generate.html">Generate</a></code></summary><ul class="link-list nav-list"><li><code><a href="./MavisCLI/Generate/CohortImports.html">CohortImports</a></code></li><li><code><a href="./MavisCLI/Generate/ConsentForms.html">ConsentForms</a></code></li><li><code><a href="./MavisCLI/Generate/Consents.html">Consents</a></code></li><li><code><a href="./MavisCLI/Generate/VaccinationRecords.html">VaccinationRecords</a></code></li></ul></details></li><li><details><summary><code><a href="./MavisCLI/LocalAuthorities.html">LocalAuthorities</a></code></summary><ul class="link-list nav-list"><li><code><a href="./MavisCLI/LocalAuthorities/Download.html">Download</a></code></li><li><code><a href="./MavisCLI/LocalAuthorities/DownloadGIASCodes.html">DownloadGIASCodes</a></code></li><li><code><a href="./MavisCLI/LocalAuthorities/DownloadPostcodeMappings.html">DownloadPostcodeMappings</a></code></li><li><code><a href="./MavisCLI/LocalAuthorities/Import.html">Import</a></code></li><li><code><a href="./MavisCLI/LocalAuthorities/ImportGIASCodes.html">ImportGIASCodes</a></code></li><li><code><a href="./MavisCLI/LocalAuthorities/ImportPostcodeMappings.html">ImportPostcodeMappings</a></code></li></ul></details></li><li><details><summary><code><a href="./MavisCLI/NHSAPI.html">NHSAPI</a></code></summary><ul class="link-list nav-list"><li><code><a href="./MavisCLI/NHSAPI/AccessToken.html">AccessToken</a></code></li></ul></details></li><li><details><summary><code><a href="./MavisCLI/PDS.html">PDS</a></code></summary><ul class="link-list nav-list"><li><code><a href="./MavisCLI/PDS/Get.html">Get</a></code></li><li><code><a href="./MavisCLI/PDS/Search.html">Search</a></code></li></ul></details></li><li><details><summary><code><a href="./MavisCLI/Schools.html">Schools</a></code></summary><ul class="link-list nav-list"><li><code><a href="./MavisCLI/Schools/AddProgrammeYearGroup.html">AddProgrammeYearGroup</a></code></li><li><code><a href="./MavisCLI/Schools/AddToTeam.html">AddToTeam</a></code></li><li><code><a href="./MavisCLI/Schools/Create.html">Create</a></code></li><li><code><a href="./MavisCLI/Schools/CreateSite.html">CreateSite</a></code></li><li><code><a href="./MavisCLI/Schools/MovePatients.html">MovePatients</a></code></li><li><code><a href="./MavisCLI/Schools/RemoveFromTeam.html">RemoveFromTeam</a></code></li><li><code><a href="./MavisCLI/Schools/RemoveProgrammeYearGroup.html">RemoveProgrammeYearGroup</a></code></li><li><code><a href="./MavisCLI/Schools/Show.html">Show</a></code></li></ul></details></li><li><details><summary><code><a href="./MavisCLI/Sessions.html">Sessions</a></code></summary><ul class="link-list nav-list"><li><code><a href="./MavisCLI/Sessions/Configure.html">Configure</a></code></li></ul></details></li><li><details><summary><code><a href="./MavisCLI/Stats.html">Stats</a></code></summary><ul class="link-list nav-list"><li><code><a href="./MavisCLI/Stats/ConsentsBySchool.html">ConsentsBySchool</a></code></li><li><code><a href="./MavisCLI/Stats/Organisations.html">Organisations</a></code></li><li><code><a href="./MavisCLI/Stats/Sessions.html">Sessions</a></code></li><li><code><a href="./MavisCLI/Stats/Vaccinations.html">Vaccinations</a></code></li></ul></details></li><li><details><summary><code><a href="./MavisCLI/Subteams.html">Subteams</a></code></summary><ul class="link-list nav-list"><li><code><a href="./MavisCLI/Subteams/Create.html">Create</a></code></li><li><code><a href="./MavisCLI/Subteams/List.html">List</a></code></li></ul></details></li><li><details><summary><code><a href="./MavisCLI/Teams.html">Teams</a></code></summary><ul class="link-list nav-list"><li><code><a href="./MavisCLI/Teams/AddProgramme.html">AddProgramme</a></code></li><li><code><a href="./MavisCLI/Teams/List.html">List</a></code></li><li><code><a href="./MavisCLI/Teams/Onboard.html">Onboard</a></code></li></ul></details></li><li><details><summary><code><a href="./MavisCLI/Users.html">Users</a></code></summary><ul class="link-list nav-list"><li><code><a href="./MavisCLI/Users/Create.html">Create</a></code></li></ul></details></li><li><details><summary><code><a href="./MavisCLI/VaccinationRecords.html">VaccinationRecords</a></code></summary><ul class="link-list nav-list"><li><code><a href="./MavisCLI/VaccinationRecords/BulkEdit.html">BulkEdit</a></code></li><li><code><a href="./MavisCLI/VaccinationRecords/CreateFromFHIR.html">CreateFromFHIR</a></code></li><li><code><a href="./MavisCLI/VaccinationRecords/Edit.html">Edit</a></code></li><li><code><a href="./MavisCLI/VaccinationRecords/GenerateFHIR.html">GenerateFHIR</a></code></li><li><code><a href="./MavisCLI/VaccinationRecords/ReadImmsAPI.html">ReadImmsAPI</a></code></li><li><code><a href="./MavisCLI/VaccinationRecords/SearchImmsAPI.html">SearchImmsAPI</a></code></li><li><code><a href="./MavisCLI/VaccinationRecords/Sync.html">Sync</a></code></li></ul></details></li></ul></details></li><li><code><a href="./MavisCLIHelpers.html">MavisCLIHelpers</a></code></li><li><details><summary><code><a href="./NHS.html">NHS</a></code></summary><ul class="link-list nav-list"><li><code><a href="./NHS/API.html">API</a></code></li><li><code><a href="./NHS/CIS2.html">CIS2</a></code></li><li><details><summary><code><a href="./NHS/ImmunisationsAPI.html">ImmunisationsAPI</a></code></summary><ul class="link-list nav-list"><li><code><a href="./NHS/ImmunisationsAPI/BundleLinkParamsMismatch.html">BundleLinkParamsMismatch</a></code></li><li><code><a href="./NHS/ImmunisationsAPI/OperationOutcomeInBundle.html">OperationOutcomeInBundle</a></code></li></ul></details></li><li><details><summary><code><a href="./NHS/PDS.html">PDS</a></code></summary><ul class="link-list nav-list"><li><code><a href="./NHS/PDS/InvalidNHSNumber.html">InvalidNHSNumber</a></code></li><li><code><a href="./NHS/PDS/InvalidSearchData.html">InvalidSearchData</a></code></li><li><code><a href="./NHS/PDS/InvalidatedResource.html">InvalidatedResource</a></code></li><li><code><a href="./NHS/PDS/PatientNotFound.html">PatientNotFound</a></code></li><li><code><a href="./NHS/PDS/TooManyMatches.html">TooManyMatches</a></code></li></ul></details></li></ul></details></li><li><code><a href="./NHSNumberValidator.html">NHSNumberValidator</a></code></li><li><code><a href="./NavigationConcern.html">NavigationConcern</a></code></li><li><code><a href="./NextDoseTriageFactory.html">NextDoseTriageFactory</a></code></li><li><code><a href="./Notable.html">Notable</a></code></li><li><code><a href="./Note.html">Note</a></code></li><li><code><a href="./NotificationParentSelector.html">NotificationParentSelector</a></code></li><li><code><a href="./NotificationsController.html">NotificationsController</a></code></li><li><details><summary><code><a href="./Notifier.html">Notifier</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Notifier/Consent.html">Consent</a></code></li><li><code><a href="./Notifier/ConsentForm.html">ConsentForm</a></code></li><li><code><a href="./Notifier/VaccinationRecord.html">VaccinationRecord</a></code></li></ul></details></li><li><details><summary><code><a href="./NotifyDeliveryJob.html">NotifyDeliveryJob</a></code></summary><ul class="link-list nav-list"><li><code><a href="./NotifyDeliveryJob/UnknownTemplate.html">UnknownTemplate</a></code></li></ul></details></li><li><details><summary><code><a href="./NotifyLogEntry.html">NotifyLogEntry</a></code></summary><ul class="link-list nav-list"><li><code><a href="./NotifyLogEntry/Programme.html">Programme</a></code></li></ul></details></li><li><code><a href="./NotifySafeEmailValidator.html">NotifySafeEmailValidator</a></code></li><li><code><a href="./NotifyThrottlingConcern.html">NotifyThrottlingConcern</a></code></li><li><code><a href="./ODSCodeConcern.html">ODSCodeConcern</a></code></li><li><code><a href="./OmniAuthStrategiesOpenIDConnectPatch.html">OmniAuthStrategiesOpenIDConnectPatch</a></code></li><li><details><summary><code><a href="./Onboarding.html">Onboarding</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Onboarding/ExistingProgramme.html">ExistingProgramme</a></code></li><li><code><a href="./Onboarding/ExistingSchool.html">ExistingSchool</a></code></li><li><code><a href="./Onboarding/NewSchoolSite.html">NewSchoolSite</a></code></li></ul></details></li><li><code><a href="./Organisation.html">Organisation</a></code></li><li><details><summary><code><a href="./PDS.html">PDS</a></code></summary><ul class="link-list nav-list"><li><code><a href="./PDS/Patient.html">Patient</a></code></li></ul></details></li><li><code><a href="./PDSAPIThrottlingConcern.html">PDSAPIThrottlingConcern</a></code></li><li><code><a href="./PDSCascadingSearchJob.html">PDSCascadingSearchJob</a></code></li><li><code><a href="./PDSSearchResult.html">PDSSearchResult</a></code></li><li><code><a href="./Parent.html">Parent</a></code></li><li><details><summary><code><a href="./ParentInterface.html">ParentInterface</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="./ParentInterface/ConsentForms.html">ConsentForms</a></code></summary><ul class="link-list nav-list"><li><code><a href="./ParentInterface/ConsentForms/BaseController.html">BaseController</a></code></li><li><code><a href="./ParentInterface/ConsentForms/EditController.html">EditController</a></code></li></ul></details></li><li><code><a href="./ParentInterface/ConsentFormsController.html">ConsentFormsController</a></code></li></ul></details></li><li><code><a href="./ParentRelationship.html">ParentRelationship</a></code></li><li><code><a href="./ParentRelationshipPolicy.html">ParentRelationshipPolicy</a></code></li><li><code><a href="./ParentRelationshipsController.html">ParentRelationshipsController</a></code></li><li><code><a href="./ParentsHelper.html">ParentsHelper</a></code></li><li><details><summary><code><a href="./Patient.html">Patient</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Patient/ArchivePolicy.html">ArchivePolicy</a></code></li><li><code><a href="./Patient/ConsentStatus.html">ConsentStatus</a></code></li><li><code><a href="./Patient/NHSNumberMismatch.html">NHSNumberMismatch</a></code></li><li><code><a href="./Patient/ProgrammeStatus.html">ProgrammeStatus</a></code></li><li><code><a href="./Patient/RegistrationStatus.html">RegistrationStatus</a></code></li><li><code><a href="./Patient/TriageStatus.html">TriageStatus</a></code></li><li><code><a href="./Patient/UnknownGPPractice.html">UnknownGPPractice</a></code></li></ul></details></li><li><code><a href="./PatientArchiveForm.html">PatientArchiveForm</a></code></li><li><code><a href="./PatientArchiver.html">PatientArchiver</a></code></li><li><code><a href="./PatientChangeset.html">PatientChangeset</a></code></li><li><code><a href="./PatientImport.html">PatientImport</a></code></li><li><code><a href="./PatientImportConcern.html">PatientImportConcern</a></code></li><li><code><a href="./PatientImportRow.html">PatientImportRow</a></code></li><li><code><a href="./PatientLocation.html">PatientLocation</a></code></li><li><code><a href="./PatientMergeForm.html">PatientMergeForm</a></code></li><li><code><a href="./PatientMergeFormConcern.html">PatientMergeFormConcern</a></code></li><li><code><a href="./PatientMerger.html">PatientMerger</a></code></li><li><code><a href="./PatientNHSNumberLookupJob.html">PatientNHSNumberLookupJob</a></code></li><li><details><summary><code><a href="./PatientPolicy.html">PatientPolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./PatientPolicy/Scope.html">Scope</a></code></li></ul></details></li><li><code><a href="./PatientProgrammeStatusResolver.html">PatientProgrammeStatusResolver</a></code></li><li><code><a href="./PatientSearchForm.html">PatientSearchForm</a></code></li><li><code><a href="./PatientSearchFormConcern.html">PatientSearchFormConcern</a></code></li><li><details><summary><code><a href="./PatientSessions.html">PatientSessions</a></code></summary><ul class="link-list nav-list"><li><code><a href="./PatientSessions/ActivitiesController.html">ActivitiesController</a></code></li><li><code><a href="./PatientSessions/AttendancesController.html">AttendancesController</a></code></li><li><code><a href="./PatientSessions/BaseController.html">BaseController</a></code></li><li><code><a href="./PatientSessions/ConsentsController.html">ConsentsController</a></code></li><li><code><a href="./PatientSessions/GillickAssessmentsController.html">GillickAssessmentsController</a></code></li><li><code><a href="./PatientSessions/ProgrammesController.html">ProgrammesController</a></code></li><li><code><a href="./PatientSessions/TriagesController.html">TriagesController</a></code></li><li><code><a href="./PatientSessions/VaccinationsController.html">VaccinationsController</a></code></li></ul></details></li><li><code><a href="./PatientSpecificDirection.html">PatientSpecificDirection</a></code></li><li><code><a href="./PatientSpecificDirectionPolicy.html">PatientSpecificDirectionPolicy</a></code></li><li><code><a href="./PatientTeam.html">PatientTeam</a></code></li><li><code><a href="./PatientTeamUpdater.html">PatientTeamUpdater</a></code></li><li><code><a href="./PatientTeamUpdaterJob.html">PatientTeamUpdaterJob</a></code></li><li><details><summary><code><a href="./PatientUpdateFromPDSJob.html">PatientUpdateFromPDSJob</a></code></summary><ul class="link-list nav-list"><li><code><a href="./PatientUpdateFromPDSJob/MissingNHSNumber.html">MissingNHSNumber</a></code></li></ul></details></li><li><details><summary><code><a href="./Patients.html">Patients</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Patients/ArchiveController.html">ArchiveController</a></code></li><li><code><a href="./Patients/BaseController.html">BaseController</a></code></li><li><code><a href="./Patients/EditController.html">EditController</a></code></li></ul></details></li><li><code><a href="./PatientsAgedOutOfSchoolJob.html">PatientsAgedOutOfSchoolJob</a></code></li><li><code><a href="./PatientsClearRegistrationJob.html">PatientsClearRegistrationJob</a></code></li><li><code><a href="./PatientsController.html">PatientsController</a></code></li><li><code><a href="./PatientsHelper.html">PatientsHelper</a></code></li><li><code><a href="./PatientsRefusedConsentAlreadyVaccinatedJob.html">PatientsRefusedConsentAlreadyVaccinatedJob</a></code></li><li><code><a href="./PendingChangesConcern.html">PendingChangesConcern</a></code></li><li><code><a href="./PerformableByUser.html">PerformableByUser</a></code></li><li><code><a href="./PhoneHelper.html">PhoneHelper</a></code></li><li><code><a href="./PhoneNumberNormaliser.html">PhoneNumberNormaliser</a></code></li><li><code><a href="./PostcodeValidator.html">PostcodeValidator</a></code></li><li><code><a href="./PreScreening.html">PreScreening</a></code></li><li><code><a href="./ProcessConsentFormJob.html">ProcessConsentFormJob</a></code></li><li><code><a href="./ProcessImportJob.html">ProcessImportJob</a></code></li><li><code><a href="./ProcessPatientChangesetJob.html">ProcessPatientChangesetJob</a></code></li><li><code><a href="./Programmable.html">Programmable</a></code></li><li><details><summary><code><a href="./Programme.html">Programme</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Programme/InvalidType.html">InvalidType</a></code></li><li><code><a href="./Programme/Variant.html">Variant</a></code></li></ul></details></li><li><code><a href="./ProgrammeGrouper.html">ProgrammeGrouper</a></code></li><li><code><a href="./ProgrammePolicy.html">ProgrammePolicy</a></code></li><li><details><summary><code><a href="./Programmes.html">Programmes</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Programmes/BaseController.html">BaseController</a></code></li><li><code><a href="./Programmes/OverviewController.html">OverviewController</a></code></li><li><code><a href="./Programmes/PatientsController.html">PatientsController</a></code></li><li><code><a href="./Programmes/ReportsController.html">ReportsController</a></code></li><li><code><a href="./Programmes/SessionsController.html">SessionsController</a></code></li></ul></details></li><li><code><a href="./ProgrammesController.html">ProgrammesController</a></code></li><li><code><a href="./RackOAuth2ClientPatch.html">RackOAuth2ClientPatch</a></code></li><li><code><a href="./Refusable.html">Refusable</a></code></li><li><code><a href="./RemoveImportCSVJob.html">RemoveImportCSVJob</a></code></li><li><details><summary><code><a href="./ReportingAPI.html">ReportingAPI</a></code></summary><ul class="link-list nav-list"><li><code><a href="./ReportingAPI/EventFilter.html">EventFilter</a></code></li><li><code><a href="./ReportingAPI/OneTimeToken.html">OneTimeToken</a></code></li><li><code><a href="./ReportingAPI/PatientProgrammeStatus.html">PatientProgrammeStatus</a></code></li><li><code><a href="./ReportingAPI/RefreshJob.html">RefreshJob</a></code></li><li><code><a href="./ReportingAPI/TokenAuthenticationConcern.html">TokenAuthenticationConcern</a></code></li><li><code><a href="./ReportingAPI/Total.html">Total</a></code></li></ul></details></li><li><details><summary><code><a href="./Reports.html">Reports</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Reports/CareplusExporter.html">CareplusExporter</a></code></li><li><code><a href="./Reports/ExportFormatters.html">ExportFormatters</a></code></li><li><details><summary><code><a href="./Reports/OfflineSessionExporter.html">OfflineSessionExporter</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Reports/OfflineSessionExporter/CachedStyles.html">CachedStyles</a></code></li><li><code><a href="./Reports/OfflineSessionExporter/Cell.html">Cell</a></code></li><li><code><a href="./Reports/OfflineSessionExporter/Row.html">Row</a></code></li></ul></details></li><li><code><a href="./Reports/ProgrammeVaccinationsExporter.html">ProgrammeVaccinationsExporter</a></code></li><li><code><a href="./Reports/SchoolMovesExporter.html">SchoolMovesExporter</a></code></li><li><code><a href="./Reports/SystmOneExporter.html">SystmOneExporter</a></code></li></ul></details></li><li><code><a href="./ReportsController.html">ReportsController</a></code></li><li><details><summary><code><a href="./RequestSessionPersistable.html">RequestSessionPersistable</a></code></summary><ul class="link-list nav-list"><li><code><a href="./RequestSessionPersistable/RecordInvalid.html">RecordInvalid</a></code></li></ul></details></li><li><code><a href="./ReviewClassImportSchoolMoveJob.html">ReviewClassImportSchoolMoveJob</a></code></li><li><code><a href="./ReviewPatientChangesetJob.html">ReviewPatientChangesetJob</a></code></li><li><code><a href="./SMSDeliveryJob.html">SMSDeliveryJob</a></code></li><li><code><a href="./SchoolMove.html">SchoolMove</a></code></li><li><code><a href="./SchoolMoveExport.html">SchoolMoveExport</a></code></li><li><details><summary><code><a href="./SchoolMoveExportPolicy.html">SchoolMoveExportPolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./SchoolMoveExportPolicy/Scope.html">Scope</a></code></li></ul></details></li><li><code><a href="./SchoolMoveForm.html">SchoolMoveForm</a></code></li><li><code><a href="./SchoolMoveLogEntry.html">SchoolMoveLogEntry</a></code></li><li><details><summary><code><a href="./SchoolMovePolicy.html">SchoolMovePolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./SchoolMovePolicy/Scope.html">Scope</a></code></li></ul></details></li><li><details><summary><code><a href="./SchoolMoves.html">SchoolMoves</a></code></summary><ul class="link-list nav-list"><li><code><a href="./SchoolMoves/ExportsController.html">ExportsController</a></code></li></ul></details></li><li><code><a href="./SchoolMovesController.html">SchoolMovesController</a></code></li><li><code><a href="./SchoolMovesHelper.html">SchoolMovesHelper</a></code></li><li><code><a href="./SchoolPolicy.html">SchoolPolicy</a></code></li><li><code><a href="./Schoolable.html">Schoolable</a></code></li><li><code><a href="./SchoolsController.html">SchoolsController</a></code></li><li><code><a href="./SearchForm.html">SearchForm</a></code></li><li><code><a href="./SearchVaccinationRecordsInNHSJob.html">SearchVaccinationRecordsInNHSJob</a></code></li><li><code><a href="./SelectTeamForm.html">SelectTeamForm</a></code></li><li><code><a href="./SendAutomaticSchoolConsentRemindersJob.html">SendAutomaticSchoolConsentRemindersJob</a></code></li><li><details><summary><code><a href="./SendClinicInitialInvitationsJob.html">SendClinicInitialInvitationsJob</a></code></summary><ul class="link-list nav-list"><li><code><a href="./SendClinicInitialInvitationsJob/InvalidLocation.html">InvalidLocation</a></code></li><li><code><a href="./SendClinicInitialInvitationsJob/NoSessionDates.html">NoSessionDates</a></code></li></ul></details></li><li><details><summary><code><a href="./SendClinicSubsequentInvitationsJob.html">SendClinicSubsequentInvitationsJob</a></code></summary><ul class="link-list nav-list"><li><code><a href="./SendClinicSubsequentInvitationsJob/InvalidLocation.html">InvalidLocation</a></code></li><li><code><a href="./SendClinicSubsequentInvitationsJob/NoSessionDates.html">NoSessionDates</a></code></li></ul></details></li><li><code><a href="./SendManualSchoolConsentRemindersJob.html">SendManualSchoolConsentRemindersJob</a></code></li><li><code><a href="./SendSchoolConsentNotificationConcern.html">SendSchoolConsentNotificationConcern</a></code></li><li><code><a href="./SendSchoolConsentRequestsJob.html">SendSchoolConsentRequestsJob</a></code></li><li><code><a href="./SendSchoolSessionRemindersJob.html">SendSchoolSessionRemindersJob</a></code></li><li><code><a href="./SendVaccinationConfirmationsJob.html">SendVaccinationConfirmationsJob</a></code></li><li><code><a href="./Sendable.html">Sendable</a></code></li><li><details><summary><code><a href="./Session.html">Session</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Session/ProgrammeYearGroup.html">ProgrammeYearGroup</a></code></li></ul></details></li><li><code><a href="./SessionNotification.html">SessionNotification</a></code></li><li><details><summary><code><a href="./SessionPolicy.html">SessionPolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./SessionPolicy/Scope.html">Scope</a></code></li></ul></details></li><li><code><a href="./SessionSearchForm.html">SessionSearchForm</a></code></li><li><code><a href="./SessionSearchFormConcern.html">SessionSearchFormConcern</a></code></li><li><details><summary><code><a href="./Sessions.html">Sessions</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Sessions/BaseController.html">BaseController</a></code></li><li><code><a href="./Sessions/InviteToClinicController.html">InviteToClinicController</a></code></li><li><code><a href="./Sessions/ManageConsentRemindersController.html">ManageConsentRemindersController</a></code></li><li><code><a href="./Sessions/PatientSpecificDirectionsController.html">PatientSpecificDirectionsController</a></code></li><li><code><a href="./Sessions/PatientsController.html">PatientsController</a></code></li><li><code><a href="./Sessions/RecordController.html">RecordController</a></code></li></ul></details></li><li><code><a href="./SessionsController.html">SessionsController</a></code></li><li><code><a href="./SessionsHelper.html">SessionsHelper</a></code></li><li><code><a href="./SingleConcurrencyConcern.html">SingleConcurrencyConcern</a></code></li><li><code><a href="./StartController.html">StartController</a></code></li><li><details><summary><code><a href="./Stats.html">Stats</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Stats/ConsentsBySchool.html">ConsentsBySchool</a></code></li><li><code><a href="./Stats/Organisations.html">Organisations</a></code></li><li><code><a href="./Stats/Session.html">Session</a></code></li><li><code><a href="./Stats/Vaccinations.html">Vaccinations</a></code></li></ul></details></li><li><details><summary><code><a href="./StatusGenerator.html">StatusGenerator</a></code></summary><ul class="link-list nav-list"><li><code><a href="./StatusGenerator/Consent.html">Consent</a></code></li><li><code><a href="./StatusGenerator/Programme.html">Programme</a></code></li><li><code><a href="./StatusGenerator/Registration.html">Registration</a></code></li><li><code><a href="./StatusGenerator/Triage.html">Triage</a></code></li><li><code><a href="./StatusGenerator/Vaccination.html">Vaccination</a></code></li></ul></details></li><li><code><a href="./StatusUpdater.html">StatusUpdater</a></code></li><li><code><a href="./StatusUpdaterJob.html">StatusUpdaterJob</a></code></li><li><code><a href="./String.html">String</a></code></li><li><code><a href="./Subteam.html">Subteam</a></code></li><li><code><a href="./SyncVaccinationRecordToNHSJob.html">SyncVaccinationRecordToNHSJob</a></code></li><li><code><a href="./Team.html">Team</a></code></li><li><code><a href="./TeamCachedCounts.html">TeamCachedCounts</a></code></li><li><code><a href="./TeamLocation.html">TeamLocation</a></code></li><li><details><summary><code><a href="./TeamPolicy.html">TeamPolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./TeamPolicy/Scope.html">Scope</a></code></li></ul></details></li><li><code><a href="./TeamsController.html">TeamsController</a></code></li><li><code><a href="./TimelineRecords.html">TimelineRecords</a></code></li><li><code><a href="./TodaysBatchConcern.html">TodaysBatchConcern</a></code></li><li><code><a href="./TrainingOnboardingConfiguration.html">TrainingOnboardingConfiguration</a></code></li><li><code><a href="./Triage.html">Triage</a></code></li><li><code><a href="./TriageFinder.html">TriageFinder</a></code></li><li><code><a href="./TriageForm.html">TriageForm</a></code></li><li><details><summary><code><a href="./TriagePolicy.html">TriagePolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./TriagePolicy/Scope.html">Scope</a></code></li></ul></details></li><li><code><a href="./TriagesHelper.html">TriagesHelper</a></code></li><li><code><a href="./TrimActiveRecordSessionsJob.html">TrimActiveRecordSessionsJob</a></code></li><li><code><a href="./UnsupportedProgrammeType.html">UnsupportedProgrammeType</a></code></li><li><code><a href="./UpdatePatientsFromPDS.html">UpdatePatientsFromPDS</a></code></li><li><code><a href="./User.html">User</a></code></li><li><details><summary><code><a href="./UserPolicy.html">UserPolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./UserPolicy/Scope.html">Scope</a></code></li></ul></details></li><li><details><summary><code><a href="./Users.html">Users</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Users/ErrorsController.html">ErrorsController</a></code></li><li><code><a href="./Users/LogoutController.html">LogoutController</a></code></li><li><code><a href="./Users/OmniauthCallbacksController.html">OmniauthCallbacksController</a></code></li><li><code><a href="./Users/SessionsController.html">SessionsController</a></code></li><li><code><a href="./Users/TeamsController.html">TeamsController</a></code></li></ul></details></li><li><code><a href="./VaccinateForm.html">VaccinateForm</a></code></li><li><code><a href="./VaccinationDescriptionStringParser.html">VaccinationDescriptionStringParser</a></code></li><li><code><a href="./VaccinationNotificationCriteria.html">VaccinationNotificationCriteria</a></code></li><li><code><a href="./VaccinationRecord.html">VaccinationRecord</a></code></li><li><code><a href="./VaccinationRecordPerformedByConcern.html">VaccinationRecordPerformedByConcern</a></code></li><li><details><summary><code><a href="./VaccinationRecordPolicy.html">VaccinationRecordPolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./VaccinationRecordPolicy/Scope.html">Scope</a></code></li></ul></details></li><li><code><a href="./VaccinationRecordSyncToNHSImmunisationsAPIConcern.html">VaccinationRecordSyncToNHSImmunisationsAPIConcern</a></code></li><li><code><a href="./VaccinationRecordTechnicalFieldsUpdater.html">VaccinationRecordTechnicalFieldsUpdater</a></code></li><li><code><a href="./VaccinationRecordsController.html">VaccinationRecordsController</a></code></li><li><code><a href="./VaccinationRecordsHelper.html">VaccinationRecordsHelper</a></code></li><li><code><a href="./VaccinationReport.html">VaccinationReport</a></code></li><li><code><a href="./VaccinationReportPolicy.html">VaccinationReportPolicy</a></code></li><li><code><a href="./VaccinationReportsController.html">VaccinationReportsController</a></code></li><li><code><a href="./VaccinationsHelper.html">VaccinationsHelper</a></code></li><li><code><a href="./Vaccine.html">Vaccine</a></code></li><li><code><a href="./VaccineCriteria.html">VaccineCriteria</a></code></li><li><details><summary><code><a href="./VaccinePolicy.html">VaccinePolicy</a></code></summary><ul class="link-list nav-list"><li><code><a href="./VaccinePolicy/Scope.html">Scope</a></code></li></ul></details></li><li><code><a href="./VaccinesController.html">VaccinesController</a></code></li><li><code><a href="./VaccinesHelper.html">VaccinesHelper</a></code></li><li><code><a href="./WizardControllerConcern.html">WizardControllerConcern</a></code></li><li><code><a href="./WizardStepConcern.html">WizardStepConcern</a></code></li><li><code><a href="./YearGroupsHelper.html">YearGroupsHelper</a></code></li></ul>
+  </details>
+</div>
+
+</nav>
+
+<main role="main" aria-label="Page README.md">
+
+<span id="label-Manage+vaccinations+in+schools" class="legacy-anchor"></span>
+<h1 id="manage-vaccinations-in-schools"><a href="#manage-vaccinations-in-schools">Manage vaccinations in schools</a></h1>
+
+<p>This is a service used within the <a href="NHS.html"><code>NHS</code></a> for managing and recording school-aged vaccinations.</p>
+
+<span id="label-Environments" class="legacy-anchor"></span>
+<h2 id="environments"><a href="#environments">Environments</a></h2>
+
+<table role="table">
+<thead>
+<tr>
+<th>Name</th>
+<th>URL</th>
+<th>Purpose</th>
+<th>Care Identity login</th>
+<th>Code</th>
+<th>Deployment</th>
+<th><code>RAILS_ENV</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/heroku">Heroku</a></td>
+<td>mavis-pr-xxxx.herokuapp.com</td>
+<td>PR review apps</td>
+<td>❌</td>
+<td>pull request branch</td>
+<td>automated</td>
+<td><a href="config/environments/staging_rb.html"><code>staging</code></a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/test">Test</a></td>
+<td><a href="https://test.mavistesting.com">test.mavistesting.com</a></td>
+<td>Internal testing (manual)</td>
+<td>✅</td>
+<td><code>main</code> branch (latest)</td>
+<td>automated</td>
+<td><a href="config/environments/staging_rb.html"><code>staging</code></a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/qa">QA</a></td>
+<td><a href="https://qa.mavistesting.com">qa.mavistesting.com</a></td>
+<td>Internal testing (automated)</td>
+<td>❌</td>
+<td><code>main</code> branch (latest)</td>
+<td>automated</td>
+<td><a href="config/environments/staging_rb.html"><code>staging</code></a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/Preview">Preview</a></td>
+<td><a href="https://preview.mavistesting.com">preview.mavistesting.com</a></td>
+<td>External testing</td>
+<td>❌</td>
+<td><code>release</code> or release candidate</td>
+<td>manual</td>
+<td><a href="config/environments/staging_rb.html"><code>staging</code></a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/training">Training</a></td>
+<td><a href="https://training.manage-vaccinations-in-schools.nhs.uk">training.manage-vaccinations-in-schools.nhs.uk</a></td>
+<td>External training</td>
+<td>❌</td>
+<td><code>release</code> branch</td>
+<td>manual</td>
+<td><a href="config/environments/staging_rb.html"><code>staging</code></a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/production">Production</a></td>
+<td><a href="https://www.manage-vaccinations-in-schools.nhs.uk"><a href="www.manage-vaccinations-in-schools.nhs.uk">www.manage-vaccinations-in-schools.nhs.uk</a></a></td>
+<td>Live service</td>
+<td>✅</td>
+<td><code>release</code> branch</td>
+<td>manual</td>
+<td><a href="config/environments/production_rb.html"><code>production</code></a></td>
+</tr>
+</tbody>
+</table>
+
+<span id="label-Development" class="legacy-anchor"></span>
+<h2 id="development"><a href="#development">Development</a></h2>
+
+<span id="label-Prerequisites" class="legacy-anchor"></span>
+<h3 id="prerequisites"><a href="#prerequisites">Prerequisites</a></h3>
+
+<p>This project depends on:</p>
+<ul><li>
+<p><a href="https://www.ruby-lang.org/">Ruby</a></p>
+</li><li>
+<p><a href="https://rubyonrails.org/">Ruby on Rails</a></p>
+</li><li>
+<p><a href="https://nodejs.org/">NodeJS</a></p>
+</li><li>
+<p><a href="https://yarnpkg.com/">Yarn</a></p>
+</li><li>
+<p><a href="https://www.postgresql.org/">PostgreSQL</a></p>
+</li><li>
+<p><a href="https://redis.io/">Redis</a> or <a href="https://valkey.io/">Valkey</a></p>
+</li></ul>
+
+<p>The instructions below assume you are using <code>mise</code> to manage the necessary versions of the above.</p>
+
+<span id="label-Application+architecture" class="legacy-anchor"></span>
+<h3 id="application-architecture"><a href="#application-architecture">Application architecture</a></h3>
+
+<p>We keep track of architecture decisions in <a href="adr">Architecture Decision Records (ADRs)</a>.</p>
+
+<p>We use <code>rladr</code> to generate the boilerplate for new records:</p>
+
+<pre class="shell">bin/bundle exec rladr new title</pre>
+
+<span id="label-Development+toolchain" class="legacy-anchor"></span>
+<h3 id="development-toolchain"><a href="#development-toolchain">Development toolchain</a></h3>
+
+<span id="label-Mise" class="legacy-anchor"></span>
+<h4 id="mise"><a href="#mise">Mise</a></h4>
+
+<p>This project uses <code>mise</code>. Use the following to set up (replace <code>brew</code> and package names depending on your platform):</p>
+
+<pre class="shell"># Dependencies for ruby
+brew install libyaml
+
+# Dependencies for postgres
+brew install gcc readline zlib curl ossp-uuid icu4c pkg-config
+
+# Env vars for postgres
+export OPENSSL_PATH=$(brew --prefix openssl)
+export CMAKE_PREFIX_PATH=$(brew --prefix icu4c)
+export PATH=&quot;$OPENSSL_PATH/bin:$CMAKE_PREFIX_PATH/bin:$PATH&quot;
+export LDFLAGS=&quot;-L$OPENSSL_PATH/lib $LDFLAGS&quot;
+export CPPFLAGS=&quot;-I$OPENSSL_PATH/include $CPPFLAGS&quot;
+export PKG_CONFIG_PATH=&quot;$CMAKE_PREFIX_PATH/lib/pkgconfig&quot;
+export MACOSX_DEPLOYMENT_TARGET=&quot;$(sw_vers -productVersion)&quot;
+
+# Version manager
+brew install mise
+
+# Yarn via brew as this skips installing `gpg`
+brew install yarn</pre>
+
+<p>Then to install the required tools (or update, following a change to <code>.tool-versions</code>):</p>
+
+<pre class="shell">mise install</pre>
+
+<p>After installing Postgres via <code>mise</code>, run the database in the background, and connect to it to create a user:</p>
+
+<pre class="shell">pg_ctl start
+psql -U postgres -c &quot;CREATE USER $(whoami); ALTER USER $(whoami) WITH SUPERUSER;&quot;</pre>
+
+<span id="label-Local+development" class="legacy-anchor"></span>
+<h3 id="local-development"><a href="#local-development">Local development</a></h3>
+
+<p>To run the project locally:</p>
+
+<pre class="shell">bin/setup</pre>
+
+<span id="label-Branching+strategy" class="legacy-anchor"></span>
+<h3 id="branching-strategy"><a href="#branching-strategy">Branching strategy</a></h3>
+
+<p>See the <a href="docs/branching_md.html">branching strategy documentation</a> for more information.</p>
+
+<span id="label-Linting" class="legacy-anchor"></span>
+<h3 id="linting"><a href="#linting">Linting</a></h3>
+
+<p>The linters are configured to run using <a href="https://hk.jdx.dev/"><code>hk</code></a> which is a tool for running hooks in a Git repository.</p>
+
+<p>If using <code>mise</code> this should have already been installed as it’s listed in <code>.tool-versions</code>, but it can be installed manually by running:</p>
+
+<pre class="shell">mise use hk pkl</pre>
+
+<p>To run the linters you can use <code>hk check</code> and <code>hk fix</code> to check and fix any linting issues respectively. Alternatively <code>bin/lint</code> is provided as a way of running the linters without needing to know about <code>hk</code>.</p>
+
+<p><code>hk</code> allows for the linters to be installed as Git hook, ensuring they are run on each commit. This can be configured by running:</p>
+
+<pre class="shell">hk install</pre>
+
+<span id="label-Intellisense" class="legacy-anchor"></span>
+<h3 id="intellisense"><a href="#intellisense">Intellisense</a></h3>
+
+<p><a href="https://github.com/castwide/solargraph">solargraph</a> is bundled as part of the development dependencies. You need to <a href="https://github.com/castwide/solargraph#using-solargraph">set it up for your editor</a>, and then run this command to index your local bundle (re-run if/when we install new dependencies and you want completion):</p>
+
+<pre class="shell">bin/bundle exec yard gems</pre>
+
+<p>You’ll also need to configure your editor’s <code>solargraph</code> plugin to <code>useBundler</code>:</p>
+
+<pre class="diff">+  &quot;solargraph.useBundler&quot;: true,</pre>
+
+<span id="label-PostgreSQL" class="legacy-anchor"></span>
+<h3 id="postgresql"><a href="#postgresql">PostgreSQL</a></h3>
+
+<p>The script <code>bin/db</code> is included to start up PostgreSQL for setups that don’t use system-started services. <a href="Note.html"><code>Note</code></a> that this is meant to be a handy script to manage PostgreSQL, not run a console like <code>rails db</code> does.</p>
+
+<pre class="shell">$ bin/db
+pg_ctl: no server running
+$ bin/db start
+waiting for server to start.... done
+server started
+$ bin/db
+pg_ctl: server is running (PID: 79113)</pre>
+
+<p>This script attempts to be installation agnostic by relying on <code>pg_config</code> to determine postgres’s installation directory and setting up logging accordingly.</p>
+
+<span id="label-Development+server" class="legacy-anchor"></span>
+<h3 id="development-server"><a href="#development-server">Development server</a></h3>
+
+<p>This application comes with a <code>Procfile.dev</code> for use with <code>foreman</code> in development environments. Use the script <code>bin/dev</code> to run it:</p>
+
+<pre class="shell">$ bin/dev
+13:07:31 web.1  | started with pid 73965
+13:07:31 css.1  | started with pid 73966
+13:07:31 js.1   | started with pid 73967
+...</pre>
+
+<span id="label-Debugging+with+binding.pry" class="legacy-anchor"></span>
+<h4 id="debugging-with-bindingpry"><a href="#debugging-with-bindingpry">Debugging with <code>binding.pry</code></a></h4>
+
+<p>TTY echo can get mangled when using <code>binding.pry</code> in <code>bin/dev</code>. To work around this, you can run <code>rails s</code> directly if you’re not working with any JS or CSS assets.</p>
+
+<p>Alternatively, you can install <code>tmux</code> and <a href="https://github.com/DarthSim/overmind#connecting-to-a-process"><code>overmind</code></a> which is compatible with our <code>Procfile.dev</code>:</p>
+
+<pre class="shell">overmind start -f Procfile.dev
+overmind connect web</pre>
+
+<span id="label-Testing" class="legacy-anchor"></span>
+<h3 id="testing"><a href="#testing">Testing</a></h3>
+
+<p>To run the Rails tests:</p>
+
+<pre class="shell">bin/bundle exec rspec</pre>
+
+<p>or run them in parallel using the <code>parallel_tests</code> gem</p>
+
+<pre class="shell"># Setup
+rake parallel:create parallel:prepare
+
+rake parallel:spec</pre>
+
+<p>To run the JS unit tests:</p>
+
+<pre class="shell">yarn test</pre>
+
+<p>E2E, performance, security and accessibility tests can be found in the <a href="https://github.com/NHSDigital/manage-vaccinations-in-schools-testing">Mavis testing respository</a>.</p>
+
+<span id="label-Example+programmes" class="legacy-anchor"></span>
+<h3 id="example-programmes"><a href="#example-programmes">Example programmes</a></h3>
+
+<p>You can generate an example programme by seeding the database with <code>rails db:seed:replant</code>.</p>
+
+<span id="label-Adding+a+test+user" class="legacy-anchor"></span>
+<h4 id="adding-a-test-user"><a href="#adding-a-test-user">Adding a test user</a></h4>
+
+<p>You can add a new user to an environment using the <code>users:create</code> <a href="docs/rake-tasks_md.html#userscreateemailpasswordgiven_namefamily_nameteam_ods_code">rake task</a>:</p>
+
+<pre class="shell">
+# With no arguments, it will prompt you for all the information it needs:
+rails users:create
+
+# Or, create a user belonging to the team with ODS code &#39;R1L&#39; (this is created in db/seeds.rb):
+rails users:create[&#39;user@example.com&#39;,&#39;password123&#39;,&#39;John&#39;, &#39;Doe&#39;,&#39;R1L&#39;]
+
+# Note that on some Mac machines, this syntax can throw an error saying something like &#39;zsh: bad pattern&#39;, in which case you may need to remove the single quotes and escape the square brackets:
+rails users:create\[user@example.com,password123,John,Doe,R1L\]</pre>
+
+<span id="label-Previewing+view+components" class="legacy-anchor"></span>
+<h3 id="previewing-view-components"><a href="#previewing-view-components">Previewing view components</a></h3>
+
+<p><a href="https://viewcomponent.org/guide/previews.html">ViewComponent previews</a> are enabled in development and test environments. In development, they are here:</p>
+
+<pre>http://localhost:4000/rails/view_components</pre>
+
+<p>The previews are defined in <code>spec/components/previews</code>.</p>
+
+<span id="label-Deploying" class="legacy-anchor"></span>
+<h3 id="deploying"><a href="#deploying">Deploying</a></h3>
+
+<p>This app can be deployed to AWS with Terraform.</p>
+
+<p>See <a href="docs/terraform_md.html#local-deployment">terraform/README.md</a> for more information.</p>
+
+<span id="label-Notify" class="legacy-anchor"></span>
+<h3 id="notify"><a href="#notify">Notify</a></h3>
+
+<p>When developing locally, emails are sent using the <code>:file</code> delivery method, and logged to <code>STDOUT</code>.</p>
+
+<p>If you want to use Notify, you’ll need to set up a test <a href="API.html"><code>API</code></a> key, and then set up a <code>config/settings/development.local.yml</code> file:</p>
+
+<pre class="yaml">govuk_notify:
+  enabled: true
+  test_key: YOUR_KEY_HERE</pre>
+
+<p>You should set it to <code>enabled: false</code> when you’re done testing Notify locally, because it’s easier to work offline without it.</p>
+
+<span id="label-Reply-To" class="legacy-anchor"></span>
+<h4 id="reply-to"><a href="#reply-to">Reply-To</a></h4>
+
+<p>GOV.UK Notify can store reply-to email addresses and use them when sending mail. Once you’ve added the reply-to email in GOV.UK Notify, get the UUID and add it to the team.</p>
+
+<span id="label-Care+Identity+Service+-28CIS2-29" class="legacy-anchor"></span>
+<h3 id="care-identity-service-cis2"><a href="#care-identity-service-cis2">Care Identity Service (CIS2)</a></h3>
+
+<p>This service uses <a href="https://digital.nhs.uk/developer/api-catalogue/nhs-cis2-care-identity-authentication">NHS’s CIS2 Care Identity Authentication service</a> to perform OIDC authentication for users.</p>
+
+<p>You can retrieve the issuer URL from the appropriate endpoint listed on [CIS2 Guidance Discovery page] (<a href="https://digital.nhs.uk/services/care-identity-service/applications-and-services/cis2-authentication/guidance-for-developers/detailed-guidance/discovery">digital.nhs.uk/services/care-identity-service/applications-and-services/cis2-authentication/guidance-for-developers/detailed-guidance/discovery</a>) (note: the dev env is being deprecated and will be removed):</p>
+
+<pre class="shell">curl -s https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare/.well-known/openid-configuration | jq .issuer &quot;https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare&quot;</pre>
+
+<p>Clients in the INT environment can be configured via CIS2 Connection Manager, please contact other team members to get the details for that. Mavis can use either a client secret or a private key JWT when authenticating requests to CIS2, these are configured via the Connection Manager.</p>
+
+<p>To configure Mavis, put non-secret configuration into Settings:</p>
+
+<pre class="yaml">cis2:
+  enabled: true
+  issuer: https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcareopenam/oauth2/realms/root/realms/oidc&quot;</pre>
+
+<p>And once you have your client secrets, either via the Connection Manager or from <a href="NHS.html"><code>NHS</code></a> support, put the <code>client_id</code> and <code>secret</code>/<code>private_key</code> into the Rails credentials file for the environment you are configuring.</p>
+
+<pre class="yaml">cis2:
+  client_id: # Client ID, as provided by NHS
+  secret: # Client secret, as provided by NHS
+  private_key: # ... or RSA private key in PEM format</pre>
+
+<p>The <code>private_key</code> will automatically be used to generate a JWK on the <code>/oidc/jwks</code> endpoint, which is used by CIS2 to validate the JWT we use to request the access token from CIS2.</p>
+
+<span id="label-Reporting" class="legacy-anchor"></span>
+<h3 id="reporting"><a href="#reporting">Reporting</a></h3>
+
+<p>See <a href="docs/reporting_md.html">docs/reporting.md</a>.</p>
+
+<span id="label-Key+Rotation" class="legacy-anchor"></span>
+<h4 id="key-rotation"><a href="#key-rotation">Key Rotation</a></h4>
+
+<p>Keys should be rotated regularly. When a new key is introduced it’s JWK will automatically be added to the JWKS generated for <code>/oidc/jwks</code>, but the old public key can also be added to <a href="JWKSController.html#EXTRA_JWK"><code>JWKSController::EXTRA_JWK</code></a> to ensure a smooth roll-over.</p>
+
+<span id="label-Releasing" class="legacy-anchor"></span>
+<h2 id="releasing"><a href="#releasing">Releasing</a></h2>
+
+<p>See the <a href="docs/releasing_md.html">releasing documentation</a> for more information.</p>
+
+<span id="label-Rake+tasks" class="legacy-anchor"></span>
+<h2 id="rake-tasks"><a href="#rake-tasks">Rake tasks</a></h2>
+<ul><li>
+<p><code>feature_flags:seed</code></p>
+</li><li>
+<p><code>smoke:seed</code></p>
+</li><li>
+<p><code>vaccines:seed[type]</code></p>
+</li></ul>
+
+<p>See the <a href="docs/rake-tasks_md.html">Rake tasks documentation</a> for more information.</p>
+
+<span id="label-Operations+tasks" class="legacy-anchor"></span>
+<h2 id="operations-tasks"><a href="#operations-tasks">Operations tasks</a></h2>
+
+<p>See the <a href="docs/ops-tasks_md.html">Ops tasks documentation</a> for more information.</p>
+
+<span id="label-NHS+Personal+Demographic+Service+-28PDS-29+Connection" class="legacy-anchor"></span>
+<h2 id="nhs-personal-demographic-service-pds-connection"><a href="#nhs-personal-demographic-service-pds-connection"><a href="NHS.html"><code>NHS</code></a> Personal Demographic Service (<a href="PDS.html"><code>PDS</code></a>) Connection</a></h2>
+
+<p>Mavis is also configured to connect to <a href="PDS.html"><code>PDS</code></a> to retrieve patient information such as <a href="NHS.html"><code>NHS</code></a> numbers.</p>
+
+<p>See the <a href="docs/pds_md.html">PDS documentation</a> for more information.</p>
+
+<span id="label-Licence" class="legacy-anchor"></span>
+<h2 id="licence"><a href="#licence">Licence</a></h2>
+
+<p><a href="LICENCE">MIT</a>.</p>
+
+</main>
+
+<aside class="table-of-contents" role="complementary" aria-label="Table of Contents">
+  <div class="toc-sticky">
+    <h3 class="toc-heading">On This Page</h3>
+    <nav class="toc-nav" id="toc-nav" aria-label="Page sections">
+      <!-- Generated by JavaScript based on page headings -->
+    </nav>
+  </div>
+</aside>
+
+
+<footer class="site-footer">
+  
+
+  <div class="footer-bottom">
+    <p>
+      Generated by <a href="https://ruby.github.io/rdoc/">RDoc 7.1.0</a>
+      using the Aliki theme by <a href="http://st0012.dev">Stan Lo</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+
