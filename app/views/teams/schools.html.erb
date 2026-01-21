@@ -15,12 +15,11 @@
         <% table.with_head do |head| %>
           <% head.with_row do |row| %>
             <% row.with_cell { "Name" } %>
-            <% row.with_cell { "URN" } %>
-            <% row.with_cell { "Phase" } %>
+            <% row.with_cell { "School URN" } %>
           <% end %>
         <% end %>
         <% table.with_body do |body| %>
-          <% @team.schools.each do |school| %>
+          <% @schools.each do |school| %>
             <% body.with_row do |row| %>
               <% row.with_cell {
                    [
@@ -32,7 +31,6 @@
                      .html_safe
                  } %>
                  <% row.with_cell { tag.span(school.urn_and_site, class: "app-u-code") } %>
-              <% row.with_cell { school.human_enum_name(:phase) } %>
             <% end %>
           <% end %>
         <% end %>

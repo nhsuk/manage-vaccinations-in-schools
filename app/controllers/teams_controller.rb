@@ -3,6 +3,8 @@
 class TeamsController < ApplicationController
   skip_after_action :verify_policy_scoped
   before_action :set_team
+  before_action :set_schools, only: :schools
+  before_action :set_clinics, only: :clinics
 
   layout "full"
 
@@ -22,5 +24,25 @@ class TeamsController < ApplicationController
 
   def set_team
     @team = authorize current_team
+  end
+
+  def set_schools
+    @schools =
+      @team
+        .schools
+        .joins(:team_locations)
+        .where(team_locations: { academic_year: AcademicYear.pending })
+        .distinct
+        .order(:name)
+  end
+
+  def set_clinics
+    @clinics =
+      @team
+        .community_clinics
+        .joins(:team_locations)
+        .where(team_locations: { academic_year: AcademicYear.pending })
+        .distinct
+        .order(:name)
   end
 end
