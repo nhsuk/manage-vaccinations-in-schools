@@ -11,7 +11,7 @@ describe Import::IssuePolicy do
 
   permissions :index?, :create?, :edit?, :new?, :show?, :update? do
     it { should permit(poc_only_user, vaccination_record) }
-    it { should permit(upload_only_user, vaccination_record) }
+    it { should_not permit(upload_only_user, vaccination_record) }
   end
 
   permissions :destroy? do
