@@ -742,10 +742,13 @@ class Patient < ApplicationRecord
     scope = patient_locations.pending
 
     unless team.nil?
-      scope = scope.joins_sessions.where("team_locations.team_id = ?", team.id)
+      scope = scope.joins_sessions.where(team_locations: { team_id: team.id })
     end
 
-    scope.destroy_all_if_safe
+    scope.find_each do |patient_location|
+      patient_location.end_date = Date.current
+      patient_location.save!
+    end
   end
 
   def self.from_consent_form(consent_form)

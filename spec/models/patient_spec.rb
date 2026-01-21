@@ -1063,10 +1063,17 @@ describe Patient do
           create(:patient_location, patient:, session:)
         end
 
-        it "removes the patient from the session" do
+        it "sets the range of the patient location" do
+          expect(patient_location.date_range).to eq(
+            -Float::INFINITY...Float::INFINITY
+          )
           expect(patient.patient_locations).to include(patient_location)
-          update_from_pds!
-          expect(patient.patient_locations).not_to include(patient_location)
+
+          expect { update_from_pds! }.not_to change(PatientLocation, :count)
+
+          expect(patient_location.reload.date_range).to eq(
+            -Float::INFINITY...Date.tomorrow
+          )
         end
 
         it "archives the patient" do
