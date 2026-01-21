@@ -6,7 +6,9 @@ describe "Download vaccination reports (single page)" do
     and_an_administered_vaccination_record_exists
 
     when_i_visit_the_single_page_form
-    and_i_fill_in_the_form
+    then_i_do_not_see_careplus_as_an_option
+
+    when_i_fill_in_the_form
     then_i_download_a_csv_file
   end
 
@@ -16,6 +18,15 @@ describe "Download vaccination reports (single page)" do
     when_i_visit_the_single_page_form
     and_i_submit_without_filling_in_the_form
     then_i_see_validation_errors
+  end
+
+  scenario "Download a vaccination report in CarePlus format" do
+    given_an_hpv_programme_is_underway_and_care_plus_is_enabled
+    and_an_administered_vaccination_record_exists
+
+    when_i_visit_the_single_page_form
+    and_i_fill_in_the_form_with_careplus_format
+    then_i_download_a_careplus_file
   end
 
   def given_an_hpv_programme_is_underway
@@ -37,6 +48,17 @@ describe "Download vaccination reports (single page)" do
     create(:patient_location, patient: @patient, session: @session)
   end
 
+  def given_an_hpv_programme_is_underway_and_care_plus_is_enabled
+    given_an_hpv_programme_is_underway
+    @team =
+      create(
+        :team,
+        :with_one_nurse,
+        :with_careplus_enabled,
+        programmes: [@programme]
+      )
+  end
+
   def and_an_administered_vaccination_record_exists
     vaccine = @programme.vaccines.first
     batch = create(:batch, team: @team, vaccine:)
@@ -55,10 +77,22 @@ describe "Download vaccination reports (single page)" do
     visit new_vaccination_report_path
   end
 
-  def and_i_fill_in_the_form
+  def then_i_do_not_see_careplus_as_an_option
+    expect(page).not_to have_content("CarePlus")
+  end
+
+  def when_i_fill_in_the_form
+    fill_in_the_form(file_format: "CSV")
+  end
+
+  def and_i_fill_in_the_form_with_careplus_format
+    fill_in_the_form(file_format: "CSV for CarePlus (System C)")
+  end
+
+  def fill_in_the_form(file_format:)
     choose "#{AcademicYear.current} to #{AcademicYear.current + 1}"
     choose "HPV"
-    choose "CSV"
+    choose file_format
     click_on "Download vaccination data"
   end
 
@@ -75,5 +109,13 @@ describe "Download vaccination reports (single page)" do
     expect(page).to have_content("There is a problem")
     expect(page).to have_content("Choose a programme")
     expect(page).to have_content("Choose a file format")
+  end
+
+  def then_i_download_a_careplus_file
+    expect(page.status_code).to eq(200)
+
+    expect(page).to have_content(
+      "NHS Number,Surname,Forename,Date of Birth,Address Line 1"
+    )
   end
 end

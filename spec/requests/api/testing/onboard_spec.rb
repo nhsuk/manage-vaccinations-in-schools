@@ -51,7 +51,6 @@ describe "/api/testing/onboard" do
           {
             "clinics" => ["can't be blank"],
             "organisation.ods_code" => ["can't be blank"],
-            "team.careplus_venue_code" => ["can't be blank"],
             "team.name" => ["can't be blank"],
             "team.phone" => ["can't be blank", "is invalid"],
             "team.privacy_notice_url" => ["can't be blank"],

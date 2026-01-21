@@ -17,7 +17,15 @@ describe Reports::CareplusExporter do
 
   shared_examples "generates a report" do
     let(:programmes) { [programme] }
-    let(:team) { create(:team, careplus_venue_code: "ABC", programmes:) }
+    let(:team) do
+      create(
+        :team,
+        careplus_staff_code: "ABCD",
+        careplus_staff_type: "PQ",
+        careplus_venue_code: "ABC",
+        programmes:
+      )
+    end
     let(:location) do
       create(
         :school,
@@ -110,8 +118,8 @@ describe Reports::CareplusExporter do
       expect(row[dose_index]).to eq("1P")
       expect(row[batch_index]).to eq(vaccination_record.batch.name)
       expect(row[site_index]).to eq("ULA")
-      expect(row[staff_type_index]).to eq("IN")
-      expect(row[staff_code_index]).to eq("LW5PM")
+      expect(row[staff_type_index]).to eq("PQ")
+      expect(row[staff_code_index]).to eq("ABCD")
       expect(row[venue_type_index]).to eq("SC")
       expect(row[venue_code_index]).to eq("123456")
     end
