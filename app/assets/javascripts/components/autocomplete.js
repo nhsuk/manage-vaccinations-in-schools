@@ -63,7 +63,6 @@ export class Autocomplete extends Component {
     return this.options.map((option) => ({
       name: option.label,
       value: option.value,
-      append: option.getAttribute("data-append"),
       hint: option.getAttribute("data-hint"),
     }));
   }
@@ -92,10 +91,9 @@ export class Autocomplete extends Component {
   suggestion(value, options) {
     const option = options.find(({ name }) => name === value);
     if (option) {
-      const label = option.append ? `${value} – ${option.append}` : value;
       return option.hint
-        ? `${label}<br><span class="app-autocomplete__option-hint">${option.hint}</span>`
-        : label;
+        ? `${value}<br><span class="app-autocomplete__option-hint">${option.hint}</span>`
+        : value;
     }
     return "No results found";
   }

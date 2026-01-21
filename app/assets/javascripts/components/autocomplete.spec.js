@@ -4,9 +4,9 @@ document.body.classList.add("nhsuk-frontend-supported");
 document.body.innerHTML = `
   <select id="fruit" name="fruit" data-module="app-autocomplete">
     <option value=""></option>
-    <option data-hint="Red" data-append="Sliced">Apple</option>
-    <option data-hint="Yellow" data-append="Peeled">Banana</option>
-    <option data-hint="Orange" data-append="Squeezed">Orange</option>
+    <option data-hint="Red">Apple</option>
+    <option data-hint="Yellow">Banana</option>
+    <option data-hint="Orange">Orange</option>
   </select>
 `;
 
@@ -49,7 +49,7 @@ describe("Autocomplete", () => {
 
     // Check that options display hint and appended text
     expect(visibleOptions[0].innerHTML.trim()).toEqual(
-      `Apple – Sliced<br><span class="app-autocomplete__option-hint">Red</span>`,
+      `Apple<br><span class="app-autocomplete__option-hint">Red</span>`,
     );
 
     // Simulate clicking first option
