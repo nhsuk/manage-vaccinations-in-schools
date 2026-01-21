@@ -5,17 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>module HasVaccineMethods - Mavis Documentation</title>
+<title>class BatchNameValidator - Mavis Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,module,HasVaccineMethods"
+    content="ruby,class,BatchNameValidator"
   >
 
     <meta
       name="description"
-      content="Documentation for the HasVaccineMethods module"
+      content="Documentation for the BatchNameValidator class"
     >
 
 
@@ -24,13 +24,13 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="module HasVaccineMethods - Mavis Documentation">
+<meta property="og:title" content="class BatchNameValidator - Mavis Documentation">
 
 
 
     <meta
       property="og:description"
-      content="Documentation for HasVaccineMethods module - API reference and code examples"
+      content="Documentation for BatchNameValidator class - API reference and code examples"
     >
 
 
@@ -39,13 +39,13 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="module HasVaccineMethods - Mavis Documentation">
+<meta name="twitter:title" content="class BatchNameValidator - Mavis Documentation">
 
 
 
     <meta
       name="twitter:description"
-      content="Documentation for HasVaccineMethods module - API reference and code examples"
+      content="Documentation for BatchNameValidator class - API reference and code examples"
     >
 
 
@@ -97,7 +97,7 @@
 
 
 
-<body role="document" class="module has-toc">
+<body role="document" class="class has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -529,36 +529,25 @@
   
 
   
-
-  
-
-  
-<div id="extends-section" class="nav-section">
+<div id="parent-class-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
       <span class="nav-section-icon">
-        <svg><use href="#icon-extends"></use></svg>
+        <svg><use href="#icon-ancestors"></use></svg>
       </span>
-      <span class="nav-section-title">Extended With Modules</span>
+      <span class="nav-section-title">Ancestors</span>
       <span class="nav-section-chevron">
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-
-    <ul class="nav-list">
-
-
-      <li><span class="extend">ActiveSupport::Concern</span></li>
-
-
-
-      <li><span class="extend">ArrayEnum</span></li>
-
-
-    </ul>
+    <ul><li>ActiveModel::EachValidator</li></ul>
   </details>
 </div>
 
+
+  
+
+  
 
   
 
@@ -576,13 +565,7 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-vaccine_method_injection-3F">vaccine_method_injection?</a></li>
-
-        <li ><a href="#method-i-vaccine_method_injection_and_nasal-3F">vaccine_method_injection_and_nasal?</a></li>
-
-        <li ><a href="#method-i-vaccine_method_nasal-3F">vaccine_method_nasal?</a></li>
-
-        <li ><a href="#method-i-vaccine_method_nasal_only-3F">vaccine_method_nasal_only?</a></li>
+        <li ><a href="#method-i-validate_each">validate_each</a></li>
 
       </ul>
     </details>
@@ -607,13 +590,13 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-hasvaccinemethods">
+<main role="main" aria-labelledby="class-batchnamevalidator">
   
   
 
-  <span id="module-HasVaccineMethods" class="legacy-anchor"></span>
-  <h1 id="module-hasvaccinemethods" class="anchor-link module">
-    module HasVaccineMethods
+  <span id="class-BatchNameValidator" class="legacy-anchor"></span>
+  <h1 id="class-batchnamevalidator" class="anchor-link class">
+    class BatchNameValidator
   </h1>
 
   <section class="description">
@@ -627,6 +610,39 @@
 
 
 
+
+    <section class="constants-list">
+      <header>
+        <h3 id="constants"><a href="#constants">Constants</a></h3>
+      </header>
+      <dl>
+
+        <dt id="FORMAT">FORMAT</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+        <dt id="MAX_LENGTH">MAX_LENGTH</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+        <dt id="MIN_LENGTH">MIN_LENGTH</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+      </dl>
+    </section>
 
 
 
@@ -647,13 +663,13 @@
        </header>
 
 
-      <div id="method-i-vaccine_method_injection-3F" class="method-detail anchor-link ">
+      <div id="method-i-validate_each" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-vaccine_method_injection-3F" title="Link to this method">
-                <span class="method-name">vaccine_method_injection?</span>
-                <span class="method-args">(= vaccine_methods.include?(&quot;injection&quot;))</span>
+              <a href="#method-i-validate_each" title="Link to this method">
+                <span class="method-name">validate_each</span>
+                <span class="method-args">(record, attribute, value)</span>
               </a>
             </div>
 
@@ -665,148 +681,17 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="vaccine_method_injection-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/has_vaccine_methods.rb, line 14</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_method_injection?</span> = <span class="ruby-identifier">vaccine_methods</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;injection&quot;</span>)
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_method_nasal?</span> = <span class="ruby-identifier">vaccine_methods</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;nasal&quot;</span>)
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_method_nasal_only?</span> = <span class="ruby-identifier">vaccine_methods</span> <span class="ruby-operator">==</span> <span class="ruby-node">%w[nasal]</span>
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_method_injection_and_nasal?</span>
-  <span class="ruby-identifier">vaccine_method_injection?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">vaccine_method_nasal?</span>
-</pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-vaccine_method_injection_and_nasal-3F" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-vaccine_method_injection_and_nasal-3F" title="Link to this method">
-                <span class="method-name">vaccine_method_injection_and_nasal?</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="vaccine_method_injection_and_nasal-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/has_vaccine_methods.rb, line 20</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_method_injection_and_nasal?</span>
-  <span class="ruby-identifier">vaccine_method_injection?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">vaccine_method_nasal?</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-vaccine_method_nasal-3F" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-vaccine_method_nasal-3F" title="Link to this method">
-                <span class="method-name">vaccine_method_nasal?</span>
-                <span class="method-args">(= vaccine_methods.include?(&quot;nasal&quot;))</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="vaccine_method_nasal-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/has_vaccine_methods.rb, line 16</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_method_nasal?</span> = <span class="ruby-identifier">vaccine_methods</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;nasal&quot;</span>)
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_method_nasal_only?</span> = <span class="ruby-identifier">vaccine_methods</span> <span class="ruby-operator">==</span> <span class="ruby-node">%w[nasal]</span>
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_method_injection_and_nasal?</span>
-  <span class="ruby-identifier">vaccine_method_injection?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">vaccine_method_nasal?</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-vaccine_method_nasal_only-3F" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-vaccine_method_nasal_only-3F" title="Link to this method">
-                <span class="method-name">vaccine_method_nasal_only?</span>
-                <span class="method-args">(= vaccine_methods == %w[nasal])</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="vaccine_method_nasal_only-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/has_vaccine_methods.rb, line 18</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_method_nasal_only?</span> = <span class="ruby-identifier">vaccine_methods</span> <span class="ruby-operator">==</span> <span class="ruby-node">%w[nasal]</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_method_injection_and_nasal?</span>
-    <span class="ruby-identifier">vaccine_method_injection?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">vaccine_method_nasal?</span>
+          <div class="method-source-code" id="validate_each-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/validators/batch_name_validator.rb, line 8</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_each</span>(<span class="ruby-identifier">record</span>, <span class="ruby-identifier">attribute</span>, <span class="ruby-identifier">value</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">blank?</span>
+    <span class="ruby-identifier">record</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">attribute</span>, <span class="ruby-value">:blank</span>)
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">MIN_LENGTH</span>
+    <span class="ruby-identifier">record</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">attribute</span>, <span class="ruby-value">:too_short</span>, <span class="ruby-value">count:</span> <span class="ruby-constant">MIN_LENGTH</span>)
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_LENGTH</span>
+    <span class="ruby-identifier">record</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">attribute</span>, <span class="ruby-value">:too_long</span>, <span class="ruby-value">count:</span> <span class="ruby-constant">MAX_LENGTH</span>)
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">!~</span> <span class="ruby-constant">FORMAT</span>
+    <span class="ruby-identifier">record</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">attribute</span>, <span class="ruby-value">:invalid</span>)
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
