@@ -20,6 +20,7 @@ cis2:
   private_key: |
 <%= Rails.application.credentials.cis2&.private_key&.gsub(/^/, "    ") %>
   secret: <%= Rails.application.credentials.cis2&.secret %>
+  support_organisation: Y90128
 
 govuk_notify:
   enabled: true
