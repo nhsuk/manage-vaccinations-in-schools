@@ -15,13 +15,11 @@ export class Autocomplete extends Component {
   constructor($root) {
     super($root);
 
-    if ($root instanceof HTMLSelectElement) {
-      this.name = this.$root.name;
-      this.options = Array.from(this.$root.options);
-      this.value = this.$root.value;
+    this.name = this.$root.name;
+    this.options = Array.from(this.$root.options);
+    this.value = this.$root.value;
 
-      this.enhanceSelectElement(this.$root);
-    }
+    this.enhanceSelectElement(this.$root);
   }
 
   /**
