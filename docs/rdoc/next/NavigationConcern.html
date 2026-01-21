@@ -749,7 +749,7 @@
     <span class="ruby-ivar">@navigation_items</span> <span class="ruby-operator">&lt;&lt;</span> {
       <span class="ruby-value">title:</span> <span class="ruby-identifier">t</span>(<span class="ruby-string">&quot;imports.index.title_short&quot;</span>),
       <span class="ruby-value">path:</span> <span class="ruby-identifier">imports_path</span>,
-      <span class="ruby-value">count:</span> <span class="ruby-ivar">@cached_counts</span>.<span class="ruby-identifier">import_issues</span>
+      <span class="ruby-value">count:</span> (<span class="ruby-ivar">@cached_counts</span>.<span class="ruby-identifier">import_issues</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">policy</span>(<span class="ruby-node">%i[import issue]</span>).<span class="ruby-identifier">index?</span>)
     }
   <span class="ruby-keyword">end</span>
 

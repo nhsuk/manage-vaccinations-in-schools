@@ -1073,7 +1073,7 @@
             </details>
           </div>
           <div class="method-source-code" id="academic_year-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 468</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 472</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">academic_year</span> = <span class="ruby-identifier">date_of_vaccination</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">academic_year</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">existing_patients</span>
@@ -1852,7 +1852,7 @@
             </details>
           </div>
           <div class="method-source-code" id="administered-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 500</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 504</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">administered</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccinated</span>.<span class="ruby-identifier">present?</span>
     <span class="ruby-keyword">if</span> <span class="ruby-string">&quot;yes&quot;</span>.<span class="ruby-identifier">start_with?</span>(<span class="ruby-identifier">vaccinated</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span>)
@@ -1903,7 +1903,7 @@
             </details>
           </div>
           <div class="method-source-code" id="batch-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 418</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 422</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">batch</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">valid?</span>
 
@@ -1955,7 +1955,7 @@
             </details>
           </div>
           <div class="method-source-code" id="batch_expiry-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 211</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 215</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">batch_expiry</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:batch_expiry_date</span>]
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">batch_name</span> =
@@ -2981,7 +2981,7 @@
             </details>
           </div>
           <div class="method-source-code" id="batch_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 213</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 217</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">batch_name</span> =
   <span class="ruby-ivar">@data</span>[<span class="ruby-value">:batch_number</span>].<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:vaccination_batch_number</span>]
 
@@ -4072,7 +4072,11 @@
   }
 
   <span class="ruby-identifier">vaccination_record</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">present?</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">bulk?</span>
+      <span class="ruby-constant">VaccinationRecord</span>.<span class="ruby-identifier">find_or_initialize_by</span>(
+        <span class="ruby-identifier">attributes</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">attributes_to_stage_if_already_exists</span>)
+      )
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">present?</span>
       <span class="ruby-constant">VaccinationRecord</span>
         .<span class="ruby-identifier">find_by!</span>(<span class="ruby-value">uuid:</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">to_s</span>)
         .<span class="ruby-identifier">tap</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">stage_changes</span>(<span class="ruby-identifier">attributes</span>) }
@@ -5202,7 +5206,11 @@
   }
 
   <span class="ruby-identifier">vaccination_record</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">present?</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">bulk?</span>
+      <span class="ruby-constant">VaccinationRecord</span>.<span class="ruby-identifier">find_or_initialize_by</span>(
+        <span class="ruby-identifier">attributes</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">attributes_to_stage_if_already_exists</span>)
+      )
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">present?</span>
       <span class="ruby-constant">VaccinationRecord</span>
         .<span class="ruby-identifier">find_by!</span>(<span class="ruby-value">uuid:</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">to_s</span>)
         .<span class="ruby-identifier">tap</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">stage_changes</span>(<span class="ruby-identifier">attributes</span>) }
@@ -6328,7 +6336,11 @@
   }
 
   <span class="ruby-identifier">vaccination_record</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">present?</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">bulk?</span>
+      <span class="ruby-constant">VaccinationRecord</span>.<span class="ruby-identifier">find_or_initialize_by</span>(
+        <span class="ruby-identifier">attributes</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">attributes_to_stage_if_already_exists</span>)
+      )
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">present?</span>
       <span class="ruby-constant">VaccinationRecord</span>
         .<span class="ruby-identifier">find_by!</span>(<span class="ruby-value">uuid:</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">to_s</span>)
         .<span class="ruby-identifier">tap</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">stage_changes</span>(<span class="ruby-identifier">attributes</span>) }
@@ -7429,7 +7441,7 @@
             </details>
           </div>
           <div class="method-source-code" id="care_setting-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 216</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 220</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">care_setting</span> = <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:care_setting</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clinic_name</span> =
@@ -8452,7 +8464,7 @@
             </details>
           </div>
           <div class="method-source-code" id="clinic-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 354</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 358</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clinic</span>
   <span class="ruby-ivar">@clinic</span> <span class="ruby-operator">||=</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">clinic_name</span>.<span class="ruby-identifier">present?</span>
@@ -8500,7 +8512,7 @@
             </details>
           </div>
           <div class="method-source-code" id="clinic_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 218</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 222</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clinic_name</span> =
   <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:clinic_name</span>].<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:event_done_at</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
@@ -9521,7 +9533,7 @@
             </details>
           </div>
           <div class="method-source-code" id="combined_vaccination_and_dose_sequence-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 221</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 225</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">combined_vaccination_and_dose_sequence</span> =
   <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:vaccination_type</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
@@ -10540,7 +10552,7 @@
             </details>
           </div>
           <div class="method-source-code" id="date_of_vaccination-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 224</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 228</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">date_of_vaccination</span> =
   <span class="ruby-ivar">@data</span>[<span class="ruby-value">:date_of_vaccination</span>].<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:event_date</span>]
 
@@ -11556,7 +11568,7 @@
             </details>
           </div>
           <div class="method-source-code" id="delivery_method_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 517</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 521</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delivery_method_value</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">delivery_site_value</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;nose&quot;</span>
     <span class="ruby-string">&quot;nasal_spray&quot;</span>
@@ -11602,7 +11614,7 @@
             </details>
           </div>
           <div class="method-source-code" id="delivery_site-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 227</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 231</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delivery_site</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:anatomical_site</span>]
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:dose_sequence</span>]
@@ -12615,7 +12627,7 @@
             </details>
           </div>
           <div class="method-source-code" id="delivery_site_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 513</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 517</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delivery_site_value</span>
   <span class="ruby-constant">DELIVERY_SITES</span>[<span class="ruby-identifier">delivery_site</span>&amp;.<span class="ruby-identifier">to_s</span>&amp;.<span class="ruby-identifier">downcase</span>]
 <span class="ruby-keyword">end</span></pre>
@@ -12657,7 +12669,7 @@
             </details>
           </div>
           <div class="method-source-code" id="disease_types-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 525</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 529</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span> = <span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">disease_types</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">disease_types</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence_value</span>
@@ -13380,7 +13392,7 @@
             </details>
           </div>
           <div class="method-source-code" id="dose_sequence-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 229</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 233</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:dose_sequence</span>]
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">location_type</span> = <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:event_location_type</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
@@ -14391,7 +14403,7 @@
             </details>
           </div>
           <div class="method-source-code" id="dose_sequence_required-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 464</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 468</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence_required?</span> =
   <span class="ruby-identifier">administered</span> <span class="ruby-operator">&amp;&amp;</span>
     ((<span class="ruby-identifier">offline_recording?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">default_dose_sequence</span>.<span class="ruby-identifier">present?</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">bulk_hpv?</span>)
@@ -15174,7 +15186,7 @@
             </details>
           </div>
           <div class="method-source-code" id="dose_sequence_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 527</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 531</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence_value</span>
   <span class="ruby-identifier">value</span> =
     <span class="ruby-identifier">parsed_vaccination_description_string</span>&amp;.<span class="ruby-identifier">dig</span>(<span class="ruby-value">:dose_sequence</span>) <span class="ruby-operator">||</span>
@@ -15228,7 +15240,7 @@
             </details>
           </div>
           <div class="method-source-code" id="existing_patients-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 470</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 474</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">existing_patients</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient_first_name</span>.<span class="ruby-identifier">blank?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">patient_last_name</span>.<span class="ruby-identifier">blank?</span> <span class="ruby-operator">||</span>
        <span class="ruby-identifier">patient_date_of_birth</span>.<span class="ruby-identifier">nil?</span>
@@ -15282,7 +15294,7 @@
             </details>
           </div>
           <div class="method-source-code" id="imms_api_record-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 455</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 459</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">imms_api_record?</span>
   <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span>
     <span class="ruby-constant">VaccinationRecord</span>.<span class="ruby-identifier">sourced_from_nhs_immunisations_api</span>.<span class="ruby-identifier">exists?</span>(
@@ -15327,7 +15339,7 @@
             </details>
           </div>
           <div class="method-source-code" id="is_community_setting-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 552</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 556</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_community_setting?</span>
   <span class="ruby-identifier">care_setting</span>&amp;.<span class="ruby-identifier">to_i</span> <span class="ruby-operator">==</span> <span class="ruby-constant">CARE_SETTING_COMMUNITY</span> <span class="ruby-operator">||</span>
     (<span class="ruby-identifier">location_type</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">location_type</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-operator">!=</span> <span class="ruby-string">&quot;school&quot;</span>)
@@ -15370,7 +15382,7 @@
             </details>
           </div>
           <div class="method-source-code" id="is_school_setting-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 547</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 551</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_school_setting?</span>
   <span class="ruby-identifier">care_setting</span>&amp;.<span class="ruby-identifier">to_i</span> <span class="ruby-operator">==</span> <span class="ruby-constant">CARE_SETTING_SCHOOL</span> <span class="ruby-operator">||</span>
     <span class="ruby-identifier">location_type</span>&amp;.<span class="ruby-identifier">to_s</span>&amp;.<span class="ruby-identifier">downcase</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;school&quot;</span>
@@ -15413,7 +15425,7 @@
             </details>
           </div>
           <div class="method-source-code" id="is_unknown_setting-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 543</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 547</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_unknown_setting?</span>
   <span class="ruby-identifier">care_setting</span>.<span class="ruby-identifier">blank?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">location_type</span>.<span class="ruby-identifier">blank?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -15455,7 +15467,7 @@
             </details>
           </div>
           <div class="method-source-code" id="local_patient_id-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 284</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 288</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">local_patient_id</span> = <span class="ruby-identifier">bulk?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:local_patient_id</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">local_patient_id_uri</span> = <span class="ruby-identifier">bulk?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:local_patient_id_uri</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
@@ -16415,7 +16427,7 @@
             </details>
           </div>
           <div class="method-source-code" id="local_patient_id_uri-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 286</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 290</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">local_patient_id_uri</span> = <span class="ruby-identifier">bulk?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:local_patient_id_uri</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
 <span class="ruby-identifier">private</span>
@@ -17374,7 +17386,7 @@
             </details>
           </div>
           <div class="method-source-code" id="location-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 292</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 296</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">location</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">bulk?</span>
     <span class="ruby-identifier">school</span>
@@ -17420,7 +17432,7 @@
             </details>
           </div>
           <div class="method-source-code" id="location_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 300</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 304</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">location_name</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">location</span>.<span class="ruby-identifier">nil?</span>
 
@@ -17468,7 +17480,7 @@
             </details>
           </div>
           <div class="method-source-code" id="location_type-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 231</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 235</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">location_type</span> = <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:event_location_type</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notes</span> = <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:notes</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
@@ -18477,7 +18489,7 @@
             </details>
           </div>
           <div class="method-source-code" id="must_be_current_academic_year-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 462</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 466</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">must_be_current_academic_year?</span> = <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">flu?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">bulk?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence_required?</span> =
@@ -19261,7 +19273,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new_patient_attributes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 486</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 490</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">new_patient_attributes</span>
   {
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">patient_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
@@ -19313,7 +19325,7 @@
             </details>
           </div>
           <div class="method-source-code" id="notes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 233</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 237</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notes</span> = <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:notes</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_date_of_birth</span> =
@@ -20320,7 +20332,7 @@
             </details>
           </div>
           <div class="method-source-code" id="offline_recording-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 453</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 457</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">offline_recording?</span> = <span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">present?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">imms_api_record?</span>
@@ -21112,7 +21124,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parsed_vaccination_description_string-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 557</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 561</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parsed_vaccination_description_string</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">combined_vaccination_and_dose_sequence</span>.<span class="ruby-identifier">present?</span>
     <span class="ruby-constant">VaccinationDescriptionStringParser</span>.<span class="ruby-identifier">call</span>(
@@ -21158,7 +21170,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 338</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 342</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient</span>
   <span class="ruby-ivar">@patient</span> <span class="ruby-operator">||=</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">valid?</span>
@@ -21203,7 +21215,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_date_of_birth-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 235</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 239</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_date_of_birth</span> =
   <span class="ruby-ivar">@data</span>[<span class="ruby-value">:person_dob</span>].<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:date_of_birth</span>]
 
@@ -22208,7 +22220,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_first_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 238</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 242</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_first_name</span> =
   <span class="ruby-ivar">@data</span>[<span class="ruby-value">:person_forename</span>].<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:first_name</span>]
 
@@ -23211,7 +23223,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_gender_code-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 241</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 245</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_gender_code</span> =
   <span class="ruby-ivar">@data</span>[<span class="ruby-value">:person_gender_code</span>].<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:person_gender</span>].<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span>
     <span class="ruby-ivar">@data</span>[<span class="ruby-value">:sex</span>]
@@ -24211,7 +24223,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_gender_code_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 565</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 569</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_gender_code_value</span>
   <span class="ruby-identifier">value</span> = <span class="ruby-identifier">patient_gender_code</span>&amp;.<span class="ruby-identifier">to_s</span>&amp;.<span class="ruby-identifier">downcase</span>&amp;.<span class="ruby-identifier">gsub</span>(<span class="ruby-string">&quot; &quot;</span>, <span class="ruby-string">&quot;_&quot;</span>)
 
@@ -24259,7 +24271,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_last_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 245</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 249</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_last_name</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:person_surname</span>].<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:surname</span>]
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_nhs_number</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:nhs_number</span>]
@@ -25255,7 +25267,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_nhs_number-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 247</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 251</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_nhs_number</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:nhs_number</span>]
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_postcode</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:person_postcode</span>].<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:postcode</span>]
@@ -26249,7 +26261,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_nhs_number_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 575</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 579</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_nhs_number_value</span>
   <span class="ruby-identifier">patient_nhs_number</span>&amp;.<span class="ruby-identifier">to_s</span>&amp;.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/\s/</span>, <span class="ruby-string">&quot;&quot;</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -26291,7 +26303,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_postcode-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 249</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 253</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_postcode</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:person_postcode</span>].<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:postcode</span>]
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performed_by_email</span> = <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:performing_professional_email</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
@@ -27284,7 +27296,7 @@
             </details>
           </div>
           <div class="method-source-code" id="performed_at-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 310</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 314</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performed_at</span>
   <span class="ruby-identifier">date</span> = <span class="ruby-identifier">date_of_vaccination</span>.<span class="ruby-identifier">to_date</span>
   <span class="ruby-identifier">time</span> = <span class="ruby-identifier">time_of_vaccination</span>&amp;.<span class="ruby-identifier">to_time</span>
@@ -27336,7 +27348,7 @@
             </details>
           </div>
           <div class="method-source-code" id="performed_by_email-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 251</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 255</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performed_by_email</span> = <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:performing_professional_email</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performed_by_family_name</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:performing_professional_surname</span>]
@@ -28327,7 +28339,7 @@
             </details>
           </div>
           <div class="method-source-code" id="performed_by_family_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 253</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 257</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performed_by_family_name</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:performing_professional_surname</span>]
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performed_by_given_name</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:performing_professional_forename</span>]
@@ -29316,7 +29328,7 @@
             </details>
           </div>
           <div class="method-source-code" id="performed_by_given_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 255</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 259</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performed_by_given_name</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:performing_professional_forename</span>]
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performed_ods_code</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:organisation_code</span>]
@@ -30303,7 +30315,7 @@
             </details>
           </div>
           <div class="method-source-code" id="performed_by_user-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 324</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 328</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performed_by_user</span>
   <span class="ruby-ivar">@performed_by_user</span> <span class="ruby-operator">||=</span>
     <span class="ruby-keyword">if</span> (<span class="ruby-identifier">email</span> = <span class="ruby-identifier">performed_by_email</span>&amp;.<span class="ruby-identifier">to_s</span>)
@@ -30348,7 +30360,7 @@
             </details>
           </div>
           <div class="method-source-code" id="performed_ods_code-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 257</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 261</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performed_ods_code</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:organisation_code</span>]
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_name</span> = <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:programme</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
@@ -31405,7 +31417,11 @@
   }
 
   <span class="ruby-identifier">vaccination_record</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">present?</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">bulk?</span>
+      <span class="ruby-constant">VaccinationRecord</span>.<span class="ruby-identifier">find_or_initialize_by</span>(
+        <span class="ruby-identifier">attributes</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">attributes_to_stage_if_already_exists</span>)
+      )
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">present?</span>
       <span class="ruby-constant">VaccinationRecord</span>
         .<span class="ruby-identifier">find_by!</span>(<span class="ruby-value">uuid:</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">to_s</span>)
         .<span class="ruby-identifier">tap</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">stage_changes</span>(<span class="ruby-identifier">attributes</span>) }
@@ -32463,7 +32479,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 364</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 368</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme</span>
   <span class="ruby-ivar">@programme</span> <span class="ruby-operator">||=</span>
     <span class="ruby-keyword">begin</span>
@@ -32512,7 +32528,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 259</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 263</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_name</span> = <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:programme</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reason_not_administered</span> = <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:reason_not_vaccinated</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
@@ -33496,7 +33512,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programmes_by_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 432</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 436</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programmes_by_name</span>
   <span class="ruby-ivar">@programmes_by_name</span> <span class="ruby-operator">||=</span>
     (<span class="ruby-identifier">session</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">team</span>)
@@ -33553,7 +33569,7 @@
             </details>
           </div>
           <div class="method-source-code" id="protocol-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 386</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 390</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">protocol</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">imms_api_record?</span>
     <span class="ruby-keyword">nil</span>
@@ -33610,7 +33626,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reason_not_administered-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 261</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 265</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reason_not_administered</span> = <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:reason_not_vaccinated</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school_name</span> =
@@ -34592,7 +34608,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reason_not_administered_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 579</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 583</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reason_not_administered_value</span>
   <span class="ruby-constant">REASONS_NOT_ADMINISTERED</span>[<span class="ruby-identifier">reason_not_administered</span>&amp;.<span class="ruby-identifier">to_s</span>&amp;.<span class="ruby-identifier">downcase</span>]
 <span class="ruby-keyword">end</span></pre>
@@ -34634,7 +34650,7 @@
             </details>
           </div>
           <div class="method-source-code" id="school-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 345</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 349</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school</span>
   <span class="ruby-ivar">@school</span> <span class="ruby-operator">||=</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">!=</span> <span class="ruby-constant">SCHOOL_URN_HOME_EDUCATED</span> <span class="ruby-operator">&amp;&amp;</span>
@@ -34681,7 +34697,7 @@
             </details>
           </div>
           <div class="method-source-code" id="school_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 263</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 267</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school_name</span> =
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">poc?</span>
     <span class="ruby-ivar">@data</span>[<span class="ruby-value">:school_name</span>].<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:school</span>].<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span>
@@ -34725,7 +34741,7 @@
             </details>
           </div>
           <div class="method-source-code" id="school_urn-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 269</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 273</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school_urn</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:school_urn</span>].<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:school_code</span>]
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">session_id</span> = <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:session_id</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
@@ -35699,7 +35715,7 @@
             </details>
           </div>
           <div class="method-source-code" id="session-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 375</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 379</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">session</span>
   <span class="ruby-ivar">@session</span> <span class="ruby-operator">||=</span>
     <span class="ruby-keyword">if</span> (<span class="ruby-identifier">id</span> = <span class="ruby-identifier">session_id</span>&amp;.<span class="ruby-identifier">to_i</span>)
@@ -35748,7 +35764,7 @@
             </details>
           </div>
           <div class="method-source-code" id="session_id-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 271</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 275</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">session_id</span> = <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:session_id</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supplied_by_email</span> = <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:supplier_email</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
@@ -36720,7 +36736,7 @@
             </details>
           </div>
           <div class="method-source-code" id="supplied_by-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 331</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 335</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supplied_by</span>
   <span class="ruby-ivar">@supplied_by</span> <span class="ruby-operator">||=</span>
     <span class="ruby-keyword">if</span> (<span class="ruby-identifier">email</span> = <span class="ruby-identifier">supplied_by_email</span>&amp;.<span class="ruby-identifier">to_s</span>)
@@ -36765,7 +36781,7 @@
             </details>
           </div>
           <div class="method-source-code" id="supplied_by_email-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 273</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 277</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supplied_by_email</span> = <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:supplier_email</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">time_of_vaccination</span> =
@@ -37736,7 +37752,7 @@
             </details>
           </div>
           <div class="method-source-code" id="time_of_vaccination-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 275</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 279</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">time_of_vaccination</span> =
   <span class="ruby-ivar">@data</span>[<span class="ruby-value">:time_of_vaccination</span>].<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:event_time</span>]
 
@@ -38705,7 +38721,7 @@
             </details>
           </div>
           <div class="method-source-code" id="to_archive_reason-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 204</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 208</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_archive_reason</span>
   <span class="ruby-comment"># If the patient is new to this team, we need to add an archive reason for this team</span>
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">patient</span>&amp;.<span class="ruby-identifier">teams</span>&amp;.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">team</span>)
@@ -38750,7 +38766,7 @@
             </details>
           </div>
           <div class="method-source-code" id="to_patient_location-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 198</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 202</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_patient_location</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">session</span>
     <span class="ruby-constant">PatientLocation</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">patient:</span>, <span class="ruby-value">location:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>, <span class="ruby-value">academic_year:</span>)
@@ -38854,7 +38870,11 @@
   }
 
   <span class="ruby-identifier">vaccination_record</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">present?</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">bulk?</span>
+      <span class="ruby-constant">VaccinationRecord</span>.<span class="ruby-identifier">find_or_initialize_by</span>(
+        <span class="ruby-identifier">attributes</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">attributes_to_stage_if_already_exists</span>)
+      )
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">present?</span>
       <span class="ruby-constant">VaccinationRecord</span>
         .<span class="ruby-identifier">find_by!</span>(<span class="ruby-value">uuid:</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">to_s</span>)
         .<span class="ruby-identifier">tap</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">stage_changes</span>(<span class="ruby-identifier">attributes</span>) }
@@ -38913,7 +38933,7 @@
             </details>
           </div>
           <div class="method-source-code" id="uuid-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 278</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 282</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">uuid</span> = <span class="ruby-identifier">poc?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:uuid</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccinated</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:vaccinated</span>]
@@ -39879,7 +39899,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccinated-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 280</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 284</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccinated</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:vaccinated</span>]
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_name</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:vaccine_given</span>]
@@ -40843,7 +40863,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 410</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 414</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccine_upload_name</span>.<span class="ruby-identifier">nil?</span>
 
@@ -40889,7 +40909,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 282</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 286</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_name</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:vaccine_given</span>]
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">local_patient_id</span> = <span class="ruby-identifier">bulk?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@data</span>[<span class="ruby-value">:local_patient_id</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
@@ -41851,7 +41871,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_upload_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 405</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 409</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_upload_name</span>
   <span class="ruby-identifier">parsed_vaccination_description_string</span>&amp;.<span class="ruby-identifier">dig</span>(<span class="ruby-value">:vaccine_name</span>) <span class="ruby-operator">||</span>
     <span class="ruby-identifier">vaccine_name</span>&amp;.<span class="ruby-identifier">to_s</span>
@@ -41894,7 +41914,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_administered-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 583</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 587</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_administered</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> [<span class="ruby-keyword">true</span>, <span class="ruby-keyword">false</span>].<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">administered</span>)
 
@@ -41945,7 +41965,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_batch_expiry-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 599</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 603</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_batch_expiry</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">administered</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">batch_expiry</span>.<span class="ruby-identifier">present?</span>
@@ -42010,7 +42030,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_batch_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 626</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 630</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_batch_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">administered</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">batch_name</span>.<span class="ruby-identifier">present?</span>
@@ -42077,7 +42097,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_care_setting-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 655</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 659</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_care_setting</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">care_setting</span>.<span class="ruby-identifier">blank?</span>
 
@@ -42127,7 +42147,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_clinic_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 667</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 671</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_clinic_name</span>
   <span class="ruby-identifier">clinic_name_required</span> = <span class="ruby-identifier">offline_recording?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">is_community_setting?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">poc?</span>
 
@@ -42189,7 +42209,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_date_of_vaccination-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 691</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 695</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_vaccination</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_vaccination</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
@@ -42276,7 +42296,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_delivery_site-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 740</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 744</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_delivery_site</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">administered</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">delivery_site</span>.<span class="ruby-identifier">present?</span>
@@ -42339,7 +42359,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_dose_sequence-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 765</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 769</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_dose_sequence</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">nil?</span>
 
@@ -42423,7 +42443,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_existing_patients-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 811</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 815</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_existing_patients</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">existing_patients</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">existing_patients</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
@@ -42470,7 +42490,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_local_patient_id-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 820</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 824</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_local_patient_id</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">bulk?</span>
 
@@ -42516,7 +42536,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_local_patient_id_uri-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 828</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 832</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_local_patient_id_uri</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">bulk?</span>
 
@@ -42562,7 +42582,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_patient_date_of_birth-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 836</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 840</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient_date_of_birth</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
@@ -42625,7 +42645,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_patient_first_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 861</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 865</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient_first_name</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
@@ -42683,7 +42703,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_patient_gender_code-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 881</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 885</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_gender_code</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient_gender_code</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
@@ -42741,7 +42761,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_patient_last_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 901</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 905</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient_last_name</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
@@ -42799,7 +42819,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_patient_nhs_number-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 921</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 925</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_nhs_number</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient_nhs_number</span>.<span class="ruby-identifier">blank?</span>
 
@@ -42847,7 +42867,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_patient_postcode-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 931</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 935</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_postcode</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient_postcode</span>.<span class="ruby-identifier">present?</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient_postcode</span>.<span class="ruby-identifier">to_postcode</span>.<span class="ruby-identifier">nil?</span>
@@ -42912,7 +42932,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_performed_by-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 958</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 962</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_performed_by</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">poc?</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">offline_recording?</span>
@@ -42992,7 +43012,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_performed_ods_code-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1000</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1004</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_performed_ods_code</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">offline_recording?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">bulk?</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">performed_ods_code</span>.<span class="ruby-identifier">nil?</span>
@@ -43045,7 +43065,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_programme-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1015</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1019</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_programme</span>
   <span class="ruby-identifier">field</span> = <span class="ruby-identifier">programme_name</span>.<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">combined_vaccination_and_dose_sequence</span>
 
@@ -43115,7 +43135,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_reason_not_administered-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1047</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1051</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_reason_not_administered</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">administered</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">reason_not_administered</span>.<span class="ruby-identifier">present?</span>
@@ -43169,7 +43189,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_school_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1063</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1067</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_school_name</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">bulk?</span>
 
@@ -43231,7 +43251,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_school_urn-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1087</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1091</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_school_urn</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">blank?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">poc?</span>
 
@@ -43296,7 +43316,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_session_id-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1114</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1118</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_session_id</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">present?</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span>
@@ -43362,7 +43382,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_supplied_by-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1142</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1146</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_supplied_by</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">supplied_by_email</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">supplied_by</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">supplied_by_email</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a valid email address&quot;</span>)
@@ -43406,7 +43426,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_time_of_vaccination-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1148</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1152</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_time_of_vaccination</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">time_of_vaccination</span>.<span class="ruby-identifier">blank?</span>
 
@@ -43459,7 +43479,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_uuid-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1163</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1167</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_uuid</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">blank?</span>
 
@@ -43515,7 +43535,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_vaccine-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1181</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import_row.rb, line 1185</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_vaccine</span>
   <span class="ruby-identifier">field</span> = <span class="ruby-identifier">vaccine_name</span>.<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">combined_vaccination_and_dose_sequence</span>
 

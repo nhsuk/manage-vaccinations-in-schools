@@ -734,11 +734,13 @@
       <span class="ruby-value">selected:</span> <span class="ruby-identifier">active</span> <span class="ruby-operator">==</span> <span class="ruby-value">:imported</span>
     )
 
-    <span class="ruby-identifier">nav</span>.<span class="ruby-identifier">with_item</span>(
-      <span class="ruby-value">href:</span> <span class="ruby-identifier">imports_issues_path</span>,
-      <span class="ruby-value">text:</span> <span class="ruby-identifier">issues_text</span>,
-      <span class="ruby-value">selected:</span> <span class="ruby-identifier">active</span> <span class="ruby-operator">==</span> <span class="ruby-value">:issues</span>
-    )
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">policy</span>(<span class="ruby-node">%i[import issue]</span>).<span class="ruby-identifier">index?</span>
+      <span class="ruby-identifier">nav</span>.<span class="ruby-identifier">with_item</span>(
+        <span class="ruby-value">href:</span> <span class="ruby-identifier">imports_issues_path</span>,
+        <span class="ruby-value">text:</span> <span class="ruby-identifier">issues_text</span>,
+        <span class="ruby-value">selected:</span> <span class="ruby-identifier">active</span> <span class="ruby-operator">==</span> <span class="ruby-value">:issues</span>
+      )
+    <span class="ruby-keyword">end</span>
 
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">policy</span>(<span class="ruby-constant">ImportantNotice</span>).<span class="ruby-identifier">index?</span>
       <span class="ruby-identifier">nav</span>.<span class="ruby-identifier">with_item</span>(
