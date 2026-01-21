@@ -18,22 +18,26 @@ commands:
         help: Specify the environment (cluster will be mavis-ENV)
 
     flags:
-      - long: --service
+      - &service-flag
+        long: --service
         short: -s
         help: "Specify the service name. Ignored if using --task-id or --task-ip"
-      - long: --task-id
+      - &task-id-flag
+        long: --task-id
         short: -t
         arg: task_id
         help: "Specify the task ID directly"
         conflicts: [--task-ip]
-      - long: --task-ip
+      - &task-ip-flag
+        long: --task-ip
         short: -T
         arg: task_ip
         help: "Specify the task by its IP address."
         conflicts: [--task-id]
-      - long: --exit-without-login
+      - &exit-without-login-flag
+        long: --exit-without-login
         short: -x
-        arg:
+        help: "Do not try to login if user is not already logged in"
 
     examples:
       - mavis-server shell test
@@ -42,3 +46,24 @@ commands:
     help: List running tasks for an env
     args:
       - *environment-arg
+
+  - name: send-file
+    help: Send file to a server
+
+    args:
+      - *environment-arg
+      - name: local-file
+        required: true
+        help: "Path to local source file to copy"
+      - name: remote-file
+        required: true
+        help: "Path to remote destination file"
+
+    flags:
+      - *service-flag
+      - *task-id-flag
+      - *task-ip-flag
+      - *exit-without-login-flag
+
+    # examples:
+    #   - mavis-server send-file

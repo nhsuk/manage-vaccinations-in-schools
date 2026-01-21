@@ -34,8 +34,10 @@ function set_service_name {
     if [ -z "$service_name" ] && [[ "$env" != *data-replication ]]; then
         if [ "$env" == "qa" ] || [ "$env" == "production" ]; then
             service_name="mavis-$env-ops"
+            service_type="ops"
         else
             service_name="mavis-$env-web"
+            service_type="web"
         fi
     fi
 }

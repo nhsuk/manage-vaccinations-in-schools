@@ -28,6 +28,7 @@ mavis_server_usage() {
   printf "%s\n" "Commands:"
   printf "  %s   Open shell on server\n" "shell     "
   printf "  %s   List running tasks for an env\n" "list-tasks"
+  printf "  %s   Send file to a server\n" "send-file "
   echo
 
   # :command.long_usage
@@ -82,7 +83,7 @@ mavis_server_shell_usage() {
 
     # :flag.usage
     printf "  %s\n" "--exit-without-login, -x"
-    printf "\n"
+    printf "    Do not try to login if user is not already logged in\n"
     echo
 
     # :command.usage_fixed_flags
@@ -131,6 +132,69 @@ mavis_server_list_tasks_usage() {
     # :argument.usage
     printf "  %s\n" "ENVIRONMENT"
     printf "    Specify the environment (cluster will be mavis-ENV)\n"
+    echo
+
+  fi
+}
+
+# :command.usage
+mavis_server_send_file_usage() {
+  printf "mavis-server send-file - Send file to a server\n\n"
+
+  printf "%s\n" "Usage:"
+  printf "  mavis-server send-file ENVIRONMENT LOCAL-FILE REMOTE-FILE [OPTIONS]\n"
+  printf "  mavis-server send-file --help | -h\n"
+  echo
+
+  # :command.long_usage
+  if [[ -n "$long_usage" ]]; then
+    # :command.usage_options
+    printf "%s\n" "Options:"
+
+    # :command.usage_flags
+    # :flag.usage
+    printf "  %s\n" "--service, -s"
+    printf "    Specify the service name. Ignored if using --task-id or --task-ip\n"
+    echo
+
+    # :flag.usage
+    printf "  %s\n" "--task-id, -t TASK_ID"
+    printf "    Specify the task ID directly\n"
+    printf "    %s\n" "Conflicts: --task-ip"
+    echo
+
+    # :flag.usage
+    printf "  %s\n" "--task-ip, -T TASK_IP"
+    printf "    Specify the task by its IP address.\n"
+    printf "    %s\n" "Conflicts: --task-id"
+    echo
+
+    # :flag.usage
+    printf "  %s\n" "--exit-without-login, -x"
+    printf "    Do not try to login if user is not already logged in\n"
+    echo
+
+    # :command.usage_fixed_flags
+    printf "  %s\n" "--help, -h"
+    printf "    Show this help\n"
+    echo
+
+    # :command.usage_args
+    printf "%s\n" "Arguments:"
+
+    # :argument.usage
+    printf "  %s\n" "ENVIRONMENT"
+    printf "    Specify the environment (cluster will be mavis-ENV)\n"
+    echo
+
+    # :argument.usage
+    printf "  %s\n" "LOCAL-FILE"
+    printf "    Path to local source file to copy\n"
+    echo
+
+    # :argument.usage
+    printf "  %s\n" "REMOTE-FILE"
+    printf "    Path to remote destination file\n"
     echo
 
   fi
@@ -239,8 +303,10 @@ function set_service_name {
     if [ -z "$service_name" ] && [[ "$env" != *data-replication ]]; then
         if [ "$env" == "qa" ] || [ "$env" == "production" ]; then
             service_name="mavis-$env-ops"
+            service_type="ops"
         else
             service_name="mavis-$env-web"
+            service_type="web"
         fi
     fi
 }
@@ -408,6 +474,78 @@ mavis_server_list_tasks_command() {
 
 }
 
+# :command.function
+mavis_server_send_file_command() {
+
+  # lib/mavis-server/send_file_command.sh
+  region="eu-west-2"
+  env=${args[environment]}
+  local_file=${args[local-file]}
+  remote_path=${args[remote-path]}
+  task_id=${args[--task-id]}
+  task_ip=${args[--task-ip]}
+
+  confirm_production
+
+  authenticate_user
+
+  set_service_name
+  if [[ "$service_type" != "ops" ]]; then
+      echo "This command requires an ops service but one isn't available in $env env"
+      exit 1
+  fi
+
+  echo "Using service: $service_name"
+
+  set_cluster_name
+  set_task_info
+
+  echo "Task ID: $task_id"
+  echo "Container: $container_name"
+
+  if [[ $env == 'production' || $env == 'production-data-replication' ]]; then
+      bucket_name="mavis-filetransfer-production"
+  else
+      bucket_name="mavis-filetransfer-development"
+  fi
+
+  # Generate unique identifier for the S3 object to avoid conflicts
+  unique_id="temp-$RANDOM"
+
+  echo "Uploading to S3 bucket: s3://$bucket_name/$unique_id"
+  aws s3 cp "$local_file" "s3://$bucket_name/$unique_id"
+  if [[ $? -ne 0 ]]; then
+      echo "Error: Failed to upload file to S3"
+      exit 1
+  fi
+
+  echo "Downloading from S3 to task $task_id and path: $remote_path "
+  echo container_name: $container_name
+  echo task_id: $task_id
+  aws ecs execute-command \
+      --region "$region" \
+      --cluster "$cluster_name" \
+      --task "$task_id" \
+      --container "$container_name" \
+      --command "aws s3 cp s3://$bucket_name/$unique_id $remote_path" \
+      --interactive
+
+  copy_exit_code=$?
+
+  echo "Cleaning up S3 object"
+  aws s3 rm "s3://$bucket_name/$unique_id" --region "$region" &>/dev/null
+
+  if [[ $copy_exit_code -eq 0 ]]; then
+      echo ""
+      echo "File successfully copied to container"
+  else
+      echo ""
+      echo "Error: Failed to copy file to container"
+      exit 1
+  fi
+
+}
+
 # :command.parse_requirements
 parse_requirements() {
   local key
@@ -451,6 +589,13 @@ parse_requirements() {
       action="list-tasks"
       shift
       mavis_server_list_tasks_parse_requirements "$@"
+      shift $#
+      ;;
+
+    send-file)
+      action="send-file"
+      shift
+      mavis_server_send_file_parse_requirements "$@"
       shift $#
       ;;
 
@@ -663,6 +808,139 @@ mavis_server_list_tasks_parse_requirements() {
 
 }
 
+# :command.parse_requirements
+mavis_server_send_file_parse_requirements() {
+  local key
+
+  # :command.fixed_flags_filter
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+      --help | -h)
+        long_usage=yes
+        mavis_server_send_file_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  # :command.command_filter
+  action="send-file"
+
+  # :command.parse_requirements_while
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+      # :flag.case
+      --service | -s)
+
+        # :flag.case_no_arg
+        args['--service']=1
+        shift
+        ;;
+
+      # :flag.case
+      --task-id | -t)
+        # :flag.conflicts
+        if [[ -n "${args['--task-ip']:-}" ]]; then
+          printf "conflicting options: %s cannot be used with %s\n" "$key" "--task-ip" >&2
+          exit 1
+        fi
+
+        # :flag.case_arg
+        if [[ -n ${2+x} ]]; then
+          args['--task-id']="$2"
+          shift
+          shift
+        else
+          printf "%s\n" "--task-id requires an argument: --task-id, -t TASK_ID" >&2
+          exit 1
+        fi
+        ;;
+
+      # :flag.case
+      --task-ip | -T)
+        # :flag.conflicts
+        if [[ -n "${args['--task-id']:-}" ]]; then
+          printf "conflicting options: %s cannot be used with %s\n" "$key" "--task-id" >&2
+          exit 1
+        fi
+
+        # :flag.case_arg
+        if [[ -n ${2+x} ]]; then
+          args['--task-ip']="$2"
+          shift
+          shift
+        else
+          printf "%s\n" "--task-ip requires an argument: --task-ip, -T TASK_IP" >&2
+          exit 1
+        fi
+        ;;
+
+      # :flag.case
+      --exit-without-login | -x)
+
+        # :flag.case_no_arg
+        args['--exit-without-login']=1
+        shift
+        ;;
+
+      -?*)
+        printf "invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+        # :command.parse_requirements_case
+        # :command.parse_requirements_case_simple
+        # :argument.case
+        if [[ -z ${args['environment']+x} ]]; then
+          args['environment']=$1
+          shift
+        # :argument.case
+        elif [[ -z ${args['local-file']+x} ]]; then
+          args['local-file']=$1
+          shift
+        # :argument.case
+        elif [[ -z ${args['remote-file']+x} ]]; then
+          args['remote-file']=$1
+          shift
+        else
+          printf "invalid argument: %s\n" "$key" >&2
+          exit 1
+        fi
+
+        ;;
+
+    esac
+  done
+
+  # :command.required_args_filter
+  if [[ -z ${args['environment']+x} ]]; then
+    printf "missing required argument: ENVIRONMENT\nusage: mavis-server send-file ENVIRONMENT LOCAL-FILE REMOTE-FILE [OPTIONS]\n" >&2
+
+    exit 1
+  fi
+
+  if [[ -z ${args['local-file']+x} ]]; then
+    printf "missing required argument: LOCAL-FILE\nusage: mavis-server send-file ENVIRONMENT LOCAL-FILE REMOTE-FILE [OPTIONS]\n" >&2
+
+    exit 1
+  fi
+
+  if [[ -z ${args['remote-file']+x} ]]; then
+    printf "missing required argument: REMOTE-FILE\nusage: mavis-server send-file ENVIRONMENT LOCAL-FILE REMOTE-FILE [OPTIONS]\n" >&2
+
+    exit 1
+  fi
+
+}
+
 # :command.initialize
 initialize() {
   declare -g version="0.0.0"
@@ -685,6 +963,7 @@ run() {
   case "$action" in
     "shell") mavis_server_shell_command ;;
     "list-tasks") mavis_server_list_tasks_command ;;
+    "send-file") mavis_server_send_file_command ;;
   esac
 }
 
