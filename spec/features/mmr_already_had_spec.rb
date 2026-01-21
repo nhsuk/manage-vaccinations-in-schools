@@ -99,7 +99,16 @@ describe "MMR/MMRV" do
   end
 
   def then_i_see_the_did_you_have_mmr_or_mmrv_page
-    expect(page).to have_content("Was #{patient.given_name} vaccinated with the MMRV vaccine?")
+    expect(page).to have_content("Was #{@patient.given_name} vaccinated with the MMRV vaccine?")
+  end
+
+  def when_i_choose_mmr_and_continue
+    choose "Yes"
+    click_on "Continue"
+  end
+
+  def then_i_see_the_confirmation_page
+    expect(page).to have_content("Check your answers before saving this vaccination outcome")
   end
 
   def when_i_confirm_the_details
