@@ -17,7 +17,7 @@
                      },
                      hint: { text: "If the school is not in #{current_team.name}, archive the child record." },
                      data: { module: "app-autocomplete" } do %>
-    
+
     <%= tag.option "", value: "" %>
     <% duplicate_school_names = @eligible_schools.group_by(&:name).select { |_name, schools| schools.size > 1 }.keys %>
     <% @eligible_schools.each do |school| %>

@@ -18,6 +18,7 @@ export class Autocomplete extends Component {
     this.name = this.$root.name;
     this.options = Array.from(this.$root.options);
     this.value = this.$root.value;
+    this.disableHints = this.$root.dataset.disablehints === "true";
 
     this.enhanceSelectElement(this.$root);
   }
@@ -40,7 +41,9 @@ export class Autocomplete extends Component {
       inputClasses: "nhsuk-input",
       showNoOptionsFound: true,
       templates: {
-        suggestion: (value) => this.suggestion(value),
+        suggestion: this.disableHints
+          ? undefined
+          : (value) => this.suggestion(value),
       },
       onConfirm: (value) => {
         const selectedOption = this.options.filter(

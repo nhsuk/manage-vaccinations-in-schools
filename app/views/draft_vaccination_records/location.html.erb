@@ -12,13 +12,12 @@
   <%= f.govuk_select :location_id,
                      label: { text: "Location", size: "l", tag: "h1" },
                      caption: { text: @patient.full_name },
-                     data: { module: "app-autocomplete" } do %>
+                     data: { module: "app-autocomplete", disablehints: true } do %>
 
       <% @locations.find_each do |location| %>
         <%= tag.option location_display_name(location, show_urn: true),
                        value: location.id,
-                       selected: location.id == @draft_vaccination_record.location&.id,
-                       data: { hint: format_address_single_line(location) } %>
+                       selected: location.id == @draft_vaccination_record.location&.id %>
       <% end %>
       <%= tag.option "Unknown", value: "unknown", selected: @draft_vaccination_record.location.nil? %>
   <% end %>
