@@ -32,7 +32,7 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
       source: "service"
     )
 
-    redirect_to draft_vaccination_record_path("confirm")
+    redirect_to draft_vaccination_record_path("mmr-or-mmrv")
   end
 
   private

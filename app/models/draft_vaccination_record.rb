@@ -23,6 +23,7 @@ class DraftVaccinationRecord
   attribute :identity_check_confirmed_by_patient, :boolean
   attribute :location_id, :integer
   attribute :location_name, :string
+  attribute :mmrv, :boolean
   attribute :notes, :string
   attribute :outcome, :string
   attribute :patient_id, :integer
@@ -51,6 +52,7 @@ class DraftVaccinationRecord
 
   def wizard_steps
     [
+      :mmr_or_mmrv,
       :identity,
       :notes,
       :date_and_time,

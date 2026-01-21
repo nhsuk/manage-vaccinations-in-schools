@@ -1,0 +1,24 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: @back_link_path) %>
+<% end %>
+
+<% legend = "Was #{@patient.given_name} vaccinated with the MMRV vaccine?" %>
+<% hint = "#{@patient.given_name} is eligible for the new MMRV vaccine, but may have got the MMR vaccine instead" %>
+
+<% content_for :page_title, legend %>
+
+<span class="nhsuk-caption-l"><%= @patient.full_name %></span>
+
+<%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <% options = [OpenStruct.new(value: true, label: "Yes"), OpenStruct.new(value: false, label: "No")] %>
+
+  <%= f.govuk_collection_radio_buttons :mmrv,
+                                       options,
+                                       :value,
+                                       :label,
+                                       legend: { text: legend, tag: "h1", size: "l" },
+                                       hint: { text: hint } %>
+  <%= f.govuk_submit %>
+<% end %>

@@ -18,8 +18,14 @@ describe "MMR/MMRV" do
     then_i_see_the_patient_session_page
 
     when_i_click_record_as_already_vaccinated
-    and_i_confirm_the_details
+    then_i_see_the_did_you_have_mmr_or_mmrv_page
+
+    when_i_choose_mmr_and_continue
+    then_i_see_the_confirmation_page
+
+    when_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
+    and_had_been_vaccinated_with_mmr
     and_the_consent_requests_are_sent
     then_the_parent_doesnt_receive_a_consent_request
   end
@@ -92,7 +98,11 @@ describe "MMR/MMRV" do
     click_on "Back"
   end
 
-  def and_i_confirm_the_details
+  def then_i_see_the_did_you_have_mmr_or_mmrv_page
+    expect(page).to have_content("Was #{patient.given_name} vaccinated with the MMRV vaccine?")
+  end
+
+  def when_i_confirm_the_details
     click_on "Confirm"
   end
 

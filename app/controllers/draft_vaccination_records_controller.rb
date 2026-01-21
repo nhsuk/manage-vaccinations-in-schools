@@ -210,6 +210,7 @@ class DraftVaccinationRecordsController < ApplicationController
         identity_check_confirmed_by_other_relationship
       ],
       location: %i[location_id],
+      mmr_or_mmrv: %i[mmrv],
       notes: %i[notes],
       outcome: %i[outcome],
       supplier: %i[supplied_by_user_id],

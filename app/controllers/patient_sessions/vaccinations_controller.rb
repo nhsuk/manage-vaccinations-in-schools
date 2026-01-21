@@ -28,6 +28,7 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
     if @vaccinate_form.save(draft_vaccination_record:)
       steps = draft_vaccination_record.wizard_steps
 
+      # steps.delete(:mmr_or_mmrv) unless draft_vaccination_record.programme.mmr_mmrv?
       steps.delete(:dose) # this can only be changed from confirmation page
       steps.delete(:identity) # this can only be changed from confirmation page
       steps.delete(:notes) # this is on the confirmation page
