@@ -13,6 +13,13 @@ This is a service used within the NHS for managing and recording school-aged vac
 | [Training](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/training)     | [training.manage-vaccinations-in-schools.nhs.uk](https://training.manage-vaccinations-in-schools.nhs.uk) | External training            | ❌                  | `release` branch               | manual     | [`staging`](config/environments/staging.rb)       |
 | [Production](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/production) | [www.manage-vaccinations-in-schools.nhs.uk](https://www.manage-vaccinations-in-schools.nhs.uk)           | Live service                 | ✅                  | `release` branch               | manual     | [`production`](config/environments/production.rb) |
 
+## Documentation
+
+We have two Rdoc versions:
+
+1. [next](https://nhsuk.github.io/manage-vaccinations-in-schools/rdoc/next) - useful for dev work (based off the `next` branch).
+2. [release](https://nhsuk.github.io/manage-vaccinations-in-schools/rdoc/release) - useful for ops to debug live issues (based off the `release` branch).
+
 ## Development
 
 ### Prerequisites
