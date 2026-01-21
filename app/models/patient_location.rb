@@ -6,7 +6,7 @@
 #
 #  id            :bigint           not null, primary key
 #  academic_year :integer          not null
-#  date_range    :daterange        default(-Infinity...Infinity)
+#  date_range    :daterange        default(-Infinity...Infinity), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  location_id   :bigint           not null
@@ -51,8 +51,7 @@ class PatientLocation < ApplicationRecord
   scope :joins_sessions, -> { joins_team_locations.joins(<<-SQL) }
     INNER JOIN sessions
     ON sessions.team_location_id = team_locations.id
-    AND (patient_locations.date_range IS NULL OR sessions.dates = '{}'
-        OR patient_locations.date_range @> ANY(sessions.dates))
+    AND (sessions.dates = '{}' OR patient_locations.date_range @> ANY(sessions.dates))
   SQL
 
   scope :appear_in_programmes,
@@ -78,13 +77,13 @@ class PatientLocation < ApplicationRecord
         end
 
   def begin_date
-    value = date_range&.begin
+    value = date_range.begin
     return nil if value.nil? || value == -Float::INFINITY
     value
   end
 
   def end_date
-    value = date_range&.end
+    value = date_range.end
     return nil if value.nil? || value == Float::INFINITY
     date_range.exclude_end? ? value - 1.day : value
   end
