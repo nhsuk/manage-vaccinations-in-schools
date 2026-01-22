@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_19_161311) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1387,8 +1387,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_19_161311) do
           END AS patient_school_urn,
           CASE
               WHEN (school.name IS NOT NULL) THEN school.name
-              WHEN (pat.home_educated = true) THEN 'Home educated'::text
-              ELSE 'Unknown'::text
+              WHEN (pat.home_educated = true) THEN 'Home-schooled'::text
+              ELSE 'Unknown school'::text
           END AS patient_school_name,
       (ar.patient_id IS NOT NULL) AS is_archived,
       (EXISTS ( SELECT 1

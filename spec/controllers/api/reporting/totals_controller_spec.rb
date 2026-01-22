@@ -242,12 +242,12 @@ describe API::Reporting::TotalsController do
       expect(school_two_data["vaccinated"]).to eq(1)
       expect(school_two_data["not_vaccinated"]).to eq(0)
 
-      expect(home_educated_data["school_name"]).to eq("Home educated")
+      expect(home_educated_data["school_name"]).to eq("Home-schooled")
       expect(home_educated_data["cohort"]).to eq(1)
       expect(home_educated_data["vaccinated"]).to eq(0)
       expect(home_educated_data["not_vaccinated"]).to eq(1)
 
-      expect(unknown_data["school_name"]).to eq("Unknown")
+      expect(unknown_data["school_name"]).to eq("Unknown school")
       expect(unknown_data["cohort"]).to eq(1)
       expect(unknown_data["vaccinated"]).to eq(0)
       expect(unknown_data["not_vaccinated"]).to eq(1)
