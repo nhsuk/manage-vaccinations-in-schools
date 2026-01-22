@@ -29,7 +29,7 @@ describe "MMR/MMRV" do
     when_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
     and_had_been_vaccinated_with_mmr
-    and_the_dose_sequence_is_first_dose
+    and_the_dose_number_is_first
     and_the_consent_requests_are_sent
     then_the_parent_doesnt_receive_a_consent_request
   end
@@ -152,7 +152,8 @@ describe "MMR/MMRV" do
     expect(vaccination_record.performed_at.to_date).to eq(@vaccination_date)
   end
 
-  def and_the_dose_sequence_is_first_dose
+  def and_the_dose_number_is_first
+    expect(page).to have_content("Dose number1st")
     vaccination_record = @patient.vaccination_records.last
     expect(vaccination_record.dose_sequence).to be(1)
   end
