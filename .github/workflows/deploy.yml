@@ -44,7 +44,6 @@ on:
           - web
           - sidekiq
           - ops
-          - none
         default: all
 
 env:
@@ -80,73 +79,10 @@ jobs:
       - name: Get git sha
         id: get-git-sha
         run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-  validate-permissions:
-    needs: validate-inputs
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./terraform
-    permissions:
-      id-token: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ github.ref_name }}
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v5
-        with:
-          role-to-assume: arn:aws:iam::${{ env.account_id }}:role/GithubDeployMavisAndInfrastructure
-          aws-region: eu-west-2
-      - name: Compare permissions
-        id: compare-permissions
-        run: |
-          source ./scripts/validate-github-actions-policy.sh
-          validate_policies "arn:aws:iam::$account_id:policy/DeployMavisResources" ./account/resources/iam_policy_DeployMavisResources.json
-          exit $?
-  update-permissions:
-    runs-on: ubuntu-latest
-    needs: validate-permissions
-    if: ${{ !cancelled() && (inputs.environment == 'production' || inputs.environment == 'preview') && needs.validate-permissions.result == 'failure' }}
-    environment: ${{ inputs.environment }}
-    defaults:
-      run:
-        working-directory: ./terraform
-    permissions:
-      id-token: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ github.ref_name }}
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v5
-        with:
-          role-to-assume: arn:aws:iam::${{ env.account_id }}:role/GithubDeployMavisAndInfrastructure
-          aws-region: eu-west-2
-      - name: Update IAM policy
-        run: ./scripts/update-github-actions-policy.sh "arn:aws:iam::$account_id:policy/DeployMavisResources" ./account/resources/iam_policy_DeployMavisResources.json
-  deploy-infrastructure:
-    permissions:
-      id-token: write
-    needs:
-      [
-        determine-git-sha,
-        validate-permissions,
-        update-permissions,
-      ]
-    if: ${{ !cancelled() &&
-      ((inputs.environment != 'production' && inputs.environment != 'preview') ||
-      needs.validate-permissions.result == 'success' || needs.update-permissions.result == 'success') }}
-    uses: ./.github/workflows/deploy-infrastructure.yml
-    with:
-      environment: ${{ inputs.environment }}
-      git_ref_to_deploy: ${{ needs.determine-git-sha.outputs.git-sha }}
   deploy-application:
     permissions:
       id-token: write
-    needs: [deploy-infrastructure, determine-git-sha]
-    if: ${{ !cancelled() && inputs.server_types != 'none' && needs.deploy-infrastructure.result == 'success' }}
+    needs: determine-git-sha
     uses: ./.github/workflows/deploy-application.yml
     with:
       environment: ${{ inputs.environment }}

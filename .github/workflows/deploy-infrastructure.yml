@@ -2,15 +2,6 @@ name: Deploy infrastructure
 run-name: Deploy infrastructure for ${{ inputs.environment }}
 
 on:
-  workflow_call:
-    inputs:
-      environment:
-        description: Deployment environment
-        required: true
-        type: string
-      git_ref_to_deploy:
-        required: true
-        type: string
   workflow_dispatch:
     inputs:
       environment:
@@ -26,7 +17,6 @@ permissions: {}
 
 env:
   environment: ${{ inputs.environment }}
-  image_tag: ${{ inputs.image_tag || github.sha }}
   git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
   aws_role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
@@ -42,9 +32,92 @@ defaults:
     working-directory: terraform/app
 
 jobs:
+
+  validate-inputs:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Validate inputs
+        run: |
+          if [[ "$environment" == "preview" || "$environment" == "production" ]]; then
+            if [[ -z "$git_ref_to_deploy" ]]; then
+              echo "Error: git_ref_to_deploy is required for preview and production environments."
+              exit 1
+            fi
+          fi
+  determine-git-sha:
+    runs-on: ubuntu-latest
+    permissions: {}
+    needs: validate-inputs
+    outputs:
+      git-sha: ${{ steps.get-git-sha.outputs.git-sha }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.git_ref_to_deploy || github.sha }}
+      - name: Get git sha
+        id: get-git-sha
+        run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+  validate-permissions:
+    needs: validate-inputs
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::${{ env.account_id }}:role/GithubDeployMavisAndInfrastructure
+          aws-region: eu-west-2
+      - name: Compare permissions
+        id: compare-permissions
+        run: |
+          source ./scripts/validate-github-actions-policy.sh
+          validate_policies "arn:aws:iam::$account_id:policy/DeployMavisResources" ./account/resources/iam_policy_DeployMavisResources.json
+          exit $?
+  update-permissions:
+    runs-on: ubuntu-latest
+    needs: validate-permissions
+    if: ${{ !cancelled() && (inputs.environment == 'production' || inputs.environment == 'preview') && needs.validate-permissions.result == 'failure' }}
+    environment: ${{ inputs.environment }}
+    defaults:
+      run:
+        working-directory: ./terraform
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::${{ env.account_id }}:role/GithubDeployMavisAndInfrastructure
+          aws-region: eu-west-2
+      - name: Update IAM policy
+        run: ./scripts/update-github-actions-policy.sh "arn:aws:iam::$account_id:policy/DeployMavisResources" ./account/resources/iam_policy_DeployMavisResources.json
+
   plan:
     name: Terraform plan
     runs-on: ubuntu-latest
+    needs:
+      [
+        determine-git-sha,
+        validate-permissions,
+        update-permissions,
+      ]
+    if: ${{ !cancelled() && 
+      ((inputs.environment != 'production' && inputs.environment != 'preview') ||
+      needs.validate-permissions.result == 'success' || needs.update-permissions.result == 'success') }}
     permissions:
       id-token: write
     steps:
@@ -85,6 +158,7 @@ jobs:
     name: Terraform apply
     runs-on: ubuntu-latest
     needs: plan
+    if: ${{ !cancelled() && needs.plan.result == 'success' }}
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write
