@@ -36,8 +36,8 @@ SELECT
   END                                   AS patient_school_urn,
   CASE
     WHEN school.name IS NOT NULL THEN school.name
-    WHEN pat.home_educated = true THEN 'Home educated'
-    ELSE 'Unknown'
+    WHEN pat.home_educated = true THEN 'Home-schooled'
+    ELSE 'Unknown school'
   END                                   AS patient_school_name,
 
   -- Status flags
