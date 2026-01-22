@@ -13,10 +13,6 @@ describe StatusUpdater do
     let(:programmes) { [Programme.hpv] }
     let(:patient) { create(:patient, year_group: 7) }
 
-    it "doesn't create any consent statuses" do
-      expect { call }.not_to change(Patient::ConsentStatus, :count)
-    end
-
     it "creates a programme status for all programmes" do
       expect { call }.to change(patient.programme_statuses, :count).by(5)
       expect(patient.programme_statuses).to all(be_not_eligible)
@@ -30,20 +26,6 @@ describe StatusUpdater do
   context "with an flu session and eligible patient" do
     let(:programmes) { [Programme.flu] }
     let(:patient) { create(:patient, year_group: 8) }
-
-    it "creates a consent status" do
-      expect { call }.to change(Patient::ConsentStatus, :count).by(1)
-      expect(Patient::ConsentStatus.first).to be_no_response
-    end
-
-    context "when consent is given" do
-      before { create(:consent, patient:, programme: programmes.first) }
-
-      it "sets the vaccine methods" do
-        expect { call }.to change(Patient::ConsentStatus, :count).by(1)
-        expect(Patient::ConsentStatus.first).to be_vaccine_method_injection
-      end
-    end
 
     it "creates a programme status for all programmes" do
       expect { call }.to change(patient.programme_statuses, :count).by(5)
@@ -59,11 +41,6 @@ describe StatusUpdater do
     let(:programmes) { [Programme.hpv] }
     let(:patient) { create(:patient, year_group: 8) }
 
-    it "creates a consent status" do
-      expect { call }.to change(Patient::ConsentStatus, :count).by(1)
-      expect(Patient::ConsentStatus.first).to be_no_response
-    end
-
     it "creates a programme status for all programmes" do
       expect { call }.to change(patient.programme_statuses, :count).by(5)
     end
@@ -78,10 +55,6 @@ describe StatusUpdater do
     let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
     let(:patient) { create(:patient, year_group: 8) }
 
-    it "doesn't create any consent statuses" do
-      expect { call }.not_to change(Patient::ConsentStatus, :count)
-    end
-
     it "creates a programme status for all programmes" do
       expect { call }.to change(patient.programme_statuses, :count).by(5)
     end
@@ -94,12 +67,6 @@ describe StatusUpdater do
   context "with an doubles session and eligible patient" do
     let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
     let(:patient) { create(:patient, year_group: 9) }
-
-    it "creates a consent status for both programmes" do
-      expect { call }.to change(Patient::ConsentStatus, :count).by(2)
-      expect(Patient::ConsentStatus.first).to be_no_response
-      expect(Patient::ConsentStatus.second).to be_no_response
-    end
 
     it "creates a programme status for all programmes" do
       expect { call }.to change(patient.programme_statuses, :count).by(5)
