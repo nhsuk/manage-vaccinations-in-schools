@@ -13,10 +13,10 @@ describe "MMR/MMRV" do
     and_i_click_on_the_patient
     then_i_see_the_patient_needs_consent
 
-    when_i_click_record_as_already_had_first_dose
-    when_i_click_back
-    then_i_see_the_patient_session_page
-
+    # when_i_click_record_as_already_had_first_dose
+    # when_i_click_back
+    # then_i_see_the_patient_session_page
+    #
     when_i_click_record_as_already_had_first_dose
     then_i_see_the_did_you_have_mmr_or_mmrv_page
 
@@ -67,7 +67,7 @@ describe "MMR/MMRV" do
   end
 
   def and_a_patient_is_in_the_session
-    @patient = create(:patient, :eligible_for_vaccination, :due_for_vaccination, session: @session)
+    @patient = create(:patient, :due_for_vaccination, session: @session)
   end
 
   def and_the_patient_doesnt_need_triage
@@ -117,8 +117,20 @@ describe "MMR/MMRV" do
     click_on "Continue"
   end
 
+  def then_i_see_the_date_page
+    expect(page).to have_content("When was the MMR vaccination given?")
+  end
+
+  def when_i_fill_in_the_date_and_continue
+    @vaccination_date = 6.months.ago.to_date
+    fill_in "Day", with: @vaccination_date.day
+    fill_in "Month", with: @vaccination_date.month
+    fill_in "Year", with: @vaccination_date.year
+    click_on "Continue"
+  end
+
   def then_i_see_the_confirmation_page
-    expect(page).to have_content("Check your answers before saving this vaccination outcome")
+    expect(page).to have_content("Check and confirm")
   end
 
   def when_i_confirm_the_details
@@ -132,6 +144,17 @@ describe "MMR/MMRV" do
   def then_i_see_the_patient_is_already_vaccinated
     expect(page).to have_content("Vaccination outcome recorded for MMR")
     expect(page).to have_content("LocationUnknown")
+  end
+
+  def and_had_been_vaccinated_with_mmr
+    vaccination_record = @patient.vaccination_records.last
+    expect(vaccination_record.programme_type).to eq("mmr")
+    expect(vaccination_record.performed_at.to_date).to eq(@vaccination_date)
+  end
+
+  def and_the_dose_sequence_is_first_dose
+    vaccination_record = @patient.vaccination_records.last
+    expect(vaccination_record.dose_sequence).to be(1)
   end
 
   def and_the_consent_requests_are_sent

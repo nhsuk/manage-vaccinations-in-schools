@@ -51,6 +51,8 @@ class DraftVaccinationRecordsController < ApplicationController
       handle_location
     when :batch
       handle_batch
+    when :mmr_or_mmrv
+      handle_mmr_or_mmrv
     when :confirm
       handle_confirm
     end
@@ -116,6 +118,15 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def handle_batch
+    if params.dig(:draft_vaccination_record, :todays_batch).present? &&
+         update_params[:batch_id].in?(
+           params[:draft_vaccination_record][:todays_batch]
+         )
+      self.todays_batch = policy_scope(Batch).find(update_params[:batch_id])
+    end
+  end
+
+  def handle_mmr_or_mmrv
     if params.dig(:draft_vaccination_record, :todays_batch).present? &&
          update_params[:batch_id].in?(
            params[:draft_vaccination_record][:todays_batch]
