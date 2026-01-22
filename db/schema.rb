@@ -618,6 +618,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
 
   create_table "patient_programme_statuses", force: :cascade do |t|
     t.integer "academic_year", null: false
+    t.integer "consent_status", default: 0
+    t.integer "consent_vaccine_methods", default: [], array: true
     t.date "date"
     t.enum "disease_types", array: true, enum_type: "disease_type"
     t.integer "dose_sequence"

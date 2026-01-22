@@ -4,17 +4,19 @@
 #
 # Table name: patient_programme_statuses
 #
-#  id               :bigint           not null, primary key
-#  academic_year    :integer          not null
-#  date             :date
-#  disease_types    :enum             is an Array
-#  dose_sequence    :integer
-#  programme_type   :enum             not null
-#  status           :integer          default("not_eligible"), not null
-#  vaccine_methods  :integer          is an Array
-#  without_gelatine :boolean
-#  location_id      :bigint
-#  patient_id       :bigint           not null
+#  id                      :bigint           not null, primary key
+#  academic_year           :integer          not null
+#  consent_status          :integer          default("no_response")
+#  consent_vaccine_methods :integer          default([]), is an Array
+#  date                    :date
+#  disease_types           :enum             is an Array
+#  dose_sequence           :integer
+#  programme_type          :enum             not null
+#  status                  :integer          default("not_eligible"), not null
+#  vaccine_methods         :integer          is an Array
+#  without_gelatine        :boolean
+#  location_id             :bigint
+#  patient_id              :bigint           not null
 #
 # Indexes
 #

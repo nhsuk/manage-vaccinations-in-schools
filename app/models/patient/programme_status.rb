@@ -4,17 +4,19 @@
 #
 # Table name: patient_programme_statuses
 #
-#  id               :bigint           not null, primary key
-#  academic_year    :integer          not null
-#  date             :date
-#  disease_types    :enum             is an Array
-#  dose_sequence    :integer
-#  programme_type   :enum             not null
-#  status           :integer          default("not_eligible"), not null
-#  vaccine_methods  :integer          is an Array
-#  without_gelatine :boolean
-#  location_id      :bigint
-#  patient_id       :bigint           not null
+#  id                      :bigint           not null, primary key
+#  academic_year           :integer          not null
+#  consent_status          :integer          default("no_response")
+#  consent_vaccine_methods :integer          default([]), is an Array
+#  date                    :date
+#  disease_types           :enum             is an Array
+#  dose_sequence           :integer
+#  programme_type          :enum             not null
+#  status                  :integer          default("not_eligible"), not null
+#  vaccine_methods         :integer          is an Array
+#  without_gelatine        :boolean
+#  location_id             :bigint
+#  patient_id              :bigint           not null
 #
 # Indexes
 #
@@ -117,6 +119,16 @@ class Patient::ProgrammeStatus < ApplicationRecord
        default: :not_eligible,
        validate: true
 
+  enum :consent_status,
+       { no_response: 0, given: 1, refused: 2, conflicts: 3, not_required: 4 },
+       default: :no_response,
+       prefix: :consent,
+       validate: true
+
+  array_enum consent_vaccine_methods: vaccine_methods
+
+  validates :consent_vaccine_methods, subset: consent_vaccine_methods.keys
+
   scope :needs_consent, -> { where(status: NEEDS_CONSENT_STATUSES.keys) }
 
   scope :has_refusal, -> { where(status: HAS_REFUSAL_STATUSES.keys) }
@@ -136,6 +148,8 @@ class Patient::ProgrammeStatus < ApplicationRecord
   def group = GROUPS.find { status.starts_with?(it) }
 
   def assign
+    self.consent_status = generator.consent_status
+    self.consent_vaccine_methods = generator.consent_vaccine_methods
     self.date = generator.date
     self.disease_types = generator.disease_types
     self.dose_sequence = generator.dose_sequence

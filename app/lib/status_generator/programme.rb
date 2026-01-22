@@ -78,7 +78,7 @@ class StatusGenerator::Programme
     if vaccination_generator.status == :not_eligible ||
          triage_generator.status.in?(
            %i[required invite_to_clinic do_not_vaccinate]
-         ) || consent_generator.status.in?(%i[no_response conflicts refused])
+         ) || consent_status.in?(%i[no_response conflicts refused])
       return nil
     end
 
@@ -89,14 +89,14 @@ class StatusGenerator::Programme
     if vaccination_generator.status == :not_eligible ||
          triage_generator.status.in?(
            %i[required invite_to_clinic do_not_vaccinate]
-         ) || consent_generator.status.in?(%i[no_response conflicts refused])
+         ) || consent_status.in?(%i[no_response conflicts refused])
       return nil
     end
 
     if triage_generator.vaccine_method
       [triage_generator.vaccine_method]
     else
-      consent_generator.vaccine_methods
+      consent_vaccine_methods
     end
   end
 
@@ -105,7 +105,7 @@ class StatusGenerator::Programme
 
     if vaccination_generator.disease_types
       vaccination_generator.disease_types
-    elsif consent_generator.status.in?(%i[given refused conflicts])
+    elsif consent_status.in?(%i[given refused conflicts])
       consent_generator.disease_types
     end
   end
@@ -117,6 +117,14 @@ class StatusGenerator::Programme
 
   def location_id
     vaccination_generator.latest_location_id
+  end
+
+  def consent_status
+    consent_generator.status
+  end
+
+  def consent_vaccine_methods
+    consent_generator.vaccine_methods
   end
 
   private
@@ -182,11 +190,11 @@ class StatusGenerator::Programme
   end
 
   def should_be_has_refusal_consent_conflicts?
-    consent_generator.status == :conflicts
+    consent_status == :conflicts
   end
 
   def should_be_has_refusal_consent_refused?
-    consent_generator.status == :refused
+    consent_status == :refused
   end
 
   def should_be_needs_consent_follow_up_requested?
@@ -194,8 +202,7 @@ class StatusGenerator::Programme
   end
 
   def should_be_needs_consent_no_response?
-    vaccination_generator.status == :eligible &&
-      consent_generator.status == :no_response
+    vaccination_generator.status == :eligible && consent_status == :no_response
   end
 
   def should_be_needs_consent_request_failed?
