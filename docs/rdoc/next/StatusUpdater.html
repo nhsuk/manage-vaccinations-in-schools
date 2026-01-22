@@ -739,6 +739,8 @@
           <span class="ruby-value">on_duplicate_key_update:</span> {
             <span class="ruby-value">conflict_target:</span> [<span class="ruby-value">:id</span>],
             <span class="ruby-value">columns:</span> <span class="ruby-node">%i[
+              consent_status
+              consent_vaccine_methods
               date
               disease_types
               dose_sequence
@@ -1002,7 +1004,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_location_statuses_to_import-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_updater.rb, line 143</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_updater.rb, line 145</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_location_statuses_to_import</span>
   <span class="ruby-constant">PatientLocation</span>
     .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:patient</span>)
@@ -1066,7 +1068,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_statuses_to_import-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_updater.rb, line 111</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_updater.rb, line 113</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_statuses_to_import</span>
   <span class="ruby-ivar">@patient_statuses_to_import</span> <span class="ruby-operator">||=</span>
     <span class="ruby-constant">Patient</span>
@@ -1122,7 +1124,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme_statuses_to_import-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_updater.rb, line 129</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_updater.rb, line 131</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_statuses_to_import</span>
   <span class="ruby-ivar">@programme_statuses_to_import</span> <span class="ruby-operator">||=</span>
     <span class="ruby-constant">Patient</span>
@@ -1174,7 +1176,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme_types_per_session_id_and_year_group-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_updater.rb, line 182</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_updater.rb, line 184</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_types_per_session_id_and_year_group</span>
   <span class="ruby-ivar">@programme_types_per_session_id_and_year_group</span> <span class="ruby-operator">||=</span>
     <span class="ruby-constant">Session</span><span class="ruby-operator">::</span><span class="ruby-constant">ProgrammeYearGroup</span>
@@ -1227,7 +1229,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme_types_per_year_group-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_updater.rb, line 169</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_updater.rb, line 171</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_types_per_year_group</span>
   <span class="ruby-ivar">@programme_types_per_year_group</span> <span class="ruby-operator">||=</span>
     <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">ProgrammeYearGroup</span>
@@ -1367,6 +1369,8 @@
         <span class="ruby-value">on_duplicate_key_update:</span> {
           <span class="ruby-value">conflict_target:</span> [<span class="ruby-value">:id</span>],
           <span class="ruby-value">columns:</span> <span class="ruby-node">%i[
+            consent_status
+            consent_vaccine_methods
             date
             disease_types
             dose_sequence
@@ -1417,7 +1421,7 @@
             </details>
           </div>
           <div class="method-source-code" id="update_registration_statuses-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_updater.rb, line 86</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_updater.rb, line 88</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_registration_statuses!</span>
   <span class="ruby-constant">Patient</span><span class="ruby-operator">::</span><span class="ruby-constant">RegistrationStatus</span>.<span class="ruby-identifier">import!</span>(
     <span class="ruby-node">%i[patient_id session_id]</span>,

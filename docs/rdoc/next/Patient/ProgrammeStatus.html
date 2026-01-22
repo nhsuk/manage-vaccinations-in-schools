@@ -656,17 +656,19 @@
 
 <p>Table name: patient_programme_statuses</p>
 
-<pre>id               :bigint           not null, primary key
-academic_year    :integer          not null
-date             :date
-disease_types    :enum             is an Array
-dose_sequence    :integer
-programme_type   :enum             not null
-status           :integer          default(&quot;not_eligible&quot;), not null
-vaccine_methods  :integer          is an Array
-without_gelatine :boolean
-location_id      :bigint
-patient_id       :bigint           not null</pre>
+<pre>id                      :bigint           not null, primary key
+academic_year           :integer          not null
+consent_status          :integer          default(&quot;no_response&quot;)
+consent_vaccine_methods :integer          default([]), is an Array
+date                    :date
+disease_types           :enum             is an Array
+dose_sequence           :integer
+programme_type          :enum             not null
+status                  :integer          default(&quot;not_eligible&quot;), not null
+vaccine_methods         :integer          is an Array
+without_gelatine        :boolean
+location_id             :bigint
+patient_id              :bigint           not null</pre>
 
 <p>Indexes</p>
 
@@ -801,8 +803,10 @@ index_patient_programme_statuses_on_status                 (status)</pre>
             </details>
           </div>
           <div class="method-source-code" id="assign-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 138</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 150</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">assign</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">consent_status</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">consent_status</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">consent_vaccine_methods</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">consent_vaccine_methods</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">date</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">date</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">disease_types</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dose_sequence</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">dose_sequence</span>
@@ -849,7 +853,7 @@ index_patient_programme_statuses_on_status                 (status)</pre>
             </details>
           </div>
           <div class="method-source-code" id="cannot_vaccinate-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 132</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 144</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cannot_vaccinate?</span> = <span class="ruby-identifier">status</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-constant">CANNOT_VACCINATE_STATUSES</span>.<span class="ruby-identifier">keys</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccinated?</span> = <span class="ruby-identifier">status</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-constant">VACCINATED_STATUSES</span>.<span class="ruby-identifier">keys</span>)
@@ -857,6 +861,8 @@ index_patient_programme_statuses_on_status                 (status)</pre>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">group</span> = <span class="ruby-constant">GROUPS</span>.<span class="ruby-identifier">find</span> { <span class="ruby-identifier">status</span>.<span class="ruby-identifier">starts_with?</span>(<span class="ruby-identifier">it</span>) }
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">assign</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">consent_status</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">consent_status</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">consent_vaccine_methods</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">consent_vaccine_methods</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">date</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">date</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">disease_types</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dose_sequence</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">dose_sequence</span>
@@ -920,7 +926,7 @@ index_patient_programme_statuses_on_status                 (status)</pre>
             </details>
           </div>
           <div class="method-source-code" id="generator-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 152</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 166</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generator</span>
   <span class="ruby-ivar">@generator</span> <span class="ruby-operator">||=</span>
     <span class="ruby-constant">StatusGenerator</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(
@@ -972,10 +978,12 @@ index_patient_programme_statuses_on_status                 (status)</pre>
             </details>
           </div>
           <div class="method-source-code" id="group-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 136</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 148</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">group</span> = <span class="ruby-constant">GROUPS</span>.<span class="ruby-identifier">find</span> { <span class="ruby-identifier">status</span>.<span class="ruby-identifier">starts_with?</span>(<span class="ruby-identifier">it</span>) }
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">assign</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">consent_status</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">consent_status</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">consent_vaccine_methods</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">consent_vaccine_methods</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">date</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">date</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">disease_types</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dose_sequence</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">dose_sequence</span>
@@ -1040,7 +1048,7 @@ index_patient_programme_statuses_on_status                 (status)</pre>
             </details>
           </div>
           <div class="method-source-code" id="has_refusal-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 130</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 142</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_refusal?</span> = <span class="ruby-identifier">status</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-constant">HAS_REFUSAL_STATUSES</span>.<span class="ruby-identifier">keys</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cannot_vaccinate?</span> = <span class="ruby-identifier">status</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-constant">CANNOT_VACCINATE_STATUSES</span>.<span class="ruby-identifier">keys</span>)
@@ -1050,6 +1058,8 @@ index_patient_programme_statuses_on_status                 (status)</pre>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">group</span> = <span class="ruby-constant">GROUPS</span>.<span class="ruby-identifier">find</span> { <span class="ruby-identifier">status</span>.<span class="ruby-identifier">starts_with?</span>(<span class="ruby-identifier">it</span>) }
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">assign</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">consent_status</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">consent_status</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">consent_vaccine_methods</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">consent_vaccine_methods</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">date</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">date</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">disease_types</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dose_sequence</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">dose_sequence</span>
@@ -1112,7 +1122,7 @@ index_patient_programme_statuses_on_status                 (status)</pre>
             </details>
           </div>
           <div class="method-source-code" id="needs_consent-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 128</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 140</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">needs_consent?</span> = <span class="ruby-identifier">status</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-constant">NEEDS_CONSENT_STATUSES</span>.<span class="ruby-identifier">keys</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_refusal?</span> = <span class="ruby-identifier">status</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-constant">HAS_REFUSAL_STATUSES</span>.<span class="ruby-identifier">keys</span>)
@@ -1124,6 +1134,8 @@ index_patient_programme_statuses_on_status                 (status)</pre>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">group</span> = <span class="ruby-constant">GROUPS</span>.<span class="ruby-identifier">find</span> { <span class="ruby-identifier">status</span>.<span class="ruby-identifier">starts_with?</span>(<span class="ruby-identifier">it</span>) }
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">assign</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">consent_status</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">consent_status</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">consent_vaccine_methods</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">consent_vaccine_methods</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">date</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">date</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">disease_types</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dose_sequence</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">dose_sequence</span>
@@ -1186,12 +1198,14 @@ index_patient_programme_statuses_on_status                 (status)</pre>
             </details>
           </div>
           <div class="method-source-code" id="vaccinated-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 134</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 146</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccinated?</span> = <span class="ruby-identifier">status</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-constant">VACCINATED_STATUSES</span>.<span class="ruby-identifier">keys</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">group</span> = <span class="ruby-constant">GROUPS</span>.<span class="ruby-identifier">find</span> { <span class="ruby-identifier">status</span>.<span class="ruby-identifier">starts_with?</span>(<span class="ruby-identifier">it</span>) }
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">assign</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">consent_status</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">consent_status</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">consent_vaccine_methods</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">consent_vaccine_methods</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">date</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">date</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">disease_types</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dose_sequence</span> = <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">dose_sequence</span>
@@ -1256,7 +1270,7 @@ index_patient_programme_statuses_on_status                 (status)</pre>
             </details>
           </div>
           <div class="method-source-code" id="vaccine_criteria-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 148</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 162</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_criteria</span> = <span class="ruby-constant">VaccineCriteria</span>.<span class="ruby-identifier">from_programme_status</span>(<span class="ruby-keyword">self</span>)
 
   <span class="ruby-identifier">private</span>

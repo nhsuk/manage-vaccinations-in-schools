@@ -584,6 +584,10 @@
       </summary>
       <ul class="nav-list" role="directory">
 
+        <li ><a href="#method-i-consent_status">consent_status</a></li>
+
+        <li ><a href="#method-i-consent_vaccine_methods">consent_vaccine_methods</a></li>
+
         <li ><a href="#method-i-date">date</a></li>
 
         <li ><a href="#method-i-disease_types">disease_types</a></li>
@@ -745,6 +749,90 @@
        </header>
 
 
+      <div id="method-i-consent_status" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-consent_status" title="Link to this method">
+                <span class="method-name">consent_status</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="consent_status-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 122</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consent_status</span>
+  <span class="ruby-identifier">consent_generator</span>.<span class="ruby-identifier">status</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-consent_vaccine_methods" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-consent_vaccine_methods" title="Link to this method">
+                <span class="method-name">consent_vaccine_methods</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="consent_vaccine_methods-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 126</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consent_vaccine_methods</span>
+  <span class="ruby-identifier">consent_generator</span>.<span class="ruby-identifier">vaccine_methods</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-i-date" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -813,7 +901,7 @@
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_generator</span>.<span class="ruby-identifier">disease_types</span>
     <span class="ruby-identifier">vaccination_generator</span>.<span class="ruby-identifier">disease_types</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">consent_generator</span>.<span class="ruby-identifier">status</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-node">%i[given refused conflicts]</span>)
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">consent_status</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-node">%i[given refused conflicts]</span>)
     <span class="ruby-identifier">consent_generator</span>.<span class="ruby-identifier">disease_types</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1022,14 +1110,14 @@
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_generator</span>.<span class="ruby-identifier">status</span> <span class="ruby-operator">==</span> <span class="ruby-value">:not_eligible</span> <span class="ruby-operator">||</span>
        <span class="ruby-identifier">triage_generator</span>.<span class="ruby-identifier">status</span>.<span class="ruby-identifier">in?</span>(
          <span class="ruby-node">%i[required invite_to_clinic do_not_vaccinate]</span>
-       ) <span class="ruby-operator">||</span> <span class="ruby-identifier">consent_generator</span>.<span class="ruby-identifier">status</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-node">%i[no_response conflicts refused]</span>)
+       ) <span class="ruby-operator">||</span> <span class="ruby-identifier">consent_status</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-node">%i[no_response conflicts refused]</span>)
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">triage_generator</span>.<span class="ruby-identifier">vaccine_method</span>
     [<span class="ruby-identifier">triage_generator</span>.<span class="ruby-identifier">vaccine_method</span>]
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">consent_generator</span>.<span class="ruby-identifier">vaccine_methods</span>
+    <span class="ruby-identifier">consent_vaccine_methods</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -1075,7 +1163,7 @@
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_generator</span>.<span class="ruby-identifier">status</span> <span class="ruby-operator">==</span> <span class="ruby-value">:not_eligible</span> <span class="ruby-operator">||</span>
        <span class="ruby-identifier">triage_generator</span>.<span class="ruby-identifier">status</span>.<span class="ruby-identifier">in?</span>(
          <span class="ruby-node">%i[required invite_to_clinic do_not_vaccinate]</span>
-       ) <span class="ruby-operator">||</span> <span class="ruby-identifier">consent_generator</span>.<span class="ruby-identifier">status</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-node">%i[no_response conflicts refused]</span>)
+       ) <span class="ruby-operator">||</span> <span class="ruby-identifier">consent_status</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-node">%i[no_response conflicts refused]</span>)
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
   <span class="ruby-keyword">end</span>
 
