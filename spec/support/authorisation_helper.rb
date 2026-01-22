@@ -8,7 +8,7 @@ module AuthorisationHelper
         ApplicationPolicy,
         create?: allowed,
         new?: allowed,
-        edit?: allowed
+        edit?: allowed,
       )
     )
     # rubocop:enable RSpec/AnyInstance

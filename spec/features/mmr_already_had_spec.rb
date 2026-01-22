@@ -35,6 +35,31 @@ describe "MMR/MMRV" do
   end
 
   scenario "record a patient as already had their second dose outside the school session" do
+    given_an_mmr_programme_with_a_session
+    and_a_patient_is_in_the_session
+    and_the_patient_doesnt_need_triage
+    and_the_patient_already_has_first_dose
+
+    when_i_go_the_session
+    then_i_see_one_patient_needing_consent
+    and_i_click_on_the_patient
+    then_i_see_the_patient_needs_consent
+
+    when_i_click_record_as_already_had_second_dose
+    then_i_see_the_did_you_have_mmr_or_mmrv_page
+
+    when_i_choose_mmr_and_continue
+    then_i_see_the_date_page
+
+    when_i_fill_in_the_date_and_continue
+    then_i_see_the_confirmation_page
+
+    when_i_confirm_the_details
+    then_i_see_the_patient_is_already_vaccinated
+    and_had_been_vaccinated_with_mmr
+    and_the_dose_number_is_second
+    and_the_consent_requests_are_sent
+    then_the_parent_doesnt_receive_a_consent_request
   end
 
   scenario "edit the dose sequence for an MMR vaccination record" do
