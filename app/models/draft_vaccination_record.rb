@@ -361,6 +361,9 @@ class DraftVaccinationRecord
       vaccination_record.batch_id = batch&.id
     end
 
+    vaccination_record.batch_number = vaccination_record.batch&.name
+    vaccination_record.batch_expiry = vaccination_record.batch&.expiry
+
     vaccination_record.vaccine_id = batch&.vaccine_id
   end
 

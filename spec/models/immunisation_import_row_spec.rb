@@ -1374,6 +1374,22 @@ describe ImmunisationImportRow do
         end
       end
 
+      describe "#batch_number" do
+        subject(:batch_number) { vaccination_record.batch_number }
+
+        let(:data) { valid_data }
+
+        it { should eq("123") }
+      end
+
+      describe "#batch_expiry" do
+        subject(:batch_expiry) { vaccination_record.batch_expiry }
+
+        let(:data) { valid_data }
+
+        it { should eq(Date.new(2021, 1, 1)) }
+      end
+
       describe "#delivery_method" do
         subject { vaccination_record.delivery_method }
 
@@ -2566,6 +2582,9 @@ describe ImmunisationImportRow do
 
         its(:location) { should eq location }
 
+        its(:batch_number) { should eq "123" }
+        its(:batch_expiry) { should eq Date.new(2026, 1, 6) }
+
         context "with an unknown school and no name" do
           let(:data) do
             valid_bulk_flu_data.merge(
@@ -2658,6 +2677,8 @@ describe ImmunisationImportRow do
               performed_by_given_name: vaccinator.given_name,
               performed_by_family_name: vaccinator.family_name,
               vaccine:,
+              batch_number: "456", # different
+              batch_expiry: Date.new(2026, 1, 6), # identical
               batch:
                 create(
                   :batch,
@@ -2690,6 +2711,8 @@ describe ImmunisationImportRow do
               performed_by_given_name: vaccinator.given_name,
               performed_by_family_name: vaccinator.family_name,
               vaccine:,
+              batch_number: "123", # identical
+              batch_expiry: Date.new(2026, 1, 6), # identical
               batch:
                 create(
                   :batch,
@@ -2737,6 +2760,9 @@ describe ImmunisationImportRow do
         end
 
         its(:location) { should eq location }
+
+        its(:batch_number) { should eq "123" }
+        its(:batch_expiry) { should eq Date.new(2026, 1, 6) }
 
         include_examples "accepts a VACCINE_GIVEN code",
                          "Gardasil",
