@@ -13,10 +13,10 @@ describe "MMR/MMRV" do
     and_i_click_on_the_patient
     then_i_see_the_patient_needs_consent
 
-    # when_i_click_record_as_already_had_first_dose
-    # when_i_click_back
-    # then_i_see_the_patient_session_page
-    #
+    when_i_click_record_as_already_had_first_dose
+    when_i_click_back
+    then_i_see_the_patient_session_page
+
     when_i_click_record_as_already_had_first_dose
     then_i_see_the_did_you_have_mmr_or_mmrv_page
 
