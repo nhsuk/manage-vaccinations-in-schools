@@ -107,6 +107,8 @@ module FHIRMapper
       attrs[:dose_sequence] = dose_sequence_from_fhir(fhir_record)
 
       attrs[:vaccine] = Vaccine.from_fhir_record(fhir_record)
+      attrs[:batch_number] = fhir_record.lotNumber&.to_s
+      attrs[:batch_expiry] = fhir_record.expirationDate&.to_date
 
       if attrs[:vaccine]
         attrs[:disease_types] = attrs[:vaccine].disease_types

@@ -164,6 +164,8 @@ class ImmunisationImportRow
 
     attributes_to_stage_if_already_exists = {
       batch_id: batch&.id,
+      batch_number: batch_name&.to_s,
+      batch_expiry: batch_expiry&.to_date,
       delivery_method: delivery_method_value,
       delivery_site: delivery_site_value,
       notes: notes&.to_s,
