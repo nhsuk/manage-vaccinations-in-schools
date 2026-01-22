@@ -3,39 +3,30 @@
 class SendSchoolSessionRemindersJob < ApplicationJob
   queue_as :notifications
 
-  def perform
-    date = Date.tomorrow
+  def perform(session)
+    date = session.next_date(include_today: false)
 
-    sessions =
-      Session
-        .includes(:session_programme_year_groups)
-        .has_date(date)
-        .joins(:location)
-        .merge(Location.school)
+    patients =
+      session.patients.includes_statuses.where.not(
+        SessionNotification
+          .where(session:)
+          .where(
+            "session_notifications.patient_id = patient_locations.patient_id"
+          )
+          .where(session_date: date)
+          .arel
+          .exists
+      )
 
-    sessions.find_each do |session|
-      patients =
-        session.patients.includes_statuses.where.not(
-          SessionNotification
-            .where(session:)
-            .where(
-              "session_notifications.patient_id = patient_locations.patient_id"
-            )
-            .where(session_date: date)
-            .arel
-            .exists
-        )
+    patients.find_each do |patient|
+      next unless should_send_notification?(patient:, session:)
 
-      patients.find_each do |patient|
-        next unless should_send_notification?(patient:, session:)
-
-        SessionNotification.create_and_send!(
-          patient:,
-          session:,
-          session_date: date,
-          type: :school_reminder
-        )
-      end
+      SessionNotification.create_and_send!(
+        patient:,
+        session:,
+        session_date: date,
+        type: :school_reminder
+      )
     end
   end
 
