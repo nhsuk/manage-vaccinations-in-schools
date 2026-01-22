@@ -599,7 +599,11 @@ en:
         personal_choice: Tell us why you don’t agree
         will_be_vaccinated_elsewhere: When and where will your child get their vaccination?
     start:
-      title: Give or refuse consent for vaccinations
+      title:
+        flu: Give or refuse consent for your child’s flu vaccination
+        hpv: Give or refuse consent for the HPV vaccination
+        menacwy-td_ipv: Give or refuse consent for the MenACWY and Td/IPV vaccinations
+        mmr: Give or refuse consent for an MMR catch-up vaccination
   dashboard:
     index:
       title: Home
