@@ -135,7 +135,7 @@ class Reports::OfflineSessionExporter
       session
         .patients
         .includes(
-          :consent_statuses,
+          :programme_statuses,
           :school,
           parent_relationships: :parent,
           vaccination_records: %i[batch performed_by_user vaccine session]
@@ -213,12 +213,12 @@ class Reports::OfflineSessionExporter
     session
       .programmes_for(patient:)
       .flat_map do |programme|
-        consent_status = patient.consent_status(programme:, academic_year:)
+        programme_status = patient.programme_status(programme, academic_year:)
 
         bg_color =
-          if consent_status.refused?
+          if programme_status.consent_refused?
             "F7D4D1"
-          elsif consent_status.conflicts?
+          elsif programme_status.consent_conflicts?
             "FFDC8E"
           end
 

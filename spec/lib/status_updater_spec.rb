@@ -32,16 +32,16 @@ describe StatusUpdater do
     let(:patient) { create(:patient, year_group: 8) }
 
     it "creates a consent status" do
-      expect { call }.to change(patient.consent_statuses, :count).by(1)
-      expect(patient.consent_statuses.first).to be_no_response
+      expect { call }.to change(Patient::ConsentStatus, :count).by(1)
+      expect(Patient::ConsentStatus.first).to be_no_response
     end
 
     context "when consent is given" do
       before { create(:consent, patient:, programme: programmes.first) }
 
       it "sets the vaccine methods" do
-        expect { call }.to change(patient.consent_statuses, :count).by(1)
-        expect(patient.consent_statuses.first).to be_vaccine_method_injection
+        expect { call }.to change(Patient::ConsentStatus, :count).by(1)
+        expect(Patient::ConsentStatus.first).to be_vaccine_method_injection
       end
     end
 
@@ -60,8 +60,8 @@ describe StatusUpdater do
     let(:patient) { create(:patient, year_group: 8) }
 
     it "creates a consent status" do
-      expect { call }.to change(patient.consent_statuses, :count).by(1)
-      expect(patient.consent_statuses.first).to be_no_response
+      expect { call }.to change(Patient::ConsentStatus, :count).by(1)
+      expect(Patient::ConsentStatus.first).to be_no_response
     end
 
     it "creates a programme status for all programmes" do
@@ -96,9 +96,9 @@ describe StatusUpdater do
     let(:patient) { create(:patient, year_group: 9) }
 
     it "creates a consent status for both programmes" do
-      expect { call }.to change(patient.consent_statuses, :count).by(2)
-      expect(patient.consent_statuses.first).to be_no_response
-      expect(patient.consent_statuses.second).to be_no_response
+      expect { call }.to change(Patient::ConsentStatus, :count).by(2)
+      expect(Patient::ConsentStatus.first).to be_no_response
+      expect(Patient::ConsentStatus.second).to be_no_response
     end
 
     it "creates a programme status for all programmes" do

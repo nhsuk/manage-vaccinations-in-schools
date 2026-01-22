@@ -172,12 +172,7 @@ describe "Invalidate consent" do
         patient: @patient,
         programme: @programme
       )
-    create(
-      :patient_consent_status,
-      :given,
-      patient: @patient,
-      programme: @programme
-    )
+    StatusUpdater.call(patient: @patient.reload)
   end
 
   def when_the_patient_has_been_vaccinated_with_no_parent_notification

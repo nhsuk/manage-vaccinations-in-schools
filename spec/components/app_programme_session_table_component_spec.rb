@@ -14,12 +14,10 @@ describe AppProgrammeSessionTableComponent do
   let(:sessions) do
     [session] + create_list(:session, 2, programmes: [programme])
   end
-  let(:patient) { create(:patient, session:) }
+  let(:patient) { create(:patient, :consent_given_triage_not_needed, session:) }
 
   before do
     create_list(:patient, 4, :consent_no_response, session:)
-
-    create(:patient_consent_status, :given, programme:, patient:)
 
     create(:vaccination_record, patient:, session:, programme:)
   end

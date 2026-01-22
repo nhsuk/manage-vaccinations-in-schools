@@ -43,25 +43,49 @@ FactoryBot.define do
       date { Date.tomorrow }
     end
 
+    trait :has_refusal_consent_refused do
+      consent_status { "refused" }
+      status { "has_refusal_consent_refused" }
+    end
+
+    trait :has_refusal_consent_conflicts do
+      consent_status { "conflicts" }
+      status { "has_refusal_consent_conflicts" }
+    end
+
+    trait :needs_triage do
+      consent_status { "given" }
+      consent_vaccine_methods { %w[injection] }
+      status { "needs_triage" }
+    end
+
     trait :due_injection do
+      consent_status { "given" }
+      consent_vaccine_methods { %w[injection] }
       status { "due" }
       vaccine_methods { %w[injection] }
       without_gelatine { false }
     end
 
     trait :due_injection_without_gelatine do
+      consent_status { "given" }
+      consent_vaccine_methods { %w[injection] }
       status { "due" }
       vaccine_methods { %w[injection] }
       without_gelatine { true }
     end
 
     trait :due_nasal_injection do
+      consent_status { "given" }
+      consent_vaccine_methods { %w[nasal injection] }
       status { "due" }
       vaccine_methods { %w[nasal injection] }
       without_gelatine { false }
     end
 
     trait :due_nasal do
+      consent_status { "given" }
+      consent_vaccine_methods { %w[nasal] }
       status { "due" }
       vaccine_methods { %w[nasal] }
       without_gelatine { false }
