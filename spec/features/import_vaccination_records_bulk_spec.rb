@@ -5,8 +5,8 @@ describe("National reporting immunisation imports") do
 
   scenario "User uploads a mixed flu and HPV file, views cohort and vaccination records" do
     given_mavis_logins_are_configured
-    given_i_am_signed_in_as_a_bulk_upload_user
-    given_a_patient_already_exists
+    and_i_am_signed_in_as_a_bulk_upload_user
+    and_a_patient_already_exists
     and_sending_to_nhs_immunisations_api_is_enabled
 
     when_i_go_to_the_import_page
@@ -27,6 +27,7 @@ describe("National reporting immunisation imports") do
     when_i_go_back_to_the_upload_page
     and_i_upload_a_valid_mixed_file
     then_i_should_see_the_upload
+    and_the_upload_has_completed_successfully
     and_i_should_see_the_vaccination_records
     and_the_patients_should_now_be_associated_with_the_team
     and_the_newly_created_patients_should_be_archived
@@ -47,7 +48,23 @@ describe("National reporting immunisation imports") do
     when_i_navigate_to_the_upload_page
     and_i_upload_a_valid_mixed_file # The exact same file again
     then_i_should_see_the_upload
+    and_the_upload_has_completed_successfully
     and_no_new_vaccination_records_were_created
+  end
+
+  scenario "User uploads a file with only VACCINATED = N records" do
+    given_mavis_logins_are_configured
+    and_i_am_signed_in_as_a_bulk_upload_user
+
+    when_i_go_to_the_import_page
+    then_i_should_see_the_upload_link
+
+    when_i_click_on_the_upload_link
+    then_i_should_see_the_upload_page
+
+    when_i_upload_a_file_with_only_vaccinated_n_records
+    then_i_should_see_the_upload
+    and_the_upload_has_completed_successfully
   end
 
   def given_mavis_logins_are_configured
@@ -63,12 +80,12 @@ describe("National reporting immunisation imports") do
     create(:school, team: @team, urn: 100_000)
   end
 
-  def given_i_am_signed_in_as_a_bulk_upload_user
+  def and_i_am_signed_in_as_a_bulk_upload_user
     @user = @team.users.first
     sign_in @user
   end
 
-  def given_a_patient_already_exists
+  def and_a_patient_already_exists
     @existing_patient =
       create(
         :patient,
@@ -169,6 +186,15 @@ describe("National reporting immunisation imports") do
     wait_for_import_to_complete(ImmunisationImport)
   end
 
+  def when_i_upload_a_file_with_only_vaccinated_n_records
+    attach_file(
+      "immunisation_import[csv]",
+      "spec/fixtures/immunisation_import_bulk/valid_only_vaccinated_n_records.csv"
+    )
+    click_on "Continue"
+    wait_for_import_to_complete(ImmunisationImport)
+  end
+
   def and_i_should_see_the_vaccination_records
     expect(page).to have_content(
       "Full nameNHS numberDate of birthVaccination date"
@@ -181,6 +207,11 @@ describe("National reporting immunisation imports") do
 
   def then_i_should_see_the_upload
     expect(page).to have_content("Uploaded byUSER, Test")
+  end
+
+  def and_the_upload_has_completed_successfully
+    expect(page).to have_content("StatusCompleted")
+    expect(page).to have_content("2 imported recoroaarstrstads")
   end
 
   def and_the_patients_should_now_be_associated_with_the_team
