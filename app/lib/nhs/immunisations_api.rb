@@ -258,15 +258,11 @@ module NHS::ImmunisationsAPI
       end
     end
 
-    def should_be_in_immunisations_api?(
-      vaccination_record,
-      ignore_nhs_number: false
-    )
+    def should_be_in_immunisations_api?(vaccination_record)
       vaccination_record.kept? &&
         vaccination_record.correct_source_for_nhs_immunisations_api? &&
         vaccination_record.administered? &&
         Flipper.enabled?(:imms_api_sync_job, vaccination_record.programme) &&
-        (ignore_nhs_number || vaccination_record.patient.nhs_number.present?) &&
         vaccination_record.notify_parents != false &&
         vaccination_record.patient.not_invalidated?
     end
@@ -400,10 +396,6 @@ module NHS::ImmunisationsAPI
 
       if vaccination_record.discarded?
         raise "Vaccination record is discarded: #{vaccination_record.id}"
-      end
-
-      if vaccination_record.patient.nhs_number.blank?
-        raise "Patient nhs number is missing: #{vaccination_record.id}"
       end
     end
 

@@ -47,10 +47,7 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
 
   def sync_status
     should_be_synced =
-      NHS::ImmunisationsAPI.should_be_in_immunisations_api?(
-        self,
-        ignore_nhs_number: true
-      )
+      NHS::ImmunisationsAPI.should_be_in_immunisations_api?(self)
     return :not_synced unless should_be_synced
 
     return :cannot_sync if patient.nhs_number.blank?
