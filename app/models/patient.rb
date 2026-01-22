@@ -83,7 +83,6 @@ class Patient < ApplicationRecord
   has_many :school_move_log_entries
   has_many :school_moves
   has_many :session_notifications
-  has_many :triage_statuses
   has_many :triages
   has_many :vaccination_records, -> { kept }
 
@@ -153,9 +152,7 @@ class Patient < ApplicationRecord
   scope :restricted, -> { where.not(restricted_at: nil) }
 
   scope :includes_statuses,
-        -> do
-          includes(:consent_statuses, :programme_statuses, :triage_statuses)
-        end
+        -> { includes(:consent_statuses, :programme_statuses) }
 
   scope :has_vaccination_records_dont_notify_parents,
         -> do
@@ -606,10 +603,6 @@ class Patient < ApplicationRecord
   def registration_status(session:)
     registration_statuses.find { it.session_id == session.id } ||
       registration_statuses.build(session:)
-  end
-
-  def triage_status(programme:, academic_year:)
-    patient_status(triage_statuses, programme:, academic_year:)
   end
 
   def has_patient_specific_direction?(team:, **kwargs)

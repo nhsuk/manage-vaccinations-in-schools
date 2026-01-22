@@ -25,10 +25,6 @@ describe StatusUpdater do
     it "doesn't create any registration statuses" do
       expect { call }.not_to change(Patient::RegistrationStatus, :count)
     end
-
-    it "doesn't create any triage statuses" do
-      expect { call }.not_to change(Patient::TriageStatus, :count)
-    end
   end
 
   context "with an flu session and eligible patient" do
@@ -57,11 +53,6 @@ describe StatusUpdater do
       expect { call }.to change(patient.registration_statuses, :count).by(1)
       expect(patient.registration_statuses.first).to be_unknown
     end
-
-    it "creates a triage status" do
-      expect { call }.to change(patient.triage_statuses, :count).by(1)
-      expect(patient.triage_statuses.first).to be_not_required
-    end
   end
 
   context "with an HPV session and eligible patient" do
@@ -81,11 +72,6 @@ describe StatusUpdater do
       expect { call }.to change(patient.registration_statuses, :count).by(1)
       expect(patient.registration_statuses.first).to be_unknown
     end
-
-    it "creates a triage status" do
-      expect { call }.to change(patient.triage_statuses, :count).by(1)
-      expect(patient.triage_statuses.first).to be_not_required
-    end
   end
 
   context "with a doubles session and ineligible patient" do
@@ -102,10 +88,6 @@ describe StatusUpdater do
 
     it "doesn't create any registration statuses" do
       expect { call }.not_to change(Patient::RegistrationStatus, :count)
-    end
-
-    it "doesn't create any triage statuses" do
-      expect { call }.not_to change(Patient::TriageStatus, :count)
     end
   end
 
@@ -126,12 +108,6 @@ describe StatusUpdater do
     it "creates a registration status" do
       expect { call }.to change(patient.registration_statuses, :count).by(1)
       expect(patient.registration_statuses.first).to be_unknown
-    end
-
-    it "creates a triage status for both programmes" do
-      expect { call }.to change(patient.triage_statuses, :count).by(2)
-      expect(patient.triage_statuses.first).to be_not_required
-      expect(patient.triage_statuses.second).to be_not_required
     end
   end
 end

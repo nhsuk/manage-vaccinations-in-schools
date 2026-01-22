@@ -31,9 +31,9 @@ class Generate::Triages
   def patients
     (@session.presence || team)
       .patients
-      .includes(:triage_statuses)
+      .includes(:programme_statuses)
       .appear_in_programmes([programme], academic_year:)
-      .select { it.triage_status(programme:, academic_year:).required? }
+      .select { it.programme_status(programme, academic_year:).needs_triage? }
   end
 
   def random_patients(count)
