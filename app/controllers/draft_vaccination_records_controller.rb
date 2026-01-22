@@ -127,11 +127,8 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def handle_mmr_or_mmrv
-    if params.dig(:draft_vaccination_record, :todays_batch).present? &&
-         update_params[:batch_id].in?(
-           params[:draft_vaccination_record][:todays_batch]
-         )
-      self.todays_batch = policy_scope(Batch).find(update_params[:batch_id])
+    if @draft_vaccination_record.mmrv.nil?
+      @draft_vaccination_record.errors.add(:mmrv, :blank)
     end
   end
 

@@ -19,6 +19,7 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
 
     draft_vaccination_record.clear_attributes
     draft_vaccination_record.update!(
+      dose_sequence: @programme.mmr? ? 1 : nil,
       first_active_wizard_step: :confirm,
       location_id: nil,
       location_name: "Unknown",
@@ -29,7 +30,7 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
       performed_ods_code: current_team.organisation.ods_code,
       programme: @programme,
       session: @session,
-      source: "service"
+      source: "service",
     )
 
     redirect_to draft_vaccination_record_path("mmr-or-mmrv")
