@@ -6,8 +6,8 @@
 #
 #  id                      :bigint           not null, primary key
 #  academic_year           :integer          not null
-#  consent_status          :integer          default("no_response")
-#  consent_vaccine_methods :integer          default([]), is an Array
+#  consent_status          :integer          default("no_response"), not null
+#  consent_vaccine_methods :integer          default([]), not null, is an Array
 #  date                    :date
 #  disease_types           :enum             is an Array
 #  dose_sequence           :integer
