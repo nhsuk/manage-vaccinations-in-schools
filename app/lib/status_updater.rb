@@ -70,6 +70,8 @@ class StatusUpdater
           on_duplicate_key_update: {
             conflict_target: [:id],
             columns: %i[
+              consent_status
+              consent_vaccine_methods
               date
               disease_types
               dose_sequence

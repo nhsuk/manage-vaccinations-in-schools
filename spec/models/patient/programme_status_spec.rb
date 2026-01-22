@@ -4,17 +4,19 @@
 #
 # Table name: patient_programme_statuses
 #
-#  id               :bigint           not null, primary key
-#  academic_year    :integer          not null
-#  date             :date
-#  disease_types    :enum             is an Array
-#  dose_sequence    :integer
-#  programme_type   :enum             not null
-#  status           :integer          default("not_eligible"), not null
-#  vaccine_methods  :integer          is an Array
-#  without_gelatine :boolean
-#  location_id      :bigint
-#  patient_id       :bigint           not null
+#  id                      :bigint           not null, primary key
+#  academic_year           :integer          not null
+#  consent_status          :integer          default("no_response")
+#  consent_vaccine_methods :integer          default([]), is an Array
+#  date                    :date
+#  disease_types           :enum             is an Array
+#  dose_sequence           :integer
+#  programme_type          :enum             not null
+#  status                  :integer          default("not_eligible"), not null
+#  vaccine_methods         :integer          is an Array
+#  without_gelatine        :boolean
+#  location_id             :bigint
+#  patient_id              :bigint           not null
 #
 # Indexes
 #
@@ -45,11 +47,13 @@ describe Patient::ProgrammeStatus do
         programme_generator
       )
       allow(programme_generator).to receive_messages(
+        consent_status: :given,
+        consent_vaccine_methods: %w[injection],
         date: Date.new(2020, 1, 1),
         disease_types: %w[influenza],
         dose_sequence: 1,
         location_id: 1,
-        status: "vaccinated",
+        status: :vaccinated_fully,
         vaccine_methods: %w[injection],
         without_gelatine: true
       )
@@ -58,11 +62,15 @@ describe Patient::ProgrammeStatus do
     it "calls the status generator" do
       assign
 
+      expect(patient_programme_status.consent_status).to eq("given")
+      expect(patient_programme_status.consent_vaccine_methods).to eq(
+        %w[injection]
+      )
       expect(patient_programme_status.date).to eq(Date.new(2020, 1, 1))
       expect(patient_programme_status.disease_types).to eq(%w[influenza])
       expect(patient_programme_status.dose_sequence).to eq(1)
       expect(patient_programme_status.location_id).to eq(1)
-      expect(patient_programme_status.status).to eq("vaccinated")
+      expect(patient_programme_status.status).to eq("vaccinated_fully")
       expect(patient_programme_status.vaccine_methods).to eq(%w[injection])
       expect(patient_programme_status.without_gelatine).to be(true)
     end
