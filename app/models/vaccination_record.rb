@@ -24,8 +24,8 @@
 #  notify_parents                          :boolean
 #  outcome                                 :integer          not null
 #  pending_changes                         :jsonb            not null
-#  performed_at                            :datetime         not null
-#  performed_at_date                       :date
+#  performed_at                            :datetime
+#  performed_at_date                       :date             not null
 #  performed_at_time                       :time
 #  performed_by_family_name                :string
 #  performed_by_given_name                 :string
