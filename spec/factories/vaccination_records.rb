@@ -122,6 +122,10 @@ FactoryBot.define do
     notify_parents { true }
 
     after(:create) do |vaccination_record|
+      PatientTeamUpdater.call(
+        patient_scope: Patient.where(id: vaccination_record.patient_id)
+      )
+
       ImportantNoticeGeneratorJob.perform_now([vaccination_record.patient_id])
     end
 

@@ -1,12 +1,80 @@
 # frozen_string_literal: true
 
-class AppPatientSessionConsentComponent < AppPatientSessionSectionComponent
+class AppPatientSessionConsentComponent < ViewComponent::Base
+  def initialize(patient:, session:, programme:)
+    @patient = patient
+    @session = session
+    @programme = programme
+  end
+
   private
+
+  attr_reader :patient, :session, :programme
+
+  delegate :academic_year, :team, to: :session
 
   delegate :govuk_button_to, to: :helpers
 
-  def resolved_status
-    @resolved_status ||= patient_status_resolver.consent
+  def programme_type = programme.type
+
+  def colour
+    I18n.t(consent_status_value, scope: %i[status consent colour])
+  end
+
+  def heading
+    status_text = I18n.t(consent_status_value, scope: %i[status consent label])
+    "#{consent_status_generator.programme.name}: #{status_text}"
+  end
+
+  def consent_status_value
+    @consent_status_value ||=
+      if consent_status_generator.status == :given
+        vaccine_method =
+          triage_status_generator.vaccine_method.presence ||
+            consent_status_generator.vaccine_methods.first
+
+        without_gelatine =
+          triage_status_generator.without_gelatine ||
+            consent_status_generator.without_gelatine
+
+        parts = [
+          "given",
+          vaccine_method,
+          without_gelatine ? "without_gelatine" : nil,
+          without_gelatine && programme.flu? ? "flu" : nil
+        ]
+
+        parts.compact_blank.join("_")
+      else
+        consent_status_generator.status
+      end
+  end
+
+  def programme_status
+    @programme_status ||= patient.programme_status(programme, academic_year:)
+  end
+
+  def consent_status_generator
+    @consent_status_generator ||=
+      StatusGenerator::Consent.new(
+        programme_type:,
+        academic_year:,
+        patient:,
+        consents:,
+        vaccination_records:
+      )
+  end
+
+  def triage_status_generator
+    @triage_status_generator ||=
+      StatusGenerator::Triage.new(
+        programme_type:,
+        academic_year:,
+        patient:,
+        consents:,
+        triages:,
+        vaccination_records:
+      )
   end
 
   def latest_consent_request
@@ -31,28 +99,33 @@ class AppPatientSessionConsentComponent < AppPatientSessionSectionComponent
         .order(created_at: :desc)
   end
 
-  def consent_status
-    @consent_status ||= patient.consent_status(programme:, academic_year:)
+  def triages
+    @triages ||=
+      patient
+        .triages
+        .for_programme(programme)
+        .where(academic_year:)
+        .not_invalidated
+        .order(created_at: :desc)
   end
 
-  def vaccination_status
-    @vaccination_status ||=
-      patient.vaccination_status(programme:, academic_year:)
+  def vaccination_records
+    @vaccination_records ||=
+      patient
+        .vaccination_records
+        .for_programme(programme)
+        .order(performed_at: :desc)
   end
 
   def can_send_consent_request?
-    consent_status.no_response? &&
+    consent_status_value == :no_response &&
       patient.send_notifications?(team: @session.team) &&
       session.can_receive_consent? && patient.parents.any?
   end
 
   def grouped_consents
     @grouped_consents ||=
-      ConsentGrouper.call(
-        consents,
-        programme_type: programme.type,
-        academic_year:
-      )
+      ConsentGrouper.call(consents, programme_type:, academic_year:)
   end
 
   def who_refused

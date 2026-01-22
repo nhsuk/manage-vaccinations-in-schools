@@ -59,14 +59,14 @@ module NavigationConcern
       @navigation_items << {
         title: t("imports.index.title_short"),
         path: imports_path,
-        count: @cached_counts.import_issues
+        count: (@cached_counts.import_issues if policy(%i[import issue]).index?)
       }
     end
 
     if current_team&.has_poc_only_access?
       @navigation_items << {
         title: I18n.t("teams.show.title_short"),
-        path: team_path
+        path: contact_details_team_path
       }
     end
 

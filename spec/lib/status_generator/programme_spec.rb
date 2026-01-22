@@ -3,7 +3,7 @@
 describe StatusGenerator::Programme do
   subject(:generator) do
     described_class.new(
-      programme:,
+      programme_type: programme.type,
       academic_year: AcademicYear.current,
       patient:,
       patient_locations:
@@ -64,7 +64,7 @@ describe StatusGenerator::Programme do
 
     its(:date) { should eq(vaccination_record.performed_at.to_date) }
     its(:disease_types) { should be_nil }
-    its(:dose_sequence) { should be_nil }
+    its(:dose_sequence) { should eq(2) }
     its(:location_id) { should be_nil }
     its(:status) { should be(:needs_consent_no_response) }
     its(:vaccine_methods) { should be_nil }
@@ -194,6 +194,8 @@ describe StatusGenerator::Programme do
   end
 
   context "when triaged as delay" do
+    let(:programme) { Programme.menacwy }
+
     before do
       create(:consent, :given, patient:, programme:)
       create(
@@ -215,6 +217,8 @@ describe StatusGenerator::Programme do
   end
 
   context "when triaged as invite to clinic" do
+    let(:programme) { Programme.hpv }
+
     before do
       create(:consent, :given, patient:, programme:)
       create(:triage, :invite_to_clinic, patient:, programme:)
@@ -230,6 +234,8 @@ describe StatusGenerator::Programme do
   end
 
   context "when triaged as do not vaccinated" do
+    let(:programme) { Programme.td_ipv }
+
     before do
       create(:consent, :given, patient:, programme:)
       create(:triage, :do_not_vaccinate, patient:, programme:)
@@ -245,6 +251,8 @@ describe StatusGenerator::Programme do
   end
 
   context "when needs triage" do
+    let(:programme) { Programme.flu }
+
     before { create(:consent, :given, :needing_triage, patient:, programme:) }
 
     its(:date) { should be_nil }
@@ -257,11 +265,13 @@ describe StatusGenerator::Programme do
   end
 
   context "when consent is refused" do
+    let(:programme) { Programme.mmr }
+
     before { create(:consent, :refused, patient:, programme:) }
 
     its(:date) { should be_nil }
     its(:disease_types) { should be_empty }
-    its(:dose_sequence) { should be_nil }
+    its(:dose_sequence) { should eq(1) }
     its(:location_id) { should be_nil }
     its(:status) { should be(:has_refusal_consent_refused) }
     its(:vaccine_methods) { should be_nil }
@@ -269,6 +279,8 @@ describe StatusGenerator::Programme do
   end
 
   context "when consent is conflicting" do
+    let(:programme) { Programme.mmr }
+
     before do
       create(:consent, :refused, patient:, programme:)
       create(:consent, :given, patient:, programme:, parent: create(:parent))
@@ -276,7 +288,7 @@ describe StatusGenerator::Programme do
 
     its(:date) { should be_nil }
     its(:disease_types) { should be_empty }
-    its(:dose_sequence) { should be_nil }
+    its(:dose_sequence) { should be(1) }
     its(:location_id) { should be_nil }
     its(:status) { should be(:has_refusal_consent_conflicts) }
     its(:vaccine_methods) { should be_nil }
@@ -284,6 +296,8 @@ describe StatusGenerator::Programme do
   end
 
   context "when consent is needed" do
+    let(:programme) { Programme.menacwy }
+
     its(:date) { should be_nil }
     its(:disease_types) { should be_nil }
     its(:dose_sequence) { should be_nil }
@@ -291,6 +305,12 @@ describe StatusGenerator::Programme do
     its(:status) { should be(:needs_consent_no_response) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
+
+    context "with a multi-dose programme" do
+      let(:programme) { Programme.mmr }
+
+      its(:dose_sequence) { should eq(1) }
+    end
   end
 
   context "when not eligible" do

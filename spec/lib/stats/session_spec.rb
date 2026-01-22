@@ -6,7 +6,7 @@ describe Stats::Session do
 
     let(:programme) { Programme.hpv }
     let(:session) { create(:session, programmes: [programme]) }
-    let(:latest_location) { session.location }
+    let(:location) { session.location }
 
     context "with no patients" do
       it "returns zero counts for all stats" do
@@ -46,17 +46,11 @@ describe Stats::Session do
 
         create(:patient, session:, year_group: 9).tap do |patient|
           create(
-            :patient_vaccination_status,
-            :vaccinated,
-            patient:,
-            programme:,
-            latest_location:
-          )
-          create(
             :patient_programme_status,
             :vaccinated_fully,
             patient:,
-            programme:
+            programme:,
+            location:
           )
         end
 
@@ -251,11 +245,11 @@ describe Stats::Session do
       before do
         create(:patient, session:, year_group: 9).tap do |patient|
           create(
-            :patient_vaccination_status,
-            :vaccinated,
+            :patient_programme_status,
+            :vaccinated_fully,
             patient:,
             programme:,
-            latest_location: nil
+            location: nil
           )
         end
       end

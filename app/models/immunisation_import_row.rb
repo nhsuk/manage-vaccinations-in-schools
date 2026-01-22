@@ -173,7 +173,11 @@ class ImmunisationImportRow
     }
 
     vaccination_record =
-      if uuid.present?
+      if bulk?
+        VaccinationRecord.find_or_initialize_by(
+          attributes.merge(attributes_to_stage_if_already_exists)
+        )
+      elsif uuid.present?
         VaccinationRecord
           .find_by!(uuid: uuid.to_s)
           .tap { it.stage_changes(attributes) }
@@ -630,7 +634,7 @@ class ImmunisationImportRow
           errors.add(batch_name.header, "must be at most 100 characters long")
         elsif batch_name.to_s.length < 2
           errors.add(batch_name.header, "must be at least 2 characters long")
-        elsif batch_name.to_s !~ BatchForm::NAME_FORMAT
+        elsif batch_name.to_s !~ BatchNameValidator::FORMAT
           errors.add(batch_name.header, "must be only letters and numbers")
         end
       elsif offline_recording? || bulk?

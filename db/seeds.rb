@@ -27,6 +27,7 @@ def create_team(ods_code:, workgroup: nil, type: :poc_only)
     FactoryBot.create(
       :team,
       :with_generic_clinic,
+      :with_careplus_enabled,
       ods_code:,
       programmes: Programme.all,
       workgroup:,
@@ -208,7 +209,7 @@ def setup_clinic(team)
   PatientLocation.import(
     new_patient_location_records,
     on_duplicate_key_ignore: :all
-  ).ids
+  )
 end
 
 def create_patients(team)

@@ -11,7 +11,7 @@ module SendSchoolConsentNotificationConcern
     session
       .patient_locations
       .includes(
-        patient: %i[consent_notifications consent_statuses vaccination_statuses]
+        patient: %i[consent_notifications consent_statuses programme_statuses]
       )
       .find_each do |patient_location|
         patient = patient_location.patient
@@ -33,8 +33,7 @@ module SendSchoolConsentNotificationConcern
     academic_year = session.academic_year
 
     programmes.select do |programme|
-      patient.consent_status(programme:, academic_year:).no_response? &&
-        patient.vaccination_status(programme:, academic_year:).eligible?
+      patient.programme_status(programme, academic_year:).needs_consent?
     end
   end
 

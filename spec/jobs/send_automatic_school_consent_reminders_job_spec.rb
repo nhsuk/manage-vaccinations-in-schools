@@ -15,7 +15,7 @@ describe SendAutomaticSchoolConsentRemindersJob do
       :patient,
       :consent_request_sent,
       :initial_consent_reminder_sent,
-      :eligible_for_vaccination,
+      :consent_no_response,
       parents:,
       programmes:
     )
@@ -24,7 +24,7 @@ describe SendAutomaticSchoolConsentRemindersJob do
     create(
       :patient,
       :consent_request_sent,
-      :eligible_for_vaccination,
+      :consent_no_response,
       parents:,
       programmes:
     )
@@ -36,14 +36,14 @@ describe SendAutomaticSchoolConsentRemindersJob do
     create(
       :patient,
       :consent_request_sent,
-      :eligible_for_vaccination,
+      :consent_no_response,
       parents:,
       programmes:
     )
   end
 
   let(:patient_not_sent_request) do
-    create(:patient, :eligible_for_vaccination, parents:, programmes:)
+    create(:patient, :consent_no_response, parents:, programmes:)
   end
   let(:patient_with_consent) do
     create(:patient, :consent_given_triage_not_needed, programmes:)

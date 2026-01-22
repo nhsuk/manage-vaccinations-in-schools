@@ -86,7 +86,6 @@ class Patient < ApplicationRecord
   has_many :triage_statuses
   has_many :triages
   has_many :vaccination_records, -> { kept }
-  has_many :vaccination_statuses
 
   has_many :locations, through: :patient_locations
   has_many :parents, through: :parent_relationships
@@ -155,12 +154,7 @@ class Patient < ApplicationRecord
 
   scope :includes_statuses,
         -> do
-          includes(
-            :consent_statuses,
-            :programme_statuses,
-            :triage_statuses,
-            vaccination_statuses: :latest_location
-          )
+          includes(:consent_statuses, :programme_statuses, :triage_statuses)
         end
 
   scope :has_vaccination_records_dont_notify_parents,
@@ -407,8 +401,8 @@ class Patient < ApplicationRecord
 
           return self if location.generic_clinic? && programme.seasonal?
 
-          vaccinated_statuses =
-            Patient::VaccinationStatus
+          programme_statuses =
+            Patient::ProgrammeStatus
               .select("1")
               .where("patient_id = patients.id")
               .for_programme(programme)
@@ -416,18 +410,18 @@ class Patient < ApplicationRecord
 
           not_eligible_criteria =
             if location.generic_clinic?
-              vaccinated_statuses.where(academic_year: academic_year - 1)
+              programme_statuses.where(academic_year: academic_year - 1)
             else
               scope =
-                vaccinated_statuses.where(academic_year:).where(
-                  "latest_location_id IS NULL OR latest_location_id != ?",
+                programme_statuses.where(academic_year:).where(
+                  "location_id IS NULL OR location_id != ?",
                   location.id
                 )
 
               unless programme.seasonal?
                 scope =
                   scope.or(
-                    vaccinated_statuses.where(academic_year: academic_year - 1)
+                    programme_statuses.where(academic_year: academic_year - 1)
                   )
               end
 
@@ -616,10 +610,6 @@ class Patient < ApplicationRecord
 
   def triage_status(programme:, academic_year:)
     patient_status(triage_statuses, programme:, academic_year:)
-  end
-
-  def vaccination_status(programme:, academic_year:)
-    patient_status(vaccination_statuses, programme:, academic_year:)
   end
 
   def has_patient_specific_direction?(team:, **kwargs)
@@ -819,7 +809,7 @@ class Patient < ApplicationRecord
         conflict_target: %i[team_id patient_id],
         columns: %i[type]
       }
-    ).ids
+    )
 
     PatientTeamUpdater.call(
       patient_scope: Patient.where(id:),

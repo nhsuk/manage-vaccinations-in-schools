@@ -195,6 +195,63 @@ describe API::Reporting::TotalsController do
       expect(response).to have_http_status(:ok)
       expect(parsed_response["cohort"]).to eq(2)
     end
+
+    it "returns grouped JSON data by school" do
+      team = Team.last
+      programme = Programme.hpv
+      team.programmes << programme
+      session = create(:session, team:, programmes: [programme])
+
+      school_one = create(:school, name: "School One", urn: "111111")
+      school_two = create(:school, name: "School Two", urn: "222222")
+
+      create(:patient, session:, school: school_one)
+      patient2 = create(:patient, session:, school: school_two)
+      create(
+        :vaccination_record,
+        patient: patient2,
+        programme:,
+        session:,
+        outcome: "administered",
+        performed_at: Time.current
+      )
+
+      create(:patient, session:, school: nil, home_educated: true)
+      create(:patient, session:, school: nil, home_educated: false)
+
+      refresh_reporting_views!
+
+      get :index, params: { group: "school", programme: "hpv" }
+
+      expect(response).to have_http_status(:ok)
+      expect(parsed_response).to be_an(Array)
+      expect(parsed_response.length).to eq(4)
+
+      school_one_data = parsed_response.find { it["school_urn"] == "111111" }
+      school_two_data = parsed_response.find { it["school_urn"] == "222222" }
+      home_educated_data = parsed_response.find { it["school_urn"] == "999999" }
+      unknown_data = parsed_response.find { it["school_urn"] == "888888" }
+
+      expect(school_one_data["school_name"]).to eq("School One")
+      expect(school_one_data["cohort"]).to eq(1)
+      expect(school_one_data["vaccinated"]).to eq(0)
+      expect(school_one_data["not_vaccinated"]).to eq(1)
+
+      expect(school_two_data["school_name"]).to eq("School Two")
+      expect(school_two_data["cohort"]).to eq(1)
+      expect(school_two_data["vaccinated"]).to eq(1)
+      expect(school_two_data["not_vaccinated"]).to eq(0)
+
+      expect(home_educated_data["school_name"]).to eq("Home-schooled")
+      expect(home_educated_data["cohort"]).to eq(1)
+      expect(home_educated_data["vaccinated"]).to eq(0)
+      expect(home_educated_data["not_vaccinated"]).to eq(1)
+
+      expect(unknown_data["school_name"]).to eq("Unknown school")
+      expect(unknown_data["cohort"]).to eq(1)
+      expect(unknown_data["vaccinated"]).to eq(0)
+      expect(unknown_data["not_vaccinated"]).to eq(1)
+    end
   end
 
   describe "#index.csv" do
@@ -217,6 +274,36 @@ describe API::Reporting::TotalsController do
 
       csv = CSV.parse(response.body, headers: true)
       expect(csv.headers).to include("Year Group", "Cohort", "Vaccinated")
+      expect(csv.length).to eq(2)
+    end
+
+    it "returns grouped CSV data by school" do
+      team = Team.last
+      programme = Programme.hpv
+      team.programmes << programme
+      session = create(:session, team:, programmes: [programme])
+
+      school_one = create(:school, name: "School One", urn: "111111")
+      school_two = create(:school, name: "School Two", urn: "222222")
+
+      create(:patient, session:, school: school_one)
+      create(:patient, session:, school: school_two)
+
+      refresh_reporting_views!
+
+      request.headers["Accept"] = "text/csv"
+      get :index, params: { group: "school" }, format: :csv
+
+      expect(response).to have_http_status(:ok)
+      expect(response.content_type).to eq("text/csv")
+
+      csv = CSV.parse(response.body, headers: true)
+      expect(csv.headers).to include(
+        "School URN",
+        "School Name",
+        "Cohort",
+        "Vaccinated"
+      )
       expect(csv.length).to eq(2)
     end
   end

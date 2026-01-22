@@ -58,7 +58,7 @@ class AlreadyHadNotificationSender
 
   attr_reader :vaccination_record
 
-  delegate :patient, :programme, to: :vaccination_record
+  delegate :patient, :programme_type, to: :vaccination_record
 
   def academic_year = AcademicYear.current
 
@@ -67,7 +67,7 @@ class AlreadyHadNotificationSender
   end
 
   def would_still_be_vaccinated?
-    # We're not using the existing `Patient::VaccinationStatus` instance here
+    # We're not using the existing `Patient::ProgrammeStatus` instance here
     # because we want to know if the patient would still be vaccinated if we
     # took away the vaccination record in question, to know whether to send
     # the notification.
@@ -76,7 +76,7 @@ class AlreadyHadNotificationSender
     # although we're using the same status generator logic as elsewhere, we
     # don't need to pass  in the consents and triage as an optimisation.
     StatusGenerator::Vaccination.new(
-      programme:,
+      programme_type:,
       academic_year:,
       patient:,
       vaccination_records: other_vaccination_records,

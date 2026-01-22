@@ -51,7 +51,13 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
           if @vaccine
             row.with_value { vaccine_value }
 
-            if (href = @change_links[:vaccine])
+            if @current_user.selected_team.has_upload_only_access?
+              row.with_action(
+                text: "Change",
+                href: @change_links[:batch],
+                visually_hidden_text: "vaccine"
+              )
+            elsif (href = @change_links[:vaccine])
               row.with_action(
                 text: "Change",
                 visually_hidden_text: "vaccine",
@@ -89,6 +95,14 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
           summary_list.with_row do |row|
             row.with_key { "Batch expiry date" }
             row.with_value { batch_expiry_value }
+
+            if @current_user.selected_team.has_upload_only_access?
+              row.with_action(
+                text: "Change",
+                href: @change_links[:batch],
+                visually_hidden_text: "batch expiry date"
+              )
+            end
           end
         end
 
@@ -280,12 +294,12 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
-      sync_feature_flag_enabled =
-        Programme.all.any? { Flipper.enabled?(:imms_api_sync_job, it) }
+      correct_feature_flags_enabled =
+        Programme.all.any? { Flipper.enabled?(:imms_api_sync_job, it) } &&
+          Flipper.enabled?(:imms_api_integration)
       if @vaccination_record.respond_to?(:sync_status) &&
-           sync_feature_flag_enabled &&
-           Flipper.enabled?(:imms_api_integration) &&
-           @vaccination_record&.sourced_from_service?
+           correct_feature_flags_enabled &&
+           @vaccination_record&.correct_source_for_nhs_immunisations_api?
         summary_list.with_row do |row|
           row.with_key { "Synced with NHS England?" }
           row.with_value do
@@ -325,7 +339,13 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def vaccine_value
-    highlight_if(@vaccine.brand, @vaccination_record.vaccine_id_changed?)
+    display_name =
+      if @current_user.selected_team.has_upload_only_access?
+        @vaccine.nivs_name.presence || @vaccine.brand
+      else
+        @vaccine.brand
+      end
+    highlight_if(display_name, @vaccination_record.vaccine_id_changed?)
   end
 
   def delivery_method_value

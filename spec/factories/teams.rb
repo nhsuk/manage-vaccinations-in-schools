@@ -5,7 +5,9 @@
 # Table name: teams
 #
 #  id                            :bigint           not null, primary key
-#  careplus_venue_code           :string           not null
+#  careplus_staff_code           :string
+#  careplus_staff_type           :string
+#  careplus_venue_code           :string
 #  days_before_consent_reminders :integer          default(7), not null
 #  days_before_consent_requests  :integer          default(21), not null
 #  days_before_invitations       :integer          default(21), not null
@@ -49,7 +51,7 @@ FactoryBot.define do
     name { "SAIS Team #{identifier}" }
     email { "sais-team-#{identifier}@example.com" }
     phone { "01234 567890" }
-    careplus_venue_code { identifier.to_s }
+
     privacy_notice_url { "https://example.com/privacy-notice" }
     privacy_policy_url { "https://example.com/privacy-policy" }
     type { :poc_only }
@@ -70,6 +72,12 @@ FactoryBot.define do
       after(:create) do |team|
         GenericClinicFactory.call(team:, academic_year: AcademicYear.pending)
       end
+    end
+
+    trait :with_careplus_enabled do
+      careplus_staff_code { "LW5PM" }
+      careplus_staff_type { "IN" }
+      careplus_venue_code { identifier.to_s }
     end
   end
 end

@@ -85,8 +85,8 @@ module MavisCLI
             ).subteam
 
           MavisCLI::Schools::AddToTeam.new.call(
-            workgroup: team.workgroup,
-            subteam: subteam.name,
+            team_workgroup: team.workgroup,
+            subteam_name: subteam.name,
             urns: [location.urn_and_site]
           )
 

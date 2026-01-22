@@ -51,5 +51,19 @@ FactoryBot.define do
       team
       school { nil }
     end
+
+    after(:create) do |school_move|
+      team_scope =
+        if (id = school_move.team_id)
+          Team.where(id:)
+        else
+          school_move.school.teams
+        end
+
+      PatientTeamUpdater.call(
+        patient_scope: Patient.where(id: school_move.patient_id),
+        team_scope:
+      )
+    end
   end
 end

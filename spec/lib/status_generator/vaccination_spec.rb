@@ -3,7 +3,7 @@
 describe StatusGenerator::Vaccination do
   subject(:generator) do
     described_class.new(
-      programme:,
+      programme_type: programme.type,
       academic_year: AcademicYear.current,
       patient:,
       patient_locations:
@@ -345,7 +345,16 @@ describe StatusGenerator::Vaccination do
                 :vaccination_record,
                 patient:,
                 programme:,
-                performed_at: patient.date_of_birth + 1.year + 3.months
+                performed_at:
+                  (patient.date_of_birth + 1.year + 3.months).then do
+                    # When date is at the end of the month, adding months to it
+                    # results in dates that are also at the end of the month,
+                    # which can cause test failures. For example if dob is
+                    # 2021-01-31, then 1 year + 3 months is 2022-04-30, but when
+                    # AgeConcern#age_months calculates age, the result is 14
+                    # months, triggering a false negative in our test here.
+                    it == it.end_of_month ? it + 1.day : it
+                  end
               )
             end
 

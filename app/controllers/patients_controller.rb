@@ -62,11 +62,18 @@ class PatientsController < ApplicationController
   end
 
   def invite_to_clinic
-    PatientLocation.find_or_create_by!(
-      patient: @patient,
-      location: current_team.generic_clinic,
-      academic_year: AcademicYear.pending
-    )
+    ActiveRecord::Base.transaction do
+      PatientLocation.find_or_create_by!(
+        patient: @patient,
+        location: current_team.generic_clinic,
+        academic_year: AcademicYear.pending
+      )
+
+      PatientTeamUpdater.call(
+        patient_scope: Patient.where(id: @patient.id),
+        team_scope: Team.where(id: current_team.id)
+      )
+    end
 
     redirect_to patient_path(@patient),
                 flash: {

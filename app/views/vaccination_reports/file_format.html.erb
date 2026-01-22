@@ -9,7 +9,7 @@
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_collection_radio_buttons :file_format,
-                                       VaccinationReport::FILE_FORMATS,
+                                       @vaccination_report.file_formats,
                                        :itself,
                                        legend: { text: title, size: "l", tag: "h1" },
                                        caption: { text: @programme.name } %>

@@ -18,12 +18,8 @@ class VaccinationRecordPolicy < ApplicationPolicy
   def show? = true
 
   def record_already_vaccinated?
-    return unless user.is_nurse? || user.is_prescriber?
-    return if session.today?
-
-    vaccination_status = patient.vaccination_status(programme:, academic_year:)
-
-    vaccination_status.not_eligible? || vaccination_status.eligible?
+    (user.is_nurse? || user.is_prescriber?) && !session.today? &&
+      !patient.programme_status(programme, academic_year:).vaccinated?
   end
 
   def update?

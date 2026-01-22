@@ -30,7 +30,7 @@ class ProgrammeGrouper
     if (value = GROUPS[key])
       value
     else
-      raise UnsupportedProgramme, programme(object)
+      raise UnsupportedProgrammeType, key
     end
   end
 

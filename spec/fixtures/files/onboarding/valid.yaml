@@ -6,6 +6,8 @@ team:
   email: example@trust.nhs.uk
   phone: 07700 900815
   phone_instructions: option 1, followed by option 3
+  careplus_staff_code: ABCD
+  careplus_staff_type: PQ
   careplus_venue_code: EXAMPLE
   privacy_notice_url: https://example.com/privacy-notice
   privacy_policy_url: https://example.com/privacy-policy

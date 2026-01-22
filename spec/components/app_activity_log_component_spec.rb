@@ -698,10 +698,7 @@ describe AppActivityLogComponent do
           session: session_last_year,
           performed_at: 1.year.ago
         )
-        patient.vaccination_status(
-          programme: flu_programme,
-          academic_year: 2024
-        ).assign_status
+        patient.programme_status(flu_programme, academic_year: 2024).assign
       end
 
       include_examples "card",

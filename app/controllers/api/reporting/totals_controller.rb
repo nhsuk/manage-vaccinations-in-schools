@@ -14,13 +14,16 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   GROUPS = {
     local_authority: :patient_local_authority_code,
     year_group: :patient_year_group,
-    gender: :patient_gender
+    gender: :patient_gender,
+    school: %i[patient_school_urn patient_school_name]
   }.freeze
 
   GROUP_HEADERS = {
     patient_local_authority_code: "Local Authority",
     patient_year_group: "Year Group",
-    patient_gender: "Gender"
+    patient_gender: "Gender",
+    patient_school_urn: "School URN",
+    patient_school_name: "School Name"
   }.freeze
 
   METRIC_HEADERS = {
@@ -99,15 +102,18 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
     headers
   end
 
+  def parse_groups
+    params[:group]
+      .to_s
+      .split(",")
+      .map { GROUPS[it.strip.to_sym] }
+      .compact
+      .flatten
+      .uniq
+  end
+
   def render_format_csv
-    groups =
-      params[:group]
-        .to_s
-        .split(",")
-        .map { GROUPS[it.strip.to_sym] }
-        .compact
-        .flatten
-        .uniq
+    groups = parse_groups
 
     scope = @totals_scope
     scope = scope.group(groups).select(groups) if groups.any?
@@ -117,6 +123,27 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   end
 
   def render_format_json
+    groups = parse_groups
+
+    groups.any? ? render_grouped_json(groups) : render_totals_json
+  end
+
+  def render_grouped_json(groups)
+    records = @totals_scope.group(groups).select(groups).with_aggregate_metrics
+    render json: records.map { grouped_record_json(it, groups) }
+  end
+
+  def grouped_record_json(record, groups)
+    groups
+      .to_h { [it.to_s.delete_prefix("patient_").to_sym, record[it]] }
+      .merge(
+        cohort: record.cohort,
+        vaccinated: record.vaccinated,
+        not_vaccinated: record.not_vaccinated
+      )
+  end
+
+  def render_totals_json
     cohort = @totals_scope.cohort_count
     vaccinated = @totals_scope.vaccinated_count
 

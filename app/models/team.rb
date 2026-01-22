@@ -5,7 +5,9 @@
 # Table name: teams
 #
 #  id                            :bigint           not null, primary key
-#  careplus_venue_code           :string           not null
+#  careplus_staff_code           :string
+#  careplus_staff_type           :string
+#  careplus_venue_code           :string
 #  days_before_consent_reminders :integer          default(7), not null
 #  days_before_consent_requests  :integer          default(21), not null
 #  days_before_invitations       :integer          default(21), not null
@@ -81,7 +83,6 @@ class Team < ApplicationRecord
        prefix: "has",
        suffix: "access"
 
-  validates :careplus_venue_code, presence: true
   validates :email, notify_safe_email: true
   validates :name, presence: true, uniqueness: true
   validates :phone, presence: true, phone: true
@@ -100,4 +101,8 @@ class Team < ApplicationRecord
       .where(location_year_group: { academic_year: })
       .pluck_year_groups
   end
+
+  def careplus_enabled? =
+    careplus_staff_code.present? && careplus_staff_type.present? &&
+      careplus_venue_code.present?
 end

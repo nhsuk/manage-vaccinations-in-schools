@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/alphagov/rubocop-govuk.git
-  revision: 58ff3290bf5c267d0228d0910fa0bc92a405ec81
+  revision: cb59fb73abfb010ea000ed53dcc84a3e20c28974
   branch: main
   specs:
     rubocop-govuk (5.1.20)
@@ -136,7 +136,7 @@ GEM
     ast (2.4.3)
     attr_required (1.0.2)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1206.0)
+    aws-partitions (1.1208.0)
     aws-sdk-accessanalyzer (1.85.0)
       aws-sdk-core (~> 3, >= 3.241.4)
       aws-sigv4 (~> 1.5)
@@ -148,7 +148,7 @@ GEM
       bigdecimal
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-ec2 (1.591.0)
+    aws-sdk-ec2 (1.592.0)
       aws-sdk-core (~> 3, >= 3.241.4)
       aws-sigv4 (~> 1.5)
     aws-sdk-ecr (1.119.0)
@@ -243,7 +243,7 @@ GEM
     docile (1.4.1)
     domain_name (0.6.20240107)
     drb (2.2.3)
-    dry-cli (1.4.0)
+    dry-cli (1.4.1)
     email_validator (2.2.4)
       activemodel
     erb (6.0.1)
@@ -486,7 +486,7 @@ GEM
       date
       stringio
     public_suffix (7.0.2)
-    puma (7.1.0)
+    puma (7.2.0)
       nio4r (~> 2.0)
     pundit (2.5.2)
       activesupport (>= 3.0.0)
@@ -674,7 +674,7 @@ GEM
     sidekiq-scheduler (6.0.1)
       rufus-scheduler (~> 3.2)
       sidekiq (>= 7.3, < 9)
-    sidekiq-throttled (2.0.0)
+    sidekiq-throttled (2.1.0)
       concurrent-ruby (>= 1.2.0)
       redis-prescription (~> 2.2)
       sidekiq (>= 8.0)
@@ -786,7 +786,7 @@ GEM
     websocket-extensions (0.1.5)
     wicked (2.0.0)
       railties (>= 3.0.7)
-    with_advisory_lock (7.0.2)
+    with_advisory_lock (7.5.0)
       activerecord (>= 7.2)
       zeitwerk (>= 2.7)
     xpath (3.2.0)

@@ -84,7 +84,7 @@ class Notifier::Consent
     next_dose =
       patient
         .reload
-        .vaccination_status(programme:, academic_year: session.academic_year)
+        .programme_status(programme, academic_year: session.academic_year)
         .dose_sequence
 
     next_dose == programme.maximum_dose_sequence

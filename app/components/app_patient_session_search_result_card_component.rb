@@ -179,12 +179,12 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     status_by_programme =
       programmes.each_with_object({}) do |programme, hash|
         resolved_status =
-          PatientStatusResolver.new(
+          PatientProgrammeStatusResolver.call(
             patient,
-            programme:,
+            programme_type: programme.type,
             academic_year:,
             context_location_id: session.location_id
-          ).programme
+          )
 
         hash[resolved_status.fetch(:prefix)] = resolved_status
       end

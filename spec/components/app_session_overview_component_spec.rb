@@ -68,7 +68,8 @@ describe AppSessionOverviewComponent do
           :patient_programme_status,
           :vaccinated_fully,
           patient:,
-          programme: flu_programme
+          programme: flu_programme,
+          location: session.location
         )
       end
 
@@ -136,13 +137,6 @@ describe AppSessionOverviewComponent do
         create(
           :patient_programme_status,
           :vaccinated_fully,
-          patient:,
-          programme: hpv_programme,
-          academic_year: AcademicYear.current - 1
-        )
-        create(
-          :patient_vaccination_status,
-          :vaccinated,
           patient:,
           programme: hpv_programme,
           academic_year: AcademicYear.current - 1
@@ -229,19 +223,22 @@ describe AppSessionOverviewComponent do
         :patient_programme_status,
         :has_refusal_consent_refused,
         patient: patients.first,
-        programme: hpv_programme
+        programme: hpv_programme,
+        location: session.location
       )
       create(
         :patient_programme_status,
         :cannot_vaccinate_unwell,
         programme: hpv_programme,
-        patient: patients.second
+        patient: patients.second,
+        location: session.location
       )
       create(
         :patient_programme_status,
         :vaccinated_fully,
         programme: hpv_programme,
-        patient: patients.third
+        patient: patients.third,
+        location: session.location
       )
     end
 

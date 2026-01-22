@@ -1,0 +1,40 @@
+<%= h1 t("teams.show.title") do %>
+  <span class="nhsuk-caption-l"><%= @team.name %></span>
+  <%= t("teams.show.title") %>
+<% end %>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter">
+    <%= render AppTeamNavigationComponent.new(team: @team) %>
+  </div>
+  <div class="nhsuk-grid-column-three-quarters">
+    <%= render AppCardComponent.new do |card| %>
+      <% card.with_heading(level: 2) { "Schools" } %>
+
+      <%= govuk_table do |table| %>
+        <% table.with_head do |head| %>
+          <% head.with_row do |row| %>
+            <% row.with_cell { "Name" } %>
+            <% row.with_cell { "URN" } %>
+          <% end %>
+        <% end %>
+        <% table.with_body do |body| %>
+          <% @schools.each do |school| %>
+            <% body.with_row do |row| %>
+              <% row.with_cell {
+                   [
+                     school.name,
+                     tag.span(format_address_single_line(school), class: "nhsuk-u-secondary-text-colour"),
+                   ]
+                     .compact
+                     .join(tag.br)
+                     .html_safe
+                 } %>
+                 <% row.with_cell { tag.span(school.urn_and_site, class: "app-u-code") } %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

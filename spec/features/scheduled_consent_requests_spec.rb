@@ -9,6 +9,7 @@ describe "Scheduled consent requests" do
     and_i_am_signed_in
 
     when_i_go_to_my_team_page
+    and_i_click_on_sessions
     then_i_see_consent_requests_are_sent_3_weeks_before
 
     when_i_schedule_a_session_4_weeks_away
@@ -70,6 +71,10 @@ describe "Scheduled consent requests" do
     click_link "Your team", match: :first
   end
 
+  def and_i_click_on_sessions
+    find(".app-sub-navigation__link", text: "Sessions").click
+  end
+
   def then_i_see_consent_requests_are_sent_3_weeks_before
     expect(page).to have_content(
       ["Consent requests", "Send 3 weeks before first session"].join
@@ -77,7 +82,7 @@ describe "Scheduled consent requests" do
   end
 
   def when_i_schedule_a_session_4_weeks_away
-    click_link "Sessions"
+    click_link "Sessions", match: :first
     choose "Unscheduled"
     click_button "Update results"
     click_link @location.name

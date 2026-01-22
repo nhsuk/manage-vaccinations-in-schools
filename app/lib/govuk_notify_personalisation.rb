@@ -199,10 +199,9 @@ class GovukNotifyPersonalisation
     return unless patient
     return unless mmr_programme
 
-    vaccination_status =
-      patient.vaccination_status(programme: mmr_programme, academic_year:)
+    programme_status = patient.programme_status(mmr_programme, academic_year:)
 
-    return "" if vaccination_status.vaccinated?
+    return "" if programme_status.vaccinated?
 
     [
       "## Your child still needs a second dose of the MMR vaccine",
@@ -262,15 +261,16 @@ class GovukNotifyPersonalisation
     return if patient.nil?
     return if mmr_programme.nil?
 
-    vaccination_status =
-      patient.vaccination_status(programme: mmr_programme, academic_year:)
+    programme_status = patient.programme_status(mmr_programme, academic_year:)
 
-    first_dose_date =
-      if vaccination_status.eligible? || vaccination_status.due?
-        vaccination_status.latest_date
+    date =
+      if programme_status.cannot_vaccinate_delay_vaccination?
+        programme_status.date
+      elsif (first_dose_date = programme_status.date)
+        (first_dose_date + 28.days).to_date
       end
 
-    (first_dose_date + 28.days).to_date.to_fs(:long) if first_dose_date
+    date.to_fs(:long)
   end
 
   def patient_eligible_for_additional_dose?
@@ -280,7 +280,7 @@ class GovukNotifyPersonalisation
     next_dose =
       patient
         .reload
-        .vaccination_status(programme: mmr_programme, academic_year:)
+        .programme_status(mmr_programme, academic_year:)
         .dose_sequence
 
     next_dose == mmr_programme.maximum_dose_sequence

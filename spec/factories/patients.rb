@@ -126,7 +126,7 @@ FactoryBot.define do
     after(:create) do |patient, evaluator|
       if (location = evaluator.location) &&
            (academic_year = evaluator.academic_year)
-        PatientLocation.find_or_create_by!(patient:, location:, academic_year:)
+        create(:patient_location, patient:, location:, academic_year:)
       end
     end
 
@@ -214,35 +214,12 @@ FactoryBot.define do
       end
     end
 
-    trait :eligible_for_vaccination do
-      vaccination_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_vaccination_status,
-            :eligible,
-            patient: instance,
-            programme:
-          )
-        end
-      end
-    end
-
     trait :due_for_vaccination do
       programme_statuses do
         programmes.map do |programme|
           association(
             :patient_programme_status,
             :due_injection,
-            patient: instance,
-            programme:
-          )
-        end
-      end
-      vaccination_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_vaccination_status,
-            :due,
             patient: instance,
             programme:
           )
@@ -451,7 +428,6 @@ FactoryBot.define do
 
     trait :consent_given_triage_needed do
       triage_required
-      eligible_for_vaccination
 
       consents do
         programmes.map do |programme|
@@ -489,8 +465,6 @@ FactoryBot.define do
     end
 
     trait :consent_given_injection_only_triage_needed do
-      eligible_for_vaccination
-
       consents do
         programmes.map do |programme|
           association(
@@ -538,8 +512,6 @@ FactoryBot.define do
     end
 
     trait :consent_given_nasal_only_triage_needed do
-      eligible_for_vaccination
-
       consents do
         programmes.map do |programme|
           association(
@@ -831,9 +803,21 @@ FactoryBot.define do
         programmes.map do |programme|
           association(
             :consent,
-            :given_nasal,
+            :given_nasal_or_injection,
             :from_mum,
             :health_question_notes,
+            patient: instance,
+            team:,
+            programme:
+          )
+        end
+      end
+
+      triages do
+        programmes.map do |programme|
+          association(
+            :triage,
+            :safe_to_vaccinate_without_gelatine,
             patient: instance,
             team:,
             programme:
@@ -1157,16 +1141,6 @@ FactoryBot.define do
           association(
             :patient_programme_status,
             :vaccinated_fully,
-            patient: instance,
-            programme:
-          )
-        end
-      end
-      vaccination_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_vaccination_status,
-            :vaccinated,
             patient: instance,
             programme:
           )

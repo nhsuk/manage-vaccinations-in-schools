@@ -38,5 +38,12 @@ FactoryBot.define do
       type { "other" }
       other_details { Faker::Lorem.sentence }
     end
+
+    after(:create) do |archive_reason|
+      PatientTeamUpdater.call(
+        patient_scope: Patient.where(id: archive_reason.patient_id),
+        team_scope: Team.where(id: archive_reason.team_id)
+      )
+    end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_19_161311) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -863,7 +863,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_19_161311) do
   end
 
   create_table "teams", force: :cascade do |t|
-    t.string "careplus_venue_code", null: false
+    t.string "careplus_staff_code"
+    t.string "careplus_staff_type"
+    t.string "careplus_venue_code"
     t.datetime "created_at", null: false
     t.integer "days_before_consent_reminders", default: 7, null: false
     t.integer "days_before_consent_requests", default: 21, null: false
@@ -1378,6 +1380,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_19_161311) do
       ((pps.academic_year - pat.birth_academic_year) - 5) AS patient_year_group,
       COALESCE(la.mhclg_code, ''::character varying) AS patient_local_authority_code,
       COALESCE(la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
+          CASE
+              WHEN (school.urn IS NOT NULL) THEN school.urn
+              WHEN (pat.home_educated = true) THEN '999999'::character varying
+              ELSE '888888'::character varying
+          END AS patient_school_urn,
+          CASE
+              WHEN (school.name IS NOT NULL) THEN school.name
+              WHEN (pat.home_educated = true) THEN 'Home-schooled'::text
+              ELSE 'Unknown school'::text
+          END AS patient_school_name,
       (ar.patient_id IS NOT NULL) AS is_archived,
       (EXISTS ( SELECT 1
              FROM consents con

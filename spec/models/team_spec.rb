@@ -5,7 +5,9 @@
 # Table name: teams
 #
 #  id                            :bigint           not null, primary key
-#  careplus_venue_code           :string           not null
+#  careplus_staff_code           :string
+#  careplus_staff_type           :string
+#  careplus_venue_code           :string
 #  days_before_consent_reminders :integer          default(7), not null
 #  days_before_consent_requests  :integer          default(21), not null
 #  days_before_invitations       :integer          default(21), not null
@@ -76,6 +78,24 @@ describe Team do
       it "ignores academic_year parameter" do
         expect(team.year_groups(academic_year: 2024)).to eq((-2..13).to_a)
       end
+    end
+  end
+
+  describe "#careplus_enabled?" do
+    subject(:careplus_enabled?) { team.careplus_enabled? }
+
+    context "when careplus_staff_code and careplus_staff_type are present" do
+      let(:team) { create(:team, :with_careplus_enabled) }
+
+      it { should be(true) }
+    end
+
+    context "when careplus_staff_code or careplus_staff_type are not present" do
+      let(:team) do
+        create(:team, careplus_staff_code: nil, careplus_staff_type: nil)
+      end
+
+      it { should be(false) }
     end
   end
 end

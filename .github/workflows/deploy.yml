@@ -34,6 +34,7 @@ on:
           - sandbox-alpha
           - sandbox-beta
           - performance
+          - pentest
       server_types:
         description: Server types to deploy
         required: true
