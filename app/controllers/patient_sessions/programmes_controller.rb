@@ -30,10 +30,12 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
       performed_ods_code: current_team.organisation.ods_code,
       programme: @programme,
       session: @session,
-      source: "service",
+      source: "service"
     )
 
-    redirect_to draft_vaccination_record_path(@programme.mmr? ? "mmr-or-mmrv" : "confirm")
+    redirect_to draft_vaccination_record_path(
+                  @programme.mmr? ? "mmr-or-mmrv" : "confirm"
+                )
   end
 
   private
@@ -42,7 +44,10 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
 
   def dose_sequence
     if @programme.mmr?
-      @patient.programme_status(@programme, academic_year: AcademicYear.current)&.dose_sequence || 1
+      @patient.programme_status(
+        @programme,
+        academic_year: AcademicYear.current
+      )&.dose_sequence || 1
     end
   end
 end

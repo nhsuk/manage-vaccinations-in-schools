@@ -131,7 +131,9 @@ class DraftVaccinationRecordsController < ApplicationController
       @draft_vaccination_record.errors.add(:mmrv, :blank)
     end
     @draft_vaccination_record.disease_types =
-      Programme::Variant::DISEASE_TYPES[@draft_vaccination_record.mmrv ? "mmrv" : "mmr"]
+      Programme::Variant::DISEASE_TYPES[
+        @draft_vaccination_record.mmrv ? "mmrv" : "mmr"
+      ]
   end
 
   def handle_location

@@ -93,7 +93,7 @@ describe "MMR/MMRV" do
   end
 
   def and_a_patient_is_in_the_session
-    @patient = create(:patient, :due_for_vaccination, session: @session)
+    @patient = create(:patient, session: @session)
   end
 
   def and_the_patient_doesnt_need_triage
