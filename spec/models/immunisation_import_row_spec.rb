@@ -1210,9 +1210,7 @@ describe ImmunisationImportRow do
         let(:data) { valid_data.merge("DATE_OF_VACCINATION" => "20230901") }
 
         it "sets the administered at time" do
-          expect(vaccination_record.performed_at).to eq(
-            Time.new(2023, 9, 1, 0, 0, 0, "+01:00")
-          )
+          expect(vaccination_record.performed_at).to eq(Date.new(2023, 9, 1))
         end
       end
 
@@ -1220,9 +1218,7 @@ describe ImmunisationImportRow do
         let(:data) { valid_data.merge("DATE_OF_VACCINATION" => "01/09/2023") }
 
         it "parses the date and sets the administered at time" do
-          expect(vaccination_record.performed_at).to eq(
-            Time.new(2023, 9, 1, 0, 0, 0, "+01:00")
-          )
+          expect(vaccination_record.performed_at).to eq(Date.new(2023, 9, 1))
         end
       end
 
@@ -1230,9 +1226,7 @@ describe ImmunisationImportRow do
         let(:data) { valid_data.merge("DATE_OF_VACCINATION" => "2023-09-01") }
 
         it "parses the date and sets the administered at time" do
-          expect(vaccination_record.performed_at).to eq(
-            Time.new(2023, 9, 1, 0, 0, 0, "+01:00")
-          )
+          expect(vaccination_record.performed_at).to eq(Date.new(2023, 9, 1))
         end
       end
 
@@ -1252,6 +1246,21 @@ describe ImmunisationImportRow do
         it "sets the administered at time" do
           expect(vaccination_record.performed_at).to eq(
             Time.new(2024, 1, 1, 10, 30, 0, "+00:00")
+          )
+        end
+      end
+
+      context "with a daylight saving time" do
+        let(:data) do
+          valid_data.merge(
+            "DATE_OF_VACCINATION" => "20230901",
+            "TIME_OF_VACCINATION" => "1030"
+          )
+        end
+
+        it "sets the administered at time" do
+          expect(vaccination_record.performed_at).to eq(
+            Time.new(2023, 9, 1, 10, 30, 0, "+01:00")
           )
         end
       end
@@ -2420,7 +2429,8 @@ describe ImmunisationImportRow do
             location: nil,
             location_name: location.name,
             performed_by_user: nil,
-            performed_at: valid_hpv_data["DATE_OF_VACCINATION"].to_time,
+            performed_at_date: valid_hpv_data["DATE_OF_VACCINATION"],
+            performed_at_time: nil,
             source: :nhs_immunisations_api,
             nhs_immunisations_api_identifier_system: "ABC",
             nhs_immunisations_api_identifier_value: "123",
@@ -2650,7 +2660,7 @@ describe ImmunisationImportRow do
               :sourced_from_bulk_upload,
               patient:,
               programme:,
-              performed_at: Time.zone.local(2026, 1, 5, 0, 0, 0),
+              performed_at: Date.new(2026, 1, 5),
               location:,
               local_patient_id: "CIN-OXFORD-pat123456",
               local_patient_id_uri: "https://cinnamon.nhs.uk/0de/system1",
@@ -2682,7 +2692,7 @@ describe ImmunisationImportRow do
               :sourced_from_bulk_upload,
               patient:,
               programme:,
-              performed_at: Time.zone.local(2026, 1, 5, 0, 0, 0),
+              performed_at: Date.new(2026, 1, 5),
               location:,
               local_patient_id: "CIN-OXFORD-pat123456",
               local_patient_id_uri: "https://cinnamon.nhs.uk/0de/system1",
