@@ -78,24 +78,74 @@ describe Location do
     describe "#search_by_name" do
       subject(:scope) { described_class.search_by_name(query) }
 
-      let(:location) { create(:generic_clinic) }
+      let(:clinic) { create(:generic_clinic) }
+      let!(:school_a) { create(:school, name: "St. John's School") }
+      let!(:school_b) { create(:school, name: "St. John's School for Boys") }
+      let!(:school_c) do
+        create(
+          :school,
+          name: "St. John's Primary School for Boys with learning disabilities"
+        )
+      end
+      let!(:school_d) { create(:school, name: "St. Mary's School for Girls") }
 
       context "with an exact match on the name" do
         let(:query) { "Community clinic" }
 
-        it { should contain_exactly(location) }
+        it { should contain_exactly(clinic) }
       end
 
       context "with a partial match on the alternative name" do
         let(:query) { "No known school" }
 
-        it { should contain_exactly(location) }
+        it { should contain_exactly(clinic) }
       end
 
       context "without a match" do
         let(:query) { "Some other location" }
 
-        it { should_not contain_exactly(location) }
+        it { should_not contain_exactly(clinic) }
+      end
+
+      context "when searching with just the start of a name" do
+        let(:query) { "St. J" }
+
+        it { should include(school_a, school_b, school_c) }
+      end
+
+      context "with a query matching the name of school A" do
+        let(:query) { "St. John's School" }
+
+        it { should eq([school_a, school_b, school_c]) }
+      end
+
+      context "with a query matching the name of school B" do
+        let(:query) { "St. John's School for Boys" }
+
+        it { should start_with(school_b) }
+        it { should include(school_c) }
+        it { should_not include(school_d) }
+      end
+
+      context "with a query matching the name of a school C" do
+        let(:query) do
+          "St. John's Primary School for Boys with learning disabilities"
+        end
+
+        it { should eq([school_c]) }
+        it { should_not include(school_d) }
+      end
+
+      context "with an overly generic search term" do
+        let(:query) { "school" }
+
+        it { should contain_exactly(school_a, school_b, school_c, school_d) }
+      end
+
+      context "with typos" do
+        let(:query) { "Saint John's school" }
+
+        it { should start_with([school_a, school_b]) }
       end
     end
 
