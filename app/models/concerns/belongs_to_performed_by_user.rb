@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module PerformableByUser
+module BelongsToPerformedByUser
   extend ActiveSupport::Concern
 
   included do

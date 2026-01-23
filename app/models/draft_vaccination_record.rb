@@ -7,8 +7,8 @@ class DraftVaccinationRecord
 
   include HasDoseVolume
   include PerformableAtDateAndTime
+  include PerformableBy
   include Programmable
-  include VaccinationRecordPerformedByConcern
 
   attribute :batch_id, :integer
   attribute :batch_name, :string
