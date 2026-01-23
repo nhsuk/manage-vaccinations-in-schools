@@ -699,7 +699,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reason_for_refusal_requires_notes-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/refusable.rb, line 35</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/refusable.rb, line 39</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reason_for_refusal_requires_notes?</span>
   <span class="ruby-identifier">reason_for_refusal</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-constant">REASON_FOR_REFUSAL_REQUIRES_NOTES</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -741,7 +741,7 @@
             </details>
           </div>
           <div class="method-source-code" id="requires_notes-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/refusable.rb, line 39</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/refusable.rb, line 43</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_notes?</span>
   <span class="ruby-identifier">requires_reason_for_refusal?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">reason_for_refusal_requires_notes?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -783,7 +783,7 @@
             </details>
           </div>
           <div class="method-source-code" id="requires_reason_for_refusal-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/refusable.rb, line 31</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/refusable.rb, line 35</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_reason_for_refusal?</span>
   <span class="ruby-identifier">response_refused?</span>
 <span class="ruby-keyword">end</span></pre>

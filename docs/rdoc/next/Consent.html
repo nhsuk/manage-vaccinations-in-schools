@@ -626,6 +626,8 @@
       </summary>
       <ul class="nav-list" role="directory">
 
+        <li ><a href="#method-i-can_have_reason_for_refusal-3F">can_have_reason_for_refusal?</a></li>
+
         <li ><a href="#method-i-can_invalidate-3F">can_invalidate?</a></li>
 
         <li ><a href="#method-i-can_withdraw-3F">can_withdraw?</a></li>
@@ -783,7 +785,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="from_consent_form-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 166</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 168</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_consent_form!</span>(<span class="ruby-identifier">consent_form</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">current_user:</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">ConsentFormNotRecorded</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">recorded?</span>
 
@@ -888,6 +890,8 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_reason_for_refusal?</span> = <span class="ruby-keyword">super</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">withdrawn?</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_have_reason_for_refusal?</span> = <span class="ruby-identifier">requires_reason_for_refusal?</span>
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_notes?</span> = <span class="ruby-keyword">super</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">invalidated?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_triage?</span>
@@ -974,7 +978,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notifier</span> = <span class="ruby-constant">Notifier</span><span class="ruby-operator">::</span><span class="ruby-constant">Consent</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 
-<span class="ruby-keyword">class</span> <span class="ruby-constant">ConsentFormNotRecorded</span> </pre>
+<span class="ruby-keyword">class</span> </pre>
           </div>
 
 
@@ -1006,6 +1010,135 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
        <header>
          <h3 id="public-instance-methods"><a href="#public-instance-methods">Public Instance Methods</a></h3>
        </header>
+
+
+      <div id="method-i-can_have_reason_for_refusal-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-can_have_reason_for_refusal-3F" title="Link to this method">
+                <span class="method-name">can_have_reason_for_refusal?</span>
+                <span class="method-args">(= requires_reason_for_refusal?)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="can_have_reason_for_refusal-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 128</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_have_reason_for_refusal?</span> = <span class="ruby-identifier">requires_reason_for_refusal?</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_notes?</span> = <span class="ruby-keyword">super</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">invalidated?</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_triage?</span>
+  <span class="ruby-identifier">response_given?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">health_answers_require_triage?</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">alias_method</span> <span class="ruby-value">:should_invalidate_existing_triages?</span>, <span class="ruby-value">:requires_triage?</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">should_invalidate_existing_patient_specific_directions?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_triages?</span>
+
+  <span class="ruby-comment"># TODO: Make this more generic. At the moment PSD is only used for nasal</span>
+  <span class="ruby-comment">#  flu, but no reason it couldn&#39;t be applied to other programmes in the</span>
+  <span class="ruby-comment">#  future.</span>
+  <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">flu?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">vaccine_method_nasal?</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_existing_triage_and_patient_specific_directions!</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_patient_specific_directions?</span>
+    <span class="ruby-identifier">patient</span>
+      .<span class="ruby-identifier">patient_specific_directions</span>
+      .<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>)
+      .<span class="ruby-identifier">invalidate_all</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_triages?</span>
+    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">triages</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>).<span class="ruby-identifier">invalidate_all</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_relationship</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">parent_relationships</span>.<span class="ruby-identifier">find</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">parent_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">parent_id</span> }
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">matched_manually?</span>
+  <span class="ruby-operator">!</span><span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">recorded_by_user_id</span>.<span class="ruby-identifier">nil?</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_consent_form!</span>(<span class="ruby-identifier">consent_form</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">current_user:</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">ConsentFormNotRecorded</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">recorded?</span>
+
+  <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">parent</span> =
+      <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">find_or_create_parent_with_relationship_to!</span>(<span class="ruby-value">patient:</span>)
+
+    <span class="ruby-identifier">consents</span> =
+      <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">consent_form_programme</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consents</span>.<span class="ruby-identifier">create!</span>(
+          <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">academic_year</span>,
+          <span class="ruby-value">consent_form:</span>,
+          <span class="ruby-value">disease_types:</span> <span class="ruby-identifier">consent_form_programme</span>.<span class="ruby-identifier">disease_types</span>,
+          <span class="ruby-value">health_answers:</span> <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">health_answers</span>,
+          <span class="ruby-value">notes:</span> <span class="ruby-identifier">consent_form_programme</span>.<span class="ruby-identifier">notes</span>,
+          <span class="ruby-value">parent:</span>,
+          <span class="ruby-value">programme_type:</span> <span class="ruby-identifier">consent_form_programme</span>.<span class="ruby-identifier">programme_type</span>,
+          <span class="ruby-value">reason_for_refusal:</span> <span class="ruby-identifier">consent_form_programme</span>.<span class="ruby-identifier">reason_for_refusal</span>,
+          <span class="ruby-value">recorded_by:</span> <span class="ruby-identifier">current_user</span>,
+          <span class="ruby-value">response:</span> <span class="ruby-identifier">consent_form_programme</span>.<span class="ruby-identifier">response</span>,
+          <span class="ruby-value">route:</span> <span class="ruby-string">&quot;website&quot;</span>,
+          <span class="ruby-value">submitted_at:</span> <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">recorded_at</span>,
+          <span class="ruby-value">team:</span> <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">team</span>,
+          <span class="ruby-value">vaccine_methods:</span> <span class="ruby-identifier">consent_form_programme</span>.<span class="ruby-identifier">vaccine_methods</span>,
+          <span class="ruby-value">without_gelatine:</span> <span class="ruby-identifier">consent_form_programme</span>.<span class="ruby-identifier">without_gelatine</span>
+        )
+      <span class="ruby-keyword">end</span>
+
+    <span class="ruby-constant">StatusUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">patient:</span>)
+
+    <span class="ruby-identifier">consents</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_vaccination_records_no_notify!</span>
+  <span class="ruby-identifier">vaccination_records</span> =
+    <span class="ruby-constant">VaccinationRecord</span>.<span class="ruby-identifier">for_programme</span>(<span class="ruby-identifier">programme</span>).<span class="ruby-identifier">where</span>(<span class="ruby-value">patient:</span>)
+
+  <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">vaccination_record</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">update!</span>(
+      <span class="ruby-value">notify_parents:</span>
+        <span class="ruby-constant">VaccinationNotificationCriteria</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">vaccination_record:</span>)
+    )
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notifier</span> = <span class="ruby-constant">Notifier</span><span class="ruby-operator">::</span><span class="ruby-constant">Consent</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">ConsentFormNotRecorded</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">StandardError</span>
+</pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
 
 
       <div id="method-i-can_invalidate-3F" class="method-detail anchor-link ">
@@ -1111,7 +1244,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="invalidate_existing_triage_and_patient_specific_directions-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 145</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 147</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_existing_triage_and_patient_specific_directions!</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_patient_specific_directions?</span>
     <span class="ruby-identifier">patient</span>
@@ -1162,7 +1295,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="matched_manually-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 162</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 164</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">matched_manually?</span>
   <span class="ruby-operator">!</span><span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">recorded_by_user_id</span>.<span class="ruby-identifier">nil?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1288,7 +1421,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="notifier-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 212</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 214</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notifier</span> = <span class="ruby-constant">Notifier</span><span class="ruby-operator">::</span><span class="ruby-constant">Consent</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 
   <span class="ruby-keyword">class</span> <span class="ruby-constant">ConsentFormNotRecorded</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">StandardError</span>
@@ -1332,7 +1465,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="parent_relationship-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 158</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 160</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_relationship</span>
   <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">parent_relationships</span>.<span class="ruby-identifier">find</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">parent_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">parent_id</span> }
 <span class="ruby-keyword">end</span></pre>
@@ -1374,7 +1507,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="requires_notes-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 128</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 130</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_notes?</span> = <span class="ruby-keyword">super</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">invalidated?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_triage?</span>
@@ -1504,6 +1637,8 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 126</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_reason_for_refusal?</span> = <span class="ruby-keyword">super</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">withdrawn?</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_have_reason_for_refusal?</span> = <span class="ruby-identifier">requires_reason_for_refusal?</span>
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_notes?</span> = <span class="ruby-keyword">super</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">invalidated?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_triage?</span>
@@ -1590,8 +1725,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notifier</span> = <span class="ruby-constant">Notifier</span><span class="ruby-operator">::</span><span class="ruby-constant">Consent</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 
-<span class="ruby-keyword">class</span> <span class="ruby-constant">ConsentFormNotRecorded</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">StandardError</span>
-</pre>
+<span class="ruby-keyword">class</span> <span class="ruby-constant">ConsentFormNotRecorded</span> <span class="ruby-operator">&lt;</span> </pre>
           </div>
 
 
@@ -1630,7 +1764,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="requires_triage-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 130</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 132</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_triage?</span>
   <span class="ruby-identifier">response_given?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">health_answers_require_triage?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1739,6 +1873,8 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_reason_for_refusal?</span> = <span class="ruby-keyword">super</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">withdrawn?</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_have_reason_for_refusal?</span> = <span class="ruby-identifier">requires_reason_for_refusal?</span>
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_notes?</span> = <span class="ruby-keyword">super</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">invalidated?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_triage?</span>
@@ -1825,7 +1961,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notifier</span> = <span class="ruby-constant">Notifier</span><span class="ruby-operator">::</span><span class="ruby-constant">Consent</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 
-<span class="ruby-keyword">class</span> <span class="ruby-constant">ConsentFormNotRecorded</span> <span class="ruby-operator">&lt;</span> </pre>
+<span class="ruby-keyword">class</span> <span class="ruby-constant">ConsentFormNotRecorded</span> </pre>
           </div>
 
 
@@ -1864,7 +2000,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="should_invalidate_existing_patient_specific_directions-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 136</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 138</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">should_invalidate_existing_patient_specific_directions?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_triages?</span>
 
@@ -1911,7 +2047,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="update_vaccination_records_no_notify-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 200</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 202</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_vaccination_records_no_notify!</span>
   <span class="ruby-identifier">vaccination_records</span> =
     <span class="ruby-constant">VaccinationRecord</span>.<span class="ruby-identifier">for_programme</span>(<span class="ruby-identifier">programme</span>).<span class="ruby-identifier">where</span>(<span class="ruby-value">patient:</span>)

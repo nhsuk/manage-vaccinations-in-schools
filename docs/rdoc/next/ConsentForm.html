@@ -2040,9 +2040,11 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">parent_relationship_other_name</span> = <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">parent_relationship_other?</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">response_given?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">response_refused?</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal_notes</span> = <span class="ruby-keyword">nil</span>
+  <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">response_given?</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">notes</span> = <span class="ruby-string">&quot;&quot;</span>
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_confirmed</span>
@@ -2307,9 +2309,11 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">parent_relationship_other_name</span> = <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">parent_relationship_other?</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">response_given?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">response_refused?</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal_notes</span> = <span class="ruby-keyword">nil</span>
+  <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">response_given?</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">notes</span> = <span class="ruby-string">&quot;&quot;</span>
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_confirmed</span>
@@ -2845,9 +2849,11 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">parent_relationship_other_name</span> = <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">parent_relationship_other?</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">response_given?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">response_refused?</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal_notes</span> = <span class="ruby-keyword">nil</span>
+  <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">response_given?</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">notes</span> = <span class="ruby-string">&quot;&quot;</span>
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_confirmed</span>
@@ -3241,9 +3247,11 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">parent_relationship_other_name</span> = <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">parent_relationship_other?</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">response_given?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">response_refused?</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal_notes</span> = <span class="ruby-keyword">nil</span>
+  <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">response_given?</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">notes</span> = <span class="ruby-string">&quot;&quot;</span>
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_confirmed</span>
@@ -3924,9 +3932,11 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">parent_relationship_other_name</span> = <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">parent_relationship_other?</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">response_given?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">response_refused?</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal_notes</span> = <span class="ruby-keyword">nil</span>
+  <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">response_given?</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">notes</span> = <span class="ruby-string">&quot;&quot;</span>
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_confirmed</span>
@@ -4001,9 +4011,11 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
 
     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">parent_relationship_other_name</span> = <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">parent_relationship_other?</span>
 
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">response_given?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">response_refused?</span>
-      <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
-      <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal_notes</span> = <span class="ruby-keyword">nil</span>
+    <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span>
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">response_given?</span>
+        <span class="ruby-identifier">it</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
+        <span class="ruby-identifier">it</span>.<span class="ruby-identifier">notes</span> = <span class="ruby-string">&quot;&quot;</span>
+      <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
 
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_confirmed</span>
@@ -4079,9 +4091,11 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">parent_relationship_other_name</span> = <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">parent_relationship_other?</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">response_given?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">response_refused?</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal_notes</span> = <span class="ruby-keyword">nil</span>
+  <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">response_given?</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">notes</span> = <span class="ruby-string">&quot;&quot;</span>
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_confirmed</span>
@@ -4545,9 +4559,11 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">parent_relationship_other_name</span> = <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">parent_relationship_other?</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">response_given?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">response_refused?</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal_notes</span> = <span class="ruby-keyword">nil</span>
+  <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">response_given?</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">notes</span> = <span class="ruby-string">&quot;&quot;</span>
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_confirmed</span>
@@ -5007,9 +5023,11 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">parent_relationship_other_name</span> = <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">parent_relationship_other?</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">response_given?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">response_refused?</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reason_for_refusal_notes</span> = <span class="ruby-keyword">nil</span>
+  <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">response_given?</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">reason_for_refusal</span> = <span class="ruby-keyword">nil</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">notes</span> = <span class="ruby-string">&quot;&quot;</span>
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_confirmed</span>
