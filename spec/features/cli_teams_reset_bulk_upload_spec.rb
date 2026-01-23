@@ -70,6 +70,22 @@ describe "mavis teams reset-bulk-upload" do
         /not a bulk upload team/
       )
     end
+
+    it "does not delete records that have been sent to the Imms API" do
+      given_a_bulk_upload_team_exists
+      and_the_bulk_upload_team_has_immunisation_imports_with_vaccination_records
+      and_some_vaccination_records_have_been_sent_to_the_imms_api
+
+      when_i_run_the_command_for_single_team
+
+      then_the_immunisation_imports_of_the_synced_vaccination_records_are_not_deleted
+      and_the_synced_vaccination_records_are_not_deleted
+      and_the_patients_of_the_synced_vaccination_records_are_not_deleted
+
+      and_the_other_immunisation_imports_are_deleted
+      and_the_other_vaccination_records_are_deleted
+      and_the_other_patients_are_deleted
+    end
   end
 
   context "when resetting all bulk upload teams" do
@@ -257,6 +273,10 @@ describe "mavis teams reset-bulk-upload" do
     @poc_import.patients << @poc_patient
   end
 
+  def and_some_vaccination_records_have_been_sent_to_the_imms_api
+    @vaccination_record1.update(nhs_immunisations_api_synced_at: 1.hour.ago)
+  end
+
   def when_i_run_the_command_for_single_team
     run_command_with_workgroup(@bulk_team.workgroup)
   end
@@ -358,5 +378,29 @@ describe "mavis teams reset-bulk-upload" do
 
   def and_no_patients_are_deleted
     expect(Patient.count).to be >= 1
+  end
+
+  def then_the_immunisation_imports_of_the_synced_vaccination_records_are_not_deleted
+    expect(ImmunisationImport.where(id: @import1.id)).to exist
+  end
+
+  def and_the_synced_vaccination_records_are_not_deleted
+    expect(VaccinationRecord.where(id: @vaccination_record1.id)).to exist
+  end
+
+  def and_the_patients_of_the_synced_vaccination_records_are_not_deleted
+    expect(Patient.where(id: @patient1.id)).to exist
+  end
+
+  def and_the_other_immunisation_imports_are_deleted
+    expect(ImmunisationImport.where(id: @import2.id)).to be_empty
+  end
+
+  def and_the_other_vaccination_records_are_deleted
+    expect(VaccinationRecord.where(id: @vaccination_record2.id)).to be_empty
+  end
+
+  def and_the_other_patients_are_deleted
+    expect(Patient.where(id: @patient2.id)).to be_empty
   end
 end

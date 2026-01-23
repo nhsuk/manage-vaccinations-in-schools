@@ -31,12 +31,18 @@ module MavisCLI
           puts "  - #{team.name} (#{team.workgroup})"
           puts "    - Immunisation imports: #{ImmunisationImport.where(team:).count}"
           puts "    - Total patients: #{find_patients_for_team(team).count}"
-          puts "    - Vaccination records: #{find_vaccination_records_for_team(team).count}"
+          vaccination_records = find_vaccination_records_for_team(team)
+          puts "    - Vaccination records: #{vaccination_records.count}"
+          synced = vaccination_records.synced_to_nhs_immunisations_api
+          next unless synced.any?
+          puts "      - #{synced.count} vaccination record(s) have been" \
+                 " synced to NHS Immunisations API and will NOT be deleted"
         end
         puts
 
         unless MavisCLI.prompt_to_continue(
-                 "This will permanently delete all data associated with the above teams. Continue? (y/n) "
+                 "This will permanently delete all data associated with the" \
+                   "above teams. Continue? (y/n) "
                )
           puts "Operation cancelled."
           return
@@ -78,8 +84,35 @@ module MavisCLI
           vaccination_records = find_vaccination_records_for_team(team)
           puts "  - Found #{vaccination_records.count} vaccination record(s) in this team's imports"
 
+          not_synced_vaccination_records =
+            vaccination_records.not_synced_to_nhs_immunisations_api
+          synced_vaccination_records =
+            vaccination_records.synced_to_nhs_immunisations_api
+          if synced_vaccination_records.exists?
+            puts "    - #{synced_vaccination_records.count} vaccination" \
+                   " record(s) have been synced to NHS Immunisations API and" \
+                   " will NOT be deleted"
+            puts "    - #{not_synced_vaccination_records.count} vaccination" \
+                   " record(s) will be deleted"
+          end
+
           puts "Destroying vaccination records..."
-          vaccination_records.destroy_all
+          not_synced_vaccination_records.destroy_all
+
+          puts "Refreshing immunisations imports..."
+          if immunisation_imports.joins(:vaccination_records).any?
+            immunisation_imports_with_records =
+              immunisation_imports.joins(:vaccination_records).distinct
+            immunisation_imports =
+              immunisation_imports.where.not(
+                id: immunisation_imports_with_records.select(:id)
+              )
+            puts " - #{immunisation_imports_with_records.count} immunisation" \
+                   " import(s) have associated vaccination records and will NOT" \
+                   " be deleted"
+            puts " - #{immunisation_imports.count} immunisation import(s) will" \
+                   " be deleted"
+          end
 
           puts "Destroying immunisation imports..."
           immunisation_imports.destroy_all
