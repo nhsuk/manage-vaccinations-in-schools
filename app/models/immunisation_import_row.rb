@@ -341,10 +341,7 @@ class ImmunisationImportRow
 
   def performed_at_date = date_of_vaccination.to_date
 
-  def performed_at_time
-    # TODO: Allow this to be `nil`.
-    time_of_vaccination&.to_time || Time.zone.local(2000, 1, 1, 0, 0, 0)
-  end
+  def performed_at_time = time_of_vaccination&.to_time
 
   def performed_by_user
     @performed_by_user ||=
