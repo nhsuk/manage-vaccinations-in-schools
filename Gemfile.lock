@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/alphagov/rubocop-govuk.git
-  revision: cb59fb73abfb010ea000ed53dcc84a3e20c28974
+  revision: 2c68c963afbae8ac53a1a3d06dd81569f1bfea1e
   branch: main
   specs:
     rubocop-govuk (5.1.20)
