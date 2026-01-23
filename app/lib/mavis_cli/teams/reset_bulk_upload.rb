@@ -31,12 +31,20 @@ module MavisCLI
           puts "  - #{team.name} (#{team.workgroup})"
           puts "    - Immunisation imports: #{ImmunisationImport.where(team:).count}"
           puts "    - Total patients: #{find_patients_for_team(team).count}"
+
           vaccination_records = find_vaccination_records_for_team(team)
           puts "    - Vaccination records: #{vaccination_records.count}"
-          synced = vaccination_records.synced_to_nhs_immunisations_api
-          next unless synced.any?
-          puts "      - #{synced.count} vaccination record(s) have been" \
-                 " synced to NHS Immunisations API and will NOT be deleted"
+          if (synced = vaccination_records.synced_to_nhs_immunisations_api).any?
+            puts "      - #{synced.count} vaccination record(s) have been" \
+                   " synced to NHS Immunisations API and will NOT be deleted"
+          end
+
+          archive_reasons =
+            find_archive_reasons_for_team(
+              team,
+              find_patients_for_team(team).ids
+            )
+          puts "    - Archive reasons: #{archive_reasons.count}"
         end
         puts
 
@@ -88,6 +96,8 @@ module MavisCLI
             vaccination_records.not_synced_to_nhs_immunisations_api
           synced_vaccination_records =
             vaccination_records.synced_to_nhs_immunisations_api
+          patient_ids_of_not_synced_records =
+            not_synced_vaccination_records.pluck(:patient_id).uniq
           if synced_vaccination_records.exists?
             puts "    - #{synced_vaccination_records.count} vaccination" \
                    " record(s) have been synced to NHS Immunisations API and" \
@@ -117,15 +127,18 @@ module MavisCLI
           puts "Destroying immunisation imports..."
           immunisation_imports.destroy_all
 
+          archive_reasons =
+            ArchiveReason.where(
+              patient_id: patient_ids_of_not_synced_records,
+              team:
+            )
+          puts "Destroying #{archive_reasons.count} archive reasons..."
+          archive_reasons.destroy_all
+
           puts "Updating patient-team relationships..."
           PatientTeamUpdater.call(patient_scope: Patient.where(id: patient_ids))
 
-          patients_to_destroy =
-            Patient
-              .where(id: patient_ids)
-              .left_outer_joins(:patient_teams)
-              .group("patients.id")
-              .having("COUNT(patient_teams.team_id) = 0")
+          patients_to_destroy = find_patients_without_team(patient_ids)
           puts "  - Found #{patients_to_destroy.count} patient(s) who were in the imports, and no longer have teams"
 
           puts "Destroying patients..."
@@ -143,6 +156,18 @@ module MavisCLI
             team:
           }
         )
+      end
+
+      def find_archive_reasons_for_team(team, patient_ids)
+        ArchiveReason.where(patient_id: patient_ids, team:)
+      end
+
+      def find_patients_without_team(patient_ids)
+        Patient
+          .where(id: patient_ids)
+          .left_outer_joins(:patient_teams)
+          .group("patients.id")
+          .having("COUNT(patient_teams.team_id) = 0")
       end
     end
   end

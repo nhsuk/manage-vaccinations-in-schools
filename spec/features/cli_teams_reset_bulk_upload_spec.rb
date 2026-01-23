@@ -28,6 +28,7 @@ describe "mavis teams reset-bulk-upload" do
 
       then_all_the_immunisation_imports_are_deleted
       and_all_the_vaccination_records_are_deleted
+      and_all_the_archive_reasons_are_deleted
       and_all_the_patients_are_deleted
     end
 
@@ -41,6 +42,7 @@ describe "mavis teams reset-bulk-upload" do
       then_all_the_immunisation_imports_are_deleted
       and_the_patient_is_not_deleted
       and_the_vaccination_record_is_deleted
+      and_the_archive_reason_is_deleted
       and_the_patient_team_relationships_are_updated
     end
 
@@ -53,6 +55,7 @@ describe "mavis teams reset-bulk-upload" do
 
       then_all_the_immunisation_imports_are_deleted
       and_all_the_vaccination_records_are_deleted
+      and_all_the_archive_reasons_are_deleted
       and_all_the_patients_are_deleted
     end
 
@@ -80,10 +83,12 @@ describe "mavis teams reset-bulk-upload" do
 
       then_the_immunisation_imports_of_the_synced_vaccination_records_are_not_deleted
       and_the_synced_vaccination_records_are_not_deleted
+      and_the_archive_reasons_of_the_synced_vaccination_records_are_not_deleted
       and_the_patients_of_the_synced_vaccination_records_are_not_deleted
 
       and_the_other_immunisation_imports_are_deleted
       and_the_other_vaccination_records_are_deleted
+      and_the_other_archive_reasons_are_deleted
       and_the_other_patients_are_deleted
     end
   end
@@ -192,6 +197,15 @@ describe "mavis teams reset-bulk-upload" do
 
     @patient1 = @vaccination_record1.patient
     @patient2 = @vaccination_record2.patient
+
+    [@patient1, @patient2].each do |patient|
+      ArchiveReason.create(
+        patient:,
+        team: @bulk_team,
+        type: :immunisation_import
+      )
+    end
+    PatientTeamUpdater.call(patient_scope: Patient.all)
   end
 
   def and_a_patient_is_associated_with_both_teams
@@ -315,6 +329,10 @@ describe "mavis teams reset-bulk-upload" do
     expect(VaccinationRecord.count).to be 0
   end
 
+  def and_all_the_archive_reasons_are_deleted
+    expect(ArchiveReason.count).to be 0
+  end
+
   def and_all_the_patients_are_deleted
     expect(Patient.count).to be 0
   end
@@ -330,6 +348,12 @@ describe "mavis teams reset-bulk-upload" do
   def and_the_vaccination_record_is_deleted
     expect(
       VaccinationRecord.where(id: [@bulk_upload_vaccination_record.id])
+    ).to be_empty
+  end
+
+  def and_the_archive_reason_is_deleted
+    expect(
+      ArchiveReason.where(team: @bulk_team, patient: @shared_patient)
     ).to be_empty
   end
 
@@ -392,12 +416,22 @@ describe "mavis teams reset-bulk-upload" do
     expect(Patient.where(id: @patient1.id)).to exist
   end
 
+  def and_the_archive_reasons_of_the_synced_vaccination_records_are_not_deleted
+    expect(ArchiveReason.where(team: @bulk_team, patient: @patient1)).to exist
+  end
+
   def and_the_other_immunisation_imports_are_deleted
     expect(ImmunisationImport.where(id: @import2.id)).to be_empty
   end
 
   def and_the_other_vaccination_records_are_deleted
     expect(VaccinationRecord.where(id: @vaccination_record2.id)).to be_empty
+  end
+
+  def and_the_other_archive_reasons_are_deleted
+    expect(
+      ArchiveReason.where(team: @bulk_team, patient: @patient2)
+    ).to be_empty
   end
 
   def and_the_other_patients_are_deleted
