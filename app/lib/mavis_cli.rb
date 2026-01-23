@@ -16,6 +16,18 @@ module MavisCLI
         remainder_mark: "\u{FF65}"
       )
   end
+
+  def self.prompt_to_continue(message = "Continue? (y/n) ")
+    print message
+
+    response = $stdin.gets.chomp.downcase
+    case response
+    when /y(es)?/i
+      true
+    else
+      false
+    end
+  end
 end
 
 require_relative "mavis_cli_helpers"

@@ -19,8 +19,20 @@ module MavisCLI
         end
 
         puts "Found #{teams.count} bulk upload team(s) to reset:"
-        teams.each { |team| puts "  - #{team.name} (#{team.workgroup})" }
+        teams.each do |team|
+          puts "  - #{team.name} (#{team.workgroup})"
+          puts "    - Immunisation imports: #{ImmunisationImport.where(team:).count}"
+          puts "    - Total patients: #{find_patients_for_team(team).count}"
+          puts "    - Vaccination records: #{find_vaccination_records_for_team(team).count}"
+        end
         puts
+
+        unless MavisCLI.prompt_to_continue(
+                 "This will permanently delete all data associated with the above teams. Continue? (y/n) "
+               )
+          puts "Operation cancelled."
+          return
+        end
 
         teams.each do |team|
           puts "Resetting #{team.name} (#{team.workgroup})..."
@@ -52,20 +64,10 @@ module MavisCLI
           immunisation_imports = ImmunisationImport.where(team:)
           puts "  - Found #{immunisation_imports.count} immunisation import(s)"
 
-          patient_ids =
-            Patient
-              .joins(:patient_teams)
-              .where(patient_teams: { team: })
-              .distinct
-              .ids
+          patient_ids = find_patients_for_team(team).ids
           puts "  - Found #{patient_ids.count} patient(s) in this team"
 
-          vaccination_records =
-            VaccinationRecord.joins(:immunisation_imports).where(
-              immunisation_imports: {
-                team:
-              }
-            )
+          vaccination_records = find_vaccination_records_for_team(team)
           puts "  - Found #{vaccination_records.count} vaccination record(s) in this team's imports"
 
           puts "Destroying vaccination records..."
@@ -88,6 +90,18 @@ module MavisCLI
           puts "Destroying patients..."
           patients_to_destroy.destroy_all
         end
+      end
+
+      def find_patients_for_team(team)
+        Patient.joins(:patient_teams).where(patient_teams: { team: }).distinct
+      end
+
+      def find_vaccination_records_for_team(team)
+        VaccinationRecord.joins(:immunisation_imports).where(
+          immunisation_imports: {
+            team:
+          }
+        )
       end
     end
   end

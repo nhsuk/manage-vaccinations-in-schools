@@ -248,7 +248,7 @@ describe "mavis teams reset-bulk-upload" do
 
   def run_command_with_workgroup(workgroup)
     @output =
-      capture_output do
+      capture_output(input: "y") do
         Dry::CLI.new(MavisCLI).call(
           arguments: ["teams", "reset-bulk-upload", "--workgroup", workgroup]
         )
@@ -257,7 +257,7 @@ describe "mavis teams reset-bulk-upload" do
 
   def run_command_without_workgroup
     @output =
-      capture_output do
+      capture_output(input: "y") do
         Dry::CLI.new(MavisCLI).call(arguments: %w[teams reset-bulk-upload])
       end
   end
