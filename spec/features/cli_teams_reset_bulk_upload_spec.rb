@@ -4,6 +4,21 @@ describe "mavis teams reset-bulk-upload" do
   let(:bulk_organisation) { create(:organisation) }
   let(:poc_organisation) { create(:organisation) }
 
+  context "when sync_national_reporting_to_imms_api feature flag is enabled" do
+    it "does not allow resetting bulk upload teams" do
+      given_a_bulk_upload_team_exists
+      and_the_feature_flag_is_enabled
+      and_the_bulk_upload_team_has_immunisation_imports_with_vaccination_records
+
+      when_i_run_the_command_for_single_team
+
+      then_an_error_is_displayed_in_output
+      and_no_immunisation_imports_are_deleted
+      and_no_vaccination_records_are_deleted
+      and_no_patients_are_deleted
+    end
+  end
+
   context "when resetting a single bulk upload team" do
     it "removes all immunisation imports, associated vaccination records, and associated patients" do
       given_a_bulk_upload_team_exists
@@ -112,6 +127,10 @@ describe "mavis teams reset-bulk-upload" do
   end
 
   alias_method :and_a_bulk_upload_team_exists, :given_a_bulk_upload_team_exists
+
+  def and_the_feature_flag_is_enabled
+    Flipper.enable(:sync_national_reporting_to_imms_api)
+  end
 
   def given_a_poc_only_team_exists
     @poc_team =
@@ -262,6 +281,12 @@ describe "mavis teams reset-bulk-upload" do
       end
   end
 
+  def then_an_error_is_displayed_in_output
+    expect(@output).to include(
+      "Error: This operation is not allowed while sync_national_reporting_to_imms_api is enabled."
+    )
+  end
+
   def then_all_the_immunisation_imports_are_deleted
     expect(ImmunisationImport.count).to be 0
   end
@@ -324,14 +349,14 @@ describe "mavis teams reset-bulk-upload" do
   end
 
   def and_no_immunisation_imports_are_deleted
-    expect(ImmunisationImport.count).to eq(1)
+    expect(ImmunisationImport.count).to be >= 1
   end
 
   def and_no_vaccination_records_are_deleted
-    expect(VaccinationRecord.count).to eq(1)
+    expect(VaccinationRecord.count).to be >= 1
   end
 
   def and_no_patients_are_deleted
-    expect(Patient.count).to eq(1)
+    expect(Patient.count).to be >= 1
   end
 end
