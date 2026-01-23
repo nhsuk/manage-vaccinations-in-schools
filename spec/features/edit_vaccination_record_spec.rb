@@ -822,14 +822,13 @@ describe "Edit vaccination record" do
   end
 
   def and_i_choose_location_unknown
-    fill_in "Search for a school", with: "School"
-    click_on "Search"
+    find("summary", text: "School not known or home-schooled").click
     choose "Unknown"
     click_on "Continue"
   end
 
   def and_i_should_see_location_unknown
-    expect(page).to have_content("LocationUnknown")
+    expect(page).to have_content("LocationUnknown school")
   end
 
   def and_i_choose_a_school

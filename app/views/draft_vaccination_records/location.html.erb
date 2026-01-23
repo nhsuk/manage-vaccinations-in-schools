@@ -7,8 +7,8 @@
 
 <% if @draft_vaccination_record.bulk_upload_user_and_record? %>
   <h1 class="nhsuk-heading-l">
-    <span class="nhsuk-caption-l"><%= @patient.full_name %></span>
-    <%= title %>
+    <span class="nhsuk-caption-l">Location</span>
+    <%= @patient.full_name %>
   </h1>
 
   <%= form_with url: wizard_path, method: :get, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |search_form| %>
@@ -34,6 +34,19 @@
       <% end %>
 
       <%= f.govuk_submit "Continue" %>
+    <% end %>
+  <% else %>
+    <%= render AppDetailsComponent.new(summary: "School not known or home-schooled") do %>
+      <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
+        <%= f.govuk_radio_buttons_fieldset :location_id,
+                                           legend: { text: "Select an option", size: "s", class: "nhsuk-u-visually-hidden" } do %>
+          <%= f.govuk_radio_button :location_id, "unknown",
+                                   label: { text: "Unknown school" } %>
+          <%= f.govuk_radio_button :location_id, "home_educated",
+                                   label: { text: "Home-schooled" } %>
+        <% end %>
+        <%= f.govuk_submit "Continue", class: "nhsuk-u-margin-bottom-0" %>
+      <% end %>
     <% end %>
   <% end %>
 <% else %>
