@@ -4,13 +4,13 @@ document.body.classList.add("nhsuk-frontend-supported");
 document.body.innerHTML = `
   <select id="fruit" name="fruit" data-module="app-autocomplete">
     <option value=""></option>
-    <option data-hint="Red" data-append="Sliced">Apple</option>
-    <option data-hint="Yellow" data-append="Peeled">Banana</option>
-    <option data-hint="Orange" data-append="Squeezed">Orange</option>
+    <option data-hint="Red">Apple</option>
+    <option data-hint="Yellow">Banana</option>
+    <option data-hint="Orange">Orange</option>
   </select>
 `;
 
-describe("Autocomplete", () => {
+describe("Autocomplete with hints", () => {
   beforeAll(() => {
     const $select = document.querySelector('[data-module="app-autocomplete"]');
     return new Autocomplete($select);
@@ -35,10 +35,7 @@ describe("Autocomplete", () => {
     expect(listbox.classList).toContain("app-autocomplete__menu--hidden");
 
     // Simulate typing "a" in the input
-    input.focus();
-    input.value = "a";
-    input.dispatchEvent(new Event("input", { bubbles: true }));
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await typeInInput(input, "a");
 
     // The listbox should now be visible
     expect(listbox.classList).toContain("app-autocomplete__menu--visible");
@@ -47,9 +44,9 @@ describe("Autocomplete", () => {
     const visibleOptions = listbox.querySelectorAll("li");
     expect(visibleOptions.length).toEqual(3);
 
-    // Check that options display hint and appended text
+    // Check that options display hint text
     expect(visibleOptions[0].innerHTML.trim()).toEqual(
-      `Apple – Sliced<br><span class="app-autocomplete__option-hint">Red</span>`,
+      `Apple<br><span class="app-autocomplete__option-hint">Red</span>`,
     );
 
     // Simulate clicking first option
@@ -65,10 +62,7 @@ describe("Autocomplete", () => {
     const listbox = document.querySelector("#fruit__listbox");
 
     // Simulate typing "z" in the input
-    input.focus();
-    input.value = "z";
-    input.dispatchEvent(new Event("input", { bubbles: true }));
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await typeInInput(input, "z");
 
     // Check that matching options are shown
     const visibleOptions = listbox.querySelectorAll("li");
@@ -78,3 +72,35 @@ describe("Autocomplete", () => {
     expect(visibleOptions[0].innerHTML.trim()).toEqual("No results found");
   });
 });
+
+describe("Autocomplete without hints", () => {
+  beforeAll(() => {
+    document.body.innerHTML = `
+      <select id="fruit2" name="fruit2" data-module="app-autocomplete" data-disablehints="true">
+        <option data-hint="Red">Apple</option>
+        <option data-hint="Yellow">Banana</option>
+        <option data-hint="Orange">Orange</option>
+      </select>
+    `;
+    const $select = document.querySelector("#fruit2");
+    return new Autocomplete($select);
+  });
+
+  test("should not show hint text if disablehints is true", async () => {
+    const input = document.querySelector(".app-autocomplete__wrapper input");
+    const listbox = document.querySelector("#fruit2__listbox");
+
+    await typeInInput(input, "a");
+
+    // Check that options don't display hint text
+    const visibleOptions = listbox.querySelectorAll("li");
+    expect(visibleOptions[0].innerHTML.trim()).toEqual("Apple");
+  });
+});
+
+async function typeInInput(input, value) {
+  input.focus();
+  input.value = value;
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+  await new Promise(process.nextTick);
+}
