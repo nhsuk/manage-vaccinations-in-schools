@@ -662,13 +662,8 @@ describe NHS::ImmunisationsAPI do
 
   describe "should_be_in_immunisations_api?" do
     subject(:should_be_in_immunisations_api) do
-      described_class.should_be_in_immunisations_api?(
-        vaccination_record,
-        ignore_nhs_number:
-      )
+      described_class.should_be_in_immunisations_api?(vaccination_record)
     end
-
-    let(:ignore_nhs_number) { false }
 
     context "when all conditions are met" do
       it { should be true }
@@ -714,17 +709,7 @@ describe NHS::ImmunisationsAPI do
     context "when the patient has no NHS number" do
       before { patient.update(nhs_number: nil) }
 
-      context "and ignore_nhs_number is false" do
-        let(:ignore_nhs_number) { false }
-
-        it { should be false }
-      end
-
-      context "and ignore_nhs_number is true" do
-        let(:ignore_nhs_number) { true }
-
-        it { should be true }
-      end
+      it { should be true }
     end
 
     context "when the patient has requested that their parents aren't notified" do
@@ -836,7 +821,7 @@ describe NHS::ImmunisationsAPI do
     context "the patient has no NHS number" do
       before { patient.update(nhs_number: nil) }
 
-      include_examples "deletes the immunisation record if previously recorded"
+      it { should eq :create }
     end
 
     VaccinationRecord.defined_enums["outcome"].each_key do |outcome|
