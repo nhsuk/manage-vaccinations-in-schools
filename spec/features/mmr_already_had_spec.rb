@@ -3,10 +3,11 @@
 describe "MMR/MMRV" do
   around { |example| travel_to(Date.new(2025, 7, 1)) { example.run } }
 
-  scenario "record a patient as already had their first dose outside the school session" do
+  scenario "record a patient as already had their first MMR dose outside the school session" do
     given_an_mmr_programme_with_a_session
     and_a_patient_is_in_the_session
     and_the_patient_doesnt_need_triage
+    and_the_patient_has_not_had_a_first_dose
 
     when_i_go_the_session
     then_i_see_one_patient_needing_consent
@@ -34,7 +35,7 @@ describe "MMR/MMRV" do
     then_the_parent_doesnt_receive_a_consent_request
   end
 
-  scenario "record a patient as already had their second dose outside the school session" do
+  scenario "record a patient as already had their second MMRV dose outside the school session" do
     given_an_mmr_programme_with_a_session
     and_a_patient_is_in_the_session
     and_the_patient_doesnt_need_triage
@@ -48,7 +49,7 @@ describe "MMR/MMRV" do
     when_i_click_record_as_already_had_second_dose
     then_i_see_the_did_you_have_mmr_or_mmrv_page
 
-    when_i_choose_mmr_and_continue
+    when_i_choose_mmrv_and_continue
     then_i_see_the_date_page
 
     when_i_fill_in_the_date_and_continue
@@ -56,7 +57,7 @@ describe "MMR/MMRV" do
 
     when_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
-    and_had_been_vaccinated_with_mmr
+    and_had_been_vaccinated_with_mmrv
     and_the_dose_number_is_second
     and_the_consent_requests_are_sent
     then_the_parent_doesnt_receive_a_consent_request
@@ -105,6 +106,12 @@ describe "MMR/MMRV" do
     programme_status.save!
   end
 
+  def and_the_patient_has_not_had_a_first_dose
+    programme_status = @patient.programme_status(@programme, academic_year: AcademicYear.current)
+    programme_status.dose_sequence = 1
+    programme_status.save!
+  end
+
   def when_i_go_the_session
     sign_in @nurse
     visit dashboard_path
@@ -148,6 +155,11 @@ describe "MMR/MMRV" do
   end
 
   def when_i_choose_mmr_and_continue
+    choose "No"
+    click_on "Continue"
+  end
+
+  def when_i_choose_mmrv_and_continue
     choose "Yes"
     click_on "Continue"
   end
@@ -184,6 +196,14 @@ describe "MMR/MMRV" do
   def and_had_been_vaccinated_with_mmr
     vaccination_record = @patient.vaccination_records.last
     expect(vaccination_record.programme_type).to eq("mmr")
+    expect(vaccination_record.disease_types).to eq(Programme::Variant::DISEASE_TYPES["mmr"])
+    expect(vaccination_record.performed_at.to_date).to eq(@vaccination_date)
+  end
+
+  def and_had_been_vaccinated_with_mmrv
+    vaccination_record = @patient.vaccination_records.last
+    expect(vaccination_record.programme_type).to eq("mmr")
+    expect(vaccination_record.disease_types).to eq(Programme::Variant::DISEASE_TYPES["mmrv"])
     expect(vaccination_record.performed_at.to_date).to eq(@vaccination_date)
   end
 
