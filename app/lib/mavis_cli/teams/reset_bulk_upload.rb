@@ -139,7 +139,8 @@ module MavisCLI
           PatientTeamUpdater.call(patient_scope: Patient.where(id: patient_ids))
 
           patients_to_destroy = find_patients_without_team(patient_ids)
-          puts "  - Found #{patients_to_destroy.count} patient(s) who were in the imports, and no longer have teams"
+          puts "  - Found #{patients_to_destroy.count}" \
+                 " patient(s) who were in the imports, and no longer have teams"
 
           puts "Destroying patients..."
           patients_to_destroy.destroy_all
@@ -163,11 +164,7 @@ module MavisCLI
       end
 
       def find_patients_without_team(patient_ids)
-        Patient
-          .where(id: patient_ids)
-          .left_outer_joins(:patient_teams)
-          .group("patients.id")
-          .having("COUNT(patient_teams.team_id) = 0")
+        Patient.where(id: patient_ids).where.missing(:patient_teams)
       end
     end
   end
