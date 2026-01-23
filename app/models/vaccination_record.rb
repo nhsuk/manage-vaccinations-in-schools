@@ -75,8 +75,6 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class VaccinationRecord < ApplicationRecord
-  self.ignored_columns = %w[performed_at]
-
   include BelongsToProgramme
   include Confirmable
   include Discard::Model
