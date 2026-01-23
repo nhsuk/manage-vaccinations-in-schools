@@ -382,13 +382,13 @@ describe API::Reporting::TotalsController do
     it "counts vaccination in correct month when performed during BST" do
       patient = create(:patient, session: hpv_session)
       create(
-          :vaccination_record,
-          patient:,
-          programme: hpv_programme,
-          session: hpv_session,
-          outcome: "administered",
-          performed_at: Time.zone.local(2024, 9, 1, 0, 30) # 00:30 BST = 23:30 UTC (Aug 31)
-        )
+        :vaccination_record,
+        patient:,
+        programme: hpv_programme,
+        session: hpv_session,
+        outcome: "administered",
+        performed_at: Time.zone.local(2024, 9, 1, 0, 30) # 00:30 BST = 23:30 UTC (Aug 31)
+      )
 
       refresh_and_get_totals
 
