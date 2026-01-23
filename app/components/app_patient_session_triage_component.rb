@@ -99,10 +99,7 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
 
   def vaccination_records
     @vaccination_records ||=
-      patient
-        .vaccination_records
-        .for_programme(programme)
-        .order(performed_at: :desc)
+      patient.vaccination_records.for_programme(programme).order_by_performed_at
   end
 
   def latest_triage
