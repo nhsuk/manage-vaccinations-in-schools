@@ -40,7 +40,9 @@ gem "flipper"
 gem "flipper-active_record"
 gem "flipper-ui"
 gem "govuk-components"
-gem "govuk_design_system_formbuilder"
+gem "govuk_design_system_formbuilder",
+    github: "thomasleese/govuk-form-builder",
+    branch: "time-field"
 gem "govuk_markdown"
 gem "indefinite_article"
 gem "jsonb_accessor"
