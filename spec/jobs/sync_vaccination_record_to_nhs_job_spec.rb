@@ -98,4 +98,28 @@ describe SyncVaccinationRecordToNHSJob, type: :job do
       end
     end
   end
+
+  context "with the feature flag on for MMRV" do
+    before do
+      Flipper.enable(:mmrv)
+
+      Flipper.enable(:imms_api_sync_job, mmrv_programme)
+    end
+
+    let(:mmrv_programme) do
+      Programme.mmr.variant_for(
+        disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
+      )
+    end
+
+    context "with an MMRV vaccination" do
+      let(:programme) { mmrv_programme }
+
+      it "does sync the vaccination" do
+        perform
+
+        expect(NHS::ImmunisationsAPI).to have_received(:sync_immunisation)
+      end
+    end
+  end
 end
