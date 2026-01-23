@@ -99,6 +99,12 @@ describe "MMR/MMRV" do
     StatusUpdater.call(patient: @patient.reload)
   end
 
+  def and_the_patient_already_has_first_dose
+    programme_status = @patient.programme_status(@programme, academic_year: AcademicYear.current)
+    programme_status.dose_sequence = 2
+    programme_status.save!
+  end
+
   def when_i_go_the_session
     sign_in @nurse
     visit dashboard_path
@@ -127,6 +133,10 @@ describe "MMR/MMRV" do
 
   def when_i_click_record_as_already_had_first_dose
     click_on "Record 1st dose as already given"
+  end
+
+  def when_i_click_record_as_already_had_second_dose
+    click_on "Record 2nd dose as already given"
   end
 
   def when_i_click_back
@@ -181,6 +191,12 @@ describe "MMR/MMRV" do
     expect(page).to have_content("Dose number1st")
     vaccination_record = @patient.vaccination_records.last
     expect(vaccination_record.dose_sequence).to be(1)
+  end
+
+  def and_the_dose_number_is_second
+    expect(page).to have_content("Dose number2nd")
+    vaccination_record = @patient.vaccination_records.last
+    expect(vaccination_record.dose_sequence).to be(2)
   end
 
   def and_the_consent_requests_are_sent

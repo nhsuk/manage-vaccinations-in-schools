@@ -19,7 +19,7 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
 
     draft_vaccination_record.clear_attributes
     draft_vaccination_record.update!(
-      dose_sequence: @programme.mmr? ? 1 : nil,
+      dose_sequence: @programme.mmr? ? @patient.programme_status(@programme, academic_year: AcademicYear.current)&.dose_sequence : nil,
       first_active_wizard_step: @programme.mmr? ? :mmr_or_mmrv : :confirm,
       location_id: nil,
       location_name: "Unknown",
