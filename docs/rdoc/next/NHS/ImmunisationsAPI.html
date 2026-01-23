@@ -974,7 +974,7 @@
             </details>
           </div>
           <div class="method-source-code" id="search_immunisations-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/nhs/immunisations_api.rb, line 274</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/nhs/immunisations_api.rb, line 270</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">search_immunisations</span>(<span class="ruby-identifier">patient</span>, <span class="ruby-value">programmes:</span>, <span class="ruby-value">date_from:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">date_to:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">unless</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:imms_api_integration</span>)
     <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span>(
@@ -1063,7 +1063,7 @@
             <div class="method-heading">
               <a href="#method-c-should_be_in_immunisations_api-3F" title="Link to this method">
                 <span class="method-name">should_be_in_immunisations_api?</span>
-                <span class="method-args">( vaccination_record, ignore_nhs_number: false )</span>
+                <span class="method-args">(vaccination_record)</span>
               </a>
             </div>
 
@@ -1077,15 +1077,11 @@
           </div>
           <div class="method-source-code" id="should_be_in_immunisations_api-3F-source">
             <pre class="ruby"><span class="ruby-comment"># File app/lib/nhs/immunisations_api.rb, line 261</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">should_be_in_immunisations_api?</span>(
-  <span class="ruby-identifier">vaccination_record</span>,
-  <span class="ruby-value">ignore_nhs_number:</span> <span class="ruby-keyword">false</span>
-)
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">should_be_in_immunisations_api?</span>(<span class="ruby-identifier">vaccination_record</span>)
   <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">kept?</span> <span class="ruby-operator">&amp;&amp;</span>
     <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">correct_source_for_nhs_immunisations_api?</span> <span class="ruby-operator">&amp;&amp;</span>
     <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">administered?</span> <span class="ruby-operator">&amp;&amp;</span>
     <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:imms_api_sync_job</span>, <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">programme</span>) <span class="ruby-operator">&amp;&amp;</span>
-    (<span class="ruby-identifier">ignore_nhs_number</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">present?</span>) <span class="ruby-operator">&amp;&amp;</span>
     <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">notify_parents</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span>
     <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">not_invalidated?</span>
 <span class="ruby-keyword">end</span></pre>

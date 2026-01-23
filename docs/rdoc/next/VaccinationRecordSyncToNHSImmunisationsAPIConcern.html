@@ -666,7 +666,7 @@
             </details>
           </div>
           <div class="method-source-code" id="changes_need_to_be_synced_to_nhs_immunisations_api-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/vaccination_record_sync_to_nhs_immunisations_api_concern.rb, line 69</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/vaccination_record_sync_to_nhs_immunisations_api_concern.rb, line 66</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">changes_need_to_be_synced_to_nhs_immunisations_api?</span>
   <span class="ruby-identifier">changes</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">nhs_immunisations_api_etag_changed?</span> <span class="ruby-operator">&amp;&amp;</span>
     <span class="ruby-operator">!</span><span class="ruby-identifier">nhs_immunisations_api_sync_pending_at_changed?</span> <span class="ruby-operator">&amp;&amp;</span>
@@ -757,7 +757,7 @@
             </details>
           </div>
           <div class="method-source-code" id="queue_sync_to_nhs_immunisations_api-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/vaccination_record_sync_to_nhs_immunisations_api_concern.rb, line 83</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/vaccination_record_sync_to_nhs_immunisations_api_concern.rb, line 80</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">queue_sync_to_nhs_immunisations_api</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:imms_api_sync_job</span>, <span class="ruby-identifier">programme</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">correct_source_for_nhs_immunisations_api?</span>
@@ -814,10 +814,7 @@
             <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/vaccination_record_sync_to_nhs_immunisations_api_concern.rb, line 48</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sync_status</span>
   <span class="ruby-identifier">should_be_synced</span> =
-    <span class="ruby-constant">NHS</span><span class="ruby-operator">::</span><span class="ruby-constant">ImmunisationsAPI</span>.<span class="ruby-identifier">should_be_in_immunisations_api?</span>(
-      <span class="ruby-keyword">self</span>,
-      <span class="ruby-value">ignore_nhs_number:</span> <span class="ruby-keyword">true</span>
-    )
+    <span class="ruby-constant">NHS</span><span class="ruby-operator">::</span><span class="ruby-constant">ImmunisationsAPI</span>.<span class="ruby-identifier">should_be_in_immunisations_api?</span>(<span class="ruby-keyword">self</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-value">:not_synced</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">should_be_synced</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-value">:cannot_sync</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">blank?</span>
@@ -870,7 +867,7 @@
             </details>
           </div>
           <div class="method-source-code" id="sync_to_nhs_immunisations_api-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/vaccination_record_sync_to_nhs_immunisations_api_concern.rb, line 99</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/vaccination_record_sync_to_nhs_immunisations_api_concern.rb, line 96</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sync_to_nhs_immunisations_api!</span>
   <span class="ruby-identifier">touch_nhs_immunisations_api_sync_pending_at</span>
   <span class="ruby-identifier">save!</span>
@@ -916,7 +913,7 @@
             </details>
           </div>
           <div class="method-source-code" id="touch_nhs_immunisations_api_sync_pending_at-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/vaccination_record_sync_to_nhs_immunisations_api_concern.rb, line 76</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/vaccination_record_sync_to_nhs_immunisations_api_concern.rb, line 73</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">touch_nhs_immunisations_api_sync_pending_at</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:imms_api_sync_job</span>, <span class="ruby-identifier">programme</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">correct_source_for_nhs_immunisations_api?</span>
