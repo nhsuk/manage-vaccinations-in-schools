@@ -57,4 +57,6 @@ class ConsentFormProgramme < ApplicationRecord
   private
 
   def requires_reason_for_refusal? = false
+
+  def can_have_reason_for_refusal? = true
 end
