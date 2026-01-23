@@ -87,8 +87,8 @@ class VaccinationRecord < ApplicationRecord
   include Notable
   include PendingChangesConcern
   include PerformableAtDateAndTime
-  include VaccinationRecordPerformedByConcern
-  include VaccinationRecordSyncToNHSImmunisationsAPIConcern
+  include PerformableBy
+  include SyncableToNHSImmunisationsAPI
 
   audited associated_with: :patient
 

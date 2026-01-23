@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module VaccinationRecordPerformedByConcern
+module PerformableBy
   extend ActiveSupport::Concern
 
   included do
