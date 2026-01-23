@@ -614,6 +614,8 @@
 
         <li ><a href="#method-i-school_move_log_entries">school_move_log_entries</a></li>
 
+        <li ><a href="#method-i-school_urn">school_urn</a></li>
+
       </ul>
     </details>
   </div>
@@ -854,7 +856,7 @@
     <span class="ruby-keyword">nil</span>,
     <span class="ruby-keyword">nil</span>,
     <span class="ruby-keyword">nil</span>,
-    <span class="ruby-identifier">systm_one_school_code</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">school_urn</span>(<span class="ruby-value">location:</span>, <span class="ruby-value">patient:</span>),
+    <span class="ruby-identifier">systm_one_school_code</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">school_urn</span>(<span class="ruby-identifier">log_entry</span>),
     <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">name</span>,
     <span class="ruby-identifier">log_entry</span>.<span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">iso8601</span>,
     <span class="ruby-keyword">nil</span>,
@@ -984,12 +986,22 @@
       <span class="ruby-keyword">nil</span>,
       <span class="ruby-keyword">nil</span>,
       <span class="ruby-keyword">nil</span>,
-      <span class="ruby-identifier">systm_one_school_code</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">school_urn</span>(<span class="ruby-value">location:</span>, <span class="ruby-value">patient:</span>),
+      <span class="ruby-identifier">systm_one_school_code</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">school_urn</span>(<span class="ruby-identifier">log_entry</span>),
       <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">name</span>,
       <span class="ruby-identifier">log_entry</span>.<span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">iso8601</span>,
       <span class="ruby-keyword">nil</span>,
       <span class="ruby-keyword">nil</span>
     ]
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school_urn</span>(<span class="ruby-identifier">log_entry</span>)
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">log_entry</span>.<span class="ruby-identifier">school</span>
+      <span class="ruby-identifier">log_entry</span>.<span class="ruby-identifier">school</span>.<span class="ruby-identifier">urn</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">log_entry</span>.<span class="ruby-identifier">home_educated?</span>
+      <span class="ruby-string">&quot;999999&quot;</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-string">&quot;888888&quot;</span>
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -1073,6 +1085,54 @@
 
       <span class="ruby-identifier">scope</span>
     <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-school_urn" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-school_urn" title="Link to this method">
+                <span class="method-name">school_urn</span>
+                <span class="method-args">(log_entry)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="school_urn-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/school_moves_exporter.rb, line 125</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school_urn</span>(<span class="ruby-identifier">log_entry</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">log_entry</span>.<span class="ruby-identifier">school</span>
+    <span class="ruby-identifier">log_entry</span>.<span class="ruby-identifier">school</span>.<span class="ruby-identifier">urn</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">log_entry</span>.<span class="ruby-identifier">home_educated?</span>
+    <span class="ruby-string">&quot;999999&quot;</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-string">&quot;888888&quot;</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
