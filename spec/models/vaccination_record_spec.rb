@@ -24,7 +24,6 @@
 #  notify_parents                          :boolean
 #  outcome                                 :integer          not null
 #  pending_changes                         :jsonb            not null
-#  performed_at                            :datetime
 #  performed_at_date                       :date             not null
 #  performed_at_time                       :time
 #  performed_by_family_name                :string
@@ -152,13 +151,13 @@ describe VaccinationRecord do
       around { |example| freeze_time { example.run } }
 
       let(:vaccination_record) do
-        build(:vaccination_record, performed_at: 1.second.from_now)
+        build(:vaccination_record, performed_at: 1.day.from_now)
       end
 
       it "has an error" do
         expect(vaccination_record).to be_invalid
-        expect(vaccination_record.errors[:performed_at]).to include(
-          "Enter a time in the past"
+        expect(vaccination_record.errors[:performed_at_date]).to include(
+          "Enter a date in the past"
         )
       end
     end
@@ -263,6 +262,34 @@ describe VaccinationRecord do
       end
 
       it { should be_nil }
+    end
+  end
+
+  describe "#performed_at" do
+    subject { vaccination_record.performed_at }
+
+    context "with only a date" do
+      let(:vaccination_record) do
+        create(
+          :vaccination_record,
+          performed_at_date: "2020-01-01",
+          performed_at_time: nil
+        )
+      end
+
+      it { should eq(Date.new(2020, 1, 1)) }
+    end
+
+    context "with a date and a time" do
+      let(:vaccination_record) do
+        create(
+          :vaccination_record,
+          performed_at_date: "2020-01-01",
+          performed_at_time: "12:30"
+        )
+      end
+
+      it { should eq(Time.zone.local(2020, 1, 1, 12, 30)) }
     end
   end
 

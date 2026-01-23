@@ -24,7 +24,6 @@
 #  notify_parents                          :boolean
 #  outcome                                 :integer          not null
 #  pending_changes                         :jsonb            not null
-#  performed_at                            :datetime
 #  performed_at_date                       :date             not null
 #  performed_at_time                       :time
 #  performed_by_family_name                :string
@@ -77,12 +76,15 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class VaccinationRecord < ApplicationRecord
+  self.ignored_columns = %w[performed_at]
+
   include BelongsToProgramme
   include Confirmable
   include Discard::Model
   include HasDoseVolume
   include Notable
   include PendingChangesConcern
+  include PerformableAtDateAndTime
   include VaccinationRecordPerformedByConcern
   include VaccinationRecordSyncToNHSImmunisationsAPIConcern
 
@@ -129,7 +131,7 @@ class VaccinationRecord < ApplicationRecord
   has_one :team, through: :session
 
   after_update :recalculate_next_dose_delay_triage_date,
-               if: :saved_change_to_performed_at?
+               if: :saved_change_to_performed_at_date?
 
   scope :joins_organisation_on_performed_ods_code, -> { joins(<<-SQL) }
     INNER JOIN organisations organisation
@@ -143,7 +145,12 @@ class VaccinationRecord < ApplicationRecord
 
   scope :for_academic_year,
         ->(academic_year) do
-          where(performed_at: academic_year.to_academic_year_date_range)
+          where(performed_at_date: academic_year.to_academic_year_date_range)
+        end
+
+  scope :order_by_performed_at,
+        -> do
+          order("performed_at_date DESC, performed_at_time DESC NULLS LAST")
         end
 
   enum :protocol, { pgd: 0, psd: 1, national: 2 }, validate: { allow_nil: true }
@@ -210,9 +217,9 @@ class VaccinationRecord < ApplicationRecord
               allow_nil: true
             }
 
-  validates :performed_at,
+  validates :performed_at_date,
             comparison: {
-              less_than_or_equal_to: -> { Time.current }
+              less_than_or_equal_to: -> { Date.current }
             }
 
   validates :nhs_immunisations_api_identifier_system,
@@ -254,13 +261,7 @@ class VaccinationRecord < ApplicationRecord
     delegate :from_fhir_record, to: FHIRMapper::VaccinationRecord
   end
 
-  def performed_at=(value)
-    super(value)
-    self.performed_at_date = value&.to_date
-    self.performed_at_time = value&.to_time
-  end
-
-  def academic_year = performed_at.to_date.academic_year
+  delegate :academic_year, to: :performed_at_date
 
   def not_administered? = !administered?
 
@@ -304,10 +305,11 @@ class VaccinationRecord < ApplicationRecord
     return if next_dose_delay_triage.blank?
     return unless administered?
 
-    previous_performed_at, current_performed_at = saved_change_to_performed_at
+    previous_performed_at_date, current_performed_at_date =
+      saved_change_to_performed_at_date
 
     days_difference =
-      (current_performed_at.to_date - previous_performed_at.to_date).to_i
+      (current_performed_at_date - previous_performed_at_date).to_i
 
     new_delay_date =
       next_dose_delay_triage.delay_vaccination_until + days_difference.days

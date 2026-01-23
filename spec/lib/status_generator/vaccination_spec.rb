@@ -13,8 +13,7 @@ describe StatusGenerator::Vaccination do
       consents: patient.consents,
       triages: patient.triages,
       attendance_record: patient.attendance_records.first,
-      vaccination_records:
-        patient.vaccination_records.order(performed_at: :desc)
+      vaccination_records: patient.vaccination_records.order_by_performed_at
     )
   end
 

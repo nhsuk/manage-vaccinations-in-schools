@@ -26,7 +26,7 @@ class Patient::RegistrationStatus < ApplicationRecord
   belongs_to :session
 
   has_many :vaccination_records,
-           -> { kept.order(performed_at: :desc) },
+           -> { kept.order_by_performed_at },
            through: :patient
 
   has_many :attendance_records, -> { today }, through: :patient

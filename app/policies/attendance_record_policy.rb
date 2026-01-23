@@ -31,7 +31,7 @@ class AttendanceRecordPolicy < ApplicationPolicy
     VaccinationRecord.kept.exists?(
       patient:,
       location_id:,
-      performed_at: date.all_day
+      performed_at_date: date
     )
   end
 end

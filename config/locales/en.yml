@@ -146,12 +146,18 @@ en:
               too_long: Enter notes that are less than %{count} characters long
             outcome:
               inclusion: Choose an outcome
-            performed_at:
-              blank: Enter a date and time
+            performed_at_date:
+              blank: Enter a date
+              invalid: Enter a valid date
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year
-              invalid: Enter a valid date and time
+            performed_at_time:
+              blank: Enter a date time
+              invalid: Enter a valid time
+              missing_hour: Enter a day
+              missing_minute: Enter a month
+              missing_second: Enter a year
             performed_by_given_name:
               blank: First name can't be blank
             performed_by_family_name:
@@ -569,8 +575,8 @@ en:
               invalid: The unlock token is invalid
         vaccination_record:
           attributes:
-            performed_at:
-              less_than_or_equal_to: Enter a time in the past
+            performed_at_date:
+              less_than_or_equal_to: Enter a date in the past
             performed_by_given_name:
               blank: First name can't be blank
             performed_by_family_name:

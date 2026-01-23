@@ -61,7 +61,12 @@ class CSVParser
 
         parsed_values =
           TIME_FORMATS.lazy.filter_map do |format|
-            Time.zone.strptime(value, format)
+            # We change the date to 2000-01-01 as this is what Rails uses when
+            #  it's reading from a `TIME` column.
+            Time
+              .zone
+              .strptime(value, format)
+              .change(year: 2000, month: 1, day: 1)
           rescue ArgumentError, TypeError
             nil
           end

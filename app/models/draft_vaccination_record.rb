@@ -6,6 +6,7 @@ class DraftVaccinationRecord
   include WizardStepConcern
 
   include HasDoseVolume
+  include PerformableAtDateAndTime
   include Programmable
   include VaccinationRecordPerformedByConcern
 
@@ -26,7 +27,8 @@ class DraftVaccinationRecord
   attribute :notes, :string
   attribute :outcome, :string
   attribute :patient_id, :integer
-  attribute :performed_at, :datetime
+  attribute :performed_at_date, :date
+  attribute :performed_at_time, :time
   attribute :performed_by_family_name, :string
   attribute :performed_by_given_name, :string
   attribute :performed_by_user_id, :integer
@@ -67,8 +69,8 @@ class DraftVaccinationRecord
   end
 
   on_wizard_step :date_and_time, exact: true do
-    validates :performed_at, presence: true
-    validate :performed_at_within_range
+    validates :performed_at_date, :performed_at_time, presence: true
+    validate :performed_at_date_within_range
   end
 
   on_wizard_step :outcome, exact: true do
@@ -140,7 +142,8 @@ class DraftVaccinationRecord
     validates :batch_id,
               :delivery_method,
               :delivery_site,
-              :performed_at,
+              :performed_at_date,
+              :performed_at_time,
               :protocol,
               presence: true
     validates :full_dose, inclusion: { in: [true, false] }
@@ -384,7 +387,8 @@ class DraftVaccinationRecord
       notes
       outcome
       patient_id
-      performed_at
+      performed_at_date
+      performed_at_time
       performed_by_family_name
       performed_by_given_name
       performed_by_user_id
@@ -418,28 +422,26 @@ class DraftVaccinationRecord
 
   def academic_year = session&.academic_year
 
-  def earliest_possible_value
-    academic_year.to_academic_year_date_range.first.beginning_of_day
+  def earliest_possible_date
+    academic_year.to_academic_year_date_range.first
   end
 
-  def latest_possible_value
-    [
-      academic_year.to_academic_year_date_range.last.end_of_day,
-      Time.current
-    ].min
+  def latest_possible_date
+    [academic_year.to_academic_year_date_range.last, Date.current].min
   end
 
-  def performed_at_within_range
-    return if performed_at.nil? || session.nil?
-    if performed_at < earliest_possible_value
+  def performed_at_date_within_range
+    return if performed_at_date.nil? || session.nil?
+
+    if performed_at_date < earliest_possible_date
       errors.add(
-        :performed_at,
-        "The vaccination cannot take place before #{earliest_possible_value.to_fs(:long)}"
+        :performed_at_date,
+        "The vaccination cannot take place before #{earliest_possible_date.to_fs(:long)}"
       )
-    elsif performed_at > latest_possible_value
+    elsif performed_at_date > latest_possible_date
       errors.add(
-        :performed_at,
-        "The vaccination cannot take place after #{latest_possible_value.to_fs(:long)}"
+        :performed_at_date,
+        "The vaccination cannot take place after #{latest_possible_date.to_fs(:long)}"
       )
     end
   end
