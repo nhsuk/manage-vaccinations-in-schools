@@ -586,6 +586,8 @@
 
         <li ><a href="#method-i-disease_types">disease_types</a></li>
 
+        <li ><a href="#method-i-fhir_mapper">fhir_mapper</a></li>
+
         <li ><a href="#method-i-flipper_id">flipper_id</a></li>
 
         <li ><a href="#method-i-import_names">import_names</a></li>
@@ -858,6 +860,56 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">flipper_id</span>
   <span class="ruby-node">&quot;ProgrammeVariant:#{variant_type}&quot;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
+
+<span class="ruby-identifier">private</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-fhir_mapper" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-fhir_mapper" title="Link to this method">
+                <span class="method-name">fhir_mapper</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="fhir_mapper-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme/variant.rb, line 68</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -961,6 +1013,14 @@
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">flipper_id</span>
     <span class="ruby-node">&quot;ProgrammeVariant:#{variant_type}&quot;</span>
   <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
+
+  <span class="ruby-identifier">private</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
+    <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1031,7 +1091,16 @@
   <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">variant_type</span>)
 <span class="ruby-keyword">end</span>
 
-</pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">flipper_id</span>
+  <span class="ruby-node">&quot;ProgrammeVariant:#{variant_type}&quot;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
+
+<span class="ruby-identifier">private</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span></pre>
           </div>
 
 
@@ -1099,7 +1168,16 @@
   <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">variant_type</span>)
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span></pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">flipper_id</span>
+  <span class="ruby-node">&quot;ProgrammeVariant:#{variant_type}&quot;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
+
+<span class="ruby-identifier">private</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span></pre>
           </div>
 
 
@@ -1164,7 +1242,15 @@
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">flipper_id</span>
-  </pre>
+  <span class="ruby-node">&quot;ProgrammeVariant:#{variant_type}&quot;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
+
+<span class="ruby-identifier">private</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span></pre>
           </div>
 
 
@@ -1228,6 +1314,14 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">flipper_id</span>
   <span class="ruby-node">&quot;ProgrammeVariant:#{variant_type}&quot;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
+
+<span class="ruby-identifier">private</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 </pre>
           </div>
 
@@ -1420,7 +1514,16 @@
   <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">variant_type</span>)
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">flipper_id</span></pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">flipper_id</span>
+  <span class="ruby-node">&quot;ProgrammeVariant:#{variant_type}&quot;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
+
+<span class="ruby-identifier">private</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span></pre>
           </div>
 
 
