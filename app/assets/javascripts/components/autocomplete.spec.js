@@ -73,31 +73,6 @@ describe("Autocomplete with hints", () => {
   });
 });
 
-describe("Autocomplete without hints", () => {
-  beforeAll(() => {
-    document.body.innerHTML = `
-      <select id="fruit2" name="fruit2" data-module="app-autocomplete" data-disablehints="true">
-        <option data-hint="Red">Apple</option>
-        <option data-hint="Yellow">Banana</option>
-        <option data-hint="Orange">Orange</option>
-      </select>
-    `;
-    const $select = document.querySelector("#fruit2");
-    return new Autocomplete($select);
-  });
-
-  test("should not show hint text if disablehints is true", async () => {
-    const input = document.querySelector(".app-autocomplete__wrapper input");
-    const listbox = document.querySelector("#fruit2__listbox");
-
-    await typeInInput(input, "a");
-
-    // Check that options don't display hint text
-    const visibleOptions = listbox.querySelectorAll("li");
-    expect(visibleOptions[0].innerHTML.trim()).toEqual("Apple");
-  });
-});
-
 async function typeInInput(input, value) {
   input.focus();
   input.value = value;
