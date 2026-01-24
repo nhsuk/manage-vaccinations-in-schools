@@ -60,4 +60,12 @@ class Programme::Variant < SimpleDelegator
   def flipper_id
     "ProgrammeVariant:#{variant_type}"
   end
+
+  delegate :fhir_target_disease_coding, to: :fhir_mapper
+
+  private
+
+  def fhir_mapper
+    @fhir_mapper ||= FHIRMapper::Programme.new(self)
+  end
 end

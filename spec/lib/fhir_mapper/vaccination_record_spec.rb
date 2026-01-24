@@ -329,6 +329,54 @@ describe FHIRMapper::VaccinationRecord do
         subject(:target_disease) { protocol_applied.targetDisease }
 
         it { should eq programme.fhir_target_disease_coding }
+
+        context "with an MMRV vaccination" do
+          let(:programme) do
+            Flipper.enable(:mmrv)
+
+            Programme.mmr.variant_for(
+              disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
+            )
+          end
+
+          describe "target disease coding has four items" do
+            subject { programme.fhir_target_disease_coding.count }
+
+            it { should eq 4 }
+          end
+
+          describe "measles coding" do
+            subject { target_disease[0].coding.first }
+
+            its(:code) { should eq "14189004" }
+            its(:display) { should eq "Measles" }
+            its(:system) { should eq "http://snomed.info/sct" }
+          end
+
+          describe "mumps coding" do
+            subject { target_disease[1].coding.first }
+
+            its(:code) { should eq "36989005" }
+            its(:display) { should eq "Mumps" }
+            its(:system) { should eq "http://snomed.info/sct" }
+          end
+
+          describe "rubella coding" do
+            subject { target_disease[2].coding.first }
+
+            its(:code) { should eq "36653000" }
+            its(:display) { should eq "Rubella" }
+            its(:system) { should eq "http://snomed.info/sct" }
+          end
+
+          describe "varicella coding" do
+            subject { target_disease[3].coding.first }
+
+            its(:code) { should eq "38907003" }
+            its(:display) { should eq "Varicella" }
+            its(:system) { should eq "http://snomed.info/sct" }
+          end
+        end
       end
 
       describe "doseNumberPositiveInt" do
