@@ -162,6 +162,25 @@ class Programme
     Programme::Variant.new(self, variant_type:)
   end
 
+  def variants
+    if mmr?
+      [
+        variant_for(
+          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
+        ),
+        (
+          if Flipper.enabled?(:mmrv)
+            variant_for(
+              disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
+            )
+          end
+        )
+      ].compact
+    else
+      [self]
+    end
+  end
+
   def disease_types = DISEASE_TYPES.fetch(type)
 
   def doubles? = menacwy? || td_ipv?
