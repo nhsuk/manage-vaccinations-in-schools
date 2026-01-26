@@ -856,7 +856,7 @@
             </details>
           </div>
           <div class="method-source-code" id="academic_year-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 423</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 420</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">academic_year</span> = <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">academic_year</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">earliest_possible_value</span>
@@ -1224,7 +1224,7 @@
             </details>
           </div>
           <div class="method-source-code" id="can_be_half_dose-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 455</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 452</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_be_half_dose?</span> = <span class="ruby-identifier">vaccine_method</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;nasal&quot;</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_change_outcome?</span>
@@ -1298,7 +1298,7 @@
             </details>
           </div>
           <div class="method-source-code" id="can_change_outcome-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 457</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 454</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_change_outcome?</span>
   (<span class="ruby-identifier">outcome</span> <span class="ruby-operator">!=</span> <span class="ruby-string">&quot;already_had&quot;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">editing?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">today?</span>) <span class="ruby-operator">&amp;&amp;</span>
     <span class="ruby-operator">!</span><span class="ruby-identifier">bulk_upload_user_and_record?</span>
@@ -1395,7 +1395,7 @@
             </details>
           </div>
           <div class="method-source-code" id="delivery_site_matches_delivery_method-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 466</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 463</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delivery_site_matches_delivery_method</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">delivery_method</span>.<span class="ruby-identifier">blank?</span>
 
@@ -1457,7 +1457,7 @@
             </details>
           </div>
           <div class="method-source-code" id="earliest_possible_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 425</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 422</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">earliest_possible_value</span>
   <span class="ruby-identifier">academic_year</span>.<span class="ruby-identifier">to_academic_year_date_range</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">beginning_of_day</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1641,7 +1641,7 @@
             </details>
           </div>
           <div class="method-source-code" id="latest_possible_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 429</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 426</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">latest_possible_value</span>
   [
     <span class="ruby-identifier">academic_year</span>.<span class="ruby-identifier">to_academic_year_date_range</span>.<span class="ruby-identifier">last</span>.<span class="ruby-identifier">end_of_day</span>,
@@ -1902,7 +1902,7 @@
             </details>
           </div>
           <div class="method-source-code" id="performed_at_within_range-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 436</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 433</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performed_at_within_range</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">performed_at</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">performed_at</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">earliest_possible_value</span>
@@ -2091,7 +2091,7 @@
             </details>
           </div>
           <div class="method-source-code" id="readable_attribute_names-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 373</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 370</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">readable_attribute_names</span>
   <span class="ruby-identifier">writable_attribute_names</span> <span class="ruby-operator">-</span> <span class="ruby-node">%w[vaccine_id]</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2133,7 +2133,7 @@
             </details>
           </div>
           <div class="method-source-code" id="request_session_key-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 405</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 402</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">request_session_key</span> = <span class="ruby-string">&quot;vaccination_record&quot;</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_unused_attributes</span>
@@ -2256,7 +2256,7 @@
             </details>
           </div>
           <div class="method-source-code" id="requires_supplied_by-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 462</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 459</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_supplied_by?</span>
   <span class="ruby-identifier">performed_by_user</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">performed_by_user</span>&amp;.<span class="ruby-identifier">show_in_suppliers</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2298,7 +2298,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reset_unused_attributes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 407</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 404</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_unused_attributes</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">administered?</span>
     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">full_dose</span> = <span class="ruby-keyword">true</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">can_be_half_dose?</span>
@@ -2460,9 +2460,6 @@
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">batch_expiry</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">batch_name</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">vaccine_id</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">bulk_upload_user_and_record?</span>
     <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_id</span> = <span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">id</span>
   <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_number</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">name</span>
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_expiry</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">expiry</span>
 
   <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine_id</span> = <span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">vaccine_id</span>
 <span class="ruby-keyword">end</span>
@@ -2646,9 +2643,6 @@
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">batch_expiry</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">batch_name</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">vaccine_id</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">bulk_upload_user_and_record?</span>
     <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_id</span> = <span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">id</span>
   <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_number</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">name</span>
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_expiry</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">expiry</span>
 
   <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine_id</span> = <span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">vaccine_id</span>
 <span class="ruby-keyword">end</span>
@@ -2836,9 +2830,6 @@
     <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_id</span> = <span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">id</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_number</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">name</span>
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_expiry</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">expiry</span>
-
   <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine_id</span> = <span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">vaccine_id</span>
 <span class="ruby-keyword">end</span>
 
@@ -3022,9 +3013,6 @@
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">batch_expiry</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">batch_name</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">vaccine_id</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">bulk_upload_user_and_record?</span>
     <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_id</span> = <span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">id</span>
   <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_number</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">name</span>
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_expiry</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">expiry</span>
 
   <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine_id</span> = <span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">vaccine_id</span>
 <span class="ruby-keyword">end</span>
@@ -3213,9 +3201,6 @@
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">batch_expiry</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">batch_name</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">vaccine_id</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">bulk_upload_user_and_record?</span>
     <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_id</span> = <span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">id</span>
   <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_number</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">name</span>
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_expiry</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">expiry</span>
 
   <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine_id</span> = <span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">vaccine_id</span>
 <span class="ruby-keyword">end</span>
@@ -3658,9 +3643,6 @@
     <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_id</span> = <span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">id</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_number</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">name</span>
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_expiry</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">expiry</span>
-
   <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine_id</span> = <span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">vaccine_id</span>
 <span class="ruby-keyword">end</span>
 
@@ -3818,7 +3800,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_method-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 451</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 448</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_method</span>
   <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">delivery_method_to_vaccine_method</span>(<span class="ruby-identifier">delivery_method</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -3993,7 +3975,7 @@
             </details>
           </div>
           <div class="method-source-code" id="writable_attribute_names-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 377</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 374</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">writable_attribute_names</span>
   <span class="ruby-node">%w[
     batch_id
@@ -4066,9 +4048,6 @@
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">batch_expiry</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">batch_name</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">vaccine_id</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">bulk_upload_user_and_record?</span>
     <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_id</span> = <span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">id</span>
   <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_number</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">name</span>
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch_expiry</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">expiry</span>
 
   <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine_id</span> = <span class="ruby-identifier">batch</span>&amp;.<span class="ruby-identifier">vaccine_id</span>
 <span class="ruby-keyword">end</span></pre>
