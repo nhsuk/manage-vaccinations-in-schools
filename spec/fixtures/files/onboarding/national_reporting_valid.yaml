@@ -1,0 +1,9 @@
+organisation:
+  ods_code: EXAMPLE
+
+team:
+  name: NHS Trust
+  type: upload_only
+  workgroup: nhstrust
+
+programmes: [hpv, flu]

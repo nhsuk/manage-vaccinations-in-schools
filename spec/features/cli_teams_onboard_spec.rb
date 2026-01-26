@@ -3,13 +3,22 @@
 require_relative "../../app/lib/mavis_cli"
 
 describe "mavis teams onboard" do
-  context "with a valid configuration" do
+  context "with a valid poc configuration" do
     it "runs successfully" do
       given_programmes_and_schools_exist
-      when_i_run_the_valid_command
+      when_i_run_the_valid_command_for_a_poc_team
       then_i_see_no_output
       and_a_new_team_is_created
       and_schools_are_added_to_the_team_appropriately
+    end
+  end
+
+  context "with a valid national reporting configuration" do
+    it "runs successfully" do
+      given_programmes_and_schools_exist
+      when_i_run_the_valid_command_for_a_national_reporting_team
+      then_i_see_no_output
+      and_a_new_team_is_created
     end
   end
 
@@ -39,9 +48,19 @@ describe "mavis teams onboard" do
     end
   end
 
-  def command_with_valid_configuration
+  def command_with_valid_poc_configuration
     Dry::CLI.new(MavisCLI).call(
-      arguments: %w[teams onboard spec/fixtures/files/onboarding/valid.yaml]
+      arguments: %w[teams onboard spec/fixtures/files/onboarding/poc_valid.yaml]
+    )
+  end
+
+  def command_with_valid_national_reporting_configuration
+    Dry::CLI.new(MavisCLI).call(
+      arguments: %w[
+        teams
+        onboard
+        spec/fixtures/files/onboarding/national_reporting_valid.yaml
+      ]
     )
   end
 
@@ -65,6 +84,7 @@ describe "mavis teams onboard" do
 
   def given_programmes_and_schools_exist
     Programme.hpv
+    Programme.flu
 
     @school_a =
       create(
@@ -100,8 +120,13 @@ describe "mavis teams onboard" do
       )
   end
 
-  def when_i_run_the_valid_command
-    @output = capture_output { command_with_valid_configuration }
+  def when_i_run_the_valid_command_for_a_poc_team
+    @output = capture_output { command_with_valid_poc_configuration }
+  end
+
+  def when_i_run_the_valid_command_for_a_national_reporting_team
+    @output =
+      capture_output { command_with_valid_national_reporting_configuration }
   end
 
   def when_i_run_the_invalid_command
