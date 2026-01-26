@@ -8,6 +8,8 @@ When first onboarding a new SAIS team, there’s a lot of information to include
 
 ### Configuration file structure
 
+#### For teams which use Mavis as a point-of-care system
+
 ```yaml
 organisation:
   ods_code: # ODS code of the organisation
@@ -20,6 +22,7 @@ team:
   privacy_notice_url: # URL of a privacy notice shown to parents
   privacy_policy_url: # URL of a privacy policy shown to parents
   reply_to_id: # Optional GOV.UK Notify Reply-To UUID
+  type: poc_only
 
 programmes: [] # A list of programmes (flu, hpv, menacwy, td_ipv)
 
@@ -51,6 +54,20 @@ clinics:
       address_town: # Town of the address
       address_postcode: # Postcode of the address
       ods_code: # Unique ODS code
+```
+
+#### For teams which use Mavis for national reporting
+
+These teams need a drastically reduced set of information.
+
+```yaml
+organisation:
+  ods_code: # ODS code of the organisation
+
+team:
+  name: # Unique name of the organisation
+  workgroup: # Used in their CIS2 configuration
+  type: upload_only
 ```
 
 [Example configuration files can be found in the repo][config-onboarding].
