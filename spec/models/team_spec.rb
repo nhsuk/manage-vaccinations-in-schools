@@ -15,8 +15,8 @@
 #  name                          :text             not null
 #  phone                         :string
 #  phone_instructions            :string
-#  privacy_notice_url            :string           not null
-#  privacy_policy_url            :string           not null
+#  privacy_notice_url            :string
+#  privacy_policy_url            :string
 #  programme_types               :enum             not null, is an Array
 #  type                          :integer          not null
 #  workgroup                     :string           not null

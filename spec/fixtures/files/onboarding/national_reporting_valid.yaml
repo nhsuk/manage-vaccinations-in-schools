@@ -5,5 +5,3 @@ team:
   name: NHS Trust
   type: upload_only
   workgroup: nhstrust
-
-programmes: [hpv, flu]

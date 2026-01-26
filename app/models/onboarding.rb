@@ -53,11 +53,20 @@ class Onboarding
     upload_only: []
   }.freeze
 
+  DEFAULT_PROGRAMMES = { poc_only: [], upload_only: %w[flu hpv] }.freeze
+
   validates :team, presence: true
   validates :programmes, presence: true
-  validates :subteams, presence: true
-  validates :schools, presence: true
-  validates :clinics, presence: true
+  with_options if: -> { team.has_upload_only_access? } do
+    validates :subteams, absence: true
+    validates :schools, absence: true
+    validates :clinics, absence: true
+  end
+  with_options unless: -> { team.has_upload_only_access? } do
+    validates :subteams, presence: true
+    validates :schools, presence: true
+    validates :clinics, presence: true
+  end
   validate :no_duplicate_urns_across_school_types
   validate :no_schools_with_existing_team_attachments
 
@@ -82,7 +91,7 @@ class Onboarding
 
     @programmes =
       config
-        .fetch(:programmes, [])
+        .fetch(:programmes, DEFAULT_PROGRAMMES.fetch(team_type, []))
         .map { |type| ExistingProgramme.new(type:, team:) }
 
     subteams_by_name =

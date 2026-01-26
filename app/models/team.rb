@@ -15,8 +15,8 @@
 #  name                          :text             not null
 #  phone                         :string
 #  phone_instructions            :string
-#  privacy_notice_url            :string           not null
-#  privacy_policy_url            :string           not null
+#  privacy_notice_url            :string
+#  privacy_policy_url            :string
 #  programme_types               :enum             not null, is an Array
 #  type                          :integer          not null
 #  workgroup                     :string           not null
@@ -83,11 +83,19 @@ class Team < ApplicationRecord
        prefix: "has",
        suffix: "access"
 
-  validates :email, notify_safe_email: true
   validates :name, presence: true, uniqueness: true
-  validates :phone, presence: true, phone: true
-  validates :privacy_notice_url, presence: true
-  validates :privacy_policy_url, presence: true
+  with_options if: :has_upload_only_access? do
+    validates :email, absence: true
+    validates :phone, absence: true
+    validates :privacy_notice_url, absence: true
+    validates :privacy_policy_url, absence: true
+  end
+  with_options unless: :has_upload_only_access? do
+    validates :email, notify_safe_email: true
+    validates :phone, presence: true, phone: true
+    validates :privacy_notice_url, presence: true
+    validates :privacy_policy_url, presence: true
+  end
   validates :workgroup, presence: true, uniqueness: true
 
   def to_param = workgroup
