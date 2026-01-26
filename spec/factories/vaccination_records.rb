@@ -172,6 +172,16 @@ FactoryBot.define do
       end
     end
 
+    trait :with_archived_patient do
+      after(:create) do |_vaccination_record, evaluator|
+        ArchiveReason.create!(
+          patient: evaluator.patient,
+          team: evaluator.team,
+          type: :immunisation_import
+        )
+      end
+    end
+
     trait :not_administered do
       delivery_site { nil }
       delivery_method { nil }

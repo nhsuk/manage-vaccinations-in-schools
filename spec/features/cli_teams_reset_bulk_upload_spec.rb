@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 describe "mavis teams reset-bulk-upload" do
-  let(:bulk_organisation) { create(:organisation) }
+  around { |example| travel_to(Date.new(2025, 12, 20)) { example.run } }
+
+  let(:bulk_organisation) { create(:organisation, ods_code: "R1L") }
   let(:poc_organisation) { create(:organisation) }
 
   context "when sync_national_reporting_to_imms_api feature flag is enabled" do
@@ -22,7 +24,7 @@ describe "mavis teams reset-bulk-upload" do
   context "when resetting a single bulk upload team" do
     it "removes all immunisation imports, associated vaccination records, and associated patients" do
       given_a_bulk_upload_team_exists
-      and_the_bulk_upload_team_has_immunisation_imports_with_vaccination_records
+      and_i_upload_some_vaccination_records
 
       when_i_run_the_command_for_single_team
 
@@ -141,7 +143,9 @@ describe "mavis teams reset-bulk-upload" do
     @bulk_team =
       create(
         :team,
+        :with_one_nurse,
         type: :upload_only,
+        programmes: [Programme.hpv, Programme.flu],
         organisation: bulk_organisation,
         workgroup: "bulk-team"
       )
@@ -174,6 +178,22 @@ describe "mavis teams reset-bulk-upload" do
       )
   end
 
+  def and_i_upload_some_vaccination_records
+    create(:school, team: @bulk_team, urn: 100_000)
+
+    @user = @bulk_team.users.first
+    sign_in @user
+
+    visit "/immunisation-imports/new"
+    attach_file(
+      "immunisation_import[csv]",
+      "spec/fixtures/immunisation_import_bulk/valid_mixed_flu_hpv.csv"
+    )
+    click_on "Continue"
+    wait_for_import_to_complete(ImmunisationImport)
+    expect(page).to have_content("StatusCompleted")
+  end
+
   def and_the_bulk_upload_team_has_immunisation_imports_with_vaccination_records
     @import1 = create(:immunisation_import, team: @bulk_team)
     @import2 = create(:immunisation_import, team: @bulk_team)
@@ -182,6 +202,7 @@ describe "mavis teams reset-bulk-upload" do
       create(
         :vaccination_record,
         :sourced_from_bulk_upload,
+        :with_archived_patient,
         immunisation_import: @import1,
         team: @bulk_team,
         performed_at: 1.day.ago
@@ -190,6 +211,7 @@ describe "mavis teams reset-bulk-upload" do
       create(
         :vaccination_record,
         :sourced_from_bulk_upload,
+        :with_archived_patient,
         immunisation_import: @import2,
         team: @bulk_team,
         performed_at: 2.days.ago
@@ -198,13 +220,6 @@ describe "mavis teams reset-bulk-upload" do
     @patient1 = @vaccination_record1.patient
     @patient2 = @vaccination_record2.patient
 
-    [@patient1, @patient2].each do |patient|
-      ArchiveReason.create(
-        patient:,
-        team: @bulk_team,
-        type: :immunisation_import
-      )
-    end
     PatientTeamUpdater.call(patient_scope: Patient.all)
   end
 
