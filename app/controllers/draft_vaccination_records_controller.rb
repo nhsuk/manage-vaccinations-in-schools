@@ -128,13 +128,9 @@ class DraftVaccinationRecordsController < ApplicationController
     if @draft_vaccination_record.bulk_upload_user_and_record?
       location_id = update_params[:location_id]
 
-      case location_id
-      when "unknown"
+      if location_id == "unknown"
         @draft_vaccination_record.location_id = nil
-        @draft_vaccination_record.location_name = "Unknown school"
-      when "home_educated"
-        @draft_vaccination_record.location_id = nil
-        @draft_vaccination_record.location_name = "Home-schooled"
+        @draft_vaccination_record.location_name = "Unknown"
       else
         @draft_vaccination_record.location_id = location_id
         @draft_vaccination_record.location_name = nil

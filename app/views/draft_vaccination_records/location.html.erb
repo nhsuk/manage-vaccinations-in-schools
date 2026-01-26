@@ -36,16 +36,10 @@
       <%= f.govuk_submit "Continue" %>
     <% end %>
   <% else %>
-    <%= render AppDetailsComponent.new(summary: "School not known or home-schooled") do %>
+    <%= render AppDetailsComponent.new(summary: "Vaccination location unknown") do %>
       <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
-        <%= f.govuk_radio_buttons_fieldset :location_id,
-                                           legend: { text: "Select an option", size: "s", class: "nhsuk-u-visually-hidden" } do %>
-          <%= f.govuk_radio_button :location_id, "unknown",
-                                   label: { text: "Unknown school" } %>
-          <%= f.govuk_radio_button :location_id, "home_educated",
-                                   label: { text: "Home-schooled" } %>
-        <% end %>
-        <%= f.govuk_submit "Continue", class: "nhsuk-u-margin-bottom-0" %>
+        <%= f.hidden_field :location_id, value: "unknown" %>
+        <%= f.govuk_submit "Set vaccination location to unknown", class: "nhsuk-u-margin-bottom-0" %>
       <% end %>
     <% end %>
   <% end %>
