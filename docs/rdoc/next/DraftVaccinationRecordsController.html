@@ -561,6 +561,10 @@
     <ul class="nav-list">
 
 
+      <li><span class="include">Pagy::Backend</span></li>
+
+
+
       <li><a class="include" href="TodaysBatchConcern.html">TodaysBatchConcern</a></li>
 
 
@@ -677,7 +681,7 @@
             </details>
           </div>
           <div class="method-source-code" id="show-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/draft_vaccination_records_controller.rb, line 31</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/draft_vaccination_records_controller.rb, line 32</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show</span>
   <span class="ruby-identifier">authorize</span> <span class="ruby-ivar">@vaccination_record</span>,
             <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">new_record?</span> <span class="ruby-operator">?</span> <span class="ruby-value">:new?</span> <span class="ruby-operator">:</span> <span class="ruby-value">:edit?</span>
@@ -722,7 +726,7 @@
             </details>
           </div>
           <div class="method-source-code" id="update-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/draft_vaccination_records_controller.rb, line 38</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/draft_vaccination_records_controller.rb, line 39</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>
   <span class="ruby-identifier">authorize</span> <span class="ruby-ivar">@vaccination_record</span>,
             <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">new_record?</span> <span class="ruby-operator">?</span> <span class="ruby-value">:create?</span> <span class="ruby-operator">:</span> <span class="ruby-value">:update?</span>
