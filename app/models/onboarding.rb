@@ -238,8 +238,10 @@ class Onboarding
 
       @users.each { |user| user.teams << team }
 
-      academic_years.each do |academic_year|
-        GenericClinicFactory.call(team:, academic_year:)
+      unless team.has_upload_only_access?
+        academic_years.each do |academic_year|
+          GenericClinicFactory.call(team:, academic_year:)
+        end
       end
 
       PatientTeamUpdater.call(team_scope: Team.where(id: team.id))
