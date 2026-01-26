@@ -165,6 +165,44 @@ resource "aws_iam_policy" "run_ecs_task" {
   }
 }
 
+resource "aws_iam_policy" "github_assurance_s3_endtoend_reports" {
+  count       = var.environment == "development" ? 1 : 0
+  name        = "GithubAssuranceS3EndToEndReports"
+  description = "Allow GitHubAssuranceTestRole to manage objects in endtoendtest-reports bucket"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid      = "ListReportsBucket"
+        Effect   = "Allow"
+        Action   = ["s3:ListBucket"]
+        Resource = "arn:aws:s3:::endtoendtest-reports"
+      },
+      {
+        Sid    = "ManageReportsObjects"
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject"
+        ]
+        Resource = "arn:aws:s3:::endtoendtest-reports/*"
+      }
+    ]
+  })
+
+  lifecycle {
+    ignore_changes = [description]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "github_assurance_s3_endtoend_reports" {
+  count      = var.environment == "development" ? 1 : 0
+  role       = aws_iam_role.github_assurance[0].name
+  policy_arn = aws_iam_policy.github_assurance_s3_endtoend_reports[0].arn
+}
+
 resource "aws_iam_role_policy_attachment" "run_ecs_task_custom" {
   count      = var.environment == "development" ? 1 : 0
   role       = aws_iam_role.github_assurance[0].name
