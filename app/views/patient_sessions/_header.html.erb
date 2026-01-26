@@ -27,40 +27,40 @@
   <%= patient_year_group(@patient, academic_year: @academic_year) %>
 </p>
 
-<ul class="app-action-list">
+<%= render AppActionListComponent.new do |action_list| %>
   <% if @programme && @session.psd_enabled? %>
-    <li class="app-action-list__item">
+    <% action_list.with_item do %>
       <% if @patient.has_patient_specific_direction?(academic_year: @academic_year, programme_type: @programme.type, team: current_team) %>
         <%= render AppStatusTagComponent.new(:added, context: :patient_specific_direction) %>
       <% else %>
         <%= render AppStatusTagComponent.new(:not_added, context: :patient_specific_direction) %>
       <% end %>
-    </li>
+    <% end %>
   <% end %>
 
   <% if @session.requires_registration? && (date = @session.dates.find(&:today?)) %>
     <% attendance_record = @patient.attendance_records.find_or_initialize_by(location: @session.location, date:) %>
 
-    <li class="app-action-list__item">
+    <% action_list.with_item do %>
       <%= render AppStatusTagComponent.new(@patient.registration_status(session: @session)&.status || "unknown", context: :registration) %>
-    </li>
+    <% end %>
 
     <% attendance_record.session = @session %>
     <% if policy(attendance_record).edit? %>
-      <li class="app-action-list__item">
-        <%= link_to "Update attendance",
-                    edit_session_patient_attendance_path(@session, @patient) %>
-      </li>
+      <% action_list.with_item(
+           text: "Update attendance",
+           href: edit_session_patient_attendance_path(@session, @patient),
+         ) %>
     <% end %>
   <% end %>
 
   <% if @programme && policy(VaccinationRecord.new(patient: @patient, session: @session, programme: @programme)).record_already_vaccinated? %>
-    <li class="app-action-list__item">
-      <%= link_to "Record as already vaccinated",
-                  session_patient_programme_record_already_vaccinated_path(@session, @patient, @programme) %>
-    </li>
+    <% action_list.with_item(
+         text: "Record as already vaccinated",
+         href: session_patient_programme_record_already_vaccinated_path(@session, @patient, @programme),
+       ) %>
   <% end %>
-</ul>
+<% end %>
 
 <%= render AppStickyNavigationComponent.new do %>
   <%= render AppSecondaryNavigationComponent.new do |nav|
