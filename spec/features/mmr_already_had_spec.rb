@@ -101,13 +101,15 @@ describe "MMR/MMRV" do
   end
 
   def and_the_patient_already_has_first_dose
-    programme_status = @patient.programme_status(@programme, academic_year: AcademicYear.current)
+    programme_status =
+      @patient.programme_status(@programme, academic_year: AcademicYear.current)
     programme_status.dose_sequence = 2
     programme_status.save!
   end
 
   def and_the_patient_has_not_had_a_first_dose
-    programme_status = @patient.programme_status(@programme, academic_year: AcademicYear.current)
+    programme_status =
+      @patient.programme_status(@programme, academic_year: AcademicYear.current)
     programme_status.dose_sequence = 1
     programme_status.save!
   end
@@ -151,7 +153,9 @@ describe "MMR/MMRV" do
   end
 
   def then_i_see_the_did_you_have_mmr_or_mmrv_page
-    expect(page).to have_content("Was #{@patient.given_name} vaccinated with the MMRV vaccine?")
+    expect(page).to have_content(
+      "Was #{@patient.given_name} vaccinated with the MMRV vaccine?"
+    )
   end
 
   def when_i_choose_mmr_and_continue
@@ -196,14 +200,18 @@ describe "MMR/MMRV" do
   def and_had_been_vaccinated_with_mmr
     vaccination_record = @patient.vaccination_records.last
     expect(vaccination_record.programme_type).to eq("mmr")
-    expect(vaccination_record.disease_types).to eq(Programme::Variant::DISEASE_TYPES["mmr"])
+    expect(vaccination_record.disease_types).to eq(
+      Programme::Variant::DISEASE_TYPES["mmr"]
+    )
     expect(vaccination_record.performed_at.to_date).to eq(@vaccination_date)
   end
 
   def and_had_been_vaccinated_with_mmrv
     vaccination_record = @patient.vaccination_records.last
     expect(vaccination_record.programme_type).to eq("mmr")
-    expect(vaccination_record.disease_types).to eq(Programme::Variant::DISEASE_TYPES["mmrv"])
+    expect(vaccination_record.disease_types).to eq(
+      Programme::Variant::DISEASE_TYPES["mmrv"]
+    )
     expect(vaccination_record.performed_at.to_date).to eq(@vaccination_date)
   end
 
