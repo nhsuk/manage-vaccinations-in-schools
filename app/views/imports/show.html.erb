@@ -68,7 +68,7 @@
       ) %>
 <% end %>
 
-<% if import.processed? || import.partially_processed? %>
+<% if import.processed? || import.partially_processed? || import.removing_parent_relationships? %>
 
   <% if @cancelled.present? %>
     <h3 class="nhsuk-u-reading-width">
@@ -131,13 +131,5 @@
       Imported records
     </h3>
     <%= render AppVaccinationRecordTableComponent.new(@vaccination_records, current_user:, pagy: @pagy) %>
-  <% end %>
-
-  <% if Flipper.enabled?(:import_bulk_remove_parents) &&
-        import.is_a?(PatientImport) && import.processed? &&
-        import.parent_relationships.present? %>
-    <p>
-      <%= link_to "Remove all parent-child relationships from import", imports_bulk_remove_parents_path(import.class.name.underscore, import.id) %>
-    </p>
   <% end %>
 <% end %>

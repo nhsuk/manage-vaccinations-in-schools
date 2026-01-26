@@ -691,8 +691,8 @@ en:
           cancel: Cancel
       create:
         success_flash:
-          unconsented_only: Parent–child relationships without a submitted consent response have been removed.
-          all: All parent-child relationships included in this import have been removed.
+          unconsented_only: Parent–child relationships without a submitted consent response are being removed.
+          all: All parent-child relationships included in this import are being removed.
   mailers:
     consent_form_mailer:
       reasons_for_refusal:
