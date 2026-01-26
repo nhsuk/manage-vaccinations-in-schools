@@ -136,9 +136,12 @@ module MavisCLI
           archive_reasons.destroy_all
 
           puts "Updating patient-team relationships..."
-          PatientTeamUpdater.call(patient_scope: Patient.where(id: patient_ids))
+          PatientTeamUpdater.call(
+            patient_scope: Patient.where(id: patient_ids_of_not_synced_records)
+          )
 
-          patients_to_destroy = find_patients_without_team(patient_ids)
+          patients_to_destroy =
+            find_patients_without_team(patient_ids_of_not_synced_records)
           puts "  - Found #{patients_to_destroy.count}" \
                  " patient(s) who were in the imports, and no longer have teams"
 
