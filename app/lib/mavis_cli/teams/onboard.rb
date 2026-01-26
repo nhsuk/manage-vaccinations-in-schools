@@ -14,8 +14,19 @@ module MavisCLI
 
       option :ods_code, desc: "The ODS code for the training team"
       option :workgroup, desc: "The workgroup for the training team"
+      option :type,
+             desc:
+               "The type of team to onboard, either 'poc_only' or 'upload_only'",
+             default: "poc_only"
 
-      def call(path: nil, training: false, ods_code: nil, workgroup: nil, **)
+      def call(
+        path: nil,
+        training: false,
+        ods_code: nil,
+        workgroup: nil,
+        type: "poc_only",
+        **
+      )
         MavisCLI.load_rails
 
         if training && Rails.env.production?
@@ -30,7 +41,12 @@ module MavisCLI
 
         config =
           if training
-            TrainingOnboardingConfiguration.call(ods_code:, workgroup:)
+            unless type.in?(Team.types.keys)
+              warn "Invalid team type. Must be 'poc_only' or 'upload_only'."
+              return
+            end
+
+            TrainingOnboardingConfiguration.call(ods_code:, workgroup:, type:)
           else
             YAML.safe_load(File.read(path))
           end
