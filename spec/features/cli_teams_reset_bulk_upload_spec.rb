@@ -182,6 +182,7 @@ describe "mavis teams reset-bulk-upload" do
       create(
         :vaccination_record,
         :sourced_from_bulk_upload,
+        :with_archived_patient,
         immunisation_import: @import1,
         team: @bulk_team,
         performed_at: 1.day.ago
@@ -190,6 +191,7 @@ describe "mavis teams reset-bulk-upload" do
       create(
         :vaccination_record,
         :sourced_from_bulk_upload,
+        :with_archived_patient,
         immunisation_import: @import2,
         team: @bulk_team,
         performed_at: 2.days.ago
@@ -198,13 +200,6 @@ describe "mavis teams reset-bulk-upload" do
     @patient1 = @vaccination_record1.patient
     @patient2 = @vaccination_record2.patient
 
-    [@patient1, @patient2].each do |patient|
-      ArchiveReason.create(
-        patient:,
-        team: @bulk_team,
-        type: :immunisation_import
-      )
-    end
     PatientTeamUpdater.call(patient_scope: Patient.all)
   end
 
