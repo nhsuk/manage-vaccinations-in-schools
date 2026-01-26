@@ -247,6 +247,16 @@ describe AppActivityLogComponent do
                      notes: "test@example.com",
                      by: "JOY, Nurse",
                      programme: "HPV"
+
+    context "when filtering by programme" do
+      let(:component) do
+        described_class.new(patient:, team:, programme_type: "hpv", session:)
+      end
+
+      it "has only cards" do
+        expect(rendered).to have_css(".nhsuk-card", count: 9)
+      end
+    end
   end
 
   describe "patient specific directions" do

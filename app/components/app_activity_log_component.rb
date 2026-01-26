@@ -14,7 +14,7 @@ class AppActivityLogComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(team:, patient:, session: nil)
+  def initialize(team:, patient:, programme_type: nil, session: nil)
     @patient = patient
 
     @archive_reasons =
@@ -38,7 +38,13 @@ class AppActivityLogComponent < ViewComponent::Base
           patient: :parent_relationships
         )
         .then do |scope|
-          session ? scope.where(programme_type: session.programme_types) : scope
+          if programme_type
+            scope.where(programme_type:)
+          elsif session
+            scope.for_session(session)
+          else
+            scope
+          end
         end
 
     @gillick_assessments =
@@ -46,7 +52,15 @@ class AppActivityLogComponent < ViewComponent::Base
         .gillick_assessments
         .includes(:performed_by)
         .order(:created_at)
-        .then { |scope| session ? scope.for_session(session) : scope }
+        .then do |scope|
+          if programme_type
+            scope.where(programme_type:)
+          elsif session
+            scope.for_session(session)
+          else
+            scope
+          end
+        end
 
     @notes =
       @patient
@@ -59,7 +73,15 @@ class AppActivityLogComponent < ViewComponent::Base
         .notify_log_entries
         .includes(:sent_by)
         .preload(:notify_log_entry_programmes)
-        .then { |scope| session ? scope.for_session(session) : scope }
+        .then do |scope|
+          if programme_type
+            scope.for_programme_type(programme_type)
+          elsif session
+            scope.for_session(session)
+          else
+            scope
+          end
+        end
 
     @patient_locations =
       @patient
@@ -74,28 +96,49 @@ class AppActivityLogComponent < ViewComponent::Base
         .patient_specific_directions
         .includes(:created_by)
         .then do |scope|
-          session ? scope.where(programme_type: session.programme_types) : scope
+          if programme_type
+            scope.where(programme_type:)
+          elsif session
+            scope.for_session(session)
+          else
+            scope
+          end
         end
 
     @pre_screenings =
       @patient
         .pre_screenings
         .includes(:performed_by)
-        .then { |scope| session ? scope.for_session(session) : scope }
+        .then do |scope|
+          if programme_type
+            scope.where(programme_type:)
+          elsif session
+            scope.for_session(session)
+          else
+            scope
+          end
+        end
 
     @triages =
       @patient
         .triages
         .includes(:performed_by)
         .then do |scope|
-          session ? scope.where(programme_type: session.programme_types) : scope
+          if programme_type
+            scope.where(programme_type:)
+          elsif session
+            scope.for_session(session)
+          else
+            scope
+          end
         end
 
     @vaccination_records =
-      @patient.vaccination_records.with_discarded.includes(
-        :performed_by_user,
-        :vaccine
-      )
+      @patient
+        .vaccination_records
+        .with_discarded
+        .includes(:performed_by_user, :vaccine)
+        .then { |scope| programme_type ? scope.where(programme_type:) : scope }
   end
 
   attr_reader :archive_reasons,
