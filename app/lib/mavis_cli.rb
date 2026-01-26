@@ -16,6 +16,18 @@ module MavisCLI
         remainder_mark: "\u{FF65}"
       )
   end
+
+  def self.prompt_to_continue(message = "Continue? (y/n) ")
+    print message
+
+    response = $stdin.gets.chomp.downcase
+    case response
+    when /y(es)?/i
+      true
+    else
+      false
+    end
+  end
 end
 
 require_relative "mavis_cli_helpers"
@@ -58,6 +70,7 @@ require_relative "mavis_cli/subteams/list"
 require_relative "mavis_cli/teams/add_programme"
 require_relative "mavis_cli/teams/list"
 require_relative "mavis_cli/teams/onboard"
+require_relative "mavis_cli/teams/reset_bulk_upload"
 require_relative "mavis_cli/users/create"
 require_relative "mavis_cli/vaccination_records/bulk_edit"
 require_relative "mavis_cli/vaccination_records/create_from_fhir"

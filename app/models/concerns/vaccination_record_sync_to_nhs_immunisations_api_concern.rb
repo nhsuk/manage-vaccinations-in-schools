@@ -32,6 +32,11 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
             SyncVaccinationRecordToNHSJob.perform_bulk(ids.zip)
           end
 
+    scope :synced_to_nhs_immunisations_api,
+          -> { where.not(nhs_immunisations_api_synced_at: nil) }
+    scope :not_synced_to_nhs_immunisations_api,
+          -> { where(nhs_immunisations_api_synced_at: nil) }
+
     before_save :touch_nhs_immunisations_api_sync_pending_at,
                 if: :changes_need_to_be_synced_to_nhs_immunisations_api?
     after_commit :queue_sync_to_nhs_immunisations_api

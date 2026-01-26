@@ -1,14 +1,19 @@
-#!/usr/bin/env ruby
 # frozen_string_literal: true
 
 module RSpec
   module Support
     module CaptureOutputHelper
-      def capture_output
+      def capture_output(input: nil)
         require "stringio"
         output = StringIO.new
         original_stdout = $stdout
         $stdout = output
+        original_input =
+          if input
+            oin = $stdin
+            $stdin = StringIO.new(input)
+            oin
+          end
         stub_const("ProgressBar::Output::DEFAULT_OUTPUT_STREAM", output)
 
         yield
@@ -18,6 +23,7 @@ module RSpec
         output.string
       ensure
         $stdout = original_stdout
+        $stdin = original_input if input
       end
 
       def capture_error
