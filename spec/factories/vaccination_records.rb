@@ -5,8 +5,6 @@
 # Table name: vaccination_records
 #
 #  id                                      :bigint           not null, primary key
-#  batch_expiry                            :date
-#  batch_number                            :string
 #  confirmation_sent_at                    :datetime
 #  delivery_method                         :integer
 #  delivery_site                           :integer
