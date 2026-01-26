@@ -24,16 +24,13 @@ class BulkRemoveParentsForm
 
   def save!
     return false unless valid?
-
-    if remove_option == "unconsented_only"
-      import.destroy_parent_relationships_without_consent!(consents)
-    else
-      import.destroy_parent_relationships_and_invalidate_consents!(
-        current_user,
-        consents
-      )
-    end
-
+    import.update!(status: :removing_parent_relationships)
+    BulkRemoveParentRelationshipsJob.perform_later(
+      import.to_global_id.to_s,
+      consents.map(&:id),
+      current_user.id,
+      remove_option
+    )
     true
   end
 
