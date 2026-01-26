@@ -822,8 +822,8 @@ describe "Edit vaccination record" do
   end
 
   def and_i_choose_location_unknown
-    select "Unknown"
-    click_on "Continue"
+    find("summary", text: "Vaccination location unknown").click
+    click_on "Set vaccination location to unknown"
   end
 
   def and_i_should_see_location_unknown
@@ -831,7 +831,9 @@ describe "Edit vaccination record" do
   end
 
   def and_i_choose_a_school
-    select "A New School"
+    fill_in "Search for a school", with: "A New School"
+    click_on "Search"
+    choose "A New School"
     click_on "Continue"
   end
 
