@@ -47,7 +47,6 @@ describe "Edit vaccination record" do
       when_i_click_on_save_changes
       then_the_parent_doesnt_receive_an_email
       and_the_vaccination_record_is_synced_to_nhs
-      and_the_records_batch_fields_are_assigned
     end
 
     scenario "User edits a vaccination record that already received confirmation" do
@@ -75,7 +74,6 @@ describe "Edit vaccination record" do
 
       when_i_click_on_save_changes
       then_the_parent_receives_an_administered_email
-      and_the_records_batch_fields_are_assigned
     end
 
     scenario "User edits a vaccination record, not enough to trigger an email" do
@@ -127,7 +125,6 @@ describe "Edit vaccination record" do
       then_i_should_see_the_vaccination_record
       and_the_parent_receives_an_administered_email
       and_the_vaccination_record_is_synced_to_nhs
-      and_the_records_batch_fields_are_assigned
     end
 
     scenario "Edit outcome to not vaccinated" do
@@ -168,7 +165,6 @@ describe "Edit vaccination record" do
 
       when_i_click_on_save_changes
       then_i_should_see_the_vaccination_record
-      and_the_records_batch_fields_are_assigned_with_the_original_batch_details
     end
 
     scenario "With an expired batch" do
@@ -186,7 +182,6 @@ describe "Edit vaccination record" do
 
       when_i_click_on_save_changes
       then_i_should_see_the_vaccination_record
-      and_the_records_batch_fields_are_assigned_with_the_original_batch_details
     end
 
     scenario "Cannot as a medical secretary" do
@@ -241,7 +236,6 @@ describe "Edit vaccination record" do
       when_i_click_on_save_changes
       then_i_should_see_the_vaccination_record
       and_the_parent_doesnt_receive_a_vaccination_already_had_email
-      and_the_records_batch_fields_are_assigned
     end
 
     scenario "Patient has an existing delayed triage and user edit's vaccination record date" do
@@ -960,20 +954,6 @@ describe "Edit vaccination record" do
   def and_the_vaccination_record_is_deleted_from_nhs
     Sidekiq::Job.drain_all
     expect(@stubbed_delete_request).to have_been_requested
-  end
-
-  def and_the_records_batch_fields_are_assigned
-    @vaccination_record.reload
-
-    expect(@vaccination_record.batch_number).to eq(@replacement_batch.name)
-    expect(@vaccination_record.batch_expiry).to eq(@replacement_batch.expiry)
-  end
-
-  def and_the_records_batch_fields_are_assigned_with_the_original_batch_details
-    @vaccination_record.reload
-
-    expect(@vaccination_record.batch_number).to eq(@original_batch.name)
-    expect(@vaccination_record.batch_expiry).to eq(@original_batch.expiry)
   end
 
   def and_the_patient_has_consent_but_no_prior_discovered_notification

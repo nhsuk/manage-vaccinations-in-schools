@@ -518,8 +518,6 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_by_given_name) { should eq "Steph" }
         its(:performed_by_family_name) { should eq "Smith" }
         its(:batch) { should have_attributes(name: "4120Z001") }
-        its(:batch_number) { should eq "4120Z001" }
-        its(:batch_expiry) { should eq Date.new(2026, 7, 2) }
 
         its(:vaccine) do
           should have_attributes(snomed_product_code: "43207411000001105")
@@ -557,8 +555,6 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_by_given_name) { should eq "Steph" }
         its(:performed_by_family_name) { should eq "Smith" }
         its(:batch) { should have_attributes(name: "4120Z001") }
-        its(:batch_number) { should eq "4120Z001" }
-        its(:batch_expiry) { should eq Date.new(2026, 7, 2) }
 
         its(:vaccine) do
           should have_attributes(snomed_product_code: "43208811000001106")
@@ -598,8 +594,6 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_by_given_name) { should eq "Steph" }
         its(:performed_by_family_name) { should eq "Smith" }
         its(:batch) { should have_attributes(name: "4120Z001") }
-        its(:batch_number) { should eq "4120Z001" }
-        its(:batch_expiry) { should eq Date.new(2026, 7, 2) }
 
         its(:vaccine) do
           should have_attributes(snomed_product_code: "43208811000001106")
@@ -638,8 +632,6 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_by_given_name) { should be_nil }
         its(:performed_by_family_name) { should be_nil }
         its(:batch) { should have_attributes(name: "YF3276") }
-        its(:batch_number) { should eq "YF3276" }
-        its(:batch_expiry) { should eq Date.new(2025, 12, 16) }
 
         its(:vaccine) do
           should have_attributes(snomed_product_code: "43208811000001106")
@@ -673,8 +665,6 @@ describe FHIRMapper::VaccinationRecord do
 
         its(:vaccine) { should be_nil }
         its(:batch) { should be_nil }
-        its(:batch_number) { should eq "4120Z001" }
-        its(:batch_expiry) { should eq Date.new(2026, 7, 2) }
 
         its(:performed_at) do
           should eq Time.parse("2025-04-06T23:59:50.2+01:00")
@@ -711,9 +701,6 @@ describe FHIRMapper::VaccinationRecord do
 
         its(:vaccine) { should be_nil }
         its(:batch) { should be_nil }
-        its(:batch_number) { should be_nil }
-        its(:batch_expiry) { should be_nil }
-
         its(:performed_at) { should eq Time.parse("2023-12-07T00:00:00+00:00") }
         its(:delivery_method) { should be_nil }
         its(:delivery_site) { should be_nil }
@@ -738,8 +725,6 @@ describe FHIRMapper::VaccinationRecord do
         end
 
         its(:batch) { should be_nil }
-        its(:batch_number) { should be_nil }
-        its(:batch_expiry) { should be_nil }
         its(:performed_at) { should eq Time.parse("2025-10-06T00:00:00+00:00") }
         its(:delivery_method) { should be_nil }
         its(:delivery_site) { should be_nil }
@@ -761,8 +746,6 @@ describe FHIRMapper::VaccinationRecord do
         end
 
         its(:batch) { should be_nil }
-        its(:batch_number) { should be_nil }
-        its(:batch_expiry) { should be_nil }
         its(:performed_at) { should eq Time.parse("2025-10-06T00:00:00+00:00") }
         its(:delivery_method) { should be_nil }
         its(:delivery_site) { should be_nil }
@@ -782,8 +765,6 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_by_given_name) { should be_nil }
         its(:performed_by_family_name) { should be_nil }
         its(:batch) { should have_attributes(name: "0") }
-        its(:batch_number) { should eq "0" }
-        its(:batch_expiry) { should be_nil }
 
         its(:vaccine) do
           should have_attributes(snomed_product_code: "43207411000001105")
@@ -814,8 +795,6 @@ describe FHIRMapper::VaccinationRecord do
           should eq "68aef549-601f-427c-b914-7e459238c4dd"
         end
 
-        its(:batch_number) { should eq "bb2222" }
-        its(:batch_expiry) { should eq Date.new(2030, 1, 1) }
         its(:performed_at) { should eq Time.parse("2025-08-28T11:45:30+01:00") }
         its(:delivery_method) { should eq "nasal_spray" }
         its(:delivery_site) { should eq "nose" }
@@ -845,8 +824,6 @@ describe FHIRMapper::VaccinationRecord do
           should eq "7fa9ba01-aa9e-4ef9-a27c-30c9f413e421"
         end
 
-        its(:batch_number) { should eq "aa1111" }
-        its(:batch_expiry) { should eq Date.new(2030, 1, 1) }
         its(:performed_at) { should eq Time.parse("2025-10-06T07:57:32+01:00") }
         its(:delivery_method) { should be_nil }
         its(:delivery_site) { should be_nil }
@@ -877,8 +854,6 @@ describe FHIRMapper::VaccinationRecord do
 
         its(:vaccine) { should be_nil }
         its(:batch) { should be_nil }
-        its(:batch_number) { should be_nil }
-        its(:batch_expiry) { should be_nil }
         its(:performed_at) { should eq Time.parse("2023-12-07T00:00:00+00:00") }
         its(:delivery_method) { should be_nil }
         its(:delivery_site) { should be_nil }
@@ -910,8 +885,6 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_by_given_name) { should be_nil }
         its(:performed_by_family_name) { should be_nil }
         its(:batch) { should have_attributes(name: "GU9271") }
-        its(:batch_number) { should eq "GU9271" }
-        its(:batch_expiry) { should eq Date.new(2025, 12, 2) }
 
         its(:vaccine) do
           should have_attributes(snomed_product_code: "33493111000001108")
@@ -950,8 +923,6 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_by_given_name) { should be_nil }
         its(:performed_by_family_name) { should be_nil }
         its(:batch) { should have_attributes(name: "TK6780") }
-        its(:batch_number) { should eq "TK6780" }
-        its(:batch_expiry) { should eq Date.new(2025, 11, 20) }
 
         its(:vaccine) do
           should have_attributes(snomed_product_code: "39779611000001104")
@@ -990,8 +961,6 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_by_given_name) { should be_nil }
         its(:performed_by_family_name) { should be_nil }
         its(:batch) { should have_attributes(name: "SP3485") }
-        its(:batch_number) { should eq "SP3485" }
-        its(:batch_expiry) { should eq Date.new(2025, 12, 9) }
 
         its(:vaccine) do
           should have_attributes(snomed_product_code: "7374511000001107")
@@ -1039,8 +1008,6 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_by_given_name) { should be_nil }
         its(:performed_by_family_name) { should be_nil }
         its(:batch) { should have_attributes(name: "ABC123") }
-        its(:batch_number) { should eq "ABC123" }
-        its(:batch_expiry) { should eq Date.new(2025, 11, 10) }
 
         its(:vaccine) do
           should have_attributes(snomed_product_code: "13968211000001108")

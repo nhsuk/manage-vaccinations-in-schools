@@ -14,7 +14,7 @@ describe DraftVaccinationRecord do
   let(:session) { create(:session, team:, programmes: [programme]) }
   let(:patient) { create(:patient, session:) }
   let(:vaccine) { programme.vaccines.first }
-  let(:batch) { create(:batch, team:, vaccine:, expiry: Date.new(2026, 11, 1)) }
+  let(:batch) { create(:batch, team:, vaccine:) }
 
   let(:valid_administered_attributes) do
     {
@@ -321,18 +321,6 @@ describe DraftVaccinationRecord do
     it "sets the vaccine" do
       expect { write_to! }.to change(vaccination_record, :vaccine).to(
         batch.vaccine
-      )
-    end
-
-    it "sets the batch number" do
-      expect { write_to! }.to change(vaccination_record, :batch_number).to(
-        batch.name
-      )
-    end
-
-    it "sets the batch expiry" do
-      expect { write_to! }.to change(vaccination_record, :batch_expiry).to(
-        batch.expiry
       )
     end
   end
