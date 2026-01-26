@@ -39,6 +39,8 @@ class DraftVaccinationRecord
   attribute :supplied_by_user_id, :integer
   attribute :vaccine_id, :integer
 
+  MMR_OR_MMRV_INTRODUCTION_DATE = Date.new(2020, 1, 1).freeze
+
   def initialize(current_user:, **attributes)
     @current_user = current_user
     super(**attributes)
@@ -55,7 +57,8 @@ class DraftVaccinationRecord
       :identity,
       :notes,
       (
-        if programme&.mmr? && (administered? || outcome == "already_had")
+        if programme&.mmr? && (administered? || outcome == "already_had") &&
+             patient.date_of_birth >= MMR_OR_MMRV_INTRODUCTION_DATE
           :mmr_or_mmrv
         end
       ),

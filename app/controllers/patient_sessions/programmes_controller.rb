@@ -20,7 +20,8 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
     draft_vaccination_record.clear_attributes
     draft_vaccination_record.update!(
       dose_sequence: dose_sequence,
-      first_active_wizard_step: @programme.mmr? ? :mmr_or_mmrv : :confirm,
+      first_active_wizard_step:
+        eligible_for_mmr_or_mmrv? ? :mmr_or_mmrv : :confirm,
       location_id: nil,
       location_name: "Unknown",
       outcome: :already_had,
@@ -34,7 +35,7 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
     )
 
     redirect_to draft_vaccination_record_path(
-                  @programme.mmr? ? "mmr-or-mmrv" : "confirm"
+                  eligible_for_mmr_or_mmrv? ? "mmr-or-mmrv" : "confirm"
                 )
   end
 
@@ -49,5 +50,11 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
         academic_year: AcademicYear.current
       )&.dose_sequence || 1
     end
+  end
+
+  def eligible_for_mmr_or_mmrv?
+    @programme.mmr? &&
+      @patient.date_of_birth >=
+        DraftVaccinationRecord::MMR_OR_MMRV_INTRODUCTION_DATE
   end
 end

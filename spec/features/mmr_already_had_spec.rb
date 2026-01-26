@@ -3,9 +3,9 @@
 describe "MMR/MMRV" do
   around { |example| travel_to(Date.new(2025, 7, 1)) { example.run } }
 
-  scenario "record a patient as already had their first MMR dose outside the school session" do
+  scenario "record a patient born after January 2020 as already had their 1st MMR dose outside the school session" do
     given_an_mmr_programme_with_a_session
-    and_a_patient_is_in_the_session
+    and_a_patient_is_in_the_session_born_after_january_2020
     and_the_patient_doesnt_need_triage
     and_the_patient_has_not_had_a_first_dose
 
@@ -35,9 +35,24 @@ describe "MMR/MMRV" do
     then_the_parent_doesnt_receive_a_consent_request
   end
 
-  scenario "record a patient as already had their second MMRV dose outside the school session" do
+  scenario "record a patient born before January 2020 as already had their 1st MMR dose outside the school session" do
     given_an_mmr_programme_with_a_session
-    and_a_patient_is_in_the_session
+    and_a_patient_is_in_the_session_born_before_january_2020
+    and_the_patient_doesnt_need_triage
+    and_the_patient_has_not_had_a_first_dose
+
+    when_i_go_the_session
+    then_i_see_one_patient_needing_consent
+    and_i_click_on_the_patient
+    then_i_see_the_patient_needs_consent
+
+    when_i_click_record_as_already_had_first_dose
+    then_i_see_the_confirmation_page_instead_of_the_mmrv_page
+  end
+
+  scenario "record a patient born after January 2020 as already had their 2nd MMRV dose outside the school session" do
+    given_an_mmr_programme_with_a_session
+    and_a_patient_is_in_the_session_born_after_january_2020
     and_the_patient_doesnt_need_triage
     and_the_patient_already_has_first_dose
 
@@ -61,9 +76,6 @@ describe "MMR/MMRV" do
     and_the_dose_number_is_second
     and_the_consent_requests_are_sent
     then_the_parent_doesnt_receive_a_consent_request
-  end
-
-  scenario "edit the dose sequence for an MMR vaccination record" do
   end
 
   def given_an_mmr_programme_with_a_session(clinic: false)
@@ -92,8 +104,14 @@ describe "MMR/MMRV" do
       )
   end
 
-  def and_a_patient_is_in_the_session
-    @patient = create(:patient, session: @session)
+  def and_a_patient_is_in_the_session_born_after_january_2020
+    @patient =
+      create(:patient, session: @session, date_of_birth: Date.new(2020, 1, 1))
+  end
+
+  def and_a_patient_is_in_the_session_born_before_january_2020
+    @patient =
+      create(:patient, session: @session, date_of_birth: Date.new(2019, 12, 31))
   end
 
   def and_the_patient_doesnt_need_triage
@@ -183,6 +201,8 @@ describe "MMR/MMRV" do
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Check and confirm")
   end
+  alias_method :then_i_see_the_confirmation_page_instead_of_the_mmrv_page,
+               :then_i_see_the_confirmation_page
 
   def when_i_confirm_the_details
     click_on "Confirm"
