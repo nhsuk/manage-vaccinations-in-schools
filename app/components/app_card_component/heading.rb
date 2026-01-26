@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppCardHeadingComponent < ViewComponent::Base
+class AppCardComponent::Heading < ViewComponent::Base
   def initialize(level: 3, size: nil, colour: nil, link_to: nil)
     @level = level
     @size = size

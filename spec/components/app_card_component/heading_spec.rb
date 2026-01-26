@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppCardHeadingComponent do
+describe AppCardComponent::Heading do
   let(:content) { "Test Heading" }
 
   context "with default parameters" do

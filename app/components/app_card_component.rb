@@ -25,7 +25,7 @@ class AppCardComponent < ViewComponent::Base
 
   renders_one :heading,
               ->(level: 3, size: nil, colour: nil) do
-                AppCardHeadingComponent.new(
+                Heading.new(
                   level: level,
                   size: size,
                   colour: colour,
