@@ -2,16 +2,31 @@
 
 class AppActivityLogComponent < ViewComponent::Base
   erb_template <<-ERB
-    <% events_by_day.each do |day, events| %>
-      <h3 class="nhsuk-heading-xs nhsuk-u-secondary-text-colour
-                 nhsuk-u-font-weight-normal">
-        <%= day.to_fs(:long) %>
-      </h3>
+    <div class="app-timeline">
+      <% all_events.each do |event| %>
+        <%= render AppTimelineItemComponent.new(is_past: true) do |item| %>
+          <% item.with_heading do %>
+            <%= event[:invalidated] ? tag.s(event[:title]) : event[:title] %>
+          <% end %>
 
-      <% events.each do |event| %>
-        <%= render AppLogEventComponent.new(card: true, **event) %>
+          <% item.with_description do %>
+            <% if event[:invalidated] %><s><% end %>
+            <% if (by = event[:by]) %>
+              <%= by.respond_to?(:full_name) ? by.full_name : by %>
+              &middot;
+            <% end %>
+            <%= event[:at].to_fs(:long) %>
+            <% if event[:invalidated] %></s><% end %>
+          <% end %>
+
+          <% if (body = event[:body]).present? %>
+            <blockquote><p>
+              <%= event[:invalidated] ? tag.s(body) : body %>
+            </p></blockquote>
+          <% end %>
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
   ERB
 
   def initialize(team:, patient:, programme_type: nil, session: nil)
@@ -154,10 +169,6 @@ class AppActivityLogComponent < ViewComponent::Base
               :triages,
               :vaccination_records
 
-  def events_by_day
-    all_events.sort_by { it[:at] }.reverse.group_by { it[:at].to_date }
-  end
-
   def all_events
     [
       archive_events,
@@ -172,7 +183,7 @@ class AppActivityLogComponent < ViewComponent::Base
       session_events,
       triage_events,
       vaccination_events
-    ].flatten
+    ].flatten.sort_by { it[:at] }.reverse
   end
 
   def archive_events
