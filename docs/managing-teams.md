@@ -18,19 +18,24 @@ team:
   name: # Unique name of the organisation
   email: # Contact email address
   phone: # Contact phone number
+  phone_instructions: # E.g., "option 1, followed by option 3"
+  careplus_staff_code: # Staff code used in CarePlus exports
+  careplus_staff_type: # Staff type used in CarePlus exports
   careplus_venue_code: # Venue code used in CarePlus exports
   privacy_notice_url: # URL of a privacy notice shown to parents
   privacy_policy_url: # URL of a privacy policy shown to parents
   reply_to_id: # Optional GOV.UK Notify Reply-To UUID
+  workgroup: # Used in their CIS2 configuration
   type: poc_only
 
-programmes: [] # A list of programmes (flu, hpv, menacwy, td_ipv)
+programmes: [] # A list of programmes (flu, hpv, menacwy, td_ipv, mmr)
 
 subteams:
   subteam1: # Identifier to link team with school and links below, not used in app
     name: # Name of the team
     email: # Contact email address
     phone: # Contact phone number
+    phone_instructions: # E.g., "option 9"
     reply_to_id: # Optional GOV.UK Notify Reply-To UUID
 
 schools:
