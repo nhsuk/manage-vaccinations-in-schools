@@ -64,6 +64,9 @@ class Triage < ApplicationRecord
          if: :safe_to_vaccinate?
        }
 
+  scope :for_session,
+        ->(session) { where(programme_type: session.programme_types) }
+
   scope :safe_to_invalidate_automatically, -> { not_delay_vaccination }
 
   validates :delay_vaccination_until, absence: true, unless: :delay_vaccination?
