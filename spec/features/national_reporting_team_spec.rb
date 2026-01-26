@@ -194,8 +194,9 @@ describe "National reporting team homepage and navigation" do
   end
 
   def and_child_cannot_be_archived
-    app_card_buttons = page.all(".app-card .nhsuk-button")
-    expect(app_card_buttons.count).to eq(1)
+    card_actions = page.all(".nhsuk-card .nhsuk-card__action")
+    expect(card_actions.count).to eq(1)
+    expect(page).to have_link("Edit child record")
     expect(page).not_to have_content("Archive child record")
   end
 
