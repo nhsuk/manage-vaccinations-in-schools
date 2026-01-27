@@ -994,8 +994,7 @@ describe FHIRMapper::VaccinationRecord do
 
         include_examples "a mapped vaccination record (common fields)"
 
-        its(:programme) { should be_a Programme::Variant }
-        it { expect(vaccination_record.programme.variant_type).to eq "mmr" }
+        its(:programme) { should eq programme }
 
         its(:nhs_immunisations_api_identifier_system) do
           should eq "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records"
@@ -1014,6 +1013,52 @@ describe FHIRMapper::VaccinationRecord do
         end
 
         its(:performed_at) { should eq Time.parse("2025-11-03T15:11:11+00:00") }
+        its(:delivery_method) { should eq "intramuscular" }
+        its(:delivery_site) { should eq "left_arm_upper_position" }
+        its(:full_dose) { should be true }
+        its(:outcome) { should eq "administered" }
+        its(:location) { should have_attributes(urn: "100006") }
+        its(:location_name) { should be_nil }
+        its(:performed_ods_code) { should eq "R1L" }
+        its(:nhs_immunisations_api_primary_source) { should be true }
+
+        its(:notes) { should be_nil }
+      end
+    end
+
+    context "for mmrv" do
+      before { Flipper.enable(:mmrv) }
+
+      let(:programme) do
+        Programme.mmr.variant_for(
+          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
+        )
+      end
+
+      context "with a fhir record from Mavis" do
+        let(:fixture_file_name) { "fhir/mmrv/fhir_record_from_mavis.json" }
+
+        include_examples "a mapped vaccination record (common fields)"
+
+        its(:programme) { should eq programme }
+
+        its(:nhs_immunisations_api_identifier_system) do
+          should eq "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records"
+        end
+
+        its(:nhs_immunisations_api_identifier_value) do
+          should eq "aaaabbbb-0000-1111-3333-ffff77773333"
+        end
+
+        its(:performed_by_given_name) { should be_nil }
+        its(:performed_by_family_name) { should be_nil }
+        its(:batch) { should have_attributes(name: "XKCD1234") }
+
+        its(:vaccine) do
+          should have_attributes(snomed_product_code: "45525711000001102")
+        end
+
+        its(:performed_at) { should eq Time.parse("2025-01-27T08:49:44+0000") }
         its(:delivery_method) { should eq "intramuscular" }
         its(:delivery_site) { should eq "left_arm_upper_position" }
         its(:full_dose) { should be true }

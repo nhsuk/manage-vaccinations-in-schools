@@ -31,4 +31,76 @@ describe FHIRMapper::Programme do
       end
     end
   end
+
+  describe "#from_fhir_record" do
+    subject(:programme) { described_class.from_fhir_record(fhir_record) }
+
+    context "for a flu record" do
+      let(:fhir_record) do
+        FHIR.from_contents(file_fixture("fhir/flu/fhir_record_full.json").read)
+      end
+
+      it { should be Programme.flu }
+    end
+
+    context "for an hpv record" do
+      let(:fhir_record) do
+        FHIR.from_contents(
+          file_fixture("fhir/hpv/fhir_record_from_mavis.json").read
+        )
+      end
+
+      it { should be Programme.hpv }
+    end
+
+    context "for a menacwy record" do
+      let(:fhir_record) do
+        FHIR.from_contents(
+          file_fixture("fhir/menacwy/fhir_record_from_mavis.json").read
+        )
+      end
+
+      it { should be Programme.menacwy }
+    end
+
+    context "for a td_ipv record" do
+      let(:fhir_record) do
+        FHIR.from_contents(
+          file_fixture("fhir/td_ipv/fhir_record_from_mavis.json").read
+        )
+      end
+
+      it { should be Programme.td_ipv }
+    end
+
+    context "for a mmr record" do
+      let(:fhir_record) do
+        FHIR.from_contents(
+          file_fixture("fhir/mmr/fhir_record_from_mavis.json").read
+        )
+      end
+
+      it do
+        expect(programme).to eq Programme.mmr.variant_for(
+             disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
+           )
+      end
+    end
+
+    context "for a mmrv record" do
+      before { Flipper.enable(:mmrv) }
+
+      let(:fhir_record) do
+        FHIR.from_contents(
+          file_fixture("fhir/mmrv/fhir_record_from_mavis.json").read
+        )
+      end
+
+      it do
+        expect(programme).to eq Programme.mmr.variant_for(
+             disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
+           )
+      end
+    end
+  end
 end

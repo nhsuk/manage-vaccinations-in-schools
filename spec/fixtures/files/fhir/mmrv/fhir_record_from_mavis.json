@@ -1,0 +1,148 @@
+{
+  "id": "11112222-3333-4444-5555-666677779999",
+  "meta": {
+    "versionId": "1"
+  },
+  "extension": [
+    {
+      "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "432636005",
+            "display": "Administration of vaccine product containing only Human alphaherpesvirus 3 and Measles morbillivirus and Mumps orthorubulavirus and Rubella virus antigens"
+          }
+        ]
+      }
+    }
+  ],
+  "identifier": [
+    {
+      "use": "official",
+      "system": "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records",
+      "value": "aaaabbbb-0000-1111-3333-ffff77773333"
+    }
+  ],
+  "status": "completed",
+  "vaccineCode": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "45525711000001102",
+        "display": "Priorix Tetra vaccine powder and solvent for solution for injection 0.5ml pre-filled syringes (GlaxoSmithKline UK Ltd) (product)"
+      }
+    ]
+  },
+  "patient": {
+    "reference": "urn:uuid:b98d36c9-acab-444e-b2e8-f92c59f2ee26",
+    "type": "Patient",
+    "identifier": {
+      "system": "https://fhir.nhs.uk/Id/nhs-number",
+      "value": "9990001855"
+    }
+  },
+  "occurrenceDateTime": "2025-01-27T08:49:44+00:00",
+  "recorded": "2025-01-27T08:50:53.257000+00:00",
+  "primarySource": true,
+  "location": {
+    "identifier": {
+      "system": "https://fhir.hl7.org.uk/Id/urn-school-number",
+      "value": "100006"
+    }
+  },
+  "manufacturer": {
+    "display": "GlaxoSmithKline"
+  },
+  "lotNumber": "XKCD1234",
+  "expirationDate": "2026-11-10",
+  "site": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "368208006",
+        "display": "Left upper arm structure"
+      }
+    ]
+  },
+  "route": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "78421000",
+        "display": "Intramuscular"
+      }
+    ]
+  },
+  "doseQuantity": {
+    "value": 0.5,
+    "unit": "ml",
+    "system": "http://snomed.info/sct",
+    "code": "258773002"
+  },
+  "performer": [
+    {
+      "actor": {
+        "type": "Organization",
+        "identifier": {
+          "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+          "value": "R1L"
+        }
+      }
+    }
+  ],
+  "reasonCode": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "723620004"
+        }
+      ]
+    }
+  ],
+  "protocolApplied": [
+    {
+      "targetDisease": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "14189004",
+              "display": "Measles"
+            }
+          ]
+        },
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "36989005",
+              "display": "Mumps"
+            }
+          ]
+        },
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "36653000",
+              "display": "Rubella"
+            }
+          ]
+        },
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "38907003",
+              "display": "Varicella"
+            }
+          ]
+        }
+      ],
+      "doseNumberString": "Unknown"
+    }
+  ],
+  "resourceType": "Immunization"
+}
