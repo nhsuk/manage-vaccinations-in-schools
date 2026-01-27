@@ -704,7 +704,8 @@ class Patient < ApplicationRecord
 
       patient_locations.pending.find_each do |patient_location|
         new_patient.patient_locations.build(
-          **patient_location.slice(:academic_year, :location_id)
+          academic_year: patient_location.academic_year,
+          location_id: patient_location.location_id
         )
       end
 
@@ -716,6 +717,17 @@ class Patient < ApplicationRecord
           source: school_move.source,
           team_id: school_move.team_id
         )
+      end
+
+      patient_teams.find_each do |patient_team|
+        # Patients that have been duplicated from another won't have any
+        #  vaccination records or imports, therefore we need to filter the
+        #  sources.
+        sources =
+          patient_team.sources &
+            %w[patient_location school_move_school school_move_team]
+
+        new_patient.patient_teams.build(team_id: patient_team.team_id, sources:)
       end
     end
   end
