@@ -221,59 +221,28 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
       end
 
       context "record needs to be synced" do
-        it "returns :cannot_sync" do
-          expect(sync_status).to eq(:cannot_sync)
-        end
-      end
-
-      context "record was never going to be synced anyway" do
         before do
-          allow(vaccination_record).to receive(:administered?).and_return(false)
+          vaccination_record.update!(
+            nhs_immunisations_api_sync_pending_at: Time.current,
+            nhs_immunisations_api_id: nil
+          )
         end
 
-        it "returns :not_synced" do
-          expect(sync_status).to eq(:not_synced)
+        it "returns :pending" do
+          expect(sync_status).to eq(:pending)
         end
       end
 
-      context "NHS number has been removed from patient after record was synced" do
-        context "record is yet to be queued for deletion from API" do
-          before do
-            vaccination_record.update!(
-              nhs_immunisations_api_sync_pending_at: 3.days.ago,
-              nhs_immunisations_api_synced_at: 2.days.ago
-            )
-          end
-
-          it "returns :cannot_sync" do
-            expect(sync_status).to eq(:cannot_sync)
-          end
+      context "when record has been synced successfully" do
+        before do
+          vaccination_record.update!(
+            nhs_immunisations_api_sync_pending_at: 2.hours.ago,
+            nhs_immunisations_api_synced_at: 1.hour.ago
+          )
         end
 
-        context "record is pending deletion from API" do
-          before do
-            vaccination_record.update!(
-              nhs_immunisations_api_sync_pending_at: 1.hour.ago,
-              nhs_immunisations_api_synced_at: 2.days.ago
-            )
-          end
-
-          it "returns :cannot_sync" do
-            expect(sync_status).to eq(:cannot_sync)
-          end
-        end
-
-        context "record is successfully deleted from API" do
-          before do
-            vaccination_record.update!(
-              nhs_immunisations_api_sync_pending_at: 1.hour.ago,
-              nhs_immunisations_api_synced_at: 1.minute.ago
-            )
-          end
-
-          it "returns :cannot_sync" do
-            expect(sync_status).to eq(:cannot_sync)
-          end
+        it "returns :synced" do
+          expect(sync_status).to eq(:synced)
         end
       end
     end

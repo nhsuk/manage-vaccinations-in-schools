@@ -31,7 +31,6 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
     synced: "green",
     pending: "blue",
     failed: "red",
-    cannot_sync: "orange",
     not_synced: "grey"
   }.freeze
 
@@ -62,8 +61,6 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
         elsif sourced_from_service?
           "Records are not synced if the vaccination was not given"
         end
-      when :cannot_sync
-        "You must add an NHS number to the child's record before this record will sync"
       when :failed
         "The Mavis team is aware of the issue and is working to resolve it"
       end
