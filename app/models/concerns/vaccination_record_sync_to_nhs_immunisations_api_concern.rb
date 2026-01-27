@@ -55,8 +55,6 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
       NHS::ImmunisationsAPI.should_be_in_immunisations_api?(self)
     return :not_synced unless should_be_synced
 
-    return :cannot_sync if patient.nhs_number.blank?
-
     synced_at = nhs_immunisations_api_synced_at
     pending_at = nhs_immunisations_api_sync_pending_at
     if synced_at.present? && (pending_at.nil? || synced_at > pending_at)

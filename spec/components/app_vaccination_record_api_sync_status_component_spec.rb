@@ -85,20 +85,6 @@ describe AppVaccinationRecordAPISyncStatusComponent do
       end
     end
 
-    context "when sync_status is :cannot_sync" do
-      before do
-        allow(vaccination_record).to receive(:sync_status).and_return(
-          :cannot_sync
-        )
-      end
-
-      it do
-        expect(formatted_status).to include(
-          "You must add an NHS number to the child's record before this record will sync"
-        )
-      end
-    end
-
     context "when sync_status is :failed" do
       before do
         allow(vaccination_record).to receive(:sync_status).and_return(:failed)
