@@ -563,6 +563,8 @@
       </summary>
       <ul class="nav-list" role="directory">
 
+        <li ><a href="#method-c-from_fhir_record">from_fhir_record</a></li>
+
         <li ><a href="#method-c-new">new</a></li>
 
       </ul>
@@ -657,6 +659,85 @@
        <header>
          <h3 id="public-class-methods"><a href="#public-class-methods">Public Class Methods</a></h3>
        </header>
+
+
+      <div id="method-c-from_fhir_record" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-from_fhir_record" title="Link to this method">
+                <span class="method-name">from_fhir_record</span>
+                <span class="method-args">(fhir_record)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="from_fhir_record-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/fhir_mapper/programme.rb, line 29</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_fhir_record</span>(<span class="ruby-identifier">fhir_record</span>)
+  <span class="ruby-identifier">target_diseases</span> = <span class="ruby-identifier">fhir_record</span>.<span class="ruby-identifier">protocolApplied</span>.<span class="ruby-identifier">sole</span>.<span class="ruby-identifier">targetDisease</span>
+  <span class="ruby-identifier">target_disease_codes</span> =
+    <span class="ruby-identifier">target_diseases</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">disease</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">disease</span>
+        .<span class="ruby-identifier">coding</span>
+        .<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">coding</span><span class="ruby-operator">|</span> <span class="ruby-identifier">coding</span>.<span class="ruby-identifier">system</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;http://snomed.info/sct&quot;</span> }
+        .<span class="ruby-identifier">code</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">if</span> (
+       <span class="ruby-identifier">variant_type</span> =
+         <span class="ruby-operator">::</span><span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">key</span>(
+           <span class="ruby-identifier">target_disease_codes</span>.<span class="ruby-identifier">to_set</span>
+         )
+     )
+    <span class="ruby-comment"># If there is a matching `Programme::Variant`</span>
+    <span class="ruby-comment"># TODO: Make `Programme::Variant` type more generic, so that it can handle any programme type;</span>
+    <span class="ruby-comment">#       remove MMR hardcoding here</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-node">%w[mmr mmrv]</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">variant_type</span>)
+      <span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(
+        <span class="ruby-string">&quot;mmr&quot;</span>,
+        <span class="ruby-value">disease_types:</span>
+          <span class="ruby-operator">::</span><span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(
+            <span class="ruby-identifier">variant_type</span>
+          )
+      )
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">InvalidType</span>,
+            <span class="ruby-node">&quot;Programme::Variant type not mapped to a Programme; #{variant_type}&quot;</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-comment"># Otherwise it must be a `Programme`</span>
+    <span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(
+      <span class="ruby-operator">::</span><span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">key</span>(
+        <span class="ruby-identifier">target_disease_codes</span>.<span class="ruby-identifier">to_set</span>
+      )
+    )
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
 
 
       <div id="method-c-new" class="method-detail anchor-link ">

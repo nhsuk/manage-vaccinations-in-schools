@@ -581,8 +581,6 @@
 
         <li ><a href="#method-c-outcome_from_fhir">outcome_from_fhir</a></li>
 
-        <li ><a href="#method-c-programme_from_fhir">programme_from_fhir</a></li>
-
         <li ><a href="#method-c-site_from_fhir">site_from_fhir</a></li>
 
         <li ><a href="#method-c-user_performer_name_from_fhir">user_performer_name_from_fhir</a></li>
@@ -735,7 +733,7 @@
             </details>
           </div>
           <div class="method-source-code" id="batch_from_fhir-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/fhir_mapper/vaccination_record.rb, line 351</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/fhir_mapper/vaccination_record.rb, line 334</span>
                      <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">batch_from_fhir</span>(<span class="ruby-identifier">fhir_record</span>, <span class="ruby-value">vaccine:</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">fhir_record</span>.<span class="ruby-identifier">lotNumber</span>&amp;.<span class="ruby-identifier">to_s</span>&amp;.<span class="ruby-identifier">presence</span>.<span class="ruby-identifier">nil?</span>
 
@@ -947,7 +945,7 @@
     .<span class="ruby-identifier">value</span>
   <span class="ruby-identifier">attrs</span>[<span class="ruby-value">:nhs_immunisations_api_primary_source</span>] = <span class="ruby-identifier">fhir_record</span>.<span class="ruby-identifier">primarySource</span>
 
-  <span class="ruby-identifier">attrs</span>[<span class="ruby-value">:programme</span>] = <span class="ruby-identifier">programme_from_fhir</span>(<span class="ruby-identifier">fhir_record</span>)
+  <span class="ruby-identifier">attrs</span>[<span class="ruby-value">:programme</span>] = <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">from_fhir_record</span>(<span class="ruby-identifier">fhir_record</span>)
 
   <span class="ruby-identifier">attrs</span>[<span class="ruby-value">:performed_at</span>] = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">zone</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">fhir_record</span>.<span class="ruby-identifier">occurrenceDateTime</span>)
   <span class="ruby-identifier">attrs</span>[<span class="ruby-value">:outcome</span>] = <span class="ruby-identifier">outcome_from_fhir</span>(<span class="ruby-identifier">fhir_record</span>)
@@ -1184,61 +1182,6 @@
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Unexpected vaccination status: \&quot;#{fhir_record.status}\&quot;. Expected only &#39;completed&#39; or &#39;not-done&#39;&quot;</span>
   <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-c-programme_from_fhir" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-c-programme_from_fhir" title="Link to this method">
-                <span class="method-name">programme_from_fhir</span>
-                <span class="method-args">(fhir_record)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="programme_from_fhir-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/fhir_mapper/vaccination_record.rb, line 334</span>
-                     <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">programme_from_fhir</span>(<span class="ruby-identifier">fhir_record</span>)
-  <span class="ruby-identifier">target_diseases</span> = <span class="ruby-identifier">fhir_record</span>.<span class="ruby-identifier">protocolApplied</span>.<span class="ruby-identifier">sole</span>.<span class="ruby-identifier">targetDisease</span>
-  <span class="ruby-identifier">target_disease_codes</span> =
-    <span class="ruby-identifier">target_diseases</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">disease</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">disease</span>
-        .<span class="ruby-identifier">coding</span>
-        .<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">coding</span><span class="ruby-operator">|</span> <span class="ruby-identifier">coding</span>.<span class="ruby-identifier">system</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;http://snomed.info/sct&quot;</span> }
-        .<span class="ruby-identifier">code</span>
-    <span class="ruby-keyword">end</span>
-
-  <span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(
-    <span class="ruby-operator">::</span><span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">key</span>(
-      <span class="ruby-identifier">target_disease_codes</span>.<span class="ruby-identifier">to_set</span>
-    )
-  )
 <span class="ruby-keyword">end</span></pre>
           </div>
 
