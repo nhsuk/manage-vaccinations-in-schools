@@ -53,7 +53,6 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
   end
 
   def eligible_for_mmr_or_mmrv?
-    @programme.mmr? &&
-      @patient.eligible_for_mmrv?
+    @programme.mmr? && @patient.eligible_for_mmrv?
   end
 end
