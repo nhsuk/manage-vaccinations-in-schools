@@ -57,8 +57,8 @@ class DraftVaccinationRecord
       :identity,
       :notes,
       (
-        if programme&.mmr? && (administered? || outcome == "already_had") &&
-             patient.date_of_birth >= MMR_OR_MMRV_INTRODUCTION_DATE
+        if programme&.mmr? && (administered? || already_had?) &&
+             patient.eligible_for_mmrv?
           :mmr_or_mmrv
         end
       ),

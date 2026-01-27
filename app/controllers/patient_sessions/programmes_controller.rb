@@ -47,7 +47,7 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
     if @programme.mmr?
       @patient.programme_status(
         @programme,
-        academic_year: AcademicYear.current
+        academic_year: @academic_year
       )&.dose_sequence || 1
     end
   end
