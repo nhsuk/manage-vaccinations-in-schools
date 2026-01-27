@@ -57,7 +57,7 @@
 
     <%= render AppPaginationComponent.new(pagy: @pagy) %>
 
-    <%= f.govuk_collection_radio_buttons :remove_option, %w[unconsented_only all], :itself %>
+    <%= f.govuk_collection_radio_buttons :remove_option, %w[unconsented_only all], :itself, legend: { text: "Which relationships do you want to remove?" } %>
   <% end %>
 
   <div class="nhsuk-button-group">
