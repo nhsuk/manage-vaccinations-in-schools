@@ -595,6 +595,8 @@
 
         <li ><a href="#method-c-all">all</a></li>
 
+        <li ><a href="#method-c-all_as_variants">all_as_variants</a></li>
+
         <li ><a href="#method-c-available_delivery_methods">available_delivery_methods</a></li>
 
         <li ><a href="#method-c-available_delivery_sites">available_delivery_sites</a></li>
@@ -668,6 +670,8 @@
         <li ><a href="#method-c-variant_for">variant_for</a></li>
 
         <li ><a href="#method-c-variant_type">variant_type</a></li>
+
+        <li ><a href="#method-c-variants">variants</a></li>
 
       </ul>
     </details>
@@ -852,7 +856,7 @@
             </details>
           </div>
           <div class="method-source-code" id="3C-3D-3E-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 123</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 127</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">&lt;=&gt;</span>(<span class="ruby-identifier">other</span>) = <span class="ruby-identifier">type</span> <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">type</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variant_type</span> = <span class="ruby-keyword">nil</span>
@@ -893,6 +897,25 @@
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-value">variant_type:</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr?</span>
+    [
+      <span class="ruby-identifier">variant_for</span>(
+        <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmr&quot;</span>)
+      ),
+      (
+        <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:mmrv</span>)
+          <span class="ruby-identifier">variant_for</span>(
+            <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmrv&quot;</span>)
+          )
+        <span class="ruby-keyword">end</span>
+      )
+    ].<span class="ruby-identifier">compact</span>
+  <span class="ruby-keyword">else</span>
+    [<span class="ruby-keyword">self</span>]
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span> = <span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -1000,7 +1023,7 @@
             </details>
           </div>
           <div class="method-source-code" id="3D-3D-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 119</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 123</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">==</span>(<span class="ruby-identifier">other</span>) = <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">type</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">eql?</span>(<span class="ruby-identifier">other</span>) = <span class="ruby-identifier">other</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Programme</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">type</span>.<span class="ruby-identifier">eql?</span>(<span class="ruby-identifier">other</span>.<span class="ruby-identifier">type</span>)
@@ -1045,6 +1068,25 @@
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-value">variant_type:</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr?</span>
+    [
+      <span class="ruby-identifier">variant_for</span>(
+        <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmr&quot;</span>)
+      ),
+      (
+        <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:mmrv</span>)
+          <span class="ruby-identifier">variant_for</span>(
+            <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmrv&quot;</span>)
+          )
+        <span class="ruby-keyword">end</span>
+      )
+    ].<span class="ruby-identifier">compact</span>
+  <span class="ruby-keyword">else</span>
+    [<span class="ruby-keyword">self</span>]
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span> = <span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -1159,6 +1201,10 @@
     <span class="ruby-identifier">types</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">type</span><span class="ruby-operator">|</span> <span class="ruby-identifier">find</span>(<span class="ruby-identifier">type</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">disease_types:</span>) }
   <span class="ruby-keyword">end</span>
 
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">all_as_variants</span>
+    <span class="ruby-identifier">all</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:variants</span>)
+  <span class="ruby-keyword">end</span>
+
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">type</span>, <span class="ruby-value">disease_types:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">patient:</span> <span class="ruby-keyword">nil</span>)
     <span class="ruby-identifier">validate_type!</span>(<span class="ruby-identifier">type</span>)
 
@@ -1231,6 +1277,25 @@
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-value">variant_type:</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr?</span>
+    [
+      <span class="ruby-identifier">variant_for</span>(
+        <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmr&quot;</span>)
+      ),
+      (
+        <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:mmrv</span>)
+          <span class="ruby-identifier">variant_for</span>(
+            <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmrv&quot;</span>)
+          )
+        <span class="ruby-keyword">end</span>
+      )
+    ].<span class="ruby-identifier">compact</span>
+  <span class="ruby-keyword">else</span>
+    [<span class="ruby-keyword">self</span>]
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span> = <span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -1317,6 +1382,48 @@
       </div>
 
 
+      <div id="method-c-all_as_variants" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-all_as_variants" title="Link to this method">
+                <span class="method-name">all_as_variants</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="all_as_variants-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 91</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">all_as_variants</span>
+  <span class="ruby-identifier">all</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:variants</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-c-available_delivery_methods" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -1336,7 +1443,7 @@
             </details>
           </div>
           <div class="method-source-code" id="available_delivery_methods-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 201</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 224</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">available_delivery_methods</span>
   <span class="ruby-ivar">@available_delivery_methods</span> <span class="ruby-operator">||=</span>
     <span class="ruby-identifier">vaccines</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:available_delivery_methods</span>).<span class="ruby-identifier">uniq</span>
@@ -1379,7 +1486,7 @@
             </details>
           </div>
           <div class="method-source-code" id="available_delivery_sites-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 206</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 229</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">available_delivery_sites</span>
   <span class="ruby-ivar">@available_delivery_sites</span> <span class="ruby-operator">||=</span>
     <span class="ruby-identifier">vaccines</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:available_delivery_sites</span>).<span class="ruby-identifier">uniq</span>
@@ -1422,7 +1529,7 @@
             </details>
           </div>
           <div class="method-source-code" id="can_save_to_todays_batch-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 175</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 198</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_save_to_todays_batch?</span> = <span class="ruby-operator">!</span><span class="ruby-identifier">mmr?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">triage_on_vaccination_history?</span> = <span class="ruby-identifier">menacwy?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">td_ipv?</span>
@@ -1523,7 +1630,7 @@
             </details>
           </div>
           <div class="method-source-code" id="catch_up_only-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 171</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 194</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">catch_up_only?</span> = <span class="ruby-identifier">mmr?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_delegation?</span> = <span class="ruby-identifier">flu?</span>
@@ -1627,7 +1734,7 @@
             </details>
           </div>
           <div class="method-source-code" id="default_dose_sequence-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 211</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 234</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">default_dose_sequence</span> = <span class="ruby-identifier">hpv?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">flu?</span> <span class="ruby-operator">?</span> <span class="ruby-value">1</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -1692,7 +1799,7 @@
             </details>
           </div>
           <div class="method-source-code" id="default_year_groups-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 179</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 202</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">default_year_groups</span> = <span class="ruby-constant">DEFAULT_YEAR_GROUPS_BY_TYPE</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_catch_up?</span>(<span class="ruby-value">year_group:</span>)
@@ -1789,7 +1896,7 @@
             </details>
           </div>
           <div class="method-source-code" id="disease_types-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 165</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 188</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span> = <span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">doubles?</span> = <span class="ruby-identifier">menacwy?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">td_ipv?</span>
@@ -1897,7 +2004,7 @@
             </details>
           </div>
           <div class="method-source-code" id="doubles-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 167</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 190</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">doubles?</span> = <span class="ruby-identifier">menacwy?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">td_ipv?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">seasonal?</span> = <span class="ruby-identifier">flu?</span>
@@ -2004,7 +2111,7 @@
             </details>
           </div>
           <div class="method-source-code" id="eql-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 121</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 125</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">eql?</span>(<span class="ruby-identifier">other</span>) = <span class="ruby-identifier">other</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Programme</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">type</span>.<span class="ruby-identifier">eql?</span>(<span class="ruby-identifier">other</span>.<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">&lt;=&gt;</span>(<span class="ruby-identifier">other</span>) = <span class="ruby-identifier">type</span> <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">type</span>
@@ -2047,6 +2154,25 @@
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-value">variant_type:</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr?</span>
+    [
+      <span class="ruby-identifier">variant_for</span>(
+        <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmr&quot;</span>)
+      ),
+      (
+        <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:mmrv</span>)
+          <span class="ruby-identifier">variant_for</span>(
+            <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmrv&quot;</span>)
+          )
+        <span class="ruby-keyword">end</span>
+      )
+    ].<span class="ruby-identifier">compact</span>
+  <span class="ruby-keyword">else</span>
+    [<span class="ruby-keyword">self</span>]
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span> = <span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -2154,7 +2280,7 @@
             </details>
           </div>
           <div class="method-source-code" id="exists-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 100</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 104</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">exists?</span>(<span class="ruby-identifier">type</span>) = <span class="ruby-identifier">type</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-constant">TYPES</span>)
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sample</span> = <span class="ruby-identifier">find</span>(<span class="ruby-constant">TYPES</span>.<span class="ruby-identifier">sample</span>)
@@ -2218,6 +2344,25 @@
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-value">variant_type:</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr?</span>
+    [
+      <span class="ruby-identifier">variant_for</span>(
+        <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmr&quot;</span>)
+      ),
+      (
+        <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:mmrv</span>)
+          <span class="ruby-identifier">variant_for</span>(
+            <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmrv&quot;</span>)
+          )
+        <span class="ruby-keyword">end</span>
+      )
+    ].<span class="ruby-identifier">compact</span>
+  <span class="ruby-keyword">else</span>
+    [<span class="ruby-keyword">self</span>]
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span> = <span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -2323,7 +2468,7 @@
             </details>
           </div>
           <div class="method-source-code" id="fhir_mapper-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 235</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 258</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
   <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2365,7 +2510,7 @@
             </details>
           </div>
           <div class="method-source-code" id="find-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 91</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 95</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">type</span>, <span class="ruby-value">disease_types:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">patient:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">validate_type!</span>(<span class="ruby-identifier">type</span>)
 
@@ -2454,7 +2599,7 @@
             </details>
           </div>
           <div class="method-source-code" id="has_multiple_vaccine_methods-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 199</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 222</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_multiple_vaccine_methods?</span> = <span class="ruby-identifier">vaccine_methods</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">available_delivery_methods</span>
@@ -2531,7 +2676,7 @@
             </details>
           </div>
           <div class="method-source-code" id="id-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 117</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 121</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">id</span> = <span class="ruby-identifier">type</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">==</span>(<span class="ruby-identifier">other</span>) = <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">type</span>
@@ -2578,6 +2723,25 @@
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-value">variant_type:</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr?</span>
+    [
+      <span class="ruby-identifier">variant_for</span>(
+        <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmr&quot;</span>)
+      ),
+      (
+        <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:mmrv</span>)
+          <span class="ruby-identifier">variant_for</span>(
+            <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmrv&quot;</span>)
+          )
+        <span class="ruby-keyword">end</span>
+      )
+    ].<span class="ruby-identifier">compact</span>
+  <span class="ruby-keyword">else</span>
+    [<span class="ruby-keyword">self</span>]
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span> = <span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -2683,7 +2847,7 @@
             </details>
           </div>
           <div class="method-source-code" id="import_names-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 216</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 239</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span>
   <span class="ruby-identifier">names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:mmrv</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;mmr&quot;</span>
@@ -2730,7 +2894,7 @@
             </details>
           </div>
           <div class="method-source-code" id="initialize-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 111</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 115</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">type:</span>)
   <span class="ruby-ivar">@type</span> = <span class="ruby-identifier">type</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2772,7 +2936,7 @@
             </details>
           </div>
           <div class="method-source-code" id="is_catch_up-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 181</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 204</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_catch_up?</span>(<span class="ruby-value">year_group:</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">seasonal?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">catch_up_only?</span>
@@ -2820,7 +2984,7 @@
             </details>
           </div>
           <div class="method-source-code" id="maximum_dose_sequence-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 213</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 236</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-comment"># TODO: add MMRV to IMPORT_NAMES once the MMRV flag is removed</span>
@@ -2892,6 +3056,10 @@
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find_all</span>(<span class="ruby-identifier">types</span>, <span class="ruby-value">disease_types:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">patient:</span> <span class="ruby-keyword">nil</span>)
     <span class="ruby-identifier">types</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">type</span><span class="ruby-operator">|</span> <span class="ruby-identifier">find</span>(<span class="ruby-identifier">type</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">disease_types:</span>) }
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">all_as_variants</span>
+    <span class="ruby-identifier">all</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:variants</span>)
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">type</span>, <span class="ruby-value">disease_types:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">patient:</span> <span class="ruby-keyword">nil</span>)
@@ -2966,6 +3134,25 @@
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-value">variant_type:</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr?</span>
+    [
+      <span class="ruby-identifier">variant_for</span>(
+        <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmr&quot;</span>)
+      ),
+      (
+        <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:mmrv</span>)
+          <span class="ruby-identifier">variant_for</span>(
+            <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmrv&quot;</span>)
+          )
+        <span class="ruby-keyword">end</span>
+      )
+    ].<span class="ruby-identifier">compact</span>
+  <span class="ruby-keyword">else</span>
+    [<span class="ruby-keyword">self</span>]
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span> = <span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -3071,7 +3258,7 @@
             </details>
           </div>
           <div class="method-source-code" id="name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 135</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 139</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">name</span> = <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-identifier">translation_key</span>, <span class="ruby-value">scope:</span> <span class="ruby-value">:programme_types</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">name_in_sentence</span> = <span class="ruby-identifier">flu?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">name</span>
@@ -3100,6 +3287,25 @@
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-value">variant_type:</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr?</span>
+    [
+      <span class="ruby-identifier">variant_for</span>(
+        <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmr&quot;</span>)
+      ),
+      (
+        <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:mmrv</span>)
+          <span class="ruby-identifier">variant_for</span>(
+            <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmrv&quot;</span>)
+          )
+        <span class="ruby-keyword">end</span>
+      )
+    ].<span class="ruby-identifier">compact</span>
+  <span class="ruby-keyword">else</span>
+    [<span class="ruby-keyword">self</span>]
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span> = <span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -3207,7 +3413,7 @@
             </details>
           </div>
           <div class="method-source-code" id="name_in_sentence-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 137</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 141</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">name_in_sentence</span> = <span class="ruby-identifier">flu?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">name</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variant_for</span>(<span class="ruby-value">disease_types:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">patient:</span> <span class="ruby-keyword">nil</span>)
@@ -3234,6 +3440,25 @@
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-value">variant_type:</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr?</span>
+    [
+      <span class="ruby-identifier">variant_for</span>(
+        <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmr&quot;</span>)
+      ),
+      (
+        <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:mmrv</span>)
+          <span class="ruby-identifier">variant_for</span>(
+            <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmrv&quot;</span>)
+          )
+        <span class="ruby-keyword">end</span>
+      )
+    ].<span class="ruby-identifier">compact</span>
+  <span class="ruby-keyword">else</span>
+    [<span class="ruby-keyword">self</span>]
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span> = <span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -3351,6 +3576,10 @@
     <span class="ruby-identifier">types</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">type</span><span class="ruby-operator">|</span> <span class="ruby-identifier">find</span>(<span class="ruby-identifier">type</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">disease_types:</span>) }
   <span class="ruby-keyword">end</span>
 
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">all_as_variants</span>
+    <span class="ruby-identifier">all</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:variants</span>)
+  <span class="ruby-keyword">end</span>
+
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">type</span>, <span class="ruby-value">disease_types:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">patient:</span> <span class="ruby-keyword">nil</span>)
     <span class="ruby-identifier">validate_type!</span>(<span class="ruby-identifier">type</span>)
 
@@ -3423,6 +3652,25 @@
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-value">variant_type:</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr?</span>
+    [
+      <span class="ruby-identifier">variant_for</span>(
+        <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmr&quot;</span>)
+      ),
+      (
+        <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:mmrv</span>)
+          <span class="ruby-identifier">variant_for</span>(
+            <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmrv&quot;</span>)
+          )
+        <span class="ruby-keyword">end</span>
+      )
+    ].<span class="ruby-identifier">compact</span>
+  <span class="ruby-keyword">else</span>
+    [<span class="ruby-keyword">self</span>]
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span> = <span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -3528,7 +3776,7 @@
             </details>
           </div>
           <div class="method-source-code" id="sample-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 102</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 106</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sample</span> = <span class="ruby-identifier">find</span>(<span class="ruby-constant">TYPES</span>.<span class="ruby-identifier">sample</span>)
 
   <span class="ruby-identifier">private</span>
@@ -3575,7 +3823,7 @@
             </details>
           </div>
           <div class="method-source-code" id="seasonal-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 169</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 192</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">seasonal?</span> = <span class="ruby-identifier">flu?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">catch_up_only?</span> = <span class="ruby-identifier">mmr?</span>
@@ -3681,7 +3929,7 @@
             </details>
           </div>
           <div class="method-source-code" id="snomed_target_disease_codes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 225</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 248</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_terms</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -3733,7 +3981,7 @@
             </details>
           </div>
           <div class="method-source-code" id="snomed_target_disease_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 229</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 252</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
   <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
@@ -3782,7 +4030,7 @@
             </details>
           </div>
           <div class="method-source-code" id="snomed_target_disease_terms-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 227</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 250</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_terms</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -3832,7 +4080,7 @@
             </details>
           </div>
           <div class="method-source-code" id="supports_delegation-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 173</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 196</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_delegation?</span> = <span class="ruby-identifier">flu?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_save_to_todays_batch?</span> = <span class="ruby-operator">!</span><span class="ruby-identifier">mmr?</span>
@@ -3935,7 +4183,7 @@
             </details>
           </div>
           <div class="method-source-code" id="to_param-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 115</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 119</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_param</span> = <span class="ruby-identifier">type</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">id</span> = <span class="ruby-identifier">type</span>
@@ -3984,6 +4232,25 @@
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-value">variant_type:</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr?</span>
+    [
+      <span class="ruby-identifier">variant_for</span>(
+        <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmr&quot;</span>)
+      ),
+      (
+        <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:mmrv</span>)
+          <span class="ruby-identifier">variant_for</span>(
+            <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmrv&quot;</span>)
+          )
+        <span class="ruby-keyword">end</span>
+      )
+    ].<span class="ruby-identifier">compact</span>
+  <span class="ruby-keyword">else</span>
+    [<span class="ruby-keyword">self</span>]
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span> = <span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -4089,7 +4356,7 @@
             </details>
           </div>
           <div class="method-source-code" id="translation_key-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 127</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 131</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">translation_key</span>
   <span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:mmrv</span>) <span class="ruby-operator">?</span> <span class="ruby-string">&quot;mmr_and_mmrv&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">type</span>
 <span class="ruby-keyword">end</span></pre>
@@ -4131,7 +4398,7 @@
             </details>
           </div>
           <div class="method-source-code" id="triage_on_vaccination_history-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 177</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 200</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">triage_on_vaccination_history?</span> = <span class="ruby-identifier">menacwy?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">td_ipv?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">default_year_groups</span> = <span class="ruby-constant">DEFAULT_YEAR_GROUPS_BY_TYPE</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -4230,7 +4497,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_methods-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 195</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 218</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_methods</span>
   <span class="ruby-ivar">@vaccine_methods</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">vaccines</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:method</span>).<span class="ruby-identifier">uniq</span>
 <span class="ruby-keyword">end</span></pre>
@@ -4272,7 +4539,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccines-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 191</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 214</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccines</span>
   <span class="ruby-ivar">@vaccines</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programme</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -4314,7 +4581,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_type-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 106</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 110</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_type!</span>(<span class="ruby-identifier">type</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">InvalidType</span>, <span class="ruby-identifier">type</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">exists?</span>(<span class="ruby-identifier">type</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -4356,7 +4623,7 @@
             </details>
           </div>
           <div class="method-source-code" id="variant_for-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 139</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 143</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variant_for</span>(<span class="ruby-value">disease_types:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">patient:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">mmr?</span>
 
@@ -4420,7 +4687,7 @@
             </details>
           </div>
           <div class="method-source-code" id="variant_type-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 125</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 129</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variant_type</span> = <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">translation_key</span>
@@ -4459,6 +4726,25 @@
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-value">variant_type:</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr?</span>
+    [
+      <span class="ruby-identifier">variant_for</span>(
+        <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmr&quot;</span>)
+      ),
+      (
+        <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:mmrv</span>)
+          <span class="ruby-identifier">variant_for</span>(
+            <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmrv&quot;</span>)
+          )
+        <span class="ruby-keyword">end</span>
+      )
+    ].<span class="ruby-identifier">compact</span>
+  <span class="ruby-keyword">else</span>
+    [<span class="ruby-keyword">self</span>]
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span> = <span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -4528,6 +4814,63 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, </pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-variants" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-variants" title="Link to this method">
+                <span class="method-name">variants</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="variants-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 169</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr?</span>
+    [
+      <span class="ruby-identifier">variant_for</span>(
+        <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmr&quot;</span>)
+      ),
+      (
+        <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:mmrv</span>)
+          <span class="ruby-identifier">variant_for</span>(
+            <span class="ruby-value">disease_types:</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;mmrv&quot;</span>)
+          )
+        <span class="ruby-keyword">end</span>
+      )
+    ].<span class="ruby-identifier">compact</span>
+  <span class="ruby-keyword">else</span>
+    [<span class="ruby-keyword">self</span>]
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
           </div>
 
 

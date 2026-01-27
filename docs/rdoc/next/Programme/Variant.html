@@ -610,6 +610,8 @@
 
         <li ><a href="#method-i-vaccines">vaccines</a></li>
 
+        <li ><a href="#method-i-variants">variants</a></li>
+
       </ul>
     </details>
   </div>
@@ -842,6 +844,10 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">variant_type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  [<span class="ruby-keyword">self</span>]
+<span class="ruby-keyword">end</span>
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccines</span>
   <span class="ruby-ivar">@vaccines</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programme</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span>
@@ -907,7 +913,7 @@
             </details>
           </div>
           <div class="method-source-code" id="fhir_mapper-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme/variant.rb, line 68</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme/variant.rb, line 72</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
   <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -949,7 +955,7 @@
             </details>
           </div>
           <div class="method-source-code" id="flipper_id-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme/variant.rb, line 60</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme/variant.rb, line 64</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">flipper_id</span>
   <span class="ruby-node">&quot;ProgrammeVariant:#{variant_type}&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -993,6 +999,10 @@
           <div class="method-source-code" id="import_names-source">
             <pre class="ruby"><span class="ruby-comment"># File app/models/programme/variant.rb, line 42</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">variant_type</span>)
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+    [<span class="ruby-keyword">self</span>]
+  <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccines</span>
     <span class="ruby-ivar">@vaccines</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programme</span>(<span class="ruby-keyword">self</span>)
@@ -1075,6 +1085,10 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">variant_type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  [<span class="ruby-keyword">self</span>]
+<span class="ruby-keyword">end</span>
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccines</span>
   <span class="ruby-ivar">@vaccines</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programme</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span>
@@ -1152,6 +1166,10 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">variant_type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  [<span class="ruby-keyword">self</span>]
+<span class="ruby-keyword">end</span>
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccines</span>
   <span class="ruby-ivar">@vaccines</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programme</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span>
@@ -1225,6 +1243,10 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">variant_type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  [<span class="ruby-keyword">self</span>]
+<span class="ruby-keyword">end</span>
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccines</span>
   <span class="ruby-ivar">@vaccines</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programme</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span>
@@ -1296,6 +1318,10 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">variant_type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  [<span class="ruby-keyword">self</span>]
+<span class="ruby-keyword">end</span>
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccines</span>
   <span class="ruby-ivar">@vaccines</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programme</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span>
@@ -1361,7 +1387,7 @@
             </details>
           </div>
           <div class="method-source-code" id="snomed_target_disease_codes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme/variant.rb, line 48</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme/variant.rb, line 52</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span>
   <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">variant_type</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1403,7 +1429,7 @@
             </details>
           </div>
           <div class="method-source-code" id="snomed_target_disease_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme/variant.rb, line 56</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme/variant.rb, line 60</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span>
   <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">variant_type</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1445,7 +1471,7 @@
             </details>
           </div>
           <div class="method-source-code" id="snomed_target_disease_terms-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme/variant.rb, line 52</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme/variant.rb, line 56</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_terms</span>
   <span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">variant_type</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1497,6 +1523,10 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span> = <span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">variant_type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">variant_type</span>)
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  [<span class="ruby-keyword">self</span>]
+<span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccines</span>
   <span class="ruby-ivar">@vaccines</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programme</span>(<span class="ruby-keyword">self</span>)
@@ -1562,9 +1592,51 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccines-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme/variant.rb, line 44</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme/variant.rb, line 48</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccines</span>
   <span class="ruby-ivar">@vaccines</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programme</span>(<span class="ruby-keyword">self</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-variants" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-variants" title="Link to this method">
+                <span class="method-name">variants</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="variants-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme/variant.rb, line 44</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
+  [<span class="ruby-keyword">self</span>]
 <span class="ruby-keyword">end</span></pre>
           </div>
 

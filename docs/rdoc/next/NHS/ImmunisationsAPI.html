@@ -996,7 +996,10 @@
     <span class="ruby-string">&quot;patient.identifier&quot;</span> <span class="ruby-operator">=&gt;</span>
       <span class="ruby-node">&quot;https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}&quot;</span>,
     <span class="ruby-string">&quot;-immunization.target&quot;</span> <span class="ruby-operator">=&gt;</span>
-      <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:snomed_target_disease_name</span>).<span class="ruby-identifier">sort</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;,&quot;</span>),
+      <span class="ruby-identifier">programmes</span>
+        .<span class="ruby-identifier">flat_map</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">variants</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:snomed_target_disease_name</span>) }
+        .<span class="ruby-identifier">sort</span>
+        .<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;,&quot;</span>),
     <span class="ruby-string">&quot;-date.from&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">date_from</span>&amp;.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%F&quot;</span>),
     <span class="ruby-string">&quot;-date.to&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">date_to</span>&amp;.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%F&quot;</span>)
   }.<span class="ruby-identifier">compact</span>
