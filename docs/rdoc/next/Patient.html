@@ -835,7 +835,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
             </details>
           </div>
           <div class="method-source-code" id="from_consent_form-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 733</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 745</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_consent_form</span>(<span class="ruby-identifier">consent_form</span>)
   <span class="ruby-identifier">new</span>(
     <span class="ruby-value">address_line_1:</span> <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">address_line_1</span>,
@@ -1017,7 +1017,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
             </details>
           </div>
           <div class="method-source-code" id="archive_due_to_deceased-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 793</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 805</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">archive_due_to_deceased!</span>
   <span class="ruby-identifier">archive_reasons</span> =
     <span class="ruby-identifier">teams</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">team</span><span class="ruby-operator">|</span>
@@ -1121,7 +1121,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
             </details>
           </div>
           <div class="method-source-code" id="clear_pending_sessions-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 723</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 735</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clear_pending_sessions!</span>(<span class="ruby-value">team:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">scope</span> = <span class="ruby-identifier">patient_locations</span>.<span class="ruby-identifier">pending</span>
 
@@ -1337,7 +1337,8 @@ reason, but we should be trying again to vaccinate these children.</pre>
 
     <span class="ruby-identifier">patient_locations</span>.<span class="ruby-identifier">pending</span>.<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient_location</span><span class="ruby-operator">|</span>
       <span class="ruby-identifier">new_patient</span>.<span class="ruby-identifier">patient_locations</span>.<span class="ruby-identifier">build</span>(
-        <span class="ruby-operator">**</span><span class="ruby-identifier">patient_location</span>.<span class="ruby-identifier">slice</span>(<span class="ruby-value">:academic_year</span>, <span class="ruby-value">:location_id</span>)
+        <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">patient_location</span>.<span class="ruby-identifier">academic_year</span>,
+        <span class="ruby-value">location_id:</span> <span class="ruby-identifier">patient_location</span>.<span class="ruby-identifier">location_id</span>
       )
     <span class="ruby-keyword">end</span>
 
@@ -1349,6 +1350,17 @@ reason, but we should be trying again to vaccinate these children.</pre>
         <span class="ruby-value">source:</span> <span class="ruby-identifier">school_move</span>.<span class="ruby-identifier">source</span>,
         <span class="ruby-value">team_id:</span> <span class="ruby-identifier">school_move</span>.<span class="ruby-identifier">team_id</span>
       )
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">patient_teams</span>.<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient_team</span><span class="ruby-operator">|</span>
+      <span class="ruby-comment"># Patients that have been duplicated from another won&#39;t have any</span>
+      <span class="ruby-comment">#  vaccination records or imports, therefore we need to filter the</span>
+      <span class="ruby-comment">#  sources.</span>
+      <span class="ruby-identifier">sources</span> =
+        <span class="ruby-identifier">patient_team</span>.<span class="ruby-identifier">sources</span> <span class="ruby-operator">&amp;</span>
+          <span class="ruby-node">%w[patient_location school_move_school school_move_team]</span>
+
+      <span class="ruby-identifier">new_patient</span>.<span class="ruby-identifier">patient_teams</span>.<span class="ruby-identifier">build</span>(<span class="ruby-value">team_id:</span> <span class="ruby-identifier">patient_team</span>.<span class="ruby-identifier">team_id</span>, <span class="ruby-value">sources:</span>)
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
@@ -1514,7 +1526,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
             </details>
           </div>
           <div class="method-source-code" id="destroy_childless_parents-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 782</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 794</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">destroy_childless_parents</span>
   <span class="ruby-identifier">parents_to_check</span> = <span class="ruby-identifier">parents</span>.<span class="ruby-identifier">to_a</span> <span class="ruby-comment"># Store parents before destroying relationships</span>
 
@@ -1570,7 +1582,8 @@ reason, but we should be trying again to vaccinate these children.</pre>
 
     <span class="ruby-identifier">patient_locations</span>.<span class="ruby-identifier">pending</span>.<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient_location</span><span class="ruby-operator">|</span>
       <span class="ruby-identifier">new_patient</span>.<span class="ruby-identifier">patient_locations</span>.<span class="ruby-identifier">build</span>(
-        <span class="ruby-operator">**</span><span class="ruby-identifier">patient_location</span>.<span class="ruby-identifier">slice</span>(<span class="ruby-value">:academic_year</span>, <span class="ruby-value">:location_id</span>)
+        <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">patient_location</span>.<span class="ruby-identifier">academic_year</span>,
+        <span class="ruby-value">location_id:</span> <span class="ruby-identifier">patient_location</span>.<span class="ruby-identifier">location_id</span>
       )
     <span class="ruby-keyword">end</span>
 
@@ -1582,6 +1595,17 @@ reason, but we should be trying again to vaccinate these children.</pre>
         <span class="ruby-value">source:</span> <span class="ruby-identifier">school_move</span>.<span class="ruby-identifier">source</span>,
         <span class="ruby-value">team_id:</span> <span class="ruby-identifier">school_move</span>.<span class="ruby-identifier">team_id</span>
       )
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">patient_teams</span>.<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient_team</span><span class="ruby-operator">|</span>
+      <span class="ruby-comment"># Patients that have been duplicated from another won&#39;t have any</span>
+      <span class="ruby-comment">#  vaccination records or imports, therefore we need to filter the</span>
+      <span class="ruby-comment">#  sources.</span>
+      <span class="ruby-identifier">sources</span> =
+        <span class="ruby-identifier">patient_team</span>.<span class="ruby-identifier">sources</span> <span class="ruby-operator">&amp;</span>
+          <span class="ruby-node">%w[patient_location school_move_school school_move_team]</span>
+
+      <span class="ruby-identifier">new_patient</span>.<span class="ruby-identifier">patient_teams</span>.<span class="ruby-identifier">build</span>(<span class="ruby-value">team_id:</span> <span class="ruby-identifier">patient_team</span>.<span class="ruby-identifier">team_id</span>, <span class="ruby-value">sources:</span>)
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1665,7 +1689,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
             </details>
           </div>
           <div class="method-source-code" id="fhir_mapper-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 813</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 825</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span> = <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Patient</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">should_sync_vaccinations_to_nhs_immunisations_api?</span>
@@ -1738,7 +1762,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
             </details>
           </div>
           <div class="method-source-code" id="generate_important_notice_if_needed-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 841</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 853</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate_important_notice_if_needed</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_generate_important_notice?</span>
     <span class="ruby-constant">ImportantNoticeGeneratorJob</span>.<span class="ruby-identifier">perform_later</span>([<span class="ruby-identifier">id</span>])
@@ -1782,7 +1806,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
             </details>
           </div>
           <div class="method-source-code" id="gp_practice_is_correct_type-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 775</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 787</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">gp_practice_is_correct_type</span>
   <span class="ruby-identifier">location</span> = <span class="ruby-identifier">gp_practice</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">location</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">location</span>.<span class="ruby-identifier">gp_practice?</span>
@@ -1913,7 +1937,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
             </details>
           </div>
           <div class="method-source-code" id="latest_pds_search_result-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 757</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 769</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">latest_pds_search_result</span>
   <span class="ruby-identifier">nhs_numbers</span> =
     <span class="ruby-identifier">pds_search_results</span>.<span class="ruby-identifier">latest_set</span>&amp;.<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:nhs_number</span>)&amp;.<span class="ruby-identifier">compact</span>&amp;.<span class="ruby-identifier">uniq</span>
@@ -2054,7 +2078,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
             </details>
           </div>
           <div class="method-source-code" id="patient_status-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 769</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 781</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_status</span>(<span class="ruby-identifier">association</span>, <span class="ruby-value">programme:</span>, <span class="ruby-value">academic_year:</span>)
   <span class="ruby-identifier">association</span>.<span class="ruby-identifier">find</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">it</span>.<span class="ruby-identifier">programme_type</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">type</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">academic_year</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">academic_year</span>
@@ -2098,7 +2122,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
             </details>
           </div>
           <div class="method-source-code" id="pds_lookup_match-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 763</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 775</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">pds_lookup_match?</span>
   <span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">nhs_number</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">latest_pds_search_result</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2305,7 +2329,8 @@ reason, but we should be trying again to vaccinate these children.</pre>
 
     <span class="ruby-identifier">patient_locations</span>.<span class="ruby-identifier">pending</span>.<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient_location</span><span class="ruby-operator">|</span>
       <span class="ruby-identifier">new_patient</span>.<span class="ruby-identifier">patient_locations</span>.<span class="ruby-identifier">build</span>(
-        <span class="ruby-operator">**</span><span class="ruby-identifier">patient_location</span>.<span class="ruby-identifier">slice</span>(<span class="ruby-value">:academic_year</span>, <span class="ruby-value">:location_id</span>)
+        <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">patient_location</span>.<span class="ruby-identifier">academic_year</span>,
+        <span class="ruby-value">location_id:</span> <span class="ruby-identifier">patient_location</span>.<span class="ruby-identifier">location_id</span>
       )
     <span class="ruby-keyword">end</span>
 
@@ -2317,6 +2342,17 @@ reason, but we should be trying again to vaccinate these children.</pre>
         <span class="ruby-value">source:</span> <span class="ruby-identifier">school_move</span>.<span class="ruby-identifier">source</span>,
         <span class="ruby-value">team_id:</span> <span class="ruby-identifier">school_move</span>.<span class="ruby-identifier">team_id</span>
       )
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">patient_teams</span>.<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient_team</span><span class="ruby-operator">|</span>
+      <span class="ruby-comment"># Patients that have been duplicated from another won&#39;t have any</span>
+      <span class="ruby-comment">#  vaccination records or imports, therefore we need to filter the</span>
+      <span class="ruby-comment">#  sources.</span>
+      <span class="ruby-identifier">sources</span> =
+        <span class="ruby-identifier">patient_team</span>.<span class="ruby-identifier">sources</span> <span class="ruby-operator">&amp;</span>
+          <span class="ruby-node">%w[patient_location school_move_school school_move_team]</span>
+
+      <span class="ruby-identifier">new_patient</span>.<span class="ruby-identifier">patient_teams</span>.<span class="ruby-identifier">build</span>(<span class="ruby-value">team_id:</span> <span class="ruby-identifier">patient_team</span>.<span class="ruby-identifier">team_id</span>, <span class="ruby-value">sources:</span>)
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
@@ -2482,7 +2518,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
             </details>
           </div>
           <div class="method-source-code" id="search_vaccinations_from_nhs_immunisations_api-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 829</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 841</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">search_vaccinations_from_nhs_immunisations_api</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_search_vaccinations_from_nhs_immunisations_api?</span>
     <span class="ruby-constant">SearchVaccinationRecordsInNHSJob</span>.<span class="ruby-identifier">perform_async</span>(<span class="ruby-identifier">id</span>)
@@ -2616,7 +2652,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
             </details>
           </div>
           <div class="method-source-code" id="should_generate_important_notice-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 835</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 847</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">should_generate_important_notice?</span>
   <span class="ruby-identifier">nhs_number_previously_changed?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">invalidated_at_previously_changed?</span> <span class="ruby-operator">||</span>
     <span class="ruby-identifier">restricted_at_previously_changed?</span> <span class="ruby-operator">||</span>
@@ -2660,7 +2696,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
             </details>
           </div>
           <div class="method-source-code" id="should_search_vaccinations_from_nhs_immunisations_api-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 825</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 837</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">should_search_vaccinations_from_nhs_immunisations_api?</span>
   <span class="ruby-identifier">nhs_number_previously_changed?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2702,7 +2738,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
             </details>
           </div>
           <div class="method-source-code" id="should_sync_vaccinations_to_nhs_immunisations_api-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 815</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 827</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">should_sync_vaccinations_to_nhs_immunisations_api?</span>
   <span class="ruby-identifier">nhs_number_previously_changed?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">invalidated_at_previously_changed?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2800,7 +2836,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
             </details>
           </div>
           <div class="method-source-code" id="sync_vaccinations_to_nhs_immunisations_api-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 819</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 831</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sync_vaccinations_to_nhs_immunisations_api</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_sync_vaccinations_to_nhs_immunisations_api?</span>
     <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">sync_all_to_nhs_immunisations_api</span>
@@ -3142,7 +3178,8 @@ reason, but we should be trying again to vaccinate these children.</pre>
 
     <span class="ruby-identifier">patient_locations</span>.<span class="ruby-identifier">pending</span>.<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient_location</span><span class="ruby-operator">|</span>
       <span class="ruby-identifier">new_patient</span>.<span class="ruby-identifier">patient_locations</span>.<span class="ruby-identifier">build</span>(
-        <span class="ruby-operator">**</span><span class="ruby-identifier">patient_location</span>.<span class="ruby-identifier">slice</span>(<span class="ruby-value">:academic_year</span>, <span class="ruby-value">:location_id</span>)
+        <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">patient_location</span>.<span class="ruby-identifier">academic_year</span>,
+        <span class="ruby-value">location_id:</span> <span class="ruby-identifier">patient_location</span>.<span class="ruby-identifier">location_id</span>
       )
     <span class="ruby-keyword">end</span>
 
@@ -3154,6 +3191,17 @@ reason, but we should be trying again to vaccinate these children.</pre>
         <span class="ruby-value">source:</span> <span class="ruby-identifier">school_move</span>.<span class="ruby-identifier">source</span>,
         <span class="ruby-value">team_id:</span> <span class="ruby-identifier">school_move</span>.<span class="ruby-identifier">team_id</span>
       )
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">patient_teams</span>.<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient_team</span><span class="ruby-operator">|</span>
+      <span class="ruby-comment"># Patients that have been duplicated from another won&#39;t have any</span>
+      <span class="ruby-comment">#  vaccination records or imports, therefore we need to filter the</span>
+      <span class="ruby-comment">#  sources.</span>
+      <span class="ruby-identifier">sources</span> =
+        <span class="ruby-identifier">patient_team</span>.<span class="ruby-identifier">sources</span> <span class="ruby-operator">&amp;</span>
+          <span class="ruby-node">%w[patient_location school_move_school school_move_team]</span>
+
+      <span class="ruby-identifier">new_patient</span>.<span class="ruby-identifier">patient_teams</span>.<span class="ruby-identifier">build</span>(<span class="ruby-value">team_id:</span> <span class="ruby-identifier">patient_team</span>.<span class="ruby-identifier">team_id</span>, <span class="ruby-value">sources:</span>)
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
