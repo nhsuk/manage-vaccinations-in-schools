@@ -23,7 +23,7 @@ class DraftVaccinationRecord
   attribute :identity_check_confirmed_by_patient, :boolean
   attribute :location_id, :integer
   attribute :location_name, :string
-  attribute :mmrv, :boolean
+  attribute :mmrv_vaccine, :boolean
   attribute :notes, :string
   attribute :outcome, :string
   attribute :patient_id, :integer

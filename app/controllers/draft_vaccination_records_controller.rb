@@ -127,12 +127,12 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def handle_mmr_or_mmrv
-    if @draft_vaccination_record.mmrv.nil?
-      @draft_vaccination_record.errors.add(:mmrv, :blank)
+    if @draft_vaccination_record.mmrv_vaccine.nil?
+      @draft_vaccination_record.errors.add(:mmrv_vaccine, :blank)
     end
     @draft_vaccination_record.disease_types =
       Programme::Variant::DISEASE_TYPES[
-        @draft_vaccination_record.mmrv ? "mmrv" : "mmr"
+        @draft_vaccination_record.mmrv_vaccine ? "mmrv" : "mmr"
       ]
   end
 
@@ -222,7 +222,7 @@ class DraftVaccinationRecordsController < ApplicationController
         identity_check_confirmed_by_other_relationship
       ],
       location: %i[location_id],
-      mmr_or_mmrv: %i[mmrv],
+      mmr_or_mmrv: %i[mmrv_vaccine],
       notes: %i[notes],
       outcome: %i[outcome],
       supplier: %i[supplied_by_user_id],
