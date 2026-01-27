@@ -75,7 +75,7 @@ module FHIRMapper
         .value
       attrs[:nhs_immunisations_api_primary_source] = fhir_record.primarySource
 
-      attrs[:programme] = programme_from_fhir(fhir_record)
+      attrs[:programme] = Programme.from_fhir_record(fhir_record)
 
       attrs[:performed_at] = Time.zone.parse(fhir_record.occurrenceDateTime)
       attrs[:outcome] = outcome_from_fhir(fhir_record)
@@ -329,23 +329,6 @@ module FHIRMapper
       #       This doesn't matter much for flu, but this may need to be revisited when we start consuming programmes
       #       where dose number matters more (eg MMR)
       fhir_record.protocolApplied.sole.doseNumberPositiveInt
-    end
-
-    private_class_method def self.programme_from_fhir(fhir_record)
-      target_diseases = fhir_record.protocolApplied.sole.targetDisease
-      target_disease_codes =
-        target_diseases.map do |disease|
-          disease
-            .coding
-            .find { |coding| coding.system == "http://snomed.info/sct" }
-            .code
-        end
-
-      ::Programme.find(
-        ::Programme::SNOMED_TARGET_DISEASE_CODES.key(
-          target_disease_codes.to_set
-        )
-      )
     end
 
     private_class_method def self.batch_from_fhir(fhir_record, vaccine:)
