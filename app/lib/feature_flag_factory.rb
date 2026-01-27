@@ -23,8 +23,8 @@ class FeatureFlagFactory
   ].freeze
 
   def self.enable_for_development!
-    unless Rails.env.development?
-      raise "These flags should only be enabled in development."
+    unless Rails.env.development? || Rails.env.end_to_end?
+      raise "These flags should only be enabled in development or end_to_end."
     end
 
     FEATURES_FOR_DEVELOPMENT.each { Flipper.enable(it) }

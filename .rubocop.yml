@@ -53,6 +53,7 @@ Rails/UnknownEnv:
     - production
     - staging
     - test
+    - end_to_end
 
 RSpec/BeforeAfterAll:
   Exclude:
