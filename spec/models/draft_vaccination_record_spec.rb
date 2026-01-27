@@ -227,6 +227,8 @@ describe DraftVaccinationRecord do
     end
 
     context "when source is 'service'" do
+      before { draft_vaccination_record.wizard_step = :confirm }
+
       let(:attributes) { valid_administered_attributes }
 
       it "is valid" do
@@ -236,6 +238,8 @@ describe DraftVaccinationRecord do
     end
 
     context "when source is invalid" do
+      before { draft_vaccination_record.wizard_step = :confirm }
+
       let(:attributes) do
         valid_administered_attributes.merge(source: "invalid_source")
       end
@@ -249,6 +253,8 @@ describe DraftVaccinationRecord do
     end
 
     context "when source is nil" do
+      before { draft_vaccination_record.wizard_step = :confirm }
+
       let(:attributes) { valid_administered_attributes.except(:source) }
 
       it "is invalid" do

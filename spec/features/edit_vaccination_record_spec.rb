@@ -424,6 +424,21 @@ describe "Edit vaccination record" do
       then_i_should_see_the_vaccination_record
       and_i_should_see_the_patient_based_breadcrumb
     end
+
+    scenario "User edits two vaccination records with different delivery methods" do
+      given_i_am_signed_in
+      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_vaccination_record_with_a_different_delivery_method_exists
+
+      when_i_visit_the_first_vaccination_record_directly
+      and_i_click_on_edit_vaccination_record
+
+      and_i_visit_the_flu_vaccination_record_directly
+      and_i_click_on_edit_vaccination_record
+      and_i_click_on_save_changes
+
+      then_i_should_see_a_success_message
+    end
   end
 
   def given_an_hpv_programme_is_underway
@@ -539,6 +554,33 @@ describe "Edit vaccination record" do
         performed_by_given_name: "Albus",
         performed_by_family_name: "Dumbledore"
       )
+  end
+
+  def and_a_vaccination_record_with_a_different_delivery_method_exists
+    @flu_programme = Programme.flu
+    @flu_vaccine = @flu_programme.vaccines.first
+    @flu_batch =
+      create(:batch, :not_expired, team: @team, vaccine: @flu_vaccine)
+
+    @flu_vaccination_record =
+      create(
+        :vaccination_record,
+        :sourced_from_bulk_upload,
+        uploaded_by: @team.users.first,
+        delivery_method: :nasal_spray,
+        delivery_site: :nose,
+        batch: @flu_batch,
+        vaccine: @flu_batch.vaccine,
+        patient: @patient,
+        programme: @flu_programme,
+        performed_by_user: nil,
+        performed_by_given_name: "Albus",
+        performed_by_family_name: "Dumbledore"
+      )
+
+    expect(@flu_vaccination_record.delivery_method).not_to eq(
+      @vaccination_record.delivery_method
+    )
   end
 
   def and_a_delayed_triage_exists
@@ -996,6 +1038,13 @@ describe "Edit vaccination record" do
     visit vaccination_record_path(@vaccination_record)
   end
 
+  alias_method :when_i_visit_the_first_vaccination_record_directly,
+               :when_i_visit_the_vaccination_record_directly
+
+  def and_i_visit_the_flu_vaccination_record_directly
+    visit vaccination_record_path(@flu_vaccination_record)
+  end
+
   def and_i_should_see_the_session_specific_breadcrumb
     breadcrumb = page.find(".nhsuk-breadcrumb")
     expect(breadcrumb).to have_content("Sessions")
@@ -1029,5 +1078,19 @@ describe "Edit vaccination record" do
     breadcrumb = page.find(".nhsuk-breadcrumb")
     expect(breadcrumb).to have_content("Children")
     expect(breadcrumb).not_to have_content("Sessions")
+  end
+
+  def when_i_edit_the_first_vaccination_record
+    visit vaccination_record_path(@vaccination_record)
+
+    click_on "Edit vaccination record"
+    click_on "Save changes"
+  end
+
+  def then_i_should_see_a_success_message
+    expect(page).to have_alert(
+      "Success",
+      text: "Vaccination outcome recorded for flu"
+    )
   end
 end
