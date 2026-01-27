@@ -54,7 +54,6 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
 
   def eligible_for_mmr_or_mmrv?
     @programme.mmr? &&
-      @patient.date_of_birth >=
-        DraftVaccinationRecord::MMR_OR_MMRV_INTRODUCTION_DATE
+      @patient.eligible_for_mmrv?
   end
 end
