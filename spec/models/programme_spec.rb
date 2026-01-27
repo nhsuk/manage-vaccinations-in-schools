@@ -17,6 +17,41 @@
 describe Programme do
   subject(:programme) { described_class.sample }
 
+  describe "#all_as_variants" do
+    subject(:all_as_variants) { described_class.all_as_variants }
+
+    context "with the mmrv feature flag off" do
+      it "returns all the full programme objects" do
+        expect(all_as_variants).to contain_exactly(
+          described_class.flu,
+          described_class.hpv,
+          described_class.td_ipv,
+          described_class.menacwy,
+          described_class.mmr
+        )
+      end
+    end
+
+    context "with the mmrv feature flag on" do
+      before { Flipper.enable(:mmrv) }
+
+      it "returns all variants where applicable" do
+        expect(all_as_variants).to contain_exactly(
+          described_class.flu,
+          described_class.hpv,
+          described_class.td_ipv,
+          described_class.menacwy,
+          described_class.mmr.variant_for(
+            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
+          ),
+          described_class.mmr.variant_for(
+            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
+          )
+        )
+      end
+    end
+  end
+
   describe "#find" do
     subject(:find) { described_class.find(type) }
 

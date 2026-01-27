@@ -88,6 +88,10 @@ class Programme
       types.map { |type| find(type, patient:, disease_types:) }
     end
 
+    def all_as_variants
+      all.flat_map(&:variants)
+    end
+
     def find(type, disease_types: nil, patient: nil)
       validate_type!(type)
 
