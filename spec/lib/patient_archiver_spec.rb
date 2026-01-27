@@ -2,11 +2,12 @@
 
 describe PatientArchiver do
   subject(:call) do
-    described_class.call(patient:, team:, type:, other_details:)
+    described_class.call(patient:, team:, type:, user:, other_details:)
   end
 
   let(:patient) { create(:patient) }
   let(:team) { create(:team) }
+  let(:user) { create(:user, team:) }
 
   let(:type) { "imported_in_error" }
   let(:other_details) { nil }
@@ -17,6 +18,7 @@ describe PatientArchiver do
     archive_reason = patient.archive_reasons.last
     expect(archive_reason).to be_imported_in_error
     expect(archive_reason.team_id).to eq(team.id)
+    expect(archive_reason.created_by).to eq(user)
   end
 
   context "when in upcoming sessions" do

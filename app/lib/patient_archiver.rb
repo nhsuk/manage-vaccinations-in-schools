@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class PatientArchiver
-  def initialize(patient:, team:, type:, other_details: nil)
+  def initialize(patient:, team:, type:, user: nil, other_details: nil)
     @patient = patient
     @team = team
+    @user = user
     @type = type
     @other_details = other_details
   end
@@ -33,7 +34,8 @@ class PatientArchiver
   attr_reader :patient, :team, :type, :other_details
 
   def archive_reason
-    @archive_reason ||= ArchiveReason.find_or_create_by(team:, patient:)
+    @archive_reason ||=
+      ArchiveReason.find_or_create_by(team:, patient:, created_by: @user)
   end
 
   def destroy_school_moves!
