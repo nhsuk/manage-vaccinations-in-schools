@@ -88,6 +88,10 @@ class Programme
       types.map { |type| find(type, patient:, disease_types:) }
     end
 
+    def all_as_variants
+      all.flat_map(&:variants)
+    end
+
     def find(type, disease_types: nil, patient: nil)
       validate_type!(type)
 
@@ -160,6 +164,25 @@ class Programme
       end
 
     Programme::Variant.new(self, variant_type:)
+  end
+
+  def variants
+    if mmr?
+      [
+        variant_for(
+          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
+        ),
+        (
+          if Flipper.enabled?(:mmrv)
+            variant_for(
+              disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
+            )
+          end
+        )
+      ].compact
+    else
+      [self]
+    end
   end
 
   def disease_types = DISEASE_TYPES.fetch(type)

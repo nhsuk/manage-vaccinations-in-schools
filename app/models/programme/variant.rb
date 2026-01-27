@@ -41,6 +41,10 @@ class Programme::Variant < SimpleDelegator
 
   def import_names = IMPORT_NAMES.fetch(variant_type)
 
+  def variants
+    [self]
+  end
+
   def vaccines
     @vaccines ||= Vaccine.for_programme(self)
   end
