@@ -45,10 +45,7 @@ describe SearchVaccinationRecordsInNHSJob do
     let(:hpv_record) { create(:vaccination_record, programme: Programme.hpv) }
     let(:mmrv_programme) do
       Flipper.enable(:mmrv)
-
-      Programme.mmr.variant_for(
-        disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
-      )
+      Programme::Variant.new(Programme.mmr, variant_type: "mmrv")
     end
     let(:mmrv_record) { create(:vaccination_record, programme: mmrv_programme) }
 
@@ -391,11 +388,12 @@ describe SearchVaccinationRecordsInNHSJob do
     end
 
     let(:patient_id) { patient.id }
+    let(:expected_query_immunization_target) { "3IN1,FLU,HPV,MENACWY,MMR" }
     let(:expected_query) do
       {
         "patient.identifier" =>
           "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}",
-        "-immunization.target" => "3IN1,FLU,HPV,MENACWY,MMR"
+        "-immunization.target" => expected_query_immunization_target
       }
     end
     let(:status) { 200 }
@@ -510,9 +508,7 @@ describe SearchVaccinationRecordsInNHSJob do
         Flipper.enable(:imms_api_search_job, Programme.td_ipv)
         Flipper.enable(
           :imms_api_search_job,
-          Programme.mmr.variant_for(
-            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
-          )
+          Programme::Variant.new(Programme.mmr, variant_type: "mmr")
         )
       end
 
@@ -523,16 +519,97 @@ describe SearchVaccinationRecordsInNHSJob do
       it "creates one vaccination record of each programme" do
         perform
 
-        expect(
-          patient.vaccination_records.map do
-            it.strict_loading!(false)
-            it.programme
-          end
-        ).to match_array(Programme.all)
+        programmes = patient.vaccination_records.map(&:programme)
+
+        expect(programmes).to contain_exactly(
+          Programme.flu,
+          Programme.hpv,
+          Programme.menacwy,
+          Programme.td_ipv,
+          Programme::Variant.new(Programme.mmr, variant_type: "mmr")
+        )
+
+        expect(programmes.select { |it| it.type == "mmr" }).to all(
+          be_a Programme::Variant
+        )
       end
 
       include_examples "sends discovery comms if required n times", 5
       include_examples "calls StatusUpdater"
+    end
+
+    context "with a record for each programme, inc. MMRV (total 6)" do
+      shared_examples "ingests all 6 vaccination record types" do
+        it "creates new vaccination records for incoming Immunizations" do
+          expect { perform }.to change { patient.vaccination_records.count }.by(
+            6
+          )
+        end
+
+        it "creates one vaccination record of each programme" do
+          perform
+
+          programmes = patient.vaccination_records.map(&:programme)
+
+          expect(programmes).to contain_exactly(
+            Programme.flu,
+            Programme.hpv,
+            Programme.menacwy,
+            Programme.td_ipv,
+            Programme::Variant.new(Programme.mmr, variant_type: "mmr"),
+            Programme::Variant.new(Programme.mmr, variant_type: "mmrv")
+          )
+
+          expect(programmes.select { |it| it.type == "mmr" }).to all(
+            be_a Programme::Variant
+          )
+        end
+
+        include_examples "sends discovery comms if required n times", 6
+        include_examples "calls StatusUpdater"
+      end
+
+      let(:expected_query_immunization_target) do
+        "3IN1,FLU,HPV,MENACWY,MMR,MMRV"
+      end
+      let(:body) do
+        file_fixture("fhir/search_response_all_programmes_mmrv.json").read
+      end
+
+      before do
+        Flipper.enable(:mmrv)
+
+        Flipper.disable(:imms_api_search_job)
+      end
+
+      context "with all feature flags explicitly enabled" do
+        before do
+          # Enable feature flag actors explicitly
+          Flipper.enable(:imms_api_search_job, Programme.flu)
+          Flipper.enable(:imms_api_search_job, Programme.hpv)
+          Flipper.enable(:imms_api_search_job, Programme.menacwy)
+          Flipper.enable(:imms_api_search_job, Programme.td_ipv)
+          Flipper.enable(
+            :imms_api_search_job,
+            Programme::Variant.new(Programme.mmr, variant_type: "mmr")
+          )
+          Flipper.enable(
+            :imms_api_search_job,
+            Programme::Variant.new(Programme.mmr, variant_type: "mmrv")
+          )
+        end
+
+        it_behaves_like "ingests all 6 vaccination record types"
+      end
+
+      context "with feature flags enabled as they will be in prod" do
+        before do
+          # Enable feature flag actors as they will be in prod, after MMRV is enabled
+          Flipper.enable(:imms_api_search_job)
+        end
+
+        it_behaves_like "ingests all 6 vaccination record types"
+      end
     end
 
     context "with a mavis record in the database" do
