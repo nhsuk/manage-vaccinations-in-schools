@@ -165,10 +165,10 @@ resource "aws_iam_policy" "run_ecs_task" {
   }
 }
 
-resource "aws_iam_policy" "github_assurance_s3_endtoend_reports" {
+resource "aws_iam_policy" "github_assurance_s3_mavis_end_to_end_test_reports" {
   count       = var.environment == "development" ? 1 : 0
   name        = "GithubAssuranceS3EndToEndReports"
-  description = "Allow GitHubAssuranceTestRole to manage objects in endtoendtest-reports bucket"
+  description = "Allow GitHubAssuranceTestRole to manage objects in mavis-end-to-end-test-reports bucket"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -177,7 +177,7 @@ resource "aws_iam_policy" "github_assurance_s3_endtoend_reports" {
         Sid      = "ListReportsBucket"
         Effect   = "Allow"
         Action   = ["s3:ListBucket"]
-        Resource = "arn:aws:s3:::endtoendtest-reports"
+        Resource = "arn:aws:s3:::mavis-end-to-end-test-reports"
       },
       {
         Sid    = "ManageReportsObjects"
@@ -187,7 +187,7 @@ resource "aws_iam_policy" "github_assurance_s3_endtoend_reports" {
           "s3:PutObject",
           "s3:DeleteObject"
         ]
-        Resource = "arn:aws:s3:::endtoendtest-reports/*"
+        Resource = "arn:aws:s3:::mavis-end-to-end-test-reports/*"
       }
     ]
   })
@@ -197,10 +197,10 @@ resource "aws_iam_policy" "github_assurance_s3_endtoend_reports" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "github_assurance_s3_endtoend_reports" {
+resource "aws_iam_role_policy_attachment" "github_assurance_s3_mavis_end_to_end_test_reports" {
   count      = var.environment == "development" ? 1 : 0
   role       = aws_iam_role.github_assurance[0].name
-  policy_arn = aws_iam_policy.github_assurance_s3_endtoend_reports[0].arn
+  policy_arn = aws_iam_policy.github_assurance_s3_mavis_end_to_end_test_reports[0].arn
 }
 
 resource "aws_iam_role_policy_attachment" "run_ecs_task_custom" {

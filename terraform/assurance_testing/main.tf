@@ -83,11 +83,11 @@ module "s3_performance_reports" {
   logging_target_prefix    = "performancetest-reports/"
 }
 
-module "s3_endtoend_reports" {
+module "s3_mavis_end_to_end_test_reports" {
   source                   = "../modules/s3"
-  bucket_name              = "endtoendtest-reports"
+  bucket_name              = "mavis-end-to-end-test-reports"
   logging_target_bucket_id = data.aws_s3_bucket.access_logs.id
-  logging_target_prefix    = "endtoendtest-reports/"
+  logging_target_prefix    = "mavis-end-to-end-test-reports/"
 
   additional_policy_statements = [
     {
@@ -97,7 +97,7 @@ module "s3_endtoend_reports" {
         "s3:GetObject",
       ]
       resources = [
-        "arn:aws:s3:::endtoendtest-reports/*",
+        "arn:aws:s3:::mavis-end-to-end-test-reports/*",
       ]
       principals = [
         {
@@ -108,33 +108,33 @@ module "s3_endtoend_reports" {
       condition = {
         test     = "StringEquals"
         variable = "AWS:SourceArn"
-        values   = [aws_cloudfront_distribution.endtoend_reports.arn]
+        values   = [aws_cloudfront_distribution.mavis_end_to_end_test_reports.arn]
       }
     }
   ]
 }
 
-resource "aws_cloudfront_origin_access_control" "endtoend_reports" {
-  name                              = "endtoend-reports-oac"
-  description                       = "OAC for end-to-end test reports bucket"
+resource "aws_cloudfront_origin_access_control" "mavis_end_to_end_test_reports" {
+  name                              = "mavis-end-to-end-test-reports-oac"
+  description                       = "OAC for mavis-end-to-end-test-reports bucket"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
 }
 
-resource "aws_cloudfront_distribution" "endtoend_reports" {
+resource "aws_cloudfront_distribution" "mavis_end_to_end_test_reports" {
   enabled             = true
   comment             = "End-to-end test reports"
   default_root_object = "index.html"
 
   origin {
-    domain_name              = module.s3_endtoend_reports.bucket_regional_domain_name
-    origin_id                = "s3-endtoend-reports"
-    origin_access_control_id = aws_cloudfront_origin_access_control.endtoend_reports.id
+    domain_name              = module.s3_mavis_end_to_end_test_reports.bucket_regional_domain_name
+    origin_id                = "s3-mavis-end-to-end-test-reports"
+    origin_access_control_id = aws_cloudfront_origin_access_control.mavis_end_to_end_test_reports.id
   }
 
   default_cache_behavior {
-    target_origin_id       = "s3-endtoend-reports"
+    target_origin_id       = "s3-mavis-end-to-end-test-reports"
     viewer_protocol_policy = "redirect-to-https"
 
     allowed_methods = ["GET", "HEAD"]
