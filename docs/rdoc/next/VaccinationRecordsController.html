@@ -655,7 +655,7 @@
             </details>
           </div>
           <div class="method-source-code" id="confirm_destroy-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/vaccination_records_controller.rb, line 20</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/vaccination_records_controller.rb, line 27</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">confirm_destroy</span>
   <span class="ruby-identifier">authorize</span> <span class="ruby-ivar">@vaccination_record</span>, <span class="ruby-value">:destroy?</span>
   <span class="ruby-identifier">render</span> <span class="ruby-value">:destroy</span>
@@ -698,7 +698,7 @@
             </details>
           </div>
           <div class="method-source-code" id="destroy-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/vaccination_records_controller.rb, line 25</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/vaccination_records_controller.rb, line 32</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">destroy</span>
   <span class="ruby-identifier">authorize</span> <span class="ruby-ivar">@vaccination_record</span>
 
@@ -795,10 +795,17 @@
           <div class="method-source-code" id="update-source">
             <pre class="ruby"><span class="ruby-comment"># File app/controllers/vaccination_records_controller.rb, line 11</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>
-  <span class="ruby-constant">DraftVaccinationRecord</span>.<span class="ruby-identifier">new</span>(
-    <span class="ruby-value">request_session:</span> <span class="ruby-identifier">session</span>,
-    <span class="ruby-value">current_user:</span>
-  ).<span class="ruby-identifier">read_from!</span>(<span class="ruby-ivar">@vaccination_record</span>)
+  <span class="ruby-identifier">draft_vaccination_record</span> =
+    <span class="ruby-constant">DraftVaccinationRecord</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">request_session:</span> <span class="ruby-identifier">session</span>, <span class="ruby-value">current_user:</span>)
+  <span class="ruby-comment"># TODO: Refactor this so that we don&#39;t need to clear out the attributes from</span>
+  <span class="ruby-comment">#       the draft record(s) in this use case. This likely means changing</span>
+  <span class="ruby-comment">#       RequestSessionPersistable to do this clearing out. One possible</span>
+  <span class="ruby-comment">#       approach would be to change `new` to instantiate without loading</span>
+  <span class="ruby-comment">#       values from the session, and adding `new_from_session` to replace</span>
+  <span class="ruby-comment">#       the existing functionality in `new`.</span>
+  <span class="ruby-identifier">draft_vaccination_record</span>.<span class="ruby-identifier">clear!</span>
+  <span class="ruby-identifier">draft_vaccination_record</span>.<span class="ruby-identifier">clear_changes_information</span>
+  <span class="ruby-identifier">draft_vaccination_record</span>.<span class="ruby-identifier">read_from!</span>(<span class="ruby-ivar">@vaccination_record</span>)
 
   <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">draft_vaccination_record_path</span>(<span class="ruby-string">&quot;confirm&quot;</span>)
 <span class="ruby-keyword">end</span></pre>
