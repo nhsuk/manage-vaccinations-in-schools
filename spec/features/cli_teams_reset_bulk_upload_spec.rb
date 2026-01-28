@@ -25,6 +25,7 @@ describe "mavis teams reset-bulk-upload" do
     it "removes all immunisation imports, associated vaccination records, and associated patients" do
       given_a_bulk_upload_team_exists
       and_i_upload_some_vaccination_records
+      and_i_view_a_patient_record
 
       when_i_run_the_command_for_single_team
 
@@ -38,6 +39,8 @@ describe "mavis teams reset-bulk-upload" do
       given_a_bulk_upload_team_exists
       and_a_poc_only_team_exists
       and_a_patient_is_associated_with_both_teams
+      and_i_sign_in
+      and_i_view_the_patient_that_is_associated_with_both_teams
 
       when_i_run_the_command_for_single_team
 
@@ -46,7 +49,8 @@ describe "mavis teams reset-bulk-upload" do
       and_the_vaccination_record_is_deleted
       and_the_archive_reason_is_deleted
       and_the_patient_team_relationships_are_updated
-      and_the_a_status_updater_job_is_enqueued
+      and_the_status_updater_job_is_enqueued
+      and_the_access_log_entry_is_not_deleted
     end
 
     it "handles the case when a non bulk upload team is in the same org" do
@@ -193,6 +197,21 @@ describe "mavis teams reset-bulk-upload" do
     click_on "Continue"
     wait_for_import_to_complete(ImmunisationImport)
     expect(page).to have_content("StatusCompleted")
+  end
+
+  def and_i_view_a_patient_record
+    find(".nhsuk-details__summary", text: "2 imported records").click
+    click_on "POTTER, Harry"
+    click_on "POTTER, Harry"
+  end
+
+  def and_i_sign_in
+    @user = @bulk_team.users.first
+    sign_in @user
+  end
+
+  def and_i_view_the_patient_that_is_associated_with_both_teams
+    visit "/patients/#{@shared_patient.id}"
   end
 
   def and_the_bulk_upload_team_has_immunisation_imports_with_vaccination_records
@@ -454,7 +473,11 @@ describe "mavis teams reset-bulk-upload" do
     expect(Patient.where(id: @patient2.id)).to be_empty
   end
 
-  def and_the_a_status_updater_job_is_enqueued
+  def and_the_status_updater_job_is_enqueued
     expect(StatusUpdaterJob).to have_enqueued_sidekiq_job(@shared_patient.id)
+  end
+
+  def and_the_access_log_entry_is_not_deleted
+    expect(AccessLogEntry.where(patient: @shared_patient)).to exist
   end
 end
