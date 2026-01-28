@@ -9,7 +9,12 @@ class ProcessConsentFormJob < ApplicationJob
     @consent_form =
       ConsentForm.includes(:consent_form_programmes).find(consent_form.id)
 
-    return if already_matched?
+    if already_matched?
+      patient = consent_form.matched_patient
+      patient.assign_ethnicity_from(consent_form)
+      patient.save!
+      return
+    end
 
     begin
       if match_with_exact_nhs_number

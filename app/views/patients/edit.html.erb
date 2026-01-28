@@ -6,6 +6,7 @@
 
 <% change_links = {
      nhs_number: edit_nhs_number_patient_path(@patient),
+     ethnicity: edit_ethnic_group_patient_path(@patient),
      school: edit_school_patient_path(@patient),
      parent: @patient.parent_relationships.each_with_object({}) do |parent_relationship, memo|
        memo[parent_relationship.parent_id] = edit_patient_parent_relationship_path(@patient, parent_relationship.parent_id)

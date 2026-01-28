@@ -13,6 +13,9 @@
 #  date_of_birth              :date             not null
 #  date_of_death              :date
 #  date_of_death_recorded_at  :datetime
+#  ethnic_background          :integer
+#  ethnic_background_other    :string
+#  ethnic_group               :integer
 #  family_name                :string           not null
 #  gender_code                :integer          default("not_known"), not null
 #  given_name                 :string           not null

@@ -13,6 +13,9 @@
 #  date_of_birth              :date             not null
 #  date_of_death              :date
 #  date_of_death_recorded_at  :datetime
+#  ethnic_background          :integer
+#  ethnic_background_other    :string
+#  ethnic_group               :integer
 #  family_name                :string           not null
 #  gender_code                :integer          default("not_known"), not null
 #  given_name                 :string           not null
@@ -120,6 +123,19 @@ FactoryBot.define do
     parent_relationships do
       parents.map do |parent|
         association(:parent_relationship, patient: instance, parent:)
+      end
+    end
+
+    after(:build) do |patient, _|
+      if patient.ethnic_group.blank?
+        group = Patient.ethnic_backgrounds_by_group.keys.sample
+        ethnic_background = Patient.ethnic_backgrounds_for_group(group).sample
+        patient.ethnic_group = group
+        patient.ethnic_background = ethnic_background
+
+        if Patient.any_other_ethnic_backgrounds.include?(ethnic_background)
+          patient.ethnic_background_other = "Any other background details"
+        end
       end
     end
 

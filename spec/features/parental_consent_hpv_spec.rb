@@ -20,6 +20,7 @@ describe "Parental consent" do
     then_i_can_check_my_answers
 
     when_i_submit_the_consent_form
+    and_i_refuse_to_answer_questions_on_ethnicity
     then_i_see_the_confirmation_page
 
     when_i_wait_for_the_background_jobs_to_complete
@@ -210,5 +211,10 @@ describe "Parental consent" do
     expect(page).to have_content(
       "#{@child.full_name} is ready for the vaccinator"
     )
+  end
+
+  def and_i_refuse_to_answer_questions_on_ethnicity
+    choose "No, skip the ethnicity questions"
+    click_on "Continue"
   end
 end

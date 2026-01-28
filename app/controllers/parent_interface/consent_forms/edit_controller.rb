@@ -74,10 +74,23 @@ module ParentInterface
 
       skip_to_confirm_or_next_health_question
 
-      render_wizard model
+      if current_step == :ethnicity && model.ethnicity_question == "no"
+        redirect_to confirmation_parent_interface_consent_form_path(model)
+        return
+      end
+
+      render_wizard model, context:
     end
 
     private
+
+    def context
+      if @consent_form.ethnicity_steps.include?(current_step)
+        :ethnicity_update
+      else
+        :update
+      end
+    end
 
     def finish_wizard_path
       confirm_parent_interface_consent_form_path(@consent_form)
@@ -102,6 +115,9 @@ module ParentInterface
           date_of_birth(1i)
         ],
         education_setting: %i[education_setting],
+        ethnicity: %i[ethnicity_question],
+        ethnic_group: %i[ethnic_group],
+        ethnic_background: %i[ethnic_background ethnic_background_other],
         injection_alternative: %i[injection_alternative],
         name: %i[
           given_name
@@ -137,7 +153,12 @@ module ParentInterface
     end
 
     def set_steps
-      self.steps = @consent_form.wizard_steps
+      self.steps =
+        if @consent_form.recorded?
+          @consent_form.ethnicity_steps
+        else
+          @consent_form.wizard_steps
+        end
     end
 
     def set_health_answer
@@ -245,6 +266,14 @@ module ParentInterface
     def skip_to_confirm_or_next_health_question
       if skip_to_confirm?
         return if @skip_to.present? # already going somewhere else
+
+        if @consent_form.ethnicity_steps.include?(current_step)
+          # When editing ethnicity from the confirm page, we still need to
+          # traverse the ethnicity steps in order.
+          # Only return to confirm once the ethnicity flow is complete.
+          jump_to(Wicked::FINISH_STEP) if current_step == :ethnic_background
+          return
+        end
 
         if is_health_question_step? && next_health_answer_missing_response?
           jump_to "health-question", question_number: next_health_question

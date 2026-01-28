@@ -1,0 +1,38 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: backlink_path) %>
+<% end %>
+
+<% group = @consent_form.ethnic_group&.to_sym %>
+<% group_label = t("ethnicity.groups.#{group}") %>
+
+<% title = t("ethnicity.ethnic_background_title", group_label:, group_key: group) %>
+<% content_for :page_title, title %>
+
+<% ethnic_background_options = ConsentForm.ethnic_backgrounds_for_group(group) %>
+<% any_other_backgrounds = ConsentForm.any_other_ethnic_backgrounds.map(&:to_s) %>
+
+<%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_radio_buttons_fieldset :ethnic_background, legend: { size: "l", text: title, tag: "h1" } do %>
+    <% ethnic_background_options.each_with_index do |background, index| %>
+      <% if any_other_backgrounds.include?(background.to_s) %>
+        <%= f.govuk_radio_button :ethnic_background,
+                                 background.to_s,
+                                 label: { text: t("ethnicity.backgrounds.#{background}") },
+                                 link_errors: index.zero? do %>
+          <%= f.govuk_text_field :ethnic_background_other, label: {
+                                                             text: "How would you describe your child’s background? (optional)",
+                                                           } %>
+        <% end %>
+      <% else %>
+        <%= f.govuk_radio_button :ethnic_background,
+                                 background.to_s,
+                                 label: { text: t("ethnicity.backgrounds.#{background}") },
+                                 link_errors: index.zero? %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

@@ -13,6 +13,9 @@
 #  confirmation_sent_at                :datetime
 #  date_of_birth                       :date
 #  education_setting                   :integer
+#  ethnic_background                   :integer
+#  ethnic_background_other             :string
+#  ethnic_group                        :integer
 #  family_name                         :text
 #  given_name                          :text
 #  health_answers                      :jsonb            not null
@@ -364,6 +367,16 @@ describe ConsentForm do
           consent_form.save # rubocop:disable Rails/SaveBang
           expect(consent_form).to be_valid
         end
+      end
+    end
+
+    context "when wizard_step is :ethnicity_question" do
+      let(:wizard_step) { :ethnicity_question }
+
+      it do
+        expect(consent_form).to validate_inclusion_of(:ethnicity_question).on(
+          :ethnicity_update
+        ).in_array(%w[yes no])
       end
     end
   end

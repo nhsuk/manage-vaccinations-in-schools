@@ -1,3 +1,4 @@
+<% session.delete(:consent_form_id) %>
 <% component = AppConsentConfirmationComponent.new(@consent_form) %>
 <%= content_for :page_title, component.title %>
 <%= render component %>

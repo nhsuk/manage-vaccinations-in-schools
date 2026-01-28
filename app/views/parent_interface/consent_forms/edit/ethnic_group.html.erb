@@ -1,0 +1,23 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: backlink_path) %>
+<% end %>
+
+<% title = t("ethnicity.ethnic_group_title") %>
+<% content_for :page_title, title %>
+
+<% ethnic_group_options = ConsentForm.ethnic_backgrounds_by_group.keys %>
+
+<%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_radio_buttons_fieldset :ethnic_group, legend: { size: "m", text: title, tag: "h1" } do %>
+    <% ethnic_group_options.each_with_index do |group, index| %>
+      <%= f.govuk_radio_button :ethnic_group,
+                               group.to_s,
+                               label: { text: t("ethnicity.groups.#{group}") },
+                               link_errors: index.zero? %>
+    <% end %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

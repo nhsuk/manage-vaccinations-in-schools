@@ -14,6 +14,7 @@ describe "Parental consent" do
     then_i_see_the_check_and_confirm_page
 
     when_i_submit_the_consent_form
+    and_i_refuse_to_answer_questions_on_ethnicity
     then_i_see_the_confirmation_page
   end
 
@@ -28,6 +29,7 @@ describe "Parental consent" do
     then_i_see_the_check_and_confirm_page
 
     when_i_submit_the_consent_form
+    and_i_refuse_to_answer_questions_on_ethnicity
     then_i_see_the_confirmation_page
   end
 
@@ -39,6 +41,7 @@ describe "Parental consent" do
     then_i_see_the_check_and_confirm_page
 
     when_i_submit_the_consent_form
+    and_i_refuse_to_answer_questions_on_ethnicity
     then_i_see_the_confirmation_page_about_refusal
   end
 
@@ -173,5 +176,10 @@ describe "Parental consent" do
     expect(page).to have_content(
       "do not want River Cartwright to get the MMR vaccination at school"
     )
+  end
+
+  def and_i_refuse_to_answer_questions_on_ethnicity
+    choose "No, skip the ethnicity questions"
+    click_on "Continue"
   end
 end

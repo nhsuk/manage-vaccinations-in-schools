@@ -14,6 +14,7 @@ describe "Triage" do
 
     when_i_go_to_the_consent_form_as_a_parent
     and_i_refuse_consent
+    and_i_refuse_to_answer_questions_on_ethnicity
     then_i_see_the_confirmation_page
 
     when_i_wait_for_background_jobs_to_complete
@@ -126,5 +127,10 @@ describe "Triage" do
 
   def then_i_see_the_patient_is_not_safe_to_vaccinate
     expect(page).to have_content("Conflicting consent")
+  end
+
+  def and_i_refuse_to_answer_questions_on_ethnicity
+    choose "No, skip the ethnicity questions"
+    click_on "Continue"
   end
 end

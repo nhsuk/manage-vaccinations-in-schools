@@ -15,9 +15,17 @@ class PatientPolicy < ApplicationPolicy
 
   def edit_nhs_number? = edit?
 
+  def edit_ethnic_group? = edit?
+
+  def edit_ethnic_background? = edit?
+
   def edit_school? = edit?
 
   def update_nhs_number? = update?
+
+  def update_ethnic_group? = update?
+
+  def update_ethnic_background? = update?
 
   def update_nhs_number_merge? = update?
 

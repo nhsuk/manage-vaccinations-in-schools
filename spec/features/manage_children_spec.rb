@@ -250,6 +250,15 @@ describe "Manage children" do
     and_i_do_not_see_gillick_no_notify_notices
   end
 
+  scenario "Edit child ethnicity information" do
+    given_patients_exist
+    and_i_am_on_the_child_edit_page
+    when_i_click_on_change_ethnicity
+    and_i_choose_another_ethnic_group
+    and_i_choose_another_ethnic_background
+    then_the_ethnicity_is_changed
+  end
+
   def given_my_team_exists
     @hpv = Programme.hpv
     @flu = Programme.flu
@@ -310,6 +319,9 @@ describe "Manage children" do
         given_name: "Jane",
         family_name: "Doe"
       )
+    @current_ethnic_group = @patient.ethnic_group
+    @current_ethnic_background = @patient.ethnic_background
+
     create(:vaccination_record, patient: @existing_patient)
 
     StatusUpdater.call
@@ -491,6 +503,10 @@ describe "Manage children" do
 
   def when_i_click_on_change_nhs_number
     click_on "Change NHS number"
+  end
+
+  def when_i_click_on_change_ethnicity
+    click_on "Change Ethnicity"
   end
 
   def when_i_click_on_change_school
@@ -775,5 +791,40 @@ describe "Manage children" do
   def and_the_vaccination_record_is_deleted_from_the_nhs
     Sidekiq::Job.drain_all
     expect(@stubbed_delete_request).to have_been_requested
+  end
+
+  def and_i_am_on_the_child_edit_page
+    sign_in @team.users.first
+    visit edit_patient_path(@patient)
+  end
+
+  def and_i_choose_another_ethnic_group
+    @new_ethnic_group =
+      choose_different_radio(field_name: "patient[ethnic_group]")
+    click_on "Continue"
+  end
+
+  def and_i_choose_another_ethnic_background
+    @new_ethnic_background =
+      choose_different_radio(field_name: "patient[ethnic_background]")
+    click_on "Continue"
+  end
+
+  def choose_different_radio(field_name:)
+    radios =
+      page.all("input[name='#{field_name}'][type='radio']", visible: :all)
+    currently_checked_value = radios.find(&:checked?)&.value
+    candidate = radios.find { it.value != currently_checked_value }
+    candidate.choose
+    candidate.value
+  end
+
+  def then_the_ethnicity_is_changed
+    ethnic_group_text = I18n.t("ethnicity.groups.#{@new_ethnic_group}")
+    ethnic_background_text =
+      I18n.t("ethnicity.backgrounds.#{@new_ethnic_background}")
+    expect(page).to have_content(
+      "#{ethnic_group_text} (#{ethnic_background_text})"
+    )
   end
 end

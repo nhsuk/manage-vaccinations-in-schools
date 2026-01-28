@@ -13,6 +13,9 @@
 #  confirmation_sent_at                :datetime
 #  date_of_birth                       :date
 #  education_setting                   :integer
+#  ethnic_background                   :integer
+#  ethnic_background_other             :string
+#  ethnic_group                        :integer
 #  family_name                         :text
 #  given_name                          :text
 #  health_answers                      :jsonb            not null
@@ -130,6 +133,18 @@ FactoryBot.define do
     after(:build) do |consent_form, evaluator|
       evaluator.programmes.each do |programme|
         consent_form.consent_form_programmes.build(programme:)
+      end
+
+      if consent_form.ethnic_group.blank?
+        group = ConsentForm.ethnic_backgrounds_by_group.keys.sample
+        ethnic_background =
+          ConsentForm.ethnic_backgrounds_for_group(group).sample
+        consent_form.ethnic_group = group
+        consent_form.ethnic_background = ethnic_background
+
+        if ConsentForm.any_other_ethnic_backgrounds.include?(ethnic_background)
+          consent_form.ethnic_background_other = "Any other background details"
+        end
       end
     end
 

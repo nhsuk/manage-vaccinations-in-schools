@@ -104,9 +104,21 @@
           row.with_value { @consent_form.date_of_birth.to_fs(:long) }
           row.with_action(
             text: "Change",
-            href: change_link["date-of-birth"],
-            visually_hidden_text: "date of birth",
+            href: change_link["ethnicity"],
+            visually_hidden_text: "ethnicity",
           )
+        end
+      
+        if @consent_form.ethnic_group.present?
+          summary_list.with_row do |row|
+            row.with_key { "Ethnicity" }
+            row.with_value { @consent_form.ethnic_group_and_background }
+            row.with_action(
+              text: "Change",
+              href: change_link["ethnic-group"],
+              visually_hidden_text: "date of birth",
+            )
+          end
         end
       
         if @consent_form.response_given?
