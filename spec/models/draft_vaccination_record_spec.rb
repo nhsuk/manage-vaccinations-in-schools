@@ -49,7 +49,7 @@ describe DraftVaccinationRecord do
   describe "validations" do
     context "when performed_at is in the future" do
       let(:attributes) do
-        valid_administered_attributes.merge(performed_at: 1.second.from_now)
+        valid_administered_attributes.merge(performed_at: 1.day.from_now)
       end
 
       around { |example| freeze_time { example.run } }
@@ -58,8 +58,8 @@ describe DraftVaccinationRecord do
 
       it "has an error" do
         expect(draft_vaccination_record.save(context: :update)).to be(false)
-        expect(draft_vaccination_record.errors[:performed_at]).to include(
-          "The vaccination cannot take place after #{Time.current.to_fs(:long)}"
+        expect(draft_vaccination_record.errors[:performed_at_date]).to include(
+          "The vaccination cannot take place after #{Date.current.to_fs(:long)}"
         )
       end
     end
@@ -77,8 +77,8 @@ describe DraftVaccinationRecord do
 
       it "has an error" do
         expect(draft_vaccination_record.save(context: :update)).to be(false)
-        expect(draft_vaccination_record.errors[:performed_at]).to include(
-          "The vaccination cannot take place before 1 September 2024 at 12:00am"
+        expect(draft_vaccination_record.errors[:performed_at_date]).to include(
+          "The vaccination cannot take place before 1 September 2024"
         )
       end
     end
@@ -106,8 +106,8 @@ describe DraftVaccinationRecord do
 
       it "has an error" do
         expect(draft_vaccination_record.save(context: :update)).to be(false)
-        expect(draft_vaccination_record.errors[:performed_at]).to include(
-          "The vaccination cannot take place after 31 August 2024 at 11:59pm"
+        expect(draft_vaccination_record.errors[:performed_at_date]).to include(
+          "The vaccination cannot take place after 31 August 2024"
         )
       end
     end

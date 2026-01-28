@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_22_191433) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_22_212146) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -943,8 +943,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_191433) do
     t.integer "outcome", null: false
     t.bigint "patient_id", null: false
     t.jsonb "pending_changes", default: {}, null: false
-    t.datetime "performed_at", null: false
-    t.date "performed_at_date"
+    t.datetime "performed_at"
+    t.date "performed_at_date", null: false
     t.time "performed_at_time"
     t.string "performed_by_family_name"
     t.string "performed_by_given_name"
@@ -1133,7 +1133,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_191433) do
               vr_tl.academic_year,
               count(*) FILTER (WHERE (vr.outcome = 0)) AS sais_vaccinations_count,
               bool_or((vr.outcome = 0)) AS has_sais_vaccination,
-              max(vr.performed_at) FILTER (WHERE (vr.outcome = 0)) AS most_recent_vaccination,
+              max(vr.performed_at_date) FILTER (WHERE (vr.outcome = 0)) AS most_recent_vaccination,
               bool_or(((vr.outcome = 0) AND (vr.delivery_method = 2))) AS has_nasal,
               bool_or(((vr.outcome = 0) AND (vr.delivery_method = ANY (ARRAY[0, 1])))) AS has_injection
              FROM ((vaccination_records vr
@@ -1156,8 +1156,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_191433) do
            SELECT vr.patient_id,
               vr.programme_type,
                   CASE
-                      WHEN (EXTRACT(month FROM ((vr.performed_at AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text)) >= (9)::numeric) THEN (EXTRACT(year FROM ((vr.performed_at AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text)))::integer
-                      ELSE ((EXTRACT(year FROM ((vr.performed_at AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text)))::integer - 1)
+                      WHEN (EXTRACT(month FROM vr.performed_at_date) >= (9)::numeric) THEN (EXTRACT(year FROM vr.performed_at_date))::integer
+                      ELSE ((EXTRACT(year FROM vr.performed_at_date))::integer - 1)
                   END AS academic_year,
               NULL::bigint AS team_id,
               vr.outcome,
@@ -1202,8 +1202,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_191433) do
               (vr_elsewhere_recorded.patient_id IS NOT NULL) AS vaccinated_elsewhere_recorded_current_year,
               ((vr_previous.patient_id IS NOT NULL) AND (vaccination_summary.has_sais_vaccination IS NOT TRUE) AND (vr_elsewhere_declared.patient_id IS NULL) AND (consent_already_vaccinated.patient_id IS NULL) AND (vr_elsewhere_recorded.patient_id IS NULL)) AS vaccinated_in_previous_years,
               COALESCE(vaccination_summary.sais_vaccinations_count, (0)::bigint) AS sais_vaccinations_count,
-              EXTRACT(month FROM ((vaccination_summary.most_recent_vaccination AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text)) AS most_recent_vaccination_month,
-              EXTRACT(year FROM ((vaccination_summary.most_recent_vaccination AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text)) AS most_recent_vaccination_year,
+              EXTRACT(month FROM vaccination_summary.most_recent_vaccination) AS most_recent_vaccination_month,
+              EXTRACT(year FROM vaccination_summary.most_recent_vaccination) AS most_recent_vaccination_year,
               COALESCE(pps.consent_status, 0) AS consent_status,
               pps.consent_vaccine_methods,
               (parent_refused.patient_id IS NOT NULL) AS parent_refused_consent_current_year,
@@ -1256,7 +1256,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_191433) do
                     WHERE (all_vaccinations_by_year.outcome = ANY (ARRAY[0, 4]))) vr_any ON (((vr_any.patient_id = p.id) AND (vr_any.programme_type = patient_team_prog.s_programme_type) AND (vr_any.academic_year = tl.academic_year))))
                LEFT JOIN ( SELECT DISTINCT vr.patient_id,
                       vr.programme_type,
-                      COALESCE((vr_tl.academic_year)::numeric, EXTRACT(year FROM ((vr.performed_at AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text))) AS academic_year
+                      COALESCE((vr_tl.academic_year)::numeric, EXTRACT(year FROM vr.performed_at_date)) AS academic_year
                      FROM ((vaccination_records vr
                        LEFT JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
                        LEFT JOIN team_locations vr_tl ON ((vr_tl.id = vr_s.team_location_id)))
@@ -1284,7 +1284,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_191433) do
                    LIMIT 1) pps ON (true))
                LEFT JOIN ( SELECT DISTINCT vr.patient_id,
                       vr.programme_type,
-                      COALESCE((vr_tl.academic_year)::numeric, EXTRACT(year FROM ((vr.performed_at AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text))) AS academic_year
+                      COALESCE((vr_tl.academic_year)::numeric, EXTRACT(year FROM vr.performed_at_date)) AS academic_year
                      FROM ((vaccination_records vr
                        LEFT JOIN sessions vr_s ON ((vr_s.id = vr.session_id)))
                        LEFT JOIN team_locations vr_tl ON ((vr_tl.id = vr_s.team_location_id)))

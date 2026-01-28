@@ -27,6 +27,17 @@ GIT
       webrick
 
 GIT
+  remote: https://github.com/thomasleese/govuk-form-builder.git
+  revision: d0629ac6e098a6411f0f9da77a3400a3019ebdea
+  branch: time-field
+  specs:
+    govuk_design_system_formbuilder (5.13.0)
+      actionview (>= 6.1)
+      activemodel (>= 6.1)
+      activesupport (>= 6.1)
+      html-attributes-utils (~> 1)
+
+GIT
   remote: https://github.com/tvararu/audited.git
   revision: e089773f10f8ef5e5e92a2052a2fea55f83091d2
   branch: encryption
@@ -302,11 +313,6 @@ GEM
       html-attributes-utils (~> 1.0.0, >= 1.0.0)
       pagy (>= 6, < 10)
       view_component (>= 4.0, < 4.2)
-    govuk_design_system_formbuilder (5.13.0)
-      actionview (>= 6.1)
-      activemodel (>= 6.1)
-      activesupport (>= 6.1)
-      html-attributes-utils (~> 1)
     govuk_markdown (2.0.3)
       activesupport
       redcarpet
@@ -846,7 +852,7 @@ DEPENDENCIES
   flipper-active_record
   flipper-ui
   govuk-components
-  govuk_design_system_formbuilder
+  govuk_design_system_formbuilder!
   govuk_markdown
   hotwire-livereload
   indefinite_article

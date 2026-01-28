@@ -29,10 +29,10 @@
 #  fk_rails_...  (performed_by_user_id => users.id)
 #
 class PreScreening < ApplicationRecord
-  include BelongsToProgramme
   include BelongsToLocationAndDate
+  include BelongsToPerformedByUser
+  include BelongsToProgramme
   include Notable
-  include PerformableByUser
 
   audited associated_with: :patient
 

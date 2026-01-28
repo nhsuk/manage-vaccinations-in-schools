@@ -33,7 +33,7 @@ module FHIRMapper
       immunisation.vaccineCode = vaccine.fhir_codeable_concept
 
       immunisation.patient = FHIR::Reference.new(reference: "#Patient1")
-      immunisation.occurrenceDateTime = performed_at.iso8601(3)
+      immunisation.occurrenceDateTime = performed_at.to_time.iso8601(3)
       immunisation.recorded = created_at.iso8601(3)
       immunisation.primarySource = sourced_from_service?
       immunisation.manufacturer = vaccine.fhir_manufacturer_reference

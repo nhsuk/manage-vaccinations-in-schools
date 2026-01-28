@@ -13,6 +13,7 @@ class Reports::CareplusExporter
     CSV.generate(headers:, write_headers: true) do |csv|
       vaccination_records
         .group_by(&:patient)
+        .transform_values(&:reverse)
         .each do |patient, vaccination_records|
           rows(patient:, vaccination_records:).each { |row| csv << row }
         end
@@ -73,7 +74,7 @@ class Reports::CareplusExporter
         .where(team_location: { team_id: team.id })
         .for_academic_year(academic_year)
         .administered
-        .order(:performed_at)
+        .order_by_performed_at
         .includes(
           :batch,
           :patient,

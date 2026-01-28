@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "date"
-
 describe DateParamsValidator do
   let(:dummy_class) do
     Class.new do
@@ -10,7 +8,7 @@ describe DateParamsValidator do
       # Cannot find a better way to get the errors for a specific attribute,
       # replace as appropriate.
       def errors_for_attribute(attribute)
-        errors.find_all { |e| e.attribute == attribute }.map(&:type)
+        errors.find_all { it.attribute == attribute }.map(&:type)
       end
     end
   end

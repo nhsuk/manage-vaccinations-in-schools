@@ -68,19 +68,24 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def validate_params
     if current_step == :date_and_time
-      validator =
+      date_validator =
         DateParamsValidator.new(
-          field_name: :performed_at,
+          field_name: :performed_at_date,
           object: @draft_vaccination_record,
           params: update_params
         )
 
-      hour = Integer(update_params["performed_at(4i)"], exception: false)
-      minute = Integer(update_params["performed_at(5i)"], exception: false)
-      time_valid = hour&.between?(0, 23) && minute&.between?(0, 59)
+      time_validator =
+        TimeParamsValidator.new(
+          field_name: :performed_at_time,
+          object: @draft_vaccination_record,
+          params: update_params
+        )
 
-      unless validator.date_params_valid? && time_valid
-        @draft_vaccination_record.errors.add(:performed_at, :invalid)
+      is_date_valid = date_validator.date_params_valid?
+      is_time_valid = time_validator.time_params_valid?
+
+      unless is_date_valid && is_time_valid
         render_wizard nil, status: :unprocessable_content
       end
     elsif current_step == :batch &&
@@ -200,7 +205,7 @@ class DraftVaccinationRecordsController < ApplicationController
     permitted_attributes = {
       batch: %i[batch_id vaccine_id batch_name batch_expiry],
       confirm: @draft_vaccination_record.editing? ? [] : %i[notes],
-      date_and_time: %i[performed_at],
+      date_and_time: %i[performed_at_date performed_at_time],
       delivery: %i[delivery_site delivery_method],
       dose: %i[full_dose],
       dose_sequence: %i[dose_sequence],
