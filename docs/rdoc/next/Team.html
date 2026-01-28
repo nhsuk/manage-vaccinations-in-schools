@@ -649,8 +649,8 @@ email                         :string
 name                          :text             not null
 phone                         :string
 phone_instructions            :string
-privacy_notice_url            :string           not null
-privacy_policy_url            :string           not null
+privacy_notice_url            :string
+privacy_policy_url            :string
 programme_types               :enum             not null, is an Array
 type                          :integer          not null
 workgroup                     :string           not null
@@ -735,7 +735,7 @@ index_teams_on_workgroup        (workgroup) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="careplus_enabled-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/team.rb, line 105</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/team.rb, line 113</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">careplus_enabled?</span> =
     <span class="ruby-identifier">careplus_staff_code</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">careplus_staff_type</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span>
       <span class="ruby-identifier">careplus_venue_code</span>.<span class="ruby-identifier">present?</span>
@@ -778,7 +778,7 @@ index_teams_on_workgroup        (workgroup) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="to_param-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/team.rb, line 93</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/team.rb, line 101</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_param</span> = <span class="ruby-identifier">workgroup</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">year_groups</span>(<span class="ruby-value">academic_year:</span> <span class="ruby-keyword">nil</span>)
@@ -832,7 +832,7 @@ index_teams_on_workgroup        (workgroup) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="year_groups-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/team.rb, line 95</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/team.rb, line 103</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">year_groups</span>(<span class="ruby-value">academic_year:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-constant">UPLOAD_ONLY_YEAR_GROUPS</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">has_upload_only_access?</span>
 
