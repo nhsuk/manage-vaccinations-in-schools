@@ -27,7 +27,7 @@ Layout/LineLength:
 
 Lint/MissingSuper:
   Exclude:
-    - app/components/*.rb
+    - app/components/**/*.rb
 
 Lint/PercentStringArray:
   Exclude:
