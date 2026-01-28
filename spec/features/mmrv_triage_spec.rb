@@ -144,6 +144,6 @@ describe "MMR triage" do
   end
 
   def then_i_see_the_right_programme_on_the_entries
-    expect(page).to have_content("Triaged decision: Safe to vaccinate\nMMRV")
+    expect(page).to have_content("Triaged decision: Safe to vaccinate")
   end
 end

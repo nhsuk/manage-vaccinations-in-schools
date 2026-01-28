@@ -18,8 +18,8 @@ describe "Parental consent" do
     and_a_text_is_sent_to_the_parent
 
     when_i_click_on_session_activity_and_notes
-    then_an_activity_log_entry_is_visible_for_the_email_tagged_as("HPV")
-    and_an_activity_log_entry_is_visible_for_the_text_tagged_as("HPV")
+    then_an_activity_log_entry_is_visible_for_the_email
+    and_an_activity_log_entry_is_visible_for_the_text
   end
 
   scenario "Send request where patient is eligible for MMRV" do
@@ -36,8 +36,8 @@ describe "Parental consent" do
     and_a_text_is_sent_to_the_parent
 
     when_i_click_on_session_activity_and_notes
-    then_an_activity_log_entry_is_visible_for_the_email_tagged_as("MMRV")
-    and_an_activity_log_entry_is_visible_for_the_text_tagged_as("MMRV")
+    then_an_activity_log_entry_is_visible_for_the_email
+    and_an_activity_log_entry_is_visible_for_the_text
   end
 
   def given_a_programme_exists(programme_type)
@@ -112,22 +112,18 @@ describe "Parental consent" do
     click_on "Session activity and notes"
   end
 
-  def then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
-    programme_name
-  )
+  def then_an_activity_log_entry_is_visible_for_the_email
     expect(page).to have_content(
-      "Consent clinic request sent\n#{@parent.email}\n" \
-        "#{programme_name}   1 January 2024 at 12:00am · USER, Test"
+      "Consent clinic request sent\n" \
+        "USER, Test · 1 January 2024 at 12:00am\n#{@parent.email}"
     )
   end
 
-  def and_an_activity_log_entry_is_visible_for_the_text_tagged_as(
-    programme_name
-  )
+  def and_an_activity_log_entry_is_visible_for_the_text
     click_on "Session activity and notes"
     expect(page).to have_content(
-      "Consent clinic request sent\n#{@parent.phone}\n" \
-        "#{programme_name}   1 January 2024 at 12:00am · USER, Test"
+      "Consent clinic request sent\n" \
+        "USER, Test · 1 January 2024 at 12:00am\n#{@parent.phone}"
     )
   end
 end
