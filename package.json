@@ -2,7 +2,7 @@
   "name": "app",
   "private": "true",
   "dependencies": {
-    "@hotwired/turbo-rails": "^8.0.21",
+    "@hotwired/turbo-rails": "^8.0.22",
     "accessible-autocomplete": "^3.0.1",
     "esbuild": "^0.27.2",
     "idb": "^8.0.3",
