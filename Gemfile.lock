@@ -1,17 +1,4 @@
 GIT
-  remote: https://github.com/alphagov/rubocop-govuk.git
-  revision: 3106a1c200c0703feda762a37298da4ec4ed7707
-  branch: main
-  specs:
-    rubocop-govuk (5.2.0)
-      rubocop (= 1.82.1)
-      rubocop-ast (= 1.49.0)
-      rubocop-capybara (= 2.22.1)
-      rubocop-rails (= 2.34.3)
-      rubocop-rake (= 0.7.1)
-      rubocop-rspec (= 3.9.0)
-
-GIT
   remote: https://github.com/citizensadvice/capybara_accessible_selectors.git
   revision: 3feb17c2e2723bc2e177ce00765a50d6cddf479e
   specs:
@@ -621,6 +608,13 @@ GEM
     rubocop-capybara (2.22.1)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
+    rubocop-govuk (5.2.0)
+      rubocop (= 1.82.1)
+      rubocop-ast (= 1.49.0)
+      rubocop-capybara (= 2.22.1)
+      rubocop-rails (= 2.34.3)
+      rubocop-rake (= 0.7.1)
+      rubocop-rspec (= 3.9.0)
     rubocop-rails (2.34.3)
       activesupport (>= 4.2.0)
       lint_roller (~> 1.1)
@@ -880,7 +874,7 @@ DEPENDENCIES
   rspec-html-matchers
   rspec-rails
   rspec-sidekiq
-  rubocop-govuk!
+  rubocop-govuk
   ruby-prof
   ruby-progressbar
   rubyXL
