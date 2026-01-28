@@ -81,15 +81,13 @@ describe FHIRMapper::Programme do
       end
 
       it do
-        expect(programme).to eq Programme.mmr.variant_for(
-             disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
-           )
+        expect(programme).to eq(
+          Programme::Variant.new(Programme.mmr, variant_type: "mmr")
+        )
       end
     end
 
     context "for a mmrv record" do
-      before { Flipper.enable(:mmrv) }
-
       let(:fhir_record) do
         FHIR.from_contents(
           file_fixture("fhir/mmrv/fhir_record_from_mavis.json").read
@@ -97,9 +95,9 @@ describe FHIRMapper::Programme do
       end
 
       it do
-        expect(programme).to eq Programme.mmr.variant_for(
-             disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
-           )
+        expect(programme).to eq(
+          Programme::Variant.new(Programme.mmr, variant_type: "mmrv")
+        )
       end
     end
   end

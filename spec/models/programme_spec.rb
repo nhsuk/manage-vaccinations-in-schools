@@ -20,35 +20,15 @@ describe Programme do
   describe "#all_as_variants" do
     subject(:all_as_variants) { described_class.all_as_variants }
 
-    context "with the mmrv feature flag off" do
-      it "returns all the full programme objects" do
-        expect(all_as_variants).to contain_exactly(
-          described_class.flu,
-          described_class.hpv,
-          described_class.td_ipv,
-          described_class.menacwy,
-          described_class.mmr
-        )
-      end
-    end
-
-    context "with the mmrv feature flag on" do
-      before { Flipper.enable(:mmrv) }
-
-      it "returns all variants where applicable" do
-        expect(all_as_variants).to contain_exactly(
-          described_class.flu,
-          described_class.hpv,
-          described_class.td_ipv,
-          described_class.menacwy,
-          described_class.mmr.variant_for(
-            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
-          ),
-          described_class.mmr.variant_for(
-            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
-          )
-        )
-      end
+    it "returns all variants" do
+      expect(all_as_variants).to contain_exactly(
+        described_class.flu,
+        described_class.hpv,
+        described_class.td_ipv,
+        described_class.menacwy,
+        Programme::Variant.new(described_class.mmr, variant_type: "mmr"),
+        Programme::Variant.new(described_class.mmr, variant_type: "mmrv")
+      )
     end
   end
 
@@ -71,8 +51,6 @@ describe Programme do
 
     context "when programme is MMR and MMRV support is enabled" do
       let(:type) { "mmr" }
-
-      before { Flipper.enable(:mmrv) }
 
       context "without any additional criteria" do
         it "doesn't return a variant" do
@@ -122,13 +100,7 @@ describe Programme do
     context "with an MMR programme" do
       let(:programme) { described_class.mmr }
 
-      it { should eq("MMR") }
-
-      context "when MMRV is enabled" do
-        before { Flipper.enable(:mmrv) }
-
-        it { should eq("MMR(V)") }
-      end
+      it { should eq("MMR(V)") }
     end
   end
 
@@ -155,104 +127,35 @@ describe Programme do
       let(:programme) { described_class.flu }
 
       it { should contain_exactly(described_class.flu) }
-      it { expect(variants).to all(be_a(described_class)) }
     end
 
-    context "for td_ipv" do
+    context "for Td/IPV" do
       let(:programme) { described_class.td_ipv }
 
       it { should contain_exactly(described_class.td_ipv) }
-      it { expect(variants).to all(be_a(described_class)) }
     end
 
-    context "for menacwy" do
+    context "for MenACWY" do
       let(:programme) { described_class.menacwy }
 
       it { should contain_exactly(described_class.menacwy) }
-      it { expect(variants).to all(be_a(described_class)) }
     end
 
-    context "for hpv" do
+    context "for HPV" do
       let(:programme) { described_class.hpv }
 
       it { should contain_exactly(described_class.hpv) }
-      it { expect(variants).to all(be_a(described_class)) }
     end
 
-    context "for mmr with mmrv feature flag on" do
-      let(:programme) do
-        Flipper.enable(:mmrv)
-        described_class.mmr
-      end
-
-      it do
-        expect(variants).to contain_exactly(
-          described_class.mmr.variant_for(
-            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
-          ),
-          described_class.mmr.variant_for(
-            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
-          )
-        )
-      end
-
-      it { expect(variants).to all(be_a(Programme::Variant)) }
-    end
-
-    context "for mmr with mmrv feature flag off" do
+    context "for MMR(V)" do
       let(:programme) { described_class.mmr }
 
       it do
         expect(variants).to contain_exactly(
-          described_class.mmr.variant_for(
-            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
-          )
+          Programme::Variant.new(described_class.mmr, variant_type: "mmr"),
+          Programme::Variant.new(described_class.mmr, variant_type: "mmrv")
         )
       end
-
-      it { expect(variants).to all(be_a(Programme::Variant)) }
-    end
-
-    context "for mmrv variant" do
-      let(:programme) do
-        Flipper.enable(:mmrv)
-
-        described_class.mmr.variant_for(
-          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
-        )
-      end
-
-      it do
-        expect(variants).to contain_exactly(
-          described_class.mmr.variant_for(
-            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
-          )
-        )
-      end
-
-      it { expect(variants).to all(be_a(Programme::Variant)) }
-    end
-
-    context "for mmr variant" do
-      let(:programme) do
-        Flipper.enable(:mmrv)
-
-        described_class.mmr.variant_for(
-          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
-        )
-      end
-
-      it do
-        expect(variants).to eq(
-          [
-            described_class.mmr.variant_for(
-              disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
-            )
-          ]
-        )
-      end
-
-      it { expect(variants).to all(be_a(Programme::Variant)) }
     end
   end
 
@@ -483,49 +386,41 @@ describe Programme do
       it { should eq("Programme:flu") }
     end
 
-    context "for td_ipv" do
+    context "for Td/IPV" do
       let(:programme) { described_class.td_ipv }
 
       it { should eq("Programme:td_ipv") }
     end
 
-    context "for menacwy" do
+    context "for MenACWY" do
       let(:programme) { described_class.menacwy }
 
       it { should eq("Programme:menacwy") }
     end
 
-    context "for hpv" do
+    context "for HPV" do
       let(:programme) { described_class.hpv }
 
       it { should eq("Programme:hpv") }
     end
 
-    context "for mmr" do
+    context "for MMR" do
       let(:programme) { described_class.mmr }
 
       it { should eq("Programme:mmr") }
     end
 
-    context "for mmrv variant" do
+    context "for MMRV variant" do
       let(:programme) do
-        Flipper.enable(:mmrv)
-
-        described_class.mmr.variant_for(
-          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
-        )
+        Programme::Variant.new(described_class.mmr, variant_type: "mmrv")
       end
 
       it { should eq("ProgrammeVariant:mmrv") }
     end
 
-    context "for mmr variant" do
+    context "for MMR variant" do
       let(:programme) do
-        Flipper.enable(:mmrv)
-
-        described_class.mmr.variant_for(
-          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
-        )
+        Programme::Variant.new(described_class.mmr, variant_type: "mmr")
       end
 
       it { should eq("ProgrammeVariant:mmr") }

@@ -332,11 +332,7 @@ describe FHIRMapper::VaccinationRecord do
 
         context "with an MMRV vaccination" do
           let(:programme) do
-            Flipper.enable(:mmrv)
-
-            Programme.mmr.variant_for(
-              disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
-            )
+            Programme::Variant.new(Programme.mmr, variant_type: "mmrv")
           end
 
           describe "target disease coding has four items" do
@@ -981,12 +977,8 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "for mmr" do
-      before { Flipper.enable(:mmrv) }
-
       let(:programme) do
-        Programme.mmr.variant_for(
-          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
-        )
+        Programme::Variant.new(Programme.mmr, variant_type: "mmr")
       end
 
       context "with a fhir record from Mavis" do
@@ -1027,12 +1019,8 @@ describe FHIRMapper::VaccinationRecord do
     end
 
     context "for mmrv" do
-      before { Flipper.enable(:mmrv) }
-
       let(:programme) do
-        Programme.mmr.variant_for(
-          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
-        )
+        Programme::Variant.new(Programme.mmr, variant_type: "mmrv")
       end
 
       context "with a fhir record from Mavis" do

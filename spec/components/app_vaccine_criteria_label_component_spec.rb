@@ -19,14 +19,14 @@ describe AppVaccineCriteriaLabelComponent do
     let(:vaccine_methods) { %w[injection] }
     let(:without_gelatine) { false }
 
-    it { should have_content("Record MMR vaccination") }
+    it { should have_content("Record MMR(V) vaccination") }
 
     context "with gelatine-free injection" do
       let(:without_gelatine) { true }
 
       it do
         expect(rendered).to have_content(
-          "Record MMR vaccination with gelatine-free injection"
+          "Record MMR(V) vaccination with gelatine-free injection"
         )
       end
     end

@@ -371,8 +371,6 @@ describe Reports::CareplusExporter do
     end
 
     context "and an MMRV vaccine" do
-      before { Flipper.enable(:mmrv) }
-
       let(:vaccine) { Vaccine.find_by!(brand: "ProQuad") }
       let(:expected_vaccine_code) { "MMRV" }
 

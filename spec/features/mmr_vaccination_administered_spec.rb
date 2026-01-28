@@ -110,10 +110,7 @@ describe "MMR vaccination" do
   end
 
   def and_there_is_a_session_today_with_patients_safe_to_vaccinate
-    mmr_variant =
-      @programme.variant_for(
-        disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
-      )
+    mmr_variant = Programme::Variant.new(@programme, variant_type: "mmr")
 
     @without_gelatine_only_patient =
       create(
@@ -291,7 +288,7 @@ describe "MMR vaccination" do
     expect(page).to have_content("Vaccinated with Priorix\nMMR")
     expect(page).to have_content(
       "Triaged decision: Delay vaccination to a later date\n" \
-        "Next dose 29 October 2024 at 9:00am\nMMR"
+        "Next dose 29 October 2024 at 9:00am\nMMR(V)"
     )
   end
 

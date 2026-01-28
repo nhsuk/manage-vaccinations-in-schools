@@ -109,7 +109,6 @@ describe Reports::ProgrammeVaccinationsExporter do
 
         context "with a vaccinated patient" do
           let(:patient) { create(:patient, session:) }
-          let(:vaccine) { programme.vaccines.active.first }
           let(:batch) do
             create(:batch, expiry: Date.new(2025, 12, 1), vaccine:)
           end
@@ -118,6 +117,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           let!(:vaccination_record) do
             create(
               :vaccination_record,
+              vaccine:,
               batch:,
               patient:,
               session:,
@@ -166,7 +166,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "PERSON_GENDER_CODE" => "Not known",
                 "PERSON_POSTCODE" => patient.address_postcode,
                 "PERSON_SURNAME" => patient.family_name,
-                "PROGRAMME_NAME" => programme.name,
+                "PROGRAMME_NAME" => expected_programme_name,
                 "PROTOCOL" => "pgd",
                 "REASON_NOT_VACCINATED" => "",
                 "RECORD_CREATED" => "2024-01-01T12:05:20+00:00",
@@ -282,7 +282,6 @@ describe Reports::ProgrammeVaccinationsExporter do
 
         context "with a vaccinated patient" do
           let(:patient) { create(:patient, session:) }
-          let(:vaccine) { programmes.first.vaccines.active.first }
           let(:batch) do
             create(:batch, expiry: Date.new(2025, 12, 1), vaccine:)
           end
@@ -292,6 +291,7 @@ describe Reports::ProgrammeVaccinationsExporter do
             create(
               :vaccination_record,
               performed_at:,
+              vaccine:,
               batch:,
               patient:,
               session:,
@@ -338,7 +338,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "PERSON_GENDER_CODE" => "Not known",
                 "PERSON_POSTCODE" => patient.address_postcode,
                 "PERSON_SURNAME" => patient.family_name,
-                "PROGRAMME_NAME" => programme.name,
+                "PROGRAMME_NAME" => expected_programme_name,
                 "PROTOCOL" => "pgd",
                 "REASON_NOT_VACCINATED" => "",
                 "RECORD_CREATED" => Time.current.iso8601,
@@ -568,35 +568,55 @@ describe Reports::ProgrammeVaccinationsExporter do
 
   context "Flu programme" do
     let(:programme) { Programme.flu }
+    let(:vaccine) { programme.vaccines.injection.sample }
     let(:expected_consent_status) { "Consent given for injection" }
+    let(:expected_programme_name) { "Flu" }
 
     include_examples "generates a report"
   end
 
   context "HPV programme" do
     let(:programme) { Programme.hpv }
+    let(:vaccine) { programme.vaccines.sample }
     let(:expected_consent_status) { "Consent given" }
+    let(:expected_programme_name) { "HPV" }
 
     include_examples "generates a report"
   end
 
   context "MenACWY programme" do
     let(:programme) { Programme.menacwy }
+    let(:vaccine) { programme.vaccines.sample }
     let(:expected_consent_status) { "Consent given" }
+    let(:expected_programme_name) { "MenACWY" }
 
     include_examples "generates a report"
   end
 
-  context "MMR programme" do
+  context "MMR(V) programme" do
     let(:programme) { Programme.mmr }
     let(:expected_consent_status) { "Consent given" }
 
-    include_examples "generates a report"
+    context "and an MMR vaccine" do
+      let(:vaccine) { Vaccine.find_by!(brand: "Priorix") }
+      let(:expected_programme_name) { "MMR" }
+
+      include_examples "generates a report"
+    end
+
+    context "and an MMRV vaccine" do
+      let(:vaccine) { Vaccine.find_by!(brand: "ProQuad") }
+      let(:expected_programme_name) { "MMRV" }
+
+      include_examples "generates a report"
+    end
   end
 
   context "Td/IPV programme" do
     let(:programme) { Programme.td_ipv }
+    let(:vaccine) { programme.vaccines.sample }
     let(:expected_consent_status) { "Consent given" }
+    let(:expected_programme_name) { "Td/IPV" }
 
     include_examples "generates a report"
   end

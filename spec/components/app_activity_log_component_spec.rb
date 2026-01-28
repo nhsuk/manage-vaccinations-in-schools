@@ -527,10 +527,7 @@ describe AppActivityLogComponent do
   describe "vaccination records" do
     context "for the MMRV variant" do
       let(:programme) do
-        Flipper.enable(:mmrv)
-        Programme.mmr.variant_for(
-          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
-        )
+        Programme::Variant.new(Programme.mmr, variant_type: "mmrv")
       end
       let(:programmes) { [programme] }
 

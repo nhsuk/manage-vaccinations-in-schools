@@ -38,7 +38,7 @@ class Programme
     "flu" => %w[Flu],
     "hpv" => %w[HPV],
     "menacwy" => %w[ACWYX4 MenACWY],
-    "mmr" => %w[MMR],
+    "mmr" => %w[MMR MMRV],
     "td_ipv" => %w[3-in-1 Td/IPV]
   }.freeze
 
@@ -128,17 +128,19 @@ class Programme
 
   def variant_type = nil
 
-  def translation_key
-    mmr? && Flipper.enabled?(:mmrv) ? "mmr_and_mmrv" : type
-  end
+  def translation_key = mmr? ? "mmr_and_mmrv" : type
 
   TYPES.each do |programme_type|
     define_method("#{programme_type}?") { type == programme_type }
   end
 
-  def name = I18n.t(translation_key, scope: :programme_types)
+  def name
+    @name ||= I18n.t(translation_key, scope: :programme_types)
+  end
 
-  def name_in_sentence = flu? ? name.downcase : name
+  def name_in_sentence
+    @name_in_sentence = flu? ? name.downcase : name
+  end
 
   def variant_for(disease_types: nil, patient: nil)
     return self unless mmr?
@@ -156,30 +158,16 @@ class Programme
 
     return self if eligible_for_mmrv.nil?
 
-    variant_type =
-      if eligible_for_mmrv && Flipper.enabled?(:mmrv)
-        "mmrv"
-      else
-        "mmr"
-      end
+    variant_type = eligible_for_mmrv ? "mmrv" : "mmr"
 
     Programme::Variant.new(self, variant_type:)
   end
 
   def variants
     if mmr?
-      [
-        variant_for(
-          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
-        ),
-        (
-          if Flipper.enabled?(:mmrv)
-            variant_for(
-              disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
-            )
-          end
-        )
-      ].compact
+      %w[mmr mmrv].map do |variant_type|
+        Programme::Variant.new(self, variant_type:)
+      end
     else
       [self]
     end
@@ -235,15 +223,7 @@ class Programme
 
   def maximum_dose_sequence = MAXIMUM_DOSE_SEQUENCES.fetch(type)
 
-  # TODO: add MMRV to IMPORT_NAMES once the MMRV flag is removed
-  def import_names
-    names = IMPORT_NAMES.fetch(type)
-    if Flipper.enabled?(:mmrv) && type == "mmr"
-      names + %w[MMRV]
-    else
-      names
-    end
-  end
+  def import_names = IMPORT_NAMES.fetch(type)
 
   def snomed_target_disease_codes = SNOMED_TARGET_DISEASE_CODES.fetch(type)
 
