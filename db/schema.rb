@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_22_111151) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_22_140214) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -591,19 +591,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_111151) do
     t.index ["status"], name: "index_patient_changesets_on_status"
   end
 
-  create_table "patient_consent_statuses", force: :cascade do |t|
-    t.integer "academic_year", null: false
-    t.enum "disease_types", default: [], null: false, array: true, enum_type: "disease_type"
-    t.bigint "patient_id", null: false
-    t.enum "programme_type", null: false, enum_type: "programme_type"
-    t.integer "status", default: 0, null: false
-    t.integer "vaccine_methods", default: [], null: false, array: true
-    t.boolean "without_gelatine"
-    t.index ["academic_year", "patient_id"], name: "index_patient_consent_statuses_on_academic_year_and_patient_id"
-    t.index ["patient_id", "programme_type", "academic_year"], name: "idx_on_patient_id_programme_type_academic_year_89a70c9513", unique: true
-    t.index ["status"], name: "index_patient_consent_statuses_on_status"
-  end
-
   create_table "patient_locations", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.datetime "created_at", null: false
@@ -1077,7 +1064,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_111151) do
   add_foreign_key "parent_relationships", "patients"
   add_foreign_key "patient_changesets", "locations", column: "school_id"
   add_foreign_key "patient_changesets", "patients"
-  add_foreign_key "patient_consent_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_locations", "locations"
   add_foreign_key "patient_locations", "patients"
   add_foreign_key "patient_programme_statuses", "patients", on_delete: :cascade
