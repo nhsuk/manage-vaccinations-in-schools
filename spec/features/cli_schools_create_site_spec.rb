@@ -3,12 +3,21 @@
 require_relative "../../app/lib/mavis_cli"
 
 describe "mavis schools create-site" do
-  context "with valid arguments" do
+  context "when adding to team" do
     it "runs successfully" do
       given_a_school_exists
-      when_i_run_the_command
+      when_i_run_the_command_with_add_to_team
       then_the_school_is_created
       and_the_school_is_added_to_team
+    end
+  end
+
+  context "when not adding to team" do
+    it "runs successfully" do
+      given_a_school_exists
+      when_i_run_the_command_without_add_to_team
+      then_the_school_is_created
+      and_the_school_is_not_added_to_team
     end
   end
 
@@ -28,14 +37,24 @@ describe "mavis schools create-site" do
       )
   end
 
-  def command
+  def add_to_team_command
     Dry::CLI.new(MavisCLI).call(
       arguments: %w[schools create-site 123456 SiteSchool A --add-to-team]
     )
   end
 
-  def when_i_run_the_command
-    @output = capture_output { command }
+  def no_add_to_team_command
+    Dry::CLI.new(MavisCLI).call(
+      arguments: %w[schools create-site 123456 SiteSchool A]
+    )
+  end
+
+  def when_i_run_the_command_with_add_to_team
+    @output = capture_output { add_to_team_command }
+  end
+
+  def when_i_run_the_command_without_add_to_team
+    @output = capture_output { no_add_to_team_command }
   end
 
   def then_the_school_is_created
@@ -54,5 +73,10 @@ describe "mavis schools create-site" do
   def and_the_school_is_added_to_team
     location = Location.find_by(urn: "123456", site: "A")
     expect(location.teams.count).to eq(1)
+  end
+
+  def and_the_school_is_not_added_to_team
+    location = Location.find_by(urn: "123456", site: "A")
+    expect(location.teams.count).to eq(0)
   end
 end

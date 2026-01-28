@@ -129,7 +129,10 @@ FactoryBot.define do
 
     after(:build) do |consent_form, evaluator|
       evaluator.programmes.each do |programme|
-        consent_form.consent_form_programmes.build(programme:)
+        consent_form.consent_form_programmes.build(
+          programme:,
+          response: evaluator.response
+        )
       end
     end
 

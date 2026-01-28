@@ -10,20 +10,21 @@ module MavisCLI
       option :team_workgroup,
              aliases: ["-w"],
              default: "A9A5A",
-             desc: "Workgroup of team to generate consents for"
+             desc: "Workgroup of team to generate patient records for"
 
       option :programme_types,
              aliases: ["-p"],
              default: [],
+             type: :array,
              desc:
-               "Programme type to generate consents for (hpv, menacwy, td_ipv, etc)"
+               "Programme type to generate patient records for (hpv, menacwy, td_ipv, etc)"
 
       option :patient_count,
              aliases: ["-c"],
              type: :integer,
              required: true,
              default: 10,
-             desc: "Number of patients to create"
+             desc: "Number of patient records to create"
 
       def call(team_workgroup:, programme_types:, patient_count:)
         MavisCLI.load_rails
