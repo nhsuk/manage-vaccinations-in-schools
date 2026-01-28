@@ -5,17 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>module InspectAuthenticationConcern - Mavis Documentation</title>
+<title>class PatientProgrammeVaccinationsSearch - Mavis Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,module,InspectAuthenticationConcern"
+    content="ruby,class,PatientProgrammeVaccinationsSearch"
   >
 
     <meta
       name="description"
-      content="Documentation for the InspectAuthenticationConcern module"
+      content="class PatientProgrammeVaccinationsSearch: bigint not null Indexes idx_on_last_searched_at_96aaa59442 (last_searched_at) idx_on_programme_type_0d0cfaeb86"
     >
 
 
@@ -24,14 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="module InspectAuthenticationConcern - Mavis Documentation">
+<meta property="og:title" content="class PatientProgrammeVaccinationsSearch - Mavis Documentation">
 
 
 
-    <meta
-      property="og:description"
-      content="Documentation for InspectAuthenticationConcern module - API reference and code examples"
-    >
+    <meta property="og:description" content="bigint not null Indexes idx_on_last_searched_at_96aaa59442 (last_searched_at) idx_on_programme_type_0d0cfaeb86">
 
 
 
@@ -39,14 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="module InspectAuthenticationConcern - Mavis Documentation">
+<meta name="twitter:title" content="class PatientProgrammeVaccinationsSearch - Mavis Documentation">
 
 
 
-    <meta
-      name="twitter:description"
-      content="Documentation for InspectAuthenticationConcern module - API reference and code examples"
-    >
+    <meta name="twitter:description" content="bigint not null Indexes idx_on_last_searched_at_96aaa59442 (last_searched_at) idx_on_programme_type_0d0cfaeb86">
 
 
 
@@ -97,7 +91,7 @@
 
 
 
-<body role="document" class="module has-toc">
+<body role="document" class="class has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -529,17 +523,30 @@
   
 
   
-
-  
-
-  
-<div id="extends-section" class="nav-section">
+<div id="parent-class-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
       <span class="nav-section-icon">
-        <svg><use href="#icon-extends"></use></svg>
+        <svg><use href="#icon-ancestors"></use></svg>
       </span>
-      <span class="nav-section-title">Extended With Modules</span>
+      <span class="nav-section-title">Ancestors</span>
+      <span class="nav-section-chevron">
+        <svg><use href="#icon-chevron"></use></svg>
+      </span>
+    </summary>
+    <ul><li><a href="ApplicationRecord.html">ApplicationRecord</a><ul><li>ActiveRecord::Base</li></ul></li></ul>
+  </details>
+</div>
+
+
+  
+<div id="includes-section" class="nav-section">
+  <details class="nav-section-collapsible" open>
+    <summary class="nav-section-header">
+      <span class="nav-section-icon">
+        <svg><use href="#icon-includes"></use></svg>
+      </span>
+      <span class="nav-section-title">Included Modules</span>
       <span class="nav-section-chevron">
         <svg><use href="#icon-chevron"></use></svg>
       </span>
@@ -548,13 +555,15 @@
     <ul class="nav-list">
 
 
-      <li><span class="extend">ActiveSupport::Concern</span></li>
+      <li><a class="include" href="BelongsToProgramme.html">BelongsToProgramme</a></li>
 
 
     </ul>
   </details>
 </div>
 
+
+  
 
   
 
@@ -578,17 +587,40 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-inspectauthenticationconcern">
+<main role="main" aria-labelledby="class-patientprogrammevaccinationssearch">
   
   
 
-  <span id="module-InspectAuthenticationConcern" class="legacy-anchor"></span>
-  <h1 id="module-inspectauthenticationconcern" class="anchor-link module">
-    module InspectAuthenticationConcern
+  <span id="class-PatientProgrammeVaccinationsSearch" class="legacy-anchor"></span>
+  <h1 id="class-patientprogrammevaccinationssearch" class="anchor-link class">
+    class PatientProgrammeVaccinationsSearch
   </h1>
 
   <section class="description">
     
+<span id="class-PatientProgrammeVaccinationsSearch-label-Schema+Information" class="legacy-anchor"></span>
+<h2 id="class-patientprogrammevaccinationssearch-schema-information"><a href="#class-patientprogrammevaccinationssearch-schema-information">Schema Information</a></h2>
+
+<p>Table name: patient_programme_vaccinations_searches</p>
+
+<pre>id               :bigint           not null, primary key
+last_searched_at :datetime         not null
+programme_type   :enum             not null
+created_at       :datetime         not null
+updated_at       :datetime         not null
+patient_id       :bigint           not null</pre>
+
+<p>Indexes</p>
+
+<pre class="ruby"><span class="ruby-identifier">idx_on_last_searched_at_96aaa59442</span>                           (<span class="ruby-identifier">last_searched_at</span>)
+<span class="ruby-identifier">idx_on_programme_type_0d0cfaeb86</span>                             (<span class="ruby-identifier">programme_type</span>)
+<span class="ruby-identifier">index_patient_programme_vaccinations_searches_on_patient_id</span>  (<span class="ruby-identifier">patient_id</span>)
+</pre>
+
+<p>Foreign Keys</p>
+
+<pre>fk_rails_...  (patient_id =&gt; patients.id)</pre>
+
   </section>
 
 
