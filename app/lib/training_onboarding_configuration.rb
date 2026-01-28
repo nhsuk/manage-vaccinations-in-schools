@@ -1,13 +1,26 @@
 # frozen_string_literal: true
 
 class TrainingOnboardingConfiguration
-  def initialize(ods_code:, workgroup:)
+  def initialize(ods_code:, workgroup:, type:)
     @ods_code = ods_code
     @workgroup = workgroup
+    @type = type
   end
 
   def call
-    { organisation:, team:, programmes:, subteams:, users:, schools:, clinics: }
+    if type == "upload_only"
+      { organisation:, team: }
+    else
+      {
+        organisation:,
+        team:,
+        programmes:,
+        subteams:,
+        users:,
+        schools:,
+        clinics:
+      }
+    end
   end
 
   def self.call(...) = new(...).call
@@ -16,7 +29,7 @@ class TrainingOnboardingConfiguration
 
   private
 
-  attr_reader :ods_code, :workgroup
+  attr_reader :ods_code, :workgroup, :type
 
   def academic_year = AcademicYear.pending
 
@@ -33,16 +46,20 @@ class TrainingOnboardingConfiguration
   end
 
   def team
-    {
-      workgroup:,
-      name:,
-      email:,
-      phone:,
-      careplus_venue_code: ods_code,
-      privacy_notice_url: "https://example.com/privacy-notice-#{workgroup}",
-      privacy_policy_url: "https://example.com/privacy-policy-#{workgroup}",
-      type: "poc_only"
-    }
+    if type == "upload_only"
+      { name:, workgroup:, type: }
+    else
+      {
+        workgroup:,
+        name:,
+        email:,
+        phone:,
+        careplus_venue_code: ods_code,
+        privacy_notice_url: "https://example.com/privacy-notice-#{workgroup}",
+        privacy_policy_url: "https://example.com/privacy-policy-#{workgroup}",
+        type:
+      }
+    end
   end
 
   def programmes = Programme.all.map(&:type)
