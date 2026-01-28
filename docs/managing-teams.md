@@ -8,6 +8,8 @@ When first onboarding a new SAIS team, there’s a lot of information to include
 
 ### Configuration file structure
 
+#### For teams which use Mavis as a point-of-care system
+
 ```yaml
 organisation:
   ods_code: # ODS code of the organisation
@@ -16,18 +18,24 @@ team:
   name: # Unique name of the organisation
   email: # Contact email address
   phone: # Contact phone number
+  phone_instructions: # E.g., "option 1, followed by option 3"
+  careplus_staff_code: # Staff code used in CarePlus exports
+  careplus_staff_type: # Staff type used in CarePlus exports
   careplus_venue_code: # Venue code used in CarePlus exports
   privacy_notice_url: # URL of a privacy notice shown to parents
   privacy_policy_url: # URL of a privacy policy shown to parents
   reply_to_id: # Optional GOV.UK Notify Reply-To UUID
+  workgroup: # Used in their CIS2 configuration
+  type: poc_only
 
-programmes: [] # A list of programmes (flu, hpv, menacwy, td_ipv)
+programmes: [] # A list of programmes (flu, hpv, menacwy, td_ipv, mmr)
 
 subteams:
   subteam1: # Identifier to link team with school and links below, not used in app
     name: # Name of the team
     email: # Contact email address
     phone: # Contact phone number
+    phone_instructions: # E.g., "option 9"
     reply_to_id: # Optional GOV.UK Notify Reply-To UUID
 
 schools:
@@ -51,6 +59,20 @@ clinics:
       address_town: # Town of the address
       address_postcode: # Postcode of the address
       ods_code: # Unique ODS code
+```
+
+#### For teams which use Mavis for national reporting
+
+These teams need a drastically reduced set of information.
+
+```yaml
+organisation:
+  ods_code: # ODS code of the organisation
+
+team:
+  name: # Unique name of the organisation
+  workgroup: # Used in their CIS2 configuration
+  type: upload_only
 ```
 
 [Example configuration files can be found in the repo][config-onboarding].

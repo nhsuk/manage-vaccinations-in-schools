@@ -15,8 +15,8 @@
 #  name                          :text             not null
 #  phone                         :string
 #  phone_instructions            :string
-#  privacy_notice_url            :string           not null
-#  privacy_policy_url            :string           not null
+#  privacy_notice_url            :string
+#  privacy_policy_url            :string
 #  programme_types               :enum             not null, is an Array
 #  type                          :integer          not null
 #  workgroup                     :string           not null
@@ -69,7 +69,7 @@ describe Team do
 
   describe "#year_groups" do
     context "when team has upload_only access" do
-      let(:team) { create(:team, type: :upload_only) }
+      let(:team) { create(:team, :upload_only) }
 
       it "covers nursery to upper sixth" do
         expect(team.year_groups).to eq((-2..13).to_a)

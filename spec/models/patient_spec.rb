@@ -873,7 +873,7 @@ describe Patient do
 
     context "when the team has upload only access" do
       let(:patient) { create(:patient, school:, year_group: 1) }
-      let(:team) { create(:team, type: :upload_only) }
+      let(:team) { create(:team, :upload_only) }
 
       it { should be(false) }
     end

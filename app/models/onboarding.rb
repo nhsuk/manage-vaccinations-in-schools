@@ -3,85 +3,101 @@
 class Onboarding
   include ActiveModel::Model
 
-  CLINIC_ATTRIBUTES = %i[
-    address_line_1
-    address_line_2
-    address_postcode
-    address_town
-    name
-    ods_code
-    url
-    year_groups
-  ].freeze
+  CLINIC_ATTRIBUTES = {
+    poc_only: %i[
+      address_line_1
+      address_line_2
+      address_postcode
+      address_town
+      name
+      ods_code
+      url
+      year_groups
+    ],
+    upload_only: []
+  }.freeze
 
-  ORGANISATION_ATTRIBUTES = %i[ods_code].freeze
+  ORGANISATION_ATTRIBUTES = {
+    poc_only: %i[ods_code],
+    upload_only: %i[ods_code]
+  }.freeze
 
-  TEAM_ATTRIBUTES = %i[
-    careplus_staff_code
-    careplus_staff_type
-    careplus_venue_code
-    days_before_consent_reminders
-    days_before_consent_requests
-    days_before_invitations
-    email
-    name
-    phone
-    phone_instructions
-    privacy_notice_url
-    privacy_policy_url
-    reply_to_id
-    type
-    workgroup
-  ].freeze
+  TEAM_ATTRIBUTES = {
+    poc_only: %i[
+      careplus_staff_code
+      careplus_staff_type
+      careplus_venue_code
+      days_before_consent_reminders
+      days_before_consent_requests
+      days_before_invitations
+      email
+      name
+      phone
+      phone_instructions
+      privacy_notice_url
+      privacy_policy_url
+      reply_to_id
+      type
+      workgroup
+    ],
+    upload_only: %i[name type workgroup]
+  }.freeze
 
-  SUBTEAM_ATTRIBUTES = %i[
-    email
-    name
-    phone
-    phone_instructions
-    reply_to_id
-  ].freeze
+  SUBTEAM_ATTRIBUTES = {
+    poc_only: %i[email name phone phone_instructions reply_to_id],
+    upload_only: []
+  }.freeze
 
-  USER_ATTRIBUTES = %i[
-    email
-    fallback_role
-    family_name
-    given_name
-    password
-  ].freeze
+  USER_ATTRIBUTES = {
+    poc_only: %i[email fallback_role family_name given_name password],
+    upload_only: []
+  }.freeze
+
+  DEFAULT_PROGRAMMES = { poc_only: [], upload_only: %w[flu hpv] }.freeze
 
   validates :team, presence: true
   validates :programmes, presence: true
-  validates :subteams, presence: true
-  validates :schools, presence: true
-  validates :clinics, presence: true
+  with_options if: -> { team.has_upload_only_access? } do
+    validates :subteams, absence: true
+    validates :schools, absence: true
+    validates :clinics, absence: true
+  end
+  with_options unless: -> { team.has_upload_only_access? } do
+    validates :subteams, presence: true
+    validates :schools, presence: true
+    validates :clinics, presence: true
+  end
   validate :no_duplicate_urns_across_school_types
   validate :no_schools_with_existing_team_attachments
 
   def initialize(hash)
     config = hash.deep_symbolize_keys
 
+    team_type = config.fetch(:team, {})&.fetch(:type, "poc_only")&.to_sym
+
     @organisation =
       Organisation.find_or_initialize_by(
-        config.fetch(:organisation, {}).slice(*ORGANISATION_ATTRIBUTES)
+        config.fetch(:organisation, {}).slice(
+          *ORGANISATION_ATTRIBUTES.fetch(team_type)
+        )
       )
 
     @team =
       Team.new(
-        **config.fetch(:team, {}).slice(*TEAM_ATTRIBUTES),
+        **config.fetch(:team, {}).slice(*TEAM_ATTRIBUTES.fetch(team_type)),
         organisation: @organisation,
         programme_types: []
       )
 
     @programmes =
       config
-        .fetch(:programmes, [])
+        .fetch(:programmes, DEFAULT_PROGRAMMES.fetch(team_type, []))
         .map { |type| ExistingProgramme.new(type:, team:) }
 
     subteams_by_name =
       config
         .fetch(:subteams, {})
-        .transform_values { it.slice(*SUBTEAM_ATTRIBUTES) }
+        .transform_values { it.slice(*SUBTEAM_ATTRIBUTES.fetch(team_type)) }
         .transform_values { Subteam.new(**it, team:) }
 
     @subteams = subteams_by_name.values
@@ -89,7 +105,7 @@ class Onboarding
     @users =
       config
         .fetch(:users, [])
-        .map { it.slice(*USER_ATTRIBUTES) }
+        .map { it.slice(*USER_ATTRIBUTES.fetch(team_type)) }
         .map do |attributes|
           User
             .find_or_initialize_by(email: attributes[:email])
@@ -134,7 +150,7 @@ class Onboarding
         .each_with_object({}) do |(team_name, clinic_configs), hash|
           subteam = subteams_by_name[team_name]
           clinic_configs
-            .map { it.slice(*CLINIC_ATTRIBUTES) }
+            .map { it.slice(*CLINIC_ATTRIBUTES.fetch(team_type)) }
             .each do
               hash[Location.new(**it, type: :community_clinic)] = subteam
             end
@@ -222,8 +238,10 @@ class Onboarding
 
       @users.each { |user| user.teams << team }
 
-      academic_years.each do |academic_year|
-        GenericClinicFactory.call(team:, academic_year:)
+      unless team.has_upload_only_access?
+        academic_years.each do |academic_year|
+          GenericClinicFactory.call(team:, academic_year:)
+        end
       end
 
       PatientTeamUpdater.call(team_scope: Team.where(id: team.id))

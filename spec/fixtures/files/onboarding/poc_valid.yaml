@@ -11,7 +11,8 @@ team:
   careplus_venue_code: EXAMPLE
   privacy_notice_url: https://example.com/privacy-notice
   privacy_policy_url: https://example.com/privacy-policy
-  type: 0
+  reply_to_id: 24af66c3-d6bd-4b9f-8067-3844f49e08d0
+  type: poc_only
   workgroup: nhstrust
 
 programmes: [hpv]

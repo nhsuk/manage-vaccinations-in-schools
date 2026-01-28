@@ -55,10 +55,10 @@ describe("National reporting immunisation imports") do
     @team =
       create(
         :team,
+        :upload_only,
         :with_one_nurse,
         ods_code: "R1L",
-        programmes: programmes,
-        type: "upload_only"
+        programmes: programmes
       )
     create(:school, team: @team, urn: 100_000)
   end

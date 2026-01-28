@@ -56,11 +56,11 @@ describe "Upload-only team homepage and navigation" do
     @team =
       create(
         :team,
+        :upload_only,
         :with_one_admin,
         :with_generic_clinic,
         programmes: [Programme.flu, Programme.hpv],
-        ods_code: "XX99",
-        type: :upload_only
+        ods_code: "XX99"
       )
     create(:school, team: @team, urn: 100_000)
     sign_in @team.users.first
