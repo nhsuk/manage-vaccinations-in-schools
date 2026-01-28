@@ -58,8 +58,7 @@ class Session < ApplicationRecord
     INNER JOIN patient_locations
     ON patient_locations.location_id = team_locations.location_id
     AND patient_locations.academic_year = team_locations.academic_year
-    AND (patient_locations.date_range IS NULL OR sessions.dates = '{}'
-        OR patient_locations.date_range @> ANY(sessions.dates))
+    AND (sessions.dates = '{}' OR patient_locations.date_range @> ANY(sessions.dates))
   SQL
 
   scope :joins_patients, -> { joins(<<-SQL) }
