@@ -345,13 +345,9 @@ describe Reports::OfflineSessionExporter do
                 programme:,
                 health_questions_list: ["First question?", "Second question?"]
               )
-              create(
-                :patient_consent_status,
-                :given,
-                patient:,
-                programme:,
-                academic_year:,
-                vaccine_methods: %w[nasal injection]
+              patient.programme_status(programme, academic_year:).update!(
+                consent_status: "given",
+                consent_vaccine_methods: %w[nasal injection]
               )
             end
 

@@ -25,7 +25,6 @@ describe Stats::Session do
     context "with patients in various states" do
       before do
         create(:patient, session:, year_group: 9).tap do |patient|
-          create(:patient_consent_status, :no_response, patient:, programme:)
           create(
             :patient_programme_status,
             :needs_consent_no_response,
@@ -35,7 +34,6 @@ describe Stats::Session do
         end
 
         create(:patient, session:, year_group: 9).tap do |patient|
-          create(:patient_consent_status, :given, patient:, programme:)
           create(
             :patient_programme_status,
             :due_injection,
@@ -55,7 +53,6 @@ describe Stats::Session do
         end
 
         create(:patient, session:, year_group: 9).tap do |patient|
-          create(:patient_consent_status, :refused, patient:, programme:)
           create(
             :patient_programme_status,
             :has_refusal_consent_refused,
@@ -65,7 +62,6 @@ describe Stats::Session do
         end
 
         create(:patient, session:, year_group: 9).tap do |patient|
-          create(:patient_consent_status, :conflicts, patient:, programme:)
           create(
             :patient_programme_status,
             :has_refusal_consent_conflicts,
@@ -98,7 +94,12 @@ describe Stats::Session do
 
       before do
         create(:patient, session:, year_group: 8).tap do |patient|
-          create(:patient_consent_status, :no_response, patient:, programme:)
+          create(
+            :patient_programme_status,
+            :needs_consent_no_response,
+            patient:,
+            programme:
+          )
         end
       end
 
@@ -120,22 +121,10 @@ describe Stats::Session do
 
       before do
         create(:patient, session:, year_group: 9).tap do |patient|
-          create(
-            :patient_consent_status,
-            :given_nasal_only,
-            patient:,
-            programme:
-          )
           create(:patient_programme_status, :due_nasal, patient:, programme:)
         end
 
         create(:patient, session:, year_group: 9).tap do |patient|
-          create(
-            :patient_consent_status,
-            :given_nasal_or_injection,
-            patient:,
-            programme:
-          )
           create(
             :patient_programme_status,
             :due_nasal_injection,
@@ -146,12 +135,6 @@ describe Stats::Session do
 
         create(:patient, session:, year_group: 9).tap do |patient|
           create(
-            :patient_consent_status,
-            :given_without_gelatine,
-            patient:,
-            programme:
-          )
-          create(
             :patient_programme_status,
             :due_injection_without_gelatine,
             patient:,
@@ -160,12 +143,6 @@ describe Stats::Session do
         end
 
         create(:patient, session:, year_group: 9).tap do |patient|
-          create(
-            :patient_consent_status,
-            :given_without_gelatine,
-            patient:,
-            programme:
-          )
           create(
             :patient_programme_status,
             :due_injection_without_gelatine,
@@ -186,12 +163,6 @@ describe Stats::Session do
       before do
         create(:patient, session:, year_group: 9).tap do |patient|
           create(
-            :patient_consent_status,
-            :given_injection_only,
-            patient:,
-            programme:
-          )
-          create(
             :patient_programme_status,
             :due_injection,
             patient:,
@@ -200,12 +171,6 @@ describe Stats::Session do
         end
 
         create(:patient, session:, year_group: 9).tap do |patient|
-          create(
-            :patient_consent_status,
-            :given_without_gelatine,
-            patient:,
-            programme:
-          )
           create(
             :patient_programme_status,
             :due_injection_without_gelatine,
@@ -226,15 +191,6 @@ describe Stats::Session do
 
     context "when patient is deceased" do
       let(:patient) { create(:patient, :deceased, session:, year_group: 9) }
-
-      before do
-        create(
-          :patient_consent_status,
-          :given_injection_only,
-          patient:,
-          programme:
-        )
-      end
 
       it "doesn't include them in the total" do
         expect(stats).to include(total: 0)

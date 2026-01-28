@@ -215,16 +215,6 @@ FactoryBot.define do
     end
 
     trait :consent_no_response do
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :no_response,
-            patient: instance,
-            programme:
-          )
-        end
-      end
       programme_statuses do
         programmes.map do |programme|
           association(
@@ -250,16 +240,6 @@ FactoryBot.define do
           )
         end
       end
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :given,
-            patient: instance,
-            programme:
-          )
-        end
-      end
       programme_statuses do
         programmes.map do |programme|
           association(
@@ -281,16 +261,6 @@ FactoryBot.define do
             :from_mum,
             patient: instance,
             team:,
-            programme:
-          )
-        end
-      end
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :given_nasal_only,
-            patient: instance,
             programme:
           )
         end
@@ -321,16 +291,6 @@ FactoryBot.define do
           )
         end
       end
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :given_injection_only,
-            patient: instance,
-            programme:
-          )
-        end
-      end
       programme_statuses do
         programmes.map do |programme|
           association(
@@ -352,16 +312,6 @@ FactoryBot.define do
             :from_mum,
             patient: instance,
             team:,
-            programme:
-          )
-        end
-      end
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :given_nasal_or_injection,
-            patient: instance,
             programme:
           )
         end
@@ -392,16 +342,6 @@ FactoryBot.define do
           )
         end
       end
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :given,
-            patient: instance,
-            programme:
-          )
-        end
-      end
       programme_statuses do
         programmes.map do |programme|
           association(
@@ -424,17 +364,6 @@ FactoryBot.define do
             :health_question_notes,
             patient: instance,
             team:,
-            programme:
-          )
-        end
-      end
-
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :given_injection_only,
-            patient: instance,
             programme:
           )
         end
@@ -465,17 +394,6 @@ FactoryBot.define do
           )
         end
       end
-
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :given_nasal_only,
-            patient: instance,
-            programme:
-          )
-        end
-      end
       programme_statuses do
         programmes.map do |programme|
           association(
@@ -499,16 +417,6 @@ FactoryBot.define do
             patient: instance,
             programme:,
             team:
-          )
-        end
-      end
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :given_without_gelatine,
-            patient: instance,
-            programme:
           )
         end
       end
@@ -537,16 +445,6 @@ FactoryBot.define do
           )
         end
       end
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :given_without_gelatine,
-            patient: instance,
-            programme:
-          )
-        end
-      end
       programme_statuses do
         programmes.map do |programme|
           association(
@@ -569,17 +467,6 @@ FactoryBot.define do
             :health_question_notes,
             patient: instance,
             team:,
-            programme:
-          )
-        end
-      end
-
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :given,
-            patient: instance,
             programme:
           )
         end
@@ -625,18 +512,6 @@ FactoryBot.define do
           )
         end
       end
-
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :given_nasal_or_injection,
-            patient: instance,
-            programme:
-          )
-        end
-      end
-
       programme_statuses do
         programmes.map do |programme|
           association(
@@ -674,18 +549,6 @@ FactoryBot.define do
           )
         end
       end
-
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :given_nasal_only,
-            patient: instance,
-            programme:
-          )
-        end
-      end
-
       programme_statuses do
         programmes.map do |programme|
           association(
@@ -712,7 +575,6 @@ FactoryBot.define do
           )
         end
       end
-
       triages do
         programmes.map do |programme|
           association(
@@ -724,18 +586,6 @@ FactoryBot.define do
           )
         end
       end
-
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :given_nasal_or_injection,
-            patient: instance,
-            programme:
-          )
-        end
-      end
-
       programme_statuses do
         programmes.map do |programme|
           association(
@@ -757,16 +607,6 @@ FactoryBot.define do
             :from_mum,
             patient: instance,
             team:,
-            programme:
-          )
-        end
-      end
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :refused,
-            patient: instance,
             programme:
           )
         end
@@ -798,16 +638,6 @@ FactoryBot.define do
           )
         end
       end
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :refused,
-            patient: instance,
-            programme:
-          )
-        end
-      end
     end
 
     trait :consent_conflicting do
@@ -831,16 +661,6 @@ FactoryBot.define do
               programme:
             )
           ]
-        end
-      end
-      consent_statuses do
-        programmes.map do |programme|
-          association(
-            :patient_consent_status,
-            :conflicts,
-            patient: instance,
-            programme:
-          )
         end
       end
       programme_statuses do

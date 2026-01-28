@@ -57,8 +57,8 @@ class SendClinicSubsequentInvitationsJob < ApplicationJob
     return unless already_invited
 
     programmes.any? do |programme|
-      !patient.programme_status(programme, academic_year:).vaccinated? &&
-        !patient.consent_status(programme:, academic_year:).refused?
+      programme_status = patient.programme_status(programme, academic_year:)
+      !programme_status.vaccinated? && !programme_status.consent_refused?
     end
   end
 

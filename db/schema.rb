@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_22_111151) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -618,8 +618,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
 
   create_table "patient_programme_statuses", force: :cascade do |t|
     t.integer "academic_year", null: false
-    t.integer "consent_status", default: 0
-    t.integer "consent_vaccine_methods", default: [], array: true
+    t.integer "consent_status", default: 0, null: false
+    t.integer "consent_vaccine_methods", default: [], null: false, array: true
     t.date "date"
     t.enum "disease_types", array: true, enum_type: "disease_type"
     t.integer "dose_sequence"
@@ -1202,8 +1202,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
               COALESCE(vaccination_summary.sais_vaccinations_count, (0)::bigint) AS sais_vaccinations_count,
               EXTRACT(month FROM ((vaccination_summary.most_recent_vaccination AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text)) AS most_recent_vaccination_month,
               EXTRACT(year FROM ((vaccination_summary.most_recent_vaccination AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text)) AS most_recent_vaccination_year,
-              COALESCE(pcs.status, 0) AS consent_status,
-              pcs.vaccine_methods AS consent_vaccine_methods,
+              COALESCE(pps.consent_status, 0) AS consent_status,
+              pps.consent_vaccine_methods,
               (parent_refused.patient_id IS NOT NULL) AS parent_refused_consent_current_year,
               (child_refused.patient_id IS NOT NULL) AS child_refused_vaccination_current_year,
               vaccination_summary.has_nasal AS vaccinated_nasal_current_year,
@@ -1275,11 +1275,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
                       all_vaccinations_by_year.academic_year
                      FROM all_vaccinations_by_year
                     WHERE ((all_vaccinations_by_year.outcome = ANY (ARRAY[0, 4])) AND (all_vaccinations_by_year.programme_type <> 'flu'::programme_type))) vr_previous ON (((vr_previous.patient_id = p.id) AND (vr_previous.programme_type = patient_team_prog.s_programme_type) AND (vr_previous.academic_year < tl.academic_year))))
-               LEFT JOIN LATERAL ( SELECT pcs_1.status,
-                      pcs_1.vaccine_methods
-                     FROM patient_consent_statuses pcs_1
-                    WHERE ((pcs_1.patient_id = p.id) AND (pcs_1.programme_type = patient_team_prog.s_programme_type) AND (pcs_1.academic_year = tl.academic_year))
-                   LIMIT 1) pcs ON (true))
+               LEFT JOIN LATERAL ( SELECT pps_1.consent_status,
+                      pps_1.consent_vaccine_methods
+                     FROM patient_programme_statuses pps_1
+                    WHERE ((pps_1.patient_id = p.id) AND (pps_1.programme_type = patient_team_prog.s_programme_type) AND (pps_1.academic_year = tl.academic_year))
+                   LIMIT 1) pps ON (true))
                LEFT JOIN ( SELECT DISTINCT vr.patient_id,
                       vr.programme_type,
                       COALESCE((vr_tl.academic_year)::numeric, EXTRACT(year FROM ((vr.performed_at AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text))) AS academic_year

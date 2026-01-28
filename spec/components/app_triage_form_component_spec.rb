@@ -25,15 +25,7 @@ describe AppTriageFormComponent do
     let(:programme) { Programme.flu }
 
     context "when only injection is consented to" do
-      before do
-        create(
-          :patient_consent_status,
-          :given,
-          patient:,
-          programme:,
-          vaccine_methods: %w[injection]
-        )
-      end
+      before { create(:consent, :given_injection, patient:, programme:) }
 
       it "shows the correct hint about injection only" do
         expect(rendered).to have_text(
@@ -49,13 +41,7 @@ describe AppTriageFormComponent do
 
     context "when both nasal and injection are consented to" do
       before do
-        create(
-          :patient_consent_status,
-          :given,
-          patient:,
-          programme:,
-          vaccine_methods: %w[injection nasal]
-        )
+        create(:consent, :given_nasal_or_injection, patient:, programme:)
       end
 
       it "shows the correct hint about injection being offered" do
@@ -71,15 +57,7 @@ describe AppTriageFormComponent do
     end
 
     context "when only nasal is consented to" do
-      before do
-        create(
-          :patient_consent_status,
-          :given,
-          patient:,
-          programme:,
-          vaccine_methods: %w[nasal]
-        )
-      end
+      before { create(:consent, :given_nasal, patient:, programme:) }
 
       it "shows the correct hint about nasal spray only" do
         expect(rendered).to have_text(
@@ -99,15 +77,7 @@ describe AppTriageFormComponent do
   context "when programme does not have multiple delivery methods" do
     let(:programme) { Programme.hpv }
 
-    before do
-      create(
-        :patient_consent_status,
-        :given,
-        patient:,
-        programme:,
-        vaccine_methods: %w[injection]
-      )
-    end
+    before { create(:consent, :given_injection, patient:, programme:) }
 
     it "shows only the generic safe to vaccinate option, and no hint" do
       expect(rendered).to have_text("safe to vaccinate")
