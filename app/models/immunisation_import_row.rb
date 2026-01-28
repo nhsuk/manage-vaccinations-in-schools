@@ -138,7 +138,6 @@ class ImmunisationImportRow
       outcome:,
       patient_id: patient.id,
       performed_at_date:,
-      performed_at_time:,
       performed_by_user:,
       performed_ods_code: performed_ods_code&.to_s,
       programme_type: programme.type,
@@ -169,10 +168,11 @@ class ImmunisationImportRow
       batch_id: batch&.id,
       delivery_method: delivery_method_value,
       delivery_site: delivery_site_value,
-      notes: notes&.to_s,
-      vaccine_id: vaccine&.id,
       discarded_at: nil,
-      source:
+      notes: notes&.to_s,
+      performed_at_time:,
+      source:,
+      vaccine_id: vaccine&.id
     }
 
     vaccination_record =

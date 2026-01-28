@@ -105,9 +105,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
         patient.vaccination_records.sourced_from_service.includes(:team)
 
     grouped_vaccination_records =
-      vaccination_records.group_by do
-        [it.performed_at.to_date, it.programme_type]
-      end
+      vaccination_records.group_by { [it.performed_at_date, it.programme_type] }
 
     deduplicated_vaccination_records = []
 

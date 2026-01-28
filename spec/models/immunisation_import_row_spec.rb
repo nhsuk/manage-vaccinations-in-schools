@@ -1317,7 +1317,7 @@ describe ImmunisationImportRow do
         end
       end
 
-      context "with an existing vaccination record" do
+      context "with an existing vaccination record with the same UUID" do
         let!(:existing_vaccination_record) do
           create(
             :vaccination_record,
@@ -1340,6 +1340,48 @@ describe ImmunisationImportRow do
             expect(vaccination_record.pending_changes["discarded_at"]).to be_nil
           end
         end
+      end
+
+      context "with an existing vaccination record with the same programme and date" do
+        let(:vaccine) { Vaccine.find_by!(upload_name: "Gardasil9") }
+        let(:batch) do
+          create(
+            :batch,
+            name: "123",
+            expiry: Date.new(2021, 1, 1),
+            vaccine:,
+            team: nil
+          )
+        end
+        let(:patient) do
+          create(
+            :patient,
+            given_name:,
+            family_name:,
+            date_of_birth: Date.parse(date_of_birth),
+            address_postcode:,
+            nhs_number:
+          )
+        end
+
+        let!(:existing_vaccination_record) do
+          create(
+            :vaccination_record,
+            batch:,
+            location_name: "Waterloo Road",
+            patient:,
+            performed_at: Time.zone.local(2024, 1, 1, 12, 30),
+            performed_by_user: nil,
+            performed_ods_code: "ABC",
+            programme: programmes.first,
+            vaccine:
+          )
+        end
+
+        let(:data) { valid_data }
+
+        it { should_not be_nil }
+        it { should eq(existing_vaccination_record) }
       end
 
       describe "#batch" do
