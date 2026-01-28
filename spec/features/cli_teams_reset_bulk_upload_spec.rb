@@ -144,7 +144,7 @@ describe "mavis teams reset-bulk-upload" do
       create(
         :team,
         :with_one_nurse,
-        type: :upload_only,
+        :upload_only,
         programmes: [Programme.hpv, Programme.flu],
         organisation: bulk_organisation,
         workgroup: "bulk-team"
@@ -249,14 +249,14 @@ describe "mavis teams reset-bulk-upload" do
     @bulk_team1 =
       create(
         :team,
-        type: :upload_only,
+        :upload_only,
         organisation: bulk_organisation,
         workgroup: "bulk-1"
       )
     @bulk_team2 =
       create(
         :team,
-        type: :upload_only,
+        :upload_only,
         organisation: bulk_organisation,
         workgroup: "bulk-2"
       )

@@ -138,7 +138,7 @@ describe AppChildSummaryComponent do
   context "when created by bulk upload" do
     let(:component) { described_class.new(patient, current_team: team) }
 
-    let(:team) { create(:team, type: :upload_only) }
+    let(:team) { create(:team, :upload_only) }
 
     before { create(:archive_reason, :immunisation_import, patient:, team:) }
 

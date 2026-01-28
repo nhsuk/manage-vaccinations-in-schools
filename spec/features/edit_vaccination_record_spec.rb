@@ -489,7 +489,7 @@ describe "Edit vaccination record" do
       create(
         :team,
         :with_one_admin,
-        type: :upload_only,
+        :upload_only,
         ods_code: "R1L",
         programmes: [Programme.hpv, Programme.flu]
       )

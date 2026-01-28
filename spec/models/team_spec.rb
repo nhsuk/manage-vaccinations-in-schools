@@ -69,7 +69,7 @@ describe Team do
 
   describe "#year_groups" do
     context "when team has upload_only access" do
-      let(:team) { create(:team, type: :upload_only) }
+      let(:team) { create(:team, :upload_only) }
 
       it "covers nursery to upper sixth" do
         expect(team.year_groups).to eq((-2..13).to_a)

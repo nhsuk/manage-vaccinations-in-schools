@@ -49,12 +49,21 @@ FactoryBot.define do
 
     workgroup { "w#{identifier}" }
     name { "SAIS Team #{identifier}" }
+
     email { "sais-team-#{identifier}@example.com" }
     phone { "01234 567890" }
-
     privacy_notice_url { "https://example.com/privacy-notice" }
     privacy_policy_url { "https://example.com/privacy-policy" }
+
     type { :poc_only }
+
+    trait :upload_only do
+      type { :upload_only }
+      email { nil }
+      phone { nil }
+      privacy_notice_url { nil }
+      privacy_policy_url { nil }
+    end
 
     trait :with_one_nurse do
       users { [create(:user, :nurse, team: instance)] }
