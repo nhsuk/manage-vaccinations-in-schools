@@ -2435,13 +2435,16 @@ describe ImmunisationImportRow do
             "UUID" => existing_vaccination_record.uuid,
             "PERSON_FORENAME" => existing_vaccination_record.patient.given_name,
             "PERSON_SURNAME" => existing_vaccination_record.patient.family_name,
-            "PERSON_DOB" => existing_vaccination_record.patient.date_of_birth.to_s,
+            "PERSON_DOB" =>
+              existing_vaccination_record.patient.date_of_birth.to_s,
             "NHS_NUMBER" => existing_vaccination_record.patient.nhs_number,
-            "PERSON_POSTCODE" => existing_vaccination_record.patient.address_postcode,
+            "PERSON_POSTCODE" =>
+              existing_vaccination_record.patient.address_postcode,
             "BATCH_EXPIRY_DATE" => nil,
             "BATCH_NUMBER" => nil,
             "VACCINE_GIVEN" => nil,
-            "ORGANISATION_CODE" => existing_vaccination_record.performed_ods_code
+            "ORGANISATION_CODE" =>
+              existing_vaccination_record.performed_ods_code
           )
         end
 
@@ -2449,15 +2452,12 @@ describe ImmunisationImportRow do
           let(:existing_delivery_site) { "left_arm_upper_position" }
           let(:existing_delivery_method) { "intramuscular" }
 
-          let(:data) do
-            duplicate_hpv_data.merge(
-              "ANATOMICAL_SITE" => nil
-            )
-          end
+          let(:data) { duplicate_hpv_data.merge("ANATOMICAL_SITE" => nil) }
 
           it { should eq(existing_vaccination_record) }
+
           it "identifies pending changes" do
-            expect(vaccination_record.pending_changes?).to eq(false)
+            expect(vaccination_record.pending_changes?).to be(false)
           end
         end
 
@@ -2468,13 +2468,13 @@ describe ImmunisationImportRow do
           let(:data) { duplicate_hpv_data }
 
           it { should eq(existing_vaccination_record) }
+
           it "identifies pending changes" do
-            expect(vaccination_record.pending_changes?).to eq(false)
+            expect(vaccination_record.pending_changes?).to be(false)
           end
         end
 
         context "in first import site defined and in second missing but dose sequence changed" do
-
           let(:existing_delivery_site) { "left_arm_upper_position" }
           let(:existing_delivery_method) { "intramuscular" }
 
@@ -2490,7 +2490,7 @@ describe ImmunisationImportRow do
           end
         end
       end
-  end
+    end
 
     context "for a bulk upload" do
       let(:programmes) { [Programme.hpv, Programme.flu] }
