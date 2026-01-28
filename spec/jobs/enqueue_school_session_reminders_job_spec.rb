@@ -1,0 +1,45 @@
+# frozen_string_literal: true
+
+describe EnqueueSchoolSessionRemindersJob do
+  subject(:perform_now) { described_class.perform_now }
+
+  context "with a session from last week" do
+    let(:session) { create(:session, :completed) }
+
+    it "doesn't queue a job" do
+      expect { perform_now }.not_to have_enqueued_job(
+        SendSchoolSessionRemindersJob
+      ).with(session)
+    end
+  end
+
+  context "with a session today" do
+    let(:session) { create(:session, :today) }
+
+    it "doesn't queue a job" do
+      expect { perform_now }.not_to have_enqueued_job(
+        SendSchoolSessionRemindersJob
+      ).with(session)
+    end
+  end
+
+  context "with a session tomorrow" do
+    let(:session) { create(:session, :tomorrow) }
+
+    it "queues a job" do
+      expect { perform_now }.to have_enqueued_job(
+        SendSchoolSessionRemindersJob
+      ).with(session)
+    end
+  end
+
+  context "with a session next week" do
+    let(:session) { create(:session, :scheduled) }
+
+    it "doesn't queue a job" do
+      expect { perform_now }.not_to have_enqueued_job(
+        SendSchoolSessionRemindersJob
+      ).with(session)
+    end
+  end
+end
