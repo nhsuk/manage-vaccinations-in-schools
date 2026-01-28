@@ -3,6 +3,14 @@ basic_auth: Require users to sign in with basic authentication before they
 
 dev_tools: Developer tools useful for testing and debugging.
 
+imms_api_enqueue_rolling_searches: |
+  Enables enqueueing of vaccination searches for patients not in sessions,
+  spread over a period of 28 days, in the EnqueueVaccinationsSearchInNHSJob.
+
+imms_api_enqueue_session_searches: |
+  Enables enqueueing of vaccination searches for upcoming sessions in the
+  EnqueueVaccinationsSearchInNHSJob.
+
 imms_api_integration: Umbrella flag to switch off ALL API integration (including CLI tools).
 
 imms_api_search_job: Flag to switch off any automated receipt of vaccination records (Search),

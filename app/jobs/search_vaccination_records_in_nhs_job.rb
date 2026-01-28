@@ -3,9 +3,11 @@
 class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
   sidekiq_options queue: :immunisations_api_search
 
+  attr_reader :patient, :programmes
+
   def perform(patient_id)
     begin
-      patient = Patient.includes(teams: :organisation).find(patient_id)
+      @patient = Patient.includes(teams: :organisation).find(patient_id)
     rescue ActiveRecord::RecordNotFound
       # This patient has since been merged with another so we don't need to
       # perform a search.
@@ -17,41 +19,9 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     SemanticLogger.tagged(tx_id:, job_id:) do
       Sentry.set_tags(tx_id:, job_id:)
 
-      programmes = Programme.all_as_variants
+      @programmes = Programme.all_as_variants
 
-      feature_flag_enabled =
-        programmes.any? do |programme|
-          Flipper.enabled?(:imms_api_search_job, programme)
-        end
-      return unless feature_flag_enabled
-
-      if patient.nhs_number.nil?
-        incoming_vaccination_records = []
-      else
-        fhir_bundle =
-          NHS::ImmunisationsAPI.search_immunisations(patient, programmes:)
-
-        incoming_vaccination_records =
-          extract_vaccination_records(fhir_bundle).map do |fhir_record|
-            FHIRMapper::VaccinationRecord.from_fhir_record(
-              fhir_record,
-              patient:
-            )
-          end
-
-        incoming_vaccination_records =
-          deduplicate_vaccination_records(patient, incoming_vaccination_records)
-
-        incoming_vaccination_records =
-          select_programme_feature_flagged_records(incoming_vaccination_records)
-      end
-
-      existing_vaccination_records =
-        patient
-          .vaccination_records
-          .includes(:identity_check)
-          .sourced_from_nhs_immunisations_api
-          .for_programmes(programmes)
+      return unless feature_flags_enabled
 
       existing_vaccination_records.find_each do |vaccination_record|
         incoming_vaccination_record =
@@ -80,6 +50,8 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
         AlreadyHadNotificationSender.call(vaccination_record:)
       end
 
+      update_vaccination_search_timestamps if patient.nhs_number.present?
+
       StatusUpdater.call(patient:)
     end
   end
@@ -92,14 +64,44 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     end
   end
 
-  def extract_vaccination_records(fhir_bundle)
+  def incoming_vaccination_records
+    @incoming_vaccination_records ||=
+      if patient.nhs_number.nil?
+        []
+      else
+        fhir_bundle =
+          NHS::ImmunisationsAPI.search_immunisations(patient, programmes:)
+
+        extract_fhir_vaccination_records(fhir_bundle)
+          .then { convert_to_vaccination_records(it) }
+          .then { deduplicate_vaccination_records(it) }
+          .then { select_programme_feature_flagged_records(it) }
+      end
+  end
+
+  def existing_vaccination_records
+    @existing_vaccination_records ||=
+      patient
+        .vaccination_records
+        .includes(:identity_check)
+        .sourced_from_nhs_immunisations_api
+        .for_programmes(programmes)
+  end
+
+  def extract_fhir_vaccination_records(fhir_bundle)
     fhir_bundle
       .entry
       .map { it.resource if it.resource.resourceType == "Immunization" }
       .compact
   end
 
-  def deduplicate_vaccination_records(patient, incoming_vaccination_records)
+  def convert_to_vaccination_records(fhir_records)
+    fhir_records.map do |fhir_record|
+      FHIRMapper::VaccinationRecord.from_fhir_record(fhir_record, patient:)
+    end
+  end
+
+  def deduplicate_vaccination_records(incoming_vaccination_records)
     vaccination_records =
       incoming_vaccination_records +
         patient.vaccination_records.sourced_from_service.includes(:team)
@@ -128,5 +130,19 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     deduplicated_vaccination_records.select(
       &:sourced_from_nhs_immunisations_api?
     )
+  end
+
+  def update_vaccination_search_timestamps
+    programmes.each do |programme|
+      PatientProgrammeVaccinationsSearch
+        .find_or_initialize_by(patient:, programme_type: programme.type)
+        .tap { it.update!(last_searched_at: Time.current) }
+    end
+  end
+
+  def feature_flags_enabled
+    programmes.any? do |programme|
+      Flipper.enabled?(:imms_api_search_job, programme)
+    end
   end
 end

@@ -26,7 +26,8 @@ describe SearchVaccinationRecordsInNHSJob do
     end
 
     it "returns only Immunization resources from the bundle" do
-      records = described_class.new.send(:extract_vaccination_records, bundle)
+      records =
+        described_class.new.send(:extract_fhir_vaccination_records, bundle)
       expect(records).to all(have_attributes(resourceType: "Immunization"))
       expect(records.size).to eq 2
     end
@@ -65,11 +66,10 @@ describe SearchVaccinationRecordsInNHSJob do
 
   describe "#deduplicate_vaccination_records" do
     subject(:deduplicate) do
-      described_class.new.send(
-        :deduplicate_vaccination_records,
-        patient,
-        vaccination_records
-      )
+      described_class
+        .new
+        .tap { it.instance_variable_set(:@patient, patient) }
+        .send(:deduplicate_vaccination_records, vaccination_records)
     end
 
     shared_examples "handles duplicates" do
@@ -390,6 +390,38 @@ describe SearchVaccinationRecordsInNHSJob do
       end
     end
 
+    shared_examples "records the search" do
+      describe "the PatientProgrammeVaccinationsSearch record" do
+        it "is created or updated with the search time" do
+          freeze_time
+
+          perform
+
+          ppis =
+            PatientProgrammeVaccinationsSearch.find_by(
+              patient:,
+              programme_type: programme.type
+            )
+          expect(ppis.last_searched_at).to eq Time.current
+        end
+      end
+    end
+
+    shared_examples "does not record the search" do
+      describe "the PatientProgrammeVaccinationsSearch record" do
+        it "is not created or updated" do
+          perform
+
+          expect(
+            PatientProgrammeVaccinationsSearch.find_by(
+              patient:,
+              programme_type: programme.type
+            )
+          ).to be_nil
+        end
+      end
+    end
+
     let(:patient_id) { patient.id }
     let(:expected_query) do
       {
@@ -409,7 +441,10 @@ describe SearchVaccinationRecordsInNHSJob do
     end
     let!(:existing_records) do
       fhir_records =
-        described_class.new.send(:extract_vaccination_records, existing_bundle)
+        described_class.new.send(
+          :extract_fhir_vaccination_records,
+          existing_bundle
+        )
       mapped_records =
         fhir_records.map do |fhir_record|
           mapped =
@@ -447,6 +482,8 @@ describe SearchVaccinationRecordsInNHSJob do
 
       include_examples "sends discovery comms if required n times", 2
       include_examples "calls StatusUpdater"
+
+      include_examples "records the search"
     end
 
     context "with 1 existing record and 1 new incoming record" do
@@ -652,6 +689,7 @@ describe SearchVaccinationRecordsInNHSJob do
 
       include_examples "sends discovery comms if required n times", 2
       include_examples "calls StatusUpdater"
+      include_examples "records the search"
     end
 
     context "with no NHS number" do
@@ -672,6 +710,26 @@ describe SearchVaccinationRecordsInNHSJob do
 
       include_examples "sends discovery comms if required n times", 0
       include_examples "calls StatusUpdater"
+
+      include_examples "does not record the search"
+    end
+
+    context "with an existing PatientProgrammeVaccinationsSearch record" do
+      before do
+        create(:patient_programme_vaccinations_search, patient:, programme:)
+      end
+
+      include_examples "records the search"
+
+      describe "the PatientProgrammeVaccinationsSearch record" do
+        it "is not newly created" do
+          expect { perform }.not_to(
+            change do
+              PatientProgrammeVaccinationsSearch.for_programme(programme).count
+            end
+          )
+        end
+      end
     end
 
     context "with duplicates" do
