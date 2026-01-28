@@ -129,7 +129,10 @@ class ImmunisationImport < ApplicationRecord
     patient_locations = @patient_locations_batch.to_a
     archive_reasons = @archive_reasons_batch.to_a
 
-    VaccinationRecord.import(vaccination_records, on_duplicate_key_update: :all)
+    VaccinationRecord.import!(
+      vaccination_records,
+      on_duplicate_key_update: :all
+    )
 
     vaccination_records.each do |vaccination_record|
       AlreadyHadNotificationSender.call(vaccination_record:)

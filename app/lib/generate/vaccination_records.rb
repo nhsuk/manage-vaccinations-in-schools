@@ -52,6 +52,7 @@ class Generate::VaccinationRecords
     PatientTeamUpdater.call(
       patient_scope: Patient.where(id: patients.map(&:id))
     )
+
     StatusUpdater.call(patient: patients)
   end
 

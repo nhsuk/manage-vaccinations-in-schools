@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_22_111151) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_22_191433) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -944,6 +944,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_111151) do
     t.bigint "patient_id", null: false
     t.jsonb "pending_changes", default: {}, null: false
     t.datetime "performed_at", null: false
+    t.date "performed_at_date"
+    t.time "performed_at_time"
     t.string "performed_by_family_name"
     t.string "performed_by_given_name"
     t.bigint "performed_by_user_id"
