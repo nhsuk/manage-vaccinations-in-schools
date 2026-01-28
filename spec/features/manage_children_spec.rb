@@ -288,7 +288,8 @@ describe "Manage children" do
     @session =
       create(:session, location: school, team: @team, programmes: [@hpv])
 
-    create(:session, location: @new_school, team: @team, programmes: [@hpv])
+    @new_session =
+      create(:session, location: @new_school, team: @team, programmes: [@hpv])
 
     @patient =
       create(
@@ -584,10 +585,10 @@ describe "Manage children" do
   def and_i_see_the_school_has_been_updated
     expect(page).to have_content("New School")
     expect(@patient.reload.school).to eq(@new_school)
-    expect(@patient.sessions.map(&:location).uniq).to eq([@new_school])
-    expect(@patient.school_move_log_entries.pluck(:school_id)).to eq(
-      [@new_school.id]
-    )
+    expect(@patient.sessions).to contain_exactly(@new_session)
+    expect(
+      @patient.school_move_log_entries.pluck(:school_id)
+    ).to contain_exactly(@new_school.id)
   end
 
   def and_i_see_the_child_is_home_schooled

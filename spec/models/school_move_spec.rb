@@ -58,7 +58,6 @@ describe SchoolMove do
     let(:generic_clinic_session) do
       create(
         :session,
-        :unscheduled,
         academic_year:,
         team:,
         location: team.generic_clinic,
@@ -309,232 +308,113 @@ describe SchoolMove do
         end
         let(:patient) { create(:patient, session:) }
 
-        context "and not already vaccinated" do
-          context "to a school with a scheduled session" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
-
-            let(:school) { create(:school, team:) }
-            let(:new_sessions) do
-              create_list(
-                :session,
-                2,
-                date: session_date + 1.week,
-                location: school,
-                team:,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "removes the patient from the old school sessions"
-            include_examples "adds the patient to the new school sessions"
-            include_examples "destroys the school move"
+        context "to a school with a scheduled session" do
+          let(:school_move) do
+            create(:school_move, :to_school, patient:, school:)
           end
 
-          context "to a school with a completed session" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
-
-            let(:school) { create(:school, team:) }
-            let(:new_sessions) do
-              create_list(
-                :session,
-                2,
-                date: session_date - 1.week,
-                location: school,
-                team:,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "removes the patient from the old school sessions"
-            include_examples "adds the patient to the new school sessions"
-            include_examples "destroys the school move"
-          end
-
-          context "to home-schooled" do
-            let(:school_move) do
-              create(:school_move, :to_home_educated, team:, patient:)
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient to home-schooled"
-            include_examples "removes the patient from the old school sessions"
-            include_examples "adds the patient to the community clinic"
-            include_examples "destroys the school move"
-          end
-
-          context "to a school in a different team" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
-
-            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
-            let(:school) { create(:school, team: new_team) }
-            let(:new_sessions) do
-              create_list(
-                :session,
-                2,
-                date: session_date + 1.week,
-                location: school,
-                team: new_team,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "removes the patient from the old school sessions"
-            include_examples "adds the patient to the new school sessions"
-            include_examples "archives the patient in the original team"
-            include_examples "destroys the school move"
-          end
-
-          context "to home-schooled in a different team" do
-            let(:school_move) do
-              create(:school_move, :to_home_educated, team: new_team, patient:)
-            end
-
-            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
-            let(:generic_clinic_session) do
-              create(
-                :session,
-                :unscheduled,
-                academic_year:,
-                team: new_team,
-                location: new_team.generic_clinic,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient to home-schooled"
-            include_examples "removes the patient from the old school sessions"
-            include_examples "adds the patient to the community clinic"
-            include_examples "destroys the school move"
-          end
-        end
-
-        context "and already vaccinated" do
-          before do
-            create(
-              :vaccination_record,
-              patient:,
-              session:,
-              programme: programmes.first
+          let(:school) { create(:school, team:) }
+          let(:new_sessions) do
+            create_list(
+              :session,
+              2,
+              date: session_date + 1.week,
+              location: school,
+              team:,
+              programmes:
             )
           end
 
-          context "to a school with a scheduled session" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
+          include_examples "creates a log entry"
+          include_examples "sets the patient school"
+          include_examples "removes the patient from the old school sessions"
+          include_examples "adds the patient to the new school sessions"
+          include_examples "destroys the school move"
+        end
 
-            let(:school) { create(:school, team:) }
-            let(:new_sessions) do
-              create_list(
-                :session,
-                2,
-                date: session_date + 1.week,
-                location: school,
-                team:,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "keeps the patient in the old school sessions"
-            include_examples "destroys the school move"
+        context "to a school with a completed session" do
+          let(:school_move) do
+            create(:school_move, :to_school, patient:, school:)
           end
 
-          context "to a school with a completed session" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
-
-            let(:school) { create(:school, team:) }
-            let(:new_sessions) do
-              create_list(
-                :session,
-                2,
-                date: session_date - 1.week,
-                location: school,
-                team:,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "keeps the patient in the old school sessions"
-            include_examples "destroys the school move"
+          let(:school) { create(:school, team:) }
+          let(:new_sessions) do
+            create_list(
+              :session,
+              2,
+              date: session_date - 1.week,
+              location: school,
+              team:,
+              programmes:
+            )
           end
 
-          context "to home-schooled" do
-            let(:school_move) do
-              create(:school_move, :to_home_educated, team:, patient:)
-            end
+          include_examples "creates a log entry"
+          include_examples "sets the patient school"
+          include_examples "removes the patient from the old school sessions"
+          include_examples "adds the patient to the new school sessions"
+          include_examples "destroys the school move"
+        end
 
-            include_examples "creates a log entry"
-            include_examples "sets the patient to home-schooled"
-            include_examples "keeps the patient in the old school sessions"
-            include_examples "destroys the school move"
+        context "to home-schooled" do
+          let(:school_move) do
+            create(:school_move, :to_home_educated, team:, patient:)
           end
 
-          context "to a school in a different team" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
+          include_examples "creates a log entry"
+          include_examples "sets the patient to home-schooled"
+          include_examples "removes the patient from the old school sessions"
+          include_examples "adds the patient to the community clinic"
+          include_examples "destroys the school move"
+        end
 
-            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
-            let(:school) { create(:school, team: new_team) }
-            let(:new_sessions) do
-              create(
-                :session,
-                2,
-                date: session_date + 1.week,
-                location: school,
-                team: new_team,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "keeps the patient in the old school sessions"
-            include_examples "archives the patient in the original team"
-            include_examples "destroys the school move"
+        context "to a school in a different team" do
+          let(:school_move) do
+            create(:school_move, :to_school, patient:, school:)
           end
 
-          context "to home-schooled in a different team" do
-            let(:school_move) do
-              create(:school_move, :to_home_educated, team: new_team, patient:)
-            end
-
-            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
-            let(:generic_clinic_session) do
-              create(
-                :session,
-                :unscheduled,
-                academic_year: AcademicYear.current,
-                team: new_team,
-                location: new_team.generic_clinic,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient to home-schooled"
-            include_examples "keeps the patient in the old school sessions"
-            include_examples "destroys the school move"
+          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:school) { create(:school, team: new_team) }
+          let(:new_sessions) do
+            create_list(
+              :session,
+              2,
+              date: session_date + 1.week,
+              location: school,
+              team: new_team,
+              programmes:
+            )
           end
+
+          include_examples "creates a log entry"
+          include_examples "sets the patient school"
+          include_examples "removes the patient from the old school sessions"
+          include_examples "adds the patient to the new school sessions"
+          include_examples "archives the patient in the original team"
+          include_examples "destroys the school move"
+        end
+
+        context "to home-schooled in a different team" do
+          let(:school_move) do
+            create(:school_move, :to_home_educated, team: new_team, patient:)
+          end
+
+          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:generic_clinic_session) do
+            create(
+              :session,
+              academic_year:,
+              team: new_team,
+              location: new_team.generic_clinic,
+              programmes:
+            )
+          end
+
+          include_examples "creates a log entry"
+          include_examples "sets the patient to home-schooled"
+          include_examples "removes the patient from the old school sessions"
+          include_examples "adds the patient to the community clinic"
+          include_examples "destroys the school move"
         end
       end
 
@@ -543,267 +423,128 @@ describe SchoolMove do
           create(:patient, :home_educated, session: generic_clinic_session)
         end
 
-        context "and not already vaccinated" do
-          context "to a school with a scheduled session" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
-
-            let(:school) { create(:school, team:) }
-            let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
-              create_list(
-                :session,
-                2,
-                date: session_date + 1.week,
-                location: school,
-                team:,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "adds the patient to the new school sessions"
-            include_examples "destroys the school move"
+        context "to a school with a scheduled session" do
+          let(:school_move) do
+            create(:school_move, :to_school, patient:, school:)
           end
 
-          context "to a school with a completed session" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
-
-            let(:school) { create(:school, team:) }
-            let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
-              create_list(
-                :session,
-                2,
-                date: session_date - 1.week,
-                location: school,
-                team:,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "adds the patient to the new school sessions"
-            include_examples "destroys the school move"
-          end
-
-          context "to home-schooled" do
-            let(:school_move) do
-              create(:school_move, :to_home_educated, team:, patient:)
-            end
-
-            it "keeps the patient as home-schooled" do
-              expect { confirm! }.not_to(
-                change { patient.reload.home_educated }
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "keeps the patient in the community clinic"
-            include_examples "destroys the school move"
-          end
-
-          context "to a school in a different team" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
-
-            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
-            let(:school) { create(:school, team: new_team) }
-            let(:new_sessions) do
-              create_list(
-                :session,
-                2,
-                date: session_date + 1.week,
-                location: school,
-                team: new_team,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "removes the patient from the community clinic"
-            include_examples "archives the patient in the original team"
-            include_examples "destroys the school move"
-          end
-
-          context "to home-schooled in a different team" do
-            let(:school_move) do
-              create(:school_move, :to_home_educated, team: new_team, patient:)
-            end
-
-            let(:patient) do
-              create(
-                :patient,
-                :home_educated,
-                session:
-                  create(
-                    :session,
-                    :unscheduled,
-                    academic_year:,
-                    team:,
-                    location: team.generic_clinic,
-                    programmes:
-                  )
-              )
-            end
-            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
-            let(:generic_clinic_session) do
-              create(
-                :session,
-                :unscheduled,
-                academic_year:,
-                team: new_team,
-                location: new_team.generic_clinic,
-                programmes:
-              )
-            end
-
-            it "keeps the patient as home-schooled" do
-              expect { confirm! }.not_to(
-                change { patient.reload.home_educated }
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "adds the patient to the community clinic"
-            include_examples "destroys the school move"
-          end
-        end
-
-        context "and already vaccinated" do
-          before do
-            create(
-              :vaccination_record,
-              patient:,
-              session: generic_clinic_session,
-              programme: programmes.first,
-              location_name: "A clinic"
+          let(:school) { create(:school, team:) }
+          let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
+            create_list(
+              :session,
+              2,
+              date: session_date + 1.week,
+              location: school,
+              team:,
+              programmes:
             )
           end
 
-          context "to a school with a scheduled session" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
+          include_examples "creates a log entry"
+          include_examples "sets the patient school"
+          include_examples "adds the patient to the new school sessions"
+          include_examples "destroys the school move"
+        end
 
-            let(:school) { create(:school, team:) }
-            let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
-              create_list(
-                :session,
-                2,
-                date: session_date + 1.week,
-                location: school,
-                team:,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "keeps the patient in the community clinic"
-            include_examples "destroys the school move"
+        context "to a school with a completed session" do
+          let(:school_move) do
+            create(:school_move, :to_school, patient:, school:)
           end
 
-          context "to a school with a completed session" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
-
-            let(:school) { create(:school, team:) }
-            let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
-              create_list(
-                :session,
-                2,
-                :completed,
-                location: school,
-                team:,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "keeps the patient in the community clinic"
-            include_examples "destroys the school move"
+          let(:school) { create(:school, team:) }
+          let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
+            create_list(
+              :session,
+              2,
+              date: session_date - 1.week,
+              location: school,
+              team:,
+              programmes:
+            )
           end
 
-          context "to home-schooled" do
-            let(:school_move) do
-              create(:school_move, :to_home_educated, team:, patient:)
-            end
+          include_examples "creates a log entry"
+          include_examples "sets the patient school"
+          include_examples "adds the patient to the new school sessions"
+          include_examples "destroys the school move"
+        end
 
-            it "keeps the patient as home-schooled" do
-              expect { confirm! }.not_to(
-                change { patient.reload.home_educated }
-              )
-            end
-
-            include_examples "keeps the patient in the community clinic"
-            include_examples "destroys the school move"
+        context "to home-schooled" do
+          let(:school_move) do
+            create(:school_move, :to_home_educated, team:, patient:)
           end
 
-          context "to a school in a different team" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
-
-            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
-            let(:school) { create(:school, team: new_team) }
-            let(:new_sessions) do
-              create_list(
-                :session,
-                2,
-                date: session_date + 1.week,
-                location: school,
-                team: new_team,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "keeps the patient in the community clinic"
-            include_examples "archives the patient in the original team"
-            include_examples "destroys the school move"
+          it "keeps the patient as home-schooled" do
+            expect { confirm! }.not_to(change { patient.reload.home_educated })
           end
 
-          context "to home-schooled in a different team" do
-            let(:school_move) do
-              create(:school_move, :to_home_educated, team: new_team, patient:)
-            end
+          include_examples "creates a log entry"
+          include_examples "keeps the patient in the community clinic"
+          include_examples "destroys the school move"
+        end
 
-            let(:patient) do
-              create(
-                :patient,
-                :home_educated,
-                session:
-                  create(
-                    :session,
-                    :unscheduled,
-                    academic_year:,
-                    team:,
-                    location: team.generic_clinic,
-                    programmes:
-                  )
-              )
-            end
-            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
-
-            it "keeps the patient as home-schooled" do
-              expect { confirm! }.not_to(
-                change { patient.reload.home_educated }
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "keeps the patient in the community clinic"
-            include_examples "destroys the school move"
+        context "to a school in a different team" do
+          let(:school_move) do
+            create(:school_move, :to_school, patient:, school:)
           end
+
+          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:school) { create(:school, team: new_team) }
+          let(:new_sessions) do
+            create_list(
+              :session,
+              2,
+              date: session_date + 1.week,
+              location: school,
+              team: new_team,
+              programmes:
+            )
+          end
+
+          include_examples "creates a log entry"
+          include_examples "sets the patient school"
+          include_examples "removes the patient from the community clinic"
+          include_examples "archives the patient in the original team"
+          include_examples "destroys the school move"
+        end
+
+        context "to home-schooled in a different team" do
+          let(:school_move) do
+            create(:school_move, :to_home_educated, team: new_team, patient:)
+          end
+
+          let(:patient) do
+            create(
+              :patient,
+              :home_educated,
+              session:
+                create(
+                  :session,
+                  academic_year:,
+                  team:,
+                  location: team.generic_clinic,
+                  programmes:
+                )
+            )
+          end
+          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:generic_clinic_session) do
+            create(
+              :session,
+              academic_year:,
+              team: new_team,
+              location: new_team.generic_clinic,
+              programmes:
+            )
+          end
+
+          it "keeps the patient as home-schooled" do
+            expect { confirm! }.not_to(change { patient.reload.home_educated })
+          end
+
+          include_examples "creates a log entry"
+          include_examples "adds the patient to the community clinic"
+          include_examples "destroys the school move"
         end
       end
 
@@ -812,248 +553,122 @@ describe SchoolMove do
           create(:patient, school: nil, session: generic_clinic_session)
         end
 
-        context "and not already vaccinated" do
-          context "to a school with a scheduled session" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
-
-            let(:school) { create(:school, team:) }
-            let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
-              create_list(
-                :session,
-                2,
-                date: session_date + 1.week,
-                location: school,
-                team:,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "adds the patient to the new school sessions"
-            include_examples "destroys the school move"
+        context "to a school with a scheduled session" do
+          let(:school_move) do
+            create(:school_move, :to_school, patient:, school:)
           end
 
-          context "to a school with a completed session" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
-
-            let(:school) { create(:school, team:) }
-            let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
-              create_list(
-                :session,
-                2,
-                date: session_date - 1.week,
-                location: school,
-                team:,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "adds the patient to the new school sessions"
-            include_examples "destroys the school move"
-          end
-
-          context "to home-schooled" do
-            let(:school_move) do
-              create(:school_move, :to_home_educated, team:, patient:)
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient to home-schooled"
-            include_examples "keeps the patient in the community clinic"
-            include_examples "destroys the school move"
-          end
-
-          context "to a school in a different team" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
-
-            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
-            let(:school) { create(:school, team: new_team) }
-            let(:new_sessions) do
-              create_list(
-                :session,
-                2,
-                date: session_date + 1.week,
-                location: school,
-                team: new_team,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "removes the patient from the community clinic"
-            include_examples "archives the patient in the original team"
-            include_examples "destroys the school move"
-          end
-
-          context "to home-schooled in a different team" do
-            let(:school_move) do
-              create(:school_move, :to_home_educated, team: new_team, patient:)
-            end
-
-            let(:patient) do
-              create(
-                :patient,
-                school: nil,
-                session:
-                  create(
-                    :session,
-                    :unscheduled,
-                    academic_year:,
-                    team:,
-                    location: team.generic_clinic,
-                    programmes:
-                  )
-              )
-            end
-            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
-            let(:generic_clinic_session) do
-              create(
-                :session,
-                :unscheduled,
-                academic_year:,
-                team: new_team,
-                location: new_team.generic_clinic,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient to home-schooled"
-            include_examples "adds the patient to the community clinic"
-            include_examples "destroys the school move"
-          end
-        end
-
-        context "and already vaccinated" do
-          before do
-            create(
-              :vaccination_record,
-              patient:,
-              session: generic_clinic_session,
-              programme: programmes.first,
-              location_name: "A clinic"
+          let(:school) { create(:school, team:) }
+          let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
+            create_list(
+              :session,
+              2,
+              date: session_date + 1.week,
+              location: school,
+              team:,
+              programmes:
             )
           end
 
-          context "to a school with a scheduled session" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
+          include_examples "creates a log entry"
+          include_examples "sets the patient school"
+          include_examples "adds the patient to the new school sessions"
+          include_examples "destroys the school move"
+        end
 
-            let(:school) { create(:school, team:) }
-            let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
-              create_list(
-                :session,
-                2,
-                date: session_date + 1.week,
-                location: school,
-                team:,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "keeps the patient in the community clinic"
-            include_examples "destroys the school move"
+        context "to a school with a completed session" do
+          let(:school_move) do
+            create(:school_move, :to_school, patient:, school:)
           end
 
-          context "to a school with a completed session" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
-
-            let(:school) { create(:school, team:) }
-            let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
-              create_list(
-                :session,
-                2,
-                date: session_date - 1.week,
-                location: school,
-                team:,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "keeps the patient in the community clinic"
-            include_examples "destroys the school move"
+          let(:school) { create(:school, team:) }
+          let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
+            create_list(
+              :session,
+              2,
+              date: session_date - 1.week,
+              location: school,
+              team:,
+              programmes:
+            )
           end
 
-          context "to home-schooled" do
-            let(:school_move) do
-              create(:school_move, :to_home_educated, team:, patient:)
-            end
+          include_examples "creates a log entry"
+          include_examples "sets the patient school"
+          include_examples "adds the patient to the new school sessions"
+          include_examples "destroys the school move"
+        end
 
-            include_examples "creates a log entry"
-            include_examples "sets the patient to home-schooled"
-            include_examples "keeps the patient in the community clinic"
-            include_examples "destroys the school move"
+        context "to home-schooled" do
+          let(:school_move) do
+            create(:school_move, :to_home_educated, team:, patient:)
           end
 
-          context "to a school in a different team" do
-            let(:school_move) do
-              create(:school_move, :to_school, patient:, school:)
-            end
+          include_examples "creates a log entry"
+          include_examples "sets the patient to home-schooled"
+          include_examples "keeps the patient in the community clinic"
+          include_examples "destroys the school move"
+        end
 
-            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
-            let(:school) { create(:school, team: new_team) }
-            let(:new_sessions) do
-              create_list(
-                :session,
-                2,
-                date: session_date + 1.week,
-                location: school,
-                team: new_team,
-                programmes:
-              )
-            end
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient school"
-            include_examples "keeps the patient in the community clinic"
-            include_examples "archives the patient in the original team"
-            include_examples "destroys the school move"
+        context "to a school in a different team" do
+          let(:school_move) do
+            create(:school_move, :to_school, patient:, school:)
           end
 
-          context "to home-schooled in a different team" do
-            let(:school_move) do
-              create(:school_move, :to_home_educated, team: new_team, patient:)
-            end
-
-            let(:patient) do
-              create(
-                :patient,
-                school: nil,
-                session:
-                  create(
-                    :session,
-                    :unscheduled,
-                    academic_year:,
-                    team:,
-                    location: team.generic_clinic,
-                    programmes:
-                  )
-              )
-            end
-            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
-
-            include_examples "creates a log entry"
-            include_examples "sets the patient to home-schooled"
-            include_examples "keeps the patient in the community clinic"
-            include_examples "destroys the school move"
+          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:school) { create(:school, team: new_team) }
+          let(:new_sessions) do
+            create_list(
+              :session,
+              2,
+              date: session_date + 1.week,
+              location: school,
+              team: new_team,
+              programmes:
+            )
           end
+
+          include_examples "creates a log entry"
+          include_examples "sets the patient school"
+          include_examples "removes the patient from the community clinic"
+          include_examples "archives the patient in the original team"
+          include_examples "destroys the school move"
+        end
+
+        context "to home-schooled in a different team" do
+          let(:school_move) do
+            create(:school_move, :to_home_educated, team: new_team, patient:)
+          end
+
+          let(:patient) do
+            create(
+              :patient,
+              school: nil,
+              session:
+                create(
+                  :session,
+                  academic_year:,
+                  team:,
+                  location: team.generic_clinic,
+                  programmes:
+                )
+            )
+          end
+          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:generic_clinic_session) do
+            create(
+              :session,
+              academic_year:,
+              team: new_team,
+              location: new_team.generic_clinic,
+              programmes:
+            )
+          end
+
+          include_examples "creates a log entry"
+          include_examples "sets the patient to home-schooled"
+          include_examples "adds the patient to the community clinic"
+          include_examples "destroys the school move"
         end
       end
     end

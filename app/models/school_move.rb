@@ -83,7 +83,7 @@ class SchoolMove < ApplicationRecord
     ActiveRecord::Base.transaction do
       update_patient!
       update_archive_reasons!(user:)
-      update_sessions!
+      update_locations!
 
       log_entry = create_log_entry!(user:)
       create_important_notice!(old_teams, log_entry) if old_teams
@@ -128,15 +128,53 @@ class SchoolMove < ApplicationRecord
     ArchiveReason.import!(archive_reasons, on_duplicate_key_ignore: true).ids
   end
 
-  def update_sessions!
+  def update_locations!
+    location = school || team.generic_clinic
+
+    patient_locations = []
+
     patient
       .patient_locations
       .where("academic_year >= ?", academic_year)
-      .destroy_all_if_safe
+      .where.not(location:)
+      .find_each do |patient_location|
+        end_date = Date.yesterday
 
-    location = school || team.generic_clinic
+        patient_location.end_date = end_date
 
-    PatientLocation.find_or_create_by!(patient:, location:, academic_year:)
+        # It is possible for a patient to join and school and then at some
+        #  point later that day be removed from it.
+        if patient_location.begin_date && patient_location.begin_date > end_date
+          patient_location.begin_date = end_date
+        end
+
+        patient_locations << patient_location
+      end
+
+    PatientLocation
+      .find_or_initialize_by(patient:, location:, academic_year:)
+      .tap do |patient_location|
+        patient_location.end_date = nil
+
+        # We only want to change the date if this is a new patient location
+        #  for this patient, or if the existing patient location already has
+        #  a start date. This is because if there's an existing patient
+        #  location without a start date, changing the date will take the
+        #  patient out of existing sessions.
+        if patient_location.new_record? || patient_location.begin_date&.past?
+          patient_location.begin_date = Date.current
+        end
+
+        patient_locations << patient_location
+      end
+
+    PatientLocation.import!(
+      patient_locations,
+      on_duplicate_key_update: {
+        conflict_target: %i[patient_id location_id academic_year],
+        columns: %i[date_range]
+      }
+    )
 
     PatientTeamUpdater.call(patient_scope: Patient.where(id: patient.id))
     StatusUpdater.call(patient:)

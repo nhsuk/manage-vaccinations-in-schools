@@ -119,8 +119,7 @@ module MavisCLI
                 _value: patient_locations.count,
                 with_attendance_records: attendance_records.count,
                 with_gillick_assessments: gillick_assessments.count
-              },
-              safe_to_destroy: patient_locations.count(&:safe_to_destroy?)
+              }
             )
           end
 

@@ -607,6 +607,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_111151) do
   create_table "patient_locations", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.datetime "created_at", null: false
+    t.daterange "date_range", default: -::Float::INFINITY...::Float::INFINITY
     t.bigint "location_id", null: false
     t.bigint "patient_id", null: false
     t.datetime "updated_at", null: false
