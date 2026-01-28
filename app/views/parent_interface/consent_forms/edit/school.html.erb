@@ -14,7 +14,7 @@
   </p>
 
   <%= f.govuk_select :school_id,
-                     label: { text: "Select a school" },
+                     label: { text: "Start typing to see schools" },
                      data: { module: "app-autocomplete" } do %>
     <%= tag.option "", value: "" %>
     <% @consent_form.eligible_schools.each do |school| %>

@@ -8,7 +8,7 @@
   <%= h1 "Where is this school session taking place?" %>
 
   <%= f.govuk_select :location_id,
-                     label: { text: "Select a school" },
+                     label: { text: "Start typing to see schools" },
                      data: { module: "app-autocomplete" } do %>
     <%= tag.option "", value: "" %>
     <% @schools.each do |school| %>
