@@ -15,13 +15,10 @@ export class Autocomplete extends Component {
   constructor($root) {
     super($root);
 
-    if ($root instanceof HTMLSelectElement) {
-      this.name = this.$root.name;
-      this.options = Array.from(this.$root.options);
-      this.value = this.$root.value;
-
-      this.enhanceSelectElement(this.$root);
-    }
+    this.name = this.$root.name;
+    this.options = Array.from(this.$root.options);
+    this.value = this.$root.value;
+    this.enhanceSelectElement(this.$root);
   }
 
   /**
@@ -42,10 +39,12 @@ export class Autocomplete extends Component {
       inputClasses: "nhsuk-input",
       showNoOptionsFound: true,
       templates: {
-        suggestion: (value) => this.suggestion(value, this.enhancedOptions),
+        suggestion: (value) => this.suggestion(value),
       },
       onConfirm: (value) => {
-        const selectedOption = this.selectedOption(value, this.options);
+        const selectedOption = this.options.filter(
+          (option) => (option.textContent || option.innerText) === value,
+        )[0];
 
         if (selectedOption) {
           selectedOption.selected = true;
@@ -55,47 +54,17 @@ export class Autocomplete extends Component {
   }
 
   /**
-   * Get enhanced information about each option
-   *
-   * @returns {object} Enhanced options
-   */
-  get enhancedOptions() {
-    return this.options.map((option) => ({
-      name: option.label,
-      value: option.value,
-      append: option.getAttribute("data-append"),
-      hint: option.getAttribute("data-hint"),
-    }));
-  }
-
-  /**
-   * Selected option
-   *
-   * @param {*} value - Current value
-   * @param {Array} options - Available options
-   * @returns {HTMLOptionElement} Selected option
-   */
-  selectedOption(value, options) {
-    return [].filter.call(
-      options,
-      (option) => (option.textContent || option.innerText) === value,
-    )[0];
-  }
-
-  /**
    * HTML for suggestion
    *
    * @param {*} value - Current value
-   * @param {Array} options - Available options
    * @returns {string} HTML for suggestion
    */
-  suggestion(value, options) {
-    const option = options.find(({ name }) => name === value);
+  suggestion(value) {
+    const option = this.options.find(({ label }) => label === value);
     if (option) {
-      const label = option.append ? `${value} – ${option.append}` : value;
-      return option.hint
-        ? `${label}<br><span class="app-autocomplete__option-hint">${option.hint}</span>`
-        : label;
+      return option.dataset.hint
+        ? `${value}<br><span class="app-autocomplete__option-hint">${option.dataset.hint}</span>`
+        : value;
     }
     return "No results found";
   }

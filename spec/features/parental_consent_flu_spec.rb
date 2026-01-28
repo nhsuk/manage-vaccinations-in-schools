@@ -92,7 +92,9 @@ describe "Parental consent" do
   end
 
   def then_i_see_the_consent_form
-    expect(page).to have_content("Give or refuse consent for vaccinations")
+    expect(page).to have_content(
+      "Give or refuse consent for your child’s flu vaccination"
+    )
   end
 
   def when_i_give_consent(nasal_spray:)

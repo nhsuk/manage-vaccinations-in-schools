@@ -41,6 +41,10 @@ class Programme::Variant < SimpleDelegator
 
   def import_names = IMPORT_NAMES.fetch(variant_type)
 
+  def variants
+    [self]
+  end
+
   def vaccines
     @vaccines ||= Vaccine.for_programme(self)
   end
@@ -59,5 +63,13 @@ class Programme::Variant < SimpleDelegator
 
   def flipper_id
     "ProgrammeVariant:#{variant_type}"
+  end
+
+  delegate :fhir_target_disease_coding, to: :fhir_mapper
+
+  private
+
+  def fhir_mapper
+    @fhir_mapper ||= FHIRMapper::Programme.new(self)
   end
 end

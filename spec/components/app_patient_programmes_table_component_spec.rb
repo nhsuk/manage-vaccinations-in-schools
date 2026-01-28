@@ -66,7 +66,7 @@ describe AppPatientProgrammesTableComponent do
         )
       end
 
-      it { should have_content("Needs triage") }
+      it { should have_content("Unable to vaccinateContraindications") }
     end
 
     context "when no outcome yet but had contraindications" do

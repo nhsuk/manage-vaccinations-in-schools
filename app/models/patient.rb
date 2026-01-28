@@ -83,7 +83,6 @@ class Patient < ApplicationRecord
   has_many :school_move_log_entries
   has_many :school_moves
   has_many :session_notifications
-  has_many :triage_statuses
   has_many :triages
   has_many :vaccination_records, -> { kept }
 
@@ -153,9 +152,7 @@ class Patient < ApplicationRecord
   scope :restricted, -> { where.not(restricted_at: nil) }
 
   scope :includes_statuses,
-        -> do
-          includes(:consent_statuses, :programme_statuses, :triage_statuses)
-        end
+        -> { includes(:consent_statuses, :programme_statuses) }
 
   scope :has_vaccination_records_dont_notify_parents,
         -> do
@@ -608,10 +605,6 @@ class Patient < ApplicationRecord
       registration_statuses.build(session:)
   end
 
-  def triage_status(programme:, academic_year:)
-    patient_status(triage_statuses, programme:, academic_year:)
-  end
-
   def has_patient_specific_direction?(team:, **kwargs)
     patient_specific_directions.not_invalidated.where(team:, **kwargs).exists?
   end
@@ -711,7 +704,8 @@ class Patient < ApplicationRecord
 
       patient_locations.pending.find_each do |patient_location|
         new_patient.patient_locations.build(
-          **patient_location.slice(:academic_year, :location_id)
+          academic_year: patient_location.academic_year,
+          location_id: patient_location.location_id
         )
       end
 
@@ -723,6 +717,17 @@ class Patient < ApplicationRecord
           source: school_move.source,
           team_id: school_move.team_id
         )
+      end
+
+      patient_teams.find_each do |patient_team|
+        # Patients that have been duplicated from another won't have any
+        #  vaccination records or imports, therefore we need to filter the
+        #  sources.
+        sources =
+          patient_team.sources &
+            %w[patient_location school_move_school school_move_team]
+
+        new_patient.patient_teams.build(team_id: patient_team.team_id, sources:)
       end
     end
   end

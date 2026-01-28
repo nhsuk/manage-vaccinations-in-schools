@@ -135,7 +135,7 @@ describe "Manage children" do
     when_i_enter_a_blank_nhs_number
     then_i_see_the_edit_child_record_page
     and_i_see_the_blank_nhs_number
-    and_the_vaccination_record_is_deleted_from_the_nhs
+    and_the_vaccination_record_is_updated_with_the_nhs
   end
 
   scenario "Editing school" do

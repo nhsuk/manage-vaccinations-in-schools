@@ -17,6 +17,41 @@
 describe Programme do
   subject(:programme) { described_class.sample }
 
+  describe "#all_as_variants" do
+    subject(:all_as_variants) { described_class.all_as_variants }
+
+    context "with the mmrv feature flag off" do
+      it "returns all the full programme objects" do
+        expect(all_as_variants).to contain_exactly(
+          described_class.flu,
+          described_class.hpv,
+          described_class.td_ipv,
+          described_class.menacwy,
+          described_class.mmr
+        )
+      end
+    end
+
+    context "with the mmrv feature flag on" do
+      before { Flipper.enable(:mmrv) }
+
+      it "returns all variants where applicable" do
+        expect(all_as_variants).to contain_exactly(
+          described_class.flu,
+          described_class.hpv,
+          described_class.td_ipv,
+          described_class.menacwy,
+          described_class.mmr.variant_for(
+            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
+          ),
+          described_class.mmr.variant_for(
+            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
+          )
+        )
+      end
+    end
+  end
+
   describe "#find" do
     subject(:find) { described_class.find(type) }
 
@@ -110,6 +145,114 @@ describe Programme do
       let(:programme) { described_class.hpv }
 
       it { should eq("HPV") }
+    end
+  end
+
+  describe "#variants" do
+    subject(:variants) { programme.variants }
+
+    context "for flu" do
+      let(:programme) { described_class.flu }
+
+      it { should contain_exactly(described_class.flu) }
+      it { expect(variants).to all(be_a(described_class)) }
+    end
+
+    context "for td_ipv" do
+      let(:programme) { described_class.td_ipv }
+
+      it { should contain_exactly(described_class.td_ipv) }
+      it { expect(variants).to all(be_a(described_class)) }
+    end
+
+    context "for menacwy" do
+      let(:programme) { described_class.menacwy }
+
+      it { should contain_exactly(described_class.menacwy) }
+      it { expect(variants).to all(be_a(described_class)) }
+    end
+
+    context "for hpv" do
+      let(:programme) { described_class.hpv }
+
+      it { should contain_exactly(described_class.hpv) }
+      it { expect(variants).to all(be_a(described_class)) }
+    end
+
+    context "for mmr with mmrv feature flag on" do
+      let(:programme) do
+        Flipper.enable(:mmrv)
+        described_class.mmr
+      end
+
+      it do
+        expect(variants).to contain_exactly(
+          described_class.mmr.variant_for(
+            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
+          ),
+          described_class.mmr.variant_for(
+            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
+          )
+        )
+      end
+
+      it { expect(variants).to all(be_a(Programme::Variant)) }
+    end
+
+    context "for mmr with mmrv feature flag off" do
+      let(:programme) { described_class.mmr }
+
+      it do
+        expect(variants).to contain_exactly(
+          described_class.mmr.variant_for(
+            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
+          )
+        )
+      end
+
+      it { expect(variants).to all(be_a(Programme::Variant)) }
+    end
+
+    context "for mmrv variant" do
+      let(:programme) do
+        Flipper.enable(:mmrv)
+
+        described_class.mmr.variant_for(
+          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
+        )
+      end
+
+      it do
+        expect(variants).to contain_exactly(
+          described_class.mmr.variant_for(
+            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
+          )
+        )
+      end
+
+      it { expect(variants).to all(be_a(Programme::Variant)) }
+    end
+
+    context "for mmr variant" do
+      let(:programme) do
+        Flipper.enable(:mmrv)
+
+        described_class.mmr.variant_for(
+          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
+        )
+      end
+
+      it do
+        expect(variants).to eq(
+          [
+            described_class.mmr.variant_for(
+              disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
+            )
+          ]
+        )
+      end
+
+      it { expect(variants).to all(be_a(Programme::Variant)) }
     end
   end
 

@@ -149,17 +149,36 @@ FactoryBot.define do
       after(:create) do |vaccination_record, evaluator|
         next unless evaluator.uploaded_by || evaluator.immunisation_import
 
-        if evaluator.immunisation_import
-          evaluator.immunisation_import.vaccination_records << vaccination_record
-        else
-          create(
-            :immunisation_import,
-            type: "bulk",
-            vaccination_records: [vaccination_record],
-            team: evaluator.uploaded_by.selected_team,
-            uploaded_by: evaluator.uploaded_by
-          )
-        end
+        immunisation_import =
+          if evaluator.immunisation_import
+            evaluator.immunisation_import.vaccination_records << vaccination_record
+
+            evaluator.immunisation_import
+          else
+            create(
+              :immunisation_import,
+              type: "bulk",
+              vaccination_records: [vaccination_record],
+              team: evaluator.uploaded_by.selected_team,
+              uploaded_by: evaluator.uploaded_by
+            )
+          end
+
+        immunisation_import.patients << vaccination_record.patient
+
+        PatientTeamUpdater.call(
+          patient_scope: Patient.where(id: vaccination_record.patient_id)
+        )
+      end
+    end
+
+    trait :with_archived_patient do
+      after(:create) do |_vaccination_record, evaluator|
+        ArchiveReason.create!(
+          patient: evaluator.patient,
+          team: evaluator.team,
+          type: :immunisation_import
+        )
       end
     end
 

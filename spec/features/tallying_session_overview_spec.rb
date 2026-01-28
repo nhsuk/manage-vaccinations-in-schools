@@ -54,12 +54,6 @@ describe "Tallying on session overview page" do
       programme: @flu_programme
     )
     create(
-      :patient_triage_status,
-      :not_required,
-      patient: @patients.second,
-      programme: @flu_programme
-    )
-    create(
       :patient_programme_status,
       :due_nasal,
       patient: @patients.second,
@@ -71,12 +65,6 @@ describe "Tallying on session overview page" do
     create(
       :patient_consent_status,
       :given_without_gelatine,
-      patient: @patients.third,
-      programme: @flu_programme
-    )
-    create(
-      :patient_triage_status,
-      :not_required,
       patient: @patients.third,
       programme: @flu_programme
     )

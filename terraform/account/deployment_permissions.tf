@@ -153,7 +153,7 @@ resource "aws_iam_role" "github_assurance" {
       "repo:nhsuk/manage-vaccinations-in-schools"
     ]
   })
-  max_session_duration = 14400 # 4 hours
+  max_session_duration = 32400 # 9 hours
 }
 
 resource "aws_iam_policy" "run_ecs_task" {

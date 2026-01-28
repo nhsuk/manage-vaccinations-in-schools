@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class DraftVaccinationRecordsController < ApplicationController
+  include Pagy::Backend
   include TodaysBatchConcern
 
   skip_after_action :verify_policy_scoped
@@ -125,17 +126,15 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def handle_location
     if @draft_vaccination_record.bulk_upload_user_and_record?
-      parsed_location_id =
-        (
-          if update_params[:location_id] == "unknown"
-            nil
-          else
-            update_params[:location_id]
-          end
-        )
-      @draft_vaccination_record.location_id = parsed_location_id
-      @draft_vaccination_record.location_name =
-        (@draft_vaccination_record.location_id.present? ? nil : "Unknown")
+      location_id = update_params[:location_id]
+
+      if location_id == "unknown"
+        @draft_vaccination_record.location_id = nil
+        @draft_vaccination_record.location_name = "Unknown"
+      else
+        @draft_vaccination_record.location_id = location_id
+        @draft_vaccination_record.location_name = nil
+      end
     end
   end
 
@@ -271,12 +270,19 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def set_locations
-    @locations =
-      if @draft_vaccination_record.bulk_upload_user_and_record?
-        Location.school.where(status: "open").order(:name)
+    if @draft_vaccination_record.bulk_upload_user_and_record?
+      @location_query = params[:q]
+      scope = Location.school.where(status: "open")
+
+      if @location_query.present?
+        scope = scope.search_by_name(@location_query)
+        @pagy, @locations = pagy(scope, limit: 10)
       else
-        policy_scope(Location).community_clinic
+        @locations = Location.none
       end
+    else
+      @locations = policy_scope(Location).community_clinic
+    end
   end
 
   def set_supplied_by_users

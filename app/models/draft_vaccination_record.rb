@@ -49,8 +49,6 @@ class DraftVaccinationRecord
               if: :performed_by_user
             }
 
-  validates :source, inclusion: { in: VaccinationRecord.sources.keys }
-
   def wizard_steps
     [
       :identity,
@@ -146,6 +144,7 @@ class DraftVaccinationRecord
               :protocol,
               presence: true
     validates :full_dose, inclusion: { in: [true, false] }
+    validates :source, inclusion: { in: VaccinationRecord.sources.keys }
   end
 
   def administered?

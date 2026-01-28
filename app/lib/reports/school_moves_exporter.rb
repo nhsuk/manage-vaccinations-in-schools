@@ -114,11 +114,21 @@ class Reports::SchoolMovesExporter
       nil,
       nil,
       nil,
-      systm_one_school_code || school_urn(location:, patient:),
+      systm_one_school_code || school_urn(log_entry),
       location&.name,
       log_entry.created_at.iso8601,
       nil,
       nil
     ]
+  end
+
+  def school_urn(log_entry)
+    if log_entry.school
+      log_entry.school.urn
+    elsif log_entry.home_educated?
+      "999999"
+    else
+      "888888"
+    end
   end
 end

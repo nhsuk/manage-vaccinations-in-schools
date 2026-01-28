@@ -43,6 +43,7 @@ Rails/LexicallyScopedActionFilter:
 
 Rails/Output:
   Exclude:
+    - app/lib/mavis_cli.rb
     - app/lib/mavis_cli/**/*.rb
     - app/lib/timeline_records.rb
 
@@ -52,6 +53,7 @@ Rails/UnknownEnv:
     - production
     - staging
     - test
+    - end_to_end
 
 RSpec/BeforeAfterAll:
   Exclude:

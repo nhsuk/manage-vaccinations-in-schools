@@ -9,10 +9,17 @@ class VaccinationRecordsController < ApplicationController
   end
 
   def update
-    DraftVaccinationRecord.new(
-      request_session: session,
-      current_user:
-    ).read_from!(@vaccination_record)
+    draft_vaccination_record =
+      DraftVaccinationRecord.new(request_session: session, current_user:)
+    # TODO: Refactor this so that we don't need to clear out the attributes from
+    #       the draft record(s) in this use case. This likely means changing
+    #       RequestSessionPersistable to do this clearing out. One possible
+    #       approach would be to change `new` to instantiate without loading
+    #       values from the session, and adding `new_from_session` to replace
+    #       the existing functionality in `new`.
+    draft_vaccination_record.clear!
+    draft_vaccination_record.clear_changes_information
+    draft_vaccination_record.read_from!(@vaccination_record)
 
     redirect_to draft_vaccination_record_path("confirm")
   end

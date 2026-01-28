@@ -755,9 +755,11 @@ class ConsentForm < ApplicationRecord
 
     self.parent_relationship_other_name = nil unless parent_relationship_other?
 
-    if response_given? && !response_refused?
-      self.reason_for_refusal = nil
-      self.reason_for_refusal_notes = nil
+    consent_form_programmes.each do
+      if it.response_given?
+        it.reason_for_refusal = nil
+        it.notes = ""
+      end
     end
 
     if school_confirmed
