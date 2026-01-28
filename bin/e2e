@@ -116,7 +116,16 @@ RAILS_ENV="$RAILS_ENV" bin/rails db:prepare
 # Start Rails server in end_to_end environment
 
 echo "[e2e] Starting end_to_end stack with foreman..."
-RAILS_ENV="$RAILS_ENV" SIDEKIQ_REDIS_URL="$E2E_REDIS_URL" setsid foreman start -f Procfile.e2e > /tmp/e2e-foreman.log 2>&1 &
+start_foreman() {
+  if command -v setsid >/dev/null 2>&1; then
+    setsid foreman start -f Procfile.e2e
+  else
+    # macOS does not ship a setsid binary; use Perl to create a new session.
+    perl -MPOSIX -e 'POSIX::setsid() or die "setsid failed: $!"; exec @ARGV' foreman start -f Procfile.e2e
+  fi
+}
+
+RAILS_ENV="$RAILS_ENV" SIDEKIQ_REDIS_URL="$E2E_REDIS_URL" start_foreman > /tmp/e2e-foreman.log 2>&1 &
 E2E_PGID=$!
 
 
