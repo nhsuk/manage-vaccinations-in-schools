@@ -658,7 +658,7 @@
             <div class="method-heading">
               <a href="#method-i-call" title="Link to this method">
                 <span class="method-name">call</span>
-                <span class="method-args">(path: nil, training: false, ods_code: nil, workgroup: nil, **)</span>
+                <span class="method-args">( path: nil, training: false, ods_code: nil, workgroup: nil, type: &quot;poc_only&quot;, ** )</span>
               </a>
             </div>
 
@@ -671,8 +671,15 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/teams/onboard.rb, line 18</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">path:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">training:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">ods_code:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">workgroup:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span>)
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/teams/onboard.rb, line 22</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(
+  <span class="ruby-value">path:</span> <span class="ruby-keyword">nil</span>,
+  <span class="ruby-value">training:</span> <span class="ruby-keyword">false</span>,
+  <span class="ruby-value">ods_code:</span> <span class="ruby-keyword">nil</span>,
+  <span class="ruby-value">workgroup:</span> <span class="ruby-keyword">nil</span>,
+  <span class="ruby-value">type:</span> <span class="ruby-string">&quot;poc_only&quot;</span>,
+  <span class="ruby-operator">**</span>
+)
   <span class="ruby-constant">MavisCLI</span>.<span class="ruby-identifier">load_rails</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">training</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">env</span>.<span class="ruby-identifier">production?</span>
@@ -687,7 +694,12 @@
 
   <span class="ruby-identifier">config</span> =
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">training</span>
-      <span class="ruby-constant">TrainingOnboardingConfiguration</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">ods_code:</span>, <span class="ruby-value">workgroup:</span>)
+      <span class="ruby-keyword">unless</span> <span class="ruby-identifier">type</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-constant">Team</span>.<span class="ruby-identifier">types</span>.<span class="ruby-identifier">keys</span>)
+        <span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Invalid team type. Must be &#39;poc_only&#39; or &#39;upload_only&#39;.&quot;</span>
+        <span class="ruby-keyword">return</span>
+      <span class="ruby-keyword">end</span>
+
+      <span class="ruby-constant">TrainingOnboardingConfiguration</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">ods_code:</span>, <span class="ruby-value">workgroup:</span>, <span class="ruby-value">type:</span>)
     <span class="ruby-keyword">else</span>
       <span class="ruby-constant">YAML</span>.<span class="ruby-identifier">safe_load</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">path</span>))
     <span class="ruby-keyword">end</span>
