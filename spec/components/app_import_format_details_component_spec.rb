@@ -95,7 +95,7 @@ describe AppImportFormatDetailsComponent do
       import = ImmunisationImport.new(team:)
       render_inline(described_class.new(import:))
 
-      # Required bulk columns
+      # Required national reporting columns
       expect(page).to have_content("ORGANISATION_CODE")
       expect(page).to have_content("SCHOOL_URN")
       expect(page).to have_content("NHS_NUMBER")

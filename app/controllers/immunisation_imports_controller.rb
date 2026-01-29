@@ -63,7 +63,7 @@ class ImmunisationImportsController < ApplicationController
   private
 
   def type
-    current_team.has_national_reporting_access? ? "bulk" : "poc"
+    current_team.has_national_reporting_access? ? "national_reporting" : "poc"
   end
 
   def set_immunisation_import

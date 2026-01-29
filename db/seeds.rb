@@ -246,12 +246,12 @@ def create_imports(user, team)
   )
 end
 
-def create_bulk_upload_imports(user, team)
+def create_national_reporting_imports(user, team)
   %i[pending invalid processed].each do |status|
     FactoryBot.create(
       :immunisation_import,
       status,
-      type: "bulk",
+      type: "national_reporting",
       team:,
       uploaded_by: user
     )
@@ -350,7 +350,7 @@ def create_national_reporting_team
     create_user(:medical_secretary, team:, email: "admin.sarah@example.com")
   create_user(:superuser, team:, email: "superuser.rob@example.com")
 
-  create_bulk_upload_imports(user, team)
+  create_national_reporting_imports(user, team)
 
   create_upload_patients_and_vaccination_records(user)
 end
@@ -360,7 +360,7 @@ def create_upload_patients_and_vaccination_records(user)
     FactoryBot.create_list(:patient, 50, :archived, team: user.teams.first)
 
   immunisation_import =
-    ImmunisationImport.find_by(type: "bulk", status: "processed")
+    ImmunisationImport.find_by(type: "national_reporting", status: "processed")
 
   patients.each do |patient|
     FactoryBot.create(
