@@ -918,6 +918,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -1299,6 +1301,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -1677,6 +1681,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -2057,6 +2063,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -2399,7 +2407,7 @@
             </details>
           </div>
           <div class="method-source-code" id="birth_academic_year_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 178</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 180</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">birth_academic_year_value</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">year_group</span>.<span class="ruby-identifier">present?</span>
     <span class="ruby-identifier">year_group</span>&amp;.<span class="ruby-identifier">to_i</span>&amp;.<span class="ruby-identifier">to_birth_academic_year</span>(<span class="ruby-value">academic_year:</span>)
@@ -2495,6 +2503,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -2836,7 +2846,7 @@
             </details>
           </div>
           <div class="method-source-code" id="existing_patients-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 164</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 166</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">existing_patients</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">date_of_birth</span>&amp;.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-keyword">return</span>
@@ -2946,6 +2956,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -3327,6 +3339,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -3668,7 +3682,7 @@
             </details>
           </div>
           <div class="method-source-code" id="gender_code_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 186</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 188</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">gender_code_value</span>
   <span class="ruby-identifier">gender_code</span>&amp;.<span class="ruby-identifier">to_s</span>&amp;.<span class="ruby-identifier">downcase</span>&amp;.<span class="ruby-identifier">gsub</span>(<span class="ruby-string">&quot; &quot;</span>, <span class="ruby-string">&quot;_&quot;</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -3722,6 +3736,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -3830,6 +3846,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -4228,6 +4246,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -4636,6 +4656,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -4978,7 +5000,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parent_1_email_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 194</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 196</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_1_email_value</span>
   <span class="ruby-identifier">parent_1_email</span>&amp;.<span class="ruby-identifier">to_s</span>&amp;.<span class="ruby-identifier">downcase</span>
 <span class="ruby-keyword">end</span></pre>
@@ -5020,7 +5042,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parent_1_exists-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 141</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 143</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_1_exists?</span>
   [<span class="ruby-identifier">parent_1_name</span>, <span class="ruby-identifier">parent_1_email</span>, <span class="ruby-identifier">parent_1_phone</span>].<span class="ruby-identifier">any?</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:present?</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -5062,7 +5084,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parent_1_import_attributes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 121</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 123</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_1_import_attributes</span>
   {
     <span class="ruby-value">full_name:</span> <span class="ruby-identifier">parent_1_name_value</span>,
@@ -5143,6 +5165,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -5485,7 +5509,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parent_1_name_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 190</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 192</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_1_name_value</span>
   <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">parent_1_name</span>&amp;.<span class="ruby-identifier">to_s</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -5555,6 +5579,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -5897,7 +5923,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parent_1_phone_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 206</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 208</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_1_phone_value</span>
   <span class="ruby-identifier">parent_1_phone</span>&amp;.<span class="ruby-identifier">to_s</span>&amp;.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/\s/</span>, <span class="ruby-string">&quot;&quot;</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -5971,6 +5997,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -6335,6 +6363,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -6679,7 +6709,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parent_2_email_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 202</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 204</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_2_email_value</span>
   <span class="ruby-identifier">parent_2_email</span>&amp;.<span class="ruby-identifier">to_s</span>&amp;.<span class="ruby-identifier">downcase</span>
 <span class="ruby-keyword">end</span></pre>
@@ -6721,7 +6751,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parent_2_exists-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 145</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 147</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_2_exists?</span>
   [<span class="ruby-identifier">parent_2_name</span>, <span class="ruby-identifier">parent_2_email</span>, <span class="ruby-identifier">parent_2_phone</span>].<span class="ruby-identifier">any?</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:present?</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -6763,7 +6793,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parent_2_import_attributes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 130</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 132</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_2_import_attributes</span>
   {
     <span class="ruby-value">full_name:</span> <span class="ruby-identifier">parent_2_name_value</span>,
@@ -6836,6 +6866,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -7179,7 +7211,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parent_2_name_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 198</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 200</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_2_name_value</span>
   <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">parent_2_name</span>&amp;.<span class="ruby-identifier">to_s</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -7241,6 +7273,8 @@
       <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
       <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
       <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+      <span class="ruby-value">local_authority_mhclg_code:</span>
+        <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
       <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
       <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
       <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -7586,7 +7620,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parent_2_phone_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 210</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 212</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_2_phone_value</span>
   <span class="ruby-identifier">parent_2_phone</span>&amp;.<span class="ruby-identifier">to_s</span>&amp;.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/\s/</span>, <span class="ruby-string">&quot;&quot;</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -7652,6 +7686,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -7996,7 +8032,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parent_relationship_attributes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 149</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 151</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_relationship_attributes</span>(<span class="ruby-identifier">relationship</span>)
   <span class="ruby-keyword">case</span> <span class="ruby-identifier">relationship</span>&amp;.<span class="ruby-identifier">downcase</span>
   <span class="ruby-keyword">when</span> <span class="ruby-keyword">nil</span>, <span class="ruby-string">&quot;unknown&quot;</span>
@@ -8103,6 +8139,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -8494,6 +8532,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -8879,6 +8919,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
@@ -9220,7 +9262,7 @@
             </details>
           </div>
           <div class="method-source-code" id="registration_academic_year-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 214</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 216</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">registration_academic_year</span>
   <span class="ruby-identifier">academic_year</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">registration</span>.<span class="ruby-identifier">present?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -9262,7 +9304,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_date_of_birth-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 218</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 220</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
@@ -9312,7 +9354,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_existing_patients-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 230</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 232</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_existing_patients</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">existing_patients</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">existing_patients</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
@@ -9359,7 +9401,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_first_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 239</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 241</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
@@ -9412,7 +9454,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_gender_code-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 254</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 256</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_gender_code</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">gender_code</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span>
        <span class="ruby-operator">!</span><span class="ruby-constant">Patient</span>.<span class="ruby-identifier">gender_codes</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">gender_code_value</span>)
@@ -9457,7 +9499,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_last_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 273</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 275</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
@@ -9510,7 +9552,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_nhs_number-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 300</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 302</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_nhs_number</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">blank?</span>
 
@@ -9558,7 +9600,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_parent_1_email-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 323</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 325</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_parent_1_email</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">parent_1_email</span>.<span class="ruby-identifier">blank?</span>
 
@@ -9606,7 +9648,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_parent_1_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 310</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 312</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_parent_1_name</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">parent_1_name</span>.<span class="ruby-identifier">blank?</span>
 
@@ -9657,7 +9699,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_parent_1_phone-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 333</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 335</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_parent_1_phone</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">parent_1_phone</span>.<span class="ruby-identifier">blank?</span>
 
@@ -9706,7 +9748,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_parent_1_relationship-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 344</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 346</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_parent_1_relationship</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">parent_1_relationship</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">parent_1_exists?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">parent_1_relationship</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;must be blank&quot;</span>)
@@ -9750,7 +9792,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_parent_2_email-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 363</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 365</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_parent_2_email</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">parent_2_email</span>.<span class="ruby-identifier">blank?</span>
 
@@ -9798,7 +9840,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_parent_2_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 350</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 352</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_parent_2_name</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">parent_2_name</span>.<span class="ruby-identifier">blank?</span>
 
@@ -9849,7 +9891,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_parent_2_phone-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 373</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 375</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_parent_2_phone</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">parent_2_phone</span>.<span class="ruby-identifier">blank?</span>
 
@@ -9898,7 +9940,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_parent_2_relationship-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 384</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 386</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_parent_2_relationship</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">parent_2_relationship</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">parent_2_exists?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">parent_2_relationship</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;must be blank&quot;</span>)
@@ -9942,7 +9984,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_preferred_first_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 261</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 263</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_preferred_first_name</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">preferred_first_name</span>.<span class="ruby-identifier">blank?</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">preferred_first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
@@ -9992,7 +10034,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_preferred_last_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 288</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 290</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_preferred_last_name</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">preferred_last_name</span>.<span class="ruby-identifier">blank?</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">preferred_last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
@@ -10042,7 +10084,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_year_group-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 390</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 392</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_year_group</span>
   <span class="ruby-identifier">field</span> = <span class="ruby-identifier">year_group</span>.<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">date_of_birth</span>
 
@@ -10151,6 +10193,8 @@
     <span class="ruby-value">address_line_2:</span> <span class="ruby-identifier">address_line_2</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">address_postcode:</span> <span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>,
     <span class="ruby-value">address_town:</span> <span class="ruby-identifier">address_town</span>&amp;.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local_authority_mhclg_code:</span>
+      <span class="ruby-constant">LocalAuthority</span>.<span class="ruby-identifier">for_postcode</span>(<span class="ruby-identifier">address_postcode</span>&amp;.<span class="ruby-identifier">to_postcode</span>)&amp;.<span class="ruby-identifier">mhclg_code</span>,
     <span class="ruby-value">birth_academic_year:</span> <span class="ruby-identifier">birth_academic_year_value</span>,
     <span class="ruby-value">date_of_birth:</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">family_name:</span> <span class="ruby-constant">ApostropheNormaliser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>),
