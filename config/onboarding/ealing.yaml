@@ -1,0 +1,174 @@
+organisation:
+  ods_code: AJC
+
+team:
+  workgroup: vaccsukealingsais
+  name: Vaccination UK - Ealing
+  email: ealing@v-uk.co.uk
+  phone: "0208 150 1215"
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.schoolvaccination.uk/privacy-policy
+  privacy_notice_url: https://www.schoolvaccination.uk/privacy-policy
+  reply_to_id: 00d1f9fe-6332-40e0-ac2d-919a08a45d25
+  type: poc_only
+
+programmes: [flu, hpv, menacwy, td_ipv]
+
+subteams:
+  ealing:
+    name: Vaccination UK - Ealing
+    email: ealing@v-uk.co.uk
+    phone: "0208 150 1215"
+    reply_to_id: 00d1f9fe-6332-40e0-ac2d-919a08a45d25
+
+schools:
+  ealing:
+    - 101867
+    - 145724
+    - urn: 134369
+      site: "A"
+      name: "Alec Reed Academy (Primary Site)"
+    - urn: 134369
+      site: "B"
+      name: "Alec Reed Academy (Secondary Site, Bengarth Road)"
+    - 101891
+    #- EY466213
+    - 146318
+    - 142110
+    - 139699
+    - 147863
+    - 101962
+    - 135155
+    - 101878
+    - urn: 101965
+      site: "A"
+      name: "Belvue School (Lower Site)"
+    - urn: 101965
+      site: "B"
+      name: "Belvue School (Upper Site)"
+    - 101892
+    - 148807
+    - 148153
+    - 139488
+    - 101939
+    - 101966
+    - urn: 136445
+      site: "A"
+      name: "Christ the Saviour Church of England Primary School (Infant Site)"
+    - urn: 136445
+      site: "B"
+      name: "Christ the Saviour Church of England Primary School (Junior Site)"
+    - 101955
+    - 101893
+    - 101879
+    - 101894
+    - 101895
+    - 145348
+    - 145406
+    - 101880
+    - 101881
+    - 137221
+    - 101896
+    - 101944
+    - 131753
+    - 142654
+    - 133444
+    - 101868
+    - 101927
+    - 131310
+    - 137729
+    - 101910
+    - 101897
+    - 131128
+    - 101898
+    - 131144
+    - 131788
+    - 101940
+    - 101899
+    - 101887
+    - 101900
+    - 101888
+    - 137569
+    - 101901
+    - 135493
+    - urn: 101969
+      site: "A"
+      name: "John Chilton School (Orchard Site, Greenford)"
+    - urn: 101969
+      site: "B"
+      name: "John Chilton School (Bengrath Site, Northolt)"
+    - 101889
+    - 135482
+    - 101903
+    - 101904
+    - 101968
+    - 101877
+    - 101912
+    - 101919
+    - 142832
+    - 101870
+    - 101884
+    - 101943
+    - urn: 101954
+      site: "A"
+      name: "Notting Hill and Ealing High School (Primary Site)"
+    - urn: 101954
+      site: "B"
+      name: "Notting Hill and Ealing High School (Secondary Site)"
+    - 101905
+    - 101869
+    - 102547
+    - 101920
+    - 101906
+    - 134217
+    - 101885
+    - 101886
+    - 135616
+    - 101890
+    - 101970
+    - 101971
+    - 101922
+    - 101946
+    - urn: 101947
+      site: "A"
+      name: "St Benedict's School (Primary Site, Montpelier Avenue)"
+    - urn: 101947
+      site: "B"
+      name: "St Benedict's School (Secondary Site, Eaton Rise)"
+    - 101923
+    - 101921
+    - 101873
+    - 101924
+    - 101874
+    - 140963
+    - 101925
+    - 101926
+    - 101907
+    - 101934
+    - 101941
+    - 101958
+    - 101953
+    - 101911
+    - 101913
+    - 137546
+    - 101916
+    - 101908
+    - 101928
+    - 101876
+    - 150275
+    - 101875
+    - 139725
+    - 101902
+    - 101909
+    - 136737
+    - 143118
+    - 101573
+
+
+
+clinics:
+  ealing:
+    - name: Crowne Street Surgery
+      address_line_1: 2 Lombard Court
+      address_town: London
+      address_postcode: W3 8SA
