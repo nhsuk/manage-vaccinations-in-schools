@@ -46,6 +46,7 @@ describe "mavis teams reset-bulk-upload" do
       and_the_vaccination_record_is_deleted
       and_the_archive_reason_is_deleted
       and_the_patient_team_relationships_are_updated
+      and_the_a_status_updater_job_is_enqueued
     end
 
     it "handles the case when a non bulk upload team is in the same org" do
@@ -451,5 +452,9 @@ describe "mavis teams reset-bulk-upload" do
 
   def and_the_other_patients_are_deleted
     expect(Patient.where(id: @patient2.id)).to be_empty
+  end
+
+  def and_the_a_status_updater_job_is_enqueued
+    expect(StatusUpdaterJob).to have_enqueued_sidekiq_job(@shared_patient.id)
   end
 end
