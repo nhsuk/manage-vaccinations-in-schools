@@ -2,8 +2,8 @@
 
 module MavisCLI
   module Teams
-    class ResetBulkUpload < Dry::CLI::Command
-      desc "Reset bulk upload teams by removing all immunisation imports and associated data"
+    class ResetNationalReporting < Dry::CLI::Command
+      desc "Reset national reporting teams by removing all immunisation imports and associated data"
 
       option :workgroup,
              desc: "The workgroup of a specific team to reset (optional)"
@@ -22,11 +22,11 @@ module MavisCLI
         teams = find_teams(workgroup)
 
         if teams.empty?
-          puts "No bulk upload teams found."
+          puts "No national reporting teams found."
           return
         end
 
-        puts "Found #{teams.count} bulk upload team(s) to reset:"
+        puts "Found #{teams.count} national reporting team(s) to reset:"
         teams.each do |team|
           puts "  - #{team.name} (#{team.workgroup})"
           puts "    - Immunisation imports: #{ImmunisationImport.where(team:).count}"
@@ -72,7 +72,8 @@ module MavisCLI
           raise ArgumentError, "Team not found: #{workgroup}" if team.nil?
 
           unless team.has_upload_only_access?
-            raise ArgumentError, "Team #{workgroup} is not a bulk upload team"
+            raise ArgumentError,
+                  "Team #{workgroup} is not a national reporting team"
           end
 
           [team]
@@ -192,6 +193,6 @@ module MavisCLI
   end
 
   register "teams" do |prefix|
-    prefix.register "reset-bulk-upload", Teams::ResetBulkUpload
+    prefix.register "reset-national-reporting", Teams::ResetNationalReporting
   end
 end

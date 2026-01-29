@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "mavis teams reset-bulk-upload" do
+describe "mavis teams reset-national-reporting" do
   around { |example| travel_to(Date.new(2025, 12, 20)) { example.run } }
 
   let(:bulk_organisation) { create(:organisation, ods_code: "R1L") }
@@ -338,7 +338,12 @@ describe "mavis teams reset-bulk-upload" do
     @output =
       capture_output(input: "y") do
         Dry::CLI.new(MavisCLI).call(
-          arguments: ["teams", "reset-bulk-upload", "--workgroup", workgroup]
+          arguments: [
+            "teams",
+            "reset-national-reporting",
+            "--workgroup",
+            workgroup
+          ]
         )
       end
   end
@@ -346,7 +351,9 @@ describe "mavis teams reset-bulk-upload" do
   def run_command_without_workgroup
     @output =
       capture_output(input: "y") do
-        Dry::CLI.new(MavisCLI).call(arguments: %w[teams reset-bulk-upload])
+        Dry::CLI.new(MavisCLI).call(
+          arguments: %w[teams reset-national-reporting]
+        )
       end
   end
 
