@@ -3,7 +3,7 @@
 describe SearchVaccinationRecordsInNHSJob do
   let(:team) { create(:team) }
   let(:school) { create(:school, team:) }
-  let(:patient) { create(:patient, team:, school:, nhs_number:) }
+  let(:patient) { create(:patient, team:, session:, school:, nhs_number:) }
   let(:session) { create(:session, programmes: [programme], location: school) }
   let(:nhs_number) { "9449308357" }
   let!(:programme) { Programme.flu }
