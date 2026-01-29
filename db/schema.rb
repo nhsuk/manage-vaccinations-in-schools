@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_26_113704) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_29_140834) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -95,6 +95,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_26_113704) do
     t.datetime "created_at", null: false
     t.date "expiry"
     t.string "name", null: false
+    t.string "number"
     t.bigint "team_id"
     t.datetime "updated_at", null: false
     t.bigint "vaccine_id", null: false
