@@ -7,7 +7,7 @@
 <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-<% if @draft_vaccination_record.bulk_upload_user_and_record? %>
+<% if @draft_vaccination_record.national_reporting_user_and_record? %>
 
     <span class="nhsuk-caption-l"><%= @patient.full_name %></span>
     <%= h1 "Which vaccine and batch did you use?" %>

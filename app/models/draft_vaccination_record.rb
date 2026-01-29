@@ -59,9 +59,13 @@ class DraftVaccinationRecord
       (:delivery if administered?),
       (:dose if administered? && can_be_half_dose?),
       (:batch if administered?),
-      (:location if session&.generic_clinic? || bulk_upload_user_and_record?),
-      (:dose_sequence if bulk_upload_user_and_record?),
-      (:vaccinator if bulk_upload_user_and_record?),
+      (
+        if session&.generic_clinic? || national_reporting_user_and_record?
+          :location
+        end
+      ),
+      (:dose_sequence if national_reporting_user_and_record?),
+      (:vaccinator if national_reporting_user_and_record?),
       :confirm
     ].compact
   end
@@ -84,11 +88,19 @@ class DraftVaccinationRecord
   end
 
   on_wizard_step :batch, exact: true do
-    validates :batch_id, presence: true, unless: :bulk_upload_user_and_record?
+    validates :batch_id,
+              presence: true,
+              unless: :national_reporting_user_and_record?
 
-    validates :vaccine_id, presence: true, if: :bulk_upload_user_and_record?
-    validates :batch_name, batch_name: true, if: :bulk_upload_user_and_record?
-    validates :batch_expiry, presence: true, if: :bulk_upload_user_and_record?
+    validates :vaccine_id,
+              presence: true,
+              if: :national_reporting_user_and_record?
+    validates :batch_name,
+              batch_name: true,
+              if: :national_reporting_user_and_record?
+    validates :batch_expiry,
+              presence: true,
+              if: :national_reporting_user_and_record?
   end
 
   on_wizard_step :dose, exact: true do
@@ -105,10 +117,10 @@ class DraftVaccinationRecord
   end
 
   on_wizard_step :location, exact: true do
-    validate :location_is_school, if: :bulk_upload_user_and_record?
+    validate :location_is_school, if: :national_reporting_user_and_record?
     validates :location_id,
               presence: true,
-              unless: :bulk_upload_user_and_record?
+              unless: :national_reporting_user_and_record?
   end
 
   on_wizard_step :notes, exact: true do
@@ -161,7 +173,8 @@ class DraftVaccinationRecord
   alias_method :administered, :administered?
 
   def batch
-    if batch_expiry && batch_name && vaccine_id && bulk_upload_user_and_record?
+    if batch_expiry && batch_name && vaccine_id &&
+         national_reporting_user_and_record?
       return(
         Batch.create_with(archived_at: Time.current).find_or_create_by!(
           expiry: batch_expiry,
@@ -341,7 +354,7 @@ class DraftVaccinationRecord
 
   def sourced_from_national_reporting? = source == "national_reporting"
 
-  def bulk_upload_user_and_record?
+  def national_reporting_user_and_record?
     @current_user.selected_team.has_upload_only_access? &&
       sourced_from_national_reporting?
   end
@@ -357,7 +370,8 @@ class DraftVaccinationRecord
   def write_to!(vaccination_record)
     super(vaccination_record)
 
-    if batch_expiry && batch_name && vaccine_id && bulk_upload_user_and_record?
+    if batch_expiry && batch_name && vaccine_id &&
+         national_reporting_user_and_record?
       vaccination_record.batch_id = batch&.id
     end
 
@@ -455,7 +469,7 @@ class DraftVaccinationRecord
 
   def can_change_outcome?
     (outcome != "already_had" || editing? || session.nil? || session.today?) &&
-      !bulk_upload_user_and_record?
+      !national_reporting_user_and_record?
   end
 
   def requires_supplied_by?

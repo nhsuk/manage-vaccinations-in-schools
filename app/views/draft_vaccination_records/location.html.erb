@@ -5,7 +5,7 @@
 <% title = "Where was the #{@programme.name_in_sentence} vaccination offered?" %>
 <% content_for :page_title, title %>
 
-<% if @draft_vaccination_record.bulk_upload_user_and_record? %>
+<% if @draft_vaccination_record.national_reporting_user_and_record? %>
   <h1 class="nhsuk-heading-l">
     <span class="nhsuk-caption-l">Location</span>
     <%= @patient.full_name %>
