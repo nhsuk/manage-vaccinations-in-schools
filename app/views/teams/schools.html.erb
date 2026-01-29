@@ -9,7 +9,7 @@
   </div>
   <div class="nhsuk-grid-column-three-quarters">
     <%= render AppCardComponent.new do |card| %>
-      <% card.with_heading(level: 2) { "Schools" } %>
+      <% card.with_heading(level: 2, actions: [{ text: "Add a new school site", href: draft_school_site_path(:school) }]) { "Schools" } %>
 
       <%= govuk_table do |table| %>
         <% table.with_head do |head| %>
