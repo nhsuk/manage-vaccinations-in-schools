@@ -152,6 +152,14 @@ module MavisCLI
           puts "  - Found #{patients_to_destroy.count}" \
                  " patient(s) who were in the imports, and no longer have teams"
 
+          access_log_entries =
+            AccessLogEntry.where(patient_id: patients_to_destroy.ids)
+          puts "  - Found #{access_log_entries.count} access_log_entries for" \
+                 " patients without teams"
+
+          puts "Destroying access-log-entries..."
+          access_log_entries.destroy_all
+
           puts "Destroying patients..."
           patients_to_destroy.destroy_all
         end
