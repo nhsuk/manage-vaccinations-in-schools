@@ -444,7 +444,10 @@ class ImmunisationImportRow
 
     @batch ||=
       if administered && vaccine && batch_name.present?
-        Batch.create_with(archived_at: Time.current).find_or_create_by!(
+        Batch.create_with(
+          archived_at: Time.current,
+          number: batch_name.to_s
+        ).find_or_create_by!(
           expiry: batch_expiry&.to_date,
           name: batch_name.to_s,
           team_id: session&.team_id,
