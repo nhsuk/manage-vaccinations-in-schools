@@ -183,25 +183,28 @@ class ImmunisationImportRow
         VaccinationRecord.find_or_initialize_by(attributes)
       end
 
+    should_stage_delivery_attributes =
+      vaccination_record.pending_changes? ||
+        (
+          (
+            vaccination_record.delivery_site.present? &&
+              delivery_site_value.present?
+          ) ||
+            (
+              vaccination_record.delivery_method.present? &&
+                delivery_method_value.present?
+            )
+        )
+
+    delivery_attributes = {
+      delivery_method: delivery_method_value,
+      delivery_site: delivery_site_value
+    }
+
     if vaccination_record.persisted?
       vaccination_record.stage_changes(attributes_to_stage_if_already_exists)
-      if vaccination_record.pending_changes? ||
-           (
-             (
-               vaccination_record.delivery_site.present? &&
-                 delivery_site_value.present?
-             ) ||
-               (
-                 vaccination_record.delivery_method.present? &&
-                   delivery_method_value.present?
-               )
-           )
-        vaccination_record.stage_changes(
-          {
-            delivery_site: delivery_site_value,
-            delivery_method: delivery_method_value
-          }
-        )
+      if should_stage_delivery_attributes
+        vaccination_record.stage_changes(delivery_attributes)
       else
         vaccination_record.delivery_site =
           delivery_site_value || vaccination_record.delivery_site
@@ -213,10 +216,7 @@ class ImmunisationImportRow
       vaccination_record.uuid = SecureRandom.uuid
 
       vaccination_record.assign_attributes(
-        attributes_to_stage_if_already_exists.merge!(
-          delivery_site: delivery_site_value,
-          delivery_method: delivery_method_value
-        )
+        attributes_to_stage_if_already_exists.merge!(delivery_attributes)
       )
     end
 
