@@ -369,9 +369,14 @@ describe SearchVaccinationRecordsInNHSJob do
     end
 
     context "with an existing Mavis record" do
-      let(:session) { create(:session) }
-      let(:second_vaccination_record) do
-        create(:vaccination_record, session:, performed_at:, programme:)
+      before do
+        create(
+          :vaccination_record,
+          patient:,
+          session: create(:session),
+          performed_at:,
+          programme:
+        )
       end
 
       it "returns an empty array, discarding the incoming duplicate" do
@@ -380,12 +385,13 @@ describe SearchVaccinationRecordsInNHSJob do
     end
 
     context "with a national reporting record" do
-      before { Flipper.enable(:sync_national_reporting_to_imms_api) }
+      before do
+        Flipper.enable(:sync_national_reporting_to_imms_api)
 
-      let(:second_vaccination_record) do
         create(
           :vaccination_record,
           :sourced_from_bulk_upload,
+          patient:,
           performed_at:,
           programme:
         )
