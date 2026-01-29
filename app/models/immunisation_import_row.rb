@@ -206,10 +206,7 @@ class ImmunisationImportRow
       if should_stage_delivery_attributes
         vaccination_record.stage_changes(delivery_attributes)
       else
-        vaccination_record.delivery_site =
-          delivery_site_value || vaccination_record.delivery_site
-        vaccination_record.delivery_method =
-          delivery_method_value || vaccination_record.delivery_method
+        vaccination_record.assign_attributes(delivery_attributes.compact)
       end
     else
       # Postgres UUID generation is skipped in bulk import
