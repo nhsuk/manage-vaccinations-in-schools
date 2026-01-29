@@ -731,12 +731,14 @@
       <span class="ruby-identifier">postcode_index</span> = <span class="ruby-identifier">headers</span>.<span class="ruby-identifier">index</span>(<span class="ruby-identifier">postcode_field</span>)
       <span class="ruby-identifier">gss_code_index</span> = <span class="ruby-identifier">headers</span>.<span class="ruby-identifier">index</span>(<span class="ruby-identifier">gss_code_field</span>)
 
+      <span class="ruby-comment"># rubocop:disable Rails/SaveBang</span>
       <span class="ruby-identifier">progress_bar</span> =
-        <span class="ruby-constant">ProgressBar</span>.<span class="ruby-identifier">create!</span>(
+        <span class="ruby-constant">ProgressBar</span>.<span class="ruby-identifier">create</span>(
           <span class="ruby-value">starting_at:</span> <span class="ruby-value">0</span>,
           <span class="ruby-value">total:</span> <span class="ruby-identifier">stream</span>.<span class="ruby-identifier">size</span>,
           <span class="ruby-value">format:</span> <span class="ruby-string">&quot;%a %e %P% Processed: %c bytes of %C&quot;</span>
         )
+      <span class="ruby-comment"># rubocop:enable Rails/SaveBang</span>
 
       <span class="ruby-identifier">line_no</span> = <span class="ruby-value">1</span>
       <span class="ruby-constant">LocalAuthority</span><span class="ruby-operator">::</span><span class="ruby-constant">Postcode</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
