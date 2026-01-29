@@ -126,7 +126,7 @@ class ImmunisationImportRow
       elsif poc?
         "historical_upload"
       else
-        "bulk_upload"
+        "national_reporting"
       end
 
     attributes = {

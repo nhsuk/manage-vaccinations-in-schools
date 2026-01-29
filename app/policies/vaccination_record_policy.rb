@@ -30,7 +30,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
       ) && record.sourced_from_service? &&
         record.performed_ods_code == user.selected_organisation.ods_code
     elsif team.has_upload_only_access?
-      record.sourced_from_bulk_upload? &&
+      record.sourced_from_national_reporting? &&
         record.immunisation_imports.any? { it.team_id == team.id }
     end
   end

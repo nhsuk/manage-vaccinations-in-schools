@@ -149,7 +149,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
       if @vaccination_record.administered?
         if @vaccination_record.vaccine.present? &&
-             !@vaccination_record.sourced_from_bulk_upload?
+             !@vaccination_record.sourced_from_national_reporting?
           summary_list.with_row do |row|
             row.with_key { "Dose volume" }
             row.with_value { dose_volume_value }
@@ -250,7 +250,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
       end
 
       if @vaccination_record.protocol.present? &&
-           !@vaccination_record.sourced_from_bulk_upload?
+           !@vaccination_record.sourced_from_national_reporting?
         summary_list.with_row do |row|
           row.with_key { "Protocol" }
           row.with_value { protocol_value }

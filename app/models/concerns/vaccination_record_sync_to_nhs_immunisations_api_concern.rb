@@ -8,7 +8,7 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
           -> do
             includes(:patient).then do
               if Flipper.enabled?(:sync_national_reporting_to_imms_api)
-                it.sourced_from_service.or(it.sourced_from_bulk_upload)
+                it.sourced_from_service.or(it.sourced_from_national_reporting)
               else
                 it.sourced_from_service
               end
@@ -46,7 +46,7 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
     sourced_from_service? ||
       (
         Flipper.enabled?(:sync_national_reporting_to_imms_api) &&
-          sourced_from_bulk_upload?
+          sourced_from_national_reporting?
       )
   end
 

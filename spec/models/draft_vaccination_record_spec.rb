@@ -292,8 +292,8 @@ describe DraftVaccinationRecord do
 
       expect(
         draft_vaccination_record_with_source(
-          "bulk_upload"
-        ).sourced_from_bulk_upload?
+          "national_reporting"
+        ).sourced_from_national_reporting?
       ).to be(true)
     end
 
@@ -303,7 +303,7 @@ describe DraftVaccinationRecord do
       expect(record.sourced_from_historical_upload?).to be(false)
       expect(record.sourced_from_nhs_immunisations_api?).to be(false)
       expect(record.sourced_from_consent_refusal?).to be(false)
-      expect(record.sourced_from_bulk_upload?).to be(false)
+      expect(record.sourced_from_national_reporting?).to be(false)
     end
 
     def draft_vaccination_record_with_source(source_value)

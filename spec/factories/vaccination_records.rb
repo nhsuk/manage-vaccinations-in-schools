@@ -145,7 +145,7 @@ FactoryBot.define do
         immunisation_import { nil }
       end
 
-      source { "bulk_upload" }
+      source { "national_reporting" }
       programme { [Programme.flu, Programme.hpv].sample }
 
       after(:create) do |vaccination_record, evaluator|

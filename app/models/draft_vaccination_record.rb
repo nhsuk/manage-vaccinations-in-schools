@@ -339,11 +339,11 @@ class DraftVaccinationRecord
 
   def sourced_from_consent_refusal? = source == "consent_refusal"
 
-  def sourced_from_bulk_upload? = source == "bulk_upload"
+  def sourced_from_national_reporting? = source == "national_reporting"
 
   def bulk_upload_user_and_record?
     @current_user.selected_team.has_upload_only_access? &&
-      sourced_from_bulk_upload?
+      sourced_from_national_reporting?
   end
 
   def read_from!(vaccination_record)

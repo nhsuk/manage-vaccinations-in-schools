@@ -2572,7 +2572,7 @@ describe ImmunisationImportRow do
 
         its(:programme) { should eq programme }
 
-        its(:source) { should eq("bulk_upload") }
+        its(:source) { should eq("national_reporting") }
 
         its(:local_patient_id) { should eq "CIN-OXFORD-pat123456" }
 
@@ -2751,7 +2751,7 @@ describe ImmunisationImportRow do
 
         its(:programme) { should eq programme }
 
-        its(:source) { should eq("bulk_upload") }
+        its(:source) { should eq("national_reporting") }
 
         its(:local_patient_id) { should eq "CIN-OXFORD-pat123456" }
 

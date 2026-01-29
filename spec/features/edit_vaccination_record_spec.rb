@@ -280,12 +280,12 @@ describe "Edit vaccination record" do
     end
   end
 
-  context "in bulk upload Mavis" do
-    before { given_a_bulk_upload_team_exists }
+  context "in national reporting Mavis" do
+    before { given_a_national_reporting_team_exists }
 
     scenario "Bulk upload user edits a national reporting uploaded vaccination record" do
       given_i_am_signed_in
-      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_national_reporting_vaccination_record_exists
 
       when_i_go_to_the_vaccination_record_for_the_patient
       then_i_should_see_the_vaccination_record
@@ -307,7 +307,7 @@ describe "Edit vaccination record" do
 
     scenario "Edits the vaccinator" do
       given_i_am_signed_in
-      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_national_reporting_vaccination_record_exists
 
       when_i_navigate_to_the_edit_vaccination_record_page
 
@@ -322,7 +322,7 @@ describe "Edit vaccination record" do
 
     scenario "Edits dose number" do
       given_i_am_signed_in
-      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_national_reporting_vaccination_record_exists
 
       when_i_navigate_to_the_edit_vaccination_record_page
 
@@ -337,7 +337,7 @@ describe "Edit vaccination record" do
 
     scenario "Edits the location" do
       given_i_am_signed_in
-      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_national_reporting_vaccination_record_exists
 
       when_i_navigate_to_the_edit_vaccination_record_page
 
@@ -363,7 +363,7 @@ describe "Edit vaccination record" do
 
     scenario "Edits notes" do
       given_i_am_signed_in
-      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_national_reporting_vaccination_record_exists
 
       when_i_navigate_to_the_edit_vaccination_record_page
 
@@ -379,7 +379,7 @@ describe "Edit vaccination record" do
 
     scenario "Edits the batch" do
       given_i_am_signed_in
-      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_national_reporting_vaccination_record_exists
 
       when_i_navigate_to_the_edit_vaccination_record_page
 
@@ -413,7 +413,7 @@ describe "Edit vaccination record" do
 
     scenario "Parent details are not visible when viewing vaccination records" do
       given_i_am_signed_in
-      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_national_reporting_vaccination_record_exists
       and_the_patient_has_parents
 
       when_i_go_to_the_vaccination_record_for_the_patient
@@ -433,7 +433,7 @@ describe "Edit vaccination record" do
 
     scenario "User edits two vaccination records with different delivery methods" do
       given_i_am_signed_in
-      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_national_reporting_vaccination_record_exists
       and_a_vaccination_record_with_a_different_delivery_method_exists
 
       when_i_visit_the_first_vaccination_record_directly
@@ -546,7 +546,7 @@ describe "Edit vaccination record" do
     Sidekiq::Job.drain_all if Flipper.enabled?(:imms_api_integration)
   end
 
-  def and_a_bulk_uploaded_vaccination_record_exists
+  def and_a_national_reporting_vaccination_record_exists
     @vaccination_record =
       create(
         :vaccination_record,
