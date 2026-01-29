@@ -29,7 +29,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
           user.is_prescriber?
       ) && record.sourced_from_service? &&
         record.performed_ods_code == user.selected_organisation.ods_code
-    elsif team.has_upload_only_access?
+    elsif team.has_national_reporting_access?
       record.sourced_from_national_reporting? &&
         record.immunisation_imports.any? { it.team_id == team.id }
     end

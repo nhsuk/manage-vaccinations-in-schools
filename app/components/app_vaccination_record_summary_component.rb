@@ -51,7 +51,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
           if @vaccine
             row.with_value { vaccine_value }
 
-            if @current_user.selected_team.has_upload_only_access?
+            if @current_user.selected_team.has_national_reporting_access?
               row.with_action(
                 text: "Change",
                 href: @change_links[:batch],
@@ -96,7 +96,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
             row.with_key { "Batch expiry date" }
             row.with_value { batch_expiry_value }
 
-            if @current_user.selected_team.has_upload_only_access?
+            if @current_user.selected_team.has_national_reporting_access?
               row.with_action(
                 text: "Change",
                 href: @change_links[:batch],
@@ -340,7 +340,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
   def vaccine_value
     display_name =
-      if @current_user.selected_team.has_upload_only_access?
+      if @current_user.selected_team.has_national_reporting_access?
         @vaccine.nivs_name.presence || @vaccine.brand
       else
         @vaccine.brand

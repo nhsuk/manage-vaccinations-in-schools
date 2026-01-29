@@ -71,14 +71,14 @@ module MavisCLI
           team = Team.find_by(workgroup:)
           raise ArgumentError, "Team not found: #{workgroup}" if team.nil?
 
-          unless team.has_upload_only_access?
+          unless team.has_national_reporting_access?
             raise ArgumentError,
                   "Team #{workgroup} is not a national reporting team"
           end
 
           [team]
         else
-          Team.where(type: :upload_only)
+          Team.where(type: :national_reporting)
         end
       end
 

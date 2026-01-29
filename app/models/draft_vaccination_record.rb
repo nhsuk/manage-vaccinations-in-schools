@@ -355,7 +355,7 @@ class DraftVaccinationRecord
   def sourced_from_national_reporting? = source == "national_reporting"
 
   def national_reporting_user_and_record?
-    @current_user.selected_team.has_upload_only_access? &&
+    @current_user.selected_team.has_national_reporting_access? &&
       sourced_from_national_reporting?
   end
 

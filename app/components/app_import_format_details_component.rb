@@ -17,7 +17,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     when CohortImport
       "How to format your Mavis CSV file for child records"
     when ImmunisationImport
-      if team.has_upload_only_access?
+      if team.has_national_reporting_access?
         "How to format your CSV file for vaccination records"
       else
         "How to format your Mavis CSV file for vaccination records"
@@ -68,7 +68,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def immunisation_import_columns
-    if team.has_upload_only_access?
+    if team.has_national_reporting_access?
       bulk_immunisation_import_columns
     else
       poc_immunisation_import_columns

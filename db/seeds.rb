@@ -337,11 +337,11 @@ def create_nurse_joy_team
   create_school_moves(team)
 end
 
-def create_upload_only_team
+def create_national_reporting_team
   team =
     FactoryBot.create(
       :team,
-      :upload_only,
+      :national_reporting,
       ods_code: "XX99",
       programmes: [Programme.flu, Programme.hpv],
       workgroup: "XX99"
@@ -382,7 +382,7 @@ unless Settings.cis2.enabled
   # is not available and password= fails to run.
   create_nurse_joy_team
 
-  create_upload_only_team
+  create_national_reporting_team
 end
 
 # CIS2 team - the ODS code and user UID need to match the values in the CIS2 env

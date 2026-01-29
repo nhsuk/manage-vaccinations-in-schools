@@ -283,7 +283,7 @@ describe "Edit vaccination record" do
   context "in national reporting Mavis" do
     before { given_a_national_reporting_team_exists }
 
-    scenario "Bulk upload user edits a national reporting uploaded vaccination record" do
+    scenario "National reporting user edits a national reporting uploaded vaccination record" do
       given_i_am_signed_in
       and_a_national_reporting_vaccination_record_exists
 
@@ -424,7 +424,7 @@ describe "Edit vaccination record" do
     scenario "Breadcrumb shows patient-based path when viewing session-based vaccination record" do
       given_i_am_signed_in
       and_a_vaccination_record_with_a_session_exists
-      and_the_patient_is_accessible_to_the_upload_only_team
+      and_the_patient_is_accessible_to_the_national_reporting_team
 
       when_i_visit_the_vaccination_record_directly
       then_i_should_see_the_vaccination_record
@@ -488,14 +488,14 @@ describe "Edit vaccination record" do
       )
   end
 
-  def given_a_bulk_upload_team_exists
+  def given_a_national_reporting_team_exists
     @programme = Programme.hpv
 
     @team =
       create(
         :team,
         :with_one_admin,
-        :upload_only,
+        :national_reporting,
         ods_code: "R1L",
         programmes: [Programme.hpv, Programme.flu]
       )
@@ -1086,8 +1086,8 @@ describe "Edit vaccination record" do
       )
   end
 
-  def and_the_patient_is_accessible_to_the_upload_only_team
-    # Patient is already part of the upload-only team from the before block
+  def and_the_patient_is_accessible_to_the_national_reporting_team
+    # Patient is already part of the national reporting team from the before block
     # Just ensure patient_team association exists
     PatientTeam.find_or_create_by!(patient: @patient, team: @team)
   end

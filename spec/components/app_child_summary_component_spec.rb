@@ -135,10 +135,10 @@ describe AppChildSummaryComponent do
     it { should have_text("Archive reason") }
   end
 
-  context "when created by bulk upload" do
+  context "when created by a national reporting upload" do
     let(:component) { described_class.new(patient, current_team: team) }
 
-    let(:team) { create(:team, :upload_only) }
+    let(:team) { create(:team, :national_reporting) }
 
     before { create(:archive_reason, :immunisation_import, patient:, team:) }
 

@@ -80,8 +80,8 @@ describe AppImportFormatDetailsComponent do
     expect(page).not_to have_content("LOCAL_PATIENT_ID_URI")
   end
 
-  context "with an upload-only team" do
-    let(:team) { create(:team, :upload_only, programmes: [programme]) }
+  context "with a national reporting team" do
+    let(:team) { create(:team, :national_reporting, programmes: [programme]) }
 
     it "renders the correct summary text for ImmunisationImport" do
       import = ImmunisationImport.new(team:)

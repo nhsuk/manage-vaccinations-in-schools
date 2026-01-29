@@ -56,7 +56,7 @@ describe Team do
 
     it do
       expect(team).to validate_inclusion_of(:type).in_array(
-        %w[poc_only upload_only]
+        %w[poc_only national_reporting]
       )
     end
 
@@ -68,8 +68,8 @@ describe Team do
   it_behaves_like "a model with a normalised phone number"
 
   describe "#year_groups" do
-    context "when team has upload_only access" do
-      let(:team) { create(:team, :upload_only) }
+    context "when team has national_reporting access" do
+      let(:team) { create(:team, :national_reporting) }
 
       it "covers nursery to upper sixth" do
         expect(team.year_groups).to eq((-2..13).to_a)

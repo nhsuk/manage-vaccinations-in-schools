@@ -5,7 +5,7 @@ describe("National reporting immunisation imports") do
 
   scenario "User uploads a mixed flu and HPV file, views cohort and vaccination records" do
     given_mavis_logins_are_configured
-    given_i_am_signed_in_as_a_bulk_upload_user
+    given_i_am_signed_in_as_a_national_reporting_user
     given_a_patient_already_exists
     and_sending_to_nhs_immunisations_api_is_enabled
 
@@ -55,7 +55,7 @@ describe("National reporting immunisation imports") do
     @team =
       create(
         :team,
-        :upload_only,
+        :national_reporting,
         :with_one_nurse,
         ods_code: "R1L",
         programmes: programmes
@@ -63,7 +63,7 @@ describe("National reporting immunisation imports") do
     create(:school, team: @team, urn: 100_000)
   end
 
-  def given_i_am_signed_in_as_a_bulk_upload_user
+  def given_i_am_signed_in_as_a_national_reporting_user
     @user = @team.users.first
     sign_in @user
   end

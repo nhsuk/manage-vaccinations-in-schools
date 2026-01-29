@@ -104,10 +104,10 @@ describe TrainingOnboardingConfiguration do
       end
     end
 
-    context "when type is upload_only" do
-      let(:type) { "upload_only" }
+    context "when type is national_reporting" do
+      let(:type) { "national_reporting" }
 
-      it "generates suitable configuration for upload only users" do
+      it "generates suitable configuration for national reporting users" do
         expect(call).to eq(
           {
             organisation: {
@@ -116,7 +116,7 @@ describe TrainingOnboardingConfiguration do
             team: {
               name: "ABC (abc) training",
               workgroup: "abc",
-              type: "upload_only"
+              type: "national_reporting"
             }
           }
         )

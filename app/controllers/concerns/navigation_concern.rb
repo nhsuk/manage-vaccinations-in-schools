@@ -70,7 +70,7 @@ module NavigationConcern
       }
     end
 
-    if current_team&.has_upload_only_access?
+    if current_team&.has_national_reporting_access?
       @navigation_items << {
         title: t("patients.index.title"),
         path: patients_path

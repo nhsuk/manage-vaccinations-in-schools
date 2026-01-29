@@ -57,8 +57,8 @@ FactoryBot.define do
 
     type { :poc_only }
 
-    trait :upload_only do
-      type { :upload_only }
+    trait :national_reporting do
+      type { :national_reporting }
       email { nil }
       phone { nil }
       privacy_notice_url { nil }

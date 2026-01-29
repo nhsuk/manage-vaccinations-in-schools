@@ -668,7 +668,7 @@ en:
       title: Imports
       title_short: Imports
       description: Import child, cohort and vaccination records and see important notices
-      description_upload_only: Upload flu and HPV vaccination records and share them with NHS England
+      description_national_reporting: Upload flu and HPV vaccination records and share them with NHS England
     notices:
       index:
         no_results: There are currently no important notices.
@@ -729,7 +729,7 @@ en:
     index:
       title: Children
       description: Find children and view their vaccination history
-      description_upload_only: Find children, view their vaccination history and edit their details
+      description_national_reporting: Find children, view their vaccination history and edit their details
   programmes:
     index:
       title: Programmes

@@ -72,7 +72,7 @@ organisation:
 team:
   name: # Unique name of the organisation
   workgroup: # Used in their CIS2 configuration
-  type: upload_only
+  type: national_reporting
 ```
 
 [Example configuration files can be found in the repo][config-onboarding].

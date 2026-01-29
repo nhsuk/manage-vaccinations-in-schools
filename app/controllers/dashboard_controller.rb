@@ -17,18 +17,19 @@ class DashboardController < ApplicationController
 
   def set_primary_items
     @primary_items =
-      if current_team.has_upload_only_access?
+      if current_team.has_national_reporting_access?
         [
           {
             title: I18n.t("imports.index.title"),
             path: imports_path,
-            description: I18n.t("imports.index.description_upload_only"),
+            description: I18n.t("imports.index.description_national_reporting"),
             width: "one-half"
           },
           {
             title: I18n.t("patients.index.title"),
             path: patients_path,
-            description: I18n.t("patients.index.description_upload_only"),
+            description:
+              I18n.t("patients.index.description_national_reporting"),
             width: "one-half"
           }
         ]
