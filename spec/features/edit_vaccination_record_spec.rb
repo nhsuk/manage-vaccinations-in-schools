@@ -503,7 +503,7 @@ describe "Edit vaccination record" do
     @patient =
       create(
         :patient,
-        :bulk_uploaded,
+        :in_national_reporting_upload,
         given_name: "John",
         family_name: "Smith",
         team: @team,
