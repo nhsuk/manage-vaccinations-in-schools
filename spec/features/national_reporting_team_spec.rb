@@ -188,7 +188,7 @@ describe "National reporting team homepage and navigation" do
     app_cards = page.all(".app-card")
     expect(app_cards.count).to eq(2)
     expect(app_cards[0]).to have_content("Vaccinations")
-    expect(app_cards[1]).to have_content("Child’s details")
+    expect(app_cards[1]).to have_content("Child record")
   end
 
   def and_child_cannot_be_archived
@@ -215,8 +215,14 @@ describe "National reporting team homepage and navigation" do
   end
 
   def and_the_activity_log_is_hidden
-    expect(page).not_to have_content("Activity log")
-    expect(page).not_to have_content("Child record")
+    expect(page).not_to have_css(
+      ".app-secondary-navigation__current",
+      text: "Activity log"
+    )
+    expect(page).not_to have_css(
+      ".app-secondary-navigation__current",
+      text: "Child record"
+    )
   end
 
   def and_i_should_see_the_national_reporting_service_guide_link

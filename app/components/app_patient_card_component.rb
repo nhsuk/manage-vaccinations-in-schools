@@ -3,7 +3,7 @@
 class AppPatientCardComponent < ViewComponent::Base
   erb_template <<-ERB
     <%= render AppCardComponent.new(section: true) do |card| %>
-      <% card.with_heading(level: heading_level, actions: heading_actions) { "Child’s details" } %>
+      <% card.with_heading(level: heading_level, actions: heading_actions) { "Child record" } %>
 
       <% important_notices.each do |notice| %>
         <%= render AppStatusComponent.new(text: notice) %>
