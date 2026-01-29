@@ -12,7 +12,7 @@ describe DraftVaccinationRecord do
 
   let(:programme) { Programme.hpv }
   let(:session) { create(:session, team:, programmes: [programme]) }
-  let(:patient) { create(:patient, session:) }
+  let(:patient) { create(:patient, :in_attendance, session:) }
   let(:vaccine) { programme.vaccines.first }
   let(:batch) { create(:batch, team:, vaccine:, expiry: Date.new(2026, 11, 1)) }
 
@@ -126,6 +126,42 @@ describe DraftVaccinationRecord do
       before { draft_vaccination_record.wizard_step = :confirm }
 
       it { should validate_length_of(:notes).is_at_most(1000).on(:update) }
+    end
+
+    context "when the patient is marked not attending" do
+      let(:attributes) { valid_administered_attributes }
+      let(:patient) { create(:patient, session:) }
+
+      before do
+        draft_vaccination_record.wizard_step = :confirm
+        create(:attendance_record, :today, :absent, patient:, session:)
+      end
+
+      it "raises an error when attempting to save the record" do
+        expect(draft_vaccination_record.save(context: :update)).to be(false)
+        expect(draft_vaccination_record.errors[:base]).to include(
+          "Child is marked as not attending this session. Mark them as attending to record a vaccination."
+        )
+      end
+
+      context "when editing an existing vaccination record" do
+        let(:existing_vaccination_record) do
+          create(:vaccination_record, patient:, session:)
+        end
+
+        let(:attributes) do
+          valid_administered_attributes.merge(
+            editing_id: existing_vaccination_record.id
+          )
+        end
+
+        it "does not raise an attendance error" do
+          expect(draft_vaccination_record.save(context: :update)).to be(true)
+          expect(draft_vaccination_record.errors[:base]).not_to include(
+            "Child is marked as not attending this session. Mark them as attending to record a vaccination."
+          )
+        end
+      end
     end
 
     context "on delivery step" do
