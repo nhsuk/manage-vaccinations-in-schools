@@ -29,12 +29,14 @@ module MavisCLI
             postcode_index = headers.index(postcode_field)
             gss_code_index = headers.index(gss_code_field)
 
+            # rubocop:disable Rails/SaveBang
             progress_bar =
-              ProgressBar.create!(
+              ProgressBar.create(
                 starting_at: 0,
                 total: stream.size,
                 format: "%a %e %P% Processed: %c bytes of %C"
               )
+            # rubocop:enable Rails/SaveBang
 
             line_no = 1
             LocalAuthority::Postcode.transaction do
