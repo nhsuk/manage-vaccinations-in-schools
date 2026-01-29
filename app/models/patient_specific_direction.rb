@@ -59,4 +59,7 @@ class PatientSpecificDirection < ApplicationRecord
        validate: true
 
   enum :vaccine_method, { injection: 0, nasal: 1 }, prefix: true, validate: true
+
+  scope :for_session,
+        ->(session) { where(programme_type: session.programme_types) }
 end

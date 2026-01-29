@@ -287,11 +287,12 @@ describe "MMR vaccination" do
 
   def then_i_see_the_right_programme_on_the_entries
     expect(page).not_to have_content("MMRV")
-    expect(page).to have_content("Completed pre-screening checks\nMMR")
-    expect(page).to have_content("Vaccinated with Priorix\nMMR")
+    expect(page).to have_content("Completed pre-screening checks")
+    expect(page).to have_content("Vaccinated with Priorix")
     expect(page).to have_content(
       "Triaged decision: Delay vaccination to a later date\n" \
-        "Next dose 29 October 2024 at 9:00am\nMMR"
+        "1 October 2024 at 9:00am\n" \
+        "Next dose 29 October 2024 at 9:00am"
     )
   end
 

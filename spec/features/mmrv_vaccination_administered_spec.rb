@@ -26,7 +26,7 @@ describe "MMRV vaccination" do
     and_i_should_see_a_triage_for_the_next_vaccination_dose
 
     when_i_go_to_the_activity_log
-    then_i_see_the_right_programme_on_the_entries
+    then_i_see_the_right_entries
 
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_to_the_parent_confirming_the_vaccination
@@ -250,12 +250,13 @@ describe "MMRV vaccination" do
     click_on "Session activity and notes"
   end
 
-  def then_i_see_the_right_programme_on_the_entries
-    expect(page).to have_content("Completed pre-screening checks\nMMRV")
-    expect(page).to have_content("Vaccinated with ProQuad\nMMRV")
+  def then_i_see_the_right_entries
+    expect(page).to have_content("Completed pre-screening checks")
+    expect(page).to have_content("Vaccinated with ProQuad")
     expect(page).to have_content(
       "Triaged decision: Delay vaccination to a later date\n" \
-        "Next dose 29 October 2024 at 12:00am\nMMR(V)"
+        "1 October 2024 at 12:00am\n" \
+        "Next dose 29 October 2024 at 12:00am"
     )
   end
 

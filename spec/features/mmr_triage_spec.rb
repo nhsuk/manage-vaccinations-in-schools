@@ -16,7 +16,7 @@ describe "MMR triage" do
     and_i_get_confirmation_after_recording
 
     when_i_go_to_the_activity_log
-    then_i_see_the_right_programme_on_the_entries
+    then_i_see_the_right_programme_on_the_tab_headings
   end
 
   scenario "triage without gelatine" do
@@ -30,7 +30,7 @@ describe "MMR triage" do
     and_i_get_confirmation_after_recording
 
     when_i_go_to_the_activity_log
-    then_i_see_the_right_programme_on_the_entries
+    then_i_see_the_right_programme_on_the_tab_headings
   end
 
   scenario "triage with gelatine" do
@@ -44,7 +44,7 @@ describe "MMR triage" do
     and_i_get_confirmation_after_recording
 
     when_i_go_to_the_activity_log
-    then_i_see_the_right_programme_on_the_entries
+    then_i_see_the_right_programme_on_the_tab_headings
   end
 
   def given_i_am_signed_in_with_mmr_programme
@@ -136,8 +136,15 @@ describe "MMR triage" do
     click_on "Session activity and notes"
   end
 
-  def then_i_see_the_right_programme_on_the_entries
-    expect(page).not_to have_content("MMRV")
-    expect(page).to have_content("Triaged decision: Safe to vaccinate\nMMR")
+  def then_i_see_the_right_programme_on_the_tab_headings
+    expect(page).not_to have_css(
+      "li.app-secondary-navigation__list-item",
+      text: "MMRV"
+    )
+    expect(page).to have_css(
+      "li.app-secondary-navigation__list-item",
+      text: "MMR"
+    )
+    expect(page).to have_content("Triaged decision: Safe to vaccinate")
   end
 end

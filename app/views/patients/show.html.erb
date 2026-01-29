@@ -31,21 +31,23 @@
       @patient,
       current_team:,
       show_parents: !current_team.has_upload_only_access?,
-    ) do %>
-  <% if @patient.not_archived?(team: current_team) %>
-    <div class="nhsuk-button-group">
-      <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), secondary: true %>
-      <%= govuk_button_link_to "Archive child record", new_patient_archive_path(@patient), class: "app-button--secondary-warning" %>
-    </div>
-  <% elsif current_team.has_upload_only_access? %>
-    <div class="nhsuk-button-group">
-      <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), secondary: true %>
-    </div>
-  <% end %>
-<% end %>
+      heading_actions: [
+        if policy(@patient).edit?
+          {
+            text: "Edit child record",
+            href: edit_patient_path(@patient),
+          }
+        end,
+        if Patient::ArchivePolicy.new(current_user, @patient).new? && @patient.not_archived?(team: current_team)
+          {
+            text: "Archive child record",
+            href: new_patient_archive_path(@patient),
+          }
+        end,
+      ].compact,
+    ) %>
 
 <% unless current_team.has_upload_only_access? %>
-
   <%= render AppCardComponent.new(section: true) do |card| %>
     <%= render AppPatientProgrammesTableComponent.new(
           @patient,
