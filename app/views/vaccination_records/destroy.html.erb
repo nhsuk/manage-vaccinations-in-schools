@@ -9,10 +9,16 @@
     <%= @patient.full_name %>
   </span>
   <%= page_title %>
-  <span class="nhsuk-caption-l">
-    This vaccination record may be removed from other NHS systems, and the child’s parents will receive a notification that the vaccination did not take place. Mavis will keep a record of this vaccination should it get imported again at a later date.
-  </span>
 <% end %>
+
+<p>
+  <% if current_team.has_upload_only_access? %>
+    This vaccination record may be removed from other NHS systems.
+  <% else %>
+    Archived records may also be removed from other NHS systems, such as GP records. If the child’s parents were
+    previously told the vaccination was given, they’ll get a correction message explaining that it was not given.
+  <% end %>
+</p>
 
 <%= form_with url: vaccination_record_path, method: :delete do |f| %>
   <%= f.hidden_field :return_to, value: @return_to %>
