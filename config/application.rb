@@ -20,6 +20,8 @@ require "rails/test_unit/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+require_relative "../lib/user_session_logger"
+
 module ManageVaccinations
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
@@ -57,6 +59,10 @@ module ManageVaccinations
     end
 
     config.middleware.use Rack::Deflater
+
+    # Add user_session_id to logger tags after session is loaded
+    config.middleware.insert_after ActionDispatch::Session::ActiveRecordStore,
+                                   UserSessionLogger
 
     # Configuration for the application, engines, and railties goes here.
     #
