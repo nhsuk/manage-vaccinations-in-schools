@@ -183,19 +183,6 @@ class ImmunisationImportRow
         VaccinationRecord.find_or_initialize_by(attributes)
       end
 
-    should_stage_delivery_attributes =
-      vaccination_record.pending_changes? ||
-        (
-          (
-            vaccination_record.delivery_site.present? &&
-              delivery_site_value.present?
-          ) ||
-            (
-              vaccination_record.delivery_method.present? &&
-                delivery_method_value.present?
-            )
-        )
-
     delivery_attributes = {
       delivery_method: delivery_method_value,
       delivery_site: delivery_site_value
@@ -203,6 +190,18 @@ class ImmunisationImportRow
 
     if vaccination_record.persisted?
       vaccination_record.stage_changes(attributes_to_stage_if_already_exists)
+      should_stage_delivery_attributes =
+        vaccination_record.pending_changes? ||
+          (
+            (
+              vaccination_record.delivery_site.present? &&
+                delivery_site_value.present?
+            ) ||
+              (
+                vaccination_record.delivery_method.present? &&
+                  delivery_method_value.present?
+              )
+          )
       if should_stage_delivery_attributes
         vaccination_record.stage_changes(delivery_attributes)
       else
