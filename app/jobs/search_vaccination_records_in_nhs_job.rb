@@ -104,7 +104,10 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
   def deduplicate_vaccination_records(incoming_vaccination_records)
     vaccination_records =
       incoming_vaccination_records +
-        patient.vaccination_records.sourced_from_service.includes(:team)
+        patient
+          .vaccination_records
+          .with_correct_source_for_nhs_immunisations_api
+          .includes(:team)
 
     grouped_vaccination_records =
       vaccination_records.group_by do
