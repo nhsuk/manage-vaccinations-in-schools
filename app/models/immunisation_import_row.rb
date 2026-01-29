@@ -164,8 +164,6 @@ class ImmunisationImportRow
 
     attributes_to_stage_if_already_exists = {
       batch_id: batch&.id,
-      delivery_method: delivery_method_value,
-      delivery_site: delivery_site_value,
       notes: notes&.to_s,
       vaccine_id: vaccine&.id,
       discarded_at: nil,
@@ -185,14 +183,40 @@ class ImmunisationImportRow
         VaccinationRecord.find_or_initialize_by(attributes)
       end
 
+    should_stage_delivery_attributes =
+      vaccination_record.pending_changes? ||
+        (
+          (
+            vaccination_record.delivery_site.present? &&
+              delivery_site_value.present?
+          ) ||
+            (
+              vaccination_record.delivery_method.present? &&
+                delivery_method_value.present?
+            )
+        )
+
+    delivery_attributes = {
+      delivery_method: delivery_method_value,
+      delivery_site: delivery_site_value
+    }
+
     if vaccination_record.persisted?
       vaccination_record.stage_changes(attributes_to_stage_if_already_exists)
+      if should_stage_delivery_attributes
+        vaccination_record.stage_changes(delivery_attributes)
+      else
+        vaccination_record.delivery_site =
+          delivery_site_value || vaccination_record.delivery_site
+        vaccination_record.delivery_method =
+          delivery_method_value || vaccination_record.delivery_method
+      end
     else
       # Postgres UUID generation is skipped in bulk import
       vaccination_record.uuid = SecureRandom.uuid
 
       vaccination_record.assign_attributes(
-        attributes_to_stage_if_already_exists
+        attributes_to_stage_if_already_exists.merge!(delivery_attributes)
       )
     end
 
