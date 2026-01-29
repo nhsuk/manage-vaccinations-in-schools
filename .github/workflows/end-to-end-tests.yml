@@ -356,3 +356,26 @@ jobs:
           aws-region: eu-west-2
       - name: Stop dockerized dev image
         run: aws ecs stop-task --cluster assurance-testing --task ${{ needs.wait-for-task-stability.outputs.task_arn }}
+  enforce-end-to-end-tests:
+    name: Check if end-to-end tests passed if required
+    needs: [ check-if-run-needed, call-end-to-end-tests ]
+    if: ${{ always() && github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check end-to-end tests passed or were skipped
+        run: |
+          RUN_TEST_SUITES="${{ needs.check-if-run-needed.outputs.run-test-suites }}"
+          CALL_RESULT="${{ needs.call-end-to-end-tests.result }}"
+
+          if [ "$RUN_TEST_SUITES" != "true" ]; then
+            echo "E2E tests not required for this PR. Marking check as passed."
+            exit 0
+          fi
+
+          if [ "$CALL_RESULT" = "success" ]; then
+            echo "E2E tests required and passed."
+            exit 0
+          fi
+
+          echo "E2E tests were required but did not pass (call-end-to-end-tests result: $CALL_RESULT)."
+          exit 1
