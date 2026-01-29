@@ -56,7 +56,7 @@ describe Team do
 
     it do
       expect(team).to validate_inclusion_of(:type).in_array(
-        %w[poc_only national_reporting]
+        %w[point_of_care national_reporting]
       )
     end
 

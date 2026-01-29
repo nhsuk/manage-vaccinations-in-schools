@@ -270,7 +270,7 @@ describe "Edit vaccination record" do
       and_i_should_see_parent_details
     end
 
-    scenario "Breadcrumb shows session-specific path for POC team" do
+    scenario "Breadcrumb shows session-specific path for point of care team" do
       given_i_am_signed_in
       and_an_administered_vaccination_record_exists
 

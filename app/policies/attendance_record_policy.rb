@@ -1,16 +1,18 @@
 # frozen_string_literal: true
 
 class AttendanceRecordPolicy < ApplicationPolicy
-  def index? = team.has_poc_only_access?
+  def index? = team.has_point_of_care_access?
 
   def create?
-    team.has_poc_only_access? && !already_vaccinated? && !was_seen_by_nurse?
+    team.has_point_of_care_access? && !already_vaccinated? &&
+      !was_seen_by_nurse?
   end
 
-  def show? = team.has_poc_only_access?
+  def show? = team.has_point_of_care_access?
 
   def update?
-    team.has_poc_only_access? && !already_vaccinated? && !was_seen_by_nurse?
+    team.has_point_of_care_access? && !already_vaccinated? &&
+      !was_seen_by_nurse?
   end
 
   private

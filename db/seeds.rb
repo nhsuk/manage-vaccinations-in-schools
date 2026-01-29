@@ -20,7 +20,7 @@ def create_gp_practices
   FactoryBot.create_list(:gp_practice, 30)
 end
 
-def create_team(ods_code:, workgroup: nil, type: :poc_only)
+def create_team(ods_code:, workgroup: nil, type: :point_of_care)
   workgroup ||= ods_code.downcase
 
   Team.find_by(workgroup:) ||

@@ -15,8 +15,8 @@ describe Onboarding do
 
   before { create(:school, :secondary, :closed, urn: "567890") }
 
-  context "with a valid configuration file for a poc team" do
-    let(:filename) { "onboarding/poc_valid.yaml" }
+  context "with a valid configuration file for a point of care team" do
+    let(:filename) { "onboarding/point_of_care_valid.yaml" }
 
     it { should be_valid }
 

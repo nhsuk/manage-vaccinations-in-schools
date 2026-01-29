@@ -78,7 +78,7 @@ class Team < ApplicationRecord
   normalizes :phone, with: PhoneNumberNormaliser.new
 
   enum :type,
-       { poc_only: 0, national_reporting: 1 },
+       { point_of_care: 0, national_reporting: 1 },
        validate: true,
        prefix: "has",
        suffix: "access"

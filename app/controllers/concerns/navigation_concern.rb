@@ -16,7 +16,7 @@ module NavigationConcern
   def set_navigation_items
     @navigation_items = []
 
-    if current_team&.has_poc_only_access?
+    if current_team&.has_point_of_care_access?
       @navigation_items << {
         title: t("schools.index.title"),
         path: schools_path
@@ -63,7 +63,7 @@ module NavigationConcern
       }
     end
 
-    if current_team&.has_poc_only_access?
+    if current_team&.has_point_of_care_access?
       @navigation_items << {
         title: I18n.t("teams.show.title_short"),
         path: contact_details_team_path

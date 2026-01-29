@@ -6,7 +6,7 @@ describe "mavis teams reset-national-reporting" do
   let(:national_reporting_organisation) do
     create(:organisation, ods_code: "R1L")
   end
-  let(:poc_organisation) { create(:organisation) }
+  let(:point_of_care_organisation) { create(:organisation) }
 
   context "when sync_national_reporting_to_imms_api feature flag is enabled" do
     it "does not allow resetting national_reporting teams" do
@@ -76,11 +76,10 @@ describe "mavis teams reset-national-reporting" do
     end
 
     it "raises an error when team is not a national reporting team" do
-      given_a_poc_only_team_exists
-      expect { run_command_with_workgroup(@poc_team.workgroup) }.to raise_error(
-        ArgumentError,
-        /not a national reporting team/
-      )
+      given_a_point_of_care_team_exists
+      expect {
+        run_command_with_workgroup(@point_of_care_team.workgroup)
+      }.to raise_error(ArgumentError, /not a national reporting team/)
     end
 
     it "does not delete records that have been sent to the Imms API" do
@@ -117,14 +116,14 @@ describe "mavis teams reset-national-reporting" do
     it "does not affect point_of_care teams" do
       given_a_point_of_care_team_exists
       and_a_national_reporting_team_exists
-      and_the_poc_team_has_an_immunisation_import
+      and_the_point_of_care_team_has_an_immunisation_import
       and_the_national_reporting_team_has_immunisation_imports_with_vaccination_records
 
       when_i_run_the_command_for_all_teams
 
-      then_the_poc_team_imports_are_not_deleted
-      and_the_poc_team_vaccination_records_are_not_deleted
-      and_the_poc_patients_are_not_deleted
+      then_the_point_of_care_team_imports_are_not_deleted
+      and_the_point_of_care_team_vaccination_records_are_not_deleted
+      and_the_point_of_care_patients_are_not_deleted
 
       and_only_the_national_reporting_team_imports_are_deleted
       and_only_the_national_reporting_team_vaccination_records_are_deleted
@@ -133,7 +132,7 @@ describe "mavis teams reset-national-reporting" do
 
     it "handles the case when no national_reporting teams exist" do
       given_a_point_of_care_team_exists
-      and_the_poc_team_has_an_immunisation_import
+      and_the_point_of_care_team_has_an_immunisation_import
 
       when_i_run_the_command_for_all_teams
 
@@ -166,24 +165,24 @@ describe "mavis teams reset-national-reporting" do
   end
 
   def given_a_point_of_care_team_exists
-    @poc_team =
+    @point_of_care_team =
       create(
         :team,
-        type: :poc_only,
-        organisation: poc_organisation,
-        workgroup: "poc-team"
+        type: :point_of_care,
+        organisation: point_of_care_organisation,
+        workgroup: "point-of-care-team"
       )
   end
   alias_method :and_a_point_of_care_team_exists,
                :given_a_point_of_care_team_exists
 
   def and_a_point_of_care_team_exists_in_the_same_org_as_the_national_reporting_team
-    @poc_team =
+    @point_of_care_team =
       create(
         :team,
-        type: :poc_only,
+        type: :point_of_care,
         organisation: national_reporting_organisation,
-        workgroup: "poc-team"
+        workgroup: "point-of-care-team"
       )
   end
 
@@ -263,7 +262,7 @@ describe "mavis teams reset-national-reporting" do
     @other_vaccination_record =
       create(
         :vaccination_record,
-        team: @poc_team,
+        team: @point_of_care_team,
         patient: @shared_patient,
         performed_at: 2.days.ago
       )
@@ -311,19 +310,20 @@ describe "mavis teams reset-national-reporting" do
     @patient2 = @vaccination_record2.patient
   end
 
-  def and_the_poc_team_has_an_immunisation_import
-    @poc_import = create(:immunisation_import, team: @poc_team)
-    @poc_patient = create(:patient)
-    @poc_vaccination_record =
+  def and_the_point_of_care_team_has_an_immunisation_import
+    @point_of_care_import =
+      create(:immunisation_import, team: @point_of_care_team)
+    @point_of_care_patient = create(:patient)
+    @point_of_care_vaccination_record =
       create(
         :vaccination_record,
-        team: @poc_team,
-        patient: @poc_patient,
+        team: @point_of_care_team,
+        patient: @point_of_care_patient,
         performed_at: 1.day.ago
       )
 
-    @poc_import.vaccination_records << @poc_vaccination_record
-    @poc_import.patients << @poc_patient
+    @point_of_care_import.vaccination_records << @point_of_care_vaccination_record
+    @point_of_care_import.patients << @point_of_care_patient
   end
 
   def and_some_vaccination_records_have_been_sent_to_the_imms_api
@@ -388,7 +388,9 @@ describe "mavis teams reset-national-reporting" do
   end
 
   def and_the_patient_team_relationships_are_updated
-    expect(@shared_patient.patient_teams.pluck(:team_id)).to eq([@poc_team.id])
+    expect(@shared_patient.patient_teams.pluck(:team_id)).to eq(
+      [@point_of_care_team.id]
+    )
   end
 
   def and_the_vaccination_record_is_deleted
@@ -406,9 +408,11 @@ describe "mavis teams reset-national-reporting" do
     ).to be_empty
   end
 
-  def then_the_poc_team_imports_are_not_deleted
-    expect(ImmunisationImport.where(id: @poc_import.id)).to exist
-    expect(VaccinationRecord.where(id: @poc_vaccination_record.id)).to exist
+  def then_the_point_of_care_team_imports_are_not_deleted
+    expect(ImmunisationImport.where(id: @point_of_care_import.id)).to exist
+    expect(
+      VaccinationRecord.where(id: @point_of_care_vaccination_record.id)
+    ).to exist
   end
 
   def and_only_the_national_reporting_team_imports_are_deleted
@@ -417,8 +421,10 @@ describe "mavis teams reset-national-reporting" do
     expect(national_reporting_imports).to be_empty
   end
 
-  def and_the_poc_team_vaccination_records_are_not_deleted
-    expect(VaccinationRecord.where(id: @poc_vaccination_record.id)).to exist
+  def and_the_point_of_care_team_vaccination_records_are_not_deleted
+    expect(
+      VaccinationRecord.where(id: @point_of_care_vaccination_record.id)
+    ).to exist
   end
 
   def and_only_the_national_reporting_team_vaccination_records_are_deleted
@@ -435,8 +441,8 @@ describe "mavis teams reset-national-reporting" do
     expect(national_reporting_patients).to be_empty
   end
 
-  def and_the_poc_patients_are_not_deleted
-    expect(Patient.where(id: @poc_patient.id)).to exist
+  def and_the_point_of_care_patients_are_not_deleted
+    expect(Patient.where(id: @point_of_care_patient.id)).to exist
   end
 
   def then_the_output_indicates_no_teams_found

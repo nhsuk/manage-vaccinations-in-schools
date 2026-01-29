@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class VaccinePolicy < ApplicationPolicy
-  def index? = team.has_poc_only_access?
+  def index? = team.has_point_of_care_access?
 
-  def show? = team.has_poc_only_access?
+  def show? = team.has_point_of_care_access?
 
   class Scope < ApplicationPolicy::Scope
     def resolve

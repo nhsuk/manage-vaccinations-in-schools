@@ -26,7 +26,7 @@ team:
   privacy_policy_url: # URL of a privacy policy shown to parents
   reply_to_id: # Optional GOV.UK Notify Reply-To UUID
   workgroup: # Used in their CIS2 configuration
-  type: poc_only
+  type: point_of_care
 
 programmes: [] # A list of programmes (flu, hpv, menacwy, td_ipv, mmr)
 

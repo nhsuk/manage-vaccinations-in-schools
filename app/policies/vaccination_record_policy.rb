@@ -23,7 +23,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
   end
 
   def update?
-    if team.has_poc_only_access?
+    if team.has_point_of_care_access?
       (
         record.performed_by_user_id == user.id || user.is_nurse? ||
           user.is_prescriber?

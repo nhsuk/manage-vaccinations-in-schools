@@ -66,7 +66,7 @@ class DashboardController < ApplicationController
   def set_secondary_items
     @secondary_items = []
 
-    if current_team.has_poc_only_access?
+    if current_team.has_point_of_care_access?
       @secondary_items << {
         title: I18n.t("school_moves.index.title"),
         path: school_moves_path,

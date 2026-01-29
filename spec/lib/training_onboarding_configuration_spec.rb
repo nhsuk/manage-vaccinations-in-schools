@@ -12,10 +12,10 @@ describe TrainingOnboardingConfiguration do
   before { create(:school, :open, team: create(:team)) }
 
   context "when cis2 is disabled", cis2: :disabled do
-    context "when type is poc_only" do
-      let(:type) { "poc_only" }
+    context "when type is point_of_care" do
+      let(:type) { "point_of_care" }
 
-      it "generates suitable configuration for poc users" do
+      it "generates suitable configuration for point of care users" do
         expect(call).to eq(
           {
             organisation: {
@@ -29,7 +29,7 @@ describe TrainingOnboardingConfiguration do
               privacy_notice_url: "https://example.com/privacy-notice-abc",
               privacy_policy_url: "https://example.com/privacy-policy-abc",
               workgroup: "abc",
-              type: "poc_only"
+              type: "point_of_care"
             },
             programmes: %w[flu hpv menacwy mmr td_ipv],
             subteams: {
@@ -125,7 +125,7 @@ describe TrainingOnboardingConfiguration do
   end
 
   context "when cis2 is enabled", cis2: :enabled do
-    let(:type) { "poc_only" }
+    let(:type) { "point_of_care" }
 
     it "doesn't include any users" do
       expect(call).to include(users: [])

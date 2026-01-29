@@ -55,7 +55,7 @@ FactoryBot.define do
     privacy_notice_url { "https://example.com/privacy-notice" }
     privacy_policy_url { "https://example.com/privacy-policy" }
 
-    type { :poc_only }
+    type { :point_of_care }
 
     trait :national_reporting do
       type { :national_reporting }
