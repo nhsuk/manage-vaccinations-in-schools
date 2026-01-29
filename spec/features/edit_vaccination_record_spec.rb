@@ -550,7 +550,7 @@ describe "Edit vaccination record" do
     @vaccination_record =
       create(
         :vaccination_record,
-        :sourced_from_bulk_upload,
+        :sourced_from_national_reporting,
         uploaded_by: @team.users.first,
         batch: @batch,
         vaccine: @batch.vaccine,
@@ -571,7 +571,7 @@ describe "Edit vaccination record" do
     @flu_vaccination_record =
       create(
         :vaccination_record,
-        :sourced_from_bulk_upload,
+        :sourced_from_national_reporting,
         uploaded_by: @team.users.first,
         delivery_method: :nasal_spray,
         delivery_site: :nose,

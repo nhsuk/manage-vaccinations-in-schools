@@ -151,7 +151,7 @@ describe AppVaccinationRecordSummaryComponent do
 
     context "when the vaccination record was sourced from a national reporting" do
       let(:vaccination_record) do
-        create(:vaccination_record, :sourced_from_bulk_upload)
+        create(:vaccination_record, :sourced_from_national_reporting)
       end
 
       it do
@@ -353,7 +353,7 @@ describe AppVaccinationRecordSummaryComponent do
 
     context "when the vaccination record was sourced from a national reporting" do
       let(:vaccination_record) do
-        create(:vaccination_record, :sourced_from_bulk_upload)
+        create(:vaccination_record, :sourced_from_national_reporting)
       end
 
       it do
@@ -395,7 +395,7 @@ describe AppVaccinationRecordSummaryComponent do
 
     context "when the vaccination record was sourced from a national reporting" do
       let(:vaccination_record) do
-        create(:vaccination_record, :sourced_from_bulk_upload)
+        create(:vaccination_record, :sourced_from_national_reporting)
       end
 
       it do

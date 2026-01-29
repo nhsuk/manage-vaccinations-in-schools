@@ -221,7 +221,7 @@ describe "mavis teams reset-bulk-upload" do
     @vaccination_record1 =
       create(
         :vaccination_record,
-        :sourced_from_bulk_upload,
+        :sourced_from_national_reporting,
         :with_archived_patient,
         immunisation_import: @import1,
         team: @bulk_team,
@@ -230,7 +230,7 @@ describe "mavis teams reset-bulk-upload" do
     @vaccination_record2 =
       create(
         :vaccination_record,
-        :sourced_from_bulk_upload,
+        :sourced_from_national_reporting,
         :with_archived_patient,
         immunisation_import: @import2,
         team: @bulk_team,
@@ -249,7 +249,7 @@ describe "mavis teams reset-bulk-upload" do
     @bulk_upload_vaccination_record =
       create(
         :vaccination_record,
-        :sourced_from_bulk_upload,
+        :sourced_from_national_reporting,
         immunisation_import: @import,
         team: @bulk_team,
         patient: @shared_patient,
@@ -289,7 +289,7 @@ describe "mavis teams reset-bulk-upload" do
     @vaccination_record1 =
       create(
         :vaccination_record,
-        :sourced_from_bulk_upload,
+        :sourced_from_national_reporting,
         immunisation_import: @import1,
         team: @bulk_team1,
         performed_at: 1.day.ago
@@ -297,7 +297,7 @@ describe "mavis teams reset-bulk-upload" do
     @vaccination_record2 =
       create(
         :vaccination_record,
-        :sourced_from_bulk_upload,
+        :sourced_from_national_reporting,
         immunisation_import: @import2,
         team: @bulk_team2,
         performed_at: 2.days.ago

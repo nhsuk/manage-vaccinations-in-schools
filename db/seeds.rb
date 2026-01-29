@@ -365,7 +365,7 @@ def create_upload_patients_and_vaccination_records(user)
   patients.each do |patient|
     FactoryBot.create(
       :vaccination_record,
-      :sourced_from_bulk_upload,
+      :sourced_from_national_reporting,
       immunisation_import:,
       patient:,
       performed_by: user

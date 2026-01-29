@@ -117,7 +117,7 @@ describe FHIRMapper::VaccinationRecord do
         let(:vaccination_record) do
           create(
             :vaccination_record,
-            :sourced_from_bulk_upload,
+            :sourced_from_national_reporting,
             uploaded_by: User.first,
             performed_ods_code: :national_reporting_test_ods_code,
             patient:,

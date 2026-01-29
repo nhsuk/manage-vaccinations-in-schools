@@ -139,7 +139,7 @@ FactoryBot.define do
       nhs_immunisations_api_primary_source { true }
     end
 
-    trait :sourced_from_bulk_upload do
+    trait :sourced_from_national_reporting do
       transient do
         uploaded_by { nil }
         immunisation_import { nil }

@@ -2666,7 +2666,7 @@ describe ImmunisationImportRow do
 
             create(
               :vaccination_record,
-              :sourced_from_bulk_upload,
+              :sourced_from_national_reporting,
               patient:,
               programme:,
               performed_at: Time.zone.local(2026, 1, 5, 0, 0, 0),
@@ -2700,7 +2700,7 @@ describe ImmunisationImportRow do
             vaccine = Vaccine.find_by(nivs_name: "AstraZeneca Fluenz LAIV")
             create(
               :vaccination_record,
-              :sourced_from_bulk_upload,
+              :sourced_from_national_reporting,
               patient:,
               programme:,
               performed_at: Time.zone.local(2026, 1, 5, 0, 0, 0),
