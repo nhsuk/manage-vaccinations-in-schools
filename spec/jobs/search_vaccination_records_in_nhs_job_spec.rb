@@ -367,6 +367,34 @@ describe SearchVaccinationRecordsInNHSJob do
         expect(deduplicate).to eq([])
       end
     end
+
+    context "with an existing Mavis record" do
+      let(:session) { create(:session) }
+      let(:second_vaccination_record) do
+        create(:vaccination_record, session:, performed_at:, programme:)
+      end
+
+      it "returns an empty array, discarding the incoming duplicate" do
+        expect(deduplicate).to eq([])
+      end
+    end
+
+    context "with a national reporting record" do
+      before { Flipper.enable(:sync_national_reporting_to_imms_api) }
+
+      let(:second_vaccination_record) do
+        create(
+          :vaccination_record,
+          :sourced_from_bulk_upload,
+          performed_at:,
+          programme:
+        )
+      end
+
+      it "returns an empty array, discarding the incoming duplicate" do
+        expect(deduplicate).to eq([])
+      end
+    end
   end
 
   describe "#perform" do
