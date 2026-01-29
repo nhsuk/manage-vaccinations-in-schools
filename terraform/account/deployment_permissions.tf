@@ -165,6 +165,22 @@ resource "aws_iam_policy" "run_ecs_task" {
   }
 }
 
+resource "aws_iam_policy" "run_ecs_task_s3_modifications" {
+  count       = var.environment == "development" ? 1 : 0
+  name        = "RunECSTaskS3Modifications"
+  description = "Permissions to manage objects in mavis-end-to-end-test-reports s3 bucket"
+  policy      = file("resources/iam_policy_RunECSTaskS3Modifications.json")
+  lifecycle {
+    ignore_changes = [description]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "run_ecs_task_s3_modifications" {
+  count      = var.environment == "development" ? 1 : 0
+  role       = aws_iam_role.github_assurance[0].name
+  policy_arn = aws_iam_policy.run_ecs_task_s3_modifications[0].arn
+}
+
 resource "aws_iam_role_policy_attachment" "run_ecs_task_custom" {
   count      = var.environment == "development" ? 1 : 0
   role       = aws_iam_role.github_assurance[0].name
