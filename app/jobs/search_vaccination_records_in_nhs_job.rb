@@ -115,7 +115,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
 
     grouped_vaccination_records.each_value do |records|
       deduplicated_vaccination_records +=
-        if records.any?(&:sourced_from_service?)
+        if records.any?(&:correct_source_for_nhs_immunisations_api?)
           # If there exists a Mavis record, discard all incoming records
           []
         elsif records.none?(&:nhs_immunisations_api_primary_source)
