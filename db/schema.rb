@@ -703,6 +703,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_26_113704) do
     t.bigint "gp_practice_id"
     t.boolean "home_educated"
     t.datetime "invalidated_at"
+    t.string "local_authority_mhclg_code"
     t.string "nhs_number"
     t.jsonb "pending_changes", default: {}, null: false
     t.string "preferred_family_name"
@@ -719,6 +720,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_26_113704) do
     t.index ["given_name"], name: "index_patients_on_given_name_trigram", opclass: :gin_trgm_ops, using: :gin
     t.index ["gp_practice_id"], name: "index_patients_on_gp_practice_id"
     t.index ["id"], name: "index_patients_on_pending_changes_not_empty", where: "(pending_changes <> '{}'::jsonb)"
+    t.index ["local_authority_mhclg_code"], name: "index_patients_on_local_authority_mhclg_code"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
     t.index ["school_id"], name: "index_patients_on_school_id"
   end

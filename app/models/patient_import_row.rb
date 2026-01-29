@@ -103,6 +103,8 @@ class PatientImportRow
       address_line_2: address_line_2&.to_s,
       address_postcode: address_postcode&.to_postcode,
       address_town: address_town&.to_s,
+      local_authority_mhclg_code:
+        LocalAuthority.for_postcode(address_postcode&.to_postcode)&.mhclg_code,
       birth_academic_year: birth_academic_year_value,
       date_of_birth: date_of_birth.to_date,
       family_name: ApostropheNormaliser.call(last_name.to_s),
