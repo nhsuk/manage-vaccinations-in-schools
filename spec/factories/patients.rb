@@ -18,6 +18,7 @@
 #  given_name                 :string           not null
 #  home_educated              :boolean
 #  invalidated_at             :datetime
+#  local_authority_mhclg_code :string
 #  nhs_number                 :string
 #  pending_changes            :jsonb            not null
 #  preferred_family_name      :string
@@ -33,14 +34,15 @@
 #
 # Indexes
 #
-#  index_patients_on_family_name_trigram        (family_name) USING gin
-#  index_patients_on_given_name_trigram         (given_name) USING gin
-#  index_patients_on_gp_practice_id             (gp_practice_id)
-#  index_patients_on_names_family_first         (family_name,given_name)
-#  index_patients_on_names_given_first          (given_name,family_name)
-#  index_patients_on_nhs_number                 (nhs_number) UNIQUE
-#  index_patients_on_pending_changes_not_empty  (id) WHERE (pending_changes <> '{}'::jsonb)
-#  index_patients_on_school_id                  (school_id)
+#  index_patients_on_family_name_trigram         (family_name) USING gin
+#  index_patients_on_given_name_trigram          (given_name) USING gin
+#  index_patients_on_gp_practice_id              (gp_practice_id)
+#  index_patients_on_local_authority_mhclg_code  (local_authority_mhclg_code)
+#  index_patients_on_names_family_first          (family_name,given_name)
+#  index_patients_on_names_given_first           (given_name,family_name)
+#  index_patients_on_nhs_number                  (nhs_number) UNIQUE
+#  index_patients_on_pending_changes_not_empty   (id) WHERE (pending_changes <> '{}'::jsonb)
+#  index_patients_on_school_id                   (school_id)
 #
 # Foreign Keys
 #
