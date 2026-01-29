@@ -3,18 +3,70 @@
 class BulkRemoveParentRelationshipsJob < ApplicationJob
   queue_as :imports
 
-  def perform(import_global_id, consent_ids, user_id, remove_option)
+  def perform(
+    import_global_id,
+    parent_relationship_ids_batch,
+    user_id,
+    remove_option
+  )
     import = GlobalID::Locator.locate(import_global_id)
-    consents = Consent.where(id: consent_ids)
+    user = User.find(user_id)
 
-    if remove_option == "unconsented_only"
-      import.destroy_parent_relationships_without_consent!(consents)
-    else
-      import.destroy_parent_relationships_and_invalidate_consents!(
-        User.find(user_id),
-        consents
-      )
+    ActiveRecord::Base.transaction do
+      parent_relationships =
+        import
+          .parent_relationships
+          .where(id: parent_relationship_ids_batch)
+          .includes(:parent, :patient)
+
+      consents =
+        import.parent_relationship_consents(scope: parent_relationships)
+
+      parent_relationships_to_remove =
+        if remove_option == "unconsented_only"
+          consented_pairs = consents.pluck(:patient_id, :parent_id).to_set
+
+          parent_relationships.reject do |pr|
+            consented_pairs.include?([pr.patient_id, pr.parent_id])
+          end
+        else
+          parent_relationships
+        end
+
+      invalidate_consents!(user, consents) if remove_option == "all"
+
+      parents_to_check = parent_relationships_to_remove.map(&:parent)
+      patient_ids = parent_relationships_to_remove.map(&:patient_id)
+
+      parent_relationships_to_remove.each(&:destroy!)
+
+      parents_to_check.each do |parent|
+        next if parent.destroyed?
+        next if parent.parent_relationships.exists?
+        next if parent.consents.exists?
+
+        parent.destroy!
+      end
+
+      StatusUpdaterJob.perform_bulk(patient_ids.zip)
     end
+
+    mark_complete_if_finished(import, remove_option)
+  end
+
+  private
+
+  def invalidate_consents!(user, consents)
+    timestamp = Time.current.to_fs(:long)
+    invalidation_note =
+      "Consent invalidated on #{timestamp} " \
+        "because #{user.full_name} removed all parent-child relationships from an import."
+
+    consents.update_all(notes: invalidation_note, invalidated_at: Time.current)
+  end
+
+  def mark_complete_if_finished(import, remove_option)
+    return unless import.remaining_parent_relationships(remove_option:).empty?
 
     import.update!(status: :processed)
   end

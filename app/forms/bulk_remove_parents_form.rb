@@ -4,6 +4,8 @@ class BulkRemoveParentsForm
   include ActiveModel::Model
   include ActiveModel::Attributes
 
+  BATCH_SIZE = 100
+
   attr_accessor :current_user
   attr_reader :import, :consents
 
@@ -25,12 +27,18 @@ class BulkRemoveParentsForm
   def save!
     return false unless valid?
     import.update!(status: :removing_parent_relationships)
-    BulkRemoveParentRelationshipsJob.perform_later(
-      import.to_global_id.to_s,
-      consents.map(&:id),
-      current_user.id,
-      remove_option
-    )
+
+    import
+      .parent_relationship_ids
+      .each_slice(BATCH_SIZE) do |batch_ids|
+        BulkRemoveParentRelationshipsJob.perform_later(
+          import.to_global_id.to_s,
+          batch_ids,
+          current_user.id,
+          remove_option
+        )
+      end
+
     true
   end
 

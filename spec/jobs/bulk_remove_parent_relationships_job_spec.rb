@@ -4,7 +4,7 @@ describe BulkRemoveParentRelationshipsJob do
   subject(:perform_job) do
     described_class.new.perform(
       import.to_global_id.to_s,
-      consents.map(&:id),
+      import.parent_relationship_ids,
       user.id,
       remove_option
     )
@@ -17,26 +17,21 @@ describe BulkRemoveParentRelationshipsJob do
 
   let(:user) { create(:user, team:) }
 
-  let(:consents) do
-    [
-      create(
-        :consent,
-        :given,
-        parent: import.parent_relationships.includes(:parent).first.parent,
-        patient: import.parent_relationships.includes(:patient).first.patient
-      ),
-      create(
-        :consent,
-        :refused,
-        parent: import.parent_relationships.includes(:parent).second.parent,
-        patient: import.parent_relationships.includes(:patient).second.patient
-      )
-    ]
-  end
-
   before do
     import.process!
     CommitImportJob.drain
+    create(
+      :consent,
+      :given,
+      parent: import.parent_relationships.includes(:parent).first.parent,
+      patient: import.parent_relationships.includes(:patient).first.patient
+    )
+    create(
+      :consent,
+      :refused,
+      parent: import.parent_relationships.includes(:parent).second.parent,
+      patient: import.parent_relationships.includes(:patient).second.patient
+    )
   end
 
   describe "#perform" do
@@ -68,7 +63,7 @@ describe BulkRemoveParentRelationshipsJob do
 
       it "invalidates consents" do
         perform_job
-        consents.each { |consent| expect(consent.reload).to be_invalidated }
+        Consent.all.find_each { expect(it.reload).to be_invalidated }
       end
 
       it "updates import status" do

@@ -181,10 +181,9 @@ describe "Bulk remove parents" do
   end
 
   def and_the_bulk_remove_job_should_be_enqueued_with_remove_option(option)
-    consent_ids = @consent ? [@consent.id] : []
     expect(BulkRemoveParentRelationshipsJob).to have_been_enqueued.with(
       @class_import.to_global_id.to_s,
-      consent_ids,
+      @class_import.parent_relationship_ids,
       @user.id,
       option
     )
