@@ -96,6 +96,7 @@ group :development, :end_to_end do
   gem "aws-sdk-iam"
   gem "aws-sdk-rds"
   gem "aws-sdk-s3"
+  gem "bashly"
   gem "hotwire-livereload"
   gem "prettier_print", require: false
   gem "rladr"
