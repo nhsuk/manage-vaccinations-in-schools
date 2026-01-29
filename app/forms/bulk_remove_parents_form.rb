@@ -4,6 +4,8 @@ class BulkRemoveParentsForm
   include ActiveModel::Model
   include ActiveModel::Attributes
 
+  BATCH_SIZE = 100
+
   attr_accessor :current_user
   attr_reader :import, :consents
 
@@ -24,13 +26,23 @@ class BulkRemoveParentsForm
 
   def save!
     return false unless valid?
+    import.update!(status: :removing_parent_relationships)
 
-    if remove_option == "unconsented_only"
-      import.destroy_parent_relationships_without_consent!(consents)
-    else
-      import.destroy_parent_relationships_and_invalidate_consents!(
-        current_user,
-        consents
+    parent_relationships_to_remove_ids =
+      if remove_option == "unconsented_only"
+        import.parent_relationship_ids -
+          consents.map(&:parent_relationship).pluck(:id)
+      else
+        import.parent_relationship_ids
+      end
+
+    parent_relationships_to_remove_ids.each_slice(BATCH_SIZE) do |batch_ids|
+      BulkRemoveParentRelationshipsJob.perform_later(
+        import.to_global_id.to_s,
+        batch_ids,
+        consents.pluck(:id),
+        current_user.id,
+        remove_option
       )
     end
 

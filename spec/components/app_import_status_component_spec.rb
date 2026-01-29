@@ -55,4 +55,11 @@ describe AppImportStatusComponent do
     it { should have_css(".nhsuk-tag--green", text: "Completed") }
     it { should_not have_content("2 minutes") }
   end
+
+  context "when status is removing_parent_relationships" do
+    let(:status) { "removing_parent_relationships" }
+
+    it { should have_css(".nhsuk-tag--green", text: "Completed") }
+    it { should_not have_content("2 minutes") }
+  end
 end
