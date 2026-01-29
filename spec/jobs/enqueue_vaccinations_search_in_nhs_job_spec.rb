@@ -336,6 +336,38 @@ describe EnqueueVaccinationsSearchInNHSJob do
             )
           end
         end
+
+        context "that is part of a national reporting only team" do
+          let(:team) { create(:team, :national_reporting) }
+
+          it "does not perform a search on the patient" do
+            described_class.perform_now
+
+            expect(SearchVaccinationRecordsInNHSJob).not_to have_received(
+              :perform_bulk
+            )
+          end
+        end
+
+        context "that is linked to both a poc and a national reporting team" do
+          before do
+            national_reporting_team = create(:team, :national_reporting)
+            create(
+              :vaccination_record,
+              :sourced_from_national_reporting,
+              patient:,
+              team: national_reporting_team
+            )
+          end
+
+          it "does perform a search on the patient" do
+            described_class.perform_now
+
+            expect(SearchVaccinationRecordsInNHSJob).to have_received(
+              :perform_bulk
+            )
+          end
+        end
       end
 
       context "with many patients" do
@@ -360,6 +392,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
               }
             end
           )
+          PatientTeamUpdater.call
           Patient.all
         end
 

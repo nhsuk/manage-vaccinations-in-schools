@@ -55,7 +55,8 @@ class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
   # This ensures that over the given search period all enrolled patients will
   # have a search performed.
   def patient_ids_for_rolling_searches
-    patients_base = Patient.with_nhs_number
+    patients_base =
+      Patient.with_nhs_number.with_team_searchable_in_nhs_immunisations_api
     batch_size = (patients_base.count.to_f / rolling_search_period_in_days).ceil
 
     patients_with_recent_searches =
