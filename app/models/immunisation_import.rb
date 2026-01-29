@@ -38,7 +38,7 @@ class ImmunisationImport < ApplicationRecord
 
   self.inheritance_column = nil
 
-  enum :type, { poc: 0, national_reporting: 1 }, validate: true
+  enum :type, { point_of_care: 0, national_reporting: 1 }, validate: true
 
   has_and_belongs_to_many :batches
   has_and_belongs_to_many :patient_locations

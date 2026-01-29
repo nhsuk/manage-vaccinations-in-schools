@@ -71,11 +71,11 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     if team.has_national_reporting_access?
       national_reporting_immunisation_import_columns
     else
-      poc_immunisation_import_columns
+      point_of_care_immunisation_import_columns
     end
   end
 
-  def poc_immunisation_import_columns
+  def point_of_care_immunisation_import_columns
     organisation_code(optionality: "Optional") +
       school_urn(optionality: "Optional") + school_name +
       nhs_number(optionality: "Optional") +

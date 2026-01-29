@@ -75,7 +75,7 @@ describe AppImportFormatDetailsComponent do
     expect(page).to have_content("CARE_SETTING")
     expect(page).to have_content("CLINIC_NAME")
 
-    # Excluded POC columns
+    # Excluded point of care columns
     expect(page).not_to have_content("LOCAL_PATIENT_ID")
     expect(page).not_to have_content("LOCAL_PATIENT_ID_URI")
   end
@@ -117,7 +117,7 @@ describe AppImportFormatDetailsComponent do
       expect(page).to have_content("LOCAL_PATIENT_ID")
       expect(page).to have_content("LOCAL_PATIENT_ID_URI")
 
-      # Excluded POC columns
+      # Excluded point of care columns
       expect(page).not_to have_content("CARE_SETTING")
       expect(page).not_to have_content("CLINIC_NAME")
       expect(page).not_to have_content("SCHOOL_NAME")

@@ -94,11 +94,11 @@ describe ImmunisationImportRow do
 
   let!(:location) { create(:school, urn: "123456", name: "Waterloo Road") }
 
-  let(:import_type) { "poc" }
+  let(:import_type) { "point_of_care" }
 
   describe "validations" do
-    context "for a poc upload" do
-      let(:import_type) { "poc" }
+    context "for a point_of_care upload" do
+      let(:import_type) { "point_of_care" }
 
       context "with an empty row" do
         let(:data) { {} }
@@ -1185,8 +1185,8 @@ describe ImmunisationImportRow do
       end
     end
 
-    context "for a poc upload" do
-      let(:import_type) { "poc" }
+    context "for a point_of_care upload" do
+      let(:import_type) { "point_of_care" }
       let(:data) { valid_data }
 
       let(:not_vaccinated_data) do

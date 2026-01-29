@@ -102,7 +102,7 @@ class ImmunisationImportRow
   end
 
   # Convenience predicate helpers mirroring the enum on ImmunisationImport
-  def poc? = type == :poc
+  def point_of_care? = type == :point_of_care
 
   def national_reporting_flu? = national_reporting? && programme&.flu?
 
@@ -123,7 +123,7 @@ class ImmunisationImportRow
         "nhs_immunisations_api"
       elsif offline_recording?
         "service"
-      elsif poc?
+      elsif point_of_care?
         "historical_upload"
       else
         "national_reporting"
@@ -239,13 +239,13 @@ class ImmunisationImportRow
   def batch_name =
     @data[:batch_number].presence || @data[:vaccination_batch_number]
 
-  def care_setting = poc? ? @data[:care_setting] : nil
+  def care_setting = point_of_care? ? @data[:care_setting] : nil
 
   def clinic_name =
-    poc? ? @data[:clinic_name].presence || @data[:event_done_at] : nil
+    point_of_care? ? @data[:clinic_name].presence || @data[:event_done_at] : nil
 
   def combined_vaccination_and_dose_sequence =
-    poc? ? @data[:vaccination_type] : nil
+    point_of_care? ? @data[:vaccination_type] : nil
 
   def date_of_vaccination =
     @data[:date_of_vaccination].presence || @data[:event_date]
@@ -254,9 +254,9 @@ class ImmunisationImportRow
 
   def dose_sequence = @data[:dose_sequence]
 
-  def location_type = poc? ? @data[:event_location_type] : nil
+  def location_type = point_of_care? ? @data[:event_location_type] : nil
 
-  def notes = poc? ? @data[:notes] : nil
+  def notes = point_of_care? ? @data[:notes] : nil
 
   def patient_date_of_birth =
     @data[:person_dob].presence || @data[:date_of_birth]
@@ -274,7 +274,8 @@ class ImmunisationImportRow
 
   def patient_postcode = @data[:person_postcode].presence || @data[:postcode]
 
-  def performed_by_email = poc? ? @data[:performing_professional_email] : nil
+  def performed_by_email =
+    point_of_care? ? @data[:performing_professional_email] : nil
 
   def performed_by_family_name = @data[:performing_professional_surname]
 
@@ -282,26 +283,27 @@ class ImmunisationImportRow
 
   def performed_ods_code = @data[:organisation_code]
 
-  def programme_name = poc? ? @data[:programme] : nil
+  def programme_name = point_of_care? ? @data[:programme] : nil
 
-  def reason_not_administered = poc? ? @data[:reason_not_vaccinated] : nil
+  def reason_not_administered =
+    point_of_care? ? @data[:reason_not_vaccinated] : nil
 
   def school_name =
-    if poc?
+    if point_of_care?
       @data[:school_name].presence || @data[:school].presence ||
         @data[:event_done_at]
     end
 
   def school_urn = @data[:school_urn].presence || @data[:school_code]
 
-  def session_id = poc? ? @data[:session_id] : nil
+  def session_id = point_of_care? ? @data[:session_id] : nil
 
-  def supplied_by_email = poc? ? @data[:supplier_email] : nil
+  def supplied_by_email = point_of_care? ? @data[:supplier_email] : nil
 
   def time_of_vaccination =
     @data[:time_of_vaccination].presence || @data[:event_time]
 
-  def uuid = poc? ? @data[:uuid] : nil
+  def uuid = point_of_care? ? @data[:uuid] : nil
 
   def vaccinated = @data[:vaccinated]
 
@@ -695,7 +697,8 @@ class ImmunisationImportRow
   end
 
   def validate_clinic_name
-    clinic_name_required = offline_recording? && is_community_setting? && poc?
+    clinic_name_required =
+      offline_recording? && is_community_setting? && point_of_care?
 
     if clinic_name.present?
       if clinic_name.to_s.length > MAX_FIELD_LENGTH
@@ -986,7 +989,7 @@ class ImmunisationImportRow
   end
 
   def validate_performed_by
-    if poc?
+    if point_of_care?
       if offline_recording?
         if performed_by_user.nil?
           if performed_by_email.nil?
@@ -1033,7 +1036,7 @@ class ImmunisationImportRow
         errors.add(:base, "<code>ORGANISATION_CODE</code> is required")
       elsif performed_ods_code.blank?
         errors.add(performed_ods_code.header, "Enter an organisation code.")
-      elsif performed_ods_code.to_s != organisation.ods_code && poc?
+      elsif performed_ods_code.to_s != organisation.ods_code && point_of_care?
         errors.add(
           performed_ods_code.header,
           "Enter an organisation code that matches the current team."
@@ -1058,7 +1061,7 @@ class ImmunisationImportRow
       return
     end
 
-    if poc?
+    if point_of_care?
       if field.nil?
         errors.add(
           :base,
@@ -1116,7 +1119,7 @@ class ImmunisationImportRow
   end
 
   def validate_school_urn
-    return if school_urn.blank? && poc?
+    return if school_urn.blank? && point_of_care?
 
     if national_reporting?
       if school_urn.nil?

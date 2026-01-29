@@ -63,7 +63,7 @@ class ImmunisationImportsController < ApplicationController
   private
 
   def type
-    current_team.has_national_reporting_access? ? "national_reporting" : "poc"
+    current_team.type
   end
 
   def set_immunisation_import
