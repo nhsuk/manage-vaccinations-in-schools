@@ -4,6 +4,7 @@ describe BulkRemoveParentRelationshipsJob do
   subject(:perform_job) do
     described_class.new.perform(
       import.to_global_id.to_s,
+      parent_relationships_to_remove.map(&:id),
       consents.map(&:id),
       user.id,
       remove_option
@@ -42,6 +43,9 @@ describe BulkRemoveParentRelationshipsJob do
   describe "#perform" do
     context "remove only parents that havent consented" do
       let(:remove_option) { "unconsented_only" }
+      let(:parent_relationships_to_remove) do
+        import.parent_relationships - consents.map(&:parent_relationship)
+      end
 
       it "removes only unconsented parents" do
         expect(import.parent_relationships.count).to eq(5)
@@ -58,6 +62,7 @@ describe BulkRemoveParentRelationshipsJob do
 
     context "remove all parents" do
       let(:remove_option) { "all" }
+      let(:parent_relationships_to_remove) { import.parent_relationships }
 
       it "removes all parents" do
         expect(import.parent_relationships.count).to eq(5)

@@ -181,9 +181,19 @@ describe "Bulk remove parents" do
   end
 
   def and_the_bulk_remove_job_should_be_enqueued_with_remove_option(option)
-    consent_ids = @consent ? [@consent.id] : []
+    parent_relationship_ids =
+      if option == "unconsented_only"
+        @class_import.parent_relationship_ids -
+          [@consent.parent_relationship.id]
+      else
+        @class_import.parent_relationship_ids
+      end
+
+    consent_ids = [@consent&.id].compact
+
     expect(BulkRemoveParentRelationshipsJob).to have_been_enqueued.with(
       @class_import.to_global_id.to_s,
+      parent_relationship_ids,
       consent_ids,
       @user.id,
       option
