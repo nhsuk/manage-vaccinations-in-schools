@@ -5,6 +5,8 @@ class Patients::ProgrammesController < Patients::BaseController
 
   skip_after_action :verify_policy_scoped
 
+  layout "full"
+
   def show
     authorize @patient
   end

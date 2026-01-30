@@ -20,6 +20,9 @@ describe "View children" do
 
     when_i_click_on_the_flu_tab
     then_i_see_the_childs_flu_information
+
+    when_i_click_on_the_mmr_tab
+    then_i_see_the_childs_mmr_information
   end
 
   def given_my_team_exists
@@ -135,6 +138,12 @@ describe "View children" do
   end
 
   def then_i_see_the_childs_flu_information
-    expect(page).to have_content("No vaccination record")
+    expect(page).to have_content("No vaccinations")
+  end
+
+  def when_i_click_on_the_mmr_tab
+  end
+
+  def then_i_see_the_childs_mmr_information
   end
 end
