@@ -52,6 +52,7 @@ module MavisCLI
 
             if schools.size >= batch_size
               import_schools(schools)
+              update_sites(schools)
               schools.clear
             end
 
@@ -116,8 +117,7 @@ module MavisCLI
         Location.import!(
           sites,
           on_duplicate_key_update: {
-            conflict_target: %i[id],
-            index_predicate: "site IS NULL",
+            conflict_target: %i[urn site],
             columns: %i[
               gias_establishment_number
               gias_local_authority_code
