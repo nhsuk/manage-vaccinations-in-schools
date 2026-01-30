@@ -41,7 +41,6 @@
 /spec
 !/spec/factories
 !/spec/support/faker
-/terraform
 
 /config/settings.local.yml
 /config/settings/*.local.yml

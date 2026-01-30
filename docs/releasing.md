@@ -53,10 +53,6 @@ deployment, it's important to start the workflow from the `main` branch and
 specify the tag to deploy as input. This is because only workflows from the
 `main` branch can authenticate with the production AWS account.
 
-Changes to the backup infrastructure must be deployed separately. In the rare
-case that the backup infrastructure needs to be updated, run the
-`deploy-backup-infrastructure.yml` workflow.
-
 ## Upading the release branch
 
 We update the `release` branch after we've deployed `main` to production. If

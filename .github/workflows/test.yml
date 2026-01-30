@@ -105,17 +105,3 @@ jobs:
           cache: yarn
       - run: yarn install --immutable --immutable-cache --check-cache
       - run: yarn test
-
-  terraform:
-    name: Terraform
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: terraform
-    steps:
-      - uses: actions/checkout@v6
-      - uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.13.3
-      - run: terraform init -backend=false
-      - run: terraform validate

@@ -34,9 +34,6 @@ public/assets
 storage
 tmp
 vendor
-terraform/.terraform
-*.tfstate
-*.tfstate.backup
 scratchpad
 spec/fixtures/files/fhir/immunisation_create.json
 spec/fixtures/files/fhir/immunisation_update.json
