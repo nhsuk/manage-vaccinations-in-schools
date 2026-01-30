@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+# Test configuration for PII anonymization specs
+information_types:
+  names:
+    description: "Test names processing"
+    primary_table: "users"
+    batch_size: 10
+    tables:
+      users:
+        fields:
+          given_name:
+            faker_method: "PIIAnonymizer::FakeDataGenerators.first_name"
+
+processing:
+  parallel_threads: 2
+  processing_order:
+    - names
+
+backup:
+  required: false
