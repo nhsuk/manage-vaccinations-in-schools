@@ -10,7 +10,7 @@ describe StatusUpdaterJob do
       around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
 
       it "calls the service class with the current and pending academic years" do
-        expect(StatusUpdater).to receive(:call).with(
+        expect(PatientStatusUpdater).to receive(:call).with(
           patient:,
           academic_years: [2024, 2025]
         )
@@ -23,7 +23,7 @@ describe StatusUpdaterJob do
       around { |example| travel_to(Date.new(2025, 9, 1)) { example.run } }
 
       it "calls the service class with the current and pending academic years" do
-        expect(StatusUpdater).to receive(:call).with(
+        expect(PatientStatusUpdater).to receive(:call).with(
           patient:,
           academic_years: [2025]
         )

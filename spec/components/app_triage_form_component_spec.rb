@@ -104,7 +104,7 @@ describe AppTriageFormComponent do
       before do
         create(:vaccination_record, patient:, programme:, session:)
 
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
       end
 
       it "shows the specific hint text about the 2nd dose" do

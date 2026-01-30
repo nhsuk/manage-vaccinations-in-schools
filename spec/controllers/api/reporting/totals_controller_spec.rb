@@ -785,7 +785,7 @@ describe API::Reporting::TotalsController do
         reason_for_refusal: "already_vaccinated"
       )
 
-      StatusUpdater.call(patient:)
+      PatientStatusUpdater.call(patient:)
       refresh_and_get_totals(programme_type: "flu")
 
       expect(cohort).to eq(1)
@@ -820,7 +820,7 @@ describe API::Reporting::TotalsController do
         performed_at: Time.current
       )
 
-      StatusUpdater.call(patient:)
+      PatientStatusUpdater.call(patient:)
       refresh_and_get_totals(programme_type: "flu")
 
       expect(cohort).to eq(1)
@@ -1058,7 +1058,7 @@ describe API::Reporting::TotalsController do
       patient = create(:patient, session: hpv_session)
       create(:consent, :given, patient:, programme: hpv_programme, team:)
 
-      StatusUpdater.call(patient:)
+      PatientStatusUpdater.call(patient:)
       refresh_and_get_totals
 
       expect(cohort).to eq(1)
@@ -1100,7 +1100,7 @@ describe API::Reporting::TotalsController do
         parent: parent2
       )
 
-      StatusUpdater.call(patient:)
+      PatientStatusUpdater.call(patient:)
       refresh_and_get_totals
 
       expect(cohort).to eq(1)
@@ -1294,9 +1294,9 @@ describe API::Reporting::TotalsController do
         vaccine_methods: %w[nasal injection]
       )
 
-      StatusUpdater.call(patient: patient1)
-      StatusUpdater.call(patient: patient2)
-      StatusUpdater.call(patient: patient3)
+      PatientStatusUpdater.call(patient: patient1)
+      PatientStatusUpdater.call(patient: patient2)
+      PatientStatusUpdater.call(patient: patient3)
 
       refresh_and_get_totals(programme_type: "flu")
 

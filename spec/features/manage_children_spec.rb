@@ -313,7 +313,7 @@ describe "Manage children" do
       )
     create(:vaccination_record, patient: @existing_patient)
 
-    StatusUpdater.call
+    PatientStatusUpdater.call
   end
 
   def and_a_clinic_session_exists
@@ -330,7 +330,7 @@ describe "Manage children" do
 
     create_list(:patient, 100, session: @session)
 
-    StatusUpdater.call
+    PatientStatusUpdater.call
   end
 
   def given_an_invalidated_patient_exists
@@ -347,7 +347,7 @@ describe "Manage children" do
 
     create(:patient, session:, nhs_number: nil)
 
-    StatusUpdater.call
+    PatientStatusUpdater.call
   end
 
   def and_the_patient_is_vaccinated

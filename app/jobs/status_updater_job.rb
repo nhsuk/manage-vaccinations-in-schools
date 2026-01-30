@@ -17,10 +17,10 @@ class StatusUpdaterJob
 
     if patient_id
       if (patient = Patient.find_by(id: patient_id))
-        StatusUpdater.call(patient:, academic_years:)
+        PatientStatusUpdater.call(patient:, academic_years:)
       end
     else
-      StatusUpdater.call(academic_years:)
+      PatientStatusUpdater.call(academic_years:)
     end
   end
 end

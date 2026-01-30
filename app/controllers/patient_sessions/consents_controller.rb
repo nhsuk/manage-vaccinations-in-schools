@@ -129,7 +129,7 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
       )
       .invalidate_all
 
-    StatusUpdater.call(patient: @patient)
+    PatientStatusUpdater.call(patient: @patient)
   end
 
   def ensure_can_withdraw

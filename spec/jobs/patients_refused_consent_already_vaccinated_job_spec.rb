@@ -2,7 +2,7 @@
 
 describe PatientsRefusedConsentAlreadyVaccinatedJob do
   subject(:perform_now) do
-    StatusUpdater.call
+    PatientStatusUpdater.call
     described_class.perform_now
   end
 

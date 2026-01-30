@@ -71,6 +71,6 @@ class PatientsRefusedConsentAlreadyVaccinatedJob < ApplicationJob
       source: "consent_refusal"
     )
 
-    StatusUpdater.call(patient:)
+    PatientStatusUpdater.call(patient:)
   end
 end

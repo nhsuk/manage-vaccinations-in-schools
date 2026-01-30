@@ -193,7 +193,7 @@ class Consent < ApplicationRecord
           )
         end
 
-      StatusUpdater.call(patient:)
+      PatientStatusUpdater.call(patient:)
 
       consents
     end

@@ -465,7 +465,7 @@ describe GovukNotifyPersonalisation do
             performed_at: Date.new(2020, 1, 1)
           )
 
-          StatusUpdater.call(patient:)
+          PatientStatusUpdater.call(patient:)
         end
 
         context "generic message inviting patient to generic clinic for their 2nd dose" do
@@ -693,7 +693,7 @@ describe GovukNotifyPersonalisation do
 
           vaccination_record # ensure second dose exists
 
-          StatusUpdater.call(patient:)
+          PatientStatusUpdater.call(patient:)
         end
 
         it { should include(mmr_second_dose_message: "") }

@@ -649,7 +649,7 @@ describe AppActivityLogComponent do
           performed_at: Time.zone.local(2025, 5, 30, 16)
         )
 
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
       end
 
       it "does not render expired PSD card for vaccinated patient" do

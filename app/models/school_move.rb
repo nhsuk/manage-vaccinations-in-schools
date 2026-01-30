@@ -177,7 +177,7 @@ class SchoolMove < ApplicationRecord
     )
 
     PatientTeamUpdater.call(patient_scope: Patient.where(id: patient.id))
-    StatusUpdater.call(patient:)
+    PatientStatusUpdater.call(patient:)
   end
 
   def create_log_entry!(user:)

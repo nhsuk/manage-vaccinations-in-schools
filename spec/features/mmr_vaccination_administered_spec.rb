@@ -376,7 +376,7 @@ describe "MMR vaccination" do
 
   def when_i_wait_28_days
     travel 28.days
-    StatusUpdater.call
+    PatientStatusUpdater.call
   end
 
   def then_i_see_the_patient_needs_triage

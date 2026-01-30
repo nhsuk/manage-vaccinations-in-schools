@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class StatusUpdater
+class PatientStatusUpdater
   # TODO: Refactor this class to accept a patient relation similar to the
   #  `PatientTeamUpdater` and then use the scope to filter the patients.
   def initialize(patient: nil, academic_years: nil)

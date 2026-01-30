@@ -180,7 +180,7 @@ class DraftVaccinationRecordsController < ApplicationController
 
     PatientTeamUpdater.call(patient_scope: Patient.where(id: @patient.id))
 
-    StatusUpdater.call(patient: @patient)
+    PatientStatusUpdater.call(patient: @patient)
 
     if should_notify_parents
       @vaccination_record.notifier.send_confirmation(sent_by: current_user)

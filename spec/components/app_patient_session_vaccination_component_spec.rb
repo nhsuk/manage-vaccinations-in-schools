@@ -30,7 +30,7 @@ describe AppPatientSessionVaccinationComponent do
   context "with a vaccination record for the programme" do
     before do
       create(:vaccination_record, patient:, programme:)
-      StatusUpdater.call(patient:)
+      PatientStatusUpdater.call(patient:)
     end
 
     it { should have_text("HPV: Vaccinated") }
@@ -39,7 +39,7 @@ describe AppPatientSessionVaccinationComponent do
   context "with an unwell vaccination record for the programme" do
     before do
       create(:vaccination_record, :unwell, patient:, programme:)
-      StatusUpdater.call(patient:)
+      PatientStatusUpdater.call(patient:)
     end
 
     it { should have_text("HPV: Unable to vaccinate") }
