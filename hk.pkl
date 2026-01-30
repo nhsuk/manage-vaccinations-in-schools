@@ -35,14 +35,6 @@ local linters = new Mapping<String, Group> {
                 check = "bin/stylelint {{ files }}"
                 fix = "bin/stylelint --fix {{ files }}"
             }
-
-            ["terraform"] = Builtins.terraform
-
-            ["tf_lint"] = new Step {
-                glob = "*.tf"
-                check = "tflint --chdir=terraform --config=$(pwd)/terraform/.tflint.hcl --recursive"
-                fix = "tflint --chdir=terraform --config=$(pwd)/terraform/.tflint.hcl --recursive --fix"
-            }
         }
     }
 
