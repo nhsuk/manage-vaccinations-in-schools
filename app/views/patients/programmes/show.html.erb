@@ -7,8 +7,15 @@
 
 <%= render "patients/header" %>
 
-<%= render AppPatientSecondaryNavigationComponent.new(patient: @patient, current_user: current_user) %>
+<%= render AppPatientSecondaryNavigationComponent.new(
+      patient: @patient,
+      current_user: current_user,
+      selected_tab: @programme.type
+    ) %>
 
-<h3 class="nhsuk-card__heading">
-      No vaccination record
-    </h3>
+<%= render AppCardComponent.new(section: true) do |card| %>
+  <% card.with_heading { "Vaccinations" } %>
+  <%= render AppPatientVaccinationTableComponent.new(
+        @patient, academic_year: AcademicYear.current, show_caption: false, programme: @programme
+      ) %>
+<% end %>
