@@ -47,9 +47,6 @@ class PatientArchiver
   end
 
   def update_patient_teams!
-    PatientTeamUpdater.call(
-      patient_scope: Patient.where(id: patient.id),
-      team_scope: Team.where(id: team.id)
-    )
+    PatientTeamUpdater.call(patient:, team:)
   end
 end

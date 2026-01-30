@@ -1,10 +1,22 @@
 # frozen_string_literal: true
 
-class PatientStatusUpdater
-  # TODO: Refactor this class to accept a patient relation similar to the
-  #  `PatientTeamUpdater` and then use the scope to filter the patients.
-  def initialize(patient: nil, academic_years: nil)
-    @patient = patient
+##
+# This class is used to update the programme and registration statuses of a
+#  single or multiple patients.
+#
+# It works in four stages:
+#
+# - `Patient::ProgrammeStatus` instances are created for all combinations of
+#   patients, programmes and academic years.
+# - The `Patient::ProgrammeStatus` objects that were created in the previous
+#   step are updated to ensure they reflect the latest status.
+# - `Patient::RegistrationStatus` instances are created for all combinations
+#   of patients and sessions.
+# - The `Patient::RegistrationStatus` objects that were created in the
+#   previous step are updated to ensure they reflect the latest status.
+class PatientStatusUpdater < PatientScopedUpdater
+  def initialize(patient_scope: nil, patient: nil, academic_years: nil)
+    super(patient_scope:, patient:)
     @academic_years = academic_years || AcademicYear.all
   end
 
@@ -19,7 +31,7 @@ class PatientStatusUpdater
 
   private
 
-  attr_reader :patient, :academic_years
+  attr_reader :patient_scope, :academic_years
 
   def update_programme_statuses!
     Patient::ProgrammeStatus.import!(
@@ -28,8 +40,7 @@ class PatientStatusUpdater
       on_duplicate_key_ignore: true
     )
 
-    Patient::ProgrammeStatus
-      .then { patient ? it.where(patient:) : it }
+    merge_patient_scope(Patient::ProgrammeStatus)
       .where(academic_year: academic_years)
       .includes(
         :attendance_record,
@@ -69,9 +80,8 @@ class PatientStatusUpdater
       on_duplicate_key_ignore: true
     )
 
-    Patient::RegistrationStatus
+    merge_patient_scope(Patient::RegistrationStatus)
       .joins(session: :team_location)
-      .then { patient ? it.where(patient:) : it }
       .where(team_location: { academic_year: academic_years })
       .includes(:attendance_records, :patient, :session, :vaccination_records)
       .find_in_batches(batch_size: 10_000) do |batch|
@@ -89,8 +99,7 @@ class PatientStatusUpdater
 
   def patient_statuses_to_import
     @patient_statuses_to_import ||=
-      Patient
-        .then { patient ? it.where(id: patient) : it }
+      (patient_scope || Patient.all)
         .pluck(:id, :birth_academic_year)
         .flat_map do |patient_id, birth_academic_year|
           academic_years.flat_map do |academic_year|
@@ -107,8 +116,7 @@ class PatientStatusUpdater
 
   def programme_statuses_to_import
     @programme_statuses_to_import ||=
-      Patient
-        .then { patient ? it.where(id: patient) : it }
+      (patient_scope || Patient.all)
         .pluck(:id)
         .flat_map do |patient_id|
           academic_years.flat_map do |academic_year|
@@ -120,10 +128,9 @@ class PatientStatusUpdater
   end
 
   def patient_location_statuses_to_import
-    PatientLocation
+    merge_patient_scope(PatientLocation)
       .joins(:patient)
       .joins_sessions
-      .then { patient ? it.where(patient:) : it }
       .where(team_locations: { academic_year: academic_years })
       .pluck(
         "patients.id",

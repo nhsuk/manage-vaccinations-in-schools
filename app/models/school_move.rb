@@ -176,7 +176,7 @@ class SchoolMove < ApplicationRecord
       }
     )
 
-    PatientTeamUpdater.call(patient_scope: Patient.where(id: patient.id))
+    PatientTeamUpdater.call(patient:)
     PatientStatusUpdater.call(patient:)
   end
 

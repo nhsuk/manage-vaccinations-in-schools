@@ -180,7 +180,7 @@ class ImmunisationImport < ApplicationRecord
       end
 
     PatientTeamUpdater.call(patient_scope: patients)
-    PatientStatusUpdater.call(patient: patients)
+    PatientStatusUpdater.call(patient_scope: patients)
   end
 
   def post_commit!

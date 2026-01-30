@@ -24,10 +24,11 @@
 # `vaccination_record_organisation`). The second query deletes any rows from
 # the table where the sources array is empty (meaning the patient should not
 # belong to the team.).
-class PatientTeamUpdater
-  def initialize(patient_scope: nil, team_scope: nil)
-    @patient_scope = patient_scope
-    @team_scope = team_scope
+class PatientTeamUpdater < PatientScopedUpdater
+  def initialize(patient_scope: nil, patient: nil, team_scope: nil, team: nil)
+    super(patient_scope:, patient:)
+
+    @team_scope = (team ? Team.where(id: team.id) : team_scope)
   end
 
   def call
@@ -254,34 +255,8 @@ class PatientTeamUpdater
     scope.joins("INNER JOIN teams ON teams.id = team_locations_alias.team_id")
   end
 
-  # The following code is necessary to support an optimisation where we're
-  #  updating a specific team or patient by ID.
-  #
-  # These methods allow us to check if the scope where clause is only checking
-  #  the ID of the patient or team, meaning we can optimise out the `JOIN` and
-  #  filter the table directly.
-  #
-  # For example, without this optimisation, a scope of `Patient.where(id: 1)`
-  #  would result in the following SQL query:
-  #
-  # SELECT patient_id, team_id FROM patient_teams
-  # JOIN patients ON patients.id = patient_teams.patient_id
-  # WHERE patients.id = 1
-  #
-  # Whereas we know that the following SQL query is all we need in this case:
-  #
-  # SELECT patient_id, team_id FROM patient_teams
-  # WHERE patient_teams.patient_id = 1
-
-  def merge_patient_scope(scope)
-    if is_patient_scope_id_only?
-      scope.where(patient_id: patient_scope.select(:id))
-    elsif patient_scope
-      scope.joins(:patient).merge(patient_scope)
-    else
-      scope
-    end
-  end
+  # The following code is used to support an optimisation where we're updating
+  #  a specific team by ID.
 
   def merge_team_scope(scope)
     if is_team_scope_id_only?
@@ -293,21 +268,7 @@ class PatientTeamUpdater
     end
   end
 
-  def is_patient_scope_id_only?
-    @is_patient_scope_id_only ||= is_id_only_scope?(patient_scope)
-  end
-
   def is_team_scope_id_only?
     @is_team_scope_id_only ||= is_id_only_scope?(team_scope)
-  end
-
-  def is_id_only_scope?(scope)
-    if scope.nil? || scope.joins_values.any? ||
-         scope.left_outer_joins_values.any?
-      return false
-    end
-
-    values = scope.where_values_hash
-    values.key?("id") && values.size == 1
   end
 end

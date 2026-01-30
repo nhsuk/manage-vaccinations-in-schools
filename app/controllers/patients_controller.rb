@@ -69,10 +69,7 @@ class PatientsController < ApplicationController
         academic_year: AcademicYear.pending
       )
 
-      PatientTeamUpdater.call(
-        patient_scope: Patient.where(id: @patient.id),
-        team_scope: Team.where(id: current_team.id)
-      )
+      PatientTeamUpdater.call(patient: @patient.id, team: current_team)
     end
 
     redirect_to patient_path(@patient),

@@ -243,7 +243,7 @@ describe "mavis teams reset-national-reporting" do
     @patient1 = @vaccination_record1.patient
     @patient2 = @vaccination_record2.patient
 
-    PatientTeamUpdater.call(patient_scope: Patient.all)
+    PatientTeamUpdater.call
   end
 
   def and_a_patient_is_associated_with_both_teams
