@@ -437,12 +437,6 @@
                   </li>
 
                   <li>
-                    <a href="../docs/disaster-recovery_md.html">
-                      disaster-recovery
-                    </a>
-                  </li>
-
-                  <li>
                     <a href="../docs/managing-teams_md.html">
                       managing-teams
                     </a>
@@ -499,12 +493,6 @@
                   <li>
                     <a href="../docs/states_md.html">
                       states
-                    </a>
-                  </li>
-
-                  <li>
-                    <a href="../docs/terraform_md.html">
-                      terraform
                     </a>
                   </li>
 
@@ -583,8 +571,6 @@
 <h2 id="running-the-deploy-workflow"><a href="#running-the-deploy-workflow">Running the Deploy workflow</a></h2>
 
 <p>Use the <code>deploy.yml</code> workflow to run the deployments. For the production deployment, it’s important to start the workflow from the <code>main</code> branch and specify the tag to deploy as input. This is because only workflows from the <code>main</code> branch can authenticate with the production AWS account.</p>
-
-<p>Changes to the backup infrastructure must be deployed separately. In the rare case that the backup infrastructure needs to be updated, run the <code>deploy-backup-infrastructure.yml</code> workflow.</p>
 
 <span id="label-Upading+the+release+branch" class="legacy-anchor"></span>
 <h2 id="upading-the-release-branch"><a href="#upading-the-release-branch">Upading the release branch</a></h2>
