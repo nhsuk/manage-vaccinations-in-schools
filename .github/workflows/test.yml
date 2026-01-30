@@ -7,22 +7,9 @@ on:
 permissions: {}
 
 jobs:
-  run-test-suites-check:
-    name: Check if E2E test is required
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Check if Rails tests need to run
-        id: check
-        uses: ./.github/actions/run-test-suites-check
-    outputs:
-      run-test-suites: ${{ steps.check.outputs.run-test-suites }}
-
   rspec:
     name: RSpec
     runs-on: ubuntu-latest
-    needs: run-test-suites-check
-    if: needs.run-test-suites-check.outputs.run-test-suites == 'true'
     services:
       postgres:
         image: postgres:17.2
@@ -65,8 +52,6 @@ jobs:
   seeds:
     name: Seeds
     runs-on: ubuntu-latest
-    needs: run-test-suites-check
-    if: needs.run-test-suites-check.outputs.run-test-suites == 'true'
     services:
       postgres:
         image: postgres:17.2
