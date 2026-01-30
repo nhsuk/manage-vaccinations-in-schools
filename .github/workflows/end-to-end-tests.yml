@@ -77,7 +77,7 @@ jobs:
       - name: Check if image exists
         id: check-image
         env:
-          GIT_REF: ${{ (inputs.git_reference_for_application_image == 'next' && 'origin/next') || github.event.pull_request.head.sha ||  github.sha }}
+          GIT_REF: ${{ inputs.git_reference_for_application_image && format('origin/{0}', inputs.git_reference_for_application_image) || github.event.pull_request.head.sha || github.sha }}
         run: |
           GIT_REF_SHA=$(git rev-parse $GIT_REF)
           echo "GIT_REF_SHA=$GIT_REF_SHA" >> $GITHUB_OUTPUT
@@ -137,7 +137,7 @@ jobs:
       - name: Check if image exists
         id: check-image
         env:
-          GIT_REF: ${{ ( inputs.git_reference_for_database_image == 'next' && 'origin/next' ) || github.event.pull_request.base.sha || github.sha }}
+          GIT_REF: ${{ inputs.git_reference_for_database_image && format('origin/{0}', inputs.git_reference_for_database_image) || github.event.pull_request.base.sha || github.sha }}
         run: |
           GIT_REF_SHA=$(git rev-parse $GIT_REF)
           echo "GIT_REF_SHA=$GIT_REF_SHA" >> $GITHUB_OUTPUT
