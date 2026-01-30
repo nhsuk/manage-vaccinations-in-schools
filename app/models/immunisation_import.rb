@@ -40,7 +40,6 @@ class ImmunisationImport < ApplicationRecord
 
   enum :type, { point_of_care: 0, national_reporting: 1 }, validate: true
 
-  has_and_belongs_to_many :batches
   has_and_belongs_to_many :patient_locations
   has_and_belongs_to_many :sessions
   has_and_belongs_to_many :vaccination_records
@@ -77,9 +76,6 @@ class ImmunisationImport < ApplicationRecord
     return count_column_to_increment unless vaccination_record
 
     @vaccination_records_batch.add(vaccination_record)
-    if (batch = vaccination_record.batch)
-      @batches_batch.add(batch)
-    end
     @patients_batch.add(vaccination_record.patient)
 
     if (patient_location = row.to_patient_location)
@@ -97,7 +93,6 @@ class ImmunisationImport < ApplicationRecord
     counts = count_columns.index_with(0)
 
     @vaccination_records_batch = Set.new
-    @batches_batch = Set.new
     @patients_batch = Set.new
     @patient_locations_batch = Set.new
     @archive_reasons_batch = Set.new
@@ -144,7 +139,6 @@ class ImmunisationImport < ApplicationRecord
 
     [
       [:vaccination_records, vaccination_records],
-      [:batches, @batches_batch],
       [:patients, @patients_batch],
       [:patient_locations, patient_locations.select { it.id.present? }]
     ].each do |association, collection|

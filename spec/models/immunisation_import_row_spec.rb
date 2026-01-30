@@ -1336,47 +1336,6 @@ describe ImmunisationImportRow do
         end
       end
 
-      describe "#batch" do
-        subject(:batch) { vaccination_record.batch }
-
-        let(:data) { valid_data }
-
-        it { should be_archived }
-
-        its(:team) { should be_nil }
-
-        context "without a vaccine" do
-          before { data.delete("VACCINE_GIVEN") }
-
-          it { should be_nil }
-        end
-
-        context "without a batch number or expiry date" do
-          before do
-            data.delete("BATCH_NUMBER")
-            data.delete("BATCH_EXPIRY_DATE")
-          end
-
-          it { should be_nil }
-        end
-
-        context "when recording offline" do
-          let(:data) do
-            valid_data.merge(
-              "DATE_OF_VACCINATION" => session.dates.first.strftime("%Y%m%d"),
-              "SESSION_ID" => session.id.to_s,
-              "ORGANISATION_CODE" => team.organisation.ods_code,
-              "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,
-              "DOSE_SEQUENCE" => "1"
-            )
-          end
-
-          let(:session) { create(:session, team:, programmes:) }
-
-          its(:team) { should eq(session.team) }
-        end
-      end
-
       describe "#batch_number" do
         subject(:batch_number) { vaccination_record.batch_number }
 
@@ -2446,7 +2405,9 @@ describe ImmunisationImportRow do
             nhs_immunisations_api_identifier_value: "123",
             protocol: nil,
             delivery_site: existing_delivery_site,
-            delivery_method: existing_delivery_method
+            delivery_method: existing_delivery_method,
+            batch_number: nil,
+            batch_expiry: nil
           )
         end
 
@@ -2684,15 +2645,7 @@ describe ImmunisationImportRow do
               performed_by_family_name: vaccinator.family_name,
               vaccine:,
               batch_number: "456", # different
-              batch_expiry: Date.new(2026, 1, 6), # identical
-              batch:
-                create(
-                  :batch,
-                  team: nil,
-                  name: "456",
-                  expiry: Date.new(2026, 1, 6),
-                  vaccine:
-                ) # different
+              batch_expiry: Date.new(2026, 1, 6) # identical
             )
           end
 
@@ -2718,15 +2671,7 @@ describe ImmunisationImportRow do
               performed_by_family_name: vaccinator.family_name,
               vaccine:,
               batch_number: "123", # identical
-              batch_expiry: Date.new(2026, 1, 6), # identical
-              batch:
-                create(
-                  :batch,
-                  team: nil,
-                  name: "123",
-                  expiry: Date.new(2026, 1, 6),
-                  vaccine:
-                ) # identical
+              batch_expiry: Date.new(2026, 1, 6) # identical
             )
           end
 
