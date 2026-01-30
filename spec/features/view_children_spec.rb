@@ -135,5 +135,6 @@ describe "View children" do
   end
 
   def then_i_see_the_childs_flu_information
+    expect(page).to have_content("No vaccination record")
   end
 end

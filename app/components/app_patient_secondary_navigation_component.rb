@@ -18,7 +18,7 @@ class AppPatientSecondaryNavigationComponent < ViewComponent::Base
         selected: true
       )
       current_user.programmes.flat_map do |programme|
-        nav.with_item(href: patient_path(patient), text: programme.name)
+        nav.with_item(href: patient_programme_path(patient, programme.type), text: programme.name)
       end
     end
   end
