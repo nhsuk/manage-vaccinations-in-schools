@@ -23,6 +23,4 @@ jobs:
       - run: yarn install --immutable --immutable-cache --check-cache
       - uses: jdx/mise-action@v3
         with:
-          install_args: hk pkl tflint terraform
-      - run: tflint --chdir=terraform --init
-      - run: hk check --all
+          install_args: hk pkl

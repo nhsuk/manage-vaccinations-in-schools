@@ -261,9 +261,8 @@ The previews are defined in `spec/components/previews`.
 
 ### Deploying
 
-This app can be deployed to AWS with Terraform.
-
-See [terraform/README.md](docs/terraform.md#local-deployment) for more information.
+This app can be deployed to AWS using the relevant [github workflow](.github/workflows/deploy.yml). The infrastructure
+configuration is located in [its own repository](https://github.com/NHSDigital/manage-vaccinations-in-schools-infrastructure)
 
 ### Notify
 
