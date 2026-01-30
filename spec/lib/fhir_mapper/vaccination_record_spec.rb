@@ -864,7 +864,7 @@ describe FHIRMapper::VaccinationRecord do
 
       context "with a record that is the minimum which can be created based on the spec (for CSV national reporting)" do
         let(:fixture_file_name) do
-          "fhir/flu/fhir_record_minimum_bulk_spec.json"
+          "fhir/flu/fhir_record_minimum_national_reporting_spec.json"
         end
 
         include_examples "a mapped vaccination record (common fields)"

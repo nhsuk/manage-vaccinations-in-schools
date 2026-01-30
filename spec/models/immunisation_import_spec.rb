@@ -50,7 +50,11 @@ describe ImmunisationImport do
   end
 
   let(:file) { "valid_flu.csv" }
-  let(:csv) { fixture_file_upload("spec/fixtures/immunisation_import/#{file}") }
+  let(:csv) do
+    fixture_file_upload(
+      "spec/fixtures/immunisation_import/point_of_care/#{file}"
+    )
+  end
   let(:uploaded_by) { create(:user, team:) }
 
   it_behaves_like "a CSVImportable model"

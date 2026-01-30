@@ -160,7 +160,7 @@ describe "National reporting team homepage and navigation" do
     click_on "Upload records"
     attach_file(
       "immunisation_import[csv]",
-      "spec/fixtures/immunisation_import_bulk/valid_mixed_flu_hpv.csv"
+      "spec/fixtures/immunisation_import/national_reporting/valid_mixed_flu_hpv.csv"
     )
     click_on "Continue"
     wait_for_import_to_complete(ImmunisationImport)

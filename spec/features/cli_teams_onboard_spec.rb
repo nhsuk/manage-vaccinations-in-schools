@@ -50,7 +50,11 @@ describe "mavis teams onboard" do
 
   def command_with_valid_point_of_care_configuration
     Dry::CLI.new(MavisCLI).call(
-      arguments: %w[teams onboard spec/fixtures/files/onboarding/poc_valid.yaml]
+      arguments: %w[
+        teams
+        onboard
+        spec/fixtures/files/onboarding/point_of_care_valid.yaml
+      ]
     )
   end
 
