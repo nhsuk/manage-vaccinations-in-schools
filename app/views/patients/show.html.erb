@@ -7,14 +7,7 @@
 
 <%= render "patients/header" %>
 
-<% if policy(@patient).log? %>
-  <%= render AppSecondaryNavigationComponent.new do |nav|
-        nav.with_item(href: patient_path(@patient), text: "Child record", selected: true)
-        current_user.programmes.flat_map do |programme|
-          nav.with_item(href: patient_path(@patient), text: programme.name)
-        end
-      end %>
-<% end %>
+<%= render AppPatientSecondaryNavigationComponent.new(patient: @patient, current_user: current_user) %>
 
 <% vaccinations_card = capture do %>
   <%= render AppCardComponent.new(section: true) do |card| %>

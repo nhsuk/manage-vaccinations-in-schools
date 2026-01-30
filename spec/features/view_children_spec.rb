@@ -17,6 +17,9 @@ describe "View children" do
     then_i_see_the_child
     and_i_can_only_see_tabs_for_relevant_programme
     and_i_cannot_see_an_activity_log_tab
+
+    when_i_click_on_the_flu_tab
+    then_i_see_the_childs_flu_information
   end
 
   def given_my_team_exists
@@ -111,9 +114,7 @@ describe "View children" do
 
   def and_i_can_only_see_tabs_for_relevant_programme
     visible_programmes = @team.programmes.map(&:name)
-    visible_programmes.each do |programme|
-      expect(page).to have_link(programme)
-    end
+    visible_programmes.each { |programme| expect(page).to have_link(programme) }
 
     hidden_programmes = Programme.all.map(&:name) - visible_programmes
     hidden_programmes.each do |programme|
@@ -127,5 +128,12 @@ describe "View children" do
 
   def and_i_cannot_see_an_activity_log_tab
     expect(page).not_to have_link("Activity log")
+  end
+
+  def when_i_click_on_the_flu_tab
+    click_on "Flu"
+  end
+
+  def then_i_see_the_childs_flu_information
   end
 end
