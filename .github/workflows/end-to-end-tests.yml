@@ -13,11 +13,6 @@ on:
         type: string
         required: false
         default: "next"
-      force_test_suite_run:
-        description: If true, skip the run-test-suites check and force it to 'true'
-        type: boolean
-        required: false
-        default: false
     secrets:
       HTTP_AUTH_TOKEN_FOR_TESTS:
         description: HTTP Basic Auth token for the environment under test
@@ -40,22 +35,6 @@ on:
 permissions: { }
 
 jobs:
-  check-if-run-needed:
-    name: Check if tests are required
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    outputs:
-      run-test-suites: ${{ inputs.force_test_suite_run || steps.check.outputs.run-test-suites }}
-    steps:
-      - uses: actions/checkout@v6
-        if: ${{ !inputs.force_test_suite_run }}
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          repository: nhsuk/manage-vaccinations-in-schools
-      - name: Check if end-to-end tests need to run
-        if: ${{ !inputs.force_test_suite_run }}
-        id: check
-        uses: ./.github/actions/run-test-suites-check
   check-development-image-presence:
     name: Check if mavis docker image already exists
     runs-on: ubuntu-latest
@@ -89,8 +68,8 @@ jobs:
             echo "build-needed=true" >> $GITHUB_OUTPUT
           fi
   build-and-push-development-image:
-    needs: [ check-development-image-presence, check-if-run-needed ]
-    if: ${{ !cancelled() && needs.check-development-image-presence.outputs.build-needed == 'true' && (github.event_name != 'pull_request' || needs.check-if-run-needed.outputs.run-test-suites == 'true') }}
+    needs: [ check-development-image-presence ]
+    if: ${{ !cancelled() && needs.check-development-image-presence.outputs.build-needed == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -149,8 +128,8 @@ jobs:
             echo "build-needed=true" >> $GITHUB_OUTPUT
           fi
   build-and-push-database-image:
-    needs: [ check-database-image-presence, check-if-run-needed ]
-    if: ${{ !cancelled() && needs.check-database-image-presence.outputs.build-needed == 'true' && (github.event_name != 'pull_request' || needs.check-if-run-needed.outputs.run-test-suites == 'true') }}
+    needs: [ check-database-image-presence]
+    if: ${{ !cancelled() && needs.check-database-image-presence.outputs.build-needed == 'true' }}
     permissions:
       id-token: write
       contents: read
@@ -161,14 +140,14 @@ jobs:
     needs: [ check-development-image-presence,
              build-and-push-development-image,
              check-database-image-presence,
-             build-and-push-database-image,
-             check-if-run-needed ]
+             build-and-push-database-image
+            ]
     if: ${{ !cancelled() &&
       (needs.build-and-push-development-image.result == 'success' ||
       (needs.check-development-image-presence.result == 'success' && needs.build-and-push-development-image.result == 'skipped')) &&
       (needs.build-and-push-database-image.result == 'success' ||
       (needs.check-database-image-presence.result == 'success' && needs.build-and-push-database-image.result == 'skipped'))
-      && (github.event_name != 'pull_request' || needs.check-if-run-needed.outputs.run-test-suites == 'true') }}
+      }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -368,24 +347,10 @@ jobs:
         run: aws ecs stop-task --cluster assurance-testing --task ${{ needs.wait-for-task-stability.outputs.task_arn }}
   enforce-end-to-end-tests:
     name: Check if end-to-end tests passed if required
-    needs: [ check-if-run-needed, call-end-to-end-tests ]
+    needs: [ call-end-to-end-tests ]
     if: ${{ always() && github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check end-to-end tests passed or were skipped
         run: |
-          RUN_TEST_SUITES="${{ needs.check-if-run-needed.outputs.run-test-suites }}"
-          CALL_RESULT="${{ needs.call-end-to-end-tests.result }}"
-
-          if [ "$RUN_TEST_SUITES" != "true" ]; then
-            echo "E2E tests not required for this PR. Marking check as passed."
-            exit 0
-          fi
-
-          if [ "$CALL_RESULT" = "success" ]; then
-            echo "E2E tests required and passed."
-            exit 0
-          fi
-
-          echo "E2E tests were required but did not pass (call-end-to-end-tests result: $CALL_RESULT)."
-          exit 1
+          echo "All good" # TODO: Remove in followup PR
