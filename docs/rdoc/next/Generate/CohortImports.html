@@ -787,6 +787,7 @@
       <span class="ruby-identifier">progress_bar</span>&amp;.<span class="ruby-identifier">increment</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
+
   <span class="ruby-identifier">cohort_import_csv_filepath</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span>
 
@@ -1022,6 +1023,7 @@
         <span class="ruby-identifier">progress_bar</span>&amp;.<span class="ruby-identifier">increment</span>
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
+
     <span class="ruby-identifier">cohort_import_csv_filepath</span>.<span class="ruby-identifier">to_s</span>
   <span class="ruby-keyword">end</span>
 
@@ -1157,7 +1159,7 @@
             </details>
           </div>
           <div class="method-source-code" id="build_patient-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/cohort_imports.rb, line 134</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/cohort_imports.rb, line 135</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">build_patient</span>
   <span class="ruby-identifier">school</span> = <span class="ruby-identifier">schools_with_year_groups</span>.<span class="ruby-identifier">sample</span>
   <span class="ruby-identifier">year_group</span> <span class="ruby-operator">||=</span> (<span class="ruby-identifier">school</span>.<span class="ruby-identifier">gias_year_groups</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">all_year_groups</span>).<span class="ruby-identifier">sample</span>
@@ -1312,6 +1314,7 @@
       <span class="ruby-identifier">progress_bar</span>&amp;.<span class="ruby-identifier">increment</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
+
   <span class="ruby-identifier">cohort_import_csv_filepath</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span>
 
@@ -1462,7 +1465,7 @@
             </details>
           </div>
           <div class="method-source-code" id="date_of_birth_for_year-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/cohort_imports.rb, line 162</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/cohort_imports.rb, line 163</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">date_of_birth_for_year</span>(<span class="ruby-identifier">year_group</span>)
   <span class="ruby-identifier">rand</span>(
     <span class="ruby-identifier">year_group</span>.<span class="ruby-identifier">to_birth_academic_year</span>(
@@ -1550,7 +1553,7 @@
             </details>
           </div>
           <div class="method-source-code" id="schools_with_year_groups-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/cohort_imports.rb, line 118</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/cohort_imports.rb, line 119</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">schools_with_year_groups</span>
   <span class="ruby-ivar">@schools_with_year_groups</span> <span class="ruby-operator">||=</span>
     <span class="ruby-keyword">begin</span>
@@ -1652,6 +1655,7 @@
       <span class="ruby-identifier">progress_bar</span>&amp;.<span class="ruby-identifier">increment</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
+
   <span class="ruby-identifier">cohort_import_csv_filepath</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
