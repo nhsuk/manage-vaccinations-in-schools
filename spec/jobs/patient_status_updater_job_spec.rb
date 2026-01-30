@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe StatusUpdaterJob do
+describe PatientStatusUpdaterJob do
   describe "#perform" do
     subject(:perform) { described_class.new.perform(patient.id) }
 
