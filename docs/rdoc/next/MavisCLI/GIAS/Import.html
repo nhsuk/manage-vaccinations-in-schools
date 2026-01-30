@@ -722,6 +722,7 @@
 
       <span class="ruby-keyword">if</span> <span class="ruby-identifier">schools</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">batch_size</span>
         <span class="ruby-identifier">import_schools</span>(<span class="ruby-identifier">schools</span>)
+        <span class="ruby-identifier">update_sites</span>(<span class="ruby-identifier">schools</span>)
         <span class="ruby-identifier">schools</span>.<span class="ruby-identifier">clear</span>
       <span class="ruby-keyword">end</span>
 
@@ -772,7 +773,7 @@
             </details>
           </div>
           <div class="method-source-code" id="import_schools-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/gias/import.rb, line 68</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/gias/import.rb, line 69</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_schools</span>(<span class="ruby-identifier">schools</span>)
   <span class="ruby-constant">Location</span>.<span class="ruby-identifier">import!</span>(
     <span class="ruby-identifier">schools</span>,
@@ -926,7 +927,7 @@
             </details>
           </div>
           <div class="method-source-code" id="update_sites-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/gias/import.rb, line 91</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/gias/import.rb, line 92</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_sites</span>(<span class="ruby-identifier">schools</span>)
   <span class="ruby-identifier">schools_by_urn</span> = <span class="ruby-identifier">schools</span>.<span class="ruby-identifier">index_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:urn</span>)
 
@@ -955,8 +956,7 @@
   <span class="ruby-constant">Location</span>.<span class="ruby-identifier">import!</span>(
     <span class="ruby-identifier">sites</span>,
     <span class="ruby-value">on_duplicate_key_update:</span> {
-      <span class="ruby-value">conflict_target:</span> <span class="ruby-node">%i[id]</span>,
-      <span class="ruby-value">index_predicate:</span> <span class="ruby-string">&quot;site IS NULL&quot;</span>,
+      <span class="ruby-value">conflict_target:</span> <span class="ruby-node">%i[urn site]</span>,
       <span class="ruby-value">columns:</span> <span class="ruby-node">%i[
         gias_establishment_number
         gias_local_authority_code
