@@ -209,6 +209,8 @@ Rails.application.routes.draw do
       get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
     end
 
+    resources :programmes, only: :show, controller: "patients/programmes"
+
     member do
       post "invite-to-clinic"
       get "log"
