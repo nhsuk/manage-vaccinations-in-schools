@@ -41,6 +41,8 @@ describe FHIRMapper::Programme do
       end
 
       it { should be Programme.flu }
+
+      it { should be_a Programme }
     end
 
     context "for an hpv record" do
@@ -51,6 +53,8 @@ describe FHIRMapper::Programme do
       end
 
       it { should be Programme.hpv }
+
+      it { should be_a Programme }
     end
 
     context "for a menacwy record" do
@@ -61,6 +65,8 @@ describe FHIRMapper::Programme do
       end
 
       it { should be Programme.menacwy }
+
+      it { should be_a Programme }
     end
 
     context "for a td_ipv record" do
@@ -71,6 +77,8 @@ describe FHIRMapper::Programme do
       end
 
       it { should be Programme.td_ipv }
+
+      it { should be_a Programme }
     end
 
     context "for a mmr record" do
@@ -85,6 +93,8 @@ describe FHIRMapper::Programme do
              disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
            )
       end
+
+      it { should be_a Programme::Variant }
     end
 
     context "for a mmrv record" do
@@ -101,6 +111,8 @@ describe FHIRMapper::Programme do
              disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
            )
       end
+
+      it { should be_a Programme::Variant }
     end
   end
 end

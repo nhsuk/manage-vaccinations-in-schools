@@ -36,35 +36,7 @@ module FHIRMapper
             .code
         end
 
-      if (
-           variant_type =
-             ::Programme::Variant::SNOMED_TARGET_DISEASE_CODES.key(
-               target_disease_codes.to_set
-             )
-         )
-        # If there is a matching `Programme::Variant`
-        # TODO: Make `Programme::Variant` type more generic, so that it can handle any programme type;
-        #       remove MMR hardcoding here
-        if %w[mmr mmrv].include?(variant_type)
-          ::Programme.find(
-            "mmr",
-            disease_types:
-              ::Programme::Variant::SNOMED_TARGET_DISEASE_TERMS.fetch(
-                variant_type
-              )
-          )
-        else
-          raise Programme::InvalidType,
-                "Programme::Variant type not mapped to a Programme; #{variant_type}"
-        end
-      else
-        # Otherwise it must be a `Programme`
-        ::Programme.find(
-          ::Programme::SNOMED_TARGET_DISEASE_CODES.key(
-            target_disease_codes.to_set
-          )
-        )
-      end
+      ::Programme.find_by_snomed_target_disease_codes(target_disease_codes)
     end
   end
 end

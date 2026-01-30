@@ -101,6 +101,13 @@ class Programme
       programme.variant_for(patient:, disease_types:)
     end
 
+    def find_by_snomed_target_disease_codes(snomed_target_disease_codes)
+      all_as_variants.find do |variant|
+        variant.snomed_target_disease_codes ==
+          snomed_target_disease_codes.to_set
+      end
+    end
+
     def exists?(type) = type.in?(TYPES)
 
     def sample = find(TYPES.sample)
