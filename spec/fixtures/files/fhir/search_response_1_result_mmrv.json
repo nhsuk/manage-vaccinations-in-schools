@@ -4,7 +4,7 @@
   "link": [
     {
       "relation": "self",
-      "url": "https://internal-dev.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization?immunization.target=MMRV%2CMMR%2C3IN1%2CMENACWY%2CFLU%2CHPV&-immunization.target=MMRV%2CMMR%2C3IN1%2CMENACWY%2CFLU%2CHPV&patient.identifier=https%3A%2F%2Ffhir.nhs.uk%2FId%2Fnhs-number%7C9990001855"
+      "url": "https://internal-dev.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization?-immunization.target=MMRV%2CMMR%2C3IN1%2CMENACWY%2CFLU%2CHPV&patient.identifier=https%3A%2F%2Ffhir.nhs.uk%2FId%2Fnhs-number%7C9990001855"
     }
   ],
   "entry": [
