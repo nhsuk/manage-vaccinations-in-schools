@@ -35,34 +35,9 @@ class BatchesController < ApplicationController
     end
   end
 
-  def edit
-    @form =
-      BatchForm.new(batch: @batch, name: @batch.name, expiry: @batch.expiry)
-  end
-
   def make_default
     self.todays_batch = @batch
     redirect_to vaccines_path
-  end
-
-  def update
-    @form =
-      BatchForm.new(
-        **batch_form_params.except(:number),
-        batch: @batch,
-        name: @batch.name
-      )
-
-    if expiry_validator.date_params_valid? && @form.save
-      redirect_to vaccines_path,
-                  flash: {
-                    success:
-                      "Batch <span class=\"nhsuk-u-text-break-word\">#{@batch.name}</span> updated".html_safe
-                  }
-    else
-      @form.expiry = expiry_validator.date_params_as_struct
-      render :edit, status: :unprocessable_content
-    end
   end
 
   def edit_archive
