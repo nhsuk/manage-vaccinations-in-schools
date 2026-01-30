@@ -66,6 +66,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          repository: nhsuk/manage-vaccinations-in-schools
       - name: Check if image exists
         id: check-image
         env:
@@ -125,6 +126,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          repository: nhsuk/manage-vaccinations-in-schools
       - name: Check if image exists
         id: check-image
         env:
