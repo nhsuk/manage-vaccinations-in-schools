@@ -13,6 +13,11 @@ on:
         type: string
         required: false
         default: "next"
+      force_test_suite_run:
+        description: If true, skip the run-test-suites check and force it to 'true'
+        type: boolean
+        required: false
+        default: false
     secrets:
       HTTP_AUTH_TOKEN_FOR_TESTS:
         description: HTTP Basic Auth token for the environment under test
@@ -39,16 +44,18 @@ jobs:
     name: Check if tests are required
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
+    outputs:
+      run-test-suites: ${{ inputs.force_test_suite_run || steps.check.outputs.run-test-suites }}
     steps:
       - uses: actions/checkout@v6
+        if: ${{ !inputs.force_test_suite_run }}
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: nhsuk/manage-vaccinations-in-schools
       - name: Check if end-to-end tests need to run
+        if: ${{ !inputs.force_test_suite_run }}
         id: check
         uses: ./.github/actions/run-test-suites-check
-    outputs:
-      run-test-suites: ${{ steps.check.outputs.run-test-suites }}
   check-development-image-presence:
     name: Check if mavis docker image already exists
     runs-on: ubuntu-latest
@@ -70,7 +77,7 @@ jobs:
       - name: Check if image exists
         id: check-image
         env:
-          GIT_REF: ${{ (inputs.git_reference_for_application_image == 'next' && 'origin/next') || github.event.pull_request.head.sha ||  github.sha }}
+          GIT_REF: ${{ inputs.git_reference_for_application_image && format('origin/{0}', inputs.git_reference_for_application_image) || github.event.pull_request.head.sha || github.sha }}
         run: |
           GIT_REF_SHA=$(git rev-parse $GIT_REF)
           echo "GIT_REF_SHA=$GIT_REF_SHA" >> $GITHUB_OUTPUT
@@ -130,7 +137,7 @@ jobs:
       - name: Check if image exists
         id: check-image
         env:
-          GIT_REF: ${{ ( inputs.git_reference_for_database_image == 'next' && 'origin/next' ) || github.event.pull_request.base.sha || github.sha }}
+          GIT_REF: ${{ inputs.git_reference_for_database_image && format('origin/{0}', inputs.git_reference_for_database_image) || github.event.pull_request.base.sha || github.sha }}
         run: |
           GIT_REF_SHA=$(git rev-parse $GIT_REF)
           echo "GIT_REF_SHA=$GIT_REF_SHA" >> $GITHUB_OUTPUT
