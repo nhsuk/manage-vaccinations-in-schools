@@ -170,7 +170,9 @@ class DraftVaccinationRecordsController < ApplicationController
       @vaccination_record.confirmation_sent? &&
         (
           @vaccination_record.outcome_changed? ||
-            @vaccination_record.batch_id_changed? || performed_at_date_changed
+            @vaccination_record.batch_number_changed? ||
+            @vaccination_record.batch_expiry_changed? ||
+            performed_at_date_changed
         )
     if is_new_record
       @vaccination_record.notify_parents =
@@ -214,7 +216,7 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def update_params
     permitted_attributes = {
-      batch: %i[batch_id vaccine_id batch_name batch_expiry],
+      batch: %i[batch_id vaccine_id batch_number batch_expiry],
       confirm: @draft_vaccination_record.editing? ? [] : %i[notes],
       date_and_time: %i[performed_at_date performed_at_time],
       delivery: %i[delivery_site delivery_method],
@@ -281,7 +283,10 @@ class DraftVaccinationRecordsController < ApplicationController
 
     @batches =
       scope
-        .where(id: @draft_vaccination_record.batch_id)
+        .where(
+          name: @draft_vaccination_record.batch_number,
+          expiry: @draft_vaccination_record.batch_expiry
+        )
         .or(scope.not_archived.not_expired.where(vaccine: vaccines))
         .order_by_name_and_expiration
   end

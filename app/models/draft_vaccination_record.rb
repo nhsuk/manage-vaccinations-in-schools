@@ -11,7 +11,7 @@ class DraftVaccinationRecord
   include Programmable
 
   attribute :batch_id, :integer
-  attribute :batch_name, :string
+  attribute :batch_number, :string
   attribute :batch_expiry, :date
   attribute :delivery_method, :string
   attribute :delivery_site, :string
@@ -101,7 +101,7 @@ class DraftVaccinationRecord
     validates :vaccine_id,
               presence: true,
               if: :national_reporting_user_and_record?
-    validates :batch_name,
+    validates :batch_number,
               batch_name: true,
               if: :national_reporting_user_and_record?
     validates :batch_expiry,
@@ -156,13 +156,16 @@ class DraftVaccinationRecord
                if: -> do
                  required_for_step?(:confirm, exact: true) && administered?
                end do
-    validates :batch_id,
-              :delivery_method,
+    validates :delivery_method,
               :delivery_site,
               :performed_at_date,
               :performed_at_time,
               :protocol,
               presence: true
+    validates :batch_number,
+              :batch_expiry,
+              presence: true,
+              if: :national_reporting_user_and_record?
     validates :full_dose, inclusion: { in: [true, false] }
     validates :source, inclusion: { in: VaccinationRecord.sources.keys }
   end
@@ -179,30 +182,6 @@ class DraftVaccinationRecord
 
   # So that a form error matches to a field in this model
   alias_method :administered, :administered?
-
-  def batch
-    if batch_expiry && batch_name && vaccine_id &&
-         national_reporting_user_and_record?
-      return(
-        Batch.create_with(
-          archived_at: Time.current,
-          number: batch_name
-        ).find_or_create_by!(
-          expiry: batch_expiry,
-          name: batch_name,
-          team_id: nil,
-          vaccine_id: vaccine_id
-        )
-      )
-    end
-
-    return nil if batch_id.nil?
-    Batch.find(batch_id)
-  end
-
-  def batch=(value)
-    self.batch_id = value.id
-  end
 
   def location
     return nil if location_id.nil?
@@ -275,9 +254,26 @@ class DraftVaccinationRecord
     self.batch_id = nil unless previous_value == new_value
   end
 
-  delegate :vaccine, to: :batch, allow_nil: true
+  def vaccine
+    return nil if vaccine_id.nil?
+    Vaccine.find(vaccine_id)
+  end
 
-  def vaccine_id_changed? = batch_id_changed?
+  def vaccine=(value)
+    self.vaccine_id = value.id
+  end
+
+  def vaccine_id
+    super || batch&.vaccine_id
+  end
+
+  def batch_number
+    batch&.name || super
+  end
+
+  def batch_expiry
+    batch&.expiry || super
+  end
 
   def location_is_school
     return if location_id.blank?
@@ -370,37 +366,16 @@ class DraftVaccinationRecord
       sourced_from_national_reporting?
   end
 
-  def read_from!(vaccination_record)
-    self.batch_name = vaccination_record.batch&.name
-    self.batch_expiry = vaccination_record.batch&.expiry
-    self.vaccine_id = vaccination_record.vaccine&.id
-
-    super(vaccination_record)
-  end
-
-  def write_to!(vaccination_record)
-    super(vaccination_record)
-
-    if batch_expiry && batch_name && vaccine_id &&
-         national_reporting_user_and_record?
-      vaccination_record.batch_id = batch&.id
-    end
-
-    vaccination_record.batch_number = vaccination_record.batch&.name
-    vaccination_record.batch_expiry = vaccination_record.batch&.expiry
-
-    vaccination_record.vaccine_id = batch&.vaccine_id
-  end
-
   private
 
   def readable_attribute_names
-    writable_attribute_names - %w[vaccine_id]
+    writable_attribute_names
   end
 
   def writable_attribute_names
     %w[
-      batch_id
+      batch_number
+      batch_expiry
       delivery_method
       delivery_site
       disease_types
@@ -435,6 +410,8 @@ class DraftVaccinationRecord
       self.full_dose = true unless can_be_half_dose?
     else
       self.batch_id = nil
+      self.batch_number = nil
+      self.batch_expiry = nil
       self.delivery_method = nil
       self.delivery_site = nil
       self.full_dose = nil
@@ -447,6 +424,11 @@ class DraftVaccinationRecord
   end
 
   def academic_year = session&.academic_year
+
+  def batch
+    return nil if batch_id.nil?
+    Batch.find(batch_id)
+  end
 
   def earliest_possible_date
     academic_year.to_academic_year_date_range.first

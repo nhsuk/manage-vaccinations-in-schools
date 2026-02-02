@@ -392,7 +392,6 @@ describe "Edit vaccination record" do
 
       when_i_click_on_save_changes
       then_i_should_see_the_vaccination_record
-      and_the_batch_should_be_a_new_batch_object
     end
 
     scenario "Parent details are not visible when viewing vaccination records" do
@@ -619,7 +618,8 @@ describe "Edit vaccination record" do
       create(
         :vaccination_record,
         :not_administered,
-        batch: @original_batch,
+        batch_number: @original_batch.number,
+        batch_expiry: @original_batch.expiry,
         patient: @patient,
         session: @session,
         programme: @programme
@@ -642,6 +642,9 @@ describe "Edit vaccination record" do
   def and_the_original_batch_has_expired
     @original_batch.expiry = 1.day.ago
     @original_batch.save!(validate: false)
+
+    @vaccination_record.batch_expiry = @original_batch.expiry
+    @vaccination_record.save!
   end
 
   def when_i_go_to_the_vaccination_record_for_the_patient
@@ -920,10 +923,6 @@ describe "Edit vaccination record" do
     expect(page).to have_content("Vaccine#{@new_vaccine.nivs_name}")
     expect(page).to have_content("Batch numberNEWBATCH123")
     expect(page).to have_content("Batch expiry date1 December 2027")
-  end
-
-  def and_the_batch_should_be_a_new_batch_object
-    expect(@vaccination_record.reload.batch).not_to eq(@batch)
   end
 
   def when_i_click_on_save_changes
