@@ -15,7 +15,7 @@
 
     <meta
       name="description"
-      content="class PatientLocation: bigint not null Indexes idx_on_location_id_academic_year_patient_id_3237b32fa0 (location_id,academic_year,patient_id) UNIQUE idx_on_p"
+      content="class PatientLocation: daterange default(-Infinity. bigint not null Indexes idx_on_location_id_academic_year_patient_id_3237b32fa0 (location_id,academ"
     >
 
 
@@ -28,7 +28,7 @@
 
 
 
-    <meta property="og:description" content="bigint not null Indexes idx_on_location_id_academic_year_patient_id_3237b32fa0 (location_id,academic_year,patient_id) UNIQUE idx_on_p">
+    <meta property="og:description" content="daterange default(-Infinity. bigint not null Indexes idx_on_location_id_academic_year_patient_id_3237b32fa0 (location_id,academ">
 
 
 
@@ -40,7 +40,7 @@
 
 
 
-    <meta name="twitter:description" content="bigint not null Indexes idx_on_location_id_academic_year_patient_id_3237b32fa0 (location_id,academic_year,patient_id) UNIQUE idx_on_p">
+    <meta name="twitter:description" content="daterange default(-Infinity. bigint not null Indexes idx_on_location_id_academic_year_patient_id_3237b32fa0 (location_id,academ">
 
 
 
@@ -547,9 +547,13 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-destroy_if_safe-21">destroy_if_safe!</a></li>
+        <li ><a href="#method-i-begin_date">begin_date</a></li>
 
-        <li ><a href="#method-i-safe_to_destroy-3F">safe_to_destroy?</a></li>
+        <li ><a href="#method-i-begin_date-3D">begin_date=</a></li>
+
+        <li ><a href="#method-i-end_date">end_date</a></li>
+
+        <li ><a href="#method-i-end_date-3D">end_date=</a></li>
 
       </ul>
     </details>
@@ -592,6 +596,7 @@
 
 <pre>id            :bigint           not null, primary key
 academic_year :integer          not null
+date_range    :daterange        default(-Infinity...Infinity)
 created_at    :datetime         not null
 updated_at    :datetime         not null
 location_id   :bigint           not null
@@ -638,12 +643,12 @@ fk_rails_...  (patient_id =&gt; patients.id)</pre>
        </header>
 
 
-      <div id="method-i-destroy_if_safe-21" class="method-detail anchor-link ">
+      <div id="method-i-begin_date" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-destroy_if_safe-21" title="Link to this method">
-                <span class="method-name">destroy_if_safe!</span>
+              <a href="#method-i-begin_date" title="Link to this method">
+                <span class="method-name">begin_date</span>
                 <span class="method-args">()</span>
               </a>
             </div>
@@ -656,10 +661,12 @@ fk_rails_...  (patient_id =&gt; patients.id)</pre>
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="destroy_if_safe-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_location.rb, line 126</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">destroy_if_safe!</span>
-  <span class="ruby-identifier">destroy!</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">safe_to_destroy?</span>
+          <div class="method-source-code" id="begin_date-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_location.rb, line 80</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">begin_date</span>
+  <span class="ruby-identifier">value</span> = <span class="ruby-identifier">date_range</span>&amp;.<span class="ruby-identifier">begin</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">==</span> <span class="ruby-operator">-</span><span class="ruby-constant">Float</span><span class="ruby-operator">::</span><span class="ruby-constant">INFINITY</span>
+  <span class="ruby-identifier">value</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -680,12 +687,54 @@ fk_rails_...  (patient_id =&gt; patients.id)</pre>
       </div>
 
 
-      <div id="method-i-safe_to_destroy-3F" class="method-detail anchor-link ">
+      <div id="method-i-begin_date-3D" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-safe_to_destroy-3F" title="Link to this method">
-                <span class="method-name">safe_to_destroy?</span>
+              <a href="#method-i-begin_date-3D" title="Link to this method">
+                <span class="method-name">begin_date=</span>
+                <span class="method-args">(value)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="begin_date-3D-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_location.rb, line 92</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">begin_date=</span>(<span class="ruby-identifier">value</span>)
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">date_range</span> = <span class="ruby-constant">Range</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">end_date</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-end_date" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-end_date" title="Link to this method">
+                <span class="method-name">end_date</span>
                 <span class="method-args">()</span>
               </a>
             </div>
@@ -698,11 +747,54 @@ fk_rails_...  (patient_id =&gt; patients.id)</pre>
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="safe_to_destroy-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_location.rb, line 121</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">safe_to_destroy?</span>
-  <span class="ruby-identifier">attendance_records</span>.<span class="ruby-identifier">none?</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:attending?</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">gillick_assessments</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">&amp;&amp;</span>
-    <span class="ruby-identifier">pre_screenings</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">empty?</span>
+          <div class="method-source-code" id="end_date-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_location.rb, line 86</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">end_date</span>
+  <span class="ruby-identifier">value</span> = <span class="ruby-identifier">date_range</span>&amp;.<span class="ruby-identifier">end</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Float</span><span class="ruby-operator">::</span><span class="ruby-constant">INFINITY</span>
+  <span class="ruby-identifier">date_range</span>.<span class="ruby-identifier">exclude_end?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">day</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">value</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-end_date-3D" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-end_date-3D" title="Link to this method">
+                <span class="method-name">end_date=</span>
+                <span class="method-args">(value)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="end_date-3D-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_location.rb, line 96</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">end_date=</span>(<span class="ruby-identifier">value</span>)
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">date_range</span> = <span class="ruby-constant">Range</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">begin_date</span>, <span class="ruby-identifier">value</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 

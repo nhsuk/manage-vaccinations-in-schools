@@ -744,7 +744,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
   <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">update_patient!</span>
     <span class="ruby-identifier">update_archive_reasons!</span>(<span class="ruby-value">user:</span>)
-    <span class="ruby-identifier">update_sessions!</span>
+    <span class="ruby-identifier">update_locations!</span>
 
     <span class="ruby-identifier">log_entry</span> = <span class="ruby-identifier">create_log_entry!</span>(<span class="ruby-value">user:</span>)
     <span class="ruby-identifier">create_important_notice!</span>(<span class="ruby-identifier">old_teams</span>, <span class="ruby-identifier">log_entry</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">old_teams</span>
