@@ -6,6 +6,7 @@
 #
 #  id            :bigint           not null, primary key
 #  academic_year :integer          not null
+#  date_range    :daterange        default(-Infinity...Infinity)
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  location_id   :bigint           not null
@@ -31,40 +32,6 @@ class PatientLocation < ApplicationRecord
   belongs_to :patient
   belongs_to :location
 
-  has_many :team_locations,
-           -> { where(academic_year: it.academic_year) },
-           through: :location
-
-  has_many :sessions, through: :team_locations
-
-  has_many :attendance_records,
-           -> do
-             where(patient_id: it.patient_id).for_academic_year(
-               it.academic_year
-             )
-           end,
-           through: :location
-
-  has_many :gillick_assessments,
-           -> do
-             where(patient_id: it.patient_id).for_academic_year(
-               it.academic_year
-             )
-           end,
-           through: :location
-
-  has_many :pre_screenings,
-           -> do
-             where(patient_id: it.patient_id).for_academic_year(
-               it.academic_year
-             )
-           end,
-           through: :location
-
-  has_many :vaccination_records,
-           -> { where(patient_id: it.patient_id) },
-           through: :sessions
-
   has_and_belongs_to_many :immunisation_imports
 
   scope :current, -> { where(academic_year: AcademicYear.current) }
@@ -84,6 +51,8 @@ class PatientLocation < ApplicationRecord
   scope :joins_sessions, -> { joins_team_locations.joins(<<-SQL) }
     INNER JOIN sessions
     ON sessions.team_location_id = team_locations.id
+    AND (patient_locations.date_range IS NULL OR sessions.dates = '{}'
+        OR patient_locations.date_range @> ANY(sessions.dates))
   SQL
 
   scope :appear_in_programmes,
@@ -108,22 +77,23 @@ class PatientLocation < ApplicationRecord
           )
         end
 
-  scope :destroy_all_if_safe,
-        -> do
-          preload(
-            :attendance_records,
-            :gillick_assessments,
-            :pre_screenings,
-            :vaccination_records
-          ).find_each(&:destroy_if_safe!)
-        end
-
-  def safe_to_destroy?
-    attendance_records.none?(&:attending?) && gillick_assessments.empty? &&
-      pre_screenings.empty? && vaccination_records.empty?
+  def begin_date
+    value = date_range&.begin
+    return nil if value.nil? || value == -Float::INFINITY
+    value
   end
 
-  def destroy_if_safe!
-    destroy! if safe_to_destroy?
+  def end_date
+    value = date_range&.end
+    return nil if value.nil? || value == Float::INFINITY
+    date_range.exclude_end? ? value - 1.day : value
+  end
+
+  def begin_date=(value)
+    self.date_range = Range.new(value, end_date)
+  end
+
+  def end_date=(value)
+    self.date_range = Range.new(begin_date, value)
   end
 end

@@ -21,19 +21,6 @@ module MavisCLI
           return
         end
 
-        unless PatientLocation
-                 .joins(:patient)
-                 .where(
-                   patient: {
-                     school: old_loc
-                   },
-                   academic_year:,
-                   location: old_loc
-                 )
-                 .all?(&:safe_to_destroy?)
-          raise "Some patient sessions at #{old_loc.urn} are not safe to destroy. Cannot complete transfer."
-        end
-
         team_id =
           old_loc.team_locations.ordered.where(academic_year:).sole.team_id
 
