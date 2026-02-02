@@ -444,6 +444,9 @@ class Patient < ApplicationRecord
           scope
         end
 
+  scope :with_team_searchable_in_nhs_immunisations_api,
+        -> { joins(:teams).where.not(teams: { type: :national_reporting }) }
+
   validates :given_name, :family_name, :date_of_birth, presence: true
 
   validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }
