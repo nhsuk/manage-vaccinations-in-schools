@@ -338,6 +338,15 @@ Rails.application.routes.draw do
       get :sessions
       get :clinics
     end
+
+    resources :schools, only: %i[edit update], controller: "teams/schools" do
+      member do
+        get "edit/name", action: :edit_name
+        put "edit/name", action: :update_name
+        get "edit/address", action: :edit_address
+        put "edit/address", action: :update_address
+      end
+    end
   end
 
   resources :vaccination_records,
