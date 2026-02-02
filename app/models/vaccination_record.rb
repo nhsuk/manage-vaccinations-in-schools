@@ -27,6 +27,8 @@
 #  outcome                                 :integer          not null
 #  pending_changes                         :jsonb            not null
 #  performed_at                            :datetime         not null
+#  performed_at_date                       :date
+#  performed_at_time                       :time
 #  performed_by_family_name                :string
 #  performed_by_given_name                 :string
 #  performed_ods_code                      :string
@@ -252,6 +254,12 @@ class VaccinationRecord < ApplicationRecord
 
   class << self
     delegate :from_fhir_record, to: FHIRMapper::VaccinationRecord
+  end
+
+  def performed_at=(value)
+    super(value)
+    self.performed_at_date = value&.to_date
+    self.performed_at_time = value&.to_time
   end
 
   def academic_year = performed_at.to_date.academic_year
