@@ -21,7 +21,7 @@ class BatchesController < ApplicationController
 
     batch.archived_at = nil if batch.archived?
 
-    @form = BatchForm.new(**batch_form_params, batch:)
+    @form = BatchForm.new(**batch_form_params.except(:number), batch:)
 
     if expiry_validator.date_params_valid? && @form.save
       redirect_to vaccines_path,
@@ -46,7 +46,12 @@ class BatchesController < ApplicationController
   end
 
   def update
-    @form = BatchForm.new(**batch_form_params, batch: @batch, name: @batch.name)
+    @form =
+      BatchForm.new(
+        **batch_form_params.except(:number),
+        batch: @batch,
+        name: @batch.name
+      )
 
     if expiry_validator.date_params_valid? && @form.save
       redirect_to vaccines_path,
@@ -89,6 +94,7 @@ class BatchesController < ApplicationController
 
     {
       name: raw_params[:name],
+      number: raw_params[:name],
       expiry:
         begin
           Date.new(

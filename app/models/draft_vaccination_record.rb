@@ -163,7 +163,10 @@ class DraftVaccinationRecord
   def batch
     if batch_expiry && batch_name && vaccine_id && bulk_upload_user_and_record?
       return(
-        Batch.create_with(archived_at: Time.current).find_or_create_by!(
+        Batch.create_with(
+          archived_at: Time.current,
+          number: batch_name
+        ).find_or_create_by!(
           expiry: batch_expiry,
           name: batch_name,
           team_id: nil,
