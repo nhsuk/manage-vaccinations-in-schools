@@ -46,8 +46,7 @@ class Programme
     "hpv" => %w[240532009].to_set,
     "flu" => %w[6142004].to_set,
     "menacwy" => %w[23511006].to_set,
-    # TODO: Find a way to delete this, we should be using only the variants.
-    "mmr" => %w[14189004 36989005 36653000].to_set,
+    "mmr" => [], # This is blank because MMR has two variants with different disease types.
     "td_ipv" => %w[76902006 397430003 398102009].to_set
   }.freeze
 
@@ -55,8 +54,7 @@ class Programme
     "hpv" => ["Human papillomavirus infection"],
     "flu" => ["Influenza"],
     "menacwy" => ["Meningococcal infectious disease"],
-    # TODO: Find a way to delete this, we should be using only the variants.
-    "mmr" => %w[Measles Mumps Rubella],
+    "mmr" => [], # This is blank because MMR has two variants with different disease types.
     "td_ipv" => [
       "Tetanus",
       "Diphtheria caused by Corynebacterium diphtheriae",
@@ -68,8 +66,7 @@ class Programme
     "flu" => "FLU",
     "hpv" => "HPV",
     "menacwy" => "MENACWY",
-    # TODO: Find a way to delete this, we should be using only the variants.
-    "mmr" => "MMR",
+    "mmr" => [], # This is blank because MMR has two variants with different disease types.
     "td_ipv" => "3IN1"
   }.freeze
 
@@ -99,6 +96,13 @@ class Programme
       programme = (@programmes[type] ||= new(type:))
 
       programme.variant_for(patient:, disease_types:)
+    end
+
+    def find_by_snomed_target_disease_codes(snomed_target_disease_codes)
+      all_as_variants.find do |variant|
+        variant.snomed_target_disease_codes ==
+          snomed_target_disease_codes.to_set
+      end
     end
 
     def exists?(type) = type.in?(TYPES)
