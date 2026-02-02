@@ -4,21 +4,22 @@
 #
 # Table name: reporting_api_totals
 #
-#  id                                  :text             primary key
-#  academic_year                       :integer
-#  has_already_vaccinated_consent      :boolean
-#  is_archived                         :boolean
-#  patient_gender                      :text
-#  patient_local_authority_code        :string
-#  patient_school_local_authority_code :string
-#  patient_school_name                 :text
-#  patient_school_urn                  :string
-#  patient_year_group                  :integer
-#  programme_type                      :enum
-#  status                              :integer
-#  patient_id                          :bigint
-#  session_location_id                 :bigint
-#  team_id                             :bigint
+#  id                                    :text             primary key
+#  academic_year                         :integer
+#  has_already_vaccinated_consent        :boolean
+#  is_archived                           :boolean
+#  patient_gender                        :text
+#  patient_local_authority_code          :string
+#  patient_local_authority_official_name :string
+#  patient_school_local_authority_code   :string
+#  patient_school_name                   :text
+#  patient_school_urn                    :string
+#  patient_year_group                    :integer
+#  programme_type                        :enum
+#  status                                :integer
+#  patient_id                            :bigint
+#  session_location_id                   :bigint
+#  team_id                               :bigint
 #
 # Indexes
 #

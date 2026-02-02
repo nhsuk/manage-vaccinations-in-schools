@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_29_140834) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_02_124516) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1357,6 +1357,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_29_140834) do
           END AS patient_gender,
       ((pps.academic_year - pat.birth_academic_year) - 5) AS patient_year_group,
       COALESCE(la.mhclg_code, pat.local_authority_mhclg_code, ''::character varying) AS patient_local_authority_code,
+      COALESCE(la.official_name, pat_la.official_name, ''::character varying) AS patient_local_authority_official_name,
       COALESCE(la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
           CASE
               WHEN (school.urn IS NOT NULL) THEN school.urn
@@ -1372,13 +1373,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_29_140834) do
       (EXISTS ( SELECT 1
              FROM consents con
             WHERE ((con.patient_id = pps.patient_id) AND (con.programme_type = pps.programme_type) AND (con.academic_year = pps.academic_year) AND (con.invalidated_at IS NULL) AND (con.withdrawn_at IS NULL) AND (con.response = 1) AND (con.reason_for_refusal = 1)))) AS has_already_vaccinated_consent
-     FROM ((((((patient_programme_statuses pps
+     FROM (((((((patient_programme_statuses pps
        JOIN patients pat ON ((pat.id = pps.patient_id)))
        JOIN patient_locations pl ON (((pl.patient_id = pps.patient_id) AND (pl.academic_year = pps.academic_year))))
        JOIN team_locations tl ON (((tl.location_id = pl.location_id) AND (tl.academic_year = pps.academic_year))))
        LEFT JOIN archive_reasons ar ON (((ar.patient_id = pps.patient_id) AND (ar.team_id = tl.team_id))))
        LEFT JOIN locations school ON ((school.id = pat.school_id)))
        LEFT JOIN local_authorities la ON ((la.gias_code = school.gias_local_authority_code)))
+       LEFT JOIN local_authorities pat_la ON (((pat_la.mhclg_code)::text = (pat.local_authority_mhclg_code)::text)))
     WHERE ((pat.invalidated_at IS NULL) AND (pat.restricted_at IS NULL) AND (pat.date_of_death IS NULL));
   SQL
   add_index "reporting_api_totals", ["id"], name: "ix_rapi_totals_id", unique: true
