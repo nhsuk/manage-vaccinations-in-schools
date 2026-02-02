@@ -114,7 +114,7 @@ en:
           attributes:
             batch_id:
               blank: Choose a batch
-            batch_name:
+            batch_number:
               blank: Enter a batch number
               invalid: Enter a batch number with only letters and numbers
               too_short: Enter a batch number that is more than %{count} characters long
