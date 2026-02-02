@@ -106,6 +106,8 @@ FactoryBot.define do
         association(:batch, :not_expired, team:, vaccine:, strategy: :create)
       end
     end
+    batch_number { batch&.number }
+    batch_expiry { batch&.expiry }
 
     performed_by
 
