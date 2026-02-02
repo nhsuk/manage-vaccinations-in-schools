@@ -33,7 +33,9 @@ describe AlreadyHadNotificationSender do
           )
         end
 
-        context "when the patient is considered vaccinated due to this vaccination and has valid consents" do
+        context "when the patient was not previously considered vaccinated and has valid consents" do
+          let(:performed_at) { Time.zone.today }
+
           let!(:first_consent) do
             create(
               :consent,
@@ -54,8 +56,6 @@ describe AlreadyHadNotificationSender do
               academic_year:
             )
           end
-
-          let(:performed_at) { Time.zone.today }
 
           it "sends email notifications to all parents with valid consents" do
             call
@@ -150,7 +150,7 @@ describe AlreadyHadNotificationSender do
           end
         end
 
-        context "when patient is not considered vaccinated and has valid consents" do
+        context "when patient was not previously considered vaccinated and has valid consents" do
           let!(:first_consent) do
             create(
               :consent,

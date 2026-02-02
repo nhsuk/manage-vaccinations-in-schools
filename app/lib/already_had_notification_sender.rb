@@ -7,7 +7,7 @@ class AlreadyHadNotificationSender
 
   def call
     return if vaccination_record.sourced_from_service?
-    return if would_still_be_vaccinated?
+    return if was_already_vaccinated?
     return if is_still_eligible_for_vaccination?
 
     consents = patient.consents.includes(:parent)
@@ -67,7 +67,7 @@ class AlreadyHadNotificationSender
     patient.vaccination_records.where.not(id: vaccination_record.id)
   end
 
-  def would_still_be_vaccinated?
+  def was_already_vaccinated?
     # We're not using the existing `Patient::ProgrammeStatus` instance here
     # because we want to know if the patient would still be vaccinated if we
     # took away the vaccination record in question, to know whether to send
