@@ -3,21 +3,14 @@
 class NotificationParentSelector
   def initialize(vaccination_record:, consents: nil)
     @vaccination_record = vaccination_record
-
     @consents =
-      if consents.present?
-        consents
+      if @vaccination_record.patient.send_notifications?(
+           team: @vaccination_record.team,
+           send_to_archived: true
+         ) && @vaccination_record.notify_parents
+        consents || @vaccination_record.patient.consents
       else
-        patient = @vaccination_record.patient
-
-        if patient.send_notifications?(
-             team: @vaccination_record.team,
-             send_to_archived: true
-           ) && @vaccination_record.notify_parents
-          patient.consents
-        else
-          []
-        end
+        []
       end
   end
 

@@ -173,14 +173,20 @@ describe NotificationParentSelector do
     end
 
     context "when patient should not send notifications" do
-      let(:consents) { nil }
-
       before do
         allow(patient).to receive(:send_notifications?).and_return(false)
       end
 
       it "returns empty array" do
         expect(parents).to be_empty
+      end
+
+      context "when no consents are provided" do
+        let(:consents) { nil }
+
+        it "returns empty array" do
+          expect(parents).to be_empty
+        end
       end
     end
 
