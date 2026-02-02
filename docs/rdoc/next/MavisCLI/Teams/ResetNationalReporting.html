@@ -5,17 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class MavisCLI::Schools::AddToTeam - Mavis Documentation</title>
+<title>class MavisCLI::Teams::ResetNationalReporting - Mavis Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,MavisCLI::Schools::AddToTeam"
+    content="ruby,class,MavisCLI::Teams::ResetNationalReporting"
   >
 
     <meta
       name="description"
-      content="Documentation for the MavisCLI::Schools::AddToTeam class"
+      content="Documentation for the MavisCLI::Teams::ResetNationalReporting class"
     >
 
 
@@ -24,13 +24,13 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class MavisCLI::Schools::AddToTeam - Mavis Documentation">
+<meta property="og:title" content="class MavisCLI::Teams::ResetNationalReporting - Mavis Documentation">
 
 
 
     <meta
       property="og:description"
-      content="Documentation for MavisCLI::Schools::AddToTeam class - API reference and code examples"
+      content="Documentation for MavisCLI::Teams::ResetNationalReporting class - API reference and code examples"
     >
 
 
@@ -39,13 +39,13 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class MavisCLI::Schools::AddToTeam - Mavis Documentation">
+<meta name="twitter:title" content="class MavisCLI::Teams::ResetNationalReporting - Mavis Documentation">
 
 
 
     <meta
       name="twitter:description"
-      content="Documentation for MavisCLI::Schools::AddToTeam class - API reference and code examples"
+      content="Documentation for MavisCLI::Teams::ResetNationalReporting class - API reference and code examples"
     >
 
 
@@ -578,7 +578,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-maviscli-schools-addtoteam">
+<main role="main" aria-labelledby="class-maviscli-teams-resetnationalreporting">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -591,22 +591,22 @@
       
       <li>
         
-        <a href="../../MavisCLI/Schools.html">Schools</a><span>::</span>
+        <a href="../../MavisCLI/Teams.html">Teams</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>AddToTeam</span>
+        <span>ResetNationalReporting</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-MavisCLI::Schools::AddToTeam" class="legacy-anchor"></span>
-  <h1 id="class-maviscli-schools-addtoteam" class="anchor-link class">
-    class MavisCLI::Schools::AddToTeam
+  <span id="class-MavisCLI::Teams::ResetNationalReporting" class="legacy-anchor"></span>
+  <h1 id="class-maviscli-teams-resetnationalreporting" class="anchor-link class">
+    class MavisCLI::Teams::ResetNationalReporting
   </h1>
 
   <section class="description">
@@ -646,7 +646,7 @@
             <div class="method-heading">
               <a href="#method-i-call" title="Link to this method">
                 <span class="method-name">call</span>
-                <span class="method-args">(team_workgroup:, subteam_name:, urns:, programmes: [], **)</span>
+                <span class="method-args">(workgroup: nil, force: false, **)</span>
               </a>
             </div>
 
@@ -659,59 +659,58 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/schools/add_to_team.rb, line 21</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">team_workgroup:</span>, <span class="ruby-value">subteam_name:</span>, <span class="ruby-value">urns:</span>, <span class="ruby-value">programmes:</span> [], <span class="ruby-operator">**</span>)
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/teams/reset_national_reporting.rb, line 14</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">workgroup:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">force:</span> <span class="ruby-keyword">false</span>, <span class="ruby-operator">**</span>)
   <span class="ruby-constant">MavisCLI</span>.<span class="ruby-identifier">load_rails</span>
 
-  <span class="ruby-identifier">team</span> = <span class="ruby-constant">Team</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">workgroup:</span> <span class="ruby-identifier">team_workgroup</span>)
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">warn</span> <span class="ruby-node">&quot;Could not find team with workgroup #{team_workgroup}.&quot;</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">force</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:sync_national_reporting_to_imms_api</span>)
+    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Error: This operation is not allowed while sync_national_reporting_to_imms_api is enabled.&quot;</span>
     <span class="ruby-keyword">return</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">subteam</span> = <span class="ruby-identifier">team</span>.<span class="ruby-identifier">subteams</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">name:</span> <span class="ruby-identifier">subteam_name</span>)
+  <span class="ruby-identifier">teams</span> = <span class="ruby-identifier">find_teams</span>(<span class="ruby-identifier">workgroup</span>)
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">subteam</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">warn</span> <span class="ruby-node">&quot;Could not find subteam with name #{subteam_name}.&quot;</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">teams</span>.<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;No national reporting teams found.&quot;</span>
     <span class="ruby-keyword">return</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">programmes</span> =
-    (<span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">programmes</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find_all</span>(<span class="ruby-identifier">programmes</span>))
+  <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Found #{teams.count} national reporting team(s) to reset:&quot;</span>
+  <span class="ruby-identifier">teams</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">team</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;  - #{team.name} (#{team.workgroup})&quot;</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;    - Immunisation imports: #{ImmunisationImport.where(team:).count}&quot;</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;    - Total patients: #{find_patients_for_team(team).count}&quot;</span>
 
-  <span class="ruby-identifier">academic_year</span> = <span class="ruby-constant">AcademicYear</span>.<span class="ruby-identifier">pending</span>
-
-  <span class="ruby-identifier">locations</span> = []
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">urns_are_valid?</span>(<span class="ruby-identifier">urns</span>, <span class="ruby-identifier">team</span>, <span class="ruby-identifier">academic_year</span>, <span class="ruby-identifier">locations</span>)
-    <span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;URN validation failed.&quot;</span>
-    <span class="ruby-keyword">return</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">locations</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">location</span><span class="ruby-operator">|</span>
-      <span class="ruby-keyword">if</span> (
-           <span class="ruby-identifier">existing_team_locations</span> =
-             <span class="ruby-identifier">location</span>
-               .<span class="ruby-identifier">team_locations</span>
-               .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:team</span>, <span class="ruby-value">:subteam</span>)
-               .<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>)
-         )
-        <span class="ruby-identifier">existing_team_locations</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">existing_team_location</span><span class="ruby-operator">|</span>
-          <span class="ruby-identifier">warn</span> <span class="ruby-node">&quot;#{location.urn_and_site} previously belonged to #{existing_team_location.name}.&quot;</span>
-        <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">end</span>
-
-      <span class="ruby-identifier">location</span>.<span class="ruby-identifier">attach_to_team!</span>(<span class="ruby-identifier">team</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">subteam:</span>)
-      <span class="ruby-identifier">location</span>.<span class="ruby-identifier">import_year_groups_from_gias!</span>(<span class="ruby-value">academic_year:</span>)
-      <span class="ruby-identifier">location</span>.<span class="ruby-identifier">import_default_programme_year_groups!</span>(
-        <span class="ruby-identifier">programmes</span>,
-        <span class="ruby-value">academic_year:</span>
-      )
+    <span class="ruby-identifier">vaccination_records</span> = <span class="ruby-identifier">find_vaccination_records_for_team</span>(<span class="ruby-identifier">team</span>)
+    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;    - Vaccination records: #{vaccination_records.count}&quot;</span>
+    <span class="ruby-keyword">if</span> (<span class="ruby-identifier">synced</span> = <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">synced_to_nhs_immunisations_api</span>).<span class="ruby-identifier">any?</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;      - #{synced.count} vaccination record(s) have been&quot;</span> \
+             <span class="ruby-string">&quot; synced to NHS Immunisations API and will NOT be deleted&quot;</span>
     <span class="ruby-keyword">end</span>
 
-    <span class="ruby-constant">PatientTeamUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">team_scope:</span> <span class="ruby-constant">Team</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">id</span>))
+    <span class="ruby-identifier">archive_reasons</span> =
+      <span class="ruby-identifier">find_archive_reasons_for_team</span>(
+        <span class="ruby-identifier">team</span>,
+        <span class="ruby-identifier">find_patients_for_team</span>(<span class="ruby-identifier">team</span>).<span class="ruby-identifier">ids</span>
+      )
+    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;    - Archive reasons: #{archive_reasons.count}&quot;</span>
   <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">puts</span>
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-constant">MavisCLI</span>.<span class="ruby-identifier">prompt_to_continue</span>(
+           <span class="ruby-string">&quot;This will permanently delete all data associated with the&quot;</span> \
+             <span class="ruby-string">&quot;above teams. Continue? (y/n) &quot;</span>
+         )
+    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Operation cancelled.&quot;</span>
+    <span class="ruby-keyword">return</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">teams</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">team</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Resetting #{team.name} (#{team.workgroup})...&quot;</span>
+    <span class="ruby-identifier">reset_team</span>(<span class="ruby-identifier">team</span>)
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;\nAll teams reset successfully.&quot;</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
