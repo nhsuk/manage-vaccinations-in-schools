@@ -1,0 +1,22 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: wizard_path(:urn)) %>
+<% end %>
+
+<%= h1 "Confirm school" %>
+
+<div class="nhsuk-inset-text nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-4">
+  <span class="nhsuk-u-visually-hidden">Information: </span>
+  <p>
+    <span class="nhsuk-heading-m nhsuk-u-margin-bottom-0"><%= @draft_school.school.name %></span>
+    <%= format_address_single_line(@draft_school) %>
+  </p>
+</div>
+
+<%= form_with(model: @draft_school, url: wizard_path, method: :put) do |form| %>
+  <%= form.govuk_radio_buttons_fieldset :confirm_school, legend: { text: "Is this the correct school?", size: "s" } do %>
+    <%= form.govuk_radio_button :confirm_school, :yes, label: { text: "Yes, add this school" } %>
+    <%= form.govuk_radio_button :confirm_school, :no, label: { text: "No, search again" }, link_errors: true %>
+  <% end %>
+
+  <%= form.govuk_submit "Continue" %>
+<% end %>

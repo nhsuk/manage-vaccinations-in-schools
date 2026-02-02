@@ -163,6 +163,7 @@ Rails.application.routes.draw do
   resource :draft_vaccination_record,
            only: %i[show update],
            path: "draft-vaccination-record/:id"
+  resource :draft_school, only: %i[show update], path: "draft-school/:id"
   resource :draft_school_site,
            only: %i[show update],
            path: "draft-school-site/:id"

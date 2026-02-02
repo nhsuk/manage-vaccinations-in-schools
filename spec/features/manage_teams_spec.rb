@@ -73,11 +73,39 @@ describe "Manage teams" do
     and_the_site_details_are_updated
   end
 
+  scenario "Adding a school" do
+    given_my_team_exists
+    and_a_school_exists
+
+    when_i_click_on_team_settings
+    when_i_click_on_schools
+    then_i_see_the_team_schools
+
+    when_i_click_on_add_a_new_school
+    then_i_see_the_find_school_form
+
+    when_i_fill_in_the_urn_with_a_school_already_assigned_to_the_team
+    and_i_continue
+    then_i_see_a_validation_error_that_the_school_is_already_assigned
+
+    when_i_fill_in_the_urn_with_a_different_school
+    and_i_continue
+    then_i_see_the_confirm_school_form
+
+    when_i_confirm_the_school
+    then_i_see_the_school_confirmation_banner
+    and_a_school_is_created
+  end
+
   def given_my_team_exists
     @team = create(:team, :with_one_nurse)
     create(:school, team: @team, urn: "12345")
     create(:school, team: @team, urn: "34567")
     create(:community_clinic, team: @team)
+  end
+
+  def and_a_school_exists
+    @school = create(:school, urn: "100000")
   end
 
   def and_sites_exist
@@ -257,5 +285,48 @@ describe "Manage teams" do
 
   def when_i_go_back
     visit draft_school_site_path("confirm")
+  end
+
+  def when_i_click_on_add_a_new_school
+    click_on "Add a new school"
+  end
+
+  def then_i_see_the_find_school_form
+    expect(page).to have_content("Find a school to add to your team")
+    expect(page).to have_field("School URN")
+  end
+
+  def when_i_fill_in_the_urn_with_a_school_already_assigned_to_the_team
+    fill_in "School URN", with: "12345"
+  end
+
+  def when_i_fill_in_the_urn_with_a_different_school
+    fill_in "School URN", with: "100000"
+  end
+
+  def then_i_see_a_validation_error_that_the_school_is_already_assigned
+    expect(page).to have_content(
+      "This school or its sites are already assigned to your team"
+    )
+  end
+
+  def then_i_see_the_confirm_school_form
+    expect(page).to have_content("Confirm school")
+    expect(page).to have_content("Is this the correct school?")
+  end
+
+  def when_i_confirm_the_school
+    choose "Yes, add this school"
+    click_on "Continue"
+  end
+
+  def then_i_see_the_school_confirmation_banner
+    expect(page).to have_content("has been added to your team.")
+  end
+
+  def and_a_school_is_created
+    school = @team.schools.find_by(urn: "100000")
+    expect(school).to be_present
+    expect(school.teams).to include(@team)
   end
 end
