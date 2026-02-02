@@ -43,7 +43,8 @@ describe AppVaccinationRecordSummaryComponent do
       location_name:,
       protocol:,
       pending_changes: {
-        batch_id: other_batch&.id,
+        batch_number: other_batch&.name,
+        batch_expiry: other_batch&.expiry,
         delivery_method: :nasal_spray,
         delivery_site: :nose
       },
