@@ -679,35 +679,7 @@
         .<span class="ruby-identifier">code</span>
     <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">if</span> (
-       <span class="ruby-identifier">variant_type</span> =
-         <span class="ruby-operator">::</span><span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">key</span>(
-           <span class="ruby-identifier">target_disease_codes</span>.<span class="ruby-identifier">to_set</span>
-         )
-     )
-    <span class="ruby-comment"># If there is a matching `Programme::Variant`</span>
-    <span class="ruby-comment"># TODO: Make `Programme::Variant` type more generic, so that it can handle any programme type;</span>
-    <span class="ruby-comment">#       remove MMR hardcoding here</span>
-    <span class="ruby-keyword">if</span> <span class="ruby-node">%w[mmr mmrv]</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">variant_type</span>)
-      <span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(
-        <span class="ruby-string">&quot;mmr&quot;</span>,
-        <span class="ruby-value">disease_types:</span>
-          <span class="ruby-operator">::</span><span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(
-            <span class="ruby-identifier">variant_type</span>
-          )
-      )
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-identifier">raise</span> <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">InvalidType</span>,
-            <span class="ruby-node">&quot;Programme::Variant type not mapped to a Programme; #{variant_type}&quot;</span>
-    <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-comment"># Otherwise it must be a `Programme`</span>
-    <span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(
-      <span class="ruby-operator">::</span><span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">key</span>(
-        <span class="ruby-identifier">target_disease_codes</span>.<span class="ruby-identifier">to_set</span>
-      )
-    )
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find_by_snomed_target_disease_codes</span>(<span class="ruby-identifier">target_disease_codes</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
