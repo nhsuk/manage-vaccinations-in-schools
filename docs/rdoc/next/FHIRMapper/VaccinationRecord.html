@@ -725,7 +725,10 @@
                      <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">batch_from_fhir</span>(<span class="ruby-identifier">fhir_record</span>, <span class="ruby-value">vaccine:</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">fhir_record</span>.<span class="ruby-identifier">lotNumber</span>&amp;.<span class="ruby-identifier">to_s</span>&amp;.<span class="ruby-identifier">presence</span>.<span class="ruby-identifier">nil?</span>
 
-  <span class="ruby-operator">::</span><span class="ruby-constant">Batch</span>.<span class="ruby-identifier">create_with</span>(<span class="ruby-value">archived_at:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">current</span>).<span class="ruby-identifier">find_or_create_by!</span>(
+  <span class="ruby-operator">::</span><span class="ruby-constant">Batch</span>.<span class="ruby-identifier">create_with</span>(
+    <span class="ruby-value">archived_at:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">current</span>,
+    <span class="ruby-value">number:</span> <span class="ruby-identifier">fhir_record</span>.<span class="ruby-identifier">lotNumber</span>&amp;.<span class="ruby-identifier">to_s</span>
+  ).<span class="ruby-identifier">find_or_create_by!</span>(
     <span class="ruby-value">expiry:</span> <span class="ruby-identifier">fhir_record</span>.<span class="ruby-identifier">expirationDate</span>&amp;.<span class="ruby-identifier">to_date</span>,
     <span class="ruby-value">name:</span> <span class="ruby-identifier">fhir_record</span>.<span class="ruby-identifier">lotNumber</span>&amp;.<span class="ruby-identifier">to_s</span>,
     <span class="ruby-value">team:</span> <span class="ruby-keyword">nil</span>,

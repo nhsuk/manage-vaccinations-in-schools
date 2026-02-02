@@ -682,7 +682,7 @@
 
   <span class="ruby-identifier">batch</span>.<span class="ruby-identifier">archived_at</span> = <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">batch</span>.<span class="ruby-identifier">archived?</span>
 
-  <span class="ruby-ivar">@form</span> = <span class="ruby-constant">BatchForm</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">batch_form_params</span>, <span class="ruby-value">batch:</span>)
+  <span class="ruby-ivar">@form</span> = <span class="ruby-constant">BatchForm</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">batch_form_params</span>.<span class="ruby-identifier">except</span>(<span class="ruby-value">:number</span>), <span class="ruby-value">batch:</span>)
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">expiry_validator</span>.<span class="ruby-identifier">date_params_valid?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@form</span>.<span class="ruby-identifier">save</span>
     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">vaccines_path</span>,
@@ -776,7 +776,7 @@
             </details>
           </div>
           <div class="method-source-code" id="edit_archive-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 63</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 68</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">edit_archive</span>
   <span class="ruby-identifier">render</span> <span class="ruby-value">:archive</span>
 <span class="ruby-keyword">end</span></pre>
@@ -906,7 +906,12 @@
           <div class="method-source-code" id="update-source">
             <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 48</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>
-  <span class="ruby-ivar">@form</span> = <span class="ruby-constant">BatchForm</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">batch_form_params</span>, <span class="ruby-value">batch:</span> <span class="ruby-ivar">@batch</span>, <span class="ruby-value">name:</span> <span class="ruby-ivar">@batch</span>.<span class="ruby-identifier">name</span>)
+  <span class="ruby-ivar">@form</span> =
+    <span class="ruby-constant">BatchForm</span>.<span class="ruby-identifier">new</span>(
+      <span class="ruby-operator">**</span><span class="ruby-identifier">batch_form_params</span>.<span class="ruby-identifier">except</span>(<span class="ruby-value">:number</span>),
+      <span class="ruby-value">batch:</span> <span class="ruby-ivar">@batch</span>,
+      <span class="ruby-value">name:</span> <span class="ruby-ivar">@batch</span>.<span class="ruby-identifier">name</span>
+    )
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">expiry_validator</span>.<span class="ruby-identifier">date_params_valid?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@form</span>.<span class="ruby-identifier">save</span>
     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">vaccines_path</span>,
@@ -957,7 +962,7 @@
             </details>
           </div>
           <div class="method-source-code" id="update_archive-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 67</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 72</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_archive</span>
   <span class="ruby-ivar">@batch</span>.<span class="ruby-identifier">archive!</span>
 
