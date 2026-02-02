@@ -63,8 +63,18 @@ class AlreadyHadNotificationSender
 
   def academic_year = AcademicYear.current
 
-  def other_vaccination_records
-    patient.vaccination_records.where.not(id: vaccination_record.id)
+  def previous_vaccination_records
+    # We need to ensure there is a deterministic order of vaccination records on
+    # a child so that the :already_vaccinated_notification is sent once and only
+    # once per child. Using created_at alone is not sufficient as batching
+    # allows for multiple vaccination records to be created with the same
+    # created_at timestamp. We chose the ID as a tie-breaker since IDs are
+    # unique and sequential.
+    patient.vaccination_records.where(
+      "(created_at < :created_at) OR (created_at = :created_at AND id < :id)",
+      created_at: vaccination_record.created_at,
+      id: vaccination_record.id
+    )
   end
 
   def was_already_vaccinated?
@@ -80,7 +90,7 @@ class AlreadyHadNotificationSender
       programme_type:,
       academic_year:,
       patient:,
-      vaccination_records: other_vaccination_records,
+      vaccination_records: previous_vaccination_records,
       patient_locations: [],
       consents: [],
       triages: [],
