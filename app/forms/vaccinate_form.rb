@@ -151,6 +151,7 @@ class VaccinateForm
     draft_vaccination_record.source = "service"
     draft_vaccination_record.supplied_by_user_id =
       supplied_by_user_id || psd_created_by_user_id
+    draft_vaccination_record.uuid = generate_uuid
 
     draft_vaccination_record.save # rubocop:disable Rails/SaveBang
   end
@@ -210,5 +211,13 @@ class VaccinateForm
         performed_by: current_user,
         programme:
       )
+  end
+
+  def generate_uuid
+    10
+      .times
+      .map { SecureRandom.uuid }
+      .find { !VaccinationRecord.exists?(uuid: it) } or
+      raise "Unable to generate unique UUID"
   end
 end

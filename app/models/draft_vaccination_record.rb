@@ -37,6 +37,7 @@ class DraftVaccinationRecord
   attribute :session_id, :integer
   attribute :source, :string
   attribute :supplied_by_user_id, :integer
+  attribute :uuid, :string
   attribute :vaccine_id, :integer
 
   MMR_OR_MMRV_INTRODUCTION_DATE = Date.new(2020, 1, 1).freeze
@@ -417,6 +418,7 @@ class DraftVaccinationRecord
       session_id
       source
       supplied_by_user_id
+      uuid
       vaccine_id
     ]
   end
