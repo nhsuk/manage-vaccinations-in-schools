@@ -729,6 +729,7 @@
     <span class="ruby-constant">PatientTeamUpdater</span>.<span class="ruby-identifier">call</span>(
       <span class="ruby-value">patient_scope:</span> <span class="ruby-constant">Patient</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">patients</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:id</span>))
     )
+
     <span class="ruby-constant">StatusUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">patient:</span> <span class="ruby-identifier">patients</span>)
   <span class="ruby-keyword">end</span>
 
@@ -925,7 +926,7 @@
             </details>
           </div>
           <div class="method-source-code" id="batch-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/vaccination_records.rb, line 146</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/vaccination_records.rb, line 147</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">batch</span>
   (<span class="ruby-ivar">@batches</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">vaccine</span>.<span class="ruby-identifier">batches</span>).<span class="ruby-identifier">sample</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1012,6 +1013,7 @@
   <span class="ruby-constant">PatientTeamUpdater</span>.<span class="ruby-identifier">call</span>(
     <span class="ruby-value">patient_scope:</span> <span class="ruby-constant">Patient</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">patients</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:id</span>))
   )
+
   <span class="ruby-constant">StatusUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">patient:</span> <span class="ruby-identifier">patients</span>)
 <span class="ruby-keyword">end</span>
 
@@ -1148,7 +1150,7 @@
             </details>
           </div>
           <div class="method-source-code" id="check_sessions_have_enough_patients-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/vaccination_records.rb, line 58</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/vaccination_records.rb, line 59</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">check_sessions_have_enough_patients</span>
   <span class="ruby-identifier">available_patients</span> = <span class="ruby-identifier">sessions</span>.<span class="ruby-identifier">sum</span> { <span class="ruby-identifier">patients_for</span>(<span class="ruby-value">session:</span> <span class="ruby-identifier">it</span>).<span class="ruby-identifier">count</span> }
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">available_patients</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">administered</span>
@@ -1195,7 +1197,7 @@
             </details>
           </div>
           <div class="method-source-code" id="create_administered_vaccination-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/vaccination_records.rb, line 81</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/vaccination_records.rb, line 82</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create_administered_vaccination</span>(<span class="ruby-identifier">session</span>, <span class="ruby-identifier">patient</span>)
   <span class="ruby-identifier">location</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>
 
@@ -1287,6 +1289,7 @@
   <span class="ruby-constant">PatientTeamUpdater</span>.<span class="ruby-identifier">call</span>(
     <span class="ruby-value">patient_scope:</span> <span class="ruby-constant">Patient</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">patients</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:id</span>))
   )
+
   <span class="ruby-constant">StatusUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">patient:</span> <span class="ruby-identifier">patients</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -1327,7 +1330,7 @@
             </details>
           </div>
           <div class="method-source-code" id="each_random_patient_ready_for_vaccination-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/vaccination_records.rb, line 67</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/vaccination_records.rb, line 68</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">each_random_patient_ready_for_vaccination</span>(<span class="ruby-identifier">count</span>)
   <span class="ruby-identifier">count</span>.<span class="ruby-identifier">times</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">session</span> = <span class="ruby-identifier">sessions</span>.<span class="ruby-identifier">sample</span>
@@ -1379,7 +1382,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patients_for-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/vaccination_records.rb, line 126</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/vaccination_records.rb, line 127</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patients_for</span>(<span class="ruby-value">session:</span>)
   <span class="ruby-ivar">@patients_for</span> <span class="ruby-operator">||=</span> {}
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@patients_for</span>[<span class="ruby-identifier">session</span>.<span class="ruby-identifier">id</span>] <span class="ruby-keyword">if</span> <span class="ruby-ivar">@patients_for</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">session</span>.<span class="ruby-identifier">id</span>)
@@ -1433,7 +1436,7 @@
             </details>
           </div>
           <div class="method-source-code" id="performed_by-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/vaccination_records.rb, line 150</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/vaccination_records.rb, line 151</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performed_by</span>
   (<span class="ruby-ivar">@team_users</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">users</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:teams</span>)).<span class="ruby-identifier">sample</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1475,7 +1478,7 @@
             </details>
           </div>
           <div class="method-source-code" id="sessions-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/vaccination_records.rb, line 110</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/vaccination_records.rb, line 111</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sessions</span>
   <span class="ruby-ivar">@sessions</span> <span class="ruby-operator">||=</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>
@@ -1529,7 +1532,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/vaccination_records.rb, line 142</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/vaccination_records.rb, line 143</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine</span>
   (<span class="ruby-ivar">@vaccines</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">vaccines</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:batches</span>).<span class="ruby-identifier">active</span>).<span class="ruby-identifier">first</span>
 <span class="ruby-keyword">end</span></pre>
