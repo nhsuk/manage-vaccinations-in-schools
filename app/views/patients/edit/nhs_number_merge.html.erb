@@ -16,7 +16,7 @@
 <%= render AppPatientCardComponent.new(
       @existing_patient,
       current_team:,
-      show_parents: !current_team.has_upload_only_access?,
+      show_parents: !current_team.has_national_reporting_access?,
     ) %>
 
 <%= form_with model: @form, url: edit_nhs_number_merge_patient_path(@patient), method: :put do |f| %>

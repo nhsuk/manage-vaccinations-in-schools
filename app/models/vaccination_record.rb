@@ -182,7 +182,7 @@ class VaccinationRecord < ApplicationRecord
          historical_upload: 1,
          nhs_immunisations_api: 2,
          consent_refusal: 3,
-         bulk_upload: 4
+         national_reporting: 4
        },
        prefix: "sourced_from",
        validate: true
@@ -243,7 +243,7 @@ class VaccinationRecord < ApplicationRecord
   validates :local_patient_id,
             :local_patient_id_uri,
             absence: {
-              unless: :sourced_from_bulk_upload?
+              unless: :sourced_from_national_reporting?
             }
 
   after_save :generate_important_notice_if_needed

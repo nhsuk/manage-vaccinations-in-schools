@@ -89,12 +89,18 @@ class PatientsController < ApplicationController
 
   def set_programmes
     @programmes =
-      (current_team.has_upload_only_access? ? [] : current_team.programmes)
+      (
+        if current_team.has_national_reporting_access?
+          []
+        else
+          current_team.programmes
+        end
+      )
   end
 
   def set_programme_statuses
     @programme_statuses =
-      if current_team.has_upload_only_access?
+      if current_team.has_national_reporting_access?
         []
       else
         Patient::ProgrammeStatus.statuses.keys -
@@ -109,13 +115,13 @@ class PatientsController < ApplicationController
   end
 
   def set_visibility_flags
-    upload_only_access = current_team.has_upload_only_access?
+    national_reporting_access = current_team.has_national_reporting_access?
 
-    @show_aged_out_of_programmes = !upload_only_access
-    @show_archived_records = !upload_only_access
-    @show_patient_school = !upload_only_access
-    @show_vaccinated_programme_status_only = upload_only_access
-    @show_patient_postcode = upload_only_access
+    @show_aged_out_of_programmes = !national_reporting_access
+    @show_archived_records = !national_reporting_access
+    @show_patient_school = !national_reporting_access
+    @show_vaccinated_programme_status_only = national_reporting_access
+    @show_patient_postcode = national_reporting_access
   end
 
   def set_patient

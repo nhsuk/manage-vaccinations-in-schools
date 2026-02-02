@@ -8,7 +8,7 @@ class TrainingOnboardingConfiguration
   end
 
   def call
-    if type == "upload_only"
+    if type == "national_reporting"
       { organisation:, team: }
     else
       {
@@ -46,7 +46,7 @@ class TrainingOnboardingConfiguration
   end
 
   def team
-    if type == "upload_only"
+    if type == "national_reporting"
       { name:, workgroup:, type: }
     else
       {

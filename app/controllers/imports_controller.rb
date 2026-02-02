@@ -18,7 +18,7 @@ class ImportsController < ApplicationController
   end
 
   def create
-    if current_team.has_upload_only_access?
+    if current_team.has_national_reporting_access?
       redirect_to new_immunisation_import_path
     else
       DraftImport.new(request_session: session, current_user:).clear!

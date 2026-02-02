@@ -6,7 +6,7 @@ class TeamPolicy < ApplicationPolicy
   def update? = false
   def destroy? = false
 
-  def show? = team.has_poc_only_access? && record == team
+  def show? = team.has_point_of_care_access? && record == team
 
   alias_method :contact_details?, :show?
   alias_method :schools?, :show?

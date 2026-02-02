@@ -3,10 +3,12 @@
 describe ParentRelationshipPolicy do
   subject(:policy) { described_class }
 
-  let(:poc_only_team) { create(:team, :poc_only) }
-  let(:upload_only_team) { create(:team, :upload_only) }
-  let(:poc_only_user) { create(:nurse, teams: [poc_only_team]) }
-  let(:upload_only_user) { create(:nurse, teams: [upload_only_team]) }
+  let(:point_of_care_team) { create(:team, :point_of_care) }
+  let(:national_reporting_team) { create(:team, :national_reporting) }
+  let(:point_of_care_user) { create(:nurse, teams: [point_of_care_team]) }
+  let(:national_reporting_user) do
+    create(:nurse, teams: [national_reporting_team])
+  end
   let(:parent_relationship) { create(:parent_relationship) }
 
   permissions :index?,
@@ -17,7 +19,7 @@ describe ParentRelationshipPolicy do
               :new?,
               :show?,
               :update? do
-    it { should permit(poc_only_user, parent_relationship) }
-    it { should_not permit(upload_only_user, parent_relationship) }
+    it { should permit(point_of_care_user, parent_relationship) }
+    it { should_not permit(national_reporting_user, parent_relationship) }
   end
 end

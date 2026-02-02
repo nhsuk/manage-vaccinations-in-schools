@@ -16,7 +16,7 @@ describe "/api/testing/onboard" do
     end
 
     context "with a valid configuration file" do
-      let(:filename) { "onboarding/poc_valid.yaml" }
+      let(:filename) { "onboarding/point_of_care_valid.yaml" }
 
       before do
         Programme.hpv

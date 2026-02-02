@@ -873,9 +873,9 @@ describe Patient do
       end
     end
 
-    context "when the team has upload only access" do
+    context "when the team has national reporting access" do
       let(:patient) { create(:patient, school:, year_group: 1) }
-      let(:team) { create(:team, :upload_only) }
+      let(:team) { create(:team, :national_reporting) }
 
       it { should be(false) }
     end

@@ -92,7 +92,7 @@ class PatientSearchForm < SearchForm
   end
 
   def filter_aged_out_of_programmes(scope)
-    return scope if team.has_upload_only_access?
+    return scope if team.has_national_reporting_access?
 
     if aged_out_of_programmes
       scope.not_appear_in_programmes(team.programmes, academic_year:)
@@ -106,7 +106,7 @@ class PatientSearchForm < SearchForm
   end
 
   def filter_archived(scope)
-    return scope if team.has_upload_only_access?
+    return scope if team.has_national_reporting_access?
 
     if archived
       scope.archived(team:)

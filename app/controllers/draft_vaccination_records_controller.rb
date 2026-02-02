@@ -18,12 +18,12 @@ class DraftVaccinationRecordsController < ApplicationController
   before_action :set_batches,
                 if: -> do
                   current_step == :batch &&
-                    !@draft_vaccination_record.bulk_upload_user_and_record?
+                    !@draft_vaccination_record.national_reporting_user_and_record?
                 end
   before_action :set_vaccines,
                 if: -> do
                   current_step == :batch &&
-                    @draft_vaccination_record.bulk_upload_user_and_record?
+                    @draft_vaccination_record.national_reporting_user_and_record?
                 end
   before_action :set_locations, if: -> { current_step == :location }
   before_action :set_supplied_by_users, if: -> { current_step == :supplier }
@@ -84,7 +84,7 @@ class DraftVaccinationRecordsController < ApplicationController
         render_wizard nil, status: :unprocessable_content
       end
     elsif current_step == :batch &&
-          @draft_vaccination_record.bulk_upload_user_and_record?
+          @draft_vaccination_record.national_reporting_user_and_record?
       validator =
         DateParamsValidator.new(
           field_name: :batch_expiry,
@@ -125,7 +125,7 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def handle_location
-    if @draft_vaccination_record.bulk_upload_user_and_record?
+    if @draft_vaccination_record.national_reporting_user_and_record?
       location_id = update_params[:location_id]
 
       if location_id == "unknown"
@@ -270,7 +270,7 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def set_locations
-    if @draft_vaccination_record.bulk_upload_user_and_record?
+    if @draft_vaccination_record.national_reporting_user_and_record?
       @location_query = params[:q]
       scope = Location.school.where(status: "open")
 

@@ -390,7 +390,7 @@ describe SearchVaccinationRecordsInNHSJob do
 
         create(
           :vaccination_record,
-          :sourced_from_bulk_upload,
+          :sourced_from_national_reporting,
           patient:,
           performed_at:,
           programme:

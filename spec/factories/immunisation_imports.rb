@@ -41,7 +41,7 @@ FactoryBot.define do
     csv_filename { Faker::File.file_name(ext: "csv") }
     rows_count { rand(100..1000) }
 
-    type { "poc" }
+    type { "point_of_care" }
 
     trait :csv_removed do
       csv_data { nil }

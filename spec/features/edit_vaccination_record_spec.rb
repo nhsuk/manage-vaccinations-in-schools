@@ -270,7 +270,7 @@ describe "Edit vaccination record" do
       and_i_should_see_parent_details
     end
 
-    scenario "Breadcrumb shows session-specific path for POC team" do
+    scenario "Breadcrumb shows session-specific path for point of care team" do
       given_i_am_signed_in
       and_an_administered_vaccination_record_exists
 
@@ -280,12 +280,12 @@ describe "Edit vaccination record" do
     end
   end
 
-  context "in bulk upload Mavis" do
-    before { given_a_bulk_upload_team_exists }
+  context "in national reporting Mavis" do
+    before { given_a_national_reporting_team_exists }
 
-    scenario "Bulk upload user edits a national reporting uploaded vaccination record" do
+    scenario "National reporting user edits a national reporting uploaded vaccination record" do
       given_i_am_signed_in
-      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_national_reporting_vaccination_record_exists
 
       when_i_go_to_the_vaccination_record_for_the_patient
       then_i_should_see_the_vaccination_record
@@ -307,7 +307,7 @@ describe "Edit vaccination record" do
 
     scenario "Edits the vaccinator" do
       given_i_am_signed_in
-      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_national_reporting_vaccination_record_exists
 
       when_i_navigate_to_the_edit_vaccination_record_page
 
@@ -322,7 +322,7 @@ describe "Edit vaccination record" do
 
     scenario "Edits dose number" do
       given_i_am_signed_in
-      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_national_reporting_vaccination_record_exists
 
       when_i_navigate_to_the_edit_vaccination_record_page
 
@@ -337,7 +337,7 @@ describe "Edit vaccination record" do
 
     scenario "Edits the location" do
       given_i_am_signed_in
-      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_national_reporting_vaccination_record_exists
 
       when_i_navigate_to_the_edit_vaccination_record_page
 
@@ -363,7 +363,7 @@ describe "Edit vaccination record" do
 
     scenario "Edits notes" do
       given_i_am_signed_in
-      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_national_reporting_vaccination_record_exists
 
       when_i_navigate_to_the_edit_vaccination_record_page
 
@@ -379,7 +379,7 @@ describe "Edit vaccination record" do
 
     scenario "Edits the batch" do
       given_i_am_signed_in
-      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_national_reporting_vaccination_record_exists
 
       when_i_navigate_to_the_edit_vaccination_record_page
 
@@ -413,7 +413,7 @@ describe "Edit vaccination record" do
 
     scenario "Parent details are not visible when viewing vaccination records" do
       given_i_am_signed_in
-      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_national_reporting_vaccination_record_exists
       and_the_patient_has_parents
 
       when_i_go_to_the_vaccination_record_for_the_patient
@@ -424,7 +424,7 @@ describe "Edit vaccination record" do
     scenario "Breadcrumb shows patient-based path when viewing session-based vaccination record" do
       given_i_am_signed_in
       and_a_vaccination_record_with_a_session_exists
-      and_the_patient_is_accessible_to_the_upload_only_team
+      and_the_patient_is_accessible_to_the_national_reporting_team
 
       when_i_visit_the_vaccination_record_directly
       then_i_should_see_the_vaccination_record
@@ -433,7 +433,7 @@ describe "Edit vaccination record" do
 
     scenario "User edits two vaccination records with different delivery methods" do
       given_i_am_signed_in
-      and_a_bulk_uploaded_vaccination_record_exists
+      and_a_national_reporting_vaccination_record_exists
       and_a_vaccination_record_with_a_different_delivery_method_exists
 
       when_i_visit_the_first_vaccination_record_directly
@@ -488,14 +488,14 @@ describe "Edit vaccination record" do
       )
   end
 
-  def given_a_bulk_upload_team_exists
+  def given_a_national_reporting_team_exists
     @programme = Programme.hpv
 
     @team =
       create(
         :team,
         :with_one_admin,
-        :upload_only,
+        :national_reporting,
         ods_code: "R1L",
         programmes: [Programme.hpv, Programme.flu]
       )
@@ -503,7 +503,7 @@ describe "Edit vaccination record" do
     @patient =
       create(
         :patient,
-        :bulk_uploaded,
+        :in_national_reporting_upload,
         given_name: "John",
         family_name: "Smith",
         team: @team,
@@ -546,11 +546,11 @@ describe "Edit vaccination record" do
     Sidekiq::Job.drain_all if Flipper.enabled?(:imms_api_integration)
   end
 
-  def and_a_bulk_uploaded_vaccination_record_exists
+  def and_a_national_reporting_vaccination_record_exists
     @vaccination_record =
       create(
         :vaccination_record,
-        :sourced_from_bulk_upload,
+        :sourced_from_national_reporting,
         uploaded_by: @team.users.first,
         batch: @batch,
         vaccine: @batch.vaccine,
@@ -571,7 +571,7 @@ describe "Edit vaccination record" do
     @flu_vaccination_record =
       create(
         :vaccination_record,
-        :sourced_from_bulk_upload,
+        :sourced_from_national_reporting,
         uploaded_by: @team.users.first,
         delivery_method: :nasal_spray,
         delivery_site: :nose,
@@ -1086,8 +1086,8 @@ describe "Edit vaccination record" do
       )
   end
 
-  def and_the_patient_is_accessible_to_the_upload_only_team
-    # Patient is already part of the upload-only team from the before block
+  def and_the_patient_is_accessible_to_the_national_reporting_team
+    # Patient is already part of the national reporting team from the before block
     # Just ensure patient_team association exists
     PatientTeam.find_or_create_by!(patient: @patient, team: @team)
   end

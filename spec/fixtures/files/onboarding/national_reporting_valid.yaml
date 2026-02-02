@@ -3,5 +3,5 @@ organisation:
 
 team:
   name: NHS Trust
-  type: upload_only
+  type: national_reporting
   workgroup: nhstrust

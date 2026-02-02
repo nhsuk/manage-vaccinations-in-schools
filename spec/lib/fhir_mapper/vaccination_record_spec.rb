@@ -117,7 +117,7 @@ describe FHIRMapper::VaccinationRecord do
         let(:vaccination_record) do
           create(
             :vaccination_record,
-            :sourced_from_bulk_upload,
+            :sourced_from_national_reporting,
             uploaded_by: User.first,
             performed_ods_code: :national_reporting_test_ods_code,
             patient:,
@@ -862,9 +862,9 @@ describe FHIRMapper::VaccinationRecord do
         end
       end
 
-      context "with a record that is the minimum which can be created based on the spec (for CSV bulk upload)" do
+      context "with a record that is the minimum which can be created based on the spec (for CSV national reporting)" do
         let(:fixture_file_name) do
-          "fhir/flu/fhir_record_minimum_bulk_spec.json"
+          "fhir/flu/fhir_record_minimum_national_reporting_spec.json"
         end
 
         include_examples "a mapped vaccination record (common fields)"

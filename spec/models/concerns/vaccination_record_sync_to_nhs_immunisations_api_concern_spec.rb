@@ -88,7 +88,11 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
 
     context "when vaccination record was uploaded through national reporting portal" do
       let!(:vaccination_record) do
-        create(:vaccination_record, :sourced_from_bulk_upload, programme:)
+        create(
+          :vaccination_record,
+          :sourced_from_national_reporting,
+          programme:
+        )
       end
 
       it { should include(vaccination_record) }
@@ -97,7 +101,11 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
         before { Flipper.disable(:sync_national_reporting_to_imms_api) }
 
         let!(:vaccination_record) do
-          create(:vaccination_record, :sourced_from_bulk_upload, programme:)
+          create(
+            :vaccination_record,
+            :sourced_from_national_reporting,
+            programme:
+          )
         end
 
         it { should_not include(vaccination_record) }
@@ -146,7 +154,7 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
       let(:vaccination_record) do
         build(
           :vaccination_record,
-          :sourced_from_bulk_upload,
+          :sourced_from_national_reporting,
           outcome:,
           programme:
         )

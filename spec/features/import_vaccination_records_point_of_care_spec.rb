@@ -119,7 +119,7 @@ describe "Immunisation imports" do
   def when_i_upload_an_invalid_file
     attach_file(
       "immunisation_import[csv]",
-      "spec/fixtures/immunisation_import/invalid_rows.csv"
+      "spec/fixtures/immunisation_import/point_of_care/invalid_rows.csv"
     )
     click_on "Continue"
     wait_for_import_to_complete(ImmunisationImport)
@@ -147,7 +147,7 @@ describe "Immunisation imports" do
   def and_i_upload_a_valid_file
     attach_file(
       "immunisation_import[csv]",
-      "spec/fixtures/immunisation_import/valid_hpv.csv"
+      "spec/fixtures/immunisation_import/point_of_care/valid_hpv.csv"
     )
     click_on "Continue"
     wait_for_import_to_complete(ImmunisationImport)

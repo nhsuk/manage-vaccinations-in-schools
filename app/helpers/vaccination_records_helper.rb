@@ -20,7 +20,7 @@ module VaccinationRecordsHelper
   end
 
   def vaccination_record_source(vaccination_record)
-    if vaccination_record.sourced_from_bulk_upload?
+    if vaccination_record.sourced_from_national_reporting?
       "Mavis national reporting upload"
     else
       vaccination_record.human_enum_name(:source)

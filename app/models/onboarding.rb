@@ -4,7 +4,7 @@ class Onboarding
   include ActiveModel::Model
 
   CLINIC_ATTRIBUTES = {
-    poc_only: %i[
+    point_of_care: %i[
       address_line_1
       address_line_2
       address_postcode
@@ -14,16 +14,16 @@ class Onboarding
       url
       year_groups
     ],
-    upload_only: []
+    national_reporting: []
   }.freeze
 
   ORGANISATION_ATTRIBUTES = {
-    poc_only: %i[ods_code],
-    upload_only: %i[ods_code]
+    point_of_care: %i[ods_code],
+    national_reporting: %i[ods_code]
   }.freeze
 
   TEAM_ATTRIBUTES = {
-    poc_only: %i[
+    point_of_care: %i[
       careplus_staff_code
       careplus_staff_type
       careplus_venue_code
@@ -40,29 +40,32 @@ class Onboarding
       type
       workgroup
     ],
-    upload_only: %i[name type workgroup]
+    national_reporting: %i[name type workgroup]
   }.freeze
 
   SUBTEAM_ATTRIBUTES = {
-    poc_only: %i[email name phone phone_instructions reply_to_id],
-    upload_only: []
+    point_of_care: %i[email name phone phone_instructions reply_to_id],
+    national_reporting: []
   }.freeze
 
   USER_ATTRIBUTES = {
-    poc_only: %i[email fallback_role family_name given_name password],
-    upload_only: []
+    point_of_care: %i[email fallback_role family_name given_name password],
+    national_reporting: []
   }.freeze
 
-  DEFAULT_PROGRAMMES = { poc_only: [], upload_only: %w[flu hpv] }.freeze
+  DEFAULT_PROGRAMMES = {
+    point_of_care: [],
+    national_reporting: %w[flu hpv]
+  }.freeze
 
   validates :team, presence: true
   validates :programmes, presence: true
-  with_options if: -> { team.has_upload_only_access? } do
+  with_options if: -> { team.has_national_reporting_access? } do
     validates :subteams, absence: true
     validates :schools, absence: true
     validates :clinics, absence: true
   end
-  with_options unless: -> { team.has_upload_only_access? } do
+  with_options unless: -> { team.has_national_reporting_access? } do
     validates :subteams, presence: true
     validates :schools, presence: true
     validates :clinics, presence: true
@@ -73,7 +76,7 @@ class Onboarding
   def initialize(hash)
     config = hash.deep_symbolize_keys
 
-    team_type = config.fetch(:team, {})&.fetch(:type, "poc_only")&.to_sym
+    team_type = config.fetch(:team, {})&.fetch(:type, "point_of_care")&.to_sym
 
     @organisation =
       Organisation.find_or_initialize_by(
@@ -238,7 +241,7 @@ class Onboarding
 
       @users.each { |user| user.teams << team }
 
-      unless team.has_upload_only_access?
+      unless team.has_national_reporting_access?
         academic_years.each do |academic_year|
           GenericClinicFactory.call(team:, academic_year:)
         end

@@ -3,10 +3,10 @@
 require_relative "../../app/lib/mavis_cli"
 
 describe "mavis teams onboard" do
-  context "with a valid poc configuration" do
+  context "with a valid point of care configuration" do
     it "runs successfully" do
       given_programmes_and_schools_exist
-      when_i_run_the_valid_command_for_a_poc_team
+      when_i_run_the_valid_command_for_a_point_of_care_team
       then_i_see_no_output
       and_a_new_team_is_created
       and_schools_are_added_to_the_team_appropriately
@@ -48,9 +48,13 @@ describe "mavis teams onboard" do
     end
   end
 
-  def command_with_valid_poc_configuration
+  def command_with_valid_point_of_care_configuration
     Dry::CLI.new(MavisCLI).call(
-      arguments: %w[teams onboard spec/fixtures/files/onboarding/poc_valid.yaml]
+      arguments: %w[
+        teams
+        onboard
+        spec/fixtures/files/onboarding/point_of_care_valid.yaml
+      ]
     )
   end
 
@@ -120,8 +124,8 @@ describe "mavis teams onboard" do
       )
   end
 
-  def when_i_run_the_valid_command_for_a_poc_team
-    @output = capture_output { command_with_valid_poc_configuration }
+  def when_i_run_the_valid_command_for_a_point_of_care_team
+    @output = capture_output { command_with_valid_point_of_care_configuration }
   end
 
   def when_i_run_the_valid_command_for_a_national_reporting_team

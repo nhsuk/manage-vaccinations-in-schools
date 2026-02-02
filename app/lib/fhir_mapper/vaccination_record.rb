@@ -130,7 +130,7 @@ module FHIRMapper
 
     def fhir_identifier
       case source
-      when "bulk_upload"
+      when "national_reporting"
         FHIR::Identifier.new(
           system: MAVIS_NATIONAL_REPORTING_SYSTEM_NAME,
           value: uuid

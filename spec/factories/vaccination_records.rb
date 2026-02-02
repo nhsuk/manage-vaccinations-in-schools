@@ -139,13 +139,13 @@ FactoryBot.define do
       nhs_immunisations_api_primary_source { true }
     end
 
-    trait :sourced_from_bulk_upload do
+    trait :sourced_from_national_reporting do
       transient do
         uploaded_by { nil }
         immunisation_import { nil }
       end
 
-      source { "bulk_upload" }
+      source { "national_reporting" }
       programme { [Programme.flu, Programme.hpv].sample }
 
       after(:create) do |vaccination_record, evaluator|
@@ -159,7 +159,7 @@ FactoryBot.define do
           else
             create(
               :immunisation_import,
-              type: "bulk",
+              type: "national_reporting",
               vaccination_records: [vaccination_record],
               team: evaluator.uploaded_by.selected_team,
               uploaded_by: evaluator.uploaded_by

@@ -23,28 +23,28 @@
   <% end %>
 <% end %>
 
-<% if current_team.has_upload_only_access? %>
+<% if current_team.has_national_reporting_access? %>
   <%= vaccinations_card %>
 <% end %>
 
 <%= render AppPatientCardComponent.new(
       @patient,
       current_team:,
-      show_parents: !current_team.has_upload_only_access?,
+      show_parents: !current_team.has_national_reporting_access?,
     ) do %>
   <% if @patient.not_archived?(team: current_team) %>
     <div class="nhsuk-button-group">
       <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), secondary: true %>
       <%= govuk_button_link_to "Archive child record", new_patient_archive_path(@patient), class: "app-button--secondary-warning" %>
     </div>
-  <% elsif current_team.has_upload_only_access? %>
+  <% elsif current_team.has_national_reporting_access? %>
     <div class="nhsuk-button-group">
       <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), secondary: true %>
     </div>
   <% end %>
 <% end %>
 
-<% unless current_team.has_upload_only_access? %>
+<% unless current_team.has_national_reporting_access? %>
 
   <%= render AppCardComponent.new(section: true) do |card| %>
     <%= render AppPatientProgrammesTableComponent.new(

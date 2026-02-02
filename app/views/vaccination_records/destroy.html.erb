@@ -12,7 +12,7 @@
 <% end %>
 
 <p>
-  <% if current_team.has_upload_only_access? %>
+  <% if current_team.has_national_reporting_access? %>
     This vaccination record may be removed from other NHS systems.
   <% else %>
     Archived records may also be removed from other NHS systems, such as GP records. If the child’s parents were

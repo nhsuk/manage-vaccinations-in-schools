@@ -16,15 +16,15 @@ module MavisCLI
       option :workgroup, desc: "The workgroup for the training team"
       option :type,
              desc:
-               "The type of team to onboard, either 'poc_only' or 'upload_only'",
-             default: "poc_only"
+               "The type of team to onboard, either 'point_of_care' or 'national_reporting'",
+             default: "point_of_care"
 
       def call(
         path: nil,
         training: false,
         ods_code: nil,
         workgroup: nil,
-        type: "poc_only",
+        type: "point_of_care",
         **
       )
         MavisCLI.load_rails
@@ -42,7 +42,7 @@ module MavisCLI
         config =
           if training
             unless type.in?(Team.types.keys)
-              warn "Invalid team type. Must be 'poc_only' or 'upload_only'."
+              warn "Invalid team type. Must be 'point_of_care' or 'national_reporting'."
               return
             end
 

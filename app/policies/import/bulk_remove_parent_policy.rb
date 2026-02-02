@@ -2,6 +2,7 @@
 
 class Import::BulkRemoveParentPolicy < ApplicationPolicy
   def create?
-    team.has_poc_only_access? && Flipper.enabled?(:import_bulk_remove_parents)
+    team.has_point_of_care_access? &&
+      Flipper.enabled?(:import_bulk_remove_parents)
   end
 end
