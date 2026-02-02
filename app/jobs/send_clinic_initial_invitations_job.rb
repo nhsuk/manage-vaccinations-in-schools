@@ -42,7 +42,15 @@ class SendClinicInitialInvitationsJob < ApplicationJob
   def should_send_notification?(patient:, team:, academic_year:, programmes:)
     return false unless patient.send_notifications?(team:)
 
-    programme_types = programmes.map(&:type)
+    eligible_programmes =
+      programmes.select do
+        programme_status = patient.programme_status(it, academic_year:)
+        !programme_status.vaccinated? && !programme_status.consent_refused?
+      end
+
+    return false if eligible_programmes.empty?
+
+    programme_types = eligible_programmes.map(&:type)
 
     already_invited =
       patient.clinic_notifications.any? do
@@ -54,12 +62,7 @@ class SendClinicInitialInvitationsJob < ApplicationJob
     # We only send initial invitations to patients who haven't already
     # received an invitation.
 
-    return if already_invited
-
-    programmes.any? do |programme|
-      programme_status = patient.programme_status(programme, academic_year:)
-      !programme_status.vaccinated? && !programme_status.consent_refused?
-    end
+    !already_invited
   end
 
   class InvalidLocation < StandardError
