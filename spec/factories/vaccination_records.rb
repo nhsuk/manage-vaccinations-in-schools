@@ -84,6 +84,8 @@ FactoryBot.define do
         Team.has_all_programmes_of([programme]).first ||
           association(:team, programmes: [programme])
       end
+
+      batch { build(:batch, :not_expired) if vaccine }
     end
 
     programme { Programme.sample }
@@ -101,11 +103,6 @@ FactoryBot.define do
     vaccine { programme.vaccines.active.sample if session }
     disease_types { vaccine&.disease_types || programme.disease_types }
 
-    batch do
-      if vaccine
-        association(:batch, :not_expired, team:, vaccine:, strategy: :create)
-      end
-    end
     batch_number { batch&.number }
     batch_expiry { batch&.expiry }
 
