@@ -156,6 +156,8 @@ class Location < ApplicationRecord
   validates :urn, uniqueness: true, allow_nil: true, if: -> { site.nil? }
   validates :site, uniqueness: { scope: :urn }, allow_nil: true
 
+  validates :address_postcode, postcode: { allow_blank: true }
+
   with_options if: :community_clinic? do
     validates :ods_code, exclusion: { in: :organisation_ods_codes }
   end
@@ -173,6 +175,13 @@ class Location < ApplicationRecord
     validates :gias_local_authority_code, presence: true
     validates :gias_phase, presence: true
     validates :urn, presence: true
+    validates :name,
+              uniqueness: {
+                scope: :urn,
+                message:
+                  "This site name is already in use. Enter a different name."
+              },
+              if: -> { site.present? }
   end
 
   normalizes :site, with: -> { it.presence&.strip }
