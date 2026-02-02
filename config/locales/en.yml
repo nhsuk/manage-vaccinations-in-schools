@@ -142,6 +142,8 @@ en:
               inclusion: Choose who confirmed their child’s identity
             location_name:
               blank: Enter where the vaccination was given
+            mmr_or_mmrv:
+              blank: Choose a vaccination type
             notes:
               too_long: Enter notes that are less than %{count} characters long
             outcome:

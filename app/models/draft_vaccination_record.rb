@@ -23,6 +23,7 @@ class DraftVaccinationRecord
   attribute :identity_check_confirmed_by_patient, :boolean
   attribute :location_id, :integer
   attribute :location_name, :string
+  attribute :mmrv_vaccine, :boolean
   attribute :notes, :string
   attribute :outcome, :string
   attribute :patient_id, :integer
@@ -37,6 +38,8 @@ class DraftVaccinationRecord
   attribute :source, :string
   attribute :supplied_by_user_id, :integer
   attribute :vaccine_id, :integer
+
+  MMR_OR_MMRV_INTRODUCTION_DATE = Date.new(2020, 1, 1).freeze
 
   def initialize(current_user:, **attributes)
     @current_user = current_user
@@ -53,6 +56,12 @@ class DraftVaccinationRecord
     [
       :identity,
       :notes,
+      (
+        if programme&.mmr? && (administered? || already_had?) &&
+             patient.eligible_for_mmrv?
+          :mmr_or_mmrv
+        end
+      ),
       :date_and_time,
       (:outcome if can_change_outcome?),
       (:supplier if requires_supplied_by?),

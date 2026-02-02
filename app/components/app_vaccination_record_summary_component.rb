@@ -147,7 +147,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
-      if @vaccination_record.administered?
+      if @vaccination_record.administered? || @vaccination_record.already_had?
         if @vaccination_record.vaccine.present? &&
              !@vaccination_record.sourced_from_national_reporting?
           summary_list.with_row do |row|
