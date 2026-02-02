@@ -629,21 +629,22 @@
 
 <p>Table name: reporting_api_totals</p>
 
-<pre>id                                  :text             primary key
-academic_year                       :integer
-has_already_vaccinated_consent      :boolean
-is_archived                         :boolean
-patient_gender                      :text
-patient_local_authority_code        :string
-patient_school_local_authority_code :string
-patient_school_name                 :text
-patient_school_urn                  :string
-patient_year_group                  :integer
-programme_type                      :enum
-status                              :integer
-patient_id                          :bigint
-session_location_id                 :bigint
-team_id                             :bigint</pre>
+<pre>id                                    :text             primary key
+academic_year                         :integer
+has_already_vaccinated_consent        :boolean
+is_archived                           :boolean
+patient_gender                        :text
+patient_local_authority_code          :string
+patient_local_authority_official_name :string
+patient_school_local_authority_code   :string
+patient_school_name                   :text
+patient_school_urn                    :string
+patient_year_group                    :integer
+programme_type                        :enum
+status                                :integer
+patient_id                            :bigint
+session_location_id                   :bigint
+team_id                               :bigint</pre>
 
 <p>Indexes</p>
 
@@ -711,7 +712,7 @@ ix_rapi_totals_year_group             (patient_year_group)</pre>
             </details>
           </div>
           <div class="method-source-code" id="cohort_count-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/reporting_api/total.rb, line 56</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/reporting_api/total.rb, line 57</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">cohort_count</span>
   <span class="ruby-identifier">distinct</span>.<span class="ruby-identifier">count</span>(<span class="ruby-value">:patient_id</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -753,7 +754,7 @@ ix_rapi_totals_year_group             (patient_year_group)</pre>
             </details>
           </div>
           <div class="method-source-code" id="refresh-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/reporting_api/total.rb, line 48</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/reporting_api/total.rb, line 49</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">refresh!</span>(<span class="ruby-value">concurrently:</span> <span class="ruby-keyword">true</span>)
   <span class="ruby-constant">Scenic</span>.<span class="ruby-identifier">database</span>.<span class="ruby-identifier">refresh_materialized_view</span>(
     <span class="ruby-identifier">table_name</span>,
@@ -799,7 +800,7 @@ ix_rapi_totals_year_group             (patient_year_group)</pre>
             </details>
           </div>
           <div class="method-source-code" id="vaccinated_count-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/reporting_api/total.rb, line 60</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/reporting_api/total.rb, line 61</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">vaccinated_count</span>
   <span class="ruby-identifier">vaccinated</span>.<span class="ruby-identifier">distinct</span>.<span class="ruby-identifier">count</span>(<span class="ruby-value">:patient_id</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -841,7 +842,7 @@ ix_rapi_totals_year_group             (patient_year_group)</pre>
             </details>
           </div>
           <div class="method-source-code" id="with_aggregate_metrics-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/reporting_api/total.rb, line 64</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/reporting_api/total.rb, line 65</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">with_aggregate_metrics</span>
   <span class="ruby-identifier">vaccinated_condition</span> =
     <span class="ruby-node">&quot;status IN (#{VACCINATED_STATUSES.join(&quot;,&quot;)}) OR has_already_vaccinated_consent = true&quot;</span>
@@ -903,7 +904,7 @@ ix_rapi_totals_year_group             (patient_year_group)</pre>
             </details>
           </div>
           <div class="method-source-code" id="readonly-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/reporting_api/total.rb, line 46</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/reporting_api/total.rb, line 47</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">readonly?</span> = <span class="ruby-keyword">true</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">refresh!</span>(<span class="ruby-value">concurrently:</span> <span class="ruby-keyword">true</span>)
