@@ -8,6 +8,7 @@ describe "Upload-only team homepage and navigation" do
     and_i_should_see_the_import_records_card
     and_i_should_see_the_children_card
     and_i_should_see_the_national_reporting_service_name
+    and_i_should_see_the_national_reporting_service_guide_link
   end
 
   scenario "Navigation shows only import, children and your team" do
@@ -217,5 +218,13 @@ describe "Upload-only team homepage and navigation" do
   def and_the_activity_log_is_hidden
     expect(page).not_to have_content("Activity log")
     expect(page).not_to have_content("Child record")
+  end
+
+  def and_i_should_see_the_national_reporting_service_guide_link
+    expect(page).to have_link(
+      "Service guidance",
+      href:
+        "https://guide.manage-vaccinations-in-schools.nhs.uk/national-reporting/"
+    )
   end
 end
