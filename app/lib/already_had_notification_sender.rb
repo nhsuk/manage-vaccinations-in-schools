@@ -8,6 +8,7 @@ class AlreadyHadNotificationSender
   def call
     return if vaccination_record.sourced_from_service?
     return if would_still_be_vaccinated?
+    return if is_still_eligible_for_vaccination?
 
     consents = patient.consents.includes(:parent)
 
@@ -58,7 +59,7 @@ class AlreadyHadNotificationSender
 
   attr_reader :vaccination_record
 
-  delegate :patient, :programme_type, to: :vaccination_record
+  delegate :patient, :programme_type, :programme, to: :vaccination_record
 
   def academic_year = AcademicYear.current
 
@@ -85,5 +86,9 @@ class AlreadyHadNotificationSender
       triages: [],
       attendance_record: nil
     ).status == :vaccinated
+  end
+
+  def is_still_eligible_for_vaccination?
+    !patient.programme_status(programme, academic_year:).vaccinated?
   end
 end

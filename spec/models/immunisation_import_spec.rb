@@ -437,95 +437,6 @@ describe ImmunisationImport do
         expect(existing_patient.reload.pending_changes).to be_empty
       end
     end
-
-    context "when vaccination discovered notifications shouldn't be sent" do
-      let(:programmes) { [Programme.flu] }
-      let(:file) { "valid_flu.csv" }
-
-      let!(:patient) do
-        create(
-          :patient,
-          given_name: "Chyna",
-          family_name: "Pickle",
-          date_of_birth: Date.new(2012, 9, 12),
-          nhs_number: "7420180008"
-        )
-      end
-
-      let!(:parent) do
-        create(:parent, email: "parent@example.com", phone: "07700900123")
-      end
-      let!(:consent) do
-        create(
-          :consent,
-          consent_status,
-          patient:,
-          parent: parent,
-          programme: programmes.first,
-          academic_year: AcademicYear.current
-        )
-      end
-      let(:consent_status) { :given }
-
-      it "sends vaccination discovered notifications for imported records" do
-        expect { process! }.to have_enqueued_job(EmailDeliveryJob).with(
-          :vaccination_already_had,
-          hash_including(parent: parent)
-        ).at_least(:once)
-      end
-
-      it "updates consent timestamps when notifications are sent" do
-        process!
-        expect(
-          consent.reload.patient_already_vaccinated_notification_sent_at
-        ).to be_present
-      end
-
-      context "when parent has opted in for SMS updates" do
-        let!(:parent) do
-          create(
-            :parent,
-            email: "parent@example.com",
-            phone: "07700900123",
-            phone_receive_updates: true
-          )
-        end
-
-        it "sends both email and SMS notifications" do
-          expect { process! }.to have_enqueued_job(EmailDeliveryJob).with(
-            :vaccination_already_had,
-            hash_including(parent: parent)
-          ).at_least(:once).and have_enqueued_job(SMSDeliveryJob).with(
-                  :vaccination_already_had,
-                  hash_including(parent: parent)
-                ).at_least(:once)
-        end
-      end
-
-      context "when patient is already considered vaccinated" do
-        before do
-          create(:vaccination_record, patient:, programme: programmes.first)
-        end
-
-        it "does not send vaccination discovered notifications" do
-          expect { process! }.not_to have_enqueued_job(EmailDeliveryJob).with(
-            :vaccination_already_had,
-            hash_including(parent: parent)
-          )
-        end
-      end
-
-      context "when no valid consents exist" do
-        let(:consent_status) { :refused }
-
-        it "does not send vaccination discovered notifications" do
-          expect { process! }.not_to have_enqueued_job(EmailDeliveryJob).with(
-            :vaccination_already_had,
-            hash_including(parent: parent)
-          )
-        end
-      end
-    end
   end
 
   describe "#post_commit!" do
@@ -582,6 +493,14 @@ describe ImmunisationImport do
       it "creates a next dose triage" do
         expect { postprocess_rows! }.to change(Triage, :count).by(1)
       end
+    end
+
+    it "calls the AlreadyHadNotificationSender for the vaccination record" do
+      expect(AlreadyHadNotificationSender).to receive(:call).with(
+        vaccination_record:
+      )
+
+      postprocess_rows!
     end
   end
 end
