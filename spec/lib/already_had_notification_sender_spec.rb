@@ -348,6 +348,84 @@ describe AlreadyHadNotificationSender do
             expect { call }.not_to have_delivered_sms
           end
         end
+
+        context "when another vaccination record has been created at almost the same time" do
+          let!(:first_consent) do
+            create(
+              :consent,
+              :given,
+              patient:,
+              programme:,
+              parent: first_parent,
+              academic_year:
+            )
+          end
+          let!(:second_consent) do
+            create(
+              :consent,
+              :given,
+              patient:,
+              programme:,
+              parent: second_parent,
+              academic_year:
+            )
+          end
+
+          before do
+            create(
+              :vaccination_record,
+              programme:,
+              patient:,
+              session:,
+              performed_at:
+            )
+          end
+
+          it "sends email notifications to all parents with valid consents" do
+            call
+
+            expect(EmailDeliveryJob).to have_been_enqueued
+              .with(
+                :vaccination_already_had,
+                parent: first_parent,
+                vaccination_record:,
+                consent: first_consent
+              )
+              .exactly(1)
+              .times
+
+            expect(EmailDeliveryJob).to have_been_enqueued
+              .with(
+                :vaccination_already_had,
+                parent: second_parent,
+                vaccination_record:,
+                consent: second_consent
+              )
+              .exactly(1)
+              .times
+          end
+
+          it "sends SMS notifications only to parents who opted in for updates" do
+            call
+
+            expect(SMSDeliveryJob).to have_been_enqueued
+              .with(
+                :vaccination_already_had,
+                parent: first_parent,
+                vaccination_record:,
+                consent: first_consent
+              )
+              .exactly(1)
+              .times
+
+            expect(SMSDeliveryJob).not_to have_been_enqueued.with(
+              :vaccination_already_had,
+              parent: second_parent,
+              vaccination_record:,
+              consent: second_consent
+            )
+          end
+        end
       end
     end
   end
