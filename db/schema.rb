@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_26_113704) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -618,8 +618,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
 
   create_table "patient_programme_statuses", force: :cascade do |t|
     t.integer "academic_year", null: false
-    t.integer "consent_status", default: 0
-    t.integer "consent_vaccine_methods", default: [], array: true
+    t.integer "consent_status", default: 0, null: false
+    t.integer "consent_vaccine_methods", default: [], null: false, array: true
     t.date "date"
     t.enum "disease_types", array: true, enum_type: "disease_type"
     t.integer "dose_sequence"
@@ -634,6 +634,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
     t.index ["patient_id", "academic_year", "programme_type"], name: "idx_on_patient_id_academic_year_programme_type_75e0e0c471", unique: true
     t.index ["patient_id"], name: "index_patient_programme_statuses_on_patient_id"
     t.index ["status"], name: "index_patient_programme_statuses_on_status"
+  end
+
+  create_table "patient_programme_vaccinations_searches", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "last_searched_at", null: false
+    t.bigint "patient_id", null: false
+    t.enum "programme_type", null: false, enum_type: "programme_type"
+    t.datetime "updated_at", null: false
+    t.index ["last_searched_at"], name: "idx_on_last_searched_at_96aaa59442"
+    t.index ["patient_id"], name: "index_patient_programme_vaccinations_searches_on_patient_id"
+    t.index ["programme_type"], name: "idx_on_programme_type_0d0cfaeb86"
   end
 
   create_table "patient_registration_statuses", force: :cascade do |t|
@@ -676,18 +687,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
     t.index ["team_id"], name: "index_patient_teams_on_team_id"
   end
 
-  create_table "patient_triage_statuses", force: :cascade do |t|
-    t.integer "academic_year", null: false
-    t.bigint "patient_id", null: false
-    t.enum "programme_type", null: false, enum_type: "programme_type"
-    t.integer "status", default: 0, null: false
-    t.integer "vaccine_method"
-    t.boolean "without_gelatine"
-    t.index ["academic_year", "patient_id"], name: "index_patient_triage_statuses_on_academic_year_and_patient_id"
-    t.index ["patient_id", "programme_type", "academic_year"], name: "idx_on_patient_id_programme_type_academic_year_b66791407e", unique: true
-    t.index ["status"], name: "index_patient_triage_statuses_on_status"
-  end
-
   create_table "patients", force: :cascade do |t|
     t.string "address_line_1"
     t.string "address_line_2"
@@ -704,6 +703,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
     t.bigint "gp_practice_id"
     t.boolean "home_educated"
     t.datetime "invalidated_at"
+    t.string "local_authority_mhclg_code"
     t.string "nhs_number"
     t.jsonb "pending_changes", default: {}, null: false
     t.string "preferred_family_name"
@@ -720,6 +720,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
     t.index ["given_name"], name: "index_patients_on_given_name_trigram", opclass: :gin_trgm_ops, using: :gin
     t.index ["gp_practice_id"], name: "index_patients_on_gp_practice_id"
     t.index ["id"], name: "index_patients_on_pending_changes_not_empty", where: "(pending_changes <> '{}'::jsonb)"
+    t.index ["local_authority_mhclg_code"], name: "index_patients_on_local_authority_mhclg_code"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
     t.index ["school_id"], name: "index_patients_on_school_id"
   end
@@ -862,8 +863,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
     t.bigint "organisation_id", null: false
     t.string "phone"
     t.string "phone_instructions"
-    t.string "privacy_notice_url", null: false
-    t.string "privacy_policy_url", null: false
+    t.string "privacy_notice_url"
+    t.string "privacy_policy_url"
     t.enum "programme_types", null: false, array: true, enum_type: "programme_type"
     t.uuid "reply_to_id"
     t.integer "type", null: false
@@ -1093,6 +1094,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
   add_foreign_key "patient_locations", "locations"
   add_foreign_key "patient_locations", "patients"
   add_foreign_key "patient_programme_statuses", "patients", on_delete: :cascade
+  add_foreign_key "patient_programme_vaccinations_searches", "patients"
   add_foreign_key "patient_registration_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_registration_statuses", "sessions", on_delete: :cascade
   add_foreign_key "patient_specific_directions", "patients"
@@ -1101,7 +1103,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
   add_foreign_key "patient_specific_directions", "vaccines"
   add_foreign_key "patient_teams", "patients", on_delete: :cascade
   add_foreign_key "patient_teams", "teams", on_delete: :cascade
-  add_foreign_key "patient_triage_statuses", "patients", on_delete: :cascade
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "pds_search_results", "patients"
@@ -1215,8 +1216,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
               COALESCE(vaccination_summary.sais_vaccinations_count, (0)::bigint) AS sais_vaccinations_count,
               EXTRACT(month FROM ((vaccination_summary.most_recent_vaccination AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text)) AS most_recent_vaccination_month,
               EXTRACT(year FROM ((vaccination_summary.most_recent_vaccination AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text)) AS most_recent_vaccination_year,
-              COALESCE(pcs.status, 0) AS consent_status,
-              pcs.vaccine_methods AS consent_vaccine_methods,
+              COALESCE(pps.consent_status, 0) AS consent_status,
+              pps.consent_vaccine_methods,
               (parent_refused.patient_id IS NOT NULL) AS parent_refused_consent_current_year,
               (child_refused.patient_id IS NOT NULL) AS child_refused_vaccination_current_year,
               vaccination_summary.has_nasal AS vaccinated_nasal_current_year,
@@ -1288,11 +1289,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
                       all_vaccinations_by_year.academic_year
                      FROM all_vaccinations_by_year
                     WHERE ((all_vaccinations_by_year.outcome = ANY (ARRAY[0, 4])) AND (all_vaccinations_by_year.programme_type <> 'flu'::programme_type))) vr_previous ON (((vr_previous.patient_id = p.id) AND (vr_previous.programme_type = patient_team_prog.s_programme_type) AND (vr_previous.academic_year < tl.academic_year))))
-               LEFT JOIN LATERAL ( SELECT pcs_1.status,
-                      pcs_1.vaccine_methods
-                     FROM patient_consent_statuses pcs_1
-                    WHERE ((pcs_1.patient_id = p.id) AND (pcs_1.programme_type = patient_team_prog.s_programme_type) AND (pcs_1.academic_year = tl.academic_year))
-                   LIMIT 1) pcs ON (true))
+               LEFT JOIN LATERAL ( SELECT pps_1.consent_status,
+                      pps_1.consent_vaccine_methods
+                     FROM patient_programme_statuses pps_1
+                    WHERE ((pps_1.patient_id = p.id) AND (pps_1.programme_type = patient_team_prog.s_programme_type) AND (pps_1.academic_year = tl.academic_year))
+                   LIMIT 1) pps ON (true))
                LEFT JOIN ( SELECT DISTINCT vr.patient_id,
                       vr.programme_type,
                       COALESCE((vr_tl.academic_year)::numeric, EXTRACT(year FROM ((vr.performed_at AT TIME ZONE 'UTC'::text) AT TIME ZONE 'Europe/London'::text))) AS academic_year
@@ -1363,7 +1364,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_093544) do
               ELSE NULL::text
           END AS patient_gender,
       ((pps.academic_year - pat.birth_academic_year) - 5) AS patient_year_group,
-      COALESCE(la.mhclg_code, ''::character varying) AS patient_local_authority_code,
+      COALESCE(la.mhclg_code, pat.local_authority_mhclg_code, ''::character varying) AS patient_local_authority_code,
       COALESCE(la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
           CASE
               WHEN (school.urn IS NOT NULL) THEN school.urn

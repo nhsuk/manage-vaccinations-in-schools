@@ -4,17 +4,11 @@
 
 <%= h1 "Consent response from #{@consent_form.parent_full_name}" %>
 
-<ul class="app-action-list">
-  <li class="app-action-list__item">
-    <%= link_to "Match", search_consent_form_path(@consent_form) %>
-  </li>
-  <li class="app-action-list__item">
-    <%= link_to "Create new record", patient_consent_form_path(@consent_form) %>
-  </li>
-  <li class="app-action-list__item">
-    <%= link_to "Archive", archive_consent_form_path(@consent_form) %>
-  </li>
-</ul>
+<%= render AppActionListComponent.new do |action_list| %>
+  <% action_list.with_item(text: "Match", href: search_consent_form_path(@consent_form)) %>
+  <% action_list.with_item(text: "Create new record", href: patient_consent_form_path(@consent_form)) %>
+  <% action_list.with_item(text: "Archive", href: archive_consent_form_path(@consent_form)) %>
+<% end %>
 
 <%= render AppConsentFormCardComponent.new(@consent_form) %>
 

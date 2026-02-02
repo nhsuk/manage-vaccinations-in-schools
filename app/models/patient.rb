@@ -18,6 +18,7 @@
 #  given_name                 :string           not null
 #  home_educated              :boolean
 #  invalidated_at             :datetime
+#  local_authority_mhclg_code :string
 #  nhs_number                 :string
 #  pending_changes            :jsonb            not null
 #  preferred_family_name      :string
@@ -33,14 +34,15 @@
 #
 # Indexes
 #
-#  index_patients_on_family_name_trigram        (family_name) USING gin
-#  index_patients_on_given_name_trigram         (given_name) USING gin
-#  index_patients_on_gp_practice_id             (gp_practice_id)
-#  index_patients_on_names_family_first         (family_name,given_name)
-#  index_patients_on_names_given_first          (given_name,family_name)
-#  index_patients_on_nhs_number                 (nhs_number) UNIQUE
-#  index_patients_on_pending_changes_not_empty  (id) WHERE (pending_changes <> '{}'::jsonb)
-#  index_patients_on_school_id                  (school_id)
+#  index_patients_on_family_name_trigram         (family_name) USING gin
+#  index_patients_on_given_name_trigram          (given_name) USING gin
+#  index_patients_on_gp_practice_id              (gp_practice_id)
+#  index_patients_on_local_authority_mhclg_code  (local_authority_mhclg_code)
+#  index_patients_on_names_family_first          (family_name,given_name)
+#  index_patients_on_names_given_first           (given_name,family_name)
+#  index_patients_on_nhs_number                  (nhs_number) UNIQUE
+#  index_patients_on_pending_changes_not_empty   (id) WHERE (pending_changes <> '{}'::jsonb)
+#  index_patients_on_school_id                   (school_id)
 #
 # Foreign Keys
 #
@@ -66,7 +68,6 @@ class Patient < ApplicationRecord
   has_many :changesets, class_name: "PatientChangeset"
   has_many :clinic_notifications
   has_many :consent_notifications
-  has_many :consent_statuses
   has_many :consents
   has_many :gillick_assessments
   has_many :important_notices, dependent: :destroy
@@ -74,6 +75,7 @@ class Patient < ApplicationRecord
   has_many :notify_log_entries
   has_many :parent_relationships, -> { order(:created_at) }
   has_many :patient_locations
+  has_many :patient_programme_vaccinations_searches
   has_many :patient_specific_directions
   has_many :patient_teams
   has_many :pds_search_results
@@ -151,8 +153,7 @@ class Patient < ApplicationRecord
   scope :not_deceased, -> { where(date_of_death: nil) }
   scope :restricted, -> { where.not(restricted_at: nil) }
 
-  scope :includes_statuses,
-        -> { includes(:consent_statuses, :programme_statuses) }
+  scope :includes_statuses, -> { includes(:programme_statuses) }
 
   scope :has_vaccination_records_dont_notify_parents,
         -> do
@@ -592,12 +593,15 @@ class Patient < ApplicationRecord
     end
   end
 
-  def consent_status(programme:, academic_year:)
-    patient_status(consent_statuses, programme:, academic_year:)
-  end
-
   def programme_status(programme, academic_year:)
-    patient_status(programme_statuses, programme:, academic_year:)
+    # TODO: Update this method to accept the `programme_type` so that we can
+    #  then determine the right programme variant from the `disease_types` on
+    #  the `Patient::ProgrammeStatus`.
+    programme_type = programme.type
+
+    programme_statuses.find do
+      it.programme_type == programme_type && it.academic_year == academic_year
+    end || programme_statuses.build(programme_type:, academic_year:)
   end
 
   def registration_status(session:)
@@ -777,12 +781,6 @@ class Patient < ApplicationRecord
   end
 
   private
-
-  def patient_status(association, programme:, academic_year:)
-    association.find do
-      it.programme_type == programme.type && it.academic_year == academic_year
-    end || association.build(programme_type: programme.type, academic_year:)
-  end
 
   def gp_practice_is_correct_type
     location = gp_practice

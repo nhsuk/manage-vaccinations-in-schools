@@ -52,13 +52,17 @@ module MavisCLI
 
             if schools.size >= batch_size
               import_schools(schools)
+              update_sites(schools)
               schools.clear
             end
 
             progress_bar.increment
           end
 
-          import_schools(schools) unless schools.empty?
+          unless schools.empty?
+            import_schools(schools)
+            update_sites(schools)
+          end
         end
       end
 
@@ -78,6 +82,47 @@ module MavisCLI
               gias_phase
               gias_year_groups
               name
+              status
+              url
+            ]
+          }
+        )
+      end
+
+      def update_sites(schools)
+        schools_by_urn = schools.index_by(&:urn)
+
+        sites =
+          Location
+            .where(urn: schools_by_urn.keys)
+            .where.not(site: nil)
+            .distinct
+            .map do |site|
+              school = schools_by_urn[site.urn]
+
+              site.assign_attributes(
+                gias_establishment_number: school.gias_establishment_number,
+                gias_local_authority_code: school.gias_local_authority_code,
+                gias_phase: school.gias_phase,
+                gias_year_groups: school.gias_year_groups,
+                status: school.status,
+                url: school.url
+              )
+
+              site
+            end
+
+        return if sites.empty?
+
+        Location.import!(
+          sites,
+          on_duplicate_key_update: {
+            conflict_target: %i[urn site],
+            columns: %i[
+              gias_establishment_number
+              gias_local_authority_code
+              gias_phase
+              gias_year_groups
               status
               url
             ]

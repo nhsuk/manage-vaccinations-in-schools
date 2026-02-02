@@ -5,7 +5,7 @@ describe Onboarding do
 
   let(:config) { YAML.safe_load(file_fixture(filename).read) }
 
-  let!(:programme) { Programme.hpv }
+  let!(:programmes) { [Programme.hpv] }
   # rubocop:disable RSpec/IndexedLet
   let!(:school1) { create(:school, :secondary, :open, urn: "123456") }
   let!(:school2) { create(:school, :secondary, :open, urn: "234567") }
@@ -15,8 +15,8 @@ describe Onboarding do
 
   before { create(:school, :secondary, :closed, urn: "567890") }
 
-  context "with a valid configuration file" do
-    let(:filename) { "onboarding/valid.yaml" }
+  context "with a valid configuration file for a poc team" do
+    let(:filename) { "onboarding/poc_valid.yaml" }
 
     it { should be_valid }
 
@@ -33,7 +33,7 @@ describe Onboarding do
       expect(team.careplus_venue_code).to eq("EXAMPLE")
       expect(team.careplus_staff_code).to eq("ABCD")
       expect(team.careplus_staff_type).to eq("PQ")
-      expect(team.programmes).to contain_exactly(programme)
+      expect(team.programmes).to match_array(programmes)
 
       expect(team.locations.generic_clinic.count).to eq(1)
       generic_clinic = team.locations.generic_clinic.first
@@ -71,6 +71,37 @@ describe Onboarding do
       clinic2 = subteam2.community_clinics.find_by!(ods_code: "SW1A11")
       expect(clinic2.name).to eq("11 Downing Street")
       expect(clinic2.address_postcode).to eq("SW1A 1AA")
+    end
+  end
+
+  context "with a valid configuration file for a national reporting team" do
+    let(:filename) { "onboarding/national_reporting_valid.yaml" }
+
+    let(:programmes) { [Programme.hpv, Programme.flu] }
+
+    it { should be_valid }
+
+    it "set up the models" do
+      expect { onboarding.save! }.not_to raise_error
+
+      organisation = Organisation.find_by(ods_code: "EXAMPLE")
+      expect(organisation).not_to be_nil
+
+      team = Team.find_by(organisation:, name: "NHS Trust")
+      expect(team.email).to be_nil
+      expect(team.phone).to be_nil
+      expect(team.phone_instructions).to be_nil
+      expect(team.careplus_venue_code).to be_nil
+      expect(team.careplus_staff_code).to be_nil
+      expect(team.careplus_staff_type).to be_nil
+      expect(team.programmes).to match_array(programmes)
+
+      expect(team.locations.generic_clinic.count).to eq(0)
+      expect(team.locations.community_clinic.count).to eq(0)
+
+      expect(team.subteams.count).to eq(0)
+
+      expect(team.schools.count).to eq(0)
     end
   end
 

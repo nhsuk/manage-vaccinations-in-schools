@@ -4,19 +4,21 @@
 
 <%= h1 "Consent response from #{@consent.name}" %>
 
-<ul class="app-action-list">
+<%= render AppActionListComponent.new do |action_list| %>
   <% if @consent.can_withdraw? %>
-    <li class="app-action-list__item">
-      <%= link_to "Withdraw consent", withdraw_session_patient_programme_consent_path %>
-    </li>
+    <% action_list.with_item(
+         text: "Withdraw consent",
+         href: withdraw_session_patient_programme_consent_path,
+       ) %>
   <% end %>
 
   <% if @consent.can_invalidate? %>
-    <li class="app-action-list__item">
-      <%= link_to "Mark as invalid", invalidate_session_patient_programme_consent_path %>
-    </li>
+    <% action_list.with_item(
+         text: "Mark as invalid",
+         href: invalidate_session_patient_programme_consent_path,
+       ) %>
   <% end %>
-</ul>
+<% end %>
 
 <%= render AppCardComponent.new do |card| %>
   <% card.with_heading { "Response" } %>

@@ -6,8 +6,8 @@
 #
 #  id                      :bigint           not null, primary key
 #  academic_year           :integer          not null
-#  consent_status          :integer          default("no_response")
-#  consent_vaccine_methods :integer          default([]), is an Array
+#  consent_status          :integer          default("no_response"), not null
+#  consent_vaccine_methods :integer          default([]), not null, is an Array
 #  date                    :date
 #  disease_types           :enum             is an Array
 #  dose_sequence           :integer
@@ -43,25 +43,49 @@ FactoryBot.define do
       date { Date.tomorrow }
     end
 
+    trait :has_refusal_consent_refused do
+      consent_status { "refused" }
+      status { "has_refusal_consent_refused" }
+    end
+
+    trait :has_refusal_consent_conflicts do
+      consent_status { "conflicts" }
+      status { "has_refusal_consent_conflicts" }
+    end
+
+    trait :needs_triage do
+      consent_status { "given" }
+      consent_vaccine_methods { %w[injection] }
+      status { "needs_triage" }
+    end
+
     trait :due_injection do
+      consent_status { "given" }
+      consent_vaccine_methods { %w[injection] }
       status { "due" }
       vaccine_methods { %w[injection] }
       without_gelatine { false }
     end
 
     trait :due_injection_without_gelatine do
+      consent_status { "given" }
+      consent_vaccine_methods { %w[injection] }
       status { "due" }
       vaccine_methods { %w[injection] }
       without_gelatine { true }
     end
 
     trait :due_nasal_injection do
+      consent_status { "given" }
+      consent_vaccine_methods { %w[nasal injection] }
       status { "due" }
       vaccine_methods { %w[nasal injection] }
       without_gelatine { false }
     end
 
     trait :due_nasal do
+      consent_status { "given" }
+      consent_vaccine_methods { %w[nasal] }
       status { "due" }
       vaccine_methods { %w[nasal] }
       without_gelatine { false }

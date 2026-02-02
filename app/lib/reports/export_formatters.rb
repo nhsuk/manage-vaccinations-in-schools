@@ -28,20 +28,20 @@ module Reports::ExportFormatters
   end
 
   def consent_status(patient:, programme:, academic_year:)
-    consent_status = patient.consent_status(programme:, academic_year:)
-    if consent_status.given?
+    programme_status = patient.programme_status(programme, academic_year:)
+    if programme_status.consent_given?
       if programme.has_multiple_vaccine_methods?
         vaccine_methods =
-          consent_status.vaccine_methods.map do |method|
+          programme_status.consent_vaccine_methods.map do |method|
             Vaccine.human_enum_name(:method, method).downcase
           end
         "Consent given for #{vaccine_methods.to_sentence}"
       else
         "Consent given"
       end
-    elsif consent_status.refused?
+    elsif programme_status.consent_refused?
       "Consent refused"
-    elsif consent_status.conflicts?
+    elsif programme_status.consent_conflicts?
       "Conflicting consent"
     else
       ""

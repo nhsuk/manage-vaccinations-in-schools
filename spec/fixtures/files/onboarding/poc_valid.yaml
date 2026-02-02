@@ -1,0 +1,61 @@
+organisation:
+  ods_code: EXAMPLE
+
+team:
+  name: NHS Trust
+  email: example@trust.nhs.uk
+  phone: 07700 900815
+  phone_instructions: option 1, followed by option 3
+  careplus_staff_code: ABCD
+  careplus_staff_type: PQ
+  careplus_venue_code: EXAMPLE
+  privacy_notice_url: https://example.com/privacy-notice
+  privacy_policy_url: https://example.com/privacy-policy
+  reply_to_id: 24af66c3-d6bd-4b9f-8067-3844f49e08d0
+  type: poc_only
+  workgroup: nhstrust
+
+programmes: [hpv]
+
+subteams:
+  subteam_1:
+    name: Subteam 1
+    email: subteam-1@trust.nhs.uk
+    phone: 07700 900816
+    phone_instructions: option 9
+    reply_to_id: 24af66c3-d6bd-4b9f-8067-3844f49e08d0
+  subteam_2:
+    name: Subteam 2
+    email: subteam-2@trust.nhs.uk
+    phone: 07700 900817
+
+schools:
+  subteam_1:
+    - 123456
+    - urn: 234567
+      site: "A"
+      name: "Existing School 2 (Site A)"
+    - urn: 234567
+      site: "B"
+      name: "Existing School 2 (Site B)"
+  subteam_2:
+    - 345678
+    - urn: 456789
+      site: "A"
+      name: "Existing School 4 (Site A)"
+    - urn: 456789
+      site: "B"
+      name: "Existing School 4 (Site B)"
+      address_line_1: "456 High St"
+      address_town: "London"
+      address_postcode: "SW1A 1AA"
+
+clinics:
+  subteam_1:
+    - name: 10 Downing Street
+      address_postcode: SW1A 1AA
+      # ods_code intentionally not provided
+  subteam_2:
+    - name: 11 Downing Street
+      address_postcode: SW1A 1AA
+      ods_code: SW1A11

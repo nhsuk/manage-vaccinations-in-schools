@@ -13,29 +13,10 @@ class AppTimelineComponent < ViewComponent::Base
             </h3>
           </li>
         <% else %>
-          <li class="app-timeline__item <%= 'app-timeline__item--past' if item[:is_past_item] %>">
-            <% if item[:active] || item[:is_past_item] %>
-              <svg class="app-timeline__badge" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
-                <circle cx="14" cy="14" r="13" fill="#005EB8"/>
-              </svg>
-            <% else %>
-              <svg class="app-timeline__badge app-timeline__badge--small" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14">
-                <circle cx="7" cy="7" r="6" fill="white" stroke="#AEB7BD" stroke-width="2"/>
-              </svg>
-            <% end %>
-
-            <div class="app-timeline__content">
-              <h3 class="app-timeline__header <%= 'nhsuk-u-font-weight-bold' if item[:active] %>">
-                <%= format_heading(item).html_safe %>
-              </h3>
-
-              <% if item[:description].present? || item[:details].present? %>
-                <div class="app-timeline__description">
-                  <%= format_description(item).html_safe %>
-                </div>
-              <% end %>
-            </div>
-          </li>
+          <%= render AppTimelineItemComponent.new(is_active: item[:active], is_past: item[:is_past_item]) do %>
+            <% it.with_heading { format_heading(item).html_safe } %>
+            <% it.with_description { format_description(item).html_safe } %>
+          <% end %>
         <% end %>
       <% end %>
     </ul>
@@ -45,9 +26,7 @@ class AppTimelineComponent < ViewComponent::Base
     @items = items
   end
 
-  def render?
-    @items.present?
-  end
+  def render? = @items.present?
 
   private
 

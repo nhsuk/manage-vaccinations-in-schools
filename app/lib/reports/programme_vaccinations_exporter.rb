@@ -100,7 +100,7 @@ class Reports::ProgrammeVaccinationsExporter
           :session,
           :supplied_by,
           :vaccine,
-          patient: %i[consent_statuses gp_practice school]
+          patient: %i[programme_statuses gp_practice school]
         )
 
     if start_date.present?

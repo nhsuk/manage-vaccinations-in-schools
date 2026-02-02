@@ -55,7 +55,7 @@
       description: Send school consent reminder emails to parents for each session
     school_session_reminders:
       cron: "0 9 * * *"
-      class: SendSchoolSessionRemindersJob
+      class: EnqueueSchoolSessionRemindersJob
       description: Send school session reminder emails to parents
     status_updater:
       cron: "0 3 * * *"

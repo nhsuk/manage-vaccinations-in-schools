@@ -65,6 +65,45 @@ describe "mavis schools add-to-team" do
     end
   end
 
+  context "when the school has sites" do
+    it "runs successfully when all sites are included" do
+      given_the_team_exists
+      and_the_subteam_exists
+      and_the_school_exists_with_multiple_sites
+
+      when_i_run_the_command_with_all_sites
+      then_all_sites_are_added_to_the_team
+    end
+
+    it "displays an error when using base URN instead of site URNs" do
+      given_the_team_exists
+      and_the_subteam_exists
+      and_the_school_exists_with_multiple_sites
+
+      when_i_run_the_command_with_base_urn_expecting_an_error
+      then_a_missing_sites_error_message_is_displayed
+    end
+
+    it "displays an error when not all sites are included" do
+      given_the_team_exists
+      and_the_subteam_exists
+      and_the_school_exists_with_multiple_sites
+
+      when_i_run_the_command_with_partial_sites_expecting_an_error
+      then_a_missing_site_b_error_message_is_displayed
+    end
+
+    it "allows partial sites when others are already in the team" do
+      given_the_team_exists
+      and_the_subteam_exists
+      and_the_school_exists_with_multiple_sites
+      and_site_b_already_belongs_to_the_team
+
+      when_i_run_the_command_with_site_a_only
+      then_site_a_is_added_to_the_team
+    end
+  end
+
   private
 
   def command
@@ -142,5 +181,82 @@ describe "mavis schools add-to-team" do
 
   def and_the_school_remains_in_the_other_team_too
     expect(@other_team.schools).to include(@school)
+  end
+
+  def and_the_school_exists_with_multiple_sites
+    @school_main = create(:school, name: "School", urn: "123456", site: nil)
+    @school_site_a =
+      create(:school, name: "School Site A", urn: "123456", site: "A")
+    @school_site_b =
+      create(:school, name: "School Site B", urn: "123456", site: "B")
+  end
+
+  def and_site_b_already_belongs_to_the_team
+    @school_site_b.attach_to_team!(
+      @team,
+      academic_year: AcademicYear.pending,
+      subteam: @subteam
+    )
+  end
+
+  def command_with_base_urn
+    Dry::CLI.new(MavisCLI).call(
+      arguments: %w[schools add-to-team abc Team 123456]
+    )
+  end
+
+  def command_with_partial_sites
+    Dry::CLI.new(MavisCLI).call(
+      arguments: %w[schools add-to-team abc Team 123456A]
+    )
+  end
+
+  def command_with_all_sites
+    Dry::CLI.new(MavisCLI).call(
+      arguments: %w[schools add-to-team abc Team 123456A 123456B]
+    )
+  end
+
+  def command_with_site_a_only
+    Dry::CLI.new(MavisCLI).call(
+      arguments: %w[schools add-to-team abc Team 123456A]
+    )
+  end
+
+  def when_i_run_the_command_with_base_urn_expecting_an_error
+    @output = capture_error { command_with_base_urn }
+  end
+
+  def when_i_run_the_command_with_partial_sites_expecting_an_error
+    @output = capture_error { command_with_partial_sites }
+  end
+
+  def when_i_run_the_command_with_all_sites
+    @output = capture_error { command_with_all_sites }
+  end
+
+  def when_i_run_the_command_with_site_a_only
+    @output = capture_error { command_with_site_a_only }
+  end
+
+  def then_a_missing_sites_error_message_is_displayed
+    expect(@output).to include("URN 123456 has multiple sites in the database")
+    expect(@output).to include("123456A")
+    expect(@output).to include("123456B")
+  end
+
+  def then_a_missing_site_b_error_message_is_displayed
+    expect(@output).to include("Missing site 123456B")
+  end
+
+  def then_all_sites_are_added_to_the_team
+    expect(@team.schools).to include(@school_site_a)
+    expect(@team.schools).to include(@school_site_b)
+    expect(@team.schools).not_to include(@school_main)
+  end
+
+  def then_site_a_is_added_to_the_team
+    expect(@team.schools).to include(@school_site_a)
+    expect(@team.schools).to include(@school_site_b) # already was in team
   end
 end

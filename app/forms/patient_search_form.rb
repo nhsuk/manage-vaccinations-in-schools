@@ -32,10 +32,6 @@ class PatientSearchForm < SearchForm
     super(values&.compact_blank || [])
   end
 
-  def consent_statuses=(values)
-    super(values&.compact_blank || [])
-  end
-
   def vaccine_criteria=(values)
     super(values&.compact_blank || [])
   end

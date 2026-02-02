@@ -107,13 +107,16 @@ class TriageForm
 
   delegate :academic_year, :team, to: :session
 
+  def programme_type = programme.type
+
   def safe_to_vaccinate? = status_option.starts_with?("safe_to_vaccinate")
 
   def delay_vaccination? = status_option == "delay_vaccination"
 
   def consented_vaccine_methods
     @consented_vaccine_methods ||=
-      consent_vaccine_methods.presence || consent_status.vaccine_methods
+      consent_vaccine_methods.presence ||
+        consent_status_generator.vaccine_methods
   end
 
   def consented_without_gelatine
@@ -121,12 +124,19 @@ class TriageForm
       if !consent_without_gelatine.nil?
         consent_without_gelatine
       else
-        consent_status.without_gelatine
+        consent_status_generator.without_gelatine
       end
   end
 
-  def consent_status
-    @consent_status ||= patient.consent_status(programme:, academic_year:)
+  def consent_status_generator
+    @consent_status_generator ||=
+      StatusGenerator::Consent.new(
+        programme_type:,
+        academic_year:,
+        patient:,
+        consents: patient.consents,
+        vaccination_records: []
+      )
   end
 
   def triage_attributes
@@ -205,7 +215,7 @@ class TriageForm
       delivery_site: "nose",
       invalidated_at: nil,
       patient:,
-      programme_type: programme.type,
+      programme_type:,
       team:,
       vaccine:,
       vaccine_method:

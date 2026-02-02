@@ -99,10 +99,7 @@ group :development, :end_to_end do
   gem "hotwire-livereload"
   gem "prettier_print", require: false
   gem "rladr"
-  gem "rubocop-govuk",
-      require: false,
-      github: "alphagov/rubocop-govuk",
-      branch: "main"
+  gem "rubocop-govuk", require: false
   gem "ruby-prof", require: false
   gem "rufo", require: false
   gem "solargraph", require: false

@@ -112,6 +112,7 @@ class Generate::CohortImports
         progress_bar&.increment
       end
     end
+
     cohort_import_csv_filepath.to_s
   end
 

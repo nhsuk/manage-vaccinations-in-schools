@@ -1,17 +1,4 @@
 GIT
-  remote: https://github.com/alphagov/rubocop-govuk.git
-  revision: 3106a1c200c0703feda762a37298da4ec4ed7707
-  branch: main
-  specs:
-    rubocop-govuk (5.2.0)
-      rubocop (= 1.82.1)
-      rubocop-ast (= 1.49.0)
-      rubocop-capybara (= 2.22.1)
-      rubocop-rails (= 2.34.3)
-      rubocop-rake (= 0.7.1)
-      rubocop-rspec (= 3.9.0)
-
-GIT
   remote: https://github.com/citizensadvice/capybara_accessible_selectors.git
   revision: 3feb17c2e2723bc2e177ce00765a50d6cddf479e
   specs:
@@ -148,7 +135,7 @@ GEM
       bigdecimal
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-ec2 (1.595.0)
+    aws-sdk-ec2 (1.597.0)
       aws-sdk-core (~> 3, >= 3.241.4)
       aws-sigv4 (~> 1.5)
     aws-sdk-ecr (1.119.0)
@@ -163,7 +150,7 @@ GEM
     aws-sdk-rds (1.306.0)
       aws-sdk-core (~> 3, >= 3.241.4)
       aws-sigv4 (~> 1.5)
-    aws-sdk-s3 (1.212.0)
+    aws-sdk-s3 (1.213.0)
       aws-sdk-core (~> 3, >= 3.241.4)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
@@ -180,7 +167,7 @@ GEM
     bindex (0.8.1)
     bootsnap (1.21.1)
       msgpack (~> 1.2)
-    brakeman (7.1.2)
+    brakeman (8.0.0)
       racc
     builder (3.3.0)
     capybara (3.40.0)
@@ -621,6 +608,13 @@ GEM
     rubocop-capybara (2.22.1)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
+    rubocop-govuk (5.2.0)
+      rubocop (= 1.82.1)
+      rubocop-ast (= 1.49.0)
+      rubocop-capybara (= 2.22.1)
+      rubocop-rails (= 2.34.3)
+      rubocop-rake (= 0.7.1)
+      rubocop-rspec (= 3.9.0)
     rubocop-rails (2.34.3)
       activesupport (>= 4.2.0)
       lint_roller (~> 1.1)
@@ -745,7 +739,7 @@ GEM
     tilt (2.7.0)
     timeout (0.6.0)
     tsort (0.2.0)
-    turbo-rails (2.0.21)
+    turbo-rails (2.0.23)
       actionpack (>= 7.1.0)
       railties (>= 7.1.0)
     tzinfo (2.0.6)
@@ -880,7 +874,7 @@ DEPENDENCIES
   rspec-html-matchers
   rspec-rails
   rspec-sidekiq
-  rubocop-govuk!
+  rubocop-govuk
   ruby-prof
   ruby-progressbar
   rubyXL

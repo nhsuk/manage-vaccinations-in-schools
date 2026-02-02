@@ -40,16 +40,17 @@
               <% row.with_cell(text: batch.created_at.to_date.to_fs(:long)) %>
               <% row.with_cell(text: batch.expiry&.to_fs(:long) || "Unknown") %>
               <% row.with_cell do %>
-                <ul class="app-action-list">
-                  <li class="app-action-list__item">
+                <%= render AppActionListComponent.new do |action_list| %>
+                  <% action_list.with_item do %>
                     <%= link_to "Change", edit_vaccine_batch_path(vaccine, batch),
                                 aria: { label: "Change #{batch.name} batch of #{vaccine.brand}" } %>
-                  </li>
-                  <li class="app-action-list__item">
+                  <% end %>
+
+                  <% action_list.with_item do %>
                     <%= link_to "Archive", archive_vaccine_batch_path(vaccine, batch),
                                 aria: { label: "Archive #{batch.name} batch of #{vaccine.brand}" } %>
-                  </li>
-                </ul>
+                  <% end %>
+                <% end %>
               <% end %>
             <% end %>
           <% end %>

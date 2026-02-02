@@ -1036,44 +1036,10 @@ describe NHS::ImmunisationsAPI do
       end
     end
 
-    describe "handling `-immunisation.target` in `Bundle.link`" do
-      context "with `immunization.target` (incorrect)" do
-        let(:body) do
-          file_fixture(
-            "fhir/search_response_bad_immunization_target_1.json"
-          ).read
-        end
-
-        it "doesn't raise an error" do
-          expect { perform_request }.not_to raise_error
-        end
-
-        include_examples "continues the request and returns the bundle anyway",
-                         2,
-                         3
-      end
-
-      context "with `immunization-target` (incorrect)" do
-        let(:body) do
-          file_fixture(
-            "fhir/search_response_bad_immunization_target_2.json"
-          ).read
-        end
-
-        it "doesn't raise an error" do
-          expect { perform_request }.not_to raise_error
-        end
-
-        include_examples "continues the request and returns the bundle anyway",
-                         2,
-                         3
-      end
-
+    describe "handling `-immunization.target` in `Bundle.link`" do
       context "with `immunization+target` (incorrect, and unexpected)" do
         let(:body) do
-          file_fixture(
-            "fhir/search_response_bad_immunization_target_3.json"
-          ).read
+          file_fixture("fhir/search_response_bad_immunization_target.json").read
         end
 
         it "doesn't raise an error" do
@@ -1094,15 +1060,49 @@ describe NHS::ImmunisationsAPI do
                          3
       end
 
-      context "with `-immunization.target` (correct)" do
+      context "with both `immunization.target` and `-immunization.target` (as is currently in production)" do
         let(:body) do
           file_fixture(
-            "fhir/search_response_good_immunization_target.json"
+            "fhir/search_response_immunization_target_both.json"
           ).read
         end
 
         it "doesn't raise an error" do
           expect { perform_request }.not_to raise_error
+        end
+
+        it "doesn't raise a warning, and doesn't send to Sentry" do
+          expect(Rails.logger).not_to receive(:warn)
+          expect(Sentry).not_to receive(:capture_exception).with(
+            NHS::ImmunisationsAPI::BundleLinkParamsMismatch
+          )
+
+          perform_request
+        end
+
+        include_examples "continues the request and returns the bundle anyway",
+                         2,
+                         3
+      end
+
+      context "with `-immunization.target` (correct)" do
+        let(:body) do
+          file_fixture(
+            "fhir/search_response_immunization_target_good.json"
+          ).read
+        end
+
+        it "doesn't raise an error" do
+          expect { perform_request }.not_to raise_error
+        end
+
+        it "doesn't raise a warning, and doesn't send to Sentry" do
+          expect(Rails.logger).not_to receive(:warn)
+          expect(Sentry).not_to receive(:capture_exception).with(
+            NHS::ImmunisationsAPI::BundleLinkParamsMismatch
+          )
+
+          perform_request
         end
 
         include_examples "continues the request and returns the bundle anyway",

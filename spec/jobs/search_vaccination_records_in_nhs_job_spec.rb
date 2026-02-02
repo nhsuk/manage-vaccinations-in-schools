@@ -26,7 +26,8 @@ describe SearchVaccinationRecordsInNHSJob do
     end
 
     it "returns only Immunization resources from the bundle" do
-      records = described_class.new.send(:extract_vaccination_records, bundle)
+      records =
+        described_class.new.send(:extract_fhir_vaccination_records, bundle)
       expect(records).to all(have_attributes(resourceType: "Immunization"))
       expect(records.size).to eq 2
     end
@@ -45,10 +46,7 @@ describe SearchVaccinationRecordsInNHSJob do
     let(:hpv_record) { create(:vaccination_record, programme: Programme.hpv) }
     let(:mmrv_programme) do
       Flipper.enable(:mmrv)
-
-      Programme.mmr.variant_for(
-        disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
-      )
+      Programme::Variant.new(Programme.mmr, variant_type: "mmrv")
     end
     let(:mmrv_record) { create(:vaccination_record, programme: mmrv_programme) }
 
@@ -65,11 +63,10 @@ describe SearchVaccinationRecordsInNHSJob do
 
   describe "#deduplicate_vaccination_records" do
     subject(:deduplicate) do
-      described_class.new.send(
-        :deduplicate_vaccination_records,
-        patient,
-        vaccination_records
-      )
+      described_class
+        .new
+        .tap { it.instance_variable_set(:@patient, patient) }
+        .send(:deduplicate_vaccination_records, vaccination_records)
     end
 
     shared_examples "handles duplicates" do
@@ -370,6 +367,40 @@ describe SearchVaccinationRecordsInNHSJob do
         expect(deduplicate).to eq([])
       end
     end
+
+    context "with an existing Mavis record" do
+      before do
+        create(
+          :vaccination_record,
+          patient:,
+          session: create(:session),
+          performed_at:,
+          programme:
+        )
+      end
+
+      it "returns an empty array, discarding the incoming duplicate" do
+        expect(deduplicate).to eq([])
+      end
+    end
+
+    context "with a national reporting record" do
+      before do
+        Flipper.enable(:sync_national_reporting_to_imms_api)
+
+        create(
+          :vaccination_record,
+          :sourced_from_bulk_upload,
+          patient:,
+          performed_at:,
+          programme:
+        )
+      end
+
+      it "returns an empty array, discarding the incoming duplicate" do
+        expect(deduplicate).to eq([])
+      end
+    end
   end
 
   describe "#perform" do
@@ -390,12 +421,45 @@ describe SearchVaccinationRecordsInNHSJob do
       end
     end
 
+    shared_examples "records the search" do
+      describe "the PatientProgrammeVaccinationsSearch record" do
+        it "is created or updated with the search time" do
+          freeze_time
+
+          perform
+
+          ppis =
+            PatientProgrammeVaccinationsSearch.find_by(
+              patient:,
+              programme_type: programme.type
+            )
+          expect(ppis.last_searched_at).to eq Time.current
+        end
+      end
+    end
+
+    shared_examples "does not record the search" do
+      describe "the PatientProgrammeVaccinationsSearch record" do
+        it "is not created or updated" do
+          perform
+
+          expect(
+            PatientProgrammeVaccinationsSearch.find_by(
+              patient:,
+              programme_type: programme.type
+            )
+          ).to be_nil
+        end
+      end
+    end
+
     let(:patient_id) { patient.id }
+    let(:expected_query_immunization_target) { "3IN1,FLU,HPV,MENACWY,MMR" }
     let(:expected_query) do
       {
         "patient.identifier" =>
           "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}",
-        "-immunization.target" => "3IN1,FLU,HPV,MENACWY,MMR"
+        "-immunization.target" => expected_query_immunization_target
       }
     end
     let(:status) { 200 }
@@ -409,7 +473,10 @@ describe SearchVaccinationRecordsInNHSJob do
     end
     let!(:existing_records) do
       fhir_records =
-        described_class.new.send(:extract_vaccination_records, existing_bundle)
+        described_class.new.send(
+          :extract_fhir_vaccination_records,
+          existing_bundle
+        )
       mapped_records =
         fhir_records.map do |fhir_record|
           mapped =
@@ -447,6 +514,8 @@ describe SearchVaccinationRecordsInNHSJob do
 
       include_examples "sends discovery comms if required n times", 2
       include_examples "calls StatusUpdater"
+
+      include_examples "records the search"
     end
 
     context "with 1 existing record and 1 new incoming record" do
@@ -510,9 +579,7 @@ describe SearchVaccinationRecordsInNHSJob do
         Flipper.enable(:imms_api_search_job, Programme.td_ipv)
         Flipper.enable(
           :imms_api_search_job,
-          Programme.mmr.variant_for(
-            disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
-          )
+          Programme::Variant.new(Programme.mmr, variant_type: "mmr")
         )
       end
 
@@ -523,16 +590,97 @@ describe SearchVaccinationRecordsInNHSJob do
       it "creates one vaccination record of each programme" do
         perform
 
-        expect(
-          patient.vaccination_records.map do
-            it.strict_loading!(false)
-            it.programme
-          end
-        ).to match_array(Programme.all)
+        programmes = patient.vaccination_records.map(&:programme)
+
+        expect(programmes).to contain_exactly(
+          Programme.flu,
+          Programme.hpv,
+          Programme.menacwy,
+          Programme.td_ipv,
+          Programme::Variant.new(Programme.mmr, variant_type: "mmr")
+        )
+
+        expect(programmes.select { |it| it.type == "mmr" }).to all(
+          be_a Programme::Variant
+        )
       end
 
       include_examples "sends discovery comms if required n times", 5
       include_examples "calls StatusUpdater"
+    end
+
+    context "with a record for each programme, inc. MMRV (total 6)" do
+      shared_examples "ingests all 6 vaccination record types" do
+        it "creates new vaccination records for incoming Immunizations" do
+          expect { perform }.to change { patient.vaccination_records.count }.by(
+            6
+          )
+        end
+
+        it "creates one vaccination record of each programme" do
+          perform
+
+          programmes = patient.vaccination_records.map(&:programme)
+
+          expect(programmes).to contain_exactly(
+            Programme.flu,
+            Programme.hpv,
+            Programme.menacwy,
+            Programme.td_ipv,
+            Programme::Variant.new(Programme.mmr, variant_type: "mmr"),
+            Programme::Variant.new(Programme.mmr, variant_type: "mmrv")
+          )
+
+          expect(programmes.select { |it| it.type == "mmr" }).to all(
+            be_a Programme::Variant
+          )
+        end
+
+        include_examples "sends discovery comms if required n times", 6
+        include_examples "calls StatusUpdater"
+      end
+
+      let(:expected_query_immunization_target) do
+        "3IN1,FLU,HPV,MENACWY,MMR,MMRV"
+      end
+      let(:body) do
+        file_fixture("fhir/search_response_all_programmes_mmrv.json").read
+      end
+
+      before do
+        Flipper.enable(:mmrv)
+
+        Flipper.disable(:imms_api_search_job)
+      end
+
+      context "with all feature flags explicitly enabled" do
+        before do
+          # Enable feature flag actors explicitly
+          Flipper.enable(:imms_api_search_job, Programme.flu)
+          Flipper.enable(:imms_api_search_job, Programme.hpv)
+          Flipper.enable(:imms_api_search_job, Programme.menacwy)
+          Flipper.enable(:imms_api_search_job, Programme.td_ipv)
+          Flipper.enable(
+            :imms_api_search_job,
+            Programme::Variant.new(Programme.mmr, variant_type: "mmr")
+          )
+          Flipper.enable(
+            :imms_api_search_job,
+            Programme::Variant.new(Programme.mmr, variant_type: "mmrv")
+          )
+        end
+
+        it_behaves_like "ingests all 6 vaccination record types"
+      end
+
+      context "with feature flags enabled as they will be in prod" do
+        before do
+          # Enable feature flag actors as they will be in prod, after MMRV is enabled
+          Flipper.enable(:imms_api_search_job)
+        end
+
+        it_behaves_like "ingests all 6 vaccination record types"
+      end
     end
 
     context "with a mavis record in the database" do
@@ -652,6 +800,7 @@ describe SearchVaccinationRecordsInNHSJob do
 
       include_examples "sends discovery comms if required n times", 2
       include_examples "calls StatusUpdater"
+      include_examples "records the search"
     end
 
     context "with no NHS number" do
@@ -672,6 +821,26 @@ describe SearchVaccinationRecordsInNHSJob do
 
       include_examples "sends discovery comms if required n times", 0
       include_examples "calls StatusUpdater"
+
+      include_examples "does not record the search"
+    end
+
+    context "with an existing PatientProgrammeVaccinationsSearch record" do
+      before do
+        create(:patient_programme_vaccinations_search, patient:, programme:)
+      end
+
+      include_examples "records the search"
+
+      describe "the PatientProgrammeVaccinationsSearch record" do
+        it "is not newly created" do
+          expect { perform }.not_to(
+            change do
+              PatientProgrammeVaccinationsSearch.for_programme(programme).count
+            end
+          )
+        end
+      end
     end
 
     context "with duplicates" do

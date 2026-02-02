@@ -82,6 +82,8 @@ module MavisCLI
       end
 
       def reset_team(team)
+        patient_ids_to_update = Set.new
+
         ActiveRecord::Base.transaction do
           immunisation_imports = ImmunisationImport.where(team:)
           puts "  - Found #{immunisation_imports.count} immunisation import(s)"
@@ -142,12 +144,29 @@ module MavisCLI
 
           patients_to_destroy =
             find_patients_without_team(patient_ids_of_not_synced_records)
+          # We need to ensure we only update statuses for patients who are not
+          # destroyed. This should be the same as the list of patients _with_
+          # a team, but it's fine to use this subtraction to be safe.
+          patient_ids_to_update +=
+            patient_ids_of_not_synced_records - patients_to_destroy.ids
           puts "  - Found #{patients_to_destroy.count}" \
                  " patient(s) who were in the imports, and no longer have teams"
+
+          access_log_entries =
+            AccessLogEntry.where(patient_id: patients_to_destroy.ids)
+          puts "  - Found #{access_log_entries.count} access_log_entries for" \
+                 " patients without teams"
+
+          puts "Destroying access-log-entries..."
+          access_log_entries.destroy_all
 
           puts "Destroying patients..."
           patients_to_destroy.destroy_all
         end
+
+        puts "Enqueueing jobs to update statuses for" \
+               " #{patient_ids_to_update.size} patient(s) left over..."
+        StatusUpdaterJob.perform_bulk(patient_ids_to_update.zip)
       end
 
       def find_patients_for_team(team)

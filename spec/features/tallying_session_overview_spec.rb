@@ -48,12 +48,6 @@ describe "Tallying on session overview page" do
 
   def and_one_has_given_consent_for_nasal_spray
     create(
-      :patient_consent_status,
-      :given_nasal_only,
-      patient: @patients.second,
-      programme: @flu_programme
-    )
-    create(
       :patient_programme_status,
       :due_nasal,
       patient: @patients.second,
@@ -62,12 +56,6 @@ describe "Tallying on session overview page" do
   end
 
   def and_one_has_given_consent_for_injection
-    create(
-      :patient_consent_status,
-      :given_without_gelatine,
-      patient: @patients.third,
-      programme: @flu_programme
-    )
     create(
       :patient_programme_status,
       :due_injection_without_gelatine,

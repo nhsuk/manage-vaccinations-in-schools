@@ -1,0 +1,18 @@
+name: Scheduled Data Replication Redeploy
+run-name: Nightly redeploy of data replication environment
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # At 01:00 infrastructure is refreshed, so redeploy at 03:00 UTC
+
+permissions: {}
+
+jobs:
+  deploy-image:
+    name: Deploy image
+    uses: ./.github/workflows/data-replication-pipeline.yml
+    permissions:
+      id-token: write
+    with:
+      environment: production
+      git_ref_to_deploy: main

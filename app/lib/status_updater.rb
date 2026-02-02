@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 class StatusUpdater
+  # TODO: Refactor this class to accept a patient relation similar to the
+  #  `PatientTeamUpdater` and then use the scope to filter the patients.
   def initialize(patient: nil, academic_years: nil)
     @patient = patient
     @academic_years = academic_years || AcademicYear.all
   end
 
   def call
-    update_consent_statuses!
     update_programme_statuses!
     update_registration_statuses!
   end
@@ -19,30 +20,6 @@ class StatusUpdater
   private
 
   attr_reader :patient, :academic_years
-
-  def update_consent_statuses!
-    Patient::ConsentStatus.import!(
-      %i[patient_id programme_type academic_year],
-      patient_statuses_to_import,
-      on_duplicate_key_ignore: true
-    )
-
-    Patient::ConsentStatus
-      .then { patient ? it.where(patient:) : it }
-      .where(academic_year: academic_years)
-      .includes(:consents, :patient, :vaccination_records)
-      .find_in_batches(batch_size: 10_000) do |batch|
-        batch.each(&:assign_status)
-
-        Patient::ConsentStatus.import!(
-          batch,
-          on_duplicate_key_update: {
-            conflict_target: [:id],
-            columns: %i[status vaccine_methods without_gelatine disease_types]
-          }
-        )
-      end
-  end
 
   def update_programme_statuses!
     Patient::ProgrammeStatus.import!(
