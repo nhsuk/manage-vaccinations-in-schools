@@ -88,7 +88,13 @@ class ApplicationController < ActionController::Base
   end
 
   def set_service_guide_url
-    @service_guide_url = "https://guide.manage-vaccinations-in-schools.nhs.uk"
+    base_url = "https://guide.manage-vaccinations-in-schools.nhs.uk"
+    @service_guide_url =
+      if current_team&.has_upload_only_access?
+        "#{base_url}/national-reporting/"
+      else
+        base_url
+      end
   end
 
   def set_privacy_policy_url
