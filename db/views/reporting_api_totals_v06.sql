@@ -26,8 +26,10 @@ SELECT
   pps.academic_year
     - pat.birth_academic_year - 5       AS patient_year_group,   -- Filter: ?year_group=8,9
   COALESCE(la.mhclg_code,
-    pat.local_authority_mhclg_code, '') AS patient_local_authority_code, -- Filter: ?local_authority=E09000001
-  COALESCE(la.mhclg_code, '')           AS patient_school_local_authority_code, -- Filter: ?school_local_authority=E09000001
+    pat.local_authority_mhclg_code, '') AS patient_local_authority_code,
+  COALESCE(la.official_name,
+    pat_la.official_name, '')           AS patient_local_authority_official_name,
+  COALESCE(la.mhclg_code, '')           AS patient_school_local_authority_code,
 
   -- School info (for CSV grouping by school)
   CASE
@@ -85,6 +87,10 @@ LEFT JOIN locations school
 -- School's local authority (LEFT: school may not have LA set)
 LEFT JOIN local_authorities la
   ON la.gias_code = school.gias_local_authority_code
+
+-- Patient's direct local authority (LEFT: fallback when school has no LA)
+LEFT JOIN local_authorities pat_la
+  ON pat_la.mhclg_code = pat.local_authority_mhclg_code
 
 -- Exclude patients who shouldn't appear in any reports
 WHERE pat.invalidated_at IS NULL  -- Merged/duplicate record
