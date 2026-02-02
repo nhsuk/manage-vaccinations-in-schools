@@ -699,6 +699,7 @@
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@vaccinate_form</span>.<span class="ruby-identifier">save</span>(<span class="ruby-value">draft_vaccination_record:</span>)
     <span class="ruby-identifier">steps</span> = <span class="ruby-identifier">draft_vaccination_record</span>.<span class="ruby-identifier">wizard_steps</span>
 
+    <span class="ruby-identifier">steps</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:mmr_or_mmrv</span>)
     <span class="ruby-identifier">steps</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:dose</span>) <span class="ruby-comment"># this can only be changed from confirmation page</span>
     <span class="ruby-identifier">steps</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:identity</span>) <span class="ruby-comment"># this can only be changed from confirmation page</span>
     <span class="ruby-identifier">steps</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:notes</span>) <span class="ruby-comment"># this is on the confirmation page</span>
