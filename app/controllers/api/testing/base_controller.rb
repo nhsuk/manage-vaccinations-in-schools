@@ -10,4 +10,14 @@ class API::Testing::BaseController < ActionController::API
       render status: :forbidden
     end
   end
+
+  def log_destroy(query)
+    where_clause = query.where_clause
+    @log_time ||= Time.zone.now
+    query.delete_all
+    response.stream.write(
+      "#{query.model.name}.where(#{where_clause.to_h}): #{Time.zone.now - @log_time}s\n"
+    )
+    @log_time = Time.zone.now
+  end
 end
