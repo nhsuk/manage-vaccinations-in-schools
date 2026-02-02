@@ -757,7 +757,15 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">should_send_notification?</span>(<span class="ruby-value">patient:</span>, <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">programmes:</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">send_notifications?</span>(<span class="ruby-value">team:</span>)
 
-  <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>)
+  <span class="ruby-identifier">eligible_programmes</span> =
+    <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">select</span> <span class="ruby-keyword">do</span>
+      <span class="ruby-identifier">programme_status</span> = <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(<span class="ruby-identifier">it</span>, <span class="ruby-value">academic_year:</span>)
+      <span class="ruby-operator">!</span><span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">vaccinated?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">consent_refused?</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">eligible_programmes</span>.<span class="ruby-identifier">empty?</span>
+
+  <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">eligible_programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>)
 
   <span class="ruby-identifier">already_invited</span> =
     <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">clinic_notifications</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span>
@@ -769,12 +777,7 @@
   <span class="ruby-comment"># We only send initial invitations to patients who haven&#39;t already</span>
   <span class="ruby-comment"># received an invitation.</span>
 
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">already_invited</span>
-
-  <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">programme_status</span> = <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(<span class="ruby-identifier">programme</span>, <span class="ruby-value">academic_year:</span>)
-    <span class="ruby-operator">!</span><span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">vaccinated?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">consent_refused?</span>
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-operator">!</span><span class="ruby-identifier">already_invited</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
