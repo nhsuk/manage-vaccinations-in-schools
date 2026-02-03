@@ -1,0 +1,21 @@
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t("patients.index.title"), href: patients_path },
+                                        ]) %>
+<% end %>
+
+<%= render "patients/header" %>
+
+<%= render AppPatientSecondaryNavigationComponent.new(
+      patient: @patient,
+      current_user: current_user,
+      selected_tab: @programme.type
+    ) %>
+
+<%= render AppCardComponent.new(section: true) do |card| %>
+  <% card.with_heading { "Vaccinations" } %>
+  <%= render AppPatientVaccinationTableComponent.new(
+        @patient, academic_year: AcademicYear.current, show_caption: false, programme: @programme
+      ) %>
+<% end %>

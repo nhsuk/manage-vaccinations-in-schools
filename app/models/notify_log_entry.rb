@@ -61,6 +61,18 @@ class NotifyLogEntry < ApplicationRecord
   validates :recipient, presence: true
   validates :template_id, presence: true
 
+  scope :for_programme_type,
+        ->(programme_type) do
+          where(
+            NotifyLogEntry::Programme
+              .select("1")
+              .where("notify_log_entry_id = notify_log_entries.id")
+              .where(programme_type:)
+              .arel
+              .exists
+          )
+        end
+
   scope :for_session,
         ->(session) do
           where(

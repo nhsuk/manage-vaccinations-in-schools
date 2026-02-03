@@ -69,6 +69,9 @@ class Consent < ApplicationRecord
              optional: true,
              foreign_key: :recorded_by_user_id
 
+  scope :for_session,
+        ->(session) { where(programme_type: session.programme_types) }
+
   scope :withdrawn, -> { where.not(withdrawn_at: nil) }
   scope :not_withdrawn, -> { where(withdrawn_at: nil) }
 
