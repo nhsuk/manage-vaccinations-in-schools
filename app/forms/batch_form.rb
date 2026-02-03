@@ -9,7 +9,7 @@ class BatchForm
   attribute :number, :string
   attribute :expiry, :date
 
-  validates :number, batch_name: true
+  validates :number, batch_number: true
 
   validates :expiry,
             comparison: {
