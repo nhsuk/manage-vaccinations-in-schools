@@ -16,8 +16,8 @@
 #
 # Indexes
 #
-#  index_batches_on_team_id_and_name_and_expiry_and_vaccine_id  (team_id,name,expiry,vaccine_id) UNIQUE
-#  index_batches_on_vaccine_id                                  (vaccine_id)
+#  index_batches_on_team_id_and_number_and_expiry_and_vaccine_id  (team_id,number,expiry,vaccine_id) UNIQUE
+#  index_batches_on_vaccine_id                                    (vaccine_id)
 #
 # Foreign Keys
 #
@@ -34,18 +34,19 @@ class Batch < ApplicationRecord
 
   has_and_belongs_to_many :immunisation_imports
 
-  scope :order_by_name_and_expiration, -> { order(expiry: :asc, name: :asc) }
+  scope :order_by_number_and_expiration,
+        -> { order(expiry: :asc, number: :asc) }
 
   scope :expired,
         -> { where(expiry: nil).or(where("expiry <= ?", Time.current)) }
   scope :not_expired,
         -> { where.not(expiry: nil).where("expiry > ?", Time.current) }
 
-  validates :name, presence: true
+  validates :number, presence: true
 
   validates :expiry,
             uniqueness: {
-              scope: %i[team_id name vaccine_id],
+              scope: %i[team_id number vaccine_id],
               allow_nil: true
             }
 
