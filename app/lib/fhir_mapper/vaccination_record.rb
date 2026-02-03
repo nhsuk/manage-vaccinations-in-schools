@@ -112,7 +112,6 @@ module FHIRMapper
 
       if attrs[:vaccine]
         attrs[:disease_types] = attrs[:vaccine].disease_types
-        attrs[:batch] = batch_from_fhir(fhir_record, vaccine: attrs[:vaccine])
         attrs[:full_dose] = full_dose_from_fhir(
           fhir_record,
           vaccine: attrs[:vaccine]
@@ -266,14 +265,9 @@ module FHIRMapper
       vaccine_snomed_code = fhir_vaccine&.code
       vaccine_description = fhir_vaccine&.display.presence
 
-      batch_number = fhir_record.lotNumber
-      batch_expiry = fhir_record.expirationDate
-
       [
         ("SNOMED product code: #{vaccine_snomed_code}" if vaccine_snomed_code),
-        ("SNOMED description: #{vaccine_description}" if vaccine_description),
-        ("Batch number: #{batch_number}" if batch_number),
-        ("Batch expiry: #{batch_expiry}" if batch_expiry)
+        ("SNOMED description: #{vaccine_description}" if vaccine_description)
       ].compact.join("\n").presence
     end
 
@@ -331,20 +325,6 @@ module FHIRMapper
       #       This doesn't matter much for flu, but this may need to be revisited when we start consuming programmes
       #       where dose number matters more (eg MMR)
       fhir_record.protocolApplied.sole.doseNumberPositiveInt
-    end
-
-    private_class_method def self.batch_from_fhir(fhir_record, vaccine:)
-      return if fhir_record.lotNumber&.to_s&.presence.nil?
-
-      ::Batch.create_with(
-        archived_at: Time.current,
-        number: fhir_record.lotNumber&.to_s
-      ).find_or_create_by!(
-        expiry: fhir_record.expirationDate&.to_date,
-        name: fhir_record.lotNumber&.to_s,
-        team: nil,
-        vaccine:
-      )
     end
   end
 end
