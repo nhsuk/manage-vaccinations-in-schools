@@ -31,8 +31,7 @@ FactoryBot.define do
     team
     vaccine
 
-    name { "#{prefix}#{Faker::Number.number(digits: 4)}" }
-    number { name }
+    number { "#{prefix}#{Faker::Number.number(digits: 4)}" }
 
     trait :expired do
       expiry { Faker::Time.backward(days: 50, period: :evening) }
