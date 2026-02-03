@@ -435,10 +435,10 @@ class Reports::OfflineSessionExporter
           .not_expired
           .joins(:vaccine)
           .where(vaccine: { programme_type: programme.type })
-          .pluck(:name)
+          .pluck(:number)
       )
 
-    (batch_names + [existing_batch&.name].compact).uniq
+    (batch_names + [existing_batch&.number].compact).uniq
   end
 
   def performing_professional_email_values

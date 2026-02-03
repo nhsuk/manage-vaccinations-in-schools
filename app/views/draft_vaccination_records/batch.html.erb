@@ -31,7 +31,7 @@
                                      legend: { size: "l", tag: "h1", text: "Which batch did you use?" } do %>
     <% @batches.find_each do |batch| %>
       <% label = proc do %>
-        <span class="app-u-code"><%= batch.name %></span>
+        <span class="app-u-code"><%= batch.number %></span>
         (<%= batch.vaccine.brand %>)
       <% end %>
 

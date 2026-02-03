@@ -247,19 +247,19 @@ describe "MMR vaccination" do
   end
 
   def then_i_see_only_the_vaccine_without_gelatine
-    expect(page).to have_content(@without_gelatine_batch.name)
-    expect(page).not_to have_content(@with_gelatine_batch.name)
+    expect(page).to have_content(@without_gelatine_batch.number)
+    expect(page).not_to have_content(@with_gelatine_batch.number)
   end
 
   def then_i_see_both_vaccines
-    expect(page).to have_content(@without_gelatine_batch.name)
-    expect(page).to have_content(@with_gelatine_batch.name)
+    expect(page).to have_content(@without_gelatine_batch.number)
+    expect(page).to have_content(@with_gelatine_batch.number)
   end
 
   def and_i_choose_a_batch(without_gelatine:)
     batch = (without_gelatine ? @without_gelatine_batch : @with_gelatine_batch)
 
-    choose batch.name
+    choose batch.number
     click_button "Continue"
   end
 
@@ -268,7 +268,7 @@ describe "MMR vaccination" do
 
     expect(page).to have_content("Check and confirm")
     expect(page).to have_content(@patient.full_name)
-    expect(page).to have_content(batch.name)
+    expect(page).to have_content(batch.number)
     expect(page).to have_content(@location.name)
     expect(page).to have_content("Vaccinated")
   end

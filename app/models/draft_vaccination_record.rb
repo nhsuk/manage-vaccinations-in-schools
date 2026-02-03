@@ -268,7 +268,7 @@ class DraftVaccinationRecord
   end
 
   def batch_number
-    batch&.name || super
+    batch&.number || super
   end
 
   def batch_expiry

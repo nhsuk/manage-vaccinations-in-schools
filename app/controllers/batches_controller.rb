@@ -27,7 +27,7 @@ class BatchesController < ApplicationController
       redirect_to vaccines_path,
                   flash: {
                     success:
-                      "Batch <span class=\"nhsuk-u-text-break-word\">#{batch.name}</span> added".html_safe
+                      "Batch <span class=\"nhsuk-u-text-break-word\">#{batch.number}</span> added".html_safe
                   }
     else
       @form.expiry = expiry_validator.date_params_as_struct

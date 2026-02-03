@@ -27,7 +27,7 @@
             <% body.with_row do |row| %>
               <% row.with_cell do %>
                 <span class="nhsuk-u-text-break-word app-u-code">
-                  <%= batch.name %>
+                  <%= batch.number %>
                 </span>
 
                 <% if batch.id == @todays_batch_id_by_programme_and_vaccine_methods&.dig(vaccine.programme, vaccine.method) %>
@@ -43,7 +43,7 @@
                 <%= render AppActionListComponent.new do |action_list| %>
                   <% action_list.with_item do %>
                     <%= link_to "Archive", archive_vaccine_batch_path(vaccine, batch),
-                                aria: { label: "Archive #{batch.name} batch of #{vaccine.brand}" } %>
+                                aria: { label: "Archive #{batch.number} batch of #{vaccine.brand}" } %>
                   <% end %>
                 <% end %>
               <% end %>

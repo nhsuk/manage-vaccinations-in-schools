@@ -368,7 +368,7 @@ describe DraftVaccinationRecord do
 
     it "sets the batch number" do
       expect { write_to! }.to change(vaccination_record, :batch_number).to(
-        batch.name
+        batch.number
       )
     end
 
