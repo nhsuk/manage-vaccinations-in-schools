@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class BatchNameValidator < ActiveModel::EachValidator
+class BatchNumberValidator < ActiveModel::EachValidator
   FORMAT = /\A[A-Za-z0-9]+\z/
   MIN_LENGTH = 2
   MAX_LENGTH = 100
