@@ -30,7 +30,6 @@ class Imports::IssuesController < ApplicationController
   def set_import_issues
     @vaccination_records =
       policy_scope(VaccinationRecord).with_pending_changes.includes(
-        :batch,
         :location,
         :performed_by_user,
         :vaccine,
