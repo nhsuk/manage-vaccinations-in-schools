@@ -128,7 +128,6 @@ class Reports::SystmOneExporter
         .for_programme(programme)
         .for_academic_year(academic_year)
         .includes(
-          :batch,
           :location,
           :patient,
           :performed_by_user,
@@ -184,8 +183,8 @@ class Reports::SystmOneExporter
       vaccination(vaccination_record), # Vaccination
       "", # Part
       vaccination_record.performed_at.to_date.to_fs(:uk_short), # Admin date
-      vaccination_record.batch&.name, # Batch number
-      vaccination_record.batch&.expiry&.to_fs(:uk_short), # Expiry date
+      vaccination_record.batch_number, # Batch number
+      vaccination_record.batch_expiry&.to_fs(:uk_short), # Expiry date
       vaccination_record.dose_volume_ml, # Dose
       reason(vaccination_record), # Reason (not specified)
       site(vaccination_record), # Site
