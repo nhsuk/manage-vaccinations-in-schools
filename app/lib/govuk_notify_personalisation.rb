@@ -109,7 +109,7 @@ class GovukNotifyPersonalisation
               :vaccination_record
 
   def batch_name
-    vaccination_record&.batch&.name
+    vaccination_record&.batch_number
   end
 
   def catch_up = is_catch_up? ? "yes" : "no"
