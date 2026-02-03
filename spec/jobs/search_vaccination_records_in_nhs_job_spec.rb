@@ -563,7 +563,7 @@ describe SearchVaccinationRecordsInNHSJob do
       include_examples "calls StatusUpdater"
     end
 
-    context "with a record for each programme, inc. MMRV (total 6)" do
+    context "with a record for each programme (total 6)" do
       shared_examples "ingests all 6 vaccination record types" do
         it "creates new vaccination records for incoming Immunizations" do
           expect { perform }.to change { patient.vaccination_records.count }.by(
