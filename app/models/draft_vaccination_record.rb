@@ -59,6 +59,12 @@ class DraftVaccinationRecord
     [
       :identity,
       (:notes unless national_reporting_user_and_record?),
+      (
+        if programme&.mmr? && (administered? || already_had?) &&
+             patient.eligible_for_mmrv?
+          :mmr_or_mmrv
+        end
+      ),
       :date_and_time,
       (:outcome if can_change_outcome?),
       (:supplier if requires_supplied_by?),
