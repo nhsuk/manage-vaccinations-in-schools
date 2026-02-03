@@ -926,7 +926,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
 
   create_table "vaccination_records", force: :cascade do |t|
     t.date "batch_expiry"
-    t.bigint "batch_id"
     t.string "batch_number"
     t.datetime "confirmation_sent_at"
     t.datetime "created_at", null: false
@@ -968,7 +967,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
     t.datetime "updated_at", null: false
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.bigint "vaccine_id"
-    t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
     t.index ["id"], name: "index_vaccination_records_on_pending_changes_not_empty", where: "(pending_changes <> '{}'::jsonb)"
     t.index ["location_id"], name: "index_vaccination_records_on_location_id"
@@ -1127,7 +1125,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
   add_foreign_key "triages", "patients"
   add_foreign_key "triages", "teams"
   add_foreign_key "triages", "users", column: "performed_by_user_id"
-  add_foreign_key "vaccination_records", "batches"
   add_foreign_key "vaccination_records", "patients"
   add_foreign_key "vaccination_records", "sessions"
   add_foreign_key "vaccination_records", "triages", column: "next_dose_delay_triage_id"
