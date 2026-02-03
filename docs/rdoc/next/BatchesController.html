@@ -577,15 +577,11 @@
 
         <li ><a href="#method-i-create">create</a></li>
 
-        <li ><a href="#method-i-edit">edit</a></li>
-
         <li ><a href="#method-i-edit_archive">edit_archive</a></li>
 
         <li ><a href="#method-i-make_default">make_default</a></li>
 
         <li ><a href="#method-i-new">new</a></li>
-
-        <li ><a href="#method-i-update">update</a></li>
 
         <li ><a href="#method-i-update_archive">update_archive</a></li>
 
@@ -714,49 +710,6 @@
       </div>
 
 
-      <div id="method-i-edit" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-edit" title="Link to this method">
-                <span class="method-name">edit</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="edit-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 38</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">edit</span>
-  <span class="ruby-ivar">@form</span> =
-    <span class="ruby-constant">BatchForm</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">batch:</span> <span class="ruby-ivar">@batch</span>, <span class="ruby-value">name:</span> <span class="ruby-ivar">@batch</span>.<span class="ruby-identifier">name</span>, <span class="ruby-value">expiry:</span> <span class="ruby-ivar">@batch</span>.<span class="ruby-identifier">expiry</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
       <div id="method-i-edit_archive" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -776,7 +729,7 @@
             </details>
           </div>
           <div class="method-source-code" id="edit_archive-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 68</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 43</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">edit_archive</span>
   <span class="ruby-identifier">render</span> <span class="ruby-value">:archive</span>
 <span class="ruby-keyword">end</span></pre>
@@ -818,7 +771,7 @@
             </details>
           </div>
           <div class="method-source-code" id="make_default-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 43</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 38</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">make_default</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">todays_batch</span> = <span class="ruby-ivar">@batch</span>
   <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">vaccines_path</span>
@@ -885,64 +838,6 @@
       </div>
 
 
-      <div id="method-i-update" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-update" title="Link to this method">
-                <span class="method-name">update</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="update-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 48</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>
-  <span class="ruby-ivar">@form</span> =
-    <span class="ruby-constant">BatchForm</span>.<span class="ruby-identifier">new</span>(
-      <span class="ruby-operator">**</span><span class="ruby-identifier">batch_form_params</span>.<span class="ruby-identifier">except</span>(<span class="ruby-value">:number</span>),
-      <span class="ruby-value">batch:</span> <span class="ruby-ivar">@batch</span>,
-      <span class="ruby-value">name:</span> <span class="ruby-ivar">@batch</span>.<span class="ruby-identifier">name</span>
-    )
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">expiry_validator</span>.<span class="ruby-identifier">date_params_valid?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@form</span>.<span class="ruby-identifier">save</span>
-    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">vaccines_path</span>,
-                <span class="ruby-value">flash:</span> {
-                  <span class="ruby-value">success:</span>
-                    <span class="ruby-node">&quot;Batch &lt;span class=\&quot;nhsuk-u-text-break-word\&quot;&gt;#{@batch.name}&lt;/span&gt; updated&quot;</span>.<span class="ruby-identifier">html_safe</span>
-                }
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-ivar">@form</span>.<span class="ruby-identifier">expiry</span> = <span class="ruby-identifier">expiry_validator</span>.<span class="ruby-identifier">date_params_as_struct</span>
-    <span class="ruby-identifier">render</span> <span class="ruby-value">:edit</span>, <span class="ruby-value">status:</span> <span class="ruby-value">:unprocessable_content</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
       <div id="method-i-update_archive" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -962,7 +857,7 @@
             </details>
           </div>
           <div class="method-source-code" id="update_archive-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 72</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 47</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_archive</span>
   <span class="ruby-ivar">@batch</span>.<span class="ruby-identifier">archive!</span>
 
