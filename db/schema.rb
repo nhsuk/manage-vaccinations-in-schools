@@ -103,12 +103,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
     t.index ["vaccine_id"], name: "index_batches_on_vaccine_id"
   end
 
-  create_table "batches_immunisation_imports", id: false, force: :cascade do |t|
-    t.bigint "batch_id", null: false
-    t.bigint "immunisation_import_id", null: false
-    t.index ["immunisation_import_id", "batch_id"], name: "idx_on_immunisation_import_id_batch_id_d039b76103", unique: true
-  end
-
   create_table "class_imports", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.integer "changed_record_count"
@@ -1017,8 +1011,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
   add_foreign_key "attendance_records", "patients"
   add_foreign_key "batches", "teams"
   add_foreign_key "batches", "vaccines"
-  add_foreign_key "batches_immunisation_imports", "batches", on_delete: :cascade
-  add_foreign_key "batches_immunisation_imports", "immunisation_imports", on_delete: :cascade
   add_foreign_key "class_imports", "locations"
   add_foreign_key "class_imports", "teams"
   add_foreign_key "class_imports", "users", column: "uploaded_by_user_id"
