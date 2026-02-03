@@ -668,9 +668,7 @@
 
   <span class="ruby-identifier">draft_vaccination_record</span>.<span class="ruby-identifier">clear_attributes</span>
   <span class="ruby-identifier">draft_vaccination_record</span>.<span class="ruby-identifier">update!</span>(
-    <span class="ruby-value">dose_sequence:</span> <span class="ruby-identifier">dose_sequence</span>,
-    <span class="ruby-value">first_active_wizard_step:</span>
-      <span class="ruby-identifier">eligible_for_mmr_or_mmrv?</span> <span class="ruby-operator">?</span> <span class="ruby-value">:mmr_or_mmrv</span> <span class="ruby-operator">:</span> <span class="ruby-value">:confirm</span>,
+    <span class="ruby-value">first_active_wizard_step:</span> <span class="ruby-value">:confirm</span>,
     <span class="ruby-value">location_id:</span> <span class="ruby-keyword">nil</span>,
     <span class="ruby-value">location_name:</span> <span class="ruby-string">&quot;Unknown&quot;</span>,
     <span class="ruby-value">outcome:</span> <span class="ruby-value">:already_had</span>,
@@ -683,9 +681,7 @@
     <span class="ruby-value">source:</span> <span class="ruby-string">&quot;service&quot;</span>
   )
 
-  <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">draft_vaccination_record_path</span>(
-                <span class="ruby-identifier">eligible_for_mmr_or_mmrv?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;mmr-or-mmrv&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;confirm&quot;</span>
-              )
+  <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">draft_vaccination_record_path</span>(<span class="ruby-string">&quot;confirm&quot;</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
