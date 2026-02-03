@@ -85,7 +85,6 @@ class API::Testing::TeamsController < API::Testing::BaseController
     )
     log_destroy(Parent.where.missing(:parent_relationships))
 
-    log_destroy(VaccinationRecord.joins(:batch).where(batch: { team: }))
     log_destroy(Batch.where(team:))
 
     log_destroy(
