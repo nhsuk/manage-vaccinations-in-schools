@@ -12,7 +12,7 @@ en:
               missing_month: Enter a month
               missing_year: Enter a year
               taken: This batch already exists
-            name:
+            number:
               blank: Enter a batch number
               invalid: Enter a batch number with only letters and numbers
               too_short: Enter a batch number that is more than %{count} characters long

@@ -6,10 +6,10 @@ class BatchForm
 
   attr_accessor :batch
 
-  attribute :name, :string
+  attribute :number, :string
   attribute :expiry, :date
 
-  validates :name, batch_name: true
+  validates :number, batch_name: true
 
   validates :expiry,
             comparison: {
@@ -18,6 +18,6 @@ class BatchForm
             }
 
   def save
-    valid? && batch.update(name: name, number: name, expiry: expiry)
+    valid? && batch.update(number: number, expiry: expiry)
   end
 end
