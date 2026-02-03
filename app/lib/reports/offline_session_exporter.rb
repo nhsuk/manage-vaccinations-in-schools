@@ -138,7 +138,7 @@ class Reports::OfflineSessionExporter
           :programme_statuses,
           :school,
           parent_relationships: :parent,
-          vaccination_records: %i[batch performed_by_user vaccine session]
+          vaccination_records: %i[performed_by_user vaccine session]
         )
         .order_by_name
   end
@@ -302,7 +302,6 @@ class Reports::OfflineSessionExporter
   end
 
   def add_existing_row_cells(row, vaccination_record:)
-    batch = vaccination_record.batch
     patient = vaccination_record.patient
     programme = vaccination_record.programme
     session = vaccination_record.session
@@ -345,10 +344,10 @@ class Reports::OfflineSessionExporter
       allowed_formula: suppliers_range
     )
     row[:batch_number] = Cell.new(
-      batch&.name,
+      vaccination_record.batch_number,
       allowed_formula: batch_numbers_range_for_programme(programme)
     )
-    row[:batch_expiry_date] = batch&.expiry
+    row[:batch_expiry_date] = vaccination_record.batch_expiry
     row[:anatomical_site] = Cell.new(
       anatomical_site(vaccination_record:),
       allowed_values: ImmunisationImportRow::DELIVERY_SITES.keys
