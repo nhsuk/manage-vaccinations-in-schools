@@ -105,20 +105,20 @@ describe "MenACWY vaccination" do
   end
 
   def and_i_see_only_not_expired_batches
-    expect(page).not_to have_content(@expired_batch.name)
-    expect(page).not_to have_content(@archived_batch.name)
-    expect(page).to have_content(@active_batch.name)
+    expect(page).not_to have_content(@expired_batch.number)
+    expect(page).not_to have_content(@archived_batch.number)
+    expect(page).to have_content(@active_batch.number)
   end
 
   def and_i_select_the_batch
-    choose @active_batch.name
+    choose @active_batch.number
     click_button "Continue"
   end
 
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Check and confirm")
     expect(page).to have_content("Child#{@patient.full_name}")
-    expect(page).to have_content("Batch number#{@active_batch.name}")
+    expect(page).to have_content("Batch number#{@active_batch.number}")
     expect(page).to have_content("MethodIntramuscular")
     expect(page).to have_content("SiteLeft arm")
     expect(page).to have_content("OutcomeVaccinated")

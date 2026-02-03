@@ -55,7 +55,7 @@ describe "mavis vaccination-records sync" do
     session = create(:session, programmes: [programme], team:)
     patient = create(:patient, team:)
     vaccine = programme.vaccines.find_by!(brand: "Gardasil")
-    batch = create(:batch, vaccine:, expiry: "2023-03-20", name: "X8U375AL")
+    batch = create(:batch, vaccine:, expiry: "2023-03-20", number: "X8U375AL")
 
     @vaccination_record =
       create(

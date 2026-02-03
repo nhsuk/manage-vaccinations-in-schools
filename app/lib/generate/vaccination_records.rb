@@ -101,7 +101,7 @@ class Generate::VaccinationRecords
         performed_by:,
         session:,
         vaccine:,
-        batch_number: batch&.name,
+        batch_number: batch&.number,
         batch_expiry: batch&.expiry,
         location_name:
       )

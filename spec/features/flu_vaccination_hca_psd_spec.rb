@@ -240,7 +240,7 @@ describe "Flu vaccination" do
       click_button "Continue"
     end
 
-    choose @batch.name
+    choose @batch.number
     click_button "Continue"
 
     expect(page).to have_content("ProtocolPatient Specific Direction")

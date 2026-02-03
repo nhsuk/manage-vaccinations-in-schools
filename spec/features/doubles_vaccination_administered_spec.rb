@@ -83,7 +83,7 @@ describe "MenACWY and Td/IPV vaccination" do
       click_button "Continue"
     end
 
-    choose batch.name
+    choose batch.number
     click_on "Continue"
 
     expect(page).to have_content("Check and confirm")
