@@ -120,7 +120,7 @@ jobs:
         run: |
           GIT_REF_SHA=$(git rev-parse $GIT_REF)
           echo "GIT_REF_SHA=$GIT_REF_SHA" >> $GITHUB_OUTPUT
-          if aws ecr describe-images --repository-name mavis/development --image-ids imageTag=$GIT_REF_SHA > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name mavis/development/postgres_db --image-ids imageTag=$GIT_REF_SHA > /dev/null 2>&1; then
             echo "Docker image with given tag already exists"
             echo "build-needed=false" >> $GITHUB_OUTPUT
           else
