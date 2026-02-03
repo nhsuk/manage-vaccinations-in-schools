@@ -1,0 +1,17 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: schools_team_path) %>
+<% end %>
+
+<%= h1 "Edit school details" %>
+
+<% change_links = {
+     name: edit_name_team_school_path(@school.urn_and_site),
+     address: edit_address_team_school_path(@school.urn_and_site),
+   } %>
+
+<%= render AppSchoolCardComponent.new(
+      @school,
+      change_links:,
+    ) %>
+
+<%= govuk_button_link_to "Continue", schools_team_path %>
