@@ -62,10 +62,7 @@ describe "MMR triage" do
   end
 
   def and_there_is_a_session_today_with_patients_with_consent
-    mmr_variant =
-      @programme.variant_for(
-        disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
-      )
+    mmr_variant = Programme::Variant.new(@programme, variant_type: "mmr")
 
     @without_gelatine_only_patient =
       create(

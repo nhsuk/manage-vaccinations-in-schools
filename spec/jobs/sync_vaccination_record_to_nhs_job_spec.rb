@@ -60,16 +60,12 @@ describe SyncVaccinationRecordToNHSJob, type: :job do
 
   context "with the feature flag on for MMR but off for MMRV" do
     before do
-      Flipper.enable(:mmrv)
-
       Flipper.disable(:imms_api_sync_job)
       Flipper.enable(:imms_api_sync_job, mmr_programme)
     end
 
     let(:mmr_programme) do
-      Programme.mmr.variant_for(
-        disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
-      )
+      Programme::Variant.new(Programme.mmr, variant_type: "mmr")
     end
 
     context "with an MMR vaccination" do
@@ -84,11 +80,7 @@ describe SyncVaccinationRecordToNHSJob, type: :job do
 
     context "with an MMRV vaccination" do
       let(:programme) do
-        Flipper.enable(:mmrv)
-
-        Programme.mmr.variant_for(
-          disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
-        )
+        Programme::Variant.new(Programme.mmr, variant_type: "mmrv")
       end
 
       it "doesn't sync the vaccination" do
@@ -100,16 +92,10 @@ describe SyncVaccinationRecordToNHSJob, type: :job do
   end
 
   context "with the feature flag on for MMRV" do
-    before do
-      Flipper.enable(:mmrv)
-
-      Flipper.enable(:imms_api_sync_job, mmrv_programme)
-    end
+    before { Flipper.enable(:imms_api_sync_job, mmrv_programme) }
 
     let(:mmrv_programme) do
-      Programme.mmr.variant_for(
-        disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
-      )
+      Programme::Variant.new(Programme.mmr, variant_type: "mmrv")
     end
 
     context "with an MMRV vaccination" do
