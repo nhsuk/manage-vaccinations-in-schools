@@ -94,8 +94,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_04_174555) do
     t.datetime "archived_at"
     t.datetime "created_at", null: false
     t.date "expiry"
-    t.string "name", null: false
-    t.string "number"
+    t.string "name"
+    t.string "number", null: false
     t.bigint "team_id"
     t.datetime "updated_at", null: false
     t.bigint "vaccine_id", null: false
