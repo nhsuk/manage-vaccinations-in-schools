@@ -47,7 +47,7 @@ describe "MMR/MMRV" do
     then_i_see_the_patient_needs_consent
 
     when_i_click_record_as_already_had_first_dose
-    then_i_see_the_confirmation_page_instead_of_the_mmrv_page
+    then_i_see_the_mmr_date_instead_of_the_mmr_or_mmrv_page
   end
 
   scenario "record a patient born after January 2020 as already had their 2nd MMRV dose outside the school session" do
@@ -192,6 +192,10 @@ describe "MMR/MMRV" do
 
   def then_i_see_the_mmrv_date_page
     expect(page).to have_content("When was the MMRV vaccination given?")
+  end
+
+  def then_i_see_the_mmr_date_instead_of_the_mmr_or_mmrv_page
+    expect(page).to have_content("When was the MMR(V) vaccination given?")
   end
 
   def when_i_fill_in_the_date_and_continue
