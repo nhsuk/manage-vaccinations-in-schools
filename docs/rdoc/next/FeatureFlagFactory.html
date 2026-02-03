@@ -701,7 +701,7 @@
             </details>
           </div>
           <div class="method-source-code" id="enable_for_development-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/feature_flag_factory.rb, line 25</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/feature_flag_factory.rb, line 24</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">enable_for_development!</span>
   <span class="ruby-keyword">unless</span> <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">env</span>.<span class="ruby-identifier">development?</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">env</span>.<span class="ruby-identifier">end_to_end?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;These flags should only be enabled in development or end_to_end.&quot;</span>
