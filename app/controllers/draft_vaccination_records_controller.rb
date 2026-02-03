@@ -288,7 +288,7 @@ class DraftVaccinationRecordsController < ApplicationController
           expiry: @draft_vaccination_record.batch_expiry
         )
         .or(scope.not_archived.not_expired.where(vaccine: vaccines))
-        .order_by_name_and_expiration
+        .order_by_number_and_expiration
   end
 
   def set_locations

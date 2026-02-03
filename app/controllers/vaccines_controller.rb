@@ -14,7 +14,7 @@ class VaccinesController < ApplicationController
       policy_scope(Batch)
         .where(vaccine: @vaccines)
         .not_archived
-        .order_by_name_and_expiration
+        .order_by_number_and_expiration
         .group_by(&:vaccine_id)
 
     @todays_batch_id_by_programme_and_vaccine_methods =

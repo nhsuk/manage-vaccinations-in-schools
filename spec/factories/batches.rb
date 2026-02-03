@@ -16,8 +16,8 @@
 #
 # Indexes
 #
-#  index_batches_on_team_id_and_name_and_expiry_and_vaccine_id  (team_id,name,expiry,vaccine_id) UNIQUE
-#  index_batches_on_vaccine_id                                  (vaccine_id)
+#  index_batches_on_team_id_and_number_and_expiry_and_vaccine_id  (team_id,number,expiry,vaccine_id) UNIQUE
+#  index_batches_on_vaccine_id                                    (vaccine_id)
 #
 # Foreign Keys
 #
