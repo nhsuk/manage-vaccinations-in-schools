@@ -7,8 +7,8 @@
 #  id          :bigint           not null, primary key
 #  archived_at :datetime
 #  expiry      :date
-#  name        :string           not null
-#  number      :string
+#  name        :string
+#  number      :string           not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #  team_id     :bigint
