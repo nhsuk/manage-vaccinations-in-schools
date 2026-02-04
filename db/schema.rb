@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_04_174326) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_04_174555) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -689,6 +689,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_04_174326) do
     t.date "date_of_birth", null: false
     t.date "date_of_death"
     t.datetime "date_of_death_recorded_at"
+    t.integer "ethnic_background"
+    t.string "ethnic_background_other"
+    t.integer "ethnic_group"
     t.string "family_name", null: false
     t.integer "gender_code", default: 0, null: false
     t.string "given_name", null: false
