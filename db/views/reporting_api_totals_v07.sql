@@ -26,9 +26,11 @@ SELECT
   pps.academic_year
     - pat.birth_academic_year - 5       AS patient_year_group,   -- Filter: ?year_group=8,9
   COALESCE(la.mhclg_code,
-    pat.local_authority_mhclg_code, '') AS patient_local_authority_code,
+    pat.local_authority_mhclg_code,
+    'UNKNOWN')                          AS patient_local_authority_code,
   COALESCE(la.official_name,
-    pat_la.official_name, '')           AS patient_local_authority_official_name,
+    pat_la.official_name,
+    'Unknown Local Authority')          AS patient_local_authority_official_name,
   COALESCE(la.mhclg_code, '')           AS patient_school_local_authority_code,
 
   -- School info (for CSV grouping by school)
