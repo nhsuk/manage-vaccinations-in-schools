@@ -339,10 +339,13 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def outcome_value
-    highlight_if(
-      VaccinationRecord.human_enum_name(:outcome, @vaccination_record.outcome),
-      @vaccination_record.outcome_changed?
-    )
+    outcome = VaccinationRecord.human_enum_name(:outcome, @vaccination_record.outcome)
+
+    if @vaccination_record.already_had? && @vaccination_record.new_already_vaccinated_flow?
+      outcome = VaccinationRecord.human_enum_name(:outcome, "administered")
+    end
+
+    highlight_if(outcome, @vaccination_record.outcome_changed?)
   end
 
   def programme_value

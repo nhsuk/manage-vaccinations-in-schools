@@ -269,6 +269,10 @@ class VaccinationRecord < ApplicationRecord
 
   def not_administered? = !administered?
 
+  def new_already_vaccinated_flow?
+    already_had? && reported_by_id.present?
+  end
+
   def show_in_academic_year?(current_academic_year)
     if programme.seasonal?
       academic_year == current_academic_year

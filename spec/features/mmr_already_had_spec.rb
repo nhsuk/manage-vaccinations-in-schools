@@ -124,7 +124,7 @@ describe "MMR/MMRV" do
   end
 
   def and_the_patient_doesnt_need_triage
-    StatusUpdater.call(patient: @patient.reload)
+    PatientStatusUpdater.call(patient: @patient.reload)
   end
 
   def and_the_patient_already_has_first_dose

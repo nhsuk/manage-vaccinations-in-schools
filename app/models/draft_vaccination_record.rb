@@ -193,6 +193,10 @@ class DraftVaccinationRecord
     outcome == "already_had"
   end
 
+  def new_already_vaccinated_flow?
+    already_had? && reported_by_id.present?
+  end
+
   # So that a form error matches to a field in this model
   alias_method :administered, :administered?
 
