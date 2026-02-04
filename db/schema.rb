@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_04_073325) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_04_141544) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -48,12 +48,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_04_073325) do
     t.bigint "patient_id", null: false
     t.bigint "team_id", null: false
     t.integer "type", null: false
+    t.integer "unarchive_reason"
+    t.datetime "unarchived_at"
+    t.bigint "unarchived_by_user_id"
     t.datetime "updated_at", null: false
     t.index ["created_by_user_id"], name: "index_archive_reasons_on_created_by_user_id"
-    t.index ["patient_id", "team_id"], name: "index_archive_reasons_on_patient_id_and_team_id", unique: true
     t.index ["patient_id"], name: "index_archive_reasons_on_patient_id"
-    t.index ["team_id", "patient_id"], name: "index_archive_reasons_on_team_id_and_patient_id", unique: true
     t.index ["team_id"], name: "index_archive_reasons_on_team_id"
+    t.index ["unarchived_by_user_id"], name: "index_archive_reasons_on_unarchived_by_user_id"
   end
 
   create_table "attendance_records", force: :cascade do |t|
@@ -1022,6 +1024,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_04_073325) do
   add_foreign_key "archive_reasons", "patients"
   add_foreign_key "archive_reasons", "teams"
   add_foreign_key "archive_reasons", "users", column: "created_by_user_id"
+  add_foreign_key "archive_reasons", "users", column: "unarchived_by_user_id"
   add_foreign_key "attendance_records", "locations"
   add_foreign_key "attendance_records", "patients"
   add_foreign_key "batches", "teams"

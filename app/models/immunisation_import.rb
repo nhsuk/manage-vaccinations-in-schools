@@ -140,7 +140,7 @@ class ImmunisationImport < ApplicationRecord
 
     PatientLocation.import(patient_locations, on_duplicate_key_ignore: :all)
 
-    ArchiveReason.import(archive_reasons, on_duplicate_key_ignore: :all)
+    ArchiveReason.import(archive_reasons)
 
     [
       [:vaccination_records, vaccination_records],

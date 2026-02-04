@@ -18,7 +18,10 @@ class AppActivityLogComponent < ViewComponent::Base
     @patient = patient
 
     @archive_reasons =
-      @patient.archive_reasons.where(team:).includes(:created_by)
+      @patient
+        .archive_reasons
+        .where(team:)
+        .includes(:created_by, :unarchived_by)
 
     @attendance_records =
       patient
@@ -133,6 +136,7 @@ class AppActivityLogComponent < ViewComponent::Base
       pre_screening_events,
       session_events,
       triage_events,
+      unarchive_events,
       vaccination_events
     ].flatten
   end
@@ -146,6 +150,21 @@ class AppActivityLogComponent < ViewComponent::Base
         by: archive_reason.created_by
       }
     end
+  end
+
+  def unarchive_events
+    archive_reasons
+      .where.not(unarchived_at: nil)
+      .where(unarchive_reason: :upload)
+      .flat_map do |archive_reason|
+        {
+          title: "Child record unarchived",
+          notes:
+            "This record was unarchived after the child was included in a cohort or class list upload.",
+          at: archive_reason.unarchived_at,
+          by: archive_reason.unarchived_by
+        }
+      end
   end
 
   def consent_events
