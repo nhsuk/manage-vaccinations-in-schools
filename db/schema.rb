@@ -1352,6 +1352,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
       pps.academic_year,
       pps.programme_type,
       pps.status,
+      pps.consent_status,
       tl.team_id,
       pl.location_id AS session_location_id,
           CASE pat.gender_code

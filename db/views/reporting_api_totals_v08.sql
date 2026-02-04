@@ -11,6 +11,7 @@ SELECT
   pps.academic_year,                    -- Filter: ?academic_year=2024
   pps.programme_type,                   -- Filter: ?programme=hpv
   pps.status,                           -- Scope: .vaccinated (status IN 60,61)
+  pps.consent_status,                   -- Filter: consent dashboard cards
   tl.team_id,                           -- Filter: by user's team_ids
   pl.location_id                        AS session_location_id,  -- Year group eligibility subquery
 
