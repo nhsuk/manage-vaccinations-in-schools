@@ -74,42 +74,17 @@ module EthnicityConcern
   ].freeze
 
   included do
-    enum :ethnic_group,
-         ETHNIC_GROUPS,
-         prefix: true,
-         on: :ethnicity_update,
-         validate: {
-           allow_nil: true
-         }
+    enum :ethnic_group, ETHNIC_GROUPS, prefix: true
+    enum :ethnic_background, ETHNIC_BACKGROUNDS, prefix: true
 
-    enum :ethnic_background,
-         ETHNIC_BACKGROUNDS,
-         prefix: true,
-         on: :ethnicity_update,
-         validate: {
-           allow_nil: true
-         }
-
-    before_validation :normalise_ethnic_background_other, on: :ethnicity_update
+    before_validation :normalise_ethnic_background_other
 
     validates :ethnic_background_other,
+              presence: true,
               length: {
                 maximum: 300
               },
-              on: :ethnicity_update,
-              if: -> do
-                wizard_step == :ethnic_background &&
-                  ethnic_background_requires_additional_details?
-              end
-
-    validates :ethnic_background_other,
-              absence: true,
-              on: :ethnicity_update,
-              if: -> do
-                wizard_step == :ethnic_background &&
-                  ethnic_background.present? &&
-                  !ethnic_background_requires_additional_details?
-              end
+              if: :require_ethnic_background_other?
   end
 
   class_methods do
@@ -119,7 +94,7 @@ module EthnicityConcern
     def any_other_ethnic_backgrounds = ANY_OTHER_ETHNIC_BACKGROUNDS
 
     def ethnic_backgrounds_for_group(group)
-      ethnic_backgrounds_by_group.fetch(group&.to_sym)
+      ethnic_backgrounds_by_group.fetch(group&.to_sym, nil)
     end
   end
 
@@ -145,12 +120,21 @@ module EthnicityConcern
   end
 
   def normalise_ethnic_background_other
-    return unless wizard_step == :ethnic_background
     return if ethnic_background.blank?
 
     # If the chosen background isn't an "any other" option, this value must not persist
     self.ethnic_background_other =
       nil unless ethnic_background_requires_additional_details?
+  end
+
+  def require_ethnic_background_other?
+    validate_ethnic_background_other? &&
+      ethnic_background_requires_additional_details?
+  end
+
+  def validate_ethnic_background_other?
+    will_save_change_to_ethnic_background? ||
+      will_save_change_to_ethnic_background_other?
   end
 
   def ethnic_background_requires_additional_details?

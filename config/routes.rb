@@ -224,6 +224,12 @@ Rails.application.routes.draw do
           controller: "patients/edit",
           action: "update_nhs_number_merge"
 
+      get "edit/ethnic-group", to: "patients/edit#edit_ethnic_group"
+      put "edit/ethnic-group", to: "patients/edit#update_ethnic_group"
+
+      get "edit/ethnic-background", to: "patients/edit#edit_ethnic_background"
+      put "edit/ethnic-background", to: "patients/edit#update_ethnic_background"
+
       get "edit/school", controller: "patients/edit", action: "edit_school"
       put "edit/school", controller: "patients/edit", action: "update_school"
     end

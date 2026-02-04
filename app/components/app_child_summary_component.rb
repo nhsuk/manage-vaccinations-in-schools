@@ -67,6 +67,13 @@ class AppChildSummaryComponent < ViewComponent::Base
               summary_list.with_row do |row|
                 row.with_key { "Ethnicity" }
                 row.with_value { @child.ethnic_group_and_background }
+                if (href = @change_links[:ethnicity])
+                  row.with_action(
+                    text: "Change",
+                    href:,
+                    visually_hidden_text: "Ethnicity"
+                  )
+                end
               end
             end
             if @child.try(:deceased?)

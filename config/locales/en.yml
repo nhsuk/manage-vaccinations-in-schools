@@ -542,6 +542,8 @@ en:
               too_long: Enter a relationship that is less than 300 characters long
         patient:
           attributes:
+            ethnic_background_other:
+              blank: Enter details about your child's background
             nhs_number:
               invalid: Enter a valid NHS number
               wrong_length: Enter a valid NHS number with 10 characters
