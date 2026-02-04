@@ -815,13 +815,7 @@ class Patient < ApplicationRecord
         ArchiveReason.new(team:, patient: self, type: :deceased)
       end
 
-    ArchiveReason.import!(
-      archive_reasons,
-      on_duplicate_key_update: {
-        conflict_target: %i[team_id patient_id],
-        columns: %i[type]
-      }
-    )
+    ArchiveReason.import!(archive_reasons)
 
     PatientTeamUpdater.call(
       patient_scope: Patient.where(id:),

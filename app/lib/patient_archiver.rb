@@ -10,11 +10,9 @@ class PatientArchiver
 
   def call
     ActiveRecord::Base.transaction do
-      if type == "other"
-        archive_reason.update!(type:, other_details:)
-      else
-        archive_reason.update!(type:, other_details: "")
-      end
+      archive_reason.type = type
+      archive_reason.other_details = type == "other" ? other_details : ""
+      archive_reason.save!
 
       patient.clear_pending_sessions!(team:)
 
@@ -33,7 +31,7 @@ class PatientArchiver
   attr_reader :patient, :team, :type, :other_details
 
   def archive_reason
-    @archive_reason ||= ArchiveReason.find_or_create_by(team:, patient:)
+    @archive_reason ||= ArchiveReason.new(team:, patient:)
   end
 
   def destroy_school_moves!
