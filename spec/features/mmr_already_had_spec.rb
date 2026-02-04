@@ -30,6 +30,9 @@ describe "MMR/MMRV" do
 
     when_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
+    and_i_see_that_the_vaccinator_is_unknown
+    and_i_see_that_the_location_is_unknown
+    expect(page).to have_content("LocationUnknown")
     and_had_been_vaccinated_with_mmr
     and_the_dose_number_is_first
     and_the_consent_requests_are_sent
@@ -74,6 +77,8 @@ describe "MMR/MMRV" do
 
     when_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
+    and_i_see_that_the_vaccinator_is_unknown
+    and_i_see_that_the_location_is_unknown
     and_had_been_vaccinated_with_mmrv
     and_the_dose_number_is_second
     and_the_consent_requests_are_sent
@@ -229,7 +234,15 @@ describe "MMR/MMRV" do
 
   def then_i_see_the_patient_is_already_vaccinated
     expect(page).to have_content("Vaccination outcome recorded for MMR")
+    expect(page).to have_content("OutcomeVaccinated")
+  end
+
+  def and_i_see_that_the_location_is_unknown
     expect(page).to have_content("LocationUnknown")
+  end
+
+  def and_i_see_that_the_vaccinator_is_unknown
+    expect(page).to have_content("VaccinatorUnknown")
   end
 
   def and_had_been_vaccinated_with_mmr
