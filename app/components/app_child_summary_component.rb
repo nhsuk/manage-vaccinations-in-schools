@@ -63,6 +63,12 @@ class AppChildSummaryComponent < ViewComponent::Base
               row.with_key { "Date of birth" }
               row.with_value { format_date_of_birth }
             end
+            if @child.ethnic_group.present?
+              summary_list.with_row do |row|
+                row.with_key { "Ethnicity" }
+                row.with_value { @child.ethnic_group_and_background }
+              end
+            end
             if @child.try(:deceased?)
               summary_list.with_row do |row|
                 row.with_key { "Date of death" }
