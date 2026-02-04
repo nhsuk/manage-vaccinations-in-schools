@@ -121,6 +121,26 @@ describe "Import child records" do
       and_i_go_to_the_import_page
       then_i_should_see_import_issues_with_the_count
     end
+
+    scenario "Keep both records assigns changesets and PDS search results to the new patient" do
+      given_the_app_is_setup
+      and_import_review_screen_is_enabled
+      and_pds_lookup_during_import_is_enabled
+      stub_pds_search_to_return_no_patients
+      and_an_existing_patient_record_exists_with_same_name_and_dob
+
+      when_i_visit_the_import_page
+      and_i_choose_to_import_child_records
+      and_i_upload_a_file_with_duplicate_except_for_postcode
+
+      when_i_review_the_duplicate_record
+      and_i_choose_to_keep_both_records
+      and_i_confirm_my_selection
+      then_i_should_see_a_success_message
+
+      then_the_changeset_should_belong_to_the_new_patient
+      and_the_pds_search_results_should_belong_to_the_new_patient
+    end
   end
 
   def given_the_app_is_setup
@@ -362,5 +382,69 @@ describe "Import child records" do
   def then_i_should_see_import_issues_with_the_count
     expect(page).to have_link("Issues")
     expect(page).to have_selector(".app-count", text: "(1)").twice
+  end
+
+  def and_an_existing_patient_record_exists_with_same_name_and_dob
+    @existing_patient =
+      create(
+        :patient,
+        given_name: "Taylor",
+        family_name: "Reed",
+        nhs_number: nil,
+        date_of_birth: Date.new(2010, 1, 1),
+        address_line_1: "10 Downing Street",
+        address_line_2: "",
+        address_town: "London",
+        address_postcode: "SW1A 1AA",
+        school: Location.find_by!(urn: "123456")
+      )
+  end
+
+  def and_i_upload_a_file_with_duplicate_except_for_postcode
+    attach_file(
+      "cohort_import[csv]",
+      "spec/fixtures/cohort_import/duplicate_except_postcode.csv"
+    )
+    click_on "Continue"
+    wait_for_import_to_complete(CohortImport)
+  end
+
+  def when_i_review_the_duplicate_record
+    find(".nhsuk-details__summary", text: /1 upload issue/).click
+    click_on "Review"
+  end
+
+  def and_i_choose_to_keep_both_records
+    choose "Keep both child records"
+  end
+
+  def and_i_confirm_my_selection
+    click_on "Resolve duplicate"
+  end
+
+  def then_i_should_see_a_success_message
+    expect(page).to have_content("Record updated")
+  end
+
+  def then_the_changeset_should_belong_to_the_new_patient
+    import = CohortImport.order(:created_at).last
+    changeset = import.changesets.from_file.sole
+    expect(changeset.reload.patient_id).to eq(new_patient.id)
+  end
+
+  def and_the_pds_search_results_should_belong_to_the_new_patient
+    import = CohortImport.order(:created_at).last
+
+    results =
+      PDSSearchResult.where(import_type: "CohortImport", import_id: import.id)
+
+    expect(results.pluck(:patient_id).uniq).to eq([new_patient.id])
+  end
+
+  def new_patient
+    Patient
+      .where(given_name: "Taylor", family_name: "Reed")
+      .where.not(id: @existing_patient.id)
+      .sole
   end
 end
