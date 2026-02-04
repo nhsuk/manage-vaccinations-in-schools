@@ -334,7 +334,7 @@ en:
         outcomes:
           absent: Absent from session
           administered: Vaccinated
-          already_had: Already had the vaccine
+          already_had: Vaccinated
           contraindicated: Had contraindications
           unwell: Unwell
           refused: Refused vaccine

@@ -27,7 +27,6 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
       outcome: :already_had,
       patient: @patient,
       performed_at: Time.current,
-      performed_by_user_id: current_user.id,
       performed_ods_code: current_team.organisation.ods_code,
       programme: @programme,
       session: @session,
