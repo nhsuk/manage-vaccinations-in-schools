@@ -64,7 +64,10 @@ class ImportDuplicateForm
   end
 
   def keep_both_changes!
-    object.apply_pending_changes_to_new_record! if can_keep_both? && can_apply?
+    if can_keep_both? && can_apply?
+      changeset = object.changesets.includes(:import).order(:created_at).last
+      object.apply_pending_changes_to_new_record!(changeset:)
+    end
   end
 
   def reset_count!
