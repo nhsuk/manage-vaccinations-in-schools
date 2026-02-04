@@ -1182,6 +1182,7 @@
   <span class="ruby-identifier">draft_vaccination_record</span>.<span class="ruby-identifier">source</span> = <span class="ruby-string">&quot;service&quot;</span>
   <span class="ruby-identifier">draft_vaccination_record</span>.<span class="ruby-identifier">supplied_by_user_id</span> =
     <span class="ruby-identifier">supplied_by_user_id</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">psd_created_by_user_id</span>
+  <span class="ruby-identifier">draft_vaccination_record</span>.<span class="ruby-identifier">uuid</span> = <span class="ruby-identifier">generate_uuid</span>
 
   <span class="ruby-identifier">draft_vaccination_record</span>.<span class="ruby-identifier">save</span> <span class="ruby-comment"># rubocop:disable Rails/SaveBang</span>
 <span class="ruby-keyword">end</span></pre>
