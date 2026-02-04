@@ -16,7 +16,8 @@ describe PatientMerger do
             to_destroy:
               Patient.includes(parent_relationships: :parent).find(
                 patient_to_destroy.id
-              )
+              ),
+            user:
           )
         end
     end
@@ -283,6 +284,15 @@ describe PatientMerger do
       expect { call }.to enqueue_sidekiq_job(
         SyncVaccinationRecordToNHSJob
       ).with(vaccination_record.id)
+    end
+
+    it "creates a patient merge log entry" do
+      expect { call }.to change(PatientMergeLogEntry, :count).by(1)
+
+      log_entry = PatientMergeLogEntry.last
+      expect(log_entry.patient).to eq(patient_to_keep)
+      expect(log_entry.merged_patient_id).to eq(patient_to_destroy.id)
+      expect(log_entry.user).to eq(user)
     end
 
     context "when parent is already associated with patient to keep" do

@@ -29,5 +29,8 @@ FactoryBot.define do
     patient
     user
     merged_patient_id { rand(100..1000) }
+    merged_patient_name { patient.full_name }
+    merged_patient_dob { patient.date_of_birth }
+    merged_patient_nhs_number { patient.nhs_number || "9999075320" }
   end
 end
