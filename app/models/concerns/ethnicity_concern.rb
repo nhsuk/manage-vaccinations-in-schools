@@ -105,20 +105,6 @@ module EthnicityConcern
     save!
   end
 
-  def ethnic_group_and_background
-    group_label = I18n.t("ethnicity.groups.#{ethnic_group}")
-    background_label = I18n.t("ethnicity.backgrounds.#{ethnic_background}")
-
-    background_with_additional = [
-      background_label,
-      ethnic_background_other
-    ].compact_blank.join(" - ")
-
-    if group_label.present? && background_with_additional.present?
-      "#{group_label} (#{background_with_additional})"
-    end
-  end
-
   def normalise_ethnic_background_other
     return if ethnic_background.blank?
 

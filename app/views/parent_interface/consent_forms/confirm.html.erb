@@ -112,7 +112,9 @@
         if @consent_form.ethnic_group.present?
           summary_list.with_row do |row|
             row.with_key { "Ethnicity" }
-            row.with_value { @consent_form.ethnic_group_and_background }
+            row.with_value do
+              format_ethnic_group_and_background(@consent_form)
+            end
             row.with_action(
               text: "Change",
               href: change_link["ethnic-group"],

@@ -66,7 +66,7 @@ class AppChildSummaryComponent < ViewComponent::Base
             if @child.ethnic_group.present?
               summary_list.with_row do |row|
                 row.with_key { "Ethnicity" }
-                row.with_value { @child.ethnic_group_and_background }
+                row.with_value { format_ethnic_group_and_background(@child) }
                 if (href = @change_links[:ethnicity])
                   row.with_action(
                     text: "Change",
@@ -169,6 +169,7 @@ class AppChildSummaryComponent < ViewComponent::Base
   private
 
   delegate :format_address_multi_line,
+           :format_ethnic_group_and_background,
            :format_parent_with_relationship,
            :govuk_button_to,
            :govuk_summary_list,
