@@ -291,6 +291,20 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
+      if @vaccination_record.reported_by.present?
+        summary_list.with_row do |row|
+          row.with_key { "Reported by" }
+          row.with_value { @vaccination_record.reported_by&.full_name }
+        end
+      end
+
+      if @vaccination_record.reported_at.present?
+        summary_list.with_row do |row|
+          row.with_key { "Reported on" }
+          row.with_value { @vaccination_record.reported_at.to_fs(:long) }
+        end
+      end
+
       correct_feature_flags_enabled =
         Programme.all.any? { Flipper.enabled?(:imms_api_sync_job, it) } &&
           Flipper.enabled?(:imms_api_integration)

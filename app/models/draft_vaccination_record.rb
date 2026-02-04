@@ -36,6 +36,8 @@ class DraftVaccinationRecord
   attribute :performed_ods_code, :string
   attribute :programme_type, :string
   attribute :protocol, :string
+  attribute :reported_at, :datetime
+  attribute :reported_by_id, :integer
   attribute :session_id, :integer
   attribute :source, :string
   attribute :supplied_by_user_id, :integer
@@ -219,6 +221,11 @@ class DraftVaccinationRecord
 
   def performed_by_user=(value)
     self.performed_by_user_id = value.id
+  end
+
+  def reported_by
+    return nil if reported_by_id.nil?
+    User.find(reported_by_id)
   end
 
   def session
@@ -406,6 +413,8 @@ class DraftVaccinationRecord
       performed_ods_code
       programme_type
       protocol
+      reported_at
+      reported_by_id
       session_id
       source
       supplied_by_user_id

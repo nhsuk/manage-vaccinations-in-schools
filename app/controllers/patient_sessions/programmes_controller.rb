@@ -26,9 +26,10 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
       location_name: "Unknown",
       outcome: :already_had,
       patient: @patient,
-      performed_at: Time.current,
       performed_ods_code: current_team.organisation.ods_code,
       programme: @programme,
+      reported_by_id: current_user.id,
+      reported_at: Time.current,
       session: @session,
       source: "service"
     )
