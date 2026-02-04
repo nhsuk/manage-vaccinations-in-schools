@@ -47,6 +47,10 @@ class NotificationParentSelector
 
   def latest_consents
     @latest_consents ||=
-      ConsentGrouper.call(consents, programme_type:, academic_year:)
+      ConsentGrouper.call(
+        consents,
+        programme_type:,
+        academic_year: AcademicYear.current
+      )
   end
 end
