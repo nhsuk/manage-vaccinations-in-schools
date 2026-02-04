@@ -45,6 +45,9 @@ FILTER_EXACTLY_MATCHING = %w[
   given
   health_answers
   location_name
+  merged_patient_dob
+  merged_patient_full_name
+  merged_patient_nhs_number
   other_details
   q
   to

@@ -21,6 +21,8 @@ describe AppActivityLogComponent do
       school: location,
       given_name: "Sarah",
       family_name: "Doe",
+      nhs_number: "9999075320",
+      date_of_birth: Date.new(2010, 1, 1),
       year_group: 9
     )
   end
@@ -562,6 +564,26 @@ describe AppActivityLogComponent do
                        date: "31 May 2025 at 1:00pm",
                        programme: "HPV"
     end
+  end
+
+  describe "patient merge events" do
+    before do
+      create(
+        :patient_merge_log_entry,
+        patient:,
+        user:,
+        created_at: Time.zone.local(2025, 6, 1, 12)
+      )
+    end
+
+    include_examples "card",
+                     title: "Child record merged",
+                     date: "1 June 2025 at 12:00pm",
+                     notes:
+                       "The record for DOE, Sarah (date of birth 1 January 2010) was merged with the record " \
+                         "for DOE, Sarah (date of birth 1 January 2010) because they have the same NHS number " \
+                         "(9999075320).",
+                     by: "JOY, Nurse"
   end
 
   describe "decision expiration events" do

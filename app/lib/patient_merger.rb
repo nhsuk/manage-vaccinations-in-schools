@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class PatientMerger
-  def initialize(to_keep:, to_destroy:)
+  def initialize(to_keep:, to_destroy:, user: nil)
     @patient_to_keep = to_keep
     @patient_to_destroy = to_destroy
+    @user = user
   end
 
   def call
@@ -149,6 +150,15 @@ class PatientMerger
 
         patient_team_to_keep.save!
       end
+
+      PatientMergeLogEntry.create!(
+        patient: patient_to_keep,
+        merged_patient_id: patient_to_destroy.id,
+        merged_patient_name: patient_to_destroy.full_name,
+        merged_patient_dob: patient_to_destroy.date_of_birth,
+        merged_patient_nhs_number: patient_to_keep.nhs_number,
+        user: @user
+      )
 
       patient_to_destroy.reload.destroy!
 

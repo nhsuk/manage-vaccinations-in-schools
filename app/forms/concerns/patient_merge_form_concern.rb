@@ -32,7 +32,11 @@ module PatientMergeFormConcern
     return false if invalid?
 
     if existing_patient
-      PatientMerger.call(to_keep: existing_patient, to_destroy: patient)
+      PatientMerger.call(
+        to_keep: existing_patient,
+        to_destroy: patient,
+        user: current_user
+      )
     end
 
     true
