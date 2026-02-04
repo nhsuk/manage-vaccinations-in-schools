@@ -38,8 +38,8 @@
      show_notes:,
    ) %>
 
-<% if @draft_vaccination_record.administered? || @draft_vaccination_record.already_had? %>
-  <% if @draft_vaccination_record.vaccine_method_matches_consent_and_triage? || @draft_vaccination_record.already_had? %>
+<% if @draft_vaccination_record.administered? || @draft_vaccination_record.new_already_vaccinated_flow? %>
+  <% if @draft_vaccination_record.vaccine_method_matches_consent_and_triage? || @draft_vaccination_record.new_already_vaccinated_flow? %>
     <%= render AppCardComponent.new do |card| %>
       <% card.with_heading { "Vaccination details" } %>
       <%= render vaccination_summary %>
