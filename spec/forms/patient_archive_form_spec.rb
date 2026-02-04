@@ -3,6 +3,10 @@
 describe PatientArchiveForm do
   subject(:form) { described_class.new }
 
+  let(:patient) { create(:patient) }
+  let(:user) { create(:user) }
+  let(:other_patient) { create(:patient) }
+
   describe "validations" do
     it do
       expect(form).to validate_inclusion_of(:type).in_array(
@@ -11,10 +15,33 @@ describe PatientArchiveForm do
     end
 
     context "when type is duplicate" do
-      before { form.type = "duplicate" }
+      before do
+        form.type = "duplicate"
+        form.patient = patient
+        form.current_user = user
+      end
 
       it { should validate_presence_of(:nhs_number) }
       it { should validate_length_of(:nhs_number).is_equal_to(10) }
+
+      context "when NHS number is the patient's own NHS number" do
+        before { form.nhs_number = patient.nhs_number }
+
+        it "is invalid" do
+          expect(form).not_to be_valid
+          expect(form.errors[:nhs_number]).to include(
+            "No other child record has this NHS number. Enter the NHS number of the duplicate record."
+          )
+        end
+      end
+
+      context "when NHS number is different from the patient's own NHS number" do
+        before { form.nhs_number = other_patient.nhs_number }
+
+        it "is valid" do
+          expect(form).to be_valid
+        end
+      end
     end
 
     context "when type is other" do
