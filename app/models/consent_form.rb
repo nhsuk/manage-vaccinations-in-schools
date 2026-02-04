@@ -13,6 +13,9 @@
 #  confirmation_sent_at                :datetime
 #  date_of_birth                       :date
 #  education_setting                   :integer
+#  ethnic_background                   :integer
+#  ethnic_background_other             :string
+#  ethnic_group                        :integer
 #  family_name                         :text
 #  given_name                          :text
 #  health_answers                      :jsonb            not null
@@ -59,6 +62,7 @@ class ConsentForm < ApplicationRecord
   include Archivable
   include BelongsToTeamLocation
   include Confirmable
+  include EthnicityConcern
   include FullNameConcern
   include GelatineVaccinesConcern
   include HasHealthAnswers
