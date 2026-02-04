@@ -6,6 +6,7 @@
 #
 #  id                                    :text             primary key
 #  academic_year                         :integer
+#  consent_status                        :integer
 #  has_already_vaccinated_consent        :boolean
 #  is_archived                           :boolean
 #  patient_gender                        :text
@@ -36,6 +37,12 @@ class ReportingAPI::Total < ApplicationRecord
 
   VACCINATED_STATUSES = Patient::ProgrammeStatus::VACCINATED_STATUSES.values
 
+  CONSENT_NO_RESPONSE = 0
+  CONSENT_GIVEN = 1
+  CONSENT_REFUSED = 2
+  CONSENT_CONFLICTS = 3
+  CONSENT_NOT_REQUIRED = 4
+
   scope :not_archived, -> { where(is_archived: false) }
   scope :vaccinated,
         -> do
@@ -62,13 +69,46 @@ class ReportingAPI::Total < ApplicationRecord
     vaccinated.distinct.count(:patient_id)
   end
 
+  def self.consent_given_count
+    where(consent_status: [CONSENT_GIVEN, CONSENT_NOT_REQUIRED]).distinct.count(
+      :patient_id
+    )
+  end
+
+  def self.no_consent_count
+    where(
+      consent_status: [CONSENT_NO_RESPONSE, CONSENT_REFUSED, CONSENT_CONFLICTS]
+    ).distinct.count(:patient_id)
+  end
+
+  def self.consent_no_response_count
+    where(consent_status: CONSENT_NO_RESPONSE).distinct.count(:patient_id)
+  end
+
+  def self.consent_refused_count
+    where(consent_status: CONSENT_REFUSED).distinct.count(:patient_id)
+  end
+
+  def self.consent_conflicts_count
+    where(consent_status: CONSENT_CONFLICTS).distinct.count(:patient_id)
+  end
+
   def self.with_aggregate_metrics
     vaccinated_condition =
       "status IN (#{VACCINATED_STATUSES.join(",")}) OR has_already_vaccinated_consent = true"
+    no_consent_condition =
+      "consent_status IN (#{CONSENT_NO_RESPONSE}, #{CONSENT_REFUSED}, #{CONSENT_CONFLICTS})"
+    consent_given_condition =
+      "consent_status IN (#{CONSENT_GIVEN}, #{CONSENT_NOT_REQUIRED})"
     select(
       "COUNT(DISTINCT patient_id) AS cohort",
       "COUNT(DISTINCT patient_id) FILTER (WHERE #{vaccinated_condition}) AS vaccinated",
-      "COUNT(DISTINCT patient_id) FILTER (WHERE NOT (#{vaccinated_condition})) AS not_vaccinated"
+      "COUNT(DISTINCT patient_id) FILTER (WHERE NOT (#{vaccinated_condition})) AS not_vaccinated",
+      "COUNT(DISTINCT patient_id) FILTER (WHERE #{consent_given_condition}) AS consent_given",
+      "COUNT(DISTINCT patient_id) FILTER (WHERE #{no_consent_condition}) AS no_consent",
+      "COUNT(DISTINCT patient_id) FILTER (WHERE consent_status = #{CONSENT_NO_RESPONSE}) AS consent_no_response",
+      "COUNT(DISTINCT patient_id) FILTER (WHERE consent_status = #{CONSENT_REFUSED}) AS consent_refused",
+      "COUNT(DISTINCT patient_id) FILTER (WHERE consent_status = #{CONSENT_CONFLICTS}) AS consent_conflicts"
     )
   end
 end
