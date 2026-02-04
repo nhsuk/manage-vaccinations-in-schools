@@ -13,6 +13,7 @@ describe NHS::ImmunisationsAPI do
       :patient,
       id: 31_337,
       team:,
+      session:,
       address_postcode: "EC1A 1BB",
       nhs_number:,
       given_name: "Sarah",
@@ -891,7 +892,7 @@ describe NHS::ImmunisationsAPI do
       {
         "patient.identifier" =>
           "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}",
-        "-immunization.target" => "3IN1,FLU,HPV,MENACWY,MMR",
+        "-immunization.target" => "3IN1,FLU,HPV,MENACWY,MMR,MMRV",
         "-date.from" => "2025-08-01",
         "-date.to" => "2025-10-01"
       }
@@ -926,7 +927,7 @@ describe NHS::ImmunisationsAPI do
         {
           "patient.identifier" =>
             "https://fhir.nhs.uk/Id/nhs-number|#{patient.nhs_number}",
-          "-immunization.target" => "3IN1,FLU,HPV,MENACWY,MMR",
+          "-immunization.target" => "3IN1,FLU,HPV,MENACWY,MMR,MMRV",
           "-date.from" => "2025-08-01"
         }
       end
@@ -1116,9 +1117,7 @@ describe NHS::ImmunisationsAPI do
 
     include_examples "an imms_api_integration feature flag check"
 
-    context "with the mmrv feature flag enabled" do
-      before { Flipper.enable(:mmrv) }
-
+    context "for MMRV" do
       let(:date_from) { nil }
       let(:date_to) { nil }
 
@@ -1137,6 +1136,35 @@ describe NHS::ImmunisationsAPI do
       it_behaves_like "continues the request and returns the bundle anyway",
                       1,
                       2
+    end
+
+    context "with patients uploaded as part of national reporting" do
+      before do
+        create(
+          :vaccination_record,
+          :sourced_from_national_reporting,
+          team:,
+          patient:
+        )
+      end
+
+      let(:team) { create(:team, :national_reporting, ods_code: "A9A5A") }
+
+      it "does not perform a search" do
+        perform_request
+
+        expect(request_stub).not_to have_been_made
+      end
+    end
+
+    context "with patients without a team" do
+      let(:session) { nil }
+
+      it "does not perform a search" do
+        perform_request
+
+        expect(request_stub).not_to have_been_made
+      end
     end
   end
 end

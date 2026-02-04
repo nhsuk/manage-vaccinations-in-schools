@@ -6,6 +6,7 @@
 #
 #  id            :bigint           not null, primary key
 #  academic_year :integer          not null
+#  date_range    :daterange        default(-Infinity...Infinity)
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  location_id   :bigint           not null

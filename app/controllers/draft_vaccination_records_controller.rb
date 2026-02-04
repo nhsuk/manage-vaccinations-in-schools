@@ -18,12 +18,12 @@ class DraftVaccinationRecordsController < ApplicationController
   before_action :set_batches,
                 if: -> do
                   current_step == :batch &&
-                    !@draft_vaccination_record.bulk_upload_user_and_record?
+                    !@draft_vaccination_record.national_reporting_user_and_record?
                 end
   before_action :set_vaccines,
                 if: -> do
                   current_step == :batch &&
-                    @draft_vaccination_record.bulk_upload_user_and_record?
+                    @draft_vaccination_record.national_reporting_user_and_record?
                 end
   before_action :set_locations, if: -> { current_step == :location }
   before_action :set_supplied_by_users, if: -> { current_step == :supplier }
@@ -51,6 +51,8 @@ class DraftVaccinationRecordsController < ApplicationController
       handle_location
     when :batch
       handle_batch
+    when :mmr_or_mmrv
+      handle_mmr_or_mmrv
     when :confirm
       handle_confirm
     end
@@ -84,7 +86,7 @@ class DraftVaccinationRecordsController < ApplicationController
         render_wizard nil, status: :unprocessable_content
       end
     elsif current_step == :batch &&
-          @draft_vaccination_record.bulk_upload_user_and_record?
+          @draft_vaccination_record.national_reporting_user_and_record?
       validator =
         DateParamsValidator.new(
           field_name: :batch_expiry,
@@ -124,8 +126,18 @@ class DraftVaccinationRecordsController < ApplicationController
     end
   end
 
+  def handle_mmr_or_mmrv
+    if @draft_vaccination_record.mmrv_vaccine.nil?
+      @draft_vaccination_record.errors.add(:mmrv_vaccine, :blank)
+    end
+    @draft_vaccination_record.disease_types =
+      Programme::Variant::DISEASE_TYPES[
+        @draft_vaccination_record.mmrv_vaccine ? "mmrv" : "mmr"
+      ]
+  end
+
   def handle_location
-    if @draft_vaccination_record.bulk_upload_user_and_record?
+    if @draft_vaccination_record.national_reporting_user_and_record?
       location_id = update_params[:location_id]
 
       if location_id == "unknown"
@@ -210,6 +222,7 @@ class DraftVaccinationRecordsController < ApplicationController
         identity_check_confirmed_by_other_relationship
       ],
       location: %i[location_id],
+      mmr_or_mmrv: %i[mmrv_vaccine],
       notes: %i[notes],
       outcome: %i[outcome],
       supplier: %i[supplied_by_user_id],
@@ -270,7 +283,7 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def set_locations
-    if @draft_vaccination_record.bulk_upload_user_and_record?
+    if @draft_vaccination_record.national_reporting_user_and_record?
       @location_query = params[:q]
       scope = Location.school.where(status: "open")
 

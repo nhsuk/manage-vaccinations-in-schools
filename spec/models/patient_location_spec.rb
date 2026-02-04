@@ -6,6 +6,7 @@
 #
 #  id            :bigint           not null, primary key
 #  academic_year :integer          not null
+#  date_range    :daterange        default(-Infinity...Infinity)
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  location_id   :bigint           not null
@@ -29,13 +30,6 @@ describe PatientLocation do
 
   let(:programme) { Programme.sample }
   let(:session) { create(:session, programmes: [programme]) }
-
-  describe "associations" do
-    it { should have_many(:attendance_records) }
-    it { should have_many(:gillick_assessments) }
-    it { should have_many(:pre_screenings) }
-    it { should have_many(:vaccination_records) }
-  end
 
   describe "scopes" do
     describe "#appear_in_programmes" do
@@ -86,60 +80,51 @@ describe PatientLocation do
     end
   end
 
-  describe "#safe_to_destroy?" do
-    subject { patient_location.safe_to_destroy? }
+  describe "#begin_date" do
+    subject { patient_location.begin_date }
 
-    let(:patient_location) { create(:patient_location, session:) }
-    let(:patient) { patient_location.patient }
-    let(:location) { patient_location.location }
+    it { should be_nil }
 
-    it { should be(true) }
-
-    context "with only absent attendance records" do
-      before { create(:attendance_record, :absent, patient:, session:) }
-
-      it { should be(true) }
-    end
-
-    context "with a vaccination record" do
-      before { create(:vaccination_record, programme:, patient:, session:) }
-
-      it { should be(false) }
-    end
-
-    context "with a Gillick assessment" do
-      before { create(:gillick_assessment, :competent, patient:, session:) }
-
-      it { should be(false) }
-    end
-
-    context "with an attendance record" do
-      before { create(:attendance_record, :present, patient:, session:) }
-
-      it { should be(false) }
-    end
-
-    context "with an attendance record from a different academic year" do
-      before do
+    context "with a date range" do
+      let(:patient_location) do
         create(
-          :attendance_record,
-          :present,
-          patient:,
-          location:,
-          date: 1.year.ago
+          :patient_location,
+          date_range: Date.new(2020, 1, 1)...Date.new(2020, 2, 1)
         )
       end
 
-      it { should be(true) }
+      it { should eq(Date.new(2020, 1, 1)) }
     end
+  end
 
-    context "with a mix of conditions" do
-      before do
-        create(:attendance_record, :absent, patient:, session:)
-        create(:vaccination_record, programme:, patient:, session:)
+  describe "#end_date" do
+    subject { patient_location.end_date }
+
+    it { should be_nil }
+
+    context "with a date range" do
+      let(:patient_location) do
+        create(
+          :patient_location,
+          date_range: Date.new(2020, 1, 1)...Date.new(2020, 2, 1)
+        )
       end
 
-      it { should be(false) }
+      it { should eq(Date.new(2020, 1, 31)) }
+    end
+  end
+
+  describe "#begin_date=" do
+    it "sets the beginning of the data range" do
+      patient_location.begin_date = Date.new(2020, 1, 1)
+      expect(patient_location.date_range).to eq(Date.new(2020, 1, 1)..)
+    end
+  end
+
+  describe "#end_date=" do
+    it "sets the end of the data range" do
+      patient_location.end_date = Date.new(2020, 1, 31)
+      expect(patient_location.date_range).to eq(..Date.new(2020, 1, 31))
     end
   end
 end

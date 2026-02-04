@@ -8,6 +8,14 @@
 <%= form_with model: @patient, url: edit_school_patient_path(@patient), method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
+  <% hint_text =
+       safe_join(
+         [
+           "Start typing to see schools",
+           "If the school is not in #{current_team.name}, archive the child record.",
+         ],
+         tag.br
+       ) %>
   <%= f.govuk_select :school_id,
                      caption: { text: @patient.full_name, size: "l" },
                      label: {
@@ -15,7 +23,7 @@
                        text: legend,
                        size: "l",
                      },
-                     hint: { text: "If the school is not in #{current_team.name}, archive the child record." },
+                     hint: { text: hint_text },
                      data: { module: "app-autocomplete" } do %>
 
     <%= tag.option "", value: "" %>

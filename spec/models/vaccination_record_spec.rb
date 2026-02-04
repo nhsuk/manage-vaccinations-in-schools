@@ -5,6 +5,8 @@
 # Table name: vaccination_records
 #
 #  id                                      :bigint           not null, primary key
+#  batch_expiry                            :date
+#  batch_number                            :string
 #  confirmation_sent_at                    :datetime
 #  delivery_method                         :integer
 #  delivery_site                           :integer
@@ -25,6 +27,8 @@
 #  outcome                                 :integer          not null
 #  pending_changes                         :jsonb            not null
 #  performed_at                            :datetime         not null
+#  performed_at_date                       :date
+#  performed_at_time                       :time
 #  performed_by_family_name                :string
 #  performed_by_given_name                 :string
 #  performed_ods_code                      :string
@@ -165,8 +169,6 @@ describe VaccinationRecord do
   describe "#programme" do
     subject { vaccination_record.programme }
 
-    before { Flipper.enable(:mmrv) }
-
     context "for an MMRV vaccine" do
       let(:programme) { Programme.mmr }
       let(:vaccine) { Vaccine.find_by!(brand: "ProQuad") }
@@ -261,6 +263,42 @@ describe VaccinationRecord do
       end
 
       it { should be_nil }
+    end
+  end
+
+  describe "#performed_at=" do
+    let(:vaccination_record) { build(:vaccination_record, performed_at: nil) }
+
+    it "sets the performed at date and time columns" do
+      performed_at = Time.zone.local(2020, 1, 1, 12, 30)
+
+      expected_date = Date.new(2020, 1, 1)
+
+      # Although we store the value in the database as just the time, Ruby
+      #  doesn't have an object that can hold just time information. Instead,
+      #  we get back a `Time` object with the date set to 2020-01-01.
+      expected_time = Time.zone.local(2000, 1, 1, 12, 30)
+
+      expect { vaccination_record.performed_at = performed_at }.to change(
+        vaccination_record,
+        :performed_at_date
+      ).to(expected_date).and change(vaccination_record, :performed_at_time).to(
+              expected_time
+            )
+    end
+
+    it "sets the time correctly for daylight saving" do
+      performed_at = Time.zone.local(2020, 8, 1, 12, 30)
+
+      expected_date = Date.new(2020, 8, 1)
+      expected_time = Time.zone.local(2000, 1, 1, 12, 30)
+
+      expect { vaccination_record.performed_at = performed_at }.to change(
+        vaccination_record,
+        :performed_at_date
+      ).to(expected_date).and change(vaccination_record, :performed_at_time).to(
+              expected_time
+            )
     end
   end
 

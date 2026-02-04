@@ -306,6 +306,83 @@ describe API::Reporting::TotalsController do
       )
       expect(csv.length).to eq(2)
     end
+
+    it "returns grouped CSV data by local authority with official names" do
+      team = Team.last
+      programme = Programme.hpv
+      team.programmes << programme
+      session = create(:session, team:, programmes: [programme])
+
+      school_one =
+        create(:school, name: "School One", gias_local_authority_code: 201)
+      school_two =
+        create(:school, name: "School Two", gias_local_authority_code: 202)
+
+      create(:patient, session:, school: school_one)
+      create(:patient, session:, school: school_two)
+
+      refresh_reporting_views!
+
+      request.headers["Accept"] = "text/csv"
+      get :index, params: { group: "local_authority" }, format: :csv
+
+      expect(response).to have_http_status(:ok)
+      expect(response.content_type).to eq("text/csv")
+
+      csv = CSV.parse(response.body, headers: true)
+      expect(csv.headers).to include("Local Authority", "Cohort", "Vaccinated")
+      expect(csv.length).to eq(2)
+
+      local_authorities = csv.map { it["Local Authority"] }
+      expect(local_authorities).to contain_exactly(
+        "Test Authority 201",
+        "Test Authority 202"
+      )
+    end
+
+    it "returns Unknown Local Authority for patients without school or postcode LA" do
+      team = Team.last
+      programme = Programme.hpv
+      team.programmes << programme
+      session = create(:session, team:, programmes: [programme])
+
+      # Patient with school that has LA
+      school =
+        create(:school, name: "Known School", gias_local_authority_code: 201)
+      create(:patient, session:, school:)
+
+      # Home-educated patient without postcode LA lookup
+      create(
+        :patient,
+        session:,
+        school: nil,
+        home_educated: true,
+        local_authority_mhclg_code: nil
+      )
+
+      # Unknown school patient without postcode LA lookup
+      create(
+        :patient,
+        session:,
+        school: nil,
+        home_educated: false,
+        local_authority_mhclg_code: nil
+      )
+
+      refresh_reporting_views!
+
+      request.headers["Accept"] = "text/csv"
+      get :index, params: { group: "local_authority" }, format: :csv
+
+      expect(response).to have_http_status(:ok)
+
+      csv = CSV.parse(response.body, headers: true)
+      local_authorities = csv.map { it["Local Authority"] }
+      expect(local_authorities).to contain_exactly(
+        "Test Authority 201",
+        "Unknown Local Authority"
+      )
+    end
   end
 
   describe "Dashboard acceptance criteria" do

@@ -299,6 +299,7 @@ jobs:
     name: Deploy service
     runs-on: ubuntu-latest
     needs: [ prepare-deployment, approve-deployments, run-migrations ]
+    if: ${{ !cancelled() && needs.run-migrations.result != 'failure' }}
     permissions:
       id-token: write
     strategy:

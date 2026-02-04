@@ -16,8 +16,6 @@ describe PatientProgrammeStatusResolver do
   let(:academic_year) { AcademicYear.current }
   let(:context_location_id) { nil }
 
-  before { Flipper.enable(:mmrv) }
-
   it { should eq({ prefix: "HPV", text: "Not eligible", colour: "grey" }) }
 
   context "when triaged to delay vaccination" do
@@ -106,9 +104,7 @@ describe PatientProgrammeStatusResolver do
   context "for MMR programme" do
     let(:programme) { Programme.mmr }
     let(:programme_variant) do
-      programme.variant_for(
-        disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
-      )
+      Programme::Variant.new(programme, variant_type: "mmr")
     end
 
     let(:date_of_birth) { Date.new(2019, 12, 31) }

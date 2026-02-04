@@ -18,6 +18,6 @@ class BatchForm
             }
 
   def save
-    valid? && batch.update(name: name, expiry: expiry)
+    valid? && batch.update(name: name, number: name, expiry: expiry)
   end
 end

@@ -267,11 +267,23 @@ module NHS::ImmunisationsAPI
         vaccination_record.patient.not_invalidated?
     end
 
+    def should_perform_search_for_patient?(patient)
+      patient.teams.any?(&:has_point_of_care_access?)
+    end
+
     def search_immunisations(patient, programmes:, date_from: nil, date_to: nil)
       unless Flipper.enabled?(:imms_api_integration)
         Rails.logger.info(
           "Not searching for vaccination records in the immunisations API as the" \
             "feature flag is disabled: Patient #{patient.id}"
+        )
+        return
+      end
+
+      unless should_perform_search_for_patient?(patient)
+        Rails.logger.warn(
+          "Not searching for vaccination records for patient #{patient.id} as" \
+            " all their teams are upload-only teams"
         )
         return
       end

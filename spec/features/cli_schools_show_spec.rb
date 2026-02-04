@@ -214,6 +214,5 @@ describe "mavis schools show" do
     expect(@output).to match(/^  in current academic year: 3/)
     expect(@output).to match(/^    with attendance records: 1/)
     expect(@output).to match(/^    with gillick assessments: 1/)
-    expect(@output).to match(/^  safe to destroy: 1/)
   end
 end

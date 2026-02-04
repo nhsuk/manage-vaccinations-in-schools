@@ -10,7 +10,7 @@ team:
   privacy_policy_url: https://www.schoolvaccination.uk/policies
   privacy_notice_url: https://www.schoolvaccination.uk/policies
   reply_to_id: 8d4721f4-e5db-49db-8eb4-86fd37990391
-  type: poc_only
+  type: point_of_care
 
 programmes: [menacwy, mmr, td_ipv, hpv]
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_26_113704) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_04_073325) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -95,6 +95,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_26_113704) do
     t.datetime "created_at", null: false
     t.date "expiry"
     t.string "name", null: false
+    t.string "number"
     t.bigint "team_id"
     t.datetime "updated_at", null: false
     t.bigint "vaccine_id", null: false
@@ -591,22 +592,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_26_113704) do
     t.index ["status"], name: "index_patient_changesets_on_status"
   end
 
-  create_table "patient_consent_statuses", force: :cascade do |t|
-    t.integer "academic_year", null: false
-    t.enum "disease_types", default: [], null: false, array: true, enum_type: "disease_type"
-    t.bigint "patient_id", null: false
-    t.enum "programme_type", null: false, enum_type: "programme_type"
-    t.integer "status", default: 0, null: false
-    t.integer "vaccine_methods", default: [], null: false, array: true
-    t.boolean "without_gelatine"
-    t.index ["academic_year", "patient_id"], name: "index_patient_consent_statuses_on_academic_year_and_patient_id"
-    t.index ["patient_id", "programme_type", "academic_year"], name: "idx_on_patient_id_programme_type_academic_year_89a70c9513", unique: true
-    t.index ["status"], name: "index_patient_consent_statuses_on_status"
-  end
-
   create_table "patient_locations", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.datetime "created_at", null: false
+    t.daterange "date_range", default: -::Float::INFINITY...::Float::INFINITY
     t.bigint "location_id", null: false
     t.bigint "patient_id", null: false
     t.datetime "updated_at", null: false
@@ -930,7 +919,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_26_113704) do
   end
 
   create_table "vaccination_records", force: :cascade do |t|
+    t.date "batch_expiry"
     t.bigint "batch_id"
+    t.string "batch_number"
     t.datetime "confirmation_sent_at"
     t.datetime "created_at", null: false
     t.integer "delivery_method"
@@ -957,6 +948,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_26_113704) do
     t.bigint "patient_id", null: false
     t.jsonb "pending_changes", default: {}, null: false
     t.datetime "performed_at", null: false
+    t.date "performed_at_date"
+    t.time "performed_at_time"
     t.string "performed_by_family_name"
     t.string "performed_by_given_name"
     t.bigint "performed_by_user_id"
@@ -1090,7 +1083,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_26_113704) do
   add_foreign_key "parent_relationships", "patients"
   add_foreign_key "patient_changesets", "locations", column: "school_id"
   add_foreign_key "patient_changesets", "patients"
-  add_foreign_key "patient_consent_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_locations", "locations"
   add_foreign_key "patient_locations", "patients"
   add_foreign_key "patient_programme_statuses", "patients", on_delete: :cascade
@@ -1364,7 +1356,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_26_113704) do
               ELSE NULL::text
           END AS patient_gender,
       ((pps.academic_year - pat.birth_academic_year) - 5) AS patient_year_group,
-      COALESCE(la.mhclg_code, pat.local_authority_mhclg_code, ''::character varying) AS patient_local_authority_code,
+      COALESCE(la.mhclg_code, pat.local_authority_mhclg_code, 'UNKNOWN'::character varying) AS patient_local_authority_code,
+      COALESCE(la.official_name, pat_la.official_name, 'Unknown Local Authority'::character varying) AS patient_local_authority_official_name,
       COALESCE(la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
           CASE
               WHEN (school.urn IS NOT NULL) THEN school.urn
@@ -1380,13 +1373,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_26_113704) do
       (EXISTS ( SELECT 1
              FROM consents con
             WHERE ((con.patient_id = pps.patient_id) AND (con.programme_type = pps.programme_type) AND (con.academic_year = pps.academic_year) AND (con.invalidated_at IS NULL) AND (con.withdrawn_at IS NULL) AND (con.response = 1) AND (con.reason_for_refusal = 1)))) AS has_already_vaccinated_consent
-     FROM ((((((patient_programme_statuses pps
+     FROM (((((((patient_programme_statuses pps
        JOIN patients pat ON ((pat.id = pps.patient_id)))
        JOIN patient_locations pl ON (((pl.patient_id = pps.patient_id) AND (pl.academic_year = pps.academic_year))))
        JOIN team_locations tl ON (((tl.location_id = pl.location_id) AND (tl.academic_year = pps.academic_year))))
        LEFT JOIN archive_reasons ar ON (((ar.patient_id = pps.patient_id) AND (ar.team_id = tl.team_id))))
        LEFT JOIN locations school ON ((school.id = pat.school_id)))
        LEFT JOIN local_authorities la ON ((la.gias_code = school.gias_local_authority_code)))
+       LEFT JOIN local_authorities pat_la ON (((pat_la.mhclg_code)::text = (pat.local_authority_mhclg_code)::text)))
     WHERE ((pat.invalidated_at IS NULL) AND (pat.restricted_at IS NULL) AND (pat.date_of_death IS NULL));
   SQL
   add_index "reporting_api_totals", ["id"], name: "ix_rapi_totals_id", unique: true

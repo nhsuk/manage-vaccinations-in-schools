@@ -842,7 +842,7 @@ FactoryBot.define do
       end
     end
 
-    trait :bulk_uploaded do
+    trait :in_national_reporting_upload do
       after(:create) do |patient, evaluator|
         create(
           :archive_reason,

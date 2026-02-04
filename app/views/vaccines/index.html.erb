@@ -42,11 +42,6 @@
               <% row.with_cell do %>
                 <%= render AppActionListComponent.new do |action_list| %>
                   <% action_list.with_item do %>
-                    <%= link_to "Change", edit_vaccine_batch_path(vaccine, batch),
-                                aria: { label: "Change #{batch.name} batch of #{vaccine.brand}" } %>
-                  <% end %>
-
-                  <% action_list.with_item do %>
                     <%= link_to "Archive", archive_vaccine_batch_path(vaccine, batch),
                                 aria: { label: "Archive #{batch.name} batch of #{vaccine.brand}" } %>
                   <% end %>

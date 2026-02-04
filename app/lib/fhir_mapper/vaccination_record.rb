@@ -107,6 +107,8 @@ module FHIRMapper
       attrs[:dose_sequence] = dose_sequence_from_fhir(fhir_record)
 
       attrs[:vaccine] = Vaccine.from_fhir_record(fhir_record)
+      attrs[:batch_number] = fhir_record.lotNumber&.to_s
+      attrs[:batch_expiry] = fhir_record.expirationDate&.to_date
 
       if attrs[:vaccine]
         attrs[:disease_types] = attrs[:vaccine].disease_types
@@ -128,7 +130,7 @@ module FHIRMapper
 
     def fhir_identifier
       case source
-      when "bulk_upload"
+      when "national_reporting"
         FHIR::Identifier.new(
           system: MAVIS_NATIONAL_REPORTING_SYSTEM_NAME,
           value: uuid
@@ -334,7 +336,10 @@ module FHIRMapper
     private_class_method def self.batch_from_fhir(fhir_record, vaccine:)
       return if fhir_record.lotNumber&.to_s&.presence.nil?
 
-      ::Batch.create_with(archived_at: Time.current).find_or_create_by!(
+      ::Batch.create_with(
+        archived_at: Time.current,
+        number: fhir_record.lotNumber&.to_s
+      ).find_or_create_by!(
         expiry: fhir_record.expirationDate&.to_date,
         name: fhir_record.lotNumber&.to_s,
         team: nil,

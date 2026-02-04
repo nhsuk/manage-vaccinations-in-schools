@@ -20,10 +20,31 @@ module VaccinationRecordsHelper
   end
 
   def vaccination_record_source(vaccination_record)
-    if vaccination_record.sourced_from_bulk_upload?
+    if vaccination_record.sourced_from_national_reporting?
       "Mavis national reporting upload"
     else
       vaccination_record.human_enum_name(:source)
     end
+  end
+
+  def already_vaccinated_link_label(session:, patient:, programme:)
+    if programme.mmr?
+      if had_first_dose?(session:, patient:, programme:)
+        "Record 2nd dose as already given"
+      else
+        "Record 1st dose as already given"
+      end
+    else
+      "Record as already vaccinated"
+    end
+  end
+
+  private
+
+  def had_first_dose?(session:, patient:, programme:)
+    programme_status =
+      patient.programme_status(programme, academic_year: session.academic_year)
+    programme_status.dose_sequence.present? &&
+      programme_status.dose_sequence > 1
   end
 end

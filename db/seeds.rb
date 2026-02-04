@@ -20,7 +20,7 @@ def create_gp_practices
   FactoryBot.create_list(:gp_practice, 30)
 end
 
-def create_team(ods_code:, workgroup: nil, type: :poc_only)
+def create_team(ods_code:, workgroup: nil, type: :point_of_care)
   workgroup ||= ods_code.downcase
 
   Team.find_by(workgroup:) ||
@@ -246,12 +246,12 @@ def create_imports(user, team)
   )
 end
 
-def create_bulk_upload_imports(user, team)
+def create_national_reporting_imports(user, team)
   %i[pending invalid processed].each do |status|
     FactoryBot.create(
       :immunisation_import,
       status,
-      type: "bulk",
+      type: "national_reporting",
       team:,
       uploaded_by: user
     )
@@ -337,11 +337,11 @@ def create_nurse_joy_team
   create_school_moves(team)
 end
 
-def create_upload_only_team
+def create_national_reporting_team
   team =
     FactoryBot.create(
       :team,
-      :upload_only,
+      :national_reporting,
       ods_code: "XX99",
       programmes: [Programme.flu, Programme.hpv],
       workgroup: "XX99"
@@ -350,7 +350,7 @@ def create_upload_only_team
     create_user(:medical_secretary, team:, email: "admin.sarah@example.com")
   create_user(:superuser, team:, email: "superuser.rob@example.com")
 
-  create_bulk_upload_imports(user, team)
+  create_national_reporting_imports(user, team)
 
   create_upload_patients_and_vaccination_records(user)
 end
@@ -360,12 +360,12 @@ def create_upload_patients_and_vaccination_records(user)
     FactoryBot.create_list(:patient, 50, :archived, team: user.teams.first)
 
   immunisation_import =
-    ImmunisationImport.find_by(type: "bulk", status: "processed")
+    ImmunisationImport.find_by(type: "national_reporting", status: "processed")
 
   patients.each do |patient|
     FactoryBot.create(
       :vaccination_record,
-      :sourced_from_bulk_upload,
+      :sourced_from_national_reporting,
       immunisation_import:,
       patient:,
       performed_by: user
@@ -382,7 +382,7 @@ unless Settings.cis2.enabled
   # is not available and password= fails to run.
   create_nurse_joy_team
 
-  create_upload_only_team
+  create_national_reporting_team
 end
 
 # CIS2 team - the ODS code and user UID need to match the values in the CIS2 env

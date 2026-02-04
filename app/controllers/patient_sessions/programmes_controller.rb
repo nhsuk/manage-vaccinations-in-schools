@@ -38,4 +38,17 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
   private
 
   def access_log_entry_action = :show
+
+  def dose_sequence
+    if @programme.mmr?
+      @patient.programme_status(
+        @programme,
+        academic_year: @academic_year
+      )&.dose_sequence || 1
+    end
+  end
+
+  def eligible_for_mmr_or_mmrv?
+    @programme.mmr? && @patient.eligible_for_mmrv?
+  end
 end

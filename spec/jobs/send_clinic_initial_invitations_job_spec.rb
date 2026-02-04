@@ -132,4 +132,28 @@ describe SendClinicInitialInvitationsJob do
       perform_now
     end
   end
+
+  context "when eligible for multiple programmes but already vaccinated for one and notified for others" do
+    let(:programmes) { [Programme.hpv, Programme.menacwy, Programme.td_ipv] }
+
+    before do
+      create(:vaccination_record, patient:, programme: programmes.first)
+
+      create(
+        :clinic_notification,
+        :initial_invitation,
+        patient:,
+        academic_year: session.academic_year,
+        programmes: [programmes.second, programmes.third],
+        team:
+      )
+
+      StatusUpdater.call(patient:)
+    end
+
+    it "doesn't send any notifications" do
+      expect(ClinicNotification).not_to receive(:create_and_send!)
+      perform_now
+    end
+  end
 end

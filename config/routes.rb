@@ -108,6 +108,7 @@ Rails.application.routes.draw do
     unless Rails.env.production?
       namespace :testing do
         resources :locations, only: :index
+        delete "teams/:workgroup/locations", to: "teams#destroy_locations"
         resources :teams, only: :destroy, param: :workgroup
         post "/onboard", to: "onboard#create"
         get "refresh-reporting", to: "reporting_refresh#create"

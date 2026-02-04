@@ -6,8 +6,7 @@ describe "MMR triage" do
   end
 
   scenario "triage without gelatine only" do
-    given_mmrv_vaccinations_are_enabled
-    and_i_am_signed_in_with_mmr_programme
+    given_i_am_signed_in_with_mmr_programme
     and_there_is_a_session_today_with_patients_with_consent
 
     when_i_go_to_the_without_gelatine_only_patient
@@ -21,8 +20,7 @@ describe "MMR triage" do
   end
 
   scenario "triage without gelatine" do
-    given_mmrv_vaccinations_are_enabled
-    and_i_am_signed_in_with_mmr_programme
+    given_i_am_signed_in_with_mmr_programme
     and_there_is_a_session_today_with_patients_with_consent
 
     when_i_go_to_the_without_gelatine_patient
@@ -36,8 +34,7 @@ describe "MMR triage" do
   end
 
   scenario "triage with gelatine" do
-    given_mmrv_vaccinations_are_enabled
-    and_i_am_signed_in_with_mmr_programme
+    given_i_am_signed_in_with_mmr_programme
     and_there_is_a_session_today_with_patients_with_consent
 
     when_i_go_to_the_with_gelatine_patient
@@ -50,11 +47,7 @@ describe "MMR triage" do
     then_i_see_the_right_programme_on_the_entries
   end
 
-  def given_mmrv_vaccinations_are_enabled
-    Flipper.enable(:mmrv)
-  end
-
-  def and_i_am_signed_in_with_mmr_programme
+  def given_i_am_signed_in_with_mmr_programme
     @programme = Programme.mmr
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @location = create(:school, team: @team)
@@ -69,10 +62,7 @@ describe "MMR triage" do
   end
 
   def and_there_is_a_session_today_with_patients_with_consent
-    mmrv_variant =
-      @programme.variant_for(
-        disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmrv")
-      )
+    mmrv_variant = Programme::Variant.new(@programme, variant_type: "mmrv")
 
     @without_gelatine_only_patient =
       create(

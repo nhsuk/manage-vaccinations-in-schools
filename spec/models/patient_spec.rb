@@ -72,6 +72,58 @@ describe Patient do
   end
 
   describe "scopes" do
+    describe "#joins_sessions" do
+      subject(:scope) { described_class.joins_sessions }
+
+      let(:patient) { create(:patient) }
+
+      it { should be_empty }
+
+      context "when a patient belongs to a session with no dates" do
+        let(:session) { create(:session, :unscheduled) }
+
+        before { create(:patient_location, patient:, session:) }
+
+        it { should include(patient) }
+      end
+
+      context "when the session has a date" do
+        let(:session) { create(:session, :today) }
+
+        context "and the patient location has no date range" do
+          before { create(:patient_location, patient:, session:) }
+
+          it { should include(patient) }
+        end
+
+        context "and the patient location is outside the range" do
+          before do
+            create(
+              :patient_location,
+              patient:,
+              session:,
+              date_range: ..Date.yesterday
+            )
+          end
+
+          it { should_not include(patient) }
+        end
+
+        context "and the patient location is inside the range" do
+          before do
+            create(
+              :patient_location,
+              patient:,
+              session:,
+              date_range: Date.current..
+            )
+          end
+
+          it { should include(patient) }
+        end
+      end
+    end
+
     describe "#archived" do
       subject(:scope) { described_class.archived(team:) }
 
@@ -873,9 +925,9 @@ describe Patient do
       end
     end
 
-    context "when the team has upload only access" do
+    context "when the team has national reporting access" do
       let(:patient) { create(:patient, school:, year_group: 1) }
-      let(:team) { create(:team, :upload_only) }
+      let(:team) { create(:team, :national_reporting) }
 
       it { should be(false) }
     end
@@ -1011,10 +1063,17 @@ describe Patient do
           create(:patient_location, patient:, session:)
         end
 
-        it "removes the patient from the session" do
+        it "sets the range of the patient location" do
+          expect(patient_location.date_range).to eq(
+            -Float::INFINITY...Float::INFINITY
+          )
           expect(patient.patient_locations).to include(patient_location)
-          update_from_pds!
-          expect(patient.patient_locations).not_to include(patient_location)
+
+          expect { update_from_pds! }.not_to change(PatientLocation, :count)
+
+          expect(patient_location.reload.date_range).to eq(
+            -Float::INFINITY...Date.tomorrow
+          )
         end
 
         it "archives the patient" do

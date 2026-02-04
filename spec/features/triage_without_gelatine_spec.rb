@@ -46,13 +46,10 @@ describe "Triage" do
   end
 
   def given_an_mmr_programme_is_underway
-    Flipper.enable(:mmrv)
-
     programmes = [Programme.mmr]
+
     @programme_variant =
-      Programme.mmr.variant_for(
-        disease_types: Programme::Variant::DISEASE_TYPES.fetch("mmr")
-      )
+      Programme::Variant.new(Programme.mmr, variant_type: "mmr")
 
     team = create(:team, programmes:)
     @user = create(:nurse, team:)

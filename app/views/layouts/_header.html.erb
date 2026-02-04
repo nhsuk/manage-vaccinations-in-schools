@@ -45,11 +45,11 @@
         <ul class="nhsuk-header__navigation-list">
           <% @navigation_items.each do |item| %>
             <%= render AppHeaderNavigationItemComponent.new(
-              item.fetch(:title),
-              item.fetch(:path),
-              request_path: request.path,
-              count: item[:count],
-            ) %>
+                  item.fetch(:title),
+                  item.fetch(:path),
+                  request_path: request.path,
+                  count: item[:count],
+                ) %>
           <% end %>
 
           <li class="nhsuk-header__menu" hidden>

@@ -10,6 +10,7 @@ describe "End-to-end journey" do
     then_i_should_see_the_default_dashboard_cards
     and_the_default_navigation_items
     and_the_default_service_name
+    and_the_default_service_guide_link
 
     # Cohorting
     when_i_upload_the_cohort_import_containing_one_child
@@ -105,6 +106,13 @@ describe "End-to-end journey" do
     service_name = page.first(".nhsuk-header__service-name")
     expect(page_title.text).to eq("Manage vaccinations in schools (Mavis)")
     expect(service_name.text).to eq("Manage vaccinations in schools")
+  end
+
+  def and_the_default_service_guide_link
+    expect(page).to have_link(
+      "Service guidance",
+      href: "https://guide.manage-vaccinations-in-schools.nhs.uk"
+    )
   end
 
   def when_i_upload_the_cohort_import_containing_one_child

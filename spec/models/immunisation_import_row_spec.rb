@@ -66,7 +66,7 @@ describe ImmunisationImportRow do
   end
   let(:valid_data) { valid_hpv_data }
 
-  let(:valid_bulk_common_data) do
+  let(:valid_national_reporting_common_data) do
     valid_patient_data.deep_dup.merge(
       "ANATOMICAL_SITE" => "Left Deltoid",
       "BATCH_EXPIRY_DATE" => "20260106",
@@ -76,16 +76,16 @@ describe ImmunisationImportRow do
       "LOCAL_PATIENT_ID_URI" => "https://cinnamon.nhs.uk/0de/system1"
     )
   end
-  let(:valid_bulk_flu_data) do
-    valid_bulk_common_data.deep_dup.merge(
+  let(:valid_national_reporting_flu_data) do
+    valid_national_reporting_common_data.deep_dup.merge(
       "VACCINATED" => "Y",
       "PERFORMING_PROFESSIONAL_FORENAME" => vaccinator.given_name,
       "PERFORMING_PROFESSIONAL_SURNAME" => vaccinator.family_name,
       "VACCINE_GIVEN" => "AstraZeneca Fluenz LAIV"
     )
   end
-  let(:valid_bulk_hpv_data) do
-    valid_bulk_common_data.deep_dup.merge(
+  let(:valid_national_reporting_hpv_data) do
+    valid_national_reporting_common_data.deep_dup.merge(
       "VACCINE_GIVEN" => "Gardasil9",
       "DOSE_SEQUENCE" => "1",
       "CARE_SETTING" => "1" # School
@@ -94,11 +94,11 @@ describe ImmunisationImportRow do
 
   let!(:location) { create(:school, urn: "123456", name: "Waterloo Road") }
 
-  let(:import_type) { "poc" }
+  let(:import_type) { "point_of_care" }
 
   describe "validations" do
-    context "for a poc upload" do
-      let(:import_type) { "poc" }
+    context "for a point_of_care upload" do
+      let(:import_type) { "point_of_care" }
 
       context "with an empty row" do
         let(:data) { {} }
@@ -210,8 +210,6 @@ describe ImmunisationImportRow do
       end
 
       context "without a vaccine with MMRV programme variant" do
-        before { Flipper.enable(:mmrv) }
-
         let(:programmes) { [Programme.mmr] }
         let(:data) do
           valid_data.except("VACCINE_GIVEN").merge("PROGRAMME" => "MMRV")
@@ -919,8 +917,6 @@ describe ImmunisationImportRow do
       end
 
       context "with MMRV programme name" do
-        before { Flipper.enable(:mmrv) }
-
         let(:programmes) { [Programme.mmr] }
         let(:session) { create(:session, team:, programmes:) }
         let(:data) do
@@ -938,12 +934,12 @@ describe ImmunisationImportRow do
       end
     end
 
-    context "for a bulk upload" do
+    context "for a national reporting upload" do
       let(:programmes) { [Programme.hpv, Programme.flu] }
 
-      let(:import_type) { "bulk" }
+      let(:import_type) { "national_reporting" }
 
-      shared_examples "with an empty row where vaccine was administered (both bulk upload types)" do
+      shared_examples "with an empty row where vaccine was administered (both national reporting upload types)" do
         it "requires the mandatory fields" do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors[:base]).to include(
@@ -1019,9 +1015,9 @@ describe ImmunisationImportRow do
         end
       end
 
-      shared_examples "when Mavis columns are present, which the bulk upload should ignore" do
+      shared_examples "when Mavis columns are present, which the national reporting upload should ignore" do
         let(:data) do
-          valid_bulk_flu_data.merge(
+          valid_national_reporting_flu_data.merge(
             {
               "PROGRAMME" => "HPV",
               "PERFORMING_PROFESSIONAL_EMAIL" => "abc123@example.com",
@@ -1101,7 +1097,7 @@ describe ImmunisationImportRow do
         end
 
         shared_examples "it is equivalent to `VACCINATED` being `Y`" do
-          include_examples "with an empty row where vaccine was administered (both bulk upload types)"
+          include_examples "with an empty row where vaccine was administered (both national reporting upload types)"
 
           it "requires the mandatory fields specific to flu when vaccinated" do
             expect(immunisation_import_row).to be_invalid
@@ -1128,14 +1124,14 @@ describe ImmunisationImportRow do
 
         include_examples "when `VACCINATED` is `N`"
 
-        include_examples "when Mavis columns are present, which the bulk upload should ignore"
+        include_examples "when Mavis columns are present, which the national reporting upload should ignore"
       end
 
       context "of type hpv" do
         let(:basic_hpv_data) { { "VACCINE_GIVEN" => "Gardasil" } }
 
         shared_examples "it is equivalent to `VACCINATED` being `Y`" do
-          include_examples "with an empty row where vaccine was administered (both bulk upload types)"
+          include_examples "with an empty row where vaccine was administered (both national reporting upload types)"
 
           it "requires the mandatory fields specific to HPV" do
             expect(immunisation_import_row).to be_invalid
@@ -1153,7 +1149,7 @@ describe ImmunisationImportRow do
           include_examples "it is equivalent to `VACCINATED` being `Y`"
         end
 
-        context "when `VACCINATED` is `Y` (ie in all cases for HPV bulk upload)" do
+        context "when `VACCINATED` is `Y` (ie in all cases for HPV national reporting upload)" do
           let(:data) { basic_hpv_data.merge({ "VACCINATED" => "Y" }) }
 
           include_examples "it is equivalent to `VACCINATED` being `Y`"
@@ -1161,7 +1157,7 @@ describe ImmunisationImportRow do
 
         include_examples "when `VACCINATED` is `N`"
 
-        include_examples "when Mavis columns are present, which the bulk upload should ignore"
+        include_examples "when Mavis columns are present, which the national reporting upload should ignore"
       end
     end
   end
@@ -1185,8 +1181,8 @@ describe ImmunisationImportRow do
       end
     end
 
-    context "for a poc upload" do
-      let(:import_type) { "poc" }
+    context "for a point_of_care upload" do
+      let(:import_type) { "point_of_care" }
       let(:data) { valid_data }
 
       let(:not_vaccinated_data) do
@@ -1270,8 +1266,6 @@ describe ImmunisationImportRow do
       end
 
       context "without a vaccine with MMRV programme variant" do
-        before { Flipper.enable(:mmrv) }
-
         let(:programmes) { [Programme.mmr] }
         let(:data) do
           valid_data.except("VACCINE_GIVEN").merge("PROGRAMME" => "MMRV")
@@ -1372,6 +1366,22 @@ describe ImmunisationImportRow do
 
           its(:team) { should eq(session.team) }
         end
+      end
+
+      describe "#batch_number" do
+        subject(:batch_number) { vaccination_record.batch_number }
+
+        let(:data) { valid_data }
+
+        it { should eq("123") }
+      end
+
+      describe "#batch_expiry" do
+        subject(:batch_expiry) { vaccination_record.batch_expiry }
+
+        let(:data) { valid_data }
+
+        it { should eq(Date.new(2021, 1, 1)) }
       end
 
       describe "#delivery_method" do
@@ -2393,7 +2403,7 @@ describe ImmunisationImportRow do
 
       include_examples "with pseudo-postcodes"
 
-      context "when bulk upload columns are present, which the Mavis upload should ignore" do
+      context "when national reporting columns are present, which the Mavis upload should ignore" do
         let(:data) do
           valid_data.merge(
             {
@@ -2492,10 +2502,10 @@ describe ImmunisationImportRow do
       end
     end
 
-    context "for a bulk upload" do
+    context "for a national reporting upload" do
       let(:programmes) { [Programme.hpv, Programme.flu] }
 
-      let(:import_type) { "bulk" }
+      let(:import_type) { "national_reporting" }
 
       shared_examples "date deduplication with existing vaccination records" do |programme|
         let(:patient) { create(:patient, nhs_number:) }
@@ -2539,7 +2549,9 @@ describe ImmunisationImportRow do
         shared_examples "accepts a VACCINE_GIVEN code" do |vaccine_given, snomed_product_code|
           context "with code: #{vaccine_given}" do
             let(:data) do
-              valid_bulk_flu_data.merge("VACCINE_GIVEN" => vaccine_given)
+              valid_national_reporting_flu_data.merge(
+                "VACCINE_GIVEN" => vaccine_given
+              )
             end
 
             it { should be_valid }
@@ -2548,7 +2560,7 @@ describe ImmunisationImportRow do
           end
         end
 
-        let(:data) { valid_bulk_flu_data }
+        let(:data) { valid_national_reporting_flu_data }
 
         let(:programme) { Programme.flu }
 
@@ -2556,7 +2568,7 @@ describe ImmunisationImportRow do
 
         its(:programme) { should eq programme }
 
-        its(:source) { should eq("bulk_upload") }
+        its(:source) { should eq("national_reporting") }
 
         its(:local_patient_id) { should eq "CIN-OXFORD-pat123456" }
 
@@ -2566,9 +2578,12 @@ describe ImmunisationImportRow do
 
         its(:location) { should eq location }
 
+        its(:batch_number) { should eq "123" }
+        its(:batch_expiry) { should eq Date.new(2026, 1, 6) }
+
         context "with an unknown school and no name" do
           let(:data) do
-            valid_bulk_flu_data.merge(
+            valid_national_reporting_flu_data.merge(
               "SCHOOL_URN" => "888888",
               "SCHOOL_NAME" => nil
             )
@@ -2583,9 +2598,9 @@ describe ImmunisationImportRow do
           it { should be_nil }
         end
 
-        context "when Mavis columns are present, which the bulk upload should ignore" do
+        context "when Mavis columns are present, which the national reporting upload should ignore" do
           let(:data) do
-            valid_bulk_flu_data.merge(
+            valid_national_reporting_flu_data.merge(
               {
                 "PROGRAMME" => "HPV",
                 "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,
@@ -2647,7 +2662,7 @@ describe ImmunisationImportRow do
 
             create(
               :vaccination_record,
-              :sourced_from_bulk_upload,
+              :sourced_from_national_reporting,
               patient:,
               programme:,
               performed_at: Time.zone.local(2026, 1, 5, 0, 0, 0),
@@ -2658,6 +2673,8 @@ describe ImmunisationImportRow do
               performed_by_given_name: vaccinator.given_name,
               performed_by_family_name: vaccinator.family_name,
               vaccine:,
+              batch_number: "456", # different
+              batch_expiry: Date.new(2026, 1, 6), # identical
               batch:
                 create(
                   :batch,
@@ -2679,7 +2696,7 @@ describe ImmunisationImportRow do
             vaccine = Vaccine.find_by(nivs_name: "AstraZeneca Fluenz LAIV")
             create(
               :vaccination_record,
-              :sourced_from_bulk_upload,
+              :sourced_from_national_reporting,
               patient:,
               programme:,
               performed_at: Time.zone.local(2026, 1, 5, 0, 0, 0),
@@ -2690,6 +2707,8 @@ describe ImmunisationImportRow do
               performed_by_given_name: vaccinator.given_name,
               performed_by_family_name: vaccinator.family_name,
               vaccine:,
+              batch_number: "123", # identical
+              batch_expiry: Date.new(2026, 1, 6), # identical
               batch:
                 create(
                   :batch,
@@ -2711,7 +2730,9 @@ describe ImmunisationImportRow do
         shared_examples "accepts a VACCINE_GIVEN code" do |vaccine_given, snomed_product_code|
           context "with code: #{vaccine_given}" do
             let(:data) do
-              valid_bulk_hpv_data.merge("VACCINE_GIVEN" => vaccine_given)
+              valid_national_reporting_hpv_data.merge(
+                "VACCINE_GIVEN" => vaccine_given
+              )
             end
 
             it { should be_valid }
@@ -2720,7 +2741,7 @@ describe ImmunisationImportRow do
           end
         end
 
-        let(:data) { valid_bulk_hpv_data }
+        let(:data) { valid_national_reporting_hpv_data }
 
         let(:programme) { Programme.hpv }
 
@@ -2728,7 +2749,7 @@ describe ImmunisationImportRow do
 
         its(:programme) { should eq programme }
 
-        its(:source) { should eq("bulk_upload") }
+        its(:source) { should eq("national_reporting") }
 
         its(:local_patient_id) { should eq "CIN-OXFORD-pat123456" }
 
@@ -2737,6 +2758,9 @@ describe ImmunisationImportRow do
         end
 
         its(:location) { should eq location }
+
+        its(:batch_number) { should eq "123" }
+        its(:batch_expiry) { should eq Date.new(2026, 1, 6) }
 
         include_examples "accepts a VACCINE_GIVEN code",
                          "Gardasil",
@@ -2750,7 +2774,7 @@ describe ImmunisationImportRow do
 
         context "with an unknown school and no name" do
           let(:data) do
-            valid_bulk_hpv_data.merge(
+            valid_national_reporting_hpv_data.merge(
               "SCHOOL_URN" => "888888",
               "SCHOOL_NAME" => nil
             )
@@ -2765,9 +2789,9 @@ describe ImmunisationImportRow do
           it { should be_nil }
         end
 
-        context "when Mavis columns are present, which the bulk upload should ignore" do
+        context "when Mavis columns are present, which the national reporting upload should ignore" do
           let(:data) do
-            valid_bulk_hpv_data.merge(
+            valid_national_reporting_hpv_data.merge(
               {
                 "PROGRAMME" => "Flu",
                 "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,

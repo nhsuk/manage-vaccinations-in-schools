@@ -117,6 +117,8 @@ class Patient < ApplicationRecord
     AND team_locations.academic_year = patient_locations.academic_year
     INNER JOIN sessions
     ON sessions.team_location_id = team_locations.id
+    AND (patient_locations.date_range IS NULL OR sessions.dates = '{}'
+        OR patient_locations.date_range @> ANY(sessions.dates))
   SQL
 
   scope :joins_session_programme_year_groups, -> { joins(<<-SQL) }
@@ -442,6 +444,9 @@ class Patient < ApplicationRecord
           scope
         end
 
+  scope :with_team_searchable_in_nhs_immunisations_api,
+        -> { joins(:teams).where.not(teams: { type: :national_reporting }) }
+
   validates :given_name, :family_name, :date_of_birth, presence: true
 
   validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }
@@ -576,7 +581,7 @@ class Patient < ApplicationRecord
   def year_group_changed? = birth_academic_year_changed?
 
   def show_year_group?(team:)
-    return false if team.has_upload_only_access?
+    return false if team.has_national_reporting_access?
 
     academic_year = AcademicYear.pending
     year_group = self.year_group(academic_year:)
@@ -740,10 +745,13 @@ class Patient < ApplicationRecord
     scope = patient_locations.pending
 
     unless team.nil?
-      scope = scope.joins_sessions.where("team_locations.team_id = ?", team.id)
+      scope = scope.joins_sessions.where(team_locations: { team_id: team.id })
     end
 
-    scope.destroy_all_if_safe
+    scope.find_each do |patient_location|
+      patient_location.end_date = Date.current
+      patient_location.save!
+    end
   end
 
   def self.from_consent_form(consent_form)

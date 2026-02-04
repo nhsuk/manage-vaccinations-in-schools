@@ -1,24 +1,25 @@
 # frozen_string_literal: true
 
-describe "Upload-only team homepage and navigation" do
-  scenario "Homepage shows upload-only title and cards" do
-    given_i_am_signed_in_as_an_upload_only_team
+describe "National reporting team homepage and navigation" do
+  scenario "Homepage shows national reporting title and cards" do
+    given_i_am_signed_in_as_an_national_reporting_team
     when_i_visit_the_dashboard
-    then_i_should_see_the_upload_only_cards
+    then_i_should_see_the_national_reporting_cards
     and_i_should_see_the_import_records_card
     and_i_should_see_the_children_card
     and_i_should_see_the_national_reporting_service_name
+    and_i_should_see_the_national_reporting_service_guide_link
   end
 
   scenario "Navigation shows only import, children and your team" do
-    given_i_am_signed_in_as_an_upload_only_team
+    given_i_am_signed_in_as_an_national_reporting_team
     when_i_visit_the_dashboard
     then_i_should_see_only_import_and_children_navigation_items
     and_there_should_be_no_count_next_to_the_import_link
   end
 
   scenario "Children page search shows limited filters and the patient's card" do
-    given_i_am_signed_in_as_an_upload_only_team
+    given_i_am_signed_in_as_an_national_reporting_team
     and_i_upload_a_valid_file
     when_i_visit_the_children_page
     then_i_should_see_limited_filters
@@ -28,7 +29,7 @@ describe "Upload-only team homepage and navigation" do
   end
 
   scenario "Child record page shows vaccination records first and cannot be archived" do
-    given_i_am_signed_in_as_an_upload_only_team
+    given_i_am_signed_in_as_an_national_reporting_team
     and_i_upload_a_valid_file
     when_i_visit_the_children_page
     and_i_search_for_a_child(search_term: "Harry")
@@ -40,7 +41,7 @@ describe "Upload-only team homepage and navigation" do
   end
 
   scenario "Parent details are not shown for a child with parents" do
-    given_i_am_signed_in_as_an_upload_only_team
+    given_i_am_signed_in_as_an_national_reporting_team
     and_there_is_a_child_with_parents
     when_i_visit_the_children_page
     and_i_search_for_a_child(search_term: "Draco")
@@ -52,11 +53,11 @@ describe "Upload-only team homepage and navigation" do
     and_i_should_not_see_add_parent_button
   end
 
-  def given_i_am_signed_in_as_an_upload_only_team
+  def given_i_am_signed_in_as_an_national_reporting_team
     @team =
       create(
         :team,
-        :upload_only,
+        :national_reporting,
         :with_one_admin,
         :with_generic_clinic,
         programmes: [Programme.flu, Programme.hpv],
@@ -87,7 +88,7 @@ describe "Upload-only team homepage and navigation" do
     visit dashboard_path
   end
 
-  def then_i_should_see_the_upload_only_cards
+  def then_i_should_see_the_national_reporting_cards
     cards = page.all(".nhsuk-card-group__item")
     expect(cards.count).to eq(3)
   end
@@ -159,7 +160,7 @@ describe "Upload-only team homepage and navigation" do
     click_on "Upload records"
     attach_file(
       "immunisation_import[csv]",
-      "spec/fixtures/immunisation_import_bulk/valid_mixed_flu_hpv.csv"
+      "spec/fixtures/immunisation_import/national_reporting/valid_mixed_flu_hpv.csv"
     )
     click_on "Continue"
     wait_for_import_to_complete(ImmunisationImport)
@@ -217,5 +218,13 @@ describe "Upload-only team homepage and navigation" do
   def and_the_activity_log_is_hidden
     expect(page).not_to have_content("Activity log")
     expect(page).not_to have_content("Child record")
+  end
+
+  def and_i_should_see_the_national_reporting_service_guide_link
+    expect(page).to have_link(
+      "Service guidance",
+      href:
+        "https://guide.manage-vaccinations-in-schools.nhs.uk/national-reporting/"
+    )
   end
 end

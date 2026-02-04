@@ -5,6 +5,8 @@
 # Table name: vaccination_records
 #
 #  id                                      :bigint           not null, primary key
+#  batch_expiry                            :date
+#  batch_number                            :string
 #  confirmation_sent_at                    :datetime
 #  delivery_method                         :integer
 #  delivery_site                           :integer
@@ -25,6 +27,8 @@
 #  outcome                                 :integer          not null
 #  pending_changes                         :jsonb            not null
 #  performed_at                            :datetime         not null
+#  performed_at_date                       :date
+#  performed_at_time                       :time
 #  performed_by_family_name                :string
 #  performed_by_given_name                 :string
 #  performed_ods_code                      :string
@@ -180,7 +184,7 @@ class VaccinationRecord < ApplicationRecord
          historical_upload: 1,
          nhs_immunisations_api: 2,
          consent_refusal: 3,
-         bulk_upload: 4
+         national_reporting: 4
        },
        prefix: "sourced_from",
        validate: true
@@ -241,7 +245,7 @@ class VaccinationRecord < ApplicationRecord
   validates :local_patient_id,
             :local_patient_id_uri,
             absence: {
-              unless: :sourced_from_bulk_upload?
+              unless: :sourced_from_national_reporting?
             }
 
   after_save :generate_important_notice_if_needed
@@ -250,6 +254,12 @@ class VaccinationRecord < ApplicationRecord
 
   class << self
     delegate :from_fhir_record, to: FHIRMapper::VaccinationRecord
+  end
+
+  def performed_at=(value)
+    super(value)
+    self.performed_at_date = value&.to_date
+    self.performed_at_time = value&.to_time
   end
 
   def academic_year = performed_at.to_date.academic_year

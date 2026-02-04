@@ -8,7 +8,7 @@ describe SendClinicSubsequentInvitationsJob do
   let(:programmes) { [Programme.hpv] }
   let(:team) { create(:team, programmes:) }
   let(:parents) { create_list(:parent, 2) }
-  let(:patient) { create(:patient, parents:, year_group: 8, session:) }
+  let(:patient) { create(:patient, parents:, year_group: 9, session:) }
   let(:location) { create(:generic_clinic, team:, academic_year: 2024) }
   let(:academic_year) { session.academic_year }
 
@@ -111,6 +111,36 @@ describe SendClinicSubsequentInvitationsJob do
         expect(ClinicNotification).not_to receive(:create_and_send!)
         perform_now
       end
+    end
+  end
+
+  context "when eligible for multiple programmes but already vaccinated for one" do
+    let(:programmes) { [Programme.hpv, Programme.menacwy, Programme.td_ipv] }
+
+    before do
+      create(:vaccination_record, patient:, programme: programmes.first)
+
+      create(
+        :clinic_notification,
+        :initial_invitation,
+        patient:,
+        academic_year:,
+        programmes: [programmes.second, programmes.third],
+        team:
+      )
+
+      StatusUpdater.call(patient:)
+    end
+
+    it "sends a subsequent invitation for the non-vaccinated programmes" do
+      expect(ClinicNotification).to receive(:create_and_send!).once.with(
+        patient:,
+        team:,
+        academic_year:,
+        programmes:,
+        type: :subsequent_invitation
+      )
+      perform_now
     end
   end
 end

@@ -75,13 +75,13 @@ describe AppImportFormatDetailsComponent do
     expect(page).to have_content("CARE_SETTING")
     expect(page).to have_content("CLINIC_NAME")
 
-    # Excluded POC columns
+    # Excluded point of care columns
     expect(page).not_to have_content("LOCAL_PATIENT_ID")
     expect(page).not_to have_content("LOCAL_PATIENT_ID_URI")
   end
 
-  context "with an upload-only team" do
-    let(:team) { create(:team, :upload_only, programmes: [programme]) }
+  context "with a national reporting team" do
+    let(:team) { create(:team, :national_reporting, programmes: [programme]) }
 
     it "renders the correct summary text for ImmunisationImport" do
       import = ImmunisationImport.new(team:)
@@ -95,7 +95,7 @@ describe AppImportFormatDetailsComponent do
       import = ImmunisationImport.new(team:)
       render_inline(described_class.new(import:))
 
-      # Required bulk columns
+      # Required national reporting columns
       expect(page).to have_content("ORGANISATION_CODE")
       expect(page).to have_content("SCHOOL_URN")
       expect(page).to have_content("NHS_NUMBER")
@@ -117,7 +117,7 @@ describe AppImportFormatDetailsComponent do
       expect(page).to have_content("LOCAL_PATIENT_ID")
       expect(page).to have_content("LOCAL_PATIENT_ID_URI")
 
-      # Excluded POC columns
+      # Excluded point of care columns
       expect(page).not_to have_content("CARE_SETTING")
       expect(page).not_to have_content("CLINIC_NAME")
       expect(page).not_to have_content("SCHOOL_NAME")

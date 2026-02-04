@@ -42,7 +42,7 @@ class Team < ApplicationRecord
   include HasManyProgrammes
   include HasManyTeamLocations
 
-  UPLOAD_ONLY_YEAR_GROUPS = (-2..13).to_a.freeze
+  NATIONAL_REPORTING_YEAR_GROUPS = (-2..13).to_a.freeze
 
   audited associated_with: :organisation
   has_associated_audits
@@ -78,19 +78,19 @@ class Team < ApplicationRecord
   normalizes :phone, with: PhoneNumberNormaliser.new
 
   enum :type,
-       { poc_only: 0, upload_only: 1 },
+       { point_of_care: 0, national_reporting: 1 },
        validate: true,
        prefix: "has",
        suffix: "access"
 
   validates :name, presence: true, uniqueness: true
-  with_options if: :has_upload_only_access? do
+  with_options if: :has_national_reporting_access? do
     validates :email, absence: true
     validates :phone, absence: true
     validates :privacy_notice_url, absence: true
     validates :privacy_policy_url, absence: true
   end
-  with_options unless: :has_upload_only_access? do
+  with_options unless: :has_national_reporting_access? do
     validates :email, notify_safe_email: true
     validates :phone, presence: true, phone: true
     validates :privacy_notice_url, presence: true
@@ -101,7 +101,7 @@ class Team < ApplicationRecord
   def to_param = workgroup
 
   def year_groups(academic_year: nil)
-    return UPLOAD_ONLY_YEAR_GROUPS if has_upload_only_access?
+    return NATIONAL_REPORTING_YEAR_GROUPS if has_national_reporting_access?
 
     academic_year ||= AcademicYear.pending
     location_programme_year_groups

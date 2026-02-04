@@ -34,7 +34,7 @@ describe API::Testing::TeamsController do
         :immunisation_import,
         csv:
           fixture_file_upload(
-            "spec/fixtures/immunisation_import/valid_hpv.csv"
+            "spec/fixtures/immunisation_import/point_of_care/valid_hpv.csv"
           ),
         team:
       )

@@ -17,7 +17,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     when CohortImport
       "How to format your Mavis CSV file for child records"
     when ImmunisationImport
-      if team.has_upload_only_access?
+      if team.has_national_reporting_access?
         "How to format your CSV file for vaccination records"
       else
         "How to format your Mavis CSV file for vaccination records"
@@ -68,14 +68,14 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def immunisation_import_columns
-    if team.has_upload_only_access?
-      bulk_immunisation_import_columns
+    if team.has_national_reporting_access?
+      national_reporting_immunisation_import_columns
     else
-      poc_immunisation_import_columns
+      point_of_care_immunisation_import_columns
     end
   end
 
-  def poc_immunisation_import_columns
+  def point_of_care_immunisation_import_columns
     organisation_code(optionality: "Optional") +
       school_urn(optionality: "Optional") + school_name +
       nhs_number(optionality: "Optional") +
@@ -90,7 +90,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       performing_professional
   end
 
-  def bulk_immunisation_import_columns
+  def national_reporting_immunisation_import_columns
     organisation_code(optionality: "Mandatory") +
       school_urn(optionality: "Mandatory") +
       nhs_number(optionality: "Required") +
@@ -103,8 +103,9 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         extra_notes:
           "Rows with the value #{tag.i("N")} will not be validated and will not be imported."
       ) + date_and_time_of_vaccination(date_optionality: "Mandatory") +
-      bulk_vaccine_and_batch + bulk_anatomical_site + bulk_dose_sequence +
-      bulk_performing_professional_names + local_patient_id
+      national_reporting_vaccine_and_batch +
+      national_reporting_anatomical_site + national_reporting_dose_sequence +
+      national_reporting_performing_professional_names + local_patient_id
   end
 
   def child_columns
@@ -343,7 +344,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     ]
   end
 
-  def bulk_vaccine_and_batch
+  def national_reporting_vaccine_and_batch
     hpv_vaccines =
       Programme.hpv.vaccines.pluck(:nivs_name).compact.map { tag.i(it) }
     flu_vaccines =
@@ -461,7 +462,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     ]
   end
 
-  def bulk_performing_professional_names
+  def national_reporting_performing_professional_names
     [
       {
         name: "PERFORMING_PROFESSIONAL_FORENAME",
@@ -483,7 +484,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     ]
   end
 
-  def bulk_anatomical_site
+  def national_reporting_anatomical_site
     sites = ImmunisationImportRow::DELIVERY_SITES.keys.sort.map { tag.i(_1) }
 
     site_sentence =
@@ -500,7 +501,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     ]
   end
 
-  def bulk_dose_sequence
+  def national_reporting_dose_sequence
     hpv_max = Programme.hpv.maximum_dose_sequence
     flu_max = Programme.flu.maximum_dose_sequence
 

@@ -5,6 +5,8 @@
 # Table name: vaccination_records
 #
 #  id                                      :bigint           not null, primary key
+#  batch_expiry                            :date
+#  batch_number                            :string
 #  confirmation_sent_at                    :datetime
 #  delivery_method                         :integer
 #  delivery_site                           :integer
@@ -25,6 +27,8 @@
 #  outcome                                 :integer          not null
 #  pending_changes                         :jsonb            not null
 #  performed_at                            :datetime         not null
+#  performed_at_date                       :date
+#  performed_at_time                       :time
 #  performed_by_family_name                :string
 #  performed_by_given_name                 :string
 #  performed_ods_code                      :string
@@ -137,13 +141,13 @@ FactoryBot.define do
       nhs_immunisations_api_primary_source { true }
     end
 
-    trait :sourced_from_bulk_upload do
+    trait :sourced_from_national_reporting do
       transient do
         uploaded_by { nil }
         immunisation_import { nil }
       end
 
-      source { "bulk_upload" }
+      source { "national_reporting" }
       programme { [Programme.flu, Programme.hpv].sample }
 
       after(:create) do |vaccination_record, evaluator|
@@ -157,7 +161,7 @@ FactoryBot.define do
           else
             create(
               :immunisation_import,
-              type: "bulk",
+              type: "national_reporting",
               vaccination_records: [vaccination_record],
               team: evaluator.uploaded_by.selected_team,
               uploaded_by: evaluator.uploaded_by

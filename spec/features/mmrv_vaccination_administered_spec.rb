@@ -4,8 +4,7 @@ describe "MMRV vaccination" do
   around { |example| travel_to(Time.zone.local(2024, 10, 1)) { example.run } }
 
   scenario "administered at community clinic" do
-    given_mmrv_vaccinations_are_enabled
-    and_i_am_signed_in_as_a_nurse
+    given_i_am_signed_in_as_a_nurse
     and_a_patient_has_consented_for_mmrv
 
     when_i_go_to_the_patients_tab
@@ -34,8 +33,7 @@ describe "MMRV vaccination" do
   end
 
   scenario "there is no more MMRV stock available" do
-    given_mmrv_vaccinations_are_enabled
-    and_i_am_signed_in_as_a_nurse
+    given_i_am_signed_in_as_a_nurse
     and_a_patient_exists
 
     when_i_visit_the_patient_mmrv_tab
@@ -52,8 +50,7 @@ describe "MMRV vaccination" do
   end
 
   scenario "patient has MMRV consent, then consents for MMR" do
-    given_mmrv_vaccinations_are_enabled
-    and_i_am_signed_in_as_a_nurse
+    given_i_am_signed_in_as_a_nurse
     and_a_patient_has_consented_for_mmrv
 
     when_i_visit_the_patient_mmrv_tab
@@ -65,11 +62,7 @@ describe "MMRV vaccination" do
     then_i_see_a_message_that_the_consent_is_conflicting
   end
 
-  def given_mmrv_vaccinations_are_enabled
-    Flipper.enable(:mmrv)
-  end
-
-  def and_i_am_signed_in_as_a_nurse
+  def given_i_am_signed_in_as_a_nurse
     @programme = Programme.mmr
     @team = create(:team, :with_one_nurse, programmes: [@programme])
 
