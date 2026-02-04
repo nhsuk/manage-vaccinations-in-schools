@@ -14,8 +14,9 @@ describe AlreadyHadNotificationSender do
     let(:patient) do
       create(:patient, parents: [first_parent, second_parent], session:)
     end
+    let(:performed_at) { 1.year.ago }
     let(:vaccination_record) do
-      create(:vaccination_record, programme:, patient:, session:)
+      create(:vaccination_record, programme:, patient:, session:, performed_at:)
     end
 
     before { ActiveJob::Base.queue_adapter.enqueued_jobs.clear }
