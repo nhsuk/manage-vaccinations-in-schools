@@ -123,6 +123,13 @@ module EthnicityConcern
     end
   end
 
+  def assign_ethnicity_from!(source)
+    self.ethnic_group = source.ethnic_group
+    self.ethnic_background = source.ethnic_background
+    self.ethnic_background_other = source.ethnic_background_other
+    save!
+  end
+
   def ethnic_group_and_background
     group_label = I18n.t("ethnicity.groups.#{ethnic_group}")
     background_label = I18n.t("ethnicity.backgrounds.#{ethnic_background}")

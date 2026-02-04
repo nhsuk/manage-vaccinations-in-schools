@@ -74,7 +74,9 @@ module ParentInterface
 
       skip_to_confirm_or_next_health_question
 
-      if current_step == :ethnicity && model.ethnicity_question == "no"
+      if ethnicity_flow_complete?
+        model.save!
+        ProcessConsentFormJob.perform_later(model)
         redirect_to submitted_parent_interface_consent_form_path(model)
         return
       end
@@ -90,6 +92,19 @@ module ParentInterface
       else
         :update
       end
+    end
+
+    def ethnicity_flow_complete?
+      if current_step == :ethnicity && @consent_form.ethnicity_question == "no"
+        return true
+      end
+
+      if current_step == :ethnic_background &&
+           @consent_form.ethnic_background.present?
+        return true
+      end
+
+      false
     end
 
     def finish_wizard_path
@@ -266,14 +281,6 @@ module ParentInterface
     def skip_to_confirm_or_next_health_question
       if skip_to_confirm?
         return if @skip_to.present? # already going somewhere else
-
-        if @consent_form.ethnicity_steps.include?(current_step)
-          # When editing ethnicity from the confirm page, we still need to
-          # traverse the ethnicity steps in order.
-          # Only return to confirm once the ethnicity flow is complete.
-          jump_to(Wicked::FINISH_STEP) if current_step == :ethnic_background
-          return
-        end
 
         if is_health_question_step? && next_health_answer_missing_response?
           jump_to "health-question", question_number: next_health_question

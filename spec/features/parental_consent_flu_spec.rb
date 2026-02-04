@@ -24,10 +24,8 @@ describe "Parental consent" do
     when_i_choose_yes_to_answering_ethnicity_questions
     and_i_choose_an_ethnic_group
     and_i_choose_an_ethnic_background
-    then_i_see_the_confirmation_page
-
-    when_i_click_on_confirm
     then_i_see_the_consent_confirmation_page
+    and_the_patient_is_updated_with_the_ethnicity_information
   end
 
   scenario "Flu - already has a PSD won't need triage and consented to nasal" do
@@ -44,6 +42,7 @@ describe "Parental consent" do
     then_i_see_the_confirmation_page
 
     when_i_submit_the_consent_form
+    and_i_refuse_to_answer_questions_on_ethnicity
     then_the_psd_is_not_invalidated
   end
 
@@ -61,6 +60,7 @@ describe "Parental consent" do
     then_i_see_the_confirmation_page
 
     when_i_submit_the_consent_form
+    and_i_refuse_to_answer_questions_on_ethnicity
     then_the_psd_is_invalidated
   end
 
@@ -78,6 +78,7 @@ describe "Parental consent" do
     then_i_see_the_confirmation_page
 
     when_i_submit_the_consent_form
+    and_i_refuse_to_answer_questions_on_ethnicity
     then_the_psd_is_invalidated
   end
 
@@ -87,6 +88,7 @@ describe "Parental consent" do
     location = create(:school, name: "Pilot School", programmes: [@programme])
     @session = create(:session, :scheduled, programmes: [@programme], location:)
     @child = create(:patient, session: @session)
+    stub_pds_search_to_return_a_patient(@child.nhs_number)
   end
 
   def and_the_child_has_a_psd
@@ -203,7 +205,6 @@ describe "Parental consent" do
 
   def when_i_submit_the_consent_form
     click_on "Confirm"
-    perform_enqueued_jobs
   end
 
   def then_the_psd_is_invalidated
@@ -235,11 +236,33 @@ describe "Parental consent" do
   end
 
   def and_i_choose_an_ethnic_background
-    choose "White and Black Caribbean"
-    click_button "Continue"
+    perform_enqueued_jobs do
+      choose "White and Black Caribbean"
+      click_button "Continue"
+    end
+  end
+
+  def and_the_ethnicity_information_is_shown
+    expect(page).to have_content(
+      "Mixed or multiple ethnic groups (White and Black Caribbean)"
+    )
+  end
+
+  def and_i_refuse_to_answer_questions_on_ethnicity
+    perform_enqueued_jobs do
+      choose "No, skip the ethnicity questions"
+      click_on "Continue"
+    end
   end
 
   def then_i_see_the_consent_confirmation_page
     expect(page).to have_content("Consent confirmed")
+  end
+
+  def and_the_patient_is_updated_with_the_ethnicity_information
+    expect(@child.reload).to have_attributes(
+      ethnic_group: "mixed_or_multiple_ethnic_groups",
+      ethnic_background: "mixed_white_and_black_caribbean"
+    )
   end
 end
