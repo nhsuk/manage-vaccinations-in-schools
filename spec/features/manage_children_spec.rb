@@ -76,6 +76,10 @@ describe "Manage children" do
     when_i_click_on_merge_records
     then_i_see_the_merged_edit_child_record_page
     and_the_vaccination_record_is_updated_with_the_nhs
+
+    when_i_go_back_to_the_patient_page
+    and_i_click_on_activity_log
+    then_i_see_the_patient_merge_in_the_activity_log
   end
 
   scenario "Adding an NHS number to an invalidated patient" do
@@ -383,6 +387,8 @@ describe "Manage children" do
     click_on "Activity log"
   end
 
+  alias_method :and_i_click_on_activity_log, :when_i_click_on_activity_log
+
   def then_i_see_the_activity_log
     expect(page).to have_content("Added to the session")
     expect(page).to have_content("Vaccinated")
@@ -616,6 +622,19 @@ describe "Manage children" do
       I18n.t("ethnicity.backgrounds.#{@new_ethnic_background}")
     expect(page).to have_content(
       "#{ethnic_group_text} (#{ethnic_background_text})"
+    )
+  end
+
+  def when_i_go_back_to_the_patient_page
+    visit patient_path(@existing_patient)
+  end
+
+  def then_i_see_the_patient_merge_in_the_activity_log
+    expect(page).to have_content("Child record merged")
+    expect(page).to have_content(
+      "The record for SMITH, John (date of birth #{@patient.date_of_birth.to_fs(:long)}) was merged with " \
+        "the record for DOE, Jane (date of birth #{@existing_patient.date_of_birth.to_fs(:long)}) because " \
+        "they have the same NHS number (#{@existing_patient.nhs_number})."
     )
   end
 end
