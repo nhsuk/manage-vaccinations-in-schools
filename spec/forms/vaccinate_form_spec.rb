@@ -91,4 +91,41 @@ describe VaccinateForm do
       end
     end
   end
+
+  describe "#save" do
+    subject(:form) do
+      described_class.new(
+        programme:,
+        current_user:,
+        session:,
+        patient: create(:patient),
+        identity_check_confirmed_by_patient: true,
+        pre_screening_notes: "",
+        pre_screening_confirmed: true,
+        vaccine_method: "injection",
+        delivery_site: "left_arm_upper_position"
+      )
+    end
+
+    describe "a uuid" do
+      let(:draft_vaccination_record) do
+        DraftVaccinationRecord.new(request_session: {}, current_user:)
+      end
+
+      it "is generated" do
+        form.save(draft_vaccination_record:) # rubocop:disable Rails/SaveBang
+        expect(draft_vaccination_record.uuid).to be_present
+      end
+
+      it "tries 10 times to find a uuid that's not already in use" do
+        allow(VaccinationRecord).to receive(:exists?).and_return(true)
+
+        expect { form.save(draft_vaccination_record:) }.to raise_error(
+          RuntimeError,
+          "Unable to generate unique UUID"
+        )
+        expect(VaccinationRecord).to have_received(:exists?).exactly(10).times
+      end
+    end
+  end
 end
