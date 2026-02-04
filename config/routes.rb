@@ -98,6 +98,7 @@ Rails.application.routes.draw do
         get "cannot-consent-responsibility"
         get "confirm"
         put "record"
+        get "submitted"
       end
 
       resources :edit, only: %i[show update], controller: "consent_forms/edit"

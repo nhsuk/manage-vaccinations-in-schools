@@ -18,6 +18,7 @@ describe "Parental consent" do
     then_i_can_check_my_answers
 
     when_i_submit_the_consent_form
+    and_i_refuse_to_answer_questions_on_ethnicity
     then_i_see_the_confirmation_page
   end
 
@@ -136,5 +137,10 @@ describe "Parental consent" do
     expect(page).to have_content("Consent confirmed")
     expect(page).to have_content("is due to get the HPV vaccination at school")
     expect(page).not_to have_content(@session.dates.first.to_fs(:long))
+  end
+
+  def and_i_refuse_to_answer_questions_on_ethnicity
+    choose "No, skip the ethnicity questions"
+    click_on "Continue"
   end
 end

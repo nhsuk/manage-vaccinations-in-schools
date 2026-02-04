@@ -8,8 +8,7 @@ module EthnicityConcern
     mixed_or_multiple_ethnic_groups: 1,
     asian_or_asian_british: 2,
     black_african_caribbean_or_black_british: 3,
-    other_ethnic_group: 4,
-    prefer_not_to_say: 5
+    other_ethnic_group: 4
   }.freeze
 
   ETHNIC_BACKGROUNDS = {
@@ -35,9 +34,7 @@ module EthnicityConcern
     black_any_other_black_african_or_caribbean_background: 32,
     # Other ethnic group
     other_arab: 40,
-    other_any_other_ethnic_group: 41,
-    # Leaf option on background pages
-    prefer_not_to_say: 99
+    other_any_other_ethnic_group: 41
   }.freeze
 
   ETHNIC_BACKGROUNDS_BY_GROUP = {
@@ -80,6 +77,7 @@ module EthnicityConcern
     enum :ethnic_group,
          ETHNIC_GROUPS,
          prefix: true,
+         on: :ethnicity_update,
          validate: {
            allow_nil: true
          }
@@ -87,17 +85,31 @@ module EthnicityConcern
     enum :ethnic_background,
          ETHNIC_BACKGROUNDS,
          prefix: true,
+         on: :ethnicity_update,
          validate: {
            allow_nil: true
          }
 
-    validates :additional_ethnic_background,
-              presence: true,
-              if: :ethnic_background_requires_additional_details?
+    before_validation :normalise_ethnic_background_other, on: :ethnicity_update
 
-    validates :additional_ethnic_background,
+    validates :ethnic_background_other,
+              length: {
+                maximum: 300
+              },
+              on: :ethnicity_update,
+              if: -> do
+                wizard_step == :ethnic_background &&
+                  ethnic_background_requires_additional_details?
+              end
+
+    validates :ethnic_background_other,
               absence: true,
-              unless: :ethnic_background_requires_additional_details?
+              on: :ethnicity_update,
+              if: -> do
+                wizard_step == :ethnic_background &&
+                  ethnic_background.present? &&
+                  !ethnic_background_requires_additional_details?
+              end
   end
 
   class_methods do
@@ -107,11 +119,32 @@ module EthnicityConcern
     def any_other_ethnic_backgrounds = ANY_OTHER_ETHNIC_BACKGROUNDS
 
     def ethnic_backgrounds_for_group(group)
-      ethnic_backgrounds_by_group.fetch(group.to_sym)
+      ethnic_backgrounds_by_group.fetch(group&.to_sym)
     end
   end
 
-  private
+  def ethnic_group_and_background
+    group_label = I18n.t("ethnicity.groups.#{ethnic_group}")
+    background_label = I18n.t("ethnicity.backgrounds.#{ethnic_background}")
+
+    background_with_additional = [
+      background_label,
+      ethnic_background_other
+    ].compact_blank.join(" - ")
+
+    if group_label.present? && background_with_additional.present?
+      "#{group_label} (#{background_with_additional})"
+    end
+  end
+
+  def normalise_ethnic_background_other
+    return unless wizard_step == :ethnic_background
+    return if ethnic_background.blank?
+
+    # If the chosen background isn't an "any other" option, this value must not persist
+    self.ethnic_background_other =
+      nil unless ethnic_background_requires_additional_details?
+  end
 
   def ethnic_background_requires_additional_details?
     return false if ethnic_background.blank?

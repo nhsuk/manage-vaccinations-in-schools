@@ -58,11 +58,23 @@ module ParentInterface
     def record
       @consent_form.update!(recorded_at: Time.zone.now)
 
-      session.delete(:consent_form_id)
-
       TeamCachedCounts.new(@team).reset_unmatched_consent_responses!
 
       ProcessConsentFormJob.perform_later(@consent_form)
+
+      if @consent_form.ethnic_group.blank?
+        redirect_to parent_interface_consent_form_edit_path(
+                      @consent_form,
+                      "ethnicity"
+                    )
+      else
+        session.delete(:consent_form_id)
+        render "parent_interface/consent_forms/submitted"
+      end
+    end
+
+    def submitted
+      session.delete(:consent_form_id)
     end
 
     private

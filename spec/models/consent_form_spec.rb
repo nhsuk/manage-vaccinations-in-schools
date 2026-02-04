@@ -369,6 +369,16 @@ describe ConsentForm do
         end
       end
     end
+
+    context "when wizard_step is :ethnicity_question" do
+      let(:wizard_step) { :ethnicity_question }
+
+      it do
+        expect(consent_form).to validate_inclusion_of(:ethnicity_question).on(
+          :ethnicity_update
+        ).in_array(%w[yes no])
+      end
+    end
   end
 
   it { should normalize(:given_name).from(" Joanna ").to("Joanna") }

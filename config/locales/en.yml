@@ -400,6 +400,12 @@ en:
               too_long: Enter notes that are less than %{count} characters long
         consent_form:
           attributes:
+            ethnic_group:
+              blank: Choose an ethnic group
+            ethnic_background:
+              blank: Choose an ethnic background
+            ethnic_background_other:
+              blank: Enter details about your child’s background
             address_line_1:
               blank: Enter the first line of your address
               too_long: >-
@@ -855,3 +861,35 @@ en:
     absent: "%{name} is absent from today’s session."
     not_registered: "%{name} is not registered yet."
     present: "%{name} is attending today’s session."
+  ethnicity:
+    ethnic_group_title: "What is your child’s ethnic group?"
+    ethnic_background_title: "Which of the following best describes your child’s %{group_label} background?"
+    groups:
+      white: "White"
+      mixed_or_multiple_ethnic_groups: "Mixed or multiple ethnic groups"
+      asian_or_asian_british: "Asian or Asian British"
+      black_african_caribbean_or_black_british: "Black, African, Caribbean or Black British"
+      other_ethnic_group: "Other ethnic group"
+    backgrounds:
+      white_english_welsh_scottish_northern_irish_or_british: "English, Welsh, Scottish, Northern Irish or British"
+      white_irish: "Irish"
+      white_gypsy_or_irish_traveller: "Gypsy or Irish Traveller"
+      white_any_other_white_background: "Any other White background"
+
+      mixed_white_and_black_caribbean: "White and Black Caribbean"
+      mixed_white_and_black_african: "White and Black African"
+      mixed_white_and_asian: "White and Asian"
+      mixed_any_other_mixed_or_multiple_ethnic_background: "Any other mixed or multiple ethnic background"
+
+      asian_indian: "Indian"
+      asian_pakistani: "Pakistani"
+      asian_bangladeshi: "Bangladeshi"
+      asian_chinese: "Chinese"
+      asian_any_other_asian_background: "Any other Asian background"
+
+      black_african: "African"
+      black_caribbean: "Caribbean"
+      black_any_other_black_african_or_caribbean_background: "Any other Black, African or Caribbean background"
+
+      other_arab: "Arab"
+      other_any_other_ethnic_group: "Any other ethnic group"

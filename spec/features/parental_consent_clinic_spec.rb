@@ -27,6 +27,7 @@ describe "Parental consent" do
     then_i_can_check_my_answers
 
     when_i_submit_the_consent_form
+    and_i_refuse_to_answer_questions_on_ethnicity
     then_i_see_a_confirmation_page_in_school
 
     when_the_nurse_checks_the_school_moves
@@ -57,6 +58,7 @@ describe "Parental consent" do
     then_i_can_check_my_answers
 
     when_i_submit_the_consent_form
+    and_i_refuse_to_answer_questions_on_ethnicity
     then_i_see_a_confirmation_page_in_clinic
 
     when_the_nurse_checks_the_school_moves
@@ -87,6 +89,7 @@ describe "Parental consent" do
     then_i_can_check_my_answers
 
     when_i_submit_the_consent_form
+    and_i_refuse_to_answer_questions_on_ethnicity
     then_i_see_a_confirmation_page_in_clinic
 
     when_the_nurse_checks_the_school_moves
@@ -295,5 +298,10 @@ describe "Parental consent" do
   def then_the_nurse_should_see_unknown_school
     click_on "View full child record"
     expect(page).to have_content("SchoolUnknown")
+  end
+
+  def and_i_refuse_to_answer_questions_on_ethnicity
+    choose "No, skip the ethnicity questions"
+    click_on "Continue"
   end
 end
