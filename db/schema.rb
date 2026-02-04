@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_02_124516) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_04_073325) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1356,8 +1356,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_02_124516) do
               ELSE NULL::text
           END AS patient_gender,
       ((pps.academic_year - pat.birth_academic_year) - 5) AS patient_year_group,
-      COALESCE(la.mhclg_code, pat.local_authority_mhclg_code, ''::character varying) AS patient_local_authority_code,
-      COALESCE(la.official_name, pat_la.official_name, ''::character varying) AS patient_local_authority_official_name,
+      COALESCE(la.mhclg_code, pat.local_authority_mhclg_code, 'UNKNOWN'::character varying) AS patient_local_authority_code,
+      COALESCE(la.official_name, pat_la.official_name, 'Unknown Local Authority'::character varying) AS patient_local_authority_official_name,
       COALESCE(la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
           CASE
               WHEN (school.urn IS NOT NULL) THEN school.urn
