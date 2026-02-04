@@ -26,6 +26,7 @@ describe "MMR/MMRV" do
 
     when_i_fill_in_the_date_and_continue
     then_i_see_the_confirmation_page
+    and_the_confirmation_summary_is_not_displayed_as_a_warning
 
     when_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
@@ -69,6 +70,7 @@ describe "MMR/MMRV" do
 
     when_i_fill_in_the_date_and_continue
     then_i_see_the_confirmation_page
+    and_the_confirmation_summary_is_not_displayed_as_a_warning
 
     when_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
@@ -211,6 +213,11 @@ describe "MMR/MMRV" do
   end
   alias_method :then_i_see_the_confirmation_page_instead_of_the_mmrv_page,
                :then_i_see_the_confirmation_page
+
+  def and_the_confirmation_summary_is_not_displayed_as_a_warning
+    expect(page).to have_css("div.nhsuk-card")
+    expect(page).not_to have_css("div.nhsuk-card--warning")
+  end
 
   def when_i_confirm_the_details
     click_on "Confirm"
