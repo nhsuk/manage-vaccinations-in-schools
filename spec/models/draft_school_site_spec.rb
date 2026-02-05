@@ -78,6 +78,36 @@ describe DraftSchoolSite do
 
         it { should be_valid(:update) }
       end
+
+      context "with invalid characters in name" do
+        let(:attributes) do
+          valid_attributes.merge(wizard_step: :details, name: "School with []")
+        end
+
+        it "is invalid" do
+          expect(draft_school_site).not_to be_valid(:update)
+          expect(draft_school_site.errors[:name]).to include(
+            "includes invalid character(s)"
+          )
+        end
+      end
+
+      context "with valid special characters in name" do
+        [
+          "St Mary's & St John's",
+          "École Française",
+          "Smith-Jones School",
+          "St. Mary's School, (Site A)"
+        ].each do |valid_name|
+          context "with name '#{valid_name}'" do
+            let(:attributes) do
+              valid_attributes.merge(wizard_step: :details, name: valid_name)
+            end
+
+            it { should be_valid(:update) }
+          end
+        end
+      end
     end
 
     context "on the confirm step" do
@@ -201,6 +231,58 @@ describe DraftSchoolSite do
       let(:attributes) { {} }
 
       it { expect(draft_school_site.address_parts).to eq([]) }
+    end
+  end
+
+  describe "normalization" do
+    let(:attributes) { valid_attributes.merge(wizard_step: :details) }
+
+    it "normalizes whitespace in name" do
+      draft_school_site.name = "  School   Name  "
+      draft_school_site.valid?(:update)
+      expect(draft_school_site.name).to eq("School Name")
+    end
+
+    it "removes zero-width joiners from name" do
+      draft_school_site.name = "School\u200DName"
+      draft_school_site.valid?(:update)
+      expect(draft_school_site.name).to eq("SchoolName")
+    end
+
+    it "removes non-breaking spaces from name" do
+      draft_school_site.name = "School\u00A0Name"
+      draft_school_site.valid?(:update)
+      expect(draft_school_site.name).to eq("School Name")
+    end
+
+    it "normalizes whitespace in address_line_1" do
+      draft_school_site.address_line_1 = "  123   Main   Street  "
+      draft_school_site.valid?(:update)
+      expect(draft_school_site.address_line_1).to eq("123 Main Street")
+    end
+
+    it "removes zero-width joiners from address_line_1" do
+      draft_school_site.address_line_1 = "123\u200DMain\u200DStreet"
+      draft_school_site.valid?(:update)
+      expect(draft_school_site.address_line_1).to eq("123MainStreet")
+    end
+
+    it "normalizes whitespace in address_line_2" do
+      draft_school_site.address_line_2 = "  Floor   2  "
+      draft_school_site.valid?(:update)
+      expect(draft_school_site.address_line_2).to eq("Floor 2")
+    end
+
+    it "normalizes whitespace in address_town" do
+      draft_school_site.address_town = "  Greater   London  "
+      draft_school_site.valid?(:update)
+      expect(draft_school_site.address_town).to eq("Greater London")
+    end
+
+    it "returns nil for blank values after normalization" do
+      draft_school_site.address_line_2 = "   "
+      draft_school_site.valid?(:update)
+      expect(draft_school_site.address_line_2).to be_nil
     end
   end
 
