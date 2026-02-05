@@ -89,7 +89,12 @@ module ParentInterface
     def handle_ethnicity_completion!(model)
       model.save!
 
-      ProcessConsentFormJob.perform_later(model)
+      # This job will have already been scheduled in the
+      # background after recording the consent. If the
+      # parent decides to answer "Yes" or "No" (they might not)
+      # to the ethnicity questions, the job will make sure the
+      # ethnicity information is copied to the matched patient.
+      ProcessConsentFormJob.perform_later(model.id)
 
       redirect_to submitted_parent_interface_consent_form_path(model)
     end

@@ -5,11 +5,35 @@ class ProcessConsentFormJob < ApplicationJob
 
   queue_as :consents
 
-  def perform(consent_form)
-    @consent_form =
-      ConsentForm.includes(:consent_form_programmes).find(consent_form.id)
+  # We may enqueue this job more than once for the same ConsentForm during the parent
+  # consent journey (e.g. once when the consent is recorded, and again after the optional
+  # ethnicity flow is completed). Sidekiq does not guarantee ordering, so those jobs
+  # could otherwise run concurrently and race each other while reading/updating the
+  # same ConsentForm/Patient (and while calling out to PDS).
+  #
+  # Throttling concurrency to 1 per consent_form ID ensures only one job for a given
+  # ConsentForm is processed at a time. This makes the job safe to re-run to pick up
+  # newly submitted data like ethnicity.
+  sidekiq_throttle(
+    concurrency: {
+      limit: 1,
+      key_suffix: ->(consent_form_id) { consent_form_id }
+    }
+  )
 
-    return if already_matched?
+  def perform(consent_form_id)
+    @consent_form =
+      ConsentForm.includes(:consent_form_programmes).find(consent_form_id)
+
+    if already_matched?
+      # This covers the case where the job is re-run
+      # after the ethnicity flow is completed.
+      if (patient = @consent_form.matched_patient)
+        patient.assign_ethnicity_from!(@consent_form)
+      end
+
+      return
+    end
 
     begin
       if match_with_exact_nhs_number

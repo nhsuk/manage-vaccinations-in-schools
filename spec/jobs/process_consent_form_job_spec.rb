@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe ProcessConsentFormJob do
-  subject(:perform) { described_class.new.perform(consent_form) }
+  subject(:perform) { described_class.new.perform(consent_form.id) }
 
   let(:team) { create(:team) }
   let(:session) { create(:session, team:) }
