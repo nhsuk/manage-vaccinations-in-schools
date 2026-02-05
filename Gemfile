@@ -40,7 +40,9 @@ gem "flipper"
 gem "flipper-active_record"
 gem "flipper-ui"
 gem "govuk-components"
-gem "govuk_design_system_formbuilder"
+gem "govuk_design_system_formbuilder",
+    github: "x-govuk/govuk-form-builder",
+    ref: "main" #TODO: replace with version > 5.13.0 when released
 gem "govuk_markdown"
 gem "indefinite_article"
 gem "jsonb_accessor"

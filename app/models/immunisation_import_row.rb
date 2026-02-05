@@ -3,6 +3,8 @@
 class ImmunisationImportRow
   include ActiveModel::Model
 
+  include PerformableAtDateAndTime
+
   validate :validate_administered
 
   validate :validate_batch_expiry,
@@ -135,7 +137,8 @@ class ImmunisationImportRow
       full_dose: true,
       outcome:,
       patient_id: patient.id,
-      performed_at:,
+      performed_at_date:,
+      performed_at_time:,
       performed_by_user:,
       performed_ods_code: performed_ods_code&.to_s,
       programme_type: programme.type,
@@ -336,19 +339,9 @@ class ImmunisationImportRow
     end
   end
 
-  def performed_at
-    date = date_of_vaccination.to_date
-    time = time_of_vaccination&.to_time
+  def performed_at_date = date_of_vaccination.to_date
 
-    Time.zone.local(
-      date.year,
-      date.month,
-      date.day,
-      time&.hour || 0,
-      time&.min || 0,
-      time&.sec || 0
-    )
-  end
+  def performed_at_time = time_of_vaccination&.to_time
 
   def performed_by_user
     @performed_by_user ||=
@@ -1191,7 +1184,7 @@ class ImmunisationImportRow
         "Enter a time in the correct format."
       )
     elsif date_of_vaccination&.to_date&.today?
-      if time_of_vaccination.to_time.future?
+      if performed_at.future?
         errors.add(time_of_vaccination.header, "Enter a time in the past.")
       end
     end

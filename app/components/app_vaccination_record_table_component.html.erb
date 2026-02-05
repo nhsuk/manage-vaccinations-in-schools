@@ -39,7 +39,7 @@
 
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Vaccination date</span>
-              <%= vaccination_record.performed_at.to_date.to_fs(:long) %>
+              <%= vaccination_record.performed_at_date.to_fs(:long) %>
             <% end %>
           <% end %>
         <% end %>

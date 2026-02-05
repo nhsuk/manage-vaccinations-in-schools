@@ -390,18 +390,18 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def date_value
-    date = @vaccination_record.performed_at.to_date
+    date = @vaccination_record.performed_at_date
 
     highlight_if(
       date.today? ? "Today (#{date.to_fs(:long)})" : date.to_fs(:long),
-      @vaccination_record.performed_at_changed?
+      @vaccination_record.performed_at_date_changed?
     )
   end
 
   def time_value
     highlight_if(
-      @vaccination_record.performed_at.to_fs(:time),
-      @vaccination_record.performed_at_changed?
+      @vaccination_record.performed_at_time&.to_fs(:time) || "Unknown",
+      @vaccination_record.performed_at_time_changed?
     )
   end
 

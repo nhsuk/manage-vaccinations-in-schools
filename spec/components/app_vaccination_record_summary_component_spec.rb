@@ -253,6 +253,19 @@ describe AppVaccinationRecordSummaryComponent do
         text: "Time12:00pm"
       )
     end
+
+    context "when the time is not specified" do
+      let(:vaccination_record) do
+        create(:vaccination_record, performed_at: Date.new(2020, 1, 1))
+      end
+
+      it do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "TimeUnknown"
+        )
+      end
+    end
   end
 
   describe "vaccinator row" do

@@ -270,8 +270,8 @@ class TriageForm
       patient
         .vaccination_records
         .for_programme(programme)
-        .order(:performed_at)
-        .last
+        .order_by_performed_at
+        .first
 
     vaccination_record.presence&.update!(next_dose_delay_triage:)
   end

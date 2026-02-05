@@ -23,10 +23,7 @@ class AppVaccinationsSummaryTableComponent < ViewComponent::Base
         .vaccination_records
         .includes(:vaccine)
         .administered
-        .where(
-          performed_by_user: current_user,
-          performed_at: Date.current.all_day
-        )
+        .where(performed_by_user: current_user, performed_at_date: Date.current)
 
     results = vaccines.index_with { 0 }
 
