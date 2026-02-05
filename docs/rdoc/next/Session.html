@@ -740,7 +740,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="birth_academic_years-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 197</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 196</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">birth_academic_years</span>(<span class="ruby-value">programme:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>
     <span class="ruby-identifier">session_programme_year_groups</span>.<span class="ruby-identifier">where</span>(
@@ -788,7 +788,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="can_send_clinic_invitations-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 264</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 263</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_send_clinic_invitations?</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">clinic?</span>
     <span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">completed?</span>
@@ -839,7 +839,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="completed-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 220</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 219</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">completed?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">dates</span>.<span class="ruby-identifier">empty?</span>
   <span class="ruby-constant">Date</span>.<span class="ruby-identifier">current</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">dates</span>.<span class="ruby-identifier">max</span>
@@ -882,7 +882,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="future_dates-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 252</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 251</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">future_dates</span> = <span class="ruby-identifier">dates</span>.<span class="ruby-identifier">select</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:future?</span>)
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_date</span>(<span class="ruby-value">include_today:</span>)
@@ -988,7 +988,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="has_been_attended-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 258</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 257</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_been_attended?</span>(<span class="ruby-value">date:</span>)
   <span class="ruby-identifier">gillick_assessments</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> } <span class="ruby-operator">||</span>
     <span class="ruby-identifier">pre_screenings</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> } <span class="ruby-operator">||</span>
@@ -1032,7 +1032,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="has_multiple_vaccine_methods-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 236</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 235</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_multiple_vaccine_methods?</span> = <span class="ruby-identifier">vaccine_methods</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programmes_for</span>(<span class="ruby-value">year_group:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">patient:</span> <span class="ruby-keyword">nil</span>)
@@ -1153,7 +1153,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="next_date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 254</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 253</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_date</span>(<span class="ruby-value">include_today:</span>)
   (<span class="ruby-identifier">include_today</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">today_or_future_dates</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">future_dates</span>).<span class="ruby-identifier">first</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1195,7 +1195,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="patients-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 207</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 206</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patients</span>
   <span class="ruby-constant">Patient</span>
     .<span class="ruby-identifier">joins_sessions</span>
@@ -1242,7 +1242,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="patients_with_no_consent_response_count-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 277</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 276</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patients_with_no_consent_response_count</span>
   <span class="ruby-identifier">patients</span>.<span class="ruby-identifier">has_programme_status</span>(
     <span class="ruby-string">&quot;needs_consent_no_response&quot;</span>,
@@ -1288,7 +1288,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="programme_types-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 166</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 165</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_types</span>
   <span class="ruby-ivar">@programme_types</span> <span class="ruby-operator">||=</span>
     <span class="ruby-identifier">session_programme_year_groups</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:programme_type</span>).<span class="ruby-identifier">sort</span>.<span class="ruby-identifier">uniq</span>
@@ -1331,7 +1331,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="programmes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 171</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 170</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programmes</span> = <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find_all</span>(<span class="ruby-identifier">programme_types</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccines</span>
@@ -1516,7 +1516,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="programmes_for-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 238</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 237</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programmes_for</span>(<span class="ruby-value">year_group:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">patient:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">year_group</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">year_group</span>(<span class="ruby-value">academic_year:</span>)
 
@@ -1564,7 +1564,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="scheduled-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 225</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 224</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">scheduled?</span> = <span class="ruby-operator">!</span><span class="ruby-identifier">unscheduled?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">completed?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">started?</span>
@@ -1696,7 +1696,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="set_slug-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 315</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 314</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_slug</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">slug</span> = <span class="ruby-constant">SecureRandom</span>.<span class="ruby-identifier">alphanumeric</span>(<span class="ruby-value">10</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">slug</span>.<span class="ruby-identifier">nil?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1738,7 +1738,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="started-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 227</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 226</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">started?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">dates</span>.<span class="ruby-identifier">empty?</span>
   <span class="ruby-constant">Date</span>.<span class="ruby-identifier">current</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">dates</span>.<span class="ruby-identifier">min</span>
@@ -1781,7 +1781,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="sync_location_programme_year_groups-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 285</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 284</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sync_location_programme_year_groups!</span>(<span class="ruby-value">programmes:</span>)
   <span class="ruby-identifier">location_programme_year_groups</span> =
     <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">ProgrammeYearGroup</span>
@@ -1847,7 +1847,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="to_param-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 162</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 161</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_param</span> = <span class="ruby-identifier">slug</span>
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:type</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:location</span>, <span class="ruby-value">prefix:</span> <span class="ruby-keyword">true</span>
@@ -2041,7 +2041,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="today-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 216</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 215</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">today?</span> = <span class="ruby-identifier">dates</span>.<span class="ruby-identifier">any?</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:today?</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">unscheduled?</span> = <span class="ruby-identifier">dates</span>.<span class="ruby-identifier">empty?</span>
@@ -2181,7 +2181,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="today_or_future_dates-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 248</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 247</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">today_or_future_dates</span>
   <span class="ruby-identifier">dates</span>.<span class="ruby-identifier">select</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">today?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">future?</span> }
 <span class="ruby-keyword">end</span></pre>
@@ -2223,7 +2223,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="unscheduled-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 218</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 217</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">unscheduled?</span> = <span class="ruby-identifier">dates</span>.<span class="ruby-identifier">empty?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">completed?</span>
@@ -2361,7 +2361,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="vaccine_methods-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 232</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 231</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_methods</span>
   <span class="ruby-ivar">@vaccine_methods</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:vaccine_methods</span>).<span class="ruby-identifier">uniq</span>.<span class="ruby-identifier">sort</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2403,7 +2403,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="vaccines-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 173</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 172</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccines</span>
   <span class="ruby-ivar">@vaccines</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">programme_type:</span> <span class="ruby-identifier">programme_types</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2445,7 +2445,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="year_groups-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 177</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 176</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">year_groups</span>(<span class="ruby-value">programme:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">session_programme_year_groups</span>.<span class="ruby-identifier">loaded?</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>
