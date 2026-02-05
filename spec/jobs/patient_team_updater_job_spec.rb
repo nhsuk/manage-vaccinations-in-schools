@@ -20,7 +20,7 @@ describe PatientTeamUpdaterJob do
       let(:patient) { create(:patient) }
 
       it "calls the updater with the appropriate scopes" do
-        expect(Patient).to receive(:where).with(id: patient.id)
+        expect(Patient).to receive(:find).with(patient.id)
         expect(Team).not_to receive(:all)
         expect(PatientTeamUpdater).to receive(:call)
 
@@ -35,7 +35,7 @@ describe PatientTeamUpdaterJob do
 
       it "calls the updater with the appropriate scopes" do
         expect(Patient).not_to receive(:all)
-        expect(Team).to receive(:where).with(id: team.id)
+        expect(Team).to receive(:find).with(team.id)
         expect(PatientTeamUpdater).to receive(:call)
 
         perform
@@ -49,8 +49,8 @@ describe PatientTeamUpdaterJob do
       let(:team) { create(:team) }
 
       it "calls the updater with the appropriate scopes" do
-        expect(Patient).to receive(:where).with(id: patient.id)
-        expect(Team).to receive(:where).with(id: team.id)
+        expect(Patient).to receive(:find).with(patient.id)
+        expect(Team).to receive(:find).with(team.id)
         expect(PatientTeamUpdater).to receive(:call)
 
         perform

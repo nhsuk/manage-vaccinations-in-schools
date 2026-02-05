@@ -115,7 +115,7 @@ describe "Triage" do
 
   def and_the_parent_gives_consent
     create(:consent, :given, patient: Patient.first, programme: @programme)
-    StatusUpdater.call(patient: @patient)
+    PatientStatusUpdater.call(patient: @patient)
 
     page.refresh
   end

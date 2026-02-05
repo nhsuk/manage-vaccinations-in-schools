@@ -117,7 +117,7 @@ describe ClinicNotification do
 
         before do
           create(:vaccination_record, patient:, programme: programmes.first)
-          StatusUpdater.call(patient:)
+          PatientStatusUpdater.call(patient:)
         end
 
         it "only sends emails for the remaining programme" do

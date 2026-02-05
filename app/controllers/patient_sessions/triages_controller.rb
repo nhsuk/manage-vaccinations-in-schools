@@ -33,7 +33,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
       )
 
     if (triage = @triage_form.save)
-      StatusUpdater.call(patient: @patient)
+      PatientStatusUpdater.call(patient: @patient)
 
       ConsentGrouper
         .call(

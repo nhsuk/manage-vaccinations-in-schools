@@ -152,7 +152,7 @@ class PatientMerger
 
       patient_to_destroy.reload.destroy!
 
-      StatusUpdater.call(patient: patient_to_keep)
+      PatientStatusUpdater.call(patient: patient_to_keep)
     end
 
     SearchVaccinationRecordsInNHSJob.perform_async(patient_to_keep.id)

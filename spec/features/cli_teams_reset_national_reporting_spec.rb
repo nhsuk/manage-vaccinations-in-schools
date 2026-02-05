@@ -243,7 +243,7 @@ describe "mavis teams reset-national-reporting" do
     @patient1 = @vaccination_record1.patient
     @patient2 = @vaccination_record2.patient
 
-    PatientTeamUpdater.call(patient_scope: Patient.all)
+    PatientTeamUpdater.call
   end
 
   def and_a_patient_is_associated_with_both_teams
@@ -498,7 +498,9 @@ describe "mavis teams reset-national-reporting" do
   end
 
   def and_the_status_updater_job_is_enqueued
-    expect(StatusUpdaterJob).to have_enqueued_sidekiq_job(@shared_patient.id)
+    expect(PatientStatusUpdaterJob).to have_enqueued_sidekiq_job(
+      @shared_patient.id
+    )
   end
 
   def and_the_access_log_entry_is_not_deleted

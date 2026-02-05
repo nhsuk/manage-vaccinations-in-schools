@@ -129,7 +129,7 @@ describe SendClinicSubsequentInvitationsJob do
         team:
       )
 
-      StatusUpdater.call(patient:)
+      PatientStatusUpdater.call(patient:)
     end
 
     it "sends a subsequent invitation for the non-vaccinated programmes" do

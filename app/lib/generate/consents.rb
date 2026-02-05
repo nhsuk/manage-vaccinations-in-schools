@@ -25,7 +25,7 @@ class Generate::Consents
     create_consents(:given, @given)
     create_consents(:needing_triage, @given_needs_triage)
 
-    StatusUpdater.call(patient: @updated_patients)
+    PatientStatusUpdater.call(patient: @updated_patients)
   end
 
   def self.call(...) = new(...).call

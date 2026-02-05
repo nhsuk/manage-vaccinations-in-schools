@@ -121,7 +121,7 @@ describe "Verbal consent" do
         date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE - 1.year
       )
 
-    StatusUpdater.call
+    PatientStatusUpdater.call
   end
 
   def and_i_am_signed_in

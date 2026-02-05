@@ -48,7 +48,7 @@ class BulkRemoveParentRelationshipsJob < ApplicationJob
         parent.destroy!
       end
 
-      StatusUpdaterJob.perform_bulk(patient_ids.zip)
+      PatientStatusUpdaterJob.perform_bulk(patient_ids.zip)
     end
 
     mark_complete_if_finished(import, remove_option)

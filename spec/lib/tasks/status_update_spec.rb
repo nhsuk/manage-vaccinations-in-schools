@@ -13,7 +13,7 @@ describe "status:update" do
     end
 
     it "calls the status updater" do
-      expect(StatusUpdater).to receive(:call)
+      expect(PatientStatusUpdater).to receive(:call)
       invoke
     end
   end
@@ -32,7 +32,7 @@ describe "status:update" do
     end
 
     it "calls the status updater" do
-      expect(StatusUpdater).to receive(:call).with(patient:)
+      expect(PatientStatusUpdater).to receive(:call).with(patient:)
       invoke
     end
   end

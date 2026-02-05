@@ -96,7 +96,7 @@ describe "MMRV vaccination" do
           )
         ]
       )
-    StatusUpdater.call(patient: @patient)
+    PatientStatusUpdater.call(patient: @patient)
     @community_clinic = create(:community_clinic, team: @team)
   end
 

@@ -60,7 +60,7 @@ describe NextDoseTriageFactory do
         second_dose =
           create(:vaccination_record, programme:, session:, patient:)
 
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
 
         described_class.call(vaccination_record: second_dose.reload)
 

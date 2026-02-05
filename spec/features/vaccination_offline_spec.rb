@@ -178,7 +178,7 @@ describe "Offline vaccination" do
         year_group: 8
       )
 
-    StatusUpdater.call
+    PatientStatusUpdater.call
   end
 
   def given_an_hpv_programme_is_underway_with_a_single_patient
@@ -210,7 +210,7 @@ describe "Offline vaccination" do
       notify_parents: true
     )
 
-    StatusUpdater.call
+    PatientStatusUpdater.call
   end
 
   def given_a_flu_programme_is_underway_with_a_single_patient

@@ -67,7 +67,7 @@ describe SendSchoolSessionRemindersJob do
   context "when already vaccinated" do
     before do
       create(:vaccination_record, patient:, programme: programmes.first)
-      StatusUpdater.call(patient:)
+      PatientStatusUpdater.call(patient:)
     end
 
     it "doesn't send any notifications" do

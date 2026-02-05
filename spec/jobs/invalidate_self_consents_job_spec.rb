@@ -144,7 +144,7 @@ describe InvalidateSelfConsentsJob do
           created_at: 1.day.ago
         )
 
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
       end
 
       it "does not invalidate the consent" do

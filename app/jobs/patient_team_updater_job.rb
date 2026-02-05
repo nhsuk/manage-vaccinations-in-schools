@@ -6,8 +6,8 @@ class PatientTeamUpdaterJob
   sidekiq_options queue: :cache, lock: :until_executed
 
   def perform(patient_id = nil, team_id = nil)
-    patient_scope = (patient_id ? Patient.where(id: patient_id) : nil)
-    team_scope = (team_id ? Team.where(id: team_id) : nil)
-    PatientTeamUpdater.call(patient_scope:, team_scope:)
+    patient = (patient_id ? Patient.find(patient_id) : nil)
+    team = (team_id ? Team.find(team_id) : nil)
+    PatientTeamUpdater.call(patient:, team:)
   end
 end

@@ -407,7 +407,7 @@ describe SearchVaccinationRecordsInNHSJob do
 
     shared_examples "calls StatusUpdater" do
       it "calls StatusUpdater with the patient" do
-        expect(StatusUpdater).to receive(:call).with(patient:)
+        expect(PatientStatusUpdater).to receive(:call).with(patient:)
         perform
       end
     end

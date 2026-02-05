@@ -323,7 +323,7 @@ class VaccinationRecord < ApplicationRecord
 
     next_dose_delay_triage.save!
 
-    StatusUpdater.call(patient:)
+    PatientStatusUpdater.call(patient:)
   end
 
   def should_generate_important_notice?

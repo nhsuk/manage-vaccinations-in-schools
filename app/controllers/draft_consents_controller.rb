@@ -79,7 +79,7 @@ class DraftConsentsController < ApplicationController
 
       @consent.update_vaccination_records_no_notify!
 
-      StatusUpdater.call(patient: @patient)
+      PatientStatusUpdater.call(patient: @patient)
     end
 
     if @draft_consent.send_confirmation?

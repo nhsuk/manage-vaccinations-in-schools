@@ -153,7 +153,7 @@ describe TriageForm do
           )
         end
 
-        before { StatusUpdater.call(patient:) }
+        before { PatientStatusUpdater.call(patient:) }
 
         it "produces validation errors" do
           expect(validation_errors.join).to include(

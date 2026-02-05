@@ -34,7 +34,7 @@ class Sessions::PatientsController < Sessions::BaseController
 
     ActiveRecord::Base.transaction do
       attendance_record.update!(attending: params[:status] == "present")
-      StatusUpdater.call(patient: @patient)
+      PatientStatusUpdater.call(patient: @patient)
     end
 
     name = @patient.full_name

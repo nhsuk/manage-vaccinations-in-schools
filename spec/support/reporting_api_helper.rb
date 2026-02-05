@@ -37,7 +37,7 @@ module ReportingAPIHelper
   end
 
   def refresh_reporting_views!
-    StatusUpdater.call
+    PatientStatusUpdater.call
     ReportingAPI::PatientProgrammeStatus.refresh!(concurrently: false)
     ReportingAPI::Total.refresh!(concurrently: false)
   end

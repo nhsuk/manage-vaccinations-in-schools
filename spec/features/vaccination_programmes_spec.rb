@@ -78,7 +78,7 @@ describe "Vaccination programmes table" do
         school:
       )
 
-    StatusUpdater.call(patient: @patient)
+    PatientStatusUpdater.call(patient: @patient)
   end
 
   def when_i_click_on_children
@@ -166,7 +166,7 @@ describe "Vaccination programmes table" do
       session: @session,
       performed_at: 6.months.ago
     )
-    StatusUpdater.call(patient: @patient)
+    PatientStatusUpdater.call(patient: @patient)
   end
 
   def and_the_patient_has_a_second_dose_of_hpv
@@ -177,7 +177,7 @@ describe "Vaccination programmes table" do
       programme: @hpv_programme,
       session: @session
     )
-    StatusUpdater.call(patient: @patient)
+    PatientStatusUpdater.call(patient: @patient)
   end
 
   def and_the_patient_had_two_flu_doses_last_year
@@ -196,7 +196,7 @@ describe "Vaccination programmes table" do
       session: @session,
       performed_at: Time.zone.local(2025, 3, 1)
     )
-    StatusUpdater.call(patient: @patient)
+    PatientStatusUpdater.call(patient: @patient)
   end
 
   def and_the_patient_has_an_outcome_other_than_vaccinated
@@ -207,6 +207,6 @@ describe "Vaccination programmes table" do
       programme: @hpv_programme,
       academic_year: AcademicYear.pending
     )
-    StatusUpdater.call(patient: @patient)
+    PatientStatusUpdater.call(patient: @patient)
   end
 end

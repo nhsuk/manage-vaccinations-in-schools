@@ -70,7 +70,7 @@ describe "Manual consent reminders" do
         parents: [@parents[2]]
       )
 
-    StatusUpdater.call
+    PatientStatusUpdater.call
   end
 
   def given_a_session_with_patients_having_consent_responses
@@ -101,7 +101,7 @@ describe "Manual consent reminders" do
     @patient_with_refused_consent =
       create(:patient, :consent_refused, session: @session, programmes:)
 
-    StatusUpdater.call
+    PatientStatusUpdater.call
   end
 
   def and_i_am_signed_in

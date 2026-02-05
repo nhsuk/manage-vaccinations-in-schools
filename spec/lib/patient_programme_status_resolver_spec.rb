@@ -50,7 +50,7 @@ describe PatientProgrammeStatusResolver do
         programme:,
         performed_at: Time.zone.local(2025, 10, 30)
       )
-      StatusUpdater.call(patient:)
+      PatientStatusUpdater.call(patient:)
       patient.reload
     end
 
@@ -73,7 +73,7 @@ describe PatientProgrammeStatusResolver do
 
     before do
       create(:vaccination_record, :already_had, patient:, programme:)
-      StatusUpdater.call(patient:)
+      PatientStatusUpdater.call(patient:)
       patient.reload
     end
 
@@ -113,7 +113,7 @@ describe PatientProgrammeStatusResolver do
       let(:patient) { create(:patient, date_of_birth:, session:) }
 
       before do
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
         patient.reload
       end
 
@@ -141,7 +141,7 @@ describe PatientProgrammeStatusResolver do
       end
 
       before do
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
         patient.reload
       end
 
@@ -169,7 +169,7 @@ describe PatientProgrammeStatusResolver do
       end
 
       before do
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
         patient.reload
       end
 
