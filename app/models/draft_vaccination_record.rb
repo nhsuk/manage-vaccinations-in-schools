@@ -134,6 +134,7 @@ class DraftVaccinationRecord
   on_wizard_step :confirm, exact: true do
     validates :outcome, presence: true
     validates :notes, length: { maximum: 1000 }
+    validate :validate_patient_attendance
   end
 
   on_wizard_step :vaccinator, exact: true do
@@ -506,5 +507,24 @@ class DraftVaccinationRecord
     unless VaccinationRecord.delivery_sites.keys.include?(delivery_site)
       errors.add(:delivery_site, :inclusion)
     end
+  end
+
+  def validate_patient_attendance
+    return unless new_record?
+    return unless session&.today?
+    return if patient.blank?
+
+    attendance_record =
+      patient.attendance_records.find_by(
+        location: session.location,
+        date: session.dates.find(&:today?)
+      )
+
+    return if attendance_record&.attending?
+
+    errors.add(
+      :base,
+      "Child is marked as not attending this session. Mark them as attending to record a vaccination."
+    )
   end
 end

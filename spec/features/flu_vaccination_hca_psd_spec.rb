@@ -118,6 +118,7 @@ describe "Flu vaccination" do
       create(
         :patient,
         :consent_given_nasal_only_triage_not_needed,
+        :in_attendance,
         session: @session
       )
     @patient_injection_only =

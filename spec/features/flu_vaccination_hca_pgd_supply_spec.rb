@@ -73,18 +73,21 @@ describe "Flu vaccination" do
     @patient_nasal_only =
       create(
         :patient,
+        :in_attendance,
         :consent_given_nasal_only_triage_not_needed,
         session: @session
       )
     @patient_nasal_and_injection =
       create(
         :patient,
+        :in_attendance,
         :consent_given_nasal_or_injection_triage_not_needed,
         session: @session
       )
     @patient_injection_only =
       create(
         :patient,
+        :in_attendance,
         :consent_given_injection_only_triage_not_needed,
         session: @session
       )
@@ -103,6 +106,7 @@ describe "Flu vaccination" do
     @patient_nasal_only =
       create(
         :patient,
+        :in_attendance,
         :consent_given_nasal_triage_safe_to_vaccinate_nasal,
         session: @session
       )
