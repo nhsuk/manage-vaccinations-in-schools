@@ -646,7 +646,7 @@
             <div class="method-heading">
               <a href="#method-i-call" title="Link to this method">
                 <span class="method-name">call</span>
-                <span class="method-args">( ods_code:, name:, address_line_1:, address_town:, address_postcode:, ** )</span>
+                <span class="method-args">( name:, address_line_1:, address_town:, address_postcode:, ods_code: nil, ** )</span>
               </a>
             </div>
 
@@ -659,13 +659,13 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/clinics/create.rb, line 18</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/clinics/create.rb, line 19</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(
-  <span class="ruby-value">ods_code:</span>,
   <span class="ruby-value">name:</span>,
   <span class="ruby-value">address_line_1:</span>,
   <span class="ruby-value">address_town:</span>,
   <span class="ruby-value">address_postcode:</span>,
+  <span class="ruby-value">ods_code:</span> <span class="ruby-keyword">nil</span>,
   <span class="ruby-operator">**</span>
 )
   <span class="ruby-constant">MavisCLI</span>.<span class="ruby-identifier">load_rails</span>

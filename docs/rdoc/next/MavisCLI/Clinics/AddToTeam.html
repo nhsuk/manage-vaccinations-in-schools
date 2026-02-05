@@ -646,7 +646,7 @@
             <div class="method-heading">
               <a href="#method-i-call" title="Link to this method">
                 <span class="method-name">call</span>
-                <span class="method-args">(team_workgroup:, subteam_name:, ods_codes:, **)</span>
+                <span class="method-args">(team_workgroup:, subteam_name:, names:, **)</span>
               </a>
             </div>
 
@@ -660,7 +660,7 @@
           </div>
           <div class="method-source-code" id="call-source">
             <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/clinics/add_to_team.rb, line 17</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">team_workgroup:</span>, <span class="ruby-value">subteam_name:</span>, <span class="ruby-value">ods_codes:</span>, <span class="ruby-operator">**</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">team_workgroup:</span>, <span class="ruby-value">subteam_name:</span>, <span class="ruby-value">names:</span>, <span class="ruby-operator">**</span>)
   <span class="ruby-constant">MavisCLI</span>.<span class="ruby-identifier">load_rails</span>
 
   <span class="ruby-identifier">team</span> = <span class="ruby-constant">Team</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">workgroup:</span> <span class="ruby-identifier">team_workgroup</span>)
@@ -679,11 +679,11 @@
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">ods_codes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">ods_code</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">location</span> = <span class="ruby-constant">Location</span>.<span class="ruby-identifier">clinic</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">ods_code:</span>)
+    <span class="ruby-identifier">names</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">location</span> = <span class="ruby-constant">Location</span>.<span class="ruby-identifier">clinic</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">name:</span>)
 
       <span class="ruby-keyword">if</span> <span class="ruby-identifier">location</span>.<span class="ruby-identifier">nil?</span>
-        <span class="ruby-identifier">warn</span> <span class="ruby-node">&quot;Could not find clinic with ODS code #{ods_code}.&quot;</span>
+        <span class="ruby-identifier">warn</span> <span class="ruby-node">&quot;Could not find clinic with name #{name}.&quot;</span>
         <span class="ruby-keyword">next</span>
       <span class="ruby-keyword">end</span>
 
@@ -695,7 +695,7 @@
                .<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>)
          )
         <span class="ruby-identifier">existing_team_locations</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">existing_team_location</span><span class="ruby-operator">|</span>
-          <span class="ruby-identifier">warn</span> <span class="ruby-node">&quot;#{ods_code} previously belonged to #{existing_team_location.name}.&quot;</span>
+          <span class="ruby-identifier">warn</span> <span class="ruby-node">&quot;#{name} previously belonged to #{existing_team_location.name}.&quot;</span>
         <span class="ruby-keyword">end</span>
       <span class="ruby-keyword">end</span>
 
